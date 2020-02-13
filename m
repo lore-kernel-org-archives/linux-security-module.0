@@ -2,340 +2,288 @@ Return-Path: <SRS0=7Hmq=4B=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MSGID_FROM_MTA_HEADER,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 993F8C2BA83
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Feb 2020 09:05:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16A85C3B189
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Feb 2020 10:49:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67CB52173E
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Feb 2020 09:05:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD4F62465D
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Feb 2020 10:49:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=fortanix.onmicrosoft.com header.i=@fortanix.onmicrosoft.com header.b="AguTaT5/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729588AbgBMJFk (ORCPT
+        id S1729511AbgBMKtd (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 13 Feb 2020 04:05:40 -0500
-Received: from mga04.intel.com ([192.55.52.120]:54713 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729459AbgBMJFk (ORCPT
+        Thu, 13 Feb 2020 05:49:33 -0500
+Received: from mail-dm6nam12on2116.outbound.protection.outlook.com ([40.107.243.116]:16865
+        "EHLO NAM12-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726232AbgBMKtc (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 13 Feb 2020 04:05:40 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Feb 2020 01:05:35 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,436,1574150400"; 
-   d="scan'208";a="267006589"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga002.fm.intel.com with ESMTP; 13 Feb 2020 01:05:33 -0800
-Received: from [10.125.252.71] (abudanko-mobl.ccr.corp.intel.com [10.125.252.71])
-        by linux.intel.com (Postfix) with ESMTP id 49A115802C1;
-        Thu, 13 Feb 2020 01:05:25 -0800 (PST)
-Subject: Re: [PATCH v5 01/10] capabilities: introduce CAP_PERFMON to kernel
- and user space
-To:     Stephen Smalley <sds@tycho.nsa.gov>
-Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        "jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>,
-        "joonas.lahtinen@linux.intel.com" <joonas.lahtinen@linux.intel.com>,
-        "rodrigo.vivi@intel.com" <rodrigo.vivi@intel.com>,
-        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "james.bottomley@hansenpartnership.com" 
-        <james.bottomley@hansenpartnership.com>,
-        Serge Hallyn <serge@hallyn.com>,
-        James Morris <jmorris@namei.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Robert Richter <rric@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>,
-        Igor Lubashev <ilubashe@akamai.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Song Liu <songliubraving@fb.com>,
-        Lionel Landwerlin <lionel.g.landwerlin@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
-        oprofile-list@lists.sf.net, Andy Lutomirski <luto@amacapital.net>
-References: <0548c832-7f4b-dc4c-8883-3f2b6d351a08@linux.intel.com>
- <9b77124b-675d-5ac7-3741-edec575bd425@linux.intel.com>
- <64cab472-806e-38c4-fb26-0ffbee485367@tycho.nsa.gov>
- <05297eff-8e14-ccdf-55a4-870c64516de8@linux.intel.com>
- <CAADnVQK-JzK-GUk4KOozn4c1xr=7TiCpB9Fi0QDC9nE6iVn8iQ@mail.gmail.com>
- <537bdb28-c9e4-f44f-d665-25250065a6bb@linux.intel.com>
- <63d9700f-231d-7973-5307-3e56a48c54cb@linux.intel.com>
- <d7213569-9578-7201-6106-f5ebc95bd6be@tycho.nsa.gov>
- <2e38c33d-f085-1320-8cc2-45f74b6ad86d@linux.intel.com>
- <dd6a1382-7b2f-a6e6-a1ac-009566d7f556@tycho.nsa.gov>
- <8141da2e-49cf-c02d-69e9-8a7cbdc91431@linux.intel.com>
- <7c367905-e8c9-7665-d923-c850e05c757a@tycho.nsa.gov>
- <280e6644-c129-15f6-ea5c-0f66bf764e0f@tycho.nsa.gov>
- <950cc6a4-5823-d607-1210-6f62c96cf67f@linux.intel.com>
- <46751eb9-deca-53cc-95fb-1602cfdf62a2@tycho.nsa.gov>
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <874115a9-fb11-b7f4-7e92-46aedc5f26af@linux.intel.com>
-Date:   Thu, 13 Feb 2020 12:05:24 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
-MIME-Version: 1.0
-In-Reply-To: <46751eb9-deca-53cc-95fb-1602cfdf62a2@tycho.nsa.gov>
+        Thu, 13 Feb 2020 05:49:32 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=YW/PwMa52T0oYrIcDDZd7rlEfEcA/10wp1mkupv9S56ap/vubkShC/ulo1Ly6smdHUJSel/DlNATKh5gi+I5tm+Cqz8NQfQ6J67I7a3kLspdkaiWJ2+jSRR9CqgVkXmN4qLDIxT5ksX6IQV7z8Cw3TU6eEr1a6EIP9g1u82vDdLGlvVC5Rz/K0UWOiSgRiuNz9UBJUznBQLO09sPfSstwFniu4CqweKzQwtRPGG4MyVCCjvcL+4pnufP7cwqLdOKTeEi1yGvV5ymYnFHDdhgh36ce9rJSeRqjb+Naxhh0SqPGi5PFPz/ApYOL+N+1ryGLZyjxRjfzEPnnaJV2/Ggwg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Y1Pde1onGSDd1PxjH1H32ne5Udn8C2FJsVfS3sYkU/E=;
+ b=OozOi6oyrd8nvlA9MY+IqoUDR5e70RT3k7WOxY/dw+JiFty59ZEn6IplfrS8qfjlDiujQWOB462Ib7PR/fLWRl9VqPCPCTjYPdbNgHANIeJjaI2mv9Pu8U2Y3DdpoB7Tu9PHlEYSAC2N76UJ2eMPnb/8iITrfJOQxoVqjrMI2PNQ0KTG3Oh+BrLYtXDpoRz1TJyjl3h50r9uoufJYNf0qAJna+3ZGxz+fKNMz9R8BwePxFJRObqwbmaQxEBPNhSYnZAYTJoBBiFq8xWDBNc0FMEoheSIuY5/xiF+wVs1IeLxnxhsBzO2N56/hywCHnnIZbkHf3uLVOzYFbhF2jL0Cg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fortanix.com; dmarc=pass action=none header.from=fortanix.com;
+ dkim=pass header.d=fortanix.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=fortanix.onmicrosoft.com; s=selector2-fortanix-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Y1Pde1onGSDd1PxjH1H32ne5Udn8C2FJsVfS3sYkU/E=;
+ b=AguTaT5/bzgv7ENfoEpw00Pz/vNeRz9N8J5TiU5NVYDQtn60kG5NQPjsAWVLPJzQkN4vJbP2KP8jxYzhrszXZwJvUFEbp4deq8RjJPwoSinoV8ziUE4sHd9pWd2We/KwwisVPAeqZITXi/iyhbu5I4BJ3SX2ejdScvMuhb8My6A=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=jethro@fortanix.com; 
+Received: from BYAPR11MB3734.namprd11.prod.outlook.com (20.178.239.29) by
+ BYAPR11MB2743.namprd11.prod.outlook.com (52.135.227.161) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2707.21; Thu, 13 Feb 2020 10:49:27 +0000
+Received: from BYAPR11MB3734.namprd11.prod.outlook.com
+ ([fe80::180:d484:4d3f:fd99]) by BYAPR11MB3734.namprd11.prod.outlook.com
+ ([fe80::180:d484:4d3f:fd99%7]) with mapi id 15.20.2729.025; Thu, 13 Feb 2020
+ 10:49:27 +0000
+Subject: Re: [PATCH v26 13/22] x86/sgx: Add provisioning
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org
+Cc:     akpm@linux-foundation.org, dave.hansen@intel.com,
+        sean.j.christopherson@intel.com, nhorman@redhat.com,
+        npmccallum@redhat.com, haitao.huang@intel.com,
+        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
+        kai.svahn@intel.com, bp@alien8.de, josh@joshtriplett.org,
+        luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
+        cedric.xing@intel.com, puiterwijk@redhat.com,
+        linux-security-module@vger.kernel.org
+References: <20200209212609.7928-1-jarkko.sakkinen@linux.intel.com>
+ <20200209212609.7928-14-jarkko.sakkinen@linux.intel.com>
+From:   Jethro Beekman <jethro@fortanix.com>
+Message-ID: <91744cc7-b50c-ffe2-1875-aba9174f7535@fortanix.com>
+Date:   Thu, 13 Feb 2020 11:49:18 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+In-Reply-To: <20200209212609.7928-14-jarkko.sakkinen@linux.intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: LNXP265CA0078.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:76::18) To BYAPR11MB3734.namprd11.prod.outlook.com
+ (2603:10b6:a03:fe::29)
+MIME-Version: 1.0
+Received: from [10.195.0.226] (212.61.132.179) by LNXP265CA0078.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:76::18) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2729.22 via Frontend Transport; Thu, 13 Feb 2020 10:49:23 +0000
+X-Originating-IP: [212.61.132.179]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: b8d8335c-4733-4c13-7717-08d7b0726599
+X-MS-TrafficTypeDiagnostic: BYAPR11MB2743:
+X-Microsoft-Antispam-PRVS: <BYAPR11MB27430463C36AF47BDB950739AA1A0@BYAPR11MB2743.namprd11.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
+X-Forefront-PRVS: 031257FE13
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(39830400003)(396003)(366004)(376002)(136003)(346002)(199004)(189003)(66476007)(86362001)(66946007)(31696002)(36756003)(52116002)(5660300002)(4326008)(6486002)(31686004)(26005)(316002)(508600001)(66556008)(53546011)(16576012)(16526019)(186003)(956004)(81156014)(7416002)(81166006)(8676002)(2906002)(8936002)(2616005)(6666004);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR11MB2743;H:BYAPR11MB3734.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: fortanix.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: hiNSRlLldMAHPIvzB+5xoMs6gFXxbQO/YJwJYRj6eX5TsxZCwXoB9MmbCHUaE6560W5rH02UV1U+yhkT1LjaKj7U008PMVkcqmehfxbOudf3tBJ+AT7UT/VNkFY8f3v8ZOcI5PVvaEFyJb9/k+Fo3NLyJBSBGxeOoCj9t+EvOaamm4f2SSqQ+af1a0nqLbGxwEp50lwk3T5QS5sHJ3fH1UEDvCfv3UUkUUxXFGbtQgBPIkNUDTxRtaL3hdY1o68GVoS4kmz+Bg5nTOPn9XEHxTX4A8EiZk6jdp2slkdNdrqtCTaNutE7HWnAZENEWClCBJxqBTCGJylmKZBkiH8wA9xHHOxez+5SFrGhpsDu/Ex0SJ+i5fUkkTkjrVcd08LHXnGzeI75X3VO4iaklPH8SGQfgl3/zrQHPCMVBkca8TSlH38NuZjjjHC5rf3xdzZ6
+X-MS-Exchange-AntiSpam-MessageData: hYbdBlg7QSnNP8BokeXYkYFFcHTiCOHsFJXNSCkADRcdu3jQZn03PxcdRa7ItdqyHDLxQPR6mCL3jIjWh+JkkTpwtT9gayvOgTUO515fTLqGVHtC7mfmu8vMDIXzWwIAkMuZGtNsaQB7qLlgtOP5Jg==
+X-OriginatorOrg: fortanix.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b8d8335c-4733-4c13-7717-08d7b0726599
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2020 10:49:27.7608
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: de7becae-4883-43e8-82c7-7dbdbb988ae6
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: kpVITXddMKjM8owSmF4uMhtA3HnUCM3ulGdoUN8ubhQk2uIpOZBmURbme+7JatvUq1WIUIXMJiXzl0h23oOI4w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR11MB2743
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+This patch and 22/22 contain the following email header:
 
-On 12.02.2020 20:09, Stephen Smalley wrote:
-> On 2/12/20 11:56 AM, Alexey Budankov wrote:
->>
->>
->> On 12.02.2020 18:45, Stephen Smalley wrote:
->>> On 2/12/20 10:21 AM, Stephen Smalley wrote:
->>>> On 2/12/20 8:53 AM, Alexey Budankov wrote:
->>>>> On 12.02.2020 16:32, Stephen Smalley wrote:
->>>>>> On 2/12/20 3:53 AM, Alexey Budankov wrote:
->>>>>>> Hi Stephen,
->>>>>>>
->>>>>>> On 22.01.2020 17:07, Stephen Smalley wrote:
->>>>>>>> On 1/22/20 5:45 AM, Alexey Budankov wrote:
->>>>>>>>>
->>>>>>>>> On 21.01.2020 21:27, Alexey Budankov wrote:
->>>>>>>>>>
->>>>>>>>>> On 21.01.2020 20:55, Alexei Starovoitov wrote:
->>>>>>>>>>> On Tue, Jan 21, 2020 at 9:31 AM Alexey Budankov
->>>>>>>>>>> <alexey.budankov@linux.intel.com> wrote:
->>>>>>>>>>>>
->>>>>>>>>>>>
->>>>>>>>>>>> On 21.01.2020 17:43, Stephen Smalley wrote:
->>>>>>>>>>>>> On 1/20/20 6:23 AM, Alexey Budankov wrote:
->>>>>>>>>>>>>>
->>>>>>> <SNIP>
->>>>>>>>>>>>>> Introduce CAP_PERFMON capability designed to secure system performance
->>>>>>>>>>>>>
->>>>>>>>>>>>> Why _noaudit()?  Normally only used when a permission failure is non-fatal to the operation.  Otherwise, we want the audit message.
->>>>>>>>>
->>>>>>>>> So far so good, I suggest using the simplest version for v6:
->>>>>>>>>
->>>>>>>>> static inline bool perfmon_capable(void)
->>>>>>>>> {
->>>>>>>>>        return capable(CAP_PERFMON) || capable(CAP_SYS_ADMIN);
->>>>>>>>> }
->>>>>>>>>
->>>>>>>>> It keeps the implementation simple and readable. The implementation is more
->>>>>>>>> performant in the sense of calling the API - one capable() call for CAP_PERFMON
->>>>>>>>> privileged process.
->>>>>>>>>
->>>>>>>>> Yes, it bloats audit log for CAP_SYS_ADMIN privileged and unprivileged processes,
->>>>>>>>> but this bloating also advertises and leverages using more secure CAP_PERFMON
->>>>>>>>> based approach to use perf_event_open system call.
->>>>>>>>
->>>>>>>> I can live with that.  We just need to document that when you see both a CAP_PERFMON and a CAP_SYS_ADMIN audit message for a process, try only allowing CAP_PERFMON first and see if that resolves the issue.  We have a similar issue with CAP_DAC_READ_SEARCH versus CAP_DAC_OVERRIDE.
->>>>>>>
->>>>>>> I am trying to reproduce this double logging with CAP_PERFMON.
->>>>>>> I am using the refpolicy version with enabled perf_event tclass [1], in permissive mode.
->>>>>>> When running perf stat -a I am observing this AVC audit messages:
->>>>>>>
->>>>>>> type=AVC msg=audit(1581496695.666:8691): avc:  denied  { open } for  pid=2779 comm="perf" scontext=user_u:user_r:user_systemd_t tcontext=user_u:user_r:user_systemd_t tclass=perf_event permissive=1
->>>>>>> type=AVC msg=audit(1581496695.666:8691): avc:  denied  { kernel } for  pid=2779 comm="perf" scontext=user_u:user_r:user_systemd_t tcontext=user_u:user_r:user_systemd_t tclass=perf_event permissive=1
->>>>>>> type=AVC msg=audit(1581496695.666:8691): avc:  denied  { cpu } for  pid=2779 comm="perf" scontext=user_u:user_r:user_systemd_t tcontext=user_u:user_r:user_systemd_t tclass=perf_event permissive=1
->>>>>>> type=AVC msg=audit(1581496695.666:8692): avc:  denied  { write } for  pid=2779 comm="perf" scontext=user_u:user_r:user_systemd_t tcontext=user_u:user_r:user_systemd_t tclass=perf_event permissive=1
->>>>>>>
->>>>>>> However there is no capability related messages around. I suppose my refpolicy should
->>>>>>> be modified somehow to observe capability related AVCs.
->>>>>>>
->>>>>>> Could you please comment or clarify on how to enable caps related AVCs in order
->>>>>>> to test the concerned logging.
->>>>>>
->>>>>> The new perfmon permission has to be defined in your policy; you'll have a message in dmesg about "Permission perfmon in class capability2 not defined in policy.".  You can either add it to the common cap2 definition in refpolicy/policy/flask/access_vectors and rebuild your policy or extract your base module as CIL, add it there, and insert the updated module.
->>>>>
->>>>> Yes, I already have it like this:
->>>>> common cap2
->>>>> {
->>>>> <------>mac_override<--># unused by SELinux
->>>>> <------>mac_admin
->>>>> <------>syslog
->>>>> <------>wake_alarm
->>>>> <------>block_suspend
->>>>> <------>audit_read
->>>>> <------>perfmon
->>>>> }
->>>>>
->>>>> dmesg stopped reporting perfmon as not defined but audit.log still doesn't report CAP_PERFMON denials.
->>>>> BTW, audit even doesn't report CAP_SYS_ADMIN denials, however perfmon_capable() does check for it.
->>>>
->>>> Some denials may be silenced by dontaudit rules; semodule -DB will strip those and semodule -B will restore them.  Other possibility is that the process doesn't have CAP_PERFMON in its effective set and therefore never reaches SELinux at all; denied first by the capability module.
->>>
->>> Also, the fact that your denials are showing up in user_systemd_t suggests that something is off in your policy or userspace/distro; I assume that is a domain type for the systemd --user instance, but your shell and commands shouldn't be running in that domain (user_t would be more appropriate for that).
->>
->> It is user_t for local terminal session:
->> ps -Z
->> LABEL                             PID TTY          TIME CMD
->> user_u:user_r:user_t            11317 pts/9    00:00:00 bash
->> user_u:user_r:user_t            11796 pts/9    00:00:00 ps
->>
->> For local terminal root session:
->> ps -Z
->> LABEL                             PID TTY          TIME CMD
->> user_u:user_r:user_su_t          2926 pts/3    00:00:00 bash
->> user_u:user_r:user_su_t         10995 pts/3    00:00:00 ps
->>
->> For remote ssh session:
->> ps -Z
->> LABEL                             PID TTY          TIME CMD
->> user_u:user_r:user_t             7540 pts/8    00:00:00 ps
->> user_u:user_r:user_systemd_t     8875 pts/8    00:00:00 bash
+Content-Type: text/plain; charset=a
+
+git am doesn't like this.
+
+--
+Jethro Beekman | Fortanix
+
+On 2020-02-09 22:26, Jarkko Sakkinen wrote:
+> In order to provide a mechanism for devilering provisoning rights:
 > 
-> That's a bug in either your policy or your userspace/distro integration.  In any event, unless user_systemd_t is allowed all capability2 permissions by your policy, you should see the denials if CAP_PERFMON is set in the effective capability set of the process.
+> 1. Add a new device file /dev/sgx/provision that works as a token for
+>    allowing an enclave to have the provisioning privileges.
+> 2. Add a new ioctl called SGX_IOC_ENCLAVE_SET_ATTRIBUTE that accepts the
+>    following data structure:
 > 
-
-That all seems to be true. After instrumentation, rebuilding and rebooting, in CAP_PERFMON case:
-
-$ getcap perf
-perf = cap_sys_ptrace,cap_syslog,cap_perfmon+ep
-
-$ perf stat -a
-
-type=AVC msg=audit(1581580399.165:784): avc:  denied  { open } for  pid=8859 comm="perf" scontext=user_u:user_r:user_t tcontext=user_u:user_r:user_t tclass=perf_event permissive=1
-type=AVC msg=audit(1581580399.165:785): avc:  denied  { perfmon } for  pid=8859 comm="perf" capability=38  scontext=user_u:user_r:user_t tcontext=user_u:user_r:user_t tclass=capability2 permissive=1
-type=AVC msg=audit(1581580399.165:786): avc:  denied  { kernel } for  pid=8859 comm="perf" scontext=user_u:user_r:user_t tcontext=user_u:user_r:user_t tclass=perf_event permissive=1
-type=AVC msg=audit(1581580399.165:787): avc:  denied  { cpu } for  pid=8859 comm="perf" scontext=user_u:user_r:user_t tcontext=user_u:user_r:user_t tclass=perf_event permissive=1
-type=AVC msg=audit(1581580399.165:788): avc:  denied  { write } for  pid=8859 comm="perf" scontext=user_u:user_r:user_t tcontext=user_u:user_r:user_t tclass=perf_event permissive=1
-type=AVC msg=audit(1581580408.078:791): avc:  denied  { read } for  pid=8859 comm="perf" scontext=user_u:user_r:user_t tcontext=user_u:user_r:user_t tclass=perf_event permissive=1
-
-dmesg:
-
-[  137.877713] security_capable(0000000071f7ee6e, 000000009dd7a5fc, CAP_PERFMON, 0) = ?
-[  137.877774] cread_has_capability(CAP_PERFMON) = 0
-[  137.877775] prior avc_audit(CAP_PERFMON)
-[  137.877779] security_capable(0000000071f7ee6e, 000000009dd7a5fc, CAP_PERFMON, 0) = 0
-
-[  137.877784] security_capable(0000000071f7ee6e, 000000009dd7a5fc, CAP_PERFMON, 0) = ?
-[  137.877785] cread_has_capability(CAP_PERFMON) = 0
-[  137.877786] security_capable(0000000071f7ee6e, 000000009dd7a5fc, CAP_PERFMON, 0) = 0
-
-[  137.877794] security_capable(0000000071f7ee6e, 000000009dd7a5fc, CAP_PERFMON, 0) = ?
-[  137.877795] cread_has_capability(CAP_PERFMON) = 0
-[  137.877796] security_capable(0000000071f7ee6e, 000000009dd7a5fc, CAP_PERFMON, 0) = 0
-
-...
-
-in CAP_SYS_ADMIN case:
-
-$ getcap perf
-perf = cap_sys_ptrace,cap_sys_admin,cap_syslog+ep
-
-$ perf stat -a
-
-type=AVC msg=audit(1581580747.928:835): avc:  denied  { open } for  pid=8927 comm="perf" scontext=user_u:user_r:user_t tcontext=user_u:user_r:user_t tclass=perf_event permissive=1
-type=AVC msg=audit(1581580747.928:836): avc:  denied  { cpu } for  pid=8927 comm="perf" scontext=user_u:user_r:user_t tcontext=user_u:user_r:user_t tclass=perf_event permissive=1
-type=AVC msg=audit(1581580747.928:837): avc:  denied  { kernel } for  pid=8927 comm="perf" scontext=user_u:user_r:user_t tcontext=user_u:user_r:user_t tclass=perf_event permissive=1
-type=AVC msg=audit(1581580747.928:838): avc:  denied  { read } for  pid=8927 comm="perf" scontext=user_u:user_r:user_t tcontext=user_u:user_r:user_t tclass=perf_event permissive=1
-type=AVC msg=audit(1581580747.928:839): avc:  denied  { write } for  pid=8927 comm="perf" scontext=user_u:user_r:user_t tcontext=user_u:user_r:user_t tclass=perf_event permissive=1
-...
-
-$ perf record -- ls
-...
-type=AVC msg=audit(1581580747.930:843): avc:  denied  { sys_ptrace } for  pid=8927 comm="perf" capability=19  scontext=user_u:user_r:user_t tcontext=user_u:user_r:user_t tclass=capability permissive=1
-...
-
-dmesg:
-
-[  276.714266] security_capable(000000006b09ad8a, 000000009dd7a5fc, CAP_PERFMON, 0) = ?
-[  276.714268] security_capable(000000006b09ad8a, 000000009dd7a5fc, CAP_PERFMON, 0) = -1
-
-[  276.714269] security_capable(000000006b09ad8a, 000000009dd7a5fc, CAP_SYS_ADMIN, 0) = ?
-[  276.714270] cread_has_capability(CAP_SYS_ADMIN) = 0
-[  276.714270] security_capable(000000006b09ad8a, 000000009dd7a5fc, CAP_SYS_ADMIN, 0) = 0
-
-[  276.714287] security_capable(000000006b09ad8a, 000000009dd7a5fc, CAP_PERFMON, 0) = ?
-[  276.714287] security_capable(000000006b09ad8a, 000000009dd7a5fc, CAP_PERFMON, 0) = -1
-
-[  276.714288] security_capable(000000006b09ad8a, 000000009dd7a5fc, CAP_SYS_ADMIN, 0) = ?
-[  276.714288] cread_has_capability(CAP_SYS_ADMIN) = 0
-[  276.714289] security_capable(000000006b09ad8a, 000000009dd7a5fc, CAP_SYS_ADMIN, 0) = 0
-
-[  276.714294] security_capable(000000006b09ad8a, 000000009dd7a5fc, CAP_PERFMON, 0) = ?
-[  276.714295] security_capable(000000006b09ad8a, 000000009dd7a5fc, CAP_PERFMON, 0) = -1
-
-[  276.714295] security_capable(000000006b09ad8a, 000000009dd7a5fc, CAP_SYS_ADMIN, 0) = ?
-[  276.714296] cread_has_capability(CAP_SYS_ADMIN) = 0
-[  276.714296] security_capable(000000006b09ad8a, 000000009dd7a5fc, CAP_SYS_ADMIN, 0) = 0
-
-...
-
-in unprivileged case:
-
-$ getcap perf
-perf =
-
-$ perf stat -a; perf record -a
-
-...
-
-dmesg:
-
-[  947.275611] security_capable(00000000d3a75377, 000000009dd7a5fc, CAP_PERFMON, 0) = ?
-[  947.275613] security_capable(00000000d3a75377, 000000009dd7a5fc, CAP_PERFMON, 0) = -1
-
-[  947.275614] security_capable(00000000d3a75377, 000000009dd7a5fc, CAP_SYS_ADMIN, 0) = ?
-[  947.275615] security_capable(00000000d3a75377, 000000009dd7a5fc, CAP_SYS_ADMIN, 0) = -1
-
-[  947.275636] security_capable(00000000d3a75377, 000000009dd7a5fc, CAP_PERFMON, 0) = ?
-[  947.275637] security_capable(00000000d3a75377, 000000009dd7a5fc, CAP_PERFMON, 0) = -1
-
-[  947.275638] security_capable(00000000d3a75377, 000000009dd7a5fc, CAP_SYS_ADMIN, 0) = ?
-[  947.275638] security_capable(00000000d3a75377, 000000009dd7a5fc, CAP_SYS_ADMIN, 0) = -1
-
-...
-
-So it looks like CAP_PERFMON and CAP_SYS_ADMIN are not ever logged by AVC simultaneously,
-in the current LSM and perfmon_capable() implementations.
-
-If perfmon is granted:
-	perfmon is not logged by capabilities, perfmon is logged by AVC,
-	no check for sys_admin by perfmon_capable().
-
-If perfmon is not granted but sys_admin is granted:
-	perfmon is not logged by capabilities, AVC logging is not called for perfmon,
-	sys_admin is not logged by capabilities, sys_admin is not logged by AVC, for some intended reason?
-
-No caps are granted:
-	AVC logging is not called either for perfmon or for sys_admin.
-
-BTW, is there a way to may be drop some AV cache so denials would appear in audit in the next AV access?
-
-Well, I guess you have initially mentioned some case similar to this (note that ids are not the same but pids= are):
-
-type=AVC msg=audit(1581580399.165:784): avc:  denied  { open } for  pid=8859 comm="perf" scontext=user_u:user_r:user_t tcontext=user_u:user_r:user_t tclass=perf_event permissive=1
-type=AVC msg=audit(1581580399.165:785): avc:  denied  { perfmon } for  pid=8859 comm="perf" capability=38  scontext=user_u:user_r:user_t tcontext=user_u:user_r:user_t tclass=capability2 permissive=1
-type=AVC msg=audit(          .   :   ): avc:  denied  { sys_admin } for  pid=8859 comm="perf" capability=21  scontext=user_u:user_r:user_t tcontext=user_u:user_r:user_t tclass=capability2 permissive=1
-type=AVC msg=audit(1581580399.165:786): avc:  denied  { kernel } for  pid=8859 comm="perf" scontext=user_u:user_r:user_t tcontext=user_u:user_r:user_t tclass=perf_event permissive=1
-type=AVC msg=audit(1581580399.165:787): avc:  denied  { cpu } for  pid=8859 comm="perf" scontext=user_u:user_r:user_t tcontext=user_u:user_r:user_t tclass=perf_event permissive=1
-type=AVC msg=audit(1581580399.165:788): avc:  denied  { write } for  pid=8859 comm="perf" scontext=user_u:user_r:user_t tcontext=user_u:user_r:user_t tclass=perf_event permissive=1
-type=AVC msg=audit(1581580408.078:791): avc:  denied  { read } for  pid=8859 comm="perf" scontext=user_u:user_r:user_t tcontext=user_u:user_r:user_t tclass=perf_event permissive=1
-
-So the message could be like this:
-
-"If audit logs for a process using perf_events related syscalls i.e. perf_event_open(), read(), write(),
- ioctl(), mmap() contain denials both for CAP_PERFMON and CAP_SYS_ADMIN capabilities then providing the
- process with CAP_PERFMON capability singly is the secure preferred approach to resolve access denials 
- to performance monitoring and observability operations."
-
-~Alexey
+>    struct sgx_enclave_set_attribute {
+>            __u64 addr;
+>            __u64 attribute_fd;
+>    };
+> 
+> A daemon could sit on top of /dev/sgx/provision and send a file
+> descriptor of this file to a process that needs to be able to provision
+> enclaves.
+> 
+> The way this API is used is straight-forward. Lets assume that dev_fd is
+> a handle to /dev/sgx/enclave and prov_fd is a handle to
+> /dev/sgx/provision.  You would allow SGX_IOC_ENCLAVE_CREATE to
+> initialize an enclave with the PROVISIONKEY attribute by
+> 
+> params.addr = <enclave address>;
+> params.token_fd = prov_fd;
+> 
+> ioctl(dev_fd, SGX_IOC_ENCLAVE_SET_ATTRIBUTE, &params);
+> 
+> Cc: linux-security-module@vger.kernel.org
+> Suggested-by: Andy Lutomirski <luto@kernel.org>
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> ---
+>  arch/x86/include/uapi/asm/sgx.h  | 11 ++++++++
+>  arch/x86/kernel/cpu/sgx/driver.c | 14 ++++++++++
+>  arch/x86/kernel/cpu/sgx/driver.h |  2 ++
+>  arch/x86/kernel/cpu/sgx/ioctl.c  | 47 ++++++++++++++++++++++++++++++++
+>  4 files changed, 74 insertions(+)
+> 
+> diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
+> index 5edb08ab8fd0..57d0d30c79b3 100644
+> --- a/arch/x86/include/uapi/asm/sgx.h
+> +++ b/arch/x86/include/uapi/asm/sgx.h
+> @@ -25,6 +25,8 @@ enum sgx_page_flags {
+>  	_IOWR(SGX_MAGIC, 0x01, struct sgx_enclave_add_pages)
+>  #define SGX_IOC_ENCLAVE_INIT \
+>  	_IOW(SGX_MAGIC, 0x02, struct sgx_enclave_init)
+> +#define SGX_IOC_ENCLAVE_SET_ATTRIBUTE \
+> +	_IOW(SGX_MAGIC, 0x03, struct sgx_enclave_set_attribute)
+>  
+>  /**
+>   * struct sgx_enclave_create - parameter structure for the
+> @@ -63,4 +65,13 @@ struct sgx_enclave_init {
+>  	__u64 sigstruct;
+>  };
+>  
+> +/**
+> + * struct sgx_enclave_set_attribute - parameter structure for the
+> + *				      %SGX_IOC_ENCLAVE_SET_ATTRIBUTE ioctl
+> + * @attribute_fd:	file handle of the attribute file in the securityfs
+> + */
+> +struct sgx_enclave_set_attribute {
+> +	__u64 attribute_fd;
+> +};
+> +
+>  #endif /* _UAPI_ASM_X86_SGX_H */
+> diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/driver.c
+> index b4aa7b9f8376..d90114cec1c3 100644
+> --- a/arch/x86/kernel/cpu/sgx/driver.c
+> +++ b/arch/x86/kernel/cpu/sgx/driver.c
+> @@ -150,6 +150,13 @@ static struct miscdevice sgx_dev_enclave = {
+>  	.fops = &sgx_encl_fops,
+>  };
+>  
+> +static struct miscdevice sgx_dev_provision = {
+> +	.minor = MISC_DYNAMIC_MINOR,
+> +	.name = "provision",
+> +	.nodename = "sgx/provision",
+> +	.fops = &sgx_provision_fops,
+> +};
+> +
+>  int __init sgx_drv_init(void)
+>  {
+>  	unsigned int eax, ebx, ecx, edx;
+> @@ -190,5 +197,12 @@ int __init sgx_drv_init(void)
+>  		return ret;
+>  	}
+>  
+> +	ret = misc_register(&sgx_dev_provision);
+> +	if (ret) {
+> +		pr_err("Creating /dev/sgx/provision failed with %d.\n", ret);
+> +		misc_deregister(&sgx_dev_enclave);
+> +		return ret;
+> +	}
+> +
+>  	return 0;
+>  }
+> diff --git a/arch/x86/kernel/cpu/sgx/driver.h b/arch/x86/kernel/cpu/sgx/driver.h
+> index e4063923115b..72747d01c046 100644
+> --- a/arch/x86/kernel/cpu/sgx/driver.h
+> +++ b/arch/x86/kernel/cpu/sgx/driver.h
+> @@ -23,6 +23,8 @@ extern u64 sgx_attributes_reserved_mask;
+>  extern u64 sgx_xfrm_reserved_mask;
+>  extern u32 sgx_xsave_size_tbl[64];
+>  
+> +extern const struct file_operations sgx_provision_fops;
+> +
+>  long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg);
+>  
+>  int sgx_drv_init(void);
+> diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+> index 83513cdfd1c0..262001df3ae4 100644
+> --- a/arch/x86/kernel/cpu/sgx/ioctl.c
+> +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+> @@ -663,6 +663,50 @@ static long sgx_ioc_enclave_init(struct sgx_encl *encl, void __user *arg)
+>  	return ret;
+>  }
+>  
+> +/**
+> + * sgx_ioc_enclave_set_attribute - handler for %SGX_IOC_ENCLAVE_SET_ATTRIBUTE
+> + * @filep:	open file to /dev/sgx
+> + * @arg:	userspace pointer to a struct sgx_enclave_set_attribute instance
+> + *
+> + * Mark the enclave as being allowed to access a restricted attribute bit.
+> + * The requested attribute is specified via the attribute_fd field in the
+> + * provided struct sgx_enclave_set_attribute.  The attribute_fd must be a
+> + * handle to an SGX attribute file, e.g. “/dev/sgx/provision".
+> + *
+> + * Failure to explicitly request access to a restricted attribute will cause
+> + * sgx_ioc_enclave_init() to fail.  Currently, the only restricted attribute
+> + * is access to the PROVISION_KEY.
+> + *
+> + * Note, access to the EINITTOKEN_KEY is disallowed entirely.
+> + *
+> + * Return: 0 on success, -errno otherwise
+> + */
+> +static long sgx_ioc_enclave_set_attribute(struct sgx_encl *encl,
+> +					  void __user *arg)
+> +{
+> +	struct sgx_enclave_set_attribute params;
+> +	struct file *attribute_file;
+> +	int ret;
+> +
+> +	if (copy_from_user(&params, arg, sizeof(params)))
+> +		return -EFAULT;
+> +
+> +	attribute_file = fget(params.attribute_fd);
+> +	if (!attribute_file)
+> +		return -EINVAL;
+> +
+> +	if (attribute_file->f_op != &sgx_provision_fops) {
+> +		ret = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	encl->allowed_attributes |= SGX_ATTR_PROVISIONKEY;
+> +	ret = 0;
+> +
+> +out:
+> +	fput(attribute_file);
+> +	return ret;
+> +}
+>  
+>  long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
+>  {
+> @@ -686,6 +730,9 @@ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
+>  	case SGX_IOC_ENCLAVE_INIT:
+>  		ret = sgx_ioc_enclave_init(encl, (void __user *)arg);
+>  		break;
+> +	case SGX_IOC_ENCLAVE_SET_ATTRIBUTE:
+> +		ret = sgx_ioc_enclave_set_attribute(encl, (void __user *)arg);
+> +		break;
+>  	default:
+>  		ret = -ENOIOCTLCMD;
+>  		break;
+> 
