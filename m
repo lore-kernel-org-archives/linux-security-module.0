@@ -5,51 +5,51 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	MSGID_FROM_MTA_HEADER,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16A85C3B189
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Feb 2020 10:49:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83A8BC3B18B
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Feb 2020 14:00:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD4F62465D
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Feb 2020 10:49:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B4E2222C2
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Feb 2020 14:00:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fortanix.onmicrosoft.com header.i=@fortanix.onmicrosoft.com header.b="AguTaT5/"
+	dkim=pass (1024-bit key) header.d=fortanix.onmicrosoft.com header.i=@fortanix.onmicrosoft.com header.b="SoYPC9wW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729511AbgBMKtd (ORCPT
+        id S1730165AbgBMOAH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 13 Feb 2020 05:49:33 -0500
-Received: from mail-dm6nam12on2116.outbound.protection.outlook.com ([40.107.243.116]:16865
-        "EHLO NAM12-DM6-obe.outbound.protection.outlook.com"
+        Thu, 13 Feb 2020 09:00:07 -0500
+Received: from mail-co1nam11on2120.outbound.protection.outlook.com ([40.107.220.120]:44128
+        "EHLO NAM11-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726232AbgBMKtc (ORCPT
+        id S1730036AbgBMOAH (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 13 Feb 2020 05:49:32 -0500
+        Thu, 13 Feb 2020 09:00:07 -0500
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=YW/PwMa52T0oYrIcDDZd7rlEfEcA/10wp1mkupv9S56ap/vubkShC/ulo1Ly6smdHUJSel/DlNATKh5gi+I5tm+Cqz8NQfQ6J67I7a3kLspdkaiWJ2+jSRR9CqgVkXmN4qLDIxT5ksX6IQV7z8Cw3TU6eEr1a6EIP9g1u82vDdLGlvVC5Rz/K0UWOiSgRiuNz9UBJUznBQLO09sPfSstwFniu4CqweKzQwtRPGG4MyVCCjvcL+4pnufP7cwqLdOKTeEi1yGvV5ymYnFHDdhgh36ce9rJSeRqjb+Naxhh0SqPGi5PFPz/ApYOL+N+1ryGLZyjxRjfzEPnnaJV2/Ggwg==
+ b=ZHALXOmemsJToDTcHfbLo7Wi/l4EhZTPgzsT7ApFAPJoNasdiXj+LB9cVizzMX6Nu8NXQM1LcPrxzNjdeVNmnYVYlco7noqO67HzwhttupyX2sTvFfR9Wt83qo4Z9+RgcXDji1uN0T9xZZJMbuXifz5QCVTkTrxUYqJ0yOWIexHVPGcqiD3oXPv5Ty/5ZhPhAi3+D83NlQIS9flGKymUcWifZwLWWSFhoTlQpoRsH4BJnYyCjwvqHYxNcytw23mS+eNhEQ8q4/I1Iu+FTcv+4ekHdUwwg+J92oM8G2tQpo99bzVkvYgr/rdEeyMQAvMQut8w9MN9C80SewWLZFclTg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Y1Pde1onGSDd1PxjH1H32ne5Udn8C2FJsVfS3sYkU/E=;
- b=OozOi6oyrd8nvlA9MY+IqoUDR5e70RT3k7WOxY/dw+JiFty59ZEn6IplfrS8qfjlDiujQWOB462Ib7PR/fLWRl9VqPCPCTjYPdbNgHANIeJjaI2mv9Pu8U2Y3DdpoB7Tu9PHlEYSAC2N76UJ2eMPnb/8iITrfJOQxoVqjrMI2PNQ0KTG3Oh+BrLYtXDpoRz1TJyjl3h50r9uoufJYNf0qAJna+3ZGxz+fKNMz9R8BwePxFJRObqwbmaQxEBPNhSYnZAYTJoBBiFq8xWDBNc0FMEoheSIuY5/xiF+wVs1IeLxnxhsBzO2N56/hywCHnnIZbkHf3uLVOzYFbhF2jL0Cg==
+ bh=NIU37tZkVlHbyFJyTV4+QGUxuhrr/iXpGQSs/ZgSVII=;
+ b=SH1hi6DRAzn+r807dBFvDueRTbj2EHyh+oVmevaDVC6azSGO6lphRhd2lHsVgW6aRKqTS/GWc0C/+kyibRWjm4zHazNNdbIXoUfeWo570uE8+5ouOOlCXSZ/GgpgbssXcFuACp8Xb1WPXQp+1AjMjMxfQxqSu9G7cFCoGxQWbPZqOTPOUW+es5sOWRRZLUwoNVQp1QvqP0AU3S8JhxJfSCvmgcIt5b/Mcyxjvvx7fZpHbyLZW3VNeZegXCz9K8B7MikdhW65r1cmUNY8vPCsKDwmnBiVkf2iDF0zZPzxxzIHSdF0fhVZsRVUMk6EBri1oWKbjwS+yVYqIdjmR3enLg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=fortanix.com; dmarc=pass action=none header.from=fortanix.com;
  dkim=pass header.d=fortanix.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=fortanix.onmicrosoft.com; s=selector2-fortanix-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Y1Pde1onGSDd1PxjH1H32ne5Udn8C2FJsVfS3sYkU/E=;
- b=AguTaT5/bzgv7ENfoEpw00Pz/vNeRz9N8J5TiU5NVYDQtn60kG5NQPjsAWVLPJzQkN4vJbP2KP8jxYzhrszXZwJvUFEbp4deq8RjJPwoSinoV8ziUE4sHd9pWd2We/KwwisVPAeqZITXi/iyhbu5I4BJ3SX2ejdScvMuhb8My6A=
+ bh=NIU37tZkVlHbyFJyTV4+QGUxuhrr/iXpGQSs/ZgSVII=;
+ b=SoYPC9wWWhICakNycVVNrGNzILFQoRPiWuQxTC9jMu1U4IDVQuMh5/KmfL7vt1rSQ8DIrrqIbBKKmmcvPMMMY5fZMfkXUNQ4prnD+1Q3sYyJWkdF3/4sMWkKlas8v2rqFtCTIiknmKdPDo8Pt7i3DZQA3NUqPAVD2tTfqYuhcvQ=
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=jethro@fortanix.com; 
 Received: from BYAPR11MB3734.namprd11.prod.outlook.com (20.178.239.29) by
- BYAPR11MB2743.namprd11.prod.outlook.com (52.135.227.161) with Microsoft SMTP
+ BYAPR11MB2919.namprd11.prod.outlook.com (20.177.226.213) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2707.21; Thu, 13 Feb 2020 10:49:27 +0000
+ 15.20.2707.21; Thu, 13 Feb 2020 14:00:02 +0000
 Received: from BYAPR11MB3734.namprd11.prod.outlook.com
  ([fe80::180:d484:4d3f:fd99]) by BYAPR11MB3734.namprd11.prod.outlook.com
  ([fe80::180:d484:4d3f:fd99%7]) with mapi id 15.20.2729.025; Thu, 13 Feb 2020
- 10:49:27 +0000
-Subject: Re: [PATCH v26 13/22] x86/sgx: Add provisioning
+ 14:00:02 +0000
+Subject: Re: [PATCH v26 10/22] x86/sgx: Linux Enclave Driver
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         linux-kernel@vger.kernel.org, x86@kernel.org,
         linux-sgx@vger.kernel.org
@@ -60,230 +60,208 @@ Cc:     akpm@linux-foundation.org, dave.hansen@intel.com,
         kai.svahn@intel.com, bp@alien8.de, josh@joshtriplett.org,
         luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
         cedric.xing@intel.com, puiterwijk@redhat.com,
-        linux-security-module@vger.kernel.org
+        linux-security-module@vger.kernel.org,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        Haitao Huang <haitao.huang@linux.intel.com>
 References: <20200209212609.7928-1-jarkko.sakkinen@linux.intel.com>
- <20200209212609.7928-14-jarkko.sakkinen@linux.intel.com>
+ <20200209212609.7928-11-jarkko.sakkinen@linux.intel.com>
 From:   Jethro Beekman <jethro@fortanix.com>
-Message-ID: <91744cc7-b50c-ffe2-1875-aba9174f7535@fortanix.com>
-Date:   Thu, 13 Feb 2020 11:49:18 +0100
+Message-ID: <d17c50a7-6900-731b-43a2-d6e49b8eb44d@fortanix.com>
+Date:   Thu, 13 Feb 2020 14:59:52 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.9.0
-In-Reply-To: <20200209212609.7928-14-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20200209212609.7928-11-jarkko.sakkinen@linux.intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: LNXP265CA0078.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:76::18) To BYAPR11MB3734.namprd11.prod.outlook.com
+X-ClientProxiedBy: LO2P265CA0218.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:b::14) To BYAPR11MB3734.namprd11.prod.outlook.com
  (2603:10b6:a03:fe::29)
 MIME-Version: 1.0
-Received: from [10.195.0.226] (212.61.132.179) by LNXP265CA0078.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:76::18) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2729.22 via Frontend Transport; Thu, 13 Feb 2020 10:49:23 +0000
+Received: from [10.195.0.226] (212.61.132.179) by LO2P265CA0218.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:b::14) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2729.22 via Frontend Transport; Thu, 13 Feb 2020 13:59:57 +0000
 X-Originating-IP: [212.61.132.179]
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: b8d8335c-4733-4c13-7717-08d7b0726599
-X-MS-TrafficTypeDiagnostic: BYAPR11MB2743:
-X-Microsoft-Antispam-PRVS: <BYAPR11MB27430463C36AF47BDB950739AA1A0@BYAPR11MB2743.namprd11.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: 6c421f50-3b1a-4975-c01e-08d7b08d04f8
+X-MS-TrafficTypeDiagnostic: BYAPR11MB2919:
+X-Microsoft-Antispam-PRVS: <BYAPR11MB29195A8170A0131131468CCEAA1A0@BYAPR11MB2919.namprd11.prod.outlook.com>
 X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
 X-Forefront-PRVS: 031257FE13
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(39830400003)(396003)(366004)(376002)(136003)(346002)(199004)(189003)(66476007)(86362001)(66946007)(31696002)(36756003)(52116002)(5660300002)(4326008)(6486002)(31686004)(26005)(316002)(508600001)(66556008)(53546011)(16576012)(16526019)(186003)(956004)(81156014)(7416002)(81166006)(8676002)(2906002)(8936002)(2616005)(6666004);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR11MB2743;H:BYAPR11MB3734.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(396003)(136003)(39830400003)(366004)(346002)(376002)(199004)(189003)(8676002)(66476007)(52116002)(26005)(54906003)(66946007)(186003)(4001150100001)(508600001)(31686004)(53546011)(16576012)(316002)(16526019)(66556008)(7416002)(6486002)(36756003)(8936002)(2906002)(86362001)(31696002)(4326008)(2616005)(6666004)(81156014)(81166006)(5660300002)(956004);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR11MB2919;H:BYAPR11MB3734.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 Received-SPF: None (protection.outlook.com: fortanix.com does not designate
  permitted sender hosts)
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: hiNSRlLldMAHPIvzB+5xoMs6gFXxbQO/YJwJYRj6eX5TsxZCwXoB9MmbCHUaE6560W5rH02UV1U+yhkT1LjaKj7U008PMVkcqmehfxbOudf3tBJ+AT7UT/VNkFY8f3v8ZOcI5PVvaEFyJb9/k+Fo3NLyJBSBGxeOoCj9t+EvOaamm4f2SSqQ+af1a0nqLbGxwEp50lwk3T5QS5sHJ3fH1UEDvCfv3UUkUUxXFGbtQgBPIkNUDTxRtaL3hdY1o68GVoS4kmz+Bg5nTOPn9XEHxTX4A8EiZk6jdp2slkdNdrqtCTaNutE7HWnAZENEWClCBJxqBTCGJylmKZBkiH8wA9xHHOxez+5SFrGhpsDu/Ex0SJ+i5fUkkTkjrVcd08LHXnGzeI75X3VO4iaklPH8SGQfgl3/zrQHPCMVBkca8TSlH38NuZjjjHC5rf3xdzZ6
-X-MS-Exchange-AntiSpam-MessageData: hYbdBlg7QSnNP8BokeXYkYFFcHTiCOHsFJXNSCkADRcdu3jQZn03PxcdRa7ItdqyHDLxQPR6mCL3jIjWh+JkkTpwtT9gayvOgTUO515fTLqGVHtC7mfmu8vMDIXzWwIAkMuZGtNsaQB7qLlgtOP5Jg==
+X-Microsoft-Antispam-Message-Info: +dmZiQkJICCYzCoXtRv6KDoBK0BzSYEa7VKJZ7G6cBkEwt4oxUecQMntEpMw7eXCBjX5MrDVU2flJPmJp5hBzFsZRPDql5/PkxqSv28fsR+Sr/88ScmF1W+UlyHzo3upcVfNvDjNGJQiw2CDKy/IY8qnxX47ULho9OvYK6f6rx7rGknb+2MR367xcPmDERHbmuk8xvFvJSk4usL/ALUzE8DbQbNGGcUXncELcW/kduN+f/t0Rx1LhAEbvB07ea1mSZMrQHca21CUnfWCPtwKUWUpLN9Ay679mfRwMH+wOXuJXM21hCKru4d00tN7ytWjBZKqI8Q15AiByc8f7HrAtDQk5BuTe0t9lxfggYmr71CYfV/dXKPc5MoBymYajmSum/Zzo9ARA9DXU3MV7xomRF51EBqAS3OXuKpsEVI4F2JyQ6Qt0QGsSm9qpofB1oqE
+X-MS-Exchange-AntiSpam-MessageData: zfsLGCFPonbQozrX+1oZjs3HHOgGgundyWmCCIjPuDgTLpES5f3/EVWqBN3Wlrw5wFyzFZKahmGoFotTZtjTDjVfQlFMQYLyGN60+bgCMuLPQdCpZDiVLXb1sACRUgoKHgzPokA+lvbDmo2r4x3z4A==
 X-OriginatorOrg: fortanix.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b8d8335c-4733-4c13-7717-08d7b0726599
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2020 10:49:27.7608
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6c421f50-3b1a-4975-c01e-08d7b08d04f8
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2020 14:00:02.0570
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: de7becae-4883-43e8-82c7-7dbdbb988ae6
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: kpVITXddMKjM8owSmF4uMhtA3HnUCM3ulGdoUN8ubhQk2uIpOZBmURbme+7JatvUq1WIUIXMJiXzl0h23oOI4w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR11MB2743
+X-MS-Exchange-CrossTenant-UserPrincipalName: hwWytOlp9mwfjxrJ9bNkNuQnd0kT5PpwHlbmCPz9f30pHozYYTcC/Ksf1JuGuGiWOUWoQde4Aqk6ZfJAguX5aQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR11MB2919
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This patch and 22/22 contain the following email header:
+On 2020-02-09 22:25, Jarkko Sakkinen wrote:
+> Intel Software Guard eXtensions (SGX) is a set of CPU instructions that
+> can be used by applications to set aside private regions of code and
+> data. The code outside the SGX hosted software entity is disallowed to
+> access the memory inside the enclave enforced by the CPU. We call these
+> entities as enclaves.
+> 
+> This commit implements a driver that provides an ioctl API to construct
+> and run enclaves. Enclaves are constructed from pages residing in
+> reserved physical memory areas. The contents of these pages can only be
+> accessed when they are mapped as part of an enclave, by a hardware
+> thread running inside the enclave.
+> 
+> The starting state of an enclave consists of a fixed measured set of
+> pages that are copied to the EPC during the construction process by
+> using ENCLS leaf functions and Software Enclave Control Structure (SECS)
+> that defines the enclave properties.
+> 
+> Enclave are constructed by using ENCLS leaf functions ECREATE, EADD and
+> EINIT. ECREATE initializes SECS, EADD copies pages from system memory to
+> the EPC and EINIT check a given signed measurement and moves the enclave
+> into a state ready for execution.
+> 
+> An initialized enclave can only be accessed through special Thread Control
+> Structure (TCS) pages by using ENCLU (ring-3 only) leaf EENTER.  This leaf
+> function converts a thread into enclave mode and continues the execution in
+> the offset defined by the TCS provided to EENTER. An enclave is exited
+> through syscall, exception, interrupts or by explicitly calling another
+> ENCLU leaf EEXIT.
+> 
+> The permissions, which enclave page is added will set the limit for maximum
+> permissions that can be set for mmap() and mprotect(). This will
+> effectively allow to build different security schemes between producers and
+> consumers of enclaves. Later on we can increase granularity with LSM hooks
+> for page addition (i.e. for producers) and mapping of the enclave (i.e. for
+> consumers)
+> 
+> Cc: linux-security-module@vger.kernel.org
+> Cc: Nathaniel McCallum <npmccallum@redhat.com>
+> Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> Co-developed-by: Suresh Siddha <suresh.b.siddha@intel.com>
+> Signed-off-by: Suresh Siddha <suresh.b.siddha@intel.com>
+> Tested-by: Haitao Huang <haitao.huang@linux.intel.com>
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> ---
+>  .../userspace-api/ioctl/ioctl-number.rst      |   1 +
+>  arch/x86/include/uapi/asm/sgx.h               |  66 ++
+>  arch/x86/kernel/cpu/sgx/Makefile              |   3 +
+>  arch/x86/kernel/cpu/sgx/driver.c              | 194 +++++
+>  arch/x86/kernel/cpu/sgx/driver.h              |  30 +
+>  arch/x86/kernel/cpu/sgx/encl.c                | 329 +++++++++
+>  arch/x86/kernel/cpu/sgx/encl.h                |  87 +++
+>  arch/x86/kernel/cpu/sgx/ioctl.c               | 697 ++++++++++++++++++
+>  arch/x86/kernel/cpu/sgx/main.c                |  12 +-
+>  arch/x86/kernel/cpu/sgx/reclaim.c             |   1 +
+>  10 files changed, 1419 insertions(+), 1 deletion(-)
+>  create mode 100644 arch/x86/include/uapi/asm/sgx.h
+>  create mode 100644 arch/x86/kernel/cpu/sgx/driver.c
+>  create mode 100644 arch/x86/kernel/cpu/sgx/driver.h
+>  create mode 100644 arch/x86/kernel/cpu/sgx/encl.c
+>  create mode 100644 arch/x86/kernel/cpu/sgx/encl.h
+>  create mode 100644 arch/x86/kernel/cpu/sgx/ioctl.c
+> 
+> diff --git a/Documentation/userspace-api/ioctl/ioctl-number.rst b/Documentation/userspace-api/ioctl/ioctl-number.rst
+> index 2e91370dc159..1c54dd2704db 100644
+> --- a/Documentation/userspace-api/ioctl/ioctl-number.rst
+> +++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
+> @@ -321,6 +321,7 @@ Code  Seq#    Include File                                           Comments
+>                                                                       <mailto:tlewis@mindspring.com>
+>  0xA3  90-9F  linux/dtlk.h
+>  0xA4  00-1F  uapi/linux/tee.h                                        Generic TEE subsystem
+> +0xA4  00-1F  uapi/asm/sgx.h                                          Intel SGX subsystem (a legit conflict as TEE and SGX do not co-exist)
+>  0xAA  00-3F  linux/uapi/linux/userfaultfd.h
+>  0xAB  00-1F  linux/nbd.h
+>  0xAC  00-1F  linux/raw.h
+> diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
+> new file mode 100644
+> index 000000000000..5edb08ab8fd0
+> --- /dev/null
+> +++ b/arch/x86/include/uapi/asm/sgx.h
+> @@ -0,0 +1,66 @@
+> +/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) WITH Linux-syscall-note */
+> +/*
+> + * Copyright(c) 2016-19 Intel Corporation.
+> + */
+> +#ifndef _UAPI_ASM_X86_SGX_H
+> +#define _UAPI_ASM_X86_SGX_H
+> +
+> +#include <linux/types.h>
+> +#include <linux/ioctl.h>
+> +
+> +/**
+> + * enum sgx_epage_flags - page control flags
+> + * %SGX_PAGE_MEASURE:	Measure the page contents with a sequence of
+> + *			ENCLS[EEXTEND] operations.
+> + */
+> +enum sgx_page_flags {
+> +	SGX_PAGE_MEASURE	= 0x01,
+> +};
+> +
+> +#define SGX_MAGIC 0xA4
+> +
+> +#define SGX_IOC_ENCLAVE_CREATE \
+> +	_IOW(SGX_MAGIC, 0x00, struct sgx_enclave_create)
+> +#define SGX_IOC_ENCLAVE_ADD_PAGES \
+> +	_IOWR(SGX_MAGIC, 0x01, struct sgx_enclave_add_pages)
+> +#define SGX_IOC_ENCLAVE_INIT \
+> +	_IOW(SGX_MAGIC, 0x02, struct sgx_enclave_init)
+> +
+> +/**
+> + * struct sgx_enclave_create - parameter structure for the
+> + *                             %SGX_IOC_ENCLAVE_CREATE ioctl
+> + * @src:	address for the SECS page data
+> + */
+> +struct sgx_enclave_create  {
+> +	__u64	src;
+> +};
+> +
+> +/**
+> + * struct sgx_enclave_add_pages - parameter structure for the
+> + *                                %SGX_IOC_ENCLAVE_ADD_PAGE ioctl
+> + * @src:	start address for the page data
+> + * @offset:	starting page offset
+> + * @length:	length of the data (multiple of the page size)
+> + * @secinfo:	address for the SECINFO data
+> + * @flags:	page control flags
+> + * @count:	number of bytes added (multiple of the page size)
+> + */
+> +struct sgx_enclave_add_pages {
+> +	__u64	src;
+> +	__u64	offset;
+> +	__u64	length;
+> +	__u64	secinfo;
+> +	__u64	flags;
+> +	__u64	count;
+> +};
 
-Content-Type: text/plain; charset=a
+Compared to the last time I looked at the patch set, this API removes the ability to measure individual pages chunks. That is not acceptable.
 
-git am doesn't like this.
+On 2019-10-11 16:37, Sean Christopherson wrote:
+> Hiding the 256-byte granualarity from userspace is a good idea as it's not
+> intrinsically tied to the SGX architecture and exists only because of
+> latency requirements.
+
+What do you mean by "it's not intrinsically tied to the SGX architecture"? This is a fundamental part of the SGX instruction set. This is the instruction definition from the SDM: "EEXTEND—Extend Uninitialized Enclave Measurement by 256 Bytes".
+
+The exact sequence of EADD/EEXTEND calls is part of the enclave hash. The OS mustn't arbitrarily restrict how an enclave may be loaded. If the enclave loader were to follows OS-specific restrictions, that would result in effectively different enclaves. Because of these interoperability concerns, 256-byte granularity *must* be exposed through the UAPI.
+
+Besides only partially measuring a page, there are some other fringe cases that are technically possible, although I haven't seen any toolchains that do that. These include not interleaving EADD and EEXTEND, not using logical ordering for the EEXTENDs, and call EEXTEND multiple times on the same chunk. Maximum interoperability would require supporting any EADD/EEXTEND sequence.
+
+Maybe we should just add an EEXTEND@offset ioctl? This would give fine-grained control when needed (one could set flags=0 in the add pages ioctl and interleave with EEXTEND as needed). If you're ok adding an EEXTEND ioctl I don't think this issue needs to block landing the driver in its current form, in which case:
+
+Tested-by: Jethro Beekman <jethro@fortanix.com>
+
+Sorry for being super late with this, I know you asked me for feedback about this specific point in October. However, I did previously mention several times that being able to measure individual 256-byte chunks is necessary.
 
 --
 Jethro Beekman | Fortanix
-
-On 2020-02-09 22:26, Jarkko Sakkinen wrote:
-> In order to provide a mechanism for devilering provisoning rights:
-> 
-> 1. Add a new device file /dev/sgx/provision that works as a token for
->    allowing an enclave to have the provisioning privileges.
-> 2. Add a new ioctl called SGX_IOC_ENCLAVE_SET_ATTRIBUTE that accepts the
->    following data structure:
-> 
->    struct sgx_enclave_set_attribute {
->            __u64 addr;
->            __u64 attribute_fd;
->    };
-> 
-> A daemon could sit on top of /dev/sgx/provision and send a file
-> descriptor of this file to a process that needs to be able to provision
-> enclaves.
-> 
-> The way this API is used is straight-forward. Lets assume that dev_fd is
-> a handle to /dev/sgx/enclave and prov_fd is a handle to
-> /dev/sgx/provision.  You would allow SGX_IOC_ENCLAVE_CREATE to
-> initialize an enclave with the PROVISIONKEY attribute by
-> 
-> params.addr = <enclave address>;
-> params.token_fd = prov_fd;
-> 
-> ioctl(dev_fd, SGX_IOC_ENCLAVE_SET_ATTRIBUTE, &params);
-> 
-> Cc: linux-security-module@vger.kernel.org
-> Suggested-by: Andy Lutomirski <luto@kernel.org>
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> ---
->  arch/x86/include/uapi/asm/sgx.h  | 11 ++++++++
->  arch/x86/kernel/cpu/sgx/driver.c | 14 ++++++++++
->  arch/x86/kernel/cpu/sgx/driver.h |  2 ++
->  arch/x86/kernel/cpu/sgx/ioctl.c  | 47 ++++++++++++++++++++++++++++++++
->  4 files changed, 74 insertions(+)
-> 
-> diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
-> index 5edb08ab8fd0..57d0d30c79b3 100644
-> --- a/arch/x86/include/uapi/asm/sgx.h
-> +++ b/arch/x86/include/uapi/asm/sgx.h
-> @@ -25,6 +25,8 @@ enum sgx_page_flags {
->  	_IOWR(SGX_MAGIC, 0x01, struct sgx_enclave_add_pages)
->  #define SGX_IOC_ENCLAVE_INIT \
->  	_IOW(SGX_MAGIC, 0x02, struct sgx_enclave_init)
-> +#define SGX_IOC_ENCLAVE_SET_ATTRIBUTE \
-> +	_IOW(SGX_MAGIC, 0x03, struct sgx_enclave_set_attribute)
->  
->  /**
->   * struct sgx_enclave_create - parameter structure for the
-> @@ -63,4 +65,13 @@ struct sgx_enclave_init {
->  	__u64 sigstruct;
->  };
->  
-> +/**
-> + * struct sgx_enclave_set_attribute - parameter structure for the
-> + *				      %SGX_IOC_ENCLAVE_SET_ATTRIBUTE ioctl
-> + * @attribute_fd:	file handle of the attribute file in the securityfs
-> + */
-> +struct sgx_enclave_set_attribute {
-> +	__u64 attribute_fd;
-> +};
-> +
->  #endif /* _UAPI_ASM_X86_SGX_H */
-> diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/driver.c
-> index b4aa7b9f8376..d90114cec1c3 100644
-> --- a/arch/x86/kernel/cpu/sgx/driver.c
-> +++ b/arch/x86/kernel/cpu/sgx/driver.c
-> @@ -150,6 +150,13 @@ static struct miscdevice sgx_dev_enclave = {
->  	.fops = &sgx_encl_fops,
->  };
->  
-> +static struct miscdevice sgx_dev_provision = {
-> +	.minor = MISC_DYNAMIC_MINOR,
-> +	.name = "provision",
-> +	.nodename = "sgx/provision",
-> +	.fops = &sgx_provision_fops,
-> +};
-> +
->  int __init sgx_drv_init(void)
->  {
->  	unsigned int eax, ebx, ecx, edx;
-> @@ -190,5 +197,12 @@ int __init sgx_drv_init(void)
->  		return ret;
->  	}
->  
-> +	ret = misc_register(&sgx_dev_provision);
-> +	if (ret) {
-> +		pr_err("Creating /dev/sgx/provision failed with %d.\n", ret);
-> +		misc_deregister(&sgx_dev_enclave);
-> +		return ret;
-> +	}
-> +
->  	return 0;
->  }
-> diff --git a/arch/x86/kernel/cpu/sgx/driver.h b/arch/x86/kernel/cpu/sgx/driver.h
-> index e4063923115b..72747d01c046 100644
-> --- a/arch/x86/kernel/cpu/sgx/driver.h
-> +++ b/arch/x86/kernel/cpu/sgx/driver.h
-> @@ -23,6 +23,8 @@ extern u64 sgx_attributes_reserved_mask;
->  extern u64 sgx_xfrm_reserved_mask;
->  extern u32 sgx_xsave_size_tbl[64];
->  
-> +extern const struct file_operations sgx_provision_fops;
-> +
->  long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg);
->  
->  int sgx_drv_init(void);
-> diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-> index 83513cdfd1c0..262001df3ae4 100644
-> --- a/arch/x86/kernel/cpu/sgx/ioctl.c
-> +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-> @@ -663,6 +663,50 @@ static long sgx_ioc_enclave_init(struct sgx_encl *encl, void __user *arg)
->  	return ret;
->  }
->  
-> +/**
-> + * sgx_ioc_enclave_set_attribute - handler for %SGX_IOC_ENCLAVE_SET_ATTRIBUTE
-> + * @filep:	open file to /dev/sgx
-> + * @arg:	userspace pointer to a struct sgx_enclave_set_attribute instance
-> + *
-> + * Mark the enclave as being allowed to access a restricted attribute bit.
-> + * The requested attribute is specified via the attribute_fd field in the
-> + * provided struct sgx_enclave_set_attribute.  The attribute_fd must be a
-> + * handle to an SGX attribute file, e.g. “/dev/sgx/provision".
-> + *
-> + * Failure to explicitly request access to a restricted attribute will cause
-> + * sgx_ioc_enclave_init() to fail.  Currently, the only restricted attribute
-> + * is access to the PROVISION_KEY.
-> + *
-> + * Note, access to the EINITTOKEN_KEY is disallowed entirely.
-> + *
-> + * Return: 0 on success, -errno otherwise
-> + */
-> +static long sgx_ioc_enclave_set_attribute(struct sgx_encl *encl,
-> +					  void __user *arg)
-> +{
-> +	struct sgx_enclave_set_attribute params;
-> +	struct file *attribute_file;
-> +	int ret;
-> +
-> +	if (copy_from_user(&params, arg, sizeof(params)))
-> +		return -EFAULT;
-> +
-> +	attribute_file = fget(params.attribute_fd);
-> +	if (!attribute_file)
-> +		return -EINVAL;
-> +
-> +	if (attribute_file->f_op != &sgx_provision_fops) {
-> +		ret = -EINVAL;
-> +		goto out;
-> +	}
-> +
-> +	encl->allowed_attributes |= SGX_ATTR_PROVISIONKEY;
-> +	ret = 0;
-> +
-> +out:
-> +	fput(attribute_file);
-> +	return ret;
-> +}
->  
->  long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
->  {
-> @@ -686,6 +730,9 @@ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
->  	case SGX_IOC_ENCLAVE_INIT:
->  		ret = sgx_ioc_enclave_init(encl, (void __user *)arg);
->  		break;
-> +	case SGX_IOC_ENCLAVE_SET_ATTRIBUTE:
-> +		ret = sgx_ioc_enclave_set_attribute(encl, (void __user *)arg);
-> +		break;
->  	default:
->  		ret = -ENOIOCTLCMD;
->  		break;
-> 
