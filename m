@@ -2,192 +2,129 @@ Return-Path: <SRS0=+399=4C=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6371BC2BA83
-	for <linux-security-module@archiver.kernel.org>; Fri, 14 Feb 2020 17:21:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98CC9C3B1A6
+	for <linux-security-module@archiver.kernel.org>; Fri, 14 Feb 2020 17:40:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3439420637
-	for <linux-security-module@archiver.kernel.org>; Fri, 14 Feb 2020 17:21:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7654620873
+	for <linux-security-module@archiver.kernel.org>; Fri, 14 Feb 2020 17:40:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Vrn2eOFl"
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="scFiUdiF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391967AbgBNRVo (ORCPT
+        id S1729268AbgBNRkQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 14 Feb 2020 12:21:44 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:43801 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390699AbgBNRVn (ORCPT
+        Fri, 14 Feb 2020 12:40:16 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:33130 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390031AbgBNRkI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 14 Feb 2020 12:21:43 -0500
-Received: by mail-oi1-f195.google.com with SMTP id p125so10092530oif.10
-        for <linux-security-module@vger.kernel.org>; Fri, 14 Feb 2020 09:21:43 -0800 (PST)
+        Fri, 14 Feb 2020 12:40:08 -0500
+Received: by mail-pf1-f195.google.com with SMTP id n7so5223741pfn.0
+        for <linux-security-module@vger.kernel.org>; Fri, 14 Feb 2020 09:40:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lyrhKNeMU7eJT6PQUqEykdJHGU1Beqa7yTElEjUp1E0=;
-        b=Vrn2eOFlzFF/53jUFp1t0oYF9TfJcGmQyncWKIriM2ZXKwsnnVwXyPEwMYBT9SoOvv
-         M9+pzijsccF6LKpwqVNwH7arNG/hJkR82XFRmVPyeQfsr2WEzgiC7PjODsswCoLGSpaY
-         LaKRFh+AbvxODIzDTc9/KjTYvCJBjUXvMcY0lndjCM6xdnpAlg8uqBx3b/me3q46lm3g
-         3BVL3n1uIIzcduNMraAfMFs20elqdxaKxcGWiqzInJy8oFts0UuFlfQstgm5hh/nVuyG
-         KEqS6DZpZ/3ejce9GGRl8uDlBf7GeSu1Ldi9wOUcn9yptQaljIzYAeog+BBmqeGJgZ48
-         s6NQ==
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=content-transfer-encoding:from:mime-version:subject:date:message-id
+         :references:cc:in-reply-to:to;
+        bh=3eXuOgfEolpkZ5hPj8gcQuPTURlTdrMwkoy/D3yOIvc=;
+        b=scFiUdiFkMp38HNXCebJUGM5/Xev4sTfpdTyi+eIORpvxEE0NyI4nWVBHUHdSXuU5d
+         RiPBBexlo3EQIACh+gtrdkaprcMAxzHOwE42W3z3TOHhCccOugoonMcadDsGExGx24pZ
+         H5/pvCKDjTt4FVP9c5g/C0+RgXXbdQ1Xqk7FmQlbb6AZ5h2ILWTjgqWfIwcHgBV+L7JY
+         TSCYm2FabsMtQ8YOEMv0D3S/L1piI0FOoF1PWbmE6EHuG+gpgg4BZW4kiiK6A07bGmUH
+         FXPJ4y0WsutSbFR4CDk3jDnnfWv6EdKE+piowBnqUmvtaAu45SrnpvEWExNeyJp8gdnO
+         cUZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lyrhKNeMU7eJT6PQUqEykdJHGU1Beqa7yTElEjUp1E0=;
-        b=AbkCkEMx0iH6pYhvA9tL/M8/iwj2bYlflj6voChCw4eHBUNyH8bStKWRmEAIm5yDKh
-         feAzrKWcrxfEYtfIBrw8p45YFZppwSoS7dDtlvquHSitdNUaAPYIJ1KEMCOomxh4XKyA
-         +7X1lZiZLWVUt6vOJqpVsiZ9BIbvjdX/ftiJ/dhvof5zi43eeVSrZa9viPvw7dSAGB/8
-         iPTF8IKlT1q22AB7/7EYMZwEZoWzWkcIPA2Ql6IEzdBNi9yp0Me7tVhygp+t45KPCSad
-         +7QHt/JGfnIZSb48qpumHr0IdvwJclMs2SQJDRM5Kool3f1fZeQHN1d8nfdIqxNTLIoy
-         ZWPw==
-X-Gm-Message-State: APjAAAVoTlejv9xVhPrsgDPRon6t4EcrMkS97xO3j2Nal11hzfFubQcf
-        YFt/+HiG8DFiO0BwpzFYswcZXKnjWBtWHh/narG7eA==
-X-Google-Smtp-Source: APXvYqzW5wCMUPDZUW8FlhlD0lFevf/gsf9pfcTNJvNRaLJB2Qb+Yl5ryjulc4AOX27A438sIlR0pFuhqlw/4hCWscQ=
-X-Received: by 2002:a54:458d:: with SMTP id z13mr2670272oib.32.1581700902393;
- Fri, 14 Feb 2020 09:21:42 -0800 (PST)
-MIME-Version: 1.0
-References: <20200211225547.235083-1-dancol@google.com> <20200214032635.75434-1-dancol@google.com>
- <20200214032635.75434-3-dancol@google.com> <9ca03838-8686-0007-0971-ee63bf5031da@tycho.nsa.gov>
-In-Reply-To: <9ca03838-8686-0007-0971-ee63bf5031da@tycho.nsa.gov>
-From:   Daniel Colascione <dancol@google.com>
-Date:   Fri, 14 Feb 2020 09:21:04 -0800
-Message-ID: <CAKOZuev-=7Lgu35E3tzpHQn0m_KAvvrqi+ZJr1dpqRjHERRSqg@mail.gmail.com>
-Subject: Re: [PATCH 2/3] Teach SELinux about anonymous inodes
-To:     Stephen Smalley <sds@tycho.nsa.gov>
-Cc:     Tim Murray <timmurray@google.com>,
-        SElinux list <selinux@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>, paul@paul-moore.com,
-        Nick Kralevich <nnk@google.com>,
-        Lokesh Gidra <lokeshgidra@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:content-transfer-encoding:from:mime-version
+         :subject:date:message-id:references:cc:in-reply-to:to;
+        bh=3eXuOgfEolpkZ5hPj8gcQuPTURlTdrMwkoy/D3yOIvc=;
+        b=k4guTXNd4Yuezghso01EEn/YpC4rzL1e8O3udiL275uyITQVBcPRuwQRZhzYtvflab
+         Go7up87y5CMBVP5U9Gb9/thbfEHhaqrSidIcLXVXxU2RtQC0x8q3Ht3yOtWqxa4w6b2y
+         OwDT1yRVE6mxs6LeaaoVSshuVL6sbOdT42SAc7nd1Vjy1lc1zt/OL2/jePgugJ1NS8+3
+         +9pxgHcWPcFkjeiOQIT1bd7d2g3M4Cje3IEF4OB2RZbqocX3qFdjLKP9/FNH6BusvjVo
+         ZshXzEQaL6Y7IsXtlo12A/OcnjxYBKSCOb3wvKGCnak69r1yJVjfnYcBaig1JAuPd9dJ
+         4nog==
+X-Gm-Message-State: APjAAAXEAifMJ1sgsCPEN67eHrqaabCooB/VRDr9/lfJe2FqA5Xxp2r9
+        e+jNvDjAZcuWNbmnESDY+4QXkw==
+X-Google-Smtp-Source: APXvYqw6w4pf9w58UmNm5LBUCfGCa8I1IoNvSrGAdVzQAvVkPnOFhecSxwSGlrlAdNuVi3wRbquU2g==
+X-Received: by 2002:a63:f40d:: with SMTP id g13mr4919987pgi.374.1581702007228;
+        Fri, 14 Feb 2020 09:40:07 -0800 (PST)
+Received: from ?IPv6:2600:1010:b013:3558:61dd:b73f:191c:9246? ([2600:1010:b013:3558:61dd:b73f:191c:9246])
+        by smtp.gmail.com with ESMTPSA id h3sm7424340pfo.102.2020.02.14.09.40.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Feb 2020 09:40:06 -0800 (PST)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+From:   Andy Lutomirski <luto@amacapital.net>
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH v26 10/22] x86/sgx: Linux Enclave Driver
+Date:   Fri, 14 Feb 2020 09:40:00 -0800
+Message-Id: <D18DD438-2458-4264-9D56-A05EB84BB545@amacapital.net>
+References: <20200214171146.GD20690@linux.intel.com>
+Cc:     Jethro Beekman <jethro@fortanix.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
+        dave.hansen@intel.com, nhorman@redhat.com, npmccallum@redhat.com,
+        haitao.huang@intel.com, andriy.shevchenko@linux.intel.com,
+        tglx@linutronix.de, kai.svahn@intel.com, bp@alien8.de,
+        josh@joshtriplett.org, luto@kernel.org, kai.huang@intel.com,
+        rientjes@google.com, cedric.xing@intel.com, puiterwijk@redhat.com,
+        linux-security-module@vger.kernel.org,
+        Haitao Huang <haitao.huang@linux.intel.com>
+In-Reply-To: <20200214171146.GD20690@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+X-Mailer: iPhone Mail (17D50)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Feb 14, 2020 at 8:38 AM Stephen Smalley <sds@tycho.nsa.gov> wrote:
->
-> On 2/13/20 10:26 PM, Daniel Colascione wrote:
-> > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> > index 1659b59fb5d7..6de0892620b3 100644
-> > --- a/security/selinux/hooks.c
-> > +++ b/security/selinux/hooks.c
-> > @@ -2915,6 +2915,62 @@ static int selinux_inode_init_security(struct inode *inode, struct inode *dir,
-> >       return 0;
-> >   }
-> >
-> > +static int selinux_inode_init_security_anon(struct inode *inode,
-> > +                                         const struct qstr *name,
-> > +                                         const struct file_operations *fops,
-> > +                                         const struct inode *context_inode)
-> > +{
-> > +     const struct task_security_struct *tsec = selinux_cred(current_cred());
-> > +     struct common_audit_data ad;
-> > +     struct inode_security_struct *isec;
-> > +     int rc;
-> > +
-> > +     if (unlikely(IS_PRIVATE(inode)))
-> > +             return 0;
->
-> This is not possible since the caller clears S_PRIVATE before calling
-> and it would be a bug to call the hook on an inode that was intended to
-> be private, so we shouldn't check it here.
->
-> > +
-> > +     if (unlikely(!selinux_state.initialized))
-> > +             return 0;
->
-> Are we doing this to defer initialization until selinux_complete_init()
-> - that's normally why we bail in the !initialized case?  Not entirely
-> sure what will happen in such a situation since we won't have the
-> context_inode or the allocating task information at that time, so we
-> certainly won't get the same result - probably they would all be labeled
-> with whatever anon_inodefs is assigned via genfscon or
-> SECINITSID_UNLABELED by default.
-> If we instead just drop this test and
-> proceed, we'll inherit the context inode SID if specified or we'll call
-> security_transition_sid(), which in the !initialized case will just
-> return the tsid i.e. tsec->sid, so it will be labeled with the creating
-> task SID (SECINITSID_KERNEL prior to initialization).  Then the
-> avc_has_perm() call will pass because everything gets allowed until
-> initialization. So you could drop this check and userfaultfds created
-> before policy load would get the kernel SID, or you can keep it and they
-> will get the unlabeled SID.  Preference?
 
-The kernel SID seems safer. Thanks for the explanation!
 
-> > +
-> > +     isec = selinux_inode(inode);
-> > +
-> > +     /*
-> > +      * We only get here once per ephemeral inode.  The inode has
-> > +      * been initialized via inode_alloc_security but is otherwise
-> > +      * untouched.
-> > +      */
-> > +
-> > +     if (context_inode) {
-> > +             struct inode_security_struct *context_isec =
-> > +                     selinux_inode(context_inode);
-> > +             if (IS_ERR(context_isec))
-> > +                     return PTR_ERR(context_isec);
->
-> This isn't possible AFAICT so you don't need to test for it or handle
-> it.  In fact, even the test for NULL in selinux_inode() is bogus and
-> should get dropped AFAICT; we always allocate an inode security blob
-> even before policy load so it would be a bug if we ever had a NULL there.
+> On Feb 14, 2020, at 9:11 AM, Sean Christopherson <sean.j.christopherson@in=
+tel.com> wrote:
+>=20
+> =EF=BB=BFOn Fri, Feb 14, 2020 at 10:24:10AM +0100, Jethro Beekman wrote:
+>>> On 2020-02-13 19:07, Sean Christopherson wrote:
+>>> On Thu, Feb 13, 2020 at 02:59:52PM +0100, Jethro Beekman wrote:
+>>>> On 2020-02-09 22:25, Jarkko Sakkinen wrote:
+>>>>> +/**
+>>>>> + * struct sgx_enclave_add_pages - parameter structure for the
+>>>>> + *                                %SGX_IOC_ENCLAVE_ADD_PAGE ioctl
+>>>>> + * @src:    start address for the page data
+>>>>> + * @offset:    starting page offset
+>>>>> + * @length:    length of the data (multiple of the page size)
+>>>>> + * @secinfo:    address for the SECINFO data
+>>>>> + * @flags:    page control flags
+>>>>> + * @count:    number of bytes added (multiple of the page size)
+>>>>> + */
+>>>>> +struct sgx_enclave_add_pages {
+>>>>> +    __u64    src;
+>>>>> +    __u64    offset;
+>>>>> +    __u64    length;
+>>>>> +    __u64    secinfo;
+>>>>> +    __u64    flags;
+>>>>> +    __u64    count;
+>>>>> +};
+>>>>=20
+>>>> Compared to the last time I looked at the patch set, this API removes t=
+he
+>>>> ability to measure individual pages chunks. That is not acceptable.
+>>>=20
+>>> Why is it not acceptable?  E.g. what specific use case do you have that
+>>> _requires_ on measuring partial 4k pages of an enclave?
+>>=20
+>> The use case is someone gives me an enclave and I want to load it. If I d=
+on't
+>> load it exactly as the enclave author specified, the enclave hash will be=
 
-Thanks. Will fix.
+>> different, and it won't work.
+>=20
+> And if our ABI says "thou shall measure in 4k chunks", then it's an invali=
+d
+> enclave if its author generated MRENCLAVE using a different granularity.
 
-> > +             isec->sid = context_isec->sid;
-> > +     } else {
-> > +             rc = security_transition_sid(
-> > +                     &selinux_state, tsec->sid, tsec->sid,
-> > +                     SECCLASS_FILE, name, &isec->sid);
-> > +             if (rc)
-> > +                     return rc;
-> > +     }
->
-> Since you switched to using security_transition_sid(), you are not using
-> the fops parameter anymore nor comparing with userfaultfd_fops, so you
-> could drop the parameter from the hook and leave the latter static in
-> the first patch.
-
-That's true, but I figured different LSMs might want different rules
-that depend on the fops. I'm also okay with removing this parameter
-for now, since we're not using it.
-
-> That's assuming you are ok with having to define these type_transition
-> rules for the userfaultfd case instead of having your own separate
-> security class.  Wondering how many different anon inode names/classes
-> there are in the kernel today and how much they change over time; for a
-> small, relatively stable set, separate classes might be ok; for a large,
-> dynamic set, type transitions should scale better.
-
-I think we can get away without a class per anonymous-inode-type. I do
-wonder whether we need a class for all anonymous inodes, though: if we
-just give them the file class and use the anon inode type name for the
-type_transition rule, isn't it possible that the type_transition rule
-might also fire for plain files with the same names in the last path
-component and the same originating sid? (Maybe I'm not understanding
-type_transition rules properly.) Using a class to encompass all
-anonymous inodes would address this problem (assuming the problem
-exists in the first place).
-
-> We might still need
-> to create a mapping table in SELinux from the names to some stable
-> identifier for the policy lookup if we can't rely on the names being stable.
-
-Sure. The anonymous inode type names have historically been stable,
-though, so maybe we can just use the names from anon_inodes directly
-for now and then add some kind of remapping if we want to change those
-names in the core, remaping to the old name for SELinux
-type_transition purposes.
+ISTM, unless there=E2=80=99s a particularly compelling reason, if an enclave=
+ is valid, we should be able to load it.=
