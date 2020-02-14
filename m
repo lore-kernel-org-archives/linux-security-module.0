@@ -2,211 +2,155 @@ Return-Path: <SRS0=+399=4C=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no autolearn_force=no
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96CEBC2BA83
-	for <linux-security-module@archiver.kernel.org>; Fri, 14 Feb 2020 19:12:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCFFFC35242
+	for <linux-security-module@archiver.kernel.org>; Fri, 14 Feb 2020 20:23:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5721224670
-	for <linux-security-module@archiver.kernel.org>; Fri, 14 Feb 2020 19:12:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CBCA22314
+	for <linux-security-module@archiver.kernel.org>; Fri, 14 Feb 2020 20:23:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="A01RKV0y"
+	dkim=pass (2048-bit key) header.d=tycho.nsa.gov header.i=@tycho.nsa.gov header.b="SEjRFt+j"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388832AbgBNTMg (ORCPT
+        id S1729976AbgBNUXi (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 14 Feb 2020 14:12:36 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:33948 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388761AbgBNTMF (ORCPT
+        Fri, 14 Feb 2020 15:23:38 -0500
+Received: from USFB19PA31.eemsg.mail.mil ([214.24.26.194]:25819 "EHLO
+        USFB19PA31.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729682AbgBNUXh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 14 Feb 2020 14:12:05 -0500
-Received: by mail-ot1-f68.google.com with SMTP id j16so10193911otl.1
-        for <linux-security-module@vger.kernel.org>; Fri, 14 Feb 2020 11:12:04 -0800 (PST)
+        Fri, 14 Feb 2020 15:23:37 -0500
+X-EEMSG-check-017: 56145307|USFB19PA31_ESA_OUT01.csd.disa.mil
+X-IronPort-AV: E=Sophos;i="5.70,441,1574121600"; 
+   d="scan'208";a="56145307"
+Received: from emsm-gh1-uea11.ncsc.mil ([214.29.60.3])
+  by USFB19PA31.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 14 Feb 2020 20:23:34 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6uqzI/vJCb+lytMRQLBtmGBNvQ3CBGyQ4CHe99juhWw=;
-        b=A01RKV0yUncA2zmUFntZswW/86rIj8tLC2M+AhXaShqxWykJDCkRYD43cXW50sXU39
-         MAa7XyeI7GLjetxuKiKl6Z+csq3oWb/Ynl+99TLWkIoJSkpYl2aCL7j/cGo8BHzrvsd2
-         8aySaepz0fQ2TgDbNN875+eReDdnjC93cTHaog9V5AwTUQwx8yb1iHjXkm3WNamm65pV
-         hGFAn/wkc14F1h7uUo5Lzol4RTLd0WtY2Xogo92Ly7NncWyYlAwKRiui1jUZR5WcYhIt
-         FXIzTf3dg9PluaRNFM74ih0l8HABOHZ+yTWC3VapgIcDQ1btBJ0IDtlJKNucSnOnbLig
-         c0/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6uqzI/vJCb+lytMRQLBtmGBNvQ3CBGyQ4CHe99juhWw=;
-        b=bFWR51namPFpNgj73hyjBZMFs4a3IEj1FST4pdl19aNydXJiwZguQG0EljWpLFv6Qs
-         6n8VDyHJPk5a1rbzxwf75SwHz/OYWTRKm7sjWWK4aSoAiwESLT9GLFI1W3Cmz9Dbnk41
-         52mKxWFRX50wq/aVLc+863SbtHnbsYZzGUkEe0Wyym+C1Db/yuXRAz9AI3AiF1XjIO+K
-         zcg8QDbzidrsFqImiRqEpaEbUCvqapmRnzudnOgAqbH+guvZa46YujL+lX1FxdBbFNTu
-         gIBVYNzDxUH+ZEenYxZJ+pGQ3VzQxekWPzo3naov+2w7gUwlslQALT4jpI357fJUnrhp
-         ZSWQ==
-X-Gm-Message-State: APjAAAV524Bab/CQU3cGYFENOJ3G4xfIU9HpDpIIOG24Nw7CZCNDCdyk
-        bgqTgEII39vaAfWLnV52YWXRbX0ercKCUBePdjj9Ow==
-X-Google-Smtp-Source: APXvYqw9Sh4U5QH4PzNP9ZbTWhW45tXHy/W8ePIQAS0ykZLvuNQTIJlI1t1RupZqm8jvXOKMHeZWx2pyg/XWkHVOixM=
-X-Received: by 2002:a05:6830:1d6e:: with SMTP id l14mr3411629oti.32.1581707524096;
- Fri, 14 Feb 2020 11:12:04 -0800 (PST)
+  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
+  s=tycho.nsa.gov; t=1581711815; x=1613247815;
+  h=subject:from:to:cc:references:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=Yh8yVLzfgcJrNxKWl5z8u9g/3WjkV3f+RBoxNQYxV4E=;
+  b=SEjRFt+jPcV9d7xQ62emkRKBYfsit3hOVekv1/DwwiF5oakkpP17NzWX
+   VVXQpk2mV0jH9UN9n38HRgU/XvFPkyCelfxznnJHvH9Iwuogof2WjGaPU
+   4KYZ/+b4DTTO1L09qVa0fU6HAKl9nO1K/VtW1OyTedB+KO2N50r/AHjnI
+   Q8AiHI1dXqh3azBLfk1EbPVaavaOrozkSReb9pYccrzTv13eIVvEWZpKH
+   Q8WLrY3+g1IRB8K/1kI6Ph3sKakQuzqWKqCfKDnVUoYCPAT8t4JeR74Qn
+   cofMpTvxl6hbjRZBbwgi1NxDfGjvgLj73zE2GLtqrxrdsFeVbZ4dh48t7
+   A==;
+X-IronPort-AV: E=Sophos;i="5.70,441,1574121600"; 
+   d="scan'208";a="39155698"
+IronPort-PHdr: =?us-ascii?q?9a23=3AgzRpzBR99aF4BifuhODwqvMPatpsv+yvbD5Q0Y?=
+ =?us-ascii?q?Iujvd0So/mwa67YB2Ot8tkgFKBZ4jH8fUM07OQ7/m8HzNYqs/a7zgrS99laV?=
+ =?us-ascii?q?wssY0uhQsuAcqIWwXQDcXBSGgEJvlET0Jv5HqhMEJYS47UblzWpWCuv3ZJQk?=
+ =?us-ascii?q?2sfQV6Kf7oFYHMks+5y/69+4HJYwVPmTGxfa5+IA+5oAnMucQam4lvJro+xh?=
+ =?us-ascii?q?fUrHZFefldyH91K16Ugxvz6cC88YJ5/S9Nofwh7clAUav7f6Q8U7NVCSktPn?=
+ =?us-ascii?q?426sP2qxTNVBOD6XQAXGoYlBpIGBXF4wrhXpjtqCv6t/Fy1zecMMbrUL07Qz?=
+ =?us-ascii?q?Wi76NsSB/1lCcKMiMy/W/LhsBsiq9QvQmsrAJjzYHKfI6VNeJ+fqLDctMcWW?=
+ =?us-ascii?q?pBRdtaWyhYDo+hc4cDE+8NMOBWoInno1sFsAWwCw+iCujyzjNEn3/70Kk/3+?=
+ =?us-ascii?q?knDArI3hEvH8gWvXrJrNv7KqkSX+O7wqbGwjrMbe9Z1zjm5YjUcR0su+2AUa?=
+ =?us-ascii?q?5+fMfTz0QkCgPLjk+XqYzgJz6by/gNvHaD7+pgS+2vjXMspRx0oje1wscsjp?=
+ =?us-ascii?q?fGh4IIwV3D7iV23Z01KMakSE97fdGkEJxQuzucN4ttWMwuWW5ouCEkyrAfv5?=
+ =?us-ascii?q?OwYSsEyIw/yhLCZPGKfJKE7xL+WOqLPzt1i2xpdKiiixu07EOu0PfzVtOu31?=
+ =?us-ascii?q?ZPtidFl97MuW0T2BHL8ciHT+d9/l+m2TaSywDf8uFELl4wlarcM5Mh3qQ/lo?=
+ =?us-ascii?q?ASsUTeBS/6gkT2jKmYdkUj4ein9fjobq/6pp6cK4B0igb+Pr4omsOjGuQ3Lh?=
+ =?us-ascii?q?ICX22a+eS4zLHj/Ev5T6tWjvAuj6XUv5/XKd4bq6KkGQNZzIku5wilAzu7yN?=
+ =?us-ascii?q?gYmGMILFNBeBKJlYjpPFTOLejjDfiimFShiytrxvDaMb3hBZXBNH7DkKz7cr?=
+ =?us-ascii?q?pn5E5czxQzwchF551IErEBPO7zWkjpudPFFBA5NRC7w+HjCNhm2YMeXmWPAq?=
+ =?us-ascii?q?CdMKzMq1OH+uUvI+yUbo8PpDn9M+Ql5+LpjXIhhV8dfKyp3Z4KaHCiBPRpOU?=
+ =?us-ascii?q?WYbGHjgtcGFmcKsQ4+Q/LwhFKeVj5TYm64X7gg6TEjFIKmEYDDS5i2gLOf2C?=
+ =?us-ascii?q?e7H5tWZn1JC12XD3foeJuLW+0WZCKRPMBhiDoEWqalS4M70hGurgD6waJ9Lu?=
+ =?us-ascii?q?XI4i0YqY7j1N9t6u3XlBEy8yF0DsuE32GWUW57gn4IRyU33KBjoU1x01KD0a?=
+ =?us-ascii?q?9ljPxFEdxc+ehEUhk1NZHC1ex2EdPyVRzbftePVlmmRs+qATYrTtI+29UOeV?=
+ =?us-ascii?q?pyG82+jhDf2CqnG7sVl72NBJwp/aPQxnbxJ91gxHnYyqkukV0mT9BRNW2pmK?=
+ =?us-ascii?q?F/7RLfB43XnEWDkaala6Ac0DTK9GeZwmqEpFtYXxJoUaXZQXAfYVPbrdD45k?=
+ =?us-ascii?q?PEUr+vBq0rMghfxs6YLKtFdNnpgE5YRPfsJtveeXi9m2SuChaSwLODco7qd3?=
+ =?us-ascii?q?8a3CXHB0gOixoT8mqeNQgiGiehpHrTDD9wFVLqeE7s7+Z+p22hTkMuzAGFcV?=
+ =?us-ascii?q?dh17yr9R4Rn/CcTOkT3r0csic7tzp0BEq9387RC9eYuQphfb9cYdQm7VZGy2?=
+ =?us-ascii?q?3ZsQ19PoK6I6Bmh14edRl3vkz02xVwEIVAntImrG4pzABqM6KXzEtBdy+E3Z?=
+ =?us-ascii?q?D3IrDXMnP9/A2ra6PNwlHRysuW+qMW5PQ9rFXjuxupGVQ4/3p71NlV1mOW5o?=
+ =?us-ascii?q?/WAwoKTZLxTkE3+gB8p7HcYSkw/IzU1XprMam7tj/NxcglC/ciyhalZ91fKr?=
+ =?us-ascii?q?+LFBfuE80GAMijMOgqm1+qbh0aJ+BS9KE0P8K7ePucwqGmJ+lgnDWhjWRI5I?=
+ =?us-ascii?q?ByzFiA+DZ7Su7Nx5wF2e2X3hObVzfgi1esqsL3lp5KZTEcAGqy0ifkBIlWZq?=
+ =?us-ascii?q?19eYYEF32iLNGwxtV71NbRXCt0/ViiCldO88itcAGZblv70EUE2U0RqnujsS?=
+ =?us-ascii?q?S/yDNwnnciqa/JjwLUxOG3TwYKIm5GQiFZiF7oJYWlx4QBUFOAcxkilBzj41?=
+ =?us-ascii?q?3zgadcuvIsfCHoXU5Ucn2ufClZWayqu+/HOpMe5Q=3D=3D?=
+X-IPAS-Result: =?us-ascii?q?A2ANAwAXAUde/wHyM5BmHAEBAQEBBwEBEQEEBAEBgXuBe?=
+ =?us-ascii?q?AWCDRKEPokDhlwBAQEDBoESJYlwkUoJAQEBAQEBAQEBNwQBAYRAAoIlOBMCE?=
+ =?us-ascii?q?AEBAQUBAQEBAQUDAQFshUOCOykBgwIBBSMPAQVBEAsOCgICJgICVwYNCAEBg?=
+ =?us-ascii?q?mM/glclriiBMokfgT6BDiqMPnmBB4E4DAOCXT6HW4JeBI1ggj6Hb5dtgkSCT?=
+ =?us-ascii?q?5N8BhybGKwnIoFYKwgCGAghD4MoTxgNjikXjkEjA5EIAQE?=
+Received: from tarius.tycho.ncsc.mil (HELO tarius.infosec.tycho.ncsc.mil) ([144.51.242.1])
+  by emsm-gh1-uea11.NCSC.MIL with ESMTP; 14 Feb 2020 20:23:33 +0000
+Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
+        by tarius.infosec.tycho.ncsc.mil (8.14.7/8.14.4) with ESMTP id 01EKMXfe033109;
+        Fri, 14 Feb 2020 15:22:33 -0500
+Subject: Re: [PATCH 2/3] Teach SELinux about anonymous inodes
+From:   Stephen Smalley <sds@tycho.nsa.gov>
+To:     Daniel Colascione <dancol@google.com>
+Cc:     Tim Murray <timmurray@google.com>,
+        SElinux list <selinux@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>, paul@paul-moore.com,
+        Nick Kralevich <nnk@google.com>,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        Jeffrey Vander Stoep <jeffv@google.com>
+References: <20200211225547.235083-1-dancol@google.com>
+ <20200214032635.75434-1-dancol@google.com>
+ <20200214032635.75434-3-dancol@google.com>
+ <9ca03838-8686-0007-0971-ee63bf5031da@tycho.nsa.gov>
+ <CAKOZuev-=7Lgu35E3tzpHQn0m_KAvvrqi+ZJr1dpqRjHERRSqg@mail.gmail.com>
+ <23f725ca-5b5a-5938-fcc8-5bbbfc9ba9bc@tycho.nsa.gov>
+ <97603935-9f6b-ccf4-4229-87f26380c3db@tycho.nsa.gov>
+Message-ID: <6d8f2e69-85e0-5313-337f-53144cf08218@tycho.nsa.gov>
+Date:   Fri, 14 Feb 2020 15:24:43 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-References: <20200214183554.1133805-1-christian.brauner@ubuntu.com> <20200214183554.1133805-5-christian.brauner@ubuntu.com>
-In-Reply-To: <20200214183554.1133805-5-christian.brauner@ubuntu.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Fri, 14 Feb 2020 20:11:36 +0100
-Message-ID: <CAG48ez2o81ZwwL9muYyheN9vY69vJR5sB9LsLh=nk6wB4iuUgw@mail.gmail.com>
-Subject: Re: [PATCH v2 04/28] fsuidgid: add fsid mapping helpers
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     =?UTF-8?Q?St=C3=A9phane_Graber?= <stgraber@ubuntu.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Stephen Barber <smbarber@chromium.org>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Serge Hallyn <serge@hallyn.com>,
-        James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Phil Estes <estesp@gmail.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <97603935-9f6b-ccf4-4229-87f26380c3db@tycho.nsa.gov>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Feb 14, 2020 at 7:37 PM Christian Brauner
-<christian.brauner@ubuntu.com> wrote:
-> This adds a set of helpers to translate between kfsuid/kfsgid and their
-> userspace fsuid/fsgid counter parts relative to a given user namespace.
->
-> - kuid_t make_kfsuid(struct user_namespace *from, uid_t fsuid)
->   Maps a user-namespace fsuid pair into a kfsuid.
->   If no fsuid mappings have been written it behaves identical to calling
->   make_kuid(). This ensures backwards compatibility for workloads unaware
->   or not in need of fsid mappings.
-[...]
-> +#ifdef CONFIG_USER_NS_FSID
-> +/**
-> + *     make_kfsuid - Map a user-namespace fsuid pair into a kuid.
-> + *     @ns:  User namespace that the fsuid is in
-> + *     @fsuid: User identifier
-> + *
-> + *     Maps a user-namespace fsuid pair into a kernel internal kfsuid,
-> + *     and returns that kfsuid.
-> + *
-> + *     When there is no mapping defined for the user-namespace kfsuid
-> + *     pair INVALID_UID is returned.  Callers are expected to test
-> + *     for and handle INVALID_UID being returned.  INVALID_UID
-> + *     may be tested for using uid_valid().
-> + */
-> +kuid_t make_kfsuid(struct user_namespace *ns, uid_t fsuid)
-> +{
-> +       unsigned extents = ns->fsuid_map.nr_extents;
-> +       smp_rmb();
-> +
-> +       /* Map the fsuid to a global kernel fsuid */
-> +       if (extents == 0)
-> +               return KUIDT_INIT(map_id_down(&ns->uid_map, fsuid));
-> +
-> +       return KUIDT_INIT(map_id_down(&ns->fsuid_map, fsuid));
-> +}
-> +EXPORT_SYMBOL(make_kfsuid);
+On 2/14/20 1:08 PM, Stephen Smalley wrote:
+> On 2/14/20 1:02 PM, Stephen Smalley wrote:
+>> It shouldn't fire for non-anon inodes because on a (non-anon) file 
+>> creation, security_transition_sid() is passed the parent directory SID 
+>> as the second argument and we only assign task SIDs to /proc/pid 
+>> directories, which don't support (userspace) file creation anyway.
+>>
+>> However, in the absence of a matching type_transition rule, we'll end 
+>> up defaulting to the task SID on the anon inode, and without a 
+>> separate class we won't be able to distinguish it from a /proc/pid 
+>> inode.  So that might justify a separate anoninode or similar class.
+>>
+>> This however reminded me that for the context_inode case, we not only 
+>> want to inherit the SID but also the sclass from the context_inode. 
+>> That is so that anon inodes created via device node ioctls inherit the 
+>> same SID/class pair as the device node and a single allowx rule can 
+>> govern all ioctl commands on that device.
+> 
+> At least that's the way our patch worked with the /dev/kvm example. 
+> However, if we are introducing a separate anoninode class for the 
+> type_transition case, maybe we should apply that to all anon inodes 
+> regardless of how they are labeled (based on context_inode or 
+> transition) and then we'd need to write two allowx rules, one for ioctls 
+> on the original device node and one for those on anon inodes created 
+> from it.  Not sure how Android wants to handle that as the original 
+> developer and primary user of SELinux ioctl whitelisting.
 
-What effect is this fallback going to have for nested namespaces?
+I would tentatively argue for inheriting both sclass and SID from the 
+context_inode for the sake of sane policy writing.  In the userfaultfd 
+case, that will still end up using the new SECCLASS_ANONINODE or 
+whatever since the sclass will be initially set to that value for the 
+transition SID case and then inherited on fork.  But for /dev/kvm, it 
+would be the class from the /dev/kvm inode, i.e. SECCLASS_CHR_FILE.
 
-Let's say we have an outer namespace N1 with this uid_map:
-
-    0 100000 65535
-
-and with this fsuid_map:
-
-    0 300000 65535
-
-Now from in there, a process that is not aware of the existence of
-fsuid mappings creates a new user namespace N2 with the following
-uid_map:
-
-    0 1000 1
-
-At this point, if a process in N2 does chown("foo", 0, 0), is that
-going to make "foo" owned by kuid 101000, which isn't even mapped in
-N1?
-
-> @@ -1215,11 +1376,13 @@ static bool new_idmap_permitted(const struct file *file,
->             uid_eq(ns->owner, cred->euid)) {
->                 u32 id = new_map->extent[0].lower_first;
->                 if (cap_setid == CAP_SETUID) {
-> -                       kuid_t uid = make_kuid(ns->parent, id);
-> +                       kuid_t uid = map_fsid ? make_kfsuid(ns->parent, id) :
-> +                                               make_kuid(ns->parent, id);
->                         if (uid_eq(uid, cred->euid))
->                                 return true;
-
-Let's say we have an outer user namespace N1 with this uid_map:
-
-    0 1000 3000
-
-and this fsuid_map:
-
-    0 2000 3000
-
-and in that namespace, a process is running as UID 1000 (which means
-kernel-euid=2000, kernel-fsuid=3000). Now this process unshares its
-user namespace and from this nested user namespace N2, tries to write
-the following fsuid_map:
-
-    0 1000 1
-
-This should work, since the only ID it maps is the one the process had
-in N1; but the code is AFAICS going to run as follows:
-
-        if ((new_map->nr_extents == 1) && (new_map->extent[0].count == 1) &&
-            uid_eq(ns->owner, cred->euid)) { // branch taken
-                u32 id = new_map->extent[0].lower_first;
-                if (cap_setid == CAP_SETUID) { // branch taken
-                        // uid = make_kfsuid(ns->parent, 1000) = 3000
-                        kuid_t uid = map_fsid ? make_kfsuid(ns->parent, id) :
-                                                make_kuid(ns->parent, id);
-                        // uid_eq(3000, 2000)
-                        if (uid_eq(uid, cred->euid)) // not taken
-                                return true;
-                } else [...]
-        }
-
-Instead, I think what would succeed is this, which shouldn't be allowed:
-
-    0 0 1
-
-which AFAICS will evaluate as follows:
-
-        if ((new_map->nr_extents == 1) && (new_map->extent[0].count == 1) &&
-            uid_eq(ns->owner, cred->euid)) { // branch taken
-                u32 id = new_map->extent[0].lower_first;
-                if (cap_setid == CAP_SETUID) { // branch taken
-                        // uid = make_kfsuid(ns->parent, 0) = 2000
-                        kuid_t uid = map_fsid ? make_kfsuid(ns->parent, id) :
-                                                make_kuid(ns->parent, id);
-                        // uid_eq(2000, 2000)
-                        if (uid_eq(uid, cred->euid)) // taken
-                                return true;
-                } else [...]
-        }
-
->                 } else if (cap_setid == CAP_SETGID) {
-> -                       kgid_t gid = make_kgid(ns->parent, id);
-> +                       kgid_t gid = map_fsid ? make_kfsgid(ns->parent, id) :
-> +                                               make_kgid(ns->parent, id);
->                         if (!(ns->flags & USERNS_SETGROUPS_ALLOWED) &&
->                             gid_eq(gid, cred->egid))
->                                 return true;
-> --
-> 2.25.0
->
