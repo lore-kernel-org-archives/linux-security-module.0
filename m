@@ -2,137 +2,141 @@ Return-Path: <SRS0=+399=4C=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24982C3B194
-	for <linux-security-module@archiver.kernel.org>; Fri, 14 Feb 2020 03:27:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CE95C3B18F
+	for <linux-security-module@archiver.kernel.org>; Fri, 14 Feb 2020 03:51:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFE4322314
-	for <linux-security-module@archiver.kernel.org>; Fri, 14 Feb 2020 03:27:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="d7u2Fkhw"
+	by mail.kernel.org (Postfix) with ESMTP id 351BD2168B
+	for <linux-security-module@archiver.kernel.org>; Fri, 14 Feb 2020 03:51:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728725AbgBND1W (ORCPT
+        id S1728556AbgBNDvR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 13 Feb 2020 22:27:22 -0500
-Received: from mail-pj1-f73.google.com ([209.85.216.73]:37498 "EHLO
-        mail-pj1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728486AbgBND04 (ORCPT
+        Thu, 13 Feb 2020 22:51:17 -0500
+Received: from out02.mta.xmission.com ([166.70.13.232]:35780 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728154AbgBNDvR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 13 Feb 2020 22:26:56 -0500
-Received: by mail-pj1-f73.google.com with SMTP id dw15so4892703pjb.2
-        for <linux-security-module@vger.kernel.org>; Thu, 13 Feb 2020 19:26:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=0WYp+nOc4W1ueTL6njcvhwE6Wrya56t+7LdjPX2+2/g=;
-        b=d7u2FkhwK0FN7IXYD8paZmQSKyhKm96rk0yh6wSPXStrq+ZyUe0RBJ0cSR/kkVrTZ7
-         yyAcca7EmJ6rSMeEPPDmRMQPnPyEsl8d+DvxOEmq0DTwgrwmiGE7SqOajaQIzDeOuqcf
-         Dup93fAzq0KZymXZwZ+fiEXw7p7pZvYsz9Sd3yWE6XW47saWou3JDaduJwLGhI/6aCvr
-         jXEAo8CTJA5tMyHfa2LpOlraU1cl+g4iI3Mmkp15BOF9zeBzfcEkhcK1YsPI+ryUiGy1
-         60g7n05mvI2V1MgGUXg5cFf4vvol75AtiWxiV1xP9EDlQm2jLHIy74/BgTZiK6/Tk6+T
-         /DFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=0WYp+nOc4W1ueTL6njcvhwE6Wrya56t+7LdjPX2+2/g=;
-        b=Nq7tHMxV/5ocKVOI+3f/+F4Uoxla7i8iRkYlmSods/8A0oiSNga6BvabJmM7nZqpIc
-         UW90sLqQHrIlBhHA0N98aRzaCUWwWT/GRybL3RUxPIzGHIwSsVRHA2dHsjcDHk2grEKJ
-         9U9u+/Eif+aQsnpPUkCrTnmBaddcMkjqxcJ7qDpUtKoR4wmy50XG+DuWtFtqUlKccu35
-         IhaIQhtonfJu3cWr3hdy1I/uR+gTFL2CGD6ykVWusyMcLFwntkhgtPuHvO65aPrDgvzq
-         t5i6KU3HWipoeEE9ZVMULJ3kf1EnEyUALXdCkT7UpLjHuWrxhkA92a+F3SCJCFBu5Dt3
-         0l6Q==
-X-Gm-Message-State: APjAAAWT+IkMRuOaHkhvE+01u89uUuIMZVAeWHC1mDZhjoou7ffcqWh3
-        TKu++TKJ8ysUDGSBzKaDF2/6FNrv+1M=
-X-Google-Smtp-Source: APXvYqycI2BpuraXCc3IrQ2spptnq0wpysgGaSnKRL3VQeWA2X/FZ9eFhD8j0BwJp3nlWxw33egBUz7gUsU=
-X-Received: by 2002:a63:5a11:: with SMTP id o17mr1256158pgb.60.1581650815604;
- Thu, 13 Feb 2020 19:26:55 -0800 (PST)
-Date:   Thu, 13 Feb 2020 19:26:32 -0800
-In-Reply-To: <20200211225547.235083-1-dancol@google.com>
-Message-Id: <20200214032635.75434-1-dancol@google.com>
-Mime-Version: 1.0
-References: <20200211225547.235083-1-dancol@google.com>
-X-Mailer: git-send-email 2.25.0.265.gbab2e86ba0-goog
-Subject: [PATCH 0/3] SELinux support for anonymous inodes and UFFD
-From:   Daniel Colascione <dancol@google.com>
-To:     timmurray@google.com, selinux@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, viro@zeniv.linux.org.uk, paul@paul-moore.com,
-        nnk@google.com, sds@tycho.nsa.gov, lokeshgidra@google.com
-Cc:     Daniel Colascione <dancol@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 13 Feb 2020 22:51:17 -0500
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1j2S0a-0007Cp-F5; Thu, 13 Feb 2020 20:51:16 -0700
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1j2S0Z-0006vA-4D; Thu, 13 Feb 2020 20:51:16 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Security Module <linux-security-module@vger.kernel.org>,
+        Akinobu Mita <akinobu.mita@gmail.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Daniel Micay <danielmicay@gmail.com>,
+        Djalal Harouni <tixxdz@gmail.com>,
+        "Dmitry V . Levin" <ldv@altlinux.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@poochiereds.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Solar Designer <solar@openwall.com>
+References: <20200210150519.538333-1-gladkov.alexey@gmail.com>
+        <20200210150519.538333-8-gladkov.alexey@gmail.com>
+        <87v9odlxbr.fsf@x220.int.ebiederm.org>
+        <20200212144921.sykucj4mekcziicz@comp-core-i7-2640m-0182e6>
+        <87tv3vkg1a.fsf@x220.int.ebiederm.org>
+        <CAHk-=wg52stFtUxMOxs3afkwDWmWn1JXC7RJ7dPsTrJbnxpZVg@mail.gmail.com>
+        <87v9obipk9.fsf@x220.int.ebiederm.org>
+        <CAHk-=wgwmu4jpmOqW0+Lz0dcem1Fub=ThLHvmLobf_WqCq7bwg@mail.gmail.com>
+        <20200212200335.GO23230@ZenIV.linux.org.uk>
+        <CAHk-=wi+1CPShMFvJNPfnrJ8DD8uVKUOQ5TQzQUNGLUkeoahkg@mail.gmail.com>
+        <20200212203833.GQ23230@ZenIV.linux.org.uk>
+Date:   Thu, 13 Feb 2020 21:49:20 -0600
+In-Reply-To: <20200212203833.GQ23230@ZenIV.linux.org.uk> (Al Viro's message of
+        "Wed, 12 Feb 2020 20:38:33 +0000")
+Message-ID: <87sgjdde0v.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-XM-SPF: eid=1j2S0Z-0006vA-4D;;;mid=<87sgjdde0v.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18hwn2iY2MOovMvLUTHlMeKjuKGlG2T5jo=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH v8 07/11] proc: flush task dcache entries from all procfs instances
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Userfaultfd in unprivileged contexts could be potentially very
-useful. We'd like to harden userfaultfd to make such unprivileged use
-less risky. This patch series allows SELinux to manage userfaultfd
-file descriptors and in the future, other kinds of
-anonymous-inode-based file descriptor.  SELinux policy authors can
-apply policy types to anonymous inodes by providing name-based
-transition rules keyed off the anonymous inode internal name (
-"[userfaultfd]" in the case of userfaultfd(2) file descriptors) and
-applying policy to the new SIDs thus produced.
+Al Viro <viro@zeniv.linux.org.uk> writes:
 
-Inside the kernel, a pair of new anon_inodes interface,
-anon_inode_getfile_secure and anon_inode_getfd_secure, allow callers
-to opt into this SELinux management. In this new "secure" mode,
-anon_inodes creates new ephemeral inodes for anonymous file objects
-instead of reusing the normal anon_inodes singleton dummy inode. A new
-LSM hook gives security modules an opportunity to configure and veto
-these ephemeral inodes.
+> On Wed, Feb 12, 2020 at 12:35:04PM -0800, Linus Torvalds wrote:
+>> On Wed, Feb 12, 2020 at 12:03 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>> >
+>> > What's to prevent racing with fs shutdown while you are doing the second part?
+>> 
+>> I was thinking that only the proc_flush_task() code would do this.
+>> 
+>> And that holds a ref to the vfsmount through upid->ns.
+>> 
+>> So I wasn't suggesting doing this in general - just splitting up the
+>> implementation of d_invalidate() so that proc_flush_task_mnt() could
+>> delay the complex part to after having traversed the RCU-protected
+>> list.
+>> 
+>> But hey - I missed this part of the problem originally, so maybe I'm
+>> just missing something else this time. Wouldn't be the first time.
+>
+> Wait, I thought the whole point of that had been to allow multiple
+> procfs instances for the same userns?  Confused...
 
-This patch series is one of two fork of [1] and is an
-alternative to [2].
+Multiple procfs instances for the same pidns.  Exactly.
 
-The primary difference between the two patch series is that this
-partch series creates a unique inode for each "secure" anonymous
-inode, while the other patch series ([2]) continues using the
-singleton dummy anonymous inode and adds a way to attach SELinux
-security information directly to file objects.
+Which would let people have their own set of procfs mount
+options without having to worry about stomping on someone else.
 
-I prefer the approach in this patch series because 1) it's a smaller
-patch than [2], and 2) it produces a more regular security
-architecture: in this patch series, secure anonymous inodes aren't
-S_PRIVATE and they maintain the SELinux property that the label for a
-file is in its inode. We do need an additional inode per anonymous
-file, but per-struct-file inode creation doesn't seem to be a problem
-for pipes and sockets.
+The fundamental problem with multiple procfs instances per pidns
+is there isn't an obvous place to put a vfs mount.
 
-The previous version of this feature ([1]) created a new SELinux
-security class for userfaultfd file descriptors. This version adopts
-the generic transition-based approach of [2].
 
-This patch series also differs from [2] in that it doesn't affect all
-anonymous inodes right away --- instead requiring anon_inodes callers
-to opt in --- but this difference isn't one of basic approach. The
-important question to resolve is whether we should be creating new
-inodes or enhancing per-file data.
+...
 
-[1] https://lore.kernel.org/lkml/20200211225547.235083-1-dancol@google.com/
-[2] https://lore.kernel.org/linux-fsdevel/20200213194157.5877-1-sds@tycho.nsa.gov/
 
-Daniel Colascione (3):
-  Add a new LSM-supporting anonymous inode interface
-  Teach SELinux about anonymous inodes
-  Wire UFFD up to SELinux
+Which means we need some way to keep the file system from going away
+while anyone in the kernel is running proc_flush_task.
 
- fs/anon_inodes.c            | 196 ++++++++++++++++++++++++++++--------
- fs/userfaultfd.c            |  34 +++++--
- include/linux/anon_inodes.h |  13 +++
- include/linux/lsm_hooks.h   |   9 ++
- include/linux/security.h    |   4 +
- security/security.c         |  10 ++
- security/selinux/hooks.c    |  57 +++++++++++
- 7 files changed, 274 insertions(+), 49 deletions(-)
+One was I can see to solve this that would give us cheap readers, is to
+have a percpu count of the number of processes in proc_flush_task.
+That would work something like mnt_count.
 
--- 
-2.25.0.265.gbab2e86ba0-goog
+Then forbid proc_kill_sb from removing any super block from the list
+or otherwise making progress until the proc_flush_task_count goes
+to zero.
+
+
+f we wanted cheap readers and an expensive writer
+kind of flag that proc_kill_sb can
+
+Thinking out loud perhaps we have add a list_head on task_struct
+and a list_head in proc_inode.  That would let us find the inodes
+and by extention the dentries we care about quickly.
+
+Then in evict_inode we could remove the proc_inode from the list.
+
+
+Eric
 
