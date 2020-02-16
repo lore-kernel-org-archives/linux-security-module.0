@@ -2,90 +2,74 @@ Return-Path: <SRS0=N8uA=4E=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB896C3B1BF
-	for <linux-security-module@archiver.kernel.org>; Sun, 16 Feb 2020 07:17:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22A65C76199
+	for <linux-security-module@archiver.kernel.org>; Sun, 16 Feb 2020 14:12:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B751220729
-	for <linux-security-module@archiver.kernel.org>; Sun, 16 Feb 2020 07:17:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZXyE1Lpg"
+	by mail.kernel.org (Postfix) with ESMTP id EFFC02086A
+	for <linux-security-module@archiver.kernel.org>; Sun, 16 Feb 2020 14:12:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725899AbgBPHR3 (ORCPT
+        id S1728300AbgBPOMm (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 16 Feb 2020 02:17:29 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:56024 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725866AbgBPHR3 (ORCPT
+        Sun, 16 Feb 2020 09:12:42 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:46336 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726171AbgBPOMl (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 16 Feb 2020 02:17:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:
-        Content-ID:Content-Description:In-Reply-To:References;
-        bh=GRmxcuiStJNK4Se+yV7ZvCjHXpXLLJWJh8lGPi6S3os=; b=ZXyE1LpgzMadB62tAzvZ/IYhVC
-        p+YNY4HRyFXiBrBRr7WDUPiELX/6hgoknHqAjQd/iF90Jg1Gua4qHeNtANiGtUbVP/Tc0JC1679IQ
-        RbXUZ9hMjWYF7vJo61idEQTesjc8+9ZhJoQqDXkYV+HXUNY3VXCwONC9iy0SieSx8V2A1rMQTXTPQ
-        9t7Sq1GzzpYUv6bFniCU0gRuHcBPTwRrzYjwB12ksI27m0hgl/dWOMX6YGAupImxYhX392nlhZ2Tx
-        +9retKZBwdmP/bCQDdX4SsNn2Z9kDWaUQAp9E21gP7IrEhHdeApU/rx9jvAGVxB6yKZC0oA5e5S2D
-        /A3/yvDA==;
-Received: from [2601:1c0:6280:3f0::19c2]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j3EBB-00017A-GY; Sun, 16 Feb 2020 07:17:25 +0000
-To:     LKML <linux-kernel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>
-Cc:     Micah Morton <mortonm@chromium.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH] MAINTAINERS: use tabs for SAFESETID
-Message-ID: <2bb2e52a-2694-816d-57b4-6cabfadd6c1a@infradead.org>
-Date:   Sat, 15 Feb 2020 23:17:24 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Sun, 16 Feb 2020 09:12:41 -0500
+Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1j3Kf0-0000yC-JA; Sun, 16 Feb 2020 14:12:38 +0000
+Date:   Sun, 16 Feb 2020 15:12:37 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Tycho Andersen <tycho@tycho.ws>
+Cc:     linux-security-module@vger.kernel.org,
+        Kees Cook <keescook@chromium.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        linux-api@vger.kernel.org, containers@lists.linux-foundation.org,
+        Jann Horn <jannh@google.com>, linux-kernel@vger.kernel.org,
+        smbarber@chromium.org, Seth Forshee <seth.forshee@canonical.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH v2 19/28] stat: handle fsid mappings
+Message-ID: <20200216141237.nk7yh7hdwpo5nmfx@wittgenstein>
+References: <20200214183554.1133805-1-christian.brauner@ubuntu.com>
+ <20200214183554.1133805-20-christian.brauner@ubuntu.com>
+ <20200214190314.GD22883@cisco>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <20200214190314.GD22883@cisco>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Randy Dunlap <rdunlap@infradead.org>
+On Fri, Feb 14, 2020 at 12:03:14PM -0700, Tycho Andersen wrote:
+> On Fri, Feb 14, 2020 at 07:35:45PM +0100, Christian Brauner wrote:
+> > @@ -471,8 +484,13 @@ static long cp_new_stat64(struct kstat *stat, struct stat64 __user *statbuf)
+> >  #endif
+> >  	tmp.st_mode = stat->mode;
+> >  	tmp.st_nlink = stat->nlink;
+> > -	tmp.st_uid = from_kuid_munged(current_user_ns(), stat->uid);
+> > -	tmp.st_gid = from_kgid_munged(current_user_ns(), stat->gid);
+> > +	if (stat->userns_visible) {
+> > +		tmp.st_uid, from_kuid_munged(current_user_ns(), stat->uid);
+> > +		tmp.st_gid, from_kgid_munged(current_user_ns(), stat->gid);
+> > +	} else {
+> > +		tmp.st_uid, from_kfsuid_munged(current_user_ns(), stat->uid);
+> > +		tmp.st_gid, from_kfsgid_munged(current_user_ns(), stat->gid);
+> > +	}
+> 
+> I suppose this should be = ?
 
-Use tabs for indentation instead of spaces for SAFESETID.
-All (!) other entries in MAINTAINERS use tabs (according to
-my simple grepping).
+Good catch. I thought I had eliminated all those by doing automated
+conversion but apparently not. :)
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Micah Morton <mortonm@chromium.org>
-Cc: James Morris <jmorris@namei.org>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: linux-security-module@vger.kernel.org
-Cc: Andrew Morton <akpm@linux-foundation.org>
----
- MAINTAINERS |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
---- lnx-56-rc1.orig/MAINTAINERS
-+++ lnx-56-rc1/MAINTAINERS
-@@ -14582,10 +14582,10 @@ F:	drivers/media/pci/saa7146/
- F:	include/media/drv-intf/saa7146*
- 
- SAFESETID SECURITY MODULE
--M:     Micah Morton <mortonm@chromium.org>
--S:     Supported
--F:     security/safesetid/
--F:     Documentation/admin-guide/LSM/SafeSetID.rst
-+M:	Micah Morton <mortonm@chromium.org>
-+S:	Supported
-+F:	security/safesetid/
-+F:	Documentation/admin-guide/LSM/SafeSetID.rst
- 
- SAMSUNG AUDIO (ASoC) DRIVERS
- M:	Krzysztof Kozlowski <krzk@kernel.org>
-
+Christian
