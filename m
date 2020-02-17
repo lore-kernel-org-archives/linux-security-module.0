@@ -1,265 +1,281 @@
-Return-Path: <SRS0=N8uA=4E=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=tuct=4F=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46451C2BA83
-	for <linux-security-module@archiver.kernel.org>; Sun, 16 Feb 2020 19:27:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA031C2BA83
+	for <linux-security-module@archiver.kernel.org>; Mon, 17 Feb 2020 08:02:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0326C2072C
-	for <linux-security-module@archiver.kernel.org>; Sun, 16 Feb 2020 19:27:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="ZAiwpY47"
+	by mail.kernel.org (Postfix) with ESMTP id A20AD20726
+	for <linux-security-module@archiver.kernel.org>; Mon, 17 Feb 2020 08:02:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726020AbgBPT1l (ORCPT
+        id S1727179AbgBQICZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 16 Feb 2020 14:27:41 -0500
-Received: from sonic310-30.consmr.mail.ne1.yahoo.com ([66.163.186.211]:33018
-        "EHLO sonic310-30.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725989AbgBPT1l (ORCPT
+        Mon, 17 Feb 2020 03:02:25 -0500
+Received: from mga11.intel.com ([192.55.52.93]:16991 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726267AbgBQICY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 16 Feb 2020 14:27:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1581881259; bh=ELDqlQ03NQgB7oI6tUqGsOXSkVISQIcDeP06jk+R0gI=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=ZAiwpY47YwVThcPBpfeBL7wkTnXR3kOUMZFAae2z2lk0/9+QoCWpNpCaVnfg3YYqUprOt0IkyEoEyTcrwkO7itxVtmwfRqGYnLyLR+fGPCkt8Vrlg1okxykTF4+0Fi7Am5L/AuIuLTg6m1h/L8oH5pQRZkcuaBJIm2xpC2nt2ugxnpJvjTNToMRPw50PlP8OBEBlbvlMKjbSnFldpiRQFh8jR1pIoCHiLIdljEN4ctfDcHhqnCaJLRGaMZnJz8tLU3u2YdEPUsYgsBxsRFNok3gc33Wt0zEoolfoq64B3V72wAzda7bF+8slA+q7kVsZJHCYvl70sa7FfblM6hYb2Q==
-X-YMail-OSG: z7eH8LkVM1nN9S_30k9rpisoZ8dLKu0MNrtBJIRkS4__2WK5d_gAnQIQl7baTSZ
- utK0Asx0gT4okxVtAe73W_Ikb8k9t86zUJ8UydkVS82TUGLTaqB6JeEULYlk7EkMoj2knw9dolr9
- br2c0RI0M97ESgQxWY_SYk_HOcDtIavhEZRTdvu8vmiqDYZupS1QsH5J1M4Z2iehUxC3HedtAz7m
- OSTeGaXVQJW920f9AzSjgfzYQVHG6Tji.YsoMTpgcByxNN1hIuw1dvL8Sr9y8ShwbumRXTOgVcQ1
- M.tHyZ84UKxNmXDrjbx5.mruMhBge4zmC79mKWyHu_lHEkoy1.NWBLEEQ43n5hB4rM.Zh.Iysqwo
- HB0e5yYM.DqyHw11vqbYtfszWEnvaXBxNUqCelmRNNwQud2ToSoR6KdJp4Ok29UTSerhhUCJ_p4l
- nZgLX45uI6DPRYrZQU3Ama7p.2oF_vix0ELUpfOzSjpDlYmEe23rz_tt4qWjCVSBnZyVoI1bgyfb
- ZQiVX_MQec1Y_ArfBAmqmgkBnsAQH73iPKy07FocYDJN7mTQo2ZPqm8ZAcU7ybeKIsFhT2yr0FMW
- wHrOmx5RavjZHTuVH8I15LoJ9m_OVmh2cPVvgIGKqhP9tPMMhByNwNXAqt_qc1BYpn3TFyAQz3Sm
- ENiswvcMpgeE8J0z.Fr2MwXSJKkI6xnoo8B2XP0vYLhuy4dJwKzsl0vSnjBvUhQxL4SX5JjAx30c
- 8k6Plxs8A8wJ5N9w_z5PzJlKXvFrKGuPgVYSxjb931S30HyfvkhfFm7JJNZaPfLx8mYbOM2.UQIR
- srVXrtzgYszSSe.PhNLayCL4RmG7_nR2clB1h21gRZoWizTR5aopOkL0pVgV3Eoq7RwXYuWEYJUj
- ViDSwA1K2ITHDihbogJenVp1BHyS3LhjyHNPQJ88EvEYvMrzdCL_9eCoeQWnfuM3oWvlGIgMQcPq
- XAVf8deDI2Ees.azj6utQdm2ohP78MvAfOYNnL6wquZAEso.W6nOp_JZPdNXJJMaCurku4AaDwK.
- qLe2WJPQnvTg_U6fvA03OftQKNdzYPRu05QZvCJxXQOovqHqDdBZMapUGwe6vp7i0wIurVKsbexu
- trf3emFeZBhqRFtJxfvJMr6Pjm01KDogtsT1NSh6Gj_kHkRN54tna7o0apdN_EYvwyBGemiw.DNv
- 03ngyYsuBvN8Ve3U1yU_lkkgXHmsOHny6FqYmRDcQPNVno_IxMI6bgpj3JZY9ZzsccHh7j60ZVqI
- J14tiT6Iapr4PJ.MXxwhnjMCrA6rQwuvwJnO4gDgCzZArji9Jl6MPwLAxAAN93EV77BYz3twwV__
- KC8vLO2dHeKtLlug9O7k.3dacdtTtbNOum2RoIx2_KKT8ZihrB_VgY5giYq3F2IYr2Wcj7htBeyE
- f6VxE5OZPkfJwNlgyIjLxmsYWIANzYmDpko38KPU-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.ne1.yahoo.com with HTTP; Sun, 16 Feb 2020 19:27:39 +0000
-Received: by smtp432.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID a3329b1f484036c1569512c99375b883;
-          Sun, 16 Feb 2020 19:27:37 +0000 (UTC)
-Subject: Re: [RFC PATCH] security: <linux/lsm_hooks.h>: fix all kernel-doc
- warnings
-To:     Randy Dunlap <rdunlap@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>
-Cc:     John Johansen <john.johansen@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        Micah Morton <mortonm@chromium.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Paul Moore <paul@paul-moore.com>,
+        Mon, 17 Feb 2020 03:02:24 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Feb 2020 00:02:23 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,451,1574150400"; 
+   d="scan'208";a="258189636"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga004.fm.intel.com with ESMTP; 17 Feb 2020 00:02:22 -0800
+Received: from [10.125.252.180] (abudanko-mobl.ccr.corp.intel.com [10.125.252.180])
+        by linux.intel.com (Postfix) with ESMTP id 9B7B558060A;
+        Mon, 17 Feb 2020 00:02:16 -0800 (PST)
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Subject: [PATCH v7 00/12] Introduce CAP_PERFMON to secure system performance
+ monitoring and observability
+To:     James Morris <jmorris@namei.org>, Serge Hallyn <serge@hallyn.com>,
         Stephen Smalley <sds@tycho.nsa.gov>,
-        Eric Paris <eparis@parisplace.org>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-References: <fb2c98bd-b579-6ad0-721a-56a4f81f0d6e@infradead.org>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Autocrypt: addr=casey@schaufler-ca.com; keydata=
- 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
- abzjfg==
-Message-ID: <16c14750-cbda-892c-c767-ef4e8b9125dd@schaufler-ca.com>
-Date:   Sun, 16 Feb 2020 11:27:36 -0800
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "joonas.lahtinen@linux.intel.com" <joonas.lahtinen@linux.intel.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Will Deacon <will@kernel.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Helge Deller <deller@gmx.de>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     Andi Kleen <ak@linux.intel.com>,
+        Stephane Eranian <eranian@google.com>,
+        Igor Lubashev <ilubashe@akamai.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+        oprofile-list@lists.sf.net,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        linux-man@vger.kernel.org
+Organization: Intel Corp.
+Message-ID: <c8de937a-0b3a-7147-f5ef-69f467e87a13@linux.intel.com>
+Date:   Mon, 17 Feb 2020 11:02:15 +0300
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
  Thunderbird/68.5.0
 MIME-Version: 1.0
-In-Reply-To: <fb2c98bd-b579-6ad0-721a-56a4f81f0d6e@infradead.org>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-X-Mailer: WebService/1.1.15199 hermes Apache-HttpAsyncClient/4.1.4 (Java/1.8.0_181)
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2/15/2020 11:08 PM, Randy Dunlap wrote:
-> From: Randy Dunlap <rdunlap@infradead.org>
->
-> Fix all kernel-doc warnings in <linux/lsm_hooks.h>.
-> Fixes the following warnings:
->
-> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'quotactl' not described in 'security_list_options'
-> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'quota_on' not described in 'security_list_options'
-> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'sb_free_mnt_opts' not described in 'security_list_options'
-> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'sb_eat_lsm_opts' not described in 'security_list_options'
-> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'sb_kern_mount' not described in 'security_list_options'
-> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'sb_show_options' not described in 'security_list_options'
-> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'sb_add_mnt_opt' not described in 'security_list_options'
-> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'd_instantiate' not described in 'security_list_options'
-> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'getprocattr' not described in 'security_list_options'
-> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'setprocattr' not described in 'security_list_options'
-> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'locked_down' not described in 'security_list_options'
-> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'perf_event_open' not described in 'security_list_options'
-> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'perf_event_alloc' not described in 'security_list_options'
-> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'perf_event_free' not described in 'security_list_options'
-> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'perf_event_read' not described in 'security_list_options'
-> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'perf_event_write' not described in 'security_list_options'
->
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
 
-Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+Currently access to perf_events, i915_perf and other performance
+monitoring and observability subsystems of the kernel is open only for
+a privileged process [1] with CAP_SYS_ADMIN capability enabled in the
+process effective set [2].
 
-Thank you very much.
+This patch set introduces CAP_PERFMON capability designed to secure
+system performance monitoring and observability operations so that
+CAP_PERFMON would assist CAP_SYS_ADMIN capability in its governing role
+for performance monitoring and observability subsystems of the kernel.
 
-> Cc: John Johansen <john.johansen@canonical.com>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Micah Morton <mortonm@chromium.org>
-> Cc: James Morris <jmorris@namei.org>
-> Cc: "Serge E. Hallyn" <serge@hallyn.com>
-> Cc: linux-security-module@vger.kernel.org
-> Cc: Paul Moore <paul@paul-moore.com>
-> Cc: Stephen Smalley <sds@tycho.nsa.gov>
-> Cc: Eric Paris <eparis@parisplace.org>
-> Cc: Casey Schaufler <casey@schaufler-ca.com>
-> Cc: Kentaro Takeda <takedakn@nttdata.co.jp>
-> Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> ---
-> Notes:
-> a. The location for some of these might need to be modified.
-> b. 'locked_down' was just missing a final ':'.
-> c. Added a new section: Security hooks for perf events.
->
->  include/linux/lsm_hooks.h |   36 +++++++++++++++++++++++++++++++++++-
->  1 file changed, 35 insertions(+), 1 deletion(-)
->
-> --- lnx-56-rc1.orig/include/linux/lsm_hooks.h
-> +++ lnx-56-rc1/include/linux/lsm_hooks.h
-> @@ -103,6 +103,10 @@
->   * @sb_free_security:
->   *	Deallocate and clear the sb->s_security field.
->   *	@sb contains the super_block structure to be modified.
-> + * @sb_free_mnt_opts:
-> + * 	Free memory associated with @mnt_ops.
-> + * @sb_eat_lsm_opts:
-> + * 	Eat (scan @orig options) and save them in @mnt_opts.
->   * @sb_statfs:
->   *	Check permission before obtaining filesystem statistics for the @mnt
->   *	mountpoint.
-> @@ -136,6 +140,10 @@
->   *	@sb superblock being remounted
->   *	@data contains the filesystem-specific data.
->   *	Return 0 if permission is granted.
-> + * @sb_kern_mount:
-> + * 	Mount this @sb if allowed by permissions.
-> + * @sb_show_options:
-> + * 	Show (print on @m) mount options for this @sb.
->   * @sb_umount:
->   *	Check permission before the @mnt file system is unmounted.
->   *	@mnt contains the mounted file system.
-> @@ -155,6 +163,8 @@
->   *	Copy all security options from a given superblock to another
->   *	@oldsb old superblock which contain information to clone
->   *	@newsb new superblock which needs filled in
-> + * @sb_add_mnt_opt:
-> + * 	Add one mount @option to @mnt_opts.
->   * @sb_parse_opts_str:
->   *	Parse a string of security data filling in the opts structure
->   *	@options string containing all mount options known by the LSM
-> @@ -451,6 +461,12 @@
->   *	security module does not know about attribute or a negative error code
->   *	to abort the copy up. Note that the caller is responsible for reading
->   *	and writing the xattrs as this hook is merely a filter.
-> + * @d_instantiate:
-> + * 	Fill in @inode security information for a @dentry if allowed.
-> + * @getprocattr:
-> + * 	Read attribute @name for process @p and store it into @value if allowed.
-> + * @setprocattr:
-> + * 	Write (set) attribute @name to @value, size @size if allowed.
->   *
->   * Security hooks for kernfs node operations
->   *
-> @@ -1113,6 +1129,7 @@
->   *	In case of failure, @secid will be set to zero.
->   *
->   * Security hooks for individual messages held in System V IPC message queues
-> + *
->   * @msg_msg_alloc_security:
->   *	Allocate and attach a security structure to the msg->security field.
->   *	The security field is initialized to NULL when the structure is first
-> @@ -1302,6 +1319,10 @@
->   *	@cap contains the capability <include/linux/capability.h>.
->   *	@opts contains options for the capable check <include/linux/security.h>
->   *	Return 0 if the capability is granted for @tsk.
-> + * @quotactl:
-> + * 	Check whether the quotactl syscall is allowed for this @sb.
-> + * @quota_on:
-> + * 	Check whether QUOTAON is allowed for this @dentry.
->   * @syslog:
->   *	Check permission before accessing the kernel message ring or changing
->   *	logging to the console.
-> @@ -1449,11 +1470,24 @@
->   * @bpf_prog_free_security:
->   *	Clean up the security information stored inside bpf prog.
->   *
-> - * @locked_down
-> + * @locked_down:
->   *     Determine whether a kernel feature that potentially enables arbitrary
->   *     code execution in kernel space should be permitted.
->   *
->   *     @what: kernel feature being accessed
-> + *
-> + * Security hooks for perf events
-> + *
-> + * @perf_event_open:
-> + * 	Check whether the @type of perf_event_open syscall is allowed.
-> + * @perf_event_alloc:
-> + * 	Allocate and save perf_event security info.
-> + * @perf_event_free:
-> + * 	Release (free) perf_event security info.
-> + * @perf_event_read:
-> + * 	Read perf_event security info if allowed.
-> + * @perf_event_write:
-> + * 	Write perf_event security info if allowed.
->   */
->  union security_list_options {
->  	int (*binder_set_context_mgr)(struct task_struct *mgr);
->
+CAP_PERFMON intends to harden system security and integrity during
+performance monitoring and observability operations by decreasing attack
+surface that is available to a CAP_SYS_ADMIN privileged process [2].
+Providing the access to performance monitoring and observability
+operations under CAP_PERFMON capability singly, without the rest of
+CAP_SYS_ADMIN credentials, excludes chances to misuse the credentials
+and makes the operation more secure. Thus, CAP_PERFMON implements the
+principal of least privilege for performance monitoring and
+observability operations (POSIX IEEE 1003.1e: 2.2.2.39 principle of
+least privilege: A security design principle that states that a process
+or program be granted only those privileges (e.g., capabilities)
+necessary to accomplish its legitimate function, and only for the time
+that such privileges are actually required)
+
+CAP_PERFMON intends to meet the demand to secure system performance
+monitoring and observability operations for adoption in security
+sensitive, restricted, multiuser production environments (e.g. HPC
+clusters, cloud and virtual compute environments), where root or
+CAP_SYS_ADMIN credentials are not available to mass users of a system,
+and securely unblock accessibility of system performance monitoring and
+observability operations beyond root and CAP_SYS_ADMIN use cases.
+
+CAP_PERFMON intends to take over CAP_SYS_ADMIN credentials related to
+system performance monitoring and observability operations and balance
+amount of CAP_SYS_ADMIN credentials following the recommendations in
+the capabilities man page [2] for CAP_SYS_ADMIN: "Note: this capability
+is overloaded; see Notes to kernel developers, below." For backward
+compatibility reasons access to system performance monitoring and
+observability subsystems of the kernel remains open for CAP_SYS_ADMIN
+privileged processes but CAP_SYS_ADMIN capability usage for secure
+system performance monitoring and observability operations is
+discouraged with respect to the designed CAP_PERFMON capability.
+
+Possible alternative solution to this system security hardening,
+capabilities balancing task of making performance monitoring and
+observability operations more secure and accessible could be to use
+the existing CAP_SYS_PTRACE capability to govern system performance
+monitoring and observability subsystems. However CAP_SYS_PTRACE
+capability still provides users with more credentials than are
+required for secure performance monitoring and observability
+operations and this excess is avoided by the designed CAP_PERFMON.
+
+Although software running under CAP_PERFMON can not ensure avoidance of
+related hardware issues, the software can still mitigate those issues
+following the official hardware issues mitigation procedure [3]. The
+bugs in the software itself can be fixed following the standard kernel
+development process [4] to maintain and harden security of system
+performance monitoring and observability operations. Finally, the patch
+set is shaped in the way that simplifies backtracking procedure of
+possible induced issues [5] as much as possible.
+
+The patch set is for tip perf/core repository:
+git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip perf/core
+sha1: fdb64822443ec9fb8c3a74b598a74790ae8d2e22
+
+---
+Changes in v7:
+- updated and extended kernel.rst and perf-security.rst documentation 
+  files with the information about CAP_PERFMON capability and its use cases
+- documented the case of double audit logging of CAP_PERFMON and CAP_SYS_ADMIN
+  capabilities on a SELinux enabled system
+Changes in v6:
+- avoided noaudit checks in perfmon_capable() to explicitly advertise
+  CAP_PERFMON usage thru audit logs to secure system performance
+  monitoring and observability
+Changes in v5:
+- renamed CAP_SYS_PERFMON to CAP_PERFMON
+- extended perfmon_capable() with noaudit checks
+Changes in v4:
+- converted perfmon_capable() into an inline function
+- made perf_events kprobes, uprobes, hw breakpoints and namespaces data
+  available to CAP_SYS_PERFMON privileged processes
+- applied perfmon_capable() to drivers/perf and drivers/oprofile
+- extended __cmd_ftrace() with support of CAP_SYS_PERFMON
+Changes in v3:
+- implemented perfmon_capable() macros aggregating required capabilities
+  checks
+Changes in v2:
+- made perf_events trace points available to CAP_SYS_PERFMON privileged
+  processes
+- made perf_event_paranoid_check() treat CAP_SYS_PERFMON equally to
+  CAP_SYS_ADMIN
+- applied CAP_SYS_PERFMON to i915_perf, bpf_trace, powerpc and parisc
+  system performance monitoring and observability related subsystems
+
+---
+Alexey Budankov (12):
+  capabilities: introduce CAP_PERFMON to kernel and user space
+  perf/core: open access to the core for CAP_PERFMON privileged process
+  perf/core: open access to probes for CAP_PERFMON privileged process
+  perf tool: extend Perf tool with CAP_PERFMON capability support
+  drm/i915/perf: open access for CAP_PERFMON privileged process
+  trace/bpf_trace: open access for CAP_PERFMON privileged process
+  powerpc/perf: open access for CAP_PERFMON privileged process
+  parisc/perf: open access for CAP_PERFMON privileged process
+  drivers/perf: open access for CAP_PERFMON privileged process
+  drivers/oprofile: open access for CAP_PERFMON privileged process
+  doc/admin-guide: update perf-security.rst with CAP_PERFMON information
+  doc/admin-guide: update kernel.rst with CAP_PERFMON information
+
+ Documentation/admin-guide/perf-security.rst | 65 +++++++++++++--------
+ Documentation/admin-guide/sysctl/kernel.rst | 16 +++--
+ arch/parisc/kernel/perf.c                   |  2 +-
+ arch/powerpc/perf/imc-pmu.c                 |  4 +-
+ drivers/gpu/drm/i915/i915_perf.c            | 13 ++---
+ drivers/oprofile/event_buffer.c             |  2 +-
+ drivers/perf/arm_spe_pmu.c                  |  4 +-
+ include/linux/capability.h                  |  4 ++
+ include/linux/perf_event.h                  |  6 +-
+ include/uapi/linux/capability.h             |  8 ++-
+ kernel/events/core.c                        |  6 +-
+ kernel/trace/bpf_trace.c                    |  2 +-
+ security/selinux/include/classmap.h         |  4 +-
+ tools/perf/builtin-ftrace.c                 |  5 +-
+ tools/perf/design.txt                       |  3 +-
+ tools/perf/util/cap.h                       |  4 ++
+ tools/perf/util/evsel.c                     | 10 ++--
+ tools/perf/util/util.c                      |  1 +
+ 18 files changed, 98 insertions(+), 61 deletions(-)
+
+---
+Validation (Intel Skylake, 8 cores, Fedora 29, 5.5.0-rc3+, x86_64):
+
+libcap library [6], [7], [8] and Perf tool can be used to apply
+CAP_PERFMON capability for secure system performance monitoring and
+observability beyond the scope permitted by the system wide
+perf_event_paranoid kernel setting [9] and below are the steps for
+evaluation:
+
+  - patch, build and boot the kernel
+  - patch, build Perf tool e.g. to /home/user/perf
+  ...
+  # git clone git://git.kernel.org/pub/scm/libs/libcap/libcap.git libcap
+  # pushd libcap
+  # patch libcap/include/uapi/linux/capabilities.h with [PATCH 1]
+  # make
+  # pushd progs
+  # ./setcap "cap_perfmon,cap_sys_ptrace,cap_syslog=ep" /home/user/perf
+  # ./setcap -v "cap_perfmon,cap_sys_ptrace,cap_syslog=ep" /home/user/perf
+  /home/user/perf: OK
+  # ./getcap /home/user/perf
+  /home/user/perf = cap_sys_ptrace,cap_syslog,cap_perfmon+ep
+  # echo 2 > /proc/sys/kernel/perf_event_paranoid
+  # cat /proc/sys/kernel/perf_event_paranoid 
+  2
+  ...
+  $ /home/user/perf top
+    ... works as expected ...
+  $ cat /proc/`pidof perf`/status
+  Name:	perf
+  Umask:	0002
+  State:	S (sleeping)
+  Tgid:	2958
+  Ngid:	0
+  Pid:	2958
+  PPid:	9847
+  TracerPid:	0
+  Uid:	500	500	500	500
+  Gid:	500	500	500	500
+  FDSize:	256
+  ...
+  CapInh:	0000000000000000
+  CapPrm:	0000004400080000
+  CapEff:	0000004400080000 => 01000100 00000000 00001000 00000000 00000000
+                                     cap_perfmon,cap_sys_ptrace,cap_syslog
+  CapBnd:	0000007fffffffff
+  CapAmb:	0000000000000000
+  NoNewPrivs:	0
+  Seccomp:	0
+  Speculation_Store_Bypass:	thread vulnerable
+  Cpus_allowed:	ff
+  Cpus_allowed_list:	0-7
+  ...
+
+Usage of cap_perfmon effectively avoids unused credentials excess:
+
+- with cap_sys_admin:
+  CapEff:	0000007fffffffff => 01111111 11111111 11111111 11111111 11111111
+
+- with cap_perfmon:
+  CapEff:	0000004400080000 => 01000100 00000000 00001000 00000000 00000000
+                                    38   34               19
+                               perfmon   syslog           sys_ptrace
+
+---
+[1] https://www.kernel.org/doc/html/latest/admin-guide/perf-security.html
+[2] http://man7.org/linux/man-pages/man7/capabilities.7.html
+[3] https://www.kernel.org/doc/html/latest/process/embargoed-hardware-issues.html
+[4] https://www.kernel.org/doc/html/latest/admin-guide/security-bugs.html
+[5] https://www.kernel.org/doc/html/latest/process/management-style.html#decisions
+[6] http://man7.org/linux/man-pages/man8/setcap.8.html
+[7] https://git.kernel.org/pub/scm/libs/libcap/libcap.git
+[8] https://sites.google.com/site/fullycapable/, posix_1003.1e-990310.pdf
+[9] http://man7.org/linux/man-pages/man2/perf_event_open.2.html
