@@ -2,128 +2,44 @@ Return-Path: <SRS0=tuct=4F=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5FD0C7619B
-	for <linux-security-module@archiver.kernel.org>; Mon, 17 Feb 2020 08:13:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AED25C7619F
+	for <linux-security-module@archiver.kernel.org>; Mon, 17 Feb 2020 09:37:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C813E20725
-	for <linux-security-module@archiver.kernel.org>; Mon, 17 Feb 2020 08:13:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91A882070B
+	for <linux-security-module@archiver.kernel.org>; Mon, 17 Feb 2020 09:37:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727576AbgBQINt (ORCPT
+        id S1728904AbgBQJhF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 17 Feb 2020 03:13:49 -0500
-Received: from mga07.intel.com ([134.134.136.100]:6404 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726414AbgBQINt (ORCPT
+        Mon, 17 Feb 2020 04:37:05 -0500
+Received: from out30-54.freemail.mail.aliyun.com ([115.124.30.54]:59769 "EHLO
+        out30-54.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728889AbgBQJhF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 17 Feb 2020 03:13:49 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Feb 2020 00:13:48 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,451,1574150400"; 
-   d="scan'208";a="435475567"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga006.fm.intel.com with ESMTP; 17 Feb 2020 00:13:47 -0800
-Received: from [10.125.252.180] (abudanko-mobl.ccr.corp.intel.com [10.125.252.180])
-        by linux.intel.com (Postfix) with ESMTP id 1684E5804A2;
-        Mon, 17 Feb 2020 00:13:40 -0800 (PST)
-Subject: [PATCH v7 12/12] doc/admin-guide: update kernel.rst with CAP_PERFMON
- information
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-To:     James Morris <jmorris@namei.org>, Serge Hallyn <serge@hallyn.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "joonas.lahtinen@linux.intel.com" <joonas.lahtinen@linux.intel.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Will Deacon <will@kernel.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Helge Deller <deller@gmx.de>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Andi Kleen <ak@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>,
-        Igor Lubashev <ilubashe@akamai.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        oprofile-list@lists.sf.net,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        linux-man@vger.kernel.org
-References: <c8de937a-0b3a-7147-f5ef-69f467e87a13@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <ab933480-ac99-2e22-ed91-f25d2b23ef38@linux.intel.com>
-Date:   Mon, 17 Feb 2020 11:13:39 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
-MIME-Version: 1.0
-In-Reply-To: <c8de937a-0b3a-7147-f5ef-69f467e87a13@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 17 Feb 2020 04:37:05 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04428;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0Tq9PhSs_1581932216;
+Received: from localhost(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0Tq9PhSs_1581932216)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Mon, 17 Feb 2020 17:36:56 +0800
+From:   Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+To:     herbert@gondor.apana.org.au, davem@davemloft.net,
+        jarkko.sakkinen@linux.intel.com, zohar@linux.ibm.com,
+        ebiggers@kernel.org, dmitry.kasatkin@gmail.com, jmorris@namei.org,
+        serge@hallyn.com
+Cc:     linux-crypto@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] IMA hash algorithm supports sm3
+Date:   Mon, 17 Feb 2020 17:36:47 +0800
+Message-Id: <20200217093649.97938-1-tianjia.zhang@linux.alibaba.com>
+X-Mailer: git-send-email 2.17.1
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-Update kernel.rst documentation file with the information
-related to usage of CAP_PERFMON capability to secure performance
-monitoring and observability operations in system.
-
-Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
----
- Documentation/admin-guide/sysctl/kernel.rst | 16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
-
-diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
-index def074807cee..b06ae9389809 100644
---- a/Documentation/admin-guide/sysctl/kernel.rst
-+++ b/Documentation/admin-guide/sysctl/kernel.rst
-@@ -720,20 +720,26 @@ perf_event_paranoid:
- ====================
- 
- Controls use of the performance events system by unprivileged
--users (without CAP_SYS_ADMIN).  The default value is 2.
-+users (without CAP_PERFMON). The default value is 2.
-+
-+For backward compatibility reasons access to system performance
-+monitoring and observability remains open for CAP_SYS_ADMIN
-+privileged processes but CAP_SYS_ADMIN usage for secure system
-+performance monitoring and observability operations is discouraged
-+with respect to CAP_PERFMON use cases.
- 
- ===  ==================================================================
-  -1  Allow use of (almost) all events by all users
- 
-      Ignore mlock limit after perf_event_mlock_kb without CAP_IPC_LOCK
- 
-->=0  Disallow ftrace function tracepoint by users without CAP_SYS_ADMIN
-+>=0  Disallow ftrace function tracepoint by users without CAP_PERFMON
- 
--     Disallow raw tracepoint access by users without CAP_SYS_ADMIN
-+     Disallow raw tracepoint access by users without CAP_PERFMON
- 
-->=1  Disallow CPU event access by users without CAP_SYS_ADMIN
-+>=1  Disallow CPU event access by users without CAP_PERFMON
- 
-->=2  Disallow kernel profiling by users without CAP_SYS_ADMIN
-+>=2  Disallow kernel profiling by users without CAP_PERFMON
- ===  ==================================================================
- 
- 
--- 
-2.20.1
+Fixed an issue where the sm3 algorithm name mismatch in the crypto subsystem hash_algo_name.
+Make IMA support sm3 hash algorithm, added support for sm3 in IMA algorithm Kconfig configuration.
 
 
