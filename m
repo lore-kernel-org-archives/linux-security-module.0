@@ -2,150 +2,110 @@ Return-Path: <SRS0=lArx=4G=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2DA1C34026
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Feb 2020 14:38:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58524C3403F
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Feb 2020 14:50:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8147B20801
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Feb 2020 14:38:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E6F0208C4
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Feb 2020 14:50:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A+CFIqQL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726841AbgBROif (ORCPT
+        id S1726645AbgBROuv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 18 Feb 2020 09:38:35 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:53250 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726821AbgBROif (ORCPT
+        Tue, 18 Feb 2020 09:50:51 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:34233 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726605AbgBROuv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 18 Feb 2020 09:38:35 -0500
-Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein.fritz.box)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1j43y8-0000fF-OS; Tue, 18 Feb 2020 14:35:24 +0000
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     =?UTF-8?q?St=C3=A9phane=20Graber?= <stgraber@ubuntu.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Aleksa Sarai <cyphar@cyphar.com>, Jann Horn <jannh@google.com>
-Cc:     smbarber@chromium.org, Seth Forshee <seth.forshee@canonical.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Serge Hallyn <serge@hallyn.com>,
-        James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Phil Estes <estesp@gmail.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        containers@lists.linux-foundation.org,
-        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH v3 20/25] exec: bprm_fill_uid(): handle fsid mappings
-Date:   Tue, 18 Feb 2020 15:34:06 +0100
-Message-Id: <20200218143411.2389182-21-christian.brauner@ubuntu.com>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200218143411.2389182-1-christian.brauner@ubuntu.com>
-References: <20200218143411.2389182-1-christian.brauner@ubuntu.com>
+        Tue, 18 Feb 2020 09:50:51 -0500
+Received: by mail-qt1-f193.google.com with SMTP id l16so9993442qtq.1;
+        Tue, 18 Feb 2020 06:50:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=PGsIFpt7ejI04gpcZDzS9agp/KwgfVH4fOkFoivCASg=;
+        b=A+CFIqQLqeyU4kvK3MhSbCMbuuEqrbjvvIqJxOUTv2HgmiXGYNW7C1z+p7V0gC79zi
+         GQEvfcKfBj14K9RWMUehMaRhJ2bCH/FRNv2MTPHpbNz+UAoC0npdPeZJVhl0U8UI/Wme
+         CffES0H9jOiIQ7QEXTg1U5MlAtT6wyJGipAWKClCzYDBkaQ/o7mVwhVmINa1xhrFoxMi
+         943U2II4fkn95KMXcsrTNq8qlG6tMcCW3kximKXa7u+r58cfcl+IrK13vkZM2BQAb/mH
+         82Pug4U25ikvmGjuiGRS089d55/ZkW/WgwuDwxFqFRMXK6p9Ahy4E6X7bRulK/oz8dx2
+         JwCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=PGsIFpt7ejI04gpcZDzS9agp/KwgfVH4fOkFoivCASg=;
+        b=iNAnhHZsCcqKg01Y1WjMEI8qZZ7OtV5Nb9cRhW0pBCbdEUsUbPE2zYrZpr9uuJuAql
+         7nwjPm9DRoA95luMki4k5ccJX9b/PdxKzj6lG3+/p6mcBy187UQgTStzCjsPgCm0ybwG
+         YkOF7UgCR9DkRQ1OMDGTcxXqqW+FmHLPF/TSEXvQeAOQWRy8S/PNaipRGOgMuTfMbefb
+         N8w7A53o9UF54w6ZOzUksRWf/j9M1jozpCXGhTuBxfm88mV9Pzi9nx5Gm2BmhRNlTLa7
+         siwjmJj0kRh7PEJA9hJNV+ldHLx2+Cg2FIEibHW7F9tO8RCIJ2HviRxv3Aiod61/zBiy
+         32ZA==
+X-Gm-Message-State: APjAAAVn4xZDo/8ivJICQ+aGHWZHlXl6SND33GHeA9niBuC+H6oyWZ/J
+        oeFtkDWDj2M67zU3rifaVe4=
+X-Google-Smtp-Source: APXvYqz3WZcsMIi6+6MdOuy7Qphd3EjWE46lqPDYwzRM1wZevIiPom5g0b7L2RYgvCWP20Z+2K2k7g==
+X-Received: by 2002:ac8:1c23:: with SMTP id a32mr17338223qtk.119.1582037448975;
+        Tue, 18 Feb 2020 06:50:48 -0800 (PST)
+Received: from localhost.localdomain (pool-74-108-111-89.nycmny.fios.verizon.net. [74.108.111.89])
+        by smtp.gmail.com with ESMTPSA id h9sm1874717qtq.61.2020.02.18.06.50.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2020 06:50:47 -0800 (PST)
+Message-ID: <a3bdba9f94669acb1be7bacec456918eb520e606.camel@gmail.com>
+Subject: Re: [PATCH v2] ima: export the measurement list when needed
+From:   david.safford@gmail.com
+To:     Ken Goldman <kgold@linux.ibm.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Cc:     monty.wiseman@ge.com
+Date:   Tue, 18 Feb 2020 09:50:46 -0500
+In-Reply-To: <f095a412-9967-416d-a4d9-d3b5799f8409@linux.ibm.com>
+References: <20200108111743.23393-1-janne.karhunen@gmail.com>
+         <CAE=NcrZrbRinOAbB+k1rjhcae3nqfJ8snC_EnY8njMDioM7=vg@mail.gmail.com>
+         <1580998432.5585.411.camel@linux.ibm.com>
+         <40f780ffe2ddc879e5fa4443c098c0f1d331390f.camel@gmail.com>
+         <1581366258.5585.891.camel@linux.ibm.com>
+         <fab03a0b8cc9dc93f2d0db51071521ce82e2b96b.camel@gmail.com>
+         <f095a412-9967-416d-a4d9-d3b5799f8409@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.3 (3.34.3-1.fc31) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Make sure that during suid/sgid binary execution we lookup the fsids in the
-fsid mappings. If the kernel is compiled without fsid mappings or no fsid
-mappings are setup the behavior is unchanged.
+On Thu, 2020-02-13 at 15:11 -0500, Ken Goldman wrote:
+> On 2/11/2020 11:10 AM, david.safford@gmail.com wrote:
+> > There is no reason to resend the same data for every attestation,
+> > nor is there any reason to store already attested measurements anywhere
+> > on the client. By versioning the log file names, userspace gets a
+> > simple way to know what has and has not been attested, and for small
+> > embedded devices we don't need to waste memory or filesystem space
+> > on the data already attested.
+> 
+> Yes ... no.
+> 
+> There isn't any reason to resend measurements that a verifier has 
+> already received.  In fact, the logic I coded also said "if PCR 10 
+> didn't change, there's no need to even ask for the measurement log".
+> 
+> However, don't you have to save already attested measurements for
+> the case where there are multiple verifiers?  A different verifier would 
+> have to receive all measurements.
 
-Assuming we have a binary in a given user namespace that is owned by 0:0 in the
-given user namespace which appears as 300000:300000 on-disk in the initial user
-namespace. Now assume we write an id mapping of 0 100000 100000 and an fsid
-mapping for 0 300000 300000 in the user namespace. When we hit bprm_fill_uid()
-during setid execution we will retrieve inode kuid=300000 and kgid=300000. We
-first check whether there's an fsid mapping for these kids. In our scenario we
-find that they map to fsuid=0 and fsgid=0 in the user namespace. Now we
-translate them into kids in the id mapping. In our example they translate to
-kuid=100000 and kgid=100000 which means the file will ultimately run as uid=0
-and gid=0 in the user namespace and as uid=100000, gid=100000 in the initial
-user namespace.
-Let's alter the example and assume that there is an fsid mapping of 0 300000
-300000 set up but no id mapping has been setup for the user namespace. In this
-the last step of translating into a valid kid pair in the id mappings will fail
-and we will behave as before and ignore the sid bits.
+Certainly for the use case of multiple verifiers, the client would not 
+delete the data until all verifiers had acknowledged receipt.
 
-Cc: Jann Horn <jannh@google.com>
-Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
----
-/* v2 */
-patch added
-- Christian Brauner <christian.brauner@ubuntu.com>:
-  - Make sure that bprm_fill_uid() handles fsid mappings.
+My main point was that there are at least some use cases in which the
+client does not need to keep the measurement list, and IMA should 
+support the option of exporting and deleting the list in these cases.
 
-/* v3 */
-- Christian Brauner <christian.brauner@ubuntu.com>:
-  - Fix commit message.
----
- fs/exec.c | 25 +++++++++++++++++++------
- 1 file changed, 19 insertions(+), 6 deletions(-)
-
-diff --git a/fs/exec.c b/fs/exec.c
-index db17be51b112..9e4a7e757cef 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -62,6 +62,7 @@
- #include <linux/oom.h>
- #include <linux/compat.h>
- #include <linux/vmalloc.h>
-+#include <linux/fsuidgid.h>
- 
- #include <linux/uaccess.h>
- #include <asm/mmu_context.h>
-@@ -1518,8 +1519,8 @@ static void bprm_fill_uid(struct linux_binprm *bprm)
- {
- 	struct inode *inode;
- 	unsigned int mode;
--	kuid_t uid;
--	kgid_t gid;
-+	kuid_t uid, euid;
-+	kgid_t gid, egid;
- 
- 	/*
- 	 * Since this can be called multiple times (via prepare_binprm),
-@@ -1551,18 +1552,30 @@ static void bprm_fill_uid(struct linux_binprm *bprm)
- 	inode_unlock(inode);
- 
- 	/* We ignore suid/sgid if there are no mappings for them in the ns */
--	if (!kuid_has_mapping(bprm->cred->user_ns, uid) ||
--		 !kgid_has_mapping(bprm->cred->user_ns, gid))
-+	if (!kfsuid_has_mapping(bprm->cred->user_ns, uid) ||
-+		 !kfsgid_has_mapping(bprm->cred->user_ns, gid))
- 		return;
- 
-+	if (mode & S_ISUID) {
-+		euid = kfsuid_to_kuid(bprm->cred->user_ns, uid);
-+		if (!uid_valid(euid))
-+			return;
-+	}
-+
-+	if ((mode & (S_ISGID | S_IXGRP)) == (S_ISGID | S_IXGRP)) {
-+		egid = kfsgid_to_kgid(bprm->cred->user_ns, gid);
-+		if (!gid_valid(egid))
-+			return;
-+	}
-+
- 	if (mode & S_ISUID) {
- 		bprm->per_clear |= PER_CLEAR_ON_SETID;
--		bprm->cred->euid = uid;
-+		bprm->cred->euid = euid;
- 	}
- 
- 	if ((mode & (S_ISGID | S_IXGRP)) == (S_ISGID | S_IXGRP)) {
- 		bprm->per_clear |= PER_CLEAR_ON_SETID;
--		bprm->cred->egid = gid;
-+		bprm->cred->egid = egid;
- 	}
- }
- 
--- 
-2.25.0
+dave
 
