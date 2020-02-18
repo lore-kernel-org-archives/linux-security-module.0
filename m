@@ -2,124 +2,101 @@ Return-Path: <SRS0=lArx=4G=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA9E3C34031
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Feb 2020 00:14:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7ED4C34031
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Feb 2020 01:33:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1A3320836
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Feb 2020 00:14:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="dPTgLG+Y"
+	by mail.kernel.org (Postfix) with ESMTP id B921620801
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Feb 2020 01:33:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726054AbgBRAOi (ORCPT
+        id S1726091AbgBRBd3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 17 Feb 2020 19:14:38 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:44547 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725997AbgBRAOi (ORCPT
+        Mon, 17 Feb 2020 20:33:29 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35644 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726097AbgBRBd3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 17 Feb 2020 19:14:38 -0500
-Received: by mail-ed1-f65.google.com with SMTP id g19so22661012eds.11
-        for <linux-security-module@vger.kernel.org>; Mon, 17 Feb 2020 16:14:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=C1vYFSkdKc64YU909r3NN/RxWnwYJTgCAzVYJykceo4=;
-        b=dPTgLG+YkkLPBW9twraX80RUev1XvRASe4OXsqmBuzlxxZR1SxZRuxc7fyQxjupqcv
-         ywjCvau2eVJdkP5foRhAPzEcyd4ivNGjvrwSrpqLjRpinZLegg2PjvnFB4IcYDZbtusg
-         OZM7pNxc/FUdrNtUYsh7YaTqEsOrn5cFeWXBEe99VTeuHLbmyAN2RScSyPrXh5hmWh6M
-         0qlWjSjggkhQYRR4N0dNZI8R6JnLNapNQM7O0HIS5P1mBDyLb8bPpc9f6k9GXtEctxXJ
-         EdfhLdGWGGq6HRVFkH/uZ8wGUPfyUCCbgTXqUTi8+h57QAJqSf1STcyVWvH8zlMBj3+a
-         t/NQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=C1vYFSkdKc64YU909r3NN/RxWnwYJTgCAzVYJykceo4=;
-        b=PGobyQM+aSDu+zZ2R3aLMyHuCNJUFbTzCCkkWNVRpBKkxwSJpZBLIjMgT4onv3miN2
-         bu9ke2RI1ig0VQIk09cr0QMmA50azrlX2UggOLtw+wfYz+J8q/WaDICkE8dW+OuL0i5n
-         jOKaLaKCnH5k0hsyn7axF39zgyFGX80ngrPrS+hHbjoYMM0WtIq66By67/JYCpOsmNS6
-         zgSgfi/hdfHiOUXGH6G5aulpy1NyjdfSJr4YnQEHbAshB7eyWtqFByiWiDRrtWYtcX6a
-         v97Dtkg8sXVt+7FdwzHXK9jvBMbhpq0LvOdbnEDRK5mjhEC5xnBTIjlmCjW1yspNGOh+
-         4H8Q==
-X-Gm-Message-State: APjAAAU18eZfBOk4QiEMIYpIyNd0DOOu8Vaq7zATdKPF79DnD2tMuBNP
-        +Z4RI+rbJjjVIbIrpqc1N2JgxLvoZ1SCTHLgsejXHZtcsg==
-X-Google-Smtp-Source: APXvYqwn0E8HDTiFXoWF/DdHcW13nSXh+LKbFA1du82DjhCL9nzW4mM5cz9RyEKKtHSNtDsWRxboa3ZJFD/dcTvfKo4=
-X-Received: by 2002:a05:6402:61a:: with SMTP id n26mr15421837edv.135.1581984875984;
- Mon, 17 Feb 2020 16:14:35 -0800 (PST)
-MIME-Version: 1.0
-References: <20200213194157.5877-1-sds@tycho.nsa.gov>
-In-Reply-To: <20200213194157.5877-1-sds@tycho.nsa.gov>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 17 Feb 2020 19:14:24 -0500
-Message-ID: <CAHC9VhSsjrgu2Jn+yiV5Bz_wt2x5bgEXdhjqLA+duWYNo4gOtw@mail.gmail.com>
-Subject: Re: [RFC PATCH] security,anon_inodes,kvm: enable security support for
- anon inodes
-To:     linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
-Cc:     selinux@vger.kernel.org, kvm@vger.kernel.org, dancol@google.com,
-        nnk@google.com, Stephen Smalley <sds@tycho.nsa.gov>
+        Mon, 17 Feb 2020 20:33:29 -0500
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01I1TPkl123675
+        for <linux-security-module@vger.kernel.org>; Mon, 17 Feb 2020 20:33:28 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2y6bumvy2h-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Mon, 17 Feb 2020 20:33:27 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Tue, 18 Feb 2020 01:33:25 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 18 Feb 2020 01:33:22 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01I1XLFl45023244
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 18 Feb 2020 01:33:21 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0DF3F52051;
+        Tue, 18 Feb 2020 01:33:21 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.165.167])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 080315204F;
+        Tue, 18 Feb 2020 01:33:18 +0000 (GMT)
+Subject: Re: [PATCH v2 1/2] crypto: fix mismatched hash algorithm name
+ sm3-256 to sm3
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Tianjia Zhang <tianjia.zhang@linux.alibaba.com>,
+        herbert@gondor.apana.org.au, davem@davemloft.net,
+        jarkko.sakkinen@linux.intel.com, ebiggers@kernel.org,
+        dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com
+Cc:     linux-crypto@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Mon, 17 Feb 2020 20:33:18 -0500
+In-Reply-To: <20200217093649.97938-2-tianjia.zhang@linux.alibaba.com>
+References: <20200217093649.97938-1-tianjia.zhang@linux.alibaba.com>
+         <20200217093649.97938-2-tianjia.zhang@linux.alibaba.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 20021801-4275-0000-0000-000003A2F334
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20021801-4276-0000-0000-000038B6F8A5
+Message-Id: <1581989598.8515.233.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-17_14:2020-02-17,2020-02-17 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
+ adultscore=0 suspectscore=0 mlxlogscore=999 lowpriorityscore=0
+ priorityscore=1501 clxscore=1015 phishscore=0 mlxscore=0 bulkscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002180009
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Feb 13, 2020 at 2:41 PM Stephen Smalley <sds@tycho.nsa.gov> wrote:
->
-> Add support for labeling and controlling access to files attached to anon
-> inodes. Introduce extended interfaces for creating such files to permit
-> passing a related file as an input to decide how to label the anon
-> inode. Define a security hook for initializing the anon inode security
-> attributes. Security attributes are either inherited from a related file
-> or determined based on some combination of the creating task and policy
-> (in the case of SELinux, using type_transition rules).  As an
-> example user of the inheritance support, convert kvm to use the new
-> interface for passing the related file so that the anon inode can inherit
-> the security attributes of /dev/kvm and provide consistent access control
-> for subsequent ioctl operations.  Other users of anon inodes, including
-> userfaultfd, will default to the transition-based mechanism instead.
->
-> Compared to the series in
-> https://lore.kernel.org/selinux/20200211225547.235083-1-dancol@google.com/,
-> this approach differs in that it does not require creation of a separate
-> anonymous inode for each file (instead storing the per-instance security
-> information in the file security blob), it applies labeling and control
-> to all users of anonymous inodes rather than requiring opt-in via a new
-> flag, it supports labeling based on a related inode if provided,
-> it relies on type transitions to compute the label of the anon inode
-> when there is no related inode, and it does not require introducing a new
-> security class for each user of anonymous inodes.
->
-> On the other hand, the approach in this patch does expose the name passed
-> by the creator of the anon inode to the policy (an indirect mapping could
-> be provided within SELinux if these names aren't considered to be stable),
-> requires the definition of type_transition rules to distinguish userfaultfd
-> inodes from proc inodes based on type since they share the same class,
-> doesn't support denying the creation of anonymous inodes (making the hook
-> added by this patch return something other than void is problematic due to
-> it being called after the file is already allocated and error handling in
-> the callers can't presently account for this scenario and end up calling
-> release methods multiple times), and may be more expensive
-> (security_transition_sid overhead on each anon inode allocation).
->
-> We are primarily posting this RFC patch now so that the two different
-> approaches can be concretely compared.  We anticipate a hybrid of the
-> two approaches being the likely outcome in the end.  In particular
-> if support for allocating a separate inode for each of these files
-> is acceptable, then we would favor storing the security information
-> in the inode security blob and using it instead of the file security
-> blob.
+On Mon, 2020-02-17 at 17:36 +0800, Tianjia Zhang wrote:
+> The name sm3-256 is defined in hash_algo_name in hash_info, but the
+> algorithm name implemented in sm3_generic.c is sm3, which will cause
+> the sm3-256 algorithm to be not found in some application scenarios of
+> the hash algorithm, and an ENOENT error will occur. For example,
+> IMA, keys, and other subsystems that reference hash_algo_name all use
+> the hash algorithm of sm3.
+> 
+> According to https://tools.ietf.org/id/draft-oscca-cfrg-sm3-01.html,
+> SM3 always produces a 256-bit hash value and there are no plans for
+> other length development, so there is no ambiguity in the name of sm3.
+> 
+> Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+> Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-Bringing this back up in hopes of attracting some attention from the
-fs-devel crowd and Al.  As Stephen already mentioned, from a SELinux
-perspective we would prefer to attach the security blob to the inode
-as opposed to the file struct; does anyone have any objections to
-that?
+The previous version of this patch set is queued in the next-
+integrity-testing branch.  That version of this patch didn't
+change TPM_ALG_SM3_256.  Unless the TPM standard was modified, the TPM
+spec refers to it as TPM_ALG_SM3_256.  Has that changed?
 
--- 
-paul moore
-www.paul-moore.com
+Mimi
+
