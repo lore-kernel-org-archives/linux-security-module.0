@@ -4,27 +4,27 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9513AC34040
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Feb 2020 14:35:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70280C3403F
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Feb 2020 14:35:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76A0024658
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Feb 2020 14:35:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 511A3208C4
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Feb 2020 14:35:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727161AbgBROfm (ORCPT
+        id S1726667AbgBROfz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 18 Feb 2020 09:35:42 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:53053 "EHLO
+        Tue, 18 Feb 2020 09:35:55 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:53068 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726963AbgBROfl (ORCPT
+        with ESMTP id S1727108AbgBROfm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 18 Feb 2020 09:35:41 -0500
+        Tue, 18 Feb 2020 09:35:42 -0500
 Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein.fritz.box)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <christian.brauner@ubuntu.com>)
-        id 1j43y3-0000fF-7I; Tue, 18 Feb 2020 14:35:19 +0000
+        id 1j43y5-0000fF-CD; Tue, 18 Feb 2020 14:35:21 +0000
 From:   Christian Brauner <christian.brauner@ubuntu.com>
 To:     =?UTF-8?q?St=C3=A9phane=20Graber?= <stgraber@ubuntu.com>,
         "Eric W. Biederman" <ebiederm@xmission.com>,
@@ -41,9 +41,9 @@ Cc:     smbarber@chromium.org, Seth Forshee <seth.forshee@canonical.com>,
         containers@lists.linux-foundation.org,
         linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
         Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH v3 15/25] posix_acl: handle fsid mappings
-Date:   Tue, 18 Feb 2020 15:34:01 +0100
-Message-Id: <20200218143411.2389182-16-christian.brauner@ubuntu.com>
+Subject: [PATCH v3 17/25] commoncap: cap_bprm_set_creds(): handle fsid mappings
+Date:   Tue, 18 Feb 2020 15:34:03 +0100
+Message-Id: <20200218143411.2389182-18-christian.brauner@ubuntu.com>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200218143411.2389182-1-christian.brauner@ubuntu.com>
 References: <20200218143411.2389182-1-christian.brauner@ubuntu.com>
@@ -53,85 +53,68 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Switch posix_acls() to lookup fsids in the fsid mappings. If no fsid
-mappings are setup the behavior is unchanged, i.e. fsids are looked up in the
-id mappings.
+During exec the kfsids are currently reset to the effective kids. To retain the
+same semantics with the introduction of fsid mappings, we lookup the userspace
+effective id in the id mappings and translate the effective id into the
+corresponding kfsid in the fsid mapping. This means, the behavior is unchanged
+when no fsid mappings are setup and the semantics stay the same even when fsid
+mappings are setup.
 
-Afaict, all filesystems that share a superblock in all user namespaces
-currently do not support acls so this change should be safe to do
-unconditionally.
-
+Cc: Jann Horn <jannh@google.com>
 Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 ---
 /* v2 */
-unchanged
+- Christian Brauner <christian.brauner@ubuntu.com>:
+  - Reset kfsids used for userns visible filesystems such as proc too.
 
 /* v3 */
 unchanged
 ---
- fs/posix_acl.c | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
+ security/commoncap.c | 17 ++++++++++++++---
+ 1 file changed, 14 insertions(+), 3 deletions(-)
 
-diff --git a/fs/posix_acl.c b/fs/posix_acl.c
-index 249672bf54fe..ed6112c9b804 100644
---- a/fs/posix_acl.c
-+++ b/fs/posix_acl.c
-@@ -22,6 +22,7 @@
- #include <linux/xattr.h>
- #include <linux/export.h>
+diff --git a/security/commoncap.c b/security/commoncap.c
+index f4ee0ae106b2..55e6cc24f887 100644
+--- a/security/commoncap.c
++++ b/security/commoncap.c
+@@ -24,6 +24,7 @@
  #include <linux/user_namespace.h>
+ #include <linux/binfmts.h>
+ #include <linux/personality.h>
 +#include <linux/fsuidgid.h>
  
- static struct posix_acl **acl_by_type(struct inode *inode, int type)
- {
-@@ -692,12 +693,12 @@ static void posix_acl_fix_xattr_userns(
- 	for (end = entry + count; entry != end; entry++) {
- 		switch(le16_to_cpu(entry->e_tag)) {
- 		case ACL_USER:
--			uid = make_kuid(from, le32_to_cpu(entry->e_id));
--			entry->e_id = cpu_to_le32(from_kuid(to, uid));
-+			uid = make_kfsuid(from, le32_to_cpu(entry->e_id));
-+			entry->e_id = cpu_to_le32(from_kfsuid(to, uid));
- 			break;
- 		case ACL_GROUP:
--			gid = make_kgid(from, le32_to_cpu(entry->e_id));
--			entry->e_id = cpu_to_le32(from_kgid(to, gid));
-+			gid = make_kfsgid(from, le32_to_cpu(entry->e_id));
-+			entry->e_id = cpu_to_le32(from_kfsgid(to, gid));
- 			break;
- 		default:
- 			break;
-@@ -765,14 +766,14 @@ posix_acl_from_xattr(struct user_namespace *user_ns,
+ /*
+  * If a non-root user executes a setuid-root binary in
+@@ -810,7 +811,10 @@ int cap_bprm_set_creds(struct linux_binprm *bprm)
+ 	struct cred *new = bprm->cred;
+ 	bool effective = false, has_fcap = false, is_setid;
+ 	int ret;
+-	kuid_t root_uid;
++	kuid_t root_uid, kfsuid;
++	kgid_t kfsgid;
++	uid_t fsuid;
++	gid_t fsgid;
  
- 			case ACL_USER:
- 				acl_e->e_uid =
--					make_kuid(user_ns,
-+					make_kfsuid(user_ns,
- 						  le32_to_cpu(entry->e_id));
- 				if (!uid_valid(acl_e->e_uid))
- 					goto fail;
- 				break;
- 			case ACL_GROUP:
- 				acl_e->e_gid =
--					make_kgid(user_ns,
-+					make_kfsgid(user_ns,
- 						  le32_to_cpu(entry->e_id));
- 				if (!gid_valid(acl_e->e_gid))
- 					goto fail;
-@@ -817,11 +818,11 @@ posix_acl_to_xattr(struct user_namespace *user_ns, const struct posix_acl *acl,
- 		switch(acl_e->e_tag) {
- 		case ACL_USER:
- 			ext_entry->e_id =
--				cpu_to_le32(from_kuid(user_ns, acl_e->e_uid));
-+				cpu_to_le32(from_kfsuid(user_ns, acl_e->e_uid));
- 			break;
- 		case ACL_GROUP:
- 			ext_entry->e_id =
--				cpu_to_le32(from_kgid(user_ns, acl_e->e_gid));
-+				cpu_to_le32(from_kfsgid(user_ns, acl_e->e_gid));
- 			break;
- 		default:
- 			ext_entry->e_id = cpu_to_le32(ACL_UNDEFINED_ID);
+ 	if (WARN_ON(!cap_ambient_invariant_ok(old)))
+ 		return -EPERM;
+@@ -847,8 +851,15 @@ int cap_bprm_set_creds(struct linux_binprm *bprm)
+ 						   old->cap_permitted);
+ 	}
+ 
+-	new->suid = new->fsuid = new->euid;
+-	new->sgid = new->fsgid = new->egid;
++	fsuid = from_kuid_munged(new->user_ns, new->euid);
++	kfsuid = make_kfsuid(new->user_ns, fsuid);
++	new->suid = new->kfsuid = new->euid;
++	new->fsuid = kfsuid;
++
++	fsgid = from_kgid_munged(new->user_ns, new->egid);
++	kfsgid = make_kfsgid(new->user_ns, fsgid);
++	new->sgid = new->kfsgid = new->egid;
++	new->fsgid = kfsgid;
+ 
+ 	/* File caps or setid cancels ambient. */
+ 	if (has_fcap || is_setid)
 -- 
 2.25.0
 
