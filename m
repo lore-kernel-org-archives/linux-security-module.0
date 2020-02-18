@@ -2,82 +2,62 @@ Return-Path: <SRS0=lArx=4G=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C38DC34026
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Feb 2020 19:46:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FB59C34049
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Feb 2020 20:43:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1640F21D56
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Feb 2020 19:46:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7DE5A2173E
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Feb 2020 20:43:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726475AbgBRTqM (ORCPT
+        id S1727259AbgBRUnr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 18 Feb 2020 14:46:12 -0500
-Received: from namei.org ([65.99.196.166]:46926 "EHLO namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726339AbgBRTqM (ORCPT
+        Tue, 18 Feb 2020 15:43:47 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:37016 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726799AbgBRUnr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 18 Feb 2020 14:46:12 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id 01IJiQMI016417;
-        Tue, 18 Feb 2020 19:44:26 GMT
-Date:   Wed, 19 Feb 2020 06:44:26 +1100 (AEDT)
-From:   James Morris <jmorris@namei.org>
-To:     Alexey Budankov <alexey.budankov@linux.intel.com>
-cc:     Serge Hallyn <serge@hallyn.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "joonas.lahtinen@linux.intel.com" <joonas.lahtinen@linux.intel.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Will Deacon <will@kernel.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Helge Deller <deller@gmx.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andi Kleen <ak@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>,
-        Igor Lubashev <ilubashe@akamai.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        oprofile-list@lists.sf.net,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        linux-man@vger.kernel.org
-Subject: Re: [PATCH v7 10/12] drivers/oprofile: open access for CAP_PERFMON
- privileged process
-In-Reply-To: <046beedf-e074-58e2-579d-df535799169c@linux.intel.com>
-Message-ID: <alpine.LRH.2.21.2002190644070.10165@namei.org>
-References: <c8de937a-0b3a-7147-f5ef-69f467e87a13@linux.intel.com> <046beedf-e074-58e2-579d-df535799169c@linux.intel.com>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Tue, 18 Feb 2020 15:43:47 -0500
+Received: from localhost (unknown [IPv6:2601:601:9f00:477::3d5])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 084391238B5CB;
+        Tue, 18 Feb 2020 12:43:47 -0800 (PST)
+Date:   Tue, 18 Feb 2020 12:43:46 -0800 (PST)
+Message-Id: <20200218.124346.1576463725573330621.davem@davemloft.net>
+To:     madhuparnabhowmik10@gmail.com
+Cc:     paul@paul-moore.com, netdev@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, joel@joelfernandes.org,
+        frextrite@gmail.com,
+        linux-kernel-mentees@lists.linuxfoundation.org, paulmck@kernel.org
+Subject: Re: [PATCH] net: netlabel: Use built-in RCU list checking
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20200218181718.7258-1-madhuparnabhowmik10@gmail.com>
+References: <20200218181718.7258-1-madhuparnabhowmik10@gmail.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 18 Feb 2020 12:43:47 -0800 (PST)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 17 Feb 2020, Alexey Budankov wrote:
+From: madhuparnabhowmik10@gmail.com
+Date: Tue, 18 Feb 2020 23:47:18 +0530
 
-> For backward compatibility reasons access to the monitoring remains
-> open for CAP_SYS_ADMIN privileged processes but CAP_SYS_ADMIN usage
-> for secure monitoring is discouraged with respect to CAP_PERFMON
-> capability.
+> From: Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
 > 
-> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+> list_for_each_entry_rcu() has built-in RCU and lock checking.
+> 
+> Pass cond argument to list_for_each_entry_rcu() to silence
+> false lockdep warning when CONFIG_PROVE_RCU_LIST is enabled
+> by default.
+> 
+> Signed-off-by: Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
 
-
-Reviewed-by: James Morris <jamorris@linux.microsoft.com>
-
-
--- 
-James Morris
-<jmorris@namei.org>
-
+Applied.
