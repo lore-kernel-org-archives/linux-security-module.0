@@ -2,28 +2,28 @@ Return-Path: <SRS0=lArx=4G=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 567C4C3404C
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Feb 2020 19:23:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 237C7C3404C
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Feb 2020 19:23:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3163521D56
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Feb 2020 19:23:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDF2221D56
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Feb 2020 19:23:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726512AbgBRTXF (ORCPT
+        id S1726571AbgBRTXI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 18 Feb 2020 14:23:05 -0500
-Received: from namei.org ([65.99.196.166]:46582 "EHLO namei.org"
+        Tue, 18 Feb 2020 14:23:08 -0500
+Received: from namei.org ([65.99.196.166]:46584 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726296AbgBRTXE (ORCPT
+        id S1726346AbgBRTXF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 18 Feb 2020 14:23:04 -0500
+        Tue, 18 Feb 2020 14:23:05 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id 01IJLesW013028;
-        Tue, 18 Feb 2020 19:21:40 GMT
-Date:   Wed, 19 Feb 2020 06:21:40 +1100 (AEDT)
+        by namei.org (8.14.4/8.14.4) with ESMTP id 01IJMJhB013131;
+        Tue, 18 Feb 2020 19:22:19 GMT
+Date:   Wed, 19 Feb 2020 06:22:19 +1100 (AEDT)
 From:   James Morris <jmorris@namei.org>
 To:     Alexey Budankov <alexey.budankov@linux.intel.com>
 cc:     Serge Hallyn <serge@hallyn.com>,
@@ -52,11 +52,11 @@ cc:     Serge Hallyn <serge@hallyn.com>,
         oprofile-list@lists.sf.net,
         "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
         linux-man@vger.kernel.org
-Subject: Re: [PATCH v7 01/12] capabilities: introduce CAP_PERFMON to kernel
- and user space
-In-Reply-To: <f56fbb5c-1477-44d5-7346-85a1ca0869dc@linux.intel.com>
-Message-ID: <alpine.LRH.2.21.2002190621180.10165@namei.org>
-References: <c8de937a-0b3a-7147-f5ef-69f467e87a13@linux.intel.com> <f56fbb5c-1477-44d5-7346-85a1ca0869dc@linux.intel.com>
+Subject: Re: [PATCH v7 02/12] perf/core: open access to the core for CAP_PERFMON
+ privileged process
+In-Reply-To: <e68be109-7174-2c9e-11a9-9770a6316834@linux.intel.com>
+Message-ID: <alpine.LRH.2.21.2002190622060.10165@namei.org>
+References: <c8de937a-0b3a-7147-f5ef-69f467e87a13@linux.intel.com> <e68be109-7174-2c9e-11a9-9770a6316834@linux.intel.com>
 User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -67,13 +67,28 @@ List-ID: <linux-security-module.vger.kernel.org>
 On Mon, 17 Feb 2020, Alexey Budankov wrote:
 
 > 
-> Introduce CAP_PERFMON capability designed to secure system performance
-> monitoring and observability operations so that CAP_PERFMON would assist
-> CAP_SYS_ADMIN capability in its governing role for performance
-> monitoring and observability subsystems.
+> Open access to monitoring of kernel code, cpus, tracepoints and
+> namespaces data for a CAP_PERFMON privileged process. Providing the
+> access under CAP_PERFMON capability singly, without the rest of
+> CAP_SYS_ADMIN credentials, excludes chances to misuse the credentials
+> and makes operation more secure.
+> 
+> CAP_PERFMON implements the principal of least privilege for performance
+> monitoring and observability operations (POSIX IEEE 1003.1e 2.2.2.39
+> principle of least privilege: A security design principle that states
+> that a process or program be granted only those privileges (e.g.,
+> capabilities) necessary to accomplish its legitimate function, and only
+> for the time that such privileges are actually required)
+> 
+> For backward compatibility reasons access to perf_events subsystem
+> remains open for CAP_SYS_ADMIN privileged processes but CAP_SYS_ADMIN
+> usage for secure perf_events monitoring is discouraged with respect to
+> CAP_PERFMON capability.
+> 
+> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
 
 
-Acked-by: James Morris <jamorris@linux.microsoft.com>
+Reviewed-by: James Morris <jamorris@linux.microsoft.com>
 
 
 -- 
