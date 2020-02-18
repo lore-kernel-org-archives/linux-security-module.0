@@ -2,98 +2,110 @@ Return-Path: <SRS0=lArx=4G=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C131C34031
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Feb 2020 22:26:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00793C34031
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Feb 2020 22:49:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3BD4206E2
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Feb 2020 22:26:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C61E822B48
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Feb 2020 22:49:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dS5irFAO"
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="Ih8OVG9o"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726512AbgBRW0v (ORCPT
+        id S1726761AbgBRWtK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 18 Feb 2020 17:26:51 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:34336 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726461AbgBRW0v (ORCPT
+        Tue, 18 Feb 2020 17:49:10 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:40083 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726736AbgBRWtK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 18 Feb 2020 17:26:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=eHa75jjK7tbUuErtO3G7nDpZI0D8u2i7RzDZ3Fa/mSQ=; b=dS5irFAO/VhYF4UgVQoLT0B9O6
-        MPBORZ5xrN/aS26lKpicm7lsfmaZEgK7qANlYypTZI/HpdFjldeBJ4aM0/EnZAA3dj8Vwu+qQid+r
-        FPq1TmKLYaDObZEBGGMF1Pre4M7hYA2wZnviMARe43CWRTOzm4OD1DK3DFT2hNuqQKcILTTWOrT/p
-        pHACZcmDalugA5C0kKEPIDuKQeTySqkBFM7N/17CrsZOtcfqDWEhfoBTYdi0Rdxb1c/y41yFrpImK
-        LtOG+hBNetGPMvosrbIR3WVLMWVdbz6tkMHUtl3eI/LPdNifpqQGPcHDkKcSQk+jGtYdGOpUi7hvM
-        4ujvVuSw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j4BK3-0003xA-Uu; Tue, 18 Feb 2020 22:26:31 +0000
-Date:   Tue, 18 Feb 2020 14:26:31 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     =?iso-8859-1?Q?St=E9phane?= Graber <stgraber@ubuntu.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Aleksa Sarai <cyphar@cyphar.com>, Jann Horn <jannh@google.com>,
-        smbarber@chromium.org, Seth Forshee <seth.forshee@canonical.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Serge Hallyn <serge@hallyn.com>,
-        James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Phil Estes <estesp@gmail.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        containers@lists.linux-foundation.org,
-        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org
-Subject: Re: [PATCH v3 15/25] posix_acl: handle fsid mappings
-Message-ID: <20200218222631.GB9535@infradead.org>
-References: <20200218143411.2389182-1-christian.brauner@ubuntu.com>
- <20200218143411.2389182-16-christian.brauner@ubuntu.com>
+        Tue, 18 Feb 2020 17:49:10 -0500
+Received: by mail-ed1-f65.google.com with SMTP id p3so26739571edx.7
+        for <linux-security-module@vger.kernel.org>; Tue, 18 Feb 2020 14:49:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=l6bGLfW+S3PbTSNe7BlkqXOXTsrm4VZ4lQdamKUPW64=;
+        b=Ih8OVG9omwJ6Rxw+SlKjwczxNf0k2Ng94CvXCZbV3YDaX3UQbLCeVFJCDBgE+/TbWa
+         949c1MNdpMLpcyDXtROzVlkZqcqThZvj3dhD1ALAKRu2iuAubkhK1t55o+Mi/JGULJQA
+         Do0mKi+fIwpeSajmK6ZtYgsGWtcp2ixmaSSIN7Z+3VM59asG03lUut8OZYU+OftobKN/
+         FARxahH/c9osR5/SjqCdrfiIcl3zufcnKdJwz8aagy+PHbiKJZq82UM0DiByhRA429++
+         amw4egh1MaKmoNsfmmEllJZPFRXMrhRAJ3PBPBSRTfXKHz76UknYvpsHjXKYCfr9H+iG
+         sLNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=l6bGLfW+S3PbTSNe7BlkqXOXTsrm4VZ4lQdamKUPW64=;
+        b=rkBjYWtIgxmdmDikaq+TA+0qHcXC+g5rnBJrLlpfmO3U2aZ4l5M9rx8hkPJ3vmKEsw
+         P7bFKM0W2F4dWstS4OYIZEVKGlCQoDLG7xjpJwdkqz5Kf9fj9xtP3+8SWoke7BFZrX7V
+         5tCJ2dUkDnHNWVkJtOlPumfIxf2aJGf4yaPaZFwTJof16BAlq6i53byLYViiPZfgyNnC
+         DUp7CsmfedqFHrjrKeN7J+XC4InwBnjVIxRmsTFKPTGwYelqTFg7+0lKqOx7GANi3z1i
+         pSgvOFcYhvzhN9r1tIi/CaumWQbFkCTzzDvFNxd2AkcOr8pNqgSEtxeiOEngZPZQ5Pe+
+         jkug==
+X-Gm-Message-State: APjAAAVUhaj5nY0vwlcR4ThTptUdCZ7z2Kn20vWrVcdIo79M9obrIOH4
+        vv/oHXEWteOhcekh+pKz8h1FzRlVdG5b8PF+7NYG
+X-Google-Smtp-Source: APXvYqyL9+hoGiE8tChYcCVk+t7iqdIxiz2N27oHXffytLSJrvsGhrrkoMyf4wu5HG59PmlYeN3uSH1WjtWg9WFGERg=
+X-Received: by 2002:a17:906:f251:: with SMTP id gy17mr21225090ejb.308.1582066147205;
+ Tue, 18 Feb 2020 14:49:07 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200218143411.2389182-16-christian.brauner@ubuntu.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <20200218181718.7258-1-madhuparnabhowmik10@gmail.com>
+In-Reply-To: <20200218181718.7258-1-madhuparnabhowmik10@gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 18 Feb 2020 17:48:56 -0500
+Message-ID: <CAHC9VhSzqccDgt2EAPqVmTFCcETrKrkUDRoL-2YzzSFGfYJGQg@mail.gmail.com>
+Subject: Re: [PATCH] net: netlabel: Use built-in RCU list checking
+To:     madhuparnabhowmik10@gmail.com
+Cc:     davem@davemloft.net, netdev@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, joel@joelfernandes.org,
+        frextrite@gmail.com,
+        linux-kernel-mentees@lists.linuxfoundation.org, paulmck@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Feb 18, 2020 at 03:34:01PM +0100, Christian Brauner wrote:
-> diff --git a/fs/posix_acl.c b/fs/posix_acl.c
-> index 249672bf54fe..ed6112c9b804 100644
-> --- a/fs/posix_acl.c
-> +++ b/fs/posix_acl.c
-> @@ -22,6 +22,7 @@
->  #include <linux/xattr.h>
->  #include <linux/export.h>
->  #include <linux/user_namespace.h>
-> +#include <linux/fsuidgid.h>
->  
->  static struct posix_acl **acl_by_type(struct inode *inode, int type)
->  {
-> @@ -692,12 +693,12 @@ static void posix_acl_fix_xattr_userns(
->  	for (end = entry + count; entry != end; entry++) {
->  		switch(le16_to_cpu(entry->e_tag)) {
->  		case ACL_USER:
-> -			uid = make_kuid(from, le32_to_cpu(entry->e_id));
-> -			entry->e_id = cpu_to_le32(from_kuid(to, uid));
-> +			uid = make_kfsuid(from, le32_to_cpu(entry->e_id));
-> +			entry->e_id = cpu_to_le32(from_kfsuid(to, uid));
->  			break;
->  		case ACL_GROUP:
-> -			gid = make_kgid(from, le32_to_cpu(entry->e_id));
-> -			entry->e_id = cpu_to_le32(from_kgid(to, gid));
-> +			gid = make_kfsgid(from, le32_to_cpu(entry->e_id));
-> +			entry->e_id = cpu_to_le32(from_kfsgid(to, gid));
->  			break;
+On Tue, Feb 18, 2020 at 1:17 PM <madhuparnabhowmik10@gmail.com> wrote:
+>
+> From: Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
+>
+> list_for_each_entry_rcu() has built-in RCU and lock checking.
+>
+> Pass cond argument to list_for_each_entry_rcu() to silence
+> false lockdep warning when CONFIG_PROVE_RCU_LIST is enabled
+> by default.
+>
+> Signed-off-by: Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
+> ---
+>  net/netlabel/netlabel_unlabeled.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 
-Before we touch this code any more it needs to move to the right place.
-Poking into ACLs from generic xattr code is a complete layering
-violation, and all this needs to be moved so that it is called by
-the actual handlers called from the file systems.
+Not that this has much bearing since it's already been merged, but for
+what it's worth ...
+
+Acked-by: Paul Moore <paul@paul-moore.com>
+
+> diff --git a/net/netlabel/netlabel_unlabeled.c b/net/netlabel/netlabel_unlabeled.c
+> index d2e4ab8d1cb1..77bb1bb22c3b 100644
+> --- a/net/netlabel/netlabel_unlabeled.c
+> +++ b/net/netlabel/netlabel_unlabeled.c
+> @@ -207,7 +207,8 @@ static struct netlbl_unlhsh_iface *netlbl_unlhsh_search_iface(int ifindex)
+>
+>         bkt = netlbl_unlhsh_hash(ifindex);
+>         bkt_list = &netlbl_unlhsh_rcu_deref(netlbl_unlhsh)->tbl[bkt];
+> -       list_for_each_entry_rcu(iter, bkt_list, list)
+> +       list_for_each_entry_rcu(iter, bkt_list, list,
+> +                               lockdep_is_held(&netlbl_unlhsh_lock))
+>                 if (iter->valid && iter->ifindex == ifindex)
+>                         return iter;
+>
+> --
+> 2.17.1
+
+-- 
+paul moore
+www.paul-moore.com
