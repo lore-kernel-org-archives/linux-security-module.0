@@ -6,24 +6,24 @@ X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 237C7C3404C
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Feb 2020 19:23:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51D58C3404D
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Feb 2020 19:23:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDF2221D56
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Feb 2020 19:23:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3309A24125
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Feb 2020 19:23:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726571AbgBRTXI (ORCPT
+        id S1726634AbgBRTX0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 18 Feb 2020 14:23:08 -0500
-Received: from namei.org ([65.99.196.166]:46584 "EHLO namei.org"
+        Tue, 18 Feb 2020 14:23:26 -0500
+Received: from namei.org ([65.99.196.166]:46600 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726346AbgBRTXF (ORCPT
+        id S1726339AbgBRTXZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 18 Feb 2020 14:23:05 -0500
+        Tue, 18 Feb 2020 14:23:25 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id 01IJMJhB013131;
-        Tue, 18 Feb 2020 19:22:19 GMT
-Date:   Wed, 19 Feb 2020 06:22:19 +1100 (AEDT)
+        by namei.org (8.14.4/8.14.4) with ESMTP id 01IJMet4013185;
+        Tue, 18 Feb 2020 19:22:40 GMT
+Date:   Wed, 19 Feb 2020 06:22:40 +1100 (AEDT)
 From:   James Morris <jmorris@namei.org>
 To:     Alexey Budankov <alexey.budankov@linux.intel.com>
 cc:     Serge Hallyn <serge@hallyn.com>,
@@ -52,11 +52,11 @@ cc:     Serge Hallyn <serge@hallyn.com>,
         oprofile-list@lists.sf.net,
         "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
         linux-man@vger.kernel.org
-Subject: Re: [PATCH v7 02/12] perf/core: open access to the core for CAP_PERFMON
+Subject: Re: [PATCH v7 03/12] perf/core: open access to probes for CAP_PERFMON
  privileged process
-In-Reply-To: <e68be109-7174-2c9e-11a9-9770a6316834@linux.intel.com>
-Message-ID: <alpine.LRH.2.21.2002190622060.10165@namei.org>
-References: <c8de937a-0b3a-7147-f5ef-69f467e87a13@linux.intel.com> <e68be109-7174-2c9e-11a9-9770a6316834@linux.intel.com>
+In-Reply-To: <3364fa26-b5d1-1808-aaee-c057f26e0eb4@linux.intel.com>
+Message-ID: <alpine.LRH.2.21.2002190622300.10165@namei.org>
+References: <c8de937a-0b3a-7147-f5ef-69f467e87a13@linux.intel.com> <3364fa26-b5d1-1808-aaee-c057f26e0eb4@linux.intel.com>
 User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -67,11 +67,16 @@ List-ID: <linux-security-module.vger.kernel.org>
 On Mon, 17 Feb 2020, Alexey Budankov wrote:
 
 > 
-> Open access to monitoring of kernel code, cpus, tracepoints and
-> namespaces data for a CAP_PERFMON privileged process. Providing the
-> access under CAP_PERFMON capability singly, without the rest of
-> CAP_SYS_ADMIN credentials, excludes chances to misuse the credentials
-> and makes operation more secure.
+> Open access to monitoring via kprobes and uprobes and eBPF tracing for
+> CAP_PERFMON privileged process. Providing the access under CAP_PERFMON
+> capability singly, without the rest of CAP_SYS_ADMIN credentials,
+> excludes chances to misuse the credentials and makes operation more
+> secure.
+> 
+> perf kprobes and uprobes are used by ftrace and eBPF. perf probe uses
+> ftrace to define new kprobe events, and those events are treated as
+> tracepoint events. eBPF defines new probes via perf_event_open interface
+> and then the probes are used in eBPF tracing.
 > 
 > CAP_PERFMON implements the principal of least privilege for performance
 > monitoring and observability operations (POSIX IEEE 1003.1e 2.2.2.39
