@@ -2,142 +2,128 @@ Return-Path: <SRS0=lArx=4G=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31057C34031
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Feb 2020 21:13:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76FA5C3404B
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Feb 2020 22:12:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F2D124125
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Feb 2020 21:13:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FC302173E
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Feb 2020 22:12:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726734AbgBRVND (ORCPT
+        id S1726422AbgBRWMK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 18 Feb 2020 16:13:03 -0500
-Received: from mga01.intel.com ([192.55.52.88]:12302 "EHLO mga01.intel.com"
+        Tue, 18 Feb 2020 17:12:10 -0500
+Received: from mga06.intel.com ([134.134.136.31]:31506 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726339AbgBRVND (ORCPT
+        id S1726352AbgBRWMJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 18 Feb 2020 16:13:03 -0500
+        Tue, 18 Feb 2020 17:12:09 -0500
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Feb 2020 13:13:03 -0800
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Feb 2020 14:12:09 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,457,1574150400"; 
-   d="scan'208";a="348765756"
-Received: from unknown (HELO localhost) ([10.252.27.59])
-  by fmsmga001.fm.intel.com with ESMTP; 18 Feb 2020 13:13:00 -0800
-Date:   Tue, 18 Feb 2020 23:12:59 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     dhowells@redhat.com
-Cc:     jmorris@namei.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, serge@hallyn.com
-Subject: Re: kernel BUG at lib/assoc_array.c:LINE!
-Message-ID: <20200218211259.GA19673@linux.intel.com>
-References: <000000000000f4bf93059db8b081@google.com>
+X-IronPort-AV: E=Sophos;i="5.70,458,1574150400"; 
+   d="scan'208";a="228893016"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
+  by orsmga008.jf.intel.com with ESMTP; 18 Feb 2020 14:12:08 -0800
+Date:   Tue, 18 Feb 2020 14:12:08 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Jethro Beekman <jethro@fortanix.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
+        dave.hansen@intel.com, nhorman@redhat.com, npmccallum@redhat.com,
+        haitao.huang@intel.com, andriy.shevchenko@linux.intel.com,
+        tglx@linutronix.de, kai.svahn@intel.com, bp@alien8.de,
+        josh@joshtriplett.org, luto@kernel.org, kai.huang@intel.com,
+        rientjes@google.com, cedric.xing@intel.com, puiterwijk@redhat.com,
+        linux-security-module@vger.kernel.org,
+        Haitao Huang <haitao.huang@linux.intel.com>
+Subject: Re: [PATCH v26 10/22] x86/sgx: Linux Enclave Driver
+Message-ID: <20200218221208.GJ28156@linux.intel.com>
+References: <20200214175211.GE20690@linux.intel.com>
+ <033BCE0D-FA8C-40FB-849A-E401A5C6F6A3@amacapital.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <000000000000f4bf93059db8b081@google.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <033BCE0D-FA8C-40FB-849A-E401A5C6F6A3@amacapital.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Feb 03, 2020 at 08:44:11PM -0800, syzbot wrote:
-> Hello, > 
-> syzbot found the following crash on:
+On Sat, Feb 15, 2020 at 08:56:54AM -0800, Andy Lutomirski wrote:
 > 
-> HEAD commit:    46d6b7be Merge git://git.kernel.org/pub/scm/linux/kernel/g..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=11383a79e00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=6dda7ccc1e75a63f
-> dashboard link: https://syzkaller.appspot.com/bug?extid=23e14950fa7550d86091
-> compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
+> > On Feb 14, 2020, at 9:52 AM, Sean Christopherson <sean.j.christopherson@intel.com> wrote:
+> > 
+> > On Fri, Feb 14, 2020 at 09:40:00AM -0800, Andy Lutomirski wrote:
+> >> 
+> >> 
+> >>>> On Feb 14, 2020, at 9:11 AM, Sean Christopherson <sean.j.christopherson@intel.com> wrote:
+> >>> 
+> >>> On Fri, Feb 14, 2020 at 10:24:10AM +0100, Jethro Beekman wrote:
+> >>>>> On 2020-02-13 19:07, Sean Christopherson wrote:
+> >>>>> On Thu, Feb 13, 2020 at 02:59:52PM +0100, Jethro Beekman wrote:
+> >>>>>> On 2020-02-09 22:25, Jarkko Sakkinen wrote:
+> >>>>>>> +/**
+> >>>>>>> + * struct sgx_enclave_add_pages - parameter structure for the
+> >>>>>>> + *                                %SGX_IOC_ENCLAVE_ADD_PAGE ioctl
+> >>>>>>> + * @src:    start address for the page data
+> >>>>>>> + * @offset:    starting page offset
+> >>>>>>> + * @length:    length of the data (multiple of the page size)
+> >>>>>>> + * @secinfo:    address for the SECINFO data
+> >>>>>>> + * @flags:    page control flags
+> >>>>>>> + * @count:    number of bytes added (multiple of the page size)
+> >>>>>>> + */
+> >>>>>>> +struct sgx_enclave_add_pages {
+> >>>>>>> +    __u64    src;
+> >>>>>>> +    __u64    offset;
+> >>>>>>> +    __u64    length;
+> >>>>>>> +    __u64    secinfo;
+> >>>>>>> +    __u64    flags;
+> >>>>>>> +    __u64    count;
+> >>>>>>> +};
+> >>>>>> 
+> >>>>>> Compared to the last time I looked at the patch set, this API removes the
+> >>>>>> ability to measure individual pages chunks. That is not acceptable.
+> >>>>> 
+> >>>>> Why is it not acceptable?  E.g. what specific use case do you have that
+> >>>>> _requires_ on measuring partial 4k pages of an enclave?
+> >>>> 
+> >>>> The use case is someone gives me an enclave and I want to load it. If I don't
+> >>>> load it exactly as the enclave author specified, the enclave hash will be
+> >>>> different, and it won't work.
+> >>> 
+> >>> And if our ABI says "thou shall measure in 4k chunks", then it's an invalid
+> >>> enclave if its author generated MRENCLAVE using a different granularity.
+> >> 
+> >> ISTM, unless there’s a particularly compelling reason, if an enclave is
+> >> valid, we should be able to load it.
+> > 
+> > That means we have to have a separate ioctl() for EEXTEND, otherwise we
+> > can't handle EADD[0]->EADD[1]->EADD[2]->EEXTEND[0]->EEXTEND[1]->EEXTEND[2].
+> > 
+> > I think we'd still want to keep the MEASURE flag for SGX_IOC_ENCLAVE_ADD_PAGE
+> > so that we can optimize EADD[0]->EEXTEND[0]->EADD[1]->EEXTEND[1].
 > 
-> Unfortunately, I don't have any reproducer for this crash yet.
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+23e14950fa7550d86091@syzkaller.appspotmail.com
-> 
-> ------------[ cut here ]------------
-> kernel BUG at lib/assoc_array.c:652!
-> invalid opcode: 0000 [#1] PREEMPT SMP KASAN
-> CPU: 0 PID: 2778 Comm: kworker/0:37 Not tainted 5.5.0-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> Workqueue: afs afs_manage_cell
-> RIP: 0010:assoc_array_insert_into_terminal_node lib/assoc_array.c:652 [inline]
-> RIP: 0010:assoc_array_insert+0x2baa/0x2bd0 lib/assoc_array.c:1001
-> Code: 0f 0b e8 a9 64 d4 fd 0f 0b e8 a2 64 d4 fd 0f 0b e8 9b 64 d4 fd 0f 0b e8 94 64 d4 fd 0f 0b e8 8d 64 d4 fd 0f 0b e8 86 64 d4 fd <0f> 0b e8 7f 64 d4 fd 0f 0b e8 78 64 d4 fd 0f 0b e8 71 64 d4 fd 0f
-> RSP: 0018:ffffc900087ff810 EFLAGS: 00010293
-> RAX: ffffffff83a25a7a RBX: 1ffff11012d568af RCX: ffff88809f34a580
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-> RBP: ffffc900087ff920 R08: ffffffff83a249fd R09: ffffffff83538f4f
-> R10: ffff88809f34a580 R11: 0000000000000004 R12: ffff888096ab4588
-> R13: ffff888096ab4500 R14: ffff888096ab4578 R15: dffffc0000000000
-> FS:  0000000000000000(0000) GS:ffff8880aea00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000000738000 CR3: 0000000054a3b000 CR4: 00000000001406f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  __key_link_begin+0xfe/0x230 security/keys/keyring.c:1316
->  construct_alloc_key security/keys/request_key.c:404 [inline]
->  construct_key_and_link security/keys/request_key.c:499 [inline]
->  request_key_and_link+0x9b6/0x1680 security/keys/request_key.c:637
->  request_key_tag+0x53/0x190 security/keys/request_key.c:701
->  dns_query+0x266/0x6c0 net/dns_resolver/dns_query.c:128
->  afs_dns_query+0xdd/0x320 fs/afs/addr_list.c:249
->  afs_update_cell fs/afs/cell.c:391 [inline]
->  afs_manage_cell+0xda2/0x1500 fs/afs/cell.c:693
->  process_one_work+0x7f5/0x10f0 kernel/workqueue.c:2264
->  worker_thread+0xbbc/0x1630 kernel/workqueue.c:2410
->  kthread+0x332/0x350 kernel/kthread.c:255
->  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-> Modules linked in:
-> ---[ end trace 9dabb2deade74362 ]---
-> RIP: 0010:assoc_array_insert_into_terminal_node lib/assoc_array.c:652 [inline]
-> RIP: 0010:assoc_array_insert+0x2baa/0x2bd0 lib/assoc_array.c:1001
-> Code: 0f 0b e8 a9 64 d4 fd 0f 0b e8 a2 64 d4 fd 0f 0b e8 9b 64 d4 fd 0f 0b e8 94 64 d4 fd 0f 0b e8 8d 64 d4 fd 0f 0b e8 86 64 d4 fd <0f> 0b e8 7f 64 d4 fd 0f 0b e8 78 64 d4 fd 0f 0b e8 71 64 d4 fd 0f
-> RSP: 0018:ffffc900087ff810 EFLAGS: 00010293
-> RAX: ffffffff83a25a7a RBX: 1ffff11012d568af RCX: ffff88809f34a580
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-> RBP: ffffc900087ff920 R08: ffffffff83a249fd R09: ffffffff83538f4f
-> R10: ffff88809f34a580 R11: 0000000000000004 R12: ffff888096ab4588
-> R13: ffff888096ab4500 R14: ffff888096ab4578 R15: dffffc0000000000
-> FS:  0000000000000000(0000) GS:ffff8880aea00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00000000013e4978 CR3: 000000008adb2000 CR4: 00000000001406f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> 
-> 
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> Seems reasonable to me. I suppose such as ioctl could also be added later if
+> there’s a need.
 
-The arguments for request_key_and_link() are fairly constrained:
+Assuming you're referring to the separate EEXTEND ioctl()...
 
-type == &key_type_dns_resolver
-description == "afsdb:<cell name>"
-domain_tag == net->key_domain
-callout_info == "srv=1"
-callout_len == 5
-aux == NULL
-dest_keyring == NULL
-flags == KEY_ALLOC_IN_QUOTA
+Everyone:
 
-(manually resolved)
+Is a dedicated EEXTEND ioctl() needed now, i.e. is there an existing or
+in-flight use case that would break by having only the MEASURE flag in
+ADD_PAGE?
 
-The only obvious moving part I see is the key type implementatio i.e.
-net/dns_resolver/dns_key.c.
-
-/Jarkko
+If the answer is 'no' from all parties, my preference would be to hold off
+on adding it until there is an actual end user.  To be clear, I'm not
+against adding such an ioctl(), I just don't want to add code where the
+only user is a kernel selftest.
