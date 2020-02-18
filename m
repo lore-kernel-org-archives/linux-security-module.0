@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B688C34042
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Feb 2020 14:36:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08248C3403F
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Feb 2020 14:36:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2C2B2467B
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Feb 2020 14:36:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E04E020801
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Feb 2020 14:36:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727761AbgBROgW (ORCPT
+        id S1726829AbgBROgf (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 18 Feb 2020 09:36:22 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:53031 "EHLO
+        Tue, 18 Feb 2020 09:36:35 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:53123 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726840AbgBROfj (ORCPT
+        with ESMTP id S1726700AbgBROgf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 18 Feb 2020 09:35:39 -0500
+        Tue, 18 Feb 2020 09:36:35 -0500
 Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein.fritz.box)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <christian.brauner@ubuntu.com>)
-        id 1j43xt-0000fF-2o; Tue, 18 Feb 2020 14:35:09 +0000
+        id 1j43yC-0000fF-K3; Tue, 18 Feb 2020 14:35:28 +0000
 From:   Christian Brauner <christian.brauner@ubuntu.com>
 To:     =?UTF-8?q?St=C3=A9phane=20Graber?= <stgraber@ubuntu.com>,
         "Eric W. Biederman" <ebiederm@xmission.com>,
@@ -41,9 +41,9 @@ Cc:     smbarber@chromium.org, Seth Forshee <seth.forshee@canonical.com>,
         containers@lists.linux-foundation.org,
         linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
         Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH v3 05/25] user_namespace: refactor map_write()
-Date:   Tue, 18 Feb 2020 15:33:51 +0100
-Message-Id: <20200218143411.2389182-6-christian.brauner@ubuntu.com>
+Subject: [PATCH v3 23/25] keys: handle fsid mappings
+Date:   Tue, 18 Feb 2020 15:34:09 +0100
+Message-Id: <20200218143411.2389182-24-christian.brauner@ubuntu.com>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200218143411.2389182-1-christian.brauner@ubuntu.com>
 References: <20200218143411.2389182-1-christian.brauner@ubuntu.com>
@@ -53,11 +53,10 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Refactor map_write() to prepare for adding fsid mappings support. This mainly
-factors out various open-coded parts into helpers that can be reused in the
-follow up patch.
+Similar to proc and sysfs let keys use kfsids which are always mapped according
+to id mappings.
 
-Cc: Jann Horn <jannh@google.com>
+Suggested-by: Jann Horn <jannh@google.com>
 Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 ---
 /* v2 */
@@ -66,179 +65,140 @@ patch not present
 /* v3 */
 patch added
 - Jann Horn <jannh@google.com>:
-  - Split changes to map_write() to implement fsid mappings into three separate
-    patches: basic fsid helpers, preparatory changes to map_write(), actual
-    fsid mapping support in map_write().
+  - Add patch to handle the keyrings.
 ---
- kernel/user_namespace.c | 117 +++++++++++++++++++++++++---------------
- 1 file changed, 74 insertions(+), 43 deletions(-)
+ security/keys/key.c              |  2 +-
+ security/keys/permission.c       |  4 ++--
+ security/keys/process_keys.c     |  6 ++++--
+ security/keys/request_key.c      | 10 +++++-----
+ security/keys/request_key_auth.c |  2 +-
+ 5 files changed, 13 insertions(+), 11 deletions(-)
 
-diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
-index 2cfd1e519cc4..e91141262bcc 100644
---- a/kernel/user_namespace.c
-+++ b/kernel/user_namespace.c
-@@ -1038,10 +1038,10 @@ static int cmp_extents_reverse(const void *a, const void *b)
+diff --git a/security/keys/key.c b/security/keys/key.c
+index 718bf7217420..bfb17e8210d7 100644
+--- a/security/keys/key.c
++++ b/security/keys/key.c
+@@ -923,7 +923,7 @@ key_ref_t key_create_or_update(key_ref_t keyring_ref,
+ 
+ 	/* allocate a new key */
+ 	key = key_alloc(index_key.type, index_key.description,
+-			cred->fsuid, cred->fsgid, cred, perm, flags, NULL);
++			cred->kfsuid, cred->kfsgid, cred, perm, flags, NULL);
+ 	if (IS_ERR(key)) {
+ 		key_ref = ERR_CAST(key);
+ 		goto error_link_end;
+diff --git a/security/keys/permission.c b/security/keys/permission.c
+index 085f907b64ac..847187ca6b41 100644
+--- a/security/keys/permission.c
++++ b/security/keys/permission.c
+@@ -33,7 +33,7 @@ int key_task_permission(const key_ref_t key_ref, const struct cred *cred,
+ 	key = key_ref_to_ptr(key_ref);
+ 
+ 	/* use the second 8-bits of permissions for keys the caller owns */
+-	if (uid_eq(key->uid, cred->fsuid)) {
++	if (uid_eq(key->uid, cred->kfsuid)) {
+ 		kperm = key->perm >> 16;
+ 		goto use_these_perms;
+ 	}
+@@ -41,7 +41,7 @@ int key_task_permission(const key_ref_t key_ref, const struct cred *cred,
+ 	/* use the third 8-bits of permissions for keys the caller has a group
+ 	 * membership in common with */
+ 	if (gid_valid(key->gid) && key->perm & KEY_GRP_ALL) {
+-		if (gid_eq(key->gid, cred->fsgid)) {
++		if (gid_eq(key->gid, cred->kfsgid)) {
+ 			kperm = key->perm >> 8;
+ 			goto use_these_perms;
+ 		}
+diff --git a/security/keys/process_keys.c b/security/keys/process_keys.c
+index 09541de31f2f..32376f0fbb42 100644
+--- a/security/keys/process_keys.c
++++ b/security/keys/process_keys.c
+@@ -379,7 +379,7 @@ void key_fsuid_changed(struct cred *new_cred)
+ 	/* update the ownership of the thread keyring */
+ 	if (new_cred->thread_keyring) {
+ 		down_write(&new_cred->thread_keyring->sem);
+-		new_cred->thread_keyring->uid = new_cred->fsuid;
++		new_cred->thread_keyring->uid = new_cred->kfsuid;
+ 		up_write(&new_cred->thread_keyring->sem);
+ 	}
  }
- 
- /**
-- * sort_idmaps - Sorts an array of idmap entries.
-+ * sort_map - Sorts an array of idmap entries.
-  * Can only be called if number of mappings exceeds UID_GID_MAP_MAX_BASE_EXTENTS.
-  */
--static int sort_idmaps(struct uid_gid_map *map)
-+static int sort_map(struct uid_gid_map *map)
- {
- 	if (map->nr_extents <= UID_GID_MAP_MAX_BASE_EXTENTS)
- 		return 0;
-@@ -1064,6 +1064,71 @@ static int sort_idmaps(struct uid_gid_map *map)
- 	return 0;
+@@ -392,7 +392,7 @@ void key_fsgid_changed(struct cred *new_cred)
+ 	/* update the ownership of the thread keyring */
+ 	if (new_cred->thread_keyring) {
+ 		down_write(&new_cred->thread_keyring->sem);
+-		new_cred->thread_keyring->gid = new_cred->fsgid;
++		new_cred->thread_keyring->gid = new_cred->kfsgid;
+ 		up_write(&new_cred->thread_keyring->sem);
+ 	}
  }
+@@ -923,10 +923,12 @@ void key_change_session_keyring(struct callback_head *twork)
+ 	new-> euid	= old-> euid;
+ 	new-> suid	= old-> suid;
+ 	new->fsuid	= old->fsuid;
++	new->kfsuid	= old->kfsuid;
+ 	new->  gid	= old->  gid;
+ 	new-> egid	= old-> egid;
+ 	new-> sgid	= old-> sgid;
+ 	new->fsgid	= old->fsgid;
++	new->kfsgid	= old->kfsgid;
+ 	new->user	= get_uid(old->user);
+ 	new->user_ns	= get_user_ns(old->user_ns);
+ 	new->group_info	= get_group_info(old->group_info);
+diff --git a/security/keys/request_key.c b/security/keys/request_key.c
+index 957b9e3e1492..254a7c2f3fde 100644
+--- a/security/keys/request_key.c
++++ b/security/keys/request_key.c
+@@ -134,7 +134,7 @@ static int call_sbin_request_key(struct key *authkey, void *aux)
+ 	sprintf(desc, "_req.%u", key->serial);
  
-+static int sort_idmaps(struct uid_gid_map *map)
-+{
-+	return sort_map(map);
-+}
-+
-+static int map_from_parent(struct uid_gid_map *new_map,
-+			   struct uid_gid_map *parent_map)
-+{
-+	unsigned idx;
-+
-+	/* Map the lower ids from the parent user namespace to the
-+	 * kernel global id space.
-+	 */
-+	for (idx = 0; idx < new_map->nr_extents; idx++) {
-+		struct uid_gid_extent *e;
-+		u32 lower_first;
-+
-+		if (new_map->nr_extents <= UID_GID_MAP_MAX_BASE_EXTENTS)
-+			e = &new_map->extent[idx];
-+		else
-+			e = &new_map->forward[idx];
-+
-+		lower_first = map_id_range_down(parent_map, e->lower_first, e->count);
-+
-+		/* Fail if we can not map the specified extent to
-+		 * the kernel global id space.
-+		 */
-+		if (lower_first == (u32)-1)
-+			return -EPERM;
-+
-+		e->lower_first = lower_first;
-+	}
-+
-+	return 0;
-+}
-+
-+static int map_into_kids(struct uid_gid_map *id_map,
-+			 struct uid_gid_map *parent_id_map)
-+{
-+	return map_from_parent(id_map, parent_id_map);
-+}
-+
-+static void install_idmaps(struct uid_gid_map *id_map,
-+			   struct uid_gid_map *new_id_map)
-+{
-+	if (new_id_map->nr_extents <= UID_GID_MAP_MAX_BASE_EXTENTS) {
-+		memcpy(id_map->extent, new_id_map->extent,
-+		       new_id_map->nr_extents * sizeof(new_id_map->extent[0]));
-+	} else {
-+		id_map->forward = new_id_map->forward;
-+		id_map->reverse = new_id_map->reverse;
-+	}
-+}
-+
-+static void free_idmaps(struct uid_gid_map *new_id_map)
-+{
-+	if (new_id_map->nr_extents > UID_GID_MAP_MAX_BASE_EXTENTS) {
-+		kfree(new_id_map->forward);
-+		kfree(new_id_map->reverse);
-+		new_id_map->forward = NULL;
-+		new_id_map->reverse = NULL;
-+		new_id_map->nr_extents = 0;
-+	}
-+}
-+
- static ssize_t map_write(struct file *file, const char __user *buf,
- 			 size_t count, loff_t *ppos,
- 			 int cap_setid,
-@@ -1073,7 +1138,6 @@ static ssize_t map_write(struct file *file, const char __user *buf,
- 	struct seq_file *seq = file->private_data;
- 	struct user_namespace *ns = seq->private;
- 	struct uid_gid_map new_map;
--	unsigned idx;
- 	struct uid_gid_extent extent;
- 	char *kbuf = NULL, *pos, *next_line;
- 	ssize_t ret;
-@@ -1191,61 +1255,28 @@ static ssize_t map_write(struct file *file, const char __user *buf,
- 	if (!new_idmap_permitted(file, ns, cap_setid, &new_map))
- 		goto out;
+ 	cred = get_current_cred();
+-	keyring = keyring_alloc(desc, cred->fsuid, cred->fsgid, cred,
++	keyring = keyring_alloc(desc, cred->kfsuid, cred->kfsgid, cred,
+ 				KEY_POS_ALL | KEY_USR_VIEW | KEY_USR_READ,
+ 				KEY_ALLOC_QUOTA_OVERRUN, NULL, NULL);
+ 	put_cred(cred);
+@@ -149,8 +149,8 @@ static int call_sbin_request_key(struct key *authkey, void *aux)
+ 		goto error_link;
  
--	ret = -EPERM;
--	/* Map the lower ids from the parent user namespace to the
--	 * kernel global id space.
--	 */
--	for (idx = 0; idx < new_map.nr_extents; idx++) {
--		struct uid_gid_extent *e;
--		u32 lower_first;
--
--		if (new_map.nr_extents <= UID_GID_MAP_MAX_BASE_EXTENTS)
--			e = &new_map.extent[idx];
--		else
--			e = &new_map.forward[idx];
--
--		lower_first = map_id_range_down(parent_map,
--						e->lower_first,
--						e->count);
--
--		/* Fail if we can not map the specified extent to
--		 * the kernel global id space.
--		 */
--		if (lower_first == (u32) -1)
--			goto out;
--
--		e->lower_first = lower_first;
--	}
-+	ret = map_into_kids(&new_map, parent_map);
-+	if (ret)
-+		goto out;
+ 	/* record the UID and GID */
+-	sprintf(uid_str, "%d", from_kuid(&init_user_ns, cred->fsuid));
+-	sprintf(gid_str, "%d", from_kgid(&init_user_ns, cred->fsgid));
++	sprintf(uid_str, "%d", from_kuid(&init_user_ns, cred->kfsuid));
++	sprintf(gid_str, "%d", from_kgid(&init_user_ns, cred->kfsgid));
  
- 	/*
- 	 * If we want to use binary search for lookup, this clones the extent
- 	 * array and sorts both copies.
- 	 */
- 	ret = sort_idmaps(&new_map);
--	if (ret < 0)
-+	if (ret)
- 		goto out;
+ 	/* we say which key is under construction */
+ 	sprintf(key_str, "%d", key->serial);
+@@ -390,7 +390,7 @@ static int construct_alloc_key(struct keyring_search_context *ctx,
+ 		perm |= KEY_POS_WRITE;
  
- 	/* Install the map */
--	if (new_map.nr_extents <= UID_GID_MAP_MAX_BASE_EXTENTS) {
--		memcpy(map->extent, new_map.extent,
--		       new_map.nr_extents * sizeof(new_map.extent[0]));
--	} else {
--		map->forward = new_map.forward;
--		map->reverse = new_map.reverse;
--	}
-+	install_idmaps(map, &new_map);
- 	smp_wmb();
- 	map->nr_extents = new_map.nr_extents;
+ 	key = key_alloc(ctx->index_key.type, ctx->index_key.description,
+-			ctx->cred->fsuid, ctx->cred->fsgid, ctx->cred,
++			ctx->cred->kfsuid, ctx->cred->kfsgid, ctx->cred,
+ 			perm, flags, NULL);
+ 	if (IS_ERR(key))
+ 		goto alloc_failed;
+@@ -490,7 +490,7 @@ static struct key *construct_key_and_link(struct keyring_search_context *ctx,
+ 	if (ret)
+ 		goto error;
  
- 	*ppos = count;
- 	ret = count;
- out:
--	if (ret < 0 && new_map.nr_extents > UID_GID_MAP_MAX_BASE_EXTENTS) {
--		kfree(new_map.forward);
--		kfree(new_map.reverse);
--		map->forward = NULL;
--		map->reverse = NULL;
--		map->nr_extents = 0;
--	}
-+	if (ret < 0)
-+		free_idmaps(&new_map);
+-	user = key_user_lookup(current_fsuid());
++	user = key_user_lookup(current_kfsuid());
+ 	if (!user) {
+ 		ret = -ENOMEM;
+ 		goto error_put_dest_keyring;
+diff --git a/security/keys/request_key_auth.c b/security/keys/request_key_auth.c
+index ecba39c93fd9..26808146897c 100644
+--- a/security/keys/request_key_auth.c
++++ b/security/keys/request_key_auth.c
+@@ -215,7 +215,7 @@ struct key *request_key_auth_new(struct key *target, const char *op,
+ 	sprintf(desc, "%x", target->serial);
  
- 	mutex_unlock(&userns_state_mutex);
- 	kfree(kbuf);
+ 	authkey = key_alloc(&key_type_request_key_auth, desc,
+-			    cred->fsuid, cred->fsgid, cred,
++			    cred->kfsuid, cred->kfsgid, cred,
+ 			    KEY_POS_VIEW | KEY_POS_READ | KEY_POS_SEARCH | KEY_POS_LINK |
+ 			    KEY_USR_VIEW, KEY_ALLOC_NOT_IN_QUOTA, NULL);
+ 	if (IS_ERR(authkey)) {
 -- 
 2.25.0
 
