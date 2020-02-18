@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E500C34026
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Feb 2020 14:37:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B757C34043
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Feb 2020 14:37:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3136020801
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Feb 2020 14:37:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C8F0208C4
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Feb 2020 14:37:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727086AbgBROg6 (ORCPT
+        id S1726783AbgBROgu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 18 Feb 2020 09:36:58 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:53142 "EHLO
+        Tue, 18 Feb 2020 09:36:50 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:52971 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726620AbgBROg5 (ORCPT
+        with ESMTP id S1726645AbgBROff (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 18 Feb 2020 09:36:57 -0500
+        Tue, 18 Feb 2020 09:35:35 -0500
 Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein.fritz.box)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <christian.brauner@ubuntu.com>)
-        id 1j43yB-0000fF-Br; Tue, 18 Feb 2020 14:35:27 +0000
+        id 1j43xr-0000fF-7O; Tue, 18 Feb 2020 14:35:07 +0000
 From:   Christian Brauner <christian.brauner@ubuntu.com>
 To:     =?UTF-8?q?St=C3=A9phane=20Graber?= <stgraber@ubuntu.com>,
         "Eric W. Biederman" <ebiederm@xmission.com>,
@@ -41,9 +41,9 @@ Cc:     smbarber@chromium.org, Seth Forshee <seth.forshee@canonical.com>,
         containers@lists.linux-foundation.org,
         linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
         Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH v3 22/25] devpts: handle fsid mappings
-Date:   Tue, 18 Feb 2020 15:34:08 +0100
-Message-Id: <20200218143411.2389182-23-christian.brauner@ubuntu.com>
+Subject: [PATCH v3 03/25] proc: add /proc/<pid>/fsgid_map
+Date:   Tue, 18 Feb 2020 15:33:49 +0100
+Message-Id: <20200218143411.2389182-4-christian.brauner@ubuntu.com>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200218143411.2389182-1-christian.brauner@ubuntu.com>
 References: <20200218143411.2389182-1-christian.brauner@ubuntu.com>
@@ -53,9 +53,22 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-When a uid or gid mount option is specified with devpts have it lookup the
-corresponding kfsids in the fsid mappings. If no fsid mappings are setup the
-behavior is unchanged, i.e. fsids are looked up in the id mappings.
+The /proc/<pid>/fsgid_map file can be written once to setup an fsgid mapping
+for a user namespace. Writing to this file has the same restrictions as writing
+to /proc/<pid>/fsgid_map.
+
+root@e1-vm:/# cat /proc/13023/fsgid_map
+         0     300000     100000
+
+Fsid mappings have always been around. They are currently always identical to
+the id mappings for a user namespace. This means, currently whenever an fsid
+needs to be looked up the kernel will use the id mapping of the user namespace.
+With the introduction of fsid mappings the kernel will now lookup fsids in the
+fsid mappings of the user namespace. If no fsid mapping exists the kernel will
+continue looking up fsids in the id mappings of the user namespace. Hence, if a
+system supports fsid mappings through /proc/<pid>/fs*id_map and a container
+runtime is not aware of fsid mappings it or does not use them it will it will
+continue to work just as before.
 
 Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 ---
@@ -63,50 +76,51 @@ Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 unchanged
 
 /* v3 */
-unchanged
+- Christian Brauner <christian.brauner@ubuntu.com>:
+  - Fix grammar in commit message.
 ---
- fs/devpts/inode.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ fs/proc/base.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/fs/devpts/inode.c b/fs/devpts/inode.c
-index 42e5a766d33c..139958892572 100644
---- a/fs/devpts/inode.c
-+++ b/fs/devpts/inode.c
-@@ -24,6 +24,7 @@
- #include <linux/parser.h>
- #include <linux/fsnotify.h>
- #include <linux/seq_file.h>
-+#include <linux/fsuidgid.h>
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index 5fb28004663e..1303cdd2e617 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -2975,6 +2975,11 @@ static int proc_fsuid_map_open(struct inode *inode, struct file *file)
+ {
+ 	return proc_id_map_open(inode, file, &proc_fsuid_seq_operations);
+ }
++
++static int proc_fsgid_map_open(struct inode *inode, struct file *file)
++{
++	return proc_id_map_open(inode, file, &proc_fsgid_seq_operations);
++}
+ #endif
  
- #define DEVPTS_DEFAULT_MODE 0600
- /*
-@@ -277,7 +278,7 @@ static int parse_mount_options(char *data, int op, struct pts_mount_opts *opts)
- 		case Opt_uid:
- 			if (match_int(&args[0], &option))
- 				return -EINVAL;
--			uid = make_kuid(current_user_ns(), option);
-+			uid = make_kfsuid(current_user_ns(), option);
- 			if (!uid_valid(uid))
- 				return -EINVAL;
- 			opts->uid = uid;
-@@ -286,7 +287,7 @@ static int parse_mount_options(char *data, int op, struct pts_mount_opts *opts)
- 		case Opt_gid:
- 			if (match_int(&args[0], &option))
- 				return -EINVAL;
--			gid = make_kgid(current_user_ns(), option);
-+			gid = make_kfsgid(current_user_ns(), option);
- 			if (!gid_valid(gid))
- 				return -EINVAL;
- 			opts->gid = gid;
-@@ -410,7 +411,7 @@ static int devpts_show_options(struct seq_file *seq, struct dentry *root)
- 			   from_kuid_munged(&init_user_ns, opts->uid));
- 	if (opts->setgid)
- 		seq_printf(seq, ",gid=%u",
--			   from_kgid_munged(&init_user_ns, opts->gid));
-+			   from_kfsgid_munged(&init_user_ns, opts->gid));
- 	seq_printf(seq, ",mode=%03o", opts->mode);
- 	seq_printf(seq, ",ptmxmode=%03o", opts->ptmxmode);
- 	if (opts->max < NR_UNIX98_PTY_MAX)
+ static const struct file_operations proc_uid_map_operations = {
+@@ -3009,6 +3014,14 @@ static const struct file_operations proc_fsuid_map_operations = {
+ 	.llseek		= seq_lseek,
+ 	.release	= proc_id_map_release,
+ };
++
++static const struct file_operations proc_fsgid_map_operations = {
++	.open		= proc_fsgid_map_open,
++	.write		= proc_fsgid_map_write,
++	.read		= seq_read,
++	.llseek		= seq_lseek,
++	.release	= proc_id_map_release,
++};
+ #endif
+ 
+ static int proc_setgroups_open(struct inode *inode, struct file *file)
+@@ -3195,6 +3208,7 @@ static const struct pid_entry tgid_base_stuff[] = {
+ #ifdef CONFIG_USER_NS
+ #ifdef CONFIG_USER_NS_FSID
+ 	REG("fsuid_map",  S_IRUGO|S_IWUSR, proc_fsuid_map_operations),
++	REG("fsgid_map",  S_IRUGO|S_IWUSR, proc_fsgid_map_operations),
+ #endif
+ 	REG("uid_map",    S_IRUGO|S_IWUSR, proc_uid_map_operations),
+ 	REG("gid_map",    S_IRUGO|S_IWUSR, proc_gid_map_operations),
 -- 
 2.25.0
 
