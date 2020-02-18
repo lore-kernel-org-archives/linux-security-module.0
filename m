@@ -2,118 +2,131 @@ Return-Path: <SRS0=lArx=4G=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFFE0C3403D
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Feb 2020 14:24:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 438A5C34042
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Feb 2020 14:35:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D32982464E
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Feb 2020 14:24:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2531E24649
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Feb 2020 14:35:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726402AbgBROY4 (ORCPT
+        id S1726770AbgBROff (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 18 Feb 2020 09:24:56 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:64104 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726442AbgBROYy (ORCPT
+        Tue, 18 Feb 2020 09:35:35 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:52955 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726567AbgBROfe (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 18 Feb 2020 09:24:54 -0500
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01IENxNt125602
-        for <linux-security-module@vger.kernel.org>; Tue, 18 Feb 2020 09:24:53 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2y6cu33hgt-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Tue, 18 Feb 2020 09:24:53 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Tue, 18 Feb 2020 14:24:50 -0000
-Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 18 Feb 2020 14:24:46 -0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01IEOjkQ40108542
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 18 Feb 2020 14:24:45 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5A24611C058;
-        Tue, 18 Feb 2020 14:24:45 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CBCC411C052;
-        Tue, 18 Feb 2020 14:24:43 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.142.171])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 18 Feb 2020 14:24:43 +0000 (GMT)
-Subject: Re: [PATCH v2 1/2] crypto: fix mismatched hash algorithm name
- sm3-256 to sm3
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Tianjia Zhang <tianjia.zhang@linux.alibaba.com>,
-        herbert@gondor.apana.org.au, davem@davemloft.net,
-        jarkko.sakkinen@linux.intel.com, ebiggers@kernel.org,
-        dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com
-Cc:     linux-crypto@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Tue, 18 Feb 2020 09:24:43 -0500
-In-Reply-To: <f26b221c-f2e1-a14b-46cb-cae03f1357aa@linux.alibaba.com>
-References: <20200217093649.97938-1-tianjia.zhang@linux.alibaba.com>
-         <20200217093649.97938-2-tianjia.zhang@linux.alibaba.com>
-         <1581989598.8515.233.camel@linux.ibm.com>
-         <f26b221c-f2e1-a14b-46cb-cae03f1357aa@linux.alibaba.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
+        Tue, 18 Feb 2020 09:35:34 -0500
+Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein.fritz.box)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1j43xq-0000fF-Bx; Tue, 18 Feb 2020 14:35:06 +0000
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     =?UTF-8?q?St=C3=A9phane=20Graber?= <stgraber@ubuntu.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Aleksa Sarai <cyphar@cyphar.com>, Jann Horn <jannh@google.com>
+Cc:     smbarber@chromium.org, Seth Forshee <seth.forshee@canonical.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Serge Hallyn <serge@hallyn.com>,
+        James Morris <jmorris@namei.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Phil Estes <estesp@gmail.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        containers@lists.linux-foundation.org,
+        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Subject: [PATCH v3 02/25] proc: add /proc/<pid>/fsuid_map
+Date:   Tue, 18 Feb 2020 15:33:48 +0100
+Message-Id: <20200218143411.2389182-3-christian.brauner@ubuntu.com>
+X-Mailer: git-send-email 2.25.0
+In-Reply-To: <20200218143411.2389182-1-christian.brauner@ubuntu.com>
+References: <20200218143411.2389182-1-christian.brauner@ubuntu.com>
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 20021814-0016-0000-0000-000002E7FAD5
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20021814-0017-0000-0000-0000334B0F1B
-Message-Id: <1582035883.4576.8.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-18_02:2020-02-17,2020-02-18 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 mlxscore=0 suspectscore=0 bulkscore=0 spamscore=0
- lowpriorityscore=0 impostorscore=0 adultscore=0 clxscore=1015
- mlxlogscore=999 phishscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2001150001 definitions=main-2002180112
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 2020-02-18 at 10:34 +0800, Tianjia Zhang wrote:
-> On 2020/2/18 9:33, Mimi Zohar wrote:
-> > On Mon, 2020-02-17 at 17:36 +0800, Tianjia Zhang wrote:
-> >> The name sm3-256 is defined in hash_algo_name in hash_info, but the
-> >> algorithm name implemented in sm3_generic.c is sm3, which will cause
-> >> the sm3-256 algorithm to be not found in some application scenarios of
-> >> the hash algorithm, and an ENOENT error will occur. For example,
-> >> IMA, keys, and other subsystems that reference hash_algo_name all use
-> >> the hash algorithm of sm3.
-> >>
-> >> According to https://tools.ietf.org/id/draft-oscca-cfrg-sm3-01.html,
-> >> SM3 always produces a 256-bit hash value and there are no plans for
-> >> other length development, so there is no ambiguity in the name of sm3.
-> >>
-> >> Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-> >> Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > The previous version of this patch set is queued in the next-
-> > integrity-testing branch.  That version of this patch didn't
-> > change TPM_ALG_SM3_256.  Unless the TPM standard was modified, the TPM
-> > spec refers to it as TPM_ALG_SM3_256.  Has that changed?
-> >
-> > Mimi
-> 
-> The definition in the TPM specification is still TPM_ALG_SM3_256, please
-> ignore the modification to the TPM definition in this patch.
+The /proc/<pid>/fsuid_map file can be written once to setup an fsuid mapping
+for a user namespace. Writing to this file has the same restrictions as writing
+to /proc/<pid>/fsuid_map:
 
-Ok.  Just confirming that I should ignore v2 of this patch set.
- Upstreaming the original version, as queued in next-integrity-
-testing, is fine.
+root@e1-vm:/# cat /proc/13023/fsuid_map
+         0     300000     100000
 
-thanks,
+Fsid mappings have always been around. They are currently always identical to
+the id mappings for a user namespace. This means, currently whenever an fsid
+needs to be looked up the kernel will use the id mapping of the user namespace.
+With the introduction of fsid mappings the kernel will now lookup fsids in the
+fsid mappings of the user namespace. If no fsid mapping exists the kernel will
+continue looking up fsids in the id mappings of the user namespace. Hence, if a
+system supports fsid mappings through /proc/<pid>/fs*id_map and a container
+runtime is not aware of fsid mappings it or does not use them it will it will
+continue to work just as before.
 
-Mimi
+Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+---
+/* v2 */
+unchanged
+
+/* v3 */
+- Christian Brauner <christian.brauner@ubuntu.com>:
+  - Fix grammar in commit message.
+---
+ fs/proc/base.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index c7c64272b0fa..5fb28004663e 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -2970,6 +2970,13 @@ static int proc_projid_map_open(struct inode *inode, struct file *file)
+ 	return proc_id_map_open(inode, file, &proc_projid_seq_operations);
+ }
+ 
++#ifdef CONFIG_USER_NS_FSID
++static int proc_fsuid_map_open(struct inode *inode, struct file *file)
++{
++	return proc_id_map_open(inode, file, &proc_fsuid_seq_operations);
++}
++#endif
++
+ static const struct file_operations proc_uid_map_operations = {
+ 	.open		= proc_uid_map_open,
+ 	.write		= proc_uid_map_write,
+@@ -2994,6 +3001,16 @@ static const struct file_operations proc_projid_map_operations = {
+ 	.release	= proc_id_map_release,
+ };
+ 
++#ifdef CONFIG_USER_NS_FSID
++static const struct file_operations proc_fsuid_map_operations = {
++	.open		= proc_fsuid_map_open,
++	.write		= proc_fsuid_map_write,
++	.read		= seq_read,
++	.llseek		= seq_lseek,
++	.release	= proc_id_map_release,
++};
++#endif
++
+ static int proc_setgroups_open(struct inode *inode, struct file *file)
+ {
+ 	struct user_namespace *ns = NULL;
+@@ -3176,6 +3193,9 @@ static const struct pid_entry tgid_base_stuff[] = {
+ 	ONE("io",	S_IRUSR, proc_tgid_io_accounting),
+ #endif
+ #ifdef CONFIG_USER_NS
++#ifdef CONFIG_USER_NS_FSID
++	REG("fsuid_map",  S_IRUGO|S_IWUSR, proc_fsuid_map_operations),
++#endif
+ 	REG("uid_map",    S_IRUGO|S_IWUSR, proc_uid_map_operations),
+ 	REG("gid_map",    S_IRUGO|S_IWUSR, proc_gid_map_operations),
+ 	REG("projid_map", S_IRUGO|S_IWUSR, proc_projid_map_operations),
+-- 
+2.25.0
 
