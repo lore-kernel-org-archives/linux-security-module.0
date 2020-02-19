@@ -2,61 +2,76 @@ Return-Path: <SRS0=QiiV=4H=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL autolearn=no
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D265BC3404D
-	for <linux-security-module@archiver.kernel.org>; Wed, 19 Feb 2020 03:26:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16AD5C3404E
+	for <linux-security-module@archiver.kernel.org>; Wed, 19 Feb 2020 07:54:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC06F24658
-	for <linux-security-module@archiver.kernel.org>; Wed, 19 Feb 2020 03:26:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="r4+Kljkj"
+	by mail.kernel.org (Postfix) with ESMTP id E3C3521D56
+	for <linux-security-module@archiver.kernel.org>; Wed, 19 Feb 2020 07:54:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726528AbgBSD0d (ORCPT
+        id S1726514AbgBSHyp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 18 Feb 2020 22:26:33 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:57678 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726346AbgBSD0d (ORCPT
+        Wed, 19 Feb 2020 02:54:45 -0500
+Received: from mga07.intel.com ([134.134.136.100]:6491 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726156AbgBSHyp (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 18 Feb 2020 22:26:33 -0500
-Received: from [10.131.86.135] (unknown [131.107.147.135])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 0583320B9C02;
-        Tue, 18 Feb 2020 19:26:32 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0583320B9C02
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1582082792;
-        bh=uuBpz3jOBtISlExYRZ5CqsTuMHXduhDBZyDX+rs/0uQ=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=r4+Kljkj3skkGozxptnCeqBISH4etkGbNOxIcfgS+/o/90eMCoq3t1A2A5COFzzXG
-         mJbybAOHJibpTMVy387FTD752QW333+M3SVUE4+lbrNYFKb9xs/ILOj6KymE70x/6F
-         xkbgPuYBmjF4z7NCm+gkRGWFl6nQRL3QKQHqzwsM=
-Subject: Re: [PATCH v26 10/22] x86/sgx: Linux Enclave Driver
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org
-Cc:     akpm@linux-foundation.org, dave.hansen@intel.com,
-        sean.j.christopherson@intel.com, nhorman@redhat.com,
-        npmccallum@redhat.com, haitao.huang@intel.com,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        kai.svahn@intel.com, bp@alien8.de, josh@joshtriplett.org,
-        luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
-        cedric.xing@intel.com, puiterwijk@redhat.com,
-        linux-security-module@vger.kernel.org,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        Haitao Huang <haitao.huang@linux.intel.com>
-References: <20200209212609.7928-1-jarkko.sakkinen@linux.intel.com>
- <20200209212609.7928-11-jarkko.sakkinen@linux.intel.com>
-From:   Jordan Hand <jorhand@linux.microsoft.com>
-Message-ID: <15074c16-4832-456d-dd12-af8548e46d6d@linux.microsoft.com>
-Date:   Tue, 18 Feb 2020 19:26:31 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Wed, 19 Feb 2020 02:54:45 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Feb 2020 23:54:43 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,459,1574150400"; 
+   d="scan'208";a="436148633"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga006.fm.intel.com with ESMTP; 18 Feb 2020 23:54:42 -0800
+Received: from [10.125.252.130] (abudanko-mobl.ccr.corp.intel.com [10.125.252.130])
+        by linux.intel.com (Postfix) with ESMTP id 40E9A580270;
+        Tue, 18 Feb 2020 23:54:36 -0800 (PST)
+Subject: Re: [PATCH v7 01/12] capabilities: introduce CAP_PERFMON to kernel
+ and user space
+To:     James Morris <jmorris@namei.org>
+Cc:     Serge Hallyn <serge@hallyn.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "joonas.lahtinen@linux.intel.com" <joonas.lahtinen@linux.intel.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Will Deacon <will@kernel.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Helge Deller <deller@gmx.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andi Kleen <ak@linux.intel.com>,
+        Stephane Eranian <eranian@google.com>,
+        Igor Lubashev <ilubashe@akamai.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+        oprofile-list@lists.sf.net,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        linux-man@vger.kernel.org
+References: <c8de937a-0b3a-7147-f5ef-69f467e87a13@linux.intel.com>
+ <f56fbb5c-1477-44d5-7346-85a1ca0869dc@linux.intel.com>
+ <alpine.LRH.2.21.2002190621180.10165@namei.org>
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <4664bbc7-e4ef-5d6e-7f71-96e5567fcf60@linux.intel.com>
+Date:   Wed, 19 Feb 2020 10:54:35 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-In-Reply-To: <20200209212609.7928-11-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <alpine.LRH.2.21.2002190621180.10165@namei.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -64,99 +79,22 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-I ran our validation tests for the Open Enclave SDK against this patch
-set and came across a potential issue.
 
-On 2/9/20 1:25 PM, Jarkko Sakkinen wrote:
-> +/**
-> + * sgx_encl_may_map() - Check if a requested VMA mapping is allowed
-> + * @encl:		an enclave
-> + * @start:		lower bound of the address range, inclusive
-> + * @end:		upper bound of the address range, exclusive
-> + * @vm_prot_bits:	requested protections of the address range
-> + *
-> + * Iterate through the enclave pages contained within [@start, @end) to verify
-> + * the permissions requested by @vm_prot_bits do not exceed that of any enclave
-> + * page to be mapped.  Page addresses that do not have an associated enclave
-> + * page are interpreted to zero permissions.
-> + *
-> + * Return:
-> + *   0 on success,
-> + *   -EACCES if VMA permissions exceed enclave page permissions
-> + */
-> +int sgx_encl_may_map(struct sgx_encl *encl, unsigned long start,
-> +		     unsigned long end, unsigned long vm_prot_bits)
-> +{
-> +	unsigned long idx, idx_start, idx_end;
-> +	struct sgx_encl_page *page;
-> +
-> +	/* PROT_NONE always succeeds. */
-> +	if (!vm_prot_bits)
-> +		return 0;
-> +
-> +	idx_start = PFN_DOWN(start);
-> +	idx_end = PFN_DOWN(end - 1);
-> +
-> +	for (idx = idx_start; idx <= idx_end; ++idx) {
-> +		mutex_lock(&encl->lock);
-> +		page = radix_tree_lookup(&encl->page_tree, idx);
-> +		mutex_unlock(&encl->lock);
-> +
-> +		if (!page || (~page->vm_max_prot_bits & vm_prot_bits))
-> +			return -EACCES;
-> +	}
-> +
-> +	return 0;
-> +}
-> +static struct sgx_encl_page *sgx_encl_page_alloc(struct sgx_encl *encl,
-> +						 unsigned long offset,
-> +						 u64 secinfo_flags)
-> +{
-> +	struct sgx_encl_page *encl_page;
-> +	unsigned long prot;
-> +
-> +	encl_page = kzalloc(sizeof(*encl_page), GFP_KERNEL);
-> +	if (!encl_page)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	encl_page->desc = encl->base + offset;
-> +	encl_page->encl = encl;
-> +
-> +	prot = _calc_vm_trans(secinfo_flags, SGX_SECINFO_R, PROT_READ)  |
-> +	       _calc_vm_trans(secinfo_flags, SGX_SECINFO_W, PROT_WRITE) |
-> +	       _calc_vm_trans(secinfo_flags, SGX_SECINFO_X, PROT_EXEC);
-> +
-> +	/*
-> +	 * TCS pages must always RW set for CPU access while the SECINFO
-> +	 * permissions are *always* zero - the CPU ignores the user provided
-> +	 * values and silently overwrites them with zero permissions.
-> +	 */
-> +	if ((secinfo_flags & SGX_SECINFO_PAGE_TYPE_MASK) == SGX_SECINFO_TCS)
-> +		prot |= PROT_READ | PROT_WRITE;
-> +
-> +	/* Calculate maximum of the VM flags for the page. */
-> +	encl_page->vm_max_prot_bits = calc_vm_prot_bits(prot, 0);
+On 18.02.2020 22:21, James Morris wrote:
+> On Mon, 17 Feb 2020, Alexey Budankov wrote:
+> 
+>>
+>> Introduce CAP_PERFMON capability designed to secure system performance
+>> monitoring and observability operations so that CAP_PERFMON would assist
+>> CAP_SYS_ADMIN capability in its governing role for performance
+>> monitoring and observability subsystems.
+> 
+> 
+> Acked-by: James Morris <jamorris@linux.microsoft.com>
 
-During mprotect (in mm/mprotect.c line 525) the following checks if
-READ_IMPLIES_EXECUTE and a PROT_READ is being requested. If so and
-VM_MAYEXEC is set, it also adds PROT_EXEC to the request.
+Thanks James! 
+I appreciate your involvement and collaboration 
+w.r.t to the whole patch set.
 
-	if (rier && (vma->vm_flags & VM_MAYEXEC))
-		prot |= PROT_EXEC;
-
-But if we look at sgx_encl_page_alloc(), we see vm_max_prot_bits is set
-without taking VM_MAYEXEC into account:
-
-	encl_page->vm_max_prot_bits = calc_vm_prot_bits(prot, 0);
-
-sgx_encl_may_map() checks that the requested protection can be added with:
-
-	if (!page || (~page->vm_max_prot_bits & vm_prot_bits))
-		return -EACCESS
-
-This means that for any process where READ_IMPLIES_EXECUTE is set and
-page where (vma->vm_flags & VM_MAYEXEC) == true, mmap/mprotect calls to
-that request PROT_READ on a page that was not added with PROT_EXEC will
-fail.
-
-- Jordan
+Gratefully,
+Alexey
