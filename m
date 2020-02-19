@@ -2,70 +2,82 @@ Return-Path: <SRS0=QiiV=4H=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9059C35242
-	for <linux-security-module@archiver.kernel.org>; Wed, 19 Feb 2020 19:36:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31EA9C18E00
+	for <linux-security-module@archiver.kernel.org>; Wed, 19 Feb 2020 20:46:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACA9024670
-	for <linux-security-module@archiver.kernel.org>; Wed, 19 Feb 2020 19:36:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 060F924670
+	for <linux-security-module@archiver.kernel.org>; Wed, 19 Feb 2020 20:46:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726754AbgBSTgB (ORCPT
+        id S1726734AbgBSUqF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 19 Feb 2020 14:36:01 -0500
-Received: from mail.hallyn.com ([178.63.66.53]:39468 "EHLO mail.hallyn.com"
+        Wed, 19 Feb 2020 15:46:05 -0500
+Received: from mail.hallyn.com ([178.63.66.53]:40728 "EHLO mail.hallyn.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726683AbgBSTgA (ORCPT
+        id S1726645AbgBSUqF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 19 Feb 2020 14:36:00 -0500
+        Wed, 19 Feb 2020 15:46:05 -0500
 Received: by mail.hallyn.com (Postfix, from userid 1001)
-        id B6255B4F; Wed, 19 Feb 2020 13:35:58 -0600 (CST)
-Date:   Wed, 19 Feb 2020 13:35:58 -0600
+        id 1CA7E46B; Wed, 19 Feb 2020 14:46:03 -0600 (CST)
+Date:   Wed, 19 Feb 2020 14:46:03 -0600
 From:   "Serge E. Hallyn" <serge@hallyn.com>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     =?iso-8859-1?Q?St=E9phane?= Graber <stgraber@ubuntu.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Aleksa Sarai <cyphar@cyphar.com>, Jann Horn <jannh@google.com>,
-        smbarber@chromium.org, Seth Forshee <seth.forshee@canonical.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Serge Hallyn <serge@hallyn.com>,
+To:     Ard Biesheuvel <ardb@kernel.org>
+Cc:     linux-efi@vger.kernel.org, Leif Lindholm <leif@nuviainc.com>,
+        Peter Jones <pjones@redhat.com>,
+        Alexander Graf <agraf@csgraf.de>,
+        Heinrich Schuchardt <xypron.glpk@gmx.de>,
+        Jeff Brasen <jbrasen@nvidia.com>,
+        Atish Patra <Atish.Patra@wdc.com>, x86@kernel.org,
         James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Phil Estes <estesp@gmail.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        containers@lists.linux-foundation.org,
-        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org
-Subject: Re: [PATCH v3 00/25] user_namespace: introduce fsid mappings
-Message-ID: <20200219193558.GA27641@mail.hallyn.com>
-References: <20200218143411.2389182-1-christian.brauner@ubuntu.com>
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH 9/9] integrity: check properly whether EFI GetVariable()
+ is available
+Message-ID: <20200219204603.GA28639@mail.hallyn.com>
+References: <20200219171907.11894-1-ardb@kernel.org>
+ <20200219171907.11894-10-ardb@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200218143411.2389182-1-christian.brauner@ubuntu.com>
+In-Reply-To: <20200219171907.11894-10-ardb@kernel.org>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Feb 18, 2020 at 03:33:46PM +0100, Christian Brauner wrote:
-> With fsid mappings we can solve this by writing an id mapping of 0
-> 100000 100000 and an fsid mapping of 0 300000 100000. On filesystem
-> access the kernel will now lookup the mapping for 300000 in the fsid
-> mapping tables of the user namespace. And since such a mapping exists,
-> the corresponding files will have correct ownership.
+On Wed, Feb 19, 2020 at 06:19:07PM +0100, Ard Biesheuvel wrote:
+> Testing the value of the efi.get_variable function pointer is not
+> the right way to establish whether the platform supports EFI
+> variables at runtime. Instead, use the newly added granular check
+> that can test for the presence of each EFI runtime service
+> individually.
+> 
+> Cc: James Morris <jmorris@namei.org>
+> Cc: "Serge E. Hallyn" <serge@hallyn.com>
+> Cc: linux-security-module@vger.kernel.org
+> Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+> ---
+>  security/integrity/platform_certs/load_uefi.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/security/integrity/platform_certs/load_uefi.c b/security/integrity/platform_certs/load_uefi.c
+> index 111898aad56e..e2fe1bd3abb9 100644
+> --- a/security/integrity/platform_certs/load_uefi.c
+> +++ b/security/integrity/platform_certs/load_uefi.c
+> @@ -76,7 +76,7 @@ static int __init load_uefi_certs(void)
+>  	unsigned long dbsize = 0, dbxsize = 0, moksize = 0;
+>  	int rc = 0;
+>  
+> -	if (!efi.get_variable)
+> +	if (!efi_rt_services_supported(EFI_RT_SUPPORTED_GET_VARIABLE))
 
-So if I have
+Sorry, where is this defined?
 
-/proc/self/uid_map: 0 100000 100000
-/proc/self/fsid_map: 1000 1000 1
-
-1. If I read files from the rootfs which have host uid 101000, they
-will appear as uid 100 to me?
-
-2. If I read host files with uid 1000, they will appear as uid 1000 to me?
-
-3. If I create a new file, as uid 1000, what will be the inode owning uid?
+>  		return false;
+>  
+>  	/* Get db, MokListRT, and dbx.  They might not exist, so it isn't
+> -- 
+> 2.17.1
