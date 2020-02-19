@@ -2,63 +2,63 @@ Return-Path: <SRS0=QiiV=4H=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58B98C34050
-	for <linux-security-module@archiver.kernel.org>; Wed, 19 Feb 2020 15:42:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 694A3C34047
+	for <linux-security-module@archiver.kernel.org>; Wed, 19 Feb 2020 15:54:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BE0A2464E
-	for <linux-security-module@archiver.kernel.org>; Wed, 19 Feb 2020 15:42:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F1BC2465D
+	for <linux-security-module@archiver.kernel.org>; Wed, 19 Feb 2020 15:54:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="m+WyVCnj"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hCbOktmi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726651AbgBSPm3 (ORCPT
+        id S1726558AbgBSPyQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 19 Feb 2020 10:42:29 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:41014 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726677AbgBSPm2 (ORCPT
+        Wed, 19 Feb 2020 10:54:16 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:37275 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726528AbgBSPyP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 19 Feb 2020 10:42:28 -0500
-Received: by mail-oi1-f195.google.com with SMTP id i1so24182835oie.8
-        for <linux-security-module@vger.kernel.org>; Wed, 19 Feb 2020 07:42:28 -0800 (PST)
+        Wed, 19 Feb 2020 10:54:15 -0500
+Received: by mail-ot1-f65.google.com with SMTP id w23so590672otj.4
+        for <linux-security-module@vger.kernel.org>; Wed, 19 Feb 2020 07:54:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=5m55kfVwkJi2EKe9BNjAoqNwmjnBNj+rhpNNJ8psMf0=;
-        b=m+WyVCnjj1MKoR4h4JIOlgp2fjMP9yF/DEMlRuSkziBg37L/i9PeB+qwHQtq+5TBM6
-         SooNA0Wk6Ljhtp5qSzPtSknsnL4DWgLfrCjYHytGQKdcv6POKVRKZfNj2WLGQm/nydCI
-         tLJnBS44YGa0T/JV/3kNf+/psgr2j9ltjMIFFiTi5//ha9SRMrTDUxEcO7tDYtXyCNU0
-         0W+ISMm5w6/KIDLxt6/6C3JAxunTLQr6+KHCnpMaj0TdKqHVbfPLbNK5F/nDNzZq3/LD
-         fJURS56rYXEp2uY/mJftWB6gjcZlAAKUD1/slAZtFwMjuk9DFgtmJPrszBy2PNb1wk3w
-         XhEg==
+        bh=lxARnBor1U+6So+HrMWf9Gk7N+daPrHbJnbZhnhwrnE=;
+        b=hCbOktmi3YliRq0ScBXSNUesHyAqvCL12c5uWO6XJNi9n/y2ahYy8f6c/hN9HhkUp6
+         NtGyeKNDq17KU1oflZcGFavHZ0yak7eV3txHutBNLTY+fhuz//0QGxRkoWIV07omcEfA
+         pV2jnT0owxB53J3tC25KDX6npdI6rpYslOVlEcpoDIMBKSsQQwz65+OTQrTbhk+C91KH
+         1egcT0uxQa4IR7ZPjdBFsZarSM4W8MpTmZQCyLXSB+NtwqZcQBCMtj55+3PKd8Ts8PoK
+         t5d3X57H5eosvrejeqcBMmaMblxiDL8WOSJRKe0vQsPwInYir9WHgpdZ7zxw5ZYJrLkr
+         SE7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=5m55kfVwkJi2EKe9BNjAoqNwmjnBNj+rhpNNJ8psMf0=;
-        b=Vb+G6TMhLJHdhrQ6rYCfa4Nyw7HFuw7dyx5WZmhGfi1JZdlezNdgW7fww8td5LliWg
-         5QJGAZ6LWee8nZOACWgjGGIf2cX6iPUa9Kjj4sc1mq5UJAt9ENgclRFz76GSGUiXV7Hi
-         uSX34rgf60qEX2kRzlJoblfEQz2VCv0zO/TbJ18XJQe4mBH2yq9R3uR+CGDWqYNyYXa2
-         9941Hu4HL2fM12PVYh2xTaLJHsfQcQpi+AEDDjLBZKD6v5ov9hFijDLcUFAmEOjLMF/A
-         dE29VKGIA9RzWQjmIxGeptGTk1BI5gO9+8Jc+vXcVjkfuhqQ2yunKI715sKXgNL60ova
-         lEiA==
-X-Gm-Message-State: APjAAAX2b9PTGycJNwdI5YC39QbKmEnBpip0/M+ymLF9YOLm55pDIEMf
-        +zeVWZOut2VOc6i7NPEXKht06qU90eu1zrORU1Sgvw==
-X-Google-Smtp-Source: APXvYqzYVTetcJbLAR2lHbzroMwjo5ViVjvR49a/DJvQymhESORCu2lQOkJU6wuyq4SCG9SAJgJJeWDh3Spsw3GeH0I=
-X-Received: by 2002:aca:484a:: with SMTP id v71mr5008155oia.39.1582126947895;
- Wed, 19 Feb 2020 07:42:27 -0800 (PST)
+        bh=lxARnBor1U+6So+HrMWf9Gk7N+daPrHbJnbZhnhwrnE=;
+        b=avD1Iw5KFAianbLe8bkUB+Dz/VHqmWW2KxtLKI7Qf/2pcyRTYVoLhmQujnG2tCzJzf
+         lZ0LIVIgldxeo3uw7D0dZbD0duiQShjC0v1vgjlGYXc4+5cex+XnILWVoVP7VdlYkFbz
+         ibXvIDgoeNA0k2U747y+y/sy4zP9AfsGadXPnlgFMAk9jsZiXgl/wi3AfHMKVNEMo3Ld
+         SmmPE6LXydh13JFrwDFhFyyjddUsUrD6I1EussZ39HlZhfyTxONtD5S5HZu7m/hm8qGT
+         35tvKaN2BiwTzQDFAFKQVr3Mk2InQgwmKnvtl4I4oIZkWQlg8Uoq4E9m5yrCAbnurzDU
+         zWmQ==
+X-Gm-Message-State: APjAAAWxpY4R7imDcqad9mPftL1GAjfSNK121jRz6STE8+JjUsQjIIPB
+        NGWp/cyRbNoVGmFTm2yYZjF2kyM88/H82eh9CzlY+g==
+X-Google-Smtp-Source: APXvYqxMNt0Da4orYoVxsQsRxu5xNkMkw0G1x6vghAKafmTT/NokCPoqIr/ZB8PYTJmUP6i//FyBRvrO9SGFwmyS5SI=
+X-Received: by 2002:a05:6830:13c3:: with SMTP id e3mr5336055otq.180.1582127653521;
+ Wed, 19 Feb 2020 07:54:13 -0800 (PST)
 MIME-Version: 1.0
-References: <20200218143411.2389182-1-christian.brauner@ubuntu.com> <20200218143411.2389182-25-christian.brauner@ubuntu.com>
-In-Reply-To: <20200218143411.2389182-25-christian.brauner@ubuntu.com>
+References: <20200218143411.2389182-1-christian.brauner@ubuntu.com> <20200218143411.2389182-20-christian.brauner@ubuntu.com>
+In-Reply-To: <20200218143411.2389182-20-christian.brauner@ubuntu.com>
 From:   Jann Horn <jannh@google.com>
-Date:   Wed, 19 Feb 2020 16:42:01 +0100
-Message-ID: <CAG48ez3onfVSYF_qx+jJuz0y+KuZ3U75Or8dxFhiDqMTdXzCZg@mail.gmail.com>
-Subject: Re: [PATCH v3 24/25] sys: handle fsid mappings in set*id() calls
+Date:   Wed, 19 Feb 2020 16:53:47 +0100
+Message-ID: <CAG48ez2ikuZQTctjR0RAXYUFrSsJdyn98cKGn5hGEhYjzWfO8g@mail.gmail.com>
+Subject: Re: [PATCH v3 19/25] commoncap: handle fsid mappings with vfs caps
 To:     Christian Brauner <christian.brauner@ubuntu.com>
 Cc:     =?UTF-8?Q?St=C3=A9phane_Graber?= <stgraber@ubuntu.com>,
         "Eric W. Biederman" <ebiederm@xmission.com>,
@@ -82,55 +82,23 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Feb 18, 2020 at 3:37 PM Christian Brauner
+On Tue, Feb 18, 2020 at 3:35 PM Christian Brauner
 <christian.brauner@ubuntu.com> wrote:
-> Switch set*id() calls to lookup fsids in the fsid mappings. If no fsid mappings
-> are setup the behavior is unchanged, i.e. fsids are looked up in the id
-> mappings.
+> Switch vfs cap helpers to lookup fsids in the fsid mappings. If no fsid
+> mappings are setup the behavior is unchanged, i.e. fsids are looked up in the
+> id mappings.
 [...]
-> @@ -353,7 +354,7 @@ long __sys_setregid(gid_t rgid, gid_t egid)
->         const struct cred *old;
->         struct cred *new;
->         int retval;
-> -       kgid_t krgid, kegid;
-> +       kgid_t krgid, kegid, kfsgid;
+> diff --git a/security/commoncap.c b/security/commoncap.c
+[...]
+> @@ -328,7 +328,7 @@ static bool rootid_owns_currentns(kuid_t kroot)
+>                 return false;
 >
->         krgid = make_kgid(ns, rgid);
->         kegid = make_kgid(ns, egid);
-> @@ -385,12 +386,20 @@ long __sys_setregid(gid_t rgid, gid_t egid)
->                         new->egid = kegid;
->                 else
->                         goto error;
-> +               kfsgid = make_kfsgid(ns, egid);
-> +       } else {
-> +               kfsgid = kgid_to_kfsgid(new->user_ns, new->egid);
-> +       }
+>         for (ns = current_user_ns(); ; ns = ns->parent) {
+> -               if (from_kuid(ns, kroot) == 0)
+> +               if (from_kfsuid(ns, kroot) == 0)
+>                         return true;
+>                 if (ns == &init_user_ns)
+>                         break;
 
-Here the "kfsgid" is the new filesystem GID as translated by the
-special fsgid mapping...
-
-> +       if (!gid_valid(kfsgid)) {
-> +               retval = -EINVAL;
-> +               goto error;
->         }
->
->         if (rgid != (gid_t) -1 ||
->             (egid != (gid_t) -1 && !gid_eq(kegid, old->gid)))
->                 new->sgid = new->egid;
-> -       new->fsgid = new->egid;
-> +       new->kfsgid = new->egid;
-
-... but the "kfsgid" of the creds struct is translated by the normal
-gid mapping...
-
-> +       new->fsgid = kfsgid;
-
-... and the local "kfsgid" is stored into the "fsgid" member.
-
-This is pretty hard to follow. Can you come up with some naming scheme
-that is clearer and where one name is always used for the
-normally-translated fsgid and another name is always used for the
-specially-translated fsgid? E.g. something like "pfsgid" (with the "p"
-standing for "process", because it uses the same id mappings as used
-for process identities) for the IDs translated via the normal gid
-mapping?
+Nit: Maybe change the name of this function to something that makes it
+clear that this operates in the fsuid mapping domain.
