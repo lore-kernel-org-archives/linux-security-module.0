@@ -2,99 +2,109 @@ Return-Path: <SRS0=QiiV=4H=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,HK_RANDOM_FROM,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16AD5C3404E
-	for <linux-security-module@archiver.kernel.org>; Wed, 19 Feb 2020 07:54:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 040F1C34022
+	for <linux-security-module@archiver.kernel.org>; Wed, 19 Feb 2020 09:02:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3C3521D56
-	for <linux-security-module@archiver.kernel.org>; Wed, 19 Feb 2020 07:54:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C998524658
+	for <linux-security-module@archiver.kernel.org>; Wed, 19 Feb 2020 09:02:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W+MvosDD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726514AbgBSHyp (ORCPT
+        id S1726265AbgBSJCf (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 19 Feb 2020 02:54:45 -0500
-Received: from mga07.intel.com ([134.134.136.100]:6491 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726156AbgBSHyp (ORCPT
+        Wed, 19 Feb 2020 04:02:35 -0500
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:41403 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726260AbgBSJCf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 19 Feb 2020 02:54:45 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Feb 2020 23:54:43 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,459,1574150400"; 
-   d="scan'208";a="436148633"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga006.fm.intel.com with ESMTP; 18 Feb 2020 23:54:42 -0800
-Received: from [10.125.252.130] (abudanko-mobl.ccr.corp.intel.com [10.125.252.130])
-        by linux.intel.com (Postfix) with ESMTP id 40E9A580270;
-        Tue, 18 Feb 2020 23:54:36 -0800 (PST)
-Subject: Re: [PATCH v7 01/12] capabilities: introduce CAP_PERFMON to kernel
- and user space
-To:     James Morris <jmorris@namei.org>
-Cc:     Serge Hallyn <serge@hallyn.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "joonas.lahtinen@linux.intel.com" <joonas.lahtinen@linux.intel.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Will Deacon <will@kernel.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Helge Deller <deller@gmx.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andi Kleen <ak@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>,
-        Igor Lubashev <ilubashe@akamai.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        oprofile-list@lists.sf.net,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        linux-man@vger.kernel.org
-References: <c8de937a-0b3a-7147-f5ef-69f467e87a13@linux.intel.com>
- <f56fbb5c-1477-44d5-7346-85a1ca0869dc@linux.intel.com>
- <alpine.LRH.2.21.2002190621180.10165@namei.org>
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <4664bbc7-e4ef-5d6e-7f71-96e5567fcf60@linux.intel.com>
-Date:   Wed, 19 Feb 2020 10:54:35 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Wed, 19 Feb 2020 04:02:35 -0500
+Received: by mail-vs1-f67.google.com with SMTP id k188so14600110vsc.8;
+        Wed, 19 Feb 2020 01:02:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=TSVyOEZZlUXcItl/vOCqMLuW1ofkxTSLhKQ7okp+WUw=;
+        b=W+MvosDDNezGY0Xz11wcWD5F1iPFX3ljmRkbHSfE1anrFuYDdb5UEvX8Fd8FSEH9fK
+         g8XNmermebanajz8wUzJv6E7+Lpo9m7pUKQ8ZjMH8YxkLRrPGILV6HWQ4eHw5XDZ53IT
+         JtSiHbAegJIwYSLSM1i75JFwskZoZYZmkoHBZr3guFZvzpisQLR5P/3OZjhatToz49LT
+         W008XH5uN98RYQ5w1FVVPIiAj2mk8Kqji8aeT4695uKAsTwWkkJCOIw992VqU97Pyepv
+         JZaJ0Dnq2IVvJ2db4U3xYnlHdTyVasQ1eT9IhbblNbuRuTspOSdoXH7PKohvp1PxIh0S
+         FggA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=TSVyOEZZlUXcItl/vOCqMLuW1ofkxTSLhKQ7okp+WUw=;
+        b=TlmEhK8ARvxQkU8jlX5bg7aNkDbWxL8i/WnNwIFGPnh9Ib+TD7y4dsaKre2HRsHSkV
+         V7+V+exlO+8l9wXqaKTpWC2HaXLWnqUSJ99gI/lnMcGsd4esdyX7qhE6w+LG06Llh7Pa
+         xJ/C3rmCgEACwpdDS8K1bLfDCCOIO8psOn8Z9NdbQFzhyS3BnTlfvmFES2exo44yb6+x
+         cHH0KxP57XLuJLiW77fcwPCv3UcXXXUXTooMN3pbPL+39NZoQkfcj91BGbXina/FpZ38
+         iavDo8OMjhh/+rJdxK6zJNAqUm1C1HFAILdpfVQyJ24S3H6t+DFjlURbjKHdmeyf1vom
+         GukA==
+X-Gm-Message-State: APjAAAUP+NucwGvTHrsMpGC4Ubmc6J8JFKXDwmB30EyRVrvESFjVeuK+
+        zcGUmP/J4ON01HMxKQmF42nYF4rQ4lFstlbf3uk=
+X-Google-Smtp-Source: APXvYqyYPlXGS2nEIB0nWEpd2b1ixbT/+c7Z/cOCKib+7XtifVu0NFO4zmvfJR/Et/9/RC0y/ZQ/vXXzv9FEqzt3KWQ=
+X-Received: by 2002:a67:eac5:: with SMTP id s5mr13315040vso.148.1582102954243;
+ Wed, 19 Feb 2020 01:02:34 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <alpine.LRH.2.21.2002190621180.10165@namei.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+From:   Martin Haass <vvvrrooomm@gmail.com>
+Date:   Wed, 19 Feb 2020 10:02:17 +0100
+Message-ID: <CAH3oDPzeu_bzYa3fOUpcjQk4HJ5K2Rx+Qf+qbqxSrmTdrWHm5g@mail.gmail.com>
+Subject: [PATCH] module support: during lockdown, log name of unsigned module
+To:     Jessica Yu <jeyu@kernel.org>
+Cc:     linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-modules@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+during lockdown loading of unsigned modules is restricted to signed
+modules only. The old error message does not show which module misses
+the signature, making it very difficult for a user to determine which
+module is at fault.
+This patch adds a line to the logs which additionally contains the
+module name that caused the error message. The old message cannot
+be replaced as it is generated by lockdown_is_locked_down
+---
+ kernel/module.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-On 18.02.2020 22:21, James Morris wrote:
-> On Mon, 17 Feb 2020, Alexey Budankov wrote:
-> 
->>
->> Introduce CAP_PERFMON capability designed to secure system performance
->> monitoring and observability operations so that CAP_PERFMON would assist
->> CAP_SYS_ADMIN capability in its governing role for performance
->> monitoring and observability subsystems.
-> 
-> 
-> Acked-by: James Morris <jamorris@linux.microsoft.com>
+diff --git a/kernel/module.c b/kernel/module.c
+index 33569a01d6e..6dcb28139a0 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -2807,7 +2807,8 @@ static int module_sig_check(struct load_info *info,
+int flags)
+  const unsigned long markerlen = sizeof(MODULE_SIG_STRING) - 1;
+  const char *reason;
+  const void *mod = info->hdr;
+-
++ int is_locked = -EPERM;
++
+  /*
+  * Require flags == 0, as a module with version information
+  * removed is no longer the module that was signed
+@@ -2843,7 +2844,12 @@ static int module_sig_check(struct load_info *info,
+int flags)
+  return -EKEYREJECTED;
+  }
 
-Thanks James! 
-I appreciate your involvement and collaboration 
-w.r.t to the whole patch set.
+- return security_locked_down(LOCKDOWN_MODULE_SIGNATURE);
++ is_locked = security_locked_down(LOCKDOWN_MODULE_SIGNATURE);
++ if (is_locked == -EPERM) {
++ pr_notice("Lockdown: %s: rejected module '%s' cause: %s",
++ current->comm, info->name, reason);
++ }
++ return is_locked;
 
-Gratefully,
-Alexey
+  /* All other errors are fatal, including nomem, unparseable
+  * signatures and signature check failures - even if signatures
+-- 
+2.25.0
