@@ -2,109 +2,77 @@ Return-Path: <SRS0=QiiV=4H=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,HK_RANDOM_FROM,INCLUDES_PATCH,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 040F1C34022
-	for <linux-security-module@archiver.kernel.org>; Wed, 19 Feb 2020 09:02:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDA84C3404D
+	for <linux-security-module@archiver.kernel.org>; Wed, 19 Feb 2020 12:06:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C998524658
-	for <linux-security-module@archiver.kernel.org>; Wed, 19 Feb 2020 09:02:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W+MvosDD"
+	by mail.kernel.org (Postfix) with ESMTP id A70DA2465D
+	for <linux-security-module@archiver.kernel.org>; Wed, 19 Feb 2020 12:06:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726265AbgBSJCf (ORCPT
+        id S1726671AbgBSMGY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 19 Feb 2020 04:02:35 -0500
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:41403 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726260AbgBSJCf (ORCPT
+        Wed, 19 Feb 2020 07:06:24 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:57574 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726495AbgBSMGY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 19 Feb 2020 04:02:35 -0500
-Received: by mail-vs1-f67.google.com with SMTP id k188so14600110vsc.8;
-        Wed, 19 Feb 2020 01:02:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=TSVyOEZZlUXcItl/vOCqMLuW1ofkxTSLhKQ7okp+WUw=;
-        b=W+MvosDDNezGY0Xz11wcWD5F1iPFX3ljmRkbHSfE1anrFuYDdb5UEvX8Fd8FSEH9fK
-         g8XNmermebanajz8wUzJv6E7+Lpo9m7pUKQ8ZjMH8YxkLRrPGILV6HWQ4eHw5XDZ53IT
-         JtSiHbAegJIwYSLSM1i75JFwskZoZYZmkoHBZr3guFZvzpisQLR5P/3OZjhatToz49LT
-         W008XH5uN98RYQ5w1FVVPIiAj2mk8Kqji8aeT4695uKAsTwWkkJCOIw992VqU97Pyepv
-         JZaJ0Dnq2IVvJ2db4U3xYnlHdTyVasQ1eT9IhbblNbuRuTspOSdoXH7PKohvp1PxIh0S
-         FggA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=TSVyOEZZlUXcItl/vOCqMLuW1ofkxTSLhKQ7okp+WUw=;
-        b=TlmEhK8ARvxQkU8jlX5bg7aNkDbWxL8i/WnNwIFGPnh9Ib+TD7y4dsaKre2HRsHSkV
-         V7+V+exlO+8l9wXqaKTpWC2HaXLWnqUSJ99gI/lnMcGsd4esdyX7qhE6w+LG06Llh7Pa
-         xJ/C3rmCgEACwpdDS8K1bLfDCCOIO8psOn8Z9NdbQFzhyS3BnTlfvmFES2exo44yb6+x
-         cHH0KxP57XLuJLiW77fcwPCv3UcXXXUXTooMN3pbPL+39NZoQkfcj91BGbXina/FpZ38
-         iavDo8OMjhh/+rJdxK6zJNAqUm1C1HFAILdpfVQyJ24S3H6t+DFjlURbjKHdmeyf1vom
-         GukA==
-X-Gm-Message-State: APjAAAUP+NucwGvTHrsMpGC4Ubmc6J8JFKXDwmB30EyRVrvESFjVeuK+
-        zcGUmP/J4ON01HMxKQmF42nYF4rQ4lFstlbf3uk=
-X-Google-Smtp-Source: APXvYqyYPlXGS2nEIB0nWEpd2b1ixbT/+c7Z/cOCKib+7XtifVu0NFO4zmvfJR/Et/9/RC0y/ZQ/vXXzv9FEqzt3KWQ=
-X-Received: by 2002:a67:eac5:: with SMTP id s5mr13315040vso.148.1582102954243;
- Wed, 19 Feb 2020 01:02:34 -0800 (PST)
+        Wed, 19 Feb 2020 07:06:24 -0500
+Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1j4O7B-0002If-8k; Wed, 19 Feb 2020 12:06:05 +0000
+Date:   Wed, 19 Feb 2020 13:06:04 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     "Serge E. Hallyn" <serge@hallyn.com>
+Cc:     =?utf-8?B?U3TDqXBoYW5l?= Graber <stgraber@ubuntu.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Aleksa Sarai <cyphar@cyphar.com>, Jann Horn <jannh@google.com>,
+        smbarber@chromium.org, Seth Forshee <seth.forshee@canonical.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Phil Estes <estesp@gmail.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        containers@lists.linux-foundation.org,
+        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org
+Subject: Re: [PATCH v3 09/25] fs: add is_userns_visible() helper
+Message-ID: <20200219120604.vqudwaeppebvisco@wittgenstein>
+References: <20200218143411.2389182-1-christian.brauner@ubuntu.com>
+ <20200218143411.2389182-10-christian.brauner@ubuntu.com>
+ <20200219024233.GA19334@mail.hallyn.com>
 MIME-Version: 1.0
-From:   Martin Haass <vvvrrooomm@gmail.com>
-Date:   Wed, 19 Feb 2020 10:02:17 +0100
-Message-ID: <CAH3oDPzeu_bzYa3fOUpcjQk4HJ5K2Rx+Qf+qbqxSrmTdrWHm5g@mail.gmail.com>
-Subject: [PATCH] module support: during lockdown, log name of unsigned module
-To:     Jessica Yu <jeyu@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-modules@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200219024233.GA19334@mail.hallyn.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-during lockdown loading of unsigned modules is restricted to signed
-modules only. The old error message does not show which module misses
-the signature, making it very difficult for a user to determine which
-module is at fault.
-This patch adds a line to the logs which additionally contains the
-module name that caused the error message. The old message cannot
-be replaced as it is generated by lockdown_is_locked_down
----
- kernel/module.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+On Tue, Feb 18, 2020 at 08:42:33PM -0600, Serge Hallyn wrote:
+> On Tue, Feb 18, 2020 at 03:33:55PM +0100, Christian Brauner wrote:
+> > Introduce a helper which makes it possible to detect fileystems whose
+> > superblock is visible in multiple user namespace. This currently only
+> > means proc and sys. Such filesystems usually have special semantics so their
+> > behavior will not be changed with the introduction of fsid mappings.
+> 
+> Hi,
+> 
+> I'm afraid I've got a bit of a hangup about the terminology here.  I
+> *think* what you mean is that SB_I_USERNS_VISIBLE is an fs whose uids are
+> always translated per the id mappings, not fsid mappings.  But when I see
 
-diff --git a/kernel/module.c b/kernel/module.c
-index 33569a01d6e..6dcb28139a0 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -2807,7 +2807,8 @@ static int module_sig_check(struct load_info *info,
-int flags)
-  const unsigned long markerlen = sizeof(MODULE_SIG_STRING) - 1;
-  const char *reason;
-  const void *mod = info->hdr;
--
-+ int is_locked = -EPERM;
-+
-  /*
-  * Require flags == 0, as a module with version information
-  * removed is no longer the module that was signed
-@@ -2843,7 +2844,12 @@ static int module_sig_check(struct load_info *info,
-int flags)
-  return -EKEYREJECTED;
-  }
+Correct!
 
-- return security_locked_down(LOCKDOWN_MODULE_SIGNATURE);
-+ is_locked = security_locked_down(LOCKDOWN_MODULE_SIGNATURE);
-+ if (is_locked == -EPERM) {
-+ pr_notice("Lockdown: %s: rejected module '%s' cause: %s",
-+ current->comm, info->name, reason);
-+ }
-+ return is_locked;
+> the name it seems to imply that !SB_I_USERNS_VISIBLE filesystems can't
+> be seen by other namespaces at all.
+> 
+> Am I right in my first interpretation?  If so, can we talk about the
+> naming?
 
-  /* All other errors are fatal, including nomem, unparseable
-  * signatures and signature check failures - even if signatures
--- 
-2.25.0
+Yep, your first interpretation is right. What about: wants_idmaps()
