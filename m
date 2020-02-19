@@ -1,132 +1,330 @@
-Return-Path: <SRS0=lArx=4G=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=QiiV=4H=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90CA4C3404D
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Feb 2020 23:51:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B23B2C34031
+	for <linux-security-module@archiver.kernel.org>; Wed, 19 Feb 2020 02:33:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 628292465A
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Feb 2020 23:51:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="KhPrEaLp";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="KhPrEaLp"
+	by mail.kernel.org (Postfix) with ESMTP id 8D30F22B48
+	for <linux-security-module@archiver.kernel.org>; Wed, 19 Feb 2020 02:33:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726808AbgBRXu7 (ORCPT
+        id S1726964AbgBSCdb (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 18 Feb 2020 18:50:59 -0500
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:35564 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726716AbgBRXu7 (ORCPT
+        Tue, 18 Feb 2020 21:33:31 -0500
+Received: from mail.hallyn.com ([178.63.66.53]:49358 "EHLO mail.hallyn.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726799AbgBSCdb (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 18 Feb 2020 18:50:59 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id CECF68EE367;
-        Tue, 18 Feb 2020 15:50:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1582069858;
-        bh=uAmYYHSWRiJ7Jt65f/eBWdihBlK1KFIAAWXVc9m7yt0=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=KhPrEaLpdk5FFgsYKEuwFY/rqCQlUMnKPGm2py/twY0ZtW2iIguWNWc8WFKNn2a8s
-         5anURAu22KldxiQZCLKx46Rfz58z1zsxEFuyiy1CPDao4Ru/8YS+lSURC0sO/oUk7S
-         yIehdox1DGMePvRq0uPTOqchbx7i1wAEhSQw2u0U=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id ilGQnuwfvJXX; Tue, 18 Feb 2020 15:50:58 -0800 (PST)
-Received: from jarvis.ext.hansenpartnership.com (jarvis.ext.hansenpartnership.com [153.66.160.226])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 73D138EE0D5;
-        Tue, 18 Feb 2020 15:50:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1582069858;
-        bh=uAmYYHSWRiJ7Jt65f/eBWdihBlK1KFIAAWXVc9m7yt0=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=KhPrEaLpdk5FFgsYKEuwFY/rqCQlUMnKPGm2py/twY0ZtW2iIguWNWc8WFKNn2a8s
-         5anURAu22KldxiQZCLKx46Rfz58z1zsxEFuyiy1CPDao4Ru/8YS+lSURC0sO/oUk7S
-         yIehdox1DGMePvRq0uPTOqchbx7i1wAEhSQw2u0U=
-Message-ID: <1582069856.16681.59.camel@HansenPartnership.com>
-Subject: Re: [PATCH v3 00/25] user_namespace: introduce fsid mappings
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Christian Brauner <christian.brauner@ubuntu.com>,
-        =?ISO-8859-1?Q?St=E9phane?= Graber <stgraber@ubuntu.com>,
+        Tue, 18 Feb 2020 21:33:31 -0500
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+        id 9396D46B; Tue, 18 Feb 2020 20:33:26 -0600 (CST)
+Date:   Tue, 18 Feb 2020 20:33:26 -0600
+From:   "Serge E. Hallyn" <serge@hallyn.com>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     =?iso-8859-1?Q?St=E9phane?= Graber <stgraber@ubuntu.com>,
         "Eric W. Biederman" <ebiederm@xmission.com>,
-        Aleksa Sarai <cyphar@cyphar.com>, Jann Horn <jannh@google.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
-        containers@lists.linux-foundation.org, smbarber@chromium.org,
-        Seth Forshee <seth.forshee@canonical.com>,
-        linux-security-module@vger.kernel.org,
+        Aleksa Sarai <cyphar@cyphar.com>, Jann Horn <jannh@google.com>,
+        smbarber@chromium.org, Seth Forshee <seth.forshee@canonical.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Alexey Dobriyan <adobriyan@gmail.com>
-Date:   Tue, 18 Feb 2020 15:50:56 -0800
-In-Reply-To: <20200218143411.2389182-1-christian.brauner@ubuntu.com>
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Serge Hallyn <serge@hallyn.com>,
+        James Morris <jmorris@namei.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Phil Estes <estesp@gmail.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        containers@lists.linux-foundation.org,
+        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org
+Subject: Re: [PATCH v3 01/25] user_namespace: introduce fsid mappings
+ infrastructure
+Message-ID: <20200219023326.GA19144@mail.hallyn.com>
 References: <20200218143411.2389182-1-christian.brauner@ubuntu.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+ <20200218143411.2389182-2-christian.brauner@ubuntu.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200218143411.2389182-2-christian.brauner@ubuntu.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 2020-02-18 at 15:33 +0100, Christian Brauner wrote:
-> In the usual case of running an unprivileged container we will have
-> setup an id mapping, e.g. 0 100000 100000. The on-disk mapping will
-> correspond to this id mapping, i.e. all files which we want to appear
-> as 0:0 inside the user namespace will be chowned to 100000:100000 on
-> the host. This works, because whenever the kernel needs to do a
-> filesystem access it will lookup the corresponding uid and gid in the
-> idmapping tables of the container. Now think about the case where we
-> want to have an id mapping of 0 100000 100000 but an on-disk mapping
-> of 0 300000 100000 which is needed to e.g. share a single on-disk
-> mapping with multiple containers that all have different id mappings.
-> This will be problematic. Whenever a filesystem access is requested,
-> the kernel will now try to lookup a mapping for 300000 in the id
-> mapping tables of the user namespace but since there is none the
-> files will appear to be owned by the overflow id, i.e. usually
-> 65534:65534 or nobody:nogroup.
+On Tue, Feb 18, 2020 at 03:33:47PM +0100, Christian Brauner wrote:
+> This introduces the infrastructure to setup fsid mappings which will be used in
+> later patches.
+> All new code depends on CONFIG_USER_NS_FSID=y. It currently defaults to "N".
+> If CONFIG_USER_NS_FSID is not set, no new code is added.
 > 
-> With fsid mappings we can solve this by writing an id mapping of 0
-> 100000 100000 and an fsid mapping of 0 300000 100000. On filesystem
-> access the kernel will now lookup the mapping for 300000 in the fsid
-> mapping tables of the user namespace. And since such a mapping
-> exists, the corresponding files will have correct ownership.
+> In this patch fsuid_m_show() and fsgid_m_show() are introduced. They are
+> identical to uid_m_show() and gid_m_show() until we introduce from_kfsuid() and
+> from_kfsgid() in a follow-up patch.
+> 
+> Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 
-So I did compile this up in order to run the shiftfs tests over it to
-see how it coped with the various corner cases.  However, what I find
-is it simply fails the fsid reverse mapping in the setup.  Trying to
-use a simple uid of 0 100000 1000 and a fsid of 100000 0 1000 fails the
-entry setuid(0) call because of this code:
+Acked-by: Serge Hallyn <serge@hallyn.com>
 
-long __sys_setuid(uid_t uid)
-{
-	struct user_namespace *ns =
-current_user_ns();
-	const struct cred *old;
-	struct cred *new;
-	int
-retval;
-	kuid_t kuid;
-	kuid_t kfsuid;
-
-	kuid = make_kuid(ns, uid);
-	if
-(!uid_valid(kuid))
-		return -EINVAL;
-
-	kfsuid = make_kfsuid(ns, uid);
-	if
-(!uid_valid(kfsuid))
-		return -EINVAL;
-
-which means you can't have a fsid mapping that doesn't have the same
-domain as the uid mapping, meaning a reverse mapping isn't possible
-because the range and domain have to be inverse and disjoint.
-
-James
-
+> ---
+> /* v2 */
+> - Randy Dunlap <rdunlap@infradead.org>:
+>   - Fix typo in USER_NS_FSID kconfig documentation.
+> 
+> /* v3 */
+> unchanged
+> ---
+>  include/linux/user_namespace.h |  10 +++
+>  init/Kconfig                   |  11 +++
+>  kernel/user.c                  |  22 ++++++
+>  kernel/user_namespace.c        | 122 +++++++++++++++++++++++++++++++++
+>  4 files changed, 165 insertions(+)
+> 
+> diff --git a/include/linux/user_namespace.h b/include/linux/user_namespace.h
+> index 6ef1c7109fc4..e44742b0cf8a 100644
+> --- a/include/linux/user_namespace.h
+> +++ b/include/linux/user_namespace.h
+> @@ -56,6 +56,10 @@ enum ucount_type {
+>  struct user_namespace {
+>  	struct uid_gid_map	uid_map;
+>  	struct uid_gid_map	gid_map;
+> +#ifdef CONFIG_USER_NS_FSID
+> +	struct uid_gid_map	fsuid_map;
+> +	struct uid_gid_map	fsgid_map;
+> +#endif
+>  	struct uid_gid_map	projid_map;
+>  	atomic_t		count;
+>  	struct user_namespace	*parent;
+> @@ -127,6 +131,12 @@ struct seq_operations;
+>  extern const struct seq_operations proc_uid_seq_operations;
+>  extern const struct seq_operations proc_gid_seq_operations;
+>  extern const struct seq_operations proc_projid_seq_operations;
+> +#ifdef CONFIG_USER_NS_FSID
+> +extern const struct seq_operations proc_fsuid_seq_operations;
+> +extern const struct seq_operations proc_fsgid_seq_operations;
+> +extern ssize_t proc_fsuid_map_write(struct file *, const char __user *, size_t, loff_t *);
+> +extern ssize_t proc_fsgid_map_write(struct file *, const char __user *, size_t, loff_t *);
+> +#endif
+>  extern ssize_t proc_uid_map_write(struct file *, const char __user *, size_t, loff_t *);
+>  extern ssize_t proc_gid_map_write(struct file *, const char __user *, size_t, loff_t *);
+>  extern ssize_t proc_projid_map_write(struct file *, const char __user *, size_t, loff_t *);
+> diff --git a/init/Kconfig b/init/Kconfig
+> index cfee56c151f1..d4d0beeba48f 100644
+> --- a/init/Kconfig
+> +++ b/init/Kconfig
+> @@ -1111,6 +1111,17 @@ config USER_NS
+>  
+>  	  If unsure, say N.
+>  
+> +config USER_NS_FSID
+> +	bool "User namespace fsid mappings"
+> +	depends on USER_NS
+> +	default n
+> +	help
+> +	  This allows containers to alter their filesystem id mappings.
+> +	  With this containers with different id mappings can still share
+> +	  the same filesystem.
+> +
+> +	  If unsure, say N.
+> +
+>  config PID_NS
+>  	bool "PID Namespaces"
+>  	default y
+> diff --git a/kernel/user.c b/kernel/user.c
+> index 5235d7f49982..2ccaea9b810b 100644
+> --- a/kernel/user.c
+> +++ b/kernel/user.c
+> @@ -55,6 +55,28 @@ struct user_namespace init_user_ns = {
+>  			},
+>  		},
+>  	},
+> +#ifdef CONFIG_USER_NS_FSID
+> +	.fsuid_map = {
+> +		.nr_extents = 1,
+> +		{
+> +			.extent[0] = {
+> +				.first = 0,
+> +				.lower_first = 0,
+> +				.count = 4294967295U,
+> +			},
+> +		},
+> +	},
+> +	.fsgid_map = {
+> +		.nr_extents = 1,
+> +		{
+> +			.extent[0] = {
+> +				.first = 0,
+> +				.lower_first = 0,
+> +				.count = 4294967295U,
+> +			},
+> +		},
+> +	},
+> +#endif
+>  	.count = ATOMIC_INIT(3),
+>  	.owner = GLOBAL_ROOT_UID,
+>  	.group = GLOBAL_ROOT_GID,
+> diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
+> index 8eadadc478f9..cbdf456f95f0 100644
+> --- a/kernel/user_namespace.c
+> +++ b/kernel/user_namespace.c
+> @@ -191,6 +191,16 @@ static void free_user_ns(struct work_struct *work)
+>  			kfree(ns->projid_map.forward);
+>  			kfree(ns->projid_map.reverse);
+>  		}
+> +#ifdef CONFIG_USER_NS_FSID
+> +		if (ns->fsgid_map.nr_extents > UID_GID_MAP_MAX_BASE_EXTENTS) {
+> +			kfree(ns->fsgid_map.forward);
+> +			kfree(ns->fsgid_map.reverse);
+> +		}
+> +		if (ns->fsuid_map.nr_extents > UID_GID_MAP_MAX_BASE_EXTENTS) {
+> +			kfree(ns->fsuid_map.forward);
+> +			kfree(ns->fsuid_map.reverse);
+> +		}
+> +#endif
+>  		retire_userns_sysctls(ns);
+>  		key_free_user_ns(ns);
+>  		ns_free_inum(&ns->ns);
+> @@ -637,6 +647,50 @@ static int projid_m_show(struct seq_file *seq, void *v)
+>  	return 0;
+>  }
+>  
+> +#ifdef CONFIG_USER_NS_FSID
+> +static int fsuid_m_show(struct seq_file *seq, void *v)
+> +{
+> +	struct user_namespace *ns = seq->private;
+> +	struct uid_gid_extent *extent = v;
+> +	struct user_namespace *lower_ns;
+> +	uid_t lower;
+> +
+> +	lower_ns = seq_user_ns(seq);
+> +	if ((lower_ns == ns) && lower_ns->parent)
+> +		lower_ns = lower_ns->parent;
+> +
+> +	lower = from_kuid(lower_ns, KUIDT_INIT(extent->lower_first));
+> +
+> +	seq_printf(seq, "%10u %10u %10u\n",
+> +		extent->first,
+> +		lower,
+> +		extent->count);
+> +
+> +	return 0;
+> +}
+> +
+> +static int fsgid_m_show(struct seq_file *seq, void *v)
+> +{
+> +	struct user_namespace *ns = seq->private;
+> +	struct uid_gid_extent *extent = v;
+> +	struct user_namespace *lower_ns;
+> +	gid_t lower;
+> +
+> +	lower_ns = seq_user_ns(seq);
+> +	if ((lower_ns == ns) && lower_ns->parent)
+> +		lower_ns = lower_ns->parent;
+> +
+> +	lower = from_kgid(lower_ns, KGIDT_INIT(extent->lower_first));
+> +
+> +	seq_printf(seq, "%10u %10u %10u\n",
+> +		extent->first,
+> +		lower,
+> +		extent->count);
+> +
+> +	return 0;
+> +}
+> +#endif
+> +
+>  static void *m_start(struct seq_file *seq, loff_t *ppos,
+>  		     struct uid_gid_map *map)
+>  {
+> @@ -674,6 +728,22 @@ static void *projid_m_start(struct seq_file *seq, loff_t *ppos)
+>  	return m_start(seq, ppos, &ns->projid_map);
+>  }
+>  
+> +#ifdef CONFIG_USER_NS_FSID
+> +static void *fsuid_m_start(struct seq_file *seq, loff_t *ppos)
+> +{
+> +	struct user_namespace *ns = seq->private;
+> +
+> +	return m_start(seq, ppos, &ns->fsuid_map);
+> +}
+> +
+> +static void *fsgid_m_start(struct seq_file *seq, loff_t *ppos)
+> +{
+> +	struct user_namespace *ns = seq->private;
+> +
+> +	return m_start(seq, ppos, &ns->fsgid_map);
+> +}
+> +#endif
+> +
+>  static void *m_next(struct seq_file *seq, void *v, loff_t *pos)
+>  {
+>  	(*pos)++;
+> @@ -706,6 +776,22 @@ const struct seq_operations proc_projid_seq_operations = {
+>  	.show = projid_m_show,
+>  };
+>  
+> +#ifdef CONFIG_USER_NS_FSID
+> +const struct seq_operations proc_fsuid_seq_operations = {
+> +	.start = fsuid_m_start,
+> +	.stop = m_stop,
+> +	.next = m_next,
+> +	.show = fsuid_m_show,
+> +};
+> +
+> +const struct seq_operations proc_fsgid_seq_operations = {
+> +	.start = fsgid_m_start,
+> +	.stop = m_stop,
+> +	.next = m_next,
+> +	.show = fsgid_m_show,
+> +};
+> +#endif
+> +
+>  static bool mappings_overlap(struct uid_gid_map *new_map,
+>  			     struct uid_gid_extent *extent)
+>  {
+> @@ -1081,6 +1167,42 @@ ssize_t proc_projid_map_write(struct file *file, const char __user *buf,
+>  			 &ns->projid_map, &ns->parent->projid_map);
+>  }
+>  
+> +#ifdef CONFIG_USER_NS_FSID
+> +ssize_t proc_fsuid_map_write(struct file *file, const char __user *buf,
+> +			     size_t size, loff_t *ppos)
+> +{
+> +	struct seq_file *seq = file->private_data;
+> +	struct user_namespace *ns = seq->private;
+> +	struct user_namespace *seq_ns = seq_user_ns(seq);
+> +
+> +	if (!ns->parent)
+> +		return -EPERM;
+> +
+> +	if ((seq_ns != ns) && (seq_ns != ns->parent))
+> +		return -EPERM;
+> +
+> +	return map_write(file, buf, size, ppos, CAP_SETUID, &ns->fsuid_map,
+> +			 &ns->parent->fsuid_map);
+> +}
+> +
+> +ssize_t proc_fsgid_map_write(struct file *file, const char __user *buf,
+> +			     size_t size, loff_t *ppos)
+> +{
+> +	struct seq_file *seq = file->private_data;
+> +	struct user_namespace *ns = seq->private;
+> +	struct user_namespace *seq_ns = seq_user_ns(seq);
+> +
+> +	if (!ns->parent)
+> +		return -EPERM;
+> +
+> +	if ((seq_ns != ns) && (seq_ns != ns->parent))
+> +		return -EPERM;
+> +
+> +	return map_write(file, buf, size, ppos, CAP_SETGID, &ns->fsgid_map,
+> +			 &ns->parent->fsgid_map);
+> +}
+> +#endif
+> +
+>  static bool new_idmap_permitted(const struct file *file,
+>  				struct user_namespace *ns, int cap_setid,
+>  				struct uid_gid_map *new_map)
+> -- 
+> 2.25.0
