@@ -6,126 +6,97 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11717C11D04
-	for <linux-security-module@archiver.kernel.org>; Thu, 20 Feb 2020 13:05:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35AD2C11D05
+	for <linux-security-module@archiver.kernel.org>; Thu, 20 Feb 2020 14:26:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E49D224670
-	for <linux-security-module@archiver.kernel.org>; Thu, 20 Feb 2020 13:05:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE72C207FD
+	for <linux-security-module@archiver.kernel.org>; Thu, 20 Feb 2020 14:26:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727983AbgBTNFj (ORCPT
+        id S1727545AbgBTO01 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 20 Feb 2020 08:05:39 -0500
-Received: from mga03.intel.com ([134.134.136.65]:57895 "EHLO mga03.intel.com"
+        Thu, 20 Feb 2020 09:26:27 -0500
+Received: from mail.hallyn.com ([178.63.66.53]:59536 "EHLO mail.hallyn.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727989AbgBTNFj (ORCPT
+        id S1727088AbgBTO01 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 20 Feb 2020 08:05:39 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Feb 2020 05:05:23 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,464,1574150400"; 
-   d="scan'208";a="283399590"
-Received: from linux.intel.com ([10.54.29.200])
-  by FMSMGA003.fm.intel.com with ESMTP; 20 Feb 2020 05:05:21 -0800
-Received: from [10.125.252.166] (abudanko-mobl.ccr.corp.intel.com [10.125.252.166])
-        by linux.intel.com (Postfix) with ESMTP id 253CC580472;
-        Thu, 20 Feb 2020 05:05:12 -0800 (PST)
-Subject: Re: [PATCH v5 01/10] capabilities: introduce CAP_PERFMON to kernel
- and user space
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Serge Hallyn <serge@hallyn.com>,
-        James Morris <jmorris@namei.org>
-Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        "jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>,
-        "joonas.lahtinen@linux.intel.com" <joonas.lahtinen@linux.intel.com>,
-        "rodrigo.vivi@intel.com" <rodrigo.vivi@intel.com>,
-        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Robert Richter <rric@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>,
-        Igor Lubashev <ilubashe@akamai.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Song Liu <songliubraving@fb.com>,
-        Lionel Landwerlin <lionel.g.landwerlin@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
-        oprofile-list@lists.sf.net, Andy Lutomirski <luto@amacapital.net>
-References: <875zgizkyk.fsf@nanos.tec.linutronix.de>
- <7d6f4210-423f-e454-3910-9f8e17dff1aa@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <95aa57e6-4d78-39df-386c-a98734f19777@linux.intel.com>
-Date:   Thu, 20 Feb 2020 16:05:11 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Thu, 20 Feb 2020 09:26:27 -0500
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+        id B0D613F5; Thu, 20 Feb 2020 08:26:24 -0600 (CST)
+Date:   Thu, 20 Feb 2020 08:26:24 -0600
+From:   "Serge E. Hallyn" <serge@hallyn.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        =?iso-8859-1?Q?St=E9phane?= Graber <stgraber@ubuntu.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Aleksa Sarai <cyphar@cyphar.com>, Jann Horn <jannh@google.com>,
+        smbarber@chromium.org, Seth Forshee <seth.forshee@canonical.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Phil Estes <estesp@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: [PATCH v3 09/25] fs: add is_userns_visible() helper
+Message-ID: <20200220142624.GA5249@mail.hallyn.com>
+References: <20200218143411.2389182-1-christian.brauner@ubuntu.com>
+ <20200218143411.2389182-10-christian.brauner@ubuntu.com>
+ <20200219024233.GA19334@mail.hallyn.com>
+ <20200219120604.vqudwaeppebvisco@wittgenstein>
+ <CALCETrW-XPkBMs30vk+Aiv+jA5i7TjHOYCgz0Ud6d0geaYte=g@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <7d6f4210-423f-e454-3910-9f8e17dff1aa@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALCETrW-XPkBMs30vk+Aiv+jA5i7TjHOYCgz0Ud6d0geaYte=g@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-On 07.02.2020 16:39, Alexey Budankov wrote:
+On Wed, Feb 19, 2020 at 09:18:51AM -0800, Andy Lutomirski wrote:
+> On Wed, Feb 19, 2020 at 4:06 AM Christian Brauner
+> <christian.brauner@ubuntu.com> wrote:
+> >
+> > On Tue, Feb 18, 2020 at 08:42:33PM -0600, Serge Hallyn wrote:
+> > > On Tue, Feb 18, 2020 at 03:33:55PM +0100, Christian Brauner wrote:
+> > > > Introduce a helper which makes it possible to detect fileystems whose
+> > > > superblock is visible in multiple user namespace. This currently only
+> > > > means proc and sys. Such filesystems usually have special semantics so their
+> > > > behavior will not be changed with the introduction of fsid mappings.
+> > >
+> > > Hi,
+> > >
+> > > I'm afraid I've got a bit of a hangup about the terminology here.  I
+> > > *think* what you mean is that SB_I_USERNS_VISIBLE is an fs whose uids are
+> > > always translated per the id mappings, not fsid mappings.  But when I see
+> >
+> > Correct!
+> >
+> > > the name it seems to imply that !SB_I_USERNS_VISIBLE filesystems can't
+> > > be seen by other namespaces at all.
+> > >
+> > > Am I right in my first interpretation?  If so, can we talk about the
+> > > naming?
+> >
+> > Yep, your first interpretation is right. What about: wants_idmaps()
 > 
-> On 07.02.2020 14:38, Thomas Gleixner wrote:
->> Alexey Budankov <alexey.budankov@linux.intel.com> writes:
->>> On 22.01.2020 17:25, Alexey Budankov wrote:
->>>> On 22.01.2020 17:07, Stephen Smalley wrote:
->>>>>> It keeps the implementation simple and readable. The implementation is more
->>>>>> performant in the sense of calling the API - one capable() call for CAP_PERFMON
->>>>>> privileged process.
->>>>>>
->>>>>> Yes, it bloats audit log for CAP_SYS_ADMIN privileged and unprivileged processes,
->>>>>> but this bloating also advertises and leverages using more secure CAP_PERFMON
->>>>>> based approach to use perf_event_open system call.
->>>>>
->>>>> I can live with that.  We just need to document that when you see
->>>>> both a CAP_PERFMON and a CAP_SYS_ADMIN audit message for a process,
->>>>> try only allowing CAP_PERFMON first and see if that resolves the
->>>>> issue.  We have a similar issue with CAP_DAC_READ_SEARCH versus
->>>>> CAP_DAC_OVERRIDE.
->>>>
->>>> perf security [1] document can be updated, at least, to align and document 
->>>> this audit logging specifics.
->>>
->>> And I plan to update the document right after this patch set is accepted.
->>> Feel free to let me know of the places in the kernel docs that also
->>> require update w.r.t CAP_PERFMON extension.
->>
->> The documentation update wants be part of the patch set and not planned
->> to be done _after_ the patch set is merged.
-> 
-> Well, accepted. It is going to make patches #11 and beyond.
+> Maybe fsidmap_exempt()?
 
-Patches #11 and #12 of v7 [1] contain information on CAP_PERFMON intention and usage.
-Patch for man-pages [2] extends perf_event_open.2 documentation.
+Yeah, and maybe SB_USERNS_FSID_EXEMPT ?
 
-Thanks,
-Alexey
+> I still haven't convinced myself that any of the above is actually
+> correct behavior, especially when people do things like creating
+> setuid binaries.
 
----
-[1] https://lore.kernel.org/lkml/c8de937a-0b3a-7147-f5ef-69f467e87a13@linux.intel.com/
-[2] https://lore.kernel.org/lkml/18d1083d-efe5-f5f8-c531-d142c0e5c1a8@linux.intel.com/
-
+The only place that would be a problem is if the child userns has an
+fsidmapping from X to 0 in the parent userns, right?  Yeah I'm sure
+many people would ignore all advice to the contrary and do this anyway,
+but I would try hard to suggest that people use an intermediary userns
+for storing filesystems for the "docker share" case.  So the host fsid
+range would start at say 200000.  So a setuid binary would just be
+setuid-200000.
