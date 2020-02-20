@@ -2,320 +2,202 @@ Return-Path: <SRS0=0oss=4I=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E212C11D0C
-	for <linux-security-module@archiver.kernel.org>; Thu, 20 Feb 2020 17:53:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB6CEC11D19
+	for <linux-security-module@archiver.kernel.org>; Thu, 20 Feb 2020 18:11:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5192320722
-	for <linux-security-module@archiver.kernel.org>; Thu, 20 Feb 2020 17:53:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF1EF24672
+	for <linux-security-module@archiver.kernel.org>; Thu, 20 Feb 2020 18:11:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="P0HVXfLY"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="VGC/1ist"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728119AbgBTRxA (ORCPT
+        id S1728787AbgBTSLn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 20 Feb 2020 12:53:00 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:35915 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728359AbgBTRw6 (ORCPT
+        Thu, 20 Feb 2020 13:11:43 -0500
+Received: from sonic310-30.consmr.mail.ne1.yahoo.com ([66.163.186.211]:38239
+        "EHLO sonic310-30.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728162AbgBTSLk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 20 Feb 2020 12:52:58 -0500
-Received: by mail-wm1-f66.google.com with SMTP id p17so3025813wma.1
-        for <linux-security-module@vger.kernel.org>; Thu, 20 Feb 2020 09:52:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=0abA5E0OjgcrSzHbxE94d8IVvZFrSKJHA7cstMQj5qA=;
-        b=P0HVXfLYteXQE5UhSl8LTP0NGCRqCPckfbBRYGOdV+RmW+QOLjeg6HFWkW4sll9KOC
-         61YuhuiHt3T2kWLTaB2ZjPNqovlBBvo6TAOc8Xcj0ZU52RlutjB2ldpTEqCrgfcC20eJ
-         7WooBGwQcyT7OsQ0lM9rE5C0DncgsRKxsJ98I=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=0abA5E0OjgcrSzHbxE94d8IVvZFrSKJHA7cstMQj5qA=;
-        b=Ac8FA4IDABVhQ4Gu8kDmKxmX5y2QoZnKADQfUDeAKRAEswRNFe4Eyl7DGk8t/PysAI
-         Vuewqzw88OsG3dyhntIWw0CfrA8nHs2XlCvbMotU4Prx2Ki75inQ5NjWOslJ/t3fSlKD
-         kNrULrTo6XUfbzEuaHiAiw8RNOwM3W2MZ/axzDvGQdHFca0cR01gyeiGhfX8KABsbyv9
-         94v6PlP7dgPUrpNM37a12wUv2CohaW3OQLC3VeRkIyy/w2wjTauKCojq0Gvlvvp96Sq8
-         ZkSusIBPbH+K2nZ/xMbGzUy3UN6FtoH1rB5XHA1Vpk9Y4VSo5pr4CZffZvDFhqEuqG4W
-         +Cag==
-X-Gm-Message-State: APjAAAVarxeZIpgaehU/KK9RlqFj1/Zf+zAeOaGpCwgcEK3sqFk0cPhP
-        jO+MUHlwdQu1kqYwat64dKEuxg==
-X-Google-Smtp-Source: APXvYqzF1RB3bMF8HHT53VW6yM9RwTMt/SeAq+H3oPgCjQ85zeXqE9yf4W2eoV0TQfF6xtJkN5fZJQ==
-X-Received: by 2002:a7b:c750:: with SMTP id w16mr5566673wmk.46.1582221175124;
-        Thu, 20 Feb 2020 09:52:55 -0800 (PST)
-Received: from kpsingh-kernel.localdomain ([2620:0:105f:fd00:d960:542a:a1d:648a])
-        by smtp.gmail.com with ESMTPSA id r5sm363059wrt.43.2020.02.20.09.52.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2020 09:52:54 -0800 (PST)
-From:   KP Singh <kpsingh@chromium.org>
-To:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Cc:     Brendan Jackman <jackmanb@google.com>,
-        Florent Revest <revest@google.com>,
-        Thomas Garnier <thgarnie@google.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>,
-        Thomas Garnier <thgarnie@chromium.org>,
-        Michael Halcrow <mhalcrow@google.com>,
-        Paul Turner <pjt@google.com>,
-        Brendan Gregg <brendan.d.gregg@gmail.com>,
-        Jann Horn <jannh@google.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Christian Brauner <christian@brauner.io>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Stanislav Fomichev <sdf@google.com>,
-        Quentin Monnet <quentin.monnet@netronome.com>,
-        Andrey Ignatov <rdna@fb.com>, Joe Stringer <joe@wand.net.nz>
-Subject: [PATCH bpf-next v4 1/8] bpf: Introduce BPF_PROG_TYPE_LSM
-Date:   Thu, 20 Feb 2020 18:52:43 +0100
-Message-Id: <20200220175250.10795-2-kpsingh@chromium.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200220175250.10795-1-kpsingh@chromium.org>
-References: <20200220175250.10795-1-kpsingh@chromium.org>
+        Thu, 20 Feb 2020 13:11:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1582222298; bh=q6UjrjE6DHvxFVsNl/iL7eDH3TLOf4/1fX67xW+i3FY=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=VGC/1istFeIoAwEQw+FhtFiR365iNRDZa5aWCPlZEAxvNBEKfiIGUC2gE4PFf/tUX81QI86J1HIb9Rb60CFw2AwQq/16J7K2mXtmHGYo7+Z6avgBweD636zdjM3x3LUgZErvRh6dwgVwQq5QNRGlwFe8Wc8Thxo5YiQEN9NeX83LN8xzgsANV8JM92mDWl3CB7SjG3dlKYqS8c38qbjwsI3aQRzgYPFqRDzjwCb4GXO5yyrRLviyh7+VT6WWdAg3yZLcqQ82t1/0TaEKxbjWzR8dzsZi4KEJOAWBk1+UIao4wzaUIRUD3ylT7Ua6Acs5WW3djMMgKN1vt0pmJ58Kww==
+X-YMail-OSG: pPjDUuQVM1ms14ONCgjem.eISD8MwlVJBucfpVJ5JK5t5iMwrnUiQ8VO1jVNuAp
+ mimT2t_t8V9eAsqtBMYelI4p0.yhloDPKoqcF.wCwgJh2c.Q6VXS.XU.mR2LJCkq.8zta78_lhTp
+ 4QKdqmV8tdEonOFWmHffr8f7tmobnlKSwkhm2xUybxiph3nmsCNJs4NN4GrKL.9mrQ.ZPLH8vFtx
+ _k4R3q5h2EVmLBlt9DLW56CdYIas_rngGGkeJm5cC8Qv02TPaQWKt2HCc16Rut1V1m8Qk6qNADrB
+ oS8NxFE3JD3sK694al9b9t4R._U4WLX6msYvaqQlQj.FEIzRnSDuPdW8czRxQ94Oj2EzzhQ5dj2n
+ jc.RIlosHnP9oSPXra2FzLlfjGWEWDCEmoLk2UJKlgfvFzJOtOM1ADLzwtF6er0bogF6MEcpStS4
+ WCO5wDUZ9Lr2uCczcTLJbTtKRvMhWFpm4sXS.ScNNQulig2GWlbH5o2joD89Gi0ajXe9PM3Jk0w8
+ 7FZ7UQVq2KxWVDFYQzYH4eUybE0jcWWUHapvUgcDo_aNR95zy.1qQZbsz8CZqmcyliRdimEjoZLa
+ gNvoMu5.8Grqlb1naqnbwSwtmJt9QzZ8LMg4d95TkTj3o1U9qoPVbi.HZWKaRP8GlzCpLWb4UcuG
+ 7V6v2Q18nVCpCJks04A8dsyKYlGrB9pHv8AAI9RhICoavWYr05WdFRNW1UXTBpkp_jrW3YBOwVFI
+ hpash_0jDfLPJGozdhJ0sqi.XJqYqK229UQ.YmlNT78iOXt.dkybj565umOf6agrhuKY6ho7JC68
+ RY8BbPiLhQjnWfkRE4Ze1jSqMGUJrPmi_tTFz4MydJjtgkVPgQrpTV8BeAl5lQHFRKW3t2eXbqyh
+ tXsMi3LsbbUaLt2oTFtGjGEbdLrxgIdba9RLBWtUdpCoqjo0GFBPHmI2xWFH69ukG0ytbguwKg.O
+ meYvYMGRufVfnjvIK7HkEoq5.ecyWSTcq02AsC4De.mfE3nuzMCLykcmyie1rm_pA_9FLKFBdDly
+ o9cJvYB8vf_yZerPauqOiCsjX5CiQV4NubZZ76R1cF6_vr5Dr6dAZFMiH0yJMWtO.QN_dHLR2dY0
+ MRCbb286o8eqVBk4IkXdqNFhkxL3_z7RrH2eH9.J9NYb5nVXnsf0zYER2OMFaDJ0fwRIwZ7EaBoj
+ RP88b8ZMbzGCLS2nMYxdXp1Cm78nlS90kTe1W25LUgJZkI8lLc_aQfHPfVpFS8HzTtJX4zSObNj.
+ lpwBSJ0hNw6kel2BFQ9AlVlhO_HlgnkyVO5kuGgNEbC4_xGSui6QvW6sMAObD2geTDxP.CGEY2rv
+ _GP0MrOdXZQj4BZIUEZq.i0neMYYiWtfGYJCCAauuW26n4y1qBqzvIY6IcWi90yBasTfnz_Qf.d4
+ j1G_8qCN9b898gPDcxXD0S38Ks0Gwp33uIpvjxdzHnAkYFRVBQJhA8.uR70OORfJlqS5e
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.ne1.yahoo.com with HTTP; Thu, 20 Feb 2020 18:11:38 +0000
+Received: by smtp408.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 9be6706b3feab7ead6eccd5f32f440ad;
+          Thu, 20 Feb 2020 18:11:36 +0000 (UTC)
+Subject: Re: [RFC PATCH] security,anon_inodes,kvm: enable security support for
+ anon inodes
+To:     Paul Moore <paul@paul-moore.com>,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
+Cc:     selinux@vger.kernel.org, kvm@vger.kernel.org, dancol@google.com,
+        nnk@google.com, Stephen Smalley <sds@tycho.nsa.gov>
+References: <20200213194157.5877-1-sds@tycho.nsa.gov>
+ <CAHC9VhSsjrgu2Jn+yiV5Bz_wt2x5bgEXdhjqLA+duWYNo4gOtw@mail.gmail.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Autocrypt: addr=casey@schaufler-ca.com; keydata=
+ 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
+ abzjfg==
+Message-ID: <eb2dbe22-91af-17c6-3dfb-d9ec619a4d7a@schaufler-ca.com>
+Date:   Thu, 20 Feb 2020 10:11:34 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhSsjrgu2Jn+yiV5Bz_wt2x5bgEXdhjqLA+duWYNo4gOtw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+X-Mailer: WebService/1.1.15199 hermes Apache-HttpAsyncClient/4.1.4 (Java/1.8.0_181)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: KP Singh <kpsingh@google.com>
+On 2/17/2020 4:14 PM, Paul Moore wrote:
+> On Thu, Feb 13, 2020 at 2:41 PM Stephen Smalley <sds@tycho.nsa.gov> wro=
+te:
+>> Add support for labeling and controlling access to files attached to a=
+non
+>> inodes. Introduce extended interfaces for creating such files to permi=
+t
+>> passing a related file as an input to decide how to label the anon
+>> inode. Define a security hook for initializing the anon inode security=
 
-Introduce types and configs for bpf programs that can be attached to
-LSM hooks. The programs can be enabled by the config option
-CONFIG_BPF_LSM.
+>> attributes. Security attributes are either inherited from a related fi=
+le
+>> or determined based on some combination of the creating task and polic=
+y
+>> (in the case of SELinux, using type_transition rules).  As an
+>> example user of the inheritance support, convert kvm to use the new
+>> interface for passing the related file so that the anon inode can inhe=
+rit
+>> the security attributes of /dev/kvm and provide consistent access cont=
+rol
+>> for subsequent ioctl operations.  Other users of anon inodes, includin=
+g
+>> userfaultfd, will default to the transition-based mechanism instead.
+>>
+>> Compared to the series in
+>> https://lore.kernel.org/selinux/20200211225547.235083-1-dancol@google.=
+com/,
+>> this approach differs in that it does not require creation of a separa=
+te
+>> anonymous inode for each file (instead storing the per-instance securi=
+ty
+>> information in the file security blob), it applies labeling and contro=
+l
+>> to all users of anonymous inodes rather than requiring opt-in via a ne=
+w
+>> flag, it supports labeling based on a related inode if provided,
+>> it relies on type transitions to compute the label of the anon inode
+>> when there is no related inode, and it does not require introducing a =
+new
+>> security class for each user of anonymous inodes.
+>>
+>> On the other hand, the approach in this patch does expose the name pas=
+sed
+>> by the creator of the anon inode to the policy (an indirect mapping co=
+uld
+>> be provided within SELinux if these names aren't considered to be stab=
+le),
+>> requires the definition of type_transition rules to distinguish userfa=
+ultfd
+>> inodes from proc inodes based on type since they share the same class,=
 
-Signed-off-by: KP Singh <kpsingh@google.com>
-Reviewed-by: Brendan Jackman <jackmanb@google.com>
-Reviewed-by: Florent Revest <revest@google.com>
-Reviewed-by: Thomas Garnier <thgarnie@google.com>
----
- MAINTAINERS                    |  1 +
- include/linux/bpf.h            |  3 +++
- include/linux/bpf_types.h      |  4 ++++
- include/uapi/linux/bpf.h       |  2 ++
- init/Kconfig                   | 11 +++++++++++
- kernel/bpf/Makefile            |  1 +
- kernel/bpf/bpf_lsm.c           | 17 +++++++++++++++++
- kernel/trace/bpf_trace.c       | 12 ++++++------
- tools/include/uapi/linux/bpf.h |  2 ++
- tools/lib/bpf/libbpf_probes.c  |  1 +
- 10 files changed, 48 insertions(+), 6 deletions(-)
- create mode 100644 kernel/bpf/bpf_lsm.c
+>> doesn't support denying the creation of anonymous inodes (making the h=
+ook
+>> added by this patch return something other than void is problematic du=
+e to
+>> it being called after the file is already allocated and error handling=
+ in
+>> the callers can't presently account for this scenario and end up calli=
+ng
+>> release methods multiple times), and may be more expensive
+>> (security_transition_sid overhead on each anon inode allocation).
+>>
+>> We are primarily posting this RFC patch now so that the two different
+>> approaches can be concretely compared.  We anticipate a hybrid of the
+>> two approaches being the likely outcome in the end.  In particular
+>> if support for allocating a separate inode for each of these files
+>> is acceptable, then we would favor storing the security information
+>> in the inode security blob and using it instead of the file security
+>> blob.
+> Bringing this back up in hopes of attracting some attention from the
+> fs-devel crowd and Al.  As Stephen already mentioned, from a SELinux
+> perspective we would prefer to attach the security blob to the inode
+> as opposed to the file struct; does anyone have any objections to
+> that?
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a0d86490c2c6..0f603e8928d5 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -3147,6 +3147,7 @@ R:	Martin KaFai Lau <kafai@fb.com>
- R:	Song Liu <songliubraving@fb.com>
- R:	Yonghong Song <yhs@fb.com>
- R:	Andrii Nakryiko <andriin@fb.com>
-+R:	KP Singh <kpsingh@chromium.org>
- L:	netdev@vger.kernel.org
- L:	bpf@vger.kernel.org
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf.git
-diff --git a/include/linux/bpf.h b/include/linux/bpf.h
-index 49b1a70e12c8..c647cef3f4c1 100644
---- a/include/linux/bpf.h
-+++ b/include/linux/bpf.h
-@@ -1429,6 +1429,9 @@ extern const struct bpf_func_proto bpf_strtoul_proto;
- extern const struct bpf_func_proto bpf_tcp_sock_proto;
- extern const struct bpf_func_proto bpf_jiffies64_proto;
- 
-+const struct bpf_func_proto *bpf_tracing_func_proto(
-+	enum bpf_func_id func_id, const struct bpf_prog *prog);
-+
- /* Shared helpers among cBPF and eBPF. */
- void bpf_user_rnd_init_once(void);
- u64 bpf_user_rnd_u32(u64 r1, u64 r2, u64 r3, u64 r4, u64 r5);
-diff --git a/include/linux/bpf_types.h b/include/linux/bpf_types.h
-index c81d4ece79a4..ba0c2d56f8a3 100644
---- a/include/linux/bpf_types.h
-+++ b/include/linux/bpf_types.h
-@@ -70,6 +70,10 @@ BPF_PROG_TYPE(BPF_PROG_TYPE_STRUCT_OPS, bpf_struct_ops,
- 	      void *, void *)
- BPF_PROG_TYPE(BPF_PROG_TYPE_EXT, bpf_extension,
- 	      void *, void *)
-+#ifdef CONFIG_BPF_LSM
-+BPF_PROG_TYPE(BPF_PROG_TYPE_LSM, lsm,
-+	       void *, void *)
-+#endif /* CONFIG_BPF_LSM */
- #endif
- 
- BPF_MAP_TYPE(BPF_MAP_TYPE_ARRAY, array_map_ops)
-diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
-index f1d74a2bd234..2f1e24a8c4a4 100644
---- a/include/uapi/linux/bpf.h
-+++ b/include/uapi/linux/bpf.h
-@@ -181,6 +181,7 @@ enum bpf_prog_type {
- 	BPF_PROG_TYPE_TRACING,
- 	BPF_PROG_TYPE_STRUCT_OPS,
- 	BPF_PROG_TYPE_EXT,
-+	BPF_PROG_TYPE_LSM,
- };
- 
- enum bpf_attach_type {
-@@ -210,6 +211,7 @@ enum bpf_attach_type {
- 	BPF_TRACE_RAW_TP,
- 	BPF_TRACE_FENTRY,
- 	BPF_TRACE_FEXIT,
-+	BPF_LSM_MAC,
- 	__MAX_BPF_ATTACH_TYPE
- };
- 
-diff --git a/init/Kconfig b/init/Kconfig
-index 452bc1835cd4..7d5db2982875 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -1617,6 +1617,17 @@ config KALLSYMS_BASE_RELATIVE
- # end of the "standard kernel features (expert users)" menu
- 
- # syscall, maps, verifier
-+
-+config BPF_LSM
-+	bool "LSM Instrumentation with BPF"
-+	depends on BPF_SYSCALL
-+	help
-+	  This enables instrumentation of the security hooks with eBPF programs.
-+	  The programs are executed after all the statically defined LSM hooks
-+	  allow the action.
-+
-+	  If you are unsure how to answer this question, answer N.
-+
- config BPF_SYSCALL
- 	bool "Enable bpf() system call"
- 	select BPF
-diff --git a/kernel/bpf/Makefile b/kernel/bpf/Makefile
-index 046ce5d98033..f2d7be596966 100644
---- a/kernel/bpf/Makefile
-+++ b/kernel/bpf/Makefile
-@@ -29,4 +29,5 @@ obj-$(CONFIG_DEBUG_INFO_BTF) += sysfs_btf.o
- endif
- ifeq ($(CONFIG_BPF_JIT),y)
- obj-$(CONFIG_BPF_SYSCALL) += bpf_struct_ops.o
-+obj-${CONFIG_BPF_LSM} += bpf_lsm.o
- endif
-diff --git a/kernel/bpf/bpf_lsm.c b/kernel/bpf/bpf_lsm.c
-new file mode 100644
-index 000000000000..affb6941622e
---- /dev/null
-+++ b/kernel/bpf/bpf_lsm.c
-@@ -0,0 +1,17 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/*
-+ * Copyright 2019 Google LLC.
-+ */
-+
-+#include <linux/filter.h>
-+#include <linux/bpf.h>
-+#include <linux/btf.h>
-+
-+const struct bpf_prog_ops lsm_prog_ops = {
-+};
-+
-+const struct bpf_verifier_ops lsm_verifier_ops = {
-+	.get_func_proto = bpf_tracing_func_proto,
-+	.is_valid_access = btf_ctx_access,
-+};
-diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-index 4ddd5ac46094..a69cb8a0042d 100644
---- a/kernel/trace/bpf_trace.c
-+++ b/kernel/trace/bpf_trace.c
-@@ -781,8 +781,8 @@ static const struct bpf_func_proto bpf_send_signal_thread_proto = {
- 	.arg1_type	= ARG_ANYTHING,
- };
- 
--static const struct bpf_func_proto *
--tracing_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
-+const struct bpf_func_proto *
-+bpf_tracing_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- {
- 	switch (func_id) {
- 	case BPF_FUNC_map_lookup_elem:
-@@ -865,7 +865,7 @@ kprobe_prog_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- 		return &bpf_override_return_proto;
- #endif
- 	default:
--		return tracing_func_proto(func_id, prog);
-+		return bpf_tracing_func_proto(func_id, prog);
- 	}
- }
- 
-@@ -975,7 +975,7 @@ tp_prog_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- 	case BPF_FUNC_get_stack:
- 		return &bpf_get_stack_proto_tp;
- 	default:
--		return tracing_func_proto(func_id, prog);
-+		return bpf_tracing_func_proto(func_id, prog);
- 	}
- }
- 
-@@ -1041,7 +1041,7 @@ pe_prog_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- 	case BPF_FUNC_perf_prog_read_value:
- 		return &bpf_perf_prog_read_value_proto;
- 	default:
--		return tracing_func_proto(func_id, prog);
-+		return bpf_tracing_func_proto(func_id, prog);
- 	}
- }
- 
-@@ -1168,7 +1168,7 @@ raw_tp_prog_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- 	case BPF_FUNC_get_stack:
- 		return &bpf_get_stack_proto_raw_tp;
- 	default:
--		return tracing_func_proto(func_id, prog);
-+		return bpf_tracing_func_proto(func_id, prog);
- 	}
- }
- 
-diff --git a/tools/include/uapi/linux/bpf.h b/tools/include/uapi/linux/bpf.h
-index f1d74a2bd234..2f1e24a8c4a4 100644
---- a/tools/include/uapi/linux/bpf.h
-+++ b/tools/include/uapi/linux/bpf.h
-@@ -181,6 +181,7 @@ enum bpf_prog_type {
- 	BPF_PROG_TYPE_TRACING,
- 	BPF_PROG_TYPE_STRUCT_OPS,
- 	BPF_PROG_TYPE_EXT,
-+	BPF_PROG_TYPE_LSM,
- };
- 
- enum bpf_attach_type {
-@@ -210,6 +211,7 @@ enum bpf_attach_type {
- 	BPF_TRACE_RAW_TP,
- 	BPF_TRACE_FENTRY,
- 	BPF_TRACE_FEXIT,
-+	BPF_LSM_MAC,
- 	__MAX_BPF_ATTACH_TYPE
- };
- 
-diff --git a/tools/lib/bpf/libbpf_probes.c b/tools/lib/bpf/libbpf_probes.c
-index b782ebef6ac9..2c92059c0c90 100644
---- a/tools/lib/bpf/libbpf_probes.c
-+++ b/tools/lib/bpf/libbpf_probes.c
-@@ -108,6 +108,7 @@ probe_load(enum bpf_prog_type prog_type, const struct bpf_insn *insns,
- 	case BPF_PROG_TYPE_TRACING:
- 	case BPF_PROG_TYPE_STRUCT_OPS:
- 	case BPF_PROG_TYPE_EXT:
-+	case BPF_PROG_TYPE_LSM:
- 	default:
- 		break;
- 	}
--- 
-2.20.1
+Sorry for the delay - been sick the past few days.
+
+I agree that the inode is a better place than the file for information
+about the inode. This is especially true for Smack, which uses
+multiple extended attributes in some cases. I don't believe that any
+except the access label will be relevant to anonymous inodes, but
+I can imagine security modules with policies that would.
+
+I am always an advocate of full xattr support. It goes a long
+way in reducing the number and complexity of special case interfaces.=20
+
 
