@@ -7,59 +7,56 @@ X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7202C11D18
-	for <linux-security-module@archiver.kernel.org>; Thu, 20 Feb 2020 17:53:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9171C11D19
+	for <linux-security-module@archiver.kernel.org>; Thu, 20 Feb 2020 17:53:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B284520722
-	for <linux-security-module@archiver.kernel.org>; Thu, 20 Feb 2020 17:53:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A553120722
+	for <linux-security-module@archiver.kernel.org>; Thu, 20 Feb 2020 17:53:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="B3piX1VD"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Rx0luW6p"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728845AbgBTRxG (ORCPT
+        id S1728847AbgBTRxU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 20 Feb 2020 12:53:06 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:46381 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728836AbgBTRxG (ORCPT
+        Thu, 20 Feb 2020 12:53:20 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:33839 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728806AbgBTRxD (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 20 Feb 2020 12:53:06 -0500
-Received: by mail-wr1-f66.google.com with SMTP id z7so5573308wrl.13
-        for <linux-security-module@vger.kernel.org>; Thu, 20 Feb 2020 09:53:03 -0800 (PST)
+        Thu, 20 Feb 2020 12:53:03 -0500
+Received: by mail-wm1-f68.google.com with SMTP id s144so3339144wme.1
+        for <linux-security-module@vger.kernel.org>; Thu, 20 Feb 2020 09:53:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=adfWj6krnYMDay+GPoQfqpNZuN5MZlEFMLgjeZEuGG8=;
-        b=B3piX1VDd0y+GiS3xOijNGSIS70I0ytViQp349mNrJ9q866rEPEN8mdD4TzrOQT4WM
-         CwRexqXTw0sefFk71rFC7BkFTTbNbCwH5qtot+ZlZxLAzhoO9BrOS55PvQNOFIlSPuyO
-         ia7M5YF+7sylLkAXIQY8vfxLf3QJ2PkYBVCzQ=
+        bh=Adu6TFrPNSr18eey8+2tPmGfp+2eqe2mYVGsncyEkDQ=;
+        b=Rx0luW6pGwCXCc8qCCqt+RFGihCY4OijwO71VThmmQFmAjf4MrKJzpkU7zKnp05oNH
+         t0j2cMFMgg0MyhDSExfeNTqxIR4wUbTBQ9OehhS1E90aoTtWhZafYOb7ij8LmsDh2z6V
+         0CW6vl9fuGiR8IMgwDf9no8Oqay/cUVB8QzxQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=adfWj6krnYMDay+GPoQfqpNZuN5MZlEFMLgjeZEuGG8=;
-        b=TWLrHb3jg7FT8mq8xUIPPOr0l8rIvsX/HG92djw9BvoVD/SjqXrJuCMcxi/9TPfk+N
-         ETga7hHxlTOWlIMiWuZiXRvUSO0huD4B19Q7qNUSnlRsAkJV1+WGcesiBRyn94S8KABc
-         F/xf0XxHOpjf4BEpSYXETbd73bTO4ccnC0gym8s8FIJ/Elj7FlvBHz+gKDCfr8fMGoLV
-         tCuz6UPIzE+mDiT1gHHMKqTpLjb1tXmBBQKG7TneheV5ObJVMdjeKdAdpyHTPP/2eEmm
-         0c8Vfcf27GAvyJtrns1lJFmhVp1u64jE3DqOdzqAyALQxF2j1AeAB55L0xQhw+f9mUkC
-         svTA==
-X-Gm-Message-State: APjAAAXut3+GTdW+rH72BLA+ptXrz3bCBXbqVmZ1+p6QW1tHxINyMlp8
-        pPj40MQV1k8KhrOOG9bq9ydrzA==
-X-Google-Smtp-Source: APXvYqyKZvCNuUcqJozkMRYf/cFD+U0nFmP2+o8GPNyDe0jeSaF09jaWPuXvxncvQlu+uLdva4G56Q==
-X-Received: by 2002:a5d:4a84:: with SMTP id o4mr43474331wrq.396.1582221183000;
-        Thu, 20 Feb 2020 09:53:03 -0800 (PST)
+        bh=Adu6TFrPNSr18eey8+2tPmGfp+2eqe2mYVGsncyEkDQ=;
+        b=KFsDAwHnjzcnw5LOk+bNfswDtvdPyhQHqO6Q61L/oQpsc6CBxeZYoPEpp4zcHQvq2z
+         wtxrTMQ9meTsKxXE5rYxlxmbORxoBGYRr8kHj4qWXZ6WWK4LYXurSPNaY1tZsXIyFrtW
+         B5UGZnqxzKtmdx1btHLIcgkjO+bsTIgcwbZnD2GU/0EbtRI2CgJe0rE7mJDryRMeCsuf
+         /YqzpwfSHXXJH4FW4Kxjh8qcC9zOb9OSBkwtTt8w6JYNq59iHTOl56ZXEAa/7vgk24Pa
+         rkwUYBfwEYiDfTnw2A5+5AkcdLn+IPFQ7xHEWV1HEMxlTrwo0xkWuVna4ntHqDdJefA8
+         OxLg==
+X-Gm-Message-State: APjAAAVUXNBdOga/ocpH/EQML1Hhm3JQqDHOwO47zMB7x5cLPVHvSf9l
+        X789q8awUnObqh7drPqtkK6fVw==
+X-Google-Smtp-Source: APXvYqw0z9ltTQGr1UG7ZjjOTiaFeE6G8AsIvJWW0WnaT+7vTOCJEX+dmrIG6ZG/8efmggTixAtTpA==
+X-Received: by 2002:a05:600c:34b:: with SMTP id u11mr5626356wmd.69.1582221181234;
+        Thu, 20 Feb 2020 09:53:01 -0800 (PST)
 Received: from kpsingh-kernel.localdomain ([2620:0:105f:fd00:d960:542a:a1d:648a])
-        by smtp.gmail.com with ESMTPSA id r5sm363059wrt.43.2020.02.20.09.53.01
+        by smtp.gmail.com with ESMTPSA id r5sm363059wrt.43.2020.02.20.09.53.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2020 09:53:02 -0800 (PST)
+        Thu, 20 Feb 2020 09:53:00 -0800 (PST)
 From:   KP Singh <kpsingh@chromium.org>
 To:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
         linux-security-module@vger.kernel.org
-Cc:     Brendan Jackman <jackmanb@google.com>,
-        Florent Revest <revest@google.com>,
-        Thomas Garnier <thgarnie@google.com>,
-        Alexei Starovoitov <ast@kernel.org>,
+Cc:     Alexei Starovoitov <ast@kernel.org>,
         Daniel Borkmann <daniel@iogearbox.net>,
         James Morris <jmorris@namei.org>,
         Kees Cook <keescook@chromium.org>,
@@ -81,9 +78,9 @@ Cc:     Brendan Jackman <jackmanb@google.com>,
         Stanislav Fomichev <sdf@google.com>,
         Quentin Monnet <quentin.monnet@netronome.com>,
         Andrey Ignatov <rdna@fb.com>, Joe Stringer <joe@wand.net.nz>
-Subject: [PATCH bpf-next v4 7/8] bpf: lsm: Add selftests for BPF_PROG_TYPE_LSM
-Date:   Thu, 20 Feb 2020 18:52:49 +0100
-Message-Id: <20200220175250.10795-8-kpsingh@chromium.org>
+Subject: [PATCH bpf-next v4 6/8] tools/libbpf: Add support for BPF_PROG_TYPE_LSM
+Date:   Thu, 20 Feb 2020 18:52:48 +0100
+Message-Id: <20200220175250.10795-7-kpsingh@chromium.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200220175250.10795-1-kpsingh@chromium.org>
 References: <20200220175250.10795-1-kpsingh@chromium.org>
@@ -95,268 +92,217 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: KP Singh <kpsingh@google.com>
 
-* Load a BPF program that hooks to the mprotect calls.
-* Attach the program to the "file_mprotect" LSM hook.
-* Do an mprotect on some memory allocated on the heap
-* Verify if the return value is overridden.
-* Verify if the audit event was received using the shared global
-  result variable.
+Since BPF_PROG_TYPE_LSM uses the same attaching mechanism as
+BPF_PROG_TYPE_TRACING, the common logic is refactored into a static
+function bpf_program__attach_btf.
+
+A new API call bpf_program__attach_lsm is still added to avoid userspace
+conflicts if this ever changes in the future.
 
 Signed-off-by: KP Singh <kpsingh@google.com>
-Reviewed-by: Brendan Jackman <jackmanb@google.com>
-Reviewed-by: Florent Revest <revest@google.com>
-Reviewed-by: Thomas Garnier <thgarnie@google.com>
 ---
- tools/testing/selftests/bpf/lsm_helpers.h     | 19 ++++
- .../selftests/bpf/prog_tests/lsm_mprotect.c   | 96 +++++++++++++++++++
- .../selftests/bpf/progs/lsm_mprotect_audit.c  | 48 ++++++++++
- .../selftests/bpf/progs/lsm_mprotect_mac.c    | 53 ++++++++++
- 4 files changed, 216 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/lsm_helpers.h
- create mode 100644 tools/testing/selftests/bpf/prog_tests/lsm_mprotect.c
- create mode 100644 tools/testing/selftests/bpf/progs/lsm_mprotect_audit.c
- create mode 100644 tools/testing/selftests/bpf/progs/lsm_mprotect_mac.c
+ tools/lib/bpf/bpf.c      |  3 ++-
+ tools/lib/bpf/libbpf.c   | 46 ++++++++++++++++++++++++++++++++--------
+ tools/lib/bpf/libbpf.h   |  4 ++++
+ tools/lib/bpf/libbpf.map |  3 +++
+ 4 files changed, 46 insertions(+), 10 deletions(-)
 
-diff --git a/tools/testing/selftests/bpf/lsm_helpers.h b/tools/testing/selftests/bpf/lsm_helpers.h
-new file mode 100644
-index 000000000000..b973ec1c4a0b
---- /dev/null
-+++ b/tools/testing/selftests/bpf/lsm_helpers.h
-@@ -0,0 +1,19 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+/*
-+ * Copyright 2019 Google LLC.
-+ */
-+#ifndef _LSM_HELPERS_H
-+#define _LSM_HELPERS_H
-+
-+struct lsm_mprotect_result {
-+	/* This ensures that the LSM Hook only monitors the PID requested
-+	 * by the loader
-+	 */
-+	__u32 monitored_pid;
-+	/* The number of mprotect calls for the monitored PID.
-+	 */
-+	__u32 mprotect_count;
-+};
-+
-+#endif /* _LSM_HELPERS_H */
-diff --git a/tools/testing/selftests/bpf/prog_tests/lsm_mprotect.c b/tools/testing/selftests/bpf/prog_tests/lsm_mprotect.c
-new file mode 100644
-index 000000000000..93c3b5fb2ef0
---- /dev/null
-+++ b/tools/testing/selftests/bpf/prog_tests/lsm_mprotect.c
-@@ -0,0 +1,96 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/*
-+ * Copyright 2019 Google LLC.
-+ */
-+
-+#include <test_progs.h>
-+#include <sys/mman.h>
-+#include <unistd.h>
-+#include <malloc.h>
-+#include "lsm_helpers.h"
-+#include "lsm_mprotect_audit.skel.h"
-+#include "lsm_mprotect_mac.skel.h"
-+
-+int heap_mprotect(void)
+diff --git a/tools/lib/bpf/bpf.c b/tools/lib/bpf/bpf.c
+index c6dafe563176..73220176728d 100644
+--- a/tools/lib/bpf/bpf.c
++++ b/tools/lib/bpf/bpf.c
+@@ -235,7 +235,8 @@ int bpf_load_program_xattr(const struct bpf_load_program_attr *load_attr,
+ 	memset(&attr, 0, sizeof(attr));
+ 	attr.prog_type = load_attr->prog_type;
+ 	attr.expected_attach_type = load_attr->expected_attach_type;
+-	if (attr.prog_type == BPF_PROG_TYPE_STRUCT_OPS) {
++	if (attr.prog_type == BPF_PROG_TYPE_STRUCT_OPS ||
++	    attr.prog_type == BPF_PROG_TYPE_LSM) {
+ 		attr.attach_btf_id = load_attr->attach_btf_id;
+ 	} else if (attr.prog_type == BPF_PROG_TYPE_TRACING ||
+ 		   attr.prog_type == BPF_PROG_TYPE_EXT) {
+diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+index 514b1a524abb..d11139d5e76b 100644
+--- a/tools/lib/bpf/libbpf.c
++++ b/tools/lib/bpf/libbpf.c
+@@ -2351,16 +2351,14 @@ static int bpf_object__finalize_btf(struct bpf_object *obj)
+ 
+ static inline bool libbpf_prog_needs_vmlinux_btf(struct bpf_program *prog)
+ {
+-	if (prog->type == BPF_PROG_TYPE_STRUCT_OPS)
++	if (prog->type == BPF_PROG_TYPE_STRUCT_OPS ||
++	    prog->type == BPF_PROG_TYPE_LSM)
+ 		return true;
+ 
+ 	/* BPF_PROG_TYPE_TRACING programs which do not attach to other programs
+ 	 * also need vmlinux BTF
+ 	 */
+-	if (prog->type == BPF_PROG_TYPE_TRACING && !prog->attach_prog_fd)
+-		return true;
+-
+-	return false;
++	return prog->type == BPF_PROG_TYPE_TRACING && !prog->attach_prog_fd;
+ }
+ 
+ static int bpf_object__load_vmlinux_btf(struct bpf_object *obj)
+@@ -4855,7 +4853,8 @@ load_program(struct bpf_program *prog, struct bpf_insn *insns, int insns_cnt,
+ 	load_attr.insns = insns;
+ 	load_attr.insns_cnt = insns_cnt;
+ 	load_attr.license = license;
+-	if (prog->type == BPF_PROG_TYPE_STRUCT_OPS) {
++	if (prog->type == BPF_PROG_TYPE_STRUCT_OPS ||
++	    prog->type == BPF_PROG_TYPE_LSM) {
+ 		load_attr.attach_btf_id = prog->attach_btf_id;
+ 	} else if (prog->type == BPF_PROG_TYPE_TRACING ||
+ 		   prog->type == BPF_PROG_TYPE_EXT) {
+@@ -4940,6 +4939,7 @@ int bpf_program__load(struct bpf_program *prog, char *license, __u32 kern_ver)
+ 	int err = 0, fd, i, btf_id;
+ 
+ 	if (prog->type == BPF_PROG_TYPE_TRACING ||
++	    prog->type == BPF_PROG_TYPE_LSM ||
+ 	    prog->type == BPF_PROG_TYPE_EXT) {
+ 		btf_id = libbpf_find_attach_btf_id(prog);
+ 		if (btf_id <= 0)
+@@ -6179,6 +6179,7 @@ bool bpf_program__is_##NAME(const struct bpf_program *prog)	\
+ }								\
+ 
+ BPF_PROG_TYPE_FNS(socket_filter, BPF_PROG_TYPE_SOCKET_FILTER);
++BPF_PROG_TYPE_FNS(lsm, BPF_PROG_TYPE_LSM);
+ BPF_PROG_TYPE_FNS(kprobe, BPF_PROG_TYPE_KPROBE);
+ BPF_PROG_TYPE_FNS(sched_cls, BPF_PROG_TYPE_SCHED_CLS);
+ BPF_PROG_TYPE_FNS(sched_act, BPF_PROG_TYPE_SCHED_ACT);
+@@ -6245,6 +6246,8 @@ static struct bpf_link *attach_raw_tp(const struct bpf_sec_def *sec,
+ 				      struct bpf_program *prog);
+ static struct bpf_link *attach_trace(const struct bpf_sec_def *sec,
+ 				     struct bpf_program *prog);
++static struct bpf_link *attach_lsm(const struct bpf_sec_def *sec,
++				   struct bpf_program *prog);
+ 
+ struct bpf_sec_def {
+ 	const char *sec;
+@@ -6291,6 +6294,10 @@ static const struct bpf_sec_def section_defs[] = {
+ 	SEC_DEF("freplace/", EXT,
+ 		.is_attach_btf = true,
+ 		.attach_fn = attach_trace),
++	SEC_DEF("lsm/", LSM,
++		.is_attach_btf = true,
++		.expected_attach_type = BPF_LSM_MAC,
++		.attach_fn = attach_lsm),
+ 	BPF_PROG_SEC("xdp",			BPF_PROG_TYPE_XDP),
+ 	BPF_PROG_SEC("perf_event",		BPF_PROG_TYPE_PERF_EVENT),
+ 	BPF_PROG_SEC("lwt_in",			BPF_PROG_TYPE_LWT_IN),
+@@ -6553,6 +6560,7 @@ static int bpf_object__collect_struct_ops_map_reloc(struct bpf_object *obj,
+ }
+ 
+ #define BTF_TRACE_PREFIX "btf_trace_"
++#define BTF_LSM_PREFIX "bpf_lsm_"
+ #define BTF_MAX_NAME_SIZE 128
+ 
+ static int find_btf_by_prefix_kind(const struct btf *btf, const char *prefix,
+@@ -6580,6 +6588,9 @@ static inline int __find_vmlinux_btf_id(struct btf *btf, const char *name,
+ 	if (attach_type == BPF_TRACE_RAW_TP)
+ 		err = find_btf_by_prefix_kind(btf, BTF_TRACE_PREFIX, name,
+ 					      BTF_KIND_TYPEDEF);
++	else if (attach_type == BPF_LSM_MAC)
++		err = find_btf_by_prefix_kind(btf, BTF_LSM_PREFIX, name,
++					      BTF_KIND_FUNC);
+ 	else
+ 		err = btf__find_by_name_kind(btf, name, BTF_KIND_FUNC);
+ 
+@@ -7354,7 +7365,8 @@ static struct bpf_link *attach_raw_tp(const struct bpf_sec_def *sec,
+ 	return bpf_program__attach_raw_tracepoint(prog, tp_name);
+ }
+ 
+-struct bpf_link *bpf_program__attach_trace(struct bpf_program *prog)
++/* Common logic for all BPF program types that attach to a btf_id */
++static struct bpf_link *bpf_program__attach_btf(struct bpf_program *prog)
+ {
+ 	char errmsg[STRERR_BUFSIZE];
+ 	struct bpf_link_fd *link;
+@@ -7376,7 +7388,7 @@ struct bpf_link *bpf_program__attach_trace(struct bpf_program *prog)
+ 	if (pfd < 0) {
+ 		pfd = -errno;
+ 		free(link);
+-		pr_warn("program '%s': failed to attach to trace: %s\n",
++		pr_warn("program '%s': failed to attach to: %s\n",
+ 			bpf_program__title(prog, false),
+ 			libbpf_strerror_r(pfd, errmsg, sizeof(errmsg)));
+ 		return ERR_PTR(pfd);
+@@ -7385,10 +7397,26 @@ struct bpf_link *bpf_program__attach_trace(struct bpf_program *prog)
+ 	return (struct bpf_link *)link;
+ }
+ 
++struct bpf_link *bpf_program__attach_trace(struct bpf_program *prog)
 +{
-+	void *buf;
-+	long sz;
-+
-+	sz = sysconf(_SC_PAGESIZE);
-+	if (sz < 0)
-+		return sz;
-+
-+	buf = memalign(sz, 2 * sz);
-+	if (buf == NULL)
-+		return -ENOMEM;
-+
-+	return mprotect(buf, sz, PROT_READ | PROT_EXEC);
++	return bpf_program__attach_btf(prog);
 +}
 +
-+void test_lsm_mprotect_audit(void)
++struct bpf_link *bpf_program__attach_lsm(struct bpf_program *prog)
 +{
-+	struct lsm_mprotect_result *result;
-+	struct lsm_mprotect_audit *skel = NULL;
-+	int err, duration = 0;
-+
-+	skel = lsm_mprotect_audit__open_and_load();
-+	if (CHECK(!skel, "skel_load", "lsm_mprotect_audit skeleton failed\n"))
-+		goto close_prog;
-+
-+	err = lsm_mprotect_audit__attach(skel);
-+	if (CHECK(err, "attach", "lsm_mprotect_audit attach failed: %d\n", err))
-+		goto close_prog;
-+
-+	result = &skel->bss->result;
-+	result->monitored_pid = getpid();
-+
-+	err = heap_mprotect();
-+	if (CHECK(err < 0, "heap_mprotect", "err %d errno %d\n", err, errno))
-+		goto close_prog;
-+
-+	/* Make sure mprotect_audit program was triggered
-+	 * and detected an mprotect on the heap.
-+	 */
-+	CHECK_FAIL(result->mprotect_count != 1);
-+
-+close_prog:
-+	lsm_mprotect_audit__destroy(skel);
++	return bpf_program__attach_btf(prog);
 +}
 +
-+void test_lsm_mprotect_mac(void)
-+{
-+	struct lsm_mprotect_result *result;
-+	struct lsm_mprotect_mac *skel = NULL;
-+	int err, duration = 0;
-+
-+	skel = lsm_mprotect_mac__open_and_load();
-+	if (CHECK(!skel, "skel_load", "lsm_mprotect_mac skeleton failed\n"))
-+		goto close_prog;
-+
-+	err = lsm_mprotect_mac__attach(skel);
-+	if (CHECK(err, "attach", "lsm_mprotect_mac attach failed: %d\n", err))
-+		goto close_prog;
-+
-+	result = &skel->bss->result;
-+	result->monitored_pid = getpid();
-+
-+	err = heap_mprotect();
-+	if (CHECK(errno != EPERM, "heap_mprotect", "want errno=EPERM, got %d\n",
-+		  errno))
-+		goto close_prog;
-+
-+	/* Make sure mprotect_mac program was triggered
-+	 * and detected an mprotect on the heap.
-+	 */
-+	CHECK_FAIL(result->mprotect_count != 1);
-+
-+close_prog:
-+	lsm_mprotect_mac__destroy(skel);
+ static struct bpf_link *attach_trace(const struct bpf_sec_def *sec,
+ 				     struct bpf_program *prog)
+ {
+-	return bpf_program__attach_trace(prog);
++	return bpf_program__attach_btf(prog);
 +}
 +
-+void test_lsm_mprotect(void)
++static struct bpf_link *attach_lsm(const struct bpf_sec_def *sec,
++				   struct bpf_program *prog)
 +{
-+	test_lsm_mprotect_audit();
-+	test_lsm_mprotect_mac();
-+}
-diff --git a/tools/testing/selftests/bpf/progs/lsm_mprotect_audit.c b/tools/testing/selftests/bpf/progs/lsm_mprotect_audit.c
-new file mode 100644
-index 000000000000..c68fb02b57fa
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/lsm_mprotect_audit.c
-@@ -0,0 +1,48 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/*
-+ * Copyright 2019 Google LLC.
-+ */
-+
-+#include <linux/bpf.h>
-+#include <stdbool.h>
-+#include "bpf_trace_helpers.h"
-+#include  <errno.h>
-+#include "lsm_helpers.h"
-+
-+char _license[] SEC("license") = "GPL";
-+
-+struct lsm_mprotect_result result = {
-+	.mprotect_count = 0,
-+	.monitored_pid = 0,
-+};
-+
-+/*
-+ * Define some of the structs used in the BPF program.
-+ * Only the field names and their sizes need to be the
-+ * same as the kernel type, the order is irrelevant.
-+ */
-+struct mm_struct {
-+	unsigned long start_brk, brk;
-+} __attribute__((preserve_access_index));
-+
-+struct vm_area_struct {
-+	unsigned long vm_start, vm_end;
-+	struct mm_struct *vm_mm;
-+} __attribute__((preserve_access_index));
-+
-+SEC("lsm/file_mprotect")
-+int BPF_PROG(mprotect_audit, struct vm_area_struct *vma,
-+	     unsigned long reqprot, unsigned long prot)
-+{
-+	__u32 pid = bpf_get_current_pid_tgid();
-+	int is_heap = 0;
-+
-+	is_heap = (vma->vm_start >= vma->vm_mm->start_brk &&
-+		   vma->vm_end <= vma->vm_mm->brk);
-+
-+	if (is_heap && result.monitored_pid == pid)
-+		result.mprotect_count++;
-+
-+	return 0;
-+}
-diff --git a/tools/testing/selftests/bpf/progs/lsm_mprotect_mac.c b/tools/testing/selftests/bpf/progs/lsm_mprotect_mac.c
-new file mode 100644
-index 000000000000..c0ae344593e8
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/lsm_mprotect_mac.c
-@@ -0,0 +1,53 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/*
-+ * Copyright 2019 Google LLC.
-+ */
-+
-+#include <linux/bpf.h>
-+#include <stdbool.h>
-+#include "bpf_trace_helpers.h"
-+#include  <errno.h>
-+#include "lsm_helpers.h"
-+
-+char _license[] SEC("license") = "GPL";
-+
-+struct lsm_mprotect_result result = {
-+	.mprotect_count = 0,
-+	.monitored_pid = 0,
-+};
-+
-+/*
-+ * Define some of the structs used in the BPF program.
-+ * Only the field names and their sizes need to be the
-+ * same as the kernel type, the order is irrelevant.
-+ */
-+struct mm_struct {
-+	unsigned long start_brk, brk;
-+} __attribute__((preserve_access_index));
-+
-+struct vm_area_struct {
-+	unsigned long vm_start, vm_end;
-+	struct mm_struct *vm_mm;
-+} __attribute__((preserve_access_index));
-+
-+SEC("lsm/file_mprotect")
-+int BPF_PROG(mprotect_mac, struct vm_area_struct *vma,
-+	     unsigned long reqprot, unsigned long prot, int ret)
-+{
-+	if (ret != 0)
-+		return ret;
-+
-+	__u32 pid = bpf_get_current_pid_tgid();
-+	int is_heap = 0;
-+
-+	is_heap = (vma->vm_start >= vma->vm_mm->start_brk &&
-+		   vma->vm_end <= vma->vm_mm->brk);
-+
-+	if (is_heap && result.monitored_pid == pid) {
-+		result.mprotect_count++;
-+		ret = -EPERM;
-+	}
-+
-+	return ret;
-+}
++	return bpf_program__attach_btf(prog);
+ }
+ 
+ struct bpf_link *bpf_program__attach(struct bpf_program *prog)
+diff --git a/tools/lib/bpf/libbpf.h b/tools/lib/bpf/libbpf.h
+index 3fe12c9d1f92..3f72323f205b 100644
+--- a/tools/lib/bpf/libbpf.h
++++ b/tools/lib/bpf/libbpf.h
+@@ -243,6 +243,8 @@ bpf_program__attach_raw_tracepoint(struct bpf_program *prog,
+ 
+ LIBBPF_API struct bpf_link *
+ bpf_program__attach_trace(struct bpf_program *prog);
++LIBBPF_API struct bpf_link *
++bpf_program__attach_lsm(struct bpf_program *prog);
+ struct bpf_map;
+ LIBBPF_API struct bpf_link *bpf_map__attach_struct_ops(struct bpf_map *map);
+ struct bpf_insn;
+@@ -316,6 +318,7 @@ LIBBPF_API int bpf_program__set_socket_filter(struct bpf_program *prog);
+ LIBBPF_API int bpf_program__set_tracepoint(struct bpf_program *prog);
+ LIBBPF_API int bpf_program__set_raw_tracepoint(struct bpf_program *prog);
+ LIBBPF_API int bpf_program__set_kprobe(struct bpf_program *prog);
++LIBBPF_API int bpf_program__set_lsm(struct bpf_program *prog);
+ LIBBPF_API int bpf_program__set_sched_cls(struct bpf_program *prog);
+ LIBBPF_API int bpf_program__set_sched_act(struct bpf_program *prog);
+ LIBBPF_API int bpf_program__set_xdp(struct bpf_program *prog);
+@@ -338,6 +341,7 @@ LIBBPF_API bool bpf_program__is_socket_filter(const struct bpf_program *prog);
+ LIBBPF_API bool bpf_program__is_tracepoint(const struct bpf_program *prog);
+ LIBBPF_API bool bpf_program__is_raw_tracepoint(const struct bpf_program *prog);
+ LIBBPF_API bool bpf_program__is_kprobe(const struct bpf_program *prog);
++LIBBPF_API bool bpf_program__is_lsm(const struct bpf_program *prog);
+ LIBBPF_API bool bpf_program__is_sched_cls(const struct bpf_program *prog);
+ LIBBPF_API bool bpf_program__is_sched_act(const struct bpf_program *prog);
+ LIBBPF_API bool bpf_program__is_xdp(const struct bpf_program *prog);
+diff --git a/tools/lib/bpf/libbpf.map b/tools/lib/bpf/libbpf.map
+index b035122142bb..8df332a528a0 100644
+--- a/tools/lib/bpf/libbpf.map
++++ b/tools/lib/bpf/libbpf.map
+@@ -227,10 +227,13 @@ LIBBPF_0.0.7 {
+ 		bpf_probe_large_insn_limit;
+ 		bpf_prog_attach_xattr;
+ 		bpf_program__attach;
++		bpf_program__attach_lsm;
+ 		bpf_program__name;
+ 		bpf_program__is_extension;
++		bpf_program__is_lsm;
+ 		bpf_program__is_struct_ops;
+ 		bpf_program__set_extension;
++		bpf_program__set_lsm;
+ 		bpf_program__set_struct_ops;
+ 		btf__align_of;
+ 		libbpf_find_kernel_btf;
 -- 
 2.20.1
 
