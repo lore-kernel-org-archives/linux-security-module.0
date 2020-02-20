@@ -6,62 +6,62 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A4C1C11D24
-	for <linux-security-module@archiver.kernel.org>; Thu, 20 Feb 2020 22:38:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D40B2C11D00
+	for <linux-security-module@archiver.kernel.org>; Thu, 20 Feb 2020 22:49:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1C2B207FD
-	for <linux-security-module@archiver.kernel.org>; Thu, 20 Feb 2020 22:38:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5D8A207FD
+	for <linux-security-module@archiver.kernel.org>; Thu, 20 Feb 2020 22:49:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1582238325;
-	bh=mzPiCbr8XYsvkRVHCAOzgYnZ6/GsVqT7alkkqsg2qmQ=;
+	s=default; t=1582238965;
+	bh=+Jk8ZLGepwfSKBz/r/AeAIirnEIPybIoNRaHLfpkM8g=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=Ty8OrQqgHaZjCHbmqGW+a74NINSbRDLxmcx+/kcSCahnMfBW9jzRlfgNwrRLMwLsT
-	 uvoZ64vl1MCmxlONkif7VimvBrxhpRoX5a7KgvYnqxSbEnDu2QqGv7OUvEOl45E2Zm
-	 PfzExAovi5AhGcprh5ar5/uYaPws3qD0SfseKjYs=
+	b=eZ/iQVQLmfpS5+1HmJs/ScY+eGeBL7BiGYO/5SjOOhozJ2CNqFpi00qPUznSukgtR
+	 cqED8yVSUm6v7N0IDKUl47FFn5HkC3UOg+2TVya5GN+2GJryklbqfPdkd+OT56TTIO
+	 u/7DeaVH3Gkw8owf8Lhd6f0GBUsys1rYVQeiNGhY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729262AbgBTWip (ORCPT
+        id S1729158AbgBTWtZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 20 Feb 2020 17:38:45 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:45609 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729006AbgBTWip (ORCPT
+        Thu, 20 Feb 2020 17:49:25 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:38188 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729006AbgBTWtZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 20 Feb 2020 17:38:45 -0500
-Received: by mail-ed1-f68.google.com with SMTP id v28so35612760edw.12
-        for <linux-security-module@vger.kernel.org>; Thu, 20 Feb 2020 14:38:42 -0800 (PST)
+        Thu, 20 Feb 2020 17:49:25 -0500
+Received: by mail-ed1-f67.google.com with SMTP id p23so5253edr.5
+        for <linux-security-module@vger.kernel.org>; Thu, 20 Feb 2020 14:49:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=WrNmlOpMVxzFXh2A2oJzXRWZK2fGDe1+SPIAN4gWybk=;
-        b=QiMLUGsRq9HWg+G+gXiEaS3g8vcEPOTXS0nkdYQXIsCA2EjphiI1+TGu1HVJ3od+BY
-         4nIUXqbNSwvfL1zzmPatevn6ccupRjp+aZGa5eL8bOeMqUiv7Bg7Hz5IKilERFOA99sS
-         jMLLQ3OrRmjEMgFi9TJzZnDfd0rXWYetgu1bs=
+        bh=IsBAqEZQag0ypHqg0PyTqrCBxrLtLK/vf3m5Pbo+Q1I=;
+        b=HocGqZaPvPbj2Rc3tHfIsXtvsU9ZExNqDhyGTd1FkLfg2CixXSIhWg+lhtFLFy7LH5
+         Ll9ajjeSCLGyVGJFCP3pr8MzRIUlhdaSf4zT2trYK3NmUY7kfmF8q56qyO7AFc70i6vi
+         mx1gRvncgXwtZTQp0OujHwfoGsQovufSXPaY4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=WrNmlOpMVxzFXh2A2oJzXRWZK2fGDe1+SPIAN4gWybk=;
-        b=Br/WF4U0jl5Cw4+C1GcF83SuKBkPPKrOPXkcBlLpM6FHvXNlK9Jvb2iMZg7sQFeb+w
-         pKdwEzGG2IovS1zsT6P4X66lGc9VNGZeS1o4E5ZLGNu32FDRbLRqzcZI338meyFKwxml
-         blEiHGSd5sYwYKhgs1NNTtaQaJbdHGDkgraYE38FxcEYpYHKHq4P+XMByiOUCm1PDClV
-         t0ozegB7qVrU/2WVqirE+N0RY+hJWYXJsXmNg5DJzYFGRPt2CGxMTgvs2ooDhVkjpF6T
-         azMvrSGaZXCvIPlgATe0sZM7kj/R7F3LmObf96Vwo/u8jD6DGFOC5qF6XN41MNlsnr/D
-         bIPA==
-X-Gm-Message-State: APjAAAUsQRpoAXO47rvVjBhRkQgy6qBC9NkoSTSvX8Mxt3tRJCVPkFt1
-        8+dstFIlqZXNMdHG2x+OkTWfWJUizz0=
-X-Google-Smtp-Source: APXvYqyqq2M16F0MyjG2Lsqm3xabrNyrStVdWw1nMLhcGNWXNPmcvfKrjl9CAgqge8Y8Pr0voh41Xg==
-X-Received: by 2002:aa7:c2cb:: with SMTP id m11mr31567606edp.89.1582238321779;
-        Thu, 20 Feb 2020 14:38:41 -0800 (PST)
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com. [209.85.208.51])
-        by smtp.gmail.com with ESMTPSA id k6sm86236edi.68.2020.02.20.14.38.41
+        bh=IsBAqEZQag0ypHqg0PyTqrCBxrLtLK/vf3m5Pbo+Q1I=;
+        b=V7fHnPfyLso48PAVdhQeon8LZKdNu9eNPWQ6GVcYoekGu2f7F7B2lvcCUKSHFyDnv8
+         adaiOwg9wj34YrYUGD68+lMSLYcZY+ws4ranCc/xg4xfdsNVPlVzYBDM7QP/mi3m0g6d
+         wA5eIBzFQmatBcWc8HNiZRq2pM6UAs08M8rA2sVWjEmla0i9mfdnLXNrJT6qONCmZs4x
+         AOY7Bg7cLvTmwjDmKjGQ81CZKdeigEESbQwuHwRkDnkfEJoUlAVlDLQxwmIaDIvmQIFf
+         G+E9+oNJ1K0+hkWhb7rccVVVOV8c+Vv7Fb5FhJeflTmcyPiF+I7xgJvJxu++LDJVYeJ9
+         QfTg==
+X-Gm-Message-State: APjAAAWOJvtjaLq4P9ymgyr6j7E7k5Eno0bkDD+/C8PF+fIDRb8+4Xji
+        4k+f5Au+Bd3vOSIASSYXToXdsRZKSYE=
+X-Google-Smtp-Source: APXvYqwTU5njjRK+5GT/qPKgPgVzJHUgzwJVv2RY0gMImCRrQkFaAo6NcfovU2caXXTwUIfSJhl1gA==
+X-Received: by 2002:a05:6402:1e1:: with SMTP id i1mr30357240edy.338.1582238962822;
+        Thu, 20 Feb 2020 14:49:22 -0800 (PST)
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com. [209.85.208.41])
+        by smtp.gmail.com with ESMTPSA id d9sm89599edp.97.2020.02.20.14.49.22
         for <linux-security-module@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Feb 2020 14:38:41 -0800 (PST)
-Received: by mail-ed1-f51.google.com with SMTP id dc19so35601857edb.10
-        for <linux-security-module@vger.kernel.org>; Thu, 20 Feb 2020 14:38:41 -0800 (PST)
-X-Received: by 2002:a2e:97cc:: with SMTP id m12mr19716647ljj.241.1582238006401;
- Thu, 20 Feb 2020 14:33:26 -0800 (PST)
+        Thu, 20 Feb 2020 14:49:22 -0800 (PST)
+Received: by mail-ed1-f41.google.com with SMTP id v28so35639708edw.12
+        for <linux-security-module@vger.kernel.org>; Thu, 20 Feb 2020 14:49:22 -0800 (PST)
+X-Received: by 2002:a2e:88c5:: with SMTP id a5mr20465844ljk.201.1582238633679;
+ Thu, 20 Feb 2020 14:43:53 -0800 (PST)
 MIME-Version: 1.0
 References: <20200210150519.538333-8-gladkov.alexey@gmail.com>
  <87v9odlxbr.fsf@x220.int.ebiederm.org> <20200212144921.sykucj4mekcziicz@comp-core-i7-2640m-0182e6>
@@ -72,13 +72,13 @@ References: <20200210150519.538333-8-gladkov.alexey@gmail.com>
  <CAHk-=wi5FOGV_3tALK3n6E2fK3Oa_yCYkYQtCSaXLSEm2DUCKg@mail.gmail.com>
  <87lfp7h422.fsf@x220.int.ebiederm.org> <CAHk-=wgmn9Qds0VznyphouSZW6e42GWDT5H1dpZg8pyGDGN+=w@mail.gmail.com>
  <87pnejf6fz.fsf@x220.int.ebiederm.org> <871rqpaswu.fsf_-_@x220.int.ebiederm.org>
- <87h7zl9e7u.fsf_-_@x220.int.ebiederm.org>
-In-Reply-To: <87h7zl9e7u.fsf_-_@x220.int.ebiederm.org>
+ <87blpt9e6m.fsf_-_@x220.int.ebiederm.org>
+In-Reply-To: <87blpt9e6m.fsf_-_@x220.int.ebiederm.org>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 20 Feb 2020 14:33:10 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wht3ZWRaYs8QBXuftfuiFGOTjjZ9zj3-Dz7dkiBhJNBrQ@mail.gmail.com>
-Message-ID: <CAHk-=wht3ZWRaYs8QBXuftfuiFGOTjjZ9zj3-Dz7dkiBhJNBrQ@mail.gmail.com>
-Subject: Re: [PATCH 3/7] proc: Mov rcu_read_(lock|unlock) in proc_prune_siblings_dcache
+Date:   Thu, 20 Feb 2020 14:43:38 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whmwfv6zGwTRR8zTyTdfxgYoc7SE3Z0nKHu_srG_8NPWw@mail.gmail.com>
+Message-ID: <CAHk-=whmwfv6zGwTRR8zTyTdfxgYoc7SE3Z0nKHu_srG_8NPWw@mail.gmail.com>
+Subject: Re: [PATCH 4/7] proc: Use d_invalidate in proc_prune_siblings_dcache
 To:     "Eric W. Biederman" <ebiederm@xmission.com>
 Cc:     Al Viro <viro@zeniv.linux.org.uk>,
         LKML <linux-kernel@vger.kernel.org>,
@@ -109,16 +109,15 @@ List-ID: <linux-security-module.vger.kernel.org>
 On Thu, Feb 20, 2020 at 12:51 PM Eric W. Biederman
 <ebiederm@xmission.com> wrote:
 >
-> Don't make it look like rcu_read_lock is held over the entire loop
-> instead just take the rcu_read_lock over the part of the loop that
-> matters.  This makes the intent of the code a little clearer.
+> To use d_invalidate replace d_prune_aliases with d_find_alias
+> followed by d_invalidate and dput.  This is safe and complete
+> because no inode in proc has any hardlinks or aliases.
 
-No, this is horrid.
+Are you sure you can't create them some way?  This makes em go "what
+if we had multiple dentries associated with that inode?" Then the code
+would just invalidate the first one.
 
-Maybe it makes the intent clearer, but it also causes that "continue"
-case to unlock and relock immediately.
+I guess we don't have export_operations or anything like that, but
+this makes me worry...
 
-And maybe that case never triggers, and that's ok. But then it needs a
-big comment about it.
-
-              Linus
+            Linus
