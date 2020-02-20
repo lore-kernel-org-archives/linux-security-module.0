@@ -2,86 +2,97 @@ Return-Path: <SRS0=0oss=4I=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5BD1C5ACC4
-	for <linux-security-module@archiver.kernel.org>; Thu, 20 Feb 2020 00:11:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 123BAC7619D
+	for <linux-security-module@archiver.kernel.org>; Thu, 20 Feb 2020 03:19:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 859452465D
-	for <linux-security-module@archiver.kernel.org>; Thu, 20 Feb 2020 00:11:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB81324672
+	for <linux-security-module@archiver.kernel.org>; Thu, 20 Feb 2020 03:19:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726751AbgBTALn (ORCPT
+        id S1727402AbgBTDTz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 19 Feb 2020 19:11:43 -0500
-Received: from namei.org ([65.99.196.166]:47126 "EHLO namei.org"
+        Wed, 19 Feb 2020 22:19:55 -0500
+Received: from mail.hallyn.com ([178.63.66.53]:47712 "EHLO mail.hallyn.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726691AbgBTALm (ORCPT
+        id S1727208AbgBTDTz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 19 Feb 2020 19:11:42 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id 01K0AprM011915;
-        Thu, 20 Feb 2020 00:10:51 GMT
-Date:   Thu, 20 Feb 2020 11:10:51 +1100 (AEDT)
-From:   James Morris <jmorris@namei.org>
-To:     Randy Dunlap <rdunlap@infradead.org>
-cc:     LKML <linux-kernel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        John Johansen <john.johansen@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        Micah Morton <mortonm@chromium.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Eric Paris <eparis@parisplace.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Subject: Re: [RFC PATCH] security: <linux/lsm_hooks.h>: fix all kernel-doc
- warnings
-In-Reply-To: <fb2c98bd-b579-6ad0-721a-56a4f81f0d6e@infradead.org>
-Message-ID: <alpine.LRH.2.21.2002201110290.21499@namei.org>
-References: <fb2c98bd-b579-6ad0-721a-56a4f81f0d6e@infradead.org>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        Wed, 19 Feb 2020 22:19:55 -0500
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+        id 5ADB89D4; Wed, 19 Feb 2020 21:19:53 -0600 (CST)
+Date:   Wed, 19 Feb 2020 21:19:53 -0600
+From:   "Serge E. Hallyn" <serge@hallyn.com>
+To:     Ard Biesheuvel <ardb@kernel.org>
+Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        Leif Lindholm <leif@nuviainc.com>,
+        Peter Jones <pjones@redhat.com>,
+        Alexander Graf <agraf@csgraf.de>,
+        Heinrich Schuchardt <xypron.glpk@gmx.de>,
+        Jeff Brasen <jbrasen@nvidia.com>,
+        Atish Patra <Atish.Patra@wdc.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH 9/9] integrity: check properly whether EFI GetVariable()
+ is available
+Message-ID: <20200220031953.GA32167@mail.hallyn.com>
+References: <20200219171907.11894-1-ardb@kernel.org>
+ <20200219171907.11894-10-ardb@kernel.org>
+ <20200219204603.GA28639@mail.hallyn.com>
+ <CAKv+Gu_c4mhMN5LBoH5jJWwMHaMxKY7zcp4hiqdRFiadPT8Nww@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKv+Gu_c4mhMN5LBoH5jJWwMHaMxKY7zcp4hiqdRFiadPT8Nww@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, 15 Feb 2020, Randy Dunlap wrote:
-
-> From: Randy Dunlap <rdunlap@infradead.org>
+On Wed, Feb 19, 2020 at 10:00:11PM +0100, Ard Biesheuvel wrote:
+> On Wed, 19 Feb 2020 at 21:46, Serge E. Hallyn <serge@hallyn.com> wrote:
+> >
+> > On Wed, Feb 19, 2020 at 06:19:07PM +0100, Ard Biesheuvel wrote:
+> > > Testing the value of the efi.get_variable function pointer is not
+> > > the right way to establish whether the platform supports EFI
+> > > variables at runtime. Instead, use the newly added granular check
+> > > that can test for the presence of each EFI runtime service
+> > > individually.
+> > >
+> > > Cc: James Morris <jmorris@namei.org>
+> > > Cc: "Serge E. Hallyn" <serge@hallyn.com>
+> > > Cc: linux-security-module@vger.kernel.org
+> > > Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+> > > ---
+> > >  security/integrity/platform_certs/load_uefi.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >
+> > > diff --git a/security/integrity/platform_certs/load_uefi.c b/security/integrity/platform_certs/load_uefi.c
+> > > index 111898aad56e..e2fe1bd3abb9 100644
+> > > --- a/security/integrity/platform_certs/load_uefi.c
+> > > +++ b/security/integrity/platform_certs/load_uefi.c
+> > > @@ -76,7 +76,7 @@ static int __init load_uefi_certs(void)
+> > >       unsigned long dbsize = 0, dbxsize = 0, moksize = 0;
+> > >       int rc = 0;
+> > >
+> > > -     if (!efi.get_variable)
+> > > +     if (!efi_rt_services_supported(EFI_RT_SUPPORTED_GET_VARIABLE))
+> >
+> > Sorry, where is this defined?
+> >
 > 
-> Fix all kernel-doc warnings in <linux/lsm_hooks.h>.
-> Fixes the following warnings:
+> Apologies, I failed to cc everyone on the whole series.
 > 
-> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'quotactl' not described in 'security_list_options'
-> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'quota_on' not described in 'security_list_options'
-> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'sb_free_mnt_opts' not described in 'security_list_options'
-> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'sb_eat_lsm_opts' not described in 'security_list_options'
-> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'sb_kern_mount' not described in 'security_list_options'
-> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'sb_show_options' not described in 'security_list_options'
-> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'sb_add_mnt_opt' not described in 'security_list_options'
-> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'd_instantiate' not described in 'security_list_options'
-> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'getprocattr' not described in 'security_list_options'
-> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'setprocattr' not described in 'security_list_options'
-> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'locked_down' not described in 'security_list_options'
-> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'perf_event_open' not described in 'security_list_options'
-> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'perf_event_alloc' not described in 'security_list_options'
-> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'perf_event_free' not described in 'security_list_options'
-> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'perf_event_read' not described in 'security_list_options'
-> ../include/linux/lsm_hooks.h:1830: warning: Function parameter or member 'perf_event_write' not described in 'security_list_options'
+> It is defined in the first patch.
 > 
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> https://lore.kernel.org/linux-efi/20200219171907.11894-1-ardb@kernel.org/
 
-Thanks, applied to
-git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-general
+Gotcha, thanks, I shoulda get-lore-mbox'ed it :)
 
+Acked-by: Serge Hallyn <serge@hallyn.com>
 
--- 
-James Morris
-<jmorris@namei.org>
-
+thanks,
+-serge
