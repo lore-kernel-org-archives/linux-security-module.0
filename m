@@ -2,114 +2,106 @@ Return-Path: <SRS0=8B0L=4J=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8FE5C11D25
-	for <linux-security-module@archiver.kernel.org>; Fri, 21 Feb 2020 00:32:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1BB3C11D25
+	for <linux-security-module@archiver.kernel.org>; Fri, 21 Feb 2020 02:18:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FAA124653
-	for <linux-security-module@archiver.kernel.org>; Fri, 21 Feb 2020 00:32:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B949920722
+	for <linux-security-module@archiver.kernel.org>; Fri, 21 Feb 2020 02:18:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="L2xq9Vle"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y9/zM3RM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729441AbgBUAc1 (ORCPT
+        id S1729045AbgBUCSB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 20 Feb 2020 19:32:27 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:38475 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729365AbgBUAc0 (ORCPT
+        Thu, 20 Feb 2020 21:18:01 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:45102 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728992AbgBUCSB (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 20 Feb 2020 19:32:26 -0500
-Received: by mail-pg1-f194.google.com with SMTP id d6so95800pgn.5
-        for <linux-security-module@vger.kernel.org>; Thu, 20 Feb 2020 16:32:26 -0800 (PST)
+        Thu, 20 Feb 2020 21:18:01 -0500
+Received: by mail-pf1-f195.google.com with SMTP id 2so376204pfg.12;
+        Thu, 20 Feb 2020 18:18:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=content-transfer-encoding:from:mime-version:subject:date:message-id
-         :references:cc:in-reply-to:to;
-        bh=z2DSekIXnkX9eU39ZMxeSaJ+Ey4ada2j/LjI3viMpe8=;
-        b=L2xq9Vle6jxp9WXJix/nJ1E6aNq25XGRDldBnE6uRfHPTKAZidzklN+ABPMmf6twdj
-         9iF+ezVYOWPSBqEKGBFsP667oRit4McJEgy0SnPH61oD5WigzY6ow9ds+A4YVkKCg71+
-         isZ9j8P++FFMlx1PqFw2gd5fAr2ryaDc1lybA8W/uuAZFCMG/J6CL3EM1K8nQ/sEMLMr
-         R4yNGXen8b9ERC8Inh1eMrA9zbbvEY7KBfc0E7lwgRjD71sZku0KLC5Wub0HyEN+1azo
-         A7y9Aq2fiHX8eP7WA9XiUVTh11d13PprbklWSMPwnVUjKJeB7br7pZScqcu/sxf5hmEZ
-         ZLsQ==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=aInQ+bV7EjLbwOn5yuSwAB2aHiKLYjiz5SbjsgDviAY=;
+        b=Y9/zM3RMZGOGTJSxfuAMkGqEyNBqNlCEzUVmFk3K84KZUXDsfCMepHCF58vstGFBKB
+         y61eklmJ5eDxwqDpmi+ucrwJadzGnUCt8ZucXxbxoVjpupv48FwGegfMjBeKhijgIZKG
+         HYR7CjCNFapmynIWoJ7n/jAPG+UjgfUOjuVuw9YGCySO5ohewwPom0UXT7eDvpD1cQ3O
+         WpWPF8YRXW1KqKGyo/SnHRMZfmUJKYSGFUa86KbPQi42TuGu6evc/z6u6EKaVLrwi9Y7
+         BXJnSBvX6iVJnYYt7c25N85IpClOo5QrwCJNSHaMqx02cm7ZLWxEo+BrQeKTa8CE3KB6
+         WBug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:content-transfer-encoding:from:mime-version
-         :subject:date:message-id:references:cc:in-reply-to:to;
-        bh=z2DSekIXnkX9eU39ZMxeSaJ+Ey4ada2j/LjI3viMpe8=;
-        b=ROte4DcXeeXcNmJ+95EbdKKt7MnGcTG3jnACAJzZnOwcMG/TUNLbMmlsIbuYOUVdX1
-         0+lqEYxpRr2iDAxBNfirQAiT2IFQOy59btWJzRM2yVXBLjFJ3AQmGuJqK8PFvePS6wC1
-         0hrmV+HhQqEIMDpv9WfWWcBz8Bo/vPe5LGhQscw0TYLy5f6VQuJpVo+jnYQqqSzt3yM6
-         TQtdDUDQut/r1JetLXKis5CA4Psyz4YObGgVf6usaUdy9hQNMrLru/53W9ZLs81ueOoI
-         KzdEVp1wCDe/9bKl+edrgKfNoQ8Cb0b/xn5AVDGGO0m4G25tE3pUtgVEY5TP6aLBlrJP
-         sl0g==
-X-Gm-Message-State: APjAAAWAmkKDgVO3w8BIA4Lk9NGGeXCTDb/yzzvV/vbuF6iaOyUGcnuq
-        TN/lFqf+KrxBzEB4eTwewEDYDDkTPjc=
-X-Google-Smtp-Source: APXvYqw+4sLKln1oYdQ5ZrfvbhT1EDHvVbA/mNOVE6O5bdOhE1oFR/NW3nQfak7gZ3wI/2EWOdZ/fg==
-X-Received: by 2002:a63:9919:: with SMTP id d25mr35049553pge.22.1582245146084;
-        Thu, 20 Feb 2020 16:32:26 -0800 (PST)
-Received: from ?IPv6:2601:646:c200:1ef2:511c:ebc0:d124:b4a0? ([2601:646:c200:1ef2:511c:ebc0:d124:b4a0])
-        by smtp.gmail.com with ESMTPSA id f43sm540853pje.23.2020.02.20.16.32.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Feb 2020 16:32:25 -0800 (PST)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From:   Andy Lutomirski <luto@amacapital.net>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH v26 10/22] x86/sgx: Linux Enclave Driver
-Date:   Thu, 20 Feb 2020 16:32:22 -0800
-Message-Id: <6AE5891F-FC0D-4062-A6CA-01C78C2D5A1A@amacapital.net>
-References: <20200220221607.GB26618@linux.intel.com>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Jordan Hand <jorhand@linux.microsoft.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
-        dave.hansen@intel.com, nhorman@redhat.com, npmccallum@redhat.com,
-        haitao.huang@intel.com, andriy.shevchenko@linux.intel.com,
-        tglx@linutronix.de, kai.svahn@intel.com, bp@alien8.de,
-        josh@joshtriplett.org, luto@kernel.org, kai.huang@intel.com,
-        rientjes@google.com, cedric.xing@intel.com, puiterwijk@redhat.com,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=aInQ+bV7EjLbwOn5yuSwAB2aHiKLYjiz5SbjsgDviAY=;
+        b=XTZ7sbjn03IY+qPuOw3XbeuijXmVoFZNeyyffF2XJcezc4OSWZC0Ng9VWNRQkUKsuF
+         IxcGlOaIOCrOXmL0ceC4j2UF+oT474bJ1U6hB+vEC1GsnpgS79Qy8XV/Sn8QA5iO2y6R
+         C0LzHtMt1mWKLkCwzEbksdwh75AR+4W0DKqpAfErriKlcdUsfIxDRQq/hNuNtxczn2oy
+         UpEawEXNOQv4VmYmSaHwXh48ZmyE2QdHzO46Y4CAdwVrC+m5JKqhTixbn+husE5ehbff
+         +e2Lix8B178tGw6BFmN9Kr26gwXO3+3BrxLE2AFBTjvl+isPTizYk7wtHXDhY622tqpM
+         4xJA==
+X-Gm-Message-State: APjAAAVtURvHre3Pd9ov0w4kSxAkv+NnB9MxRI2xERIcvDW8AiHrBk9a
+        sGmaPrdqheskwEFdLX+9rks=
+X-Google-Smtp-Source: APXvYqw7sbSpit71nmXnqudgKI725O3kLqAZxewMC1o2xGr1TWmrCEhJZzOoQ7ak89Bs5Y7hhh01pQ==
+X-Received: by 2002:a63:650:: with SMTP id 77mr35068014pgg.102.1582251480255;
+        Thu, 20 Feb 2020 18:18:00 -0800 (PST)
+Received: from ast-mbp ([2620:10d:c090:500::5:f03d])
+        by smtp.gmail.com with ESMTPSA id z4sm867510pfn.42.2020.02.20.18.17.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Feb 2020 18:17:59 -0800 (PST)
+Date:   Thu, 20 Feb 2020 18:17:57 -0800
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     KP Singh <kpsingh@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        Haitao Huang <haitao.huang@linux.intel.com>
-In-Reply-To: <20200220221607.GB26618@linux.intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-X-Mailer: iPhone Mail (17D50)
+        Daniel Borkmann <daniel@iogearbox.net>,
+        James Morris <jmorris@namei.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH bpf-next v4 5/8] bpf: lsm: Implement attach, detach and
+ execution
+Message-ID: <20200221021755.3z7ifyyeh6seo3zs@ast-mbp>
+References: <20200220175250.10795-1-kpsingh@chromium.org>
+ <20200220175250.10795-6-kpsingh@chromium.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200220175250.10795-6-kpsingh@chromium.org>
+User-Agent: NeoMutt/20180223
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Thu, Feb 20, 2020 at 06:52:47PM +0100, KP Singh wrote:
+> +
+> +	/* This is the first program to be attached to the LSM hook, the hook
+> +	 * needs to be enabled.
+> +	 */
+> +	if (prog->type == BPF_PROG_TYPE_LSM && tr->progs_cnt[kind] == 1)
+> +		err = bpf_lsm_set_enabled(prog->aux->attach_func_name, true);
+>  out:
+>  	mutex_unlock(&tr->mutex);
+>  	return err;
+> @@ -336,7 +348,11 @@ int bpf_trampoline_unlink_prog(struct bpf_prog *prog)
+>  	}
+>  	hlist_del(&prog->aux->tramp_hlist);
+>  	tr->progs_cnt[kind]--;
+> -	err = bpf_trampoline_update(prog->aux->trampoline);
+> +	err = bpf_trampoline_update(prog);
+> +
+> +	/* There are no more LSM programs, the hook should be disabled */
+> +	if (prog->type == BPF_PROG_TYPE_LSM && tr->progs_cnt[kind] == 0)
+> +		err = bpf_lsm_set_enabled(prog->aux->attach_func_name, false);
 
-
-
-> On Feb 20, 2020, at 2:16 PM, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.=
-com> wrote:
->=20
-> =EF=BB=BFOn Thu, Feb 20, 2020 at 10:48:42AM -0800, Sean Christopherson wro=
-te:
->> My biggest concern for allowing PROT_EXEC if RIE is that it would result
->> in #PF(SGX) (#GP on Skylake) due to an EPCM violation if the enclave
->> actually tried to execute from such a page.  This isn't a problem for the=
-
->> kernel as the fault will be reported cleanly through the vDSO (or get
->> delivered as a SIGSEGV if the enclave isn't entered through the vDSO), bu=
-t
->> it's a bit weird for userspace as userspace will see the #PF(SGX) and
->> likely assume the EPC was lost, e.g. silently restart the enclave instead=
-
->> of logging an error that the enclave is broken.
->=20
-> I think right way to fix the current implementation is to -EACCES mmap()
-> (and mprotect) when !!(current->personality & READ_IMPLIES_EXEC).
->=20
-> This way supporting RIE can be reconsidered later on without any
-> potential ABI bottlenecks.
->=20
-
-Sounds good to me.  I see no credible reason why anyone would use RIE and SG=
-X.
-
-> /Jarkko
+Overall looks good, but I don't think above logic works.
+Consider lsm being attached, then fexit, then lsm detached, then fexit detached.
+Both are kind==fexit and static_key stays enabled.
