@@ -2,61 +2,60 @@ Return-Path: <SRS0=8B0L=4J=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C65CC3565D
-	for <linux-security-module@archiver.kernel.org>; Fri, 21 Feb 2020 18:24:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1177C35660
+	for <linux-security-module@archiver.kernel.org>; Fri, 21 Feb 2020 18:57:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50CA1222C4
-	for <linux-security-module@archiver.kernel.org>; Fri, 21 Feb 2020 18:24:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 77CB524650
+	for <linux-security-module@archiver.kernel.org>; Fri, 21 Feb 2020 18:57:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="NpBCfn3l"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="KiV8Zzu/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729413AbgBUSX7 (ORCPT
+        id S1729288AbgBUS5u (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 21 Feb 2020 13:23:59 -0500
-Received: from sonic314-27.consmr.mail.ne1.yahoo.com ([66.163.189.153]:44291
-        "EHLO sonic314-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726342AbgBUSX7 (ORCPT
+        Fri, 21 Feb 2020 13:57:50 -0500
+Received: from sonic315-26.consmr.mail.ne1.yahoo.com ([66.163.190.152]:41782
+        "EHLO sonic315-26.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729484AbgBUS5t (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 21 Feb 2020 13:23:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1582309437; bh=gOhMKqzGn0V8Y6w//oELZyi0fPcFzlzxFDnKT/XEQTE=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=NpBCfn3lA/2gQexjbr76H9+u4UpTVT2c2xT8et0vI6qEVHzs0ZKWlrFSLbCUDq3aHS+tBaOqp5S57MnAW+pvCoHjLaDpiXEv5r2K02tfCWEfJTwPrA8HFmQOcOsDYCVBJU8yPfQaghCXRZiXx8NHUSxt3Nadl4Lf3c6zMA6aKCm8WlJXU5H4hxDmZiOu50rGcu33E8goc0y7RGguAKsb2vYsa78G6BCmLbcGNiqvWsM66ePvSW9aP5ZcV2/x2n8s28PXF49rcjfC036Nb1JvqwIp7QQtHWFRLcUFc9QRfn+KNl4ZqmC/ipjFBmFx7GYwiQXNyEfov5lRU2Y9zd3pfA==
-X-YMail-OSG: UUmCupsVM1k7ebf5Et3WamgXbLlL6qFf.diymB7et1o_5Womow_NswYmGAlvlSq
- 8omLV8wGkYSK9by0Om5HDlRLt3Tn1AR7pRZXqQm0F4Rqu30UufmF8BvDrthCcB78sIBzDJcvZBFh
- 0TPi3CwKERfDC9pq.KRXmeJwOLh5mEibLuvMAyXtOUo8RxWog70fxMYRsoQpcYMpx5ceY5I8wk9A
- ndxSjTUHhddFjq7eL.vWOtckho70DkKQ9z2F7NRoDGM_yDc62mcpBdNhYS8XrHfXWCaKebMRoygm
- 57ncj2sWjWsaapnFYAJxGE2cyCva4it.s426RvoMrDIgrLZZH.v3AsY8TmvE9yemUAfUH53pqkmq
- xFouQwkKZbc991s8kQZig4enkx.4bUQ4MlXsxapaLvgkpRS1v7V7_gUMPISqPo5KyHFif8sIlkuw
- HBQjfthCTxRIoCIwjsI2AoSO1itl.WYOJ6dWPUVZrFF.u0iVVei4nEggukv_zqNCX1A36CnAn1Uh
- PlPcoNu3hz3y725w2QfwIFHn2R9awt8zqnW5GB2e2pCwChhoEAG4_4SFh9Nvb.P8xn6ocb0ljRRI
- 9BdZ5zC8P2VMPJ2mQATpGV3wIXSbmDWHA3Hqe56xfgtYfVonFe7EDnIEyKEV6LaQfl1jjOHh0MqB
- oa81TR5GbFNI_3A2GLBAd9g1W5Els5QK1BQ8aevYqS2_6O.K5BuZ6ek0TeUUlhr86WH_Va9xVqcH
- q4wBH8ONHDiovNdQKCnjFh.aqeVVP0cUdCdhdqW5geW3zgFcCRIpg78WoO.l6zI198C5hlpjpUem
- ZOccs7f0scvrX9FmlzS4ODPS0EZwupVp6aKtve12siqwVmCi3i0c6Lk72dPfQHPsyBCslPgdpbBw
- nCgKfdCWBgsaYurmU0Px.npQNwIoPGK88Bv1RjJNiIEj9MRKY71.gTvch5L32Cppi.9LsjDUfpCB
- G61wnCfxlgBYZk5B5nvRwcVZP0pNZTOzDVHKh7MAlYNY5DLnXZ.kJ1qMLnwhk_P7Tf2eTnGdycaX
- 5mZElY1JLRlGFLsY0fHvmUMJSRMobgWBbfTz8F.7UnA7vV2cxtK8rwaM3.kXJHJ5x_EAkNQgyhGU
- p.6q_Xymh6.viljSzRFt8MZzo6s8ZLxkqX5_LYL2dCLGTDSGf00LByVhQkEaO.yxzoKofqR6rhhK
- cjDgrpbXB6mMGBu1ch_dxnF2zFUVW7vRYcpr2GoepdEPG9JvT.4Kv1VE8CqHpZRyhWpkQMe32yS_
- mGjIzb3IS0VC.pJUe3VTTaVneLuxvM0Rh5q12IrGszkeolJr5Enb57uZvH4cWSNPw.IK2w52j5qs
- TDQX7Trqslj7qnDUyYE26e4k_wS41T5_k68tZiE05H5WpNQT5ImSAXIVfqAkruBu4VlT3HQ5LhTe
- gPiofKQCfS3o58_4yV.rpu6LoxGl2hleoXw--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.ne1.yahoo.com with HTTP; Fri, 21 Feb 2020 18:23:57 +0000
-Received: by smtp430.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID a4b3b99e33a6493e11de2915c46a0e02;
-          Fri, 21 Feb 2020 18:23:52 +0000 (UTC)
-Subject: Re: [PATCH bpf-next v4 3/8] bpf: lsm: provide attachment points for
- BPF LSM programs
+        Fri, 21 Feb 2020 13:57:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1582311465; bh=b8T47NxXCLWEB1H35wG7dKJKHTiAJpD7FFDz8YDKOa0=; h=Subject:To:References:Cc:From:Date:In-Reply-To:From:Subject; b=KiV8Zzu/dXmaTrendT44pZewiH6VN4TtMD1x0B2LzleEkcKaN4htsZbcP2ieQtnyzJUqUt6VSXZ4UOB23Q16pQDZeNOzAe8aZLgZyIuyipxEADsX9vfuTHiidmgdMCDD3HH6NuoscsqI5WrBFuI7dSQ24PCwvi9AaPzFk2Lqeo+fYx/CViEDNvAan8lFFBanT570eXx6eHo0Vvh16TNdMYB9+P/JjyYUoMsTZzawvqz0aTTZ9vVOI2UwJLZC2yrUisbSHzN6UiKtaOkiI13KdbGa3jShsLvWBk6ohevJT58sCb2BdZ8iXAvgLKThuDjSD/IkoW+PED/tUz0VcnLCig==
+X-YMail-OSG: OQYhzh0VM1mYPah9ovcFoz8_dL4KLh4RoMKn9zKeD5YIFdiqy4FU4AIsUPtFu3A
+ 6EQAZq3YIo1m358xhZHna7SK7idmnYg2wVzmhRMNy2tcQsbVU3Bft_59qeEHBBs4JT27Gh0O1jDM
+ xHklEab3PWBu29Hz1s7kPA77VXadauIHu89kwHo8peUdFnTaAdQJbVtNFoD.64YvCzJS89hb_692
+ FuXYuC5.5uiPXT3o5S8d0CaZG5omOIIiGmuO3EFR1WBz915JoOgv2j5l44U1Cnzaqr.1uL4gfUWE
+ UZsjFlzOIOGxTieQnDp5_glHyjj64uQJOT6Zb9120i2Qx0weF3BBoNcOGhqrk0B2Nwu4RGofwlO4
+ l1KmuJ2.DsejefBBnULGuwjrwsJCGMa8GyKJ2tlnq8nA5mL_cPP2YSrT2qRPGEi.K5Nx6ivKlKr8
+ DXz8SFSoj9rAPOJPkRgJk7HI0P88SIryMBXwGq.nhpzUXyexzSRPKiCR7u_0oHeLxWG5w7RPMaSc
+ q1u8czws3WHTYBiXZ8l1ef50irr_4IemS7WfrCuIoIBeU.M3M8YwNRZ3RG7NXbWOU2muSFm5V66b
+ pcfj1dkDprPj_fr8Ku2.tx2_m2PLGLaKGQBfJ2k.SpnP8MqjFNoJ4syXJnVQY_6mP.CZO5UoNkdh
+ dsTOEJIeU8yH0O.RY99iJtWD05uIKnV7ETp.WpLlrRgBGTr2Yo_m9NI8dBa_JdknXumZYbWTATTc
+ Ui1RfC7di66Nva4TMVk2Bu2BFn.uHXEuIOtTbDQLST.q.QUlFLqftz7TDw9L098qiw5VIkQQ.iuZ
+ KcFuMT6xc5hnYnoHPhpqdYz5GU0YKnCTS1p79nJ_XZIxKj_1d_dSz46_U8tI6IdW90kdU4Jr4ugh
+ XuLhWfJs9jPTFr089Y4aNmXZeR_RpzapZsVe7WhC8WJLsEa_n7ikRS_2EciNwAwAUkzoveAPWSop
+ 8be..ITVQEZpJllbcRpZU2XGiaIby9A3CmiA4vYOvVkFKswpSOHwHmaXFxQIkC8o2zHC2Tra3zK7
+ TYm_1GTw68hskD8ihsT48vzZrXjpaJ0wz7ghSyb91vSMRq2wpa2_Q6dZdw.hYuME7am75mglCNzD
+ nvh9AJ36qO8uoOIkPbUDD2oP8OaGx.q4acbS0_ukbu_eyvgRr8C_7c8jLsMUuMcUOgzDVoA5azo1
+ iuM4GC2KXSenVt..Xpu9zANb6AZLEWSP.tCLclVjQprg8sUmcL307.M.JHvYYX9fyxJC4oTdi_7d
+ Vq3ZJzRFME.7DPEpHAxYW4TXo8Aypp7GYpTf2N5r2_iTccvj6LK9M9_bSA5rwFXxaEdRXiv_8auX
+ x0UYq.Fs7X47zrDbCAQPLbfr5rYAMLRXX9NuK.rQfvt_sj6fMpq8f4uhA2wnq9wKgwFXQOlGvxw5
+ GU_GnXjwM7nGB6IixA5j4cVeYfFh80ipA
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.ne1.yahoo.com with HTTP; Fri, 21 Feb 2020 18:57:45 +0000
+Received: by smtp417.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID e623b7807d3e08591094321f90aee448;
+          Fri, 21 Feb 2020 18:57:40 +0000 (UTC)
+Subject: Re: [PATCH bpf-next v4 4/8] bpf: lsm: Add support for
+ enabling/disabling BPF hooks
 To:     KP Singh <kpsingh@chromium.org>
+References: <20200220175250.10795-1-kpsingh@chromium.org>
+ <20200220175250.10795-5-kpsingh@chromium.org>
 Cc:     LKML <linux-kernel@vger.kernel.org>,
         Linux Security Module list 
-        <linux-security-module@vger.kernel.org>, bpf@vger.kernel.org,
+        <linux-security-module@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
         Casey Schaufler <casey@schaufler-ca.com>
-References: <20200220175250.10795-1-kpsingh@chromium.org>
- <20200220175250.10795-4-kpsingh@chromium.org>
- <0ef26943-9619-3736-4452-fec536a8d169@schaufler-ca.com>
- <20200221114458.GA56944@google.com>
 From:   Casey Schaufler <casey@schaufler-ca.com>
 Autocrypt: addr=casey@schaufler-ca.com; keydata=
  mQINBFzV9HABEAC/mmv3jeJyF7lR7QhILYg1+PeBLIMZv7KCzBSc/4ZZipoWdmr77Lel/RxQ
@@ -102,12 +101,12 @@ Autocrypt: addr=casey@schaufler-ca.com; keydata=
  wQ1QL4o4t1hviM7LyoflsCLnQFJh6RSBhBpKQinMJl/z0A6NYDkQi6vEGMDBWX/M2vk9Jvwa
  v0cEBfY3Z5oFgkh7BUORsu1V+Hn0fR/Lqq/Pyq+nTR26WzGDkolLsDr3IH0TiAVH5ZuPxyz6
  abzjfg==
-Message-ID: <37fa4f0b-be38-5a7d-9bff-39d77c3c7335@schaufler-ca.com>
-Date:   Fri, 21 Feb 2020 10:23:50 -0800
+Message-ID: <bb32f155-5213-71df-c679-85c614c0ac26@schaufler-ca.com>
+Date:   Fri, 21 Feb 2020 10:57:39 -0800
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
  Thunderbird/68.5.0
 MIME-Version: 1.0
-In-Reply-To: <20200221114458.GA56944@google.com>
+In-Reply-To: <20200220175250.10795-5-kpsingh@chromium.org>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 Content-Language: en-US
@@ -116,69 +115,238 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2/21/2020 3:44 AM, KP Singh wrote:
-> On 20-Feb 15:49, Casey Schaufler wrote:
->> On 2/20/2020 9:52 AM, KP Singh wrote:
->>> From: KP Singh <kpsingh@google.com>
->> Sorry about the heavy list pruning - the original set
->> blows thunderbird up.
->>
->>> The BPF LSM programs are implemented as fexit trampolines to avoid th=
-e
->>> overhead of retpolines. These programs cannot be attached to security=
-_*
->>> wrappers as there are quite a few security_* functions that do more t=
-han
->>> just calling the LSM callbacks.
->>>
->>> This was discussed on the lists in:
->>>
->>>   https://lore.kernel.org/bpf/20200123152440.28956-1-kpsingh@chromium=
-=2Eorg/T/#m068becce588a0cdf01913f368a97aea4c62d8266
->>>
->>> Adding a NOP callback after all the static LSM callbacks are called h=
-as
->>> the following benefits:
->>>
->>> - The BPF programs run at the right stage of the security_* wrappers.=
+On 2/20/2020 9:52 AM, KP Singh wrote:
+> From: KP Singh <kpsingh@google.com>
 
->>> - They run after all the static LSM hooks allowed the operation,
->>>   therefore cannot allow an action that was already denied.
->> I still say that the special call-out to BPF is unnecessary.
->> I remain unconvinced by the arguments. You aren't doing anything
->> so special that the general mechanism won't work.
-> The existing mechanism would work functionally, but the cost of an
-> indirect call for all the hooks, even those that are completely unused
-> is not really acceptable for KRSI=E2=80=99s use cases.
+Again, sorry for trimming the CC list, but thunderbird ...
 
-Are you at all familiar with the way LSMs where installed
-before the current list infrastructure? Every interface had
-a hook that got called, even if the installed module did not
-provide one. That was deemed acceptable for a good long time.
+>
+> Each LSM hook defines a static key i.e. bpf_lsm_<name>
+> and a bpf_lsm_<name>_set_enabled function to toggle the key
+> which enables/disables the branch which executes the BPF programs
+> attached to the LSM hook.
+>
+> Use of static keys was suggested in upstream discussion:
+>
+>   https://lore.kernel.org/bpf/1cd10710-a81b-8f9b-696d-aa40b0a67225@ioge=
+arbox.net/
+>
+> and results in the following assembly:
+>
+>   0x0000000000001e31 <+65>:    jmpq   0x1e36 <security_bprm_check+70>
+>   0x0000000000001e36 <+70>:    nopl   0x0(%rax,%rax,1)
+>   0x0000000000001e3b <+75>:    xor    %eax,%eax
+>   0x0000000000001e3d <+77>:    jmp    0x1e25 <security_bprm_check+53>
+>
+> which avoids an indirect branch and results in lower overhead which is
+> especially helpful for LSM hooks in performance hotpaths.
+>
+> Given the ability to toggle the BPF trampolines, some hooks which do
+> not call call_<int, void>_hooks as they have different default return
+> values, also gain support for BPF program attachment.
+>
+> There are some hooks like security_setprocattr and security_getprocattr=
 
-Way back in the early days of the stacking effort I seriously
-considered implementing a new security module that would do
-the stacking, and leave the infrastructure alone. Very much
-like what you're proposing for BPF modules. It would have worked,
-but the list model works better.
+> which are not instrumentable as they do not provide any monitoring or
+> access control decisions. If required, generation of BTF type
+> information for these hooks can be also be blacklisted.
+>
+> Signed-off-by: KP Singh <kpsingh@google.com>
+> ---
+>  include/linux/bpf_lsm.h | 30 +++++++++++++++++++++++++++---
+>  kernel/bpf/bpf_lsm.c    | 28 ++++++++++++++++++++++++++++
+>  security/security.c     | 32 ++++++++++++++++++++++++++++++++
+>  3 files changed, 87 insertions(+), 3 deletions(-)
+>
+> diff --git a/include/linux/bpf_lsm.h b/include/linux/bpf_lsm.h
+> index f867f72f6aa9..53dcda8ace01 100644
+> --- a/include/linux/bpf_lsm.h
+> +++ b/include/linux/bpf_lsm.h
+> @@ -8,27 +8,51 @@
+>  #define _LINUX_BPF_LSM_H
+> =20
+>  #include <linux/bpf.h>
+> +#include <linux/jump_label.h>
+> =20
+>  #ifdef CONFIG_BPF_LSM
+> =20
+> +#define LSM_HOOK(RET, NAME, ...)		\
+> +DECLARE_STATIC_KEY_FALSE(bpf_lsm_key_##NAME);   \
+> +void bpf_lsm_##NAME##_set_enabled(bool value);
+> +#include <linux/lsm_hook_names.h>
+> +#undef LSM_HOOK
 
->  It=E2=80=99s easy to avoid and
-> I do think that what we=E2=80=99re doing here (with hooks being defined=
- at
-> runtime) has significant functional differences from existing LSMs.
+This is an amazing amount of macro magic. You're creating
+dependencies that will make changes to the infrastructure
+much more difficult. I think. It's really hard to tell.
+At the very least you should have a description of what this
+accomplishes, as it's far from obvious.
 
-KRSI isn't all that different from the other modules.
-The way you specify where system policy is restricted
-and under which circumstances is different. You're trying
-to be extremely general, beyond the Mandatory Access Control
-claims of the existing modules. But really, there's nothing
-all that special.
-
-I know that you don't want to be making a lot of checks on
-empty BPF program lists. You've come up with clever hacks
-to avoid doing so. But the cleverer the hack, the more likely
-it is to haunt someone else later. It probably won't cause
-KRSI any grief, but you can bet someone will take it in the
-chin.
-
+> +
+>  #define LSM_HOOK(RET, NAME, ...) RET bpf_lsm_##NAME(__VA_ARGS__);
+>  #include <linux/lsm_hook_names.h>
+>  #undef LSM_HOOK
+> =20
+> -#define RUN_BPF_LSM_VOID_PROGS(FUNC, ...) bpf_lsm_##FUNC(__VA_ARGS__)
+> +#define HAS_BPF_LSM_PROG(FUNC) (static_branch_unlikely(&bpf_lsm_key_##=
+FUNC))
+> +
+> +#define RUN_BPF_LSM_VOID_PROGS(FUNC, ...)				\
+> +	do {								\
+> +		if (HAS_BPF_LSM_PROG(FUNC))				\
+> +			bpf_lsm_##FUNC(__VA_ARGS__);			\
+> +	} while (0)
+> +
+>  #define RUN_BPF_LSM_INT_PROGS(RC, FUNC, ...) ({				\
+>  	do {								\
+> -		if (RC =3D=3D 0)						\
+> -			RC =3D bpf_lsm_##FUNC(__VA_ARGS__);		\
+> +		if (HAS_BPF_LSM_PROG(FUNC)) {				\
+> +			if (RC =3D=3D 0)					\
+> +				RC =3D bpf_lsm_##FUNC(__VA_ARGS__);	\
+> +		}							\
+>  	} while (0);							\
+>  	RC;								\
+>  })
+> =20
+> +int bpf_lsm_set_enabled(const char *name, bool value);
+> +
+>  #else /* !CONFIG_BPF_LSM */
+> =20
+> +#define HAS_BPF_LSM_PROG false
+>  #define RUN_BPF_LSM_INT_PROGS(RC, FUNC, ...) (RC)
+>  #define RUN_BPF_LSM_VOID_PROGS(FUNC, ...)
+> =20
+> +static inline int bpf_lsm_set_enabled(const char *name, bool value)
+> +{
+> +	return -EOPNOTSUPP;
+> +}
+> +
+>  #endif /* CONFIG_BPF_LSM */
+> =20
+>  #endif /* _LINUX_BPF_LSM_H */
+> diff --git a/kernel/bpf/bpf_lsm.c b/kernel/bpf/bpf_lsm.c
+> index abc847c9b9a1..d7c44433c003 100644
+> --- a/kernel/bpf/bpf_lsm.c
+> +++ b/kernel/bpf/bpf_lsm.c
+> @@ -8,6 +8,20 @@
+>  #include <linux/bpf.h>
+>  #include <linux/btf.h>
+>  #include <linux/bpf_lsm.h>
+> +#include <linux/jump_label.h>
+> +#include <linux/kallsyms.h>
+> +
+> +#define LSM_HOOK(RET, NAME, ...)					\
+> +	DEFINE_STATIC_KEY_FALSE(bpf_lsm_key_##NAME);			\
+> +	void bpf_lsm_##NAME##_set_enabled(bool value)			\
+> +	{								\
+> +		if (value)						\
+> +			static_branch_enable(&bpf_lsm_key_##NAME);	\
+> +		else							\
+> +			static_branch_disable(&bpf_lsm_key_##NAME);	\
+> +	}
+> +#include <linux/lsm_hook_names.h>
+> +#undef LSM_HOOK
+> =20
+>  /* For every LSM hook  that allows attachment of BPF programs, declare=
+ a NOP
+>   * function where a BPF program can be attached as an fexit trampoline=
+=2E
+> @@ -24,6 +38,20 @@
+>  #include <linux/lsm_hook_names.h>
+>  #undef LSM_HOOK
+> =20
+> +int bpf_lsm_set_enabled(const char *name, bool value)
+> +{
+> +	char toggle_fn_name[KSYM_NAME_LEN];
+> +	void (*toggle_fn)(bool value);
+> +
+> +	snprintf(toggle_fn_name, KSYM_NAME_LEN, "%s_set_enabled", name);
+> +	toggle_fn =3D (void *)kallsyms_lookup_name(toggle_fn_name);
+> +	if (!toggle_fn)
+> +		return -ESRCH;
+> +
+> +	toggle_fn(value);
+> +	return 0;
+> +}
+> +
+>  const struct bpf_prog_ops lsm_prog_ops =3D {
+>  };
+> =20
+> diff --git a/security/security.c b/security/security.c
+> index aa111392a700..569cc07d5e34 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -804,6 +804,13 @@ int security_vm_enough_memory_mm(struct mm_struct =
+*mm, long pages)
+>  			break;
+>  		}
+>  	}
+> +#ifdef CONFIG_BPF_LSM
+> +	if (HAS_BPF_LSM_PROG(vm_enough_memory)) {
+> +		rc =3D bpf_lsm_vm_enough_memory(mm, pages);
+> +		if (rc <=3D 0)
+> +			cap_sys_admin =3D 0;
+> +	}
+> +#endif
+>  	return __vm_enough_memory(mm, pages, cap_sys_admin);
+>  }
+> =20
+> @@ -1350,6 +1357,13 @@ int security_inode_getsecurity(struct inode *ino=
+de, const char *name, void **buf
+>  		if (rc !=3D -EOPNOTSUPP)
+>  			return rc;
+>  	}
+> +#ifdef CONFIG_BPF_LSM
+> +	if (HAS_BPF_LSM_PROG(inode_getsecurity)) {
+> +		rc =3D bpf_lsm_inode_getsecurity(inode, name, buffer, alloc);
+> +		if (rc !=3D -EOPNOTSUPP)
+> +			return rc;
+> +	}
+> +#endif
+>  	return -EOPNOTSUPP;
+>  }
+> =20
+> @@ -1369,6 +1383,14 @@ int security_inode_setsecurity(struct inode *ino=
+de, const char *name, const void
+>  		if (rc !=3D -EOPNOTSUPP)
+>  			return rc;
+>  	}
+> +#ifdef CONFIG_BPF_LSM
+> +	if (HAS_BPF_LSM_PROG(inode_setsecurity)) {
+> +		rc =3D bpf_lsm_inode_setsecurity(inode, name, value, size,
+> +					       flags);
+> +		if (rc !=3D -EOPNOTSUPP)
+> +			return rc;
+> +	}
+> +#endif
+>  	return -EOPNOTSUPP;
+>  }
+> =20
+> @@ -1754,6 +1776,12 @@ int security_task_prctl(int option, unsigned lon=
+g arg2, unsigned long arg3,
+>  				break;
+>  		}
+>  	}
+> +#ifdef CONFIG_BPF_LSM
+> +	if (HAS_BPF_LSM_PROG(task_prctl)) {
+> +		if (rc =3D=3D -ENOSYS)
+> +			rc =3D bpf_lsm_task_prctl(option, arg2, arg3, arg4, arg5);
+> +	}
+> +#endif
+>  	return rc;
+>  }
+> =20
+> @@ -2334,6 +2362,10 @@ int security_xfrm_state_pol_flow_match(struct xf=
+rm_state *x,
+>  		rc =3D hp->hook.xfrm_state_pol_flow_match(x, xp, fl);
+>  		break;
+>  	}
+> +#ifdef CONFIG_BPF_LSM
+> +	if (HAS_BPF_LSM_PROG(xfrm_state_pol_flow_match))
+> +		rc =3D bpf_lsm_xfrm_state_pol_flow_match(x, xp, fl);
+> +#endif
+>  	return rc;
+>  }
+> =20
 
