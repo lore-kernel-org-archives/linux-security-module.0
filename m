@@ -2,134 +2,104 @@ Return-Path: <SRS0=8B0L=4J=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A5E9C35647
-	for <linux-security-module@archiver.kernel.org>; Fri, 21 Feb 2020 12:02:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFC91C35646
+	for <linux-security-module@archiver.kernel.org>; Fri, 21 Feb 2020 12:53:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0ECBA222C4
-	for <linux-security-module@archiver.kernel.org>; Fri, 21 Feb 2020 12:02:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UKFOzCl6"
+	by mail.kernel.org (Postfix) with ESMTP id AD593206EF
+	for <linux-security-module@archiver.kernel.org>; Fri, 21 Feb 2020 12:53:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727141AbgBUMCy (ORCPT
+        id S1728147AbgBUMxW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 21 Feb 2020 07:02:54 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:46817 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726976AbgBUMCy (ORCPT
+        Fri, 21 Feb 2020 07:53:22 -0500
+Received: from mga17.intel.com ([192.55.52.151]:55135 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726909AbgBUMxW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 21 Feb 2020 07:02:54 -0500
-Received: by mail-wr1-f65.google.com with SMTP id z7so1718786wrl.13
-        for <linux-security-module@vger.kernel.org>; Fri, 21 Feb 2020 04:02:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=XEMXcf1Qym5KZXe7M87kC8LbHamJQ0UMLSMngcLuhOU=;
-        b=UKFOzCl6q4/cR/NsAjylHV5Gebfb6qxNZdL5rw1XT2ToRS3Q+BmEAaQt3KQowks3FV
-         O2f4DMGkYVUc9KYLH3UeegG+7DhMaBXhBb8dvjuLIFosDhSaBHSmk3y0GcXVyKS00HDn
-         CB3v4G6PN2dB9kj8W5qmjzuUQudPYm7QpNcUs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=XEMXcf1Qym5KZXe7M87kC8LbHamJQ0UMLSMngcLuhOU=;
-        b=aWAquhZMZ0NxC06sWD0QQ6Ogu3FGOztqTw2jtFRLbW8qBDIIIU8E8x3QvHDGPdcqAn
-         o8jzJg/S8euxqNwHKruJHCIkAqdlEJtSaQOaivHNbNN374VNbnVMHMdjPEEDD02hv2yv
-         yI/FQ48oTlzG2rQv3zN68jyvhTFlqsZJrN7QRIY9n6QPzP1vdmvvjicywu+LH81Zm/i7
-         0NUcEhRag6OTRrOFNkkDEBuo3J4FkaAIwY2K4BCOyvT6ZNr7B3rbbU/n1U5cDCE8KcMP
-         wT1kOg/9Qo8zp1GVYd+f5lBH4p7c3iCfHvK1UxJxWCvshyAKWLsGvtYqjoz9PMoAXwSj
-         b7nw==
-X-Gm-Message-State: APjAAAVuuajfVqjoNK4fROVnRFg6tYgIxIvIas4V38Jv2rVD73iOjMg5
-        976NjEFlm7pv6RHWA1JDsemikQ==
-X-Google-Smtp-Source: APXvYqzsuM0rMnESdMtK5OBkUXp1jDKWa+okCPaVGYbgB20R7139xAB9Mq1tDbbjbEUGQCmxgxSxBQ==
-X-Received: by 2002:a5d:61cb:: with SMTP id q11mr50890228wrv.71.1582286562277;
-        Fri, 21 Feb 2020 04:02:42 -0800 (PST)
-Received: from google.com ([2a00:79e0:42:204:8a21:ba0c:bb42:75ec])
-        by smtp.gmail.com with ESMTPSA id x21sm3322107wmi.30.2020.02.21.04.02.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Feb 2020 04:02:41 -0800 (PST)
-Date:   Fri, 21 Feb 2020 13:02:40 +0100
-From:   KP Singh <kpsingh@chromium.org>
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     KP Singh <kpsingh@chromium.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH bpf-next v4 5/8] bpf: lsm: Implement attach, detach and
- execution
-Message-ID: <CACYkzJ6E7FDE0xnnZPCmxgC+vEw1o4qcu9szV1DMeDeukbnFxQ@mail.gmail.com>
-References: <20200220175250.10795-1-kpsingh@chromium.org>
- <20200220175250.10795-6-kpsingh@chromium.org>
- <20200221021755.3z7ifyyeh6seo3zs@ast-mbp>
+        Fri, 21 Feb 2020 07:53:22 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Feb 2020 04:53:21 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,468,1574150400"; 
+   d="scan'208";a="409128495"
+Received: from mklimasz-mobl1.ger.corp.intel.com (HELO localhost) ([10.251.87.58])
+  by orsmga005.jf.intel.com with ESMTP; 21 Feb 2020 04:53:06 -0800
+Date:   Fri, 21 Feb 2020 14:53:04 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Jordan Hand <jorhand@linux.microsoft.com>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
+        dave.hansen@intel.com, nhorman@redhat.com, npmccallum@redhat.com,
+        haitao.huang@intel.com, andriy.shevchenko@linux.intel.com,
+        tglx@linutronix.de, kai.svahn@intel.com, bp@alien8.de,
+        josh@joshtriplett.org, luto@kernel.org, kai.huang@intel.com,
+        rientjes@google.com, cedric.xing@intel.com, puiterwijk@redhat.com,
+        linux-security-module@vger.kernel.org,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        Haitao Huang <haitao.huang@linux.intel.com>
+Subject: Re: [PATCH v26 10/22] x86/sgx: Linux Enclave Driver
+Message-ID: <20200221125242.GA3112@linux.intel.com>
+References: <20200209212609.7928-1-jarkko.sakkinen@linux.intel.com>
+ <20200209212609.7928-11-jarkko.sakkinen@linux.intel.com>
+ <15074c16-4832-456d-dd12-af8548e46d6d@linux.microsoft.com>
+ <20200220181345.GD3972@linux.intel.com>
+ <7738b3cf-fb32-5306-5740-59974444e327@linux.microsoft.com>
+ <20200220184842.GE3972@linux.intel.com>
+ <20200220221607.GB26618@linux.intel.com>
+ <2c077197-a8a7-feac-58ea-e901c92fb58b@linux.microsoft.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200221021755.3z7ifyyeh6seo3zs@ast-mbp>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <2c077197-a8a7-feac-58ea-e901c92fb58b@linux.microsoft.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 20-Feb 18:17, Alexei Starovoitov wrote:
-> On Thu, Feb 20, 2020 at 06:52:47PM +0100, KP Singh wrote:
-> > +
-> > +   /* This is the first program to be attached to the LSM hook, the hook
-> > +    * needs to be enabled.
-> > +    */
-> > +   if (prog->type == BPF_PROG_TYPE_LSM && tr->progs_cnt[kind] == 1)
-> > +           err = bpf_lsm_set_enabled(prog->aux->attach_func_name, true);
-> >  out:
-> >     mutex_unlock(&tr->mutex);
-> >     return err;
-> > @@ -336,7 +348,11 @@ int bpf_trampoline_unlink_prog(struct bpf_prog *prog)
-> >     }
-> >     hlist_del(&prog->aux->tramp_hlist);
-> >     tr->progs_cnt[kind]--;
-> > -   err = bpf_trampoline_update(prog->aux->trampoline);
-> > +   err = bpf_trampoline_update(prog);
-> > +
-> > +   /* There are no more LSM programs, the hook should be disabled */
-> > +   if (prog->type == BPF_PROG_TYPE_LSM && tr->progs_cnt[kind] == 0)
-> > +           err = bpf_lsm_set_enabled(prog->aux->attach_func_name, false);
->
-> Overall looks good, but I don't think above logic works.
-> Consider lsm being attached, then fexit, then lsm detached, then fexit detached.
-> Both are kind==fexit and static_key stays enabled.
+On Thu, Feb 20, 2020 at 04:11:04PM -0800, Jordan Hand wrote:
+> On 2/20/20 2:16 PM, Jarkko Sakkinen wrote:
+> > On Thu, Feb 20, 2020 at 10:48:42AM -0800, Sean Christopherson wrote:
+> >> My biggest concern for allowing PROT_EXEC if RIE is that it would result
+> >> in #PF(SGX) (#GP on Skylake) due to an EPCM violation if the enclave
+> >> actually tried to execute from such a page.  This isn't a problem for the
+> >> kernel as the fault will be reported cleanly through the vDSO (or get
+> >> delivered as a SIGSEGV if the enclave isn't entered through the vDSO), but
+> >> it's a bit weird for userspace as userspace will see the #PF(SGX) and
+> >> likely assume the EPC was lost, e.g. silently restart the enclave instead
+> >> of logging an error that the enclave is broken.
+> > 
+> > I think right way to fix the current implementation is to -EACCES mmap()
+> > (and mprotect) when !!(current->personality & READ_IMPLIES_EXEC).
+> > 
+> 
+> I agree. It still means userspace code with an executable stack can't
+> mmap/mprotect enclave pages and request PROT_READ but the check you've
+> proposed would more consistently enforce this which is easier to
+> understand from userspace perspective.
 
-You're right. I was weary of introducing a new kind (something like
-BPF_TRAMP_LSM) since they are just fexit trampolines. For now, I
-added nr_lsm_progs as a member in struct bpf_trampoline and refactored
-the increment and decrement logic into inline helper functions e.g.
+Thank you. Your observation was really important because having half
+working RIE support hanging around would only have potential to cause
+unnecessary maintenance burden. It would even make adding a legit RIE
+support later on somewhat more difficult.
 
-static inline void bpf_trampoline_dec_progs(struct bpf_prog *prog,
-                                            enum bpf_tramp_prog_type kind)
-{
-        struct bpf_trampoline *tr = prog->aux->trampoline;
+I updated the commit under discussion in my tree [*] with a fix that
+adds the following to the beginning of sgx_encl_may_map():
 
-        if (prog->type == BPF_PROG_TYPE_LSM)
-                tr->nr_lsm_progs--;
+/*
+ * Disallow RIE tasks as their VMA permissions might conflict with the
+ * enclave page permissions.
+ */
+if (!!(current->personality & READ_IMPLIES_EXEC))
+	return -EACCES;
 
-        tr->progs_cnt[kind]--;
-}
+[*] https://github.com/jsakkine-intel/linux-sgx.git
 
-and doing the check as:
-
-  if (prog->type == BPF_PROG_TYPE_LSM && tr->nr_lsm_progs == 0)
-        err = bpf_lsm_set_enabled(prog->aux->attach_func_name, false);
-
-This should work, If you're okay with it, I will update it in the next
-revision of the patch-set.
-
-- KP
+/Jarkko
