@@ -2,119 +2,82 @@ Return-Path: <SRS0=8B0L=4J=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D788C35646
-	for <linux-security-module@archiver.kernel.org>; Fri, 21 Feb 2020 16:50:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98701C35646
+	for <linux-security-module@archiver.kernel.org>; Fri, 21 Feb 2020 16:51:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40E50208C4
-	for <linux-security-module@archiver.kernel.org>; Fri, 21 Feb 2020 16:50:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="K1shmBu8"
+	by mail.kernel.org (Postfix) with ESMTP id 6FCBA208C4
+	for <linux-security-module@archiver.kernel.org>; Fri, 21 Feb 2020 16:51:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727967AbgBUQuv (ORCPT
+        id S1727761AbgBUQvn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 21 Feb 2020 11:50:51 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:27856 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727966AbgBUQuv (ORCPT
+        Fri, 21 Feb 2020 11:51:43 -0500
+Received: from namei.org ([65.99.196.166]:47390 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726550AbgBUQvn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 21 Feb 2020 11:50:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582303850;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=4h82rv0PoKdnsyNmTUn/xy7ivRxE79f7MGtv9RQvsxs=;
-        b=K1shmBu8+u1/EsmCeJcLOaIF0aoRRyv11djXs6M4qTDQnYzkGX9nfNXZ9iN8RNF2H0Geqx
-        rhLBJHFP4V21MftI7Z0FB/e2f+X8aWlloY8W5R8ppMf7/Ef+syM8Q0q/5B1X78Y5bOVIDf
-        dKba6K/A0nDhzTG3K4b5gihJ92t+a3Q=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-493-NEfudibLOf2BUHT9bNEyZQ-1; Fri, 21 Feb 2020 11:50:46 -0500
-X-MC-Unique: NEfudibLOf2BUHT9bNEyZQ-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C638119057C2;
-        Fri, 21 Feb 2020 16:50:42 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.70])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 229DC1001B0B;
-        Fri, 21 Feb 2020 16:50:37 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Fri, 21 Feb 2020 17:50:42 +0100 (CET)
-Date:   Fri, 21 Feb 2020 17:50:37 +0100
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Solar Designer <solar@openwall.com>
-Subject: Re: [PATCH 7/7] proc: Ensure we see the exit of each process tid
- exactly once
-Message-ID: <20200221165036.GB16646@redhat.com>
-References: <20200212200335.GO23230@ZenIV.linux.org.uk>
- <CAHk-=wi+1CPShMFvJNPfnrJ8DD8uVKUOQ5TQzQUNGLUkeoahkg@mail.gmail.com>
- <20200212203833.GQ23230@ZenIV.linux.org.uk>
- <20200212204124.GR23230@ZenIV.linux.org.uk>
- <CAHk-=wi5FOGV_3tALK3n6E2fK3Oa_yCYkYQtCSaXLSEm2DUCKg@mail.gmail.com>
- <87lfp7h422.fsf@x220.int.ebiederm.org>
- <CAHk-=wgmn9Qds0VznyphouSZW6e42GWDT5H1dpZg8pyGDGN+=w@mail.gmail.com>
- <87pnejf6fz.fsf@x220.int.ebiederm.org>
- <871rqpaswu.fsf_-_@x220.int.ebiederm.org>
- <87r1yp7zhc.fsf_-_@x220.int.ebiederm.org>
+        Fri, 21 Feb 2020 11:51:43 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id 01LGpOnL014504;
+        Fri, 21 Feb 2020 16:51:24 GMT
+Date:   Sat, 22 Feb 2020 03:51:24 +1100 (AEDT)
+From:   James Morris <jmorris@namei.org>
+To:     Jeremy Cline <jcline@redhat.com>
+cc:     "Serge E . Hallyn" <serge@hallyn.com>,
+        Matthew Garrett <matthewgarrett@google.com>,
+        David Howells <dhowells@redhat.com>,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, "Frank Ch . Eigler" <fche@redhat.com>
+Subject: Re: [PATCH] lockdown: Allow unprivileged users to see lockdown
+ status
+In-Reply-To: <20200220151738.1492852-1-jcline@redhat.com>
+Message-ID: <alpine.LRH.2.21.2002220351010.18183@namei.org>
+References: <20200220151738.1492852-1-jcline@redhat.com>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87r1yp7zhc.fsf_-_@x220.int.ebiederm.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Type: text/plain; charset=US-ASCII
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 02/20, Eric W. Biederman wrote:
->
-> +void exchange_tids(struct task_struct *ntask, struct task_struct *otask)
-> +{
-> +	/* pid_links[PIDTYPE_PID].next is always NULL */
-> +	struct pid *npid = READ_ONCE(ntask->thread_pid);
-> +	struct pid *opid = READ_ONCE(otask->thread_pid);
-> +
-> +	rcu_assign_pointer(opid->tasks[PIDTYPE_PID].first, &ntask->pid_links[PIDTYPE_PID]);
-> +	rcu_assign_pointer(npid->tasks[PIDTYPE_PID].first, &otask->pid_links[PIDTYPE_PID]);
-> +	rcu_assign_pointer(ntask->thread_pid, opid);
-> +	rcu_assign_pointer(otask->thread_pid, npid);
+On Thu, 20 Feb 2020, Jeremy Cline wrote:
 
-this breaks has_group_leader_pid()...
+> A number of userspace tools, such as systemtap, need a way to see the
+> current lockdown state so they can gracefully deal with the kernel being
+> locked down. The state is already exposed in
+> /sys/kernel/security/lockdown, but is only readable by root. Adjust the
+> permissions so unprivileged users can read the state.
+> 
+> Fixes: 000d388ed3bb ("security: Add a static lockdown policy LSM")
+> Cc: Frank Ch. Eigler <fche@redhat.com>
+> Signed-off-by: Jeremy Cline <jcline@redhat.com>
 
-proc_pid_readdir() can miss a process doing mt-exec but this looks fixable,
-just we need to update ntask->thread_pid before updating ->first.
+Looks fine to me, any objection from Matthew or others?
 
-The more problematic case is __exit_signal() which does
-		
-		if (unlikely(has_group_leader_pid(tsk)))
-			posix_cpu_timers_exit_group(tsk);
+> ---
+>  security/lockdown/lockdown.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
+> index 5a952617a0eb..87cbdc64d272 100644
+> --- a/security/lockdown/lockdown.c
+> +++ b/security/lockdown/lockdown.c
+> @@ -150,7 +150,7 @@ static int __init lockdown_secfs_init(void)
+>  {
+>  	struct dentry *dentry;
+>  
+> -	dentry = securityfs_create_file("lockdown", 0600, NULL, NULL,
+> +	dentry = securityfs_create_file("lockdown", 0644, NULL, NULL,
+>  					&lockdown_ops);
+>  	return PTR_ERR_OR_ZERO(dentry);
+>  }
+> 
 
-Oleg.
+-- 
+James Morris
+<jmorris@namei.org>
 
