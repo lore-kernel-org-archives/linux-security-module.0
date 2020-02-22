@@ -6,139 +6,154 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CEF2C35641
-	for <linux-security-module@archiver.kernel.org>; Sat, 22 Feb 2020 03:36:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E84FC35669
+	for <linux-security-module@archiver.kernel.org>; Sat, 22 Feb 2020 04:23:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D6CB206DB
-	for <linux-security-module@archiver.kernel.org>; Sat, 22 Feb 2020 03:36:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 240BC208C4
+	for <linux-security-module@archiver.kernel.org>; Sat, 22 Feb 2020 04:23:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="AmrhPy7R"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WbIUIWw1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727273AbgBVDgJ (ORCPT
+        id S1727933AbgBVEXE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 21 Feb 2020 22:36:09 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:39598 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726032AbgBVDgJ (ORCPT
+        Fri, 21 Feb 2020 23:23:04 -0500
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:33544 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726198AbgBVEXD (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 21 Feb 2020 22:36:09 -0500
-Received: by mail-pl1-f195.google.com with SMTP id g6so1694562plp.6
-        for <linux-security-module@vger.kernel.org>; Fri, 21 Feb 2020 19:36:09 -0800 (PST)
+        Fri, 21 Feb 2020 23:23:03 -0500
+Received: by mail-pj1-f67.google.com with SMTP id m7so2753547pjs.0
+        for <linux-security-module@vger.kernel.org>; Fri, 21 Feb 2020 20:23:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=Dy4w/JtP1JAdelu+LxOrdV8M+iFt3K5B73WlLdHiOa4=;
-        b=AmrhPy7RumaWH6FOFHW3GNC6kY68F1410q008OJPuXEzc8b4LAhybx6uLh6Twwz4mp
-         TPPbGhdCnnTCDMNdemay7kGwoVq3yb/Lm2y5mAr3HCih8z3Y5MBd4E5dtlFZsluckQvO
-         H7sBTTErYEOs+yTcyLb9t1sxLI8PugM5PtZrI=
+        bh=sj8CQVSI+XR7Um9F3+oX5kyZ8ufj2uz32S5QnSkl8nI=;
+        b=WbIUIWw19p2K2eTy6btqRA0hRhGmFBu5LIhJBDehwobrUKrAznBqiLvZYsjd6Z7HaR
+         vHze/JEuw4Ek/ZFX7VqoeOKryl2Bn/uNxlvs64FGC99dFHpjp1ADrFxQqdZH5VzNecBY
+         0LYVEespIJc3kfSbcYi/+iuH035Rgi6fARsjA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=Dy4w/JtP1JAdelu+LxOrdV8M+iFt3K5B73WlLdHiOa4=;
-        b=ZFbTqCaikkBMbCiaAa5JvD+hMISuwDV/KYl/qpu1SXftQM1wn1ehqnEtikNx92kQSI
-         G52hBltrNGlmzvcx5BqJfBetah3o4MK8O8yxAlPCx37c/9c11o2fMsZq9bvh7gcPWsg/
-         nlCB4dzlKfYTnfmge5LCsBjAN7KEh0twefWIm+T5YpbTBjvVyQp4AaPWR9Gs72/DCmBF
-         jfAL824rMWpMDiYKlk9EYQg/JeM9Is9iCbgqC5nFJ0xoX3WnAkw+GSkyt20vCz1Ytd4e
-         fE7PsGyGeoH1PJjf7gz4k1qQXUbHhVKHVl6B/bKrwOx00Zc+IaQpU1GcCbXCLSljA/go
-         udKQ==
-X-Gm-Message-State: APjAAAWOLbHMwmfUlng5Y7p8RnDArVkOUJuaonl+S7ygoCVBE96RSQPC
-        0BXNpJbtreskVyqGyojpSY1mWOojFgs=
-X-Google-Smtp-Source: APXvYqzjTBw/bhvUIWQPCmbF9AleRhd6Oh8HsREouo4o8p5KTXx04i33eeEUh7oMqMk24ma41xQegQ==
-X-Received: by 2002:a17:902:be0e:: with SMTP id r14mr39370446pls.33.1582342568584;
-        Fri, 21 Feb 2020 19:36:08 -0800 (PST)
+        bh=sj8CQVSI+XR7Um9F3+oX5kyZ8ufj2uz32S5QnSkl8nI=;
+        b=Isn1tEMvIYG7PIWrHBJ/9xQwJT/PTuvPbXMnrY6OuuTkJ0Cklr/C4JBMXxZGkrnBmb
+         Z2gjIXodPLryEAm9vMqO8yNVpiId57tzHcwUkr70lGya/W/rUIr9hgdN8S6t8lBUE93h
+         NRDCRTuDwo86FF6j60qQVXKJ7guKiEZPiYvFNcY1gWTLm/OQR5Vqa0n1xqvDDCGlRcqO
+         Cwjgh7tg0J828FcMpRx0BM6vdLdsj1/HuTmKf3lBrfm4tBagnAW66nztAtkD8H0HxMfF
+         6vmaLpRo8G+IaUdmWqJo8iQ6PQF0FO5GbmEi7JhBp3z290PNjEIrfp/eX2JEau/QLIxF
+         430w==
+X-Gm-Message-State: APjAAAUOOIKlInyuBzCSNmlwVFV7alTJuAK+So8IyfdE9svPALECI6s8
+        qemzFz5R/gEXiPG03nQfs0OxNw==
+X-Google-Smtp-Source: APXvYqwl0wb5CrweSL5pMD4VOtn8tqiqcUhm53HOTl+wJjtOKlFhN1GBrqKziehHryVuUgUBJ4QtPA==
+X-Received: by 2002:a17:902:14d:: with SMTP id 71mr35871887plb.162.1582345381707;
+        Fri, 21 Feb 2020 20:23:01 -0800 (PST)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id dw10sm3908095pjb.11.2020.02.21.19.36.06
+        by smtp.gmail.com with ESMTPSA id d3sm4055057pjx.10.2020.02.21.20.23.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Feb 2020 19:36:07 -0800 (PST)
-Date:   Fri, 21 Feb 2020 19:36:06 -0800
+        Fri, 21 Feb 2020 20:23:00 -0800 (PST)
+Date:   Fri, 21 Feb 2020 20:22:59 -0800
 From:   Kees Cook <keescook@chromium.org>
 To:     Casey Schaufler <casey@schaufler-ca.com>
 Cc:     KP Singh <kpsingh@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
         Linux Security Module list 
         <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
         James Morris <jmorris@namei.org>
-Subject: Re: [PATCH bpf-next v4 0/8] MAC and Audit policy using eBPF (KRSI)
-Message-ID: <202002211909.10D57A125@keescook>
+Subject: Re: [PATCH bpf-next v4 3/8] bpf: lsm: provide attachment points for
+ BPF LSM programs
+Message-ID: <202002211946.A23A987@keescook>
 References: <20200220175250.10795-1-kpsingh@chromium.org>
- <85e89b0c-5f2c-a4b1-17d3-47cc3bdab38b@schaufler-ca.com>
- <20200221194149.GA9207@chromium.org>
- <8a2a2d59-ec4b-80d1-2710-c2ead588e638@schaufler-ca.com>
- <202002211617.28EAC6826@keescook>
- <7fd415e0-35c8-e30e-e4b8-af0ba286f628@schaufler-ca.com>
+ <20200220175250.10795-4-kpsingh@chromium.org>
+ <0ef26943-9619-3736-4452-fec536a8d169@schaufler-ca.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7fd415e0-35c8-e30e-e4b8-af0ba286f628@schaufler-ca.com>
+In-Reply-To: <0ef26943-9619-3736-4452-fec536a8d169@schaufler-ca.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Feb 21, 2020 at 05:04:38PM -0800, Casey Schaufler wrote:
-> On 2/21/2020 4:22 PM, Kees Cook wrote:
-> > I really like this approach: it actually _simplifies_ the LSM piece in
-> > that there is no need to keep the union and the hook lists in sync any
-> > more: they're defined once now. (There were already 2 lists, and this
-> > collapses the list into 1 place for all 3 users.) It's very visible in
-> > the diffstat too (~300 lines removed):
+On Thu, Feb 20, 2020 at 03:49:05PM -0800, Casey Schaufler wrote:
+> On 2/20/2020 9:52 AM, KP Singh wrote:
+> > From: KP Singh <kpsingh@google.com>
 > 
-> Erk. Too many smart people like this. I still don't, but it's possible
-> that I could learn to.
+> Sorry about the heavy list pruning - the original set
+> blows thunderbird up.
 
-Well, I admit that I am, perhaps, overly infatuatied with "fancy" macros,
-but in cases like this where we're operating on a list of stuff and doing
-the same thing over and over but with different elements, I've found
-this is actually much nicer way to do it. (E.g. I did something like
-this in drivers/misc/lkdtm/core.c to avoid endless typing, and Mimi did
-something similar in include/linux/fs.h for keeping kernel_read_file_id
-and kernel_read_file_str automatically in sync.) KP's macros are more
-extensive, but I think it's a clever to avoid going crazy as LSM hooks
-evolve.
+(I've added some people back; I had to dig this thread back out of lkml
+since I didn't get a direct copy...)
 
-> > Also, there is no need to worry about divergence: the BPF will always
-> > track the exposed LSM. Backward compat is (AIUI) explicitly a
-> > non-feature.
+> > The BPF LSM programs are implemented as fexit trampolines to avoid the
+> > overhead of retpolines. These programs cannot be attached to security_*
+> > wrappers as there are quite a few security_* functions that do more than
+> > just calling the LSM callbacks.
+> >
+> > This was discussed on the lists in:
+> >
+> >   https://lore.kernel.org/bpf/20200123152440.28956-1-kpsingh@chromium.org/T/#m068becce588a0cdf01913f368a97aea4c62d8266
+> >
+> > Adding a NOP callback after all the static LSM callbacks are called has
+> > the following benefits:
+> >
+> > - The BPF programs run at the right stage of the security_* wrappers.
+> > - They run after all the static LSM hooks allowed the operation,
+> >   therefore cannot allow an action that was already denied.
 > 
-> As written you're correct, it can't diverge. My concern is about
-> what happens when someone decides that they want the BPF and hook
-> to be different. I fear there will be a hideous solution.
+> I still say that the special call-out to BPF is unnecessary.
+> I remain unconvinced by the arguments. You aren't doing anything
+> so special that the general mechanism won't work.
 
-This is related to some of the discussion at the last Maintainer's
-Summit and tracepoints: i.e. the exposure of what is basically kernel
-internals to a userspace system. The conclusion there (which, I think,
-has been extended strongly into BPF) is that things that produce BPF are
-accepted to be strongly tied to kernel version, so if a hook changes, so
-much the userspace side. This appears to be proven out in the existing
-BPF world, which gives me some evidence that this claim (close tie to
-kernel version) isn't an empty promise.
+If I'm understanding this correctly, there are two issues:
 
-> > I don't see why anything here is "harmful"?
-> 
-> Injecting large chucks of code via an #include does nothing
-> for readability. I've seen it fail disastrously many times,
-> usually after the original author has moved on and entrusted
-> the code to someone who missed some of the nuance.
+1- BPF needs to be run last due to fexit trampolines (?)
 
-I totally agree about wanting to avoid reduced readability. In this case,
-I actually think readability is improved since the macro "implementation"
-are right above each #include. And then looking at the resulting included
-header, all the metadata is visible in one place. But I agree: it is
-"unusual", but I think on the sum it's an improvement. (But I share some
-of the frustration of the kernel being filled with weird preprocessor
-insanity. I will never get back the weeks I spent on trying to improve
-the min/max macros.... *sob*)
+2- BPF hooks don't know what may be attached at any given time, so
+   ALL LSM hooks need to be universally hooked. THIS turns out to create
+   a measurable performance problem in that the cost of the indirect call
+   on the (mostly/usually) empty BPF policy is too high.
 
-> I'll drop objection to this bit, but still object to making
-> BPF special in the infrastructure. It doesn't need to be and
-> it is exactly the kind of additional complexity we need to
-> avoid.
+"1" can be solved a lot of ways, and doesn't seem to be a debated part
+of this series.
 
-You mean 3/8's RUN_BPF_LSM_*_PROGS() additions to the call_*_hook()s?
+"2" is interesting -- it creates a performance problem for EVERYONE that
+builds in this kernel feature, regardless of them using it. Excepting
+SELinux, "traditional" LSMs tends to be relatively sparse in their hooking:
 
-I'll go comment on that thread directly instead of splitting the
-discussion. :)
+$ grep '^      struct hlist_head' include/linux/lsm_hooks.h | wc -l
+230
+$ for i in apparmor loadpin lockdown safesetid selinux smack tomoyo yama ; \
+  do echo -n "$i " && (cd $i && git grep LSM_HOOK_INIT | wc -l) ; done
+apparmor   68
+loadpin     3
+lockdown    1
+safesetid   2
+selinux   202
+smack     108
+tomoyo     28
+yama        4
+
+So, trying to avoid the indirect calls is, as you say, an optimization,
+but it might be a needed one due to the other limitations.
+
+To me, some questions present themselves:
+
+a) What, exactly, are the performance characteristics of:
+	"before"
+	"with indirect calls"
+	"with static keys optimization"
+
+b) Would there actually be a global benefit to using the static keys
+   optimization for other LSMs? (Especially given that they're already
+   sparsely populated and policy likely determines utility -- all the
+   LSMs would just turn ON all their static keys or turn off ALL their
+   static keys depending on having policy loaded.)
+
+If static keys are justified for KRSI (by "a") then it seems the approach
+here should stand. If "b" is also true, then we need an additional
+series to apply this optimization for the other LSMs (but that seems
+distinctly separate from THIS series).
 
 -- 
 Kees Cook
