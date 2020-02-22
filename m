@@ -2,124 +2,169 @@ Return-Path: <SRS0=jUed=4K=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A423C35671
-	for <linux-security-module@archiver.kernel.org>; Sat, 22 Feb 2020 04:26:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 771B2C35671
+	for <linux-security-module@archiver.kernel.org>; Sat, 22 Feb 2020 15:48:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30C6B208C4
-	for <linux-security-module@archiver.kernel.org>; Sat, 22 Feb 2020 04:26:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="HC6tB5/n"
+	by mail.kernel.org (Postfix) with ESMTP id 5057D206ED
+	for <linux-security-module@archiver.kernel.org>; Sat, 22 Feb 2020 15:48:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726564AbgBVE0H (ORCPT
+        id S1727534AbgBVPsg (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 21 Feb 2020 23:26:07 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:45984 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726328AbgBVE0H (ORCPT
+        Sat, 22 Feb 2020 10:48:36 -0500
+Received: from out03.mta.xmission.com ([166.70.13.233]:53310 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727480AbgBVPsf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 21 Feb 2020 23:26:07 -0500
-Received: by mail-pg1-f193.google.com with SMTP id b9so1992591pgk.12
-        for <linux-security-module@vger.kernel.org>; Fri, 21 Feb 2020 20:26:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=S04MpDY/ruT9R3530Z87j5UAy18sgkgPvdS5rq+kd3k=;
-        b=HC6tB5/n3jprjIUAPVp7s8TE+lw3DArPemCjTLFf6SZTq8rdljmvjDQKfwnpDCqu9M
-         McuEh8+mx8FGgpNOPUbP/5TCKlQV1w1VEu4/HSjSNXVsfPT9ASGqbZKiIFvVJAlUrr86
-         aZuMUWYfnYI9yYDHnbwRw6bEQzeTrErT1JXZM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=S04MpDY/ruT9R3530Z87j5UAy18sgkgPvdS5rq+kd3k=;
-        b=QT6csZ3yO/0F7jO2n9Ln+7WIU6q/cv0NbJXguBtzhFWqeRBzlUk2vv+9oYpToC62+r
-         umZwOAFd5Nk3uCwZV9iQyA1yvgyoPh6wbuc6q4xyJmrsl3IitmfA3Zqf+0XCyKUI3Vqz
-         TYzWEGcKIXrVfjEm8x8+fS3brOL9brxu45IEdjp7BfjI2PO8KOGoqkPUa7o/411vZUU0
-         SV78dRyJ4onwwiB6cHDcD75Nvu3eeRl1L7Rs9mHCl2JKzA27T2s1bxW5kKYJx/1DyusJ
-         bbaH3Y21SP6bQW9ICvN/eBlKpw0dvqQZV32ay8NeFw7Z8goLxBQ+9WChEPxTIgUanICd
-         W1lw==
-X-Gm-Message-State: APjAAAXpuTVFwQN8IQlVXh0gT7KcQ2QDtrFy4TQXWsIOg4WvRmGQVvmy
-        v8OKBf1J//fsENjRUekVHnNUXw==
-X-Google-Smtp-Source: APXvYqynLpaT1SHFc7hteRLE/Am8rkGvVcqos0AxtZQFh6Ok/U/TQctt8ObsfFGGlRMXV0KtzIJk4Q==
-X-Received: by 2002:a62:1548:: with SMTP id 69mr41986772pfv.239.1582345566578;
-        Fri, 21 Feb 2020 20:26:06 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id c15sm4342928pfo.137.2020.02.21.20.26.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Feb 2020 20:26:05 -0800 (PST)
-Date:   Fri, 21 Feb 2020 20:26:04 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     KP Singh <kpsingh@chromium.org>
-Cc:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        James Morris <jmorris@namei.org>,
-        Thomas Garnier <thgarnie@chromium.org>,
-        Michael Halcrow <mhalcrow@google.com>,
-        Paul Turner <pjt@google.com>,
-        Brendan Gregg <brendan.d.gregg@gmail.com>,
-        Jann Horn <jannh@google.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Christian Brauner <christian@brauner.io>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        Sat, 22 Feb 2020 10:48:35 -0500
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1j5X15-0002Kb-RQ; Sat, 22 Feb 2020 08:48:31 -0700
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1j5X14-0004kb-Io; Sat, 22 Feb 2020 08:48:31 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Security Module <linux-security-module@vger.kernel.org>,
+        Akinobu Mita <akinobu.mita@gmail.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Daniel Micay <danielmicay@gmail.com>,
+        Djalal Harouni <tixxdz@gmail.com>,
+        "Dmitry V . Levin" <ldv@altlinux.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Stanislav Fomichev <sdf@google.com>,
-        Quentin Monnet <quentin.monnet@netronome.com>,
-        Andrey Ignatov <rdna@fb.com>, Joe Stringer <joe@wand.net.nz>
-Subject: Re: [PATCH bpf-next v4 4/8] bpf: lsm: Add support for
- enabling/disabling BPF hooks
-Message-ID: <202002212023.1712A8AB@keescook>
-References: <20200220175250.10795-1-kpsingh@chromium.org>
- <20200220175250.10795-5-kpsingh@chromium.org>
+        Ingo Molnar <mingo@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@poochiereds.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Solar Designer <solar@openwall.com>
+References: <20200212200335.GO23230@ZenIV.linux.org.uk>
+        <CAHk-=wi+1CPShMFvJNPfnrJ8DD8uVKUOQ5TQzQUNGLUkeoahkg@mail.gmail.com>
+        <20200212203833.GQ23230@ZenIV.linux.org.uk>
+        <20200212204124.GR23230@ZenIV.linux.org.uk>
+        <CAHk-=wi5FOGV_3tALK3n6E2fK3Oa_yCYkYQtCSaXLSEm2DUCKg@mail.gmail.com>
+        <87lfp7h422.fsf@x220.int.ebiederm.org>
+        <CAHk-=wgmn9Qds0VznyphouSZW6e42GWDT5H1dpZg8pyGDGN+=w@mail.gmail.com>
+        <87pnejf6fz.fsf@x220.int.ebiederm.org>
+        <871rqpaswu.fsf_-_@x220.int.ebiederm.org>
+        <87r1yp7zhc.fsf_-_@x220.int.ebiederm.org>
+        <20200221165036.GB16646@redhat.com>
+Date:   Sat, 22 Feb 2020 09:46:29 -0600
+In-Reply-To: <20200221165036.GB16646@redhat.com> (Oleg Nesterov's message of
+        "Fri, 21 Feb 2020 17:50:37 +0100")
+Message-ID: <87mu9a4obu.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200220175250.10795-5-kpsingh@chromium.org>
+Content-Type: text/plain
+X-XM-SPF: eid=1j5X14-0004kb-Io;;;mid=<87mu9a4obu.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1+wG8oCF9P5p4qTliSUMtLy9dXaaffHDtc=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH 7/7] proc: Ensure we see the exit of each process tid exactly once
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Feb 20, 2020 at 06:52:46PM +0100, KP Singh wrote:
-> index aa111392a700..569cc07d5e34 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -804,6 +804,13 @@ int security_vm_enough_memory_mm(struct mm_struct *mm, long pages)
->  			break;
->  		}
->  	}
-> +#ifdef CONFIG_BPF_LSM
-> +	if (HAS_BPF_LSM_PROG(vm_enough_memory)) {
-> +		rc = bpf_lsm_vm_enough_memory(mm, pages);
-> +		if (rc <= 0)
-> +			cap_sys_admin = 0;
-> +	}
-> +#endif
+Oleg Nesterov <oleg@redhat.com> writes:
 
-This pattern of using #ifdef in code is not considered best practice.
-Using in-code IS_ENABLED(CONFIG_BPF_LSM) is preferred. But since this
-pattern always uses HAS_BPF_LSM_PROG(), you could fold the
-IS_ENABLED() into the definition of HAS_BPF_LSM_PROG itself -- or more
-likely, have the macro defined as:
+> On 02/20, Eric W. Biederman wrote:
+>>
+>> +void exchange_tids(struct task_struct *ntask, struct task_struct *otask)
+>> +{
+>> +	/* pid_links[PIDTYPE_PID].next is always NULL */
+>> +	struct pid *npid = READ_ONCE(ntask->thread_pid);
+>> +	struct pid *opid = READ_ONCE(otask->thread_pid);
+>> +
+>> +	rcu_assign_pointer(opid->tasks[PIDTYPE_PID].first, &ntask->pid_links[PIDTYPE_PID]);
+>> +	rcu_assign_pointer(npid->tasks[PIDTYPE_PID].first, &otask->pid_links[PIDTYPE_PID]);
+>> +	rcu_assign_pointer(ntask->thread_pid, opid);
+>> +	rcu_assign_pointer(otask->thread_pid, npid);
+>
+> this breaks has_group_leader_pid()...
+>
+> proc_pid_readdir() can miss a process doing mt-exec but this looks fixable,
+> just we need to update ntask->thread_pid before updating ->first.
+>
+> The more problematic case is __exit_signal() which does
+> 		
+> 		if (unlikely(has_group_leader_pid(tsk)))
+> 			posix_cpu_timers_exit_group(tsk);
 
-#ifdef CONFIG_BPF_LSM
-# define HAS_BPF_LSM_PROG(x)    ....existing implementation....
-#else
-# define HAS_BPF_LSM_PROG(x)	false
-#endif
+Along with the comment:
+		/*
+		 * This can only happen if the caller is de_thread().
+		 * FIXME: this is the temporary hack, we should teach
+		 * posix-cpu-timers to handle this case correctly.
+		 */
+So I suspect this is fixable and the above fix might be part of that.
 
-Then none of these ifdefs are needed.
+Hmm looking at your commit:
 
--- 
-Kees Cook
+commit e0a70217107e6f9844628120412cb27bb4cea194
+Author: Oleg Nesterov <oleg@redhat.com>
+Date:   Fri Nov 5 16:53:42 2010 +0100
+
+    posix-cpu-timers: workaround to suppress the problems with mt exec
+    
+    posix-cpu-timers.c correctly assumes that the dying process does
+    posix_cpu_timers_exit_group() and removes all !CPUCLOCK_PERTHREAD
+    timers from signal->cpu_timers list.
+    
+    But, it also assumes that timer->it.cpu.task is always the group
+    leader, and thus the dead ->task means the dead thread group.
+    
+    This is obviously not true after de_thread() changes the leader.
+    After that almost every posix_cpu_timer_ method has problems.
+    
+    It is not simple to fix this bug correctly. First of all, I think
+    that timer->it.cpu should use struct pid instead of task_struct.
+    Also, the locking should be reworked completely. In particular,
+    tasklist_lock should not be used at all. This all needs a lot of
+    nontrivial and hard-to-test changes.
+    
+    Change __exit_signal() to do posix_cpu_timers_exit_group() when
+    the old leader dies during exec. This is not the fix, just the
+    temporary hack to hide the problem for 2.6.37 and stable. IOW,
+    this is obviously wrong but this is what we currently have anyway:
+    cpu timers do not work after mt exec.
+    
+    In theory this change adds another race. The exiting leader can
+    detach the timers which were attached to the new leader. However,
+    the window between de_thread() and release_task() is small, we
+    can pretend that sys_timer_create() was called before de_thread().
+    
+    Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+    Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+
+It looks like the data structures need fixing.  Possibly to use struct
+pid.  Possibly to move the group data to signal struct.
+
+I think I played with some of that awhile ago.
+
+I am going to move this change to another patchset.  So I don't wind up
+playing shift the bug around.  I thought I would need this to get the
+other code working but it turns out we remain bug compatible without
+this.
+
+Hopefully I can get something out in the next week or so that addresses
+the issues you have pointed out.
+
+Eric
+
