@@ -2,231 +2,133 @@ Return-Path: <SRS0=LCdB=4L=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64D9BC35673
-	for <linux-security-module@archiver.kernel.org>; Sun, 23 Feb 2020 17:28:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35750C35671
+	for <linux-security-module@archiver.kernel.org>; Sun, 23 Feb 2020 22:08:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4812A2067D
-	for <linux-security-module@archiver.kernel.org>; Sun, 23 Feb 2020 17:28:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 067EF206E0
+	for <linux-security-module@archiver.kernel.org>; Sun, 23 Feb 2020 22:08:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M8icaUOj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727191AbgBWR2G (ORCPT
+        id S1727163AbgBWWIj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 23 Feb 2020 12:28:06 -0500
-Received: from mga18.intel.com ([134.134.136.126]:58422 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726884AbgBWR2F (ORCPT
+        Sun, 23 Feb 2020 17:08:39 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:39655 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726302AbgBWWIj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 23 Feb 2020 12:28:05 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Feb 2020 09:28:05 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,476,1574150400"; 
-   d="scan'208";a="229650196"
-Received: from ajbergin-mobl.ger.corp.intel.com (HELO localhost) ([10.252.23.203])
-  by fmsmga007.fm.intel.com with ESMTP; 23 Feb 2020 09:27:58 -0800
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org
-Cc:     akpm@linux-foundation.org, dave.hansen@intel.com,
-        sean.j.christopherson@intel.com, nhorman@redhat.com,
-        npmccallum@redhat.com, haitao.huang@intel.com,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        kai.svahn@intel.com, bp@alien8.de, josh@joshtriplett.org,
-        luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
-        cedric.xing@intel.com, puiterwijk@redhat.com,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH v27 13/22] x86/sgx: Add provisioning
-Date:   Sun, 23 Feb 2020 19:25:50 +0200
-Message-Id: <20200223172559.6912-14-jarkko.sakkinen@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200223172559.6912-1-jarkko.sakkinen@linux.intel.com>
-References: <20200223172559.6912-1-jarkko.sakkinen@linux.intel.com>
+        Sun, 23 Feb 2020 17:08:39 -0500
+Received: by mail-pl1-f194.google.com with SMTP id g6so3213520plp.6;
+        Sun, 23 Feb 2020 14:08:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=XVT/YiAQAM+tR2353qmEjurEX/hNonF51dX4WWwf8g0=;
+        b=M8icaUOjj6WKkl3lO0YEn6n/6EFNlzQtFCC1eFpfB0A/m+Ex3zZ0wgszkR/VJkfPfY
+         vkhN/78yQlMZK6/fc9T3IPSoXy49baEQSfWx2y3JQr0mhinh0oa2x6NB9RxioM/4Ldi4
+         spbiARX9wvnniO6CsAIo5vEnxjdcDvP8AWrukLg3eyPu6zdvPM2goDQBZbjupndIK+wS
+         qKCHAVQHVY8L0oVJxCO6xS02Vj1eRzdExi0jg23VKL0QcHM9/kb+QlRbXHIS3gEt3Us+
+         EgZ/z2QDare/fFMjLb5UiIF0UNCTmWaijATJjPLxc7uwMLOlWQoOMahJVUe6r/P0jJo4
+         UUCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=XVT/YiAQAM+tR2353qmEjurEX/hNonF51dX4WWwf8g0=;
+        b=V9i0Z8uUYzWiwPvJifes07YpyszzRZTWTlp7pL6GSJLtCCPmDJb1TuA8eDgu9YYp0v
+         JXjTZZ/htuQbBxa6yDm90mmFjxdL0Q1RuCxVL7gPMKZiX5aQA3zDwh0FnO7G1lqGUHdQ
+         uFVq3YwQLu9WmUvhufG+j8Ij+IxE0+waE8Ma5xRbYa3XkvHfdc4sK01lIrdW+MXCqhDG
+         YIpbmG4cyT8WiCLTzMBgt/qMvMMbSnfExLbD6dZCZOU8IHE5rCNXZb7IODNU/krCee5Y
+         pGoWQRrRIp2JlAEz0umCeIrcA1fyMjQy8jysFCCk6xZ69VsXqplhrKnubm/VMWY/ejU/
+         s3+Q==
+X-Gm-Message-State: APjAAAVxmhkbr7qITZ3WUtdUPBkUZlqePtSepBUp7GZjKT5WF6FZTobS
+        cATdulJaVjoOJlRjPA5sASzw1Qzs
+X-Google-Smtp-Source: APXvYqw7avgJ0mrUniGFD86P47DGUntXTbl/vC8rO4/qWXHTyo+kuYAaxDPE5aTYyMY/O+FutHGfxQ==
+X-Received: by 2002:a17:90a:5289:: with SMTP id w9mr16774328pjh.95.1582495718321;
+        Sun, 23 Feb 2020 14:08:38 -0800 (PST)
+Received: from ast-mbp ([2620:10d:c090:400::5:7207])
+        by smtp.gmail.com with ESMTPSA id v8sm9840160pfn.172.2020.02.23.14.08.36
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 23 Feb 2020 14:08:37 -0800 (PST)
+Date:   Sun, 23 Feb 2020 14:08:34 -0800
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        KP Singh <kpsingh@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        James Morris <jmorris@namei.org>, bpf@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: Re: [PATCH bpf-next v4 3/8] bpf: lsm: provide attachment points for
+ BPF LSM programs
+Message-ID: <20200223220833.wdhonzvven7payaw@ast-mbp>
+References: <20200220175250.10795-1-kpsingh@chromium.org>
+ <20200220175250.10795-4-kpsingh@chromium.org>
+ <0ef26943-9619-3736-4452-fec536a8d169@schaufler-ca.com>
+ <202002211946.A23A987@keescook>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=a
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202002211946.A23A987@keescook>
+User-Agent: NeoMutt/20180223
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-In order to provide a mechanism for devilering provisoning rights:
+On Fri, Feb 21, 2020 at 08:22:59PM -0800, Kees Cook wrote:
+> 
+> If I'm understanding this correctly, there are two issues:
+> 
+> 1- BPF needs to be run last due to fexit trampolines (?)
 
-1. Add a new device file /dev/sgx/provision that works as a token for
-   allowing an enclave to have the provisioning privileges.
-2. Add a new ioctl called SGX_IOC_ENCLAVE_SET_ATTRIBUTE that accepts the
-   following data structure:
+no.
+The placement of nop call can be anywhere.
+BPF trampoline is automagically converting nop call into a sequence
+of directly invoked BPF programs.
+No link list traversals and no indirect calls in run-time.
 
-   struct sgx_enclave_set_attribute {
-           __u64 addr;
-           __u64 attribute_fd;
-   };
+> 2- BPF hooks don't know what may be attached at any given time, so
+>    ALL LSM hooks need to be universally hooked. THIS turns out to create
+>    a measurable performance problem in that the cost of the indirect call
+>    on the (mostly/usually) empty BPF policy is too high.
 
-A daemon could sit on top of /dev/sgx/provision and send a file
-descriptor of this file to a process that needs to be able to provision
-enclaves.
+also no.
 
-The way this API is used is straight-forward. Lets assume that dev_fd is
-a handle to /dev/sgx/enclave and prov_fd is a handle to
-/dev/sgx/provision.  You would allow SGX_IOC_ENCLAVE_CREATE to
-initialize an enclave with the PROVISIONKEY attribute by
+> So, trying to avoid the indirect calls is, as you say, an optimization,
+> but it might be a needed one due to the other limitations.
 
-params.addr = <enclave address>;
-params.token_fd = prov_fd;
+I'm convinced that avoiding the cost of retpoline in critical path is a
+requirement for any new infrastructure in the kernel.
+Not only for security, but for any new infra.
+Networking stack converted all such places to conditional calls.
+In BPF land we converted indirect calls to direct jumps and direct calls.
+It took two years to do so. Adding new indirect calls is not an option.
+I'm eagerly waiting for Peter's static_call patches to land to convert
+a lot more indirect calls. May be existing LSMs will take advantage
+of static_call patches too, but static_call is not an option for BPF.
+That's why we introduced BPF trampoline in the last kernel release.
 
-ioctl(dev_fd, SGX_IOC_ENCLAVE_SET_ATTRIBUTE, &params);
+> b) Would there actually be a global benefit to using the static keys
+>    optimization for other LSMs?
 
-Cc: linux-security-module@vger.kernel.org
-Suggested-by: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
- arch/x86/include/uapi/asm/sgx.h  | 11 ++++++++
- arch/x86/kernel/cpu/sgx/driver.c | 14 ++++++++++
- arch/x86/kernel/cpu/sgx/driver.h |  2 ++
- arch/x86/kernel/cpu/sgx/ioctl.c  | 47 ++++++++++++++++++++++++++++++++
- 4 files changed, 74 insertions(+)
+Yes. Just compiling with CONFIG_SECURITY adds "if (hlist_empty)" check
+for every hook. Some of those hooks are in critical path. This load+cmp
+can be avoided with static_key optimization. I think it's worth doing.
 
-diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
-index 5edb08ab8fd0..57d0d30c79b3 100644
---- a/arch/x86/include/uapi/asm/sgx.h
-+++ b/arch/x86/include/uapi/asm/sgx.h
-@@ -25,6 +25,8 @@ enum sgx_page_flags {
- 	_IOWR(SGX_MAGIC, 0x01, struct sgx_enclave_add_pages)
- #define SGX_IOC_ENCLAVE_INIT \
- 	_IOW(SGX_MAGIC, 0x02, struct sgx_enclave_init)
-+#define SGX_IOC_ENCLAVE_SET_ATTRIBUTE \
-+	_IOW(SGX_MAGIC, 0x03, struct sgx_enclave_set_attribute)
- 
- /**
-  * struct sgx_enclave_create - parameter structure for the
-@@ -63,4 +65,13 @@ struct sgx_enclave_init {
- 	__u64 sigstruct;
- };
- 
-+/**
-+ * struct sgx_enclave_set_attribute - parameter structure for the
-+ *				      %SGX_IOC_ENCLAVE_SET_ATTRIBUTE ioctl
-+ * @attribute_fd:	file handle of the attribute file in the securityfs
-+ */
-+struct sgx_enclave_set_attribute {
-+	__u64 attribute_fd;
-+};
-+
- #endif /* _UAPI_ASM_X86_SGX_H */
-diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/driver.c
-index b4aa7b9f8376..d90114cec1c3 100644
---- a/arch/x86/kernel/cpu/sgx/driver.c
-+++ b/arch/x86/kernel/cpu/sgx/driver.c
-@@ -150,6 +150,13 @@ static struct miscdevice sgx_dev_enclave = {
- 	.fops = &sgx_encl_fops,
- };
- 
-+static struct miscdevice sgx_dev_provision = {
-+	.minor = MISC_DYNAMIC_MINOR,
-+	.name = "provision",
-+	.nodename = "sgx/provision",
-+	.fops = &sgx_provision_fops,
-+};
-+
- int __init sgx_drv_init(void)
- {
- 	unsigned int eax, ebx, ecx, edx;
-@@ -190,5 +197,12 @@ int __init sgx_drv_init(void)
- 		return ret;
- 	}
- 
-+	ret = misc_register(&sgx_dev_provision);
-+	if (ret) {
-+		pr_err("Creating /dev/sgx/provision failed with %d.\n", ret);
-+		misc_deregister(&sgx_dev_enclave);
-+		return ret;
-+	}
-+
- 	return 0;
- }
-diff --git a/arch/x86/kernel/cpu/sgx/driver.h b/arch/x86/kernel/cpu/sgx/driver.h
-index e4063923115b..72747d01c046 100644
---- a/arch/x86/kernel/cpu/sgx/driver.h
-+++ b/arch/x86/kernel/cpu/sgx/driver.h
-@@ -23,6 +23,8 @@ extern u64 sgx_attributes_reserved_mask;
- extern u64 sgx_xfrm_reserved_mask;
- extern u32 sgx_xsave_size_tbl[64];
- 
-+extern const struct file_operations sgx_provision_fops;
-+
- long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg);
- 
- int sgx_drv_init(void);
-diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index 83513cdfd1c0..262001df3ae4 100644
---- a/arch/x86/kernel/cpu/sgx/ioctl.c
-+++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -663,6 +663,50 @@ static long sgx_ioc_enclave_init(struct sgx_encl *encl, void __user *arg)
- 	return ret;
- }
- 
-+/**
-+ * sgx_ioc_enclave_set_attribute - handler for %SGX_IOC_ENCLAVE_SET_ATTRIBUTE
-+ * @filep:	open file to /dev/sgx
-+ * @arg:	userspace pointer to a struct sgx_enclave_set_attribute instance
-+ *
-+ * Mark the enclave as being allowed to access a restricted attribute bit.
-+ * The requested attribute is specified via the attribute_fd field in the
-+ * provided struct sgx_enclave_set_attribute.  The attribute_fd must be a
-+ * handle to an SGX attribute file, e.g. “/dev/sgx/provision".
-+ *
-+ * Failure to explicitly request access to a restricted attribute will cause
-+ * sgx_ioc_enclave_init() to fail.  Currently, the only restricted attribute
-+ * is access to the PROVISION_KEY.
-+ *
-+ * Note, access to the EINITTOKEN_KEY is disallowed entirely.
-+ *
-+ * Return: 0 on success, -errno otherwise
-+ */
-+static long sgx_ioc_enclave_set_attribute(struct sgx_encl *encl,
-+					  void __user *arg)
-+{
-+	struct sgx_enclave_set_attribute params;
-+	struct file *attribute_file;
-+	int ret;
-+
-+	if (copy_from_user(&params, arg, sizeof(params)))
-+		return -EFAULT;
-+
-+	attribute_file = fget(params.attribute_fd);
-+	if (!attribute_file)
-+		return -EINVAL;
-+
-+	if (attribute_file->f_op != &sgx_provision_fops) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
-+	encl->allowed_attributes |= SGX_ATTR_PROVISIONKEY;
-+	ret = 0;
-+
-+out:
-+	fput(attribute_file);
-+	return ret;
-+}
- 
- long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
- {
-@@ -686,6 +730,9 @@ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
- 	case SGX_IOC_ENCLAVE_INIT:
- 		ret = sgx_ioc_enclave_init(encl, (void __user *)arg);
- 		break;
-+	case SGX_IOC_ENCLAVE_SET_ATTRIBUTE:
-+		ret = sgx_ioc_enclave_set_attribute(encl, (void __user *)arg);
-+		break;
- 	default:
- 		ret = -ENOIOCTLCMD;
- 		break;
--- 
-2.20.1
+> If static keys are justified for KRSI
 
+I really like that KRSI costs absolutely zero when it's not enabled.
+Attaching BPF prog to one hook preserves zero cost for all other hooks.
+And when one hook is BPF powered it's using direct call instead of
+super expensive retpoline.
+
+Overall this patch set looks good to me. There was a minor issue with prog
+accounting. I expect only that bit to be fixed in v5.
