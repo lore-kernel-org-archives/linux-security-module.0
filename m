@@ -2,183 +2,149 @@ Return-Path: <SRS0=CMy/=4M=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14CD3C11D2F
-	for <linux-security-module@archiver.kernel.org>; Mon, 24 Feb 2020 17:23:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E452C11D2F
+	for <linux-security-module@archiver.kernel.org>; Mon, 24 Feb 2020 17:57:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF58720732
-	for <linux-security-module@archiver.kernel.org>; Mon, 24 Feb 2020 17:23:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="g+oJppTD"
+	by mail.kernel.org (Postfix) with ESMTP id 4047320836
+	for <linux-security-module@archiver.kernel.org>; Mon, 24 Feb 2020 17:57:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728107AbgBXRXU (ORCPT
+        id S1727259AbgBXR5J (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 24 Feb 2020 12:23:20 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:34681 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728382AbgBXRXM (ORCPT
+        Mon, 24 Feb 2020 12:57:09 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:31482 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727438AbgBXR5J (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 24 Feb 2020 12:23:12 -0500
-Received: by mail-wr1-f65.google.com with SMTP id z15so3013864wrl.1
-        for <linux-security-module@vger.kernel.org>; Mon, 24 Feb 2020 09:23:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Z7r4FCCdgK//1AJV7o7c7T7DxWEhsHdVIX0fUYjE4Ts=;
-        b=g+oJppTDpv5kQixddVJjhu7C9YgdQArMSg5hmvMNu3Y69lt1nSnlv6e4GUhHjgzmhc
-         kpyDv0phuVbr2tlC8zCjmDiCR1McS75gOj4mhVZnXt6t/GONUhBWF2zamYaURL31rXtE
-         7lQy0TnmmSKA733p9DxpdQcfGDWL0NZ7BMpRU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Z7r4FCCdgK//1AJV7o7c7T7DxWEhsHdVIX0fUYjE4Ts=;
-        b=Ex7lQb9KcSeGLIcGzJs/UEvgy6XWAigHXV9d7pJsVBTVVw2PU6QWt7d3zaFEUdkCzI
-         WmImWkaEwGFrC7bvg5oEjgoUzUFe5p5Xo/hPPfxcONjs054fGvOCn4mtPIp0TORZCcLZ
-         MxGXeg9bOedpra4BcbjHo4RDFHFiGThYjZDMY6EV6J7tCogi1GyXtQ452TvrtZ6ZyUpJ
-         DllKar4DszIEGwyYEf49M2v+GYVdsLtF7uooA1BfPSiezw39MYVneguO0BZ5HhU1v37+
-         q6Jxn76SBEz+1RKmEaoCQVUaLc1LqyZYv0kZl3dij6vTYhVUUj1DdGW1AzEFeeVtXHdY
-         Xi0Q==
-X-Gm-Message-State: APjAAAUvCgcdEto4mXuF0i8eloTgBQD7Wxq8hmc06cBMg4f67atg+KTt
-        N1wRI8Z2UxMTo4RHE7SRaaXxXA==
-X-Google-Smtp-Source: APXvYqw/rLv+BSiAvCyHeUmMe9yYodWuPz2r3aFrU2+asq1tfmpvCuhAPRCp6EaiEEqrhW9IeqWgdQ==
-X-Received: by 2002:a5d:5706:: with SMTP id a6mr67768995wrv.108.1582564990967;
-        Mon, 24 Feb 2020 09:23:10 -0800 (PST)
-Received: from chromium.org ([2620:0:105f:fd00:d960:542a:a1d:648a])
-        by smtp.gmail.com with ESMTPSA id j15sm20087903wrp.9.2020.02.24.09.23.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2020 09:23:10 -0800 (PST)
-From:   KP Singh <kpsingh@chromium.org>
-X-Google-Original-From: KP Singh <kpsingh>
-Date:   Mon, 24 Feb 2020 18:23:09 +0100
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        James Morris <jmorris@namei.org>
-Subject: Re: [PATCH bpf-next v4 3/8] bpf: lsm: provide attachment points for
- BPF LSM programs
-Message-ID: <20200224172309.GB21886@chromium.org>
-References: <20200220175250.10795-1-kpsingh@chromium.org>
- <20200220175250.10795-4-kpsingh@chromium.org>
- <0ef26943-9619-3736-4452-fec536a8d169@schaufler-ca.com>
- <202002211946.A23A987@keescook>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202002211946.A23A987@keescook>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 24 Feb 2020 12:57:09 -0500
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01OHoiQ2049659
+        for <linux-security-module@vger.kernel.org>; Mon, 24 Feb 2020 12:57:08 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2yb1qcskwh-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Mon, 24 Feb 2020 12:57:08 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Mon, 24 Feb 2020 17:57:06 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 24 Feb 2020 17:57:03 -0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01OHv2Rl54788320
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 24 Feb 2020 17:57:02 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 09FFD11C058;
+        Mon, 24 Feb 2020 17:57:02 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7996D11C04C;
+        Mon, 24 Feb 2020 17:57:00 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.188.252])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 24 Feb 2020 17:57:00 +0000 (GMT)
+Subject: Re: [PATCH v15 02/23] LSM: Create and manage the lsmblob data
+ structure.
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Casey Schaufler <casey@schaufler-ca.com>,
+        casey.schaufler@intel.com, jmorris@namei.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        Janne Karhunen <janne.karhunen@gmail.com>
+Cc:     keescook@chromium.org, john.johansen@canonical.com,
+        penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com,
+        sds@tycho.nsa.gov
+Date:   Mon, 24 Feb 2020 12:56:59 -0500
+In-Reply-To: <20200214234203.7086-3-casey@schaufler-ca.com>
+References: <20200214234203.7086-1-casey@schaufler-ca.com>
+         <20200214234203.7086-3-casey@schaufler-ca.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 20022417-0020-0000-0000-000003AD2EBA
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20022417-0021-0000-0000-0000220541B2
+Message-Id: <1582567019.10443.140.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-24_07:2020-02-21,2020-02-24 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ spamscore=0 clxscore=1015 impostorscore=0 suspectscore=2 phishscore=0
+ mlxlogscore=999 bulkscore=0 mlxscore=0 adultscore=0 malwarescore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002240132
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Kees,
+[Cc'ing Janne Karhunen]
 
-Thanks for the feedback!
+On Fri, 2020-02-14 at 15:41 -0800, Casey Schaufler wrote:
+<snip>
+> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+> index 453427048999..624ed1a34842 100644
+> --- a/security/integrity/ima/ima_policy.c
+> +++ b/security/integrity/ima/ima_policy.c
+> @@ -75,7 +75,7 @@ struct ima_rule_entry {
+>  	bool (*fowner_op)(kuid_t, kuid_t); /* uid_eq(), uid_gt(), uid_lt() */
+>  	int pcr;
+>  	struct {
+> -		void *rule;	/* LSM file metadata specific */
+> +		void *rules[LSMBLOB_ENTRIES];
+>  		void *args_p;	/* audit value */
+>  		int type;	/* audit type */
+>  	} lsm[MAX_LSM_RULES];
+> @@ -84,6 +84,16 @@ struct ima_rule_entry {
+>  	struct ima_template_desc *template;
+>  };
+> 
+> +static inline bool ima_lsm_isset(void *rules[])
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < LSMBLOB_ENTRIES; i++)
+> +		if (rules[i])
+> +			return true;
+> +	return false;
+> +}
+> +
 
-On 21-Feb 20:22, Kees Cook wrote:
-> On Thu, Feb 20, 2020 at 03:49:05PM -0800, Casey Schaufler wrote:
-> > On 2/20/2020 9:52 AM, KP Singh wrote:
-> > > From: KP Singh <kpsingh@google.com>
-> > 
-> > Sorry about the heavy list pruning - the original set
-> > blows thunderbird up.
-> 
-> (I've added some people back; I had to dig this thread back out of lkml
-> since I didn't get a direct copy...)
-> 
-> > > The BPF LSM programs are implemented as fexit trampolines to avoid the
-> > > overhead of retpolines. These programs cannot be attached to security_*
-> > > wrappers as there are quite a few security_* functions that do more than
-> > > just calling the LSM callbacks.
-> > >
-> > > This was discussed on the lists in:
-> > >
-> > >   https://lore.kernel.org/bpf/20200123152440.28956-1-kpsingh@chromium.org/T/#m068becce588a0cdf01913f368a97aea4c62d8266
-> > >
-> > > Adding a NOP callback after all the static LSM callbacks are called has
-> > > the following benefits:
-> > >
-> > > - The BPF programs run at the right stage of the security_* wrappers.
-> > > - They run after all the static LSM hooks allowed the operation,
-> > >   therefore cannot allow an action that was already denied.
-> > 
-> > I still say that the special call-out to BPF is unnecessary.
-> > I remain unconvinced by the arguments. You aren't doing anything
-> > so special that the general mechanism won't work.
-> 
-> If I'm understanding this correctly, there are two issues:
-> 
-> 1- BPF needs to be run last due to fexit trampolines (?)
-> 
-> 2- BPF hooks don't know what may be attached at any given time, so
->    ALL LSM hooks need to be universally hooked. THIS turns out to create
->    a measurable performance problem in that the cost of the indirect call
->    on the (mostly/usually) empty BPF policy is too high.
-> 
-> "1" can be solved a lot of ways, and doesn't seem to be a debated part
-> of this series.
-> 
-> "2" is interesting -- it creates a performance problem for EVERYONE that
-> builds in this kernel feature, regardless of them using it. Excepting
-> SELinux, "traditional" LSMs tends to be relatively sparse in their hooking:
-> 
-> $ grep '^      struct hlist_head' include/linux/lsm_hooks.h | wc -l
-> 230
-> $ for i in apparmor loadpin lockdown safesetid selinux smack tomoyo yama ; \
->   do echo -n "$i " && (cd $i && git grep LSM_HOOK_INIT | wc -l) ; done
-> apparmor   68
-> loadpin     3
-> lockdown    1
-> safesetid   2
-> selinux   202
-> smack     108
-> tomoyo     28
-> yama        4
-> 
-> So, trying to avoid the indirect calls is, as you say, an optimization,
-> but it might be a needed one due to the other limitations.
-> 
-> To me, some questions present themselves:
-> 
-> a) What, exactly, are the performance characteristics of:
-> 	"before"
-> 	"with indirect calls"
-> 	"with static keys optimization"
+Even though ima_lsm_isset() is static, it should really be commented.
 
-Good suggestion!
-
-I will do some analysis and come back with the numbers.
-
+>  /*
+>   * Without LSM specific knowledge, the default policy can only be
+>   * written in terms of .action, .func, .mask, .fsmagic, .uid, and .fowner
+> @@ -258,9 +268,11 @@ __setup("ima_appraise_tcb", default_appraise_policy_setup);
+>  static void ima_lsm_free_rule(struct ima_rule_entry *entry)
+>  {
+>  	int i;
+> +	int r;
 > 
-> b) Would there actually be a global benefit to using the static keys
->    optimization for other LSMs? (Especially given that they're already
->    sparsely populated and policy likely determines utility -- all the
->    LSMs would just turn ON all their static keys or turn off ALL their
->    static keys depending on having policy loaded.)
+>  	for (i = 0; i < MAX_LSM_RULES; i++) {
+> -		kfree(entry->lsm[i].rule);
+> +		for (r = 0; r < LSMBLOB_ENTRIES; r++)
+> +			kfree(entry->lsm[i].rules[r]);
+>  		kfree(entry->lsm[i].args_p);
+>  	}
+>  	kfree(entry);
+> @@ -295,8 +307,8 @@ static struct ima_rule_entry *ima_lsm_copy_rule(struct ima_rule_entry *entry)
+>  		security_filter_rule_init(nentry->lsm[i].type,
+>  					  Audit_equal,
+>  					  nentry->lsm[i].args_p,
+> -					  &nentry->lsm[i].rule);
+> -		if (!nentry->lsm[i].rule)
+> +					  nentry->lsm[i].rules);
+> +		if (!ima_lsm_isset(nentry->lsm[i].rules))
+>  			pr_warn("rule for LSM \'%s\' is undefined\n",
+>  				(char *)entry->lsm[i].args_p);
 
-As Alexei mentioned, we can use the patches for static calls after
-they are merged:
+Janne, the generic LSM message looks fine, but should there also be an
+LSM specific warning the first time it changes?
 
-https://lore.kernel.org/lkml/8bc857824f82462a296a8a3c4913a11a7f801e74.1547073843.git.jpoimboe@redhat.com/
+Mimi
 
-to make the framework better (as a separate series) especially given
-that we are unsure how they work with BPF.
-
-- KP
-
-> 
-> If static keys are justified for KRSI (by "a") then it seems the approach
-> here should stand. If "b" is also true, then we need an additional
-> series to apply this optimization for the other LSMs (but that seems
-> distinctly separate from THIS series).
-> 
-> -- 
-> Kees Cook
