@@ -2,410 +2,203 @@ Return-Path: <SRS0=CMy/=4M=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05610C11D32
-	for <linux-security-module@archiver.kernel.org>; Mon, 24 Feb 2020 16:31:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 273C4C11D2F
+	for <linux-security-module@archiver.kernel.org>; Mon, 24 Feb 2020 16:32:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA0362084E
-	for <linux-security-module@archiver.kernel.org>; Mon, 24 Feb 2020 16:31:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E519A2084E
+	for <linux-security-module@archiver.kernel.org>; Mon, 24 Feb 2020 16:32:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="hldjLpzc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727506AbgBXQbq (ORCPT
+        id S1727973AbgBXQcS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 24 Feb 2020 11:31:46 -0500
-Received: from out01.mta.xmission.com ([166.70.13.231]:48478 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727160AbgBXQbq (ORCPT
+        Mon, 24 Feb 2020 11:32:18 -0500
+Received: from sonic309-27.consmr.mail.ne1.yahoo.com ([66.163.184.153]:37888
+        "EHLO sonic309-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727935AbgBXQcS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 24 Feb 2020 11:31:46 -0500
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1j6Ge1-0004uo-5E; Mon, 24 Feb 2020 09:31:45 -0700
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1j6Gdx-00052X-3L; Mon, 24 Feb 2020 09:31:44 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Mon, 24 Feb 2020 11:32:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1582561936; bh=jEdYHQfjEPk7Ub9OADMJTPn8R+rCgiglI9as12qrm30=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=hldjLpzcwV3BY5rdmK9yZGAUGjYZfPHOoZqCw0XhDH2KncJH37Pzx2ZkTM9xdDyqqc2V4yKvoMqO+uMmN+sfUeqP7LgmLWzyG846uxylbwkhY6evSGTY78wk791BzhlXAOFDCJSK5HCXOMP4MFCQWChWYbH/0pi+VTS7FPhGmp6AkSisZ7a4FJ4GBcyplhEgji0PaG98IiRd6lDZBz8aA1+/LEcM0Y7sKpuQISE4VaOD0MXOFCbmYhsN34YnSNRKJb/ei91iuZeNFve3Ub4GwLllYF6R8/HBTBI+5dwtPuCSYY9vwzjcJYK8FNGZzQrDY83c29Vrk45mJDgEN62qYg==
+X-YMail-OSG: xJ_GdC4VM1l5kxxnBl0Lney9fsdvankXxCcLb.xZurXxr.JqokefUWynnPrVAXv
+ vINYCXn0cjIA7RWXbbyOT7B_nIX1cJcSNP1Tl_Lfw_cB91PI1QwXFQ2SMliu3c51ureMiDH4h9Qy
+ pK1w2dP2khkXe0rmFELSQ60X.HVogs2ujgrNlhaccLtNk9byg5losin4piTH5DxzygZGN6n7BtnV
+ A98BE430XdsXDhAcEwTnpnCDaaachAqWRucc8mDZgd0._ZpjTp.wpJjZd_s7_yZdP1GSyG9Rzg8m
+ BIoOC.YN9fEZnjccoakDuiejWMGFa93A7DYxKXHHvgupWqoAw8jfdxP_B5brxDylvsbT75AGDkEb
+ UyAJveC.txTTWM8unBWaj7zrMRhDtuARwWR_0qj1WVjqgkCpzJaaOzp2sfBQmEllQxsHhGBdEp0.
+ E5RSEsxTMHaOlD50GoCmmXtkwNou1CYMMFHx6j29h2oVC_obQAqxIH.Ur8Fkl_nD38URUI0VtPl8
+ kMZVM6loixSvYLCxIO8l3b9bi4oBQLfjs38aWC0hMGF9gAhY83s5SOjfdoGfvzmbRkowT7jmWP96
+ eqNw13NgJI8OATaz9uymx5E6mzhfqzG2V.bA91MbjNADBO20fS4w0M4ibLFOJif5YbtCqj9XrEPT
+ 0DeZ9W9qsr98U1Z5fS3Gj_TBCSH_vnq4sRdneC8hILGwVHFhns298ZNHABVs7ZwyfTUenDPWHPX6
+ KyT_tpsO01_qHHHnw.D3k9n70urEAlEI8Nmj364y1Lw2nTCJ3t08s9i0t7JWyI.OXFnt37Af08t.
+ 6muE8JEHqztrhq1LZbgtxgb5KpZcn2k0hPOcbNFV.ut0CIyguBhyiqoEEP_OW7aE_Qdc6D9Ogh4B
+ YcaxGlR7CDGILlhvxv1gdXCWPXPrTQmDbUtJYqpdnEEIfTrm4rrHS5nflqT2T0cYw4jF_hHTM4.D
+ 58gvUaVnj7uIKxEZH3jymzOaV2nmuXZOsvqVh4SYiOhhOyPjftBZcH2uJmxN6OOmc6c4I_WArFLW
+ K596dICTfcvzw_wfanuhqHesRIDHt2GyKskkGWm9PHt2AEjz7UMOMPfMXlrDrs_EP4soPrRhCAZb
+ jyXghOT00D0p.QkM9DDefp1V7OhaG90mHM_N_PP8zu9W5fTNbzS0xUk62WRUxAcMvE_dEVonwspV
+ rUyF1ae9Pf4kbPLFCEmC6GHlv7.Wm.omK6K6rWY3YG_BYFHtHQ1k9k8eYTNQ7zDdwbHOBfSPaecl
+ kOJBDjVuAfxjBhPqGxpxVfoN23nouMR9f9_LuvZ6Kb6pkyf1_6iP956ZcexfRUFjfoqcO6_OaQGx
+ Zvt.yG8orifnc8h_C23cQvexXUVjThQWyyKx8pturKdHIwxHhYWkOI2Z63YSH1mwtU3H6IH0JPss
+ kiek8TZ7EfF0lk5qxHKTNgaO_McVkyjmikQ--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Mon, 24 Feb 2020 16:32:16 +0000
+Received: by smtp411.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID c12ff2e79bd6414a6c59430047e9d2d0;
+          Mon, 24 Feb 2020 16:32:11 +0000 (UTC)
+Subject: Re: [PATCH bpf-next v4 3/8] bpf: lsm: provide attachment points for
+ BPF LSM programs
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Kees Cook <keescook@chromium.org>
+Cc:     KP Singh <kpsingh@chromium.org>,
         LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Solar Designer <solar@openwall.com>,
-        Alexey Gladkov <gladkov.alexey@gmail.com>
-References: <20200210150519.538333-8-gladkov.alexey@gmail.com>
-        <87v9odlxbr.fsf@x220.int.ebiederm.org>
-        <20200212144921.sykucj4mekcziicz@comp-core-i7-2640m-0182e6>
-        <87tv3vkg1a.fsf@x220.int.ebiederm.org>
-        <CAHk-=wg52stFtUxMOxs3afkwDWmWn1JXC7RJ7dPsTrJbnxpZVg@mail.gmail.com>
-        <87v9obipk9.fsf@x220.int.ebiederm.org>
-        <CAHk-=wgwmu4jpmOqW0+Lz0dcem1Fub=ThLHvmLobf_WqCq7bwg@mail.gmail.com>
-        <20200212200335.GO23230@ZenIV.linux.org.uk>
-        <CAHk-=wi+1CPShMFvJNPfnrJ8DD8uVKUOQ5TQzQUNGLUkeoahkg@mail.gmail.com>
-        <20200212203833.GQ23230@ZenIV.linux.org.uk>
-        <20200212204124.GR23230@ZenIV.linux.org.uk>
-        <CAHk-=wi5FOGV_3tALK3n6E2fK3Oa_yCYkYQtCSaXLSEm2DUCKg@mail.gmail.com>
-        <87lfp7h422.fsf@x220.int.ebiederm.org>
-        <CAHk-=wgmn9Qds0VznyphouSZW6e42GWDT5H1dpZg8pyGDGN+=w@mail.gmail.com>
-        <87pnejf6fz.fsf@x220.int.ebiederm.org>
-        <871rqpaswu.fsf_-_@x220.int.ebiederm.org>
-        <871rqk2brn.fsf_-_@x220.int.ebiederm.org>
-Date:   Mon, 24 Feb 2020 10:29:38 -0600
-In-Reply-To: <871rqk2brn.fsf_-_@x220.int.ebiederm.org> (Eric W. Biederman's
-        message of "Mon, 24 Feb 2020 10:25:16 -0600")
-Message-ID: <8736b00wzx.fsf_-_@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        James Morris <jmorris@namei.org>, bpf@vger.kernel.org,
+        netdev@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
+References: <20200220175250.10795-1-kpsingh@chromium.org>
+ <20200220175250.10795-4-kpsingh@chromium.org>
+ <0ef26943-9619-3736-4452-fec536a8d169@schaufler-ca.com>
+ <202002211946.A23A987@keescook> <20200223220833.wdhonzvven7payaw@ast-mbp>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Autocrypt: addr=casey@schaufler-ca.com; keydata=
+ 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
+ abzjfg==
+Message-ID: <c5c67ece-e5c1-9e8f-3a2b-60d8d002c894@schaufler-ca.com>
+Date:   Mon, 24 Feb 2020 08:32:10 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1j6Gdx-00052X-3L;;;mid=<8736b00wzx.fsf_-_@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX19MH8OOLAnkeXKMBLr4LWC1fUGnAEgCvqg=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: [PATCH v2 6/6] proc: Use a list of inodes to flush from proc
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+In-Reply-To: <20200223220833.wdhonzvven7payaw@ast-mbp>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+X-Mailer: WebService/1.1.15199 hermes Apache-HttpAsyncClient/4.1.4 (Java/1.8.0_241)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On 2/23/2020 2:08 PM, Alexei Starovoitov wrote:
+> On Fri, Feb 21, 2020 at 08:22:59PM -0800, Kees Cook wrote:
+>> If I'm understanding this correctly, there are two issues:
+>>
+>> 1- BPF needs to be run last due to fexit trampolines (?)
+> no.
+> The placement of nop call can be anywhere.
+> BPF trampoline is automagically converting nop call into a sequence
+> of directly invoked BPF programs.
+> No link list traversals and no indirect calls in run-time.
 
-Rework the flushing of proc to use a list of directory inodes that
-need to be flushed.
+Then why the insistence that it be last?
 
-The list is kept on struct pid not on struct task_struct, as there is
-a fixed connection between proc inodes and pids but at least for the
-case of de_thread the pid of a task_struct changes.
+>> 2- BPF hooks don't know what may be attached at any given time, so
+>>    ALL LSM hooks need to be universally hooked. THIS turns out to crea=
+te
+>>    a measurable performance problem in that the cost of the indirect c=
+all
+>>    on the (mostly/usually) empty BPF policy is too high.
+> also no.
 
-This removes the dependency on proc_mnt which allows for different
-mounts of proc having different mount options even in the same pid
-namespace and this allows for the removal of proc_mnt which will
-trivially the first mount of proc to honor it's mount options.
+Um, then why not use the infrastructure as is?
 
-This flushing remains an optimization.  The functions
-pid_delete_dentry and pid_revalidate ensure that ordinary dcache
-management will not attempt to use dentries past the point their
-respective task has died.  When unused the shrinker will
-eventually be able to remove these dentries.
+>> So, trying to avoid the indirect calls is, as you say, an optimization=
+,
+>> but it might be a needed one due to the other limitations.
+> I'm convinced that avoiding the cost of retpoline in critical path is a=
 
-There is a case in de_thread where proc_flush_pid can be
-called early for a given pid.  Which winds up being
-safe (if suboptimal) as this is just an optiimization.
+> requirement for any new infrastructure in the kernel.
 
-Only pid directories are put on the list as the other
-per pid files are children of those directories and
-d_invalidate on the directory will get them as well.
+Sorry, I haven't gotten that memo.
 
-So that the pid can be used during flushing it's reference count is
-taken in release_task and dropped in proc_flush_pid.  Further the call
-of proc_flush_pid is moved after the tasklist_lock is released in
-release_task so that it is certain that the pid has already been
-unhashed when flushing it taking place.  This removes a small race
-where a dentry could recreated.
+> Not only for security, but for any new infra.
 
-As struct pid is supposed to be small and I need a per pid lock
-I reuse the only lock that currently exists in struct pid the
-the wait_pidfd.lock.
+The LSM infrastructure ain't new.
 
-The net result is that this adds all of this functionality
-with just a little extra list management overhead and
-a single extra pointer in struct pid.
+> Networking stack converted all such places to conditional calls.
+> In BPF land we converted indirect calls to direct jumps and direct call=
+s.
+> It took two years to do so. Adding new indirect calls is not an option.=
 
-v2: Initialize pid->inodes.  I somehow failed to get that
-    initialization into the initial version of the patch.  A boot
-    failure was reported by "kernel test robot <lkp@intel.com>", and
-    failure to initialize that pid->inodes matches all of the reported
-    symptoms.
+> I'm eagerly waiting for Peter's static_call patches to land to convert
+> a lot more indirect calls. May be existing LSMs will take advantage
+> of static_call patches too, but static_call is not an option for BPF.
+> That's why we introduced BPF trampoline in the last kernel release.
 
-Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
----
- fs/proc/base.c          | 111 +++++++++++++---------------------------
- fs/proc/inode.c         |   2 +-
- fs/proc/internal.h      |   1 +
- include/linux/pid.h     |   1 +
- include/linux/proc_fs.h |   4 +-
- kernel/exit.c           |   4 +-
- kernel/pid.c            |   1 +
- 7 files changed, 45 insertions(+), 79 deletions(-)
+Sorry, but I don't see how BPF is so overwhelmingly special.
 
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index c7c64272b0fa..e7efe9d6f3d6 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -1834,11 +1834,25 @@ void task_dump_owner(struct task_struct *task, umode_t mode,
- 	*rgid = gid;
- }
- 
-+void proc_pid_evict_inode(struct proc_inode *ei)
-+{
-+	struct pid *pid = ei->pid;
-+
-+	if (S_ISDIR(ei->vfs_inode.i_mode)) {
-+		spin_lock(&pid->wait_pidfd.lock);
-+		hlist_del_init_rcu(&ei->sibling_inodes);
-+		spin_unlock(&pid->wait_pidfd.lock);
-+	}
-+
-+	put_pid(pid);
-+}
-+
- struct inode *proc_pid_make_inode(struct super_block * sb,
- 				  struct task_struct *task, umode_t mode)
- {
- 	struct inode * inode;
- 	struct proc_inode *ei;
-+	struct pid *pid;
- 
- 	/* We need a new inode */
- 
-@@ -1856,10 +1870,18 @@ struct inode *proc_pid_make_inode(struct super_block * sb,
- 	/*
- 	 * grab the reference to task.
- 	 */
--	ei->pid = get_task_pid(task, PIDTYPE_PID);
--	if (!ei->pid)
-+	pid = get_task_pid(task, PIDTYPE_PID);
-+	if (!pid)
- 		goto out_unlock;
- 
-+	/* Let the pid remember us for quick removal */
-+	ei->pid = pid;
-+	if (S_ISDIR(mode)) {
-+		spin_lock(&pid->wait_pidfd.lock);
-+		hlist_add_head_rcu(&ei->sibling_inodes, &pid->inodes);
-+		spin_unlock(&pid->wait_pidfd.lock);
-+	}
-+
- 	task_dump_owner(task, 0, &inode->i_uid, &inode->i_gid);
- 	security_task_to_inode(task, inode);
- 
-@@ -3230,90 +3252,29 @@ static const struct inode_operations proc_tgid_base_inode_operations = {
- 	.permission	= proc_pid_permission,
- };
- 
--static void proc_flush_task_mnt(struct vfsmount *mnt, pid_t pid, pid_t tgid)
--{
--	struct dentry *dentry, *leader, *dir;
--	char buf[10 + 1];
--	struct qstr name;
--
--	name.name = buf;
--	name.len = snprintf(buf, sizeof(buf), "%u", pid);
--	/* no ->d_hash() rejects on procfs */
--	dentry = d_hash_and_lookup(mnt->mnt_root, &name);
--	if (dentry) {
--		d_invalidate(dentry);
--		dput(dentry);
--	}
--
--	if (pid == tgid)
--		return;
--
--	name.name = buf;
--	name.len = snprintf(buf, sizeof(buf), "%u", tgid);
--	leader = d_hash_and_lookup(mnt->mnt_root, &name);
--	if (!leader)
--		goto out;
--
--	name.name = "task";
--	name.len = strlen(name.name);
--	dir = d_hash_and_lookup(leader, &name);
--	if (!dir)
--		goto out_put_leader;
--
--	name.name = buf;
--	name.len = snprintf(buf, sizeof(buf), "%u", pid);
--	dentry = d_hash_and_lookup(dir, &name);
--	if (dentry) {
--		d_invalidate(dentry);
--		dput(dentry);
--	}
--
--	dput(dir);
--out_put_leader:
--	dput(leader);
--out:
--	return;
--}
--
- /**
-- * proc_flush_task -  Remove dcache entries for @task from the /proc dcache.
-- * @task: task that should be flushed.
-+ * proc_flush_pid -  Remove dcache entries for @pid from the /proc dcache.
-+ * @pid: pid that should be flushed.
-  *
-- * When flushing dentries from proc, one needs to flush them from global
-- * proc (proc_mnt) and from all the namespaces' procs this task was seen
-- * in. This call is supposed to do all of this job.
-- *
-- * Looks in the dcache for
-- * /proc/@pid
-- * /proc/@tgid/task/@pid
-- * if either directory is present flushes it and all of it'ts children
-- * from the dcache.
-+ * This function walks a list of inodes (that belong to any proc
-+ * filesystem) that are attached to the pid and flushes them from
-+ * the dentry cache.
-  *
-  * It is safe and reasonable to cache /proc entries for a task until
-  * that task exits.  After that they just clog up the dcache with
-  * useless entries, possibly causing useful dcache entries to be
-- * flushed instead.  This routine is proved to flush those useless
-- * dcache entries at process exit time.
-+ * flushed instead.  This routine is provided to flush those useless
-+ * dcache entries when a process is reaped.
-  *
-  * NOTE: This routine is just an optimization so it does not guarantee
-- *       that no dcache entries will exist at process exit time it
-- *       just makes it very unlikely that any will persist.
-+ *       that no dcache entries will exist after a process is reaped
-+ *       it just makes it very unlikely that any will persist.
-  */
- 
--void proc_flush_task(struct task_struct *task)
-+void proc_flush_pid(struct pid *pid)
- {
--	int i;
--	struct pid *pid, *tgid;
--	struct upid *upid;
--
--	pid = task_pid(task);
--	tgid = task_tgid(task);
--
--	for (i = 0; i <= pid->level; i++) {
--		upid = &pid->numbers[i];
--		proc_flush_task_mnt(upid->ns->proc_mnt, upid->nr,
--					tgid->numbers[i].nr);
--	}
-+	proc_invalidate_siblings_dcache(&pid->inodes, &pid->wait_pidfd.lock);
-+	put_pid(pid);
- }
- 
- static struct dentry *proc_pid_instantiate(struct dentry * dentry,
-diff --git a/fs/proc/inode.c b/fs/proc/inode.c
-index d9243b24554a..1e730ea1dcd6 100644
---- a/fs/proc/inode.c
-+++ b/fs/proc/inode.c
-@@ -40,7 +40,7 @@ static void proc_evict_inode(struct inode *inode)
- 
- 	/* Stop tracking associated processes */
- 	if (ei->pid) {
--		put_pid(ei->pid);
-+		proc_pid_evict_inode(ei);
- 		ei->pid = NULL;
- 	}
- 
-diff --git a/fs/proc/internal.h b/fs/proc/internal.h
-index fd470172675f..9e294f0290e5 100644
---- a/fs/proc/internal.h
-+++ b/fs/proc/internal.h
-@@ -158,6 +158,7 @@ extern int proc_pid_statm(struct seq_file *, struct pid_namespace *,
- extern const struct dentry_operations pid_dentry_operations;
- extern int pid_getattr(const struct path *, struct kstat *, u32, unsigned int);
- extern int proc_setattr(struct dentry *, struct iattr *);
-+extern void proc_pid_evict_inode(struct proc_inode *);
- extern struct inode *proc_pid_make_inode(struct super_block *, struct task_struct *, umode_t);
- extern void pid_update_inode(struct task_struct *, struct inode *);
- extern int pid_delete_dentry(const struct dentry *);
-diff --git a/include/linux/pid.h b/include/linux/pid.h
-index 998ae7d24450..01a0d4e28506 100644
---- a/include/linux/pid.h
-+++ b/include/linux/pid.h
-@@ -62,6 +62,7 @@ struct pid
- 	unsigned int level;
- 	/* lists of tasks that use this pid */
- 	struct hlist_head tasks[PIDTYPE_MAX];
-+	struct hlist_head inodes;
- 	/* wait queue for pidfd notifications */
- 	wait_queue_head_t wait_pidfd;
- 	struct rcu_head rcu;
-diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
-index 3dfa92633af3..40a7982b7285 100644
---- a/include/linux/proc_fs.h
-+++ b/include/linux/proc_fs.h
-@@ -32,7 +32,7 @@ struct proc_ops {
- typedef int (*proc_write_t)(struct file *, char *, size_t);
- 
- extern void proc_root_init(void);
--extern void proc_flush_task(struct task_struct *);
-+extern void proc_flush_pid(struct pid *);
- 
- extern struct proc_dir_entry *proc_symlink(const char *,
- 		struct proc_dir_entry *, const char *);
-@@ -105,7 +105,7 @@ static inline void proc_root_init(void)
- {
- }
- 
--static inline void proc_flush_task(struct task_struct *task)
-+static inline void proc_flush_pid(struct pid *pid)
- {
- }
- 
-diff --git a/kernel/exit.c b/kernel/exit.c
-index 2833ffb0c211..502b4995b688 100644
---- a/kernel/exit.c
-+++ b/kernel/exit.c
-@@ -191,6 +191,7 @@ void put_task_struct_rcu_user(struct task_struct *task)
- void release_task(struct task_struct *p)
- {
- 	struct task_struct *leader;
-+	struct pid *thread_pid;
- 	int zap_leader;
- repeat:
- 	/* don't need to get the RCU readlock here - the process is dead and
-@@ -199,11 +200,11 @@ void release_task(struct task_struct *p)
- 	atomic_dec(&__task_cred(p)->user->processes);
- 	rcu_read_unlock();
- 
--	proc_flush_task(p);
- 	cgroup_release(p);
- 
- 	write_lock_irq(&tasklist_lock);
- 	ptrace_release_task(p);
-+	thread_pid = get_pid(p->thread_pid);
- 	__exit_signal(p);
- 
- 	/*
-@@ -226,6 +227,7 @@ void release_task(struct task_struct *p)
- 	}
- 
- 	write_unlock_irq(&tasklist_lock);
-+	proc_flush_pid(thread_pid);
- 	release_thread(p);
- 	put_task_struct_rcu_user(p);
- 
-diff --git a/kernel/pid.c b/kernel/pid.c
-index 0f4ecb57214c..ca08d6a3aa77 100644
---- a/kernel/pid.c
-+++ b/kernel/pid.c
-@@ -258,6 +258,7 @@ struct pid *alloc_pid(struct pid_namespace *ns, pid_t *set_tid,
- 		INIT_HLIST_HEAD(&pid->tasks[type]);
- 
- 	init_waitqueue_head(&pid->wait_pidfd);
-+	INIT_HLIST_HEAD(&pid->inodes);
- 
- 	upid = pid->numbers + ns->level;
- 	spin_lock_irq(&pidmap_lock);
--- 
-2.25.0
+>> b) Would there actually be a global benefit to using the static keys
+>>    optimization for other LSMs?
+> Yes. Just compiling with CONFIG_SECURITY adds "if (hlist_empty)" check
+> for every hook.
+
+Err, no, it doesn't. It does an hlish_for_each_entry(), which
+may be the equivalent on an empty list, but let's not go around
+spreading misinformation.
+
+>  Some of those hooks are in critical path. This load+cmp
+> can be avoided with static_key optimization. I think it's worth doing.
+
+I admit to being unfamiliar with the static_key implementation,
+but if it would work for a list of hooks rather than a singe hook,
+I'm all ears.
+
+>> If static keys are justified for KRSI
+> I really like that KRSI costs absolutely zero when it's not enabled.
+
+And I dislike that there's security module specific code in security.c,
+security.h and/or lsm_hooks.h. KRSI *is not that special*.
+
+> Attaching BPF prog to one hook preserves zero cost for all other hooks.=
+
+> And when one hook is BPF powered it's using direct call instead of
+> super expensive retpoline.
+
+I'm not objecting to the good it does for KRSI.
+I am *strongly* objecting to special casing KRSI.
+
+> Overall this patch set looks good to me. There was a minor issue with p=
+rog
+> accounting. I expect only that bit to be fixed in v5.
 
