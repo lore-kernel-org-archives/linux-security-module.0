@@ -7,204 +7,178 @@ X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83AD3C11D2F
-	for <linux-security-module@archiver.kernel.org>; Mon, 24 Feb 2020 17:13:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14CD3C11D2F
+	for <linux-security-module@archiver.kernel.org>; Mon, 24 Feb 2020 17:23:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5267920838
-	for <linux-security-module@archiver.kernel.org>; Mon, 24 Feb 2020 17:13:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF58720732
+	for <linux-security-module@archiver.kernel.org>; Mon, 24 Feb 2020 17:23:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WAaMkWyo"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="g+oJppTD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727757AbgBXRNL (ORCPT
+        id S1728107AbgBXRXU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 24 Feb 2020 12:13:11 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:52990 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727689AbgBXRNL (ORCPT
+        Mon, 24 Feb 2020 12:23:20 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:34681 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728382AbgBXRXM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 24 Feb 2020 12:13:11 -0500
-Received: by mail-wm1-f67.google.com with SMTP id p9so91420wmc.2
-        for <linux-security-module@vger.kernel.org>; Mon, 24 Feb 2020 09:13:08 -0800 (PST)
+        Mon, 24 Feb 2020 12:23:12 -0500
+Received: by mail-wr1-f65.google.com with SMTP id z15so3013864wrl.1
+        for <linux-security-module@vger.kernel.org>; Mon, 24 Feb 2020 09:23:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:date:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=djq2UzRGDZUviySA8l7HGT0qHQEYWEuCD4uLW+Pmvvs=;
-        b=WAaMkWyorUPlUuI4nRXYbnoDGL7eMtZS5tpi8LV09uUXVKFh7REQoOvUkK7e7el4rQ
-         oWWOnN2++jNfuFzKY1zTUQCyJat1fTLlATlX3vBCBeFPfbMwKhe/f+QW6XvTChbrrrtY
-         4PbOkD+89zTQLmnpGpMMS0qrKSMdfAMjGVrdM=
+        bh=Z7r4FCCdgK//1AJV7o7c7T7DxWEhsHdVIX0fUYjE4Ts=;
+        b=g+oJppTDpv5kQixddVJjhu7C9YgdQArMSg5hmvMNu3Y69lt1nSnlv6e4GUhHjgzmhc
+         kpyDv0phuVbr2tlC8zCjmDiCR1McS75gOj4mhVZnXt6t/GONUhBWF2zamYaURL31rXtE
+         7lQy0TnmmSKA733p9DxpdQcfGDWL0NZ7BMpRU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:date:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=djq2UzRGDZUviySA8l7HGT0qHQEYWEuCD4uLW+Pmvvs=;
-        b=U6Iec4t4OFJ/+DBTHvtF/s+jylZuAtoqpkFR6gHAVUOUbmUudPjmaeGe7mIM25GN//
-         F9hfyyr45R7dsyU7pEzeCP28EKUe3A1XgXEwZ/zdy6J/a+B+5/+jm/WL8QlJ6s/vbhY4
-         TDK7bM4k6gPG+88j97OJm5Wm8IC5lbr4ta5+u8Km3FH+uX3aDwqGfYJoDfCk36LBQIpx
-         rUSvumvKCaVcuMMv6NKxjrpE5Tednw4IvDWwWVCsveuj21A4Hgqyeom4uA8L1Dlhs2CI
-         h4bIJHFzvKvo2QCbWMTG9WKbJGiKGGPXrRgIyJ05e/2yx2ZdLsRy0BMfD7aIejoKq5MB
-         KAEA==
-X-Gm-Message-State: APjAAAVG+1/gexhuk+iApKIKf1brqRX9RRzuQ0BrbaHc5xhWimOe+waH
-        7WvffaE9+yAD5NghU/DJb/fwBA==
-X-Google-Smtp-Source: APXvYqw+txJF+rLovWHEHGiqNzAcu94O+9oGuFuSTTeDeQS+cKKNh0sPeN+HaDKqz1TrcTn35uMIVQ==
-X-Received: by 2002:a1c:dc85:: with SMTP id t127mr95275wmg.16.1582564387555;
-        Mon, 24 Feb 2020 09:13:07 -0800 (PST)
+        bh=Z7r4FCCdgK//1AJV7o7c7T7DxWEhsHdVIX0fUYjE4Ts=;
+        b=Ex7lQb9KcSeGLIcGzJs/UEvgy6XWAigHXV9d7pJsVBTVVw2PU6QWt7d3zaFEUdkCzI
+         WmImWkaEwGFrC7bvg5oEjgoUzUFe5p5Xo/hPPfxcONjs054fGvOCn4mtPIp0TORZCcLZ
+         MxGXeg9bOedpra4BcbjHo4RDFHFiGThYjZDMY6EV6J7tCogi1GyXtQ452TvrtZ6ZyUpJ
+         DllKar4DszIEGwyYEf49M2v+GYVdsLtF7uooA1BfPSiezw39MYVneguO0BZ5HhU1v37+
+         q6Jxn76SBEz+1RKmEaoCQVUaLc1LqyZYv0kZl3dij6vTYhVUUj1DdGW1AzEFeeVtXHdY
+         Xi0Q==
+X-Gm-Message-State: APjAAAUvCgcdEto4mXuF0i8eloTgBQD7Wxq8hmc06cBMg4f67atg+KTt
+        N1wRI8Z2UxMTo4RHE7SRaaXxXA==
+X-Google-Smtp-Source: APXvYqw/rLv+BSiAvCyHeUmMe9yYodWuPz2r3aFrU2+asq1tfmpvCuhAPRCp6EaiEEqrhW9IeqWgdQ==
+X-Received: by 2002:a5d:5706:: with SMTP id a6mr67768995wrv.108.1582564990967;
+        Mon, 24 Feb 2020 09:23:10 -0800 (PST)
 Received: from chromium.org ([2620:0:105f:fd00:d960:542a:a1d:648a])
-        by smtp.gmail.com with ESMTPSA id g29sm13919879wrb.59.2020.02.24.09.13.06
+        by smtp.gmail.com with ESMTPSA id j15sm20087903wrp.9.2020.02.24.09.23.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2020 09:13:07 -0800 (PST)
+        Mon, 24 Feb 2020 09:23:10 -0800 (PST)
 From:   KP Singh <kpsingh@chromium.org>
 X-Google-Original-From: KP Singh <kpsingh>
-Date:   Mon, 24 Feb 2020 18:13:05 +0100
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
+Date:   Mon, 24 Feb 2020 18:23:09 +0100
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
         LKML <linux-kernel@vger.kernel.org>,
         Linux Security Module list 
         <linux-security-module@vger.kernel.org>,
         Alexei Starovoitov <ast@kernel.org>,
-        James Morris <jmorris@namei.org>, bpf@vger.kernel.org,
-        netdev@vger.kernel.org
+        James Morris <jmorris@namei.org>
 Subject: Re: [PATCH bpf-next v4 3/8] bpf: lsm: provide attachment points for
  BPF LSM programs
-Message-ID: <20200224171305.GA21886@chromium.org>
+Message-ID: <20200224172309.GB21886@chromium.org>
 References: <20200220175250.10795-1-kpsingh@chromium.org>
  <20200220175250.10795-4-kpsingh@chromium.org>
  <0ef26943-9619-3736-4452-fec536a8d169@schaufler-ca.com>
  <202002211946.A23A987@keescook>
- <20200223220833.wdhonzvven7payaw@ast-mbp>
- <c5c67ece-e5c1-9e8f-3a2b-60d8d002c894@schaufler-ca.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c5c67ece-e5c1-9e8f-3a2b-60d8d002c894@schaufler-ca.com>
+In-Reply-To: <202002211946.A23A987@keescook>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 24-Feb 08:32, Casey Schaufler wrote:
-> On 2/23/2020 2:08 PM, Alexei Starovoitov wrote:
-> > On Fri, Feb 21, 2020 at 08:22:59PM -0800, Kees Cook wrote:
-> >> If I'm understanding this correctly, there are two issues:
-> >>
-> >> 1- BPF needs to be run last due to fexit trampolines (?)
-> > no.
-> > The placement of nop call can be anywhere.
-> > BPF trampoline is automagically converting nop call into a sequence
-> > of directly invoked BPF programs.
-> > No link list traversals and no indirect calls in run-time.
+Hi Kees,
+
+Thanks for the feedback!
+
+On 21-Feb 20:22, Kees Cook wrote:
+> On Thu, Feb 20, 2020 at 03:49:05PM -0800, Casey Schaufler wrote:
+> > On 2/20/2020 9:52 AM, KP Singh wrote:
+> > > From: KP Singh <kpsingh@google.com>
+> > 
+> > Sorry about the heavy list pruning - the original set
+> > blows thunderbird up.
 > 
-> Then why the insistence that it be last?
+> (I've added some people back; I had to dig this thread back out of lkml
+> since I didn't get a direct copy...)
+> 
+> > > The BPF LSM programs are implemented as fexit trampolines to avoid the
+> > > overhead of retpolines. These programs cannot be attached to security_*
+> > > wrappers as there are quite a few security_* functions that do more than
+> > > just calling the LSM callbacks.
+> > >
+> > > This was discussed on the lists in:
+> > >
+> > >   https://lore.kernel.org/bpf/20200123152440.28956-1-kpsingh@chromium.org/T/#m068becce588a0cdf01913f368a97aea4c62d8266
+> > >
+> > > Adding a NOP callback after all the static LSM callbacks are called has
+> > > the following benefits:
+> > >
+> > > - The BPF programs run at the right stage of the security_* wrappers.
+> > > - They run after all the static LSM hooks allowed the operation,
+> > >   therefore cannot allow an action that was already denied.
+> > 
+> > I still say that the special call-out to BPF is unnecessary.
+> > I remain unconvinced by the arguments. You aren't doing anything
+> > so special that the general mechanism won't work.
+> 
+> If I'm understanding this correctly, there are two issues:
+> 
+> 1- BPF needs to be run last due to fexit trampolines (?)
+> 
+> 2- BPF hooks don't know what may be attached at any given time, so
+>    ALL LSM hooks need to be universally hooked. THIS turns out to create
+>    a measurable performance problem in that the cost of the indirect call
+>    on the (mostly/usually) empty BPF policy is too high.
+> 
+> "1" can be solved a lot of ways, and doesn't seem to be a debated part
+> of this series.
+> 
+> "2" is interesting -- it creates a performance problem for EVERYONE that
+> builds in this kernel feature, regardless of them using it. Excepting
+> SELinux, "traditional" LSMs tends to be relatively sparse in their hooking:
+> 
+> $ grep '^      struct hlist_head' include/linux/lsm_hooks.h | wc -l
+> 230
+> $ for i in apparmor loadpin lockdown safesetid selinux smack tomoyo yama ; \
+>   do echo -n "$i " && (cd $i && git grep LSM_HOOK_INIT | wc -l) ; done
+> apparmor   68
+> loadpin     3
+> lockdown    1
+> safesetid   2
+> selinux   202
+> smack     108
+> tomoyo     28
+> yama        4
+> 
+> So, trying to avoid the indirect calls is, as you say, an optimization,
+> but it might be a needed one due to the other limitations.
+> 
+> To me, some questions present themselves:
+> 
+> a) What, exactly, are the performance characteristics of:
+> 	"before"
+> 	"with indirect calls"
+> 	"with static keys optimization"
 
-I think this came out of the discussion about not being able to
-override the other LSMs and introduce a new attack vector with some
-arguments discussed at:
+Good suggestion!
 
-  https://lore.kernel.org/bpf/20200109194302.GA85350@google.com/
-
-Let's say we have SELinux + BPF runnng on the system. BPF should still
-respect any decisions made by SELinux. This hasn't got anything to
-do with the usage of fexit trampolines.
+I will do some analysis and come back with the numbers.
 
 > 
-> >> 2- BPF hooks don't know what may be attached at any given time, so
-> >>    ALL LSM hooks need to be universally hooked. THIS turns out to create
-> >>    a measurable performance problem in that the cost of the indirect call
-> >>    on the (mostly/usually) empty BPF policy is too high.
-> > also no.
-> 
-> Um, then why not use the infrastructure as is?
+> b) Would there actually be a global benefit to using the static keys
+>    optimization for other LSMs? (Especially given that they're already
+>    sparsely populated and policy likely determines utility -- all the
+>    LSMs would just turn ON all their static keys or turn off ALL their
+>    static keys depending on having policy loaded.)
 
-I think what Kees meant is that BPF allows hooking to all the LSM
-hooks and providing static LSM hook callbacks like traditional LSMs
-has a measurable performance overhead and this is indeed correct. This
-is why we want provide with the following characteristics:
+As Alexei mentioned, we can use the patches for static calls after
+they are merged:
 
-- Without introducing a new attack surface, this was the reason for
-  creating a mutable security_hook_heads in v1 which ran the hook
-  after v1.
+https://lore.kernel.org/lkml/8bc857824f82462a296a8a3c4913a11a7f801e74.1547073843.git.jpoimboe@redhat.com/
 
-  This approach still had the issues of an indirect call and an
-  extra check when not used. So this was not truly zero overhead even
-  after special casing BPF.
-
-- Having a truly zero performance overhead on the system. There are
-  other tracing / attachment mechnaisms in the kernel which provide
-  similar guarrantees (using static keys and direct calls) and it
-  seems regressive for KRSI to not leverage these known patterns and
-  sacrifice performance espeically in hotpaths. This provides users
-  to use KRSI alongside other LSMs without paying extra cost for all
-  the possible hooks.
-
-> 
-> >> So, trying to avoid the indirect calls is, as you say, an optimization,
-> >> but it might be a needed one due to the other limitations.
-> > I'm convinced that avoiding the cost of retpoline in critical path is a
-> > requirement for any new infrastructure in the kernel.
-> 
-> Sorry, I haven't gotten that memo.
-> 
-> > Not only for security, but for any new infra.
-> 
-> The LSM infrastructure ain't new.
-
-But the ability to attach BPF programs to LSM hooks is new. Also, we
-have not had the whole implementation of the LSM hook be mutable
-before and this is essentially what the KRSI provides.
-
-> 
-> > Networking stack converted all such places to conditional calls.
-> > In BPF land we converted indirect calls to direct jumps and direct calls.
-> > It took two years to do so. Adding new indirect calls is not an option.
-> > I'm eagerly waiting for Peter's static_call patches to land to convert
-> > a lot more indirect calls. May be existing LSMs will take advantage
-> > of static_call patches too, but static_call is not an option for BPF.
-> > That's why we introduced BPF trampoline in the last kernel release.
-> 
-> Sorry, but I don't see how BPF is so overwhelmingly special.
-
-My analogy here is that if every tracepoint in the kernel were of the
-type:
-
-if (trace_foo_enabled) // <-- Overhead here, solved with static key
-   trace_foo(a);  // <-- retpoline overhead, solved with fexit trampolines
-
-It would be very hard to justify enabling them on a production system,
-and the same can be said for BPF and KRSI.
+to make the framework better (as a separate series) especially given
+that we are unsure how they work with BPF.
 
 - KP
 
 > 
-> >> b) Would there actually be a global benefit to using the static keys
-> >>    optimization for other LSMs?
-> > Yes. Just compiling with CONFIG_SECURITY adds "if (hlist_empty)" check
-> > for every hook.
+> If static keys are justified for KRSI (by "a") then it seems the approach
+> here should stand. If "b" is also true, then we need an additional
+> series to apply this optimization for the other LSMs (but that seems
+> distinctly separate from THIS series).
 > 
-> Err, no, it doesn't. It does an hlish_for_each_entry(), which
-> may be the equivalent on an empty list, but let's not go around
-> spreading misinformation.
-> 
-> >  Some of those hooks are in critical path. This load+cmp
-> > can be avoided with static_key optimization. I think it's worth doing.
-> 
-> I admit to being unfamiliar with the static_key implementation,
-> but if it would work for a list of hooks rather than a singe hook,
-> I'm all ears.
-> 
-> >> If static keys are justified for KRSI
-> > I really like that KRSI costs absolutely zero when it's not enabled.
-> 
-> And I dislike that there's security module specific code in security.c,
-> security.h and/or lsm_hooks.h. KRSI *is not that special*.
-> 
-> > Attaching BPF prog to one hook preserves zero cost for all other hooks.
-> > And when one hook is BPF powered it's using direct call instead of
-> > super expensive retpoline.
-> 
-> I'm not objecting to the good it does for KRSI.
-> I am *strongly* objecting to special casing KRSI.
-> 
-> > Overall this patch set looks good to me. There was a minor issue with prog
-> > accounting. I expect only that bit to be fixed in v5.
-> 
+> -- 
+> Kees Cook
