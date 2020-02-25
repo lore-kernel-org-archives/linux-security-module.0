@@ -2,158 +2,294 @@ Return-Path: <SRS0=WY9+=4N=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4958C35DF9
-	for <linux-security-module@archiver.kernel.org>; Tue, 25 Feb 2020 08:19:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0933C35DF9
+	for <linux-security-module@archiver.kernel.org>; Tue, 25 Feb 2020 09:56:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5C812176D
-	for <linux-security-module@archiver.kernel.org>; Tue, 25 Feb 2020 08:19:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 885FF21744
+	for <linux-security-module@archiver.kernel.org>; Tue, 25 Feb 2020 09:56:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729705AbgBYITP (ORCPT
+        id S1729334AbgBYJ4D (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 25 Feb 2020 03:19:15 -0500
-Received: from mail-io1-f71.google.com ([209.85.166.71]:40665 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729663AbgBYITP (ORCPT
+        Tue, 25 Feb 2020 04:56:03 -0500
+Received: from mga03.intel.com ([134.134.136.65]:23639 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725788AbgBYJ4D (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 25 Feb 2020 03:19:15 -0500
-Received: by mail-io1-f71.google.com with SMTP id m24so19694956iol.7
-        for <linux-security-module@vger.kernel.org>; Tue, 25 Feb 2020 00:19:14 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=JnIpG0/J61WLiO1q3oM1jxlRNVDltdBX+u0kfHknrM0=;
-        b=YJ1ayAwukLAgdEMiZMeb/HWol3qodp1Bg6LrlRGGHVadn5K2Zb5vDk4WyHb6da7Ybe
-         nEyY2fdfhnN9aQHVaXiyQJb4U/qhp1lp+PjNxdGFqqySGqVrn8fi1AeD6rRHoKNFCREd
-         jUKyI3iqOf4OLKXYt88Wpg1PtNQVvqOM2pqZYf0sKrTZi4JXkzm6K1hEt8VfeP7c/yKj
-         zjSxR3EPcpsxdDRbg6s0R4QlCDU4ac8Wy5g5/v9LuyPIqV76wxsybnWwW4Z00vwjKGwC
-         ZuD+uVzxspTpf2/Sg5J00ybSHYsYRvDqXlhF9kcy4fyqYfhsadWNy3bhI7OwprR97nOF
-         kO9g==
-X-Gm-Message-State: APjAAAULbyDOVq2gjKtVLSFpYkTEn8TqpFfcc4F/5iENBe00S6oXdpIA
-        axPtPJz4ZbUC8fzI1O9x0LlAAP0jB8ltdJ7tIy0CXcl+vBh5
-X-Google-Smtp-Source: APXvYqwdgK4/CB1G+y2zoTGVO2dnzPpAkdWqc/vppUT1sAz5Si0TeFiOlyF2DMYMfya2tZy2jf2ZxRpyPS0GWUZbY+QD6OcnYT1N
+        Tue, 25 Feb 2020 04:56:03 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Feb 2020 01:56:01 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,483,1574150400"; 
+   d="scan'208";a="317039975"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga001.jf.intel.com with ESMTP; 25 Feb 2020 01:56:01 -0800
+Received: from [10.125.253.45] (abudanko-mobl.ccr.corp.intel.com [10.125.253.45])
+        by linux.intel.com (Postfix) with ESMTP id 3429A58052E;
+        Tue, 25 Feb 2020 01:55:54 -0800 (PST)
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Subject: Re: [PATCH v7 00/12] Introduce CAP_PERFMON to secure system
+ performance monitoring and observability
+To:     James Morris <jmorris@namei.org>, Serge Hallyn <serge@hallyn.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "joonas.lahtinen@linux.intel.com" <joonas.lahtinen@linux.intel.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Will Deacon <will@kernel.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Helge Deller <deller@gmx.de>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     Andi Kleen <ak@linux.intel.com>,
+        Stephane Eranian <eranian@google.com>,
+        Igor Lubashev <ilubashe@akamai.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+        oprofile-list@lists.sf.net,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        linux-man@vger.kernel.org
+References: <c8de937a-0b3a-7147-f5ef-69f467e87a13@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <3ae0bed5-204e-de81-7647-5f0d8106cd67@linux.intel.com>
+Date:   Tue, 25 Feb 2020 12:55:54 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-X-Received: by 2002:a92:cb8c:: with SMTP id z12mr65405884ilo.5.1582618754093;
- Tue, 25 Feb 2020 00:19:14 -0800 (PST)
-Date:   Tue, 25 Feb 2020 00:19:14 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a719a9059f62246e@google.com>
-Subject: BUG: unable to handle kernel NULL pointer dereference in cipso_v4_sock_setattr
-From:   syzbot <syzbot+f4dfece964792d80b139@syzkaller.appspotmail.com>
-To:     cpaasch@apple.com, davem@davemloft.net, dcaratti@redhat.com,
-        fw@strlen.de, kuba@kernel.org, kuznet@ms2.inr.ac.ru,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        matthieu.baerts@tessares.net, netdev@vger.kernel.org,
-        pabeni@redhat.com, paul@paul-moore.com,
-        peter.krystad@linux.intel.com, syzkaller-bugs@googlegroups.com,
-        yoshfuji@linux-ipv6.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <c8de937a-0b3a-7147-f5ef-69f467e87a13@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello,
 
-syzbot found the following crash on:
+Hi,
 
-HEAD commit:    ca7e1fd1 Merge tag 'linux-kselftest-5.6-rc3' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=179f0931e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a61f2164c515c07f
-dashboard link: https://syzkaller.appspot.com/bug?extid=f4dfece964792d80b139
-compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14fdfdede00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17667de9e00000
+Is there anything else I could do in order to move the changes forward
+or is something still missing from this patch set?
+Could you please share you mind?
 
-The bug was bisected to:
+Thanks,
+Alexey
 
-commit 2303f994b3e187091fd08148066688b08f837efc
-Author: Peter Krystad <peter.krystad@linux.intel.com>
-Date:   Wed Jan 22 00:56:17 2020 +0000
-
-    mptcp: Associate MPTCP context with TCP socket
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14fbec81e00000
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=16fbec81e00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=12fbec81e00000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+f4dfece964792d80b139@syzkaller.appspotmail.com
-Fixes: 2303f994b3e1 ("mptcp: Associate MPTCP context with TCP socket")
-
-BUG: kernel NULL pointer dereference, address: 0000000000000000
-#PF: supervisor instruction fetch in kernel mode
-#PF: error_code(0x0010) - not-present page
-PGD 8e171067 P4D 8e171067 PUD 93fa2067 PMD 0 
-Oops: 0010 [#1] PREEMPT SMP KASAN
-CPU: 0 PID: 8984 Comm: syz-executor066 Not tainted 5.6.0-rc2-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:0x0
-Code: Bad RIP value.
-RSP: 0018:ffffc900020b7b80 EFLAGS: 00010246
-RAX: 1ffff110124ba600 RBX: 0000000000000000 RCX: ffff88809fefa600
-RDX: ffff8880994cdb18 RSI: 0000000000000000 RDI: ffff8880925d3140
-RBP: ffffc900020b7bd8 R08: ffffffff870225be R09: fffffbfff140652a
-R10: fffffbfff140652a R11: 0000000000000000 R12: ffff8880925d35d0
-R13: ffff8880925d3140 R14: dffffc0000000000 R15: 1ffff110124ba6ba
-FS:  0000000001a0b880(0000) GS:ffff8880aea00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffffffffffffd6 CR3: 00000000a6d6f000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- cipso_v4_sock_setattr+0x34b/0x470 net/ipv4/cipso_ipv4.c:1888
- netlbl_sock_setattr+0x2a7/0x310 net/netlabel/netlabel_kapi.c:989
- smack_netlabel security/smack/smack_lsm.c:2425 [inline]
- smack_inode_setsecurity+0x3da/0x4a0 security/smack/smack_lsm.c:2716
- security_inode_setsecurity+0xb2/0x140 security/security.c:1364
- __vfs_setxattr_noperm+0x16f/0x3e0 fs/xattr.c:197
- vfs_setxattr fs/xattr.c:224 [inline]
- setxattr+0x335/0x430 fs/xattr.c:451
- __do_sys_fsetxattr fs/xattr.c:506 [inline]
- __se_sys_fsetxattr+0x130/0x1b0 fs/xattr.c:495
- __x64_sys_fsetxattr+0xbf/0xd0 fs/xattr.c:495
- do_syscall_64+0xf7/0x1c0 arch/x86/entry/common.c:294
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x440199
-Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffcadc19e48 EFLAGS: 00000246 ORIG_RAX: 00000000000000be
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000440199
-RDX: 0000000020000200 RSI: 00000000200001c0 RDI: 0000000000000003
-RBP: 00000000006ca018 R08: 0000000000000003 R09: 00000000004002c8
-R10: 0000000000000009 R11: 0000000000000246 R12: 0000000000401a20
-R13: 0000000000401ab0 R14: 0000000000000000 R15: 0000000000000000
-Modules linked in:
-CR2: 0000000000000000
----[ end trace 9bbc7bb8e1061a42 ]---
-RIP: 0010:0x0
-Code: Bad RIP value.
-RSP: 0018:ffffc900020b7b80 EFLAGS: 00010246
-RAX: 1ffff110124ba600 RBX: 0000000000000000 RCX: ffff88809fefa600
-RDX: ffff8880994cdb18 RSI: 0000000000000000 RDI: ffff8880925d3140
-RBP: ffffc900020b7bd8 R08: ffffffff870225be R09: fffffbfff140652a
-R10: fffffbfff140652a R11: 0000000000000000 R12: ffff8880925d35d0
-R13: ffff8880925d3140 R14: dffffc0000000000 R15: 1ffff110124ba6ba
-FS:  0000000001a0b880(0000) GS:ffff8880aea00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffffffffffffd6 CR3: 00000000a6d6f000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+On 17.02.2020 11:02, Alexey Budankov wrote:
+> 
+> Currently access to perf_events, i915_perf and other performance
+> monitoring and observability subsystems of the kernel is open only for
+> a privileged process [1] with CAP_SYS_ADMIN capability enabled in the
+> process effective set [2].
+> 
+> This patch set introduces CAP_PERFMON capability designed to secure
+> system performance monitoring and observability operations so that
+> CAP_PERFMON would assist CAP_SYS_ADMIN capability in its governing role
+> for performance monitoring and observability subsystems of the kernel.
+> 
+> CAP_PERFMON intends to harden system security and integrity during
+> performance monitoring and observability operations by decreasing attack
+> surface that is available to a CAP_SYS_ADMIN privileged process [2].
+> Providing the access to performance monitoring and observability
+> operations under CAP_PERFMON capability singly, without the rest of
+> CAP_SYS_ADMIN credentials, excludes chances to misuse the credentials
+> and makes the operation more secure. Thus, CAP_PERFMON implements the
+> principal of least privilege for performance monitoring and
+> observability operations (POSIX IEEE 1003.1e: 2.2.2.39 principle of
+> least privilege: A security design principle that states that a process
+> or program be granted only those privileges (e.g., capabilities)
+> necessary to accomplish its legitimate function, and only for the time
+> that such privileges are actually required)
+> 
+> CAP_PERFMON intends to meet the demand to secure system performance
+> monitoring and observability operations for adoption in security
+> sensitive, restricted, multiuser production environments (e.g. HPC
+> clusters, cloud and virtual compute environments), where root or
+> CAP_SYS_ADMIN credentials are not available to mass users of a system,
+> and securely unblock accessibility of system performance monitoring and
+> observability operations beyond root and CAP_SYS_ADMIN use cases.
+> 
+> CAP_PERFMON intends to take over CAP_SYS_ADMIN credentials related to
+> system performance monitoring and observability operations and balance
+> amount of CAP_SYS_ADMIN credentials following the recommendations in
+> the capabilities man page [2] for CAP_SYS_ADMIN: "Note: this capability
+> is overloaded; see Notes to kernel developers, below." For backward
+> compatibility reasons access to system performance monitoring and
+> observability subsystems of the kernel remains open for CAP_SYS_ADMIN
+> privileged processes but CAP_SYS_ADMIN capability usage for secure
+> system performance monitoring and observability operations is
+> discouraged with respect to the designed CAP_PERFMON capability.
+> 
+> Possible alternative solution to this system security hardening,
+> capabilities balancing task of making performance monitoring and
+> observability operations more secure and accessible could be to use
+> the existing CAP_SYS_PTRACE capability to govern system performance
+> monitoring and observability subsystems. However CAP_SYS_PTRACE
+> capability still provides users with more credentials than are
+> required for secure performance monitoring and observability
+> operations and this excess is avoided by the designed CAP_PERFMON.
+> 
+> Although software running under CAP_PERFMON can not ensure avoidance of
+> related hardware issues, the software can still mitigate those issues
+> following the official hardware issues mitigation procedure [3]. The
+> bugs in the software itself can be fixed following the standard kernel
+> development process [4] to maintain and harden security of system
+> performance monitoring and observability operations. Finally, the patch
+> set is shaped in the way that simplifies backtracking procedure of
+> possible induced issues [5] as much as possible.
+> 
+> The patch set is for tip perf/core repository:
+> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip perf/core
+> sha1: fdb64822443ec9fb8c3a74b598a74790ae8d2e22
+> 
+> ---
+> Changes in v7:
+> - updated and extended kernel.rst and perf-security.rst documentation 
+>   files with the information about CAP_PERFMON capability and its use cases
+> - documented the case of double audit logging of CAP_PERFMON and CAP_SYS_ADMIN
+>   capabilities on a SELinux enabled system
+> Changes in v6:
+> - avoided noaudit checks in perfmon_capable() to explicitly advertise
+>   CAP_PERFMON usage thru audit logs to secure system performance
+>   monitoring and observability
+> Changes in v5:
+> - renamed CAP_SYS_PERFMON to CAP_PERFMON
+> - extended perfmon_capable() with noaudit checks
+> Changes in v4:
+> - converted perfmon_capable() into an inline function
+> - made perf_events kprobes, uprobes, hw breakpoints and namespaces data
+>   available to CAP_SYS_PERFMON privileged processes
+> - applied perfmon_capable() to drivers/perf and drivers/oprofile
+> - extended __cmd_ftrace() with support of CAP_SYS_PERFMON
+> Changes in v3:
+> - implemented perfmon_capable() macros aggregating required capabilities
+>   checks
+> Changes in v2:
+> - made perf_events trace points available to CAP_SYS_PERFMON privileged
+>   processes
+> - made perf_event_paranoid_check() treat CAP_SYS_PERFMON equally to
+>   CAP_SYS_ADMIN
+> - applied CAP_SYS_PERFMON to i915_perf, bpf_trace, powerpc and parisc
+>   system performance monitoring and observability related subsystems
+> 
+> ---
+> Alexey Budankov (12):
+>   capabilities: introduce CAP_PERFMON to kernel and user space
+>   perf/core: open access to the core for CAP_PERFMON privileged process
+>   perf/core: open access to probes for CAP_PERFMON privileged process
+>   perf tool: extend Perf tool with CAP_PERFMON capability support
+>   drm/i915/perf: open access for CAP_PERFMON privileged process
+>   trace/bpf_trace: open access for CAP_PERFMON privileged process
+>   powerpc/perf: open access for CAP_PERFMON privileged process
+>   parisc/perf: open access for CAP_PERFMON privileged process
+>   drivers/perf: open access for CAP_PERFMON privileged process
+>   drivers/oprofile: open access for CAP_PERFMON privileged process
+>   doc/admin-guide: update perf-security.rst with CAP_PERFMON information
+>   doc/admin-guide: update kernel.rst with CAP_PERFMON information
+> 
+>  Documentation/admin-guide/perf-security.rst | 65 +++++++++++++--------
+>  Documentation/admin-guide/sysctl/kernel.rst | 16 +++--
+>  arch/parisc/kernel/perf.c                   |  2 +-
+>  arch/powerpc/perf/imc-pmu.c                 |  4 +-
+>  drivers/gpu/drm/i915/i915_perf.c            | 13 ++---
+>  drivers/oprofile/event_buffer.c             |  2 +-
+>  drivers/perf/arm_spe_pmu.c                  |  4 +-
+>  include/linux/capability.h                  |  4 ++
+>  include/linux/perf_event.h                  |  6 +-
+>  include/uapi/linux/capability.h             |  8 ++-
+>  kernel/events/core.c                        |  6 +-
+>  kernel/trace/bpf_trace.c                    |  2 +-
+>  security/selinux/include/classmap.h         |  4 +-
+>  tools/perf/builtin-ftrace.c                 |  5 +-
+>  tools/perf/design.txt                       |  3 +-
+>  tools/perf/util/cap.h                       |  4 ++
+>  tools/perf/util/evsel.c                     | 10 ++--
+>  tools/perf/util/util.c                      |  1 +
+>  18 files changed, 98 insertions(+), 61 deletions(-)
+> 
+> ---
+> Validation (Intel Skylake, 8 cores, Fedora 29, 5.5.0-rc3+, x86_64):
+> 
+> libcap library [6], [7], [8] and Perf tool can be used to apply
+> CAP_PERFMON capability for secure system performance monitoring and
+> observability beyond the scope permitted by the system wide
+> perf_event_paranoid kernel setting [9] and below are the steps for
+> evaluation:
+> 
+>   - patch, build and boot the kernel
+>   - patch, build Perf tool e.g. to /home/user/perf
+>   ...
+>   # git clone git://git.kernel.org/pub/scm/libs/libcap/libcap.git libcap
+>   # pushd libcap
+>   # patch libcap/include/uapi/linux/capabilities.h with [PATCH 1]
+>   # make
+>   # pushd progs
+>   # ./setcap "cap_perfmon,cap_sys_ptrace,cap_syslog=ep" /home/user/perf
+>   # ./setcap -v "cap_perfmon,cap_sys_ptrace,cap_syslog=ep" /home/user/perf
+>   /home/user/perf: OK
+>   # ./getcap /home/user/perf
+>   /home/user/perf = cap_sys_ptrace,cap_syslog,cap_perfmon+ep
+>   # echo 2 > /proc/sys/kernel/perf_event_paranoid
+>   # cat /proc/sys/kernel/perf_event_paranoid 
+>   2
+>   ...
+>   $ /home/user/perf top
+>     ... works as expected ...
+>   $ cat /proc/`pidof perf`/status
+>   Name:	perf
+>   Umask:	0002
+>   State:	S (sleeping)
+>   Tgid:	2958
+>   Ngid:	0
+>   Pid:	2958
+>   PPid:	9847
+>   TracerPid:	0
+>   Uid:	500	500	500	500
+>   Gid:	500	500	500	500
+>   FDSize:	256
+>   ...
+>   CapInh:	0000000000000000
+>   CapPrm:	0000004400080000
+>   CapEff:	0000004400080000 => 01000100 00000000 00001000 00000000 00000000
+>                                      cap_perfmon,cap_sys_ptrace,cap_syslog
+>   CapBnd:	0000007fffffffff
+>   CapAmb:	0000000000000000
+>   NoNewPrivs:	0
+>   Seccomp:	0
+>   Speculation_Store_Bypass:	thread vulnerable
+>   Cpus_allowed:	ff
+>   Cpus_allowed_list:	0-7
+>   ...
+> 
+> Usage of cap_perfmon effectively avoids unused credentials excess:
+> 
+> - with cap_sys_admin:
+>   CapEff:	0000007fffffffff => 01111111 11111111 11111111 11111111 11111111
+> 
+> - with cap_perfmon:
+>   CapEff:	0000004400080000 => 01000100 00000000 00001000 00000000 00000000
+>                                     38   34               19
+>                                perfmon   syslog           sys_ptrace
+> 
+> ---
+> [1] https://www.kernel.org/doc/html/latest/admin-guide/perf-security.html
+> [2] http://man7.org/linux/man-pages/man7/capabilities.7.html
+> [3] https://www.kernel.org/doc/html/latest/process/embargoed-hardware-issues.html
+> [4] https://www.kernel.org/doc/html/latest/admin-guide/security-bugs.html
+> [5] https://www.kernel.org/doc/html/latest/process/management-style.html#decisions
+> [6] http://man7.org/linux/man-pages/man8/setcap.8.html
+> [7] https://git.kernel.org/pub/scm/libs/libcap/libcap.git
+> [8] https://sites.google.com/site/fullycapable/, posix_1003.1e-990310.pdf
+> [9] http://man7.org/linux/man-pages/man2/perf_event_open.2.html
+> 
