@@ -2,92 +2,127 @@ Return-Path: <SRS0=WY9+=4N=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DA24C35E01
-	for <linux-security-module@archiver.kernel.org>; Tue, 25 Feb 2020 15:31:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BEA7C35E04
+	for <linux-security-module@archiver.kernel.org>; Tue, 25 Feb 2020 17:59:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6407521744
-	for <linux-security-module@archiver.kernel.org>; Tue, 25 Feb 2020 15:31:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SKyrGUWa"
+	by mail.kernel.org (Postfix) with ESMTP id 57E7020CC7
+	for <linux-security-module@archiver.kernel.org>; Tue, 25 Feb 2020 17:59:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731104AbgBYPbQ (ORCPT
+        id S1730829AbgBYR7z (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 25 Feb 2020 10:31:16 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:37159 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731120AbgBYPbQ (ORCPT
+        Tue, 25 Feb 2020 12:59:55 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2464 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727983AbgBYR7z (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 25 Feb 2020 10:31:16 -0500
-Received: by mail-pf1-f195.google.com with SMTP id p14so7356121pfn.4
-        for <linux-security-module@vger.kernel.org>; Tue, 25 Feb 2020 07:31:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=VzT+Bi9aRcIzHGw33ls7K4ic9gdRd2ue48AE8Ckn9dY=;
-        b=SKyrGUWa4UMK4lem3L5ao7gm5EwFg8zzQVwz4lVhuLmNLxggYbFhFp+9qvKw7Ocr4u
-         eefBfQiK6VRs3kwbcGZxGik+foeRG2TkAWl28VLy8mOVivZWNOp+nmLcypOw2W3t7wS1
-         Pc9+lfTQiqYNKJKNMfkCGUCUckJAoj+10idh8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=VzT+Bi9aRcIzHGw33ls7K4ic9gdRd2ue48AE8Ckn9dY=;
-        b=GcWkoCu5WGzVgHkz/Wzbaodf7TZDarG5Q2iyp223uhkSfVvprLwWn4wy6/JBLdaghx
-         MscRsJ/xrRR/7lh4WmKBhHnFO3OuKfHjQA3eB3iGk/CKUr4A/jzGlSBTzhn0J7JQLxNS
-         DVBISjL1fezRwHqKkf8HDrG6W/3oJ2r/avK3T1bdEWHJ92Q+dlpYRiKY9HKjCNx3e6Yy
-         lDYNgRoxvTG/3cr7kOrokB3Rz51MN4pS3am1mrKfm0TjsTTT4fvGDd/BAyEmnhfWaj4m
-         p5neWWPVSCs8HVIgWA0EZ5HVIxA7zgKBFQKjcjiSLW6LsP/TxvZ3E4cPRGUw+9dNcLCd
-         JIww==
-X-Gm-Message-State: APjAAAUUHseePNVGweDf/1dyx/qf5oRhuzDYShXjVhhKYTntdJHF2rGh
-        gGofB252G9h4R3aXdCgwSGyGakjeIuE=
-X-Google-Smtp-Source: APXvYqz96aCOZJnivHeAhI3DTYBvj8Uq0Ew8+dU6teoDezYVy2LVzhSaLWTs/qKzU1bEWOQ1dEE9Dg==
-X-Received: by 2002:a63:8c18:: with SMTP id m24mr60402523pgd.70.1582644675177;
-        Tue, 25 Feb 2020 07:31:15 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id r62sm17947322pfc.89.2020.02.25.07.31.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2020 07:31:14 -0800 (PST)
-Date:   Tue, 25 Feb 2020 07:31:13 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        KP Singh <kpsingh@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        James Morris <jmorris@namei.org>, bpf@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH bpf-next v4 3/8] bpf: lsm: provide attachment points for
- BPF LSM programs
-Message-ID: <202002250730.62F9BD642A@keescook>
-References: <20200220175250.10795-1-kpsingh@chromium.org>
- <20200220175250.10795-4-kpsingh@chromium.org>
- <0ef26943-9619-3736-4452-fec536a8d169@schaufler-ca.com>
- <202002211946.A23A987@keescook>
- <20200223220833.wdhonzvven7payaw@ast-mbp>
- <c5c67ece-e5c1-9e8f-3a2b-60d8d002c894@schaufler-ca.com>
- <20200224171305.GA21886@chromium.org>
- <00c216e1-bcfd-b7b1-5444-2a2dfa69190b@schaufler-ca.com>
- <202002241136.C4F9F7DFF@keescook>
- <20200225054125.dttrc3fvllzu4mx5@ast-mbp>
+        Tue, 25 Feb 2020 12:59:55 -0500
+Received: from lhreml702-cah.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id 8C2CEBE719B78ED283CF;
+        Tue, 25 Feb 2020 17:59:52 +0000 (GMT)
+Received: from lhreml724-chm.china.huawei.com (10.201.108.75) by
+ lhreml702-cah.china.huawei.com (10.201.108.43) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Tue, 25 Feb 2020 17:59:47 +0000
+Received: from [127.0.0.1] (10.202.226.45) by lhreml724-chm.china.huawei.com
+ (10.201.108.75) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5; Tue, 25 Feb
+ 2020 17:59:47 +0000
+From:   John Garry <john.garry@huawei.com>
+To:     <casey@schaufler-ca.com>, "jmorris@namei.org" <jmorris@namei.org>,
+        "serge@hallyn.com" <serge@hallyn.com>,
+        <linux-security-module@vger.kernel.org>
+Subject: suspicious RCU usage from smack code
+CC:     Anders Roxell <anders.roxell@linaro.org>
+Message-ID: <9d97e54f-a7d3-30fa-de4c-ae8d70dee087@huawei.com>
+Date:   Tue, 25 Feb 2020 17:59:46 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200225054125.dttrc3fvllzu4mx5@ast-mbp>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.45]
+X-ClientProxiedBy: lhreml708-chm.china.huawei.com (10.201.108.57) To
+ lhreml724-chm.china.huawei.com (10.201.108.75)
+X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Feb 24, 2020 at 09:41:27PM -0800, Alexei Starovoitov wrote:
-> I'm proposing to rename BPF_PROG_TYPE_LSM into BPF_PROG_TYPE_OVERRIDE_RETURN.
+Hi guys,
 
-Isn't the type used to decide which validator to use?
+JFYI, When I enable CONFIG_PROVE_RCU=y, I get these:
 
--- 
-Kees Cook
+[    0.369697] WARNING: suspicious RCU usage
+[    0.374179] 5.6.0-rc3-00002-g619882231229-dirty #1753 Not tainted
+[    0.380974] -----------------------------
+[    0.385455] security/smack/smack_lsm.c:354 RCU-list traversed in 
+non-reader section!!
+[    0.394183]
+[    0.394183] other info that might help us debug this:
+[    0.394183]
+[    0.403107]
+[    0.403107] rcu_scheduler_active = 1, debug_locks = 1
+[    0.410389] no locks held by kthreadd/2.
+[    0.414770]
+[    0.414770] stack backtrace:
+[    0.419636] CPU: 0 PID: 2 Comm: kthreadd Not tainted 
+5.6.0-rc3-00002-g619882231229-dirty #1753
+[    0.429204] Call trace:
+[    0.431924]  dump_backtrace+0x0/0x298
+[    0.435990]  show_stack+0x14/0x20
+[    0.439674]  dump_stack+0x118/0x190
+[    0.443548]  lockdep_rcu_suspicious+0xe0/0x120
+[    0.448487]  smack_cred_prepare+0x2f8/0x310
+[    0.453134]  security_prepare_creds+0x64/0xe0
+[    0.457979]  prepare_creds+0x25c/0x368
+[    0.462141]  copy_creds+0x40/0x620
+[    0.465918]  copy_process+0x62c/0x25e0
+[    0.470084]  _do_fork+0xc0/0x998
+[    0.473667]  kernel_thread+0xa0/0xc8
+[    0.477640]  kthreadd+0x2b0/0x408
+[    0.481325]  ret_from_fork+0x10/0x18
+
+[   18.804382] =============================
+[   18.808872] WARNING: suspicious RCU usage
+[   18.813348] 5.6.0-rc3-00002-g619882231229-dirty #1753 Not tainted
+[   18.820145] -----------------------------
+[   18.824621] security/smack/smack_access.c:87 RCU-list traversed in 
+non-reader section!!
+[   18.833544]
+[   18.833544] other info that might help us debug this:
+[   18.833544]
+[   18.842465]
+[   18.842465] rcu_scheduler_active = 1, debug_locks = 1
+[   18.849741] no locks held by kdevtmpfs/781.
+[   18.854410]
+[   18.854410] stack backtrace:
+[   18.859277] CPU: 1 PID: 781 Comm: kdevtmpfs Not tainted 
+5.6.0-rc3-00002-g619882231229-dirty #1753
+[   18.869138] Call trace:
+[   18.871860]  dump_backtrace+0x0/0x298
+[   18.875929]  show_stack+0x14/0x20
+[   18.879612]  dump_stack+0x118/0x190
+[   18.883489]  lockdep_rcu_suspicious+0xe0/0x120
+[   18.888428]  smk_access_entry+0x110/0x128
+[   18.892885]  smk_tskacc+0x70/0xe8
+[   18.896568]  smk_curacc+0x64/0x78
+[   18.900249]  smack_inode_permission+0x110/0x1c8
+[   18.905284]  security_inode_permission+0x50/0x98
+[   18.910412]  inode_permission+0x70/0x1d0
+[   18.914768]  link_path_walk.part.38+0x4a8/0x778
+[   18.919802]  path_lookupat+0xd0/0x1a8
+[   18.923871]  filename_lookup+0xf0/0x1f8
+[   18.928136]  user_path_at_empty+0x48/0x58
+[   18.932590]  ksys_chdir+0x8c/0x138
+[   18.936366]  devtmpfsd+0x148/0x448
+[   18.940146]  kthread+0x1c8/0x1d0
+[   18.943732]  ret_from_fork+0x10/0x18
+
+I haven't had a chance to check whether they are bogus or not.
+
+Thanks,
+John
