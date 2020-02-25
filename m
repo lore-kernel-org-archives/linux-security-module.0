@@ -2,66 +2,66 @@ Return-Path: <SRS0=WY9+=4N=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEAB2C35E08
-	for <linux-security-module@archiver.kernel.org>; Tue, 25 Feb 2020 15:09:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08582C35E04
+	for <linux-security-module@archiver.kernel.org>; Tue, 25 Feb 2020 15:11:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD28C2176D
-	for <linux-security-module@archiver.kernel.org>; Tue, 25 Feb 2020 15:09:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CAD3F21744
+	for <linux-security-module@archiver.kernel.org>; Tue, 25 Feb 2020 15:11:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EuHICkRJ"
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="sARjaeSv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730922AbgBYPJO (ORCPT
+        id S1729390AbgBYPLQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 25 Feb 2020 10:09:14 -0500
-Received: from mail-qv1-f68.google.com ([209.85.219.68]:32918 "EHLO
-        mail-qv1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730872AbgBYPJO (ORCPT
+        Tue, 25 Feb 2020 10:11:16 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:39321 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729894AbgBYPLQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 25 Feb 2020 10:09:14 -0500
-Received: by mail-qv1-f68.google.com with SMTP id ek2so5849728qvb.0
-        for <linux-security-module@vger.kernel.org>; Tue, 25 Feb 2020 07:09:13 -0800 (PST)
+        Tue, 25 Feb 2020 10:11:16 -0500
+Received: by mail-ed1-f67.google.com with SMTP id m13so16606700edb.6
+        for <linux-security-module@vger.kernel.org>; Tue, 25 Feb 2020 07:11:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=hfJPS0aSSmWSxrS1z6hdTyQpH7CN51v0RStp/ll4t7o=;
-        b=EuHICkRJTvkHvHmdiItNxQmplfi8eYk+gJ1lsh3yb6qmiy50HtAcW4+6j+Mq7L4S85
-         1Mx2+Xg9Bd/Fg9ATFMej1fO+dpJMo9f24wCo4wzJ0r+xUCzzrioU6ebC2QnfYRvz+h7N
-         0iV6DkwnkxWArUeqWGI26iIDWnkxJ7VYi5YoAnqZl+y1SbyY7eK8rTtO0vGzupfISbV6
-         LcVjw0KL+tiFPRVvoKt9i+kgWphbLlJ+vSNr49lvhFRDJeF5yV4PON4VEypMp1KOWQ8u
-         2aovX5x4le7186emQ53Svd69x3ngLPPEVkyUAzhtjafAfodoZ6pZjS62OEmAa5Y0dki1
-         7NMA==
+        bh=QyIKHoe0zdPnfK4XeY9IM8vuq1WtcdXTsRQQD6Fa5W0=;
+        b=sARjaeSvuf0rkn41cGwPSjyr3y9TkDv0UcNoecaL0jjTAK1BEwyTxAoaxx3/MV9uZV
+         eJTtf7XyC5CsctCxAB4toYZiuOcnyLtX/XZYCHGSbDpFAVQ/vk6EUrLfh9dH7hMD8MNk
+         iv5ZONeQ1r0p3yb1x9DgXwrB+Ui+89r2hBJP6NlNk5ewXT8j+Pzuqb//dqetMKIt2puE
+         IXL/IUgFcF3pVcFYHOZoEMQI4a9fgSF3WGy15MSXWzEOy8Lz7aD0gMIDg8BMoIzu42H0
+         t+EflPz8zhc4OJZV8u3WLDKqvxYx3ztj8M9eS6v+Dq0UYX9dcB27gLEK4SqsQdP9iAUq
+         UmUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=hfJPS0aSSmWSxrS1z6hdTyQpH7CN51v0RStp/ll4t7o=;
-        b=aaGF7nD5xfG6Uvy00Xc4ONDqWPHHriJ659rApM6c+8/OX6ak8xGNCYmo6/yHPGTQHd
-         MwdUOr9zqPNNC9nqhkn5N6a+ymtAnxp70PPpbJKWO8YJEbR3w2DpzQSs9YI+O2cduqO2
-         HQoUeCo/LlkIrYY3e21/6zDmpTACYqgr0E/cLt7DO2+G3frQtla/pPLpo9HVuZPMjMm+
-         HWMVM3UgWQ7KvhwVbAnK53c2sPInJmGK5QkU1/xBIRxMA3sQ8qFknO+tyeb1Einibv3z
-         h4kBZK3gdnAWCtVfSE12JflqzewStK6zM/GRumDqTYT9vBVJgvXMiOcOY7jfvOqhZQnr
-         nFhg==
-X-Gm-Message-State: APjAAAXSYPG7wDGQF2uP/3LoOJUk3RL5TNNsNgiIV3YfeMOEye0DPlYA
-        MfmeZ48NfvAVvLZQPHSJzQiQewYp82RhFhBshKOpgg==
-X-Google-Smtp-Source: APXvYqyM4ugTOOU3/Yh4aSow5D9jJTB19rycM3Nqj6TBmlDHljnuFLqRTOLoo/f+9kfOyY6wAHJ5n4n8pCpjxGIRRyQ=
-X-Received: by 2002:ad4:4e50:: with SMTP id eb16mr50742796qvb.34.1582643352427;
- Tue, 25 Feb 2020 07:09:12 -0800 (PST)
+        bh=QyIKHoe0zdPnfK4XeY9IM8vuq1WtcdXTsRQQD6Fa5W0=;
+        b=h7YsFotGbOS/MXGP7/11xhK/lMMlIABc5XApCk7h0Lmk88lOgHRnRQMfcXFeYUtRb6
+         AMr3smqAIc/BDcjZ5BZx1vHxqUnY3O+zIlxzedB7zIOhKAoZwNdoEoR3mx9CbPTkUKfx
+         8EJpVHBZOGL2zt2M0jcpwWH74IAqnJEBI5lkGBOIau+6fM1/rlsaOGt659vwEEpqi/cj
+         oz8AzilRKabMz8xvBb7M7ocjVFRLyTBe+A/ji/gz62SVlB9LfvKnNtaQP4SRLMFL+zPc
+         r3Qc5d5A0dmlY5kle0hhflMs/cfA3YzlhZvIoMdj6anQ3S/6O+Htfsce8KuJY/2andue
+         IvVQ==
+X-Gm-Message-State: APjAAAVRaqapioywr4+gMaYZtl/cu8+Q/za7vHpp/jIVOSUx6Nq24P+J
+        dmq1pUGMK8+asStNWYxcCSbLZW5VTGBkkFm2QJYd
+X-Google-Smtp-Source: APXvYqwm2XhqLuPrGPXGCiNbgNYmxtGfKr2SHv0Etrwk/3t6dEnloO/+uZkuyuNJgswg+lx52LF5eQ6REVCl6aKcPHk=
+X-Received: by 2002:a05:6402:309b:: with SMTP id de27mr35926843edb.269.1582643473519;
+ Tue, 25 Feb 2020 07:11:13 -0800 (PST)
 MIME-Version: 1.0
 References: <000000000000a719a9059f62246e@google.com> <CAHC9VhTh6s1m7YBZp-3XO3q2EcjtMKUTcXwRzDTj_LSJd+cHTA@mail.gmail.com>
  <CACT4Y+Y3QN9=c5JvJkecCtdQGTxHYRXMhS4f1itwU5JEZmcYtA@mail.gmail.com> <db643ed6efb6fa04fe5753af68d13f1b2ffcf821.camel@redhat.com>
 In-Reply-To: <db643ed6efb6fa04fe5753af68d13f1b2ffcf821.camel@redhat.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Tue, 25 Feb 2020 16:09:01 +0100
-Message-ID: <CACT4Y+a6Lp=YGYrxDubwrXiMKc5R5WhehR+Q5E1jEu452d0tfA@mail.gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 25 Feb 2020 10:11:02 -0500
+Message-ID: <CAHC9VhR=fKXhL5vgRD1tqMa74P0FBu2wmkjZj8c9BmiYJyaTog@mail.gmail.com>
 Subject: Re: BUG: unable to handle kernel NULL pointer dereference in cipso_v4_sock_setattr
 To:     Paolo Abeni <pabeni@redhat.com>
-Cc:     Paul Moore <paul@paul-moore.com>,
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
         syzbot <syzbot+f4dfece964792d80b139@syzkaller.appspotmail.com>,
         cpaasch@apple.com, David Miller <davem@davemloft.net>,
         Davide Caratti <dcaratti@redhat.com>,
@@ -78,8 +78,7 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Feb 25, 2020 at 3:46 PM Paolo Abeni <pabeni@redhat.com> wrote:
->
+On Tue, Feb 25, 2020 at 9:46 AM Paolo Abeni <pabeni@redhat.com> wrote:
 > On Tue, 2020-02-25 at 15:27 +0100, Dmitry Vyukov wrote:
 > > On Tue, Feb 25, 2020 at 3:20 PM Paul Moore <paul@paul-moore.com> wrote:
 > > > On Tue, Feb 25, 2020 at 3:19 AM syzbot
@@ -160,10 +159,13 @@ On Tue, Feb 25, 2020 at 3:46 PM Paolo Abeni <pabeni@redhat.com> wrote:
 >
 > I sent the patch to the syzbot ML only, for testing before posting on
 > netdev, so Paul likely have not seen it yet, sorry.
->
-> @Dmitry: I did not get any reply yet from syzbot, are there any
-> problems or is this the usual time-frame?
 
-The testing is queued after bisection of this guy:
-https://syzkaller.appspot.com/bug?id=c0a75a31c5fa84e6e5d3131fd98a5b56e2141b9a
-which has been running since 6pm yesterday...
+No problem, as long as someone is working on a fix I'm happy.  Would
+you mind CC'ing me on the patch once you post it?  I'm curious as to
+what the problem and solution turns out to be.
+
+Thanks.
+
+-- 
+paul moore
+www.paul-moore.com
