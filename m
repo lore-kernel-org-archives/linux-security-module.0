@@ -2,420 +2,170 @@ Return-Path: <SRS0=gx/C=4P=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0576C35677
-	for <linux-security-module@archiver.kernel.org>; Thu, 27 Feb 2020 17:01:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5772C11D3D
+	for <linux-security-module@archiver.kernel.org>; Thu, 27 Feb 2020 18:42:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C888A246A1
-	for <linux-security-module@archiver.kernel.org>; Thu, 27 Feb 2020 17:01:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A746724695
+	for <linux-security-module@archiver.kernel.org>; Thu, 27 Feb 2020 18:42:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729223AbgB0RBO (ORCPT
+        id S1729172AbgB0SmW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 27 Feb 2020 12:01:14 -0500
-Received: from smtp-190c.mail.infomaniak.ch ([185.125.25.12]:56853 "EHLO
-        smtp-190c.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729298AbgB0RBL (ORCPT
+        Thu, 27 Feb 2020 13:42:22 -0500
+Received: from wind.enjellic.com ([76.10.64.91]:58478 "EHLO wind.enjellic.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726805AbgB0SmW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 27 Feb 2020 12:01:11 -0500
-X-Greylist: delayed 902 seconds by postgrey-1.27 at vger.kernel.org; Thu, 27 Feb 2020 12:01:08 EST
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id DDFAA1003A4D3;
-        Thu, 27 Feb 2020 18:01:05 +0100 (CET)
-Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
-        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 48SzT85slszlhCmN;
-        Thu, 27 Feb 2020 18:01:00 +0100 (CET)
-Subject: Re: [RFC PATCH v14 01/10] landlock: Add object and rule management
-To:     Hillf Danton <hdanton@sina.com>
-Cc:     linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        James Morris <jmorris@namei.org>, Jann Horn <jann@thejh.net>,
-        Jonathan Corbet <corbet@lwn.net>,
+        Thu, 27 Feb 2020 13:42:22 -0500
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 01RIf1sj026858;
+        Thu, 27 Feb 2020 12:41:01 -0600
+Received: (from greg@localhost)
+        by wind.enjellic.com (8.15.2/8.15.2/Submit) id 01RIewJG026857;
+        Thu, 27 Feb 2020 12:40:58 -0600
+Date:   Thu, 27 Feb 2020 12:40:58 -0600
+From:   "Dr. Greg" <greg@enjellic.com>
+To:     KP Singh <kpsingh@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        James Morris <jmorris@namei.org>,
         Kees Cook <keescook@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>,
+        Thomas Garnier <thgarnie@chromium.org>,
+        Michael Halcrow <mhalcrow@google.com>,
+        Paul Turner <pjt@google.com>,
+        Brendan Gregg <brendan.d.gregg@gmail.com>,
+        Jann Horn <jannh@google.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Christian Brauner <christian@brauner.io>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
         "Serge E. Hallyn" <serge@hallyn.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-security-module@vger.kernel.org, x86@kernel.org
-References: <20200224160215.4136-1-mic@digikod.net>
- <20200227042002.3032-1-hdanton@sina.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Message-ID: <216c8e89-2906-4ad5-f8a1-ab3ec50614fe@digikod.net>
-Date:   Thu, 27 Feb 2020 18:01:00 +0100
-User-Agent: 
-MIME-Version: 1.0
-In-Reply-To: <20200227042002.3032-1-hdanton@sina.com>
-Content-Type: text/plain; charset=iso-8859-15
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
-X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
-X-Antivirus-Code: 0x100000
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Stanislav Fomichev <sdf@google.com>,
+        Quentin Monnet <quentin.monnet@netronome.com>,
+        Andrey Ignatov <rdna@fb.com>, Joe Stringer <joe@wand.net.nz>
+Subject: Re: [PATCH bpf-next v4 0/8] MAC and Audit policy using eBPF (KRSI)
+Message-ID: <20200227184058.GA25392@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <20200220175250.10795-1-kpsingh@chromium.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200220175250.10795-1-kpsingh@chromium.org>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Thu, 27 Feb 2020 12:41:01 -0600 (CST)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Thu, Feb 20, 2020 at 06:52:42PM +0100, KP Singh wrote:
 
+Good morning, I hope the week is going well for everyone.
 
-On 27/02/2020 05:20, Hillf Danton wrote:
+Apologies for being somewhat late with these comments, I've been
+recovering from travel.
+
+> # Motivation
 > 
-> On Mon, 24 Feb 2020 17:02:06 +0100 Mickaël Salaün 
->> A Landlock object enables to identify a kernel object (e.g. an inode).
->> A Landlock rule is a set of access rights allowed on an object.  Rules
->> are grouped in rulesets that may be tied to a set of processes (i.e.
->> subjects) to enforce a scoped access-control (i.e. a domain).
->>
->> Because Landlock's goal is to empower any process (especially
->> unprivileged ones) to sandbox themselves, we can't rely on a system-wide
->> object identification such as file extended attributes.  Indeed, we need
->> innocuous, composable and modular access-controls.
->>
->> The main challenge with this constraints is to identify kernel objects
->> while this identification is useful (i.e. when a security policy makes
->> use of this object).  But this identification data should be freed once
->> no policy is using it.  This ephemeral tagging should not and may not be
->> written in the filesystem.  We then need to manage the lifetime of a
->> rule according to the lifetime of its object.  To avoid a global lock,
->> this implementation make use of RCU and counters to safely reference
->> objects.
->>
->> A following commit uses this generic object management for inodes.
->>
->> Signed-off-by: Mickaël Salaün <mic@digikod.net>
->> Cc: Andy Lutomirski <luto@amacapital.net>
->> Cc: James Morris <jmorris@namei.org>
->> Cc: Kees Cook <keescook@chromium.org>
->> Cc: Serge E. Hallyn <serge@hallyn.com>
->> ---
->>
->> Changes since v13:
->> * New dedicated implementation, removing the need for eBPF.
->>
->> Previous version:
->> https://lore.kernel.org/lkml/20190721213116.23476-6-mic@digikod.net/
->> ---
->>  MAINTAINERS                |  10 ++
->>  security/Kconfig           |   1 +
->>  security/Makefile          |   2 +
->>  security/landlock/Kconfig  |  15 ++
->>  security/landlock/Makefile |   3 +
->>  security/landlock/object.c | 339 +++++++++++++++++++++++++++++++++++++
->>  security/landlock/object.h | 134 +++++++++++++++
->>  7 files changed, 504 insertions(+)
->>  create mode 100644 security/landlock/Kconfig
->>  create mode 100644 security/landlock/Makefile
->>  create mode 100644 security/landlock/object.c
->>  create mode 100644 security/landlock/object.h
->>
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index fcd79fc38928..206f85768cd9 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -9360,6 +9360,16 @@ F:	net/core/skmsg.c
->>  F:	net/core/sock_map.c
->>  F:	net/ipv4/tcp_bpf.c
->>  
->> +LANDLOCK SECURITY MODULE
->> +M:	Mickaël Salaün <mic@digikod.net>
->> +L:	linux-security-module@vger.kernel.org
->> +W:	https://landlock.io
->> +T:	git https://github.com/landlock-lsm/linux.git
->> +S:	Supported
->> +F:	security/landlock/
->> +K:	landlock
->> +K:	LANDLOCK
->> +
->>  LANTIQ / INTEL Ethernet drivers
->>  M:	Hauke Mehrtens <hauke@hauke-m.de>
->>  L:	netdev@vger.kernel.org
->> diff --git a/security/Kconfig b/security/Kconfig
->> index 2a1a2d396228..9d9981394fb0 100644
->> --- a/security/Kconfig
->> +++ b/security/Kconfig
->> @@ -238,6 +238,7 @@ source "security/loadpin/Kconfig"
->>  source "security/yama/Kconfig"
->>  source "security/safesetid/Kconfig"
->>  source "security/lockdown/Kconfig"
->> +source "security/landlock/Kconfig"
->>  
->>  source "security/integrity/Kconfig"
->>  
->> diff --git a/security/Makefile b/security/Makefile
->> index 746438499029..2472ef96d40a 100644
->> --- a/security/Makefile
->> +++ b/security/Makefile
->> @@ -12,6 +12,7 @@ subdir-$(CONFIG_SECURITY_YAMA)		+= yama
->>  subdir-$(CONFIG_SECURITY_LOADPIN)	+= loadpin
->>  subdir-$(CONFIG_SECURITY_SAFESETID)    += safesetid
->>  subdir-$(CONFIG_SECURITY_LOCKDOWN_LSM)	+= lockdown
->> +subdir-$(CONFIG_SECURITY_LANDLOCK)		+= landlock
->>  
->>  # always enable default capabilities
->>  obj-y					+= commoncap.o
->> @@ -29,6 +30,7 @@ obj-$(CONFIG_SECURITY_YAMA)		+= yama/
->>  obj-$(CONFIG_SECURITY_LOADPIN)		+= loadpin/
->>  obj-$(CONFIG_SECURITY_SAFESETID)       += safesetid/
->>  obj-$(CONFIG_SECURITY_LOCKDOWN_LSM)	+= lockdown/
->> +obj-$(CONFIG_SECURITY_LANDLOCK)	+= landlock/
->>  obj-$(CONFIG_CGROUP_DEVICE)		+= device_cgroup.o
->>  
->>  # Object integrity file lists
->> diff --git a/security/landlock/Kconfig b/security/landlock/Kconfig
->> new file mode 100644
->> index 000000000000..4a321d5b3f67
->> --- /dev/null
->> +++ b/security/landlock/Kconfig
->> @@ -0,0 +1,15 @@
->> +# SPDX-License-Identifier: GPL-2.0-only
->> +
->> +config SECURITY_LANDLOCK
->> +	bool "Landlock support"
->> +	depends on SECURITY
->> +	default n
->> +	help
->> +	  This selects Landlock, a safe sandboxing mechanism.  It enables to
->> +	  restrict processes on the fly (i.e. enforce an access control policy),
->> +	  which can complement seccomp-bpf.  The security policy is a set of access
->> +	  rights tied to an object, which could be a file, a socket or a process.
->> +
->> +	  See Documentation/security/landlock/ for further information.
->> +
->> +	  If you are unsure how to answer this question, answer N.
->> diff --git a/security/landlock/Makefile b/security/landlock/Makefile
->> new file mode 100644
->> index 000000000000..cb6deefbf4c0
->> --- /dev/null
->> +++ b/security/landlock/Makefile
->> @@ -0,0 +1,3 @@
->> +obj-$(CONFIG_SECURITY_LANDLOCK) := landlock.o
->> +
->> +landlock-y := object.o
->> diff --git a/security/landlock/object.c b/security/landlock/object.c
->> new file mode 100644
->> index 000000000000..38fbbb108120
->> --- /dev/null
->> +++ b/security/landlock/object.c
->> @@ -0,0 +1,339 @@
->> +// SPDX-License-Identifier: GPL-2.0-only
->> +/*
->> + * Landlock LSM - Object and rule management
->> + *
->> + * Copyright © 2016-2020 Mickaël Salaün <mic@digikod.net>
->> + * Copyright © 2018-2020 ANSSI
->> + *
->> + * Principles and constraints of the object and rule management:
->> + * - Do not leak memory.
->> + * - Try as much as possible to free a memory allocation as soon as it is
->> + *   unused.
->> + * - Do not use global lock.
->> + * - Do not charge processes other than the one requesting a Landlock
->> + *   operation.
->> + */
->> +
->> +#include <linux/bug.h>
->> +#include <linux/compiler.h>
->> +#include <linux/compiler_types.h>
->> +#include <linux/err.h>
->> +#include <linux/errno.h>
->> +#include <linux/fs.h>
->> +#include <linux/kernel.h>
->> +#include <linux/list.h>
->> +#include <linux/rbtree.h>
->> +#include <linux/rcupdate.h>
->> +#include <linux/refcount.h>
->> +#include <linux/slab.h>
->> +#include <linux/spinlock.h>
->> +#include <linux/workqueue.h>
->> +
->> +#include "object.h"
->> +
->> +struct landlock_object *landlock_create_object(
->> +		const enum landlock_object_type type, void *underlying_object)
->> +{
->> +	struct landlock_object *object;
->> +
->> +	if (WARN_ON_ONCE(!underlying_object))
->> +		return NULL;
->> +	object = kzalloc(sizeof(*object), GFP_KERNEL);
->> +	if (!object)
->> +		return NULL;
->> +	refcount_set(&object->usage, 1);
->> +	refcount_set(&object->cleaners, 1);
->> +	spin_lock_init(&object->lock);
->> +	INIT_LIST_HEAD(&object->rules);
->> +	object->type = type;
->> +	WRITE_ONCE(object->underlying_object, underlying_object);
->> +	return object;
->> +}
->> +
->> +struct landlock_object *landlock_get_object(struct landlock_object *object)
->> +	__acquires(object->usage)
->> +{
->> +	__acquire(object->usage);
->> +	/*
->> +	 * If @object->usage equal 0, then it will be ignored by writers, and
->> +	 * underlying_object->object may be replaced, but this is not an issue
->> +	 * for release_object().
->> +	 */
->> +	if (object && refcount_inc_not_zero(&object->usage)) {
->> +		/*
->> +		 * It should not be possible to get a reference to an object if
->> +		 * its underlying object is being terminated (e.g. with
->> +		 * landlock_release_object()), because an object is only
->> +		 * modifiable through such underlying object.  This is not the
->> +		 * case with landlock_get_object_cleaner().
->> +		 */
->> +		WARN_ON_ONCE(!READ_ONCE(object->underlying_object));
->> +		return object;
->> +	}
->> +	return NULL;
->> +}
->> +
->> +static struct landlock_object *get_object_cleaner(
->> +		struct landlock_object *object)
->> +	__acquires(object->cleaners)
->> +{
->> +	__acquire(object->cleaners);
->> +	if (object && refcount_inc_not_zero(&object->cleaners))
->> +		return object;
->> +	return NULL;
->> +}
->> +
->> +/*
->> + * There is two cases when an object should be free and the reference to the
->> + * underlying object should be put:
->> + * - when the last rule tied to this object is removed, which is handled by
->> + *   landlock_put_rule() and then release_object();
->> + * - when the object is being terminated (e.g. no more reference to an inode),
->> + *   which is handled by landlock_put_object().
->> + */
->> +static void put_object_free(struct landlock_object *object)
->> +	__releases(object->cleaners)
->> +{
->> +	__release(object->cleaners);
->> +	if (!refcount_dec_and_test(&object->cleaners))
->> +		return;
->> +	WARN_ON_ONCE(refcount_read(&object->usage));
->> +	/*
->> +	 * Ensures a safe use of @object in the RCU block from
->> +	 * landlock_put_rule().
->> +	 */
->> +	kfree_rcu(object, rcu_free);
->> +}
->> +
->> +/*
->> + * Destroys a newly created and useless object.
->> + */
->> +void landlock_drop_object(struct landlock_object *object)
->> +{
->> +	if (WARN_ON_ONCE(!refcount_dec_and_test(&object->usage)))
->> +		return;
->> +	__acquire(object->cleaners);
->> +	put_object_free(object);
->> +}
->> +
->> +/*
->> + * Puts the underlying object (e.g. inode) if it is the first request to
->> + * release @object, without calling landlock_put_object().
->> + *
->> + * Return true if this call effectively marks @object as released, false
->> + * otherwise.
->> + */
->> +static bool release_object(struct landlock_object *object)
->> +	__releases(&object->lock)
->> +{
->> +	void *underlying_object;
->> +
->> +	lockdep_assert_held(&object->lock);
->> +
->> +	underlying_object = xchg(&object->underlying_object, NULL);
+> Google does analysis of rich runtime security data to detect and thwart
+> threats in real-time. Currently, this is done in custom kernel modules
+> but we would like to replace this with something that's upstream and
+> useful to others.
 > 
-> A one-line comment looks needed for xchg.
-
-Ok. This is to have a guarantee that the underlying_object (e.g. the
-inode pointer) is only used once. I'll add a comment.
-
+> The current kernel infrastructure for providing telemetry (Audit, Perf
+> etc.) is disjoint from access enforcement (i.e. LSMs).  Augmenting the
+> information provided by audit requires kernel changes to audit, its
+> policy language and user-space components. Furthermore, building a MAC
+> policy based on the newly added telemetry data requires changes to
+> various LSMs and their respective policy languages.
 > 
->> +	spin_unlock(&object->lock);
->> +	might_sleep();
+> This patchset allows BPF programs to be attached to LSM hooks This
+> facilitates a unified and dynamic (not requiring re-compilation of the
+> kernel) audit and MAC policy.
 > 
-> Have trouble working out what might_sleep is put for.
-
-Patch 5 adds a call to landlock_release_inode(underlying_object, object)
-(LANDLOCK_OBJECT_INODE case), which can sleep e.g., with a call to iput().
-
+> # Why an LSM?
 > 
->> +	if (!underlying_object)
->> +		return false;
->> +
->> +	switch (object->type) {
->> +	case LANDLOCK_OBJECT_INODE:
->> +		break;
->> +	default:
->> +		WARN_ON_ONCE(1);
->> +	}
->> +	return true;
->> +}
->> +
->> +static void put_object_cleaner(struct landlock_object *object)
->> +	__releases(object->cleaners)
->> +{
->> +	/* Let's try an early lockless check. */
->> +	if (list_empty(&object->rules) &&
->> +			READ_ONCE(object->underlying_object)) {
->> +		/*
->> +		 * Puts @object if there is no rule tied to it and the
->> +		 * remaining user is the underlying object.  This check is
->> +		 * atomic because @object->rules and @object->underlying_object
->> +		 * are protected by @object->lock.
->> +		 */
->> +		spin_lock(&object->lock);
->> +		if (list_empty(&object->rules) &&
->> +				READ_ONCE(object->underlying_object) &&
->> +				refcount_dec_if_one(&object->usage)) {
->> +			/*
->> +			 * Releases @object, in place of
->> +			 * landlock_release_object().
->> +			 *
->> +			 * @object is already empty, implying that all its
->> +			 * previous rules are already disabled.
->> +			 *
->> +			 * Unbalance the @object->cleaners counter to reflect
->> +			 * the underlying object release.
->> +			 */
->> +			if (!WARN_ON_ONCE(!release_object(object))) {
+> Linux Security Modules target security behaviours rather than the
+> kernel's API. For example, it's easy to miss out a newly added system
+> call for executing processes (eg. execve, execveat etc.) but the LSM
+> framework ensures that all process executions trigger the relevant hooks
+> irrespective of how the process was executed.
 > 
-> Two ! hurt more than help.
+> Allowing users to implement LSM hooks at runtime also benefits the LSM
+> eco-system by enabling a quick feedback loop from the security community
+> about the kind of behaviours that the LSM Framework should be targeting.
 
-Well, it may not look nice but don't you think it is better than a
-WARN_ON_ONCE(1) in the if block?
+On the remote possibility that our practical experiences are relevant
+to this, I thought I would pitch these comments in, since I see that
+LWN is covering the issues and sensitivities surrounding BPF based
+'intelligent' LSM hooks, if I can take the liberty of referring to
+them as that.
 
->> +				__acquire(object->cleaners);
->> +				put_object_free(object);
-> 
-> Why put object more than once?
+We namespaced a modified version of the Linux IMA implementation in
+order to provide a mechanism for deterministic system modeling, in
+order to support autonomously self defensive platforms for
+IOT/INED/SCADA type applications.  Big picture, the objective was to
+provide 'dynamic intelligence' for LSM decisions, presumably an
+objective similar to the KRSI initiative.
 
-I just replied to Jann about this subject. This is to "unbalance" the
-counter to potentially free it (if there is no more user). I explain it
-here:
-https://lore.kernel.org/lkml/67465638-e22c-5d1a-df37-862b31d999a1@digikod.net/
+Our IMA implementation, if you can still call it that, pushes
+actor/subject interaction identities up into an SGX enclave that runs
+a modeling engine that makes decisions on whether or not a process is
+engaging in activity inconsistent with a behavioral map defined by the
+platform or container developer.  If the behavior is extra-dimensional
+(untrusted), the enclave, via an OCALL, sets the value of a 'bad
+actor' variable in the task control structure that is used to indicate
+that the context of execution has questionable trust status.
 
-> 
->> +			}
->> +		} else {
->> +			spin_unlock(&object->lock);
->> +		}
->> +	}
->> +	put_object_free(object);
->> +}
->> +
-> 
+We paired this with a very simple LSM that has each hook check a bit
+position in the bad actor variable/bitfield to determine whether or
+not the hook should operate on the requested action.  Separate LSM
+infrastructure is provided that specifies whether or not the behavior
+should be EPERM'ed or logged.  An LSM using this infrastructure also
+has the ability, if triggered by the trust status of the context of
+execution, to make further assessments based on what information is
+supplied via the hook itself.
+
+Our field experience and testing has suggested that this architecture
+has considerable utility.
+
+In this model, numerous and disparate sections of the kernel can have
+input into the trust status of a context of execution.  This
+methodology would seem to be consistent with having multiple eBPF tap
+points in the kernel that can make decisions on what they perceive to
+be security relevant issues and if and how the behavior should be
+acted upon by the LSM.
+
+At the LSM level the costs are minimal, essentially a conditional
+check for non-zero status.  Performance costs will be with the eBPF
+code installed at introspection points.  At the end of the
+day. security costs money, if no one is willing to pay the bill we
+simply won't have secure systems, the fundamental tenant of the
+inherent economic barrier to security.
+
+Food for thought if anyone is interested.
+
+Best wishes for a productive remainder of the week.
+
+Dr. Greg
+
+As always,
+Dr. Greg Wettstein, Ph.D, Worker
+IDfusion, LLC               SGX secured infrastructure and
+4206 N. 19th Ave.           autonomously self-defensive platforms.
+Fargo, ND  58102
+PH: 701-281-1686            EMAIL: greg@idfusion.net
+------------------------------------------------------------------------------
+"We have to grow some roots before we can even think about having
+ any blossoms."
+                                -- Terrance George Wieland
+                                   Resurrection.
