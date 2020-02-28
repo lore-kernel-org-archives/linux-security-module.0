@@ -2,85 +2,140 @@ Return-Path: <SRS0=sUyx=4Q=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18016C3F2CD
-	for <linux-security-module@archiver.kernel.org>; Fri, 28 Feb 2020 18:31:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D103BC3F2D4
+	for <linux-security-module@archiver.kernel.org>; Fri, 28 Feb 2020 20:19:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E59DB246AC
-	for <linux-security-module@archiver.kernel.org>; Fri, 28 Feb 2020 18:31:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.com header.i=@fastmail.com header.b="zUDtvA66";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="KUscW+i2"
+	by mail.kernel.org (Postfix) with ESMTP id B1D0E24677
+	for <linux-security-module@archiver.kernel.org>; Fri, 28 Feb 2020 20:19:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726366AbgB1Sb0 (ORCPT
+        id S1726490AbgB1UTz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 28 Feb 2020 13:31:26 -0500
-Received: from wout1-smtp.messagingengine.com ([64.147.123.24]:47849 "EHLO
-        wout1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726167AbgB1Sb0 (ORCPT
+        Fri, 28 Feb 2020 15:19:55 -0500
+Received: from out02.mta.xmission.com ([166.70.13.232]:58168 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725805AbgB1UTz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 28 Feb 2020 13:31:26 -0500
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.west.internal (Postfix) with ESMTP id 48EC2AB9
-        for <linux-security-module@vger.kernel.org>; Fri, 28 Feb 2020 13:31:25 -0500 (EST)
-Received: from imap4 ([10.202.2.54])
-  by compute1.internal (MEProxy); Fri, 28 Feb 2020 13:31:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.com; h=
-        mime-version:message-id:date:from:to:subject:content-type; s=
-        fm2; bh=91iDt8BQL4Avos2gM5eSATLKVz2ounHcbnawCEUnj5Q=; b=zUDtvA66
-        pdKOGFnGMCVNlaHlpzD7BDmIKAGylN4QSwFRMfyB8grracHwLnOf0x36JwPZVyyo
-        fEZmi+ZOtgaTgjEn6FwTzZQDCr9ZIEralXt0CM/w6fbiKNemoUwtF2XQ0u6bKjOe
-        75ZSybcLqqRzdpqTGezruy/GvqOqP315te+TKZ7cPELd2ZYjkExIkDi28BGJ5O2p
-        fWqVMIks15NIIaIUDRpXd6xYWE2JPb5N4oc4+NWD9wFOo3QwZb48UaIq2xJZAmH4
-        QM9w6NbYyfvzv/Sr6CcmtmZUqOuFWJZTakO3QAfCk1uOQzu/wKVS9sYuRwQxElIy
-        r95t1ZRPiwWqkg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=content-type:date:from:message-id
-        :mime-version:subject:to:x-me-proxy:x-me-proxy:x-me-sender
-        :x-me-sender:x-sasl-enc; s=fm2; bh=91iDt8BQL4Avos2gM5eSATLKVz2ou
-        nHcbnawCEUnj5Q=; b=KUscW+i2emDMZDaZ2AsTu6TsgLe1iy1nXJa2L5Ro7ZvHS
-        3CGH6Vpn6XBVjGOGSOttxcQXTrR9OJ5N+tCSQ4CFRCzK2MPOrXJ/CkoI4zdP25up
-        /RSAR63fSOC7Vqx8E2ggevcwRfVJ3//XNH2GbrGMokjfsR1d96jTslI0375aJ16X
-        IplxcaegdWyHmQVPxYXeh0wkwz/hK56frk4OpNFW/bVXIX3PNHOQXdXYkqQWOiRt
-        dokoav27rrgnBQkg6xHK/cZucaKIsA38bp03X7YmcTbNgqZ7PbHkZA4CATCJ6Z7n
-        guYjpJ9B0dwFqJkv/cOP3gPSm4yxiM/mx7WJc/wRA==
-X-ME-Sender: <xms:fFxZXm1o0YoyTvFbuFAYjUaxdQcTlXSksahfU2qRGgwyrJVroWjZIA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrleekgdduuddvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucenucfjughrpefofgggkfffhffvufgtsehttdertd
-    erredtnecuhfhrohhmpedftehlvgigrghnuggvrhcukfhvrghnohhvfdcuoegrmhhivhgr
-    nhhovhesfhgrshhtmhgrihhlrdgtohhmqeenucevlhhushhtvghrufhiiigvpedtnecurf
-    grrhgrmhepmhgrihhlfhhrohhmpegrmhhivhgrnhhovhesfhgrshhtmhgrihhlrdgtohhm
-X-ME-Proxy: <xmx:fFxZXg2nSeQ4NYR5E9AJcKoXj1HhN4NH1CFY0X9K0hM1E76wqMCRyg>
-    <xmx:fFxZXj4-gfxOQ3b3x0JhCTDzjaV5gvTrMWdnB5smzz2KGdNaCWp8rw>
-    <xmx:fFxZXv3u78fD-9iTjmH7CER9cgn6PHd81s75bB20cctzf9xP0FiOVQ>
-    <xmx:fFxZXoVvyn1nohmRD4WYXPSpPZKqxoV9x7o7yS9GIJcm6H5xwn8ENw>
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id C901D3C00A1; Fri, 28 Feb 2020 13:31:24 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.1.7-967-g014f925-fmstable-20200226v1
-Mime-Version: 1.0
-Message-Id: <91958250-142b-4ceb-877c-3dd9036c7a9c@www.fastmail.com>
-Date:   Fri, 28 Feb 2020 10:31:04 -0800
-From:   "Alexander Ivanov" <amivanov@fastmail.com>
-To:     linux-security-module@vger.kernel.org
-Subject: protecting overlayfs's lower consistently.
+        Fri, 28 Feb 2020 15:19:55 -0500
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1j7m6v-00068n-3K; Fri, 28 Feb 2020 13:19:49 -0700
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1j7m6u-0002fJ-0Y; Fri, 28 Feb 2020 13:19:48 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     <linux-kernel@vger.kernel.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Security Module <linux-security-module@vger.kernel.org>,
+        Akinobu Mita <akinobu.mita@gmail.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Daniel Micay <danielmicay@gmail.com>,
+        Djalal Harouni <tixxdz@gmail.com>,
+        "Dmitry V . Levin" <ldv@altlinux.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@poochiereds.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Alexey Gladkov <gladkov.alexey@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jeff Dike <jdike@addtoit.com>,
+        Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>
+References: <20200210150519.538333-8-gladkov.alexey@gmail.com>
+        <87v9odlxbr.fsf@x220.int.ebiederm.org>
+        <20200212144921.sykucj4mekcziicz@comp-core-i7-2640m-0182e6>
+        <87tv3vkg1a.fsf@x220.int.ebiederm.org>
+        <CAHk-=wg52stFtUxMOxs3afkwDWmWn1JXC7RJ7dPsTrJbnxpZVg@mail.gmail.com>
+        <87v9obipk9.fsf@x220.int.ebiederm.org>
+        <CAHk-=wgwmu4jpmOqW0+Lz0dcem1Fub=ThLHvmLobf_WqCq7bwg@mail.gmail.com>
+        <20200212200335.GO23230@ZenIV.linux.org.uk>
+        <CAHk-=wi+1CPShMFvJNPfnrJ8DD8uVKUOQ5TQzQUNGLUkeoahkg@mail.gmail.com>
+        <20200212203833.GQ23230@ZenIV.linux.org.uk>
+        <20200212204124.GR23230@ZenIV.linux.org.uk>
+        <CAHk-=wi5FOGV_3tALK3n6E2fK3Oa_yCYkYQtCSaXLSEm2DUCKg@mail.gmail.com>
+        <87lfp7h422.fsf@x220.int.ebiederm.org>
+        <CAHk-=wgmn9Qds0VznyphouSZW6e42GWDT5H1dpZg8pyGDGN+=w@mail.gmail.com>
+        <87pnejf6fz.fsf@x220.int.ebiederm.org>
+        <871rqpaswu.fsf_-_@x220.int.ebiederm.org>
+        <871rqk2brn.fsf_-_@x220.int.ebiederm.org>
+Date:   Fri, 28 Feb 2020 14:17:41 -0600
+In-Reply-To: <871rqk2brn.fsf_-_@x220.int.ebiederm.org> (Eric W. Biederman's
+        message of "Mon, 24 Feb 2020 10:25:16 -0600")
+Message-ID: <878skmsbyy.fsf_-_@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+MIME-Version: 1.0
 Content-Type: text/plain
+X-XM-SPF: eid=1j7m6u-0002fJ-0Y;;;mid=<878skmsbyy.fsf_-_@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX184o7/7/rMRoEK9hF/5tZ1Qs2V3r2fvMT0=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: [PATCH 0/3] proc: Actually honor the mount options
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-We have LSM that implements file_open call back to protect fs object based on path. Now, supposed are to protect /mnt/l in the following setup
 
-mount -t overlay -orw,lowerdir=/mnt/l,upperdir=/mnt/u,workdir=/mnt/w none /mnt/m
+Proc mount option handling is broken, and it has been since I
+accidentally broke it in the middle 2006.
 
-However, when one attempts to change the upper (for the objects that originates on lower) the dentry passed into vfs_open() and then to do_dentry_open() points to the lower and there seems no easy way to calculate its upper. It
+The problem is that because we perform an internal mount of proc
+before user space mounts proc all of the mount options that user
+specifies when mounting proc are ignored.
 
-This seems was different in older kernels, eg. 3.10 (rhel7). The changes the seemingly broke that behaviour happened around kernel 4.4. What was a reason for that change and is there anyway to figure out the upper given the lower passed into vfs_open()?
+You can set those mount options with a remount but that is rather
+surprising.
 
-Thanks,
---Alex
+This most directly affects android which is using hidpid=2 by default.
+
+Now that the sysctl system call support has been removed, and we have
+settled on way of flushing proc dentries when a process exits without
+using proc_mnt, there is an simple and easy fix.
+
+a) Give UML mconsole it's own private mount of proc to use.
+b) Stop creating the internal mount of proc
+
+We still need Alexey Gladkov's full patch to get proc mount options to
+work inside of UML, and to be generally useful.  This set of changes
+is just enough to get them working as well as they have in the past.
+
+If anyone sees any problem with this code please let me know.
+
+Otherwise I plan to merge these set of fixes through my tree.
+
+Link: https://lore.kernel.org/lkml/87r21tuulj.fsf@x220.int.ebiederm.org/
+Link: https://lore.kernel.org/lkml/871rqk2brn.fsf_-_@x220.int.ebiederm.org/
+Link: https://lore.kernel.org/lkml/20200210150519.538333-1-gladkov.alexey@gmail.com/
+Link: https://lore.kernel.org/lkml/20180611195744.154962-1-astrachan@google.com/
+Fixes: e94591d0d90c ("proc: Convert proc_mount to use mount_ns.")
+
+Eric W. Biederman (3):
+      uml: Don't consult current to find the proc_mnt in mconsole_proc
+      uml: Create a private mount of proc for mconsole
+      proc: Remove the now unnecessary internal mount of proc
+
+ arch/um/drivers/mconsole_kern.c | 28 +++++++++++++++++++++++++++-
+ fs/proc/root.c                  | 36 ------------------------------------
+ include/linux/pid_namespace.h   |  2 --
+ include/linux/proc_ns.h         |  5 -----
+ kernel/pid.c                    |  8 --------
+ kernel/pid_namespace.c          |  7 -------
+ 6 files changed, 27 insertions(+), 59 deletions(-)
+
+Eric
