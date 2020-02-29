@@ -2,133 +2,387 @@ Return-Path: <SRS0=9BIS=4R=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E434C3F2D3
-	for <linux-security-module@archiver.kernel.org>; Sat, 29 Feb 2020 02:59:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66F7CC3F2D6
+	for <linux-security-module@archiver.kernel.org>; Sat, 29 Feb 2020 17:23:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1ED2B246AF
-	for <linux-security-module@archiver.kernel.org>; Sat, 29 Feb 2020 02:59:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3782F24688
+	for <linux-security-module@archiver.kernel.org>; Sat, 29 Feb 2020 17:23:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qCqXkYKX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726603AbgB2C7y (ORCPT
+        id S1727258AbgB2RXq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 28 Feb 2020 21:59:54 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:43794 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726046AbgB2C7y (ORCPT
+        Sat, 29 Feb 2020 12:23:46 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:55886 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727177AbgB2RXq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 28 Feb 2020 21:59:54 -0500
-Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1j7sM1-0000Wh-Pt; Sat, 29 Feb 2020 02:59:49 +0000
-Date:   Sat, 29 Feb 2020 03:59:48 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
+        Sat, 29 Feb 2020 12:23:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description;
+        bh=6Si9TLpxJhjW8mWab2ldu/HcfCY1uTLyNEocypbMayo=; b=qCqXkYKXQZee7Nz7LGtyQFTdWa
+        ZVGKnFYyveaS3XUHWGtQcRB3FOrAbYUm27JT/T5AyoFT3ue/iyXo8zc3ddUbZC7G9IQrm6cL/KK19
+        MThfgR/g4axpeCnWa31czFTMoSRby0YJ8yj3IwjqO2qurTtPdV/WYNmWmzPIxpE7CyLAwRzAICbq+
+        DD/JGPnBIP5lZqwP4eRIGnjzMtiBQBJtnsddAYp/iPIAYKOH3wesXgerkummOUO8SqaWGLNCP4b8j
+        H3fPBIySVY3Ur8MnMunXWtbPwqe+mlrE7w2/IRabkmxN81jPrFw5o87eGZXP6k1Sb4K+9GPfzW/iE
+        aYun8VdA==;
+Received: from [2601:1c0:6280:3f0::19c2]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j85q1-0006l3-4l; Sat, 29 Feb 2020 17:23:41 +0000
+Subject: Re: [RFC PATCH v14 10/10] landlock: Add user and kernel documentation
+To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
+        linux-kernel@vger.kernel.org
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
+        James Morris <jmorris@namei.org>, Jann Horn <jann@thejh.net>,
         Jonathan Corbet <corbet@lwn.net>,
         Kees Cook <keescook@chromium.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Alexey Gladkov <gladkov.alexey@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jeff Dike <jdike@addtoit.com>,
-        Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>
-Subject: Re: [PATCH 4/3] pid: Improve the comment about waiting in
- zap_pid_ns_processes
-Message-ID: <20200229025948.mfla2guxzvo7mdwg@wittgenstein>
-References: <20200212203833.GQ23230@ZenIV.linux.org.uk>
- <20200212204124.GR23230@ZenIV.linux.org.uk>
- <CAHk-=wi5FOGV_3tALK3n6E2fK3Oa_yCYkYQtCSaXLSEm2DUCKg@mail.gmail.com>
- <87lfp7h422.fsf@x220.int.ebiederm.org>
- <CAHk-=wgmn9Qds0VznyphouSZW6e42GWDT5H1dpZg8pyGDGN+=w@mail.gmail.com>
- <87pnejf6fz.fsf@x220.int.ebiederm.org>
- <871rqpaswu.fsf_-_@x220.int.ebiederm.org>
- <871rqk2brn.fsf_-_@x220.int.ebiederm.org>
- <878skmsbyy.fsf_-_@x220.int.ebiederm.org>
- <878skmpcib.fsf_-_@x220.int.ebiederm.org>
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-security-module@vger.kernel.org, x86@kernel.org
+References: <20200224160215.4136-1-mic@digikod.net>
+ <20200224160215.4136-11-mic@digikod.net>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <cc8da381-d3dc-3c0a-5afd-96824362b636@infradead.org>
+Date:   Sat, 29 Feb 2020 09:23:38 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
+In-Reply-To: <20200224160215.4136-11-mic@digikod.net>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <878skmpcib.fsf_-_@x220.int.ebiederm.org>
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Feb 28, 2020 at 04:34:20PM -0600, Eric W. Biederman wrote:
+Hi,
+Here are a few corrections for you to consider.
+
+
+On 2/24/20 8:02 AM, Mickaël Salaün wrote:
+> This documentation can be built with the Sphinx framework.
 > 
-> Oleg wrote a very informative comment, but with the removal of
-> proc_cleanup_work it is no longer accurate.
+> Another location might be more appropriate, though.
 > 
-> Rewrite the comment so that it only talks about the details
-> that are still relevant, and hopefully is a little clearer.
-> 
-> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> Reviewed-by: Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>
+> Cc: Andy Lutomirski <luto@amacapital.net>
+> Cc: James Morris <jmorris@namei.org>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Serge E. Hallyn <serge@hallyn.com>
 > ---
->  kernel/pid_namespace.c | 31 +++++++++++++++++++------------
->  1 file changed, 19 insertions(+), 12 deletions(-)
 > 
-> diff --git a/kernel/pid_namespace.c b/kernel/pid_namespace.c
-> index 318fcc6ba301..01f8ba32cc0c 100644
-> --- a/kernel/pid_namespace.c
-> +++ b/kernel/pid_namespace.c
-> @@ -224,20 +224,27 @@ void zap_pid_ns_processes(struct pid_namespace *pid_ns)
->  	} while (rc != -ECHILD);
->  
->  	/*
-> -	 * kernel_wait4() above can't reap the EXIT_DEAD children but we do not
-> -	 * really care, we could reparent them to the global init. We could
-> -	 * exit and reap ->child_reaper even if it is not the last thread in
-> -	 * this pid_ns, free_pid(pid_allocated == 0) calls proc_cleanup_work(),
-> -	 * pid_ns can not go away until proc_kill_sb() drops the reference.
-> +	 * kernel_wait4() misses EXIT_DEAD children, and EXIT_ZOMBIE
-> +	 * process whose parents processes are outside of the pid
-> +	 * namespace.  Such processes are created with setns()+fork().
->  	 *
-> -	 * But this ns can also have other tasks injected by setns()+fork().
-> -	 * Again, ignoring the user visible semantics we do not really need
-> -	 * to wait until they are all reaped, but they can be reparented to
-> -	 * us and thus we need to ensure that pid->child_reaper stays valid
-> -	 * until they all go away. See free_pid()->wake_up_process().
-> +	 * If those EXIT_ZOMBIE processes are not reaped by their
-> +	 * parents before their parents exit, they will be reparented
-> +	 * to pid_ns->child_reaper.  Thus pidns->child_reaper needs to
-> +	 * stay valid until they all go away.
->  	 *
-> -	 * We rely on ignored SIGCHLD, an injected zombie must be autoreaped
-> -	 * if reparented.
-> +	 * The code relies on the the pid_ns->child_reaper ignoring
+> Changes since v13:
+> * Rewrote the documentation according to the major revamp.
+> 
+> Previous version:
+> https://lore.kernel.org/lkml/20191104172146.30797-8-mic@digikod.net/
+> ---
+>  Documentation/security/index.rst           |   1 +
+>  Documentation/security/landlock/index.rst  |  18 ++
+>  Documentation/security/landlock/kernel.rst |  44 ++++
+>  Documentation/security/landlock/user.rst   | 233 +++++++++++++++++++++
+>  4 files changed, 296 insertions(+)
+>  create mode 100644 Documentation/security/landlock/index.rst
+>  create mode 100644 Documentation/security/landlock/kernel.rst
+>  create mode 100644 Documentation/security/landlock/user.rst
+> 
+> diff --git a/Documentation/security/landlock/index.rst b/Documentation/security/landlock/index.rst
+> new file mode 100644
+> index 000000000000..dbd33b96ce60
+> --- /dev/null
+> +++ b/Documentation/security/landlock/index.rst
+> @@ -0,0 +1,18 @@
+> +=========================================
+> +Landlock LSM: unprivileged access control
+> +=========================================
+> +
+> +:Author: Mickaël Salaün
+> +
+> +The goal of Landlock is to enable to restrict ambient rights (e.g.  global
+> +filesystem access) for a set of processes.  Because Landlock is a stackable
+> +LSM, it makes possible to create safe security sandboxes as new security layers
+> +in addition to the existing system-wide access-controls. This kind of sandbox
+> +is expected to help mitigate the security impact of bugs or
+> +unexpected/malicious behaviors in user-space applications. Landlock empower any
 
-s/the the/the/
+                                                                       empowers
 
-Hm, can we maybe reformulate this to:
+> +process, including unprivileged ones, to securely restrict themselves.
+> +
+> +.. toctree::
+> +
+> +    user
+> +    kernel
+> diff --git a/Documentation/security/landlock/kernel.rst b/Documentation/security/landlock/kernel.rst
+> new file mode 100644
+> index 000000000000..b87769909029
+> --- /dev/null
+> +++ b/Documentation/security/landlock/kernel.rst
+> @@ -0,0 +1,44 @@
+> +==============================
+> +Landlock: kernel documentation
+> +==============================
+> +
+> +Landlock's goal is to create scoped access-control (i.e. sandboxing).  To
+> +harden a whole system, this feature should be available to any process,
+> +including unprivileged ones.  Because such process may be compromised or
+> +backdoored (i.e. untrusted), Landlock's features must be safe to use from the
+> +kernel and other processes point of view.  Landlock's interface must therefore
+> +expose a minimal attack surface.
+> +
+> +Landlock is designed to be usable by unprivileged processes while following the
+> +system security policy enforced by other access control mechanisms (e.g. DAC,
+> +LSM).  Indeed, a Landlock rule shall not interfere with other access-controls
+> +enforced on the system, only add more restrictions.
+> +
+> +Any user can enforce Landlock rulesets on their processes.  They are merged and
+> +evaluated according to the inherited ones in a way that ensure that only more
 
-"The code relies on having made pid_ns->child_reaper ignore SIGCHLD above
-causing EXIT_ZOMBIE processes to be autoreaped if reparented."
+                                                           ensures
 
-Which imho makes it clearer that it was us ensuring that SIGCHLD is
-ignored. Someone not too familiar with the exit codepaths might be
-looking at zap_pid_ns_processes() not knowing that it is only called
-when namespace init is exiting.
+> +constraints can be added.
+> +
+> +
+> +Guiding principles for safe access controls
+> +===========================================
+> +
+> +* A Landlock rule shall be focused on access control on kernel objects instead
+> +  of syscall filtering (i.e. syscall arguments), which is the purpose of
+> +  seccomp-bpf.
+> +* To avoid multiple kind of side-channel attacks (e.g. leak of security
 
-Otherwise
+                       kinds
 
-Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
+> +  policies, CPU-based attacks), Landlock rules shall not be able to
+> +  programmatically communicate with user space.
+> +* Kernel access check shall not slow down access request from unsandboxed
+> +  processes.
+> +* Computation related to Landlock operations (e.g. enforce a ruleset) shall
+> +  only impact the processes requesting them.
+> +
+> +
+> +Landlock rulesets and domains
+> +=============================
+> +
+> +A domain is a read-only ruleset tied to a set of subjects (i.e. tasks).  A
+> +domain can transition to a new one which is the intersection of the constraints
+> +from the current and a new ruleset.  The definition of a subject is implicit
+> +for a task sandboxing itself, which makes the reasoning much easier and helps
+> +avoid pitfalls.
+> diff --git a/Documentation/security/landlock/user.rst b/Documentation/security/landlock/user.rst
+> new file mode 100644
+> index 000000000000..cbd7f61fca8c
+> --- /dev/null
+> +++ b/Documentation/security/landlock/user.rst
+> @@ -0,0 +1,233 @@
+> +=================================
+> +Landlock: userspace documentation
+> +=================================
+> +
+> +Landlock rules
+> +==============
+> +
+> +A Landlock rule enables to describe an action on an object.  An object is
+> +currently a file hierarchy, and the related filesystem actions are defined in
+> +`Access rights`_.  A set of rules are aggregated in a ruleset, which can then
+
+                                     is
+
+> +restricts the thread enforcing it, and its future children.
+
+   restrict
+
+> +
+> +
+> +Defining and enforcing a security policy
+> +----------------------------------------
+> +
+> +Before defining a security policy, an application should first probe for the
+> +features supported by the running kernel, which is important to be compatible
+> +with older kernels.  This can be done thanks to the `landlock` syscall (cf.
+> +:ref:`syscall`).
+> +
+> +.. code-block:: c
+> +
+> +    struct landlock_attr_features attr_features;
+> +
+> +    if (landlock(LANDLOCK_CMD_GET_FEATURES, LANDLOCK_OPT_GET_FEATURES,
+> +            sizeof(attr_features), &attr_features)) {
+> +        perror("Failed to probe the Landlock supported features");
+> +        return 1;
+> +    }
+> +
+> +Then, we need to create the ruleset that will contains our rules.  For this
+
+                                                 contain
+
+> +example, the ruleset will contains rules which only allow read actions, but
+
+                             contain
+
+> +write actions will be denied.  The ruleset then needs to handle both of these
+> +kind of actions.  To have a backward compatibility, these actions should be
+> +ANDed with the supported ones.
+> +
+> +.. code-block:: c
+> +
+> +    int ruleset_fd;
+> +    struct landlock_attr_ruleset ruleset = {
+> +        .handled_access_fs =
+> +            LANDLOCK_ACCESS_FS_READ |
+> +            LANDLOCK_ACCESS_FS_READDIR |
+> +            LANDLOCK_ACCESS_FS_EXECUTE |
+> +            LANDLOCK_ACCESS_FS_WRITE |
+> +            LANDLOCK_ACCESS_FS_TRUNCATE |
+> +            LANDLOCK_ACCESS_FS_CHMOD |
+> +            LANDLOCK_ACCESS_FS_CHOWN |
+> +            LANDLOCK_ACCESS_FS_CHGRP |
+> +            LANDLOCK_ACCESS_FS_LINK_TO |
+> +            LANDLOCK_ACCESS_FS_RENAME_FROM |
+> +            LANDLOCK_ACCESS_FS_RENAME_TO |
+> +            LANDLOCK_ACCESS_FS_RMDIR |
+> +            LANDLOCK_ACCESS_FS_UNLINK |
+> +            LANDLOCK_ACCESS_FS_MAKE_CHAR |
+> +            LANDLOCK_ACCESS_FS_MAKE_DIR |
+> +            LANDLOCK_ACCESS_FS_MAKE_REG |
+> +            LANDLOCK_ACCESS_FS_MAKE_SOCK |
+> +            LANDLOCK_ACCESS_FS_MAKE_FIFO |
+> +            LANDLOCK_ACCESS_FS_MAKE_BLOCK |
+> +            LANDLOCK_ACCESS_FS_MAKE_SYM,
+> +    };
+> +
+> +    ruleset.handled_access_fs &= attr_features.access_fs;
+> +    ruleset_fd = landlock(LANDLOCK_CMD_CREATE_RULESET,
+> +                    LANDLOCK_OPT_CREATE_RULESET, sizeof(ruleset), &ruleset);
+> +    if (ruleset_fd < 0) {
+> +        perror("Failed to create a ruleset");
+> +        return 1;
+> +    }
+> +
+> +We can now add a new rule to this ruleset thanks to the returned file
+> +descriptor referring to this ruleset.  The rule will only enable to read the
+> +file hierarchy ``/usr``.  Without other rule, write actions would then be
+
+                             Without other rules,
+or
+                             Without another rule,
+
+> +denied by the ruleset.  To add ``/usr`` to the ruleset, we open it with the
+> +``O_PATH`` flag and fill the &struct landlock_attr_path_beneath with this file
+> +descriptor.
+> +
+> +.. code-block:: c
+> +
+> +    int err;
+> +    struct landlock_attr_path_beneath path_beneath = {
+> +        .ruleset_fd = ruleset_fd,
+> +        .allowed_access =
+> +            LANDLOCK_ACCESS_FS_READ |
+> +            LANDLOCK_ACCESS_FS_READDIR |
+> +            LANDLOCK_ACCESS_FS_EXECUTE,
+> +    };
+> +
+> +    path_beneath.allowed_access &= attr_features.access_fs;
+> +    path_beneath.parent_fd = open("/usr", O_PATH | O_CLOEXEC);
+> +    if (path_beneath.parent_fd < 0) {
+> +        perror("Failed to open file");
+> +        close(ruleset_fd);
+> +        return 1;
+> +    }
+> +    err = landlock(LANDLOCK_CMD_ADD_RULE, LANDLOCK_OPT_ADD_RULE_PATH_BENEATH,
+> +            sizeof(path_beneath), &path_beneath);
+> +    close(path_beneath.parent_fd);
+> +    if (err) {
+> +        perror("Failed to update ruleset");
+> +        close(ruleset_fd);
+> +        return 1;
+> +    }
+> +
+> +We now have a ruleset with one rule allowing read access to ``/usr`` while
+> +denying all accesses featured in ``attr_features.access_fs`` to everything else
+> +on the filesystem.  The next step is to restrict the current thread from
+> +gaining more privileges (e.g. thanks to a SUID binary).
+> +
+> +.. code-block:: c
+> +
+> +    if (prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0)) {
+> +        perror("Failed to restrict privileges");
+> +        close(ruleset_fd);
+> +        return 1;
+> +    }
+> +
+> +The current thread is now ready to sandbox itself with the ruleset.
+> +
+> +.. code-block:: c
+> +
+> +    struct landlock_attr_enforce attr_enforce = {
+> +        .ruleset_fd = ruleset_fd,
+> +    };
+> +
+> +    if (landlock(LANDLOCK_CMD_ENFORCE_RULESET, LANDLOCK_OPT_ENFORCE_RULESET,
+> +            sizeof(attr_enforce), &attr_enforce)) {
+> +        perror("Failed to enforce ruleset");
+> +        close(ruleset_fd);
+> +        return 1;
+> +    }
+> +    close(ruleset_fd);
+> +
+> +If this last system call succeeds, the current thread is now restricted and
+
+   If this last landlock system call succeeds,
+
+[because close() is the last system call]
+
+> +this policy will be enforced on all its subsequently created children as well.
+> +Once a thread is landlocked, there is no way to remove its security policy,
+
+                                                   preferably:         policy;
+
+> +only adding more restrictions is allowed.  These threads are now in a new
+> +Landlock domain, merge of their parent one (if any) with the new ruleset.
+> +
+> +A full working code can be found in `samples/landlock/sandboxer.c`_.
+
+   Full working code
+
+> +
+> +
+> +Inheritance
+> +-----------
+> +
+> +Every new thread resulting from a :manpage:`clone(2)` inherits Landlock program
+> +restrictions from its parent.  This is similar to the seccomp inheritance (cf.
+> +:doc:`/userspace-api/seccomp_filter`) or any other LSM dealing with task's
+> +:manpage:`credentials(7)`.  For instance, one process' thread may apply
+
+                                                 process's
+
+> +Landlock rules to itself, but they will not be automatically applied to other
+> +sibling threads (unlike POSIX thread credential changes, cf.
+> +:manpage:`nptl(7)`).
+
+[snip]
+
+thanks for the documentation.
+
+-- 
+~Randy
+
