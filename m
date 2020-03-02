@@ -1,109 +1,222 @@
-Return-Path: <SRS0=spL8=4W=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=VYUt=4T=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MIME_QP_LONG_LINE,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 271B5C3F2D1
-	for <linux-security-module@archiver.kernel.org>; Thu,  5 Mar 2020 18:02:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 834CFC3F2D1
+	for <linux-security-module@archiver.kernel.org>; Mon,  2 Mar 2020 17:43:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0305B2072D
-	for <linux-security-module@archiver.kernel.org>; Thu,  5 Mar 2020 18:02:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4DE05214DB
+	for <linux-security-module@archiver.kernel.org>; Mon,  2 Mar 2020 17:43:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UBjwhXXB"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="f0oD/nK5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726067AbgCESCV (ORCPT
+        id S1727250AbgCBRnH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 5 Mar 2020 13:02:21 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:35724 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725993AbgCESCV (ORCPT
+        Mon, 2 Mar 2020 12:43:07 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:40399 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727370AbgCBRnE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 5 Mar 2020 13:02:21 -0500
-Received: by mail-ot1-f68.google.com with SMTP id v10so6631460otp.2;
-        Thu, 05 Mar 2020 10:02:21 -0800 (PST)
+        Mon, 2 Mar 2020 12:43:04 -0500
+Received: by mail-wm1-f68.google.com with SMTP id e26so171251wme.5
+        for <linux-security-module@vger.kernel.org>; Mon, 02 Mar 2020 09:43:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bImCa8e75imP5OBiFn4OIcu9vGwfjFkhcN3Jk6EQf9c=;
-        b=UBjwhXXB7Z3eO7J/9T0RT1RI8fpcwomIFdsfs667Q3w3V4MrEqj1JxGClS1nCzLXtu
-         OB4WkpY+EooNfPTvjY0qr7DuPSuAt7D3SqzFKq/ellIgtaM3DY5QKKfXbjyCEvvEnz4t
-         hQgjGwsVgvNtcF/t15XaM8sJ0DczcuyEFDLQngNw/LaGa25bryQxdbXRJXbFyqwVr35S
-         4mc7xyA/NQFFk/74kv7IXPPe0E+jcGUm/mVR+WQR/dRZWyEB6xBf164GWiu62359avCj
-         pNLVz2qmkVV68i19jQxzYExh6ecLV9Wd0N80e0/2f1v7GC1yxe8B96jBPoj4u9BcY+5t
-         eiqQ==
+        d=brauner.io; s=google;
+        h=message-id:from:date:user-agent:in-reply-to:references:mime-version
+         :content-transfer-encoding:subject:to:cc;
+        bh=I9QbkrVVYHhIoSifcadeu1EkGLpO8eHQFkfllDR/K2c=;
+        b=f0oD/nK5puQRTMWphzAe+fUjcl+QhqrVxCo/yA6SLJElb5NXYz9gSyZUxWwCdooL64
+         EL9J2cXo3+/hyx+w009TNArcZCCZ2lAmyKO8ssx5+yngWIyAUI0rHXMm2qy5M9qUEQVY
+         p88BcddFHbuYjhgn96fRgpAxgjHaSRGOtQdU0BA81I9V+CnwPR4dQFRDP93fj+JW/Cbf
+         Bb1bhdKCnBU4zukfA4g4ab5SJssq/TYd/QkgYUbGPABaMxgCBhErzfKfrYri+hXVP4HR
+         ZgGcaDMuaaLq1HX1ZF8eeApGXLdzfZgDWEGnb0ySJ77RCGpErepUZ1dPfgVzr2NhlJ7/
+         DZAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bImCa8e75imP5OBiFn4OIcu9vGwfjFkhcN3Jk6EQf9c=;
-        b=nq0pSMsCcs7ZolZI5OpvXhCVJW6FXOtzhdFe6GrDCYNaCRPQGXgER8mmS1TbzKvpaS
-         ycUV0tQWSsNS8cYIo7B2IFDoe2iCoMhRvGobiYE3xHxHAdulWCVCOFDwmCTpfI3AIB1e
-         rHIWl9v8zjpIZGcvusBqR6l5XyHDmpm5qWvo6pyKs5ZEjRYtJK3iSslBldsZjdjrkmkr
-         rx/PliuQ7U13hW0uRuIVEczDUYYN7w4J2SflhmUqNWWLF0OtO+nouM7PkiJPUIqlUDFM
-         jFVZ0CwL04xqb85hB7R3V+rgoayogYqg5J7a+pGUGfNznBia/Ieh6vjwUqP0Q4WA31vN
-         dpQQ==
-X-Gm-Message-State: ANhLgQ2P87WWWV8yZfXHMFQxw4OqxHF+VWFGmozxS9TP1IRHIT66U7nq
-        QBFGEqI3lWIfvfomGVQXOIuxTm8SAbNoe+nXjJs=
-X-Google-Smtp-Source: ADFU+vsvbQuqzn8gGOtAxjPNVm9WpKEFdkyFDU2gticZVw82S72hfRFT62HlHzFLjnhAG5wKOwfQ5MHvENi4XGLAZXw=
-X-Received: by 2002:a05:6830:22f2:: with SMTP id t18mr7959676otc.165.1583431340611;
- Thu, 05 Mar 2020 10:02:20 -0800 (PST)
+        h=x-gm-message-state:message-id:from:date:user-agent:in-reply-to
+         :references:mime-version:content-transfer-encoding:subject:to:cc;
+        bh=I9QbkrVVYHhIoSifcadeu1EkGLpO8eHQFkfllDR/K2c=;
+        b=frqnYJ2778DJ3cAuWG5pLLO+6ojqIyF16G/LJscVSezwFCc2jI511pdRvTj9bwBEWW
+         U3osqicsqE3n30KhsKtBgEnR43kszWXvxjGlrR8gRZUZeQnnLvIkks6qtQQ2sBJzmy99
+         ewgefYf+HzX55EDi94Pt+LkdQrDNeKZySftJiAT473FRADWxHHXAdYJUyk4YV9l44hIh
+         CjpNEZbY+cDZWCkb6fS5ajbXzohtxq9D/Q5rDEmJZO8XTbgPJiLyvyZK+5oUNES5MkZ7
+         cy4fa6gm0qbb7KEZ9HOqSjOYlN0CflG2iq4AExUmhx0bwzYCuRfm31KR+5r6z7yx7hPd
+         NC5A==
+X-Gm-Message-State: ANhLgQ0MXqWxlt2b2+hYrCWnCvZj56iTHBosc5Pa5gGJpBs/YdcqMtkA
+        P73ZjTujD7thxqvrrtetfVSDmw==
+X-Google-Smtp-Source: ADFU+vuS7wyTTj+q9BrEadAA7WBI95PRV87TDlze0qES8p6CzMOXqclt96Kjx7Zix17kmY7TxiR3Fw==
+X-Received: by 2002:a1c:c2c5:: with SMTP id s188mr186830wmf.162.1583170980356;
+        Mon, 02 Mar 2020 09:43:00 -0800 (PST)
+Received: from Google-Pixel-3a.fritz.box (ip5f5bf7ec.dynamic.kabel-deutschland.de. [95.91.247.236])
+        by smtp.gmail.com with ESMTPSA id z19sm120954wmi.43.2020.03.02.09.42.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Mar 2020 09:42:59 -0800 (PST)
+Message-ID: <5e5d45a3.1c69fb81.f99ac.0806@mx.google.com>
+From:   christian@brauner.io
+Date:   Mon, 02 Mar 2020 18:42:57 +0100
+User-Agent: K-9 Mail for Android
+In-Reply-To: <CAG48ez1jj_J3PtENWvu8piFGsik6RvuyD38ie48TYr2k1Rbf3A@mail.gmail.com>
+References: <AM6PR03MB5170B06F3A2B75EFB98D071AE4E60@AM6PR03MB5170.eurprd03.prod.outlook.com> <CAG48ez3QHVpMJ9Rb_Q4LEE6uAqQJeS1Myu82U=fgvUfoeiscgw@mail.gmail.com> <20200301185244.zkofjus6xtgkx4s3@wittgenstein> <CAG48ez3mnYc84iFCA25-rbJdSBi3jh9hkp569XZTbFc_9WYbZw@mail.gmail.com> <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com> <87a74zmfc9.fsf@x220.int.ebiederm.org> <AM6PR03MB517071DEF894C3D72D2B4AE2E4E70@AM6PR03MB5170.eurprd03.prod.outlook.com> <87k142lpfz.fsf@x220.int.ebiederm.org> <AM6PR03MB51704206634C009500A8080DE4E70@AM6PR03MB5170.eurprd03.prod.outlook.com> <875zfmloir.fsf@x220.int.ebiederm.org> <CAG48ez0iXMD0mduKWHG6GZZoR+s2jXy776zwiRd+tFADCEiBEw@mail.gmail.com> <AM6PR03MB5170BD130F15CE1909F59B55E4E70@AM6PR03MB5170.eurprd03.prod.outlook.com> <CAG48ez1jj_J3PtENWvu8piFGsik6RvuyD38ie48TYr2k1Rbf3A@mail.gmail.com>
 MIME-Version: 1.0
-References: <20200304191853.1529-1-kpsingh@chromium.org> <20200304191853.1529-4-kpsingh@chromium.org>
- <CAEjxPJ4+aW5JVC9QjJywjNUS=+cVJeaWwRHLwOssLsZyhX3siw@mail.gmail.com>
- <20200305155421.GA209155@google.com> <d7615424-48cb-1131-3c5d-f2a0b4adfaf7@schaufler-ca.com>
-In-Reply-To: <d7615424-48cb-1131-3c5d-f2a0b4adfaf7@schaufler-ca.com>
-From:   Stephen Smalley <stephen.smalley.work@gmail.com>
-Date:   Thu, 5 Mar 2020 13:03:26 -0500
-Message-ID: <CAEjxPJ7EQjq2J8AGn+b90=yMG9H5CaNErk1PqtTz8T3CwdAvJw@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v4 3/7] bpf: Introduce BPF_MODIFY_RETURN
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     KP Singh <kpsingh@chromium.org>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-        Andrii Nakryiko <andriin@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>, jmorris@namei.org,
-        Paul Moore <paul@paul-moore.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCHv2] exec: Fix a deadlock in ptrace
+To:     Jann Horn <jannh@google.com>,
+        Bernd Edlinger <bernd.edlinger@hotmail.de>
+CC:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Yuyang Du <duyuyang@gmail.com>,
+        David Hildenbrand <david@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        David Howells <dhowells@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Christian Kellner <christian@kellner.me>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>, linux-doc@vger.kernel.org
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Mar 5, 2020 at 12:35 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> I believe that I have stated that order isn't my issue.
-> Go first, last or as specified in the lsm list, I really
-> don't care. We'll talk about what does matter in the KRSI
-> thread.
+<linux-doc@vger.kernel.org>,"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,"linux-mm@kvack.org" <linux-mm@kvack.org>,"stable@vger.kernel.org" <stable@vger.kernel.org>,linux-security-module <linux-security-module@vger.kernel.org>
+From: Christian Brauner <christian.brauner@ubuntu.com>
+Message-ID: <9C3BF644-0F82-48C9-9116-8554204FB57D@ubuntu.com>
 
-Order matters when the security module logic (in this case, the BPF
-program) is loaded from userspace and
-the userspace process isn't already required to be fully privileged
-with respect to the in-kernel security modules.
-CAP_MAC_ADMIN was their (not unreasonable) attempt to check that
-requirement; it just doesn't happen to convey
-the same meaning for SELinux since SELinux predates the introduction
-of CAP_MAC_ADMIN (in Linux at least) and
-since SELinux was designed to confine even processes with capabilities.
+On March 2, 2020 6:37:27 PM GMT+01:00, Jann Horn <jannh@google=2Ecom> wrote=
+:
+>On Mon, Mar 2, 2020 at 6:01 PM Bernd Edlinger
+><bernd=2Eedlinger@hotmail=2Ede> wrote:
+>> On 3/2/20 5:43 PM, Jann Horn wrote:
+>> > On Mon, Mar 2, 2020 at 5:19 PM Eric W=2E Biederman
+><ebiederm@xmission=2Ecom> wrote:
+>> >>
+>> >> Bernd Edlinger <bernd=2Eedlinger@hotmail=2Ede> writes:
+>> >>
+>> >>> On 3/2/20 4:57 PM, Eric W=2E Biederman wrote:
+>> >>>> Bernd Edlinger <bernd=2Eedlinger@hotmail=2Ede> writes:
+>> >>>>
+>> >>>>>
+>> >>>>> I tried this with s/EACCESS/EACCES/=2E
+>> >>>>>
+>> >>>>> The test case in this patch is not fixed, but strace does not
+>freeze,
+>> >>>>> at least with my setup where it did freeze repeatable=2E
+>> >>>>
+>> >>>> Thanks, That is what I was aiming at=2E
+>> >>>>
+>> >>>> So we have one method we can pursue to fix this in practice=2E
+>> >>>>
+>> >>>>> That is
+>> >>>>> obviously because it bypasses the cred_guard_mutex=2E  But all
+>other
+>> >>>>> process that access this file still freeze, and cannot be
+>> >>>>> interrupted except with kill -9=2E
+>> >>>>>
+>> >>>>> However that smells like a denial of service, that this
+>> >>>>> simple test case which can be executed by guest, creates a
+>/proc/$pid/mem
+>> >>>>> that freezes any process, even root, when it looks at it=2E
+>> >>>>> I mean: "ln -s README /proc/$pid/mem" would be a nice bomb=2E
+>> >>>>
+>> >>>> Yes=2E  Your the test case in your patch a variant of the original
+>> >>>> problem=2E
+>> >>>>
+>> >>>>
+>> >>>> I have been staring at this trying to understand the
+>fundamentals of the
+>> >>>> original deeper problem=2E
+>> >>>>
+>> >>>> The current scope of cred_guard_mutex in exec is because being
+>ptraced
+>> >>>> causes suid exec to act differently=2E  So we need to know early
+>if we are
+>> >>>> ptraced=2E
+>> >>>>
+>> >>>
+>> >>> It has a second use, that it prevents two threads entering
+>execve,
+>> >>> which would probably result in disaster=2E
+>> >>
+>> >> Exec can fail with an error code up until de_thread=2E  de_thread
+>causes
+>> >> exec to fail with the error code -EAGAIN for the second thread to
+>get
+>> >> into de_thread=2E
+>> >>
+>> >> So no=2E  The cred_guard_mutex is not needed for that case at all=2E
+>> >>
+>> >>>> If that case did not exist we could reduce the scope of the
+>> >>>> cred_guard_mutex in exec to where your patch puts the
+>cred_change_mutex=2E
+>> >>>>
+>> >>>> I am starting to think reworking how we deal with ptrace and
+>exec is the
+>> >>>> way to solve this problem=2E
+>> >>
+>> >>
+>> >> I am 99% convinced that the fix is to move cred_guard_mutex down=2E
+>> >
+>> > "move cred_guard_mutex down" as in "take it once we've already set
+>up
+>> > the new process, past the point of no return"?
+>> >
+>> >> Then right after we take cred_guard_mutex do:
+>> >>         if (ptraced) {
+>> >>                 use_original_creds();
+>> >>         }
+>> >>
+>> >> And call it a day=2E
+>> >>
+>> >> The details suck but I am 99% certain that would solve everyones
+>> >> problems, and not be too bad to audit either=2E
+>> >
+>> > Ah, hmm, that sounds like it'll work fine at least when no LSMs are
+>involved=2E
+>> >
+>> > SELinux normally doesn't do the execution-degrading thing, it just
+>> > blocks the execution completely - see their
+>selinux_bprm_set_creds()
+>> > hook=2E So I think they'd still need to set some state on the task
+>that
+>> > says "we're currently in the middle of an execution where the
+>target
+>> > task will run in context X", and then check against that in the
+>> > ptrace_may_access hook=2E Or I suppose they could just kill the task
+>> > near the end of execve, although that'd be kinda ugly=2E
+>> >
+>>
+>> We have current->in_execve for that, right?
+>> I think when the cred_guard_mutex is taken only in the critical
+>section,
+>> then PTRACE_ATTACH could take the guard_mutex, and look at
+>current->in_execve,
+>> and just return -EAGAIN in that case, right, everybody happy :)
+>
+>It's probably going to mean that things like strace will just randomly
+>fail to attach to processes if they happen to be in the middle of
+>execve=2E=2E=2E but I guess that works?
 
-> Then I'm fine with using the LSM ordering mechanisms that Kees
-> thought through to run the BPF last. Although I think it's somewhat
-> concerning that SELinux cares what other security models might be
-> in place. If BPF programs can violate SELinux (or traditional DAC)
-> policies there are bigger issues than ordering.
-
-It is only safe for Smack because CAP_MAC_ADMIN already conveys all
-privileges with respect to Smack.
-Otherwise, the BPF program can access information about the object
-attributes, e.g. inode attributes,
-and leak that information to userspace even if SELinux would have
-denied the process that loaded the BPF
-program permissions to directly obtain that information.  This is also
-why Landlock has to be last in the LSM list.
+That sounds like an acceptable outcome=2E
+We can at least risk it and if we regress
+revert or come up with the more complex
+solution suggested in another mail here?
