@@ -2,140 +2,133 @@ Return-Path: <SRS0=VYUt=4T=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8596CC3F2D2
-	for <linux-security-module@archiver.kernel.org>; Mon,  2 Mar 2020 14:28:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FC9EC3F2D7
+	for <linux-security-module@archiver.kernel.org>; Mon,  2 Mar 2020 14:34:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5773D214DB
-	for <linux-security-module@archiver.kernel.org>; Mon,  2 Mar 2020 14:28:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70F13214DB
+	for <linux-security-module@archiver.kernel.org>; Mon,  2 Mar 2020 14:34:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727175AbgCBO2G (ORCPT
+        id S1727112AbgCBOeJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 2 Mar 2020 09:28:06 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2495 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727053AbgCBO2G (ORCPT
+        Mon, 2 Mar 2020 09:34:09 -0500
+Received: from mail.hallyn.com ([178.63.66.53]:46164 "EHLO mail.hallyn.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727053AbgCBOeI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 2 Mar 2020 09:28:06 -0500
-Received: from lhreml702-cah.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id B68A47C0738F4A9E4DA7;
-        Mon,  2 Mar 2020 14:28:04 +0000 (GMT)
-Received: from fraeml703-chm.china.huawei.com (10.206.15.52) by
- lhreml702-cah.china.huawei.com (10.201.108.43) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Mon, 2 Mar 2020 14:28:04 +0000
-Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- fraeml703-chm.china.huawei.com (10.206.15.52) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1713.5; Mon, 2 Mar 2020 15:28:03 +0100
-Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
- fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.1713.004;
- Mon, 2 Mar 2020 15:28:03 +0100
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        "James.Bottomley@HansenPartnership.com" 
-        <James.Bottomley@HansenPartnership.com>,
-        "jarkko.sakkinen@linux.intel.com" <jarkko.sakkinen@linux.intel.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-CC:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: RE: [PATCH v3 2/8] ima: Switch to ima_hash_algo for boot aggregate
-Thread-Topic: [PATCH v3 2/8] ima: Switch to ima_hash_algo for boot aggregate
-Thread-Index: AQHV3/kpNT3OoKRF00CRxabm/9u1E6gU8McAgADT8jCAH5syAIAAFKYQ
-Date:   Mon, 2 Mar 2020 14:28:03 +0000
-Message-ID: <8a6fb34e18b147fa811e82c78fb30d66@huawei.com>
-References: <20200210100048.21448-1-roberto.sassu@huawei.com>
-         <20200210100048.21448-3-roberto.sassu@huawei.com>
-         <1581373420.5585.920.camel@linux.ibm.com>
-         <6955307747034265bd282bf68c368f34@huawei.com>
- <1583156506.8544.60.camel@linux.ibm.com>
-In-Reply-To: <1583156506.8544.60.camel@linux.ibm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.220.96.108]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Mon, 2 Mar 2020 09:34:08 -0500
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+        id 5E334B1A; Mon,  2 Mar 2020 08:34:05 -0600 (CST)
+Date:   Mon, 2 Mar 2020 08:34:05 -0600
+From:   "Serge E. Hallyn" <serge@hallyn.com>
+To:     Josef Bacik <josef@toxicpanda.com>
+Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
+        =?iso-8859-1?Q?St=E9phane?= Graber <stgraber@ubuntu.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Aleksa Sarai <cyphar@cyphar.com>, Jann Horn <jannh@google.com>,
+        smbarber@chromium.org, Seth Forshee <seth.forshee@canonical.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Serge Hallyn <serge@hallyn.com>,
+        James Morris <jmorris@namei.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Phil Estes <estesp@gmail.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        containers@lists.linux-foundation.org,
+        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
+        mpawlowski@fb.com
+Subject: Re: [PATCH v3 00/25] user_namespace: introduce fsid mappings
+Message-ID: <20200302143405.GA25432@mail.hallyn.com>
+References: <20200218143411.2389182-1-christian.brauner@ubuntu.com>
+ <2b0fe94b-036a-919e-219b-cc1ba0641781@toxicpanda.com>
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2b0fe94b-036a-919e-219b-cc1ba0641781@toxicpanda.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBNaW1pIFpvaGFyIFttYWlsdG86
-em9oYXJAbGludXguaWJtLmNvbV0NCj4gU2VudDogTW9uZGF5LCBNYXJjaCAyLCAyMDIwIDI6NDIg
-UE0NCj4gVG86IFJvYmVydG8gU2Fzc3UgPHJvYmVydG8uc2Fzc3VAaHVhd2VpLmNvbT47DQo+IEph
-bWVzLkJvdHRvbWxleUBIYW5zZW5QYXJ0bmVyc2hpcC5jb207DQo+IGphcmtrby5zYWtraW5lbkBs
-aW51eC5pbnRlbC5jb207IERtaXRyeSBLYXNhdGtpbg0KPiA8ZG1pdHJ5Lmthc2F0a2luQGdtYWls
-LmNvbT4NCj4gQ2M6IGxpbnV4LWludGVncml0eUB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LXNlY3Vy
-aXR5LW1vZHVsZUB2Z2VyLmtlcm5lbC5vcmc7DQo+IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5v
-cmc7IFNpbHZpdSBWbGFzY2VhbnUNCj4gPFNpbHZpdS5WbGFzY2VhbnVAaHVhd2VpLmNvbT47IHN0
-YWJsZUB2Z2VyLmtlcm5lbC5vcmcNCj4gU3ViamVjdDogUmU6IFtQQVRDSCB2MyAyLzhdIGltYTog
-U3dpdGNoIHRvIGltYV9oYXNoX2FsZ28gZm9yIGJvb3QNCj4gYWdncmVnYXRlDQo+IA0KPiBPbiBU
-dWUsIDIwMjAtMDItMTEgYXQgMTA6MDkgKzAwMDAsIFJvYmVydG8gU2Fzc3Ugd3JvdGU6DQo+ID4g
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiANCj4gUGxlYXNlIGZpbmQvdXNlIGEgbWFp
-bGVyIHRoYXQgZG9lc24ndCBpbmNsdWRlIHRoaXMganVuay4NCg0KSSB3aWxsIGRvLiBJIGRpZG4n
-dCBoYXZlIHRoZSB0aW1lIHlldC4NCg0KPiA+ID4gT24gTW9uLCAyMDIwLTAyLTEwIGF0IDExOjAw
-ICswMTAwLCBSb2JlcnRvIFNhc3N1IHdyb3RlOg0KPiA+ID4gPiBib290X2FnZ3JlZ2F0ZSBpcyB0
-aGUgZmlyc3QgZW50cnkgb2YgSU1BIG1lYXN1cmVtZW50IGxpc3QuIEl0cyBwdXJwb3NlDQo+IGlz
-DQo+ID4gPiA+IHRvIGxpbmsgcHJlLWJvb3QgbWVhc3VyZW1lbnRzIHRvIElNQSBtZWFzdXJlbWVu
-dHMuIEFzIElNQSB3YXMNCj4gPiA+IGRlc2lnbmVkIHRvDQo+ID4gPiA+IHdvcmsgd2l0aCBhIFRQ
-TSAxLjIsIHRoZSBTSEExIFBDUiBiYW5rIHdhcyBhbHdheXMgc2VsZWN0ZWQuDQo+ID4gPiA+DQo+
-ID4gPiA+IEN1cnJlbnRseSwgZXZlbiBpZiBhIFRQTSAyLjAgaXMgdXNlZCwgdGhlIFNIQTEgUENS
-IGJhbmsgaXMgc2VsZWN0ZWQuDQo+ID4gPiA+IEhvd2V2ZXIsIHRoZSBhc3N1bXB0aW9uIHRoYXQg
-dGhlIFNIQTEgUENSIGJhbmsgaXMgYWx3YXlzIGF2YWlsYWJsZSBpcw0KPiBub3QNCj4gPiA+ID4g
-Y29ycmVjdCwgYXMgUENSIGJhbmtzIGNhbiBiZSBzZWxlY3RlZCB3aXRoIHRoZSBQQ1JfQWxsb2Nh
-dGUoKSBUUE0NCj4gPiA+IGNvbW1hbmQuDQo+ID4gPiA+DQo+ID4gPiA+IFRoaXMgcGF0Y2ggdHJp
-ZXMgdG8gdXNlIGltYV9oYXNoX2FsZ28gYXMgaGFzaCBhbGdvcml0aG0gZm9yDQo+ID4gPiBib290
-X2FnZ3JlZ2F0ZS4NCj4gPiA+ID4gSWYgbm8gUENSIGJhbmsgdXNlcyB0aGF0IGFsZ29yaXRobSwg
-dGhlIHBhdGNoIHRyaWVzIHRvIGZpbmQgdGhlIFNIQTI1Ng0KPiBQQ1INCj4gPiA+ID4gYmFuayAo
-d2hpY2ggaXMgbWFuZGF0b3J5IGluIHRoZSBUQ0cgUEMgQ2xpZW50IHNwZWNpZmljYXRpb24pLg0K
-PiA+ID4NCj4gPiA+IFVwIHRvIGhlcmUsIHRoZSBwYXRjaCBkZXNjcmlwdGlvbiBtYXRjaGVzIHRo
-ZSBjb2RlLg0KPiA+ID4gPiBJZiBhbHNvIHRoaXMNCj4gPiA+ID4gYmFuayBpcyBub3QgZm91bmQs
-IHRoZSBwYXRjaCBzZWxlY3RzIHRoZSBmaXJzdCBvbmUuIElmIHRoZSBUUE0gYWxnb3JpdGhtDQo+
-ID4gPiA+IG9mIHRoYXQgYmFuayBpcyBub3QgbWFwcGVkIHRvIGEgY3J5cHRvIElELCBib290X2Fn
-Z3JlZ2F0ZSBpcyBzZXQgdG8NCj4gemVyby4NCj4gPiA+DQo+ID4gPiBUaGlzIGNvbW1lbnQgYW5k
-IHRoZSBvbmUgaW5saW5lIGFyZSBsZWZ0IG92ZXIgZnJvbSBwcmV2aW91cyB2ZXJzaW9uLg0KPiA+
-DQo+ID4gSGkgTWltaQ0KPiA+DQo+ID4gYWN0dWFsbHkgdGhlIGNvZGUgZG9lcyB3aGF0IGlzIGRl
-c2NyaWJlZCBhYm92ZS4gYmFua19pZHggaXMgaW5pdGlhbGx5DQo+ID4gc2V0IHRvIHplcm8gYW5k
-IHJlbWFpbnMgYXMgaXQgaXMgaWYgdGhlcmUgaXMgbm8gUENSIGJhbmsgZm9yIHRoZSBkZWZhdWx0
-DQo+ID4gSU1BIGFsZ29yaXRobSBvciBTSEEyNTYuDQo+IA0KPiBTb3JyeSBmb3IgdGhlIGRlbGF5
-IGluIGNvbnRpbnVpbmcgdG8gcmV2aWV3IHRoaXMgcGF0Y2ggc2V0LiDCoEl0IHRvb2sgYQ0KPiB3
-aGlsZSB0byB3cml0ZSBpbWEtZXZtLXV0aWxzIHJlZ3Jlc3Npb24gdGVzdHMgZm9yIGl0Lg0KPiAN
-Cj4gRG1pdHJ5IGFuZCB5b3Ugd2VyZSB0aGUgb25lcyB0aGF0IGluaXRpYXRlZCBpbWEtZXZtLXV0
-aWxzLCBzYXlpbmcNCj4gdGhlcmUgc2hvdWxkIGEgc2luZ2xlIHBhY2thZ2UgZm9yIHNpZ25pbmcg
-ZmlsZXMgYW5kIGludGVncml0eSB0ZXN0aW5nLg0KPiDCoFRoZSBmZWF0dXJlcyBpbiBpbWEtZXZt
-LXV0aWxzIHNob3VsZCByZWZsZWN0IHdoYXQgaXMgYWN0dWFsbHkNCj4gdXBzdHJlYW1lZCBpbiB0
-aGUga2VybmVsLiDCoChDdXJyZW50bHkgdGhlcmUgYXJlIGEgZmV3IGV4cGVyaW1lbnRhbA0KPiBm
-ZWF0dXJlcyB3aGljaCB3ZXJlIG5ldmVyIHVwc3RyZWFtZWQuIMKgSSdkIGxpa2UgdG8gcmVtb3Zl
-IHRoZW0sIGJ1dCBhbQ0KPiBhIGJpdCBjb25jZXJuZWQgdGhhdCB0aGV5IGFyZSBiZWluZyB1c2Vk
-LikgwqBJJ2QgYXBwcmVjaWF0ZSB5b3VyIGhlbHANCj4gaW4ga2VlcGluZyBpbWEtZXZtLXV0aWxz
-IHVwIHRvIGRhdGUuIMKgSXQgd2lsbCBoZWxwIHNpbXBsaWZ5DQo+IHVwc3RyZWFtaW5nIG5ldyBr
-ZXJuZWwgZmVhdHVyZXMuDQo+IA0KPiBNeSBpbml0aWFsIHBhdGNoIGF0dGVtcHRlZCB0byB1c2Ug
-YW55IGNvbW1vbiBUUE0gYW5kIGtlcm5lbCBoYXNoDQo+IGFsZ29yaXRobSB0byBjYWxjdWxhdGUg
-dGhlIGJvb3RfYWdncmVnYXRlLiDCoFRoZSBkaXNjdXNzaW9uIHdpdGggSmFtZXMNCj4gd2FzIHBy
-ZXR0eSBjbGVhciwgd2hpY2ggeW91IGV2ZW4gc3RhdGVkIGluIHRoZSBDaGFuZ2Vsb2cuIMKgRWl0
-aGVyIHdlDQo+IHVzZSB0aGUgSU1BIGRlZmF1bHQgaGFzaCBhbGdvcml0aG0sIFNIQTI1NiBmb3Ig
-VFBNIDIuMCBvciBTSEExIGZvciBUUE0NCj4gMS4yIGZvciB0aGUgYm9vdC1hZ2dyZWdhdGUuDQoN
-Ck9rLCBJIGRpZG4ndCB1bmRlcnN0YW5kIGZ1bGx5LiBJIHRob3VnaHQgd2Ugc2hvdWxkIHVzZSB0
-aGUgZGVmYXVsdCBJTUENCmFsZ29yaXRobSBhbmQgc2VsZWN0IFNIQTI1NiBhcyBmYWxsYmFjayBj
-aG9pY2UgZm9yIFRQTSAyLjAgaWYgdGhlcmUgaXMgbm8NClBDUiBiYW5rIGZvciBkZWZhdWx0IGFs
-Z29yaXRobS4gSSBhZGRpdGlvbmFsbHkgaW1wbGVtZW50ZWQgdGhlIGxvZ2ljIHRvDQpzZWxlY3Qg
-dGhlIGZpcnN0IFBDUiBiYW5rIGlmIHRoZSBTSEEyNTYgUENSIGJhbmsgaXMgbm90IGF2YWlsYWJs
-ZSBidXQgSSBjYW4NCnJlbW92ZSBpdC4NCg0KU0hBMjU2IHNob3VsZCBiZSB0aGUgbWluaW11bSBy
-ZXF1aXJlbWVudCBmb3IgYm9vdCBhZ2dyZWdhdGUuIFRoZQ0KYWR2YW50YWdlIG9mIHVzaW5nIHRo
-ZSBkZWZhdWx0IElNQSBhbGdvcml0aG0gaXMgdGhhdCBpdCB3aWxsIGJlIHBvc3NpYmxlIHRvDQpz
-ZWxlY3Qgc3Ryb25nZXIgYWxnb3JpdGhtcyB3aGVuIHRoZXkgYXJlIHN1cHBvcnRlZCBieSB0aGUg
-VFBNLiBXZSBtaWdodA0KaW50cm9kdWNlIGEgbmV3IG9wdGlvbiB0byBzcGVjaWZ5IG9ubHkgdGhl
-IGFsZ29yaXRobSBmb3IgYm9vdCBhZ2dyZWdhdGUsDQpsaWtlIEphbWVzIHN1Z2dlc3RlZCB0byBz
-dXBwb3J0IGVtYmVkZGVkIHN5c3RlbXMuIExldCBtZSBrbm93IHdoaWNoDQpvcHRpb24geW91IHBy
-ZWZlci4NCg0KVGhhbmtzDQoNClJvYmVydG8NCg0KSFVBV0VJIFRFQ0hOT0xPR0lFUyBEdWVzc2Vs
-ZG9yZiBHbWJILCBIUkIgNTYwNjMNCk1hbmFnaW5nIERpcmVjdG9yOiBMaSBQZW5nLCBMaSBKaWFu
-LCBTaGkgWWFubGkNCg==
+On Thu, Feb 27, 2020 at 02:33:04PM -0500, Josef Bacik wrote:
+> On 2/18/20 9:33 AM, Christian Brauner wrote:
+> > Hey everyone,
+> > 
+> > This is v3 after (off- and online) discussions with Jann the following
+> > changes were made:
+> > - To handle nested user namespaces cleanly, efficiently, and with full
+> >    backwards compatibility for non fsid-mapping aware workloads we only
+> >    allow writing fsid mappings as long as the corresponding id mapping
+> >    type has not been written.
+> > - Split the patch which adds the internal ability in
+> >    kernel/user_namespace to verify and write fsid mappings into tree
+> >    patches:
+> >    1. [PATCH v3 04/25] fsuidgid: add fsid mapping helpers
+> >       patch to implement core helpers for fsid translations (i.e.
+> >       make_kfs*id(), from_kfs*id{_munged}(), kfs*id_to_k*id(),
+> >       k*id_to_kfs*id()
+> >    2. [PATCH v3 05/25] user_namespace: refactor map_write()
+> >       patch to refactor map_write() in order to prepare for actual fsid
+> >       mappings changes in the following patch. (This should make it
+> >       easier to review.)
+> >    3. [PATCH v3 06/25] user_namespace: make map_write() support fsid mappings
+> >       patch to implement actual fsid mappings support in mape_write()
+> > - Let the keyctl infrastructure only operate on kfsid which are always
+> >    mapped/looked up in the id mappings similar to what we do for
+> >    filesystems that have the same superblock visible in multiple user
+> >    namespaces.
+> > 
+> > This version also comes with minimal tests which I intend to expand in
+> > the future.
+> > 
+> >  From pings and off-list questions and discussions at Google Container
+> > Security Summit there seems to be quite a lot of interest in this
+> > patchset with use-cases ranging from layer sharing for app containers
+> > and k8s, as well as data sharing between containers with different id
+> > mappings. I haven't Cced all people because I don't have all the email
+> > adresses at hand but I've at least added Phil now. :)
+> > 
+> I put this into a kernel for our container guys to mess with in order to
+> validate it would actually be useful for real world uses.  I've cc'ed the
+> guy who did all of the work in case you have specific questions.
+> 
+> Good news is the interface is acceptable, albeit apparently the whole user
+> ns interface sucks in general.  But you haven't made it worse, so success!
+
+Well I very much disagree here :)  With the first part!  But I do
+understand the shortcomings.  Anyway,
+
+I still hope we get to talk about this in person, but IMO this is the
+right approach (this being - thinking about how to make the uid mappings
+more flexible without making them too complicated to be safe to use),
+but a bit too static in terms of target.  There are at least two ways
+that I could see usefully generalizing it
+
+From a user space pov, the following goal is indespensible (for my use
+cases):  that the fsuid be selectable based on fs, mountpoint, or file
+context (as in selinux).
+
+From a userns pov, one way to look at it is this:  when task t1 signals
+task t2, it's not only t1's namespace that's considered when filling in
+the sender uid, but also t2's.  Likewise, when writing a file, we should
+consider both t1's fsuid+userns, and the file's, mount's, or filesystem's
+userns.
+
+From that POV, your patch is a step in the right direction and could be
+taken as is (modulo any tmpfs fix Josef needs :)  From there I would
+propose adding a 'userns=<uidnsfd>' bind mount option, so we could create
+an empty userns with the desired mapping (subject to permissions granted
+by subuids), get an fd to the uidns, and say
+
+	mount --bind -o uidns=5 /shared /containers/c1/mnt/shared
+
+So now when I write a file /etc/hosts as container fsuid 0, it'll be
+subject to the container rootfs mount's uid mapping, presumably
+100000.  When I write /mnt/shared/hello, it'll be subject to the mount's
+uid mapping, which might be 1000.
+
+-serge
