@@ -2,87 +2,99 @@ Return-Path: <SRS0=VYUt=4T=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22FA9C3F2D2
-	for <linux-security-module@archiver.kernel.org>; Mon,  2 Mar 2020 09:27:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79494C3F2D2
+	for <linux-security-module@archiver.kernel.org>; Mon,  2 Mar 2020 09:46:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3F1224695
-	for <linux-security-module@archiver.kernel.org>; Mon,  2 Mar 2020 09:27:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z96Xg0OK"
+	by mail.kernel.org (Postfix) with ESMTP id 58D7D246BE
+	for <linux-security-module@archiver.kernel.org>; Mon,  2 Mar 2020 09:46:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727115AbgCBJ13 (ORCPT
+        id S1727500AbgCBJq0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 2 Mar 2020 04:27:29 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:33218 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726956AbgCBJ13 (ORCPT
+        Mon, 2 Mar 2020 04:46:26 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2485 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727498AbgCBJq0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 2 Mar 2020 04:27:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583141248;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=e7SwlGV6SzZARN8z/sqcSHNyyZ6d+Qw/y79yqdRaRMQ=;
-        b=Z96Xg0OKjcKHR+O8xCm/7S6LbNUg+brElUHwSj6zNo1TKuTDGq5SnzairQZ9ySNcC7qS1n
-        b3Dm4BybSHQJHsN27O4rb6jss3LM0IOl+GY+NWVwTOGeDogl1wAu09JoZH9ikyXWbDqb6H
-        koQd60vtaBbuvBixK9tN2ogBIfDLvcg=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-77-_U5IG59xP6KG5tsyynbpGw-1; Mon, 02 Mar 2020 04:27:24 -0500
-X-MC-Unique: _U5IG59xP6KG5tsyynbpGw-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7AC6BDB61;
-        Mon,  2 Mar 2020 09:27:23 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-182.rdu2.redhat.com [10.10.120.182])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 324FE100194E;
-        Mon,  2 Mar 2020 09:27:22 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <538780.1583137732@warthog.procyon.org.uk>
-References: <538780.1583137732@warthog.procyon.org.uk> <20200218211259.GA19673@linux.intel.com> <000000000000f4bf93059db8b081@google.com>
-Cc:     dhowells@redhat.com,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        jmorris@namei.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, serge@hallyn.com
-Subject: Re: kernel BUG at lib/assoc_array.c:LINE!
+        Mon, 2 Mar 2020 04:46:26 -0500
+Received: from LHREML710-CAH.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id B2AAD9DF79AC803B8C56;
+        Mon,  2 Mar 2020 09:46:24 +0000 (GMT)
+Received: from fraeml704-chm.china.huawei.com (10.206.15.53) by
+ LHREML710-CAH.china.huawei.com (10.201.108.33) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Mon, 2 Mar 2020 09:46:24 +0000
+Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
+ fraeml704-chm.china.huawei.com (10.206.15.53) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1713.5; Mon, 2 Mar 2020 10:46:23 +0100
+Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
+ fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.1713.004;
+ Mon, 2 Mar 2020 10:46:23 +0100
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     kernel test robot <rong.a.chen@intel.com>
+CC:     "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
+        "James.Bottomley@HansenPartnership.com" 
+        <James.Bottomley@HansenPartnership.com>,
+        "jarkko.sakkinen@linux.intel.com" <jarkko.sakkinen@linux.intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>,
+        "lkp@lists.01.org" <lkp@lists.01.org>
+Subject: RE: [ima] 9165b814d2: BUG:kernel_NULL_pointer_dereference,address
+Thread-Topic: [ima] 9165b814d2: BUG:kernel_NULL_pointer_dereference,address
+Thread-Index: AQHV8DEWZqyGfs8H/kW8+ywKreXaD6g1CQuA
+Date:   Mon, 2 Mar 2020 09:46:23 +0000
+Message-ID: <0b454d6825824d3d9e4a99b552cc5f84@huawei.com>
+References: <20200205103317.29356-9-roberto.sassu@huawei.com>
+ <20200302012218.GU6548@shao2-debian>
+In-Reply-To: <20200302012218.GU6548@shao2-debian>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.220.96.108]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <686377.1583141241.1@warthog.procyon.org.uk>
-Date:   Mon, 02 Mar 2020 09:27:21 +0000
-Message-ID: <686378.1583141241@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-To:     unlisted-recipients:; (no To-header on input)
+X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-David Howells <dhowells@redhat.com> wrote:
-
-> [  621.627412][ T6728] kAFS: unable to lookup cell '?T]??J??n/P4?['
-> 
-> This is a bit odd, since the version allegedly being tested includes a patch
-> to prohibit AFS cell names that contain unprintable chars.  It should error
-> out in afs_alloc_cell(), way before it tries to do a DNS lookup.
-
-Ah, no, that's okay.  This error message is printed in afs_parse_source() on
-the way out after afs_lookup_cell() fails (presumably due to afs_alloc_cell()
-failing).
-
-It seems unlikely that the dead process is actually anything to do with the
-mount that more or less immediately preceded it in the log.  It mount should
-have failed without creating a cell record - which then precludes affecting
-afs_manage_cell().  However, a previously created cell with a valid name can
-feasibly be driving afs_manage_cell() and causing the problem.
-
-David
-
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBrZXJuZWwgdGVzdCByb2JvdCBb
+bWFpbHRvOnJvbmcuYS5jaGVuQGludGVsLmNvbV0NCj4gU2VudDogTW9uZGF5LCBNYXJjaCAyLCAy
+MDIwIDI6MjIgQU0NCj4gVG86IFJvYmVydG8gU2Fzc3UgPHJvYmVydG8uc2Fzc3VAaHVhd2VpLmNv
+bT4NCj4gQ2M6IHpvaGFyQGxpbnV4LmlibS5jb207IEphbWVzLkJvdHRvbWxleUBIYW5zZW5QYXJ0
+bmVyc2hpcC5jb207DQo+IGphcmtrby5zYWtraW5lbkBsaW51eC5pbnRlbC5jb207IGxpbnV4LWlu
+dGVncml0eUB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LQ0KPiBzZWN1cml0eS1tb2R1bGVAdmdlci5r
+ZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBTaWx2aXUNCj4gVmxhc2Nl
+YW51IDxTaWx2aXUuVmxhc2NlYW51QGh1YXdlaS5jb20+OyBSb2JlcnRvIFNhc3N1DQo+IDxyb2Jl
+cnRvLnNhc3N1QGh1YXdlaS5jb20+OyBsa3BAbGlzdHMuMDEub3JnDQo+IFN1YmplY3Q6IFtpbWFd
+IDkxNjViODE0ZDI6DQo+IEJVRzprZXJuZWxfTlVMTF9wb2ludGVyX2RlcmVmZXJlbmNlLGFkZHJl
+c3MNCj4gDQo+IEZZSSwgd2Ugbm90aWNlZCB0aGUgZm9sbG93aW5nIGNvbW1pdCAoYnVpbHQgd2l0
+aCBnY2MtNyk6DQo+IA0KPiBjb21taXQ6IDkxNjViODE0ZDJiZWE4Y2ZlYjU1NzUwNWJiMjA2Mzk2
+MzMxZTgxOTIgKCJbUEFUQ0ggdjIgOC84XQ0KPiBpbWE6IFVzZSBpbWFfaGFzaF9hbGdvIGZvciBj
+b2xsaXNpb24gZGV0ZWN0aW9uIGluIHRoZSBtZWFzdXJlbWVudCBsaXN0IikNCj4gdXJsOiBodHRw
+czovL2dpdGh1Yi5jb20vMGRheS1jaS9saW51eC9jb21taXRzL1JvYmVydG8tU2Fzc3UvaW1hLXN1
+cHBvcnQtDQo+IHN0cm9uZ2VyLWFsZ29yaXRobXMtZm9yLWF0dGVzdGF0aW9uLzIwMjAwMjA1LTIz
+MzkwMQ0KPiBiYXNlOiBodHRwczovL2dpdC5rZXJuZWwub3JnL2NnaXQvbGludXgva2VybmVsL2dp
+dC96b2hhci9saW51eC1pbnRlZ3JpdHkuZ2l0DQo+IG5leHQtaW50ZWdyaXR5DQoNCkhpDQoNCnRo
+YW5rcyBmb3IgdGhlIHJlcG9ydC4NCg0KWWVzLCB2ZXJzaW9uIDIgaGFkIGEgYnVnOg0KDQotLS0N
+CgkJaW1hX2FsZ29fYXJyYXlbaSsrXS5hbGdvID0gSEFTSF9BTEdPX1NIQTE7DQoJfQ0KDQoJaWYg
+KGltYV9oYXNoX2FsZ29faWR4ID49IG5yX2FsbG9jYXRlZF9iYW5rcykgew0KCQlpbWFfYWxnb19h
+cnJheVtpXS50Zm0gPSBpbWFfc2hhc2hfdGZtOw0KCQlpbWFfYWxnb19hcnJheVtpXS5hbGdvID0g
+aW1hX2hhc2hfYWxnbzsNCgl9DQotLS0NCg0KVGhlIGNvZGUgYWxsb2NhdGVkIGltYV9hbGdvX2Fy
+cmF5IHdpdGggc2l6ZSAxIChUUE0gd2FzIG5vdCBmb3VuZCBhbmQNCnRoZSBkZWZhdWx0IGFsZ29y
+aXRobSBpcyBTSEExKS4NCg0KSG93ZXZlciwgbGF0ZXIgaXQgaW5pdGlhbGl6ZXMgaW1hX2FsZ29f
+YXJyYXkgZm9yIFNIQTEgYW5kIGluY3JlbWVudHMgdGhlDQppIHZhcmlhYmxlLiBTaW5jZSB0aGUg
+Y29kZSBkb2VzIG5vdCBjaGVjayBpZiB0aGUgZGVmYXVsdCBhbGdvcml0aG0gaXMgU0hBMSwNCnRo
+ZSBsYXN0IHBhcnQgaXMgYWxzbyBleGVjdXRlZCBhbmQgY2F1c2VzIGNvcnJ1cHRpb24sIGJlY2F1
+c2UgaW1hX2FsZ29fYXJyYXkNCmhhcyBvbmx5IG9uZSBlbGVtZW50Lg0KDQpJIGZpeGVkIGFscmVh
+ZHkgdGhpcyBidWcgaW4gdmVyc2lvbiAzIG9mIHRoZSBwYXRjaCBzZXQuDQoNClRoYW5rcw0KDQpS
+b2JlcnRvDQoNCkhVQVdFSSBURUNITk9MT0dJRVMgRHVlc3NlbGRvcmYgR21iSCwgSFJCIDU2MDYz
+DQpNYW5hZ2luZyBEaXJlY3RvcjogTGkgUGVuZywgTGkgSmlhbiwgU2hpIFlhbmxpDQo=
