@@ -2,192 +2,113 @@ Return-Path: <SRS0=t7gL=4U=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3029BC3F2D2
-	for <linux-security-module@archiver.kernel.org>; Tue,  3 Mar 2020 03:01:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D2B1C3F2D8
+	for <linux-security-module@archiver.kernel.org>; Tue,  3 Mar 2020 04:03:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 068522166E
-	for <linux-security-module@archiver.kernel.org>; Tue,  3 Mar 2020 03:01:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1583204463;
-	bh=k1YJFRpqWZr/RQKoQR1pqK8QgRDaZ/e+DAJMuHQUrEw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=1YYeNXCrctC03sQrori3Z108VjjaQSOeeFjUJg/3v3+xwnAb7MQYQRLJPwCNJ75mk
-	 LxOb4Doy+BTMyt0B161KkAWpQUalcicmOUW/0j2jWQgA+4OZqmoCbZrBTXq/iwWEvF
-	 zdrwhEb6pqv3+Bw7KBE1a5rV7aBTib4y2Lic3JWk=
+	by mail.kernel.org (Postfix) with ESMTP id E0F1A2465E
+	for <linux-security-module@archiver.kernel.org>; Tue,  3 Mar 2020 04:03:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727897AbgCCCrJ (ORCPT
+        id S1726910AbgCCEDv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 2 Mar 2020 21:47:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41924 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727883AbgCCCrI (ORCPT
+        Mon, 2 Mar 2020 23:03:51 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:47192 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726942AbgCCEDv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 2 Mar 2020 21:47:08 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 73C1924684;
-        Tue,  3 Mar 2020 02:47:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583203627;
-        bh=k1YJFRpqWZr/RQKoQR1pqK8QgRDaZ/e+DAJMuHQUrEw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FT4yvANRzMFJcIggJZLoVuUWSMb8xUoggphYVQlTEv4oKjBWwE87rRz6Q8nZUWgIY
-         qiWISGoY+L/JFtUHHOlouRCz0sDoWswPo1V2AbAwsIsM4qPUgsoLlpx3PHU2oMFmOF
-         75eYiTWVRDZMnU6KlBr1b/emL6pESYb2e31/5wYU=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Javier Martinez Canillas <javierm@redhat.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.5 41/66] efi: Only print errors about failing to get certs if EFI vars are found
-Date:   Mon,  2 Mar 2020 21:45:50 -0500
-Message-Id: <20200303024615.8889-41-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200303024615.8889-1-sashal@kernel.org>
-References: <20200303024615.8889-1-sashal@kernel.org>
-MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+        Mon, 2 Mar 2020 23:03:51 -0500
+Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 023429tk165498
+        for <linux-security-module@vger.kernel.org>; Mon, 2 Mar 2020 23:03:50 -0500
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2yfmg0qd5t-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Mon, 02 Mar 2020 23:03:50 -0500
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Tue, 3 Mar 2020 04:03:47 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 3 Mar 2020 04:03:44 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02343h1x54263954
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 3 Mar 2020 04:03:43 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7928D5205F;
+        Tue,  3 Mar 2020 04:03:43 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.229.179])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 970925204E;
+        Tue,  3 Mar 2020 04:03:42 +0000 (GMT)
+Subject: Re: [PATCH v3 7/8] ima: Calculate and extend PCR with digests in
+ ima_template_entry
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>,
+        James.Bottomley@HansenPartnership.com,
+        jarkko.sakkinen@linux.intel.com
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
+Date:   Mon, 02 Mar 2020 23:03:42 -0500
+In-Reply-To: <20200210100418.22049-1-roberto.sassu@huawei.com>
+References: <20200210100418.22049-1-roberto.sassu@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 20030304-0028-0000-0000-000003E03FA6
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20030304-0029-0000-0000-000024A56A70
+Message-Id: <1583208222.8544.168.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-03-02_09:2020-03-02,2020-03-02 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 clxscore=1015
+ lowpriorityscore=0 malwarescore=0 adultscore=0 suspectscore=0
+ priorityscore=1501 spamscore=0 mlxscore=0 bulkscore=0 phishscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2003030028
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Javier Martinez Canillas <javierm@redhat.com>
+On Mon, 2020-02-10 at 11:04 +0100, Roberto Sassu wrote:
 
-[ Upstream commit 3be54d558c75562e42bc83d665df024bd79d399b ]
+> @@ -219,6 +214,8 @@ int ima_restore_measurement_entry(struct ima_template_entry *entry)
+>  
+>  int __init ima_init_digests(void)
+>  {
+> +	u16 digest_size;
+> +	u16 crypto_id;
+>  	int i;
+>  
+>  	if (!ima_tpm_chip)
+> @@ -229,8 +226,17 @@ int __init ima_init_digests(void)
+>  	if (!digests)
+>  		return -ENOMEM;
+>  
+> -	for (i = 0; i < ima_tpm_chip->nr_allocated_banks; i++)
+> +	for (i = 0; i < ima_tpm_chip->nr_allocated_banks; i++) {
+>  		digests[i].alg_id = ima_tpm_chip->allocated_banks[i].alg_id;
+> +		digest_size = ima_tpm_chip->allocated_banks[i].digest_size;
+> +		crypto_id = ima_tpm_chip->allocated_banks[i].crypto_id;
+> +
+> +		/* for unmapped TPM algorithms digest is still a padded SHA1 */
+> +		if (crypto_id == HASH_ALGO__LAST)
+> +			digest_size = SHA1_DIGEST_SIZE;
+> +
+> +		memset(digests[i].digest, 0xff, digest_size);
 
-If CONFIG_LOAD_UEFI_KEYS is enabled, the kernel attempts to load the certs
-from the db, dbx and MokListRT EFI variables into the appropriate keyrings.
+Shouldn't the memset here be of the actual digest size even for
+unmapped TPM algorithms.
 
-But it just assumes that the variables will be present and prints an error
-if the certs can't be loaded, even when is possible that the variables may
-not exist. For example the MokListRT variable will only be present if shim
-is used.
-
-So only print an error message about failing to get the certs list from an
-EFI variable if this is found. Otherwise these printed errors just pollute
-the kernel log ring buffer with confusing messages like the following:
-
-[    5.427251] Couldn't get size: 0x800000000000000e
-[    5.427261] MODSIGN: Couldn't get UEFI db list
-[    5.428012] Couldn't get size: 0x800000000000000e
-[    5.428023] Couldn't get UEFI MokListRT
-
-Reported-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
-Tested-by: Hans de Goede <hdegoede@redhat.com>
-Acked-by: Ard Biesheuvel <ardb@kernel.org>
-Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- security/integrity/platform_certs/load_uefi.c | 40 ++++++++++++-------
- 1 file changed, 26 insertions(+), 14 deletions(-)
-
-diff --git a/security/integrity/platform_certs/load_uefi.c b/security/integrity/platform_certs/load_uefi.c
-index 111898aad56e4..f0c908241966a 100644
---- a/security/integrity/platform_certs/load_uefi.c
-+++ b/security/integrity/platform_certs/load_uefi.c
-@@ -35,16 +35,18 @@ static __init bool uefi_check_ignore_db(void)
-  * Get a certificate list blob from the named EFI variable.
-  */
- static __init void *get_cert_list(efi_char16_t *name, efi_guid_t *guid,
--				  unsigned long *size)
-+				  unsigned long *size, efi_status_t *status)
- {
--	efi_status_t status;
- 	unsigned long lsize = 4;
- 	unsigned long tmpdb[4];
- 	void *db;
- 
--	status = efi.get_variable(name, guid, NULL, &lsize, &tmpdb);
--	if (status != EFI_BUFFER_TOO_SMALL) {
--		pr_err("Couldn't get size: 0x%lx\n", status);
-+	*status = efi.get_variable(name, guid, NULL, &lsize, &tmpdb);
-+	if (*status == EFI_NOT_FOUND)
-+		return NULL;
-+
-+	if (*status != EFI_BUFFER_TOO_SMALL) {
-+		pr_err("Couldn't get size: 0x%lx\n", *status);
- 		return NULL;
- 	}
- 
-@@ -52,10 +54,10 @@ static __init void *get_cert_list(efi_char16_t *name, efi_guid_t *guid,
- 	if (!db)
- 		return NULL;
- 
--	status = efi.get_variable(name, guid, NULL, &lsize, db);
--	if (status != EFI_SUCCESS) {
-+	*status = efi.get_variable(name, guid, NULL, &lsize, db);
-+	if (*status != EFI_SUCCESS) {
- 		kfree(db);
--		pr_err("Error reading db var: 0x%lx\n", status);
-+		pr_err("Error reading db var: 0x%lx\n", *status);
- 		return NULL;
- 	}
- 
-@@ -74,6 +76,7 @@ static int __init load_uefi_certs(void)
- 	efi_guid_t mok_var = EFI_SHIM_LOCK_GUID;
- 	void *db = NULL, *dbx = NULL, *mok = NULL;
- 	unsigned long dbsize = 0, dbxsize = 0, moksize = 0;
-+	efi_status_t status;
- 	int rc = 0;
- 
- 	if (!efi.get_variable)
-@@ -83,9 +86,12 @@ static int __init load_uefi_certs(void)
- 	 * an error if we can't get them.
- 	 */
- 	if (!uefi_check_ignore_db()) {
--		db = get_cert_list(L"db", &secure_var, &dbsize);
-+		db = get_cert_list(L"db", &secure_var, &dbsize, &status);
- 		if (!db) {
--			pr_err("MODSIGN: Couldn't get UEFI db list\n");
-+			if (status == EFI_NOT_FOUND)
-+				pr_debug("MODSIGN: db variable wasn't found\n");
-+			else
-+				pr_err("MODSIGN: Couldn't get UEFI db list\n");
- 		} else {
- 			rc = parse_efi_signature_list("UEFI:db",
- 					db, dbsize, get_handler_for_db);
-@@ -96,9 +102,12 @@ static int __init load_uefi_certs(void)
- 		}
- 	}
- 
--	mok = get_cert_list(L"MokListRT", &mok_var, &moksize);
-+	mok = get_cert_list(L"MokListRT", &mok_var, &moksize, &status);
- 	if (!mok) {
--		pr_info("Couldn't get UEFI MokListRT\n");
-+		if (status == EFI_NOT_FOUND)
-+			pr_debug("MokListRT variable wasn't found\n");
-+		else
-+			pr_info("Couldn't get UEFI MokListRT\n");
- 	} else {
- 		rc = parse_efi_signature_list("UEFI:MokListRT",
- 					      mok, moksize, get_handler_for_db);
-@@ -107,9 +116,12 @@ static int __init load_uefi_certs(void)
- 		kfree(mok);
- 	}
- 
--	dbx = get_cert_list(L"dbx", &secure_var, &dbxsize);
-+	dbx = get_cert_list(L"dbx", &secure_var, &dbxsize, &status);
- 	if (!dbx) {
--		pr_info("Couldn't get UEFI dbx list\n");
-+		if (status == EFI_NOT_FOUND)
-+			pr_debug("dbx variable wasn't found\n");
-+		else
-+			pr_info("Couldn't get UEFI dbx list\n");
- 	} else {
- 		rc = parse_efi_signature_list("UEFI:dbx",
- 					      dbx, dbxsize,
--- 
-2.20.1
+> +	}
+>  
+>  	return 0;
+>  }
 
