@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9F29C3F2D8
-	for <linux-security-module@archiver.kernel.org>; Tue,  3 Mar 2020 02:57:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3029BC3F2D2
+	for <linux-security-module@archiver.kernel.org>; Tue,  3 Mar 2020 03:01:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B055A217F4
-	for <linux-security-module@archiver.kernel.org>; Tue,  3 Mar 2020 02:57:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 068522166E
+	for <linux-security-module@archiver.kernel.org>; Tue,  3 Mar 2020 03:01:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1583204237;
-	bh=NkRFNdz3XKrMZQz4RVrE5BBAyFyLOqfqLt6eXCZ7G5A=;
+	s=default; t=1583204463;
+	bh=k1YJFRpqWZr/RQKoQR1pqK8QgRDaZ/e+DAJMuHQUrEw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=sKjCX0FNbUSMuSqaWA/NK1ElzBHy2cSjARMonqlRD+ekgnfuMxHL7qeDv+aTKihyB
-	 dD3gqnU4c8RaA2LBSkzJUiCiezN6adld2HbHU/IFjCt2+rEabWzXNiUJG/ajxUPU6A
-	 kFTZ+lMTuezHKg4c13MjHq3vBduPgO+3CoIV/rtI=
+	b=1YYeNXCrctC03sQrori3Z108VjjaQSOeeFjUJg/3v3+xwnAb7MQYQRLJPwCNJ75mk
+	 LxOb4Doy+BTMyt0B161KkAWpQUalcicmOUW/0j2jWQgA+4OZqmoCbZrBTXq/iwWEvF
+	 zdrwhEb6pqv3+Bw7KBE1a5rV7aBTib4y2Lic3JWk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727417AbgCCCs0 (ORCPT
+        id S1727897AbgCCCrJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 2 Mar 2020 21:48:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44196 "EHLO mail.kernel.org"
+        Mon, 2 Mar 2020 21:47:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41924 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728402AbgCCCsZ (ORCPT
+        id S1727883AbgCCCrI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 2 Mar 2020 21:48:25 -0500
+        Mon, 2 Mar 2020 21:47:08 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D020424697;
-        Tue,  3 Mar 2020 02:48:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 73C1924684;
+        Tue,  3 Mar 2020 02:47:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583203704;
-        bh=NkRFNdz3XKrMZQz4RVrE5BBAyFyLOqfqLt6eXCZ7G5A=;
+        s=default; t=1583203627;
+        bh=k1YJFRpqWZr/RQKoQR1pqK8QgRDaZ/e+DAJMuHQUrEw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=icVM2Gf0zqcilKhxcwW0HNEBMyRnB9RFQUbrKtjpRZ055Yst2UyvoFWKjVDGc2dem
-         9RrOA7NwAB0sm+ovMeUX1E3WdiqXM1mGFhoX+3OdjITuU2Y0v0iCJYmSnPxiOTdMsM
-         u2Sb7WGvXaV/X6+au327e3fTK+vzKmY4owLJUaaY=
+        b=FT4yvANRzMFJcIggJZLoVuUWSMb8xUoggphYVQlTEv4oKjBWwE87rRz6Q8nZUWgIY
+         qiWISGoY+L/JFtUHHOlouRCz0sDoWswPo1V2AbAwsIsM4qPUgsoLlpx3PHU2oMFmOF
+         75eYiTWVRDZMnU6KlBr1b/emL6pESYb2e31/5wYU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Javier Martinez Canillas <javierm@redhat.com>,
@@ -48,12 +48,12 @@ Cc:     Javier Martinez Canillas <javierm@redhat.com>,
         Mimi Zohar <zohar@linux.ibm.com>,
         Sasha Levin <sashal@kernel.org>,
         linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 36/58] efi: Only print errors about failing to get certs if EFI vars are found
-Date:   Mon,  2 Mar 2020 21:47:18 -0500
-Message-Id: <20200303024740.9511-36-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.5 41/66] efi: Only print errors about failing to get certs if EFI vars are found
+Date:   Mon,  2 Mar 2020 21:45:50 -0500
+Message-Id: <20200303024615.8889-41-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200303024740.9511-1-sashal@kernel.org>
-References: <20200303024740.9511-1-sashal@kernel.org>
+In-Reply-To: <20200303024615.8889-1-sashal@kernel.org>
+References: <20200303024615.8889-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -94,10 +94,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 26 insertions(+), 14 deletions(-)
 
 diff --git a/security/integrity/platform_certs/load_uefi.c b/security/integrity/platform_certs/load_uefi.c
-index 81b19c52832ba..020fc7a11ef0e 100644
+index 111898aad56e4..f0c908241966a 100644
 --- a/security/integrity/platform_certs/load_uefi.c
 +++ b/security/integrity/platform_certs/load_uefi.c
-@@ -39,16 +39,18 @@ static __init bool uefi_check_ignore_db(void)
+@@ -35,16 +35,18 @@ static __init bool uefi_check_ignore_db(void)
   * Get a certificate list blob from the named EFI variable.
   */
  static __init void *get_cert_list(efi_char16_t *name, efi_guid_t *guid,
@@ -121,7 +121,7 @@ index 81b19c52832ba..020fc7a11ef0e 100644
  		return NULL;
  	}
  
-@@ -56,10 +58,10 @@ static __init void *get_cert_list(efi_char16_t *name, efi_guid_t *guid,
+@@ -52,10 +54,10 @@ static __init void *get_cert_list(efi_char16_t *name, efi_guid_t *guid,
  	if (!db)
  		return NULL;
  
@@ -135,7 +135,7 @@ index 81b19c52832ba..020fc7a11ef0e 100644
  		return NULL;
  	}
  
-@@ -144,6 +146,7 @@ static int __init load_uefi_certs(void)
+@@ -74,6 +76,7 @@ static int __init load_uefi_certs(void)
  	efi_guid_t mok_var = EFI_SHIM_LOCK_GUID;
  	void *db = NULL, *dbx = NULL, *mok = NULL;
  	unsigned long dbsize = 0, dbxsize = 0, moksize = 0;
@@ -143,7 +143,7 @@ index 81b19c52832ba..020fc7a11ef0e 100644
  	int rc = 0;
  
  	if (!efi.get_variable)
-@@ -153,9 +156,12 @@ static int __init load_uefi_certs(void)
+@@ -83,9 +86,12 @@ static int __init load_uefi_certs(void)
  	 * an error if we can't get them.
  	 */
  	if (!uefi_check_ignore_db()) {
@@ -158,7 +158,7 @@ index 81b19c52832ba..020fc7a11ef0e 100644
  		} else {
  			rc = parse_efi_signature_list("UEFI:db",
  					db, dbsize, get_handler_for_db);
-@@ -166,9 +172,12 @@ static int __init load_uefi_certs(void)
+@@ -96,9 +102,12 @@ static int __init load_uefi_certs(void)
  		}
  	}
  
@@ -173,7 +173,7 @@ index 81b19c52832ba..020fc7a11ef0e 100644
  	} else {
  		rc = parse_efi_signature_list("UEFI:MokListRT",
  					      mok, moksize, get_handler_for_db);
-@@ -177,9 +186,12 @@ static int __init load_uefi_certs(void)
+@@ -107,9 +116,12 @@ static int __init load_uefi_certs(void)
  		kfree(mok);
  	}
  
