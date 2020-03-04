@@ -2,121 +2,110 @@ Return-Path: <SRS0=IE2G=4V=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2E73C3F2D8
-	for <linux-security-module@archiver.kernel.org>; Wed,  4 Mar 2020 15:13:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99A45C3F2CD
+	for <linux-security-module@archiver.kernel.org>; Wed,  4 Mar 2020 15:24:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C7D821741
-	for <linux-security-module@archiver.kernel.org>; Wed,  4 Mar 2020 15:13:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 67D5A21739
+	for <linux-security-module@archiver.kernel.org>; Wed,  4 Mar 2020 15:24:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SUIT7ybv"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FQPR4T3f"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387619AbgCDPNm (ORCPT
+        id S1729286AbgCDPYy (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 4 Mar 2020 10:13:42 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:44847 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727930AbgCDPNm (ORCPT
+        Wed, 4 Mar 2020 10:24:54 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:40900 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729169AbgCDPYx (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 4 Mar 2020 10:13:42 -0500
-Received: by mail-wr1-f66.google.com with SMTP id n7so2812485wrt.11
-        for <linux-security-module@vger.kernel.org>; Wed, 04 Mar 2020 07:13:39 -0800 (PST)
+        Wed, 4 Mar 2020 10:24:53 -0500
+Received: by mail-wm1-f66.google.com with SMTP id e26so2282277wme.5
+        for <linux-security-module@vger.kernel.org>; Wed, 04 Mar 2020 07:24:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=fsgJGQMpQ1G9tftbB0Mps00ljMhlrkE3dAL7nSnd3vo=;
-        b=SUIT7ybvralMQlOhJIjHu6ly0ZrFuMBji/zcuoM0lUme2+qnQIfCnvpMGvJy4bjzqE
-         jjLsZAJziFoMM3AKjRXlddNWJPUuwwfWaOPOVzfgJtf0tPyS9kXqW/KaApFrz19w6HHu
-         nskZiLoYB7+X9+SdAd9lrYl3Rtsa3eW2hwYXI=
+         :content-disposition:in-reply-to:user-agent;
+        bh=ZmLS9qnO1Q66v/wtUwX9VxbxLnQwytCVRya2k8J6vNI=;
+        b=FQPR4T3fjY4rOCvwbAQ0z8QbhMr1ZjWh/xFw9Lzc6W6+ZG7u3WI8Ah6jcGVr/7iX06
+         PwPe9WEyKHVL3xuyryUBVKXmU47z4QmcSlCbFjOVUp4BD1ILDAbH8mc0KFDN/IyJyIUA
+         UCIVqbT+3CO8S6wCXr7gfGksuTKj7jCzv4fV8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=fsgJGQMpQ1G9tftbB0Mps00ljMhlrkE3dAL7nSnd3vo=;
-        b=bLF9MUDamgHZ17LVWNmNL73IM9Dq7UnW88M0abP/8DeCkVudXHVcfc+yzrckgvrE0k
-         oWmqqa14s9j5d1nHW5zX6WEWqc1vxGKsReeLfy+OCPsgtcHBKYoqrNA0LmCI/Um5p58d
-         TZ72exmAUnMAEwaA1ay5s2L5yFyrTJBSF/y3oa+5uZDx2+ZzCmrD1A4Bb79do3l3jMRM
-         NJQdHGSl0v+wjNhE+nE9+Tfb6xWbZxDSlraJgP+bIebHGRrTawOJxe6DsEaS4iw7OAef
-         BhtqIIWts3Gf6bts1JvOWLUyYvA/Z8wXtLPHRsQH/kOpi7NL/V8oX8YQufChGhoLjlM5
-         +2iw==
-X-Gm-Message-State: ANhLgQ2PxlqMAzZNAj8xn1N06AQtsYz+85s99H0h1Hr/g/z6ur4g88zc
-        Q+Ln7GX0Fvr4v9EdvKCTOSyh9Q==
-X-Google-Smtp-Source: ADFU+vuLe5ALaEm7h3gtz45GbwJ5nu0Ea3aTrgxaP+bm5Zu/T7rBxy4ewEXTQPFiSC0nAd34IQszeA==
-X-Received: by 2002:a5d:6086:: with SMTP id w6mr4494482wrt.224.1583334819160;
-        Wed, 04 Mar 2020 07:13:39 -0800 (PST)
-Received: from chromium.org ([2a00:79e1:abc:308:8ca0:6f80:af01:b24])
-        by smtp.gmail.com with ESMTPSA id x13sm69264wmi.35.2020.03.04.07.13.38
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ZmLS9qnO1Q66v/wtUwX9VxbxLnQwytCVRya2k8J6vNI=;
+        b=m8tUR1syDUoMqUKuQli3K2+u83Lu3MegYVGFrDDkZ34YeqQGI4pTHIHPdwUPBJKUBf
+         N2RNB0AXI8tWl7bSeVOpNIork0dPxbNFbpO/szAkAbRWURszvfYdssyG7zXbLBlJEY94
+         qI8cO67Y/zOfgwJ4nqenSMX57/phPm0GjpPF62OivM8UNcwbw0bxJLfBZqjDyuCMMt+J
+         /5gaYtAxn/r6SXTFBqsofOJ7V2at1UMCuNmeFEoVRrDUyLCeyjkxK2JFFtrgZ46+ZIi6
+         dYJVc4r22U3oU9TbM0YDE1m0jzFa0vZ7UBqM+jNhHhKLW/1t8oxpSTWzvgfMEOrlXdcA
+         Tg3Q==
+X-Gm-Message-State: ANhLgQ3HTwpkrGSXP1FFGlVn5xlg4IUsOxTDlx6WGgWaBG/kt7rqDRP4
+        P3AidRe71hVdl2bgKaRTLkRZVw==
+X-Google-Smtp-Source: ADFU+vtzSljSP9Rf+4htWw0ktNMsb3VloEd6kKjoSEQOggRPiPdIX37a5amcCVkEUychGquYG0F2wg==
+X-Received: by 2002:a7b:c857:: with SMTP id c23mr4209940wml.68.1583335492265;
+        Wed, 04 Mar 2020 07:24:52 -0800 (PST)
+Received: from google.com ([2a00:79e0:42:204:8a21:ba0c:bb42:75ec])
+        by smtp.gmail.com with ESMTPSA id z10sm4687059wmk.31.2020.03.04.07.24.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Mar 2020 07:13:38 -0800 (PST)
+        Wed, 04 Mar 2020 07:24:51 -0800 (PST)
 From:   KP Singh <kpsingh@chromium.org>
 X-Google-Original-From: KP Singh <kpsingh>
-Date:   Wed, 4 Mar 2020 16:13:37 +0100
+Date:   Wed, 4 Mar 2020 16:24:50 +0100
 To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc:     linux-security-module@vger.kernel.org,
+Cc:     KP Singh <kpsingh@chromium.org>,
+        linux-security-module@vger.kernel.org,
         open list <linux-kernel@vger.kernel.org>,
         bpf <bpf@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>,
         Daniel Borkmann <daniel@iogearbox.net>,
         Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
         Florent Revest <revest@chromium.org>,
         Brendan Jackman <jackmanb@chromium.org>
-Subject: Re: [PATCH bpf-next v2 4/7] bpf: Attachment verification for
- BPF_MODIFY_RETURN
-Message-ID: <20200304151337.GD9984@chromium.org>
+Subject: Re: [PATCH bpf-next v2 2/7] bpf: JIT helpers for fmod_ret progs
+Message-ID: <20200304152450.GA53576@google.com>
 References: <20200304015528.29661-1-kpsingh@chromium.org>
- <20200304015528.29661-5-kpsingh@chromium.org>
- <CAEf4BzZdR-PTFZT5VJ7kMw=FNhsCUpbQvdypEWSF1JNuaye6Kw@mail.gmail.com>
+ <20200304015528.29661-3-kpsingh@chromium.org>
+ <CAEf4Bzah9CpWJ1vLuy+V1K26Ka1ovKvvAnbRuYBJ1GF-xcQbJQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4BzZdR-PTFZT5VJ7kMw=FNhsCUpbQvdypEWSF1JNuaye6Kw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAEf4Bzah9CpWJ1vLuy+V1K26Ka1ovKvvAnbRuYBJ1GF-xcQbJQ@mail.gmail.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 03-Mär 21:12, Andrii Nakryiko wrote:
+On 03-Mar 20:52, Andrii Nakryiko wrote:
 > On Tue, Mar 3, 2020 at 5:56 PM KP Singh <kpsingh@chromium.org> wrote:
 > >
 > > From: KP Singh <kpsingh@google.com>
 > >
-> > - Allow BPF_MODIFY_RETURN attachment only to functions that are:
-> >
-> >     * Whitelisted by for error injection i.e. by checking
-> >       within_error_injection_list. Similar disucssions happened for the
-> >       bpf_overrie_return helper.
-> 
-> 2 typos: discussions and bpf_override_return ;)
+> > * Split the invoke_bpf program to prepare for special handling of
+> >   fmod_ret programs introduced in a subsequent patch.
+> > * Move the definition of emit_cond_near_jump and emit_nops as they are
+> >   needed for fmod_ret.
+> > * Refactor branch target alignment into its own function
+> >   align16_branch_target.
 
-/me bows his head in shame ;) Fixed.
+I updated this as well, as we changed it to emit_align.
 
- -KP
+- KP
 
-> 
-> >
-> >     * security hooks, this is expected to be cleaned up with the LSM
-> >       changes after the KRSI patches introduce the LSM_HOOK macro:
-> >
-> >         https://lore.kernel.org/bpf/20200220175250.10795-1-kpsingh@chromium.org/
-> >
-> > - The attachment is currently limited to functions that return an int.
-> >   This can be extended later other types (e.g. PTR).
 > >
 > > Signed-off-by: KP Singh <kpsingh@google.com>
 > > ---
 > 
+> I trust invoke_bpf_prog logic didn't change, code was just moved around, right?
+> 
 > Acked-by: Andrii Nakryiko <andriin@fb.com>
 > 
-> >  kernel/bpf/btf.c      | 28 ++++++++++++++++++++--------
-> >  kernel/bpf/verifier.c | 31 +++++++++++++++++++++++++++++++
-> >  2 files changed, 51 insertions(+), 8 deletions(-)
+> 
+> >  arch/x86/net/bpf_jit_comp.c | 148 +++++++++++++++++++++---------------
+> >  1 file changed, 85 insertions(+), 63 deletions(-)
 > >
 > 
 > [...]
