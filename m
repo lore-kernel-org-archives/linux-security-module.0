@@ -5,54 +5,54 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98C5FC3F2D1
-	for <linux-security-module@archiver.kernel.org>; Wed,  4 Mar 2020 19:19:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D322C3F2D9
+	for <linux-security-module@archiver.kernel.org>; Wed,  4 Mar 2020 19:19:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6997021739
-	for <linux-security-module@archiver.kernel.org>; Wed,  4 Mar 2020 19:19:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 661AC21739
+	for <linux-security-module@archiver.kernel.org>; Wed,  4 Mar 2020 19:19:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YuW+r0Rb"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cqjc9v23"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729093AbgCDTTG (ORCPT
+        id S1728998AbgCDTTX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 4 Mar 2020 14:19:06 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:39054 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728779AbgCDTTF (ORCPT
+        Wed, 4 Mar 2020 14:19:23 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:46920 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728591AbgCDTTE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 4 Mar 2020 14:19:05 -0500
-Received: by mail-wr1-f67.google.com with SMTP id y17so3873899wrn.6
-        for <linux-security-module@vger.kernel.org>; Wed, 04 Mar 2020 11:19:02 -0800 (PST)
+        Wed, 4 Mar 2020 14:19:04 -0500
+Received: by mail-wr1-f65.google.com with SMTP id j7so3849167wrp.13
+        for <linux-security-module@vger.kernel.org>; Wed, 04 Mar 2020 11:19:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=rwJ/lEQbGlXVsZnbKvzZuJddWa90yHQNeHuRAfmMm6M=;
-        b=YuW+r0RbYRXdAkIUknNFTEZBRZv7OC6YDbAI60Wq2zRM0dPwoWy5dQKy6DGbtUIOpn
-         puJLaUyBrJ+4Ivs50kITQXHVrH/Yd4/s96h4/hvRSRbYdJValZN2Jizp70/Io9ktQYT+
-         rO8SSdbboVJTJtGY/ZaeV3fI1olfAAXFYvaqc=
+        bh=WWtZI2A0hmIEG0llfgLQpxiUN3KWtDRPNvPAySOvq1M=;
+        b=cqjc9v23mitxaMXQf8aHqW5gzEHp6s6IyTnrVtm7GBcKbsdhChc5ytpJYPypWqQmkJ
+         ikr5tef0zbpWBemrVABFPv3GUJ5Td1WMy8tQVfagF/TXF8IKPm9hjIggtz3Ev7q5TfXQ
+         zEpaqad8KkgyFbKf3PDhsLlXaNjed64xMu7CA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=rwJ/lEQbGlXVsZnbKvzZuJddWa90yHQNeHuRAfmMm6M=;
-        b=iGZbvou4G0Oo8BxYZWJP0uDTW5/Oux2faYbXWQSr5fPPO3qhFMqQLe7lIXnLqMVRHi
-         NPmMUEFL1LzXXcCPxkU3NiOs3VdHmOV2JcoqsfqwPBKCz84edHPWOS74XDYGojXl0UhS
-         0LcckldVYOCGwO6CTizJjUftN0r2QhmFDIHJaRNVcrCZh4+D6epvAZ7A+Zc+eKbOeZfy
-         uBYA3gV011ml2OmXgBHjkKp6/ox6z8b6Zp0/OB17rYc0WCyvLzDAck6/nXotqwQPcp6D
-         KuyXY2MUH4AgOjmvuEHCI+pTJAye1xbyc4QFDMvPQV6dzaUEc0kECM3Yte26au9Mxksi
-         4WyQ==
-X-Gm-Message-State: ANhLgQ0d46gO88lweA3tzfoMqp6lwneP4E7rSWKeRNkNrP9fbzLRAO2T
-        ifiAkrPUQTOoH5ndduyDsGGkfLtS89c=
-X-Google-Smtp-Source: ADFU+vtv3MhCAV7jzqkIyXGSneU1Spf0xXDb/bKfvj5B9IBmup6Pm4xF9QFcW2d4JNzwLoMP53rtEw==
-X-Received: by 2002:a05:6000:1207:: with SMTP id e7mr3785748wrx.229.1583349541734;
-        Wed, 04 Mar 2020 11:19:01 -0800 (PST)
+        bh=WWtZI2A0hmIEG0llfgLQpxiUN3KWtDRPNvPAySOvq1M=;
+        b=Scfc+ZbiqCNIe80/FBcCm6bTNMY6WJJs9GoNhS0thwyyimKB+a/Z4ZA9nEp8x9URzF
+         8y9p5UCqiYOGto0Kt9bHO3PM6TIHlYW+KUVNhjApbFYmZ2/fCsA7dKeYDA1MRMhUI+UT
+         qH6p9ZHe2C9rJ83gzR4yxyZeRqU6hP0Ivf/u1HFlMDa3JLg+Nea9HsDsoeMHbQxu+2xo
+         UQ4xiK3EV3CldWmfHun2wfG1EscQ+AUAoGiZWGpDb+fkvXGX4YygtsHAjOV75jgWVKcA
+         6xR2IqR06TzjXujGIZnzbKBz6R8Ad/6I++4ZviW5MvHbknTmdpkfISHzwROBz8icoDgj
+         iIEw==
+X-Gm-Message-State: ANhLgQ3SErUViV7GNGCep/vLLKGpk4df7CrDkC3zq3YpAH4gVOlgQxaA
+        V44s5EbrN62cKxF3UKUyier41OHcPro=
+X-Google-Smtp-Source: ADFU+vtPo96cnWToK+KAUona3kPvrZp0O6zmn0FVxipDMLpxTnEt9XkW5jJbaaEHhIdWFiPLFkTThg==
+X-Received: by 2002:a05:6000:8f:: with SMTP id m15mr5272596wrx.378.1583349540737;
+        Wed, 04 Mar 2020 11:19:00 -0800 (PST)
 Received: from kpsingh-kernel.localdomain (77-56-209-237.dclient.hispeed.ch. [77.56.209.237])
-        by smtp.gmail.com with ESMTPSA id w9sm2018556wrn.35.2020.03.04.11.19.00
+        by smtp.gmail.com with ESMTPSA id w9sm2018556wrn.35.2020.03.04.11.18.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Mar 2020 11:19:01 -0800 (PST)
+        Wed, 04 Mar 2020 11:19:00 -0800 (PST)
 From:   KP Singh <kpsingh@chromium.org>
 To:     linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, bpf@vger.kernel.org
@@ -62,9 +62,9 @@ Cc:     Andrii Nakryiko <andriin@fb.com>,
         Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
         Florent Revest <revest@chromium.org>,
         Brendan Jackman <jackmanb@chromium.org>
-Subject: [PATCH bpf-next v4 3/7] bpf: Introduce BPF_MODIFY_RETURN
-Date:   Wed,  4 Mar 2020 20:18:49 +0100
-Message-Id: <20200304191853.1529-4-kpsingh@chromium.org>
+Subject: [PATCH bpf-next v4 2/7] bpf: JIT helpers for fmod_ret progs
+Date:   Wed,  4 Mar 2020 20:18:48 +0100
+Message-Id: <20200304191853.1529-3-kpsingh@chromium.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200304191853.1529-1-kpsingh@chromium.org>
 References: <20200304191853.1529-1-kpsingh@chromium.org>
@@ -76,100 +76,104 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: KP Singh <kpsingh@google.com>
 
-When multiple programs are attached, each program receives the return
-value from the previous program on the stack and the last program
-provides the return value to the attached function.
-
-The fmod_ret bpf programs are run after the fentry programs and before
-the fexit programs. The original function is only called if all the
-fmod_ret programs return 0 to avoid any unintended side-effects. The
-success value, i.e. 0 is not currently configurable but can be made so
-where user-space can specify it at load time.
-
-For example:
-
-int func_to_be_attached(int a, int b)
-{  <--- do_fentry
-
-do_fmod_ret:
-   <update ret by calling fmod_ret>
-   if (ret != 0)
-        goto do_fexit;
-
-original_function:
-
-    <side_effects_happen_here>
-
-}  <--- do_fexit
-
-The fmod_ret program attached to this function can be defined as:
-
-SEC("fmod_ret/func_to_be_attached")
-int BPF_PROG(func_name, int a, int b, int ret)
-{
-        // This will skip the original function logic.
-        return 1;
-}
-
-The first fmod_ret program is passed 0 in its return argument.
+* Split the invoke_bpf program to prepare for special handling of
+  fmod_ret programs introduced in a subsequent patch.
+* Move the definition of emit_cond_near_jump and emit_nops as they are
+  needed for fmod_ret.
+* Refactor branch target alignment into its own generic helper function
+  i.e. emit_align.
 
 Signed-off-by: KP Singh <kpsingh@google.com>
 Acked-by: Andrii Nakryiko <andriin@fb.com>
 ---
- arch/x86/net/bpf_jit_comp.c    | 130 ++++++++++++++++++++++++++++++---
- include/linux/bpf.h            |   1 +
- include/uapi/linux/bpf.h       |   1 +
- kernel/bpf/btf.c               |   3 +-
- kernel/bpf/syscall.c           |   1 +
- kernel/bpf/trampoline.c        |   5 +-
- kernel/bpf/verifier.c          |   1 +
- tools/include/uapi/linux/bpf.h |   1 +
- 8 files changed, 130 insertions(+), 13 deletions(-)
+ arch/x86/net/bpf_jit_comp.c | 148 +++++++++++++++++++++---------------
+ 1 file changed, 85 insertions(+), 63 deletions(-)
 
 diff --git a/arch/x86/net/bpf_jit_comp.c b/arch/x86/net/bpf_jit_comp.c
-index d6349e930b06..b1fd000feb89 100644
+index 15c7d28bc05c..d6349e930b06 100644
 --- a/arch/x86/net/bpf_jit_comp.c
 +++ b/arch/x86/net/bpf_jit_comp.c
-@@ -1362,7 +1362,7 @@ static void restore_regs(const struct btf_func_model *m, u8 **prog, int nr_args,
+@@ -1361,35 +1361,95 @@ static void restore_regs(const struct btf_func_model *m, u8 **prog, int nr_args,
+ 			 -(stack_size - i * 8));
  }
  
- static int invoke_bpf_prog(const struct btf_func_model *m, u8 **pprog,
--			   struct bpf_prog *p, int stack_size)
-+			   struct bpf_prog *p, int stack_size, bool mod_ret)
- {
- 	u8 *prog = *pprog;
- 	int cnt = 0;
-@@ -1383,6 +1383,13 @@ static int invoke_bpf_prog(const struct btf_func_model *m, u8 **pprog,
- 	if (emit_call(&prog, p->bpf_func, prog))
- 		return -EINVAL;
- 
-+	/* BPF_TRAMP_MODIFY_RETURN trampolines can modify the return
-+	 * of the previous call which is then passed on the stack to
-+	 * the next BPF program.
-+	 */
-+	if (mod_ret)
-+		emit_stx(&prog, BPF_DW, BPF_REG_FP, BPF_REG_0, -8);
-+
- 	/* arg1: mov rdi, progs[i] */
- 	emit_mov_imm64(&prog, BPF_REG_1, (long) p >> 32,
- 		       (u32) (long) p);
-@@ -1442,6 +1449,23 @@ static int emit_cond_near_jump(u8 **pprog, void *func, void *ip, u8 jmp_cond)
- 	return 0;
- }
- 
-+static int emit_mod_ret_check_imm8(u8 **pprog, int value)
++static int invoke_bpf_prog(const struct btf_func_model *m, u8 **pprog,
++			   struct bpf_prog *p, int stack_size)
 +{
 +	u8 *prog = *pprog;
 +	int cnt = 0;
 +
-+	if (!is_imm8(value))
++	if (emit_call(&prog, __bpf_prog_enter, prog))
++		return -EINVAL;
++	/* remember prog start time returned by __bpf_prog_enter */
++	emit_mov_reg(&prog, true, BPF_REG_6, BPF_REG_0);
++
++	/* arg1: lea rdi, [rbp - stack_size] */
++	EMIT4(0x48, 0x8D, 0x7D, -stack_size);
++	/* arg2: progs[i]->insnsi for interpreter */
++	if (!p->jited)
++		emit_mov_imm64(&prog, BPF_REG_2,
++			       (long) p->insnsi >> 32,
++			       (u32) (long) p->insnsi);
++	/* call JITed bpf program or interpreter */
++	if (emit_call(&prog, p->bpf_func, prog))
 +		return -EINVAL;
 +
-+	if (value == 0)
-+		EMIT2(0x85, add_2reg(0xC0, BPF_REG_0, BPF_REG_0));
-+	else
-+		EMIT3(0x83, add_1reg(0xF8, BPF_REG_0), value);
++	/* arg1: mov rdi, progs[i] */
++	emit_mov_imm64(&prog, BPF_REG_1, (long) p >> 32,
++		       (u32) (long) p);
++	/* arg2: mov rsi, rbx <- start time in nsec */
++	emit_mov_reg(&prog, true, BPF_REG_2, BPF_REG_6);
++	if (emit_call(&prog, __bpf_prog_exit, prog))
++		return -EINVAL;
 +
++	*pprog = prog;
++	return 0;
++}
++
++static void emit_nops(u8 **pprog, unsigned int len)
++{
++	unsigned int i, noplen;
++	u8 *prog = *pprog;
++	int cnt = 0;
++
++	while (len > 0) {
++		noplen = len;
++
++		if (noplen > ASM_NOP_MAX)
++			noplen = ASM_NOP_MAX;
++
++		for (i = 0; i < noplen; i++)
++			EMIT1(ideal_nops[noplen][i]);
++		len -= noplen;
++	}
++
++	*pprog = prog;
++}
++
++static void emit_align(u8 **pprog, u32 align)
++{
++	u8 *target, *prog = *pprog;
++
++	target = PTR_ALIGN(prog, align);
++	if (target != prog)
++		emit_nops(&prog, target - prog);
++
++	*pprog = prog;
++}
++
++static int emit_cond_near_jump(u8 **pprog, void *func, void *ip, u8 jmp_cond)
++{
++	u8 *prog = *pprog;
++	int cnt = 0;
++	s64 offset;
++
++	offset = func - (ip + 2 + 4);
++	if (!is_simm32(offset)) {
++		pr_err("Target %p is out of range\n", func);
++		return -EINVAL;
++	}
++	EMIT2_off32(0x0F, jmp_cond + 0x10, offset);
 +	*pprog = prog;
 +	return 0;
 +}
@@ -177,252 +181,99 @@ index d6349e930b06..b1fd000feb89 100644
  static int invoke_bpf(const struct btf_func_model *m, u8 **pprog,
  		      struct bpf_tramp_progs *tp, int stack_size)
  {
-@@ -1449,9 +1473,49 @@ static int invoke_bpf(const struct btf_func_model *m, u8 **pprog,
++	int i;
  	u8 *prog = *pprog;
+-	int cnt = 0, i;
  
  	for (i = 0; i < tp->nr_progs; i++) {
--		if (invoke_bpf_prog(m, &prog, tp->progs[i], stack_size))
-+		if (invoke_bpf_prog(m, &prog, tp->progs[i], stack_size, false))
-+			return -EINVAL;
-+	}
-+	*pprog = prog;
-+	return 0;
-+}
-+
-+static int invoke_bpf_mod_ret(const struct btf_func_model *m, u8 **pprog,
-+			      struct bpf_tramp_progs *tp, int stack_size,
-+			      u8 **branches)
-+{
-+	u8 *prog = *pprog;
-+	int i;
-+
-+	/* The first fmod_ret program will receive a garbage return value.
-+	 * Set this to 0 to avoid confusing the program.
-+	 */
-+	emit_mov_imm32(&prog, false, BPF_REG_0, 0);
-+	emit_stx(&prog, BPF_DW, BPF_REG_FP, BPF_REG_0, -8);
-+	for (i = 0; i < tp->nr_progs; i++) {
-+		if (invoke_bpf_prog(m, &prog, tp->progs[i], stack_size, true))
+-		if (emit_call(&prog, __bpf_prog_enter, prog))
+-			return -EINVAL;
+-		/* remember prog start time returned by __bpf_prog_enter */
+-		emit_mov_reg(&prog, true, BPF_REG_6, BPF_REG_0);
+-
+-		/* arg1: lea rdi, [rbp - stack_size] */
+-		EMIT4(0x48, 0x8D, 0x7D, -stack_size);
+-		/* arg2: progs[i]->insnsi for interpreter */
+-		if (!tp->progs[i]->jited)
+-			emit_mov_imm64(&prog, BPF_REG_2,
+-				       (long) tp->progs[i]->insnsi >> 32,
+-				       (u32) (long) tp->progs[i]->insnsi);
+-		/* call JITed bpf program or interpreter */
+-		if (emit_call(&prog, tp->progs[i]->bpf_func, prog))
+-			return -EINVAL;
+-
+-		/* arg1: mov rdi, progs[i] */
+-		emit_mov_imm64(&prog, BPF_REG_1, (long) tp->progs[i] >> 32,
+-			       (u32) (long) tp->progs[i]);
+-		/* arg2: mov rsi, rbx <- start time in nsec */
+-		emit_mov_reg(&prog, true, BPF_REG_2, BPF_REG_6);
+-		if (emit_call(&prog, __bpf_prog_exit, prog))
++		if (invoke_bpf_prog(m, &prog, tp->progs[i], stack_size))
  			return -EINVAL;
-+
-+		/* Generate a branch:
-+		 *
-+		 * if (ret !=  0)
-+		 *	goto do_fexit;
-+		 *
-+		 * If needed this can be extended to any integer value which can
-+		 * be passed by user-space when the program is loaded.
-+		 */
-+		if (emit_mod_ret_check_imm8(&prog, 0))
-+			return -EINVAL;
-+
-+		/* Save the location of the branch and Generate 6 nops
-+		 * (4 bytes for an offset and 2 bytes for the jump) These nops
-+		 * are replaced with a conditional jump once do_fexit (i.e. the
-+		 * start of the fexit invocation) is finalized.
-+		 */
-+		branches[i] = prog;
-+		emit_nops(&prog, 4 + 2);
  	}
-+
  	*pprog = prog;
- 	return 0;
- }
-@@ -1521,10 +1585,12 @@ int arch_prepare_bpf_trampoline(void *image, void *image_end,
- 				struct bpf_tramp_progs *tprogs,
- 				void *orig_call)
- {
--	int cnt = 0, nr_args = m->nr_args;
-+	int ret, i, cnt = 0, nr_args = m->nr_args;
- 	int stack_size = nr_args * 8;
- 	struct bpf_tramp_progs *fentry = &tprogs[BPF_TRAMP_FENTRY];
- 	struct bpf_tramp_progs *fexit = &tprogs[BPF_TRAMP_FEXIT];
-+	struct bpf_tramp_progs *fmod_ret = &tprogs[BPF_TRAMP_MODIFY_RETURN];
-+	u8 **branches = NULL;
- 	u8 *prog;
- 
- 	/* x86-64 supports up to 6 arguments. 7+ can be added in the future */
-@@ -1557,24 +1623,60 @@ int arch_prepare_bpf_trampoline(void *image, void *image_end,
- 		if (invoke_bpf(m, &prog, fentry, stack_size))
- 			return -EINVAL;
- 
-+	if (fmod_ret->nr_progs) {
-+		branches = kcalloc(fmod_ret->nr_progs, sizeof(u8 *),
-+				   GFP_KERNEL);
-+		if (!branches)
-+			return -ENOMEM;
-+
-+		if (invoke_bpf_mod_ret(m, &prog, fmod_ret, stack_size,
-+				       branches)) {
-+			ret = -EINVAL;
-+			goto cleanup;
-+		}
-+	}
-+
- 	if (flags & BPF_TRAMP_F_CALL_ORIG) {
--		if (fentry->nr_progs)
-+		if (fentry->nr_progs || fmod_ret->nr_progs)
- 			restore_regs(m, &prog, nr_args, stack_size);
- 
- 		/* call original function */
--		if (emit_call(&prog, orig_call, prog))
--			return -EINVAL;
-+		if (emit_call(&prog, orig_call, prog)) {
-+			ret = -EINVAL;
-+			goto cleanup;
-+		}
- 		/* remember return value in a stack for bpf prog to access */
- 		emit_stx(&prog, BPF_DW, BPF_REG_FP, BPF_REG_0, -8);
- 	}
- 
-+	if (fmod_ret->nr_progs) {
-+		/* From Intel 64 and IA-32 Architectures Optimization
-+		 * Reference Manual, 3.4.1.4 Code Alignment, Assembly/Compiler
-+		 * Coding Rule 11: All branch targets should be 16-byte
-+		 * aligned.
-+		 */
-+		emit_align(&prog, 16);
-+		/* Update the branches saved in invoke_bpf_mod_ret with the
-+		 * aligned address of do_fexit.
-+		 */
-+		for (i = 0; i < fmod_ret->nr_progs; i++)
-+			emit_cond_near_jump(&branches[i], prog, branches[i],
-+					    X86_JNE);
-+	}
-+
- 	if (fexit->nr_progs)
--		if (invoke_bpf(m, &prog, fexit, stack_size))
--			return -EINVAL;
-+		if (invoke_bpf(m, &prog, fexit, stack_size)) {
-+			ret = -EINVAL;
-+			goto cleanup;
-+		}
- 
- 	if (flags & BPF_TRAMP_F_RESTORE_REGS)
- 		restore_regs(m, &prog, nr_args, stack_size);
- 
-+	/* This needs to be done regardless. If there were fmod_ret programs,
-+	 * the return value is only updated on the stack and still needs to be
-+	 * restored to R0.
-+	 */
- 	if (flags & BPF_TRAMP_F_CALL_ORIG)
- 		/* restore original return value back into RAX */
- 		emit_ldx(&prog, BPF_DW, BPF_REG_0, BPF_REG_FP, -8);
-@@ -1586,9 +1688,15 @@ int arch_prepare_bpf_trampoline(void *image, void *image_end,
- 		EMIT4(0x48, 0x83, 0xC4, 8); /* add rsp, 8 */
- 	EMIT1(0xC3); /* ret */
- 	/* Make sure the trampoline generation logic doesn't overflow */
--	if (WARN_ON_ONCE(prog > (u8 *)image_end - BPF_INSN_SAFETY))
--		return -EFAULT;
--	return prog - (u8 *)image;
-+	if (WARN_ON_ONCE(prog > (u8 *)image_end - BPF_INSN_SAFETY)) {
-+		ret = -EFAULT;
-+		goto cleanup;
-+	}
-+	ret = prog - (u8 *)image;
-+
-+cleanup:
-+	kfree(branches);
-+	return ret;
+@@ -1531,42 +1591,6 @@ int arch_prepare_bpf_trampoline(void *image, void *image_end,
+ 	return prog - (u8 *)image;
  }
  
+-static int emit_cond_near_jump(u8 **pprog, void *func, void *ip, u8 jmp_cond)
+-{
+-	u8 *prog = *pprog;
+-	int cnt = 0;
+-	s64 offset;
+-
+-	offset = func - (ip + 2 + 4);
+-	if (!is_simm32(offset)) {
+-		pr_err("Target %p is out of range\n", func);
+-		return -EINVAL;
+-	}
+-	EMIT2_off32(0x0F, jmp_cond + 0x10, offset);
+-	*pprog = prog;
+-	return 0;
+-}
+-
+-static void emit_nops(u8 **pprog, unsigned int len)
+-{
+-	unsigned int i, noplen;
+-	u8 *prog = *pprog;
+-	int cnt = 0;
+-
+-	while (len > 0) {
+-		noplen = len;
+-
+-		if (noplen > ASM_NOP_MAX)
+-			noplen = ASM_NOP_MAX;
+-
+-		for (i = 0; i < noplen; i++)
+-			EMIT1(ideal_nops[noplen][i]);
+-		len -= noplen;
+-	}
+-
+-	*pprog = prog;
+-}
+-
  static int emit_fallback_jump(u8 **pprog)
-diff --git a/include/linux/bpf.h b/include/linux/bpf.h
-index 98ec10b23dbb..f748b31e5888 100644
---- a/include/linux/bpf.h
-+++ b/include/linux/bpf.h
-@@ -474,6 +474,7 @@ void notrace __bpf_prog_exit(struct bpf_prog *prog, u64 start);
- enum bpf_tramp_prog_type {
- 	BPF_TRAMP_FENTRY,
- 	BPF_TRAMP_FEXIT,
-+	BPF_TRAMP_MODIFY_RETURN,
- 	BPF_TRAMP_MAX,
- 	BPF_TRAMP_REPLACE, /* more than MAX */
- };
-diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
-index d6b33ea27bcc..40b2d9476268 100644
---- a/include/uapi/linux/bpf.h
-+++ b/include/uapi/linux/bpf.h
-@@ -210,6 +210,7 @@ enum bpf_attach_type {
- 	BPF_TRACE_RAW_TP,
- 	BPF_TRACE_FENTRY,
- 	BPF_TRACE_FEXIT,
-+	BPF_MODIFY_RETURN,
- 	__MAX_BPF_ATTACH_TYPE
- };
+ {
+ 	u8 *prog = *pprog;
+@@ -1589,7 +1613,7 @@ static int emit_fallback_jump(u8 **pprog)
  
-diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
-index 787140095e58..30841fb8b3c0 100644
---- a/kernel/bpf/btf.c
-+++ b/kernel/bpf/btf.c
-@@ -3710,7 +3710,8 @@ bool btf_ctx_access(int off, int size, enum bpf_access_type type,
- 		nr_args--;
- 	}
+ static int emit_bpf_dispatcher(u8 **pprog, int a, int b, s64 *progs)
+ {
+-	u8 *jg_reloc, *jg_target, *prog = *pprog;
++	u8 *jg_reloc, *prog = *pprog;
+ 	int pivot, err, jg_bytes = 1, cnt = 0;
+ 	s64 jg_offset;
  
--	if (prog->expected_attach_type == BPF_TRACE_FEXIT &&
-+	if ((prog->expected_attach_type == BPF_TRACE_FEXIT ||
-+	     prog->expected_attach_type == BPF_MODIFY_RETURN) &&
- 	    arg == nr_args) {
- 		if (!t)
- 			/* Default prog with 5 args. 6th arg is retval. */
-diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index 13de65363ba2..7ce0815793dd 100644
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -2324,6 +2324,7 @@ static int bpf_tracing_prog_attach(struct bpf_prog *prog)
- 
- 	if (prog->expected_attach_type != BPF_TRACE_FENTRY &&
- 	    prog->expected_attach_type != BPF_TRACE_FEXIT &&
-+	    prog->expected_attach_type != BPF_MODIFY_RETURN &&
- 	    prog->type != BPF_PROG_TYPE_EXT) {
- 		err = -EINVAL;
- 		goto out_put_prog;
-diff --git a/kernel/bpf/trampoline.c b/kernel/bpf/trampoline.c
-index 546198f6f307..221a17af1f81 100644
---- a/kernel/bpf/trampoline.c
-+++ b/kernel/bpf/trampoline.c
-@@ -232,7 +232,8 @@ static int bpf_trampoline_update(struct bpf_trampoline *tr)
- 		goto out;
- 	}
- 
--	if (tprogs[BPF_TRAMP_FEXIT].nr_progs)
-+	if (tprogs[BPF_TRAMP_FEXIT].nr_progs ||
-+	    tprogs[BPF_TRAMP_MODIFY_RETURN].nr_progs)
- 		flags = BPF_TRAMP_F_CALL_ORIG | BPF_TRAMP_F_SKIP_FRAME;
- 
- 	/* Though the second half of trampoline page is unused a task could be
-@@ -269,6 +270,8 @@ static enum bpf_tramp_prog_type bpf_attach_type_to_tramp(enum bpf_attach_type t)
- 	switch (t) {
- 	case BPF_TRACE_FENTRY:
- 		return BPF_TRAMP_FENTRY;
-+	case BPF_MODIFY_RETURN:
-+		return BPF_TRAMP_MODIFY_RETURN;
- 	case BPF_TRACE_FEXIT:
- 		return BPF_TRAMP_FEXIT;
- 	default:
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index 289383edfc8c..2460c8e6b5be 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -9950,6 +9950,7 @@ static int check_attach_btf_id(struct bpf_verifier_env *env)
- 		if (!prog_extension)
- 			return -EINVAL;
- 		/* fallthrough */
-+	case BPF_MODIFY_RETURN:
- 	case BPF_TRACE_FENTRY:
- 	case BPF_TRACE_FEXIT:
- 		if (!btf_type_is_func(t)) {
-diff --git a/tools/include/uapi/linux/bpf.h b/tools/include/uapi/linux/bpf.h
-index d6b33ea27bcc..40b2d9476268 100644
---- a/tools/include/uapi/linux/bpf.h
-+++ b/tools/include/uapi/linux/bpf.h
-@@ -210,6 +210,7 @@ enum bpf_attach_type {
- 	BPF_TRACE_RAW_TP,
- 	BPF_TRACE_FENTRY,
- 	BPF_TRACE_FEXIT,
-+	BPF_MODIFY_RETURN,
- 	__MAX_BPF_ATTACH_TYPE
- };
+@@ -1644,9 +1668,7 @@ static int emit_bpf_dispatcher(u8 **pprog, int a, int b, s64 *progs)
+ 	 * Coding Rule 11: All branch targets should be 16-byte
+ 	 * aligned.
+ 	 */
+-	jg_target = PTR_ALIGN(prog, 16);
+-	if (jg_target != prog)
+-		emit_nops(&prog, jg_target - prog);
++	emit_align(&prog, 16);
+ 	jg_offset = prog - jg_reloc;
+ 	emit_code(jg_reloc - jg_bytes, jg_offset, jg_bytes);
  
 -- 
 2.20.1
