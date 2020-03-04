@@ -2,57 +2,57 @@ Return-Path: <SRS0=IE2G=4V=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAC25C3F2CE
-	for <linux-security-module@archiver.kernel.org>; Wed,  4 Mar 2020 15:48:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 945FCC3F2CE
+	for <linux-security-module@archiver.kernel.org>; Wed,  4 Mar 2020 15:48:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5A2B2166E
-	for <linux-security-module@archiver.kernel.org>; Wed,  4 Mar 2020 15:48:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 682E922B48
+	for <linux-security-module@archiver.kernel.org>; Wed,  4 Mar 2020 15:48:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jU92eUOq"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ce65Ks4e"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387860AbgCDPsA (ORCPT
+        id S2388063AbgCDPsE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 4 Mar 2020 10:48:00 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:34627 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729796AbgCDPr7 (ORCPT
+        Wed, 4 Mar 2020 10:48:04 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:33717 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388185AbgCDPsE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 4 Mar 2020 10:47:59 -0500
-Received: by mail-wr1-f68.google.com with SMTP id z15so3016470wrl.1
-        for <linux-security-module@vger.kernel.org>; Wed, 04 Mar 2020 07:47:58 -0800 (PST)
+        Wed, 4 Mar 2020 10:48:04 -0500
+Received: by mail-wr1-f67.google.com with SMTP id x7so3018097wrr.0
+        for <linux-security-module@vger.kernel.org>; Wed, 04 Mar 2020 07:48:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=WWtZI2A0hmIEG0llfgLQpxiUN3KWtDRPNvPAySOvq1M=;
-        b=jU92eUOq+o3P7YhmDESj75RV80CCOdz8tebb+gqNx9vXBekAvvAKMv+AXjhUJOqy2Z
-         Y8yYA2y1wbMx9jy9pFfVZbTtvjFvAWiKxYCmAUT2oMT7SeA1uQ+2SV8KlfQPr7xXFetB
-         JLKxcbEOjtZekwFqdxae9Gux7jubloD72evcQ=
+        bh=JH3iKdoX60vBDf5RPVZX6I6Dg2qntJTjRhn9rqqRbkU=;
+        b=ce65Ks4eMK1y7cjThJcC8xe2T0GpZxp0Y+G35ZaB+P0atYcbffyjFrn2rV5D+ghDVU
+         A4GZnpbhNKizq6u4X16MSbcKPlq1vVvO3PSxW+87YBkymRC/1qwwWikmt8GEexTzo2tg
+         B7RhyEdQ+sXdUVuV3tsaj+MgXW5XPgmLgFxzw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=WWtZI2A0hmIEG0llfgLQpxiUN3KWtDRPNvPAySOvq1M=;
-        b=pSy4Vo1zfpVDhwlgbRDq9V9AMJx7GUjZ6+33/Q8ZBvSOr4yWuJ5BcBB0KFLWMi/DNS
-         7Tp07PRQNxghz4jDYEltDy3j7ZeyqMya6Dk8ePKKdtk0/Lqq2mBU0XI1s/8lUpBT0QM8
-         Tpt/Kt6ln6Qsfca0ckAlVUmob1L601JtTTUWXdv2amjo95Og0pnDsmHCOAiPXqGDntAP
-         lKBzXVbwrMKVLaS2SU/fmYABK9Pu3SMLYr7zR39mmEkluaD9N+9M4EcQWF8/qk1i+gro
-         2TuC9bSjck4+dXFYo1vL9pAANxyHSlGAz0BQNn+6qW9O9zajBcJl7MmeuKYEfInapk8l
-         /yjw==
-X-Gm-Message-State: ANhLgQ1yXOUknqkEIoyDEdqmCYkz6I/kZvfEyyzjVIWdRp2wwM3VzHco
-        O9UdyhMKvS9DQ1u4H0PM0019U+o/b0I=
-X-Google-Smtp-Source: ADFU+vuQvIeSRpB8htDrCccbaPFd8EuNPWKA0fKMxmCPXPXyRaki1owsrq6sPCRhSspI5pExfQwPbw==
-X-Received: by 2002:a5d:60c2:: with SMTP id x2mr4587045wrt.123.1583336877192;
-        Wed, 04 Mar 2020 07:47:57 -0800 (PST)
+        bh=JH3iKdoX60vBDf5RPVZX6I6Dg2qntJTjRhn9rqqRbkU=;
+        b=Pq7ReF44tbI/yhWEVA112jHCw6ofbvMTJz8XyIRW1s4EhPVqr1yGbIs5aWYx0c5IRl
+         4O+vXZI0gyZ9Rd9IFnsWLjVmDz7nRXnjK8VgIETKZ0i6TRMRiOxyLMGovEj6fN4wpafD
+         iEu+uXFERvv1oc07bDU+tZkO+hl9h2kMWLP2eqg6IrhkeMNHGCuXo4fxJ4eS2LEW+buH
+         32mu6pIB7C7D2B6umCX5vL2O7dBOTyBH3JDwtFI4Sn+rOttBxCKkrlq6N7M2E9YrS8ZG
+         5gruTA2f1xwZKq9xBrpB99toXGOnX0qJ85WX/7GWvS0wBDyJ02bNKcq7Ejrnn+mJLXpt
+         KY8A==
+X-Gm-Message-State: ANhLgQ3J2TBv+AJbMuxVMbb7+Y1mqUJn7qH+VSc7AmFIVm3AYg0dOsMR
+        /2uhvbyIbhmLHko9yHwYHcMdD2vNwU0=
+X-Google-Smtp-Source: ADFU+vtR4KyEGJ2cO/OPp0l9p4ynjqVAQjux5fRnVlx1siYw/whKL46bRLgi6BO7eEqFZVwwZt+RuQ==
+X-Received: by 2002:adf:c44a:: with SMTP id a10mr4453283wrg.279.1583336882040;
+        Wed, 04 Mar 2020 07:48:02 -0800 (PST)
 Received: from kpsingh-kernel.localdomain ([2a00:79e1:abc:308:8ca0:6f80:af01:b24])
-        by smtp.gmail.com with ESMTPSA id u25sm4816091wml.17.2020.03.04.07.47.56
+        by smtp.gmail.com with ESMTPSA id u25sm4816091wml.17.2020.03.04.07.48.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Mar 2020 07:47:56 -0800 (PST)
+        Wed, 04 Mar 2020 07:48:01 -0800 (PST)
 From:   KP Singh <kpsingh@chromium.org>
 To:     linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, bpf@vger.kernel.org
@@ -62,9 +62,9 @@ Cc:     Andrii Nakryiko <andriin@fb.com>,
         Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
         Florent Revest <revest@chromium.org>,
         Brendan Jackman <jackmanb@chromium.org>
-Subject: [PATCH bpf-next v3 2/7] bpf: JIT helpers for fmod_ret progs
-Date:   Wed,  4 Mar 2020 16:47:42 +0100
-Message-Id: <20200304154747.23506-3-kpsingh@chromium.org>
+Subject: [PATCH bpf-next v3 7/7] bpf: Add selftests for BPF_MODIFY_RETURN
+Date:   Wed,  4 Mar 2020 16:47:47 +0100
+Message-Id: <20200304154747.23506-8-kpsingh@chromium.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200304154747.23506-1-kpsingh@chromium.org>
 References: <20200304154747.23506-1-kpsingh@chromium.org>
@@ -76,205 +76,212 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: KP Singh <kpsingh@google.com>
 
-* Split the invoke_bpf program to prepare for special handling of
-  fmod_ret programs introduced in a subsequent patch.
-* Move the definition of emit_cond_near_jump and emit_nops as they are
-  needed for fmod_ret.
-* Refactor branch target alignment into its own generic helper function
-  i.e. emit_align.
+Test for two scenarios:
+
+  * When the fmod_ret program returns 0, the original function should
+    be called along with fentry and fexit programs.
+  * When the fmod_ret program returns a non-zero value, the original
+    function should not be called, no side effect should be observed and
+    fentry and fexit programs should be called.
+
+The result from the kernel function call and whether a side-effect is
+observed is returned via the retval attr of the BPF_PROG_TEST_RUN (bpf)
+syscall.
 
 Signed-off-by: KP Singh <kpsingh@google.com>
 Acked-by: Andrii Nakryiko <andriin@fb.com>
 ---
- arch/x86/net/bpf_jit_comp.c | 148 +++++++++++++++++++++---------------
- 1 file changed, 85 insertions(+), 63 deletions(-)
+ net/bpf/test_run.c                            | 22 ++++++-
+ .../selftests/bpf/prog_tests/modify_return.c  | 65 +++++++++++++++++++
+ .../selftests/bpf/progs/modify_return.c       | 49 ++++++++++++++
+ 3 files changed, 135 insertions(+), 1 deletion(-)
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/modify_return.c
+ create mode 100644 tools/testing/selftests/bpf/progs/modify_return.c
 
-diff --git a/arch/x86/net/bpf_jit_comp.c b/arch/x86/net/bpf_jit_comp.c
-index 15c7d28bc05c..d6349e930b06 100644
---- a/arch/x86/net/bpf_jit_comp.c
-+++ b/arch/x86/net/bpf_jit_comp.c
-@@ -1361,35 +1361,95 @@ static void restore_regs(const struct btf_func_model *m, u8 **prog, int nr_args,
- 			 -(stack_size - i * 8));
+diff --git a/net/bpf/test_run.c b/net/bpf/test_run.c
+index 3600f098e7c6..4c921f5154e0 100644
+--- a/net/bpf/test_run.c
++++ b/net/bpf/test_run.c
+@@ -10,6 +10,7 @@
+ #include <net/bpf_sk_storage.h>
+ #include <net/sock.h>
+ #include <net/tcp.h>
++#include <linux/error-injection.h>
+ 
+ #define CREATE_TRACE_POINTS
+ #include <trace/events/bpf_test_run.h>
+@@ -143,6 +144,14 @@ int noinline bpf_fentry_test6(u64 a, void *b, short c, int d, void *e, u64 f)
+ 	return a + (long)b + c + d + (long)e + f;
  }
  
-+static int invoke_bpf_prog(const struct btf_func_model *m, u8 **pprog,
-+			   struct bpf_prog *p, int stack_size)
++int noinline bpf_modify_return_test(int a, int *b)
 +{
-+	u8 *prog = *pprog;
-+	int cnt = 0;
-+
-+	if (emit_call(&prog, __bpf_prog_enter, prog))
-+		return -EINVAL;
-+	/* remember prog start time returned by __bpf_prog_enter */
-+	emit_mov_reg(&prog, true, BPF_REG_6, BPF_REG_0);
-+
-+	/* arg1: lea rdi, [rbp - stack_size] */
-+	EMIT4(0x48, 0x8D, 0x7D, -stack_size);
-+	/* arg2: progs[i]->insnsi for interpreter */
-+	if (!p->jited)
-+		emit_mov_imm64(&prog, BPF_REG_2,
-+			       (long) p->insnsi >> 32,
-+			       (u32) (long) p->insnsi);
-+	/* call JITed bpf program or interpreter */
-+	if (emit_call(&prog, p->bpf_func, prog))
-+		return -EINVAL;
-+
-+	/* arg1: mov rdi, progs[i] */
-+	emit_mov_imm64(&prog, BPF_REG_1, (long) p >> 32,
-+		       (u32) (long) p);
-+	/* arg2: mov rsi, rbx <- start time in nsec */
-+	emit_mov_reg(&prog, true, BPF_REG_2, BPF_REG_6);
-+	if (emit_call(&prog, __bpf_prog_exit, prog))
-+		return -EINVAL;
-+
-+	*pprog = prog;
-+	return 0;
++	*b += 1;
++	return a + *b;
 +}
 +
-+static void emit_nops(u8 **pprog, unsigned int len)
-+{
-+	unsigned int i, noplen;
-+	u8 *prog = *pprog;
-+	int cnt = 0;
++ALLOW_ERROR_INJECTION(bpf_modify_return_test, ERRNO);
 +
-+	while (len > 0) {
-+		noplen = len;
-+
-+		if (noplen > ASM_NOP_MAX)
-+			noplen = ASM_NOP_MAX;
-+
-+		for (i = 0; i < noplen; i++)
-+			EMIT1(ideal_nops[noplen][i]);
-+		len -= noplen;
-+	}
-+
-+	*pprog = prog;
-+}
-+
-+static void emit_align(u8 **pprog, u32 align)
-+{
-+	u8 *target, *prog = *pprog;
-+
-+	target = PTR_ALIGN(prog, align);
-+	if (target != prog)
-+		emit_nops(&prog, target - prog);
-+
-+	*pprog = prog;
-+}
-+
-+static int emit_cond_near_jump(u8 **pprog, void *func, void *ip, u8 jmp_cond)
-+{
-+	u8 *prog = *pprog;
-+	int cnt = 0;
-+	s64 offset;
-+
-+	offset = func - (ip + 2 + 4);
-+	if (!is_simm32(offset)) {
-+		pr_err("Target %p is out of range\n", func);
-+		return -EINVAL;
-+	}
-+	EMIT2_off32(0x0F, jmp_cond + 0x10, offset);
-+	*pprog = prog;
-+	return 0;
-+}
-+
- static int invoke_bpf(const struct btf_func_model *m, u8 **pprog,
- 		      struct bpf_tramp_progs *tp, int stack_size)
+ static void *bpf_test_init(const union bpf_attr *kattr, u32 size,
+ 			   u32 headroom, u32 tailroom)
  {
-+	int i;
- 	u8 *prog = *pprog;
--	int cnt = 0, i;
+@@ -168,7 +177,9 @@ int bpf_prog_test_run_tracing(struct bpf_prog *prog,
+ 			      const union bpf_attr *kattr,
+ 			      union bpf_attr __user *uattr)
+ {
+-	int err = -EFAULT;
++	u16 side_effect = 0, ret = 0;
++	int b = 2, err = -EFAULT;
++	u32 retval = 0;
  
- 	for (i = 0; i < tp->nr_progs; i++) {
--		if (emit_call(&prog, __bpf_prog_enter, prog))
--			return -EINVAL;
--		/* remember prog start time returned by __bpf_prog_enter */
--		emit_mov_reg(&prog, true, BPF_REG_6, BPF_REG_0);
--
--		/* arg1: lea rdi, [rbp - stack_size] */
--		EMIT4(0x48, 0x8D, 0x7D, -stack_size);
--		/* arg2: progs[i]->insnsi for interpreter */
--		if (!tp->progs[i]->jited)
--			emit_mov_imm64(&prog, BPF_REG_2,
--				       (long) tp->progs[i]->insnsi >> 32,
--				       (u32) (long) tp->progs[i]->insnsi);
--		/* call JITed bpf program or interpreter */
--		if (emit_call(&prog, tp->progs[i]->bpf_func, prog))
--			return -EINVAL;
--
--		/* arg1: mov rdi, progs[i] */
--		emit_mov_imm64(&prog, BPF_REG_1, (long) tp->progs[i] >> 32,
--			       (u32) (long) tp->progs[i]);
--		/* arg2: mov rsi, rbx <- start time in nsec */
--		emit_mov_reg(&prog, true, BPF_REG_2, BPF_REG_6);
--		if (emit_call(&prog, __bpf_prog_exit, prog))
-+		if (invoke_bpf_prog(m, &prog, tp->progs[i], stack_size))
- 			return -EINVAL;
+ 	switch (prog->expected_attach_type) {
+ 	case BPF_TRACE_FENTRY:
+@@ -181,10 +192,19 @@ int bpf_prog_test_run_tracing(struct bpf_prog *prog,
+ 		    bpf_fentry_test6(16, (void *)17, 18, 19, (void *)20, 21) != 111)
+ 			goto out;
+ 		break;
++	case BPF_MODIFY_RETURN:
++		ret = bpf_modify_return_test(1, &b);
++		if (b != 2)
++			side_effect = 1;
++		break;
+ 	default:
+ 		goto out;
  	}
- 	*pprog = prog;
-@@ -1531,42 +1591,6 @@ int arch_prepare_bpf_trampoline(void *image, void *image_end,
- 	return prog - (u8 *)image;
- }
  
--static int emit_cond_near_jump(u8 **pprog, void *func, void *ip, u8 jmp_cond)
--{
--	u8 *prog = *pprog;
--	int cnt = 0;
--	s64 offset;
--
--	offset = func - (ip + 2 + 4);
--	if (!is_simm32(offset)) {
--		pr_err("Target %p is out of range\n", func);
--		return -EINVAL;
--	}
--	EMIT2_off32(0x0F, jmp_cond + 0x10, offset);
--	*pprog = prog;
--	return 0;
--}
--
--static void emit_nops(u8 **pprog, unsigned int len)
--{
--	unsigned int i, noplen;
--	u8 *prog = *pprog;
--	int cnt = 0;
--
--	while (len > 0) {
--		noplen = len;
--
--		if (noplen > ASM_NOP_MAX)
--			noplen = ASM_NOP_MAX;
--
--		for (i = 0; i < noplen; i++)
--			EMIT1(ideal_nops[noplen][i]);
--		len -= noplen;
--	}
--
--	*pprog = prog;
--}
--
- static int emit_fallback_jump(u8 **pprog)
- {
- 	u8 *prog = *pprog;
-@@ -1589,7 +1613,7 @@ static int emit_fallback_jump(u8 **pprog)
- 
- static int emit_bpf_dispatcher(u8 **pprog, int a, int b, s64 *progs)
- {
--	u8 *jg_reloc, *jg_target, *prog = *pprog;
-+	u8 *jg_reloc, *prog = *pprog;
- 	int pivot, err, jg_bytes = 1, cnt = 0;
- 	s64 jg_offset;
- 
-@@ -1644,9 +1668,7 @@ static int emit_bpf_dispatcher(u8 **pprog, int a, int b, s64 *progs)
- 	 * Coding Rule 11: All branch targets should be 16-byte
- 	 * aligned.
- 	 */
--	jg_target = PTR_ALIGN(prog, 16);
--	if (jg_target != prog)
--		emit_nops(&prog, jg_target - prog);
-+	emit_align(&prog, 16);
- 	jg_offset = prog - jg_reloc;
- 	emit_code(jg_reloc - jg_bytes, jg_offset, jg_bytes);
- 
++	retval = ((u32)side_effect << 16) | ret;
++	if (copy_to_user(&uattr->test.retval, &retval, sizeof(retval)))
++		goto out;
++
+ 	err = 0;
+ out:
+ 	trace_bpf_test_finish(&err);
+diff --git a/tools/testing/selftests/bpf/prog_tests/modify_return.c b/tools/testing/selftests/bpf/prog_tests/modify_return.c
+new file mode 100644
+index 000000000000..97fec70c600b
+--- /dev/null
++++ b/tools/testing/selftests/bpf/prog_tests/modify_return.c
+@@ -0,0 +1,65 @@
++// SPDX-License-Identifier: GPL-2.0
++
++/*
++ * Copyright 2020 Google LLC.
++ */
++
++#include <test_progs.h>
++#include "modify_return.skel.h"
++
++#define LOWER(x) ((x) & 0xffff)
++#define UPPER(x) ((x) >> 16)
++
++
++static void run_test(__u32 input_retval, __u16 want_side_effect, __s16 want_ret)
++{
++	struct modify_return *skel = NULL;
++	int err, prog_fd;
++	__u32 duration = 0, retval;
++	__u16 side_effect;
++	__s16 ret;
++
++	skel = modify_return__open_and_load();
++	if (CHECK(!skel, "skel_load", "modify_return skeleton failed\n"))
++		goto cleanup;
++
++	err = modify_return__attach(skel);
++	if (CHECK(err, "modify_return", "attach failed: %d\n", err))
++		goto cleanup;
++
++	skel->bss->input_retval = input_retval;
++	prog_fd = bpf_program__fd(skel->progs.fmod_ret_test);
++	err = bpf_prog_test_run(prog_fd, 1, NULL, 0, NULL, 0,
++				&retval, &duration);
++
++	CHECK(err, "test_run", "err %d errno %d\n", err, errno);
++
++	side_effect = UPPER(retval);
++	ret  = LOWER(retval);
++
++	CHECK(ret != want_ret, "test_run",
++	      "unexpected ret: %d, expected: %d\n", ret, want_ret);
++	CHECK(side_effect != want_side_effect, "modify_return",
++	      "unexpected side_effect: %d\n", side_effect);
++
++	CHECK(skel->bss->fentry_result != 1, "modify_return",
++	      "fentry failed\n");
++	CHECK(skel->bss->fexit_result != 1, "modify_return",
++	      "fexit failed\n");
++	CHECK(skel->bss->fmod_ret_result != 1, "modify_return",
++	      "fmod_ret failed\n");
++
++cleanup:
++	modify_return__destroy(skel);
++}
++
++void test_modify_return(void)
++{
++	run_test(0 /* input_retval */,
++		 1 /* want_side_effect */,
++		 4 /* want_ret */);
++	run_test(-EINVAL /* input_retval */,
++		 0 /* want_side_effect */,
++		 -EINVAL /* want_ret */);
++}
++
+diff --git a/tools/testing/selftests/bpf/progs/modify_return.c b/tools/testing/selftests/bpf/progs/modify_return.c
+new file mode 100644
+index 000000000000..8b7466a15c6b
+--- /dev/null
++++ b/tools/testing/selftests/bpf/progs/modify_return.c
+@@ -0,0 +1,49 @@
++// SPDX-License-Identifier: GPL-2.0
++
++/*
++ * Copyright 2020 Google LLC.
++ */
++
++#include <linux/bpf.h>
++#include <bpf/bpf_helpers.h>
++#include <bpf/bpf_tracing.h>
++
++char _license[] SEC("license") = "GPL";
++
++static int sequence = 0;
++__s32 input_retval = 0;
++
++__u64 fentry_result = 0;
++SEC("fentry/bpf_modify_return_test")
++int BPF_PROG(fentry_test, int a, __u64 b)
++{
++	sequence++;
++	fentry_result = (sequence == 1);
++	return 0;
++}
++
++__u64 fmod_ret_result = 0;
++SEC("fmod_ret/bpf_modify_return_test")
++int BPF_PROG(fmod_ret_test, int a, int *b, int ret)
++{
++	sequence++;
++	/* This is the first fmod_ret program, the ret passed should be 0 */
++	fmod_ret_result = (sequence == 2 && ret == 0);
++	return input_retval;
++}
++
++__u64 fexit_result = 0;
++SEC("fexit/bpf_modify_return_test")
++int BPF_PROG(fexit_test, int a, __u64 b, int ret)
++{
++	sequence++;
++	/* If the input_reval is non-zero a successful modification should have
++	 * occurred.
++	 */
++	if (input_retval)
++		fexit_result = (sequence == 3 && ret == input_retval);
++	else
++		fexit_result = (sequence == 3 && ret == 4);
++
++	return 0;
++}
 -- 
 2.20.1
 
