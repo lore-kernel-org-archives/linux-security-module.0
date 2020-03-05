@@ -2,110 +2,111 @@ Return-Path: <SRS0=spL8=4W=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5943C3F2D1
-	for <linux-security-module@archiver.kernel.org>; Thu,  5 Mar 2020 21:30:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32A0CC3F2D7
+	for <linux-security-module@archiver.kernel.org>; Thu,  5 Mar 2020 22:01:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89BA820728
-	for <linux-security-module@archiver.kernel.org>; Thu,  5 Mar 2020 21:30:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 08B13206E2
+	for <linux-security-module@archiver.kernel.org>; Thu,  5 Mar 2020 22:01:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="W7srfdUL"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OyN0As3W"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726067AbgCEVa1 (ORCPT
+        id S1726145AbgCEWBi (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 5 Mar 2020 16:30:27 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:48506 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726049AbgCEVa1 (ORCPT
+        Thu, 5 Mar 2020 17:01:38 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:37852 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726178AbgCEWBi (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 5 Mar 2020 16:30:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583443825;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Hkim17AcBCnxI/wSF69dkEpIuJDcwbjPUSIQZbbuoHA=;
-        b=W7srfdULrPmF8Ee7WZ+xTZZTYy2CARYq4EIcpvyrzVsWwuuRyIHNW/+Wt8RbKJMffe5VIr
-        oElxclTjPvNykOeoCOjwQb4jpuws7ognr/qYff7iHC1HnO9prEpFA+feMXz04M/jcm+TkF
-        /JjNk0v56P1NSLdgi2cvv6PIN7lTQzY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-217-QZ2WNUImOeqq3Z_tfIAuGA-1; Thu, 05 Mar 2020 16:30:23 -0500
-X-MC-Unique: QZ2WNUImOeqq3Z_tfIAuGA-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 719268B789C;
-        Thu,  5 Mar 2020 21:30:20 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-59.bos.redhat.com [10.18.17.59])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A47C49494C;
-        Thu,  5 Mar 2020 21:30:18 +0000 (UTC)
-Subject: Re: [PATCH] KEYS: Don't write out to userspace while holding key
- semaphore
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     David Howells <dhowells@redhat.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Mimi Zohar <zohar@linux.ibm.com>, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        Sumit Garg <sumit.garg@linaro.org>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Chris von Recklinghausen <crecklin@redhat.com>
-References: <20200305210640.15315-1-longman@redhat.com>
- <20200305211651.GA225345@gmail.com>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <f581aab4-1bad-64b8-59bf-2da6c34c53c5@redhat.com>
-Date:   Thu, 5 Mar 2020 16:30:18 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Thu, 5 Mar 2020 17:01:38 -0500
+Received: by mail-wr1-f67.google.com with SMTP id 6so19589wre.4
+        for <linux-security-module@vger.kernel.org>; Thu, 05 Mar 2020 14:01:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=QRs769N8QUo0slXGjoV/bE6quT349p8P4cDyvi5+xSs=;
+        b=OyN0As3WtsQyPWrtZ0mTiBeTZecUOCo749mffQpTDmTx69lKJuE4osS24tJYR/gpHX
+         9VrzXIzE920xZDE0WeBQEVk4jHfPgbL+L8RNeX1VBPd6m95OUXVDG4faYkaORxj/wR5E
+         oXvLlM71z+RvpZVtk0IWK8zhjSZ6NIBdrlVwA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=QRs769N8QUo0slXGjoV/bE6quT349p8P4cDyvi5+xSs=;
+        b=kebzF5bFwRjps3th4WB+F7V8an/JOl6iLxhiy4J2vjAnOCRK5qEnG1aYA6+CT7uD1Z
+         Ndn26DTKQDxIEA+sgPKf3YgajkWC8UU4GNG49MRaOXe6X7n2ps4itKtQXyhZftt0Uw19
+         uMwLe/CpFc7mnCXhb7oNS5svdVx380vP2DM7mvXEUG/F2reT7k4KPPbitElAJ7wUGEV2
+         fdvfhcT+3qFJOiatjMXTUHgT44w4dxaYmd45M2aVnUigEBsyNYKMc8QVlU97/NPfJNVa
+         Tkl8hApu63GZIT1seHsRAS8UJY6UoLiQh+2v8vT6m8GmAjk8jKKUmPY1cEOizEz0qRMi
+         vaHA==
+X-Gm-Message-State: ANhLgQ06Jijn8ZaYJmwavQ1EqgGHURcyYk8cr9Zbrs4i8UMhIEDs8cyf
+        HUikYObYWyHczkAjuY6JR8VdiHkxbZQwBw==
+X-Google-Smtp-Source: ADFU+vuNWeddf1HH7nZX+stJXAplqB1550B+DJXHvxhEuJ8KddsSUGbg7If5vezjuGur7ZvPeojLkw==
+X-Received: by 2002:adf:d4d2:: with SMTP id w18mr66826wrk.180.1583445696430;
+        Thu, 05 Mar 2020 14:01:36 -0800 (PST)
+Received: from kpsingh-kernel.localdomain (77-56-209-237.dclient.hispeed.ch. [77.56.209.237])
+        by smtp.gmail.com with ESMTPSA id x9sm5002641wrx.0.2020.03.05.14.01.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Mar 2020 14:01:35 -0800 (PST)
+From:   KP Singh <kpsingh@chromium.org>
+To:     linux-security-module@vger.kernel.org, linux-next@vger.kernel.org,
+        bpf@vger.kernel.org
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>
+Subject: [PATCH bpf-next] bpf: Fix bpf_prog_test_run_tracing for !CONFIG_NET
+Date:   Thu,  5 Mar 2020 23:01:27 +0100
+Message-Id: <20200305220127.29109-1-kpsingh@chromium.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20200305211651.GA225345@gmail.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 3/5/20 4:16 PM, Eric Biggers wrote:
-> On Thu, Mar 05, 2020 at 04:06:40PM -0500, Waiman Long wrote:
->> diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
->> index 9b898c969558..564a4d187329 100644
->> --- a/security/keys/keyctl.c
->> +++ b/security/keys/keyctl.c
->> @@ -846,14 +846,36 @@ long keyctl_read_key(key_serial_t keyid, char __user *buffer, size_t buflen)
->>  can_read_key:
->>  	ret = -EOPNOTSUPP;
->>  	if (key->type->read) {
->> -		/* Read the data with the semaphore held (since we might sleep)
->> +		/*
->> +		 * Read the data with the semaphore held (since we might sleep)
->>  		 * to protect against the key being updated or revoked.
->> +		 *
->> +		 * Allocating a temporary buffer to hold the keys before
->> +		 * transferring them to user buffer to avoid potential
->> +		 * deadlock involving page fault and mmap_sem.
->>  		 */
->> +		char *tmpbuf = kmalloc(buflen, GFP_KERNEL);
-> This is passing an arbitrarily large size from userspace into kmalloc().
->
-> - Eric
->
-That is true. Is there a limit of how much key data are expected to be
-returned from the kernel? We could set an internal limit here on how
-large the buffer can be.
+From: KP Singh <kpsingh@google.com>
 
-Cheers,
-Longman
+test_run.o is not built when CONFIG_NET is not set and
+bpf_prog_test_run_tracing being referenced in bpf_trace.o causes the
+linker error:
+
+ld: kernel/trace/bpf_trace.o:(.rodata+0x38): undefined reference to
+ `bpf_prog_test_run_tracing'
+
+Add a __weak function in bpf_trace.c to handle this.
+
+Fixes: da00d2f117a0 ("bpf: Add test ops for BPF_PROG_TYPE_TRACING")
+Signed-off-by: KP Singh <kpsingh@google.com>
+---
+ kernel/trace/bpf_trace.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+index 363e0a2c75cf..6a490d8ce9de 100644
+--- a/kernel/trace/bpf_trace.c
++++ b/kernel/trace/bpf_trace.c
+@@ -1252,6 +1252,13 @@ static bool tracing_prog_is_valid_access(int off, int size,
+ 	return btf_ctx_access(off, size, type, prog, info);
+ }
+ 
++int __weak bpf_prog_test_run_tracing(struct bpf_prog *prog,
++				     const union bpf_attr *kattr,
++				     union bpf_attr __user *uattr)
++{
++	return -ENOTSUPP;
++}
++
+ const struct bpf_verifier_ops raw_tracepoint_verifier_ops = {
+ 	.get_func_proto  = raw_tp_prog_func_proto,
+ 	.is_valid_access = raw_tp_prog_is_valid_access,
+-- 
+2.20.1
 
