@@ -2,257 +2,145 @@ Return-Path: <SRS0=spL8=4W=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64EFDC3F2D7
-	for <linux-security-module@archiver.kernel.org>; Thu,  5 Mar 2020 18:24:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C39C8C3F2D8
+	for <linux-security-module@archiver.kernel.org>; Thu,  5 Mar 2020 18:47:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DAC5208C3
-	for <linux-security-module@archiver.kernel.org>; Thu,  5 Mar 2020 18:24:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A10BF207FD
+	for <linux-security-module@archiver.kernel.org>; Thu,  5 Mar 2020 18:47:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fortanix.onmicrosoft.com header.i=@fortanix.onmicrosoft.com header.b="E1sRSg0X"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="DN56SIMK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725974AbgCESYb (ORCPT
+        id S1726183AbgCESrR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 5 Mar 2020 13:24:31 -0500
-Received: from mail-co1nam11on2113.outbound.protection.outlook.com ([40.107.220.113]:19937
-        "EHLO NAM11-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725946AbgCESYa (ORCPT
+        Thu, 5 Mar 2020 13:47:17 -0500
+Received: from sonic305-27.consmr.mail.ne1.yahoo.com ([66.163.185.153]:38841
+        "EHLO sonic305-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725991AbgCESrR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 5 Mar 2020 13:24:30 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=CYp6SMck2l6XHnlJKbDVB3Pj0rBUb/IVZA9dtMQxnI3biHW/w4z6j5gV5BGF4tu2V4GoJUESwyex8cBIfKUqCZZmZEs6KosV28HUhkQTLTekCTeiHHFd0e1xnjBUzX/3JniQuOqmIDqLuuX4vcH4f1ZEzNzN7gJwy2Tb2x5E2b2KGjsxKIj1oSPt1B2mXN5TNPbF2GlrZ01weNQRFEGBakcmJ7NROHAZCbk5gRTo7VuEsKytDWCTs2ZqjeGc6lw3KeMpE5IJAHB6mjSH+XsrY4S16MaRfGbXQayjI7nZnWrPLh2GD/lGOLu/3AIRHder33Po8QKQtMgIlNfsQ63j0Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Eppg20KTfgHZbVRr9lC7U3ImR5/7n3kmPGvKVGZLa/U=;
- b=ibyAVprzfLVr+KU70XPvOGLQjtVMWUksoP9m0qVR3hU7lNk9us0gVNdnymNi9WaQofbyf24MoeLRfdBRNjGFqTBe3HJ4VFKJbGdW9RQUYs/n21161HFk6wgE8hJcILH1KyaPX4iYifuDxlnDAGZrjG9cKSz0UHg3jfEFP9zRRXYTyqukliio4JE1Rxfg2M69TLbwfaqtW9BlV8pvbuxf0IzcOliWtEIvtht/E/W55yEhLazNLOq+EXy5mspDt0vGxZcpW5DkBgsBnO11nc/LBcFK+HFUO3aUy925RIqeypaUyOd37aGZf4L8CK2y+uRpRI5FpGhqruCVFyfloJnQaA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fortanix.com; dmarc=pass action=none header.from=fortanix.com;
- dkim=pass header.d=fortanix.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=fortanix.onmicrosoft.com; s=selector2-fortanix-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Eppg20KTfgHZbVRr9lC7U3ImR5/7n3kmPGvKVGZLa/U=;
- b=E1sRSg0X6ItnCvZSUEGqJO+UuMOJjjeCWAo+8nVpvqt7VMJIkCZ7/iNJP0CKggfXdgjOz6pR+pNeZZNXTnNm4mQ/vDUH1/uFHjaHJrsDDAw92GbSzCPDRe0ICSIdqQoj9BGJvOjnse+axVEzshIiSnXf1muwYX5TTW3rWieu0tM=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=jethro@fortanix.com; 
-Received: from BYAPR11MB3734.namprd11.prod.outlook.com (2603:10b6:a03:fe::29)
- by BYAPR11MB2919.namprd11.prod.outlook.com (2603:10b6:a03:8d::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.11; Thu, 5 Mar
- 2020 18:24:23 +0000
-Received: from BYAPR11MB3734.namprd11.prod.outlook.com
- ([fe80::dc9c:f877:efd1:401a]) by BYAPR11MB3734.namprd11.prod.outlook.com
- ([fe80::dc9c:f877:efd1:401a%4]) with mapi id 15.20.2793.013; Thu, 5 Mar 2020
- 18:24:23 +0000
-Subject: Re: [PATCH v28 11/22] x86/sgx: Linux Enclave Driver
-To:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
-        dave.hansen@intel.com, nhorman@redhat.com, npmccallum@redhat.com,
-        haitao.huang@intel.com, andriy.shevchenko@linux.intel.com,
-        tglx@linutronix.de, kai.svahn@intel.com, bp@alien8.de,
-        josh@joshtriplett.org, luto@kernel.org, kai.huang@intel.com,
-        rientjes@google.com, cedric.xing@intel.com, puiterwijk@redhat.com,
+        Thu, 5 Mar 2020 13:47:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1583434035; bh=GcY1vK8yKtz85gn0IdfY2ICNUki/N1ewme/5hJvjsOw=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=DN56SIMKyQ9w0Obi4fhbFjWzlj9+81cBRaGY11RdxX1AZp3RK/oD9ZJOhjqrWq19Vii1cVGxYAVzJCFBHY251UMe6qwHIiBRFwfkZcMGKWn4SiMcBajg2BAvs+wNuxLrBbR3+9jJ8BjxaU0kU0fbbd69Y4KdtErLw388/l5upzz3SpmVcruCW+Y8PsBeCSleWqrX3Fx7a7uH6nRqJiBDUnMNYZ+MGNkhWqXcnqeEksWErr5Z0FjLETJ1xb6PnE1ZFXXGtGK5tf+L4HRlkzbjMYjKBEigrpDxOCYce7j/iB4DXv7uDmIcfkggdqdISol2Xe3YgKT1wTjrhdF7fOMH3g==
+X-YMail-OSG: x3ePi6wVM1lyyaPpn_rd_bDwmw38mdq7JnnVd_LCm5_IWrxPCc8o0GriRdTLtHO
+ K9iuUoMrK9NnVXUCKfHD33qlt_idDY8Cn25ek8.zjy97N4e166vm9FFf.7XF8EAMfvhOxw3nzwxE
+ g12hH0dJGgOlqx0kIk8BFfgcRQp9fD3uNDqDHzwdOk1JyRsrGQ6sCByCAX3hFcfrnM7T8j0ZSyUz
+ kyZIzyTkcz77u1nV4X5if7cQDZ5XJcsyg3WUBwU8cqy9D0q8rmaj6tYhDWS9_4Ub.rB5FmFtefGs
+ Fxm6SxSaGRwCcM23wIiU6ENzPkQlgUiiznXi66L.NJlcwd7pvrliwqV_m1yIW2rqOAD0a9flS87X
+ IgeDzU05FvIWRg95GwP.z46BzKPmNIkATPn7U5N9LhiukPsKCQQETmuFzdHW0IC_g2dDRC5Ua8Xt
+ cBQnHJDMVdKkcXPjXSgMC4tAfFj28aq6Koa9ta6oUfkg47QhKC80Zv01XYowfZ1HnjxnDAEU7VCg
+ nklDmQs1wxSCvZvRF9nxcSbr1huUOaGaAHgJnrL6LdJlaVmyoECQOzTUsUiMHkm331q5RzqxVViI
+ YSuId.neZbLwHKxoATXCib.XsZncxPLtx5oFFaBmel4XfipFNP0IBYqE190jYF_W2MOD0Zx4r4ya
+ Ttv9D.NViWQVQZUJi4m9aM2Y_y7YokdsRG_eQHHYDFgHLXos9M5A.1n4zLej2ny3.7wHL3PnnVB9
+ zNvZpSFhiLNCgyWN53YVK_9ZhCGCmfVNS9vz4e_q6NdQyfE1F8ZVBNlgdSxGT8yKMzu2hSsjWoJK
+ x9K6GcA1xPc7cva7lNiUj55hwOjLrhR.qbtDbX7eWnsRh6.qdWpdQmylnkG6QsvUmPRMnq5.cfGE
+ LrV9ulkD.BSk16BaPaFaTlrrgbMeUUtQZmSZsgnXKzC60n3ZuYdGg5oibCnhViwbVMqPxCk1eJc2
+ 3uFRqawrq39nz4y5.WcOkdhgWSj0OjsXQMO0CDS.3btkZonw.U8JTlN0IybIgrH.8lsu2OW1nKiv
+ SQHJMTfvTfwBOOCwdFCn8Nd.Gmd5a8If6X4lUnme8JjyvPBW8xRTreImIWCQb8nZwSJQjkNGdLMw
+ IDlIaLEHTqVhH_zggWGgnD7rPpxN5.20HBKNSO.zMJvTq4jgbvbFzWMjEIJj_K2xWAOAQ3ZmC0xn
+ duYE9kK5Uf1nTufyguflvTxObP_2kr76MzRTax0El3JquNT8m1tu7ObuI_Z_yvxwDZ.TKk6bbAze
+ TklLkOQn3l7lGSK8Ex2xBZ7lNBWnvOOthx7aXx36T4oQeTD_Hd2ocwWJ4N9VsC5o_bwoxvJJS0LN
+ YvZERPHVYUyoenxXJo3ZLLAL3JBhK89ADWqS9IJU8ck_0nqAVMxm5KL_ZtnlJ.oJyddNRoEbWiiJ
+ KxEcvBEmdhW50WGC_jzsY0XtqdRw3axg1j.qnBqQ-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.ne1.yahoo.com with HTTP; Thu, 5 Mar 2020 18:47:15 +0000
+Received: by smtp429.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 18dcc0ab0dcb8d07abc4d3534f6927eb;
+          Thu, 05 Mar 2020 18:47:12 +0000 (UTC)
+Subject: Re: [PATCH bpf-next v4 3/7] bpf: Introduce BPF_MODIFY_RETURN
+To:     Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc:     KP Singh <kpsingh@chromium.org>,
         linux-security-module@vger.kernel.org,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Chunyang Hui <sanqian.hcy@antfin.com>
-References: <20200303233609.713348-1-jarkko.sakkinen@linux.intel.com>
- <20200303233609.713348-12-jarkko.sakkinen@linux.intel.com>
- <20200305174015.GJ11500@linux.intel.com>
-From:   Jethro Beekman <jethro@fortanix.com>
-Message-ID: <e445c2f8-fddd-5740-0e26-a03e023918bf@fortanix.com>
-Date:   Thu, 5 Mar 2020 19:24:11 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-In-Reply-To: <20200305174015.GJ11500@linux.intel.com>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms070604070802020306060307"
-X-ClientProxiedBy: LNXP123CA0013.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:d2::25) To BYAPR11MB3734.namprd11.prod.outlook.com
- (2603:10b6:a03:fe::29)
+        linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+        Andrii Nakryiko <andriin@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>, jmorris@namei.org,
+        Paul Moore <paul@paul-moore.com>
+References: <20200304191853.1529-1-kpsingh@chromium.org>
+ <20200304191853.1529-4-kpsingh@chromium.org>
+ <CAEjxPJ4+aW5JVC9QjJywjNUS=+cVJeaWwRHLwOssLsZyhX3siw@mail.gmail.com>
+ <20200305155421.GA209155@google.com>
+ <d7615424-48cb-1131-3c5d-f2a0b4adfaf7@schaufler-ca.com>
+ <CAEjxPJ7EQjq2J8AGn+b90=yMG9H5CaNErk1PqtTz8T3CwdAvJw@mail.gmail.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Autocrypt: addr=casey@schaufler-ca.com; keydata=
+ mQINBFzV9HABEAC/mmv3jeJyF7lR7QhILYg1+PeBLIMZv7KCzBSc/4ZZipoWdmr77Lel/RxQ
+ 1PrNx0UaM5r6Hj9lJmJ9eg4s/TUBSP67mTx+tsZ1RhG78/WFf9aBe8MSXxY5cu7IUwo0J/CG
+ vdSqACKyYPV5eoTJmnMxalu8/oVUHyPnKF3eMGgE0mKOFBUMsb2pLS/enE4QyxhcZ26jeeS6
+ 3BaqDl1aTXGowM5BHyn7s9LEU38x/y2ffdqBjd3au2YOlvZ+XUkzoclSVfSR29bomZVVyhMB
+ h1jTmX4Ac9QjpwsxihT8KNGvOM5CeCjQyWcW/g8LfWTzOVF9lzbx6IfEZDDoDem4+ZiPsAXC
+ SWKBKil3npdbgb8MARPes2DpuhVm8yfkJEQQmuLYv8GPiJbwHQVLZGQAPBZSAc7IidD2zbf9
+ XAw1/SJGe1poxOMfuSBsfKxv9ba2i8hUR+PH7gWwkMQaQ97B1yXYxVEkpG8Y4MfE5Vd3bjJU
+ kvQ/tOBUCw5zwyIRC9+7zr1zYi/3hk+OG8OryZ5kpILBNCo+aePeAJ44znrySarUqS69tuXd
+ a3lMPHUJJpUpIwSKQ5UuYYkWlWwENEWSefpakFAIwY4YIBkzoJ/t+XJHE1HTaJnRk6SWpeDf
+ CreF3+LouP4njyeLEjVIMzaEpwROsw++BX5i5vTXJB+4UApTAQARAQABtChDYXNleSBTY2hh
+ dWZsZXIgPGNhc2V5QHNjaGF1Zmxlci1jYS5jb20+iQJUBBMBCAA+FiEEC+9tH1YyUwIQzUIe
+ OKUVfIxDyBEFAlzV9HACGwMFCRLMAwAFCwkIBwIGFQoJCAsCBBYCAwECHgECF4AACgkQOKUV
+ fIxDyBG6ag/6AiRl8yof47YOEVHlrmewbpnlBTaYNfJ5cZflNRKRX6t4bp1B2YV1whlDTpiL
+ vNOwFkh+ZE0eI5M4x8Gw2Oiok+4Q5liA9PHTozQYF+Ia+qdL5EehfbLGoEBqklpGvG3h8JsO
+ 7SvONJuFDgvab/U/UriDYycJwzwKZuhVtK9EMpnTtUDyP3DY+Q8h7MWsniNBLVXnh4yBIEJg
+ SSgDn3COpZoFTPGKE+rIzioo/GJe8CTa2g+ZggJiY/myWTS3quG0FMvwvNYvZ4I2g6uxSl7n
+ bZVqAZgqwoTAv1HSXIAn9muwZUJL03qo25PFi2gQmX15BgJKQcV5RL0GHFHRThDS3IyadOgK
+ P2j78P8SddTN73EmsG5OoyzwZAxXfck9A512BfVESqapHurRu2qvMoUkQaW/2yCeRQwGTsFj
+ /rr0lnOBkyC6wCmPSKXe3dT2mnD5KnCkjn7KxLqexKt4itGjJz4/ynD/qh+gL7IPbifrQtVH
+ JI7cr0fI6Tl8V6efurk5RjtELsAlSR6fKV7hClfeDEgLpigHXGyVOsynXLr59uE+g/+InVic
+ jKueTq7LzFd0BiduXGO5HbGyRKw4MG5DNQvC//85EWmFUnDlD3WHz7Hicg95D+2IjD2ZVXJy
+ x3LTfKWdC8bU8am1fi+d6tVEFAe/KbUfe+stXkgmfB7pxqW5Ag0EXNX0cAEQAPIEYtPebJzT
+ wHpKLu1/j4jQcke06Kmu5RNuj1pEje7kX5IKzQSs+CPH0NbSNGvrA4dNGcuDUTNHgb5Be9hF
+ zVqRCEvF2j7BFbrGe9jqMBWHuWheQM8RRoa2UMwQ704mRvKr4sNPh01nKT52ASbWpBPYG3/t
+ WbYaqfgtRmCxBnqdOx5mBJIBh9Q38i63DjQgdNcsTx2qS7HFuFyNef5LCf3jogcbmZGxG/b7
+ yF4OwmGsVc8ufvlKo5A9Wm+tnRjLr/9Mn9vl5Xa/tQDoPxz26+aWz7j1in7UFzAarcvqzsdM
+ Em6S7uT+qy5jcqyuipuenDKYF/yNOVSNnsiFyQTFqCPCpFihOnuaWqfmdeUOQHCSo8fD4aRF
+ emsuxqcsq0Jp2ODq73DOTsdFxX2ESXYoFt3Oy7QmIxeEgiHBzdKU2bruIB5OVaZ4zWF+jusM
+ Uh+jh+44w9DZkDNjxRAA5CxPlmBIn1OOYt1tsphrHg1cH1fDLK/pDjsJZkiH8EIjhckOtGSb
+ aoUUMMJ85nVhN1EbU/A3DkWCVFEA//Vu1+BckbSbJKE7Hl6WdW19BXOZ7v3jo1q6lWwcFYth
+ esJfk3ZPPJXuBokrFH8kqnEQ9W2QgrjDX3et2WwZFLOoOCItWxT0/1QO4ikcef/E7HXQf/ij
+ Dxf9HG2o5hOlMIAkJq/uLNMvABEBAAGJAjwEGAEIACYWIQQL720fVjJTAhDNQh44pRV8jEPI
+ EQUCXNX0cAIbDAUJEswDAAAKCRA4pRV8jEPIEWkzEACKFUnpp+wIVHpckMfBqN8BE5dUbWJc
+ GyQ7wXWajLtlPdw1nNw0Wrv+ob2RCT7qQlUo6GRLcvj9Fn5tR4hBvR6D3m8aR0AGHbcC62cq
+ I7LjaSDP5j/em4oVL2SMgNTrXgE2w33JMGjAx9oBzkxmKUqprhJomPwmfDHMJ0t7y39Da724
+ oLPTkQDpJL1kuraM9TC5NyLe1+MyIxqM/8NujoJbWeQUgGjn9uxQAil7o/xSCjrWCP3kZDID
+ vd5ZaHpdl8e1mTExQoKr4EWgaMjmD/a3hZ/j3KfTVNpM2cLfD/QwTMaC2fkK8ExMsz+rUl1H
+ icmcmpptCwOSgwSpPY1Zfio6HvEJp7gmDwMgozMfwQuT9oxyFTxn1X3rn1IoYQF3P8gsziY5
+ qtTxy2RrgqQFm/hr8gM78RhP54UPltIE96VywviFzDZehMvuwzW//fxysIoK97Y/KBZZOQs+
+ /T+Bw80Pwk/dqQ8UmIt2ffHEgwCTbkSm711BejapWCfklxkMZDp16mkxSt2qZovboVjXnfuq
+ wQ1QL4o4t1hviM7LyoflsCLnQFJh6RSBhBpKQinMJl/z0A6NYDkQi6vEGMDBWX/M2vk9Jvwa
+ v0cEBfY3Z5oFgkh7BUORsu1V+Hn0fR/Lqq/Pyq+nTR26WzGDkolLsDr3IH0TiAVH5ZuPxyz6
+ abzjfg==
+Message-ID: <2a46d961-5cb8-bfc1-9e42-26d8af97ae86@schaufler-ca.com>
+Date:   Thu, 5 Mar 2020 10:47:10 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [10.195.0.226] (212.61.132.179) by LNXP123CA0013.GBRP123.PROD.OUTLOOK.COM (2603:10a6:600:d2::25) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.16 via Frontend Transport; Thu, 5 Mar 2020 18:24:16 +0000
-X-Originating-IP: [212.61.132.179]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 040bede7-85c3-4b74-4e8a-08d7c1326dbf
-X-MS-TrafficTypeDiagnostic: BYAPR11MB2919:
-X-Microsoft-Antispam-PRVS: <BYAPR11MB2919A086042435E01FEE106AAAE20@BYAPR11MB2919.namprd11.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
-X-Forefront-PRVS: 03333C607F
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(376002)(39830400003)(396003)(136003)(366004)(346002)(199004)(189003)(110136005)(81156014)(81166006)(956004)(4326008)(8936002)(52116002)(31686004)(6486002)(6666004)(33964004)(2616005)(508600001)(54906003)(31696002)(26005)(66946007)(186003)(2906002)(16526019)(7416002)(5660300002)(66556008)(16576012)(316002)(8676002)(53546011)(36756003)(86362001)(66476007)(235185007);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR11MB2919;H:BYAPR11MB3734.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-Received-SPF: None (protection.outlook.com: fortanix.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Nezen3jYwPDPvAIPqeOF5SifCpODkfz+we0PtlfXpcTu3FHxxCd5NpIkBN0FeRBCv8/0QkyCc8m3yqkl0o4B0PPNC1SsO/zQoqIoW9vcNZUC2QARD1zCmAK3vIKJ6x7M1vB9r0+9PPSyxEIE8zTUyBtcjkup32AAKbgTaTqK5CA6rqqiKG7sM0OZDOigHMgllgz8+hvhFoGNbBWL53lz4wrPPPUF6cRMsOXPCtfKZhmQXNVBfXiNvsg/iJI7DTmaCl+q0H80Xim1tZYcSc9xZoKgwhnXSQAOGF/2U/uPCeYwCazMnsBsZHYhWjXoEhtQcB8dhA999VhIhhntLsUSHti1SWGN9heNrtAP8cXhLVIFIA98FNxB7EnVa1XJOK46ANr23scqyNgIbYwQjYCn/wcyM2FQjoId1Qhum1jIW+owE/BnJxZOHkEVu0mh5JRn
-X-MS-Exchange-AntiSpam-MessageData: A4SsgplaVBn/oE9Ru0ssdmMNC6dNQBVTz7uQic6p56OjOnpSBWlftE3TUdBQaj9Hj7MRTz28POprsJ4IVgeZcRehkPHPMVObqmNmc0GjcrtGgqumU6it/KTnd+8JhRGfwJcJuDVwgd4A2RTIEXEviw==
-X-OriginatorOrg: fortanix.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 040bede7-85c3-4b74-4e8a-08d7c1326dbf
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Mar 2020 18:24:23.5501
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: de7becae-4883-43e8-82c7-7dbdbb988ae6
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: jrHpbZ1wankF/Z49R41NdhjJuVzleWEwEVJP0VmLpdp48C6Y8oHOOOC3zN1Qdg6MTa76qmC6mEI/kfGBNWxJnA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR11MB2919
+In-Reply-To: <CAEjxPJ7EQjq2J8AGn+b90=yMG9H5CaNErk1PqtTz8T3CwdAvJw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Mailer: WebService/1.1.15302 hermes Apache-HttpAsyncClient/4.1.4 (Java/1.8.0_241)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
---------------ms070604070802020306060307
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+On 3/5/2020 10:03 AM, Stephen Smalley wrote:
+> On Thu, Mar 5, 2020 at 12:35 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> I believe that I have stated that order isn't my issue.
+>> Go first, last or as specified in the lsm list, I really
+>> don't care. We'll talk about what does matter in the KRSI
+>> thread.
+> Order matters when the security module logic (in this case, the BPF
+> program) is loaded from userspace and
+> the userspace process isn't already required to be fully privileged
+> with respect to the in-kernel security modules.
+> CAP_MAC_ADMIN was their (not unreasonable) attempt to check that
+> requirement; it just doesn't happen to convey
+> the same meaning for SELinux since SELinux predates the introduction
+> of CAP_MAC_ADMIN (in Linux at least) and
+> since SELinux was designed to confine even processes with capabilities.
 
-On 2020-03-05 18:40, Sean Christopherson wrote:
-> On Wed, Mar 04, 2020 at 01:35:58AM +0200, Jarkko Sakkinen wrote:
->> diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/a=
-sm/sgx.h
->> new file mode 100644
->> index 000000000000..5edb08ab8fd0
->> --- /dev/null
->> +++ b/arch/x86/include/uapi/asm/sgx.h
->> @@ -0,0 +1,66 @@
->> +/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) WITH Linux-sysc=
-all-note */
->> +/*
->> + * Copyright(c) 2016-19 Intel Corporation.
->> + */
->> +#ifndef _UAPI_ASM_X86_SGX_H
->> +#define _UAPI_ASM_X86_SGX_H
->> +
->> +#include <linux/types.h>
->> +#include <linux/ioctl.h>
->> +
->> +/**
->> + * enum sgx_epage_flags - page control flags
->> + * %SGX_PAGE_MEASURE:	Measure the page contents with a sequence of
->> + *			ENCLS[EEXTEND] operations.
->> + */
->> +enum sgx_page_flags {
->> +	SGX_PAGE_MEASURE	=3D 0x01,
->> +};
->> +
->> +#define SGX_MAGIC 0xA4
->> +
->> +#define SGX_IOC_ENCLAVE_CREATE \
->> +	_IOW(SGX_MAGIC, 0x00, struct sgx_enclave_create)
->> +#define SGX_IOC_ENCLAVE_ADD_PAGES \
->> +	_IOWR(SGX_MAGIC, 0x01, struct sgx_enclave_add_pages)
->> +#define SGX_IOC_ENCLAVE_INIT \
->> +	_IOW(SGX_MAGIC, 0x02, struct sgx_enclave_init)
->> +
->> +/**
->> + * struct sgx_enclave_create - parameter structure for the
->> + *                             %SGX_IOC_ENCLAVE_CREATE ioctl
->> + * @src:	address for the SECS page data
->> + */
->> +struct sgx_enclave_create  {
->> +	__u64	src;
->=20
-> Would it make sense to add reserved fields to the structs so that new
-> features can be added in a backwards compatible way?  E.g. if we want t=
-o
-> allow userspace to control the backing store by passing in a file
-> descriptor ENCLAVE_CREATE.
+If KRSI "needs" to go last, I'm fine with that. What I continue
+to object to is making KRSI/BPF a special case in the code. It
+doesn't need to be.
+ 
 
-Reserving space for future fields is not necessary because the size of th=
-e struct is encoded in the ioctl number. The kernel can use this to diffe=
-rentiate between different call versions from userspace.
-
---
-Jethro Beekman | Fortanix
-
-
---------------ms070604070802020306060307
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCC
-C54wggVPMIIEN6ADAgECAhAFFr+cC0ZYZTtbKgQCBwyyMA0GCSqGSIb3DQEBCwUAMIGCMQsw
-CQYDVQQGEwJJVDEPMA0GA1UECAwGTWlsYW5vMQ8wDQYDVQQHDAZNaWxhbm8xIzAhBgNVBAoM
-GkFjdGFsaXMgUy5wLkEuLzAzMzU4NTIwOTY3MSwwKgYDVQQDDCNBY3RhbGlzIENsaWVudCBB
-dXRoZW50aWNhdGlvbiBDQSBHMTAeFw0xOTA5MTYwOTQ3MDlaFw0yMDA5MTYwOTQ3MDlaMB4x
-HDAaBgNVBAMME2pldGhyb0Bmb3J0YW5peC5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAw
-ggEKAoIBAQDHWEhcRGkEl1ZnImSqBt/OXNJ4AyDZ86CejuWI9jYpWbtf/gXBQO6iaaEKBDlj
-Vffk2QxH9wcifkYsvCYfxFgD15dU9TABO7YOwvHa8NtxanWr1xomufu/P1ApI336+S7ZXfSe
-qMnookNJUMHuF3Nxw2lI69LXqZLCdcVXquM4DY1lVSV+DXIwpTMtB+pMyqOWrsgmrISMZYFw
-EUJOqVDvtU8KewhpuGAYXAQSDVLcAl2nZg7C2Mex8vT8stBoslPTkRXxAgMbslDNDUiKhy8d
-E3I78P+stNHlFAgALgoYLBiVVLZkVBUPvgr2yUApR63yosztqp+jFhqfeHbjTRlLAgMBAAGj
-ggIiMIICHjAMBgNVHRMBAf8EAjAAMB8GA1UdIwQYMBaAFH5g/Phspz09166ToXkCj7N0KTv1
-MEsGCCsGAQUFBwEBBD8wPTA7BggrBgEFBQcwAoYvaHR0cDovL2NhY2VydC5hY3RhbGlzLml0
-L2NlcnRzL2FjdGFsaXMtYXV0Y2xpZzEwHgYDVR0RBBcwFYETamV0aHJvQGZvcnRhbml4LmNv
-bTBHBgNVHSAEQDA+MDwGBiuBHwEYATAyMDAGCCsGAQUFBwIBFiRodHRwczovL3d3dy5hY3Rh
-bGlzLml0L2FyZWEtZG93bmxvYWQwHQYDVR0lBBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMEMIHo
-BgNVHR8EgeAwgd0wgZuggZiggZWGgZJsZGFwOi8vbGRhcDA1LmFjdGFsaXMuaXQvY24lM2RB
-Y3RhbGlzJTIwQ2xpZW50JTIwQXV0aGVudGljYXRpb24lMjBDQSUyMEcxLG8lM2RBY3RhbGlz
-JTIwUy5wLkEuLzAzMzU4NTIwOTY3LGMlM2RJVD9jZXJ0aWZpY2F0ZVJldm9jYXRpb25MaXN0
-O2JpbmFyeTA9oDugOYY3aHR0cDovL2NybDA1LmFjdGFsaXMuaXQvUmVwb3NpdG9yeS9BVVRI
-Q0wtRzEvZ2V0TGFzdENSTDAdBgNVHQ4EFgQUAXkM7yNq6pH6j+IC/7IsDPSTMnowDgYDVR0P
-AQH/BAQDAgWgMA0GCSqGSIb3DQEBCwUAA4IBAQC8z+2tLUwep0OhTQBgMaybrxTHCxRZ4/en
-XB0zGVrry94pItE4ro4To/t86Kfcic41ZsaX8/SFVUW2NNHjEodJu94UhYqPMDUVjO6Y14s2
-jznFHyKQdXMrhIBU5lzYqyh97w6s82Z/qoMy3OuLek+8rXirwju9ATSNLsFTzt2CEoyCSRtl
-yOmR7Z9wgSvD7C7XoBdGEFVdGCXwCy1t9AT7UCIHKssnguVaMGN9vWqLPVKOVTwc4g3RAQC7
-J1Aoo6U5d6wCIX4MxEZhICxnUgAKHULxsWMGjBfQAo3QGXjJ4wDEu7O/5KCyUfn6lyhRYa+t
-YgyFAX0ZU9Upovd+aOw0MIIGRzCCBC+gAwIBAgIILNSK07EeD4kwDQYJKoZIhvcNAQELBQAw
-azELMAkGA1UEBhMCSVQxDjAMBgNVBAcMBU1pbGFuMSMwIQYDVQQKDBpBY3RhbGlzIFMucC5B
-Li8wMzM1ODUyMDk2NzEnMCUGA1UEAwweQWN0YWxpcyBBdXRoZW50aWNhdGlvbiBSb290IENB
-MB4XDTE1MDUxNDA3MTQxNVoXDTMwMDUxNDA3MTQxNVowgYIxCzAJBgNVBAYTAklUMQ8wDQYD
-VQQIDAZNaWxhbm8xDzANBgNVBAcMBk1pbGFubzEjMCEGA1UECgwaQWN0YWxpcyBTLnAuQS4v
-MDMzNTg1MjA5NjcxLDAqBgNVBAMMI0FjdGFsaXMgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIENB
-IEcxMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwPzBiVbZiOL0BGW/zQk1qygp
-MP4MyvcnqxwR7oY9XeT1bES2DFczlZfeiIqNLanbkyqTxydXZ+kxoS9071qWsZ6zS+pxSqXL
-s+RTvndEaWx5hdHZcKNWGzhy5FiO4GZvGlFInFEiaY+dOEpjjWvSeXpvcDpnYw6M9AXuHo4J
-hjC3P/OK//5QFXnztTa4iU66RpLteOTgCtiRCwZNKx8EFeqqfTpYvfEb4H91E7n+Y61jm0d2
-E8fJ2wGTaSSwjc8nTI2ApXujoczukb2kHqwaGP3q5UuedWcnRZc65XUhK/Z6K32KvrQuNP32
-F/5MxkvEDnJpUnnt9iMExvEzn31zDQIDAQABo4IB1TCCAdEwQQYIKwYBBQUHAQEENTAzMDEG
-CCsGAQUFBzABhiVodHRwOi8vb2NzcDA1LmFjdGFsaXMuaXQvVkEvQVVUSC1ST09UMB0GA1Ud
-DgQWBBR+YPz4bKc9Pdeuk6F5Ao+zdCk79TAPBgNVHRMBAf8EBTADAQH/MB8GA1UdIwQYMBaA
-FFLYiDrIn3hm7YnzezhwlMkCAjbQMEUGA1UdIAQ+MDwwOgYEVR0gADAyMDAGCCsGAQUFBwIB
-FiRodHRwczovL3d3dy5hY3RhbGlzLml0L2FyZWEtZG93bmxvYWQwgeMGA1UdHwSB2zCB2DCB
-lqCBk6CBkIaBjWxkYXA6Ly9sZGFwMDUuYWN0YWxpcy5pdC9jbiUzZEFjdGFsaXMlMjBBdXRo
-ZW50aWNhdGlvbiUyMFJvb3QlMjBDQSxvJTNkQWN0YWxpcyUyMFMucC5BLiUyZjAzMzU4NTIw
-OTY3LGMlM2RJVD9jZXJ0aWZpY2F0ZVJldm9jYXRpb25MaXN0O2JpbmFyeTA9oDugOYY3aHR0
-cDovL2NybDA1LmFjdGFsaXMuaXQvUmVwb3NpdG9yeS9BVVRILVJPT1QvZ2V0TGFzdENSTDAO
-BgNVHQ8BAf8EBAMCAQYwDQYJKoZIhvcNAQELBQADggIBAE2TztUkvkEbShZYc19lifLZej5Y
-jLzLxA/lWxZnssFLpDPySfzMmndz3F06S51ltwDe+blTwcpdzUl3M2alKH3bOr855ku9Rr6u
-edya+HGQUT0OhqDo2K2CAE9nBcfANxifjfT8XzCoC3ctf9ux3og1WuE8WTcLZKgCMuNRBmJt
-e9C4Ug0w3iXqPzq8KuRRobNKqddPjk3EiK+QA+EFCCka1xOLh/7cPGTJMNta1/0u5oLiXaOA
-HeALt/nqeZ2kZ+lizK8oTv4in5avIf3ela3oL6vrwpTca7TZxTX90e805dZQN4qRVPdPbrBl
-WtNozH7SdLeLrcoN8l2EXO6190GAJYdynTc2E6EyrLVGcDKUX91VmCSRrqEppZ7W05TbWRLi
-6+wPjAzmTq2XSmKfajq7juTKgkkw7FFJByixa0NdSZosdQb3VkLqG8EOYOamZLqH+v7ua0+u
-lg7FOviFbeZ7YR9eRO81O8FC1uLgutlyGD2+GLjgQnsvneDsbNAWfkory+qqAxvVzX5PSaQp
-2pJ52AaIH1MN1i2/geRSP83TRMrFkwuIMzDhXxKFQvpspNc19vcTryzjtwP4xq0WNS4YWPS4
-U+9mW+U0Cgnsgx9fMiJNbLflf5qSb53j3AGHnjK/qJzPa39wFTXLXB648F3w1Qf9R7eZeTRJ
-fCQY/fJUMYID9jCCA/ICAQEwgZcwgYIxCzAJBgNVBAYTAklUMQ8wDQYDVQQIDAZNaWxhbm8x
-DzANBgNVBAcMBk1pbGFubzEjMCEGA1UECgwaQWN0YWxpcyBTLnAuQS4vMDMzNTg1MjA5Njcx
-LDAqBgNVBAMMI0FjdGFsaXMgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIENBIEcxAhAFFr+cC0ZY
-ZTtbKgQCBwyyMA0GCWCGSAFlAwQCAQUAoIICLzAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcB
-MBwGCSqGSIb3DQEJBTEPFw0yMDAzMDUxODI0MTFaMC8GCSqGSIb3DQEJBDEiBCCVAwcv1B+N
-1o5Gg7KW6mHmOD2F1XL540RgRcHzggIj4DBsBgkqhkiG9w0BCQ8xXzBdMAsGCWCGSAFlAwQB
-KjALBglghkgBZQMEAQIwCgYIKoZIhvcNAwcwDgYIKoZIhvcNAwICAgCAMA0GCCqGSIb3DQMC
-AgFAMAcGBSsOAwIHMA0GCCqGSIb3DQMCAgEoMIGoBgkrBgEEAYI3EAQxgZowgZcwgYIxCzAJ
-BgNVBAYTAklUMQ8wDQYDVQQIDAZNaWxhbm8xDzANBgNVBAcMBk1pbGFubzEjMCEGA1UECgwa
-QWN0YWxpcyBTLnAuQS4vMDMzNTg1MjA5NjcxLDAqBgNVBAMMI0FjdGFsaXMgQ2xpZW50IEF1
-dGhlbnRpY2F0aW9uIENBIEcxAhAFFr+cC0ZYZTtbKgQCBwyyMIGqBgsqhkiG9w0BCRACCzGB
-mqCBlzCBgjELMAkGA1UEBhMCSVQxDzANBgNVBAgMBk1pbGFubzEPMA0GA1UEBwwGTWlsYW5v
-MSMwIQYDVQQKDBpBY3RhbGlzIFMucC5BLi8wMzM1ODUyMDk2NzEsMCoGA1UEAwwjQWN0YWxp
-cyBDbGllbnQgQXV0aGVudGljYXRpb24gQ0EgRzECEAUWv5wLRlhlO1sqBAIHDLIwDQYJKoZI
-hvcNAQEBBQAEggEAM2r/fecuoObSDyo/x1AVp7l3XCN1HtCZdPAZmIoNoAxSkGhAvZ0JSfN3
-PKOaDnz8Of3GlXpek2pg9xUhZg0pWVs0icHghyFs+eBfJnHwk6oka4onhpAWzHKPGR5KuJco
-zqgu3KrCzzOU2yZ/SXtmR6zS1rGI8UXwZlCkjK3mBz+3RQen9phFfp7LrX/v58wuiY1dTSEV
-sfUJHDBMVd8IAtO/gPMG9hz9ZAlOLCI2j+8LAr93RN+d2pSNIXJuKagGb5xkTPTwlG5K6YOd
-4r1GOl6NLsgkteVfEnnkUFopO9bAA0S1z8LpeJzxykeSYcVpfj1mA0jguEKRzZ+ZSDYbNwAA
-AAAAAA==
-
---------------ms070604070802020306060307--
