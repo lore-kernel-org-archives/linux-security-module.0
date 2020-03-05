@@ -2,161 +2,92 @@ Return-Path: <SRS0=spL8=4W=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D122EC3F2D7
-	for <linux-security-module@archiver.kernel.org>; Thu,  5 Mar 2020 21:16:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB328C3F2D2
+	for <linux-security-module@archiver.kernel.org>; Thu,  5 Mar 2020 21:17:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB62721556
-	for <linux-security-module@archiver.kernel.org>; Thu,  5 Mar 2020 21:16:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="isUdIXzz"
+	by mail.kernel.org (Postfix) with ESMTP id A4D7C20870
+	for <linux-security-module@archiver.kernel.org>; Thu,  5 Mar 2020 21:17:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1583443045;
+	bh=TwO5bwawSGBd1hvXvSkBLj+ILLCCIBlCvGCMPQ8I2c4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=jerZYvrsKCf/oASl061CGHsU2Jq3EBqfAbVLwuuoKbE4km7YEaCeutFwyvAct9Jdh
+	 V6u/U0ObsMa6nQV+iTPowcLR4qNVbIvErK3Oa8JXiPd0w+hkElEj/xJbx2z4KDZvQz
+	 vjeiqZFkp5m/lvGR0e+hEN31IZVGHUb6rNWwUBz0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726080AbgCEVQu (ORCPT
+        id S1726141AbgCEVRD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 5 Mar 2020 16:16:50 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:33605 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726067AbgCEVQu (ORCPT
+        Thu, 5 Mar 2020 16:17:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36224 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726271AbgCEVQx (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 5 Mar 2020 16:16:50 -0500
-Received: by mail-wm1-f65.google.com with SMTP id a25so7966494wmm.0
-        for <linux-security-module@vger.kernel.org>; Thu, 05 Mar 2020 13:16:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=rFYE9qU6hfZLMjbuv+Lw+SiZtkHRJmxeQZgCYrPMhQA=;
-        b=isUdIXzz1WywdtIB6ayzczG6D27adzp5OvZ+mwE5OAioulxSPjDaDutrYz88lS5//h
-         8gDvO0A0RNZ+xrP4i3PSqfYZQizRnLpAk1S7jcK2ysbU7KL5FXPhBQSp6wMbgWrIKgnG
-         as59ZuFJ+uo1o9AqL2xYldyROmTL5aIFXgVSA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=rFYE9qU6hfZLMjbuv+Lw+SiZtkHRJmxeQZgCYrPMhQA=;
-        b=idK11Ligd02qOjQ+mkvGND44JKJaEo5Rflk5GV7h7ZWuNbiwqciWW7dHR9q32wGadO
-         jiY45XCRLst4ZRyHbwYK+oiAdkziHZfKYWZN2xejRVNyDKd7ld5iIq4sIsgGnmR1IOzH
-         OjotLQ2hd7MCFYy8REaeFmJi35ZLVUsjuC3T/NzazK3KomRW3yEQnJFd0WDDaYFKcHKD
-         x9fzahVt4i7/boz9CGPViLr525pX3g0IvZn/XMp2lsiL8/UWqxND/PQphn9IBDbYMqin
-         xV4FSKbu6jhnMH1KHM8+pgakCbYBetfOVrxiq5ntM7WTWR/dYAaNwAcpPJjBuiglzoQI
-         /Bhg==
-X-Gm-Message-State: ANhLgQ2N26o23YzE+cF7l0qPEpLS8UTmoE410wxk3mqmw91i7VO5gm/T
-        5nKIWnjg6Fg1hMO86MbELZdN4+7M6XjR1Q==
-X-Google-Smtp-Source: ADFU+vuwbPUqEfT9MYVYDIUGPBhYImhXKM8fUAOSLCzk+p4JfLVCw9oSKX/YzU7LYBOvnLdNGrs3gg==
-X-Received: by 2002:a05:600c:218d:: with SMTP id e13mr686605wme.127.1583443006355;
-        Thu, 05 Mar 2020 13:16:46 -0800 (PST)
-Received: from chromium.org (77-56-209-237.dclient.hispeed.ch. [77.56.209.237])
-        by smtp.gmail.com with ESMTPSA id j5sm10577968wmi.33.2020.03.05.13.16.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Mar 2020 13:16:45 -0800 (PST)
-From:   KP Singh <kpsingh@chromium.org>
-X-Google-Original-From: KP Singh <kpsingh>
-Date:   Thu, 5 Mar 2020 22:16:43 +0100
-To:     Stephen Smalley <stephen.smalley.work@gmail.com>
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-        Andrii Nakryiko <andriin@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>, jmorris@namei.org,
-        Paul Moore <paul@paul-moore.com>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Subject: Re: [PATCH bpf-next v4 3/7] bpf: Introduce BPF_MODIFY_RETURN
-Message-ID: <20200305211643.GA12094@chromium.org>
-References: <20200304191853.1529-1-kpsingh@chromium.org>
- <20200304191853.1529-4-kpsingh@chromium.org>
- <CAEjxPJ4+aW5JVC9QjJywjNUS=+cVJeaWwRHLwOssLsZyhX3siw@mail.gmail.com>
- <20200305155421.GA209155@google.com>
- <CAEjxPJ5u7tsa_9-7Oq_Wi28mZD_aDC1tVWj5Tb8ud=bfEYsY9Q@mail.gmail.com>
+        Thu, 5 Mar 2020 16:16:53 -0500
+Received: from gmail.com (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B21F820728;
+        Thu,  5 Mar 2020 21:16:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583443013;
+        bh=TwO5bwawSGBd1hvXvSkBLj+ILLCCIBlCvGCMPQ8I2c4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=fdWl/xjGhfe8AKx4gpf1+pTdzly+8Vw6cUxr4Dy4g6e/giV8iCGLZTBYALqfTRnW7
+         Wq3TB/+Ek0YX+fvgK7QRy+qGFMS7sTmnHAakfRHiyKa6JB1O9V/GpM+BdgTzoGmYe2
+         nenXuvZHS0ixwjtE/x0jRLbXfYNFYqfxat8gl61M=
+Date:   Thu, 5 Mar 2020 13:16:51 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Waiman Long <longman@redhat.com>
+Cc:     David Howells <dhowells@redhat.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Mimi Zohar <zohar@linux.ibm.com>, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        Sumit Garg <sumit.garg@linaro.org>,
+        Jerry Snitselaar <jsnitsel@redhat.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        Chris von Recklinghausen <crecklin@redhat.com>
+Subject: Re: [PATCH] KEYS: Don't write out to userspace while holding key
+ semaphore
+Message-ID: <20200305211651.GA225345@gmail.com>
+References: <20200305210640.15315-1-longman@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEjxPJ5u7tsa_9-7Oq_Wi28mZD_aDC1tVWj5Tb8ud=bfEYsY9Q@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200305210640.15315-1-longman@redhat.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 05-Mär 14:43, Stephen Smalley wrote:
-> On Thu, Mar 5, 2020 at 10:54 AM KP Singh <kpsingh@chromium.org> wrote:
-> >
-> > On 05-Mar 08:51, Stephen Smalley wrote:
-> > > IIUC you've switched from a model where the BPF program would be
-> > > invoked after the original function logic
-> > > and the BPF program is skipped if the original function logic returns
-> > > non-zero to a model where the BPF program is invoked first and
-> > > the original function logic is skipped if the BPF program returns
-> > > non-zero.  I'm not keen on that for userspace-loaded code attached
-> >
-> > We do want to continue the KRSI series and the effort to implement a
-> > proper BPF LSM. In the meantime, the tracing + error injection
-> > solution helps us to:
-> >
-> >   * Provide better debug capabilities.
-> >   * And parallelize the effort to come up with the right helpers
-> >     for our LSM work and work on sleepable BPF which is also essential
-> >     for some of the helpers.
-> >
-> > As you noted, in the KRSI v4 series, we mentioned that we would like
-> > to have the user-space loaded BPF programs be unable to override the
-> > decision made by the in-kernel logic/LSMs, but this got shot down:
-> >
-> >    https://lore.kernel.org/bpf/00c216e1-bcfd-b7b1-5444-2a2dfa69190b@schaufler-ca.com
-> >
-> > I would like to continue this discussion when we post the v5 series
-> > for KRSI as to what the correct precedence order should be for the
-> > BPF_PROG_TYPE_LSM and would appreciate if you also bring it up there.
-> 
-> That's fine but I guess I don't see why you or anyone else would
-> bother with introducing a BPF_PROG_TYPE_LSM
-> if BPF_PROG_MODIFY_RETURN is accepted and is allowed to attach to the
-> LSM hooks.  What's the benefit to you
-> if you can achieve your goals directly with MODIFY_RETURN?
+On Thu, Mar 05, 2020 at 04:06:40PM -0500, Waiman Long wrote:
+> diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
+> index 9b898c969558..564a4d187329 100644
+> --- a/security/keys/keyctl.c
+> +++ b/security/keys/keyctl.c
+> @@ -846,14 +846,36 @@ long keyctl_read_key(key_serial_t keyid, char __user *buffer, size_t buflen)
+>  can_read_key:
+>  	ret = -EOPNOTSUPP;
+>  	if (key->type->read) {
+> -		/* Read the data with the semaphore held (since we might sleep)
+> +		/*
+> +		 * Read the data with the semaphore held (since we might sleep)
+>  		 * to protect against the key being updated or revoked.
+> +		 *
+> +		 * Allocating a temporary buffer to hold the keys before
+> +		 * transferring them to user buffer to avoid potential
+> +		 * deadlock involving page fault and mmap_sem.
+>  		 */
+> +		char *tmpbuf = kmalloc(buflen, GFP_KERNEL);
 
-There is still value in being a proper LSM, as I had mentioned in KRSI
-v3 that not all security_* wrappers simply call the attached hooks and
-return their exit code.
+This is passing an arbitrarily large size from userspace into kmalloc().
 
-It's also okay, taking into consideration Casey's objections and Kees'
-suggestion, to be properly registered with the LSM framework (even if
-it is with LSM_ORDER_LAST) and work towards improving some of the
-performance bottle-necks in the framework. It would be a positive
-outcome for all LSMs.
-
-BPF_MODIFY_RETURN is just a first step which lays the foundation for
-BPF_PROG_TYPE_LSM and facilitates us to build BPF infrastructure for
-it.
-
-- KP
-
-> 
-> > > to LSM hooks; it means that userspace BPF programs can run even if
-> > > SELinux would have denied access and SELinux hooks get
-> > > skipped entirely if the BPF program returns an error.  I think Casey
-> > > may have wrongly pointed you in this direction on the grounds
-> > > it can already happen with the base DAC checking logic.  But that's
-> >
-> > What we can do for this tracing/modify_ret series, is to remove
-> > the special casing for "security_" functions in the BPF code and add
-> > ALLOW_ERROR_INJECTION calls to the security hooks. This way, if
-> > someone needs to disable the BPF programs being able to modify
-> > security hooks, they can disable error injection. If that's okay, we
-> > can send a patch.
-> 
-> Realistically distros tend to enable lots of developer-friendly
-> options including error injection, and most users don't build their
-> own kernels
-> and distros won't support them when they do. So telling users they can
-> just rebuild their kernel without error injection if they care about
-> BPF programs being able to modify security hooks isn't really viable.
-> The security modules need a way to veto it based on their policies.
-> That's why I suggested a security hook here.
+- Eric
