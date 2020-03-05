@@ -2,436 +2,161 @@ Return-Path: <SRS0=spL8=4W=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD100C3F2D7
-	for <linux-security-module@archiver.kernel.org>; Thu,  5 Mar 2020 21:07:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D122EC3F2D7
+	for <linux-security-module@archiver.kernel.org>; Thu,  5 Mar 2020 21:16:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77F98207FD
-	for <linux-security-module@archiver.kernel.org>; Thu,  5 Mar 2020 21:07:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB62721556
+	for <linux-security-module@archiver.kernel.org>; Thu,  5 Mar 2020 21:16:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="U1XN9eXK"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="isUdIXzz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726191AbgCEVHh (ORCPT
+        id S1726080AbgCEVQu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 5 Mar 2020 16:07:37 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:50229 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726141AbgCEVHh (ORCPT
+        Thu, 5 Mar 2020 16:16:50 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:33605 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726067AbgCEVQu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 5 Mar 2020 16:07:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583442455;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc; bh=dRYGAZrMwBFIPigt3msYEmu2svGNIvUsM7amhWk/Nu0=;
-        b=U1XN9eXKSt91TMASBcCCn7kI9RBd2XBofhUsHfXo9DQECtKj1l0u8rAucygDmCQ0mE50bY
-        SVy80RQWfvcLvEvxFWiEsZortg2b2IA4ea4KKWVgF+IfYlitkfj0wnrt+vOkgC1NIkCNLF
-        Uc1mnxeduBELRQdc4PrJnOkvbiI3Lkc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-410-utyKBdopPqymwuR8HPwW2w-1; Thu, 05 Mar 2020 16:07:26 -0500
-X-MC-Unique: utyKBdopPqymwuR8HPwW2w-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4254E184C808;
-        Thu,  5 Mar 2020 21:07:24 +0000 (UTC)
-Received: from llong.com (dhcp-17-59.bos.redhat.com [10.18.17.59])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8A4EC272D1;
-        Thu,  5 Mar 2020 21:07:18 +0000 (UTC)
-From:   Waiman Long <longman@redhat.com>
-To:     David Howells <dhowells@redhat.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Mimi Zohar <zohar@linux.ibm.com>
-Cc:     keyrings@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        Sumit Garg <sumit.garg@linaro.org>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Chris von Recklinghausen <crecklin@redhat.com>,
-        Waiman Long <longman@redhat.com>
-Subject: [PATCH] KEYS: Don't write out to userspace while holding key semaphore
-Date:   Thu,  5 Mar 2020 16:06:40 -0500
-Message-Id: <20200305210640.15315-1-longman@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+        Thu, 5 Mar 2020 16:16:50 -0500
+Received: by mail-wm1-f65.google.com with SMTP id a25so7966494wmm.0
+        for <linux-security-module@vger.kernel.org>; Thu, 05 Mar 2020 13:16:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=rFYE9qU6hfZLMjbuv+Lw+SiZtkHRJmxeQZgCYrPMhQA=;
+        b=isUdIXzz1WywdtIB6ayzczG6D27adzp5OvZ+mwE5OAioulxSPjDaDutrYz88lS5//h
+         8gDvO0A0RNZ+xrP4i3PSqfYZQizRnLpAk1S7jcK2ysbU7KL5FXPhBQSp6wMbgWrIKgnG
+         as59ZuFJ+uo1o9AqL2xYldyROmTL5aIFXgVSA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=rFYE9qU6hfZLMjbuv+Lw+SiZtkHRJmxeQZgCYrPMhQA=;
+        b=idK11Ligd02qOjQ+mkvGND44JKJaEo5Rflk5GV7h7ZWuNbiwqciWW7dHR9q32wGadO
+         jiY45XCRLst4ZRyHbwYK+oiAdkziHZfKYWZN2xejRVNyDKd7ld5iIq4sIsgGnmR1IOzH
+         OjotLQ2hd7MCFYy8REaeFmJi35ZLVUsjuC3T/NzazK3KomRW3yEQnJFd0WDDaYFKcHKD
+         x9fzahVt4i7/boz9CGPViLr525pX3g0IvZn/XMp2lsiL8/UWqxND/PQphn9IBDbYMqin
+         xV4FSKbu6jhnMH1KHM8+pgakCbYBetfOVrxiq5ntM7WTWR/dYAaNwAcpPJjBuiglzoQI
+         /Bhg==
+X-Gm-Message-State: ANhLgQ2N26o23YzE+cF7l0qPEpLS8UTmoE410wxk3mqmw91i7VO5gm/T
+        5nKIWnjg6Fg1hMO86MbELZdN4+7M6XjR1Q==
+X-Google-Smtp-Source: ADFU+vuwbPUqEfT9MYVYDIUGPBhYImhXKM8fUAOSLCzk+p4JfLVCw9oSKX/YzU7LYBOvnLdNGrs3gg==
+X-Received: by 2002:a05:600c:218d:: with SMTP id e13mr686605wme.127.1583443006355;
+        Thu, 05 Mar 2020 13:16:46 -0800 (PST)
+Received: from chromium.org (77-56-209-237.dclient.hispeed.ch. [77.56.209.237])
+        by smtp.gmail.com with ESMTPSA id j5sm10577968wmi.33.2020.03.05.13.16.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Mar 2020 13:16:45 -0800 (PST)
+From:   KP Singh <kpsingh@chromium.org>
+X-Google-Original-From: KP Singh <kpsingh>
+Date:   Thu, 5 Mar 2020 22:16:43 +0100
+To:     Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+        Andrii Nakryiko <andriin@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>, jmorris@namei.org,
+        Paul Moore <paul@paul-moore.com>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Subject: Re: [PATCH bpf-next v4 3/7] bpf: Introduce BPF_MODIFY_RETURN
+Message-ID: <20200305211643.GA12094@chromium.org>
+References: <20200304191853.1529-1-kpsingh@chromium.org>
+ <20200304191853.1529-4-kpsingh@chromium.org>
+ <CAEjxPJ4+aW5JVC9QjJywjNUS=+cVJeaWwRHLwOssLsZyhX3siw@mail.gmail.com>
+ <20200305155421.GA209155@google.com>
+ <CAEjxPJ5u7tsa_9-7Oq_Wi28mZD_aDC1tVWj5Tb8ud=bfEYsY9Q@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEjxPJ5u7tsa_9-7Oq_Wi28mZD_aDC1tVWj5Tb8ud=bfEYsY9Q@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-A lockdep circular locking dependency report was seen when running a
-keyutils test:
+On 05-Mär 14:43, Stephen Smalley wrote:
+> On Thu, Mar 5, 2020 at 10:54 AM KP Singh <kpsingh@chromium.org> wrote:
+> >
+> > On 05-Mar 08:51, Stephen Smalley wrote:
+> > > IIUC you've switched from a model where the BPF program would be
+> > > invoked after the original function logic
+> > > and the BPF program is skipped if the original function logic returns
+> > > non-zero to a model where the BPF program is invoked first and
+> > > the original function logic is skipped if the BPF program returns
+> > > non-zero.  I'm not keen on that for userspace-loaded code attached
+> >
+> > We do want to continue the KRSI series and the effort to implement a
+> > proper BPF LSM. In the meantime, the tracing + error injection
+> > solution helps us to:
+> >
+> >   * Provide better debug capabilities.
+> >   * And parallelize the effort to come up with the right helpers
+> >     for our LSM work and work on sleepable BPF which is also essential
+> >     for some of the helpers.
+> >
+> > As you noted, in the KRSI v4 series, we mentioned that we would like
+> > to have the user-space loaded BPF programs be unable to override the
+> > decision made by the in-kernel logic/LSMs, but this got shot down:
+> >
+> >    https://lore.kernel.org/bpf/00c216e1-bcfd-b7b1-5444-2a2dfa69190b@schaufler-ca.com
+> >
+> > I would like to continue this discussion when we post the v5 series
+> > for KRSI as to what the correct precedence order should be for the
+> > BPF_PROG_TYPE_LSM and would appreciate if you also bring it up there.
+> 
+> That's fine but I guess I don't see why you or anyone else would
+> bother with introducing a BPF_PROG_TYPE_LSM
+> if BPF_PROG_MODIFY_RETURN is accepted and is allowed to attach to the
+> LSM hooks.  What's the benefit to you
+> if you can achieve your goals directly with MODIFY_RETURN?
 
-[12537.027242] ======================================================
-[12537.059309] WARNING: possible circular locking dependency detected
-[12537.088148] 4.18.0-147.7.1.el8_1.x86_64+debug #1 Tainted: G OE    --------- -  -
-[12537.125253] ------------------------------------------------------
-[12537.153189] keyctl/25598 is trying to acquire lock:
-[12537.175087] 000000007c39f96c (&mm->mmap_sem){++++}, at: __might_fault+0xc4/0x1b0
-[12537.208365]
-[12537.208365] but task is already holding lock:
-[12537.234507] 000000003de5b58d (&type->lock_class){++++}, at: keyctl_read_key+0x15a/0x220
-[12537.270476]
-[12537.270476] which lock already depends on the new lock.
-[12537.270476]
-[12537.307209]
-[12537.307209] the existing dependency chain (in reverse order) is:
-[12537.340754]
-[12537.340754] -> #3 (&type->lock_class){++++}:
-[12537.367434]        down_write+0x4d/0x110
-[12537.385202]        __key_link_begin+0x87/0x280
-[12537.405232]        request_key_and_link+0x483/0xf70
-[12537.427221]        request_key+0x3c/0x80
-[12537.444839]        dns_query+0x1db/0x5a5 [dns_resolver]
-[12537.468445]        dns_resolve_server_name_to_ip+0x1e1/0x4d0 [cifs]
-[12537.496731]        cifs_reconnect+0xe04/0x2500 [cifs]
-[12537.519418]        cifs_readv_from_socket+0x461/0x690 [cifs]
-[12537.546263]        cifs_read_from_socket+0xa0/0xe0 [cifs]
-[12537.573551]        cifs_demultiplex_thread+0x311/0x2db0 [cifs]
-[12537.601045]        kthread+0x30c/0x3d0
-[12537.617906]        ret_from_fork+0x3a/0x50
-[12537.636225]
-[12537.636225] -> #2 (root_key_user.cons_lock){+.+.}:
-[12537.664525]        __mutex_lock+0x105/0x11f0
-[12537.683734]        request_key_and_link+0x35a/0xf70
-[12537.705640]        request_key+0x3c/0x80
-[12537.723304]        dns_query+0x1db/0x5a5 [dns_resolver]
-[12537.746773]        dns_resolve_server_name_to_ip+0x1e1/0x4d0 [cifs]
-[12537.775607]        cifs_reconnect+0xe04/0x2500 [cifs]
-[12537.798322]        cifs_readv_from_socket+0x461/0x690 [cifs]
-[12537.823369]        cifs_read_from_socket+0xa0/0xe0 [cifs]
-[12537.847262]        cifs_demultiplex_thread+0x311/0x2db0 [cifs]
-[12537.873477]        kthread+0x30c/0x3d0
-[12537.890281]        ret_from_fork+0x3a/0x50
-[12537.908649]
-[12537.908649] -> #1 (&tcp_ses->srv_mutex){+.+.}:
-[12537.935225]        __mutex_lock+0x105/0x11f0
-[12537.954450]        cifs_call_async+0x102/0x7f0 [cifs]
-[12537.977250]        smb2_async_readv+0x6c3/0xc90 [cifs]
-[12538.000659]        cifs_readpages+0x120a/0x1e50 [cifs]
-[12538.023920]        read_pages+0xf5/0x560
-[12538.041583]        __do_page_cache_readahead+0x41d/0x4b0
-[12538.067047]        ondemand_readahead+0x44c/0xc10
-[12538.092069]        filemap_fault+0xec1/0x1830
-[12538.111637]        __do_fault+0x82/0x260
-[12538.129216]        do_fault+0x419/0xfb0
-[12538.146390]        __handle_mm_fault+0x862/0xdf0
-[12538.167408]        handle_mm_fault+0x154/0x550
-[12538.187401]        __do_page_fault+0x42f/0xa60
-[12538.207395]        do_page_fault+0x38/0x5e0
-[12538.225777]        page_fault+0x1e/0x30
-[12538.243010]
-[12538.243010] -> #0 (&mm->mmap_sem){++++}:
-[12538.267875]        lock_acquire+0x14c/0x420
-[12538.286848]        __might_fault+0x119/0x1b0
-[12538.306006]        keyring_read_iterator+0x7e/0x170
-[12538.327936]        assoc_array_subtree_iterate+0x97/0x280
-[12538.352154]        keyring_read+0xe9/0x110
-[12538.370558]        keyctl_read_key+0x1b9/0x220
-[12538.391470]        do_syscall_64+0xa5/0x4b0
-[12538.410511]        entry_SYSCALL_64_after_hwframe+0x6a/0xdf
-[12538.435535]
-[12538.435535] other info that might help us debug this:
-[12538.435535]
-[12538.472829] Chain exists of:
-[12538.472829]   &mm->mmap_sem --> root_key_user.cons_lock --> &type->lock_class
-[12538.472829]
-[12538.524820]  Possible unsafe locking scenario:
-[12538.524820]
-[12538.551431]        CPU0                    CPU1
-[12538.572654]        ----                    ----
-[12538.595865]   lock(&type->lock_class);
-[12538.613737]                                lock(root_key_user.cons_lock);
-[12538.644234]                                lock(&type->lock_class);
-[12538.672410]   lock(&mm->mmap_sem);
-[12538.687758]
-[12538.687758]  *** DEADLOCK ***
-[12538.687758]
-[12538.714455] 1 lock held by keyctl/25598:
-[12538.732097]  #0: 000000003de5b58d (&type->lock_class){++++}, at: keyctl_read_key+0x15a/0x220
-[12538.770573]
-[12538.770573] stack backtrace:
-[12538.790136] CPU: 2 PID: 25598 Comm: keyctl Kdump: loaded Tainted: G
-[12538.844855] Hardware name: HP ProLiant DL360 Gen9/ProLiant DL360 Gen9, BIOS P89 12/27/2015
-[12538.881963] Call Trace:
-[12538.892897]  dump_stack+0x9a/0xf0
-[12538.907908]  print_circular_bug.isra.25.cold.50+0x1bc/0x279
-[12538.932891]  ? save_trace+0xd6/0x250
-[12538.948979]  check_prev_add.constprop.32+0xc36/0x14f0
-[12538.971643]  ? keyring_compare_object+0x104/0x190
-[12538.992738]  ? check_usage+0x550/0x550
-[12539.009845]  ? sched_clock+0x5/0x10
-[12539.025484]  ? sched_clock_cpu+0x18/0x1e0
-[12539.043555]  __lock_acquire+0x1f12/0x38d0
-[12539.061551]  ? trace_hardirqs_on+0x10/0x10
-[12539.080554]  lock_acquire+0x14c/0x420
-[12539.100330]  ? __might_fault+0xc4/0x1b0
-[12539.119079]  __might_fault+0x119/0x1b0
-[12539.135869]  ? __might_fault+0xc4/0x1b0
-[12539.153234]  keyring_read_iterator+0x7e/0x170
-[12539.172787]  ? keyring_read+0x110/0x110
-[12539.190059]  assoc_array_subtree_iterate+0x97/0x280
-[12539.211526]  keyring_read+0xe9/0x110
-[12539.227561]  ? keyring_gc_check_iterator+0xc0/0xc0
-[12539.249076]  keyctl_read_key+0x1b9/0x220
-[12539.266660]  do_syscall_64+0xa5/0x4b0
-[12539.283091]  entry_SYSCALL_64_after_hwframe+0x6a/0xdf
+There is still value in being a proper LSM, as I had mentioned in KRSI
+v3 that not all security_* wrappers simply call the attached hooks and
+return their exit code.
 
-One way to prevent this deadlock scenario from happening is to not
-allow writing to userspace while holding the key semaphore. Instead,
-an internal buffer is allocated for getting the keys out from the
-read method first before copying them out to userspace without holding
-the lock.
+It's also okay, taking into consideration Casey's objections and Kees'
+suggestion, to be properly registered with the LSM framework (even if
+it is with LSM_ORDER_LAST) and work towards improving some of the
+performance bottle-necks in the framework. It would be a positive
+outcome for all LSMs.
 
-That requires taking out the __user modifier from the read methods as
-well as additional changes to not use any userspace write helpers.
+BPF_MODIFY_RETURN is just a first step which lays the foundation for
+BPF_PROG_TYPE_LSM and facilitates us to build BPF infrastructure for
+it.
 
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- include/linux/key-type.h                  |  2 +-
- security/keys/big_key.c                   |  7 +++---
- security/keys/encrypted-keys/encrypted.c  |  7 +++---
- security/keys/keyctl.c                    | 26 +++++++++++++++++++++--
- security/keys/keyring.c                   |  6 +-----
- security/keys/request_key_auth.c          |  7 +++---
- security/keys/trusted-keys/trusted_tpm1.c | 14 ++----------
- security/keys/user_defined.c              |  5 ++---
- 8 files changed, 39 insertions(+), 35 deletions(-)
+- KP
 
-diff --git a/include/linux/key-type.h b/include/linux/key-type.h
-index 4ded94bcf274..2ab2d6d6aeab 100644
---- a/include/linux/key-type.h
-+++ b/include/linux/key-type.h
-@@ -127,7 +127,7 @@ struct key_type {
- 	 *   much is copied into the buffer
- 	 * - shouldn't do the copy if the buffer is NULL
- 	 */
--	long (*read)(const struct key *key, char __user *buffer, size_t buflen);
-+	long (*read)(const struct key *key, char *buffer, size_t buflen);
- 
- 	/* handle request_key() for this type instead of invoking
- 	 * /sbin/request-key (optional)
-diff --git a/security/keys/big_key.c b/security/keys/big_key.c
-index 001abe530a0d..cad075710bc4 100644
---- a/security/keys/big_key.c
-+++ b/security/keys/big_key.c
-@@ -352,7 +352,7 @@ void big_key_describe(const struct key *key, struct seq_file *m)
-  * read the key data
-  * - the key's semaphore is read-locked
-  */
--long big_key_read(const struct key *key, char __user *buffer, size_t buflen)
-+long big_key_read(const struct key *key, char *buffer, size_t buflen)
- {
- 	size_t datalen = (size_t)key->payload.data[big_key_len];
- 	long ret;
-@@ -391,9 +391,8 @@ long big_key_read(const struct key *key, char __user *buffer, size_t buflen)
- 
- 		ret = datalen;
- 
--		/* copy decrypted data to user */
--		if (copy_to_user(buffer, buf->virt, datalen) != 0)
--			ret = -EFAULT;
-+		/* copy out decrypted data */
-+		memcpy(buffer, buf->virt, datalen);
- 
- err_fput:
- 		fput(file);
-diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/encrypted-keys/encrypted.c
-index 60720f58cbe0..f6797ba44bf7 100644
---- a/security/keys/encrypted-keys/encrypted.c
-+++ b/security/keys/encrypted-keys/encrypted.c
-@@ -902,14 +902,14 @@ static int encrypted_update(struct key *key, struct key_preparsed_payload *prep)
- }
- 
- /*
-- * encrypted_read - format and copy the encrypted data to userspace
-+ * encrypted_read - format and copy out the encrypted data
-  *
-  * The resulting datablob format is:
-  * <master-key name> <decrypted data length> <encrypted iv> <encrypted data>
-  *
-  * On success, return to userspace the encrypted key datablob size.
-  */
--static long encrypted_read(const struct key *key, char __user *buffer,
-+static long encrypted_read(const struct key *key, char *buffer,
- 			   size_t buflen)
- {
- 	struct encrypted_key_payload *epayload;
-@@ -957,8 +957,7 @@ static long encrypted_read(const struct key *key, char __user *buffer,
- 	key_put(mkey);
- 	memzero_explicit(derived_key, sizeof(derived_key));
- 
--	if (copy_to_user(buffer, ascii_buf, asciiblob_len) != 0)
--		ret = -EFAULT;
-+	memcpy(buffer, ascii_buf, asciiblob_len);
- 	kzfree(ascii_buf);
- 
- 	return asciiblob_len;
-diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
-index 9b898c969558..564a4d187329 100644
---- a/security/keys/keyctl.c
-+++ b/security/keys/keyctl.c
-@@ -846,14 +846,36 @@ long keyctl_read_key(key_serial_t keyid, char __user *buffer, size_t buflen)
- can_read_key:
- 	ret = -EOPNOTSUPP;
- 	if (key->type->read) {
--		/* Read the data with the semaphore held (since we might sleep)
-+		/*
-+		 * Read the data with the semaphore held (since we might sleep)
- 		 * to protect against the key being updated or revoked.
-+		 *
-+		 * Allocating a temporary buffer to hold the keys before
-+		 * transferring them to user buffer to avoid potential
-+		 * deadlock involving page fault and mmap_sem.
- 		 */
-+		char *tmpbuf = kmalloc(buflen, GFP_KERNEL);
-+
-+		if (!tmpbuf) {
-+			ret = -ENOMEM;
-+			goto error2;
-+		}
- 		down_read(&key->sem);
- 		ret = key_validate(key);
- 		if (ret == 0)
--			ret = key->type->read(key, buffer, buflen);
-+			ret = key->type->read(key, tmpbuf, buflen);
- 		up_read(&key->sem);
-+
-+		/*
-+		 * Some read methods may just return the required length
-+		 * without any copying if the provided length isn't big
-+		 * enough.
-+		 */
-+		if ((ret > 0) && (ret <= buflen) &&
-+		    (copy_to_user(buffer, tmpbuf, ret) != 0))
-+			ret = -EFAULT;
-+
-+		kzfree(tmpbuf);
- 	}
- 
- error2:
-diff --git a/security/keys/keyring.c b/security/keys/keyring.c
-index febf36c6ddc5..5ca620d31cd3 100644
---- a/security/keys/keyring.c
-+++ b/security/keys/keyring.c
-@@ -459,7 +459,6 @@ static int keyring_read_iterator(const void *object, void *data)
- {
- 	struct keyring_read_iterator_context *ctx = data;
- 	const struct key *key = keyring_ptr_to_key(object);
--	int ret;
- 
- 	kenter("{%s,%d},,{%zu/%zu}",
- 	       key->type->name, key->serial, ctx->count, ctx->buflen);
-@@ -467,10 +466,7 @@ static int keyring_read_iterator(const void *object, void *data)
- 	if (ctx->count >= ctx->buflen)
- 		return 1;
- 
--	ret = put_user(key->serial, ctx->buffer);
--	if (ret < 0)
--		return ret;
--	ctx->buffer++;
-+	*ctx->buffer++ = key->serial;
- 	ctx->count += sizeof(key->serial);
- 	return 0;
- }
-diff --git a/security/keys/request_key_auth.c b/security/keys/request_key_auth.c
-index ecba39c93fd9..41e9735006d0 100644
---- a/security/keys/request_key_auth.c
-+++ b/security/keys/request_key_auth.c
-@@ -22,7 +22,7 @@ static int request_key_auth_instantiate(struct key *,
- static void request_key_auth_describe(const struct key *, struct seq_file *);
- static void request_key_auth_revoke(struct key *);
- static void request_key_auth_destroy(struct key *);
--static long request_key_auth_read(const struct key *, char __user *, size_t);
-+static long request_key_auth_read(const struct key *, char *, size_t);
- 
- /*
-  * The request-key authorisation key type definition.
-@@ -80,7 +80,7 @@ static void request_key_auth_describe(const struct key *key,
-  * - the key's semaphore is read-locked
-  */
- static long request_key_auth_read(const struct key *key,
--				  char __user *buffer, size_t buflen)
-+				  char *buffer, size_t buflen)
- {
- 	struct request_key_auth *rka = dereference_key_locked(key);
- 	size_t datalen;
-@@ -97,8 +97,7 @@ static long request_key_auth_read(const struct key *key,
- 		if (buflen > datalen)
- 			buflen = datalen;
- 
--		if (copy_to_user(buffer, rka->callout_info, buflen) != 0)
--			ret = -EFAULT;
-+		memcpy(buffer, rka->callout_info, buflen);
- 	}
- 
- 	return ret;
-diff --git a/security/keys/trusted-keys/trusted_tpm1.c b/security/keys/trusted-keys/trusted_tpm1.c
-index d2c5ec1e040b..8001ab07e63b 100644
---- a/security/keys/trusted-keys/trusted_tpm1.c
-+++ b/security/keys/trusted-keys/trusted_tpm1.c
-@@ -1130,11 +1130,10 @@ static int trusted_update(struct key *key, struct key_preparsed_payload *prep)
-  * trusted_read - copy the sealed blob data to userspace in hex.
-  * On success, return to userspace the trusted key datablob size.
-  */
--static long trusted_read(const struct key *key, char __user *buffer,
-+static long trusted_read(const struct key *key, char *buffer,
- 			 size_t buflen)
- {
- 	const struct trusted_key_payload *p;
--	char *ascii_buf;
- 	char *bufp;
- 	int i;
- 
-@@ -1143,18 +1142,9 @@ static long trusted_read(const struct key *key, char __user *buffer,
- 		return -EINVAL;
- 
- 	if (buffer && buflen >= 2 * p->blob_len) {
--		ascii_buf = kmalloc_array(2, p->blob_len, GFP_KERNEL);
--		if (!ascii_buf)
--			return -ENOMEM;
--
--		bufp = ascii_buf;
-+		bufp = buffer;
- 		for (i = 0; i < p->blob_len; i++)
- 			bufp = hex_byte_pack(bufp, p->blob[i]);
--		if (copy_to_user(buffer, ascii_buf, 2 * p->blob_len) != 0) {
--			kzfree(ascii_buf);
--			return -EFAULT;
--		}
--		kzfree(ascii_buf);
- 	}
- 	return 2 * p->blob_len;
- }
-diff --git a/security/keys/user_defined.c b/security/keys/user_defined.c
-index 6f12de4ce549..07d4287e9084 100644
---- a/security/keys/user_defined.c
-+++ b/security/keys/user_defined.c
-@@ -168,7 +168,7 @@ EXPORT_SYMBOL_GPL(user_describe);
-  * read the key data
-  * - the key's semaphore is read-locked
-  */
--long user_read(const struct key *key, char __user *buffer, size_t buflen)
-+long user_read(const struct key *key, char *buffer, size_t buflen)
- {
- 	const struct user_key_payload *upayload;
- 	long ret;
-@@ -181,8 +181,7 @@ long user_read(const struct key *key, char __user *buffer, size_t buflen)
- 		if (buflen > upayload->datalen)
- 			buflen = upayload->datalen;
- 
--		if (copy_to_user(buffer, upayload->data, buflen) != 0)
--			ret = -EFAULT;
-+		memcpy(buffer, upayload->data, buflen);
- 	}
- 
- 	return ret;
--- 
-2.18.1
-
+> 
+> > > to LSM hooks; it means that userspace BPF programs can run even if
+> > > SELinux would have denied access and SELinux hooks get
+> > > skipped entirely if the BPF program returns an error.  I think Casey
+> > > may have wrongly pointed you in this direction on the grounds
+> > > it can already happen with the base DAC checking logic.  But that's
+> >
+> > What we can do for this tracing/modify_ret series, is to remove
+> > the special casing for "security_" functions in the BPF code and add
+> > ALLOW_ERROR_INJECTION calls to the security hooks. This way, if
+> > someone needs to disable the BPF programs being able to modify
+> > security hooks, they can disable error injection. If that's okay, we
+> > can send a patch.
+> 
+> Realistically distros tend to enable lots of developer-friendly
+> options including error injection, and most users don't build their
+> own kernels
+> and distros won't support them when they do. So telling users they can
+> just rebuild their kernel without error injection if they care about
+> BPF programs being able to modify security hooks isn't really viable.
+> The security modules need a way to veto it based on their policies.
+> That's why I suggested a security hook here.
