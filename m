@@ -2,111 +2,91 @@ Return-Path: <SRS0=spL8=4W=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32A0CC3F2D7
-	for <linux-security-module@archiver.kernel.org>; Thu,  5 Mar 2020 22:01:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E03E4C3F2D1
+	for <linux-security-module@archiver.kernel.org>; Thu,  5 Mar 2020 22:39:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08B13206E2
-	for <linux-security-module@archiver.kernel.org>; Thu,  5 Mar 2020 22:01:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AFBA62073D
+	for <linux-security-module@archiver.kernel.org>; Thu,  5 Mar 2020 22:39:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OyN0As3W"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JLlvnkIJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726145AbgCEWBi (ORCPT
+        id S1726142AbgCEWjE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 5 Mar 2020 17:01:38 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:37852 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726178AbgCEWBi (ORCPT
+        Thu, 5 Mar 2020 17:39:04 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:35944 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726177AbgCEWjE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 5 Mar 2020 17:01:38 -0500
-Received: by mail-wr1-f67.google.com with SMTP id 6so19589wre.4
-        for <linux-security-module@vger.kernel.org>; Thu, 05 Mar 2020 14:01:37 -0800 (PST)
+        Thu, 5 Mar 2020 17:39:04 -0500
+Received: by mail-pg1-f196.google.com with SMTP id d9so121087pgu.3;
+        Thu, 05 Mar 2020 14:39:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=QRs769N8QUo0slXGjoV/bE6quT349p8P4cDyvi5+xSs=;
-        b=OyN0As3WtsQyPWrtZ0mTiBeTZecUOCo749mffQpTDmTx69lKJuE4osS24tJYR/gpHX
-         9VrzXIzE920xZDE0WeBQEVk4jHfPgbL+L8RNeX1VBPd6m95OUXVDG4faYkaORxj/wR5E
-         oXvLlM71z+RvpZVtk0IWK8zhjSZ6NIBdrlVwA=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=BH9SEY6sBAAworg6urGASTmP0JolCTW4zXLsv8vx0fM=;
+        b=JLlvnkIJTCIJ3NXqKzdDTG+m71bBc5wNzfTmXHmAXbD/kDeCQ9gQZj7mYTrgVSj1wW
+         zTeHtEXXkuas0n0KLPVW59kYAxfJQP6nCjGHGXOR+Sc9nCBAlMKLnOEyxhLDd/ebDbbK
+         5NbwPhaXVRDInHWzY71pTVa4o0DlFWkD0PQAIU2LGYn2QVreNx3dEIz8t2jJgWkbTIAX
+         UAObaMBBBajW9wBmY3F985iGRs/WcIJWyyOrhC4ilqx5xILHa0cDwpuqlzrNSf4kDR2Z
+         fjnXNgm9HUrs7964QxZ8bkyNjk6x3/IwR3Y7LqZw7Yt+Zx8oGWml335HLT+x+PSWMguZ
+         DoCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=QRs769N8QUo0slXGjoV/bE6quT349p8P4cDyvi5+xSs=;
-        b=kebzF5bFwRjps3th4WB+F7V8an/JOl6iLxhiy4J2vjAnOCRK5qEnG1aYA6+CT7uD1Z
-         Ndn26DTKQDxIEA+sgPKf3YgajkWC8UU4GNG49MRaOXe6X7n2ps4itKtQXyhZftt0Uw19
-         uMwLe/CpFc7mnCXhb7oNS5svdVx380vP2DM7mvXEUG/F2reT7k4KPPbitElAJ7wUGEV2
-         fdvfhcT+3qFJOiatjMXTUHgT44w4dxaYmd45M2aVnUigEBsyNYKMc8QVlU97/NPfJNVa
-         Tkl8hApu63GZIT1seHsRAS8UJY6UoLiQh+2v8vT6m8GmAjk8jKKUmPY1cEOizEz0qRMi
-         vaHA==
-X-Gm-Message-State: ANhLgQ06Jijn8ZaYJmwavQ1EqgGHURcyYk8cr9Zbrs4i8UMhIEDs8cyf
-        HUikYObYWyHczkAjuY6JR8VdiHkxbZQwBw==
-X-Google-Smtp-Source: ADFU+vuNWeddf1HH7nZX+stJXAplqB1550B+DJXHvxhEuJ8KddsSUGbg7If5vezjuGur7ZvPeojLkw==
-X-Received: by 2002:adf:d4d2:: with SMTP id w18mr66826wrk.180.1583445696430;
-        Thu, 05 Mar 2020 14:01:36 -0800 (PST)
-Received: from kpsingh-kernel.localdomain (77-56-209-237.dclient.hispeed.ch. [77.56.209.237])
-        by smtp.gmail.com with ESMTPSA id x9sm5002641wrx.0.2020.03.05.14.01.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Mar 2020 14:01:35 -0800 (PST)
-From:   KP Singh <kpsingh@chromium.org>
-To:     linux-security-module@vger.kernel.org, linux-next@vger.kernel.org,
-        bpf@vger.kernel.org
-Cc:     Alexei Starovoitov <ast@kernel.org>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=BH9SEY6sBAAworg6urGASTmP0JolCTW4zXLsv8vx0fM=;
+        b=rqxjWBz18ZlNNAU0pB+lUnqijGQhp19d1dGuggCBT/kGB68qOcQDLmO1GqA3y8apao
+         LQ2oY6Qgm4naMxcg714tQDIYDyUtOSsuZFgNPz/yJqg8c+QDbk72RrMvAp9KW0yIwyB2
+         TrR+PU44uGXlmQsKoCkaTe4P1hajxJQDe+dna0nXs25mEpkH9mG04T8+G03Ke54AAmKx
+         BFrpVkC20M5vIVGTnHsfM9QS7R7BZw56snQCEtecsfrxnEMyiwVhSvWIlqkshGrplL30
+         I3DKCxbczaTWBaGk0GPQMuei1hOyOj/PSDEdV1MFWh6zaOi7vhAWZg1TDa/oSsK8KQks
+         2MMQ==
+X-Gm-Message-State: ANhLgQ3tTA9uRY1/Ziw7Od5ol85HZQa2bpR/OqeDKdw4CkNBeDlY61Va
+        g2DeLv20i1i2WwmLL3z2Lsc=
+X-Google-Smtp-Source: ADFU+vtOChJvtEGPPChwrCfmKZhaaypCWfiV6Jb9Y7N4eDknBWmYPUwlemRkpnNp/0Q2PjhHzhoTmg==
+X-Received: by 2002:a63:dd06:: with SMTP id t6mr345743pgg.384.1583447942858;
+        Thu, 05 Mar 2020 14:39:02 -0800 (PST)
+Received: from ast-mbp ([2620:10d:c090:400::5:f0e7])
+        by smtp.gmail.com with ESMTPSA id h29sm30356632pfk.57.2020.03.05.14.39.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 05 Mar 2020 14:39:02 -0800 (PST)
+Date:   Thu, 5 Mar 2020 14:38:59 -0800
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     KP Singh <kpsingh@chromium.org>
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+        Alexei Starovoitov <ast@kernel.org>,
         Daniel Borkmann <daniel@iogearbox.net>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
         Florent Revest <revest@chromium.org>,
         Brendan Jackman <jackmanb@chromium.org>
-Subject: [PATCH bpf-next] bpf: Fix bpf_prog_test_run_tracing for !CONFIG_NET
-Date:   Thu,  5 Mar 2020 23:01:27 +0100
-Message-Id: <20200305220127.29109-1-kpsingh@chromium.org>
-X-Mailer: git-send-email 2.20.1
+Subject: Re: [PATCH bpf-next] bpf: Remove unnecessary CAP_MAC_ADMIN check
+Message-ID: <20200305223858.qprrtu6jfbaqt3bk@ast-mbp>
+References: <20200305204955.31123-1-kpsingh@chromium.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200305204955.31123-1-kpsingh@chromium.org>
+User-Agent: NeoMutt/20180223
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: KP Singh <kpsingh@google.com>
+On Thu, Mar 05, 2020 at 09:49:55PM +0100, KP Singh wrote:
+> From: KP Singh <kpsingh@google.com>
+> 
+> While well intentioned, checking CAP_MAC_ADMIN for attaching
+> BPF_MODIFY_RETURN tracing programs to "security_" functions is not
+> necessary as tracing BPF programs already require CAP_SYS_ADMIN.
+> 
+> Fixes: 6ba43b761c41 ("bpf: Attachment verification for BPF_MODIFY_RETURN")
+> Signed-off-by: KP Singh <kpsingh@google.com>
 
-test_run.o is not built when CONFIG_NET is not set and
-bpf_prog_test_run_tracing being referenced in bpf_trace.o causes the
-linker error:
-
-ld: kernel/trace/bpf_trace.o:(.rodata+0x38): undefined reference to
- `bpf_prog_test_run_tracing'
-
-Add a __weak function in bpf_trace.c to handle this.
-
-Fixes: da00d2f117a0 ("bpf: Add test ops for BPF_PROG_TYPE_TRACING")
-Signed-off-by: KP Singh <kpsingh@google.com>
----
- kernel/trace/bpf_trace.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-index 363e0a2c75cf..6a490d8ce9de 100644
---- a/kernel/trace/bpf_trace.c
-+++ b/kernel/trace/bpf_trace.c
-@@ -1252,6 +1252,13 @@ static bool tracing_prog_is_valid_access(int off, int size,
- 	return btf_ctx_access(off, size, type, prog, info);
- }
- 
-+int __weak bpf_prog_test_run_tracing(struct bpf_prog *prog,
-+				     const union bpf_attr *kattr,
-+				     union bpf_attr __user *uattr)
-+{
-+	return -ENOTSUPP;
-+}
-+
- const struct bpf_verifier_ops raw_tracepoint_verifier_ops = {
- 	.get_func_proto  = raw_tp_prog_func_proto,
- 	.is_valid_access = raw_tp_prog_is_valid_access,
--- 
-2.20.1
-
+Applied. Thanks
