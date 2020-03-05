@@ -1,123 +1,134 @@
-Return-Path: <SRS0=IE2G=4V=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=spL8=4W=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10CBCC3F2D7
-	for <linux-security-module@archiver.kernel.org>; Wed,  4 Mar 2020 22:17:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1A18C3F2D1
+	for <linux-security-module@archiver.kernel.org>; Thu,  5 Mar 2020 13:42:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB8462084E
-	for <linux-security-module@archiver.kernel.org>; Wed,  4 Mar 2020 22:17:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7747208C3
+	for <linux-security-module@archiver.kernel.org>; Thu,  5 Mar 2020 13:42:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NMU2vjdl"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FmtSTEvH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388026AbgCDWRf (ORCPT
+        id S1725991AbgCENl7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 4 Mar 2020 17:17:35 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:46609 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387931AbgCDWRf (ORCPT
+        Thu, 5 Mar 2020 08:41:59 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:36062 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725989AbgCENl7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 4 Mar 2020 17:17:35 -0500
-Received: by mail-pg1-f193.google.com with SMTP id y30so1655683pga.13;
-        Wed, 04 Mar 2020 14:17:34 -0800 (PST)
+        Thu, 5 Mar 2020 08:41:59 -0500
+Received: by mail-oi1-f194.google.com with SMTP id t24so5993062oij.3;
+        Thu, 05 Mar 2020 05:41:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=SeLK1u6XZQiNjm/hVW01wDa1blPflVVcyrMnhEyc6lQ=;
-        b=NMU2vjdlKGiHucUtsyG5rog2PzW9dzSnvDzdLKNICZRP2PNr8ScfWCQFerCD8Ahp2u
-         vcUeFNhQG8fPfXQ0gGiJdVRFNTvcogp34MrK6zryQm4gwiI6JQQpIdQ70ZDrOevveruT
-         BUe+wIukIMUlRudvg0bo9jOQ3aE/yM6Xt5AGi8DirwFPvk4bGYJWgAZuvsYum+0rAKHn
-         6GnluaBJFp+g3s93SOqNX9+N5XBSJLxrHLxBFvm02VytTQBXtJyyR6sG/XdfxLCZJaZ9
-         qnywdqfsF0Xw5akcQdU3OnELDza+MQ0cDUe8rlVoEcm/uz//hHG87CAd4sSMiWCxa6F3
-         2hOg==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Eg8qOXXxTZFH+avf9eVy3dxxHHbyWn0g+mO5XgLQ+LM=;
+        b=FmtSTEvH4JMkzvU0rV87l8dSnNd84J4k4OZljnkIKeA+JdbhSP2k3UYVQHAj/RdzZo
+         3X0XIgdmwfssLPelrx2aDyIQUJYesIXKOkcKZNCtmXlc89vmsPXqkm+yQXN3ygynVjbx
+         kA/QSQ/XlzuAL3x3oTPFD5Kkb7hT2/DZcQumspk3pMO31H0x5RSlrPF2krNULhOMuRRs
+         7gHmKFAPVWUPnfWSCSlJLvyV4AYkbm+vUQVwHSMiCzuwiIG2lHJFWjrz/R6fMGO+g2PT
+         JIXFfICm6nMqSzkHWrXGgBrbUtNWAFrx7Ld2iLBooTpGfVfsdKb0XRNnsuhaqmnGm5Wr
+         r19w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=SeLK1u6XZQiNjm/hVW01wDa1blPflVVcyrMnhEyc6lQ=;
-        b=bG6M4Ut0DGtIAS90bJTpz/Q8MVcZiNfptw0jOjs2FTmHIERtv1RcTL8D29YO67gED2
-         rnZafOBPhPi3Wt2c4EGfDaGeYbOotQZzBIPv5jasu9n+Gjc5vjb/8OxvOYukUNNUgLIz
-         WQWp863ZQEMqzw9o5JVqQjztEuCkXbYNW9CIKqou1ceMHSQaRGc3UharcA6T0BCpwVpj
-         hrg0GqBaw6wVpZ/KAU+61KZMcX98nxjlB3w5q7RD1OWySSc+NqK9aBW7HmwGzERLD/IE
-         09encumyvcLVEYWELgwq0PwXtEjNNN2vDJ2pEqEcofgh9cVSjp7sMG+Wcttc6S76ObaE
-         ezhg==
-X-Gm-Message-State: ANhLgQ1GqPhZe8dNnHqU3nC2LcFbw72aGvr3fpSRVu6mx19XNRjPH3z4
-        qM3ukmgBYHMHgucfYv3H4zTOTTzA
-X-Google-Smtp-Source: ADFU+vvKbQM5v+o2ycE8rww55wXTCIhFEwn13T6g0O69i6FRGcqst85HQWxGYDGPUnt5gDi8TljC5Q==
-X-Received: by 2002:a63:2323:: with SMTP id j35mr4466654pgj.440.1583360253961;
-        Wed, 04 Mar 2020 14:17:33 -0800 (PST)
-Received: from ast-mbp ([2620:10d:c090:500::4:c694])
-        by smtp.gmail.com with ESMTPSA id d186sm11160532pfc.8.2020.03.04.14.17.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 04 Mar 2020 14:17:33 -0800 (PST)
-Date:   Wed, 4 Mar 2020 14:17:31 -0800
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Eg8qOXXxTZFH+avf9eVy3dxxHHbyWn0g+mO5XgLQ+LM=;
+        b=C91yfvNHiKvlUR5jUaZAWKFMaW/lhjwACwHYsQwIhpTgpa8BRH3fD3pPRZD4Ph6Cg5
+         2Ri+7b+2dal7Vm6CD/h2Z51HdfPnVgDfAn80eELCu14/ErlK9GtiUObqYFP4ojagSax2
+         /4BV8sEVV+vpCYpB8giSYQ3BDJ0oUuwBjoGnXel3uKi/p20o0UsjB6emfnyN7Sn9ZFVU
+         mgenznFSeoyHv7zG184cQ8rNbLN0RgAGFh30nxzPVeLd4+zEdgNHk7cpzMWxgZK+mShy
+         w/UshD8Fy9ebxxSrKG+UNNLOUaOqac+ymGlqm4xFcee6v/Khe58JDexTNwiFoYsWur0u
+         auaw==
+X-Gm-Message-State: ANhLgQ3p3X7aZDuDXP7Hns2onQMMAOkuxvi/KmehvXO+C49nSsjykGaj
+        Q3eCh4NoIo7aIufiNudLCSyN9INXDJPkiJFpBYI=
+X-Google-Smtp-Source: ADFU+vvtxT5hJ8HqcW7oErtibqc8cObhOkR6SqqTz7pQJCUcRgKfjJTnBK7VFvyHTTwWd+9UuWVXYTEiLpwYZAjhOD4=
+X-Received: by 2002:aca:3544:: with SMTP id c65mr5466604oia.160.1583415718336;
+ Thu, 05 Mar 2020 05:41:58 -0800 (PST)
+MIME-Version: 1.0
+References: <20200304191853.1529-1-kpsingh@chromium.org> <20200304191853.1529-5-kpsingh@chromium.org>
+In-Reply-To: <20200304191853.1529-5-kpsingh@chromium.org>
+From:   Stephen Smalley <stephen.smalley.work@gmail.com>
+Date:   Thu, 5 Mar 2020 08:43:11 -0500
+Message-ID: <CAEjxPJ4G4sp5_zHXxhe+crafNGV-oZZZ2YYbbMb61BZx0F_ujw@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v4 4/7] bpf: Attachment verification for BPF_MODIFY_RETURN
 To:     KP Singh <kpsingh@chromium.org>
 Cc:     linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+        Andrii Nakryiko <andriin@fb.com>,
         Alexei Starovoitov <ast@kernel.org>,
         Daniel Borkmann <daniel@iogearbox.net>,
         Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
         Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>
-Subject: Re: [PATCH bpf-next v4 0/7] Introduce BPF_MODIFY_RET tracing progs
-Message-ID: <20200304221729.d6omw6tltqhbw5xr@ast-mbp>
-References: <20200304191853.1529-1-kpsingh@chromium.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200304191853.1529-1-kpsingh@chromium.org>
-User-Agent: NeoMutt/20180223
+        Brendan Jackman <jackmanb@chromium.org>,
+        Paul Moore <paul@paul-moore.com>, jmorris@namei.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Mar 04, 2020 at 08:18:46PM +0100, KP Singh wrote:
-> 
-> Here is an example of how a fmod_ret program behaves:
-> 
-> int func_to_be_attached(int a, int b)
-V> {  <--- do_fentry
-> 
-> do_fmod_ret:
->    <update ret by calling fmod_ret>
->    if (ret != 0)
->         goto do_fexit;
-> 
-> original_function:
-> 
->     <side_effects_happen_here>
-> 
-> }  <--- do_fexit
-> 
-> ALLOW_ERROR_INJECTION(func_to_be_attached, ERRNO)
-> 
-> The fmod_ret program attached to this function can be defined as:
-> 
-> SEC("fmod_ret/func_to_be_attached")
-> int BPF_PROG(func_name, int a, int b, int ret)
-> {
->         // This will skip the original function logic.
->         return -1;
-> }
+On Wed, Mar 4, 2020 at 2:20 PM KP Singh <kpsingh@chromium.org> wrote:
+>
+> From: KP Singh <kpsingh@google.com>
+>
+> - Allow BPF_MODIFY_RETURN attachment only to functions that are:
+>
+>     * Whitelisted for error injection by checking
+>       within_error_injection_list. Similar discussions happened for the
+>       bpf_override_return helper.
+>
+>     * security hooks, this is expected to be cleaned up with the LSM
+>       changes after the KRSI patches introduce the LSM_HOOK macro:
+>
+>         https://lore.kernel.org/bpf/20200220175250.10795-1-kpsingh@chromium.org/
+>
+> - The attachment is currently limited to functions that return an int.
+>   This can be extended later other types (e.g. PTR).
+>
+> Signed-off-by: KP Singh <kpsingh@google.com>
+> Acked-by: Andrii Nakryiko <andriin@fb.com>
+> ---
+> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+> index 2460c8e6b5be..ae32517d4ccd 100644
+> --- a/kernel/bpf/verifier.c
+> +++ b/kernel/bpf/verifier.c
+> @@ -9800,6 +9801,33 @@ static int check_struct_ops_btf_id(struct bpf_verifier_env *env)
+>
+>         return 0;
+>  }
+> +#define SECURITY_PREFIX "security_"
+> +
+> +static int check_attach_modify_return(struct bpf_verifier_env *env)
+> +{
+> +       struct bpf_prog *prog = env->prog;
+> +       unsigned long addr = (unsigned long) prog->aux->trampoline->func.addr;
+> +
+> +       if (within_error_injection_list(addr))
+> +               return 0;
+> +
+> +       /* This is expected to be cleaned up in the future with the KRSI effort
+> +        * introducing the LSM_HOOK macro for cleaning up lsm_hooks.h.
+> +        */
+> +       if (!strncmp(SECURITY_PREFIX, prog->aux->attach_func_name,
+> +                    sizeof(SECURITY_PREFIX) - 1)) {
+> +
+> +               if (!capable(CAP_MAC_ADMIN))
+> +                       return -EPERM;
 
-Applied to bpf-next. Thanks.
-
-I think it sets up a great base to parallelize further work.
-
-1. I'm rebasing my sleepable BPF patches on top.
-It's necessary to read enviroment variables without the
-'opportunistic copy before hand' hack I saw in your github tree
-to do bpf_get_env_var() helper.
-
-2. please continue on LSM_HOOK patches to go via security tree.
-
-3. we need a volunteer to generalize bpf_sk_storage to task and inode structs.
-This work will be super useful for all bpf tracing too.
-Sleepable progs are useful for tracing as well.
+CAP_MAC_ADMIN was originally introduced for Smack and is not
+all-powerful wrt SELinux, so this is not a sufficient check for
+SELinux.
+We would want an actual security hook called here so we can implement
+a specific check over userspace
+being able to attach BPF progs to LSM hooks.  CAP_MAC_ADMIN has other
+connotations to SELinux (presently the
+ability to set/get file security labels that are not known to the
+currently loaded policy).
