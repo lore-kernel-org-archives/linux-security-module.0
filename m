@@ -1,155 +1,102 @@
-Return-Path: <SRS0=CcHb=4Y=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=WJqi=4Z=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D337C10DCE
-	for <linux-security-module@archiver.kernel.org>; Sat,  7 Mar 2020 02:14:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7641C10DCE
+	for <linux-security-module@archiver.kernel.org>; Sun,  8 Mar 2020 17:04:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5311F2067C
-	for <linux-security-module@archiver.kernel.org>; Sat,  7 Mar 2020 02:14:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78A9220866
+	for <linux-security-module@archiver.kernel.org>; Sun,  8 Mar 2020 17:04:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="a4uiYIZF"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="c2TdsSxA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726271AbgCGCOt (ORCPT
+        id S1726368AbgCHREa (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 6 Mar 2020 21:14:49 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:33933 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726259AbgCGCOt (ORCPT
+        Sun, 8 Mar 2020 13:04:30 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:54976 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726360AbgCHREa (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 6 Mar 2020 21:14:49 -0500
-Received: by mail-ed1-f67.google.com with SMTP id c21so4778255edt.1
-        for <linux-security-module@vger.kernel.org>; Fri, 06 Mar 2020 18:14:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jgA+GvZHpxvqH3AlWIOKDGZc5EP123kI9OgSbOMqtU4=;
-        b=a4uiYIZFMxKAVY9caf6/FpeTpmWiKGsYh2zhBSXh2tjTxcvnQZDh1k1jPiqpt9nhmd
-         dcNE7FVI7VYb/nvWpVcD2L7UTGlcuRbagmv9CwDIvgTBuhfkVjItugNluzwURXEDCe5E
-         znHHI48tbJYxxPIEykXI5oorZrbUWUxYzjnulx099xdAABSJD7llM9J8mTEfwXRZMUH9
-         rkXrSiZf7kG0VXDCkN01hIDpztQ2SOtAheJPMhESjQKN+c20rXEldCKAHhb7LhDJ868w
-         S0SPWizxGIzlEvw3ilmTNiBhl5L8dteEVu/PuZyo8mqeo82A9ZvYxIkR8C37YnBeI/e+
-         xDUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jgA+GvZHpxvqH3AlWIOKDGZc5EP123kI9OgSbOMqtU4=;
-        b=UL5eX06EpXBmGHjpx/W3FUBwe1gFk0dZNG2tTfQXrFGMOsBy/BZiPeo2KEJbGdTQJf
-         Z3bVLJaT5GM1aKnOE3oBdBVu7dTvTwPgP5YxuzDlIu0bH5UjCiUWJRBxBJeLF4+qTdCo
-         nxubkilqgSIgtYk2dz5poIvaCExPmOlHXBW9/HT4LqiAPIRw0LEHgFkjN3Tv7xvx3Y/T
-         6yRHGZdY+RKgM+O0nQuj/QUFCpsVatDLKoqmxWjOKwu3vdXax+6o2tT8Qykyfw1XiOJE
-         OX2fZ2wjuNgSd+sYGOMQmYEPn9/QvsvWKaCihVGaCV2yDn11FuBW3l7bsv7T2K31Vjyv
-         Ja7g==
-X-Gm-Message-State: ANhLgQ3Ibe/oaGHzEdR8NfQD5F57mj7XnkYrB25Kua8wm3lgobVuaQTO
-        l8VK461KZ51yvF7qFuFbGtssUSffxndD5z4QSOiH
-X-Google-Smtp-Source: ADFU+vsLgoAW6B9s9yosK5UWrnm/hMReRrYEzZF6nV3yNR9ckjGMUDJe3X2Yp1ar/5qpmDzKMknrG7Xsm98SZHuY4X0=
-X-Received: by 2002:aa7:c1d3:: with SMTP id d19mr6310409edp.12.1583547286144;
- Fri, 06 Mar 2020 18:14:46 -0800 (PST)
-MIME-Version: 1.0
-References: <20200214234203.7086-1-casey@schaufler-ca.com> <20200214234203.7086-19-casey@schaufler-ca.com>
-In-Reply-To: <20200214234203.7086-19-casey@schaufler-ca.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 6 Mar 2020 21:14:35 -0500
-Message-ID: <CAHC9VhREcdFNtJkXkUrwtbu8GA_h2T5CJ9hAQCU0PSpd5yLGgg@mail.gmail.com>
-Subject: Re: [PATCH v15 18/23] NET: Store LSM netlabel data in a lsmblob
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     casey.schaufler@intel.com, James Morris <jmorris@namei.org>,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        keescook@chromium.org, john.johansen@canonical.com,
-        penguin-kernel@i-love.sakura.ne.jp,
-        Stephen Smalley <sds@tycho.nsa.gov>
-Content-Type: text/plain; charset="UTF-8"
+        Sun, 8 Mar 2020 13:04:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583687069;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc; bh=xCWfIVVtXcNrPtfCAElXYhujkDeI7te8IIcxIOU/lhc=;
+        b=c2TdsSxA3pesaEURBvWFkLJS1Bk59+nDsuRko2oTc5TFWgdU3WXc5mlDvo1bXwzN/LLEBL
+        C94qdSmBJ4HARXtP64oYgAszbtL7I1exJ76V0SSHEnC7eqRuo95W79w9AbmshxD61ElhXd
+        v1zWvLkchJHfDlb6Yo7R0NfOYJIQ3eQ=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-272-9pF2p6WgPbuuHt77AJVMew-1; Sun, 08 Mar 2020 13:04:27 -0400
+X-MC-Unique: 9pF2p6WgPbuuHt77AJVMew-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9C2081005513;
+        Sun,  8 Mar 2020 17:04:25 +0000 (UTC)
+Received: from llong.com (ovpn-120-251.rdu2.redhat.com [10.10.120.251])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0ADEF5D9C5;
+        Sun,  8 Mar 2020 17:04:19 +0000 (UTC)
+From:   Waiman Long <longman@redhat.com>
+To:     David Howells <dhowells@redhat.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Mimi Zohar <zohar@linux.ibm.com>
+Cc:     keyrings@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        Sumit Garg <sumit.garg@linaro.org>,
+        Jerry Snitselaar <jsnitsel@redhat.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Chris von Recklinghausen <crecklin@redhat.com>,
+        Waiman Long <longman@redhat.com>
+Subject: [PATCH v2 0/2] KEYS: Read keys to internal buffer & then copy to userspace
+Date:   Sun,  8 Mar 2020 13:04:08 -0400
+Message-Id: <20200308170410.14166-1-longman@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Feb 14, 2020 at 6:45 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->
-> Netlabel uses LSM interfaces requiring an lsmblob and
-> the internal storage is used to pass information between
-> these interfaces, so change the internal data from a secid
-> to a lsmblob. Update the netlabel interfaces and their
-> callers to accommodate the change. This requires that the
-> modules using netlabel use the lsm_id.slot to access the
-> correct secid when using netlabel.
->
-> Reviewed-by: Kees Cook <keescook@chromium.org>
-> Reviewed-by: John Johansen <john.johansen@canonical.com>
-> Acked-by: Stephen Smalley <sds@tycho.nsa.gov>
-> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> ---
->  include/net/netlabel.h              |  8 ++--
->  net/ipv4/cipso_ipv4.c               | 23 +++++++-----
->  net/netlabel/netlabel_kapi.c        |  6 +--
->  net/netlabel/netlabel_unlabeled.c   | 57 +++++++++++------------------
->  net/netlabel/netlabel_unlabeled.h   |  2 +-
->  security/selinux/hooks.c            |  2 +-
->  security/selinux/include/security.h |  1 +
->  security/selinux/netlabel.c         |  2 +-
->  security/selinux/ss/services.c      |  4 +-
->  security/smack/smack.h              |  1 +
->  security/smack/smack_lsm.c          |  5 ++-
->  security/smack/smackfs.c            | 10 +++--
->  12 files changed, 59 insertions(+), 62 deletions(-)
+v2:
+ - Handle NULL buffer and buflen properly in patch 1.
+ - Fix a bug in big_key.c.
+ - Add patch 2 to handle arbitrary large user-supplied buflen.
 
-...
+The current security key read methods are called with the key semaphore
+held.  The methods then copy out the key data to userspace which is
+subjected to page fault and may acquire the mmap semaphore. That can
+result in circular lock dependency and hence a chance to get into
+deadlock.
 
+To avoid such a deadlock, an internal buffer is now allocated for getting
+out the necessary data first. After releasing the key semaphore, the
+key data are then copied out to userspace sidestepping the circular
+lock dependency.
 
-> diff --git a/net/ipv4/cipso_ipv4.c b/net/ipv4/cipso_ipv4.c
-> index 376882215919..adb9dffc3952 100644
-> --- a/net/ipv4/cipso_ipv4.c
-> +++ b/net/ipv4/cipso_ipv4.c
-> @@ -106,15 +106,17 @@ int cipso_v4_rbm_strictvalid = 1;
->  /* Base length of the local tag (non-standard tag).
->   *  Tag definition (may change between kernel versions)
->   *
-> - * 0          8          16         24         32
-> - * +----------+----------+----------+----------+
-> - * | 10000000 | 00000110 | 32-bit secid value  |
-> - * +----------+----------+----------+----------+
-> - * | in (host byte order)|
-> - * +----------+----------+
-> - *
-> + * 0          8          16                    16 + sizeof(struct lsmblob)
-> + * +----------+----------+---------------------+
-> + * | 10000000 | 00000110 | LSM blob data       |
-> + * +----------+----------+---------------------+
-> + *
-> + * All secid and flag fields are in host byte order.
-> + * The lsmblob structure size varies depending on which
-> + * Linux security modules are built in the kernel.
-> + * The data is opaque.
->   */
-> -#define CIPSO_V4_TAG_LOC_BLEN         6
-> +#define CIPSO_V4_TAG_LOC_BLEN         (2 + sizeof(struct lsmblob))
+The keyutils test suite was run and the test passed with these patchset
+applied without any falure.
 
-This isn't as bad as the sk_buff.cb limitation so I'm not going to
-worry too much about it, but just to be safe I think we should put a
-compile-time check to ensure that the local tag is within the bounds
-of the IPv4 option limit.  If we don't put a check I worry that there
-is a chance someone could get a very rude surprise at some point in
-the future (yes, this is highly unlikely, but still possible).
+Waiman Long (2):
+  KEYS: Don't write out to userspace while holding key semaphore
+  KEYS: Avoid false positive ENOMEM error on key read
 
->  /*
->   * Helper Functions
-> @@ -1467,7 +1469,8 @@ static int cipso_v4_gentag_loc(const struct cipso_v4_doi *doi_def,
->
->         buffer[0] = CIPSO_V4_TAG_LOCAL;
->         buffer[1] = CIPSO_V4_TAG_LOC_BLEN;
-> -       *(u32 *)&buffer[2] = secattr->attr.secid;
-> +       memcpy(&buffer[2], &secattr->attr.lsmblob,
-> +              sizeof(secattr->attr.lsmblob));
->
->         return CIPSO_V4_TAG_LOC_BLEN;
->  }
+ include/linux/key-type.h                  |  2 +-
+ security/keys/big_key.c                   | 11 ++---
+ security/keys/encrypted-keys/encrypted.c  |  7 ++-
+ security/keys/keyctl.c                    | 54 ++++++++++++++++++++++-
+ security/keys/keyring.c                   |  6 +--
+ security/keys/request_key_auth.c          |  7 ++-
+ security/keys/trusted-keys/trusted_tpm1.c | 14 +-----
+ security/keys/user_defined.c              |  5 +--
+ 8 files changed, 68 insertions(+), 38 deletions(-)
 
 -- 
-paul moore
-www.paul-moore.com
+2.18.1
+
