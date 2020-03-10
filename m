@@ -2,67 +2,67 @@ Return-Path: <SRS0=JkyI=43=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86EB2C3F2D0
-	for <linux-security-module@archiver.kernel.org>; Tue, 10 Mar 2020 18:25:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D511DC18E5B
+	for <linux-security-module@archiver.kernel.org>; Tue, 10 Mar 2020 21:51:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A87521D56
-	for <linux-security-module@archiver.kernel.org>; Tue, 10 Mar 2020 18:25:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 929D42071B
+	for <linux-security-module@archiver.kernel.org>; Tue, 10 Mar 2020 21:51:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WI9tLQJg"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ML2h3mAT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726426AbgCJSZV (ORCPT
+        id S1726315AbgCJVvH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 10 Mar 2020 14:25:21 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:41485 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726269AbgCJSZV (ORCPT
+        Tue, 10 Mar 2020 17:51:07 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:37839 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726271AbgCJVvG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 10 Mar 2020 14:25:21 -0400
-Received: by mail-oi1-f193.google.com with SMTP id i1so14869735oie.8;
-        Tue, 10 Mar 2020 11:25:21 -0700 (PDT)
+        Tue, 10 Mar 2020 17:51:06 -0400
+Received: by mail-ot1-f65.google.com with SMTP id b3so14790314otp.4
+        for <linux-security-module@vger.kernel.org>; Tue, 10 Mar 2020 14:51:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=IjIWuou5FNbpKIwkRVi1r1E7TPmhuA9yxao2LdlFDVE=;
-        b=WI9tLQJg7U6QlzllzIJHpD6wSvkR6y1ff62nPXosfhZyJsydo0PdyMGciqTChMwu2L
-         Oeyn/jiioMtizwmrzehdCVIxILPScyEy//UJqoyqpjyBgQ4bxN77BJUZELrZMuIGYnE/
-         DRcAy4+vyqCWmO784Sc26Wz5AwMX5cbfSXi9YI2a+qslTFkjKXck0aqFJHIDOgI84NvM
-         YjYBKH7u20RahkHVrddMtyGr/B8JLQ/UK7WOfnxQ+2x+rCfN1NnaPpk7YApJDiIcE1i1
-         Ngv8MuaOiP+XYfokKVE6/fcDTZ8ajiTUtvG5vm1eXYSSJnj+xIcfUM15NbtEFkMnGwER
-         KA2A==
+        bh=Vb0GLcs/8L01cTZ3HReaJOKCCqFsvClKHIQrRrGWG3I=;
+        b=ML2h3mATLzke2m39a1Y6P/zDeHMxWqmWXR8CmeCANV0lcaQJmDMP4U3tgRYj3VwNVk
+         gcrsdaOTXdOK+JjqpLxko+kEbnGIn7QupEmi+2Q0b4vwqC6coa38rR0r7QcCru31DAfk
+         sP5TSdEzlau5ApuVktDVZXO2kqn+tioqibI+YdajtqBI/IN2FQIVXJjbMrmTR6N8aagK
+         4bYw66E+LCk5utYxoMeGj/mgh0bXybW9Hy21qFbJP8VzcWirKwIuqM4fg53vOIcf2M5G
+         457LG5EtugTnBxKo2TqABdeUV2BIWYtxrAYSp56R1HBngCTQ7tFbkZP+oMTR4otrECVK
+         bGtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=IjIWuou5FNbpKIwkRVi1r1E7TPmhuA9yxao2LdlFDVE=;
-        b=NSoZ7tk7aHyn1RBMHZR86yF6wOwsJvXBjc6r5ysRtrS+xXiFTmcc07yb0fowdaF8eP
-         yXHJYAcd/RVSFRBQTWtZscXu04vZGNH4qf+JwYtYYjOCsMnKEoIRzG3buocFzM9QrbF3
-         wnYjDW3CG8vf5p8HUIqIUhpdyoUuhjQFpKYWmmpSG8DOkrJ+YXGuFgkZxJMypsq+nc2Z
-         36jiHZSM5anWzndsfjzwzsGtBzRNID2/eEwswbrDTr3BS2dyHdLnTKc7ZjxR8AC2OVGI
-         AkJLEix0RADHmXXRHK6t8C+zlx7qEsvONA2AavSDXlR3svR4Bt1924IsRyAzc4aqiZvM
-         u9KQ==
-X-Gm-Message-State: ANhLgQ3Rx7c6ZrbhhWyLdd9/guBqDOlLvTnj/G+333/Rx33BsvYUMMox
-        qZGF6RO5+d5mKbgc1HJ3KStfSFc1p4LDTXFvNdQ=
-X-Google-Smtp-Source: ADFU+vswVRn0x9/9vIuzC+gThOxIhkBVxwX9dq/qu0w55L1cDu/dEBQIkOIBCMOLoSPfrr4X2xbAcHrscbEUEr5kLJQ=
-X-Received: by 2002:aca:5191:: with SMTP id f139mr2210175oib.140.1583864720522;
- Tue, 10 Mar 2020 11:25:20 -0700 (PDT)
+        bh=Vb0GLcs/8L01cTZ3HReaJOKCCqFsvClKHIQrRrGWG3I=;
+        b=BYCAmUqEHSnTIcfYfCXAjw7Vc6xwW5lZKZkyHGjwitwogHLLB/qOlFuywYb6iPsOAB
+         1kfD5cUQ76hFrkEvTMNS2YsKiZAx5HDWUy1271MzxVLm9hF0uUJIUNNYO3qzTH/chXFF
+         ror5WEhQ6/6Z3c6aXePMiNBwrKSt4rWTd2mIrbccAtoWQpPHXQ8yeC0hf/a8RiD3l4ad
+         NbzMDQ/cZ8D8hUYipw3AmUoY5/SVbYQeMhDzsuM7pmW1Lttx/f1RLESJEmOBcNn072Xa
+         FFsRIXoDCyvQArhzn6tdemtsXYO9hZ7ro2/iXcSvnBaSj+IyKr5EQH5m2R0/CInAIzjL
+         H6eA==
+X-Gm-Message-State: ANhLgQ0zctLAPnHW13q/dl++vvIg8nl+7cjwe3qsgF/QnO9Gk2+88x/Q
+        1eY37+rSMLNgR8LM1mgnBF4XYPCFfRsQFbqbwhCt9g==
+X-Google-Smtp-Source: ADFU+vv6rIwq0naQzaPUTbSTkQPR9MrTSMoZs8D8+Kw1FxXqF+vvTQ6t7/pUXhQZwCfMKjxzfvYNNNcfLsXZgyFIH1w=
+X-Received: by 2002:a9d:2028:: with SMTP id n37mr19373893ota.127.1583877064482;
+ Tue, 10 Mar 2020 14:51:04 -0700 (PDT)
 MIME-Version: 1.0
 References: <20200213194157.5877-1-sds@tycho.nsa.gov> <CAHC9VhSsjrgu2Jn+yiV5Bz_wt2x5bgEXdhjqLA+duWYNo4gOtw@mail.gmail.com>
  <eb2dbe22-91af-17c6-3dfb-d9ec619a4d7a@schaufler-ca.com> <CAKOZueuus6fVqrKsfNgSYGo-kXJ3f6Mv_NJZStY1Uo934=SjDw@mail.gmail.com>
- <CAKOZuetUvu=maOmHXjCqkHaYEN5Sf+pKBc3BZ+qpy1tE1NJ9xQ@mail.gmail.com>
-In-Reply-To: <CAKOZuetUvu=maOmHXjCqkHaYEN5Sf+pKBc3BZ+qpy1tE1NJ9xQ@mail.gmail.com>
-From:   Stephen Smalley <stephen.smalley.work@gmail.com>
-Date:   Tue, 10 Mar 2020 14:26:11 -0400
-Message-ID: <CAEjxPJ4+NM6-tfOeZ6UQfas6=KxtBTAk6f23GEyLomFn3K3qew@mail.gmail.com>
+ <CAKOZuetUvu=maOmHXjCqkHaYEN5Sf+pKBc3BZ+qpy1tE1NJ9xQ@mail.gmail.com> <CAEjxPJ4+NM6-tfOeZ6UQfas6=KxtBTAk6f23GEyLomFn3K3qew@mail.gmail.com>
+In-Reply-To: <CAEjxPJ4+NM6-tfOeZ6UQfas6=KxtBTAk6f23GEyLomFn3K3qew@mail.gmail.com>
+From:   Daniel Colascione <dancol@google.com>
+Date:   Tue, 10 Mar 2020 14:50:27 -0700
+Message-ID: <CAKOZuevcz+fvfhRXPx2iZGtkk6+FjVj3ZSaGGT8DfwsOJR0k3A@mail.gmail.com>
 Subject: Re: [RFC PATCH] security,anon_inodes,kvm: enable security support for
  anon inodes
-To:     Daniel Colascione <dancol@google.com>
+To:     Stephen Smalley <stephen.smalley.work@gmail.com>
 Cc:     Casey Schaufler <casey@schaufler-ca.com>,
         Sandeep Patil <sspatil@google.com>,
         Paul Moore <paul@paul-moore.com>,
@@ -77,81 +77,88 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Mar 10, 2020 at 2:11 PM Daniel Colascione <dancol@google.com> wrote:
+On Tue, Mar 10, 2020 at 11:25 AM Stephen Smalley
+<stephen.smalley.work@gmail.com> wrote:
 >
-> On Thu, Feb 20, 2020 at 10:50 AM Daniel Colascione <dancol@google.com> wrote:
+> On Tue, Mar 10, 2020 at 2:11 PM Daniel Colascione <dancol@google.com> wrote:
 > >
-> > On Thu, Feb 20, 2020 at 10:11 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> > On Thu, Feb 20, 2020 at 10:50 AM Daniel Colascione <dancol@google.com> wrote:
 > > >
-> > > On 2/17/2020 4:14 PM, Paul Moore wrote:
-> > > > On Thu, Feb 13, 2020 at 2:41 PM Stephen Smalley <sds@tycho.nsa.gov> wrote:
-> > > >> Add support for labeling and controlling access to files attached to anon
-> > > >> inodes. Introduce extended interfaces for creating such files to permit
-> > > >> passing a related file as an input to decide how to label the anon
-> > > >> inode. Define a security hook for initializing the anon inode security
-> > > >> attributes. Security attributes are either inherited from a related file
-> > > >> or determined based on some combination of the creating task and policy
-> > > >> (in the case of SELinux, using type_transition rules).  As an
-> > > >> example user of the inheritance support, convert kvm to use the new
-> > > >> interface for passing the related file so that the anon inode can inherit
-> > > >> the security attributes of /dev/kvm and provide consistent access control
-> > > >> for subsequent ioctl operations.  Other users of anon inodes, including
-> > > >> userfaultfd, will default to the transition-based mechanism instead.
-> > > >>
-> > > >> Compared to the series in
-> > > >> https://lore.kernel.org/selinux/20200211225547.235083-1-dancol@google.com/,
-> > > >> this approach differs in that it does not require creation of a separate
-> > > >> anonymous inode for each file (instead storing the per-instance security
-> > > >> information in the file security blob), it applies labeling and control
-> > > >> to all users of anonymous inodes rather than requiring opt-in via a new
-> > > >> flag, it supports labeling based on a related inode if provided,
-> > > >> it relies on type transitions to compute the label of the anon inode
-> > > >> when there is no related inode, and it does not require introducing a new
-> > > >> security class for each user of anonymous inodes.
-> > > >>
-> > > >> On the other hand, the approach in this patch does expose the name passed
-> > > >> by the creator of the anon inode to the policy (an indirect mapping could
-> > > >> be provided within SELinux if these names aren't considered to be stable),
-> > > >> requires the definition of type_transition rules to distinguish userfaultfd
-> > > >> inodes from proc inodes based on type since they share the same class,
-> > > >> doesn't support denying the creation of anonymous inodes (making the hook
-> > > >> added by this patch return something other than void is problematic due to
-> > > >> it being called after the file is already allocated and error handling in
-> > > >> the callers can't presently account for this scenario and end up calling
-> > > >> release methods multiple times), and may be more expensive
-> > > >> (security_transition_sid overhead on each anon inode allocation).
-> > > >>
-> > > >> We are primarily posting this RFC patch now so that the two different
-> > > >> approaches can be concretely compared.  We anticipate a hybrid of the
-> > > >> two approaches being the likely outcome in the end.  In particular
-> > > >> if support for allocating a separate inode for each of these files
-> > > >> is acceptable, then we would favor storing the security information
-> > > >> in the inode security blob and using it instead of the file security
-> > > >> blob.
-> > > > Bringing this back up in hopes of attracting some attention from the
-> > > > fs-devel crowd and Al.  As Stephen already mentioned, from a SELinux
-> > > > perspective we would prefer to attach the security blob to the inode
-> > > > as opposed to the file struct; does anyone have any objections to
-> > > > that?
+> > > On Thu, Feb 20, 2020 at 10:11 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> > > >
+> > > > On 2/17/2020 4:14 PM, Paul Moore wrote:
+> > > > > On Thu, Feb 13, 2020 at 2:41 PM Stephen Smalley <sds@tycho.nsa.gov> wrote:
+> > > > >> Add support for labeling and controlling access to files attached to anon
+> > > > >> inodes. Introduce extended interfaces for creating such files to permit
+> > > > >> passing a related file as an input to decide how to label the anon
+> > > > >> inode. Define a security hook for initializing the anon inode security
+> > > > >> attributes. Security attributes are either inherited from a related file
+> > > > >> or determined based on some combination of the creating task and policy
+> > > > >> (in the case of SELinux, using type_transition rules).  As an
+> > > > >> example user of the inheritance support, convert kvm to use the new
+> > > > >> interface for passing the related file so that the anon inode can inherit
+> > > > >> the security attributes of /dev/kvm and provide consistent access control
+> > > > >> for subsequent ioctl operations.  Other users of anon inodes, including
+> > > > >> userfaultfd, will default to the transition-based mechanism instead.
+> > > > >>
+> > > > >> Compared to the series in
+> > > > >> https://lore.kernel.org/selinux/20200211225547.235083-1-dancol@google.com/,
+> > > > >> this approach differs in that it does not require creation of a separate
+> > > > >> anonymous inode for each file (instead storing the per-instance security
+> > > > >> information in the file security blob), it applies labeling and control
+> > > > >> to all users of anonymous inodes rather than requiring opt-in via a new
+> > > > >> flag, it supports labeling based on a related inode if provided,
+> > > > >> it relies on type transitions to compute the label of the anon inode
+> > > > >> when there is no related inode, and it does not require introducing a new
+> > > > >> security class for each user of anonymous inodes.
+> > > > >>
+> > > > >> On the other hand, the approach in this patch does expose the name passed
+> > > > >> by the creator of the anon inode to the policy (an indirect mapping could
+> > > > >> be provided within SELinux if these names aren't considered to be stable),
+> > > > >> requires the definition of type_transition rules to distinguish userfaultfd
+> > > > >> inodes from proc inodes based on type since they share the same class,
+> > > > >> doesn't support denying the creation of anonymous inodes (making the hook
+> > > > >> added by this patch return something other than void is problematic due to
+> > > > >> it being called after the file is already allocated and error handling in
+> > > > >> the callers can't presently account for this scenario and end up calling
+> > > > >> release methods multiple times), and may be more expensive
+> > > > >> (security_transition_sid overhead on each anon inode allocation).
+> > > > >>
+> > > > >> We are primarily posting this RFC patch now so that the two different
+> > > > >> approaches can be concretely compared.  We anticipate a hybrid of the
+> > > > >> two approaches being the likely outcome in the end.  In particular
+> > > > >> if support for allocating a separate inode for each of these files
+> > > > >> is acceptable, then we would favor storing the security information
+> > > > >> in the inode security blob and using it instead of the file security
+> > > > >> blob.
+> > > > > Bringing this back up in hopes of attracting some attention from the
+> > > > > fs-devel crowd and Al.  As Stephen already mentioned, from a SELinux
+> > > > > perspective we would prefer to attach the security blob to the inode
+> > > > > as opposed to the file struct; does anyone have any objections to
+> > > > > that?
+> > > >
+> > > > Sorry for the delay - been sick the past few days.
+> > > >
+> > > > I agree that the inode is a better place than the file for information
+> > > > about the inode. This is especially true for Smack, which uses
+> > > > multiple extended attributes in some cases. I don't believe that any
+> > > > except the access label will be relevant to anonymous inodes, but
+> > > > I can imagine security modules with policies that would.
+> > > >
+> > > > I am always an advocate of full xattr support. It goes a long
+> > > > way in reducing the number and complexity of special case interfaces.
 > > >
-> > > Sorry for the delay - been sick the past few days.
-> > >
-> > > I agree that the inode is a better place than the file for information
-> > > about the inode. This is especially true for Smack, which uses
-> > > multiple extended attributes in some cases. I don't believe that any
-> > > except the access label will be relevant to anonymous inodes, but
-> > > I can imagine security modules with policies that would.
-> > >
-> > > I am always an advocate of full xattr support. It goes a long
-> > > way in reducing the number and complexity of special case interfaces.
+> > > It sounds like we have broad consensus on using the inode to hold
+> > > security information, implying that anon_inodes should create new
+> > > inodes. Do any of the VFS people want to object?
 > >
-> > It sounds like we have broad consensus on using the inode to hold
-> > security information, implying that anon_inodes should create new
-> > inodes. Do any of the VFS people want to object?
+> > Ping?
 >
-> Ping?
+> I'd recommend refreshing your patch series to incorporate feedback on
+> the previous version and re-post,
+> including viro and linux-fsdevel on the cc, and see if they have any
+> comments on it.
 
-I'd recommend refreshing your patch series to incorporate feedback on
-the previous version and re-post,
-including viro and linux-fsdevel on the cc, and see if they have any
-comments on it.
+I don't think there's anything in the patch series that needs to
+change right now. AFAICT, we're still just waiting on comment from the
+VFS people, who should be on this thread. Did I miss something?
