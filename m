@@ -2,99 +2,147 @@ Return-Path: <SRS0=JkyI=43=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99626C10F27
-	for <linux-security-module@archiver.kernel.org>; Tue, 10 Mar 2020 17:12:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CA9EC18E5C
+	for <linux-security-module@archiver.kernel.org>; Tue, 10 Mar 2020 18:10:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 716D42146E
-	for <linux-security-module@archiver.kernel.org>; Tue, 10 Mar 2020 17:12:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 241B62146E
+	for <linux-security-module@archiver.kernel.org>; Tue, 10 Mar 2020 18:10:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="g6GVVaiY"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="E4Gh5Feb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726380AbgCJRMj (ORCPT
+        id S1726752AbgCJSKP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 10 Mar 2020 13:12:39 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:24481 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726486AbgCJRMi (ORCPT
+        Tue, 10 Mar 2020 14:10:15 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:33411 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726641AbgCJSKP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 10 Mar 2020 13:12:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583860358;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=OC/jw5IZXVx7wZDomW5T/X+1F9FrFuN9wQhaz4Xoo1Y=;
-        b=g6GVVaiYE2gDWdeHjamQ/ya0Ok9Z2GXLXbrhgCJVnWi2jMElHHqNR3fCwW1UjR9LP8wJRJ
-        bFLBaGjAlOxL6Ms5XTj20npq2FU3rAhU1/RziOcg2+okvXK6Po0BtglOI+cEJgHApXaslm
-        zU1xULQnCnz/lIuxUM5QsZcXSqTREpk=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-25-7QaVQKJVOA29IpYAOK_8NQ-1; Tue, 10 Mar 2020 13:12:34 -0400
-X-MC-Unique: 7QaVQKJVOA29IpYAOK_8NQ-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 25C0B800D48;
-        Tue, 10 Mar 2020 17:12:32 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-182.rdu2.redhat.com [10.10.120.182])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3E11260BF3;
-        Tue, 10 Mar 2020 17:12:24 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <da226448-4b76-0456-4c29-742a1a24fe79@redhat.com>
-References: <da226448-4b76-0456-4c29-742a1a24fe79@redhat.com> <20200308170410.14166-3-longman@redhat.com> <20200308170410.14166-1-longman@redhat.com> <416690.1583771540@warthog.procyon.org.uk> <a4c92057-c364-965c-a251-02cbe46229b6@redhat.com>
-To:     Waiman Long <longman@redhat.com>
-Cc:     dhowells@redhat.com,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Mimi Zohar <zohar@linux.ibm.com>, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        Sumit Garg <sumit.garg@linaro.org>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Chris von Recklinghausen <crecklin@redhat.com>
-Subject: Re: [PATCH v2 2/2] KEYS: Avoid false positive ENOMEM error on key read
+        Tue, 10 Mar 2020 14:10:15 -0400
+Received: by mail-lj1-f193.google.com with SMTP id f13so15285890ljp.0
+        for <linux-security-module@vger.kernel.org>; Tue, 10 Mar 2020 11:10:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GAmrLSm94M3atxor6m3MBGNU1T3aJwAms1a60E3OcKQ=;
+        b=E4Gh5FebxbswQObtHkMKLa0I1vxP38Xyu9we0WSALKU9brqcmL7dmgK5DPgBi0vtGt
+         OCLEcIv+wlGiaPr/aZzGWrh3C2GCorpWLWvzGmTExo1WIkd5cOXbmEz/PNc1Nce2bWNb
+         MO1ty0KtN9jj98dselZJN/RU3YxMNgohQiTzVr0ujRZdljdUfPEMa86uPKlKMgmqEjd7
+         7puKGvXBmhiuGcL0ITpKvmrRv1gCP6RcvRMvm2Rp5JZUvGM5UjUAdTpQUbo2QI6Pnsj+
+         7i7kQRLJXarHpzmGH7INlZlEHEfpWE1zujmaiianXg7IXVsEvq/5l8bcP+9wdmtziTPi
+         NK7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GAmrLSm94M3atxor6m3MBGNU1T3aJwAms1a60E3OcKQ=;
+        b=KR9b3zJ9Fl12ZErI2MtsiNgcWOOTHdok15f4R+JJDfRJvKO4/OwfaTAfZMoY/C6qXp
+         4UfFMdhoDz/NgOh2PJILVT+w+khdkfFzTu28RRymZAiUxFt3elTQBb7VyXtUGk2SxJ+q
+         CCBngGI2BqSnvcg4uoDEwx77vo19F2V3s0mwN1HeAtOK+D3/Yz390vvahgodcceGgKSS
+         Wf42Uq+JHiaTkfRmzAvlsLD/YbEkp2r86oVZZbPCbFGmqTm8BhYBS9M4etZ7b22ERZ8H
+         lMoT+UKy6hFDdQKBKA9aKd9WqL5BGQkdAzPY8GQ8M0Yi/AzIV/8nz53GIXkfy0SnDjZW
+         W6pw==
+X-Gm-Message-State: ANhLgQ3norTuPA0xO3n00R+WlpSa1wa49bmaRAUUs8f9eODqNeXNGxk6
+        CD7hdFRCdm/ISvBCoGYHVREPVqfFuQm0xBfM5Pswyz/6
+X-Google-Smtp-Source: ADFU+vv0bRCpZ9upS082ADo1baaiIcsgHRiEr/NQ/XsGlkb1/DnYR7EmtbYbw4Q/00elQBj/MZtk5RGryisNcNPLl5A=
+X-Received: by 2002:a2e:800a:: with SMTP id j10mr10367065ljg.23.1583863810659;
+ Tue, 10 Mar 2020 11:10:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <675399.1583860343.1@warthog.procyon.org.uk>
-Date:   Tue, 10 Mar 2020 17:12:23 +0000
-Message-ID: <675400.1583860343@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+References: <20200213194157.5877-1-sds@tycho.nsa.gov> <CAHC9VhSsjrgu2Jn+yiV5Bz_wt2x5bgEXdhjqLA+duWYNo4gOtw@mail.gmail.com>
+ <eb2dbe22-91af-17c6-3dfb-d9ec619a4d7a@schaufler-ca.com> <CAKOZueuus6fVqrKsfNgSYGo-kXJ3f6Mv_NJZStY1Uo934=SjDw@mail.gmail.com>
+In-Reply-To: <CAKOZueuus6fVqrKsfNgSYGo-kXJ3f6Mv_NJZStY1Uo934=SjDw@mail.gmail.com>
+From:   Daniel Colascione <dancol@google.com>
+Date:   Tue, 10 Mar 2020 11:09:34 -0700
+Message-ID: <CAKOZuetUvu=maOmHXjCqkHaYEN5Sf+pKBc3BZ+qpy1tE1NJ9xQ@mail.gmail.com>
+Subject: Re: [RFC PATCH] security,anon_inodes,kvm: enable security support for
+ anon inodes
+To:     Casey Schaufler <casey@schaufler-ca.com>,
+        Sandeep Patil <sspatil@google.com>
+Cc:     Paul Moore <paul@paul-moore.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        SElinux list <selinux@vger.kernel.org>, kvm@vger.kernel.org,
+        Nick Kralevich <nnk@google.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Waiman Long <longman@redhat.com> wrote:
+On Thu, Feb 20, 2020 at 10:50 AM Daniel Colascione <dancol@google.com> wrote:
+>
+> On Thu, Feb 20, 2020 at 10:11 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> >
+> > On 2/17/2020 4:14 PM, Paul Moore wrote:
+> > > On Thu, Feb 13, 2020 at 2:41 PM Stephen Smalley <sds@tycho.nsa.gov> wrote:
+> > >> Add support for labeling and controlling access to files attached to anon
+> > >> inodes. Introduce extended interfaces for creating such files to permit
+> > >> passing a related file as an input to decide how to label the anon
+> > >> inode. Define a security hook for initializing the anon inode security
+> > >> attributes. Security attributes are either inherited from a related file
+> > >> or determined based on some combination of the creating task and policy
+> > >> (in the case of SELinux, using type_transition rules).  As an
+> > >> example user of the inheritance support, convert kvm to use the new
+> > >> interface for passing the related file so that the anon inode can inherit
+> > >> the security attributes of /dev/kvm and provide consistent access control
+> > >> for subsequent ioctl operations.  Other users of anon inodes, including
+> > >> userfaultfd, will default to the transition-based mechanism instead.
+> > >>
+> > >> Compared to the series in
+> > >> https://lore.kernel.org/selinux/20200211225547.235083-1-dancol@google.com/,
+> > >> this approach differs in that it does not require creation of a separate
+> > >> anonymous inode for each file (instead storing the per-instance security
+> > >> information in the file security blob), it applies labeling and control
+> > >> to all users of anonymous inodes rather than requiring opt-in via a new
+> > >> flag, it supports labeling based on a related inode if provided,
+> > >> it relies on type transitions to compute the label of the anon inode
+> > >> when there is no related inode, and it does not require introducing a new
+> > >> security class for each user of anonymous inodes.
+> > >>
+> > >> On the other hand, the approach in this patch does expose the name passed
+> > >> by the creator of the anon inode to the policy (an indirect mapping could
+> > >> be provided within SELinux if these names aren't considered to be stable),
+> > >> requires the definition of type_transition rules to distinguish userfaultfd
+> > >> inodes from proc inodes based on type since they share the same class,
+> > >> doesn't support denying the creation of anonymous inodes (making the hook
+> > >> added by this patch return something other than void is problematic due to
+> > >> it being called after the file is already allocated and error handling in
+> > >> the callers can't presently account for this scenario and end up calling
+> > >> release methods multiple times), and may be more expensive
+> > >> (security_transition_sid overhead on each anon inode allocation).
+> > >>
+> > >> We are primarily posting this RFC patch now so that the two different
+> > >> approaches can be concretely compared.  We anticipate a hybrid of the
+> > >> two approaches being the likely outcome in the end.  In particular
+> > >> if support for allocating a separate inode for each of these files
+> > >> is acceptable, then we would favor storing the security information
+> > >> in the inode security blob and using it instead of the file security
+> > >> blob.
+> > > Bringing this back up in hopes of attracting some attention from the
+> > > fs-devel crowd and Al.  As Stephen already mentioned, from a SELinux
+> > > perspective we would prefer to attach the security blob to the inode
+> > > as opposed to the file struct; does anyone have any objections to
+> > > that?
+> >
+> > Sorry for the delay - been sick the past few days.
+> >
+> > I agree that the inode is a better place than the file for information
+> > about the inode. This is especially true for Smack, which uses
+> > multiple extended attributes in some cases. I don't believe that any
+> > except the access label will be relevant to anonymous inodes, but
+> > I can imagine security modules with policies that would.
+> >
+> > I am always an advocate of full xattr support. It goes a long
+> > way in reducing the number and complexity of special case interfaces.
+>
+> It sounds like we have broad consensus on using the inode to hold
+> security information, implying that anon_inodes should create new
+> inodes. Do any of the VFS people want to object?
 
-> That is not as simple as I thought. First of that, there is not an
-> equivalent kzvfree() helper to clear the buffer first before clearing.
-> Of course, I can do that manually.
-
-Yeah, the actual substance of vfree() may get deferred.  It may be worth
-adding a kvzfree() that switches between kzfree() and memset(),vfree().
-
-> With patch 2, the allocated buffer length will be max(1024, keylen). The
-> security code uses kmalloc() for allocation. If we use kvalloc() here,
-> perhaps we should also use that for allocation that can be potentially
-> large like that in big_key. What do you think?
-
-Not for big_key: if it's larger than BIG_KEY_FILE_THRESHOLD (~1KiB) it gets
-written encrypted into shmem so that it can be swapped out to disk when not in
-use.
-
-However, other cases, sure - just be aware that on a 32-bit system,
-vmalloc/vmap space is a strictly limited resource.
-
-David
-
+Ping?
