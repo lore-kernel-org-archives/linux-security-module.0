@@ -2,136 +2,138 @@ Return-Path: <SRS0=JkyI=43=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB5D6C10F25
-	for <linux-security-module@archiver.kernel.org>; Tue, 10 Mar 2020 00:18:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81334C10F27
+	for <linux-security-module@archiver.kernel.org>; Tue, 10 Mar 2020 01:02:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8533D24649
-	for <linux-security-module@archiver.kernel.org>; Tue, 10 Mar 2020 00:18:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 51B6E20637
+	for <linux-security-module@archiver.kernel.org>; Tue, 10 Mar 2020 01:02:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=anarazel.de header.i=@anarazel.de header.b="hCLjptm8";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="hR1CHx7s"
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="M9s9SqLF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727514AbgCJAS1 (ORCPT
+        id S1727380AbgCJBCy (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 9 Mar 2020 20:18:27 -0400
-Received: from new4-smtp.messagingengine.com ([66.111.4.230]:39277 "EHLO
-        new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726937AbgCJAS0 (ORCPT
+        Mon, 9 Mar 2020 21:02:54 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:38742 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727579AbgCJBCy (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 9 Mar 2020 20:18:26 -0400
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 35D6B2B17;
-        Mon,  9 Mar 2020 20:18:25 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Mon, 09 Mar 2020 20:18:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=y2GQYGvf1VdVHeGmvE5sDqwzusj
-        gACWrEd8rXJZj1/8=; b=hCLjptm8wkq6KP7tCx7x9OtPNkX0eMvm5L8o2L97Wdo
-        y7vZrsFkN2f4S8Xv4R8dqRogUS/9W/QJ66jTev5Aoip48Jo0P4gB73pf4vehqIPK
-        JjNTp8MWQ1ArZcM945bWyUlu9TnTT7vRowJNgZw7oaWVz+6Ro+kUV+BvaTb/Axir
-        Rd6auBHkdyebUJ4UZ8DYveKmdHVSu6fdUbPx5wy2rYk0qCyFwSg38WMAwVPUg5Ku
-        GA4lOOXpIKxaAK22UekVw8FFJzKTa6OzjJ9Oxk/T3qcyaA35MUgwyxYjd1ZtgS6K
-        i5h6lcNjdPFhMmGhYyeM8m3cEHGO/5NZU3TbC7SzNdw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=y2GQYG
-        vf1VdVHeGmvE5sDqwzusjgACWrEd8rXJZj1/8=; b=hR1CHx7sGSLI0tfsHsnts5
-        3Hmffp3/lf5X5mVKSJZiHGvay1HEsa/lAhINcfhikONaFnXvPMdWcLXqeI65qu98
-        5IGZzvzrZLQ9rEQZTkcsAFr2dIvY4csYaQValDPkpQpiqkp6DIy7g6XepjoptqAM
-        TAM4ZHUlxf1IYp29XvsF7D7DaBJDJkw0kAtUKVLfY/O4E08dDeL6j/ykjMW5rpWe
-        5XcWL8In/VDf8l+3tnGbBDB8uwSj9B1NPqbn3/lNK7AcsnmcVtwEgK191sA2Nh4G
-        LIeRxCXeQnoCNpMDjJXnTOClDNOcp3XeJNhqoSjyqGciCTV5p+IuLeAxePrsi5bg
-        ==
-X-ME-Sender: <xms:z9xmXj9MdiMQxb3sWpQ0zpHMFqyrXHaQEw8NK1xMORNkzGXW3ZRTzQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrudduledgudelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeetnhgurhgv
-    shcuhfhrvghunhguuceorghnughrvghssegrnhgrrhgriigvlhdruggvqeenucfkphepie
-    ejrdduiedtrddvudejrddvhedtnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghm
-    pehmrghilhhfrhhomheprghnughrvghssegrnhgrrhgriigvlhdruggv
-X-ME-Proxy: <xmx:z9xmXg-FyPlg1L30wL5k3gQsDNd-t7jy7bKj8Kt6liqh63q9EbY7mw>
-    <xmx:z9xmXuF-0sjXCm1U5Zku5J7ltPA7_BmZzh1YdA3oUYFbwW4JBHao7g>
-    <xmx:z9xmXicuLoixXJ2XZ_721dkzztz4dN0Kp240Oq1ekOXjgrpEZlsUkw>
-    <xmx:0dxmXho2KzunPEg77nJRP3TUrcGMSb00ReWWFfVGCGI3mSgfDxoD0Q>
-Received: from intern.anarazel.de (c-67-160-217-250.hsd1.ca.comcast.net [67.160.217.250])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 007C43061856;
-        Mon,  9 Mar 2020 20:18:23 -0400 (EDT)
-Date:   Mon, 9 Mar 2020 17:18:21 -0700
-From:   Andres Freund <andres@anarazel.de>
-To:     Jeff Layton <jlayton@redhat.com>
-Cc:     David Howells <dhowells@redhat.com>, torvalds@linux-foundation.org,
-        viro@zeniv.linux.org.uk, Theodore Ts'o <tytso@mit.edu>,
-        Stefan Metzmacher <metze@samba.org>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-ext4@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        linux-nfs@vger.kernel.org, linux-api@vger.kernel.org,
-        raven@themaw.net, mszeredi@redhat.com, christian@brauner.io,
-        jannh@google.com, darrick.wong@oracle.com, kzak@redhat.com,
-        linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/14] VFS: Filesystem information [ver #18]
-Message-ID: <20200310001821.vb7qwfhnq67rsknn@alap3.anarazel.de>
-References: <158376244589.344135.12925590041630631412.stgit@warthog.procyon.org.uk>
- <2d31e2658e5f6651dc7d9908c4c12b6ba461fc88.camel@redhat.com>
- <20200309192240.nqf5bxylptw7mdm3@alap3.anarazel.de>
- <32c384ac3adf0cf924d3071a13af7edffe53cc2b.camel@redhat.com>
+        Mon, 9 Mar 2020 21:02:54 -0400
+Received: by mail-ed1-f68.google.com with SMTP id h5so3916035edn.5
+        for <linux-security-module@vger.kernel.org>; Mon, 09 Mar 2020 18:02:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=dlnrI8vvkVvEBpQcjfC0eTRxPLxDgLwApwMvNTDpDAQ=;
+        b=M9s9SqLFDSiMTrIqz5zT2m7yZLnqTdN4U7lMb3OaNvsCOcQKPAxZAv2+Srb56oBxUg
+         YxD93hIitjU7HUD5+VTLYY2wkN/J/Yo8o908igHk/qpkpAARNwglU4P6HmgVa/FuQzWU
+         t8dyvHllCr/jh6A38B0SPWsN/dcPTGQ/g5/4iBjhAyjpc46cN086UFo0yaLb4rtUZfpd
+         7KmSEjLp/rpzT5y9Eb1BzZuUa/35LDNAgUc70DilF3pXoAlpGI1M4imTIGr1u0S9cjMC
+         v+sF6QM51oneiJgW2nC+YL3crC4N1nIeUSIy1jvsKOxhZdi8MfpTjE4Pk9XbOPSk3JhM
+         uefA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dlnrI8vvkVvEBpQcjfC0eTRxPLxDgLwApwMvNTDpDAQ=;
+        b=rUTmjovWdjEMU9jv92mPhghKqTEeIbkfCMOlKPCNg+QMQT0sBomqbs2XH2HhadfHv6
+         wm2Zmbn5HnLt/lm6nmLjbQf1jfywt00bfpxkvjngpDWEnsNP8HRl7gk1FpnrF0MPMvJc
+         +B9HHmB0qZzneOOFdy1PJaoDVcU/9qZKy3lUri/fJ5rHNyZ4toAoi18sIvS60HWHTyLY
+         OVXW5vKxAYhwm7NRfBPW7L9+RaI/YUf1WrWb6suZIueryyTpcChr2GPxpQUPYEHdfvTw
+         Svd7N9H+3Bf84NewagxoFOk3ihhA9x7QWlrN5f9+HbMOpdD/HhWzT0txIaZse+Os6MjD
+         CXcA==
+X-Gm-Message-State: ANhLgQ3+fJBGQp31W3zxM56G5R9SrezJHX1z3w5dWBnWge+scL7jOGZ/
+        U0Mjf5g+MufduQQkmYYMjbu6AyxVtxaNGrntnOTv
+X-Google-Smtp-Source: ADFU+vuq6G+fBfE6JXTIa4+WYhXiu3eBbVQ+YUbWfVLoIf3A8FQXf65d0q5R+HxuDnI+1A3FVSl1SMiGEzn9qtTeCdA=
+X-Received: by 2002:aa7:c1d3:: with SMTP id d19mr19560358edp.12.1583802172478;
+ Mon, 09 Mar 2020 18:02:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <32c384ac3adf0cf924d3071a13af7edffe53cc2b.camel@redhat.com>
+References: <20200214234203.7086-1-casey@schaufler-ca.com> <20200214234203.7086-6-casey@schaufler-ca.com>
+ <CAHC9VhQzSqbEh_RN3zqnhOqVMCjrKwGhyBXnYb8Du4LUq7=txQ@mail.gmail.com> <50b463c1-1ff1-caad-3e4c-6e822e1c4a7a@schaufler-ca.com>
+In-Reply-To: <50b463c1-1ff1-caad-3e4c-6e822e1c4a7a@schaufler-ca.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 9 Mar 2020 21:02:41 -0400
+Message-ID: <CAHC9VhTAk7+Zuh6vcOd=9hb-5aWY6=Rgv2aVqnSCm1q+TCHNGA@mail.gmail.com>
+Subject: Re: [PATCH v15 05/23] net: Prepare UDS for security module stacking
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     casey.schaufler@intel.com, James Morris <jmorris@namei.org>,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        keescook@chromium.org, john.johansen@canonical.com,
+        penguin-kernel@i-love.sakura.ne.jp,
+        Stephen Smalley <sds@tycho.nsa.gov>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi,
-
-On 2020-03-09 18:49:31 -0400, Jeff Layton wrote:
-> On Mon, 2020-03-09 at 12:22 -0700, Andres Freund wrote:
-> > On 2020-03-09 13:50:59 -0400, Jeff Layton wrote:
-> > > I sent a patch a few weeks ago to make syncfs() return errors when there
-> > > have been writeback errors on the superblock. It's not merged yet, but
-> > > once we have something like that in place, we could expose info from the
-> > > errseq_t to userland using this interface.
+On Mon, Mar 9, 2020 at 8:13 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> On 3/6/2020 2:14 PM, Paul Moore wrote:
+> > On Fri, Feb 14, 2020 at 6:42 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> >> Change the data used in UDS SO_PEERSEC processing from a
+> >> secid to a more general struct lsmblob. Update the
+> >> security_socket_getpeersec_dgram() interface to use the
+> >> lsmblob. There is a small amount of scaffolding code
+> >> that will come out when the security_secid_to_secctx()
+> >> code is brought in line with the lsmblob.
+> >>
+> >> Reviewed-by: Kees Cook <keescook@chromium.org>
+> >> Reviewed-by: John Johansen <john.johansen@canonical.com>
+> >> Acked-by: Stephen Smalley <sds@tycho.nsa.gov>
+> >> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> >> cc: netdev@vger.kernel.org
+> >> ---
+> >>  include/linux/security.h |  7 +++++--
+> >>  include/net/af_unix.h    |  2 +-
+> >>  include/net/scm.h        |  8 +++++---
+> >>  net/ipv4/ip_sockglue.c   |  8 +++++---
+> >>  net/unix/af_unix.c       |  6 +++---
+> >>  security/security.c      | 18 +++++++++++++++---
+> >>  6 files changed, 34 insertions(+), 15 deletions(-)
+> > ...
 > >
-> > I'm still a bit worried about the details of errseq_t being exposed to
-> > userland. Partially because it seems to restrict further evolution of
-> > errseq_t, and partially because it will likely up with userland trying
-> > to understand it (it's e.g. just too attractive to report a count of
-> > errors etc).
+> >> diff --git a/include/net/af_unix.h b/include/net/af_unix.h
+> >> index 17e10fba2152..59af08ca802f 100644
+> >> --- a/include/net/af_unix.h
+> >> +++ b/include/net/af_unix.h
+> >> @@ -36,7 +36,7 @@ struct unix_skb_parms {
+> >>         kgid_t                  gid;
+> >>         struct scm_fp_list      *fp;            /* Passed files         */
+> >>  #ifdef CONFIG_SECURITY_NETWORK
+> >> -       u32                     secid;          /* Security ID          */
+> >> +       struct lsmblob          lsmblob;        /* Security LSM data    */
+> >>  #endif
+> >>         u32                     consumed;
+> >>  } __randomize_layout;
+> > This might be a problem.  As it currently stands, the sk_buff.cb field
+> > is 48 bytes; with CONFIG_SECURITY_NETWORK=n unix_skb_parms is 28 bytes
+> > on a 64-bit system.  That leaves 20 bytes (room for 5 LSMs) assuming a
+> > tight packing *and* that netdev doesn't swoop in and drop another few
+> > fields in unix_skb_parms.
+> >
+> > This may work now, and you might manage to sneak this by the netdev
+> > crowd, but I predict problems in the future.
 >
-> Trying to interpret the counter field won't really tell you anything.
-> The counter is not incremented unless someone has queried the value
-> since it was last checked. A single increment could represent a single
-> writeback error or 10000 identical ones.
+> Do you think that making this a struct lsmblob * instead would make
+> the change more likely to be accepted? It would complicate the code
+> but remove the issue.
 
-Oh, right.  A zero errseq would still indicate something, but that's
-probably fine.
+I honestly have no idea anymore when it comes to the netdev crowd.  I
+can toss out a few examples, but you've been in this space long enough
+to have seen the same things I have wrt to LSMs and the networking
+folks.
 
+Regardless of the implementation, I don't think you can embed the
+lsmblob struct in the skb.cb; room for five LSMs is likely going to be
+a limiting factor.  Once you settle on that, no matter what you do for
+a reference, pointer/index/etc., the problems are all roughly the
+same.  The trick is to find out what netdev will begrudgingly accept,
+and for that I'm afraid you'll need to ask them directly.
 
-> > Is there a reason to not instead report a 64bit counter instead of the
-> > cookie? In contrast to the struct file case we'd only have the space
-> > overhead once per superblock, rather than once per #files * #fd. And it
-> > seems that the maintenance of that counter could be done without
-> > widespread changes, e.g. instead/in addition to your change:
-
-> What problem would moving to a 64-bit counter solve? I get the concern
-> about people trying to get a counter out of the cookie field, but giving
-> people an explicit 64-bit counter seems even more open to
-> misinterpretation.
-
-Well, you could get an actual error count out of it? I was thinking that
-that value would get incremented every time mapping_set_error() is
-called, which should make it a meaningful count?
-
-Greetings,
-
-Andres Freund
+-- 
+paul moore
+www.paul-moore.com
