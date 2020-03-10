@@ -1,239 +1,176 @@
-Return-Path: <SRS0=zxnP=42=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=JkyI=43=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14ED7C10F27
-	for <linux-security-module@archiver.kernel.org>; Mon,  9 Mar 2020 23:45:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 562EFC10F25
+	for <linux-security-module@archiver.kernel.org>; Tue, 10 Mar 2020 00:13:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D61B524654
-	for <linux-security-module@archiver.kernel.org>; Mon,  9 Mar 2020 23:45:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1EDC324649
+	for <linux-security-module@archiver.kernel.org>; Tue, 10 Mar 2020 00:13:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TEQwnLgh"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="uJJRy8MX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727405AbgCIXpX (ORCPT
+        id S1727471AbgCJANa (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 9 Mar 2020 19:45:23 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:42854 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727452AbgCIXpW (ORCPT
+        Mon, 9 Mar 2020 20:13:30 -0400
+Received: from sonic310-31.consmr.mail.ne1.yahoo.com ([66.163.186.212]:44664
+        "EHLO sonic310-31.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726937AbgCJANa (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 9 Mar 2020 19:45:22 -0400
-Received: by mail-ot1-f66.google.com with SMTP id 66so11412928otd.9
-        for <linux-security-module@vger.kernel.org>; Mon, 09 Mar 2020 16:45:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=fmBdIxd2DBH3drat2RxXw5EvMETx4X35UelSAv/ALh8=;
-        b=TEQwnLgh8B3PsJKBlW2TWyJTnA9DDlkOy51XwT8ZvW45CdlsU0L88IRmKnKkRltzBm
-         kGOI6UBw/K7+paEi85+jlPPq3aiTme3vzGx0b9SuJDLCK0DjPl3v+LDgpJwsWFjalO1g
-         VMe5PrqnKGg8d5GsqbZHoRMhh7Niv0b3RLcDFnfMlagHZIzScsm1LLtypLf7E73dZsIz
-         Uu+rOdydlnVXzRtmsfDp6JQRHCADpg+3xOUK4fvE+ZcX7GO7hPaNAxIED0JiHv2Ndvjm
-         IgTFCLoYEf13ad9TCi4MxxRLj54zFArGjR3fZwoYAoFD1Y+5F1sl/nxCYT1zPUp2xbwH
-         keJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=fmBdIxd2DBH3drat2RxXw5EvMETx4X35UelSAv/ALh8=;
-        b=bqxcRq8hSpT5rRvqYQJuTNOEcX4V2LwSYkQuOiZp5UyZtfKqLUszKDSU9U6ejar8/s
-         /C9kmPweHSiCB7HA0buhFLTuR0dbbfCiqKjyIHFcKMLCLi4EIz/5yQc985EEE61SnOjI
-         lGO343IMoQEnGLDNoY3bnGjgeeW8DDqF4YWYBdjRyfFRA3ma57pjYcVoQDjjNFL2BTSp
-         n8ViKjBym7+xcsNNs5dCl3ViU1WA95ge3MeUf1RSVhLJb2vATv9f9AN1mpMQAn+0WKVq
-         oHpZLAcWmwyj3WwTZpUoZUFVlc0pi3L6rjZNE1qeUndp53NeU6SMNcfO7sJ65xlSgHNz
-         TctQ==
-X-Gm-Message-State: ANhLgQ2gUnvH1nRRBAInGObrf1vrGtOoBxlDwmbng+NoI8bBRQaC5AyG
-        XN2HzHZeFndqVnLJ3mf+c4w37EaoMh/F0P2+aNH8MQ==
-X-Google-Smtp-Source: ADFU+vu3ctqe66UiWnus61OOtoDCVSNb+kXOZJ2waD27t2a3YUthZNqfb4fWuw2uMljnqbH/s6/XwWZrmf2yGIRlebQ=
-X-Received: by 2002:a9d:7358:: with SMTP id l24mr14121308otk.228.1583797521077;
- Mon, 09 Mar 2020 16:45:21 -0700 (PDT)
+        Mon, 9 Mar 2020 20:13:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1583799209; bh=IZ4PmzmrWhj2QI2hiH2mbH1wcS9QIVhHrNxHZN9ONvM=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=uJJRy8MXJsxmtmxTwRAXNYvv+pXEVaa+a2UdjegC7VFMNJH9bQFlpfwGmk5V/NC3M8Z7/AEj6c1+sbJPCS/5Od4UShPP8NKpGaXVR3JsMNbRNyv7g0VpMS+5baNQNNAe3E0apRW5XSnxcdX0NMPuVOC0UMpuzfnr11CcZ4zkTxuDJy3NXeqFnoPzrLprpcw4sBLnZhK/ba8rEtSkKGh2F0SWqa3l0VAlh4jFGMcMJ/ANoYXor4mvYRfFLC0Jc9FbWUl4RaxESVYggoIcoVv8C5WESxiIPj1ASVvVSpecum6ckruD8RFmnyex1ouKm4h8TIYYg1K3rTHC6eFgeu+drQ==
+X-YMail-OSG: XH37gn4VM1m7IaSCuW.5CmmaqggTnvPnTTUEFWnPyL9PS6nbbUBnxoaU8XFeBy7
+ .GGI9EjWUGKKKKhM62khZ6XWiobCTlAX1p_1FlGBQ55Bt15au5s9FfZhhnWbYX9.gIT2vVPQqow6
+ LpgjELtIENOJ4p9uzv.Bw10OJ_iwPybjHRpfntCo6vMJVg9FFTwkBbwLOz9Lrg.avi7GJyKJEGYr
+ wME8SKYDNCiVwkSOH7Bi1qYTCoEXBRT8_3WbnxrDJQMIPCB1WviAfgph6FAlyH1kZjK0AXl6TI1n
+ ZNea2hODUq38x2e7GCim4r5VYyJ.UM3TlsFvZOxvFed5A2pT8s09X4uz7iZOnqkNUomp9PiaejLS
+ gOWZy0YddmKuo7dz5cTxHzHW9R1B.O_buC4M0NDCtH81HX8jfzFJNXGsV6lBF7DW9zu77LwgkwTA
+ pFOsXisQ5HURZgIO76THFj1MlyN20e1Jj5Dre_7fPyCEn_9.iqIDWvpauqTVTpp73tMI6_vq51Kx
+ m8a0UkZUQq6Uthpsa8ozvbFr62eFEnUe.CnN4.e9qm1Oj2HrL7IzOF8f.VzsDWRV99EE28Fq5AzG
+ m_wMqwLERe11uG1lfgfzqoeRgMQJWmhJecPlrjjDhA9.5wifD9TudDdkYgGxljQ94tfzoF6mob7I
+ Pr8P9JuGDsj7Whzarcy1hZ7qgNr53CGiflgJToI0ZQRCheCSDY9c3yQkrSlGlL9RmYhQotLYSUTu
+ gm6Vmhr3CReA7IM5b9me54gosl3LJwNcw4mbUJPbIGnWN4uf8Mi94zym1WQcBwVHJCAx6K5IS5kg
+ 266HEh_bb1jkdACXhuXZ7hIXAr8YCEQHowiiRidxNudiSB93VsW5OHGYYbfBXKS3p4M1iOHvgWqO
+ .P9DKHsaoMZmlc9AXqH9K3cPVFruKrP8HlhIY3DH0Mgk6XGu7F8Mwpl4Bpprw0iUSevF4tvuVqTf
+ rutIkM82Jm10dnyjPqkLk.Nq_xeACBpmTtxFWfuoD3yaU92TsRhmiR5k7dibmeM5INj1pW6YEWJ8
+ pvZteZqEk4Tsuc7zlUfJLOhu7KKRaHtSR6hBDL5eORAAVD3UeqCHV6tkFswIqEDxfQwkUKVHQ9R3
+ .nH8kXc7c_cstDXPGyJ35GBuKK.pHr6kQsV2INuk1N7HSfVwSGwWWGPNTIlSW9VHfNy9tNNIAo3_
+ HnG7_x84p3IqnJwqf.7gCHJEl3kslsbFJSuLMTqrQWdPVlHuvl1ZMKQxBUlH.mJjYyQp0_9agQuI
+ xMV6tfmdTOce7d4pLf0LmgwpVS0_vJNF_CenRI1nUUVRmuhOAqyDh5CrMv90o8VxiAeC7qkMdV0_
+ 3rkiMR12VKqmSdquoWV3dzuKchBCv1wFdV0kkRrVjop4VQx4AbQanz1fk4FQv6XZQujVRQL5OP.U
+ tHTMy.Hb7ZaQ_bVw8yw7JmIpG9kHbEmDPKekj6.OAHvMzV7w-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.ne1.yahoo.com with HTTP; Tue, 10 Mar 2020 00:13:29 +0000
+Received: by smtp415.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 70d268739a7dfb93c1d92dce8d21242a;
+          Tue, 10 Mar 2020 00:13:24 +0000 (UTC)
+Subject: Re: [PATCH v15 05/23] net: Prepare UDS for security module stacking
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     casey.schaufler@intel.com, James Morris <jmorris@namei.org>,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        keescook@chromium.org, john.johansen@canonical.com,
+        penguin-kernel@i-love.sakura.ne.jp,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <20200214234203.7086-1-casey@schaufler-ca.com>
+ <20200214234203.7086-6-casey@schaufler-ca.com>
+ <CAHC9VhQzSqbEh_RN3zqnhOqVMCjrKwGhyBXnYb8Du4LUq7=txQ@mail.gmail.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Autocrypt: addr=casey@schaufler-ca.com; keydata=
+ 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
+ abzjfg==
+Message-ID: <50b463c1-1ff1-caad-3e4c-6e822e1c4a7a@schaufler-ca.com>
+Date:   Mon, 9 Mar 2020 17:13:23 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-References: <20200224160215.4136-1-mic@digikod.net>
-In-Reply-To: <20200224160215.4136-1-mic@digikod.net>
-From:   Jann Horn <jannh@google.com>
-Date:   Tue, 10 Mar 2020 00:44:54 +0100
-Message-ID: <CAG48ez21bEn0wL1bbmTiiu8j9jP5iEWtHOwz4tURUJ+ki0ydYw@mail.gmail.com>
-Subject: Re: [RFC PATCH v14 00/10] Landlock LSM
-To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc:     kernel list <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        James Morris <jmorris@namei.org>, Jann Horn <jann@thejh.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mickael.salaun@ssi.gouv.fr>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        linux-doc@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAHC9VhQzSqbEh_RN3zqnhOqVMCjrKwGhyBXnYb8Du4LUq7=txQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+X-Mailer: WebService/1.1.15302 hermes Apache-HttpAsyncClient/4.1.4 (Java/1.8.0_241)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Feb 24, 2020 at 5:03 PM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> =
-wrote:
-> This new version of Landlock is a major revamp of the previous series
-> [1], hence the RFC tag.  The three main changes are the replacement of
-> eBPF with a dedicated safe management of access rules, the replacement
-> of the use of seccomp(2) with a dedicated syscall, and the management of
-> filesystem access-control (back from the v10).
+On 3/6/2020 2:14 PM, Paul Moore wrote:
+> On Fri, Feb 14, 2020 at 6:42 PM Casey Schaufler <casey@schaufler-ca.com=
+> wrote:
+>> Change the data used in UDS SO_PEERSEC processing from a
+>> secid to a more general struct lsmblob. Update the
+>> security_socket_getpeersec_dgram() interface to use the
+>> lsmblob. There is a small amount of scaffolding code
+>> that will come out when the security_secid_to_secctx()
+>> code is brought in line with the lsmblob.
+>>
+>> Reviewed-by: Kees Cook <keescook@chromium.org>
+>> Reviewed-by: John Johansen <john.johansen@canonical.com>
+>> Acked-by: Stephen Smalley <sds@tycho.nsa.gov>
+>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+>> cc: netdev@vger.kernel.org
+>> ---
+>>  include/linux/security.h |  7 +++++--
+>>  include/net/af_unix.h    |  2 +-
+>>  include/net/scm.h        |  8 +++++---
+>>  net/ipv4/ip_sockglue.c   |  8 +++++---
+>>  net/unix/af_unix.c       |  6 +++---
+>>  security/security.c      | 18 +++++++++++++++---
+>>  6 files changed, 34 insertions(+), 15 deletions(-)
+> ...
 >
-> As discussed in [2], eBPF may be too powerful and dangerous to be put in
-> the hand of unprivileged and potentially malicious processes, especially
-> because of side-channel attacks against access-controls or other parts
-> of the kernel.
+>> diff --git a/include/net/af_unix.h b/include/net/af_unix.h
+>> index 17e10fba2152..59af08ca802f 100644
+>> --- a/include/net/af_unix.h
+>> +++ b/include/net/af_unix.h
+>> @@ -36,7 +36,7 @@ struct unix_skb_parms {
+>>         kgid_t                  gid;
+>>         struct scm_fp_list      *fp;            /* Passed files       =
+  */
+>>  #ifdef CONFIG_SECURITY_NETWORK
+>> -       u32                     secid;          /* Security ID        =
+  */
+>> +       struct lsmblob          lsmblob;        /* Security LSM data  =
+  */
+>>  #endif
+>>         u32                     consumed;
+>>  } __randomize_layout;
+> This might be a problem.  As it currently stands, the sk_buff.cb field
+> is 48 bytes; with CONFIG_SECURITY_NETWORK=3Dn unix_skb_parms is 28 byte=
+s
+> on a 64-bit system.  That leaves 20 bytes (room for 5 LSMs) assuming a
+> tight packing *and* that netdev doesn't swoop in and drop another few
+> fields in unix_skb_parms.
 >
-> Thanks to this new implementation (1540 SLOC), designed from the ground
-> to be used by unprivileged processes, this series enables a process to
-> sandbox itself without requiring CAP_SYS_ADMIN, but only the
-> no_new_privs constraint (like seccomp).  Not relying on eBPF also
-> enables to improve performances, especially for stacked security
-> policies thanks to mergeable rulesets.
->
-> The compiled documentation is available here:
-> https://landlock.io/linux-doc/landlock-v14/security/landlock/index.html
->
-> This series can be applied on top of v5.6-rc3.  This can be tested with
-> CONFIG_SECURITY_LANDLOCK and CONFIG_SAMPLE_LANDLOCK.  This patch series
-> can be found in a Git repository here:
-> https://github.com/landlock-lsm/linux/commits/landlock-v14
-> I would really appreciate constructive comments on the design and the cod=
-e.
+> This may work now, and you might manage to sneak this by the netdev
+> crowd, but I predict problems in the future.
 
-I've looked through the patchset, and I think that it would be
-possible to simplify it quite a bit. I have tried to do that (and
-compiled-tested it, but not actually tried running it); here's what I
-came up with:
-
-https://github.com/thejh/linux/commits/landlock-mod
-
-The three modified patches (patches 1, 2 and 5) are marked with
-"[MODIFIED]" in their title. Please take a look - what do you think?
-Feel free to integrate my changes into your patches if you think they
-make sense.
+Do you think that making this a struct lsmblob * instead would make
+the change more likely to be accepted? It would complicate the code
+but remove the issue.
+=C2=A0
 
 
-Apart from simplifying the code, I also found the following issues,
-which I have fixed in the modified patches:
-
-put_hierarchy() has to drop a reference on its parent. (However, this
-must not recurse, so we have to do it with a loop.)
-
-put_ruleset() is not in an RCU read-side critical section, so as soon
-as it calls kfree_rcu(), "freeme" might disappear; but "orig" is in
-"freeme", so when the loop tries to find the next element with
-rb_next(orig), that can be a UAF.
-rbtree_postorder_for_each_entry_safe() exists for dealing with such
-issues.
-
-AFAIK the calls to rb_erase() in clean_ruleset() is not safe if
-someone is concurrently accessing the rbtree as an RCU reader, because
-concurrent rotations can prevent a lookup from succeeding. The
-simplest fix is probably to just make any rbtree that has been
-installed on a process immutable, and give up on the cleaning -
-arguably the memory wastage that can cause is pretty limited. (By the
-way, as a future optimization, we might want to turn the rbtree into a
-hashtable when installing it?)
-
-The iput() in landlock_release_inode() looks unsafe - you need to
-guarantee that even if the deletion of a ruleset races with
-generic_shutdown_super(), every iput() for that superblock finishes
-before landlock_release_inodes() returns, even if the iput() is
-happening in the context of ruleset deletion. This is why
-fsnotify_unmount_inodes() has that wait_var_event() at the end.
-
-
-Aside from those things, there is also a major correctness issue where
-I'm not sure how to solve it properly:
-
-Let's say a process installs a filter on itself like this:
-
-struct landlock_attr_ruleset ruleset =3D { .handled_access_fs =3D
-ACCESS_FS_ROUGHLY_WRITE};
-int ruleset_fd =3D landlock(LANDLOCK_CMD_CREATE_RULESET,
-LANDLOCK_OPT_CREATE_RULESET, sizeof(ruleset), &ruleset);
-struct landlock_attr_path_beneath path_beneath =3D {
-  .ruleset_fd =3D ruleset_fd,
-  .allowed_access =3D ACCESS_FS_ROUGHLY_WRITE,
-  .parent_fd =3D open("/tmp/foobar", O_PATH),
-};
-landlock(LANDLOCK_CMD_ADD_RULE, LANDLOCK_OPT_ADD_RULE_PATH_BENEATH,
-sizeof(path_beneath), &path_beneath);
-prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
-struct landlock_attr_enforce attr_enforce =3D { .ruleset_fd =3D ruleset_fd =
-};
-landlock(LANDLOCK_CMD_ENFORCE_RULESET, LANDLOCK_OPT_ENFORCE_RULESET,
-sizeof(attr_enforce), &attr_enforce);
-
-At this point, the process is not supposed to be able to write to
-anything outside /tmp/foobar, right? But what happens if the process
-does the following next?
-
-struct landlock_attr_ruleset ruleset =3D { .handled_access_fs =3D
-ACCESS_FS_ROUGHLY_WRITE};
-int ruleset_fd =3D landlock(LANDLOCK_CMD_CREATE_RULESET,
-LANDLOCK_OPT_CREATE_RULESET, sizeof(ruleset), &ruleset);
-struct landlock_attr_path_beneath path_beneath =3D {
-  .ruleset_fd =3D ruleset_fd,
-  .allowed_access =3D ACCESS_FS_ROUGHLY_WRITE,
-  .parent_fd =3D open("/", O_PATH),
-};
-landlock(LANDLOCK_CMD_ADD_RULE, LANDLOCK_OPT_ADD_RULE_PATH_BENEATH,
-sizeof(path_beneath), &path_beneath);
-prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
-struct landlock_attr_enforce attr_enforce =3D { .ruleset_fd =3D ruleset_fd =
-};
-landlock(LANDLOCK_CMD_ENFORCE_RULESET, LANDLOCK_OPT_ENFORCE_RULESET,
-sizeof(attr_enforce), &attr_enforce);
-
-As far as I can tell from looking at the source, after this, you will
-have write access to the entire filesystem again. I think the idea is
-that LANDLOCK_CMD_ENFORCE_RULESET should only let you drop privileges,
-not increase them, right?
-
-I think the easy way to fix this would be to add a bitmask to each
-rule that says from which ruleset it originally comes, and then let
-check_access_path() collect these bitmasks from each rule with OR, and
-check at the end whether the resulting bitmask is full - if not, at
-least one of the rulesets did not permit the access, and it should be
-denied.
-
-But maybe it would make more sense to change how the API works
-instead, and get rid of the concept of "merging" two rulesets
-together? Instead, we could make the API work like this:
-
- - LANDLOCK_CMD_CREATE_RULESET gives you a file descriptor whose
-->private_data contains a pointer to the old ruleset of the process,
-as well as a pointer to a new empty ruleset.
- - LANDLOCK_CMD_ADD_RULE fails if the specified rule would not be
-permitted by the old ruleset, then adds the rule to the new ruleset
- - LANDLOCK_CMD_ENFORCE_RULESET fails if the old ruleset pointer in
-->private_data doesn't match the current ruleset of the process, then
-replaces the old ruleset with the new ruleset.
-
-With this, the new ruleset is guaranteed to be a subset of the old
-ruleset because each of the new ruleset's rules is permitted by the
-old ruleset. (Unless the directory hierarchy rotates, but in that case
-the inaccuracy isn't much worse than what would've been possible
-through RCU path walk anyway AFAIK.)
-
-What do you think?
