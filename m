@@ -1,131 +1,235 @@
-Return-Path: <SRS0=VYj3=44=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <linux-security-module-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
-Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FE92C4CC9E
-	for <linux-security-module@archiver.kernel.org>; Wed, 11 Mar 2020 18:00:13 +0000 (UTC)
+X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_NONE,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1630F20691
-	for <linux-security-module@archiver.kernel.org>; Wed, 11 Mar 2020 18:00:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1583949614;
-	bh=LkZT0BmK1tbF9N6Lr5DM7GiObqeCU2DGSZcsJF+15Yc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=Mw3BTXlvrta40vWdL0q2CPo2SBICFc1kIaTi+8iQsg+gdevAfZA/8Zkkg69rsUX0i
-	 w52Akd3Il6O/6zh7dJEVXsc5OIaM+oxDd19ATEfz64ded3gJsm4jch03pU50zL3Z3y
-	 jPbM+7ZF/OJ1+e3MTR8A+XdaAXiYJ1eYiKUCW1xI=
+	by archive.lwn.net (Postfix) with ESMTP id 951467D910
+	for <lwn-linux-security-module@archive.lwn.net>; Wed, 11 Mar 2020 15:34:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730753AbgCKSAM (ORCPT
-        <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 11 Mar 2020 14:00:12 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:42707 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730748AbgCKSAK (ORCPT
+        id S1729680AbgCKPeD (ORCPT
+        <rfc822;lwn-linux-security-module@archive.lwn.net>);
+        Wed, 11 Mar 2020 11:34:03 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:28635 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729521AbgCKPeC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 11 Mar 2020 14:00:10 -0400
-Received: by mail-lj1-f195.google.com with SMTP id q19so3343140ljp.9
-        for <linux-security-module@vger.kernel.org>; Wed, 11 Mar 2020 11:00:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dpqDD1Wo+HKU40oDoKA/BJI8LsaHpPP8z3qrK9mKasM=;
-        b=ckkZBdQmXywHGIbczwxKoXJtM5bn1Q4zF8980dmDzUAerY42Vnt79h0/hrgko+maFY
-         g6W5qtOcDU0FR7TReGj9YV2UAWuNcF/lAEUT03GfvSsuEW22s7MzLhczmTz71ew7VoeG
-         9tipLpaaHNIEBXH+b/EPSFlrBcI9QWo4iyKEg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dpqDD1Wo+HKU40oDoKA/BJI8LsaHpPP8z3qrK9mKasM=;
-        b=QnO9gJHAZB3116OCX9GBMvFG2sAhn+SoMWHsa0cPTkXeaWi25VnoeLr1iC8RxMEwAJ
-         tTvYY+8dUoO3ALmxjyKYrC8CnxNDHyEGbkbETonBk3UIf58tMVwlf+qQpOGm3sTyxnPH
-         6FTJ2Nirzl6Y+bMS8cewgHL650GcLtTuf+Iqt0hPbD7Fbpij1K5VGYas7pULQ4k+QMVr
-         +7lyiU8H7jvLf4T7gXgV5CDeQsaMzvk8NmGtzM6Puw6xvr4Oduk85gSrg9n7M9dh5R1a
-         oKFjrP1Wmtnpzt8hFQ4yCpV2D6xoy3FuR0UxJ8VnRLmgOha9UnBrLZ9/3q++FbpuY54V
-         6Rlw==
-X-Gm-Message-State: ANhLgQ1INe7TaM5cFe+3jnKW7E8NeHxq1wAywapdQEwZfQJUllPeM+mK
-        f3SBk8wg7GwE37ucBAO8USx+++tvhcw=
-X-Google-Smtp-Source: ADFU+vvpnlxcIG+M7yn9/O7boxiSZjiiQ6FAHhlAD7d5+1PpTHiBXmtzbi0rqmO1QCeLGbB/mDZ+QA==
-X-Received: by 2002:a2e:904f:: with SMTP id n15mr2754812ljg.101.1583949608295;
-        Wed, 11 Mar 2020 11:00:08 -0700 (PDT)
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com. [209.85.208.181])
-        by smtp.gmail.com with ESMTPSA id y9sm17071301ljm.49.2020.03.11.11.00.07
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Mar 2020 11:00:07 -0700 (PDT)
-Received: by mail-lj1-f181.google.com with SMTP id g12so3387166ljj.3
-        for <linux-security-module@vger.kernel.org>; Wed, 11 Mar 2020 11:00:07 -0700 (PDT)
-X-Received: by 2002:a2e:5850:: with SMTP id x16mr2622296ljd.209.1583949607115;
- Wed, 11 Mar 2020 11:00:07 -0700 (PDT)
-MIME-Version: 1.0
-References: <158376244589.344135.12925590041630631412.stgit@warthog.procyon.org.uk>
- <158376245699.344135.7522994074747336376.stgit@warthog.procyon.org.uk>
- <20200310005549.adrn3yf4mbljc5f6@yavin> <CAHk-=wiEBNFJ0_riJnpuUXTO7+_HByVo-R3pGoB_84qv3LzHxA@mail.gmail.com>
- <580352.1583825105@warthog.procyon.org.uk>
-In-Reply-To: <580352.1583825105@warthog.procyon.org.uk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 11 Mar 2020 10:59:51 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiaL6zznNtCHKg6+MJuCqDxO=yVfms3qR9A0czjKuSSiA@mail.gmail.com>
-Message-ID: <CAHk-=wiaL6zznNtCHKg6+MJuCqDxO=yVfms3qR9A0czjKuSSiA@mail.gmail.com>
-Subject: Re: [PATCH 01/14] VFS: Add additional RESOLVE_* flags [ver #18]
+        Wed, 11 Mar 2020 11:34:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583940840;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=u0xU1PIw/tg3wOhypjxZL8zbVhPE6xy4N+qm1n6mhVU=;
+        b=hpgAz07JIam1RJ2ysaXRAUW3nzawwk0HghvAYR+l3d+BO8BW/8zNA9BFgA//1Ehac7sU8N
+        fkz+hgpCe3wansEoGKPSUXV2MqjxRDVpItrIvqF3fS2/Ptd1SBX5ciAEaFAvV1OSB3iJq3
+        oJwPPKZ4FNAITJ2r20wslV51jaL7+rw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-344-JzqYz28jPcSBOwpmBU3X3g-1; Wed, 11 Mar 2020 11:33:59 -0400
+X-MC-Unique: JzqYz28jPcSBOwpmBU3X3g-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C5922189D6C0;
+        Wed, 11 Mar 2020 15:33:56 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-59.bos.redhat.com [10.18.17.59])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id F24EA8D553;
+        Wed, 11 Mar 2020 15:33:54 +0000 (UTC)
+Subject: Re: [PATCH v2 2/2] KEYS: Avoid false positive ENOMEM error on key
+ read
 To:     David Howells <dhowells@redhat.com>
-Cc:     Aleksa Sarai <cyphar@cyphar.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Stefan Metzmacher <metze@samba.org>,
-        Ian Kent <raven@themaw.net>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Christian Brauner <christian@brauner.io>,
-        Jann Horn <jannh@google.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Karel Zak <kzak@redhat.com>, jlayton@redhat.com,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Mimi Zohar <zohar@linux.ibm.com>, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        Sumit Garg <sumit.garg@linaro.org>,
+        Jerry Snitselaar <jsnitsel@redhat.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Chris von Recklinghausen <crecklin@redhat.com>
+References: <da226448-4b76-0456-4c29-742a1a24fe79@redhat.com>
+ <20200308170410.14166-3-longman@redhat.com>
+ <20200308170410.14166-1-longman@redhat.com>
+ <416690.1583771540@warthog.procyon.org.uk>
+ <a4c92057-c364-965c-a251-02cbe46229b6@redhat.com>
+ <675400.1583860343@warthog.procyon.org.uk>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <7d0b0c5f-98e7-0fb6-69cd-76a31a010bcb@redhat.com>
+Date:   Wed, 11 Mar 2020 11:33:54 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
+MIME-Version: 1.0
+In-Reply-To: <675400.1583860343@warthog.procyon.org.uk>
+Content-Type: multipart/mixed;
+ boundary="------------38FC0D37D8A890979402365F"
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
+Archived-At: <http://archive.lwn.net:8080/linux-security-module/7d0b0c5f-98e7-0fb6-69cd-76a31a010bcb@redhat.com/>
+List-Archive: <http://archive.lwn.net:8080/linux-security-module/>
+List-Post: <mailto:linux-security-module@vger.kernel.org>
 
-On Tue, Mar 10, 2020 at 12:25 AM David Howells <dhowells@redhat.com> wrote:
-?
-> Okay.  So what's the equivalent of AT_SYMLINK_NOFOLLOW in RESOLVE_* flag
-> terms?
+This is a multi-part message in MIME format.
+--------------38FC0D37D8A890979402365F
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-Nothing.
+On 3/10/20 1:12 PM, David Howells wrote:
+> Waiman Long <longman@redhat.com> wrote:
+>
+>> That is not as simple as I thought. First of that, there is not an
+>> equivalent kzvfree() helper to clear the buffer first before clearing.
+>> Of course, I can do that manually.
+> Yeah, the actual substance of vfree() may get deferred.  It may be worth
+> adding a kvzfree() that switches between kzfree() and memset(),vfree().
+>
+>> With patch 2, the allocated buffer length will be max(1024, keylen). The
+>> security code uses kmalloc() for allocation. If we use kvalloc() here,
+>> perhaps we should also use that for allocation that can be potentially
+>> large like that in big_key. What do you think?
+> Not for big_key: if it's larger than BIG_KEY_FILE_THRESHOLD (~1KiB) it gets
+> written encrypted into shmem so that it can be swapped out to disk when not in
+> use.
+>
+> However, other cases, sure - just be aware that on a 32-bit system,
+> vmalloc/vmap space is a strictly limited resource.
 
-openat2() takes two sets of flags. We'll never get rid of
-AT_SYMLINK_NOFOLLOW / O_NOFOLLOW, and we've added RESOLVE_NO_SYMLINKS
-to the new set of flags. It's just a separate namespace.
+Attached is an additional patch to make the transition from kmalloc() to
+kvmalloc(). I put the __kvzfree() helper in internal.h for now. I plan
+to send a patch later to add a kvzfree() API once there is a use case in
+the kernel.
 
-We will _not_ be adding a RESOLVE_XYZ flag for O_NOFOLLOW or
-AT_SYMLINK_NOFOLLOW. At least not visible to user space - because as
-people already figured out, that just causes problems with consistency
-issues.
+I am not going to touch other places for now to make thing simpler.
 
-And yes, the fact that we then have three different user-visible
-namespaces (O_xyz flags for open(), AT_xyz flags for linkat(), and now
-RESOLVE_xyz flags for openat2()) is sad and messy. But it's an
-inherent messiness from just how the world works. We can't get rid of
-it.
+Cheers,
+Longman
 
-If we need linkat2() and friends, so be it. Do we?
 
-Could we have a _fourth_ set of flags that are simply for internal use
-that is a superset of them all? Sure. But no, it's almost certainly
-not worth it. Four is not better than three.
+--------------38FC0D37D8A890979402365F
+Content-Type: text/x-patch;
+ name="v2-0003-KEYS-Use-kvmalloc-to-better-handle-large-buffer-a.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename*0="v2-0003-KEYS-Use-kvmalloc-to-better-handle-large-buffer-a.pa";
+ filename*1="tch"
 
-Now, some type-safety in the kernel to make sure that we can't mix
-AT_xyz with O_xyz or RESOLVE_xyz - that might be worth it. Although
-judging by past experience, not enough people run sparse for it to
-really be worth it.
+>From e2e73e2bc0c5cd168de273b0fe9df1e5c48cd232 Mon Sep 17 00:00:00 2001
+From: Waiman Long <longman@redhat.com>
+Date: Wed, 11 Mar 2020 11:01:59 -0400
+Subject: [PATCH v2 3/3] KEYS: Use kvmalloc() to better handle large buffer
+ allocation
 
-               Linus
+For large multi-page temporary buffer allocation, the security/keys
+subsystem don't need contiguous physical pages. It will work perfectly
+fine with virtually mapped pages.
 
-PS. Yeah, we also have that LOOKUP_xyz namespace, and the access mode
-namespace, so we already have those internal format versions too.
+Replace the kmalloc() call by kvmalloc() and provide a __kvzfree()
+helper function to clear and free the kvmalloc'ed buffer. This will
+reduce the chance of memory allocation failure just because of highly
+fragmented pages.
+
+Suggested-by: David Howells <dhowells@redhat.com>
+Signed-off-by: Waiman Long <longman@redhat.com>
+---
+ security/keys/internal.h | 14 ++++++++++++++
+ security/keys/keyctl.c   | 12 ++++++------
+ 2 files changed, 20 insertions(+), 6 deletions(-)
+
+diff --git a/security/keys/internal.h b/security/keys/internal.h
+index ba3e2da14cef..1b6e2d66e378 100644
+--- a/security/keys/internal.h
++++ b/security/keys/internal.h
+@@ -16,6 +16,8 @@
+ #include <linux/keyctl.h>
+ #include <linux/refcount.h>
+ #include <linux/compat.h>
++#include <linux/mm.h>
++#include <linux/vmalloc.h>
+ 
+ struct iovec;
+ 
+@@ -349,4 +351,16 @@ static inline void key_check(const struct key *key)
+ 
+ #endif
+ 
++/*
++ * Helper function to clear and free a kvmalloc'ed memory object.
++ */
++static inline void __kvzfree(const void *addr, size_t len)
++{
++	if (is_vmalloc_addr(addr)) {
++		memset((char *)addr, 0, len);
++		vfree(addr);
++	} else {
++		kzfree(addr);
++	}
++}
+ #endif /* _INTERNAL_H */
+diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
+index 662a638a680d..ca05604bc9c0 100644
+--- a/security/keys/keyctl.c
++++ b/security/keys/keyctl.c
+@@ -339,7 +339,7 @@ long keyctl_update_key(key_serial_t id,
+ 	payload = NULL;
+ 	if (plen) {
+ 		ret = -ENOMEM;
+-		payload = kmalloc(plen, GFP_KERNEL);
++		payload = kvmalloc(plen, GFP_KERNEL);
+ 		if (!payload)
+ 			goto error;
+ 
+@@ -360,7 +360,7 @@ long keyctl_update_key(key_serial_t id,
+ 
+ 	key_ref_put(key_ref);
+ error2:
+-	kzfree(payload);
++	__kvzfree(payload, plen);
+ error:
+ 	return ret;
+ }
+@@ -870,7 +870,7 @@ long keyctl_read_key(key_serial_t keyid, char __user *buffer, size_t buflen)
+ 		 */
+ 		if (buflen && buffer && (buflen <= 0x400)) {
+ allocbuf:
+-			tmpbuf = kmalloc(tbuflen, GFP_KERNEL);
++			tmpbuf = kvmalloc(tbuflen, GFP_KERNEL);
+ 			if (!tmpbuf) {
+ 				ret = -ENOMEM;
+ 				goto error2;
+@@ -892,9 +892,9 @@ long keyctl_read_key(key_serial_t keyid, char __user *buffer, size_t buflen)
+ 			 * again.
+ 			 */
+ 			if (!tmpbuf || unlikely(ret > tbuflen)) {
+-				tbuflen = ret;
+ 				if (unlikely(tmpbuf))
+-					kzfree(tmpbuf);
++					__kvzfree(tmpbuf, tbuflen);
++				tbuflen = ret;
+ 				goto allocbuf;
+ 			}
+ 
+@@ -903,7 +903,7 @@ long keyctl_read_key(key_serial_t keyid, char __user *buffer, size_t buflen)
+ 		}
+ 
+ 		if (tmpbuf)
+-			kzfree(tmpbuf);
++			__kvzfree(tmpbuf, tbuflen);
+ 	}
+ 
+ error2:
+-- 
+2.18.1
+
+
+--------------38FC0D37D8A890979402365F--
+
