@@ -1,235 +1,301 @@
-Return-Path: <linux-security-module-owner@vger.kernel.org>
+Return-Path: <SRS0=VYj3=44=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_NONE,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23FB0C2BB1D
+	for <linux-security-module@archiver.kernel.org>; Wed, 11 Mar 2020 23:38:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by archive.lwn.net (Postfix) with ESMTP id 951467D910
-	for <lwn-linux-security-module@archive.lwn.net>; Wed, 11 Mar 2020 15:34:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2644620754
+	for <linux-security-module@archiver.kernel.org>; Wed, 11 Mar 2020 23:38:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729680AbgCKPeD (ORCPT
-        <rfc822;lwn-linux-security-module@archive.lwn.net>);
-        Wed, 11 Mar 2020 11:34:03 -0400
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:28635 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729521AbgCKPeC (ORCPT
+        id S2387410AbgCKXio (ORCPT
+        <rfc822;linux-security-module@archiver.kernel.org>);
+        Wed, 11 Mar 2020 19:38:44 -0400
+Received: from smtp-190b.mail.infomaniak.ch ([185.125.25.11]:54805 "EHLO
+        smtp-190b.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731501AbgCKXio (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 11 Mar 2020 11:34:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583940840;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=u0xU1PIw/tg3wOhypjxZL8zbVhPE6xy4N+qm1n6mhVU=;
-        b=hpgAz07JIam1RJ2ysaXRAUW3nzawwk0HghvAYR+l3d+BO8BW/8zNA9BFgA//1Ehac7sU8N
-        fkz+hgpCe3wansEoGKPSUXV2MqjxRDVpItrIvqF3fS2/Ptd1SBX5ciAEaFAvV1OSB3iJq3
-        oJwPPKZ4FNAITJ2r20wslV51jaL7+rw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-344-JzqYz28jPcSBOwpmBU3X3g-1; Wed, 11 Mar 2020 11:33:59 -0400
-X-MC-Unique: JzqYz28jPcSBOwpmBU3X3g-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C5922189D6C0;
-        Wed, 11 Mar 2020 15:33:56 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-59.bos.redhat.com [10.18.17.59])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id F24EA8D553;
-        Wed, 11 Mar 2020 15:33:54 +0000 (UTC)
-Subject: Re: [PATCH v2 2/2] KEYS: Avoid false positive ENOMEM error on key
- read
-To:     David Howells <dhowells@redhat.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Mimi Zohar <zohar@linux.ibm.com>, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        Sumit Garg <sumit.garg@linaro.org>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Chris von Recklinghausen <crecklin@redhat.com>
-References: <da226448-4b76-0456-4c29-742a1a24fe79@redhat.com>
- <20200308170410.14166-3-longman@redhat.com>
- <20200308170410.14166-1-longman@redhat.com>
- <416690.1583771540@warthog.procyon.org.uk>
- <a4c92057-c364-965c-a251-02cbe46229b6@redhat.com>
- <675400.1583860343@warthog.procyon.org.uk>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <7d0b0c5f-98e7-0fb6-69cd-76a31a010bcb@redhat.com>
-Date:   Wed, 11 Mar 2020 11:33:54 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Wed, 11 Mar 2020 19:38:44 -0400
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id AC4E6100351F7;
+        Thu, 12 Mar 2020 00:38:39 +0100 (CET)
+Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
+        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 48d7gx0FMFzlmRkW;
+        Thu, 12 Mar 2020 00:38:36 +0100 (CET)
+Subject: Re: [RFC PATCH v14 00/10] Landlock LSM
+To:     Jann Horn <jannh@google.com>
+Cc:     kernel list <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        James Morris <jmorris@namei.org>, Jann Horn <jann@thejh.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        linux-doc@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>
+References: <20200224160215.4136-1-mic@digikod.net>
+ <CAG48ez21bEn0wL1bbmTiiu8j9jP5iEWtHOwz4tURUJ+ki0ydYw@mail.gmail.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Message-ID: <873d7419-bdd9-8a52-0a9b-dddbe31df4f9@digikod.net>
+Date:   Thu, 12 Mar 2020 00:38:21 +0100
+User-Agent: 
 MIME-Version: 1.0
-In-Reply-To: <675400.1583860343@warthog.procyon.org.uk>
-Content-Type: multipart/mixed;
- boundary="------------38FC0D37D8A890979402365F"
+In-Reply-To: <CAG48ez21bEn0wL1bbmTiiu8j9jP5iEWtHOwz4tURUJ+ki0ydYw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-Transfer-Encoding: 8bit
+X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
+X-Antivirus-Code: 0x100000
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
-Archived-At: <http://archive.lwn.net:8080/linux-security-module/7d0b0c5f-98e7-0fb6-69cd-76a31a010bcb@redhat.com/>
-List-Archive: <http://archive.lwn.net:8080/linux-security-module/>
-List-Post: <mailto:linux-security-module@vger.kernel.org>
-
-This is a multi-part message in MIME format.
---------------38FC0D37D8A890979402365F
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-
-On 3/10/20 1:12 PM, David Howells wrote:
-> Waiman Long <longman@redhat.com> wrote:
->
->> That is not as simple as I thought. First of that, there is not an
->> equivalent kzvfree() helper to clear the buffer first before clearing.
->> Of course, I can do that manually.
-> Yeah, the actual substance of vfree() may get deferred.  It may be worth
-> adding a kvzfree() that switches between kzfree() and memset(),vfree().
->
->> With patch 2, the allocated buffer length will be max(1024, keylen). The
->> security code uses kmalloc() for allocation. If we use kvalloc() here,
->> perhaps we should also use that for allocation that can be potentially
->> large like that in big_key. What do you think?
-> Not for big_key: if it's larger than BIG_KEY_FILE_THRESHOLD (~1KiB) it gets
-> written encrypted into shmem so that it can be swapped out to disk when not in
-> use.
->
-> However, other cases, sure - just be aware that on a 32-bit system,
-> vmalloc/vmap space is a strictly limited resource.
-
-Attached is an additional patch to make the transition from kmalloc() to
-kvmalloc(). I put the __kvzfree() helper in internal.h for now. I plan
-to send a patch later to add a kvzfree() API once there is a use case in
-the kernel.
-
-I am not going to touch other places for now to make thing simpler.
-
-Cheers,
-Longman
 
 
---------------38FC0D37D8A890979402365F
-Content-Type: text/x-patch;
- name="v2-0003-KEYS-Use-kvmalloc-to-better-handle-large-buffer-a.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
- filename*0="v2-0003-KEYS-Use-kvmalloc-to-better-handle-large-buffer-a.pa";
- filename*1="tch"
+On 10/03/2020 00:44, Jann Horn wrote:
+> On Mon, Feb 24, 2020 at 5:03 PM Mickaël Salaün <mic@digikod.net> wrote:
+>> This new version of Landlock is a major revamp of the previous series
+>> [1], hence the RFC tag.  The three main changes are the replacement of
+>> eBPF with a dedicated safe management of access rules, the replacement
+>> of the use of seccomp(2) with a dedicated syscall, and the management of
+>> filesystem access-control (back from the v10).
+>>
+>> As discussed in [2], eBPF may be too powerful and dangerous to be put in
+>> the hand of unprivileged and potentially malicious processes, especially
+>> because of side-channel attacks against access-controls or other parts
+>> of the kernel.
+>>
+>> Thanks to this new implementation (1540 SLOC), designed from the ground
+>> to be used by unprivileged processes, this series enables a process to
+>> sandbox itself without requiring CAP_SYS_ADMIN, but only the
+>> no_new_privs constraint (like seccomp).  Not relying on eBPF also
+>> enables to improve performances, especially for stacked security
+>> policies thanks to mergeable rulesets.
+>>
+>> The compiled documentation is available here:
+>> https://landlock.io/linux-doc/landlock-v14/security/landlock/index.html
+>>
+>> This series can be applied on top of v5.6-rc3.  This can be tested with
+>> CONFIG_SECURITY_LANDLOCK and CONFIG_SAMPLE_LANDLOCK.  This patch series
+>> can be found in a Git repository here:
+>> https://github.com/landlock-lsm/linux/commits/landlock-v14
+>> I would really appreciate constructive comments on the design and the code.
+> 
+> I've looked through the patchset, and I think that it would be
+> possible to simplify it quite a bit. I have tried to do that (and
+> compiled-tested it, but not actually tried running it); here's what I
+> came up with:
+> 
+> https://github.com/thejh/linux/commits/landlock-mod
+> 
+> The three modified patches (patches 1, 2 and 5) are marked with
+> "[MODIFIED]" in their title. Please take a look - what do you think?
+> Feel free to integrate my changes into your patches if you think they
+> make sense.
 
->From e2e73e2bc0c5cd168de273b0fe9df1e5c48cd232 Mon Sep 17 00:00:00 2001
-From: Waiman Long <longman@redhat.com>
-Date: Wed, 11 Mar 2020 11:01:59 -0400
-Subject: [PATCH v2 3/3] KEYS: Use kvmalloc() to better handle large buffer
- allocation
+Regarding the landlock_release_inodes(), the final wait_var_event() is
+indeed needed (as does fsnotify), but why do you use a READ_ONCE() for
+landlock_initialized?
 
-For large multi-page temporary buffer allocation, the security/keys
-subsystem don't need contiguous physical pages. It will work perfectly
-fine with virtually mapped pages.
+I was reluctant to use function pointers but landlock_object_operations
+makes a cleaner and more generic interface to manage objects.
 
-Replace the kmalloc() call by kvmalloc() and provide a __kvzfree()
-helper function to clear and free the kvmalloc'ed buffer. This will
-reduce the chance of memory allocation failure just because of highly
-fragmented pages.
+Your get_inode_object() is much simpler and easier to understand than
+the get_object() and get_cleaner().
+The other main change is about the object cross-reference: you entirely
+removed it, which means that an object will only be free when there are
+no rules using it. This does not free an object when its underlying
+object is being terminated. We now only have to worry about the
+termination of the parent of an underlying object (e.g. the super-block
+of an inode).
 
-Suggested-by: David Howells <dhowells@redhat.com>
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- security/keys/internal.h | 14 ++++++++++++++
- security/keys/keyctl.c   | 12 ++++++------
- 2 files changed, 20 insertions(+), 6 deletions(-)
+However, I think you forgot to increment object->usage in
+create_ruleset_elem(). There is also an unused checked_mask variable in
+merge_ruleset().
 
-diff --git a/security/keys/internal.h b/security/keys/internal.h
-index ba3e2da14cef..1b6e2d66e378 100644
---- a/security/keys/internal.h
-+++ b/security/keys/internal.h
-@@ -16,6 +16,8 @@
- #include <linux/keyctl.h>
- #include <linux/refcount.h>
- #include <linux/compat.h>
-+#include <linux/mm.h>
-+#include <linux/vmalloc.h>
- 
- struct iovec;
- 
-@@ -349,4 +351,16 @@ static inline void key_check(const struct key *key)
- 
- #endif
- 
-+/*
-+ * Helper function to clear and free a kvmalloc'ed memory object.
-+ */
-+static inline void __kvzfree(const void *addr, size_t len)
-+{
-+	if (is_vmalloc_addr(addr)) {
-+		memset((char *)addr, 0, len);
-+		vfree(addr);
-+	} else {
-+		kzfree(addr);
-+	}
-+}
- #endif /* _INTERNAL_H */
-diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
-index 662a638a680d..ca05604bc9c0 100644
---- a/security/keys/keyctl.c
-+++ b/security/keys/keyctl.c
-@@ -339,7 +339,7 @@ long keyctl_update_key(key_serial_t id,
- 	payload = NULL;
- 	if (plen) {
- 		ret = -ENOMEM;
--		payload = kmalloc(plen, GFP_KERNEL);
-+		payload = kvmalloc(plen, GFP_KERNEL);
- 		if (!payload)
- 			goto error;
- 
-@@ -360,7 +360,7 @@ long keyctl_update_key(key_serial_t id,
- 
- 	key_ref_put(key_ref);
- error2:
--	kzfree(payload);
-+	__kvzfree(payload, plen);
- error:
- 	return ret;
- }
-@@ -870,7 +870,7 @@ long keyctl_read_key(key_serial_t keyid, char __user *buffer, size_t buflen)
- 		 */
- 		if (buflen && buffer && (buflen <= 0x400)) {
- allocbuf:
--			tmpbuf = kmalloc(tbuflen, GFP_KERNEL);
-+			tmpbuf = kvmalloc(tbuflen, GFP_KERNEL);
- 			if (!tmpbuf) {
- 				ret = -ENOMEM;
- 				goto error2;
-@@ -892,9 +892,9 @@ long keyctl_read_key(key_serial_t keyid, char __user *buffer, size_t buflen)
- 			 * again.
- 			 */
- 			if (!tmpbuf || unlikely(ret > tbuflen)) {
--				tbuflen = ret;
- 				if (unlikely(tmpbuf))
--					kzfree(tmpbuf);
-+					__kvzfree(tmpbuf, tbuflen);
-+				tbuflen = ret;
- 				goto allocbuf;
- 			}
- 
-@@ -903,7 +903,7 @@ long keyctl_read_key(key_serial_t keyid, char __user *buffer, size_t buflen)
- 		}
- 
- 		if (tmpbuf)
--			kzfree(tmpbuf);
-+			__kvzfree(tmpbuf, tbuflen);
- 	}
- 
- error2:
--- 
-2.18.1
+All this removes optimizations that made the code more difficult to
+understand. The performance difference is negligible, and I think that
+the memory footprint is fine.
+These optimizations (and others) could be discussed later. I'm
+integrating most of your changes in the next patch series.
 
+Thank you very much for this review and the code.
 
---------------38FC0D37D8A890979402365F--
+> 
+> 
+> Apart from simplifying the code, I also found the following issues,
+> which I have fixed in the modified patches:
+> 
+> put_hierarchy() has to drop a reference on its parent. (However, this
+> must not recurse, so we have to do it with a loop.)
 
+Right, fixed.
+
+> 
+> put_ruleset() is not in an RCU read-side critical section, so as soon
+> as it calls kfree_rcu(), "freeme" might disappear; but "orig" is in
+> "freeme", so when the loop tries to find the next element with
+> rb_next(orig), that can be a UAF.
+> rbtree_postorder_for_each_entry_safe() exists for dealing with such
+> issues.
+
+Good catch.
+
+> 
+> AFAIK the calls to rb_erase() in clean_ruleset() is not safe if
+> someone is concurrently accessing the rbtree as an RCU reader, because
+> concurrent rotations can prevent a lookup from succeeding. The
+> simplest fix is probably to just make any rbtree that has been
+> installed on a process immutable, and give up on the cleaning -
+> arguably the memory wastage that can cause is pretty limited.
+
+Yes, let's go for immutable domains.
+
+> (By the
+> way, as a future optimization, we might want to turn the rbtree into a
+> hashtable when installing it?)
+
+Definitely. This was a previous (private) implementation I did for
+domains, but to simplify the code I reused the same type as a ruleset. A
+future evolution of Landlock could add back this optimization.
+
+> 
+> The iput() in landlock_release_inode() looks unsafe - you need to
+> guarantee that even if the deletion of a ruleset races with
+> generic_shutdown_super(), every iput() for that superblock finishes
+> before landlock_release_inodes() returns, even if the iput() is
+> happening in the context of ruleset deletion. This is why
+> fsnotify_unmount_inodes() has that wait_var_event() at the end.
+
+Right, much better with that.
+
+> 
+> 
+> Aside from those things, there is also a major correctness issue where
+> I'm not sure how to solve it properly:
+> 
+> Let's say a process installs a filter on itself like this:
+> 
+> struct landlock_attr_ruleset ruleset = { .handled_access_fs =
+> ACCESS_FS_ROUGHLY_WRITE};
+> int ruleset_fd = landlock(LANDLOCK_CMD_CREATE_RULESET,
+> LANDLOCK_OPT_CREATE_RULESET, sizeof(ruleset), &ruleset);
+> struct landlock_attr_path_beneath path_beneath = {
+>   .ruleset_fd = ruleset_fd,
+>   .allowed_access = ACCESS_FS_ROUGHLY_WRITE,
+>   .parent_fd = open("/tmp/foobar", O_PATH),
+> };
+> landlock(LANDLOCK_CMD_ADD_RULE, LANDLOCK_OPT_ADD_RULE_PATH_BENEATH,
+> sizeof(path_beneath), &path_beneath);
+> prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
+> struct landlock_attr_enforce attr_enforce = { .ruleset_fd = ruleset_fd };
+> landlock(LANDLOCK_CMD_ENFORCE_RULESET, LANDLOCK_OPT_ENFORCE_RULESET,
+> sizeof(attr_enforce), &attr_enforce);
+> 
+> At this point, the process is not supposed to be able to write to
+> anything outside /tmp/foobar, right? But what happens if the process
+> does the following next?
+> 
+> struct landlock_attr_ruleset ruleset = { .handled_access_fs =
+> ACCESS_FS_ROUGHLY_WRITE};
+> int ruleset_fd = landlock(LANDLOCK_CMD_CREATE_RULESET,
+> LANDLOCK_OPT_CREATE_RULESET, sizeof(ruleset), &ruleset);
+> struct landlock_attr_path_beneath path_beneath = {
+>   .ruleset_fd = ruleset_fd,
+>   .allowed_access = ACCESS_FS_ROUGHLY_WRITE,
+>   .parent_fd = open("/", O_PATH),
+> };
+> landlock(LANDLOCK_CMD_ADD_RULE, LANDLOCK_OPT_ADD_RULE_PATH_BENEATH,
+> sizeof(path_beneath), &path_beneath);
+> prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
+> struct landlock_attr_enforce attr_enforce = { .ruleset_fd = ruleset_fd };
+> landlock(LANDLOCK_CMD_ENFORCE_RULESET, LANDLOCK_OPT_ENFORCE_RULESET,
+> sizeof(attr_enforce), &attr_enforce);
+> 
+> As far as I can tell from looking at the source, after this, you will
+> have write access to the entire filesystem again. I think the idea is
+> that LANDLOCK_CMD_ENFORCE_RULESET should only let you drop privileges,
+> not increase them, right?
+
+There is an additionnal check in syscall.c:get_path_from_fd(): it is
+forbidden to add a rule with a path which is not accessible (according
+to LANDLOCK_ACCESS_FS_OPEN) thanks to a call to security_file_open(),
+but this is definitely not perfect.
+
+> 
+> I think the easy way to fix this would be to add a bitmask to each
+> rule that says from which ruleset it originally comes, and then let
+> check_access_path() collect these bitmasks from each rule with OR, and
+> check at the end whether the resulting bitmask is full - if not, at
+> least one of the rulesets did not permit the access, and it should be
+> denied.
+> 
+> But maybe it would make more sense to change how the API works
+> instead, and get rid of the concept of "merging" two rulesets
+> together? Instead, we could make the API work like this:
+> 
+>  - LANDLOCK_CMD_CREATE_RULESET gives you a file descriptor whose
+> ->private_data contains a pointer to the old ruleset of the process,
+> as well as a pointer to a new empty ruleset.
+>  - LANDLOCK_CMD_ADD_RULE fails if the specified rule would not be
+> permitted by the old ruleset, then adds the rule to the new ruleset
+>  - LANDLOCK_CMD_ENFORCE_RULESET fails if the old ruleset pointer in
+> ->private_data doesn't match the current ruleset of the process, then
+> replaces the old ruleset with the new ruleset.
+> 
+> With this, the new ruleset is guaranteed to be a subset of the old
+> ruleset because each of the new ruleset's rules is permitted by the
+> old ruleset. (Unless the directory hierarchy rotates, but in that case
+> the inaccuracy isn't much worse than what would've been possible
+> through RCU path walk anyway AFAIK.)
+> 
+> What do you think?
+> 
+
+I would prefer to add the same checks you described at first (with
+check_access_path), but only when creating a new ruleset with
+merge_ruleset() (which should probably be renamed). This enables not to
+rely on a parent ruleset/domain until the enforcement, which is the case
+anyway.
+Unfortunately this doesn't work for some cases with bind mounts. Because
+check_access_path() goes through one path, another (bind mounted) path
+could be illegitimately allowed.
+That makes the problem a bit more complicated. A solution may be to keep
+track of the hierarchy of each rule (e.g. with a layer/depth number),
+and only allow an access request if at least a rule of each layer allow
+this access. In this case we also need to correctly handle the case when
+rules from different layers are tied to the same object.
+
+I would like Landlock to have "pure" syscalls, in the sense that a
+process A (e.g. a daemon) could prepare a ruleset and sends its FD to a
+process B which would then be able to use it to sandbox itself. I think
+it makes the reasoning clearer not to have a given ruleset (FD) tied to
+a domain (i.e. parent ruleset) at first.
+Landlock should (as much as possible) return an error if a syscall
+argument is invalid, not according to the current access control (which
+is not the case currently because of the security_file_open() check).
+This means that these additional merge_ruleset() checks should only
+affect the new domain/ruleset, but it should not be visible to userspace.
+
+In a future evolution, it may be useful to add a lock/seal command to
+deny any additional rule enforcement. However that may be
+counter-productive because that enable application developers (e.g. for
+a shell) to deny the use of Landlock features to its child processes.
+But it would be possible anyway with seccomp-bpf…
