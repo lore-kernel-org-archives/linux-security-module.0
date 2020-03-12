@@ -2,32 +2,47 @@ Return-Path: <SRS0=85Tz=45=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02455C2BB1D
-	for <linux-security-module@archiver.kernel.org>; Thu, 12 Mar 2020 19:38:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3F93C10DCE
+	for <linux-security-module@archiver.kernel.org>; Thu, 12 Mar 2020 21:49:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE493206E2
-	for <linux-security-module@archiver.kernel.org>; Thu, 12 Mar 2020 19:38:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D3B820674
+	for <linux-security-module@archiver.kernel.org>; Thu, 12 Mar 2020 21:49:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b="M0zd3UDi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726553AbgCLTiX (ORCPT
+        id S1726528AbgCLVtH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 12 Mar 2020 15:38:23 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:56666 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726483AbgCLTiX (ORCPT
+        Thu, 12 Mar 2020 17:49:07 -0400
+Received: from hr2.samba.org ([144.76.82.148]:24712 "EHLO hr2.samba.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726481AbgCLVtH (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 12 Mar 2020 15:38:23 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jCTeV-00AJDj-Tq; Thu, 12 Mar 2020 19:37:55 +0000
-Date:   Thu, 12 Mar 2020 19:37:55 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
+        Thu, 12 Mar 2020 17:49:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
+         s=42; h=Message-ID:Cc:To:From:Date;
+        bh=1JcRWJgIjBZEatikoz0G3mL9EJsdG0P/Ykm3OGVRQo4=; b=M0zd3UDimz2yegwwlZBWRu1Sjm
+        Hb2a9sq9I/B2kDBeJsob+VR2XNQaYH9Iy1mlh80tLPM12bcDfMTE7Vl1rQta5McDePT92ZD8iJVx9
+        4tIkUFiaXRuJxqXRY1b3LYV5TT9y0Y51MUhnzpAXCmeCh50oytdBZauYcQ24b2HFNK/RLcTAtOrD5
+        hTBFgTzdVQ0ofrJuWOVAaffympfy8PogEB8b5bMOrBCYsIUxsV32VOqKq22+55Ix0JZtWjbxJNRV1
+        6vDfCbps6fckISnbwkJA83CC45iVr8ot0VEw954sESPpX3S08kajgNhTB7NTflfsu+IYxtRNf86CY
+        b+xx302xd92v1CkKTYCFMBwqmCqn0RvpztruQ3/4/poqm41ia+R5OfQLbgustha/L4tkO0VQG5NXK
+        fyDcx1FGbGK/vnFmBQd79m7VBcS1nIU1N2SRWXJu2fLt8wJuxfBAzUQjf6/twU2w9n5Gnq5D+R541
+        DWEaB6FUBoQZBsoGn8v9YsSo;
+Received: from [127.0.0.2] (localhost [127.0.0.1])
+        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_RSA_CHACHA20_POLY1305:256)
+        (Exim)
+        id 1jCVhO-0001fg-IM; Thu, 12 Mar 2020 21:49:02 +0000
+Date:   Thu, 12 Mar 2020 14:48:54 -0700
+From:   Jeremy Allison <jra@samba.org>
 To:     Stefan Metzmacher <metze@samba.org>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         David Howells <dhowells@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>, Ian Kent <raven@themaw.net>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>,
         Miklos Szeredi <mszeredi@redhat.com>,
         Christian Brauner <christian@brauner.io>,
         Jann Horn <jannh@google.com>,
@@ -37,11 +52,11 @@ Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         LSM List <linux-security-module@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jeremy Allison <jra@samba.org>,
         Ralph =?iso-8859-1?Q?B=F6hme?= <slow@samba.org>,
         Volker Lendecke <vl@sernet.de>
 Subject: Re: [PATCH 01/14] VFS: Add additional RESOLVE_* flags [ver #18]
-Message-ID: <20200312193755.GL23230@ZenIV.linux.org.uk>
+Message-ID: <20200312214854.GA19247@jeremy-acer>
+Reply-To: Jeremy Allison <jra@samba.org>
 References: <158376244589.344135.12925590041630631412.stgit@warthog.procyon.org.uk>
  <158376245699.344135.7522994074747336376.stgit@warthog.procyon.org.uk>
  <20200310005549.adrn3yf4mbljc5f6@yavin>
@@ -55,44 +70,57 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <8d24e9f6-8e90-96bb-6e98-035127af0327@samba.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 On Thu, Mar 12, 2020 at 06:11:09PM +0100, Stefan Metzmacher wrote:
+> Am 12.03.20 um 17:24 schrieb Linus Torvalds:
+> > On Thu, Mar 12, 2020 at 2:08 AM Stefan Metzmacher <metze@samba.org> wrote:
+> >>
+> >> The whole discussion was triggered by the introduction of a completely
+> >> new fsinfo() call:
+> >>
+> >> Would you propose to have 'at_flags' and 'resolve_flags' passed in here?
+> > 
+> > Yes, I think that would be the way to go.
+> 
+> Ok, that's also fine for me:-)
+> 
+> >>> If we need linkat2() and friends, so be it. Do we?
+> >>
+> >> Yes, I'm going to propose something like this, as it would make the life
+> >> much easier for Samba to have the new features available on all path
+> >> based syscalls.
+> > 
+> > Will samba actually use them? I think we've had extensions before that
+> > weren't worth the non-portability pain?
+> 
+> Yes, we're currently moving to the portable *at() calls as a start.
+> And we already make use of Linux only feature for performance reasons
+> in other places. Having the new resolve flags will make it possible to
+> move some of the performance intensive work into non-linux specific
+> modules as fallback.
+> 
+> I hope that we'll use most of this through io_uring in the end,
+> that's the reason Jens added the IORING_REGISTER_PERSONALITY feature
+> used for IORING_OP_OPENAT2.
+> 
+> > But yes, if we have a major package like samba use it, then by all
+> > means let's add linkat2(). How many things are we talking about? We
+> > have a number of system calls that do *not* take flags, but do do
+> > pathname walking. I'm thinking things like "mkdirat()"?)
+> 
+> I haven't looked them up in detail yet.
+> Jeremy can you provide a list?
 
-> If that works safely for hardlinks and having another process doing a
-> rename between openat2() and unlinkat(), we could try that.
-> 
-> My initial naive idea was to have one syscall instead of
-> linkat2/renameat3/unlinkat2.
-> 
-> int xlinkat(int src_dfd, const char *src_path,
->             int dst_dfd, const char *dst_path,
->             const struct xlinkat_how *how, size_t how_size);
-> 
-> struct xlinkat_how {
->        __u64 src_at_flags;
->        __u64 src_resolve_flags;
->        __u64 dst_at_flags;
->        __u64 dst_resolve_flags;
->        __u64 rename_flags;
->        __s32 src_fd;
-> };
-> 
-> With src_dfd=-1, src_path=NULL, how.src_fd = -1, this would be like
-> linkat().
-> With dst_dfd=-1, dst_path=NULL, it would be like unlinkat().
-> Otherwise a renameat2().
->
-> If how.src_fd is not -1, it would be checked to be the same path as
-> specified by src_dfd and src_path.
+Fixing the flags argument on fchmodat() to actually *implement*
+AT_SYMLINK_NOFOLLOW would be a good start :-).
 
-"Checked" as in...?  And is that the same path or another link to the
-same object, or...?
+As for the syscalls that don't have
+flags I'm thinking of the things like:
 
-The idea of dumping all 3 into the same syscall looks wrong - compare
-the effects of link() and rename() on the opened files, for starters,
-and try to come up with documentation for all of that.  Multiplexors
-tend to be very bad, in large part because they have so bloody
-convoluted semantics...
+getxattr/setxattr/removexattr just off the top of my head.
+
+Jeremy.
