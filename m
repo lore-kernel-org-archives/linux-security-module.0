@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7437C10DCE
-	for <linux-security-module@archiver.kernel.org>; Thu, 12 Mar 2020 19:26:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02455C2BB1D
+	for <linux-security-module@archiver.kernel.org>; Thu, 12 Mar 2020 19:38:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 987E8206EB
-	for <linux-security-module@archiver.kernel.org>; Thu, 12 Mar 2020 19:26:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE493206E2
+	for <linux-security-module@archiver.kernel.org>; Thu, 12 Mar 2020 19:38:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726803AbgCLT0g (ORCPT
+        id S1726553AbgCLTiX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 12 Mar 2020 15:26:36 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:56540 "EHLO
+        Thu, 12 Mar 2020 15:38:23 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:56666 "EHLO
         ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726510AbgCLT0f (ORCPT
+        with ESMTP id S1726483AbgCLTiX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 12 Mar 2020 15:26:35 -0400
+        Thu, 12 Mar 2020 15:38:23 -0400
 Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jCTSq-00AIsn-AL; Thu, 12 Mar 2020 19:25:52 +0000
-Date:   Thu, 12 Mar 2020 19:25:52 +0000
+        id 1jCTeV-00AJDj-Tq; Thu, 12 Mar 2020 19:37:55 +0000
+Date:   Thu, 12 Mar 2020 19:37:55 +0000
 From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Stefan Metzmacher <metze@samba.org>,
+To:     Stefan Metzmacher <metze@samba.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         David Howells <dhowells@redhat.com>,
         Aleksa Sarai <cyphar@cyphar.com>, Ian Kent <raven@themaw.net>,
         Miklos Szeredi <mszeredi@redhat.com>,
@@ -36,9 +36,12 @@ Cc:     Stefan Metzmacher <metze@samba.org>,
         Linux API <linux-api@vger.kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         LSM List <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jeremy Allison <jra@samba.org>,
+        Ralph =?iso-8859-1?Q?B=F6hme?= <slow@samba.org>,
+        Volker Lendecke <vl@sernet.de>
 Subject: Re: [PATCH 01/14] VFS: Add additional RESOLVE_* flags [ver #18]
-Message-ID: <20200312192552.GK23230@ZenIV.linux.org.uk>
+Message-ID: <20200312193755.GL23230@ZenIV.linux.org.uk>
 References: <158376244589.344135.12925590041630631412.stgit@warthog.procyon.org.uk>
  <158376245699.344135.7522994074747336376.stgit@warthog.procyon.org.uk>
  <20200310005549.adrn3yf4mbljc5f6@yavin>
@@ -47,42 +50,49 @@ References: <158376244589.344135.12925590041630631412.stgit@warthog.procyon.org.
  <CAHk-=wiaL6zznNtCHKg6+MJuCqDxO=yVfms3qR9A0czjKuSSiA@mail.gmail.com>
  <3d209e29-e73d-23a6-5c6f-0267b1e669b6@samba.org>
  <CAHk-=wgu3Wo_xcjXnwski7JZTwQFaMmKD0hoTZ=hqQv3-YojSg@mail.gmail.com>
+ <8d24e9f6-8e90-96bb-6e98-035127af0327@samba.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wgu3Wo_xcjXnwski7JZTwQFaMmKD0hoTZ=hqQv3-YojSg@mail.gmail.com>
+In-Reply-To: <8d24e9f6-8e90-96bb-6e98-035127af0327@samba.org>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Mar 12, 2020 at 09:24:49AM -0700, Linus Torvalds wrote:
-> Would that be basically just an AT_EMPTY_PATH kind of thing? IOW,
-> you'd be able to remove a file by doing
+On Thu, Mar 12, 2020 at 06:11:09PM +0100, Stefan Metzmacher wrote:
+
+> If that works safely for hardlinks and having another process doing a
+> rename between openat2() and unlinkat(), we could try that.
 > 
->    fd = open(path.., O_PATH);
->    unlinkat(fd, "", AT_EMPTY_PATH);
+> My initial naive idea was to have one syscall instead of
+> linkat2/renameat3/unlinkat2.
 > 
-> Hmm. We have _not_ allowed filesystem changes without that last
-> component lookup. Of course, with our dentry model, we *can* do it,
-> but this smells fairly fundamental to me.
-
-That's a bloody bad idea.  It breeds fuckloads of corner cases, it does not
-match the locking model at all and I don't want to even think of e.g.
-the interplay with open-by-fhandle ("Parent?  What parent?"), etc.
-
-Fundamentally, there are operations on objects and there are operations
-on links to objects.  Mixing those is the recipe for massive headache.
-
-> It might avoid some of the extra system calls (ie you could use
-> openat2() to do the path walking part, and then
-> unlinkat(AT_EMPTY_PATH) to remove it, and have a "fstat()" etc in
-> between the verify that it's the right type of file or whatever - and
-> you'd not need an unlinkat2() with resolve flags).
+> int xlinkat(int src_dfd, const char *src_path,
+>             int dst_dfd, const char *dst_path,
+>             const struct xlinkat_how *how, size_t how_size);
 > 
-> I think Al needs to ok this kind of change. Maybe you've already
-> discussed it with him and I just missed it.
+> struct xlinkat_how {
+>        __u64 src_at_flags;
+>        __u64 src_resolve_flags;
+>        __u64 dst_at_flags;
+>        __u64 dst_resolve_flags;
+>        __u64 rename_flags;
+>        __s32 src_fd;
+> };
+> 
+> With src_dfd=-1, src_path=NULL, how.src_fd = -1, this would be like
+> linkat().
+> With dst_dfd=-1, dst_path=NULL, it would be like unlinkat().
+> Otherwise a renameat2().
+>
+> If how.src_fd is not -1, it would be checked to be the same path as
+> specified by src_dfd and src_path.
 
-They have not.  And IME samba folks tend to present the set of
-primitives they want without bothering to explain what do they
-want to factorize that way, let alone why it should be factorized
-that way...
+"Checked" as in...?  And is that the same path or another link to the
+same object, or...?
+
+The idea of dumping all 3 into the same syscall looks wrong - compare
+the effects of link() and rename() on the opened files, for starters,
+and try to come up with documentation for all of that.  Multiplexors
+tend to be very bad, in large part because they have so bloody
+convoluted semantics...
