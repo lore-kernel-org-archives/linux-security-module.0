@@ -4,45 +4,45 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44BBEC5ACC0
-	for <linux-security-module@archiver.kernel.org>; Fri, 13 Mar 2020 15:21:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF977C4CECE
+	for <linux-security-module@archiver.kernel.org>; Fri, 13 Mar 2020 15:21:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CE362074E
-	for <linux-security-module@archiver.kernel.org>; Fri, 13 Mar 2020 15:21:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8757620724
+	for <linux-security-module@archiver.kernel.org>; Fri, 13 Mar 2020 15:21:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cbWP3/dz"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HI7pP3qm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726964AbgCMPVg (ORCPT
+        id S1726998AbgCMPVo (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 13 Mar 2020 11:21:36 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:24951 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726930AbgCMPVf (ORCPT
+        Fri, 13 Mar 2020 11:21:44 -0400
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:27316 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726681AbgCMPVf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
         Fri, 13 Mar 2020 11:21:35 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
         s=mimecast20190719; t=1584112894;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:in-reply-to:in-reply-to:references:references;
-        bh=Guy49jz/MclwiKRYm/R98tQ5vcDgMGGlebOY5cev/kE=;
-        b=cbWP3/dzBMAID5PrHP4UrOXqg8FeKgrsiMHZCQgR5jXOOOARuG7jl4DquqpLnUZKHrfgwC
-        1jVe4Utt1p/swYLfl2/46K3TY13FbW6GLktAS09mwDLDLL58r3CCnimygxPkXSg527bTWU
-        hgskuju5J0dzQP/lbHw18ZV4Q7zUpuA=
+        bh=IgMdwtUBEGAuM/8z5e97O8Otg6NfgxXQdFDc4jd+DZ0=;
+        b=HI7pP3qmZp4wLPpLWhs902AtRKBnJ4juj3R8nt7Mb4VVCALqWwZoK+d6PCM0fA6ZYJjnko
+        iUrmiAIj2A0gE07Mi76XBYR/fuZE8+OWxZ3tWynhSU4L19ydyx5Gwfg08wfAwe4+Gv+37r
+        YOiKY0ujYz5SjTiDUwS10sxY7+v6dEQ=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-5-VNOdMdZHMWGwBA7EAb8cFg-1; Fri, 13 Mar 2020 11:21:32 -0400
-X-MC-Unique: VNOdMdZHMWGwBA7EAb8cFg-1
+ us-mta-415-7l5v2bgOOHicxRo9VhQqFw-1; Fri, 13 Mar 2020 11:21:30 -0400
+X-MC-Unique: 7l5v2bgOOHicxRo9VhQqFw-1
 Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4E882808245;
-        Fri, 13 Mar 2020 15:21:30 +0000 (UTC)
-Received: from llong.com (ovpn-125-21.rdu2.redhat.com [10.10.125.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 46A8291D61;
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 14CE8107B767;
         Fri, 13 Mar 2020 15:21:28 +0000 (UTC)
+Received: from llong.com (ovpn-125-21.rdu2.redhat.com [10.10.125.21])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1316492D30;
+        Fri, 13 Mar 2020 15:21:25 +0000 (UTC)
 From:   Waiman Long <longman@redhat.com>
 To:     David Howells <dhowells@redhat.com>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
@@ -58,9 +58,9 @@ Cc:     keyrings@vger.kernel.org, linux-kernel@vger.kernel.org,
         Eric Biggers <ebiggers@google.com>,
         Chris von Recklinghausen <crecklin@redhat.com>,
         Waiman Long <longman@redhat.com>
-Subject: [PATCH v3 3/3] KEYS: Use kvmalloc() to better handle large buffer allocation
-Date:   Fri, 13 Mar 2020 11:21:02 -0400
-Message-Id: <20200313152102.1707-4-longman@redhat.com>
+Subject: [PATCH v3 2/3] KEYS: Avoid false positive ENOMEM error on key read
+Date:   Fri, 13 Mar 2020 11:21:01 -0400
+Message-Id: <20200313152102.1707-3-longman@redhat.com>
 In-Reply-To: <20200313152102.1707-1-longman@redhat.com>
 References: <20200313152102.1707-1-longman@redhat.com>
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
@@ -68,98 +68,83 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-For large multi-page temporary buffer allocation, the security/keys
-subsystem don't need contiguous physical pages. It will work perfectly
-fine with virtually mapped pages.
+By allocating a kernel buffer with an user-supplied buffer length, it
+is possible that a false positive ENOMEM error may be returned because
+the user-supplied length is just too large even if the system do have
+enough memory to hold the actual key data.
 
-Replace the kmalloc() call by kvmalloc() and provide a __kvzfree()
-helper function to clear and free the kvmalloc'ed buffer. This will
-reduce the chance of memory allocation failure just because of highly
-fragmented pages.
+To reduce this possibility, we set a threshold (1024) over which we
+do check the actual key length first before allocating a buffer of the
+right size to hold it.
 
-Suggested-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Waiman Long <longman@redhat.com>
 ---
- security/keys/internal.h | 14 ++++++++++++++
- security/keys/keyctl.c   | 10 +++++-----
- 2 files changed, 19 insertions(+), 5 deletions(-)
+ security/keys/keyctl.c | 48 ++++++++++++++++++++++++++++++++----------
+ 1 file changed, 37 insertions(+), 11 deletions(-)
 
-diff --git a/security/keys/internal.h b/security/keys/internal.h
-index ba3e2da14cef..855b11eb73ee 100644
---- a/security/keys/internal.h
-+++ b/security/keys/internal.h
-@@ -16,6 +16,8 @@
- #include <linux/keyctl.h>
- #include <linux/refcount.h>
- #include <linux/compat.h>
-+#include <linux/mm.h>
-+#include <linux/vmalloc.h>
- 
- struct iovec;
- 
-@@ -349,4 +351,16 @@ static inline void key_check(const struct key *key)
- 
- #endif
- 
-+/*
-+ * Helper function to clear and free a kvmalloc'ed memory object.
-+ */
-+static inline void __kvzfree(const void *addr, size_t len)
-+{
-+	if (is_vmalloc_addr(addr)) {
-+		memset((void *)addr, 0, len);
-+		vfree(addr);
-+	} else {
-+		kzfree(addr);
-+	}
-+}
- #endif /* _INTERNAL_H */
 diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
-index a05a4dd2f9ce..878259cf35d5 100644
+index 81f68e434b9f..a05a4dd2f9ce 100644
 --- a/security/keys/keyctl.c
 +++ b/security/keys/keyctl.c
-@@ -339,7 +339,7 @@ long keyctl_update_key(key_serial_t id,
- 	payload = NULL;
- 	if (plen) {
- 		ret = -ENOMEM;
--		payload = kmalloc(plen, GFP_KERNEL);
-+		payload = kvmalloc(plen, GFP_KERNEL);
- 		if (!payload)
- 			goto error;
- 
-@@ -360,7 +360,7 @@ long keyctl_update_key(key_serial_t id,
- 
- 	key_ref_put(key_ref);
- error2:
--	kzfree(payload);
-+	__kvzfree(payload, plen);
- error:
- 	return ret;
- }
-@@ -893,7 +893,7 @@ long keyctl_read_key(key_serial_t keyid, char __user *buffer, size_t buflen)
+@@ -877,24 +877,50 @@ long keyctl_read_key(key_serial_t keyid, char __user *buffer, size_t buflen)
+ 		 * transferring them to user buffer to avoid potential
+ 		 * deadlock involving page fault and mmap_sem.
  		 */
- 		if (buflen <= 0x400) {
- allocbuf:
--			tmpbuf = kmalloc(tmpbuflen, GFP_KERNEL);
-+			tmpbuf = kvmalloc(tmpbuflen, GFP_KERNEL);
- 			if (!tmpbuf) {
- 				ret = -ENOMEM;
- 				goto error2;
-@@ -911,7 +911,7 @@ long keyctl_read_key(key_serial_t keyid, char __user *buffer, size_t buflen)
- 			 */
- 			if (!tmpbuf || unlikely(ret > tmpbuflen)) {
- 				if (unlikely(tmpbuf))
--					kzfree(tmpbuf);
-+					__kvzfree(tmpbuf, tmpbuflen);
- 				tmpbuflen = ret;
- 				goto allocbuf;
- 			}
-@@ -920,7 +920,7 @@ long keyctl_read_key(key_serial_t keyid, char __user *buffer, size_t buflen)
+-		char *tmpbuf = kmalloc(buflen, GFP_KERNEL);
+-
+-		if (!tmpbuf) {
+-			ret = -ENOMEM;
+-			goto error2;
+-		}
+-		ret = __keyctl_read_key(key, tmpbuf, buflen);
++		char *tmpbuf = NULL;
++		size_t tmpbuflen = buflen;
+ 
+ 		/*
+-		 * Read methods will just return the required length
+-		 * without any copying if the provided length isn't big
+-		 * enough.
++		 * We don't want an erronous -ENOMEM error due to an
++		 * arbitrary large user-supplied buflen. So if buflen
++		 * exceeds a threshold (1024 bytes in this case), we call
++		 * the read method twice. The first time to get the buffer
++		 * length and the second time to read out the key data.
++		 *
++		 * N.B. All the read methods will return the required
++		 *      buffer length with a NULL input buffer or when
++		 *      the input buffer length isn't large enough.
+ 		 */
++		if (buflen <= 0x400) {
++allocbuf:
++			tmpbuf = kmalloc(tmpbuflen, GFP_KERNEL);
++			if (!tmpbuf) {
++				ret = -ENOMEM;
++				goto error2;
++			}
++		}
++
++		ret = __keyctl_read_key(key, tmpbuf, tmpbuflen);
+ 		if ((ret > 0) && (ret <= buflen)) {
++			/*
++			 * It is possible, though unlikely, that the key
++			 * changes in between the up_read->down_read period.
++			 * If the key becomes longer, we will have to
++			 * allocate a larger buffer and redo the key read
++			 * again.
++			 */
++			if (!tmpbuf || unlikely(ret > tmpbuflen)) {
++				if (unlikely(tmpbuf))
++					kzfree(tmpbuf);
++				tmpbuflen = ret;
++				goto allocbuf;
++			}
++
+ 			if (copy_to_user(buffer, tmpbuf, ret))
  				ret = -EFAULT;
  		}
- 		if (tmpbuf)
--			kzfree(tmpbuf);
-+			__kvzfree(tmpbuf, tmpbuflen);
+-		kzfree(tmpbuf);
++		if (tmpbuf)
++			kzfree(tmpbuf);
  	}
  
  error2:
