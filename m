@@ -2,87 +2,99 @@ Return-Path: <SRS0=meF1=46=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97B25C4CECE
-	for <linux-security-module@archiver.kernel.org>; Fri, 13 Mar 2020 16:49:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CBF3C4CECE
+	for <linux-security-module@archiver.kernel.org>; Fri, 13 Mar 2020 16:57:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41D08206B7
-	for <linux-security-module@archiver.kernel.org>; Fri, 13 Mar 2020 16:49:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53E86206E7
+	for <linux-security-module@archiver.kernel.org>; Fri, 13 Mar 2020 16:57:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b="iKm45esC"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eOWeSrCD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726676AbgCMQtO (ORCPT
+        id S1726406AbgCMQ5z (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 13 Mar 2020 12:49:14 -0400
-Received: from hr2.samba.org ([144.76.82.148]:26618 "EHLO hr2.samba.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726406AbgCMQtO (ORCPT
+        Fri, 13 Mar 2020 12:57:55 -0400
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:52944 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726550AbgCMQ5z (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 13 Mar 2020 12:49:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-         s=42; h=Message-ID:Cc:To:From:Date;
-        bh=4vhKPMR7SeZxlf7ZpBtqsj7Dz5N+IM1oiuv9cBc+Ink=; b=iKm45esCD3Z7W10y62bNXkvQId
-        yQpjzJBHnGD8w/MVLMPLZSzXI3W1J0ESUAzUdCzKsrTNuazHyXEZuU6Un0upKxGdtnHfRTNdzXqlL
-        E8WpeKrqXYyNYPmOy+ukbYgpqiE16Za+rqYwxLlMvA22gUMj8SxYEbGGbeD/1a+4eqihAs4n9I2Tb
-        NZOOZh2TvLbutKsObumOFis7hoi4QZbGdla4YE0M25C2Ze8dCxTMvLgNLYzAZCxE0NH5vs1maItsK
-        9GzZP4YjFpJt2eAqHJmS8SaZqvxN1AsLwDyH76zUZ4Zo1vVDoXJASgCkN2QfVQzlHV0GfIGN0DVOU
-        uD1tuibwoGkWrtuinM5SyWGu+mx0eCb/BYwZjEssXYc+bj0KTc0I+E/FVYy5313XY6P6ghsaorG21
-        RRRfxJvciWou6kGv/9FQR66d98ys9flGp9S8QD5tUXbxcmQZQbPASuDNh5aB9ANU5diyWYtTkeRnc
-        d3m96Qz+vwBVqoehb9dqX+1G;
-Received: from [127.0.0.2] (localhost [127.0.0.1])
-        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_RSA_CHACHA20_POLY1305:256)
-        (Exim)
-        id 1jCnUj-0001NY-Ee; Fri, 13 Mar 2020 16:49:09 +0000
-Date:   Fri, 13 Mar 2020 09:48:57 -0700
-From:   Jeremy Allison <jra@samba.org>
-To:     Aleksa Sarai <cyphar@cyphar.com>
-Cc:     Stefan Metzmacher <metze@samba.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Christian Brauner <christian@brauner.io>,
-        Jann Horn <jannh@google.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Karel Zak <kzak@redhat.com>, jlayton@redhat.com,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ralph =?iso-8859-1?Q?B=F6hme?= <slow@samba.org>,
-        Volker Lendecke <vl@sernet.de>
-Subject: Re: [PATCH 01/14] VFS: Add additional RESOLVE_* flags [ver #18]
-Message-ID: <20200313164857.GA17682@jeremy-acer>
-Reply-To: Jeremy Allison <jra@samba.org>
-References: <158376244589.344135.12925590041630631412.stgit@warthog.procyon.org.uk>
- <158376245699.344135.7522994074747336376.stgit@warthog.procyon.org.uk>
- <20200310005549.adrn3yf4mbljc5f6@yavin>
- <CAHk-=wiEBNFJ0_riJnpuUXTO7+_HByVo-R3pGoB_84qv3LzHxA@mail.gmail.com>
- <580352.1583825105@warthog.procyon.org.uk>
- <CAHk-=wiaL6zznNtCHKg6+MJuCqDxO=yVfms3qR9A0czjKuSSiA@mail.gmail.com>
- <3d209e29-e73d-23a6-5c6f-0267b1e669b6@samba.org>
- <CAHk-=wgu3Wo_xcjXnwski7JZTwQFaMmKD0hoTZ=hqQv3-YojSg@mail.gmail.com>
- <8d24e9f6-8e90-96bb-6e98-035127af0327@samba.org>
- <20200313095901.tdv4vl7envypgqfz@yavin>
+        Fri, 13 Mar 2020 12:57:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584118674;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=9j8OnyBfNlILX87ciN7BUxM/us5ynsXzxTQG5ddWEmM=;
+        b=eOWeSrCD7Uq7hUGuQbefMek4Q4vjgwhE3OQSSTh2l18haNxK86ffwAyJ/cTNYWYWRkTj0/
+        KUTl8jhiKcI5RKT0EDc/Gsiy1maFS3SO0Ragf0CAaZ/4AgbEfdTYTVJsD+wHC+OhSAc2aa
+        3RIQJMGdZIu4v3jr5P5T0DixNqKz0TU=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-61-RJuFnENPPai3qqAECQMLXA-1; Fri, 13 Mar 2020 12:57:50 -0400
+X-MC-Unique: RJuFnENPPai3qqAECQMLXA-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 53604107ACC4;
+        Fri, 13 Mar 2020 16:57:47 +0000 (UTC)
+Received: from llong.remote.csb (ovpn-125-21.rdu2.redhat.com [10.10.125.21])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C7D905D9CA;
+        Fri, 13 Mar 2020 16:57:44 +0000 (UTC)
+Subject: Re: [PATCH v2 1/2] KEYS: Don't write out to userspace while holding
+ key semaphore
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     David Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Mimi Zohar <zohar@linux.ibm.com>, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        Sumit Garg <sumit.garg@linaro.org>,
+        Jerry Snitselaar <jsnitsel@redhat.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Chris von Recklinghausen <crecklin@redhat.com>
+References: <20200308170410.14166-1-longman@redhat.com>
+ <20200308170410.14166-2-longman@redhat.com>
+ <20200313010425.GA11360@linux.intel.com>
+ <e2dc038b-0283-0bf6-45f6-ad2dd0775e81@redhat.com>
+ <20200313152837.GB142269@linux.intel.com>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <f4526e6f-0038-11f1-7950-e91ce90e49c1@redhat.com>
+Date:   Fri, 13 Mar 2020 12:57:44 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200313095901.tdv4vl7envypgqfz@yavin>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200313152837.GB142269@linux.intel.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Mar 13, 2020 at 08:59:01PM +1100, Aleksa Sarai wrote:
-> 
-> I have heard some folks asking for a way to create a directory and get a
-> handle to it atomically -- so arguably this is something that could be
-> inside openat2()'s feature set (O_MKDIR?). But I'm not sure how popular
-> of an idea this is.
+On 3/13/20 11:28 AM, Jarkko Sakkinen wrote:
+> On Fri, Mar 13, 2020 at 09:29:47AM -0400, Waiman Long wrote:
+>> One way to do that is to extract the down_read/up_read block into a
+>> helper function and then have 2 separate paths - one for length
+>> retrieval and another one for reading the key. I think that will make
+>> the code a bit easier easier to read.
+>>
+>> Thanks,
+>> Longman
+> If it is not too much trouble for you, I think this would be a legit
+> cleanup to do.
 
-This would be very useful to prevent race conditions between making
-a directory and EA's on it, as are needed by Samba for
-DOS attributes and Windows/NFSv4 ACLS.
+Done. Please review the v3 patch.
+
+Thanks,
+Longman
+
