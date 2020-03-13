@@ -2,164 +2,115 @@ Return-Path: <SRS0=meF1=46=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F8C7C10DCE
-	for <linux-security-module@archiver.kernel.org>; Fri, 13 Mar 2020 17:50:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC10DC4CECE
+	for <linux-security-module@archiver.kernel.org>; Fri, 13 Mar 2020 18:33:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0715B206E9
-	for <linux-security-module@archiver.kernel.org>; Fri, 13 Mar 2020 17:50:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BKbfHUHG"
+	by mail.kernel.org (Postfix) with ESMTP id 93ECA20752
+	for <linux-security-module@archiver.kernel.org>; Fri, 13 Mar 2020 18:33:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727231AbgCMRuF (ORCPT
+        id S1726651AbgCMSdv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 13 Mar 2020 13:50:05 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:48940 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727210AbgCMRuF (ORCPT
+        Fri, 13 Mar 2020 14:33:51 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:45386 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726339AbgCMSdv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 13 Mar 2020 13:50:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584121804;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=2y9bOOdnV7SoV4MD1WpKfVVbv/C4nrVUnfO1nhE2Kbg=;
-        b=BKbfHUHGwbPgXxt8H2dKbEwjVKtCfvJMltrqOd1jqonr9vqV18O8iNDe+gLAaDJPq33g8S
-        njpCPxz7ywWdwykXl2u/6/kG2SQKiFShdtJEVubMs+gjh2h8zj/tV2rHpeGAZj+aUylFKZ
-        851NYnGRhko7toZJILTXQerD6YXB+jE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-245-UH7TaFUzPLSR-Dn6vFuh8w-1; Fri, 13 Mar 2020 13:50:02 -0400
-X-MC-Unique: UH7TaFUzPLSR-Dn6vFuh8w-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7490E801E6D;
-        Fri, 13 Mar 2020 17:50:00 +0000 (UTC)
-Received: from llong.remote.csb (ovpn-125-21.rdu2.redhat.com [10.10.125.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 82A4960BF7;
-        Fri, 13 Mar 2020 17:49:58 +0000 (UTC)
-Subject: Re: [PATCH v3 3/3] KEYS: Use kvmalloc() to better handle large buffer
- allocation
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     David Howells <dhowells@redhat.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Mimi Zohar <zohar@linux.ibm.com>, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        Sumit Garg <sumit.garg@linaro.org>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Chris von Recklinghausen <crecklin@redhat.com>
-References: <20200313152102.1707-1-longman@redhat.com>
- <20200313152102.1707-4-longman@redhat.com>
- <20200313164306.GA907@sol.localdomain>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <8f2f1787-88b0-f86d-991c-34cfd2f9b4aa@redhat.com>
-Date:   Fri, 13 Mar 2020 13:49:57 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Fri, 13 Mar 2020 14:33:51 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jCp36-00AyVa-Sz; Fri, 13 Mar 2020 18:28:45 +0000
+Date:   Fri, 13 Mar 2020 18:28:44 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     Stefan Metzmacher <metze@samba.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>,
+        Ian Kent <raven@themaw.net>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Christian Brauner <christian@brauner.io>,
+        Jann Horn <jannh@google.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Karel Zak <kzak@redhat.com>, jlayton@redhat.com,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jeremy Allison <jra@samba.org>,
+        Ralph =?iso-8859-1?Q?B=F6hme?= <slow@samba.org>,
+        Volker Lendecke <vl@sernet.de>
+Subject: Re: [PATCH 01/14] VFS: Add additional RESOLVE_* flags [ver #18]
+Message-ID: <20200313182844.GO23230@ZenIV.linux.org.uk>
+References: <158376244589.344135.12925590041630631412.stgit@warthog.procyon.org.uk>
+ <158376245699.344135.7522994074747336376.stgit@warthog.procyon.org.uk>
+ <20200310005549.adrn3yf4mbljc5f6@yavin>
+ <CAHk-=wiEBNFJ0_riJnpuUXTO7+_HByVo-R3pGoB_84qv3LzHxA@mail.gmail.com>
+ <580352.1583825105@warthog.procyon.org.uk>
+ <CAHk-=wiaL6zznNtCHKg6+MJuCqDxO=yVfms3qR9A0czjKuSSiA@mail.gmail.com>
+ <3d209e29-e73d-23a6-5c6f-0267b1e669b6@samba.org>
+ <CAHk-=wgu3Wo_xcjXnwski7JZTwQFaMmKD0hoTZ=hqQv3-YojSg@mail.gmail.com>
+ <8d24e9f6-8e90-96bb-6e98-035127af0327@samba.org>
+ <20200313095901.tdv4vl7envypgqfz@yavin>
 MIME-Version: 1.0
-In-Reply-To: <20200313164306.GA907@sol.localdomain>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200313095901.tdv4vl7envypgqfz@yavin>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 3/13/20 12:43 PM, Eric Biggers wrote:
-> On Fri, Mar 13, 2020 at 11:21:02AM -0400, Waiman Long wrote:
->> For large multi-page temporary buffer allocation, the security/keys
->> subsystem don't need contiguous physical pages. It will work perfectly
->> fine with virtually mapped pages.
->>
->> Replace the kmalloc() call by kvmalloc() and provide a __kvzfree()
->> helper function to clear and free the kvmalloc'ed buffer. This will
->> reduce the chance of memory allocation failure just because of highly
->> fragmented pages.
->>
->> Suggested-by: David Howells <dhowells@redhat.com>
->> Signed-off-by: Waiman Long <longman@redhat.com>
->> ---
->>  security/keys/internal.h | 14 ++++++++++++++
->>  security/keys/keyctl.c   | 10 +++++-----
->>  2 files changed, 19 insertions(+), 5 deletions(-)
->>
->> diff --git a/security/keys/internal.h b/security/keys/internal.h
->> index ba3e2da14cef..855b11eb73ee 100644
->> --- a/security/keys/internal.h
->> +++ b/security/keys/internal.h
->> @@ -16,6 +16,8 @@
->>  #include <linux/keyctl.h>
->>  #include <linux/refcount.h>
->>  #include <linux/compat.h>
->> +#include <linux/mm.h>
->> +#include <linux/vmalloc.h>
->>  
->>  struct iovec;
->>  
->> @@ -349,4 +351,16 @@ static inline void key_check(const struct key *key)
->>  
->>  #endif
->>  
->> +/*
->> + * Helper function to clear and free a kvmalloc'ed memory object.
->> + */
->> +static inline void __kvzfree(const void *addr, size_t len)
->> +{
->> +	if (is_vmalloc_addr(addr)) {
->> +		memset((void *)addr, 0, len);
->> +		vfree(addr);
->> +	} else {
->> +		kzfree(addr);
->> +	}
->> +}
-> Since this takes the length as a parameter, it can be simplified to:
->
-> static inline void __kvzfree(const void *addr, size_t len)
-> {
-> 	if (addr) {
-> 		memset((void *)addr, 0, len);
-> 		kvfree(addr);
-> 	}
-> }
-Yes, that will work too.
->>  			if (!tmpbuf || unlikely(ret > tmpbuflen)) {
->>  				if (unlikely(tmpbuf))
->> -					kzfree(tmpbuf);
->> +					__kvzfree(tmpbuf, tmpbuflen);
-> Both kzfree() and __kvzfree() handle a NULL pointer, so there's no need for the
-> NULL check first.
->
-I would like to keep this one because of the unlikely annotation.
+On Fri, Mar 13, 2020 at 08:59:01PM +1100, Aleksa Sarai wrote:
+> On 2020-03-12, Stefan Metzmacher <metze@samba.org> wrote:
+> > Am 12.03.20 um 17:24 schrieb Linus Torvalds:
+> > > But yes, if we have a major package like samba use it, then by all
+> > > means let's add linkat2(). How many things are we talking about? We
+> > > have a number of system calls that do *not* take flags, but do do
+> > > pathname walking. I'm thinking things like "mkdirat()"?)
+> > 
+> > I haven't looked them up in detail yet.
+> > Jeremy can you provide a list?
+> > 
+> > Do you think we could route some of them like mkdirat() and mknodat()
+> > via openat2() instead of creating new syscalls?
+> 
+> I have heard some folks asking for a way to create a directory and get a
+> handle to it atomically -- so arguably this is something that could be
+> inside openat2()'s feature set (O_MKDIR?). But I'm not sure how popular
+> of an idea this is.
 
+For fuck sake, *NO*!
 
->> @@ -920,7 +920,7 @@ long keyctl_read_key(key_serial_t keyid, char __user *buffer, size_t buflen)
->>  				ret = -EFAULT;
->>  		}
->>  		if (tmpbuf)
->> -			kzfree(tmpbuf);
->> +			__kvzfree(tmpbuf, tmpbuflen);
-> Likewise here.  No need for the NULL check.
+We don't need any more multiplexors from hell.  mkdir() and open() have
+deeply different interpretation of pathnames (and anyone who asks for
+e.g. traversals of dangling symlinks on mkdir() is insane).  Don't try to
+mix those; even O_TMPFILE had been a mistake.
 
-Yes, that tmpbuf check is not really necessary, but it doesn't harm either.
+Folks, we'd paid very dearly for the atomic_open() merge.  We are _still_
+paying for it - and keep finding bugs induced by the convoluted horrors
+in that thing (see yesterday pull from vfs.git#fixes for the latest crop).
+I hope to get into more or less sane shape (part - this cycle, with
+followups in the next one), but the last thing we need is more complexity
+in the area.
 
-My plan is to send out a mm patch to officially add the kvzfree()
-function to mm/util.c. I will remove the tmpbuf check at that time if
-you don't mind.
+Keep the semantics simple and regular; corner cases _suck_.  "Infinitely
+extensible (without review)" is no virtue.  And having nowhere to hide
+very special flags for very special kludges is a bloody good thing.
 
-Cheers,
-Longman
+Every fucking time we had a multiplexed syscall, it had been a massive
+source of trouble.  IF it has a uniform semantics - fine; we don't need
+arseloads of read_this(2)/read_that(2).  But when you need pages upon
+pages to describe the subtle differences in the interpretation of
+its arguments, you have already lost.  It will be full of corner
+cases, they will get zero testing and they will rot.  Inevitably.  All
+the faster for the lack of people who would be able to keep all of that
+in head.
 
+We do have a mechanism for multiplexing; on amd64 it lives in do_syscall_64().
+We really don't need openat2() turning into another one.  Syscall table
+slots are not in a short supply, and the level of review one gets from
+"new syscall added" is higher than from "make fubar(2) recognize a new
+member in options->union_full_of_crap if it has RESOLVE_TO_WANK_WITH_RIGHT_HAND
+set in options->flags, affecting its behaviour in some odd ways".
+Which is a good thing, damnit.
