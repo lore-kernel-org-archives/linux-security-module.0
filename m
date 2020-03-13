@@ -2,143 +2,87 @@ Return-Path: <SRS0=meF1=46=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78997C2BB1D
-	for <linux-security-module@archiver.kernel.org>; Fri, 13 Mar 2020 16:43:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97B25C4CECE
+	for <linux-security-module@archiver.kernel.org>; Fri, 13 Mar 2020 16:49:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FF35206EB
-	for <linux-security-module@archiver.kernel.org>; Fri, 13 Mar 2020 16:43:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1584117793;
-	bh=9uZEI+oOcFKGuYiAX/4oCsXo600bTwJmNKjcMRlMz9s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=NfjVl48+yyrjgADXwiLdSj4hRB9cSzRyqTxPG2PkH/1JVdAPRJ+IjpveZq/P+pylw
-	 RpnqmCCWi7Xb/uEP0YsVMCDo5L2a9heS/h0wE81cE3YzpSAVKBdnnQaovrmIQXClL5
-	 KxKa5sRf/ESmDTQQrddGLMWdbz+/E+3dLa53+juA=
+	by mail.kernel.org (Postfix) with ESMTP id 41D08206B7
+	for <linux-security-module@archiver.kernel.org>; Fri, 13 Mar 2020 16:49:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b="iKm45esC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726571AbgCMQnJ (ORCPT
+        id S1726676AbgCMQtO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 13 Mar 2020 12:43:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38914 "EHLO mail.kernel.org"
+        Fri, 13 Mar 2020 12:49:14 -0400
+Received: from hr2.samba.org ([144.76.82.148]:26618 "EHLO hr2.samba.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726406AbgCMQnJ (ORCPT
+        id S1726406AbgCMQtO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 13 Mar 2020 12:43:09 -0400
-Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4F872206BE;
-        Fri, 13 Mar 2020 16:43:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584117788;
-        bh=9uZEI+oOcFKGuYiAX/4oCsXo600bTwJmNKjcMRlMz9s=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZCHJb8mk/tD9veVKos8z2FAbiYflpUdwh1BVM3NL5KiPVTBt0ISp3dxLCmlpy8Ent
-         dwWFZ/r8SWaEhaZ8yMnRUDZZWO2QPmFMvCySTZcr256MwJjE3eUOQzAwFQEoc7JMDk
-         ZCwEQAbwK6dV8lgwYLH1qlQq5X0gj2RVvz0JKkPU=
-Date:   Fri, 13 Mar 2020 09:43:06 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Waiman Long <longman@redhat.com>
-Cc:     David Howells <dhowells@redhat.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Mimi Zohar <zohar@linux.ibm.com>, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        Sumit Garg <sumit.garg@linaro.org>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Chris von Recklinghausen <crecklin@redhat.com>
-Subject: Re: [PATCH v3 3/3] KEYS: Use kvmalloc() to better handle large
- buffer allocation
-Message-ID: <20200313164306.GA907@sol.localdomain>
-References: <20200313152102.1707-1-longman@redhat.com>
- <20200313152102.1707-4-longman@redhat.com>
+        Fri, 13 Mar 2020 12:49:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
+         s=42; h=Message-ID:Cc:To:From:Date;
+        bh=4vhKPMR7SeZxlf7ZpBtqsj7Dz5N+IM1oiuv9cBc+Ink=; b=iKm45esCD3Z7W10y62bNXkvQId
+        yQpjzJBHnGD8w/MVLMPLZSzXI3W1J0ESUAzUdCzKsrTNuazHyXEZuU6Un0upKxGdtnHfRTNdzXqlL
+        E8WpeKrqXYyNYPmOy+ukbYgpqiE16Za+rqYwxLlMvA22gUMj8SxYEbGGbeD/1a+4eqihAs4n9I2Tb
+        NZOOZh2TvLbutKsObumOFis7hoi4QZbGdla4YE0M25C2Ze8dCxTMvLgNLYzAZCxE0NH5vs1maItsK
+        9GzZP4YjFpJt2eAqHJmS8SaZqvxN1AsLwDyH76zUZ4Zo1vVDoXJASgCkN2QfVQzlHV0GfIGN0DVOU
+        uD1tuibwoGkWrtuinM5SyWGu+mx0eCb/BYwZjEssXYc+bj0KTc0I+E/FVYy5313XY6P6ghsaorG21
+        RRRfxJvciWou6kGv/9FQR66d98ys9flGp9S8QD5tUXbxcmQZQbPASuDNh5aB9ANU5diyWYtTkeRnc
+        d3m96Qz+vwBVqoehb9dqX+1G;
+Received: from [127.0.0.2] (localhost [127.0.0.1])
+        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_RSA_CHACHA20_POLY1305:256)
+        (Exim)
+        id 1jCnUj-0001NY-Ee; Fri, 13 Mar 2020 16:49:09 +0000
+Date:   Fri, 13 Mar 2020 09:48:57 -0700
+From:   Jeremy Allison <jra@samba.org>
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     Stefan Metzmacher <metze@samba.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Christian Brauner <christian@brauner.io>,
+        Jann Horn <jannh@google.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Karel Zak <kzak@redhat.com>, jlayton@redhat.com,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ralph =?iso-8859-1?Q?B=F6hme?= <slow@samba.org>,
+        Volker Lendecke <vl@sernet.de>
+Subject: Re: [PATCH 01/14] VFS: Add additional RESOLVE_* flags [ver #18]
+Message-ID: <20200313164857.GA17682@jeremy-acer>
+Reply-To: Jeremy Allison <jra@samba.org>
+References: <158376244589.344135.12925590041630631412.stgit@warthog.procyon.org.uk>
+ <158376245699.344135.7522994074747336376.stgit@warthog.procyon.org.uk>
+ <20200310005549.adrn3yf4mbljc5f6@yavin>
+ <CAHk-=wiEBNFJ0_riJnpuUXTO7+_HByVo-R3pGoB_84qv3LzHxA@mail.gmail.com>
+ <580352.1583825105@warthog.procyon.org.uk>
+ <CAHk-=wiaL6zznNtCHKg6+MJuCqDxO=yVfms3qR9A0czjKuSSiA@mail.gmail.com>
+ <3d209e29-e73d-23a6-5c6f-0267b1e669b6@samba.org>
+ <CAHk-=wgu3Wo_xcjXnwski7JZTwQFaMmKD0hoTZ=hqQv3-YojSg@mail.gmail.com>
+ <8d24e9f6-8e90-96bb-6e98-035127af0327@samba.org>
+ <20200313095901.tdv4vl7envypgqfz@yavin>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200313152102.1707-4-longman@redhat.com>
+In-Reply-To: <20200313095901.tdv4vl7envypgqfz@yavin>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Mar 13, 2020 at 11:21:02AM -0400, Waiman Long wrote:
-> For large multi-page temporary buffer allocation, the security/keys
-> subsystem don't need contiguous physical pages. It will work perfectly
-> fine with virtually mapped pages.
+On Fri, Mar 13, 2020 at 08:59:01PM +1100, Aleksa Sarai wrote:
 > 
-> Replace the kmalloc() call by kvmalloc() and provide a __kvzfree()
-> helper function to clear and free the kvmalloc'ed buffer. This will
-> reduce the chance of memory allocation failure just because of highly
-> fragmented pages.
-> 
-> Suggested-by: David Howells <dhowells@redhat.com>
-> Signed-off-by: Waiman Long <longman@redhat.com>
-> ---
->  security/keys/internal.h | 14 ++++++++++++++
->  security/keys/keyctl.c   | 10 +++++-----
->  2 files changed, 19 insertions(+), 5 deletions(-)
-> 
-> diff --git a/security/keys/internal.h b/security/keys/internal.h
-> index ba3e2da14cef..855b11eb73ee 100644
-> --- a/security/keys/internal.h
-> +++ b/security/keys/internal.h
-> @@ -16,6 +16,8 @@
->  #include <linux/keyctl.h>
->  #include <linux/refcount.h>
->  #include <linux/compat.h>
-> +#include <linux/mm.h>
-> +#include <linux/vmalloc.h>
->  
->  struct iovec;
->  
-> @@ -349,4 +351,16 @@ static inline void key_check(const struct key *key)
->  
->  #endif
->  
-> +/*
-> + * Helper function to clear and free a kvmalloc'ed memory object.
-> + */
-> +static inline void __kvzfree(const void *addr, size_t len)
-> +{
-> +	if (is_vmalloc_addr(addr)) {
-> +		memset((void *)addr, 0, len);
-> +		vfree(addr);
-> +	} else {
-> +		kzfree(addr);
-> +	}
-> +}
+> I have heard some folks asking for a way to create a directory and get a
+> handle to it atomically -- so arguably this is something that could be
+> inside openat2()'s feature set (O_MKDIR?). But I'm not sure how popular
+> of an idea this is.
 
-Since this takes the length as a parameter, it can be simplified to:
-
-static inline void __kvzfree(const void *addr, size_t len)
-{
-	if (addr) {
-		memset((void *)addr, 0, len);
-		kvfree(addr);
-	}
-}
-
->  			if (!tmpbuf || unlikely(ret > tmpbuflen)) {
->  				if (unlikely(tmpbuf))
-> -					kzfree(tmpbuf);
-> +					__kvzfree(tmpbuf, tmpbuflen);
-
-Both kzfree() and __kvzfree() handle a NULL pointer, so there's no need for the
-NULL check first.
-
-> @@ -920,7 +920,7 @@ long keyctl_read_key(key_serial_t keyid, char __user *buffer, size_t buflen)
->  				ret = -EFAULT;
->  		}
->  		if (tmpbuf)
-> -			kzfree(tmpbuf);
-> +			__kvzfree(tmpbuf, tmpbuflen);
-
-Likewise here.  No need for the NULL check.
-
-- Eric
+This would be very useful to prevent race conditions between making
+a directory and EA's on it, as are needed by Samba for
+DOS attributes and Windows/NFSv4 ACLS.
