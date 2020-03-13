@@ -1,126 +1,91 @@
-Return-Path: <SRS0=85Tz=45=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=meF1=46=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3F93C10DCE
-	for <linux-security-module@archiver.kernel.org>; Thu, 12 Mar 2020 21:49:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E48DC2BB1D
+	for <linux-security-module@archiver.kernel.org>; Fri, 13 Mar 2020 01:04:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D3B820674
-	for <linux-security-module@archiver.kernel.org>; Thu, 12 Mar 2020 21:49:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b="M0zd3UDi"
+	by mail.kernel.org (Postfix) with ESMTP id 57C8B20637
+	for <linux-security-module@archiver.kernel.org>; Fri, 13 Mar 2020 01:04:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726528AbgCLVtH (ORCPT
+        id S1726820AbgCMBEh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 12 Mar 2020 17:49:07 -0400
-Received: from hr2.samba.org ([144.76.82.148]:24712 "EHLO hr2.samba.org"
+        Thu, 12 Mar 2020 21:04:37 -0400
+Received: from mga09.intel.com ([134.134.136.24]:58736 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726481AbgCLVtH (ORCPT
+        id S1726647AbgCMBEh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 12 Mar 2020 17:49:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-         s=42; h=Message-ID:Cc:To:From:Date;
-        bh=1JcRWJgIjBZEatikoz0G3mL9EJsdG0P/Ykm3OGVRQo4=; b=M0zd3UDimz2yegwwlZBWRu1Sjm
-        Hb2a9sq9I/B2kDBeJsob+VR2XNQaYH9Iy1mlh80tLPM12bcDfMTE7Vl1rQta5McDePT92ZD8iJVx9
-        4tIkUFiaXRuJxqXRY1b3LYV5TT9y0Y51MUhnzpAXCmeCh50oytdBZauYcQ24b2HFNK/RLcTAtOrD5
-        hTBFgTzdVQ0ofrJuWOVAaffympfy8PogEB8b5bMOrBCYsIUxsV32VOqKq22+55Ix0JZtWjbxJNRV1
-        6vDfCbps6fckISnbwkJA83CC45iVr8ot0VEw954sESPpX3S08kajgNhTB7NTflfsu+IYxtRNf86CY
-        b+xx302xd92v1CkKTYCFMBwqmCqn0RvpztruQ3/4/poqm41ia+R5OfQLbgustha/L4tkO0VQG5NXK
-        fyDcx1FGbGK/vnFmBQd79m7VBcS1nIU1N2SRWXJu2fLt8wJuxfBAzUQjf6/twU2w9n5Gnq5D+R541
-        DWEaB6FUBoQZBsoGn8v9YsSo;
-Received: from [127.0.0.2] (localhost [127.0.0.1])
-        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_RSA_CHACHA20_POLY1305:256)
-        (Exim)
-        id 1jCVhO-0001fg-IM; Thu, 12 Mar 2020 21:49:02 +0000
-Date:   Thu, 12 Mar 2020 14:48:54 -0700
-From:   Jeremy Allison <jra@samba.org>
-To:     Stefan Metzmacher <metze@samba.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        David Howells <dhowells@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Christian Brauner <christian@brauner.io>,
-        Jann Horn <jannh@google.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Karel Zak <kzak@redhat.com>, jlayton@redhat.com,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ralph =?iso-8859-1?Q?B=F6hme?= <slow@samba.org>,
-        Volker Lendecke <vl@sernet.de>
-Subject: Re: [PATCH 01/14] VFS: Add additional RESOLVE_* flags [ver #18]
-Message-ID: <20200312214854.GA19247@jeremy-acer>
-Reply-To: Jeremy Allison <jra@samba.org>
-References: <158376244589.344135.12925590041630631412.stgit@warthog.procyon.org.uk>
- <158376245699.344135.7522994074747336376.stgit@warthog.procyon.org.uk>
- <20200310005549.adrn3yf4mbljc5f6@yavin>
- <CAHk-=wiEBNFJ0_riJnpuUXTO7+_HByVo-R3pGoB_84qv3LzHxA@mail.gmail.com>
- <580352.1583825105@warthog.procyon.org.uk>
- <CAHk-=wiaL6zznNtCHKg6+MJuCqDxO=yVfms3qR9A0czjKuSSiA@mail.gmail.com>
- <3d209e29-e73d-23a6-5c6f-0267b1e669b6@samba.org>
- <CAHk-=wgu3Wo_xcjXnwski7JZTwQFaMmKD0hoTZ=hqQv3-YojSg@mail.gmail.com>
- <8d24e9f6-8e90-96bb-6e98-035127af0327@samba.org>
+        Thu, 12 Mar 2020 21:04:37 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Mar 2020 18:04:36 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,546,1574150400"; 
+   d="scan'208";a="243218144"
+Received: from seyal2-mobl.ger.corp.intel.com (HELO localhost) ([10.254.147.27])
+  by orsmga003.jf.intel.com with ESMTP; 12 Mar 2020 18:04:27 -0700
+Date:   Fri, 13 Mar 2020 03:04:25 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Waiman Long <longman@redhat.com>
+Cc:     David Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Mimi Zohar <zohar@linux.ibm.com>, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        Sumit Garg <sumit.garg@linaro.org>,
+        Jerry Snitselaar <jsnitsel@redhat.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Chris von Recklinghausen <crecklin@redhat.com>
+Subject: Re: [PATCH v2 1/2] KEYS: Don't write out to userspace while holding
+ key semaphore
+Message-ID: <20200313010425.GA11360@linux.intel.com>
+References: <20200308170410.14166-1-longman@redhat.com>
+ <20200308170410.14166-2-longman@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8d24e9f6-8e90-96bb-6e98-035127af0327@samba.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200308170410.14166-2-longman@redhat.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Mar 12, 2020 at 06:11:09PM +0100, Stefan Metzmacher wrote:
-> Am 12.03.20 um 17:24 schrieb Linus Torvalds:
-> > On Thu, Mar 12, 2020 at 2:08 AM Stefan Metzmacher <metze@samba.org> wrote:
-> >>
-> >> The whole discussion was triggered by the introduction of a completely
-> >> new fsinfo() call:
-> >>
-> >> Would you propose to have 'at_flags' and 'resolve_flags' passed in here?
-> > 
-> > Yes, I think that would be the way to go.
-> 
-> Ok, that's also fine for me:-)
-> 
-> >>> If we need linkat2() and friends, so be it. Do we?
-> >>
-> >> Yes, I'm going to propose something like this, as it would make the life
-> >> much easier for Samba to have the new features available on all path
-> >> based syscalls.
-> > 
-> > Will samba actually use them? I think we've had extensions before that
-> > weren't worth the non-portability pain?
-> 
-> Yes, we're currently moving to the portable *at() calls as a start.
-> And we already make use of Linux only feature for performance reasons
-> in other places. Having the new resolve flags will make it possible to
-> move some of the performance intensive work into non-linux specific
-> modules as fallback.
-> 
-> I hope that we'll use most of this through io_uring in the end,
-> that's the reason Jens added the IORING_REGISTER_PERSONALITY feature
-> used for IORING_OP_OPENAT2.
-> 
-> > But yes, if we have a major package like samba use it, then by all
-> > means let's add linkat2(). How many things are we talking about? We
-> > have a number of system calls that do *not* take flags, but do do
-> > pathname walking. I'm thinking things like "mkdirat()"?)
-> 
-> I haven't looked them up in detail yet.
-> Jeremy can you provide a list?
+On Sun, Mar 08, 2020 at 01:04:09PM -0400, Waiman Long wrote:
+> +		/*
+> +		 * Read methods will just return the required length
+> +		 * without any copying if the provided length isn't big
+> +		 * enough.
+> +		 */
+> +		if ((ret > 0) && (ret <= buflen) && buffer &&
+> +		    copy_to_user(buffer, tmpbuf, ret))
+> +			ret = -EFAULT;
 
-Fixing the flags argument on fchmodat() to actually *implement*
-AT_SYMLINK_NOFOLLOW would be a good start :-).
+Please, reorg and remove redundant parentheses:
 
-As for the syscalls that don't have
-flags I'm thinking of the things like:
+/*
+ * Read methods will just return the required length
+ * without any copying if the provided length isn't big
+ * enough.
+ */
+if (ret > 0 && ret <= buflen) {
+	if (buffer && copy_to_user(buffer, tmpbuf, ret))
+		ret = -EFAULT;
+}
 
-getxattr/setxattr/removexattr just off the top of my head.
+Now the comment is attached to the exact right thing. The previous
+organization is a pain to look at when backtracking commits for
+whatever reason in the future.
 
-Jeremy.
+I'm also wondering, would it be possible to rework the code in a way
+that you don't have check whether buffer is valid on a constant basis?
+
+/Jarkko
