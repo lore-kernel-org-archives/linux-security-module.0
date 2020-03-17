@@ -2,206 +2,250 @@ Return-Path: <SRS0=p1dC=5C=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9142AC1975A
-	for <linux-security-module@archiver.kernel.org>; Tue, 17 Mar 2020 19:43:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1463EC2BB1D
+	for <linux-security-module@archiver.kernel.org>; Tue, 17 Mar 2020 19:46:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5803820753
-	for <linux-security-module@archiver.kernel.org>; Tue, 17 Mar 2020 19:43:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DDBB6206EC
+	for <linux-security-module@archiver.kernel.org>; Tue, 17 Mar 2020 19:46:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S2yFmBHB"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JI600Y+S"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726756AbgCQTnY (ORCPT
+        id S1726619AbgCQTq0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 17 Mar 2020 15:43:24 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:35862 "EHLO
-        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726692AbgCQTnY (ORCPT
+        Tue, 17 Mar 2020 15:46:26 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:40041 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726494AbgCQTqZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 17 Mar 2020 15:43:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584474203;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:in-reply-to:in-reply-to:references:references;
-        bh=VP/33sULw/Y4pBnAwwPfa1aLW7Jli8KU3auzMsRKrNI=;
-        b=S2yFmBHBJ57BHjDW4MzJQjKuV8JgxZYhe2pEAS3dbfQunL1E7bhnZr2BAKqQUD0VYY1stM
-        beNWEMY5YKxofzbkpYDSrh9RCW/wK5i2q6xDOfIc1a1zxy3KQfc1tdhxllOiK7jV1qQ53e
-        y2U4hV9L9W3NOkiZW5B+58Db1ajeMg4=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-454-3j8DzbXzMg2ZwixPszIWXg-1; Tue, 17 Mar 2020 15:43:07 -0400
-X-MC-Unique: 3j8DzbXzMg2ZwixPszIWXg-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B2B9B80259A;
-        Tue, 17 Mar 2020 19:42:59 +0000 (UTC)
-Received: from llong.com (ovpn-115-15.rdu2.redhat.com [10.10.115.15])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 17FFD10027A3;
-        Tue, 17 Mar 2020 19:42:48 +0000 (UTC)
-From:   Waiman Long <longman@redhat.com>
-To:     David Howells <dhowells@redhat.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>
-Cc:     keyrings@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, netdev@vger.kernel.org,
-        linux-afs@lists.infradead.org, Sumit Garg <sumit.garg@linaro.org>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Chris von Recklinghausen <crecklin@redhat.com>,
-        Waiman Long <longman@redhat.com>
-Subject: [PATCH v4 4/4] KEYS: Avoid false positive ENOMEM error on key read
-Date:   Tue, 17 Mar 2020 15:41:40 -0400
-Message-Id: <20200317194140.6031-5-longman@redhat.com>
-In-Reply-To: <20200317194140.6031-1-longman@redhat.com>
-References: <20200317194140.6031-1-longman@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+        Tue, 17 Mar 2020 15:46:25 -0400
+Received: by mail-ot1-f67.google.com with SMTP id e19so1943069otj.7
+        for <linux-security-module@vger.kernel.org>; Tue, 17 Mar 2020 12:46:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=9s2Sb3c4MxnnBmpoBuePNWugbWE68PyhFAR020YyxKI=;
+        b=JI600Y+S7vaaL+M1SlEKgAEtEUPT5Q45PYyhNUPJY82ExiEm4yLvuyoLjANOxrw/L8
+         K0LSxUZhq+pXM1GGwp3j51HMQSJZsaS91TWVYRhmi3aC265XUUVxVsf85Lt6C4FHfODU
+         F+8841uMdqRd6VymvDirqjn9SmklKMzELb2nq4ltyUMq1nVMo8mh6KrYIj6CXSK8975s
+         8Wppxc9EDwI6+CuP2CcdW21eufAGc9NTfDD0XTQ6x9Ta4mXhWmyFq+EubLApEE3PIMY3
+         UluxszB5ZBrGmCkrxM1stsbflxhZ846CG2/SzeG3kVFjDKkewelUAmzGKrdjkzgjSzUp
+         gkCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=9s2Sb3c4MxnnBmpoBuePNWugbWE68PyhFAR020YyxKI=;
+        b=Lhdtu2P7wJ/YSzqfKpD5xjsNtUaTway5mQ7i2wEzUI+wqKsJ9sS1S9SgAI4iVSD56H
+         W9dILEUUT+zE6E7uheixEsxM1P0WiSW8bs7tCWhL3Zwd7G60rqSaADvEp0zyGsdMw747
+         5gPlHrrLlwfwOv9jGSratzkwkC1GZAVH7nhh9w3KswKOHaumYEs/8NlnPQurOM4OjxRj
+         Kwsr/d48sdfh5eJaqOYocApZp6YR1NShNqa59GJ65JGNAmcqNqEr1m9RG2DL8JkWApu2
+         vIJ9h/tWIERXeVVyc/BdVemvsB3Dd2eeC8MyXistqnrB0juXvLFXRi1UUy7ODCrHW0Tw
+         kVNQ==
+X-Gm-Message-State: ANhLgQ13GwfqiB1WdJldGkSuNwT/Mwxsgp0S8vCyWOcwen05bLmHGwTV
+        M8K4p+WhBnUFCUOTSVOnw8NUVQc/4oZqR0shtPmtmQ==
+X-Google-Smtp-Source: ADFU+vuKl0l5cSfO5Cy+yKgBZm1XSTGaBWgXbflYl3a2hR5fw7Go07ECSMEPZtHP+SUIHarbwT5aqXaP0EMleeCdfQE=
+X-Received: by 2002:a9d:5e8b:: with SMTP id f11mr858477otl.110.1584474384151;
+ Tue, 17 Mar 2020 12:46:24 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200224160215.4136-1-mic@digikod.net> <CAG48ez21bEn0wL1bbmTiiu8j9jP5iEWtHOwz4tURUJ+ki0ydYw@mail.gmail.com>
+ <873d7419-bdd9-8a52-0a9b-dddbe31df4f9@digikod.net> <CAG48ez0=0W5Ok-8nASqZrZ28JboXRRi3gDxV5u6mdcOtzwuRVA@mail.gmail.com>
+ <688dda0f-0907-34eb-c19e-3e9e5f613a74@digikod.net>
+In-Reply-To: <688dda0f-0907-34eb-c19e-3e9e5f613a74@digikod.net>
+From:   Jann Horn <jannh@google.com>
+Date:   Tue, 17 Mar 2020 20:45:57 +0100
+Message-ID: <CAG48ez16yT+zbK1WPxr2TnxrifW5c2DnpFLbWRRLUT_WpuFNmw@mail.gmail.com>
+Subject: Re: [RFC PATCH v14 00/10] Landlock LSM
+To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc:     kernel list <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        James Morris <jmorris@namei.org>, Jann Horn <jann@thejh.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mickael.salaun@ssi.gouv.fr>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        linux-doc@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-By allocating a kernel buffer with a user-supplied buffer length, it
-is possible that a false positive ENOMEM error may be returned because
-the user-supplied length is just too large even if the system do have
-enough memory to hold the actual key data.
+On Tue, Mar 17, 2020 at 6:50 PM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> =
+wrote:
+> On 17/03/2020 17:19, Jann Horn wrote:
+> > On Thu, Mar 12, 2020 at 12:38 AM Micka=C3=ABl Sala=C3=BCn <mic@digikod.=
+net> wrote:
+> >> On 10/03/2020 00:44, Jann Horn wrote:
+> >>> On Mon, Feb 24, 2020 at 5:03 PM Micka=C3=ABl Sala=C3=BCn <mic@digikod=
+.net> wrote:
+>
+> [...]
+>
+> >>> Aside from those things, there is also a major correctness issue wher=
+e
+> >>> I'm not sure how to solve it properly:
+> >>>
+> >>> Let's say a process installs a filter on itself like this:
+> >>>
+> >>> struct landlock_attr_ruleset ruleset =3D { .handled_access_fs =3D
+> >>> ACCESS_FS_ROUGHLY_WRITE};
+> >>> int ruleset_fd =3D landlock(LANDLOCK_CMD_CREATE_RULESET,
+> >>> LANDLOCK_OPT_CREATE_RULESET, sizeof(ruleset), &ruleset);
+> >>> struct landlock_attr_path_beneath path_beneath =3D {
+> >>>   .ruleset_fd =3D ruleset_fd,
+> >>>   .allowed_access =3D ACCESS_FS_ROUGHLY_WRITE,
+> >>>   .parent_fd =3D open("/tmp/foobar", O_PATH),
+> >>> };
+> >>> landlock(LANDLOCK_CMD_ADD_RULE, LANDLOCK_OPT_ADD_RULE_PATH_BENEATH,
+> >>> sizeof(path_beneath), &path_beneath);
+> >>> prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
+> >>> struct landlock_attr_enforce attr_enforce =3D { .ruleset_fd =3D rules=
+et_fd };
+> >>> landlock(LANDLOCK_CMD_ENFORCE_RULESET, LANDLOCK_OPT_ENFORCE_RULESET,
+> >>> sizeof(attr_enforce), &attr_enforce);
+> >>>
+> >>> At this point, the process is not supposed to be able to write to
+> >>> anything outside /tmp/foobar, right? But what happens if the process
+> >>> does the following next?
+> >>>
+> >>> struct landlock_attr_ruleset ruleset =3D { .handled_access_fs =3D
+> >>> ACCESS_FS_ROUGHLY_WRITE};
+> >>> int ruleset_fd =3D landlock(LANDLOCK_CMD_CREATE_RULESET,
+> >>> LANDLOCK_OPT_CREATE_RULESET, sizeof(ruleset), &ruleset);
+> >>> struct landlock_attr_path_beneath path_beneath =3D {
+> >>>   .ruleset_fd =3D ruleset_fd,
+> >>>   .allowed_access =3D ACCESS_FS_ROUGHLY_WRITE,
+> >>>   .parent_fd =3D open("/", O_PATH),
+> >>> };
+> >>> landlock(LANDLOCK_CMD_ADD_RULE, LANDLOCK_OPT_ADD_RULE_PATH_BENEATH,
+> >>> sizeof(path_beneath), &path_beneath);
+> >>> prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
+> >>> struct landlock_attr_enforce attr_enforce =3D { .ruleset_fd =3D rules=
+et_fd };
+> >>> landlock(LANDLOCK_CMD_ENFORCE_RULESET, LANDLOCK_OPT_ENFORCE_RULESET,
+> >>> sizeof(attr_enforce), &attr_enforce);
+> >>>
+> >>> As far as I can tell from looking at the source, after this, you will
+> >>> have write access to the entire filesystem again. I think the idea is
+> >>> that LANDLOCK_CMD_ENFORCE_RULESET should only let you drop privileges=
+,
+> >>> not increase them, right?
+> >>
+> >> There is an additionnal check in syscall.c:get_path_from_fd(): it is
+> >> forbidden to add a rule with a path which is not accessible (according
+> >> to LANDLOCK_ACCESS_FS_OPEN) thanks to a call to security_file_open(),
+> >> but this is definitely not perfect.
+> >
+> > Ah, I missed that.
+> >
+> >>> I think the easy way to fix this would be to add a bitmask to each
+> >>> rule that says from which ruleset it originally comes, and then let
+> >>> check_access_path() collect these bitmasks from each rule with OR, an=
+d
+> >>> check at the end whether the resulting bitmask is full - if not, at
+> >>> least one of the rulesets did not permit the access, and it should be
+> >>> denied.
+> >>>
+> >>> But maybe it would make more sense to change how the API works
+> >>> instead, and get rid of the concept of "merging" two rulesets
+> >>> together? Instead, we could make the API work like this:
+> >>>
+> >>>  - LANDLOCK_CMD_CREATE_RULESET gives you a file descriptor whose
+> >>> ->private_data contains a pointer to the old ruleset of the process,
+> >>> as well as a pointer to a new empty ruleset.
+> >>>  - LANDLOCK_CMD_ADD_RULE fails if the specified rule would not be
+> >>> permitted by the old ruleset, then adds the rule to the new ruleset
+> >>>  - LANDLOCK_CMD_ENFORCE_RULESET fails if the old ruleset pointer in
+> >>> ->private_data doesn't match the current ruleset of the process, then
+> >>> replaces the old ruleset with the new ruleset.
+> >>>
+> >>> With this, the new ruleset is guaranteed to be a subset of the old
+> >>> ruleset because each of the new ruleset's rules is permitted by the
+> >>> old ruleset. (Unless the directory hierarchy rotates, but in that cas=
+e
+> >>> the inaccuracy isn't much worse than what would've been possible
+> >>> through RCU path walk anyway AFAIK.)
+> >>>
+> >>> What do you think?
+> >>>
+> >>
+> >> I would prefer to add the same checks you described at first (with
+> >> check_access_path), but only when creating a new ruleset with
+> >> merge_ruleset() (which should probably be renamed). This enables not t=
+o
+> >> rely on a parent ruleset/domain until the enforcement, which is the ca=
+se
+> >> anyway.
+> >> Unfortunately this doesn't work for some cases with bind mounts. Becau=
+se
+> >> check_access_path() goes through one path, another (bind mounted) path
+> >> could be illegitimately allowed.
+> >
+> > Hmm... I'm not sure what you mean. At the moment, landlock doesn't
+> > allow any sandboxed process to change the mount hierarchy, right? Can
+> > you give an example where this would go wrong?
+>
+> Indeed, a Landlocked process must no be able to change its mount
+> namespace layout. However, bind mounts may already exist.
+> Let's say a process sandbox itself to only access /a in a read-write
+> way.
 
-Moreover, if the buffer length is larger than the maximum amount of
-memory that can be returned by kmalloc() (2^(MAX_ORDER-1) number of
-pages), a warning message will also be printed.
+So, first policy:
 
-To reduce this possibility, we set a threshold (PAGE_SIZE) over which we
-do check the actual key length first before allocating a buffer of the
-right size to hold it. The threshold is arbitrary, it is just used to
-trigger a buffer length check. It does not limit the actual key length
-as long as there is enough memory to satisfy the memory request.
+/a RW
 
-To further avoid large buffer allocation failure due to page
-fragmentation, kvmalloc() is used to allocate the buffer so that vmapped
-pages can be used when there is not a large enough contiguous set of
-pages available for allocation.
+> Then, this process (or one of its children) add a new restriction
+> on /a/b to only be able to read this hierarchy.
 
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- security/keys/internal.h | 12 ++++++++++++
- security/keys/keyctl.c   | 41 ++++++++++++++++++++++++++++++++--------
- 2 files changed, 45 insertions(+), 8 deletions(-)
+You mean with the second policy looking like this?
 
-diff --git a/security/keys/internal.h b/security/keys/internal.h
-index ba3e2da14cef..6d0ca48ae9a5 100644
---- a/security/keys/internal.h
-+++ b/security/keys/internal.h
-@@ -16,6 +16,8 @@
- #include <linux/keyctl.h>
- #include <linux/refcount.h>
- #include <linux/compat.h>
-+#include <linux/mm.h>
-+#include <linux/vmalloc.h>
- 
- struct iovec;
- 
-@@ -349,4 +351,14 @@ static inline void key_check(const struct key *key)
- 
- #endif
- 
-+/*
-+ * Helper function to clear and free a kvmalloc'ed memory object.
-+ */
-+static inline void __kvzfree(const void *addr, size_t len)
-+{
-+	if (addr) {
-+		memset((void *)addr, 0, len);
-+		kvfree(addr);
-+	}
-+}
- #endif /* _INTERNAL_H */
-diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
-index 81f68e434b9f..07eaa46d344c 100644
---- a/security/keys/keyctl.c
-+++ b/security/keys/keyctl.c
-@@ -339,7 +339,7 @@ long keyctl_update_key(key_serial_t id,
- 	payload = NULL;
- 	if (plen) {
- 		ret = -ENOMEM;
--		payload = kmalloc(plen, GFP_KERNEL);
-+		payload = kvmalloc(plen, GFP_KERNEL);
- 		if (!payload)
- 			goto error;
- 
-@@ -360,7 +360,7 @@ long keyctl_update_key(key_serial_t id,
- 
- 	key_ref_put(key_ref);
- error2:
--	kzfree(payload);
-+	__kvzfree(payload, plen);
- error:
- 	return ret;
- }
-@@ -877,13 +877,24 @@ long keyctl_read_key(key_serial_t keyid, char __user *buffer, size_t buflen)
- 		 * transferring them to user buffer to avoid potential
- 		 * deadlock involving page fault and mmap_sem.
- 		 */
--		char *tmpbuf = kmalloc(buflen, GFP_KERNEL);
-+		char *tmpbuf = NULL;
-+		size_t tmpbuflen = buflen;
- 
--		if (!tmpbuf) {
--			ret = -ENOMEM;
--			goto error2;
-+		/*
-+		 * To prevent memory allocation failure with an arbitrary
-+		 * large user-supplied buflen, we do a key length check
-+		 * before allocating a buffer of the right size to hold
-+		 * key data if it exceeds a threshold (PAGE_SIZE).
-+		 */
-+		if (buflen <= PAGE_SIZE) {
-+allocbuf:
-+			tmpbuf = kvmalloc(tmpbuflen, GFP_KERNEL);
-+			if (!tmpbuf) {
-+				ret = -ENOMEM;
-+				goto error2;
-+			}
- 		}
--		ret = __keyctl_read_key(key, tmpbuf, buflen);
-+		ret = __keyctl_read_key(key, tmpbuf, tmpbuflen);
- 
- 		/*
- 		 * Read methods will just return the required length
-@@ -891,10 +902,24 @@ long keyctl_read_key(key_serial_t keyid, char __user *buffer, size_t buflen)
- 		 * enough.
- 		 */
- 		if ((ret > 0) && (ret <= buflen)) {
-+			/*
-+			 * It is possible, though unlikely, that the key
-+			 * changes in between the up_read->down_read period.
-+			 * If the key becomes longer, we will have to
-+			 * allocate a larger buffer and redo the key read
-+			 * again.
-+			 */
-+			if (!tmpbuf || unlikely(ret > tmpbuflen)) {
-+				if (unlikely(tmpbuf))
-+					__kvzfree(tmpbuf, tmpbuflen);
-+				tmpbuflen = ret;
-+				goto allocbuf;
-+			}
-+
- 			if (copy_to_user(buffer, tmpbuf, ret))
- 				ret = -EFAULT;
- 		}
--		kzfree(tmpbuf);
-+		__kvzfree(tmpbuf, tmpbuflen);
- 	}
- 
- error2:
--- 
-2.18.1
+/a RW
+/a/b R
 
+Then the resulting policy would be:
+
+/a RW policy_bitmask=3D0x00000003 (bits 0 and 1 set)
+/a/b R policy_bitmask=3D0x00000002 (bit 1 set)
+required_bits=3D0x00000003 (bits 0 and 1 set)
+
+> The check at insertion
+> time would allow this because this access right is a subset of the
+> access right allowed with the parent directory. However, If /a/b is bind
+> mounted somewhere else, let's say in /private/b, then the second
+> enforcement just gave new access rights to this hierarchy too.
+
+But with the solution I proposed, landlock's path walk would see
+something like this when accessing a file at /private/b/foo:
+/private/b/foo <no rules>
+  policies seen until now: 0x00000000
+/private/b <access: R, policy_bitmask=3D0x00000002>
+  policies seen until now: 0x00000002
+/private <no rules>
+  policies seen until now: 0x00000002
+/ <no rules>
+  policies seen until now: 0x00000002
+
+It wouldn't encounter any rule from the first policy, so the OR of the
+seen policy bitmasks would be 0x00000002, which is not the required
+value 0x00000003, and so the access would be denied.
