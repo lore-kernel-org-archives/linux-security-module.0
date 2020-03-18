@@ -2,152 +2,112 @@ Return-Path: <SRS0=DElp=5D=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27FB3C10DCE
-	for <linux-security-module@archiver.kernel.org>; Wed, 18 Mar 2020 16:06:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0434FC10DCE
+	for <linux-security-module@archiver.kernel.org>; Wed, 18 Mar 2020 16:37:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A319920658
-	for <linux-security-module@archiver.kernel.org>; Wed, 18 Mar 2020 16:06:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="PmkHFgaj"
+	by mail.kernel.org (Postfix) with ESMTP id C67B420753
+	for <linux-security-module@archiver.kernel.org>; Wed, 18 Mar 2020 16:37:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1584549424;
+	bh=GtO3h5LfPzZi/9AqSF52rEVhhdDidm949zcOUZxWt3o=;
+	h=Date:From:To:Subject:List-ID:From;
+	b=IiWfmaki9WwDXJ01RTJJS03guO0qxE4Hs/Ci2oBRGxIQM9rKEOqYfAq2NBsPqeoFQ
+	 zSTzpd0pXmuokLj8qiQKxAxeigoeNsz8T13SnnVf+0+rwOSV1O6mo+ThjMWgFXhoQV
+	 3AdM/trCWFc+XoZFIGifyao6dhd+74WYsOJG6mEA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727089AbgCRQGD (ORCPT
+        id S1726980AbgCRQhE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 18 Mar 2020 12:06:03 -0400
-Received: from mail-il1-f193.google.com ([209.85.166.193]:44057 "EHLO
-        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726976AbgCRQGC (ORCPT
+        Wed, 18 Mar 2020 12:37:04 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:38632 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726780AbgCRQhD (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 18 Mar 2020 12:06:02 -0400
-Received: by mail-il1-f193.google.com with SMTP id j69so24157861ila.11
-        for <linux-security-module@vger.kernel.org>; Wed, 18 Mar 2020 09:06:02 -0700 (PDT)
+        Wed, 18 Mar 2020 12:37:03 -0400
+Received: by mail-wr1-f66.google.com with SMTP id s1so9506756wrv.5
+        for <linux-security-module@vger.kernel.org>; Wed, 18 Mar 2020 09:37:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Q+E6phefA0/UCxZU68Ee5CkdpY/LreXqfKusKthyp5I=;
-        b=PmkHFgajk2/8VWOHdYUg8VCj1tVopeX6fqfrGgYm0sPb35e5EoxUjxowANbaw3zCwS
-         wqDhItzeSSD2F4OzNelMLAyDUKSqRDkOzITlg+Hge+tWY5LhXczVM8GuM5pTiPEM5aFa
-         ut6OlQnzTW2CXrIbgEnOI63xRs4UIkIGUhynA=
+        d=linuxfoundation.org; s=google;
+        h=date:from:to:subject:message-id:mime-version:content-disposition;
+        bh=caW/QunyOk5mz+Kj+0iK5Gu+F5vdx65w78WqgIIoRGs=;
+        b=ZjNx7Sf1n3+kVCFmJE+djiy5zPRTR6crhwkoSVVAFtwvOUFaPXzwHcVL/btuAtu4VV
+         MCDH3TQ2g3Jim7CrimceXcYuOw5MPEDx5Lw+tfGklF/7Ls4uREQ0l129DrpRmGF4vdew
+         O5EZ9oCLVd9PWxIofRwGil3cysplruRBp3HPI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Q+E6phefA0/UCxZU68Ee5CkdpY/LreXqfKusKthyp5I=;
-        b=IfNxH3U1MOAU0Nd4ma/sq74iytTVvbqersR8jWHd3QkpAF2/DvyUzxEtZpAREb3460
-         8lXIFj5mNlyhQO6CpWz/X7iAfC1i6YeiTXW0AChsMixCnRgsP172SDQGQK0iXeBJ67kw
-         W7Za27irNzjcJgiQW2zEgS8JGdwvSFlgNl+Prwe74VcRqC4c6gBOSFlwiwNYT+8zi1VA
-         QTwgicjZ8tAQm7I2zhn2k2e+v+KpjS5+MuO4OISi4Q17Efb+aE0/ljIpK5CC883yodV9
-         tSpanARbhwWMzjNAHuINXgRzo7L258q4UoN4eeSR5ctLUk5WRlgPZNIs54SKMeKqHkkR
-         llUQ==
-X-Gm-Message-State: ANhLgQ23fZp3oLAl2mJcUyyS1JlJTrEZIObeF2ZZVIl5HOyfhLrMjGhJ
-        e4Xpj80ZMr1cOXFOHOJG+sZC9AKgOflUUPi9EIfZeQ==
-X-Google-Smtp-Source: ADFU+vseuj9ZXYFeMbS3X+5vGmRRSiZoxImF5rzfLQFjQscZDtBKPWLdRkROYV3TZYIAEV5wBxQF2hmZ0LlipmXRNY0=
-X-Received: by 2002:a92:5d52:: with SMTP id r79mr4664957ilb.212.1584547562099;
- Wed, 18 Mar 2020 09:06:02 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
+         :content-disposition;
+        bh=caW/QunyOk5mz+Kj+0iK5Gu+F5vdx65w78WqgIIoRGs=;
+        b=lgMKL2+exMO3kVa0mU1cSz+t6q894tWtarseO3gRRAOYq8sZQUQj9/3uBNuMUvH3SU
+         f51aR5sopS0iIZsoIWc7vJleDHMGet8bjoY7v6/XvO36pS08i4expMRCQRiRVVKqR9u7
+         sJ0twzhJbY0Lsa6BxiVA5T9GrFY3bWRxBZFd+bfKoRhZCak1FlNl6prUOYbKS8v98DlP
+         dK2x+3tU7KPLZmFtg/rJ7ikQVoNyjzFirBCzWjan8r2/IRLyRIarZMwf5NxN28f3Ivwr
+         wkYpZtKF6TUxynHVJTkx5hOCz6153GrOq3/HkVJL/lGvcgLnIG0tB38TIrezDXIi1Qr9
+         g1rw==
+X-Gm-Message-State: ANhLgQ0TS2AV6ktVPoIHyJZD+gjjluTBw4IDV6FsD4PWizHpLR51Afoy
+        rC8XlSOB+bQAuMbqXgMMNeKfRnh04N4zIA==
+X-Google-Smtp-Source: ADFU+vvkBKWqGB2FmNU0oDRqox2zhx6GoZfnb9uuMUIuPFzfGah+MCxo5STsaHA13xSSc8XiI6CxKw==
+X-Received: by 2002:a5d:428a:: with SMTP id k10mr6781833wrq.150.1584549420839;
+        Wed, 18 Mar 2020 09:37:00 -0700 (PDT)
+Received: from chatter.i7.local ([85.159.237.210])
+        by smtp.gmail.com with ESMTPSA id z6sm9522080wrp.95.2020.03.18.09.36.59
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Mar 2020 09:36:59 -0700 (PDT)
+Date:   Wed, 18 Mar 2020 12:36:56 -0400
+From:   Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+To:     linux-security-module@vger.kernel.org
+Subject: Looking for help testing patch attestation
+Message-ID: <20200318163656.wxuta53jopgp5f2y@chatter.i7.local>
 MIME-Version: 1.0
-References: <158454408854.2864823.5910520544515668590.stgit@warthog.procyon.org.uk>
-In-Reply-To: <158454408854.2864823.5910520544515668590.stgit@warthog.procyon.org.uk>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 18 Mar 2020 17:05:50 +0100
-Message-ID: <CAJfpeguaiicjS2StY5m=8H7BCjq6PLxMsWE3Mx_jYR1foDWVTg@mail.gmail.com>
-Subject: Re: [PATCH 00/13] VFS: Filesystem information [ver #19]
-To:     David Howells <dhowells@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux NFS list <linux-nfs@vger.kernel.org>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-ext4@vger.kernel.org,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Ian Kent <raven@themaw.net>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Christian Brauner <christian@brauner.io>,
-        Jann Horn <jannh@google.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Karel Zak <kzak@redhat.com>, Jeff Layton <jlayton@redhat.com>,
-        linux-fsdevel@vger.kernel.org,
-        LSM <linux-security-module@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Mar 18, 2020 at 4:08 PM David Howells <dhowells@redhat.com> wrote:
+Hello, all:
 
-> ============================
-> WHY NOT USE PROCFS OR SYSFS?
-> ============================
->
-> Why is it better to go with a new system call rather than adding more magic
-> stuff to /proc or /sysfs for each superblock object and each mount object?
->
->  (1) It can be targetted.  It makes it easy to query directly by path.
->      procfs and sysfs cannot do this easily.
->
->  (2) It's more efficient as we can return specific binary data rather than
->      making huge text dumps.  Granted, sysfs and procfs could present the
->      same data, though as lots of little files which have to be
->      individually opened, read, closed and parsed.
+I'm reaching out to you because you're a security-oriented mailing list 
+and would likely be among the folks most interested in end-to-end 
+cryptographic patch attestation features -- or, at least, you're likely 
+to be least indifferent about it. :)
 
-Asked this a number of times, but you haven't answered yet:  what
-application would require such a high efficiency?
+In brief:
 
-Nobody's suggesting we move stat(2) to proc interfaces, and AFAIK
-nobody suggested we move /proc/PID/* to a binary syscall interface.
-Each one has its place, and I strongly feel that mount info belongs in
-the latter category.    Feel free to prove the opposite.
+- the mechanism I propose uses an external mailing list for attestation 
+  data, so list subscribers will see no changes to the mailing list 
+  traffic at all (no proliferation of pgp signatures, extra junky 
+  messages, etc)
+- attestation can be submitted after the fact for patches/series that 
+  were already sent to the list, so a maintainer can ask for attestation 
+  to be provided post-fact before they apply the series to their git 
+  tree
+- a single attestation document is generated per series (or, in fact, 
+  any collection of patches)
 
->  (3) We wouldn't have the overhead of open and close (even adding a
->      self-contained readfile() syscall has to do that internally
+For technical details of the proposed scheme, please see the following 
+LWN article:
+https://lwn.net/Articles/813646/
 
-Busted: add f_op->readfile() and be done with all that.   For example
-DEFINE_SHOW_ATTRIBUTE() could be trivially moved to that interface.
+The proposal is still experimental and requires more real-life testing 
+before I feel comfortable inviting wider participation. This is why I am 
+approaching individual lists that are likely to show interest in this 
+idea.
 
-We could optimize existing proc, sys, etc. interfaces, but it's not
-been an issue, apparently.
+If you are interested in participating, all you need to do is to install 
+the "b4" tool and start submitting and checking patch attestation.  
+Please see the following post for details:
 
->
->  (4) Opening a file in procfs or sysfs has a pathwalk overhead for each
->      file accessed.  We can use an integer attribute ID instead (yes, this
->      is similar to ioctl) - but could also use a string ID if that is
->      preferred.
->
->  (5) Can easily query cross-namespace if, say, a container manager process
->      is given an fs_context that hasn't yet been mounted into a namespace -
->      or hasn't even been fully created yet.
+https://people.kernel.org/monsieuricon/introducing-b4-and-patch-attestation
 
-Works with my patch.
+With any feedback, please email the tools@linux.kernel.org list in order 
+to minimize off-topic conversations on this list.
 
->  (6) Don't have to create/delete a bunch of sysfs/procfs nodes each time a
->      mount happens or is removed - and since systemd makes much use of
->      mount namespaces and mount propagation, this will create a lot of
->      nodes.
-
-Not true.
-
-> The argument for doing this through procfs/sysfs/somemagicfs is that
-> someone using a shell can just query the magic files using ordinary text
-> tools, such as cat - and that has merit - but it doesn't solve the
-> query-by-pathname problem.
->
-> The suggested way around the query-by-pathname problem is to open the
-> target file O_PATH and then look in a magic directory under procfs
-> corresponding to the fd number to see a set of attribute files[*] laid out.
-> Bash, however, can't open by O_PATH or O_NOFOLLOW as things stand...
-
-Bash doesn't have fsinfo(2) either, so that's not really a good argument.
-
-Implementing a utility to show mount attribute(s) by path is trivial
-for the file based interface, while it would need to be updated for
-each extension of fsinfo(2).   Same goes for libc, language bindings,
-etc.
-
-Thanks,
-Miklos
+Thanks in advance,
+-- 
+Konstantin Ryabitsev
+The Linux Foundation
