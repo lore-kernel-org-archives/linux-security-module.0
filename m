@@ -2,89 +2,152 @@ Return-Path: <SRS0=DElp=5D=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DCADC10DCE
-	for <linux-security-module@archiver.kernel.org>; Wed, 18 Mar 2020 15:14:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27FB3C10DCE
+	for <linux-security-module@archiver.kernel.org>; Wed, 18 Mar 2020 16:06:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05B5320757
-	for <linux-security-module@archiver.kernel.org>; Wed, 18 Mar 2020 15:14:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A319920658
+	for <linux-security-module@archiver.kernel.org>; Wed, 18 Mar 2020 16:06:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Dz15MQ4W"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="PmkHFgaj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726877AbgCRPOj (ORCPT
+        id S1727089AbgCRQGD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 18 Mar 2020 11:14:39 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:37420 "EHLO
-        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727186AbgCRPOi (ORCPT
+        Wed, 18 Mar 2020 12:06:03 -0400
+Received: from mail-il1-f193.google.com ([209.85.166.193]:44057 "EHLO
+        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726976AbgCRQGC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 18 Mar 2020 11:14:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584544477;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=rDahFV9TPWnSHYGEo4pu2LmiluREcgL9pHQHEehqYmE=;
-        b=Dz15MQ4W0WxLh2CYuST0npl7v2oVIt0q2/wRZ+MMyN4B6ZkFYvBSBuH5dWqhqpFw9ExlmL
-        S7rRXktEgyZ3hUaNj4JLJhI/MYOIvOyJk3UpEsmton3cjKsBVpQ75LAvLKldf1rxsOtKmO
-        YFZ3UCNfG+vLr3geXcSbRnHyIIQMbUM=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-115-zLovBwwuOPCXLkjvjN2tvw-1; Wed, 18 Mar 2020 11:14:34 -0400
-X-MC-Unique: zLovBwwuOPCXLkjvjN2tvw-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 97683107ACC7;
-        Wed, 18 Mar 2020 15:14:31 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-113-126.rdu2.redhat.com [10.10.113.126])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0851A5C1D8;
-        Wed, 18 Mar 2020 15:14:25 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <e47bef56-9271-93e0-0e59-c77c253babea@redhat.com>
-References: <e47bef56-9271-93e0-0e59-c77c253babea@redhat.com> <20200317194140.6031-5-longman@redhat.com> <20200317194140.6031-1-longman@redhat.com> <2832139.1584520054@warthog.procyon.org.uk>
-To:     Waiman Long <longman@redhat.com>
-Cc:     dhowells@redhat.com,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, netdev@vger.kernel.org,
-        linux-afs@lists.infradead.org, Sumit Garg <sumit.garg@linaro.org>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Chris von Recklinghausen <crecklin@redhat.com>
-Subject: Re: [PATCH v4 4/4] KEYS: Avoid false positive ENOMEM error on key read
+        Wed, 18 Mar 2020 12:06:02 -0400
+Received: by mail-il1-f193.google.com with SMTP id j69so24157861ila.11
+        for <linux-security-module@vger.kernel.org>; Wed, 18 Mar 2020 09:06:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Q+E6phefA0/UCxZU68Ee5CkdpY/LreXqfKusKthyp5I=;
+        b=PmkHFgajk2/8VWOHdYUg8VCj1tVopeX6fqfrGgYm0sPb35e5EoxUjxowANbaw3zCwS
+         wqDhItzeSSD2F4OzNelMLAyDUKSqRDkOzITlg+Hge+tWY5LhXczVM8GuM5pTiPEM5aFa
+         ut6OlQnzTW2CXrIbgEnOI63xRs4UIkIGUhynA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Q+E6phefA0/UCxZU68Ee5CkdpY/LreXqfKusKthyp5I=;
+        b=IfNxH3U1MOAU0Nd4ma/sq74iytTVvbqersR8jWHd3QkpAF2/DvyUzxEtZpAREb3460
+         8lXIFj5mNlyhQO6CpWz/X7iAfC1i6YeiTXW0AChsMixCnRgsP172SDQGQK0iXeBJ67kw
+         W7Za27irNzjcJgiQW2zEgS8JGdwvSFlgNl+Prwe74VcRqC4c6gBOSFlwiwNYT+8zi1VA
+         QTwgicjZ8tAQm7I2zhn2k2e+v+KpjS5+MuO4OISi4Q17Efb+aE0/ljIpK5CC883yodV9
+         tSpanARbhwWMzjNAHuINXgRzo7L258q4UoN4eeSR5ctLUk5WRlgPZNIs54SKMeKqHkkR
+         llUQ==
+X-Gm-Message-State: ANhLgQ23fZp3oLAl2mJcUyyS1JlJTrEZIObeF2ZZVIl5HOyfhLrMjGhJ
+        e4Xpj80ZMr1cOXFOHOJG+sZC9AKgOflUUPi9EIfZeQ==
+X-Google-Smtp-Source: ADFU+vseuj9ZXYFeMbS3X+5vGmRRSiZoxImF5rzfLQFjQscZDtBKPWLdRkROYV3TZYIAEV5wBxQF2hmZ0LlipmXRNY0=
+X-Received: by 2002:a92:5d52:: with SMTP id r79mr4664957ilb.212.1584547562099;
+ Wed, 18 Mar 2020 09:06:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2866041.1584544464.1@warthog.procyon.org.uk>
-Date:   Wed, 18 Mar 2020 15:14:24 +0000
-Message-ID: <2866042.1584544464@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+References: <158454408854.2864823.5910520544515668590.stgit@warthog.procyon.org.uk>
+In-Reply-To: <158454408854.2864823.5910520544515668590.stgit@warthog.procyon.org.uk>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Wed, 18 Mar 2020 17:05:50 +0100
+Message-ID: <CAJfpeguaiicjS2StY5m=8H7BCjq6PLxMsWE3Mx_jYR1foDWVTg@mail.gmail.com>
+Subject: Re: [PATCH 00/13] VFS: Filesystem information [ver #19]
+To:     David Howells <dhowells@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux NFS list <linux-nfs@vger.kernel.org>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-ext4@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Ian Kent <raven@themaw.net>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Christian Brauner <christian@brauner.io>,
+        Jann Horn <jannh@google.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Karel Zak <kzak@redhat.com>, Jeff Layton <jlayton@redhat.com>,
+        linux-fsdevel@vger.kernel.org,
+        LSM <linux-security-module@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Waiman Long <longman@redhat.com> wrote:
+On Wed, Mar 18, 2020 at 4:08 PM David Howells <dhowells@redhat.com> wrote:
 
-> Doing this is micro-optimization. As the keys subsystem is that
-> performance critical, do we need to do that to save a cycle or two while
-> making the code a bit harder to read?
+> ============================
+> WHY NOT USE PROCFS OR SYSFS?
+> ============================
+>
+> Why is it better to go with a new system call rather than adding more magic
+> stuff to /proc or /sysfs for each superblock object and each mount object?
+>
+>  (1) It can be targetted.  It makes it easy to query directly by path.
+>      procfs and sysfs cannot do this easily.
+>
+>  (2) It's more efficient as we can return specific binary data rather than
+>      making huge text dumps.  Granted, sysfs and procfs could present the
+>      same data, though as lots of little files which have to be
+>      individually opened, read, closed and parsed.
 
-It was more sort of a musing comment.  Feel free to ignore it.  kvfree()
-doesn't do this.
+Asked this a number of times, but you haven't answered yet:  what
+application would require such a high efficiency?
 
-David
+Nobody's suggesting we move stat(2) to proc interfaces, and AFAIK
+nobody suggested we move /proc/PID/* to a binary syscall interface.
+Each one has its place, and I strongly feel that mount info belongs in
+the latter category.    Feel free to prove the opposite.
 
+>  (3) We wouldn't have the overhead of open and close (even adding a
+>      self-contained readfile() syscall has to do that internally
+
+Busted: add f_op->readfile() and be done with all that.   For example
+DEFINE_SHOW_ATTRIBUTE() could be trivially moved to that interface.
+
+We could optimize existing proc, sys, etc. interfaces, but it's not
+been an issue, apparently.
+
+>
+>  (4) Opening a file in procfs or sysfs has a pathwalk overhead for each
+>      file accessed.  We can use an integer attribute ID instead (yes, this
+>      is similar to ioctl) - but could also use a string ID if that is
+>      preferred.
+>
+>  (5) Can easily query cross-namespace if, say, a container manager process
+>      is given an fs_context that hasn't yet been mounted into a namespace -
+>      or hasn't even been fully created yet.
+
+Works with my patch.
+
+>  (6) Don't have to create/delete a bunch of sysfs/procfs nodes each time a
+>      mount happens or is removed - and since systemd makes much use of
+>      mount namespaces and mount propagation, this will create a lot of
+>      nodes.
+
+Not true.
+
+> The argument for doing this through procfs/sysfs/somemagicfs is that
+> someone using a shell can just query the magic files using ordinary text
+> tools, such as cat - and that has merit - but it doesn't solve the
+> query-by-pathname problem.
+>
+> The suggested way around the query-by-pathname problem is to open the
+> target file O_PATH and then look in a magic directory under procfs
+> corresponding to the fd number to see a set of attribute files[*] laid out.
+> Bash, however, can't open by O_PATH or O_NOFOLLOW as things stand...
+
+Bash doesn't have fsinfo(2) either, so that's not really a good argument.
+
+Implementing a utility to show mount attribute(s) by path is trivial
+for the file based interface, while it would need to be updated for
+each extension of fsinfo(2).   Same goes for libc, language bindings,
+etc.
+
+Thanks,
+Miklos
