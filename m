@@ -2,105 +2,175 @@ Return-Path: <SRS0=DElp=5D=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A33EC5ACD7
-	for <linux-security-module@archiver.kernel.org>; Wed, 18 Mar 2020 14:34:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54FF7C5ACDA
+	for <linux-security-module@archiver.kernel.org>; Wed, 18 Mar 2020 15:03:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0CDE20774
-	for <linux-security-module@archiver.kernel.org>; Wed, 18 Mar 2020 14:34:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2630A20775
+	for <linux-security-module@archiver.kernel.org>; Wed, 18 Mar 2020 15:03:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="M+sTpZ4I"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QDzUF0yP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726958AbgCROel (ORCPT
+        id S1726781AbgCRPDb (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 18 Mar 2020 10:34:41 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:37026 "EHLO
+        Wed, 18 Mar 2020 11:03:31 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:42035 "EHLO
         us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726777AbgCROel (ORCPT
+        by vger.kernel.org with ESMTP id S1727052AbgCRPDa (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 18 Mar 2020 10:34:41 -0400
+        Wed, 18 Mar 2020 11:03:30 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584542080;
+        s=mimecast20190719; t=1584543808;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=UDcu1iOa70ydGTzbtxeciqeXori85SoY2pnI41cZUDY=;
-        b=M+sTpZ4Itm2z/5rKyBttp696B82XawqcxlKgQAYC/0X4kcKRmJsnyo2I/LSqzFaOy1vdSW
-        MARFEVbJMbOGvSq0UGAWO8GfJCKPuhtKHc9I1DwVWCU+/XAZdyvc3gRNi4u0RoY+gGiiBy
-        PM3HVN/2n476w5NNHpSIIeaThQtrmOM=
+        bh=i32RwNIexlSTGjPdh8V9cz3m8rKQLmmbJ0m7mElrktI=;
+        b=QDzUF0yPBHH1zsuJCBjZe+JxwzeUVypbwwKpymWKC0U7wViq4oQbuFdok8BE19Fd/t1a7H
+        qjDSjsvvVv5knUkr5jjvGhZhPfyG2hoM/6U2H2DW1ZKV+HdGHqlwuc5YRggXRzcLibEvnJ
+        7A7n8Rm5tNWecP9ywdcwensEcFY+dOM=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-435-W8OgMNYEOw6rZG7yJQ1TWA-1; Wed, 18 Mar 2020 10:34:39 -0400
-X-MC-Unique: W8OgMNYEOw6rZG7yJQ1TWA-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+ us-mta-395-dNMuW7FkMg-XGeyrWPGnNQ-1; Wed, 18 Mar 2020 11:03:27 -0400
+X-MC-Unique: dNMuW7FkMg-XGeyrWPGnNQ-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D582C189D6C0;
-        Wed, 18 Mar 2020 14:34:36 +0000 (UTC)
-Received: from llong.remote.csb (ovpn-120-114.rdu2.redhat.com [10.10.120.114])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 66E1D19C58;
-        Wed, 18 Mar 2020 14:34:34 +0000 (UTC)
-Subject: Re: [PATCH v4 4/4] KEYS: Avoid false positive ENOMEM error on key
- read
-To:     David Howells <dhowells@redhat.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, netdev@vger.kernel.org,
-        linux-afs@lists.infradead.org, Sumit Garg <sumit.garg@linaro.org>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Chris von Recklinghausen <crecklin@redhat.com>
-References: <20200317194140.6031-5-longman@redhat.com>
- <20200317194140.6031-1-longman@redhat.com>
- <2832139.1584520054@warthog.procyon.org.uk>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <e47bef56-9271-93e0-0e59-c77c253babea@redhat.com>
-Date:   Wed, 18 Mar 2020 10:34:33 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 18E7C102C8CE;
+        Wed, 18 Mar 2020 15:03:25 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-113-126.rdu2.redhat.com [10.10.113.126])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 956861001B07;
+        Wed, 18 Mar 2020 15:03:18 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH 01/17] uapi: General notification queue definitions [ver #5]
+From:   David Howells <dhowells@redhat.com>
+To:     torvalds@linux-foundation.org, viro@zeniv.linux.org.uk
+Cc:     dhowells@redhat.com, casey@schaufler-ca.com, sds@tycho.nsa.gov,
+        nicolas.dichtel@6wind.com, raven@themaw.net, christian@brauner.io,
+        andres@anarazel.de, jlayton@redhat.com, dray@redhat.com,
+        kzak@redhat.com, keyrings@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Wed, 18 Mar 2020 15:03:17 +0000
+Message-ID: <158454379781.2863966.14636232398055723657.stgit@warthog.procyon.org.uk>
+In-Reply-To: <158454378820.2863966.10496767254293183123.stgit@warthog.procyon.org.uk>
+References: <158454378820.2863966.10496767254293183123.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.21
 MIME-Version: 1.0
-In-Reply-To: <2832139.1584520054@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 3/18/20 4:27 AM, David Howells wrote:
-> Waiman Long <longman@redhat.com> wrote:
->
->> +static inline void __kvzfree(const void *addr, size_t len)
->> +{
->> +	if (addr) {
->> +		memset((void *)addr, 0, len);
->> +		kvfree(addr);
->> +	}
->> +}
-> I wonder if that would be better as "kvfree(memset(...))" as memset() will
-> return the address parameter.  If memset is not inline, it avoids the need for
-> the compiler to save the parameter.
->
-> David
+Add UAPI definitions for the general notification queue, including the
+following pieces:
 
-Doing this is micro-optimization. As the keys subsystem is that
-performance critical, do we need to do that to save a cycle or two while
-making the code a bit harder to read?
+ (*) struct watch_notification.
 
-Cheers,
-Longman
+     This is the metadata header for notification messages.  It includes a
+     type and subtype that indicate the source of the message
+     (eg. WATCH_TYPE_MOUNT_NOTIFY) and the kind of the message
+     (eg. NOTIFY_MOUNT_NEW_MOUNT).
+
+     The header also contains an information field that conveys the
+     following information:
+
+	- WATCH_INFO_LENGTH.  The size of the entry (entries are variable
+          length).
+
+	- WATCH_INFO_ID.  The watch ID specified when the watchpoint was
+          set.
+
+	- WATCH_INFO_TYPE_INFO.  (Sub)type-specific information.
+
+	- WATCH_INFO_FLAG_*.  Flag bits overlain on the type-specific
+          information.  For use by the type.
+
+     All the information in the header can be used in filtering messages at
+     the point of writing into the buffer.
+
+ (*) struct watch_notification_removal
+
+     This is an extended watch-removal notification record that includes an
+     'id' field that can indicate the identifier of the object being
+     removed if available (for instance, a keyring serial number).
+
+Signed-off-by: David Howells <dhowells@redhat.com>
+---
+
+ include/uapi/linux/watch_queue.h |   55 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 55 insertions(+)
+ create mode 100644 include/uapi/linux/watch_queue.h
+
+diff --git a/include/uapi/linux/watch_queue.h b/include/uapi/linux/watch_queue.h
+new file mode 100644
+index 000000000000..5f3d21e8a34b
+--- /dev/null
++++ b/include/uapi/linux/watch_queue.h
+@@ -0,0 +1,55 @@
++/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
++#ifndef _UAPI_LINUX_WATCH_QUEUE_H
++#define _UAPI_LINUX_WATCH_QUEUE_H
++
++#include <linux/types.h>
++
++enum watch_notification_type {
++	WATCH_TYPE_META		= 0,	/* Special record */
++	WATCH_TYPE__NR		= 1
++};
++
++enum watch_meta_notification_subtype {
++	WATCH_META_REMOVAL_NOTIFICATION	= 0,	/* Watched object was removed */
++	WATCH_META_LOSS_NOTIFICATION	= 1,	/* Data loss occurred */
++};
++
++/*
++ * Notification record header.  This is aligned to 64-bits so that subclasses
++ * can contain __u64 fields.
++ */
++struct watch_notification {
++	__u32			type:24;	/* enum watch_notification_type */
++	__u32			subtype:8;	/* Type-specific subtype (filterable) */
++	__u32			info;
++#define WATCH_INFO_LENGTH	0x0000007f	/* Length of record */
++#define WATCH_INFO_LENGTH__SHIFT 0
++#define WATCH_INFO_ID		0x0000ff00	/* ID of watchpoint */
++#define WATCH_INFO_ID__SHIFT	8
++#define WATCH_INFO_TYPE_INFO	0xffff0000	/* Type-specific info */
++#define WATCH_INFO_TYPE_INFO__SHIFT 16
++#define WATCH_INFO_FLAG_0	0x00010000	/* Type-specific info, flag bit 0 */
++#define WATCH_INFO_FLAG_1	0x00020000	/* ... */
++#define WATCH_INFO_FLAG_2	0x00040000
++#define WATCH_INFO_FLAG_3	0x00080000
++#define WATCH_INFO_FLAG_4	0x00100000
++#define WATCH_INFO_FLAG_5	0x00200000
++#define WATCH_INFO_FLAG_6	0x00400000
++#define WATCH_INFO_FLAG_7	0x00800000
++};
++
++
++/*
++ * Extended watch removal notification.  This is used optionally if the type
++ * wants to indicate an identifier for the object being watched, if there is
++ * such.  This can be distinguished by the length.
++ *
++ * type -> WATCH_TYPE_META
++ * subtype -> WATCH_META_REMOVAL_NOTIFICATION
++ */
++struct watch_notification_removal {
++	struct watch_notification watch;
++	__u64	id;		/* Type-dependent identifier */
++};
++
++#endif /* _UAPI_LINUX_WATCH_QUEUE_H */
+
 
