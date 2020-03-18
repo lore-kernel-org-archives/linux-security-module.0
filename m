@@ -2,103 +2,94 @@ Return-Path: <SRS0=DElp=5D=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06042C10DCE
-	for <linux-security-module@archiver.kernel.org>; Wed, 18 Mar 2020 12:42:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5E32C5ACD7
+	for <linux-security-module@archiver.kernel.org>; Wed, 18 Mar 2020 14:32:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D189820768
-	for <linux-security-module@archiver.kernel.org>; Wed, 18 Mar 2020 12:42:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 892D12076C
+	for <linux-security-module@archiver.kernel.org>; Wed, 18 Mar 2020 14:32:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PEyCbtua"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726795AbgCRMmo (ORCPT
+        id S1727126AbgCROca (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 18 Mar 2020 08:42:44 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2574 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726821AbgCRMmo (ORCPT
+        Wed, 18 Mar 2020 10:32:30 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:48643 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727102AbgCROc3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 18 Mar 2020 08:42:44 -0400
-Received: from lhreml706-cah.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id E0E895703F321FCD68A4;
-        Wed, 18 Mar 2020 12:42:41 +0000 (GMT)
-Received: from fraeml703-chm.china.huawei.com (10.206.15.52) by
- lhreml706-cah.china.huawei.com (10.201.108.47) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Wed, 18 Mar 2020 12:42:41 +0000
-Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- fraeml703-chm.china.huawei.com (10.206.15.52) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1713.5; Wed, 18 Mar 2020 13:42:40 +0100
-Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
- fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.1713.004;
- Wed, 18 Mar 2020 13:42:40 +0100
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        "James.Bottomley@HansenPartnership.com" 
-        <James.Bottomley@HansenPartnership.com>,
-        "jarkko.sakkinen@linux.intel.com" <jarkko.sakkinen@linux.intel.com>
-CC:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
-Subject: RE: [PATCH v3 7/8] ima: Calculate and extend PCR with digests in
- ima_template_entry
-Thread-Topic: [PATCH v3 7/8] ima: Calculate and extend PCR with digests in
- ima_template_entry
-Thread-Index: AQHV3/maB4b2w9bxIkSFxAC0vgzFrag2UL0AgBgzWHA=
-Date:   Wed, 18 Mar 2020 12:42:40 +0000
-Message-ID: <fecf59c1880045769bfecc17b5670ac5@huawei.com>
-References: <20200210100418.22049-1-roberto.sassu@huawei.com>
- <1583208222.8544.168.camel@linux.ibm.com>
-In-Reply-To: <1583208222.8544.168.camel@linux.ibm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.210.172.87]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Wed, 18 Mar 2020 10:32:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584541948;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=O4Lls9UoDb9uKTNqm5ZPP3fEFfUNHwPy6zZuzCAlNcw=;
+        b=PEyCbtuaeC8fe66Nm9su9fSJRqQBFXK094Np0i1G33i5uyqOWMniIInaD64Vf/ypPmfViB
+        miq+x0j0Y6nUTAo9rgFdPSW4zUTOocVMwR/smaHdJiPVbLzd7Au+fKveQHr0ppLtVvnYOp
+        6j6F4ZwumRPf2AskaZEaGScHo/MwXd8=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-202-ftqBYlSBOgiVh8uJpfOpng-1; Wed, 18 Mar 2020 10:32:25 -0400
+X-MC-Unique: ftqBYlSBOgiVh8uJpfOpng-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 78E1E800D50;
+        Wed, 18 Mar 2020 14:32:22 +0000 (UTC)
+Received: from llong.remote.csb (ovpn-120-114.rdu2.redhat.com [10.10.120.114])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D818B5C1D8;
+        Wed, 18 Mar 2020 14:32:19 +0000 (UTC)
+Subject: Re: [PATCH v4 2/4] KEYS: Remove __user annotation from rxrpc_read()
+To:     David Howells <dhowells@redhat.com>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, netdev@vger.kernel.org,
+        linux-afs@lists.infradead.org, Sumit Garg <sumit.garg@linaro.org>,
+        Jerry Snitselaar <jsnitsel@redhat.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Chris von Recklinghausen <crecklin@redhat.com>
+References: <20200317194140.6031-3-longman@redhat.com>
+ <20200317194140.6031-1-longman@redhat.com>
+ <2831786.1584519784@warthog.procyon.org.uk>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <fc537b1b-36f5-eac7-111b-e50f41fd01ff@redhat.com>
+Date:   Wed, 18 Mar 2020 10:32:19 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+In-Reply-To: <2831786.1584519784@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBvd25lci1saW51eC1zZWN1cml0
-eS1tb2R1bGVAdmdlci5rZXJuZWwub3JnIFttYWlsdG86b3duZXItbGludXgtDQo+IHNlY3VyaXR5
-LW1vZHVsZUB2Z2VyLmtlcm5lbC5vcmddIE9uIEJlaGFsZiBPZiBNaW1pIFpvaGFyDQo+IFNlbnQ6
-IFR1ZXNkYXksIE1hcmNoIDMsIDIwMjAgNTowNCBBTQ0KPiBUbzogUm9iZXJ0byBTYXNzdSA8cm9i
-ZXJ0by5zYXNzdUBodWF3ZWkuY29tPjsNCj4gSmFtZXMuQm90dG9tbGV5QEhhbnNlblBhcnRuZXJz
-aGlwLmNvbTsNCj4gamFya2tvLnNha2tpbmVuQGxpbnV4LmludGVsLmNvbQ0KPiBDYzogbGludXgt
-aW50ZWdyaXR5QHZnZXIua2VybmVsLm9yZzsgbGludXgtc2VjdXJpdHktbW9kdWxlQHZnZXIua2Vy
-bmVsLm9yZzsNCj4gbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgU2lsdml1IFZsYXNjZWFu
-dQ0KPiA8U2lsdml1LlZsYXNjZWFudUBodWF3ZWkuY29tPg0KPiBTdWJqZWN0OiBSZTogW1BBVENI
-IHYzIDcvOF0gaW1hOiBDYWxjdWxhdGUgYW5kIGV4dGVuZCBQQ1Igd2l0aCBkaWdlc3RzIGluDQo+
-IGltYV90ZW1wbGF0ZV9lbnRyeQ0KPiANCj4gT24gTW9uLCAyMDIwLTAyLTEwIGF0IDExOjA0ICsw
-MTAwLCBSb2JlcnRvIFNhc3N1IHdyb3RlOg0KPiANCj4gPiBAQCAtMjE5LDYgKzIxNCw4IEBAIGlu
-dCBpbWFfcmVzdG9yZV9tZWFzdXJlbWVudF9lbnRyeShzdHJ1Y3QNCj4gaW1hX3RlbXBsYXRlX2Vu
-dHJ5ICplbnRyeSkNCj4gPg0KPiA+ICBpbnQgX19pbml0IGltYV9pbml0X2RpZ2VzdHModm9pZCkN
-Cj4gPiAgew0KPiA+ICsJdTE2IGRpZ2VzdF9zaXplOw0KPiA+ICsJdTE2IGNyeXB0b19pZDsNCj4g
-PiAgCWludCBpOw0KPiA+DQo+ID4gIAlpZiAoIWltYV90cG1fY2hpcCkNCj4gPiBAQCAtMjI5LDgg
-KzIyNiwxNyBAQCBpbnQgX19pbml0IGltYV9pbml0X2RpZ2VzdHModm9pZCkNCj4gPiAgCWlmICgh
-ZGlnZXN0cykNCj4gPiAgCQlyZXR1cm4gLUVOT01FTTsNCj4gPg0KPiA+IC0JZm9yIChpID0gMDsg
-aSA8IGltYV90cG1fY2hpcC0+bnJfYWxsb2NhdGVkX2JhbmtzOyBpKyspDQo+ID4gKwlmb3IgKGkg
-PSAwOyBpIDwgaW1hX3RwbV9jaGlwLT5ucl9hbGxvY2F0ZWRfYmFua3M7IGkrKykgew0KPiA+ICAJ
-CWRpZ2VzdHNbaV0uYWxnX2lkID0gaW1hX3RwbV9jaGlwLT5hbGxvY2F0ZWRfYmFua3NbaV0uYWxn
-X2lkOw0KPiA+ICsJCWRpZ2VzdF9zaXplID0gaW1hX3RwbV9jaGlwLT5hbGxvY2F0ZWRfYmFua3Nb
-aV0uZGlnZXN0X3NpemU7DQo+ID4gKwkJY3J5cHRvX2lkID0gaW1hX3RwbV9jaGlwLT5hbGxvY2F0
-ZWRfYmFua3NbaV0uY3J5cHRvX2lkOw0KPiA+ICsNCj4gPiArCQkvKiBmb3IgdW5tYXBwZWQgVFBN
-IGFsZ29yaXRobXMgZGlnZXN0IGlzIHN0aWxsIGEgcGFkZGVkDQo+IFNIQTEgKi8NCj4gPiArCQlp
-ZiAoY3J5cHRvX2lkID09IEhBU0hfQUxHT19fTEFTVCkNCj4gPiArCQkJZGlnZXN0X3NpemUgPSBT
-SEExX0RJR0VTVF9TSVpFOw0KPiA+ICsNCj4gPiArCQltZW1zZXQoZGlnZXN0c1tpXS5kaWdlc3Qs
-IDB4ZmYsIGRpZ2VzdF9zaXplKTsNCj4gDQo+IFNob3VsZG4ndCB0aGUgbWVtc2V0IGhlcmUgYmUg
-b2YgdGhlIGFjdHVhbCBkaWdlc3Qgc2l6ZSBldmVuIGZvcg0KPiB1bm1hcHBlZCBUUE0gYWxnb3Jp
-dGhtcy4NCg0KVGhpcyBpcyBjb25zaXN0ZW50IHdpdGggaW1hX2NhbGNfZmllbGRfYXJyYXlfaGFz
-aCgpLCBzbyB0aGF0IGEgdmVyaWZpZXINCndpbGwgYWx3YXlzIHBhZCB0aGUgU0hBMSBkaWdlc3Qg
-d2l0aCB6ZXJvcyB0byBvYnRhaW4gdGhlIGZpbmFsIFBDUiB2YWx1ZS4NCg0KSSBjYW4gc2V0IGFs
-bCBieXRlcyBpZiB5b3UgcHJlZmVyLg0KDQpUaGFua3MNCg0KUm9iZXJ0bw0KDQpIVUFXRUkgVEVD
-SE5PTE9HSUVTIER1ZXNzZWxkb3JmIEdtYkgsIEhSQiA1NjA2Mw0KTWFuYWdpbmcgRGlyZWN0b3I6
-IExpIFBlbmcsIExpIEppYW4sIFNoaSBZYW5saQ0KDQo+ID4gKwl9DQo+ID4NCj4gPiAgCXJldHVy
-biAwOw0KPiA+ICB9DQoNCg==
+On 3/18/20 4:23 AM, David Howells wrote:
+> Patch 2 and 3 need to be rolled into patch 1 otherwise sparse will give
+> warnings about mismatches in address spaces on patch 1.
+>
+> Thanks,
+> David
+
+I separated them because they spans different domain. Sure, I will
+repost it to merge the first three.
+
+Cheers,
+Longman
+
