@@ -2,177 +2,210 @@ Return-Path: <SRS0=U1zy=5E=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C49E6C4332D
-	for <linux-security-module@archiver.kernel.org>; Thu, 19 Mar 2020 09:46:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FE17C4332E
+	for <linux-security-module@archiver.kernel.org>; Thu, 19 Mar 2020 10:37:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9912820732
-	for <linux-security-module@archiver.kernel.org>; Thu, 19 Mar 2020 09:46:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 03B3320752
+	for <linux-security-module@archiver.kernel.org>; Thu, 19 Mar 2020 10:37:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CK6NauoX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726589AbgCSJqH (ORCPT
+        id S1727002AbgCSKhx (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 19 Mar 2020 05:46:07 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:15938 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726825AbgCSJqF (ORCPT
+        Thu, 19 Mar 2020 06:37:53 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:29873 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726802AbgCSKht (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 19 Mar 2020 05:46:05 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02J9XkXr015639
-        for <linux-security-module@vger.kernel.org>; Thu, 19 Mar 2020 05:46:04 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2yu8bsme17-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Thu, 19 Mar 2020 05:46:04 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Thu, 19 Mar 2020 09:46:02 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 19 Mar 2020 09:45:59 -0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02J9jwOc54853638
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 19 Mar 2020 09:45:58 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3CECDAE051;
-        Thu, 19 Mar 2020 09:45:58 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AE824AE055;
-        Thu, 19 Mar 2020 09:45:56 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.203.81])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 19 Mar 2020 09:45:56 +0000 (GMT)
-Subject: Re: [PATCH v3 7/8] ima: Calculate and extend PCR with digests in
- ima_template_entry
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>,
-        "James.Bottomley@HansenPartnership.com" 
-        <James.Bottomley@HansenPartnership.com>,
-        "jarkko.sakkinen@linux.intel.com" <jarkko.sakkinen@linux.intel.com>
-Cc:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
-Date:   Thu, 19 Mar 2020 05:45:55 -0400
-In-Reply-To: <7df041fd4cd64a5bb61beb4eb8276819@huawei.com>
-References: <20200210100418.22049-1-roberto.sassu@huawei.com>
-         <1583208222.8544.168.camel@linux.ibm.com>
-         <fecf59c1880045769bfecc17b5670ac5@huawei.com>
-         <1584568492.5188.200.camel@linux.ibm.com>
-         <7df041fd4cd64a5bb61beb4eb8276819@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 20031909-0016-0000-0000-000002F3C23E
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20031909-0017-0000-0000-000033574B39
-Message-Id: <1584611155.5188.214.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
- definitions=2020-03-19_02:2020-03-18,2020-03-19 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
- lowpriorityscore=0 adultscore=0 priorityscore=1501 bulkscore=0
- suspectscore=0 malwarescore=0 mlxlogscore=999 spamscore=0 phishscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2003190043
+        Thu, 19 Mar 2020 06:37:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584614267;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=CiofkCH/sv7+7rpU6YsJXFWeq/w+9dcTqMLo0EbVExc=;
+        b=CK6NauoXI0Z63pckSz1EJg+hyCd+MygVolTHycTgOZr35DfTpEoCbe8AGdOOrgW6BAw9CK
+        h3qfyyWJcHeT23ccKfmGyCAUSJYSSY6cci5KgryR4fpDcIKlgx+EcDRYwhB2QewLVzBe0V
+        se9+mHy+sPggjiyAje65N7HtEB3cMes=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-285-cUdAiS5ZN1Sq4KuQlxE-7w-1; Thu, 19 Mar 2020 06:37:44 -0400
+X-MC-Unique: cUdAiS5ZN1Sq4KuQlxE-7w-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id BBCD5107ACC4;
+        Thu, 19 Mar 2020 10:37:41 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-113-126.rdu2.redhat.com [10.10.113.126])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C3A2117B91;
+        Thu, 19 Mar 2020 10:37:37 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAJfpeguaiicjS2StY5m=8H7BCjq6PLxMsWE3Mx_jYR1foDWVTg@mail.gmail.com>
+References: <CAJfpeguaiicjS2StY5m=8H7BCjq6PLxMsWE3Mx_jYR1foDWVTg@mail.gmail.com> <158454408854.2864823.5910520544515668590.stgit@warthog.procyon.org.uk>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     dhowells@redhat.com,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux NFS list <linux-nfs@vger.kernel.org>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-ext4@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Ian Kent <raven@themaw.net>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Christian Brauner <christian@brauner.io>,
+        Jann Horn <jannh@google.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Karel Zak <kzak@redhat.com>, Jeff Layton <jlayton@redhat.com>,
+        linux-fsdevel@vger.kernel.org,
+        LSM <linux-security-module@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/13] VFS: Filesystem information [ver #19]
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3085879.1584614257.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Thu, 19 Mar 2020 10:37:37 +0000
+Message-ID: <3085880.1584614257@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 2020-03-19 at 08:31 +0000, Roberto Sassu wrote:
-> > -----Original Message-----
-> > From: linux-integrity-owner@vger.kernel.org [mailto:linux-integrity-
-> > owner@vger.kernel.org] On Behalf Of Mimi Zohar
-> > Sent: Wednesday, March 18, 2020 10:55 PM
-> > To: Roberto Sassu <roberto.sassu@huawei.com>;
-> > James.Bottomley@HansenPartnership.com;
-> > jarkko.sakkinen@linux.intel.com
-> > Cc: linux-integrity@vger.kernel.org; linux-security-module@vger.kernel.org;
-> > linux-kernel@vger.kernel.org; Silviu Vlasceanu
-> > <Silviu.Vlasceanu@huawei.com>
-> > Subject: Re: [PATCH v3 7/8] ima: Calculate and extend PCR with digests in
-> > ima_template_entry
-> > 
-> > On Wed, 2020-03-18 at 12:42 +0000, Roberto Sassu wrote:
-> > > > -----Original Message-----
-> > > > From: owner-linux-security-module@vger.kernel.org [mailto:owner-
-> > linux-
-> > > > security-module@vger.kernel.org] On Behalf Of Mimi Zohar
-> > > > Sent: Tuesday, March 3, 2020 5:04 AM
-> > > > To: Roberto Sassu <roberto.sassu@huawei.com>;
-> > > > James.Bottomley@HansenPartnership.com;
-> > > > jarkko.sakkinen@linux.intel.com
-> > > > Cc: linux-integrity@vger.kernel.org; linux-security-
-> > module@vger.kernel.org;
-> > > > linux-kernel@vger.kernel.org; Silviu Vlasceanu
-> > > > <Silviu.Vlasceanu@huawei.com>
-> > > > Subject: Re: [PATCH v3 7/8] ima: Calculate and extend PCR with digests
-> > in
-> > > > ima_template_entry
-> > > >
-> > > > On Mon, 2020-02-10 at 11:04 +0100, Roberto Sassu wrote:
-> > > >
-> > > > > @@ -219,6 +214,8 @@ int ima_restore_measurement_entry(struct
-> > > > ima_template_entry *entry)
-> > > > >
-> > > > >  int __init ima_init_digests(void)
-> > > > >  {
-> > > > > +	u16 digest_size;
-> > > > > +	u16 crypto_id;
-> > > > >  	int i;
-> > > > >
-> > > > >  	if (!ima_tpm_chip)
-> > > > > @@ -229,8 +226,17 @@ int __init ima_init_digests(void)
-> > > > >  	if (!digests)
-> > > > >  		return -ENOMEM;
-> > > > >
-> > > > > -	for (i = 0; i < ima_tpm_chip->nr_allocated_banks; i++)
-> > > > > +	for (i = 0; i < ima_tpm_chip->nr_allocated_banks; i++) {
-> > > > >  		digests[i].alg_id = ima_tpm_chip->allocated_banks[i].alg_id;
-> > > > > +		digest_size = ima_tpm_chip->allocated_banks[i].digest_size;
-> > > > > +		crypto_id = ima_tpm_chip->allocated_banks[i].crypto_id;
-> > > > > +
-> > > > > +		/* for unmapped TPM algorithms digest is still a padded
-> > > > SHA1 */
-> > > > > +		if (crypto_id == HASH_ALGO__LAST)
-> > > > > +			digest_size = SHA1_DIGEST_SIZE;
-> > > > > +
-> > > > > +		memset(digests[i].digest, 0xff, digest_size);
-> > > >
-> > > > Shouldn't the memset here be of the actual digest size even for
-> > > > unmapped TPM algorithms.
-> > >
-> > > This is consistent with ima_calc_field_array_hash(), so that a verifier
-> > > will always pad the SHA1 digest with zeros to obtain the final PCR value.
-> > >
-> > > I can set all bytes if you prefer.
-> > 
-> > My concern is with violations.  The measurement list will be padded
-> > with 0's, but the value being extended into the TPM will only
-> > partially be 0xFF's.  When verifying the measurement list, replacing
-> > all 0x00's with all 0xFF's is simpler.
-> 
-> If the TPM algorithm is unknown, the starting point is the SHA1 digest.
-> If there is a violation, this should be the one to be modified. Then, after
-> that, padding is done for all entries in the same way, regardless of
-> whether the entry is a violation or not.
+Miklos Szeredi <miklos@szeredi.hu> wrote:
 
-Ok.  In the case that the verifier supports the hash algorithm and
-calculates the template hash, walking the measurement list will fail
-anyway.  In the case that the verifier does not support the hash
-algorithm, then it will pad/truncate the SHA1 hash consistently.  That
-works for now with the SHA1 based measurement list and should work
-with a hash agile measurement list.
+> >  (2) It's more efficient as we can return specific binary data rather =
+than
+> >      making huge text dumps.  Granted, sysfs and procfs could present =
+the
+> >      same data, though as lots of little files which have to be
+> >      individually opened, read, closed and parsed.
+> =
 
-thanks,
+> Asked this a number of times, but you haven't answered yet:  what
+> application would require such a high efficiency?
 
-Mimi
+Low efficiency means more time doing this when that time could be spent do=
+ing
+other things - or even putting the CPU in a powersaving state.  Using an
+open/read/close render-to-text-and-parse interface *will* be slower and le=
+ss
+efficient as there are more things you have to do to use it.
+
+Then consider doing a walk over all the mounts in the case where there are
+10000 of them - we have issues with /proc/mounts for such.  fsinfo() will =
+end
+up doing a lot less work.
+
+> I strongly feel that mount info belongs in the latter category
+
+I feel strongly that a lot of stuff done through /proc or /sys shouldn't b=
+e.
+
+Yes, it's nice that you can explore it with cat and poke it with echo, but=
+ it
+has a number of problems: security, atomiticity, efficiency and providing =
+an
+round-the-back way to pin stuff if not done right.
+
+> >  (3) We wouldn't have the overhead of open and close (even adding a
+> >      self-contained readfile() syscall has to do that internally
+> =
+
+> Busted: add f_op->readfile() and be done with all that.   For example
+> DEFINE_SHOW_ATTRIBUTE() could be trivially moved to that interface.
+
+Look at your example.  "f_op->".  That's "file->f_op->" I presume.
+
+You would have to make it "i_op->" to avoid the open and the close - and f=
+or
+things like procfs and sysfs, that's probably entirely reasonable - but be=
+ar
+in mind that you still have to apply all the LSM file security controls, j=
+ust
+in case the backing filesystem is, say, ext4 rather than procfs.
+
+> We could optimize existing proc, sys, etc. interfaces, but it's not
+> been an issue, apparently.
+
+You can't get rid of or change many of the existing interfaces.  A lot of =
+them
+are effectively indirect system calls and are, as such, part of the fixed
+UAPI.  You'd have to add a parallel optimised set.
+
+> >  (6) Don't have to create/delete a bunch of sysfs/procfs nodes each ti=
+me a
+> >      mount happens or is removed - and since systemd makes much use of
+> >      mount namespaces and mount propagation, this will create a lot of
+> >      nodes.
+> =
+
+> Not true.
+
+This may not be true if you roll your own special filesystem.  It *is* tru=
+e if
+you do it in procfs or sysfs.  The files don't exist if you don't create n=
+odes
+or attribute tables for them.
+
+> > The argument for doing this through procfs/sysfs/somemagicfs is that
+> > someone using a shell can just query the magic files using ordinary te=
+xt
+> > tools, such as cat - and that has merit - but it doesn't solve the
+> > query-by-pathname problem.
+> >
+> > The suggested way around the query-by-pathname problem is to open the
+> > target file O_PATH and then look in a magic directory under procfs
+> > corresponding to the fd number to see a set of attribute files[*] laid=
+ out.
+> > Bash, however, can't open by O_PATH or O_NOFOLLOW as things stand...
+> =
+
+> Bash doesn't have fsinfo(2) either, so that's not really a good argument=
+.
+
+I never claimed that fsinfo() could be accessed directly from the shell.  =
+For
+you proposal, you claimed "immediately usable from all programming languag=
+es,
+including scripts".
+
+> Implementing a utility to show mount attribute(s) by path is trivial
+> for the file based interface, while it would need to be updated for
+> each extension of fsinfo(2).   Same goes for libc, language bindings,
+> etc.
+
+That's not precisely true.  If you aren't using an extension to an fsinfo(=
+)
+attribute, you wouldn't need to change anything[*].
+
+If you want to use an extension - *even* through a file based interface - =
+you
+*would* have to change your code and your parser.
+
+And, no, extending an fsinfo() attribute would not require any changes to =
+libc
+unless libc is using that attribute[*] and wants to access the extension.
+
+[*] I assume that in C/C++ at least, you'd use linux/fsinfo.h rather than =
+some
+    libc version.
+
+[*] statfs() could be emulated this way, but I'm not sure what else libc
+    specifically is going to look at.  This is more aimed at libmount amon=
+gst
+    other things.
+
+David
 
