@@ -2,78 +2,246 @@ Return-Path: <SRS0=U1zy=5E=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74FC7C4332B
-	for <linux-security-module@archiver.kernel.org>; Thu, 19 Mar 2020 19:47:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3835EC4332B
+	for <linux-security-module@archiver.kernel.org>; Thu, 19 Mar 2020 21:18:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A0C120739
-	for <linux-security-module@archiver.kernel.org>; Thu, 19 Mar 2020 19:47:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0F1520782
+	for <linux-security-module@archiver.kernel.org>; Thu, 19 Mar 2020 21:18:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Tf78afLj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725768AbgCSTrB (ORCPT
+        id S1727238AbgCSVSF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 19 Mar 2020 15:47:01 -0400
-Received: from mga09.intel.com ([134.134.136.24]:56401 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725747AbgCSTrB (ORCPT
+        Thu, 19 Mar 2020 17:18:05 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:38249 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727049AbgCSVSF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 19 Mar 2020 15:47:01 -0400
-IronPort-SDR: Po8Z/pzT4ZyzATKERnc1WJgjSBvnAiGgTZcOVGdH2Sbi5IJn62f1jnNywVcCqPEXMi+J7xo/x9
- wwy0XEFxe94Q==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2020 12:46:58 -0700
-IronPort-SDR: a6SaYj/xeKftbSen3LWYA6qWR9ApLeeTa+v5cjiVyF9UB9Q7xyMMQqIfWGC7lVjo5Zg0E1J0nu
- 0ljRFqFI0wdQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,572,1574150400"; 
-   d="scan'208";a="391910291"
-Received: from oamor-mobl1.ger.corp.intel.com (HELO localhost) ([10.251.182.181])
-  by orsmga004.jf.intel.com with ESMTP; 19 Mar 2020 12:46:51 -0700
-Date:   Thu, 19 Mar 2020 21:46:50 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Waiman Long <longman@redhat.com>
-Cc:     David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, netdev@vger.kernel.org,
-        linux-afs@lists.infradead.org, Sumit Garg <sumit.garg@linaro.org>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Chris von Recklinghausen <crecklin@redhat.com>
-Subject: Re: [PATCH v5 2/2] KEYS: Avoid false positive ENOMEM error on key
- read
-Message-ID: <20200319194650.GA24804@linux.intel.com>
-References: <20200318221457.1330-1-longman@redhat.com>
- <20200318221457.1330-3-longman@redhat.com>
+        Thu, 19 Mar 2020 17:18:05 -0400
+Received: by mail-oi1-f194.google.com with SMTP id k21so4326934oij.5
+        for <linux-security-module@vger.kernel.org>; Thu, 19 Mar 2020 14:18:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=4C+0nKFxrFROQId9OciywMK+cltQuGW8rSImB/XpE18=;
+        b=Tf78afLj/m/bi1jEn2dedtTK5zop4owAQzcX3wyo5V2S+9CuMcHQb2WI6FP6o3Jb2Z
+         9kG2/43U+Ux4h8FtNpjk+dvWJOkqXBWhJc6u+oszorqaLHlefR2HxruTLUgbDo9vtvs9
+         VsZfgRLTaDof9ve4kEgPIrUa3y1cMTBN6hZtnaLs1AUr6TNJz6UU0YHepkEtgP5XiUBo
+         yKfGqXYLL9STToaIsbEUGRI1l+5P/o1MiTU9WHK8HQ7e2atdfkQmnMU4HyHhfDTty3Hg
+         tRea4auOXg+pxAvVuGDWpY9By8Z3tZloSjkVxqfNaY2jmWk33NoRBXSoywuJZbuc6Elk
+         IvQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=4C+0nKFxrFROQId9OciywMK+cltQuGW8rSImB/XpE18=;
+        b=iwSaA+T65J1s0Qfdcb0pF2NsdzG2QRUzOwQGEFlijgTHf45hTXkg8H8vi5uRStkELC
+         OPI3h7x9cWUdW8+V4lhP2HkQzVhHrPxzAvyM7GoytyBT1kHGGwOkhOJw7BcrQA39Skn4
+         RQ1H6tjHfJPSi3ETiPB8YYFePXUvMLpXK+6jBJtOVFbnkEB/fK7urbtHMYfXV2c3o3X1
+         MJRNuxP2EyjPQqg4Ww7XopAO4PwJGnzVmTVtq9Mjw4s449IOutL1tZtpQkh07vXWXUSN
+         VtJLDFp+tnBnELxUlsHd2RnzPoa/TcZpJaE4d7YLZi1Oajoaj0crkEsYj13a/blh0TsY
+         SZ9w==
+X-Gm-Message-State: ANhLgQ2QR1wTlquygpQ/0GWxu0LDTqENtAHdhsb8f58JSJKBChzx3L4y
+        HGhzau4wtthqD+Y1IcmqdYdwFofCHQsC96TbPw6O6Q==
+X-Google-Smtp-Source: ADFU+vvHueiVN2vm54kmRzDAr+XPiDXdCxsSO49VaaCHt9qN865al8ErN5y3kk+48T9ySDC+IbgANXTlwgqIxqx4psI=
+X-Received: by 2002:aca:bac1:: with SMTP id k184mr4023086oif.157.1584652683852;
+ Thu, 19 Mar 2020 14:18:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200318221457.1330-3-longman@redhat.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20200224160215.4136-1-mic@digikod.net> <CAG48ez21bEn0wL1bbmTiiu8j9jP5iEWtHOwz4tURUJ+ki0ydYw@mail.gmail.com>
+ <873d7419-bdd9-8a52-0a9b-dddbe31df4f9@digikod.net> <CAG48ez0=0W5Ok-8nASqZrZ28JboXRRi3gDxV5u6mdcOtzwuRVA@mail.gmail.com>
+ <688dda0f-0907-34eb-c19e-3e9e5f613a74@digikod.net> <CAG48ez16yT+zbK1WPxr2TnxrifW5c2DnpFLbWRRLUT_WpuFNmw@mail.gmail.com>
+ <e8530226-f295-a897-1132-7e6970dad49f@digikod.net> <CAG48ez1K-7Lq2Ep_p9fOvXQ-fwj_8dA1CFd5SVDbT4ccqejDzA@mail.gmail.com>
+ <2d48e3e3-e7b2-ec33-91c5-be6a308a12d4@digikod.net>
+In-Reply-To: <2d48e3e3-e7b2-ec33-91c5-be6a308a12d4@digikod.net>
+From:   Jann Horn <jannh@google.com>
+Date:   Thu, 19 Mar 2020 22:17:37 +0100
+Message-ID: <CAG48ez18LrDVLdp3agTwHNYxOBJyEb5PZ1dkwbNjpPVQoTsLcA@mail.gmail.com>
+Subject: Re: [RFC PATCH v14 00/10] Landlock LSM
+To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc:     kernel list <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        James Morris <jmorris@namei.org>, Jann Horn <jann@thejh.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mickael.salaun@ssi.gouv.fr>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        linux-doc@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Mar 18, 2020 at 06:14:57PM -0400, Waiman Long wrote:
-> +			 * It is possible, though unlikely, that the key
-> +			 * changes in between the up_read->down_read period.
-> +			 * If the key becomes longer, we will have to
-> +			 * allocate a larger buffer and redo the key read
-> +			 * again.
-> +			 */
-> +			if (!tmpbuf || unlikely(ret > tmpbuflen)) {
+On Thu, Mar 19, 2020 at 5:58 PM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> =
+wrote:
+> On 19/03/2020 00:33, Jann Horn wrote:
+> > On Wed, Mar 18, 2020 at 1:06 PM Micka=C3=ABl Sala=C3=BCn <mic@digikod.n=
+et> wrote:
+[...]
+> >> As I understand your proposition, we need to build the required_bits
+> >> when adding a rule or enforcing/merging a ruleset with a domain. The
+> >> issue is that a rule only refers to a struct inode, not a struct path.
+> >> For your proposition to work, we would need to walk through the file
+> >> path when adding a rule to a ruleset, which means that we need to depe=
+nd
+> >> of the current view of the process (i.e. its mount namespace), and its
+> >> Landlock domain.
+> >
+> > I don't see why that is necessary. Why would we have to walk the file
+> > path when adding a rule?
+> >
+> >> If the required_bits field is set when the ruleset is
+> >> merged with the domain, it is not possible anymore to walk through the
+> >> corresponding initial file path, which makes the enforcement step too
+> >> late to check for such consistency. The important point is that a
+> >> ruleset/domain doesn't have a notion of file hierarchy, a ruleset is
+> >> only a set of tagged inodes.
+> >>
+> >> I'm not sure I got your proposition right, though. When and how would
+> >> you generate the required_bits?
+> >
+> > Using your terminology:
+> > A domain is a collection of N layers, which are assigned indices 0..N-1=
+.
+> > For each possible access type, a domain has a bitmask containing N
+> > bits that stores which layers control that access type. (Basically a
+> > per-layer version of fs_access_mask.)
+>
+> OK, so there is a bit for each domain, which means that you get a limit
+> of, let's say 64 layers? Knowing that each layer can be created by a
+> standalone application, potentially nested in a bunch of layers, this
+> seems artificially limiting.
 
-Shouldn't you check that tmpbuflen stays below buflen (why else
-you had made copy of buflen otherwise)?
+Yes, that is a downside of my approach.
 
-/Jarkko
+> > To validate an access, you start by ORing together the bitmasks for
+> > the requested access types; that gives you the required_bits mask,
+> > which lists all layers that want to control the access.
+> > Then you set seen_policy_bits=3D0, then do the
+> > check_access_path_continue() loop while keeping track of which layers
+> > you've seen with "seen_policy_bits |=3D access->contributing_policies",
+> > or something like that.
+> > And in the end, you check that seen_policy_bits is a superset of
+> > required_bits - something like `(~seen_policy_bits) & required_bits =3D=
+=3D
+> > 0`.
+> >
+> > AFAICS to create a new domain from a bunch of layers, you wouldn't
+> > have to do any path walking.
+>
+> Right, I misunderstood your previous email.
+>
+> >
+> >> Here is my updated proposition: add a layer level and a depth to each
+> >> rule (once enforced/merged with a domain), and a top layer level for a
+> >> domain. When enforcing a ruleset (i.e. merging a ruleset into the
+> >> current domain), the layer level of a new rule would be the incremente=
+d
+> >> top layer level.
+> >> If there is no rule (from this domain) tied to the same
+> >> inode, then the depth of the new rule is 1. However, if there is alrea=
+dy
+> >> a rule tied to the same inode and if this rule's layer level is the
+> >> previous top layer level, then the depth and the layer level are both
+> >> incremented and the rule is updated with the new access rights (boolea=
+n
+> >> AND).
+> >>
+> >> The policy looks like this:
+> >> domain top_layer=3D2
+> >> /a RW policy_bitmask=3D0x00000003 layer=3D1 depth=3D1
+> >> /a/b R policy_bitmask=3D0x00000002 layer=3D2 depth=3D1
+> >>
+> >> The path walk access check walks through all inodes and start with a
+> >> layer counter equal to the top layer of the current domain. For each
+> >> encountered inode tied to a rule, the access rights are checked and a
+> >> new check ensures that the layer of the matching rule is the same as t=
+he
+> >> counter (this may be a merged ruleset containing rules pertaining to t=
+he
+> >> same hierarchy, which is fine) or equal to the decremented counter (i.=
+e.
+> >> the path walk just reached the underlying layer). If the path walk
+> >> encounter a rule with a layer strictly less than the counter minus one=
+,
+> >> there is a whole in the layers which means that the ruleset
+> >> hierarchy/subset does not match, and the access must be denied.
+> >>
+> >> When accessing a file at /private/b/foo for a read access:
+> >> /private/b/foo <no rules>
+> >>   allowed_access=3Dunknown layer_counter=3D2
+> >> /private/b <access: R, policy_bitmask=3D0x00000002, layer=3D2, depth=
+=3D1>
+> >>   allowed_access=3Dallowed layer_counter=3D2
+> >> /private <no rules>
+> >>   allowed_access=3Dallowed layer_counter=3D2
+> >> / <no rules>
+> >>   allowed_access=3Dallowed layer_counter=3D2
+> >>
+> >> Because the layer_counter didn't reach 1, the access request is then d=
+enied.
+> >>
+> >> This proposition enables not to rely on a parent ruleset at first, onl=
+y
+> >> when enforcing/merging a ruleset with a domain. This also solves the
+> >> issue with multiple inherited/nested rules on the same inode (in which
+> >> case the depth just grows). Moreover, this enables to safely stop the
+> >> path walk as soon as we reach the layer 1.
+> >
+> > (FWIW, you could do the same optimization with the seen_policy_bits app=
+roach.)
+> >
+> > I guess the difference between your proposal and mine is that in my
+> > proposal, the following would work, in effect permitting W access to
+> > /foo/bar/baz (and nothing else)?
+> >
+> > first ruleset:
+> >   /foo W
+> > second ruleset:
+> >   /foo/bar/baz W
+> > third ruleset:
+> >   /foo/bar W
+> >
+> > whereas in your proposal, IIUC it wouldn't be valid for a new ruleset
+> > to whitelist a superset of what was whitelisted in a previous ruleset?
+> >
+>
+> This behavior seems dangerous because a process which sandbox itself to
+> only access /foo/bar W can bypass the restrictions from one of its
+> parent domains (i.e. only access /foo/bar/baz W). Indeed, each layer is
+> (most of the time) a different and standalone security policy.
+
+It isn't actually bypassing the restriction: You still can't actually
+access files like /foo/bar/blah, because a path walk from there
+doesn't encounter any rules from the second ruleset.
+
+> To sum up, the bitmask approach doesn't have the notion of layers
+> ordering. It is then not possible to check that a rule comes from a
+> domain which is the direct ancestor of a child's domain. I want each
+> policy/layer to be really nested in the sense that a process sandboxing
+> itself can only add more restriction to itself with regard to its parent
+> domain (and the whole hierarchy). This is a similar approach to
+> seccomp-bpf (with chained filters), except there is almost no overhead
+> to nest several policies/layers together because they are flattened.
+> Using the layer level and depth approach enables to implement this.
