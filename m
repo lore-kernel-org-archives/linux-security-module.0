@@ -2,47 +2,45 @@ Return-Path: <SRS0=KxFF=5F=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6724DC43332
-	for <linux-security-module@archiver.kernel.org>; Fri, 20 Mar 2020 19:19:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF220C43332
+	for <linux-security-module@archiver.kernel.org>; Fri, 20 Mar 2020 19:19:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4181920775
-	for <linux-security-module@archiver.kernel.org>; Fri, 20 Mar 2020 19:19:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89E862070A
+	for <linux-security-module@archiver.kernel.org>; Fri, 20 Mar 2020 19:19:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="anm9V0gj"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Xah+5xo7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727240AbgCTTT2 (ORCPT
+        id S1726829AbgCTTT0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 20 Mar 2020 15:19:28 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:58787 "EHLO
+        Fri, 20 Mar 2020 15:19:26 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:44296 "EHLO
         us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727357AbgCTTT2 (ORCPT
+        by vger.kernel.org with ESMTP id S1727070AbgCTTTX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 20 Mar 2020 15:19:28 -0400
+        Fri, 20 Mar 2020 15:19:23 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584731966;
+        s=mimecast20190719; t=1584731962;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:in-reply-to:in-reply-to:references:references;
-        bh=QRTCx7iUFxWApQLdwBhGyDxdNRfn8szKdemehtnU9Mo=;
-        b=anm9V0gjYxDmr+c16m7VLEOcZ71+magfFYQkppIBsaGpZW4FJCJh486lTI5+YN+CkYxf9x
-        DRGvthGyv55UwMzXbgon5NgWpK8Nyyt4OVksKKikYBs35pFlJZsIWutnDb3vCAo2SP4x/0
-        54WLheAsMFnCBlfzA6ZUeFy7EBea9Dg=
+         to:to:cc:cc; bh=+XPAoEW7/aQaCwyJ8m3ZuKBIeslANj/gOeGSexPCoFw=;
+        b=Xah+5xo7jCkt9NY9n6GixpTYAHsATO4zuWkS7JnAfg0QPMspw4cyGCqWYcDVKLfwgABTvj
+        SN2NwNO2qORsFijDe9I+9dtqny055fm52SHDTO174i6uRKYa+ID/TcE1TlukPJuhleszpT
+        uwQTNHz3wdw/7MVl7yH60qg6LEZ2fi0=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-358-oi80VyK-P_SJHLTY9NPDjQ-1; Fri, 20 Mar 2020 15:19:22 -0400
-X-MC-Unique: oi80VyK-P_SJHLTY9NPDjQ-1
+ us-mta-5-VH2bTlNsPcqN0b-3DN_dRw-1; Fri, 20 Mar 2020 15:19:18 -0400
+X-MC-Unique: VH2bTlNsPcqN0b-3DN_dRw-1
 Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1C1A1800D53;
-        Fri, 20 Mar 2020 19:19:20 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C472CDB61;
+        Fri, 20 Mar 2020 19:19:15 +0000 (UTC)
 Received: from llong.com (ovpn-118-190.rdu2.redhat.com [10.10.118.190])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 308A45C1AB;
-        Fri, 20 Mar 2020 19:19:18 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D91BF7E301;
+        Fri, 20 Mar 2020 19:19:09 +0000 (UTC)
 From:   Waiman Long <longman@redhat.com>
 To:     David Howells <dhowells@redhat.com>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
@@ -60,146 +58,74 @@ Cc:     keyrings@vger.kernel.org, linux-kernel@vger.kernel.org,
         Eric Biggers <ebiggers@google.com>,
         Chris von Recklinghausen <crecklin@redhat.com>,
         Waiman Long <longman@redhat.com>
-Subject: [PATCH v6 2/2] KEYS: Avoid false positive ENOMEM error on key read
-Date:   Fri, 20 Mar 2020 15:19:03 -0400
-Message-Id: <20200320191903.19494-3-longman@redhat.com>
-In-Reply-To: <20200320191903.19494-1-longman@redhat.com>
-References: <20200320191903.19494-1-longman@redhat.com>
+Subject: [PATCH v6 0/2] KEYS: Read keys to internal buffer & then copy to userspace
+Date:   Fri, 20 Mar 2020 15:19:01 -0400
+Message-Id: <20200320191903.19494-1-longman@redhat.com>
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-By allocating a kernel buffer with a user-supplied buffer length, it
-is possible that a false positive ENOMEM error may be returned because
-the user-supplied length is just too large even if the system do have
-enough memory to hold the actual key data.
+v6:
+ - Make some variable name changes and revise comments as suggested by
+   Jarkko. No functional change from v5.
 
-Moreover, if the buffer length is larger than the maximum amount of
-memory that can be returned by kmalloc() (2^(MAX_ORDER-1) number of
-pages), a warning message will also be printed.
+v5:
+ - Merge v4 patches 2 and 3 into 1 to avoid sparse warning. Merge some of 
+   commit logs into patch 1 as well. There is no further change.
 
-To reduce this possibility, we set a threshold (page size) over which we
-do check the actual key length first before allocating a buffer of the
-right size to hold it. The threshold is arbitrary, it is just used to
-trigger a buffer length check. It does not limit the actual key length
-as long as there is enough memory to satisfy the memory request.
+v4:
+ - Remove the __user annotation from big_key_read() and user_read() in
+   patch 1.
+ - Add a new patch 2 to remove __user annotation from rxrpc_read().
+ - Add a new patch 3 to remove __user annotation from dns_resolver_read().
+ - Merge the original patches 2 and 3 into a single patch 4 and refactor
+   it as suggested by Jarkko and Eric.
 
-To further avoid large buffer allocation failure due to page
-fragmentation, kvmalloc() is used to allocate the buffer so that vmapped
-pages can be used when there is not a large enough contiguous set of
-pages available for allocation.
+v3:
+ - Reorganize the keyctl_read_key() code to make it more readable as
+   suggested by Jarkko Sakkinen.
+ - Add patch 3 to use kvmalloc() for safer large buffer allocation as
+   suggested by David Howells.
 
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- security/keys/internal.h | 12 ++++++++++++
- security/keys/keyctl.c   | 39 +++++++++++++++++++++++++++++++--------
- 2 files changed, 43 insertions(+), 8 deletions(-)
+v2:
+ - Handle NULL buffer and buflen properly in patch 1.
+ - Fix a bug in big_key.c.
+ - Add patch 2 to handle arbitrary large user-supplied buflen.
 
-diff --git a/security/keys/internal.h b/security/keys/internal.h
-index ba3e2da14cef..6d0ca48ae9a5 100644
---- a/security/keys/internal.h
-+++ b/security/keys/internal.h
-@@ -16,6 +16,8 @@
- #include <linux/keyctl.h>
- #include <linux/refcount.h>
- #include <linux/compat.h>
-+#include <linux/mm.h>
-+#include <linux/vmalloc.h>
- 
- struct iovec;
- 
-@@ -349,4 +351,14 @@ static inline void key_check(const struct key *key)
- 
- #endif
- 
-+/*
-+ * Helper function to clear and free a kvmalloc'ed memory object.
-+ */
-+static inline void __kvzfree(const void *addr, size_t len)
-+{
-+	if (addr) {
-+		memset((void *)addr, 0, len);
-+		kvfree(addr);
-+	}
-+}
- #endif /* _INTERNAL_H */
-diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
-index 5a0794cb8815..ded69108db0d 100644
---- a/security/keys/keyctl.c
-+++ b/security/keys/keyctl.c
-@@ -339,7 +339,7 @@ long keyctl_update_key(key_serial_t id,
- 	payload = NULL;
- 	if (plen) {
- 		ret = -ENOMEM;
--		payload = kmalloc(plen, GFP_KERNEL);
-+		payload = kvmalloc(plen, GFP_KERNEL);
- 		if (!payload)
- 			goto error;
- 
-@@ -360,7 +360,7 @@ long keyctl_update_key(key_serial_t id,
- 
- 	key_ref_put(key_ref);
- error2:
--	kzfree(payload);
-+	__kvzfree(payload, plen);
- error:
- 	return ret;
- }
-@@ -877,13 +877,23 @@ long keyctl_read_key(key_serial_t keyid, char __user *buffer, size_t buflen)
- 		 * transferring them to user buffer to avoid potential
- 		 * deadlock involving page fault and mmap_sem.
- 		 */
--		char *key_data = kmalloc(buflen, GFP_KERNEL);
-+		char *key_data = NULL;
-+		size_t key_data_len = buflen;
- 
--		if (!key_data) {
--			ret = -ENOMEM;
--			goto error2;
-+		/*
-+		 * When the user-supplied key length is larger than
-+		 * PAGE_SIZE, we get the actual key length first before
-+		 * allocating a right-sized key data buffer.
-+		 */
-+		if (buflen <= PAGE_SIZE) {
-+allocbuf:
-+			key_data = kvmalloc(key_data_len, GFP_KERNEL);
-+			if (!key_data) {
-+				ret = -ENOMEM;
-+				goto error2;
-+			}
- 		}
--		ret = __keyctl_read_key(key, key_data, buflen);
-+		ret = __keyctl_read_key(key, key_data, key_data_len);
- 
- 		/*
- 		 * Read methods will just return the required length
-@@ -891,10 +901,23 @@ long keyctl_read_key(key_serial_t keyid, char __user *buffer, size_t buflen)
- 		 * enough.
- 		 */
- 		if (ret > 0 && ret <= buflen) {
-+			/*
-+			 * The key may change (unlikely) in between 2
-+			 * consecutive __keyctl_read_key() calls. We will
-+			 * need to allocate a larger buffer and redo the key
-+			 * read when key_data_len < ret <= buflen.
-+			 */
-+			if (!key_data || unlikely(ret > key_data_len)) {
-+				if (unlikely(key_data))
-+					__kvzfree(key_data, key_data_len);
-+				key_data_len = ret;
-+				goto allocbuf;
-+			}
-+
- 			if (copy_to_user(buffer, key_data, ret))
- 				ret = -EFAULT;
- 		}
--		kzfree(key_data);
-+		__kvzfree(key_data, key_data_len);
- 	}
- 
- error2:
+The current security key read methods are called with the key semaphore
+held.  The methods then copy out the key data to userspace which is
+subjected to page fault and may acquire the mmap semaphore. That can
+result in circular lock dependency and hence a chance to get into
+deadlock.
+
+To avoid such a deadlock, an internal buffer is now allocated for getting
+out the necessary data first. After releasing the key semaphore, the
+key data are then copied out to userspace sidestepping the circular
+lock dependency.
+
+The keyutils test suite was run and the test passed with these patchset
+applied without any falure.
+
+Waiman Long (2):
+  KEYS: Don't write out to userspace while holding key semaphore
+  KEYS: Avoid false positive ENOMEM error on key read
+
+ include/keys/big_key-type.h               |  2 +-
+ include/keys/user-type.h                  |  3 +-
+ include/linux/key-type.h                  |  2 +-
+ net/dns_resolver/dns_key.c                |  2 +-
+ net/rxrpc/key.c                           | 27 +++-----
+ security/keys/big_key.c                   | 11 ++-
+ security/keys/encrypted-keys/encrypted.c  |  7 +-
+ security/keys/internal.h                  | 12 ++++
+ security/keys/keyctl.c                    | 84 ++++++++++++++++++++---
+ security/keys/keyring.c                   |  6 +-
+ security/keys/request_key_auth.c          |  7 +-
+ security/keys/trusted-keys/trusted_tpm1.c | 14 +---
+ security/keys/user_defined.c              |  5 +-
+ 13 files changed, 114 insertions(+), 68 deletions(-)
+
 -- 
 2.18.1
 
