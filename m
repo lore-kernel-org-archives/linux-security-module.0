@@ -2,58 +2,57 @@ Return-Path: <SRS0=YXOF=5I=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 877EBC3F2CD
-	for <linux-security-module@archiver.kernel.org>; Mon, 23 Mar 2020 16:44:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 735F0C54FD2
+	for <linux-security-module@archiver.kernel.org>; Mon, 23 Mar 2020 16:44:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40ED720714
-	for <linux-security-module@archiver.kernel.org>; Mon, 23 Mar 2020 16:44:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36E0620714
+	for <linux-security-module@archiver.kernel.org>; Mon, 23 Mar 2020 16:44:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jKIarY0J"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gOUKyuxd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727855AbgCWQo4 (ORCPT
+        id S1727691AbgCWQoh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 23 Mar 2020 12:44:56 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:35414 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727640AbgCWQoi (ORCPT
+        Mon, 23 Mar 2020 12:44:37 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:36692 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727688AbgCWQoh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 23 Mar 2020 12:44:38 -0400
-Received: by mail-wr1-f65.google.com with SMTP id d5so5600782wrn.2
-        for <linux-security-module@vger.kernel.org>; Mon, 23 Mar 2020 09:44:37 -0700 (PDT)
+        Mon, 23 Mar 2020 12:44:37 -0400
+Received: by mail-wr1-f68.google.com with SMTP id 31so11936277wrs.3
+        for <linux-security-module@vger.kernel.org>; Mon, 23 Mar 2020 09:44:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=J1A+TDzfwdGBNzCoNxQhiRcKRwm5TKHsspZjCjlDoXA=;
-        b=jKIarY0JV+Ih9XaccqvApu+GcLy9X8Zl0bYXSHblEPI7rSfQdv2uQmrgUQR8NJlNfp
-         KELzJE5d1kAtJ7Ue+CF7n1CjfPJl6Gtpp21E9ovUZcsWHGxZwbNlRFXLs1ETxGepyl6Q
-         0FNQsH8sE0AaEFaqMOa24E/H3/i4LPZ3wba18=
+        bh=ArnVHeKIIkUrstvsddHI/Ay1wAn4wwVzE5ugr70jw9Y=;
+        b=gOUKyuxdtGDAfXv0uXu6GLZSRDwSkJSSlfjwGHvdf5gNIFNZL64cDNXaYj6V0Uvwuh
+         omPMUNgg/EP1hRwYPa1mGt03MT8mSJ+hKc87HVFrI+0pdB4fZqNfXc2MGY3c30ZyEOye
+         QKsNVu0bTiXpYGcnaBOoWTvE1N5Lpt6tw0rSA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=J1A+TDzfwdGBNzCoNxQhiRcKRwm5TKHsspZjCjlDoXA=;
-        b=H7hLa4MH1Ki50Fs8ur3kDM9BZXOjNAccXDuaI3Q1v7HQQhjE6y2c96275Psg6KQn5s
-         U6lDWUla0+Dn7ooYE5+Dw8EOmv98BpOkBJ8Z55C8OYzg3NtDtz+Z7kB4MZB0FrhqmLRL
-         GsK2H1uIyrJ7osKTF6PPzVixNywx0wGamNv8o7oX8Kx0W+N0K4lnNnZxZDUv+qdPb3Fy
-         NBEUZvS2TZgxB+hdIcnUN+r7elL/+GF9g0re9tqwCAAGmqBE4nyE6I6rZov7/R7aMZye
-         O+sWBYMElD1zI8uWINgzrQOeUzWet9xT12t19P/mHCQOB/ZhkPPQbyai8KSz13g2aGvM
-         1gvg==
-X-Gm-Message-State: ANhLgQ26XoXvQotXv2gAhdzzo3bAuPSPJdyCHOCPSUubBAbXIXAuZm/k
-        w2NGcBQHyEeWjDX3v8d2xqBTmg==
-X-Google-Smtp-Source: ADFU+vuoLDkbLgYjyTisIcFALvI7LDVS2XXguK11pvL+rEIhy3RoWuCfO1WWaCm7wEN0otUc/AUCwQ==
-X-Received: by 2002:a5d:640a:: with SMTP id z10mr32894515wru.301.1584981877143;
-        Mon, 23 Mar 2020 09:44:37 -0700 (PDT)
+        bh=ArnVHeKIIkUrstvsddHI/Ay1wAn4wwVzE5ugr70jw9Y=;
+        b=alCYkLW8EEUGN3HZzK/ZKhf8APgXutRqj9fnv7hps9MhjUcsuzpZ1+osXwPPb9p2ZS
+         JYWSjGVHPMxrU1Pyza+kZa4A6qmmEbH+WhUHqITOaKktdDaG7oCZG+uafslDpR0mGUJs
+         c1Di70e2+ir66nBwIj24MwA8UFFFNNQmgBIefFNcoZEiDmk7nEHD/kdlEmgC4KPEnm0F
+         2GG9M5BG4b+D6awVCn0ZCbBFqxJ3LGuv1A5v6Kbas6htUY2NJVlkBNQf9YRdl6tE/sn8
+         4FUTKp8UiehUed3mYMcZ79kUeOknGaAGYwhQWIsCnJfnkdFkqZdnKnCuQwPzzmlHiyT0
+         cjXg==
+X-Gm-Message-State: ANhLgQ0Zi9YpCFJoS23H14s31Yh74hSnhSZfMc6EubF20wr1c86udZQ4
+        kPzImyGUDq1hmOSCFJmbLsYMFg==
+X-Google-Smtp-Source: ADFU+vtRLd/uB8nVO+vlJwItZhiSUK74UaZgwGLkBuJdgLzi5i6BiLURq0+uOJ27D5qvAd9tsEn2qA==
+X-Received: by 2002:a5d:624f:: with SMTP id m15mr20218008wrv.56.1584981873289;
+        Mon, 23 Mar 2020 09:44:33 -0700 (PDT)
 Received: from kpsingh-kernel.localdomain (77-56-209-237.dclient.hispeed.ch. [77.56.209.237])
-        by smtp.gmail.com with ESMTPSA id l8sm199874wmj.2.2020.03.23.09.44.35
+        by smtp.gmail.com with ESMTPSA id l8sm199874wmj.2.2020.03.23.09.44.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Mar 2020 09:44:36 -0700 (PDT)
+        Mon, 23 Mar 2020 09:44:32 -0700 (PDT)
 From:   KP Singh <kpsingh@chromium.org>
 To:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
         linux-security-module@vger.kernel.org
@@ -67,9 +66,9 @@ Cc:     Brendan Jackman <jackmanb@google.com>,
         Florent Revest <revest@chromium.org>,
         Brendan Jackman <jackmanb@chromium.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH bpf-next v5 6/7] tools/libbpf: Add support for BPF_PROG_TYPE_LSM
-Date:   Mon, 23 Mar 2020 17:44:14 +0100
-Message-Id: <20200323164415.12943-7-kpsingh@chromium.org>
+Subject: [PATCH bpf-next v5 4/7] bpf: lsm: Implement attach, detach and execution
+Date:   Mon, 23 Mar 2020 17:44:12 +0100
+Message-Id: <20200323164415.12943-5-kpsingh@chromium.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200323164415.12943-1-kpsingh@chromium.org>
 References: <20200323164415.12943-1-kpsingh@chromium.org>
@@ -81,204 +80,320 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: KP Singh <kpsingh@google.com>
 
-Since BPF_PROG_TYPE_LSM uses the same attaching mechanism as
-BPF_PROG_TYPE_TRACING, the common logic is refactored into a static
-function bpf_program__attach_btf.
+JITed BPF programs are dynamically attached to the LSM hooks
+using BPF trampolines. The trampoline prologue generates code to handle
+conversion of the signature of the hook to the appropriate BPF context.
 
-A new API call bpf_program__attach_lsm is still added to avoid userspace
-conflicts if this ever changes in the future.
+The allocated trampoline programs are attached to the nop functions
+initialized as LSM hooks.
+
+BPF_PROG_TYPE_LSM programs must have a GPL compatible license and
+and need CAP_SYS_ADMIN (required for loading eBPF programs).
+
+Upon attachment:
+
+* A BPF fexit trampoline is used for LSM hooks with a void return type.
+* A BPF fmod_ret trampoline is used for LSM hooks which return an
+  int. The attached programs can override the return value of the
+  bpf LSM hook to indicate a MAC Policy decision.
 
 Signed-off-by: KP Singh <kpsingh@google.com>
 Reviewed-by: Brendan Jackman <jackmanb@google.com>
 Reviewed-by: Florent Revest <revest@google.com>
 ---
- tools/lib/bpf/bpf.c      |  3 ++-
- tools/lib/bpf/libbpf.c   | 41 +++++++++++++++++++++++++++++++++++-----
- tools/lib/bpf/libbpf.h   |  4 ++++
- tools/lib/bpf/libbpf.map |  3 +++
- 4 files changed, 45 insertions(+), 6 deletions(-)
+ include/linux/bpf.h     |  4 ++++
+ include/linux/bpf_lsm.h | 11 +++++++++++
+ kernel/bpf/bpf_lsm.c    | 29 +++++++++++++++++++++++++++++
+ kernel/bpf/btf.c        |  9 ++++++++-
+ kernel/bpf/syscall.c    | 26 ++++++++++++++++++++++----
+ kernel/bpf/trampoline.c | 17 +++++++++++++----
+ kernel/bpf/verifier.c   | 19 +++++++++++++++----
+ 7 files changed, 102 insertions(+), 13 deletions(-)
 
-diff --git a/tools/lib/bpf/bpf.c b/tools/lib/bpf/bpf.c
-index c6dafe563176..73220176728d 100644
---- a/tools/lib/bpf/bpf.c
-+++ b/tools/lib/bpf/bpf.c
-@@ -235,7 +235,8 @@ int bpf_load_program_xattr(const struct bpf_load_program_attr *load_attr,
- 	memset(&attr, 0, sizeof(attr));
- 	attr.prog_type = load_attr->prog_type;
- 	attr.expected_attach_type = load_attr->expected_attach_type;
--	if (attr.prog_type == BPF_PROG_TYPE_STRUCT_OPS) {
-+	if (attr.prog_type == BPF_PROG_TYPE_STRUCT_OPS ||
-+	    attr.prog_type == BPF_PROG_TYPE_LSM) {
- 		attr.attach_btf_id = load_attr->attach_btf_id;
- 	} else if (attr.prog_type == BPF_PROG_TYPE_TRACING ||
- 		   attr.prog_type == BPF_PROG_TYPE_EXT) {
-diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
-index 085e41f9b68e..da8bee78e1ce 100644
---- a/tools/lib/bpf/libbpf.c
-+++ b/tools/lib/bpf/libbpf.c
-@@ -2362,7 +2362,8 @@ static int bpf_object__finalize_btf(struct bpf_object *obj)
+diff --git a/include/linux/bpf.h b/include/linux/bpf.h
+index af81ec7b783c..adf2e5a6de4b 100644
+--- a/include/linux/bpf.h
++++ b/include/linux/bpf.h
+@@ -433,6 +433,10 @@ struct btf_func_model {
+  * programs only. Should not be used with normal calls and indirect calls.
+  */
+ #define BPF_TRAMP_F_SKIP_FRAME		BIT(2)
++/* Override the return value of the original function. This flag only makes
++ * sense for fexit trampolines.
++ */
++#define BPF_TRAMP_F_OVERRIDE_RETURN     BIT(3)
  
- static inline bool libbpf_prog_needs_vmlinux_btf(struct bpf_program *prog)
- {
--	if (prog->type == BPF_PROG_TYPE_STRUCT_OPS)
-+	if (prog->type == BPF_PROG_TYPE_STRUCT_OPS ||
-+	    prog->type == BPF_PROG_TYPE_LSM)
- 		return true;
+ /* Each call __bpf_prog_enter + call bpf_func + call __bpf_prog_exit is ~50
+  * bytes on x86.  Pick a number to fit into BPF_IMAGE_SIZE / 2
+diff --git a/include/linux/bpf_lsm.h b/include/linux/bpf_lsm.h
+index c6423a140220..9bac0a11f303 100644
+--- a/include/linux/bpf_lsm.h
++++ b/include/linux/bpf_lsm.h
+@@ -16,6 +16,17 @@
+ #include <linux/lsm_hook_names.h>
+ #undef LSM_HOOK
  
- 	/* BPF_PROG_TYPE_TRACING programs which do not attach to other programs
-@@ -4870,7 +4871,8 @@ load_program(struct bpf_program *prog, struct bpf_insn *insns, int insns_cnt,
- 	load_attr.insns = insns;
- 	load_attr.insns_cnt = insns_cnt;
- 	load_attr.license = license;
--	if (prog->type == BPF_PROG_TYPE_STRUCT_OPS) {
-+	if (prog->type == BPF_PROG_TYPE_STRUCT_OPS ||
-+	    prog->type == BPF_PROG_TYPE_LSM) {
- 		load_attr.attach_btf_id = prog->attach_btf_id;
- 	} else if (prog->type == BPF_PROG_TYPE_TRACING ||
- 		   prog->type == BPF_PROG_TYPE_EXT) {
-@@ -4955,6 +4957,7 @@ int bpf_program__load(struct bpf_program *prog, char *license, __u32 kern_ver)
- 	int err = 0, fd, i, btf_id;
- 
- 	if ((prog->type == BPF_PROG_TYPE_TRACING ||
-+	     prog->type == BPF_PROG_TYPE_LSM ||
- 	     prog->type == BPF_PROG_TYPE_EXT) && !prog->attach_btf_id) {
- 		btf_id = libbpf_find_attach_btf_id(prog);
- 		if (btf_id <= 0)
-@@ -6194,6 +6197,7 @@ bool bpf_program__is_##NAME(const struct bpf_program *prog)	\
- }								\
- 
- BPF_PROG_TYPE_FNS(socket_filter, BPF_PROG_TYPE_SOCKET_FILTER);
-+BPF_PROG_TYPE_FNS(lsm, BPF_PROG_TYPE_LSM);
- BPF_PROG_TYPE_FNS(kprobe, BPF_PROG_TYPE_KPROBE);
- BPF_PROG_TYPE_FNS(sched_cls, BPF_PROG_TYPE_SCHED_CLS);
- BPF_PROG_TYPE_FNS(sched_act, BPF_PROG_TYPE_SCHED_ACT);
-@@ -6260,6 +6264,8 @@ static struct bpf_link *attach_raw_tp(const struct bpf_sec_def *sec,
- 				      struct bpf_program *prog);
- static struct bpf_link *attach_trace(const struct bpf_sec_def *sec,
- 				     struct bpf_program *prog);
-+static struct bpf_link *attach_lsm(const struct bpf_sec_def *sec,
-+				   struct bpf_program *prog);
- 
- struct bpf_sec_def {
- 	const char *sec;
-@@ -6310,6 +6316,10 @@ static const struct bpf_sec_def section_defs[] = {
- 	SEC_DEF("freplace/", EXT,
- 		.is_attach_btf = true,
- 		.attach_fn = attach_trace),
-+	SEC_DEF("lsm/", LSM,
-+		.is_attach_btf = true,
-+		.expected_attach_type = BPF_LSM_MAC,
-+		.attach_fn = attach_lsm),
- 	BPF_PROG_SEC("xdp",			BPF_PROG_TYPE_XDP),
- 	BPF_PROG_SEC("perf_event",		BPF_PROG_TYPE_PERF_EVENT),
- 	BPF_PROG_SEC("lwt_in",			BPF_PROG_TYPE_LWT_IN),
-@@ -6572,6 +6582,7 @@ static int bpf_object__collect_struct_ops_map_reloc(struct bpf_object *obj,
- }
- 
- #define BTF_TRACE_PREFIX "btf_trace_"
-+#define BTF_LSM_PREFIX "bpf_lsm_"
- #define BTF_MAX_NAME_SIZE 128
- 
- static int find_btf_by_prefix_kind(const struct btf *btf, const char *prefix,
-@@ -6599,6 +6610,9 @@ static inline int __find_vmlinux_btf_id(struct btf *btf, const char *name,
- 	if (attach_type == BPF_TRACE_RAW_TP)
- 		err = find_btf_by_prefix_kind(btf, BTF_TRACE_PREFIX, name,
- 					      BTF_KIND_TYPEDEF);
-+	else if (attach_type == BPF_LSM_MAC)
-+		err = find_btf_by_prefix_kind(btf, BTF_LSM_PREFIX, name,
-+					      BTF_KIND_FUNC);
- 	else
- 		err = btf__find_by_name_kind(btf, name, BTF_KIND_FUNC);
- 
-@@ -7452,7 +7466,8 @@ static struct bpf_link *attach_raw_tp(const struct bpf_sec_def *sec,
- 	return bpf_program__attach_raw_tracepoint(prog, tp_name);
- }
- 
--struct bpf_link *bpf_program__attach_trace(struct bpf_program *prog)
-+/* Common logic for all BPF program types that attach to a btf_id */
-+static struct bpf_link *bpf_program__attach_btf(struct bpf_program *prog)
- {
- 	char errmsg[STRERR_BUFSIZE];
- 	struct bpf_link *link;
-@@ -7474,7 +7489,7 @@ struct bpf_link *bpf_program__attach_trace(struct bpf_program *prog)
- 	if (pfd < 0) {
- 		pfd = -errno;
- 		free(link);
--		pr_warn("program '%s': failed to attach to trace: %s\n",
-+		pr_warn("program '%s': failed to attach: %s\n",
- 			bpf_program__title(prog, false),
- 			libbpf_strerror_r(pfd, errmsg, sizeof(errmsg)));
- 		return ERR_PTR(pfd);
-@@ -7483,10 +7498,26 @@ struct bpf_link *bpf_program__attach_trace(struct bpf_program *prog)
- 	return (struct bpf_link *)link;
- }
- 
-+struct bpf_link *bpf_program__attach_trace(struct bpf_program *prog)
++int bpf_lsm_verify_prog(struct bpf_verifier_log *vlog,
++			const struct bpf_prog *prog);
++
++#else /* !CONFIG_BPF_LSM */
++
++static inline int bpf_lsm_verify_prog(struct bpf_verifier_log *vlog,
++				      const struct bpf_prog *prog)
 +{
-+	return bpf_program__attach_btf(prog);
++	return -EOPNOTSUPP;
 +}
 +
-+struct bpf_link *bpf_program__attach_lsm(struct bpf_program *prog)
+ #endif /* CONFIG_BPF_LSM */
+ 
+ #endif /* _LINUX_BPF_LSM_H */
+diff --git a/kernel/bpf/bpf_lsm.c b/kernel/bpf/bpf_lsm.c
+index 530d137f7a84..2a8131b640b8 100644
+--- a/kernel/bpf/bpf_lsm.c
++++ b/kernel/bpf/bpf_lsm.c
+@@ -9,6 +9,9 @@
+ #include <linux/btf.h>
+ #include <linux/lsm_hooks.h>
+ #include <linux/bpf_lsm.h>
++#include <linux/jump_label.h>
++#include <linux/kallsyms.h>
++#include <linux/bpf_verifier.h>
+ 
+ /* For every LSM hook  that allows attachment of BPF programs, declare a NOP
+  * function where a BPF program can be attached as an fexit trampoline.
+@@ -27,6 +30,32 @@ noinline __weak void bpf_lsm_##NAME(__VA_ARGS__) {}
+ #include <linux/lsm_hook_names.h>
+ #undef LSM_HOOK
+ 
++#define BPF_LSM_SYM_PREFX  "bpf_lsm_"
++
++int bpf_lsm_verify_prog(struct bpf_verifier_log *vlog,
++			const struct bpf_prog *prog)
 +{
-+	return bpf_program__attach_btf(prog);
++	/* Only CAP_MAC_ADMIN users are allowed to make changes to LSM hooks
++	 */
++	if (!capable(CAP_MAC_ADMIN))
++		return -EPERM;
++
++	if (!prog->gpl_compatible) {
++		bpf_log(vlog,
++			"LSM programs must have a GPL compatible license\n");
++		return -EINVAL;
++	}
++
++	if (strncmp(BPF_LSM_SYM_PREFX, prog->aux->attach_func_name,
++		    strlen(BPF_LSM_SYM_PREFX))) {
++		bpf_log(vlog, "attach_btf_id %u points to wrong type name %s\n",
++			prog->aux->attach_btf_id, prog->aux->attach_func_name);
++		return -EINVAL;
++	}
++
++	return 0;
 +}
 +
- static struct bpf_link *attach_trace(const struct bpf_sec_def *sec,
- 				     struct bpf_program *prog)
- {
--	return bpf_program__attach_trace(prog);
-+	return bpf_program__attach_btf(prog);
-+}
-+
-+static struct bpf_link *attach_lsm(const struct bpf_sec_def *sec,
-+				   struct bpf_program *prog)
-+{
-+	return bpf_program__attach_btf(prog);
+ const struct bpf_prog_ops lsm_prog_ops = {
+ };
+ 
+diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
+index 6f397c4da05e..67466dd59a35 100644
+--- a/kernel/bpf/btf.c
++++ b/kernel/bpf/btf.c
+@@ -3710,7 +3710,14 @@ bool btf_ctx_access(int off, int size, enum bpf_access_type type,
+ 	}
+ 
+ 	if (arg == nr_args) {
+-		if (prog->expected_attach_type == BPF_TRACE_FEXIT) {
++		/* BPF_LSM_MAC programs only have int and void functions they
++		 * can be attached to. When they are attached to a void function
++		 * they result in the creation of an FEXIT trampoline and when
++		 * to a function that returns an int, a MODIFY_RETURN
++		 * trampoline.
++		 */
++		if (prog->expected_attach_type == BPF_TRACE_FEXIT ||
++		    prog->expected_attach_type == BPF_LSM_MAC) {
+ 			if (!t)
+ 				return true;
+ 			t = btf_type_by_id(btf, t->type);
+diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+index 85567a6ea5f9..845bdfb35852 100644
+--- a/kernel/bpf/syscall.c
++++ b/kernel/bpf/syscall.c
+@@ -25,6 +25,7 @@
+ #include <linux/nospec.h>
+ #include <linux/audit.h>
+ #include <uapi/linux/btf.h>
++#include <linux/bpf_lsm.h>
+ 
+ #define IS_FD_ARRAY(map) ((map)->map_type == BPF_MAP_TYPE_PERF_EVENT_ARRAY || \
+ 			  (map)->map_type == BPF_MAP_TYPE_CGROUP_ARRAY || \
+@@ -1935,6 +1936,7 @@ bpf_prog_load_check_attach(enum bpf_prog_type prog_type,
+ 
+ 		switch (prog_type) {
+ 		case BPF_PROG_TYPE_TRACING:
++		case BPF_PROG_TYPE_LSM:
+ 		case BPF_PROG_TYPE_STRUCT_OPS:
+ 		case BPF_PROG_TYPE_EXT:
+ 			break;
+@@ -2367,10 +2369,24 @@ static int bpf_tracing_prog_attach(struct bpf_prog *prog)
+ 	struct file *link_file;
+ 	int link_fd, err;
+ 
+-	if (prog->expected_attach_type != BPF_TRACE_FENTRY &&
+-	    prog->expected_attach_type != BPF_TRACE_FEXIT &&
+-	    prog->expected_attach_type != BPF_MODIFY_RETURN &&
+-	    prog->type != BPF_PROG_TYPE_EXT) {
++	switch (prog->type) {
++	case BPF_PROG_TYPE_TRACING:
++		if (prog->expected_attach_type != BPF_TRACE_FENTRY &&
++		    prog->expected_attach_type != BPF_TRACE_FEXIT &&
++		    prog->expected_attach_type != BPF_MODIFY_RETURN) {
++			err = -EINVAL;
++			goto out_put_prog;
++		}
++		break;
++	case BPF_PROG_TYPE_EXT:
++		break;
++	case BPF_PROG_TYPE_LSM:
++		if (prog->expected_attach_type != BPF_LSM_MAC) {
++			err = -EINVAL;
++			goto out_put_prog;
++		}
++		break;
++	default:
+ 		err = -EINVAL;
+ 		goto out_put_prog;
+ 	}
+@@ -2452,12 +2468,14 @@ static int bpf_raw_tracepoint_open(const union bpf_attr *attr)
+ 	if (prog->type != BPF_PROG_TYPE_RAW_TRACEPOINT &&
+ 	    prog->type != BPF_PROG_TYPE_TRACING &&
+ 	    prog->type != BPF_PROG_TYPE_EXT &&
++	    prog->type != BPF_PROG_TYPE_LSM &&
+ 	    prog->type != BPF_PROG_TYPE_RAW_TRACEPOINT_WRITABLE) {
+ 		err = -EINVAL;
+ 		goto out_put_prog;
+ 	}
+ 
+ 	if (prog->type == BPF_PROG_TYPE_TRACING ||
++	    prog->type == BPF_PROG_TYPE_LSM ||
+ 	    prog->type == BPF_PROG_TYPE_EXT) {
+ 		if (attr->raw_tracepoint.name) {
+ 			/* The attach point for this category of programs
+diff --git a/kernel/bpf/trampoline.c b/kernel/bpf/trampoline.c
+index f30bca2a4d01..9be85aa4ec5f 100644
+--- a/kernel/bpf/trampoline.c
++++ b/kernel/bpf/trampoline.c
+@@ -6,6 +6,7 @@
+ #include <linux/ftrace.h>
+ #include <linux/rbtree_latch.h>
+ #include <linux/perf_event.h>
++#include <linux/btf.h>
+ 
+ /* dummy _ops. The verifier will operate on target program's ops. */
+ const struct bpf_verifier_ops bpf_extension_verifier_ops = {
+@@ -233,15 +234,23 @@ static int bpf_trampoline_update(struct bpf_trampoline *tr)
+ 	return err;
  }
  
- struct bpf_link *bpf_program__attach(struct bpf_program *prog)
-diff --git a/tools/lib/bpf/libbpf.h b/tools/lib/bpf/libbpf.h
-index d38d7a629417..df1be44c8118 100644
---- a/tools/lib/bpf/libbpf.h
-+++ b/tools/lib/bpf/libbpf.h
-@@ -248,6 +248,8 @@ bpf_program__attach_raw_tracepoint(struct bpf_program *prog,
+-static enum bpf_tramp_prog_type bpf_attach_type_to_tramp(enum bpf_attach_type t)
++static enum bpf_tramp_prog_type bpf_attach_type_to_tramp(struct bpf_prog *prog)
+ {
+-	switch (t) {
++	switch (prog->expected_attach_type) {
+ 	case BPF_TRACE_FENTRY:
+ 		return BPF_TRAMP_FENTRY;
+ 	case BPF_MODIFY_RETURN:
+ 		return BPF_TRAMP_MODIFY_RETURN;
+ 	case BPF_TRACE_FEXIT:
+ 		return BPF_TRAMP_FEXIT;
++	case BPF_LSM_MAC:
++		if (!prog->aux->attach_func_proto->type)
++			/* The function returns void, we cannot modify its
++			 * return value.
++			 */
++			return BPF_TRAMP_FEXIT;
++		else
++			return BPF_TRAMP_MODIFY_RETURN;
+ 	default:
+ 		return BPF_TRAMP_REPLACE;
+ 	}
+@@ -255,7 +264,7 @@ int bpf_trampoline_link_prog(struct bpf_prog *prog)
+ 	int cnt;
  
- LIBBPF_API struct bpf_link *
- bpf_program__attach_trace(struct bpf_program *prog);
-+LIBBPF_API struct bpf_link *
-+bpf_program__attach_lsm(struct bpf_program *prog);
- struct bpf_map;
- LIBBPF_API struct bpf_link *bpf_map__attach_struct_ops(struct bpf_map *map);
- struct bpf_insn;
-@@ -321,6 +323,7 @@ LIBBPF_API int bpf_program__set_socket_filter(struct bpf_program *prog);
- LIBBPF_API int bpf_program__set_tracepoint(struct bpf_program *prog);
- LIBBPF_API int bpf_program__set_raw_tracepoint(struct bpf_program *prog);
- LIBBPF_API int bpf_program__set_kprobe(struct bpf_program *prog);
-+LIBBPF_API int bpf_program__set_lsm(struct bpf_program *prog);
- LIBBPF_API int bpf_program__set_sched_cls(struct bpf_program *prog);
- LIBBPF_API int bpf_program__set_sched_act(struct bpf_program *prog);
- LIBBPF_API int bpf_program__set_xdp(struct bpf_program *prog);
-@@ -347,6 +350,7 @@ LIBBPF_API bool bpf_program__is_socket_filter(const struct bpf_program *prog);
- LIBBPF_API bool bpf_program__is_tracepoint(const struct bpf_program *prog);
- LIBBPF_API bool bpf_program__is_raw_tracepoint(const struct bpf_program *prog);
- LIBBPF_API bool bpf_program__is_kprobe(const struct bpf_program *prog);
-+LIBBPF_API bool bpf_program__is_lsm(const struct bpf_program *prog);
- LIBBPF_API bool bpf_program__is_sched_cls(const struct bpf_program *prog);
- LIBBPF_API bool bpf_program__is_sched_act(const struct bpf_program *prog);
- LIBBPF_API bool bpf_program__is_xdp(const struct bpf_program *prog);
-diff --git a/tools/lib/bpf/libbpf.map b/tools/lib/bpf/libbpf.map
-index 5129283c0284..ec29d3aa2700 100644
---- a/tools/lib/bpf/libbpf.map
-+++ b/tools/lib/bpf/libbpf.map
-@@ -243,5 +243,8 @@ LIBBPF_0.0.8 {
- 		bpf_link__pin;
- 		bpf_link__pin_path;
- 		bpf_link__unpin;
-+		bpf_program__attach_lsm;
-+		bpf_program__is_lsm;
- 		bpf_program__set_attach_target;
-+		bpf_program__set_lsm;
- } LIBBPF_0.0.7;
+ 	tr = prog->aux->trampoline;
+-	kind = bpf_attach_type_to_tramp(prog->expected_attach_type);
++	kind = bpf_attach_type_to_tramp(prog);
+ 	mutex_lock(&tr->mutex);
+ 	if (tr->extension_prog) {
+ 		/* cannot attach fentry/fexit if extension prog is attached.
+@@ -305,7 +314,7 @@ int bpf_trampoline_unlink_prog(struct bpf_prog *prog)
+ 	int err;
+ 
+ 	tr = prog->aux->trampoline;
+-	kind = bpf_attach_type_to_tramp(prog->expected_attach_type);
++	kind = bpf_attach_type_to_tramp(prog);
+ 	mutex_lock(&tr->mutex);
+ 	if (kind == BPF_TRAMP_REPLACE) {
+ 		WARN_ON_ONCE(!tr->extension_prog);
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index 745f3cfdf3b2..c5024499f86b 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -20,6 +20,7 @@
+ #include <linux/perf_event.h>
+ #include <linux/ctype.h>
+ #include <linux/error-injection.h>
++#include <linux/bpf_lsm.h>
+ 
+ #include "disasm.h"
+ 
+@@ -6412,8 +6413,9 @@ static int check_return_code(struct bpf_verifier_env *env)
+ 	struct tnum range = tnum_range(0, 1);
+ 	int err;
+ 
+-	/* The struct_ops func-ptr's return type could be "void" */
+-	if (env->prog->type == BPF_PROG_TYPE_STRUCT_OPS &&
++	/* LSM and struct_ops func-ptr's return type could be "void" */
++	if ((env->prog->type == BPF_PROG_TYPE_STRUCT_OPS ||
++	     env->prog->type == BPF_PROG_TYPE_LSM) &&
+ 	    !prog->aux->attach_func_proto->type)
+ 		return 0;
+ 
+@@ -9843,7 +9845,9 @@ static int check_attach_btf_id(struct bpf_verifier_env *env)
+ 	if (prog->type == BPF_PROG_TYPE_STRUCT_OPS)
+ 		return check_struct_ops_btf_id(env);
+ 
+-	if (prog->type != BPF_PROG_TYPE_TRACING && !prog_extension)
++	if (prog->type != BPF_PROG_TYPE_TRACING &&
++	    prog->type != BPF_PROG_TYPE_LSM &&
++	    !prog_extension)
+ 		return 0;
+ 
+ 	if (!btf_id) {
+@@ -9974,8 +9978,16 @@ static int check_attach_btf_id(struct bpf_verifier_env *env)
+ 			return -EINVAL;
+ 		/* fallthrough */
+ 	case BPF_MODIFY_RETURN:
++	case BPF_LSM_MAC:
+ 	case BPF_TRACE_FENTRY:
+ 	case BPF_TRACE_FEXIT:
++		prog->aux->attach_func_name = tname;
++		if (prog->type == BPF_PROG_TYPE_LSM) {
++			ret = bpf_lsm_verify_prog(&env->log, prog);
++			if (ret < 0)
++				return ret;
++		}
++
+ 		if (!btf_type_is_func(t)) {
+ 			verbose(env, "attach_btf_id %u is not a function\n",
+ 				btf_id);
+@@ -9990,7 +10002,6 @@ static int check_attach_btf_id(struct bpf_verifier_env *env)
+ 		tr = bpf_trampoline_lookup(key);
+ 		if (!tr)
+ 			return -ENOMEM;
+-		prog->aux->attach_func_name = tname;
+ 		/* t is either vmlinux type or another program's type */
+ 		prog->aux->attach_func_proto = t;
+ 		mutex_lock(&tr->mutex);
 -- 
 2.20.1
 
