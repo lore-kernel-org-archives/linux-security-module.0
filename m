@@ -2,62 +2,76 @@ Return-Path: <SRS0=YXOF=5I=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MSGID_FROM_MTA_HEADER,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 735F0C54FD2
-	for <linux-security-module@archiver.kernel.org>; Mon, 23 Mar 2020 16:44:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FD6EC4332E
+	for <linux-security-module@archiver.kernel.org>; Mon, 23 Mar 2020 19:03:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36E0620714
-	for <linux-security-module@archiver.kernel.org>; Mon, 23 Mar 2020 16:44:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5ACA320719
+	for <linux-security-module@archiver.kernel.org>; Mon, 23 Mar 2020 19:03:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gOUKyuxd"
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="Z5ItajgS";
+	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="CJhQcQzg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727691AbgCWQoh (ORCPT
+        id S1727714AbgCWTD0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 23 Mar 2020 12:44:37 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:36692 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727688AbgCWQoh (ORCPT
+        Mon, 23 Mar 2020 15:03:26 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:27666 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727646AbgCWTD0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 23 Mar 2020 12:44:37 -0400
-Received: by mail-wr1-f68.google.com with SMTP id 31so11936277wrs.3
-        for <linux-security-module@vger.kernel.org>; Mon, 23 Mar 2020 09:44:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=ArnVHeKIIkUrstvsddHI/Ay1wAn4wwVzE5ugr70jw9Y=;
-        b=gOUKyuxdtGDAfXv0uXu6GLZSRDwSkJSSlfjwGHvdf5gNIFNZL64cDNXaYj6V0Uvwuh
-         omPMUNgg/EP1hRwYPa1mGt03MT8mSJ+hKc87HVFrI+0pdB4fZqNfXc2MGY3c30ZyEOye
-         QKsNVu0bTiXpYGcnaBOoWTvE1N5Lpt6tw0rSA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ArnVHeKIIkUrstvsddHI/Ay1wAn4wwVzE5ugr70jw9Y=;
-        b=alCYkLW8EEUGN3HZzK/ZKhf8APgXutRqj9fnv7hps9MhjUcsuzpZ1+osXwPPb9p2ZS
-         JYWSjGVHPMxrU1Pyza+kZa4A6qmmEbH+WhUHqITOaKktdDaG7oCZG+uafslDpR0mGUJs
-         c1Di70e2+ir66nBwIj24MwA8UFFFNNQmgBIefFNcoZEiDmk7nEHD/kdlEmgC4KPEnm0F
-         2GG9M5BG4b+D6awVCn0ZCbBFqxJ3LGuv1A5v6Kbas6htUY2NJVlkBNQf9YRdl6tE/sn8
-         4FUTKp8UiehUed3mYMcZ79kUeOknGaAGYwhQWIsCnJfnkdFkqZdnKnCuQwPzzmlHiyT0
-         cjXg==
-X-Gm-Message-State: ANhLgQ0Zi9YpCFJoS23H14s31Yh74hSnhSZfMc6EubF20wr1c86udZQ4
-        kPzImyGUDq1hmOSCFJmbLsYMFg==
-X-Google-Smtp-Source: ADFU+vtRLd/uB8nVO+vlJwItZhiSUK74UaZgwGLkBuJdgLzi5i6BiLURq0+uOJ27D5qvAd9tsEn2qA==
-X-Received: by 2002:a5d:624f:: with SMTP id m15mr20218008wrv.56.1584981873289;
-        Mon, 23 Mar 2020 09:44:33 -0700 (PDT)
-Received: from kpsingh-kernel.localdomain (77-56-209-237.dclient.hispeed.ch. [77.56.209.237])
-        by smtp.gmail.com with ESMTPSA id l8sm199874wmj.2.2020.03.23.09.44.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Mar 2020 09:44:32 -0700 (PDT)
-From:   KP Singh <kpsingh@chromium.org>
-To:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Cc:     Brendan Jackman <jackmanb@google.com>,
+        Mon, 23 Mar 2020 15:03:26 -0400
+Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02NJ2ppp024870;
+        Mon, 23 Mar 2020 12:02:58 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=subject : to : cc :
+ references : from : message-id : date : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=facebook;
+ bh=bN8VN3EvzY4NLbXHxXyp9pZtDhtO9JLhyvs+Fwt/yic=;
+ b=Z5ItajgSfqTjda/oTNl2GFe9yRDA/Arlmy8PoNLC3zXdmO5+W1j6LDHfHmCQ5winB90M
+ PRVveAnjF8QbcWeyBC/L3EZIh6lW97AVXenbLENMgiYjBQveiJvZ5CkMJlfxga2rQjwp
+ +nGhOfcsUqjwpjwLeuZ4arimydMPHURCuu4= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com with ESMTP id 2yx2xy6q9j-13
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Mon, 23 Mar 2020 12:02:58 -0700
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (100.104.31.183)
+ by o365-in.thefacebook.com (100.104.36.101) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1847.3; Mon, 23 Mar 2020 12:02:44 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=iln1j80IYC/ZcK4+V2MWGA3Mho9xqAxNK9BNN3L9nEGkllapSl+ZHTVBJMjwSCQaMHvl/SrbX0W7wzN75UluG05UxnvCe8AW4yNmYX1hUjUu078ggZKWTI2lnEqFwqAvXYlMBw0gB0n6F07aOTIyUOuypAVeHvmh0VQCTjtbfNAEQnQnMReMZPxCe+sQ1kD5yQeizCqz9RXU8EFucP9f1fjrOZDlFegofi6d/7yBA0o1JvdIe2WKrg2WuI9QO8f4eJtGspKaQTiAi01ifIXYCV//QjeT6fYMD/PuKHuQLI8gzhw0Deh2U3igBgt4sFDkR8wBUcpQXm6VPR8CHQh1rA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bN8VN3EvzY4NLbXHxXyp9pZtDhtO9JLhyvs+Fwt/yic=;
+ b=KbKZKHjhVbHbgonbwvYn3R7y4nkjzIxDnyZk7qw/2aMVdlaNWaci95UaAK7vjs9OfjZCtHcn6GkpcQaiAyYdcuANSR9sKf0LgREJlzlAKrDeRZmSscBvCsSR93pmnFcy8mymzipV4PNAYaEBFp6XIBEEZCf75zxuIWvzq2My/XeE3RpoqIOnD0P4XrSu0nlapzm0MacX0GuV10sNzI7PcDi1Df/VO52ZZm7dWGzZp4JgiM+3UEEbxIozteO+7lmoFkiifFPdsjMqCqGYmQI2mQYYWYeqwtvEga9L+Nbl2/S52vjSo6OFtsmqFVqb+EWoDMCwk1pQg9ot4ZkIn+D+bg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
+ header.d=fb.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector2-fb-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bN8VN3EvzY4NLbXHxXyp9pZtDhtO9JLhyvs+Fwt/yic=;
+ b=CJhQcQzgsqnVEj+mP3ZKDkHRhiqfUTNHDwW3f190iWu/Qmx0SoyENmKhe9bCyi9gqzgOQVvTPEg3P5I5FU5SVG6RAjAVQYB6ARqUCuwptPubgc0FjJIicLAlx1VZniqerNWSAtQiS6kpqdvJFd7CDcj5mU1z9wJnkIAwPDC1lm8=
+Received: from MW3PR15MB3883.namprd15.prod.outlook.com (2603:10b6:303:51::22)
+ by MW3PR15MB3915.namprd15.prod.outlook.com (2603:10b6:303:4a::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2835.22; Mon, 23 Mar
+ 2020 19:02:43 +0000
+Received: from MW3PR15MB3883.namprd15.prod.outlook.com
+ ([fe80::a49b:8546:912f:dd98]) by MW3PR15MB3883.namprd15.prod.outlook.com
+ ([fe80::a49b:8546:912f:dd98%5]) with mapi id 15.20.2835.021; Mon, 23 Mar 2020
+ 19:02:43 +0000
+Subject: Re: [PATCH bpf-next v5 1/7] bpf: Introduce BPF_PROG_TYPE_LSM
+To:     KP Singh <kpsingh@chromium.org>, <linux-kernel@vger.kernel.org>,
+        <bpf@vger.kernel.org>, <linux-security-module@vger.kernel.org>
+CC:     Brendan Jackman <jackmanb@google.com>,
         Florent Revest <revest@google.com>,
+        Thomas Garnier <thgarnie@google.com>,
         Alexei Starovoitov <ast@kernel.org>,
         Daniel Borkmann <daniel@iogearbox.net>,
         James Morris <jmorris@namei.org>,
@@ -66,334 +80,90 @@ Cc:     Brendan Jackman <jackmanb@google.com>,
         Florent Revest <revest@chromium.org>,
         Brendan Jackman <jackmanb@chromium.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH bpf-next v5 4/7] bpf: lsm: Implement attach, detach and execution
-Date:   Mon, 23 Mar 2020 17:44:12 +0100
-Message-Id: <20200323164415.12943-5-kpsingh@chromium.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200323164415.12943-1-kpsingh@chromium.org>
 References: <20200323164415.12943-1-kpsingh@chromium.org>
+ <20200323164415.12943-2-kpsingh@chromium.org>
+From:   Yonghong Song <yhs@fb.com>
+Message-ID: <8ad75b9e-5733-d5b7-3295-5d8915b19dfe@fb.com>
+Date:   Mon, 23 Mar 2020 12:02:38 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:68.0)
+ Gecko/20100101 Thunderbird/68.6.0
+In-Reply-To: <20200323164415.12943-2-kpsingh@chromium.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: CO2PR05CA0106.namprd05.prod.outlook.com
+ (2603:10b6:104:1::32) To MW3PR15MB3883.namprd15.prod.outlook.com
+ (2603:10b6:303:51::22)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from MacBook-Pro-52.local (2620:10d:c090:400::5:2131) by CO2PR05CA0106.namprd05.prod.outlook.com (2603:10b6:104:1::32) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2856.12 via Frontend Transport; Mon, 23 Mar 2020 19:02:41 +0000
+X-Originating-IP: [2620:10d:c090:400::5:2131]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 32a221fd-3826-48ec-6f7c-08d7cf5cc454
+X-MS-TrafficTypeDiagnostic: MW3PR15MB3915:
+X-Microsoft-Antispam-PRVS: <MW3PR15MB391563D6666E8C483C708E12D3F00@MW3PR15MB3915.namprd15.prod.outlook.com>
+X-FB-Source: Internal
+X-MS-Oob-TLC-OOBClassifiers: OLM:1201;
+X-Forefront-PRVS: 0351D213B3
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(366004)(396003)(39860400002)(136003)(376002)(346002)(199004)(316002)(4326008)(52116002)(31696002)(66476007)(81166006)(8936002)(53546011)(66946007)(66556008)(8676002)(6506007)(478600001)(6486002)(2616005)(36756003)(81156014)(6512007)(2906002)(186003)(54906003)(86362001)(31686004)(7416002)(6666004)(16526019)(5660300002);DIR:OUT;SFP:1102;SCL:1;SRVR:MW3PR15MB3915;H:MW3PR15MB3883.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
+Received-SPF: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 8hQ3d5oRx2enAqV2X+4t4A6F7yQ7NO0SKiPib/IId+/qcxnwz2NPASeCsZC2XDBiBTC1Xf4dFXj4HlPv+o0VcXNZiH/XcA/JkDwEdds/lJeIvRtyIg8ritkAItf6Vw022/fNkwZ8nR86meMLQu5NRXZjJ9folO4cY6qyBsOgXIZ39Lqvk7yQ4yZjpEsT4sTTODdi2oF48IaoTBdXUihUMocEejFJeYxe4QUOj0DDKlBN24PjpEyd0MFfX0zGm+8GXXSG/ElUCIsyTHlxO+Gt3/8UGT7DOfzHThEGLHFs2Wp9/M9iyToIb/j5moCTqqfrMgfYm/9RLJwHplmsfwOSzIDkjNiJz2A+bXKc5zZNhz6Siret1aXtAJRAVX5aYJAB7FYfWBTwC59GwU3IOV/AmoXr4omcqpj/C5/8rQJmhLUaTDQ0YCzutQD8p3f2+FC8
+X-MS-Exchange-AntiSpam-MessageData: GBJSWVlXX+JlQ7yjyOmP9ifn0+bFoEtgFZP6+02KKCfUYI2OPRR5AdlGhH1Q5Qi1fwICX8f5KV7yqlXD1CYih8F9bGJZonlTE3Jr8pRkCOX3iBt2RegxOVPw5H5q1VW42axg3OHnf3yxSHlNU0cf4GuheDxhtTxw/89jj0H48oOLskPga9JQpxGow+Bya6EK
+X-MS-Exchange-CrossTenant-Network-Message-Id: 32a221fd-3826-48ec-6f7c-08d7cf5cc454
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Mar 2020 19:02:43.6721
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 3Y4chj7WuMstKDXfy/bPZxkUd2sy4HuqgVBO9WPGxMlXCCSKKagGngrRggBXX11m
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR15MB3915
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
+ definitions=2020-03-23_08:2020-03-23,2020-03-23 signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 lowpriorityscore=0
+ spamscore=0 malwarescore=0 clxscore=1011 suspectscore=0 phishscore=0
+ mlxlogscore=931 adultscore=0 mlxscore=0 priorityscore=1501 bulkscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2003230097
+X-FB-Internal: deliver
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: KP Singh <kpsingh@google.com>
 
-JITed BPF programs are dynamically attached to the LSM hooks
-using BPF trampolines. The trampoline prologue generates code to handle
-conversion of the signature of the hook to the appropriate BPF context.
 
-The allocated trampoline programs are attached to the nop functions
-initialized as LSM hooks.
+On 3/23/20 9:44 AM, KP Singh wrote:
+> From: KP Singh <kpsingh@google.com>
+> 
+> Introduce types and configs for bpf programs that can be attached to
+> LSM hooks. The programs can be enabled by the config option
+> CONFIG_BPF_LSM.
+> 
+> Signed-off-by: KP Singh <kpsingh@google.com>
+> Reviewed-by: Brendan Jackman <jackmanb@google.com>
+> Reviewed-by: Florent Revest <revest@google.com>
+> Reviewed-by: Thomas Garnier <thgarnie@google.com>
 
-BPF_PROG_TYPE_LSM programs must have a GPL compatible license and
-and need CAP_SYS_ADMIN (required for loading eBPF programs).
+Acked-by: Yonghong Song <yhs@fb.com>
 
-Upon attachment:
+> ---
+>   MAINTAINERS                    |  1 +
+>   include/linux/bpf.h            |  3 +++
+>   include/linux/bpf_types.h      |  4 ++++
+>   include/uapi/linux/bpf.h       |  2 ++
+>   init/Kconfig                   | 10 ++++++++++
+>   kernel/bpf/Makefile            |  1 +
+>   kernel/bpf/bpf_lsm.c           | 17 +++++++++++++++++
+>   kernel/trace/bpf_trace.c       | 12 ++++++------
+>   tools/include/uapi/linux/bpf.h |  2 ++
+>   tools/lib/bpf/libbpf_probes.c  |  1 +
 
-* A BPF fexit trampoline is used for LSM hooks with a void return type.
-* A BPF fmod_ret trampoline is used for LSM hooks which return an
-  int. The attached programs can override the return value of the
-  bpf LSM hook to indicate a MAC Policy decision.
+You may want to check bpftool support for new prog types
+for proper output. It should be a simple change.
 
-Signed-off-by: KP Singh <kpsingh@google.com>
-Reviewed-by: Brendan Jackman <jackmanb@google.com>
-Reviewed-by: Florent Revest <revest@google.com>
----
- include/linux/bpf.h     |  4 ++++
- include/linux/bpf_lsm.h | 11 +++++++++++
- kernel/bpf/bpf_lsm.c    | 29 +++++++++++++++++++++++++++++
- kernel/bpf/btf.c        |  9 ++++++++-
- kernel/bpf/syscall.c    | 26 ++++++++++++++++++++++----
- kernel/bpf/trampoline.c | 17 +++++++++++++----
- kernel/bpf/verifier.c   | 19 +++++++++++++++----
- 7 files changed, 102 insertions(+), 13 deletions(-)
-
-diff --git a/include/linux/bpf.h b/include/linux/bpf.h
-index af81ec7b783c..adf2e5a6de4b 100644
---- a/include/linux/bpf.h
-+++ b/include/linux/bpf.h
-@@ -433,6 +433,10 @@ struct btf_func_model {
-  * programs only. Should not be used with normal calls and indirect calls.
-  */
- #define BPF_TRAMP_F_SKIP_FRAME		BIT(2)
-+/* Override the return value of the original function. This flag only makes
-+ * sense for fexit trampolines.
-+ */
-+#define BPF_TRAMP_F_OVERRIDE_RETURN     BIT(3)
- 
- /* Each call __bpf_prog_enter + call bpf_func + call __bpf_prog_exit is ~50
-  * bytes on x86.  Pick a number to fit into BPF_IMAGE_SIZE / 2
-diff --git a/include/linux/bpf_lsm.h b/include/linux/bpf_lsm.h
-index c6423a140220..9bac0a11f303 100644
---- a/include/linux/bpf_lsm.h
-+++ b/include/linux/bpf_lsm.h
-@@ -16,6 +16,17 @@
- #include <linux/lsm_hook_names.h>
- #undef LSM_HOOK
- 
-+int bpf_lsm_verify_prog(struct bpf_verifier_log *vlog,
-+			const struct bpf_prog *prog);
-+
-+#else /* !CONFIG_BPF_LSM */
-+
-+static inline int bpf_lsm_verify_prog(struct bpf_verifier_log *vlog,
-+				      const struct bpf_prog *prog)
-+{
-+	return -EOPNOTSUPP;
-+}
-+
- #endif /* CONFIG_BPF_LSM */
- 
- #endif /* _LINUX_BPF_LSM_H */
-diff --git a/kernel/bpf/bpf_lsm.c b/kernel/bpf/bpf_lsm.c
-index 530d137f7a84..2a8131b640b8 100644
---- a/kernel/bpf/bpf_lsm.c
-+++ b/kernel/bpf/bpf_lsm.c
-@@ -9,6 +9,9 @@
- #include <linux/btf.h>
- #include <linux/lsm_hooks.h>
- #include <linux/bpf_lsm.h>
-+#include <linux/jump_label.h>
-+#include <linux/kallsyms.h>
-+#include <linux/bpf_verifier.h>
- 
- /* For every LSM hook  that allows attachment of BPF programs, declare a NOP
-  * function where a BPF program can be attached as an fexit trampoline.
-@@ -27,6 +30,32 @@ noinline __weak void bpf_lsm_##NAME(__VA_ARGS__) {}
- #include <linux/lsm_hook_names.h>
- #undef LSM_HOOK
- 
-+#define BPF_LSM_SYM_PREFX  "bpf_lsm_"
-+
-+int bpf_lsm_verify_prog(struct bpf_verifier_log *vlog,
-+			const struct bpf_prog *prog)
-+{
-+	/* Only CAP_MAC_ADMIN users are allowed to make changes to LSM hooks
-+	 */
-+	if (!capable(CAP_MAC_ADMIN))
-+		return -EPERM;
-+
-+	if (!prog->gpl_compatible) {
-+		bpf_log(vlog,
-+			"LSM programs must have a GPL compatible license\n");
-+		return -EINVAL;
-+	}
-+
-+	if (strncmp(BPF_LSM_SYM_PREFX, prog->aux->attach_func_name,
-+		    strlen(BPF_LSM_SYM_PREFX))) {
-+		bpf_log(vlog, "attach_btf_id %u points to wrong type name %s\n",
-+			prog->aux->attach_btf_id, prog->aux->attach_func_name);
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
- const struct bpf_prog_ops lsm_prog_ops = {
- };
- 
-diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
-index 6f397c4da05e..67466dd59a35 100644
---- a/kernel/bpf/btf.c
-+++ b/kernel/bpf/btf.c
-@@ -3710,7 +3710,14 @@ bool btf_ctx_access(int off, int size, enum bpf_access_type type,
- 	}
- 
- 	if (arg == nr_args) {
--		if (prog->expected_attach_type == BPF_TRACE_FEXIT) {
-+		/* BPF_LSM_MAC programs only have int and void functions they
-+		 * can be attached to. When they are attached to a void function
-+		 * they result in the creation of an FEXIT trampoline and when
-+		 * to a function that returns an int, a MODIFY_RETURN
-+		 * trampoline.
-+		 */
-+		if (prog->expected_attach_type == BPF_TRACE_FEXIT ||
-+		    prog->expected_attach_type == BPF_LSM_MAC) {
- 			if (!t)
- 				return true;
- 			t = btf_type_by_id(btf, t->type);
-diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index 85567a6ea5f9..845bdfb35852 100644
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -25,6 +25,7 @@
- #include <linux/nospec.h>
- #include <linux/audit.h>
- #include <uapi/linux/btf.h>
-+#include <linux/bpf_lsm.h>
- 
- #define IS_FD_ARRAY(map) ((map)->map_type == BPF_MAP_TYPE_PERF_EVENT_ARRAY || \
- 			  (map)->map_type == BPF_MAP_TYPE_CGROUP_ARRAY || \
-@@ -1935,6 +1936,7 @@ bpf_prog_load_check_attach(enum bpf_prog_type prog_type,
- 
- 		switch (prog_type) {
- 		case BPF_PROG_TYPE_TRACING:
-+		case BPF_PROG_TYPE_LSM:
- 		case BPF_PROG_TYPE_STRUCT_OPS:
- 		case BPF_PROG_TYPE_EXT:
- 			break;
-@@ -2367,10 +2369,24 @@ static int bpf_tracing_prog_attach(struct bpf_prog *prog)
- 	struct file *link_file;
- 	int link_fd, err;
- 
--	if (prog->expected_attach_type != BPF_TRACE_FENTRY &&
--	    prog->expected_attach_type != BPF_TRACE_FEXIT &&
--	    prog->expected_attach_type != BPF_MODIFY_RETURN &&
--	    prog->type != BPF_PROG_TYPE_EXT) {
-+	switch (prog->type) {
-+	case BPF_PROG_TYPE_TRACING:
-+		if (prog->expected_attach_type != BPF_TRACE_FENTRY &&
-+		    prog->expected_attach_type != BPF_TRACE_FEXIT &&
-+		    prog->expected_attach_type != BPF_MODIFY_RETURN) {
-+			err = -EINVAL;
-+			goto out_put_prog;
-+		}
-+		break;
-+	case BPF_PROG_TYPE_EXT:
-+		break;
-+	case BPF_PROG_TYPE_LSM:
-+		if (prog->expected_attach_type != BPF_LSM_MAC) {
-+			err = -EINVAL;
-+			goto out_put_prog;
-+		}
-+		break;
-+	default:
- 		err = -EINVAL;
- 		goto out_put_prog;
- 	}
-@@ -2452,12 +2468,14 @@ static int bpf_raw_tracepoint_open(const union bpf_attr *attr)
- 	if (prog->type != BPF_PROG_TYPE_RAW_TRACEPOINT &&
- 	    prog->type != BPF_PROG_TYPE_TRACING &&
- 	    prog->type != BPF_PROG_TYPE_EXT &&
-+	    prog->type != BPF_PROG_TYPE_LSM &&
- 	    prog->type != BPF_PROG_TYPE_RAW_TRACEPOINT_WRITABLE) {
- 		err = -EINVAL;
- 		goto out_put_prog;
- 	}
- 
- 	if (prog->type == BPF_PROG_TYPE_TRACING ||
-+	    prog->type == BPF_PROG_TYPE_LSM ||
- 	    prog->type == BPF_PROG_TYPE_EXT) {
- 		if (attr->raw_tracepoint.name) {
- 			/* The attach point for this category of programs
-diff --git a/kernel/bpf/trampoline.c b/kernel/bpf/trampoline.c
-index f30bca2a4d01..9be85aa4ec5f 100644
---- a/kernel/bpf/trampoline.c
-+++ b/kernel/bpf/trampoline.c
-@@ -6,6 +6,7 @@
- #include <linux/ftrace.h>
- #include <linux/rbtree_latch.h>
- #include <linux/perf_event.h>
-+#include <linux/btf.h>
- 
- /* dummy _ops. The verifier will operate on target program's ops. */
- const struct bpf_verifier_ops bpf_extension_verifier_ops = {
-@@ -233,15 +234,23 @@ static int bpf_trampoline_update(struct bpf_trampoline *tr)
- 	return err;
- }
- 
--static enum bpf_tramp_prog_type bpf_attach_type_to_tramp(enum bpf_attach_type t)
-+static enum bpf_tramp_prog_type bpf_attach_type_to_tramp(struct bpf_prog *prog)
- {
--	switch (t) {
-+	switch (prog->expected_attach_type) {
- 	case BPF_TRACE_FENTRY:
- 		return BPF_TRAMP_FENTRY;
- 	case BPF_MODIFY_RETURN:
- 		return BPF_TRAMP_MODIFY_RETURN;
- 	case BPF_TRACE_FEXIT:
- 		return BPF_TRAMP_FEXIT;
-+	case BPF_LSM_MAC:
-+		if (!prog->aux->attach_func_proto->type)
-+			/* The function returns void, we cannot modify its
-+			 * return value.
-+			 */
-+			return BPF_TRAMP_FEXIT;
-+		else
-+			return BPF_TRAMP_MODIFY_RETURN;
- 	default:
- 		return BPF_TRAMP_REPLACE;
- 	}
-@@ -255,7 +264,7 @@ int bpf_trampoline_link_prog(struct bpf_prog *prog)
- 	int cnt;
- 
- 	tr = prog->aux->trampoline;
--	kind = bpf_attach_type_to_tramp(prog->expected_attach_type);
-+	kind = bpf_attach_type_to_tramp(prog);
- 	mutex_lock(&tr->mutex);
- 	if (tr->extension_prog) {
- 		/* cannot attach fentry/fexit if extension prog is attached.
-@@ -305,7 +314,7 @@ int bpf_trampoline_unlink_prog(struct bpf_prog *prog)
- 	int err;
- 
- 	tr = prog->aux->trampoline;
--	kind = bpf_attach_type_to_tramp(prog->expected_attach_type);
-+	kind = bpf_attach_type_to_tramp(prog);
- 	mutex_lock(&tr->mutex);
- 	if (kind == BPF_TRAMP_REPLACE) {
- 		WARN_ON_ONCE(!tr->extension_prog);
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index 745f3cfdf3b2..c5024499f86b 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -20,6 +20,7 @@
- #include <linux/perf_event.h>
- #include <linux/ctype.h>
- #include <linux/error-injection.h>
-+#include <linux/bpf_lsm.h>
- 
- #include "disasm.h"
- 
-@@ -6412,8 +6413,9 @@ static int check_return_code(struct bpf_verifier_env *env)
- 	struct tnum range = tnum_range(0, 1);
- 	int err;
- 
--	/* The struct_ops func-ptr's return type could be "void" */
--	if (env->prog->type == BPF_PROG_TYPE_STRUCT_OPS &&
-+	/* LSM and struct_ops func-ptr's return type could be "void" */
-+	if ((env->prog->type == BPF_PROG_TYPE_STRUCT_OPS ||
-+	     env->prog->type == BPF_PROG_TYPE_LSM) &&
- 	    !prog->aux->attach_func_proto->type)
- 		return 0;
- 
-@@ -9843,7 +9845,9 @@ static int check_attach_btf_id(struct bpf_verifier_env *env)
- 	if (prog->type == BPF_PROG_TYPE_STRUCT_OPS)
- 		return check_struct_ops_btf_id(env);
- 
--	if (prog->type != BPF_PROG_TYPE_TRACING && !prog_extension)
-+	if (prog->type != BPF_PROG_TYPE_TRACING &&
-+	    prog->type != BPF_PROG_TYPE_LSM &&
-+	    !prog_extension)
- 		return 0;
- 
- 	if (!btf_id) {
-@@ -9974,8 +9978,16 @@ static int check_attach_btf_id(struct bpf_verifier_env *env)
- 			return -EINVAL;
- 		/* fallthrough */
- 	case BPF_MODIFY_RETURN:
-+	case BPF_LSM_MAC:
- 	case BPF_TRACE_FENTRY:
- 	case BPF_TRACE_FEXIT:
-+		prog->aux->attach_func_name = tname;
-+		if (prog->type == BPF_PROG_TYPE_LSM) {
-+			ret = bpf_lsm_verify_prog(&env->log, prog);
-+			if (ret < 0)
-+				return ret;
-+		}
-+
- 		if (!btf_type_is_func(t)) {
- 			verbose(env, "attach_btf_id %u is not a function\n",
- 				btf_id);
-@@ -9990,7 +10002,6 @@ static int check_attach_btf_id(struct bpf_verifier_env *env)
- 		tr = bpf_trampoline_lookup(key);
- 		if (!tr)
- 			return -ENOMEM;
--		prog->aux->attach_func_name = tname;
- 		/* t is either vmlinux type or another program's type */
- 		prog->aux->attach_func_proto = t;
- 		mutex_lock(&tr->mutex);
--- 
-2.20.1
-
+>   10 files changed, 47 insertions(+), 6 deletions(-)
+>   create mode 100644 kernel/bpf/bpf_lsm.c
+[...]
