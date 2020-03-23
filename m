@@ -2,149 +2,252 @@ Return-Path: <SRS0=YXOF=5I=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FB46C4332E
-	for <linux-security-module@archiver.kernel.org>; Mon, 23 Mar 2020 19:44:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF41DC4332E
+	for <linux-security-module@archiver.kernel.org>; Mon, 23 Mar 2020 19:44:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 308162070A
-	for <linux-security-module@archiver.kernel.org>; Mon, 23 Mar 2020 19:44:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B949120714
+	for <linux-security-module@archiver.kernel.org>; Mon, 23 Mar 2020 19:44:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NIcVqOL8"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WG07lqEp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725877AbgCWToe (ORCPT
+        id S1727040AbgCWTom (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 23 Mar 2020 15:44:34 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:53398 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725830AbgCWToe (ORCPT
+        Mon, 23 Mar 2020 15:44:42 -0400
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:33199 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725861AbgCWTol (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 23 Mar 2020 15:44:34 -0400
-Received: by mail-wm1-f67.google.com with SMTP id b12so743348wmj.3
-        for <linux-security-module@vger.kernel.org>; Mon, 23 Mar 2020 12:44:33 -0700 (PDT)
+        Mon, 23 Mar 2020 15:44:41 -0400
+Received: by mail-pj1-f67.google.com with SMTP id jz1so316437pjb.0
+        for <linux-security-module@vger.kernel.org>; Mon, 23 Mar 2020 12:44:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=VPTbVbHjbimek43chtj4q4jGy4zz4Aerrx5erMEH+Rc=;
-        b=NIcVqOL8Hcu2/424YGZ28OCTXzD6TkjF7KtL6DTv9OThUdUUPcvGtXPZx0xQXrJTko
-         DfhPLmC9cc39I2qXIOUrPhKv/OZqHmTgXzCGJpYpkZMIB/5ui0f21hAhliaxKRjZSMyD
-         lYZxc8FEriRy0PRfvXgwgMiiYg0lamphqkKI0=
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=ls4G6lKYt71Y0XHFWkt5nDqXPlvj9q0Xq6iH0HNGuqM=;
+        b=WG07lqEpeapNlf+q9UhkvXekq1R2/kM+rxpL4XAMpxJf2QVYMEOFaDgJ1BJTHpgRZC
+         jDaKZB9+DGrG33wwzu19a0mx0kiWNijGGl1pUTqq0ljioxipjy03c4VFZPRELVCP0Dg0
+         4/bW4JhFRbWml+M7I0FBl9RebdX2ykFPTxQi0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=VPTbVbHjbimek43chtj4q4jGy4zz4Aerrx5erMEH+Rc=;
-        b=C9Q0/Xax6tIVOL/UzOSTKIiJ9nALyTUoMonpJ9iXtT43fUI/SShufVLo+g/4Bvktbb
-         AN0KAuAi4pcq53Ydqh79j2YYWrHi2T2GHotynX1ovhu6uTpuNPBf5AoeXhgGtTsyBWry
-         VrW0S9LniyIXrssLHQX750lqegz7mkwzPifkoBl+GE9V2wp//meYlm844xxYG1HL4GaG
-         nO3nj1213ulQwxDQLkMW1sueIelTqE0K4n4OwS3eMCPPKW7lp7Rk9k/4jJEgiLZTeUXS
-         h0XtIo2hfxYWKZSfIECWNxyhD3x5mspvNzD7lg39f31KHZJ0BGu0i3Ss2/yA5q8X1Zmf
-         wn2w==
-X-Gm-Message-State: ANhLgQ3vWmzyQXLuWbge45bXWuUajUhGVQCyCTA0aHHHocaqKyV1o6uR
-        uuFF7imQYiT5tW+XlkpgxE8+Tg==
-X-Google-Smtp-Source: ADFU+vs0W77BgudWAo43sPvL/3hpAylqPUXPngvJ+ANhsZ5iZMRtBHNZg0r9qVu1TnQp5Xk7K39mnQ==
-X-Received: by 2002:a05:600c:2146:: with SMTP id v6mr1092762wml.155.1584992672996;
-        Mon, 23 Mar 2020 12:44:32 -0700 (PDT)
-Received: from chromium.org (77-56-209-237.dclient.hispeed.ch. [77.56.209.237])
-        by smtp.gmail.com with ESMTPSA id w204sm910043wma.1.2020.03.23.12.44.31
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=ls4G6lKYt71Y0XHFWkt5nDqXPlvj9q0Xq6iH0HNGuqM=;
+        b=B/wTrnKcRTlWqq5KKcdUyz3xwxERMnO7JO8A4QsDRsRYj/J6x4OYG/sARA8E0NnkGD
+         fGA++8W6iQv7mRuB80kalg76RCk1H6MLu+sdWs+0IkGNsvWifdjuxQnswQ4L2bl9PanU
+         74z4QLCAViwVmaMR+xO1P4VNeBvutaigTRNmAS3CMLOhXsExRjsX9FYnN+4lxnwgmixS
+         izJ0dcMK8/AvCnhMqVhOMFQX04KOz/ioMJnt865yOpiWFfwVbWV79B6NZWb3RO2oVvT7
+         PfN7F7fPdUbHzITVv2wTPjTDWw1NnReiI9UgVFU0odG1adiMsjQDtyYt+c3Hu17yiLMe
+         7Lcw==
+X-Gm-Message-State: ANhLgQ2eM+M4l5QFI0t8bsvILariouc9rVGWX02OubWdTSdJQLoIlmLK
+        tfbmyewCPU4ivEeIPfinLc4YeXulxHE=
+X-Google-Smtp-Source: ADFU+vsjYREv0zb7uF0J3MSz4K/B3zotCbcEm7avZsPU6eUphxOcsAxXrRXR9QeoPK6hPks76WA6aw==
+X-Received: by 2002:a17:902:8648:: with SMTP id y8mr22771881plt.153.1584992680710;
+        Mon, 23 Mar 2020 12:44:40 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id 19sm13145800pgx.63.2020.03.23.12.44.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Mar 2020 12:44:32 -0700 (PDT)
-From:   KP Singh <kpsingh@chromium.org>
-X-Google-Original-From: KP Singh <kpsingh>
-Date:   Mon, 23 Mar 2020 20:44:30 +0100
-To:     Yonghong Song <yhs@fb.com>
+        Mon, 23 Mar 2020 12:44:39 -0700 (PDT)
+Date:   Mon, 23 Mar 2020 12:44:38 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     KP Singh <kpsingh@chromium.org>
 Cc:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         Brendan Jackman <jackmanb@google.com>,
         Florent Revest <revest@google.com>,
         Alexei Starovoitov <ast@kernel.org>,
         Daniel Borkmann <daniel@iogearbox.net>,
-        James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>,
-        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
+        James Morris <jmorris@namei.org>, Paul Turner <pjt@google.com>,
+        Jann Horn <jannh@google.com>,
         Florent Revest <revest@chromium.org>,
         Brendan Jackman <jackmanb@chromium.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH bpf-next v5 4/7] bpf: lsm: Implement attach, detach and
- execution
-Message-ID: <20200323194430.GA18787@chromium.org>
+Subject: Re: [PATCH bpf-next v5 5/7] bpf: lsm: Initialize the BPF LSM hooks
+Message-ID: <202003231237.F654B379@keescook>
 References: <20200323164415.12943-1-kpsingh@chromium.org>
- <20200323164415.12943-5-kpsingh@chromium.org>
- <3455719d-1359-cdba-431e-e7d06e5b398b@fb.com>
+ <20200323164415.12943-6-kpsingh@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3455719d-1359-cdba-431e-e7d06e5b398b@fb.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200323164415.12943-6-kpsingh@chromium.org>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 23-Mär 12:16, Yonghong Song wrote:
+On Mon, Mar 23, 2020 at 05:44:13PM +0100, KP Singh wrote:
+> From: KP Singh <kpsingh@google.com>
 > 
+> The bpf_lsm_ nops are initialized into the LSM framework like any other
+> LSM.  Some LSM hooks do not have 0 as their default return value. The
+> __weak symbol for these hooks is overridden by a corresponding
+> definition in security/bpf/hooks.c
 > 
-> On 3/23/20 9:44 AM, KP Singh wrote:
-> > From: KP Singh <kpsingh@google.com>
-> > 
-> > JITed BPF programs are dynamically attached to the LSM hooks
-> > using BPF trampolines. The trampoline prologue generates code to handle
-> > conversion of the signature of the hook to the appropriate BPF context.
-> > 
-> > The allocated trampoline programs are attached to the nop functions
-> > initialized as LSM hooks.
-> > 
-> > BPF_PROG_TYPE_LSM programs must have a GPL compatible license and
-> > and need CAP_SYS_ADMIN (required for loading eBPF programs).
-> > 
-> > Upon attachment:
-> > 
-> > * A BPF fexit trampoline is used for LSM hooks with a void return type.
-> > * A BPF fmod_ret trampoline is used for LSM hooks which return an
-> >    int. The attached programs can override the return value of the
-> >    bpf LSM hook to indicate a MAC Policy decision.
-> > 
-> > Signed-off-by: KP Singh <kpsingh@google.com>
-> > Reviewed-by: Brendan Jackman <jackmanb@google.com>
-> > Reviewed-by: Florent Revest <revest@google.com>
-> > ---
-> >   include/linux/bpf.h     |  4 ++++
-> >   include/linux/bpf_lsm.h | 11 +++++++++++
-> >   kernel/bpf/bpf_lsm.c    | 29 +++++++++++++++++++++++++++++
-> >   kernel/bpf/btf.c        |  9 ++++++++-
-> >   kernel/bpf/syscall.c    | 26 ++++++++++++++++++++++----
-> >   kernel/bpf/trampoline.c | 17 +++++++++++++----
-> >   kernel/bpf/verifier.c   | 19 +++++++++++++++----
-> >   7 files changed, 102 insertions(+), 13 deletions(-)
-> > 
-> > diff --git a/include/linux/bpf.h b/include/linux/bpf.h
-> > index af81ec7b783c..adf2e5a6de4b 100644
-> > --- a/include/linux/bpf.h
-> > +++ b/include/linux/bpf.h
-> > @@ -433,6 +433,10 @@ struct btf_func_model {
-> >    * programs only. Should not be used with normal calls and indirect calls.
-> >    */
-> >   #define BPF_TRAMP_F_SKIP_FRAME		BIT(2)
-> > +/* Override the return value of the original function. This flag only makes
-> > + * sense for fexit trampolines.
-> > + */
-> > +#define BPF_TRAMP_F_OVERRIDE_RETURN     BIT(3)
+> The LSM can be enabled / disabled with CONFIG_LSM.
 > 
-> Whether the return value is overridable is determined by hook return type as
-> below. Do we still need this flag?
+> Signed-off-by: KP Singh <kpsingh@google.com>
 
-Apologies, this is a relic and should not have been there, will send a
-new revision with this removed.
+Nice! This is super clean on the LSM side of things. :)
 
-- KP
+One note below...
 
+> Reviewed-by: Brendan Jackman <jackmanb@google.com>
+> Reviewed-by: Florent Revest <revest@google.com>
+> ---
+>  security/Kconfig      | 10 ++++----
+>  security/Makefile     |  2 ++
+>  security/bpf/Makefile |  5 ++++
+>  security/bpf/hooks.c  | 55 +++++++++++++++++++++++++++++++++++++++++++
+>  4 files changed, 67 insertions(+), 5 deletions(-)
+>  create mode 100644 security/bpf/Makefile
+>  create mode 100644 security/bpf/hooks.c
 > 
-> >   /* Each call __bpf_prog_enter + call bpf_func + call __bpf_prog_exit is ~50
-> >    * bytes on x86.  Pick a number to fit into BPF_IMAGE_SIZE / 2
-> [...]
+> diff --git a/security/Kconfig b/security/Kconfig
+> index 2a1a2d396228..cd3cc7da3a55 100644
+> --- a/security/Kconfig
+> +++ b/security/Kconfig
+> @@ -277,11 +277,11 @@ endchoice
+>  
+>  config LSM
+>  	string "Ordered list of enabled LSMs"
+> -	default "lockdown,yama,loadpin,safesetid,integrity,smack,selinux,tomoyo,apparmor" if DEFAULT_SECURITY_SMACK
+> -	default "lockdown,yama,loadpin,safesetid,integrity,apparmor,selinux,smack,tomoyo" if DEFAULT_SECURITY_APPARMOR
+> -	default "lockdown,yama,loadpin,safesetid,integrity,tomoyo" if DEFAULT_SECURITY_TOMOYO
+> -	default "lockdown,yama,loadpin,safesetid,integrity" if DEFAULT_SECURITY_DAC
+> -	default "lockdown,yama,loadpin,safesetid,integrity,selinux,smack,tomoyo,apparmor"
+> +	default "lockdown,yama,loadpin,safesetid,integrity,smack,selinux,tomoyo,apparmor,bpf" if DEFAULT_SECURITY_SMACK
+> +	default "lockdown,yama,loadpin,safesetid,integrity,apparmor,selinux,smack,tomoyo,bpf" if DEFAULT_SECURITY_APPARMOR
+> +	default "lockdown,yama,loadpin,safesetid,integrity,tomoyo,bpf" if DEFAULT_SECURITY_TOMOYO
+> +	default "lockdown,yama,loadpin,safesetid,integrity,bpf" if DEFAULT_SECURITY_DAC
+> +	default "lockdown,yama,loadpin,safesetid,integrity,selinux,smack,tomoyo,apparmor,bpf"
+>  	help
+>  	  A comma-separated list of LSMs, in initialization order.
+>  	  Any LSMs left off this list will be ignored. This can be
+> diff --git a/security/Makefile b/security/Makefile
+> index 746438499029..22e73a3482bd 100644
+> --- a/security/Makefile
+> +++ b/security/Makefile
+> @@ -12,6 +12,7 @@ subdir-$(CONFIG_SECURITY_YAMA)		+= yama
+>  subdir-$(CONFIG_SECURITY_LOADPIN)	+= loadpin
+>  subdir-$(CONFIG_SECURITY_SAFESETID)    += safesetid
+>  subdir-$(CONFIG_SECURITY_LOCKDOWN_LSM)	+= lockdown
+> +subdir-$(CONFIG_BPF_LSM)		+= bpf
+>  
+>  # always enable default capabilities
+>  obj-y					+= commoncap.o
+> @@ -30,6 +31,7 @@ obj-$(CONFIG_SECURITY_LOADPIN)		+= loadpin/
+>  obj-$(CONFIG_SECURITY_SAFESETID)       += safesetid/
+>  obj-$(CONFIG_SECURITY_LOCKDOWN_LSM)	+= lockdown/
+>  obj-$(CONFIG_CGROUP_DEVICE)		+= device_cgroup.o
+> +obj-$(CONFIG_BPF_LSM)			+= bpf/
+>  
+>  # Object integrity file lists
+>  subdir-$(CONFIG_INTEGRITY)		+= integrity
+> diff --git a/security/bpf/Makefile b/security/bpf/Makefile
+> new file mode 100644
+> index 000000000000..c7a89a962084
+> --- /dev/null
+> +++ b/security/bpf/Makefile
+> @@ -0,0 +1,5 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +#
+> +# Copyright (C) 2020 Google LLC.
+> +
+> +obj-$(CONFIG_BPF_LSM) := hooks.o
+> diff --git a/security/bpf/hooks.c b/security/bpf/hooks.c
+> new file mode 100644
+> index 000000000000..68e5824868f9
+> --- /dev/null
+> +++ b/security/bpf/hooks.c
+> @@ -0,0 +1,55 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +/*
+> + * Copyright (C) 2020 Google LLC.
+> + */
+> +#include <linux/lsm_hooks.h>
+> +#include <linux/bpf_lsm.h>
+> +
+> +/* Some LSM hooks do not have 0 as their default return values. Override the
+> + * __weak definitons generated by default for these hooks
+
+If you wanted to avoid this, couldn't you make the default return value
+part of lsm_hooks.h?
+
+e.g.:
+
+LSM_HOOK(int, -EOPNOTSUPP, inode_getsecurity, struct inode *inode,
+	 const char *name, void **buffer, bool alloc)
+
+...
+
+#define LSM_HOOK(RET, DEFAULT, NAME, ...)	\
+	LSM_HOOK_##RET(NAME, DEFAULT, __VA_ARGS__)
+...
+#define LSM_HOOK_int(NAME, DEFAULT, ...)	\
+noinline int bpf_lsm_##NAME(__VA_ARGS__)	\
+{						\
+	return (DEFAULT);			\
+}
+
+Then all the __weak stuff is gone, and the following 4 functions don't
+need to be written out, and the information is available to the macros
+if anyone else might ever want it.
+
+-Kees
+
+> + */
+> +noinline int bpf_lsm_inode_getsecurity(struct inode *inode, const char *name,
+> +				       void **buffer, bool alloc)
+> +{
+> +	return -EOPNOTSUPP;
+> +}
+> +
+> +noinline int bpf_lsm_inode_setsecurity(struct inode *inode, const char *name,
+> +				       const void *value, size_t size,
+> +				       int flags)
+> +{
+> +	return -EOPNOTSUPP;
+> +}
+> +
+> +noinline int bpf_lsm_task_prctl(int option, unsigned long arg2,
+> +				unsigned long arg3, unsigned long arg4,
+> +				unsigned long arg5)
+> +{
+> +	return -ENOSYS;
+> +}
+> +
+> +noinline int bpf_lsm_xfrm_state_pol_flow_match(struct xfrm_state *x,
+> +					       struct xfrm_policy *xp,
+> +					       const struct flowi *fl)
+> +{
+> +	return 1;
+> +}
+> +
+> +static struct security_hook_list bpf_lsm_hooks[] __lsm_ro_after_init = {
+> +	#define LSM_HOOK(RET, NAME, ...) LSM_HOOK_INIT(NAME, bpf_lsm_##NAME),
+> +	#include <linux/lsm_hook_names.h>
+> +	#undef LSM_HOOK
+> +};
+> +
+> +static int __init bpf_lsm_init(void)
+> +{
+> +	security_add_hooks(bpf_lsm_hooks, ARRAY_SIZE(bpf_lsm_hooks), "bpf");
+> +	pr_info("LSM support for eBPF active\n");
+> +	return 0;
+> +}
+> +
+> +DEFINE_LSM(bpf) = {
+> +	.name = "bpf",
+> +	.init = bpf_lsm_init,
+> +};
+> -- 
+> 2.20.1
+> 
+
+-- 
+Kees Cook
