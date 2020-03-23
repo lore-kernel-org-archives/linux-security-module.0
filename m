@@ -1,230 +1,306 @@
-Return-Path: <SRS0=UMXR=5H=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=YXOF=5I=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-14.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6079C4332D
-	for <linux-security-module@archiver.kernel.org>; Sun, 22 Mar 2020 01:12:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F7E8C54FCE
+	for <linux-security-module@archiver.kernel.org>; Mon, 23 Mar 2020 16:44:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FE3820757
-	for <linux-security-module@archiver.kernel.org>; Sun, 22 Mar 2020 01:12:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3424C20753
+	for <linux-security-module@archiver.kernel.org>; Mon, 23 Mar 2020 16:44:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TQP9wLO4"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mnYy+Nab"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728325AbgCVBLr (ORCPT
+        id S1727639AbgCWQoc (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 21 Mar 2020 21:11:47 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:40317 "EHLO
-        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728321AbgCVBLr (ORCPT
+        Mon, 23 Mar 2020 12:44:32 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:36683 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727598AbgCWQob (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 21 Mar 2020 21:11:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584839506;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:in-reply-to:in-reply-to:references:references;
-        bh=68srroxVO8t4m8KDSzYFB9tDrvV53dK+58Y/C/+aWXU=;
-        b=TQP9wLO4xOD33ONWIQpB5/QZmuI4RtVKi1lXMCXag0oR/S8Re8GFNSltgxq2HhdY6IeKMH
-        8rw2pt+wllmbGoq2r+QUre1Uy2P/9JiwZ0tmDTaM6RmdinfkgasUWWtQzhC+6bdTcL3uYN
-        nGjtRxMa52q11NxU4aZkEpwt2foprCg=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-449-YolrCFwmMKqfpQy_rCz9MA-1; Sat, 21 Mar 2020 21:11:44 -0400
-X-MC-Unique: YolrCFwmMKqfpQy_rCz9MA-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E88841857BF4;
-        Sun, 22 Mar 2020 01:11:41 +0000 (UTC)
-Received: from llong.com (ovpn-112-193.rdu2.redhat.com [10.10.112.193])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 137D99B90A;
-        Sun, 22 Mar 2020 01:11:39 +0000 (UTC)
-From:   Waiman Long <longman@redhat.com>
-To:     David Howells <dhowells@redhat.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Mon, 23 Mar 2020 12:44:31 -0400
+Received: by mail-wr1-f67.google.com with SMTP id 31so11936004wrs.3
+        for <linux-security-module@vger.kernel.org>; Mon, 23 Mar 2020 09:44:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=NF/GtUL8fX0TNE30GKs59tWr3ikDUbPiSsDzQ55A96E=;
+        b=mnYy+Nab6pL+E8ynECF/1xOWHihSkx6z8J187oGRe2l9/PvFhNKcG6JruVE/2blEdB
+         +Fyb8H+OtBM3gRvmzZXXYluDD8m3lB4il4a7OHZOog2CkFKgGbmjYIWcgtasxK43Z5kb
+         uC2O+frP43Z/Z8lDO9kj1CroQejCuBQCI9uP0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=NF/GtUL8fX0TNE30GKs59tWr3ikDUbPiSsDzQ55A96E=;
+        b=AMDde8ucKwjAxCefeX4bzrxgKou21NPdkAcbZyGopfZQiEO1PJWkTmOV69G63QBc7q
+         ha7QohTdyXnKjVXsDnMqHF2Kp3oC7hNfFXD0aTNuUh/jOfxSGfu/3xNjAn12gMZsRVpE
+         KiOAQ8orVGwNqDV0F+9HEnQ7Iv7ZlcAitXmN4PWsPOqptpC4PTe3p3b4IYmDACUkEkyy
+         P0cV/NbSxvjLlF2PiGatTX5rps7J9ka31AhLl4WTLiOAVM15K9nBe1OfgLQWhh28BMHC
+         E6MERm00R5uHb6nEpY+yFnUzpVZyK8EixnZauUSF8rR0BFaZTMSOS5HQ/6ayhLbpN+uZ
+         oSsg==
+X-Gm-Message-State: ANhLgQ1kJ233h5TN+sUpgOxsWkFaMckJmhT8Lak9XckWRagAr05QqDD/
+        G3LGDaEhcPpsHFc31wQSvdU6Mw==
+X-Google-Smtp-Source: ADFU+vvAWvoqPaE26h8zeaWeAXnHnoYIPnj6B/dJqDr/iUauHEYrpSIH4BWxBip37QaDajGyNNTMPQ==
+X-Received: by 2002:a5d:468c:: with SMTP id u12mr16557877wrq.394.1584981869117;
+        Mon, 23 Mar 2020 09:44:29 -0700 (PDT)
+Received: from kpsingh-kernel.localdomain (77-56-209-237.dclient.hispeed.ch. [77.56.209.237])
+        by smtp.gmail.com with ESMTPSA id l8sm199874wmj.2.2020.03.23.09.44.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Mar 2020 09:44:28 -0700 (PDT)
+From:   KP Singh <kpsingh@chromium.org>
+To:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Cc:     Brendan Jackman <jackmanb@google.com>,
+        Florent Revest <revest@google.com>,
+        Thomas Garnier <thgarnie@google.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
         James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>
-Cc:     keyrings@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, netdev@vger.kernel.org,
-        linux-afs@lists.infradead.org, Sumit Garg <sumit.garg@linaro.org>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Chris von Recklinghausen <crecklin@redhat.com>,
-        Waiman Long <longman@redhat.com>
-Subject: [PATCH v8 2/2] KEYS: Avoid false positive ENOMEM error on key read
-Date:   Sat, 21 Mar 2020 21:11:25 -0400
-Message-Id: <20200322011125.24327-3-longman@redhat.com>
-In-Reply-To: <20200322011125.24327-1-longman@redhat.com>
-References: <20200322011125.24327-1-longman@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+        Kees Cook <keescook@chromium.org>,
+        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH bpf-next v5 1/7] bpf: Introduce BPF_PROG_TYPE_LSM
+Date:   Mon, 23 Mar 2020 17:44:09 +0100
+Message-Id: <20200323164415.12943-2-kpsingh@chromium.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200323164415.12943-1-kpsingh@chromium.org>
+References: <20200323164415.12943-1-kpsingh@chromium.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-By allocating a kernel buffer with a user-supplied buffer length, it
-is possible that a false positive ENOMEM error may be returned because
-the user-supplied length is just too large even if the system do have
-enough memory to hold the actual key data.
+From: KP Singh <kpsingh@google.com>
 
-Moreover, if the buffer length is larger than the maximum amount of
-memory that can be returned by kmalloc() (2^(MAX_ORDER-1) number of
-pages), a warning message will also be printed.
+Introduce types and configs for bpf programs that can be attached to
+LSM hooks. The programs can be enabled by the config option
+CONFIG_BPF_LSM.
 
-To reduce this possibility, we set a threshold (PAGE_SIZE) over which we
-do check the actual key length first before allocating a buffer of the
-right size to hold it. The threshold is arbitrary, it is just used to
-trigger a buffer length check. It does not limit the actual key length
-as long as there is enough memory to satisfy the memory request.
-
-To further avoid large buffer allocation failure due to page
-fragmentation, kvmalloc() is used to allocate the buffer so that vmapped
-pages can be used when there is not a large enough contiguous set of
-pages available for allocation.
-
-In the extremely unlikely scenario that the key keeps on being changed
-and made longer (still <= buflen) in between 2 __keyctl_read_key()
-calls, the __keyctl_read_key() calling loop in keyctl_read_key() may
-have to be iterated a large number of times, but definitely not infinite.
-
-Signed-off-by: Waiman Long <longman@redhat.com>
+Signed-off-by: KP Singh <kpsingh@google.com>
+Reviewed-by: Brendan Jackman <jackmanb@google.com>
+Reviewed-by: Florent Revest <revest@google.com>
+Reviewed-by: Thomas Garnier <thgarnie@google.com>
 ---
- security/keys/internal.h | 12 +++++++++
- security/keys/keyctl.c   | 58 +++++++++++++++++++++++++++++-----------
- 2 files changed, 55 insertions(+), 15 deletions(-)
+ MAINTAINERS                    |  1 +
+ include/linux/bpf.h            |  3 +++
+ include/linux/bpf_types.h      |  4 ++++
+ include/uapi/linux/bpf.h       |  2 ++
+ init/Kconfig                   | 10 ++++++++++
+ kernel/bpf/Makefile            |  1 +
+ kernel/bpf/bpf_lsm.c           | 17 +++++++++++++++++
+ kernel/trace/bpf_trace.c       | 12 ++++++------
+ tools/include/uapi/linux/bpf.h |  2 ++
+ tools/lib/bpf/libbpf_probes.c  |  1 +
+ 10 files changed, 47 insertions(+), 6 deletions(-)
+ create mode 100644 kernel/bpf/bpf_lsm.c
 
-diff --git a/security/keys/internal.h b/security/keys/internal.h
-index ba3e2da14cef..6d0ca48ae9a5 100644
---- a/security/keys/internal.h
-+++ b/security/keys/internal.h
-@@ -16,6 +16,8 @@
- #include <linux/keyctl.h>
- #include <linux/refcount.h>
- #include <linux/compat.h>
-+#include <linux/mm.h>
-+#include <linux/vmalloc.h>
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 5dbee41045bc..3197fe9256b2 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -3147,6 +3147,7 @@ R:	Martin KaFai Lau <kafai@fb.com>
+ R:	Song Liu <songliubraving@fb.com>
+ R:	Yonghong Song <yhs@fb.com>
+ R:	Andrii Nakryiko <andriin@fb.com>
++R:	KP Singh <kpsingh@chromium.org>
+ L:	netdev@vger.kernel.org
+ L:	bpf@vger.kernel.org
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf.git
+diff --git a/include/linux/bpf.h b/include/linux/bpf.h
+index bdb981c204fa..af81ec7b783c 100644
+--- a/include/linux/bpf.h
++++ b/include/linux/bpf.h
+@@ -1513,6 +1513,9 @@ extern const struct bpf_func_proto bpf_tcp_sock_proto;
+ extern const struct bpf_func_proto bpf_jiffies64_proto;
+ extern const struct bpf_func_proto bpf_get_ns_current_pid_tgid_proto;
  
- struct iovec;
- 
-@@ -349,4 +351,14 @@ static inline void key_check(const struct key *key)
- 
++const struct bpf_func_proto *bpf_tracing_func_proto(
++	enum bpf_func_id func_id, const struct bpf_prog *prog);
++
+ /* Shared helpers among cBPF and eBPF. */
+ void bpf_user_rnd_init_once(void);
+ u64 bpf_user_rnd_u32(u64 r1, u64 r2, u64 r3, u64 r4, u64 r5);
+diff --git a/include/linux/bpf_types.h b/include/linux/bpf_types.h
+index c81d4ece79a4..ba0c2d56f8a3 100644
+--- a/include/linux/bpf_types.h
++++ b/include/linux/bpf_types.h
+@@ -70,6 +70,10 @@ BPF_PROG_TYPE(BPF_PROG_TYPE_STRUCT_OPS, bpf_struct_ops,
+ 	      void *, void *)
+ BPF_PROG_TYPE(BPF_PROG_TYPE_EXT, bpf_extension,
+ 	      void *, void *)
++#ifdef CONFIG_BPF_LSM
++BPF_PROG_TYPE(BPF_PROG_TYPE_LSM, lsm,
++	       void *, void *)
++#endif /* CONFIG_BPF_LSM */
  #endif
  
+ BPF_MAP_TYPE(BPF_MAP_TYPE_ARRAY, array_map_ops)
+diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
+index 5d01c5c7e598..9f2673c58788 100644
+--- a/include/uapi/linux/bpf.h
++++ b/include/uapi/linux/bpf.h
+@@ -181,6 +181,7 @@ enum bpf_prog_type {
+ 	BPF_PROG_TYPE_TRACING,
+ 	BPF_PROG_TYPE_STRUCT_OPS,
+ 	BPF_PROG_TYPE_EXT,
++	BPF_PROG_TYPE_LSM,
+ };
+ 
+ enum bpf_attach_type {
+@@ -211,6 +212,7 @@ enum bpf_attach_type {
+ 	BPF_TRACE_FENTRY,
+ 	BPF_TRACE_FEXIT,
+ 	BPF_MODIFY_RETURN,
++	BPF_LSM_MAC,
+ 	__MAX_BPF_ATTACH_TYPE
+ };
+ 
+diff --git a/init/Kconfig b/init/Kconfig
+index 20a6ac33761c..b2c9a833bc58 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -1616,6 +1616,16 @@ config KALLSYMS_BASE_RELATIVE
+ # end of the "standard kernel features (expert users)" menu
+ 
+ # syscall, maps, verifier
++
++config BPF_LSM
++	bool "LSM Instrumentation with BPF"
++	depends on BPF_SYSCALL
++	help
++	  Enables instrumentation of the security hooks with eBPF programs for
++	  implementing dynamic MAC and Audit Policies.
++
++	  If you are unsure how to answer this question, answer N.
++
+ config BPF_SYSCALL
+ 	bool "Enable bpf() system call"
+ 	select BPF
+diff --git a/kernel/bpf/Makefile b/kernel/bpf/Makefile
+index 046ce5d98033..f2d7be596966 100644
+--- a/kernel/bpf/Makefile
++++ b/kernel/bpf/Makefile
+@@ -29,4 +29,5 @@ obj-$(CONFIG_DEBUG_INFO_BTF) += sysfs_btf.o
+ endif
+ ifeq ($(CONFIG_BPF_JIT),y)
+ obj-$(CONFIG_BPF_SYSCALL) += bpf_struct_ops.o
++obj-${CONFIG_BPF_LSM} += bpf_lsm.o
+ endif
+diff --git a/kernel/bpf/bpf_lsm.c b/kernel/bpf/bpf_lsm.c
+new file mode 100644
+index 000000000000..82875039ca90
+--- /dev/null
++++ b/kernel/bpf/bpf_lsm.c
+@@ -0,0 +1,17 @@
++// SPDX-License-Identifier: GPL-2.0
++
 +/*
-+ * Helper function to clear and free a kvmalloc'ed memory object.
++ * Copyright (C) 2020 Google LLC.
 + */
-+static inline void __kvzfree(const void *addr, size_t len)
-+{
-+	if (addr) {
-+		memset((void *)addr, 0, len);
-+		kvfree(addr);
-+	}
-+}
- #endif /* _INTERNAL_H */
-diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
-index 434ed9defd3a..0062e422e0fd 100644
---- a/security/keys/keyctl.c
-+++ b/security/keys/keyctl.c
-@@ -339,7 +339,7 @@ long keyctl_update_key(key_serial_t id,
- 	payload = NULL;
- 	if (plen) {
- 		ret = -ENOMEM;
--		payload = kmalloc(plen, GFP_KERNEL);
-+		payload = kvmalloc(plen, GFP_KERNEL);
- 		if (!payload)
- 			goto error;
- 
-@@ -360,7 +360,7 @@ long keyctl_update_key(key_serial_t id,
- 
- 	key_ref_put(key_ref);
- error2:
--	kzfree(payload);
-+	__kvzfree(payload, plen);
- error:
- 	return ret;
- }
-@@ -827,7 +827,8 @@ long keyctl_read_key(key_serial_t keyid, char __user *buffer, size_t buflen)
- 	struct key *key;
- 	key_ref_t key_ref;
- 	long ret;
--	char *key_data;
-+	char *key_data = NULL;
-+	size_t key_data_len;
- 
- 	/* find the key first */
- 	key_ref = lookup_user_key(keyid, 0, 0);
-@@ -878,24 +879,51 @@ long keyctl_read_key(key_serial_t keyid, char __user *buffer, size_t buflen)
- 	 * Allocating a temporary buffer to hold the keys before
- 	 * transferring them to user buffer to avoid potential
- 	 * deadlock involving page fault and mmap_sem.
-+	 *
-+	 * key_data_len = (buflen <= PAGE_SIZE)
-+	 *		? buflen : actual length of key data
-+	 *
-+	 * This prevents allocating arbitrary large buffer which can
-+	 * be much larger than the actual key length. In the latter case,
-+	 * at least 2 passes of this loop is required.
- 	 */
--	key_data = kmalloc(buflen, GFP_KERNEL);
-+	key_data_len = (buflen <= PAGE_SIZE) ? buflen : 0;
-+	for (;;) {
-+		if (key_data_len) {
-+			key_data = kvmalloc(key_data_len, GFP_KERNEL);
-+			if (!key_data) {
-+				ret = -ENOMEM;
-+				goto key_put_out;
-+			}
-+		}
- 
--	if (!key_data) {
--		ret = -ENOMEM;
--		goto key_put_out;
--	}
--	ret = __keyctl_read_key(key, key_data, buflen);
-+		ret = __keyctl_read_key(key, key_data, key_data_len);
 +
-+		/*
-+		 * Read methods will just return the required length without
-+		 * any copying if the provided length isn't large enough.
-+		 */
-+		if (ret <= 0 || ret > buflen)
-+			break;
++#include <linux/filter.h>
++#include <linux/bpf.h>
++#include <linux/btf.h>
 +
-+		/*
-+		 * The key may change (unlikely) in between 2 consecutive
-+		 * __keyctl_read_key() calls. In this case, we reallocate
-+		 * a larger buffer and redo the key read when
-+		 * key_data_len < ret <= buflen.
-+		 */
-+		if (ret > key_data_len) {
-+			if (unlikely(key_data))
-+				__kvzfree(key_data, key_data_len);
-+			key_data_len = ret;
-+			continue;	/* Allocate buffer */
-+		}
++const struct bpf_prog_ops lsm_prog_ops = {
++};
++
++const struct bpf_verifier_ops lsm_verifier_ops = {
++	.get_func_proto = bpf_tracing_func_proto,
++	.is_valid_access = btf_ctx_access,
++};
+diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+index e619eedb5919..37ffceab608f 100644
+--- a/kernel/trace/bpf_trace.c
++++ b/kernel/trace/bpf_trace.c
+@@ -779,8 +779,8 @@ static const struct bpf_func_proto bpf_send_signal_thread_proto = {
+ 	.arg1_type	= ARG_ANYTHING,
+ };
  
--	/*
--	 * Read methods will just return the required length without
--	 * any copying if the provided length isn't large enough.
--	 */
--	if (ret > 0 && ret <= buflen) {
- 		if (copy_to_user(buffer, key_data, ret))
- 			ret = -EFAULT;
-+		break;
+-static const struct bpf_func_proto *
+-tracing_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
++const struct bpf_func_proto *
++bpf_tracing_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
+ {
+ 	switch (func_id) {
+ 	case BPF_FUNC_map_lookup_elem:
+@@ -865,7 +865,7 @@ kprobe_prog_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
+ 		return &bpf_override_return_proto;
+ #endif
+ 	default:
+-		return tracing_func_proto(func_id, prog);
++		return bpf_tracing_func_proto(func_id, prog);
  	}
--	kzfree(key_data);
-+	__kvzfree(key_data, key_data_len);
+ }
  
- key_put_out:
- 	key_put(key);
+@@ -975,7 +975,7 @@ tp_prog_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
+ 	case BPF_FUNC_get_stack:
+ 		return &bpf_get_stack_proto_tp;
+ 	default:
+-		return tracing_func_proto(func_id, prog);
++		return bpf_tracing_func_proto(func_id, prog);
+ 	}
+ }
+ 
+@@ -1082,7 +1082,7 @@ pe_prog_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
+ 	case BPF_FUNC_read_branch_records:
+ 		return &bpf_read_branch_records_proto;
+ 	default:
+-		return tracing_func_proto(func_id, prog);
++		return bpf_tracing_func_proto(func_id, prog);
+ 	}
+ }
+ 
+@@ -1210,7 +1210,7 @@ raw_tp_prog_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
+ 	case BPF_FUNC_get_stack:
+ 		return &bpf_get_stack_proto_raw_tp;
+ 	default:
+-		return tracing_func_proto(func_id, prog);
++		return bpf_tracing_func_proto(func_id, prog);
+ 	}
+ }
+ 
+diff --git a/tools/include/uapi/linux/bpf.h b/tools/include/uapi/linux/bpf.h
+index 5d01c5c7e598..9f2673c58788 100644
+--- a/tools/include/uapi/linux/bpf.h
++++ b/tools/include/uapi/linux/bpf.h
+@@ -181,6 +181,7 @@ enum bpf_prog_type {
+ 	BPF_PROG_TYPE_TRACING,
+ 	BPF_PROG_TYPE_STRUCT_OPS,
+ 	BPF_PROG_TYPE_EXT,
++	BPF_PROG_TYPE_LSM,
+ };
+ 
+ enum bpf_attach_type {
+@@ -211,6 +212,7 @@ enum bpf_attach_type {
+ 	BPF_TRACE_FENTRY,
+ 	BPF_TRACE_FEXIT,
+ 	BPF_MODIFY_RETURN,
++	BPF_LSM_MAC,
+ 	__MAX_BPF_ATTACH_TYPE
+ };
+ 
+diff --git a/tools/lib/bpf/libbpf_probes.c b/tools/lib/bpf/libbpf_probes.c
+index b782ebef6ac9..2c92059c0c90 100644
+--- a/tools/lib/bpf/libbpf_probes.c
++++ b/tools/lib/bpf/libbpf_probes.c
+@@ -108,6 +108,7 @@ probe_load(enum bpf_prog_type prog_type, const struct bpf_insn *insns,
+ 	case BPF_PROG_TYPE_TRACING:
+ 	case BPF_PROG_TYPE_STRUCT_OPS:
+ 	case BPF_PROG_TYPE_EXT:
++	case BPF_PROG_TYPE_LSM:
+ 	default:
+ 		break;
+ 	}
 -- 
-2.18.1
+2.20.1
 
