@@ -7,58 +7,57 @@ X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33E07C54FCF
-	for <linux-security-module@archiver.kernel.org>; Mon, 23 Mar 2020 16:44:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B27F0C54EEB
+	for <linux-security-module@archiver.kernel.org>; Mon, 23 Mar 2020 16:44:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 042E220771
-	for <linux-security-module@archiver.kernel.org>; Mon, 23 Mar 2020 16:44:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8681F20771
+	for <linux-security-module@archiver.kernel.org>; Mon, 23 Mar 2020 16:44:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="TW+/rwyx"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="eqUEy4dB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727829AbgCWQot (ORCPT
+        id S1727725AbgCWQoi (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 23 Mar 2020 12:44:49 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:36703 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727598AbgCWQok (ORCPT
+        Mon, 23 Mar 2020 12:44:38 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:33466 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727590AbgCWQoi (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 23 Mar 2020 12:44:40 -0400
-Received: by mail-wr1-f67.google.com with SMTP id 31so11936626wrs.3
-        for <linux-security-module@vger.kernel.org>; Mon, 23 Mar 2020 09:44:39 -0700 (PDT)
+        Mon, 23 Mar 2020 12:44:38 -0400
+Received: by mail-wr1-f65.google.com with SMTP id a25so17987971wrd.0
+        for <linux-security-module@vger.kernel.org>; Mon, 23 Mar 2020 09:44:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=hNnT69pxg2eYE6uGhioN4FH2+4XbGURiqaggzHNPFW0=;
-        b=TW+/rwyxb8wdk7e/NGL0yVvkx4tXi6cAmmRl0/yEwpBBBq+bbV4rkI36+r0Mov7Amw
-         g1LUMcZTU0hMBn2Ix2tVc/vKoBadNYSEtgjtkj8fTO4e0h78t5qZPUg9R13ESQ1/7hxZ
-         TkWEPcLTqmTnI7yd9cCDQJGXqnsafNw5J6S+s=
+        bh=zSkW27zNSTC4Fc8TCI5UW+0DrKRV7Bu83mzAYD1k77Q=;
+        b=eqUEy4dBM9mRAZt0PUr5927OFcXnR7WrVJyYuAyLEwz7/Oz+EeSXeU03igSPYZE5pj
+         zco57O5wqYcErl/jIG/o8G3dmrPl+Xz2M+dKj0Kwx3IjrzQrax9uPqGbywBsiv7h09Gt
+         Uu7uHZRasHOIfhuzXsfyCtXoB5fy5t2e/dp58=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=hNnT69pxg2eYE6uGhioN4FH2+4XbGURiqaggzHNPFW0=;
-        b=Plt8KopczvY4SzBJRLviZdmOcB4Gtof1iw14XbwKDa8Va2r4KTKaQzcIqsYXbr/zWT
-         c8BWhOryfaz8s+42nRyD9Pp43aL+BMMujgLwFH7MRAFIJ6LbonnKH4Vao6R5EyAQDLVE
-         d/QEmGQEFWdZHPu5B6EZ7CFFtJGZNdmczhk40bKDvqIy8inDTkDD0AwCvKJhUJwD92ka
-         m/fiaiZ/HO60ie6fITIdUb2MhAsZKaZuMMftSYOsgKZ4XA0QcoEXAWN3KN8Imrf2AgNy
-         aLu9ZLkyVScwC1oO8E3vqdu7+jId1rYHxJ/JBJhyP4ijwm/nq+BTZNd8EechSa4CHQxu
-         NS4A==
-X-Gm-Message-State: ANhLgQ2a5+Cl0lzZwAGalgCYhzyl2MnMhrn8i5NGnDQBkWzbWMaB8ye1
-        ug5lFrwg/2fo3GvJA8LtekeqoQ==
-X-Google-Smtp-Source: ADFU+vuF+58XxqQmQZl7BKSQ4GLqqwbXHdHNZVG8TRwqbPl4Eyu1AdM1G+EQZgCaAtuYHyASfYczkw==
-X-Received: by 2002:a5d:6187:: with SMTP id j7mr7202750wru.419.1584981878319;
-        Mon, 23 Mar 2020 09:44:38 -0700 (PDT)
+        bh=zSkW27zNSTC4Fc8TCI5UW+0DrKRV7Bu83mzAYD1k77Q=;
+        b=c4+95csG/A2dwpYUqGmvf2nKWGymJ7SyfovqBGah/HNDLS9fyQyEQgMCIx0mO75Q2T
+         Wp3peF0kEzfDyTxoMT9ge5cBvL6DNlZL6+H8wRwhKoUgcdoRhqXBJo1g3/OSbGqZJJJR
+         sQd37COxCsp2cwdykn4ntLidXhBQRP6csdhwHGCe4fdZDoEh2/hoEVzILHvO665LyuFk
+         2e71o7d4sazCgFnTyrpJRG5mnDHIUAAeVEQle+fa6Xz+G7AulBiGW1sXEwOsk3OD9ilt
+         UoBE8otWeB5duywaIYOqfjqvrXsxS1XueDSFweXKSolc5nKiMhi9IDYtJUUWSykTTZQB
+         DrfQ==
+X-Gm-Message-State: ANhLgQ1fbWf6Da0gBgjdmlvpxKYES2TsDCsAmVd7Dmo7Rp+xnE+bflwL
+        Y/T2TPdczt/RRxRHeDqj2PluwQ==
+X-Google-Smtp-Source: ADFU+vuaOEVixoBFIafSkJToy3DhcTsnaZY/ka6brQHMO25rWVX1mKJKlzZLribRBVB0JfJ8a5Rpgw==
+X-Received: by 2002:adf:db41:: with SMTP id f1mr32595515wrj.247.1584981874952;
+        Mon, 23 Mar 2020 09:44:34 -0700 (PDT)
 Received: from kpsingh-kernel.localdomain (77-56-209-237.dclient.hispeed.ch. [77.56.209.237])
-        by smtp.gmail.com with ESMTPSA id l8sm199874wmj.2.2020.03.23.09.44.37
+        by smtp.gmail.com with ESMTPSA id l8sm199874wmj.2.2020.03.23.09.44.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Mar 2020 09:44:37 -0700 (PDT)
+        Mon, 23 Mar 2020 09:44:34 -0700 (PDT)
 From:   KP Singh <kpsingh@chromium.org>
 To:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
         linux-security-module@vger.kernel.org
 Cc:     Brendan Jackman <jackmanb@google.com>,
         Florent Revest <revest@google.com>,
-        Thomas Garnier <thgarnie@google.com>,
         Alexei Starovoitov <ast@kernel.org>,
         Daniel Borkmann <daniel@iogearbox.net>,
         James Morris <jmorris@namei.org>,
@@ -67,9 +66,9 @@ Cc:     Brendan Jackman <jackmanb@google.com>,
         Florent Revest <revest@chromium.org>,
         Brendan Jackman <jackmanb@chromium.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH bpf-next v5 7/7] bpf: lsm: Add selftests for BPF_PROG_TYPE_LSM
-Date:   Mon, 23 Mar 2020 17:44:15 +0100
-Message-Id: <20200323164415.12943-8-kpsingh@chromium.org>
+Subject: [PATCH bpf-next v5 5/7] bpf: lsm: Initialize the BPF LSM hooks
+Date:   Mon, 23 Mar 2020 17:44:13 +0100
+Message-Id: <20200323164415.12943-6-kpsingh@chromium.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200323164415.12943-1-kpsingh@chromium.org>
 References: <20200323164415.12943-1-kpsingh@chromium.org>
@@ -81,277 +80,138 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: KP Singh <kpsingh@google.com>
 
-* Load/attach a BPF program to the file_mprotect (int) and
-  bprm_committed_creds (void) LSM hooks.
-* Perform an action that triggers the hook.
-* Verify if the audit event was received using a shared global
-  result variable.
+The bpf_lsm_ nops are initialized into the LSM framework like any other
+LSM.  Some LSM hooks do not have 0 as their default return value. The
+__weak symbol for these hooks is overridden by a corresponding
+definition in security/bpf/hooks.c
+
+The LSM can be enabled / disabled with CONFIG_LSM.
 
 Signed-off-by: KP Singh <kpsingh@google.com>
 Reviewed-by: Brendan Jackman <jackmanb@google.com>
 Reviewed-by: Florent Revest <revest@google.com>
-Reviewed-by: Thomas Garnier <thgarnie@google.com>
 ---
- tools/testing/selftests/bpf/lsm_helpers.h     |  19 +++
- .../selftests/bpf/prog_tests/lsm_test.c       | 112 ++++++++++++++++++
- .../selftests/bpf/progs/lsm_int_hook.c        |  54 +++++++++
- .../selftests/bpf/progs/lsm_void_hook.c       |  41 +++++++
- 4 files changed, 226 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/lsm_helpers.h
- create mode 100644 tools/testing/selftests/bpf/prog_tests/lsm_test.c
- create mode 100644 tools/testing/selftests/bpf/progs/lsm_int_hook.c
- create mode 100644 tools/testing/selftests/bpf/progs/lsm_void_hook.c
+ security/Kconfig      | 10 ++++----
+ security/Makefile     |  2 ++
+ security/bpf/Makefile |  5 ++++
+ security/bpf/hooks.c  | 55 +++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 67 insertions(+), 5 deletions(-)
+ create mode 100644 security/bpf/Makefile
+ create mode 100644 security/bpf/hooks.c
 
-diff --git a/tools/testing/selftests/bpf/lsm_helpers.h b/tools/testing/selftests/bpf/lsm_helpers.h
+diff --git a/security/Kconfig b/security/Kconfig
+index 2a1a2d396228..cd3cc7da3a55 100644
+--- a/security/Kconfig
++++ b/security/Kconfig
+@@ -277,11 +277,11 @@ endchoice
+ 
+ config LSM
+ 	string "Ordered list of enabled LSMs"
+-	default "lockdown,yama,loadpin,safesetid,integrity,smack,selinux,tomoyo,apparmor" if DEFAULT_SECURITY_SMACK
+-	default "lockdown,yama,loadpin,safesetid,integrity,apparmor,selinux,smack,tomoyo" if DEFAULT_SECURITY_APPARMOR
+-	default "lockdown,yama,loadpin,safesetid,integrity,tomoyo" if DEFAULT_SECURITY_TOMOYO
+-	default "lockdown,yama,loadpin,safesetid,integrity" if DEFAULT_SECURITY_DAC
+-	default "lockdown,yama,loadpin,safesetid,integrity,selinux,smack,tomoyo,apparmor"
++	default "lockdown,yama,loadpin,safesetid,integrity,smack,selinux,tomoyo,apparmor,bpf" if DEFAULT_SECURITY_SMACK
++	default "lockdown,yama,loadpin,safesetid,integrity,apparmor,selinux,smack,tomoyo,bpf" if DEFAULT_SECURITY_APPARMOR
++	default "lockdown,yama,loadpin,safesetid,integrity,tomoyo,bpf" if DEFAULT_SECURITY_TOMOYO
++	default "lockdown,yama,loadpin,safesetid,integrity,bpf" if DEFAULT_SECURITY_DAC
++	default "lockdown,yama,loadpin,safesetid,integrity,selinux,smack,tomoyo,apparmor,bpf"
+ 	help
+ 	  A comma-separated list of LSMs, in initialization order.
+ 	  Any LSMs left off this list will be ignored. This can be
+diff --git a/security/Makefile b/security/Makefile
+index 746438499029..22e73a3482bd 100644
+--- a/security/Makefile
++++ b/security/Makefile
+@@ -12,6 +12,7 @@ subdir-$(CONFIG_SECURITY_YAMA)		+= yama
+ subdir-$(CONFIG_SECURITY_LOADPIN)	+= loadpin
+ subdir-$(CONFIG_SECURITY_SAFESETID)    += safesetid
+ subdir-$(CONFIG_SECURITY_LOCKDOWN_LSM)	+= lockdown
++subdir-$(CONFIG_BPF_LSM)		+= bpf
+ 
+ # always enable default capabilities
+ obj-y					+= commoncap.o
+@@ -30,6 +31,7 @@ obj-$(CONFIG_SECURITY_LOADPIN)		+= loadpin/
+ obj-$(CONFIG_SECURITY_SAFESETID)       += safesetid/
+ obj-$(CONFIG_SECURITY_LOCKDOWN_LSM)	+= lockdown/
+ obj-$(CONFIG_CGROUP_DEVICE)		+= device_cgroup.o
++obj-$(CONFIG_BPF_LSM)			+= bpf/
+ 
+ # Object integrity file lists
+ subdir-$(CONFIG_INTEGRITY)		+= integrity
+diff --git a/security/bpf/Makefile b/security/bpf/Makefile
 new file mode 100644
-index 000000000000..3de230df93db
+index 000000000000..c7a89a962084
 --- /dev/null
-+++ b/tools/testing/selftests/bpf/lsm_helpers.h
-@@ -0,0 +1,19 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
++++ b/security/bpf/Makefile
+@@ -0,0 +1,5 @@
++# SPDX-License-Identifier: GPL-2.0
++#
++# Copyright (C) 2020 Google LLC.
 +
-+/*
-+ * Copyright (C) 2020 Google LLC.
-+ */
-+#ifndef _LSM_HELPERS_H
-+#define _LSM_HELPERS_H
-+
-+struct lsm_prog_result {
-+	/* This ensures that the LSM Hook only monitors the PID requested
-+	 * by the loader
-+	 */
-+	__u32 monitored_pid;
-+	/* The number of calls to the prog for the monitored PID.
-+	 */
-+	__u32 count;
-+};
-+
-+#endif /* _LSM_HELPERS_H */
-diff --git a/tools/testing/selftests/bpf/prog_tests/lsm_test.c b/tools/testing/selftests/bpf/prog_tests/lsm_test.c
++obj-$(CONFIG_BPF_LSM) := hooks.o
+diff --git a/security/bpf/hooks.c b/security/bpf/hooks.c
 new file mode 100644
-index 000000000000..5fd6b8f569f7
+index 000000000000..68e5824868f9
 --- /dev/null
-+++ b/tools/testing/selftests/bpf/prog_tests/lsm_test.c
-@@ -0,0 +1,112 @@
++++ b/security/bpf/hooks.c
+@@ -0,0 +1,55 @@
 +// SPDX-License-Identifier: GPL-2.0
 +
 +/*
 + * Copyright (C) 2020 Google LLC.
 + */
++#include <linux/lsm_hooks.h>
++#include <linux/bpf_lsm.h>
 +
-+#include <test_progs.h>
-+#include <sys/mman.h>
-+#include <sys/wait.h>
-+#include <unistd.h>
-+#include <malloc.h>
-+#include <stdlib.h>
-+
-+#include "lsm_helpers.h"
-+#include "lsm_void_hook.skel.h"
-+#include "lsm_int_hook.skel.h"
-+
-+char *LS_ARGS[] = {"true", NULL};
-+
-+int heap_mprotect(void)
-+{
-+	void *buf;
-+	long sz;
-+
-+	sz = sysconf(_SC_PAGESIZE);
-+	if (sz < 0)
-+		return sz;
-+
-+	buf = memalign(sz, 2 * sz);
-+	if (buf == NULL)
-+		return -ENOMEM;
-+
-+	return mprotect(buf, sz, PROT_READ | PROT_EXEC);
-+}
-+
-+int exec_ls(struct lsm_prog_result *result)
-+{
-+	int child_pid;
-+
-+	child_pid = fork();
-+	if (child_pid == 0) {
-+		result->monitored_pid = getpid();
-+		execvp(LS_ARGS[0], LS_ARGS);
-+		return -EINVAL;
-+	} else if (child_pid > 0)
-+		return wait(NULL);
-+
-+	return -EINVAL;
-+}
-+
-+void test_lsm_void_hook(void)
-+{
-+	struct lsm_prog_result *result;
-+	struct lsm_void_hook *skel = NULL;
-+	int err, duration = 0;
-+
-+	skel = lsm_void_hook__open_and_load();
-+	if (CHECK(!skel, "skel_load", "lsm_void_hook skeleton failed\n"))
-+		goto close_prog;
-+
-+	err = lsm_void_hook__attach(skel);
-+	if (CHECK(err, "attach", "lsm_void_hook attach failed: %d\n", err))
-+		goto close_prog;
-+
-+	result = &skel->bss->result;
-+
-+	err = exec_ls(result);
-+	if (CHECK(err < 0, "exec_ls", "err %d errno %d\n", err, errno))
-+		goto close_prog;
-+
-+	if (CHECK(result->count != 1, "count", "count = %d", result->count))
-+		goto close_prog;
-+
-+	CHECK_FAIL(result->count != 1);
-+
-+close_prog:
-+	lsm_void_hook__destroy(skel);
-+}
-+
-+void test_lsm_int_hook(void)
-+{
-+	struct lsm_prog_result *result;
-+	struct lsm_int_hook *skel = NULL;
-+	int err, duration = 0;
-+
-+	skel = lsm_int_hook__open_and_load();
-+	if (CHECK(!skel, "skel_load", "lsm_int_hook skeleton failed\n"))
-+		goto close_prog;
-+
-+	err = lsm_int_hook__attach(skel);
-+	if (CHECK(err, "attach", "lsm_int_hook attach failed: %d\n", err))
-+		goto close_prog;
-+
-+	result = &skel->bss->result;
-+	result->monitored_pid = getpid();
-+
-+	err = heap_mprotect();
-+	if (CHECK(errno != EPERM, "heap_mprotect", "want errno=EPERM, got %d\n",
-+		  errno))
-+		goto close_prog;
-+
-+	CHECK_FAIL(result->count != 1);
-+
-+close_prog:
-+	lsm_int_hook__destroy(skel);
-+}
-+
-+void test_lsm_test(void)
-+{
-+	test_lsm_void_hook();
-+	test_lsm_int_hook();
-+}
-diff --git a/tools/testing/selftests/bpf/progs/lsm_int_hook.c b/tools/testing/selftests/bpf/progs/lsm_int_hook.c
-new file mode 100644
-index 000000000000..1c5028ddca61
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/lsm_int_hook.c
-@@ -0,0 +1,54 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/*
-+ * Copyright 2020 Google LLC.
++/* Some LSM hooks do not have 0 as their default return values. Override the
++ * __weak definitons generated by default for these hooks
 + */
++noinline int bpf_lsm_inode_getsecurity(struct inode *inode, const char *name,
++				       void **buffer, bool alloc)
++{
++	return -EOPNOTSUPP;
++}
 +
-+#include <linux/bpf.h>
-+#include <stdbool.h>
-+#include <bpf/bpf_helpers.h>
-+#include <bpf/bpf_tracing.h>
-+#include  <errno.h>
-+#include "lsm_helpers.h"
++noinline int bpf_lsm_inode_setsecurity(struct inode *inode, const char *name,
++				       const void *value, size_t size,
++				       int flags)
++{
++	return -EOPNOTSUPP;
++}
 +
-+char _license[] SEC("license") = "GPL";
++noinline int bpf_lsm_task_prctl(int option, unsigned long arg2,
++				unsigned long arg3, unsigned long arg4,
++				unsigned long arg5)
++{
++	return -ENOSYS;
++}
 +
-+struct lsm_prog_result result = {
-+	.monitored_pid = 0,
-+	.count = 0,
++noinline int bpf_lsm_xfrm_state_pol_flow_match(struct xfrm_state *x,
++					       struct xfrm_policy *xp,
++					       const struct flowi *fl)
++{
++	return 1;
++}
++
++static struct security_hook_list bpf_lsm_hooks[] __lsm_ro_after_init = {
++	#define LSM_HOOK(RET, NAME, ...) LSM_HOOK_INIT(NAME, bpf_lsm_##NAME),
++	#include <linux/lsm_hook_names.h>
++	#undef LSM_HOOK
 +};
 +
-+/*
-+ * Define some of the structs used in the BPF program.
-+ * Only the field names and their sizes need to be the
-+ * same as the kernel type, the order is irrelevant.
-+ */
-+struct mm_struct {
-+	unsigned long start_brk, brk;
-+} __attribute__((preserve_access_index));
-+
-+struct vm_area_struct {
-+	unsigned long vm_start, vm_end;
-+	struct mm_struct *vm_mm;
-+} __attribute__((preserve_access_index));
-+
-+SEC("lsm/file_mprotect")
-+int BPF_PROG(test_int_hook, struct vm_area_struct *vma,
-+	     unsigned long reqprot, unsigned long prot, int ret)
++static int __init bpf_lsm_init(void)
 +{
-+	if (ret != 0)
-+		return ret;
-+
-+	__u32 pid = bpf_get_current_pid_tgid();
-+	int is_heap = 0;
-+
-+	is_heap = (vma->vm_start >= vma->vm_mm->start_brk &&
-+		   vma->vm_end <= vma->vm_mm->brk);
-+
-+	if (is_heap && result.monitored_pid == pid) {
-+		result.count++;
-+		ret = -EPERM;
-+	}
-+
-+	return ret;
-+}
-diff --git a/tools/testing/selftests/bpf/progs/lsm_void_hook.c b/tools/testing/selftests/bpf/progs/lsm_void_hook.c
-new file mode 100644
-index 000000000000..4d01a8536413
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/lsm_void_hook.c
-@@ -0,0 +1,41 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/*
-+ * Copyright (C) 2020 Google LLC.
-+ */
-+
-+#include <linux/bpf.h>
-+#include <stdbool.h>
-+#include <bpf/bpf_helpers.h>
-+#include <bpf/bpf_tracing.h>
-+#include  <errno.h>
-+#include "lsm_helpers.h"
-+
-+char _license[] SEC("license") = "GPL";
-+
-+struct lsm_prog_result result = {
-+	.monitored_pid = 0,
-+	.count = 0,
-+};
-+
-+/*
-+ * Define some of the structs used in the BPF program.
-+ * Only the field names and their sizes need to be the
-+ * same as the kernel type, the order is irrelevant.
-+ */
-+struct linux_binprm {
-+	const char *filename;
-+} __attribute__((preserve_access_index));
-+
-+SEC("lsm/bprm_committed_creds")
-+int BPF_PROG(test_void_hook, struct linux_binprm *bprm)
-+{
-+	__u32 pid = bpf_get_current_pid_tgid();
-+	char fmt[] = "lsm(bprm_committed_creds): process executed %s\n";
-+
-+	bpf_trace_printk(fmt, sizeof(fmt), bprm->filename);
-+	if (result.monitored_pid == pid)
-+		result.count++;
-+
++	security_add_hooks(bpf_lsm_hooks, ARRAY_SIZE(bpf_lsm_hooks), "bpf");
++	pr_info("LSM support for eBPF active\n");
 +	return 0;
 +}
++
++DEFINE_LSM(bpf) = {
++	.name = "bpf",
++	.init = bpf_lsm_init,
++};
 -- 
 2.20.1
 
