@@ -6,57 +6,57 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2E07C41621
-	for <linux-security-module@archiver.kernel.org>; Tue, 24 Mar 2020 18:33:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B399C2BAEE
+	for <linux-security-module@archiver.kernel.org>; Tue, 24 Mar 2020 18:34:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A04F1206F6
-	for <linux-security-module@archiver.kernel.org>; Tue, 24 Mar 2020 18:33:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 661672076E
+	for <linux-security-module@archiver.kernel.org>; Tue, 24 Mar 2020 18:34:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="T7DJhDYu"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="X8BpTUsh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727379AbgCXSdG (ORCPT
+        id S1727662AbgCXSe5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 24 Mar 2020 14:33:06 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:39925 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727468AbgCXSdF (ORCPT
+        Tue, 24 Mar 2020 14:34:57 -0400
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:55894 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727630AbgCXSe4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 24 Mar 2020 14:33:05 -0400
-Received: by mail-pl1-f193.google.com with SMTP id m1so7760825pll.6
-        for <linux-security-module@vger.kernel.org>; Tue, 24 Mar 2020 11:33:04 -0700 (PDT)
+        Tue, 24 Mar 2020 14:34:56 -0400
+Received: by mail-pj1-f67.google.com with SMTP id mj6so1972051pjb.5
+        for <linux-security-module@vger.kernel.org>; Tue, 24 Mar 2020 11:34:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=2LDhmPGgksoORBYsVldX+awgJg6yM4TQVCLJOVvQyz4=;
-        b=T7DJhDYuMjXgKVhvaR13cI7YtMJw36RfORxHbnpmHSJHf+FJ4mzurw9+9eu3aG1hey
-         wcvVsWV+FhtMo6rF4IpFMCkwmg6T5aQU7rUmzCkMn+ucj+iWDSF9DiizOoNKLp+4WZzt
-         s+A5BBhj6yVmMsM1i4ia46rL5rNp+KTYOgDis=
+        bh=mx9h2G9Pa234gVddEgnTViqlM2nzOYE5T6EE2ivPTBA=;
+        b=X8BpTUshqVTp5ZrfGENJjA7S8D3PMkC1H9raELqRdSdjLNe5sZB5Y4RMX/nghlzJ8E
+         1CsWUkd+SHVMvC1UIUpx6JTnz1l2RNGsNZUks9+wLQ7kIaqQcNp/2bungkmZ4F+++aNv
+         F9F+k+zvWPAIpXVP3evPY5DDeIBLOdTEoj2Ac=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to;
-        bh=2LDhmPGgksoORBYsVldX+awgJg6yM4TQVCLJOVvQyz4=;
-        b=bU8QEb28hoaNjEIDyZJbPXqZEU5AmuJLvoJ+WIE1WFVVD0dyjZJd2w7LkZvD6SRcn/
-         EA4u3qRXSmIYI1umrYWa2JuOZcxTQE0/q3n8mDFirzY45GMoy82QdkY+I9wzFd1Tws79
-         2BDWPwMAqhVTmxz17N/cWmjQqCpyCXB/T68K7tk5G/Hvq9g14eP/NZvV4R+tOYO0ipkH
-         bdcJMm0YkqxiCjD9Dx8dcz+idHvOC+BHbSvUjo67Gs5QgZllUv9DjohJCGsP8U4grlBP
-         4bRfYsMzxU1sKj3Lkzkmgj14oKNKDg81Ax15PetjT2ryEiWqCYHwnAobVAWkwmtG13NO
-         gyFQ==
-X-Gm-Message-State: ANhLgQ2m8J4epuxSlicP9Dl7s3IO945Ksihwxm2MW2auLz6FC1NKgwBe
-        152Jpim6j0CwujcE2mHlk2X7JQ==
-X-Google-Smtp-Source: ADFU+vvgbcz6Wt/SKJaFRiL+RAA8RKi7rgtSKvXONvciu9Bb1JJtlU3ttRoKj0XWQ2BwU+GwGGqB7Q==
-X-Received: by 2002:a17:90b:3d1:: with SMTP id go17mr6230921pjb.99.1585074784269;
-        Tue, 24 Mar 2020 11:33:04 -0700 (PDT)
+        bh=mx9h2G9Pa234gVddEgnTViqlM2nzOYE5T6EE2ivPTBA=;
+        b=ee+Wh8WolZRIToqZcGTS3kZKYb7kTlW693KEnEqSLMRIv404+rKdeOYQUb+Wq7EalQ
+         Kh+hFekG6c7RfHRrIlhsMuJ9EMrXT5xx1sYelbhkZTUVsjPZ5hz/qOES5ENXNvRKMIY8
+         i72TnL+boIO8VHWzD+RSDOj8fH261Dv94er6jZraqMkl3QSIe6bjBoxMX+iKQj6IXYpm
+         VqJVrCCh3pKMVFRcAc4sVavzBBbUF9zEqu3bb8dPmWyJJ7eobMvzhHDUcSs02mZv8ZmQ
+         KDKbvxukDK1ORGUR8TWxc2xHEhq87UWgdVQnEBEaQ/51+CeeP5ndXAUavWJDLj4dQS6F
+         Kzaw==
+X-Gm-Message-State: ANhLgQ3efQT2mToo5Jrj7g7LHnQmZ04HI8plMWu1Q9Qz9rD9A2mbwPT+
+        Toml8E1CgFI45F0f86g91w4V8g==
+X-Google-Smtp-Source: ADFU+vuY4HhM8vNaIQSER7/NiwCNGWQLQ6U2UpEtoYs0U+twgNdazhReNufRdZraq2u/dEMlw6NdIQ==
+X-Received: by 2002:a17:902:850a:: with SMTP id bj10mr27476778plb.28.1585074894587;
+        Tue, 24 Mar 2020 11:34:54 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id o20sm1095681pjr.35.2020.03.24.11.33.03
+        by smtp.gmail.com with ESMTPSA id x135sm15801559pgx.41.2020.03.24.11.34.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Mar 2020 11:33:03 -0700 (PDT)
-Date:   Tue, 24 Mar 2020 11:33:02 -0700
+        Tue, 24 Mar 2020 11:34:53 -0700 (PDT)
+Date:   Tue, 24 Mar 2020 11:34:52 -0700
 From:   Kees Cook <keescook@chromium.org>
-To:     Stephen Smalley <stephen.smalley.work@gmail.com>
-Cc:     KP Singh <kpsingh@chromium.org>,
+To:     KP Singh <kpsingh@chromium.org>
+Cc:     Stephen Smalley <stephen.smalley.work@gmail.com>,
         Casey Schaufler <casey@schaufler-ca.com>,
         linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
         LSM List <linux-security-module@vger.kernel.org>,
@@ -72,10 +72,8 @@ Cc:     KP Singh <kpsingh@chromium.org>,
         Paul Moore <paul@paul-moore.com>
 Subject: Re: [PATCH bpf-next v5 4/7] bpf: lsm: Implement attach, detach and
  execution
-Message-ID: <202003241132.8F46BC0A@keescook>
-References: <20200323164415.12943-1-kpsingh@chromium.org>
- <20200323164415.12943-5-kpsingh@chromium.org>
- <CAEjxPJ4MukexdmAD=py0r7vkE6vnn6T1LVcybP_GSJYsAdRuxA@mail.gmail.com>
+Message-ID: <202003241133.16C02BE5B@keescook>
+References: <CAEjxPJ4MukexdmAD=py0r7vkE6vnn6T1LVcybP_GSJYsAdRuxA@mail.gmail.com>
  <20200324145003.GA2685@chromium.org>
  <CAEjxPJ4YnCCeQUTK36Ao550AWProHrkrW1a6K5RKuKYcPcfhyA@mail.gmail.com>
  <d578d19f-1d3b-f60d-f803-2fcb46721a4a@schaufler-ca.com>
@@ -83,36 +81,48 @@ References: <20200323164415.12943-1-kpsingh@chromium.org>
  <202003241100.279457EF@keescook>
  <20200324180652.GA11855@chromium.org>
  <CAEjxPJ7ebh1FHBjfuoWquFLJi0TguipfRq5ozaSepLVt8+qaMQ@mail.gmail.com>
+ <20200324182759.GA5557@chromium.org>
+ <20200324183130.GA6784@chromium.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEjxPJ7ebh1FHBjfuoWquFLJi0TguipfRq5ozaSepLVt8+qaMQ@mail.gmail.com>
+In-Reply-To: <20200324183130.GA6784@chromium.org>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Mar 24, 2020 at 02:21:30PM -0400, Stephen Smalley wrote:
-> On Tue, Mar 24, 2020 at 2:06 PM KP Singh <kpsingh@chromium.org> wrote:
-> >
-> > On 24-Mär 11:01, Kees Cook wrote:
-> > > Doesn't the existing int (*bpf_prog)(struct bpf_prog *prog); cover
-> > > SELinux's need here? I.e. it can already examine that a hook is being
-> > > created for the LSM (since it has a distinct type, etc)?
-> >
-> > I was about to say the same, specifically for the BPF use-case, we do
-> > have the "bpf_prog" i.e. :
-> >
-> > "Do a check when the kernel generate and return a file descriptor for
-> > eBPF programs."
-> >
-> > SELinux can implement its policy logic for BPF_PROG_TYPE_LSM by
-> > providing a callback for this hook.
+On Tue, Mar 24, 2020 at 07:31:30PM +0100, KP Singh wrote:
+> On 24-Mär 19:27, KP Singh wrote:
+> > We do not have a specific capable check for BPF_PROG_TYPE_LSM programs
+> > now. There is a general check which requires CAP_SYS_ADMIN when
+> > unprivileged BPF is disabled:
+> > 
+> > in kernel/bpf/sycall.c:
+> > 
+> >         if (sysctl_unprivileged_bpf_disabled && !capable(CAP_SYS_ADMIN))
+> > 	        return -EPERM;
+> > 
+> > AFAIK, Most distros disable unprivileged eBPF.
+> > 
+> > Now that I look at this, I think we might need a CAP_MAC_ADMIN check
+> > though as unprivileged BPF being enabled will result in an
+> > unprivileged user being able to load MAC policies.
 > 
-> Ok.  In that case do we really need the capable() check here at all?
+> Actually we do have an extra check for loading BPF programs:
+> 
+> 
+> in kernel/bpf/syscall.c:bpf_prog_load
+> 
+> 	if (type != BPF_PROG_TYPE_SOCKET_FILTER &&
+> 	    type != BPF_PROG_TYPE_CGROUP_SKB &&
+> 	    !capable(CAP_SYS_ADMIN))
+> 		return -EPERM;
+> 
+> Do you think we still need a CAP_MAC_ADMIN check for LSM programs?
 
-IMO, this is for systems without SELinux, where they're using the
-capabilities as the basic policy for MAC management.
+IMO, these are distinct privileges on the non-SELinux system. I think
+your patch is fine as-is.
 
 -- 
 Kees Cook
