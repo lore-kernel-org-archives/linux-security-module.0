@@ -2,407 +2,238 @@ Return-Path: <SRS0=jUwH=5J=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDEDAC43331
-	for <linux-security-module@archiver.kernel.org>; Tue, 24 Mar 2020 20:04:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EF14C54FD0
+	for <linux-security-module@archiver.kernel.org>; Tue, 24 Mar 2020 20:46:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9885E2076F
-	for <linux-security-module@archiver.kernel.org>; Tue, 24 Mar 2020 20:04:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="I/qsK+M8"
+	by mail.kernel.org (Postfix) with ESMTP id EC4C82074D
+	for <linux-security-module@archiver.kernel.org>; Tue, 24 Mar 2020 20:46:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727513AbgCXUEM (ORCPT
+        id S1728306AbgCXUqV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 24 Mar 2020 16:04:12 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:33821 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727040AbgCXUEL (ORCPT
+        Tue, 24 Mar 2020 16:46:21 -0400
+Received: from monster.unsafe.ru ([5.9.28.80]:38716 "EHLO mail.unsafe.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728268AbgCXUqT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 24 Mar 2020 16:04:11 -0400
-Received: by mail-wr1-f66.google.com with SMTP id 65so84363wrl.1
-        for <linux-security-module@vger.kernel.org>; Tue, 24 Mar 2020 13:04:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=Tt0UFZephI2Ue5bqTwLi4oygzZ66RF71KGwdZLCPEUc=;
-        b=I/qsK+M8mg3ROchM+A9exgLw0tB88VSlpMAyjRnt9nNEZkmWtxKO0s8/EoYu8ra+KW
-         qEVkYgcQIJp+6+Npg20aBla+BEc7SrWjGM0Kapss2WJ9ubRfux3/i4CVQWgnAOw8ObjB
-         L52YEZ1nl0YNOk3W17tEwtyyNYaNNi6JYQ8BE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=Tt0UFZephI2Ue5bqTwLi4oygzZ66RF71KGwdZLCPEUc=;
-        b=TLYLtaZA+T0hUaoc25Rz2yP8kJe8PqD69iCowuF80BAKa7L1KRs4C+89NyFBquSv4S
-         XByRMlsgrEdwPMUQxYrwu+Zy2ctM1wFRugQSUVtcgT6bybGbTlicangqLoNIdNoAmpgU
-         QLK8KRFgwSE+92suNQKVr5kHBeLk+zjLdIODNgh8w/zjY9+uYIlZJOArBcvlQKz3V7Bh
-         Bi8d/E+9NgzKM/VvLsdxUXOF7Rq1/qbVLm7jhSuikSzv3YEnzKZLNFpM+M8Vewmb9fa4
-         IQVRgbnAZzKuK37Q7NccFLEmnyx82F0S+hstu7yUIkAyF0yw/sdxx6jl7U3emZkhKw8/
-         7TNA==
-X-Gm-Message-State: ANhLgQ1Zt2Xia1ZTGXUQrfcoy9BLy8y9Zeg76aaAozIUxn5ndWJoXWFw
-        BVdwYokrrZ5g/OcZoirZYy0p5g==
-X-Google-Smtp-Source: ADFU+vthH0wns3m18uz//rU2V4nw/Pj1cyviC8VqVMaZowJr7BllF14x+MIyTlEKCvbu0DZy/YNbig==
-X-Received: by 2002:adf:b6a5:: with SMTP id j37mr38231704wre.412.1585080248593;
-        Tue, 24 Mar 2020 13:04:08 -0700 (PDT)
-Received: from chromium.org (77-56-209-237.dclient.hispeed.ch. [77.56.209.237])
-        by smtp.gmail.com with ESMTPSA id o16sm31229588wrs.44.2020.03.24.13.04.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Mar 2020 13:04:07 -0700 (PDT)
-From:   KP Singh <kpsingh@chromium.org>
-X-Google-Original-From: KP Singh <kpsingh>
-Date:   Tue, 24 Mar 2020 21:04:05 +0100
-To:     Yonghong Song <yhs@fb.com>
-Cc:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Brendan Jackman <jackmanb@google.com>,
-        Florent Revest <revest@google.com>,
-        Thomas Garnier <thgarnie@google.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        James Morris <jmorris@namei.org>,
+        Tue, 24 Mar 2020 16:46:19 -0400
+Received: from comp-core-i7-2640m-0182e6.redhat.com (ip-89-102-33-211.net.upcbroadband.cz [89.102.33.211])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.unsafe.ru (Postfix) with ESMTPSA id EB028C61B2D;
+        Tue, 24 Mar 2020 20:46:14 +0000 (UTC)
+From:   Alexey Gladkov <gladkov.alexey@gmail.com>
+To:     LKML <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Security Module <linux-security-module@vger.kernel.org>
+Cc:     Akinobu Mita <akinobu.mita@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Alexey Gladkov <legion@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Daniel Micay <danielmicay@gmail.com>,
+        Djalal Harouni <tixxdz@gmail.com>,
+        "Dmitry V . Levin" <ldv@altlinux.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@poochiereds.net>,
+        Jonathan Corbet <corbet@lwn.net>,
         Kees Cook <keescook@chromium.org>,
-        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH bpf-next v5 7/7] bpf: lsm: Add selftests for
- BPF_PROG_TYPE_LSM
-Message-ID: <20200324200405.GA7008@chromium.org>
-References: <20200323164415.12943-1-kpsingh@chromium.org>
- <20200323164415.12943-8-kpsingh@chromium.org>
- <a071b4ce-9311-5d44-4144-56075a8aa812@fb.com>
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>
+Subject: [PATCH RESEND v9 8/8] proc: use human-readable values for hidehid
+Date:   Tue, 24 Mar 2020 21:44:49 +0100
+Message-Id: <20200324204449.7263-9-gladkov.alexey@gmail.com>
+X-Mailer: git-send-email 2.25.2
+In-Reply-To: <20200324204449.7263-1-gladkov.alexey@gmail.com>
+References: <20200324204449.7263-1-gladkov.alexey@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <a071b4ce-9311-5d44-4144-56075a8aa812@fb.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 23-Mär 13:04, Yonghong Song wrote:
-> 
-> 
-> On 3/23/20 9:44 AM, KP Singh wrote:
-> > From: KP Singh <kpsingh@google.com>
-> > 
-> > * Load/attach a BPF program to the file_mprotect (int) and
-> >    bprm_committed_creds (void) LSM hooks.
-> > * Perform an action that triggers the hook.
-> > * Verify if the audit event was received using a shared global
-> >    result variable.
-> > 
-> > Signed-off-by: KP Singh <kpsingh@google.com>
-> > Reviewed-by: Brendan Jackman <jackmanb@google.com>
-> > Reviewed-by: Florent Revest <revest@google.com>
-> > Reviewed-by: Thomas Garnier <thgarnie@google.com>
-> > ---
-> >   tools/testing/selftests/bpf/lsm_helpers.h     |  19 +++
-> >   .../selftests/bpf/prog_tests/lsm_test.c       | 112 ++++++++++++++++++
-> >   .../selftests/bpf/progs/lsm_int_hook.c        |  54 +++++++++
-> >   .../selftests/bpf/progs/lsm_void_hook.c       |  41 +++++++
-> >   4 files changed, 226 insertions(+)
-> >   create mode 100644 tools/testing/selftests/bpf/lsm_helpers.h
-> >   create mode 100644 tools/testing/selftests/bpf/prog_tests/lsm_test.c
-> >   create mode 100644 tools/testing/selftests/bpf/progs/lsm_int_hook.c
-> >   create mode 100644 tools/testing/selftests/bpf/progs/lsm_void_hook.c
-> > 
-> > diff --git a/tools/testing/selftests/bpf/lsm_helpers.h b/tools/testing/selftests/bpf/lsm_helpers.h
-> > new file mode 100644
-> > index 000000000000..3de230df93db
-> > --- /dev/null
-> > +++ b/tools/testing/selftests/bpf/lsm_helpers.h
-> > @@ -0,0 +1,19 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +
-> > +/*
-> > + * Copyright (C) 2020 Google LLC.
-> > + */
-> > +#ifndef _LSM_HELPERS_H
-> > +#define _LSM_HELPERS_H
-> > +
-> > +struct lsm_prog_result {
-> > +	/* This ensures that the LSM Hook only monitors the PID requested
-> > +	 * by the loader
-> > +	 */
-> > +	__u32 monitored_pid;
-> > +	/* The number of calls to the prog for the monitored PID.
-> > +	 */
-> > +	__u32 count;
-> > +};
-> > +
-> > +#endif /* _LSM_HELPERS_H */
-> > diff --git a/tools/testing/selftests/bpf/prog_tests/lsm_test.c b/tools/testing/selftests/bpf/prog_tests/lsm_test.c
-> > new file mode 100644
-> > index 000000000000..5fd6b8f569f7
-> > --- /dev/null
-> > +++ b/tools/testing/selftests/bpf/prog_tests/lsm_test.c
-> > @@ -0,0 +1,112 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +
-> > +/*
-> > + * Copyright (C) 2020 Google LLC.
-> > + */
-> > +
-> > +#include <test_progs.h>
-> > +#include <sys/mman.h>
-> > +#include <sys/wait.h>
-> > +#include <unistd.h>
-> > +#include <malloc.h>
-> > +#include <stdlib.h>
-> > +
-> > +#include "lsm_helpers.h"
-> > +#include "lsm_void_hook.skel.h"
-> > +#include "lsm_int_hook.skel.h"
-> > +
-> > +char *LS_ARGS[] = {"true", NULL};
-> > +
-> > +int heap_mprotect(void)
-> > +{
-> > +	void *buf;
-> > +	long sz;
-> > +
-> > +	sz = sysconf(_SC_PAGESIZE);
-> > +	if (sz < 0)
-> > +		return sz;
-> > +
-> > +	buf = memalign(sz, 2 * sz);
-> > +	if (buf == NULL)
-> > +		return -ENOMEM;
-> > +
-> > +	return mprotect(buf, sz, PROT_READ | PROT_EXEC);
-> 
-> "buf" is leaking memory here.
-> 
-> > +}
-> > +
-> > +int exec_ls(struct lsm_prog_result *result)
-> > +{
-> > +	int child_pid;
-> > +
-> > +	child_pid = fork();
-> > +	if (child_pid == 0) {
-> > +		result->monitored_pid = getpid();
-> > +		execvp(LS_ARGS[0], LS_ARGS);
-> > +		return -EINVAL;
-> > +	} else if (child_pid > 0)
-> > +		return wait(NULL);
-> > +
-> > +	return -EINVAL;
-> > +}
-> > +
-> > +void test_lsm_void_hook(void)
-> > +{
-> > +	struct lsm_prog_result *result;
-> > +	struct lsm_void_hook *skel = NULL;
-> > +	int err, duration = 0;
-> > +
-> > +	skel = lsm_void_hook__open_and_load();
-> > +	if (CHECK(!skel, "skel_load", "lsm_void_hook skeleton failed\n"))
-> > +		goto close_prog;
-> > +
-> > +	err = lsm_void_hook__attach(skel);
-> > +	if (CHECK(err, "attach", "lsm_void_hook attach failed: %d\n", err))
-> > +		goto close_prog;
-> > +
-> > +	result = &skel->bss->result;
-> > +
-> > +	err = exec_ls(result);
-> > +	if (CHECK(err < 0, "exec_ls", "err %d errno %d\n", err, errno))
-> > +		goto close_prog;
-> > +
-> > +	if (CHECK(result->count != 1, "count", "count = %d", result->count))
-> > +		goto close_prog;
-> > +
-> > +	CHECK_FAIL(result->count != 1);
-> 
-> I think the above
-> 	if (CHECK(result->count != 1, "count", "count = %d", result->count))
-> 		goto close_prog;
-> 
-> 	CHECK_FAIL(result->count != 1);
-> can be replaced with
-> 	CHECK(result->count != 1, "count", "count = %d", result->count);
+The hidepid parameter values are becoming more and more and it becomes
+difficult to remember what each new magic number means.
 
-Thanks, and updated for test_lsm_int_hook as well.
+Suggested-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Alexey Gladkov <gladkov.alexey@gmail.com>
+---
+ Documentation/filesystems/proc.txt | 52 +++++++++++++++---------------
+ fs/proc/inode.c                    | 13 +++++++-
+ fs/proc/root.c                     | 36 +++++++++++++++++++--
+ 3 files changed, 71 insertions(+), 30 deletions(-)
 
-> 
-> > +
-> > +close_prog:
-> > +	lsm_void_hook__destroy(skel);
-> > +}
-> > +
-> > +void test_lsm_int_hook(void)
-> > +{
-> > +	struct lsm_prog_result *result;
-> > +	struct lsm_int_hook *skel = NULL;
-> > +	int err, duration = 0;
-> > +
-> > +	skel = lsm_int_hook__open_and_load();
-> > +	if (CHECK(!skel, "skel_load", "lsm_int_hook skeleton failed\n"))
-> > +		goto close_prog;
-> > +
-> > +	err = lsm_int_hook__attach(skel);
-> > +	if (CHECK(err, "attach", "lsm_int_hook attach failed: %d\n", err))
-> > +		goto close_prog;
-> > +
-> > +	result = &skel->bss->result;
-> > +	result->monitored_pid = getpid();
-> > +
-> > +	err = heap_mprotect();
-> > +	if (CHECK(errno != EPERM, "heap_mprotect", "want errno=EPERM, got %d\n",
-> > +		  errno))
-> > +		goto close_prog;
-> > +
-> > +	CHECK_FAIL(result->count != 1);
-> > +
-> > +close_prog:
-> > +	lsm_int_hook__destroy(skel);
-> > +}
-> > +
-> > +void test_lsm_test(void)
-> > +{
-> > +	test_lsm_void_hook();
-> > +	test_lsm_int_hook();
-> > +}
-> > diff --git a/tools/testing/selftests/bpf/progs/lsm_int_hook.c b/tools/testing/selftests/bpf/progs/lsm_int_hook.c
-> > new file mode 100644
-> > index 000000000000..1c5028ddca61
-> > --- /dev/null
-> > +++ b/tools/testing/selftests/bpf/progs/lsm_int_hook.c
-> > @@ -0,0 +1,54 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +
-> > +/*
-> > + * Copyright 2020 Google LLC.
-> > + */
-> > +
-> > +#include <linux/bpf.h>
-> > +#include <stdbool.h>
-> > +#include <bpf/bpf_helpers.h>
-> > +#include <bpf/bpf_tracing.h>
-> > +#include  <errno.h>
-> > +#include "lsm_helpers.h"
-> > +
-> > +char _license[] SEC("license") = "GPL";
-> > +
-> > +struct lsm_prog_result result = {
-> > +	.monitored_pid = 0,
-> > +	.count = 0,
-> > +};
-> > +
-> > +/*
-> > + * Define some of the structs used in the BPF program.
-> > + * Only the field names and their sizes need to be the
-> > + * same as the kernel type, the order is irrelevant.
-> > + */
-> > +struct mm_struct {
-> > +	unsigned long start_brk, brk;
-> > +} __attribute__((preserve_access_index));
-> > +
-> > +struct vm_area_struct {
-> > +	unsigned long vm_start, vm_end;
-> > +	struct mm_struct *vm_mm;
-> > +} __attribute__((preserve_access_index));
-> > +
-> > +SEC("lsm/file_mprotect")
-> > +int BPF_PROG(test_int_hook, struct vm_area_struct *vma,
-> > +	     unsigned long reqprot, unsigned long prot, int ret)
-> > +{
-> > +	if (ret != 0)
-> > +		return ret;
-> > +
-> > +	__u32 pid = bpf_get_current_pid_tgid();
-> 
-> In user space, we assign monitored_pid with getpid()
-> which is the process pid. Here
->    pid = bpf_get_current_pid_tgid()
-> actually got tid in the kernel.
-> 
-> Although it does not matter in this particular example,
-> maybe still use
->    bpf_get_current_pid_tgid() >> 32
-> to get process pid to be consistent.
-> 
-> The same for lsm_void_hook.c.
-
-Done. Thanks!
-
-> 
-> > +	int is_heap = 0;
-> > +
-> > +	is_heap = (vma->vm_start >= vma->vm_mm->start_brk &&
-> > +		   vma->vm_end <= vma->vm_mm->brk);
-> > +
-> > +	if (is_heap && result.monitored_pid == pid) {
-> > +		result.count++;
-> > +		ret = -EPERM;
-> > +	}
-> > +
-> > +	return ret;
-> > +}
-> > diff --git a/tools/testing/selftests/bpf/progs/lsm_void_hook.c b/tools/testing/selftests/bpf/progs/lsm_void_hook.c
-> > new file mode 100644
-> > index 000000000000..4d01a8536413
-> > --- /dev/null
-> > +++ b/tools/testing/selftests/bpf/progs/lsm_void_hook.c
-> > @@ -0,0 +1,41 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +
-> > +/*
-> > + * Copyright (C) 2020 Google LLC.
-> > + */
-> > +
-> > +#include <linux/bpf.h>
-> > +#include <stdbool.h>
-> > +#include <bpf/bpf_helpers.h>
-> > +#include <bpf/bpf_tracing.h>
-> > +#include  <errno.h>
-> > +#include "lsm_helpers.h"
-> > +
-> > +char _license[] SEC("license") = "GPL";
-> > +
-> > +struct lsm_prog_result result = {
-> > +	.monitored_pid = 0,
-> > +	.count = 0,
-> > +};
-> > +
-> > +/*
-> > + * Define some of the structs used in the BPF program.
-> > + * Only the field names and their sizes need to be the
-> > + * same as the kernel type, the order is irrelevant.
-> > + */
-> > +struct linux_binprm {
-> > +	const char *filename;
-> > +} __attribute__((preserve_access_index));
-> > +
-> > +SEC("lsm/bprm_committed_creds")
-> > +int BPF_PROG(test_void_hook, struct linux_binprm *bprm)
-> > +{
-> > +	__u32 pid = bpf_get_current_pid_tgid();
-> > +	char fmt[] = "lsm(bprm_committed_creds): process executed %s\n";
-> > +
-> > +	bpf_trace_printk(fmt, sizeof(fmt), bprm->filename);
-> > +	if (result.monitored_pid == pid)
-> > +		result.count++;
-> > +
-> > +	return 0;
-> > +}
-> > 
-> 
-> Could you also upddate tools/testing/selftests/bpf/config file
-> so people will know what config options are needed to run the
-> self tests properly?
-
-Added CONFIG_BPF_LSM and CONFIG_SECURITY to the list.
-
-- KP
+diff --git a/Documentation/filesystems/proc.txt b/Documentation/filesystems/proc.txt
+index 4741fd092f36..27830a93464b 100644
+--- a/Documentation/filesystems/proc.txt
++++ b/Documentation/filesystems/proc.txt
+@@ -2025,28 +2025,28 @@ The following mount options are supported:
+ 	gid=		Set the group authorized to learn processes information.
+ 	subset=		Show only the specified subset of procfs.
+ 
+-hidepid=0 means classic mode - everybody may access all /proc/<pid>/ directories
+-(default).
+-
+-hidepid=1 means users may not access any /proc/<pid>/ directories but their
+-own.  Sensitive files like cmdline, sched*, status are now protected against
+-other users.  This makes it impossible to learn whether any user runs
+-specific program (given the program doesn't reveal itself by its behaviour).
+-As an additional bonus, as /proc/<pid>/cmdline is unaccessible for other users,
+-poorly written programs passing sensitive information via program arguments are
+-now protected against local eavesdroppers.
+-
+-hidepid=2 means hidepid=1 plus all /proc/<pid>/ will be fully invisible to other
+-users.  It doesn't mean that it hides a fact whether a process with a specific
+-pid value exists (it can be learned by other means, e.g. by "kill -0 $PID"),
+-but it hides process' uid and gid, which may be learned by stat()'ing
+-/proc/<pid>/ otherwise.  It greatly complicates an intruder's task of gathering
+-information about running processes, whether some daemon runs with elevated
+-privileges, whether other user runs some sensitive program, whether other users
+-run any program at all, etc.
+-
+-hidepid=4 means that procfs should only contain /proc/<pid>/ directories
+-that the caller can ptrace.
++hidepid=off or hidepid=0 means classic mode - everybody may access all
++/proc/<pid>/ directories (default).
++
++hidepid=noaccess or hidepid=1 means users may not access any /proc/<pid>/
++directories but their own.  Sensitive files like cmdline, sched*, status are now
++protected against other users.  This makes it impossible to learn whether any
++user runs specific program (given the program doesn't reveal itself by its
++behaviour).  As an additional bonus, as /proc/<pid>/cmdline is unaccessible for
++other users, poorly written programs passing sensitive information via program
++arguments are now protected against local eavesdroppers.
++
++hidepid=invisible or hidepid=2 means hidepid=noaccess plus all /proc/<pid>/ will
++be fully invisible to other users.  It doesn't mean that it hides a fact whether
++a process with a specific pid value exists (it can be learned by other means,
++e.g. by "kill -0 $PID"), but it hides process' uid and gid, which may be learned
++by stat()'ing /proc/<pid>/ otherwise.  It greatly complicates an intruder's task
++of gathering information about running processes, whether some daemon runs with
++elevated privileges, whether other user runs some sensitive program, whether
++other users run any program at all, etc.
++
++hidepid=ptraceable or hidepid=4 means that procfs should only contain
++/proc/<pid>/ directories that the caller can ptrace.
+ 
+ gid= defines a group authorized to learn processes information otherwise
+ prohibited by hidepid=.  If you use some daemon like identd which needs to learn
+@@ -2093,8 +2093,8 @@ creates a new procfs instance. Mount options affect own procfs instance.
+ It means that it became possible to have several procfs instances
+ displaying tasks with different filtering options in one pid namespace.
+ 
+-# mount -o hidepid=2 -t proc proc /proc
+-# mount -o hidepid=1 -t proc proc /tmp/proc
++# mount -o hidepid=invisible -t proc proc /proc
++# mount -o hidepid=noaccess -t proc proc /tmp/proc
+ # grep ^proc /proc/mounts
+-proc /proc proc rw,relatime,hidepid=2 0 0
+-proc /tmp/proc proc rw,relatime,hidepid=1 0 0
++proc /proc proc rw,relatime,hidepid=invisible 0 0
++proc /tmp/proc proc rw,relatime,hidepid=noaccess 0 0
+diff --git a/fs/proc/inode.c b/fs/proc/inode.c
+index c1dbcf2b96db..a462fd111719 100644
+--- a/fs/proc/inode.c
++++ b/fs/proc/inode.c
+@@ -165,6 +165,17 @@ void proc_invalidate_siblings_dcache(struct hlist_head *inodes, spinlock_t *lock
+ 		deactivate_super(old_sb);
+ }
+ 
++static inline const char *hidepid2str(int v)
++{
++	switch (v) {
++		case HIDEPID_OFF: return "off";
++		case HIDEPID_NO_ACCESS: return "noaccess";
++		case HIDEPID_INVISIBLE: return "invisible";
++		case HIDEPID_NOT_PTRACEABLE: return "ptraceable";
++	}
++	BUG();
++}
++
+ static int proc_show_options(struct seq_file *seq, struct dentry *root)
+ {
+ 	struct proc_fs_info *fs_info = proc_sb_info(root->d_sb);
+@@ -172,7 +183,7 @@ static int proc_show_options(struct seq_file *seq, struct dentry *root)
+ 	if (!gid_eq(fs_info->pid_gid, GLOBAL_ROOT_GID))
+ 		seq_printf(seq, ",gid=%u", from_kgid_munged(&init_user_ns, fs_info->pid_gid));
+ 	if (fs_info->hide_pid != HIDEPID_OFF)
+-		seq_printf(seq, ",hidepid=%u", fs_info->hide_pid);
++		seq_printf(seq, ",hidepid=%s", hidepid2str(fs_info->hide_pid));
+ 	if (fs_info->pidonly != PROC_PIDONLY_OFF)
+ 		seq_printf(seq, ",subset=pidfs");
+ 
+diff --git a/fs/proc/root.c b/fs/proc/root.c
+index 07c309529628..42f3ee05c584 100644
+--- a/fs/proc/root.c
++++ b/fs/proc/root.c
+@@ -45,7 +45,7 @@ enum proc_param {
+ 
+ static const struct fs_parameter_spec proc_fs_parameters[] = {
+ 	fsparam_u32("gid",	Opt_gid),
+-	fsparam_u32("hidepid",	Opt_hidepid),
++	fsparam_string("hidepid",	Opt_hidepid),
+ 	fsparam_string("subset",	Opt_subset),
+ 	{}
+ };
+@@ -58,6 +58,35 @@ static inline int valid_hidepid(unsigned int value)
+ 		value == HIDEPID_NOT_PTRACEABLE);
+ }
+ 
++static int proc_parse_hidepid_param(struct fs_context *fc, struct fs_parameter *param)
++{
++	struct proc_fs_context *ctx = fc->fs_private;
++	struct fs_parameter_spec hidepid_u32_spec = fsparam_u32("hidepid", Opt_hidepid);
++	struct fs_parse_result result;
++	int base = (unsigned long)hidepid_u32_spec.data;
++
++	if (param->type != fs_value_is_string)
++		return invalf(fc, "proc: unexpected type of hidepid value\n");
++
++	if (!kstrtouint(param->string, base, &result.uint_32)) {
++		ctx->hidepid = result.uint_32;
++		return 0;
++	}
++
++	if (!strcmp(param->string, "off"))
++		ctx->hidepid = HIDEPID_OFF;
++	else if (!strcmp(param->string, "noaccess"))
++		ctx->hidepid = HIDEPID_NO_ACCESS;
++	else if (!strcmp(param->string, "invisible"))
++		ctx->hidepid = HIDEPID_INVISIBLE;
++	else if (!strcmp(param->string, "ptraceable"))
++		ctx->hidepid = HIDEPID_NOT_PTRACEABLE;
++	else
++		return invalf(fc, "proc: unknown value of hidepid - %s\n", param->string);
++
++	return 0;
++}
++
+ static int proc_parse_subset_param(struct fs_context *fc, char *value)
+ {
+ 	struct proc_fs_context *ctx = fc->fs_private;
+@@ -97,9 +126,10 @@ static int proc_parse_param(struct fs_context *fc, struct fs_parameter *param)
+ 		break;
+ 
+ 	case Opt_hidepid:
+-		if (!valid_hidepid(result.uint_32))
++		if (proc_parse_hidepid_param(fc, param))
++			return -EINVAL;
++		if (!valid_hidepid(ctx->hidepid))
+ 			return invalf(fc, "proc: unknown value of hidepid.\n");
+-		ctx->hidepid = result.uint_32;
+ 		break;
+ 
+ 	case Opt_subset:
+-- 
+2.25.2
 
