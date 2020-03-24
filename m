@@ -7,114 +7,113 @@ X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8A5BC43331
-	for <linux-security-module@archiver.kernel.org>; Tue, 24 Mar 2020 01:52:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D55CC10DCE
+	for <linux-security-module@archiver.kernel.org>; Tue, 24 Mar 2020 01:53:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCF1D206F8
-	for <linux-security-module@archiver.kernel.org>; Tue, 24 Mar 2020 01:52:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA673206F8
+	for <linux-security-module@archiver.kernel.org>; Tue, 24 Mar 2020 01:53:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="E+Ul25EE"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="COC8ebrj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727064AbgCXBw1 (ORCPT
+        id S1727249AbgCXBxM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 23 Mar 2020 21:52:27 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:41637 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727121AbgCXBw1 (ORCPT
+        Mon, 23 Mar 2020 21:53:12 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:37321 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727036AbgCXBxM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 23 Mar 2020 21:52:27 -0400
-Received: by mail-wr1-f68.google.com with SMTP id h9so19568852wrc.8
-        for <linux-security-module@vger.kernel.org>; Mon, 23 Mar 2020 18:52:26 -0700 (PDT)
+        Mon, 23 Mar 2020 21:53:12 -0400
+Received: by mail-wr1-f65.google.com with SMTP id w10so19608793wrm.4
+        for <linux-security-module@vger.kernel.org>; Mon, 23 Mar 2020 18:53:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:date:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to
          :user-agent;
-        bh=GbEsPGbYy5/MMngLexS7oQCXLwm/Hp/VeyWHkCMZX1E=;
-        b=E+Ul25EE4P4xI9/A6uidBTsx+WzZyMu7GDfyCMr4tUb5S+8Iq5kNIXaMxobkwzSbDC
-         lB6rZfmT0/arSbWGjm6XgK9/ESRu36tu9I72PJkclggd81WizLjHob1+MAwovGjQPyw8
-         8EEL+ElBFzl876TjbWP0p10nvBTmOqS60v350=
+        bh=JYmZbOGIiVsldO4I5du4t71vc9EkrrIvswa6uMRtHCY=;
+        b=COC8ebrj/l5ZJcyLCdJUYHjZrxwLjZwDMfjtqsfpeePDvqsTbYI0BfRB8HZ/RX2v5/
+         C+DAJ/Wd796qIPgDSXvDW1Ry1PdW8DIiOh1oEjx4l2f/EG+0mP1r0hIcao4/inGTejUL
+         mvAtmweJ3ymCw6plmIyZppvwYr/DHw/QRBoVI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:date:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=GbEsPGbYy5/MMngLexS7oQCXLwm/Hp/VeyWHkCMZX1E=;
-        b=IE2g8dz+J2UmNwZepZLqUGeOxmm1livljQChcZveX5nET72+NTFu/dBCl5Dob59x76
-         u3/x0nHtS953LkY2LZkzXlw6w+FNFE/dbeoJWwrR5f3TYR4XXutkCAslp/+1oWb9I3iB
-         ZgKj3x3y8FPZqSJlyf+ZVVZg/Kf3izb+BTwufwwnLjolGeC6kfxN9g+nHaR3ITcD7keY
-         Pa6W7q6X05okVswfmviVNXWtFqexCK0GFaV7pTwITBM6b1WV0ykUSqMlTBKwaE9uLOk9
-         pB4RAS3kqyR8WhvWTd5R/CXt0M0ce5BseGCbV0q+SFbuU9xYhzBQfVrvwtyTIMdcuV2m
-         SBtw==
-X-Gm-Message-State: ANhLgQ0wHD3NbWXqRfupewVks6Z3D1Lc5lzBdoQBhuUs0L+pu5mOATeR
-        5QRxcIP6hy3zVZZxXQPcokY7Jg==
-X-Google-Smtp-Source: ADFU+vvI19XvMNXyXx1gnpAihtkuqve2z3bOLiK5ECPR9jyWujY6Sg1+S+JU2QneQqN3mdI2iXQHhw==
-X-Received: by 2002:adf:f0c5:: with SMTP id x5mr6132238wro.415.1585014745323;
-        Mon, 23 Mar 2020 18:52:25 -0700 (PDT)
+        bh=JYmZbOGIiVsldO4I5du4t71vc9EkrrIvswa6uMRtHCY=;
+        b=AqdsLsk4vBtjM2Lo2pDqQIHGR/xjfLy7Bi+gbMJ7wvGX6LekDhtVQfEP6k5+4GqL4e
+         zyWReyU6PAxo/Q3BMSnApjM0+l2DUaFa9QVVkk8rZRoviBSckVAJDlC04A3cXw3fN4bi
+         LYDFLOymgk2pIK9qbRyqlN5nu2TmxnNxaY8okw+Wea1t8NPIZXVnHMjmGLxhp1n0+qwl
+         0aDS3kD8v4yPHU5eMxw9JJ17UoGvyZKk9p7DRHIb6ED1vDahQkyJ5JZiyTKeU7RdzAcR
+         tGGTaiOrHzzn45GAsLzZeuzhAEUE4xy1Fjq88oENny1R21zntVPtnlrEVSTq6Nh6fguz
+         vS2g==
+X-Gm-Message-State: ANhLgQ3qyjsrVsVX9XXwI6tMqybMStw3Whvn6QDSY8AK8QD/JczsE9/L
+        zkfTFCkkqP3n1xbye5TCwzGUsA==
+X-Google-Smtp-Source: ADFU+vvi+CssYVE+QEdrWmvNtR0jrIL4mYFmB5jt1PYf7sjnOF2d7L8zCKeJMWH4of/XjwScMV2Efw==
+X-Received: by 2002:adf:b307:: with SMTP id j7mr34750161wrd.128.1585014788959;
+        Mon, 23 Mar 2020 18:53:08 -0700 (PDT)
 Received: from chromium.org (77-56-209-237.dclient.hispeed.ch. [77.56.209.237])
-        by smtp.gmail.com with ESMTPSA id k126sm2116248wme.4.2020.03.23.18.52.22
+        by smtp.gmail.com with ESMTPSA id f9sm27097170wro.47.2020.03.23.18.53.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Mar 2020 18:52:24 -0700 (PDT)
+        Mon, 23 Mar 2020 18:53:08 -0700 (PDT)
 From:   KP Singh <kpsingh@chromium.org>
 X-Google-Original-From: KP Singh <kpsingh>
-Date:   Tue, 24 Mar 2020 02:52:21 +0100
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+Date:   Tue, 24 Mar 2020 02:53:06 +0100
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         Brendan Jackman <jackmanb@google.com>,
         Florent Revest <revest@google.com>,
         Alexei Starovoitov <ast@kernel.org>,
         Daniel Borkmann <daniel@iogearbox.net>,
-        James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>,
-        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
+        James Morris <jmorris@namei.org>, Paul Turner <pjt@google.com>,
+        Jann Horn <jannh@google.com>,
         Florent Revest <revest@chromium.org>,
         Brendan Jackman <jackmanb@chromium.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Subject: Re: [PATCH bpf-next v5 5/7] bpf: lsm: Initialize the BPF LSM hooks
-Message-ID: <20200324015217.GA28487@chromium.org>
+Message-ID: <20200324015306.GB28487@chromium.org>
 References: <20200323164415.12943-1-kpsingh@chromium.org>
  <20200323164415.12943-6-kpsingh@chromium.org>
- <6d45de0d-c59d-4ca7-fcc5-3965a48b5997@schaufler-ca.com>
+ <202003231237.F654B379@keescook>
+ <0655d820-4c42-cf9a-23d3-82dc4fdeeceb@schaufler-ca.com>
+ <202003231354.1454ED92EC@keescook>
+ <a9a7e251-9813-7d37-34d1-c50db2273569@schaufler-ca.com>
+ <202003231505.59A11B06E@keescook>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <6d45de0d-c59d-4ca7-fcc5-3965a48b5997@schaufler-ca.com>
+In-Reply-To: <202003231505.59A11B06E@keescook>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 23-Mär 18:13, Casey Schaufler wrote:
-> On 3/23/2020 9:44 AM, KP Singh wrote:
-> > From: KP Singh <kpsingh@google.com>
-> >
-> > The bpf_lsm_ nops are initialized into the LSM framework like any other
-> > LSM.  Some LSM hooks do not have 0 as their default return value. The
-> > __weak symbol for these hooks is overridden by a corresponding
-> > definition in security/bpf/hooks.c
-> >
-> > +	return 0;
-
-[...]
-
-> > +}
-> > +
-> > +DEFINE_LSM(bpf) = {
-> > +	.name = "bpf",
-> > +	.init = bpf_lsm_init,
+On 23-Mär 15:12, Kees Cook wrote:
+> On Mon, Mar 23, 2020 at 02:58:18PM -0700, Casey Schaufler wrote:
+> > That's not too terrible, I suppose. What would you be thinking for
+> > the calls that do use call_int_hook()?
+> > 
+> > 	rc = call_int_hook(something, something_default, goodnesses);
+> > 
+> > or embedded in the macro:
+> > 
+> > 	rc = call_int_hook(something, goodnesses);
 > 
-> Have you given up on the "BPF must be last" requirement?
+> Oh yes, good point. The hook call already knows the name, so:
+> 
+> #define call_int_hook(FUNC, ...) ({                        \
+>         int RC = FUNC#_default;                            \
 
-Yes, we dropped it for as the BPF programs require CAP_SYS_ADMIN
-anwyays so the position ~shouldn't~ matter. (based on some of the
-discussions we had on the BPF_MODIFY_RETURN patches).
-
-However, This can be added later (in a separate patch) if really
-deemed necessary.
+Excellent ideas, I will spin up the next revision with these changes.
 
 - KP
 
+> ...
 > 
-> > +};
+> 
+> -- 
+> Kees Cook
+> 
+> 
