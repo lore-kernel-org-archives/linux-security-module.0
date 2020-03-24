@@ -2,127 +2,235 @@ Return-Path: <SRS0=jUwH=5J=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B399C2BAEE
-	for <linux-security-module@archiver.kernel.org>; Tue, 24 Mar 2020 18:34:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 444E1C54EEB
+	for <linux-security-module@archiver.kernel.org>; Tue, 24 Mar 2020 19:00:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 661672076E
-	for <linux-security-module@archiver.kernel.org>; Tue, 24 Mar 2020 18:34:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1765820789
+	for <linux-security-module@archiver.kernel.org>; Tue, 24 Mar 2020 19:00:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="X8BpTUsh"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="I1JIzZbm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727662AbgCXSe5 (ORCPT
+        id S1727681AbgCXTAx (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 24 Mar 2020 14:34:57 -0400
-Received: from mail-pj1-f67.google.com ([209.85.216.67]:55894 "EHLO
-        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727630AbgCXSe4 (ORCPT
+        Tue, 24 Mar 2020 15:00:53 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:51384 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727672AbgCXTAw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 24 Mar 2020 14:34:56 -0400
-Received: by mail-pj1-f67.google.com with SMTP id mj6so1972051pjb.5
-        for <linux-security-module@vger.kernel.org>; Tue, 24 Mar 2020 11:34:55 -0700 (PDT)
+        Tue, 24 Mar 2020 15:00:52 -0400
+Received: by mail-wm1-f66.google.com with SMTP id c187so4474495wme.1
+        for <linux-security-module@vger.kernel.org>; Tue, 24 Mar 2020 12:00:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=mx9h2G9Pa234gVddEgnTViqlM2nzOYE5T6EE2ivPTBA=;
-        b=X8BpTUshqVTp5ZrfGENJjA7S8D3PMkC1H9raELqRdSdjLNe5sZB5Y4RMX/nghlzJ8E
-         1CsWUkd+SHVMvC1UIUpx6JTnz1l2RNGsNZUks9+wLQ7kIaqQcNp/2bungkmZ4F+++aNv
-         F9F+k+zvWPAIpXVP3evPY5DDeIBLOdTEoj2Ac=
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=+VmbkfsT1KjaPpUv2GYJYAkZEjslGkNEys2uqLVH4a8=;
+        b=I1JIzZbmAE/7Sm9CnUYkniPqNwTQUFAbj18IvZY175AaEyOOvifEd0Ikhn/8p0TBnH
+         zhRMY6Q/X3yH8ImPKdnMzi3/QVwI4wk4IEKTVezQW6bdojsRfUv7zQHmY+DlXxCWhk9U
+         gfBu+IK/QpE0prEEC1hytMbvQBLn7zmg3sBFc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=mx9h2G9Pa234gVddEgnTViqlM2nzOYE5T6EE2ivPTBA=;
-        b=ee+Wh8WolZRIToqZcGTS3kZKYb7kTlW693KEnEqSLMRIv404+rKdeOYQUb+Wq7EalQ
-         Kh+hFekG6c7RfHRrIlhsMuJ9EMrXT5xx1sYelbhkZTUVsjPZ5hz/qOES5ENXNvRKMIY8
-         i72TnL+boIO8VHWzD+RSDOj8fH261Dv94er6jZraqMkl3QSIe6bjBoxMX+iKQj6IXYpm
-         VqJVrCCh3pKMVFRcAc4sVavzBBbUF9zEqu3bb8dPmWyJJ7eobMvzhHDUcSs02mZv8ZmQ
-         KDKbvxukDK1ORGUR8TWxc2xHEhq87UWgdVQnEBEaQ/51+CeeP5ndXAUavWJDLj4dQS6F
-         Kzaw==
-X-Gm-Message-State: ANhLgQ3efQT2mToo5Jrj7g7LHnQmZ04HI8plMWu1Q9Qz9rD9A2mbwPT+
-        Toml8E1CgFI45F0f86g91w4V8g==
-X-Google-Smtp-Source: ADFU+vuY4HhM8vNaIQSER7/NiwCNGWQLQ6U2UpEtoYs0U+twgNdazhReNufRdZraq2u/dEMlw6NdIQ==
-X-Received: by 2002:a17:902:850a:: with SMTP id bj10mr27476778plb.28.1585074894587;
-        Tue, 24 Mar 2020 11:34:54 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id x135sm15801559pgx.41.2020.03.24.11.34.53
+         :in-reply-to:user-agent;
+        bh=+VmbkfsT1KjaPpUv2GYJYAkZEjslGkNEys2uqLVH4a8=;
+        b=tQs8OSQaVZj+avee6T0ndW/GJk1fawZvT/M0+q3zVeC93GaBrdI+JH8bGvZW9UK2y7
+         yyODBmh/fhz26z+UF8neliUOJgD2NybE5awj1bl12yH7JJKFRJ40F7iitvY7yqQt2wm0
+         yCQId5qtkifM3AEdzivR1gdnQwOQxgEcLSVbxUbpeWyB51RS4av5gpiBtMLnOCtYvgyO
+         0YPMHQm9KMbgVEMXVN1EgegUYwVboqggHc0KwdJb/vdVdt9O73NcH+zq+l2brKS1Hq7q
+         qv7aW5dHfPKgm3C1nsdJ8zs54d1f889QDTYz6RJFlZTmEn7F+j6aCHjnOZThzy8VX0/w
+         D28A==
+X-Gm-Message-State: ANhLgQ3sVlh2j2cAmheSC4e/BbCrOBGu6jyaVn26HaJRpAwMAeuPb3Cb
+        g3CLK7e1U2v9fyAZ8Ji8QPKu9JpZH4w=
+X-Google-Smtp-Source: ADFU+vsYkNg+QyHBO+1j4K8rmwcnnuIfPno8vCqgZxz5Nna0aZEyBeIzBYp0svbINkrhxcthu+dLJA==
+X-Received: by 2002:a7b:c8cc:: with SMTP id f12mr6873823wml.172.1585076447444;
+        Tue, 24 Mar 2020 12:00:47 -0700 (PDT)
+Received: from chromium.org (77-56-209-237.dclient.hispeed.ch. [77.56.209.237])
+        by smtp.gmail.com with ESMTPSA id k133sm5351316wma.11.2020.03.24.12.00.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Mar 2020 11:34:53 -0700 (PDT)
-Date:   Tue, 24 Mar 2020 11:34:52 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     KP Singh <kpsingh@chromium.org>
-Cc:     Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
+        Tue, 24 Mar 2020 12:00:46 -0700 (PDT)
+From:   KP Singh <kpsingh@chromium.org>
+X-Google-Original-From: KP Singh <kpsingh>
+Date:   Tue, 24 Mar 2020 20:00:45 +0100
+To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>, linux-security-module@vger.kernel.org,
         Brendan Jackman <jackmanb@google.com>,
         Florent Revest <revest@google.com>,
         Alexei Starovoitov <ast@kernel.org>,
         Daniel Borkmann <daniel@iogearbox.net>,
-        James Morris <jmorris@namei.org>, Paul Turner <pjt@google.com>,
-        Jann Horn <jannh@google.com>,
+        James Morris <jmorris@namei.org>,
+        Kees Cook <keescook@chromium.org>,
+        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
         Florent Revest <revest@chromium.org>,
         Brendan Jackman <jackmanb@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Paul Moore <paul@paul-moore.com>
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Subject: Re: [PATCH bpf-next v5 4/7] bpf: lsm: Implement attach, detach and
  execution
-Message-ID: <202003241133.16C02BE5B@keescook>
-References: <CAEjxPJ4MukexdmAD=py0r7vkE6vnn6T1LVcybP_GSJYsAdRuxA@mail.gmail.com>
- <20200324145003.GA2685@chromium.org>
- <CAEjxPJ4YnCCeQUTK36Ao550AWProHrkrW1a6K5RKuKYcPcfhyA@mail.gmail.com>
- <d578d19f-1d3b-f60d-f803-2fcb46721a4a@schaufler-ca.com>
- <CAEjxPJ59wijpB=wa4ZhPyX_PRXrRAX2+PO6e8+f25wrb9xndRA@mail.gmail.com>
- <202003241100.279457EF@keescook>
- <20200324180652.GA11855@chromium.org>
- <CAEjxPJ7ebh1FHBjfuoWquFLJi0TguipfRq5ozaSepLVt8+qaMQ@mail.gmail.com>
- <20200324182759.GA5557@chromium.org>
- <20200324183130.GA6784@chromium.org>
+Message-ID: <20200324190045.GA1891@chromium.org>
+References: <20200323164415.12943-1-kpsingh@chromium.org>
+ <20200323164415.12943-5-kpsingh@chromium.org>
+ <CAEf4BzaceUCEw+-s9EM3rvz+KbLrvBbUfa5e0CSbtkOytF+RsQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200324183130.GA6784@chromium.org>
+In-Reply-To: <CAEf4BzaceUCEw+-s9EM3rvz+KbLrvBbUfa5e0CSbtkOytF+RsQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Mar 24, 2020 at 07:31:30PM +0100, KP Singh wrote:
-> On 24-Mär 19:27, KP Singh wrote:
-> > We do not have a specific capable check for BPF_PROG_TYPE_LSM programs
-> > now. There is a general check which requires CAP_SYS_ADMIN when
-> > unprivileged BPF is disabled:
-> > 
-> > in kernel/bpf/sycall.c:
-> > 
-> >         if (sysctl_unprivileged_bpf_disabled && !capable(CAP_SYS_ADMIN))
-> > 	        return -EPERM;
-> > 
-> > AFAIK, Most distros disable unprivileged eBPF.
-> > 
-> > Now that I look at this, I think we might need a CAP_MAC_ADMIN check
-> > though as unprivileged BPF being enabled will result in an
-> > unprivileged user being able to load MAC policies.
+On 23-Mär 13:18, Andrii Nakryiko wrote:
+> On Mon, Mar 23, 2020 at 9:45 AM KP Singh <kpsingh@chromium.org> wrote:
+> >
+> > From: KP Singh <kpsingh@google.com>
+> >
+> > JITed BPF programs are dynamically attached to the LSM hooks
+> > using BPF trampolines. The trampoline prologue generates code to handle
+> > conversion of the signature of the hook to the appropriate BPF context.
+> >
+> > The allocated trampoline programs are attached to the nop functions
+> > initialized as LSM hooks.
+> >
+> > BPF_PROG_TYPE_LSM programs must have a GPL compatible license and
+> > and need CAP_SYS_ADMIN (required for loading eBPF programs).
+> >
+> > Upon attachment:
+> >
+> > * A BPF fexit trampoline is used for LSM hooks with a void return type.
+> > * A BPF fmod_ret trampoline is used for LSM hooks which return an
+> >   int. The attached programs can override the return value of the
+> >   bpf LSM hook to indicate a MAC Policy decision.
+> >
+> > Signed-off-by: KP Singh <kpsingh@google.com>
+> > Reviewed-by: Brendan Jackman <jackmanb@google.com>
+> > Reviewed-by: Florent Revest <revest@google.com>
+> > ---
+> >  include/linux/bpf.h     |  4 ++++
+> >  include/linux/bpf_lsm.h | 11 +++++++++++
+> >  kernel/bpf/bpf_lsm.c    | 29 +++++++++++++++++++++++++++++
+> >  kernel/bpf/btf.c        |  9 ++++++++-
+> >  kernel/bpf/syscall.c    | 26 ++++++++++++++++++++++----
+> >  kernel/bpf/trampoline.c | 17 +++++++++++++----
+> >  kernel/bpf/verifier.c   | 19 +++++++++++++++----
+> >  7 files changed, 102 insertions(+), 13 deletions(-)
+> >
 > 
-> Actually we do have an extra check for loading BPF programs:
+> [...]
 > 
+> >
+> > +#define BPF_LSM_SYM_PREFX  "bpf_lsm_"
+> > +
+> > +int bpf_lsm_verify_prog(struct bpf_verifier_log *vlog,
+> > +                       const struct bpf_prog *prog)
+> > +{
+> > +       /* Only CAP_MAC_ADMIN users are allowed to make changes to LSM hooks
+> > +        */
+> > +       if (!capable(CAP_MAC_ADMIN))
+> > +               return -EPERM;
+> > +
+> > +       if (!prog->gpl_compatible) {
+> > +               bpf_log(vlog,
+> > +                       "LSM programs must have a GPL compatible license\n");
+> > +               return -EINVAL;
+> > +       }
+> > +
+> > +       if (strncmp(BPF_LSM_SYM_PREFX, prog->aux->attach_func_name,
+> > +                   strlen(BPF_LSM_SYM_PREFX))) {
 > 
-> in kernel/bpf/syscall.c:bpf_prog_load
-> 
-> 	if (type != BPF_PROG_TYPE_SOCKET_FILTER &&
-> 	    type != BPF_PROG_TYPE_CGROUP_SKB &&
-> 	    !capable(CAP_SYS_ADMIN))
-> 		return -EPERM;
-> 
-> Do you think we still need a CAP_MAC_ADMIN check for LSM programs?
+> sizeof(BPF_LSM_SYM_PREFIX) - 1?
 
-IMO, these are distinct privileges on the non-SELinux system. I think
-your patch is fine as-is.
+Thanks, done.
 
--- 
-Kees Cook
+> 
+> > +               bpf_log(vlog, "attach_btf_id %u points to wrong type name %s\n",
+> > +                       prog->aux->attach_btf_id, prog->aux->attach_func_name);
+> > +               return -EINVAL;
+> > +       }
+> > +
+> > +       return 0;
+> > +}
+> > +
+> 
+> [...]
+> 
+> > @@ -2367,10 +2369,24 @@ static int bpf_tracing_prog_attach(struct bpf_prog *prog)
+> >         struct file *link_file;
+> >         int link_fd, err;
+> >
+> > -       if (prog->expected_attach_type != BPF_TRACE_FENTRY &&
+> > -           prog->expected_attach_type != BPF_TRACE_FEXIT &&
+> > -           prog->expected_attach_type != BPF_MODIFY_RETURN &&
+> > -           prog->type != BPF_PROG_TYPE_EXT) {
+> > +       switch (prog->type) {
+> > +       case BPF_PROG_TYPE_TRACING:
+> > +               if (prog->expected_attach_type != BPF_TRACE_FENTRY &&
+> > +                   prog->expected_attach_type != BPF_TRACE_FEXIT &&
+> > +                   prog->expected_attach_type != BPF_MODIFY_RETURN) {
+> > +                       err = -EINVAL;
+> > +                       goto out_put_prog;
+> > +               }
+> > +               break;
+> > +       case BPF_PROG_TYPE_EXT:
+> 
+> It looks like an omission that we don't enforce expected_attach_type
+> to be 0 here. Should we fix it until it's too late?
+
+Done.
+
+> 
+> > +               break;
+> > +       case BPF_PROG_TYPE_LSM:
+> > +               if (prog->expected_attach_type != BPF_LSM_MAC) {
+> > +                       err = -EINVAL;
+> > +                       goto out_put_prog;
+> > +               }
+> > +               break;
+> > +       default:
+> >                 err = -EINVAL;
+> >                 goto out_put_prog;
+> >         }
+> > @@ -2452,12 +2468,14 @@ static int bpf_raw_tracepoint_open(const union bpf_attr *attr)
+> >         if (prog->type != BPF_PROG_TYPE_RAW_TRACEPOINT &&
+> >             prog->type != BPF_PROG_TYPE_TRACING &&
+> >             prog->type != BPF_PROG_TYPE_EXT &&
+> > +           prog->type != BPF_PROG_TYPE_LSM &&
+> >             prog->type != BPF_PROG_TYPE_RAW_TRACEPOINT_WRITABLE) {
+> >                 err = -EINVAL;
+> >                 goto out_put_prog;
+> >         }
+> >
+> >         if (prog->type == BPF_PROG_TYPE_TRACING ||
+> > +           prog->type == BPF_PROG_TYPE_LSM ||
+> >             prog->type == BPF_PROG_TYPE_EXT) {
+> 
+> 
+> can you please refactor this into a nicer explicit switch instead of
+> combination of if/elses?
+
+Done.
+
+- KP
+
+> 
+> >                 if (attr->raw_tracepoint.name) {
+> >                         /* The attach point for this category of programs
+> > diff --git a/kernel/bpf/trampoline.c b/kernel/bpf/trampoline.c
+> > index f30bca2a4d01..9be85aa4ec5f 100644
+> > --- a/kernel/bpf/trampoline.c
+> > +++ b/kernel/bpf/trampoline.c
+> > @@ -6,6 +6,7 @@
+> >  #include <linux/ftrace.h>
+> >  #include <linux/rbtree_latch.h>
+> >  #include <linux/perf_event.h>
+> > +#include <linux/btf.h>
+> >
+> 
+> [...]
