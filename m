@@ -2,137 +2,206 @@ Return-Path: <SRS0=jUwH=5J=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32ADEC54EEB
-	for <linux-security-module@archiver.kernel.org>; Tue, 24 Mar 2020 21:22:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74408C10DCE
+	for <linux-security-module@archiver.kernel.org>; Tue, 24 Mar 2020 21:27:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05BB62070A
-	for <linux-security-module@archiver.kernel.org>; Tue, 24 Mar 2020 21:22:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1585084939;
-	bh=X6ebq0WcchKrdaWOlTlc8AvYM4jWLIYlXO6WwrHjwSA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=TpgEHguocC9O2lCnYpJL6m0abiiy9yZxMLyqDZLN3yZfUz1vOwHanBcGYplbl6fBJ
-	 mGaSJtfQRVxKq7tixYHg0hjKVOgSVt6QNHdq/ZMDYMAZ4ayhLKHlKau/Zn3q6g4dop
-	 bvIkVlMCbLyt0B59xI9GcTWjQ4F9KfPySw78sARE=
+	by mail.kernel.org (Postfix) with ESMTP id 3AE192076F
+	for <linux-security-module@archiver.kernel.org>; Tue, 24 Mar 2020 21:27:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oFV80YsD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727496AbgCXVWS (ORCPT
+        id S1727937AbgCXV1J (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 24 Mar 2020 17:22:18 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:41837 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727088AbgCXVWS (ORCPT
+        Tue, 24 Mar 2020 17:27:09 -0400
+Received: from mail-qv1-f67.google.com ([209.85.219.67]:42070 "EHLO
+        mail-qv1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726673AbgCXV1I (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 24 Mar 2020 17:22:18 -0400
-Received: by mail-lf1-f68.google.com with SMTP id z23so28311lfh.8
-        for <linux-security-module@vger.kernel.org>; Tue, 24 Mar 2020 14:22:17 -0700 (PDT)
+        Tue, 24 Mar 2020 17:27:08 -0400
+Received: by mail-qv1-f67.google.com with SMTP id ca9so10048958qvb.9;
+        Tue, 24 Mar 2020 14:27:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=K0AQOrscsNAyPOgnjIz1wdZ8BwbWscK7BvSW7dZFNMU=;
-        b=TU+v6vgTqqL8DSRyHNIS3zPA2Au3s8bOdz4RjYVrI59y/xJG37DuCzUkFedo8prEM1
-         kEhbDC8RUbuZ44J4woqibSX2DnsCF77IrNvFFBgUdsgFnP87BEfOj65kKyLU5UPa/XiH
-         yLDUovevdVM9pFj6antE7mF1/9gnUPays5DSg=
+         :cc:content-transfer-encoding;
+        bh=VEJoT2ftN3/J+JzBUUMUSAFQV5uekS8p6QQqfLbkw4A=;
+        b=oFV80YsDBCCQS0H4uydp2GAraoKy7ypaOl2OlD8XbZYroGuz5VpxBZxfoVMgGBvuQc
+         TAiLpIF5hcEfbtGLKjdqpM7ILoJvZ77DINUgNK+ljR2xi72jnvWddbKxIvlaEAkzGQz0
+         jfbHfUrL7KAIm2RBEoyYfRUy6GRc4G6BwQbOgsHunw7c4GDpx1tXhGWJ2efEdhX1JEve
+         PXSCvO38IkqekjcBSShUg+QPHwEeWr8xAO1AejfTANdqvPGSRfWKYyGa9mR98hazvVGe
+         asS4dfkNHeWJgd8fNvwgSRQQNONdT8/31nSsRRJVI8wvjD8QwQmKmJltOXDL6R8+WyQA
+         AwfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=K0AQOrscsNAyPOgnjIz1wdZ8BwbWscK7BvSW7dZFNMU=;
-        b=pw5d590Vb6TzjQ+ENUrlF53wosLQsO2Cjhc0NKCpoNUSrLCWDjl0uUKK4mSI8V4Eg7
-         9O8APIgZFeyfrjALwez9N9dYGoPOUpbRQ2Gi7DT2CiRuuAB+iTo8cGUkeWq5WJq3NcoI
-         QA7DfF/PAcI2V2ie7ZaUbwKZRkAxqpBSYHc+ZNRFEZAsXDRvKLocLEf1NV69SzLcyMCZ
-         A16tatNVUSWuiSieEq3OSf6bJsivWlRtPjodlJk03CHBZtToU0znuunVrhaF5sRUQoxK
-         VsLBD4obSiFYG1Pn8RLQK+wL44QBcPRmYgkB7LcEHygZLhqZyrbCgRL63tdHlTH6hmi3
-         je6A==
-X-Gm-Message-State: ANhLgQ16+9F/4BJD1847JQ+ZUjrtd9J/jPwCRlkOioj7vXrONLokxpGc
-        DF/DUMFOfhI9YaeNz79GdUk2fP6Qj7w=
-X-Google-Smtp-Source: ADFU+vvHtG1124aZDHtbKQv86wRwx6EhWeHTEXc7wQ9zQN+I5NyALTQYgfqh1PjuJ9InlPjhdEUDQQ==
-X-Received: by 2002:a05:6512:50e:: with SMTP id o14mr31416lfb.85.1585084936532;
-        Tue, 24 Mar 2020 14:22:16 -0700 (PDT)
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com. [209.85.167.52])
-        by smtp.gmail.com with ESMTPSA id i13sm10603926lja.73.2020.03.24.14.22.15
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Mar 2020 14:22:15 -0700 (PDT)
-Received: by mail-lf1-f52.google.com with SMTP id j15so37727lfk.6
-        for <linux-security-module@vger.kernel.org>; Tue, 24 Mar 2020 14:22:15 -0700 (PDT)
-X-Received: by 2002:a19:f015:: with SMTP id p21mr60990lfc.10.1585084934903;
- Tue, 24 Mar 2020 14:22:14 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=VEJoT2ftN3/J+JzBUUMUSAFQV5uekS8p6QQqfLbkw4A=;
+        b=RUf/ivsbbPqhMBIMgV3NBq72E8Lt0ykepGzQPT11t0Njbi+OkgF8IuLYGKrxQn7tF+
+         cLMCEMo8txjKQxoOBV8JAkHj+uDEgrK5uzN1L4JTijtmQRFZRgLeJo6T5QtGEBf62bxi
+         xUQReLHqbvn6KoXdqB2+RlWksKsGIyVWvZq0NYWiXpffchLX/GzAr7p3I5pUdIo+2oSU
+         kwrMSvmcrnovd1xX/Z8+FojJ/ziWESKhLFifDg60E/ezMx9Sl43/eNxYVAPqpIU8PAIX
+         RtskwiR4A6yV1ODAmhURTvSVwTHWU6FM58QjtkCVYM//6iwxXxLiE9VMpFE12WKVoWhM
+         Qb8w==
+X-Gm-Message-State: ANhLgQ3BvvZiOXX2bu7AnJyFcVpqMkZj83qIygsIFUv6itlUI5LktzSz
+        J9fPTiQahaQRvNzCZ87vYx5VegRRNEH5KkTon10=
+X-Google-Smtp-Source: ADFU+vvnlC2tuBiX08DOSzyNzyZRiEDqPSX5ECF8NjcPaR1qvgPpgcPX+NbxgqdXH4UO5KxsSJRb91QXeEmgiswfoFM=
+X-Received: by 2002:a0c:ee28:: with SMTP id l8mr178148qvs.196.1585085226618;
+ Tue, 24 Mar 2020 14:27:06 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200324204449.7263-1-gladkov.alexey@gmail.com> <20200324204449.7263-4-gladkov.alexey@gmail.com>
-In-Reply-To: <20200324204449.7263-4-gladkov.alexey@gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 24 Mar 2020 14:21:59 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whXbgW7-FYL4Rkaoh8qX+CkS5saVGP2hsJPV0c+EZ6K7A@mail.gmail.com>
-Message-ID: <CAHk-=whXbgW7-FYL4Rkaoh8qX+CkS5saVGP2hsJPV0c+EZ6K7A@mail.gmail.com>
-Subject: Re: [PATCH RESEND v9 3/8] proc: move hide_pid, pid_gid from
- pid_namespace to proc_fs_info
-To:     Alexey Gladkov <gladkov.alexey@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Alexey Gladkov <legion@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>,
+References: <20200323164415.12943-1-kpsingh@chromium.org> <20200323164415.12943-4-kpsingh@chromium.org>
+ <CAEf4BzbRivYO=gVjuQw8Z8snN+RFwXswvNxs67c=5g6U3o9rmw@mail.gmail.com>
+ <20200324103910.GA7135@chromium.org> <20200324161211.GA11227@chromium.org>
+In-Reply-To: <20200324161211.GA11227@chromium.org>
+From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date:   Tue, 24 Mar 2020 14:26:55 -0700
+Message-ID: <CAEf4BzZZLBf3xRsV4khGCFdTxDFV61KbFfV1mHwM5yiCr4P37w@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v5 3/7] bpf: lsm: provide attachment points for
+ BPF LSM programs
+To:     KP Singh <kpsingh@chromium.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>, linux-security-module@vger.kernel.org,
+        Brendan Jackman <jackmanb@google.com>,
+        Florent Revest <revest@google.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        James Morris <jmorris@namei.org>,
         Kees Cook <keescook@chromium.org>,
-        Oleg Nesterov <oleg@redhat.com>
+        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Mar 24, 2020 at 1:46 PM Alexey Gladkov <gladkov.alexey@gmail.com> wrote:
+On Tue, Mar 24, 2020 at 9:12 AM KP Singh <kpsingh@chromium.org> wrote:
 >
-> +/* definitions for hide_pid field */
-> +enum {
-> +       HIDEPID_OFF       = 0,
-> +       HIDEPID_NO_ACCESS = 1,
-> +       HIDEPID_INVISIBLE = 2,
-> +};
+> On 24-M=C3=A4r 11:39, KP Singh wrote:
+> > On 23-M=C3=A4r 12:59, Andrii Nakryiko wrote:
+> > > On Mon, Mar 23, 2020 at 9:45 AM KP Singh <kpsingh@chromium.org> wrote=
+:
+> > > >
+> > > > From: KP Singh <kpsingh@google.com>
+> > > >
+> > > > When CONFIG_BPF_LSM is enabled, nops functions, bpf_lsm_<hook_name>=
+, are
+> > > > generated for each LSM hook. These nops are initialized as LSM hook=
+s in
+> > > > a subsequent patch.
+> > > >
+> > > > Signed-off-by: KP Singh <kpsingh@google.com>
+> > > > Reviewed-by: Brendan Jackman <jackmanb@google.com>
+> > > > Reviewed-by: Florent Revest <revest@google.com>
+> > > > ---
+> > > >  include/linux/bpf_lsm.h | 21 +++++++++++++++++++++
+> > > >  kernel/bpf/bpf_lsm.c    | 19 +++++++++++++++++++
+> > > >  2 files changed, 40 insertions(+)
+> > > >  create mode 100644 include/linux/bpf_lsm.h
+> > > >
+> > > > diff --git a/include/linux/bpf_lsm.h b/include/linux/bpf_lsm.h
+> > > > new file mode 100644
+> > > > index 000000000000..c6423a140220
+> > > > --- /dev/null
+> > > > +++ b/include/linux/bpf_lsm.h
+> > > > @@ -0,0 +1,21 @@
+> > > > +/* SPDX-License-Identifier: GPL-2.0 */
+> > > > +
+> > > > +/*
+> > > > + * Copyright (C) 2020 Google LLC.
+> > > > + */
+> > > > +
+> > > > +#ifndef _LINUX_BPF_LSM_H
+> > > > +#define _LINUX_BPF_LSM_H
+> > > > +
+> > > > +#include <linux/bpf.h>
+> > > > +#include <linux/lsm_hooks.h>
+> > > > +
+> > > > +#ifdef CONFIG_BPF_LSM
+> > > > +
+> > > > +#define LSM_HOOK(RET, NAME, ...) RET bpf_lsm_##NAME(__VA_ARGS__);
+> > > > +#include <linux/lsm_hook_names.h>
+> > > > +#undef LSM_HOOK
+> > > > +
+> > > > +#endif /* CONFIG_BPF_LSM */
+> > > > +
+> > > > +#endif /* _LINUX_BPF_LSM_H */
+> > > > diff --git a/kernel/bpf/bpf_lsm.c b/kernel/bpf/bpf_lsm.c
+> > > > index 82875039ca90..530d137f7a84 100644
+> > > > --- a/kernel/bpf/bpf_lsm.c
+> > > > +++ b/kernel/bpf/bpf_lsm.c
+> > > > @@ -7,6 +7,25 @@
+> > > >  #include <linux/filter.h>
+> > > >  #include <linux/bpf.h>
+> > > >  #include <linux/btf.h>
+> > > > +#include <linux/lsm_hooks.h>
+> > > > +#include <linux/bpf_lsm.h>
+> > > > +
+> > > > +/* For every LSM hook  that allows attachment of BPF programs, dec=
+lare a NOP
+> > > > + * function where a BPF program can be attached as an fexit trampo=
+line.
+> > > > + */
+> > > > +#define LSM_HOOK(RET, NAME, ...) LSM_HOOK_##RET(NAME, __VA_ARGS__)
+> > > > +
+> > > > +#define LSM_HOOK_int(NAME, ...)                        \
+> > > > +noinline __weak int bpf_lsm_##NAME(__VA_ARGS__)        \
+> > > > +{                                              \
+> > > > +       return 0;                               \
+> > > > +}
+> > > > +
+> > > > +#define LSM_HOOK_void(NAME, ...) \
+> > > > +noinline __weak void bpf_lsm_##NAME(__VA_ARGS__) {}
+> > > > +
+> > >
+> > > Could unify with:
+> > >
+> > > #define LSM_HOOK(RET, NAME, ...) noinline __weak RET bpf_lsm_##NAME(_=
+_VA_ARGS__)
+> > > {
+> > >     return (RET)0;
+> > > }
+> > >
+> > > then you don't need LSM_HOOK_int and LSM_HOOK_void.
+> >
+> > Nice.
+> >
+> > But, given that we are adding default values and that
+> > they are only needed for int hooks, we will need to keep the macros
+> > separate for int and void. Or, Am I missing a trick here?
+> >
+> > - KP
+>
+> Actually, was able to get it work. not setting a default for void
+> hooks makes the macros messier. So i just set it void. For example:
+>
+>   LSM_HOOK(void, void, bprm_committing_creds, struct linux_binprm *bprm)
 
-Should this enum be named...
+surprised this works, was going to propose to specify `(void)0` as
+default value :)
 
->  struct proc_fs_info {
->         struct pid_namespace *pid_ns;
->         struct dentry *proc_self;        /* For /proc/self */
->         struct dentry *proc_thread_self; /* For /proc/thread-self */
-> +       kgid_t pid_gid;
-> +       int hide_pid;
->  };
+>
+> This also allows me to use the cleanup you suggested and not having
+> to split every usage into int and void.
+>
 
-.. and then used here instead of "int"?
+Nice, one of the reasons for proposing this.
 
-Same goes for 'struct proc_fs_context' too, for that matter?
-
-And maybe in the function declarations and definitions too? In things
-like 'has_pid_permissions()' (the series adds some other cases later,
-like hidepid2str() etc)
-
-Yeah, enums and ints are kind of interchangeable in C, but even if it
-wouldn't give us any more typechecking (except perhaps with sparse if
-you mark it so), it would be documenting the use.
-
-Or am I missing something?
-
-Anyway, I continue to think the series looks fine, bnut would love to
-see it in -next and perhaps comments from Al and Alexey Dobriyan..
-
-            Linus
+> - KP
+>
+> >
+> > >
+> > > > +#include <linux/lsm_hook_names.h>
+> > > > +#undef LSM_HOOK
+> > > >
+> > > >  const struct bpf_prog_ops lsm_prog_ops =3D {
+> > > >  };
+> > > > --
+> > > > 2.20.1
+> > > >
