@@ -2,178 +2,150 @@ Return-Path: <SRS0=gnGb=5K=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44087C1975A
-	for <linux-security-module@archiver.kernel.org>; Wed, 25 Mar 2020 10:56:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D031EC54FD3
+	for <linux-security-module@archiver.kernel.org>; Wed, 25 Mar 2020 14:35:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2687220722
-	for <linux-security-module@archiver.kernel.org>; Wed, 25 Mar 2020 10:56:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E0BE216FD
+	for <linux-security-module@archiver.kernel.org>; Wed, 25 Mar 2020 14:35:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NSQNWZYg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727260AbgCYK4H (ORCPT
+        id S1727854AbgCYOfi (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 25 Mar 2020 06:56:07 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2594 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726139AbgCYK4H (ORCPT
+        Wed, 25 Mar 2020 10:35:38 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:34832 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727689AbgCYOff (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 25 Mar 2020 06:56:07 -0400
-Received: from lhreml707-cah.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id F025C1F99A62E89AD8C8;
-        Wed, 25 Mar 2020 10:56:05 +0000 (GMT)
-Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.160)
- by smtpsuk.huawei.com (10.201.108.48) with Microsoft SMTP Server (TLS) id
- 14.3.408.0; Wed, 25 Mar 2020 10:55:59 +0000
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     <zohar@linux.ibm.com>, <James.Bottomley@HansenPartnership.com>
-CC:     <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v4 7/7] ima: Use ima_hash_algo for collision detection in the measurement list
-Date:   Wed, 25 Mar 2020 11:54:24 +0100
-Message-ID: <20200325105424.26665-1-roberto.sassu@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200325104712.25694-1-roberto.sassu@huawei.com>
-References: <20200325104712.25694-1-roberto.sassu@huawei.com>
+        Wed, 25 Mar 2020 10:35:35 -0400
+Received: by mail-wm1-f68.google.com with SMTP id m3so2976139wmi.0
+        for <linux-security-module@vger.kernel.org>; Wed, 25 Mar 2020 07:35:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=4SCMfX4AFsAbSPoyRRB2akn3fbWQgwxVoxo/587s/z8=;
+        b=NSQNWZYgH7h9i9bJ/0fpcGqR+VH3MsRrjjNKsBw/qMvHIVxROtE/7whq7UFq7v5S/z
+         QrMRhJWkncsPtnhD/cQ9XRdOB6fwTXuvNhcCY3r0VvanFGk9LmguhT/S1HwmklbCSygS
+         FPlzURZP+Wp0rut/CEkrX0IAIb1QiGU5LO2WI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=4SCMfX4AFsAbSPoyRRB2akn3fbWQgwxVoxo/587s/z8=;
+        b=DyxVLdNDQ8rDZhPm/VotZvsNhmVqQLdip0AJcyF7zdedFbKJSrajdIQLB6d/7RiKEy
+         9WW89Xc9L2R9FvWjQ6MlJ8cZQ9UJnLlddNnkmwY/o9wkdOX8/MEpVYLdAGtF9+8T/evp
+         h9G2vt+KgL1E9Uat1LlDE/MILbQWz+5rQNz2Rne9dUBe6FJ+MgPMg0bmKN9YvV38CVTo
+         0wBg0Ny+Jl6stI7RUkz4QY3SAyagB4EQ5wMliQapb0G2LCPyVDT6oG5q7D1xT54kLYgE
+         SLbMd0N8J9r9ay4eBVfFPe4voXpf9XZz8xp5d8mJFnv32F2BnhNlsCP3FbDHFgtylPTb
+         VqlA==
+X-Gm-Message-State: ANhLgQ3XkDM9XT3qjhS2VzPUHE8V7UOOs0e1Yf5LwxY4MakvJXR6D+mD
+        tjDiUYiR3IooLl4k2YtlC3YEIw==
+X-Google-Smtp-Source: ADFU+vtcbDNx2fH0BZ0dRVcQfoo8d+zdTI5b+qqCqcI7EqKovAvDaWAteq4zsCjG8Ks4n87sO3e5Aw==
+X-Received: by 2002:a05:600c:10ce:: with SMTP id l14mr3925012wmd.161.1585146932514;
+        Wed, 25 Mar 2020 07:35:32 -0700 (PDT)
+Received: from chromium.org (77-56-209-237.dclient.hispeed.ch. [77.56.209.237])
+        by smtp.gmail.com with ESMTPSA id e9sm33653723wrw.30.2020.03.25.07.35.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Mar 2020 07:35:31 -0700 (PDT)
+From:   KP Singh <kpsingh@chromium.org>
+X-Google-Original-From: KP Singh <kpsingh>
+Date:   Wed, 25 Mar 2020 15:35:28 +0100
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Brendan Jackman <jackmanb@google.com>,
+        Florent Revest <revest@google.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        James Morris <jmorris@namei.org>, Paul Turner <pjt@google.com>,
+        Jann Horn <jannh@google.com>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH bpf-next v5 5/7] bpf: lsm: Initialize the BPF LSM hooks
+Message-ID: <20200325143528.GA22419@chromium.org>
+References: <20200323164415.12943-1-kpsingh@chromium.org>
+ <20200323164415.12943-6-kpsingh@chromium.org>
+ <202003231237.F654B379@keescook>
+ <0655d820-4c42-cf9a-23d3-82dc4fdeeceb@schaufler-ca.com>
+ <202003231354.1454ED92EC@keescook>
+ <a9a7e251-9813-7d37-34d1-c50db2273569@schaufler-ca.com>
+ <202003231505.59A11B06E@keescook>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.204.65.160]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <202003231505.59A11B06E@keescook>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Before calculating a digest for each PCR bank, collisions were detected
-with a SHA1 digest. This patch includes ima_hash_algo among the algorithms
-used to calculate the template digest and checks collisions on that digest.
+On 23-Mär 15:12, Kees Cook wrote:
+> On Mon, Mar 23, 2020 at 02:58:18PM -0700, Casey Schaufler wrote:
+> > That's not too terrible, I suppose. What would you be thinking for
+> > the calls that do use call_int_hook()?
+> > 
+> > 	rc = call_int_hook(something, something_default, goodnesses);
+> > 
+> > or embedded in the macro:
+> > 
+> > 	rc = call_int_hook(something, goodnesses);
+> 
+> Oh yes, good point. The hook call already knows the name, so:
 
-The position in the measurement entry array of the template digest
-calculated with the IMA default hash algorithm is stored in the
-ima_hash_algo_idx global variable and is determined at IMA initialization
-time.
+I learnt this the hard way that IRC that is passed to the
+call_int_hook macro is not the same as the default value for a hook
 
-Changelog
+call_int_hook accomdates for a different return value when no hook is
+implemented, but it does expect the default value of the hook to be 0
+as it compares the return value of the callbacks to 0 instead of the
+default value whereas these special cases compare it with the default
+value.
 
-v2:
-- add __ro_after_init to declaration of ima_hash_algo_idx (suggested by
-  Mimi)
-- replace ima_num_template_digests with
-  NR_BANKS(ima_tpm_chip) + ima_extra_slots(suggested by Mimi)
-- use ima_hash_algo_idx to access ima_algo_array elements in
-  ima_init_crypto()
+For example:
 
-v1:
-- increment ima_num_template_digests before kcalloc() (suggested by Mimi)
-- check if ima_tpm_chip is NULL
+  If we define the default_value of the secid_to_secctx to
+  -EOPNOTSUPP, it changes the behaviour and the BPF hook, which
+  returns this default value always results in a failure.
 
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- security/integrity/ima/ima.h        |  1 +
- security/integrity/ima/ima_crypto.c | 19 ++++++++++++++++++-
- security/integrity/ima/ima_queue.c  |  8 ++++----
- 3 files changed, 23 insertions(+), 5 deletions(-)
+  I noticed this when I saw a bunch of messages on my VM:
 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 2a7ed68e6414..467dfdbea25c 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -53,6 +53,7 @@ extern int ima_policy_flag;
- /* set during initialization */
- extern int ima_hash_algo;
- extern int ima_sha1_idx __ro_after_init;
-+extern int ima_hash_algo_idx __ro_after_init;
- extern int ima_extra_slots __ro_after_init;
- extern int ima_appraise;
- extern struct tpm_chip *ima_tpm_chip;
-diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
-index a94972d3f929..5201f5ec2ce4 100644
---- a/security/integrity/ima/ima_crypto.c
-+++ b/security/integrity/ima/ima_crypto.c
-@@ -63,6 +63,7 @@ struct ima_algo_desc {
- };
- 
- int ima_sha1_idx __ro_after_init;
-+int ima_hash_algo_idx __ro_after_init;
- /*
-  * Additional number of slots reserved, as needed, for SHA1
-  * and IMA default algo.
-@@ -122,15 +123,25 @@ int __init ima_init_crypto(void)
- 		return rc;
- 
- 	ima_sha1_idx = -1;
-+	ima_hash_algo_idx = -1;
- 
- 	for (i = 0; i < NR_BANKS(ima_tpm_chip); i++) {
- 		algo = ima_tpm_chip->allocated_banks[i].crypto_id;
- 		if (algo == HASH_ALGO_SHA1)
- 			ima_sha1_idx = i;
-+
-+		if (algo == ima_hash_algo)
-+			ima_hash_algo_idx = i;
- 	}
- 
--	if (ima_sha1_idx < 0)
-+	if (ima_sha1_idx < 0) {
- 		ima_sha1_idx = NR_BANKS(ima_tpm_chip) + ima_extra_slots++;
-+		if (ima_hash_algo == HASH_ALGO_SHA1)
-+			ima_hash_algo_idx = ima_sha1_idx;
-+	}
-+
-+	if (ima_hash_algo_idx < 0)
-+		ima_hash_algo_idx = NR_BANKS(ima_tpm_chip) + ima_extra_slots++;
- 
- 	ima_algo_array = kcalloc(NR_BANKS(ima_tpm_chip) + ima_extra_slots,
- 				 sizeof(*ima_algo_array), GFP_KERNEL);
-@@ -179,6 +190,12 @@ int __init ima_init_crypto(void)
- 		ima_algo_array[ima_sha1_idx].algo = HASH_ALGO_SHA1;
- 	}
- 
-+	if (ima_hash_algo_idx >= NR_BANKS(ima_tpm_chip) &&
-+	    ima_hash_algo_idx != ima_sha1_idx) {
-+		ima_algo_array[ima_hash_algo_idx].tfm = ima_shash_tfm;
-+		ima_algo_array[ima_hash_algo_idx].algo = ima_hash_algo;
-+	}
-+
- 	return 0;
- out_array:
- 	for (i = 0; i < NR_BANKS(ima_tpm_chip) + ima_extra_slots; i++) {
-diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
-index 82a9ca43b989..fb4ec270f620 100644
---- a/security/integrity/ima/ima_queue.c
-+++ b/security/integrity/ima/ima_queue.c
-@@ -55,8 +55,8 @@ static struct ima_queue_entry *ima_lookup_digest_entry(u8 *digest_value,
- 	key = ima_hash_key(digest_value);
- 	rcu_read_lock();
- 	hlist_for_each_entry_rcu(qe, &ima_htable.queue[key], hnext) {
--		rc = memcmp(qe->entry->digests[ima_sha1_idx].digest,
--			    digest_value, TPM_DIGEST_SIZE);
-+		rc = memcmp(qe->entry->digests[ima_hash_algo_idx].digest,
-+			    digest_value, hash_digest_size[ima_hash_algo]);
- 		if ((rc == 0) && (qe->entry->pcr == pcr)) {
- 			ret = qe;
- 			break;
-@@ -108,7 +108,7 @@ static int ima_add_digest_entry(struct ima_template_entry *entry,
- 
- 	atomic_long_inc(&ima_htable.len);
- 	if (update_htable) {
--		key = ima_hash_key(entry->digests[ima_sha1_idx].digest);
-+		key = ima_hash_key(entry->digests[ima_hash_algo_idx].digest);
- 		hlist_add_head_rcu(&qe->hnext, &ima_htable.queue[key]);
- 	}
- 
-@@ -160,7 +160,7 @@ int ima_add_template_entry(struct ima_template_entry *entry, int violation,
- 			   const char *op, struct inode *inode,
- 			   const unsigned char *filename)
- {
--	u8 *digest = entry->digests[ima_sha1_idx].digest;
-+	u8 *digest = entry->digests[ima_hash_algo_idx].digest;
- 	struct tpm_digest *digests_arg = entry->digests;
- 	const char *audit_cause = "hash_added";
- 	char tpm_audit_cause[AUDIT_CAUSE_LEN_MAX];
--- 
-2.17.1
+    audit: error in audit_log_task_context
 
+  which comes from audit_log_task_context and calls
+  security_secid_to_secctx which ends up being always denied by BPF.
+
+In anycase, I am still adding the default value in LSM_HOOK and using
+them in the following hooks:
+
+ getprocattr -EINVAL
+ inode_getsecurity -EOPNOTSUPP
+ inode_setsecurity -EOPNOTSUPP
+ setprocattr -EINVAL
+ task_prctl -ENOSYS
+ xfrm_state_pol_flow_match 1
+
+Will send v6 out with these changes.
+
+- KP
+
+> 
+> #define call_int_hook(FUNC, ...) ({                        \
+>         int RC = FUNC#_default;                            \
+> ...
+> 
+> 
+> -- 
+> Kees Cook
+> 
+> 
