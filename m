@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6344DC54FCF
-	for <linux-security-module@archiver.kernel.org>; Wed, 25 Mar 2020 16:13:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34D91C54FD0
+	for <linux-security-module@archiver.kernel.org>; Wed, 25 Mar 2020 16:16:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 429E320789
-	for <linux-security-module@archiver.kernel.org>; Wed, 25 Mar 2020 16:13:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D4072073E
+	for <linux-security-module@archiver.kernel.org>; Wed, 25 Mar 2020 16:16:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727924AbgCYQNi (ORCPT
+        id S1727953AbgCYQQr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 25 Mar 2020 12:13:38 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2602 "EHLO huawei.com"
+        Wed, 25 Mar 2020 12:16:47 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2603 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727600AbgCYQNi (ORCPT
+        id S1727948AbgCYQQr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 25 Mar 2020 12:13:38 -0400
-Received: from lhreml702-cah.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id DA8992CFA7F3ED2B89C1;
-        Wed, 25 Mar 2020 16:13:36 +0000 (GMT)
+        Wed, 25 Mar 2020 12:16:47 -0400
+Received: from lhreml703-cah.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id 3D4F71E70E9E7CC96987;
+        Wed, 25 Mar 2020 16:16:46 +0000 (GMT)
 Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.160)
- by smtpsuk.huawei.com (10.201.108.43) with Microsoft SMTP Server (TLS) id
- 14.3.408.0; Wed, 25 Mar 2020 16:13:27 +0000
+ by smtpsuk.huawei.com (10.201.108.44) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Wed, 25 Mar 2020 16:16:35 +0000
 From:   Roberto Sassu <roberto.sassu@huawei.com>
 To:     <zohar@linux.ibm.com>
 CC:     <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <krzysztof.struczynski@huawei.com>,
-        <silviu.vlasceanu@huawei.com>, <stable@vger.kernel.org>
-Subject: [PATCH 3/5] ima: Fix ima digest hash table key calculation
-Date:   Wed, 25 Mar 2020 17:11:14 +0100
-Message-ID: <20200325161116.7082-3-roberto.sassu@huawei.com>
+        <silviu.vlasceanu@huawei.com>
+Subject: [PATCH 4/5] ima: Remove redundant policy rule set in add_rules()
+Date:   Wed, 25 Mar 2020 17:14:54 +0100
+Message-ID: <20200325161455.7610-1-roberto.sassu@huawei.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200325161116.7082-1-roberto.sassu@huawei.com>
 References: <20200325161116.7082-1-roberto.sassu@huawei.com>
@@ -48,34 +48,32 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
 
-Function hash_long() accepts unsigned long, while currently only one byte
-is passed from ima_hash_key(), which calculates a key for ima_htable. Use
-more bytes to avoid frequent collisions.
+Function ima_appraise_flag() returns the flag to be set in
+temp_ima_appraise depending on the hook identifier passed as an argument.
+It is not necessary to set the flag again for the POLICY_CHECK hook.
 
-Length of the buffer is not explicitly passed as a function parameter,
-because this function expects a digest whose length is greater than the
-size of unsigned long.
-
-Cc: stable@vger.kernel.org
-Fixes: 3323eec921ef ("integrity: IMA as an integrity service provider")
 Signed-off-by: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
 ---
- security/integrity/ima/ima.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ security/integrity/ima/ima_policy.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 64317d95363e..cf0022c2bc14 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -177,7 +177,7 @@ extern struct ima_h_table ima_htable;
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index c334e0dc6083..ea9b991f0232 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -643,11 +643,8 @@ static void add_rules(struct ima_rule_entry *entries, int count,
  
- static inline unsigned long ima_hash_key(u8 *digest)
- {
--	return hash_long(*digest, IMA_HASH_BITS);
-+	return hash_long(*((unsigned long *)digest), IMA_HASH_BITS);
+ 			list_add_tail(&entry->list, &ima_policy_rules);
+ 		}
+-		if (entries[i].action == APPRAISE) {
++		if (entries[i].action == APPRAISE)
+ 			temp_ima_appraise |= ima_appraise_flag(entries[i].func);
+-			if (entries[i].func == POLICY_CHECK)
+-				temp_ima_appraise |= IMA_APPRAISE_POLICY;
+-		}
+ 	}
  }
  
- #define __ima_hooks(hook)		\
 -- 
 2.17.1
 
