@@ -2,285 +2,88 @@ Return-Path: <SRS0=gnGb=5K=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E231EC54FD5
-	for <linux-security-module@archiver.kernel.org>; Wed, 25 Mar 2020 15:27:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F01BEC54FD0
+	for <linux-security-module@archiver.kernel.org>; Wed, 25 Mar 2020 16:13:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF28F2078A
-	for <linux-security-module@archiver.kernel.org>; Wed, 25 Mar 2020 15:27:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gMqY+UNG"
+	by mail.kernel.org (Postfix) with ESMTP id C9DEA2073E
+	for <linux-security-module@archiver.kernel.org>; Wed, 25 Mar 2020 16:13:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727708AbgCYP1J (ORCPT
+        id S1727773AbgCYQNO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 25 Mar 2020 11:27:09 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:55278 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727820AbgCYP0u (ORCPT
+        Wed, 25 Mar 2020 12:13:14 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2600 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727600AbgCYQNO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 25 Mar 2020 11:26:50 -0400
-Received: by mail-wm1-f66.google.com with SMTP id c81so2919352wmd.4
-        for <linux-security-module@vger.kernel.org>; Wed, 25 Mar 2020 08:26:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=A8CeJo2xzCt6YZDm4a+ZcF1pM56XlwbluivEFaQeG7k=;
-        b=gMqY+UNG45Hf3hv5meja+qeYoelq6zH5k0XPIiGYYrdgZ5NZj2rFuVtfb8AJw9Zu/w
-         OsSXE9M+UdToDjwedxbCiPdTeGXj3CaKECmdhQc1DOPp9i86AqMD/N60dlOkOy86CKhD
-         vzaDcTuvKv5yBMgo8rRrGXnHgpteCFB0kY3Ts=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=A8CeJo2xzCt6YZDm4a+ZcF1pM56XlwbluivEFaQeG7k=;
-        b=WTjpSEc1P+ifJ/mP7dZSc/eyi9D1qrKdtZo5jGy2KktcvAxlFUtt79pJdYdklTJzw1
-         XoUlMz0r08cuPYaqvmq/ILzXACgB8m7a+3iXFRjakbX136YQAwtDwwGWnK5f6DyweqCn
-         4MhrEWk/ZKUL4b9AbTinOaWs8eV3WlJ5NKNO3xd99XPDX19K1qoT+UP9ogDUJ8M/tsWh
-         lOs/X18kspTR+53ecsPD/E3RF0ot0DJ5iSwCgra7opNd4dkpi1/iZV9lmaNg6K+fuqdl
-         EwveB/hTDK73c7TFSGaoX3z+xBkt9A62S5/YNCUY/RUrY5MhoOvNoG/NgZRCI70c/Tnz
-         Vclg==
-X-Gm-Message-State: ANhLgQ1As/RfuFMC4bySpiDgtuqmt2kw71+C92LBV0DeOXhVvXenpaWA
-        djzIjohpafCb4YG6MkYnxv+uSg==
-X-Google-Smtp-Source: ADFU+vvd6VPnGetYOLmaFFXN6FNXqnh5I0dQoVTphqgM/XYgbekaDkbZvDZmuVVnwLtHM2GGV5p1+Q==
-X-Received: by 2002:a7b:ca4e:: with SMTP id m14mr3777108wml.164.1585150007664;
-        Wed, 25 Mar 2020 08:26:47 -0700 (PDT)
-Received: from kpsingh-kernel.localdomain (77-56-209-237.dclient.hispeed.ch. [77.56.209.237])
-        by smtp.gmail.com with ESMTPSA id a2sm4033701wrp.13.2020.03.25.08.26.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Mar 2020 08:26:47 -0700 (PDT)
-From:   KP Singh <kpsingh@chromium.org>
-To:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Cc:     Brendan Jackman <jackmanb@google.com>,
-        Florent Revest <revest@google.com>, Yonghong Song <yhs@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>,
-        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH bpf-next v6 6/8] tools/libbpf: Add support for BPF_PROG_TYPE_LSM
-Date:   Wed, 25 Mar 2020 16:26:27 +0100
-Message-Id: <20200325152629.6904-7-kpsingh@chromium.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200325152629.6904-1-kpsingh@chromium.org>
-References: <20200325152629.6904-1-kpsingh@chromium.org>
+        Wed, 25 Mar 2020 12:13:14 -0400
+Received: from lhreml702-cah.china.huawei.com (unknown [172.18.7.107])
+        by Forcepoint Email with ESMTP id 85E86EC761C3ACE8F76B;
+        Wed, 25 Mar 2020 16:13:11 +0000 (GMT)
+Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.160)
+ by smtpsuk.huawei.com (10.201.108.43) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Wed, 25 Mar 2020 16:13:02 +0000
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <zohar@linux.ibm.com>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <krzysztof.struczynski@huawei.com>,
+        <silviu.vlasceanu@huawei.com>,
+        "Roberto Sassu" <roberto.sassu@huawei.com>,
+        <stable@vger.kernel.org>
+Subject: [PATCH 1/5] ima: Set file->f_mode instead of file->f_flags in ima_calc_file_hash()
+Date:   Wed, 25 Mar 2020 17:11:12 +0100
+Message-ID: <20200325161116.7082-1-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.204.65.160]
+X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: KP Singh <kpsingh@google.com>
+Commit a408e4a86b36 ("ima: open a new file instance if no read
+permissions") tries to create a new file descriptor to calculate a file
+digest if the file has not been opened with O_RDONLY flag. However, if a
+new file descriptor cannot be obtained, it sets the FMODE_READ flag to
+file->f_flags instead of file->f_mode.
 
-Since BPF_PROG_TYPE_LSM uses the same attaching mechanism as
-BPF_PROG_TYPE_TRACING, the common logic is refactored into a static
-function bpf_program__attach_btf_id.
+This patch fixes this issue by replacing f_flags with f_mode as it was
+before that commit.
 
-A new API call bpf_program__attach_lsm is still added to avoid userspace
-conflicts if this ever changes in the future.
-
-Signed-off-by: KP Singh <kpsingh@google.com>
-Reviewed-by: Brendan Jackman <jackmanb@google.com>
-Reviewed-by: Florent Revest <revest@google.com>
-Acked-by: Yonghong Song <yhs@fb.com>
+Cc: stable@vger.kernel.org # 4.20.x
+Fixes: a408e4a86b36 ("ima: open a new file instance if no read permissions")
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- tools/lib/bpf/bpf.c      |  3 ++-
- tools/lib/bpf/libbpf.c   | 39 +++++++++++++++++++++++++++++++++++----
- tools/lib/bpf/libbpf.h   |  4 ++++
- tools/lib/bpf/libbpf.map |  3 +++
- 4 files changed, 44 insertions(+), 5 deletions(-)
+ security/integrity/ima/ima_crypto.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tools/lib/bpf/bpf.c b/tools/lib/bpf/bpf.c
-index c6dafe563176..73220176728d 100644
---- a/tools/lib/bpf/bpf.c
-+++ b/tools/lib/bpf/bpf.c
-@@ -235,7 +235,8 @@ int bpf_load_program_xattr(const struct bpf_load_program_attr *load_attr,
- 	memset(&attr, 0, sizeof(attr));
- 	attr.prog_type = load_attr->prog_type;
- 	attr.expected_attach_type = load_attr->expected_attach_type;
--	if (attr.prog_type == BPF_PROG_TYPE_STRUCT_OPS) {
-+	if (attr.prog_type == BPF_PROG_TYPE_STRUCT_OPS ||
-+	    attr.prog_type == BPF_PROG_TYPE_LSM) {
- 		attr.attach_btf_id = load_attr->attach_btf_id;
- 	} else if (attr.prog_type == BPF_PROG_TYPE_TRACING ||
- 		   attr.prog_type == BPF_PROG_TYPE_EXT) {
-diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
-index 085e41f9b68e..ba605e5a9c44 100644
---- a/tools/lib/bpf/libbpf.c
-+++ b/tools/lib/bpf/libbpf.c
-@@ -2362,7 +2362,8 @@ static int bpf_object__finalize_btf(struct bpf_object *obj)
- 
- static inline bool libbpf_prog_needs_vmlinux_btf(struct bpf_program *prog)
- {
--	if (prog->type == BPF_PROG_TYPE_STRUCT_OPS)
-+	if (prog->type == BPF_PROG_TYPE_STRUCT_OPS ||
-+	    prog->type == BPF_PROG_TYPE_LSM)
- 		return true;
- 
- 	/* BPF_PROG_TYPE_TRACING programs which do not attach to other programs
-@@ -4870,7 +4871,8 @@ load_program(struct bpf_program *prog, struct bpf_insn *insns, int insns_cnt,
- 	load_attr.insns = insns;
- 	load_attr.insns_cnt = insns_cnt;
- 	load_attr.license = license;
--	if (prog->type == BPF_PROG_TYPE_STRUCT_OPS) {
-+	if (prog->type == BPF_PROG_TYPE_STRUCT_OPS ||
-+	    prog->type == BPF_PROG_TYPE_LSM) {
- 		load_attr.attach_btf_id = prog->attach_btf_id;
- 	} else if (prog->type == BPF_PROG_TYPE_TRACING ||
- 		   prog->type == BPF_PROG_TYPE_EXT) {
-@@ -4955,6 +4957,7 @@ int bpf_program__load(struct bpf_program *prog, char *license, __u32 kern_ver)
- 	int err = 0, fd, i, btf_id;
- 
- 	if ((prog->type == BPF_PROG_TYPE_TRACING ||
-+	     prog->type == BPF_PROG_TYPE_LSM ||
- 	     prog->type == BPF_PROG_TYPE_EXT) && !prog->attach_btf_id) {
- 		btf_id = libbpf_find_attach_btf_id(prog);
- 		if (btf_id <= 0)
-@@ -6194,6 +6197,7 @@ bool bpf_program__is_##NAME(const struct bpf_program *prog)	\
- }								\
- 
- BPF_PROG_TYPE_FNS(socket_filter, BPF_PROG_TYPE_SOCKET_FILTER);
-+BPF_PROG_TYPE_FNS(lsm, BPF_PROG_TYPE_LSM);
- BPF_PROG_TYPE_FNS(kprobe, BPF_PROG_TYPE_KPROBE);
- BPF_PROG_TYPE_FNS(sched_cls, BPF_PROG_TYPE_SCHED_CLS);
- BPF_PROG_TYPE_FNS(sched_act, BPF_PROG_TYPE_SCHED_ACT);
-@@ -6260,6 +6264,8 @@ static struct bpf_link *attach_raw_tp(const struct bpf_sec_def *sec,
- 				      struct bpf_program *prog);
- static struct bpf_link *attach_trace(const struct bpf_sec_def *sec,
- 				     struct bpf_program *prog);
-+static struct bpf_link *attach_lsm(const struct bpf_sec_def *sec,
-+				   struct bpf_program *prog);
- 
- struct bpf_sec_def {
- 	const char *sec;
-@@ -6310,6 +6316,10 @@ static const struct bpf_sec_def section_defs[] = {
- 	SEC_DEF("freplace/", EXT,
- 		.is_attach_btf = true,
- 		.attach_fn = attach_trace),
-+	SEC_DEF("lsm/", LSM,
-+		.is_attach_btf = true,
-+		.expected_attach_type = BPF_LSM_MAC,
-+		.attach_fn = attach_lsm),
- 	BPF_PROG_SEC("xdp",			BPF_PROG_TYPE_XDP),
- 	BPF_PROG_SEC("perf_event",		BPF_PROG_TYPE_PERF_EVENT),
- 	BPF_PROG_SEC("lwt_in",			BPF_PROG_TYPE_LWT_IN),
-@@ -6572,6 +6582,7 @@ static int bpf_object__collect_struct_ops_map_reloc(struct bpf_object *obj,
+diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
+index 423c84f95a14..8ab17aa867dd 100644
+--- a/security/integrity/ima/ima_crypto.c
++++ b/security/integrity/ima/ima_crypto.c
+@@ -436,7 +436,7 @@ int ima_calc_file_hash(struct file *file, struct ima_digest_data *hash)
+ 			 */
+ 			pr_info_ratelimited("Unable to reopen file for reading.\n");
+ 			f = file;
+-			f->f_flags |= FMODE_READ;
++			f->f_mode |= FMODE_READ;
+ 			modified_flags = true;
+ 		} else {
+ 			new_file_instance = true;
+@@ -456,7 +456,7 @@ int ima_calc_file_hash(struct file *file, struct ima_digest_data *hash)
+ 	if (new_file_instance)
+ 		fput(f);
+ 	else if (modified_flags)
+-		f->f_flags &= ~FMODE_READ;
++		f->f_mode &= ~FMODE_READ;
+ 	return rc;
  }
  
- #define BTF_TRACE_PREFIX "btf_trace_"
-+#define BTF_LSM_PREFIX "bpf_lsm_"
- #define BTF_MAX_NAME_SIZE 128
- 
- static int find_btf_by_prefix_kind(const struct btf *btf, const char *prefix,
-@@ -6599,6 +6610,9 @@ static inline int __find_vmlinux_btf_id(struct btf *btf, const char *name,
- 	if (attach_type == BPF_TRACE_RAW_TP)
- 		err = find_btf_by_prefix_kind(btf, BTF_TRACE_PREFIX, name,
- 					      BTF_KIND_TYPEDEF);
-+	else if (attach_type == BPF_LSM_MAC)
-+		err = find_btf_by_prefix_kind(btf, BTF_LSM_PREFIX, name,
-+					      BTF_KIND_FUNC);
- 	else
- 		err = btf__find_by_name_kind(btf, name, BTF_KIND_FUNC);
- 
-@@ -7452,7 +7466,8 @@ static struct bpf_link *attach_raw_tp(const struct bpf_sec_def *sec,
- 	return bpf_program__attach_raw_tracepoint(prog, tp_name);
- }
- 
--struct bpf_link *bpf_program__attach_trace(struct bpf_program *prog)
-+/* Common logic for all BPF program types that attach to a btf_id */
-+static struct bpf_link *bpf_program__attach_btf_id(struct bpf_program *prog)
- {
- 	char errmsg[STRERR_BUFSIZE];
- 	struct bpf_link *link;
-@@ -7474,7 +7489,7 @@ struct bpf_link *bpf_program__attach_trace(struct bpf_program *prog)
- 	if (pfd < 0) {
- 		pfd = -errno;
- 		free(link);
--		pr_warn("program '%s': failed to attach to trace: %s\n",
-+		pr_warn("program '%s': failed to attach: %s\n",
- 			bpf_program__title(prog, false),
- 			libbpf_strerror_r(pfd, errmsg, sizeof(errmsg)));
- 		return ERR_PTR(pfd);
-@@ -7483,12 +7498,28 @@ struct bpf_link *bpf_program__attach_trace(struct bpf_program *prog)
- 	return (struct bpf_link *)link;
- }
- 
-+struct bpf_link *bpf_program__attach_trace(struct bpf_program *prog)
-+{
-+	return bpf_program__attach_btf_id(prog);
-+}
-+
-+struct bpf_link *bpf_program__attach_lsm(struct bpf_program *prog)
-+{
-+	return bpf_program__attach_btf_id(prog);
-+}
-+
- static struct bpf_link *attach_trace(const struct bpf_sec_def *sec,
- 				     struct bpf_program *prog)
- {
- 	return bpf_program__attach_trace(prog);
- }
- 
-+static struct bpf_link *attach_lsm(const struct bpf_sec_def *sec,
-+				   struct bpf_program *prog)
-+{
-+	return bpf_program__attach_lsm(prog);
-+}
-+
- struct bpf_link *bpf_program__attach(struct bpf_program *prog)
- {
- 	const struct bpf_sec_def *sec_def;
-diff --git a/tools/lib/bpf/libbpf.h b/tools/lib/bpf/libbpf.h
-index d38d7a629417..df1be44c8118 100644
---- a/tools/lib/bpf/libbpf.h
-+++ b/tools/lib/bpf/libbpf.h
-@@ -248,6 +248,8 @@ bpf_program__attach_raw_tracepoint(struct bpf_program *prog,
- 
- LIBBPF_API struct bpf_link *
- bpf_program__attach_trace(struct bpf_program *prog);
-+LIBBPF_API struct bpf_link *
-+bpf_program__attach_lsm(struct bpf_program *prog);
- struct bpf_map;
- LIBBPF_API struct bpf_link *bpf_map__attach_struct_ops(struct bpf_map *map);
- struct bpf_insn;
-@@ -321,6 +323,7 @@ LIBBPF_API int bpf_program__set_socket_filter(struct bpf_program *prog);
- LIBBPF_API int bpf_program__set_tracepoint(struct bpf_program *prog);
- LIBBPF_API int bpf_program__set_raw_tracepoint(struct bpf_program *prog);
- LIBBPF_API int bpf_program__set_kprobe(struct bpf_program *prog);
-+LIBBPF_API int bpf_program__set_lsm(struct bpf_program *prog);
- LIBBPF_API int bpf_program__set_sched_cls(struct bpf_program *prog);
- LIBBPF_API int bpf_program__set_sched_act(struct bpf_program *prog);
- LIBBPF_API int bpf_program__set_xdp(struct bpf_program *prog);
-@@ -347,6 +350,7 @@ LIBBPF_API bool bpf_program__is_socket_filter(const struct bpf_program *prog);
- LIBBPF_API bool bpf_program__is_tracepoint(const struct bpf_program *prog);
- LIBBPF_API bool bpf_program__is_raw_tracepoint(const struct bpf_program *prog);
- LIBBPF_API bool bpf_program__is_kprobe(const struct bpf_program *prog);
-+LIBBPF_API bool bpf_program__is_lsm(const struct bpf_program *prog);
- LIBBPF_API bool bpf_program__is_sched_cls(const struct bpf_program *prog);
- LIBBPF_API bool bpf_program__is_sched_act(const struct bpf_program *prog);
- LIBBPF_API bool bpf_program__is_xdp(const struct bpf_program *prog);
-diff --git a/tools/lib/bpf/libbpf.map b/tools/lib/bpf/libbpf.map
-index 5129283c0284..ec29d3aa2700 100644
---- a/tools/lib/bpf/libbpf.map
-+++ b/tools/lib/bpf/libbpf.map
-@@ -243,5 +243,8 @@ LIBBPF_0.0.8 {
- 		bpf_link__pin;
- 		bpf_link__pin_path;
- 		bpf_link__unpin;
-+		bpf_program__attach_lsm;
-+		bpf_program__is_lsm;
- 		bpf_program__set_attach_target;
-+		bpf_program__set_lsm;
- } LIBBPF_0.0.7;
 -- 
-2.20.1
+2.17.1
 
