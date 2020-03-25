@@ -2,431 +2,186 @@ Return-Path: <SRS0=gnGb=5K=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8542CC54FCE
-	for <linux-security-module@archiver.kernel.org>; Wed, 25 Mar 2020 00:36:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A82C3C43331
+	for <linux-security-module@archiver.kernel.org>; Wed, 25 Mar 2020 10:49:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56B7D20663
-	for <linux-security-module@archiver.kernel.org>; Wed, 25 Mar 2020 00:36:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZHOdr89n"
+	by mail.kernel.org (Postfix) with ESMTP id 86F26206F6
+	for <linux-security-module@archiver.kernel.org>; Wed, 25 Mar 2020 10:49:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727099AbgCYAg5 (ORCPT
+        id S1726239AbgCYKtP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 24 Mar 2020 20:36:57 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:36029 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727196AbgCYAg4 (ORCPT
+        Wed, 25 Mar 2020 06:49:15 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2587 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726103AbgCYKtP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 24 Mar 2020 20:36:56 -0400
-Received: by mail-wm1-f65.google.com with SMTP id g62so719331wme.1
-        for <linux-security-module@vger.kernel.org>; Tue, 24 Mar 2020 17:36:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=4KBcpJjcZDkLZHBGKFNXJ02wL7qMrYpP4gvH6GCFvwI=;
-        b=ZHOdr89naMMiNiv62yI8gtD1SGL/7HgG4AmSG8r8yJuaqLrU7C1Ju50p637E2TFdzS
-         /E54jVu1cZp1SyrDR8/B9gAUzmmKsuqDPaxjCEW+acTOqIMEbRiMF6is+wUYe/UE/g2D
-         swtqF77IV0Bg1GNMzwE3Cqf0cYdmoRuyn3m/Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=4KBcpJjcZDkLZHBGKFNXJ02wL7qMrYpP4gvH6GCFvwI=;
-        b=MBV5KeHgglN4lEhCXjHc4MMqHGpV7npVt2vcN7433sdeXp31qnzsqB7regvFqXDoEb
-         3K5MKgMgnXvxPnvZ4fYky4me9ONIF9f67aVyCkUY8dIhTM9VKaABaWKZhXEFhVQeN34t
-         PY4weJanfTKRUvoqLowPjCykVQxL0xD9x9UX3tHLZg9sg1TClMlCP1qvLePU2MKU3dJh
-         NoZX8MUOOaALuwR67SsbD3qKGH2+jr4mdgXXJasanL5OQT6Mr6qQSBWzzNxpNBwQuzLP
-         bTgYrdjuTc1Rjso16e9nvVkw98Mxon3Pld91M7ievOSYwI2OMzuj7kvov35rJKK8/KiV
-         JH/A==
-X-Gm-Message-State: ANhLgQ2aoIn3qvYaMB/a8HWXOLkeyxppE2+WUjU05D+J/lIloY4F9qSH
-        rKrhiHCFdh9UFvBaJPwPaKPCXQ==
-X-Google-Smtp-Source: ADFU+vvRaL1HLy+9JKB6CEKxXaZ6oInA+i8KtxzdOYNaED497LNEndXmRmfEomXzVM7+PDv+4yf6Vg==
-X-Received: by 2002:a1c:4c1a:: with SMTP id z26mr659917wmf.11.1585096613756;
-        Tue, 24 Mar 2020 17:36:53 -0700 (PDT)
-Received: from chromium.org (77-56-209-237.dclient.hispeed.ch. [77.56.209.237])
-        by smtp.gmail.com with ESMTPSA id k133sm6389758wma.11.2020.03.24.17.36.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Mar 2020 17:36:53 -0700 (PDT)
-From:   KP Singh <kpsingh@chromium.org>
-X-Google-Original-From: KP Singh <kpsingh>
-Date:   Wed, 25 Mar 2020 01:36:51 +0100
-To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>, linux-security-module@vger.kernel.org,
-        Brendan Jackman <jackmanb@google.com>,
-        Florent Revest <revest@google.com>,
-        Thomas Garnier <thgarnie@google.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>,
-        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH bpf-next v5 7/7] bpf: lsm: Add selftests for
- BPF_PROG_TYPE_LSM
-Message-ID: <20200325003651.GA5973@chromium.org>
-References: <20200323164415.12943-1-kpsingh@chromium.org>
- <20200323164415.12943-8-kpsingh@chromium.org>
- <CAEf4BzZCVqpUDqGetxa=Nx1ZC7Q+2yX2D9FMwywWkFDoN8JHDA@mail.gmail.com>
+        Wed, 25 Mar 2020 06:49:15 -0400
+Received: from lhreml702-cah.china.huawei.com (unknown [172.18.7.107])
+        by Forcepoint Email with ESMTP id D3B41D71D1F25870776E;
+        Wed, 25 Mar 2020 10:49:11 +0000 (GMT)
+Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.160)
+ by smtpsuk.huawei.com (10.201.108.43) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Wed, 25 Mar 2020 10:49:01 +0000
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <zohar@linux.ibm.com>, <James.Bottomley@HansenPartnership.com>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v4 0/7] ima: support stronger algorithms for attestation
+Date:   Wed, 25 Mar 2020 11:47:05 +0100
+Message-ID: <20200325104712.25694-1-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4BzZCVqpUDqGetxa=Nx1ZC7Q+2yX2D9FMwywWkFDoN8JHDA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.204.65.160]
+X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 24-Mär 16:54, Andrii Nakryiko wrote:
-> On Mon, Mar 23, 2020 at 9:45 AM KP Singh <kpsingh@chromium.org> wrote:
-> >
-> > From: KP Singh <kpsingh@google.com>
-> >
-> > * Load/attach a BPF program to the file_mprotect (int) and
-> >   bprm_committed_creds (void) LSM hooks.
-> > * Perform an action that triggers the hook.
-> > * Verify if the audit event was received using a shared global
-> >   result variable.
-> >
-> > Signed-off-by: KP Singh <kpsingh@google.com>
-> > Reviewed-by: Brendan Jackman <jackmanb@google.com>
-> > Reviewed-by: Florent Revest <revest@google.com>
-> > Reviewed-by: Thomas Garnier <thgarnie@google.com>
-> > ---
-> >  tools/testing/selftests/bpf/lsm_helpers.h     |  19 +++
-> >  .../selftests/bpf/prog_tests/lsm_test.c       | 112 ++++++++++++++++++
-> >  .../selftests/bpf/progs/lsm_int_hook.c        |  54 +++++++++
-> >  .../selftests/bpf/progs/lsm_void_hook.c       |  41 +++++++
-> >  4 files changed, 226 insertions(+)
-> >  create mode 100644 tools/testing/selftests/bpf/lsm_helpers.h
-> >  create mode 100644 tools/testing/selftests/bpf/prog_tests/lsm_test.c
-> >  create mode 100644 tools/testing/selftests/bpf/progs/lsm_int_hook.c
-> >  create mode 100644 tools/testing/selftests/bpf/progs/lsm_void_hook.c
-> >
-> > diff --git a/tools/testing/selftests/bpf/lsm_helpers.h b/tools/testing/selftests/bpf/lsm_helpers.h
-> > new file mode 100644
-> > index 000000000000..3de230df93db
-> > --- /dev/null
-> > +++ b/tools/testing/selftests/bpf/lsm_helpers.h
-> > @@ -0,0 +1,19 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +
-> > +/*
-> > + * Copyright (C) 2020 Google LLC.
-> > + */
-> > +#ifndef _LSM_HELPERS_H
-> > +#define _LSM_HELPERS_H
-> > +
-> > +struct lsm_prog_result {
-> > +       /* This ensures that the LSM Hook only monitors the PID requested
-> > +        * by the loader
-> > +        */
-> > +       __u32 monitored_pid;
-> > +       /* The number of calls to the prog for the monitored PID.
-> > +        */
-> > +       __u32 count;
-> > +};
-> > +
-> 
-> Having this extra header just for this simple struct... On BPF side
-> it's easier and nicer to just use global variables. Can you please
-> drop helper and just pass two variables in prog_test part?
+IMA extends Platform Configuration Registers (PCRs) of the TPM to give a
+proof to a remote verifier that the measurement list contains all
+measurements done by the kernel and that the list was not maliciously
+modified by an attacker.
 
-Removed the header and moved to global variables. One less file to
-worry about :)
+IMA was originally designed to extend PCRs with a SHA1 digest, provided
+with the measurement list, and was subsequently updated to extend all PCR
+banks in case a TPM 2.0 is used. Non-SHA1 PCR banks are not supposed to be
+used for remote attestation, as they are extended with a SHA1 digest padded
+with zeros, which does not increase the strength.
 
-> 
-> > +#endif /* _LSM_HELPERS_H */
-> > diff --git a/tools/testing/selftests/bpf/prog_tests/lsm_test.c b/tools/testing/selftests/bpf/prog_tests/lsm_test.c
-> > new file mode 100644
-> > index 000000000000..5fd6b8f569f7
-> > --- /dev/null
-> > +++ b/tools/testing/selftests/bpf/prog_tests/lsm_test.c
-> > @@ -0,0 +1,112 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +
-> > +/*
-> > + * Copyright (C) 2020 Google LLC.
-> > + */
-> > +
-> > +#include <test_progs.h>
-> > +#include <sys/mman.h>
-> > +#include <sys/wait.h>
-> > +#include <unistd.h>
-> > +#include <malloc.h>
-> > +#include <stdlib.h>
-> > +
-> > +#include "lsm_helpers.h"
-> > +#include "lsm_void_hook.skel.h"
-> > +#include "lsm_int_hook.skel.h"
-> > +
-> > +char *LS_ARGS[] = {"true", NULL};
-> > +
-> > +int heap_mprotect(void)
-> > +{
-> > +       void *buf;
-> > +       long sz;
-> > +
-> > +       sz = sysconf(_SC_PAGESIZE);
-> > +       if (sz < 0)
-> > +               return sz;
-> > +
-> > +       buf = memalign(sz, 2 * sz);
-> > +       if (buf == NULL)
-> > +               return -ENOMEM;
-> > +
-> > +       return mprotect(buf, sz, PROT_READ | PROT_EXEC);
-> > +}
-> > +
-> > +int exec_ls(struct lsm_prog_result *result)
-> > +{
-> > +       int child_pid;
-> > +
-> > +       child_pid = fork();
-> > +       if (child_pid == 0) {
-> > +               result->monitored_pid = getpid();
-> 
-> monitored_pid needed here only
-> 
-> > +               execvp(LS_ARGS[0], LS_ARGS);
-> > +               return -EINVAL;
-> > +       } else if (child_pid > 0)
-> > +               return wait(NULL);
-> > +
-> > +       return -EINVAL;
-> > +}
-> > +
-> > +void test_lsm_void_hook(void)
-> > +{
-> > +       struct lsm_prog_result *result;
-> > +       struct lsm_void_hook *skel = NULL;
-> > +       int err, duration = 0;
-> > +
-> > +       skel = lsm_void_hook__open_and_load();
-> > +       if (CHECK(!skel, "skel_load", "lsm_void_hook skeleton failed\n"))
-> > +               goto close_prog;
-> > +
-> > +       err = lsm_void_hook__attach(skel);
-> > +       if (CHECK(err, "attach", "lsm_void_hook attach failed: %d\n", err))
-> > +               goto close_prog;
-> > +
-> > +       result = &skel->bss->result;
-> 
-> if you define variables directly, you'll access them easily as
-> skel->bss->monitored_pid and skel->bss->count, no problem, right?
+This patch set addresses this issue by extending PCRs with the digest of
+the measurement entry calculated with the crypto subsystem. The list of
+algorithms used to calculate the digest are taken from
+ima_tpm_chip->allocated_banks, returned by the TPM driver. The SHA1 digest
+is always calculated, as SHA1 still remains the default algorithm for the
+template digest in the measurement list.
 
-Yes. Updated.
+This patch set also makes two additional modifications related to the usage
+of hash algorithms. First, since now the template digest for the default
+IMA algorithm is always calculated, this is used for hash collision
+detection, to check if there are duplicate measurement entries.
 
-> 
-> > +
-> > +       err = exec_ls(result);
-> > +       if (CHECK(err < 0, "exec_ls", "err %d errno %d\n", err, errno))
-> > +               goto close_prog;
-> > +
-> > +       if (CHECK(result->count != 1, "count", "count = %d", result->count))
-> > +               goto close_prog;
-> > +
-> > +       CHECK_FAIL(result->count != 1);
-> > +
-> > +close_prog:
-> > +       lsm_void_hook__destroy(skel);
-> > +}
-> > +
-> > +void test_lsm_int_hook(void)
-> > +{
-> > +       struct lsm_prog_result *result;
-> > +       struct lsm_int_hook *skel = NULL;
-> > +       int err, duration = 0;
-> > +
-> > +       skel = lsm_int_hook__open_and_load();
-> > +       if (CHECK(!skel, "skel_load", "lsm_int_hook skeleton failed\n"))
-> > +               goto close_prog;
-> > +
-> > +       err = lsm_int_hook__attach(skel);
-> > +       if (CHECK(err, "attach", "lsm_int_hook attach failed: %d\n", err))
-> > +               goto close_prog;
-> > +
-> > +       result = &skel->bss->result;
-> > +       result->monitored_pid = getpid();
-> > +
-> > +       err = heap_mprotect();
-> > +       if (CHECK(errno != EPERM, "heap_mprotect", "want errno=EPERM, got %d\n",
-> > +                 errno))
-> > +               goto close_prog;
-> > +
-> > +       CHECK_FAIL(result->count != 1);
-> > +
-> > +close_prog:
-> > +       lsm_int_hook__destroy(skel);
-> > +}
-> > +
-> > +void test_lsm_test(void)
-> > +{
-> > +       test_lsm_void_hook();
-> > +       test_lsm_int_hook();
-> 
-> These should be subtests (see test__start_subtest() usage). Also, I'm
-> not sure why you need two separate BPF programs, why not create one
-> and use it for two subtests?
+Second, it uses the IMA default hash algorithm to calculate the boot
+aggregate, assuming that the corresponding PCR bank is currently allocated.
+If it does not find it, it selects the SHA256 PCR bank for TPM 2.0 and SHA1
+for TPM 1.2 (their use is mandatory according to TCG PC Client
+specification). Ultimately, it selects SHA1 also for TPM 2.0 if the SHA256
+PCR bank is not found.
 
-Thanks! I simplified it much more based on your feedback.
+This patch set does not yet modify the format of the measurement list to
+provide the digests passed to the TPM. However, reconstructing the value of
+the quoted PCR is still possible for the verifier by calculating the digest
+on measurement data found in binary_runtime_measurements.
 
-Now we just have two files:
+attest-tools (https://github.com/euleros/attest-tools, branch 0.2-devel)
+has the ability to parse the BIOS and IMA event logs, and to compare
+boot_aggregate with the digest of final PCR values obtained by performing
+in software the PCR extend operation with digests in the BIOS event log.
 
-* prog_tests/test_lsm.c which defines "test_lsm_test which
-  does an exec and an mprotect and verifies the global variables and
-  the return of the mprotect.
-  These are fairly simple, so we can drop the need for subtests.
-* progs/lsm.c which has both bprm_committed_creds and file_mprotect.
+To perform the test, it is necessary to have a complete BIOS event log and
+to apply the boot_aggregate patches. It would be possible to use qemu and
+swtpm from Stefan Berger, but at the moment I had to change the ACPI parser
+in drivers/char/tpm/event_log/acpi.c to accept TPM 2.0 and to return
+EFI_TCG2_EVENT_LOG_FORMAT_TCG_2.
 
-> 
-> 
-> > +}
-> > diff --git a/tools/testing/selftests/bpf/progs/lsm_int_hook.c b/tools/testing/selftests/bpf/progs/lsm_int_hook.c
-> > new file mode 100644
-> > index 000000000000..1c5028ddca61
-> > --- /dev/null
-> > +++ b/tools/testing/selftests/bpf/progs/lsm_int_hook.c
-> 
-> consider it a nit because not every test follows this, but using
-> progs/test_whatever.c for BPF side and prog_test/whatever.c makes my
-> life a bit easier.
+Create req.json with this content:
+---
+{
+  "reqs":{
+    "dummy|verify":"",
+    "ima_boot_aggregate|verify":""
+  }
+}
+---
 
-I am all for uniformity :) Updated.
+With the requirements above, attest-tools verifies boot_aggregate and
+accepts any other entry in the event logs.
 
-> 
-> 
-> > @@ -0,0 +1,54 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +
-> > +/*
-> > + * Copyright 2020 Google LLC.
-> > + */
-> > +
-> > +#include <linux/bpf.h>
-> > +#include <stdbool.h>
-> > +#include <bpf/bpf_helpers.h>
-> > +#include <bpf/bpf_tracing.h>
-> > +#include  <errno.h>
-> > +#include "lsm_helpers.h"
-> > +
-> > +char _license[] SEC("license") = "GPL";
-> > +
-> > +struct lsm_prog_result result = {
-> > +       .monitored_pid = 0,
-> > +       .count = 0,
-> > +};
-> > +
-> > +/*
-> > + * Define some of the structs used in the BPF program.
-> > + * Only the field names and their sizes need to be the
-> > + * same as the kernel type, the order is irrelevant.
-> > + */
-> > +struct mm_struct {
-> > +       unsigned long start_brk, brk;
-> > +} __attribute__((preserve_access_index));
-> > +
-> > +struct vm_area_struct {
-> > +       unsigned long vm_start, vm_end;
-> > +       struct mm_struct *vm_mm;
-> > +} __attribute__((preserve_access_index));
-> 
-> Why not just using vmlinux.h instead?
+On server side run:
+# attest_ra_server -p 10 -r req.json -s -i
 
-Thanks, updated.
+-s disables TPM signature verification
+-i allows IMA violations
 
-> 
-> > +
-> > +SEC("lsm/file_mprotect")
-> > +int BPF_PROG(test_int_hook, struct vm_area_struct *vma,
-> > +            unsigned long reqprot, unsigned long prot, int ret)
-> > +{
-> > +       if (ret != 0)
-> > +               return ret;
-> > +
-> > +       __u32 pid = bpf_get_current_pid_tgid();
-> > +       int is_heap = 0;
-> > +
-> > +       is_heap = (vma->vm_start >= vma->vm_mm->start_brk &&
-> > +                  vma->vm_end <= vma->vm_mm->brk);
-> > +
-> > +       if (is_heap && result.monitored_pid == pid) {
-> > +               result.count++;
-> > +               ret = -EPERM;
-> > +       }
-> > +
-> > +       return ret;
-> > +}
-> > diff --git a/tools/testing/selftests/bpf/progs/lsm_void_hook.c b/tools/testing/selftests/bpf/progs/lsm_void_hook.c
-> > new file mode 100644
-> > index 000000000000..4d01a8536413
-> > --- /dev/null
-> > +++ b/tools/testing/selftests/bpf/progs/lsm_void_hook.c
-> > @@ -0,0 +1,41 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +
-> > +/*
-> > + * Copyright (C) 2020 Google LLC.
-> > + */
-> > +
-> > +#include <linux/bpf.h>
-> > +#include <stdbool.h>
-> > +#include <bpf/bpf_helpers.h>
-> > +#include <bpf/bpf_tracing.h>
-> > +#include  <errno.h>
-> > +#include "lsm_helpers.h"
-> > +
-> > +char _license[] SEC("license") = "GPL";
-> > +
-> > +struct lsm_prog_result result = {
-> > +       .monitored_pid = 0,
-> > +       .count = 0,
-> > +};
-> > +
-> > +/*
-> > + * Define some of the structs used in the BPF program.
-> > + * Only the field names and their sizes need to be the
-> > + * same as the kernel type, the order is irrelevant.
-> > + */
-> > +struct linux_binprm {
-> > +       const char *filename;
-> > +} __attribute__((preserve_access_index));
-> > +
-> > +SEC("lsm/bprm_committed_creds")
-> > +int BPF_PROG(test_void_hook, struct linux_binprm *bprm)
-> > +{
-> > +       __u32 pid = bpf_get_current_pid_tgid();
-> > +       char fmt[] = "lsm(bprm_committed_creds): process executed %s\n";
-> 
-> Try static char fmt[] = "..." instead and then compare BPF assembly
-> before and after, you'll be amazed ;)
-> 
-> > +
-> > +       bpf_trace_printk(fmt, sizeof(fmt), bprm->filename);
-> 
-> is this part of test?
+To enable TPM signature verification it is necessary to have a valid AK
+certificate. It can be obtained by following the instructions at:
 
-Not really, removed.
+https://github.com/euleros/attest-tools/blob/0.2-devel/README
 
-- KP
+On client side run:
+# echo test > aik_cert.pem
+# echo aik_cert.pem > list_privacy_ca
+# attest_ra_client -A
 
-> 
-> > +       if (result.monitored_pid == pid)
-> > +               result.count++;
-> > +
-> > +       return 0;
-> > +}
-> > --
-> > 2.20.1
-> >
+The commands above generate an AK and tell attest-tools to use a dummy AK
+certificate.
+
+# attest_ra_client -s <server IP> -q -p 10 -P <PCR algo> -b -i
+
+The command above sends the TPM quote and the event logs to the RA server
+and gets the response (successful/failed verification).
+
+-b includes the BIOS event log from securityfs
+-i includes the IMA event log from securityfs
+
+To check that IMA extends non-SHA1 PCR banks with an appropriate digest,
+use -P sha256, so that attest_ra_client selects the SHA256 PCR bank. To
+check that boot_aggregate is calculated properly, set ima_hash=sha256 in
+the kernel command line.
+
+Changelog
+
+v3:
+- Remove option to select the first PCR bank and select SHA1 as fallback
+  choice also for TPM 2.0 (suggested by Mimi)
+- improve comment for ima_extra_slots (suggested by Mimi)
+- declare local variable digests in ima_alloc_init_template() and
+  ima_restore_template_data() (suggested by Mimi)
+
+v2:
+- add NR_BANKS macro to return zero if ima_tpm_chip is NULL
+- replace ima_num_template_digests with
+  NR_BANKS(ima_tpm_chip) + ima_extra_slots (suggested by Mimi)
+- add __ro_after_init to declaration of ima_sha1_idx ima_hash_algo_idx and
+  ima_extra_slots (suggested by Mimi)
+- declare ima_init_ima_crypto() as static (reported by kbuild test robot)
+- use ima_sha1_idx and ima_hash_algo_idx to access ima_algo_array elements
+  in ima_init_crypto()
+
+v1:
+- move ima_sha1_idx and ima_hash_algo_idx to ima_crypto.c
+- introduce ima_num_template_digests (suggested by Mimi)
+- determine ima_num_template_digests before allocating ima_algo_array
+  (suggested by Mimi)
+- replace kmalloc_array() with kcalloc() in ima_init_crypto() (suggested by
+  Mimi)
+- check if ima_tpm_chip is NULL
+
+Roberto Sassu (7):
+  ima: Switch to ima_hash_algo for boot aggregate
+  ima: Evaluate error in init_ima()
+  ima: Store template digest directly in ima_template_entry
+  ima: Switch to dynamically allocated buffer for template digests
+  ima: Allocate and initialize tfm for each PCR bank
+  ima: Calculate and extend PCR with digests in ima_template_entry
+  ima: Use ima_hash_algo for collision detection in the measurement list
+
+ security/integrity/ima/ima.h          |  10 +-
+ security/integrity/ima/ima_api.c      |  22 +--
+ security/integrity/ima/ima_crypto.c   | 248 ++++++++++++++++++++++----
+ security/integrity/ima/ima_fs.c       |   4 +-
+ security/integrity/ima/ima_init.c     |  22 ++-
+ security/integrity/ima/ima_main.c     |   3 +
+ security/integrity/ima/ima_queue.c    |  36 ++--
+ security/integrity/ima/ima_template.c |  25 ++-
+ 8 files changed, 297 insertions(+), 73 deletions(-)
+
+-- 
+2.17.1
+
