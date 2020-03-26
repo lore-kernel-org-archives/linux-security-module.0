@@ -7,63 +7,64 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F623C2D0E9
-	for <linux-security-module@archiver.kernel.org>; Thu, 26 Mar 2020 19:12:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5670C43331
+	for <linux-security-module@archiver.kernel.org>; Thu, 26 Mar 2020 19:24:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7465E20719
-	for <linux-security-module@archiver.kernel.org>; Thu, 26 Mar 2020 19:12:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A0EA20719
+	for <linux-security-module@archiver.kernel.org>; Thu, 26 Mar 2020 19:24:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bf6kiiHY"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U2qxRrFn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726496AbgCZTMd (ORCPT
+        id S1727719AbgCZTYc (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 26 Mar 2020 15:12:33 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:42788 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726067AbgCZTMd (ORCPT
+        Thu, 26 Mar 2020 15:24:32 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:36240 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726067AbgCZTYc (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 26 Mar 2020 15:12:33 -0400
-Received: by mail-qt1-f193.google.com with SMTP id t9so6433479qto.9;
-        Thu, 26 Mar 2020 12:12:32 -0700 (PDT)
+        Thu, 26 Mar 2020 15:24:32 -0400
+Received: by mail-qt1-f194.google.com with SMTP id m33so6498599qtb.3;
+        Thu, 26 Mar 2020 12:24:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=qHsOC/D03h0XLJc3jn+ovK0zIf17NyvwgvW1/olri/I=;
-        b=bf6kiiHYYEmy+3+jGQVmaoWewfjr+65/fJMxT3+fBDJDAhrQDTAQ0SmQTR7BCn8CRK
-         vZkl+MrEgKTW+TDY2kVcx7MunV5Ah0JzeuoqBPr+QMczC2o/j6nQfbR28g9bguH5Zp0B
-         qnpFSiL9IwOWsGibJm5lBiUzGWZ6GTsw8DCvBhkdB8SjgyaDSjwg+0zMYT1NfGBK+h7n
-         Flx86kVsOZLHxbajZdP5eRt04jWA3o4WqtrqHkLBGmfYrQNyXp2vtZsuS+LCLZD5BBIR
-         C76i1mZKyXw0rj3w+NqtLoQfQqQzdC2I+2FIrFEuQvSMBqlwhaj956AkTW7N0p2URmKG
-         lLfQ==
+        bh=FEhcUh84bEc/ZJo24v7isk+pCzKy0P8TtrN2Mpn38Rk=;
+        b=U2qxRrFnbEHa2D9PLecSl88ns17wfHcnQxs4UZAG/TJThEFPKfAFBYutyoISMOgNu4
+         LuF6aIa3gyACxiKe5JgeccNh+IF7VgjP8jvLBS3USw/7qJNYvTyfUEVV1QMdbrsy5xAp
+         G9RuyqJBF1pemXZhkOwJ0I60G8trXLpk60YJQSz1K+crOf/YvDZqhNQDdDlmsUy76LK5
+         tGDs/xrnm0dYAVFU8gdOFLKArv1jWWhTKSWHKCcLfVBAq0cKcYygzu5+XzaNgCwjqDqW
+         x5U+amugAIUufvuZ219lDV1SG1g29pvI661bPyNuIyfTUNN723VmYA2e4PO5LqcJ4a7a
+         xikA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=qHsOC/D03h0XLJc3jn+ovK0zIf17NyvwgvW1/olri/I=;
-        b=gmw1xzwJTAc9p5z5rXbjx3QyRTPInNGPre2z3AOTtuoHM3XaYbbmY492iizHr4HJy9
-         la+qjNVMv7Vn1aclWiUO+33Dv8jYjoS8EeI48PREQJ6GoNIXLSNohx9YxGs/BJSUbvmo
-         gVObJOZbvLp28n3SNyNU4PyJbEtN+fxhSKodRH45idfAKBLHEIQS1Xg8HZyBPr/wzNx1
-         eOvsVTooGDLutY1UgSKmiWi/5tEfWGIfRSlDqThprBP5uiIbYn1WYXClEoSyMtuEmXNW
-         THvOnGz77AgQANGu35svMB1nbl3HTxktJJTfNuPFfsjQt/IcHFha07WVsWTmZsAw/OBk
-         6mFA==
-X-Gm-Message-State: ANhLgQ35mkFv3S2loU+Ocl+aIZ7wglwc5TysWsBh2dSCRiHCVurOjpbf
-        AVbYfnEgL70quJWG0Z0eidhfWqlbIuCAmMHFen4=
-X-Google-Smtp-Source: ADFU+vuGpdr6jRNAReDB+x/B5xU92+TkGFdR4WoigAiJV5uSEeF2uvz6dQHx2HBTxi6NSUjJPpXxEE6SZe4f6P7KjgA=
-X-Received: by 2002:ac8:3f62:: with SMTP id w31mr9934413qtk.171.1585249951604;
- Thu, 26 Mar 2020 12:12:31 -0700 (PDT)
+        bh=FEhcUh84bEc/ZJo24v7isk+pCzKy0P8TtrN2Mpn38Rk=;
+        b=s6EcxWbkRdg+iKVFbif/MoN+t6rnDjLToakkUmMhiy+JkjXgUl75U7w+tfxEW7iwkl
+         m2NU+Uz/ynWC1jvGhGbNDgw8Fmi5GfRxtYNpbs55S5ngxU9WTWwR5ABx7WGzbi4LA9vo
+         EIb+6J9qrB6ryRwr3G4ljVSRxD4yIu7vMHN+KCidRHx29E6c2/c1MHRgaEwCnjFes55c
+         j5lhDjHGUct67AleIi54xJ2AkHyXb/tJKNSqQjRVvGC2KH+7+4Df+11ZXGZzFdTp7uv7
+         AR/5kFwEepdL1OHMBDQ8mW2xNSSuvDqJNlhwBgFgTMHNdmI5+5F32/exlYgYT92534nL
+         QVdQ==
+X-Gm-Message-State: ANhLgQ0RBIDGZO35EmthRX0kIZ0dypTVpAWVFQl+L/iCc0TvMQL3aCUY
+        EcxzSN4CDevR9I/6nrZ4usziUvQtEK8Mmw+aYYE=
+X-Google-Smtp-Source: ADFU+vuERR7TjbqcQKMpfu+Nv4ITtl5vdxV4bU6tZC4S+KNkO2aANpBuxPbk4P97fN3IWVyovMbhtdXBju4zMz751bo=
+X-Received: by 2002:ac8:7cb0:: with SMTP id z16mr9954834qtv.59.1585250671361;
+ Thu, 26 Mar 2020 12:24:31 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200326142823.26277-1-kpsingh@chromium.org> <20200326142823.26277-5-kpsingh@chromium.org>
-In-Reply-To: <20200326142823.26277-5-kpsingh@chromium.org>
+References: <20200326142823.26277-1-kpsingh@chromium.org> <20200326142823.26277-8-kpsingh@chromium.org>
+In-Reply-To: <20200326142823.26277-8-kpsingh@chromium.org>
 From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date:   Thu, 26 Mar 2020 12:12:20 -0700
-Message-ID: <CAEf4BzaS8xLLrbaWgWbWSEVfc3YBPURQhZxe=zR06B021jH5BA@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v7 4/8] bpf: lsm: Implement attach, detach and execution
+Date:   Thu, 26 Mar 2020 12:24:20 -0700
+Message-ID: <CAEf4BzZRe_kFR4yzhPFGgauvYLKvre1reuGp=5=jq_nvQGAayw@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v7 7/8] bpf: lsm: Add selftests for BPF_PROG_TYPE_LSM
 To:     KP Singh <kpsingh@chromium.org>
 Cc:     open list <linux-kernel@vger.kernel.org>,
         bpf <bpf@vger.kernel.org>, linux-security-module@vger.kernel.org,
         Brendan Jackman <jackmanb@google.com>,
         Florent Revest <revest@google.com>,
+        Thomas Garnier <thgarnie@google.com>,
         Alexei Starovoitov <ast@kernel.org>,
         Daniel Borkmann <daniel@iogearbox.net>,
         James Morris <jmorris@namei.org>,
@@ -77,56 +78,75 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Mar 26, 2020 at 7:29 AM KP Singh <kpsingh@chromium.org> wrote:
+On Thu, Mar 26, 2020 at 7:30 AM KP Singh <kpsingh@chromium.org> wrote:
 >
 > From: KP Singh <kpsingh@google.com>
 >
-> JITed BPF programs are dynamically attached to the LSM hooks
-> using BPF trampolines. The trampoline prologue generates code to handle
-> conversion of the signature of the hook to the appropriate BPF context.
->
-> The allocated trampoline programs are attached to the nop functions
-> initialized as LSM hooks.
->
-> BPF_PROG_TYPE_LSM programs must have a GPL compatible license and
-> and need CAP_SYS_ADMIN (required for loading eBPF programs).
->
-> Upon attachment:
->
-> * A BPF fexit trampoline is used for LSM hooks with a void return type.
-> * A BPF fmod_ret trampoline is used for LSM hooks which return an
->   int. The attached programs can override the return value of the
->   bpf LSM hook to indicate a MAC Policy decision.
+> * Load/attach a BPF program that hooks to file_mprotect (int)
+>   and bprm_committed_creds (void).
+> * Perform an action that triggers the hook.
+> * Verify if the audit event was received using the shared global
+>   variables for the process executed.
+> * Verify if the mprotect returns a -EPERM.
 >
 > Signed-off-by: KP Singh <kpsingh@google.com>
 > Reviewed-by: Brendan Jackman <jackmanb@google.com>
 > Reviewed-by: Florent Revest <revest@google.com>
+> Reviewed-by: Thomas Garnier <thgarnie@google.com>
 > ---
+
+Please fix endlines below. With that:
 
 Acked-by: Andrii Nakryiko <andriin@fb.com>
 
-
->  include/linux/bpf_lsm.h | 11 ++++++++
->  kernel/bpf/bpf_lsm.c    | 28 ++++++++++++++++++++
->  kernel/bpf/btf.c        |  9 ++++++-
->  kernel/bpf/syscall.c    | 57 ++++++++++++++++++++++++++++-------------
->  kernel/bpf/trampoline.c | 17 +++++++++---
->  kernel/bpf/verifier.c   | 19 +++++++++++---
->  6 files changed, 114 insertions(+), 27 deletions(-)
+>  tools/testing/selftests/bpf/config            |  2 +
+>  .../selftests/bpf/prog_tests/test_lsm.c       | 86 +++++++++++++++++++
+>  tools/testing/selftests/bpf/progs/lsm.c       | 48 +++++++++++
+>  3 files changed, 136 insertions(+)
+>  create mode 100644 tools/testing/selftests/bpf/prog_tests/test_lsm.c
+>  create mode 100644 tools/testing/selftests/bpf/progs/lsm.c
 >
 
 [...]
 
-> @@ -2479,6 +2496,10 @@ static int bpf_raw_tracepoint_open(const union bpf_attr *attr)
->                 }
->                 buf[sizeof(buf) - 1] = 0;
->                 tp_name = buf;
-> +               break;
-> +       default:
-> +                       err = -EINVAL;
-> +                       goto out_put_prog;
->         }
+> +void test_test_lsm(void)
+> +{
+> +       struct lsm *skel = NULL;
+> +       int err, duration = 0;
+> +
+> +       skel = lsm__open_and_load();
+> +       if (CHECK(!skel, "skel_load", "lsm skeleton failed\n"))
+> +               goto close_prog;
+> +
+> +       err = lsm__attach(skel);
+> +       if (CHECK(err, "attach", "lsm attach failed: %d\n", err))
+> +               goto close_prog;
+> +
+> +       err = exec_cmd(&skel->bss->monitored_pid);
+> +       if (CHECK(err < 0, "exec_cmd", "err %d errno %d\n", err, errno))
+> +               goto close_prog;
+> +
+> +       CHECK(skel->bss->bprm_count != 1, "bprm_count", "bprm_count = %d",
 
-is indentation off here or it's my email client?
+\n is missing
+
+> +             skel->bss->bprm_count);
+> +
+> +       skel->bss->monitored_pid = getpid();
+> +
+> +       err = heap_mprotect();
+> +       if (CHECK(errno != EPERM, "heap_mprotect", "want errno=EPERM, got %d\n",
+> +                 errno))
+> +               goto close_prog;
+> +
+> +       CHECK(skel->bss->mprotect_count != 1, "mprotect_count",
+> +             "mprotect_count = %d", skel->bss->mprotect_count);
+
+\n is missing
+
+> +
+> +close_prog:
+> +       lsm__destroy(skel);
+> +}
 
 [...]
