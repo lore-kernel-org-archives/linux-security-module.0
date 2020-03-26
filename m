@@ -2,101 +2,102 @@ Return-Path: <SRS0=UFfU=5L=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA9BEC2D0E7
-	for <linux-security-module@archiver.kernel.org>; Thu, 26 Mar 2020 23:30:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB4B8C2D0E8
+	for <linux-security-module@archiver.kernel.org>; Thu, 26 Mar 2020 23:54:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B219020663
-	for <linux-security-module@archiver.kernel.org>; Thu, 26 Mar 2020 23:30:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 810F720714
+	for <linux-security-module@archiver.kernel.org>; Thu, 26 Mar 2020 23:54:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dK4sZYvD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727653AbgCZXaa (ORCPT
+        id S1727446AbgCZXy2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 26 Mar 2020 19:30:30 -0400
-Received: from namei.org ([65.99.196.166]:43756 "EHLO namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726954AbgCZXaa (ORCPT
+        Thu, 26 Mar 2020 19:54:28 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:46760 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726067AbgCZXy1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 26 Mar 2020 19:30:30 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id 02QNSlWb015673;
-        Thu, 26 Mar 2020 23:28:47 GMT
-Date:   Fri, 27 Mar 2020 10:28:47 +1100 (AEDT)
-From:   James Morris <jmorris@namei.org>
-To:     Serge Hallyn <serge@hallyn.com>
-cc:     Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "joonas.lahtinen@linux.intel.com" <joonas.lahtinen@linux.intel.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Will Deacon <will@kernel.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Helge Deller <deller@gmx.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-man@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-        Igor Lubashev <ilubashe@akamai.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Stephane Eranian <eranian@google.com>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        oprofile-list@lists.sf.net, Jiri Olsa <jolsa@redhat.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [Intel-gfx] [PATCH v7 00/12] Introduce CAP_PERFMON to secure
- system performance monitoring and observability
-In-Reply-To: <20200302001913.GA21145@sl>
-Message-ID: <alpine.LRH.2.21.2003271026290.14767@namei.org>
-References: <c8de937a-0b3a-7147-f5ef-69f467e87a13@linux.intel.com> <3ae0bed5-204e-de81-7647-5f0d8106cd67@linux.intel.com> <20200302001913.GA21145@sl>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        Thu, 26 Mar 2020 19:54:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description;
+        bh=aynR0UVS1u6v72AstwmjORHZT9G2O0P+jTJ7R4PmUNo=; b=dK4sZYvDkNLevoDdXkS4/oyhiU
+        F8qajT/Y0c1KSxptgyjGLpiU8BSyPOG7u9i0XBd9reLVgCeE/oNACNqF3+f7tBcl05BU7hhD2fBmn
+        U9Y4h1hg5yBKmahrnpRMQZllYKE2dPj3pIfr7SBvecMZmhRnfhnCe/pM6fj0AFHXwoJ4QFQGoe79A
+        BpWBgGgxt5fo0OXTHk9ISPwAK9hSkXMzQJUBSk/UxFuVuZNXRUeD1Hnbi8dboIKKVcDZEs52xgv0r
+        G5TpVblEuGgkKr674wrV7JQKEJ3UxccIoCcGhDsq7B31oHmLUUwS57DffTYS2oRlInV7M9Q51DbId
+        MhvsvZ4w==;
+Received: from [2601:1c0:6280:3f0::19c2]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jHcKN-0004g2-7K; Thu, 26 Mar 2020 23:54:23 +0000
+Subject: Re: [PATCH v15 09/10] samples/landlock: Add a sandbox manager example
+To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
+        linux-kernel@vger.kernel.org
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        James Morris <jmorris@namei.org>, Jann Horn <jann@thejh.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-security-module@vger.kernel.org, x86@kernel.org
+References: <20200326202731.693608-1-mic@digikod.net>
+ <20200326202731.693608-10-mic@digikod.net>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <11634607-2fdb-1868-03d0-94096763766f@infradead.org>
+Date:   Thu, 26 Mar 2020 16:54:21 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20200326202731.693608-10-mic@digikod.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sun, 1 Mar 2020, Serge Hallyn wrote:
+Hi,
 
-> Thanks, this looks good to me, in keeping with the CAP_SYSLOG break.
-> 
-> Acked-by: Serge E. Hallyn <serge@hallyn.com>
-> 
-> for the set.
-> 
-> James/Ingo/Peter, if noone has remaining objections, whose branch
-> should these go in through?
-> 
-> thanks,
-> -serge
-> 
-> On Tue, Feb 25, 2020 at 12:55:54PM +0300, Alexey Budankov wrote:
-> > 
-> > Hi,
-> > 
-> > Is there anything else I could do in order to move the changes forward
-> > or is something still missing from this patch set?
-> > Could you please share you mind?
+On 3/26/20 1:27 PM, Mickaël Salaün wrote:
+> diff --git a/samples/Kconfig b/samples/Kconfig
+> index 9d236c346de5..b54408c5bd86 100644
+> --- a/samples/Kconfig
+> +++ b/samples/Kconfig
+> @@ -120,6 +120,13 @@ config SAMPLE_HIDRAW
+>  	bool "hidraw sample"
+>  	depends on HEADERS_INSTALL
+>  
+> +config SAMPLE_LANDLOCK
+> +	bool "Build Landlock sample code"
+> +	select HEADERS_INSTALL
 
-Alexey,
+I think that this should be like all of the other users of HEADERS_INSTALL
+and depend on that instead of select-ing it.
 
-It seems some of the previous Acks are not included in this patchset, e.g. 
-https://lkml.org/lkml/2020/1/22/655
+> +	help
+> +	  Build a simple Landlock sandbox manager able to launch a process
+> +	  restricted by a user-defined filesystem access-control security policy.
+> +
+>  config SAMPLE_PIDFD
+>  	bool "pidfd sample"
+>  	depends on HEADERS_INSTALL
 
-Every patch needs a Reviewed-by or Acked-by from maintainers of the code 
-being changed.
-
-You have enough from the security folk, but I can't see any included from 
-the perf folk.
-
-
+thanks.
 -- 
-James Morris
-<jmorris@namei.org>
+~Randy
 
