@@ -2,448 +2,277 @@ Return-Path: <SRS0=UFfU=5L=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80E60C43331
-	for <linux-security-module@archiver.kernel.org>; Thu, 26 Mar 2020 20:07:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DF31C2D0F2
+	for <linux-security-module@archiver.kernel.org>; Thu, 26 Mar 2020 20:27:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4277E2073E
-	for <linux-security-module@archiver.kernel.org>; Thu, 26 Mar 2020 20:07:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fAshHZ+Q"
+	by mail.kernel.org (Postfix) with ESMTP id EFE5120936
+	for <linux-security-module@archiver.kernel.org>; Thu, 26 Mar 2020 20:27:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728723AbgCZUGt (ORCPT
+        id S1728774AbgCZU1s (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 26 Mar 2020 16:06:49 -0400
-Received: from mail-pl1-f201.google.com ([209.85.214.201]:35304 "EHLO
-        mail-pl1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728715AbgCZUGs (ORCPT
+        Thu, 26 Mar 2020 16:27:48 -0400
+Received: from smtp-190a.mail.infomaniak.ch ([185.125.25.10]:54117 "EHLO
+        smtp-190a.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728658AbgCZU1s (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 26 Mar 2020 16:06:48 -0400
-Received: by mail-pl1-f201.google.com with SMTP id a8so5199232plm.2
-        for <linux-security-module@vger.kernel.org>; Thu, 26 Mar 2020 13:06:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=PVSwrvgjQE4kHOREjmYboSRHDQEjtQZz+pfSq1QNzRM=;
-        b=fAshHZ+QfAUpjSsm5LB2GCuEMSmaI+uOd0OSFMcRdZduS8R1Vw5QlKd88PdqNbgyof
-         2MPjdW97zMnbMoDplPGnYp1Saf/M48cZX8x4zFxI+sCdYFTYe4vEF1iiQIKLSso3SVCq
-         cCdtJBaDYgAWo6TrZpbO2y1mVzqUCPaAKdsUzxphGQo0hiwxw19StHR7BBK10y1909hE
-         +5PbEbs9c1xkbjh9g6DU5oHZNphxlAYLZvA42WDzF5V9CZLF1rbOdBhCaEYCskTS05/j
-         gdOL0nEvKp+84wcrsj3x/i4MRkM6j+THLcZ8eWKlyAHiBvEACHn6TgmRWxMM54EHfSbr
-         KfPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=PVSwrvgjQE4kHOREjmYboSRHDQEjtQZz+pfSq1QNzRM=;
-        b=CUw7bKpqgknFZsTcrGNoxAJAg4ZMXaFql9GSar0CzlR48y5XK7I9c8IFlwnoMYP5In
-         20jv/5SPIAWkrArqM9uaZ065AHQoCTQC+fo7L+Vb7ij7lgB5WvJEoWqw9ulibu9OPZ6E
-         +sFazt+4PS3Z6ij78PKyvbPXgQmwE0wyXj0yI3rl8qUqB8ayEfl9Hr+DgmxAKdGO4G1b
-         eAl/sOAIu3GAySd8WTYl/Hmru+c5gsH62AgK5kW2mgythV5bhk4fDXwSm7yejiXNedq1
-         VDLG+jlNQ4w+wUzryCMB5FbPJ00sywyhgidEMHA6EfJkEMyv0SQXS7jn9Puqn4IwVISZ
-         rbcw==
-X-Gm-Message-State: ANhLgQ1frKYWA+JzOfXAIrS3niInp7WWtJ247rARTwG5FWxgFa3VIkQ7
-        iRerzQo1figit8DMrrDlKTZyPF5EHqg=
-X-Google-Smtp-Source: ADFU+vt2nsyHQf4Ri/E3096WPwNm/QjrzhH0m1BcyB4bLSACpbtYLSr4OT7XeJlvWX3iesfKdXFwG3Vd4v8=
-X-Received: by 2002:a63:7409:: with SMTP id p9mr10150468pgc.206.1585253206759;
- Thu, 26 Mar 2020 13:06:46 -0700 (PDT)
-Date:   Thu, 26 Mar 2020 13:06:32 -0700
-In-Reply-To: <20200326200634.222009-1-dancol@google.com>
-Message-Id: <20200326200634.222009-2-dancol@google.com>
-Mime-Version: 1.0
-References: <20200326181456.132742-1-dancol@google.com> <20200326200634.222009-1-dancol@google.com>
-X-Mailer: git-send-email 2.25.1.696.g5e7596f4ac-goog
-Subject: [PATCH v4 1/3] Add a new LSM-supporting anonymous inode interface
-From:   Daniel Colascione <dancol@google.com>
-To:     timmurray@google.com, selinux@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, viro@zeniv.linux.org.uk, paul@paul-moore.com,
-        nnk@google.com, sds@tycho.nsa.gov, lokeshgidra@google.com,
-        jmorris@namei.org
-Cc:     Daniel Colascione <dancol@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 26 Mar 2020 16:27:48 -0400
+Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 48pGkn1BlgzljC2N;
+        Thu, 26 Mar 2020 21:27:45 +0100 (CET)
+Received: from localhost (unknown [94.23.54.103])
+        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 48pGkm5TpTzlkchX;
+        Thu, 26 Mar 2020 21:27:44 +0100 (CET)
+From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To:     linux-kernel@vger.kernel.org
+Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        James Morris <jmorris@namei.org>, Jann Horn <jann@thejh.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mickael.salaun@ssi.gouv.fr>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-security-module@vger.kernel.org, x86@kernel.org
+Subject: [PATCH v15 04/10] landlock: Add ptrace restrictions
+Date:   Thu, 26 Mar 2020 21:27:25 +0100
+Message-Id: <20200326202731.693608-5-mic@digikod.net>
+X-Mailer: git-send-email 2.26.0.rc2
+In-Reply-To: <20200326202731.693608-1-mic@digikod.net>
+References: <20200326202731.693608-1-mic@digikod.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
+X-Antivirus-Code: 0x100000
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This change adds two new functions, anon_inode_getfile_secure and
-anon_inode_getfd_secure, that create anonymous-node files with
-individual non-S_PRIVATE inodes to which security modules can apply
-policy. Existing callers continue using the original singleton-inode
-kind of anonymous-inode file. We can transition anonymous inode users
-to the new kind of anonymous inode in individual patches for the sake
-of bisection and review.
+Using ptrace(2) and related debug features on a target process can lead
+to a privilege escalation.  Indeed, ptrace(2) can be used by an attacker
+to impersonate another task and to remain undetected while performing
+malicious activities.  Thanks to  ptrace_may_access(), various part of
+the kernel can check if a tracer is more privileged than a tracee.
 
-The new functions accept an optional context_inode parameter that
-callers can use to provide additional contextual information to
-security modules, e.g., indicating that one anonymous struct file is a
-logical child of another, allowing a security model to propagate
-security information from one to the other.
+A landlocked process has fewer privileges than a non-landlocked process
+and must then be subject to additional restrictions when manipulating
+processes. To be allowed to use ptrace(2) and related syscalls on a
+target process, a landlocked process must have a subset of the target
+process' rules (i.e. the tracee must be in a sub-domain of the tracer).
 
-Signed-off-by: Daniel Colascione <dancol@google.com>
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+Cc: Andy Lutomirski <luto@amacapital.net>
+Cc: James Morris <jmorris@namei.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Serge E. Hallyn <serge@hallyn.com>
 ---
- fs/anon_inodes.c            | 196 ++++++++++++++++++++++++++++--------
- include/linux/anon_inodes.h |  13 +++
- include/linux/lsm_hooks.h   |  11 ++
- include/linux/security.h    |   3 +
- security/security.c         |   9 ++
- 5 files changed, 190 insertions(+), 42 deletions(-)
 
-diff --git a/fs/anon_inodes.c b/fs/anon_inodes.c
-index 89714308c25b..024059e333dc 100644
---- a/fs/anon_inodes.c
-+++ b/fs/anon_inodes.c
-@@ -55,75 +55,135 @@ static struct file_system_type anon_inode_fs_type = {
- 	.kill_sb	= kill_anon_super,
- };
+Changes since v14:
+* Constify variables.
+
+Changes since v13:
+* Make the ptrace restriction mandatory, like in the v10.
+* Remove the eBPF dependency.
+
+Previous version:
+https://lore.kernel.org/lkml/20191104172146.30797-5-mic@digikod.net/
+---
+ security/landlock/Makefile |   2 +-
+ security/landlock/ptrace.c | 120 +++++++++++++++++++++++++++++++++++++
+ security/landlock/ptrace.h |  14 +++++
+ security/landlock/setup.c  |   2 +
+ 4 files changed, 137 insertions(+), 1 deletion(-)
+ create mode 100644 security/landlock/ptrace.c
+ create mode 100644 security/landlock/ptrace.h
+
+diff --git a/security/landlock/Makefile b/security/landlock/Makefile
+index 041ea242e627..f1d1eb72fa76 100644
+--- a/security/landlock/Makefile
++++ b/security/landlock/Makefile
+@@ -1,4 +1,4 @@
+ obj-$(CONFIG_SECURITY_LANDLOCK) := landlock.o
  
--/**
-- * anon_inode_getfile - creates a new file instance by hooking it up to an
-- *                      anonymous inode, and a dentry that describe the "class"
-- *                      of the file
-- *
-- * @name:    [in]    name of the "class" of the new file
-- * @fops:    [in]    file operations for the new file
-- * @priv:    [in]    private data for the new file (will be file's private_data)
-- * @flags:   [in]    flags
-- *
-- * Creates a new file by hooking it on a single inode. This is useful for files
-- * that do not need to have a full-fledged inode in order to operate correctly.
-- * All the files created with anon_inode_getfile() will share a single inode,
-- * hence saving memory and avoiding code duplication for the file/inode/dentry
-- * setup.  Returns the newly created file* or an error pointer.
-- */
--struct file *anon_inode_getfile(const char *name,
--				const struct file_operations *fops,
--				void *priv, int flags)
-+static struct inode *anon_inode_make_secure_inode(
-+	const char *name,
-+	const struct inode *context_inode,
-+	const struct file_operations *fops)
-+{
-+	struct inode *inode;
-+	const struct qstr qname = QSTR_INIT(name, strlen(name));
-+	int error;
+ landlock-y := setup.o object.o ruleset.o \
+-	cred.o
++	cred.o ptrace.o
+diff --git a/security/landlock/ptrace.c b/security/landlock/ptrace.c
+new file mode 100644
+index 000000000000..61df38b13f5c
+--- /dev/null
++++ b/security/landlock/ptrace.c
+@@ -0,0 +1,120 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Landlock LSM - Ptrace hooks
++ *
++ * Copyright © 2017-2020 Mickaël Salaün <mic@digikod.net>
++ * Copyright © 2020 ANSSI
++ */
 +
-+	inode = alloc_anon_inode(anon_inode_mnt->mnt_sb);
-+	if (IS_ERR(inode))
-+		return inode;
-+	inode->i_flags &= ~S_PRIVATE;
-+	error =	security_inode_init_security_anon(
-+		inode, &qname, context_inode);
-+	if (error) {
-+		iput(inode);
-+		return ERR_PTR(error);
++#include <asm/current.h>
++#include <linux/cred.h>
++#include <linux/errno.h>
++#include <linux/kernel.h>
++#include <linux/lsm_hooks.h>
++#include <linux/rcupdate.h>
++#include <linux/sched.h>
++
++#include "common.h"
++#include "cred.h"
++#include "ptrace.h"
++#include "ruleset.h"
++#include "setup.h"
++
++/**
++ * domain_scope_le - Checks domain ordering for scoped ptrace
++ *
++ * @parent: Parent domain.
++ * @child: Potential child of @parent.
++ *
++ * Checks if the @parent domain is less or equal to (i.e. an ancestor, which
++ * means a subset of) the @child domain.
++ */
++static bool domain_scope_le(const struct landlock_ruleset *const parent,
++		const struct landlock_ruleset *const child)
++{
++	const struct landlock_hierarchy *walker;
++
++	if (!parent)
++		return true;
++	if (!child)
++		return false;
++	for (walker = child->hierarchy; walker; walker = walker->parent) {
++		if (walker == parent->hierarchy)
++			/* @parent is in the scoped hierarchy of @child. */
++			return true;
 +	}
-+	return inode;
++	/* There is no relationship between @parent and @child. */
++	return false;
 +}
 +
-+struct file *_anon_inode_getfile(const char *name,
-+				 const struct file_operations *fops,
-+				 void *priv, int flags,
-+				 const struct inode *context_inode,
-+				 bool secure)
++static bool task_is_scoped(const struct task_struct *const parent,
++		const struct task_struct *const child)
++{
++	bool is_scoped;
++	const struct landlock_ruleset *dom_parent, *dom_child;
++
++	rcu_read_lock();
++	dom_parent = landlock_get_task_domain(parent);
++	dom_child = landlock_get_task_domain(child);
++	is_scoped = domain_scope_le(dom_parent, dom_child);
++	rcu_read_unlock();
++	return is_scoped;
++}
++
++static int task_ptrace(const struct task_struct *const parent,
++		const struct task_struct *const child)
++{
++	/* Quick return for non-landlocked tasks. */
++	if (!landlocked(parent))
++		return 0;
++	if (task_is_scoped(parent, child))
++		return 0;
++	return -EPERM;
++}
++
++/**
++ * hook_ptrace_access_check - Determines whether the current process may access
++ *			      another
++ *
++ * @child: Process to be accessed.
++ * @mode: Mode of attachment.
++ *
++ * If the current task has Landlock rules, then the child must have at least
++ * the same rules.  Else denied.
++ *
++ * Determines whether a process may access another, returning 0 if permission
++ * granted, -errno if denied.
++ */
++static int hook_ptrace_access_check(struct task_struct *const child,
++		const unsigned int mode)
++{
++	return task_ptrace(current, child);
++}
++
++/**
++ * hook_ptrace_traceme - Determines whether another process may trace the
++ *			 current one
++ *
++ * @parent: Task proposed to be the tracer.
++ *
++ * If the parent has Landlock rules, then the current task must have the same
++ * or more rules.  Else denied.
++ *
++ * Determines whether the nominated task is permitted to trace the current
++ * process, returning 0 if permission is granted, -errno if denied.
++ */
++static int hook_ptrace_traceme(struct task_struct *const parent)
++{
++	return task_ptrace(parent, current);
++}
++
++static struct security_hook_list landlock_hooks[] __lsm_ro_after_init = {
++	LSM_HOOK_INIT(ptrace_access_check, hook_ptrace_access_check),
++	LSM_HOOK_INIT(ptrace_traceme, hook_ptrace_traceme),
++};
++
++__init void landlock_add_hooks_ptrace(void)
++{
++	security_add_hooks(landlock_hooks, ARRAY_SIZE(landlock_hooks),
++			LANDLOCK_NAME);
++}
+diff --git a/security/landlock/ptrace.h b/security/landlock/ptrace.h
+new file mode 100644
+index 000000000000..6740c6a723de
+--- /dev/null
++++ b/security/landlock/ptrace.h
+@@ -0,0 +1,14 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Landlock LSM - Ptrace hooks
++ *
++ * Copyright © 2017-2019 Mickaël Salaün <mic@digikod.net>
++ * Copyright © 2019 ANSSI
++ */
++
++#ifndef _SECURITY_LANDLOCK_PTRACE_H
++#define _SECURITY_LANDLOCK_PTRACE_H
++
++__init void landlock_add_hooks_ptrace(void);
++
++#endif /* _SECURITY_LANDLOCK_PTRACE_H */
+diff --git a/security/landlock/setup.c b/security/landlock/setup.c
+index 00eb78275cd8..a40822135d13 100644
+--- a/security/landlock/setup.c
++++ b/security/landlock/setup.c
+@@ -11,6 +11,7 @@
+ 
+ #include "common.h"
+ #include "cred.h"
++#include "ptrace.h"
+ #include "setup.h"
+ 
+ struct lsm_blob_sizes landlock_blob_sizes __lsm_ro_after_init = {
+@@ -21,6 +22,7 @@ static int __init landlock_init(void)
  {
-+	struct inode *inode;
- 	struct file *file;
- 
--	if (IS_ERR(anon_inode_inode))
--		return ERR_PTR(-ENODEV);
-+	if (secure) {
-+		inode =	anon_inode_make_secure_inode(
-+			name, context_inode, fops);
-+		if (IS_ERR(inode))
-+			return ERR_PTR(PTR_ERR(inode));
-+	} else {
-+		inode =	anon_inode_inode;
-+		if (IS_ERR(inode))
-+			return ERR_PTR(-ENODEV);
-+		/*
-+		 * We know the anon_inode inode count is always
-+		 * greater than zero, so ihold() is safe.
-+		 */
-+		ihold(inode);
-+	}
- 
--	if (fops->owner && !try_module_get(fops->owner))
--		return ERR_PTR(-ENOENT);
-+	if (fops->owner && !try_module_get(fops->owner)) {
-+		file = ERR_PTR(-ENOENT);
-+		goto err;
-+	}
- 
--	/*
--	 * We know the anon_inode inode count is always greater than zero,
--	 * so ihold() is safe.
--	 */
--	ihold(anon_inode_inode);
--	file = alloc_file_pseudo(anon_inode_inode, anon_inode_mnt, name,
-+	file = alloc_file_pseudo(inode, anon_inode_mnt, name,
- 				 flags & (O_ACCMODE | O_NONBLOCK), fops);
- 	if (IS_ERR(file))
- 		goto err;
- 
--	file->f_mapping = anon_inode_inode->i_mapping;
-+	file->f_mapping = inode->i_mapping;
- 
- 	file->private_data = priv;
- 
- 	return file;
- 
- err:
--	iput(anon_inode_inode);
-+	iput(inode);
- 	module_put(fops->owner);
- 	return file;
+ 	pr_info("Registering hooks.\n");
+ 	landlock_add_hooks_cred();
++	landlock_add_hooks_ptrace();
+ 	return 0;
  }
--EXPORT_SYMBOL_GPL(anon_inode_getfile);
  
- /**
-- * anon_inode_getfd - creates a new file instance by hooking it up to an
-- *                    anonymous inode, and a dentry that describe the "class"
-- *                    of the file
-+ * anon_inode_getfile_secure - creates a new file instance by hooking
-+ *                             it up to a new anonymous inode and a
-+ *                             dentry that describe the "class" of the
-+ *                             file.  Make it possible to use security
-+ *                             modules to control access to the
-+ *                             new file.
-  *
-  * @name:    [in]    name of the "class" of the new file
-  * @fops:    [in]    file operations for the new file
-  * @priv:    [in]    private data for the new file (will be file's private_data)
-- * @flags:   [in]    flags
-+ * @flags:   [in]    flags for the file
-+ * @anon_inode_flags: [in] flags for anon_inode*
-+ *
-+ * Creates a new file by hooking it on an unspecified inode. This is
-+ * useful for files that do not need to have a full-fledged inode in
-+ * order to operate correctly.  All the files created with
-+ * anon_inode_getfile_secure() will have distinct inodes, avoiding
-+ * code duplication for the file/inode/dentry setup.  Returns the
-+ * newly created file* or an error pointer.
-+ */
-+struct file *anon_inode_getfile_secure(const char *name,
-+				       const struct file_operations *fops,
-+				       void *priv, int flags,
-+				       const struct inode *context_inode)
-+{
-+	return _anon_inode_getfile(
-+		name, fops, priv, flags, context_inode, true);
-+}
-+EXPORT_SYMBOL_GPL(anon_inode_getfile_secure);
-+
-+/**
-+ * anon_inode_getfile - creates a new file instance by hooking it up
-+ *                      to an anonymous inode and a dentry that
-+ *                      describe the "class" of the file.
-+ *
-+ * @name:    [in]    name of the "class" of the new file
-+ * @fops:    [in]    file operations for the new file
-+ * @priv:    [in]    private data for the new file (will be file's private_data)
-+ * @flags:   [in]    flags for the file
-  *
-- * Creates a new file by hooking it on a single inode. This is useful for files
-+ * Creates a new file by hooking it on an unspecified inode. This is useful for files
-  * that do not need to have a full-fledged inode in order to operate correctly.
-- * All the files created with anon_inode_getfd() will share a single inode,
-+ * All the files created with anon_inode_getfile() will share a single inode,
-  * hence saving memory and avoiding code duplication for the file/inode/dentry
-- * setup.  Returns new descriptor or an error code.
-+ * setup.  Returns the newly created file* or an error pointer.
-  */
--int anon_inode_getfd(const char *name, const struct file_operations *fops,
--		     void *priv, int flags)
-+struct file *anon_inode_getfile(const char *name,
-+				const struct file_operations *fops,
-+				void *priv, int flags)
-+{
-+	return _anon_inode_getfile(name, fops, priv, flags, NULL, false);
-+}
-+EXPORT_SYMBOL_GPL(anon_inode_getfile);
-+
-+static int _anon_inode_getfd(const char *name,
-+			     const struct file_operations *fops,
-+			     void *priv, int flags,
-+			     const struct inode *context_inode,
-+			     bool secure)
- {
- 	int error, fd;
- 	struct file *file;
-@@ -133,7 +193,8 @@ int anon_inode_getfd(const char *name, const struct file_operations *fops,
- 		return error;
- 	fd = error;
- 
--	file = anon_inode_getfile(name, fops, priv, flags);
-+	file = _anon_inode_getfile(name, fops, priv, flags, context_inode,
-+				   secure);
- 	if (IS_ERR(file)) {
- 		error = PTR_ERR(file);
- 		goto err_put_unused_fd;
-@@ -146,6 +207,57 @@ int anon_inode_getfd(const char *name, const struct file_operations *fops,
- 	put_unused_fd(fd);
- 	return error;
- }
-+
-+/**
-+ * anon_inode_getfd_secure - creates a new file instance by hooking it
-+ *                           up to a new anonymous inode and a dentry
-+ *                           that describe the "class" of the file.
-+ *                           Make it possible to use security modules
-+ *                           to control access to the new file.
-+ *
-+ * @name:    [in]    name of the "class" of the new file
-+ * @fops:    [in]    file operations for the new file
-+ * @priv:    [in]    private data for the new file (will be file's private_data)
-+ * @flags:   [in]    flags
-+ *
-+ * Creates a new file by hooking it on an unspecified inode. This is
-+ * useful for files that do not need to have a full-fledged inode in
-+ * order to operate correctly.  All the files created with
-+ * anon_inode_getfile_secure() will have distinct inodes, avoiding
-+ * code duplication for the file/inode/dentry setup.  Returns a newly
-+ * created file descriptor or an error code.
-+ */
-+int anon_inode_getfd_secure(const char *name, const struct file_operations *fops,
-+			    void *priv, int flags,
-+			    const struct inode *context_inode)
-+{
-+	return _anon_inode_getfd(name, fops, priv, flags,
-+				 context_inode, true);
-+}
-+EXPORT_SYMBOL_GPL(anon_inode_getfd_secure);
-+
-+/**
-+ * anon_inode_getfd - creates a new file instance by hooking it up to
-+ *                    an anonymous inode and a dentry that describe
-+ *                    the "class" of the file
-+ *
-+ * @name:    [in]    name of the "class" of the new file
-+ * @fops:    [in]    file operations for the new file
-+ * @priv:    [in]    private data for the new file (will be file's private_data)
-+ * @flags:   [in]    flags
-+ *
-+ * Creates a new file by hooking it on an unspecified inode. This is
-+ * useful for files that do not need to have a full-fledged inode in
-+ * order to operate correctly.  All the files created with
-+ * anon_inode_getfile() will use the same singleton inode, reducing
-+ * memory use and avoiding code duplication for the file/inode/dentry
-+ * setup.  Returns a newly created file descriptor or an error code.
-+ */
-+int anon_inode_getfd(const char *name, const struct file_operations *fops,
-+		     void *priv, int flags)
-+{
-+	return _anon_inode_getfd(name, fops, priv, flags, NULL, false);
-+}
- EXPORT_SYMBOL_GPL(anon_inode_getfd);
- 
- static int __init anon_inode_init(void)
-diff --git a/include/linux/anon_inodes.h b/include/linux/anon_inodes.h
-index d0d7d96261ad..67bd85d92dca 100644
---- a/include/linux/anon_inodes.h
-+++ b/include/linux/anon_inodes.h
-@@ -10,12 +10,25 @@
- #define _LINUX_ANON_INODES_H
- 
- struct file_operations;
-+struct inode;
-+
-+struct file *anon_inode_getfile_secure(const char *name,
-+				       const struct file_operations *fops,
-+				       void *priv, int flags,
-+				       const struct inode *context_inode);
- 
- struct file *anon_inode_getfile(const char *name,
- 				const struct file_operations *fops,
- 				void *priv, int flags);
-+
-+int anon_inode_getfd_secure(const char *name,
-+			    const struct file_operations *fops,
-+			    void *priv, int flags,
-+			    const struct inode *context_inode);
-+
- int anon_inode_getfd(const char *name, const struct file_operations *fops,
- 		     void *priv, int flags);
- 
-+
- #endif /* _LINUX_ANON_INODES_H */
- 
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 20d8cf194fb7..5434c1d285b2 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -215,6 +215,13 @@
-  *	Returns 0 if @name and @value have been successfully set,
-  *	-EOPNOTSUPP if no security attribute is needed, or
-  *	-ENOMEM on memory allocation failure.
-+ * @inode_init_security_anon:
-+ *      Set up a secure anonymous inode.
-+ *      @inode contains the inode structure
-+ *      @name name of the anonymous inode class
-+ *      @context_inode optional related inode
-+ *	Returns 0 on success. Returns -EPERM if	the security module denies
-+ *	the creation of this inode.
-  * @inode_create:
-  *	Check permission to create a regular file.
-  *	@dir contains inode structure of the parent of the new file.
-@@ -1552,6 +1559,9 @@ union security_list_options {
- 					const struct qstr *qstr,
- 					const char **name, void **value,
- 					size_t *len);
-+	int (*inode_init_security_anon)(struct inode *inode,
-+					const struct qstr *name,
-+					const struct inode *context_inode);
- 	int (*inode_create)(struct inode *dir, struct dentry *dentry,
- 				umode_t mode);
- 	int (*inode_link)(struct dentry *old_dentry, struct inode *dir,
-@@ -1884,6 +1894,7 @@ struct security_hook_heads {
- 	struct hlist_head inode_alloc_security;
- 	struct hlist_head inode_free_security;
- 	struct hlist_head inode_init_security;
-+	struct hlist_head inode_init_security_anon;
- 	struct hlist_head inode_create;
- 	struct hlist_head inode_link;
- 	struct hlist_head inode_unlink;
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 64b19f050343..2108c3ce0666 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -320,6 +320,9 @@ void security_inode_free(struct inode *inode);
- int security_inode_init_security(struct inode *inode, struct inode *dir,
- 				 const struct qstr *qstr,
- 				 initxattrs initxattrs, void *fs_data);
-+int security_inode_init_security_anon(struct inode *inode,
-+				      const struct qstr *name,
-+				      const struct inode *context_inode);
- int security_old_inode_init_security(struct inode *inode, struct inode *dir,
- 				     const struct qstr *qstr, const char **name,
- 				     void **value, size_t *len);
-diff --git a/security/security.c b/security/security.c
-index 565bc9b67276..70bfebada024 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1033,6 +1033,15 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
- }
- EXPORT_SYMBOL(security_inode_init_security);
- 
-+int
-+security_inode_init_security_anon(struct inode *inode,
-+				  const struct qstr *name,
-+				  const struct inode *context_inode)
-+{
-+	return call_int_hook(inode_init_security_anon, 0, inode, name,
-+			     context_inode);
-+}
-+
- int security_old_inode_init_security(struct inode *inode, struct inode *dir,
- 				     const struct qstr *qstr, const char **name,
- 				     void **value, size_t *len)
 -- 
-2.25.1.696.g5e7596f4ac-goog
+2.26.0.rc2
 
