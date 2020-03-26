@@ -2,170 +2,160 @@ Return-Path: <SRS0=UFfU=5L=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61E21C43331
-	for <linux-security-module@archiver.kernel.org>; Thu, 26 Mar 2020 19:44:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0419AC2D0ED
+	for <linux-security-module@archiver.kernel.org>; Thu, 26 Mar 2020 20:06:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 342E720719
-	for <linux-security-module@archiver.kernel.org>; Thu, 26 Mar 2020 19:44:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C3025206E6
+	for <linux-security-module@archiver.kernel.org>; Thu, 26 Mar 2020 20:06:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mXue/BH8"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oQg2HiJA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727851AbgCZToF (ORCPT
+        id S1727984AbgCZUGq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 26 Mar 2020 15:44:05 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:50227 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726067AbgCZToF (ORCPT
+        Thu, 26 Mar 2020 16:06:46 -0400
+Received: from mail-pg1-f201.google.com ([209.85.215.201]:42822 "EHLO
+        mail-pg1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727879AbgCZUGp (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 26 Mar 2020 15:44:05 -0400
-Received: by mail-wm1-f65.google.com with SMTP id d198so8085272wmd.0
-        for <linux-security-module@vger.kernel.org>; Thu, 26 Mar 2020 12:44:03 -0700 (PDT)
+        Thu, 26 Mar 2020 16:06:45 -0400
+Received: by mail-pg1-f201.google.com with SMTP id g10so5823998pgg.9
+        for <linux-security-module@vger.kernel.org>; Thu, 26 Mar 2020 13:06:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=0Bii1s2deigTxksVQn5D4fa3g6KSqWpYF2vfQCrTCkQ=;
-        b=mXue/BH8dMK46Q+CxoPuOCAXIhsjfNF4BBz9nY0CKpqWmSNg1EdIyHxC/ObRwwi+4Y
-         vrbbv616X1THSsMHpH5lPr0ZnkJbdXDnByiot4haqIrWo6+ag7FMFpksuXbvMVX5B1mz
-         KDJ9sjiU9NcbKj1KvyZfGqfFysuI5OEoyFOoY=
+        d=google.com; s=20161025;
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=WqHax6ECl9wbInrMxjIjOM9cZAwTrPkoL2M2jFKPBQE=;
+        b=oQg2HiJAJN0uq3CanDGzoJhuUjBYjvhnGM82wp7T8u1ZLdJc0emxPSWGDOVo2hwXyD
+         oYhF+R4VmJyHhW9agDvAQwLEQehvPDqs2xMeloGW6iyyNl7BkF+BMNrw6sO8n5tEHSRW
+         Bj9P4BPDq3/5vV7bdFky1PCeCR2OwIF62INk4/iglpEogfPbio/6/tuFzLNw2BTLZnIM
+         szYZf1bycO6HgHYsEnY0Fz1gYItaYnVEORPALjWBYguN7JqK9Z7cKiRowmRewMd8xCuQ
+         6QR0/l8leAZRocfTh5jgbffUm6anAdrZ0D82jPJYwvqKEtPgt/HsDIA4PDCLHV2pVl9e
+         5qwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=0Bii1s2deigTxksVQn5D4fa3g6KSqWpYF2vfQCrTCkQ=;
-        b=BTSmzL3tULu7QPnaKR7YrisK4d40GWoljaxX3/SKB93sgOhrAFpJKirEgORjOujiEL
-         t4T1NpaBO2bY5l44cT1W5SDwCC9daB+Hf/qoBSTJKKLFRYJEH2o+lHazcCLxBt6Edj+Q
-         B8MB6+WWBO65h0fMfAXaNdmZr4s+D0i+yCVbLcr2xpRGl/RItkWwDIgRYwqmykgoWlxP
-         4i1eE/u0xqIoK/FkEKJRtFDr8ASGVHYgADOlGpF+8aTFfrVSWOqH+KSQzyvrSUW7zODv
-         whROEyo3omaqiNcN1mSb50V6RrH9f4jxkfGTYDDFRo72GOAOh0i+uOAsmM+PnIGGvadg
-         XRQA==
-X-Gm-Message-State: ANhLgQ0ZwcRlQBojlZJRYKgFciVB+VQBWC/sS7LLI7yN70AJ0DuYXO9g
-        RTqIGsyU8KxvTXb501c2LLnyVA==
-X-Google-Smtp-Source: ADFU+vv6oOna9/uYcBsBB+T/TvHqVZPZsv2Q92xO2Srm3mQHiGr5MgeyNE/xuLzjiHifH8JuX6CviQ==
-X-Received: by 2002:a05:600c:24c:: with SMTP id 12mr1548359wmj.186.1585251843249;
-        Thu, 26 Mar 2020 12:44:03 -0700 (PDT)
-Received: from chromium.org (77-56-209-237.dclient.hispeed.ch. [77.56.209.237])
-        by smtp.gmail.com with ESMTPSA id s127sm4869574wmf.28.2020.03.26.12.44.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Mar 2020 12:44:02 -0700 (PDT)
-From:   KP Singh <kpsingh@chromium.org>
-X-Google-Original-From: KP Singh <kpsingh>
-Date:   Thu, 26 Mar 2020 20:44:00 +0100
-To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>, linux-security-module@vger.kernel.org,
-        Brendan Jackman <jackmanb@google.com>,
-        Florent Revest <revest@google.com>,
-        Thomas Garnier <thgarnie@google.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>,
-        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH bpf-next v7 7/8] bpf: lsm: Add selftests for
- BPF_PROG_TYPE_LSM
-Message-ID: <20200326194400.GB15273@chromium.org>
-References: <20200326142823.26277-1-kpsingh@chromium.org>
- <20200326142823.26277-8-kpsingh@chromium.org>
- <CAEf4BzZRe_kFR4yzhPFGgauvYLKvre1reuGp=5=jq_nvQGAayw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4BzZRe_kFR4yzhPFGgauvYLKvre1reuGp=5=jq_nvQGAayw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=WqHax6ECl9wbInrMxjIjOM9cZAwTrPkoL2M2jFKPBQE=;
+        b=fZQdkYEfZHYiG7DUDIfyj5kmB01qFLHJdTOsq7WpRk5+LxO6GrVE+9HT0e2lE3botS
+         0Oi83Ea4ZOnDYNiZaj4FarkjQDNNsILt8d1jBh1LYS+ooEaeM5xrS39v400GGe4nSwUD
+         ci/uWmwOAy4DEOqNEpbNRIdYVpzgmmJsDQILvxTWX1m/LrS8lCTAfJ5QFipIDvDCCUcE
+         0aBWayBoVq8VhPC5FSTiuRsI4NfYPkQWvmmPPlqajp4fDqgIBhZYnV1Z4dp+XWpRA7/u
+         rHfUY4rQtW7O8d2IMW0/3JpPZOnMvmkEfkASytaBOl4MAT8qViHnw3IFssPGyef/F05m
+         Lqew==
+X-Gm-Message-State: ANhLgQ3vbJBr/DeGURSiWNah46v81A4HMdMvJEb03s1X+BlkxG+O0r2n
+        q9yBTfEZzYr9i807/YM0mNhmbn67Ags=
+X-Google-Smtp-Source: ADFU+vvsk68FMQSxurQFf3aAeMUtjRxGtYQGqNwjBsk1ShThaxSUYG2MrLAemrcldb5fjvyCliNa2Z6slbk=
+X-Received: by 2002:a17:90a:e289:: with SMTP id d9mr1801523pjz.172.1585253203623;
+ Thu, 26 Mar 2020 13:06:43 -0700 (PDT)
+Date:   Thu, 26 Mar 2020 13:06:31 -0700
+In-Reply-To: <20200326181456.132742-1-dancol@google.com>
+Message-Id: <20200326200634.222009-1-dancol@google.com>
+Mime-Version: 1.0
+References: <20200326181456.132742-1-dancol@google.com>
+X-Mailer: git-send-email 2.25.1.696.g5e7596f4ac-goog
+Subject: [PATCH v4 0/3] SELinux support for anonymous inodes and UFFD
+From:   Daniel Colascione <dancol@google.com>
+To:     timmurray@google.com, selinux@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, viro@zeniv.linux.org.uk, paul@paul-moore.com,
+        nnk@google.com, sds@tycho.nsa.gov, lokeshgidra@google.com,
+        jmorris@namei.org
+Cc:     Daniel Colascione <dancol@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 26-Mär 12:24, Andrii Nakryiko wrote:
-> On Thu, Mar 26, 2020 at 7:30 AM KP Singh <kpsingh@chromium.org> wrote:
-> >
-> > From: KP Singh <kpsingh@google.com>
-> >
-> > * Load/attach a BPF program that hooks to file_mprotect (int)
-> >   and bprm_committed_creds (void).
-> > * Perform an action that triggers the hook.
-> > * Verify if the audit event was received using the shared global
-> >   variables for the process executed.
-> > * Verify if the mprotect returns a -EPERM.
-> >
-> > Signed-off-by: KP Singh <kpsingh@google.com>
-> > Reviewed-by: Brendan Jackman <jackmanb@google.com>
-> > Reviewed-by: Florent Revest <revest@google.com>
-> > Reviewed-by: Thomas Garnier <thgarnie@google.com>
-> > ---
-> 
-> Please fix endlines below. With that:
-> 
-> Acked-by: Andrii Nakryiko <andriin@fb.com>
-> 
-> >  tools/testing/selftests/bpf/config            |  2 +
-> >  .../selftests/bpf/prog_tests/test_lsm.c       | 86 +++++++++++++++++++
-> >  tools/testing/selftests/bpf/progs/lsm.c       | 48 +++++++++++
-> >  3 files changed, 136 insertions(+)
-> >  create mode 100644 tools/testing/selftests/bpf/prog_tests/test_lsm.c
-> >  create mode 100644 tools/testing/selftests/bpf/progs/lsm.c
-> >
-> 
-> [...]
-> 
-> > +void test_test_lsm(void)
-> > +{
-> > +       struct lsm *skel = NULL;
-> > +       int err, duration = 0;
-> > +
-> > +       skel = lsm__open_and_load();
-> > +       if (CHECK(!skel, "skel_load", "lsm skeleton failed\n"))
-> > +               goto close_prog;
-> > +
-> > +       err = lsm__attach(skel);
-> > +       if (CHECK(err, "attach", "lsm attach failed: %d\n", err))
-> > +               goto close_prog;
-> > +
-> > +       err = exec_cmd(&skel->bss->monitored_pid);
-> > +       if (CHECK(err < 0, "exec_cmd", "err %d errno %d\n", err, errno))
-> > +               goto close_prog;
-> > +
-> > +       CHECK(skel->bss->bprm_count != 1, "bprm_count", "bprm_count = %d",
-> 
-> \n is missing
+Userfaultfd in unprivileged contexts could be potentially very
+useful. We'd like to harden userfaultfd to make such unprivileged use
+less risky. This patch series allows SELinux to manage userfaultfd
+file descriptors and in the future, other kinds of
+anonymous-inode-based file descriptor.  SELinux policy authors can
+apply policy types to anonymous inodes by providing name-based
+transition rules keyed off the anonymous inode internal name (
+"[userfaultfd]" in the case of userfaultfd(2) file descriptors) and
+applying policy to the new SIDs thus produced.
 
-Done.
+Inside the kernel, a pair of new anon_inodes interface,
+anon_inode_getfile_secure and anon_inode_getfd_secure, allow callers
+to opt into this SELinux management. In this new "secure" mode,
+anon_inodes creates new ephemeral inodes for anonymous file objects
+instead of reusing the normal anon_inodes singleton dummy inode. A new
+LSM hook gives security modules an opportunity to configure and veto
+these ephemeral inodes.
 
-> 
-> > +             skel->bss->bprm_count);
-> > +
-> > +       skel->bss->monitored_pid = getpid();
-> > +
-> > +       err = heap_mprotect();
-> > +       if (CHECK(errno != EPERM, "heap_mprotect", "want errno=EPERM, got %d\n",
-> > +                 errno))
-> > +               goto close_prog;
-> > +
-> > +       CHECK(skel->bss->mprotect_count != 1, "mprotect_count",
-> > +             "mprotect_count = %d", skel->bss->mprotect_count);
-> 
-> \n is missing
+This patch series is one of two fork of [1] and is an
+alternative to [2].
 
-Done.
+The primary difference between the two patch series is that this
+partch series creates a unique inode for each "secure" anonymous
+inode, while the other patch series ([2]) continues using the
+singleton dummy anonymous inode and adds a way to attach SELinux
+security information directly to file objects.
 
-- KP
+I prefer the approach in this patch series because 1) it's a smaller
+patch than [2], and 2) it produces a more regular security
+architecture: in this patch series, secure anonymous inodes aren't
+S_PRIVATE and they maintain the SELinux property that the label for a
+file is in its inode. We do need an additional inode per anonymous
+file, but per-struct-file inode creation doesn't seem to be a problem
+for pipes and sockets.
 
-> 
-> > +
-> > +close_prog:
-> > +       lsm__destroy(skel);
-> > +}
-> 
-> [...]
+The previous version of this feature ([1]) created a new SELinux
+security class for userfaultfd file descriptors. This version adopts
+the generic transition-based approach of [2].
+
+This patch series also differs from [2] in that it doesn't affect all
+anonymous inodes right away --- instead requiring anon_inodes callers
+to opt in --- but this difference isn't one of basic approach. The
+important question to resolve is whether we should be creating new
+inodes or enhancing per-file data.
+
+Changes from the first version of the patch:
+
+  - Removed some error checks
+  - Defined a new anon_inode SELinux class to resolve the
+    ambiguity in [3]
+  - Inherit sclass as well as descriptor from context inode
+
+Changes from the second version of the patch:
+
+  - Fixed example policy in the commit message to reflect the use of
+    the new anon_inode class.
+
+Changes from the third version of the patch:
+
+  - Dropped the fops parameter to the LSM hook
+  - Documented hook parameters
+  - Fixed incorrect class used for SELinux transition
+  - Removed stray UFFD changed early in the series
+  - Removed a redundant ERR_PTR(PTR_ERR())
+
+[1] https://lore.kernel.org/lkml/20200211225547.235083-1-dancol@google.com/
+[2] https://lore.kernel.org/linux-fsdevel/20200213194157.5877-1-sds@tycho.nsa.gov/
+[3] https://lore.kernel.org/lkml/23f725ca-5b5a-5938-fcc8-5bbbfc9ba9bc@tycho.nsa.gov/
+
+Daniel Colascione (3):
+  Add a new LSM-supporting anonymous inode interface
+  Teach SELinux about anonymous inodes
+  Wire UFFD up to SELinux
+
+ fs/anon_inodes.c                    | 196 ++++++++++++++++++++++------
+ fs/userfaultfd.c                    |  30 ++++-
+ include/linux/anon_inodes.h         |  13 ++
+ include/linux/lsm_hooks.h           |  11 ++
+ include/linux/security.h            |   3 +
+ security/security.c                 |   9 ++
+ security/selinux/hooks.c            |  53 ++++++++
+ security/selinux/include/classmap.h |   2 +
+ 8 files changed, 271 insertions(+), 46 deletions(-)
+
+-- 
+2.25.1.696.g5e7596f4ac-goog
+
