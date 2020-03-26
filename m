@@ -2,279 +2,377 @@ Return-Path: <SRS0=UFfU=5L=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5014C2BA11
-	for <linux-security-module@archiver.kernel.org>; Thu, 26 Mar 2020 20:28:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75076C43331
+	for <linux-security-module@archiver.kernel.org>; Thu, 26 Mar 2020 20:56:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B50A20722
-	for <linux-security-module@archiver.kernel.org>; Thu, 26 Mar 2020 20:28:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A29E2070A
+	for <linux-security-module@archiver.kernel.org>; Thu, 26 Mar 2020 20:56:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="d6ksKOlg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728660AbgCZU1n (ORCPT
+        id S1727122AbgCZU4K (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 26 Mar 2020 16:27:43 -0400
-Received: from smtp-8fab.mail.infomaniak.ch ([83.166.143.171]:56413 "EHLO
-        smtp-8fab.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727611AbgCZU1m (ORCPT
+        Thu, 26 Mar 2020 16:56:10 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:32986 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726034AbgCZU4K (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 26 Mar 2020 16:27:42 -0400
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 48pGkh05xGzlh9HG;
-        Thu, 26 Mar 2020 21:27:40 +0100 (CET)
-Received: from localhost (unknown [94.23.54.103])
-        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 48pGkf3VgqzlkXXh;
-        Thu, 26 Mar 2020 21:27:38 +0100 (CET)
-From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To:     linux-kernel@vger.kernel.org
-Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        James Morris <jmorris@namei.org>, Jann Horn <jann@thejh.net>,
-        Jonathan Corbet <corbet@lwn.net>,
+        Thu, 26 Mar 2020 16:56:10 -0400
+Received: by mail-wm1-f65.google.com with SMTP id w25so5637824wmi.0
+        for <linux-security-module@vger.kernel.org>; Thu, 26 Mar 2020 13:56:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=rwP6omks5Bq+LZp/QxgHU372BSlee6s0/LxcH04vRKs=;
+        b=d6ksKOlgjbYjHrVyYgr77zwbHRp74js8GAmnFUAI8mm/lTiINEMzxp7PaJXycUlOTU
+         Uw1xjwoet+9XZXNdqC1mbPWkMasfasXrMXkRoHUQjmtBUg30B8ixojhM0HPEy+61M79Z
+         qW98UrwAc73NokYHzWtTDFvcBKJZ1PdzlbetU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=rwP6omks5Bq+LZp/QxgHU372BSlee6s0/LxcH04vRKs=;
+        b=Ta2GKjgIMPx6+4khndS4I4wmh6fGIs51O8xwOv7PlK+UhESFkdUK40+cGIQgRCQ8lw
+         fZ3LS22sLHzC3GAgARrml6Dcuw9L4U5ecPGwi86hN/qRz+sauIF27n7wfE/P8sDHiacL
+         AIrzOp1d3qbo8YkUe0SpH8ICkeYmFNKLqTsmrT9qunFhBZwTARcIDXWbEz3UkGzp5xEk
+         7FcBfJ6BWt7BLU+EcxUExuEadGIvPKnZxFJtsyn66HTe5wmv3dLf4aH42iOUUra8CNnE
+         XcZ0IZofdmxVyDDNoqE1Px6ymtIxwFPNfm4JTkGXCwEnzXwULmvEeJrDZr4H81S0wzCk
+         fZRQ==
+X-Gm-Message-State: ANhLgQ2nAX7Oi1PlsODG5X7bVqRDPkTDrKsFJxTd3aN9R+2D4hSG3NnJ
+        7kvSHo/yvFxSKifuAj3e8dOtgA==
+X-Google-Smtp-Source: ADFU+vvJZFuES+hj74DJVNA+Egz9nA9OgldTpa60/W1NvhpyzxaZwZox17cgsEQKdYnkbSyR8a7Nvw==
+X-Received: by 2002:adf:e492:: with SMTP id i18mr6162954wrm.316.1585256167215;
+        Thu, 26 Mar 2020 13:56:07 -0700 (PDT)
+Received: from chromium.org (77-56-209-237.dclient.hispeed.ch. [77.56.209.237])
+        by smtp.gmail.com with ESMTPSA id 127sm5388422wmd.38.2020.03.26.13.56.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Mar 2020 13:56:06 -0700 (PDT)
+From:   KP Singh <kpsingh@chromium.org>
+X-Google-Original-From: KP Singh <kpsingh>
+Date:   Thu, 26 Mar 2020 21:56:04 +0100
+To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>, linux-security-module@vger.kernel.org,
+        Brendan Jackman <jackmanb@google.com>,
+        Florent Revest <revest@google.com>,
+        Thomas Garnier <thgarnie@google.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        James Morris <jmorris@namei.org>,
         Kees Cook <keescook@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mickael.salaun@ssi.gouv.fr>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-security-module@vger.kernel.org, x86@kernel.org
-Subject: [PATCH v15 00/10] Landlock LSM
-Date:   Thu, 26 Mar 2020 21:27:21 +0100
-Message-Id: <20200326202731.693608-1-mic@digikod.net>
-X-Mailer: git-send-email 2.26.0.rc2
+        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH bpf-next v7 8/8] bpf: lsm: Add Documentation
+Message-ID: <20200326205604.GC15273@chromium.org>
+References: <20200326142823.26277-1-kpsingh@chromium.org>
+ <20200326142823.26277-9-kpsingh@chromium.org>
+ <CAEf4BzZ=qCNVbGqRfkgS-rfsODQaAzjQOErN8U9RH4Eu-HuD8Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
-X-Antivirus-Code: 0x100000
+In-Reply-To: <CAEf4BzZ=qCNVbGqRfkgS-rfsODQaAzjQOErN8U9RH4Eu-HuD8Q@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi,
+Thanks for the reviews!
 
-This new patch series brings improvements, fix some bugs but mainly
-simplify the code.
+On 26-M�r 12:31, Andrii Nakryiko wrote:
+> On Thu, Mar 26, 2020 at 7:29 AM KP Singh <kpsingh@chromium.org> wrote:
+> >
+> > From: KP Singh <kpsingh@google.com>
+> >
+> > Document how eBPF programs (BPF_PROG_TYPE_LSM) can be loaded and
+> > attached (BPF_LSM_MAC) to the LSM hooks.
+> >
+> > Signed-off-by: KP Singh <kpsingh@google.com>
+> > Reviewed-by: Brendan Jackman <jackmanb@google.com>
+> > Reviewed-by: Florent Revest <revest@google.com>
+> > Reviewed-by: Thomas Garnier <thgarnie@google.com>
+> > ---
+> 
+> This needs another pass and re-reading, has a bunch of outdated info :)
 
-The object, rule and ruleset management are simplified at the expense of
-a less aggressive memory freeing (contributed by Jann Horn [1]).  There
-is now less use of RCU for an improved readability.  Access checks that
-can be reached by file-descriptor-based syscalls are removed for now
-(truncate, getattr, lock, chmod, chown, chgrp, ioctl).  This will be
-handle in a future evolution of Landlock, but right now the goal is to
-lighten the code to ease review.  The SLOC count for security/landlock/
-was 1542 with the previous patch series while the current series shrinks
-it to 1273.
+Indeed :)
 
-The other main improvement is the addition of rule layer levels to
-ensure that a nested sandbox cannot bypass the access restrictions set
-by its parents.
+> 
+> >  Documentation/bpf/bpf_lsm.rst | 150 ++++++++++++++++++++++++++++++++++
+> >  Documentation/bpf/index.rst   |   1 +
+> >  2 files changed, 151 insertions(+)
+> >  create mode 100644 Documentation/bpf/bpf_lsm.rst
+> >
+> > diff --git a/Documentation/bpf/bpf_lsm.rst b/Documentation/bpf/bpf_lsm.rst
+> > new file mode 100644
+> > index 000000000000..2a2c3b4a74d4
+> > --- /dev/null
+> > +++ b/Documentation/bpf/bpf_lsm.rst
+> > @@ -0,0 +1,150 @@
+> > +.. SPDX-License-Identifier: GPL-2.0+
+> > +.. Copyright (C) 2020 Google LLC.
+> > +
+> > +================
+> > +LSM BPF Programs
+> > +================
+> > +
+> > +These BPF programs allow runtime instrumentation of the LSM hooks by privileged
+> > +users to implement system-wide MAC (Mandatory Access Control) and Audit
+> > +policies using eBPF. Since these program end up modifying the MAC policies of
+> > +the system, they require both ``CAP_MAC_ADMIN`` and also require
+> > +``CAP_SYS_ADMIN`` for the loading of BPF programs.
+> > +
+> > +Structure
+> > +---------
+> > +
+> > +The example shows an eBPF program that can be attached to the ``file_mprotect``
+> > +LSM hook:
+> > +
+> > +.. c:function:: int file_mprotect(struct vm_area_struct *vma, unsigned long reqprot, unsigned long prot);
+> > +
+> > +Other LSM hooks which can be instrumented can be found in
+> > +``include/linux/lsm_hooks.h``.
+> > +
+> > +eBPF programs that use :doc:`/bpf/btf` do not need to include kernel headers
+> > +for accessing information from the attached eBPF program's context. They can
+> > +simply declare the structures in the eBPF program and only specify the fields
+> > +that need to be accessed.
+> > +
+> > +.. code-block:: c
+> > +
+> > +       struct mm_struct {
+> > +               unsigned long start_brk, brk, start_stack;
+> > +       } __attribute__((preserve_access_index));
+> > +
+> > +       struct vm_area_struct {
+> > +               unsigned long start_brk, brk, start_stack;
+> > +               unsigned long vm_start, vm_end;
+> > +               struct mm_struct *vm_mm;
+> > +       } __attribute__((preserve_access_index));
+> > +
+> > +
+> > +.. note:: Only the size and the names of the fields must match the type in the
+> > +         kernel and the order of the fields is irrelevant.
+> 
+> type should match/be compatible as well?
 
-The syscall is now wired for all architectures and the tests passed for
-x86_32 and x86_64.
+I changed it to simply be:
 
-The compiled documentation is available here:
-https://landlock.io/linux-doc/landlock-v15/security/landlock/index.html
+.. note:: The order of the fields is irrelevant.
 
-This series can be applied on top of v5.6-rc7.  This can be tested with
-CONFIG_SECURITY_LANDLOCK and CONFIG_SAMPLE_LANDLOCK.  This patch series
-can be found in a Git repository here:
-https://github.com/landlock-lsm/linux/commits/landlock-v15
-I would really appreciate constructive comments on the design and the code.
+> 
+> > +
+> > +This can be further simplified (if one has access to the BTF information at
+> > +build time) by generating the ``vmlinux.h`` with:
+> > +
+> > +.. code-block:: console
+> > +
+> > +        # bpftool dump file <path-to-btf-vmlinux> format c > vmlinux.h
+> > +
+> 
+> bpftool btf *dump* file
+
+Done.
+
+> 
+> > +.. note:: ``path-to-btf-vmlinux`` can be ``/sys/kernel/btf/vmlinux`` if the
+> > +         build environment matches the environment the BPF programs are
+> > +         deployed in.
+> > +
+> > +The ``vmlinux.h`` can then simply be included in the BPF programs without
+> > +requiring the definition of the types.
+> > +
+> > +The eBPF programs can be declared using the``BPF_PROG``
+> > +macros defined in `tools/lib/bpf/bpf_tracing.h`_. In this
+> > +example:
+> > +
+> > +       * ``"lsm/file_mprotect"`` indicates the LSM hook that the program must
+> > +         be attached to
+> > +       * ``mprotect_audit`` is the name of the eBPF program
+> > +
+> > +.. code-block:: c
+> > +
+> > +        SEC("lsm/file_mprotect")
+> > +        int BPF_PROG(mprotect_audit, struct vm_area_struct *vma,
+> > +                     unsigned long reqprot, unsigned long prot, int ret)
+> > +       {
+> > +                /* Ret is the return value from the previous BPF program
+> > +                 * or 0 if it's the first hook.
+> > +                 */
+> > +                if (ret != 0)
+> > +                        return ret;
+> > +
+> > +               int is_heap;
+> > +
+> > +               is_heap = (vma->vm_start >= vma->vm_mm->start_brk &&
+> > +                          vma->vm_end <= vma->vm_mm->brk);
+> > +
+> > +               /* Return an -EPERM or write information to the perf events buffer
+> > +                * for auditing
+> > +                */
+> 
+> return missing?
+
+Fixed.
+
+> 
+> > +       }
+> > +
+> > +The ``__attribute__((preserve_access_index))`` is a clang feature that allows
+> > +the BPF verifier to update the offsets for the access at runtime using the
+> > +:doc:`/bpf/btf` information. Since the BPF verifier is aware of the types, it
+> > +also validates all the accesses made to the various types in the eBPF program.
+> > +
+> > +Loading
+> > +-------
+> > +
+> > +eBPF programs can be loaded with the :manpage:`bpf(2)` syscall's
+> > +``BPF_PROG_LOAD`` operation or more simply by using the the libbpf helper
+> > +``bpf_prog_load_xattr``:
+> > +
+> > +
+> > +.. code-block:: c
+> > +
+> > +       struct bpf_prog_load_attr attr = {
+> > +               .file = "./prog.o",
+> > +       };
+> > +       struct bpf_object *prog_obj;
+> > +       struct bpf_program *prog;
+> > +       int prog_fd;
+> > +
+> > +       bpf_prog_load_xattr(&attr, &prog_obj, &prog_fd);
+> 
+> Can you please update this to not use deprecated/legacy APIs. Please
+> suggest bpf_object__open/bpf_object__load  and/or BPF skeleton as an
+> example.
 
 
-# Landlock LSM
-
-The goal of Landlock is to enable to restrict ambient rights (e.g.
-global filesystem access) for a set of processes.  Because Landlock is a
-stackable LSM [2], it makes possible to create safe security sandboxes
-as new security layers in addition to the existing system-wide
-access-controls. This kind of sandbox is expected to help mitigate the
-security impact of bugs or unexpected/malicious behaviors in user-space
-applications. Landlock empowers any process, including unprivileged
-ones, to securely restrict themselves.
-
-Landlock is inspired by seccomp-bpf but instead of filtering syscalls
-and their raw arguments, a Landlock rule can restrict the use of kernel
-objects like file hierarchies, according to the kernel semantic.
-Landlock also takes inspiration from other OS sandbox mechanisms: XNU
-Sandbox, FreeBSD Capsicum or OpenBSD Pledge/Unveil.
+Simplified and modernized this section as:
 
 
-# Current limitations
+Loading
+-------
 
-## Path walk
+eBPF programs can be loaded with the :manpage:`bpf(2)` syscall's
+``BPF_PROG_LOAD`` operation:
 
-Landlock need to use dentries to identify a file hierarchy, which is
-needed for composable and unprivileged access-controls. This means that
-path resolution/walking (handled with inode_permission()) is not
-supported, yet. The same limitation also apply to readlink(2). This
-could be filled with a future extension first of the LSM framework. The
-Landlock userspace ABI can handle such change with new options (e.g. to
-the struct landlock_ruleset).
+.. code-block:: c
 
-## UnionFS
+	struct bpf_object *obj;
 
-An UnionFS super-block use a set of upper and lower directories.  Access
-request to a file in one of these hierarchy trigger a call to
-ovl_path_real() which generate another access request according to the
-matching hierarchy. Because such super-block is not aware of its current
-mount point, OverlayFS can't create a dedicated mnt_parent for each of
-the upper and lower directories mount clones. It is then not currently
-possible to track the source of such indirect access-request, and then
-not possible to identify a unified OverlayFS hierarchy.
+	obj = bpf_object__open("./my_prog.o");
+	bpf_object__load(obj);
 
+This can be simplified by using a skeleton header generated by ``bpftool``:
 
-## Memory limits
+.. code-block:: console
 
-There is currently no limit on the memory usage.  Any idea to leverage
-an existing mechanism (e.g. rlimit)?
+	# bpftool gen skeleton my_prog.o > my_prog.skel.h
 
+and the program can be loaded by including ``my_prog.skel.h`` and using
+the generated helper, ``my_prog__open_and_load``.
 
-# Changes since v14
+Attachment to LSM Hooks
+-----------------------
 
-* Simplify the object, rule and ruleset management at the expense of a
-  less aggressive memory freeing.
-* Remove access checks that may be required for FD-only requests:
-  truncate, getattr, lock, chmod, chown, chgrp, ioctl.
-* Add the notion of rule layer level to ensure that a nested sandbox
-  cannot bypass the access restrictions set by its parent.
-* Wire up the syscall for all architectures.
-* Clean up the code and add more documentation.
-* Some improvements and bug fixes.
+The LSM allows attachment of eBPF programs as LSM hooks using :manpage:`bpf(2)`
+syscall's ``BPF_RAW_TRACEPOINT_OPEN`` operation or more simply by
+using the libbpf helper ``bpf_program__attach_lsm``.
 
+The program can be detached from the LSM hook by *destroying* the ``link``
+link returned by ``bpf_program__attach_lsm`` using ``bpf_link__destroy``.
 
-# Changes since v13
+One can also use the helpers generated in ``my_prog.skel.h`` i.e.
+``my_prog__attach`` for attachment and ``my_prog__destroy`` for cleaning up.
 
-* Revamp of the LSM: remove the need for eBPF and seccomp(2).
-* Implement a full filesystem access-control.
-* Take care of the backward compatibility issues, especially for
-  security features, following a best-effort approach.
+</end>
 
-Previous version:
-https://lore.kernel.org/lkml/20200224160215.4136-1-mic@digikod.net/
+If this looks okay, I will send a v8 with this updated and other
+fixes.
 
+- KP
 
-[1] https://lore.kernel.org/lkml/CAG48ez21bEn0wL1bbmTiiu8j9jP5iEWtHOwz4tURUJ+ki0ydYw@mail.gmail.com/
-[2] https://lore.kernel.org/lkml/50db058a-7dde-441b-a7f9-f6837fe8b69f@schaufler-ca.com/
+> 
+> > +
+> > +Attachment to LSM Hooks
+> > +-----------------------
+> > +
+> > +The LSM allows attachment of eBPF programs as LSM hooks using :manpage:`bpf(2)`
+> > +syscall's ``BPF_PROG_ATTACH`` operation or more simply by
+> 
+> BPF_PROG_ATTACH is incorrect, it's RAW_TRACEPOINT_OPEN, isn't it?
 
-Regards,
+Correct, updated. Thanks!
 
-Mickaël Salaün (10):
-  landlock: Add object management
-  landlock: Add ruleset and domain management
-  landlock: Set up the security framework and manage credentials
-  landlock: Add ptrace restrictions
-  fs,landlock: Support filesystem access-control
-  landlock: Add syscall implementation
-  arch: Wire up landlock() syscall
-  selftests/landlock: Add initial tests
-  samples/landlock: Add a sandbox manager example
-  landlock: Add user and kernel documentation
+> 
+> > +using the libbpf helper ``bpf_program__attach_lsm``. In the code shown below
+> > +``prog`` is the eBPF program loaded using ``BPF_PROG_LOAD``:
+> > +
+> > +.. code-block:: c
+> > +
+> > +       struct bpf_link *link;
+> > +
+> > +       link = bpf_program__attach_lsm(prog);
+> > +
+> > +The program can be detached from the LSM hook by *destroying* the ``link``
+> > +link returned by ``bpf_program__attach_lsm``:
+> > +
+> > +.. code-block:: c
+> > +
+> > +       link->destroy();
+> 
+> that's not how it works in C ;)
 
- Documentation/security/index.rst              |    1 +
- Documentation/security/landlock/index.rst     |   18 +
- Documentation/security/landlock/kernel.rst    |   69 +
- Documentation/security/landlock/user.rst      |  227 +++
- MAINTAINERS                                   |   12 +
- arch/alpha/kernel/syscalls/syscall.tbl        |    1 +
- arch/arm/tools/syscall.tbl                    |    1 +
- arch/arm64/include/asm/unistd.h               |    2 +-
- arch/arm64/include/asm/unistd32.h             |    2 +
- arch/ia64/kernel/syscalls/syscall.tbl         |    1 +
- arch/m68k/kernel/syscalls/syscall.tbl         |    1 +
- arch/microblaze/kernel/syscalls/syscall.tbl   |    1 +
- arch/mips/kernel/syscalls/syscall_n32.tbl     |    1 +
- arch/mips/kernel/syscalls/syscall_n64.tbl     |    1 +
- arch/mips/kernel/syscalls/syscall_o32.tbl     |    1 +
- arch/parisc/kernel/syscalls/syscall.tbl       |    1 +
- arch/powerpc/kernel/syscalls/syscall.tbl      |    1 +
- arch/s390/kernel/syscalls/syscall.tbl         |    1 +
- arch/sh/kernel/syscalls/syscall.tbl           |    1 +
- arch/sparc/kernel/syscalls/syscall.tbl        |    1 +
- arch/x86/entry/syscalls/syscall_32.tbl        |    1 +
- arch/x86/entry/syscalls/syscall_64.tbl        |    1 +
- arch/xtensa/kernel/syscalls/syscall.tbl       |    1 +
- fs/super.c                                    |    2 +
- include/linux/fs.h                            |    5 +
- include/linux/landlock.h                      |   22 +
- include/linux/syscalls.h                      |    3 +
- include/uapi/asm-generic/unistd.h             |    4 +-
- include/uapi/linux/landlock.h                 |  311 ++++
- kernel/sys_ni.c                               |    3 +
- samples/Kconfig                               |    7 +
- samples/Makefile                              |    1 +
- samples/landlock/.gitignore                   |    1 +
- samples/landlock/Makefile                     |   15 +
- samples/landlock/sandboxer.c                  |  217 +++
- security/Kconfig                              |   11 +-
- security/Makefile                             |    2 +
- security/landlock/Kconfig                     |   18 +
- security/landlock/Makefile                    |    4 +
- security/landlock/common.h                    |   20 +
- security/landlock/cred.c                      |   46 +
- security/landlock/cred.h                      |   55 +
- security/landlock/fs.c                        |  561 ++++++++
- security/landlock/fs.h                        |   42 +
- security/landlock/object.c                    |   66 +
- security/landlock/object.h                    |   92 ++
- security/landlock/ptrace.c                    |  120 ++
- security/landlock/ptrace.h                    |   14 +
- security/landlock/ruleset.c                   |  352 +++++
- security/landlock/ruleset.h                   |  182 +++
- security/landlock/setup.c                     |   39 +
- security/landlock/setup.h                     |   18 +
- security/landlock/syscall.c                   |  521 +++++++
- tools/testing/selftests/Makefile              |    1 +
- tools/testing/selftests/landlock/.gitignore   |    4 +
- tools/testing/selftests/landlock/Makefile     |   26 +
- tools/testing/selftests/landlock/common.h     |   42 +
- tools/testing/selftests/landlock/config       |    5 +
- tools/testing/selftests/landlock/test_base.c  |  113 ++
- tools/testing/selftests/landlock/test_fs.c    | 1249 +++++++++++++++++
- .../testing/selftests/landlock/test_ptrace.c  |  294 ++++
- tools/testing/selftests/landlock/true.c       |    5 +
- 62 files changed, 4833 insertions(+), 7 deletions(-)
- create mode 100644 Documentation/security/landlock/index.rst
- create mode 100644 Documentation/security/landlock/kernel.rst
- create mode 100644 Documentation/security/landlock/user.rst
- create mode 100644 include/linux/landlock.h
- create mode 100644 include/uapi/linux/landlock.h
- create mode 100644 samples/landlock/.gitignore
- create mode 100644 samples/landlock/Makefile
- create mode 100644 samples/landlock/sandboxer.c
- create mode 100644 security/landlock/Kconfig
- create mode 100644 security/landlock/Makefile
- create mode 100644 security/landlock/common.h
- create mode 100644 security/landlock/cred.c
- create mode 100644 security/landlock/cred.h
- create mode 100644 security/landlock/fs.c
- create mode 100644 security/landlock/fs.h
- create mode 100644 security/landlock/object.c
- create mode 100644 security/landlock/object.h
- create mode 100644 security/landlock/ptrace.c
- create mode 100644 security/landlock/ptrace.h
- create mode 100644 security/landlock/ruleset.c
- create mode 100644 security/landlock/ruleset.h
- create mode 100644 security/landlock/setup.c
- create mode 100644 security/landlock/setup.h
- create mode 100644 security/landlock/syscall.c
- create mode 100644 tools/testing/selftests/landlock/.gitignore
- create mode 100644 tools/testing/selftests/landlock/Makefile
- create mode 100644 tools/testing/selftests/landlock/common.h
- create mode 100644 tools/testing/selftests/landlock/config
- create mode 100644 tools/testing/selftests/landlock/test_base.c
- create mode 100644 tools/testing/selftests/landlock/test_fs.c
- create mode 100644 tools/testing/selftests/landlock/test_ptrace.c
- create mode 100644 tools/testing/selftests/landlock/true.c
+Oops, I incorrectly picked it up from link->destroy(link); and wrote
+something stupid.
 
--- 
-2.26.0.rc2
+> 
+> bpf_link__destroy(link);
 
+Updated in the snippet posted above.
+
+- KP
+
+> 
+> > +
+> > +Examples
+> > +--------
+> > +
+> > +An example eBPF programs can be found in
+> > +`tools/testing/selftests/bpf/progs/lsm.c`_ and the corresponding
+> > +userspace code in `tools/testing/selftests/bpf/prog_tests/test_lsm.c`_
+> > +
+> > +.. Links
+> > +.. _tools/lib/bpf/bpf_tracing.h:
+> > +   https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/tools/lib/bpf/bpf_tracing.h
+> > +.. _tools/testing/selftests/bpf/progs/lsm.c:
+> > +   https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/tools/testing/selftests/bpf/progs/lsm.c
+> > +.. _tools/testing/selftests/bpf/progs/lsm_void_hook.c:
+> > +   https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/tools/testing/selftests/bpf/progs/lsm_void_hook.c
+> > +.. _tools/testing/selftests/bpf/prog_tests/test_lsm.c:
+> > +   https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/tools/testing/selftests/bpf/prog_tests/test_lsm.c
+> > diff --git a/Documentation/bpf/index.rst b/Documentation/bpf/index.rst
+> > index 7be43c5f2dcf..f99677f3572f 100644
+> > --- a/Documentation/bpf/index.rst
+> > +++ b/Documentation/bpf/index.rst
+> > @@ -45,6 +45,7 @@ Program types
+> >     prog_cgroup_sockopt
+> >     prog_cgroup_sysctl
+> >     prog_flow_dissector
+> > +   bpf_lsm
+> >
+> >
+> >  Testing and debugging BPF
+> > --
+> > 2.20.1
+> >
