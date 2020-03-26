@@ -2,240 +2,311 @@ Return-Path: <SRS0=UFfU=5L=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-14.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5B17C2D0EE
-	for <linux-security-module@archiver.kernel.org>; Thu, 26 Mar 2020 14:04:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF8A3C2D0EE
+	for <linux-security-module@archiver.kernel.org>; Thu, 26 Mar 2020 14:28:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7ADD720748
-	for <linux-security-module@archiver.kernel.org>; Thu, 26 Mar 2020 14:04:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F8232073E
+	for <linux-security-module@archiver.kernel.org>; Thu, 26 Mar 2020 14:28:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho.nsa.gov header.i=@tycho.nsa.gov header.b="NQVSQC5k"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="G2JJCBIJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728322AbgCZOD4 (ORCPT
+        id S1728101AbgCZO2g (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 26 Mar 2020 10:03:56 -0400
-Received: from UHIL19PA37.eemsg.mail.mil ([214.24.21.196]:40123 "EHLO
-        UHIL19PA37.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728294AbgCZOD4 (ORCPT
+        Thu, 26 Mar 2020 10:28:36 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:42360 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727899AbgCZO2e (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 26 Mar 2020 10:03:56 -0400
-X-Greylist: delayed 426 seconds by postgrey-1.27 at vger.kernel.org; Thu, 26 Mar 2020 10:03:55 EDT
-X-EEMSG-check-017: 89856681|UHIL19PA37_ESA_OUT03.csd.disa.mil
-X-IronPort-AV: E=Sophos;i="5.72,308,1580774400"; 
-   d="scan'208";a="89856681"
-Received: from emsm-gh1-uea10.ncsc.mil ([214.29.60.2])
-  by UHIL19PA37.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 26 Mar 2020 13:56:47 +0000
+        Thu, 26 Mar 2020 10:28:34 -0400
+Received: by mail-wr1-f67.google.com with SMTP id h15so8030678wrx.9
+        for <linux-security-module@vger.kernel.org>; Thu, 26 Mar 2020 07:28:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
-  s=tycho.nsa.gov; t=1585231008; x=1616767008;
-  h=subject:to:references:from:message-id:date:mime-version:
-   in-reply-to:content-transfer-encoding;
-  bh=4klW1VsqpgpHGLj7aCzdzQeSrTNXwsMKRK/eE1tKzn0=;
-  b=NQVSQC5kzZwKlTNahP27uiFEE2PijMn+eSdTQxXAX/reZBYnduWMzXp/
-   IBW8kcEQqzd0xmQmTfuOdzEcFDRQUuZi8E2mz1HP3p4YI9xgMnHuHBYPO
-   t63uD9p0F9BoSk8uFgCfVtzD81FNVH8Xp5OzMG64FN5Sg9bJREQGJbXq5
-   lJ+BmrlPXOt0TIv6zcQAu6k9lM0s23dOxCrb3IbO8tYVssz6S03JrSUAg
-   0/WcczEkpg2D8JjS3wHWL9+Ebrh2LNpvYE8Xf4bAoD32JR1ZqBSYPPIQ8
-   JEdhffqyLn5UVCs5PJYquMFpfwn99UhWfDsG55leiM/SqmQb5G2Kla45S
-   Q==;
-X-IronPort-AV: E=Sophos;i="5.72,308,1580774400"; 
-   d="scan'208";a="34628563"
-IronPort-PHdr: =?us-ascii?q?9a23=3Aou2MNRaqYuCnBWTiuirW+Pf/LSx+4OfEezUN45?=
- =?us-ascii?q?9isYplN5qZpsqybR7h7PlgxGXEQZ/co6odzbaP7+a5BDJLvMjJmUtBWaIPfi?=
- =?us-ascii?q?dNsd8RkQ0kDZzNImzAB9muURYHGt9fXkRu5XCxPBsdMs//Y1rPvi/6tmZKSV?=
- =?us-ascii?q?3wOgVvO+v6BJPZgdip2OCu4Z3TZBhDiCagbb9oIxi6sArcutMLjYZiK6s9xR?=
- =?us-ascii?q?vEr3pVcOlK2G1kIk6ekBn76sqs5pBo7j5eu+gm985OUKX6e7o3QLlFBzk4MG?=
- =?us-ascii?q?47+dPmuwDbQQSA+nUTXGMWkgFVAwfe9xH1Qo3xsirhueVj3iSRIND7Qqo1WT?=
- =?us-ascii?q?Sm6KdrVQPohSIaPDM37G3blsp9h79ArRm/uxJw3ZLbYICNNPp/YKzde88aRX?=
- =?us-ascii?q?FcVcpVTiBNH5+wY5cKA+cHM+lYtY39rEYQoxW4CwenGefjxiZGi3Ly2KE31f?=
- =?us-ascii?q?kqHwPb0ww6B98ArWrarNv1OqkRX+66wqbHwjffYP1Zwjr99IrFfwo9rf2QU7?=
- =?us-ascii?q?99c8zcwlQvGQPfiVWQrJToMS6J1usTq2ib7/RvVeSygGA6rgF+uDyvxsMyhY?=
- =?us-ascii?q?jJm4kYzUvE+jhiwIsuOd25SFJ0Yd6jEJdKsSGaLJF5TtktQ2FvpiY307sLso?=
- =?us-ascii?q?O4cigS0Jkr2hHSZvOdf4WI/x7vTvidLDhmiH5/Zb6ygQu5/1K6xe3mTMa01U?=
- =?us-ascii?q?5Hri9CktbRqH8AzwfT6s2bSvtl+UehxCqP2xjT6u5aJUA0krLWK4I7zb4ql5?=
- =?us-ascii?q?oTrF/DEjXqmET2kKCWdkIk9vKu6+v7ebXpuoWQN4p1igH6Kqgum8q/DvokMg?=
- =?us-ascii?q?UWQmSW9uux2Kfj8EHkWrlGkPI7nrfDvJzHPcgbo7S2Aw5R0oYt8Ra/CDKm3c?=
- =?us-ascii?q?wDnXYaN1JIYw6Hjoj1NFHOJ/D0F/G/g0+2nztxyPDGOaPhDo3XLnffiLfhYa?=
- =?us-ascii?q?p960lExQUu199f4Y5bCrYFIP/oVU/xs9vYDhA9MwOq2eroFNJ91oYGU2KVHq?=
- =?us-ascii?q?CZKL/SsUOP5u83P+mMZYoVuDPgK/g//f7hl384lEQSfamu2psXZ3S4Eep8L0?=
- =?us-ascii?q?qFZnrsh88LEX0WsQomUOzqlFqCXCZIZ3msW6I85zc7CJ+pDIrYWICtj6KO3D?=
- =?us-ascii?q?2hEp1VeG9GEFaMHmnsd4meXPcMci2SKNd7kjMYTbihV5Mh1Ra2uQ/+yrpnKP?=
- =?us-ascii?q?fU+yIBuZL4ytd6+/DTlQsz9TxoD8WRymSNT2ZpkWMVQz85wrtyoVJyylidy6?=
- =?us-ascii?q?h0mf9YGsJJ5/NPTAg6MYTQz+tgC9D9QgjBZMuGSE66QtW6BjE8VtYxw94IY0?=
- =?us-ascii?q?ZgFNSulx7D3zG3DLALibyEGpg0/7nC33j+Ocl90WzK1Ko/gFk8RMtAK2mmir?=
- =?us-ascii?q?R49wjJCI7Di1+ZmLqydaQAwC7N83+OzW6PvEFeTQ5xXrzJXXMBaUvMq9T2+E?=
- =?us-ascii?q?fCQqSwCbQoLARB09SOKqhUZd3zi1VJWvPjNM7ZY2KrlGe6HQyIya+UbIr2Z2?=
- =?us-ascii?q?Ud2z3QCEsakwAW5nuGKwc+CTm7o27EDzxhC0jvY0Xy/ul6sn+7SVU0zw6SZU?=
- =?us-ascii?q?17y7W14gIVheCbS/4LwLIEuT0hqzJvEVe8wd3WDduApxR7cKVYYNM95kpH1G?=
- =?us-ascii?q?3Duwx6JJygILpuhkMdcw5vpUPhyw13CplckcgttH4q1BB9Kb+c0F5abzOXx4?=
- =?us-ascii?q?3wOrnOJmn3+xCvbLTW1U/E3NmK/acP7ewyq0//swGxCkoi73Jn3sFT03ua5Z?=
- =?us-ascii?q?XHFwUSUZX2UkY48xh1uavWbTU654PRzXdsK7W7sife29I1A+so0hKgf9BcMK?=
- =?us-ascii?q?yaDw/yE8IaB8mzJ+wwgVekdR0EPOdV9K47O8OpaeGK17KsPOZlz3qaijFr6Y?=
- =?us-ascii?q?Z830bE3C14Q/XD3pEDzrnM0gKBXDD4pFimtc/zlMZPYjREWiKjyC3hGZRLb7?=
- =?us-ascii?q?xacoEMBmOjZcaww5E2nJPpWnhF5Ha9CF4cnsykYxyfaxr6xwIUnUAWp2G33D?=
- =?us-ascii?q?C1xCFuki0466+Y0DHKzsz8excdfG1GXm9viRHrO4fwx9QbWlW4KgYymBa76E?=
- =?us-ascii?q?LS2adWvuJ8InPVTEMOeDL5aylmU62tpv+BbtRJ5ZcArypaSqK/bEqcR7q7pA?=
- =?us-ascii?q?EVl2vgAW522j82bXept4//khg8j3iSaD5trWDeUdN9wxbBotjdQ+NBmD0cS2?=
- =?us-ascii?q?9lin2fHlGhO/Gx9MiQ0pLEtfqzEWmmU9kbdy/o5YyHsyS/6CthBhj71/S0md?=
- =?us-ascii?q?D8EQc73TXy/9ZtUirMoVD3ZYy4+b69NLdcYkRwBFL6o/F/E4V6n5p40Iocwl?=
- =?us-ascii?q?AGl56V+jwBim61PtJFj/GtJEERTCIGloaGqDPu31duezfQnNP0?=
-X-IPAS-Result: =?us-ascii?q?A2B0AAAltHxe/wHyM5BmHAEBAQEBBwEBEQEEBAEBgWkFA?=
- =?us-ascii?q?QELAYF8LIFBMiqEGo58gWwliXqPUoEkA1QKAQEBAQEBAQEBNAECBAEBhEQCg?=
- =?us-ascii?q?i8kNgcOAhABAQEFAQEBAQEFAwEBbIVigjspAYJ/AQUjBBFRCw4KAgImAgJXB?=
- =?us-ascii?q?gEMBgIBAYJjP4JYJa1zfzOFS4NSgT6BDioBjC4aeYEHgREnDAOCXj6ES4MRg?=
- =?us-ascii?q?l4Elw9xmFWCRoJWlC0GHYJMjQKMEY8RnXYBMTeBISsIAhgIIQ+DJ1AYDY4pF?=
- =?us-ascii?q?41sVSUDMIEGAQGOHQEB?=
-Received: from tarius.tycho.ncsc.mil ([144.51.242.1])
-  by EMSM-GH1-UEA10.NCSC.MIL with ESMTP; 26 Mar 2020 13:56:46 +0000
-Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto.infosec.tycho.ncsc.mil [192.168.25.131])
-        by tarius.tycho.ncsc.mil (8.14.7/8.14.4) with ESMTP id 02QDv8uu044529;
-        Thu, 26 Mar 2020 09:57:08 -0400
-Subject: Re: [PATCH v2 2/3] Teach SELinux about anonymous inodes
-To:     Daniel Colascione <dancol@google.com>, timmurray@google.com,
-        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, viro@zeniv.linux.org.uk, paul@paul-moore.com,
-        nnk@google.com, lokeshgidra@google.com
-References: <20200214032635.75434-1-dancol@google.com>
- <20200325230245.184786-3-dancol@google.com>
-From:   Stephen Smalley <sds@tycho.nsa.gov>
-Message-ID: <b5999b89-6921-5667-9eb2-662b14d5f730@tycho.nsa.gov>
-Date:   Thu, 26 Mar 2020 09:58:05 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=nah7eloT8x9U2Pf6er//uT9Y/C6Gnqy/juAZ3enEX5Y=;
+        b=G2JJCBIJdZ171HJUO3VAZ+h4RfRI1TIvyxu51P/SgyYyoeYNhHb9P/fPzOr8V2clax
+         DN4gXJnJJ33Rp5P81TVmaw/ugEgzRDewKj0YWPIDmBK/Y29Nc0garwHIIgPJoJqPxEge
+         y5bVscUSExtgPWKVj7hDM1ZgZdQBOQ/Si4BZc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=nah7eloT8x9U2Pf6er//uT9Y/C6Gnqy/juAZ3enEX5Y=;
+        b=jk14qlHLWdKcfWAT8KQjTgidwE3axjgBo2+ivoLzaD7DwJ8gHJLlRqBt/NLfGx4Cyj
+         778qDiOIyhVstSWMBXawPIPAIv1q5D9vVm1UsqRDysR9bim9PCXAcGW1omFY0uagGGI6
+         ggSVv/Ihh9w6R+tOc3cF2k7OLtHdyBkGbke0eUS4FER5Emkr9ccoUDGTn9WqQObyDENO
+         cGE3KmbMd2Iot8zhlSAr7eDh6uElMshjRU2dNJ29sT95+qv7oXNMp2Mjlh8OmoVrrF6A
+         WA+7/rgxxz0K5/w8ZFcNh1kzAOodl2WwQaF8BNAxmVvbwngHpev7B/kl6NZsEUMmS8SL
+         ksLg==
+X-Gm-Message-State: ANhLgQ1XY2d32vlZde/2O8G1b80/VzfLHMn3xJMcFNcmUXgyOG3QlCbU
+        fPuniQFn7WNNbtaYko1GSCH6OQ==
+X-Google-Smtp-Source: ADFU+vvWuNxw+qMRs73GOD7kuBn22dFllf1RzIb5saYtcGRdSpZ7U8Mc/KuWpw/+HYhIQLVMiW+IUw==
+X-Received: by 2002:adf:f50d:: with SMTP id q13mr9996931wro.374.1585232911035;
+        Thu, 26 Mar 2020 07:28:31 -0700 (PDT)
+Received: from kpsingh-kernel.localdomain (77-56-209-237.dclient.hispeed.ch. [77.56.209.237])
+        by smtp.gmail.com with ESMTPSA id q3sm3643971wru.87.2020.03.26.07.28.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Mar 2020 07:28:30 -0700 (PDT)
+From:   KP Singh <kpsingh@chromium.org>
+To:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Cc:     Brendan Jackman <jackmanb@google.com>,
+        Florent Revest <revest@google.com>,
+        Thomas Garnier <thgarnie@google.com>,
+        Yonghong Song <yhs@fb.com>, Andrii Nakryiko <andriin@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        James Morris <jmorris@namei.org>,
+        Kees Cook <keescook@chromium.org>,
+        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH bpf-next v7 1/8] bpf: Introduce BPF_PROG_TYPE_LSM
+Date:   Thu, 26 Mar 2020 15:28:16 +0100
+Message-Id: <20200326142823.26277-2-kpsingh@chromium.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200326142823.26277-1-kpsingh@chromium.org>
+References: <20200326142823.26277-1-kpsingh@chromium.org>
 MIME-Version: 1.0
-In-Reply-To: <20200325230245.184786-3-dancol@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 3/25/20 7:02 PM, Daniel Colascione wrote:
-> This change uses the anon_inodes and LSM infrastructure introduced in
-> the previous patch to give SELinux the ability to control
-> anonymous-inode files that are created using the new _secure()
-> anon_inodes functions.
-> 
-> A SELinux policy author detects and controls these anonymous inodes by
-> adding a name-based type_transition rule that assigns a new security
-> type to anonymous-inode files created in some domain. The name used
-> for the name-based transition is the name associated with the
-> anonymous inode for file listings --- e.g., "[userfaultfd]" or
-> "[perf_event]".
-> 
-> Example:
-> 
-> type uffd_t;
-> type_transition sysadm_t sysadm_t : file uffd_t "[userfaultfd]";
-> allow sysadm_t uffd_t:file { create };
-> 
-> (The next patch in this series is necessary for making userfaultfd
-> support this new interface.  The example above is just
-> for exposition.)
-> 
-> Signed-off-by: Daniel Colascione <dancol@google.com>
-> ---
->   security/selinux/hooks.c            | 54 +++++++++++++++++++++++++++++
->   security/selinux/include/classmap.h |  2 ++
->   2 files changed, 56 insertions(+)
-> 
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index 1659b59fb5d7..b9eb45c2e4e5 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -2915,6 +2915,59 @@ static int selinux_inode_init_security(struct inode *inode, struct inode *dir,
->   	return 0;
->   }
->   
-> +static int selinux_inode_init_security_anon(struct inode *inode,
-> +					    const struct qstr *name,
-> +					    const struct file_operations *fops,
-> +					    const struct inode *context_inode)
-> +{
-> +	const struct task_security_struct *tsec = selinux_cred(current_cred());
-> +	struct common_audit_data ad;
-> +	struct inode_security_struct *isec;
-> +	int rc;
-> +
-> +	if (unlikely(!selinux_state.initialized))
-> +		return 0;
+From: KP Singh <kpsingh@google.com>
 
-This leaves secure anon inodes created before first policy load with the 
-unlabeled SID rather than defaulting to the SID of the creating task 
-(kernel SID in that situation).  Is that what you want?  Alternatively 
-you can just remove this test and let it proceed; nothing should be 
-break and the anon inodes will get the kernel SID.
+Introduce types and configs for bpf programs that can be attached to
+LSM hooks. The programs can be enabled by the config option
+CONFIG_BPF_LSM.
 
-> +
-> +	isec = selinux_inode(inode);
-> +
-> +	/*
-> +	 * We only get here once per ephemeral inode.  The inode has
-> +	 * been initialized via inode_alloc_security but is otherwise
-> +	 * untouched.
-> +	 */
-> +
-> +	if (context_inode) {
-> +		struct inode_security_struct *context_isec =
-> +			selinux_inode(context_inode);
-> +		isec->sclass = context_isec->sclass;
-> +		isec->sid = context_isec->sid;
-> +	} else {
-> +		isec->sclass = SECCLASS_ANON_INODE;
-> +		rc = security_transition_sid(
-> +			&selinux_state, tsec->sid, tsec->sid,
-> +			SECCLASS_FILE, name, &isec->sid);
-> +		if (rc)
-> +			return rc;
-> +	}
-> +
-> +	isec->initialized = LABEL_INITIALIZED;
-> +
-> +	/*
-> +	 * Now that we've initialized security, check whether we're
-> +	 * allowed to actually create this type of anonymous inode.
-> +	 */
-> +
-> +	ad.type = LSM_AUDIT_DATA_INODE;
-> +	ad.u.inode = inode;
-> +
-> +	return avc_has_perm(&selinux_state,
-> +			    tsec->sid,
-> +			    isec->sid,
-> +			    isec->sclass,
-> +			    FILE__CREATE,
-> +			    &ad);
-> +}
-> +
->   static int selinux_inode_create(struct inode *dir, struct dentry *dentry, umode_t mode)
->   {
->   	return may_create(dir, dentry, SECCLASS_FILE);
-> @@ -6923,6 +6976,7 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
->   
->   	LSM_HOOK_INIT(inode_free_security, selinux_inode_free_security),
->   	LSM_HOOK_INIT(inode_init_security, selinux_inode_init_security),
-> +	LSM_HOOK_INIT(inode_init_security_anon, selinux_inode_init_security_anon),
->   	LSM_HOOK_INIT(inode_create, selinux_inode_create),
->   	LSM_HOOK_INIT(inode_link, selinux_inode_link),
->   	LSM_HOOK_INIT(inode_unlink, selinux_inode_unlink),
-> diff --git a/security/selinux/include/classmap.h b/security/selinux/include/classmap.h
-> index 986f3ac14282..263750b6aaac 100644
-> --- a/security/selinux/include/classmap.h
-> +++ b/security/selinux/include/classmap.h
-> @@ -248,6 +248,8 @@ struct security_class_mapping secclass_map[] = {
->   	  {"open", "cpu", "kernel", "tracepoint", "read", "write"} },
->   	{ "lockdown",
->   	  { "integrity", "confidentiality", NULL } },
-> +	{ "anon_inode",
-> +	  { COMMON_FILE_PERMS, NULL } },
->   	{ NULL }
->     };
->   
-> 
+Signed-off-by: KP Singh <kpsingh@google.com>
+Reviewed-by: Brendan Jackman <jackmanb@google.com>
+Reviewed-by: Florent Revest <revest@google.com>
+Reviewed-by: Thomas Garnier <thgarnie@google.com>
+Acked-by: Yonghong Song <yhs@fb.com>
+Acked-by: Andrii Nakryiko <andriin@fb.com>
+---
+ MAINTAINERS                    |  1 +
+ include/linux/bpf.h            |  3 +++
+ include/linux/bpf_types.h      |  4 ++++
+ include/uapi/linux/bpf.h       |  2 ++
+ init/Kconfig                   | 12 ++++++++++++
+ kernel/bpf/Makefile            |  1 +
+ kernel/bpf/bpf_lsm.c           | 17 +++++++++++++++++
+ kernel/trace/bpf_trace.c       | 12 ++++++------
+ tools/include/uapi/linux/bpf.h |  2 ++
+ tools/lib/bpf/libbpf_probes.c  |  1 +
+ 10 files changed, 49 insertions(+), 6 deletions(-)
+ create mode 100644 kernel/bpf/bpf_lsm.c
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 5dbee41045bc..3197fe9256b2 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -3147,6 +3147,7 @@ R:	Martin KaFai Lau <kafai@fb.com>
+ R:	Song Liu <songliubraving@fb.com>
+ R:	Yonghong Song <yhs@fb.com>
+ R:	Andrii Nakryiko <andriin@fb.com>
++R:	KP Singh <kpsingh@chromium.org>
+ L:	netdev@vger.kernel.org
+ L:	bpf@vger.kernel.org
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf.git
+diff --git a/include/linux/bpf.h b/include/linux/bpf.h
+index bdb981c204fa..af81ec7b783c 100644
+--- a/include/linux/bpf.h
++++ b/include/linux/bpf.h
+@@ -1513,6 +1513,9 @@ extern const struct bpf_func_proto bpf_tcp_sock_proto;
+ extern const struct bpf_func_proto bpf_jiffies64_proto;
+ extern const struct bpf_func_proto bpf_get_ns_current_pid_tgid_proto;
+ 
++const struct bpf_func_proto *bpf_tracing_func_proto(
++	enum bpf_func_id func_id, const struct bpf_prog *prog);
++
+ /* Shared helpers among cBPF and eBPF. */
+ void bpf_user_rnd_init_once(void);
+ u64 bpf_user_rnd_u32(u64 r1, u64 r2, u64 r3, u64 r4, u64 r5);
+diff --git a/include/linux/bpf_types.h b/include/linux/bpf_types.h
+index c81d4ece79a4..ba0c2d56f8a3 100644
+--- a/include/linux/bpf_types.h
++++ b/include/linux/bpf_types.h
+@@ -70,6 +70,10 @@ BPF_PROG_TYPE(BPF_PROG_TYPE_STRUCT_OPS, bpf_struct_ops,
+ 	      void *, void *)
+ BPF_PROG_TYPE(BPF_PROG_TYPE_EXT, bpf_extension,
+ 	      void *, void *)
++#ifdef CONFIG_BPF_LSM
++BPF_PROG_TYPE(BPF_PROG_TYPE_LSM, lsm,
++	       void *, void *)
++#endif /* CONFIG_BPF_LSM */
+ #endif
+ 
+ BPF_MAP_TYPE(BPF_MAP_TYPE_ARRAY, array_map_ops)
+diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
+index 5d01c5c7e598..9f2673c58788 100644
+--- a/include/uapi/linux/bpf.h
++++ b/include/uapi/linux/bpf.h
+@@ -181,6 +181,7 @@ enum bpf_prog_type {
+ 	BPF_PROG_TYPE_TRACING,
+ 	BPF_PROG_TYPE_STRUCT_OPS,
+ 	BPF_PROG_TYPE_EXT,
++	BPF_PROG_TYPE_LSM,
+ };
+ 
+ enum bpf_attach_type {
+@@ -211,6 +212,7 @@ enum bpf_attach_type {
+ 	BPF_TRACE_FENTRY,
+ 	BPF_TRACE_FEXIT,
+ 	BPF_MODIFY_RETURN,
++	BPF_LSM_MAC,
+ 	__MAX_BPF_ATTACH_TYPE
+ };
+ 
+diff --git a/init/Kconfig b/init/Kconfig
+index 20a6ac33761c..deae572d1927 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -1616,6 +1616,18 @@ config KALLSYMS_BASE_RELATIVE
+ # end of the "standard kernel features (expert users)" menu
+ 
+ # syscall, maps, verifier
++
++config BPF_LSM
++	bool "LSM Instrumentation with BPF"
++	depends on BPF_SYSCALL
++	depends on SECURITY
++	depends on BPF_JIT
++	help
++	  Enables instrumentation of the security hooks with eBPF programs for
++	  implementing dynamic MAC and Audit Policies.
++
++	  If you are unsure how to answer this question, answer N.
++
+ config BPF_SYSCALL
+ 	bool "Enable bpf() system call"
+ 	select BPF
+diff --git a/kernel/bpf/Makefile b/kernel/bpf/Makefile
+index 046ce5d98033..f2d7be596966 100644
+--- a/kernel/bpf/Makefile
++++ b/kernel/bpf/Makefile
+@@ -29,4 +29,5 @@ obj-$(CONFIG_DEBUG_INFO_BTF) += sysfs_btf.o
+ endif
+ ifeq ($(CONFIG_BPF_JIT),y)
+ obj-$(CONFIG_BPF_SYSCALL) += bpf_struct_ops.o
++obj-${CONFIG_BPF_LSM} += bpf_lsm.o
+ endif
+diff --git a/kernel/bpf/bpf_lsm.c b/kernel/bpf/bpf_lsm.c
+new file mode 100644
+index 000000000000..82875039ca90
+--- /dev/null
++++ b/kernel/bpf/bpf_lsm.c
+@@ -0,0 +1,17 @@
++// SPDX-License-Identifier: GPL-2.0
++
++/*
++ * Copyright (C) 2020 Google LLC.
++ */
++
++#include <linux/filter.h>
++#include <linux/bpf.h>
++#include <linux/btf.h>
++
++const struct bpf_prog_ops lsm_prog_ops = {
++};
++
++const struct bpf_verifier_ops lsm_verifier_ops = {
++	.get_func_proto = bpf_tracing_func_proto,
++	.is_valid_access = btf_ctx_access,
++};
+diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+index e619eedb5919..37ffceab608f 100644
+--- a/kernel/trace/bpf_trace.c
++++ b/kernel/trace/bpf_trace.c
+@@ -779,8 +779,8 @@ static const struct bpf_func_proto bpf_send_signal_thread_proto = {
+ 	.arg1_type	= ARG_ANYTHING,
+ };
+ 
+-static const struct bpf_func_proto *
+-tracing_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
++const struct bpf_func_proto *
++bpf_tracing_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
+ {
+ 	switch (func_id) {
+ 	case BPF_FUNC_map_lookup_elem:
+@@ -865,7 +865,7 @@ kprobe_prog_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
+ 		return &bpf_override_return_proto;
+ #endif
+ 	default:
+-		return tracing_func_proto(func_id, prog);
++		return bpf_tracing_func_proto(func_id, prog);
+ 	}
+ }
+ 
+@@ -975,7 +975,7 @@ tp_prog_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
+ 	case BPF_FUNC_get_stack:
+ 		return &bpf_get_stack_proto_tp;
+ 	default:
+-		return tracing_func_proto(func_id, prog);
++		return bpf_tracing_func_proto(func_id, prog);
+ 	}
+ }
+ 
+@@ -1082,7 +1082,7 @@ pe_prog_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
+ 	case BPF_FUNC_read_branch_records:
+ 		return &bpf_read_branch_records_proto;
+ 	default:
+-		return tracing_func_proto(func_id, prog);
++		return bpf_tracing_func_proto(func_id, prog);
+ 	}
+ }
+ 
+@@ -1210,7 +1210,7 @@ raw_tp_prog_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
+ 	case BPF_FUNC_get_stack:
+ 		return &bpf_get_stack_proto_raw_tp;
+ 	default:
+-		return tracing_func_proto(func_id, prog);
++		return bpf_tracing_func_proto(func_id, prog);
+ 	}
+ }
+ 
+diff --git a/tools/include/uapi/linux/bpf.h b/tools/include/uapi/linux/bpf.h
+index 5d01c5c7e598..9f2673c58788 100644
+--- a/tools/include/uapi/linux/bpf.h
++++ b/tools/include/uapi/linux/bpf.h
+@@ -181,6 +181,7 @@ enum bpf_prog_type {
+ 	BPF_PROG_TYPE_TRACING,
+ 	BPF_PROG_TYPE_STRUCT_OPS,
+ 	BPF_PROG_TYPE_EXT,
++	BPF_PROG_TYPE_LSM,
+ };
+ 
+ enum bpf_attach_type {
+@@ -211,6 +212,7 @@ enum bpf_attach_type {
+ 	BPF_TRACE_FENTRY,
+ 	BPF_TRACE_FEXIT,
+ 	BPF_MODIFY_RETURN,
++	BPF_LSM_MAC,
+ 	__MAX_BPF_ATTACH_TYPE
+ };
+ 
+diff --git a/tools/lib/bpf/libbpf_probes.c b/tools/lib/bpf/libbpf_probes.c
+index b782ebef6ac9..2c92059c0c90 100644
+--- a/tools/lib/bpf/libbpf_probes.c
++++ b/tools/lib/bpf/libbpf_probes.c
+@@ -108,6 +108,7 @@ probe_load(enum bpf_prog_type prog_type, const struct bpf_insn *insns,
+ 	case BPF_PROG_TYPE_TRACING:
+ 	case BPF_PROG_TYPE_STRUCT_OPS:
+ 	case BPF_PROG_TYPE_EXT:
++	case BPF_PROG_TYPE_LSM:
+ 	default:
+ 		break;
+ 	}
+-- 
+2.20.1
 
