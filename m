@@ -2,329 +2,191 @@ Return-Path: <SRS0=UFfU=5L=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43440C43331
-	for <linux-security-module@archiver.kernel.org>; Thu, 26 Mar 2020 14:29:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88E54C2D0E5
+	for <linux-security-module@archiver.kernel.org>; Thu, 26 Mar 2020 17:37:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12D5120714
-	for <linux-security-module@archiver.kernel.org>; Thu, 26 Mar 2020 14:29:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 57F2520719
+	for <linux-security-module@archiver.kernel.org>; Thu, 26 Mar 2020 17:37:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YtJGWTj0"
+	dkim=pass (2048-bit key) header.d=tycho.nsa.gov header.i=@tycho.nsa.gov header.b="M9sVOfTN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727670AbgCZO2d (ORCPT
+        id S1728326AbgCZRhe (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 26 Mar 2020 10:28:33 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:36813 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727732AbgCZO2d (ORCPT
+        Thu, 26 Mar 2020 13:37:34 -0400
+Received: from USAT19PA20.eemsg.mail.mil ([214.24.22.194]:23802 "EHLO
+        USAT19PA20.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726163AbgCZRhd (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 26 Mar 2020 10:28:33 -0400
-Received: by mail-wm1-f67.google.com with SMTP id g62so7263511wme.1
-        for <linux-security-module@vger.kernel.org>; Thu, 26 Mar 2020 07:28:30 -0700 (PDT)
+        Thu, 26 Mar 2020 13:37:33 -0400
+X-EEMSG-check-017: 93888031|USAT19PA20_ESA_OUT01.csd.disa.mil
+X-IronPort-AV: E=Sophos;i="5.72,309,1580774400"; 
+   d="scan'208";a="93888031"
+Received: from emsm-gh1-uea10.ncsc.mil ([214.29.60.2])
+  by USAT19PA20.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 26 Mar 2020 17:36:41 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=tfnzNNCA8joJnnWzGgkgzC61sw3WP0jtxmMveLMqUg4=;
-        b=YtJGWTj0456PjZz32f1AyJpvI3B3UTlWz6SKnmVVYe1KvQTvxPTPagC53wtN7MPfra
-         dEXsL4mKGcX6QkevS4UO3n9S6NskfVdQFqUoSuNV9wtEqCk2zi80sJB9wCtpy8xIdv9B
-         ltIJNVnjTjdFXFc2hoZLpgB7iZY6A0k0E+7gU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=tfnzNNCA8joJnnWzGgkgzC61sw3WP0jtxmMveLMqUg4=;
-        b=Lh1JGNPaKfyL7wnXaSOJUdQlEBFpGQ0UqmcDpTeQe2STY/FYw+f4d2nQKbwzofp5Cb
-         X94RP5XDWJw8XA1yovXjy7lxGehB93BLzdc+l2/bwGxtLZ6F9gBJluM/jS3Mr+zMuO8J
-         E5c7v1949yggI/97Yen8EhrLjTvrPeVmmEUy3yp51onaJgpeSvTyEI18lGxYfxKVZMly
-         H4AkcKEBEHY49RcCcNDIlHBIU5u8hhcsvBV/X4EGAmFqD0R5SgaJMBL81Lxa2MzLxpha
-         x3S1PJb4tiT7sJL4deqfh27OIOnUh+RAtN3ScsjZhuu1cBI7esb6vGKpSAwihHCfQWvM
-         8NQw==
-X-Gm-Message-State: ANhLgQ2VT88SuZaSpf4XJo6a2czL3bGkW4S4xDlotfWXQasyT87wIeqq
-        RWGfDJqD15Eoe8biqC2hn75S8w==
-X-Google-Smtp-Source: ADFU+vva5bsygbbiOfCBjdLSUYaIpK1Z6dGSlgxNI2oJidiMxBkERFMBV/sntktMKsMyvSBRUgoHjw==
-X-Received: by 2002:a1c:bcc6:: with SMTP id m189mr258509wmf.48.1585232909506;
-        Thu, 26 Mar 2020 07:28:29 -0700 (PDT)
-Received: from kpsingh-kernel.localdomain (77-56-209-237.dclient.hispeed.ch. [77.56.209.237])
-        by smtp.gmail.com with ESMTPSA id q3sm3643971wru.87.2020.03.26.07.28.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Mar 2020 07:28:28 -0700 (PDT)
-From:   KP Singh <kpsingh@chromium.org>
-To:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>,
-        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH bpf-next v7 0/8] MAC and Audit policy using eBPF (KRSI)
-Date:   Thu, 26 Mar 2020 15:28:15 +0100
-Message-Id: <20200326142823.26277-1-kpsingh@chromium.org>
-X-Mailer: git-send-email 2.20.1
+  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
+  s=tycho.nsa.gov; t=1585244201; x=1616780201;
+  h=subject:to:references:from:message-id:date:mime-version:
+   in-reply-to:content-transfer-encoding;
+  bh=4btUFkjZphQF2UdhZnXwDJJ8A/TabzXpxKrmQP1Nhwc=;
+  b=M9sVOfTNm3W1Xx1nQoEDacgCYJ97K4U2NzzCI6OpQUKXL+Y1AHi0IIJn
+   SralracjvE/QBOe0zzf4FaCRWNuaPYgqzzaUJJ6MHijxKnnkUXcF4B/0d
+   ujYUpDig1U8AZEHoCNhKlr3LUmjIKpKoC/SwOhAS/8KvNWsmnuLN4uZrZ
+   YHVJT5JUM1Cd74hdGXESojkbtRfkKRXltpWwVsHmHKa9IeNG3Y5UnpCR2
+   KOJCyWBOxMd6+TFiJRmqHcujqvXww1x0O6V5vNiCpCfR6NAh7f5f3VNhz
+   oxt4TM8I6wqzTS6VYYlP5Eg8PDUC4zvF0nvIYxbfC1SVt8bZ+iQ11MUN5
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.72,309,1580774400"; 
+   d="scan'208";a="34644859"
+IronPort-PHdr: =?us-ascii?q?9a23=3ARN2Bwhfdok8C1OGOSHEDiy9nlGMj4u6mDksu8p?=
+ =?us-ascii?q?Mizoh2WeGdxc28bB2N2/xhgRfzUJnB7Loc0qyK6vymADFfqs3e+Fk5M7VyFD?=
+ =?us-ascii?q?Y9wf0MmAIhBMPXQWbaF9XNKxIAIcJZSVV+9Gu6O0UGUOz3ZlnVv2HgpWVKQk?=
+ =?us-ascii?q?a3OgV6PPn6FZDPhMqrye+y54fTYwJVjzahfL9+Nhq7oRjeu8UMnIdvKqQ8xh?=
+ =?us-ascii?q?THr3ZKZu9b2X5mKVWPkhnz4cu94IRt+DlKtfI78M5AX6T6f6AmQrFdET8rLW?=
+ =?us-ascii?q?M76tD1uBfaVQeA6WcSXWsQkhpTHgjK9wr6UYvrsiv7reVyxi+XNtDrQL8uWD?=
+ =?us-ascii?q?Si66BrSAL0iCoCKjU0/n3bhtB2galGux+quQBxzJDIb4GULPp+f73SfdUGRW?=
+ =?us-ascii?q?paQ81dUzVNDp6gY4cTCuYMO+hXr5P5p1ATsxWwAweiD/7rxjNRiHL72ag23u?=
+ =?us-ascii?q?I8Gg/EwQMgBcoDvmnKotX7NKkcUu67w6fHwjrBc/xY1izw6JTKfx07vf2AQb?=
+ =?us-ascii?q?x9fMjXxEIyFw3FlFKQqYn9Mj2IyuQCrXCb7+p+WuKplmUptgRxrSKrxscolI?=
+ =?us-ascii?q?bIhp8ex1ff9Spk24Y4PsG4SU5nbt6kF5tcrSeaN5BsTc84TGFovzg6x6QAtJ?=
+ =?us-ascii?q?WmfyYK0IwqywPQZvGIaYSF4g/vWPyPLTp3mn5pYq+zihCv+ka60OL8TNO70F?=
+ =?us-ascii?q?NSoypAldnDq24C2gTI6siCVvt95kCh2SuT1wzL6uFLP0Q0la3DJp492LEwjJ?=
+ =?us-ascii?q?sTsVnYHiPshEX3jLOZdkUj+uSy7eTofq7mqYOGO49xiwH+Nrwims25AesmLg?=
+ =?us-ascii?q?gDR3WX9Ouz2bH5/UD1Xa9GguM5n6XHqpzWONwXpqujDA9U1oYj5Qy/DzCj0N?=
+ =?us-ascii?q?kAhnkIMUlFdQmbj4npJ17OIPf4Ae25g1S3ijhn3f/GPrr/ApnVNHjMjK/hfa?=
+ =?us-ascii?q?ph605b0Ac80MpQ55RIBbEGJPL+QUDxtNvfDh82Nwy73fzrB8l61oMbQWiPGL?=
+ =?us-ascii?q?OWMLvOsV+U4eIiO/WMZI4QuDb4Nvgl/eTugmU5mFIGcqmp2pwXaH+8Hvt4OU?=
+ =?us-ascii?q?mWfX3sgtIZG2cQogU+VPDqiEGFUTNLfHa9QaY85jA9CIK7AobOXZ6tgLOf0y?=
+ =?us-ascii?q?ehBJFWZX5JCkqKEXj2c4WIQfAMaDidIsV5iDwLSaChS5M91RGprAL6z7tnLu?=
+ =?us-ascii?q?zJ+iwXrJ7jz8Z66PHOlREo9Dx0E8Sc33iIT2Fzg2wIWjs2075krExjxVeMz7?=
+ =?us-ascii?q?J4j+ZbFdNN/fNJVBk1NZrGw+x9EdDyVRrLfs2VR1a+XtWmHTYxQ8o1w98PZU?=
+ =?us-ascii?q?Z9BtqjggnN3yqxHrAaiaKLC4Iw8q/HwXjxKNhyy2zc2KkikVYmWM1POnOihq?=
+ =?us-ascii?q?Jl8AjTHYHJmV2Dl6m2baQcwDLN9GCbwGqKvUFYVhNwUKrcUXAceETWt9L56V?=
+ =?us-ascii?q?3GT7K1F7QnPRVOydSYJqtJdNLpl1NGS+nnONjEZGKxgWiwDw6SxryQdIrqZ3?=
+ =?us-ascii?q?kd3CLFBUgHjQAT+G2LNRYxBii/uWLSFj9uGkz1Y0Pq7+Z+rGm3TkguzwGFd0?=
+ =?us-ascii?q?dhzaa6+gYJhfyATPMexqwEuCY7qzVzB1u83szZC9yBpwp/ZqlcZdI94FFa1W?=
+ =?us-ascii?q?PWrQB9OYagL694il4DcAR9p1nu2AlvCoVcjcgqq2snzBJoJqKF1FNMbCuY0o?=
+ =?us-ascii?q?rtOr3TM2Xy+Reva6nM2l7AytqZ5qAP6PEgoVX5oA6pDlYi82lg09RN1Xuc4J?=
+ =?us-ascii?q?bKAREdUZL2VUY3+Bx6qK/AbiYh4IPU0GVmMbOovT/ax9IpGOwlxw6kf9dYM6?=
+ =?us-ascii?q?OLChTyE80VB8ivNeMqgUKmYwkLPOBV8640MMemeOWc1KG3O+ZgmWHusWMSzI?=
+ =?us-ascii?q?l700+IvwF7TufT1JcCxfzQigeOUTz7iH+utcf4nY0CbjYXSC731SnhAZNLfK?=
+ =?us-ascii?q?RjVYkMDmiqLou8wdA6z4XgX39e6U6LGVwLwomqdACUYli72hdfkQwToHq6iW?=
+ =?us-ascii?q?6jwjdpiTA1v++a2yDTx+nKahUKIChISXNkgFOqJpK7y5geXU61f00njxeo+0?=
+ =?us-ascii?q?v+77ZUqb45LGTJR0pMOS/sICUqVqq2q6rHYMNV7p4smTtYXf76Yl2ATLP55R?=
+ =?us-ascii?q?wA3GerHHVb7C40eivsuZjjmRF+zmWHIzI7snvDfuliyBHe+prYRPhMznwBXi?=
+ =?us-ascii?q?Y+lDqTTkC1It2B5dyJk9LGteekWiSqUZgXOS/tzquPsyy04WAsChq627i3nd?=
+ =?us-ascii?q?7qCgg10CPh3vFlUiLHqBu6aY7uhIqgNucyRVVlHF/x7YJBH4h6loYhzMUL1W?=
+ =?us-ascii?q?MymoSe/X1Bl3z6d9pcx/StPzI2WTcXzouNs0De00p5IyfMntmoWw=3D=3D?=
+X-IPAS-Result: =?us-ascii?q?A2DuAADi53xe/wHyM5BmHAEBAQEBBwEBEQEEBAEBgWoEA?=
+ =?us-ascii?q?QELAYF8LIFBMiqEGo5+VAaBN4l6kHYDVAoBAQEBAQEBAQE0AQIEAQGERAKCL?=
+ =?us-ascii?q?yQ3Bg4CEAEBAQUBAQEBAQUDAQFshWKCOykBgn8BBSMEEVELDgoCAiYCAlcGA?=
+ =?us-ascii?q?QwGAgEBgmM/glglrXp/M4VLg16BPoEOKgGMLhp5gQeBOA+CXj6ES4MRgl4El?=
+ =?us-ascii?q?w9xmFWCRoJWlC0GHZtfjxGeBSM3gSErCAIYCCEPgydQGA2OKReNbFUlAzCBB?=
+ =?us-ascii?q?gEBjh0BAQ?=
+Received: from tarius.tycho.ncsc.mil ([144.51.242.1])
+  by EMSM-GH1-UEA10.NCSC.MIL with ESMTP; 26 Mar 2020 17:36:24 +0000
+Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto.infosec.tycho.ncsc.mil [192.168.25.131])
+        by tarius.tycho.ncsc.mil (8.14.7/8.14.4) with ESMTP id 02QHaiqe158602;
+        Thu, 26 Mar 2020 13:36:44 -0400
+Subject: Re: [PATCH v2 2/3] Teach SELinux about anonymous inodes
+To:     Daniel Colascione <dancol@google.com>, timmurray@google.com,
+        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, viro@zeniv.linux.org.uk, paul@paul-moore.com,
+        nnk@google.com, lokeshgidra@google.com
+References: <20200214032635.75434-1-dancol@google.com>
+ <20200325230245.184786-3-dancol@google.com>
+From:   Stephen Smalley <sds@tycho.nsa.gov>
+Message-ID: <3e098729-dc6d-68d0-46a6-7add4fd75b11@tycho.nsa.gov>
+Date:   Thu, 26 Mar 2020 13:37:36 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200325230245.184786-3-dancol@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: KP Singh <kpsingh@google.com>
+On 3/25/20 7:02 PM, Daniel Colascione wrote:
+> This change uses the anon_inodes and LSM infrastructure introduced in
+> the previous patch to give SELinux the ability to control
+> anonymous-inode files that are created using the new _secure()
+> anon_inodes functions.
+> 
+> A SELinux policy author detects and controls these anonymous inodes by
+> adding a name-based type_transition rule that assigns a new security
+> type to anonymous-inode files created in some domain. The name used
+> for the name-based transition is the name associated with the
+> anonymous inode for file listings --- e.g., "[userfaultfd]" or
+> "[perf_event]".
+> 
+> Example:
+> 
+> type uffd_t;
+> type_transition sysadm_t sysadm_t : file uffd_t "[userfaultfd]";
+> allow sysadm_t uffd_t:file { create };
 
-# v6 -> v7
+These should use :anon_inode rather than :file since the class is no 
+longer file.
 
-  https://lore.kernel.org/bpf/20200325152629.6904-1-kpsingh@chromium.org/
+> 
+> (The next patch in this series is necessary for making userfaultfd
+> support this new interface.  The example above is just
+> for exposition.)
+> 
+> Signed-off-by: Daniel Colascione <dancol@google.com>
+> ---
+>   security/selinux/hooks.c            | 54 +++++++++++++++++++++++++++++
+>   security/selinux/include/classmap.h |  2 ++
+>   2 files changed, 56 insertions(+)
+> 
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index 1659b59fb5d7..b9eb45c2e4e5 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -2915,6 +2915,59 @@ static int selinux_inode_init_security(struct inode *inode, struct inode *dir,
+>   	return 0;
+>   }
+>   
+> +static int selinux_inode_init_security_anon(struct inode *inode,
+> +					    const struct qstr *name,
+> +					    const struct file_operations *fops,
+> +					    const struct inode *context_inode)
+> +{
+> +	const struct task_security_struct *tsec = selinux_cred(current_cred());
+> +	struct common_audit_data ad;
+> +	struct inode_security_struct *isec;
+> +	int rc;
+> +
+> +	if (unlikely(!selinux_state.initialized))
+> +		return 0;
+> +
+> +	isec = selinux_inode(inode);
+> +
+> +	/*
+> +	 * We only get here once per ephemeral inode.  The inode has
+> +	 * been initialized via inode_alloc_security but is otherwise
+> +	 * untouched.
+> +	 */
+> +
+> +	if (context_inode) {
+> +		struct inode_security_struct *context_isec =
+> +			selinux_inode(context_inode);
+> +		isec->sclass = context_isec->sclass;
+> +		isec->sid = context_isec->sid;
+> +	} else {
+> +		isec->sclass = SECCLASS_ANON_INODE;
+> +		rc = security_transition_sid(
+> +			&selinux_state, tsec->sid, tsec->sid,
+> +			SECCLASS_FILE, name, &isec->sid);
 
-* Removed __weak from the LSM attachment nops per Kees' suggestion.
-  Will send a separate patch (if needed) to update the noinline
-  definition in include/linux/compiler_attributes.h.
-* waitpid to wait specifically for the forked child in selftests.
-* Comment format fixes in security/... as suggested by Casey.
-* Added Acks from Kees and Andrii and Casey's Reviewed-by: tags to
-  the respective patches.
-* Rebase
-
-# v5 -> v6
-
-  https://lore.kernel.org/bpf/20200323164415.12943-1-kpsingh@chromium.org/
-
-* Updated LSM_HOOK macro to define a default value and cleaned up the
-  BPF LSM hook declarations.
-* Added Yonghong's Acks and Kees' Reviewed-by tags.
-* Simplification of the selftest code.
-* Rebase and fixes suggested by Andrii and Yonghong and some other minor
-  fixes noticed in internal review.
-
-# v4 -> v5
-
-  https://lore.kernel.org/bpf/20200220175250.10795-1-kpsingh@chromium.org/
-
-* Removed static keys and special casing of BPF calls from the LSM
-  framework.
-* Initialized the BPF callbacks (nops) as proper LSM hooks.
-* Updated to using the newly introduced BPF_TRAMP_MODIFY_RETURN
-  trampolines in https://lkml.org/lkml/2020/3/4/877
-* Addressed Andrii's feedback and rebased.
-
-# v3 -> v4
-
-* Moved away from allocating a separate security_hook_heads and adding a
-  new special case for arch_prepare_bpf_trampoline to using BPF fexit
-  trampolines called from the right place in the LSM hook and toggled by
-  static keys based on the discussion in:
-
-  https://lore.kernel.org/bpf/CAG48ez25mW+_oCxgCtbiGMX07g_ph79UOJa07h=o_6B6+Q-u5g@mail.gmail.com/
-
-* Since the code does not deal with security_hook_heads anymore, it goes
-  from "being a BPF LSM" to "BPF program attachment to LSM hooks".
-* Added a new test case which ensures that the BPF programs' return value
-  is reflected by the LSM hook.
-
-# v2 -> v3 does not change the overall design and has some minor fixes:
-
-* LSM_ORDER_LAST is introduced to represent the behaviour of the BPF LSM
-* Fixed the inadvertent clobbering of the LSM Hook error codes
-* Added GPL license requirement to the commit log
-* The lsm_hook_idx is now the more conventional 0-based index
-* Some changes were split into a separate patch ("Load btf_vmlinux only
-  once per object")
-
-  https://lore.kernel.org/bpf/20200117212825.11755-1-kpsingh@chromium.org/
-
-* Addressed Andrii's feedback on the BTF implementation
-* Documentation update for using generated vmlinux.h to simplify
-  programs
-* Rebase
-
-# Changes since v1
-
-  https://lore.kernel.org/bpf/20191220154208.15895-1-kpsingh@chromium.org
-
-* Eliminate the requirement to maintain LSM hooks separately in
-  security/bpf/hooks.h Use BPF trampolines to dynamically allocate
-  security hooks
-* Drop the use of securityfs as bpftool provides the required
-  introspection capabilities.  Update the tests to use the bpf_skeleton
-  and global variables
-* Use O_CLOEXEC anonymous fds to represent BPF attachment in line with
-  the other BPF programs with the possibility to use bpf program pinning
-  in the future to provide "permanent attachment".
-* Drop the logic based on prog names for handling re-attachment.
-* Drop bpf_lsm_event_output from this series and send it as a separate
-  patch.
-
-# Motivation
-
-Google does analysis of rich runtime security data to detect and thwart
-threats in real-time. Currently, this is done in custom kernel modules
-but we would like to replace this with something that's upstream and
-useful to others.
-
-The current kernel infrastructure for providing telemetry (Audit, Perf
-etc.) is disjoint from access enforcement (i.e. LSMs).  Augmenting the
-information provided by audit requires kernel changes to audit, its
-policy language and user-space components. Furthermore, building a MAC
-policy based on the newly added telemetry data requires changes to
-various LSMs and their respective policy languages.
-
-This patchset allows BPF programs to be attached to LSM hooks This
-facilitates a unified and dynamic (not requiring re-compilation of the
-kernel) audit and MAC policy.
-
-# Why an LSM?
-
-Linux Security Modules target security behaviours rather than the
-kernel's API. For example, it's easy to miss out a newly added system
-call for executing processes (eg. execve, execveat etc.) but the LSM
-framework ensures that all process executions trigger the relevant hooks
-irrespective of how the process was executed.
-
-Allowing users to implement LSM hooks at runtime also benefits the LSM
-eco-system by enabling a quick feedback loop from the security community
-about the kind of behaviours that the LSM Framework should be targeting.
-
-# How does it work?
-
-The patchset introduces a new eBPF (https://docs.cilium.io/en/v1.6/bpf/)
-program type BPF_PROG_TYPE_LSM which can only be attached to LSM hooks.
-Loading and attachment of BPF programs requires CAP_SYS_ADMIN.
-
-The new LSM registers nop functions (bpf_lsm_<hook_name>) as LSM hook
-callbacks. Their purpose is to provide a definite point where BPF
-programs can be attached as BPF_TRAMP_MODIFY_RETURN trampoline programs
-for hooks that return an int, and BPF_TRAMP_FEXIT trampoline programs
-for void LSM hooks.
-
-Audit logs can be written using a format chosen by the eBPF program to
-the perf events buffer or to global eBPF variables or maps and can be
-further processed in user-space.
-
-# BTF Based Design
-
-The current design uses BTF:
-
-  * https://facebookmicrosites.github.io/bpf/blog/2018/11/14/btf-enhancement.html
-  * https://lwn.net/Articles/803258
-
-which allows verifiable read-only structure accesses by field names
-rather than fixed offsets. This allows accessing the hook parameters
-using a dynamically created context which provides a certain degree of
-ABI stability:
-
-
-// Only declare the structure and fields intended to be used
-// in the program
-struct vm_area_struct {
-  unsigned long vm_start;
-} __attribute__((preserve_access_index));
-
-// Declare the eBPF program mprotect_audit which attaches to
-// to the file_mprotect LSM hook and accepts three arguments.
-SEC("lsm/file_mprotect")
-int BPF_PROG(mprotect_audit, struct vm_area_struct *vma,
-       unsigned long reqprot, unsigned long prot, int ret)
-{
-  unsigned long vm_start = vma->vm_start;
-
-  return 0;
-}
-
-By relocating field offsets, BTF makes a large portion of kernel data
-structures readily accessible across kernel versions without requiring a
-large corpus of BPF helper functions and requiring recompilation with
-every kernel version. The BTF type information is also used by the BPF
-verifier to validate memory accesses within the BPF program and also
-prevents arbitrary writes to the kernel memory.
-
-The limitations of BTF compatibility are described in BPF Co-Re
-(http://vger.kernel.org/bpfconf2019_talks/bpf-core.pdf, i.e. field
-renames, #defines and changes to the signature of LSM hooks).  This
-design imposes that the MAC policy (eBPF programs) be updated when the
-inspected kernel structures change outside of BTF compatibility
-guarantees. In practice, this is only required when a structure field
-used by a current policy is removed (or renamed) or when the used LSM
-hooks change. We expect the maintenance cost of these changes to be
-acceptable as compared to the design presented in the RFC.
-
-(https://lore.kernel.org/bpf/20190910115527.5235-1-kpsingh@chromium.org/).
-
-# Usage Examples
-
-A simple example and some documentation is included in the patchset.
-In order to better illustrate the capabilities of the framework some
-more advanced prototype (not-ready for review) code has also been
-published separately:
-
-* Logging execution events (including environment variables and
-  arguments)
-  https://github.com/sinkap/linux-krsi/blob/patch/v1/examples/samples/bpf/lsm_audit_env.c
-
-* Detecting deletion of running executables:
-  https://github.com/sinkap/linux-krsi/blob/patch/v1/examples/samples/bpf/lsm_detect_exec_unlink.c
-
-* Detection of writes to /proc/<pid>/mem:
-  https://github.com/sinkap/linux-krsi/blob/patch/v1/examples/samples/bpf/lsm_audit_env.c
-
-We have updated Google's internal telemetry infrastructure and have
-started deploying this LSM on our Linux Workstations. This gives us more
-confidence in the real-world applications of such a system.
-
-KP Singh (8):
-  bpf: Introduce BPF_PROG_TYPE_LSM
-  security: Refactor declaration of LSM hooks
-  bpf: lsm: provide attachment points for BPF LSM programs
-  bpf: lsm: Implement attach, detach and execution
-  bpf: lsm: Initialize the BPF LSM hooks
-  tools/libbpf: Add support for BPF_PROG_TYPE_LSM
-  bpf: lsm: Add selftests for BPF_PROG_TYPE_LSM
-  bpf: lsm: Add Documentation
-
- Documentation/bpf/bpf_lsm.rst                 | 150 +++++
- Documentation/bpf/index.rst                   |   1 +
- MAINTAINERS                                   |   1 +
- include/linux/bpf.h                           |   3 +
- include/linux/bpf_lsm.h                       |  33 +
- include/linux/bpf_types.h                     |   4 +
- include/linux/lsm_hook_defs.h                 | 381 +++++++++++
- include/linux/lsm_hooks.h                     | 628 +-----------------
- include/uapi/linux/bpf.h                      |   2 +
- init/Kconfig                                  |  12 +
- kernel/bpf/Makefile                           |   1 +
- kernel/bpf/bpf_lsm.c                          |  59 ++
- kernel/bpf/btf.c                              |   9 +-
- kernel/bpf/syscall.c                          |  57 +-
- kernel/bpf/trampoline.c                       |  17 +-
- kernel/bpf/verifier.c                         |  19 +-
- kernel/trace/bpf_trace.c                      |  12 +-
- security/Kconfig                              |  10 +-
- security/Makefile                             |   2 +
- security/bpf/Makefile                         |   5 +
- security/bpf/hooks.c                          |  26 +
- security/security.c                           |  41 +-
- tools/include/uapi/linux/bpf.h                |   2 +
- tools/lib/bpf/bpf.c                           |   3 +-
- tools/lib/bpf/libbpf.c                        |  39 +-
- tools/lib/bpf/libbpf.h                        |   4 +
- tools/lib/bpf/libbpf.map                      |   3 +
- tools/lib/bpf/libbpf_probes.c                 |   1 +
- tools/testing/selftests/bpf/config            |   2 +
- .../selftests/bpf/prog_tests/test_lsm.c       |  86 +++
- tools/testing/selftests/bpf/progs/lsm.c       |  48 ++
- 31 files changed, 991 insertions(+), 670 deletions(-)
- create mode 100644 Documentation/bpf/bpf_lsm.rst
- create mode 100644 include/linux/bpf_lsm.h
- create mode 100644 include/linux/lsm_hook_defs.h
- create mode 100644 kernel/bpf/bpf_lsm.c
- create mode 100644 security/bpf/Makefile
- create mode 100644 security/bpf/hooks.c
- create mode 100644 tools/testing/selftests/bpf/prog_tests/test_lsm.c
- create mode 100644 tools/testing/selftests/bpf/progs/lsm.c
-
--- 
-2.20.1
-
+You should use isec->sclass == SECCLASS_ANON_INODE instead of 
+SECCLASS_FILE here.
