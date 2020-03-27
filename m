@@ -2,40 +2,47 @@ Return-Path: <SRS0=iZqy=5M=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD750C2D0E8
-	for <linux-security-module@archiver.kernel.org>; Fri, 27 Mar 2020 00:07:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 992E6C2D0E8
+	for <linux-security-module@archiver.kernel.org>; Fri, 27 Mar 2020 00:24:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B86AF20774
-	for <linux-security-module@archiver.kernel.org>; Fri, 27 Mar 2020 00:07:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D8BF20719
+	for <linux-security-module@archiver.kernel.org>; Fri, 27 Mar 2020 00:24:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727600AbgC0AHU (ORCPT
+        id S1727666AbgC0AYq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 26 Mar 2020 20:07:20 -0400
-Received: from namei.org ([65.99.196.166]:43772 "EHLO namei.org"
+        Thu, 26 Mar 2020 20:24:46 -0400
+Received: from namei.org ([65.99.196.166]:43802 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726067AbgC0AHU (ORCPT
+        id S1726067AbgC0AYq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 26 Mar 2020 20:07:20 -0400
+        Thu, 26 Mar 2020 20:24:46 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id 02R0771a016919;
-        Fri, 27 Mar 2020 00:07:07 GMT
-Date:   Fri, 27 Mar 2020 11:07:07 +1100 (AEDT)
+        by namei.org (8.14.4/8.14.4) with ESMTP id 02R0OCMP017800;
+        Fri, 27 Mar 2020 00:24:12 GMT
+Date:   Fri, 27 Mar 2020 11:24:12 +1100 (AEDT)
 From:   James Morris <jmorris@namei.org>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-cc:     zohar@linux.ibm.com, James.Bottomley@HansenPartnership.com,
-        linux-integrity@vger.kernel.org,
+To:     KP Singh <kpsingh@chromium.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>
+cc:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v4 2/7] ima: Evaluate error in init_ima()
-In-Reply-To: <20200325104712.25694-3-roberto.sassu@huawei.com>
-Message-ID: <alpine.LRH.2.21.2003271107000.14767@namei.org>
-References: <20200325104712.25694-1-roberto.sassu@huawei.com> <20200325104712.25694-3-roberto.sassu@huawei.com>
+        Brendan Jackman <jackmanb@google.com>,
+        Florent Revest <revest@google.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Kees Cook <keescook@chromium.org>,
+        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH bpf-next v7 4/8] bpf: lsm: Implement attach, detach and
+ execution
+In-Reply-To: <20200326142823.26277-5-kpsingh@chromium.org>
+Message-ID: <alpine.LRH.2.21.2003271119420.17089@namei.org>
+References: <20200326142823.26277-1-kpsingh@chromium.org> <20200326142823.26277-5-kpsingh@chromium.org>
 User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -43,36 +50,20 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 25 Mar 2020, Roberto Sassu wrote:
+On Thu, 26 Mar 2020, KP Singh wrote:
 
-> Evaluate error in init_ima() before register_blocking_lsm_notifier() and
-> return if not zero.
-> 
-> Cc: stable@vger.kernel.org # 5.3.x
-> Fixes: b16942455193 ("ima: use the lsm policy update notifier")
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> ---
->  security/integrity/ima/ima_main.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-> index 9d0abedeae77..f96f151294e6 100644
-> --- a/security/integrity/ima/ima_main.c
-> +++ b/security/integrity/ima/ima_main.c
-> @@ -792,6 +792,9 @@ static int __init init_ima(void)
->  		error = ima_init();
->  	}
->  
-> +	if (error)
-> +		return error;
+> +int bpf_lsm_verify_prog(struct bpf_verifier_log *vlog,
+> +			const struct bpf_prog *prog)
+> +{
+> +	/* Only CAP_MAC_ADMIN users are allowed to make changes to LSM hooks
+> +	 */
+> +	if (!capable(CAP_MAC_ADMIN))
+> +		return -EPERM;
 > +
->  	error = register_blocking_lsm_notifier(&ima_lsm_policy_notifier);
->  	if (error)
->  		pr_warn("Couldn't register LSM notifier, error %d\n", error);
-> 
 
+Stephen, can you confirm that your concerns around this are resolved 
+(IIRC, by SELinux implementing a bpf_prog callback) ?
 
-Reviewed-by: James Morris <jamorris@linux.microsoft.com>
 
 -- 
 James Morris
