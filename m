@@ -1,103 +1,80 @@
-Return-Path: <SRS0=UFfU=5L=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=iZqy=5M=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB4B8C2D0E8
-	for <linux-security-module@archiver.kernel.org>; Thu, 26 Mar 2020 23:54:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD750C2D0E8
+	for <linux-security-module@archiver.kernel.org>; Fri, 27 Mar 2020 00:07:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 810F720714
-	for <linux-security-module@archiver.kernel.org>; Thu, 26 Mar 2020 23:54:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dK4sZYvD"
+	by mail.kernel.org (Postfix) with ESMTP id B86AF20774
+	for <linux-security-module@archiver.kernel.org>; Fri, 27 Mar 2020 00:07:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727446AbgCZXy2 (ORCPT
+        id S1727600AbgC0AHU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 26 Mar 2020 19:54:28 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:46760 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726067AbgCZXy1 (ORCPT
+        Thu, 26 Mar 2020 20:07:20 -0400
+Received: from namei.org ([65.99.196.166]:43772 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726067AbgC0AHU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 26 Mar 2020 19:54:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description;
-        bh=aynR0UVS1u6v72AstwmjORHZT9G2O0P+jTJ7R4PmUNo=; b=dK4sZYvDkNLevoDdXkS4/oyhiU
-        F8qajT/Y0c1KSxptgyjGLpiU8BSyPOG7u9i0XBd9reLVgCeE/oNACNqF3+f7tBcl05BU7hhD2fBmn
-        U9Y4h1hg5yBKmahrnpRMQZllYKE2dPj3pIfr7SBvecMZmhRnfhnCe/pM6fj0AFHXwoJ4QFQGoe79A
-        BpWBgGgxt5fo0OXTHk9ISPwAK9hSkXMzQJUBSk/UxFuVuZNXRUeD1Hnbi8dboIKKVcDZEs52xgv0r
-        G5TpVblEuGgkKr674wrV7JQKEJ3UxccIoCcGhDsq7B31oHmLUUwS57DffTYS2oRlInV7M9Q51DbId
-        MhvsvZ4w==;
-Received: from [2601:1c0:6280:3f0::19c2]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jHcKN-0004g2-7K; Thu, 26 Mar 2020 23:54:23 +0000
-Subject: Re: [PATCH v15 09/10] samples/landlock: Add a sandbox manager example
-To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        linux-kernel@vger.kernel.org
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        James Morris <jmorris@namei.org>, Jann Horn <jann@thejh.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-security-module@vger.kernel.org, x86@kernel.org
-References: <20200326202731.693608-1-mic@digikod.net>
- <20200326202731.693608-10-mic@digikod.net>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <11634607-2fdb-1868-03d0-94096763766f@infradead.org>
-Date:   Thu, 26 Mar 2020 16:54:21 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        Thu, 26 Mar 2020 20:07:20 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id 02R0771a016919;
+        Fri, 27 Mar 2020 00:07:07 GMT
+Date:   Fri, 27 Mar 2020 11:07:07 +1100 (AEDT)
+From:   James Morris <jmorris@namei.org>
+To:     Roberto Sassu <roberto.sassu@huawei.com>
+cc:     zohar@linux.ibm.com, James.Bottomley@HansenPartnership.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com,
+        stable@vger.kernel.org
+Subject: Re: [PATCH v4 2/7] ima: Evaluate error in init_ima()
+In-Reply-To: <20200325104712.25694-3-roberto.sassu@huawei.com>
+Message-ID: <alpine.LRH.2.21.2003271107000.14767@namei.org>
+References: <20200325104712.25694-1-roberto.sassu@huawei.com> <20200325104712.25694-3-roberto.sassu@huawei.com>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20200326202731.693608-10-mic@digikod.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi,
+On Wed, 25 Mar 2020, Roberto Sassu wrote:
 
-On 3/26/20 1:27 PM, Mickaël Salaün wrote:
-> diff --git a/samples/Kconfig b/samples/Kconfig
-> index 9d236c346de5..b54408c5bd86 100644
-> --- a/samples/Kconfig
-> +++ b/samples/Kconfig
-> @@ -120,6 +120,13 @@ config SAMPLE_HIDRAW
->  	bool "hidraw sample"
->  	depends on HEADERS_INSTALL
+> Evaluate error in init_ima() before register_blocking_lsm_notifier() and
+> return if not zero.
+> 
+> Cc: stable@vger.kernel.org # 5.3.x
+> Fixes: b16942455193 ("ima: use the lsm policy update notifier")
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> ---
+>  security/integrity/ima/ima_main.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+> index 9d0abedeae77..f96f151294e6 100644
+> --- a/security/integrity/ima/ima_main.c
+> +++ b/security/integrity/ima/ima_main.c
+> @@ -792,6 +792,9 @@ static int __init init_ima(void)
+>  		error = ima_init();
+>  	}
 >  
-> +config SAMPLE_LANDLOCK
-> +	bool "Build Landlock sample code"
-> +	select HEADERS_INSTALL
-
-I think that this should be like all of the other users of HEADERS_INSTALL
-and depend on that instead of select-ing it.
-
-> +	help
-> +	  Build a simple Landlock sandbox manager able to launch a process
-> +	  restricted by a user-defined filesystem access-control security policy.
+> +	if (error)
+> +		return error;
 > +
->  config SAMPLE_PIDFD
->  	bool "pidfd sample"
->  	depends on HEADERS_INSTALL
+>  	error = register_blocking_lsm_notifier(&ima_lsm_policy_notifier);
+>  	if (error)
+>  		pr_warn("Couldn't register LSM notifier, error %d\n", error);
+> 
 
-thanks.
+
+Reviewed-by: James Morris <jamorris@linux.microsoft.com>
+
 -- 
-~Randy
+James Morris
+<jmorris@namei.org>
 
