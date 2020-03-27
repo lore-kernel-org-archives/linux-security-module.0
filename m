@@ -5,28 +5,28 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
 	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 624BCC2D0F1
-	for <linux-security-module@archiver.kernel.org>; Fri, 27 Mar 2020 17:32:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA462C2D0EF
+	for <linux-security-module@archiver.kernel.org>; Fri, 27 Mar 2020 17:32:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FFDA2072F
-	for <linux-security-module@archiver.kernel.org>; Fri, 27 Mar 2020 17:32:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CBC742072F
+	for <linux-security-module@archiver.kernel.org>; Fri, 27 Mar 2020 17:32:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727725AbgC0Rbo (ORCPT
+        id S1727612AbgC0Rbn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 27 Mar 2020 13:31:44 -0400
-Received: from raptor.unsafe.ru ([5.9.43.93]:38834 "EHLO raptor.unsafe.ru"
+        Fri, 27 Mar 2020 13:31:43 -0400
+Received: from raptor.unsafe.ru ([5.9.43.93]:38818 "EHLO raptor.unsafe.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727593AbgC0Rbn (ORCPT
+        id S1726275AbgC0Rbn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
         Fri, 27 Mar 2020 13:31:43 -0400
+X-Greylist: delayed 464 seconds by postgrey-1.27 at vger.kernel.org; Fri, 27 Mar 2020 13:31:41 EDT
 Received: from comp-core-i7-2640m-0182e6.redhat.com (ip-89-102-33-211.net.upcbroadband.cz [89.102.33.211])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
         (No client certificate requested)
-        by raptor.unsafe.ru (Postfix) with ESMTPSA id 219CE20AB8;
-        Fri, 27 Mar 2020 17:24:02 +0000 (UTC)
+        by raptor.unsafe.ru (Postfix) with ESMTPSA id BEA84209C7;
+        Fri, 27 Mar 2020 17:23:55 +0000 (UTC)
 From:   Alexey Gladkov <gladkov.alexey@gmail.com>
 To:     LKML <linux-kernel@vger.kernel.org>,
         Kernel Hardening <kernel-hardening@lists.openwall.com>,
@@ -51,110 +51,78 @@ Cc:     Akinobu Mita <akinobu.mita@gmail.com>,
         Kees Cook <keescook@chromium.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Oleg Nesterov <oleg@redhat.com>
-Subject: [PATCH v10 9/9] proc: use named enums for better readability
-Date:   Fri, 27 Mar 2020 18:23:31 +0100
-Message-Id: <20200327172331.418878-10-gladkov.alexey@gmail.com>
+Subject: [PATCH v10 1/9] proc: rename struct proc_fs_info to proc_fs_opts
+Date:   Fri, 27 Mar 2020 18:23:23 +0100
+Message-Id: <20200327172331.418878-2-gladkov.alexey@gmail.com>
 X-Mailer: git-send-email 2.25.2
 In-Reply-To: <20200327172331.418878-1-gladkov.alexey@gmail.com>
 References: <20200327172331.418878-1-gladkov.alexey@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.1 (raptor.unsafe.ru [5.9.43.93]); Fri, 27 Mar 2020 17:24:02 +0000 (UTC)
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.1 (raptor.unsafe.ru [5.9.43.93]); Fri, 27 Mar 2020 17:23:56 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
 Reviewed-by: Alexey Dobriyan <adobriyan@gmail.com>
-Reviewed-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: Alexey Gladkov <gladkov.alexey@gmail.com>
 ---
- fs/proc/base.c               | 2 +-
- fs/proc/inode.c              | 2 +-
- fs/proc/root.c               | 4 ++--
- include/linux/proc_fs.h      | 6 +++---
- include/uapi/linux/proc_fs.h | 2 +-
- 5 files changed, 8 insertions(+), 8 deletions(-)
+ fs/proc_namespace.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index 1ebe9eba48ea..2f2f7b36c947 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -699,7 +699,7 @@ int proc_setattr(struct dentry *dentry, struct iattr *attr)
-  */
- static bool has_pid_permissions(struct proc_fs_info *fs_info,
- 				 struct task_struct *task,
--				 int hide_pid_min)
-+				 enum proc_hidepid hide_pid_min)
- {
- 	/*
- 	 * If 'hidpid' mount option is set force a ptrace check,
-diff --git a/fs/proc/inode.c b/fs/proc/inode.c
-index f01fb4bed75c..77128bc36a05 100644
---- a/fs/proc/inode.c
-+++ b/fs/proc/inode.c
-@@ -165,7 +165,7 @@ void proc_invalidate_siblings_dcache(struct hlist_head *inodes, spinlock_t *lock
- 		deactivate_super(old_sb);
+diff --git a/fs/proc_namespace.c b/fs/proc_namespace.c
+index 273ee82d8aa9..9a8b624bc3db 100644
+--- a/fs/proc_namespace.c
++++ b/fs/proc_namespace.c
+@@ -37,23 +37,23 @@ static __poll_t mounts_poll(struct file *file, poll_table *wait)
+ 	return res;
  }
  
--static inline const char *hidepid2str(int v)
-+static inline const char *hidepid2str(enum proc_hidepid v)
+-struct proc_fs_info {
++struct proc_fs_opts {
+ 	int flag;
+ 	const char *str;
+ };
+ 
+ static int show_sb_opts(struct seq_file *m, struct super_block *sb)
  {
- 	switch (v) {
- 		case HIDEPID_OFF: return "off";
-diff --git a/fs/proc/root.c b/fs/proc/root.c
-index ba782d6e6197..00f75d8ef32f 100644
---- a/fs/proc/root.c
-+++ b/fs/proc/root.c
-@@ -32,9 +32,9 @@
- struct proc_fs_context {
- 	struct proc_fs_info	*fs_info;
- 	unsigned int		mask;
--	int			hidepid;
-+	enum proc_hidepid	hidepid;
- 	int			gid;
--	int			pidonly;
-+	enum proc_pidonly	pidonly;
- };
+-	static const struct proc_fs_info fs_info[] = {
++	static const struct proc_fs_opts fs_opts[] = {
+ 		{ SB_SYNCHRONOUS, ",sync" },
+ 		{ SB_DIRSYNC, ",dirsync" },
+ 		{ SB_MANDLOCK, ",mand" },
+ 		{ SB_LAZYTIME, ",lazytime" },
+ 		{ 0, NULL }
+ 	};
+-	const struct proc_fs_info *fs_infop;
++	const struct proc_fs_opts *fs_infop;
  
- enum proc_param {
-diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
-index d259817ec913..b9f7ecd7f61f 100644
---- a/include/linux/proc_fs.h
-+++ b/include/linux/proc_fs.h
-@@ -29,7 +29,7 @@ struct proc_ops {
- };
+-	for (fs_infop = fs_info; fs_infop->flag; fs_infop++) {
++	for (fs_infop = fs_opts; fs_infop->flag; fs_infop++) {
+ 		if (sb->s_flags & fs_infop->flag)
+ 			seq_puts(m, fs_infop->str);
+ 	}
+@@ -63,7 +63,7 @@ static int show_sb_opts(struct seq_file *m, struct super_block *sb)
  
- /* definitions for proc mount option pidonly */
--enum {
-+enum proc_pidonly {
- 	PROC_PIDONLY_OFF = 0,
- 	PROC_PIDONLY_ON  = 1,
- };
-@@ -39,8 +39,8 @@ struct proc_fs_info {
- 	struct dentry *proc_self;        /* For /proc/self */
- 	struct dentry *proc_thread_self; /* For /proc/thread-self */
- 	kgid_t pid_gid;
--	int hide_pid;
--	int pidonly;
-+	enum proc_hidepid hide_pid;
-+	enum proc_pidonly pidonly;
- };
+ static void show_mnt_opts(struct seq_file *m, struct vfsmount *mnt)
+ {
+-	static const struct proc_fs_info mnt_info[] = {
++	static const struct proc_fs_opts mnt_opts[] = {
+ 		{ MNT_NOSUID, ",nosuid" },
+ 		{ MNT_NODEV, ",nodev" },
+ 		{ MNT_NOEXEC, ",noexec" },
+@@ -72,9 +72,9 @@ static void show_mnt_opts(struct seq_file *m, struct vfsmount *mnt)
+ 		{ MNT_RELATIME, ",relatime" },
+ 		{ 0, NULL }
+ 	};
+-	const struct proc_fs_info *fs_infop;
++	const struct proc_fs_opts *fs_infop;
  
- static inline struct proc_fs_info *proc_sb_info(struct super_block *sb)
-diff --git a/include/uapi/linux/proc_fs.h b/include/uapi/linux/proc_fs.h
-index dc6d717aa6ec..f5fe0e8dcfe4 100644
---- a/include/uapi/linux/proc_fs.h
-+++ b/include/uapi/linux/proc_fs.h
-@@ -3,7 +3,7 @@
- #define _UAPI_PROC_FS_H
- 
- /* definitions for hide_pid field */
--enum {
-+enum proc_hidepid {
- 	HIDEPID_OFF            = 0,
- 	HIDEPID_NO_ACCESS      = 1,
- 	HIDEPID_INVISIBLE      = 2,
+-	for (fs_infop = mnt_info; fs_infop->flag; fs_infop++) {
++	for (fs_infop = mnt_opts; fs_infop->flag; fs_infop++) {
+ 		if (mnt->mnt_flags & fs_infop->flag)
+ 			seq_puts(m, fs_infop->str);
+ 	}
 -- 
 2.25.2
 
