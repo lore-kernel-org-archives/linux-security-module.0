@@ -2,98 +2,89 @@ Return-Path: <SRS0=+cyb=5N=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18DFAC2D0E5
-	for <linux-security-module@archiver.kernel.org>; Sat, 28 Mar 2020 22:30:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3CB8C43331
+	for <linux-security-module@archiver.kernel.org>; Sat, 28 Mar 2020 22:54:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E24142073E
-	for <linux-security-module@archiver.kernel.org>; Sat, 28 Mar 2020 22:30:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DFo7Iydl"
+	by mail.kernel.org (Postfix) with ESMTP id B6D8020714
+	for <linux-security-module@archiver.kernel.org>; Sat, 28 Mar 2020 22:54:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727176AbgC1Wa0 (ORCPT
+        id S1727740AbgC1Wyp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 28 Mar 2020 18:30:26 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:42275 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726604AbgC1Wa0 (ORCPT
+        Sat, 28 Mar 2020 18:54:45 -0400
+Received: from raptor.unsafe.ru ([5.9.43.93]:39284 "EHLO raptor.unsafe.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727716AbgC1Wyp (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 28 Mar 2020 18:30:26 -0400
-Received: by mail-wr1-f68.google.com with SMTP id h15so16322902wrx.9
-        for <linux-security-module@vger.kernel.org>; Sat, 28 Mar 2020 15:30:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dXJuf2d61/8VVRTPBrmoNd9kHkfvBJR4eW3rH5y+FIU=;
-        b=DFo7Iydl8YwLfZxc2DLYtdcLmKa0XDIFKr95+X2iKt8uf+XyU60KPDk8AaAr9fOWP6
-         16L/XsZ1lN7J4YqSsAZCHcGs8P3OdQtLqKHaYOTN0ZLZUHikJvcjESR1TIa+idWQudiY
-         pR4TUEEW51zfyzcbcyulaG8fqY/4+gJMO2x/Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dXJuf2d61/8VVRTPBrmoNd9kHkfvBJR4eW3rH5y+FIU=;
-        b=hz1G7jiVRKZanDh4PsY4R04kVFJAQL9emDTNyjxc4C9Rh5oTZjFYVsN706G5oK7rzX
-         PsfAUdShWlihTLxQjvTZgSSyyggIU5Wjt7kH/OrI7KXiuTL/zRPzswXexCqEUyXWDPTQ
-         AvH3JtgPGSjWu1BaVzp+S88pOp354MRXzBkzfdjUbrJrTsmjq064ZqX9CNp8FUCTMfx0
-         JtDkJ8JoxQ8SCLliMul28ujvF9b/E5h9/qzEtLrBMOEuMMMXfE5AiDB2X1vV9I+yvnpV
-         D80t10ry3beMZ983RKlMEHK4LxRPLOoyCJca5UUWMGTPcrMwLyI6VfP/a+Qw4wHk9dIT
-         DdCQ==
-X-Gm-Message-State: ANhLgQ3sXkcfSVy3I67YVvBwwUqq6Vhh8QYOEfgER98t9NGnA+nGBjGR
-        gYPud/wOK4qJcexXIj90BmO4RluyohBnndTi5mKMWw==
-X-Google-Smtp-Source: ADFU+vulCziRFDJbIJ694ouqZtPpGPxGPDaurIMchBqU6/L0KIgWi8FFPyh3yqIaaooUdMm1rEUFxDNgE/x8ObAMY5k=
-X-Received: by 2002:adf:e48c:: with SMTP id i12mr6643082wrm.173.1585434623969;
- Sat, 28 Mar 2020 15:30:23 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200327192854.31150-1-kpsingh@chromium.org> <4e5a09bb-04c4-39b8-10d4-59496ffb5eee@iogearbox.net>
- <20200328195636.GA95544@google.com> <202003281449.333BDAF6@keescook>
-In-Reply-To: <202003281449.333BDAF6@keescook>
-From:   KP Singh <kpsingh@chromium.org>
-Date:   Sat, 28 Mar 2020 23:30:13 +0100
-Message-ID: <CACYkzJ4v_X87-+GCE++g0_BkcJWFhbNePAMQmH8Ccgq7id-akA@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v8 0/8] MAC and Audit policy using eBPF (KRSI)
+        Sat, 28 Mar 2020 18:54:45 -0400
+Received: from comp-core-i7-2640m-0182e6 (ip-89-102-33-211.net.upcbroadband.cz [89.102.33.211])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by raptor.unsafe.ru (Postfix) with ESMTPSA id B3BD8209BD;
+        Sat, 28 Mar 2020 22:54:41 +0000 (UTC)
+Date:   Sat, 28 Mar 2020 23:54:36 +0100
+From:   Alexey Gladkov <gladkov.alexey@gmail.com>
 To:     Kees Cook <keescook@chromium.org>
-Cc:     Daniel Borkmann <daniel@iogearbox.net>,
-        open list <linux-kernel@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        James Morris <jmorris@namei.org>, Paul Turner <pjt@google.com>,
-        Jann Horn <jannh@google.com>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Security Module <linux-security-module@vger.kernel.org>,
+        Akinobu Mita <akinobu.mita@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Daniel Micay <danielmicay@gmail.com>,
+        Djalal Harouni <tixxdz@gmail.com>,
+        "Dmitry V . Levin" <ldv@altlinux.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@poochiereds.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [PATCH v10 8/9] proc: use human-readable values for hidehid
+Message-ID: <20200328225436.m3f72nutyq352i2w@comp-core-i7-2640m-0182e6>
+References: <20200327172331.418878-1-gladkov.alexey@gmail.com>
+ <20200327172331.418878-9-gladkov.alexey@gmail.com>
+ <202003281321.A69D9DE45@keescook>
+ <20200328211453.w44fvkwleltnc2m7@comp-core-i7-2640m-0182e6>
+ <202003281451.88C7CBD23C@keescook>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202003281451.88C7CBD23C@keescook>
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.1 (raptor.unsafe.ru [5.9.43.93]); Sat, 28 Mar 2020 22:54:43 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, Mar 28, 2020 at 10:50 PM Kees Cook <keescook@chromium.org> wrote:
->
-> On Sat, Mar 28, 2020 at 08:56:36PM +0100, KP Singh wrote:
-> > Since the attachment succeeds and the hook does not get called, it
-> > seems like "bpf" LSM is not being initialized and the hook, although
-> > present, does not get called.
-> >
-> > This indicates that "bpf" is not in CONFIG_LSM. It should, however, be
-> > there by default as we added it to default value of CONFIG_LSM and
-> > also for other DEFAULT_SECURITY_* options.
-> >
-> > Let me know if that's the case and it fixes it.
->
-> Is the selftest expected to at least fail cleanly (i.e. not segfault)
+On Sat, Mar 28, 2020 at 02:52:55PM -0700, Kees Cook wrote:
+> On Sat, Mar 28, 2020 at 10:14:53PM +0100, Alexey Gladkov wrote:
+> > On Sat, Mar 28, 2020 at 01:28:28PM -0700, Kees Cook wrote:
+> > > On Fri, Mar 27, 2020 at 06:23:30PM +0100, Alexey Gladkov wrote:
+> > > > [...]
+> > > > +	if (!kstrtouint(param->string, base, &result.uint_32)) {
+> > > > +		ctx->hidepid = result.uint_32;
+> > > 
+> > > This need to bounds-check the value with a call to valid_hidepid(), yes?
+> > 
+> > The kstrtouint returns 0 on success and -ERANGE on overflow [1].
+> 
+> No, I mean, hidepid cannot be just any uint32 value. It must be in the
+> enum. Is that checked somewhere else? It looked like the call to
+> valid_hidepid() was removed.
 
-I am not sure where the crash comes from, it does not look like it's test_lsm,
-it seems to happen in test_overhead. Both seem to run fine for me.
+The valid_hidepid() is called after parsing the hidepid parameter value.
+Yes, it can be called inside this condition.
 
-- KP
+-- 
+Rgrds, legion
 
-> when the BPF LSF is not built into the kernel?
->
-> --
-> Kees Cook
