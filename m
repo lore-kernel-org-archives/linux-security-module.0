@@ -2,185 +2,290 @@ Return-Path: <SRS0=+cyb=5N=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B653AC43331
-	for <linux-security-module@archiver.kernel.org>; Sat, 28 Mar 2020 19:56:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 445E3C43331
+	for <linux-security-module@archiver.kernel.org>; Sat, 28 Mar 2020 20:28:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7794B206F6
-	for <linux-security-module@archiver.kernel.org>; Sat, 28 Mar 2020 19:56:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0407B2071B
+	for <linux-security-module@archiver.kernel.org>; Sat, 28 Mar 2020 20:28:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="j83qG6wi"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="O356OkPU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727115AbgC1T4k (ORCPT
+        id S1727486AbgC1U2c (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 28 Mar 2020 15:56:40 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:35380 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726976AbgC1T4k (ORCPT
+        Sat, 28 Mar 2020 16:28:32 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:44789 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727009AbgC1U2c (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 28 Mar 2020 15:56:40 -0400
-Received: by mail-wm1-f66.google.com with SMTP id f74so5599875wmf.0
-        for <linux-security-module@vger.kernel.org>; Sat, 28 Mar 2020 12:56:39 -0700 (PDT)
+        Sat, 28 Mar 2020 16:28:32 -0400
+Received: by mail-pg1-f195.google.com with SMTP id 142so6541287pgf.11
+        for <linux-security-module@vger.kernel.org>; Sat, 28 Mar 2020 13:28:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=RaAner1AOy6mqRxgg2s6OrVjNWEeXrUvVQ99ZwBacLY=;
-        b=j83qG6wi8FIVqxHB6qtn71NfG8/D64pOANqSOp43lzviKNip7DW6ja7q0RUBFEWDt9
-         2qRLkPeJzAuE70oECTtOchfpQpUZVJuRpiXtDT5LxoUxTZQv0ZlkwNgp0Nzk4wbDrMI6
-         1A0Mfd0tSNraiuW9a9o7EI1TosBTOTlHz5Nc4=
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=MUiWV4pjfeHPi8U1e/rHhzPVFQ2nBZ/K1op0DmSl2ak=;
+        b=O356OkPU3ESu244KOG9mhvpPy+52uafWy+esv/NqtJeU4HkZdS2FgU1+D6ku18Ey9U
+         WwE1swFtAGXf6jIcipRl3rxt7eSXUxtW5jNPJbCl+RWJmyxlvMgSIRn/BFX3k8XEF5Jz
+         fm+WSAuOQB8rXjlO7nq1GRvVm1DR6X/f6Bd1E=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=RaAner1AOy6mqRxgg2s6OrVjNWEeXrUvVQ99ZwBacLY=;
-        b=Rmbdy20WBoe/UZzEdoJ5/RiaKaEWP464poShxwH8aMljlgQRM/PoCL6wlT3y+1nGW3
-         skM+Lgq5wAnIciSVkSW/Ylq/lSW6vgR7Va2wI6yFOmSNk9VCu5Fztrh3femdV7MzhFYs
-         +GQ0ada5xoyfOIJ7sdkNtSxne1DK2luJ1g6a1uDcoXQk6fyB6+0c/kJPm4gt80P9hRgz
-         sByrBI5DhyDnLxDoKHF4Kod7tHwtkfXVNq4wA35XFdmZunD6spJPgm1pvgI1f81VhVYY
-         cVjpLz7FlfvF6dZ8g+5iHWEszrzePdGGTP/dDMWtLl+BLm7NwmYeUUMRa2VxMd2cXHMI
-         4zQQ==
-X-Gm-Message-State: ANhLgQ0KOKh9/JiJT/DOMdH3ay1C9NZ5t2QNAh18SdiwoEqPqcHHUIFZ
-        qDlrY33Mq5IbCgEu4lUhVq+GGA==
-X-Google-Smtp-Source: ADFU+vvaYd97z0o5WsUXqObkXdOSUk66yt71KeGEJtWcfmHE/YKKvWPVUVfd0xksvz+KE13VM1E8og==
-X-Received: by 2002:a1c:3586:: with SMTP id c128mr5091509wma.82.1585425398431;
-        Sat, 28 Mar 2020 12:56:38 -0700 (PDT)
-Received: from google.com ([2a00:79e0:42:204:8a21:ba0c:bb42:75ec])
-        by smtp.gmail.com with ESMTPSA id s11sm14547650wrw.58.2020.03.28.12.56.37
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=MUiWV4pjfeHPi8U1e/rHhzPVFQ2nBZ/K1op0DmSl2ak=;
+        b=h/O27mRluoUnNGlwkPV8V4jKd8iCnupKyi6RbEJMQPRL8dWSUBoxFKdseAK9hoTYH8
+         Nn9OJQrNVu14NbmdH2vGbpBD2wt8BCWbbKCii20LzQtm59SE1s8lVc4w7Jm/NvYCKVDX
+         IYAwRC/E2pYTo8YFfttEqyHcWeEgeaBfkthxnf1AORDZiN9XqS7MNu5TCAvmrqmLzg5E
+         EEzbHCWFjLh6HCCZDvDkb6MrZBgndx5xublMER9wTVVWD76BKDAOEQoOkOflWPyUsFWf
+         h5SRf/4uYVD2P3TlzD7K5+Q8uYGA/4D5TFfWqGYo3JOWtXX0RIMiP3bQI3Zq/FTGc2qt
+         kb2g==
+X-Gm-Message-State: ANhLgQ2ylfHALBbdHFFkWKo3N4tLUVgCeBOdoQTyMtUuxAPLOd2weUaD
+        o49gGW74MquuDilqPsaXqgqVlQ==
+X-Google-Smtp-Source: ADFU+vvfFxyZ2kTL+AiPQZIPrYo32pSmRxmE/hu6jvevOYpyed0FsDRABSVDRXjfu6Xe5G8kaOa63g==
+X-Received: by 2002:aa7:959a:: with SMTP id z26mr5695770pfj.211.1585427310147;
+        Sat, 28 Mar 2020 13:28:30 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id r63sm6926642pfr.42.2020.03.28.13.28.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 28 Mar 2020 12:56:37 -0700 (PDT)
-From:   KP Singh <kpsingh@chromium.org>
-X-Google-Original-From: KP Singh <kpsingh>
-Date:   Sat, 28 Mar 2020 20:56:36 +0100
-To:     Daniel Borkmann <daniel@iogearbox.net>
-Cc:     KP Singh <kpsingh@chromium.org>, linux-kernel@vger.kernel.org,
-        bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
-        Alexei Starovoitov <ast@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>,
-        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH bpf-next v8 0/8] MAC and Audit policy using eBPF (KRSI)
-Message-ID: <20200328195636.GA95544@google.com>
-References: <20200327192854.31150-1-kpsingh@chromium.org>
- <4e5a09bb-04c4-39b8-10d4-59496ffb5eee@iogearbox.net>
+        Sat, 28 Mar 2020 13:28:29 -0700 (PDT)
+Date:   Sat, 28 Mar 2020 13:28:28 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Alexey Gladkov <gladkov.alexey@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Security Module <linux-security-module@vger.kernel.org>,
+        Akinobu Mita <akinobu.mita@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Alexey Gladkov <legion@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Daniel Micay <danielmicay@gmail.com>,
+        Djalal Harouni <tixxdz@gmail.com>,
+        "Dmitry V . Levin" <ldv@altlinux.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@poochiereds.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [PATCH v10 8/9] proc: use human-readable values for hidehid
+Message-ID: <202003281321.A69D9DE45@keescook>
+References: <20200327172331.418878-1-gladkov.alexey@gmail.com>
+ <20200327172331.418878-9-gladkov.alexey@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4e5a09bb-04c4-39b8-10d4-59496ffb5eee@iogearbox.net>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20200327172331.418878-9-gladkov.alexey@gmail.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 28-Mar 18:18, Daniel Borkmann wrote:
-> Hey KP,
+On Fri, Mar 27, 2020 at 06:23:30PM +0100, Alexey Gladkov wrote:
+> The hidepid parameter values are becoming more and more and it becomes
+> difficult to remember what each new magic number means.
 > 
-> On 3/27/20 8:28 PM, KP Singh wrote:
-> > From: KP Singh <kpsingh@google.com>
-> > 
-> > # v7 -> v8
-> > 
-> >    https://lore.kernel.org/bpf/20200326142823.26277-1-kpsingh@chromium.org/
-> > 
-> > * Removed CAP_MAC_ADMIN check from bpf_lsm_verify_prog. LSMs can add it
-> >    in their own bpf_prog hook. This can be revisited as a separate patch.
-> > * Added Andrii and James' Ack/Review tags.
-> > * Fixed an indentation issue and missing newlines in selftest error
-> >    a cases.
-> > * Updated a comment as suggested by Alexei.
-> > * Updated the documentation to use the newer libbpf API and some other
-> >    fixes.
-> > * Rebase
-> > 
-> > # v6 -> v7
-> > 
-> >    https://lore.kernel.org/bpf/20200325152629.6904-1-kpsingh@chromium.org/
-> > 
-> [...]
-> > KP Singh (8):
-> >    bpf: Introduce BPF_PROG_TYPE_LSM
-> >    security: Refactor declaration of LSM hooks
-> >    bpf: lsm: provide attachment points for BPF LSM programs
-> >    bpf: lsm: Implement attach, detach and execution
-> >    bpf: lsm: Initialize the BPF LSM hooks
-> >    tools/libbpf: Add support for BPF_PROG_TYPE_LSM
-> >    bpf: lsm: Add selftests for BPF_PROG_TYPE_LSM
-> >    bpf: lsm: Add Documentation
+> Suggested-by: Andy Lutomirski <luto@kernel.org>
+> Reviewed-by: Alexey Dobriyan <adobriyan@gmail.com>
+> Signed-off-by: Alexey Gladkov <gladkov.alexey@gmail.com>
+> ---
+>  Documentation/filesystems/proc.txt | 52 +++++++++++++++---------------
+>  fs/proc/inode.c                    | 13 +++++++-
+>  fs/proc/root.c                     | 36 +++++++++++++++++++--
+>  3 files changed, 71 insertions(+), 30 deletions(-)
 > 
-> I was about to apply, but then I'm getting the following selftest issue on
-> the added LSM one, ptal:
+> diff --git a/Documentation/filesystems/proc.txt b/Documentation/filesystems/proc.txt
+> index bd0e0ab85048..af47672cb2cb 100644
+> --- a/Documentation/filesystems/proc.txt
+> +++ b/Documentation/filesystems/proc.txt
+> @@ -2025,28 +2025,28 @@ The following mount options are supported:
+>  	gid=		Set the group authorized to learn processes information.
+>  	subset=		Show only the specified subset of procfs.
+>  
+> -hidepid=0 means classic mode - everybody may access all /proc/<pid>/ directories
+> -(default).
+> -
+> -hidepid=1 means users may not access any /proc/<pid>/ directories but their
+> -own.  Sensitive files like cmdline, sched*, status are now protected against
+> -other users.  This makes it impossible to learn whether any user runs
+> -specific program (given the program doesn't reveal itself by its behaviour).
+> -As an additional bonus, as /proc/<pid>/cmdline is unaccessible for other users,
+> -poorly written programs passing sensitive information via program arguments are
+> -now protected against local eavesdroppers.
+> -
+> -hidepid=2 means hidepid=1 plus all /proc/<pid>/ will be fully invisible to other
+> -users.  It doesn't mean that it hides a fact whether a process with a specific
+> -pid value exists (it can be learned by other means, e.g. by "kill -0 $PID"),
+> -but it hides process' uid and gid, which may be learned by stat()'ing
+> -/proc/<pid>/ otherwise.  It greatly complicates an intruder's task of gathering
+> -information about running processes, whether some daemon runs with elevated
+> -privileges, whether other user runs some sensitive program, whether other users
+> -run any program at all, etc.
+> -
+> -hidepid=4 means that procfs should only contain /proc/<pid>/ directories
+> -that the caller can ptrace.
+> +hidepid=off or hidepid=0 means classic mode - everybody may access all
+> +/proc/<pid>/ directories (default).
+> +
+> +hidepid=noaccess or hidepid=1 means users may not access any /proc/<pid>/
+> +directories but their own.  Sensitive files like cmdline, sched*, status are now
+> +protected against other users.  This makes it impossible to learn whether any
+> +user runs specific program (given the program doesn't reveal itself by its
+> +behaviour).  As an additional bonus, as /proc/<pid>/cmdline is unaccessible for
+> +other users, poorly written programs passing sensitive information via program
+> +arguments are now protected against local eavesdroppers.
+> +
+> +hidepid=invisible or hidepid=2 means hidepid=noaccess plus all /proc/<pid>/ will
+> +be fully invisible to other users.  It doesn't mean that it hides a fact whether
+> +a process with a specific pid value exists (it can be learned by other means,
+> +e.g. by "kill -0 $PID"), but it hides process' uid and gid, which may be learned
+> +by stat()'ing /proc/<pid>/ otherwise.  It greatly complicates an intruder's task
+> +of gathering information about running processes, whether some daemon runs with
+> +elevated privileges, whether other user runs some sensitive program, whether
+> +other users run any program at all, etc.
+> +
+> +hidepid=ptraceable or hidepid=4 means that procfs should only contain
+> +/proc/<pid>/ directories that the caller can ptrace.
+>  
+>  gid= defines a group authorized to learn processes information otherwise
+>  prohibited by hidepid=.  If you use some daemon like identd which needs to learn
+> @@ -2093,8 +2093,8 @@ creates a new procfs instance. Mount options affect own procfs instance.
+>  It means that it became possible to have several procfs instances
+>  displaying tasks with different filtering options in one pid namespace.
+>  
+> -# mount -o hidepid=2 -t proc proc /proc
+> -# mount -o hidepid=1 -t proc proc /tmp/proc
+> +# mount -o hidepid=invisible -t proc proc /proc
+> +# mount -o hidepid=noaccess -t proc proc /tmp/proc
+>  # grep ^proc /proc/mounts
+> -proc /proc proc rw,relatime,hidepid=2 0 0
+> -proc /tmp/proc proc rw,relatime,hidepid=1 0 0
+> +proc /proc proc rw,relatime,hidepid=invisible 0 0
+> +proc /tmp/proc proc rw,relatime,hidepid=noaccess 0 0
+> diff --git a/fs/proc/inode.c b/fs/proc/inode.c
+> index e6577ce6027b..f01fb4bed75c 100644
+> --- a/fs/proc/inode.c
+> +++ b/fs/proc/inode.c
+> @@ -165,6 +165,17 @@ void proc_invalidate_siblings_dcache(struct hlist_head *inodes, spinlock_t *lock
+>  		deactivate_super(old_sb);
+>  }
+>  
+> +static inline const char *hidepid2str(int v)
+> +{
+> +	switch (v) {
+> +		case HIDEPID_OFF: return "off";
+> +		case HIDEPID_NO_ACCESS: return "noaccess";
+> +		case HIDEPID_INVISIBLE: return "invisible";
+> +		case HIDEPID_NOT_PTRACEABLE: return "ptraceable";
+> +	}
+> +	BUG();
+
+Please don't use BUG()[1]. Add a default case with a warn and return
+"unknown":
+
+	switch (v) {
+	case HIDEPID_OFF: return "off";
+	case HIDEPID_NO_ACCESS: return "noaccess";
+	case HIDEPID_INVISIBLE: return "invisible";
+	case HIDEPID_NOT_PTRACEABLE: return "ptraceable";
+	default:
+		WARN_ON_ONCE("bad hide_pid value: %d\n", v);
+		return "unknown";
+	}
+
+[1] https://lore.kernel.org/lkml/202003141524.59C619B51A@keescook/
+
+> +}
+> +
+>  static int proc_show_options(struct seq_file *seq, struct dentry *root)
+>  {
+>  	struct proc_fs_info *fs_info = proc_sb_info(root->d_sb);
+> @@ -172,7 +183,7 @@ static int proc_show_options(struct seq_file *seq, struct dentry *root)
+>  	if (!gid_eq(fs_info->pid_gid, GLOBAL_ROOT_GID))
+>  		seq_printf(seq, ",gid=%u", from_kgid_munged(&init_user_ns, fs_info->pid_gid));
+>  	if (fs_info->hide_pid != HIDEPID_OFF)
+> -		seq_printf(seq, ",hidepid=%u", fs_info->hide_pid);
+> +		seq_printf(seq, ",hidepid=%s", hidepid2str(fs_info->hide_pid));
+>  	if (fs_info->pidonly != PROC_PIDONLY_OFF)
+>  		seq_printf(seq, ",subset=pid");
+>  
+> diff --git a/fs/proc/root.c b/fs/proc/root.c
+> index dbcd96f07c7a..ba782d6e6197 100644
+> --- a/fs/proc/root.c
+> +++ b/fs/proc/root.c
+> @@ -45,7 +45,7 @@ enum proc_param {
+>  
+>  static const struct fs_parameter_spec proc_fs_parameters[] = {
+>  	fsparam_u32("gid",	Opt_gid),
+> -	fsparam_u32("hidepid",	Opt_hidepid),
+> +	fsparam_string("hidepid",	Opt_hidepid),
+>  	fsparam_string("subset",	Opt_subset),
+>  	{}
+>  };
+> @@ -58,6 +58,35 @@ static inline int valid_hidepid(unsigned int value)
+>  		value == HIDEPID_NOT_PTRACEABLE);
+>  }
+>  
+> +static int proc_parse_hidepid_param(struct fs_context *fc, struct fs_parameter *param)
+> +{
+> +	struct proc_fs_context *ctx = fc->fs_private;
+> +	struct fs_parameter_spec hidepid_u32_spec = fsparam_u32("hidepid", Opt_hidepid);
+> +	struct fs_parse_result result;
+> +	int base = (unsigned long)hidepid_u32_spec.data;
+> +
+> +	if (param->type != fs_value_is_string)
+> +		return invalf(fc, "proc: unexpected type of hidepid value\n");
+> +
+> +	if (!kstrtouint(param->string, base, &result.uint_32)) {
+> +		ctx->hidepid = result.uint_32;
+
+This need to bounds-check the value with a call to valid_hidepid(), yes?
+
+> +		return 0;
+> +	}
+> +
+> +	if (!strcmp(param->string, "off"))
+> +		ctx->hidepid = HIDEPID_OFF;
+> +	else if (!strcmp(param->string, "noaccess"))
+> +		ctx->hidepid = HIDEPID_NO_ACCESS;
+> +	else if (!strcmp(param->string, "invisible"))
+> +		ctx->hidepid = HIDEPID_INVISIBLE;
+> +	else if (!strcmp(param->string, "ptraceable"))
+> +		ctx->hidepid = HIDEPID_NOT_PTRACEABLE;
+> +	else
+> +		return invalf(fc, "proc: unknown value of hidepid - %s\n", param->string);
+> +
+> +	return 0;
+> +}
+> +
+>  static int proc_parse_subset_param(struct fs_context *fc, char *value)
+>  {
+>  	struct proc_fs_context *ctx = fc->fs_private;
+> @@ -97,9 +126,10 @@ static int proc_parse_param(struct fs_context *fc, struct fs_parameter *param)
+>  		break;
+>  
+>  	case Opt_hidepid:
+> -		if (!valid_hidepid(result.uint_32))
+> +		if (proc_parse_hidepid_param(fc, param))
+> +			return -EINVAL;
+> +		if (!valid_hidepid(ctx->hidepid))
+>  			return invalf(fc, "proc: unknown value of hidepid.\n");
+> -		ctx->hidepid = result.uint_32;
+>  		break;
+>  
+>  	case Opt_subset:
+> -- 
+> 2.25.2
 > 
-> # ./test_progs
-> [...]
-> #65/1 test_global_func1.o:OK
-> #65/2 test_global_func2.o:OK
-> #65/3 test_global_func3.o:OK
-> #65/4 test_global_func4.o:OK
-> #65/5 test_global_func5.o:OK
-> #65/6 test_global_func6.o:OK
-> #65/7 test_global_func7.o:OK
-> #65 test_global_funcs:OK
-> test_test_lsm:PASS:skel_load 0 nsec
-> test_test_lsm:PASS:attach 0 nsec
-> test_test_lsm:PASS:exec_cmd 0 nsec
-> test_test_lsm:FAIL:bprm_count bprm_count = 0
-> test_test_lsm:FAIL:heap_mprotect want errno=EPERM, got 22
 
-The test seems to pass for me [classic, "works on my machine" ;)]
-
-  ./test_progs -t test_lsm
-  #66 test_lsm:OK
-  Summary: 1/0 PASSED, 0 SKIPPED, 0 FAILED
-
-and also in the complete run of test_progs.
-
-Since the attachment succeeds and the hook does not get called, it
-seems like "bpf" LSM is not being initialized and the hook, although
-present, does not get called.
-
-This indicates that "bpf" is not in CONFIG_LSM. It should, however, be
-there by default as we added it to default value of CONFIG_LSM and
-also for other DEFAULT_SECURITY_* options.
-
-Let me know if that's the case and it fixes it.
-
-- KP
-
-> #66 test_lsm:FAIL
-> test_test_overhead:PASS:obj_open_file 0 nsec
-> test_test_overhead:PASS:find_probe 0 nsec
-> test_test_overhead:PASS:find_probe 0 nsec
-> test_test_overhead:PASS:find_probe 0 nsec
-> test_test_overhead:PASS:find_probe 0 nsec
-> test_test_overhead:PASS:find_probe 0 nsec
-> Caught signal #11!
-> Stack trace:
-> ./test_progs(crash_handler+0x31)[0x56100f25eb51]
-> /lib/x86_64-linux-gnu/libpthread.so.0(+0x12890)[0x7f9d8d225890]
-> /lib/x86_64-linux-gnu/libc.so.6(+0x18ef2d)[0x7f9d8cfb0f2d]
-> /lib/x86_64-linux-gnu/libc.so.6(__libc_calloc+0x372)[0x7f9d8cebc3a2]
-> /usr/local/lib/libelf.so.1(+0x33ce)[0x7f9d8d85a3ce]
-> /usr/local/lib/libelf.so.1(+0x3fb2)[0x7f9d8d85afb2]
-> ./test_progs(btf__parse_elf+0x15d)[0x56100f27a141]
-> ./test_progs(libbpf_find_kernel_btf+0x169)[0x56100f27ee83]
-> ./test_progs(+0x43906)[0x56100f266906]
-> ./test_progs(bpf_object__load_xattr+0xe5)[0x56100f26e93c]
-> ./test_progs(bpf_object__load+0x47)[0x56100f26eafd]
-> ./test_progs(test_test_overhead+0x252)[0x56100f24a922]
-> ./test_progs(main+0x212)[0x56100f22f772]
-> /lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0xe7)[0x7f9d8ce43b97]
-> ./test_progs(_start+0x2a)[0x56100f22f8fa]
-> Segmentation fault (core dumped)
-> #
-> 
-> (Before the series, it runs through fine on my side.)
-> 
-> Thanks,
-> Daniel
+-- 
+Kees Cook
