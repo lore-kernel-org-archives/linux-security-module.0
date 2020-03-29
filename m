@@ -2,119 +2,100 @@ Return-Path: <SRS0=qkJb=5O=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	HK_RANDOM_FROM,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE466C43331
-	for <linux-security-module@archiver.kernel.org>; Sun, 29 Mar 2020 03:17:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10F81C43331
+	for <linux-security-module@archiver.kernel.org>; Sun, 29 Mar 2020 15:05:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 854CD206F2
-	for <linux-security-module@archiver.kernel.org>; Sun, 29 Mar 2020 03:17:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="m9oqaykc"
+	by mail.kernel.org (Postfix) with ESMTP id E1CF1206F6
+	for <linux-security-module@archiver.kernel.org>; Sun, 29 Mar 2020 15:05:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726781AbgC2DRI (ORCPT
+        id S1728190AbgC2PFY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 28 Mar 2020 23:17:08 -0400
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:39497 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726316AbgC2DRI (ORCPT
+        Sun, 29 Mar 2020 11:05:24 -0400
+Received: from mail.fudan.edu.cn ([202.120.224.73]:50186 "EHLO fudan.edu.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727167AbgC2PFY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 28 Mar 2020 23:17:08 -0400
-Received: by mail-pj1-f68.google.com with SMTP id z3so5190321pjr.4
-        for <linux-security-module@vger.kernel.org>; Sat, 28 Mar 2020 20:17:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=4II2bc92WqcI1jJHIbHJBRCr9XHybTRKP72pOZ2vBn8=;
-        b=m9oqaykcy7+GRfPUA0qekrpwJwNqG0S1mlKb9K3dSMoiUplMP4jDXKYYiUxNSn1n+v
-         4oyL3E8RvMsSp58YQD7MyGe1pOXmUDh3zVX3F14wt1es3/kyO62xLP1vqLHROC2/iG5A
-         NA5fTeT/j2lxo6j6d+AbeShqGk6CPpwln0Emo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=4II2bc92WqcI1jJHIbHJBRCr9XHybTRKP72pOZ2vBn8=;
-        b=baoCO9v/AvG0X3iufxFu6o8fFI7CoUP573XgA9xt/0QX9PmloJ0gl0zMYXIz+5v+CQ
-         0Qm8OMbDB5fxDnBmF8cES1HulbXDrz2BVW8axCiEAVMoWogkhcEoEE8Y5EyUHd3aT5ZG
-         YNonZ4xWuV3LZQDJsyg1RFqAvbkwSL2iaqSqAzCWVstaqNEdcTerIOEzDMwiYVglgkDD
-         ck7UIiynplEa1l8p/g28UTS/BTr7bi1lXR7CEbeXqK1fA4ylcENTBAmAIsto8c42XuAv
-         fr0c0NEd5amAG7zt05rJ+F0BWiGLM/3R6eqBMvzTLx3xO4ZzR8KMv5gGyXMteCNmSOTI
-         6xWA==
-X-Gm-Message-State: ANhLgQ3mxxvgM3NpPH1SqVutTze5zcLXZt6MfgcoFBlsJoCMOdFU5A81
-        h7t1wSiw4pUmdvQ837ypI3WP3w==
-X-Google-Smtp-Source: ADFU+vtseLSYN5So1Oobu2UiukVUxTzuZN3FTYmpLjJuga7kllNUrhEyIWnwcYJIyJMu6YW0JBI/4Q==
-X-Received: by 2002:a17:90a:7105:: with SMTP id h5mr8294662pjk.54.1585451827508;
-        Sat, 28 Mar 2020 20:17:07 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id y14sm7123511pfp.127.2020.03.28.20.17.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 28 Mar 2020 20:17:06 -0700 (PDT)
-Date:   Sat, 28 Mar 2020 20:17:05 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Alexey Gladkov <gladkov.alexey@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [PATCH v10 7/9] proc: move hidepid values to uapi as they are
- user interface to mount
-Message-ID: <202003282016.19E071712@keescook>
-References: <20200327172331.418878-1-gladkov.alexey@gmail.com>
- <20200327172331.418878-8-gladkov.alexey@gmail.com>
- <202003281340.B73225DCC9@keescook>
- <20200328212547.xxiqxqhxzwp6w5n5@comp-core-i7-2640m-0182e6>
- <202003281453.CED94974@keescook>
- <20200328230046.v3qbffmbtl4sd7tg@comp-core-i7-2640m-0182e6>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200328230046.v3qbffmbtl4sd7tg@comp-core-i7-2640m-0182e6>
+        Sun, 29 Mar 2020 11:05:24 -0400
+X-Greylist: delayed 364 seconds by postgrey-1.27 at vger.kernel.org; Sun, 29 Mar 2020 11:05:23 EDT
+Received: from localhost.localdomain (unknown [120.229.255.87])
+        by app2 (Coremail) with SMTP id XQUFCgBXXUWxt4BeeJuFAA--.1822S3;
+        Sun, 29 Mar 2020 22:59:00 +0800 (CST)
+From:   Xiyu Yang <xiyuyang19@fudan.edu.cn>
+To:     John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     xiyuyang19@fudan.edu.cn, yuanxzhang@fudan.edu.cn, kjlu@umn.edu,
+        Xin Tan <tanxin.ctf@gmail.com>
+Subject: [PATCH] apparmor: fix potential label refcnt leak in aa_change_profile
+Date:   Sun, 29 Mar 2020 22:57:41 +0800
+Message-Id: <1585493861-9867-1-git-send-email-xiyuyang19@fudan.edu.cn>
+X-Mailer: git-send-email 2.7.4
+X-CM-TRANSID: XQUFCgBXXUWxt4BeeJuFAA--.1822S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7KryfGF47WF4fCr45WrW5trb_yoW8GrWDpF
+        47KF1UGFs5tFy2kF4Dta13urWak397Xr1Yva9xu3yUZrW5JayDXw1a9r17WryrurykAwsx
+        tFWayF9Y9w1UC3JanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUkK14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+        1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4U
+        JVW0owA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+        Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
+        0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr
+        1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IE
+        rcIFxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
+        v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkG
+        c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI
+        0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAFwI0_Jr0_
+        Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbHa0D
+        UUUUU==
+X-CM-SenderInfo: irzsiiysuqikmy6i3vldqovvfxof0/
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sun, Mar 29, 2020 at 12:00:46AM +0100, Alexey Gladkov wrote:
-> On Sat, Mar 28, 2020 at 02:53:49PM -0700, Kees Cook wrote:
-> > > > > +/* definitions for hide_pid field */
-> > > > > +enum {
-> > > > > +	HIDEPID_OFF            = 0,
-> > > > > +	HIDEPID_NO_ACCESS      = 1,
-> > > > > +	HIDEPID_INVISIBLE      = 2,
-> > > > > +	HIDEPID_NOT_PTRACEABLE = 4,
-> > > > > +};
-> > > > Should the numeric values still be UAPI if there is string parsing now?
-> > > 
-> > > I think yes, because these are still valid hidepid= values.
-> > 
-> > But if we don't expose the values, we can do whatever we like with
-> > future numbers (e.g. the "is this a value or a bit field?" question).
-> 
-> Alexey Dobriyan suggested to put these parameters into the UAPI and it
-> makes sense because these are user parameters.
+aa_change_profile() invokes aa_get_current_label(), which returns
+a reference of the current task's label.
 
-Okidokey. :) Anyway, ignore my HIDEPID_MAX idea then, since this could
-become a bitfield. Just checking for individual bits is the way to go
-for now. Sorry for the noise.
+According to the comment of aa_get_current_label(), the returned
+reference must be put with aa_put_label().
+However, when the original object pointed by "label" becomes
+unreachable because aa_change_profile() returns or a new object
+is assigned to "label", reference count increased by
+aa_get_current_label() is not decreased, causing a refcnt leak.
 
+Fix this by calling aa_put_label() before the original object pointed
+by "label" becomes unreachable.
+
+Signed-off-by: Xiyu Yang <xiyuyang19@fudan.edu.cn>
+Signed-off-by: Xin Tan <tanxin.ctf@gmail.com>
+---
+ security/apparmor/domain.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
+index 6ceb74e0f789..b99145ae34c0 100644
+--- a/security/apparmor/domain.c
++++ b/security/apparmor/domain.c
+@@ -1328,6 +1328,7 @@ int aa_change_profile(const char *fqname, int flags)
+ 		ctx->nnp = aa_get_label(label);
+ 
+ 	if (!fqname || !*fqname) {
++		aa_put_label(label);
+ 		AA_DEBUG("no profile name");
+ 		return -EINVAL;
+ 	}
+@@ -1346,6 +1347,7 @@ int aa_change_profile(const char *fqname, int flags)
+ 			op = OP_CHANGE_PROFILE;
+ 	}
+ 
++	aa_put_label(label);
+ 	label = aa_get_current_label();
+ 
+ 	if (*fqname == '&') {
 -- 
-Kees Cook
+2.7.4
+
