@@ -2,155 +2,119 @@ Return-Path: <SRS0=qkJb=5O=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09905C2D0E8
-	for <linux-security-module@archiver.kernel.org>; Sun, 29 Mar 2020 00:44:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE466C43331
+	for <linux-security-module@archiver.kernel.org>; Sun, 29 Mar 2020 03:17:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D470120578
-	for <linux-security-module@archiver.kernel.org>; Sun, 29 Mar 2020 00:44:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 854CD206F2
+	for <linux-security-module@archiver.kernel.org>; Sun, 29 Mar 2020 03:17:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PMY8KHel"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="m9oqaykc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727835AbgC2Aoe (ORCPT
+        id S1726781AbgC2DRI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 28 Mar 2020 20:44:34 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:53932 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727768AbgC2AoF (ORCPT
+        Sat, 28 Mar 2020 23:17:08 -0400
+Received: from mail-pj1-f68.google.com ([209.85.216.68]:39497 "EHLO
+        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726316AbgC2DRI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 28 Mar 2020 20:44:05 -0400
-Received: by mail-wm1-f67.google.com with SMTP id b12so15836860wmj.3
-        for <linux-security-module@vger.kernel.org>; Sat, 28 Mar 2020 17:44:04 -0700 (PDT)
+        Sat, 28 Mar 2020 23:17:08 -0400
+Received: by mail-pj1-f68.google.com with SMTP id z3so5190321pjr.4
+        for <linux-security-module@vger.kernel.org>; Sat, 28 Mar 2020 20:17:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=R06x0mive4StEspSChp8nXo8gNb0lFU1htQmKzctqw8=;
-        b=PMY8KHelbwaNa5xYBYDcWyEk94/0a2gh2tMn0Q3NqQjOr84u0kOMBhjAZJvXfucvnD
-         7kq5k5vcsQrc/xL4Ugpec9xTSjW+xkYonCBlU3FutlOy50av8YXw+YRL6J3j+SjfPaGL
-         +CZeRoYm+WJGtT7lztYXA5+rfTbl+Tb7evYVI=
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=4II2bc92WqcI1jJHIbHJBRCr9XHybTRKP72pOZ2vBn8=;
+        b=m9oqaykcy7+GRfPUA0qekrpwJwNqG0S1mlKb9K3dSMoiUplMP4jDXKYYiUxNSn1n+v
+         4oyL3E8RvMsSp58YQD7MyGe1pOXmUDh3zVX3F14wt1es3/kyO62xLP1vqLHROC2/iG5A
+         NA5fTeT/j2lxo6j6d+AbeShqGk6CPpwln0Emo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=R06x0mive4StEspSChp8nXo8gNb0lFU1htQmKzctqw8=;
-        b=Z7pArcgkMRb39lk0oaIvEdJFjjjSGLSZpTvXzdTOukKt4mze3rVHwQZNaxkqjzp9zi
-         GcQ5OFTXawvYkOaxKACkP37kilmNDU+q9zkBsD5yZLDY6SUftCubx8j4db9FIYdBhLyO
-         X0UOy/PKQqmPHrizJOfsOHnfQmSM1LOb87oBeDDFAdjTy5uJU99IwrPwYh2Rx/dZaPVX
-         XnQWYCTnyLqLfzOeOHOvqlRVpjmVL1vWcM60kF7Q4CB9HXO18fxbocTRy3N0ptKkH6LV
-         6JraeUP3t9qaezJ8nLPYZ4SOnvgHH9HVgiQFMxV0y4QyYHUz0ZTx4stBi6TVQ7U+6jeR
-         l3CQ==
-X-Gm-Message-State: ANhLgQ3rnz/Z91lGKFyVL/+1q+9HZ19g7Ul8q5ZM9OaSvg/hHmqJQohV
-        WfJqvuwAgtilYCLKZfsM3ywTzQ==
-X-Google-Smtp-Source: ADFU+vsyGkhX3SOTyLgCNzb2toTt7FNMiXNaSN34rKBoCi4LpY6Cqns9hhN73YF/13ZQuL/6iRJ14g==
-X-Received: by 2002:a7b:c3cd:: with SMTP id t13mr5831470wmj.15.1585442643969;
-        Sat, 28 Mar 2020 17:44:03 -0700 (PDT)
-Received: from kpsingh-kernel.localdomain (77-56-209-237.dclient.hispeed.ch. [77.56.209.237])
-        by smtp.gmail.com with ESMTPSA id e5sm14577647wru.92.2020.03.28.17.44.02
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=4II2bc92WqcI1jJHIbHJBRCr9XHybTRKP72pOZ2vBn8=;
+        b=baoCO9v/AvG0X3iufxFu6o8fFI7CoUP573XgA9xt/0QX9PmloJ0gl0zMYXIz+5v+CQ
+         0Qm8OMbDB5fxDnBmF8cES1HulbXDrz2BVW8axCiEAVMoWogkhcEoEE8Y5EyUHd3aT5ZG
+         YNonZ4xWuV3LZQDJsyg1RFqAvbkwSL2iaqSqAzCWVstaqNEdcTerIOEzDMwiYVglgkDD
+         ck7UIiynplEa1l8p/g28UTS/BTr7bi1lXR7CEbeXqK1fA4ylcENTBAmAIsto8c42XuAv
+         fr0c0NEd5amAG7zt05rJ+F0BWiGLM/3R6eqBMvzTLx3xO4ZzR8KMv5gGyXMteCNmSOTI
+         6xWA==
+X-Gm-Message-State: ANhLgQ3mxxvgM3NpPH1SqVutTze5zcLXZt6MfgcoFBlsJoCMOdFU5A81
+        h7t1wSiw4pUmdvQ837ypI3WP3w==
+X-Google-Smtp-Source: ADFU+vtseLSYN5So1Oobu2UiukVUxTzuZN3FTYmpLjJuga7kllNUrhEyIWnwcYJIyJMu6YW0JBI/4Q==
+X-Received: by 2002:a17:90a:7105:: with SMTP id h5mr8294662pjk.54.1585451827508;
+        Sat, 28 Mar 2020 20:17:07 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id y14sm7123511pfp.127.2020.03.28.20.17.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 28 Mar 2020 17:44:03 -0700 (PDT)
-From:   KP Singh <kpsingh@chromium.org>
-To:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Cc:     Yonghong Song <yhs@fb.com>,
-        James Morris <jamorris@linux.microsoft.com>,
-        Brendan Jackman <jackmanb@google.com>,
-        Florent Revest <revest@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        James Morris <jmorris@namei.org>, Paul Turner <pjt@google.com>,
-        Jann Horn <jannh@google.com>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH bpf-next v9 3/8] bpf: lsm: provide attachment points for BPF LSM programs
-Date:   Sun, 29 Mar 2020 01:43:51 +0100
-Message-Id: <20200329004356.27286-4-kpsingh@chromium.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200329004356.27286-1-kpsingh@chromium.org>
-References: <20200329004356.27286-1-kpsingh@chromium.org>
+        Sat, 28 Mar 2020 20:17:06 -0700 (PDT)
+Date:   Sat, 28 Mar 2020 20:17:05 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Alexey Gladkov <gladkov.alexey@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Security Module <linux-security-module@vger.kernel.org>,
+        Akinobu Mita <akinobu.mita@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Daniel Micay <danielmicay@gmail.com>,
+        Djalal Harouni <tixxdz@gmail.com>,
+        "Dmitry V . Levin" <ldv@altlinux.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@poochiereds.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [PATCH v10 7/9] proc: move hidepid values to uapi as they are
+ user interface to mount
+Message-ID: <202003282016.19E071712@keescook>
+References: <20200327172331.418878-1-gladkov.alexey@gmail.com>
+ <20200327172331.418878-8-gladkov.alexey@gmail.com>
+ <202003281340.B73225DCC9@keescook>
+ <20200328212547.xxiqxqhxzwp6w5n5@comp-core-i7-2640m-0182e6>
+ <202003281453.CED94974@keescook>
+ <20200328230046.v3qbffmbtl4sd7tg@comp-core-i7-2640m-0182e6>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200328230046.v3qbffmbtl4sd7tg@comp-core-i7-2640m-0182e6>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: KP Singh <kpsingh@google.com>
+On Sun, Mar 29, 2020 at 12:00:46AM +0100, Alexey Gladkov wrote:
+> On Sat, Mar 28, 2020 at 02:53:49PM -0700, Kees Cook wrote:
+> > > > > +/* definitions for hide_pid field */
+> > > > > +enum {
+> > > > > +	HIDEPID_OFF            = 0,
+> > > > > +	HIDEPID_NO_ACCESS      = 1,
+> > > > > +	HIDEPID_INVISIBLE      = 2,
+> > > > > +	HIDEPID_NOT_PTRACEABLE = 4,
+> > > > > +};
+> > > > Should the numeric values still be UAPI if there is string parsing now?
+> > > 
+> > > I think yes, because these are still valid hidepid= values.
+> > 
+> > But if we don't expose the values, we can do whatever we like with
+> > future numbers (e.g. the "is this a value or a bit field?" question).
+> 
+> Alexey Dobriyan suggested to put these parameters into the UAPI and it
+> makes sense because these are user parameters.
 
-When CONFIG_BPF_LSM is enabled, nop functions, bpf_lsm_<hook_name>, are
-generated for each LSM hook. These functions are initialized as LSM
-hooks in a subsequent patch.
+Okidokey. :) Anyway, ignore my HIDEPID_MAX idea then, since this could
+become a bitfield. Just checking for individual bits is the way to go
+for now. Sorry for the noise.
 
-Signed-off-by: KP Singh <kpsingh@google.com>
-Acked-by: Yonghong Song <yhs@fb.com>
-Acked-by: James Morris <jamorris@linux.microsoft.com>
-Reviewed-by: Brendan Jackman <jackmanb@google.com>
-Reviewed-by: Florent Revest <revest@google.com>
-Reviewed-by: Kees Cook <keescook@chromium.org>
----
- include/linux/bpf_lsm.h | 22 ++++++++++++++++++++++
- kernel/bpf/bpf_lsm.c    | 14 ++++++++++++++
- 2 files changed, 36 insertions(+)
- create mode 100644 include/linux/bpf_lsm.h
-
-diff --git a/include/linux/bpf_lsm.h b/include/linux/bpf_lsm.h
-new file mode 100644
-index 000000000000..83b96895829f
---- /dev/null
-+++ b/include/linux/bpf_lsm.h
-@@ -0,0 +1,22 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+/*
-+ * Copyright (C) 2020 Google LLC.
-+ */
-+
-+#ifndef _LINUX_BPF_LSM_H
-+#define _LINUX_BPF_LSM_H
-+
-+#include <linux/bpf.h>
-+#include <linux/lsm_hooks.h>
-+
-+#ifdef CONFIG_BPF_LSM
-+
-+#define LSM_HOOK(RET, DEFAULT, NAME, ...) \
-+	RET bpf_lsm_##NAME(__VA_ARGS__);
-+#include <linux/lsm_hook_defs.h>
-+#undef LSM_HOOK
-+
-+#endif /* CONFIG_BPF_LSM */
-+
-+#endif /* _LINUX_BPF_LSM_H */
-diff --git a/kernel/bpf/bpf_lsm.c b/kernel/bpf/bpf_lsm.c
-index 82875039ca90..3b3bbb28603e 100644
---- a/kernel/bpf/bpf_lsm.c
-+++ b/kernel/bpf/bpf_lsm.c
-@@ -7,6 +7,20 @@
- #include <linux/filter.h>
- #include <linux/bpf.h>
- #include <linux/btf.h>
-+#include <linux/lsm_hooks.h>
-+#include <linux/bpf_lsm.h>
-+
-+/* For every LSM hook that allows attachment of BPF programs, declare a nop
-+ * function where a BPF program can be attached.
-+ */
-+#define LSM_HOOK(RET, DEFAULT, NAME, ...)	\
-+noinline RET bpf_lsm_##NAME(__VA_ARGS__)	\
-+{						\
-+	return DEFAULT;				\
-+}
-+
-+#include <linux/lsm_hook_defs.h>
-+#undef LSM_HOOK
- 
- const struct bpf_prog_ops lsm_prog_ops = {
- };
 -- 
-2.20.1
-
+Kees Cook
