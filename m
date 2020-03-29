@@ -1,90 +1,178 @@
-Return-Path: <SRS0=+cyb=5N=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=qkJb=5O=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3B8FC2D0ED
-	for <linux-security-module@archiver.kernel.org>; Sat, 28 Mar 2020 23:00:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DD3CC2D0EB
+	for <linux-security-module@archiver.kernel.org>; Sun, 29 Mar 2020 00:07:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E5002074A
-	for <linux-security-module@archiver.kernel.org>; Sat, 28 Mar 2020 23:00:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 345982074F
+	for <linux-security-module@archiver.kernel.org>; Sun, 29 Mar 2020 00:07:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="iDo6heMr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727588AbgC1XAx (ORCPT
+        id S1727466AbgC2AHn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 28 Mar 2020 19:00:53 -0400
-Received: from raptor.unsafe.ru ([5.9.43.93]:39934 "EHLO raptor.unsafe.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727175AbgC1XAw (ORCPT
+        Sat, 28 Mar 2020 20:07:43 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:35723 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727469AbgC2AHn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 28 Mar 2020 19:00:52 -0400
-Received: from comp-core-i7-2640m-0182e6 (ip-89-102-33-211.net.upcbroadband.cz [89.102.33.211])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by raptor.unsafe.ru (Postfix) with ESMTPSA id 4FE36209BD;
-        Sat, 28 Mar 2020 23:00:49 +0000 (UTC)
-Date:   Sun, 29 Mar 2020 00:00:46 +0100
-From:   Alexey Gladkov <gladkov.alexey@gmail.com>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [PATCH v10 7/9] proc: move hidepid values to uapi as they are
- user interface to mount
-Message-ID: <20200328230046.v3qbffmbtl4sd7tg@comp-core-i7-2640m-0182e6>
-References: <20200327172331.418878-1-gladkov.alexey@gmail.com>
- <20200327172331.418878-8-gladkov.alexey@gmail.com>
- <202003281340.B73225DCC9@keescook>
- <20200328212547.xxiqxqhxzwp6w5n5@comp-core-i7-2640m-0182e6>
- <202003281453.CED94974@keescook>
+        Sat, 28 Mar 2020 20:07:43 -0400
+Received: by mail-wm1-f66.google.com with SMTP id f74so6133605wmf.0
+        for <linux-security-module@vger.kernel.org>; Sat, 28 Mar 2020 17:07:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=AmKZjEjyoZBWP3zxzq+jmwKlApxNsmeX6tcgIBr0Rbs=;
+        b=iDo6heMrruNgAAYPc9a+X3SHXDi261CceFI9H0ElOTwKRljxR2ublgwHP0V5HnlVVs
+         Vk4UxYm80IWn/SnoyFtSfYz8rkUNXlXVnhQrQcW4bCPP2uKxVSl4AgG1XySxxAXFLapM
+         94FsgVIbKi+FkL75GCBrwtXvhzqo1wmDUuKjk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=AmKZjEjyoZBWP3zxzq+jmwKlApxNsmeX6tcgIBr0Rbs=;
+        b=BspNIWUs8d1VtR9DpnNw7cC3wQXxdHv9mFMZF/sen76yW/5nZMMnQGs3HE+vzmw0qm
+         EyUiXFBcqONayGiyRHusBqA0RLBLSjnFt0FhH22g1ZcXB28RL7k+SlNO/IoRCQuANPqM
+         fdciJAzEJxmxkkt3KUftM8Tc3cVkytUKZPbQzcL5Q6p207TIC1ac3kfS7DFX1nqqTMXJ
+         M415VnhHKcW05QAYa+B5BhW4MINE47EhWzPYvbeQDvsQu6FpOAKqhS4eBy4d0OaNHZ/D
+         5m81lOLXZ8CeM6ofrqlqja3mH5yzsQCHJSoUwD7Lt3GR1ITRikUhbEBQnq0Q48Wmiilt
+         ltXw==
+X-Gm-Message-State: ANhLgQ15Hukfk9lO23d2vvo+0ryn8zAltNN6AIx3VQgSicibInxucdfe
+        XCapGLRz9xBTsTbArFP7yMpWPQ==
+X-Google-Smtp-Source: ADFU+vuXe3yfESUYjb5C4OHsBsQCAuVzJ/1ssVHrp3ycSEsL9Xml8SVXHWNoWmBw7XdvoQfJNt5niA==
+X-Received: by 2002:a1c:80d3:: with SMTP id b202mr6021373wmd.16.1585440460849;
+        Sat, 28 Mar 2020 17:07:40 -0700 (PDT)
+Received: from google.com ([2a00:79e0:42:204:8a21:ba0c:bb42:75ec])
+        by smtp.gmail.com with ESMTPSA id t81sm14436603wmb.15.2020.03.28.17.07.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 28 Mar 2020 17:07:40 -0700 (PDT)
+From:   KP Singh <kpsingh@chromium.org>
+X-Google-Original-From: KP Singh <kpsingh>
+Date:   Sun, 29 Mar 2020 01:07:38 +0100
+To:     KP Singh <kpsingh@chromium.org>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        open list <linux-kernel@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        James Morris <jmorris@namei.org>, Paul Turner <pjt@google.com>,
+        Jann Horn <jannh@google.com>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH bpf-next v8 0/8] MAC and Audit policy using eBPF (KRSI)
+Message-ID: <20200329000738.GA230422@google.com>
+References: <20200327192854.31150-1-kpsingh@chromium.org>
+ <4e5a09bb-04c4-39b8-10d4-59496ffb5eee@iogearbox.net>
+ <20200328195636.GA95544@google.com>
+ <202003281449.333BDAF6@keescook>
+ <CACYkzJ4v_X87-+GCE++g0_BkcJWFhbNePAMQmH8Ccgq7id-akA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <202003281453.CED94974@keescook>
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.1 (raptor.unsafe.ru [5.9.43.93]); Sat, 28 Mar 2020 23:00:49 +0000 (UTC)
+In-Reply-To: <CACYkzJ4v_X87-+GCE++g0_BkcJWFhbNePAMQmH8Ccgq7id-akA@mail.gmail.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, Mar 28, 2020 at 02:53:49PM -0700, Kees Cook wrote:
-> > > > +/* definitions for hide_pid field */
-> > > > +enum {
-> > > > +	HIDEPID_OFF            = 0,
-> > > > +	HIDEPID_NO_ACCESS      = 1,
-> > > > +	HIDEPID_INVISIBLE      = 2,
-> > > > +	HIDEPID_NOT_PTRACEABLE = 4,
-> > > > +};
-> > > Should the numeric values still be UAPI if there is string parsing now?
-> > 
-> > I think yes, because these are still valid hidepid= values.
+On 28-Mar 23:30, KP Singh wrote:
+> On Sat, Mar 28, 2020 at 10:50 PM Kees Cook <keescook@chromium.org> wrote:
+> >
+> > On Sat, Mar 28, 2020 at 08:56:36PM +0100, KP Singh wrote:
+> > > Since the attachment succeeds and the hook does not get called, it
+> > > seems like "bpf" LSM is not being initialized and the hook, although
+> > > present, does not get called.
+> > >
+> > > This indicates that "bpf" is not in CONFIG_LSM. It should, however, be
+> > > there by default as we added it to default value of CONFIG_LSM and
+> > > also for other DEFAULT_SECURITY_* options.
+> > >
+> > > Let me know if that's the case and it fixes it.
+> >
+> > Is the selftest expected to at least fail cleanly (i.e. not segfault)
 > 
-> But if we don't expose the values, we can do whatever we like with
-> future numbers (e.g. the "is this a value or a bit field?" question).
+> I am not sure where the crash comes from, it does not look like it's test_lsm,
+> it seems to happen in test_overhead. Both seem to run fine for me.
 
-Alexey Dobriyan suggested to put these parameters into the UAPI and it
-makes sense because these are user parameters.
+So I was able to reproduce the crash:
 
--- 
-Rgrds, legion
+* Remove "bpf" from CONFIG_LSM
 
+./test_progs -n 66,67
+test_test_lsm:PASS:skel_load 0 nsec
+test_test_lsm:PASS:attach 0 nsec
+test_test_lsm:PASS:exec_cmd 0 nsec
+test_test_lsm:FAIL:bprm_count bprm_count = 0
+test_test_lsm:FAIL:heap_mprotect want errno=EPERM, got 0
+#66 test_lsm:FAIL
+Caught signal #11!
+Stack trace:
+./test_progs(crash_handler+0x1f)[0x55b7f9867acf]
+/lib/x86_64-linux-gnu/libpthread.so.0(+0x13520)[0x7fcf1467e520]
+/lib/x86_64-linux-gnu/libc.so.6(+0x15f73d)[0x7fcf1460a73d]
+/lib/x86_64-linux-gnu/libc.so.6(__libc_calloc+0x2ca)[0x7fcf1453286a]
+/usr/lib/x86_64-linux-gnu/libelf.so.1(+0x37
+
+[snip]
+
+* The crash went away when I removed the heap_mprotect call, now the BPF
+  hook attached did not allow this operation, so it had no side-effects.
+  Which lead me to believe the crash could be a side-effect of this
+  operation. So I did:
+
+--- a/tools/testing/selftests/bpf/prog_tests/test_lsm.c
++++ b/tools/testing/selftests/bpf/prog_tests/test_lsm.c
+@@ -29,7 +29,7 @@ int heap_mprotect(void)
+        if (buf == NULL)
+                return -ENOMEM;
+
+-       ret = mprotect(buf, sz, PROT_READ | PROT_EXEC);
++       ret = mprotect(buf, sz, PROT_READ | PROT_WRITE | PROT_EXEC);
+        free(buf);
+        return ret;
+ }
+
+and the crash went away. Which made me realize that the free
+operation does not like memory without PROT_WRITE, So I did this:
+
+diff --git a/tools/testing/selftests/bpf/prog_tests/test_lsm.c b/tools/testing/selftests/bpf/prog_tests/test_lsm.c
+index fcd839e88540..78f125cc09b3 100644
+--- a/tools/testing/selftests/bpf/prog_tests/test_lsm.c
++++ b/tools/testing/selftests/bpf/prog_tests/test_lsm.c
+@@ -30,7 +30,7 @@ int heap_mprotect(void)
+                return -ENOMEM;
+
+        ret = mprotect(buf, sz, PROT_READ | PROT_EXEC);
+-       free(buf);
++       // free(buf);
+        return ret;
+ }
+
+and the crash went away as well. So it indeed was a combination of:
+
+* CONFIG_LSM not enabling the hook
+* mprotect marking the memory as non-writeable
+* free being called on the memory.
+
+I will send a v9 which has the PROT_WRITE on the mprotect. Thanks
+for noticing this!
+
+- KP
+
+> 
+> - KP
+> 
+> > when the BPF LSF is not built into the kernel?
+> >
+> > --
+> > Kees Cook
