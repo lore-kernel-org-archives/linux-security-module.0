@@ -2,74 +2,99 @@ Return-Path: <SRS0=K480=5P=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85263C43331
-	for <linux-security-module@archiver.kernel.org>; Mon, 30 Mar 2020 15:14:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB8A3C43331
+	for <linux-security-module@archiver.kernel.org>; Mon, 30 Mar 2020 15:15:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5557E205ED
-	for <linux-security-module@archiver.kernel.org>; Mon, 30 Mar 2020 15:14:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4BCA20732
+	for <linux-security-module@archiver.kernel.org>; Mon, 30 Mar 2020 15:15:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727183AbgC3POO (ORCPT
+        id S1727905AbgC3PPl (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 30 Mar 2020 11:14:14 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:54783 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727696AbgC3POO (ORCPT
+        Mon, 30 Mar 2020 11:15:41 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:5566 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725268AbgC3PPl (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 30 Mar 2020 11:14:14 -0400
-Received: from fsav305.sakura.ne.jp (fsav305.sakura.ne.jp [153.120.85.136])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 02UFD7Hq079755;
-        Tue, 31 Mar 2020 00:13:07 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav305.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav305.sakura.ne.jp);
- Tue, 31 Mar 2020 00:13:07 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav305.sakura.ne.jp)
-Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 02UFD7n5079751
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Tue, 31 Mar 2020 00:13:07 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Subject: Re: kernel panic: smack: Failed to initialize cipso DOI.
-To:     syzbot <syzbot+89731ccb6fec15ce1c22@syzkaller.appspotmail.com>,
-        casey@schaufler-ca.com
-References: <000000000000db448f05a212beea@google.com>
-Cc:     jmorris@namei.org, linux-security-module@vger.kernel.org,
-        serge@hallyn.com, syzkaller-bugs@googlegroups.com
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Message-ID: <a293a766-4329-f6de-c8a9-1a5051217c45@I-love.SAKURA.ne.jp>
-Date:   Tue, 31 Mar 2020 00:13:05 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        Mon, 30 Mar 2020 11:15:41 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02UF4jAg033441;
+        Mon, 30 Mar 2020 11:15:39 -0400
+Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 301ygv18fd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 30 Mar 2020 11:15:38 -0400
+Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
+        by ppma02wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 02UFFGRl013176;
+        Mon, 30 Mar 2020 15:15:38 GMT
+Received: from b01cxnp23032.gho.pok.ibm.com (b01cxnp23032.gho.pok.ibm.com [9.57.198.27])
+        by ppma02wdc.us.ibm.com with ESMTP id 301x76hn06-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 30 Mar 2020 15:15:38 +0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02UFFbcQ52363576
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 30 Mar 2020 15:15:37 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CE65CB2067;
+        Mon, 30 Mar 2020 15:15:37 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B6A3CB205F;
+        Mon, 30 Mar 2020 15:15:37 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Mon, 30 Mar 2020 15:15:37 +0000 (GMT)
+From:   Stefan Berger <stefanb@linux.vnet.ibm.com>
+To:     linux-integrity@vger.kernel.org, jarkko.sakkinen@linux.intel.com,
+        linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Cc:     Stefan Berger <stefanb@linux.ibm.com>
+Subject: [PATCH v2 0/3] tpm2: Make TPM2 logs accessible for non-UEFI firmware
+Date:   Mon, 30 Mar 2020 11:15:33 -0400
+Message-Id: <20200330151536.871700-1-stefanb@linux.vnet.ibm.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-In-Reply-To: <000000000000db448f05a212beea@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
+ definitions=2020-03-30_06:2020-03-30,2020-03-30 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 phishscore=0
+ spamscore=0 lowpriorityscore=0 suspectscore=0 clxscore=1011
+ priorityscore=1501 impostorscore=0 adultscore=0 bulkscore=0
+ mlxlogscore=933 malwarescore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2003020000 definitions=main-2003300139
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2020/03/30 22:51, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following crash on:
-> 
-> HEAD commit:    1b649e0b Merge git://git.kernel.org/pub/scm/linux/kernel/g..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=14957099e00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=4ac76c43beddbd9
-> dashboard link: https://syzkaller.appspot.com/bug?extid=89731ccb6fec15ce1c22
-> compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1202c375e00000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1390bb03e00000
+From: Stefan Berger <stefanb@linux.ibm.com>
 
-Wrong bisection. This is not a network / driver problem.
-There is a memory allocation fault injection prior to this panic.
+This series of patches extends the existing TPM2 ACPI table with additional
+fields found in the TPM2 TCG ACPI specification (reference is in the patch)
+that allow access to the log's address and its size. We then modify the
+code that so far only enables access to a TPM 1.2's log for a TPM2 as well.
+This then enables access to the TPM2's log on non-UEFI system that for example
+run SeaBIOS.
 
-  [ T1576] FAULT_INJECTION: forcing a failure.
-  [ T1576] Kernel panic - not syncing: smack:  Failed to initialize cipso DOI.
+   Stefan
+
+v1->v2:
+  - Repost of the series
+
+Stefan Berger (3):
+  acpi: Extend TPM2 ACPI table with missing log fields
+  tpm: Rearrange ACPI log code to easier extend for TPM2 case
+  tpm: Add support for ACPI logs from TPM2 ACPI table
+
+ drivers/char/tpm/eventlog/acpi.c | 54 ++++++++++++++++++++++++----------------
+ drivers/char/tpm/tpm_crb.c       | 13 +++++++---
+ drivers/char/tpm/tpm_tis.c       |  4 ++-
+ include/acpi/actbl3.h            |  5 ++--
+ 4 files changed, 49 insertions(+), 27 deletions(-)
+
+-- 
+2.14.5
+
