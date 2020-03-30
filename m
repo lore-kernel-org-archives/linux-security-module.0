@@ -2,128 +2,97 @@ Return-Path: <SRS0=K480=5P=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77268C43331
-	for <linux-security-module@archiver.kernel.org>; Mon, 30 Mar 2020 19:54:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F59EC2D0F1
+	for <linux-security-module@archiver.kernel.org>; Mon, 30 Mar 2020 21:12:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 584CA20733
-	for <linux-security-module@archiver.kernel.org>; Mon, 30 Mar 2020 19:54:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 229B520714
+	for <linux-security-module@archiver.kernel.org>; Mon, 30 Mar 2020 21:12:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728775AbgC3TyU (ORCPT
+        id S1728407AbgC3VM3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 30 Mar 2020 15:54:20 -0400
-Received: from mga17.intel.com ([192.55.52.151]:49932 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727255AbgC3TyU (ORCPT
+        Mon, 30 Mar 2020 17:12:29 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:17252 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728317AbgC3VM3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 30 Mar 2020 15:54:20 -0400
-IronPort-SDR: 6S1t14dixeNBUmwjxQOQ9pl/LINK/gWp84pKsTWuFP4IdzjpCbmI7C9c5up/fPpbTYt0foIi+X
- QzXbIQzUhUOA==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Mar 2020 12:54:20 -0700
-IronPort-SDR: mRB9tzHdIXCtzQHvqCcpOK2Y6qUuoCpdeKJQ6yI1MxaEm2qCX7qMHfqMQ2W3PdeCWQOFcCX380
- l04PXmiAIvgg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,325,1580803200"; 
-   d="scan'208";a="359275521"
-Received: from plachner-mobl.ger.corp.intel.com (HELO localhost) ([10.252.35.129])
-  by fmsmga001.fm.intel.com with ESMTP; 30 Mar 2020 12:54:17 -0700
-Date:   Mon, 30 Mar 2020 22:54:16 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Stefan Berger <stefanb@linux.vnet.ibm.com>
+        Mon, 30 Mar 2020 17:12:29 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02UL5vNi021155;
+        Mon, 30 Mar 2020 17:12:28 -0400
+Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3020wd13fm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 30 Mar 2020 17:12:27 -0400
+Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
+        by ppma01dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 02ULAIjx006418;
+        Mon, 30 Mar 2020 21:12:26 GMT
+Received: from b03cxnp08025.gho.boulder.ibm.com (b03cxnp08025.gho.boulder.ibm.com [9.17.130.17])
+        by ppma01dal.us.ibm.com with ESMTP id 301x770k9h-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 30 Mar 2020 21:12:26 +0000
+Received: from b03ledav003.gho.boulder.ibm.com (b03ledav003.gho.boulder.ibm.com [9.17.130.234])
+        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02ULCPrW23134702
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 30 Mar 2020 21:12:25 GMT
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 719806A04D;
+        Mon, 30 Mar 2020 21:12:25 +0000 (GMT)
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C03E56A04F;
+        Mon, 30 Mar 2020 21:12:24 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by b03ledav003.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Mon, 30 Mar 2020 21:12:24 +0000 (GMT)
+Subject: Re: [PATCH v2 2/3] tpm: Rearrange ACPI log code to easier extend for
+ TPM2 case
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>
 Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-acpi@vger.kernel.org, linux-security-module@vger.kernel.org,
-        Stefan Berger <stefanb@linux.ibm.com>
-Subject: Re: [PATCH v2 3/3] tpm: Add support for ACPI logs from TPM2 ACPI
- table
-Message-ID: <20200330195416.GE1384380@linux.intel.com>
+        linux-acpi@vger.kernel.org, linux-security-module@vger.kernel.org
 References: <20200330151536.871700-1-stefanb@linux.vnet.ibm.com>
- <20200330151536.871700-4-stefanb@linux.vnet.ibm.com>
+ <20200330151536.871700-3-stefanb@linux.vnet.ibm.com>
+ <20200330193144.GD1384380@linux.intel.com>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+Message-ID: <2474521e-909c-d8b4-077b-2043ce587130@linux.ibm.com>
+Date:   Mon, 30 Mar 2020 17:12:24 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200330151536.871700-4-stefanb@linux.vnet.ibm.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20200330193144.GD1384380@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
+ definitions=2020-03-30_07:2020-03-30,2020-03-30 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
+ priorityscore=1501 malwarescore=0 phishscore=0 mlxlogscore=999
+ adultscore=0 suspectscore=0 bulkscore=0 mlxscore=0 lowpriorityscore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2003300175
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Mar 30, 2020 at 11:15:36AM -0400, Stefan Berger wrote:
-> From: Stefan Berger <stefanb@linux.ibm.com>
-> 
-> In case of a TPM2 search for a TPM2 ACPI table and if found use it to
-> find start and length of the log area.
-> 
-> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+On 3/30/20 3:32 PM, Jarkko Sakkinen wrote:
+> On Mon, Mar 30, 2020 at 11:15:35AM -0400, Stefan Berger wrote:
+>> From: Stefan Berger <stefanb@linux.ibm.com>
+>>
+>> Rearrange the ACPI table based log code to allow for easier extension
+>> for the TPM2 case.
+>>
+>> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+> I think this change does not do anything useful.
 
-Please use "tpm/eventlog".
+I know. So it's easy to see what's happening and harmless. But I'll 
+squash it.
 
-There's a typo in the short summary: I guess you meant event log when
-you speak of "ACPI log".
 
-Also, I'm not getting the long description e.g. "TPM2 search" is an
-alien term.
+>
+> /Jarkko
 
-> ---
->  drivers/char/tpm/eventlog/acpi.c | 15 +++++++++++++--
->  1 file changed, 13 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/eventlog/acpi.c b/drivers/char/tpm/eventlog/acpi.c
-> index 1ef2267c9378..2447f21e4a23 100644
-> --- a/drivers/char/tpm/eventlog/acpi.c
-> +++ b/drivers/char/tpm/eventlog/acpi.c
-> @@ -49,6 +49,8 @@ int tpm_read_log_acpi(struct tpm_chip *chip)
->  	void __iomem *virt;
->  	u64 len, start;
->  	struct tpm_bios_log *log;
-> +	struct acpi_table_tpm2 *tbl;
-> +	int format;
->  
->  	log = &chip->log;
->  
-> @@ -59,7 +61,15 @@ int tpm_read_log_acpi(struct tpm_chip *chip)
->  		return -ENODEV;
->  
->  	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
-> -		return -ENODEV;
-> +		status = acpi_get_table("TPM2", 1,
-> +					(struct acpi_table_header **)&tbl);
-> +		if (ACPI_FAILURE(status))
-> +			return -ENODEV;
-> +		if (tbl->header.length < sizeof(*tbl))
-> +			return -ENODEV;
-> +		len = tbl->log_area_minimum_length;
-> +		start = tbl->log_area_start_address;
-> +		format = EFI_TCG2_EVENT_LOG_FORMAT_TCG_2;
->  	} else {
->  		/* Find TCPA entry in RSDT (ACPI_LOGICAL_ADDRESSING) */
->  		status = acpi_get_table(ACPI_SIG_TCPA, 1,
-> @@ -79,6 +89,7 @@ int tpm_read_log_acpi(struct tpm_chip *chip)
->  			start = buff->client.log_start_addr;
->  			break;
->  		}
-> +		format = EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2;
->  	}
->  	if (!len) {
->  		dev_warn(&chip->dev, "%s: TCPA log area empty\n", __func__);
-> @@ -99,7 +110,7 @@ int tpm_read_log_acpi(struct tpm_chip *chip)
->  	memcpy_fromio(log->bios_event_log, virt, len);
->  
->  	acpi_os_unmap_iomem(virt, len);
-> -	return EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2;
-> +	return format;
->  
->  err:
->  	kfree(log->bios_event_log);
-> -- 
-> 2.14.5
-> 
 
-The code change looks fine but need a review after squashed with 2/3.
-
-/Jarkko
