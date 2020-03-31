@@ -2,69 +2,69 @@ Return-Path: <SRS0=N+eG=5Q=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.3 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15DFCC43331
-	for <linux-security-module@archiver.kernel.org>; Tue, 31 Mar 2020 22:15:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2848CC43331
+	for <linux-security-module@archiver.kernel.org>; Tue, 31 Mar 2020 22:38:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB3772080C
-	for <linux-security-module@archiver.kernel.org>; Tue, 31 Mar 2020 22:15:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1585692916;
-	bh=ne016EYcgo1BXB4ktHvGk1kdHTYidGrFCVPBwbZwbUc=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=yzoIvT9RtFSLy20orxrGS5JYRjvv63HyesZY9Mq2gcO+cA2dEXHGVh2OaqEHC0QQF
-	 QeLrscN08e5ibZPvLm8kn1UHILoCItaOrIQLs5TcPUY8Gkxp/CA6BTTHggW7VUIYoZ
-	 brolyEFQdENi/oaC9BI8I6egxVhuAkL/Li7Akivw=
+	by mail.kernel.org (Postfix) with ESMTP id E8821208E0
+	for <linux-security-module@archiver.kernel.org>; Tue, 31 Mar 2020 22:38:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731427AbgCaWPQ (ORCPT
+        id S1728245AbgCaWio (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 31 Mar 2020 18:15:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59860 "EHLO mail.kernel.org"
+        Tue, 31 Mar 2020 18:38:44 -0400
+Received: from namei.org ([65.99.196.166]:44640 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729647AbgCaWPO (ORCPT
+        id S1727955AbgCaWin (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 31 Mar 2020 18:15:14 -0400
-Subject: Re: [GIT PULL] SELinux patches for v5.7
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585692913;
-        bh=ne016EYcgo1BXB4ktHvGk1kdHTYidGrFCVPBwbZwbUc=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=hssACP7P+gxAmwonGyrElO683ewcOAIawNRPc9mdqmkyOlfmSLmna73k8sjvp3GSa
-         k4JQfTbP1n3zZwOKsuVtmU3FkaBY2S5gfqA78IU2Gb4S3/dQzQIhGpx6dnI7l9RpXq
-         vNVmvANnOiZqB4XZQvAHDLHRSjt1cXeTOu4gtZvs=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CAHC9VhQoqpqiFncTP1w0+--hGTwcm57LXgrXVsGnNqcRSof1WA@mail.gmail.com>
-References: <CAHC9VhQoqpqiFncTP1w0+--hGTwcm57LXgrXVsGnNqcRSof1WA@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAHC9VhQoqpqiFncTP1w0+--hGTwcm57LXgrXVsGnNqcRSof1WA@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
- tags/selinux-pr-20200330
-X-PR-Tracked-Commit-Id: c753924b628551564b6eea3c9896e4a95aa25ed9
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: b3aa112d57b704441143d84b0475fb633a750035
-Message-Id: <158569291347.4579.3524814433990268929.pr-tracker-bot@kernel.org>
-Date:   Tue, 31 Mar 2020 22:15:13 +0000
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+        Tue, 31 Mar 2020 18:38:43 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id 02VMcaod016023;
+        Tue, 31 Mar 2020 22:38:36 GMT
+Date:   Wed, 1 Apr 2020 09:38:36 +1100 (AEDT)
+From:   James Morris <jmorris@namei.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+cc:     linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Security subsystem updates for 5.7
+Message-ID: <alpine.LRH.2.21.2004010936310.15848@namei.org>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The pull request you sent on Mon, 30 Mar 2020 20:38:17 -0400:
+Two minor updates for the core security subsystem:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git tags/selinux-pr-20200330
+- kernel-doc warning fixes from Randy Dunlap
+- header cleanup from YueHaibing
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/b3aa112d57b704441143d84b0475fb633a750035
+Please pull.
 
-Thank you!
+---
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+The following changes since commit 10c2d111c906599942efd13109061885631c4a0c:
+
+  security: remove EARLY_LSM_COUNT which never used (2020-01-27 11:19:41 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org:/pub/scm/linux/kernel/git/jmorris/linux-security next-general
+
+for you to fetch changes up to 3e27a33932df104f4f9ff811467b0b4ccebde773:
+
+  security: remove duplicated include from security.h (2020-02-21 08:53:48 -0800)
+
+----------------------------------------------------------------
+Randy Dunlap (1):
+      security: <linux/lsm_hooks.h>: fix all kernel-doc warnings
+
+YueHaibing (1):
+      security: remove duplicated include from security.h
+
+ include/linux/lsm_hooks.h | 36 +++++++++++++++++++++++++++++++++++-
+ include/linux/security.h  |  1 -
+ 2 files changed, 35 insertions(+), 2 deletions(-)
