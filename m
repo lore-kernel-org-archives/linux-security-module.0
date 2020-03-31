@@ -1,134 +1,213 @@
-Return-Path: <SRS0=K480=5P=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=N+eG=5Q=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBF6AC2D0F1
-	for <linux-security-module@archiver.kernel.org>; Mon, 30 Mar 2020 21:26:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFC86C2D0E9
+	for <linux-security-module@archiver.kernel.org>; Tue, 31 Mar 2020 00:38:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDF5020774
-	for <linux-security-module@archiver.kernel.org>; Mon, 30 Mar 2020 21:26:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3DC520774
+	for <linux-security-module@archiver.kernel.org>; Tue, 31 Mar 2020 00:38:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="bmi90RGs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728537AbgC3V0b (ORCPT
+        id S1729461AbgCaAi2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 30 Mar 2020 17:26:31 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39008 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728407AbgC3V0a (ORCPT
+        Mon, 30 Mar 2020 20:38:28 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:44100 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729398AbgCaAi1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 30 Mar 2020 17:26:30 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02UL5k2D020038;
-        Mon, 30 Mar 2020 17:26:29 -0400
-Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3020wd1cs0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 30 Mar 2020 17:26:29 -0400
-Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
-        by ppma01dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 02ULPUBN021597;
-        Mon, 30 Mar 2020 21:26:28 GMT
-Received: from b03cxnp07028.gho.boulder.ibm.com (b03cxnp07028.gho.boulder.ibm.com [9.17.130.15])
-        by ppma01dal.us.ibm.com with ESMTP id 301x770p19-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 30 Mar 2020 21:26:28 +0000
-Received: from b03ledav003.gho.boulder.ibm.com (b03ledav003.gho.boulder.ibm.com [9.17.130.234])
-        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02ULQQou47382936
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 30 Mar 2020 21:26:26 GMT
-Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B94906A04D;
-        Mon, 30 Mar 2020 21:26:26 +0000 (GMT)
-Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0C7EF6A047;
-        Mon, 30 Mar 2020 21:26:25 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-        by b03ledav003.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Mon, 30 Mar 2020 21:26:25 +0000 (GMT)
-Subject: Re: [PATCH v2 1/3] acpi: Extend TPM2 ACPI table with missing log
- fields
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>
-Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-acpi@vger.kernel.org, linux-security-module@vger.kernel.org
-References: <20200330151536.871700-1-stefanb@linux.vnet.ibm.com>
- <20200330151536.871700-2-stefanb@linux.vnet.ibm.com>
- <20200330192830.GC1384380@linux.intel.com>
-From:   Stefan Berger <stefanb@linux.ibm.com>
-Message-ID: <fa195dea-205b-fd0e-fb58-8d185a4a13c6@linux.ibm.com>
-Date:   Mon, 30 Mar 2020 17:26:25 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Mon, 30 Mar 2020 20:38:27 -0400
+Received: by mail-ed1-f67.google.com with SMTP id i16so22161082edy.11
+        for <linux-security-module@vger.kernel.org>; Mon, 30 Mar 2020 17:38:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:from:date:message-id:subject:to:cc
+         :content-transfer-encoding;
+        bh=gErK/ycbJv6uqf+b3FCQW59lfsmjwCyYyXfDMASF3Kk=;
+        b=bmi90RGsEkcS9xmzCDYV77nBmN8IBmwM/+Y8QthDzbikrqfYed/KIeivKZhM+fHGGi
+         YoMt9bctZEnfzv14hxqz0MZVnzUpH+tnNKrA30nZGmkyyGd4eO3VCRUeywUBJVdugXBR
+         BRffgH77n9eYL2YuB4X8DOm094puYLo4d/KeNs3sO9aJHnmOvd71uy++X49H3idJKolm
+         dhCBThw6rj0AfycOdLL/OHv1zNKF2RNjyvY6WbxZuW22Ex266CtkHAoL6DnSlfdejJop
+         wWAW4DlTqm2QDjzkmUP3GvKIFSE2vr51sN/eTIx6TlrmJvLbrTQPREqIl/Ya6BkosqF1
+         OXJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc
+         :content-transfer-encoding;
+        bh=gErK/ycbJv6uqf+b3FCQW59lfsmjwCyYyXfDMASF3Kk=;
+        b=Pnf74ujviTv/yCYeTTb1SU6KQlWvVrnEH9dPWGNI5eFXiOjQuLCizI2x3ZUfzZuNKq
+         nRldFXRkQUB4hgXs2PVK53dK2xs+JbhcZt4gCuMAM5u8ftrSLWglajCgQY7uQN4XLSr3
+         gI/cgYAiq3yiOisgzeXde9zlP16+RM1UwFMVbl4OPfDgVwGVRKMaZI3RGPsYPzGCEDFO
+         rbsog8aAdIFJCW3ECUxHF5SFv5Y7sevB8A8luzLw/+oMCWj8GbAjXMIX5I2cDe3LrQH+
+         udurnbtrJ/lNW8s5n+Vj4jIUV/fEDLTrMSb1upmjPoGwQDJH1QvL55w7Ex1mP+FNG1Me
+         Hy+g==
+X-Gm-Message-State: ANhLgQ24xlZ2h7aI3Kbt9gAqjXniXhNZ5611eF4lpEMofo/XYpdmQg3V
+        lgdwOYt+dcjKFuX8Z4mAhmDJTHRK+1ZAgOkuZRWq
+X-Google-Smtp-Source: ADFU+vvbmDfTAgpqjM3WtkbVSAeOOdDuxDWDFm6MYhl+NVQcodlPN0Tw+SISf0OLn2BcCUowitkP+UC1bMW5+D2ypsU=
+X-Received: by 2002:aa7:db56:: with SMTP id n22mr13804870edt.269.1585615105547;
+ Mon, 30 Mar 2020 17:38:25 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200330192830.GC1384380@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
- definitions=2020-03-30_07:2020-03-30,2020-03-30 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
- priorityscore=1501 malwarescore=0 phishscore=0 mlxlogscore=999
- adultscore=0 suspectscore=0 bulkscore=0 mlxscore=0 lowpriorityscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2003300175
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 30 Mar 2020 20:38:17 -0400
+Message-ID: <CAHC9VhQoqpqiFncTP1w0+--hGTwcm57LXgrXVsGnNqcRSof1WA@mail.gmail.com>
+Subject: [GIT PULL] SELinux patches for v5.7
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 3/30/20 3:28 PM, Jarkko Sakkinen wrote:
-> On Mon, Mar 30, 2020 at 11:15:34AM -0400, Stefan Berger wrote:
->> From: Stefan Berger <stefanb@linux.ibm.com>
->>
->> Recent extensions of the TPM2 ACPI table added 3 more fields
->> including 12 bytes of start method specific parameters and Log Area
->> Minimum Length (u32) and Log Area Start Address (u64). So, we extend
->> the existing structure with these fields to allow non-UEFI systems
->> to access the TPM2's log.
->>
->> The specification that has the new fields is the following:
->>    TCG ACPI Specification
->>    Family "1.2" and "2.0"
->>    Version 1.2, Revision 8
->>
->> Adapt all existing table size calculations to use
->> offsetof(struct acpi_table_tpm2, start_method_specific)
->> [where start_method_specific is a newly added field]
->> rather than sizeof(struct acpi_table_tpm2) so that the addition
->> of the new fields does not affect current systems that may not
->> have them.
->>
-> Cc: linux-acpi@vger.kernel.org
->
->> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-> You have this comment:
->
-> /* Platform-specific data follows */
+Hi Linus,
 
-You mean there 'was this comment'? I actually removed this comment 
-because I didn't know what it meant or what it has to do with 'platform':
+We've got twenty SELinux patches for the v5.7 merge window, the
+highlights are below.  Beyond the highlights there a couple of things
+I want to call out in this pull request: a merge conflict, and a
+maintainer screw-up.
 
--
--       /* Platform-specific data follows */
-+       u8  start_method_specific[12];
-+       u32 log_area_minimum_length;
-+       u64 log_area_start_address;
+The merge conflict is in security/selinux/hooks.c and is against a
+binder fs name fix we sent during the v5.6-rcX cycle; the fixup is
+trivial but if you need me to fix it, let me know.  The maintainer
+screw-up deals with the second patch from the top of the pull request,
+the NFS fix.  The screw-up isn't the fact that this is a NFS patch, we
+talked to the NFS guys and they are okay with it.  The issue is that
+the commit date is today - during the merge window - which doesn't
+reflect the testing the patch received.  The reality is that I merged
+this patch back on March 12th, and it has been part of our testing
+ever since, but when putting this pull request together I noticed that
+I had dropped the subject line from the patch when I was merging it.
+Not wanting a malformed commit, I popped the top two patches from the
+stack and restored the missing subject line; this had the unfortunate
+side effect of making it look like the two top patches were just
+merged today - my apologies.
 
-Specs: 
-https://trustedcomputinggroup.org/wp-content/uploads/TCG_ACPIGeneralSpecification_v1.20_r8.pdf
+Regardless, here are the highlights:
 
-PDF Page 16 / Doc page 10 bottom.
+- Deprecate setting /sys/fs/selinux/checkreqprot to 1.  This flag was
+originally created to deal with legacy userspace and the
+READ_IMPLIES_EXEC personality flag.  We changed the default from 1 to
+0 back in Linux v4.4 and now we are taking the next step of
+deprecating it, at some point in the future we will take the final
+step of rejecting 1.
+- Allow kernfs symlinks to inherit the SELinux label of the parent
+directory.  In order to preserve backwards compatibility this is
+protected by the genfs_seclabel_symlinks SELinux policy capability.
+- Optimize how we store filename transitions in the kernel, resulting
+in some significant improvements to policy load times.
+- Do a better job calculating our internal hash table sizes which
+resulted in additional policy load improvements and likely general
+SELinux performance improvements as well.
+- Remove the unused initial SIDs (labels) and improve how we handle
+initial SIDs.
+- Enable per-file labeling for the bpf filesystem.
+- Ensure that we properly label NFS v4.2 filesystems to avoid a
+temporary unlabeled condition.
+- Add some missing XFS quota command types to the SELinux quota access cont=
+rols.
+- Fix a problem where we were not updating the seq_file position index
+correctly in selinuxfs.
+- We consolidate some duplicated code into helper functions.
+- A number of list to array conversions.
+- Update Stephen Smalley's email address in MAINTAINERS.
 
-start_method_specific is obviously related to the start_method field. 
-The subsequent two fields are optional and show those 2 filelds we know 
-from the TCPA ACPI table.
+Thanks,
+-Paul
+--
+The following changes since commit bb6d3fb354c5ee8d6bde2d576eb7220ea09862b9=
+:
 
->
-> Can you elaborate a bit which platform you are speaking of? It is now
-> enabled for everything.
->
-> /Jarkko
+ Linux 5.6-rc1 (2020-02-09 16:08:48 -0800)
 
+are available in the Git repository at:
 
+ git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+   tags/selinux-pr-20200330
+
+for you to fetch changes up to c753924b628551564b6eea3c9896e4a95aa25ed9:
+
+ selinux: clean up indentation issue with assignment statement
+   (2020-03-30 19:57:07 -0400)
+
+----------------------------------------------------------------
+selinux/stable-5.7 PR 20200330
+
+----------------------------------------------------------------
+Christian G=C3=B6ttsche (1):
+     selinux: allow kernfs symlinks to inherit parent directory context
+
+Colin Ian King (1):
+     selinux: clean up indentation issue with assignment statement
+
+Connor O'Brien (1):
+     security: selinux: allow per-file labeling for bpffs
+
+Ondrej Mosnacek (10):
+     selinux: move status variables out of selinux_ss
+     selinux: simplify evaluate_cond_node()
+     selinux: convert cond_list to array
+     selinux: convert cond_av_list to array
+     selinux: convert cond_expr to array
+     selinux: generalize evaluate_cond_node()
+     selinux: factor out loop body from filename_trans_read()
+     selinux: optimize storage of filename transitions
+     selinux: reduce the use of hard-coded hash sizes
+     selinux: clean up error path in policydb_init()
+
+Paul Moore (1):
+     selinux: avtab_init() and cond_policydb_init() return void
+
+Richard Haines (1):
+     selinux: Add xfs quota command types
+
+Scott Mayhew (1):
+     NFS: Ensure security label is set for root inode
+
+Stephen Smalley (3):
+     Documentation,selinux: deprecate setting checkreqprot to 1
+     selinux: remove unused initial SIDs and improve handling
+     MAINTAINERS: Update my email address
+
+Vasily Averin (1):
+     selinux: sel_avc_get_stat_idx should increase position index
+
+.../ABI/obsolete/sysfs-selinux-checkreqprot        |  23 ++
+Documentation/admin-guide/kernel-parameters.txt    |   1 +
+MAINTAINERS                                        |   3 +-
+fs/nfs/getroot.c                                   |  39 ++-
+fs/nfs/nfs4proc.c                                  |  12 +-
+fs/nfs/super.c                                     |  25 --
+include/linux/nfs_xdr.h                            |   1 +
+scripts/selinux/genheaders/genheaders.c            |  11 +-
+security/selinux/Kconfig                           |   3 +
+security/selinux/Makefile                          |   4 +-
+security/selinux/hooks.c                           |  18 +-
+security/selinux/include/conditional.h             |   8 +-
+security/selinux/include/initial_sid_to_string.h   |  57 ++--
+security/selinux/include/security.h                |  12 +
+security/selinux/selinuxfs.c                       |  19 +-
+security/selinux/ss/avtab.c                        |   3 +-
+security/selinux/ss/avtab.h                        |   2 +-
+security/selinux/ss/conditional.c                  | 259 +++++-------
+security/selinux/ss/conditional.h                  |  29 +-
+security/selinux/ss/hashtab.c                      |  28 +-
+security/selinux/ss/hashtab.h                      |   2 +-
+security/selinux/ss/policydb.c                     | 326 ++++++++---------
+security/selinux/ss/policydb.h                     |  13 +-
+security/selinux/ss/services.c                     |  79 +++--
+security/selinux/ss/services.h                     |   2 -
+security/selinux/{ss =3D> }/status.c                 |  32 +-
+26 files changed, 521 insertions(+), 490 deletions(-)
+create mode 100644 Documentation/ABI/obsolete/sysfs-selinux-checkreqprot
+rename security/selinux/{ss =3D> }/status.c (81%)
+
+--=20
+paul moore
+www.paul-moore.com
