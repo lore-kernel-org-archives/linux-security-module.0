@@ -2,167 +2,113 @@ Return-Path: <SRS0=N+eG=5Q=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8543DC2D0EE
-	for <linux-security-module@archiver.kernel.org>; Tue, 31 Mar 2020 21:51:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F479C43331
+	for <linux-security-module@archiver.kernel.org>; Tue, 31 Mar 2020 22:13:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63CF82080C
-	for <linux-security-module@archiver.kernel.org>; Tue, 31 Mar 2020 21:51:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 654BE2080C
+	for <linux-security-module@archiver.kernel.org>; Tue, 31 Mar 2020 22:13:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1585692806;
+	bh=rFvt+ToLBB95MFxc/H8l53W1M0wuKHcQEL61VsTaY90=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=uchrJBat1Yj+0FxpGgbOxM2NnjAtjfPOWoSLpwbhtroOM8eEHA6Z+RJ3ZNGvOHNtP
+	 n5SysDxTJFnYnvjr++hlQ3cd2+LpTvWxB0SLQZ3mpsnXZBJR9esW0bkkxRAmXibJ4z
+	 kvU0Xg6pZZmww/yoVrIDfhJCUNWgzpiKZCBWQYVA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731362AbgCaVvH (ORCPT
+        id S1730556AbgCaWN0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 31 Mar 2020 17:51:07 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:18504 "EHLO
-        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731098AbgCaVvH (ORCPT
+        Tue, 31 Mar 2020 18:13:26 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:37068 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727955AbgCaWNZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 31 Mar 2020 17:51:07 -0400
-Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02VLYX23076878;
-        Tue, 31 Mar 2020 17:51:03 -0400
-Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 303ymkgg6w-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 31 Mar 2020 17:51:03 -0400
-Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
-        by ppma03wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 02VLoNV9013165;
-        Tue, 31 Mar 2020 21:51:02 GMT
-Received: from b01cxnp22034.gho.pok.ibm.com (b01cxnp22034.gho.pok.ibm.com [9.57.198.24])
-        by ppma03wdc.us.ibm.com with ESMTP id 301x76m51t-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 31 Mar 2020 21:51:02 +0000
-Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
-        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02VLp2ug37945770
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 31 Mar 2020 21:51:02 GMT
-Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2592D28058;
-        Tue, 31 Mar 2020 21:51:02 +0000 (GMT)
-Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0C5522805E;
-        Tue, 31 Mar 2020 21:51:02 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue, 31 Mar 2020 21:51:01 +0000 (GMT)
-From:   Stefan Berger <stefanb@linux.vnet.ibm.com>
-To:     linux-integrity@vger.kernel.org, jarkko.sakkinen@linux.intel.com
-Cc:     linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH v3] tpm: Add support for event log pointer found in TPM2 ACPI table
-Date:   Tue, 31 Mar 2020 17:51:00 -0400
-Message-Id: <20200331215100.883860-1-stefanb@linux.vnet.ibm.com>
-X-Mailer: git-send-email 2.24.1
+        Tue, 31 Mar 2020 18:13:25 -0400
+Received: by mail-lj1-f196.google.com with SMTP id r24so23734450ljd.4
+        for <linux-security-module@vger.kernel.org>; Tue, 31 Mar 2020 15:13:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mtbYTciJK07jpdPYpkNJRH8jV4d1kYg8E62AbUGe3pw=;
+        b=HE60VHr7dC08AjHaH2CgEeHp+dZk7gZqcXrCAw5ifgJOucC6ubxyOlVQwquxMFIsF5
+         O6NSLvh2yE3irvxWcdx+uCSeJo3zKjKq1sRi3XBH/Ek+Vj7dHkcye6EDJRRI6WOUV++t
+         61C7te9TAISjpbHISGWt0qjBDA6+IaHouXsas=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mtbYTciJK07jpdPYpkNJRH8jV4d1kYg8E62AbUGe3pw=;
+        b=fcnpYxGGjy6MGwBvyw74F3Ta4YavT8jK5jaEg4zQf+XVj6N+sTZWtU3B5RBX4Y9bQ3
+         hQ8sD8sjbh86RApENjeNzkQaz5P0aylXSRnl87U+6FWO5Y5iah710cZ3iH+IwM4LQgXz
+         5uDc7FKBau2FNut46bjcm0lZUq+xSLrNqUDYiQFPHkWNUeTcQXGMMWM+d3z2WMQhPase
+         8J9OI+afjK3j44bwOGP9Tc95CxAAVHAUTgJaIu/gm9dH+B8A8g2vXNhhcN8D4UXHLjXx
+         xUl6vwXuOECoIyk2C8wr0f8mt6UZKDx86EFnmwplYxXHGlt3tOb76sZr7Fs1E4ZszWMI
+         ro0w==
+X-Gm-Message-State: AGi0PuYvkyk1pSihmb91FLJzoedt0BdU783RjGkg79L+vkG2mh0jlERG
+        HTDbXyVm3ULlnbzbS7Irt6PH7td1TEw=
+X-Google-Smtp-Source: APiQypLru+6O5k3lEvfCamjBllZ5VpNwqhJxXtuICd2rYEtzaeQUE84bvnTHFqy19HMX6Sb/XrDn7g==
+X-Received: by 2002:a2e:8ed9:: with SMTP id e25mr10469241ljl.219.1585692803442;
+        Tue, 31 Mar 2020 15:13:23 -0700 (PDT)
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com. [209.85.167.43])
+        by smtp.gmail.com with ESMTPSA id 28sm155080lfp.8.2020.03.31.15.13.22
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 31 Mar 2020 15:13:22 -0700 (PDT)
+Received: by mail-lf1-f43.google.com with SMTP id t16so17850934lfl.2
+        for <linux-security-module@vger.kernel.org>; Tue, 31 Mar 2020 15:13:22 -0700 (PDT)
+X-Received: by 2002:a19:7f96:: with SMTP id a144mr12862417lfd.31.1585692801950;
+ Tue, 31 Mar 2020 15:13:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
- definitions=2020-03-31_07:2020-03-31,2020-03-31 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
- adultscore=0 malwarescore=0 impostorscore=0 priorityscore=1501
- clxscore=1015 phishscore=0 mlxlogscore=999 mlxscore=0 lowpriorityscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2003310171
+References: <CAHC9VhQoqpqiFncTP1w0+--hGTwcm57LXgrXVsGnNqcRSof1WA@mail.gmail.com>
+In-Reply-To: <CAHC9VhQoqpqiFncTP1w0+--hGTwcm57LXgrXVsGnNqcRSof1WA@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 31 Mar 2020 15:13:06 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgZ6WCa_8dK4=DBiFMqP5yHzmSgZHqdXuEqHUcejUtw2A@mail.gmail.com>
+Message-ID: <CAHk-=wgZ6WCa_8dK4=DBiFMqP5yHzmSgZHqdXuEqHUcejUtw2A@mail.gmail.com>
+Subject: Re: [GIT PULL] SELinux patches for v5.7
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     selinux@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Stefan Berger <stefanb@linux.ibm.com>
+On Mon, Mar 30, 2020 at 5:38 PM Paul Moore <paul@paul-moore.com> wrote:
+>
+> The merge conflict is in security/selinux/hooks.c and is against a
+> binder fs name fix we sent during the v5.6-rcX cycle; the fixup is
+> trivial but if you need me to fix it, let me know.
 
-In case a TPM2 is attached, search for a TPM2 ACPI table when trying
-to get the event log from ACPI. If one is found, use it to get the
-start and length of the log area. This allows non-UEFI systems, such
-as SeaBIOS, to pass an event log when using a TPM2.
+No problem, it was as trivial as you said, and I don't think I screwed it up.
 
-Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
----
- drivers/char/tpm/eventlog/acpi.c | 56 +++++++++++++++++++++++++---------------
- 1 file changed, 35 insertions(+), 21 deletions(-)
+I appreciate the heads-up, though, since not only does it mean I don't
+get nasty surprises, it also means that I get that warm and fuzzy
+feeling of knowing you're on the ball..
 
-diff --git a/drivers/char/tpm/eventlog/acpi.c b/drivers/char/tpm/eventlog/acpi.c
-index 63ada5e53f13..e714a2bd0423 100644
---- a/drivers/char/tpm/eventlog/acpi.c
-+++ b/drivers/char/tpm/eventlog/acpi.c
-@@ -49,9 +49,8 @@ int tpm_read_log_acpi(struct tpm_chip *chip)
- 	void __iomem *virt;
- 	u64 len, start;
- 	struct tpm_bios_log *log;
--
--	if (chip->flags & TPM_CHIP_FLAG_TPM2)
--		return -ENODEV;
-+	struct acpi_table_tpm2 *tbl;
-+	int format;
- 
- 	log = &chip->log;
- 
-@@ -61,23 +60,38 @@ int tpm_read_log_acpi(struct tpm_chip *chip)
- 	if (!chip->acpi_dev_handle)
- 		return -ENODEV;
- 
--	/* Find TCPA entry in RSDT (ACPI_LOGICAL_ADDRESSING) */
--	status = acpi_get_table(ACPI_SIG_TCPA, 1,
--				(struct acpi_table_header **)&buff);
--
--	if (ACPI_FAILURE(status))
--		return -ENODEV;
--
--	switch(buff->platform_class) {
--	case BIOS_SERVER:
--		len = buff->server.log_max_len;
--		start = buff->server.log_start_addr;
--		break;
--	case BIOS_CLIENT:
--	default:
--		len = buff->client.log_max_len;
--		start = buff->client.log_start_addr;
--		break;
-+	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
-+		status = acpi_get_table("TPM2", 1,
-+					(struct acpi_table_header **)&tbl);
-+		if (ACPI_FAILURE(status))
-+			return -ENODEV;
-+		if (tbl->header.length < sizeof(*tbl))
-+			return -ENODEV;
-+		len = tbl->log_area_minimum_length;
-+		start = tbl->log_area_start_address;
-+		if (!start || !len)
-+			return -ENODEV;
-+		format = EFI_TCG2_EVENT_LOG_FORMAT_TCG_2;
-+	} else {
-+		/* Find TCPA entry in RSDT (ACPI_LOGICAL_ADDRESSING) */
-+		status = acpi_get_table(ACPI_SIG_TCPA, 1,
-+					(struct acpi_table_header **)&buff);
-+
-+		if (ACPI_FAILURE(status))
-+			return -ENODEV;
-+
-+		switch (buff->platform_class) {
-+		case BIOS_SERVER:
-+			len = buff->server.log_max_len;
-+			start = buff->server.log_start_addr;
-+			break;
-+		case BIOS_CLIENT:
-+		default:
-+			len = buff->client.log_max_len;
-+			start = buff->client.log_start_addr;
-+			break;
-+		}
-+		format = EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2;
- 	}
- 	if (!len) {
- 		dev_warn(&chip->dev, "%s: TCPA log area empty\n", __func__);
-@@ -98,7 +112,7 @@ int tpm_read_log_acpi(struct tpm_chip *chip)
- 	memcpy_fromio(log->bios_event_log, virt, len);
- 
- 	acpi_os_unmap_iomem(virt, len);
--	return EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2;
-+	return format;
- 
- err:
- 	kfree(log->bios_event_log);
--- 
-2.14.5
+> The maintainer
+> screw-up deals with the second patch from the top of the pull request,
+> the NFS fix.  The screw-up isn't the fact that this is a NFS patch, we
+> talked to the NFS guys and they are okay with it.  The issue is that
+> the commit date is today - during the merge window - which doesn't
+> reflect the testing the patch received.  The reality is that I merged
+> this patch back on March 12th, and it has been part of our testing
+> ever since, but when putting this pull request together I noticed that
+> I had dropped the subject line from the patch when I was merging it.
+> Not wanting a malformed commit, I popped the top two patches from the
+> stack and restored the missing subject line; this had the unfortunate
+> side effect of making it look like the two top patches were just
+> merged today - my apologies.
 
+Again, this is very much the way to let me know, so that I don't get
+that uneasy feeling about anything.
+
+Thanks.
+
+               Linus
