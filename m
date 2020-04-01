@@ -2,120 +2,83 @@ Return-Path: <SRS0=fDLm=5R=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E1B6C2D0E7
-	for <linux-security-module@archiver.kernel.org>; Wed,  1 Apr 2020 08:37:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BCCFC43331
+	for <linux-security-module@archiver.kernel.org>; Wed,  1 Apr 2020 08:37:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7C422073B
-	for <linux-security-module@archiver.kernel.org>; Wed,  1 Apr 2020 08:37:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="DCWoZP8f"
+	by mail.kernel.org (Postfix) with ESMTP id 6212320784
+	for <linux-security-module@archiver.kernel.org>; Wed,  1 Apr 2020 08:37:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727627AbgDAIhf (ORCPT
+        id S1731738AbgDAIhm (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 1 Apr 2020 04:37:35 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:36020 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726205AbgDAIhe (ORCPT
+        Wed, 1 Apr 2020 04:37:42 -0400
+Received: from mga18.intel.com ([134.134.136.126]:4228 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730821AbgDAIhg (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 1 Apr 2020 04:37:34 -0400
-Received: by mail-ed1-f65.google.com with SMTP id i7so23707297edq.3
-        for <linux-security-module@vger.kernel.org>; Wed, 01 Apr 2020 01:37:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7Pb5WxXo01OUrPYKfuGBoAi7COZxVQpsVUvg17nkA6w=;
-        b=DCWoZP8f/dOkjW5uYoUFpfMxBGbKeZuXpLeJJK8mTpafT0iBm07aAautrwxGNxNPuH
-         kwa+oyklRAFDRmQ9G/64ndypZ3iC1AQSMWoHkTRNK/CJ98o+a+FWbDoEu0LWLRzfWA12
-         BQCicYA5Tma7uC+qkVwM5zNRNQOh9LLVhWIgE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7Pb5WxXo01OUrPYKfuGBoAi7COZxVQpsVUvg17nkA6w=;
-        b=pEFnirQ5fdQ6kJGKjVdQrxoI05uGn8QHSrLRc/Cu98S7/h1pvdvPUoxuLbYlvgHUCS
-         UABnCN4NSyWcDlNkJMe/7m5LfdJFSA6z8IhdtjkHeatFgFP+saPYUGc4NyGiZZ1HIHF7
-         eiULro9QgmBF1ciRcaUPKbujPQTeCR/f6X1ExfV2Cw71FSnILVqeYzINVeM4pgodKIe1
-         EoK93QUOZY/2YbvnftZOuEuRyBWimb3fH7HWsp3jYYKhyQkuUuRXzOD01D/e3DZcAfb3
-         xgb7hS/NyLYE8bQxH0DJwyyd2uke6rEzskoqdwoCzbE4/odEsvXbPoaCWur+b8w+ojOE
-         s0cQ==
-X-Gm-Message-State: ANhLgQ3wit9rW8BvyUl7r9QyFFzInAkNxrjoqm1gCGnT5irAdBCSnHSo
-        cVCYVEkRkcMYCvtQMjlsS2/JNcGbI2KKrHxQ2ux8fw==
-X-Google-Smtp-Source: ADFU+vv25aObxVqudxs/b4t6TUDhdA8HhF0PuGfXX6HSZBIvhctUM+bsT6LQzuUGvDuTHabWaoYU8+dr8sw8QJ3EQ4c=
-X-Received: by 2002:a50:8326:: with SMTP id 35mr19766368edh.134.1585730253359;
- Wed, 01 Apr 2020 01:37:33 -0700 (PDT)
+        Wed, 1 Apr 2020 04:37:36 -0400
+IronPort-SDR: AcdjHQV8OvQKXXJ5fpFG+xxnofjEeyp1ovN3+DpD60MFBOJbom9Q8BmBvO0+v5A+5ABAB8BJsg
+ K060/dbiKm8Q==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Apr 2020 01:37:35 -0700
+IronPort-SDR: /b9M4uVVdfFwYF+eLcG0YgHzbAm+2wMrLNO/iMT7tdQjqU/n6RCUDHEDg1dQhNsSmXKOCvkOF6
+ EtGE4tXUYcpQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,331,1580803200"; 
+   d="scan'208";a="422630387"
+Received: from vikasjox-mobl.amr.corp.intel.com (HELO localhost) ([10.249.39.53])
+  by orsmga005.jf.intel.com with ESMTP; 01 Apr 2020 01:37:31 -0700
+Date:   Wed, 1 Apr 2020 11:37:29 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Stefan Berger <stefanb@linux.vnet.ibm.com>, rjw@rjwysocki.net
+Cc:     linux-integrity@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Stefan Berger <stefanb@linux.ibm.com>
+Subject: Re: [PATCH v3] acpi: Extend TPM2 ACPI table with missing log fields
+Message-ID: <20200401083729.GD17325@linux.intel.com>
+References: <20200331214949.883781-1-stefanb@linux.vnet.ibm.com>
 MIME-Version: 1.0
-References: <158454408854.2864823.5910520544515668590.stgit@warthog.procyon.org.uk>
- <CAJfpeguaiicjS2StY5m=8H7BCjq6PLxMsWE3Mx_jYR1foDWVTg@mail.gmail.com>
- <50caf93782ba1d66bd6acf098fb8dcb0ecc98610.camel@themaw.net>
- <CAJfpegvvMVoNp1QeXEZiNucCeuUeDP4tKqVfq2F4koQKzjKmvw@mail.gmail.com> <2465266.1585729649@warthog.procyon.org.uk>
-In-Reply-To: <2465266.1585729649@warthog.procyon.org.uk>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 1 Apr 2020 10:37:22 +0200
-Message-ID: <CAJfpegsyeJmH3zJuseaAAY06fzgavSzpOtYr-1Mw8GR0cLcQbA@mail.gmail.com>
-Subject: Re: [PATCH 00/13] VFS: Filesystem information [ver #19]
-To:     David Howells <dhowells@redhat.com>
-Cc:     Ian Kent <raven@themaw.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux NFS list <linux-nfs@vger.kernel.org>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-ext4@vger.kernel.org,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Christian Brauner <christian@brauner.io>,
-        Jann Horn <jannh@google.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Karel Zak <kzak@redhat.com>, Jeff Layton <jlayton@redhat.com>,
-        linux-fsdevel@vger.kernel.org,
-        LSM <linux-security-module@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200331214949.883781-1-stefanb@linux.vnet.ibm.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Apr 1, 2020 at 10:27 AM David Howells <dhowells@redhat.com> wrote:
->
-> Miklos Szeredi <miklos@szeredi.hu> wrote:
->
-> > According to dhowell's measurements processing 100k mounts would take
-> > about a few seconds of system time (that's the time spent by the
-> > kernel to retrieve the data,
->
-> But the inefficiency of mountfs - at least as currently implemented - scales
-> up with the number of individual values you want to retrieve, both in terms of
-> memory usage and time taken.
+On Tue, Mar 31, 2020 at 05:49:49PM -0400, Stefan Berger wrote:
+> From: Stefan Berger <stefanb@linux.ibm.com>
+> 
+> Recent extensions of the TPM2 ACPI table added 3 more fields
+> including 12 bytes of start method specific parameters and Log Area
+> Minimum Length (u32) and Log Area Start Address (u64). So, we extend
+> the existing structure with these fields to allow non-UEFI systems
+> to access the TPM2's log.
+> 
+> The specification that has the new fields is the following:
+>   TCG ACPI Specification
+>   Family "1.2" and "2.0"
+>   Version 1.2, Revision 8
+> 
+> Adapt all existing table size calculations to use
+> offsetof(struct acpi_table_tpm2, start_method_specific)
+> [where start_method_specific is a newly added field]
+> rather than sizeof(struct acpi_table_tpm2) so that the addition
+> of the new fields does not affect current systems that may not
+> have them.
+> 
+> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+> Cc: linux-acpi@vger.kernel.org
 
-I've taken that into account when guesstimating a "few seconds per
-100k entries".  My guess is that there's probably an order of
-magnitude difference between the performance of a fs based interface
-and a binary syscall based interface.  That could be reduced somewhat
-with a readfile(2) type API.
+I think I'm cool with this but needs an ack from ACPI maintainer.
 
-But the point is: this does not matter.  Whether it's .5s or 5s is
-completely irrelevant, as neither is going to take down the system,
-and userspace processing is probably going to take as much, if not
-more time.  And remember, we are talking about stopping and starting
-the automount daemon, which is something that happens, but it should
-not happen often by any measure.
+Rafael, given that this not an intrusive change in any possible means,
+can I pick this patch and put it to my next pull request?
 
-> With fsinfo(), I've tried to batch values together where it makes sense - and
-> there's no lingering memory overhead - no extra inodes, dentries and files
-> required.
-
-The dentries, inodes and files in your test are single use (except the
-root dentry) and can be made ephemeral if that turns out to be better.
-My guess is that dentries belonging to individual attributes should be
-deleted on final put, while the dentries belonging to the mount
-directory can be reclaimed normally.
-
-Thanks,
-Miklos
+/Jarkko
