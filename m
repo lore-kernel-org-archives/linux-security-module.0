@@ -2,113 +2,165 @@ Return-Path: <SRS0=fDLm=5R=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78CE8C43331
-	for <linux-security-module@archiver.kernel.org>; Wed,  1 Apr 2020 15:51:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B6FEC10F26
+	for <linux-security-module@archiver.kernel.org>; Wed,  1 Apr 2020 21:39:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49A4920658
-	for <linux-security-module@archiver.kernel.org>; Wed,  1 Apr 2020 15:51:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47ABE206E9
+	for <linux-security-module@archiver.kernel.org>; Wed,  1 Apr 2020 21:39:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JEn7WyYG"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HtoDxjxy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733175AbgDAPv5 (ORCPT
+        id S1732537AbgDAVjO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 1 Apr 2020 11:51:57 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:35901 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1733100AbgDAPv5 (ORCPT
+        Wed, 1 Apr 2020 17:39:14 -0400
+Received: from mail-pg1-f201.google.com ([209.85.215.201]:43076 "EHLO
+        mail-pg1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732385AbgDAVjO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 1 Apr 2020 11:51:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1585756316;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=9Hue9l1/UJQF2U4lKyhSbPFzaMnHT5K5mJD7PcBNrM4=;
-        b=JEn7WyYGin1Qa2heTnw+oGJhzvCAn1rzIlyfGTaWw69DHLE1BwOtR4YjOdhbrPoUpNSLWw
-        ima3vIvr57dL2nEoUJupsBtXBK/JYKZmVSIUJ48hAct7B4kZOTrpoecF1jb7wispYwNOXF
-        LoDMi87ZI++ezloSam+assXKbDHd8N8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-191-W2iZb2t4MKawS3j31oos7A-1; Wed, 01 Apr 2020 11:51:53 -0400
-X-MC-Unique: W2iZb2t4MKawS3j31oos7A-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1338113F7;
-        Wed,  1 Apr 2020 15:51:48 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-114-243.ams2.redhat.com [10.36.114.243])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D631696B87;
-        Wed,  1 Apr 2020 15:51:43 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAJfpeguxACC68bMhS-mNm4m6ytrKgs1--jbF5X3tBiPf_iG1jg@mail.gmail.com>
-References: <CAJfpeguxACC68bMhS-mNm4m6ytrKgs1--jbF5X3tBiPf_iG1jg@mail.gmail.com> <158454408854.2864823.5910520544515668590.stgit@warthog.procyon.org.uk> <CAJfpeguaiicjS2StY5m=8H7BCjq6PLxMsWE3Mx_jYR1foDWVTg@mail.gmail.com> <50caf93782ba1d66bd6acf098fb8dcb0ecc98610.camel@themaw.net> <CAJfpegvvMVoNp1QeXEZiNucCeuUeDP4tKqVfq2F4koQKzjKmvw@mail.gmail.com> <2465266.1585729649@warthog.procyon.org.uk> <CAJfpegsyeJmH3zJuseaAAY06fzgavSzpOtYr-1Mw8GR0cLcQbA@mail.gmail.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     dhowells@redhat.com, Ian Kent <raven@themaw.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux NFS list <linux-nfs@vger.kernel.org>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-ext4@vger.kernel.org,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Christian Brauner <christian@brauner.io>,
-        Jann Horn <jannh@google.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Karel Zak <kzak@redhat.com>, Jeff Layton <jlayton@redhat.com>,
-        linux-fsdevel@vger.kernel.org,
-        LSM <linux-security-module@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/13] VFS: Filesystem information [ver #19]
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2583799.1585756303.1@warthog.procyon.org.uk>
-Date:   Wed, 01 Apr 2020 16:51:43 +0100
-Message-ID: <2583800.1585756303@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+        Wed, 1 Apr 2020 17:39:14 -0400
+Received: by mail-pg1-f201.google.com with SMTP id v11so1176236pgs.10
+        for <linux-security-module@vger.kernel.org>; Wed, 01 Apr 2020 14:39:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=HAGgUYyHHln+iAOn6yXYvlgWPJe/4zWvRIw0PRHR3XY=;
+        b=HtoDxjxyzs5b33ZeGM32Er5kRybPkg8YGOpir27RQ+bUpw6BX/dsJ2vwWdB3AAxCmG
+         bjMfAIMdlb4UR1AIOIFCN+uc1kmAxsGNUeUv/O7Of7mXZUnwD7KGKYartbCqcARuZu5S
+         pfkX1UGvumlx5lTd6PNZtdcgvvGSJ7bd4ydHOqBQDCYH8LMYmqHxRXGVp/ZzYI03Cvnf
+         V4GJQtkEQ2I/BOGpkkbnC2McxJw07GBcQ5N+j9kMTmPQ3mXOmGip3EI4TVF0z+UmDcdV
+         yHb87MmDuy1wgu53qGGYxbpjE5SRwjOxs4/Vz56t9Aqd6UVnoio9UyUMS51Lxck57Al/
+         2iVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=HAGgUYyHHln+iAOn6yXYvlgWPJe/4zWvRIw0PRHR3XY=;
+        b=MtPYH0AqKNC8XswoNGR46M6cOpxqlu4701HNqH2Ein7qXNbgi+X10RO/dwFOnAOgrm
+         UWhj5dhJaTci9qid7G+FSaDzGatv+nys/n5VBMewssNiKnv2xBD1xcw9ML1yd0EKTu0B
+         ko8r9NGfCVhM8p0zidA0Ftks3XNEGrkOTTVicshgj0MswdQlTnnrEZ6DTqkqb3cd7M7G
+         Mxn2yIgum6OM7z7tm0NorwYCwzNU21KX2wtYnvukOYMQX8c43mkk4jzV4IBlLVNaUAs9
+         BFoLX2MCrb8YIVe0Y+u8TEF9JMQhIFQXYrSmiwYQy6PxxBK22Qn9wCYT5x1t5QD0mUqD
+         HYAg==
+X-Gm-Message-State: AGi0PubcqUHb2RjoF51Bxm0Xxo/ANUC1YS5ZKjT2eQQRFqim/OHDeMFr
+        tVdt9LUH0AwIdFh0LLmoXI1+DFGL4E4=
+X-Google-Smtp-Source: APiQypJ3mXXgEz84cKvOfB4JITXTTQgCH9bS0I77D6jC/rreVESODIDpq8LIxGqLwRsYwdoGgUvE2wVKYE8=
+X-Received: by 2002:a17:90b:3583:: with SMTP id mm3mr13268pjb.123.1585777151523;
+ Wed, 01 Apr 2020 14:39:11 -0700 (PDT)
+Date:   Wed,  1 Apr 2020 14:39:00 -0700
+In-Reply-To: <20200326200634.222009-1-dancol@google.com>
+Message-Id: <20200401213903.182112-1-dancol@google.com>
+Mime-Version: 1.0
+References: <20200326200634.222009-1-dancol@google.com>
+X-Mailer: git-send-email 2.26.0.rc2.310.g2932bb562d-goog
+Subject: [PATCH v5 0/3] SELinux support for anonymous inodes and UFFD
+From:   Daniel Colascione <dancol@google.com>
+To:     timmurray@google.com, selinux@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, viro@zeniv.linux.org.uk, paul@paul-moore.com,
+        nnk@google.com, sds@tycho.nsa.gov, lokeshgidra@google.com,
+        jmorris@namei.org
+Cc:     Daniel Colascione <dancol@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Miklos Szeredi <miklos@szeredi.hu> wrote:
+Userfaultfd in unprivileged contexts could be potentially very
+useful. We'd like to harden userfaultfd to make such unprivileged use
+less risky. This patch series allows SELinux to manage userfaultfd
+file descriptors and in the future, other kinds of
+anonymous-inode-based file descriptor.  SELinux policy authors can
+apply policy types to anonymous inodes by providing name-based
+transition rules keyed off the anonymous inode internal name (
+"[userfaultfd]" in the case of userfaultfd(2) file descriptors) and
+applying policy to the new SIDs thus produced.
 
-> For   30000 mounts, f=    146400us f2=    136766us p=   1406569us p2=
->   221669us; p=9.6*f p=10.3*f2 p=6.3*p2
+Inside the kernel, a pair of new anon_inodes interface,
+anon_inode_getfile_secure and anon_inode_getfd_secure, allow callers
+to opt into this SELinux management. In this new "secure" mode,
+anon_inodes creates new ephemeral inodes for anonymous file objects
+instead of reusing the normal anon_inodes singleton dummy inode. A new
+LSM hook gives security modules an opportunity to configure and veto
+these ephemeral inodes.
 
-	f =    146400us
-	f2=    136766us
-	p =   1406569us  <--- Order of magnitude slower
-	p2=    221669us
+This patch series is one of two fork of [1] and is an
+alternative to [2].
 
-And more memory used because it's added a whole bunch of inodes and dentries
-to the cache.  For each mount that's a pair for each dir and a pair for each
-file within the dir.  So for the two files my test is reading, for 30000
-mounts, that's 90000 dentries and 90000 inodes in mountfs alone.
+The primary difference between the two patch series is that this
+partch series creates a unique inode for each "secure" anonymous
+inode, while the other patch series ([2]) continues using the
+singleton dummy anonymous inode and adds a way to attach SELinux
+security information directly to file objects.
 
-	(gdb) p sizeof(struct dentry)
-	$1 = 216
-	(gdb) p sizeof(struct inode)
-	$2 = 696
-	(gdb) p (216*696)*30000*3/1024/1024
-	$3 = 615
+I prefer the approach in this patch series because 1) it's a smaller
+patch than [2], and 2) it produces a more regular security
+architecture: in this patch series, secure anonymous inodes aren't
+S_PRIVATE and they maintain the SELinux property that the label for a
+file is in its inode. We do need an additional inode per anonymous
+file, but per-struct-file inode creation doesn't seem to be a problem
+for pipes and sockets.
 
-so 615 MiB of RAM added to the caches in an extreme case.
+The previous version of this feature ([1]) created a new SELinux
+security class for userfaultfd file descriptors. This version adopts
+the generic transition-based approach of [2].
 
-We're seeing customers with 10000+ mounts - that would be 205 MiB, just to
-read two values from each mount.
+This patch series also differs from [2] in that it doesn't affect all
+anonymous inodes right away --- instead requiring anon_inodes callers
+to opt in --- but this difference isn't one of basic approach. The
+important question to resolve is whether we should be creating new
+inodes or enhancing per-file data.
 
-I presume you're not going through /proc/fdinfo each time as that would add
-another d+i - for >1GiB added to the caches for 30000 mounts.
+Changes from the first version of the patch:
 
-David
+  - Removed some error checks
+  - Defined a new anon_inode SELinux class to resolve the
+    ambiguity in [3]
+  - Inherit sclass as well as descriptor from context inode
+
+Changes from the second version of the patch:
+
+  - Fixed example policy in the commit message to reflect the use of
+    the new anon_inode class.
+
+Changes from the third version of the patch:
+
+  - Dropped the fops parameter to the LSM hook
+  - Documented hook parameters
+  - Fixed incorrect class used for SELinux transition
+  - Removed stray UFFD changed early in the series
+  - Removed a redundant ERR_PTR(PTR_ERR())
+
+Changes from the fourth version of the patch:
+
+  - Removed an unused parameter from an internal function
+  - Fixed function documentation
+
+[1] https://lore.kernel.org/lkml/20200211225547.235083-1-dancol@google.com/
+[2] https://lore.kernel.org/linux-fsdevel/20200213194157.5877-1-sds@tycho.nsa.gov/
+[3] https://lore.kernel.org/lkml/23f725ca-5b5a-5938-fcc8-5bbbfc9ba9bc@tycho.nsa.gov/
+
+Daniel Colascione (3):
+  Add a new LSM-supporting anonymous inode interface
+  Teach SELinux about anonymous inodes
+  Wire UFFD up to SELinux
+
+ fs/anon_inodes.c                    | 191 ++++++++++++++++++++++------
+ fs/userfaultfd.c                    |  30 ++++-
+ include/linux/anon_inodes.h         |  13 ++
+ include/linux/lsm_hooks.h           |  11 ++
+ include/linux/security.h            |   3 +
+ security/security.c                 |   9 ++
+ security/selinux/hooks.c            |  53 ++++++++
+ security/selinux/include/classmap.h |   2 +
+ 8 files changed, 267 insertions(+), 45 deletions(-)
+
+-- 
+2.26.0.rc2.310.g2932bb562d-goog
 
