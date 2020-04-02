@@ -2,123 +2,202 @@ Return-Path: <SRS0=1tMQ=5S=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6083CC2BA13
-	for <linux-security-module@archiver.kernel.org>; Thu,  2 Apr 2020 08:54:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1446C43331
+	for <linux-security-module@archiver.kernel.org>; Thu,  2 Apr 2020 14:14:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4225F2080C
-	for <linux-security-module@archiver.kernel.org>; Thu,  2 Apr 2020 08:54:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A27B4206F5
+	for <linux-security-module@archiver.kernel.org>; Thu,  2 Apr 2020 14:14:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R7OC864X"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387828AbgDBIyr (ORCPT
+        id S2387592AbgDBOOH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 2 Apr 2020 04:54:47 -0400
-Received: from mga11.intel.com ([192.55.52.93]:58575 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387749AbgDBIyq (ORCPT
+        Thu, 2 Apr 2020 10:14:07 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:43496 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729213AbgDBOOH (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 2 Apr 2020 04:54:46 -0400
-IronPort-SDR: 9BniBOi08GuztXs5LKVQkquolCZVCzIUknvp59r9zdkFE2HvLNBR+tUu1xz5kpwTJ1KIbybMBV
- J7BcvbSQx3Zw==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Apr 2020 01:54:46 -0700
-IronPort-SDR: lWWDpjbJ8ako7fuY2uAUqBQixFmLUhXwmqEfSoWqQrm2CqU0NUhFFVsPF2bcI0MZ7mpRxB1Fa5
- NaMqQCJarI0A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,335,1580803200"; 
-   d="scan'208";a="267959741"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga002.jf.intel.com with ESMTP; 02 Apr 2020 01:54:45 -0700
-Received: from [10.249.226.252] (abudanko-mobl.ccr.corp.intel.com [10.249.226.252])
-        by linux.intel.com (Postfix) with ESMTP id CE205580544;
-        Thu,  2 Apr 2020 01:54:40 -0700 (PDT)
-Subject: [PATCH v8 12/12] doc/admin-guide: update kernel.rst with CAP_PERFMON
- information
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        Namhyung Kim <namhyung@kernel.org>
-Cc:     Serge Hallyn <serge@hallyn.com>, Jiri Olsa <jolsa@redhat.com>,
-        Song Liu <songliubraving@fb.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>,
-        Igor Lubashev <ilubashe@akamai.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        linux-man@vger.kernel.org
-References: <f96f8f8a-e65c-3f36-dc85-fc3f5191e8c5@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <84c32383-14a2-fa35-16b6-f9e59bd37240@linux.intel.com>
-Date:   Thu, 2 Apr 2020 11:54:39 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        Thu, 2 Apr 2020 10:14:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1585836845;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=6nCWsAOSv7XHTWMgOr7TR0iBoCbpPuN1i913e5SrGzo=;
+        b=R7OC864Xtduwx34IQPnKqaU0WhSTQUoPDflMbE3LmqCoB6jPdM0U4QcFCUScl2wOE9lFhX
+        cE0RLfPXvg+RnkxfzugoF11ca0EccmKvyNx1yEJgz6KoUMiXsqjUtYKq3iJ8uvAq0Meyf7
+        WiF/m26qgtG4FRpZxXLXkXYjUsh5fZo=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-220-lZTpThyjNoKYa8RHESMVTw-1; Thu, 02 Apr 2020 10:14:00 -0400
+X-MC-Unique: lZTpThyjNoKYa8RHESMVTw-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5ED828024D0;
+        Thu,  2 Apr 2020 14:13:59 +0000 (UTC)
+Received: from rules.brq.redhat.com (unknown [10.40.193.197])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 135CC1001B2D;
+        Thu,  2 Apr 2020 14:13:31 +0000 (UTC)
+From:   Vladis Dronov <vdronov@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>, Eric Paris <eparis@redhat.com>,
+        linux-audit@redhat.com, James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH ghak96] audit: set cwd in audit context for file-related LSM audit records
+Date:   Thu,  2 Apr 2020 16:13:19 +0200
+Message-Id: <20200402141319.28714-1-vdronov@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <f96f8f8a-e65c-3f36-dc85-fc3f5191e8c5@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Set a current working directory in an audit context for the following rec=
+ord
+types in dump_common_audit_data(): LSM_AUDIT_DATA_PATH, LSM_AUDIT_DATA_FI=
+LE,
+LSM_AUDIT_DATA_IOCTL_OP, LSM_AUDIT_DATA_DENTRY, LSM_AUDIT_DATA_INODE so a
+separate CWD record is emitted later.
 
-Update kernel.rst documentation file with the information
-related to usage of CAP_PERFMON capability to secure performance
-monitoring and observability operations in system.
-
-Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+Link: https://github.com/linux-audit/audit-kernel/issues/96
+Signed-off-by: Vladis Dronov <vdronov@redhat.com>
 ---
- Documentation/admin-guide/sysctl/kernel.rst | 16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
+out-of-commit-message-note:
 
-diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
-index def074807cee..b06ae9389809 100644
---- a/Documentation/admin-guide/sysctl/kernel.rst
-+++ b/Documentation/admin-guide/sysctl/kernel.rst
-@@ -720,20 +720,26 @@ perf_event_paranoid:
- ====================
- 
- Controls use of the performance events system by unprivileged
--users (without CAP_SYS_ADMIN).  The default value is 2.
-+users (without CAP_PERFMON). The default value is 2.
+Hello,
+Honestly, I'm not sure about "if (!context->in_syscall)" check in
+__audit_getcwd(). It was copied from __audit_getname() and I do
+not quite understand why it is there and if __audit_getcwd() needs
+it. If you have an idea on this, could you please, tell?
+
+ include/linux/audit.h |  9 ++++++++-
+ kernel/auditsc.c      | 17 +++++++++++++++++
+ security/lsm_audit.c  |  5 +++++
+ 3 files changed, 30 insertions(+), 1 deletion(-)
+
+diff --git a/include/linux/audit.h b/include/linux/audit.h
+index f9ceae57ca8d..b4306abc5891 100644
+--- a/include/linux/audit.h
++++ b/include/linux/audit.h
+@@ -268,7 +268,7 @@ extern void __audit_syscall_entry(int major, unsigned=
+ long a0, unsigned long a1,
+ extern void __audit_syscall_exit(int ret_success, long ret_value);
+ extern struct filename *__audit_reusename(const __user char *uptr);
+ extern void __audit_getname(struct filename *name);
+-
++extern void __audit_getcwd(void);
+ extern void __audit_inode(struct filename *name, const struct dentry *de=
+ntry,
+ 				unsigned int flags);
+ extern void __audit_file(const struct file *);
+@@ -327,6 +327,11 @@ static inline void audit_getname(struct filename *na=
+me)
+ 	if (unlikely(!audit_dummy_context()))
+ 		__audit_getname(name);
+ }
++static inline void audit_getcwd(void)
++{
++	if (unlikely(!audit_dummy_context()))
++		__audit_getcwd();
++}
+ static inline void audit_inode(struct filename *name,
+ 				const struct dentry *dentry,
+ 				unsigned int aflags) {
+@@ -545,6 +550,8 @@ static inline struct filename *audit_reusename(const =
+__user char *name)
+ }
+ static inline void audit_getname(struct filename *name)
+ { }
++static inline void audit_getcwd(void)
++{ }
+ static inline void __audit_inode(struct filename *name,
+ 					const struct dentry *dentry,
+ 					unsigned int flags)
+diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+index 814406a35db1..16316032ef9f 100644
+--- a/kernel/auditsc.c
++++ b/kernel/auditsc.c
+@@ -1890,6 +1890,23 @@ void __audit_getname(struct filename *name)
+ 		get_fs_pwd(current->fs, &context->pwd);
+ }
+=20
++/**
++ * __audit_getcwd - set a current working directory
++ *
++ * Set a current working directory of an audited process for this contex=
+t.
++ * Called from security/lsm_audit.c:dump_common_audit_data().
++ */
++void __audit_getcwd(void)
++{
++	struct audit_context *context =3D audit_context();
 +
-+For backward compatibility reasons access to system performance
-+monitoring and observability remains open for CAP_SYS_ADMIN
-+privileged processes but CAP_SYS_ADMIN usage for secure system
-+performance monitoring and observability operations is discouraged
-+with respect to CAP_PERFMON use cases.
- 
- ===  ==================================================================
-  -1  Allow use of (almost) all events by all users
- 
-      Ignore mlock limit after perf_event_mlock_kb without CAP_IPC_LOCK
- 
-->=0  Disallow ftrace function tracepoint by users without CAP_SYS_ADMIN
-+>=0  Disallow ftrace function tracepoint by users without CAP_PERFMON
- 
--     Disallow raw tracepoint access by users without CAP_SYS_ADMIN
-+     Disallow raw tracepoint access by users without CAP_PERFMON
- 
-->=1  Disallow CPU event access by users without CAP_SYS_ADMIN
-+>=1  Disallow CPU event access by users without CAP_PERFMON
- 
-->=2  Disallow kernel profiling by users without CAP_SYS_ADMIN
-+>=2  Disallow kernel profiling by users without CAP_PERFMON
- ===  ==================================================================
- 
- 
--- 
-2.24.1
++	if (!context->in_syscall)
++		return;
++
++	if (!context->pwd.dentry)
++		get_fs_pwd(current->fs, &context->pwd);
++}
++
+ static inline int audit_copy_fcaps(struct audit_names *name,
+ 				   const struct dentry *dentry)
+ {
+diff --git a/security/lsm_audit.c b/security/lsm_audit.c
+index 2d2bf49016f4..7c555621c2bd 100644
+--- a/security/lsm_audit.c
++++ b/security/lsm_audit.c
+@@ -241,6 +241,7 @@ static void dump_common_audit_data(struct audit_buffe=
+r *ab,
+ 			audit_log_untrustedstring(ab, inode->i_sb->s_id);
+ 			audit_log_format(ab, " ino=3D%lu", inode->i_ino);
+ 		}
++		audit_getcwd();
+ 		break;
+ 	}
+ 	case LSM_AUDIT_DATA_FILE: {
+@@ -254,6 +255,7 @@ static void dump_common_audit_data(struct audit_buffe=
+r *ab,
+ 			audit_log_untrustedstring(ab, inode->i_sb->s_id);
+ 			audit_log_format(ab, " ino=3D%lu", inode->i_ino);
+ 		}
++		audit_getcwd();
+ 		break;
+ 	}
+ 	case LSM_AUDIT_DATA_IOCTL_OP: {
+@@ -269,6 +271,7 @@ static void dump_common_audit_data(struct audit_buffe=
+r *ab,
+ 		}
+=20
+ 		audit_log_format(ab, " ioctlcmd=3D0x%hx", a->u.op->cmd);
++		audit_getcwd();
+ 		break;
+ 	}
+ 	case LSM_AUDIT_DATA_DENTRY: {
+@@ -283,6 +286,7 @@ static void dump_common_audit_data(struct audit_buffe=
+r *ab,
+ 			audit_log_untrustedstring(ab, inode->i_sb->s_id);
+ 			audit_log_format(ab, " ino=3D%lu", inode->i_ino);
+ 		}
++		audit_getcwd();
+ 		break;
+ 	}
+ 	case LSM_AUDIT_DATA_INODE: {
+@@ -300,6 +304,7 @@ static void dump_common_audit_data(struct audit_buffe=
+r *ab,
+ 		audit_log_format(ab, " dev=3D");
+ 		audit_log_untrustedstring(ab, inode->i_sb->s_id);
+ 		audit_log_format(ab, " ino=3D%lu", inode->i_ino);
++		audit_getcwd();
+ 		break;
+ 	}
+ 	case LSM_AUDIT_DATA_TASK: {
+--=20
+2.20.1
 
