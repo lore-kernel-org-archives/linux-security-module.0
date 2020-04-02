@@ -1,147 +1,178 @@
-Return-Path: <SRS0=fDLm=5R=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=1tMQ=5S=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D4FCC43331
-	for <linux-security-module@archiver.kernel.org>; Wed,  1 Apr 2020 21:39:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2AF3C2BA12
+	for <linux-security-module@archiver.kernel.org>; Thu,  2 Apr 2020 01:38:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 049B9206E9
-	for <linux-security-module@archiver.kernel.org>; Wed,  1 Apr 2020 21:39:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69CBA20721
+	for <linux-security-module@archiver.kernel.org>; Thu,  2 Apr 2020 01:38:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FeWGGGhw"
+	dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b="EhjE5WUl";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ZVR+2Un1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733255AbgDAVjW (ORCPT
+        id S1733239AbgDBBie (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 1 Apr 2020 17:39:22 -0400
-Received: from mail-pf1-f201.google.com ([209.85.210.201]:37618 "EHLO
-        mail-pf1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733252AbgDAVjW (ORCPT
+        Wed, 1 Apr 2020 21:38:34 -0400
+Received: from new1-smtp.messagingengine.com ([66.111.4.221]:46223 "EHLO
+        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726319AbgDBBid (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 1 Apr 2020 17:39:22 -0400
-Received: by mail-pf1-f201.google.com with SMTP id n28so916701pfq.4
-        for <linux-security-module@vger.kernel.org>; Wed, 01 Apr 2020 14:39:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=DdrdrRerOMvkv7vzgvI3ttukeUZ2OpdhnLu+un2eV2s=;
-        b=FeWGGGhwmXwPYJI7fgk1nXVyU38RCP6BF6eOwbkfauA5Lh/S0K7Nc0SIi0FDfzLZf/
-         bBZtA01Z+mycAmiPQF6sdgjk5IWYb+EIHKaBqeFr9fpHlHKvNDviHMxgwnRIyxJ2QR+m
-         FhGsIQS2Qu6FM71Bw7dEx5OsIbtQDambyY4fI9IepQU+Cs0Psa6YkBsLcX8FD8WIcBtp
-         vBLKQP3cpYILo3x9L44bcB2+wn09ds8LLHXl7JYuY3kZHmAMRAlkc7Jl2jKOzPh1N4mo
-         qnZvGI1i19BxSMYD89r0zKAZ5tBFZPiVCrcqrSEvreR+Eu5kKl7jbxfQkEj6DqoueZO0
-         AaSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=DdrdrRerOMvkv7vzgvI3ttukeUZ2OpdhnLu+un2eV2s=;
-        b=MrKVV0A2/qSoYAhxo8OQwVo660tQCqTZbCTomB3ehymtW8XC+hFg4jZgPhq0FxE+5q
-         DVZmlQ1svSeR2PvgvNBuhx+fw+XsNpqJ4Q8qAaeHSOLasaRiBg65ECEWBaysKPdD9FVo
-         7+m2SDpHmBTHBjoIKTHVbYgKJ/22MOPLoj8jSkYLmfm56M5CkIHaHXOoMm4aJH6XOyjg
-         +DDvyQwBYfni/Xr7fenzruxEX1ngbu5D0F20VVDsvoRXDn3vv9V8N6ydnb9HV/HE1YOv
-         WvuI7DBJhHeuBnni0/h8Ez6AkBCg7Qjpooli/5Y5l8iiUk1egAbvsH97puoXziU+Z+M/
-         qcDw==
-X-Gm-Message-State: AGi0PuaqZzWjGLjsMTsGkRfKfyB7DzuurlPdud+A6XVYOWQSAeMNtnWq
-        pcseSc8vtbMAT/LpihQHSgqDM+ZYeuM=
-X-Google-Smtp-Source: APiQypJjIzb/5kmrh3RqCS3HOgTi/GT8cY+ji3kV8XKRQ+4eFtBDnifNrAYKZFtkDdm/KNfMZ+0y3mX+CAA=
-X-Received: by 2002:a17:90a:2147:: with SMTP id a65mr41318pje.176.1585777160964;
- Wed, 01 Apr 2020 14:39:20 -0700 (PDT)
-Date:   Wed,  1 Apr 2020 14:39:03 -0700
-In-Reply-To: <20200401213903.182112-1-dancol@google.com>
-Message-Id: <20200401213903.182112-4-dancol@google.com>
-Mime-Version: 1.0
-References: <20200326200634.222009-1-dancol@google.com> <20200401213903.182112-1-dancol@google.com>
-X-Mailer: git-send-email 2.26.0.rc2.310.g2932bb562d-goog
-Subject: [PATCH v5 3/3] Wire UFFD up to SELinux
-From:   Daniel Colascione <dancol@google.com>
-To:     timmurray@google.com, selinux@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, viro@zeniv.linux.org.uk, paul@paul-moore.com,
-        nnk@google.com, sds@tycho.nsa.gov, lokeshgidra@google.com,
-        jmorris@namei.org
-Cc:     Daniel Colascione <dancol@google.com>
+        Wed, 1 Apr 2020 21:38:33 -0400
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 3ABD45801C4;
+        Wed,  1 Apr 2020 21:38:32 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Wed, 01 Apr 2020 21:38:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
+        message-id:subject:from:to:cc:date:in-reply-to:references
+        :content-type:mime-version:content-transfer-encoding; s=fm2; bh=
+        65E0cCQjZaasR2Q4SReMT3up4B2vZTD5YrrV+eEQPzU=; b=EhjE5WUllq7utAsj
+        QGotnYbb9Kw8jZCsD7odmyKl1n5mYNo16UGKeB+MA/N8pXr1cwCWa1jb2Qz6NnFR
+        OmkHYTPm3ClH8nYV38aHOd8+YkGAGNacEUH924J1y6HJ80OvGw1vOk420eaVRmr1
+        Wqv16Qg6Prbwz52FOwUoa9pw7JtngLbVwCiM9SbAOY4/IxfKTbu2Bj+zofmYQPAZ
+        3DbFdozqMh3qo9qJ646FaGfljfvPwyXGuJkQfmzNQxDFzQLOA6lcR1LS1OAtdFYu
+        R1qMp7IVbQ+56/KqtUyLLkVzOUUUIIJ+umm4GYxaZV/Wirk+sjBmfMOp/5UCTFtr
+        +kr2LQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; bh=65E0cCQjZaasR2Q4SReMT3up4B2vZTD5YrrV+eEQP
+        zU=; b=ZVR+2Un1ogFAbTykJdID1KGQHIQCJlxQdHSQLt4iyc695rALIxGzJ/tZx
+        8ttNUhd77g0OaBXN5/v5Q61v4ileqM3MNUllXQT/wmZHyyTxCGxukO3drlUximUQ
+        Yn0lLHQQ4deECa6MIpgb5BJCB4VMr8RT3NfjFcB+xwsNz55sEXdbwq6kd1MQnzlK
+        Mta2qB0IOK7uVSe1r+MH6dKM/Ym1LVOlW+qAmnUOMTA0qqlWFDEPpyRtftHWjREV
+        czKId4Nepql7rXMwphjcl51Mlljv3xaYYmB6qAyPcxod1+UpKfKizo5hobnmT3m2
+        byqO5tanFiUouyIa6j4md5wueG0Pg==
+X-ME-Sender: <xms:F0KFXnxfg-I39THCyxl8TBBO4WHZ_l_tGpGYiNs6KqDi_2mdnroUvg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrtdefgdehtdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefkuffhvfffjghftggfggfgsehtjeertddtreejnecuhfhrohhmpefkrghnucfm
+    vghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecukfhppeduudekrddvtdelrd
+    duieeirddvfedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhf
+    rhhomheprhgrvhgvnhesthhhvghmrgifrdhnvght
+X-ME-Proxy: <xmx:F0KFXjgFLqkZZSXP7k-wS0dX0TesDJcOZg4BLckP6jqvx7AMc3i6yw>
+    <xmx:F0KFXsV1k4K3Nk4yTG1Kpiu9GOkeb9fya0zvYG0XJ_h-ikBRchiVTg>
+    <xmx:F0KFXl0sM4s2FZ5lq6RtbJIVXDAH4v1HQranqyejd-iKBEZ1hzssSA>
+    <xmx:GEKFXpBmaOPBnPhHnGLHAp7bVvRp7u-xAXONrNwu4w2Gmy4Elbu9bg>
+Received: from mickey.themaw.net (unknown [118.209.166.232])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 69846306CD83;
+        Wed,  1 Apr 2020 21:38:24 -0400 (EDT)
+Message-ID: <459876eceda4bc68212faf4ed3d4bcb8570aa105.camel@themaw.net>
+Subject: Re: [PATCH 00/13] VFS: Filesystem information [ver #19]
+From:   Ian Kent <raven@themaw.net>
+To:     Miklos Szeredi <miklos@szeredi.hu>,
+        David Howells <dhowells@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux NFS list <linux-nfs@vger.kernel.org>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-ext4@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Christian Brauner <christian@brauner.io>,
+        Jann Horn <jannh@google.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Karel Zak <kzak@redhat.com>, Jeff Layton <jlayton@redhat.com>,
+        linux-fsdevel@vger.kernel.org,
+        LSM <linux-security-module@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Date:   Thu, 02 Apr 2020 09:38:20 +0800
+In-Reply-To: <CAJfpegsyeJmH3zJuseaAAY06fzgavSzpOtYr-1Mw8GR0cLcQbA@mail.gmail.com>
+References: <158454408854.2864823.5910520544515668590.stgit@warthog.procyon.org.uk>
+         <CAJfpeguaiicjS2StY5m=8H7BCjq6PLxMsWE3Mx_jYR1foDWVTg@mail.gmail.com>
+         <50caf93782ba1d66bd6acf098fb8dcb0ecc98610.camel@themaw.net>
+         <CAJfpegvvMVoNp1QeXEZiNucCeuUeDP4tKqVfq2F4koQKzjKmvw@mail.gmail.com>
+         <2465266.1585729649@warthog.procyon.org.uk>
+         <CAJfpegsyeJmH3zJuseaAAY06fzgavSzpOtYr-1Mw8GR0cLcQbA@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.5 (3.32.5-1.fc30) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This change gives userfaultfd file descriptors a real security
-context, allowing policy to act on them.
+On Wed, 2020-04-01 at 10:37 +0200, Miklos Szeredi wrote:
+> On Wed, Apr 1, 2020 at 10:27 AM David Howells <dhowells@redhat.com>
+> wrote:
+> > Miklos Szeredi <miklos@szeredi.hu> wrote:
+> > 
+> > > According to dhowell's measurements processing 100k mounts would
+> > > take
+> > > about a few seconds of system time (that's the time spent by the
+> > > kernel to retrieve the data,
+> > 
+> > But the inefficiency of mountfs - at least as currently implemented
+> > - scales
+> > up with the number of individual values you want to retrieve, both
+> > in terms of
+> > memory usage and time taken.
+> 
+> I've taken that into account when guesstimating a "few seconds per
+> 100k entries".  My guess is that there's probably an order of
+> magnitude difference between the performance of a fs based interface
+> and a binary syscall based interface.  That could be reduced somewhat
+> with a readfile(2) type API.
+> 
+> But the point is: this does not matter.  Whether it's .5s or 5s is
+> completely irrelevant, as neither is going to take down the system,
+> and userspace processing is probably going to take as much, if not
+> more time.  And remember, we are talking about stopping and starting
+> the automount daemon, which is something that happens, but it should
+> not happen often by any measure.
 
-Signed-off-by: Daniel Colascione <dancol@google.com>
----
- fs/userfaultfd.c | 30 ++++++++++++++++++++++++++----
- 1 file changed, 26 insertions(+), 4 deletions(-)
+Yes, but don't forget, I'm reporting what I saw when testing during
+development.
 
-diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-index 37df7c9eedb1..78ff5d898733 100644
---- a/fs/userfaultfd.c
-+++ b/fs/userfaultfd.c
-@@ -76,6 +76,8 @@ struct userfaultfd_ctx {
- 	bool mmap_changing;
- 	/* mm with one ore more vmas attached to this userfaultfd_ctx */
- 	struct mm_struct *mm;
-+	/* The inode that owns this context --- not a strong reference.  */
-+	const struct inode *owner;
- };
- 
- struct userfaultfd_fork_ctx {
-@@ -1022,8 +1024,10 @@ static int resolve_userfault_fork(struct userfaultfd_ctx *ctx,
- {
- 	int fd;
- 
--	fd = anon_inode_getfd("[userfaultfd]", &userfaultfd_fops, new,
--			      O_RDWR | (new->flags & UFFD_SHARED_FCNTL_FLAGS));
-+	fd = anon_inode_getfd_secure(
-+		"[userfaultfd]", &userfaultfd_fops, new,
-+		O_RDWR | (new->flags & UFFD_SHARED_FCNTL_FLAGS),
-+		ctx->owner);
- 	if (fd < 0)
- 		return fd;
- 
-@@ -1945,6 +1949,7 @@ static void init_once_userfaultfd_ctx(void *mem)
- 
- SYSCALL_DEFINE1(userfaultfd, int, flags)
- {
-+	struct file *file;
- 	struct userfaultfd_ctx *ctx;
- 	int fd;
- 
-@@ -1974,8 +1979,25 @@ SYSCALL_DEFINE1(userfaultfd, int, flags)
- 	/* prevent the mm struct to be freed */
- 	mmgrab(ctx->mm);
- 
--	fd = anon_inode_getfd("[userfaultfd]", &userfaultfd_fops, ctx,
--			      O_RDWR | (flags & UFFD_SHARED_FCNTL_FLAGS));
-+	file = anon_inode_getfile_secure(
-+		"[userfaultfd]", &userfaultfd_fops, ctx,
-+		O_RDWR | (flags & UFFD_SHARED_FCNTL_FLAGS),
-+		NULL);
-+	if (IS_ERR(file)) {
-+		fd = PTR_ERR(file);
-+		goto out;
-+	}
-+
-+	fd = get_unused_fd_flags(O_RDONLY | O_CLOEXEC);
-+	if (fd < 0) {
-+		fput(file);
-+		goto out;
-+	}
-+
-+	ctx->owner = file_inode(file);
-+	fd_install(fd, file);
-+
-+out:
- 	if (fd < 0) {
- 		mmdrop(ctx->mm);
- 		kmem_cache_free(userfaultfd_ctx_cachep, ctx);
--- 
-2.26.0.rc2.310.g2932bb562d-goog
+From previous discussion we know systemd (and probably the other apps
+like udisks2, et. al.) gets notified on mount and umount activity so
+its not going to be just starting and stopping autofs that's a problem
+with very large mount tables.
+
+To get a feel for the real difference we'd need to make the libmount
+changes for both and then check between the two and check behaviour.
+The mount and umount lookup case that Karel (and I) talked about
+should be sufficient.
+
+The biggest problem I had with fsinfo() when I was working with
+earlier series was getting fs specific options, in particular the
+need to use sb op ->fsinfo(). With this latest series David has made
+that part of the generic code and your patch also cover it.
+
+So the thing that was holding me up is done so we should be getting
+on with libmount improvements, we need to settle this.
+
+I prefer the system call interface and I'm not offering justification
+for that other than a general dislike (and on occasion outright
+frustration) of pretty much every proc implementation I have had to
+look at.
+
+> 
+> > With fsinfo(), I've tried to batch values together where it makes
+> > sense - and
+> > there's no lingering memory overhead - no extra inodes, dentries
+> > and files
+> > required.
+> 
+> The dentries, inodes and files in your test are single use (except
+> the
+> root dentry) and can be made ephemeral if that turns out to be
+> better.
+> My guess is that dentries belonging to individual attributes should
+> be
+> deleted on final put, while the dentries belonging to the mount
+> directory can be reclaimed normally.
+> 
+> Thanks,
+> Miklos
 
