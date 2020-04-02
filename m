@@ -3,72 +3,107 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7857C2BA12
-	for <linux-security-module@archiver.kernel.org>; Thu,  2 Apr 2020 19:46:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11645C2BA12
+	for <linux-security-module@archiver.kernel.org>; Thu,  2 Apr 2020 22:51:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A12FE20719
-	for <linux-security-module@archiver.kernel.org>; Thu,  2 Apr 2020 19:46:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E59752073B
+	for <linux-security-module@archiver.kernel.org>; Thu,  2 Apr 2020 22:51:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732302AbgDBTqG (ORCPT
+        id S2390052AbgDBWvq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 2 Apr 2020 15:46:06 -0400
-Received: from mga07.intel.com ([134.134.136.100]:47751 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729033AbgDBTqF (ORCPT
+        Thu, 2 Apr 2020 18:51:46 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53218 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2389951AbgDBWvq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 2 Apr 2020 15:46:05 -0400
-IronPort-SDR: fARqAckMVVJuOcvyV373XZsIpZuLANdr285266EhI7jNE1NTZQwUXL8W7uf8v2cW1W2xL4E32o
- /1fGt8gGpDgA==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Apr 2020 12:46:04 -0700
-IronPort-SDR: 1cGXrf6MKe+sp0HXx7kRvJNuro2XfYky6wlP6rOF0FNrJ6JM1bDtkZyICMsFAiArGfGJ9I8Em2
- hRbDZ5up9kXw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,336,1580803200"; 
-   d="scan'208";a="268127977"
-Received: from hbriegel-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.39.101])
-  by orsmga002.jf.intel.com with ESMTP; 02 Apr 2020 12:46:02 -0700
-Date:   Thu, 2 Apr 2020 22:46:00 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Stefan Berger <stefanb@linux.ibm.com>
-Cc:     Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Thu, 2 Apr 2020 18:51:46 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 032MYDaO018611;
+        Thu, 2 Apr 2020 18:51:42 -0400
+Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 305q27avvu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 02 Apr 2020 18:51:42 -0400
+Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
+        by ppma04wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 032MoPH6011527;
+        Thu, 2 Apr 2020 22:51:41 GMT
+Received: from b01cxnp23032.gho.pok.ibm.com (b01cxnp23032.gho.pok.ibm.com [9.57.198.27])
+        by ppma04wdc.us.ibm.com with ESMTP id 301x774bhk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 02 Apr 2020 22:51:41 +0000
+Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 032MpfLE53936610
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 2 Apr 2020 22:51:41 GMT
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4CBE0283F8;
+        Thu,  2 Apr 2020 22:51:41 +0000 (GMT)
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3299B283F5;
+        Thu,  2 Apr 2020 22:51:41 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu,  2 Apr 2020 22:51:41 +0000 (GMT)
+From:   Stefan Berger <stefanb@linux.vnet.ibm.com>
+To:     linux-integrity@vger.kernel.org, jarkko.sakkinen@linux.intel.com,
+        linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
         linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v3] tpm: Add support for event log pointer found in TPM2
- ACPI table
-Message-ID: <20200402194600.GD10314@linux.intel.com>
-References: <20200331215100.883860-1-stefanb@linux.vnet.ibm.com>
- <20200401084913.GF17325@linux.intel.com>
- <06477336-7ca0-1c72-6881-e443e922a01b@linux.ibm.com>
+Cc:     Stefan Berger <stefanb@linux.ibm.com>
+Subject: [PATCH v4 0/2] tpm2: Make TPM2 logs accessible for non-UEFI firmware
+Date:   Thu,  2 Apr 2020 18:51:38 -0400
+Message-Id: <20200402225140.922789-1-stefanb@linux.vnet.ibm.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <06477336-7ca0-1c72-6881-e443e922a01b@linux.ibm.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
+ definitions=2020-04-02_12:2020-04-02,2020-04-02 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 malwarescore=0
+ lowpriorityscore=0 clxscore=1015 suspectscore=0 spamscore=0
+ priorityscore=1501 mlxlogscore=807 bulkscore=0 mlxscore=0 adultscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2004020164
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Apr 01, 2020 at 08:20:28AM -0400, Stefan Berger wrote:
-> On 4/1/20 4:49 AM, Jarkko Sakkinen wrote:
-> > On Tue, Mar 31, 2020 at 05:51:00PM -0400, Stefan Berger wrote:
-> > > From: Stefan Berger <stefanb@linux.ibm.com>
-> > > 
-> > > In case a TPM2 is attached, search for a TPM2 ACPI table when trying
-> > > to get the event log from ACPI. If one is found, use it to get the
-> > > start and length of the log area. This allows non-UEFI systems, such
-> > > as SeaBIOS, to pass an event log when using a TPM2.
-> > > 
-> > > Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-> > Check the kbuild bot complain. I think otherwise this is sustainable.
-> > Thank you.
-> The kbuild bot did this due to the split of the patch series...
+From: Stefan Berger <stefanb@linux.ibm.com>
 
-Please resend them two patch series.
+This series of patches extends the existing TPM2 ACPI table with additional
+fields found in the TPM2 TCG ACPI specification (reference is in the patch)
+that allow access to the log's address and its size. We then modify the
+code that so far only enables access to a TPM 1.2's log for a TPM2 as well.
+This then enables access to the TPM2's log on non-UEFI system that for example
+run SeaBIOS.
 
-/Jarkko
+   Stefan
+
+v3->v4:
+  - Repost as one series
+
+v2->v3:
+  - Split the series into two separate patches
+  - Added comments to ACPI table fields
+  - Added check for null pointer to log area and zero log size
+
+v1->v2:
+  - Repost of the series
+
+
+
+Stefan Berger (2):
+  acpi: Extend TPM2 ACPI table with missing log fields
+  tpm: Add support for event log pointer found in TPM2 ACPI table
+
+ drivers/char/tpm/eventlog/acpi.c | 56 +++++++++++++++++++++++++---------------
+ drivers/char/tpm/tpm_crb.c       | 13 +++++++---
+ drivers/char/tpm/tpm_tis.c       |  4 ++-
+ include/acpi/actbl3.h            |  5 ++--
+ 4 files changed, 51 insertions(+), 27 deletions(-)
+
+-- 
+2.14.5
+
