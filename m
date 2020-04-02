@@ -3,126 +3,101 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DC88C2BA16
-	for <linux-security-module@archiver.kernel.org>; Thu,  2 Apr 2020 17:07:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDE9EC43331
+	for <linux-security-module@archiver.kernel.org>; Thu,  2 Apr 2020 19:22:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04F85206F6
-	for <linux-security-module@archiver.kernel.org>; Thu,  2 Apr 2020 17:07:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF09B20737
+	for <linux-security-module@archiver.kernel.org>; Thu,  2 Apr 2020 19:22:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732504AbgDBRHe convert rfc822-to-8bit (ORCPT
+        id S2389261AbgDBTWD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 2 Apr 2020 13:07:34 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:54828 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731608AbgDBRHe (ORCPT
+        Thu, 2 Apr 2020 15:22:03 -0400
+Received: from mga11.intel.com ([192.55.52.93]:40920 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732625AbgDBTWD (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 2 Apr 2020 13:07:34 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jK3JR-0000YP-GP; Thu, 02 Apr 2020 11:07:29 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jK3JQ-0007EN-Ov; Thu, 02 Apr 2020 11:07:29 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Alexey Gladkov <gladkov.alexey@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        David Howells <dhowells@redhat.com>
-References: <20200327172331.418878-1-gladkov.alexey@gmail.com>
-        <20200327172331.418878-9-gladkov.alexey@gmail.com>
-        <87d08pkh4u.fsf@x220.int.ebiederm.org>
-        <20200402165156.4mzenof4upvtd3lv@comp-core-i7-2640m-0182e6>
-Date:   Thu, 02 Apr 2020 12:04:44 -0500
-In-Reply-To: <20200402165156.4mzenof4upvtd3lv@comp-core-i7-2640m-0182e6>
-        (Alexey Gladkov's message of "Thu, 2 Apr 2020 18:51:56 +0200")
-Message-ID: <87r1x5iztf.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Thu, 2 Apr 2020 15:22:03 -0400
+IronPort-SDR: LVoV64XSlcBf2YFP5MixYctj01nU7A/aoWUnZ57XQZG5z8aROlLEzGywkiJMki3K3FDgpL0Fic
+ oonUTB1XRcUg==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Apr 2020 12:22:02 -0700
+IronPort-SDR: HPlrlLEifWROXK4+Dc1PcEvewa6yrANYd49N+uhhrAgGykfTHlVfk/hOoA+z5G7tR9/eMPMwPE
+ q7MhMagLko8A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,336,1580803200"; 
+   d="scan'208";a="242612758"
+Received: from hbriegel-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.39.101])
+  by fmsmga008.fm.intel.com with ESMTP; 02 Apr 2020 12:21:58 -0700
+Date:   Thu, 2 Apr 2020 22:21:57 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linux-integrity@vger.kernel.org,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org,
+        Stefan Berger <stefanb@linux.ibm.com>
+Subject: Re: [PATCH v3] acpi: Extend TPM2 ACPI table with missing log fields
+Message-ID: <20200402192145.GB10314@linux.intel.com>
+References: <20200331214949.883781-1-stefanb@linux.vnet.ibm.com>
+ <20200401083729.GD17325@linux.intel.com>
+ <CAJZ5v0gQ04h1+zN4wHj1vkwPvqu3RPfsY60VJ+GOtgUrvWuxLQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-XM-SPF: eid=1jK3JQ-0007EN-Ov;;;mid=<87r1x5iztf.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX19JB6md/ag4gch1HCHlHqnPcaDKiSdq078=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [PATCH v10 8/9] proc: use human-readable values for hidehid
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJZ5v0gQ04h1+zN4wHj1vkwPvqu3RPfsY60VJ+GOtgUrvWuxLQ@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Alexey Gladkov <gladkov.alexey@gmail.com> writes:
+On Wed, Apr 01, 2020 at 11:05:36AM +0200, Rafael J. Wysocki wrote:
+> On Wed, Apr 1, 2020 at 10:37 AM Jarkko Sakkinen
+> <jarkko.sakkinen@linux.intel.com> wrote:
+> >
+> > On Tue, Mar 31, 2020 at 05:49:49PM -0400, Stefan Berger wrote:
+> > > From: Stefan Berger <stefanb@linux.ibm.com>
+> > >
+> > > Recent extensions of the TPM2 ACPI table added 3 more fields
+> > > including 12 bytes of start method specific parameters and Log Area
+> > > Minimum Length (u32) and Log Area Start Address (u64). So, we extend
+> > > the existing structure with these fields to allow non-UEFI systems
+> > > to access the TPM2's log.
+> > >
+> > > The specification that has the new fields is the following:
+> > >   TCG ACPI Specification
+> > >   Family "1.2" and "2.0"
+> > >   Version 1.2, Revision 8
+> > >
+> > > Adapt all existing table size calculations to use
+> > > offsetof(struct acpi_table_tpm2, start_method_specific)
+> > > [where start_method_specific is a newly added field]
+> > > rather than sizeof(struct acpi_table_tpm2) so that the addition
+> > > of the new fields does not affect current systems that may not
+> > > have them.
+> > >
+> > > Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+> > > Cc: linux-acpi@vger.kernel.org
+> >
+> > I think I'm cool with this but needs an ack from ACPI maintainer.
+> >
+> > Rafael, given that this not an intrusive change in any possible means,
+> > can I pick this patch and put it to my next pull request?
+> 
+> Yes, please.
+> 
+> Thanks!
 
-> On Thu, Apr 02, 2020 at 11:05:21AM -0500, Eric W. Biederman wrote:
->> Alexey Gladkov <gladkov.alexey@gmail.com> writes:
->> 
->> > The hidepid parameter values are becoming more and more and it becomes
->> > difficult to remember what each new magic number means.
->> 
->> In principle I like this change.  In practice I think you have just
->> broken ABI compatiblity with the new mount ABI.
->> 
->> In particular the following line seems broken.
->> 
->> > diff --git a/fs/proc/root.c b/fs/proc/root.c
->> > index dbcd96f07c7a..ba782d6e6197 100644
->> > --- a/fs/proc/root.c
->> > +++ b/fs/proc/root.c
->> > @@ -45,7 +45,7 @@ enum proc_param {
->> >  
->> >  static const struct fs_parameter_spec proc_fs_parameters[] = {
->> >  	fsparam_u32("gid",	Opt_gid),
->> > -	fsparam_u32("hidepid",	Opt_hidepid),
->> > +	fsparam_string("hidepid",	Opt_hidepid),
->> >  	fsparam_string("subset",	Opt_subset),
->> >  	{}
->> >  };
->> 
->> As I read fs_parser.c fs_param_is_u32 handles string inputs and turns them
->> into numbers, and it handles binary numbers.  However fs_param_is_string
->> appears to only handle strings.  It appears to have not capacity to turn
->> raw binary numbers into strings.
->
-> I use result only with hidepid_u32_spec and nobody modifies param->string.
-> I do not use internal functions here.
->
-> I don’t follow how a raw number can get here ?
+Great, thanks Rafael.
 
-I may be wrong but last I looked you can input raw numbers using the new
-mount api.   I have most of the details paged out at the moment,
-but I believe that is why when you set a parameter in the new mount api
-it takes a type.
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
->> So I think we probably need to fix fs_param_is_string to raw binary
->> numbers before we can safely make this change to fs/proc/root.c
->> 
->> David am I reading the fs_parser.c code correctly?  If I am are you ok
->> with a change like the above?
+Do you mind if I add your ack to the commit?
 
-Eric
+/Jarkko
