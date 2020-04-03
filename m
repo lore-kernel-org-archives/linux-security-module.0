@@ -2,140 +2,179 @@ Return-Path: <SRS0=SHQt=5T=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MSGID_FROM_MTA_HEADER,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3F4FC2BA18
-	for <linux-security-module@archiver.kernel.org>; Fri,  3 Apr 2020 22:37:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1686BC2BA18
+	for <linux-security-module@archiver.kernel.org>; Fri,  3 Apr 2020 23:59:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 749532078C
-	for <linux-security-module@archiver.kernel.org>; Fri,  3 Apr 2020 22:37:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DEDF2206F8
+	for <linux-security-module@archiver.kernel.org>; Fri,  3 Apr 2020 23:59:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="pIsRWgso";
-	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="AeFC5Hyd"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Bbhh3fmX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388948AbgDCWhT (ORCPT
+        id S1726302AbgDCX71 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 3 Apr 2020 18:37:19 -0400
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:11880 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388922AbgDCWhT (ORCPT
+        Fri, 3 Apr 2020 19:59:27 -0400
+Received: from mail-pj1-f66.google.com ([209.85.216.66]:39986 "EHLO
+        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725980AbgDCX71 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 3 Apr 2020 18:37:19 -0400
-Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 033MV5Ab022207;
-        Fri, 3 Apr 2020 15:37:13 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=date : from : to : cc :
- subject : message-id : references : content-type : in-reply-to :
- mime-version; s=facebook; bh=orVTRiVunI3muYjWiUhSjohyYMfn4ykT064MFswaZ7k=;
- b=pIsRWgso+tw0W/eVTxNm9b+Y8ztUl78s8dkeZlQ4Szknny2Cv8W+Wcibm9Fh3CAww57n
- 0nrs9mh2KN2Taey07JRKjgfXegpuzjx35WbEeSsQbmxMkq3VWPa8iv6uKFnb4b1yEZV8
- NwK8TGkqqnOtu1D5WyEvUxtHv/riI7EvDt8= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com with ESMTP id 30671528nq-2
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Fri, 03 Apr 2020 15:37:12 -0700
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (100.104.31.183)
- by o365-in.thefacebook.com (100.104.35.175) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1847.3; Fri, 3 Apr 2020 15:37:10 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=IojIATX1K9TXVV2LCBvB4ykFawUrS7+FrxMne4Ys9643vdo8LiLbKM8YiFgCCN3Dri0KISudhsjqm/MdpRuez0W3A/Ft1Wka/1+jyNnIaCHIDRoCbaiJE3zEviQO6I1HFtszETBY7qA0gNElTQzQbuL9Yr+3mwPTR2w1Z7RvLcKYvSMrnGk9pH2qXQ8Hq73L14rYfbT5Yyjxop9EmFbXBs6PJsPzOinAAmMHNRSB80qguhf/b57Bb91nuf51B4dKeCWHoKOx9xC3RvPBG/UQ5h9fVQqElEQK+VVmU4/9za1PQ7aJHsFiBdemW4CS2tAulAqj+oByeeUCWhKcEZGjHQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=orVTRiVunI3muYjWiUhSjohyYMfn4ykT064MFswaZ7k=;
- b=DWE8snAEMH+yxy/+L+8CUyBTyGm9NgmyvNG3ZWDa83tLgSC8Ec/7pAyMklD7fNuYYWFxxLqYX6QOv5oF3T51sdY1Le//3W9RhFZDLcbrpp8dZheyjADGstZ7xMaUmIPa6NkYaXRhp2m41Zmi9y88KrZjoovRxj7ORg9AWoofEs1FKE1zaONGmBJm5M5lkaaqXO5rN05pYz4KqaGDBlBoaSv4oovi4BN5SfInCn3OETN0OP6ThpGMQSYb8ELSUiZJDPZO6M7Og5XsB5KJgSj8He4VD/jh9tviDGvLk9FIQhpWYuDkF7P+F1vU5kmUGxMBDtpJoUEJ95elCbJU+RXJPg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
- header.d=fb.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector2-fb-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=orVTRiVunI3muYjWiUhSjohyYMfn4ykT064MFswaZ7k=;
- b=AeFC5HydC2rMv/8IRToJj53O1u6zL1hRNZ5Z90MgzjxX/9X3am84SvdSzd/3tAWPXgcdNTUrF9lWCbCtm7fcBUIunjMNTrgF0WZXEIx908nFYRcHJlCKL/XSd2C/MPbE0fhtMjxZAxOFpKCXwsVYTOG+xUCZNtFX+uamQCr1J04=
-Received: from BYAPR15MB4136.namprd15.prod.outlook.com (20.177.229.24) by
- BYAPR15MB2887.namprd15.prod.outlook.com (20.178.237.209) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2878.19; Fri, 3 Apr 2020 22:37:09 +0000
-Received: from BYAPR15MB4136.namprd15.prod.outlook.com
- ([fe80::bdf9:6577:1d2a:a275]) by BYAPR15MB4136.namprd15.prod.outlook.com
- ([fe80::bdf9:6577:1d2a:a275%7]) with mapi id 15.20.2856.019; Fri, 3 Apr 2020
- 22:37:09 +0000
-Date:   Fri, 3 Apr 2020 15:37:04 -0700
-From:   Roman Gushchin <guro@fb.com>
-To:     Odin Ugedal <odin@ugedal.com>
-CC:     <bpf@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <tj@kernel.org>,
-        <Harish.Kasiviswanathan@amd.com>, <amd-gfx@lists.freedesktop.org>
-Subject: Re: [PATCH] device_cgroup: Cleanup cgroup eBPF device filter code
-Message-ID: <20200403223704.GA306670@carbon.dhcp.thefacebook.com>
-References: <20200403175528.225990-1-odin@ugedal.com>
+        Fri, 3 Apr 2020 19:59:27 -0400
+Received: by mail-pj1-f66.google.com with SMTP id kx8so3738167pjb.5
+        for <linux-security-module@vger.kernel.org>; Fri, 03 Apr 2020 16:59:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=YCa/Qs0yPmh3XTwnN4PsbMB277OSr9D+GN0maXxjMHA=;
+        b=Bbhh3fmXAiGdRNFedcwh3XwyQ26GhP6Z9oRxi/DD0ElrQbHJt8FP23Due9BPsALnlu
+         cdsBGZMeu1Kd8/vgELs72HvtyNixfzg4EaDAo5O2ENQpAqF+HriRbxrU9MqmUByE9IP0
+         IyiltCvmyvjnf3QdBrKiVqJ2X8ZPSJrLSlitI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=YCa/Qs0yPmh3XTwnN4PsbMB277OSr9D+GN0maXxjMHA=;
+        b=rS6xsoLCFikiNLnj2YupeReVRP8oPPfz2gc3bxZ7NTJx0xQ/2tMOiTUFbV/01rT3zr
+         e/kbCQLk/IZxr0XFE0EOKqVtMKu8mxZhqqnOMjOy/H6quwXsItCWI4oB0XCBXK6/1Hkq
+         1qm92gRNaC3kR/d8f/YzTPOca2JMLNohAzauYoNkyOF5XpVGn/6KFwfwtMNizIwspYrh
+         c6XAG5/2c6BJ8cunN4mKcFhiveozw0QIm9gbJTrAK/p+bYNjqG80W6ttm4hFEHRS/+nb
+         decX5CGgmTtDcUWD1/eFDjtL2Rhv5gzxUTsbgcqhhPHQ8IaJqE+3S8E/WKypMyzkBdEO
+         +jpQ==
+X-Gm-Message-State: AGi0PuaYtOb3vjSIpBWBOb3/2yphr23Z5poMT9Y6h6K/DxAN2KZqjN1y
+        rBBB6qcvOAte/sD/jiQ2OBLN7Q==
+X-Google-Smtp-Source: APiQypKaLpvqre5tI8MwDWqt73Tqg7m9h+IsHfp66R3KYbvS+0hTX2lg8k4AHfoG5/7A9eafgxz9Gw==
+X-Received: by 2002:a17:90a:21ac:: with SMTP id q41mr12995017pjc.41.1585958365843;
+        Fri, 03 Apr 2020 16:59:25 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id m3sm6071311pgt.27.2020.04.03.16.59.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 Apr 2020 16:59:24 -0700 (PDT)
+Date:   Fri, 3 Apr 2020 16:59:23 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Alexey Gladkov <gladkov.alexey@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Security Module <linux-security-module@vger.kernel.org>,
+        Akinobu Mita <akinobu.mita@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Alexey Gladkov <legion@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Daniel Micay <danielmicay@gmail.com>,
+        Djalal Harouni <tixxdz@gmail.com>,
+        "Dmitry V . Levin" <ldv@altlinux.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@poochiereds.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [PATCH v10 7/9] proc: move hidepid values to uapi as they are
+ user interface to mount
+Message-ID: <202004031658.8D0C048E3@keescook>
+References: <20200327172331.418878-1-gladkov.alexey@gmail.com>
+ <20200327172331.418878-8-gladkov.alexey@gmail.com>
+ <875zehkeob.fsf@x220.int.ebiederm.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200403175528.225990-1-odin@ugedal.com>
-X-ClientProxiedBy: CO2PR04CA0152.namprd04.prod.outlook.com (2603:10b6:104::30)
- To BYAPR15MB4136.namprd15.prod.outlook.com (2603:10b6:a03:96::24)
-MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from carbon.dhcp.thefacebook.com (2620:10d:c090:400::5:71d6) by CO2PR04CA0152.namprd04.prod.outlook.com (2603:10b6:104::30) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2878.15 via Frontend Transport; Fri, 3 Apr 2020 22:37:08 +0000
-X-Originating-IP: [2620:10d:c090:400::5:71d6]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: dd6d0a80-23b9-4f07-37d7-08d7d81f8b5e
-X-MS-TrafficTypeDiagnostic: BYAPR15MB2887:
-X-Microsoft-Antispam-PRVS: <BYAPR15MB2887E8AD37FE718C555ACEE1BEC70@BYAPR15MB2887.namprd15.prod.outlook.com>
-X-FB-Source: Internal
-X-MS-Oob-TLC-OOBClassifiers: OLM:1227;
-X-Forefront-PRVS: 0362BF9FDB
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR15MB4136.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(10019020)(366004)(346002)(136003)(376002)(39860400002)(396003)(81166006)(478600001)(66946007)(86362001)(6916009)(52116002)(6506007)(2906002)(7696005)(66476007)(66556008)(316002)(81156014)(55016002)(5660300002)(4326008)(9686003)(6666004)(186003)(8936002)(8676002)(33656002)(16526019)(1076003)(4744005);DIR:OUT;SFP:1102;
-Received-SPF: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: I2gzfofFl/6VmFzQlEgVA+ey0W7Zn3/ie8CrZlVOPtZDO6GS3UttuWLpM6g8XNzGAEyswiI70KpYq/6rXGobWpbeh/GjoCTCryWGTnkxRQtWcbQrkpUIbiKtFGMVizOIVtJjd2AbzVpBJOroqVtHuBpHXFi+8o/X4P3noJv57jgYte0eyjY3jCAguGJOxAilP5PSps/OqbEaYHiTP9s35JU+fbMlSp5Ov8vdVdkZgZyjAz46QEVzOQ/8lIzgae6yF77WY7IZ+uS6ZkNTqpCy4O5+XIMBHkq35YjGOvcQdDA1csIFnCzKz+DBDGJlxiIOenhPooktK/2l08LXoYkhHvFK+xwjNpaRSVzQcf091SQuT/LjuwN88rlQRaXqelv51LPz0A9e4TFJjXCXZbQE0AfztNfEfr1nEjVlKfhb9P7uY71x6pgSI2dW3U0ui7oh
-X-MS-Exchange-AntiSpam-MessageData: zPnNOeLuXvygXAsutdLup0oQbXCvwQHRi8I+CeC7lFFgLmD779VOeXOikCX7S+nVCT7K3vRgRSV5fQ9qHF7jWqrpee1h0suG+DiPpH4t4RJ+SlgaRnUMAnIFe12QMgL3tuGpY9TwNsGnY9SclMHVkOPJsIcKjdzXiCv0/NPqRKPcBjN8VqR30x3S1g8//t7Y
-X-MS-Exchange-CrossTenant-Network-Message-Id: dd6d0a80-23b9-4f07-37d7-08d7d81f8b5e
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Apr 2020 22:37:09.2076
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: B7jJ36HbcgBEBVnE9nVGIG/eySBgjBIu15HNpzPHEseQ1d3+sI0hWOJ0sAYUgquR
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB2887
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
- definitions=2020-04-03_19:2020-04-03,2020-04-03 signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 mlxlogscore=953
- spamscore=0 clxscore=1011 phishscore=0 mlxscore=0 impostorscore=0
- adultscore=0 lowpriorityscore=0 suspectscore=1 malwarescore=0
- priorityscore=1501 bulkscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2003020000 definitions=main-2004030173
-X-FB-Internal: deliver
+In-Reply-To: <875zehkeob.fsf@x220.int.ebiederm.org>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Apr 03, 2020 at 07:55:28PM +0200, Odin Ugedal wrote:
-> Original cgroup v2 eBPF code for filtering device access made it
-> possible to compile with CONFIG_CGROUP_DEVICE=n and still use the eBPF
-> filtering. Change 
-> commit 4b7d4d453fc4 ("device_cgroup: Export devcgroup_check_permission")
-> reverted this, making it required to set it to y.
+On Thu, Apr 02, 2020 at 11:58:28AM -0500, Eric W. Biederman wrote:
 > 
-> Since the device filtering (and all the docs) for cgroup v2 is no longer
-> a "device controller" like it was in v1, someone might compile their
-> kernel with CONFIG_CGROUP_DEVICE=n. Then (for linux 5.5+) the eBPF
-> filter will not be invoked, and all processes will be allowed access
-> to all devices, no matter what the eBPF filter says.
+> I will just say that I do not understand exporting this to the uapi
+> headers.  Why do we want to export the enumeration names?
 > 
-> Signed-off-by: Odin Ugedal <odin@ugedal.com>
+> I understand that the values are uapi.  This looks like it will make it
+> difficult to make changes that rename enumeration values to make
+> the code more readable.
+> 
+> Given that this patchset goes immediately to using string enumerated
+> values, I also don't understand the point of exporting
+> HIDEPID_NOT_PTRACEABLE.  I don't think we need to ever let
+> people use the numeric value.
+> 
+> My sense is that if we are switching to string values we should
+> just leave the existing numeric values as backwards compatiblity
+> and not do anything to make them easier to use.
 
-Hello, Odin!
+Yeah, that's what I had suggested too. Let's not export this to UAPI.
 
-The patch makes perfect sense to me.
+-Kees
 
-Acked-by: Roman Gushchin <guro@fb.com>
+> 
+> Eric
+> 
+> 
+> Alexey Gladkov <gladkov.alexey@gmail.com> writes:
+> 
+> > Suggested-by: Alexey Dobriyan <adobriyan@gmail.com>
+> > Reviewed-by: Alexey Dobriyan <adobriyan@gmail.com>
+> > Signed-off-by: Alexey Gladkov <gladkov.alexey@gmail.com>
+> > ---
+> >  include/linux/proc_fs.h      |  9 +--------
+> >  include/uapi/linux/proc_fs.h | 13 +++++++++++++
+> >  2 files changed, 14 insertions(+), 8 deletions(-)
+> >  create mode 100644 include/uapi/linux/proc_fs.h
+> >
+> > diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
+> > index afd38cae2339..d259817ec913 100644
+> > --- a/include/linux/proc_fs.h
+> > +++ b/include/linux/proc_fs.h
+> > @@ -7,6 +7,7 @@
+> >  
+> >  #include <linux/types.h>
+> >  #include <linux/fs.h>
+> > +#include <uapi/linux/proc_fs.h>
+> >  
+> >  struct proc_dir_entry;
+> >  struct seq_file;
+> > @@ -27,14 +28,6 @@ struct proc_ops {
+> >  	unsigned long (*proc_get_unmapped_area)(struct file *, unsigned long, unsigned long, unsigned long, unsigned long);
+> >  };
+> >  
+> > -/* definitions for hide_pid field */
+> > -enum {
+> > -	HIDEPID_OFF	  = 0,
+> > -	HIDEPID_NO_ACCESS = 1,
+> > -	HIDEPID_INVISIBLE = 2,
+> > -	HIDEPID_NOT_PTRACEABLE = 4, /* Limit pids to only ptraceable pids */
+> > -};
+> > -
+> >  /* definitions for proc mount option pidonly */
+> >  enum {
+> >  	PROC_PIDONLY_OFF = 0,
+> > diff --git a/include/uapi/linux/proc_fs.h b/include/uapi/linux/proc_fs.h
+> > new file mode 100644
+> > index 000000000000..dc6d717aa6ec
+> > --- /dev/null
+> > +++ b/include/uapi/linux/proc_fs.h
+> > @@ -0,0 +1,13 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+> > +#ifndef _UAPI_PROC_FS_H
+> > +#define _UAPI_PROC_FS_H
+> > +
+> > +/* definitions for hide_pid field */
+> > +enum {
+> > +	HIDEPID_OFF            = 0,
+> > +	HIDEPID_NO_ACCESS      = 1,
+> > +	HIDEPID_INVISIBLE      = 2,
+> > +	HIDEPID_NOT_PTRACEABLE = 4,
+> > +};
+> > +
+> > +#endif
 
-Thanks!
+-- 
+Kees Cook
