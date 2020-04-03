@@ -2,204 +2,219 @@ Return-Path: <SRS0=SHQt=5T=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 887B4C2D0E8
-	for <linux-security-module@archiver.kernel.org>; Fri,  3 Apr 2020 13:08:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58525C2BA15
+	for <linux-security-module@archiver.kernel.org>; Fri,  3 Apr 2020 17:55:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E6ED208FE
-	for <linux-security-module@archiver.kernel.org>; Fri,  3 Apr 2020 13:08:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 25C1D2077D
+	for <linux-security-module@archiver.kernel.org>; Fri,  3 Apr 2020 17:55:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ugedal.com header.i=@ugedal.com header.b="JYtJwflt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728175AbgDCNIZ (ORCPT
+        id S1728140AbgDCRzm (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 3 Apr 2020 09:08:25 -0400
-Received: from mga05.intel.com ([192.55.52.43]:24643 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728001AbgDCNIZ (ORCPT
+        Fri, 3 Apr 2020 13:55:42 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:46802 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727167AbgDCRzm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 3 Apr 2020 09:08:25 -0400
-IronPort-SDR: 5jBA5CXyyVaTeLdtl8N4Ty8c2GLxNh95x6P1IMrPwDA6uJftsIf8E6OiOcU+ysUbVTncm+/8Ls
- pGseaCdHKYew==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Apr 2020 06:08:24 -0700
-IronPort-SDR: eRbNnU/rrDVFmfPF1paXBtVE7T+boFiNmimnvsynFAx7AqUKmKsq45Gu0Hyf0/gNHc14/OXMM+
- ZhahdNoYwqYg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,339,1580803200"; 
-   d="scan'208";a="273943090"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga004.fm.intel.com with ESMTP; 03 Apr 2020 06:08:23 -0700
-Received: from [10.249.254.224] (abudanko-mobl.ccr.corp.intel.com [10.249.254.224])
-        by linux.intel.com (Postfix) with ESMTP id 3E6E958077B;
-        Fri,  3 Apr 2020 06:08:17 -0700 (PDT)
-Subject: Re: [PATCH v8 04/12] perf tool: extend Perf tool with CAP_PERFMON
- capability support
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Serge Hallyn <serge@hallyn.com>,
-        Song Liu <songliubraving@fb.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>,
-        Igor Lubashev <ilubashe@akamai.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        linux-man@vger.kernel.org
-References: <f96f8f8a-e65c-3f36-dc85-fc3f5191e8c5@linux.intel.com>
- <a66d5648-2b8e-577e-e1f2-1d56c017ab5e@linux.intel.com>
- <20200403110828.GL2784502@krava>
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <56648455-3650-1fa2-6364-659d92d5dc14@linux.intel.com>
-Date:   Fri, 3 Apr 2020 16:08:16 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        Fri, 3 Apr 2020 13:55:42 -0400
+Received: by mail-lj1-f195.google.com with SMTP id r7so7792050ljg.13
+        for <linux-security-module@vger.kernel.org>; Fri, 03 Apr 2020 10:55:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ugedal.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=FPIH9Cepkvfx+qnRWFWOtOody6sfKssdMr1NGqEz4tY=;
+        b=JYtJwfltQr8Gy7OcS6GPL1nxZiPr6yZsZVksURjdfhhaIOMAvowZok4L/vE6sJ1+KT
+         ux3maGBK7iXLCNElB/EPonnQYhUDwD1FjJ86tQSvKoVL98kTwWToj4VlflIvYTKUKd/L
+         f3tuRC18LMu25zYYrYN1dU84yP41jsHanLBa/5k/P9nxOV/rM/vPmEgo0IulFCcHhwWG
+         /rN4xbDZ2Wk7p6qik4ctf/3NBqy4Z0ee5iUPBwltKmFKYIh8ZCvsOszFGnWyv8aamKTU
+         kXD0uwh5+NQCLnwXLupvvY/Ed3v+zQlkBHRVCntRbvdtBCpmaoe7nAtUh1AwNqKr8WZx
+         UQFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=FPIH9Cepkvfx+qnRWFWOtOody6sfKssdMr1NGqEz4tY=;
+        b=e7R2Xv4pP1Gjv/X47rXiOhqGVexkjPuV5A8KY15dYWcf8Rb1Y1dwXUjrGeU/+QIIIP
+         u8Y5t51SS8Z/hi+QNFeZxnUQh8NbpdF7rKohmWZjKGi5gFyYITXApGap/mJ7fxcl+wFe
+         blLP8+HykO3fbgvyK9cqHrWusSMmSFesTIOArk5RsXyT6TzVsNOWBc28xoMj8qjK1uPm
+         JeBuL1aXrrktHwrul89Uqvm5yOdM1wyxuFVJ1ty2rF/xhlL9lwxkExHVIKrDcdSp50kw
+         TvM41zmJqoqA54QbW+rjj9/LkwCz4qO4yltVq8LiMRkvVAGQb4v9IzMKaGIsL94JOzSO
+         PQXA==
+X-Gm-Message-State: AGi0PuYUb+Xe/Kj0kBTKO+wSqoc7az44Pc6quFZwkLsm9Ra4D74cCWYi
+        +Hh+Q0Cfvj7U09a3iu8dajWdNA==
+X-Google-Smtp-Source: APiQypLCS+GwPGR8/cw+HpaBaDNdQMQ2twj7URTyHCsJPzGMMY5IVfeNWB6r16JXEq/68SuRQcA+bA==
+X-Received: by 2002:a2e:8612:: with SMTP id a18mr5165463lji.250.1585936538737;
+        Fri, 03 Apr 2020 10:55:38 -0700 (PDT)
+Received: from xps13.lan (238.89-10-169.nextgentel.com. [89.10.169.238])
+        by smtp.gmail.com with ESMTPSA id q20sm5267600ljj.66.2020.04.03.10.55.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 Apr 2020 10:55:37 -0700 (PDT)
+From:   Odin Ugedal <odin@ugedal.com>
+To:     bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, tj@kernel.org,
+        Harish.Kasiviswanathan@amd.com, guro@fb.com,
+        amd-gfx@lists.freedesktop.org
+Cc:     Odin Ugedal <odin@ugedal.com>
+Subject: [PATCH] device_cgroup: Cleanup cgroup eBPF device filter code
+Date:   Fri,  3 Apr 2020 19:55:28 +0200
+Message-Id: <20200403175528.225990-1-odin@ugedal.com>
+X-Mailer: git-send-email 2.26.0
 MIME-Version: 1.0
-In-Reply-To: <20200403110828.GL2784502@krava>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Original cgroup v2 eBPF code for filtering device access made it
+possible to compile with CONFIG_CGROUP_DEVICE=n and still use the eBPF
+filtering. Change 
+commit 4b7d4d453fc4 ("device_cgroup: Export devcgroup_check_permission")
+reverted this, making it required to set it to y.
 
-On 03.04.2020 14:08, Jiri Olsa wrote:
-> On Thu, Apr 02, 2020 at 11:47:35AM +0300, Alexey Budankov wrote:
->>
->> Extend error messages to mention CAP_PERFMON capability as an option
->> to substitute CAP_SYS_ADMIN capability for secure system performance
->> monitoring and observability operations. Make perf_event_paranoid_check()
->> and __cmd_ftrace() to be aware of CAP_PERFMON capability.
->>
->> CAP_PERFMON implements the principal of least privilege for performance
->> monitoring and observability operations (POSIX IEEE 1003.1e 2.2.2.39
->> principle of least privilege: A security design principle that states
->> that a process or program be granted only those privileges (e.g.,
->> capabilities) necessary to accomplish its legitimate function, and only
->> for the time that such privileges are actually required)
->>
->> For backward compatibility reasons access to perf_events subsystem remains
->> open for CAP_SYS_ADMIN privileged processes but CAP_SYS_ADMIN usage for
->> secure perf_events monitoring is discouraged with respect to CAP_PERFMON
->> capability.
->>
->> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
->> Reviewed-by: James Morris <jamorris@linux.microsoft.com>
-> 
-> Acked-by: Jiri Olsa <jolsa@redhat.com>
+Since the device filtering (and all the docs) for cgroup v2 is no longer
+a "device controller" like it was in v1, someone might compile their
+kernel with CONFIG_CGROUP_DEVICE=n. Then (for linux 5.5+) the eBPF
+filter will not be invoked, and all processes will be allowed access
+to all devices, no matter what the eBPF filter says.
 
-Thanks! I appreciate you support.
+Signed-off-by: Odin Ugedal <odin@ugedal.com>
+---
+ drivers/gpu/drm/amd/amdkfd/kfd_priv.h |  2 +-
+ include/linux/device_cgroup.h         | 14 +++++---------
+ security/Makefile                     |  2 +-
+ security/device_cgroup.c              | 19 ++++++++++++++++---
+ 4 files changed, 23 insertions(+), 14 deletions(-)
 
-~Alexey
+diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_priv.h b/drivers/gpu/drm/amd/amdkfd/kfd_priv.h
+index 4a3049841086..c24cad3c64ed 100644
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_priv.h
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_priv.h
+@@ -1050,7 +1050,7 @@ void kfd_dec_compute_active(struct kfd_dev *dev);
+ /* Check with device cgroup if @kfd device is accessible */
+ static inline int kfd_devcgroup_check_permission(struct kfd_dev *kfd)
+ {
+-#if defined(CONFIG_CGROUP_DEVICE)
++#if defined(CONFIG_CGROUP_DEVICE) || defined(CONFIG_CGROUP_BPF)
+ 	struct drm_device *ddev = kfd->ddev;
+ 
+ 	return devcgroup_check_permission(DEVCG_DEV_CHAR, ddev->driver->major,
+diff --git a/include/linux/device_cgroup.h b/include/linux/device_cgroup.h
+index fa35b52e0002..9a72214496e5 100644
+--- a/include/linux/device_cgroup.h
++++ b/include/linux/device_cgroup.h
+@@ -1,6 +1,5 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+ #include <linux/fs.h>
+-#include <linux/bpf-cgroup.h>
+ 
+ #define DEVCG_ACC_MKNOD 1
+ #define DEVCG_ACC_READ  2
+@@ -11,16 +10,10 @@
+ #define DEVCG_DEV_CHAR  2
+ #define DEVCG_DEV_ALL   4  /* this represents all devices */
+ 
+-#ifdef CONFIG_CGROUP_DEVICE
+-int devcgroup_check_permission(short type, u32 major, u32 minor,
+-			       short access);
+-#else
+-static inline int devcgroup_check_permission(short type, u32 major, u32 minor,
+-					     short access)
+-{ return 0; }
+-#endif
+ 
+ #if defined(CONFIG_CGROUP_DEVICE) || defined(CONFIG_CGROUP_BPF)
++int devcgroup_check_permission(short type, u32 major, u32 minor,
++			       short access);
+ static inline int devcgroup_inode_permission(struct inode *inode, int mask)
+ {
+ 	short type, access = 0;
+@@ -61,6 +54,9 @@ static inline int devcgroup_inode_mknod(int mode, dev_t dev)
+ }
+ 
+ #else
++static inline int devcgroup_check_permission(short type, u32 major, u32 minor,
++			       short access)
++{ return 0; }
+ static inline int devcgroup_inode_permission(struct inode *inode, int mask)
+ { return 0; }
+ static inline int devcgroup_inode_mknod(int mode, dev_t dev)
+diff --git a/security/Makefile b/security/Makefile
+index 22e73a3482bd..3baf435de541 100644
+--- a/security/Makefile
++++ b/security/Makefile
+@@ -30,7 +30,7 @@ obj-$(CONFIG_SECURITY_YAMA)		+= yama/
+ obj-$(CONFIG_SECURITY_LOADPIN)		+= loadpin/
+ obj-$(CONFIG_SECURITY_SAFESETID)       += safesetid/
+ obj-$(CONFIG_SECURITY_LOCKDOWN_LSM)	+= lockdown/
+-obj-$(CONFIG_CGROUP_DEVICE)		+= device_cgroup.o
++obj-$(CONFIG_CGROUPS)			+= device_cgroup.o
+ obj-$(CONFIG_BPF_LSM)			+= bpf/
+ 
+ # Object integrity file lists
+diff --git a/security/device_cgroup.c b/security/device_cgroup.c
+index 7d0f8f7431ff..43ab0ad45c1b 100644
+--- a/security/device_cgroup.c
++++ b/security/device_cgroup.c
+@@ -15,6 +15,8 @@
+ #include <linux/rcupdate.h>
+ #include <linux/mutex.h>
+ 
++#ifdef CONFIG_CGROUP_DEVICE
++
+ static DEFINE_MUTEX(devcgroup_mutex);
+ 
+ enum devcg_behavior {
+@@ -792,7 +794,7 @@ struct cgroup_subsys devices_cgrp_subsys = {
+ };
+ 
+ /**
+- * __devcgroup_check_permission - checks if an inode operation is permitted
++ * devcgroup_legacy_check_permission - checks if an inode operation is permitted
+  * @dev_cgroup: the dev cgroup to be tested against
+  * @type: device type
+  * @major: device major number
+@@ -801,7 +803,7 @@ struct cgroup_subsys devices_cgrp_subsys = {
+  *
+  * returns 0 on success, -EPERM case the operation is not permitted
+  */
+-static int __devcgroup_check_permission(short type, u32 major, u32 minor,
++static int devcgroup_legacy_check_permission(short type, u32 major, u32 minor,
+ 					short access)
+ {
+ 	struct dev_cgroup *dev_cgroup;
+@@ -825,6 +827,10 @@ static int __devcgroup_check_permission(short type, u32 major, u32 minor,
+ 	return 0;
+ }
+ 
++#endif /* CONFIG_CGROUP_DEVICE */
++
++#if defined(CONFIG_CGROUP_DEVICE) || defined(CONFIG_CGROUP_BPF)
++
+ int devcgroup_check_permission(short type, u32 major, u32 minor, short access)
+ {
+ 	int rc = BPF_CGROUP_RUN_PROG_DEVICE_CGROUP(type, major, minor, access);
+@@ -832,6 +838,13 @@ int devcgroup_check_permission(short type, u32 major, u32 minor, short access)
+ 	if (rc)
+ 		return -EPERM;
+ 
+-	return __devcgroup_check_permission(type, major, minor, access);
++	#ifdef CONFIG_CGROUP_DEVICE
++	return devcgroup_legacy_check_permission(type, major, minor, access);
++
++	#else /* CONFIG_CGROUP_DEVICE */
++	return 0;
++
++	#endif /* CONFIG_CGROUP_DEVICE */
+ }
+ EXPORT_SYMBOL(devcgroup_check_permission);
++#endif /* defined(CONFIG_CGROUP_DEVICE) || defined(CONFIG_CGROUP_BPF) */
+-- 
+2.26.0
 
-> 
-> thanks,
-> jirka
-> 
->> ---
->>  tools/perf/builtin-ftrace.c |  5 +++--
->>  tools/perf/design.txt       |  3 ++-
->>  tools/perf/util/cap.h       |  4 ++++
->>  tools/perf/util/evsel.c     | 10 +++++-----
->>  tools/perf/util/util.c      |  1 +
->>  5 files changed, 15 insertions(+), 8 deletions(-)
->>
->> diff --git a/tools/perf/builtin-ftrace.c b/tools/perf/builtin-ftrace.c
->> index d5adc417a4ca..55eda54240fb 100644
->> --- a/tools/perf/builtin-ftrace.c
->> +++ b/tools/perf/builtin-ftrace.c
->> @@ -284,10 +284,11 @@ static int __cmd_ftrace(struct perf_ftrace *ftrace, int argc, const char **argv)
->>  		.events = POLLIN,
->>  	};
->>  
->> -	if (!perf_cap__capable(CAP_SYS_ADMIN)) {
->> +	if (!(perf_cap__capable(CAP_PERFMON) ||
->> +	      perf_cap__capable(CAP_SYS_ADMIN))) {
->>  		pr_err("ftrace only works for %s!\n",
->>  #ifdef HAVE_LIBCAP_SUPPORT
->> -		"users with the SYS_ADMIN capability"
->> +		"users with the CAP_PERFMON or CAP_SYS_ADMIN capability"
->>  #else
->>  		"root"
->>  #endif
->> diff --git a/tools/perf/design.txt b/tools/perf/design.txt
->> index 0453ba26cdbd..a42fab308ff6 100644
->> --- a/tools/perf/design.txt
->> +++ b/tools/perf/design.txt
->> @@ -258,7 +258,8 @@ gets schedule to. Per task counters can be created by any user, for
->>  their own tasks.
->>  
->>  A 'pid == -1' and 'cpu == x' counter is a per CPU counter that counts
->> -all events on CPU-x. Per CPU counters need CAP_SYS_ADMIN privilege.
->> +all events on CPU-x. Per CPU counters need CAP_PERFMON or CAP_SYS_ADMIN
->> +privilege.
->>  
->>  The 'flags' parameter is currently unused and must be zero.
->>  
->> diff --git a/tools/perf/util/cap.h b/tools/perf/util/cap.h
->> index 051dc590ceee..ae52878c0b2e 100644
->> --- a/tools/perf/util/cap.h
->> +++ b/tools/perf/util/cap.h
->> @@ -29,4 +29,8 @@ static inline bool perf_cap__capable(int cap __maybe_unused)
->>  #define CAP_SYSLOG	34
->>  #endif
->>  
->> +#ifndef CAP_PERFMON
->> +#define CAP_PERFMON	38
->> +#endif
->> +
->>  #endif /* __PERF_CAP_H */
->> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
->> index 816d930d774e..2696922f06bc 100644
->> --- a/tools/perf/util/evsel.c
->> +++ b/tools/perf/util/evsel.c
->> @@ -2507,14 +2507,14 @@ int perf_evsel__open_strerror(struct evsel *evsel, struct target *target,
->>  		 "You may not have permission to collect %sstats.\n\n"
->>  		 "Consider tweaking /proc/sys/kernel/perf_event_paranoid,\n"
->>  		 "which controls use of the performance events system by\n"
->> -		 "unprivileged users (without CAP_SYS_ADMIN).\n\n"
->> +		 "unprivileged users (without CAP_PERFMON or CAP_SYS_ADMIN).\n\n"
->>  		 "The current value is %d:\n\n"
->>  		 "  -1: Allow use of (almost) all events by all users\n"
->>  		 "      Ignore mlock limit after perf_event_mlock_kb without CAP_IPC_LOCK\n"
->> -		 ">= 0: Disallow ftrace function tracepoint by users without CAP_SYS_ADMIN\n"
->> -		 "      Disallow raw tracepoint access by users without CAP_SYS_ADMIN\n"
->> -		 ">= 1: Disallow CPU event access by users without CAP_SYS_ADMIN\n"
->> -		 ">= 2: Disallow kernel profiling by users without CAP_SYS_ADMIN\n\n"
->> +		 ">= 0: Disallow ftrace function tracepoint by users without CAP_PERFMON or CAP_SYS_ADMIN\n"
->> +		 "      Disallow raw tracepoint access by users without CAP_SYS_PERFMON or CAP_SYS_ADMIN\n"
->> +		 ">= 1: Disallow CPU event access by users without CAP_PERFMON or CAP_SYS_ADMIN\n"
->> +		 ">= 2: Disallow kernel profiling by users without CAP_PERFMON or CAP_SYS_ADMIN\n\n"
->>  		 "To make this setting permanent, edit /etc/sysctl.conf too, e.g.:\n\n"
->>  		 "	kernel.perf_event_paranoid = -1\n" ,
->>  				 target->system_wide ? "system-wide " : "",
->> diff --git a/tools/perf/util/util.c b/tools/perf/util/util.c
->> index d707c9624dd9..37a9492edb3e 100644
->> --- a/tools/perf/util/util.c
->> +++ b/tools/perf/util/util.c
->> @@ -290,6 +290,7 @@ int perf_event_paranoid(void)
->>  bool perf_event_paranoid_check(int max_level)
->>  {
->>  	return perf_cap__capable(CAP_SYS_ADMIN) ||
->> +			perf_cap__capable(CAP_PERFMON) ||
->>  			perf_event_paranoid() <= max_level;
->>  }
->>  
->> -- 
->> 2.24.1
->>
-> 
