@@ -2,327 +2,140 @@ Return-Path: <SRS0=SHQt=5T=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MSGID_FROM_MTA_HEADER,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45F0DC2BA17
-	for <linux-security-module@archiver.kernel.org>; Fri,  3 Apr 2020 18:08:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3F4FC2BA18
+	for <linux-security-module@archiver.kernel.org>; Fri,  3 Apr 2020 22:37:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 052992077D
-	for <linux-security-module@archiver.kernel.org>; Fri,  3 Apr 2020 18:08:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 749532078C
+	for <linux-security-module@archiver.kernel.org>; Fri,  3 Apr 2020 22:37:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="pIsRWgso";
+	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="AeFC5Hyd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404322AbgDCSH1 (ORCPT
+        id S2388948AbgDCWhT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 3 Apr 2020 14:07:27 -0400
-Received: from raptor.unsafe.ru ([5.9.43.93]:37886 "EHLO raptor.unsafe.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728310AbgDCSH1 (ORCPT
+        Fri, 3 Apr 2020 18:37:19 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:11880 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388922AbgDCWhT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 3 Apr 2020 14:07:27 -0400
-Received: from comp-core-i7-2640m-0182e6.redhat.com (ip-89-102-33-211.net.upcbroadband.cz [89.102.33.211])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by raptor.unsafe.ru (Postfix) with ESMTPSA id A9A17209CB;
-        Fri,  3 Apr 2020 18:07:20 +0000 (UTC)
-From:   Alexey Gladkov <gladkov.alexey@gmail.com>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Alexey Gladkov <legion@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        David Howells <dhowells@redhat.com>
-Subject: [PATCH v11 0/8] proc: modernize proc to support multiple private instances
-Date:   Fri,  3 Apr 2020 20:06:40 +0200
-Message-Id: <20200403180648.721362-1-gladkov.alexey@gmail.com>
-X-Mailer: git-send-email 2.25.2
+        Fri, 3 Apr 2020 18:37:19 -0400
+Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 033MV5Ab022207;
+        Fri, 3 Apr 2020 15:37:13 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=date : from : to : cc :
+ subject : message-id : references : content-type : in-reply-to :
+ mime-version; s=facebook; bh=orVTRiVunI3muYjWiUhSjohyYMfn4ykT064MFswaZ7k=;
+ b=pIsRWgso+tw0W/eVTxNm9b+Y8ztUl78s8dkeZlQ4Szknny2Cv8W+Wcibm9Fh3CAww57n
+ 0nrs9mh2KN2Taey07JRKjgfXegpuzjx35WbEeSsQbmxMkq3VWPa8iv6uKFnb4b1yEZV8
+ NwK8TGkqqnOtu1D5WyEvUxtHv/riI7EvDt8= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com with ESMTP id 30671528nq-2
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Fri, 03 Apr 2020 15:37:12 -0700
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (100.104.31.183)
+ by o365-in.thefacebook.com (100.104.35.175) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1847.3; Fri, 3 Apr 2020 15:37:10 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=IojIATX1K9TXVV2LCBvB4ykFawUrS7+FrxMne4Ys9643vdo8LiLbKM8YiFgCCN3Dri0KISudhsjqm/MdpRuez0W3A/Ft1Wka/1+jyNnIaCHIDRoCbaiJE3zEviQO6I1HFtszETBY7qA0gNElTQzQbuL9Yr+3mwPTR2w1Z7RvLcKYvSMrnGk9pH2qXQ8Hq73L14rYfbT5Yyjxop9EmFbXBs6PJsPzOinAAmMHNRSB80qguhf/b57Bb91nuf51B4dKeCWHoKOx9xC3RvPBG/UQ5h9fVQqElEQK+VVmU4/9za1PQ7aJHsFiBdemW4CS2tAulAqj+oByeeUCWhKcEZGjHQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=orVTRiVunI3muYjWiUhSjohyYMfn4ykT064MFswaZ7k=;
+ b=DWE8snAEMH+yxy/+L+8CUyBTyGm9NgmyvNG3ZWDa83tLgSC8Ec/7pAyMklD7fNuYYWFxxLqYX6QOv5oF3T51sdY1Le//3W9RhFZDLcbrpp8dZheyjADGstZ7xMaUmIPa6NkYaXRhp2m41Zmi9y88KrZjoovRxj7ORg9AWoofEs1FKE1zaONGmBJm5M5lkaaqXO5rN05pYz4KqaGDBlBoaSv4oovi4BN5SfInCn3OETN0OP6ThpGMQSYb8ELSUiZJDPZO6M7Og5XsB5KJgSj8He4VD/jh9tviDGvLk9FIQhpWYuDkF7P+F1vU5kmUGxMBDtpJoUEJ95elCbJU+RXJPg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
+ header.d=fb.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector2-fb-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=orVTRiVunI3muYjWiUhSjohyYMfn4ykT064MFswaZ7k=;
+ b=AeFC5HydC2rMv/8IRToJj53O1u6zL1hRNZ5Z90MgzjxX/9X3am84SvdSzd/3tAWPXgcdNTUrF9lWCbCtm7fcBUIunjMNTrgF0WZXEIx908nFYRcHJlCKL/XSd2C/MPbE0fhtMjxZAxOFpKCXwsVYTOG+xUCZNtFX+uamQCr1J04=
+Received: from BYAPR15MB4136.namprd15.prod.outlook.com (20.177.229.24) by
+ BYAPR15MB2887.namprd15.prod.outlook.com (20.178.237.209) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2878.19; Fri, 3 Apr 2020 22:37:09 +0000
+Received: from BYAPR15MB4136.namprd15.prod.outlook.com
+ ([fe80::bdf9:6577:1d2a:a275]) by BYAPR15MB4136.namprd15.prod.outlook.com
+ ([fe80::bdf9:6577:1d2a:a275%7]) with mapi id 15.20.2856.019; Fri, 3 Apr 2020
+ 22:37:09 +0000
+Date:   Fri, 3 Apr 2020 15:37:04 -0700
+From:   Roman Gushchin <guro@fb.com>
+To:     Odin Ugedal <odin@ugedal.com>
+CC:     <bpf@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <tj@kernel.org>,
+        <Harish.Kasiviswanathan@amd.com>, <amd-gfx@lists.freedesktop.org>
+Subject: Re: [PATCH] device_cgroup: Cleanup cgroup eBPF device filter code
+Message-ID: <20200403223704.GA306670@carbon.dhcp.thefacebook.com>
+References: <20200403175528.225990-1-odin@ugedal.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200403175528.225990-1-odin@ugedal.com>
+X-ClientProxiedBy: CO2PR04CA0152.namprd04.prod.outlook.com (2603:10b6:104::30)
+ To BYAPR15MB4136.namprd15.prod.outlook.com (2603:10b6:a03:96::24)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.1 (raptor.unsafe.ru [5.9.43.93]); Fri, 03 Apr 2020 18:07:23 +0000 (UTC)
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from carbon.dhcp.thefacebook.com (2620:10d:c090:400::5:71d6) by CO2PR04CA0152.namprd04.prod.outlook.com (2603:10b6:104::30) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2878.15 via Frontend Transport; Fri, 3 Apr 2020 22:37:08 +0000
+X-Originating-IP: [2620:10d:c090:400::5:71d6]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: dd6d0a80-23b9-4f07-37d7-08d7d81f8b5e
+X-MS-TrafficTypeDiagnostic: BYAPR15MB2887:
+X-Microsoft-Antispam-PRVS: <BYAPR15MB2887E8AD37FE718C555ACEE1BEC70@BYAPR15MB2887.namprd15.prod.outlook.com>
+X-FB-Source: Internal
+X-MS-Oob-TLC-OOBClassifiers: OLM:1227;
+X-Forefront-PRVS: 0362BF9FDB
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR15MB4136.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(10019020)(366004)(346002)(136003)(376002)(39860400002)(396003)(81166006)(478600001)(66946007)(86362001)(6916009)(52116002)(6506007)(2906002)(7696005)(66476007)(66556008)(316002)(81156014)(55016002)(5660300002)(4326008)(9686003)(6666004)(186003)(8936002)(8676002)(33656002)(16526019)(1076003)(4744005);DIR:OUT;SFP:1102;
+Received-SPF: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: I2gzfofFl/6VmFzQlEgVA+ey0W7Zn3/ie8CrZlVOPtZDO6GS3UttuWLpM6g8XNzGAEyswiI70KpYq/6rXGobWpbeh/GjoCTCryWGTnkxRQtWcbQrkpUIbiKtFGMVizOIVtJjd2AbzVpBJOroqVtHuBpHXFi+8o/X4P3noJv57jgYte0eyjY3jCAguGJOxAilP5PSps/OqbEaYHiTP9s35JU+fbMlSp5Ov8vdVdkZgZyjAz46QEVzOQ/8lIzgae6yF77WY7IZ+uS6ZkNTqpCy4O5+XIMBHkq35YjGOvcQdDA1csIFnCzKz+DBDGJlxiIOenhPooktK/2l08LXoYkhHvFK+xwjNpaRSVzQcf091SQuT/LjuwN88rlQRaXqelv51LPz0A9e4TFJjXCXZbQE0AfztNfEfr1nEjVlKfhb9P7uY71x6pgSI2dW3U0ui7oh
+X-MS-Exchange-AntiSpam-MessageData: zPnNOeLuXvygXAsutdLup0oQbXCvwQHRi8I+CeC7lFFgLmD779VOeXOikCX7S+nVCT7K3vRgRSV5fQ9qHF7jWqrpee1h0suG+DiPpH4t4RJ+SlgaRnUMAnIFe12QMgL3tuGpY9TwNsGnY9SclMHVkOPJsIcKjdzXiCv0/NPqRKPcBjN8VqR30x3S1g8//t7Y
+X-MS-Exchange-CrossTenant-Network-Message-Id: dd6d0a80-23b9-4f07-37d7-08d7d81f8b5e
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Apr 2020 22:37:09.2076
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: B7jJ36HbcgBEBVnE9nVGIG/eySBgjBIu15HNpzPHEseQ1d3+sI0hWOJ0sAYUgquR
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB2887
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
+ definitions=2020-04-03_19:2020-04-03,2020-04-03 signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 mlxlogscore=953
+ spamscore=0 clxscore=1011 phishscore=0 mlxscore=0 impostorscore=0
+ adultscore=0 lowpriorityscore=0 suspectscore=1 malwarescore=0
+ priorityscore=1501 bulkscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2003020000 definitions=main-2004030173
+X-FB-Internal: deliver
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Preface:
---------
-This is patchset v11 to modernize procfs and make it able to support multiple
-private instances per the same pid namespace.
+On Fri, Apr 03, 2020 at 07:55:28PM +0200, Odin Ugedal wrote:
+> Original cgroup v2 eBPF code for filtering device access made it
+> possible to compile with CONFIG_CGROUP_DEVICE=n and still use the eBPF
+> filtering. Change 
+> commit 4b7d4d453fc4 ("device_cgroup: Export devcgroup_check_permission")
+> reverted this, making it required to set it to y.
+> 
+> Since the device filtering (and all the docs) for cgroup v2 is no longer
+> a "device controller" like it was in v1, someone might compile their
+> kernel with CONFIG_CGROUP_DEVICE=n. Then (for linux 5.5+) the eBPF
+> filter will not be invoked, and all processes will be allowed access
+> to all devices, no matter what the eBPF filter says.
+> 
+> Signed-off-by: Odin Ugedal <odin@ugedal.com>
 
-This patchset can be applied on top of:
+Hello, Odin!
 
-git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace.git 4b871ce26ab2
+The patch makes perfect sense to me.
 
+Acked-by: Roman Gushchin <guro@fb.com>
 
-Procfs modernization:
----------------------
-Historically procfs was always tied to pid namespaces, during pid
-namespace creation we internally create a procfs mount for it. However,
-this has the effect that all new procfs mounts are just a mirror of the
-internal one, any change, any mount option update, any new future
-introduction will propagate to all other procfs mounts that are in the
-same pid namespace.
-
-This may have solved several use cases in that time. However today we
-face new requirements, and making procfs able to support new private
-instances inside same pid namespace seems a major point. If we want to
-to introduce new features and security mechanisms we have to make sure
-first that we do not break existing usecases. Supporting private procfs
-instances will allow to support new features and behaviour without
-propagating it to all other procfs mounts.
-
-Today procfs is more of a burden especially to some Embedded, IoT,
-sandbox, container use cases. In user space we are over-mounting null
-or inaccessible files on top to hide files and information. If we want
-to hide pids we have to create PID namespaces otherwise mount options
-propagate to all other proc mounts, changing a mount option value in one
-mount will propagate to all other proc mounts. If we want to introduce
-new features, then they will propagate to all other mounts too, resulting
-either maybe new useful functionality or maybe breaking stuff. We have
-also to note that userspace should not workaround procfs, the kernel
-should just provide a sane simple interface.
-
-In this regard several developers and maintainers pointed out that
-there are problems with procfs and it has to be modernized:
-
-"Here's another one: split up and modernize /proc." by Andy Lutomirski [1]
-
-Discussion about kernel pointer leaks:
-
-"And yes, as Kees and Daniel mentioned, it's definitely not just dmesg.
-In fact, the primary things tend to be /proc and /sys, not dmesg
-itself." By Linus Torvalds [2]
-
-Lot of other areas in the kernel and filesystems have been updated to be
-able to support private instances, devpts is one major example [3].
-
-Which will be used for:
-
-1) Embedded systems and IoT: usually we have one supervisor for
-apps, we have some lightweight sandbox support, however if we create
-pid namespaces we have to manage all the processes inside too,
-where our goal is to be able to run a bunch of apps each one inside
-its own mount namespace, maybe use network namespaces for vlans
-setups, but right now we only want mount namespaces, without all the
-other complexity. We want procfs to behave more like a real file system,
-and block access to inodes that belong to other users. The 'hidepid=' will
-not work since it is a shared mount option.
-
-2) Containers, sandboxes and Private instances of file systems - devpts case
-Historically, lot of file systems inside Linux kernel view when instantiated
-were just a mirror of an already created and mounted filesystem. This was the
-case of devpts filesystem, it seems at that time the requirements were to
-optimize things and reuse the same memory, etc. This design used to work but not
-anymore with today's containers, IoT, hostile environments and all the privacy
-challenges that Linux faces.
-
-In that regards, devpts was updated so that each new mounts is a total
-independent file system by the following patches:
-
-"devpts: Make each mount of devpts an independent filesystem" by
-Eric W. Biederman [3] [4]
-
-3) Linux Security Modules have multiple ptrace paths inside some
-subsystems, however inside procfs, the implementation does not guarantee
-that the ptrace() check which triggers the security_ptrace_check() hook
-will always run. We have the 'hidepid' mount option that can be used to
-force the ptrace_may_access() check inside has_pid_permissions() to run.
-The problem is that 'hidepid' is per pid namespace and not attached to
-the mount point, any remount or modification of 'hidepid' will propagate
-to all other procfs mounts.
-
-This also does not allow to support Yama LSM easily in desktop and user
-sessions. Yama ptrace scope which restricts ptrace and some other
-syscalls to be allowed only on inferiors, can be updated to have a
-per-task context, where the context will be inherited during fork(),
-clone() and preserved across execve(). If we support multiple private
-procfs instances, then we may force the ptrace_may_access() on
-/proc/<pids>/ to always run inside that new procfs instances. This will
-allow to specifiy on user sessions if we should populate procfs with
-pids that the user can ptrace or not.
-
-By using Yama ptrace scope, some restricted users will only be able to see
-inferiors inside /proc, they won't even be able to see their other
-processes. Some software like Chromium, Firefox's crash handler, Wine
-and others are already using Yama to restrict which processes can be
-ptracable. With this change this will give the possibility to restrict
-/proc/<pids>/ but more importantly this will give desktop users a
-generic and usuable way to specifiy which users should see all processes
-and which user can not.
-
-Side notes:
-
-* This covers the lack of seccomp where it is not able to parse
-arguments, it is easy to install a seccomp filter on direct syscalls
-that operate on pids, however /proc/<pid>/ is a Linux ABI using
-filesystem syscalls. With this change all LSMs should be able to analyze
-open/read/write/close... on /proc/<pid>/
-
-4) This will allow to implement new features either in kernel or
-userspace without having to worry about procfs.
-In containers, sandboxes, etc we have workarounds to hide some /proc
-inodes, this should be supported natively without doing extra complex
-work, the kernel should be able to support sane options that work with
-today and future Linux use cases.
-
-5) Creation of new superblock with all procfs options for each procfs
-mount will fix the ignoring of mount options. The problem is that the
-second mount of procfs in the same pid namespace ignores the mount
-options. The mount options are ignored without error until procfs is
-remounted.
-
-Before:
-
-# grep ^proc /proc/mounts
-proc /proc proc rw,relatime,hidepid=2 0 0
-
-# strace -e mount mount -o hidepid=1 -t proc proc /tmp/proc
-mount("proc", "/tmp/proc", "proc", 0, "hidepid=1") = 0
-+++ exited with 0 +++
-
-# grep ^proc /proc/mounts
-proc /proc proc rw,relatime,hidepid=2 0 0
-proc /tmp/proc proc rw,relatime,hidepid=2 0 0
-
-# mount -o remount,hidepid=1 -t proc proc /tmp/proc
-
-# grep ^proc /proc/mounts
-proc /proc proc rw,relatime,hidepid=1 0 0
-proc /tmp/proc proc rw,relatime,hidepid=1 0 0
-
-After:
-
-# grep ^proc /proc/mounts
-proc /proc proc rw,relatime,hidepid=ptraceable 0 0
-
-# mount -o hidepid=invisible -t proc proc /tmp/proc
-
-# grep ^proc /proc/mounts
-proc /proc proc rw,relatime,hidepid=ptraceable 0 0
-proc /tmp/proc proc rw,relatime,hidepid=invisible 0 0
-
-
-Introduced changes:
--------------------
-Each mount of procfs creates a separate procfs instance with its own
-mount options.
-
-This series adds few new mount options:
-
-* New 'hidepid=ptraceable' or 'hidepid=4' mount option to show only ptraceable
-processes in the procfs. This allows to support lightweight sandboxes in
-Embedded Linux, also solves the case for LSM where now with this mount option,
-we make sure that they have a ptrace path in procfs.
-
-* 'subset=pid' that allows to hide non-pid inodes from procfs. It can be used
-in containers and sandboxes, as these are already trying to hide and block
-access to procfs inodes anyway.
-
-
-ChangeLog:
-----------
-# v11:
-* After a discussion with Eric W. Biederman, the numerical values for hidepid 
-  parameter have been removed from uapi.
-* Remove proc_self and proc_thread_self from the pid_namespace struct.
-* I took into account the comment of Kees Cook.
-* Update Reviewed-by tags.
-
-# v10:
-* 'subset=pidfs' renamed to 'subset=pid' as suggested by Alexey Dobriyan.
-* Include Reviewed-by tags.
-
-# v9:
-* Rebase on top of Eric W. Biederman's procfs changes.
-* Add human readable values of 'hidepid' as suggested by Andy Lutomirski.
-
-# v8:
-* Started using RCU lock to clean dcache entries as suggested by Linus Torvalds.
-
-# v7:
-* 'pidonly=1' renamed to 'subset=pidfs' as suggested by Alexey Dobriyan.
-* HIDEPID_* moved to uapi/ as they are user interface to mount().
-  Suggested-by Alexey Dobriyan <adobriyan@gmail.com>
-
-# v6:
-* 'hidepid=' and 'gid=' mount options are moved from pid namespace to superblock.
-* 'newinstance' mount option removed as suggested by Eric W. Biederman.
-   Mount of procfs always creates a new instance.
-* 'limit_pids' renamed to 'hidepid=3'.
-* I took into account the comment of Linus Torvalds [7].
-* Documentation added.
-
-# v5:
-* Fixed a bug that caused a problem with the Fedora boot.
-* The 'pidonly' option is visible among the mount options.
-
-# v2:
-* Renamed mount options to 'newinstance' and 'pids='
-   Suggested-by: Andy Lutomirski <luto@kernel.org>
-* Fixed order of commit, Suggested-by: Andy Lutomirski <luto@kernel.org>
-* Many bug fixes.
-
-# v1:
-* Removed 'unshared' mount option and replaced it with 'limit_pids'
-   which is attached to the current procfs mount.
-   Suggested-by Andy Lutomirski <luto@kernel.org>
-* Do not fill dcache with pid entries that we can not ptrace.
-* Many bug fixes.
-
-
-References:
------------
-[1] https://lists.linuxfoundation.org/pipermail/ksummit-discuss/2017-January/004215.html
-[2] http://www.openwall.com/lists/kernel-hardening/2017/10/05/5
-[3] https://lwn.net/Articles/689539/
-[4] http://lxr.free-electrons.com/source/Documentation/filesystems/devpts.txt?v=3.14
-[5] https://lkml.org/lkml/2017/5/2/407
-[6] https://lkml.org/lkml/2017/5/3/357
-[7] https://lkml.org/lkml/2018/5/11/505
-
-
-Alexey Gladkov (8):
-  proc: rename struct proc_fs_info to proc_fs_opts
-  proc: allow to mount many instances of proc in one pid namespace
-  proc: move hide_pid, pid_gid from pid_namespace to proc_fs_info
-  proc: instantiate only pids that we can ptrace on 'hidepid=4' mount
-    option
-  proc: add option to mount only a pids subset
-  docs: proc: add documentation for "hidepid=4" and "subset=pid" options
-    and new mount behavior
-  proc: use human-readable values for hidepid
-  proc: use named enums for better readability
-
- Documentation/filesystems/proc.txt |  93 ++++++++++++++++-----
- fs/proc/base.c                     |  48 +++++++----
- fs/proc/generic.c                  |   9 ++
- fs/proc/inode.c                    |  30 +++++--
- fs/proc/root.c                     | 128 +++++++++++++++++++++++------
- fs/proc/self.c                     |   6 +-
- fs/proc/thread_self.c              |   6 +-
- fs/proc_namespace.c                |  14 ++--
- include/linux/pid_namespace.h      |  12 ---
- include/linux/proc_fs.h            |  29 +++++++
- 10 files changed, 286 insertions(+), 89 deletions(-)
-
--- 
-2.25.2
-
+Thanks!
