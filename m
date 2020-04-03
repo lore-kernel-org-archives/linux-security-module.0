@@ -1,114 +1,73 @@
-Return-Path: <SRS0=1tMQ=5S=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=SHQt=5T=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CE0DC2BA12
-	for <linux-security-module@archiver.kernel.org>; Thu,  2 Apr 2020 23:53:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E101DC43331
+	for <linux-security-module@archiver.kernel.org>; Fri,  3 Apr 2020 06:19:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C6A5206B8
-	for <linux-security-module@archiver.kernel.org>; Thu,  2 Apr 2020 23:53:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BCC44206E9
+	for <linux-security-module@archiver.kernel.org>; Fri,  3 Apr 2020 06:19:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390262AbgDBXxr (ORCPT
+        id S1731040AbgDCGTd (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 2 Apr 2020 19:53:47 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:13552 "EHLO
-        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2390286AbgDBXxr (ORCPT
+        Fri, 3 Apr 2020 02:19:33 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:56600 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730889AbgDCGTd (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 2 Apr 2020 19:53:47 -0400
-Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 032NY9Do064194
-        for <linux-security-module@vger.kernel.org>; Thu, 2 Apr 2020 19:53:46 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 304mcctv1y-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Thu, 02 Apr 2020 19:53:45 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Fri, 3 Apr 2020 00:53:31 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 3 Apr 2020 00:53:27 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 032Nrd4454591736
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 2 Apr 2020 23:53:39 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 634154C046;
-        Thu,  2 Apr 2020 23:53:39 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 720924C040;
-        Thu,  2 Apr 2020 23:53:38 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.192.10])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu,  2 Apr 2020 23:53:38 +0000 (GMT)
-Subject: Re: [PATCH v4 1/7] ima: Switch to ima_hash_algo for boot aggregate
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>,
-        James.Bottomley@HansenPartnership.com,
-        Jerry Snitselaar <jsnitsel@redhat.com>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com,
-        stable@vger.kernel.org
-Date:   Thu, 02 Apr 2020 19:53:37 -0400
-In-Reply-To: <20200325104712.25694-2-roberto.sassu@huawei.com>
-References: <20200325104712.25694-1-roberto.sassu@huawei.com>
-         <20200325104712.25694-2-roberto.sassu@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 20040223-0008-0000-0000-0000036956FE
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20040223-0009-0000-0000-00004A8AE4C0
-Message-Id: <1585871617.7311.5.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
- definitions=2020-04-02_13:2020-04-02,2020-04-02 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- suspectscore=0 bulkscore=0 mlxscore=0 adultscore=0 priorityscore=1501
- clxscore=1015 lowpriorityscore=0 malwarescore=0 phishscore=0
- mlxlogscore=999 spamscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2003020000 definitions=main-2004020169
+        Fri, 3 Apr 2020 02:19:33 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 0461C8CD493A6EBC2088;
+        Fri,  3 Apr 2020 14:17:29 +0800 (CST)
+Received: from huawei.com (10.175.124.28) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.487.0; Fri, 3 Apr 2020
+ 14:17:21 +0800
+From:   Jason Yan <yanaijie@huawei.com>
+To:     <jmorris@namei.org>, <serge@hallyn.com>,
+        <linux-security-module@vger.kernel.org>
+CC:     Jason Yan <yanaijie@huawei.com>
+Subject: [PATCH] integrity: make integrity_add_key() static
+Date:   Fri, 3 Apr 2020 14:15:57 +0800
+Message-ID: <20200403061557.19630-1-yanaijie@huawei.com>
+X-Mailer: git-send-email 2.17.2
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.175.124.28]
+X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Roberto,
+Fix the following sparse warning:
 
-On Wed, 2020-03-25 at 11:47 +0100, Roberto Sassu wrote:
-> boot_aggregate is the first entry of IMA measurement list. Its purpose is
-> to link pre-boot measurements to IMA measurements. As IMA was designed to
-> work with a TPM 1.2, the SHA1 PCR bank was always selected even if a
-> TPM 2.0 with support for stronger hash algorithms is available.
-> 
-> This patch first tries to find a PCR bank with the IMA default hash
-> algorithm. If it does not find it, it selects the SHA256 PCR bank for
-> TPM 2.0 and SHA1 for TPM 1.2. Ultimately, it selects SHA1 also for TPM 2.0
-> if the SHA256 PCR bank is not found.
-> 
-> If none of the PCR banks above can be found, boot_aggregate file digest is
-> filled with zeros, as for TPM bypass, making it impossible to perform a
-> remote attestation of the system.
-> 
-> Cc: stable@vger.kernel.org # 5.1.x
-> Fixes: 879b589210a9 ("tpm: retrieve digest size of unknown algorithms with PCR read")
-> Reported-by: Jerry Snitselaar <jsnitsel@redhat.com>
-> Suggested-by: James Bottomley <James.Bottomley@HansenPartnership.com>
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+security/integrity/digsig.c:145:12: warning: symbol 'integrity_add_key'
+was not declared. Should it be static?
 
-Thank you!  This patch set is now queued in next-integrity-testing
-during the open window.  Jerry, I assume this works for you.  Could we
-get your tag?
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Jason Yan <yanaijie@huawei.com>
+---
+ security/integrity/digsig.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-thanks!
-
-Mimi
+diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
+index e9cbadade74b..8cdda97bd196 100644
+--- a/security/integrity/digsig.c
++++ b/security/integrity/digsig.c
+@@ -142,8 +142,8 @@ int __init integrity_init_keyring(const unsigned int id)
+ 	return __integrity_init_keyring(id, perm, restriction);
+ }
+ 
+-int __init integrity_add_key(const unsigned int id, const void *data,
+-			     off_t size, key_perm_t perm)
++static int __init integrity_add_key(const unsigned int id, const void *data,
++				    off_t size, key_perm_t perm)
+ {
+ 	key_ref_t key;
+ 	int rc = 0;
+-- 
+2.17.2
 
