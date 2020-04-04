@@ -1,180 +1,109 @@
-Return-Path: <SRS0=SHQt=5T=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=Ku+9=5U=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1686BC2BA18
-	for <linux-security-module@archiver.kernel.org>; Fri,  3 Apr 2020 23:59:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E291CC43331
+	for <linux-security-module@archiver.kernel.org>; Sat,  4 Apr 2020 02:18:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DEDF2206F8
-	for <linux-security-module@archiver.kernel.org>; Fri,  3 Apr 2020 23:59:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Bbhh3fmX"
+	by mail.kernel.org (Postfix) with ESMTP id A737D206F6
+	for <linux-security-module@archiver.kernel.org>; Sat,  4 Apr 2020 02:18:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1585966695;
+	bh=njNMvkZSwli/XJkxlAL53ySvEgIh59jJQ3Da06ltvek=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=jIyMsWICiqRt+qWuom4GyY/ldL9TucO3OuS7d7VXd0sxh0D7NvS+B3e7HrvNEKo3F
+	 tp3SVk4bd1qgJPOeVqeEKqfTWVohrDua6YsEpArC8yR93W1K/Bp1jAKGg0AYTMEeI1
+	 H+cAy1vPxcIEzhk5Umd5bRo0F0s9pzc473JCNmqY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726302AbgDCX71 (ORCPT
+        id S1726208AbgDDCSP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 3 Apr 2020 19:59:27 -0400
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:39986 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725980AbgDCX71 (ORCPT
+        Fri, 3 Apr 2020 22:18:15 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:45200 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726028AbgDDCSO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 3 Apr 2020 19:59:27 -0400
-Received: by mail-pj1-f66.google.com with SMTP id kx8so3738167pjb.5
-        for <linux-security-module@vger.kernel.org>; Fri, 03 Apr 2020 16:59:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=YCa/Qs0yPmh3XTwnN4PsbMB277OSr9D+GN0maXxjMHA=;
-        b=Bbhh3fmXAiGdRNFedcwh3XwyQ26GhP6Z9oRxi/DD0ElrQbHJt8FP23Due9BPsALnlu
-         cdsBGZMeu1Kd8/vgELs72HvtyNixfzg4EaDAo5O2ENQpAqF+HriRbxrU9MqmUByE9IP0
-         IyiltCvmyvjnf3QdBrKiVqJ2X8ZPSJrLSlitI=
+        Fri, 3 Apr 2020 22:18:14 -0400
+Received: by mail-wr1-f68.google.com with SMTP id t7so10674736wrw.12;
+        Fri, 03 Apr 2020 19:18:12 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=YCa/Qs0yPmh3XTwnN4PsbMB277OSr9D+GN0maXxjMHA=;
-        b=rS6xsoLCFikiNLnj2YupeReVRP8oPPfz2gc3bxZ7NTJx0xQ/2tMOiTUFbV/01rT3zr
-         e/kbCQLk/IZxr0XFE0EOKqVtMKu8mxZhqqnOMjOy/H6quwXsItCWI4oB0XCBXK6/1Hkq
-         1qm92gRNaC3kR/d8f/YzTPOca2JMLNohAzauYoNkyOF5XpVGn/6KFwfwtMNizIwspYrh
-         c6XAG5/2c6BJ8cunN4mKcFhiveozw0QIm9gbJTrAK/p+bYNjqG80W6ttm4hFEHRS/+nb
-         decX5CGgmTtDcUWD1/eFDjtL2Rhv5gzxUTsbgcqhhPHQ8IaJqE+3S8E/WKypMyzkBdEO
-         +jpQ==
-X-Gm-Message-State: AGi0PuaYtOb3vjSIpBWBOb3/2yphr23Z5poMT9Y6h6K/DxAN2KZqjN1y
-        rBBB6qcvOAte/sD/jiQ2OBLN7Q==
-X-Google-Smtp-Source: APiQypKaLpvqre5tI8MwDWqt73Tqg7m9h+IsHfp66R3KYbvS+0hTX2lg8k4AHfoG5/7A9eafgxz9Gw==
-X-Received: by 2002:a17:90a:21ac:: with SMTP id q41mr12995017pjc.41.1585958365843;
-        Fri, 03 Apr 2020 16:59:25 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id m3sm6071311pgt.27.2020.04.03.16.59.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Apr 2020 16:59:24 -0700 (PDT)
-Date:   Fri, 3 Apr 2020 16:59:23 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Alexey Gladkov <gladkov.alexey@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Alexey Gladkov <legion@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [PATCH v10 7/9] proc: move hidepid values to uapi as they are
- user interface to mount
-Message-ID: <202004031658.8D0C048E3@keescook>
-References: <20200327172331.418878-1-gladkov.alexey@gmail.com>
- <20200327172331.418878-8-gladkov.alexey@gmail.com>
- <875zehkeob.fsf@x220.int.ebiederm.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=njNMvkZSwli/XJkxlAL53ySvEgIh59jJQ3Da06ltvek=;
+        b=gv9D3JLkR70KFj803XPuYbGbgbQUTnF2FrnoTRCbbyCT1noB0z+FIf+evrwabohIRE
+         Xs7DmBRIK5YH65XgsD/wfj8UOijueV0y8ldaSbEbVXMSFomtUjE7eMwH67LkQifUZ2O+
+         HbFIhdzp/d05b5U0Z4MdwG2ALUoX2pHasMVACM3WZmjWl87i4in4XF6ehNiX/H5A44Yp
+         QXeMbzwQre3qKxS1vFmV3tH5+nH1EMsJWTFFPkZ5RdxwNmBkvfWuKIY096LQ0UD82DUv
+         Qwt9FX7rMCWNGjv+0hFq7ku6M2RmERk3YYwauJIeE125Wr9B7tWHWnQXeNKW2jcXvwY6
+         /rLg==
+X-Gm-Message-State: AGi0PuYXXSS1gplkz101/0uZWKZvBpSsWcphwzB8LqxcPm2IRusv8xWU
+        7lHP2S3iL9x9gSFal2VkovtWFkmTi14gPY6vGx4=
+X-Google-Smtp-Source: APiQypITt+t9SHGiW3VBj3kiVR4I11z137wBPJZ4Q7W9GsJPRGwRvzLCZ0lCixu8k2odpcKExmR8YBOh7LpnxfMyanc=
+X-Received: by 2002:a5d:474b:: with SMTP id o11mr11926654wrs.391.1585966692198;
+ Fri, 03 Apr 2020 19:18:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <875zehkeob.fsf@x220.int.ebiederm.org>
+References: <f96f8f8a-e65c-3f36-dc85-fc3f5191e8c5@linux.intel.com> <a66d5648-2b8e-577e-e1f2-1d56c017ab5e@linux.intel.com>
+In-Reply-To: <a66d5648-2b8e-577e-e1f2-1d56c017ab5e@linux.intel.com>
+From:   Namhyung Kim <namhyung@kernel.org>
+Date:   Sat, 4 Apr 2020 11:18:01 +0900
+Message-ID: <CAM9d7cgRczLcyUi1y96a=87Hh3BhFgRUS8Kw=DBg4C0hVYj2HQ@mail.gmail.com>
+Subject: Re: [PATCH v8 04/12] perf tool: extend Perf tool with CAP_PERFMON
+ capability support
+To:     Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        Serge Hallyn <serge@hallyn.com>, Jiri Olsa <jolsa@redhat.com>,
+        Song Liu <songliubraving@fb.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Stephane Eranian <eranian@google.com>,
+        Igor Lubashev <ilubashe@akamai.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        linux-man@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Apr 02, 2020 at 11:58:28AM -0500, Eric W. Biederman wrote:
-> 
-> I will just say that I do not understand exporting this to the uapi
-> headers.  Why do we want to export the enumeration names?
-> 
-> I understand that the values are uapi.  This looks like it will make it
-> difficult to make changes that rename enumeration values to make
-> the code more readable.
-> 
-> Given that this patchset goes immediately to using string enumerated
-> values, I also don't understand the point of exporting
-> HIDEPID_NOT_PTRACEABLE.  I don't think we need to ever let
-> people use the numeric value.
-> 
-> My sense is that if we are switching to string values we should
-> just leave the existing numeric values as backwards compatiblity
-> and not do anything to make them easier to use.
+Hello,
 
-Yeah, that's what I had suggested too. Let's not export this to UAPI.
+On Thu, Apr 2, 2020 at 5:47 PM Alexey Budankov
+<alexey.budankov@linux.intel.com> wrote:
+>
+>
+> Extend error messages to mention CAP_PERFMON capability as an option
+> to substitute CAP_SYS_ADMIN capability for secure system performance
+> monitoring and observability operations. Make perf_event_paranoid_check()
+> and __cmd_ftrace() to be aware of CAP_PERFMON capability.
+>
+> CAP_PERFMON implements the principal of least privilege for performance
+> monitoring and observability operations (POSIX IEEE 1003.1e 2.2.2.39
+> principle of least privilege: A security design principle that states
+> that a process or program be granted only those privileges (e.g.,
+> capabilities) necessary to accomplish its legitimate function, and only
+> for the time that such privileges are actually required)
+>
+> For backward compatibility reasons access to perf_events subsystem remains
+> open for CAP_SYS_ADMIN privileged processes but CAP_SYS_ADMIN usage for
+> secure perf_events monitoring is discouraged with respect to CAP_PERFMON
+> capability.
+>
+> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+> Reviewed-by: James Morris <jamorris@linux.microsoft.com>
 
--Kees
+Acked-by: Namhyung Kim <namhyung@kernel.org>
 
-> 
-> Eric
-> 
-> 
-> Alexey Gladkov <gladkov.alexey@gmail.com> writes:
-> 
-> > Suggested-by: Alexey Dobriyan <adobriyan@gmail.com>
-> > Reviewed-by: Alexey Dobriyan <adobriyan@gmail.com>
-> > Signed-off-by: Alexey Gladkov <gladkov.alexey@gmail.com>
-> > ---
-> >  include/linux/proc_fs.h      |  9 +--------
-> >  include/uapi/linux/proc_fs.h | 13 +++++++++++++
-> >  2 files changed, 14 insertions(+), 8 deletions(-)
-> >  create mode 100644 include/uapi/linux/proc_fs.h
-> >
-> > diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
-> > index afd38cae2339..d259817ec913 100644
-> > --- a/include/linux/proc_fs.h
-> > +++ b/include/linux/proc_fs.h
-> > @@ -7,6 +7,7 @@
-> >  
-> >  #include <linux/types.h>
-> >  #include <linux/fs.h>
-> > +#include <uapi/linux/proc_fs.h>
-> >  
-> >  struct proc_dir_entry;
-> >  struct seq_file;
-> > @@ -27,14 +28,6 @@ struct proc_ops {
-> >  	unsigned long (*proc_get_unmapped_area)(struct file *, unsigned long, unsigned long, unsigned long, unsigned long);
-> >  };
-> >  
-> > -/* definitions for hide_pid field */
-> > -enum {
-> > -	HIDEPID_OFF	  = 0,
-> > -	HIDEPID_NO_ACCESS = 1,
-> > -	HIDEPID_INVISIBLE = 2,
-> > -	HIDEPID_NOT_PTRACEABLE = 4, /* Limit pids to only ptraceable pids */
-> > -};
-> > -
-> >  /* definitions for proc mount option pidonly */
-> >  enum {
-> >  	PROC_PIDONLY_OFF = 0,
-> > diff --git a/include/uapi/linux/proc_fs.h b/include/uapi/linux/proc_fs.h
-> > new file mode 100644
-> > index 000000000000..dc6d717aa6ec
-> > --- /dev/null
-> > +++ b/include/uapi/linux/proc_fs.h
-> > @@ -0,0 +1,13 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-> > +#ifndef _UAPI_PROC_FS_H
-> > +#define _UAPI_PROC_FS_H
-> > +
-> > +/* definitions for hide_pid field */
-> > +enum {
-> > +	HIDEPID_OFF            = 0,
-> > +	HIDEPID_NO_ACCESS      = 1,
-> > +	HIDEPID_INVISIBLE      = 2,
-> > +	HIDEPID_NOT_PTRACEABLE = 4,
-> > +};
-> > +
-> > +#endif
-
--- 
-Kees Cook
+Thanks
+Namhyung
