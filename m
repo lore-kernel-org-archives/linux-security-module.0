@@ -1,142 +1,134 @@
-Return-Path: <SRS0=Ku+9=5U=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=1b+D=5V=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E5E6C2BA15
-	for <linux-security-module@archiver.kernel.org>; Sat,  4 Apr 2020 23:35:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04CF7C2BA16
+	for <linux-security-module@archiver.kernel.org>; Sun,  5 Apr 2020 03:11:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4ED8B206D4
-	for <linux-security-module@archiver.kernel.org>; Sat,  4 Apr 2020 23:35:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC5AC206A3
+	for <linux-security-module@archiver.kernel.org>; Sun,  5 Apr 2020 03:11:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OA7iB1Dm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726399AbgDDXfa (ORCPT
+        id S1726396AbgDEDLE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 4 Apr 2020 19:35:30 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:40792 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726323AbgDDXfa (ORCPT
+        Sat, 4 Apr 2020 23:11:04 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:49596 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726057AbgDEDLE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 4 Apr 2020 19:35:30 -0400
-Received: from static-50-53-47-111.bvtn.or.frontiernet.net ([50.53.47.111] helo=[192.168.192.153])
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <john.johansen@canonical.com>)
-        id 1jKsJs-0006aA-0h; Sat, 04 Apr 2020 23:35:20 +0000
-Subject: Re: [PATCH] apparmor: fix potential label refcnt leak in
- aa_change_profile
-To:     Xiyu Yang <xiyuyang19@fudan.edu.cn>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     yuanxzhang@fudan.edu.cn, kjlu@umn.edu,
-        Xin Tan <tanxin.ctf@gmail.com>
-References: <1585493861-9867-1-git-send-email-xiyuyang19@fudan.edu.cn>
-From:   John Johansen <john.johansen@canonical.com>
-Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: Canonical
-Message-ID: <2d905eaf-749f-e2c5-f1fa-51806848e50f@canonical.com>
-Date:   Sat, 4 Apr 2020 16:35:16 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        Sat, 4 Apr 2020 23:11:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1586056263;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=EG5ytn3q4cjrK4N/hwUftqYJUijBPztWPiSrSQnYoRI=;
+        b=OA7iB1Dm1pXRGyEi5r57zEPfUlGkNIVURBO68AK6OP9XW7XyzKh1jaQdKC/OBCqPFqvGt8
+        zyhnA3XQCHgLMdsleZqr/QTVx74fTDmiY2DmFr+cHy2yVL4s/A2K7PDFlJwHPblA4K0WJm
+        w/bCvGQKylxwrzONxZyhVgcX5hVFw9g=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-400-5rHQ2HdINEyC9VBzDOicDQ-1; Sat, 04 Apr 2020 23:11:01 -0400
+X-MC-Unique: 5rHQ2HdINEyC9VBzDOicDQ-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C3A9A100551A;
+        Sun,  5 Apr 2020 03:10:59 +0000 (UTC)
+Received: from llong.remote.csb (ovpn-112-153.rdu2.redhat.com [10.10.112.153])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D4B2D1001B09;
+        Sun,  5 Apr 2020 03:10:57 +0000 (UTC)
+Subject: Re: [GIT PULL] keys: Fix key->sem vs mmap_sem issue when reading key
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        keyrings@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <1437197.1585570598@warthog.procyon.org.uk>
+ <CAHk-=wgWnZCvTFDfiYAy=uMUf2F1Yy1r9ur5ARcmtqLjX8Tz4Q@mail.gmail.com>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <78ff6e5d-9643-8798-09cb-65b1415140be@redhat.com>
+Date:   Sat, 4 Apr 2020 23:10:57 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-In-Reply-To: <1585493861-9867-1-git-send-email-xiyuyang19@fudan.edu.cn>
+In-Reply-To: <CAHk-=wgWnZCvTFDfiYAy=uMUf2F1Yy1r9ur5ARcmtqLjX8Tz4Q@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 3/29/20 7:57 AM, Xiyu Yang wrote:
-> aa_change_profile() invokes aa_get_current_label(), which returns
-> a reference of the current task's label.
-> 
-> According to the comment of aa_get_current_label(), the returned
-> reference must be put with aa_put_label().
-> However, when the original object pointed by "label" becomes
-> unreachable because aa_change_profile() returns or a new object
-> is assigned to "label", reference count increased by
-> aa_get_current_label() is not decreased, causing a refcnt leak.
-> 
-> Fix this by calling aa_put_label() before the original object pointed
-> by "label" becomes unreachable.
-> 
-> Signed-off-by: Xiyu Yang <xiyuyang19@fudan.edu.cn>
-> Signed-off-by: Xin Tan <tanxin.ctf@gmail.com>
-> ---
->  security/apparmor/domain.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
-> index 6ceb74e0f789..b99145ae34c0 100644
-> --- a/security/apparmor/domain.c
-> +++ b/security/apparmor/domain.c
-> @@ -1328,6 +1328,7 @@ int aa_change_profile(const char *fqname, int flags)
->  		ctx->nnp = aa_get_label(label);
->  
->  	if (!fqname || !*fqname) {
-> +		aa_put_label(label);
->  		AA_DEBUG("no profile name");
->  		return -EINVAL;
->  	}
-> @@ -1346,6 +1347,7 @@ int aa_change_profile(const char *fqname, int flags)
->  			op = OP_CHANGE_PROFILE;
->  	}
->  
-> +	aa_put_label(label);
->  	label = aa_get_current_label();
+On 4/4/20 4:00 PM, Linus Torvalds wrote:
+> On Mon, Mar 30, 2020 at 5:16 AM David Howells <dhowells@redhat.com> wrote:
+>>  security/keys/internal.h                  |  12 ++++
+> This isn't so much about this pull (which I have taken), as about the
+> fact that this code re-inforces bad behavior we already in the slub
+> layer, and now extends it further to kvfree.
+>
+> Doing this:
+>
+>
+>    __kvzfree(const void *addr, size_t len)
+>   ..
+>                 memset((void *)addr, 0, len);
+>                 kvfree(addr);
+>
+> is wrong to begin with. It's wrong because if the compiler ever knows
+> that kvfree is a freeing function (with something like
+> __attribute__((free)) - I don't think gcc is smart enough today), the
+> compiler might throw the memset away.
+>
+> Yeah, so far we've only seen that for automatic stack clearing, but
+> there are very much compilers that know that alloc/free are special
+> (both for warning about use-after-free issues, and for "improving"
+> code generation by blindly removing dead writes).
+>
+> We have a function for clearing sensitive information: it's called
+> "memclear_explicit()", and it's about forced (explicit) clearing even
+> if the data might look dead afterwards.
+>
+> The other problem with that function is the name: "__kvzfree()" is not
+> a useful name for this function. We use the "__" format for internal
+> low-level helpers, and it generally means that it does *less* than the
+> full function. This does more, not less, and "__" is not following any
+> sane naming model.
+>
+> So the name should probably be something like "kvfree_sensitive()" or
+> similar. Or maybe it could go even further, and talk about _why_ it's
+> sensitive, and call it "kvfree_cleartext()" or something like that.
+>
+> Because the clearing is really not what even matters. It might choose
+> other patterns to overwrite things with, but it might do other things
+> too, like putting special barriers for data leakage (or flags to tell
+> return-to-user-mode to do so).
+>
+> And yes, kzfree() isn't a good name either, and had that same
+> memset(), but at least it doesn't do the dual-underscore mistake.
+>
+> Including some kzfree()/crypto people explicitly - I hope we can get
+> away from this incorrect and actively wrong pattern of thinking that
+> "sensitive data should be memset(), and then we should add a random
+> 'z' in the name somewhere to 'document' that".
+>
+>                Linus
+>
+Thanks for the suggestion, I will post a patch to rename the function to
+kvzfree_explicit() and use memzero_explicit() for clearing memory.
 
-this isn't quite right. Instead of adding the put_label here,
-the aa_get_current_label needs to be dropped, as it isn't needed because
-it gets called earlier in the fn.
-
-can you refresh with this change
-
->  
->  	if (*fqname == '&') {
-> 
+Cheers,
+Longman
 
