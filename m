@@ -2,133 +2,105 @@ Return-Path: <SRS0=1b+D=5V=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	HK_RANDOM_FROM,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04CF7C2BA16
-	for <linux-security-module@archiver.kernel.org>; Sun,  5 Apr 2020 03:11:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65C91C2D0E8
+	for <linux-security-module@archiver.kernel.org>; Sun,  5 Apr 2020 05:13:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC5AC206A3
-	for <linux-security-module@archiver.kernel.org>; Sun,  5 Apr 2020 03:11:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OA7iB1Dm"
+	by mail.kernel.org (Postfix) with ESMTP id 28FDD2072F
+	for <linux-security-module@archiver.kernel.org>; Sun,  5 Apr 2020 05:13:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726396AbgDEDLE (ORCPT
+        id S1726219AbgDEFNA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 4 Apr 2020 23:11:04 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:49596 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726057AbgDEDLE (ORCPT
+        Sun, 5 Apr 2020 01:13:00 -0400
+Received: from mail.fudan.edu.cn ([202.120.224.10]:60366 "EHLO fudan.edu.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726046AbgDEFNA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 4 Apr 2020 23:11:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1586056263;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=EG5ytn3q4cjrK4N/hwUftqYJUijBPztWPiSrSQnYoRI=;
-        b=OA7iB1Dm1pXRGyEi5r57zEPfUlGkNIVURBO68AK6OP9XW7XyzKh1jaQdKC/OBCqPFqvGt8
-        zyhnA3XQCHgLMdsleZqr/QTVx74fTDmiY2DmFr+cHy2yVL4s/A2K7PDFlJwHPblA4K0WJm
-        w/bCvGQKylxwrzONxZyhVgcX5hVFw9g=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-400-5rHQ2HdINEyC9VBzDOicDQ-1; Sat, 04 Apr 2020 23:11:01 -0400
-X-MC-Unique: 5rHQ2HdINEyC9VBzDOicDQ-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C3A9A100551A;
-        Sun,  5 Apr 2020 03:10:59 +0000 (UTC)
-Received: from llong.remote.csb (ovpn-112-153.rdu2.redhat.com [10.10.112.153])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D4B2D1001B09;
-        Sun,  5 Apr 2020 03:10:57 +0000 (UTC)
-Subject: Re: [GIT PULL] keys: Fix key->sem vs mmap_sem issue when reading key
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        David Howells <dhowells@redhat.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        keyrings@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <1437197.1585570598@warthog.procyon.org.uk>
- <CAHk-=wgWnZCvTFDfiYAy=uMUf2F1Yy1r9ur5ARcmtqLjX8Tz4Q@mail.gmail.com>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <78ff6e5d-9643-8798-09cb-65b1415140be@redhat.com>
-Date:   Sat, 4 Apr 2020 23:10:57 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
-MIME-Version: 1.0
-In-Reply-To: <CAHk-=wgWnZCvTFDfiYAy=uMUf2F1Yy1r9ur5ARcmtqLjX8Tz4Q@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+        Sun, 5 Apr 2020 01:13:00 -0400
+Received: from localhost.localdomain (unknown [120.229.255.226])
+        by app1 (Coremail) with SMTP id XAUFCgA3XDjGaIlemdXLAA--.46630S3;
+        Sun, 05 Apr 2020 13:12:41 +0800 (CST)
+From:   Xiyu Yang <xiyuyang19@fudan.edu.cn>
+To:     John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     xiyuyang19@fudan.edu.cn, yuanxzhang@fudan.edu.cn, kjlu@umn.edu,
+        Xin Tan <tanxin.ctf@gmail.com>
+Subject: [PATCH v2] apparmor: fix potential label refcnt leak in aa_change_profile
+Date:   Sun,  5 Apr 2020 13:11:55 +0800
+Message-Id: <1586063515-15682-1-git-send-email-xiyuyang19@fudan.edu.cn>
+X-Mailer: git-send-email 2.7.4
+X-CM-TRANSID: XAUFCgA3XDjGaIlemdXLAA--.46630S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7KryfGF47WF4fCr45WrW5trb_yoW8Xw13pF
+        47KF1UJa1DtFy7Ka1Dta15urWak3yxJr1Yvasxu3y5Zrs8JrWUXw17ur1Uur1rZrykArsF
+        qa43tFsYvw1UCa7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUkK14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+        1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+        JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+        CE3s1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
+        F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r
+        4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I
+        648v4I1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67
+        AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIY
+        rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14
+        v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j
+        6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7VUbHa0D
+        UUUUU==
+X-CM-SenderInfo: irzsiiysuqikmy6i3vldqovvfxof0/
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 4/4/20 4:00 PM, Linus Torvalds wrote:
-> On Mon, Mar 30, 2020 at 5:16 AM David Howells <dhowells@redhat.com> wrote:
->>  security/keys/internal.h                  |  12 ++++
-> This isn't so much about this pull (which I have taken), as about the
-> fact that this code re-inforces bad behavior we already in the slub
-> layer, and now extends it further to kvfree.
->
-> Doing this:
->
->
->    __kvzfree(const void *addr, size_t len)
->   ..
->                 memset((void *)addr, 0, len);
->                 kvfree(addr);
->
-> is wrong to begin with. It's wrong because if the compiler ever knows
-> that kvfree is a freeing function (with something like
-> __attribute__((free)) - I don't think gcc is smart enough today), the
-> compiler might throw the memset away.
->
-> Yeah, so far we've only seen that for automatic stack clearing, but
-> there are very much compilers that know that alloc/free are special
-> (both for warning about use-after-free issues, and for "improving"
-> code generation by blindly removing dead writes).
->
-> We have a function for clearing sensitive information: it's called
-> "memclear_explicit()", and it's about forced (explicit) clearing even
-> if the data might look dead afterwards.
->
-> The other problem with that function is the name: "__kvzfree()" is not
-> a useful name for this function. We use the "__" format for internal
-> low-level helpers, and it generally means that it does *less* than the
-> full function. This does more, not less, and "__" is not following any
-> sane naming model.
->
-> So the name should probably be something like "kvfree_sensitive()" or
-> similar. Or maybe it could go even further, and talk about _why_ it's
-> sensitive, and call it "kvfree_cleartext()" or something like that.
->
-> Because the clearing is really not what even matters. It might choose
-> other patterns to overwrite things with, but it might do other things
-> too, like putting special barriers for data leakage (or flags to tell
-> return-to-user-mode to do so).
->
-> And yes, kzfree() isn't a good name either, and had that same
-> memset(), but at least it doesn't do the dual-underscore mistake.
->
-> Including some kzfree()/crypto people explicitly - I hope we can get
-> away from this incorrect and actively wrong pattern of thinking that
-> "sensitive data should be memset(), and then we should add a random
-> 'z' in the name somewhere to 'document' that".
->
->                Linus
->
-Thanks for the suggestion, I will post a patch to rename the function to
-kvzfree_explicit() and use memzero_explicit() for clearing memory.
+aa_change_profile() invokes aa_get_current_label(), which returns
+a reference of the current task's label.
 
-Cheers,
-Longman
+According to the comment of aa_get_current_label(), the returned
+reference must be put with aa_put_label().
+However, when the original object pointed by "label" becomes
+unreachable because aa_change_profile() returns or a new object
+is assigned to "label", reference count increased by
+aa_get_current_label() is not decreased, causing a refcnt leak.
+
+Fix this by calling aa_put_label() before aa_change_profile() return
+and dropping unnecessary aa_get_current_label().
+
+Signed-off-by: Xiyu Yang <xiyuyang19@fudan.edu.cn>
+Signed-off-by: Xin Tan <tanxin.ctf@gmail.com>
+---
+Changes in v2:
+- Remove unnecessary aa_get_current_label() because it gets called
+  earlier in the fn
+---
+ security/apparmor/domain.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
+index 6ceb74e0f789..a84ef030fbd7 100644
+--- a/security/apparmor/domain.c
++++ b/security/apparmor/domain.c
+@@ -1328,6 +1328,7 @@ int aa_change_profile(const char *fqname, int flags)
+ 		ctx->nnp = aa_get_label(label);
+ 
+ 	if (!fqname || !*fqname) {
++		aa_put_label(label);
+ 		AA_DEBUG("no profile name");
+ 		return -EINVAL;
+ 	}
+@@ -1346,8 +1347,6 @@ int aa_change_profile(const char *fqname, int flags)
+ 			op = OP_CHANGE_PROFILE;
+ 	}
+ 
+-	label = aa_get_current_label();
+-
+ 	if (*fqname == '&') {
+ 		stack = true;
+ 		/* don't have label_parse() do stacking */
+-- 
+2.7.4
 
