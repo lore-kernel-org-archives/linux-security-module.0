@@ -2,100 +2,102 @@ Return-Path: <SRS0=1b+D=5V=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86370C2BA1E
-	for <linux-security-module@archiver.kernel.org>; Sun,  5 Apr 2020 15:51:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 531C4C2BA15
+	for <linux-security-module@archiver.kernel.org>; Sun,  5 Apr 2020 17:32:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CA9920675
-	for <linux-security-module@archiver.kernel.org>; Sun,  5 Apr 2020 15:51:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 268A520678
+	for <linux-security-module@archiver.kernel.org>; Sun,  5 Apr 2020 17:32:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1586107923;
+	bh=WpVA+C7vY7ZVNEVxy8nsxNGVkHzZ1oU9MJa4TwpeCX8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=HrN1Fkgf6u+GhQcL+l+NlA32/NQyftId+NzqUSXisXa+vDSXnKkpNq2g0akO3AxVZ
+	 71Z8sS/ZXscdEu6L/GQ2cTMGA1ZGwU7wPHwOZ7TNA0VTz2y1sEiladQee4MnJUhul1
+	 QvRvxnzaY4gs9li8ahft0VS3VLSOOpxRAeFhjXzU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727076AbgDEPvf (ORCPT
+        id S1727242AbgDERcC (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 5 Apr 2020 11:51:35 -0400
-Received: from mga01.intel.com ([192.55.52.88]:48229 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726765AbgDEPvf (ORCPT
+        Sun, 5 Apr 2020 13:32:02 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:34367 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726776AbgDERcC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 5 Apr 2020 11:51:35 -0400
-IronPort-SDR: y8Ex2z7lktRRQ6kZaK9rzACJ0DrZEg31sPoaGIdh1/F4rJqiJQO7+KCsvlCLZJpsHjaYGwZKov
- DZF0ZAwrOrpQ==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Apr 2020 08:51:34 -0700
-IronPort-SDR: 9H+VnNHNmgemh7OdAcgvyRmttnueGqPJX5owQ9JxCcyH7agdmWjuOTmGrPJaB/mjN5Azw8eXx/
- eZb8TElDz0eQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,348,1580803200"; 
-   d="scan'208";a="296445177"
-Received: from linux.intel.com ([10.54.29.200])
-  by FMSMGA003.fm.intel.com with ESMTP; 05 Apr 2020 08:51:34 -0700
-Received: from [10.249.231.111] (abudanko-mobl.ccr.corp.intel.com [10.249.231.111])
-        by linux.intel.com (Postfix) with ESMTP id 4251358033E;
-        Sun,  5 Apr 2020 08:51:30 -0700 (PDT)
-Subject: Re: [PATCH v8 12/12] doc/admin-guide: update kernel.rst with
- CAP_PERFMON information
-To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Serge Hallyn <serge@hallyn.com>, Jiri Olsa <jolsa@redhat.com>,
-        Song Liu <songliubraving@fb.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>,
-        Igor Lubashev <ilubashe@akamai.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        linux-man@vger.kernel.org
-References: <f96f8f8a-e65c-3f36-dc85-fc3f5191e8c5@linux.intel.com>
- <84c32383-14a2-fa35-16b6-f9e59bd37240@linux.intel.com>
- <20200405141029.GA16896@kernel.org>
- <eb7fd0bd-4043-b51c-9b19-ee0a1d1849e9@linux.intel.com>
- <966244a1-2a2d-8e47-b805-2effa46fe8cd@linux.intel.com>
- <20200405150557.GP9917@kernel.org>
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <50b54ca3-2edb-d2be-e42e-57e0de12a052@linux.intel.com>
-Date:   Sun, 5 Apr 2020 18:51:29 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        Sun, 5 Apr 2020 13:32:02 -0400
+Received: by mail-lj1-f194.google.com with SMTP id p10so12193549ljn.1
+        for <linux-security-module@vger.kernel.org>; Sun, 05 Apr 2020 10:32:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zcbh6sH9SJBGE+Cjk3XFguwEqI2IKXqqQBtRFq6gvFQ=;
+        b=R07dbyu7Y0eMKVM4FedC3n/xof3lreuns2KIRBmYuFzNApajuKhjO7x1wg1aWKkMhh
+         dwTz+7LXu6F7lM4s5hAWcEoHMHg14h+cQpmTR9fdFNXDCp6e2xdLcSoC3KXYyqK/QeGu
+         RsK9JhsA+jl8afkEI+uxGrG60T2A4hCuJEIG8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zcbh6sH9SJBGE+Cjk3XFguwEqI2IKXqqQBtRFq6gvFQ=;
+        b=oms/Q6m7gATN7kvsSriZ2RWbYRUesBed1LmvnfgUagcKM32ZAaYa9DjbliKDQ4xgPP
+         pYpXFBY4AeaVLp8mVI/53FrxdgUqZfMCIoHw+j7cmf8RuQfm6Z/UmdiqorqtluOCsGJv
+         N3kJA9vZQyWjYJmkKX1Sxh7cvTxQi/2a4M41JfRqcCsg/tXh4q9htVCm2WBP32wfyXYK
+         SUJMNgQs/gUiBfxNn6pHNz9mxJZTb6pL2TtIdnRky7Jw+1isY/bRjInw2DLoV3ASp8+S
+         IEQ9uSy5g14EMQoMgkBm2Dpy+t1hGvgBJ/cht2SYatUFWq4ADV6V1twMR84dM0g8dH1b
+         0DJQ==
+X-Gm-Message-State: AGi0PubkucY6xvgAiMCFmddQplTaWHEXJEcWVhOTC0nhp1DYdqPd7Cpl
+        ukEfJ2QIKU57R9U3/VxQHrOE7OOT8gU=
+X-Google-Smtp-Source: APiQypJo5ifN+RLvi+ss0sT8cy4Yd5NNXGVt4lnN1jsI4o6P2m52CIXX3dejWEN3miUo05pX+s+hBQ==
+X-Received: by 2002:a2e:a548:: with SMTP id e8mr10060156ljn.151.1586107919532;
+        Sun, 05 Apr 2020 10:31:59 -0700 (PDT)
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com. [209.85.167.44])
+        by smtp.gmail.com with ESMTPSA id j13sm355833lfb.19.2020.04.05.10.31.57
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 05 Apr 2020 10:31:58 -0700 (PDT)
+Received: by mail-lf1-f44.google.com with SMTP id s13so9854192lfb.9
+        for <linux-security-module@vger.kernel.org>; Sun, 05 Apr 2020 10:31:57 -0700 (PDT)
+X-Received: by 2002:a05:6512:14a:: with SMTP id m10mr6564163lfo.152.1586107917356;
+ Sun, 05 Apr 2020 10:31:57 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200405150557.GP9917@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1437197.1585570598@warthog.procyon.org.uk> <CAHk-=wgWnZCvTFDfiYAy=uMUf2F1Yy1r9ur5ARcmtqLjX8Tz4Q@mail.gmail.com>
+ <78ff6e5d-9643-8798-09cb-65b1415140be@redhat.com> <3567369.1586077430@warthog.procyon.org.uk>
+In-Reply-To: <3567369.1586077430@warthog.procyon.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sun, 5 Apr 2020 10:31:41 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wg-6906+D68VHWv_SCvWUSG8R9w=js7kExmTum90Evu4g@mail.gmail.com>
+Message-ID: <CAHk-=wg-6906+D68VHWv_SCvWUSG8R9w=js7kExmTum90Evu4g@mail.gmail.com>
+Subject: Re: [GIT PULL] keys: Fix key->sem vs mmap_sem issue when reading key
+To:     David Howells <dhowells@redhat.com>
+Cc:     Waiman Long <longman@redhat.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        keyrings@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Sun, Apr 5, 2020 at 2:04 AM David Howells <dhowells@redhat.com> wrote:
+>
+> Should this be moved into core code, rather than being squirrelled away in
+> security/keys/?
 
-On 05.04.2020 18:05, Arnaldo Carvalho de Melo wrote:
-> Em Sun, Apr 05, 2020 at 05:54:37PM +0300, Alexey Budankov escreveu:
->>
->> On 05.04.2020 17:41, Alexey Budankov wrote:
->>>
->>> On 05.04.2020 17:10, Arnaldo Carvalho de Melo wrote:
->>>> Em Thu, Apr 02, 2020 at 11:54:39AM +0300, Alexey Budankov escreveu:
->>>>>
->>>>> Update kernel.rst documentation file with the information
->>>>> related to usage of CAP_PERFMON capability to secure performance
->>>>> monitoring and observability operations in system.
->>>>
->>>> This one is failing in my perf/core branch, please take a look. I'm
->>
->> Please try applying this:
-> 
-> Thanks, applied with the original commit log message,
+Yes. I do think that that __kvzfree() function makes sense in general
+(the same way that kzfree does).
 
-Thanks,
-Alexey
+I just happen to despise the name, and think that the implementation
+isn't great.
+
+It also probably makes no sense to make it an inline function. It's
+not like that function is done for performance reasons, and it might
+only get worse if we then end up making it cause barriers or something
+for CPU data leakage issues or whatever.
+
+           Linus
