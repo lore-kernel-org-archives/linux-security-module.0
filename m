@@ -2,99 +2,114 @@ Return-Path: <SRS0=ULH2=5W=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 046CEC2BA17
-	for <linux-security-module@archiver.kernel.org>; Mon,  6 Apr 2020 02:38:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53472C2BA19
+	for <linux-security-module@archiver.kernel.org>; Mon,  6 Apr 2020 11:00:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C985A206F7
-	for <linux-security-module@archiver.kernel.org>; Mon,  6 Apr 2020 02:38:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2117B206F5
+	for <linux-security-module@archiver.kernel.org>; Mon,  6 Apr 2020 11:00:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CcOO5MaJ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XKJsvcpo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726455AbgDFCiz (ORCPT
+        id S1727126AbgDFK77 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 5 Apr 2020 22:38:55 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:29880 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726444AbgDFCiz (ORCPT
+        Mon, 6 Apr 2020 06:59:59 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:44553 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726841AbgDFK77 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 5 Apr 2020 22:38:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1586140734;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=wwTsvDmSdQ5Meft4xmbxc1SwPG3Ag9b3jECvcp2g35g=;
-        b=CcOO5MaJITO/Yigo7ff0QJCPJwYaqBTnGjEUuRX2bn4MxROzMLGA71TF0MPQ6LvXDnGSsC
-        GfQsdbWX+lKWEEQitgLgp/vyFu21oEN1zY9WtYj7DdKl5e5cSsw2qynUcIQ61g93vGbjik
-        GAJDSrbq6gBpes8lj+M1K6dmzyUL+DA=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-40-VIhQvFMwMsy-aY0rC9p_Zg-1; Sun, 05 Apr 2020 22:38:52 -0400
-X-MC-Unique: VIhQvFMwMsy-aY0rC9p_Zg-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id BF3B885EE7A;
-        Mon,  6 Apr 2020 02:38:43 +0000 (UTC)
-Received: from llong.remote.csb (ovpn-112-57.rdu2.redhat.com [10.10.112.57])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A4AC99A260;
-        Mon,  6 Apr 2020 02:38:42 +0000 (UTC)
-Subject: Re: [GIT PULL] keys: Fix key->sem vs mmap_sem issue when reading key
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        David Howells <dhowells@redhat.com>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        keyrings@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <1437197.1585570598@warthog.procyon.org.uk>
- <CAHk-=wgWnZCvTFDfiYAy=uMUf2F1Yy1r9ur5ARcmtqLjX8Tz4Q@mail.gmail.com>
- <78ff6e5d-9643-8798-09cb-65b1415140be@redhat.com>
- <3567369.1586077430@warthog.procyon.org.uk>
- <CAHk-=wg-6906+D68VHWv_SCvWUSG8R9w=js7kExmTum90Evu4g@mail.gmail.com>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <7c868f6a-593d-b9aa-9c0b-a2cd9b763f83@redhat.com>
-Date:   Sun, 5 Apr 2020 22:38:42 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Mon, 6 Apr 2020 06:59:59 -0400
+Received: by mail-pg1-f193.google.com with SMTP id 142so7350854pgf.11;
+        Mon, 06 Apr 2020 03:59:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=76mGlpp6BFJSmPDHJW6kprv/8C2HQ3fa7ORMT87pipU=;
+        b=XKJsvcpo7Y3eIsvwt+slK2It9/UwJptza1whwFfWJeSj+Tk+KPPzWRnlV8RzFZnRco
+         /y7P0QfbJX6+uyw/ECZSlNemCC0/iajDr+1ag30GCLMMRu5NcpKvX9FkOA2gYmQZI698
+         NHwzj58/n2FvYzGWfXQMvk+h0znA13zDb/EZuCDh94XdXGJYTJiQw0ILMoO5sLMAePcA
+         vaAVOnzoTiiSNsWCJVKud051c87X5fZ2jUa/FtqGx2Asx2VGORgUd7wMw2XAlPwydg/+
+         SrGwQPAkrr9goYq8UrZDdBGT2FeBGd/7ZJLVvTxDRZwkeZhXyMGxpuHt9BOGKWHq7Xl8
+         N2Tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=76mGlpp6BFJSmPDHJW6kprv/8C2HQ3fa7ORMT87pipU=;
+        b=CmAadlBZ25hcVGYOPKOizSV9QjkVYyy+QiMBybhyUtKTNQY9ByYi6E14iw4093Y3EJ
+         mb0WCPhQla3T32nVuKdy5TNR45XlTKgaGR9MTqCDXSZ/3WAmJO2Gr9PwXUmHj1z33fD1
+         HTo0G3DZKVv2YzcC7Q2YQPp2iyukKQ6x6Btuds8GlfziNNrOuxv4vgXtppGiU46M5rFW
+         kDmQaqvzgyEz7h2013pj3BeVCAXL2yLD+VuiQ9O1dIK/QUK/0aQvtFOTzET+4SjDM1Bl
+         TG2V5P7u+eaxuy3/9OeRMgjbYSJ4imXE2pbPdmf5skhj0keEDPTm9c15Qn1XrxHJJxVk
+         Uh6Q==
+X-Gm-Message-State: AGi0PuZpjTtQr78Qz6mihnvi9fjcWvNjEPeqCXuhHTXVklRBcLrFFT6S
+        If8gdyYjudd/jAjBk7SDWYE=
+X-Google-Smtp-Source: APiQypLo5R6aTgUFGFSStDUnpE8fqAAl3q8UtUXqjkfX8M/Kws53j2EaC6qi929TvME8Gj6oK+ylkg==
+X-Received: by 2002:a62:7911:: with SMTP id u17mr20215835pfc.305.1586170796382;
+        Mon, 06 Apr 2020 03:59:56 -0700 (PDT)
+Received: from workstation-kernel-dev ([103.87.57.178])
+        by smtp.gmail.com with ESMTPSA id x68sm9955214pfb.5.2020.04.06.03.59.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Apr 2020 03:59:55 -0700 (PDT)
+Date:   Mon, 6 Apr 2020 16:29:50 +0530
+From:   Amol Grover <frextrite@gmail.com>
+To:     James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>
+Cc:     linux-kernel@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>,
+        "Paul E . McKenney" <paulmck@kernel.org>,
+        linux-security-module@vger.kernel.org,
+        Amol Grover <frextrite@gmail.com>
+Subject: [PATCH RESEND] device_cgroup: Fix RCU list debugging warning
+Message-ID: <20200406105950.GA2285@workstation-kernel-dev>
 MIME-Version: 1.0
-In-Reply-To: <CAHk-=wg-6906+D68VHWv_SCvWUSG8R9w=js7kExmTum90Evu4g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email 2.24.1
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 4/5/20 1:31 PM, Linus Torvalds wrote:
-> On Sun, Apr 5, 2020 at 2:04 AM David Howells <dhowells@redhat.com> wrote:
->> Should this be moved into core code, rather than being squirrelled away in
->> security/keys/?
-> Yes. I do think that that __kvzfree() function makes sense in general
-> (the same way that kzfree does).
->
-> I just happen to despise the name, and think that the implementation
-> isn't great.
->
-> It also probably makes no sense to make it an inline function. It's
-> not like that function is done for performance reasons, and it might
-> only get worse if we then end up making it cause barriers or something
-> for CPU data leakage issues or whatever.
->
->            Linus
->
-I have just posted a patch that modify the API as suggested. Please let
-me know if further change is needed.
+exceptions may be traversed using list_for_each_entry_rcu()
+outside of an RCU read side critical section BUT under the
+protection of decgroup_mutex. Hence add the corresponding
+lockdep expression to fix the following false-positive
+warning:
 
-Cheers,
-Longman
+[    2.304417] =============================
+[    2.304418] WARNING: suspicious RCU usage
+[    2.304420] 5.5.4-stable #17 Tainted: G            E
+[    2.304422] -----------------------------
+[    2.304424] security/device_cgroup.c:355 RCU-list traversed in non-reader section!!
+
+Signed-off-by: Amol Grover <frextrite@gmail.com>
+---
+ security/device_cgroup.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/security/device_cgroup.c b/security/device_cgroup.c
+index 7d0f8f7431ff..b7da9e0970d9 100644
+--- a/security/device_cgroup.c
++++ b/security/device_cgroup.c
+@@ -352,7 +352,8 @@ static bool match_exception_partial(struct list_head *exceptions, short type,
+ {
+ 	struct dev_exception_item *ex;
+ 
+-	list_for_each_entry_rcu(ex, exceptions, list) {
++	list_for_each_entry_rcu(ex, exceptions, list,
++				lockdep_is_held(&devcgroup_mutex)) {
+ 		if ((type & DEVCG_DEV_BLOCK) && !(ex->type & DEVCG_DEV_BLOCK))
+ 			continue;
+ 		if ((type & DEVCG_DEV_CHAR) && !(ex->type & DEVCG_DEV_CHAR))
+-- 
+2.24.1
 
