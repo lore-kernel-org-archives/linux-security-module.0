@@ -2,135 +2,260 @@ Return-Path: <SRS0=ULH2=5W=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C89FC2BA17
-	for <linux-security-module@archiver.kernel.org>; Mon,  6 Apr 2020 15:46:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F49BC2BA17
+	for <linux-security-module@archiver.kernel.org>; Mon,  6 Apr 2020 17:59:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F22C248CD
-	for <linux-security-module@archiver.kernel.org>; Mon,  6 Apr 2020 15:46:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58D1E206F5
+	for <linux-security-module@archiver.kernel.org>; Mon,  6 Apr 2020 17:59:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="jW1KK0W0"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="BM2q7hn6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729041AbgDFPqk (ORCPT
+        id S1727322AbgDFR7Y (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 6 Apr 2020 11:46:40 -0400
-Received: from sonic313-14.consmr.mail.ne1.yahoo.com ([66.163.185.37]:37147
-        "EHLO sonic313-14.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729014AbgDFPqk (ORCPT
+        Mon, 6 Apr 2020 13:59:24 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:51628 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726787AbgDFR7Y (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 6 Apr 2020 11:46:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1586187998; bh=u9TuYQPVtRNgQ8g5I4yb48Qt6delhNncMIN462fqPug=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=jW1KK0W0R2sfX/2XVOX/PN6QtGYVIQYeDTCNWDR1NwEF8E3ISCyz602ih7/akGCElFOBnLFbbN4VtDo3d/G7mWz0QR8hheHasbI3T9pA9GklJQ2BB+sAJoMGAe2f2cR0IV5oj5SMWQ6rkge1XOwlVuwU8ZD5qx0ecDAfF7yCSmc2disLhmkEGCcN9tv7uJ42VKF5zNO+UBwUhg6pdXaMRSptUp+nezMKiPQ4FgcI5qgQJZHjw0dMKjbyE5Sji9hZKEmJ1dAgMNqNz9E4ITjB1Jj3cNNs3D0N5avHJ2bJo0azE5EB9HQOXAUU5pguCsZxmZ39rFEMDjlQwU0avq6b6g==
-X-YMail-OSG: tOTbmfkVM1krNBT0fueURHdVo3_1duNEfGi.UE4dJ7C0iHlBJrK4TOqpcEdRaU8
- h73v.J3uQneoRLV8SoRX1iSWmIf5t95ZrngE3yPtWt3vAQFlUX5lfc9ALnU.J1kVJHrx3G.cjs.I
- 4HMag56Z2Jrt4Z4dmCC.JYo3pXLn7kK6ho6ZHXubT8OThP4a8SQ0DO3Zy8AaCXuJfYDMLq4RC5uy
- Qjgfsegw.B9JbWNp9rPWEL.t38SyvDUyjEi2XGebNQaUNVl_1fyQ5cIWk6aFMZeqetx3.tTSnG77
- Up.BswgGjWL0LvXrgLuvky4GWQtaMpEQ14gL7ZSuQVoE2io6_GC0r9xZRK.JIZxI0T4xESDK5nwp
- q3Goduq8P1EB6X8.aYDg8XliBEg9pziWOjQRlkiAnoEuXFmqCnXoX_O14bHdqCn4b8saOVVqWuE6
- DhhJNEfQeCZzQa2MTad3sQQzy_cULhAbOXc2E9aqktkkiHMOeJPJiRXZvjZP5THsKO6u7nrgxnLI
- 1gdCzAC8oq5gt7kXT1cotdfpjuM7mbm5YUqY4TRNmN5WzBcX44UNcECqSmUG9r.5ckkMyzpVQgJp
- aFvhWK64qImKsrUhLZDj07KmsbeMTlC7H3gyPbJq.4JWIHWzTi.wRwmjK9.k29fsSxZ2dzvuHBs7
- sHGd9oAo0SdG7FRiNkpLQN4aBYwYAlh5e2SEQdkE_ceQvEMGZt4iVaTkQRLo6gCqaFL7MW_Om02E
- Rac0BbvZU9Xt_Oxb2EE.lOFEw.xc.U__XSFp7Zmhr8yqBChrNkfoYqutxEjNRl7UzhZV9iBRHKYi
- ptyswP2mN9ZOn4j7jg7eUNtpclQ9q.zsm3StcEtOlz4U9f4xqGr8DdbcP4OlXZHVFEqIGikhN2Rr
- bX6nDiooadhEK8oGXuvJywGwez3nn4ClSGaqK1bhJecyXlTSBAj5WNYcitdiJImVftEavpRWrKXC
- NIuBw7VRUY3Jx3sxZFMEVPeCGf62Z4KeRmrP31jXRAyHCg8lpXkz9ntspomvgfCXG0kWSvU4fxgJ
- NDJFSZ03ozhq3FExrcgkKAOjeYsfIPRO7WR2pY.B9vdBR7vdLRPk0RT4mZ7U9Hx5rvBLBmDHqoW7
- vuAJKDst8V9Z8scx4mMnT8Z0LlEPpDw74iL9xgYJua.OZRDQ1kF8_fc0GKZEIXe6gEpcIQI1K.m1
- JYlIYqt0jbyD4beZLXM2GCvFt9vN.IrmAxm1lxvTXiCTYSR3Bgs1fQso677GQMZ55kluwcoU2dOy
- Igjy9HfdaeEm2o86pUyIN1guKn4A_XQyA8C2TT5AiZpb9v8y8xYYdbRdrVp_CpT3k8IYOBtm..4X
- rx8qcXGL_W9fyk9V3ZJ5r9P5FXyUlw24bz3904w2xVS3jum8Myd5QtpT92DW6SPQs4oBdLMpbm_d
- 4CDWZJ.z2lr.NtkFC
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.ne1.yahoo.com with HTTP; Mon, 6 Apr 2020 15:46:38 +0000
-Received: by smtp415.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID ea47b7214172e7452b1af6db9f20f223;
-          Mon, 06 Apr 2020 15:46:33 +0000 (UTC)
-Subject: =?UTF-8?Q?Re=3a_=5bSMACK=5d_Build-time_warning_from_Linux_5=2e6=2e2?=
- =?UTF-8?B?OiB1bnVzZWQgdmFyaWFibGUg4oCYc2lw4oCZ?=
-To:     Jordan Glover <Golden_Miller83@protonmail.ch>,
-        LSM List <linux-security-module@vger.kernel.org>
-Cc:     "SMACK-discuss@lists.01.org" <SMACK-discuss@lists.01.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <lTqravVBK9-oBbja6fvn3DqA3lv42gF_wg4Q9fC0FhfG1DbinZb4oKl7JV_meJYykJtkvN2gXhy-bCAgIlRglRT2z-oQ6wFF6aPx2vo-ZAs=@protonmail.ch>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Autocrypt: addr=casey@schaufler-ca.com; keydata=
- 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
- abzjfg==
-Message-ID: <1261c28e-3de5-8122-d3db-fa78fb89e34a@schaufler-ca.com>
-Date:   Mon, 6 Apr 2020 08:46:33 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        Mon, 6 Apr 2020 13:59:24 -0400
+Received: from dede-linux.corp.microsoft.com (unknown [131.107.147.242])
+        by linux.microsoft.com (Postfix) with ESMTPSA id F1FE52072955;
+        Mon,  6 Apr 2020 10:59:22 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com F1FE52072955
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1586195963;
+        bh=1PF/ShPN4ojALJPkpCvH1fBtV3IR9aL7+GRD4lEL+Es=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=BM2q7hn61sgw2I8AOb7TKeT8byFgDQ2Gby36bTcx0NGZYBZTR4ic6MZGkE9sKA6jL
+         O1exWydXPWFwwWnLD3XxAdPHQjtwVLE1c/4vlW+kKnXx/BP9tCkO9Aew/Ugg2Gg2PN
+         VBQRJ6kIzJ3URF2LHbinXHf9kJnkSwEKL5+o7fQs=
+From:   deven.desai@linux.microsoft.com
+To:     agk@redhat.com, axboe@kernel.dk, snitzer@redhat.com,
+        jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, dm-devel@redhat.org,
+        linux-block@vger.kernel.org
+Cc:     tyhicks@linux.microsoft.com, pasha.tatashin@soleen.com,
+        mdsakib@microsoft.com, sashal@kernel.org,
+        jaskarankhurana@linux.microsoft.com, nramas@linux.microsoft.com
+Subject: [PATCH 01/11] scripts: add ipe tooling to generate boot policy
+Date:   Mon,  6 Apr 2020 10:59:08 -0700
+Message-Id: <20200406175919.1023205-2-deven.desai@linux.microsoft.com>
+X-Mailer: git-send-email 2.26.0
+In-Reply-To: <20200406175919.1023205-1-deven.desai@linux.microsoft.com>
+References: <20200406175919.1023205-1-deven.desai@linux.microsoft.com>
 MIME-Version: 1.0
-In-Reply-To: <lTqravVBK9-oBbja6fvn3DqA3lv42gF_wg4Q9fC0FhfG1DbinZb4oKl7JV_meJYykJtkvN2gXhy-bCAgIlRglRT2z-oQ6wFF6aPx2vo-ZAs=@protonmail.ch>
-Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Mailer: WebService/1.1.15620 hermes Apache-HttpAsyncClient/4.1.4 (Java/11.0.6)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 4/6/2020 5:02 AM, Jordan Glover wrote:
-> Hello, during build of Linux 5.6.2 (also happened on 5.5.x series)
-> gcc (9.3) prints following warning:
->
-> security/smack/smack_lsm.c: In function ‘smack_socket_connect’:
-> security/smack/smack_lsm.c:2838:24: warning: unused variable ‘sip’ [-Wunused-variable]
->  2838 |   struct sockaddr_in6 *sip = (struct sockaddr_in6 *)sap;
->
-> My kernel has set CONFIG_IPV6=n during build.
+From: Deven Bowers <deven.desai@linux.microsoft.com>
 
-Thank you for reporting this.
+Add a tool for the generation of an IPE policy to be compiled into the
+kernel. This policy will be enforced until userland deploys and activates
+a new policy.
 
->
-> Jordan
->
->
->
->
->
+Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
+---
+ scripts/Makefile              |   1 +
+ scripts/ipe/Makefile          |   2 +
+ scripts/ipe/polgen/.gitignore |   1 +
+ scripts/ipe/polgen/Makefile   |   7 ++
+ scripts/ipe/polgen/polgen.c   | 136 ++++++++++++++++++++++++++++++++++
+ 5 files changed, 147 insertions(+)
+ create mode 100644 scripts/ipe/Makefile
+ create mode 100644 scripts/ipe/polgen/.gitignore
+ create mode 100644 scripts/ipe/polgen/Makefile
+ create mode 100644 scripts/ipe/polgen/polgen.c
+
+diff --git a/scripts/Makefile b/scripts/Makefile
+index 5e75802b1a44..9338017a3b6e 100644
+--- a/scripts/Makefile
++++ b/scripts/Makefile
+@@ -38,6 +38,7 @@ hostprogs += unifdef
+ subdir-$(CONFIG_GCC_PLUGINS) += gcc-plugins
+ subdir-$(CONFIG_MODVERSIONS) += genksyms
+ subdir-$(CONFIG_SECURITY_SELINUX) += selinux
++subdir-$(CONFIG_SECURITY_IPE) += ipe
+ 
+ # Let clean descend into subdirs
+ subdir-	+= basic dtc gdb kconfig mod
+diff --git a/scripts/ipe/Makefile b/scripts/ipe/Makefile
+new file mode 100644
+index 000000000000..e87553fbb8d6
+--- /dev/null
++++ b/scripts/ipe/Makefile
+@@ -0,0 +1,2 @@
++# SPDX-License-Identifier: GPL-2.0-only
++subdir-y := polgen
+diff --git a/scripts/ipe/polgen/.gitignore b/scripts/ipe/polgen/.gitignore
+new file mode 100644
+index 000000000000..80f32f25d200
+--- /dev/null
++++ b/scripts/ipe/polgen/.gitignore
+@@ -0,0 +1 @@
++polgen
+diff --git a/scripts/ipe/polgen/Makefile b/scripts/ipe/polgen/Makefile
+new file mode 100644
+index 000000000000..a519b594e13c
+--- /dev/null
++++ b/scripts/ipe/polgen/Makefile
+@@ -0,0 +1,7 @@
++# SPDX-License-Identifier: GPL-2.0
++hostprogs-y	:= polgen
++HOST_EXTRACFLAGS += \
++	-I$(srctree)/include \
++	-I$(srctree)/include/uapi \
++
++always		:= $(hostprogs-y)
+diff --git a/scripts/ipe/polgen/polgen.c b/scripts/ipe/polgen/polgen.c
+new file mode 100644
+index 000000000000..a80fffe1b27c
+--- /dev/null
++++ b/scripts/ipe/polgen/polgen.c
+@@ -0,0 +1,136 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) Microsoft Corporation. All rights reserved.
++ */
++
++#include <stdlib.h>
++#include <stddef.h>
++#include <stdio.h>
++#include <unistd.h>
++#include <errno.h>
++
++static void usage(const char *const name)
++{
++	printf("Usage: %s OutputFile (PolicyFile)\n", name);
++	exit(EINVAL);
++}
++
++static int policy_to_buffer(const char *pathname, char **buffer, size_t *size)
++{
++	int rc = 0;
++	FILE *fd;
++	char *lbuf;
++	size_t fsize;
++	size_t read;
++
++	fd = fopen(pathname, "r");
++	if (!fd) {
++		rc = errno;
++		goto out;
++	}
++
++	fseek(fd, 0, SEEK_END);
++	fsize = ftell(fd);
++	rewind(fd);
++
++	lbuf = malloc(fsize);
++	if (!lbuf) {
++		rc = ENOMEM;
++		goto out_close;
++	}
++
++	read = fread((void *)lbuf, sizeof(*lbuf), fsize, fd);
++	if (read != fsize) {
++		rc = -1;
++		goto out_free;
++	}
++
++	*buffer = lbuf;
++	*size = fsize;
++	fclose(fd);
++
++	return rc;
++
++out_free:
++	free(lbuf);
++out_close:
++	fclose(fd);
++out:
++	return rc;
++}
++
++static int write_boot_policy(const char *pathname, const char *buf, size_t size)
++{
++	FILE *fd;
++	size_t i;
++
++	fd = fopen(pathname, "w");
++	if (!fd)
++		goto err;
++
++	fprintf(fd, "/* This file is automatically generated.");
++	fprintf(fd, " Do not edit. */\n");
++	fprintf(fd, "#include <stddef.h>\n");
++	fprintf(fd, "const char *const ipe_boot_policy =\n");
++
++	if (!buf || size == 0) {
++		fprintf(fd, "\tNULL;\n");
++		fclose(fd);
++		return 0;
++	}
++
++	for (i = 0; i < size; ++i) {
++		if (i == 0)
++			fprintf(fd, "\t\"");
++
++		switch (buf[i]) {
++		case '"':
++			fprintf(fd, "\\\"");
++			break;
++		case '\'':
++			fprintf(fd, "'");
++			break;
++		case '\n':
++			fprintf(fd, "\\n\"\n\t\"");
++			break;
++		case '\\':
++			fprintf(fd, "\\\\");
++			break;
++		default:
++			fprintf(fd, "%c", buf[i]);
++		}
++	}
++	fprintf(fd, "\";\n");
++	fclose(fd);
++
++	return 0;
++
++err:
++	if (fd)
++		fclose(fd);
++	return errno;
++}
++
++int main(int argc, const char *argv[])
++{
++	int rc = 0;
++	size_t len = 0;
++	char *policy = NULL;
++
++	if (argc < 2)
++		usage(argv[0]);
++
++	if (argc > 2) {
++		rc = policy_to_buffer(argv[2], &policy, &len);
++		if (rc != 0)
++			goto cleanup;
++	}
++
++	rc = write_boot_policy(argv[1], policy, len);
++cleanup:
++	if (policy)
++		free(policy);
++	if (rc != 0)
++		perror("An error occurred during policy conversion: ");
++	return rc;
++}
+-- 
+2.26.0
+
