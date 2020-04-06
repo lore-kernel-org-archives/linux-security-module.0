@@ -5,35 +5,35 @@ X-Spam-Level:
 X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 149C4C38A2C
-	for <linux-security-module@archiver.kernel.org>; Mon,  6 Apr 2020 17:59:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F25DC2BB1D
+	for <linux-security-module@archiver.kernel.org>; Mon,  6 Apr 2020 17:59:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3B63206F5
-	for <linux-security-module@archiver.kernel.org>; Mon,  6 Apr 2020 17:59:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DCC5B20678
+	for <linux-security-module@archiver.kernel.org>; Mon,  6 Apr 2020 17:59:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Vcpzm5Kp"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="YN+5QGFU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727635AbgDFR71 (ORCPT
+        id S1727737AbgDFR7a (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 6 Apr 2020 13:59:27 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:51774 "EHLO
+        Mon, 6 Apr 2020 13:59:30 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:51826 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726787AbgDFR70 (ORCPT
+        with ESMTP id S1727522AbgDFR71 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 6 Apr 2020 13:59:26 -0400
+        Mon, 6 Apr 2020 13:59:27 -0400
 Received: from dede-linux.corp.microsoft.com (unknown [131.107.147.242])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 0907020A0864;
-        Mon,  6 Apr 2020 10:59:24 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0907020A0864
+        by linux.microsoft.com (Postfix) with ESMTPSA id 3A9F220A086C;
+        Mon,  6 Apr 2020 10:59:25 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3A9F220A086C
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1586195964;
-        bh=pp2JNwWm8aiM6z3AlwB0sPXCjj9odJHaB9Ic7PhOYoU=;
+        s=default; t=1586195965;
+        bh=L7uml37MoS+awBVHHXkHfOMwrRofUR0ZftwnIyeletc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Vcpzm5KpAdG0lGZX2cn+EEZ+5oaFQCHTcTOhFlPdl09d+ybih8o6oUYURFmuNc6Q3
-         83iH0BKULoSHzTSGOLHLm+p08P35o76148yBsl4O8bqtEemtT4otpalj3wdURF8j/s
-         5kFz5poWSUoKN4mP8Z3uFHLmU+2D3QrLRjebjSGw=
+        b=YN+5QGFUHVF/9Up4jNgWE24VzWQT5cKwPUzT4arw12uZ/lgaWvXPcrMjFM7uecOcB
+         kwB4MdagDBrR7KXnflg41CFB2cJZQS/dY6cNaxf+nG3BmNwn4c17Mx5Vzqdrn+qxYb
+         YNqE8C65PyqnL+FaKMk9mstrdBJgF77VeM45LI3E=
 From:   deven.desai@linux.microsoft.com
 To:     agk@redhat.com, axboe@kernel.dk, snitzer@redhat.com,
         jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com,
@@ -43,9 +43,9 @@ To:     agk@redhat.com, axboe@kernel.dk, snitzer@redhat.com,
 Cc:     tyhicks@linux.microsoft.com, pasha.tatashin@soleen.com,
         mdsakib@microsoft.com, sashal@kernel.org,
         jaskarankhurana@linux.microsoft.com, nramas@linux.microsoft.com
-Subject: [PATCH 05/11] dm|dm-verity: refactor root-hash signature option
-Date:   Mon,  6 Apr 2020 10:59:12 -0700
-Message-Id: <20200406175919.1023205-6-deven.desai@linux.microsoft.com>
+Subject: [PATCH 09/11] ipe: add property for dmverity roothash
+Date:   Mon,  6 Apr 2020 10:59:17 -0700
+Message-Id: <20200406175919.1023205-11-deven.desai@linux.microsoft.com>
 X-Mailer: git-send-email 2.26.0
 In-Reply-To: <20200406175919.1023205-1-deven.desai@linux.microsoft.com>
 References: <20200406175919.1023205-1-deven.desai@linux.microsoft.com>
@@ -57,435 +57,293 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: Deven Bowers <deven.desai@linux.microsoft.com>
 
-The CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG introduced by Jaskaran was
-intended to be used to allow an LSM to enforce verifications for all
-dm-verity volumes.
+Add a property to allow IPE policy to express rules around a specific
+root-hash of a dm-verity volume.
 
-However, with it's current implementation, this signature verification
-occurs after the merkel-tree is validated, as a result the signature can
-pass initial verification by passing a matching root-hash and signature.
-This results in an unreadable block_device, but that has passed signature
-validation (and subsequently, would be marked as verified).
-
-This change moves the signature verification to after the merkel-tree has
-finished validation.
+This can be used for revocation, (when combined with the previous dm-verity
+property) or the authorization of a single dm-verity volume.
 
 Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
 ---
- drivers/md/dm-verity-target.c     |  42 ++++-----
- drivers/md/dm-verity-verify-sig.c | 140 ++++++++++++++++++++++--------
- drivers/md/dm-verity-verify-sig.h |  20 ++---
- drivers/md/dm-verity.h            |   2 +-
- 4 files changed, 132 insertions(+), 72 deletions(-)
+ security/ipe/ipe-blobs.c                    |  10 ++
+ security/ipe/ipe-engine.h                   |   3 +
+ security/ipe/ipe.c                          |   4 +
+ security/ipe/properties/Kconfig             |  13 +-
+ security/ipe/properties/Makefile            |   1 +
+ security/ipe/properties/dmverity-roothash.c | 155 ++++++++++++++++++++
+ security/ipe/properties/prop-entry.h        |   9 ++
+ 7 files changed, 194 insertions(+), 1 deletion(-)
+ create mode 100644 security/ipe/properties/dmverity-roothash.c
 
-diff --git a/drivers/md/dm-verity-target.c b/drivers/md/dm-verity-target.c
-index eec9f252e935..c507f3a4e237 100644
---- a/drivers/md/dm-verity-target.c
-+++ b/drivers/md/dm-verity-target.c
-@@ -471,9 +471,9 @@ static int verity_verify_io(struct dm_verity_io *io)
- 	struct bvec_iter start;
- 	unsigned b;
- 	struct crypto_wait wait;
-+	int r;
+diff --git a/security/ipe/ipe-blobs.c b/security/ipe/ipe-blobs.c
+index a4ee8df02855..1e054eb13857 100644
+--- a/security/ipe/ipe-blobs.c
++++ b/security/ipe/ipe-blobs.c
+@@ -45,6 +45,8 @@ void ipe_bdev_free_security(struct block_device *bdev)
+ {
+ 	struct ipe_bdev_blob *bdev_sec = ipe_bdev(bdev);
  
- 	for (b = 0; b < io->n_blocks; b++) {
--		int r;
- 		sector_t cur_block = io->block + b;
- 		struct ahash_request *req = verity_io_hash_req(v, io);
++	kfree(bdev_sec->dmverity_rh);
++
+ 	memset(bdev_sec, 0x0, sizeof(*bdev_sec));
+ }
  
-@@ -530,6 +530,16 @@ static int verity_verify_io(struct dm_verity_io *io)
- 			return -EIO;
+@@ -76,5 +78,13 @@ int ipe_bdev_setsecurity(struct block_device *bdev, const char *key,
+ 		bdev_sec->dmv_rh_sig_len = len;
  	}
  
-+	/*
-+	 * At this point, the merkel tree has finished validating.
-+	 * if signature was specified, validate the signature here.
-+	 */
-+	r = verity_verify_root_hash(v);
-+	if (r < 0) {
-+		DMERR_LIMIT("signature mismatch");
-+		return r;
++	if (!strcmp(key, DM_VERITY_ROOTHASH_SEC_NAME)) {
++		bdev_sec->dmverity_rh = kmemdup(value, len, GFP_KERNEL);
++		if (!bdev_sec->dmverity_rh)
++			return -ENOMEM;
++
++		bdev_sec->rh_size = len;
 +	}
 +
  	return 0;
  }
- 
-@@ -728,7 +738,7 @@ static void verity_status(struct dm_target *ti, status_type_t type,
- 			args++;
- 		if (v->validated_blocks)
- 			args++;
--		if (v->signature_key_desc)
-+		if (v->sig)
- 			args += DM_VERITY_ROOT_HASH_VERIFICATION_OPTS;
- 		if (!args)
- 			return;
-@@ -751,9 +761,9 @@ static void verity_status(struct dm_target *ti, status_type_t type,
- 		if (v->validated_blocks)
- 			DMEMIT(" " DM_VERITY_OPT_AT_MOST_ONCE);
- 		sz = verity_fec_status_table(v, sz, result, maxlen);
--		if (v->signature_key_desc)
-+		if (v->sig)
- 			DMEMIT(" " DM_VERITY_ROOT_HASH_VERIFICATION_OPT_SIG_KEY
--				" %s", v->signature_key_desc);
-+				" %s", v->sig->signature_key_desc);
- 		break;
- 	}
- }
-@@ -819,7 +829,7 @@ static void verity_dtr(struct dm_target *ti)
- 
- 	verity_fec_dtr(v);
- 
--	kfree(v->signature_key_desc);
-+	verity_verify_dtr(v);
- 
- 	kfree(v);
- }
-@@ -876,8 +886,7 @@ static int verity_alloc_zero_digest(struct dm_verity *v)
- 	return r;
- }
- 
--static int verity_parse_opt_args(struct dm_arg_set *as, struct dm_verity *v,
--				 struct dm_verity_sig_opts *verify_args)
-+static int verity_parse_opt_args(struct dm_arg_set *as, struct dm_verity *v)
- {
- 	int r;
- 	unsigned argc;
-@@ -927,9 +936,7 @@ static int verity_parse_opt_args(struct dm_arg_set *as, struct dm_verity *v,
- 				return r;
- 			continue;
- 		} else if (verity_verify_is_sig_opt_arg(arg_name)) {
--			r = verity_verify_sig_parse_opt_args(as, v,
--							     verify_args,
--							     &argc, arg_name);
-+			r = verity_verify_sig_parse_opt_args(as, v, &argc);
- 			if (r)
- 				return r;
- 			continue;
-@@ -960,7 +967,6 @@ static int verity_parse_opt_args(struct dm_arg_set *as, struct dm_verity *v,
- static int verity_ctr(struct dm_target *ti, unsigned argc, char **argv)
- {
- 	struct dm_verity *v;
--	struct dm_verity_sig_opts verify_args = {0};
- 	struct dm_arg_set as;
- 	unsigned int num;
- 	unsigned long long num_ll;
-@@ -1128,20 +1134,11 @@ static int verity_ctr(struct dm_target *ti, unsigned argc, char **argv)
- 		as.argc = argc;
- 		as.argv = argv;
- 
--		r = verity_parse_opt_args(&as, v, &verify_args);
-+		r = verity_parse_opt_args(&as, v);
- 		if (r < 0)
- 			goto bad;
- 	}
- 
--	/* Root hash signature is  a optional parameter*/
--	r = verity_verify_root_hash(root_hash_digest_to_validate,
--				    strlen(root_hash_digest_to_validate),
--				    verify_args.sig,
--				    verify_args.sig_size);
--	if (r < 0) {
--		ti->error = "Root hash verification failed";
--		goto bad;
--	}
- 	v->hash_per_block_bits =
- 		__fls((1 << v->hash_dev_block_bits) / v->digest_size);
- 
-@@ -1207,13 +1204,10 @@ static int verity_ctr(struct dm_target *ti, unsigned argc, char **argv)
- 	ti->per_io_data_size = roundup(ti->per_io_data_size,
- 				       __alignof__(struct dm_verity_io));
- 
--	verity_verify_sig_opts_cleanup(&verify_args);
--
- 	return 0;
- 
- bad:
- 
--	verity_verify_sig_opts_cleanup(&verify_args);
- 	verity_dtr(ti);
- 
- 	return r;
-diff --git a/drivers/md/dm-verity-verify-sig.c b/drivers/md/dm-verity-verify-sig.c
-index 614e43db93aa..27dac8aa2e5a 100644
---- a/drivers/md/dm-verity-verify-sig.c
-+++ b/drivers/md/dm-verity-verify-sig.c
-@@ -22,6 +22,16 @@ MODULE_PARM_DESC(require_signatures,
- #define DM_VERITY_IS_SIG_FORCE_ENABLED() \
- 	(require_signatures != false)
- 
-+static void destroy_verity_sig(struct dm_verity_sig *sig_info)
-+{
-+	if (!sig_info)
-+		return;
+diff --git a/security/ipe/ipe-engine.h b/security/ipe/ipe-engine.h
+index be17115861cb..d8cdb3cc7af8 100644
+--- a/security/ipe/ipe-engine.h
++++ b/security/ipe/ipe-engine.h
+@@ -18,6 +18,9 @@
+ struct ipe_bdev_blob {
+ 	u8	*dmverity_rh_sig;
+ 	size_t	dmv_rh_sig_len;
 +
-+	kfree(sig_info->sig);
-+	kfree(sig_info->signature_key_desc);
-+	kfree(sig_info);
++	u8 *dmverity_rh;
++	size_t rh_size;
+ };
+ 
+ struct ipe_engine_ctx {
+diff --git a/security/ipe/ipe.c b/security/ipe/ipe.c
+index 924f535c3d32..b398eafa6049 100644
+--- a/security/ipe/ipe.c
++++ b/security/ipe/ipe.c
+@@ -49,6 +49,10 @@ static int __init ipe_load_properties(void)
+ 	if (rc != 0)
+ 		return rc;
+ 
++	rc = ipe_init_dm_verity_rh();
++	if (rc != 0)
++		return rc;
++
+ 	return rc;
+ }
+ 
+diff --git a/security/ipe/properties/Kconfig b/security/ipe/properties/Kconfig
+index 2d8866ee456e..57b97b2b3877 100644
+--- a/security/ipe/properties/Kconfig
++++ b/security/ipe/properties/Kconfig
+@@ -13,8 +13,19 @@ config IPE_BOOT_PROP
+ 
+ 	  if unsure, answer N.
+ 
++config IPE_DM_VERITY_ROOTHASH
++	bool "Enable property for authorizing dm-verity volumes via root-hash"
++	depends on DM_VERITY
++	help
++	  This option enables IPE's integration with Device-Mapper Verity.
++	  This enables the usage of the property "dmverity_roothash" in IPE's
++	  policy. This property allows authorization or revocation via a
++	  a hex-string representing the roothash of a dmverity volume.
++
++	  if unsure, answer Y.
++
+ config IPE_DM_VERITY_SIGNATURE
+-	bool "Enable property for signature verified dm-verity volumes"
++	bool "Enable property for verified dm-verity volumes"
+ 	depends on DM_VERITY_VERIFY_ROOTHASH_SIG
+ 	help
+ 	  This option enables IPE's integration with Device-Mapper Verity's
+diff --git a/security/ipe/properties/Makefile b/security/ipe/properties/Makefile
+index 6b67cbe36e31..d9a3807797f4 100644
+--- a/security/ipe/properties/Makefile
++++ b/security/ipe/properties/Makefile
+@@ -10,3 +10,4 @@ obj-$(CONFIG_SECURITY_IPE) += properties.o
+ 
+ properties-$(CONFIG_IPE_BOOT_PROP) += boot-verified.o
+ properties-$(CONFIG_IPE_DM_VERITY_SIGNATURE) += dmverity-signature.o
++properties-$(CONFIG_IPE_DM_VERITY_ROOTHASH) += dmverity-roothash.o
+diff --git a/security/ipe/properties/dmverity-roothash.c b/security/ipe/properties/dmverity-roothash.c
+new file mode 100644
+index 000000000000..5c575fc275bc
+--- /dev/null
++++ b/security/ipe/properties/dmverity-roothash.c
+@@ -0,0 +1,155 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) Microsoft Corporation. All rights reserved.
++ */
++
++#include "../ipe.h"
++#include "../ipe-pin.h"
++#include "../ipe-property.h"
++#include "../utility.h"
++
++#include <linux/types.h>
++#include <linux/slab.h>
++#include <linux/fs.h>
++#include <linux/mount.h>
++#include <linux/audit.h>
++#include <linux/kernel.h>
++
++#define PROPERTY_NAME "dmverity_roothash"
++
++struct counted_array {
++	u8 *arr;
++	size_t len;
++};
++
++static void audit(struct audit_buffer *ab, const void *value)
++{
++	const struct counted_array *a = (const struct counted_array *)value;
++
++	if (!a || a->len == 0)
++		audit_log_format(ab, "NULL");
++	else
++		audit_log_n_hex(ab, a->arr, a->len);
 +}
 +
- bool verity_verify_is_sig_opt_arg(const char *arg_name)
- {
- 	return (!strcasecmp(arg_name,
-@@ -29,7 +39,7 @@ bool verity_verify_is_sig_opt_arg(const char *arg_name)
- }
- 
- static int verity_verify_get_sig_from_key(const char *key_desc,
--					struct dm_verity_sig_opts *sig_opts)
-+					  struct dm_verity_sig  *sig_info)
- {
- 	struct key *key;
- 	const struct user_key_payload *ukp;
-@@ -48,14 +58,14 @@ static int verity_verify_get_sig_from_key(const char *key_desc,
- 		goto end;
- 	}
- 
--	sig_opts->sig = kmalloc(ukp->datalen, GFP_KERNEL);
--	if (!sig_opts->sig) {
-+	sig_info->sig = kmalloc(ukp->datalen, GFP_KERNEL);
-+	if (!sig_info->sig) {
- 		ret = -ENOMEM;
- 		goto end;
- 	}
--	sig_opts->sig_size = ukp->datalen;
-+	sig_info->sig_size = ukp->datalen;
- 
--	memcpy(sig_opts->sig, ukp->data, sig_opts->sig_size);
-+	memcpy(sig_info->sig, ukp->data, sig_info->sig_size);
- 
- end:
- 	up_read(&key->sem);
-@@ -64,70 +74,128 @@ static int verity_verify_get_sig_from_key(const char *key_desc,
- 	return ret;
- }
- 
-+/**
-+ * Parse any signature verification arguments.
-+ *	This function will populate v->sig, it is the caller's
-+ *	responsibility to free this structure via verity_verify_dtr
-+ *
-+ * @as: argument set passed in to parse
-+ * @v: verity context structure. Should have a NULL v->sig member.
-+ * @argc: current argument number
-+ */
- int verity_verify_sig_parse_opt_args(struct dm_arg_set *as,
- 				     struct dm_verity *v,
--				     struct dm_verity_sig_opts *sig_opts,
--				     unsigned int *argc,
--				     const char *arg_name)
-+				     unsigned int *argc)
- {
- 	struct dm_target *ti = v->ti;
-+	struct dm_verity_sig *sig_info = NULL;
- 	int ret = 0;
- 	const char *sig_key = NULL;
- 
- 	if (!*argc) {
- 		ti->error = DM_VERITY_VERIFY_ERR("Signature key not specified");
--		return -EINVAL;
-+		ret = -EINVAL;
-+		goto cleanup;
++static inline void audit_rule_value(struct audit_buffer *ab,
++				    const void *value)
++{
++	audit(ab, value);
++}
++
++static inline void audit_ctx(struct audit_buffer *ab,
++			     const struct ipe_engine_ctx *ctx,
++			     const void *storage)
++{
++	struct counted_array a;
++
++	if (!has_bdev(ctx->file))
++		return audit(ab, NULL);
++
++	a.arr = ctx->sec_bdev->dmverity_rh;
++	a.len = ctx->sec_bdev->rh_size;
++
++	return audit(ab, &a);
++}
++
++static bool evaluate(const struct ipe_engine_ctx *ctx,
++		     const void *value, void **storage)
++{
++	const struct counted_array *a = (const struct counted_array *)value;
++
++	if (!has_bdev(ctx->file))
++		return false;
++
++	if (a->len != ctx->sec_bdev->rh_size)
++		return false;
++
++	return memcmp(a->arr, ctx->sec_bdev->dmverity_rh, a->len) == 0;
++}
++
++static int parse(const char *val_str, void **value)
++{
++	struct counted_array *arr = NULL;
++	int rv = 0;
++
++	arr = kzalloc(sizeof(*arr), GFP_KERNEL);
++	if (!arr) {
++		rv = -ENOMEM;
++		goto err;
 +	}
 +
-+	sig_info = kzalloc(sizeof(*sig_info), GFP_KERNEL);
-+	if (!sig_info) {
-+		ret = -ENOMEM;
-+		goto cleanup;
- 	}
- 
- 	sig_key = dm_shift_arg(as);
- 	(*argc)--;
- 
--	ret = verity_verify_get_sig_from_key(sig_key, sig_opts);
--	if (ret < 0)
-+	ret = verity_verify_get_sig_from_key(sig_key, sig_info);
-+	if (ret < 0) {
- 		ti->error = DM_VERITY_VERIFY_ERR("Invalid key specified");
-+		goto cleanup;
-+	}
- 
--	v->signature_key_desc = kstrdup(sig_key, GFP_KERNEL);
--	if (!v->signature_key_desc)
--		return -ENOMEM;
-+	sig_info->signature_key_desc = kstrdup(sig_key, GFP_KERNEL);
-+	if (!sig_info->signature_key_desc) {
-+		ret = -ENOMEM;
-+		goto cleanup;
-+	}
- 
-+	v->sig = sig_info;
-+	sig_info = NULL;
-+cleanup:
-+	if (sig_info)
-+		destroy_verity_sig(sig_info);
- 	return ret;
- }
- 
--/*
-+/**
-  * verify_verify_roothash - Verify the root hash of the verity hash device
-  *			     using builtin trusted keys.
-  *
-- * @root_hash: For verity, the roothash/data to be verified.
-- * @root_hash_len: Size of the roothash/data to be verified.
-- * @sig_data: The trusted signature that verifies the roothash/data.
-- * @sig_len: Size of the signature.
-+ * @v: dm_verity structure containing all context for the dm_verity
-+ *	operation.
-  *
-  */
--int verity_verify_root_hash(const void *root_hash, size_t root_hash_len,
--			    const void *sig_data, size_t sig_len)
-+int verity_verify_root_hash(const struct dm_verity *v)
- {
--	int ret;
-+	int ret = 0;
-+	char *root_hash = NULL;
-+	size_t root_hash_size = 0;
-+	struct dm_verity_sig *sig_target = NULL;
++	arr->len = strlen(val_str) / 2;
 +
-+	if (!v || !v->ti || !v->root_digest || v->digest_size == 0) {
-+		ret = -EINVAL;
-+		goto cleanup;
++	arr->arr = kzalloc(arr->len, GFP_KERNEL);
++	if (!arr->arr) {
++		rv = -ENOMEM;
++		goto err;
 +	}
 +
-+	sig_target = v->sig;
++	rv = hex2bin(arr->arr, val_str, arr->len);
++	if (rv != 0)
++		goto err;
 +
-+	if (!sig_target || !sig_target->sig || sig_target->sig_size == 0) {
-+		if (DM_VERITY_IS_SIG_FORCE_ENABLED()) {
-+			ret = -ENOKEY;
-+			goto cleanup;
-+		} else {
-+			goto cleanup;
-+		}
++	*value = arr;
++	return rv;
++err:
++	if (arr)
++		kfree(arr->arr);
++	kfree(arr);
++	return rv;
++}
++
++static int duplicate(const void *src, void **dest)
++{
++	struct counted_array *arr = NULL;
++	const struct counted_array *src_arr = src;
++	int rv = 0;
++
++	arr = kmemdup(src_arr, sizeof(*arr), GFP_KERNEL);
++	if (!arr) {
++		rv = -ENOMEM;
++		goto err;
 +	}
- 
--	if (!root_hash || root_hash_len == 0)
--		return -EINVAL;
-+	/*
-+	 * If signature has passed validation once, assume
-+	 * that future signatures will pass.
-+	 */
-+	if (sig_target->passed)
-+		goto cleanup;
- 
--	if (!sig_data  || sig_len == 0) {
--		if (DM_VERITY_IS_SIG_FORCE_ENABLED())
--			return -ENOKEY;
--		else
--			return 0;
-+	root_hash_size = v->digest_size * 2;
-+	root_hash = kzalloc(root_hash_size, GFP_KERNEL);
-+	if (!root_hash) {
-+		ret = -ENOMEM;
-+		goto cleanup;
- 	}
- 
--	ret = verify_pkcs7_signature(root_hash, root_hash_len, sig_data,
--				sig_len, NULL, VERIFYING_UNSPECIFIED_SIGNATURE,
--				NULL, NULL);
-+	bin2hex(root_hash, v->root_digest, v->digest_size);
 +
-+	ret = verify_pkcs7_signature(root_hash, root_hash_size, v->sig->sig,
-+				     v->sig->sig_size, NULL,
-+				     VERIFYING_UNSPECIFIED_SIGNATURE, NULL,
-+				     NULL);
-+	if (ret != 0)
-+		goto cleanup;
- 
-+	sig_target->passed = true;
-+cleanup:
-+	kfree(root_hash);
- 	return ret;
- }
- 
--void verity_verify_sig_opts_cleanup(struct dm_verity_sig_opts *sig_opts)
-+/**
-+ * Performs destruction / cleanup of a valid dm_verity_sig struct
-+ *
-+ * @v: dm_verity structure containing the dm_verity_sig struct to
-+ *	be freed.
-+ */
++	arr->arr = kmemdup(src_arr->arr, src_arr->len, GFP_KERNEL);
++	if (!arr->arr) {
++		rv = -ENOMEM;
++		goto err;
++	}
 +
-+void verity_verify_dtr(struct dm_verity *v)
- {
--	kfree(sig_opts->sig);
--	sig_opts->sig = NULL;
--	sig_opts->sig_size = 0;
-+	destroy_verity_sig(v->sig);
-+	v->sig = NULL;
- }
-diff --git a/drivers/md/dm-verity-verify-sig.h b/drivers/md/dm-verity-verify-sig.h
-index 19b1547aa741..9d7b34672c80 100644
---- a/drivers/md/dm-verity-verify-sig.h
-+++ b/drivers/md/dm-verity-verify-sig.h
-@@ -11,31 +11,30 @@
- #define DM_VERITY_ROOT_HASH_VERIFICATION "DM Verity Sig Verification"
- #define DM_VERITY_ROOT_HASH_VERIFICATION_OPT_SIG_KEY "root_hash_sig_key_desc"
++	*dest = arr;
++	return rv;
++err:
++	if (arr)
++		kfree(arr->arr);
++	kfree(arr);
++
++	return rv;
++}
++
++static void free_val(void **value)
++{
++	struct counted_array *a = (struct counted_array *)*value;
++
++	if (a)
++		kfree(a->arr);
++	kfree(a);
++	*value = NULL;
++}
++
++static const struct ipe_property dmv_roothash = {
++	.property_name = PROPERTY_NAME,
++	.eval = evaluate,
++	.parse = parse,
++	.rule_audit = audit_rule_value,
++	.ctx_audit = audit_ctx,
++	.dup = duplicate,
++	.free_val = free_val,
++	.prealloc = NULL,
++	.free_storage = NULL,
++};
++
++int ipe_init_dm_verity_rh(void)
++{
++	return ipe_register_property(&dmv_roothash);
++}
+diff --git a/security/ipe/properties/prop-entry.h b/security/ipe/properties/prop-entry.h
+index 85366366ff0d..86a360570f3b 100644
+--- a/security/ipe/properties/prop-entry.h
++++ b/security/ipe/properties/prop-entry.h
+@@ -26,4 +26,13 @@ static inline int __init ipe_init_dm_verity_signature(void)
+ int __init ipe_init_dm_verity_signature(void);
+ #endif /* CONFIG_IPE_DM_VERITY_SIGNATURE */
  
--struct dm_verity_sig_opts {
-+struct dm_verity_sig {
-+	char *signature_key_desc;
- 	unsigned int sig_size;
- 	u8 *sig;
-+	bool passed;
- };
- 
- #ifdef CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG
- 
- #define DM_VERITY_ROOT_HASH_VERIFICATION_OPTS 2
- 
--int verity_verify_root_hash(const void *data, size_t data_len,
--			    const void *sig_data, size_t sig_len);
-+int verity_verify_root_hash(const struct dm_verity *v);
- bool verity_verify_is_sig_opt_arg(const char *arg_name);
- 
- int verity_verify_sig_parse_opt_args(struct dm_arg_set *as, struct dm_verity *v,
--				    struct dm_verity_sig_opts *sig_opts,
--				    unsigned int *argc, const char *arg_name);
-+				    unsigned int *argc);
- 
--void verity_verify_sig_opts_cleanup(struct dm_verity_sig_opts *sig_opts);
-+void verity_verify_dtr(struct dm_verity *v);
- 
- #else
- 
- #define DM_VERITY_ROOT_HASH_VERIFICATION_OPTS 0
- 
--int verity_verify_root_hash(const void *data, size_t data_len,
--			    const void *sig_data, size_t sig_len)
-+int verity_verify_root_hash(const struct dm_verity *v);
- {
- 	return 0;
- }
-@@ -46,13 +45,12 @@ bool verity_verify_is_sig_opt_arg(const char *arg_name)
- }
- 
- int verity_verify_sig_parse_opt_args(struct dm_arg_set *as, struct dm_verity *v,
--				    struct dm_verity_sig_opts *sig_opts,
--				    unsigned int *argc, const char *arg_name)
-+				    unsigned int *argc)
- {
- 	return -EINVAL;
- }
- 
--void verity_verify_sig_opts_cleanup(struct dm_verity_sig_opts *sig_opts)
-+void verity_verify_dtr(struct dm_verity *v)
- {
- }
- 
-diff --git a/drivers/md/dm-verity.h b/drivers/md/dm-verity.h
-index 641b9e3a399b..995c495decad 100644
---- a/drivers/md/dm-verity.h
-+++ b/drivers/md/dm-verity.h
-@@ -64,7 +64,7 @@ struct dm_verity {
- 	struct dm_verity_fec *fec;	/* forward error correction */
- 	unsigned long *validated_blocks; /* bitset blocks validated */
- 
--	char *signature_key_desc; /* signature keyring reference */
-+	struct dm_verity_sig *sig; /* signature verification */
- };
- 
- struct dm_verity_io {
++#ifndef CONFIG_IPE_DM_VERITY_ROOTHASH
++static inline int __init ipe_init_dm_verity_rh(void)
++{
++	return 0;
++}
++#else
++int __init ipe_init_dm_verity_rh(void);
++#endif /* CONFIG_IPE_DM_VERITY_ROOTHASH */
++
+ #endif /* IPE_PROP_ENTRY_H */
 -- 
 2.26.0
 
