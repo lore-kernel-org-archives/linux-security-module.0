@@ -2,64 +2,40 @@ Return-Path: <SRS0=ULH2=5W=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F1B6C2BA1B
-	for <linux-security-module@archiver.kernel.org>; Mon,  6 Apr 2020 18:51:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F946C2BA17
+	for <linux-security-module@archiver.kernel.org>; Mon,  6 Apr 2020 18:59:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FA1A206B8
-	for <linux-security-module@archiver.kernel.org>; Mon,  6 Apr 2020 18:51:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A2CA206B8
+	for <linux-security-module@archiver.kernel.org>; Mon,  6 Apr 2020 18:59:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RF4PSQ9c"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="EfKpfQ9f"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726112AbgDFSvQ (ORCPT
+        id S1726380AbgDFS7L (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 6 Apr 2020 14:51:16 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:35378 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726084AbgDFSvP (ORCPT
+        Mon, 6 Apr 2020 14:59:11 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:45324 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725876AbgDFS7L (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 6 Apr 2020 14:51:15 -0400
-Received: by mail-lf1-f67.google.com with SMTP id r17so363182lff.2
-        for <linux-security-module@vger.kernel.org>; Mon, 06 Apr 2020 11:51:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qhtGc2NWi/8OTbqNFI47F+sBa8PMVgXlDImrvNA4WeI=;
-        b=RF4PSQ9c4jPFn4H6RVBhebbVanX6GFbOLrOG5+Unj/WUoFPubwZM11fvBIKGAYwftJ
-         Zgm2/O4v03W3DbXDUVS5ljY+yaztJk2uzRBoyCkU0mLc6LU0jSv0IOXAuA1GEq8rg9HK
-         ld0K+E7Oks5lW3gbwj/gxVyDwi/yekrFAjEvo25NCwULZylzAHMP6WrFLp0ZhZIZ4OAq
-         bM2zu1Wlb/74JizmfMIZwlN4iMv8M4LBl9PVzlCAc1iBmukHpwtb1U6BTlmT5igQ6C5P
-         CnFUZd4WJEv0u/3EViJf+WnVIozV4rPWDXauNMMUn13fLREesEcNaXKQ3gkLbo7ZcMbO
-         1G4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qhtGc2NWi/8OTbqNFI47F+sBa8PMVgXlDImrvNA4WeI=;
-        b=DxU3pSw+RMnF/AzoklbQvSHGzymKxuEzP9U7Sbpn3MGDb1QvnUUZ++UKpX6WGUjV3X
-         4k7XRXqJ3vaCIYK24GE1Jq+qtxfoQw+/bp8Q9lpHH0WeHE8FuZc6SWHZr1z3/SIEC8gI
-         ZNZbOWjfdHK8V8wXIGddBxmvDDPRNT5QILgub4uZnWnYIbCOp+xy7tuCQntXsGTZJ6OB
-         xt5a2DXt4nxXRb5h7wJJ68N4RHglVqIUnK3AWIaEWoBwazPe4y7MSRdIGB8JlR+KD07f
-         PO0ExNlsdYgMDsHj8PQsUCaljNWSyObhjapQYR0rJBeOvpXvkqgCAIPIVEb8zdTw5StH
-         Ve1A==
-X-Gm-Message-State: AGi0PubfoqbkrBcC+NAqdu6NJw81liZ/ooSpaPbvN5wN/gw6MqY9tOQL
-        Ik2EnjTrjiYHY0NNeL8UuSGwCaWdybFTow0F4zMyFg==
-X-Google-Smtp-Source: APiQypKCNJNdNFC2PRonEgYGyMcSGGcujUHyRc434pzWMUoZss+1QGGz8dv1ab/TAjDHReQ3qA2uS582dsE/9/zblCs=
-X-Received: by 2002:a19:c850:: with SMTP id y77mr13013340lff.45.1586199073198;
- Mon, 06 Apr 2020 11:51:13 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200406181045.1024164-1-deven.desai@linux.microsoft.com>
-In-Reply-To: <20200406181045.1024164-1-deven.desai@linux.microsoft.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Mon, 6 Apr 2020 20:50:46 +0200
-Message-ID: <CAG48ez3JV-tzjRLdcys6Fz9LKYaB1h-1GaeAzkUYtY1RgxsB6g@mail.gmail.com>
-Subject: Re: [RESEND PATCH 00/11] Integrity Policy Enforcement LSM (IPE)
-To:     deven.desai@linux.microsoft.com
+        Mon, 6 Apr 2020 14:59:11 -0400
+Received: by linux.microsoft.com (Postfix, from userid 1033)
+        id 6557920B4737; Mon,  6 Apr 2020 11:59:10 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 6557920B4737
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1586199550;
+        bh=8+4SIzp738pVoCmLOrnJS6Dy5LRKKuCLugqMPy7T3Uo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=EfKpfQ9fwJ1xCtYp8NAdRxpIpqyibbHR1Kp08SvxFwdnqAw6SUs56COIi4ZhVUaQN
+         cuXFI4b7+jZJbQa34jLIoOkB+hI+fF8zerq00JVspwHX54nvky3Xr+4ZoA4HwZSxKJ
+         qXA9lqXQSbwiUROHMO2R/qEvx3xOnzVvdfmJYL9o=
+Date:   Mon, 6 Apr 2020 11:59:10 -0700
+From:   Deven Bowers <deven.desai@linux.microsoft.com>
+To:     Jann Horn <jannh@google.com>
 Cc:     agk@redhat.com, Jens Axboe <axboe@kernel.dk>, snitzer@redhat.com,
         James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
@@ -72,20 +48,34 @@ Cc:     agk@redhat.com, Jens Axboe <axboe@kernel.dk>, snitzer@redhat.com,
         Sasha Levin <sashal@kernel.org>,
         jaskarankhurana@linux.microsoft.com, nramas@linux.microsoft.com,
         mdsakib@linux.microsoft.com
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [RESEND PATCH 00/11] Integrity Policy Enforcement LSM (IPE)
+Message-ID: <20200406185910.GA77950@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <20200406181045.1024164-1-deven.desai@linux.microsoft.com>
+ <CAG48ez3JV-tzjRLdcys6Fz9LKYaB1h-1GaeAzkUYtY1RgxsB6g@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAG48ez3JV-tzjRLdcys6Fz9LKYaB1h-1GaeAzkUYtY1RgxsB6g@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Apr 6, 2020 at 8:10 PM <deven.desai@linux.microsoft.com> wrote:
-> Overview:
-> ------------------------------------
-> IPE is a Linux Security Module, which allows for a configurable
-> policy to enforce integrity requirements on the whole system. It
-> attempts to solve the issue of Code Integrity: that any code being
-> executed (or files being read), are identical to the version that
-> was built by a trusted source.
+On Mon, Apr 06, 2020 at 08:50:46PM +0200, Jann Horn wrote:
+> On Mon, Apr 6, 2020 at 8:10 PM <deven.desai@linux.microsoft.com> wrote:
+> > Overview:
+> > ------------------------------------
+> > IPE is a Linux Security Module, which allows for a configurable
+> > policy to enforce integrity requirements on the whole system. It
+> > attempts to solve the issue of Code Integrity: that any code being
+> > executed (or files being read), are identical to the version that
+> > was built by a trusted source.
+> 
+> Where's patch 02/11? lore at
+> https://lore.kernel.org/linux-security-module/20200406183619.GA77626@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net/T/#t
+> has everything other than that patch.
 
-Where's patch 02/11? lore at
-https://lore.kernel.org/linux-security-module/20200406183619.GA77626@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net/T/#t
-has everything other than that patch.
+It looks like it's over majordomo's character limit by 7489 characters.
+I'll have to repost with this patch broken up. Apologies.
+
+- Deven
