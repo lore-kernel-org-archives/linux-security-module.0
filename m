@@ -2,673 +2,203 @@ Return-Path: <SRS0=TFuZ=5X=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90BC4C2BA80
-	for <linux-security-module@archiver.kernel.org>; Tue,  7 Apr 2020 15:39:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35594C2BB55
+	for <linux-security-module@archiver.kernel.org>; Tue,  7 Apr 2020 16:37:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 681E420730
-	for <linux-security-module@archiver.kernel.org>; Tue,  7 Apr 2020 15:39:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02E1E2072A
+	for <linux-security-module@archiver.kernel.org>; Tue,  7 Apr 2020 16:37:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OXSKFRRL"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mzeYb/v0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729082AbgDGPjl (ORCPT
+        id S1727359AbgDGQg7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 7 Apr 2020 11:39:41 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:45561 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729183AbgDGPjl (ORCPT
+        Tue, 7 Apr 2020 12:36:59 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:37610 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726873AbgDGQg7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 7 Apr 2020 11:39:41 -0400
-Received: by mail-lf1-f68.google.com with SMTP id f8so2700737lfe.12
-        for <linux-security-module@vger.kernel.org>; Tue, 07 Apr 2020 08:39:37 -0700 (PDT)
+        Tue, 7 Apr 2020 12:36:59 -0400
+Received: by mail-qt1-f194.google.com with SMTP id n17so3173953qtv.4;
+        Tue, 07 Apr 2020 09:36:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=gmgo6tjFJb4lSSLiG9Gj6gr0AGTXJbzgQ5gfcznRczE=;
-        b=OXSKFRRL6rOteNKCE7rcjCpjlgLN617NRjA20J4thiAmJn+SvPoyI8onmn6AOJzfk1
-         ZBTHc2fAH7UVO9dztl9oxmN5durdpXXuXzaA1C4h27NkjW2N9dJ7CB8B41aanoV8X4Tw
-         IpsMhM+jo9WEQVXb5fpoNeErPY+UVg+TvJRyVBR0oitxc2WYCCrnc0GXvLxo6YUmqqQ1
-         5di0xIBfUb1XlH0QCabuhBRDa+aWVVzaCQjvwofPwhm0WSMpSnAo3zKQxagtnPFV32tG
-         NfeToUVhpo8riXXu4u2PeMt/K/CZMGO+5yUV9kNMRkm68FkvoRlEAGows/k4ijTy1zGU
-         Oygg==
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=JAlgjR4rDmY/2vZYzgj0uwk64bvcEfxMeQnJObS4WN0=;
+        b=mzeYb/v07tBo5YAQ3Db2aIxdf3vGL2Lw5AQH2f7iRrn4Kf5IwN57ZEaRMgeTWEh+Z2
+         2iFPRPjt0rybDizXAmRuJpVvYtH+3caw2QLaJcDh8KF6ofgagJCDYs6CRjXVDHFAXOfq
+         WMKEBcrAyoeJUYmBod0rh7OM3zj+GREA13Qek+8274GcBUQZEc28YaRb+/Ta/gEv0tZl
+         wJiX1sAo+ptRBloacUGgzhJteIUsPqM8s8XXsWIz+ORtYGKeIiFc1ucVfE+UMgp+9Ho8
+         D97AcxxI76U2Fo2P4ZWpBzvTjKOzjAr/MP2ZDy7+tcJ4vcaN0AMVpMRDXXR0pm9ZlVW3
+         FElA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gmgo6tjFJb4lSSLiG9Gj6gr0AGTXJbzgQ5gfcznRczE=;
-        b=TLswLQp/VcN8Ysd2BVW40Q2OkjGoui+NMLPzOdFFBZGIIgvmORwhj2dV2eLk3IQ4D1
-         YEItlMLc3umEIcQQ8TEfJ926dz1reQKVqXqf9fxrrgp+DQCj/PeByNwSM7DwnfoX+YAP
-         ODO5Ce8W2xfC41hgm/hjUDuOzTPxHhBsQIDo6Hky7wYW+n4wFOS6Asy9gK20hqoSsRBd
-         nFcH5bRiSs+oo1SpuanFui9vIviYndsPrz2u8tu2XKmKgPL1mPoVN5TQiGnHCr0SYkGu
-         V9uwsmzEc1nzaEjroU80K+lL+tZFHKsi1DETtlaQKhKD1KSI/KFLDsGRxlMBKPyjTLS3
-         rMEA==
-X-Gm-Message-State: AGi0PuYlXw2kXude1SkrLIisPtFpDVo4GDPunzECx8QGjr4BMMEGufo7
-        hUHeW6GbPwf9nI072GaMsbAuhOumo3PuY2nsoGGEjQ==
-X-Google-Smtp-Source: APiQypLUqTB4BLvo/abfr8TjM9VOjupLvAgaL5qCFX3+IZDNWlEuIZYam5IsxuvRCvKYeTrsrD5vfCqyZMYzstjMFVM=
-X-Received: by 2002:ac2:5dc6:: with SMTP id x6mr1847051lfq.108.1586273976447;
- Tue, 07 Apr 2020 08:39:36 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200406221439.1469862-1-deven.desai@linux.microsoft.com> <20200406221439.1469862-4-deven.desai@linux.microsoft.com>
-In-Reply-To: <20200406221439.1469862-4-deven.desai@linux.microsoft.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Tue, 7 Apr 2020 17:39:09 +0200
-Message-ID: <CAG48ez2FfRK-ivZ0cJ4k-UqKfduQS_b2WCcD5Aj45sJKAqS58Q@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 03/12] security: add ipe lsm policy parser and
- policy loading
-To:     deven.desai@linux.microsoft.com
-Cc:     agk@redhat.com, Jens Axboe <axboe@kernel.dk>, snitzer@redhat.com,
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=JAlgjR4rDmY/2vZYzgj0uwk64bvcEfxMeQnJObS4WN0=;
+        b=c01PWq/hIy2EwR5O3NmxbMBcT33C3Z3mzuIMeJiezpJPzpSMdctVqY/FsBHPWUyjn9
+         T0u/VNwjelJmPF1uRL4AFcKMWsfQtm3ZCAP0G05T9yBcsBYy7eHMOIQ7UbcYdLfcQFyU
+         1LIGzRrdE1gGdjvsnq711dW0PVZqy3bThkFXKBRwRPpU1W1oIUF3dnPMCroTPjTwjgym
+         XBWC2H9qOvTRjS6iSjESKj/uIxP9ox+7pNLedbbmjTG8wrRS7U5Ql+JydKEYz3Y1vquG
+         MPFUs4VoyaTgahJUglCBasPxD0fACOT69RuOw0gFWXA0R8OaR1wtulqtEWc9uSCWby6I
+         i08w==
+X-Gm-Message-State: AGi0PubdDqOU7CLMactsdF9WVOFO6NQXP/nXNtQVdKqVthJUBFkMpRDI
+        oy/wP+CljTCosSnWW6JAOhI=
+X-Google-Smtp-Source: APiQypKskm/KL4CEIzIr5e5ePLM9bvbiEDFPYwKjt0cS+7S9OTINxM/HUxsHfDP21fQgJRCfKCqopw==
+X-Received: by 2002:aed:2e24:: with SMTP id j33mr1770721qtd.117.1586277417593;
+        Tue, 07 Apr 2020 09:36:57 -0700 (PDT)
+Received: from quaco.ghostprotocols.net ([179.97.37.151])
+        by smtp.gmail.com with ESMTPSA id 10sm16858487qtt.54.2020.04.07.09.36.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Apr 2020 09:36:56 -0700 (PDT)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 4E253409A3; Tue,  7 Apr 2020 13:36:54 -0300 (-03)
+Date:   Tue, 7 Apr 2020 13:36:54 -0300
+To:     Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
         James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        dm-devel@redhat.com, linux-block@vger.kernel.org,
-        tyhicks@linux.microsoft.com,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        Sasha Levin <sashal@kernel.org>,
-        jaskarankhurana@linux.microsoft.com, nramas@linux.microsoft.com,
-        mdsakib@linux.microsoft.com,
-        kernel list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Namhyung Kim <namhyung@kernel.org>,
+        Serge Hallyn <serge@hallyn.com>, Jiri Olsa <jolsa@redhat.com>,
+        Song Liu <songliubraving@fb.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Stephane Eranian <eranian@google.com>,
+        Igor Lubashev <ilubashe@akamai.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        linux-man@vger.kernel.org
+Subject: Re: [PATCH v8 00/12] Introduce CAP_PERFMON to secure system
+ performance monitoring and observability
+Message-ID: <20200407163654.GB12003@kernel.org>
+References: <f96f8f8a-e65c-3f36-dc85-fc3f5191e8c5@linux.intel.com>
+ <20200407143014.GD11186@kernel.org>
+ <20200407143551.GF11186@kernel.org>
+ <10cc74ee-8587-8cdb-f85f-5724b370a2ce@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <10cc74ee-8587-8cdb-f85f-5724b370a2ce@linux.intel.com>
+X-Url:  http://acmel.wordpress.com
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Apr 7, 2020 at 12:14 AM <deven.desai@linux.microsoft.com> wrote:
-[...]
-> Adds the policy parser and the policy loading to IPE, along with the
-> related sysfs and securityfs entries.
-[...]
-> diff --git a/security/ipe/ipe-parse.c b/security/ipe/ipe-parse.c
-[...]
-> +/* Internal Type Definitions */
-> +enum property_priority {
-> +       other = 0,
-> +       action = 1,
-> +       op = 2,
-> +       default_action = 3,
-> +       policy_ver = 4,
-> +       policy_name = 5,
-> +};
-> +
-> +struct token {
-> +       struct list_head        next_tok;
-> +       const char              *key;
-> +       enum property_priority  key_priority;
-> +       const char              *val;
-> +};
-> +
-[...]
-> +/**
-> + * ipe_free_policy: Deallocate an ipe_policy structure.
-> + * @pol: Policy to free.
-> + */
-> +void ipe_free_policy(struct ipe_policy *pol)
-> +{
-> +       size_t i;
-> +       struct ipe_rule *ptr;
-> +       struct ipe_rule_table *op;
-> +       struct list_head *l_ptr, *l_next;
-> +
-> +       if (IS_ERR_OR_NULL(pol))
-> +               return;
-> +
-> +       for (i = 0; i < ARRAY_SIZE(pol->ops); ++i) {
-> +               op = &pol->ops[i];
-> +
-> +               list_for_each_safe(l_ptr, l_next, &op->rules) {
-> +                       ptr = list_entry(l_ptr, struct ipe_rule, next);
-> +                       list_del(l_ptr);
-> +                       ipe_free_rule(ptr);
-> +               }
-> +       }
-> +
-> +       kfree(pol->policy_name);
-> +       kfree(pol);
-> +       pol = NULL;
+Em Tue, Apr 07, 2020 at 05:54:27PM +0300, Alexey Budankov escreveu:
+> On 07.04.2020 17:35, Arnaldo Carvalho de Melo wrote:
+> > Em Tue, Apr 07, 2020 at 11:30:14AM -0300, Arnaldo Carvalho de Melo escreveu:
+> >> [perf@five ~]$ type perf
+> >> perf is hashed (/home/perf/bin/perf)
+> >> [perf@five ~]$ getcap /home/perf/bin/perf
+> >> /home/perf/bin/perf = cap_sys_ptrace,cap_syslog,38+ep
+> >> [perf@five ~]$ groups
+> >> perf perf_users
+> >> [perf@five ~]$ id
+> >> uid=1002(perf) gid=1002(perf) groups=1002(perf),1003(perf_users) context=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
+> >> [perf@five ~]$ perf top --stdio
+> >> Error:
+> >> Failed to mmap with 1 (Operation not permitted)
+> >> [perf@five ~]$ perf record -a
+> >> ^C[ perf record: Woken up 1 times to write data ]
+> >> [ perf record: Captured and wrote 1.177 MB perf.data (1552 samples) ]
+> >>
+> >> [perf@five ~]$ perf evlist
+> >> cycles:u
+> >> [perf@five ~]$
+> > 
+> > Humm, perf record falls back to cycles:u after initially trying cycles
+> > (i.e. kernel and userspace), lemme see trying 'perf top -e cycles:u',
+> > lemme test, humm not really:
+> > 
+> > [perf@five ~]$ perf top --stdio -e cycles:u
+> > Error:
+> > Failed to mmap with 1 (Operation not permitted)
+> > [perf@five ~]$ perf record -e cycles:u -a sleep 1
+> > [ perf record: Woken up 1 times to write data ]
+> > [ perf record: Captured and wrote 1.123 MB perf.data (132 samples) ]
+> > [perf@five ~]$
+> > 
+> > Back to debugging this.
+> 
+> Could makes sense adding cap_ipc_lock to the binary to isolate from this:
+> 
+> kernel/events/core.c: 6101
+> 	if ((locked > lock_limit) && perf_is_paranoid() &&
+> 		!capable(CAP_IPC_LOCK)) {
+> 		ret = -EPERM;
+> 		goto unlock;
+> 	}
 
-What is this assignment supposed to do?
 
-> +}
-[...]
-> diff --git a/security/ipe/ipe-policy.c b/security/ipe/ipe-policy.c
-[...]
-> +/**
-> + * ipe_is_active_policy: Determine if @policy is the currently active policy.
-> + * @policy: Policy to check if it's the active policy.
-> + *
-> + * NOTE: If this attribute is needed to be consistent over a critical section,
-> + *       do not use this function, as it does not hold the read lock over the
-> + *       entirety of the critical section.
-> + *
-> + * Return:
-> + * true - @policy is the active policy
-> + * false - @policy is not the active policy
-> + */
-> +bool ipe_is_active_policy(const struct ipe_policy *policy)
-> +{
-> +       bool result;
-> +
-> +       rcu_read_lock();
-> +
-> +       result = rcu_dereference(ipe_active_policy) == policy;
-> +
-> +       rcu_read_unlock();
+That did the trick, I'll update the documentation and include in my
+"Committer testing" section:
 
-You're not actually accessing the pointer, so you can use rcu_access_pointer()
-and get rid of the rcu_read_lock()/rcu_read_unlock(). Then this helper turns
-into a one-liner.
+[perf@five ~]$ groups
+perf perf_users
+[perf@five ~]$ ls -lahF bin/perf
+-rwxr-x---. 1 root perf_users 24M Apr  7 10:34 bin/perf*
+[perf@five ~]$ getcap bin/perf
+bin/perf = cap_ipc_lock,cap_sys_ptrace,cap_syslog,38+ep
+[perf@five ~]$
+[perf@five ~]$ perf top --stdio
 
-> +       return result;
-> +}
-> +
-> +/**
-> + * ipe_update_active_policy: Determine if @old is the active policy, and update
-> + *                          the active policy if necessary.
-> + * @old: The previous policy that the update is trying to replace.
-> + * @new: The new policy attempting to replace @old.
-> + *
-> + * If @old is not the active policy, nothing will be done.
-> + *
-> + * Return:
-> + * 0 - OK
-> + * -EBADMSG - Invalid Policy
-> + */
-> +int ipe_update_active_policy(const struct ipe_policy *old,
-> +                            const struct ipe_policy *new)
-> +{
-> +       int rc = 0;
-> +       const struct ipe_policy *curr_policy = NULL;
-> +
-> +       /* no active policy, safe to update */
-> +       if (!ipe_active_policy)
 
-This should be rcu_access_pointer().
+   PerfTop:     652 irqs/sec  kernel:73.8%  exact: 99.7% lost: 0/0 drop: 0/0 [4000Hz cycles:u],  (all, 12 CPUs)
+---------------------------------------------------------------------------------------------------------------
 
-> +               return 0;
-[...]
-> +}
-[...]
-> diff --git a/security/ipe/ipe-secfs.c b/security/ipe/ipe-secfs.c
-[...]
-> +/**
-> + * alloc_callback: Callback given to verify_pkcs7_signature function to set
-> + *                the inner content reference and parse the policy.
-> + * @ctx: "ipe_policy_node" to set inner content, size and parsed policy of.
-> + * @data: Start of PKCS#7 inner content.
-> + * @len: Length of @data.
-> + * @asn1hdrlen: Unused.
-> + *
-> + * Return:
-> + * 0 - OK
-> + * ERR_PTR(-EBADMSG) - Invalid policy syntax
-> + * ERR_PTR(-ENOMEM) - Out of memory
-> + */
-> +static int alloc_callback(void *ctx, const void *data, size_t len,
-> +                         size_t asn1hdrlen)
-> +{
-> +       char *cpy = NULL;
-> +       struct ipe_policy *pol = NULL;
-> +       struct ipe_policy_node *n = (struct ipe_policy_node *)ctx;
-> +
-> +       n->content = (const u8 *)data;
-> +       n->content_size = len;
-> +
-> +       if (len == 0)
-> +               return -EBADMSG;
-> +
-> +       cpy = kzalloc(len + 1, GFP_KERNEL);
-> +       if (!cpy)
-> +               return -ENOMEM;
-> +
-> +       (void)strncpy(cpy, data, len);
+    13.03%  [kernel]               [k] module_get_kallsym
+     5.25%  [kernel]               [k] kallsyms_expand_symbol.constprop.0
+     5.00%  libc-2.30.so           [.] __GI_____strtoull_l_internal
+     4.41%  [kernel]               [k] memcpy
+     3.42%  [kernel]               [k] vsnprintf
+     2.98%  perf                   [.] map__process_kallsym_symbol
+     2.86%  [kernel]               [k] format_decode
+     2.73%  [kernel]               [k] number
+     2.70%  perf                   [.] rb_next
+     2.59%  perf                   [.] maps__split_kallsyms
+     2.54%  [kernel]               [k] string_nocheck
+     1.90%  libc-2.30.so           [.] _IO_getdelim
+     1.86%  [kernel]               [k] __x86_indirect_thunk_rax
+     1.53%  libc-2.30.so           [.] _int_malloc
+     1.48%  libc-2.30.so           [.] __memmove_avx_unaligned_erms
+     1.40%  [kernel]               [k] clear_page_rep
+     1.07%  perf                   [.] rb_insert_color
+     1.01%  libc-2.30.so           [.] _IO_feof
+     0.99%  perf                   [.] __dso__load_kallsyms
+     0.98%  [kernel]               [k] s_next
+     0.96%  perf                   [.] __rblist__findnew
+     0.95%  [kernel]               [k] strlen
+     0.95%  perf                   [.] arch__symbols__fixup_end
+     0.94%  libpixman-1.so.0.38.4  [.] 0x000000000006f4af
+     0.94%  perf                   [.] symbol__new
+     0.89%  libpixman-1.so.0.38.4  [.] 0x000000000006f4a0
+     0.86%  [kernel]               [k] seq_read
+     0.81%  libpixman-1.so.0.38.4  [.] 0x000000000006f4ab
+     0.80%  perf                   [.] __symbols__insert
+     0.73%  libpixman-1.so.0.38.4  [.] 0x000000000006f4a7
+     0.67%  [kernel]               [k] s_show
+     0.66%  libc-2.30.so           [.] __libc_calloc
+     0.61%  libpixman-1.so.0.38.4  [.] 0x000000000006f4bb
+     0.59%  [kernel]               [k] get_page_from_freelist
+     0.59%  perf                   [.] memcpy@plt
+     0.58%  perf                   [.] eprintf
+exiting.
+[perf@five ~]$
 
-Shouldn't this just be memcpy()?
+There is still something strange in here, the event is cycles:u (see at
+the PerfTop line, but it is getting kernel samples :-\
 
-> +       pol = ipe_parse_policy(cpy);
-> +       if (IS_ERR(pol)) {
-> +               kfree(cpy);
-> +               return PTR_ERR(pol);
-> +       }
-> +
-> +       n->parsed = pol;
-> +       kfree(cpy);
-> +       return 0;
-> +}
-[...]
-> +static ssize_t ipe_secfs_new_policy(struct file *f, const char __user *data,
-> +                                   size_t len, loff_t *offset)
-> +{
-> +       ssize_t rc = 0;
-> +       u8 *cpy = NULL;
-> +       ssize_t written = 0;
-> +
-> +       if (!ns_capable(current_user_ns(), CAP_MAC_ADMIN))
-> +               return -EPERM;
-
-Use file_ns_capable(f, &init_user_ns, CAP_MAC_ADMIN) instead, both here and
-elsewhere.
-
-> +       cpy = kzalloc(len, GFP_KERNEL);
-> +       if (!cpy) {
-> +               rc = -ENOMEM;
-> +               goto err;
-> +       }
-> +
-> +       written = simple_write_to_buffer(cpy, len, offset, data, len);
-> +       if (written < 0) {
-> +               rc = written;
-> +               goto err;
-> +       }
-
-This should probably be memdup_user() instead of
-kzalloc()+simple_write_to_buffer()?
-
-> +       rc = ipe_build_policy_secfs_node(cpy, written);
-> +err:
-> +       kfree(cpy);
-> +       return rc < 0 ? rc : written;
-> +}
-> +
-> +/**
-> + * retrieve_backed_dentry: Retrieve a dentry with a backing inode, identified
-> + *                        by @name, under @parent.
-> + * @name: Name of the dentry under @parent.
-> + * @parent: The parent dentry to search under for @name.
-> + * @size: Length of @name.
-> + *
-> + * This takes a reference to the returned dentry. Caller needs to call dput
-> + * to drop the reference.
-> + *
-> + * Return:
-> + * valid dentry - OK
-> + * ERR_PTR - Error, see lookup_one_len_unlocked
-> + * NULL - No backing inode was found
-> + */
-> +static struct dentry *retrieve_backed_dentry(const char *name,
-> +                                            struct dentry *parent,
-> +                                            size_t size)
-> +{
-> +       int rc = 0;
-> +       struct dentry *tmp = NULL;
-> +
-> +       tmp = lookup_one_len_unlocked(name, parent, size);
-> +       if (IS_ERR(tmp)) {
-> +               rc = PTR_ERR(tmp);
-> +               goto out;
-> +       }
-
-You could just "return tmp;" here.
-
-> +
-> +       if (!d_really_is_positive(tmp))
-> +               goto out1;
-
-And here "return NULL;".
-
-> +       return tmp;
-> +out1:
-> +       tmp = NULL;
-
-This just sets a variable that is never read again to NULL?
-
-> +out:
-> +       return rc == 0 ? NULL : ERR_PTR(rc);
-> +}
-> +
-> +/**
-> + * ipe_secfs_del_policy: Delete a policy indicated by the name provided by
-> + *                      @data
-> + * @f: Unused.
-> + * @data: Buffer containing the policy id to delete.
-> + * @len: Length of @data.
-> + * @offset: Offset into @data.
-> + *
-> + * NOTE: Newlines are treated as part of the name, if using echo to test,
-> + * use -n to prohibit the silent addition of a newline.
-> + *
-> + * Return:
-> + * > 0 - OK
-> + * -ENOMEM - Out of memory
-> + * -EPERM - Policy is active
-> + * -ENOENT - Policy does not exist
-> + * -EPERM - if a MAC subsystem is enabled, missing CAP_MAC_ADMIN
-> + * Other - See retrieve_backed_dentry
-> + */
-> +static ssize_t ipe_secfs_del_policy(struct file *f, const char __user *data,
-> +                                   size_t len, loff_t *offset)
-> +{
-> +       ssize_t rc = 0;
-> +       char *id = NULL;
-> +       ssize_t written = 0;
-> +       struct dentry *raw = NULL;
-> +       struct dentry *content = NULL;
-> +       struct inode *policy_i = NULL;
-> +       struct dentry *policy_root = NULL;
-> +       struct inode *policies_root = NULL;
-> +       const struct ipe_policy *target = NULL;
-> +
-> +       if (!ns_capable(current_user_ns(), CAP_MAC_ADMIN))
-> +               return -EPERM;
-> +
-> +       id = kzalloc(len, GFP_KERNEL);
-> +       if (!id) {
-> +               rc = -ENOMEM;
-> +               goto out;
-> +       }
-> +
-> +       written = simple_write_to_buffer(id, len, offset, data, len);
-> +       if (written < 0) {
-> +               rc = written;
-> +               goto out;
-> +       }
-> +
-> +       policies_root = d_inode(ipe_policies_root);
-> +
-> +       policy_root = retrieve_backed_dentry(id, ipe_policies_root, written);
-> +       if (IS_ERR_OR_NULL(policy_root)) {
-> +               rc = IS_ERR(policy_root) ? PTR_ERR(policy_root) : -ENOENT;
-> +               goto out;
-> +       }
-> +
-> +       policy_i = d_inode(policy_root);
-> +
-> +       /* if the found dentry matches boot policy, fail */
-> +       if (boot_policy_node == policy_root) {
-> +               rc = -EACCES;
-> +               goto out1;
-> +       }
-> +
-> +       target = ((struct ipe_policy_node *)policy_i->i_private)->parsed;
-> +
-> +       /* fail if it's the active policy */
-> +       if (ipe_is_active_policy(target)) {
-> +               rc = -EPERM;
-> +               goto out1;
-> +       }
-
-Why can it not become the active policy after this check?
-
-> +       raw = retrieve_backed_dentry(IPE_FULL_CONTENT, policy_root,
-> +                                    strlen(IPE_FULL_CONTENT));
-> +       if (IS_ERR_OR_NULL(raw)) {
-> +               rc = IS_ERR(raw) ? PTR_ERR(raw) : -ENOENT;
-> +               goto out1;
-> +       }
-> +
-> +       content = retrieve_backed_dentry(IPE_INNER_CONTENT, policy_root,
-> +                                        strlen(IPE_INNER_CONTENT));
-> +       if (IS_ERR_OR_NULL(content)) {
-> +               rc = IS_ERR(content) ? PTR_ERR(content) : -ENOENT;
-> +               goto out2;
-> +       }
-> +
-> +       inode_lock(policies_root);
-> +       ipe_free_policy_node(policy_i->i_private);
-> +       policy_i->i_private = NULL;
-> +       inode_unlock(policies_root);
-> +
-> +       dput(raw);
-> +       dput(content);
-> +       dput(policy_root);
-> +       securityfs_remove(raw);
-> +       securityfs_remove(content);
-> +       securityfs_remove(policy_root);
-> +
-> +       kfree(id);
-> +       return written;
-> +out2:
-> +       dput(raw);
-> +out1:
-> +       dput(policy_root);
-> +out:
-> +       kfree(id);
-> +       return rc;
-> +}
-> +
-> +/**
-> + * ipe_secfs_rd_policy: Read the raw content (full enveloped PKCS7) data of
-> + *                     the policy stored within the file's parent inode.
-> + * @f: File representing the securityfs entry.
-> + * @data: User mode buffer to place the raw pkcs7.
-> + * @len: Length of @data.
-> + * @offset: Offset into @data.
-> + *
-> + * Return:
-> + * > 0 - OK
-> + * -ENOMEM - Out of memory
-> + */
-> +static ssize_t ipe_secfs_rd_policy(struct file *f, char __user *data,
-> +                                  size_t size, loff_t *offset)
-> +{
-> +       ssize_t rc = 0;
-> +       size_t avail = 0;
-> +       u8 *buffer = NULL;
-> +       struct inode *root = NULL;
-> +       const struct ipe_policy_node *node = NULL;
-> +
-> +       root = d_inode(f->f_path.dentry->d_parent);
-> +
-> +       inode_lock_shared(root);
-> +       node = (const struct ipe_policy_node *)root->i_private;
-> +
-> +       avail = node->data_len;
-> +       buffer = kmemdup(node->data, avail, GFP_KERNEL);
-> +       if (!buffer) {
-> +               rc = -ENOMEM;
-> +               goto cleanup;
-> +       }
-> +
-> +       rc = simple_read_from_buffer(data, size, offset, buffer, avail);
-> +cleanup:
-> +       inode_unlock_shared(root);
-
-Same thing as in ipe_secfs_rd_content(): simple_read_from_buffer() needlessly
-within locked section, buffer not freed.
-
-> +
-> +       return rc;
-> +}
-> +
-> +/**
-> + * ipe_secfs_ud_policy: Update a policy in place with a new PKCS7 policy.
-> + * @f: File representing the securityfs entry.
-> + * @data: Buffer user mode to place the raw pkcs7.
-> + * @len: Length of @data.
-> + * @offset: Offset into @data.
-> + *
-> + * Return:
-> + * 0 - OK
-> + * -EBADMSG - Invalid policy format
-> + * -ENOMEM - Out of memory
-> + * -EPERM - if a MAC subsystem is enabled, missing CAP_MAC_ADMIN
-> + * -EINVAL - Incorrect policy name for this node, or version is < current
-> + */
-> +static ssize_t ipe_secfs_ud_policy(struct file *f, const char __user *data,
-> +                                  size_t len, loff_t *offset)
-> +{
-> +       ssize_t rc = 0;
-> +       u8 *cpy = NULL;
-> +       ssize_t written = 0;
-> +       struct inode *root = NULL;
-> +       struct crypto_shash *tfm = NULL;
-> +       struct ipe_policy_node *new = NULL;
-> +       struct ipe_policy_node *old = NULL;
-> +
-> +       if (!ns_capable(current_user_ns(), CAP_MAC_ADMIN))
-> +               return -EPERM;
-> +
-> +       cpy = kzalloc(len, GFP_KERNEL);
-> +       if (!cpy) {
-> +               rc = -ENOMEM;
-> +               goto out;
-> +       }
-> +
-> +       written = simple_write_to_buffer(cpy, len, offset, data, len);
-> +       if (written < 0) {
-> +               rc = written;
-> +               goto out;
-> +       }
-
-You'd probably be better off just doing memdup_user() here.
-simple_write_to_buffer() only makes sense if you have a buffer that can be
-continuously updated with multiple writes.
-
-> +       new = ipe_alloc_policy_node(cpy, len);
-> +       if (IS_ERR(new)) {
-> +               rc = PTR_ERR(new);
-> +               goto out;
-> +       }
-> +
-> +       tfm = crypto_alloc_shash("sha1", 0, 0);
-> +       if (IS_ERR(tfm))
-> +               goto out2;
-> +
-> +       root = d_inode(f->f_path.dentry->d_parent);
-> +       inode_lock(root);
-> +
-> +       old = (struct ipe_policy_node *)root->i_private;
-> +
-> +       if (strcmp(old->parsed->policy_name, new->parsed->policy_name)) {
-> +               rc = -EINVAL;
-> +               goto out3;
-> +       }
-> +
-> +       if (!ipe_is_valid_policy(old->parsed, new->parsed)) {
-> +               rc = -EINVAL;
-> +               goto out3;
-> +       }
-> +
-> +       rc = ipe_update_active_policy(old->parsed, new->parsed);
-> +       if (rc != 0)
-> +               goto out3;
-> +
-> +       ipe_audit_policy_load(new->parsed, new->data, new->data_len, tfm);
-> +       swap(root->i_private, new);
-> +
-> +       inode_unlock(root);
-> +       kfree(cpy);
-> +       ipe_free_policy_node(new);
-> +       crypto_free_shash(tfm);
-> +
-> +       return written;
-> +out3:
-> +       inode_unlock(root);
-> +       ipe_free_policy_node(new);
-> +out2:
-> +       crypto_free_shash(tfm);
-> +out:
-> +       kfree(cpy);
-> +       return rc;
-> +}
-[...]
-> +static ssize_t ipe_secfs_rd_content(struct file *f, char __user *data,
-> +                                   size_t size, loff_t *offset)
-> +{
-> +       ssize_t rc = 0;
-> +       size_t avail = 0;
-> +       u8 *buffer = NULL;
-> +       struct inode *root = NULL;
-> +       const struct ipe_policy_node *node = NULL;
-> +
-> +       root = d_inode(f->f_path.dentry->d_parent);
-> +
-> +       inode_lock(root);
-> +       node = (const struct ipe_policy_node *)root->i_private;
-> +
-> +       avail = node->content_size;
-> +       buffer = kmemdup(node->content, avail, GFP_KERNEL);
-> +       if (!buffer) {
-> +               rc = -ENOMEM;
-> +               goto cleanup;
-> +       }
-> +
-> +       rc = simple_read_from_buffer(data, size, offset, buffer, avail);
-> +cleanup:
-> +       inode_unlock(root);
-
-Why are you nod doing the simple_read_from_buffer() after inode_unlock()?
-The way you're doing it now, there isn't really a point in the kmemdup() at
-all...
-Also, you'll have to free the buffer before returning.
-
-> +       return rc;
-> +}
-[...]
-> diff --git a/security/ipe/ipe-sysfs.c b/security/ipe/ipe-sysfs.c
-[...]
-> +static int ipe_switch_active_policy(struct ctl_table *table, int write,
-> +                                   void __user *buffer, size_t *lenp,
-> +                                   loff_t *ppos)
-> +{
-> +       int rc = 0;
-> +       char *id = NULL;
-> +       size_t size = 0;
-> +
-> +       if (write) {
-> +               id = kzalloc((*lenp) + 1, GFP_KERNEL);
-> +               if (!id)
-> +                       return -ENOMEM;
-> +
-> +               table->data = id;
-> +               table->maxlen = (*lenp) + 1;
-> +
-> +               rc = proc_dostring(table, write, buffer, lenp, ppos);
-> +               if (rc != 0)
-> +                       goto out;
-> +
-> +               rc = ipe_set_active_policy(id, strlen(id));
-> +       } else {
-> +               rcu_read_lock();
-> +               size = strlen(rcu_dereference(ipe_active_policy)->policy_name);
-
-Can't `ipe_active_policy` be NULL here?
-
-> +               rcu_read_unlock();
-> +
-> +               id = kzalloc(size + 1, GFP_KERNEL);
-
-The `+ 1` seems unnecessary.
-
-> +               if (!id)
-> +                       return -ENOMEM;
-> +
-> +               rcu_read_lock();
-> +               strncpy(id, rcu_dereference(ipe_active_policy)->policy_name,
-> +                       size);
-> +               rcu_read_unlock();
-> +
-> +               table->data = id;
-> +               table->maxlen = size;
-> +
-> +               rc = proc_dostring(table, write, buffer, lenp, ppos);
-> +       }
-> +out:
-> +       kfree(id);
-> +       return rc;
-> +}
-> +
-> +#endif /* CONFIG_SECURITYFS */
-[...]
-> diff --git a/security/ipe/ipe.c b/security/ipe/ipe.c
-[...]
-> +
-> +/**
-> + * strict_parse: Kernel command line parameter to enable strict parsing of
-> + *              IPE policies - causing unrecognized properties to fail
-> + *              parsing. This breaks backwards compatibility of IPE policies,
-> + *              when enabled.
-
-I guess the backwards compatibility stuff is referring to an out-of-tree version
-of this series that you've already shipped?
-
-> + * This is also controlled by the sysctl, "ipe.strict_parse".
-> + */
-
-(Also, same thing as in the other patch re sysctls and kernel command line
-parameters for the same feature.)
+- Arnaldo
