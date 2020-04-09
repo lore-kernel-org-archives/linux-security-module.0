@@ -2,120 +2,111 @@ Return-Path: <SRS0=+lL4=5Z=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40063C2BB86
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 Apr 2020 14:33:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42457C2BA2B
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 Apr 2020 16:26:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CA9F2166E
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 Apr 2020 14:33:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10DB920678
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 Apr 2020 16:26:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="SVIUfVQP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727749AbgDIOdI (ORCPT
+        id S1726795AbgDIQZ6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 9 Apr 2020 10:33:08 -0400
-Received: from raptor.unsafe.ru ([5.9.43.93]:45052 "EHLO raptor.unsafe.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727368AbgDIOdI (ORCPT
+        Thu, 9 Apr 2020 12:25:58 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:54992 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726621AbgDIQZ6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 9 Apr 2020 10:33:08 -0400
-Received: from comp-core-i7-2640m-0182e6 (ip-89-102-33-211.net.upcbroadband.cz [89.102.33.211])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by raptor.unsafe.ru (Postfix) with ESMTPSA id 9128E209C3;
-        Thu,  9 Apr 2020 14:32:56 +0000 (UTC)
-Date:   Thu, 9 Apr 2020 16:32:51 +0200
-From:   Alexey Gladkov <gladkov.alexey@gmail.com>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        David Howells <dhowells@redhat.com>
-Subject: Re: [PATCH v10 8/9] proc: use human-readable values for hidehid
-Message-ID: <20200409143251.pqoprbjnetoup5vw@comp-core-i7-2640m-0182e6>
-References: <20200327172331.418878-1-gladkov.alexey@gmail.com>
- <20200327172331.418878-9-gladkov.alexey@gmail.com>
- <87d08pkh4u.fsf@x220.int.ebiederm.org>
+        Thu, 9 Apr 2020 12:25:58 -0400
+Received: from [10.137.106.115] (unknown [131.107.174.243])
+        by linux.microsoft.com (Postfix) with ESMTPSA id CC37A2007679;
+        Thu,  9 Apr 2020 09:25:57 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com CC37A2007679
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1586449558;
+        bh=mxgHZSJk9nY2+sfPQybAXK1hYlxOn5wF6OLSUaiTeXQ=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=SVIUfVQPfYXivTtnf81II2+cuX+VuuFT/cdRyrSfPQa/NspfBGhnRo9yWKcDnzRbk
+         LJ3Ki75Ows6uAhw3zh0yXVdiT1bgycAFmEUG1RPPnFEYcitcKAqCmE0Cd8qQo22Fey
+         1mwwxBUG5vr/LHYHNEZymvqJ6fmpTEryjbQU2kPw=
+Subject: Re: [RFC PATCH v2 00/12] Integrity Policy Enforcement LSM (IPE)
+To:     Nayna <nayna@linux.vnet.ibm.com>
+Cc:     agk@redhat.com, axboe@kernel.dk, snitzer@redhat.com,
+        jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, dm-devel@redhat.com,
+        linux-block@vger.kernel.org, tyhicks@linux.microsoft.com,
+        pasha.tatashin@soleen.com, sashal@kernel.org,
+        jaskarankhurana@linux.microsoft.com, nramas@linux.microsoft.com,
+        mdsakib@linux.microsoft.com, linux-kernel@vger.kernel.org
+References: <20200406221439.1469862-1-deven.desai@linux.microsoft.com>
+ <c1466cc8-8a08-708a-4629-234485bb833e@linux.vnet.ibm.com>
+From:   Deven Bowers <deven.desai@linux.microsoft.com>
+Message-ID: <35afdffe-179c-aedd-333a-9dfc20635fc3@linux.microsoft.com>
+Date:   Thu, 9 Apr 2020 09:25:57 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87d08pkh4u.fsf@x220.int.ebiederm.org>
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.1 (raptor.unsafe.ru [5.9.43.93]); Thu, 09 Apr 2020 14:33:06 +0000 (UTC)
+In-Reply-To: <c1466cc8-8a08-708a-4629-234485bb833e@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Apr 02, 2020 at 11:05:21AM -0500, Eric W. Biederman wrote:
-> Alexey Gladkov <gladkov.alexey@gmail.com> writes:
-> 
-> > The hidepid parameter values are becoming more and more and it becomes
-> > difficult to remember what each new magic number means.
-> 
-> In principle I like this change.  In practice I think you have just
-> broken ABI compatiblity with the new mount ABI.
-> 
-> In particular the following line seems broken.
-> 
-> > diff --git a/fs/proc/root.c b/fs/proc/root.c
-> > index dbcd96f07c7a..ba782d6e6197 100644
-> > --- a/fs/proc/root.c
-> > +++ b/fs/proc/root.c
-> > @@ -45,7 +45,7 @@ enum proc_param {
-> >  
-> >  static const struct fs_parameter_spec proc_fs_parameters[] = {
-> >  	fsparam_u32("gid",	Opt_gid),
-> > -	fsparam_u32("hidepid",	Opt_hidepid),
-> > +	fsparam_string("hidepid",	Opt_hidepid),
-> >  	fsparam_string("subset",	Opt_subset),
-> >  	{}
-> >  };
-> 
-> As I read fs_parser.c fs_param_is_u32 handles string inputs and turns them
-> into numbers, and it handles binary numbers.
+On 4/7/2020 2:31 PM, Nayna wrote:
 
-Yes, you can use: fsconfig(fsfd, FSCONFIG_SET_BINARY, ...); but in this
-case the type of parameter will be fs_value_is_blob [1]. This kind of
-parameters is handled by fs_param_is_blob(). The fs_param_is_u32 can
-handle only parametes with fs_value_is_string type [2].
+>
+> On 4/6/20 6:14 PM, deven.desai@linux.microsoft.com wrote:
+>> From: Deven Bowers <deven.desai@linux.microsoft.com>
+>>
+>> Changelog:
+>> ------------------------------------
+>>
+>> v1: Introduced
+>>
+>> v2:
+>>    Split the second patch of the previous series into two.
+>>    Minor corrections in the cover-letter and documentation
+>>    comments regarding CAP_MAC_ADMIN checks in IPE.
+>>
+>> Overview:
+>> ------------------------------------
+>> IPE is a Linux Security Module, which allows for a configurable
+>> policy to enforce integrity requirements on the whole system. It
+>> attempts to solve the issue of Code Integrity: that any code being
+>> executed (or files being read), are identical to the version that
+>> was built by a trusted source.
+>
+> Can you please clarify the "motivation" for this patch set more 
+> clearly? It seems to define a policy layer on top of dm-verity, which 
+> may be compiled into the kernel. In the motivation, can you please 
+> also make it explicit why existing mechanisms cannot be extended to 
+> achieve your purpose?
+>
+This LSM was born out of a motivation to provide strong integrity 
+guarantees without a dependency on file-metadata, allow the integrity 
+claims to be configurable on a hot system, and allow for the mechanisms 
+for ensuring integrity to be extendable.
 
-Am I missing something?
+This naturally had to be an LSM, as controlling execution at the block 
+or filesystem layer does not make sense. Existing LSM implementations 
+use filesystem metadata, and since one of IPE's goals is to secure file 
+metadata, it is circular to depend on the file metadata itself to make 
+decisions about whether the file has been modified.
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/fsopen.c#n405
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/fs_parser.c#n215
+Additionally, IPE while IPE currently provides dm-verity support and the 
+trust root support, it can be easily extended to other implementations 
+such as fs-verity. At it's core, IPE is attempting to separate mechanism 
+(dm-verity, fs-verity, etc.) from policy (IPE).
 
-> However fs_param_is_string
-> appears to only handle strings.  It appears to have not capacity to turn
-> raw binary numbers into strings.
-> 
-> So I think we probably need to fix fs_param_is_string to raw binary
-> numbers before we can safely make this change to fs/proc/root.c
-> 
-> David am I reading the fs_parser.c code correctly?  If I am are you ok
-> with a change like the above?
-> 
-> Eric
-> 
-
--- 
-Rgrds, legion
-
+> Also, AFIK, the changelog should be moved to the end of the patch 
+> description.
+>
+Thanks! I'll move the changelog.
