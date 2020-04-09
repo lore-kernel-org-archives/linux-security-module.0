@@ -2,142 +2,249 @@ Return-Path: <SRS0=+lL4=5Z=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1971EC2BB55
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 Apr 2020 21:00:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F9D1C2BA19
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 Apr 2020 21:51:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D85B020692
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 Apr 2020 21:00:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E10B02072F
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 Apr 2020 21:51:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="PzE0eKJc"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BxBKtEPd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726964AbgDIVAS (ORCPT
+        id S1726726AbgDIVvP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 9 Apr 2020 17:00:18 -0400
-Received: from sonic313-15.consmr.mail.ne1.yahoo.com ([66.163.185.38]:44182
-        "EHLO sonic313-15.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727001AbgDIVAS (ORCPT
+        Thu, 9 Apr 2020 17:51:15 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:52836 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726666AbgDIVvP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 9 Apr 2020 17:00:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1586466017; bh=i6dQubm4eW55xOW2CHC5ihX3T7Nv1NxSndsDNtFfxzQ=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=PzE0eKJcAfZ/dqy1GX2F7bw3KIFpq6QHdkejRchwIZsfLubHTcA0NDmmOO42qhxvoRwbVKaHEs03tjH+/ra869bFTA4C0R9UdBoaBCxxiZhZt5IYuZlRM8SzeiA1TRcQ5U7zQt6AWIguM6aXAaa2TExNPrKJBJz2ez+mmjU89e7q9jY6UiGWJtG3VvMybl/wu3Hp/FvkQ+xwZTDfwhtbmEjy/2NUQyOf1o9Nfin6j/4Dp5lKNl6KvSur2zHk9AMf1rVineUBUidJd1mBhA/7fAWDJFo0Ld4oZe70pClD5/z/QTg5iVN3A/OLAeWsAcqXcyjP7mA3VvO1uwd6v44r0g==
-X-YMail-OSG: C5hNu1EVM1loB1ekDhNsJO2A4G6GesNj8.wNoJRN4Kgb9QjEPv4Pq3DDWfGnmUU
- 4b..CP9aEpy_bchcVoIP6aMcK6..NQmnk5HH9Dmud4su9RFC2UQmS6F7bwpAH.tQOMGyOxzwj7Sb
- 3lJrxWBJxGJZnX_mJEOig1oTyd3O1aYOoyq7zYLcgBf8MHsNaXEYd2Hs8UC9K7cBbTWErt39_dAs
- AkERexTxYTtx.9YHnL4VbmgCOTTT6YXCVyMbbi4yH.fdRMTpDCKmXvy1Zf07a.jAyF9zcVZzDK9r
- tOEj5ImIbxWTVeg2BdIJE9Ww3TFghf.KCwwkl0S3zynWudSetvUkU5UGwTfYvnjHNQS2OTyrr3Nv
- LNbbF0f5DU3ueOyM71pzpSz196cYNYBH9f7EtwG2BnKSczVQ1_tfG84jf5Bxcxrr4AliEdkBcZGN
- XXKlWGr8YjzFiv19Uf5GdtQtJ0kjvCGcoOcuW7SE35GjxBwI26hB1j52EBNnzHqxGQxrs51DO4Ok
- giOQHLWB2QRHl4ztXFSjmgc32hGtt6wN3zcl3C_TSusmhOslhyoV7I8djO7RUOVDd4LCl95AIESp
- g3sTmrrxngaIIKwo6TgfOOEbvwJtUerZY1YD7AKtPhHxTQfF701Damf.jQUNvAdlmQ1P9UJX4JBL
- BrrjJwRHo._uXw1COrvcO2xM05RnU146hImGbhbi0OjtcxFPwbmNlPT_P2d4lgB0qfRt3xiWDe52
- HLYF0jlf465ePy2So8x_RD0x1.taCspFczxMDu1RxMs4bLncB93CgQSuzr5NU0t6joQQZKHcQqRB
- FxwWDH0xS2CFhvCP0pR4kcjhvYmEWwQ75k_HyNggi2l8THz.hSWrSEOY6EyJsva0eSpUOkmohcIJ
- Tw80WCz6NmMZlLW5k6zI1vb48ZALMSJNElNL5iXjS.iHFiDEPQVu8yi85BEKU_C7Fbz04VPcfrrJ
- 6379YT1M0S3aekR0Kz3j_byVyRLDgeF_NaYR4EELoVJ4eRw4JcTQqxHl4CyAni0W.6PTHtRDKTx0
- twdXy2lJibIvigWOoR0kh6HS95NNb.yn0xLkF6BMBfLCGCA5qUMi5uX4u5ENHqtVO3AJIsQR2HYM
- vrNr1L4Q3qTlHdoD5Wg4KS6feIQuwk7Csdzc0Uz9XQ3bHF7KL1VSP9Rfg33CW30SpyoK5ZwBQrrm
- 1KyFDD2j1fm95niQeAxmUKeaXJqPFRW5gx2OGcrzyDMm.HDatUchD5rV1x2l79uX4VJ6JX6dKLqA
- o3D7HdPW3mEC.bLGrlcIgfXklUHAvxvDa0Qmqo3qcJvjprtJwiCBlYoQO_g0wNapcKdh7heEfVVM
- AH0i7H1mFStFpoWrDENc0nAih.Og9t_6qVVXMRAK1w8X5iYZLVmM2t4QUemr3no_wHNxf_CGs0xa
- w_SLomTDJGFQ3TGJT7Xu5Kd3C6nBtiAqJ5ziTnAU-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.ne1.yahoo.com with HTTP; Thu, 9 Apr 2020 21:00:17 +0000
-Received: by smtp428.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 9a9f5023a1c147644711e2ec456bbe3d;
-          Thu, 09 Apr 2020 21:00:13 +0000 (UTC)
-Subject: Re: [PATCH 1/1] smack: remove redundant structure variable from
- header.
-To:     Maninder Singh <maninder1.s@samsung.com>, jmorris@namei.org,
-        serge@hallyn.com
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, a.sahrawat@samsung.com,
-        v.narang@samsung.com, Casey Schaufler <casey@schaufler-ca.com>
-References: <CGME20200409124013epcas5p33036c008f30327378a6ff02050261626@epcas5p3.samsung.com>
- <1586435998-18921-1-git-send-email-maninder1.s@samsung.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Autocrypt: addr=casey@schaufler-ca.com; keydata=
- mQINBFzV9HABEAC/mmv3jeJyF7lR7QhILYg1+PeBLIMZv7KCzBSc/4ZZipoWdmr77Lel/RxQ
- 1PrNx0UaM5r6Hj9lJmJ9eg4s/TUBSP67mTx+tsZ1RhG78/WFf9aBe8MSXxY5cu7IUwo0J/CG
- vdSqACKyYPV5eoTJmnMxalu8/oVUHyPnKF3eMGgE0mKOFBUMsb2pLS/enE4QyxhcZ26jeeS6
- 3BaqDl1aTXGowM5BHyn7s9LEU38x/y2ffdqBjd3au2YOlvZ+XUkzoclSVfSR29bomZVVyhMB
- h1jTmX4Ac9QjpwsxihT8KNGvOM5CeCjQyWcW/g8LfWTzOVF9lzbx6IfEZDDoDem4+ZiPsAXC
- SWKBKil3npdbgb8MARPes2DpuhVm8yfkJEQQmuLYv8GPiJbwHQVLZGQAPBZSAc7IidD2zbf9
- XAw1/SJGe1poxOMfuSBsfKxv9ba2i8hUR+PH7gWwkMQaQ97B1yXYxVEkpG8Y4MfE5Vd3bjJU
- kvQ/tOBUCw5zwyIRC9+7zr1zYi/3hk+OG8OryZ5kpILBNCo+aePeAJ44znrySarUqS69tuXd
- a3lMPHUJJpUpIwSKQ5UuYYkWlWwENEWSefpakFAIwY4YIBkzoJ/t+XJHE1HTaJnRk6SWpeDf
- CreF3+LouP4njyeLEjVIMzaEpwROsw++BX5i5vTXJB+4UApTAQARAQABtChDYXNleSBTY2hh
- dWZsZXIgPGNhc2V5QHNjaGF1Zmxlci1jYS5jb20+iQJUBBMBCAA+FiEEC+9tH1YyUwIQzUIe
- OKUVfIxDyBEFAlzV9HACGwMFCRLMAwAFCwkIBwIGFQoJCAsCBBYCAwECHgECF4AACgkQOKUV
- fIxDyBG6ag/6AiRl8yof47YOEVHlrmewbpnlBTaYNfJ5cZflNRKRX6t4bp1B2YV1whlDTpiL
- vNOwFkh+ZE0eI5M4x8Gw2Oiok+4Q5liA9PHTozQYF+Ia+qdL5EehfbLGoEBqklpGvG3h8JsO
- 7SvONJuFDgvab/U/UriDYycJwzwKZuhVtK9EMpnTtUDyP3DY+Q8h7MWsniNBLVXnh4yBIEJg
- SSgDn3COpZoFTPGKE+rIzioo/GJe8CTa2g+ZggJiY/myWTS3quG0FMvwvNYvZ4I2g6uxSl7n
- bZVqAZgqwoTAv1HSXIAn9muwZUJL03qo25PFi2gQmX15BgJKQcV5RL0GHFHRThDS3IyadOgK
- P2j78P8SddTN73EmsG5OoyzwZAxXfck9A512BfVESqapHurRu2qvMoUkQaW/2yCeRQwGTsFj
- /rr0lnOBkyC6wCmPSKXe3dT2mnD5KnCkjn7KxLqexKt4itGjJz4/ynD/qh+gL7IPbifrQtVH
- JI7cr0fI6Tl8V6efurk5RjtELsAlSR6fKV7hClfeDEgLpigHXGyVOsynXLr59uE+g/+InVic
- jKueTq7LzFd0BiduXGO5HbGyRKw4MG5DNQvC//85EWmFUnDlD3WHz7Hicg95D+2IjD2ZVXJy
- x3LTfKWdC8bU8am1fi+d6tVEFAe/KbUfe+stXkgmfB7pxqW5Ag0EXNX0cAEQAPIEYtPebJzT
- wHpKLu1/j4jQcke06Kmu5RNuj1pEje7kX5IKzQSs+CPH0NbSNGvrA4dNGcuDUTNHgb5Be9hF
- zVqRCEvF2j7BFbrGe9jqMBWHuWheQM8RRoa2UMwQ704mRvKr4sNPh01nKT52ASbWpBPYG3/t
- WbYaqfgtRmCxBnqdOx5mBJIBh9Q38i63DjQgdNcsTx2qS7HFuFyNef5LCf3jogcbmZGxG/b7
- yF4OwmGsVc8ufvlKo5A9Wm+tnRjLr/9Mn9vl5Xa/tQDoPxz26+aWz7j1in7UFzAarcvqzsdM
- Em6S7uT+qy5jcqyuipuenDKYF/yNOVSNnsiFyQTFqCPCpFihOnuaWqfmdeUOQHCSo8fD4aRF
- emsuxqcsq0Jp2ODq73DOTsdFxX2ESXYoFt3Oy7QmIxeEgiHBzdKU2bruIB5OVaZ4zWF+jusM
- Uh+jh+44w9DZkDNjxRAA5CxPlmBIn1OOYt1tsphrHg1cH1fDLK/pDjsJZkiH8EIjhckOtGSb
- aoUUMMJ85nVhN1EbU/A3DkWCVFEA//Vu1+BckbSbJKE7Hl6WdW19BXOZ7v3jo1q6lWwcFYth
- esJfk3ZPPJXuBokrFH8kqnEQ9W2QgrjDX3et2WwZFLOoOCItWxT0/1QO4ikcef/E7HXQf/ij
- Dxf9HG2o5hOlMIAkJq/uLNMvABEBAAGJAjwEGAEIACYWIQQL720fVjJTAhDNQh44pRV8jEPI
- EQUCXNX0cAIbDAUJEswDAAAKCRA4pRV8jEPIEWkzEACKFUnpp+wIVHpckMfBqN8BE5dUbWJc
- GyQ7wXWajLtlPdw1nNw0Wrv+ob2RCT7qQlUo6GRLcvj9Fn5tR4hBvR6D3m8aR0AGHbcC62cq
- I7LjaSDP5j/em4oVL2SMgNTrXgE2w33JMGjAx9oBzkxmKUqprhJomPwmfDHMJ0t7y39Da724
- oLPTkQDpJL1kuraM9TC5NyLe1+MyIxqM/8NujoJbWeQUgGjn9uxQAil7o/xSCjrWCP3kZDID
- vd5ZaHpdl8e1mTExQoKr4EWgaMjmD/a3hZ/j3KfTVNpM2cLfD/QwTMaC2fkK8ExMsz+rUl1H
- icmcmpptCwOSgwSpPY1Zfio6HvEJp7gmDwMgozMfwQuT9oxyFTxn1X3rn1IoYQF3P8gsziY5
- qtTxy2RrgqQFm/hr8gM78RhP54UPltIE96VywviFzDZehMvuwzW//fxysIoK97Y/KBZZOQs+
- /T+Bw80Pwk/dqQ8UmIt2ffHEgwCTbkSm711BejapWCfklxkMZDp16mkxSt2qZovboVjXnfuq
- wQ1QL4o4t1hviM7LyoflsCLnQFJh6RSBhBpKQinMJl/z0A6NYDkQi6vEGMDBWX/M2vk9Jvwa
- v0cEBfY3Z5oFgkh7BUORsu1V+Hn0fR/Lqq/Pyq+nTR26WzGDkolLsDr3IH0TiAVH5ZuPxyz6
- abzjfg==
-Message-ID: <91af6ae1-919a-bc48-1f62-6ba3b4c62dac@schaufler-ca.com>
-Date:   Thu, 9 Apr 2020 14:00:13 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        Thu, 9 Apr 2020 17:51:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1586469074;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=moxeWRvgWY7QT9r+gJmnAtR8mJis0dGElb2MwSmvVRU=;
+        b=BxBKtEPd0zFSzot04kyqf5QambZK5mfQRnlvVkj1cqaT4ki00WP6btzcm809q9y+XpJ8im
+        Hx/7JafYE0zaYZxrjOdrOPecRnj1ZvjNMboO6Cxvo54lCR+YRgt2qTCauwlnqUB3v0k2KA
+        LTohC/MtrubYYTReJpOs0KojKM4Wios=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-480-EPL28DMvOTmJs8n1gemQIA-1; Thu, 09 Apr 2020 17:51:10 -0400
+X-MC-Unique: EPL28DMvOTmJs8n1gemQIA-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7C61B1005509;
+        Thu,  9 Apr 2020 21:51:09 +0000 (UTC)
+Received: from madcap2.tricolour.ca (unknown [10.3.128.9])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5FFEF5DA81;
+        Thu,  9 Apr 2020 21:51:01 +0000 (UTC)
+Date:   Thu, 9 Apr 2020 17:50:56 -0400
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Vladis Dronov <vdronov@redhat.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@redhat.com>, linux-audit@redhat.com,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH ghak96] audit: set cwd in audit context for file-related
+ LSM audit records
+Message-ID: <20200409215056.qa5uso6rr57y4joo@madcap2.tricolour.ca>
+References: <20200402141319.28714-1-vdronov@redhat.com>
+ <2d7174b1-115f-b86f-8054-a5caef4b69ff@schaufler-ca.com>
+ <1800109401.20260657.1585845081366.JavaMail.zimbra@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <1586435998-18921-1-git-send-email-maninder1.s@samsung.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Mailer: WebService/1.1.15620 hermes Apache-HttpAsyncClient/4.1.4 (Java/11.0.6)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1800109401.20260657.1585845081366.JavaMail.zimbra@redhat.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 4/9/2020 5:39 AM, Maninder Singh wrote:
-> commit afb1cbe37440 ("LSM: Infrastructure management
-> of the inode security") removed usage of smk_rcu,
-> thus removing it from structure.
->
-> Signed-off-by: Maninder Singh <maninder1.s@samsung.com>
-> Signed-off-by: Vaneet Narang <v.narang@samsung.com>
+On 2020-04-02 12:31, Vladis Dronov wrote:
+> Hello, Casey, all,
+> 
+> ----- Original Message -----
+> > From: "Casey Schaufler" <casey@schaufler-ca.com>
+> > Subject: Re: [PATCH ghak96] audit: set cwd in audit context for file-related LSM audit records
+> > 
+> > On 4/2/2020 7:13 AM, Vladis Dronov wrote:
+> > > Set a current working directory in an audit context for the following
+> > > record
+> > > types in dump_common_audit_data(): LSM_AUDIT_DATA_PATH,
+> > > LSM_AUDIT_DATA_FILE,
+> > > LSM_AUDIT_DATA_IOCTL_OP, LSM_AUDIT_DATA_DENTRY, LSM_AUDIT_DATA_INODE so a
+> > > separate CWD record is emitted later.
+> > >
+> > > Link: https://github.com/linux-audit/audit-kernel/issues/96
+> > 
+> > I don't have a problem with the patch, but it sure would be nice
+> > if you explained why these events "could use a CWD record".
+> 
+> (adding Richard Guy Briggs <rgb@redhat.com> which I should have been done earlier)
+> 
+> I would agree, adding "cwd=" field in the LSM record itself is simpler to me.
 
-Thank you. I will take this.
+We already have a CWD record to record this information.  It usually
+accompanies an AUDIT_PATH record, but the intent is that it accompanies
+any event that has filesystem pathnames in path= or name= fields in
+records to help understand the command's context relative to the
+filesystem.
 
-> ---
->  security/smack/smack.h | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/security/smack/smack.h b/security/smack/smack.h
-> index 62529f3..5ebd0bb 100644
-> --- a/security/smack/smack.h
-> +++ b/security/smack/smack.h
-> @@ -111,7 +111,6 @@ struct inode_smack {
->  	struct smack_known	*smk_mmap;	/* label of the mmap domain */
->  	struct mutex		smk_lock;	/* initialization lock */
->  	int			smk_flags;	/* smack inode flags */
-> -	struct rcu_head         smk_rcu;	/* for freeing inode_smack */
->  };
+> Unfortunately, all I can say for now is "The intent was a separate CWD record,
+> that is already defined" requirement from the ghak#96 issue.
+> 
+> Richard, could you, please, clarify since you've posted this requirement in
+> the ghak#96's description?
 >  
->  struct task_smack {
+> > > Signed-off-by: Vladis Dronov <vdronov@redhat.com>
+> > > ---
+> > > out-of-commit-message-note:
+> > >
+> > > Hello,
+> > > Honestly, I'm not sure about "if (!context->in_syscall)" check in
+> > > __audit_getcwd(). It was copied from __audit_getname() and I do
+> > > not quite understand why it is there and if __audit_getcwd() needs
+> > > it. If you have an idea on this, could you please, tell?
+> > >
+> > >  include/linux/audit.h |  9 ++++++++-
+> > >  kernel/auditsc.c      | 17 +++++++++++++++++
+> > >  security/lsm_audit.c  |  5 +++++
+> > >  3 files changed, 30 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/include/linux/audit.h b/include/linux/audit.h
+> > > index f9ceae57ca8d..b4306abc5891 100644
+> > > --- a/include/linux/audit.h
+> > > +++ b/include/linux/audit.h
+> > > @@ -268,7 +268,7 @@ extern void __audit_syscall_entry(int major, unsigned
+> > > long a0, unsigned long a1,
+> > >  extern void __audit_syscall_exit(int ret_success, long ret_value);
+> > >  extern struct filename *__audit_reusename(const __user char *uptr);
+> > >  extern void __audit_getname(struct filename *name);
+> > > -
+> > > +extern void __audit_getcwd(void);
+> > >  extern void __audit_inode(struct filename *name, const struct dentry
+> > >  *dentry,
+> > >  				unsigned int flags);
+> > >  extern void __audit_file(const struct file *);
+> > > @@ -327,6 +327,11 @@ static inline void audit_getname(struct filename
+> > > *name)
+> > >  	if (unlikely(!audit_dummy_context()))
+> > >  		__audit_getname(name);
+> > >  }
+> > > +static inline void audit_getcwd(void)
+> > > +{
+> > > +	if (unlikely(!audit_dummy_context()))
+> > > +		__audit_getcwd();
+> > > +}
+> > >  static inline void audit_inode(struct filename *name,
+> > >  				const struct dentry *dentry,
+> > >  				unsigned int aflags) {
+> > > @@ -545,6 +550,8 @@ static inline struct filename *audit_reusename(const
+> > > __user char *name)
+> > >  }
+> > >  static inline void audit_getname(struct filename *name)
+> > >  { }
+> > > +static inline void audit_getcwd(void)
+> > > +{ }
+> > >  static inline void __audit_inode(struct filename *name,
+> > >  					const struct dentry *dentry,
+> > >  					unsigned int flags)
+> > > diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> > > index 814406a35db1..16316032ef9f 100644
+> > > --- a/kernel/auditsc.c
+> > > +++ b/kernel/auditsc.c
+> > > @@ -1890,6 +1890,23 @@ void __audit_getname(struct filename *name)
+> > >  		get_fs_pwd(current->fs, &context->pwd);
+> > >  }
+> > >  
+> > > +/**
+> > > + * __audit_getcwd - set a current working directory
+> > > + *
+> > > + * Set a current working directory of an audited process for this context.
+> > > + * Called from security/lsm_audit.c:dump_common_audit_data().
+> > > + */
+> > > +void __audit_getcwd(void)
+> > > +{
+> > > +	struct audit_context *context = audit_context();
+> > > +
+> > > +	if (!context->in_syscall)
+> > > +		return;
+> > > +
+> > > +	if (!context->pwd.dentry)
+> > > +		get_fs_pwd(current->fs, &context->pwd);
+> > > +}
+> > > +
+> > >  static inline int audit_copy_fcaps(struct audit_names *name,
+> > >  				   const struct dentry *dentry)
+> > >  {
+> > > diff --git a/security/lsm_audit.c b/security/lsm_audit.c
+> > > index 2d2bf49016f4..7c555621c2bd 100644
+> > > --- a/security/lsm_audit.c
+> > > +++ b/security/lsm_audit.c
+> > > @@ -241,6 +241,7 @@ static void dump_common_audit_data(struct audit_buffer
+> > > *ab,
+> > >  			audit_log_untrustedstring(ab, inode->i_sb->s_id);
+> > >  			audit_log_format(ab, " ino=%lu", inode->i_ino);
+> > >  		}
+> > > +		audit_getcwd();
+> > >  		break;
+> > >  	}
+> > >  	case LSM_AUDIT_DATA_FILE: {
+> > > @@ -254,6 +255,7 @@ static void dump_common_audit_data(struct audit_buffer
+> > > *ab,
+> > >  			audit_log_untrustedstring(ab, inode->i_sb->s_id);
+> > >  			audit_log_format(ab, " ino=%lu", inode->i_ino);
+> > >  		}
+> > > +		audit_getcwd();
+> > >  		break;
+> > >  	}
+> > >  	case LSM_AUDIT_DATA_IOCTL_OP: {
+> > > @@ -269,6 +271,7 @@ static void dump_common_audit_data(struct audit_buffer
+> > > *ab,
+> > >  		}
+> > >  
+> > >  		audit_log_format(ab, " ioctlcmd=0x%hx", a->u.op->cmd);
+> > > +		audit_getcwd();
+> > >  		break;
+> > >  	}
+> > >  	case LSM_AUDIT_DATA_DENTRY: {
+> > > @@ -283,6 +286,7 @@ static void dump_common_audit_data(struct audit_buffer
+> > > *ab,
+> > >  			audit_log_untrustedstring(ab, inode->i_sb->s_id);
+> > >  			audit_log_format(ab, " ino=%lu", inode->i_ino);
+> > >  		}
+> > > +		audit_getcwd();
+> > >  		break;
+> > >  	}
+> > >  	case LSM_AUDIT_DATA_INODE: {
+> > > @@ -300,6 +304,7 @@ static void dump_common_audit_data(struct audit_buffer
+> > > *ab,
+> > >  		audit_log_format(ab, " dev=");
+> > >  		audit_log_untrustedstring(ab, inode->i_sb->s_id);
+> > >  		audit_log_format(ab, " ino=%lu", inode->i_ino);
+> > > +		audit_getcwd();
+> > >  		break;
+> > >  	}
+> > >  	case LSM_AUDIT_DATA_TASK: {
+> 
+> Best regards,
+> Vladis Dronov | Red Hat, Inc. | The Core Kernel | Senior Software Engineer
+
+- RGB
+
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
+
