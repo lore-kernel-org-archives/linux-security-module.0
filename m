@@ -2,83 +2,164 @@ Return-Path: <SRS0=fcCn=55=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93F7CC2BBC7
-	for <linux-security-module@archiver.kernel.org>; Mon, 13 Apr 2020 13:30:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 977ABC2BA19
+	for <linux-security-module@archiver.kernel.org>; Mon, 13 Apr 2020 16:52:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6842F2075E
-	for <linux-security-module@archiver.kernel.org>; Mon, 13 Apr 2020 13:30:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iP/ULyy8"
+	by mail.kernel.org (Postfix) with ESMTP id 6F7B020780
+	for <linux-security-module@archiver.kernel.org>; Mon, 13 Apr 2020 16:52:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1586796766;
+	bh=t5agIYwO6o7SWx9yh1z/HGXcrUeg1cVcDz9eOtThQ6o=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=wUovkku8uffi3pN5TS9D5dPrQPVclXV2WIic18unymZqsj4CWoZ5HWONDsIyphB7m
+	 nrfrkddXW5BfsAUaHU4HZ4+Zf+r+/diCX8yivyEUKLudy7lgtv8yj++1jbb8DvmWwf
+	 Ld4BtZHIqgDD/4hru0gq7YpkT7jw2/LNb9P/TCyk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728009AbgDMNah (ORCPT
+        id S1731894AbgDMQwp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 13 Apr 2020 09:30:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47442 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729862AbgDMNa3 (ORCPT
+        Mon, 13 Apr 2020 12:52:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44310 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731884AbgDMQwm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 13 Apr 2020 09:30:29 -0400
-Received: from mail-ot1-x342.google.com (mail-ot1-x342.google.com [IPv6:2607:f8b0:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EA06C008769
-        for <linux-security-module@vger.kernel.org>; Mon, 13 Apr 2020 06:30:29 -0700 (PDT)
-Received: by mail-ot1-x342.google.com with SMTP id g14so813624otg.10
-        for <linux-security-module@vger.kernel.org>; Mon, 13 Apr 2020 06:30:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=6jXC2UTWF/SUxZW/pWxyCF4hxNCly+ey/YhKERzLlbQ=;
-        b=iP/ULyy8lWG1nhEGn0gppspS4F2JhILJ4nTAtiYGhdrZL51cxqVWhs6D3Y9wyc2ADf
-         A2rwUCP45WAPoWNbSBZGTGVFxJmmDPHe19L3gxm7+w8E5f22GKJOLIMHoMQQI7v3c5XY
-         DlMUV5+ZlbBmFxdLOO2VDbc7W9ESDWYt4QtLLqRZFkEOi9gTP3STkSTcSJo+WdBU2ZMP
-         cbKcszDV9RPwFi/D+lHgC6golJOLYJdAkURkw7hbGoqznT8eWbtFkjjpTaIqirsxJh7L
-         wdqYlNLP395ub4iQIUl47edMIk3+i+NAk1eC0wEHnaBVffHHOQq3Dv9hRllCWWuEG7fQ
-         v+/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=6jXC2UTWF/SUxZW/pWxyCF4hxNCly+ey/YhKERzLlbQ=;
-        b=c7nfL9hwhlanB7w0dg+f/RUj3ii9BWTpjq8bGGK+GMmEUkNcfUaZkJyPJih7+tco0s
-         30BNYGGvC7HbWZppI0DwqnMfsqnfQPcSM+MspFupS6J8yMwvhmKQ+e07O19gnI5NniSX
-         5p1Ha/LZlCAoMwJZC4cHH+0sI14fB3ZdV3tlAbjup5aB0cOXBipPJZlRvo82tVb4O+Zp
-         brjpJ9Eu9iGjkcnJKMdHt7Sd8n5hN4iFzvtHbvgi8e3dEVP1+p2pHFcIMg2dk2jhNFjJ
-         ivPS8HL4C3fhqLlhHtpFb6SSdpeRbKj+dC93vxuyUX/QixwqUKSO56MQQnGvXBEUW8Eg
-         xkFA==
-X-Gm-Message-State: AGi0Pub4HAXAcK4CyRR9EMK8eizOgv8Of9jPZIDgslS7BdqJBbrPrq2j
-        nSN9ybdoyO0WKC8iL7qd2DKHfM/NpwV26Dk5eGmp+iuAPSU=
-X-Google-Smtp-Source: APiQypLFU/9OTkw8I8yoSnsZBoCJl2kmbnPrqcYyRtFa4kS0eBylKtgliJY99Emg2IXzWabr7J0d9UY0bd1bcIemaS0=
-X-Received: by 2002:a4a:da55:: with SMTP id f21mr14363752oou.34.1586784627519;
- Mon, 13 Apr 2020 06:30:27 -0700 (PDT)
+        Mon, 13 Apr 2020 12:52:42 -0400
+Received: from quaco.ghostprotocols.net (unknown [179.97.37.151])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 888FA2078B;
+        Mon, 13 Apr 2020 16:52:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1586796761;
+        bh=t5agIYwO6o7SWx9yh1z/HGXcrUeg1cVcDz9eOtThQ6o=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=HejxPEgLATWON/Ye6GG8OVfowBCSj9U/CB6Ayq/WEvozFloDXHO09Uj7bYAm1DVpr
+         yL5HYCmY/wx7DdzGdALMYfbF77mhaLRjopvkLH6hn9fyBR0Hl7pPBcXFkDBx5r1Lmr
+         bDKZqtAcimbohq+VSzhUI3q6aFu6xET8jkT4rRnQ=
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+        Clark Williams <williams@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Igor Lubashev <ilubashe@akamai.com>,
+        Jiri Olsa <jolsa@redhat.com>, linux-man@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Serge Hallyn <serge@hallyn.com>,
+        Song Liu <songliubraving@fb.com>,
+        Stephane Eranian <eranian@google.com>,
+        intel-gfx@lists.freedesktop.org, linux-doc@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Subject: [PATCH 06/26] perf/core: Open access to the core for CAP_PERFMON privileged process
+Date:   Mon, 13 Apr 2020 13:51:43 -0300
+Message-Id: <20200413165203.1816-7-acme@kernel.org>
+X-Mailer: git-send-email 2.21.1
+In-Reply-To: <20200413165203.1816-1-acme@kernel.org>
+References: <20200413165203.1816-1-acme@kernel.org>
 MIME-Version: 1.0
-References: <20200326200634.222009-1-dancol@google.com> <20200401213903.182112-1-dancol@google.com>
-In-Reply-To: <20200401213903.182112-1-dancol@google.com>
-From:   Daniel Colascione <dancol@google.com>
-Date:   Mon, 13 Apr 2020 06:29:50 -0700
-Message-ID: <CAKOZueuu=bGt4O0xjiV=9_PC_8Ey8pa3NjtJ7+O-nHCcYbLnEg@mail.gmail.com>
-Subject: Re: [PATCH v5 0/3] SELinux support for anonymous inodes and UFFD
-To:     Tim Murray <timmurray@google.com>,
-        SElinux list <selinux@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Paul Moore <paul@paul-moore.com>,
-        Nick Kralevich <nnk@google.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Lokesh Gidra <lokeshgidra@google.com>, jmorris@namei.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Apr 1, 2020 at 2:39 PM Daniel Colascione <dancol@google.com> wrote:
->
-> Changes from the fourth version of the patch:
+From: Alexey Budankov <alexey.budankov@linux.intel.com>
 
+Open access to monitoring of kernel code, CPUs, tracepoints and
+namespaces data for a CAP_PERFMON privileged process. Providing the
+access under CAP_PERFMON capability singly, without the rest of
+CAP_SYS_ADMIN credentials, excludes chances to misuse the credentials
+and makes operation more secure.
 
-Is there anything else that needs to be done before merging this patch series?
+CAP_PERFMON implements the principle of least privilege for performance
+monitoring and observability operations (POSIX IEEE 1003.1e 2.2.2.39
+principle of least privilege: A security design principle that states
+that a process or program be granted only those privileges (e.g.,
+capabilities) necessary to accomplish its legitimate function, and only
+for the time that such privileges are actually required)
+
+For backward compatibility reasons the access to perf_events subsystem
+remains open for CAP_SYS_ADMIN privileged processes but CAP_SYS_ADMIN
+usage for secure perf_events monitoring is discouraged with respect to
+CAP_PERFMON capability.
+
+Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+Reviewed-by: James Morris <jamorris@linux.microsoft.com>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Alexei Starovoitov <ast@kernel.org>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Igor Lubashev <ilubashe@akamai.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: linux-man@vger.kernel.org
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Serge Hallyn <serge@hallyn.com>
+Cc: Song Liu <songliubraving@fb.com>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: intel-gfx@lists.freedesktop.org
+Cc: linux-doc@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org
+Cc: selinux@vger.kernel.org
+Link: http://lore.kernel.org/lkml/471acaef-bb8a-5ce2-923f-90606b78eef9@linux.intel.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ include/linux/perf_event.h | 6 +++---
+ kernel/events/core.c       | 2 +-
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index 9c3e7619c929..87e21681759c 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -1305,7 +1305,7 @@ static inline int perf_is_paranoid(void)
+ 
+ static inline int perf_allow_kernel(struct perf_event_attr *attr)
+ {
+-	if (sysctl_perf_event_paranoid > 1 && !capable(CAP_SYS_ADMIN))
++	if (sysctl_perf_event_paranoid > 1 && !perfmon_capable())
+ 		return -EACCES;
+ 
+ 	return security_perf_event_open(attr, PERF_SECURITY_KERNEL);
+@@ -1313,7 +1313,7 @@ static inline int perf_allow_kernel(struct perf_event_attr *attr)
+ 
+ static inline int perf_allow_cpu(struct perf_event_attr *attr)
+ {
+-	if (sysctl_perf_event_paranoid > 0 && !capable(CAP_SYS_ADMIN))
++	if (sysctl_perf_event_paranoid > 0 && !perfmon_capable())
+ 		return -EACCES;
+ 
+ 	return security_perf_event_open(attr, PERF_SECURITY_CPU);
+@@ -1321,7 +1321,7 @@ static inline int perf_allow_cpu(struct perf_event_attr *attr)
+ 
+ static inline int perf_allow_tracepoint(struct perf_event_attr *attr)
+ {
+-	if (sysctl_perf_event_paranoid > -1 && !capable(CAP_SYS_ADMIN))
++	if (sysctl_perf_event_paranoid > -1 && !perfmon_capable())
+ 		return -EPERM;
+ 
+ 	return security_perf_event_open(attr, PERF_SECURITY_TRACEPOINT);
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 1569979c8912..f9d564127e2e 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -11486,7 +11486,7 @@ SYSCALL_DEFINE5(perf_event_open,
+ 	}
+ 
+ 	if (attr.namespaces) {
+-		if (!capable(CAP_SYS_ADMIN))
++		if (!perfmon_capable())
+ 			return -EACCES;
+ 	}
+ 
+-- 
+2.21.1
+
