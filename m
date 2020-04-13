@@ -4,42 +4,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B57CC2BA19
-	for <linux-security-module@archiver.kernel.org>; Mon, 13 Apr 2020 16:53:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C80DC2BA19
+	for <linux-security-module@archiver.kernel.org>; Mon, 13 Apr 2020 16:53:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E95A720739
-	for <linux-security-module@archiver.kernel.org>; Mon, 13 Apr 2020 16:53:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B69A20780
+	for <linux-security-module@archiver.kernel.org>; Mon, 13 Apr 2020 16:53:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1586796793;
-	bh=8BaehHL+XwhrO6lxdvYxo5llL3H9pC0YPOrBU5W0ve0=;
+	s=default; t=1586796801;
+	bh=PXwArPyrCB+9UYBajG3cuzXYyMjKBkArgtx7/t80yDQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=mHWvjGwgTXeUWNhfgxoYV0HCnWyelEYKhvqoora5L6hNnmPUUz+0co+oensd+xaDK
-	 8OvISFzdbyopoM2qr/oUELa3LzH20XqxOMMLHYtxKIkA2lxgSUzBSzvbST3+PTtlYR
-	 8BNCs68RbrNv7ZewfHLRiMQdNpg98zEhsPOmLLEI=
+	b=2EYqxGGRbQUL6YX059Of5C0td+T7qxjIYzsrpz6M+knyh83T2bD63EimazJ7vJIi/
+	 LecRw+MB/SMgsyXno4O3D4FWKDN81rETzyPxMO+EyphOu2dHbb+TV+VrbSFCwi8ngO
+	 s1zxKp1CnT/V6RZlLdSSXShIWv4VygJIbA+gpoTU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731946AbgDMQxH (ORCPT
+        id S1731958AbgDMQxT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 13 Apr 2020 12:53:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45106 "EHLO mail.kernel.org"
+        Mon, 13 Apr 2020 12:53:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45460 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731938AbgDMQxF (ORCPT
+        id S1731956AbgDMQxQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 13 Apr 2020 12:53:05 -0400
+        Mon, 13 Apr 2020 12:53:16 -0400
 Received: from quaco.ghostprotocols.net (unknown [179.97.37.151])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 113652137B;
-        Mon, 13 Apr 2020 16:52:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 62EF7208E0;
+        Mon, 13 Apr 2020 16:53:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1586796784;
-        bh=8BaehHL+XwhrO6lxdvYxo5llL3H9pC0YPOrBU5W0ve0=;
+        s=default; t=1586796795;
+        bh=PXwArPyrCB+9UYBajG3cuzXYyMjKBkArgtx7/t80yDQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tQvCns7bp5ivoVnL8LUena+caaD7KfSakGvU0UeHevRfX9cwVC02zpImFi0db5w5T
-         o+Tmtbxiz8Tc5qrq4rkpquJ0fta2ld3eNSYHqSyQGCq2CqH1vAqyXhBglSBN75p77d
-         0FLDElKbBSL8JNWtiZgdLL62Q0NlNE644nFtDOR0=
+        b=0Ye3QTeaS86gUwQ6vaqghWKUPtsyPWvtMoV/T9srtDd688AuzzYOnmOfSSyvNb1NZ
+         pSnQ5WUa2265qzabJQcZ4l3PD7KRbGUKgZcmm0QHRyhkVj0NcQ8eVgFAaHIehQ83Uw
+         0LGYeTc2nhKKtj6ANWzZ4NMou+5ERcZbUKkFpZBk=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -48,20 +48,21 @@ Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
         Alexey Budankov <alexey.budankov@linux.intel.com>,
         James Morris <jamorris@linux.microsoft.com>,
-        Song Liu <songliubraving@fb.com>,
+        Helge Deller <deller@gmx.de>,
         Alexei Starovoitov <ast@kernel.org>,
         Andi Kleen <ak@linux.intel.com>,
         Igor Lubashev <ilubashe@akamai.com>,
         Jiri Olsa <jolsa@redhat.com>,
         Peter Zijlstra <peterz@infradead.org>,
         Serge Hallyn <serge@hallyn.com>,
+        Song Liu <songliubraving@fb.com>,
         Stephane Eranian <eranian@google.com>,
         intel-gfx@lists.freedesktop.org, linux-doc@vger.kernel.org,
         linux-man@vger.kernel.org, linux-security-module@vger.kernel.org,
         selinux@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 10/26] trace/bpf_trace: Open access for CAP_PERFMON privileged process
-Date:   Mon, 13 Apr 2020 13:51:47 -0300
-Message-Id: <20200413165203.1816-11-acme@kernel.org>
+Subject: [PATCH 12/26] parisc/perf: open access for CAP_PERFMON privileged process
+Date:   Mon, 13 Apr 2020 13:51:49 -0300
+Message-Id: <20200413165203.1816-13-acme@kernel.org>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <20200413165203.1816-1-acme@kernel.org>
 References: <20200413165203.1816-1-acme@kernel.org>
@@ -73,10 +74,10 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: Alexey Budankov <alexey.budankov@linux.intel.com>
 
-Open access to bpf_trace monitoring for CAP_PERFMON privileged process.
-Providing the access under CAP_PERFMON capability singly, without the
-rest of CAP_SYS_ADMIN credentials, excludes chances to misuse the
-credentials and makes operation more secure.
+Open access to monitoring for CAP_PERFMON privileged process.  Providing
+the access under CAP_PERFMON capability singly, without the rest of
+CAP_SYS_ADMIN credentials, excludes chances to misuse the credentials
+and makes operation more secure.
 
 CAP_PERFMON implements the principle of least privilege for performance
 monitoring and observability operations (POSIX IEEE 1003.1e 2.2.2.39
@@ -85,14 +86,13 @@ that a process or program be granted only those privileges (e.g.,
 capabilities) necessary to accomplish its legitimate function, and only
 for the time that such privileges are actually required)
 
-For backward compatibility reasons access to bpf_trace monitoring
-remains open for CAP_SYS_ADMIN privileged processes but CAP_SYS_ADMIN
-usage for secure bpf_trace monitoring is discouraged with respect to
-CAP_PERFMON capability.
+For backward compatibility reasons access to the monitoring remains open
+for CAP_SYS_ADMIN privileged processes but CAP_SYS_ADMIN usage for
+secure monitoring is discouraged with respect to CAP_PERFMON capability.
 
 Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
 Reviewed-by: James Morris <jamorris@linux.microsoft.com>
-Acked-by: Song Liu <songliubraving@fb.com>
+Acked-by: Helge Deller <deller@gmx.de>
 Cc: Alexei Starovoitov <ast@kernel.org>
 Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Igor Lubashev <ilubashe@akamai.com>
@@ -100,6 +100,7 @@ Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Serge Hallyn <serge@hallyn.com>
+Cc: Song Liu <songliubraving@fb.com>
 Cc: Stephane Eranian <eranian@google.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: intel-gfx@lists.freedesktop.org
@@ -107,25 +108,25 @@ Cc: linux-doc@vger.kernel.org
 Cc: linux-man@vger.kernel.org
 Cc: linux-security-module@vger.kernel.org
 Cc: selinux@vger.kernel.org
-Link: http://lore.kernel.org/lkml/c0a0ae47-8b6e-ff3e-416b-3cd1faaf71c0@linux.intel.com
+Link: http://lore.kernel.org/lkml/8cc98809-d35b-de0f-de02-4cf554f3cf62@linux.intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- kernel/trace/bpf_trace.c | 2 +-
+ arch/parisc/kernel/perf.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-index 68250d433bd7..770b742fc922 100644
---- a/kernel/trace/bpf_trace.c
-+++ b/kernel/trace/bpf_trace.c
-@@ -1416,7 +1416,7 @@ int perf_event_query_prog_array(struct perf_event *event, void __user *info)
- 	u32 *ids, prog_cnt, ids_len;
- 	int ret;
+diff --git a/arch/parisc/kernel/perf.c b/arch/parisc/kernel/perf.c
+index e1a8fee3ad49..d46b6709ec56 100644
+--- a/arch/parisc/kernel/perf.c
++++ b/arch/parisc/kernel/perf.c
+@@ -300,7 +300,7 @@ static ssize_t perf_write(struct file *file, const char __user *buf,
+ 	else
+ 		return -EFAULT;
  
 -	if (!capable(CAP_SYS_ADMIN))
 +	if (!perfmon_capable())
- 		return -EPERM;
- 	if (event->attr.type != PERF_TYPE_TRACEPOINT)
- 		return -EINVAL;
+ 		return -EACCES;
+ 
+ 	if (count != sizeof(uint32_t))
 -- 
 2.21.1
 
