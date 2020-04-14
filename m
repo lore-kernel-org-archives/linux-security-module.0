@@ -2,97 +2,72 @@ Return-Path: <SRS0=Yj31=56=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MIME_BASE64_TEXT,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFB31C2BB85
-	for <linux-security-module@archiver.kernel.org>; Tue, 14 Apr 2020 15:38:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1479C2BA19
+	for <linux-security-module@archiver.kernel.org>; Tue, 14 Apr 2020 15:50:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B3503206D5
-	for <linux-security-module@archiver.kernel.org>; Tue, 14 Apr 2020 15:38:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 789ED206D5
+	for <linux-security-module@archiver.kernel.org>; Tue, 14 Apr 2020 15:50:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VLc0RHyT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440565AbgDNPi0 (ORCPT
+        id S2440941AbgDNPuB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 14 Apr 2020 11:38:26 -0400
-Received: from ms.lwn.net ([45.79.88.28]:46198 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2440553AbgDNPiP (ORCPT
+        Tue, 14 Apr 2020 11:50:01 -0400
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:27529 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2440206AbgDNPt7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 14 Apr 2020 11:38:15 -0400
-Received: from lwn.net (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Tue, 14 Apr 2020 11:49:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1586879398;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=C5AiC1VtAoWJEY/odyXCn7YoS2/DSWi+dbTyYEt2cZQ=;
+        b=VLc0RHyThyvpxgG0kBRn05uMXIqWo6cUMaf4HprIHFA7KOHJJoiSzELT/pXKMhRZb1CfkA
+        JXvKPCRrMS1kPBHKsxWTcLAKj5g279ZjXo0bgax8J5YoY0Np2ptgOiNRVjj0kyKjL+t/id
+        TKBEU/nMEcbSs6IT4J+il5AeKMyDl3c=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-323-nx3W3qOFP32vjbdOe67__g-1; Tue, 14 Apr 2020 11:49:56 -0400
+X-MC-Unique: nx3W3qOFP32vjbdOe67__g-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id 27DD977D;
-        Tue, 14 Apr 2020 15:38:10 +0000 (UTC)
-Date:   Tue, 14 Apr 2020 09:38:09 -0600
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     deven.desai@linux.microsoft.com
-Cc:     agk@redhat.com, axboe@kernel.dk, snitzer@redhat.com,
-        jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, dm-devel@redhat.com,
-        linux-block@vger.kernel.org, tyhicks@linux.microsoft.com,
-        pasha.tatashin@soleen.com, sashal@kernel.org,
-        jaskarankhurana@linux.microsoft.com, nramas@linux.microsoft.com,
-        mdsakib@linux.microsoft.com, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v2 11/12] documentation: Add IPE Documentation
-Message-ID: <20200414093809.2c6ef93b@lwn.net>
-In-Reply-To: <20200406221439.1469862-12-deven.desai@linux.microsoft.com>
-References: <20200406221439.1469862-1-deven.desai@linux.microsoft.com>
-        <20200406221439.1469862-12-deven.desai@linux.microsoft.com>
-Organization: LWN.net
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A286D107ACC4;
+        Tue, 14 Apr 2020 15:49:55 +0000 (UTC)
+Received: from localhost (ovpn-114-148.ams2.redhat.com [10.36.114.148])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0C16311D2CF;
+        Tue, 14 Apr 2020 15:49:50 +0000 (UTC)
+From:   Stefan Hajnoczi <stefanha@redhat.com>
+To:     linux-security-module@vger.kernel.org
+Cc:     Serge Hallyn <serge@hallyn.com>, linux-kernel@vger.kernel.org,
+        Stefan Hajnoczi <stefanha@redhat.com>
+Subject: [PATCH] capabilities: add description for CAP_SETFCAP
+Date:   Tue, 14 Apr 2020 16:49:45 +0100
+Message-Id: <20200414154945.142372-1-stefanha@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: base64
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon,  6 Apr 2020 15:14:38 -0700
-deven.desai@linux.microsoft.com wrote:
+RG9jdW1lbnQgdGhlIHB1cnBvc2Ugb2YgQ0FQX1NFVEZDQVAuICBGb3Igc29tZSByZWFzb24gdGhp
+cyBjYXBhYmlsaXR5CmhhZCBubyBkZXNjcmlwdGlvbiB3aGlsZSB0aGUgb3RoZXJzIGRpZC4KClNp
+Z25lZC1vZmYtYnk6IFN0ZWZhbiBIYWpub2N6aSA8c3RlZmFuaGFAcmVkaGF0LmNvbT4KLS0tCiBp
+bmNsdWRlL3VhcGkvbGludXgvY2FwYWJpbGl0eS5oIHwgMiArKwogMSBmaWxlIGNoYW5nZWQsIDIg
+aW5zZXJ0aW9ucygrKQoKZGlmZiAtLWdpdCBhL2luY2x1ZGUvdWFwaS9saW51eC9jYXBhYmlsaXR5
+LmggYi9pbmNsdWRlL3VhcGkvbGludXgvY2FwYWJpbGl0eS5oCmluZGV4IDI3MmRjNjlmYTA4MC4u
+NzI4OGYwYWQ0NGFmIDEwMDY0NAotLS0gYS9pbmNsdWRlL3VhcGkvbGludXgvY2FwYWJpbGl0eS5o
+CisrKyBiL2luY2x1ZGUvdWFwaS9saW51eC9jYXBhYmlsaXR5LmgKQEAgLTMzMiw2ICszMzIsOCBA
+QCBzdHJ1Y3QgdmZzX25zX2NhcF9kYXRhIHsKIAogI2RlZmluZSBDQVBfQVVESVRfQ09OVFJPTCAg
+ICAzMAogCisvKiBTZXQgb3IgcmVtb3ZlIGNhcGFiaWxpdGllcyBvbiBmaWxlcyAqLworCiAjZGVm
+aW5lIENBUF9TRVRGQ0FQCSAgICAgMzEKIAogLyogT3ZlcnJpZGUgTUFDIGFjY2Vzcy4KLS0gCjIu
+MjUuMQoK
 
-> From: Deven Bowers <deven.desai@linux.microsoft.com>
-> 
-> Add IPE's documentation to the kernel tree.
-> 
-> Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
-
-Thanks for including this nice documentation from the outset!  I have a
-couple of tiny nits to pick, but nothing really substantive to complain
-about, so:
-
-  Acked-by: Jonathan Corbet <corbet@lwn.net>
-
-[...]
-
-> +IPE is a Linux Security Module, which allows for a configurable policy
-
-I'd drop the comma (I told you these were nits!)
-
-[...]
-
-> +IPE Policy
-> +~~~~~~~~~~
-> +
-> +IPE policy is designed to be both forward compatible and backwards
-> +compatible. There is one required line, at the top of the policy,
-> +indicating the policy name, and the policy version, for instance:
-> +
-> +::
-> +
-> +   policy_name="Ex Policy" policy_version=0.0.0
-
-This pattern can be compressed a bit by just putting the "::" at the end of
-the last line of text:
-
-	indicating the policy name, and the policy version, for instance::
-
-	   policy_name="Ex Policy" policy_version=0.0.0
-
-The result is a bit more readable in the plain-text format, IMO, and
-renders exactly the same in Sphinx.
-
-Thanks,
-
-jon
