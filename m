@@ -2,127 +2,111 @@ Return-Path: <SRS0=Yj31=56=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-12.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE425C2BB85
-	for <linux-security-module@archiver.kernel.org>; Tue, 14 Apr 2020 20:33:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB4EEC2BB1D
+	for <linux-security-module@archiver.kernel.org>; Tue, 14 Apr 2020 21:18:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AD83A2076A
-	for <linux-security-module@archiver.kernel.org>; Tue, 14 Apr 2020 20:33:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7497E2076B
+	for <linux-security-module@archiver.kernel.org>; Tue, 14 Apr 2020 21:18:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H7fyljQ1"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="GwNkoQjL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2633204AbgDNUdc (ORCPT
+        id S2633757AbgDNVSs (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 14 Apr 2020 16:33:32 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:29646 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2633199AbgDNUda (ORCPT
+        Tue, 14 Apr 2020 17:18:48 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:39766 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2633733AbgDNVSr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 14 Apr 2020 16:33:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1586896406;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=KwTOC5onNXJuxN2tXzBuJ3tclXWEJTwV06ZLB9D3qTQ=;
-        b=H7fyljQ1FCRTuqAMAiQNPpJOq2tLRqyR4Si/k7ie7IwAqpUWS5OervaSVnlajV6qXJ2D/G
-        QNuEwUSwQfTZUoJfOk4QR726zbKh6WsEXjDsNQjmpZ+Mgvejw18laMmyvpG3U0rm+3dMgz
-        QTw2Xf2Ds3afTdMHJXliT0ycd4jee0U=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-500-PUQ0StVLN8yTR-bYNrMKXQ-1; Tue, 14 Apr 2020 16:33:20 -0400
-X-MC-Unique: PUQ0StVLN8yTR-bYNrMKXQ-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id F0E25149C0;
-        Tue, 14 Apr 2020 20:33:18 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-113-129.rdu2.redhat.com [10.10.113.129])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6BA60126510;
-        Tue, 14 Apr 2020 20:33:17 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH] keys: Fix proc_keys_next to increase position index
-From:   David Howells <dhowells@redhat.com>
-To:     torvalds@linux-foundation.org
-Cc:     stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
-        dhowells@redhat.com, jarkko.sakkinen@linux.intel.com,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Tue, 14 Apr 2020 21:33:16 +0100
-Message-ID: <158689639664.3925765.4549426529245164675.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/0.21
+        Tue, 14 Apr 2020 17:18:47 -0400
+Received: from [10.137.106.115] (unknown [131.107.174.243])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 3E91D20B4737;
+        Tue, 14 Apr 2020 14:18:46 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3E91D20B4737
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1586899126;
+        bh=8vd2NllO885QphfJq499exMBBONhyoMLoUuWkoB9kMM=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=GwNkoQjLBGfCuuREHe/03lAwC66jZGflscriy+ucC2VLYeU1H2gwGfnbtARtIw/Bv
+         4DplFt0PBFLVA7BsFj6OcZIZHvCpm7RJoNrRJgrPikIOOWGzRv+KAeHNeUITy1lxxp
+         3F7GXI1j8U26y2fFZxmIuTVq/Npy+xZPthhmAfPo=
+Subject: Re: [RFC PATCH v2 11/12] documentation: Add IPE Documentation
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     agk@redhat.com, axboe@kernel.dk, snitzer@redhat.com,
+        jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, dm-devel@redhat.com,
+        linux-block@vger.kernel.org, tyhicks@linux.microsoft.com,
+        pasha.tatashin@soleen.com, sashal@kernel.org,
+        jaskarankhurana@linux.microsoft.com, nramas@linux.microsoft.com,
+        mdsakib@linux.microsoft.com, linux-kernel@vger.kernel.org
+References: <20200406221439.1469862-1-deven.desai@linux.microsoft.com>
+ <20200406221439.1469862-12-deven.desai@linux.microsoft.com>
+ <20200414093809.2c6ef93b@lwn.net>
+From:   Deven Bowers <deven.desai@linux.microsoft.com>
+Message-ID: <9c55bbe9-2c6e-7a0d-cf90-5b2aee724f19@linux.microsoft.com>
+Date:   Tue, 14 Apr 2020 14:18:45 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20200414093809.2c6ef93b@lwn.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-Language: en-US
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Vasily Averin <vvs@virtuozzo.com>
 
-If seq_file .next function does not change position index,
-read after some lseek can generate unexpected output:
+On 4/14/2020 8:38 AM, Jonathan Corbet wrote:
+> On Mon,  6 Apr 2020 15:14:38 -0700
+> deven.desai@linux.microsoft.com wrote:
+>
+>> From: Deven Bowers <deven.desai@linux.microsoft.com>
+>>
+>> Add IPE's documentation to the kernel tree.
+>>
+>> Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
+> Thanks for including this nice documentation from the outset!  I have a
+> couple of tiny nits to pick, but nothing really substantive to complain
+> about, so:
+>
+>    Acked-by: Jonathan Corbet <corbet@lwn.net>
 
-$ dd if=/proc/keys bs=1  # full usual output
-0f6bfdf5 I--Q---     2 perm 3f010000  1000  1000 user      4af2f79ab8848d0a: 740
-1fb91b32 I--Q---     3 perm 1f3f0000  1000 65534 keyring   _uid.1000: 2
-27589480 I--Q---     1 perm 0b0b0000     0     0 user      invocation_id: 16
-2f33ab67 I--Q---   152 perm 3f030000     0     0 keyring   _ses: 2
-33f1d8fa I--Q---     4 perm 3f030000  1000  1000 keyring   _ses: 1
-3d427fda I--Q---     2 perm 3f010000  1000  1000 user      69ec44aec7678e5a: 740
-3ead4096 I--Q---     1 perm 1f3f0000  1000 65534 keyring   _uid_ses.1000: 1
-521+0 records in
-521+0 records out
-521 bytes copied, 0,00123769 s, 421 kB/s
+Thanks!
 
-$ dd if=/proc/keys bs=500 skip=1  # read after lseek in middle of last line
-dd: /proc/keys: cannot skip to specified offset
-g   _uid_ses.1000: 1        <<<< end of last line
-3ead4096 I--Q---     1 perm 1f3f0000  1000 65534 keyring   _uid_ses.1000: 1
-   <<<< and whole last line again
-0+1 records in
-0+1 records out
-97 bytes copied, 0,000135035 s, 718 kB/s
+> [...]
+>
+>> +IPE is a Linux Security Module, which allows for a configurable policy
+> I'd drop the comma (I told you these were nits!)
 
-$ dd if=/proc/keys bs=1000 skip=1   # read after lseek beyond end of file
-dd: /proc/keys: cannot skip to specified offset
-3ead4096 I--Q---     1 perm 1f3f0000  1000 65534 keyring   _uid_ses.1000: 1
-   <<<< generates last line
-0+1 records in
-0+1 records out
-76 bytes copied, 0,000119981 s, 633 kB/s
+Got it, thanks!
 
-See https://bugzilla.kernel.org/show_bug.cgi?id=206283
+>
+> [...]
+>
+>> +IPE Policy
+>> +~~~~~~~~~~
+>> +
+>> +IPE policy is designed to be both forward compatible and backwards
+>> +compatible. There is one required line, at the top of the policy,
+>> +indicating the policy name, and the policy version, for instance:
+>> +
+>> +::
+>> +
+>> +   policy_name="Ex Policy" policy_version=0.0.0
+> This pattern can be compressed a bit by just putting the "::" at the end of
+> the last line of text:
+>
+> 	indicating the policy name, and the policy version, for instance::
+>
+> 	   policy_name="Ex Policy" policy_version=0.0.0
+>
+> The result is a bit more readable in the plain-text format, IMO, and
+> renders exactly the same in Sphinx.
 
-Cc: stable@vger.kernel.org
-Fixes: 1f4aace60b0e ("fs/seq_file.c: simplify seq_file iteration code ...")
-Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
----
-
- security/keys/proc.c |    2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/security/keys/proc.c b/security/keys/proc.c
-index 415f3f1c2da0..d0cde6685627 100644
---- a/security/keys/proc.c
-+++ b/security/keys/proc.c
-@@ -139,6 +139,8 @@ static void *proc_keys_next(struct seq_file *p, void *v, loff_t *_pos)
- 	n = key_serial_next(p, v);
- 	if (n)
- 		*_pos = key_node_serial(n);
-+	else
-+		(*_pos)++;
- 	return n;
- }
- 
-
-
+Awesome. I'll address this feedback in v3.
