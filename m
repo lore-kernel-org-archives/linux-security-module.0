@@ -2,112 +2,87 @@ Return-Path: <SRS0=Yj31=56=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_2 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95933C2BA19
-	for <linux-security-module@archiver.kernel.org>; Tue, 14 Apr 2020 13:48:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E7A9C2BA19
+	for <linux-security-module@archiver.kernel.org>; Tue, 14 Apr 2020 15:17:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 73F1520578
-	for <linux-security-module@archiver.kernel.org>; Tue, 14 Apr 2020 13:48:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F6B120768
+	for <linux-security-module@archiver.kernel.org>; Tue, 14 Apr 2020 15:17:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="rONCojIm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388129AbgDNNsp (ORCPT
+        id S2407318AbgDNPRX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 14 Apr 2020 09:48:45 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:8848 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2388041AbgDNNsm (ORCPT
+        Tue, 14 Apr 2020 11:17:23 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:53402 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405617AbgDNPRQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 14 Apr 2020 09:48:42 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 03EDYUE1119486
-        for <linux-security-module@vger.kernel.org>; Tue, 14 Apr 2020 09:48:41 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 30dc3rcpbg-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Tue, 14 Apr 2020 09:48:41 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Tue, 14 Apr 2020 14:48:00 +0100
-Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 14 Apr 2020 14:47:55 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 03EDmY7P37028098
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 14 Apr 2020 13:48:34 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4A1BCAE051;
-        Tue, 14 Apr 2020 13:48:34 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 67B60AE04D;
-        Tue, 14 Apr 2020 13:48:33 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.236.92])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 14 Apr 2020 13:48:33 +0000 (GMT)
-Subject: Re: [PATCH] evm: Fix possible memory leak in evm_calc_hmac_or_hash()
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>, mjg59@google.com
+        Tue, 14 Apr 2020 11:17:16 -0400
+Received: from [192.168.0.109] (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 350C720B4737;
+        Tue, 14 Apr 2020 08:17:15 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 350C720B4737
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1586877435;
+        bh=4Tq3FB+xGJtxT6ZUJb0cf3A21zkjTaUDbsRjLeb16W4=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=rONCojIm0QhclazO1zFbIqpb0Fg7wgDbsdQRc+yc8GRjqaScZWdOx870Nq7D+agOO
+         rsG2DlIToXNm6Yvf6yRt46/RvdMZKpDB29hFSxGQiL2i9OJAADLibOXrKhXrehXpkM
+         iG1yYDoJpXtG22gfeY00WDEciLw4dvRHjFdQQEu4=
+Subject: Re: [PATCH 1/2] ima: simplify function ima_store_template
+To:     Tianjia Zhang <tianjia.zhang@linux.alibaba.com>,
+        zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, jmorris@namei.org,
+        serge@hallyn.com, zhangliguang@linux.alibaba.com,
+        zhang.jia@linux.alibaba.com
 Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com,
-        stable@vger.kernel.org
-Date:   Tue, 14 Apr 2020 09:48:32 -0400
-In-Reply-To: <20200414080131.29411-1-roberto.sassu@huawei.com>
-References: <20200414080131.29411-1-roberto.sassu@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 20041413-0020-0000-0000-000003C7B0C1
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20041413-0021-0000-0000-000022208C90
-Message-Id: <1586872112.7311.194.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
- definitions=2020-04-14_05:2020-04-14,2020-04-14 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
- clxscore=1015 spamscore=0 mlxlogscore=999 lowpriorityscore=0 phishscore=0
- bulkscore=0 impostorscore=0 suspectscore=0 adultscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2004140108
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200414114850.98622-1-tianjia.zhang@linux.alibaba.com>
+ <20200414114850.98622-2-tianjia.zhang@linux.alibaba.com>
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Message-ID: <36c7b81e-ac42-b34a-808b-92107ff85805@linux.microsoft.com>
+Date:   Tue, 14 Apr 2020 08:17:14 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
+MIME-Version: 1.0
+In-Reply-To: <20200414114850.98622-2-tianjia.zhang@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Thanks, Roberto.
+On 4/14/20 4:48 AM, Tianjia Zhang wrote:
 
-Sorry for the delays in reviewing the miscellaneous set of IMA patches
-you previously posted.  They're next on my "todo" list.
-
-Mimi
-
-On Tue, 2020-04-14 at 10:01 +0200, Roberto Sassu wrote:
-> Don't immediately return if the signature is portable and security.ima is
-> not present. Just set error so that memory allocated is freed before
-> returning from evm_calc_hmac_or_hash().
+> The 'result' here is not necessary, remove redundant code,
+> the code is more concise.
 > 
-> Cc: stable@vger.kernel.org
-> Fixes: 50b977481fce9 ("EVM: Add support for portable signature format")
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
 > ---
->  security/integrity/evm/evm_crypto.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>   security/integrity/ima/ima_api.c | 3 +--
+>   1 file changed, 1 insertion(+), 2 deletions(-)
 > 
-> diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
-> index 35682852ddea..499ea01b2edc 100644
-> --- a/security/integrity/evm/evm_crypto.c
-> +++ b/security/integrity/evm/evm_crypto.c
-> @@ -241,7 +241,7 @@ static int evm_calc_hmac_or_hash(struct dentry *dentry,
->  
->  	/* Portable EVM signatures must include an IMA hash */
->  	if (type == EVM_XATTR_PORTABLE_DIGSIG && !ima_present)
-> -		return -EPERM;
-> +		error = -EPERM;
->  out:
->  	kfree(xattr_value);
->  	kfree(desc);
+> diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
+> index f6bc00914aa5..9121257c9dc6 100644
+> --- a/security/integrity/ima/ima_api.c
+> +++ b/security/integrity/ima/ima_api.c
+> @@ -118,8 +118,7 @@ int ima_store_template(struct ima_template_entry *entry,
+>   		memcpy(entry->digest, hash.hdr.digest, hash.hdr.length);
+>   	}
+>   	entry->pcr = pcr;
+> -	result = ima_add_template_entry(entry, violation, op, inode, filename);
+> -	return result;
+> +	return ima_add_template_entry(entry, violation, op, inode, filename);
+>   }
+>   
+>   /*
+> 
+
+
+Reviewed-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
 
