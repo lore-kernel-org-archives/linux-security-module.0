@@ -2,217 +2,142 @@ Return-Path: <SRS0=iun1=57=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F389C2BA19
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Apr 2020 07:54:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D3FDC3815B
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 Apr 2020 11:28:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 058B420768
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Apr 2020 07:54:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC8D220575
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 Apr 2020 11:28:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=web.de header.i=@web.de header.b="eLm8/RFy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390620AbgDOHxq (ORCPT
+        id S2896989AbgDOL2s (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 15 Apr 2020 03:53:46 -0400
-Received: from out30-54.freemail.mail.aliyun.com ([115.124.30.54]:35812 "EHLO
-        out30-54.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2635345AbgDOHwh (ORCPT
+        Wed, 15 Apr 2020 07:28:48 -0400
+Received: from mout.web.de ([212.227.17.11]:43313 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2896984AbgDOL2k (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 15 Apr 2020 03:52:37 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R721e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01419;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0TvbELz._1586937149;
-Received: from localhost(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0TvbELz._1586937149)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 15 Apr 2020 15:52:30 +0800
-From:   Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-To:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, jmorris@namei.org,
-        serge@hallyn.com, zhangliguang@linux.alibaba.com,
-        zhang.jia@linux.alibaba.com
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, tianjia.zhang@linux.alibaba.com
-Subject: [PATCH v2] ima: optimize ima_pcr_extend function by asynchronous
-Date:   Wed, 15 Apr 2020 15:52:29 +0800
-Message-Id: <20200415075229.71595-1-tianjia.zhang@linux.alibaba.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 15 Apr 2020 07:28:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1586950082;
+        bh=7xKTR06OVFKwW78tneySnyQHTGaymdDqDTgeiiTyqQo=;
+        h=X-UI-Sender-Class:Cc:Subject:From:To:Date;
+        b=eLm8/RFyvR1NubQRr+sMCUwM+8kvHdaMYdNSCWqmX2zrECID5vfsaCQH47PUrQ3Cn
+         JLRi5UtYHw0nfGfuktTN/e9LjG5dJ4Djc6EUWRV7EWDEMSJ9/GUW/Lj8g7hf6K6ejo
+         m67R/D+O7cqL1aXsBJUIRh3/Bz3NAlZ58lkCtTcU=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.3] ([78.48.133.192]) by smtp.web.de (mrweb101
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 0LwHxK-1jBn8m12nW-017zEy; Wed, 15
+ Apr 2020 13:28:02 +0200
+Cc:     linux-kernel@vger.kernel.org, James Morris <jmorris@namei.org>,
+        John Johansen <john.johansen@canonical.com>,
+        Kangjie Lu <kjlu@umn.edu>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Yuan Zhang <yuanxzhang@fudan.edu.cn>
+Subject: Re: [PATCH v2] apparmor: fix potential label refcnt leak in
+ aa_change_profile
+From:   Markus Elfring <Markus.Elfring@web.de>
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+To:     Xiyu Yang <xiyuyang19@fudan.edu.cn>,
+        Xin Tan <tanxin.ctf@gmail.com>,
+        linux-security-module@vger.kernel.org
+Message-ID: <e9f36822-2483-9512-732b-b158ed104bf2@web.de>
+Date:   Wed, 15 Apr 2020 13:27:57 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:HlGwp1Jlncc7qkjY+MrWR+P5GDDuC7x5uCE5yBkbusZZzlyIjC0
+ Cc86YJeWdFuGw9in63yttMPupDNKhZO1GyRU7qSmFFJ+X/iCuMPEBZXttlqT5ifZwZtA7Ny
+ BQe78HV1+MYMtKxxq+/4t5GV6lReOqLc2RFpsYPA+lGG45Tmp08fUbrivbHcMvUK+Y8BiQM
+ bAYO/EHr2ta/1MVBAHKFw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:DI42qCKGF9c=:JQHn+FHNyZ8AelsbHweBhM
+ eUYVQZxMIUUsYzxsk0n6Kor32rwb75PHhsn4GA7b6mSzTv1FK7JeOvap2rjYOvQkW9jle2ac6
+ MGx7G24DFJTdNAo6bUF7J8ZWdGnBuYxlj8S+mmXOn7I2NJTZNS4q/78JyOIR4HW4mUsm+DwZx
+ /XHWaRlT6tHleRymOAJSMWelG5ym+8ssIOGNcSsbmYZjfoRyHJp310Rf04OI2g4NUV8VEIEkt
+ f3AyApLP/WNS6rf43mQHQ+JAZzVi6upplxqWzTLkTCs/wx7axud3lgm1NvEgA+cfhbnm1RSuo
+ LKqBAiAVDsFjz4zsYAZg5t1O20yCPGObA5Iit01cK/2HLcSVSciYVT0CrfeFzg3kIZRSQAVzG
+ 5FhFCZK8oOUAJwoPnl/NdDk1UZ0DPk+FMR3sVwbddQVVrgOpJSRg8NKTRmK8+ZhynFCksOVpX
+ 2GvReOUHn33yzqe64xVhJXZ30JIbC7ddh/p1QU7I/UdcCKQHJxKvf/4iiPZj0p/bAgWtuj09g
+ q+DhvbuZnY+UDArF9pZDpQi2VycnZadPgtacHGUSHo/4jMc1C4f6H+IEibR67w02rqap4vxw6
+ PTlWH+CvAZjFAw1Yo8s1tiq7ZfcWeuoMLZ+ASOBVOFYu5IChxQqsONKf/ytg1EX2FqGGbhtVa
+ /GhNpZF14EeyBoXiJsHk/UApMP7yEn5163rR9Vh5ZcFJCYRohES2JlWvmjs8VTPUTfr5aTY8t
+ CSOqcxw7soycO7mmikQGDrCa5QcA/1y4haPFBhaBIzIyHwuVJF7aWTYyQgZsP1VNx6yFKhdzl
+ opAYO9hqgxhRo1J15h3yVOnfTeW3BWNuea06/YjH4sblWr3bgfJxaWYrLl6+3qCcH1jy7i9xK
+ qVOdGzXP+e8e77Pkq6pV1Wt57Q2+7pH/Wwos5SwCDvQQKjjc4iM2P8HdfBdKtINN/NOzNCdCA
+ BPDj2WtP4CXxC2ykyIZq8yskAEg8bVS4II6WcagSbPtUx2J/g4Zbykeuf3bXfuyVp1g3OL8BG
+ wtDimmfkthk55OmN9bmA+eAPagE5iPk8vDa1MBW5FxEHXw886sgs/YW2fiHhPAZYXhrx6QhIH
+ LkuIxgxriBVJF6mO8RG9+Wp24/WBvzpWX2mE7K1iGCZyyxFvpeZMkFqMqcOWYnsFk6gyKW2gf
+ Frqlu7sYjfQ5S+wqooIF9y+TO2chRXyn0hbV3JQ2zn65dWZ5Uv31YchG3oaHWaoJ2hir+8m9I
+ 3W2jmNPY7ekfIgirZ
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Because ima_pcr_extend() to operate the TPM chip, this process is
-very time-consuming, for IMA, this is a blocking action, especially
-when the TPM is in self test state, this process will block for up
-to second level.
+> According to the comment of aa_get_current_label(), =E2=80=A6
 
-Because the return result of ima_pcr_extend() is of no concern to IMA,
-it only affects the audit of IMA, so this patch use async_schedule()
-and PCR extend event serial queue to asynchronously perform the
-ima_pcr_extend() operation and do an audit operation at the end.
+I suggest to make this wording clearer.
+Would you like to refer to any software documentation here?
 
-In a vtpm scenario, I added the measure policy of BPRM and MMAP to
-compare the efficiency before and after applying the patch. The results
-show that the overall startup efficiency of conventional processes can
-be increased by 5% to 10%. I believe this efficiency increase It will
-be more obvious on real hardware tpm.
 
-Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
----
+> However, when the original object pointed by "label" becomes
+> unreachable because aa_change_profile() returns or a new object
+> is assigned to "label", reference count increased by
+> aa_get_current_label() is not decreased, causing a refcnt leak.
 
-v2 chang:
-  Use a queue to queue tpm extend operations to avoid out of order
+How do you think about to reduce abbreviations in the commit message?
 
- security/integrity/ima/ima_queue.c | 102 +++++++++++++++++++++++------
- 1 file changed, 81 insertions(+), 21 deletions(-)
+Would you like to add the tag =E2=80=9CFixes=E2=80=9D to the change descri=
+ption?
 
-diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
-index edbc2d6962be..ec146270d94b 100644
---- a/security/integrity/ima/ima_queue.c
-+++ b/security/integrity/ima/ima_queue.c
-@@ -17,6 +17,7 @@
- 
- #include <linux/rculist.h>
- #include <linux/slab.h>
-+#include <linux/async.h>
- #include "ima.h"
- 
- #define AUDIT_CAUSE_LEN_MAX 32
-@@ -44,6 +45,21 @@ struct ima_h_table ima_htable = {
-  */
- static DEFINE_MUTEX(ima_extend_list_mutex);
- 
-+/* list for pcr extned asynchronous */
-+static LIST_HEAD(ima_pcr_extend_list);
-+
-+struct ima_pcr_extend_async_ctx {
-+	struct list_head list;
-+	struct ima_template_entry *entry;
-+	int violation;
-+	const char *op;
-+	struct inode *inode;
-+	const unsigned char *filename;
-+	const char *audit_cause;
-+	int audit_info;
-+	int result;
-+};
-+
- /* lookup up the digest value in the hash table, and return the entry */
- static struct ima_queue_entry *ima_lookup_digest_entry(u8 *digest_value,
- 						       int pcr)
-@@ -150,6 +166,48 @@ static int ima_pcr_extend(const u8 *hash, int pcr)
- 	return result;
- }
- 
-+static void ima_pcr_extend_async(void *data, async_cookie_t cookie)
-+{
-+	struct ima_pcr_extend_async_ctx *ctx;
-+	u8 digest[TPM_DIGEST_SIZE];
-+	char tpm_audit_cause[AUDIT_CAUSE_LEN_MAX];
-+	int empty;
-+	int result;
-+
-+retry:
-+	mutex_lock(&ima_extend_list_mutex);
-+	empty = list_empty(&ima_pcr_extend_list);
-+	if (!empty) {
-+		ctx = list_first_entry(&ima_pcr_extend_list,
-+				struct ima_pcr_extend_async_ctx, list);
-+		list_del(&ctx->list);
-+	}
-+	mutex_unlock(&ima_extend_list_mutex);
-+
-+	/* no more pending pcr_extend, return */
-+	if (empty)
-+		return;
-+
-+	if (ctx->violation)		/* invalidate pcr */
-+		memset(digest, 0xff, sizeof(digest));
-+	else
-+		memcpy(digest, ctx->entry->digest, sizeof(digest));
-+
-+	result = ima_pcr_extend(digest, ctx->entry->pcr);
-+	if (result != 0) {
-+		snprintf(tpm_audit_cause, AUDIT_CAUSE_LEN_MAX, "TPM_error(%d)",
-+			 result);
-+		ctx->audit_cause = tpm_audit_cause;
-+		ctx->audit_info = 0;
-+	}
-+	integrity_audit_msg(AUDIT_INTEGRITY_PCR, ctx->inode, ctx->filename,
-+			    ctx->op, ctx->audit_cause,
-+			    ctx->result, ctx->audit_info);
-+
-+	kfree(ctx);
-+	goto retry;
-+}
-+
- /*
-  * Add template entry to the measurement list and hash table, and
-  * extend the pcr.
-@@ -162,20 +220,16 @@ int ima_add_template_entry(struct ima_template_entry *entry, int violation,
- 			   const char *op, struct inode *inode,
- 			   const unsigned char *filename)
- {
--	u8 digest[TPM_DIGEST_SIZE];
- 	const char *audit_cause = "hash_added";
--	char tpm_audit_cause[AUDIT_CAUSE_LEN_MAX];
- 	int audit_info = 1;
--	int result = 0, tpmresult = 0;
-+	int result = 0;
-+	struct ima_pcr_extend_async_ctx *ctx;
- 
- 	mutex_lock(&ima_extend_list_mutex);
--	if (!violation) {
--		memcpy(digest, entry->digest, sizeof(digest));
--		if (ima_lookup_digest_entry(digest, entry->pcr)) {
--			audit_cause = "hash_exists";
--			result = -EEXIST;
--			goto out;
--		}
-+	if (!violation && ima_lookup_digest_entry(entry->digest, entry->pcr)) {
-+		audit_cause = "hash_exists";
-+		result = -EEXIST;
-+		goto out;
- 	}
- 
- 	result = ima_add_digest_entry(entry, 1);
-@@ -185,20 +239,26 @@ int ima_add_template_entry(struct ima_template_entry *entry, int violation,
- 		goto out;
- 	}
- 
--	if (violation)		/* invalidate pcr */
--		memset(digest, 0xff, sizeof(digest));
--
--	tpmresult = ima_pcr_extend(digest, entry->pcr);
--	if (tpmresult != 0) {
--		snprintf(tpm_audit_cause, AUDIT_CAUSE_LEN_MAX, "TPM_error(%d)",
--			 tpmresult);
--		audit_cause = tpm_audit_cause;
--		audit_info = 0;
-+	ctx = kmalloc(sizeof(*ctx), GFP_KERNEL);
-+	if (!ctx) {
-+		audit_cause = "ENOMEM";
-+		result = -ENOMEM;
-+		goto out;
- 	}
-+
-+	ctx->entry = entry;
-+	ctx->violation = violation;
-+	ctx->op = op;
-+	ctx->inode = inode;
-+	ctx->filename = filename;
-+	ctx->audit_cause = audit_cause;
-+	ctx->audit_info = audit_info;
-+	ctx->result = result;
-+	list_add_tail(&ctx->list, &ima_pcr_extend_list);
-+	async_schedule(ima_pcr_extend_async, NULL);
-+
- out:
- 	mutex_unlock(&ima_extend_list_mutex);
--	integrity_audit_msg(AUDIT_INTEGRITY_PCR, inode, filename,
--			    op, audit_cause, result, audit_info);
- 	return result;
- }
- 
--- 
-2.17.1
-
+Regards,
+Markus
