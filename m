@@ -1,122 +1,340 @@
-Return-Path: <SRS0=iun1=57=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=Lv+b=6A=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE00FC2BA19
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Apr 2020 19:16:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E01E6C2D0EF
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 Apr 2020 10:42:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8CA1A20771
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Apr 2020 19:16:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5F3821D94
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 Apr 2020 10:42:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2411778AbgDOTIO (ORCPT
+        id S2505441AbgDPKl6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 15 Apr 2020 15:08:14 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:46959 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1416844AbgDOSlm (ORCPT
+        Thu, 16 Apr 2020 06:41:58 -0400
+Received: from smtp-190e.mail.infomaniak.ch ([185.125.25.14]:48301 "EHLO
+        smtp-190e.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2505430AbgDPKlN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 15 Apr 2020 14:41:42 -0400
-Received: from static-50-53-47-111.bvtn.or.frontiernet.net ([50.53.47.111] helo=[192.168.192.153])
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <john.johansen@canonical.com>)
-        id 1jOmyY-0001iJ-0w; Wed, 15 Apr 2020 18:41:30 +0000
-Subject: Re: [PATCH v2] apparmor: fix potential label refcnt leak in
- aa_change_profile
-To:     Markus Elfring <Markus.Elfring@web.de>,
-        Xiyu Yang <xiyuyang19@fudan.edu.cn>,
-        Xin Tan <tanxin.ctf@gmail.com>,
-        linux-security-module@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, James Morris <jmorris@namei.org>,
-        Kangjie Lu <kjlu@umn.edu>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Yuan Zhang <yuanxzhang@fudan.edu.cn>
-References: <e9f36822-2483-9512-732b-b158ed104bf2@web.de>
-From:   John Johansen <john.johansen@canonical.com>
-Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: Canonical
-Message-ID: <f5930264-946a-ad70-a327-62117499681b@canonical.com>
-Date:   Wed, 15 Apr 2020 11:41:27 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        Thu, 16 Apr 2020 06:41:13 -0400
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 492wjN2t0Xzlhk0W;
+        Thu, 16 Apr 2020 12:40:24 +0200 (CEST)
+Received: from localhost (unknown [94.23.54.103])
+        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 492wjM6mH5zlhJgr;
+        Thu, 16 Apr 2020 12:40:23 +0200 (CEST)
+From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To:     linux-kernel@vger.kernel.org
+Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mickael.salaun@ssi.gouv.fr>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-security-module@vger.kernel.org, x86@kernel.org
+Subject: [PATCH v16 03/10] landlock: Set up the security framework and manage credentials
+Date:   Thu, 16 Apr 2020 12:39:48 +0200
+Message-Id: <20200416103955.145757-4-mic@digikod.net>
+X-Mailer: git-send-email 2.26.1
+In-Reply-To: <20200416103955.145757-1-mic@digikod.net>
+References: <20200416103955.145757-1-mic@digikod.net>
 MIME-Version: 1.0
-In-Reply-To: <e9f36822-2483-9512-732b-b158ed104bf2@web.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
+X-Antivirus-Code: 0x100000
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 4/15/20 4:27 AM, Markus Elfring wrote:
->> According to the comment of aa_get_current_label(), …
-> 
-> I suggest to make this wording clearer.
-> Would you like to refer to any software documentation here?
-> 
-> 
->> However, when the original object pointed by "label" becomes
->> unreachable because aa_change_profile() returns or a new object
->> is assigned to "label", reference count increased by
->> aa_get_current_label() is not decreased, causing a refcnt leak.
-> 
-> How do you think about to reduce abbreviations in the commit message?
-> 
-> Would you like to add the tag “Fixes” to the change description?
-> 
-Fixes tags are always nice to have filled out, but some times its
-hard to determine or the patch submitter doesn't know how or ...
-If the fixes tags aren't there I will add them before I push them up.
-In this case its
+A process credentials point to a Landlock domain, which is underneath
+implemented with a ruleset.  In the following commits, this domain is
+used to check and enforce the ptrace and filesystem security policies.
+A domain is inherited from a parent to its child the same way a thread
+inherits a seccomp policy.
 
-Fixes: 9fcf78cca198 ("apparmor: update domain transitions that are subsets of confinement at nnp")
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+Cc: James Morris <jmorris@namei.org>
+Cc: Jann Horn <jannh@google.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Serge E. Hallyn <serge@hallyn.com>
+---
 
-> Regards,
-> Markus
-> 
+Changes since v15:
+* Optimize landlocked() for current thread.
+* Display the greeting message when everything is initialized.
+
+Changes since v14:
+* Uses pr_fmt from common.h .
+* Constify variables.
+* Remove useless NULL initialization.
+
+Changes since v13:
+* totally get ride of the seccomp dependency
+* only keep credential management and LSM setup.
+
+Previous changes:
+https://lore.kernel.org/lkml/20191104172146.30797-4-mic@digikod.net/
+---
+ security/Kconfig           | 10 +++----
+ security/landlock/Makefile |  3 +-
+ security/landlock/common.h | 20 +++++++++++++
+ security/landlock/cred.c   | 46 ++++++++++++++++++++++++++++++
+ security/landlock/cred.h   | 58 ++++++++++++++++++++++++++++++++++++++
+ security/landlock/setup.c  | 31 ++++++++++++++++++++
+ security/landlock/setup.h  | 16 +++++++++++
+ 7 files changed, 178 insertions(+), 6 deletions(-)
+ create mode 100644 security/landlock/common.h
+ create mode 100644 security/landlock/cred.c
+ create mode 100644 security/landlock/cred.h
+ create mode 100644 security/landlock/setup.c
+ create mode 100644 security/landlock/setup.h
+
+diff --git a/security/Kconfig b/security/Kconfig
+index 582fd777a757..a96ee1c7fd25 100644
+--- a/security/Kconfig
++++ b/security/Kconfig
+@@ -278,11 +278,11 @@ endchoice
+ 
+ config LSM
+ 	string "Ordered list of enabled LSMs"
+-	default "lockdown,yama,loadpin,safesetid,integrity,smack,selinux,tomoyo,apparmor,bpf" if DEFAULT_SECURITY_SMACK
+-	default "lockdown,yama,loadpin,safesetid,integrity,apparmor,selinux,smack,tomoyo,bpf" if DEFAULT_SECURITY_APPARMOR
+-	default "lockdown,yama,loadpin,safesetid,integrity,tomoyo,bpf" if DEFAULT_SECURITY_TOMOYO
+-	default "lockdown,yama,loadpin,safesetid,integrity,bpf" if DEFAULT_SECURITY_DAC
+-	default "lockdown,yama,loadpin,safesetid,integrity,selinux,smack,tomoyo,apparmor,bpf"
++	default "landlock,lockdown,yama,loadpin,safesetid,integrity,smack,selinux,tomoyo,apparmor,bpf" if DEFAULT_SECURITY_SMACK
++	default "landlock,lockdown,yama,loadpin,safesetid,integrity,apparmor,selinux,smack,tomoyo,bpf" if DEFAULT_SECURITY_APPARMOR
++	default "landlock,lockdown,yama,loadpin,safesetid,integrity,tomoyo,bpf" if DEFAULT_SECURITY_TOMOYO
++	default "landlock,lockdown,yama,loadpin,safesetid,integrity,bpf" if DEFAULT_SECURITY_DAC
++	default "landlock,lockdown,yama,loadpin,safesetid,integrity,selinux,smack,tomoyo,apparmor,bpf"
+ 	help
+ 	  A comma-separated list of LSMs, in initialization order.
+ 	  Any LSMs left off this list will be ignored. This can be
+diff --git a/security/landlock/Makefile b/security/landlock/Makefile
+index d846eba445bb..041ea242e627 100644
+--- a/security/landlock/Makefile
++++ b/security/landlock/Makefile
+@@ -1,3 +1,4 @@
+ obj-$(CONFIG_SECURITY_LANDLOCK) := landlock.o
+ 
+-landlock-y := object.o ruleset.o
++landlock-y := setup.o object.o ruleset.o \
++	cred.o
+diff --git a/security/landlock/common.h b/security/landlock/common.h
+new file mode 100644
+index 000000000000..5dc0fe15707d
+--- /dev/null
++++ b/security/landlock/common.h
+@@ -0,0 +1,20 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Landlock LSM - Common constants and helpers
++ *
++ * Copyright © 2016-2020 Mickaël Salaün <mic@digikod.net>
++ * Copyright © 2018-2020 ANSSI
++ */
++
++#ifndef _SECURITY_LANDLOCK_COMMON_H
++#define _SECURITY_LANDLOCK_COMMON_H
++
++#define LANDLOCK_NAME "landlock"
++
++#ifdef pr_fmt
++#undef pr_fmt
++#endif
++
++#define pr_fmt(fmt) LANDLOCK_NAME ": " fmt
++
++#endif /* _SECURITY_LANDLOCK_COMMON_H */
+diff --git a/security/landlock/cred.c b/security/landlock/cred.c
+new file mode 100644
+index 000000000000..7074149d2517
+--- /dev/null
++++ b/security/landlock/cred.c
+@@ -0,0 +1,46 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Landlock LSM - Credential hooks
++ *
++ * Copyright © 2017-2020 Mickaël Salaün <mic@digikod.net>
++ * Copyright © 2018-2020 ANSSI
++ */
++
++#include <linux/cred.h>
++#include <linux/lsm_hooks.h>
++
++#include "common.h"
++#include "cred.h"
++#include "ruleset.h"
++#include "setup.h"
++
++static int hook_cred_prepare(struct cred *const new,
++		const struct cred *const old, const gfp_t gfp)
++{
++	const struct landlock_cred_security *cred_old = landlock_cred(old);
++	struct landlock_cred_security *cred_new = landlock_cred(new);
++	struct landlock_ruleset *dom_old;
++
++	dom_old = cred_old->domain;
++	if (dom_old) {
++		landlock_get_ruleset(dom_old);
++		cred_new->domain = dom_old;
++	}
++	return 0;
++}
++
++static void hook_cred_free(struct cred *const cred)
++{
++	landlock_put_ruleset_deferred(landlock_cred(cred)->domain);
++}
++
++static struct security_hook_list landlock_hooks[] __lsm_ro_after_init = {
++	LSM_HOOK_INIT(cred_prepare, hook_cred_prepare),
++	LSM_HOOK_INIT(cred_free, hook_cred_free),
++};
++
++__init void landlock_add_hooks_cred(void)
++{
++	security_add_hooks(landlock_hooks, ARRAY_SIZE(landlock_hooks),
++			LANDLOCK_NAME);
++}
+diff --git a/security/landlock/cred.h b/security/landlock/cred.h
+new file mode 100644
+index 000000000000..55459069769c
+--- /dev/null
++++ b/security/landlock/cred.h
+@@ -0,0 +1,58 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Landlock LSM - Credential hooks
++ *
++ * Copyright © 2019 Mickaël Salaün <mic@digikod.net>
++ * Copyright © 2019 ANSSI
++ */
++
++#ifndef _SECURITY_LANDLOCK_CRED_H
++#define _SECURITY_LANDLOCK_CRED_H
++
++#include <linux/cred.h>
++#include <linux/init.h>
++#include <linux/rcupdate.h>
++
++#include "ruleset.h"
++#include "setup.h"
++
++struct landlock_cred_security {
++	struct landlock_ruleset *domain;
++};
++
++static inline struct landlock_cred_security *landlock_cred(
++		const struct cred *cred)
++{
++	return cred->security + landlock_blob_sizes.lbs_cred;
++}
++
++static inline struct landlock_ruleset *landlock_get_current_domain(void)
++{
++	return landlock_cred(current_cred())->domain;
++}
++
++/*
++ * The call needs to come from an RCU read-side critical section.
++ */
++static inline struct landlock_ruleset *landlock_get_task_domain(
++		const struct task_struct *const task)
++{
++	return landlock_cred(__task_cred(task))->domain;
++}
++
++static inline bool landlocked(const struct task_struct *const task)
++{
++	bool has_dom;
++
++	if (task == current)
++		return !!landlock_get_current_domain();
++
++	rcu_read_lock();
++	has_dom = !!landlock_get_task_domain(task);
++	rcu_read_unlock();
++	return has_dom;
++}
++
++__init void landlock_add_hooks_cred(void);
++
++#endif /* _SECURITY_LANDLOCK_CRED_H */
+diff --git a/security/landlock/setup.c b/security/landlock/setup.c
+new file mode 100644
+index 000000000000..39ee1766f175
+--- /dev/null
++++ b/security/landlock/setup.c
+@@ -0,0 +1,31 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Landlock LSM - Security framework setup
++ *
++ * Copyright © 2016-2020 Mickaël Salaün <mic@digikod.net>
++ * Copyright © 2018-2020 ANSSI
++ */
++
++#include <linux/init.h>
++#include <linux/lsm_hooks.h>
++
++#include "common.h"
++#include "cred.h"
++#include "setup.h"
++
++struct lsm_blob_sizes landlock_blob_sizes __lsm_ro_after_init = {
++	.lbs_cred = sizeof(struct landlock_cred_security),
++};
++
++static int __init landlock_init(void)
++{
++	landlock_add_hooks_cred();
++	pr_info("Up and running.\n");
++	return 0;
++}
++
++DEFINE_LSM(LANDLOCK_NAME) = {
++	.name = LANDLOCK_NAME,
++	.init = landlock_init,
++	.blobs = &landlock_blob_sizes,
++};
+diff --git a/security/landlock/setup.h b/security/landlock/setup.h
+new file mode 100644
+index 000000000000..9fdbf33fcc33
+--- /dev/null
++++ b/security/landlock/setup.h
+@@ -0,0 +1,16 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Landlock LSM - Security framework setup
++ *
++ * Copyright © 2016-2020 Mickaël Salaün <mic@digikod.net>
++ * Copyright © 2018-2020 ANSSI
++ */
++
++#ifndef _SECURITY_LANDLOCK_SETUP_H
++#define _SECURITY_LANDLOCK_SETUP_H
++
++#include <linux/lsm_hooks.h>
++
++extern struct lsm_blob_sizes landlock_blob_sizes;
++
++#endif /* _SECURITY_LANDLOCK_SETUP_H */
+-- 
+2.26.1
 
