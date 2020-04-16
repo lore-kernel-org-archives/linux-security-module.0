@@ -2,100 +2,103 @@ Return-Path: <SRS0=Lv+b=6A=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA468C2BB55
-	for <linux-security-module@archiver.kernel.org>; Thu, 16 Apr 2020 16:54:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FD52C3815B
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 Apr 2020 17:44:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 900EC2076D
-	for <linux-security-module@archiver.kernel.org>; Thu, 16 Apr 2020 16:54:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F6FA2078B
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 Apr 2020 17:44:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="d3YpuIAX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727784AbgDPQyj (ORCPT
+        id S2390504AbgDPRoK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 16 Apr 2020 12:54:39 -0400
-Received: from mga07.intel.com ([134.134.136.100]:5652 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729249AbgDPQyh (ORCPT
+        Thu, 16 Apr 2020 13:44:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39430 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2390374AbgDPRoI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 16 Apr 2020 12:54:37 -0400
-IronPort-SDR: +nM7DDdPijNq33yBRHc9Ar+6wB4EO+DgwN2VuQxEpqABKy8UtjMtu3pmIcl0D9YljzXTj43nYs
- BbcWm/2ejqPA==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2020 09:54:36 -0700
-IronPort-SDR: LIqcIv3CFFA2Is1/UUXsyl7xUaROGbP/LPzZZCmEIUmexkP5i6kC2b6GorkhFzoL8ZkYj3mbWZ
- LNciuRFa5+5g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,391,1580803200"; 
-   d="scan'208";a="454399034"
-Received: from otazetdi-mobl.ccr.corp.intel.com (HELO localhost) ([10.249.42.128])
-  by fmsmga005.fm.intel.com with ESMTP; 16 Apr 2020 09:54:33 -0700
-Date:   Thu, 16 Apr 2020 19:54:32 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     David Howells <dhowells@redhat.com>
-Cc:     torvalds@linux-foundation.org, stable@vger.kernel.org,
-        Vasily Averin <vvs@virtuozzo.com>, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] keys: Fix proc_keys_next to increase position index
-Message-ID: <20200416165432.GA199110@linux.intel.com>
-References: <158689639664.3925765.4549426529245164675.stgit@warthog.procyon.org.uk>
+        Thu, 16 Apr 2020 13:44:08 -0400
+Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D73FAC061A10
+        for <linux-security-module@vger.kernel.org>; Thu, 16 Apr 2020 10:44:07 -0700 (PDT)
+Received: by mail-ed1-x544.google.com with SMTP id c7so9274916edl.2
+        for <linux-security-module@vger.kernel.org>; Thu, 16 Apr 2020 10:44:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=lHUznoxru5R12GXaDmKNX8aXkplH6wFoA+QlOqPeLdI=;
+        b=d3YpuIAXek8wojwJPlX+mVEi3yrr57eFKzsLxMLgsJXoYIurH7nVZ/mjDHM2gKUNrb
+         BNl4EH9u92DBGQi5nZ3n0wyRZY0uR4VbVzZuwU64I+KyXeHKAXnv84oW6HnILOjliE/2
+         2l5wOeruQkOj98wCk5oWwrLKuQOWqQg1DEOtsearRpsE76PoOyAltDhjYcY1Uq+nGo+1
+         XlNPJp9Bc4GboEfZPwuUDRigqNmrT1fR3jQeQZNTvvoNStDZ4bQTCCqRoJ+ByeYrGgI/
+         B6DiXpJ5stBdqm0xq9RZkZvmh3Fgd9BCCdZFITb7q0eH5YXOc2AoTmfb/sKavW+V5n5X
+         /b1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=lHUznoxru5R12GXaDmKNX8aXkplH6wFoA+QlOqPeLdI=;
+        b=PIVGI2G0xsjq1HCVHxcUdO2m5K8hg5CMI59vM6YXznEEch8B+R0RLWHnQuVrPhkZay
+         T467BgJ+si50LiqW0y8FsFwkDrC6f3UHvwGfnKFfnPTR5uFO1J3ge7tOsMNFBeJWY/Gh
+         8gQp4gOI1ryTz2ebX6eq/sH7yhKdXTxM5BwTL4zKWQ30UPYwO2Azq2bSQQ5xUqA1c9mk
+         KXnyXbtkw3LhVuZ2/5OzsJ6zEtlihVrEfELDsg6sF9bE92/C42IyivGnv6bf6PPAux+B
+         ehvTdshzZofYbTObPpyfyVjNn/TWXnTOKVDfjJB04H/j+KJh4Y0ucVBsmI244v0BJHvQ
+         H/pQ==
+X-Gm-Message-State: AGi0PuZudEo0XKEEj3+O7nRYDRyNmy14gY+EofCxX23reK2sHV+HnMvf
+        mFqPePlgi/3DFe5/FbIbeXJ8uoPFvkFNry8B28m/
+X-Google-Smtp-Source: APiQypJflJcsD5E5bvXwMy2efxg/kPt1RTDrCEezvZ+HNOokTDmdHJAaS9dz6ehK5wvShhDpAsPpwUKgeE0HZtOM/Kc=
+X-Received: by 2002:a05:6402:1b0b:: with SMTP id by11mr12141670edb.269.1587059046433;
+ Thu, 16 Apr 2020 10:44:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <158689639664.3925765.4549426529245164675.stgit@warthog.procyon.org.uk>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 16 Apr 2020 13:43:55 -0400
+Message-ID: <CAHC9VhRNYDwZttwD0Pc3JctBg7puvc+UsuZG082CdPVrarQoDg@mail.gmail.com>
+Subject: [GIT PULL] SELinux fixes for v5.7 (#1)
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Apr 14, 2020 at 09:33:16PM +0100, David Howells wrote:
-> From: Vasily Averin <vvs@virtuozzo.com>
-> 
-> If seq_file .next function does not change position index,
-> read after some lseek can generate unexpected output:
-> 
-> $ dd if=/proc/keys bs=1  # full usual output
-> 0f6bfdf5 I--Q---     2 perm 3f010000  1000  1000 user      4af2f79ab8848d0a: 740
-> 1fb91b32 I--Q---     3 perm 1f3f0000  1000 65534 keyring   _uid.1000: 2
-> 27589480 I--Q---     1 perm 0b0b0000     0     0 user      invocation_id: 16
-> 2f33ab67 I--Q---   152 perm 3f030000     0     0 keyring   _ses: 2
-> 33f1d8fa I--Q---     4 perm 3f030000  1000  1000 keyring   _ses: 1
-> 3d427fda I--Q---     2 perm 3f010000  1000  1000 user      69ec44aec7678e5a: 740
-> 3ead4096 I--Q---     1 perm 1f3f0000  1000 65534 keyring   _uid_ses.1000: 1
-> 521+0 records in
-> 521+0 records out
-> 521 bytes copied, 0,00123769 s, 421 kB/s
-> 
-> $ dd if=/proc/keys bs=500 skip=1  # read after lseek in middle of last line
-> dd: /proc/keys: cannot skip to specified offset
-> g   _uid_ses.1000: 1        <<<< end of last line
-> 3ead4096 I--Q---     1 perm 1f3f0000  1000 65534 keyring   _uid_ses.1000: 1
->    <<<< and whole last line again
-> 0+1 records in
-> 0+1 records out
-> 97 bytes copied, 0,000135035 s, 718 kB/s
-> 
-> $ dd if=/proc/keys bs=1000 skip=1   # read after lseek beyond end of file
-> dd: /proc/keys: cannot skip to specified offset
-> 3ead4096 I--Q---     1 perm 1f3f0000  1000 65534 keyring   _uid_ses.1000: 1
->    <<<< generates last line
-> 0+1 records in
-> 0+1 records out
-> 76 bytes copied, 0,000119981 s, 633 kB/s
-> 
-> See https://bugzilla.kernel.org/show_bug.cgi?id=206283
-> 
-> Cc: stable@vger.kernel.org
+Hi Linus,
 
-# 4.19.x
+One small SELinux fix for v5.7-rcX to ensure we cleanup properly on an
+error condition.  Please merge for the next -rcX release.
 
-> Fixes: 1f4aace60b0e ("fs/seq_file.c: simplify seq_file iteration code ...")
-> Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
-> Signed-off-by: David Howells <dhowells@redhat.com>
+Thanks,
+-Paul
 
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+--
+The following changes since commit c753924b628551564b6eea3c9896e4a95aa25ed9:
 
-/Jarkko
+ selinux: clean up indentation issue with assignment statement
+   (2020-03-30 19:57:07 -0400)
+
+are available in the Git repository at:
+
+ git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+   tags/selinux-pr-20200416
+
+for you to fetch changes up to af15f14c8cfcee515f4e9078889045ad63efefe3:
+
+ selinux: free str on error in str_read() (2020-04-15 17:23:16 -0400)
+
+----------------------------------------------------------------
+selinux/stable-5.7 PR 20200416
+
+----------------------------------------------------------------
+Ondrej Mosnacek (1):
+     selinux: free str on error in str_read()
+
+security/selinux/ss/policydb.c | 8 ++++----
+1 file changed, 4 insertions(+), 4 deletions(-)
+
+-- 
+paul moore
+www.paul-moore.com
