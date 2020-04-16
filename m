@@ -2,280 +2,100 @@ Return-Path: <SRS0=Lv+b=6A=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 591DFC2BB55
-	for <linux-security-module@archiver.kernel.org>; Thu, 16 Apr 2020 11:39:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA468C2BB55
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 Apr 2020 16:54:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3C04A20656
-	for <linux-security-module@archiver.kernel.org>; Thu, 16 Apr 2020 11:39:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 900EC2076D
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 Apr 2020 16:54:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2506483AbgDPLj0 (ORCPT
+        id S1727784AbgDPQyj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 16 Apr 2020 07:39:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60840 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2505943AbgDPK7u (ORCPT
+        Thu, 16 Apr 2020 12:54:39 -0400
+Received: from mga07.intel.com ([134.134.136.100]:5652 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729249AbgDPQyh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 16 Apr 2020 06:59:50 -0400
-Received: from smtp-bc0f.mail.infomaniak.ch (smtp-bc0f.mail.infomaniak.ch [IPv6:2001:1600:3:17::bc0f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13241C061A0C
-        for <linux-security-module@vger.kernel.org>; Thu, 16 Apr 2020 03:52:55 -0700 (PDT)
-Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 492wjP4SGFzlhth3;
-        Thu, 16 Apr 2020 12:40:25 +0200 (CEST)
-Received: from localhost (unknown [94.23.54.103])
-        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 492wjP1scszlhhhp;
-        Thu, 16 Apr 2020 12:40:25 +0200 (CEST)
-From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To:     linux-kernel@vger.kernel.org
-Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mickael.salaun@ssi.gouv.fr>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-security-module@vger.kernel.org, x86@kernel.org
-Subject: [PATCH v16 04/10] landlock: Add ptrace restrictions
-Date:   Thu, 16 Apr 2020 12:39:49 +0200
-Message-Id: <20200416103955.145757-5-mic@digikod.net>
-X-Mailer: git-send-email 2.26.1
-In-Reply-To: <20200416103955.145757-1-mic@digikod.net>
-References: <20200416103955.145757-1-mic@digikod.net>
+        Thu, 16 Apr 2020 12:54:37 -0400
+IronPort-SDR: +nM7DDdPijNq33yBRHc9Ar+6wB4EO+DgwN2VuQxEpqABKy8UtjMtu3pmIcl0D9YljzXTj43nYs
+ BbcWm/2ejqPA==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2020 09:54:36 -0700
+IronPort-SDR: LIqcIv3CFFA2Is1/UUXsyl7xUaROGbP/LPzZZCmEIUmexkP5i6kC2b6GorkhFzoL8ZkYj3mbWZ
+ LNciuRFa5+5g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,391,1580803200"; 
+   d="scan'208";a="454399034"
+Received: from otazetdi-mobl.ccr.corp.intel.com (HELO localhost) ([10.249.42.128])
+  by fmsmga005.fm.intel.com with ESMTP; 16 Apr 2020 09:54:33 -0700
+Date:   Thu, 16 Apr 2020 19:54:32 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     David Howells <dhowells@redhat.com>
+Cc:     torvalds@linux-foundation.org, stable@vger.kernel.org,
+        Vasily Averin <vvs@virtuozzo.com>, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] keys: Fix proc_keys_next to increase position index
+Message-ID: <20200416165432.GA199110@linux.intel.com>
+References: <158689639664.3925765.4549426529245164675.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
-X-Antivirus-Code: 0x100000
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <158689639664.3925765.4549426529245164675.stgit@warthog.procyon.org.uk>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Using ptrace(2) and related debug features on a target process can lead
-to a privilege escalation.  Indeed, ptrace(2) can be used by an attacker
-to impersonate another task and to remain undetected while performing
-malicious activities.  Thanks to  ptrace_may_access(), various part of
-the kernel can check if a tracer is more privileged than a tracee.
+On Tue, Apr 14, 2020 at 09:33:16PM +0100, David Howells wrote:
+> From: Vasily Averin <vvs@virtuozzo.com>
+> 
+> If seq_file .next function does not change position index,
+> read after some lseek can generate unexpected output:
+> 
+> $ dd if=/proc/keys bs=1  # full usual output
+> 0f6bfdf5 I--Q---     2 perm 3f010000  1000  1000 user      4af2f79ab8848d0a: 740
+> 1fb91b32 I--Q---     3 perm 1f3f0000  1000 65534 keyring   _uid.1000: 2
+> 27589480 I--Q---     1 perm 0b0b0000     0     0 user      invocation_id: 16
+> 2f33ab67 I--Q---   152 perm 3f030000     0     0 keyring   _ses: 2
+> 33f1d8fa I--Q---     4 perm 3f030000  1000  1000 keyring   _ses: 1
+> 3d427fda I--Q---     2 perm 3f010000  1000  1000 user      69ec44aec7678e5a: 740
+> 3ead4096 I--Q---     1 perm 1f3f0000  1000 65534 keyring   _uid_ses.1000: 1
+> 521+0 records in
+> 521+0 records out
+> 521 bytes copied, 0,00123769 s, 421 kB/s
+> 
+> $ dd if=/proc/keys bs=500 skip=1  # read after lseek in middle of last line
+> dd: /proc/keys: cannot skip to specified offset
+> g   _uid_ses.1000: 1        <<<< end of last line
+> 3ead4096 I--Q---     1 perm 1f3f0000  1000 65534 keyring   _uid_ses.1000: 1
+>    <<<< and whole last line again
+> 0+1 records in
+> 0+1 records out
+> 97 bytes copied, 0,000135035 s, 718 kB/s
+> 
+> $ dd if=/proc/keys bs=1000 skip=1   # read after lseek beyond end of file
+> dd: /proc/keys: cannot skip to specified offset
+> 3ead4096 I--Q---     1 perm 1f3f0000  1000 65534 keyring   _uid_ses.1000: 1
+>    <<<< generates last line
+> 0+1 records in
+> 0+1 records out
+> 76 bytes copied, 0,000119981 s, 633 kB/s
+> 
+> See https://bugzilla.kernel.org/show_bug.cgi?id=206283
+> 
+> Cc: stable@vger.kernel.org
 
-A landlocked process has fewer privileges than a non-landlocked process
-and must then be subject to additional restrictions when manipulating
-processes. To be allowed to use ptrace(2) and related syscalls on a
-target process, a landlocked process must have a subset of the target
-process' rules (i.e. the tracee must be in a sub-domain of the tracer).
+# 4.19.x
 
-Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Cc: James Morris <jmorris@namei.org>
-Cc: Jann Horn <jannh@google.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Serge E. Hallyn <serge@hallyn.com>
----
+> Fixes: 1f4aace60b0e ("fs/seq_file.c: simplify seq_file iteration code ...")
+> Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+> Signed-off-by: David Howells <dhowells@redhat.com>
 
-Changes since v14:
-* Constify variables.
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-Changes since v13:
-* Make the ptrace restriction mandatory, like in the v10.
-* Remove the eBPF dependency.
-
-Previous changes:
-https://lore.kernel.org/lkml/20191104172146.30797-5-mic@digikod.net/
----
- security/landlock/Makefile |   2 +-
- security/landlock/ptrace.c | 120 +++++++++++++++++++++++++++++++++++++
- security/landlock/ptrace.h |  14 +++++
- security/landlock/setup.c  |   2 +
- 4 files changed, 137 insertions(+), 1 deletion(-)
- create mode 100644 security/landlock/ptrace.c
- create mode 100644 security/landlock/ptrace.h
-
-diff --git a/security/landlock/Makefile b/security/landlock/Makefile
-index 041ea242e627..f1d1eb72fa76 100644
---- a/security/landlock/Makefile
-+++ b/security/landlock/Makefile
-@@ -1,4 +1,4 @@
- obj-$(CONFIG_SECURITY_LANDLOCK) := landlock.o
- 
- landlock-y := setup.o object.o ruleset.o \
--	cred.o
-+	cred.o ptrace.o
-diff --git a/security/landlock/ptrace.c b/security/landlock/ptrace.c
-new file mode 100644
-index 000000000000..61df38b13f5c
---- /dev/null
-+++ b/security/landlock/ptrace.c
-@@ -0,0 +1,120 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Landlock LSM - Ptrace hooks
-+ *
-+ * Copyright © 2017-2020 Mickaël Salaün <mic@digikod.net>
-+ * Copyright © 2020 ANSSI
-+ */
-+
-+#include <asm/current.h>
-+#include <linux/cred.h>
-+#include <linux/errno.h>
-+#include <linux/kernel.h>
-+#include <linux/lsm_hooks.h>
-+#include <linux/rcupdate.h>
-+#include <linux/sched.h>
-+
-+#include "common.h"
-+#include "cred.h"
-+#include "ptrace.h"
-+#include "ruleset.h"
-+#include "setup.h"
-+
-+/**
-+ * domain_scope_le - Checks domain ordering for scoped ptrace
-+ *
-+ * @parent: Parent domain.
-+ * @child: Potential child of @parent.
-+ *
-+ * Checks if the @parent domain is less or equal to (i.e. an ancestor, which
-+ * means a subset of) the @child domain.
-+ */
-+static bool domain_scope_le(const struct landlock_ruleset *const parent,
-+		const struct landlock_ruleset *const child)
-+{
-+	const struct landlock_hierarchy *walker;
-+
-+	if (!parent)
-+		return true;
-+	if (!child)
-+		return false;
-+	for (walker = child->hierarchy; walker; walker = walker->parent) {
-+		if (walker == parent->hierarchy)
-+			/* @parent is in the scoped hierarchy of @child. */
-+			return true;
-+	}
-+	/* There is no relationship between @parent and @child. */
-+	return false;
-+}
-+
-+static bool task_is_scoped(const struct task_struct *const parent,
-+		const struct task_struct *const child)
-+{
-+	bool is_scoped;
-+	const struct landlock_ruleset *dom_parent, *dom_child;
-+
-+	rcu_read_lock();
-+	dom_parent = landlock_get_task_domain(parent);
-+	dom_child = landlock_get_task_domain(child);
-+	is_scoped = domain_scope_le(dom_parent, dom_child);
-+	rcu_read_unlock();
-+	return is_scoped;
-+}
-+
-+static int task_ptrace(const struct task_struct *const parent,
-+		const struct task_struct *const child)
-+{
-+	/* Quick return for non-landlocked tasks. */
-+	if (!landlocked(parent))
-+		return 0;
-+	if (task_is_scoped(parent, child))
-+		return 0;
-+	return -EPERM;
-+}
-+
-+/**
-+ * hook_ptrace_access_check - Determines whether the current process may access
-+ *			      another
-+ *
-+ * @child: Process to be accessed.
-+ * @mode: Mode of attachment.
-+ *
-+ * If the current task has Landlock rules, then the child must have at least
-+ * the same rules.  Else denied.
-+ *
-+ * Determines whether a process may access another, returning 0 if permission
-+ * granted, -errno if denied.
-+ */
-+static int hook_ptrace_access_check(struct task_struct *const child,
-+		const unsigned int mode)
-+{
-+	return task_ptrace(current, child);
-+}
-+
-+/**
-+ * hook_ptrace_traceme - Determines whether another process may trace the
-+ *			 current one
-+ *
-+ * @parent: Task proposed to be the tracer.
-+ *
-+ * If the parent has Landlock rules, then the current task must have the same
-+ * or more rules.  Else denied.
-+ *
-+ * Determines whether the nominated task is permitted to trace the current
-+ * process, returning 0 if permission is granted, -errno if denied.
-+ */
-+static int hook_ptrace_traceme(struct task_struct *const parent)
-+{
-+	return task_ptrace(parent, current);
-+}
-+
-+static struct security_hook_list landlock_hooks[] __lsm_ro_after_init = {
-+	LSM_HOOK_INIT(ptrace_access_check, hook_ptrace_access_check),
-+	LSM_HOOK_INIT(ptrace_traceme, hook_ptrace_traceme),
-+};
-+
-+__init void landlock_add_hooks_ptrace(void)
-+{
-+	security_add_hooks(landlock_hooks, ARRAY_SIZE(landlock_hooks),
-+			LANDLOCK_NAME);
-+}
-diff --git a/security/landlock/ptrace.h b/security/landlock/ptrace.h
-new file mode 100644
-index 000000000000..6740c6a723de
---- /dev/null
-+++ b/security/landlock/ptrace.h
-@@ -0,0 +1,14 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Landlock LSM - Ptrace hooks
-+ *
-+ * Copyright © 2017-2019 Mickaël Salaün <mic@digikod.net>
-+ * Copyright © 2019 ANSSI
-+ */
-+
-+#ifndef _SECURITY_LANDLOCK_PTRACE_H
-+#define _SECURITY_LANDLOCK_PTRACE_H
-+
-+__init void landlock_add_hooks_ptrace(void);
-+
-+#endif /* _SECURITY_LANDLOCK_PTRACE_H */
-diff --git a/security/landlock/setup.c b/security/landlock/setup.c
-index 39ee1766f175..5e7540fdeefa 100644
---- a/security/landlock/setup.c
-+++ b/security/landlock/setup.c
-@@ -11,6 +11,7 @@
- 
- #include "common.h"
- #include "cred.h"
-+#include "ptrace.h"
- #include "setup.h"
- 
- struct lsm_blob_sizes landlock_blob_sizes __lsm_ro_after_init = {
-@@ -20,6 +21,7 @@ struct lsm_blob_sizes landlock_blob_sizes __lsm_ro_after_init = {
- static int __init landlock_init(void)
- {
- 	landlock_add_hooks_cred();
-+	landlock_add_hooks_ptrace();
- 	pr_info("Up and running.\n");
- 	return 0;
- }
--- 
-2.26.1
-
+/Jarkko
