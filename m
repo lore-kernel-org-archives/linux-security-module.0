@@ -1,114 +1,90 @@
-Return-Path: <SRS0=9mD7=6E=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=4quM=6B=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C370C54FCF
-	for <linux-security-module@archiver.kernel.org>; Mon, 20 Apr 2020 19:05:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E5A4C2BB1D
+	for <linux-security-module@archiver.kernel.org>; Fri, 17 Apr 2020 04:37:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 368EB2078C
-	for <linux-security-module@archiver.kernel.org>; Mon, 20 Apr 2020 19:05:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 23FE020857
+	for <linux-security-module@archiver.kernel.org>; Fri, 17 Apr 2020 04:37:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726017AbgDTTF6 (ORCPT
+        id S1726505AbgDQEhj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 20 Apr 2020 15:05:58 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60816 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725896AbgDTTF5 (ORCPT
+        Fri, 17 Apr 2020 00:37:39 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:56196 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725900AbgDQEhj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 20 Apr 2020 15:05:57 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 03KJ3uZj132528
-        for <linux-security-module@vger.kernel.org>; Mon, 20 Apr 2020 15:05:56 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 30gg26xaq6-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Mon, 20 Apr 2020 15:05:56 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Mon, 20 Apr 2020 20:05:32 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 20 Apr 2020 20:05:28 +0100
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 03KJ5oA854591690
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 20 Apr 2020 19:05:50 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4B9C611C070;
-        Mon, 20 Apr 2020 19:05:50 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 902F611C052;
-        Mon, 20 Apr 2020 19:05:49 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.201.119])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 20 Apr 2020 19:05:49 +0000 (GMT)
-Subject: Re: IMA: policy update LSM rules failed
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Yiyang Su <suyiyang@hotmail.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        "James Morris <jmorris@namei.org>" 
-        <IMCEASUPPORTER-SECURITY+20SUBSYSTEM@EURPRD10.PROD.OUTLOOK.COM>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date:   Mon, 20 Apr 2020 15:05:49 -0400
-In-Reply-To: <AM6PR10MB240500A3E665DAA3807E0BF5C8D40@AM6PR10MB2405.EURPRD10.PROD.OUTLOOK.COM>
-References: <AM6PR10MB240500A3E665DAA3807E0BF5C8D40@AM6PR10MB2405.EURPRD10.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 20042019-0012-0000-0000-000003A81DC7
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20042019-0013-0000-0000-000021E56885
-Message-Id: <1587409549.5446.1.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
- definitions=2020-04-20_07:2020-04-20,2020-04-20 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
- suspectscore=0 spamscore=0 priorityscore=1501 clxscore=1015 adultscore=0
- lowpriorityscore=0 bulkscore=0 mlxlogscore=999 impostorscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2004200148
+        Fri, 17 Apr 2020 00:37:39 -0400
+Received: from fsav110.sakura.ne.jp (fsav110.sakura.ne.jp [27.133.134.237])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 03H4bbSN080607;
+        Fri, 17 Apr 2020 13:37:37 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav110.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav110.sakura.ne.jp);
+ Fri, 17 Apr 2020 13:37:37 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav110.sakura.ne.jp)
+Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 03H4bUS2080400
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Fri, 17 Apr 2020 13:37:37 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: WARNING: locking bug in tomoyo_supervisor
+To:     syzbot <syzbot+1c36440b364ea3774701@syzkaller.appspotmail.com>,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        Network Development <netdev@vger.kernel.org>,
+        James Chapman <jchapman@katalix.com>
+References: <000000000000a475ac05a36fa01e@google.com>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Message-ID: <5b71a079-54bb-57a0-360d-33fce141504f@i-love.sakura.ne.jp>
+Date:   Fri, 17 Apr 2020 13:37:31 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
+MIME-Version: 1.0
+In-Reply-To: <000000000000a475ac05a36fa01e@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 2020-04-20 at 17:51 +0000, Yiyang Su wrote:
+On 2020/04/17 7:05, syzbot wrote:
 > Hello,
 > 
-> Current i am using Kernel 4.14.169 and trying to add some LSM rules such as "measure subj_user=_ func=FILE_CHECK mask=MAY_READ" into ima policy, but i cannot update the policy. Same happens by updating for subj_role, subj_type, obj_user, obj_role, and obj_type.
+> syzbot found the following crash on:
 > 
-> The issue can be produced:
-> ###
-> echo "measure subj_user=_ func=INODE_PERM mask=MAY_READ" > /sys/kernel/security/ima/policy
-> sh: write error: Invalid argument
-> IMA: policy update failed
-> 
-> [ 1558.886333] audit: type=1805 audit(1587051889.726:28): action="measure" subj_user="_" res=0
-> [ 1558.903324] audit: type=1802 audit(1587051889.726:29): pid=255 uid=0 auid=4294967295 ses=4294967295 op="update_policy" cause="invalid-policy" comm="sh" res=0
-> [ 1558.917414] audit: type=1300 audit(1587051889.726:29): arch=40000028 syscall=4 per=800000 success=no exit=-22 a0=1 a1=aab98 a2=32 a3=0 items=0 ppid=1 pid=255 auid=4294967295 uid=0 gid=0 euid=0 suid=0 )
-> [ 1558.945176] audit: type=1327 audit(1587051889.726:29): proctitle="-sh"
-> [ 1558.951699] audit: type=1802 audit(1587051889.736:30): pid=255 uid=0 auid=4294967295 ses=4294967295 op="policy_update" cause="failed" comm="sh" res=0
-> ###
-> 
-> But there is no problem to update a rule such as "measure fowner=55"
-> ###
-> echo "measure fowner=55" > /sys/kernel/security/ima/policy
-> IMA: policy update completed
-> ###
-> 
-> The kernel option CONFIG_IMA_LSM_RULES=y is enabled.
+> HEAD commit:    4f8a3cc1 Merge tag 'x86-urgent-2020-04-12' of git://git.ke..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1599027de00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3bfbde87e8e65624
+> dashboard link: https://syzkaller.appspot.com/bug?extid=1c36440b364ea3774701
+> compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=150733cde00000
 
-Perhaps the difference isn't the LSM options, but the "func="
-definition?  I've never seen "func=INODE_PERM".
+This seems to be a misattributed report explained at https://lkml.kernel.org/r/20190924140241.be77u2jne3melzte@pathway.suse.cz .
+Petr and Sergey, how is the progress of making printk() asynchronous? When can we expect that work to be merged?
+If it is delaying, can we implement storing these metadata into the per-CPU buffers?
 
-Mimi 
+Anyway,
+
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10aacf5de00000
+
+bisection log says this will be a duplicate of
+
+#syz dup: WARNING: locking bug in inet_autobind
+
+. This misattribution by chance served as a reminder for "locking bug in inet_autobind" bug. ;-)
+
+According to https://syzkaller.appspot.com/bug?id=a7d678fba80c34b5770cc1b5638b8a2709ae9f3f ,
+this bug is happening on "2020/04/01 19:28", "2020/04/09 06:24" and "2020/04/10 20:48"
+which are after the opening of the merge window for 5.7-rc1. Reproducer suggests that
+pppl2tp and inet6_udp are relevant.
 
