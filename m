@@ -1,115 +1,129 @@
-Return-Path: <SRS0=4quM=6B=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=WmuM=6D=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A949C38A2B
-	for <linux-security-module@archiver.kernel.org>; Fri, 17 Apr 2020 22:22:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C72DC38A30
+	for <linux-security-module@archiver.kernel.org>; Sun, 19 Apr 2020 14:11:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 77BA52223C
-	for <linux-security-module@archiver.kernel.org>; Fri, 17 Apr 2020 22:22:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="H3DfPMz9"
+	by mail.kernel.org (Postfix) with ESMTP id 5278A22202
+	for <linux-security-module@archiver.kernel.org>; Sun, 19 Apr 2020 14:11:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728660AbgDQWWO (ORCPT
+        id S1726022AbgDSOLm (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 17 Apr 2020 18:22:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52310 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728470AbgDQWWO (ORCPT
+        Sun, 19 Apr 2020 10:11:42 -0400
+Received: from raptor.unsafe.ru ([5.9.43.93]:45414 "EHLO raptor.unsafe.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725905AbgDSOLm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 17 Apr 2020 18:22:14 -0400
-Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91883C061A0F
-        for <linux-security-module@vger.kernel.org>; Fri, 17 Apr 2020 15:22:11 -0700 (PDT)
-Received: by mail-ed1-x541.google.com with SMTP id r7so2619904edo.11
-        for <linux-security-module@vger.kernel.org>; Fri, 17 Apr 2020 15:22:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=w/f6Gl9VweQh9zLrWdi52uB3NRZA6g/9Wq4OQPDCCok=;
-        b=H3DfPMz9QpW/RVs87ATxAd0SsMbtWuVycfBc1ONf/oUQsagHrI9Ke4p+W5O7Gk7ehP
-         /4vhZItQbyiiB+ZS1/PiPBFH+ll43T9adO+5wKFGdXabapt/1a49KshpnQDTilurOcnK
-         +HgG7JSS7DHU62PKRqDiT9WdfeBrO5U8uy/sZRMvebc6erkJmjWqejiPzlne/2Vlm+FI
-         pQ9l/UJKmKKSJ3uWMEuql9J6KxKK1xwY3F4/VXODWIcouK5uG1Vc3isY3JOIoue/+KyZ
-         jLaLsrmWqfe60UaEdzerikzKxI+Ou4QgvvkpFDu1KsRFQtSow+A+sUZ9l32zClua8+Pw
-         +vbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=w/f6Gl9VweQh9zLrWdi52uB3NRZA6g/9Wq4OQPDCCok=;
-        b=Sg4u6gXlMigOf5UPr2guyiq0hNzlUvX/Y24JujBbAcwe7YlR/ll59z9zsuA99WfjMs
-         DzjnWeY8oZRZGGiSFAzZm0TX1H8o+ftS+dPx67uTJ6sOT62svZTWt/rcb2xnVJDK/yk3
-         SjOJTfnuqQy3zLGZh4CpNJLzoQf5sz4EHgKi2OjscA84O9WALtrdOBmMS2jOS1E2dSdm
-         uZeQ9OtYIxF0Y7gJycZg6srZw/Ie/g/+QKsc6qg0NTn0NOtYadT5uMlXQHJx0Bnr71d8
-         f8Mp/gsF6T8Lws/b89dK5mngYvZd2nJO1vtj2lGcfBea2LX+KGSyeaPWTfjVHwgMlRNn
-         7/oQ==
-X-Gm-Message-State: AGi0PuZExKZ4hWltGt/I4xofNseo4jKGKJPzBtt3Zy4xXQ4R24pHQifJ
-        3DP/HCYgP9JKJHmtAIBih5kjGALaEVJI0ize6/kC
-X-Google-Smtp-Source: APiQypJsbxCVHQN8UqEDhRhDcXP36MYF6Zp4aTeC61C3FS6fTD07E25L1PXAFJR2/Y6qCsXxV7ziDl/GtGSB95wAMiE=
-X-Received: by 2002:a05:6402:1215:: with SMTP id c21mr5347669edw.128.1587162129901;
- Fri, 17 Apr 2020 15:22:09 -0700 (PDT)
+        Sun, 19 Apr 2020 10:11:42 -0400
+Received: from comp-core-i7-2640m-0182e6.redhat.com (ip-89-102-33-211.net.upcbroadband.cz [89.102.33.211])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by raptor.unsafe.ru (Postfix) with ESMTPSA id BFC74209FB;
+        Sun, 19 Apr 2020 14:11:39 +0000 (UTC)
+From:   Alexey Gladkov <gladkov.alexey@gmail.com>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Security Module <linux-security-module@vger.kernel.org>,
+        Akinobu Mita <akinobu.mita@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Alexey Gladkov <legion@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Daniel Micay <danielmicay@gmail.com>,
+        Djalal Harouni <tixxdz@gmail.com>,
+        "Dmitry V . Levin" <ldv@altlinux.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@poochiereds.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        David Howells <dhowells@redhat.com>
+Subject: [PATCH v12 1/7] proc: rename struct proc_fs_info to proc_fs_opts
+Date:   Sun, 19 Apr 2020 16:10:51 +0200
+Message-Id: <20200419141057.621356-2-gladkov.alexey@gmail.com>
+X-Mailer: git-send-email 2.25.3
+In-Reply-To: <20200419141057.621356-1-gladkov.alexey@gmail.com>
+References: <20200419141057.621356-1-gladkov.alexey@gmail.com>
 MIME-Version: 1.0
-References: <20200402141319.28714-1-vdronov@redhat.com> <2d7174b1-115f-b86f-8054-a5caef4b69ff@schaufler-ca.com>
- <1800109401.20260657.1585845081366.JavaMail.zimbra@redhat.com> <20200409215056.qa5uso6rr57y4joo@madcap2.tricolour.ca>
-In-Reply-To: <20200409215056.qa5uso6rr57y4joo@madcap2.tricolour.ca>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 17 Apr 2020 18:21:59 -0400
-Message-ID: <CAHC9VhRG-W5ni6jPbtDFbZ=bgSEaoweMrf0ZMJJi_3-sC+u4QQ@mail.gmail.com>
-Subject: Re: [PATCH ghak96] audit: set cwd in audit context for file-related
- LSM audit records
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     Vladis Dronov <vdronov@redhat.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Eric Paris <eparis@redhat.com>, linux-audit@redhat.com,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.1 (raptor.unsafe.ru [5.9.43.93]); Sun, 19 Apr 2020 14:11:40 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Apr 9, 2020 at 5:51 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> On 2020-04-02 12:31, Vladis Dronov wrote:
-> > Hello, Casey, all,
-> >
-> > ----- Original Message -----
-> > > From: "Casey Schaufler" <casey@schaufler-ca.com>
-> > > Subject: Re: [PATCH ghak96] audit: set cwd in audit context for file-related LSM audit records
-> > >
-> > > On 4/2/2020 7:13 AM, Vladis Dronov wrote:
-> > > > Set a current working directory in an audit context for the following
-> > > > record
-> > > > types in dump_common_audit_data(): LSM_AUDIT_DATA_PATH,
-> > > > LSM_AUDIT_DATA_FILE,
-> > > > LSM_AUDIT_DATA_IOCTL_OP, LSM_AUDIT_DATA_DENTRY, LSM_AUDIT_DATA_INODE so a
-> > > > separate CWD record is emitted later.
-> > > >
-> > > > Link: https://github.com/linux-audit/audit-kernel/issues/96
-> > >
-> > > I don't have a problem with the patch, but it sure would be nice
-> > > if you explained why these events "could use a CWD record".
-> >
-> > (adding Richard Guy Briggs <rgb@redhat.com> which I should have been done earlier)
-> >
-> > I would agree, adding "cwd=" field in the LSM record itself is simpler to me.
->
-> We already have a CWD record to record this information.  It usually
-> accompanies an AUDIT_PATH record, but the intent is that it accompanies
-> any event that has filesystem pathnames in path= or name= fields in
-> records to help understand the command's context relative to the
-> filesystem.
+Signed-off-by: Alexey Gladkov <gladkov.alexey@gmail.com>
+Reviewed-by: Alexey Dobriyan <adobriyan@gmail.com>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+---
+ fs/proc_namespace.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-Yes, I think the right thing to do here is simply generate a CWD
-record in these cases.
-
+diff --git a/fs/proc_namespace.c b/fs/proc_namespace.c
+index 273ee82d8aa9..9a8b624bc3db 100644
+--- a/fs/proc_namespace.c
++++ b/fs/proc_namespace.c
+@@ -37,23 +37,23 @@ static __poll_t mounts_poll(struct file *file, poll_table *wait)
+ 	return res;
+ }
+ 
+-struct proc_fs_info {
++struct proc_fs_opts {
+ 	int flag;
+ 	const char *str;
+ };
+ 
+ static int show_sb_opts(struct seq_file *m, struct super_block *sb)
+ {
+-	static const struct proc_fs_info fs_info[] = {
++	static const struct proc_fs_opts fs_opts[] = {
+ 		{ SB_SYNCHRONOUS, ",sync" },
+ 		{ SB_DIRSYNC, ",dirsync" },
+ 		{ SB_MANDLOCK, ",mand" },
+ 		{ SB_LAZYTIME, ",lazytime" },
+ 		{ 0, NULL }
+ 	};
+-	const struct proc_fs_info *fs_infop;
++	const struct proc_fs_opts *fs_infop;
+ 
+-	for (fs_infop = fs_info; fs_infop->flag; fs_infop++) {
++	for (fs_infop = fs_opts; fs_infop->flag; fs_infop++) {
+ 		if (sb->s_flags & fs_infop->flag)
+ 			seq_puts(m, fs_infop->str);
+ 	}
+@@ -63,7 +63,7 @@ static int show_sb_opts(struct seq_file *m, struct super_block *sb)
+ 
+ static void show_mnt_opts(struct seq_file *m, struct vfsmount *mnt)
+ {
+-	static const struct proc_fs_info mnt_info[] = {
++	static const struct proc_fs_opts mnt_opts[] = {
+ 		{ MNT_NOSUID, ",nosuid" },
+ 		{ MNT_NODEV, ",nodev" },
+ 		{ MNT_NOEXEC, ",noexec" },
+@@ -72,9 +72,9 @@ static void show_mnt_opts(struct seq_file *m, struct vfsmount *mnt)
+ 		{ MNT_RELATIME, ",relatime" },
+ 		{ 0, NULL }
+ 	};
+-	const struct proc_fs_info *fs_infop;
++	const struct proc_fs_opts *fs_infop;
+ 
+-	for (fs_infop = mnt_info; fs_infop->flag; fs_infop++) {
++	for (fs_infop = mnt_opts; fs_infop->flag; fs_infop++) {
+ 		if (mnt->mnt_flags & fs_infop->flag)
+ 			seq_puts(m, fs_infop->str);
+ 	}
 -- 
-paul moore
-www.paul-moore.com
+2.25.3
+
