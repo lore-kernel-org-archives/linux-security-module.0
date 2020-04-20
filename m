@@ -1,92 +1,113 @@
-Return-Path: <SRS0=WmuM=6D=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=9mD7=6E=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,HK_RANDOM_FROM,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46D52C3A5A0
-	for <linux-security-module@archiver.kernel.org>; Sun, 19 Apr 2020 14:19:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87AD2C3815B
+	for <linux-security-module@archiver.kernel.org>; Mon, 20 Apr 2020 05:36:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1EE7421841
-	for <linux-security-module@archiver.kernel.org>; Sun, 19 Apr 2020 14:19:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E6A142078C
+	for <linux-security-module@archiver.kernel.org>; Mon, 20 Apr 2020 05:36:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=fudan.edu.cn header.i=@fudan.edu.cn header.b="aFSBgb9u"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726407AbgDSOTY (ORCPT
+        id S1725959AbgDTFgs (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 19 Apr 2020 10:19:24 -0400
-Received: from raptor.unsafe.ru ([5.9.43.93]:60052 "EHLO raptor.unsafe.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725905AbgDSOTY (ORCPT
+        Mon, 20 Apr 2020 01:36:48 -0400
+Received: from mail.fudan.edu.cn ([202.120.224.73]:39683 "EHLO fudan.edu.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725379AbgDTFgs (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 19 Apr 2020 10:19:24 -0400
-Received: from comp-core-i7-2640m-0182e6 (ip-89-102-33-211.net.upcbroadband.cz [89.102.33.211])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by raptor.unsafe.ru (Postfix) with ESMTPSA id 4282B209FA;
-        Sun, 19 Apr 2020 14:19:20 +0000 (UTC)
-Date:   Sun, 19 Apr 2020 16:19:15 +0200
-From:   Alexey Gladkov <gladkov.alexey@gmail.com>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        David Howells <dhowells@redhat.com>
-Subject: Re: [PATCH RESEND v11 7/8] proc: use human-readable values for
- hidepid
-Message-ID: <20200419141915.g4bdjbwvhpre7mra@comp-core-i7-2640m-0182e6>
-References: <20200409123752.1070597-1-gladkov.alexey@gmail.com>
- <20200409123752.1070597-8-gladkov.alexey@gmail.com>
- <87imhyaq5t.fsf@x220.int.ebiederm.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87imhyaq5t.fsf@x220.int.ebiederm.org>
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.1 (raptor.unsafe.ru [5.9.43.93]); Sun, 19 Apr 2020 14:19:20 +0000 (UTC)
+        Mon, 20 Apr 2020 01:36:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fudan.edu.cn; s=dkim; h=Received:From:To:Cc:Subject:Date:
+        Message-Id; bh=JGxxB+JBK0HpcebHZbn7qDbFyNSU19wTCnP6IIC4qB8=; b=a
+        FSBgb9uoaxIVUrYbg/R7Jz8D/WC46aPim0lNGUOk3OvLiKN04+SrxbZNL/Koeb7v
+        nKrfobgdSLYR1+BafisxavSuMlUwvd7Gee5Enxxl6RGu7lgFvfguLCymAm86HlfU
+        8/CYA9YKD5O2C7WRXfyDEriweI2jR+gwibuuaHN7PA=
+Received: from localhost.localdomain (unknown [61.129.42.58])
+        by app2 (Coremail) with SMTP id XQUFCgDXh+DdNJ1eYfAdAA--.6054S3;
+        Mon, 20 Apr 2020 13:36:30 +0800 (CST)
+From:   Xiyu Yang <xiyuyang19@fudan.edu.cn>
+To:     John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     yuanxzhang@fudan.edu.cn, kjlu@umn.edu,
+        Xiyu Yang <xiyuyang19@fudan.edu.cn>,
+        Xin Tan <tanxin.ctf@gmail.com>
+Subject: [PATCH] apparmor: Fix aa_label refcnt leak in policy_update
+Date:   Mon, 20 Apr 2020 13:35:28 +0800
+Message-Id: <1587360928-83032-1-git-send-email-xiyuyang19@fudan.edu.cn>
+X-Mailer: git-send-email 2.7.4
+X-CM-TRANSID: XQUFCgDXh+DdNJ1eYfAdAA--.6054S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7ury7JF17tr4fCFWDXr1kXwb_yoW8WryDpr
+        WUK34qkFs8tF17Jrnxta45u3yakay7Gr1rtay3Gw1IyFs8Jw48uF1fK3s0gryrGrn5Arsr
+        ZrsIvrWrZ3WxCFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUvl14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+        1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4U
+        JVW0owA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+        Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
+        0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Cr0_Gr
+        1UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I
+        648v4I1lc2xSY4AK67AK6r4rMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r
+        4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF
+        67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2I
+        x0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_WFyUJVCq3wCI42IY
+        6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvj
+        DU0xZFpf9x0JUWv3bUUUUU=
+X-CM-SenderInfo: irzsiiysuqikmy6i3vldqovvfxof0/
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Apr 17, 2020 at 02:05:50PM -0500, Eric W. Biederman wrote:
-> Alexey Gladkov <gladkov.alexey@gmail.com> writes:
-> 
-> > The hidepid parameter values are becoming more and more and it becomes
-> > difficult to remember what each new magic number means.
-> 
-> So I relooked at the code.  And I think I was misreading things.
-> However I think it is a legitimate concern.
-> 
-> Can you please mention in your description of this change that
-> switching from fsparam_u32 to fs_param_string is safe even when
-> using the new mount api because fsparam_u32 and fs_param_string
-> both are sent from userspace with "fsconfig(fd, FSCONFIG_SET_STRING, ...)".
+policy_update() invokes begin_current_label_crit_section(), which
+returns a reference of the updated aa_label object to "label" with
+increased refcount.
 
-Sure.
+When policy_update() returns, "label" becomes invalid, so the refcount
+should be decreased to keep refcount balanced.
 
-> Or words to that effect.  Ideally you will even manually test that case
-> to confirm.
+The reference counting issue happens in one exception handling path of
+policy_update(). When aa_may_manage_policy() returns not NULL, the
+refcnt increased by begin_current_label_crit_section() is not decreased,
+causing a refcnt leak.
 
-I will add a selftest for this.
+Fix this issue by jumping to "end_section" label when
+aa_may_manage_policy() returns not NULL.
 
+Signed-off-by: Xiyu Yang <xiyuyang19@fudan.edu.cn>
+Signed-off-by: Xin Tan <tanxin.ctf@gmail.com>
+---
+ security/apparmor/apparmorfs.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
+index 280741fc0f5f..f6a3ecfadf80 100644
+--- a/security/apparmor/apparmorfs.c
++++ b/security/apparmor/apparmorfs.c
+@@ -454,7 +454,7 @@ static ssize_t policy_update(u32 mask, const char __user *buf, size_t size,
+ 	 */
+ 	error = aa_may_manage_policy(label, ns, mask);
+ 	if (error)
+-		return error;
++		goto end_section;
+ 
+ 	data = aa_simple_write_to_buffer(buf, size, size, pos);
+ 	error = PTR_ERR(data);
+@@ -462,6 +462,7 @@ static ssize_t policy_update(u32 mask, const char __user *buf, size_t size,
+ 		error = aa_replace_profiles(ns, label, mask, data);
+ 		aa_put_loaddata(data);
+ 	}
++end_section:
+ 	end_current_label_crit_section(label);
+ 
+ 	return error;
 -- 
-Rgrds, legion
+2.7.4
 
