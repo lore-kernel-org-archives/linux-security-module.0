@@ -2,140 +2,113 @@ Return-Path: <SRS0=9mD7=6E=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 222F3C54FCB
-	for <linux-security-module@archiver.kernel.org>; Mon, 20 Apr 2020 11:55:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C370C54FCF
+	for <linux-security-module@archiver.kernel.org>; Mon, 20 Apr 2020 19:05:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F14D5206D4
-	for <linux-security-module@archiver.kernel.org>; Mon, 20 Apr 2020 11:55:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1587383727;
-	bh=VEov1HC8kgX2JVYBtf5NvQb82wHeJ2/NnuqpEyj7U+U=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=2eccO2jmHChu2uP5YxZGAHZvGOnah7NJo4w9gKENJ1zWuTrdTjn0B+8ydq662csWE
-	 NXrsXTulRjUewaqKku4D0j3+6pzniNonoZ2xBTXiYRA0D8tkAdl42FOLyJKJEFiL1n
-	 HBi6bIm09y045k9XT3HZEGZ5/p2Xx6LJVkhrH9Pk=
+	by mail.kernel.org (Postfix) with ESMTP id 368EB2078C
+	for <linux-security-module@archiver.kernel.org>; Mon, 20 Apr 2020 19:05:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726834AbgDTLyw (ORCPT
+        id S1726017AbgDTTF6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 20 Apr 2020 07:54:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38608 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726821AbgDTLyv (ORCPT
+        Mon, 20 Apr 2020 15:05:58 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60816 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725896AbgDTTF5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 20 Apr 2020 07:54:51 -0400
-Received: from quaco.ghostprotocols.net (unknown [179.97.37.151])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8202A21927;
-        Mon, 20 Apr 2020 11:54:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1587383690;
-        bh=VEov1HC8kgX2JVYBtf5NvQb82wHeJ2/NnuqpEyj7U+U=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=K2wA/sfFxecLv7R81Z3L8nQRfJzTKMqNt+FJN7nLvkxV66mZfO5u6jy9LnBfkf7ed
-         5jEJkZFGY7O11EbRbNmJ3pqEsYFpuOjmCkheRSJjCJxnsyW0RoFGzomKUWICd6Rzqx
-         HE2UHsV3PClSWDXhumCf8dh4djMaGw2rLR076hRY=
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Clark Williams <williams@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Igor Lubashev <ilubashe@akamai.com>,
-        James Morris <jmorris@namei.org>, Jiri Olsa <jolsa@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Serge Hallyn <serge@hallyn.com>,
-        Song Liu <songliubraving@fb.com>,
-        Stephane Eranian <eranian@google.com>,
-        intel-gfx@lists.freedesktop.org, linux-doc@vger.kernel.org,
-        linux-man@vger.kernel.org, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 16/60] doc/admin-guide: update kernel.rst with CAP_PERFMON information
-Date:   Mon, 20 Apr 2020 08:52:32 -0300
-Message-Id: <20200420115316.18781-17-acme@kernel.org>
-X-Mailer: git-send-email 2.21.1
-In-Reply-To: <20200420115316.18781-1-acme@kernel.org>
-References: <20200420115316.18781-1-acme@kernel.org>
-MIME-Version: 1.0
+        Mon, 20 Apr 2020 15:05:57 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 03KJ3uZj132528
+        for <linux-security-module@vger.kernel.org>; Mon, 20 Apr 2020 15:05:56 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 30gg26xaq6-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Mon, 20 Apr 2020 15:05:56 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Mon, 20 Apr 2020 20:05:32 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 20 Apr 2020 20:05:28 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 03KJ5oA854591690
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 20 Apr 2020 19:05:50 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4B9C611C070;
+        Mon, 20 Apr 2020 19:05:50 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 902F611C052;
+        Mon, 20 Apr 2020 19:05:49 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.201.119])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 20 Apr 2020 19:05:49 +0000 (GMT)
+Subject: Re: IMA: policy update LSM rules failed
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Yiyang Su <suyiyang@hotmail.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        "James Morris <jmorris@namei.org>" 
+        <IMCEASUPPORTER-SECURITY+20SUBSYSTEM@EURPRD10.PROD.OUTLOOK.COM>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date:   Mon, 20 Apr 2020 15:05:49 -0400
+In-Reply-To: <AM6PR10MB240500A3E665DAA3807E0BF5C8D40@AM6PR10MB2405.EURPRD10.PROD.OUTLOOK.COM>
+References: <AM6PR10MB240500A3E665DAA3807E0BF5C8D40@AM6PR10MB2405.EURPRD10.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 20042019-0012-0000-0000-000003A81DC7
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20042019-0013-0000-0000-000021E56885
+Message-Id: <1587409549.5446.1.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
+ definitions=2020-04-20_07:2020-04-20,2020-04-20 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
+ suspectscore=0 spamscore=0 priorityscore=1501 clxscore=1015 adultscore=0
+ lowpriorityscore=0 bulkscore=0 mlxlogscore=999 impostorscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2004200148
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Alexey Budankov <alexey.budankov@linux.intel.com>
+On Mon, 2020-04-20 at 17:51 +0000, Yiyang Su wrote:
+> Hello,
+> 
+> Current i am using Kernel 4.14.169 and trying to add some LSM rules such as "measure subj_user=_ func=FILE_CHECK mask=MAY_READ" into ima policy, but i cannot update the policy. Same happens by updating for subj_role, subj_type, obj_user, obj_role, and obj_type.
+> 
+> The issue can be produced:
+> ###
+> echo "measure subj_user=_ func=INODE_PERM mask=MAY_READ" > /sys/kernel/security/ima/policy
+> sh: write error: Invalid argument
+> IMA: policy update failed
+> 
+> [ 1558.886333] audit: type=1805 audit(1587051889.726:28): action="measure" subj_user="_" res=0
+> [ 1558.903324] audit: type=1802 audit(1587051889.726:29): pid=255 uid=0 auid=4294967295 ses=4294967295 op="update_policy" cause="invalid-policy" comm="sh" res=0
+> [ 1558.917414] audit: type=1300 audit(1587051889.726:29): arch=40000028 syscall=4 per=800000 success=no exit=-22 a0=1 a1=aab98 a2=32 a3=0 items=0 ppid=1 pid=255 auid=4294967295 uid=0 gid=0 euid=0 suid=0 )
+> [ 1558.945176] audit: type=1327 audit(1587051889.726:29): proctitle="-sh"
+> [ 1558.951699] audit: type=1802 audit(1587051889.736:30): pid=255 uid=0 auid=4294967295 ses=4294967295 op="policy_update" cause="failed" comm="sh" res=0
+> ###
+> 
+> But there is no problem to update a rule such as "measure fowner=55"
+> ###
+> echo "measure fowner=55" > /sys/kernel/security/ima/policy
+> IMA: policy update completed
+> ###
+> 
+> The kernel option CONFIG_IMA_LSM_RULES=y is enabled.
 
-Update the kernel.rst documentation file with the information related to
-usage of CAP_PERFMON capability to secure performance monitoring and
-observability operations in system.
+Perhaps the difference isn't the LSM options, but the "func="
+definition?  I've never seen "func=INODE_PERM".
 
-Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc: Alexei Starovoitov <ast@kernel.org>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Igor Lubashev <ilubashe@akamai.com>
-Cc: James Morris <jmorris@namei.org>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Serge Hallyn <serge@hallyn.com>
-Cc: Song Liu <songliubraving@fb.com>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: intel-gfx@lists.freedesktop.org
-Cc: linux-doc@vger.kernel.org
-Cc: linux-man@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org
-Cc: selinux@vger.kernel.org
-Link: http://lore.kernel.org/lkml/84c32383-14a2-fa35-16b6-f9e59bd37240@linux.intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- Documentation/admin-guide/sysctl/kernel.rst | 16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
-
-diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
-index 39c95c0e13d3..7e4c28dfc9ca 100644
---- a/Documentation/admin-guide/sysctl/kernel.rst
-+++ b/Documentation/admin-guide/sysctl/kernel.rst
-@@ -730,7 +730,13 @@ perf_event_paranoid
- ===================
- 
- Controls use of the performance events system by unprivileged
--users (without CAP_SYS_ADMIN).  The default value is 2.
-+users (without CAP_PERFMON).  The default value is 2.
-+
-+For backward compatibility reasons access to system performance
-+monitoring and observability remains open for CAP_SYS_ADMIN
-+privileged processes but CAP_SYS_ADMIN usage for secure system
-+performance monitoring and observability operations is discouraged
-+with respect to CAP_PERFMON use cases.
- 
- ===  ==================================================================
-  -1  Allow use of (almost) all events by all users.
-@@ -739,13 +745,13 @@ users (without CAP_SYS_ADMIN).  The default value is 2.
-      ``CAP_IPC_LOCK``.
- 
- >=0  Disallow ftrace function tracepoint by users without
--     ``CAP_SYS_ADMIN``.
-+     ``CAP_PERFMON``.
- 
--     Disallow raw tracepoint access by users without ``CAP_SYS_ADMIN``.
-+     Disallow raw tracepoint access by users without ``CAP_PERFMON``.
- 
-->=1  Disallow CPU event access by users without ``CAP_SYS_ADMIN``.
-+>=1  Disallow CPU event access by users without ``CAP_PERFMON``.
- 
-->=2  Disallow kernel profiling by users without ``CAP_SYS_ADMIN``.
-+>=2  Disallow kernel profiling by users without ``CAP_PERFMON``.
- ===  ==================================================================
- 
- 
--- 
-2.21.1
+Mimi 
 
