@@ -7,61 +7,61 @@ X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8782C54FCC
-	for <linux-security-module@archiver.kernel.org>; Tue, 21 Apr 2020 13:58:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 768E7C55184
+	for <linux-security-module@archiver.kernel.org>; Tue, 21 Apr 2020 13:58:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A8B5C2071C
-	for <linux-security-module@archiver.kernel.org>; Tue, 21 Apr 2020 13:58:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 573852071C
+	for <linux-security-module@archiver.kernel.org>; Tue, 21 Apr 2020 13:58:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z929Werq"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gCEtc98v"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728852AbgDUN6i (ORCPT
+        id S1726741AbgDUN6k (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 21 Apr 2020 09:58:38 -0400
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:39655 "EHLO
+        Tue, 21 Apr 2020 09:58:40 -0400
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:48374 "EHLO
         us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728850AbgDUN5x (ORCPT
+        by vger.kernel.org with ESMTP id S1728337AbgDUN5w (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 21 Apr 2020 09:57:53 -0400
+        Tue, 21 Apr 2020 09:57:52 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1587477471;
+        s=mimecast20190719; t=1587477470;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=5GipQquvXdS60T0xD4t06gmL9kKohzWhQBgW2pGftGs=;
-        b=Z929WerqAE05vP4WyQnk4NqKvKlsatE+HpKAQv2p5rWxftyVn7ZgkRHCY22alP5/T9xrLM
-        CdPQGIoaI4dkRyOW0bO6DIq88LRRFkokuV1RjDuy0SpHJJJabRC/RFZsK94caiuEHDogho
-        1VBXimMPC0FZZug4lNdpEXqrOa00YkI=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-338-uPc-P6UCN9erNxMGcgt2YQ-1; Tue, 21 Apr 2020 09:57:49 -0400
-X-MC-Unique: uPc-P6UCN9erNxMGcgt2YQ-1
-Received: by mail-wm1-f71.google.com with SMTP id v185so1421247wmg.0
-        for <linux-security-module@vger.kernel.org>; Tue, 21 Apr 2020 06:57:49 -0700 (PDT)
+        bh=2wRD9FPTWKMzxCyWJGhqpm27rg8NjVNjjKx55UL7gOU=;
+        b=gCEtc98vsx50GOhI5DnLX6ZTk8IPbS5r4KhGWk7yEDyJJRl05nN/liIboutEnSdeSDpOEJ
+        Ja1jLnCF/bPPsYuFH8G8ZiFE3goc9omA4BjWqiF10KhJtW+wEgO7Rl4nros0uqji7U1bxa
+        Zjq4jVxdgG3U8UfiEdJR/SJkbslNvVg=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-179-O4vvojiBOGOsnWjA26QRhA-1; Tue, 21 Apr 2020 09:57:47 -0400
+X-MC-Unique: O4vvojiBOGOsnWjA26QRhA-1
+Received: by mail-wr1-f70.google.com with SMTP id p2so6772011wrx.12
+        for <linux-security-module@vger.kernel.org>; Tue, 21 Apr 2020 06:57:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=5GipQquvXdS60T0xD4t06gmL9kKohzWhQBgW2pGftGs=;
-        b=qrJOhBosb7K035JqnLe3883RUYUUn2SPD7xULzLXFb9RvOF+ZWaGD+u7cijH4EEYTh
-         lNc0YMfoTVnzG4F22zY4SOeD0fQCcs2abJPxW1owDXJV3hC0BBsmuy5mTpcF5wTFk1fJ
-         q/XYG/tLSXLcSz8pIVhx11MDIv3SPwcAdWTg2QVBnA8IWWXZzZjzE/RW+djrBJuGGUug
-         T9NBo0moM2IE8zvNCrPV5yq38gGJOHYOUbpwJniVUmH8HEOgzxR7eLB4KcQMIxhucPOS
-         XeRycuXsTp8Lv1QUby2GguDfhQLHqx3pumndpujZhW0AbDCAMhMrYq6FzqFBE3U2bw9R
-         OZag==
-X-Gm-Message-State: AGi0PubhVNKsD+d59oL7oocaXFHQmMAi/VLGi3DgRfyX2BBPxPe6Ovar
-        Wdx0dqB6PPme95v/vooaAY3d0gJMnZGePE3S+XgrpOwk9VBUGiXXM+9rMCE5d48qFfxG7Sx/o9+
-        YhDE6sSLMsndRPfD2NNbBkHaMfPNB/WZyZtCp
-X-Received: by 2002:a05:6000:10c4:: with SMTP id b4mr3548556wrx.203.1587477468498;
-        Tue, 21 Apr 2020 06:57:48 -0700 (PDT)
-X-Google-Smtp-Source: APiQypIF3TEMFKgVlkqjV5D8Ac9x2gOX23CIH+SaywYNkeLA37qXXTG9GqXHBVuGZrEE7VAAb2MwEw==
-X-Received: by 2002:a05:6000:10c4:: with SMTP id b4mr3548522wrx.203.1587477468324;
-        Tue, 21 Apr 2020 06:57:48 -0700 (PDT)
+        bh=2wRD9FPTWKMzxCyWJGhqpm27rg8NjVNjjKx55UL7gOU=;
+        b=FId5+pjktXLwznbCO9cQKM4a23Eww38baTxxUSlvkTTjMS5pbep+y5uFYVjd5dPPnn
+         smKdBz8xnWw7YfmIbUw5CAKD4n/AO60NIS1Y7KE1V8hD5E8tkX4UTng0w2B4TRDTvM0O
+         dplHfG1fqPzKgFhK0eM88K33b+1AnQRBDbRp4uhHklQJsONccrxLeHHY39SPLmi7nE/S
+         e5O3pwt3dV5abXx2T9jmaS4QboAVuLGmBovVEuanBcBjomCAMP85ktPMem6QqP2B6BY0
+         wULw4vr9Msa5iikSWQEabA0eAYmdtHRO0QXig2Bg8a8upV8IPDZ61QBDc2/zXq8lyoNF
+         kUhQ==
+X-Gm-Message-State: AGi0PuYhmoZpfYvgtnCe61nRovofGw7qPsuUQ92bnt1E61fZr7WSx4QI
+        YZks6HofT9uBiwfru503KB651JP4Ts/3trXV2NY6UO9BE86PYAH556BOTXZENnM17IyXIvKuKfW
+        +1jUIEMkH06y2G1/e8mD/jcib4ox75kQvWQ9K
+X-Received: by 2002:a7b:cb17:: with SMTP id u23mr4993977wmj.130.1587477466574;
+        Tue, 21 Apr 2020 06:57:46 -0700 (PDT)
+X-Google-Smtp-Source: APiQypIdMbj9yLvuLA4LwwjCRX8ejEQ6n8RjZ/wI7HQOlXPSbSe/l8j+NErdfsIjBeaz5nCZl4whdg==
+X-Received: by 2002:a7b:cb17:: with SMTP id u23mr4993944wmj.130.1587477466378;
+        Tue, 21 Apr 2020 06:57:46 -0700 (PDT)
 Received: from localhost.localdomain.com ([194.230.155.194])
-        by smtp.gmail.com with ESMTPSA id f23sm3562989wml.4.2020.04.21.06.57.46
+        by smtp.gmail.com with ESMTPSA id f23sm3562989wml.4.2020.04.21.06.57.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Apr 2020 06:57:47 -0700 (PDT)
+        Tue, 21 Apr 2020 06:57:45 -0700 (PDT)
 From:   Emanuele Giuseppe Esposito <eesposit@redhat.com>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
@@ -90,9 +90,9 @@ Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         linux-security-module@vger.kernel.org,
         Paolo Bonzini <pbonzini@redhat.com>,
         Emanuele Giuseppe Esposito <eesposit@redhat.com>
-Subject: [PATCH v2 4/7] libfs: add alloc_anon_inode wrapper
-Date:   Tue, 21 Apr 2020 15:57:38 +0200
-Message-Id: <20200421135741.30657-2-eesposit@redhat.com>
+Subject: [PATCH v2 3/7] libfs: introduce new_inode_current_time
+Date:   Tue, 21 Apr 2020 15:57:37 +0200
+Message-Id: <20200421135741.30657-1-eesposit@redhat.com>
 X-Mailer: git-send-email 2.25.2
 In-Reply-To: <20200421135119.30007-1-eesposit@redhat.com>
 References: <20200421135119.30007-1-eesposit@redhat.com>
@@ -105,94 +105,59 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-libfs.c has many functions that are useful to implement dentry and inode
-operations, but not many at the filesystem level. Start adding file
-creation wrappers, the simplest returns an anonymous inode.
-
-There is no functional change intended.
+It is a common special case for new_inode to initialize the
+time to the current time and the inode to get_next_ino().
+Introduce a core function that does it.
 
 Signed-off-by: Emanuele Giuseppe Esposito <eesposit@redhat.com>
 ---
- drivers/gpu/drm/drm_drv.c       |  2 +-
- drivers/misc/cxl/api.c          |  2 +-
- drivers/scsi/cxlflash/ocxl_hw.c |  2 +-
- fs/libfs.c                      | 10 +++++++++-
- include/linux/fs.h              |  2 ++
- 5 files changed, 14 insertions(+), 4 deletions(-)
+ fs/libfs.c         | 20 ++++++++++++++++++++
+ include/linux/fs.h |  1 +
+ 2 files changed, 21 insertions(+)
 
-diff --git a/drivers/gpu/drm/drm_drv.c b/drivers/gpu/drm/drm_drv.c
-index e29424d64874..1854f760ad39 100644
---- a/drivers/gpu/drm/drm_drv.c
-+++ b/drivers/gpu/drm/drm_drv.c
-@@ -539,7 +539,7 @@ static struct inode *drm_fs_inode_new(void)
- 		return ERR_PTR(r);
- 	}
- 
--	inode = alloc_anon_inode(drm_fs.mount->mnt_sb);
-+	inode = simple_alloc_anon_inode(&drm_fs);
- 	if (IS_ERR(inode))
- 		simple_release_fs(&drm_fs);
- 
-diff --git a/drivers/misc/cxl/api.c b/drivers/misc/cxl/api.c
-index 67e4808bce49..57672abb6223 100644
---- a/drivers/misc/cxl/api.c
-+++ b/drivers/misc/cxl/api.c
-@@ -72,7 +72,7 @@ static struct file *cxl_getfile(const char *name,
- 		goto err_module;
- 	}
- 
--	inode = alloc_anon_inode(cxl_fs.mount->mnt_sb);
-+	inode = simple_alloc_anon_inode(&cxl_fs);
- 	if (IS_ERR(inode)) {
- 		file = ERR_CAST(inode);
- 		goto err_fs;
-diff --git a/drivers/scsi/cxlflash/ocxl_hw.c b/drivers/scsi/cxlflash/ocxl_hw.c
-index 7fa98dd4fa28..0e9f2ae7eebf 100644
---- a/drivers/scsi/cxlflash/ocxl_hw.c
-+++ b/drivers/scsi/cxlflash/ocxl_hw.c
-@@ -85,7 +85,7 @@ static struct file *ocxlflash_getfile(struct device *dev, const char *name,
- 		goto err2;
- 	}
- 
--	inode = alloc_anon_inode(ocxlflash_fs.mount->mnt_sb);
-+	inode = simple_alloc_anon_inode(&ocxlflash_fs);
- 	if (IS_ERR(inode)) {
- 		rc = PTR_ERR(inode);
- 		dev_err(dev, "%s: alloc_anon_inode failed rc=%d\n",
 diff --git a/fs/libfs.c b/fs/libfs.c
-index 3fa0cd27ab06..5c76e4c648dc 100644
+index 54e07ae986ca..3fa0cd27ab06 100644
 --- a/fs/libfs.c
 +++ b/fs/libfs.c
-@@ -741,7 +741,15 @@ void simple_release_fs(struct simple_fs *fs)
+@@ -594,6 +594,26 @@ int simple_write_end(struct file *file, struct address_space *mapping,
  }
- EXPORT_SYMBOL(simple_release_fs);
+ EXPORT_SYMBOL(simple_write_end);
  
--
 +/**
-+ * simple_alloc_anon_inode - wrapper for alloc_anon_inode
-+ * @fs: a pointer to a struct simple_fs containing a valid vfs_mount pointer
-+ **/
-+struct inode *simple_alloc_anon_inode(struct simple_fs *fs)
++ * new_inode_current_time - create new inode by initializing the
++ * time to the current time and the inode to get_next_ino()
++ * @sb: pointer to super block of the file system
++ *
++ * Returns an inode pointer on success, NULL on failure.
++ */
++struct inode *new_inode_current_time(struct super_block *sb)
 +{
-+	return alloc_anon_inode(fs->mount->mnt_sb);
++	struct inode *inode = new_inode(sb);
++
++	if (inode) {
++		inode->i_ino = get_next_ino();
++		inode->i_atime = inode->i_mtime =
++			inode->i_ctime = current_time(inode);
++	}
++	return inode;
 +}
-+EXPORT_SYMBOL(simple_alloc_anon_inode);
- 
- /**
-  * simple_read_from_buffer - copy data from the buffer to user space
++EXPORT_SYMBOL(new_inode_current_time);
++
+ /*
+  * the inodes created here are not hashed. If you use iunique to generate
+  * unique inode values later for this filesystem, then you must take care
 diff --git a/include/linux/fs.h b/include/linux/fs.h
-index de2577df30ae..5e93de72118b 100644
+index a3691c132b3a..de2577df30ae 100644
 --- a/include/linux/fs.h
 +++ b/include/linux/fs.h
-@@ -3373,6 +3373,8 @@ struct simple_fs {
- extern int simple_pin_fs(struct simple_fs *, struct file_system_type *);
- extern void simple_release_fs(struct simple_fs *);
- 
-+extern struct inode *simple_alloc_anon_inode(struct simple_fs *fs);
-+
- extern ssize_t simple_read_from_buffer(void __user *to, size_t count,
- 			loff_t *ppos, const void *from, size_t available);
- extern ssize_t simple_write_to_buffer(void *to, size_t available, loff_t *ppos,
+@@ -3088,6 +3088,7 @@ extern void clear_inode(struct inode *);
+ extern void __destroy_inode(struct inode *);
+ extern struct inode *new_inode_pseudo(struct super_block *sb);
+ extern struct inode *new_inode(struct super_block *sb);
++extern struct inode *new_inode_current_time(struct super_block *sb);
+ extern void free_inode_nonrcu(struct inode *inode);
+ extern int should_remove_suid(struct dentry *);
+ extern int file_remove_privs(struct file *);
 -- 
 2.25.2
 
