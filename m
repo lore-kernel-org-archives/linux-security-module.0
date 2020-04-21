@@ -7,61 +7,61 @@ X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C427C55185
-	for <linux-security-module@archiver.kernel.org>; Tue, 21 Apr 2020 13:52:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED026C54FD0
+	for <linux-security-module@archiver.kernel.org>; Tue, 21 Apr 2020 13:58:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F16B620672
-	for <linux-security-module@archiver.kernel.org>; Tue, 21 Apr 2020 13:52:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C12B020644
+	for <linux-security-module@archiver.kernel.org>; Tue, 21 Apr 2020 13:58:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CkfWmNsL"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DZYXCXls"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729045AbgDUNv7 (ORCPT
+        id S1728422AbgDUN6M (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 21 Apr 2020 09:51:59 -0400
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:57881 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728978AbgDUNv4 (ORCPT
+        Tue, 21 Apr 2020 09:58:12 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:49746 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728960AbgDUN6B (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 21 Apr 2020 09:51:56 -0400
+        Tue, 21 Apr 2020 09:58:01 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1587477112;
+        s=mimecast20190719; t=1587477479;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=uEO79FtubqXMahKIwTgMnvnxLKfl/MCXROyTj0OBoJ0=;
-        b=CkfWmNsLU6qiQQjWIfRf4Y3h4Q06H+b7r0HcUbNnmH7kX2BYrhzzTabOOh/FhMHLK4Z8b3
-        HTb2XG1AyJj3YALJr5SuEY59ZkLtlJ1f5ejwdROMpq0IhMf4RmJQ/Oq67ACbj84oMu2Yia
-        CcbbP5sr1GekY7f7xNSAVHzkK4XuOjc=
+        bh=jPnP4qV6sDaGZ2bSbejYPzydlvKfgMg0o/pB9q3go8E=;
+        b=DZYXCXlsv0fh6UE16VFVl0cTQL17cz0iEU4FclpHzRPbbxDsNK0ulE0prgaf88dYflmgiK
+        3IJKX8PwWmEtRTDlP8MFrLBjfCkd5YcQn7YuaP/1WW6MOCz9B2UG6Y4u9kL4okZ+tFx3HZ
+        oRlpmP3dK7VrCKcwGhfTl34d5DD4oVs=
 Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
  [209.85.221.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-438-HkW1rNbTOxqJBrzTbvBxdw-1; Tue, 21 Apr 2020 09:51:47 -0400
-X-MC-Unique: HkW1rNbTOxqJBrzTbvBxdw-1
-Received: by mail-wr1-f71.google.com with SMTP id o12so7541356wra.14
-        for <linux-security-module@vger.kernel.org>; Tue, 21 Apr 2020 06:51:47 -0700 (PDT)
+ us-mta-244-A1ZdssvaOJWK8YtJ77g31A-1; Tue, 21 Apr 2020 09:57:55 -0400
+X-MC-Unique: A1ZdssvaOJWK8YtJ77g31A-1
+Received: by mail-wr1-f71.google.com with SMTP id r17so7531779wrg.19
+        for <linux-security-module@vger.kernel.org>; Tue, 21 Apr 2020 06:57:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=uEO79FtubqXMahKIwTgMnvnxLKfl/MCXROyTj0OBoJ0=;
-        b=HnYkCRGGKbXOGKu89AwCsJ4TNA8Tz5q+UU1RzAAdU9M7gtm0HWzo8MywnLnolPaSYq
-         hvVxAzUb5ASuqUMS+0l8DdWErWRZVZuLlT3wAimFkmHg1jOE4qMQWq8vyiluzkAomPNx
-         FpDHODh66Te7lQAVc506PPe/saxlH0TMe1zdwNsD23eFQaNPa3KBqs2iwx5FVSYKyk3L
-         0n8fg+CyKCE21OaBd4gZ/RDEGm3+xrTyZxxeRdNAZKmh6wVPLubqhoMNK+v85ktMQUZo
-         H87KCRPGNkwTDHDQ5UlXZNgci1AyjSXErunLVXlDT/jpudXyqr5FI57AbNw7FK1pnD7G
-         27Dw==
-X-Gm-Message-State: AGi0PuZuMCfybVxqdlI1s8gZ2DfUdf2picrggxfiYPznIWc+Go7fR5E8
-        rWhOI7Y4BguHx7WyiN3Ovo+tF4NiB6y0hIG6j3VPkhGRW/SnFFUz85uLUO3doL658AKK2suUtA1
-        BzJGV/YmoZf1iZV5LWoVGvUWjxa/hZHgZMGfq
-X-Received: by 2002:a05:6000:114b:: with SMTP id d11mr11202368wrx.138.1587477104838;
-        Tue, 21 Apr 2020 06:51:44 -0700 (PDT)
-X-Google-Smtp-Source: APiQypJsZggx2G3tX02r+CIpkhG0GKbStWvZ8dzSX+QBPAQPkgkEDhh7nt3yzU3c0QsyRLr3LyQW5w==
-X-Received: by 2002:a05:6000:114b:: with SMTP id d11mr11202330wrx.138.1587477104368;
-        Tue, 21 Apr 2020 06:51:44 -0700 (PDT)
+        bh=jPnP4qV6sDaGZ2bSbejYPzydlvKfgMg0o/pB9q3go8E=;
+        b=PCKD6WOXDGeO5THnlvuc3Vtf6+YtSyz9qPA6oPu2EEusMIE2rDyaS/1rNhm8ey7Y+/
+         OhOkUGMBO13Qev2YwmLkb4/xOKKdQ/YOu76OG9urLgDDnNFdgv6GnU/ZwsxrVk4MKxmb
+         P5cLr94QzTZDeLb1TM9HDcIrGXi9MgLCAx2e9Ioi/okP/CCwuCPOlhV7wKZ8h7HrZVF7
+         3nJyfJLYaBMdpFpuptgNxJ+QuJmx+CBRxgZ8BQU3mmlT/Ar689l0gzXBVmf0h6jIULCE
+         6tmHUBn1aUvvpFOKI/sZaC4jEpfxe/+wt0c/XObIfa/PDeRt1Bl46tEW5O+4L5e2yOEO
+         eiKw==
+X-Gm-Message-State: AGi0PuZRxKIYI90TKOBbuNqC8+5z8+FC9DD3UXrsMm1gZkehRiU0JsrL
+        6lRCAvRxrRjizxaT1yJTI+dat6+vE8xRNhT31Fwzk3MnW1RoF1qNoDRvyPd8zDlH89/QZE7ey2Z
+        kk7uAIuHSSRo/SuvKXc3BUhpAUVlr0zgD5hvg
+X-Received: by 2002:a05:600c:da:: with SMTP id u26mr5188181wmm.48.1587477474539;
+        Tue, 21 Apr 2020 06:57:54 -0700 (PDT)
+X-Google-Smtp-Source: APiQypImms4WydeI5+8l3z5lWKRrEMa+0XfWFGcGeKI2hzBQZu8YXbxqfuv1YC/rok2n8KUUpE7+Vg==
+X-Received: by 2002:a05:600c:da:: with SMTP id u26mr5188144wmm.48.1587477474268;
+        Tue, 21 Apr 2020 06:57:54 -0700 (PDT)
 Received: from localhost.localdomain.com ([194.230.155.194])
-        by smtp.gmail.com with ESMTPSA id a187sm3565830wmh.40.2020.04.21.06.51.42
+        by smtp.gmail.com with ESMTPSA id f23sm3562989wml.4.2020.04.21.06.57.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Apr 2020 06:51:43 -0700 (PDT)
+        Tue, 21 Apr 2020 06:57:53 -0700 (PDT)
 From:   Emanuele Giuseppe Esposito <eesposit@redhat.com>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
@@ -90,9 +90,9 @@ Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         linux-security-module@vger.kernel.org,
         Paolo Bonzini <pbonzini@redhat.com>,
         Emanuele Giuseppe Esposito <eesposit@redhat.com>
-Subject: [PATCH v2 2/7] libfs: wrap simple_pin_fs/simple_release_fs arguments in a struct
-Date:   Tue, 21 Apr 2020 15:51:14 +0200
-Message-Id: <20200421135119.30007-3-eesposit@redhat.com>
+Subject: [PATCH v2 7/7] tracefs: switch to simplefs inode creation API
+Date:   Tue, 21 Apr 2020 15:57:41 +0200
+Message-Id: <20200421135741.30657-5-eesposit@redhat.com>
 X-Mailer: git-send-email 2.25.2
 In-Reply-To: <20200421135119.30007-1-eesposit@redhat.com>
 References: <20200421135119.30007-1-eesposit@redhat.com>
@@ -105,655 +105,133 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Simplify passing the count and mount to simple_pin_fs and
-simple_release_fs by wrapping them in the simple_fs struct,
-in preparation for adding more high level operations to
-fs/libfs.c
-
-There is no functional change intended.
+There is no semantic change intended; the code in the libfs.c
+functions in fact was derived from debugfs and tracefs code.
 
 Signed-off-by: Emanuele Giuseppe Esposito <eesposit@redhat.com>
 ---
- drivers/gpu/drm/drm_drv.c       | 11 ++++----
- drivers/misc/cxl/api.c          | 13 +++++-----
- drivers/scsi/cxlflash/ocxl_hw.c | 14 +++++-----
- fs/binfmt_misc.c                |  9 +++----
- fs/configfs/mount.c             | 10 +++-----
- fs/debugfs/inode.c              | 22 ++++++++--------
- fs/libfs.c                      | 45 +++++++++++++++++++++++++--------
- fs/tracefs/inode.c              | 18 ++++++-------
- include/linux/fs.h              | 10 ++++++--
- security/apparmor/apparmorfs.c  | 25 +++++++++---------
- security/inode.c                | 11 ++++----
- 11 files changed, 103 insertions(+), 85 deletions(-)
+ fs/tracefs/inode.c | 86 ++++------------------------------------------
+ 1 file changed, 7 insertions(+), 79 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_drv.c b/drivers/gpu/drm/drm_drv.c
-index 7b1a628d1f6e..e29424d64874 100644
---- a/drivers/gpu/drm/drm_drv.c
-+++ b/drivers/gpu/drm/drm_drv.c
-@@ -514,8 +514,7 @@ EXPORT_SYMBOL(drm_dev_unplug);
-  * iput(), but this way you'd end up with a new vfsmount for each inode.
-  */
- 
--static int drm_fs_cnt;
--static struct vfsmount *drm_fs_mnt;
-+static struct simple_fs drm_fs;
- 
- static int drm_fs_init_fs_context(struct fs_context *fc)
- {
-@@ -534,15 +533,15 @@ static struct inode *drm_fs_inode_new(void)
- 	struct inode *inode;
- 	int r;
- 
--	r = simple_pin_fs(&drm_fs_type, &drm_fs_mnt, &drm_fs_cnt);
-+	r = simple_pin_fs(&drm_fs, &drm_fs_type);
- 	if (r < 0) {
- 		DRM_ERROR("Cannot mount pseudo fs: %d\n", r);
- 		return ERR_PTR(r);
- 	}
- 
--	inode = alloc_anon_inode(drm_fs_mnt->mnt_sb);
-+	inode = alloc_anon_inode(drm_fs.mount->mnt_sb);
- 	if (IS_ERR(inode))
--		simple_release_fs(&drm_fs_mnt, &drm_fs_cnt);
-+		simple_release_fs(&drm_fs);
- 
- 	return inode;
- }
-@@ -551,7 +550,7 @@ static void drm_fs_inode_free(struct inode *inode)
- {
- 	if (inode) {
- 		iput(inode);
--		simple_release_fs(&drm_fs_mnt, &drm_fs_cnt);
-+		simple_release_fs(&drm_fs);
- 	}
- }
- 
-diff --git a/drivers/misc/cxl/api.c b/drivers/misc/cxl/api.c
-index b493de962153..67e4808bce49 100644
---- a/drivers/misc/cxl/api.c
-+++ b/drivers/misc/cxl/api.c
-@@ -31,8 +31,7 @@
- 
- #define CXL_PSEUDO_FS_MAGIC	0x1697697f
- 
--static int cxl_fs_cnt;
--static struct vfsmount *cxl_vfs_mount;
-+static struct simple_fs cxl_fs;
- 
- static int cxl_fs_init_fs_context(struct fs_context *fc)
- {
-@@ -50,7 +49,7 @@ static struct file_system_type cxl_fs_type = {
- void cxl_release_mapping(struct cxl_context *ctx)
- {
- 	if (ctx->kernelapi && ctx->mapping)
--		simple_release_fs(&cxl_vfs_mount, &cxl_fs_cnt);
-+		simple_release_fs(&cxl_fs);
- }
- 
- static struct file *cxl_getfile(const char *name,
-@@ -66,20 +65,20 @@ static struct file *cxl_getfile(const char *name,
- 	if (fops->owner && !try_module_get(fops->owner))
- 		return ERR_PTR(-ENOENT);
- 
--	rc = simple_pin_fs(&cxl_fs_type, &cxl_vfs_mount, &cxl_fs_cnt);
-+	rc = simple_pin_fs(&cxl_fs, &cxl_fs_type);
- 	if (rc < 0) {
- 		pr_err("Cannot mount cxl pseudo filesystem: %d\n", rc);
- 		file = ERR_PTR(rc);
- 		goto err_module;
- 	}
- 
--	inode = alloc_anon_inode(cxl_vfs_mount->mnt_sb);
-+	inode = alloc_anon_inode(cxl_fs.mount->mnt_sb);
- 	if (IS_ERR(inode)) {
- 		file = ERR_CAST(inode);
- 		goto err_fs;
- 	}
- 
--	file = alloc_file_pseudo(inode, cxl_vfs_mount, name,
-+	file = alloc_file_pseudo(inode, cxl_fs.mount, name,
- 				 flags & (O_ACCMODE | O_NONBLOCK), fops);
- 	if (IS_ERR(file))
- 		goto err_inode;
-@@ -91,7 +90,7 @@ static struct file *cxl_getfile(const char *name,
- err_inode:
- 	iput(inode);
- err_fs:
--	simple_release_fs(&cxl_vfs_mount, &cxl_fs_cnt);
-+	simple_release_fs(&cxl_fs);
- err_module:
- 	module_put(fops->owner);
- 	return file;
-diff --git a/drivers/scsi/cxlflash/ocxl_hw.c b/drivers/scsi/cxlflash/ocxl_hw.c
-index 7018cd802569..7fa98dd4fa28 100644
---- a/drivers/scsi/cxlflash/ocxl_hw.c
-+++ b/drivers/scsi/cxlflash/ocxl_hw.c
-@@ -29,8 +29,7 @@
- 
- #define OCXLFLASH_FS_MAGIC      0x1697698f
- 
--static int ocxlflash_fs_cnt;
--static struct vfsmount *ocxlflash_vfs_mount;
-+static struct simple_fs ocxlflash_fs;
- 
- static int ocxlflash_fs_init_fs_context(struct fs_context *fc)
- {
-@@ -51,7 +50,7 @@ static struct file_system_type ocxlflash_fs_type = {
- static void ocxlflash_release_mapping(struct ocxlflash_context *ctx)
- {
- 	if (ctx->mapping)
--		simple_release_fs(&ocxlflash_vfs_mount, &ocxlflash_fs_cnt);
-+		simple_release_fs(&ocxlflash_fs);
- 	ctx->mapping = NULL;
- }
- 
-@@ -79,15 +78,14 @@ static struct file *ocxlflash_getfile(struct device *dev, const char *name,
- 		goto err1;
- 	}
- 
--	rc = simple_pin_fs(&ocxlflash_fs_type, &ocxlflash_vfs_mount,
--			   &ocxlflash_fs_cnt);
-+	rc = simple_pin_fs(&ocxlflash_fs, &ocxlflash_fs_type);
- 	if (unlikely(rc < 0)) {
- 		dev_err(dev, "%s: Cannot mount ocxlflash pseudofs rc=%d\n",
- 			__func__, rc);
- 		goto err2;
- 	}
- 
--	inode = alloc_anon_inode(ocxlflash_vfs_mount->mnt_sb);
-+	inode = alloc_anon_inode(ocxlflash_fs.mount->mnt_sb);
- 	if (IS_ERR(inode)) {
- 		rc = PTR_ERR(inode);
- 		dev_err(dev, "%s: alloc_anon_inode failed rc=%d\n",
-@@ -95,7 +93,7 @@ static struct file *ocxlflash_getfile(struct device *dev, const char *name,
- 		goto err3;
- 	}
- 
--	file = alloc_file_pseudo(inode, ocxlflash_vfs_mount, name,
-+	file = alloc_file_pseudo(inode, ocxlflash_fs.mount, name,
- 				 flags & (O_ACCMODE | O_NONBLOCK), fops);
- 	if (IS_ERR(file)) {
- 		rc = PTR_ERR(file);
-@@ -110,7 +108,7 @@ static struct file *ocxlflash_getfile(struct device *dev, const char *name,
- err4:
- 	iput(inode);
- err3:
--	simple_release_fs(&ocxlflash_vfs_mount, &ocxlflash_fs_cnt);
-+	simple_release_fs(&ocxlflash_fs);
- err2:
- 	module_put(fops->owner);
- err1:
-diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
-index cdb45829354d..3cff446f222b 100644
---- a/fs/binfmt_misc.c
-+++ b/fs/binfmt_misc.c
-@@ -64,8 +64,7 @@ typedef struct {
- 
- static DEFINE_RWLOCK(entries_lock);
- static struct file_system_type bm_fs_type;
--static struct vfsmount *bm_mnt;
--static int entry_count;
-+static struct simple_fs bm_fs;
- 
- /*
-  * Max length of the register string.  Determined by:
-@@ -623,7 +622,7 @@ static void kill_node(Node *e)
- 	drop_nlink(d_inode(dentry));
- 	d_drop(dentry);
- 	dput(dentry);
--	simple_release_fs(&bm_mnt, &entry_count);
-+	simple_release_fs(&bm_fs);
- }
- 
- /* /<entry> */
-@@ -718,7 +717,7 @@ static ssize_t bm_register_write(struct file *file, const char __user *buffer,
- 	if (!inode)
- 		goto out2;
- 
--	err = simple_pin_fs(&bm_fs_type, &bm_mnt, &entry_count);
-+	err = simple_pin_fs(&bm_fs, &bm_fs_type);
- 	if (err) {
- 		iput(inode);
- 		inode = NULL;
-@@ -732,7 +731,7 @@ static ssize_t bm_register_write(struct file *file, const char __user *buffer,
- 		if (IS_ERR(f)) {
- 			err = PTR_ERR(f);
- 			pr_notice("register: failed to install interpreter file %s\n", e->interpreter);
--			simple_release_fs(&bm_mnt, &entry_count);
-+			simple_release_fs(&bm_fs);
- 			iput(inode);
- 			inode = NULL;
- 			goto out2;
-diff --git a/fs/configfs/mount.c b/fs/configfs/mount.c
-index 0c6e8cf61953..9fb2791e5eed 100644
---- a/fs/configfs/mount.c
-+++ b/fs/configfs/mount.c
-@@ -24,9 +24,8 @@
- /* Random magic number */
- #define CONFIGFS_MAGIC 0x62656570
- 
--static struct vfsmount *configfs_mount = NULL;
-+static struct simple_fs configfs_fs;
- struct kmem_cache *configfs_dir_cachep;
--static int configfs_mnt_count = 0;
- 
- 
- static void configfs_free_inode(struct inode *inode)
-@@ -123,14 +122,13 @@ MODULE_ALIAS_FS("configfs");
- 
- struct dentry *configfs_pin_fs(void)
- {
--	int err = simple_pin_fs(&configfs_fs_type, &configfs_mount,
--			     &configfs_mnt_count);
--	return err ? ERR_PTR(err) : configfs_mount->mnt_root;
-+	int err = simple_pin_fs(&configfs_fs, &configfs_fs_type);
-+	return err ? ERR_PTR(err) : configfs_fs.mount->mnt_root;
- }
- 
- void configfs_release_fs(void)
- {
--	simple_release_fs(&configfs_mount, &configfs_mnt_count);
-+	simple_release_fs(&configfs_fs);
- }
- 
- 
-diff --git a/fs/debugfs/inode.c b/fs/debugfs/inode.c
-index b7f2e971ecbc..5dbb74a23e7c 100644
---- a/fs/debugfs/inode.c
-+++ b/fs/debugfs/inode.c
-@@ -32,8 +32,7 @@
- 
- #define DEBUGFS_DEFAULT_MODE	0700
- 
--static struct vfsmount *debugfs_mount;
--static int debugfs_mount_count;
-+static struct simple_fs debugfs;
- static bool debugfs_registered;
- 
- /*
-@@ -297,7 +296,7 @@ struct dentry *debugfs_lookup(const char *name, struct dentry *parent)
- 		return NULL;
- 
- 	if (!parent)
--		parent = debugfs_mount->mnt_root;
-+		parent = debugfs.mount->mnt_root;
- 
- 	dentry = lookup_positive_unlocked(name, parent, strlen(name));
- 	if (IS_ERR(dentry))
-@@ -316,8 +315,7 @@ static struct dentry *start_creating(const char *name, struct dentry *parent)
- 	if (IS_ERR(parent))
- 		return parent;
- 
--	error = simple_pin_fs(&debug_fs_type, &debugfs_mount,
--			      &debugfs_mount_count);
-+	error = simple_pin_fs(&debugfs, &debug_fs_type);
- 	if (error) {
- 		pr_err("Unable to pin filesystem for file '%s'\n", name);
- 		return ERR_PTR(error);
-@@ -329,7 +327,7 @@ static struct dentry *start_creating(const char *name, struct dentry *parent)
- 	 * have around.
- 	 */
- 	if (!parent)
--		parent = debugfs_mount->mnt_root;
-+		parent = debugfs.mount->mnt_root;
- 
- 	inode_lock(d_inode(parent));
- 	if (unlikely(IS_DEADDIR(d_inode(parent))))
-@@ -349,7 +347,7 @@ static struct dentry *start_creating(const char *name, struct dentry *parent)
- 
- 	if (IS_ERR(dentry)) {
- 		inode_unlock(d_inode(parent));
--		simple_release_fs(&debugfs_mount, &debugfs_mount_count);
-+		simple_release_fs(&debugfs);
- 	}
- 
- 	return dentry;
-@@ -359,7 +357,7 @@ static struct dentry *failed_creating(struct dentry *dentry)
- {
- 	inode_unlock(d_inode(dentry->d_parent));
- 	dput(dentry);
--	simple_release_fs(&debugfs_mount, &debugfs_mount_count);
-+	simple_release_fs(&debugfs);
- 	return ERR_PTR(-ENOMEM);
- }
- 
-@@ -676,9 +674,9 @@ static void __debugfs_file_removed(struct dentry *dentry)
- 
- static void remove_one(struct dentry *victim)
- {
--        if (d_is_reg(victim))
-+	if (d_is_reg(victim))
- 		__debugfs_file_removed(victim);
--	simple_release_fs(&debugfs_mount, &debugfs_mount_count);
-+	simple_release_fs(&debugfs);
- }
- 
- /**
-@@ -699,9 +697,9 @@ void debugfs_remove(struct dentry *dentry)
- 	if (IS_ERR_OR_NULL(dentry))
- 		return;
- 
--	simple_pin_fs(&debug_fs_type, &debugfs_mount, &debugfs_mount_count);
-+	simple_pin_fs(&debugfs, &debug_fs_type);
- 	simple_recursive_removal(dentry, remove_one);
--	simple_release_fs(&debugfs_mount, &debugfs_mount_count);
-+	simple_release_fs(&debugfs);
- }
- EXPORT_SYMBOL_GPL(debugfs_remove);
- 
-diff --git a/fs/libfs.c b/fs/libfs.c
-index 3759fbacf522..54e07ae986ca 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -665,39 +665,64 @@ EXPORT_SYMBOL(simple_fill_super);
- 
- static DEFINE_SPINLOCK(pin_fs_lock);
- 
--int simple_pin_fs(struct file_system_type *type, struct vfsmount **mount, int *count)
-+/**
-+ * simple_pin_fs - generic function to pin (mount if needed,
-+ *                otherwise add a reference to the mount) a filesystem
-+ * @fs: a pointer to a the simple_fs struct containing a struct vfs_mount
-+ *      pointer (that can be NULL) and a counter.
-+ * @type: a pointer to the file system type used by vfs_kern_mount.
-+ *
-+ * This function sets fs->mount if NULL, by calling vfs_kern_mount
-+ * on @type.
-+ * It also takes care of incrementing the reference counter.
-+ *
-+ * This function will return 0 in case of success, and PTR_ERR(-ERROR)
-+ * if vfs_kern_mount fails.
-+ **/
-+int simple_pin_fs(struct simple_fs *fs, struct file_system_type *type)
- {
- 	struct vfsmount *mnt = NULL;
- 	spin_lock(&pin_fs_lock);
--	if (unlikely(!*mount)) {
-+	if (unlikely(!fs->mount)) {
- 		spin_unlock(&pin_fs_lock);
- 		mnt = vfs_kern_mount(type, SB_KERNMOUNT, type->name, NULL);
- 		if (IS_ERR(mnt))
- 			return PTR_ERR(mnt);
- 		spin_lock(&pin_fs_lock);
--		if (!*mount)
--			*mount = mnt;
-+		if (!fs->mount)
-+			fs->mount = mnt;
- 	}
--	mntget(*mount);
--	++*count;
-+	mntget(fs->mount);
-+	++fs->count;
- 	spin_unlock(&pin_fs_lock);
- 	mntput(mnt);
- 	return 0;
- }
- EXPORT_SYMBOL(simple_pin_fs);
- 
--void simple_release_fs(struct vfsmount **mount, int *count)
-+/**
-+ * simple_release_fs - decrements the reference counter and unmounts the
-+ *                    file system.
-+ * @fs: a pointer to a struct simple_fs containing the reference counter
-+ *      and vfs_mount pointer
-+ *
-+ * This function decrements the refcount of the given file system and
-+ * if 0 sets the mount pointer to NULL.
-+ **/
-+void simple_release_fs(struct simple_fs *fs)
- {
- 	struct vfsmount *mnt;
- 	spin_lock(&pin_fs_lock);
--	mnt = *mount;
--	if (!--*count)
--		*mount = NULL;
-+	mnt = fs->mount;
-+	if (!--fs->count)
-+		fs->mount = NULL;
- 	spin_unlock(&pin_fs_lock);
- 	mntput(mnt);
- }
- EXPORT_SYMBOL(simple_release_fs);
- 
-+
-+
- /**
-  * simple_read_from_buffer - copy data from the buffer to user space
-  * @to: the user space buffer to read to
 diff --git a/fs/tracefs/inode.c b/fs/tracefs/inode.c
-index 0ee8c6dfb036..370eb38ff1ad 100644
+index 370eb38ff1ad..bceaa4f45da2 100644
 --- a/fs/tracefs/inode.c
 +++ b/fs/tracefs/inode.c
-@@ -24,8 +24,7 @@
+@@ -308,57 +308,6 @@ static struct file_system_type trace_fs_type = {
+ };
+ MODULE_ALIAS_FS("tracefs");
  
- #define TRACEFS_DEFAULT_MODE	0700
+-static struct dentry *start_creating(const char *name, struct dentry *parent)
+-{
+-	struct dentry *dentry;
+-	int error;
+-
+-	pr_debug("tracefs: creating file '%s'\n",name);
+-
+-	error = simple_pin_fs(&tracefs, &trace_fs_type);
+-	if (error)
+-		return ERR_PTR(error);
+-
+-	/* If the parent is not specified, we create it in the root.
+-	 * We need the root dentry to do this, which is in the super
+-	 * block. A pointer to that is in the struct vfsmount that we
+-	 * have around.
+-	 */
+-	if (!parent)
+-		parent = tracefs.mount->mnt_root;
+-
+-	inode_lock(parent->d_inode);
+-	if (unlikely(IS_DEADDIR(parent->d_inode)))
+-		dentry = ERR_PTR(-ENOENT);
+-	else
+-		dentry = lookup_one_len(name, parent, strlen(name));
+-	if (!IS_ERR(dentry) && dentry->d_inode) {
+-		dput(dentry);
+-		dentry = ERR_PTR(-EEXIST);
+-	}
+-
+-	if (IS_ERR(dentry)) {
+-		inode_unlock(parent->d_inode);
+-		simple_release_fs(&tracefs);
+-	}
+-
+-	return dentry;
+-}
+-
+-static struct dentry *failed_creating(struct dentry *dentry)
+-{
+-	inode_unlock(dentry->d_parent->d_inode);
+-	dput(dentry);
+-	simple_release_fs(&tracefs);
+-	return NULL;
+-}
+-
+-static struct dentry *end_creating(struct dentry *dentry)
+-{
+-	inode_unlock(dentry->d_parent->d_inode);
+-	return dentry;
+-}
+-
+ /**
+  * tracefs_create_file - create a file in the tracefs filesystem
+  * @name: a pointer to a string containing the name of the file to create.
+@@ -395,49 +344,28 @@ struct dentry *tracefs_create_file(const char *name, umode_t mode,
+ 	if (security_locked_down(LOCKDOWN_TRACEFS))
+ 		return NULL;
  
--static struct vfsmount *tracefs_mount;
--static int tracefs_mount_count;
-+static struct simple_fs tracefs;
- static bool tracefs_registered;
+-	if (!(mode & S_IFMT))
+-		mode |= S_IFREG;
+-	BUG_ON(!S_ISREG(mode));
+-	dentry = start_creating(name, parent);
+-
++	dentry = simplefs_create_file(&tracefs, &trace_fs_type,
++				      name, mode, parent, data, &inode);
+ 	if (IS_ERR(dentry))
+ 		return NULL;
  
- static ssize_t default_read_file(struct file *file, char __user *buf,
-@@ -316,8 +315,7 @@ static struct dentry *start_creating(const char *name, struct dentry *parent)
- 
- 	pr_debug("tracefs: creating file '%s'\n",name);
- 
--	error = simple_pin_fs(&trace_fs_type, &tracefs_mount,
--			      &tracefs_mount_count);
-+	error = simple_pin_fs(&tracefs, &trace_fs_type);
- 	if (error)
- 		return ERR_PTR(error);
- 
-@@ -327,7 +325,7 @@ static struct dentry *start_creating(const char *name, struct dentry *parent)
- 	 * have around.
- 	 */
- 	if (!parent)
--		parent = tracefs_mount->mnt_root;
-+		parent = tracefs.mount->mnt_root;
- 
- 	inode_lock(parent->d_inode);
- 	if (unlikely(IS_DEADDIR(parent->d_inode)))
-@@ -341,7 +339,7 @@ static struct dentry *start_creating(const char *name, struct dentry *parent)
- 
- 	if (IS_ERR(dentry)) {
- 		inode_unlock(parent->d_inode);
--		simple_release_fs(&tracefs_mount, &tracefs_mount_count);
-+		simple_release_fs(&tracefs);
- 	}
- 
- 	return dentry;
-@@ -351,7 +349,7 @@ static struct dentry *failed_creating(struct dentry *dentry)
- {
- 	inode_unlock(dentry->d_parent->d_inode);
- 	dput(dentry);
--	simple_release_fs(&tracefs_mount, &tracefs_mount_count);
-+	simple_release_fs(&tracefs);
- 	return NULL;
+-	inode = tracefs_get_inode(dentry->d_sb);
+-	if (unlikely(!inode))
+-		return failed_creating(dentry);
+-
+-	inode->i_mode = mode;
+ 	inode->i_fop = fops ? fops : &tracefs_file_operations;
+-	inode->i_private = data;
+-	d_instantiate(dentry, inode);
+-	fsnotify_create(dentry->d_parent->d_inode, dentry);
+-	return end_creating(dentry);
++	return simplefs_finish_dentry(dentry, inode);
  }
  
-@@ -504,7 +502,7 @@ __init struct dentry *tracefs_create_instance_dir(const char *name,
- 
- static void remove_one(struct dentry *victim)
+ static struct dentry *__create_dir(const char *name, struct dentry *parent,
+ 				   const struct inode_operations *ops)
  {
--	simple_release_fs(&tracefs_mount, &tracefs_mount_count);
-+	simple_release_fs(&tracefs);
+-	struct dentry *dentry = start_creating(name, parent);
++	struct dentry *dentry;
+ 	struct inode *inode;
+ 
++	dentry = simplefs_create_dir(&tracefs, &trace_fs_type,
++				     name, 0755, parent, &inode);
+ 	if (IS_ERR(dentry))
+ 		return NULL;
+ 
+-	inode = tracefs_get_inode(dentry->d_sb);
+-	if (unlikely(!inode))
+-		return failed_creating(dentry);
+-
+-	inode->i_mode = S_IFDIR | S_IRWXU | S_IRUGO | S_IXUGO;
+ 	inode->i_op = ops;
+-	inode->i_fop = &simple_dir_operations;
+-
+-	/* directory inodes start off with i_nlink == 2 (for "." entry) */
+-	inc_nlink(inode);
+-	d_instantiate(dentry, inode);
+-	inc_nlink(dentry->d_parent->d_inode);
+-	fsnotify_mkdir(dentry->d_parent->d_inode, dentry);
+-	return end_creating(dentry);
++	return simplefs_finish_dentry(dentry, inode);
  }
  
  /**
-@@ -520,9 +518,9 @@ void tracefs_remove(struct dentry *dentry)
- 	if (IS_ERR_OR_NULL(dentry))
- 		return;
- 
--	simple_pin_fs(&trace_fs_type, &tracefs_mount, &tracefs_mount_count);
-+	simple_pin_fs(&tracefs, &trace_fs_type);
- 	simple_recursive_removal(dentry, remove_one);
--	simple_release_fs(&tracefs_mount, &tracefs_mount_count);
-+	simple_release_fs(&tracefs);
- }
- 
- /**
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 4f6f59b4f22a..a3691c132b3a 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3363,8 +3363,14 @@ struct tree_descr { const char *name; const struct file_operations *ops; int mod
- struct dentry *d_alloc_name(struct dentry *, const char *);
- extern int simple_fill_super(struct super_block *, unsigned long,
- 			     const struct tree_descr *);
--extern int simple_pin_fs(struct file_system_type *, struct vfsmount **mount, int *count);
--extern void simple_release_fs(struct vfsmount **mount, int *count);
-+
-+struct simple_fs {
-+	struct vfsmount *mount;
-+	int count;
-+};
-+
-+extern int simple_pin_fs(struct simple_fs *, struct file_system_type *);
-+extern void simple_release_fs(struct simple_fs *);
- 
- extern ssize_t simple_read_from_buffer(void __user *to, size_t count,
- 			loff_t *ppos, const void *from, size_t available);
-diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
-index 36f848734902..00f0158fb1e1 100644
---- a/security/apparmor/apparmorfs.c
-+++ b/security/apparmor/apparmorfs.c
-@@ -140,8 +140,7 @@ static int mangle_name(const char *name, char *target)
-  */
- 
- #define AAFS_NAME		"apparmorfs"
--static struct vfsmount *aafs_mnt;
--static int aafs_count;
-+static struct simple_fs aafs;
- 
- 
- static int aafs_show_path(struct seq_file *seq, struct dentry *dentry)
-@@ -273,7 +272,7 @@ static struct dentry *aafs_create(const char *name, umode_t mode,
- 	if (!(mode & S_IFMT))
- 		mode = (mode & S_IALLUGO) | S_IFREG;
- 
--	error = simple_pin_fs(&aafs_ops, &aafs_mnt, &aafs_count);
-+	error = simple_pin_fs(&aafs, &aafs_ops);
- 	if (error)
- 		return ERR_PTR(error);
- 
-@@ -303,7 +302,7 @@ static struct dentry *aafs_create(const char *name, umode_t mode,
- 
- fail_lock:
- 	inode_unlock(dir);
--	simple_release_fs(&aafs_mnt, &aafs_count);
-+	simple_release_fs(&aafs);
- 
- 	return ERR_PTR(error);
- }
-@@ -395,7 +394,7 @@ static void aafs_remove(struct dentry *dentry)
- 		dput(dentry);
- 	}
- 	inode_unlock(dir);
--	simple_release_fs(&aafs_mnt, &aafs_count);
-+	simple_release_fs(&aafs);
- }
- 
- 
-@@ -1824,7 +1823,7 @@ static int ns_mkdir_op(struct inode *dir, struct dentry *dentry, umode_t mode)
- 	 * for pin_fs
- 	 */
- 	inode_unlock(dir);
--	error = simple_pin_fs(&aafs_ops, &aafs_mnt, &aafs_count);
-+	error = simple_pin_fs(&aafs, &aafs_ops);
- 	mutex_lock_nested(&parent->lock, parent->level);
- 	inode_lock_nested(dir, I_MUTEX_PARENT);
- 	if (error)
-@@ -1845,7 +1844,7 @@ static int ns_mkdir_op(struct inode *dir, struct dentry *dentry, umode_t mode)
- 	aa_put_ns(ns);		/* list ref remains */
- out_pin:
- 	if (error)
--		simple_release_fs(&aafs_mnt, &aafs_count);
-+		simple_release_fs(&aafs);
- out:
- 	mutex_unlock(&parent->lock);
- 	aa_put_ns(parent);
-@@ -2580,7 +2579,7 @@ static const char *policy_get_link(struct dentry *dentry,
- 		return ERR_PTR(-ECHILD);
- 
- 	ns = aa_get_current_ns();
--	path.mnt = mntget(aafs_mnt);
-+	path.mnt = mntget(aafs.mount);
- 	path.dentry = dget(ns_dir(ns));
- 	error = nd_jump_link(&path);
- 	aa_put_ns(ns);
-@@ -2631,10 +2630,10 @@ static int __init aa_create_aafs(void)
- 	}
- 
- 	/* setup apparmorfs used to virtualize policy/ */
--	aafs_mnt = kern_mount(&aafs_ops);
--	if (IS_ERR(aafs_mnt))
-+	aafs.mount = kern_mount(&aafs_ops);
-+	if (IS_ERR(aafs.mount))
- 		panic("can't set apparmorfs up\n");
--	aafs_mnt->mnt_sb->s_flags &= ~SB_NOUSER;
-+	aafs.mount->mnt_sb->s_flags &= ~SB_NOUSER;
- 
- 	/* Populate fs tree. */
- 	error = entry_create_dir(&aa_sfs_entry, NULL);
-@@ -2667,8 +2666,8 @@ static int __init aa_create_aafs(void)
- 
- 	/* policy tree referenced by magic policy symlink */
- 	mutex_lock_nested(&root_ns->lock, root_ns->level);
--	error = __aafs_ns_mkdir(root_ns, aafs_mnt->mnt_root, ".policy",
--				aafs_mnt->mnt_root);
-+	error = __aafs_ns_mkdir(root_ns, aafs.mount->mnt_root, ".policy",
-+				aafs.mount->mnt_root);
- 	mutex_unlock(&root_ns->lock);
- 	if (error)
- 		goto error;
-diff --git a/security/inode.c b/security/inode.c
-index 6c326939750d..8a1bee35470a 100644
---- a/security/inode.c
-+++ b/security/inode.c
-@@ -22,8 +22,7 @@
- #include <linux/lsm_hooks.h>
- #include <linux/magic.h>
- 
--static struct vfsmount *mount;
--static int mount_count;
-+static struct simple_fs securityfs;
- 
- static void securityfs_free_inode(struct inode *inode)
- {
-@@ -118,12 +117,12 @@ static struct dentry *securityfs_create_dentry(const char *name, umode_t mode,
- 
- 	pr_debug("securityfs: creating file '%s'\n",name);
- 
--	error = simple_pin_fs(&fs_type, &mount, &mount_count);
-+	error = simple_pin_fs(&securityfs, &fs_type);
- 	if (error)
- 		return ERR_PTR(error);
- 
- 	if (!parent)
--		parent = mount->mnt_root;
-+		parent = securityfs.mount->mnt_root;
- 
- 	dir = d_inode(parent);
- 
-@@ -168,7 +167,7 @@ static struct dentry *securityfs_create_dentry(const char *name, umode_t mode,
- 	dentry = ERR_PTR(error);
- out:
- 	inode_unlock(dir);
--	simple_release_fs(&mount, &mount_count);
-+	simple_release_fs(&securityfs);
- 	return dentry;
- }
- 
-@@ -309,7 +308,7 @@ void securityfs_remove(struct dentry *dentry)
- 		dput(dentry);
- 	}
- 	inode_unlock(dir);
--	simple_release_fs(&mount, &mount_count);
-+	simple_release_fs(&securityfs);
- }
- EXPORT_SYMBOL_GPL(securityfs_remove);
- 
 -- 
 2.25.2
 
