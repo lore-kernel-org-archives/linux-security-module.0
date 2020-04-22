@@ -1,236 +1,138 @@
-Return-Path: <SRS0=3gqt=6F=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=ipMR=6G=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FE5BC5518F
-	for <linux-security-module@archiver.kernel.org>; Tue, 21 Apr 2020 21:54:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E4D5C55185
+	for <linux-security-module@archiver.kernel.org>; Wed, 22 Apr 2020 12:03:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E9F712072D
-	for <linux-security-module@archiver.kernel.org>; Tue, 21 Apr 2020 21:54:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6352120780
+	for <linux-security-module@archiver.kernel.org>; Wed, 22 Apr 2020 12:03:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726324AbgDUVyf (ORCPT
+        id S1728169AbgDVMDO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 21 Apr 2020 17:54:35 -0400
-Received: from mga04.intel.com ([192.55.52.120]:33472 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726061AbgDUVyc (ORCPT
+        Wed, 22 Apr 2020 08:03:14 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:28182 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726835AbgDVMDN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 21 Apr 2020 17:54:32 -0400
-IronPort-SDR: rmcYVMGDMkl//hbJH7dtvxxXmmDbXxYXsEmEi09gCxuhMNZumzX9Oh0XQj70Ok5kWM0LAcHo8O
- GZuLEfMtm5JA==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Apr 2020 14:54:32 -0700
-IronPort-SDR: nEWDR4USNE7AtVn2LTDj6epK/QBeMb3559BvAWruJq2Lu79JjGENOcmp3ltPxli+Ke7CCCvarW
- SwDi+d2YI+gQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,411,1580803200"; 
-   d="scan'208";a="456260740"
-Received: from mnchalux-mobl2.gar.corp.intel.com (HELO localhost) ([10.252.44.234])
-  by fmsmga005.fm.intel.com with ESMTP; 21 Apr 2020 14:54:27 -0700
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org
-Cc:     akpm@linux-foundation.org, dave.hansen@intel.com,
-        sean.j.christopherson@intel.com, nhorman@redhat.com,
-        npmccallum@redhat.com, haitao.huang@intel.com,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        kai.svahn@intel.com, bp@alien8.de, josh@joshtriplett.org,
-        luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
-        cedric.xing@intel.com, puiterwijk@redhat.com,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH v29 12/20] x86/sgx: Add provisioning
-Date:   Wed, 22 Apr 2020 00:53:08 +0300
-Message-Id: <20200421215316.56503-13-jarkko.sakkinen@linux.intel.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200421215316.56503-1-jarkko.sakkinen@linux.intel.com>
-References: <20200421215316.56503-1-jarkko.sakkinen@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=a
+        Wed, 22 Apr 2020 08:03:13 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 03MC0gWa009079
+        for <linux-security-module@vger.kernel.org>; Wed, 22 Apr 2020 08:03:12 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 30ghmdc8de-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Wed, 22 Apr 2020 08:03:12 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Wed, 22 Apr 2020 13:02:30 +0100
+Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 22 Apr 2020 13:02:27 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 03MC32sU56033566
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 22 Apr 2020 12:03:02 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7758A11C054;
+        Wed, 22 Apr 2020 12:03:02 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 79CA111C050;
+        Wed, 22 Apr 2020 12:03:01 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.220.15])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 22 Apr 2020 12:03:01 +0000 (GMT)
+Subject: Re: [PATCH 1/5] ima: Set file->f_mode instead of file->f_flags in
+ ima_calc_file_hash()
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, krzysztof.struczynski@huawei.com,
+        silviu.vlasceanu@huawei.com, stable@vger.kernel.org,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>
+Date:   Wed, 22 Apr 2020 08:03:01 -0400
+In-Reply-To: <20200325161116.7082-1-roberto.sassu@huawei.com>
+References: <20200325161116.7082-1-roberto.sassu@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 20042212-0008-0000-0000-0000037558B1
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20042212-0009-0000-0000-00004A9721D8
+Message-Id: <1587556981.5738.7.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
+ definitions=2020-04-22_03:2020-04-22,2020-04-22 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
+ phishscore=0 priorityscore=1501 spamscore=0 mlxlogscore=999 malwarescore=0
+ clxscore=1015 mlxscore=0 lowpriorityscore=0 adultscore=0 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2004220093
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-In order to provide a mechanism for devilering provisoning rights:
+[CC'ing Goldwyn Rodrigues]
 
-1. Add a new device file /dev/sgx/provision that works as a token for
-   allowing an enclave to have the provisioning privileges.
-2. Add a new ioctl called SGX_IOC_ENCLAVE_SET_ATTRIBUTE that accepts the
-   following data structure:
+Hi Roberto,
 
-   struct sgx_enclave_set_attribute {
-           __u64 addr;
-           __u64 attribute_fd;
-   };
+On Wed, 2020-03-25 at 17:11 +0100, Roberto Sassu wrote:
+> Commit a408e4a86b36 ("ima: open a new file instance if no read
+> permissions") tries to create a new file descriptor to calculate a file
+> digest if the file has not been opened with O_RDONLY flag. However, if a
+> new file descriptor cannot be obtained, it sets the FMODE_READ flag to
+> file->f_flags instead of file->f_mode.
+> 
+> This patch fixes this issue by replacing f_flags with f_mode as it was
+> before that commit.
+> 
+> Cc: stable@vger.kernel.org # 4.20.x
+> Fixes: a408e4a86b36 ("ima: open a new file instance if no read permissions")
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> ---
+>  security/integrity/ima/ima_crypto.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
+> index 423c84f95a14..8ab17aa867dd 100644
+> --- a/security/integrity/ima/ima_crypto.c
+> +++ b/security/integrity/ima/ima_crypto.c
+> @@ -436,7 +436,7 @@ int ima_calc_file_hash(struct file *file, struct ima_digest_data *hash)
+>  			 */
 
-A daemon could sit on top of /dev/sgx/provision and send a file
-descriptor of this file to a process that needs to be able to provision
-enclaves.
+Thanks, Roberto.  The comment above here and the rest of the code
+refers to flags.  Both should be updated as well to reflect using
+f_mode.
 
-The way this API is used is straight-forward. Lets assume that dev_fd is
-a handle to /dev/sgx/enclave and prov_fd is a handle to
-/dev/sgx/provision.  You would allow SGX_IOC_ENCLAVE_CREATE to
-initialize an enclave with the PROVISIONKEY attribute by
+>  			pr_info_ratelimited("Unable to reopen file for reading.\n");
+>  			f = file;
+> -			f->f_flags |= FMODE_READ;
+> +			f->f_mode |= FMODE_READ;
+>  			modified_flags = true;
 
-params.addr = <enclave address>;
-params.token_fd = prov_fd;
+The variable should be changed to "modified_mode".
 
-ioctl(dev_fd, SGX_IOC_ENCLAVE_SET_ATTRIBUTE, &params);
+thanks,
 
-Cc: linux-security-module@vger.kernel.org
-Suggested-by: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
- arch/x86/include/uapi/asm/sgx.h  | 11 ++++++++
- arch/x86/kernel/cpu/sgx/driver.c | 14 ++++++++++
- arch/x86/kernel/cpu/sgx/driver.h |  2 ++
- arch/x86/kernel/cpu/sgx/ioctl.c  | 47 ++++++++++++++++++++++++++++++++
- 4 files changed, 74 insertions(+)
+Mimi
 
-diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
-index 5edb08ab8fd0..57d0d30c79b3 100644
---- a/arch/x86/include/uapi/asm/sgx.h
-+++ b/arch/x86/include/uapi/asm/sgx.h
-@@ -25,6 +25,8 @@ enum sgx_page_flags {
- 	_IOWR(SGX_MAGIC, 0x01, struct sgx_enclave_add_pages)
- #define SGX_IOC_ENCLAVE_INIT \
- 	_IOW(SGX_MAGIC, 0x02, struct sgx_enclave_init)
-+#define SGX_IOC_ENCLAVE_SET_ATTRIBUTE \
-+	_IOW(SGX_MAGIC, 0x03, struct sgx_enclave_set_attribute)
- 
- /**
-  * struct sgx_enclave_create - parameter structure for the
-@@ -63,4 +65,13 @@ struct sgx_enclave_init {
- 	__u64 sigstruct;
- };
- 
-+/**
-+ * struct sgx_enclave_set_attribute - parameter structure for the
-+ *				      %SGX_IOC_ENCLAVE_SET_ATTRIBUTE ioctl
-+ * @attribute_fd:	file handle of the attribute file in the securityfs
-+ */
-+struct sgx_enclave_set_attribute {
-+	__u64 attribute_fd;
-+};
-+
- #endif /* _UAPI_ASM_X86_SGX_H */
-diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/driver.c
-index b4aa7b9f8376..d90114cec1c3 100644
---- a/arch/x86/kernel/cpu/sgx/driver.c
-+++ b/arch/x86/kernel/cpu/sgx/driver.c
-@@ -150,6 +150,13 @@ static struct miscdevice sgx_dev_enclave = {
- 	.fops = &sgx_encl_fops,
- };
- 
-+static struct miscdevice sgx_dev_provision = {
-+	.minor = MISC_DYNAMIC_MINOR,
-+	.name = "provision",
-+	.nodename = "sgx/provision",
-+	.fops = &sgx_provision_fops,
-+};
-+
- int __init sgx_drv_init(void)
- {
- 	unsigned int eax, ebx, ecx, edx;
-@@ -190,5 +197,12 @@ int __init sgx_drv_init(void)
- 		return ret;
- 	}
- 
-+	ret = misc_register(&sgx_dev_provision);
-+	if (ret) {
-+		pr_err("Creating /dev/sgx/provision failed with %d.\n", ret);
-+		misc_deregister(&sgx_dev_enclave);
-+		return ret;
-+	}
-+
- 	return 0;
- }
-diff --git a/arch/x86/kernel/cpu/sgx/driver.h b/arch/x86/kernel/cpu/sgx/driver.h
-index e4063923115b..72747d01c046 100644
---- a/arch/x86/kernel/cpu/sgx/driver.h
-+++ b/arch/x86/kernel/cpu/sgx/driver.h
-@@ -23,6 +23,8 @@ extern u64 sgx_attributes_reserved_mask;
- extern u64 sgx_xfrm_reserved_mask;
- extern u32 sgx_xsave_size_tbl[64];
- 
-+extern const struct file_operations sgx_provision_fops;
-+
- long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg);
- 
- int sgx_drv_init(void);
-diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index 26d0425d7252..aea3e82a7ab9 100644
---- a/arch/x86/kernel/cpu/sgx/ioctl.c
-+++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -653,6 +653,50 @@ static long sgx_ioc_enclave_init(struct sgx_encl *encl, void __user *arg)
- 	return ret;
- }
- 
-+/**
-+ * sgx_ioc_enclave_set_attribute - handler for %SGX_IOC_ENCLAVE_SET_ATTRIBUTE
-+ * @filep:	open file to /dev/sgx
-+ * @arg:	userspace pointer to a struct sgx_enclave_set_attribute instance
-+ *
-+ * Mark the enclave as being allowed to access a restricted attribute bit.
-+ * The requested attribute is specified via the attribute_fd field in the
-+ * provided struct sgx_enclave_set_attribute.  The attribute_fd must be a
-+ * handle to an SGX attribute file, e.g. “/dev/sgx/provision".
-+ *
-+ * Failure to explicitly request access to a restricted attribute will cause
-+ * sgx_ioc_enclave_init() to fail.  Currently, the only restricted attribute
-+ * is access to the PROVISION_KEY.
-+ *
-+ * Note, access to the EINITTOKEN_KEY is disallowed entirely.
-+ *
-+ * Return: 0 on success, -errno otherwise
-+ */
-+static long sgx_ioc_enclave_set_attribute(struct sgx_encl *encl,
-+					  void __user *arg)
-+{
-+	struct sgx_enclave_set_attribute params;
-+	struct file *attribute_file;
-+	int ret;
-+
-+	if (copy_from_user(&params, arg, sizeof(params)))
-+		return -EFAULT;
-+
-+	attribute_file = fget(params.attribute_fd);
-+	if (!attribute_file)
-+		return -EINVAL;
-+
-+	if (attribute_file->f_op != &sgx_provision_fops) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
-+	encl->allowed_attributes |= SGX_ATTR_PROVISIONKEY;
-+	ret = 0;
-+
-+out:
-+	fput(attribute_file);
-+	return ret;
-+}
- 
- long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
- {
-@@ -676,6 +720,9 @@ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
- 	case SGX_IOC_ENCLAVE_INIT:
- 		ret = sgx_ioc_enclave_init(encl, (void __user *)arg);
- 		break;
-+	case SGX_IOC_ENCLAVE_SET_ATTRIBUTE:
-+		ret = sgx_ioc_enclave_set_attribute(encl, (void __user *)arg);
-+		break;
- 	default:
- 		ret = -ENOIOCTLCMD;
- 		break;
--- 
-2.25.1
+>  		} else {
+>  			new_file_instance = true;
+> @@ -456,7 +456,7 @@ int ima_calc_file_hash(struct file *file, struct ima_digest_data *hash)
+>  	if (new_file_instance)
+>  		fput(f);
+>  	else if (modified_flags)
+> -		f->f_flags &= ~FMODE_READ;
+> +		f->f_mode &= ~FMODE_READ;
+>  	return rc;
+>  }
+>  
 
