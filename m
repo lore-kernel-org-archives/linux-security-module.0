@@ -6,43 +6,56 @@ X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FD8CC55185
-	for <linux-security-module@archiver.kernel.org>; Wed, 22 Apr 2020 16:43:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0976AC54FCB
+	for <linux-security-module@archiver.kernel.org>; Wed, 22 Apr 2020 16:51:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 76BEE21582
-	for <linux-security-module@archiver.kernel.org>; Wed, 22 Apr 2020 16:43:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E93CF2098B
+	for <linux-security-module@archiver.kernel.org>; Wed, 22 Apr 2020 16:51:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726667AbgDVQnY (ORCPT
+        id S1726234AbgDVQvG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 22 Apr 2020 12:43:24 -0400
-Received: from namei.org ([65.99.196.166]:52006 "EHLO namei.org"
+        Wed, 22 Apr 2020 12:51:06 -0400
+Received: from namei.org ([65.99.196.166]:52046 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726423AbgDVQnY (ORCPT
+        id S1726006AbgDVQvG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 22 Apr 2020 12:43:24 -0400
+        Wed, 22 Apr 2020 12:51:06 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id 03MGgnwT012761;
-        Wed, 22 Apr 2020 16:42:49 GMT
-Date:   Thu, 23 Apr 2020 02:42:49 +1000 (AEST)
+        by namei.org (8.14.4/8.14.4) with ESMTP id 03MGo4UJ013061;
+        Wed, 22 Apr 2020 16:50:04 GMT
+Date:   Thu, 23 Apr 2020 02:50:04 +1000 (AEST)
 From:   James Morris <jmorris@namei.org>
-To:     deven.desai@linux.microsoft.com
-cc:     agk@redhat.com, axboe@kernel.dk, snitzer@redhat.com,
-        "Serge E. Hallyn" <serge@hallyn.com>, zohar@linux.ibm.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, dm-devel@redhat.com,
-        linux-block@vger.kernel.org, jannh@google.com,
-        tyhicks@linux.microsoft.com, pasha.tatashin@soleen.com,
-        sashal@kernel.org, jaskarankhurana@linux.microsoft.com,
-        nramas@linux.microsoft.com, mdsakib@linux.microsoft.com,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Chad Sellers <csellers@tresys.com>,
-        John Johansen <john.johansen@canonical.com>
-Subject: Re: [RFC PATCH v3 05/12] fs: add security blob and hooks for
- block_device
-In-Reply-To: <20200415162550.2324-6-deven.desai@linux.microsoft.com>
-Message-ID: <alpine.LRH.2.21.2004230234420.12318@namei.org>
-References: <20200415162550.2324-1-deven.desai@linux.microsoft.com> <20200415162550.2324-6-deven.desai@linux.microsoft.com>
+To:     Emanuele Giuseppe Esposito <eesposit@redhat.com>
+cc:     linux-fsdevel@vger.kernel.org,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Frederic Barrat <fbarrat@linux.ibm.com>,
+        Andrew Donnellan <ajd@linux.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Manoj N. Kumar" <manoj@linux.ibm.com>,
+        "Matthew R. Ochs" <mrochs@linux.ibm.com>,
+        Uma Krishnan <ukrishn@linux.ibm.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Joel Becker <jlbec@evilplan.org>,
+        Christoph Hellwig <hch@lst.de>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        John Johansen <john.johansen@canonical.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-scsi@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [PATCH v2 2/7] libfs: wrap simple_pin_fs/simple_release_fs
+ arguments in a struct
+In-Reply-To: <20200421135119.30007-3-eesposit@redhat.com>
+Message-ID: <alpine.LRH.2.21.2004230246380.12318@namei.org>
+References: <20200421135119.30007-1-eesposit@redhat.com> <20200421135119.30007-3-eesposit@redhat.com>
 User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -50,25 +63,19 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 15 Apr 2020, deven.desai@linux.microsoft.com wrote:
+On Tue, 21 Apr 2020, Emanuele Giuseppe Esposito wrote:
 
-> From: Deven Bowers <deven.desai@linux.microsoft.com>
+> Simplify passing the count and mount to simple_pin_fs and
+> simple_release_fs by wrapping them in the simple_fs struct,
+> in preparation for adding more high level operations to
+> fs/libfs.c
 > 
-> Add a security blob and associated allocation, deallocation and set hooks
-> for a block_device structure.
+> There is no functional change intended.
 > 
-> Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
-
-Is there any feedback from block or LSM folk on the addition of a security 
-blob for block_device here?
-
-IPE uses this is to track the status of integrity verification of e.g. 
-DM-Verity devices, per this code from a subsequent patch:
+> Signed-off-by: Emanuele Giuseppe Esposito <eesposit@redhat.com>
 
 
-+       ret = security_bdev_setsecurity(dm_table_get_md(v->ti->table)->bdev,
-+                                       DM_VERITY_SIGNATURE_SEC_NAME,
-+                                       v->sig->sig, v->sig->sig_size);
+Reviewed-by: James Morris <jamorris@linux.microsoft.com>
 
 
 -- 
