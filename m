@@ -2,134 +2,101 @@ Return-Path: <SRS0=ipMR=6G=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA7F3C55189
-	for <linux-security-module@archiver.kernel.org>; Wed, 22 Apr 2020 13:45:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E65A5C5518C
+	for <linux-security-module@archiver.kernel.org>; Wed, 22 Apr 2020 14:40:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9337F2073A
-	for <linux-security-module@archiver.kernel.org>; Wed, 22 Apr 2020 13:45:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C76C2206EC
+	for <linux-security-module@archiver.kernel.org>; Wed, 22 Apr 2020 14:40:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726880AbgDVNpL (ORCPT
+        id S1726689AbgDVOkV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 22 Apr 2020 09:45:11 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:61086 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725787AbgDVNpL (ORCPT
+        Wed, 22 Apr 2020 10:40:21 -0400
+Received: from mga03.intel.com ([134.134.136.65]:36875 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725934AbgDVOkU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 22 Apr 2020 09:45:11 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 03MDWrV8120806
-        for <linux-security-module@vger.kernel.org>; Wed, 22 Apr 2020 09:45:10 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 30ghmdfnjq-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Wed, 22 Apr 2020 09:45:09 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Wed, 22 Apr 2020 14:44:14 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 22 Apr 2020 14:44:11 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 03MDj4OJ52691146
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 22 Apr 2020 13:45:04 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 11BA9AE065;
-        Wed, 22 Apr 2020 13:45:04 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 30EBFAE059;
-        Wed, 22 Apr 2020 13:45:03 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.220.15])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 22 Apr 2020 13:45:03 +0000 (GMT)
-Subject: Re: [PATCH 2/5] evm: Check also if *tfm is an error pointer in
- init_desc()
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, krzysztof.struczynski@huawei.com,
-        silviu.vlasceanu@huawei.com, stable@vger.kernel.org
-Date:   Wed, 22 Apr 2020 09:45:02 -0400
-In-Reply-To: <20200325161116.7082-2-roberto.sassu@huawei.com>
-References: <20200325161116.7082-1-roberto.sassu@huawei.com>
-         <20200325161116.7082-2-roberto.sassu@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 20042213-0020-0000-0000-000003CC8FC6
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20042213-0021-0000-0000-000022258C03
-Message-Id: <1587563102.5738.32.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
- definitions=2020-04-22_06:2020-04-22,2020-04-22 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
- phishscore=0 priorityscore=1501 spamscore=0 mlxlogscore=999 malwarescore=0
- clxscore=1015 mlxscore=0 lowpriorityscore=0 adultscore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2004220104
+        Wed, 22 Apr 2020 10:40:20 -0400
+IronPort-SDR: g4NFjibuq66vAm0GAHaHXkOaUHtNF27qABskqw0Ham9rJr3KtG2mtzCaWbMapWZbxF9EHLHq36
+ /m4s7YAMNftQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Apr 2020 07:40:19 -0700
+IronPort-SDR: JpmZ4/Kcw9KoVue+I8NidG3gKgbDYuxJO1jKi1FnffcMtVIEHU5AlJDymKzh+JN9M9MnG7w5X9
+ i3WgX3W8P9Ow==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,414,1580803200"; 
+   d="scan'208";a="290854790"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga002.fm.intel.com with ESMTP; 22 Apr 2020 07:40:19 -0700
+Received: from [10.249.227.181] (abudanko-mobl.ccr.corp.intel.com [10.249.227.181])
+        by linux.intel.com (Postfix) with ESMTP id 8B4615805B4;
+        Wed, 22 Apr 2020 07:40:16 -0700 (PDT)
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Subject: [PATCH v2 0/4] perf: make Perf tool aware of SELinux access control
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>
+Cc:     Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>
+Organization: Intel Corp.
+Message-ID: <66f2975b-4a69-b428-7dc5-d9aa40b3c673@linux.intel.com>
+Date:   Wed, 22 Apr 2020 17:40:15 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Roberto, Krzysztof,
 
-On Wed, 2020-03-25 at 17:11 +0100, Roberto Sassu wrote:
-> The mutex in init_desc(), introduced by commit 97426f985729 ("evm: prevent
-> racing during tfm allocation") prevents two tasks to concurrently set *tfm.
-> However, checking if *tfm is NULL is not enough, as crypto_alloc_shash()
-> can return an error pointer. The following sequence can happen:
-> 
-> Task A: *tfm = crypto_alloc_shash() <= error pointer
-> Task B: if (*tfm == NULL) <= *tfm is not NULL, use it
-> Task B: rc = crypto_shash_init(desc) <= panic
-> Task A: *tfm = NULL
-> 
-> This patch uses the IS_ERR_OR_NULL macro to determine whether or not a new
-> crypto context must be created.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 97426f985729 ("evm: prevent racing during tfm allocation")
+Changes in v2:
+- implemented minor doc and code changes to substitute CAP_SYS_ADMIN
+  with CAP_PERFMON capability;
+- introduced Perf doc file with instructions on how to enable and use
+  perf_event LSM hooks for mandatory access control to perf_event_open()
+  syscall;
 
-Thank you.  True, this commit introduced the mutex, but the actual
-problem is most likely the result of a crypto algorithm not being
-configured.  Depending on the kernel and which crypto algorithms are
-enabled, verifying an EVM signature might not be possible.  In the
-embedded environment, where the entire filesystem is updated, there
-shouldn't be any unknown EVM signature algorithms.
+v1: https://lore.kernel.org/lkml/b8a0669e-36e4-a0e8-fd35-3dbd890d2170@linux.intel.com/
 
-In case Greg or Sasha decide this patch should be backported,
-including the context/motivation in the patch description (first
-paragraph) would be helpful.
+repo: git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git perf/core
+sha1: ee097e8ee56f8867cbbf45fe2a06f6b9e660c39c
 
-Mimi
 
-> Co-developed-by: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
-> Signed-off-by: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> ---
->  security/integrity/evm/evm_crypto.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
-> index 35682852ddea..77ad1e5a93e4 100644
-> --- a/security/integrity/evm/evm_crypto.c
-> +++ b/security/integrity/evm/evm_crypto.c
-> @@ -91,7 +91,7 @@ static struct shash_desc *init_desc(char type, uint8_t hash_algo)
->  		algo = hash_algo_name[hash_algo];
->  	}
->  
-> -	if (*tfm == NULL) {
-> +	if (IS_ERR_OR_NULL(*tfm)) {
->  		mutex_lock(&mutex);
->  		if (*tfm)
->  			goto out;
+Extend Perf tool with the check of /sys/fs/selinux/enforce value and notify 
+in case access to perf_event_open() syscall is restricted by the enforced 
+SELinux policy settings. See new added security.txt file for exact steps
+how the changes look like and how to test the patch set.
+
+---
+Alexey Budankov (4):
+  perf trace: substitute CAP_SYS_ADMIN with CAP_PERFMON in error message
+  perf docs: substitute CAP_SYS_ADMIN with CAP_PERFMON where needed
+  perf tool: make Perf tool aware of SELinux access control
+  perf docs: introduce security.txt file to document related issues
+
+ tools/perf/Documentation/perf-intel-pt.txt |   2 +-
+ tools/perf/Documentation/security.txt      | 236 +++++++++++++++++++++
+ tools/perf/builtin-ftrace.c                |   2 +-
+ tools/perf/design.txt                      |   3 +-
+ tools/perf/util/cloexec.c                  |   4 +-
+ tools/perf/util/evsel.c                    |  40 ++--
+ 6 files changed, 265 insertions(+), 22 deletions(-)
+ create mode 100644 tools/perf/Documentation/security.txt
+
+-- 
+2.24.1
 
