@@ -2,190 +2,106 @@ Return-Path: <SRS0=ipMR=6G=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B754C54FCB
-	for <linux-security-module@archiver.kernel.org>; Wed, 22 Apr 2020 19:20:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 048AFC55185
+	for <linux-security-module@archiver.kernel.org>; Wed, 22 Apr 2020 19:21:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E9E112098B
-	for <linux-security-module@archiver.kernel.org>; Wed, 22 Apr 2020 19:20:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CBB042098B
+	for <linux-security-module@archiver.kernel.org>; Wed, 22 Apr 2020 19:21:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="MssjbJEd"
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="o8msrCuY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725913AbgDVTUb (ORCPT
+        id S1726110AbgDVTVo (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 22 Apr 2020 15:20:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34490 "EHLO
+        Wed, 22 Apr 2020 15:21:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34700 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725935AbgDVTUa (ORCPT
+        by vger.kernel.org with ESMTP id S1725935AbgDVTVo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 22 Apr 2020 15:20:30 -0400
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29233C03C1AA
-        for <linux-security-module@vger.kernel.org>; Wed, 22 Apr 2020 12:20:30 -0700 (PDT)
-Received: by mail-ej1-x629.google.com with SMTP id a2so2770041ejx.5
-        for <linux-security-module@vger.kernel.org>; Wed, 22 Apr 2020 12:20:30 -0700 (PDT)
+        Wed, 22 Apr 2020 15:21:44 -0400
+Received: from mail-ed1-x542.google.com (mail-ed1-x542.google.com [IPv6:2a00:1450:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B213CC03C1AA
+        for <linux-security-module@vger.kernel.org>; Wed, 22 Apr 2020 12:21:43 -0700 (PDT)
+Received: by mail-ed1-x542.google.com with SMTP id t12so2428272edw.3
+        for <linux-security-module@vger.kernel.org>; Wed, 22 Apr 2020 12:21:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=twK/pM53hWni1zkJhDuLdxMZbWVOtirSTf5uF8NF2g4=;
-        b=MssjbJEdWqbvQrjyN0E1xaB9FWQcK8k8mB10RDnOqeegIPNuXbwGW5eJc3Ia5iqydX
-         JqRGmbT89WnNysLZIq3jg2p1Xq/KH3ZXkliinoF3M5sdSZ46TVb+tdjLs9fXHzxeWmMj
-         /987jeIQ1ds9J+yAk3oqXKGDJME4SuL0Z+YYkreViSI+1ta5e1BcAHtAEhxLgjQeEwoS
-         Jsb6/g4/2+tJRiFv2OspI7KxAAIm2sRqMjVVhB/S4xAZuq1Ig/bF8f4/kVBDf9HK31r7
-         /3mKxoK4So6wExa33udhd+gYuHsdxazfq/QMOwlXGfmmR0Vyg7PFHHjQx3Inkl/HNmXq
-         WcOw==
+        bh=YxCJuKeYutDLDPXAPSEMJzIV43DxzgPvToiuGHFZFLc=;
+        b=o8msrCuYl9yzwxwdinHp/5zJ/iluTXdc1PKyO8gPAZru5AYRPBYpTv4YM7zOXc3nZ2
+         FGujQQrnudYueNgJjGfkvcAh+9/zKbk6PPZq6bKDzW6/flpD97bfMTX1npa9m0v9spXg
+         chVFpy1nyofJYumkysSQudI+cOAaRtj7pqe6tohr6PYBQvlIvsVKL0tQD9PjhghVSJiH
+         zN9nuJGnSUuENXK2lVmroUT265WhUirrk/aBSjMAScCtF3fleu1UAPyUaP4gx31qOlCk
+         QNC6+SqqfYISxB040FO1lDWibFTqu2SxfQZQxx/Mqavaf1xszxYhNDBN3QoHxy7651nB
+         FG8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=twK/pM53hWni1zkJhDuLdxMZbWVOtirSTf5uF8NF2g4=;
-        b=PWHb0/d7RUpSR/RjF08NAK7tCQl/7KPUIWL9X/qjo09NHixUeM+zBbZZzaDYercJLs
-         gByCu8rdn/otHIKnEmKcSM4pKVR04VF1Tc0gnmrFZl7ffcaEba5bu0JZHGRSstQqPLb8
-         yRsdgga5D1ecGH1CIA9bQv8/O2/7a9R5T7UCAsEpQ7MqJCyVmffodcwrIOElYq8txpt9
-         760U6k8lfH9aP+IP1wo84TkXLHdpDso6rGD6EIXBoTbxIRsGsqTd5EpSOWWR8JxN2k6d
-         oSa1mAqsF7WlFpPa0PzExN+U6khTrMnrfZ8YvKPHAKBJJXAzhynGUBWVtNPVrgFJirV4
-         6NgQ==
-X-Gm-Message-State: AGi0PubXxJzANXMYuaFwow1IgqAsPfFyiWibjhe87Ian/jG7DA2Xelnt
-        91R8UogRGbqRgCfbWjPfrpHPDRon1mPPZP6UidLF
-X-Google-Smtp-Source: APiQypKiaQ6F00e9os/HeZtUEFH/74Jfz/UUWJcwNwyRBxA5YRaGphR2F7C3rJE5krTu2AhrdYiOdbQpbvwiwctcSVE=
-X-Received: by 2002:a17:906:f288:: with SMTP id gu8mr28196272ejb.281.1587583228532;
- Wed, 22 Apr 2020 12:20:28 -0700 (PDT)
+        bh=YxCJuKeYutDLDPXAPSEMJzIV43DxzgPvToiuGHFZFLc=;
+        b=TxAAHhTxD+1yVoGvo+sCvIa0X6qsE5UI4ulasfX6YGsEGaLXRkYlQqUyzyLL59hrkx
+         /PNhQruWAEsr5Qr7A6MeO/8FAd8I4nLqnK/uxlV3IN8w2Ai9oy575ZAuHfIMkZYJivzZ
+         9IYxJUa0alJ9lTGd247kyeLguK96wP6tJ/Y07aSKOfGH7WSXQ1WMdQGJGPwabomOFG28
+         PrraAw4QFu2bL5+2vonUUlNybVw4Bh7EOBH9I3Q2i2KFoEFrKZZt6yLoXg+fLq0g9nfY
+         URBCA4lLQv4pu4O+b2OJfNrPFNtyA69up6PVI2vVBDqrNVx2NM6fio//yBGs7jhzgzhi
+         uGTQ==
+X-Gm-Message-State: AGi0PuaFIivapPnx6uNw0f6tjfZvJ2ZjUMch7XC+xPp/9YMnOj2NcJ6h
+        u2WS9O/3MggoLcV8QW0rzm3bATT8BUfcRbvkwISy
+X-Google-Smtp-Source: APiQypIvh77fUhTJY8QW3thwdXTgaIIw2VU2oQABHxAtS41WIPnpdUCvR4mja7yxyHkw8pkxV5zKKFWsvAua+tkBpBM=
+X-Received: by 2002:a50:d98b:: with SMTP id w11mr129015edj.196.1587583302343;
+ Wed, 22 Apr 2020 12:21:42 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAHC9VhT95GJKNTMvTtmZL35UOoVwbGH-eDWZyELb5oZ5rQU+Tw@mail.gmail.com>
- <2136640.1587472186@warthog.procyon.org.uk>
-In-Reply-To: <2136640.1587472186@warthog.procyon.org.uk>
+References: <20200422190753.2077110-1-carnil@debian.org> <20200422191301.GA2361@lorien.valinor.li>
+In-Reply-To: <20200422191301.GA2361@lorien.valinor.li>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 22 Apr 2020 15:20:17 -0400
-Message-ID: <CAHC9VhQnORRaRapbb1wrUsxweJCRJ+X+RdvKw8_U0pT0fuxZ6A@mail.gmail.com>
-Subject: Re: Problem with 9ba09998baa9 ("selinux: Implement the watch_key
- security hook") in linux-next
-To:     David Howells <dhowells@redhat.com>
-Cc:     keyrings@vger.kernel.org, selinux@vger.kernel.org,
-        linux-security-module@vger.kernel.org
+Date:   Wed, 22 Apr 2020 15:21:31 -0400
+Message-ID: <CAHC9VhSxMA3cjdjUt+wYFLnct835KedTL9JSRCgQsecqGs+wDQ@mail.gmail.com>
+Subject: Re: [PATCH] netlabel: Kconfig: Update reference for NetLabel Tools project
+To:     Salvatore Bonaccorso <carnil@debian.org>
+Cc:     netdev@vger.kernel.org, linux-security-module@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Apr 21, 2020 at 8:29 AM David Howells <dhowells@redhat.com> wrote:
-> Paul Moore <paul@paul-moore.com> wrote:
+On Wed, Apr 22, 2020 at 3:13 PM Salvatore Bonaccorso <carnil@debian.org> wrote:
+> On Wed, Apr 22, 2020 at 09:07:53PM +0200, Salvatore Bonaccorso wrote:
+> > The NetLabel Tools project has moved from http://netlabel.sf.net to a
+> > GitHub. Update to directly refer to the new home for the tools.
 >
-> > ... in particular it is the fifth argument to avc_has_perm(),
-> > "KEY_NEED_VIEW" which is a problem.  KEY_NEED_VIEW is not a SELinux
-> > permission and would likely result in odd behavior when passed to
-> > avc_has_perm().
+> Oh, well s/GitHub/GitHub project/.
 >
-> I think it works because KEY_NEED_VIEW happens to coincide with KEY__VIEW.  It
-> should just use KEY__VIEW instead.
+> >
+> > Signed-off-by: Salvatore Bonaccorso <carnil@debian.org>
+> > ---
+> >  net/netlabel/Kconfig | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Yes, it looks like it.  To be clear, it is dangerous to rely on
-permission values from outside SELinux aligning with SELinux
-permissions; changing the outside permission values w/o adjusting the
-SELinux hook code to do the necessary translation will result in some
-scary behavior (wrong permission checks).
+Thanks Salvatore.
 
-> > it probably makes the most sense to pull the permission mapping in
-> > selinux_key_permission() out into a separate function, e.g.
-> > key_perm_to_av(...)
->
-> Agreed.  How about the attached patch?  I wonder if I should do bit-by-bit
-> translation rather than using a switch?  But then it's difficult to decide
-> what it means if someone passes in two KEY_NEED_* flags OR'd together - is it
-> either or both?
+Acked-by: Paul Moore <paul@paul-moore.com>
 
-Comments inline.
-
-> > and then use this newly created mapping function in [...]
-> > selinux_watch_key()
->
-> No, I think I should just hard-code KEY__VIEW there.
-
-FWIW, my comment was based on a version of linux-next where you were
-making policycap based permission adjustments to KEY_VIEW and I
-thought you would want the same adjustments to be applied to both
-access control points.  That code appears to now be gone in
-linux-next.
-
-> ---
-> commit 70d1d82aa014ae4511976b4d80c17138006dddec
-> Author: David Howells <dhowells@redhat.com>
-> Date:   Tue Apr 21 13:15:16 2020 +0100
->
->     selinux: Fix use of KEY_NEED_* instead of KEY__* perms
->
->     selinux_key_getsecurity() is passing the KEY_NEED_* permissions to
->     security_sid_to_context() instead of the KEY__* values.  It happens to work
->     because the values are all coincident.
->
->     Fixes: d720024e94de ("[PATCH] selinux: add hooks for key subsystem")
->     Reported-by: Paul Moore <paul@paul-moore.com>
->     Signed-off-by: David Howells <dhowells@redhat.com>
->
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index 0b4e32161b77..32f7fa538c5f 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -6539,12 +6539,27 @@ static void selinux_key_free(struct key *k)
->         kfree(ksec);
->  }
->
-> +static unsigned int selinux_keyperm_to_av(unsigned int need_perm)
-> +{
-> +       switch (need_perm) {
-> +       case KEY_NEED_VIEW:     return KEY__VIEW;
-> +       case KEY_NEED_READ:     return KEY__READ;
-> +       case KEY_NEED_WRITE:    return KEY__WRITE;
-> +       case KEY_NEED_SEARCH:   return KEY__SEARCH;
-> +       case KEY_NEED_LINK:     return KEY__LINK;
-> +       case KEY_NEED_SETATTR:  return KEY__SETATTR;
-> +       default:
-> +               return 0;
-> +       }
-
-Regarding your question of permission translation via switch-statement
-as opposed to bit-by-bit comparison, I think it depends on if multiple
-permissions are going to be required in a single call to the hook.
-The failure mode for the code above if multiple permissions are
-requested is not very good, it defaults to *no* permission which means
-that if someone requested KEY_NEED_SEARCH|KEY_NEED_VIEW (or some other
-combination) then the SELinux check would not check any permissions
-... that seems wrong to me.
-
-If we want to stick with a switch statement I think we should have it
-return -EPERM for the default case to protect against this.  We don't
-need the full 32-bits afforded us by the unsigned int.
-
-> +}
-> +
->  static int selinux_key_permission(key_ref_t key_ref,
->                                   const struct cred *cred,
-> -                                 unsigned perm)
-> +                                 unsigned need_perm)
->  {
->         struct key *key;
->         struct key_security_struct *ksec;
-> +       unsigned int perm;
->         u32 sid;
->
->         /* if no specific permissions are requested, we skip the
-> @@ -6553,6 +6568,7 @@ static int selinux_key_permission(key_ref_t key_ref,
->         if (perm == 0)
->                 return 0;
->
-> +       perm = selinux_keyperm_to_av(need_perm);
-
-... and add a check for (perm < 0) as discussed above if we stick with
-the switch statement.
-
->         sid = cred_sid(cred);
->
->         key = key_ref_to_ptr(key_ref);
->
+> > diff --git a/net/netlabel/Kconfig b/net/netlabel/Kconfig
+> > index 64280a1d3906..07b03c306f28 100644
+> > --- a/net/netlabel/Kconfig
+> > +++ b/net/netlabel/Kconfig
+> > @@ -14,6 +14,6 @@ config NETLABEL
+> >         Documentation/netlabel as well as the NetLabel SourceForge project
+> >         for configuration tools and additional documentation.
+> >
+> > -        * http://netlabel.sf.net
+> > +        * https://github.com/netlabel/netlabel_tools
+> >
+> >         If you are unsure, say N.
+> > --
+> > 2.26.2
 
 -- 
 paul moore
