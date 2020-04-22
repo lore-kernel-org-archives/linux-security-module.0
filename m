@@ -2,190 +2,125 @@ Return-Path: <SRS0=ipMR=6G=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74280C54FCB
-	for <linux-security-module@archiver.kernel.org>; Wed, 22 Apr 2020 21:10:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1B14C54FCB
+	for <linux-security-module@archiver.kernel.org>; Wed, 22 Apr 2020 22:59:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 50D2920781
-	for <linux-security-module@archiver.kernel.org>; Wed, 22 Apr 2020 21:10:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="RhchmTYd"
+	by mail.kernel.org (Postfix) with ESMTP id D8F5A2076E
+	for <linux-security-module@archiver.kernel.org>; Wed, 22 Apr 2020 22:59:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725779AbgDVVJ6 (ORCPT
+        id S1726030AbgDVW7y (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 22 Apr 2020 17:09:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51514 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726189AbgDVVJ6 (ORCPT
+        Wed, 22 Apr 2020 18:59:54 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:18594 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726054AbgDVW7w (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 22 Apr 2020 17:09:58 -0400
-Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6167C03C1AA
-        for <linux-security-module@vger.kernel.org>; Wed, 22 Apr 2020 14:09:57 -0700 (PDT)
-Received: by mail-ej1-x644.google.com with SMTP id s9so3018667eju.1
-        for <linux-security-module@vger.kernel.org>; Wed, 22 Apr 2020 14:09:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pEu2Bt1tsa6w0b7bq42ZOpMGSP2pzXGTr384DFiouoM=;
-        b=RhchmTYderK89B8YaVxC6QZzgFQD0OdJxHIGY5s3t4Er/WHlva1prWp4hX5JrtRHvM
-         2NxXRoD+9mav8cGC8ukdiks1SaYf0A/ss5QTQhkP9hUuH+mmmEutrwIuqJxRH+pXkPjN
-         n1BjAiVUcgCj+geYoNoBRWrQVttO2HTQ22lEZHszQbF9QuIOVCRcHxZZPi5qY2pLc7SK
-         62hnVOPIB5q7Jcn2UCktFtXKBSH4wHsmZpRMf/S1MkLZtxabF/Y8DY5HCPbgDhdNQ3Xj
-         v47jQsTrULbT2NYHPloW3aYB/JTSCo+O3NmCNqCCfrKED4zz5iN5DZr28w9tvtH1wHSz
-         opJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pEu2Bt1tsa6w0b7bq42ZOpMGSP2pzXGTr384DFiouoM=;
-        b=NtXYLHalPYwuPXYd5lPQj6xLH7ewV3IqF4OoJDRpZRdd7wd87ILijuvnP/+m+/t3ye
-         nspmUVx0wMVXKaJQcQYLDFmDS1esj/CiXJqmV29OsJTkQsXJBcuMZo3LFb3dzNuwYiBA
-         PyAcJ+ghjC4k2zkcQqKTtBPiTSEsuucdVRvQLGMviz1gAis+4oVfI6js85LBnFDXTz4q
-         CKCgu+w8fhje9RpOIYFH8yJFwq6Nc1haR1pTVSnsnAhqhyifkmkQINaBnlFc1gHuNZdY
-         gMiPfpPdRhLXJwCheeLTSmrfiUDmccLe3GNl53cZhYKlf2Qfee+b/n3gtAbvVdSqwPlP
-         PjiQ==
-X-Gm-Message-State: AGi0PubW/fXD7ChzvybTrW8QecxQh227E79PVP2naEJwLEjePQHyEmZg
-        B0RhRrwLZXif5qdaBYdcqY/QeXlEqv6+tgIdWu0d
-X-Google-Smtp-Source: APiQypLuMzn2Fcqvcv0F9XZkyuE+HFnD0yt3nmXqCfaozI4yfrCyuwTgkMfpvw5csg/HENiRR4/7BCtEFAcaRQnkdQg=
-X-Received: by 2002:a17:906:4cd2:: with SMTP id q18mr269491ejt.70.1587589796101;
- Wed, 22 Apr 2020 14:09:56 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAHC9VhT95GJKNTMvTtmZL35UOoVwbGH-eDWZyELb5oZ5rQU+Tw@mail.gmail.com>
- <2136640.1587472186@warthog.procyon.org.uk> <CAHC9VhQnORRaRapbb1wrUsxweJCRJ+X+RdvKw8_U0pT0fuxZ6A@mail.gmail.com>
-In-Reply-To: <CAHC9VhQnORRaRapbb1wrUsxweJCRJ+X+RdvKw8_U0pT0fuxZ6A@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 22 Apr 2020 17:09:45 -0400
-Message-ID: <CAHC9VhSUApfdxpFHbZLGqM1g=5XSZBYzxCCTDhhss_FidahbWw@mail.gmail.com>
-Subject: Re: Problem with 9ba09998baa9 ("selinux: Implement the watch_key
- security hook") in linux-next
-To:     David Howells <dhowells@redhat.com>
-Cc:     keyrings@vger.kernel.org, selinux@vger.kernel.org,
-        linux-security-module@vger.kernel.org
+        Wed, 22 Apr 2020 18:59:52 -0400
+Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 03MMWg2d165928
+        for <linux-security-module@vger.kernel.org>; Wed, 22 Apr 2020 18:59:52 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 30jrxm2h44-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Wed, 22 Apr 2020 18:59:52 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Wed, 22 Apr 2020 23:59:25 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 22 Apr 2020 23:59:22 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 03MMxjv156557718
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 22 Apr 2020 22:59:45 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 97B474C040;
+        Wed, 22 Apr 2020 22:59:45 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B00984C044;
+        Wed, 22 Apr 2020 22:59:44 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.162.195])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 22 Apr 2020 22:59:44 +0000 (GMT)
+Subject: Re: [PATCH 5/5] ima: Remove unused build_ima_appraise variable
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, krzysztof.struczynski@huawei.com,
+        silviu.vlasceanu@huawei.com
+Date:   Wed, 22 Apr 2020 18:59:44 -0400
+In-Reply-To: <20200325161455.7610-2-roberto.sassu@huawei.com>
+References: <20200325161116.7082-1-roberto.sassu@huawei.com>
+         <20200325161455.7610-1-roberto.sassu@huawei.com>
+         <20200325161455.7610-2-roberto.sassu@huawei.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 20042222-0012-0000-0000-000003A97B84
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20042222-0013-0000-0000-000021E6CDBA
+Message-Id: <1587596384.5165.31.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
+ definitions=2020-04-22_08:2020-04-22,2020-04-22 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 adultscore=0
+ spamscore=0 clxscore=1015 suspectscore=0 priorityscore=1501 phishscore=0
+ lowpriorityscore=0 mlxlogscore=999 mlxscore=0 malwarescore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2004220170
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Apr 22, 2020 at 3:20 PM Paul Moore <paul@paul-moore.com> wrote:
->
-> On Tue, Apr 21, 2020 at 8:29 AM David Howells <dhowells@redhat.com> wrote:
-> > Paul Moore <paul@paul-moore.com> wrote:
-> >
-> > > ... in particular it is the fifth argument to avc_has_perm(),
-> > > "KEY_NEED_VIEW" which is a problem.  KEY_NEED_VIEW is not a SELinux
-> > > permission and would likely result in odd behavior when passed to
-> > > avc_has_perm().
-> >
-> > I think it works because KEY_NEED_VIEW happens to coincide with KEY__VIEW.  It
-> > should just use KEY__VIEW instead.
->
-> Yes, it looks like it.  To be clear, it is dangerous to rely on
-> permission values from outside SELinux aligning with SELinux
-> permissions; changing the outside permission values w/o adjusting the
-> SELinux hook code to do the necessary translation will result in some
-> scary behavior (wrong permission checks).
->
-> > > it probably makes the most sense to pull the permission mapping in
-> > > selinux_key_permission() out into a separate function, e.g.
-> > > key_perm_to_av(...)
-> >
-> > Agreed.  How about the attached patch?  I wonder if I should do bit-by-bit
-> > translation rather than using a switch?  But then it's difficult to decide
-> > what it means if someone passes in two KEY_NEED_* flags OR'd together - is it
-> > either or both?
->
-> Comments inline.
->
-> > > and then use this newly created mapping function in [...]
-> > > selinux_watch_key()
-> >
-> > No, I think I should just hard-code KEY__VIEW there.
->
-> FWIW, my comment was based on a version of linux-next where you were
-> making policycap based permission adjustments to KEY_VIEW and I
-> thought you would want the same adjustments to be applied to both
-> access control points.  That code appears to now be gone in
-> linux-next.
->
-> > ---
-> > commit 70d1d82aa014ae4511976b4d80c17138006dddec
-> > Author: David Howells <dhowells@redhat.com>
-> > Date:   Tue Apr 21 13:15:16 2020 +0100
-> >
-> >     selinux: Fix use of KEY_NEED_* instead of KEY__* perms
-> >
-> >     selinux_key_getsecurity() is passing the KEY_NEED_* permissions to
-> >     security_sid_to_context() instead of the KEY__* values.  It happens to work
-> >     because the values are all coincident.
-> >
-> >     Fixes: d720024e94de ("[PATCH] selinux: add hooks for key subsystem")
-> >     Reported-by: Paul Moore <paul@paul-moore.com>
-> >     Signed-off-by: David Howells <dhowells@redhat.com>
-> >
-> > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> > index 0b4e32161b77..32f7fa538c5f 100644
-> > --- a/security/selinux/hooks.c
-> > +++ b/security/selinux/hooks.c
-> > @@ -6539,12 +6539,27 @@ static void selinux_key_free(struct key *k)
-> >         kfree(ksec);
-> >  }
-> >
-> > +static unsigned int selinux_keyperm_to_av(unsigned int need_perm)
-> > +{
-> > +       switch (need_perm) {
-> > +       case KEY_NEED_VIEW:     return KEY__VIEW;
-> > +       case KEY_NEED_READ:     return KEY__READ;
-> > +       case KEY_NEED_WRITE:    return KEY__WRITE;
-> > +       case KEY_NEED_SEARCH:   return KEY__SEARCH;
-> > +       case KEY_NEED_LINK:     return KEY__LINK;
-> > +       case KEY_NEED_SETATTR:  return KEY__SETATTR;
-> > +       default:
-> > +               return 0;
-> > +       }
->
-> Regarding your question of permission translation via switch-statement
-> as opposed to bit-by-bit comparison, I think it depends on if multiple
-> permissions are going to be required in a single call to the hook.
-> The failure mode for the code above if multiple permissions are
-> requested is not very good, it defaults to *no* permission which means
-> that if someone requested KEY_NEED_SEARCH|KEY_NEED_VIEW (or some other
-> combination) then the SELinux check would not check any permissions
-> ... that seems wrong to me.
->
-> If we want to stick with a switch statement I think we should have it
-> return -EPERM for the default case to protect against this.  We don't
-> need the full 32-bits afforded us by the unsigned int.
->
-> > +}
-> > +
-> >  static int selinux_key_permission(key_ref_t key_ref,
-> >                                   const struct cred *cred,
-> > -                                 unsigned perm)
-> > +                                 unsigned need_perm)
-> >  {
-> >         struct key *key;
-> >         struct key_security_struct *ksec;
-> > +       unsigned int perm;
-> >         u32 sid;
-> >
-> >         /* if no specific permissions are requested, we skip the
-> > @@ -6553,6 +6568,7 @@ static int selinux_key_permission(key_ref_t key_ref,
-> >         if (perm == 0)
-> >                 return 0;
-> >
-> > +       perm = selinux_keyperm_to_av(need_perm);
->
-> ... and add a check for (perm < 0) as discussed above if we stick with
-> the switch statement.
+Hi Roberto, Krzysztof,
 
-... and we should probably emit some sort of message to indicate that
-an invalid permission set was used.
+On Wed, 2020-03-25 at 17:14 +0100, Roberto Sassu wrote:
+> From: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
+> 
+> After adding the new add_rule() function in commit c52657d93b05
+> ("ima: refactor ima_init_policy()"), all appraisal flags are added to the
+> temp_ima_appraise variable. Remove build_ima_appraise that is not set
+> anymore.
+> 
+> Signed-off-by: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
+> ---
+>  security/integrity/ima/ima_policy.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+> index ea9b991f0232..fcc26bddd7fc 100644
+> --- a/security/integrity/ima/ima_policy.c
+> +++ b/security/integrity/ima/ima_policy.c
+> @@ -48,7 +48,6 @@
+>  
+>  int ima_policy_flag;
+>  static int temp_ima_appraise;
+> -static int build_ima_appraise __ro_after_init;
+>  
+>  #define MAX_LSM_RULES 6
+>  enum lsm_rule_types { LSM_OBJ_USER, LSM_OBJ_ROLE, LSM_OBJ_TYPE,
+> @@ -606,7 +605,7 @@ void ima_update_policy_flag(void)
+>  			ima_policy_flag |= entry->action;
+>  	}
+>  
+> -	ima_appraise |= (build_ima_appraise | temp_ima_appraise);
+> +	ima_appraise |= temp_ima_appraise;
 
--- 
-paul moore
-www.paul-moore.com
+You're correct that build_ima_appraise isn't being used any longer,
+but ima_appraise isn't defined as __ro_after_init.  Instead of
+removing build_ima_appraise, does it make sense to set it?
+
+Mimi
+
+>  	if (!ima_appraise)
+>  		ima_policy_flag &= ~IMA_APPRAISE;
+>  }
+
