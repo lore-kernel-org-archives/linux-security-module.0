@@ -2,144 +2,192 @@ Return-Path: <SRS0=t1H7=6H=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6D7FC55191
-	for <linux-security-module@archiver.kernel.org>; Thu, 23 Apr 2020 19:10:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D242EC54FCB
+	for <linux-security-module@archiver.kernel.org>; Thu, 23 Apr 2020 20:02:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A1E6D20767
-	for <linux-security-module@archiver.kernel.org>; Thu, 23 Apr 2020 19:10:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B6A9520776
+	for <linux-security-module@archiver.kernel.org>; Thu, 23 Apr 2020 20:02:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727812AbgDWTKj (ORCPT
+        id S1726381AbgDWUCT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 23 Apr 2020 15:10:39 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:2866 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726366AbgDWTKi (ORCPT
+        Thu, 23 Apr 2020 16:02:19 -0400
+Received: from raptor.unsafe.ru ([5.9.43.93]:47380 "EHLO raptor.unsafe.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726380AbgDWUCS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 23 Apr 2020 15:10:38 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 03NJ3QjZ002428
-        for <linux-security-module@vger.kernel.org>; Thu, 23 Apr 2020 15:10:38 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 30k09wy3ej-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Thu, 23 Apr 2020 15:10:37 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Thu, 23 Apr 2020 20:09:48 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 23 Apr 2020 20:09:46 +0100
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 03NJAWch58720378
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 23 Apr 2020 19:10:32 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5EC5F11C0A7;
-        Thu, 23 Apr 2020 19:10:32 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 47E0E11C09F;
-        Thu, 23 Apr 2020 19:10:31 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.178.107])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 23 Apr 2020 19:10:31 +0000 (GMT)
-Subject: Re: [PATCH] ima: Fix return value of ima_write_policy()
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Date:   Thu, 23 Apr 2020 15:10:30 -0400
-In-Reply-To: <baf2fd326f5043538390254304b85e41@huawei.com>
-References: <20200421090442.22693-1-roberto.sassu@huawei.com>
-         <1587609266.5165.58.camel@linux.ibm.com>
-         <baf2fd326f5043538390254304b85e41@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 20042319-4275-0000-0000-000003C5753F
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20042319-4276-0000-0000-000038DB00E0
-Message-Id: <1587669030.5610.43.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
- definitions=2020-04-23_13:2020-04-23,2020-04-23 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- suspectscore=0 phishscore=0 clxscore=1015 adultscore=0 mlxlogscore=999
- bulkscore=0 impostorscore=0 spamscore=0 mlxscore=0 priorityscore=1501
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2004230145
+        Thu, 23 Apr 2020 16:02:18 -0400
+Received: from comp-core-i7-2640m-0182e6 (ip-89-102-33-211.net.upcbroadband.cz [89.102.33.211])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by raptor.unsafe.ru (Postfix) with ESMTPSA id 3A8DC20459;
+        Thu, 23 Apr 2020 20:01:42 +0000 (UTC)
+Date:   Thu, 23 Apr 2020 22:01:36 +0200
+From:   Alexey Gladkov <gladkov.alexey@gmail.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Security Module <linux-security-module@vger.kernel.org>,
+        Akinobu Mita <akinobu.mita@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Daniel Micay <danielmicay@gmail.com>,
+        Djalal Harouni <tixxdz@gmail.com>,
+        "Dmitry V . Levin" <ldv@altlinux.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@poochiereds.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        David Howells <dhowells@redhat.com>
+Subject: Re: [PATCH v13 2/7] proc: allow to mount many instances of proc in
+ one pid namespace
+Message-ID: <20200423200136.zrjzv6d6zghnvvrx@comp-core-i7-2640m-0182e6>
+References: <20200419141057.621356-3-gladkov.alexey@gmail.com>
+ <20200423112858.95820-1-gladkov.alexey@gmail.com>
+ <87lfmmz9bs.fsf@x220.int.ebiederm.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87lfmmz9bs.fsf@x220.int.ebiederm.org>
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.1 (raptor.unsafe.ru [5.9.43.93]); Thu, 23 Apr 2020 20:02:13 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 2020-04-23 at 09:39 +0000, Roberto Sassu wrote:
-> > On Tue, 2020-04-21 at 11:04 +0200, Roberto Sassu wrote:
-> > > Return datalen instead of zero if there is a rule to appraise the policy
-> > > but that rule is not enforced.
-> > >
-> > > Cc: stable@vger.kernel.org
-> > > Fixes: 19f8a84713edc ("ima: measure and appraise the IMA policy itself")
-> > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > > ---
-> > >  security/integrity/ima/ima_fs.c | 2 ++
-> > >  1 file changed, 2 insertions(+)
-> > >
-> > > diff --git a/security/integrity/ima/ima_fs.c
-> > b/security/integrity/ima/ima_fs.c
-> > > index a71e822a6e92..2c2ea814b954 100644
-> > > --- a/security/integrity/ima/ima_fs.c
-> > > +++ b/security/integrity/ima/ima_fs.c
-> > > @@ -340,6 +340,8 @@ static ssize_t ima_write_policy(struct file *file,
-> > const char __user *buf,
-> > >  				    1, 0);
-> > >  		if (ima_appraise & IMA_APPRAISE_ENFORCE)
-> > >  			result = -EACCES;
-> > > +		else
-> > > +			result = datalen;
-> > 
-> > In all other cases, where the IMA_APPRAISE_ENFORCE is not enabled we
-> > allow the action.  Here we prevent loading the policy, but don't
-> > return an error.  One option, as you did, is return some indication
-> > that the policy was not loaded.  Another option would be to allow
-> > loading the policy in LOG or FIX mode, but I don't think that would be
-> > productive.  Perhaps differentiate between the LOG and FIX modes from
-> > the OFF mode.  For the LOG and FIX modes, perhaps return -EACCES as
-> > well.  For the OFF case, loading a policy with appraise rules should
-> > not be permitted.
+On Thu, Apr 23, 2020 at 07:16:07AM -0500, Eric W. Biederman wrote:
 > 
-> In LOG or FIX mode, loading a policy with absolute path will succeed.
-
-Yes
-
-> Maybe we should just keep the same behavior also when the policy
-> is directly written to securityfs.
-
-The purpose of LOG mode is to learn about the filesystem behavior in
-order to label it properly.  FIX mode is for re-calculating and fixing
-existing file hashes.  If we permit directly writing the policy to
-securityfs, even if the existing policy requires the policy to be
-signed, then it is behaving differently than it would in enforcing
-mode.  I'm ok with that, as long as the error message is emitted.
-
-> Ok for the OFF mode, but probably this should be a separate patch.
-
-Agreed
-
-Mimi
-
+> I took a quick look and there is at least one other use in security/tomoyo/realpath.c:
 > 
-> > >  	} else {
-> > >  		result = ima_parse_add_rule(data);
-> > >  	}
+> static char *tomoyo_get_local_path(struct dentry *dentry, char * const buffer,
+> 				   const int buflen)
+> {
+> 	struct super_block *sb = dentry->d_sb;
+> 	char *pos = tomoyo_get_dentry_path(dentry, buffer, buflen);
 > 
+> 	if (IS_ERR(pos))
+> 		return pos;
+> 	/* Convert from $PID to self if $PID is current thread. */
+> 	if (sb->s_magic == PROC_SUPER_MAGIC && *pos == '/') {
+> 		char *ep;
+> 		const pid_t pid = (pid_t) simple_strtoul(pos + 1, &ep, 10);
+> 
+> 		if (*ep == '/' && pid && pid ==
+> 		    task_tgid_nr_ns(current, sb->s_fs_info)) {
+> 			pos = ep - 5;
+> 			if (pos < buffer)
+> 				goto out;
+> 			memmove(pos, "/self", 5);
+> 		}
+> 		goto prepend_filesystem_name;
+> 	}
+
+Ooops. I missed this one. I thought I found all such cases.
+
+> Can you make the fixes to locks.c and tomoyo a couple of standalone
+> fixes that should be inserted before your patch?
+
+Sure.
+
+> On the odd chance there is a typo they will bisect better, as well
+> as just keeping this patch and it's description from expanding in size.
+> So that things are small enough for people to really look at and review.
+> 
+> The fix itself looks fine.
+> 
+> Thank you,
+> Eric
+> 
+> 
+> Alexey Gladkov <gladkov.alexey@gmail.com> writes:
+> 
+> > Fixed getting proc_pidns in the lock_get_status() and locks_show() directly from
+> > the superblock, which caused a crash:
+> >
+> > === arm64 ===
+> > [12140.366814] LTP: starting proc01 (proc01 -m 128)
+> > [12149.580943] ==================================================================
+> > [12149.589521] BUG: KASAN: out-of-bounds in pid_nr_ns+0x2c/0x90 pid_nr_ns at kernel/pid.c:456
+> > [12149.595939] Read of size 4 at addr 1bff000bfa8c0388 by task = proc01/50298
+> > [12149.603392] Pointer tag: [1b], memory tag: [fe]
+> >
+> > [12149.610906] CPU: 69 PID: 50298 Comm: proc01 Tainted: G L 5.7.0-rc2-next-20200422 #6
+> > [12149.620585] Hardware name: HPE Apollo 70 /C01_APACHE_MB , BIOS L50_5.13_1.11 06/18/2019
+> > [12149.631074] Call trace:
+> > [12149.634304]  dump_backtrace+0x0/0x22c
+> > [12149.638745]  show_stack+0x28/0x34
+> > [12149.642839]  dump_stack+0x104/0x194
+> > [12149.647110]  print_address_description+0x70/0x3a4
+> > [12149.652576]  __kasan_report+0x188/0x238
+> > [12149.657169]  kasan_report+0x3c/0x58
+> > [12149.661430]  check_memory_region+0x98/0xa0
+> > [12149.666303]  __hwasan_load4_noabort+0x18/0x20
+> > [12149.671431]  pid_nr_ns+0x2c/0x90
+> > [12149.675446]  locks_translate_pid+0xf4/0x1a0
+> > [12149.680382]  locks_show+0x68/0x110
+> > [12149.684536]  seq_read+0x380/0x930
+> > [12149.688604]  pde_read+0x5c/0x78
+> > [12149.692498]  proc_reg_read+0x74/0xc0
+> > [12149.696813]  __vfs_read+0x84/0x1d0
+> > [12149.700939]  vfs_read+0xec/0x124
+> > [12149.704889]  ksys_read+0xb0/0x120
+> > [12149.708927]  __arm64_sys_read+0x54/0x88
+> > [12149.713485]  do_el0_svc+0x128/0x1dc
+> > [12149.717697]  el0_sync_handler+0x150/0x250
+> > [12149.722428]  el0_sync+0x164/0x180
+> >
+> > [12149.728672] Allocated by task 1:
+> > [12149.732624]  __kasan_kmalloc+0x124/0x188
+> > [12149.737269]  kasan_kmalloc+0x10/0x18
+> > [12149.741568]  kmem_cache_alloc_trace+0x2e4/0x3d4
+> > [12149.746820]  proc_fill_super+0x48/0x1fc
+> > [12149.751377]  vfs_get_super+0xcc/0x170
+> > [12149.755760]  get_tree_nodev+0x28/0x34
+> > [12149.760143]  proc_get_tree+0x24/0x30
+> > [12149.764439]  vfs_get_tree+0x54/0x158
+> > [12149.768736]  do_mount+0x80c/0xaf0
+> > [12149.772774]  __arm64_sys_mount+0xe0/0x18c
+> > [12149.777504]  do_el0_svc+0x128/0x1dc
+> > [12149.781715]  el0_sync_handler+0x150/0x250
+> > [12149.786445]  el0_sync+0x164/0x180
+> 
+> > diff --git a/fs/locks.c b/fs/locks.c
+> > index b8a31c1c4fff..399c5dbb72c4 100644
+> > --- a/fs/locks.c
+> > +++ b/fs/locks.c
+> > @@ -2823,7 +2823,7 @@ static void lock_get_status(struct seq_file *f, struct file_lock *fl,
+> >  {
+> >  	struct inode *inode = NULL;
+> >  	unsigned int fl_pid;
+> > -	struct pid_namespace *proc_pidns = file_inode(f->file)->i_sb->s_fs_info;
+> > +	struct pid_namespace *proc_pidns = proc_pid_ns(file_inode(f->file));
+> >  
+> >  	fl_pid = locks_translate_pid(fl, proc_pidns);
+> >  	/*
+> > @@ -2901,7 +2901,7 @@ static int locks_show(struct seq_file *f, void *v)
+> >  {
+> >  	struct locks_iterator *iter = f->private;
+> >  	struct file_lock *fl, *bfl;
+> > -	struct pid_namespace *proc_pidns = file_inode(f->file)->i_sb->s_fs_info;
+> > +	struct pid_namespace *proc_pidns = proc_pid_ns(file_inode(f->file));
+> >  
+> >  	fl = hlist_entry(v, struct file_lock, fl_link);
+> >  
+> 
+> Eric
+> 
+
+-- 
+Rgrds, legion
 
