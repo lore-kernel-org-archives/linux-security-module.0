@@ -2,136 +2,119 @@ Return-Path: <SRS0=t1H7=6H=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1285FC54FCB
-	for <linux-security-module@archiver.kernel.org>; Thu, 23 Apr 2020 16:53:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B94CEC54FD0
+	for <linux-security-module@archiver.kernel.org>; Thu, 23 Apr 2020 18:10:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E8A6B20CC7
-	for <linux-security-module@archiver.kernel.org>; Thu, 23 Apr 2020 16:53:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9CA2B20767
+	for <linux-security-module@archiver.kernel.org>; Thu, 23 Apr 2020 18:10:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L4EUQ7yB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729719AbgDWQxJ (ORCPT
+        id S1730143AbgDWSKg (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 23 Apr 2020 12:53:09 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:25282 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729707AbgDWQxJ (ORCPT
+        Thu, 23 Apr 2020 14:10:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50234 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729995AbgDWSKg (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 23 Apr 2020 12:53:09 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 03NGWVUw015476
-        for <linux-security-module@vger.kernel.org>; Thu, 23 Apr 2020 12:53:08 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 30k7rc79h7-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Thu, 23 Apr 2020 12:53:08 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Thu, 23 Apr 2020 17:52:29 +0100
-Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 23 Apr 2020 17:52:26 +0100
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 03NGptFe53805508
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 23 Apr 2020 16:51:55 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 754D2A4065;
-        Thu, 23 Apr 2020 16:53:02 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B2AA4A405B;
-        Thu, 23 Apr 2020 16:53:01 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.178.107])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 23 Apr 2020 16:53:01 +0000 (GMT)
-Subject: Re: [PATCH 3/5] ima: Fix ima digest hash table key calculation
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        Thu, 23 Apr 2020 14:10:36 -0400
+Received: from mail-qt1-x844.google.com (mail-qt1-x844.google.com [IPv6:2607:f8b0:4864:20::844])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F035FC09B042;
+        Thu, 23 Apr 2020 11:10:35 -0700 (PDT)
+Received: by mail-qt1-x844.google.com with SMTP id v26so56005qto.0;
+        Thu, 23 Apr 2020 11:10:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=qPBEpYztacbVXAnXtHaabQP6rRHo96QuqAvZkwuZJto=;
+        b=L4EUQ7yBDVooy2o3cEUID9EV6wJXZht1OM/OumQrg17mjL4U6kJ3+3wdpqagD8ubXA
+         yxJRaNEBUPqdD8xRvkC8QEruzYVzwWrRgtFoYGXuiH7fSRBaJDRHnnIZNah/zHQQT+DM
+         F37gTBIlutLG9InjqxXNeh7t6xbtL0fSbFnC9wWiSneqsAICpPT1GKY8m7yHLz5Q8Vov
+         hfhldY0TPwAiKej2xUc2Wc/vGu5cu3pOv4D8XKjvTLgOXNSkd0MEAfncp2460uYPEjby
+         z2zHZQiOjMEcx/YzqZKReN+/3zkWL5T/A2UL91kw6wOswuSipIA78vkNtAv2Z4Bpbv0D
+         3SNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=qPBEpYztacbVXAnXtHaabQP6rRHo96QuqAvZkwuZJto=;
+        b=YHF8fZjsYwJzUdfl+w+5ZAl1tEwkUUzBgfQFHzItZF5s4PJ6v1BanO4byEpvPX2+yq
+         3kj7Ox1tpWIA4+Gjvo7EWA2st9q3FPchSnHUGE4xnbLsIjHX3ViG5Mu0l2GzlLSQazhw
+         apsuGGUaZs5l1DDj8fJG8raK5d+VvXfaaF/lQCscqSnh9fZcm/Xi8pYhVTynBUBvqRnr
+         l9PpJIIkSLfnf4xTwo9JQ8VO8LkNE1W2jwmBtki66myC9yPxfVtUUF/QS83MMzouQuy7
+         znf6tDdxVYLimUZqUsG3G7SnbsNsV8Z/A516u0jr6ehdcNTro7SGiNvO2v2F2DdQAl9s
+         S34A==
+X-Gm-Message-State: AGi0PuahZ9zndBx04+I433pEL1mkM5/IFgsvxthsAHWmjQfAPsi92XQv
+        7nVTMVeN0ZI1l56tGw5CW1c=
+X-Google-Smtp-Source: APiQypLgGpRR9+KI9m0wrhx/bDA4BvwPsUvOnPo0dBZgS7bSoovpi9pkIB2JuG+EIiG33Dw9+aslrg==
+X-Received: by 2002:ac8:2c0c:: with SMTP id d12mr5448806qta.284.1587665435149;
+        Thu, 23 Apr 2020 11:10:35 -0700 (PDT)
+Received: from quaco.ghostprotocols.net ([179.97.37.151])
+        by smtp.gmail.com with ESMTPSA id k2sm2316868qta.39.2020.04.23.11.10.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Apr 2020 11:10:33 -0700 (PDT)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 2C10A409A3; Thu, 23 Apr 2020 15:10:30 -0300 (-03)
+Date:   Thu, 23 Apr 2020 15:10:30 -0300
+To:     Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
         "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Krzysztof Struczynski <krzysztof.struczynski@huawei.com>,
-        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Date:   Thu, 23 Apr 2020 12:53:01 -0400
-In-Reply-To: <11984a05a5624f64aed1ec6b0d0b75ff@huawei.com>
-References: <20200325161116.7082-1-roberto.sassu@huawei.com>
-         <20200325161116.7082-3-roberto.sassu@huawei.com>
-         <1587588987.5165.20.camel@linux.ibm.com>
-         <11984a05a5624f64aed1ec6b0d0b75ff@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 20042316-0008-0000-0000-000003762A0D
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20042316-0009-0000-0000-00004A97F7F0
-Message-Id: <1587660781.5610.15.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
- definitions=2020-04-23_12:2020-04-23,2020-04-23 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
- clxscore=1015 priorityscore=1501 mlxlogscore=999 impostorscore=0
- mlxscore=0 phishscore=0 lowpriorityscore=0 adultscore=0 suspectscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2004230123
+        <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH v2 1/4] perf trace: substitute CAP_SYS_ADMIN with
+ CAP_PERFMON in error message
+Message-ID: <20200423181030.GF20647@kernel.org>
+References: <66f2975b-4a69-b428-7dc5-d9aa40b3c673@linux.intel.com>
+ <450d035a-c192-10e5-1c28-664ccae3e46e@linux.intel.com>
+ <20200423132052.GA19437@kernel.org>
+ <a775fef2-6d86-d43a-3a46-5b2d129c77dc@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a775fef2-6d86-d43a-3a46-5b2d129c77dc@linux.intel.com>
+X-Url:  http://acmel.wordpress.com
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 2020-04-23 at 10:21 +0000, Roberto Sassu wrote:
-> > Hi Roberto, Krsysztof,
+Em Thu, Apr 23, 2020 at 05:49:32PM +0300, Alexey Budankov escreveu:
+> 
+> On 23.04.2020 16:20, Arnaldo Carvalho de Melo wrote:
+> > Em Wed, Apr 22, 2020 at 05:44:02PM +0300, Alexey Budankov escreveu:
+> >>
+> >> Update error message to mention CAP_PERFMON only. CAP_SYS_ADMIN still
+> >> works in keeping with user space backward compatibility approach.
 > > 
-> > On Wed, 2020-03-25 at 17:11 +0100, Roberto Sassu wrote:
-> > > From: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
-> > >
-> > > Function hash_long() accepts unsigned long, while currently only one byte
-> > > is passed from ima_hash_key(), which calculates a key for ima_htable.
-> > Use
-> > > more bytes to avoid frequent collisions.
-> > >
-> > > Length of the buffer is not explicitly passed as a function parameter,
-> > > because this function expects a digest whose length is greater than the
-> > > size of unsigned long.
+> > This will confuse users that build the latest perf to use in older
+> > systems where CAP_PERFMON isn't available, probably we need to, in these
+> > cases, check for the existence of CAP_PERFMON to provide a better
+> > warning message, something like:
 > > 
-> > Somehow I missed the original report of this problem https://lore.kern
-> > el.org/patchwork/patch/674684/.  This patch is definitely better, but
-> > how many unique keys are actually being used?  Is it anywhere near
-> > IMA_MEASURE_HTABLE_SIZE(512)?
+> >   You need CAP_ADMIN or update your kernel and libcap to one that supports
+> >   CAP_PERFMON.
+> > 
+> > For systems without CAP_PERFMON, while mentioning only CAP_PERFMON for
+> > systems where it is present, right?
 > 
-> I did a small test (with 1043 measurements):
-> 
-> slots: 250, max depth: 9 (without the patch)
-> slots: 448, max depth: 7 (with the patch)
+> Right, but this ideal implementation requires more effort, so staying with
+> two caps in the message and letting users decide which one to use looks like
+> a good balance already. 
 
-448 out of 512 slots are used.
+Agreed.
 
-> 
-> Then, I increased the number of bits to 10:
-> 
-> slots: 251, max depth: 9 (without the patch)
-> slots: 660, max depth: 4 (with the patch)
-
-660 out of 1024 slots are used.
-
-I wonder if there is any benefit to hashing a digest, instead of just
-using the first bits. 
-
-> 
-> > Do we need a new securityfs entry to display the number used?
-> 
-> Probably it is useful only if the administrator can decide the number of slots.
-
-The securityfs suggestion was just a means for triggering the above
-debugging info you provided.  Could you provide another patch with the
-debugging info?
-
-thanks,
-
-Mimi
-
+- Arnaldo
