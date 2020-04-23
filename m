@@ -2,191 +2,130 @@ Return-Path: <SRS0=t1H7=6H=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E80D3C54FCB
-	for <linux-security-module@archiver.kernel.org>; Thu, 23 Apr 2020 12:19:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C76DC55192
+	for <linux-security-module@archiver.kernel.org>; Thu, 23 Apr 2020 13:21:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C8C872076C
-	for <linux-security-module@archiver.kernel.org>; Thu, 23 Apr 2020 12:19:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 791712084D
+	for <linux-security-module@archiver.kernel.org>; Thu, 23 Apr 2020 13:21:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hAZi2qsv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726552AbgDWMTW (ORCPT
+        id S1728280AbgDWNVB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 23 Apr 2020 08:19:22 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:33428 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726090AbgDWMTV (ORCPT
+        Thu, 23 Apr 2020 09:21:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33086 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726753AbgDWNVA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 23 Apr 2020 08:19:21 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jRap5-00048z-2F; Thu, 23 Apr 2020 06:19:19 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jRap3-0005q7-LI; Thu, 23 Apr 2020 06:19:18 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Alexey Gladkov <gladkov.alexey@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Alexey Gladkov <legion@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        David Howells <dhowells@redhat.com>
-References: <20200419141057.621356-3-gladkov.alexey@gmail.com>
-        <20200423112858.95820-1-gladkov.alexey@gmail.com>
-Date:   Thu, 23 Apr 2020 07:16:07 -0500
-In-Reply-To: <20200423112858.95820-1-gladkov.alexey@gmail.com> (Alexey
-        Gladkov's message of "Thu, 23 Apr 2020 13:28:58 +0200")
-Message-ID: <87lfmmz9bs.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Thu, 23 Apr 2020 09:21:00 -0400
+Received: from mail-qk1-x742.google.com (mail-qk1-x742.google.com [IPv6:2607:f8b0:4864:20::742])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AD5EC08E934;
+        Thu, 23 Apr 2020 06:21:00 -0700 (PDT)
+Received: by mail-qk1-x742.google.com with SMTP id g74so6236351qke.13;
+        Thu, 23 Apr 2020 06:21:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=9jDk9uM72kgS9oe9Qc0OBhy8P+XuVro261CKYodI12Y=;
+        b=hAZi2qsvxi3D9D5L2q0lMwkYhurG5da4gJ1QOn0YbYqSio7OT8o5b2okqoaCdtRxSR
+         W2NKt4qwnQmmdtRht/T98LvgT6eZqDFyu4E/lG5i/ppaTPPpHRSODueIqbG1tbLoZU+o
+         vmjCn6coOrnsJXBDlE3+QZJHJDrPQ7kWo3AY63e0Iyf9SAU/L6v8lmm/nBTMbOJygRcv
+         k2nXcUoYIJNcRHkOt4e9KayLNapNU9Mh1VciCbQnhtl42lgwab2038oCuBeDV7HftV5m
+         NJt4N4/g2/k1BqKflXCqReHHsg8zIpbwudW6vQzWhNFFGywHwfiIhX8CJG6fb4dmKTIZ
+         yEIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=9jDk9uM72kgS9oe9Qc0OBhy8P+XuVro261CKYodI12Y=;
+        b=ZrdROy/3lEYssZZLKJNN0diRY8HOjIlbAbfb8573nvr/Sa0kiRIxUQaWGuelA/c6WO
+         s9a8PrhRQtmu/WfV0NIxD+wAslzjsF7tsmjhSTZ+cPvj0C7Haa/xmAnFAVodxTs4Vu9r
+         qT3gDHeR+ONSAb2kVhDTrA6/oVJ9egV500kIDGcuAuBVL+W69iOEvpSA2I0Dw2TVFwgO
+         5wndeUSfmOgtzMYccAFocNqgHaVytUCBdU4qqsQY/IuE7joCrVb2lEjB7HFXJLcHMKas
+         0qBPaIglj6T8EOVkVApH+Wh0oiJNi6dnRtSk3pBBE4dDmRFvhXoupOaTvSlxCHE7/WO1
+         tZHw==
+X-Gm-Message-State: AGi0PuZaQi/ejIJPANQUKKcmrrM287B12sMVugNdrZUk5QdXzb0+QAiN
+        wwJu83mD2VdsYg6vPF4HTPY4qsGoYiU=
+X-Google-Smtp-Source: APiQypJgfBK85X65Dk/jAoq3zjAYB/+9U5ILNxpke+V621W7pE5tIJnaBVxucrV49HaWURu6y15D+w==
+X-Received: by 2002:a37:a955:: with SMTP id s82mr3615351qke.45.1587648059092;
+        Thu, 23 Apr 2020 06:20:59 -0700 (PDT)
+Received: from quaco.ghostprotocols.net ([179.97.37.151])
+        by smtp.gmail.com with ESMTPSA id t75sm1480043qke.127.2020.04.23.06.20.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Apr 2020 06:20:54 -0700 (PDT)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 34A86409A3; Thu, 23 Apr 2020 10:20:52 -0300 (-03)
+Date:   Thu, 23 Apr 2020 10:20:52 -0300
+To:     Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc:     Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH v2 1/4] perf trace: substitute CAP_SYS_ADMIN with
+ CAP_PERFMON in error message
+Message-ID: <20200423132052.GA19437@kernel.org>
+References: <66f2975b-4a69-b428-7dc5-d9aa40b3c673@linux.intel.com>
+ <450d035a-c192-10e5-1c28-664ccae3e46e@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1jRap3-0005q7-LI;;;mid=<87lfmmz9bs.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+iR9pVq9wAKGMb1dkjvzvzUUF2IrtP4AY=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [PATCH v13 2/7] proc: allow to mount many instances of proc in one pid namespace
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <450d035a-c192-10e5-1c28-664ccae3e46e@linux.intel.com>
+X-Url:  http://acmel.wordpress.com
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Em Wed, Apr 22, 2020 at 05:44:02PM +0300, Alexey Budankov escreveu:
+> 
+> Update error message to mention CAP_PERFMON only. CAP_SYS_ADMIN still
+> works in keeping with user space backward compatibility approach.
 
-I took a quick look and there is at least one other use in security/tomoyo/realpath.c:
+This will confuse users that build the latest perf to use in older
+systems where CAP_PERFMON isn't available, probably we need to, in these
+cases, check for the existence of CAP_PERFMON to provide a better
+warning message, something like:
 
-static char *tomoyo_get_local_path(struct dentry *dentry, char * const buffer,
-				   const int buflen)
-{
-	struct super_block *sb = dentry->d_sb;
-	char *pos = tomoyo_get_dentry_path(dentry, buffer, buflen);
+  You need CAP_ADMIN or update your kernel and libcap to one that supports
+  CAP_PERFMON.
 
-	if (IS_ERR(pos))
-		return pos;
-	/* Convert from $PID to self if $PID is current thread. */
-	if (sb->s_magic == PROC_SUPER_MAGIC && *pos == '/') {
-		char *ep;
-		const pid_t pid = (pid_t) simple_strtoul(pos + 1, &ep, 10);
+For systems without CAP_PERFMON, while mentioning only CAP_PERFMON for
+systems where it is present, right?
+ 
+> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+> ---
+>  tools/perf/builtin-ftrace.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/builtin-ftrace.c b/tools/perf/builtin-ftrace.c
+> index 55eda54240fb..39d43ad02f30 100644
+> --- a/tools/perf/builtin-ftrace.c
+> +++ b/tools/perf/builtin-ftrace.c
+> @@ -288,7 +288,7 @@ static int __cmd_ftrace(struct perf_ftrace *ftrace, int argc, const char **argv)
+>  	      perf_cap__capable(CAP_SYS_ADMIN))) {
+>  		pr_err("ftrace only works for %s!\n",
+>  #ifdef HAVE_LIBCAP_SUPPORT
+> -		"users with the CAP_PERFMON or CAP_SYS_ADMIN capability"
+> +		"users with the CAP_PERFMON capability"
+>  #else
+>  		"root"
+>  #endif
+> -- 
+> 2.24.1
+> 
 
-		if (*ep == '/' && pid && pid ==
-		    task_tgid_nr_ns(current, sb->s_fs_info)) {
-			pos = ep - 5;
-			if (pos < buffer)
-				goto out;
-			memmove(pos, "/self", 5);
-		}
-		goto prepend_filesystem_name;
-	}
+-- 
 
-Can you make the fixes to locks.c and tomoyo a couple of standalone
-fixes that should be inserted before your patch?
-
-On the odd chance there is a typo they will bisect better, as well
-as just keeping this patch and it's description from expanding in size.
-So that things are small enough for people to really look at and review.
-
-The fix itself looks fine.
-
-Thank you,
-Eric
-
-
-Alexey Gladkov <gladkov.alexey@gmail.com> writes:
-
-> Fixed getting proc_pidns in the lock_get_status() and locks_show() directly from
-> the superblock, which caused a crash:
->
-> === arm64 ===
-> [12140.366814] LTP: starting proc01 (proc01 -m 128)
-> [12149.580943] ==================================================================
-> [12149.589521] BUG: KASAN: out-of-bounds in pid_nr_ns+0x2c/0x90 pid_nr_ns at kernel/pid.c:456
-> [12149.595939] Read of size 4 at addr 1bff000bfa8c0388 by task = proc01/50298
-> [12149.603392] Pointer tag: [1b], memory tag: [fe]
->
-> [12149.610906] CPU: 69 PID: 50298 Comm: proc01 Tainted: G L 5.7.0-rc2-next-20200422 #6
-> [12149.620585] Hardware name: HPE Apollo 70 /C01_APACHE_MB , BIOS L50_5.13_1.11 06/18/2019
-> [12149.631074] Call trace:
-> [12149.634304]  dump_backtrace+0x0/0x22c
-> [12149.638745]  show_stack+0x28/0x34
-> [12149.642839]  dump_stack+0x104/0x194
-> [12149.647110]  print_address_description+0x70/0x3a4
-> [12149.652576]  __kasan_report+0x188/0x238
-> [12149.657169]  kasan_report+0x3c/0x58
-> [12149.661430]  check_memory_region+0x98/0xa0
-> [12149.666303]  __hwasan_load4_noabort+0x18/0x20
-> [12149.671431]  pid_nr_ns+0x2c/0x90
-> [12149.675446]  locks_translate_pid+0xf4/0x1a0
-> [12149.680382]  locks_show+0x68/0x110
-> [12149.684536]  seq_read+0x380/0x930
-> [12149.688604]  pde_read+0x5c/0x78
-> [12149.692498]  proc_reg_read+0x74/0xc0
-> [12149.696813]  __vfs_read+0x84/0x1d0
-> [12149.700939]  vfs_read+0xec/0x124
-> [12149.704889]  ksys_read+0xb0/0x120
-> [12149.708927]  __arm64_sys_read+0x54/0x88
-> [12149.713485]  do_el0_svc+0x128/0x1dc
-> [12149.717697]  el0_sync_handler+0x150/0x250
-> [12149.722428]  el0_sync+0x164/0x180
->
-> [12149.728672] Allocated by task 1:
-> [12149.732624]  __kasan_kmalloc+0x124/0x188
-> [12149.737269]  kasan_kmalloc+0x10/0x18
-> [12149.741568]  kmem_cache_alloc_trace+0x2e4/0x3d4
-> [12149.746820]  proc_fill_super+0x48/0x1fc
-> [12149.751377]  vfs_get_super+0xcc/0x170
-> [12149.755760]  get_tree_nodev+0x28/0x34
-> [12149.760143]  proc_get_tree+0x24/0x30
-> [12149.764439]  vfs_get_tree+0x54/0x158
-> [12149.768736]  do_mount+0x80c/0xaf0
-> [12149.772774]  __arm64_sys_mount+0xe0/0x18c
-> [12149.777504]  do_el0_svc+0x128/0x1dc
-> [12149.781715]  el0_sync_handler+0x150/0x250
-> [12149.786445]  el0_sync+0x164/0x180
-
-> diff --git a/fs/locks.c b/fs/locks.c
-> index b8a31c1c4fff..399c5dbb72c4 100644
-> --- a/fs/locks.c
-> +++ b/fs/locks.c
-> @@ -2823,7 +2823,7 @@ static void lock_get_status(struct seq_file *f, struct file_lock *fl,
->  {
->  	struct inode *inode = NULL;
->  	unsigned int fl_pid;
-> -	struct pid_namespace *proc_pidns = file_inode(f->file)->i_sb->s_fs_info;
-> +	struct pid_namespace *proc_pidns = proc_pid_ns(file_inode(f->file));
->  
->  	fl_pid = locks_translate_pid(fl, proc_pidns);
->  	/*
-> @@ -2901,7 +2901,7 @@ static int locks_show(struct seq_file *f, void *v)
->  {
->  	struct locks_iterator *iter = f->private;
->  	struct file_lock *fl, *bfl;
-> -	struct pid_namespace *proc_pidns = file_inode(f->file)->i_sb->s_fs_info;
-> +	struct pid_namespace *proc_pidns = proc_pid_ns(file_inode(f->file));
->  
->  	fl = hlist_entry(v, struct file_lock, fl_link);
->  
-
-Eric
+- Arnaldo
