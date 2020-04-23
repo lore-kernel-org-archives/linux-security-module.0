@@ -2,178 +2,136 @@ Return-Path: <SRS0=t1H7=6H=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FB80C55186
-	for <linux-security-module@archiver.kernel.org>; Thu, 23 Apr 2020 14:58:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1285FC54FCB
+	for <linux-security-module@archiver.kernel.org>; Thu, 23 Apr 2020 16:53:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 06B352098B
-	for <linux-security-module@archiver.kernel.org>; Thu, 23 Apr 2020 14:58:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8A6B20CC7
+	for <linux-security-module@archiver.kernel.org>; Thu, 23 Apr 2020 16:53:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728923AbgDWO6Q (ORCPT
+        id S1729719AbgDWQxJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 23 Apr 2020 10:58:16 -0400
-Received: from mga01.intel.com ([192.55.52.88]:54034 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726380AbgDWO6Q (ORCPT
+        Thu, 23 Apr 2020 12:53:09 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:25282 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729707AbgDWQxJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 23 Apr 2020 10:58:16 -0400
-IronPort-SDR: TEKpj8Vm3GcdTlT0Ct7Hpwiel12WK4J3IjN0aGxO93KctviRMPKbaMQhstuJw+0CFPFN6r8idh
- Y49om/m/fozQ==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Apr 2020 07:58:15 -0700
-IronPort-SDR: FaswXvjqMFVLy46tV/4eP/rnfbowfboz9xwzgyGqApS0MEaPW2tUcyFil+wQjigRSNRWmYOJcI
- x2aC2oinduyQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.73,307,1583222400"; 
-   d="scan'208";a="456935239"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga005.fm.intel.com with ESMTP; 23 Apr 2020 07:58:15 -0700
-Received: from [10.249.228.14] (abudanko-mobl.ccr.corp.intel.com [10.249.228.14])
-        by linux.intel.com (Postfix) with ESMTP id DD73B5802C9;
-        Thu, 23 Apr 2020 07:58:12 -0700 (PDT)
-Subject: Re: [PATCH v2 3/4] perf tool: make Perf tool aware of SELinux access
- control
-To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-Cc:     Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        Thu, 23 Apr 2020 12:53:09 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 03NGWVUw015476
+        for <linux-security-module@vger.kernel.org>; Thu, 23 Apr 2020 12:53:08 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 30k7rc79h7-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Thu, 23 Apr 2020 12:53:08 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Thu, 23 Apr 2020 17:52:29 +0100
+Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 23 Apr 2020 17:52:26 +0100
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 03NGptFe53805508
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 23 Apr 2020 16:51:55 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 754D2A4065;
+        Thu, 23 Apr 2020 16:53:02 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B2AA4A405B;
+        Thu, 23 Apr 2020 16:53:01 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.178.107])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 23 Apr 2020 16:53:01 +0000 (GMT)
+Subject: Re: [PATCH 3/5] ima: Fix ima digest hash table key calculation
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
         "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-References: <66f2975b-4a69-b428-7dc5-d9aa40b3c673@linux.intel.com>
- <7459371d-2ec8-4700-13b6-09b73998cc7c@linux.intel.com>
- <20200423132733.GC19437@kernel.org>
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <12d614d9-e77f-d96b-7546-7b59f06edabf@linux.intel.com>
-Date:   Thu, 23 Apr 2020 17:58:11 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
-MIME-Version: 1.0
-In-Reply-To: <20200423132733.GC19437@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Krzysztof Struczynski <krzysztof.struczynski@huawei.com>,
+        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Date:   Thu, 23 Apr 2020 12:53:01 -0400
+In-Reply-To: <11984a05a5624f64aed1ec6b0d0b75ff@huawei.com>
+References: <20200325161116.7082-1-roberto.sassu@huawei.com>
+         <20200325161116.7082-3-roberto.sassu@huawei.com>
+         <1587588987.5165.20.camel@linux.ibm.com>
+         <11984a05a5624f64aed1ec6b0d0b75ff@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 20042316-0008-0000-0000-000003762A0D
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20042316-0009-0000-0000-00004A97F7F0
+Message-Id: <1587660781.5610.15.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
+ definitions=2020-04-23_12:2020-04-23,2020-04-23 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
+ clxscore=1015 priorityscore=1501 mlxlogscore=999 impostorscore=0
+ mlxscore=0 phishscore=0 lowpriorityscore=0 adultscore=0 suspectscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2004230123
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-On 23.04.2020 16:27, Arnaldo Carvalho de Melo wrote:
-> Em Wed, Apr 22, 2020 at 05:45:34PM +0300, Alexey Budankov escreveu:
->>
->> Implement SELinux sysfs check to see if the system is in enforcing
->> mode and print warning message with pointers to check audit logs.
->>
->> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
->> ---
->>  tools/perf/util/cloexec.c |  4 ++--
->>  tools/perf/util/evsel.c   | 40 +++++++++++++++++++++++----------------
->>  2 files changed, 26 insertions(+), 18 deletions(-)
->>
->> diff --git a/tools/perf/util/cloexec.c b/tools/perf/util/cloexec.c
->> index a12872f2856a..9c8ec816261b 100644
->> --- a/tools/perf/util/cloexec.c
->> +++ b/tools/perf/util/cloexec.c
->> @@ -65,7 +65,7 @@ static int perf_flag_probe(void)
->>  		return 1;
->>  	}
->>  
->> -	WARN_ONCE(err != EINVAL && err != EBUSY,
->> +	WARN_ONCE(err != EINVAL && err != EBUSY && err != EACCES,
->>  		  "perf_event_open(..., PERF_FLAG_FD_CLOEXEC) failed with unexpected error %d (%s)\n",
->>  		  err, str_error_r(err, sbuf, sizeof(sbuf)));
->>  
->> @@ -83,7 +83,7 @@ static int perf_flag_probe(void)
->>  	if (fd >= 0)
->>  		close(fd);
->>  
->> -	if (WARN_ONCE(fd < 0 && err != EBUSY,
->> +	if (WARN_ONCE(fd < 0 && err != EBUSY && err != EACCES,
->>  		      "perf_event_open(..., 0) failed unexpectedly with error %d (%s)\n",
->>  		      err, str_error_r(err, sbuf, sizeof(sbuf))))
->>  		return -1;
->> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
->> index 9fa92649adb4..82492ca12405 100644
->> --- a/tools/perf/util/evsel.c
->> +++ b/tools/perf/util/evsel.c
->> @@ -2514,32 +2514,40 @@ int perf_evsel__open_strerror(struct evsel *evsel, struct target *target,
->>  			      int err, char *msg, size_t size)
->>  {
->>  	char sbuf[STRERR_BUFSIZE];
->> -	int printed = 0;
->> +	int printed = 0, enforced = 0;
->>  
->>  	switch (err) {
->>  	case EPERM:
->>  	case EACCES:
->> +		printed += scnprintf(msg + printed, size - printed,
->> +			"Access to performance monitoring and observability operations is limited.\n");
->> +
->> +		if (!sysfs__read_int("fs/selinux/enforce", &enforced)) {
->> +			if (enforced) {
->> +				printed += scnprintf(msg + printed, size - printed,
->> +					"Enforced MAC policy settings (SELinux) can limit access to performance\n"
->> +					"monitoring and observability operations. Inspect system audit records for\n"
->> +					"more perf_event access control information and adjusting the policy.\n");
->> +			}
->> +		}
->> +
->>  		if (err == EPERM)
->> -			printed = scnprintf(msg, size,
->> -				"No permission to enable %s event.\n\n",
->> +			printed += scnprintf(msg, size,
->> +				"No permission to enable %s event.\n",
->>  				perf_evsel__name(evsel));
+On Thu, 2020-04-23 at 10:21 +0000, Roberto Sassu wrote:
+> > Hi Roberto, Krsysztof,
+> > 
+> > On Wed, 2020-03-25 at 17:11 +0100, Roberto Sassu wrote:
+> > > From: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
+> > >
+> > > Function hash_long() accepts unsigned long, while currently only one byte
+> > > is passed from ima_hash_key(), which calculates a key for ima_htable.
+> > Use
+> > > more bytes to avoid frequent collisions.
+> > >
+> > > Length of the buffer is not explicitly passed as a function parameter,
+> > > because this function expects a digest whose length is greater than the
+> > > size of unsigned long.
+> > 
+> > Somehow I missed the original report of this problem https://lore.kern
+> > el.org/patchwork/patch/674684/.  This patch is definitely better, but
+> > how many unique keys are actually being used?  Is it anywhere near
+> > IMA_MEASURE_HTABLE_SIZE(512)?
 > 
-> This removal of a newline doesn't seem necessary to this patch.
-
-There will be break in the middle of the message then, but ok.
-
->   
->>  		return scnprintf(msg + printed, size - printed,
->> -		 "You may not have permission to collect %sstats.\n\n"
->> -		 "Consider tweaking /proc/sys/kernel/perf_event_paranoid,\n"
->> -		 "which controls use of the performance events system by\n"
->> -		 "unprivileged users (without CAP_PERFMON or CAP_SYS_ADMIN).\n\n"
->> -		 "The current value is %d:\n\n"
->> +		 "Consider adjusting /proc/sys/kernel/perf_event_paranoid setting to open\n"
->> +		 "access to performance monitoring and observability operations for users\n"
->> +		 "without CAP_PERFMON capability. perf_event_paranoid setting is %d:\n"
+> I did a small test (with 1043 measurements):
 > 
-> Here we need as well to check if the kernel/libcap supports CAP_PERFMON
-> to provide a better error message.
+> slots: 250, max depth: 9 (without the patch)
+> slots: 448, max depth: 7 (with the patch)
 
-I will change change "CAP_PERFMON" to "CAP_PERFMON or CAP_SYS_ADMIN" in the new message.
+448 out of 512 slots are used.
 
 > 
->>  		 "  -1: Allow use of (almost) all events by all users\n"
->>  		 "      Ignore mlock limit after perf_event_mlock_kb without CAP_IPC_LOCK\n"
->> -		 ">= 0: Disallow ftrace function tracepoint by users without CAP_PERFMON or CAP_SYS_ADMIN\n"
->> -		 "      Disallow raw tracepoint access by users without CAP_SYS_PERFMON or CAP_SYS_ADMIN\n"
->> -		 ">= 1: Disallow CPU event access by users without CAP_PERFMON or CAP_SYS_ADMIN\n"
->> -		 ">= 2: Disallow kernel profiling by users without CAP_PERFMON or CAP_SYS_ADMIN\n\n"
->> -		 "To make this setting permanent, edit /etc/sysctl.conf too, e.g.:\n\n"
->> -		 "	kernel.perf_event_paranoid = -1\n" ,
->> -				 target->system_wide ? "system-wide " : "",
->> -				 perf_event_paranoid());
->> +		 ">= 0: Disallow raw and ftrace function tracepoint access\n"
->> +		 ">= 1: Disallow CPU event access\n"
->> +		 ">= 2: Disallow kernel profiling\n"
->> +		 "To make the adjusted perf_event_paranoid setting permanent preserve it\n"
->> +		 "in /etc/sysctl.conf (e.g. kernel.perf_event_paranoid = <setting>)",
->> +		 perf_event_paranoid());
->>  	case ENOENT:
->>  		return scnprintf(msg, size, "The %s event is not supported.",
->>  				 perf_evsel__name(evsel));
+> Then, I increased the number of bits to 10:
+> 
+> slots: 251, max depth: 9 (without the patch)
+> slots: 660, max depth: 4 (with the patch)
 
-Thanks,
-Alexey
+660 out of 1024 slots are used.
+
+I wonder if there is any benefit to hashing a digest, instead of just
+using the first bits. 
+
+> 
+> > Do we need a new securityfs entry to display the number used?
+> 
+> Probably it is useful only if the administrator can decide the number of slots.
+
+The securityfs suggestion was just a means for triggering the above
+debugging info you provided.  Could you provide another patch with the
+debugging info?
+
+thanks,
+
+Mimi
+
