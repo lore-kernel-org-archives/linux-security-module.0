@@ -2,119 +2,144 @@ Return-Path: <SRS0=t1H7=6H=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B94CEC54FD0
-	for <linux-security-module@archiver.kernel.org>; Thu, 23 Apr 2020 18:10:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6D7FC55191
+	for <linux-security-module@archiver.kernel.org>; Thu, 23 Apr 2020 19:10:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9CA2B20767
-	for <linux-security-module@archiver.kernel.org>; Thu, 23 Apr 2020 18:10:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L4EUQ7yB"
+	by mail.kernel.org (Postfix) with ESMTP id A1E6D20767
+	for <linux-security-module@archiver.kernel.org>; Thu, 23 Apr 2020 19:10:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730143AbgDWSKg (ORCPT
+        id S1727812AbgDWTKj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 23 Apr 2020 14:10:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50234 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729995AbgDWSKg (ORCPT
+        Thu, 23 Apr 2020 15:10:39 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:2866 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726366AbgDWTKi (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 23 Apr 2020 14:10:36 -0400
-Received: from mail-qt1-x844.google.com (mail-qt1-x844.google.com [IPv6:2607:f8b0:4864:20::844])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F035FC09B042;
-        Thu, 23 Apr 2020 11:10:35 -0700 (PDT)
-Received: by mail-qt1-x844.google.com with SMTP id v26so56005qto.0;
-        Thu, 23 Apr 2020 11:10:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=qPBEpYztacbVXAnXtHaabQP6rRHo96QuqAvZkwuZJto=;
-        b=L4EUQ7yBDVooy2o3cEUID9EV6wJXZht1OM/OumQrg17mjL4U6kJ3+3wdpqagD8ubXA
-         yxJRaNEBUPqdD8xRvkC8QEruzYVzwWrRgtFoYGXuiH7fSRBaJDRHnnIZNah/zHQQT+DM
-         F37gTBIlutLG9InjqxXNeh7t6xbtL0fSbFnC9wWiSneqsAICpPT1GKY8m7yHLz5Q8Vov
-         hfhldY0TPwAiKej2xUc2Wc/vGu5cu3pOv4D8XKjvTLgOXNSkd0MEAfncp2460uYPEjby
-         z2zHZQiOjMEcx/YzqZKReN+/3zkWL5T/A2UL91kw6wOswuSipIA78vkNtAv2Z4Bpbv0D
-         3SNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=qPBEpYztacbVXAnXtHaabQP6rRHo96QuqAvZkwuZJto=;
-        b=YHF8fZjsYwJzUdfl+w+5ZAl1tEwkUUzBgfQFHzItZF5s4PJ6v1BanO4byEpvPX2+yq
-         3kj7Ox1tpWIA4+Gjvo7EWA2st9q3FPchSnHUGE4xnbLsIjHX3ViG5Mu0l2GzlLSQazhw
-         apsuGGUaZs5l1DDj8fJG8raK5d+VvXfaaF/lQCscqSnh9fZcm/Xi8pYhVTynBUBvqRnr
-         l9PpJIIkSLfnf4xTwo9JQ8VO8LkNE1W2jwmBtki66myC9yPxfVtUUF/QS83MMzouQuy7
-         znf6tDdxVYLimUZqUsG3G7SnbsNsV8Z/A516u0jr6ehdcNTro7SGiNvO2v2F2DdQAl9s
-         S34A==
-X-Gm-Message-State: AGi0PuahZ9zndBx04+I433pEL1mkM5/IFgsvxthsAHWmjQfAPsi92XQv
-        7nVTMVeN0ZI1l56tGw5CW1c=
-X-Google-Smtp-Source: APiQypLgGpRR9+KI9m0wrhx/bDA4BvwPsUvOnPo0dBZgS7bSoovpi9pkIB2JuG+EIiG33Dw9+aslrg==
-X-Received: by 2002:ac8:2c0c:: with SMTP id d12mr5448806qta.284.1587665435149;
-        Thu, 23 Apr 2020 11:10:35 -0700 (PDT)
-Received: from quaco.ghostprotocols.net ([179.97.37.151])
-        by smtp.gmail.com with ESMTPSA id k2sm2316868qta.39.2020.04.23.11.10.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Apr 2020 11:10:33 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 2C10A409A3; Thu, 23 Apr 2020 15:10:30 -0300 (-03)
-Date:   Thu, 23 Apr 2020 15:10:30 -0300
-To:     Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        Thu, 23 Apr 2020 15:10:38 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 03NJ3QjZ002428
+        for <linux-security-module@vger.kernel.org>; Thu, 23 Apr 2020 15:10:38 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 30k09wy3ej-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Thu, 23 Apr 2020 15:10:37 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Thu, 23 Apr 2020 20:09:48 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 23 Apr 2020 20:09:46 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 03NJAWch58720378
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 23 Apr 2020 19:10:32 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5EC5F11C0A7;
+        Thu, 23 Apr 2020 19:10:32 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 47E0E11C09F;
+        Thu, 23 Apr 2020 19:10:31 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.178.107])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 23 Apr 2020 19:10:31 +0000 (GMT)
+Subject: Re: [PATCH] ima: Fix return value of ima_write_policy()
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
         "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH v2 1/4] perf trace: substitute CAP_SYS_ADMIN with
- CAP_PERFMON in error message
-Message-ID: <20200423181030.GF20647@kernel.org>
-References: <66f2975b-4a69-b428-7dc5-d9aa40b3c673@linux.intel.com>
- <450d035a-c192-10e5-1c28-664ccae3e46e@linux.intel.com>
- <20200423132052.GA19437@kernel.org>
- <a775fef2-6d86-d43a-3a46-5b2d129c77dc@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a775fef2-6d86-d43a-3a46-5b2d129c77dc@linux.intel.com>
-X-Url:  http://acmel.wordpress.com
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Date:   Thu, 23 Apr 2020 15:10:30 -0400
+In-Reply-To: <baf2fd326f5043538390254304b85e41@huawei.com>
+References: <20200421090442.22693-1-roberto.sassu@huawei.com>
+         <1587609266.5165.58.camel@linux.ibm.com>
+         <baf2fd326f5043538390254304b85e41@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 20042319-4275-0000-0000-000003C5753F
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20042319-4276-0000-0000-000038DB00E0
+Message-Id: <1587669030.5610.43.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
+ definitions=2020-04-23_13:2020-04-23,2020-04-23 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ suspectscore=0 phishscore=0 clxscore=1015 adultscore=0 mlxlogscore=999
+ bulkscore=0 impostorscore=0 spamscore=0 mlxscore=0 priorityscore=1501
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2004230145
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Em Thu, Apr 23, 2020 at 05:49:32PM +0300, Alexey Budankov escreveu:
+On Thu, 2020-04-23 at 09:39 +0000, Roberto Sassu wrote:
+> > On Tue, 2020-04-21 at 11:04 +0200, Roberto Sassu wrote:
+> > > Return datalen instead of zero if there is a rule to appraise the policy
+> > > but that rule is not enforced.
+> > >
+> > > Cc: stable@vger.kernel.org
+> > > Fixes: 19f8a84713edc ("ima: measure and appraise the IMA policy itself")
+> > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > > ---
+> > >  security/integrity/ima/ima_fs.c | 2 ++
+> > >  1 file changed, 2 insertions(+)
+> > >
+> > > diff --git a/security/integrity/ima/ima_fs.c
+> > b/security/integrity/ima/ima_fs.c
+> > > index a71e822a6e92..2c2ea814b954 100644
+> > > --- a/security/integrity/ima/ima_fs.c
+> > > +++ b/security/integrity/ima/ima_fs.c
+> > > @@ -340,6 +340,8 @@ static ssize_t ima_write_policy(struct file *file,
+> > const char __user *buf,
+> > >  				    1, 0);
+> > >  		if (ima_appraise & IMA_APPRAISE_ENFORCE)
+> > >  			result = -EACCES;
+> > > +		else
+> > > +			result = datalen;
+> > 
+> > In all other cases, where the IMA_APPRAISE_ENFORCE is not enabled we
+> > allow the action.  Here we prevent loading the policy, but don't
+> > return an error.  One option, as you did, is return some indication
+> > that the policy was not loaded.  Another option would be to allow
+> > loading the policy in LOG or FIX mode, but I don't think that would be
+> > productive.  Perhaps differentiate between the LOG and FIX modes from
+> > the OFF mode.  For the LOG and FIX modes, perhaps return -EACCES as
+> > well.  For the OFF case, loading a policy with appraise rules should
+> > not be permitted.
 > 
-> On 23.04.2020 16:20, Arnaldo Carvalho de Melo wrote:
-> > Em Wed, Apr 22, 2020 at 05:44:02PM +0300, Alexey Budankov escreveu:
-> >>
-> >> Update error message to mention CAP_PERFMON only. CAP_SYS_ADMIN still
-> >> works in keeping with user space backward compatibility approach.
-> > 
-> > This will confuse users that build the latest perf to use in older
-> > systems where CAP_PERFMON isn't available, probably we need to, in these
-> > cases, check for the existence of CAP_PERFMON to provide a better
-> > warning message, something like:
-> > 
-> >   You need CAP_ADMIN or update your kernel and libcap to one that supports
-> >   CAP_PERFMON.
-> > 
-> > For systems without CAP_PERFMON, while mentioning only CAP_PERFMON for
-> > systems where it is present, right?
+> In LOG or FIX mode, loading a policy with absolute path will succeed.
+
+Yes
+
+> Maybe we should just keep the same behavior also when the policy
+> is directly written to securityfs.
+
+The purpose of LOG mode is to learn about the filesystem behavior in
+order to label it properly.  FIX mode is for re-calculating and fixing
+existing file hashes.  If we permit directly writing the policy to
+securityfs, even if the existing policy requires the policy to be
+signed, then it is behaving differently than it would in enforcing
+mode.  I'm ok with that, as long as the error message is emitted.
+
+> Ok for the OFF mode, but probably this should be a separate patch.
+
+Agreed
+
+Mimi
+
 > 
-> Right, but this ideal implementation requires more effort, so staying with
-> two caps in the message and letting users decide which one to use looks like
-> a good balance already. 
+> > >  	} else {
+> > >  		result = ima_parse_add_rule(data);
+> > >  	}
+> 
 
-Agreed.
-
-- Arnaldo
