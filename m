@@ -1,126 +1,61 @@
-Return-Path: <SRS0=ipMR=6G=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=t1H7=6H=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1B14C54FCB
-	for <linux-security-module@archiver.kernel.org>; Wed, 22 Apr 2020 22:59:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FC5DC55185
+	for <linux-security-module@archiver.kernel.org>; Thu, 23 Apr 2020 00:14:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D8F5A2076E
-	for <linux-security-module@archiver.kernel.org>; Wed, 22 Apr 2020 22:59:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A09720776
+	for <linux-security-module@archiver.kernel.org>; Thu, 23 Apr 2020 00:14:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726030AbgDVW7y (ORCPT
+        id S1726054AbgDWAOb (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 22 Apr 2020 18:59:54 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:18594 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726054AbgDVW7w (ORCPT
+        Wed, 22 Apr 2020 20:14:31 -0400
+Received: from namei.org ([65.99.196.166]:52142 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725846AbgDWAOb (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 22 Apr 2020 18:59:52 -0400
-Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 03MMWg2d165928
-        for <linux-security-module@vger.kernel.org>; Wed, 22 Apr 2020 18:59:52 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 30jrxm2h44-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Wed, 22 Apr 2020 18:59:52 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Wed, 22 Apr 2020 23:59:25 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 22 Apr 2020 23:59:22 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 03MMxjv156557718
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 22 Apr 2020 22:59:45 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 97B474C040;
-        Wed, 22 Apr 2020 22:59:45 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B00984C044;
-        Wed, 22 Apr 2020 22:59:44 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.162.195])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 22 Apr 2020 22:59:44 +0000 (GMT)
-Subject: Re: [PATCH 5/5] ima: Remove unused build_ima_appraise variable
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, krzysztof.struczynski@huawei.com,
-        silviu.vlasceanu@huawei.com
-Date:   Wed, 22 Apr 2020 18:59:44 -0400
-In-Reply-To: <20200325161455.7610-2-roberto.sassu@huawei.com>
-References: <20200325161116.7082-1-roberto.sassu@huawei.com>
-         <20200325161455.7610-1-roberto.sassu@huawei.com>
-         <20200325161455.7610-2-roberto.sassu@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 20042222-0012-0000-0000-000003A97B84
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20042222-0013-0000-0000-000021E6CDBA
-Message-Id: <1587596384.5165.31.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
- definitions=2020-04-22_08:2020-04-22,2020-04-22 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 adultscore=0
- spamscore=0 clxscore=1015 suspectscore=0 priorityscore=1501 phishscore=0
- lowpriorityscore=0 mlxlogscore=999 mlxscore=0 malwarescore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2004220170
+        Wed, 22 Apr 2020 20:14:31 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id 03N0ESid031355;
+        Thu, 23 Apr 2020 00:14:29 GMT
+Date:   Thu, 23 Apr 2020 10:14:28 +1000 (AEST)
+From:   James Morris <jmorris@namei.org>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+cc:     Linux Security Module list 
+        <linux-security-module@vger.kernel.org>, linux-doc@vger.kernel.org
+Subject: Re: [PATCH RFC] Documentation: LSM: Correct the basic LSM
+ description
+In-Reply-To: <3d5970b8-f95a-2f15-851a-472cbceb94d4@schaufler-ca.com>
+Message-ID: <alpine.LRH.2.21.2004231013490.30239@namei.org>
+References: <3d5970b8-f95a-2f15-851a-472cbceb94d4.ref@schaufler-ca.com> <3d5970b8-f95a-2f15-851a-472cbceb94d4@schaufler-ca.com>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Roberto, Krzysztof,
+On Mon, 20 Apr 2020, Casey Schaufler wrote:
 
-On Wed, 2020-03-25 at 17:14 +0100, Roberto Sassu wrote:
-> From: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
+> This is a first pass at updating the basic documentation on
+> Linux Security Modules (LSM), which is frighteningly out of date.
+> Remove untrue statements about the LSM framework. Replace them
+> with true statements where it is convenient to do so. This is
+> the beginning of a larger effort to bring the LSM documentation
+> up to date.
 > 
-> After adding the new add_rule() function in commit c52657d93b05
-> ("ima: refactor ima_init_policy()"), all appraisal flags are added to the
-> temp_ima_appraise variable. Remove build_ima_appraise that is not set
-> anymore.
-> 
-> Signed-off-by: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 > ---
->  security/integrity/ima/ima_policy.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-> index ea9b991f0232..fcc26bddd7fc 100644
-> --- a/security/integrity/ima/ima_policy.c
-> +++ b/security/integrity/ima/ima_policy.c
-> @@ -48,7 +48,6 @@
->  
->  int ima_policy_flag;
->  static int temp_ima_appraise;
-> -static int build_ima_appraise __ro_after_init;
->  
->  #define MAX_LSM_RULES 6
->  enum lsm_rule_types { LSM_OBJ_USER, LSM_OBJ_ROLE, LSM_OBJ_TYPE,
-> @@ -606,7 +605,7 @@ void ima_update_policy_flag(void)
->  			ima_policy_flag |= entry->action;
->  	}
->  
-> -	ima_appraise |= (build_ima_appraise | temp_ima_appraise);
-> +	ima_appraise |= temp_ima_appraise;
 
-You're correct that build_ima_appraise isn't being used any longer,
-but ima_appraise isn't defined as __ro_after_init.  Instead of
-removing build_ima_appraise, does it make sense to set it?
+Looks good to me on a quick read.
 
-Mimi
 
->  	if (!ima_appraise)
->  		ima_policy_flag &= ~IMA_APPRAISE;
->  }
+-- 
+James Morris
+<jmorris@namei.org>
 
