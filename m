@@ -2,217 +2,109 @@ Return-Path: <SRS0=keSj=6L=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92466C4CECC
-	for <linux-security-module@archiver.kernel.org>; Mon, 27 Apr 2020 18:15:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BED2AC4CECD
+	for <linux-security-module@archiver.kernel.org>; Mon, 27 Apr 2020 19:41:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7A23E2173E
-	for <linux-security-module@archiver.kernel.org>; Mon, 27 Apr 2020 18:15:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A7CA22078C
+	for <linux-security-module@archiver.kernel.org>; Mon, 27 Apr 2020 19:41:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Awr/3rYc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726522AbgD0SPZ (ORCPT
+        id S1726442AbgD0TlE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 27 Apr 2020 14:15:25 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:40121 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725963AbgD0SPY (ORCPT
+        Mon, 27 Apr 2020 15:41:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55162 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725919AbgD0TlE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 27 Apr 2020 14:15:24 -0400
-Received: from ip5f5af183.dynamic.kabel-deutschland.de ([95.90.241.131] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1jT8Hd-0003H6-D9; Mon, 27 Apr 2020 18:15:09 +0000
-Date:   Mon, 27 Apr 2020 20:15:07 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Jann Horn <jannh@google.com>
-Cc:     kernel list <linux-kernel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        =?utf-8?B?U3TDqXBoYW5l?= Graber <stgraber@ubuntu.com>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Serge Hallyn <serge@hallyn.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: [PATCH] nsproxy: attach to namespaces via pidfds
-Message-ID: <20200427181507.ry3hw7ufiifwhi5k@wittgenstein>
-References: <20200427143646.619227-1-christian.brauner@ubuntu.com>
- <CAG48ez3eSJSODADpo=O-j9txJ=2R+EupunRvs5H9t5Wa8mvkRA@mail.gmail.com>
+        Mon, 27 Apr 2020 15:41:04 -0400
+Received: from mail-ot1-x341.google.com (mail-ot1-x341.google.com [IPv6:2607:f8b0:4864:20::341])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCE79C0610D5;
+        Mon, 27 Apr 2020 12:41:03 -0700 (PDT)
+Received: by mail-ot1-x341.google.com with SMTP id c3so28359739otp.8;
+        Mon, 27 Apr 2020 12:41:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=KJgjJqfYxYx1DamhB8SHVDVYVYMTaoNULn4soSfif8o=;
+        b=Awr/3rYcBw7IUNxOE2pHd9iUsxf+b+0F5oivdZ0gMq4uA1hkZgEw1VVHuOGZWBnp5Z
+         TIp3PNk6UW5NbnIkEyua/1uxF661Lz1zCOl9fCPsE3eF7ib9CcqRstWRMzX2YN0RApif
+         J7mPUujaPVFsvPRM81KcDC9mr8hcliXZUi+4Ba1c9w6Gcf4P569SoJofFY4DJ2b78UPs
+         djVyHuPPLi2KmetXOMEjR4ccGdlKV5P7Y/xwSjYA5ais585oWyKjE53PS0pf1SuiJsdC
+         J/1ZckW+XEo9p1xknc3mqgDPAeU1CrRqUmjkHFzbCfawVx3NTMkqZ72cJl2Gw189Ywum
+         2XYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KJgjJqfYxYx1DamhB8SHVDVYVYMTaoNULn4soSfif8o=;
+        b=IrsKeFfhexGH9Ed/VZXB7fbFz1HwnAuCiaSbLXnYlzZXNGEgX2JI/XzJoJPDEl/K4z
+         hREdBFCyw5mKaUbvHFvLYbrTdisAfakT110O555rnf9UZsOzNnV7qGKHqDxU/BNT0pPX
+         tKqrCy4NXk5izIIuBaJcDtTDDz8R8YKYGXOWS26KicFdEZUFxAt/KChflE0PV9l67oqS
+         M5eKsJk/Qai3d/+2NNr2pa4wMRklK0JKrp30AjezMuD+NrXzjq1aONF3PFWdCY4tNpyS
+         c+9PY8n6sLTfnHzBjs2BHdvGlDgcmUiPBuUUoMk/XET+IwhSPimwDWdMCAILrF7KSXB/
+         XjgA==
+X-Gm-Message-State: AGi0PuZZNrjO+G+xK/OHDChNgC4Jx5sZWlhdXAmVnnf+phRnkrcGnVGo
+        q5fvr+Fq/Ud7bTSASeqEpXuZ0FBmQSCRYQOdrsE=
+X-Google-Smtp-Source: APiQypJ1FMuh3neyv5Ove0+Oveml6rJ7zmUzQYEa8VLdUSSnKo/+3+qY5TyFQK4Y9SO0B4S0U5QMWyP+fowj5p+NOTE=
+X-Received: by 2002:aca:5e0b:: with SMTP id s11mr213497oib.160.1588016463282;
+ Mon, 27 Apr 2020 12:41:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAG48ez3eSJSODADpo=O-j9txJ=2R+EupunRvs5H9t5Wa8mvkRA@mail.gmail.com>
+References: <20200326200634.222009-1-dancol@google.com> <20200401213903.182112-1-dancol@google.com>
+ <CAKOZueuu=bGt4O0xjiV=9_PC_8Ey8pa3NjtJ7+O-nHCcYbLnEg@mail.gmail.com>
+ <alpine.LRH.2.21.2004230253530.12318@namei.org> <02468636-c981-2502-d4f4-58afbf8506b1@schaufler-ca.com>
+In-Reply-To: <02468636-c981-2502-d4f4-58afbf8506b1@schaufler-ca.com>
+From:   Stephen Smalley <stephen.smalley.work@gmail.com>
+Date:   Mon, 27 Apr 2020 15:40:51 -0400
+Message-ID: <CAEjxPJ4WKu9L4Bey1YVo3-tb0Td7Lz5WYw=d1jJ-TN5j5QMcAg@mail.gmail.com>
+Subject: Re: [PATCH v5 0/3] SELinux support for anonymous inodes and UFFD
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     James Morris <jmorris@namei.org>,
+        Daniel Colascione <dancol@google.com>,
+        Tim Murray <timmurray@google.com>,
+        SElinux list <selinux@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Paul Moore <paul@paul-moore.com>,
+        Nick Kralevich <nnk@google.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        John Johansen <john.johansen@canonical.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Apr 27, 2020 at 07:28:56PM +0200, Jann Horn wrote:
-> On Mon, Apr 27, 2020 at 4:47 PM Christian Brauner
-> <christian.brauner@ubuntu.com> wrote:
-> > For quite a while we have been thinking about using pidfds to attach to
-> > namespaces. This patchset has existed for about a year already but we've
-> > wanted to wait to see how the general api would be received and adopted.
-> > Now that more and more programs in userspace have started using pidfds
-> > for process management it's time to send this one out.
-> 
-> You can already reliably switch to a specific namespace of another
-> process like this given a pidfd and the pid of the process (which, if
-> you don't have it, you can get via fdinfo), right?
+On Mon, Apr 27, 2020 at 1:17 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>
+> On 4/22/2020 9:55 AM, James Morris wrote:
+> > On Mon, 13 Apr 2020, Daniel Colascione wrote:
+> >
+> >> On Wed, Apr 1, 2020 at 2:39 PM Daniel Colascione <dancol@google.com> wrote:
+> >>> Changes from the fourth version of the patch:
+> >>
+> >> Is there anything else that needs to be done before merging this patch series?
+> > The vfs changes need review and signoff from the vfs folk, the SELinux
+> > changes by either Paul or Stephen, and we also need signoff on the LSM
+> > hooks from other major LSM authors (Casey and John, at a minimum).
+>
+> You can add my
+>
+>         Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+>
+> for this patchset.
 
-Yep, of course. See the sample program in my earlier response. But that
-wasn't the point as I've tried to stress in the commit message. 
+This version of the series addresses all of my comments, so you can add my
+Acked-by: Stephen Smalley <stephen.smalley.work@gmail.com>
 
-> 
-> int switch_ns_to(int pidfd, int pid, char *nstypename) {
->   char ns_path[100];
->   snprintf(ns_path, sizeof(ns_path), "/proc/%d/ns/%s", pid, nstypename);
->   int fd = open(ns_path, O_RDONLY|O_CLOEXEC);
->   int errno_after_open = errno;
-> 
->   if (pidfd_send_signal(pidfd, 0, NULL, 0))
->     return -1;
-> 
->   if (fd == -1) {
->     errno = errno_after_open;
->     return -1;
->   }
-> 
->   int ret = setns(fd, 0);
->   close(fd);
->   return ret;
-> }
-> 
-> > This patch makes it possible to use pidfds to attach to the namespaces
-> > of another process, i.e. they can be passed as the first argument to the
-> > setns() syscall. When only a single namespace type is specified the
-> > semantics are equivalent to passing an nsfd.
-> 
-> This introduces a difference in terms of security: With the old API,
-> you need PTRACE_MODE_READ_FSCREDS on the task whose namespace you're
-> attaching to (to dereference the link /proc/*/ns/*) *AND* whatever
-> access checks the namespace itself enforces (always includes a check
-> for CAP_SYS_ADMIN on the namespace). The ptrace check has the
-> advantage, among other things, that it allows an LSM to see the
-> relationship between the task that's accessing the namespace (subject)
-> and the task whose namespace is being accessed (object).
-> 
-> I feel slightly twitchy about this relaxation, and I'm wondering
-> whether we can add a ptrace access check analogous to what you'd have
-> needed via procfs.
-
-Right, that's probably a sane requirement.
-
-> 
-> > That means
-> > setns(nsfd, CLONE_NEWNET) equals setns(pidfd, CLONE_NEWNET). However,
-> > when a pidfd is passed, multiple namespace flags can be specified in the
-> > second setns() argument and setns() will attach the caller to all the
-> > specified namespaces all at once or to none of them. If 0 is specified
-> > together with a pidfd then setns() will interpret it the same way 0 is
-> > interpreted together with a nsfd argument, i.e. attach to any/all
-> > namespaces.
-> [...]
-> > Apart from significiantly reducing the number of syscalls from double
-> > digit to single digit which is a decent reason post-spectre/meltdown
-> > this also allows to switch to a set of namespaces atomically, i.e.
-> > either attaching to all the specified namespaces succeeds or we fail.
-> 
-> Apart from the issues I've pointed out below, I think it's worth
-> calling out explicitly that with the current design, the switch will
-> not, in fact, be fully atomic - the process will temporarily be in
-> intermediate stages where the switches to some namespaces have
-> completed while the switches to other namespaces are still pending;
-> and while there will be less of these intermediate stages than before,
-> it also means that they will be less explicit to userspace.
-
-Right, that can be fixed by switching to the unshare model of getting a
-new set of credentials and committing it after the nsproxy has been
-installed? Then there shouldn't be an intermediate state anymore or
-rather an intermediate stage where we can still fail somehow.
-
-> 
-> [...]
-> > diff --git a/kernel/nsproxy.c b/kernel/nsproxy.c
-> [...]
-> > +/*
-> > + * Ordering is equivalent to the standard ordering used everywhere
-> > + * else during unshare and process creation.
-> > + */
-> > +static int ns_install(struct nsproxy *nsproxy, struct pid *pid, int flags)
-> > +{
-> > +       int ret = 0;
-> > +       struct task_struct *tsk;
-> > +       struct nsproxy *nsp;
-> > +
-> > +       tsk = get_pid_task(pid, PIDTYPE_PID);
-> > +       if (!tsk)
-> > +               return -ESRCH;
-> > +
-> > +       get_nsproxy(tsk->nsproxy);
-> > +       nsp = tsk->nsproxy;
-> 
-> How is this correct? Are you holding any locks that protect tsk->nsproxy?
-
-You're absolutely right, this misses task_lock().
-
-
-> 
-> > +#ifdef CONFIG_USER_NS
-> > +       if (wants_ns(flags, CLONE_NEWUSER)) {
-> > +               struct user_namespace *user_ns;
-> > +
-> > +               user_ns = get_user_ns(__task_cred(tsk)->user_ns);
-> > +               ret = __ns_install(nsproxy, &user_ns->ns);
-> 
-> If ret == 0, then at this point you've already committed the user
-> namespace change *to the calling process*. The ->install handler of
-> user namespaces doesn't touch the nsproxy at all.
-
-Yeah, I think this can be fixed by copying the unshare model.
-
-> 
-> > +               put_user_ns(user_ns);
-> > +       }
-> > +#else
-> > +       if (flags & CLONE_NEWUSER)
-> > +               ret = -EINVAL;
-> > +#endif
-> > +
-> > +       if (!ret && wants_ns(flags, CLONE_NEWNS))
-> > +               ret = __ns_install(nsproxy, mnt_ns_to_common(nsp->mnt_ns));
-> 
-> And this one might be even worse, because the mount namespace change
-> itself is only stored in the nsproxy at this point, but the cwd and
-> root paths have already been overwritten on the task's fs_struct.
-> 
-> To actually make sys_set_ns() atomic, I think you'd need some
-> moderately complicated prep work, splitting the ->install handlers up
-> into prep work and a commit phase that can't fail.
-
-Wouldn't it be sufficient to move to an unshare like model, i.e.
-creating a new set of creds, and passing the new user_ns to
-create_new_namespaces() as well as having a temporary new_fs struct?
-That should get rid of all intermediate stages.
-
-> 
-> [...]
-> > +#ifdef CONFIG_PID_NS
-> > +       if (!ret && wants_ns(flags, CLONE_NEWPID)) {
-> > +               struct pid_namespace *pidns;
-> > +
-> > +               pidns = task_active_pid_ns(tsk);
-> > +               if (pidns) {
-> > +                       get_pid_ns(pidns);
-> > +                       ret = __ns_install(nsproxy, &pidns->ns);
-> > +                       put_pid_ns(pidns);
-> > +               }
-> 
-> If you can't get the task's pidns, shouldn't that be an error?
-
-Yep, that's right. Thanks!
-
-Christian
+I don't know though how to get a response from the vfs folks; the
+series has been posted repeatedly without any
+response by them.
