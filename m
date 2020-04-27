@@ -2,135 +2,87 @@ Return-Path: <SRS0=keSj=6L=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4985C55199
-	for <linux-security-module@archiver.kernel.org>; Mon, 27 Apr 2020 14:12:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A335FC5519A
+	for <linux-security-module@archiver.kernel.org>; Mon, 27 Apr 2020 14:30:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 926E02063A
-	for <linux-security-module@archiver.kernel.org>; Mon, 27 Apr 2020 14:12:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="P+1C+LoP"
+	by mail.kernel.org (Postfix) with ESMTP id 7EF192078C
+	for <linux-security-module@archiver.kernel.org>; Mon, 27 Apr 2020 14:30:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728023AbgD0OMX (ORCPT
+        id S1727824AbgD0OaE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 27 Apr 2020 10:12:23 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:58793 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727925AbgD0OMX (ORCPT
+        Mon, 27 Apr 2020 10:30:04 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:26299 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727855AbgD0OaD (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 27 Apr 2020 10:12:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1587996741;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=NpI8PJYyNx+laG2NFVc7Zvkxuqud3siibCd4t0XswQE=;
-        b=P+1C+LoPuL88F8Zdfg4wssBXRuxKoWQbhN1ZhIUkc7bSTHlR9FLGaonpQ+9/tgDmfSh6n5
-        DuYmlmdiE9ho5jkfdu4bZkWutooEQGdp8MCghcGB8uPfuhhi07RpbW3UnieX0IPqIU9Coo
-        suC+/CLN2Prr74F2u/CJlhKqzxCFI04=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-415-mPMDvgv5OHy5VX1yAxRaYg-1; Mon, 27 Apr 2020 10:12:17 -0400
-X-MC-Unique: mPMDvgv5OHy5VX1yAxRaYg-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8612510524FF;
-        Mon, 27 Apr 2020 14:12:16 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-113-129.rdu2.redhat.com [10.10.113.129])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 84E3260BEC;
-        Mon, 27 Apr 2020 14:12:15 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAHC9VhQbhG8-ZABtkZr1FXo9cuH4_nsbB=HP_fGvW+FNQ7iAXg@mail.gmail.com>
-References: <CAHC9VhQbhG8-ZABtkZr1FXo9cuH4_nsbB=HP_fGvW+FNQ7iAXg@mail.gmail.com> <CAHC9VhT95GJKNTMvTtmZL35UOoVwbGH-eDWZyELb5oZ5rQU+Tw@mail.gmail.com> <2136640.1587472186@warthog.procyon.org.uk> <CAHC9VhQnORRaRapbb1wrUsxweJCRJ+X+RdvKw8_U0pT0fuxZ6A@mail.gmail.com> <3834193.1587771802@warthog.procyon.org.uk>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     dhowells@redhat.com, keyrings@vger.kernel.org,
-        selinux@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: [PATCH] selinux: Fix use of KEY_NEED_* instead of KEY__* perms
+        Mon, 27 Apr 2020 10:30:03 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-23-AKHUs2ulObCffgz2Mb-tuA-1; Mon, 27 Apr 2020 15:28:25 +0100
+X-MC-Unique: AKHUs2ulObCffgz2Mb-tuA-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Mon, 27 Apr 2020 15:28:24 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Mon, 27 Apr 2020 15:28:24 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Roberto Sassu' <roberto.sassu@huawei.com>,
+        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
+        "rgoldwyn@suse.de" <rgoldwyn@suse.de>
+CC:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>,
+        Krzysztof Struczynski <krzysztof.struczynski@huawei.com>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: RE: [PATCH v2 3/6] ima: Fix ima digest hash table key calculation
+Thread-Topic: [PATCH v2 3/6] ima: Fix ima digest hash table key calculation
+Thread-Index: AQHWHH8SDZUC+XMi6UOqF9nBthnXX6iMzGEggAAOugCAACgi8A==
+Date:   Mon, 27 Apr 2020 14:28:24 +0000
+Message-ID: <5786ad88cd184e5791bc285d5cac6ecc@AcuMS.aculab.com>
+References: <20200427102900.18887-1-roberto.sassu@huawei.com>
+ <20200427102900.18887-3-roberto.sassu@huawei.com>
+ <84ecd8f2576849b29876448df66824fc@AcuMS.aculab.com>
+ <90e19242fd8445cf93728c0946c03c19@huawei.com>
+In-Reply-To: <90e19242fd8445cf93728c0946c03c19@huawei.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <355575.1587996734.1@warthog.procyon.org.uk>
-Date:   Mon, 27 Apr 2020 15:12:14 +0100
-Message-ID: <355576.1587996734@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Paul Moore <paul@paul-moore.com> wrote:
-
-> Okay, can you send the next version of the patch to the SELinux list for
-> review?
-
-Here you go.  Note that I did this a few days ago and I actually used EACCES
-rather than EPERM.  Which one is one preferred for this?
-
-David
----
-selinux: Fix use of KEY_NEED_* instead of KEY__* perms
-
-selinux_key_getsecurity() is passing the KEY_NEED_* permissions to
-security_sid_to_context() instead of the KEY__* values.  It happens to work
-because the values are all coincident.
-
-Fixes: d720024e94de ("[PATCH] selinux: add hooks for key subsystem")
-Reported-by: Paul Moore <paul@paul-moore.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
----
- security/selinux/hooks.c |   22 ++++++++++++++++++++--
- 1 file changed, 20 insertions(+), 2 deletions(-)
-
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 0b4e32161b77..6087955b49d8 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -6539,20 +6539,38 @@ static void selinux_key_free(struct key *k)
- 	kfree(ksec);
- }
- 
-+static unsigned int selinux_keyperm_to_av(unsigned int need_perm)
-+{
-+	switch (need_perm) {
-+	case KEY_NEED_VIEW:	return KEY__VIEW;
-+	case KEY_NEED_READ:	return KEY__READ;
-+	case KEY_NEED_WRITE:	return KEY__WRITE;
-+	case KEY_NEED_SEARCH:	return KEY__SEARCH;
-+	case KEY_NEED_LINK:	return KEY__LINK;
-+	case KEY_NEED_SETATTR:	return KEY__SETATTR;
-+	default:
-+		return 0;
-+	}
-+}
-+
- static int selinux_key_permission(key_ref_t key_ref,
- 				  const struct cred *cred,
--				  unsigned perm)
-+				  unsigned need_perm)
- {
- 	struct key *key;
- 	struct key_security_struct *ksec;
-+	unsigned int perm;
- 	u32 sid;
- 
- 	/* if no specific permissions are requested, we skip the
- 	   permission check. No serious, additional covert channels
- 	   appear to be created. */
--	if (perm == 0)
-+	if (need_perm == 0)
- 		return 0;
- 
-+	perm = selinux_keyperm_to_av(need_perm);
-+	if (perm == 0)
-+		return -EACCES;
- 	sid = cred_sid(cred);
- 
- 	key = key_ref_to_ptr(key_ref);
+RnJvbTogUm9iZXJ0byBTYXNzdQ0KPiBTZW50OiAyNyBBcHJpbCAyMDIwIDEzOjUxDQouLi4NCj4g
+PiA+IC1zdGF0aWMgaW5saW5lIHVuc2lnbmVkIGxvbmcgaW1hX2hhc2hfa2V5KHU4ICpkaWdlc3Qp
+DQo+ID4gPiArc3RhdGljIGlubGluZSB1bnNpZ25lZCBpbnQgaW1hX2hhc2hfa2V5KHU4ICpkaWdl
+c3QpDQo+ID4gPiAgew0KPiA+ID4gLQlyZXR1cm4gaGFzaF9sb25nKCpkaWdlc3QsIElNQV9IQVNI
+X0JJVFMpOw0KPiA+ID4gKwlyZXR1cm4gKCoodW5zaWduZWQgaW50ICopZGlnZXN0ICUgSU1BX01F
+QVNVUkVfSFRBQkxFX1NJWkUpOw0KPiA+DQo+ID4gVGhhdCBhbG1vc3QgY2VydGFpbmx5IGlzbid0
+IHJpZ2h0Lg0KPiA+IEl0IGZhbGxzIGZvdWwgb2YgdGhlICooaW50ZWdlcl90eXBlICopcHRyIGJl
+aW5nIGFsbW9zdCBhbHdheXMgd3JvbmcuDQo+IA0KPiBJIGRpZG4ndCBmaW5kIHRoZSBwcm9ibGVt
+LiBDYW4geW91IHBsZWFzZSBleHBsYWluPw0KDQpUaGUgZ2VuZXJhbCBwcm9ibGVtIHdpdGggKihp
+bnRfdHlwZSAqKXB0ciBpcyB0aGF0IGl0IGRvZXMgY29tcGxldGVseQ0KdGhlIHdyb25nIHRoaW5n
+IGlmICdwdHInIGlzIHRoZSBhZGRyZXNzIG9mIGEgbGFyZ2VyIGludGVnZXIgdHlwZSBvbg0KYSBi
+aWctZW5kaWFuIHN5c3RlbS4NCllvdSBtYXkgYWxzbyBnZXQgYSBtaXNhbGlnbmVkIGFjY2VzcyB0
+cmFwLg0KDQpJbiB0aGlzIGNhc2UgSSBndWVzcyB0aGF0IGRpZ2VzdCBpcyBhY3R1YWxseSB1OFtT
+SEExX0RJR0VTVF9TSVpFXS4NCk1heWJlIHdoYXQgeW91IHNob3VsZCByZXR1cm4gaXM6DQoJKGRp
+Z2VzdFswXSB8IGRpZ2VzdFsxXSA8PCA4KSAlIElNQV9NRUFTVVJFX0hUQUJMRV9TSVpFOw0KYW5k
+IGNvbW1lbnQgdGhhdCB0aGVyZSBpcyBubyBwb2ludCB0YWtpbmcgYSBoYXNoIG9mIHBhcnQgb2YN
+CmEgU0hBMSBkaWdlc3QuDQoNCglEYXZpZA0KDQotDQpSZWdpc3RlcmVkIEFkZHJlc3MgTGFrZXNp
+ZGUsIEJyYW1sZXkgUm9hZCwgTW91bnQgRmFybSwgTWlsdG9uIEtleW5lcywgTUsxIDFQVCwgVUsN
+ClJlZ2lzdHJhdGlvbiBObzogMTM5NzM4NiAoV2FsZXMpDQo=
 
