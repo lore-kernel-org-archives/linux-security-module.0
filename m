@@ -2,127 +2,118 @@ Return-Path: <SRS0=keSj=6L=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CB19C54FD0
-	for <linux-security-module@archiver.kernel.org>; Mon, 27 Apr 2020 15:15:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2771C55199
+	for <linux-security-module@archiver.kernel.org>; Mon, 27 Apr 2020 15:24:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EAFE620661
-	for <linux-security-module@archiver.kernel.org>; Mon, 27 Apr 2020 15:15:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7BDE2206BF
+	for <linux-security-module@archiver.kernel.org>; Mon, 27 Apr 2020 15:24:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ixjl1U9Z"
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="S9/1RV0X"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728174AbgD0PPi (ORCPT
+        id S1727098AbgD0PYa (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 27 Apr 2020 11:15:38 -0400
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:60738 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727771AbgD0PPh (ORCPT
+        Mon, 27 Apr 2020 11:24:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42810 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727010AbgD0PYa (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 27 Apr 2020 11:15:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1588000536;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=eSpYzJ8vruskzw1ixWuPTFKODIOCb1DdC0Y5Ypx1fB0=;
-        b=Ixjl1U9ZxAd7CT3hUfVBj4OC3cNpxodUZOfnDT/R+PiEaqt/AILrKzUj5Eo/rzHioy9Oln
-        cvJLzIAKJ6wHxC5CCF4L4yKtPq/EaBFl8TJ9vWTotACZe3HuIK/3lALMrWYOMCjppl2WFY
-        7T3/PCaVB0U3AZ/R1FovAdsEF10h418=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-203-SmafezhaOCibwS6n0GxajA-1; Mon, 27 Apr 2020 11:15:34 -0400
-X-MC-Unique: SmafezhaOCibwS6n0GxajA-1
-Received: by mail-wm1-f69.google.com with SMTP id w2so26408wmc.3
-        for <linux-security-module@vger.kernel.org>; Mon, 27 Apr 2020 08:15:34 -0700 (PDT)
+        Mon, 27 Apr 2020 11:24:30 -0400
+Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBF94C0610D5
+        for <linux-security-module@vger.kernel.org>; Mon, 27 Apr 2020 08:24:29 -0700 (PDT)
+Received: by mail-ed1-x543.google.com with SMTP id s10so13754011edy.9
+        for <linux-security-module@vger.kernel.org>; Mon, 27 Apr 2020 08:24:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=tLfkmnAmNVphbG9R0lr0hF06PEKfNMCkHl7LVzkw/sE=;
+        b=S9/1RV0XeEBnzxqpE5Cu04AK9oPmaIKsXZfMBbLcDnlc0vKRrmMi0J0YbdjIgm5qbe
+         5z5t8JpyPByEzAFOOZZjymrqvsscl9jU3WwvmWVJz1LIWkaxSwwL+qnWYogHgKuPWqYH
+         bSfToHcp40y4Buyt20clBUotWNf8tTENoSH20jkmOecbaHJK9T2h6AO1buD0oAGpOoNi
+         T66Ri9duCWOZ2Ut0D/7rlf+fJHTrXUDQ8WZbWP41wQRHrk7jwOAGBPJ1ygLUDQJCS74a
+         YkuzCQqzS9CFxVe6Vg/EJI8p0225fyGl7yUhC0MwEPBQG0CANsP4jJ4meGImzQ0d7UWI
+         NXSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=eSpYzJ8vruskzw1ixWuPTFKODIOCb1DdC0Y5Ypx1fB0=;
-        b=fenqKknB5tfdkpfmuN070B8mJkl/6xw1mFSXII7PYu0mpEnqKtTz5CxZIZNL2gpP4m
-         5p1eT6hBlVey0bVfhNi9v8anGtcqFOUTDS/doTsJsUXBeOUi38GbNHNoVwvRcSzNElh3
-         EglvxQsdGEbAu9Ak1So226FgnRqwxangn3vXDJLXcrmop/5G7ZLCVlOtP7SycUy5GmcP
-         a9jaOtyMos3NdY7Tsui0o/4ytltbqVzduBBiqjgLCnKbRR7Y5nEXRytPIKCESvxA/867
-         n1lU3bXN8s40/nvJhzKxfz4oSDGUAFno2I46DaTZd0Jl2lOsnYkpk4tdRUp3Tt6/d3hW
-         EDng==
-X-Gm-Message-State: AGi0Pua4IJYLMjBJ4YhFrchKaqT8uVfAOOIkrw08K5gZJpJra5wuaibD
-        wDvPUYrVwyqKPNphUyZGvFsYd2ihPsQuqOmI5bACA7byvskZUoZl4WGrfeUGyTQt+DKLw+0yTm0
-        UAlrXooysyiOJIIlqZvVnKJMEpSOVR1K6qf39
-X-Received: by 2002:a5d:670d:: with SMTP id o13mr29924471wru.29.1588000533360;
-        Mon, 27 Apr 2020 08:15:33 -0700 (PDT)
-X-Google-Smtp-Source: APiQypK+T+6Aj+dLlxq4HhKDwXzdqmOqUdriVVov3jgAPiPujwYcHZ4fNtTJwlwzd9NWqPh44afp5Q==
-X-Received: by 2002:a5d:670d:: with SMTP id o13mr29924444wru.29.1588000533150;
-        Mon, 27 Apr 2020 08:15:33 -0700 (PDT)
-Received: from ?IPv6:2001:b07:6468:f312:ac19:d1fb:3f5f:d54f? ([2001:b07:6468:f312:ac19:d1fb:3f5f:d54f])
-        by smtp.gmail.com with ESMTPSA id n6sm23226378wrs.81.2020.04.27.08.15.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Apr 2020 08:15:32 -0700 (PDT)
-Subject: Re: [PATCH v2 6/7] debugfs: switch to simplefs inode creation API
-To:     Emanuele Giuseppe Esposito <eesposit@redhat.com>,
-        linux-fsdevel@vger.kernel.org
-Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Frederic Barrat <fbarrat@linux.ibm.com>,
-        Andrew Donnellan <ajd@linux.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Manoj N. Kumar" <manoj@linux.ibm.com>,
-        "Matthew R. Ochs" <mrochs@linux.ibm.com>,
-        Uma Krishnan <ukrishn@linux.ibm.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Joel Becker <jlbec@evilplan.org>,
-        Christoph Hellwig <hch@lst.de>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-scsi@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-References: <20200421135119.30007-1-eesposit@redhat.com>
- <20200421135741.30657-4-eesposit@redhat.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <167ebece-2e50-5186-3a42-2fa491fcb8a5@redhat.com>
-Date:   Mon, 27 Apr 2020 17:15:28 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tLfkmnAmNVphbG9R0lr0hF06PEKfNMCkHl7LVzkw/sE=;
+        b=g0tJaA7RO/p7m9YevWY79Io5H50539QdhrHKC+MWhB4U/7cLzB1q77Re1tcYPtlo5C
+         JfrqOmETfUwaMogyaImsZXEGF2JN0vqxgkcSRnWDH9PJR2jJS02U7XLRcevABBdREIGJ
+         t7iMkRd2RYsdqQWlEva5fVIBbiIm5PAzFDkHLawiyWs4iw5m6KrExg87eZ1ZyKco/XLc
+         N2Pokasvgpf3D7WJ+pEl+2C3O8csMp8rumkduDaE15XpKqx/1nOtdCgROakeqEVOgTxM
+         8Mko2iXVggs/5+fWSzC5bszPwzi0wDLjJZlDMfh3mUhuBxAp5adbjX6FVLxlxuQ9B+bw
+         MwGg==
+X-Gm-Message-State: AGi0PuaXTsAivtcHCn4Avkth0OFIwkGyqtS2QV4qIZL970OABX/gqbgI
+        ectBmFMrX3PfUUPgluLrLA6zwTREAMFEa3AzLK1L
+X-Google-Smtp-Source: APiQypLOcuYsweG3zdDR3Xg2WVeSZJ8Iwg7/3aFs+GmdwkODkXo2vz6N6dKj/SxkwlKgQ3ULvGfxkJgUWRmxcjrUSRM=
+X-Received: by 2002:a50:d98b:: with SMTP id w11mr17688742edj.196.1588001068417;
+ Mon, 27 Apr 2020 08:24:28 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200421135741.30657-4-eesposit@redhat.com>
-Content-Language: en-US
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+References: <CAHC9VhT95GJKNTMvTtmZL35UOoVwbGH-eDWZyELb5oZ5rQU+Tw@mail.gmail.com>
+ <2136640.1587472186@warthog.procyon.org.uk> <CAHC9VhQnORRaRapbb1wrUsxweJCRJ+X+RdvKw8_U0pT0fuxZ6A@mail.gmail.com>
+ <3834193.1587771802@warthog.procyon.org.uk> <CAHC9VhQbhG8-ZABtkZr1FXo9cuH4_nsbB=HP_fGvW+FNQ7iAXg@mail.gmail.com>
+ <355576.1587996734@warthog.procyon.org.uk> <CAEjxPJ4ScTAbOOxd8FUa2XcfMqbNuWLxnHhRko=je2+0re8Ztg@mail.gmail.com>
+In-Reply-To: <CAEjxPJ4ScTAbOOxd8FUa2XcfMqbNuWLxnHhRko=je2+0re8Ztg@mail.gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 27 Apr 2020 11:24:17 -0400
+Message-ID: <CAHC9VhRQfq+QsmdwkNfLs8bs8xGnBOA3_G=+--13sTmUkdjgCQ@mail.gmail.com>
+Subject: Re: [PATCH] selinux: Fix use of KEY_NEED_* instead of KEY__* perms
+To:     Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc:     David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
+        SElinux list <selinux@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 21/04/20 15:57, Emanuele Giuseppe Esposito wrote:
-> -	inode = debugfs_get_inode(dentry->d_sb);
+On Mon, Apr 27, 2020 at 10:36 AM Stephen Smalley
+<stephen.smalley.work@gmail.com> wrote:
+> On Mon, Apr 27, 2020 at 10:13 AM David Howells <dhowells@redhat.com> wrote:
+> >
+> > Paul Moore <paul@paul-moore.com> wrote:
+> >
+> > > Okay, can you send the next version of the patch to the SELinux list for
+> > > review?
+> >
+> > Here you go.  Note that I did this a few days ago and I actually used EACCES
+> > rather than EPERM.  Which one is one preferred for this?
+>
+> Generally SELinux returns EACCES unless the hook normally returns
+> EPERM (e.g. capable).
+> Should we use a build-time or runtime guard to catch introduction of
+> new KEY_NEED values without corresponding SELinux
+> permissions?
+>
+> >
+> > David
+> > ---
+> > selinux: Fix use of KEY_NEED_* instead of KEY__* perms
+> >
+> > selinux_key_getsecurity() is passing the KEY_NEED_* permissions to
+> > security_sid_to_context() instead of the KEY__* values.  It happens to work
+>
+> s/security_sid_to_context/avc_has_perm
+>
+> > because the values are all coincident.
+>
+> Shrug.  That was just a requirement on key permissions when they were
+> introduced; same is true of capabilities.
+> Not opposed to explicitly mapping them now but it isn't really a bug.
 
-You're not removing debugfs_get_inode so I think you're going to get a
-warning (same in tracefs)?
+I haven't looked at the rest of the patch yet, but I wanted to make a
+quick comment on this ... over the years I've seen a number of
+problems that crop up because of cross-subsytem assumptions, unless
+there is some performance critical path where the mapping is
+problematic I would prefer to see a translation layer to help protect
+SELinux.
 
-You can wait a few more days for reviews and/or Acked-bys (especially
-for patches 6 and 7) and then post v3.
-
-Since the touch-everything patch (#2) has already been reviewed, and
-it's mechanical and not introducing any semantic change, you can
-probably reduce the To/Cc list to filesystem, debugfs and tracefs
-maintainers.
-
-Thanks,
-
-Paolo
-
+-- 
+paul moore
+www.paul-moore.com
