@@ -2,119 +2,135 @@ Return-Path: <SRS0=keSj=6L=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2C95CAB360
-	for <linux-security-module@archiver.kernel.org>; Mon, 27 Apr 2020 13:42:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4985C55199
+	for <linux-security-module@archiver.kernel.org>; Mon, 27 Apr 2020 14:12:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C08F5206B6
-	for <linux-security-module@archiver.kernel.org>; Mon, 27 Apr 2020 13:42:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 926E02063A
+	for <linux-security-module@archiver.kernel.org>; Mon, 27 Apr 2020 14:12:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="P+1C+LoP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728273AbgD0Nmy (ORCPT
+        id S1728023AbgD0OMX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 27 Apr 2020 09:42:54 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34888 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727010AbgD0Nmx (ORCPT
+        Mon, 27 Apr 2020 10:12:23 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:58793 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727925AbgD0OMX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 27 Apr 2020 09:42:53 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 919B1ADB5;
-        Mon, 27 Apr 2020 13:42:50 +0000 (UTC)
-Date:   Mon, 27 Apr 2020 08:42:47 -0500
-From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     zohar@linux.ibm.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com,
-        krzysztof.struczynski@huawei.com, stable@vger.kernel.org
-Subject: Re: [PATCH v2 1/6] ima: Set file->f_mode instead of file->f_flags in
- ima_calc_file_hash()
-Message-ID: <20200427134247.vcpx6gyh62seucnf@fiona>
-References: <20200427102900.18887-1-roberto.sassu@huawei.com>
+        Mon, 27 Apr 2020 10:12:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1587996741;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=NpI8PJYyNx+laG2NFVc7Zvkxuqud3siibCd4t0XswQE=;
+        b=P+1C+LoPuL88F8Zdfg4wssBXRuxKoWQbhN1ZhIUkc7bSTHlR9FLGaonpQ+9/tgDmfSh6n5
+        DuYmlmdiE9ho5jkfdu4bZkWutooEQGdp8MCghcGB8uPfuhhi07RpbW3UnieX0IPqIU9Coo
+        suC+/CLN2Prr74F2u/CJlhKqzxCFI04=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-415-mPMDvgv5OHy5VX1yAxRaYg-1; Mon, 27 Apr 2020 10:12:17 -0400
+X-MC-Unique: mPMDvgv5OHy5VX1yAxRaYg-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8612510524FF;
+        Mon, 27 Apr 2020 14:12:16 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-113-129.rdu2.redhat.com [10.10.113.129])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 84E3260BEC;
+        Mon, 27 Apr 2020 14:12:15 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAHC9VhQbhG8-ZABtkZr1FXo9cuH4_nsbB=HP_fGvW+FNQ7iAXg@mail.gmail.com>
+References: <CAHC9VhQbhG8-ZABtkZr1FXo9cuH4_nsbB=HP_fGvW+FNQ7iAXg@mail.gmail.com> <CAHC9VhT95GJKNTMvTtmZL35UOoVwbGH-eDWZyELb5oZ5rQU+Tw@mail.gmail.com> <2136640.1587472186@warthog.procyon.org.uk> <CAHC9VhQnORRaRapbb1wrUsxweJCRJ+X+RdvKw8_U0pT0fuxZ6A@mail.gmail.com> <3834193.1587771802@warthog.procyon.org.uk>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     dhowells@redhat.com, keyrings@vger.kernel.org,
+        selinux@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: [PATCH] selinux: Fix use of KEY_NEED_* instead of KEY__* perms
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200427102900.18887-1-roberto.sassu@huawei.com>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <355575.1587996734.1@warthog.procyon.org.uk>
+Date:   Mon, 27 Apr 2020 15:12:14 +0100
+Message-ID: <355576.1587996734@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 12:28 27/04, Roberto Sassu wrote:
-> Commit a408e4a86b36 ("ima: open a new file instance if no read
-> permissions") tries to create a new file descriptor to calculate a file
-> digest if the file has not been opened with O_RDONLY flag. However, if a
-> new file descriptor cannot be obtained, it sets the FMODE_READ flag to
-> file->f_flags instead of file->f_mode.
-> 
-> This patch fixes this issue by replacing f_flags with f_mode as it was
-> before that commit.
+Paul Moore <paul@paul-moore.com> wrote:
 
-Thanks for fixing this.
+> Okay, can you send the next version of the patch to the SELinux list for
+> review?
 
-Reviewed-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
-> 
-> Changelog
-> 
-> v1:
-> - fix comment for f_mode change (suggested by Mimi)
-> - rename modified_flags variable to modified_mode (suggested by Mimi)
-> 
-> Cc: stable@vger.kernel.org # 4.20.x
-> Fixes: a408e4a86b36 ("ima: open a new file instance if no read permissions")
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> ---
->  security/integrity/ima/ima_crypto.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
-> index 5201f5ec2ce4..f3a7f4eb1fc1 100644
-> --- a/security/integrity/ima/ima_crypto.c
-> +++ b/security/integrity/ima/ima_crypto.c
-> @@ -537,7 +537,7 @@ int ima_calc_file_hash(struct file *file, struct ima_digest_data *hash)
->  	loff_t i_size;
->  	int rc;
->  	struct file *f = file;
-> -	bool new_file_instance = false, modified_flags = false;
-> +	bool new_file_instance = false, modified_mode = false;
->  
->  	/*
->  	 * For consistency, fail file's opened with the O_DIRECT flag on
-> @@ -557,13 +557,13 @@ int ima_calc_file_hash(struct file *file, struct ima_digest_data *hash)
->  		f = dentry_open(&file->f_path, flags, file->f_cred);
->  		if (IS_ERR(f)) {
->  			/*
-> -			 * Cannot open the file again, lets modify f_flags
-> +			 * Cannot open the file again, lets modify f_mode
->  			 * of original and continue
->  			 */
->  			pr_info_ratelimited("Unable to reopen file for reading.\n");
->  			f = file;
-> -			f->f_flags |= FMODE_READ;
-> -			modified_flags = true;
-> +			f->f_mode |= FMODE_READ;
-> +			modified_mode = true;
->  		} else {
->  			new_file_instance = true;
->  		}
-> @@ -581,8 +581,8 @@ int ima_calc_file_hash(struct file *file, struct ima_digest_data *hash)
->  out:
->  	if (new_file_instance)
->  		fput(f);
-> -	else if (modified_flags)
-> -		f->f_flags &= ~FMODE_READ;
-> +	else if (modified_mode)
-> +		f->f_mode &= ~FMODE_READ;
->  	return rc;
->  }
->  
-> -- 
-> 2.17.1
-> 
+Here you go.  Note that I did this a few days ago and I actually used EACCES
+rather than EPERM.  Which one is one preferred for this?
 
--- 
-Goldwyn
+David
+---
+selinux: Fix use of KEY_NEED_* instead of KEY__* perms
+
+selinux_key_getsecurity() is passing the KEY_NEED_* permissions to
+security_sid_to_context() instead of the KEY__* values.  It happens to work
+because the values are all coincident.
+
+Fixes: d720024e94de ("[PATCH] selinux: add hooks for key subsystem")
+Reported-by: Paul Moore <paul@paul-moore.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
+---
+ security/selinux/hooks.c |   22 ++++++++++++++++++++--
+ 1 file changed, 20 insertions(+), 2 deletions(-)
+
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 0b4e32161b77..6087955b49d8 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -6539,20 +6539,38 @@ static void selinux_key_free(struct key *k)
+ 	kfree(ksec);
+ }
+ 
++static unsigned int selinux_keyperm_to_av(unsigned int need_perm)
++{
++	switch (need_perm) {
++	case KEY_NEED_VIEW:	return KEY__VIEW;
++	case KEY_NEED_READ:	return KEY__READ;
++	case KEY_NEED_WRITE:	return KEY__WRITE;
++	case KEY_NEED_SEARCH:	return KEY__SEARCH;
++	case KEY_NEED_LINK:	return KEY__LINK;
++	case KEY_NEED_SETATTR:	return KEY__SETATTR;
++	default:
++		return 0;
++	}
++}
++
+ static int selinux_key_permission(key_ref_t key_ref,
+ 				  const struct cred *cred,
+-				  unsigned perm)
++				  unsigned need_perm)
+ {
+ 	struct key *key;
+ 	struct key_security_struct *ksec;
++	unsigned int perm;
+ 	u32 sid;
+ 
+ 	/* if no specific permissions are requested, we skip the
+ 	   permission check. No serious, additional covert channels
+ 	   appear to be created. */
+-	if (perm == 0)
++	if (need_perm == 0)
+ 		return 0;
+ 
++	perm = selinux_keyperm_to_av(need_perm);
++	if (perm == 0)
++		return -EACCES;
+ 	sid = cred_sid(cred);
+ 
+ 	key = key_ref_to_ptr(key_ref);
+
