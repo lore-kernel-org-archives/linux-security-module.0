@@ -2,127 +2,140 @@ Return-Path: <SRS0=keSj=6L=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0962CC4CECD
-	for <linux-security-module@archiver.kernel.org>; Mon, 27 Apr 2020 19:48:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AB47C82292
+	for <linux-security-module@archiver.kernel.org>; Mon, 27 Apr 2020 22:18:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E6C10206B8
-	for <linux-security-module@archiver.kernel.org>; Mon, 27 Apr 2020 19:48:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 29A2F2078C
+	for <linux-security-module@archiver.kernel.org>; Mon, 27 Apr 2020 22:18:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="oo3D+/91"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726285AbgD0TsU (ORCPT
+        id S1726335AbgD0WSB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 27 Apr 2020 15:48:20 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:43192 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725919AbgD0TsU (ORCPT
+        Mon, 27 Apr 2020 18:18:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51514 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726328AbgD0WSA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 27 Apr 2020 15:48:20 -0400
-Received: from ip5f5af183.dynamic.kabel-deutschland.de ([95.90.241.131] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1jT9jk-0003p6-AT; Mon, 27 Apr 2020 19:48:16 +0000
-Date:   Mon, 27 Apr 2020 21:48:15 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Jann Horn <jannh@google.com>
-Cc:     kernel list <linux-kernel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        =?utf-8?B?U3TDqXBoYW5l?= Graber <stgraber@ubuntu.com>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Serge Hallyn <serge@hallyn.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: [PATCH] nsproxy: attach to namespaces via pidfds
-Message-ID: <20200427194815.nc22k7mj543swk7z@wittgenstein>
-References: <20200427143646.619227-1-christian.brauner@ubuntu.com>
- <CAG48ez3eSJSODADpo=O-j9txJ=2R+EupunRvs5H9t5Wa8mvkRA@mail.gmail.com>
- <20200427181507.ry3hw7ufiifwhi5k@wittgenstein>
- <CAG48ez2D36QZU0djiXGbirCgcFeAWA02s8PCk6SWEY5MoKg_kg@mail.gmail.com>
+        Mon, 27 Apr 2020 18:18:00 -0400
+Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46DCEC0610D5
+        for <linux-security-module@vger.kernel.org>; Mon, 27 Apr 2020 15:17:59 -0700 (PDT)
+Received: by mail-ej1-x643.google.com with SMTP id s9so15587826eju.1
+        for <linux-security-module@vger.kernel.org>; Mon, 27 Apr 2020 15:17:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=UL/KOG9jWEcCXLI+hyOZaTUXJMue/WeQvcbigSn5Ae8=;
+        b=oo3D+/91hLZqWrB4onHqCW6rJJEyOlyHLO7bvwoLVFRudtP0fAigCrjLn7Z9f9n+nm
+         hEj3u9hPHsKPnEOAK5Tuw7pSoz/aW6wlUwqvWWuKQicUWWuwIcCJLqvP581ltLbjJwXq
+         OZCg+m65Ct4APQ+nG0JRjkiyAdNiBxEySxSDLi2sQBCxdRozmkvueShw0fcCe6b+l4on
+         ME874FzMO6JJiq/29jNwepCF8CUFQ/0oH++U2iexahGpYeFxeF5ESFrEC7zY1Y/k6FJS
+         35UXfU5LyfP/zCORQLzV1NRM36Verhzjd0JYwN0SKQ+mzdTKei/rMyoGin1IsrPTnGn5
+         VDlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UL/KOG9jWEcCXLI+hyOZaTUXJMue/WeQvcbigSn5Ae8=;
+        b=dmuDexemy/agI8dyRJtpwSnruyChd/tfz3G3HkkrLUpSO/qYrQLRlF0fIcITBszJhI
+         r2oKswAH6TQnDIzE08WSklrzJBC5BSKng/fzSoYpuFFe8rXbz2LguHXHt/CtCJjQgXoP
+         mJYdXe68wBmjS9FXGJ8fpWfoRE1kPxjkgBk84tQx0faEJhxPGYUm27QfRVbODnZPvokM
+         jEyxgbhLv5qPMeeGMuFLJ0nqmxclvmeDnQzIqTiuruM07w2Fa6vHTpyJt9nWtXvgXvsD
+         t0rpMkHKWXRjyCnbfV1jvhcZ30fQkeUvfvWg1w6UvgZNEbTDHtAwJowgKMARDKLLg+TF
+         JGjQ==
+X-Gm-Message-State: AGi0PuaFG3QgsMsCL7+iD3iRylNhZdmMTH7KHC4lKGZQo60yhfciMAkr
+        6bK01qTaQU1yBEivX6lI1WTafTb2j2O2SJNtgKj+
+X-Google-Smtp-Source: APiQypKcaWzr+dqSzZiHdrMq3hOsjQyRzRtPnEHn5+cEMPnQPkQJKf6XD2ptG29hXT9B03+/SChoZBwUAP+jLwKJmYI=
+X-Received: by 2002:a17:906:31da:: with SMTP id f26mr21210369ejf.308.1588025877826;
+ Mon, 27 Apr 2020 15:17:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAG48ez2D36QZU0djiXGbirCgcFeAWA02s8PCk6SWEY5MoKg_kg@mail.gmail.com>
+References: <CAHC9VhT95GJKNTMvTtmZL35UOoVwbGH-eDWZyELb5oZ5rQU+Tw@mail.gmail.com>
+ <2136640.1587472186@warthog.procyon.org.uk> <CAHC9VhQnORRaRapbb1wrUsxweJCRJ+X+RdvKw8_U0pT0fuxZ6A@mail.gmail.com>
+ <3834193.1587771802@warthog.procyon.org.uk> <CAHC9VhQbhG8-ZABtkZr1FXo9cuH4_nsbB=HP_fGvW+FNQ7iAXg@mail.gmail.com>
+ <355576.1587996734@warthog.procyon.org.uk> <CAEjxPJ4S0wpAtXoD1f-54qrriRC8y_hj9T5-vKOGDmf1XhOLrQ@mail.gmail.com>
+In-Reply-To: <CAEjxPJ4S0wpAtXoD1f-54qrriRC8y_hj9T5-vKOGDmf1XhOLrQ@mail.gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 27 Apr 2020 18:17:46 -0400
+Message-ID: <CAHC9VhTSuWLheaQDXwEyELGXEJOAXoFr2--FYhiviQbDHQKhkw@mail.gmail.com>
+Subject: Re: [PATCH] selinux: Fix use of KEY_NEED_* instead of KEY__* perms
+To:     Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc:     David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
+        SElinux list <selinux@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Apr 27, 2020 at 09:41:20PM +0200, Jann Horn wrote:
-> On Mon, Apr 27, 2020 at 8:15 PM Christian Brauner
-> <christian.brauner@ubuntu.com> wrote:
-> > On Mon, Apr 27, 2020 at 07:28:56PM +0200, Jann Horn wrote:
-> > > On Mon, Apr 27, 2020 at 4:47 PM Christian Brauner
-> > > <christian.brauner@ubuntu.com> wrote:
-> [...]
-> > > > That means
-> > > > setns(nsfd, CLONE_NEWNET) equals setns(pidfd, CLONE_NEWNET). However,
-> > > > when a pidfd is passed, multiple namespace flags can be specified in the
-> > > > second setns() argument and setns() will attach the caller to all the
-> > > > specified namespaces all at once or to none of them. If 0 is specified
-> > > > together with a pidfd then setns() will interpret it the same way 0 is
-> > > > interpreted together with a nsfd argument, i.e. attach to any/all
-> > > > namespaces.
-> > > [...]
-> > > > Apart from significiantly reducing the number of syscalls from double
-> > > > digit to single digit which is a decent reason post-spectre/meltdown
-> > > > this also allows to switch to a set of namespaces atomically, i.e.
-> > > > either attaching to all the specified namespaces succeeds or we fail.
-> > >
-> > > Apart from the issues I've pointed out below, I think it's worth
-> > > calling out explicitly that with the current design, the switch will
-> > > not, in fact, be fully atomic - the process will temporarily be in
-> > > intermediate stages where the switches to some namespaces have
-> > > completed while the switches to other namespaces are still pending;
-> > > and while there will be less of these intermediate stages than before,
-> > > it also means that they will be less explicit to userspace.
-> >
-> > Right, that can be fixed by switching to the unshare model of getting a
-> > new set of credentials and committing it after the nsproxy has been
-> > installed? Then there shouldn't be an intermediate state anymore or
-> > rather an intermediate stage where we can still fail somehow.
-> 
-> It still wouldn't be atomic (in the sense of parallelism, not in the
-> sense of intermediate error handling) though; for example, if task B
-> does setns(<pidfd_of_task_a>, 0) and task C concurrently does
-> setns(<pidfd_of_task_b>, 0), then task C may end up with the new mount
-> namespace of task B but the old user namespace, or something like
-> that. If C is more privileged than B, that may cause C to have more
-> privileges through its configuration of namespaces than B does (e.g.
-> by running in the &init_user_ns but with a mount namespace owned by an
-> unprivileged user), which C may not expect. Same thing for racing
-> between unshare() and setns().
-> 
-> [...]
-> > > > +               put_user_ns(user_ns);
-> > > > +       }
-> > > > +#else
-> > > > +       if (flags & CLONE_NEWUSER)
-> > > > +               ret = -EINVAL;
-> > > > +#endif
-> > > > +
-> > > > +       if (!ret && wants_ns(flags, CLONE_NEWNS))
-> > > > +               ret = __ns_install(nsproxy, mnt_ns_to_common(nsp->mnt_ns));
-> > >
-> > > And this one might be even worse, because the mount namespace change
-> > > itself is only stored in the nsproxy at this point, but the cwd and
-> > > root paths have already been overwritten on the task's fs_struct.
-> > >
-> > > To actually make sys_set_ns() atomic, I think you'd need some
-> > > moderately complicated prep work, splitting the ->install handlers up
-> > > into prep work and a commit phase that can't fail.
-> >
-> > Wouldn't it be sufficient to move to an unshare like model, i.e.
-> > creating a new set of creds, and passing the new user_ns to
-> > create_new_namespaces() as well as having a temporary new_fs struct?
-> > That should get rid of all intermediate stages.
-> 
-> Ah, good point, I didn't realize that that already exists for unshare().
+On Mon, Apr 27, 2020 at 1:02 PM Stephen Smalley
+<stephen.smalley.work@gmail.com> wrote:
+> On Mon, Apr 27, 2020 at 10:13 AM David Howells <dhowells@redhat.com> wrote:
 
-Let me try and switch the patch to that.
+...
 
-Christian
+> > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> > index 0b4e32161b77..6087955b49d8 100644
+> > --- a/security/selinux/hooks.c
+> > +++ b/security/selinux/hooks.c
+> > @@ -6539,20 +6539,38 @@ static void selinux_key_free(struct key *k)
+> >         kfree(ksec);
+> >  }
+> >
+> > +static unsigned int selinux_keyperm_to_av(unsigned int need_perm)
+> > +{
+> > +       switch (need_perm) {
+> > +       case KEY_NEED_VIEW:     return KEY__VIEW;
+> > +       case KEY_NEED_READ:     return KEY__READ;
+> > +       case KEY_NEED_WRITE:    return KEY__WRITE;
+> > +       case KEY_NEED_SEARCH:   return KEY__SEARCH;
+> > +       case KEY_NEED_LINK:     return KEY__LINK;
+> > +       case KEY_NEED_SETATTR:  return KEY__SETATTR;
+> > +       default:
+>
+> Possibly WARN() or BUG() here?  Or BUILD_BUG_ON(KEY_NEED_ALL != 0x3f)
+> to force an update here
+> whenever a new key permission is defined?
+
+My vote is for a build time check via BUILD_BUG_ON() or similar
+mechanism.  It's worked really well in other places, I'm thinking
+specifically of the SELinux netlink mapping.
+
+> > +               return 0;
+> > +       }
+> > +}
+> > +
+> >  static int selinux_key_permission(key_ref_t key_ref,
+> >                                   const struct cred *cred,
+> > -                                 unsigned perm)
+> > +                                 unsigned need_perm)
+> >  {
+> >         struct key *key;
+> >         struct key_security_struct *ksec;
+> > +       unsigned int perm;
+> >         u32 sid;
+> >
+> >         /* if no specific permissions are requested, we skip the
+> >            permission check. No serious, additional covert channels
+> >            appear to be created. */
+> > -       if (perm == 0)
+> > +       if (need_perm == 0)
+> >                 return 0;
+> >
+> > +       perm = selinux_keyperm_to_av(need_perm);
+> > +       if (perm == 0)
+> > +               return -EACCES;
+>
+> We should log or audit some kind of message here, whether via WARN(),
+> audit_log(), or something, to avoid silent denials.
+
+Assuming we add a build time check (see above), I think a WARN here is okay.
+
+-- 
+paul moore
+www.paul-moore.com
