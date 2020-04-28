@@ -2,131 +2,128 @@ Return-Path: <SRS0=nZex=6M=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 115FAC83000
-	for <linux-security-module@archiver.kernel.org>; Tue, 28 Apr 2020 17:46:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2EB8C83000
+	for <linux-security-module@archiver.kernel.org>; Tue, 28 Apr 2020 17:51:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E9CC3208E0
-	for <linux-security-module@archiver.kernel.org>; Tue, 28 Apr 2020 17:46:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF74B20757
+	for <linux-security-module@archiver.kernel.org>; Tue, 28 Apr 2020 17:51:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728469AbgD1Rqv (ORCPT
+        id S1728601AbgD1Rvr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 28 Apr 2020 13:46:51 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35190 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727074AbgD1Rqv (ORCPT
+        Tue, 28 Apr 2020 13:51:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37622 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728614AbgD1Rvq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 28 Apr 2020 13:46:51 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 03SHZ0T7018100;
-        Tue, 28 Apr 2020 13:46:44 -0400
-Received: from ppma04fra.de.ibm.com (6a.4a.5195.ip4.static.sl-reverse.com [149.81.74.106])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 30pjmjf4tq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 28 Apr 2020 13:46:44 -0400
-Received: from pps.filterd (ppma04fra.de.ibm.com [127.0.0.1])
-        by ppma04fra.de.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 03SHepiB028904;
-        Tue, 28 Apr 2020 17:46:42 GMT
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (d06relay11.portsmouth.uk.ibm.com [9.149.109.196])
-        by ppma04fra.de.ibm.com with ESMTP id 30mcu592aa-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 28 Apr 2020 17:46:42 +0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 03SHkeYk26280154
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 28 Apr 2020 17:46:40 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2B02811C06E;
-        Tue, 28 Apr 2020 17:46:40 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E9DBE11C05E;
-        Tue, 28 Apr 2020 17:46:38 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.198.90])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 28 Apr 2020 17:46:38 +0000 (GMT)
-Message-ID: <1588095998.5195.49.camel@linux.ibm.com>
-Subject: Re: [PATCH v2 6/6] ima: Fix return value of ima_write_policy()
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>,
-        Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
-Cc:     linux-integrity@vger.kernel.org,
+        Tue, 28 Apr 2020 13:51:46 -0400
+Received: from smtp-42a9.mail.infomaniak.ch (smtp-42a9.mail.infomaniak.ch [IPv6:2001:1600:3:17::42a9])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 365D4C03C1AB
+        for <linux-security-module@vger.kernel.org>; Tue, 28 Apr 2020 10:51:46 -0700 (PDT)
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 49BTjV5Jgqzlhg3W;
+        Tue, 28 Apr 2020 19:51:42 +0200 (CEST)
+Received: from localhost (unknown [94.23.54.103])
+        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 49BTjV2609zmCTtP;
+        Tue, 28 Apr 2020 19:51:42 +0200 (CEST)
+From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To:     linux-kernel@vger.kernel.org
+Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Eric Chiang <ericchiang@google.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mickael.salaun@ssi.gouv.fr>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        =?UTF-8?q?Philippe=20Tr=C3=A9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com,
-        krzysztof.struczynski@huawei.com, stable@vger.kernel.org
-Date:   Tue, 28 Apr 2020 13:46:38 -0400
-In-Reply-To: <20200427103128.19229-1-roberto.sassu@huawei.com>
-References: <20200427102900.18887-1-roberto.sassu@huawei.com>
-         <20200427103128.19229-1-roberto.sassu@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH v3 2/5] fs: Add a MAY_EXECMOUNT flag to infer the noexec mount property
+Date:   Tue, 28 Apr 2020 19:51:26 +0200
+Message-Id: <20200428175129.634352-3-mic@digikod.net>
+X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20200428175129.634352-1-mic@digikod.net>
+References: <20200428175129.634352-1-mic@digikod.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
- definitions=2020-04-28_12:2020-04-28,2020-04-28 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
- adultscore=0 spamscore=0 impostorscore=0 lowpriorityscore=0 malwarescore=0
- mlxscore=0 mlxlogscore=999 suspectscore=0 clxscore=1015 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2004280130
+X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
+X-Antivirus-Code: 0x100000
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Roberto,
+An LSM doesn't get path information related to an access request to open
+an inode.  This new (internal) MAY_EXECMOUNT flag enables an LSM to
+check if the underlying mount point of an inode is marked as executable.
+This is useful to implement a security policy taking advantage of the
+noexec mount option.
 
-On Mon, 2020-04-27 at 12:31 +0200, Roberto Sassu wrote:
-> This patch fixes the return value of ima_write_policy() when a new policy
-> is directly passed to IMA and the current policy requires appraisal of the
-> file containing the policy. Currently, if appraisal is not in ENFORCE mode,
-> ima_write_policy() returns 0 and leads user space applications to an
-> endless loop. Fix this issue by denying the operation regardless of the
-> appraisal mode.
-> 
-> Changelog
-> 
-> v1:
-> - deny the operation in all cases (suggested by Mimi, Krzysztof)
+This flag is set according to path_noexec(), which checks if a mount
+point is mounted with MNT_NOEXEC or if the underlying superblock is
+SB_I_NOEXEC.
 
-Relatively recently, people have moved away from including the
-"Changelog" in the upstream commit. (I'm removing them now.)  
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+Reviewed-by: Philippe Trébuchet <philippe.trebuchet@ssi.gouv.fr>
+Reviewed-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
+Cc: Aleksa Sarai <cyphar@cyphar.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Kees Cook <keescook@chromium.org>
+---
+ fs/namei.c         | 2 ++
+ include/linux/fs.h | 2 ++
+ 2 files changed, 4 insertions(+)
 
-> 
-> Cc: stable@vger.kernel.org # 4.10.x
-> Fixes: 19f8a84713edc ("ima: measure and appraise the IMA policy itself")
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-
-Without the Changelog, the only way of acknowledging people's
-contributions is by including their tags.  Krzysztof, did you want to
-add your "Reviewed-by" tag?
-
-> ---
-
-People have started putting the Changelog or any comments immediately
-below the separator "---" here.
-
-thanks,
-
-Mimi
-
->  security/integrity/ima/ima_fs.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
-> index 8b030a1c5e0d..e3fcad871861 100644
-> --- a/security/integrity/ima/ima_fs.c
-> +++ b/security/integrity/ima/ima_fs.c
-> @@ -338,8 +338,7 @@ static ssize_t ima_write_policy(struct file *file, const char __user *buf,
->  		integrity_audit_msg(AUDIT_INTEGRITY_STATUS, NULL, NULL,
->  				    "policy_update", "signed policy required",
->  				    1, 0);
-> -		if (ima_appraise & IMA_APPRAISE_ENFORCE)
-> -			result = -EACCES;
-> +		result = -EACCES;
->  	} else {
->  		result = ima_parse_add_rule(data);
->  	}
+diff --git a/fs/namei.c b/fs/namei.c
+index a320371899cf..33b6d372e74a 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -2849,6 +2849,8 @@ static int may_open(const struct path *path, int acc_mode, int flag)
+ 		break;
+ 	}
+ 
++	/* Pass the mount point executability. */
++	acc_mode |= path_noexec(path) ? 0 : MAY_EXECMOUNT;
+ 	error = inode_permission(inode, MAY_OPEN | acc_mode);
+ 	if (error)
+ 		return error;
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index f5be4be7c01d..9213147d8636 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -103,6 +103,8 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
+ #define MAY_NOT_BLOCK		0x00000080
+ /* the inode is opened with RESOLVE_MAYEXEC */
+ #define MAY_OPENEXEC		0x00000100
++/* the mount point is marked as executable */
++#define MAY_EXECMOUNT		0x00000200
+ 
+ /*
+  * flags in file.f_mode.  Note that FMODE_READ and FMODE_WRITE must correspond
+-- 
+2.26.2
 
