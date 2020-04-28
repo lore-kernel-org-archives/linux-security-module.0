@@ -2,110 +2,115 @@ Return-Path: <SRS0=nZex=6M=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C594C83004
-	for <linux-security-module@archiver.kernel.org>; Tue, 28 Apr 2020 07:32:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F6D7C83000
+	for <linux-security-module@archiver.kernel.org>; Tue, 28 Apr 2020 08:58:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 024E9206B9
-	for <linux-security-module@archiver.kernel.org>; Tue, 28 Apr 2020 07:32:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E9CDF206C0
+	for <linux-security-module@archiver.kernel.org>; Tue, 28 Apr 2020 08:58:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Hv+cLMRo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726315AbgD1Hco (ORCPT
+        id S1726884AbgD1I6Y (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 28 Apr 2020 03:32:44 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2117 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726274AbgD1Hcn (ORCPT
+        Tue, 28 Apr 2020 04:58:24 -0400
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:54078 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726861AbgD1I6Y (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 28 Apr 2020 03:32:43 -0400
-Received: from lhreml743-chm.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id BA2CFD6E8C5E08530288;
-        Tue, 28 Apr 2020 08:32:41 +0100 (IST)
-Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- lhreml743-chm.china.huawei.com (10.201.108.193) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1913.5; Tue, 28 Apr 2020 08:32:41 +0100
-Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.160)
- by fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1913.5; Tue, 28 Apr 2020 09:32:40 +0200
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     <zohar@linux.ibm.com>, <rgoldwyn@suse.de>,
-        <David.Laight@ACULAB.COM>
-CC:     <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
-        <krzysztof.struczynski@huawei.com>, <stable@vger.kernel.org>,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [RESEND][PATCH v2 3/6] ima: Fix ima digest hash table key calculation
-Date:   Tue, 28 Apr 2020 09:30:10 +0200
-Message-ID: <20200428073010.25631-1-roberto.sassu@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200427102900.18887-3-roberto.sassu@huawei.com>
-References: <20200427102900.18887-3-roberto.sassu@huawei.com>
+        Tue, 28 Apr 2020 04:58:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1588064303;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=MSDgdnKSujnY//yD1HvV2piAr94GHY+9CGMl9fk7zQM=;
+        b=Hv+cLMRoy9mgXJbWiewqUQWqg7gzjzc1gZn2TUj5y+G7C0VBxHa4mnZ+aG8L4wgynWMaKc
+        PGKMlrGeMv+KVtYNWJvXSB8C1ZcM8WiQqzz4SgsGWMuwHg8Qqtc9bleHS81F4ehpvY6YmV
+        1dXppg0zvpBpG6gl8O/M5mfc/vFZwLg=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-483-zdg8qOnLOAGsW_CKHY6-2g-1; Tue, 28 Apr 2020 04:58:19 -0400
+X-MC-Unique: zdg8qOnLOAGsW_CKHY6-2g-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 71AE380B70B;
+        Tue, 28 Apr 2020 08:58:18 +0000 (UTC)
+Received: from localhost (ovpn-115-22.ams2.redhat.com [10.36.115.22])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 036725C1D6;
+        Tue, 28 Apr 2020 08:58:17 +0000 (UTC)
+Date:   Tue, 28 Apr 2020 09:58:16 +0100
+From:   Stefan Hajnoczi <stefanha@redhat.com>
+To:     linux-security-module@vger.kernel.org
+Cc:     Serge Hallyn <serge@hallyn.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] capabilities: add description for CAP_SETFCAP
+Message-ID: <20200428085816.GD15547@stefanha-x1.localdomain>
+References: <20200414154945.142372-1-stefanha@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.204.65.160]
-X-ClientProxiedBy: lhreml736-chm.china.huawei.com (10.201.108.87) To
- fraeml714-chm.china.huawei.com (10.206.15.33)
-X-CFilter-Loop: Reflected
+In-Reply-To: <20200414154945.142372-1-stefanha@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="SFyWQ0h3ruR435lw"
+Content-Disposition: inline
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
+--SFyWQ0h3ruR435lw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Function hash_long() accepts unsigned long, while currently only one byte
-is passed from ima_hash_key(), which calculates a key for ima_htable.
+On Tue, Apr 14, 2020 at 04:49:45PM +0100, Stefan Hajnoczi wrote:
+> Document the purpose of CAP_SETFCAP.  For some reason this capability
+> had no description while the others did.
+>=20
+> Signed-off-by: Stefan Hajnoczi <stefanha@redhat.com>
+> ---
+>  include/uapi/linux/capability.h | 2 ++
+>  1 file changed, 2 insertions(+)
 
-Given that hashing the digest does not give clear benefits compared to
-using the digest itself, remove hash_long() and return the modulus
-calculated on the first two bytes of the digest with the number of slots.
-Also reduce the depth of the hash table by doubling the number of slots.
+Ping?
 
-Changelog
+> diff --git a/include/uapi/linux/capability.h b/include/uapi/linux/capabil=
+ity.h
+> index 272dc69fa080..7288f0ad44af 100644
+> --- a/include/uapi/linux/capability.h
+> +++ b/include/uapi/linux/capability.h
+> @@ -332,6 +332,8 @@ struct vfs_ns_cap_data {
+> =20
+>  #define CAP_AUDIT_CONTROL    30
+> =20
+> +/* Set or remove capabilities on files */
+> +
+>  #define CAP_SETFCAP=09     31
+> =20
+>  /* Override MAC access.
+> --=20
+> 2.25.1
+>=20
 
-v2: directly access the first two bytes of the digest to avoid memory
-    access issues on big endian systems (suggested by David Laight)
+--SFyWQ0h3ruR435lw
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Cc: stable@vger.kernel.org
-Fixes: 3323eec921ef ("integrity: IMA as an integrity service provider")
-Co-developed-by: Roberto Sassu <roberto.sassu@huawei.com>
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-Signed-off-by: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
----
- security/integrity/ima/ima.h | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+-----BEGIN PGP SIGNATURE-----
 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 467dfdbea25c..02796473238b 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -36,7 +36,7 @@ enum tpm_pcrs { TPM_PCR0 = 0, TPM_PCR8 = 8 };
- #define IMA_DIGEST_SIZE		SHA1_DIGEST_SIZE
- #define IMA_EVENT_NAME_LEN_MAX	255
- 
--#define IMA_HASH_BITS 9
-+#define IMA_HASH_BITS 10
- #define IMA_MEASURE_HTABLE_SIZE (1 << IMA_HASH_BITS)
- 
- #define IMA_TEMPLATE_FIELD_ID_MAX_LEN	16
-@@ -179,9 +179,10 @@ struct ima_h_table {
- };
- extern struct ima_h_table ima_htable;
- 
--static inline unsigned long ima_hash_key(u8 *digest)
-+static inline unsigned int ima_hash_key(u8 *digest)
- {
--	return hash_long(*digest, IMA_HASH_BITS);
-+	/* there is no point in taking a hash of part of a digest */
-+	return (digest[0] | digest[1] << 8) % IMA_MEASURE_HTABLE_SIZE;
- }
- 
- #define __ima_hooks(hook)		\
--- 
-2.17.1
+iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAl6n8CgACgkQnKSrs4Gr
+c8hi2wgAubzNWtaI/6UtRD/UgJdcttBom290aRYYObm7RbnjNN+9TCoTYM8Ymrat
+LebHR9o/Gg1BRwmufr3QZG5iTDPS090gQ1e1azlQY1nhS7WQ1nreNN3wMq/QwPud
+S1P9+KNqCHwMA8RdgOL2A4xxKKqdG0xg8Pv0xum2HkqI4xqYts6iESgLKQ2BR4xt
+8/6orr5eZD8HRbaNkJtMhmaUrb8I+jm4rsV+yIRvEIFiiw2ontHO9K0Kviwaa+Ah
+995oGJ4nn3YRnJKBF2h412K04a0SNMYhsMTSzn58xaq6EKPTfIcPkfGx1zmupD2Z
+rQxy1S8MSVFqiWwmwvxfEdLHnWm2cA==
+=jd69
+-----END PGP SIGNATURE-----
+
+--SFyWQ0h3ruR435lw--
 
