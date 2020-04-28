@@ -2,31 +2,31 @@ Return-Path: <SRS0=nZex=6M=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.8 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C154C83001
-	for <linux-security-module@archiver.kernel.org>; Tue, 28 Apr 2020 17:52:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ED55C8300B
+	for <linux-security-module@archiver.kernel.org>; Tue, 28 Apr 2020 17:52:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0D36F20B1F
-	for <linux-security-module@archiver.kernel.org>; Tue, 28 Apr 2020 17:52:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4976320757
+	for <linux-security-module@archiver.kernel.org>; Tue, 28 Apr 2020 17:52:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728581AbgD1RwJ (ORCPT
+        id S1728678AbgD1RwO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 28 Apr 2020 13:52:09 -0400
-Received: from smtp-1908.mail.infomaniak.ch ([185.125.25.8]:49949 "EHLO
-        smtp-1908.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728627AbgD1Rvx (ORCPT
+        Tue, 28 Apr 2020 13:52:14 -0400
+Received: from smtp-8fa8.mail.infomaniak.ch ([83.166.143.168]:60879 "EHLO
+        smtp-8fa8.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728625AbgD1RwO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 28 Apr 2020 13:51:53 -0400
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 49BTjd5tz7zlhJLg;
-        Tue, 28 Apr 2020 19:51:49 +0200 (CEST)
+        Tue, 28 Apr 2020 13:52:14 -0400
+Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 49BTjT34bjzlhPD2;
+        Tue, 28 Apr 2020 19:51:41 +0200 (CEST)
 Received: from localhost (unknown [94.23.54.103])
-        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 49BTjd35h5zmFgNv;
-        Tue, 28 Apr 2020 19:51:49 +0200 (CEST)
+        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 49BTjS6tr8zmVZjD;
+        Tue, 28 Apr 2020 19:51:40 +0200 (CEST)
 From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To:     linux-kernel@vger.kernel.org
 Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
@@ -59,9 +59,9 @@ Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
         kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH v3 4/5] selftest/openat2: Add tests for RESOLVE_MAYEXEC enforcing
-Date:   Tue, 28 Apr 2020 19:51:28 +0200
-Message-Id: <20200428175129.634352-5-mic@digikod.net>
+Subject: [PATCH v3 1/5] fs: Add support for a RESOLVE_MAYEXEC flag on openat2(2)
+Date:   Tue, 28 Apr 2020 19:51:25 +0200
+Message-Id: <20200428175129.634352-2-mic@digikod.net>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200428175129.634352-1-mic@digikod.net>
 References: <20200428175129.634352-1-mic@digikod.net>
@@ -74,421 +74,124 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Test propagation of noexec mount points or file executability through
-files open with or without RESOLVE_MAYEXEC.
+When the RESOLVE_MAYEXEC flag is passed, openat2(2) may be subject to
+additional restrictions depending on a security policy managed by the
+kernel through a sysctl or implemented by an LSM thanks to the
+inode_permission hook.
+
+The underlying idea is to be able to restrict scripts interpretation
+according to a policy defined by the system administrator.  For this to
+be possible, script interpreters must use the RESOLVE_MAYEXEC flag
+appropriately.  To be fully effective, these interpreters also need to
+handle the other ways to execute code: command line parameters (e.g.,
+option -e for Perl), module loading (e.g., option -m for Python), stdin,
+file sourcing, environment variables, configuration files...  According
+to the threat model, it may be acceptable to allow some script
+interpreters (e.g. Bash) to interpret commands from stdin, may it be a
+TTY or a pipe, because it may not be enough to (directly) perform
+syscalls.  Further documentation can be found in a following patch.
+
+A simple security policy implementation, configured through a dedicated
+sysctl, is available in a following patch.
+
+This is an updated subset of the patch initially written by Vincent
+Strubel for CLIP OS 4:
+https://github.com/clipos-archive/src_platform_clip-patches/blob/f5cb330d6b684752e403b4e41b39f7004d88e561/1901_open_mayexec.patch
+This patch has been used for more than 11 years with customized script
+interpreters.  Some examples (with the original name O_MAYEXEC) can be
+found here:
+https://github.com/clipos-archive/clipos4_portage-overlay/search?q=O_MAYEXEC
 
 Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Reviewed-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
+Signed-off-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
+Signed-off-by: Vincent Strubel <vincent.strubel@ssi.gouv.fr>
 Cc: Aleksa Sarai <cyphar@cyphar.com>
 Cc: Al Viro <viro@zeniv.linux.org.uk>
 Cc: Kees Cook <keescook@chromium.org>
-Cc: Shuah Khan <shuah@kernel.org>
 ---
 
 Changes since v2:
-* Move tests from exec/ to openat2/ .
-* Replace O_MAYEXEC with RESOLVE_MAYEXEC from openat2(2).
-* Cleanup tests.
+* Replace O_MAYEXEC with RESOLVE_MAYEXEC from openat2(2).  This change
+  enables to not break existing application using bogus O_* flags that
+  may be ignored by current kernels by using a new dedicated flag, only
+  usable through openat2(2) (suggested by Jeff Layton).  Using this flag
+  will results in an error if the running kernel does not support it.
+  User space needs to manage this case, as with other RESOLVE_* flags.
+  The best effort approach to security (for most common distros) will
+  simply consists of ignoring such an error and retry without
+  RESOLVE_MAYEXEC.  However, a fully controlled system may which to
+  error out if such an inconsistency is detected.
 
 Changes since v1:
-* Move tests from yama/ to exec/ .
-* Fix _GNU_SOURCE in kselftest_harness.h .
-* Add a new test sysctl_access_write to check if CAP_MAC_ADMIN is taken
-  into account.
-* Test directory execution which is always forbidden since commit
-  73601ea5b7b1 ("fs/open.c: allow opening only regular files during
-  execve()"), and also check that even the root user can not bypass file
-  execution checks.
-* Make sure delete_workspace() always as enough right to succeed.
-* Cosmetic cleanup.
+* Set __FMODE_EXEC when using O_MAYEXEC to make this information
+  available through the new fanotify/FAN_OPEN_EXEC event (suggested by
+  Jan Kara and Matthew Bobrowski).
 ---
- tools/testing/selftests/kselftest_harness.h   |   3 +
- tools/testing/selftests/openat2/Makefile      |   3 +-
- tools/testing/selftests/openat2/config        |   1 +
- tools/testing/selftests/openat2/helpers.h     |   3 +
- .../testing/selftests/openat2/omayexec_test.c | 315 ++++++++++++++++++
- 5 files changed, 324 insertions(+), 1 deletion(-)
- create mode 100644 tools/testing/selftests/openat2/config
- create mode 100644 tools/testing/selftests/openat2/omayexec_test.c
+ fs/open.c                    | 6 ++++++
+ include/linux/fcntl.h        | 2 +-
+ include/linux/fs.h           | 2 ++
+ include/uapi/linux/openat2.h | 6 ++++++
+ 4 files changed, 15 insertions(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/kselftest_harness.h b/tools/testing/selftests/kselftest_harness.h
-index 2bb8c81fc0b4..f6e056ba4a13 100644
---- a/tools/testing/selftests/kselftest_harness.h
-+++ b/tools/testing/selftests/kselftest_harness.h
-@@ -50,7 +50,10 @@
- #ifndef __KSELFTEST_HARNESS_H
- #define __KSELFTEST_HARNESS_H
+diff --git a/fs/open.c b/fs/open.c
+index 719b320ede52..ca5a145761a2 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -1029,6 +1029,12 @@ inline int build_open_flags(const struct open_how *how, struct open_flags *op)
+ 	if (flags & __O_SYNC)
+ 		flags |= O_DSYNC;
  
-+#ifndef _GNU_SOURCE
- #define _GNU_SOURCE
-+#endif
++	/* Checks execution permissions on open. */
++	if (how->resolve & RESOLVE_MAYEXEC) {
++		acc_mode |= MAY_OPENEXEC;
++		flags |= __FMODE_EXEC;
++	}
 +
- #include <asm/types.h>
- #include <errno.h>
- #include <stdbool.h>
-diff --git a/tools/testing/selftests/openat2/Makefile b/tools/testing/selftests/openat2/Makefile
-index 4b93b1417b86..cb98bdb4d5b1 100644
---- a/tools/testing/selftests/openat2/Makefile
-+++ b/tools/testing/selftests/openat2/Makefile
-@@ -1,7 +1,8 @@
- # SPDX-License-Identifier: GPL-2.0-or-later
+ 	op->open_flag = flags;
  
- CFLAGS += -Wall -O2 -g -fsanitize=address -fsanitize=undefined
--TEST_GEN_PROGS := openat2_test resolve_test rename_attack_test
-+LDLIBS += -lcap
-+TEST_GEN_PROGS := openat2_test resolve_test rename_attack_test omayexec_test
+ 	/* O_TRUNC implies we need access checks for write permissions */
+diff --git a/include/linux/fcntl.h b/include/linux/fcntl.h
+index 7bcdcf4f6ab2..a37e213220ad 100644
+--- a/include/linux/fcntl.h
++++ b/include/linux/fcntl.h
+@@ -19,7 +19,7 @@
+ /* List of all valid flags for the how->resolve argument: */
+ #define VALID_RESOLVE_FLAGS \
+ 	(RESOLVE_NO_XDEV | RESOLVE_NO_MAGICLINKS | RESOLVE_NO_SYMLINKS | \
+-	 RESOLVE_BENEATH | RESOLVE_IN_ROOT)
++	 RESOLVE_BENEATH | RESOLVE_IN_ROOT | RESOLVE_MAYEXEC)
  
- include ../lib.mk
+ /* List of all open_how "versions". */
+ #define OPEN_HOW_SIZE_VER0	24 /* sizeof first published struct */
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 4f6f59b4f22a..f5be4be7c01d 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -101,6 +101,8 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
+ #define MAY_CHDIR		0x00000040
+ /* called from RCU mode, don't block */
+ #define MAY_NOT_BLOCK		0x00000080
++/* the inode is opened with RESOLVE_MAYEXEC */
++#define MAY_OPENEXEC		0x00000100
  
-diff --git a/tools/testing/selftests/openat2/config b/tools/testing/selftests/openat2/config
-new file mode 100644
-index 000000000000..dd53c266bf52
---- /dev/null
-+++ b/tools/testing/selftests/openat2/config
-@@ -0,0 +1 @@
-+CONFIG_SYSCTL=y
-diff --git a/tools/testing/selftests/openat2/helpers.h b/tools/testing/selftests/openat2/helpers.h
-index a6ea27344db2..2a46d5446110 100644
---- a/tools/testing/selftests/openat2/helpers.h
-+++ b/tools/testing/selftests/openat2/helpers.h
-@@ -9,6 +9,7 @@
- 
- #define _GNU_SOURCE
- #include <stdint.h>
-+#include <stdbool.h>
- #include <errno.h>
- #include <linux/types.h>
- #include "../kselftest.h"
-@@ -60,6 +61,8 @@ bool needs_openat2(const struct open_how *how);
+ /*
+  * flags in file.f_mode.  Note that FMODE_READ and FMODE_WRITE must correspond
+diff --git a/include/uapi/linux/openat2.h b/include/uapi/linux/openat2.h
+index 58b1eb711360..86ed0a2321c3 100644
+--- a/include/uapi/linux/openat2.h
++++ b/include/uapi/linux/openat2.h
+@@ -35,5 +35,11 @@ struct open_how {
  #define RESOLVE_IN_ROOT		0x10 /* Make all jumps to "/" and ".."
  					be scoped inside the dirfd
  					(similar to chroot(2)). */
-+#define RESOLVE_MAYEXEC		0x20 /* Command execution from file is
-+					intended, checks exec permissions. */
- #endif /* RESOLVE_IN_ROOT */
++#define RESOLVE_MAYEXEC		0x20 /* Code execution from the target file is
++					intended, checks such permission.  A
++					simple policy can be enforced
++					system-wide as explained in
++					Documentation/admin-guide/sysctl/fs.rst
++					*/
  
- #define E_func(func, ...)						\
-diff --git a/tools/testing/selftests/openat2/omayexec_test.c b/tools/testing/selftests/openat2/omayexec_test.c
-new file mode 100644
-index 000000000000..5298cbd5b7e9
---- /dev/null
-+++ b/tools/testing/selftests/openat2/omayexec_test.c
-@@ -0,0 +1,315 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Test openat2(2) with RESOLVE_MAYEXEC
-+ *
-+ * Copyright © 2018-2020 ANSSI
-+ *
-+ * Author: Mickaël Salaün <mic@digikod.net>
-+ */
-+
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <sys/capability.h>
-+#include <sys/mount.h>
-+#include <sys/stat.h>
-+#include <unistd.h>
-+
-+#include "helpers.h"
-+#include "../kselftest_harness.h"
-+
-+#define SYSCTL_MAYEXEC	"/proc/sys/fs/open_mayexec_enforce"
-+
-+#define BIN_DIR		"./test-mount"
-+#define BIN_PATH	BIN_DIR "/file"
-+#define DIR_PATH	BIN_DIR "/directory"
-+
-+#define ALLOWED		1
-+#define DENIED		0
-+
-+static void ignore_dac(struct __test_metadata *_metadata, int override)
-+{
-+	cap_t caps;
-+	const cap_value_t cap_val[2] = {
-+		CAP_DAC_OVERRIDE,
-+		CAP_DAC_READ_SEARCH,
-+	};
-+
-+	caps = cap_get_proc();
-+	ASSERT_NE(NULL, caps);
-+	ASSERT_EQ(0, cap_set_flag(caps, CAP_EFFECTIVE, 2, cap_val,
-+				override ? CAP_SET : CAP_CLEAR));
-+	ASSERT_EQ(0, cap_set_proc(caps));
-+	EXPECT_EQ(0, cap_free(caps));
-+}
-+
-+static void ignore_mac(struct __test_metadata *_metadata, int override)
-+{
-+	cap_t caps;
-+	const cap_value_t cap_val[1] = {
-+		CAP_MAC_ADMIN,
-+	};
-+
-+	caps = cap_get_proc();
-+	ASSERT_NE(NULL, caps);
-+	ASSERT_EQ(0, cap_set_flag(caps, CAP_EFFECTIVE, 1, cap_val,
-+				override ? CAP_SET : CAP_CLEAR));
-+	ASSERT_EQ(0, cap_set_proc(caps));
-+	EXPECT_EQ(0, cap_free(caps));
-+}
-+
-+static void test_omx(struct __test_metadata *_metadata,
-+		const char *const path, const int exec_allowed)
-+{
-+	struct open_how how = {
-+		.flags = O_RDONLY | O_CLOEXEC,
-+	};
-+	int fd;
-+
-+	/* Opens without MAYEXEC. */
-+	fd = sys_openat2(AT_FDCWD, path, &how);
-+	ASSERT_LE(0, fd);
-+	EXPECT_EQ(0, close(fd));
-+
-+	/* Opens with MAYEXEC. */
-+	how.resolve = RESOLVE_MAYEXEC;
-+	fd = sys_openat2(AT_FDCWD, path, &how);
-+	if (exec_allowed) {
-+		ASSERT_LE(0, fd);
-+		EXPECT_EQ(0, close(fd));
-+	} else {
-+		ASSERT_EQ(-EACCES, fd);
-+	}
-+}
-+
-+static void test_omx_dir_file(struct __test_metadata *_metadata,
-+		const char *const dir_path, const char *const file_path,
-+		const int exec_allowed)
-+{
-+	/*
-+	 * Directory execution is always denied since commit 73601ea5b7b1
-+	 * ("fs/open.c: allow opening only regular files during execve()").
-+	 */
-+	test_omx(_metadata, dir_path, DENIED);
-+	test_omx(_metadata, file_path, exec_allowed);
-+}
-+
-+static void test_dir_file(struct __test_metadata *_metadata,
-+		const char *const dir_path, const char *const file_path,
-+		const int exec_allowed)
-+{
-+	/* Tests as root. */
-+	ignore_dac(_metadata, 1);
-+	test_omx_dir_file(_metadata, dir_path, file_path, exec_allowed);
-+
-+	/* Tests without bypass. */
-+	ignore_dac(_metadata, 0);
-+	test_omx_dir_file(_metadata, dir_path, file_path, exec_allowed);
-+}
-+
-+static void sysctl_write(struct __test_metadata *_metadata,
-+		const char *path, const char *value)
-+{
-+	int fd;
-+	size_t len_value;
-+	ssize_t len_wrote;
-+
-+	fd = open(path, O_WRONLY | O_CLOEXEC);
-+	ASSERT_LE(0, fd);
-+	len_value = strlen(value);
-+	len_wrote = write(fd, value, len_value);
-+	ASSERT_EQ(len_wrote, len_value);
-+	EXPECT_EQ(0, close(fd));
-+}
-+
-+static void create_workspace(struct __test_metadata *_metadata,
-+		int mount_exec, int file_exec)
-+{
-+	int fd;
-+
-+	/*
-+	 * Cleans previous workspace if any error previously happened (don't
-+	 * check errors).
-+	 */
-+	umount(BIN_DIR);
-+	rmdir(BIN_DIR);
-+
-+	/* Creates a clean mount point. */
-+	ASSERT_EQ(0, mkdir(BIN_DIR, 00700));
-+	ASSERT_EQ(0, mount("test", BIN_DIR, "tmpfs",
-+				MS_MGC_VAL | (mount_exec ? 0 : MS_NOEXEC),
-+				"mode=0700,size=4k"));
-+
-+	/* Creates a test file. */
-+	fd = open(BIN_PATH, O_CREAT | O_RDONLY | O_CLOEXEC,
-+			file_exec ? 00500 : 00400);
-+	ASSERT_LE(0, fd);
-+	EXPECT_EQ(0, close(fd));
-+
-+	/* Creates a test directory. */
-+	ASSERT_EQ(0, mkdir(DIR_PATH, file_exec ? 00500 : 00400));
-+}
-+
-+static void delete_workspace(struct __test_metadata *_metadata)
-+{
-+	ignore_mac(_metadata, 1);
-+	sysctl_write(_metadata, SYSCTL_MAYEXEC, "0");
-+
-+	/* There is no need to unlink BIN_PATH nor DIR_PATH. */
-+	ASSERT_EQ(0, umount(BIN_DIR));
-+	ASSERT_EQ(0, rmdir(BIN_DIR));
-+}
-+
-+FIXTURE_DATA(mount_exec_file_exec) { };
-+
-+FIXTURE_SETUP(mount_exec_file_exec)
-+{
-+	create_workspace(_metadata, 1, 1);
-+}
-+
-+FIXTURE_TEARDOWN(mount_exec_file_exec)
-+{
-+	delete_workspace(_metadata);
-+}
-+
-+TEST_F(mount_exec_file_exec, mount)
-+{
-+	/* Enforces mount exec check. */
-+	sysctl_write(_metadata, SYSCTL_MAYEXEC, "1");
-+	test_dir_file(_metadata, DIR_PATH, BIN_PATH, ALLOWED);
-+}
-+
-+TEST_F(mount_exec_file_exec, file)
-+{
-+	/* Enforces file exec check. */
-+	sysctl_write(_metadata, SYSCTL_MAYEXEC, "2");
-+	test_dir_file(_metadata, DIR_PATH, BIN_PATH, ALLOWED);
-+}
-+
-+TEST_F(mount_exec_file_exec, mount_file)
-+{
-+	/* Enforces mount and file exec check. */
-+	sysctl_write(_metadata, SYSCTL_MAYEXEC, "3");
-+	test_dir_file(_metadata, DIR_PATH, BIN_PATH, ALLOWED);
-+}
-+
-+FIXTURE_DATA(mount_exec_file_noexec) { };
-+
-+FIXTURE_SETUP(mount_exec_file_noexec)
-+{
-+	create_workspace(_metadata, 1, 0);
-+}
-+
-+FIXTURE_TEARDOWN(mount_exec_file_noexec)
-+{
-+	delete_workspace(_metadata);
-+}
-+
-+TEST_F(mount_exec_file_noexec, mount)
-+{
-+	/* Enforces mount exec check. */
-+	sysctl_write(_metadata, SYSCTL_MAYEXEC, "1");
-+	test_dir_file(_metadata, DIR_PATH, BIN_PATH, ALLOWED);
-+}
-+
-+TEST_F(mount_exec_file_noexec, file)
-+{
-+	/* Enforces file exec check. */
-+	sysctl_write(_metadata, SYSCTL_MAYEXEC, "2");
-+	test_dir_file(_metadata, DIR_PATH, BIN_PATH, DENIED);
-+}
-+
-+TEST_F(mount_exec_file_noexec, mount_file)
-+{
-+	/* Enforces mount and file exec check. */
-+	sysctl_write(_metadata, SYSCTL_MAYEXEC, "3");
-+	test_dir_file(_metadata, DIR_PATH, BIN_PATH, DENIED);
-+}
-+
-+FIXTURE_DATA(mount_noexec_file_exec) { };
-+
-+FIXTURE_SETUP(mount_noexec_file_exec)
-+{
-+	create_workspace(_metadata, 0, 1);
-+}
-+
-+FIXTURE_TEARDOWN(mount_noexec_file_exec)
-+{
-+	delete_workspace(_metadata);
-+}
-+
-+TEST_F(mount_noexec_file_exec, mount)
-+{
-+	/* Enforces mount exec check. */
-+	sysctl_write(_metadata, SYSCTL_MAYEXEC, "1");
-+	test_dir_file(_metadata, DIR_PATH, BIN_PATH, DENIED);
-+}
-+
-+TEST_F(mount_noexec_file_exec, file)
-+{
-+	/* Enforces file exec check. */
-+	sysctl_write(_metadata, SYSCTL_MAYEXEC, "2");
-+	test_dir_file(_metadata, DIR_PATH, BIN_PATH, ALLOWED);
-+}
-+
-+TEST_F(mount_noexec_file_exec, mount_file)
-+{
-+	/* Enforces mount and file exec check. */
-+	sysctl_write(_metadata, SYSCTL_MAYEXEC, "3");
-+	test_dir_file(_metadata, DIR_PATH, BIN_PATH, DENIED);
-+}
-+
-+FIXTURE_DATA(mount_noexec_file_noexec) { };
-+
-+FIXTURE_SETUP(mount_noexec_file_noexec)
-+{
-+	create_workspace(_metadata, 0, 0);
-+}
-+
-+FIXTURE_TEARDOWN(mount_noexec_file_noexec)
-+{
-+	delete_workspace(_metadata);
-+}
-+
-+TEST_F(mount_noexec_file_noexec, mount)
-+{
-+	/* Enforces mount exec check. */
-+	sysctl_write(_metadata, SYSCTL_MAYEXEC, "1");
-+	test_dir_file(_metadata, DIR_PATH, BIN_PATH, DENIED);
-+}
-+
-+TEST_F(mount_noexec_file_noexec, file)
-+{
-+	/* Enforces file exec check. */
-+	sysctl_write(_metadata, SYSCTL_MAYEXEC, "2");
-+	test_dir_file(_metadata, DIR_PATH, BIN_PATH, DENIED);
-+}
-+
-+TEST_F(mount_noexec_file_noexec, mount_file)
-+{
-+	/* Enforces mount and file exec check. */
-+	sysctl_write(_metadata, SYSCTL_MAYEXEC, "3");
-+	test_dir_file(_metadata, DIR_PATH, BIN_PATH, DENIED);
-+}
-+
-+TEST(sysctl_access_write)
-+{
-+	int fd;
-+	ssize_t len_wrote;
-+
-+	ignore_mac(_metadata, 1);
-+	sysctl_write(_metadata, SYSCTL_MAYEXEC, "0");
-+
-+	ignore_mac(_metadata, 0);
-+	fd = open(SYSCTL_MAYEXEC, O_WRONLY | O_CLOEXEC);
-+	ASSERT_LE(0, fd);
-+	len_wrote = write(fd, "0", 1);
-+	ASSERT_EQ(len_wrote, -1);
-+	EXPECT_EQ(0, close(fd));
-+
-+	ignore_mac(_metadata, 1);
-+}
-+
-+TEST_HARNESS_MAIN
+ #endif /* _UAPI_LINUX_OPENAT2_H */
 -- 
 2.26.2
 
