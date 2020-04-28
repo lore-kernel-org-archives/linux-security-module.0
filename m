@@ -2,113 +2,131 @@ Return-Path: <SRS0=nZex=6M=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4755AC83000
-	for <linux-security-module@archiver.kernel.org>; Tue, 28 Apr 2020 16:19:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 115FAC83000
+	for <linux-security-module@archiver.kernel.org>; Tue, 28 Apr 2020 17:46:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 27851206D8
-	for <linux-security-module@archiver.kernel.org>; Tue, 28 Apr 2020 16:19:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zv3u9Zv8"
+	by mail.kernel.org (Postfix) with ESMTP id E9CC3208E0
+	for <linux-security-module@archiver.kernel.org>; Tue, 28 Apr 2020 17:46:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728446AbgD1QTR (ORCPT
+        id S1728469AbgD1Rqv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 28 Apr 2020 12:19:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51450 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728388AbgD1QTQ (ORCPT
+        Tue, 28 Apr 2020 13:46:51 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35190 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727074AbgD1Rqv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 28 Apr 2020 12:19:16 -0400
-Received: from mail-ot1-x343.google.com (mail-ot1-x343.google.com [IPv6:2607:f8b0:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09941C03C1AC;
-        Tue, 28 Apr 2020 09:19:16 -0700 (PDT)
-Received: by mail-ot1-x343.google.com with SMTP id z25so33541971otq.13;
-        Tue, 28 Apr 2020 09:19:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=c1EsjSooPyqCnBO664DNonHfMUSKi8/7rikFXFsVYdo=;
-        b=Zv3u9Zv8TiofchaTvuqN5JwJqvonwFHSTFFbjYh3QeCWjLqyuXW6BryCjmAx0Uxxk0
-         0gP98On9XwU0NztiNgBQS/dz2UoGE3rYWrhcfH1wUhyKT6/nxhDB2BgJlJDLE3Rdtm6n
-         AJC5dct6VBPTWAc1df/VNdn3j1TdT33vcIIRp/7ldhyqnkApW4iyV74xa+IUxSX2bUPM
-         nyXDNVIp4atlEOcpcPS1vFhzUdHOYkCLBW4VyaoEdh5kD33ukSqxj81qr1JZGwsmeKMm
-         whnoqvpzGCO/KpAHxCkkDsNVU64o7Gy1OXtNsYkZ+0Nzsyj8dXEhNZN+0M66ddIgBn2x
-         OkLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=c1EsjSooPyqCnBO664DNonHfMUSKi8/7rikFXFsVYdo=;
-        b=fUCfKZtWCQBDIoAYs3MEKFxWGfD/4IUUuYgexqIVO/i1m1Nc1Vl2YpVogwJD08msru
-         ZKLUunLEnT1Hz4rOmnuR8anXA+J//IxDZgfwPiMtau5C573EKRmR8K/ygSHbkyrvPiUG
-         U0uDIMDo1MkS/sjbqz8VvlUPLKoD8pNAj+XuG8n6U2rfttxrvPToNnTQU/RjU3M3ATNs
-         tnnrp1Rn02xiuad9XZzRGs7G27APxj3djbuTkz+kjS7MA47YC4+95bt1KtBZ/FRZW5S2
-         3We1ZNWC3F2muIvWkW5lQ7S7jzvkblbFqYxNVgCKHfXiP784JUUoeA/uB7CiFo0XgAAP
-         JWoA==
-X-Gm-Message-State: AGi0PuZkzvo8C375MSHQsye0f9khilY9I/xgtIHhab6f+XqMt9j4h/LP
-        aHtBf1KdfG0Po0oSzWEgy+DglhONOhOMSOppDz0v1A==
-X-Google-Smtp-Source: APiQypKEsLKypKBFMaeTK5Vu/aRzLy34dr52xJcb9/VoDVzJrtdC3yjEMYpVolT91E1KkbeGKxf3ZCu8aozNcyXMnrw=
-X-Received: by 2002:a9d:6952:: with SMTP id p18mr21913401oto.89.1588090755407;
- Tue, 28 Apr 2020 09:19:15 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAHC9VhT95GJKNTMvTtmZL35UOoVwbGH-eDWZyELb5oZ5rQU+Tw@mail.gmail.com>
- <924658.1588078484@warthog.procyon.org.uk> <CAEjxPJ5+DtZfX36OLYiLbU=1tGZcPUWFUi1=mFfx=ntehtvd3Q@mail.gmail.com>
- <1072935.1588089479@warthog.procyon.org.uk>
-In-Reply-To: <1072935.1588089479@warthog.procyon.org.uk>
-From:   Stephen Smalley <stephen.smalley.work@gmail.com>
-Date:   Tue, 28 Apr 2020 12:19:02 -0400
-Message-ID: <CAEjxPJ6pFdDfm55pv9bT3CV5DTFF9VqzRmG_Xi5bKNxPaGuOLg@mail.gmail.com>
-Subject: Re: [PATCH] selinux: Fix use of KEY_NEED_* instead of KEY__* perms [v2]
-To:     David Howells <dhowells@redhat.com>
-Cc:     Paul Moore <paul@paul-moore.com>, keyrings@vger.kernel.org,
-        SElinux list <selinux@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>
+        Tue, 28 Apr 2020 13:46:51 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 03SHZ0T7018100;
+        Tue, 28 Apr 2020 13:46:44 -0400
+Received: from ppma04fra.de.ibm.com (6a.4a.5195.ip4.static.sl-reverse.com [149.81.74.106])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 30pjmjf4tq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 28 Apr 2020 13:46:44 -0400
+Received: from pps.filterd (ppma04fra.de.ibm.com [127.0.0.1])
+        by ppma04fra.de.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 03SHepiB028904;
+        Tue, 28 Apr 2020 17:46:42 GMT
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (d06relay11.portsmouth.uk.ibm.com [9.149.109.196])
+        by ppma04fra.de.ibm.com with ESMTP id 30mcu592aa-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 28 Apr 2020 17:46:42 +0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 03SHkeYk26280154
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 28 Apr 2020 17:46:40 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2B02811C06E;
+        Tue, 28 Apr 2020 17:46:40 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E9DBE11C05E;
+        Tue, 28 Apr 2020 17:46:38 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.198.90])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 28 Apr 2020 17:46:38 +0000 (GMT)
+Message-ID: <1588095998.5195.49.camel@linux.ibm.com>
+Subject: Re: [PATCH v2 6/6] ima: Fix return value of ima_write_policy()
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>,
+        Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com,
+        krzysztof.struczynski@huawei.com, stable@vger.kernel.org
+Date:   Tue, 28 Apr 2020 13:46:38 -0400
+In-Reply-To: <20200427103128.19229-1-roberto.sassu@huawei.com>
+References: <20200427102900.18887-1-roberto.sassu@huawei.com>
+         <20200427103128.19229-1-roberto.sassu@huawei.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
+ definitions=2020-04-28_12:2020-04-28,2020-04-28 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
+ adultscore=0 spamscore=0 impostorscore=0 lowpriorityscore=0 malwarescore=0
+ mlxscore=0 mlxlogscore=999 suspectscore=0 clxscore=1015 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2004280130
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Apr 28, 2020 at 11:58 AM David Howells <dhowells@redhat.com> wrote:
->
-> Stephen Smalley <stephen.smalley.work@gmail.com> wrote:
->
-> > 1) Are we guaranteed that the caller only ever passes a single
-> > KEY_NEED_* perm at a time (i.e. hook is never called with a bitmask
-> > of multiple permissions)?  Where is that guarantee enforced?
->
-> Currently it's the case that only one perm is ever used at once.  I'm tempted
-> to enforce this by switching the KEY_NEED_* to an enum rather than a bitmask.
->
-> I'm not sure how I would actually define the meaning of two perms being OR'd
-> together.  Either okay?  Both required?
+Hi Roberto,
 
-Both required is the usual convention in functions like
-inode_permission() or avc_has_perm().
-But if you know that you'll never use combinations, we should just
-prohibit it up front, e.g.
-key_task_permission() or whatever can reject them before they reach
-the hook call.  Then the
-hook code doesn't have to revisit the issue.
+On Mon, 2020-04-27 at 12:31 +0200, Roberto Sassu wrote:
+> This patch fixes the return value of ima_write_policy() when a new policy
+> is directly passed to IMA and the current policy requires appraisal of the
+> file containing the policy. Currently, if appraisal is not in ENFORCE mode,
+> ima_write_policy() returns 0 and leads user space applications to an
+> endless loop. Fix this issue by denying the operation regardless of the
+> appraisal mode.
+> 
+> Changelog
+> 
+> v1:
+> - deny the operation in all cases (suggested by Mimi, Krzysztof)
 
->
-> > 2) We had talked about adding a BUILD_BUG_ON() or other build-time
-> > guard
->
-> That doesn't help you trap unallowed perm combinations, though.
+Relatively recently, people have moved away from including the
+"Changelog" in the upstream commit. (I'm removing them now.)  
 
-I think we want both.
+> 
+> Cc: stable@vger.kernel.org # 4.10.x
+> Fixes: 19f8a84713edc ("ima: measure and appraise the IMA policy itself")
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 
->
-> > to ensure that new KEY_NEED_* permissions
-> > are not added without updating SELinux.  We already have similar
-> > constructs for catching new capabilities (#if CAP_LAST_CAP > 63 #error
-> > ...), socket address families (#if PF_MAX > 45 #error ...),  RTM_* and
-> > XFRM_MSG* values.
->
-> David
->
+Without the Changelog, the only way of acknowledging people's
+contributions is by including their tags.  Krzysztof, did you want to
+add your "Reviewed-by" tag?
+
+> ---
+
+People have started putting the Changelog or any comments immediately
+below the separator "---" here.
+
+thanks,
+
+Mimi
+
+>  security/integrity/ima/ima_fs.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
+> index 8b030a1c5e0d..e3fcad871861 100644
+> --- a/security/integrity/ima/ima_fs.c
+> +++ b/security/integrity/ima/ima_fs.c
+> @@ -338,8 +338,7 @@ static ssize_t ima_write_policy(struct file *file, const char __user *buf,
+>  		integrity_audit_msg(AUDIT_INTEGRITY_STATUS, NULL, NULL,
+>  				    "policy_update", "signed policy required",
+>  				    1, 0);
+> -		if (ima_appraise & IMA_APPRAISE_ENFORCE)
+> -			result = -EACCES;
+> +		result = -EACCES;
+>  	} else {
+>  		result = ima_parse_add_rule(data);
+>  	}
+
