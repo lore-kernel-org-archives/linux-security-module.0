@@ -2,154 +2,130 @@ Return-Path: <SRS0=9msM=6N=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDB92C83000
-	for <linux-security-module@archiver.kernel.org>; Wed, 29 Apr 2020 16:17:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED60EC83009
+	for <linux-security-module@archiver.kernel.org>; Wed, 29 Apr 2020 17:02:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BF6DD20757
-	for <linux-security-module@archiver.kernel.org>; Wed, 29 Apr 2020 16:17:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB43E2083B
+	for <linux-security-module@archiver.kernel.org>; Wed, 29 Apr 2020 17:02:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="duJ1CAR3"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BK/QhIP5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726776AbgD2QRz (ORCPT
+        id S1726940AbgD2RCV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 29 Apr 2020 12:17:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50152 "EHLO
+        Wed, 29 Apr 2020 13:02:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57150 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726773AbgD2QRw (ORCPT
+        by vger.kernel.org with ESMTP id S1726456AbgD2RCU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 29 Apr 2020 12:17:52 -0400
-Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FE69C035493
-        for <linux-security-module@vger.kernel.org>; Wed, 29 Apr 2020 09:17:52 -0700 (PDT)
-Received: by mail-wm1-x344.google.com with SMTP id z6so2668648wml.2
-        for <linux-security-module@vger.kernel.org>; Wed, 29 Apr 2020 09:17:52 -0700 (PDT)
+        Wed, 29 Apr 2020 13:02:20 -0400
+Received: from mail-ot1-x341.google.com (mail-ot1-x341.google.com [IPv6:2607:f8b0:4864:20::341])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4E68C03C1AE;
+        Wed, 29 Apr 2020 10:02:20 -0700 (PDT)
+Received: by mail-ot1-x341.google.com with SMTP id g14so2301814otg.10;
+        Wed, 29 Apr 2020 10:02:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=hC339AlYWIKjaIvmnsbzPnIvgC6f8npdAivdjP/WncE=;
-        b=duJ1CAR3oC0XJTSkov4YIS7U0gdKnijRTK0zU7OF120jvwnIAqXrOiZukp76t7gqEg
-         +sws3pAd0Fp715kcqIQUZ6ILybSDYsmpYBhd+d742FyzXAnETdeW6IOhAPErL4HwCrgM
-         462kB+7nxNLniPCRDs6WRnbW6aa9rbAFfqsEc=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=B985L7L6vo4SZsi3kVQu81cacr5257tGI7VdWzNQtbc=;
+        b=BK/QhIP5IW+bddXjrA1pREKlRUiMK9Wa2V3gAEYOxqPdactgZ62/420pj3wtm6eJ9C
+         HPR7JOusQPaUNxfJLn76e/Ez4DJlPvUL96k7/WY6gVuonnIGWjETrUj0454zoCzL1fN7
+         abqxu2Yc4vSx0bHI6Z/xT/1O1JmkgxrfkJDA24awcq1rNzegC4eF5okwaRi6KTNIV3i7
+         ocvUXxtnOm7HQSvRRk9zX0o1Exq1do2ynwyZfuts3czTqYt7LnPZ4X7Nz6O0658Dd/Mb
+         C5UEr1euzAXRhYIyHUtpUqMikhKiok+A5kBcQ6yiBANBIz0k0sGDoHwAW7Bo/L4Hv/9s
+         ws/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=hC339AlYWIKjaIvmnsbzPnIvgC6f8npdAivdjP/WncE=;
-        b=anhw+in18zmCmS0mPSoInE9PFXejCI0So4TaF8jYEaG6uvXNINbiDZ3Qey/fNczmUI
-         /YtS/OSKcEjnCpCDTk/Cs0/0lohP4JxlMohvBaAYShWpFWytbyOHVd40lzf4o3UrIuV/
-         jEYWxJcFdFv9+BiHcDycRYdd6RD4yfuMmVilRyO2XZR/JuCqUPe1GHnG3nA0LoPIh+wr
-         1iehKciQXRKfEaxamaz469S547YHLX7TgI/2A81AhhbTNHl4/C263NpAUOopY9/qHk+o
-         QMd5gtwj9VhqX7QAcEOf8XBBroBXXlEXDikF5W3mDJLQRGjdtaALXCuqx346hm8anF3e
-         xwAg==
-X-Gm-Message-State: AGi0PubaJD8VscK8P5uecBsWxkNhQmjpxvI4NwKGZau+amicQSCCcQj4
-        T7rNTYtbOHmkgQ1E3H/Ol0VAMw==
-X-Google-Smtp-Source: APiQypKqSi/3QCJ/S4sT8BuxhRSzNwixocTEGZPtC0ytAcL+7Al93xW6am13M7Ws4l0ZyznfHMvcCQ==
-X-Received: by 2002:a1c:3dd6:: with SMTP id k205mr4139049wma.138.1588177071094;
-        Wed, 29 Apr 2020 09:17:51 -0700 (PDT)
-Received: from google.com ([81.6.44.51])
-        by smtp.gmail.com with ESMTPSA id d143sm8275651wmd.16.2020.04.29.09.17.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Apr 2020 09:17:50 -0700 (PDT)
-From:   KP Singh <kpsingh@chromium.org>
-X-Google-Original-From: KP Singh <kpsingh>
-Date:   Wed, 29 Apr 2020 18:17:47 +0200
-To:     Mikko Ylinen <mikko.ylinen@linux.intel.com>
-Cc:     KP Singh <kpsingh@chromium.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>,
-        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH bpf-next v9 0/8] MAC and Audit policy using eBPF (KRSI)
-Message-ID: <20200429161747.GA113900@google.com>
-References: <20200329004356.27286-1-kpsingh@chromium.org>
- <0165887d-e9d0-c03e-18b9-72e74a0cbd59@linux.intel.com>
- <CACYkzJ6XyHqr1W=LWV-5Z0txFBtvPCwRY-kczphy+pS7PEitqQ@mail.gmail.com>
- <b5652508-f727-b936-79b5-f8da658395f5@linux.intel.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=B985L7L6vo4SZsi3kVQu81cacr5257tGI7VdWzNQtbc=;
+        b=inkfy7OCPiaGIpc9R938d+upfNLf+w6wemAPzOxZ6kJgJgBHs2Rdl7wkQd0x/kdIzu
+         Dfi1thccd13q7rcx5K0KVIyuvmlYSHznKJhf3SW2zbY3iUNG923KwTVf/7rQ97bxTTkE
+         C/MccqmJ1hZVfdtUOEVoZQnOQrJ+0Nz8T3g3i95yxgGBSHFGfipV2Pyv0GXYpnsfkuc9
+         k0R45ZiV0WMMnFwSVnTVtBckNLwgqM94TWgbKyMpEB3yZ3Uv1anxv7gLvpqVAcEcNQDL
+         iBwKW8iILk3ENIR5tPHi7KQY4O642FjnvzZfztmLqkoLOq3uIMxEl5DBW3aBb5oTyw3i
+         EQtA==
+X-Gm-Message-State: AGi0PuYsHpktyjm+3Mia+NmSojV0bRCass/Bt7troYxAaOaugw3H6q99
+        0UfAA/AgtxIw3XIKbnuVKkwrLOLjwCxQHwreRGzWfSQGkHY=
+X-Google-Smtp-Source: APiQypJbvSlRX+/S2xFHVro3TSK+FAqAJJ9oku9MV9UO98xDHJFqypFdsLNNoZoZ/3TEZBNx8jYUQ6xYULRbhs1VLEc=
+X-Received: by 2002:a9d:2aa9:: with SMTP id e38mr13649191otb.162.1588179740168;
+ Wed, 29 Apr 2020 10:02:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b5652508-f727-b936-79b5-f8da658395f5@linux.intel.com>
+References: <20200326200634.222009-1-dancol@google.com> <20200401213903.182112-1-dancol@google.com>
+ <CAKOZueuu=bGt4O0xjiV=9_PC_8Ey8pa3NjtJ7+O-nHCcYbLnEg@mail.gmail.com>
+ <alpine.LRH.2.21.2004230253530.12318@namei.org> <6fcc0093-f154-493e-dc11-359b44ed57ce@schaufler-ca.com>
+ <3ffd699d-c2e7-2bc3-eecc-b28457929da9@schaufler-ca.com> <8bef5acd-471e-0288-ad85-72601c3a2234@schaufler-ca.com>
+ <CAEjxPJ66ZZKfAUPnUjQiraNJO0h=T3OTY2qTVPuXrWG9va1-2g@mail.gmail.com>
+In-Reply-To: <CAEjxPJ66ZZKfAUPnUjQiraNJO0h=T3OTY2qTVPuXrWG9va1-2g@mail.gmail.com>
+From:   Stephen Smalley <stephen.smalley.work@gmail.com>
+Date:   Wed, 29 Apr 2020 13:02:09 -0400
+Message-ID: <CAEjxPJ4iquFSBfEj+UEFLUFHPsezuQ-Bzv09n+WgOWk38Nyw3w@mail.gmail.com>
+Subject: Re: [PATCH v5 0/3] SELinux support for anonymous inodes and UFFD
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Daniel Colascione <dancol@google.com>,
+        James Morris <jmorris@namei.org>,
+        Tim Murray <timmurray@google.com>,
+        SElinux list <selinux@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Paul Moore <paul@paul-moore.com>,
+        Nick Kralevich <nnk@google.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        John Johansen <john.johansen@canonical.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-So I was able to reproduce the issue and also fix it (will separately
-send a patch).
+On Mon, Apr 27, 2020 at 12:48 PM Stephen Smalley
+<stephen.smalley.work@gmail.com> wrote:
+>
+> On Mon, Apr 27, 2020 at 12:19 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> >
+> > On 4/23/2020 3:24 PM, Casey Schaufler wrote:
+> > > On 4/22/2020 10:12 AM, Casey Schaufler wrote:
+> > >> On 4/22/2020 9:55 AM, James Morris wrote:
+> > >>> On Mon, 13 Apr 2020, Daniel Colascione wrote:
+> > >>>
+> > >>>> On Wed, Apr 1, 2020 at 2:39 PM Daniel Colascione <dancol@google.com> wrote:
+> > >>>>> Changes from the fourth version of the patch:
+> > >>>> Is there anything else that needs to be done before merging this patch series?
+> > > Do you have a test case that exercises this feature?
+> >
+> > I haven't heard anything back. What would cause this code to be executed?
+>
+> See https://lore.kernel.org/selinux/513f6230-1fb3-dbb5-5f75-53cd02b91b28@tycho.nsa.gov/
+> for example.
 
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index 9cd4455528e5..1bdd027766d4 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -55,7 +55,7 @@ LSM_HOOK(void, LSM_RET_VOID, bprm_committing_creds, struct linux_binprm *bprm)
- LSM_HOOK(void, LSM_RET_VOID, bprm_committed_creds, struct linux_binprm *bprm)
- LSM_HOOK(int, 0, fs_context_dup, struct fs_context *fc,
-         struct fs_context *src_sc)
--LSM_HOOK(int, 0, fs_context_parse_param, struct fs_context *fc,
-+LSM_HOOK(int, -ENOPARAM, fs_context_parse_param, struct fs_context *fc,
-         struct fs_parameter *param)
- LSM_HOOK(int, 0, sb_alloc_security, struct super_block *sb)
- LSM_HOOK(void, LSM_RET_VOID, sb_free_security, struct super_block *sb)
+NB The example cited above needs to be tweaked for changes in the
+logic from the original RFC patch on which the example was
+based.  In particular, the userfaultfd CIL policy needs to be updated
+to define and use the new anon_inode class and to allow create
+permission as follows.
 
-So what was happening was that:
-
-bpf_lsm hook for fs_context_parse_param was returning 0 which led this
-bit of logic to believe the parameter was parsed by the LSM.
-
-int vfs_parse_fs_param(struct fs_context *fc, struct fs_parameter
-*param)
-{
-
-[...]
-        ret = security_fs_context_parse_param(fc, param);
-        if (ret != -ENOPARAM)
-                /* Param belongs to the LSM or is disallowed by the
-                 * LSM; so
-                 * don't pass to the FS.
-                 */
-                return ret;
-
-        if (fc->ops->parse_param) {
-                ret = fc->ops->parse_param(fc, param);
-                if (ret != -ENOPARAM)
-                        return ret;
-        }
-[...]
-
-This resulted in the fs_context->dev_name being NULL and the following
-chain to throw an -EINVAL resulting in unsuccessful mount of the root
-file-system:
-
-- do_mount_root -> do_mount -> do_new_mount -> vfs_get_tree ->
--> fc->ops->get_tree -> legacy->get_tree -> fc->fs_type->mount ->
-ext4_mount -> mount_bdev -> blkdev_get_by_path -> lookup_bdev
-
-- KP
-
-
-On 29-Apr 15:45, Mikko Ylinen wrote:
-> 
-> 
-> On 29/04/2020 15:34, KP Singh wrote:
-> > Thanks for reporting this! Can you share your Kconfig please?
-> 
-> This is what I originally started with
-> https://raw.githubusercontent.com/clearlinux-pkgs/linux-mainline/master/config
-> 
-> but I also tried your _LSM_ settings found in this
-> https://lore.kernel.org/bpf/20200402040357.GA217889@google.com/
-> 
-> -- Regards, Mikko
+$ cat userfaultfd.cil
+(class anon_inode ())
+(classcommon anon_inode file)
+(classorder (unordered anon_inode))
+(type uffd_t)
+; Label the UFFD with uffd_t; this can be specialized per domain
+(typetransition unconfined_t unconfined_t anon_inode "[userfaultfd]"   uffd_t)
+(allow unconfined_t uffd_t (anon_inode (create)))
+; Permit read() and ioctl() on the UFFD.
+; Comment out if you want to test read or basic ioctl enforcement.
+(allow unconfined_t uffd_t (anon_inode (read)))
+(allow unconfined_t uffd_t (anon_inode (ioctl)))
+; Uncomment one of the allowx lines below to test ioctl whitelisting.
+; Currently the 1st one is uncommented; comment that out if trying another.
+; None
+(allowx unconfined_t uffd_t (ioctl anon_inode ((0x00))))
+; UFFDIO_API
+;(allowx unconfined_t uffd_t (ioctl anon_inode ((0xaa3f))))
