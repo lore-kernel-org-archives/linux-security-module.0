@@ -2,124 +2,124 @@ Return-Path: <SRS0=9msM=6N=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41D09C83007
-	for <linux-security-module@archiver.kernel.org>; Wed, 29 Apr 2020 08:50:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C989AC83007
+	for <linux-security-module@archiver.kernel.org>; Wed, 29 Apr 2020 12:31:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2A72220775
-	for <linux-security-module@archiver.kernel.org>; Wed, 29 Apr 2020 08:50:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B18312085B
+	for <linux-security-module@archiver.kernel.org>; Wed, 29 Apr 2020 12:31:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726535AbgD2Iuy (ORCPT
+        id S1726628AbgD2Mb4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 29 Apr 2020 04:50:54 -0400
-Received: from smtp-42ae.mail.infomaniak.ch ([84.16.66.174]:56797 "EHLO
-        smtp-42ae.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726366AbgD2Iuy (ORCPT
+        Wed, 29 Apr 2020 08:31:56 -0400
+Received: from mga11.intel.com ([192.55.52.93]:18882 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726554AbgD2Mb4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 29 Apr 2020 04:50:54 -0400
-Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 49BsfQ1WB6zlhqlx;
-        Wed, 29 Apr 2020 10:50:22 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
-        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 49BsfM4z8bzmPw5b;
-        Wed, 29 Apr 2020 10:50:19 +0200 (CEST)
-Subject: Re: [PATCH v3 0/5] Add support for RESOLVE_MAYEXEC
-To:     Jann Horn <jannh@google.com>, Florian Weimer <fw@deneb.enyo.de>
-Cc:     kernel list <linux-kernel@vger.kernel.org>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christian Heimes <christian@python.org>,
+        Wed, 29 Apr 2020 08:31:56 -0400
+IronPort-SDR: Kz2jzlWPxz2lbMCaGF0nA28a24ZVaMVnNLbMduRYuLkA9//9Encjz7l8uvuL7wGpqZ3at8gTbA
+ /o6o7cb/TFFg==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Apr 2020 05:31:55 -0700
+IronPort-SDR: wgubizt0x69lH+ZvDFBUTwZpoXVYu6G8bufARnTlZJNrgBmYDO2uhPNPh0A12xREoB/ZT1aOlr
+ qqKGELXf9eCQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,332,1583222400"; 
+   d="scan'208";a="405026231"
+Received: from amasrati-mobl1.ger.corp.intel.com (HELO [10.214.197.183]) ([10.214.197.183])
+  by orsmga004.jf.intel.com with ESMTP; 29 Apr 2020 05:31:48 -0700
+Subject: Re: [PATCH bpf-next v9 0/8] MAC and Audit policy using eBPF (KRSI)
+To:     KP Singh <kpsingh@chromium.org>, linux-kernel@vger.kernel.org,
+        bpf@vger.kernel.org, linux-security-module@vger.kernel.org
+Cc:     Alexei Starovoitov <ast@kernel.org>,
         Daniel Borkmann <daniel@iogearbox.net>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Eric Chiang <ericchiang@google.com>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jonathan Corbet <corbet@lwn.net>,
+        James Morris <jmorris@namei.org>,
         Kees Cook <keescook@chromium.org>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-References: <20200428175129.634352-1-mic@digikod.net>
- <CAG48ez1bKzh1YvbD_Lcg0AbMCH_cdZmrRRumU7UCJL=qPwNFpQ@mail.gmail.com>
- <87blnb48a3.fsf@mid.deneb.enyo.de>
- <CAG48ez2TphTj-VdDaSjvnr0Q8BhNmT3n86xYz4bF3wRJmAMsMw@mail.gmail.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Message-ID: <ece281a5-8944-65fd-2a76-e4479a0cccaf@digikod.net>
-Date:   Wed, 29 Apr 2020 10:50:19 +0200
-User-Agent: 
+        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <20200329004356.27286-1-kpsingh@chromium.org>
+From:   Mikko Ylinen <mikko.ylinen@linux.intel.com>
+Message-ID: <0165887d-e9d0-c03e-18b9-72e74a0cbd59@linux.intel.com>
+Date:   Wed, 29 Apr 2020 15:31:47 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-In-Reply-To: <CAG48ez2TphTj-VdDaSjvnr0Q8BhNmT3n86xYz4bF3wRJmAMsMw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20200329004356.27286-1-kpsingh@chromium.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
-X-Antivirus-Code: 0x100000
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Hi,
 
-
-On 29/04/2020 00:01, Jann Horn wrote:
-> On Tue, Apr 28, 2020 at 11:21 PM Florian Weimer <fw@deneb.enyo.de> wrote:
->> * Jann Horn:
->>
->>> Just as a comment: You'd probably also have to use RESOLVE_MAYEXEC in
->>> the dynamic linker.
->>
->> Absolutely.  In typical configurations, the kernel does not enforce
->> that executable mappings must be backed by files which are executable.
->> It's most obvious with using an explicit loader invocation to run
->> executables on noexec mounts.  RESOLVE_MAYEXEC is much more useful
->> than trying to reimplement the kernel permission checks (or what some
->> believe they should be) in userspace.
-
-Indeed it makes sense to use RESOLVE_MAYEXEC for the dynamic linker too.
-Only the noexec mount option is taken into account for mmap(2) with
-PROT_EXEC, and if you can trick the dynamic linker with JOP as Jann
-explained, it may enable to execute new code. However, a kernel which
-forbids remapping memory with PROT_EXEC still enables to implement a W^X
-policy. Any JOP/ROP still enables unexpected code execution though.
-
+On 29/03/2020 02:43, KP Singh wrote:
+> # How does it work?
 > 
-> Oh, good point.
+> The patchset introduces a new eBPF (https://docs.cilium.io/en/v1.6/bpf/)
+> program type BPF_PROG_TYPE_LSM which can only be attached to LSM hooks.
+> Loading and attachment of BPF programs requires CAP_SYS_ADMIN.
 > 
-> That actually seems like something Mickaël could add to his series? If
-> someone turns on that knob for "When an interpreter wants to execute
-> something, enforce that we have execute access to it", they probably
-> also don't want it to be possible to just map files as executable? So
-> perhaps when that flag is on, the kernel should either refuse to map
-> anything as executable if it wasn't opened with RESOLVE_MAYEXEC or
-> (less strict) if RESOLVE_MAYEXEC wasn't used, print a warning, then
-> check whether the file is executable and bail out if not?
-> 
-> A configuration where interpreters verify that scripts are executable,
-> but other things can just mmap executable pages, seems kinda
-> inconsistent...
+> The new LSM registers nop functions (bpf_lsm_<hook_name>) as LSM hook
+> callbacks. Their purpose is to provide a definite point where BPF
+> programs can be attached as BPF_TRAMP_MODIFY_RETURN trampoline programs
+> for hooks that return an int, and BPF_TRAMP_FEXIT trampoline programs
+> for void LSM hooks.
 
-As it is written in the documentation patch, this RESOLVE_MAYEXEC
-feature is an important missing piece, but to implement a consistent
-security policy we need to enable other restrictions starting with a
-noexec mount point policy. The purpose of this patch series is not to
-bring a full-feature LSM with process states handling, but it brings
-what is needed for LSMs such as SELinux, IMA or IPE to extend their
-capabilities to reach what you would expect.
+I have two systems (a NUC and a qemu VM) that fail to boot if I enable
+the BPF LSM without enabling SELinux first. Anything I might be missing
+or are you able to trigger it too?
+
+For instance, the following additional cmdline args: "lsm.debug=1
+lsm="capability,apparmor,bpf" results in:
+
+[    1.251889] Call Trace:
+[    1.252344]  dump_stack+0x57/0x7a
+[    1.252951]  panic+0xe6/0x2a4
+[    1.253497]  ? printk+0x43/0x45
+[    1.254075]  mount_block_root+0x30c/0x31b
+[    1.254798]  mount_root+0x78/0x7b
+[    1.255417]  prepare_namespace+0x13a/0x16b
+[    1.256168]  kernel_init_freeable+0x210/0x222
+[    1.257021]  ? rest_init+0xa5/0xa5
+[    1.257639]  kernel_init+0x9/0xfb
+[    1.258074]  ret_from_fork+0x35/0x40
+[    1.258885] Kernel Offset: 0x11000000 from 0xffffffff81000000 
+(relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+[    1.264046] ---[ end Kernel panic - not syncing: VFS: Unable to mount 
+root fs on unknown-block(253,3)
+
+Taking out "bpf" or adding "selinux" before it boots OK. I've tried
+with both 5.7-rc2 and -rc3.
+
+LSM logs:
+
+[    0.267219] LSM: Security Framework initializing
+[    0.267844] LSM: first ordering: capability (enabled)
+[    0.267870] LSM: cmdline ignored: capability
+[    0.268869] LSM: cmdline ordering: apparmor (enabled)
+[    0.269508] LSM: cmdline ordering: bpf (enabled)
+[    0.269869] LSM: cmdline disabled: selinux
+[    0.270377] LSM: cmdline disabled: integrity
+[    0.270869] LSM: exclusive chosen: apparmor
+[    0.271869] LSM: cred blob size     = 8
+[    0.272354] LSM: file blob size     = 24
+[    0.272869] LSM: inode blob size    = 0
+[    0.273362] LSM: ipc blob size      = 0
+[    0.273869] LSM: msg_msg blob size  = 0
+[    0.274352] LSM: task blob size     = 32
+[    0.274873] LSM: initializing capability
+[    0.275381] LSM: initializing apparmor
+[    0.275880] AppArmor: AppArmor initialized
+[    0.276437] LSM: initializing bpf
+[    0.276871] LSM support for eBPF active
+
+-- Regards, Mikko
