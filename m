@@ -2,154 +2,110 @@ Return-Path: <SRS0=qseI=6O=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+X-Spam-Status: No, score=-10.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32971C47247
-	for <linux-security-module@archiver.kernel.org>; Thu, 30 Apr 2020 16:25:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C368CC4724C
+	for <linux-security-module@archiver.kernel.org>; Thu, 30 Apr 2020 21:24:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 11142208C3
-	for <linux-security-module@archiver.kernel.org>; Thu, 30 Apr 2020 16:25:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1588263946;
-	bh=os4gyJyASyV9Bl1//dDXxv3YvH/j3vKkp6g69zvRTVo=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:List-ID:
-	 From;
-	b=17BjMHqKBo9yAJkvCo8Ddg0F5L8HEGv2gcjyBrKgfvuZ39NjVchjd29l7dcZQuvqP
-	 jDirdvF0a0/zkDGfaOH42sWtFWSSNtFlZxuikIhKVZP/VbhK9tWQxw7Gqu8SS7m5+O
-	 rgsjEnXfWKhJFzwsRbL4rRIYhQq+YL92kEVbIeyA=
+	by mail.kernel.org (Postfix) with ESMTP id 96A212166E
+	for <linux-security-module@archiver.kernel.org>; Thu, 30 Apr 2020 21:24:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="u43mV+hG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726863AbgD3QZp (ORCPT
+        id S1727114AbgD3VYe (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 30 Apr 2020 12:25:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35398 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726860AbgD3QZp (ORCPT
+        Thu, 30 Apr 2020 17:24:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41628 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726742AbgD3VYd (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 30 Apr 2020 12:25:45 -0400
-Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A321F20873;
-        Thu, 30 Apr 2020 16:25:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1588263944;
-        bh=os4gyJyASyV9Bl1//dDXxv3YvH/j3vKkp6g69zvRTVo=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=Uen/x7p2E9/c4pH6LftTDc+ScUsz4cz5/91wrw5F60WJFHX50qQ28cakvaCcleFhM
-         n08l65mcjivWWuYcsiAq3uV5koXl25ln+h9e6b44Zk+6OPGTNrqg5IxHKIhc7ZLMRr
-         Z2AuDpKbTXd8hBUBx2DVQwION0auHo23cLEwNePY=
-Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
-        id 7C1403522697; Thu, 30 Apr 2020 09:25:44 -0700 (PDT)
-Date:   Thu, 30 Apr 2020 09:25:44 -0700
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     madhuparnabhowmik10@gmail.com
-Cc:     zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, joel@joelfernandes.org,
-        frextrite@gmail.com, linux-kernel-mentees@lists.linuxfoundation.org
-Subject: Re: [PATCH] integrity: evm: Fix RCU list related warnings.
-Message-ID: <20200430162544.GT7560@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <20200430160205.17798-1-madhuparnabhowmik10@gmail.com>
+        Thu, 30 Apr 2020 17:24:33 -0400
+Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD0B4C035495
+        for <linux-security-module@vger.kernel.org>; Thu, 30 Apr 2020 14:24:32 -0700 (PDT)
+Received: by mail-ed1-x544.google.com with SMTP id r7so5739698edo.11
+        for <linux-security-module@vger.kernel.org>; Thu, 30 Apr 2020 14:24:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=ZoHEfmnTDcYESuGHbMmk2jQ8V1rJF9rmlj/si8zVjxI=;
+        b=u43mV+hGSTT4+UwN7S5H34Rl13o9HAwNg3reMvcv91FGB3/J/PQKAaZFJ/nQeimszj
+         THdwtNIqmHQ0JM/vyg7n58WK7i+eO6w6ei1Eha2OHMyHSK2yNuB1ZQxeg374ux1IgYzI
+         vRmwvziesLZIYRTX0nTIzUc5dB5xBETPxmwQ66CdMuXnJ1ISnquymOV5aWGUCxILtguO
+         2/V7AYrHZvKXQ/Tlp8jziBb0p/Q0813u8Vwdg4bF/yT5sE4Ho0EVXaNPW2F0YAfac6cf
+         GFZJpTwp/3KlgkjkAz141tqNE1prHqV5Nio3IiZ1VKSmruzUiA9PW9wkiLQF5K6yZdh1
+         FTQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=ZoHEfmnTDcYESuGHbMmk2jQ8V1rJF9rmlj/si8zVjxI=;
+        b=ntIcV9JpoW/3m5h2Qu2s1NaAGdOkB9tam7KAekUzmPl+ABVwU1DiwpWt+7NuxjNW0A
+         4sVJ/gzqonnXks4iQWwKizLkWpgfreu8KxljeAHgztjgpyNj+CrarBZWzMU59GyqtZ/L
+         zVAeV8jgsJt+4Ol6akWn9M52kz8Y7tvzHGLCgiz1UR13PZNGZsiNbPGDV/AMl0ZbXpOI
+         8we/NEysekf54oHCtw2iA+NZkCLjZy+iko2BeWZ2PA1dnSp/cFlXYGiLsAfrfbznr5yM
+         2l4KQG61+fXb559L4AxGHPBOPIKlAJeDs5GHtiW5FU9A2SoISvPOpW+4OjcJvzJhf2hE
+         TWBA==
+X-Gm-Message-State: AGi0PuYxMFzx0vue/onSsJCXo3FklnN4TCe8mmHjlLXt4sJ03vwIpCEY
+        Kwbffdb9nin8meW6wY91+9QtYjl6t8M+Gc2kWLUPwnZBqA==
+X-Google-Smtp-Source: APiQypI6YkJcQVy9dVwcQVWuwmfdhb49nrj1ejVM0ZNVwEg0+5MtwD5WvMB0rhXXebaqXN/7l4V5Ld230nhh48E9fV8=
+X-Received: by 2002:a50:d98b:: with SMTP id w11mr865134edj.196.1588281871459;
+ Thu, 30 Apr 2020 14:24:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200430160205.17798-1-madhuparnabhowmik10@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 30 Apr 2020 17:24:20 -0400
+Message-ID: <CAHC9VhTu3YWPmwtA7RERHDRhQt0wAkmN4GJCmaRY7KSFRwtACQ@mail.gmail.com>
+Subject: [GIT PULL] SELinux fixes for v5.7 (#2)
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Apr 30, 2020 at 09:32:05PM +0530, madhuparnabhowmik10@gmail.com wrote:
-> From: Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
-> 
-> This patch fixes the following warning and few other
-> instances of traversal of evm_config_xattrnames list:
-> 
-> [   32.848432] =============================
-> [   32.848707] WARNING: suspicious RCU usage
-> [   32.848966] 5.7.0-rc1-00006-ga8d5875ce5f0b #1 Not tainted
-> [   32.849308] -----------------------------
-> [   32.849567] security/integrity/evm/evm_main.c:231 RCU-list traversed in non-reader section!!
-> 
-> Since entries are only added to the list and never deleted,
-> use list_For_each_entry_lockless() instead of
-> list_for_each_entry_rcu() for traversing the list.
-> Also, add a relevant comment in evm_secfs.c to indicate this fact.
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Suggested-by: Paul E. McKenney <paulmck@kernel.org>
-> Signed-off-by: Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
+Hi Linus,
 
-From an RCU viewpoint:
+Two more SELinux patches to fix problems in the v5.7-rcX releases.
+Wei Yongjun's patch fixes a return code in an error path, and my patch
+fixes a problem where we were not correctly applying access controls
+to all of the netlink messages in the netlink_send LSM hook.  Both
+patches pass our tests without problem and currently apply cleanly on
+top of your master branch.  Please merge for the next -rcX release.
 
-Acked-by: Paul E. McKenney <paulmck@kernel.org>
+Thanks,
+-Paul
 
-> ---
->  security/integrity/evm/evm_crypto.c | 2 +-
->  security/integrity/evm/evm_main.c   | 4 ++--
->  security/integrity/evm/evm_secfs.c  | 9 ++++++++-
->  3 files changed, 11 insertions(+), 4 deletions(-)
-> 
-> diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
-> index 35682852ddea..b2dc87da5f50 100644
-> --- a/security/integrity/evm/evm_crypto.c
-> +++ b/security/integrity/evm/evm_crypto.c
-> @@ -207,7 +207,7 @@ static int evm_calc_hmac_or_hash(struct dentry *dentry,
->  	data->hdr.length = crypto_shash_digestsize(desc->tfm);
->  
->  	error = -ENODATA;
-> -	list_for_each_entry_rcu(xattr, &evm_config_xattrnames, list) {
-> +	list_for_each_entry_lockless(xattr, &evm_config_xattrnames, list) {
->  		bool is_ima = false;
->  
->  		if (strcmp(xattr->name, XATTR_NAME_IMA) == 0)
-> diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-> index d361d7fdafc4..0d36259b690d 100644
-> --- a/security/integrity/evm/evm_main.c
-> +++ b/security/integrity/evm/evm_main.c
-> @@ -97,7 +97,7 @@ static int evm_find_protected_xattrs(struct dentry *dentry)
->  	if (!(inode->i_opflags & IOP_XATTR))
->  		return -EOPNOTSUPP;
->  
-> -	list_for_each_entry_rcu(xattr, &evm_config_xattrnames, list) {
-> +	list_for_each_entry_lockless(xattr, &evm_config_xattrnames, list) {
->  		error = __vfs_getxattr(dentry, inode, xattr->name, NULL, 0);
->  		if (error < 0) {
->  			if (error == -ENODATA)
-> @@ -228,7 +228,7 @@ static int evm_protected_xattr(const char *req_xattr_name)
->  	struct xattr_list *xattr;
->  
->  	namelen = strlen(req_xattr_name);
-> -	list_for_each_entry_rcu(xattr, &evm_config_xattrnames, list) {
-> +	list_for_each_entry_lockless(xattr, &evm_config_xattrnames, list) {
->  		if ((strlen(xattr->name) == namelen)
->  		    && (strncmp(req_xattr_name, xattr->name, namelen) == 0)) {
->  			found = 1;
-> diff --git a/security/integrity/evm/evm_secfs.c b/security/integrity/evm/evm_secfs.c
-> index 39ad1038d45d..cfc3075769bb 100644
-> --- a/security/integrity/evm/evm_secfs.c
-> +++ b/security/integrity/evm/evm_secfs.c
-> @@ -232,7 +232,14 @@ static ssize_t evm_write_xattrs(struct file *file, const char __user *buf,
->  		goto out;
->  	}
->  
-> -	/* Guard against races in evm_read_xattrs */
-> +	/*
-> +	 * xattr_list_mutex guards against races in evm_read_xattrs().
-> +	 * Entries are only added to the evm_config_xattrnames list
-> +	 * and never deleted. Therefore, the list is traversed
-> +	 * using list_for_each_entry_lockless() without holding
-> +	 * the mutex in evm_calc_hmac_or_hash(), evm_find_protected_xattrs()
-> +	 * and evm_protected_xattr().
-> +	 */
->  	mutex_lock(&xattr_list_mutex);
->  	list_for_each_entry(tmp, &evm_config_xattrnames, list) {
->  		if (strcmp(xattr->name, tmp->name) == 0) {
-> -- 
-> 2.17.1
-> 
+--
+The following changes since commit af15f14c8cfcee515f4e9078889045ad63efefe3:
+
+ selinux: free str on error in str_read() (2020-04-15 17:23:16 -0400)
+
+are available in the Git repository at:
+
+ git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+   tags/selinux-pr-20200430
+
+for you to fetch changes up to fb73974172ffaaf57a7c42f35424d9aece1a5af6:
+
+ selinux: properly handle multiple messages in selinux_netlink_send()
+   (2020-04-30 16:18:37 -0400)
+
+----------------------------------------------------------------
+selinux/stable-5.7 PR 20200430
+
+----------------------------------------------------------------
+Paul Moore (1):
+     selinux: properly handle multiple messages in selinux_netlink_send()
+
+Wei Yongjun (1):
+     selinux: fix error return code in cond_read_list()
+
+security/selinux/hooks.c          | 70 +++++++++++++++++++++----------
+security/selinux/ss/conditional.c |  2 +-
+2 files changed, 46 insertions(+), 26 deletions(-)
+-- 
+paul moore
+www.paul-moore.com
