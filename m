@@ -2,125 +2,106 @@ Return-Path: <SRS0=qseI=6O=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D7E7C83003
-	for <linux-security-module@archiver.kernel.org>; Thu, 30 Apr 2020 02:05:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5678C83002
+	for <linux-security-module@archiver.kernel.org>; Thu, 30 Apr 2020 07:06:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 53555208E0
-	for <linux-security-module@archiver.kernel.org>; Thu, 30 Apr 2020 02:05:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8754F21974
+	for <linux-security-module@archiver.kernel.org>; Thu, 30 Apr 2020 07:06:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726291AbgD3CF1 (ORCPT
+        id S1726453AbgD3HGP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 29 Apr 2020 22:05:27 -0400
-Received: from mout-p-103.mailbox.org ([80.241.56.161]:64740 "EHLO
-        mout-p-103.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726282AbgD3CF1 (ORCPT
+        Thu, 30 Apr 2020 03:06:15 -0400
+Received: from mga02.intel.com ([134.134.136.20]:61847 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726337AbgD3HGP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 29 Apr 2020 22:05:27 -0400
-X-Greylist: delayed 628 seconds by postgrey-1.27 at vger.kernel.org; Wed, 29 Apr 2020 22:05:25 EDT
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:105:465:1:2:0])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mout-p-103.mailbox.org (Postfix) with ESMTPS id 49CJNb3n0DzKmWf;
-        Thu, 30 Apr 2020 03:54:55 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp2.mailbox.org ([80.241.60.241])
-        by spamfilter03.heinlein-hosting.de (spamfilter03.heinlein-hosting.de [80.241.56.117]) (amavisd-new, port 10030)
-        with ESMTP id QqYb_XfmfTzI; Thu, 30 Apr 2020 03:54:50 +0200 (CEST)
-Date:   Thu, 30 Apr 2020 11:54:29 +1000
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc:     linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christian Heimes <christian@python.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Eric Chiang <ericchiang@google.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mickael.salaun@ssi.gouv.fr>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Philippe =?utf-8?Q?Tr=C3=A9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 0/5] Add support for RESOLVE_MAYEXEC
-Message-ID: <20200430015429.wuob7m5ofdewubui@yavin.dot.cyphar.com>
-References: <20200428175129.634352-1-mic@digikod.net>
+        Thu, 30 Apr 2020 03:06:15 -0400
+IronPort-SDR: 0lLxilEP3MBfG6/ju6yRMgN7XfxuxR7Ij77Zvas51LFL/g+rQdlgVHKqD7iR9QmDKglOEvxYIt
+ 01G48krbpJlw==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Apr 2020 00:06:14 -0700
+IronPort-SDR: djF39Bs3TB+mKFqavxnijNCI33yhlWYCDroujdcd3oTEbXyDLnhavuiHjelHtcf7sIyLtlPr6p
+ oD1NJEERE8fA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,334,1583222400"; 
+   d="scan'208";a="248196369"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga007.fm.intel.com with ESMTP; 30 Apr 2020 00:06:13 -0700
+Received: from [10.249.229.126] (bababaya-mobl.ccr.corp.intel.com [10.249.229.126])
+        by linux.intel.com (Postfix) with ESMTP id 1C8035805EB;
+        Thu, 30 Apr 2020 00:06:10 -0700 (PDT)
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Subject: [PATCH v3 0/3] perf: make Perf tool aware of SELinux access control
+Organization: Intel Corp.
+Message-ID: <0fffd9e2-1f22-a0c2-c2e3-cb7f4bb89d66@linux.intel.com>
+Date:   Thu, 30 Apr 2020 10:06:09 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="udruashf3djnhxyp"
-Content-Disposition: inline
-In-Reply-To: <20200428175129.634352-1-mic@digikod.net>
-X-Rspamd-Queue-Id: 185431774
-X-Rspamd-Score: -5.53 / 15.00 / 15.00
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 
---udruashf3djnhxyp
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Changes in v3:
+- mention "CAP_PERFMON or CAP_SYS_ADMIN" instead of sole CAP_PERFMON or 
+  CAP_SYS_ADMIN capability in the docs and messages to support use case
+  of newer Perf tool on kernel w/o CAP_PERFMON
+- reverted double new line in "No permission to enable %s event.\n\n"
+- updated security.txt content with new messages wording
 
-On 2020-04-28, Micka=EBl Sala=FCn <mic@digikod.net> wrote:
-> The goal of this patch series is to enable to control script execution
-> with interpreters help.  A new RESOLVE_MAYEXEC flag, usable through
-> openat2(2), is added to enable userspace script interpreter to delegate
-> to the kernel (and thus the system security policy) the permission to
-> interpret/execute scripts or other files containing what can be seen as
-> commands.
->=20
-> This third patch series mainly differ from the previous one by relying
-> on the new openat2(2) system call to get rid of the undefined behavior
-> of the open(2) flags.  Thus, the previous O_MAYEXEC flag is now replaced
-> with the new RESOLVE_MAYEXEC flag and benefits from the openat2(2)
-> strict check of this kind of flags.
+v2: https://lore.kernel.org/lkml/66f2975b-4a69-b428-7dc5-d9aa40b3c673@linux.intel.com/
 
-My only strong upfront objection is with this being a RESOLVE_ flag.
+Changes in v2:
+- implemented minor doc and code changes to substitute CAP_SYS_ADMIN
+  with CAP_PERFMON capability;
+- introduced Perf doc file with instructions on how to enable and use
+  perf_event LSM hooks for mandatory access control to perf_event_open()
+  syscall;
 
-RESOLVE_ flags have a specific meaning (they generally apply to all
-components, and affect the rules of path resolution). RESOLVE_MAYEXEC
-does neither of these things and so seems out of place among the other
-RESOLVE_ flags.
+v1: https://lore.kernel.org/lkml/b8a0669e-36e4-a0e8-fd35-3dbd890d2170@linux.intel.com/
 
-I would argue this should be an O_ flag, but not supported for the
-old-style open(2). This is what the O_SPECIFIC_FD patchset does[1] and I
-think it's a reasonable way of solving such problems.
+repo: git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git perf/core
+sha1: ee097e8ee56f8867cbbf45fe2a06f6b9e660c39c
 
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
 
---udruashf3djnhxyp
-Content-Type: application/pgp-signature; name="signature.asc"
+Extend Perf tool with the check of /sys/fs/selinux/enforce value and notify 
+in case access to perf_event_open() syscall is restricted by the enforced 
+SELinux policy settings. See new added security.txt file for exact steps
+how the changes look like and how to test the patch set.
 
------BEGIN PGP SIGNATURE-----
+---
+Alexey Budankov (3):
+  perf docs: extend CAP_SYS_ADMIN with CAP_PERFMON where needed
+  perf tool: make Perf tool aware of SELinux access control
+  perf docs: introduce security.txt file to document related issues
 
-iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXqov0QAKCRCdlLljIbnQ
-Es1XAP4pdpkX/auZ9BMKqDz4Q71lNx9hZ2pPWO2GKtz3HxWg3QD/d346yEY1nSmz
-4QrB06Se4f0JFMG5Fy1QoGIpSoBx+Qk=
-=DOB3
------END PGP SIGNATURE-----
+ tools/perf/Documentation/perf-intel-pt.txt |   2 +-
+ tools/perf/Documentation/security.txt      | 237 +++++++++++++++++++++
+ tools/perf/util/cloexec.c                  |   4 +-
+ tools/perf/util/evsel.c                    |  39 ++--
+ 4 files changed, 264 insertions(+), 18 deletions(-)
+ create mode 100644 tools/perf/Documentation/security.txt
 
---udruashf3djnhxyp--
+-- 
+2.24.1
+
