@@ -2,129 +2,98 @@ Return-Path: <SRS0=qseI=6O=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59F5CC83001
-	for <linux-security-module@archiver.kernel.org>; Thu, 30 Apr 2020 08:03:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ECD4C8300A
+	for <linux-security-module@archiver.kernel.org>; Thu, 30 Apr 2020 08:08:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3FF642073E
-	for <linux-security-module@archiver.kernel.org>; Thu, 30 Apr 2020 08:03:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D5AE2186A
+	for <linux-security-module@archiver.kernel.org>; Thu, 30 Apr 2020 08:08:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726543AbgD3IDv convert rfc822-to-8bit (ORCPT
+        id S1726526AbgD3IHz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 30 Apr 2020 04:03:51 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:60718 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726358AbgD3IDv (ORCPT
+        Thu, 30 Apr 2020 04:07:55 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:37501 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726453AbgD3IHz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 30 Apr 2020 04:03:51 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-188-QwramPYPODaeNg-qytVVbw-1; Thu, 30 Apr 2020 09:03:47 +0100
-X-MC-Unique: QwramPYPODaeNg-qytVVbw-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Thu, 30 Apr 2020 09:03:47 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Thu, 30 Apr 2020 09:03:47 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Roberto Sassu' <roberto.sassu@huawei.com>,
-        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
-        "rgoldwyn@suse.de" <rgoldwyn@suse.de>
-CC:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "silviu.vlasceanu@huawei.com" <silviu.vlasceanu@huawei.com>,
-        "krzysztof.struczynski@huawei.com" <krzysztof.struczynski@huawei.com>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: RE: [RESEND][PATCH v2 3/6] ima: Fix ima digest hash table key
- calculation
-Thread-Topic: [RESEND][PATCH v2 3/6] ima: Fix ima digest hash table key
- calculation
-Thread-Index: AQHWHS80o0OMQYVPmUqc5kiRSsIx16iRUJzg
-Date:   Thu, 30 Apr 2020 08:03:47 +0000
-Message-ID: <060c71f88c8d4c6a9fafca4b329605c5@AcuMS.aculab.com>
-References: <20200427102900.18887-3-roberto.sassu@huawei.com>
- <20200428073010.25631-1-roberto.sassu@huawei.com>
-In-Reply-To: <20200428073010.25631-1-roberto.sassu@huawei.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Thu, 30 Apr 2020 04:07:55 -0400
+Received: from ip5f5af183.dynamic.kabel-deutschland.de ([95.90.241.131] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1jU4EW-0000NO-1I; Thu, 30 Apr 2020 08:07:48 +0000
+Date:   Thu, 30 Apr 2020 10:07:46 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+        linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Eric Chiang <ericchiang@google.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mickael.salaun@ssi.gouv.fr>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Philippe =?utf-8?Q?Tr=C3=A9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 0/5] Add support for RESOLVE_MAYEXEC
+Message-ID: <20200430080746.n26fja2444w6i2db@wittgenstein>
+References: <20200428175129.634352-1-mic@digikod.net>
+ <20200430015429.wuob7m5ofdewubui@yavin.dot.cyphar.com>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200430015429.wuob7m5ofdewubui@yavin.dot.cyphar.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Roberto Sassu
-> Sent: 28 April 2020 08:30
-> From: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
+On Thu, Apr 30, 2020 at 11:54:29AM +1000, Aleksa Sarai wrote:
+> On 2020-04-28, Mickaël Salaün <mic@digikod.net> wrote:
+> > The goal of this patch series is to enable to control script execution
+> > with interpreters help.  A new RESOLVE_MAYEXEC flag, usable through
+> > openat2(2), is added to enable userspace script interpreter to delegate
+> > to the kernel (and thus the system security policy) the permission to
+> > interpret/execute scripts or other files containing what can be seen as
+> > commands.
+> > 
+> > This third patch series mainly differ from the previous one by relying
+> > on the new openat2(2) system call to get rid of the undefined behavior
+> > of the open(2) flags.  Thus, the previous O_MAYEXEC flag is now replaced
+> > with the new RESOLVE_MAYEXEC flag and benefits from the openat2(2)
+> > strict check of this kind of flags.
 > 
-> Function hash_long() accepts unsigned long, while currently only one byte
-> is passed from ima_hash_key(), which calculates a key for ima_htable.
+> My only strong upfront objection is with this being a RESOLVE_ flag.
 > 
-> Given that hashing the digest does not give clear benefits compared to
-> using the digest itself, remove hash_long() and return the modulus
-> calculated on the first two bytes of the digest with the number of slots.
-> Also reduce the depth of the hash table by doubling the number of slots.
+> RESOLVE_ flags have a specific meaning (they generally apply to all
+> components, and affect the rules of path resolution). RESOLVE_MAYEXEC
+> does neither of these things and so seems out of place among the other
+> RESOLVE_ flags.
 > 
-> Changelog
-> 
-> v2: directly access the first two bytes of the digest to avoid memory
->     access issues on big endian systems (suggested by David Laight)
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 3323eec921ef ("integrity: IMA as an integrity service provider")
-> Co-developed-by: Roberto Sassu <roberto.sassu@huawei.com>
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> Signed-off-by: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
+> I would argue this should be an O_ flag, but not supported for the
 
-Acked-by: David.Laight@aculab.com
+I agree.
 
-> ---
->  security/integrity/ima/ima.h | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-> index 467dfdbea25c..02796473238b 100644
-> --- a/security/integrity/ima/ima.h
-> +++ b/security/integrity/ima/ima.h
-> @@ -36,7 +36,7 @@ enum tpm_pcrs { TPM_PCR0 = 0, TPM_PCR8 = 8 };
->  #define IMA_DIGEST_SIZE		SHA1_DIGEST_SIZE
->  #define IMA_EVENT_NAME_LEN_MAX	255
-> 
-> -#define IMA_HASH_BITS 9
-> +#define IMA_HASH_BITS 10
->  #define IMA_MEASURE_HTABLE_SIZE (1 << IMA_HASH_BITS)
-> 
->  #define IMA_TEMPLATE_FIELD_ID_MAX_LEN	16
-> @@ -179,9 +179,10 @@ struct ima_h_table {
->  };
->  extern struct ima_h_table ima_htable;
-> 
-> -static inline unsigned long ima_hash_key(u8 *digest)
-> +static inline unsigned int ima_hash_key(u8 *digest)
->  {
-> -	return hash_long(*digest, IMA_HASH_BITS);
-> +	/* there is no point in taking a hash of part of a digest */
-> +	return (digest[0] | digest[1] << 8) % IMA_MEASURE_HTABLE_SIZE;
->  }
-> 
->  #define __ima_hooks(hook)		\
-> --
-> 2.17.1
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
-
+Christian
