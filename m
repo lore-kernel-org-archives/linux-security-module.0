@@ -2,125 +2,127 @@ Return-Path: <SRS0=qseI=6O=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14243C8300C
-	for <linux-security-module@archiver.kernel.org>; Thu, 30 Apr 2020 13:24:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51BEBC4724C
+	for <linux-security-module@archiver.kernel.org>; Thu, 30 Apr 2020 13:42:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F2CA3208C3
-	for <linux-security-module@archiver.kernel.org>; Thu, 30 Apr 2020 13:24:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 394582074A
+	for <linux-security-module@archiver.kernel.org>; Thu, 30 Apr 2020 13:42:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726790AbgD3NYW (ORCPT
+        id S1726768AbgD3Nmx (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 30 Apr 2020 09:24:22 -0400
-Received: from smtp-42ae.mail.infomaniak.ch ([84.16.66.174]:39631 "EHLO
-        smtp-42ae.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727103AbgD3NYP (ORCPT
+        Thu, 30 Apr 2020 09:42:53 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:63752 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726577AbgD3Nmx (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 30 Apr 2020 09:24:15 -0400
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 49CbgM4GVDzlhHxq;
-        Thu, 30 Apr 2020 15:23:43 +0200 (CEST)
-Received: from localhost (unknown [94.23.54.103])
-        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 49CbgM0jHFzlr4hc;
-        Thu, 30 Apr 2020 15:23:43 +0200 (CEST)
-From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To:     linux-kernel@vger.kernel.org
-Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christian Heimes <christian@python.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Eric Chiang <ericchiang@google.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mickael.salaun@ssi.gouv.fr>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        =?UTF-8?q?Philippe=20Tr=C3=A9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH v4 2/5] fs: Add a MAY_EXECMOUNT flag to infer the noexec mount property
-Date:   Thu, 30 Apr 2020 15:23:17 +0200
-Message-Id: <20200430132320.699508-3-mic@digikod.net>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20200430132320.699508-1-mic@digikod.net>
-References: <20200430132320.699508-1-mic@digikod.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+        Thu, 30 Apr 2020 09:42:53 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 03UDabZW014329;
+        Thu, 30 Apr 2020 09:42:43 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 30q7qjy82w-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 30 Apr 2020 09:42:43 -0400
+Received: from m0098417.ppops.net (m0098417.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 03UDad0e014593;
+        Thu, 30 Apr 2020 09:42:42 -0400
+Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 30q7qjy81w-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 30 Apr 2020 09:42:42 -0400
+Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
+        by ppma03ams.nl.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 03UDf7E4017958;
+        Thu, 30 Apr 2020 13:42:40 GMT
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
+        by ppma03ams.nl.ibm.com with ESMTP id 30mcu5tn88-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 30 Apr 2020 13:42:40 +0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 03UDgc4A64487508
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 30 Apr 2020 13:42:38 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2D476A405C;
+        Thu, 30 Apr 2020 13:42:38 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 12FE1A405B;
+        Thu, 30 Apr 2020 13:42:37 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.170.249])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 30 Apr 2020 13:42:36 +0000 (GMT)
+Message-ID: <1588254156.5167.32.camel@linux.ibm.com>
+Subject: Re: [PATCH 2/2] ima: add policy support for the new file open
+ MAY_OPENEXEC flag
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     kbuild test robot <lkp@intel.com>, linux-integrity@vger.kernel.org
+Cc:     kbuild-all@lists.01.org, Mickael Salaun <mic@digikod.net>,
+        Steve Grubb <sgrubb@redhat.com>, Jann Horn <jannh@google.com>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Thu, 30 Apr 2020 09:42:36 -0400
+In-Reply-To: <202004300526.H4rF1lW2%lkp@intel.com>
+References: <1588167523-7866-3-git-send-email-zohar@linux.ibm.com>
+         <202004300526.H4rF1lW2%lkp@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
-X-Antivirus-Code: 0x100000
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
+ definitions=2020-04-30_08:2020-04-30,2020-04-30 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
+ priorityscore=1501 bulkscore=0 malwarescore=0 suspectscore=0
+ mlxlogscore=999 lowpriorityscore=0 phishscore=0 adultscore=0
+ impostorscore=0 clxscore=1011 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2003020000 definitions=main-2004300111
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-An LSM doesn't get path information related to an access request to open
-an inode.  This new (internal) MAY_EXECMOUNT flag enables an LSM to
-check if the underlying mount point of an inode is marked as executable.
-This is useful to implement a security policy taking advantage of the
-noexec mount option.
+Hi Mickaël,
 
-This flag is set according to path_noexec(), which checks if a mount
-point is mounted with MNT_NOEXEC or if the underlying superblock is
-SB_I_NOEXEC.
+On Thu, 2020-04-30 at 05:24 +0800, kbuild test robot wrote:
+> Hi Mimi,
+> 
+> I love your patch! Yet something to improve:
+> 
+> [auto build test ERROR on integrity/next-integrity]
+> [also build test ERROR on linus/master v5.7-rc3 next-20200429]
+> [cannot apply to security/next-testing]
+> [if your patch is applied to the wrong git tree, please drop us a note to help
+> improve the system. BTW, we also suggest to use '--base' option to specify the
+> base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
 
-Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Reviewed-by: Philippe Trébuchet <philippe.trebuchet@ssi.gouv.fr>
-Reviewed-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
-Cc: Aleksa Sarai <cyphar@cyphar.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Kees Cook <keescook@chromium.org>
----
- fs/namei.c         | 2 ++
- include/linux/fs.h | 2 ++
- 2 files changed, 4 insertions(+)
+To prevent this sort of message, in the future could you include this
+patch (2/2) with your patch set?  Please include the "Reviewed-by:
+Lakshmi Ramasubramanian <nramas@linux.microsoft.com>" tag.
 
-diff --git a/fs/namei.c b/fs/namei.c
-index a320371899cf..33b6d372e74a 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -2849,6 +2849,8 @@ static int may_open(const struct path *path, int acc_mode, int flag)
- 		break;
- 	}
- 
-+	/* Pass the mount point executability. */
-+	acc_mode |= path_noexec(path) ? 0 : MAY_EXECMOUNT;
- 	error = inode_permission(inode, MAY_OPEN | acc_mode);
- 	if (error)
- 		return error;
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 313c934de9ee..79435fca6c3e 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -103,6 +103,8 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
- #define MAY_NOT_BLOCK		0x00000080
- /* the inode is opened with O_MAYEXEC */
- #define MAY_OPENEXEC		0x00000100
-+/* the mount point is marked as executable */
-+#define MAY_EXECMOUNT		0x00000200
- 
- /*
-  * flags in file.f_mode.  Note that FMODE_READ and FMODE_WRITE must correspond
--- 
-2.26.2
+thanks,
+
+Mimi
+
+> 
+> url:    https://github.com/0day-ci/linux/commits/Mimi-Zohar/ima-extending-IMA-policy-to-support-interpreters/20200430-030608
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-integrity
+> config: arc-allyesconfig (attached as .config)
+> compiler: arc-elf-gcc (GCC) 9.3.0
+> reproduce:
+>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>         chmod +x ~/bin/make.cross
+>         # save the attached .config to linux build tree
+>         COMPILER_INSTALL_PATH=$HOME/0day GCC_VERSION=9.3.0 make.cross ARCH=arc 
+> 
+> If you fix the issue, kindly add following tag as appropriate
+> Reported-by: kbuild test robot <lkp@intel.com>
+> 
+> All error/warnings (new ones prefixed by >>):
+> 
+>    security/integrity/ima/ima_main.c: In function 'ima_file_check':
+> >> security/integrity/ima/ima_main.c:442:20: error: 'MAY_OPENEXEC' undeclared (first use in this function); did you mean 'MAY_OPEN'?
+>      442 |         MAY_EXEC | MAY_OPENEXEC |
+>          |                    ^~~~~~~~~~~~
+>          |                    MAY_OPEN
 
