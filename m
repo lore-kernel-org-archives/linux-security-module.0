@@ -2,139 +2,277 @@ Return-Path: <SRS0=qseI=6O=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99197C8300B
-	for <linux-security-module@archiver.kernel.org>; Thu, 30 Apr 2020 11:01:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2CF2C8300A
+	for <linux-security-module@archiver.kernel.org>; Thu, 30 Apr 2020 13:23:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7147D207DD
-	for <linux-security-module@archiver.kernel.org>; Thu, 30 Apr 2020 11:01:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f5VuDmhy"
+	by mail.kernel.org (Postfix) with ESMTP id 966AA20870
+	for <linux-security-module@archiver.kernel.org>; Thu, 30 Apr 2020 13:23:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726839AbgD3LBe (ORCPT
+        id S1727769AbgD3NXu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 30 Apr 2020 07:01:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56420 "EHLO
+        Thu, 30 Apr 2020 09:23:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50452 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726413AbgD3LBd (ORCPT
+        by vger.kernel.org with ESMTP id S1727121AbgD3NXu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 30 Apr 2020 07:01:33 -0400
-Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59916C035494
-        for <linux-security-module@vger.kernel.org>; Thu, 30 Apr 2020 04:01:33 -0700 (PDT)
-Received: by mail-wm1-x341.google.com with SMTP id u16so1381196wmc.5
-        for <linux-security-module@vger.kernel.org>; Thu, 30 Apr 2020 04:01:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=lFFxK4DtytcE6RpAFl8YJiEBCoYUrJi5EC/p8/Y25iA=;
-        b=f5VuDmhyUjEspScUeszN5n8DPGcEiF/Kok9r2XQcaRe8HDfwuUTjWP4f00L9FgVpR6
-         NwrnkORD6lm6KvLluh5w59qQbKGxSAS44/NqciSnz039zIu/mHcI+vU5AHQsV+NmkfVr
-         2wk0iYhDyLiGTZFSRNC7xo8I9oxNI1yh7E8bUl9fe+UMfMfdBO5QFMqgwxpgtqJixBIJ
-         nzKHb0khXvNE1r3a2NF9Ib5NUDnWpC51UlhYpkPtdJXUcSg/2kdiJzqetXJ7v7YWlZr/
-         RRuw/gMakeQ5lAPHyVeiUFgbvw9ZfIwxNWNJ87QjflMf7FFzL6O7O7DWFFSgP58BUTAu
-         l+BA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=lFFxK4DtytcE6RpAFl8YJiEBCoYUrJi5EC/p8/Y25iA=;
-        b=mrt88Z5gFkQYeEQClC2aNCzf1t2bnd9/gEDeiDQhb5rPhZJf0DelSM4NfRkVNKP668
-         VfQT1dlH3xLHUx421v+LBRU7FrJnOIvww1NV9rq0zFanEUwLztRpCc++0IvNKkr+Kn8X
-         FCLJnL2NQMQhZebZiaqTqb5cnhJANdb1FI1j9OpwvjtKUcELBIclXbIcxAiYF6VLNO+3
-         AFHDZmySnLJerPrh2Zdm+lNC7Nibr2etbVJHrtR7O9IXUMUg8RbY9qA/2X7zJgUmGij8
-         F3rwgS3HinLYHHCsyM2M7m6QbfiYfZT1bNcpg3G72YLF+xMoO0Cr99vKz9tfkf3ElBrj
-         dzXg==
-X-Gm-Message-State: AGi0PuZZTK3hhkqRR6/npvG3y8FSVl33g0hoG1USL+j8RJnoO+mUhzG7
-        R3yN3z9jay/byIS2LUviKu+tPlZGalLWXQijuHk=
-X-Google-Smtp-Source: APiQypLouP4lVbKqpnSX7OlYl+j6EOSiT1pw349EOnWeumTX5PjyI+H/ngeTt/eryzVdA1cq5n6/uYXQL49LzeEGesE=
-X-Received: by 2002:a1c:a512:: with SMTP id o18mr2301640wme.138.1588244491958;
- Thu, 30 Apr 2020 04:01:31 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200428175129.634352-1-mic@digikod.net> <20200430015429.wuob7m5ofdewubui@yavin.dot.cyphar.com>
-In-Reply-To: <20200430015429.wuob7m5ofdewubui@yavin.dot.cyphar.com>
-From:   "Lev R. Oshvang ." <levonshe@gmail.com>
-Date:   Thu, 30 Apr 2020 14:01:21 +0300
-Message-ID: <CAP22eLE6DA5P+Cx6aVP=eq3tKRGz=+P+w8omk3CcEXVo0f1Nfg@mail.gmail.com>
-Subject: Re: [PATCH v3 0/5] Add support for RESOLVE_MAYEXEC
-To:     Aleksa Sarai <cyphar@cyphar.com>, viro@zeniv.linux.org.uk
-Cc:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
+        Thu, 30 Apr 2020 09:23:50 -0400
+Received: from smtp-8fa9.mail.infomaniak.ch (smtp-8fa9.mail.infomaniak.ch [IPv6:2001:1600:3:17::8fa9])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C755CC035495
+        for <linux-security-module@vger.kernel.org>; Thu, 30 Apr 2020 06:23:49 -0700 (PDT)
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 49CbgN6TNVzlhj6T;
+        Thu, 30 Apr 2020 15:23:44 +0200 (CEST)
+Received: from localhost (unknown [94.23.54.103])
+        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 49CbgN3GQZzlmTCB;
+        Thu, 30 Apr 2020 15:23:44 +0200 (CEST)
+From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To:     linux-kernel@vger.kernel.org
+Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
         Eric Chiang <ericchiang@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
+        Florian Weimer <fweimer@redhat.com>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
         Kees Cook <keescook@chromium.org>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
         Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mickael.salaun@ssi.gouv.fr>,
+        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mickael.salaun@ssi.gouv.fr>,
         Mimi Zohar <zohar@linux.ibm.com>,
-        kernel-hardening@lists.openwall.com,
-        LSM List <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        =?UTF-8?q?Philippe=20Tr=C3=A9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH v4 3/5] fs: Enable to enforce noexec mounts or file exec through O_MAYEXEC
+Date:   Thu, 30 Apr 2020 15:23:18 +0200
+Message-Id: <20200430132320.699508-4-mic@digikod.net>
+X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20200430132320.699508-1-mic@digikod.net>
+References: <20200430132320.699508-1-mic@digikod.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
+X-Antivirus-Code: 0x100000
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Apr 30, 2020 at 4:55 AM Aleksa Sarai <cyphar@cyphar.com> wrote:
->
-> On 2020-04-28, Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> wrote:
-> > The goal of this patch series is to enable to control script execution
-> > with interpreters help.  A new RESOLVE_MAYEXEC flag, usable through
-> > openat2(2), is added to enable userspace script interpreter to delegate
-> > to the kernel (and thus the system security policy) the permission to
-> > interpret/execute scripts or other files containing what can be seen as
-> > commands.
-> >
-> > This third patch series mainly differ from the previous one by relying
-> > on the new openat2(2) system call to get rid of the undefined behavior
-> > of the open(2) flags.  Thus, the previous O_MAYEXEC flag is now replace=
-d
-> > with the new RESOLVE_MAYEXEC flag and benefits from the openat2(2)
-> > strict check of this kind of flags.
->
-> My only strong upfront objection is with this being a RESOLVE_ flag.
->
-> RESOLVE_ flags have a specific meaning (they generally apply to all
-> components, and affect the rules of path resolution). RESOLVE_MAYEXEC
-> does neither of these things and so seems out of place among the other
-> RESOLVE_ flags.
->
-> I would argue this should be an O_ flag, but not supported for the
-> old-style open(2). This is what the O_SPECIFIC_FD patchset does[1] and I
-> think it's a reasonable way of solving such problems.
->
-> --
-> Aleksa Sarai
-> Senior Software Engineer (Containers)
-> SUSE Linux GmbH
-> <https://www.cyphar.com/>
+Enable to either propagate the mount options from the underlying VFS
+mount to prevent execution, or to propagate the file execute permission.
+This may allow a script interpreter to check execution permissions
+before reading commands from a file.
 
-I see that we discuss here the problem which was originated due to the
-lack of flags checks at open()
-As a newbie in kernel I want to propose maybe naive approach - add
-missing flag cheeks to open().
-In order to not break badly coded  application at once (applications
-hat pass full u32 number I propose to introduce
-2 new sysctls:
-fs.verify_open_flags =3D BITMASK of flags open() uses in this kernel,
-i.r O_CREAT||O_RDOBLY|O_RDWR,,
-fs.verify_open_flags_action =3D NONE|WARN
-1) fs.verify_open_flags  and flags_action  knobs will allow
-distributions and package maintainers to detect and fix bad code. On
-the other hand, it will allow to finally verify flags. passed to open
-2) It will show kernel ABI to libc
+The main goal is to be able to protect the kernel by restricting
+arbitrary syscalls that an attacker could perform with a crafted binary
+or certain script languages.  It also improves multilevel isolation
+by reducing the ability of an attacker to use side channels with
+specific code.  These restrictions can natively be enforced for ELF
+binaries (with the noexec mount option) but require this kernel
+extension to properly handle scripts (e.g., Python, Perl).
 
-3) The semantics of O_MAYEXEC is clear and is long waited for.
-I think that O_MAYEXEC pretty well describes the intention of
-application to treat the file as the source of actions, whether it is
-ELF or script or another format. (not necessary Posix permissions
-case)
-This intention is passed to the kernel and then to LSM, IMA.
+Add a new sysctl fs.open_mayexec_enforce to control this behavior.
+Indeed, because of compatibility with installed systems, only the system
+administrator is able to check that this new enforcement is in line with
+the system mount points and file permissions.  A following patch adds
+documentation.
 
-4) since we need to rewrite interpretersin order to use this flag, we
-can also query fs.verify_open_flags to see whether it is available.
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+Reviewed-by: Philippe Trébuchet <philippe.trebuchet@ssi.gouv.fr>
+Reviewed-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
+Cc: Aleksa Sarai <cyphar@cyphar.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Kees Cook <keescook@chromium.org>
+---
 
-I hope I added my 2 cents.
+Changes since v3:
+* Update comment with O_MAYEXEC.
+
+Changes since v2:
+* Cosmetic changes.
+
+Changes since v1:
+* Move code from Yama to the FS subsystem (suggested by Kees Cook).
+* Make omayexec_inode_permission() static (suggested by Jann Horn).
+* Use mode 0600 for the sysctl.
+* Only match regular files (not directories nor other types), which
+  follows the same semantic as commit 73601ea5b7b1 ("fs/open.c: allow
+  opening only regular files during execve()").
+---
+ fs/namei.c         | 72 +++++++++++++++++++++++++++++++++++++++++++++-
+ include/linux/fs.h |  3 ++
+ kernel/sysctl.c    |  7 +++++
+ 3 files changed, 81 insertions(+), 1 deletion(-)
+
+diff --git a/fs/namei.c b/fs/namei.c
+index 33b6d372e74a..a3ac4470da43 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -39,6 +39,7 @@
+ #include <linux/bitops.h>
+ #include <linux/init_task.h>
+ #include <linux/uaccess.h>
++#include <linux/sysctl.h>
+ 
+ #include "internal.h"
+ #include "mount.h"
+@@ -411,10 +412,40 @@ static int sb_permission(struct super_block *sb, struct inode *inode, int mask)
+ 	return 0;
+ }
+ 
++#define OMAYEXEC_ENFORCE_NONE	0
++#define OMAYEXEC_ENFORCE_MOUNT	(1 << 0)
++#define OMAYEXEC_ENFORCE_FILE	(1 << 1)
++#define _OMAYEXEC_LAST		OMAYEXEC_ENFORCE_FILE
++#define _OMAYEXEC_MASK		((_OMAYEXEC_LAST << 1) - 1)
++
++/**
++ * omayexec_inode_permission - Check O_MAYEXEC before accessing an inode
++ *
++ * @inode: Inode to check permission on
++ * @mask: Right to check for (%MAY_OPENEXEC, %MAY_EXECMOUNT, %MAY_EXEC)
++ *
++ * Returns 0 if access is permitted, -EACCES otherwise.
++ */
++static inline int omayexec_inode_permission(struct inode *inode, int mask)
++{
++	if (!(mask & MAY_OPENEXEC))
++		return 0;
++
++	if ((sysctl_omayexec_enforce & OMAYEXEC_ENFORCE_MOUNT) &&
++			!(mask & MAY_EXECMOUNT))
++		return -EACCES;
++
++	if (sysctl_omayexec_enforce & OMAYEXEC_ENFORCE_FILE)
++		return generic_permission(inode, MAY_EXEC);
++
++	return 0;
++}
++
+ /**
+  * inode_permission - Check for access rights to a given inode
+  * @inode: Inode to check permission on
+- * @mask: Right to check for (%MAY_READ, %MAY_WRITE, %MAY_EXEC)
++ * @mask: Right to check for (%MAY_READ, %MAY_WRITE, %MAY_EXEC, %MAY_OPENEXEC,
++ *        %MAY_EXECMOUNT)
+  *
+  * Check for read/write/execute permissions on an inode.  We use fs[ug]id for
+  * this, letting us set arbitrary permissions for filesystem access without
+@@ -454,10 +485,48 @@ int inode_permission(struct inode *inode, int mask)
+ 	if (retval)
+ 		return retval;
+ 
++	retval = omayexec_inode_permission(inode, mask);
++	if (retval)
++		return retval;
++
+ 	return security_inode_permission(inode, mask);
+ }
+ EXPORT_SYMBOL(inode_permission);
+ 
++/*
++ * Handle open_mayexec_enforce sysctl
++ */
++#ifdef CONFIG_SYSCTL
++int proc_omayexec(struct ctl_table *table, int write, void __user *buffer,
++		size_t *lenp, loff_t *ppos)
++{
++	int error;
++
++	if (write) {
++		struct ctl_table table_copy;
++		int tmp_mayexec_enforce;
++
++		if (!capable(CAP_MAC_ADMIN))
++			return -EPERM;
++		tmp_mayexec_enforce = *((int *)table->data);
++		table_copy = *table;
++		/* Do not erase sysctl_omayexec_enforce. */
++		table_copy.data = &tmp_mayexec_enforce;
++		error = proc_dointvec(&table_copy, write, buffer, lenp, ppos);
++		if (error)
++			return error;
++		if ((tmp_mayexec_enforce | _OMAYEXEC_MASK) != _OMAYEXEC_MASK)
++			return -EINVAL;
++		*((int *)table->data) = tmp_mayexec_enforce;
++	} else {
++		error = proc_dointvec(table, write, buffer, lenp, ppos);
++		if (error)
++			return error;
++	}
++	return 0;
++}
++#endif
++
+ /**
+  * path_get - get a reference to a path
+  * @path: path to get the reference to
+@@ -922,6 +991,7 @@ int sysctl_protected_symlinks __read_mostly = 0;
+ int sysctl_protected_hardlinks __read_mostly = 0;
+ int sysctl_protected_fifos __read_mostly;
+ int sysctl_protected_regular __read_mostly;
++int sysctl_omayexec_enforce __read_mostly = OMAYEXEC_ENFORCE_NONE;
+ 
+ /**
+  * may_follow_link - Check symlink following for unsafe situations
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 79435fca6c3e..d44650a674ad 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -83,6 +83,7 @@ extern int sysctl_protected_symlinks;
+ extern int sysctl_protected_hardlinks;
+ extern int sysctl_protected_fifos;
+ extern int sysctl_protected_regular;
++extern int sysctl_omayexec_enforce;
+ 
+ typedef __kernel_rwf_t rwf_t;
+ 
+@@ -3545,6 +3546,8 @@ int proc_nr_dentry(struct ctl_table *table, int write,
+ 		  void __user *buffer, size_t *lenp, loff_t *ppos);
+ int proc_nr_inodes(struct ctl_table *table, int write,
+ 		   void __user *buffer, size_t *lenp, loff_t *ppos);
++int proc_omayexec(struct ctl_table *table, int write, void __user *buffer,
++		size_t *lenp, loff_t *ppos);
+ int __init get_filesystem_list(char *buf);
+ 
+ #define __FMODE_EXEC		((__force int) FMODE_EXEC)
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 8a176d8727a3..911afa69f84c 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -1892,6 +1892,13 @@ static struct ctl_table fs_table[] = {
+ 		.extra1		= SYSCTL_ZERO,
+ 		.extra2		= &two,
+ 	},
++	{
++		.procname       = "open_mayexec_enforce",
++		.data           = &sysctl_omayexec_enforce,
++		.maxlen         = sizeof(int),
++		.mode           = 0600,
++		.proc_handler   = proc_omayexec,
++	},
+ #if defined(CONFIG_BINFMT_MISC) || defined(CONFIG_BINFMT_MISC_MODULE)
+ 	{
+ 		.procname	= "binfmt_misc",
+-- 
+2.26.2
+
