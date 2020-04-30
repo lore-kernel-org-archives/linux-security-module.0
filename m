@@ -2,100 +2,115 @@ Return-Path: <SRS0=qseI=6O=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE953C83000
-	for <linux-security-module@archiver.kernel.org>; Thu, 30 Apr 2020 14:27:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26BC9C47253
+	for <linux-security-module@archiver.kernel.org>; Thu, 30 Apr 2020 15:52:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C4E2B2074A
-	for <linux-security-module@archiver.kernel.org>; Thu, 30 Apr 2020 14:27:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 062272082E
+	for <linux-security-module@archiver.kernel.org>; Thu, 30 Apr 2020 15:52:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ew1UPCIe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727058AbgD3O1S (ORCPT
+        id S1725844AbgD3Pwr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 30 Apr 2020 10:27:18 -0400
-Received: from smtp-42ae.mail.infomaniak.ch ([84.16.66.174]:43335 "EHLO
-        smtp-42ae.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726858AbgD3O1S (ORCPT
+        Thu, 30 Apr 2020 11:52:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45582 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726441AbgD3Pwr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 30 Apr 2020 10:27:18 -0400
-Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 49Cd436GZyzlhyrF;
-        Thu, 30 Apr 2020 16:26:43 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
-        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 49Cd4261cTzlndDX;
-        Thu, 30 Apr 2020 16:26:42 +0200 (CEST)
-Subject: Re: [PATCH 2/2] ima: add policy support for the new file open
- MAY_OPENEXEC flag
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        kbuild test robot <lkp@intel.com>,
-        linux-integrity@vger.kernel.org
-Cc:     kbuild-all@lists.01.org, Steve Grubb <sgrubb@redhat.com>,
-        Jann Horn <jannh@google.com>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1588167523-7866-3-git-send-email-zohar@linux.ibm.com>
- <202004300526.H4rF1lW2%lkp@intel.com>
- <1588254156.5167.32.camel@linux.ibm.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Message-ID: <48e67766-89ad-0b55-baa6-761ef09298bd@digikod.net>
-Date:   Thu, 30 Apr 2020 16:26:42 +0200
-User-Agent: 
+        Thu, 30 Apr 2020 11:52:47 -0400
+Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBDC1C035495
+        for <linux-security-module@vger.kernel.org>; Thu, 30 Apr 2020 08:52:46 -0700 (PDT)
+Received: by mail-wr1-x442.google.com with SMTP id d17so7528810wrg.11
+        for <linux-security-module@vger.kernel.org>; Thu, 30 Apr 2020 08:52:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=AZo6TuIE/5CcefbKGNzYSvkrg5IwPl6ltYNRWOcMaDk=;
+        b=ew1UPCIe8ZacX7ovq7/6qUDJlJ+5LH1pYI4Qv9R/87Ys89GVuota9rIBbMd+Td5GWP
+         8srIJ0cNMt9MTgjfWwAgBPDSbyGXi2rTY+X8LXmJodhZf7wgiI/EEWIy8gdcw6riIP5z
+         fHQPkxuMdWBZXVn52OJZXfEr54kzDCckCz0FI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=AZo6TuIE/5CcefbKGNzYSvkrg5IwPl6ltYNRWOcMaDk=;
+        b=qOY2akC1KOFRvMI75+xpDCPe+KGFl1SekkLCsSFFY8HRQLNoHSBa06oRbOqFLCARQp
+         F2Vzd6IA+61YA3f+OsOu/mLl7dqQhTTcNJTM2VLlOGEEJsFJCQoiBa/ReCN5wI2gIkhU
+         se5FsmVh4jrQRa8s4dbIpgr6pS8MSoLcnRRoYtovsoI/UiR4jLFyWbxOkWvZ08IKxc1z
+         pT28p2XwcDSu4ePOHr5aaY8McVxG7PzlH6axawa83dd4D1eA/qHTeDYrGEpelYUgDFyC
+         qarNHpLKKeKsRyCVCB4P4GjctxvKsxvrrFuAjRurGK08UJa4/h89rbCj0ILzenkM0FOY
+         IG3Q==
+X-Gm-Message-State: AGi0PubapcVsG4BWY2XPdPl7uuVHdlLtV9ZdRJBJCs9+pg1doC2tY5gl
+        jp+hcoeD/rsyjLxts9ybhL3TqA==
+X-Google-Smtp-Source: APiQypKcObnvK7/azf9dwTI9MsY5sG6t8DBheJsjVNGF56u65EmqYwLcS0U3EwbjygZUPfHV+1Q/fg==
+X-Received: by 2002:adf:9d85:: with SMTP id p5mr4800271wre.101.1588261965505;
+        Thu, 30 Apr 2020 08:52:45 -0700 (PDT)
+Received: from kpsingh.zrh.corp.google.com ([81.6.44.51])
+        by smtp.gmail.com with ESMTPSA id a125sm123421wme.3.2020.04.30.08.52.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Apr 2020 08:52:44 -0700 (PDT)
+From:   KP Singh <kpsingh@chromium.org>
+To:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Cc:     Mikko Ylinen <mikko.ylinen@linux.intel.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        James Morris <jmorris@namei.org>,
+        Kees Cook <keescook@chromium.org>, Jann Horn <jannh@google.com>
+Subject: [PATCH bpf] security: Fix the default value of fs_context_parse_param hook
+Date:   Thu, 30 Apr 2020 17:52:40 +0200
+Message-Id: <20200430155240.68748-1-kpsingh@chromium.org>
+X-Mailer: git-send-email 2.26.2.303.gf8c07b1a785-goog
 MIME-Version: 1.0
-In-Reply-To: <1588254156.5167.32.camel@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: fr
 Content-Transfer-Encoding: 8bit
-X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
-X-Antivirus-Code: 0x100000
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-OK, I'll add it to the next series.
+From: KP Singh <kpsingh@google.com>
 
-On 30/04/2020 15:42, Mimi Zohar wrote:
-> Hi Mickaël,
-> 
-> On Thu, 2020-04-30 at 05:24 +0800, kbuild test robot wrote:
->> Hi Mimi,
->>
->> I love your patch! Yet something to improve:
->>
->> [auto build test ERROR on integrity/next-integrity]
->> [also build test ERROR on linus/master v5.7-rc3 next-20200429]
->> [cannot apply to security/next-testing]
->> [if your patch is applied to the wrong git tree, please drop us a note to help
->> improve the system. BTW, we also suggest to use '--base' option to specify the
->> base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
-> 
-> To prevent this sort of message, in the future could you include this
-> patch (2/2) with your patch set?  Please include the "Reviewed-by:
-> Lakshmi Ramasubramanian <nramas@linux.microsoft.com>" tag.
-> 
-> thanks,
-> 
-> Mimi
-> 
->>
->> url:    https://github.com/0day-ci/linux/commits/Mimi-Zohar/ima-extending-IMA-policy-to-support-interpreters/20200430-030608
->> base:   https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-integrity
->> config: arc-allyesconfig (attached as .config)
->> compiler: arc-elf-gcc (GCC) 9.3.0
->> reproduce:
->>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->>         chmod +x ~/bin/make.cross
->>         # save the attached .config to linux build tree
->>         COMPILER_INSTALL_PATH=$HOME/0day GCC_VERSION=9.3.0 make.cross ARCH=arc 
->>
->> If you fix the issue, kindly add following tag as appropriate
->> Reported-by: kbuild test robot <lkp@intel.com>
->>
->> All error/warnings (new ones prefixed by >>):
->>
->>    security/integrity/ima/ima_main.c: In function 'ima_file_check':
->>>> security/integrity/ima/ima_main.c:442:20: error: 'MAY_OPENEXEC' undeclared (first use in this function); did you mean 'MAY_OPEN'?
->>      442 |         MAY_EXEC | MAY_OPENEXEC |
->>          |                    ^~~~~~~~~~~~
->>          |                    MAY_OPEN
-> 
+security_fs_context_parse_param is called by vfs_parse_fs_param and
+a succussful return value (i.e 0) implies that a parameter will be
+consumed by the LSM framework. This stops all further parsing of the
+parmeter by VFS. Furthermore, if an LSM hook returns a success, the
+remaining LSM hooks are not invoked for the parameter.
+
+The current default behavior of returning success means that all the
+parameters are expected to be parsed by the LSM hook and none of them
+end up being populated by vfs in fs_context
+
+This was noticed when lsm=bpf is supplied on the command line before any
+other LSM. As the bpf lsm uses this default value to implement a default
+hook, this resulted in a failure to parse any fs_context parameters and
+a failure to mount the root filesystem.
+
+Fixes: 98e828a0650f ("security: Refactor declaration of LSM hooks")
+Reported-by: Mikko Ylinen <mikko.ylinen@linux.intel.com>
+Signed-off-by: KP Singh <kpsingh@google.com>
+---
+ include/linux/lsm_hook_defs.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index 9cd4455528e5..1bdd027766d4 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -55,7 +55,7 @@ LSM_HOOK(void, LSM_RET_VOID, bprm_committing_creds, struct linux_binprm *bprm)
+ LSM_HOOK(void, LSM_RET_VOID, bprm_committed_creds, struct linux_binprm *bprm)
+ LSM_HOOK(int, 0, fs_context_dup, struct fs_context *fc,
+ 	 struct fs_context *src_sc)
+-LSM_HOOK(int, 0, fs_context_parse_param, struct fs_context *fc,
++LSM_HOOK(int, -ENOPARAM, fs_context_parse_param, struct fs_context *fc,
+ 	 struct fs_parameter *param)
+ LSM_HOOK(int, 0, sb_alloc_security, struct super_block *sb)
+ LSM_HOOK(void, LSM_RET_VOID, sb_free_security, struct super_block *sb)
+-- 
+2.26.2.303.gf8c07b1a785-goog
+
