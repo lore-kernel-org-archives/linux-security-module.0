@@ -2,164 +2,277 @@ Return-Path: <SRS0=mFfD=6P=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11575C4725A
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 May 2020 14:46:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A92BC47253
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 May 2020 16:14:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DC26020857
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 May 2020 14:46:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6963920757
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 May 2020 16:14:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Opqu5KGs"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pA76bR8I"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729574AbgEAOqr (ORCPT
+        id S1728940AbgEAQO4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 1 May 2020 10:46:47 -0400
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:45819 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729140AbgEAOqq (ORCPT
+        Fri, 1 May 2020 12:14:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48420 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728978AbgEAQO4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 1 May 2020 10:46:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1588344405;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=2PAxMC2an+HuO6fwK0pHvsF8vFETkIJOxS2BSrwZIug=;
-        b=Opqu5KGsejFH5haU727QzqNyIMruqX6ti3zOD09bBYpuW6V2dJ3tfuVOvI9CxC69wWj1wo
-        J37bCkOswQec8zqstI1FUb3kzy6LT/OYYkHG9vRmXmSCedROqCVBTXoYC2xzKwJvS0kf8N
-        jn8mbbenKiDVpHH/U435rPG/bs3hXss=
-Received: from mail-oi1-f197.google.com (mail-oi1-f197.google.com
- [209.85.167.197]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-507-lC8Ga8FRP5SydCfxSB_jBg-1; Fri, 01 May 2020 10:46:28 -0400
-X-MC-Unique: lC8Ga8FRP5SydCfxSB_jBg-1
-Received: by mail-oi1-f197.google.com with SMTP id u204so1953978oia.4
-        for <linux-security-module@vger.kernel.org>; Fri, 01 May 2020 07:46:28 -0700 (PDT)
+        Fri, 1 May 2020 12:14:56 -0400
+Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9580BC08E859
+        for <linux-security-module@vger.kernel.org>; Fri,  1 May 2020 09:14:55 -0700 (PDT)
+Received: by mail-lj1-x244.google.com with SMTP id u15so3073417ljd.3
+        for <linux-security-module@vger.kernel.org>; Fri, 01 May 2020 09:14:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=E9HC4TtDYcMl70D2yLsiFayEi4W3obxsAzPswR8DMak=;
+        b=pA76bR8IKuynYeexWgwTHGHlEEpen9DlOqzAcw8uRr2dS5UZVc3caibWOKk4wQywFr
+         /tIBHQx4gQ6zGTK5r8pZdcRadg+b3o1EuLGJSBl0DVAcAvwb98Cwc3OCOa8mLf1KJ3+c
+         V0440x+rkHaMtCnquXTFtm776x49Mihk4Bjfq3PV2D/zg0q3/TQ0tODETFBO33pBx+Ds
+         QDN6heShl3QVkqKYjsPMRfQo+Iv+nStFqK7Nkt6rYtSAUPDL+xygZO6mtDfYUABBvvCw
+         fsUl/YsVPsW0bhXH1an1M33eSt6zU83YTb2j8dINm13kpXMVayyiQNmL8Q9rcXwNhv+P
+         KtQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=2PAxMC2an+HuO6fwK0pHvsF8vFETkIJOxS2BSrwZIug=;
-        b=q0y2T/rx8r85UOXSOTIsKOdpvSv0ptNbyZ8LIQInLdBIdhJ+arnU7hjeORfQFxKhpd
-         /Rw8/77DB1ciAG05TwcOXSlJ0AZikqKzqMCJHS/NQnwfGAB8W6FQ/EDppPJ6NCVfsPEX
-         enZZD1jo+7c3Xhsq+M+ah80Zyqu5l+EKL8jbQqVnTolS+IDn1VIM7AvX8XhGRbAQXes0
-         nh+RXKO+Hrr65UNDY+xY5COZdCRz5hlQDvgexibLRpVzYzFDL7uv6IZOxDIJYawmdb41
-         98m69nKVihvXxGnr5EO32OnUdMt+g2hPp7O7iaSdUOsTiKNUpkHC0MFqN0sGpu78SPrb
-         ZcPw==
-X-Gm-Message-State: AGi0Pub9jSq12+AV00/1K2nGCDpkjXfynVWoYo0nTDLQN+oCnhZUHL1B
-        TAzvR1zYUBic48tjgpJqvigLmcYr3sl5eJsk5qX/Z+vs4qitYmQK4QlZPTeCsGZX5NAH8kVmMv7
-        UTxVdtaLw3gh2uK2gthx9F0OxRSmIzd1IdNKkIiriNcZ2YTgh7+as
-X-Received: by 2002:a05:6830:13d4:: with SMTP id e20mr3916392otq.66.1588344387511;
-        Fri, 01 May 2020 07:46:27 -0700 (PDT)
-X-Google-Smtp-Source: APiQypKDh3hGCI49P8v9DIB0pf8SQidMuRu0a5PX4JiBQLS3y/qnX6pw1k5XjASmHpGzODx7mlwPtfE2sRdsrcygTXg=
-X-Received: by 2002:a05:6830:13d4:: with SMTP id e20mr3916376otq.66.1588344387215;
- Fri, 01 May 2020 07:46:27 -0700 (PDT)
+        bh=E9HC4TtDYcMl70D2yLsiFayEi4W3obxsAzPswR8DMak=;
+        b=lFVrzt4/L604S9lmWF4k51QAf+JiW2OuIsB6tnZUUiyFlUWM6u8pryFDJMEXC1G95e
+         rI0FiBxmn8GPhS+1OCIdHz/QyvrT+fYVGSNq4Y6rRI0vJ92z5tAPZEJjC27Yf7QhzzsJ
+         C/eSGGlAhpgP0JrsNm/+zklSmmGrVcuYA9d0dZ6iTNRD3UdFS/e4iY8u3CaJm2XCUX7a
+         K06av1Kw6RU0ssiY44h59PmO6DGpkmIhymp4TaCu9WFsKrWQW37MmTeQVFvQOySj+Gz7
+         CjzHEmM0b1nnuypFHsaoWKQHZqMaanC6oM/yBKQam9RYeCSMox5gJUJLOsBdbt5cod7N
+         EWTA==
+X-Gm-Message-State: AGi0PuYJl5O4/5JdZo4p9J/muJ/GImJiCuniWCM6MlmOvjBQYmhmGWdd
+        OeeQp/BqO7cQ15syTd56vCKXHXFokErGstgWg7aFjg==
+X-Google-Smtp-Source: APiQypK5sdtJ5Dm7sI1A1k7InQw/eggzM/HErJMHEHM6WNPkUFYgpxpemk5CyouOdKeiCaEqegrrWnev6LLK1lgEvtQ=
+X-Received: by 2002:a05:651c:107a:: with SMTP id y26mr2869691ljm.80.1588349693754;
+ Fri, 01 May 2020 09:14:53 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200409212859.GH28467@miu.piliscsaba.redhat.com>
- <20200501041444.GJ23230@ZenIV.linux.org.uk> <20200501073127.GB13131@miu.piliscsaba.redhat.com>
-In-Reply-To: <20200501073127.GB13131@miu.piliscsaba.redhat.com>
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-Date:   Fri, 1 May 2020 16:46:16 +0200
-Message-ID: <CAFqZXNu8jsz_4eqgLOc8RGSSAWhiKc=YcByvoTiBeYUprT+kMw@mail.gmail.com>
-Subject: Re: [PATCH] vfs: allow unprivileged whiteout creation
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
+References: <20200501083510.1413-1-anders.roxell@linaro.org> <CANpmjNNm9DhVj5T1rhykEdNBiTvkG-YxL6O25bSfQi8ySh9KtA@mail.gmail.com>
+In-Reply-To: <CANpmjNNm9DhVj5T1rhykEdNBiTvkG-YxL6O25bSfQi8ySh9KtA@mail.gmail.com>
+From:   Anders Roxell <anders.roxell@linaro.org>
+Date:   Fri, 1 May 2020 18:14:42 +0200
+Message-ID: <CADYN=9KLb6FVZ1icbvCY0ondiim44CNk8g8buFCGqpC5cMqyVQ@mail.gmail.com>
+Subject: Re: [PATCH] kunit: Kconfig: enable a KUNIT_RUN_ALL fragment
+To:     Marco Elver <elver@google.com>
+Cc:     Brendan Higgins <brendanhiggins@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-ext4@vger.kernel.org,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>, kunit-dev@googlegroups.com,
+        linux-security-module <linux-security-module@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, May 1, 2020 at 9:31 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
-> On Fri, May 01, 2020 at 05:14:44AM +0100, Al Viro wrote:
-> > On Thu, Apr 09, 2020 at 11:28:59PM +0200, Miklos Szeredi wrote:
-> > > From: Miklos Szeredi <mszeredi@redhat.com>
-> > >
-> > > Whiteouts, unlike real device node should not require privileges to create.
-> > >
-> > > The general concern with device nodes is that opening them can have side
-> > > effects.  The kernel already avoids zero major (see
-> > > Documentation/admin-guide/devices.txt).  To be on the safe side the patch
-> > > explicitly forbids registering a char device with 0/0 number (see
-> > > cdev_add()).
-> > >
-> > > This guarantees that a non-O_PATH open on a whiteout will fail with ENODEV;
-> > > i.e. it won't have any side effect.
+On Fri, 1 May 2020 at 11:57, Marco Elver <elver@google.com> wrote:
+>
+> On Fri, 1 May 2020 at 10:35, Anders Roxell <anders.roxell@linaro.org> wrote:
 > >
-> > >  int vfs_mknod(struct inode *dir, struct dentry *dentry, umode_t mode, dev_t dev)
-> > >  {
-> > > +   bool is_whiteout = S_ISCHR(mode) && dev == WHITEOUT_DEV;
-> > >     int error = may_create(dir, dentry);
-> > >
-> > >     if (error)
-> > >             return error;
-> > >
-> > > -   if ((S_ISCHR(mode) || S_ISBLK(mode)) && !capable(CAP_MKNOD))
-> > > +   if ((S_ISCHR(mode) || S_ISBLK(mode)) && !capable(CAP_MKNOD) &&
-> > > +       !is_whiteout)
-> > >             return -EPERM;
+> > Make it easier to enable all KUnit fragments.  This is needed for kernel
+> > test-systems, so its easy to get all KUnit tests enabled and if new gets
+> > added they will be enabled as well.  Fragments that has to be builtin
+> > will be missed if CONFIG_KUNIT_RUN_ALL is set as a module.
 > >
-> > Hmm...  That exposes vfs_whiteout() to LSM; are you sure that you won't
-> > end up with regressions for overlayfs on sufficiently weird setups?
+> > Adding 'if !KUNIT_RUN_ALL' so individual test can be turned of if
+> > someone wants that even though KUNIT_RUN_ALL is enabled.
+> >
+> > Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+> > ---
+> >  drivers/base/Kconfig      |  3 ++-
+> >  drivers/base/test/Kconfig |  3 ++-
+> >  fs/ext4/Kconfig           |  3 ++-
+> >  lib/Kconfig.debug         |  6 ++++--
+> >  lib/Kconfig.kcsan         |  3 ++-
+> >  lib/kunit/Kconfig         | 15 ++++++++++++---
+> >  security/apparmor/Kconfig |  3 ++-
+> >  7 files changed, 26 insertions(+), 10 deletions(-)
+> >
+> > diff --git a/drivers/base/Kconfig b/drivers/base/Kconfig
+> > index 5f0bc74d2409..c48e6e4ef367 100644
+> > --- a/drivers/base/Kconfig
+> > +++ b/drivers/base/Kconfig
+> > @@ -149,8 +149,9 @@ config DEBUG_TEST_DRIVER_REMOVE
+> >           test this functionality.
+> >
+> >  config PM_QOS_KUNIT_TEST
+> > -       bool "KUnit Test for PM QoS features"
+> > +       bool "KUnit Test for PM QoS features" if !KUNIT_RUN_ALL
+> >         depends on KUNIT=y
+> > +       default KUNIT_RUN_ALL
+> >
+> >  config HMEM_REPORTING
+> >         bool
+> > diff --git a/drivers/base/test/Kconfig b/drivers/base/test/Kconfig
+> > index 305c7751184a..0d662d689f6b 100644
+> > --- a/drivers/base/test/Kconfig
+> > +++ b/drivers/base/test/Kconfig
+> > @@ -9,5 +9,6 @@ config TEST_ASYNC_DRIVER_PROBE
+> >
+> >           If unsure say N.
+> >  config KUNIT_DRIVER_PE_TEST
+> > -       bool "KUnit Tests for property entry API"
+> > +       bool "KUnit Tests for property entry API" if !KUNIT_RUN_ALL
+> >         depends on KUNIT=y
+> > +       default KUNIT_RUN_ALL
+> > diff --git a/fs/ext4/Kconfig b/fs/ext4/Kconfig
+> > index 2a592e38cdfe..76785143259d 100644
+> > --- a/fs/ext4/Kconfig
+> > +++ b/fs/ext4/Kconfig
+> > @@ -103,9 +103,10 @@ config EXT4_DEBUG
+> >                 echo 1 > /sys/module/ext4/parameters/mballoc_debug
+> >
+> >  config EXT4_KUNIT_TESTS
+> > -       tristate "KUnit tests for ext4"
+> > +       tristate "KUnit tests for ext4" if !KUNIT_RUN_ALL
+> >         select EXT4_FS
+> >         depends on KUNIT
+> > +       default KUNIT_RUN_ALL
+> >         help
+> >           This builds the ext4 KUnit tests.
+> >
+> > diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+> > index 8e4aded46281..993e0c5549bc 100644
+> > --- a/lib/Kconfig.debug
+> > +++ b/lib/Kconfig.debug
+> > @@ -2123,8 +2123,9 @@ config TEST_SYSCTL
+> >           If unsure, say N.
+> >
+> >  config SYSCTL_KUNIT_TEST
+> > -       tristate "KUnit test for sysctl"
+> > +       tristate "KUnit test for sysctl" if !KUNIT_RUN_ALL
+> >         depends on KUNIT
+> > +       default KUNIT_RUN_ALL
+> >         help
+> >           This builds the proc sysctl unit test, which runs on boot.
+> >           Tests the API contract and implementation correctness of sysctl.
+> > @@ -2134,8 +2135,9 @@ config SYSCTL_KUNIT_TEST
+> >           If unsure, say N.
+> >
+> >  config LIST_KUNIT_TEST
+> > -       tristate "KUnit Test for Kernel Linked-list structures"
+> > +       tristate "KUnit Test for Kernel Linked-list structures" if !KUNIT_RUN_ALL
+> >         depends on KUNIT
+> > +       default KUNIT_RUN_ALL
+> >         help
+> >           This builds the linked list KUnit test suite.
+> >           It tests that the API and basic functionality of the list_head type
+> > diff --git a/lib/Kconfig.kcsan b/lib/Kconfig.kcsan
+> > index ea28245c6c1d..91398300a1bc 100644
+> > --- a/lib/Kconfig.kcsan
+> > +++ b/lib/Kconfig.kcsan
+> > @@ -46,8 +46,9 @@ config KCSAN_SELFTEST
+> >           works as intended.
+> >
+> >  config KCSAN_TEST
+> > -       tristate "KCSAN test for integrated runtime behaviour"
+> > +       tristate "KCSAN test for integrated runtime behaviour" if !KUNIT_RUN_ALL
+> >         depends on TRACEPOINTS && KUNIT
+> > +       default KUNIT_RUN_ALL
+> >         select TORTURE_TEST
+> >         help
+> >           KCSAN test focusing on behaviour of the integrated runtime. Tests
 >
-> You're right.  OTOH, what can we do?  We can't fix the weird setups, only the
-> distros/admins can.
+> I think if you want this patch to be picked up you need to split it,
+> with one patch for each test that is not yet in mainline or the tree
+> that should pick this patch up.
+
+OK, would it be ok to do one patch per subsystem if it's in the mainline tree,
+and another patch if it's only in the next tree for the same subsystem?
+
 >
-> Can we just try this, and revert to calling ->mknod directly from overlayfs if
-> it turns out to be a problem that people can't fix easily?
->
-> I guess we could add a new ->whiteout security hook as well, but I'm not sure
-> it's worth it.  Cc: LMS mailing list; patch re-added for context.
+> The KCSAN test is in the -rcu tree, but I don't expect it to be merged
+> before 5.9. Most likely, we would only be able to pick up the patch
+> that would make the chance to the KCSAN Kconfig entry once the rest
+> here made it into mainline.
 >
 > Thanks,
-> Miklos
+> -- Marco
 >
-> ---
->  fs/char_dev.c                 |    3 +++
->  fs/namei.c                    |   17 ++++-------------
->  include/linux/device_cgroup.h |    3 +++
->  3 files changed, 10 insertions(+), 13 deletions(-)
+> > diff --git a/lib/kunit/Kconfig b/lib/kunit/Kconfig
+> > index 95d12e3d6d95..d6a912779816 100644
+> > --- a/lib/kunit/Kconfig
+> > +++ b/lib/kunit/Kconfig
+> > @@ -15,7 +15,8 @@ menuconfig KUNIT
+> >  if KUNIT
+> >
+> >  config KUNIT_DEBUGFS
+> > -       bool "KUnit - Enable /sys/kernel/debug/kunit debugfs representation"
+> > +       bool "KUnit - Enable /sys/kernel/debug/kunit debugfs representation" if !KUNIT_RUN_ALL
+> > +       default KUNIT_RUN_ALL
+> >         help
+> >           Enable debugfs representation for kunit.  Currently this consists
+> >           of /sys/kernel/debug/kunit/<test_suite>/results files for each
+> > @@ -23,7 +24,8 @@ config KUNIT_DEBUGFS
+> >           run that occurred.
+> >
+> >  config KUNIT_TEST
+> > -       tristate "KUnit test for KUnit"
+> > +       tristate "KUnit test for KUnit" if !KUNIT_RUN_ALL
+> > +       default KUNIT_RUN_ALL
+> >         help
+> >           Enables the unit tests for the KUnit test framework. These tests test
+> >           the KUnit test framework itself; the tests are both written using
+> > @@ -32,7 +34,8 @@ config KUNIT_TEST
+> >           expected.
+> >
+> >  config KUNIT_EXAMPLE_TEST
+> > -       tristate "Example test for KUnit"
+> > +       tristate "Example test for KUnit" if !KUNIT_RUN_ALL
+> > +       default KUNIT_RUN_ALL
+> >         help
+> >           Enables an example unit test that illustrates some of the basic
+> >           features of KUnit. This test only exists to help new users understand
+> > @@ -41,4 +44,10 @@ config KUNIT_EXAMPLE_TEST
+> >           is intended for curious hackers who would like to understand how to
+> >           use KUnit for kernel development.
+> >
+> > +config KUNIT_RUN_ALL
+> > +       tristate "KUnit run all test"
+> > +       help
+> > +         Enables all KUnit tests. If they can be enabled.
+> > +         That depends on if KUnit is enabled as a module or builtin.
+> > +
 >
-> --- a/fs/char_dev.c
-> +++ b/fs/char_dev.c
-> @@ -483,6 +483,9 @@ int cdev_add(struct cdev *p, dev_t dev,
->         p->dev = dev;
->         p->count = count;
->
-> +       if (WARN_ON(dev == WHITEOUT_DEV))
-> +               return -EBUSY;
-> +
->         error = kobj_map(cdev_map, dev, count, NULL,
->                          exact_match, exact_lock, p);
->         if (error)
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -3505,12 +3505,14 @@ EXPORT_SYMBOL(user_path_create);
->
->  int vfs_mknod(struct inode *dir, struct dentry *dentry, umode_t mode, dev_t dev)
->  {
-> +       bool is_whiteout = S_ISCHR(mode) && dev == WHITEOUT_DEV;
->         int error = may_create(dir, dentry);
->
->         if (error)
->                 return error;
->
-> -       if ((S_ISCHR(mode) || S_ISBLK(mode)) && !capable(CAP_MKNOD))
-> +       if ((S_ISCHR(mode) || S_ISBLK(mode)) && !capable(CAP_MKNOD) &&
-> +           !is_whiteout)
+> s/tests. If/tests, if/ ?
 
-Sorry for sidetracking, but !capable(CAP_MKNOD) needs to be last in
-the chain, otherwise you could get a bogus audit report of CAP_MKNOD
-being denied in case is_whiteout is true.
+correct, I will fix that.
 
--- 
-Ondrej Mosnacek <omosnace at redhat dot com>
-Software Engineer, Security Technologies
-Red Hat, Inc.
+Cheers,
+Anders
 
+>
+> >  endif # KUNIT
+> > diff --git a/security/apparmor/Kconfig b/security/apparmor/Kconfig
+> > index 0fe336860773..c4648426ea5d 100644
+> > --- a/security/apparmor/Kconfig
+> > +++ b/security/apparmor/Kconfig
+> > @@ -70,8 +70,9 @@ config SECURITY_APPARMOR_DEBUG_MESSAGES
+> >           the kernel message buffer.
+> >
+> >  config SECURITY_APPARMOR_KUNIT_TEST
+> > -       bool "Build KUnit tests for policy_unpack.c"
+> > +       bool "Build KUnit tests for policy_unpack.c" if !KUNIT_RUN_ALL
+> >         depends on KUNIT=y && SECURITY_APPARMOR
+> > +       default KUNIT_RUN_ALL
+> >         help
+> >           This builds the AppArmor KUnit tests.
+> >
+> > --
+> > 2.20.1
+> >
