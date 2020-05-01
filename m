@@ -2,109 +2,245 @@ Return-Path: <SRS0=mFfD=6P=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96581C4724C
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 May 2020 07:53:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAE40C47257
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 May 2020 08:35:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7570B20787
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 May 2020 07:53:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE8A7206D9
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 May 2020 08:35:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="HWYJKgbn"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="v3aIzTXf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728339AbgEAHxd (ORCPT
+        id S1728380AbgEAIfX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 1 May 2020 03:53:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54572 "EHLO
+        Fri, 1 May 2020 04:35:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32866 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728333AbgEAHxd (ORCPT
+        with ESMTP id S1728345AbgEAIfW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 1 May 2020 03:53:33 -0400
-Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB626C035495
-        for <linux-security-module@vger.kernel.org>; Fri,  1 May 2020 00:53:32 -0700 (PDT)
-Received: by mail-ej1-x644.google.com with SMTP id k8so6931293ejv.3
-        for <linux-security-module@vger.kernel.org>; Fri, 01 May 2020 00:53:32 -0700 (PDT)
+        Fri, 1 May 2020 04:35:22 -0400
+Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F7CAC035495
+        for <linux-security-module@vger.kernel.org>; Fri,  1 May 2020 01:35:22 -0700 (PDT)
+Received: by mail-lj1-x243.google.com with SMTP id u6so2006690ljl.6
+        for <linux-security-module@vger.kernel.org>; Fri, 01 May 2020 01:35:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=JBA3kWcV1EmEL7fNmuvvfUm9MgrKtq0ZwPzgOB7jxY0=;
-        b=HWYJKgbn6Yzr2UMYpS/j+sOBW/wz7i6JHJhql1zCyxplMmvrDqqtazn85w9QlQuog8
-         pFS4cnMQM4Rz8eCEIJ32ylWpAzojc+G8FnlfjB92YMFgM2sGqGPJriIrUPqYIcbu6jqU
-         N4jO0T+MGT4F4gXwWiQwczONmyi0W1rscLr+Y=
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=uxqGfQnbNLpuSbmHYR3QsXvpUsDHwV7ckml89C19bGY=;
+        b=v3aIzTXfoKhvkGjKxC6G+5VDLUVMy4ljJXGauzCQ7yi5IPbVzHf03MD5aXHgIJXJgI
+         sjNAzsEM8mYVamdEwOPANA25PIa0/ek+m7HCYQt4kIJNhexTu5t8wyj7D13JcXb6ck/E
+         Q+iCtTR6I5LvnGBZjHD1QQFtTT4vKknBTakE1L54BWgIMRqlpOF5krEzDS9RCRdnVzfu
+         A2CaQLPaZs0p/qHBh6Wf536jXHxHLDnkZQkSgoUE+4VDu4LhsvrlwujdDKGuje6sMVhf
+         wz4iziS0upyDF1UTC+iivE0WaUxhfPG9D5tht5Mra85oMSPKvX1Ts7c3rIxXHnpUGv4M
+         TMaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JBA3kWcV1EmEL7fNmuvvfUm9MgrKtq0ZwPzgOB7jxY0=;
-        b=gsM5gTPM+QzElSJd7UQ4h+QB+hjbi1fL97FNMKB/kpo75Sbqb/crmSPjt6Bys8H6jC
-         kM+2xkPvselwrL/rLgaW+XNxpOf9jIBnBEfYHjZHxoftOLwzmIxBLv8kdZ5hobgoW5H+
-         5azx9L9hSfCRhLfc2WFdhDt5o9hlV2jD+r/GIH1Z13DsDDE+wouBpt5fik4X5YlMKejV
-         GBDou8kW+hB+EXUEdoIoUQh25smEV7r7TIuEFKJCapwp7KRe8HXel/smbAs056MyrMwR
-         RrMyTfXtxGMschXhx+ENMBIif14aHPuGXEmhFeNbvcGa2bIV9a8i4GcpXgpsWB9G1oD/
-         bc+A==
-X-Gm-Message-State: AGi0PuZ9CZFRW9dRkzw65OA8Tpt/YQUKKf4p6ZAacIypoAuQ6+vr+OV5
-        mmmjyXGKq4EH/4yxO0Omu0zDF0vLu2teALu2TyPV8Q==
-X-Google-Smtp-Source: APiQypIq2tQ4WheHgdnSbQZQ6TK69W68gxYzTTiQfJwYiHl5BUL+C//RNxupGrpp/Y1uE3sl8aYe0YfAiEwQQNaqpDk=
-X-Received: by 2002:a17:906:340a:: with SMTP id c10mr2104707ejb.218.1588319610486;
- Fri, 01 May 2020 00:53:30 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=uxqGfQnbNLpuSbmHYR3QsXvpUsDHwV7ckml89C19bGY=;
+        b=e7OYT/AVrszlMvX4qRi+x5Otvnz/ylv+aDU+rZS9GDEzCnjAKjkcTSH/A8LIrtQJg0
+         eGxLPJGGkXnmn/xOcYYkUxqyNfcY50w4IZXCh/wAJ598bRSICGlBrdrpeserCm0U6kH1
+         fFKmFbbTPvVFvhqGc55TKoWDjLNWAX7G3mWOv8jXdOiBJhZaYuIDo6xWaIdIb2eTsbMR
+         I+RHd4oeA+LD5i1SLoMXwWY45vohhsdwXNddsl11lKk73Xv/ehr/7BtLFeB7WgCsWk5Q
+         P84MgS9djozXGcNbZiSENFpKmkyToRZFMljzxrKDDgi9uJ5T/NXkZu4cX5yj4eYnx4KO
+         UudA==
+X-Gm-Message-State: AGi0PuaLgmxpHqP7Iss7cYE471e4/cMD6nW7E+DfZB3pAlLk2nnP/6Pu
+        MkTMrKjJzx8twLkjDNkejRjc2I9/b4YvZA==
+X-Google-Smtp-Source: APiQypLeUHQb68HinR8YRkTEOArVX22KcIV3ZK1EdwqhmdUWRJWRL2LqrxoUz/j4wnNd645UHlqNQg==
+X-Received: by 2002:a2e:3c05:: with SMTP id j5mr1710060lja.280.1588322120443;
+        Fri, 01 May 2020 01:35:20 -0700 (PDT)
+Received: from localhost (c-8c28e555.07-21-73746f28.bbcust.telenor.se. [85.229.40.140])
+        by smtp.gmail.com with ESMTPSA id t3sm1543110ljo.51.2020.05.01.01.35.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 May 2020 01:35:19 -0700 (PDT)
+From:   Anders Roxell <anders.roxell@linaro.org>
+To:     brendanhiggins@google.com
+Cc:     gregkh@linuxfoundation.org, tytso@mit.edu,
+        adilger.kernel@dilger.ca, elver@google.com,
+        john.johansen@canonical.com, jmorris@namei.org, serge@hallyn.com,
+        linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        kasan-dev@googlegroups.com, linux-kselftest@vger.kernel.org,
+        kunit-dev@googlegroups.com, linux-security-module@vger.kernel.org,
+        Anders Roxell <anders.roxell@linaro.org>
+Subject: [PATCH] kunit: Kconfig: enable a KUNIT_RUN_ALL fragment
+Date:   Fri,  1 May 2020 10:35:10 +0200
+Message-Id: <20200501083510.1413-1-anders.roxell@linaro.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <CAJFHJroyC8SAFJZuQxcwHqph5EQRg=MqFdvfnwbK35Cv-A-neA@mail.gmail.com>
-In-Reply-To: <CAJFHJroyC8SAFJZuQxcwHqph5EQRg=MqFdvfnwbK35Cv-A-neA@mail.gmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Fri, 1 May 2020 09:53:19 +0200
-Message-ID: <CAJfpegtWEMd_bCeULG13PACqPq5G5HbwKjMOnCoXyFQViXE0yQ@mail.gmail.com>
-Subject: Re: fuse doesn't use security_inode_init_security?
-To:     Chirantan Ekbote <chirantan@chromium.org>
-Cc:     linux-fsdevel@vger.kernel.org,
-        fuse-devel <fuse-devel@lists.sourceforge.net>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        LSM <linux-security-module@vger.kernel.org>,
-        virtio-fs-list <virtio-fs@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, May 1, 2020 at 8:55 AM Chirantan Ekbote <chirantan@chromium.org> wrote:
->
-> Hello,
->
-> I noticed that the fuse module doesn't currently call
-> security_inode_init_security and I was wondering if there is a
-> specific reason for that.  I found a patch from 2013[1] that would
-> change fuse so that it would call that function but it doesn't appear
-> that the patch was merged.
->
-> For background: I currently have a virtio-fs server with a guest VM
-> that wants to use selinux.  I was able to enable selinux support
-> without much issue by adding
->
->     fs_use_xattr virtiofs u:object_r:labeledfs:s0;
->
-> to the selinux policy in the guest.  This works for the most part
-> except that `setfscreatecon` doesn't appear to work.  From what I can
-> tell, this ends up writing to `/proc/[pid]/attr/fscreate` and the
-> attributes actually get set via the `inode_init_security` lsm hook in
-> selinux.  However, since fuse doesn't call
-> `security_inode_init_security` the hook never runs so the
-> file/directory doesn't have the right attributes.
->
-> Is it safe to just call `security_inode_init_security` whenever fuse
-> creates a new inode?  How does this affect non-virtiofs fuse servers?
+Make it easier to enable all KUnit fragments.  This is needed for kernel
+test-systems, so its easy to get all KUnit tests enabled and if new gets
+added they will be enabled as well.  Fragments that has to be builtin
+will be missed if CONFIG_KUNIT_RUN_ALL is set as a module.
 
-Not sure,  Adding more Cc's.
+Adding 'if !KUNIT_RUN_ALL' so individual test can be turned of if
+someone wants that even though KUNIT_RUN_ALL is enabled.
 
-I know there's a deadlock scenario with getxattr called on root inode
-before mount returns, which causes a deadlock unless mount is run in
-the background.  Current libfuse doesn't handle this, but I think some
-fuse fs work around this by not using libfuse, or at least have some
-special setup code (glusterfs? ceph-fuse? not sure...).  I also don't
-know whether the ->inode_init_security hook is related to this or not.
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+---
+ drivers/base/Kconfig      |  3 ++-
+ drivers/base/test/Kconfig |  3 ++-
+ fs/ext4/Kconfig           |  3 ++-
+ lib/Kconfig.debug         |  6 ++++--
+ lib/Kconfig.kcsan         |  3 ++-
+ lib/kunit/Kconfig         | 15 ++++++++++++---
+ security/apparmor/Kconfig |  3 ++-
+ 7 files changed, 26 insertions(+), 10 deletions(-)
 
+diff --git a/drivers/base/Kconfig b/drivers/base/Kconfig
+index 5f0bc74d2409..c48e6e4ef367 100644
+--- a/drivers/base/Kconfig
++++ b/drivers/base/Kconfig
+@@ -149,8 +149,9 @@ config DEBUG_TEST_DRIVER_REMOVE
+ 	  test this functionality.
+ 
+ config PM_QOS_KUNIT_TEST
+-	bool "KUnit Test for PM QoS features"
++	bool "KUnit Test for PM QoS features" if !KUNIT_RUN_ALL
+ 	depends on KUNIT=y
++	default KUNIT_RUN_ALL
+ 
+ config HMEM_REPORTING
+ 	bool
+diff --git a/drivers/base/test/Kconfig b/drivers/base/test/Kconfig
+index 305c7751184a..0d662d689f6b 100644
+--- a/drivers/base/test/Kconfig
++++ b/drivers/base/test/Kconfig
+@@ -9,5 +9,6 @@ config TEST_ASYNC_DRIVER_PROBE
+ 
+ 	  If unsure say N.
+ config KUNIT_DRIVER_PE_TEST
+-	bool "KUnit Tests for property entry API"
++	bool "KUnit Tests for property entry API" if !KUNIT_RUN_ALL
+ 	depends on KUNIT=y
++	default KUNIT_RUN_ALL
+diff --git a/fs/ext4/Kconfig b/fs/ext4/Kconfig
+index 2a592e38cdfe..76785143259d 100644
+--- a/fs/ext4/Kconfig
++++ b/fs/ext4/Kconfig
+@@ -103,9 +103,10 @@ config EXT4_DEBUG
+ 		echo 1 > /sys/module/ext4/parameters/mballoc_debug
+ 
+ config EXT4_KUNIT_TESTS
+-	tristate "KUnit tests for ext4"
++	tristate "KUnit tests for ext4" if !KUNIT_RUN_ALL
+ 	select EXT4_FS
+ 	depends on KUNIT
++	default KUNIT_RUN_ALL
+ 	help
+ 	  This builds the ext4 KUnit tests.
+ 
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index 8e4aded46281..993e0c5549bc 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -2123,8 +2123,9 @@ config TEST_SYSCTL
+ 	  If unsure, say N.
+ 
+ config SYSCTL_KUNIT_TEST
+-	tristate "KUnit test for sysctl"
++	tristate "KUnit test for sysctl" if !KUNIT_RUN_ALL
+ 	depends on KUNIT
++	default KUNIT_RUN_ALL
+ 	help
+ 	  This builds the proc sysctl unit test, which runs on boot.
+ 	  Tests the API contract and implementation correctness of sysctl.
+@@ -2134,8 +2135,9 @@ config SYSCTL_KUNIT_TEST
+ 	  If unsure, say N.
+ 
+ config LIST_KUNIT_TEST
+-	tristate "KUnit Test for Kernel Linked-list structures"
++	tristate "KUnit Test for Kernel Linked-list structures" if !KUNIT_RUN_ALL
+ 	depends on KUNIT
++	default KUNIT_RUN_ALL
+ 	help
+ 	  This builds the linked list KUnit test suite.
+ 	  It tests that the API and basic functionality of the list_head type
+diff --git a/lib/Kconfig.kcsan b/lib/Kconfig.kcsan
+index ea28245c6c1d..91398300a1bc 100644
+--- a/lib/Kconfig.kcsan
++++ b/lib/Kconfig.kcsan
+@@ -46,8 +46,9 @@ config KCSAN_SELFTEST
+ 	  works as intended.
+ 
+ config KCSAN_TEST
+-	tristate "KCSAN test for integrated runtime behaviour"
++	tristate "KCSAN test for integrated runtime behaviour" if !KUNIT_RUN_ALL
+ 	depends on TRACEPOINTS && KUNIT
++	default KUNIT_RUN_ALL
+ 	select TORTURE_TEST
+ 	help
+ 	  KCSAN test focusing on behaviour of the integrated runtime. Tests
+diff --git a/lib/kunit/Kconfig b/lib/kunit/Kconfig
+index 95d12e3d6d95..d6a912779816 100644
+--- a/lib/kunit/Kconfig
++++ b/lib/kunit/Kconfig
+@@ -15,7 +15,8 @@ menuconfig KUNIT
+ if KUNIT
+ 
+ config KUNIT_DEBUGFS
+-	bool "KUnit - Enable /sys/kernel/debug/kunit debugfs representation"
++	bool "KUnit - Enable /sys/kernel/debug/kunit debugfs representation" if !KUNIT_RUN_ALL
++	default KUNIT_RUN_ALL
+ 	help
+ 	  Enable debugfs representation for kunit.  Currently this consists
+ 	  of /sys/kernel/debug/kunit/<test_suite>/results files for each
+@@ -23,7 +24,8 @@ config KUNIT_DEBUGFS
+ 	  run that occurred.
+ 
+ config KUNIT_TEST
+-	tristate "KUnit test for KUnit"
++	tristate "KUnit test for KUnit" if !KUNIT_RUN_ALL
++	default KUNIT_RUN_ALL
+ 	help
+ 	  Enables the unit tests for the KUnit test framework. These tests test
+ 	  the KUnit test framework itself; the tests are both written using
+@@ -32,7 +34,8 @@ config KUNIT_TEST
+ 	  expected.
+ 
+ config KUNIT_EXAMPLE_TEST
+-	tristate "Example test for KUnit"
++	tristate "Example test for KUnit" if !KUNIT_RUN_ALL
++	default KUNIT_RUN_ALL
+ 	help
+ 	  Enables an example unit test that illustrates some of the basic
+ 	  features of KUnit. This test only exists to help new users understand
+@@ -41,4 +44,10 @@ config KUNIT_EXAMPLE_TEST
+ 	  is intended for curious hackers who would like to understand how to
+ 	  use KUnit for kernel development.
+ 
++config KUNIT_RUN_ALL
++	tristate "KUnit run all test"
++	help
++	  Enables all KUnit tests. If they can be enabled.
++	  That depends on if KUnit is enabled as a module or builtin.
++
+ endif # KUNIT
+diff --git a/security/apparmor/Kconfig b/security/apparmor/Kconfig
+index 0fe336860773..c4648426ea5d 100644
+--- a/security/apparmor/Kconfig
++++ b/security/apparmor/Kconfig
+@@ -70,8 +70,9 @@ config SECURITY_APPARMOR_DEBUG_MESSAGES
+ 	  the kernel message buffer.
+ 
+ config SECURITY_APPARMOR_KUNIT_TEST
+-	bool "Build KUnit tests for policy_unpack.c"
++	bool "Build KUnit tests for policy_unpack.c" if !KUNIT_RUN_ALL
+ 	depends on KUNIT=y && SECURITY_APPARMOR
++	default KUNIT_RUN_ALL
+ 	help
+ 	  This builds the AppArmor KUnit tests.
+ 
+-- 
+2.20.1
 
-Thanks,
-Miklos
