@@ -2,277 +2,121 @@ Return-Path: <SRS0=mFfD=6P=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A92BC47253
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 May 2020 16:14:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DB81C47253
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 May 2020 16:17:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6963920757
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 May 2020 16:14:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 34C4C20757
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 May 2020 16:17:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pA76bR8I"
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="m5o6DjW2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728940AbgEAQO4 (ORCPT
+        id S1728896AbgEAQRr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 1 May 2020 12:14:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48420 "EHLO
+        Fri, 1 May 2020 12:17:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48866 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728978AbgEAQO4 (ORCPT
+        with ESMTP id S1728495AbgEAQRr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 1 May 2020 12:14:56 -0400
-Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9580BC08E859
-        for <linux-security-module@vger.kernel.org>; Fri,  1 May 2020 09:14:55 -0700 (PDT)
-Received: by mail-lj1-x244.google.com with SMTP id u15so3073417ljd.3
-        for <linux-security-module@vger.kernel.org>; Fri, 01 May 2020 09:14:55 -0700 (PDT)
+        Fri, 1 May 2020 12:17:47 -0400
+Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E33C6C08E859
+        for <linux-security-module@vger.kernel.org>; Fri,  1 May 2020 09:17:46 -0700 (PDT)
+Received: by mail-ej1-x644.google.com with SMTP id gr25so7843162ejb.10
+        for <linux-security-module@vger.kernel.org>; Fri, 01 May 2020 09:17:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=E9HC4TtDYcMl70D2yLsiFayEi4W3obxsAzPswR8DMak=;
-        b=pA76bR8IKuynYeexWgwTHGHlEEpen9DlOqzAcw8uRr2dS5UZVc3caibWOKk4wQywFr
-         /tIBHQx4gQ6zGTK5r8pZdcRadg+b3o1EuLGJSBl0DVAcAvwb98Cwc3OCOa8mLf1KJ3+c
-         V0440x+rkHaMtCnquXTFtm776x49Mihk4Bjfq3PV2D/zg0q3/TQ0tODETFBO33pBx+Ds
-         QDN6heShl3QVkqKYjsPMRfQo+Iv+nStFqK7Nkt6rYtSAUPDL+xygZO6mtDfYUABBvvCw
-         fsUl/YsVPsW0bhXH1an1M33eSt6zU83YTb2j8dINm13kpXMVayyiQNmL8Q9rcXwNhv+P
-         KtQg==
+        bh=23jPYeIHxkO0ujsGD7eYlRbwJShWG3r7UKIREhK5bgw=;
+        b=m5o6DjW23uDqvbH6ScTDm+6wn+eSq6aJHkCW7h0E7PQK2TC3+9C/vXX2qmTMXOjDJV
+         5m7dDloIaOCSsVWgmy7ijk65TLdTjrJ35UszXTvgQ+9FAhewqXUSAX95ukIByWJVG8Lc
+         aJ7FU+3rG+rlYO/LV/MbE4r+CuM0NZfQfnEoIVfNHKM5uWW6T0vZY8K1Xh0pMqnuCdoB
+         3NteUzx8k6UL8h+e6dKHslAXt3Zm5yYdLt8ZZFPmzTn15hRPVkNYH3tm/IV4ZnwkNiyz
+         FKeNDhmMd7lLEeaZhxMAmD4CqLTsnybNjFKZKZBtJF0qDkGghOeiehwGobytDRRCd4i7
+         HHjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=E9HC4TtDYcMl70D2yLsiFayEi4W3obxsAzPswR8DMak=;
-        b=lFVrzt4/L604S9lmWF4k51QAf+JiW2OuIsB6tnZUUiyFlUWM6u8pryFDJMEXC1G95e
-         rI0FiBxmn8GPhS+1OCIdHz/QyvrT+fYVGSNq4Y6rRI0vJ92z5tAPZEJjC27Yf7QhzzsJ
-         C/eSGGlAhpgP0JrsNm/+zklSmmGrVcuYA9d0dZ6iTNRD3UdFS/e4iY8u3CaJm2XCUX7a
-         K06av1Kw6RU0ssiY44h59PmO6DGpkmIhymp4TaCu9WFsKrWQW37MmTeQVFvQOySj+Gz7
-         CjzHEmM0b1nnuypFHsaoWKQHZqMaanC6oM/yBKQam9RYeCSMox5gJUJLOsBdbt5cod7N
-         EWTA==
-X-Gm-Message-State: AGi0PuYJl5O4/5JdZo4p9J/muJ/GImJiCuniWCM6MlmOvjBQYmhmGWdd
-        OeeQp/BqO7cQ15syTd56vCKXHXFokErGstgWg7aFjg==
-X-Google-Smtp-Source: APiQypK5sdtJ5Dm7sI1A1k7InQw/eggzM/HErJMHEHM6WNPkUFYgpxpemk5CyouOdKeiCaEqegrrWnev6LLK1lgEvtQ=
-X-Received: by 2002:a05:651c:107a:: with SMTP id y26mr2869691ljm.80.1588349693754;
- Fri, 01 May 2020 09:14:53 -0700 (PDT)
+        bh=23jPYeIHxkO0ujsGD7eYlRbwJShWG3r7UKIREhK5bgw=;
+        b=CtSnXSZdhvwUEMgl9lZ3TWI9hx9MbEflUWV1RTl9RS+A7f2xviTh1MSyBgisgVkt6/
+         YBCnJgFcnnAs47xyqAE5GtqblzM0T3GcStUVVaCz/bJV5vrSjmsU7407/c0OyHs7zClc
+         lIEGcLbrFZx9DoNNr7w+qWPki83Ql4jvUhHsSGMlh72n/wW4ZUMq9Yw5bZnZI+0dg9yB
+         +S1fMkYfm0luTflXT5+huDKkV2IBr0OIVhg3grGiMd7qshCX63eLFhW7eLuN04znx4A7
+         koV6mbBJg8KPH9R9+ztsoWkgYKoB9P1jL8kPFMifGhgR1D77NkCAmAQ22F+KOqAm4Ktj
+         z9XQ==
+X-Gm-Message-State: AGi0Pub0BcRI0GnGSRTO6UQtNo0Q0YLGw5mBZAMUrKIqXdqhoSkv1q5Y
+        QDg6ev9ID0Zjz+Nr8Ol90XyoMVDnUbeOv/oqtIyt
+X-Google-Smtp-Source: APiQypIXB+av6flcFldEWw+bS/wH+cxQMW/luqrFwIHVh8pa/MRqCUmiUnrrXtxszp5IfdTN8uKbEAzFnfW/lbRVEho=
+X-Received: by 2002:a17:906:29c4:: with SMTP id y4mr3965185eje.95.1588349865367;
+ Fri, 01 May 2020 09:17:45 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200501083510.1413-1-anders.roxell@linaro.org> <CANpmjNNm9DhVj5T1rhykEdNBiTvkG-YxL6O25bSfQi8ySh9KtA@mail.gmail.com>
-In-Reply-To: <CANpmjNNm9DhVj5T1rhykEdNBiTvkG-YxL6O25bSfQi8ySh9KtA@mail.gmail.com>
-From:   Anders Roxell <anders.roxell@linaro.org>
-Date:   Fri, 1 May 2020 18:14:42 +0200
-Message-ID: <CADYN=9KLb6FVZ1icbvCY0ondiim44CNk8g8buFCGqpC5cMqyVQ@mail.gmail.com>
-Subject: Re: [PATCH] kunit: Kconfig: enable a KUNIT_RUN_ALL fragment
-To:     Marco Elver <elver@google.com>
-Cc:     Brendan Higgins <brendanhiggins@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-ext4@vger.kernel.org,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>, kunit-dev@googlegroups.com,
-        linux-security-module <linux-security-module@vger.kernel.org>
+References: <CAHC9VhTu3YWPmwtA7RERHDRhQt0wAkmN4GJCmaRY7KSFRwtACQ@mail.gmail.com>
+ <CAHk-=whGjVLwTnYT8euAb_Lzqxd=-TFnJU-k2uu+Fn_hBfMc+w@mail.gmail.com>
+In-Reply-To: <CAHk-=whGjVLwTnYT8euAb_Lzqxd=-TFnJU-k2uu+Fn_hBfMc+w@mail.gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Fri, 1 May 2020 12:17:33 -0400
+Message-ID: <CAHC9VhSBGaJc-dQZyyUECwrysoQ8a4w2ww4PgPyXVH5EEVOjCw@mail.gmail.com>
+Subject: Re: [GIT PULL] SELinux fixes for v5.7 (#2)
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     selinux@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 1 May 2020 at 11:57, Marco Elver <elver@google.com> wrote:
+On Thu, Apr 30, 2020 at 7:43 PM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> On Thu, Apr 30, 2020 at 2:24 PM Paul Moore <paul@paul-moore.com> wrote:
+> >
+> > Two more SELinux patches to fix problems in the v5.7-rcX releases.
+> > Wei Yongjun's patch fixes a return code in an error path, and my patch
+> > fixes a problem where we were not correctly applying access controls
+> > to all of the netlink messages in the netlink_send LSM hook.
 >
-> On Fri, 1 May 2020 at 10:35, Anders Roxell <anders.roxell@linaro.org> wrote:
-> >
-> > Make it easier to enable all KUnit fragments.  This is needed for kernel
-> > test-systems, so its easy to get all KUnit tests enabled and if new gets
-> > added they will be enabled as well.  Fragments that has to be builtin
-> > will be missed if CONFIG_KUNIT_RUN_ALL is set as a module.
-> >
-> > Adding 'if !KUNIT_RUN_ALL' so individual test can be turned of if
-> > someone wants that even though KUNIT_RUN_ALL is enabled.
-> >
-> > Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-> > ---
-> >  drivers/base/Kconfig      |  3 ++-
-> >  drivers/base/test/Kconfig |  3 ++-
-> >  fs/ext4/Kconfig           |  3 ++-
-> >  lib/Kconfig.debug         |  6 ++++--
-> >  lib/Kconfig.kcsan         |  3 ++-
-> >  lib/kunit/Kconfig         | 15 ++++++++++++---
-> >  security/apparmor/Kconfig |  3 ++-
-> >  7 files changed, 26 insertions(+), 10 deletions(-)
-> >
-> > diff --git a/drivers/base/Kconfig b/drivers/base/Kconfig
-> > index 5f0bc74d2409..c48e6e4ef367 100644
-> > --- a/drivers/base/Kconfig
-> > +++ b/drivers/base/Kconfig
-> > @@ -149,8 +149,9 @@ config DEBUG_TEST_DRIVER_REMOVE
-> >           test this functionality.
-> >
-> >  config PM_QOS_KUNIT_TEST
-> > -       bool "KUnit Test for PM QoS features"
-> > +       bool "KUnit Test for PM QoS features" if !KUNIT_RUN_ALL
-> >         depends on KUNIT=y
-> > +       default KUNIT_RUN_ALL
-> >
-> >  config HMEM_REPORTING
-> >         bool
-> > diff --git a/drivers/base/test/Kconfig b/drivers/base/test/Kconfig
-> > index 305c7751184a..0d662d689f6b 100644
-> > --- a/drivers/base/test/Kconfig
-> > +++ b/drivers/base/test/Kconfig
-> > @@ -9,5 +9,6 @@ config TEST_ASYNC_DRIVER_PROBE
-> >
-> >           If unsure say N.
-> >  config KUNIT_DRIVER_PE_TEST
-> > -       bool "KUnit Tests for property entry API"
-> > +       bool "KUnit Tests for property entry API" if !KUNIT_RUN_ALL
-> >         depends on KUNIT=y
-> > +       default KUNIT_RUN_ALL
-> > diff --git a/fs/ext4/Kconfig b/fs/ext4/Kconfig
-> > index 2a592e38cdfe..76785143259d 100644
-> > --- a/fs/ext4/Kconfig
-> > +++ b/fs/ext4/Kconfig
-> > @@ -103,9 +103,10 @@ config EXT4_DEBUG
-> >                 echo 1 > /sys/module/ext4/parameters/mballoc_debug
-> >
-> >  config EXT4_KUNIT_TESTS
-> > -       tristate "KUnit tests for ext4"
-> > +       tristate "KUnit tests for ext4" if !KUNIT_RUN_ALL
-> >         select EXT4_FS
-> >         depends on KUNIT
-> > +       default KUNIT_RUN_ALL
-> >         help
-> >           This builds the ext4 KUnit tests.
-> >
-> > diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-> > index 8e4aded46281..993e0c5549bc 100644
-> > --- a/lib/Kconfig.debug
-> > +++ b/lib/Kconfig.debug
-> > @@ -2123,8 +2123,9 @@ config TEST_SYSCTL
-> >           If unsure, say N.
-> >
-> >  config SYSCTL_KUNIT_TEST
-> > -       tristate "KUnit test for sysctl"
-> > +       tristate "KUnit test for sysctl" if !KUNIT_RUN_ALL
-> >         depends on KUNIT
-> > +       default KUNIT_RUN_ALL
-> >         help
-> >           This builds the proc sysctl unit test, which runs on boot.
-> >           Tests the API contract and implementation correctness of sysctl.
-> > @@ -2134,8 +2135,9 @@ config SYSCTL_KUNIT_TEST
-> >           If unsure, say N.
-> >
-> >  config LIST_KUNIT_TEST
-> > -       tristate "KUnit Test for Kernel Linked-list structures"
-> > +       tristate "KUnit Test for Kernel Linked-list structures" if !KUNIT_RUN_ALL
-> >         depends on KUNIT
-> > +       default KUNIT_RUN_ALL
-> >         help
-> >           This builds the linked list KUnit test suite.
-> >           It tests that the API and basic functionality of the list_head type
-> > diff --git a/lib/Kconfig.kcsan b/lib/Kconfig.kcsan
-> > index ea28245c6c1d..91398300a1bc 100644
-> > --- a/lib/Kconfig.kcsan
-> > +++ b/lib/Kconfig.kcsan
-> > @@ -46,8 +46,9 @@ config KCSAN_SELFTEST
-> >           works as intended.
-> >
-> >  config KCSAN_TEST
-> > -       tristate "KCSAN test for integrated runtime behaviour"
-> > +       tristate "KCSAN test for integrated runtime behaviour" if !KUNIT_RUN_ALL
-> >         depends on TRACEPOINTS && KUNIT
-> > +       default KUNIT_RUN_ALL
-> >         select TORTURE_TEST
-> >         help
-> >           KCSAN test focusing on behaviour of the integrated runtime. Tests
+> Side note: could we plan on (not for 5.7, but future) moving the "for
+> each message" part of that patch into the generic security layer (ie
+> security_netlink_send()), so that if/when other security subsystems
+> start doing that netlink thing, they won't have to duplicate that
+> code?
 >
-> I think if you want this patch to be picked up you need to split it,
-> with one patch for each test that is not yet in mainline or the tree
-> that should pick this patch up.
+> Obviously the "for each message" thing should only be done if there is
+> any security  hook at all..
+>
+> Right now selinux is the only one that does this, so there's no
+> duplication of effort, but it seems a mistake to do this at the
+> low-level security level.
+>
+> Or is there some fundamental reason why a security hook would want to
+> look at a single skb rather than the individual messages?
 
-OK, would it be ok to do one patch per subsystem if it's in the mainline tree,
-and another patch if it's only in the next tree for the same subsystem?
+Off the top of my head I can't think of why a LSM would want to look
+only at the skb instead of the individual netlink messages.  I suppose
+if that ever becomes an issue we could always pass the skb to the hook
+along with the nlmsghdr, and the LSM would just need to deal with
+being called multiple times for the same skb.  Another option might be
+to give the LSM the option of registering one of two hooks for the
+netlink_send hook; one type of hook would behave the same as the hook
+does now, the other type would be called once for each message in the
+skb.  Although this second option seems like a lot of extra complexity
+for a questionable advantage, especially since only SELinux is using
+the hook at the moment and we can easily change the hook without
+breaking things.
 
->
-> The KCSAN test is in the -rcu tree, but I don't expect it to be merged
-> before 5.9. Most likely, we would only be able to pick up the patch
-> that would make the chance to the KCSAN Kconfig entry once the rest
-> here made it into mainline.
->
-> Thanks,
-> -- Marco
->
-> > diff --git a/lib/kunit/Kconfig b/lib/kunit/Kconfig
-> > index 95d12e3d6d95..d6a912779816 100644
-> > --- a/lib/kunit/Kconfig
-> > +++ b/lib/kunit/Kconfig
-> > @@ -15,7 +15,8 @@ menuconfig KUNIT
-> >  if KUNIT
-> >
-> >  config KUNIT_DEBUGFS
-> > -       bool "KUnit - Enable /sys/kernel/debug/kunit debugfs representation"
-> > +       bool "KUnit - Enable /sys/kernel/debug/kunit debugfs representation" if !KUNIT_RUN_ALL
-> > +       default KUNIT_RUN_ALL
-> >         help
-> >           Enable debugfs representation for kunit.  Currently this consists
-> >           of /sys/kernel/debug/kunit/<test_suite>/results files for each
-> > @@ -23,7 +24,8 @@ config KUNIT_DEBUGFS
-> >           run that occurred.
-> >
-> >  config KUNIT_TEST
-> > -       tristate "KUnit test for KUnit"
-> > +       tristate "KUnit test for KUnit" if !KUNIT_RUN_ALL
-> > +       default KUNIT_RUN_ALL
-> >         help
-> >           Enables the unit tests for the KUnit test framework. These tests test
-> >           the KUnit test framework itself; the tests are both written using
-> > @@ -32,7 +34,8 @@ config KUNIT_TEST
-> >           expected.
-> >
-> >  config KUNIT_EXAMPLE_TEST
-> > -       tristate "Example test for KUnit"
-> > +       tristate "Example test for KUnit" if !KUNIT_RUN_ALL
-> > +       default KUNIT_RUN_ALL
-> >         help
-> >           Enables an example unit test that illustrates some of the basic
-> >           features of KUnit. This test only exists to help new users understand
-> > @@ -41,4 +44,10 @@ config KUNIT_EXAMPLE_TEST
-> >           is intended for curious hackers who would like to understand how to
-> >           use KUnit for kernel development.
-> >
-> > +config KUNIT_RUN_ALL
-> > +       tristate "KUnit run all test"
-> > +       help
-> > +         Enables all KUnit tests. If they can be enabled.
-> > +         That depends on if KUnit is enabled as a module or builtin.
-> > +
->
-> s/tests. If/tests, if/ ?
+It's also worth mentioning that we've always tried to keep the hook
+layer (the stuff in security/security.c) relatively thin, but that's a
+battle we've been slowly losing over time.  Moving the skb/nlmsghdr
+processing into security_netlink_send() seems reasonable given some of
+the other hooks.
 
-correct, I will fix that.
+Regardless, I'll work on something for an upcoming merge window, stay tuned.
 
-Cheers,
-Anders
-
->
-> >  endif # KUNIT
-> > diff --git a/security/apparmor/Kconfig b/security/apparmor/Kconfig
-> > index 0fe336860773..c4648426ea5d 100644
-> > --- a/security/apparmor/Kconfig
-> > +++ b/security/apparmor/Kconfig
-> > @@ -70,8 +70,9 @@ config SECURITY_APPARMOR_DEBUG_MESSAGES
-> >           the kernel message buffer.
-> >
-> >  config SECURITY_APPARMOR_KUNIT_TEST
-> > -       bool "Build KUnit tests for policy_unpack.c"
-> > +       bool "Build KUnit tests for policy_unpack.c" if !KUNIT_RUN_ALL
-> >         depends on KUNIT=y && SECURITY_APPARMOR
-> > +       default KUNIT_RUN_ALL
-> >         help
-> >           This builds the AppArmor KUnit tests.
-> >
-> > --
-> > 2.20.1
-> >
+-- 
+paul moore
+www.paul-moore.com
