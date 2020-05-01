@@ -2,164 +2,164 @@ Return-Path: <SRS0=mFfD=6P=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B8B3C47256
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 May 2020 14:32:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11575C4725A
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 May 2020 14:46:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 013F420708
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 May 2020 14:32:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC26020857
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 May 2020 14:46:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Opqu5KGs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729050AbgEAOc0 (ORCPT
+        id S1729574AbgEAOqr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 1 May 2020 10:32:26 -0400
-Received: from smtp-42af.mail.infomaniak.ch ([84.16.66.175]:37001 "EHLO
-        smtp-42af.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728724AbgEAOcZ (ORCPT
+        Fri, 1 May 2020 10:46:47 -0400
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:45819 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729140AbgEAOqq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 1 May 2020 10:32:25 -0400
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 49DF8659L7zlhH6x;
-        Fri,  1 May 2020 16:32:22 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
-        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 49DF850BX5zlvJFk;
-        Fri,  1 May 2020 16:32:20 +0200 (CEST)
-Subject: Re: [PATCH v3 3/5] fs: Enable to enforce noexec mounts or file exec
- through RESOLVE_MAYEXEC
-To:     James Morris <jmorris@namei.org>
-Cc:     linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christian Heimes <christian@python.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Eric Chiang <ericchiang@google.com>,
-        Florian Weimer <fweimer@redhat.com>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-References: <20200428175129.634352-1-mic@digikod.net>
- <20200428175129.634352-4-mic@digikod.net>
- <alpine.LRH.2.21.2005011409570.29679@namei.org>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Message-ID: <d1a81d06-7530-1f2b-858a-e42bc1ae2a7e@digikod.net>
-Date:   Fri, 1 May 2020 16:32:20 +0200
-User-Agent: 
+        Fri, 1 May 2020 10:46:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1588344405;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=2PAxMC2an+HuO6fwK0pHvsF8vFETkIJOxS2BSrwZIug=;
+        b=Opqu5KGsejFH5haU727QzqNyIMruqX6ti3zOD09bBYpuW6V2dJ3tfuVOvI9CxC69wWj1wo
+        J37bCkOswQec8zqstI1FUb3kzy6LT/OYYkHG9vRmXmSCedROqCVBTXoYC2xzKwJvS0kf8N
+        jn8mbbenKiDVpHH/U435rPG/bs3hXss=
+Received: from mail-oi1-f197.google.com (mail-oi1-f197.google.com
+ [209.85.167.197]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-507-lC8Ga8FRP5SydCfxSB_jBg-1; Fri, 01 May 2020 10:46:28 -0400
+X-MC-Unique: lC8Ga8FRP5SydCfxSB_jBg-1
+Received: by mail-oi1-f197.google.com with SMTP id u204so1953978oia.4
+        for <linux-security-module@vger.kernel.org>; Fri, 01 May 2020 07:46:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2PAxMC2an+HuO6fwK0pHvsF8vFETkIJOxS2BSrwZIug=;
+        b=q0y2T/rx8r85UOXSOTIsKOdpvSv0ptNbyZ8LIQInLdBIdhJ+arnU7hjeORfQFxKhpd
+         /Rw8/77DB1ciAG05TwcOXSlJ0AZikqKzqMCJHS/NQnwfGAB8W6FQ/EDppPJ6NCVfsPEX
+         enZZD1jo+7c3Xhsq+M+ah80Zyqu5l+EKL8jbQqVnTolS+IDn1VIM7AvX8XhGRbAQXes0
+         nh+RXKO+Hrr65UNDY+xY5COZdCRz5hlQDvgexibLRpVzYzFDL7uv6IZOxDIJYawmdb41
+         98m69nKVihvXxGnr5EO32OnUdMt+g2hPp7O7iaSdUOsTiKNUpkHC0MFqN0sGpu78SPrb
+         ZcPw==
+X-Gm-Message-State: AGi0Pub9jSq12+AV00/1K2nGCDpkjXfynVWoYo0nTDLQN+oCnhZUHL1B
+        TAzvR1zYUBic48tjgpJqvigLmcYr3sl5eJsk5qX/Z+vs4qitYmQK4QlZPTeCsGZX5NAH8kVmMv7
+        UTxVdtaLw3gh2uK2gthx9F0OxRSmIzd1IdNKkIiriNcZ2YTgh7+as
+X-Received: by 2002:a05:6830:13d4:: with SMTP id e20mr3916392otq.66.1588344387511;
+        Fri, 01 May 2020 07:46:27 -0700 (PDT)
+X-Google-Smtp-Source: APiQypKDh3hGCI49P8v9DIB0pf8SQidMuRu0a5PX4JiBQLS3y/qnX6pw1k5XjASmHpGzODx7mlwPtfE2sRdsrcygTXg=
+X-Received: by 2002:a05:6830:13d4:: with SMTP id e20mr3916376otq.66.1588344387215;
+ Fri, 01 May 2020 07:46:27 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <alpine.LRH.2.21.2005011409570.29679@namei.org>
-Content-Type: text/plain; charset=iso-8859-15
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
-X-Antivirus-Code: 0x100000
+References: <20200409212859.GH28467@miu.piliscsaba.redhat.com>
+ <20200501041444.GJ23230@ZenIV.linux.org.uk> <20200501073127.GB13131@miu.piliscsaba.redhat.com>
+In-Reply-To: <20200501073127.GB13131@miu.piliscsaba.redhat.com>
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+Date:   Fri, 1 May 2020 16:46:16 +0200
+Message-ID: <CAFqZXNu8jsz_4eqgLOc8RGSSAWhiKc=YcByvoTiBeYUprT+kMw@mail.gmail.com>
+Subject: Re: [PATCH] vfs: allow unprivileged whiteout creation
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Fri, May 1, 2020 at 9:31 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
+> On Fri, May 01, 2020 at 05:14:44AM +0100, Al Viro wrote:
+> > On Thu, Apr 09, 2020 at 11:28:59PM +0200, Miklos Szeredi wrote:
+> > > From: Miklos Szeredi <mszeredi@redhat.com>
+> > >
+> > > Whiteouts, unlike real device node should not require privileges to create.
+> > >
+> > > The general concern with device nodes is that opening them can have side
+> > > effects.  The kernel already avoids zero major (see
+> > > Documentation/admin-guide/devices.txt).  To be on the safe side the patch
+> > > explicitly forbids registering a char device with 0/0 number (see
+> > > cdev_add()).
+> > >
+> > > This guarantees that a non-O_PATH open on a whiteout will fail with ENODEV;
+> > > i.e. it won't have any side effect.
+> >
+> > >  int vfs_mknod(struct inode *dir, struct dentry *dentry, umode_t mode, dev_t dev)
+> > >  {
+> > > +   bool is_whiteout = S_ISCHR(mode) && dev == WHITEOUT_DEV;
+> > >     int error = may_create(dir, dentry);
+> > >
+> > >     if (error)
+> > >             return error;
+> > >
+> > > -   if ((S_ISCHR(mode) || S_ISBLK(mode)) && !capable(CAP_MKNOD))
+> > > +   if ((S_ISCHR(mode) || S_ISBLK(mode)) && !capable(CAP_MKNOD) &&
+> > > +       !is_whiteout)
+> > >             return -EPERM;
+> >
+> > Hmm...  That exposes vfs_whiteout() to LSM; are you sure that you won't
+> > end up with regressions for overlayfs on sufficiently weird setups?
+>
+> You're right.  OTOH, what can we do?  We can't fix the weird setups, only the
+> distros/admins can.
+>
+> Can we just try this, and revert to calling ->mknod directly from overlayfs if
+> it turns out to be a problem that people can't fix easily?
+>
+> I guess we could add a new ->whiteout security hook as well, but I'm not sure
+> it's worth it.  Cc: LMS mailing list; patch re-added for context.
+>
+> Thanks,
+> Miklos
+>
+> ---
+>  fs/char_dev.c                 |    3 +++
+>  fs/namei.c                    |   17 ++++-------------
+>  include/linux/device_cgroup.h |    3 +++
+>  3 files changed, 10 insertions(+), 13 deletions(-)
+>
+> --- a/fs/char_dev.c
+> +++ b/fs/char_dev.c
+> @@ -483,6 +483,9 @@ int cdev_add(struct cdev *p, dev_t dev,
+>         p->dev = dev;
+>         p->count = count;
+>
+> +       if (WARN_ON(dev == WHITEOUT_DEV))
+> +               return -EBUSY;
+> +
+>         error = kobj_map(cdev_map, dev, count, NULL,
+>                          exact_match, exact_lock, p);
+>         if (error)
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -3505,12 +3505,14 @@ EXPORT_SYMBOL(user_path_create);
+>
+>  int vfs_mknod(struct inode *dir, struct dentry *dentry, umode_t mode, dev_t dev)
+>  {
+> +       bool is_whiteout = S_ISCHR(mode) && dev == WHITEOUT_DEV;
+>         int error = may_create(dir, dentry);
+>
+>         if (error)
+>                 return error;
+>
+> -       if ((S_ISCHR(mode) || S_ISBLK(mode)) && !capable(CAP_MKNOD))
+> +       if ((S_ISCHR(mode) || S_ISBLK(mode)) && !capable(CAP_MKNOD) &&
+> +           !is_whiteout)
 
-On 01/05/2020 06:22, James Morris wrote:
-> On Tue, 28 Apr 2020, Mickaël Salaün wrote:
-> 
->> Enable to either propagate the mount options from the underlying VFS
->> mount to prevent execution, or to propagate the file execute permission.
->> This may allow a script interpreter to check execution permissions
->> before reading commands from a file.
-> 
-> I'm finding the description of this patch difficult to understand.
-> 
-> In the first case, this seems to mean: if you open a file with 
-> RESOLVE_MAYEXEC from a noexec mount, then it will fail. Correct?
+Sorry for sidetracking, but !capable(CAP_MKNOD) needs to be last in
+the chain, otherwise you could get a bogus audit report of CAP_MKNOD
+being denied in case is_whiteout is true.
 
-Yes.
+-- 
+Ondrej Mosnacek <omosnace at redhat dot com>
+Software Engineer, Security Technologies
+Red Hat, Inc.
 
-> 
-> In the second case, do you mean a RESOLVE_MAYEXEC open will fail if the 
-> file does not have +x set for the user?
-
-Yes, and this is still in the hands sysadmins.
-
-As explain in the documentation patch, the sysctl takes a bitfield
-consisting of "mount !noexec" or "file exec permission". It is not an
-exclusive OR. The "file exec permission" could be seen as a more strict
-restriction than only the mount one.
-
-> 
-> 
->> The main goal is to be able to protect the kernel by restricting
->> arbitrary syscalls that an attacker could perform with a crafted binary
->> or certain script languages.
-> 
-> This sounds like the job of seccomp. Why is this part of MAYEXEC?
-
-The initial goal of O_MAYEXEC (in CLIP OS 4) is to prevent untrusted
-code execution. Code execution leads to system calls, which could lead
-to data access/modification, and kernel attacks. seccomp can't enable
-execution of only some files, it only enables an on/off execution policy
-(i.e. by filtering execve(2) ).
-
-> 
->>  It also improves multilevel isolation
->> by reducing the ability of an attacker to use side channels with
->> specific code.  These restrictions can natively be enforced for ELF
->> binaries (with the noexec mount option) but require this kernel
->> extension to properly handle scripts (e.g., Python, Perl).
-> 
-> Again, not sure why you're talking about side channels and MAYEXEC and 
-> mount options. Are you more generally talking about being able to prevent 
-> execution of arbitrary script files included by an interpreter?
-
-Yes, I explain the thread model, especially the risk of scripts.
-Multilevel isolation can be bypassed simply by using CPU instructions
-(e.g. side channel attacks), not even syscalls. The ability to execute
-arbitrary code, including advanced scripting languages, can lead to this
-kind of CPU attacks.
-
-> 
->> Add a new sysctl fs.open_mayexec_enforce to control this behavior.
->> Indeed, because of compatibility with installed systems, only the system
->> administrator is able to check that this new enforcement is in line with
->> the system mount points and file permissions.  A following patch adds
->> documentation.
-> 
-> I don't like the idea of any of this feature set being configurable. 
-> RESOLVE_MAYEXEC as a new flag should have well-defined, stable semantics.
-
-Unfortunately, as discussed in the v2 email thread [1], if we impose
-such restrictions with the O_MAYEXEC flag, then almost no userspace
-application will use it because it could cause unexpected behavior.
-Indeed, the application developers may not know the configuration of the
-system their applications will be run on. Only sysadmins know the mount
-points configuration (either they are have noexec or not), and if the
-set of application installed on the system works well with the set of
-files (e.g. according to their permissions). It is the same issue as
-with a system-wide LSM policy configuration. Processes should be able to
-tell their use of a file, but the sysadmin using common distro binaries
-should be able to control the execution policy according to the maturity
-of the current system installation.
-
-However, for fully controlled distros such as CLIP OS, it make sense to
-enforce such restrictions at kernel build time. I can add an alternative
-kernel configuration to enforce a particular policy at boot and disable
-this sysctl.
-
-[1]
-https://lore.kernel.org/lkml/1fbf54f6-7597-3633-a76c-11c4b2481add@ssi.gouv.fr/
