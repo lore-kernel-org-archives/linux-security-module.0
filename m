@@ -2,120 +2,108 @@ Return-Path: <SRS0=mFfD=6P=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DB81C47253
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 May 2020 16:17:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D75EDC4724C
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 May 2020 16:37:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 34C4C20757
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 May 2020 16:17:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B6BDF20836
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 May 2020 16:37:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="m5o6DjW2"
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="gJ5ZE03+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728896AbgEAQRr (ORCPT
+        id S1729581AbgEAQhq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 1 May 2020 12:17:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48866 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728495AbgEAQRr (ORCPT
+        Fri, 1 May 2020 12:37:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51976 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729565AbgEAQhp (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 1 May 2020 12:17:47 -0400
-Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E33C6C08E859
-        for <linux-security-module@vger.kernel.org>; Fri,  1 May 2020 09:17:46 -0700 (PDT)
-Received: by mail-ej1-x644.google.com with SMTP id gr25so7843162ejb.10
-        for <linux-security-module@vger.kernel.org>; Fri, 01 May 2020 09:17:46 -0700 (PDT)
+        Fri, 1 May 2020 12:37:45 -0400
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B197C061A0E
+        for <linux-security-module@vger.kernel.org>; Fri,  1 May 2020 09:37:45 -0700 (PDT)
+Received: by mail-ed1-x532.google.com with SMTP id d16so7667391edq.7
+        for <linux-security-module@vger.kernel.org>; Fri, 01 May 2020 09:37:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=23jPYeIHxkO0ujsGD7eYlRbwJShWG3r7UKIREhK5bgw=;
-        b=m5o6DjW23uDqvbH6ScTDm+6wn+eSq6aJHkCW7h0E7PQK2TC3+9C/vXX2qmTMXOjDJV
-         5m7dDloIaOCSsVWgmy7ijk65TLdTjrJ35UszXTvgQ+9FAhewqXUSAX95ukIByWJVG8Lc
-         aJ7FU+3rG+rlYO/LV/MbE4r+CuM0NZfQfnEoIVfNHKM5uWW6T0vZY8K1Xh0pMqnuCdoB
-         3NteUzx8k6UL8h+e6dKHslAXt3Zm5yYdLt8ZZFPmzTn15hRPVkNYH3tm/IV4ZnwkNiyz
-         FKeNDhmMd7lLEeaZhxMAmD4CqLTsnybNjFKZKZBtJF0qDkGghOeiehwGobytDRRCd4i7
-         HHjA==
+        bh=RIPdW26vFB4MJ8eFWZufOUSxSPuDiQ/oBKR6n6zAuCQ=;
+        b=gJ5ZE03+3vD6JV5mikbt/a67qcOnBb9++h/15VTm2/laibqIpyKbjxqROTd+jkTTgV
+         C6hE04paAIcX5JOOkNiAFT7kDMURyHoh6utJpnL+BVlIj0wS+ZReXw97sSBEALxJ4qZ/
+         TXaieTtvGhyXpI5bBk18/G8++sIVFWgmnN3KAE1Aq+r+1QYUqka4Dqd2wBzZSfdKdXwi
+         efCKixcnsHnIVvecKF1hoqEjWMefw78S4CS/bLJgzdJx3U7NN1jJ+hkQRhYQa4On/thg
+         VGthP+oJz5MqpLC9+ilZ3a5ONU7C/0aPmBB6cZ6GrspDseYFBppSVEi3e72p4iZZzay/
+         rqKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=23jPYeIHxkO0ujsGD7eYlRbwJShWG3r7UKIREhK5bgw=;
-        b=CtSnXSZdhvwUEMgl9lZ3TWI9hx9MbEflUWV1RTl9RS+A7f2xviTh1MSyBgisgVkt6/
-         YBCnJgFcnnAs47xyqAE5GtqblzM0T3GcStUVVaCz/bJV5vrSjmsU7407/c0OyHs7zClc
-         lIEGcLbrFZx9DoNNr7w+qWPki83Ql4jvUhHsSGMlh72n/wW4ZUMq9Yw5bZnZI+0dg9yB
-         +S1fMkYfm0luTflXT5+huDKkV2IBr0OIVhg3grGiMd7qshCX63eLFhW7eLuN04znx4A7
-         koV6mbBJg8KPH9R9+ztsoWkgYKoB9P1jL8kPFMifGhgR1D77NkCAmAQ22F+KOqAm4Ktj
-         z9XQ==
-X-Gm-Message-State: AGi0Pub0BcRI0GnGSRTO6UQtNo0Q0YLGw5mBZAMUrKIqXdqhoSkv1q5Y
-        QDg6ev9ID0Zjz+Nr8Ol90XyoMVDnUbeOv/oqtIyt
-X-Google-Smtp-Source: APiQypIXB+av6flcFldEWw+bS/wH+cxQMW/luqrFwIHVh8pa/MRqCUmiUnrrXtxszp5IfdTN8uKbEAzFnfW/lbRVEho=
-X-Received: by 2002:a17:906:29c4:: with SMTP id y4mr3965185eje.95.1588349865367;
- Fri, 01 May 2020 09:17:45 -0700 (PDT)
+        bh=RIPdW26vFB4MJ8eFWZufOUSxSPuDiQ/oBKR6n6zAuCQ=;
+        b=VbcQfge0wg97wT7KjTiJHsBg/kTy7vI3cswOai8n+FXOHFXm8IjU75Kwu5eIB6x5JW
+         BZCstjIWbxFt71i3+m6M5DRs3vKVIo1fl+X96e6hZwynPbuSrmmjdYgDjkbqD5U7IW3F
+         jv7OdKR8KYVhwiNTSeDHjtOx89xyK0Sm7ASHBEjmPw2MuFNmCGljQk4G2NwsoD+iVVCJ
+         awqx1I61/U3y+I7J9amabJzceoXemWfifcfUdhn8HiV5KlYq1GV4ayj2fqZkg6di8/il
+         l3OsPDktd1Ly6E35fYeONuJ6L+uP8iNSclOGwu68OXeoZnQ8DNx6JqsjLt9tNbTY1kjp
+         1LjQ==
+X-Gm-Message-State: AGi0PubUMQKpOAEWVq9N4Q0hcmL5gwhDZcIJpbQAf5eJ3d/nscsTuePD
+        r6+5Z+EyUh7A/zIPQEDx4+OOxwA1dC9l8tCz+Alb
+X-Google-Smtp-Source: APiQypKoUjiJL7Sch0Qif2RZJb485+cC+mL0/HRjGDH3Aw+VwBM0aH3UfAIqlwQlmljK5A4QePcCctWZWyDW9GnCNmw=
+X-Received: by 2002:aa7:c401:: with SMTP id j1mr4214419edq.31.1588351063874;
+ Fri, 01 May 2020 09:37:43 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAHC9VhTu3YWPmwtA7RERHDRhQt0wAkmN4GJCmaRY7KSFRwtACQ@mail.gmail.com>
- <CAHk-=whGjVLwTnYT8euAb_Lzqxd=-TFnJU-k2uu+Fn_hBfMc+w@mail.gmail.com>
-In-Reply-To: <CAHk-=whGjVLwTnYT8euAb_Lzqxd=-TFnJU-k2uu+Fn_hBfMc+w@mail.gmail.com>
+References: <CAHC9VhT95GJKNTMvTtmZL35UOoVwbGH-eDWZyELb5oZ5rQU+Tw@mail.gmail.com>
+ <924658.1588078484@warthog.procyon.org.uk> <CAEjxPJ5+DtZfX36OLYiLbU=1tGZcPUWFUi1=mFfx=ntehtvd3Q@mail.gmail.com>
+ <1072935.1588089479@warthog.procyon.org.uk> <CAEjxPJ6pFdDfm55pv9bT3CV5DTFF9VqzRmG_Xi5bKNxPaGuOLg@mail.gmail.com>
+In-Reply-To: <CAEjxPJ6pFdDfm55pv9bT3CV5DTFF9VqzRmG_Xi5bKNxPaGuOLg@mail.gmail.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 1 May 2020 12:17:33 -0400
-Message-ID: <CAHC9VhSBGaJc-dQZyyUECwrysoQ8a4w2ww4PgPyXVH5EEVOjCw@mail.gmail.com>
-Subject: Re: [GIT PULL] SELinux fixes for v5.7 (#2)
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     selinux@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Fri, 1 May 2020 12:37:32 -0400
+Message-ID: <CAHC9VhTO0Ag-CODexD8hjZdTzUBEd4nJdR191o__=+iOLUHmFw@mail.gmail.com>
+Subject: Re: [PATCH] selinux: Fix use of KEY_NEED_* instead of KEY__* perms [v2]
+To:     Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc:     David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
+        SElinux list <selinux@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Apr 30, 2020 at 7:43 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> On Thu, Apr 30, 2020 at 2:24 PM Paul Moore <paul@paul-moore.com> wrote:
+On Tue, Apr 28, 2020 at 12:19 PM Stephen Smalley
+<stephen.smalley.work@gmail.com> wrote:
+> On Tue, Apr 28, 2020 at 11:58 AM David Howells <dhowells@redhat.com> wrote:
+> > Stephen Smalley <stephen.smalley.work@gmail.com> wrote:
 > >
-> > Two more SELinux patches to fix problems in the v5.7-rcX releases.
-> > Wei Yongjun's patch fixes a return code in an error path, and my patch
-> > fixes a problem where we were not correctly applying access controls
-> > to all of the netlink messages in the netlink_send LSM hook.
+> > > 1) Are we guaranteed that the caller only ever passes a single
+> > > KEY_NEED_* perm at a time (i.e. hook is never called with a bitmask
+> > > of multiple permissions)?  Where is that guarantee enforced?
+> >
+> > Currently it's the case that only one perm is ever used at once.  I'm tempted
+> > to enforce this by switching the KEY_NEED_* to an enum rather than a bitmask.
+> >
+> > I'm not sure how I would actually define the meaning of two perms being OR'd
+> > together.  Either okay?  Both required?
 >
-> Side note: could we plan on (not for 5.7, but future) moving the "for
-> each message" part of that patch into the generic security layer (ie
-> security_netlink_send()), so that if/when other security subsystems
-> start doing that netlink thing, they won't have to duplicate that
-> code?
+> Both required is the usual convention in functions like
+> inode_permission() or avc_has_perm().
+> But if you know that you'll never use combinations, we should just
+> prohibit it up front, e.g.
+> key_task_permission() or whatever can reject them before they reach
+> the hook call.  Then the
+> hook code doesn't have to revisit the issue.
 >
-> Obviously the "for each message" thing should only be done if there is
-> any security  hook at all..
+> >
+> > > 2) We had talked about adding a BUILD_BUG_ON() or other build-time
+> > > guard
+> >
+> > That doesn't help you trap unallowed perm combinations, though.
 >
-> Right now selinux is the only one that does this, so there's no
-> duplication of effort, but it seems a mistake to do this at the
-> low-level security level.
->
-> Or is there some fundamental reason why a security hook would want to
-> look at a single skb rather than the individual messages?
+> I think we want both.
 
-Off the top of my head I can't think of why a LSM would want to look
-only at the skb instead of the individual netlink messages.  I suppose
-if that ever becomes an issue we could always pass the skb to the hook
-along with the nlmsghdr, and the LSM would just need to deal with
-being called multiple times for the same skb.  Another option might be
-to give the LSM the option of registering one of two hooks for the
-netlink_send hook; one type of hook would behave the same as the hook
-does now, the other type would be called once for each message in the
-skb.  Although this second option seems like a lot of extra complexity
-for a questionable advantage, especially since only SELinux is using
-the hook at the moment and we can easily change the hook without
-breaking things.
-
-It's also worth mentioning that we've always tried to keep the hook
-layer (the stuff in security/security.c) relatively thin, but that's a
-battle we've been slowly losing over time.  Moving the skb/nlmsghdr
-processing into security_netlink_send() seems reasonable given some of
-the other hooks.
-
-Regardless, I'll work on something for an upcoming merge window, stay tuned.
+Yep, we want both. #moarsafety
 
 -- 
 paul moore
