@@ -2,79 +2,90 @@ Return-Path: <SRS0=mFfD=6P=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA7A8C4724C
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 May 2020 03:51:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3C63C47254
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 May 2020 03:55:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B0EAD206D9
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 May 2020 03:51:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BCB252071C
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 May 2020 03:55:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728099AbgEADvX (ORCPT
+        id S1728182AbgEADzK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 30 Apr 2020 23:51:23 -0400
-Received: from namei.org ([65.99.196.166]:56348 "EHLO namei.org"
+        Thu, 30 Apr 2020 23:55:10 -0400
+Received: from namei.org ([65.99.196.166]:56396 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727889AbgEADvW (ORCPT
+        id S1728193AbgEADzK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 30 Apr 2020 23:51:22 -0400
+        Thu, 30 Apr 2020 23:55:10 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id 0413pA7g030035;
-        Fri, 1 May 2020 03:51:10 GMT
-Date:   Fri, 1 May 2020 13:51:10 +1000 (AEST)
+        by namei.org (8.14.4/8.14.4) with ESMTP id 0413roZg030164;
+        Fri, 1 May 2020 03:53:51 GMT
+Date:   Fri, 1 May 2020 13:53:50 +1000 (AEST)
 From:   James Morris <jmorris@namei.org>
-To:     Stefan Hajnoczi <stefanha@redhat.com>
-cc:     linux-security-module@vger.kernel.org,
-        Serge Hallyn <serge@hallyn.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] capabilities: add description for CAP_SETFCAP
-In-Reply-To: <20200428085816.GD15547@stefanha-x1.localdomain>
-Message-ID: <alpine.LRH.2.21.2005011350590.29679@namei.org>
-References: <20200414154945.142372-1-stefanha@redhat.com> <20200428085816.GD15547@stefanha-x1.localdomain>
+To:     =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+cc:     linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Eric Chiang <ericchiang@google.com>,
+        Florian Weimer <fweimer@redhat.com>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        =?ISO-8859-15?Q?Philippe_Tr=E9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 0/5] Add support for RESOLVE_MAYEXEC
+In-Reply-To: <20200428175129.634352-1-mic@digikod.net>
+Message-ID: <alpine.LRH.2.21.2005011352300.29679@namei.org>
+References: <20200428175129.634352-1-mic@digikod.net>
 User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: multipart/mixed; boundary="1665246916-598047033-1588305232=:29679"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 28 Apr 2020, Stefan Hajnoczi wrote:
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-> On Tue, Apr 14, 2020 at 04:49:45PM +0100, Stefan Hajnoczi wrote:
-> > Document the purpose of CAP_SETFCAP.  For some reason this capability
-> > had no description while the others did.
-> > 
-> > Signed-off-by: Stefan Hajnoczi <stefanha@redhat.com>
-> > ---
-> >  include/uapi/linux/capability.h | 2 ++
-> >  1 file changed, 2 insertions(+)
-> 
-> Ping?
+--1665246916-598047033-1588305232=:29679
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 
-Please resend and I'll add it to my tree.
+On Tue, 28 Apr 2020, Mickaël Salaün wrote:
 
-> 
-> > diff --git a/include/uapi/linux/capability.h b/include/uapi/linux/capability.h
-> > index 272dc69fa080..7288f0ad44af 100644
-> > --- a/include/uapi/linux/capability.h
-> > +++ b/include/uapi/linux/capability.h
-> > @@ -332,6 +332,8 @@ struct vfs_ns_cap_data {
-> >  
-> >  #define CAP_AUDIT_CONTROL    30
-> >  
-> > +/* Set or remove capabilities on files */
-> > +
-> >  #define CAP_SETFCAP	     31
-> >  
-> >  /* Override MAC access.
-> > -- 
-> > 2.25.1
-> > 
-> 
+> Furthermore, the security policy can also be delegated to an LSM, either
+> a MAC system or an integrity system.  For instance, the new kernel
+> MAY_OPENEXEC flag closes a major IMA measurement/appraisal interpreter
+> integrity gap by bringing the ability to check the use of scripts [1].
+> Other uses are expected, such as for openat2(2) [2], SGX integration
+> [3], bpffs [4] or IPE [5].
+
+Confirming that this is a highly desirable feature for the proposed IPE 
+LSM.
 
 -- 
 James Morris
 <jmorris@namei.org>
 
+--1665246916-598047033-1588305232=:29679--
