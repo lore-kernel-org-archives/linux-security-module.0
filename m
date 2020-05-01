@@ -2,262 +2,195 @@ Return-Path: <SRS0=mFfD=6P=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DE9BC4724C
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 May 2020 09:57:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16D4EC47258
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 May 2020 11:57:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2A9972166E
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 May 2020 09:57:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA77621582
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 May 2020 11:57:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RXxxyQky"
+	dkim=pass (1024-bit key) header.d=python.org header.i=@python.org header.b="lXIut7Jn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728497AbgEAJ5x (ORCPT
+        id S1728687AbgEAL5J (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 1 May 2020 05:57:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45726 "EHLO
+        Fri, 1 May 2020 07:57:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35984 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728488AbgEAJ5v (ORCPT
+        by vger.kernel.org with ESMTP id S1728570AbgEAL5H (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 1 May 2020 05:57:51 -0400
-Received: from mail-oo1-xc44.google.com (mail-oo1-xc44.google.com [IPv6:2607:f8b0:4864:20::c44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C2CFC08ED7D
-        for <linux-security-module@vger.kernel.org>; Fri,  1 May 2020 02:57:51 -0700 (PDT)
-Received: by mail-oo1-xc44.google.com with SMTP id u190so606192ooa.10
-        for <linux-security-module@vger.kernel.org>; Fri, 01 May 2020 02:57:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nGaU+wKFVbV2rAss2AjKpFbiC5Lau7H8388Zbazbr4Q=;
-        b=RXxxyQky5lthKQjVFb2j2sx4oRqvc9W4m50GmIJ9yBU6zC8RelJVS+wF0nx4uISIwR
-         r9ZciFyAuLFo61Jz/pOWMZJyusJLScbePnqufkI+OR0nM+J0vcnhvOMtPIXetK41H76q
-         7fxq81w1GbA3/j3WIwz3zEbAYgxS9T6tgOPS1TaQOj6T2cpBFINhxxAQ0HR44BYhTsNv
-         0djHiZoWVom7qag5NeHX15wpxdcAqoqYGMmSrVhchKiFzbVTinRoiG6sYtwZyTntSzlv
-         i18fQ4ScDoRbCVhmkp1dPbm7IUz0Pmc26eCO9DJCbEXhrh4dqGlvSlXT1jeMvhzrU8mj
-         DskQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nGaU+wKFVbV2rAss2AjKpFbiC5Lau7H8388Zbazbr4Q=;
-        b=Luspm37sclXt4Arl6zp9iDOpjlk9qGaOi8lSHq8e3/m7V60vReWKGvC2Z4TB6TvSsX
-         wTWyDumsJuWkYN1W4bvh3RDRyQd4Ji75qNCAj/I0D27e8gBDLdbiaNvcDbx2xR4nmwJN
-         MbFfHvwNdAqGtduafLk/WnScAearfSAhTJgCVmovP085X2mEiuPm2g2iOoSeZiRtIfp5
-         4rrtVg6dTIoEOK/1fG8ituv6Goi+TOn+cKeAQXzLRJ/kXnMWZd4/GgVtvDxSTd3CTMxB
-         sV7l7wua36vOdthoxUWWrCNZfEEG2R8MOO8O4ArWp+Jlvf7Pc0Wrr/86dwLvIwz/Gbma
-         R8eA==
-X-Gm-Message-State: AGi0PuZZNl9cPJjWXPENZxQ9Xe8sfwbd9CBmOrdnD8ZMcKQ3IyEvNnAa
-        DBXAVMqts/hFaXNSEbxIg7LDVbRGQulW123Fliw9QA==
-X-Google-Smtp-Source: APiQypINO1sPCoWf+LPZMpQkJdEySPVbtW74n8/VWE9is0OO2sbVA0bu/Sw2vW8nlz0V+WEWr8SDwdKWM/j24nXLI0Y=
-X-Received: by 2002:a4a:e1d2:: with SMTP id n18mr3123585oot.36.1588327070112;
- Fri, 01 May 2020 02:57:50 -0700 (PDT)
+        Fri, 1 May 2020 07:57:07 -0400
+X-Greylist: delayed 580 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 01 May 2020 04:57:07 PDT
+Received: from mail.python.org (mail.python.org [IPv6:2a03:b0c0:2:d0::71:1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DA5CC061A0C;
+        Fri,  1 May 2020 04:57:07 -0700 (PDT)
+Received: from seneca.home.cheimes.de (unknown [IPv6:2a04:4540:6518:8b00:aeec:f92b:b752:e7b])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.python.org (Postfix) with ESMTPSA id 49D9Tn1CB7zpF9Y;
+        Fri,  1 May 2020 07:47:25 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=python.org; s=200901;
+        t=1588333645; bh=pdFhsqmsyyF982XVgDC/+dtkNy2N/bbOczqXOrMoUoc=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=lXIut7Jn4M4RU8tl6bpmrZKQ/kENOTJHinPDmX2e7ubiJNwM0q2RyVhrFtPudEZM5
+         yst2cFm1JLYN1V8aYq6YNB0/KfHLKNMp0/GLnmO4DHs47Ro/wdNM1c3ZuLTVMG8xoc
+         fuG6fIDNLRkMRaDrECtOjX8iPca9JQtw9zfA7fbg=
+Subject: Re: [PATCH v3 0/5] Add support for RESOLVE_MAYEXEC
+To:     Jann Horn <jannh@google.com>, Florian Weimer <fw@deneb.enyo.de>
+Cc:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Eric Chiang <ericchiang@google.com>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <20200428175129.634352-1-mic@digikod.net>
+ <CAG48ez1bKzh1YvbD_Lcg0AbMCH_cdZmrRRumU7UCJL=qPwNFpQ@mail.gmail.com>
+ <87blnb48a3.fsf@mid.deneb.enyo.de>
+ <CAG48ez2TphTj-VdDaSjvnr0Q8BhNmT3n86xYz4bF3wRJmAMsMw@mail.gmail.com>
+From:   Christian Heimes <christian@python.org>
+Autocrypt: addr=christian@python.org; prefer-encrypt=mutual; keydata=
+ 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
+ 53+DNOMi/34rdBwm0I62QkVYJYU=
+Message-ID: <b78d2d0d-04cf-c0a9-bd88-20c6ec6705fd@python.org>
+Date:   Fri, 1 May 2020 13:47:24 +0200
 MIME-Version: 1.0
-References: <20200501083510.1413-1-anders.roxell@linaro.org>
-In-Reply-To: <20200501083510.1413-1-anders.roxell@linaro.org>
-From:   Marco Elver <elver@google.com>
-Date:   Fri, 1 May 2020 11:57:37 +0200
-Message-ID: <CANpmjNNm9DhVj5T1rhykEdNBiTvkG-YxL6O25bSfQi8ySh9KtA@mail.gmail.com>
-Subject: Re: [PATCH] kunit: Kconfig: enable a KUNIT_RUN_ALL fragment
-To:     Anders Roxell <anders.roxell@linaro.org>
-Cc:     Brendan Higgins <brendanhiggins@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        john.johansen@canonical.com, jmorris@namei.org, serge@hallyn.com,
-        LKML <linux-kernel@vger.kernel.org>, linux-ext4@vger.kernel.org,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
-        linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAG48ez2TphTj-VdDaSjvnr0Q8BhNmT3n86xYz4bF3wRJmAMsMw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 1 May 2020 at 10:35, Anders Roxell <anders.roxell@linaro.org> wrote:
->
-> Make it easier to enable all KUnit fragments.  This is needed for kernel
-> test-systems, so its easy to get all KUnit tests enabled and if new gets
-> added they will be enabled as well.  Fragments that has to be builtin
-> will be missed if CONFIG_KUNIT_RUN_ALL is set as a module.
->
-> Adding 'if !KUNIT_RUN_ALL' so individual test can be turned of if
-> someone wants that even though KUNIT_RUN_ALL is enabled.
->
-> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-> ---
->  drivers/base/Kconfig      |  3 ++-
->  drivers/base/test/Kconfig |  3 ++-
->  fs/ext4/Kconfig           |  3 ++-
->  lib/Kconfig.debug         |  6 ++++--
->  lib/Kconfig.kcsan         |  3 ++-
->  lib/kunit/Kconfig         | 15 ++++++++++++---
->  security/apparmor/Kconfig |  3 ++-
->  7 files changed, 26 insertions(+), 10 deletions(-)
->
-> diff --git a/drivers/base/Kconfig b/drivers/base/Kconfig
-> index 5f0bc74d2409..c48e6e4ef367 100644
-> --- a/drivers/base/Kconfig
-> +++ b/drivers/base/Kconfig
-> @@ -149,8 +149,9 @@ config DEBUG_TEST_DRIVER_REMOVE
->           test this functionality.
->
->  config PM_QOS_KUNIT_TEST
-> -       bool "KUnit Test for PM QoS features"
-> +       bool "KUnit Test for PM QoS features" if !KUNIT_RUN_ALL
->         depends on KUNIT=y
-> +       default KUNIT_RUN_ALL
->
->  config HMEM_REPORTING
->         bool
-> diff --git a/drivers/base/test/Kconfig b/drivers/base/test/Kconfig
-> index 305c7751184a..0d662d689f6b 100644
-> --- a/drivers/base/test/Kconfig
-> +++ b/drivers/base/test/Kconfig
-> @@ -9,5 +9,6 @@ config TEST_ASYNC_DRIVER_PROBE
->
->           If unsure say N.
->  config KUNIT_DRIVER_PE_TEST
-> -       bool "KUnit Tests for property entry API"
-> +       bool "KUnit Tests for property entry API" if !KUNIT_RUN_ALL
->         depends on KUNIT=y
-> +       default KUNIT_RUN_ALL
-> diff --git a/fs/ext4/Kconfig b/fs/ext4/Kconfig
-> index 2a592e38cdfe..76785143259d 100644
-> --- a/fs/ext4/Kconfig
-> +++ b/fs/ext4/Kconfig
-> @@ -103,9 +103,10 @@ config EXT4_DEBUG
->                 echo 1 > /sys/module/ext4/parameters/mballoc_debug
->
->  config EXT4_KUNIT_TESTS
-> -       tristate "KUnit tests for ext4"
-> +       tristate "KUnit tests for ext4" if !KUNIT_RUN_ALL
->         select EXT4_FS
->         depends on KUNIT
-> +       default KUNIT_RUN_ALL
->         help
->           This builds the ext4 KUnit tests.
->
-> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-> index 8e4aded46281..993e0c5549bc 100644
-> --- a/lib/Kconfig.debug
-> +++ b/lib/Kconfig.debug
-> @@ -2123,8 +2123,9 @@ config TEST_SYSCTL
->           If unsure, say N.
->
->  config SYSCTL_KUNIT_TEST
-> -       tristate "KUnit test for sysctl"
-> +       tristate "KUnit test for sysctl" if !KUNIT_RUN_ALL
->         depends on KUNIT
-> +       default KUNIT_RUN_ALL
->         help
->           This builds the proc sysctl unit test, which runs on boot.
->           Tests the API contract and implementation correctness of sysctl.
-> @@ -2134,8 +2135,9 @@ config SYSCTL_KUNIT_TEST
->           If unsure, say N.
->
->  config LIST_KUNIT_TEST
-> -       tristate "KUnit Test for Kernel Linked-list structures"
-> +       tristate "KUnit Test for Kernel Linked-list structures" if !KUNIT_RUN_ALL
->         depends on KUNIT
-> +       default KUNIT_RUN_ALL
->         help
->           This builds the linked list KUnit test suite.
->           It tests that the API and basic functionality of the list_head type
-> diff --git a/lib/Kconfig.kcsan b/lib/Kconfig.kcsan
-> index ea28245c6c1d..91398300a1bc 100644
-> --- a/lib/Kconfig.kcsan
-> +++ b/lib/Kconfig.kcsan
-> @@ -46,8 +46,9 @@ config KCSAN_SELFTEST
->           works as intended.
->
->  config KCSAN_TEST
-> -       tristate "KCSAN test for integrated runtime behaviour"
-> +       tristate "KCSAN test for integrated runtime behaviour" if !KUNIT_RUN_ALL
->         depends on TRACEPOINTS && KUNIT
-> +       default KUNIT_RUN_ALL
->         select TORTURE_TEST
->         help
->           KCSAN test focusing on behaviour of the integrated runtime. Tests
+On 29/04/2020 00.01, Jann Horn wrote:
+> On Tue, Apr 28, 2020 at 11:21 PM Florian Weimer <fw@deneb.enyo.de> wrote:
+>> * Jann Horn:
+>>
+>>> Just as a comment: You'd probably also have to use RESOLVE_MAYEXEC in
+>>> the dynamic linker.
+>>
+>> Absolutely.  In typical configurations, the kernel does not enforce
+>> that executable mappings must be backed by files which are executable.
+>> It's most obvious with using an explicit loader invocation to run
+>> executables on noexec mounts.  RESOLVE_MAYEXEC is much more useful
+>> than trying to reimplement the kernel permission checks (or what some
+>> believe they should be) in userspace.
+> 
+> Oh, good point.
+> 
+> That actually seems like something Mickaël could add to his series? If
+> someone turns on that knob for "When an interpreter wants to execute
+> something, enforce that we have execute access to it", they probably
+> also don't want it to be possible to just map files as executable? So
+> perhaps when that flag is on, the kernel should either refuse to map
+> anything as executable if it wasn't opened with RESOLVE_MAYEXEC or
+> (less strict) if RESOLVE_MAYEXEC wasn't used, print a warning, then
+> check whether the file is executable and bail out if not?
+> 
+> A configuration where interpreters verify that scripts are executable,
+> but other things can just mmap executable pages, seems kinda
+> inconsistent...
 
-I think if you want this patch to be picked up you need to split it,
-with one patch for each test that is not yet in mainline or the tree
-that should pick this patch up.
++1
 
-The KCSAN test is in the -rcu tree, but I don't expect it to be merged
-before 5.9. Most likely, we would only be able to pick up the patch
-that would make the chance to the KCSAN Kconfig entry once the rest
-here made it into mainline.
+I worked with Steve Downer on Python PEP 578 [1] that added audit hooks
+and PyFile_OpenCode() to CPython. A PyFile_OpenCode() implementation
+with RESOLVE_MAYEXEC will hep to secure loading of Python code. But
+Python also includes a wrapper of libffi. ctypes or cffi can load native
+code from either shared libraries with dlopen() or execute native code
+from mmap() regions. For example SnakeEater [2] is a clever attack that
+abused memfd_create syscall and proc filesystem to execute code.
 
-Thanks,
--- Marco
+A consistent security policy must also ensure that mmap() PROT_EXEC
+enforces the same restrictions as RESOLVE_MAYEXEC. The restriction
+doesn't have be part of this patch, though.
 
-> diff --git a/lib/kunit/Kconfig b/lib/kunit/Kconfig
-> index 95d12e3d6d95..d6a912779816 100644
-> --- a/lib/kunit/Kconfig
-> +++ b/lib/kunit/Kconfig
-> @@ -15,7 +15,8 @@ menuconfig KUNIT
->  if KUNIT
->
->  config KUNIT_DEBUGFS
-> -       bool "KUnit - Enable /sys/kernel/debug/kunit debugfs representation"
-> +       bool "KUnit - Enable /sys/kernel/debug/kunit debugfs representation" if !KUNIT_RUN_ALL
-> +       default KUNIT_RUN_ALL
->         help
->           Enable debugfs representation for kunit.  Currently this consists
->           of /sys/kernel/debug/kunit/<test_suite>/results files for each
-> @@ -23,7 +24,8 @@ config KUNIT_DEBUGFS
->           run that occurred.
->
->  config KUNIT_TEST
-> -       tristate "KUnit test for KUnit"
-> +       tristate "KUnit test for KUnit" if !KUNIT_RUN_ALL
-> +       default KUNIT_RUN_ALL
->         help
->           Enables the unit tests for the KUnit test framework. These tests test
->           the KUnit test framework itself; the tests are both written using
-> @@ -32,7 +34,8 @@ config KUNIT_TEST
->           expected.
->
->  config KUNIT_EXAMPLE_TEST
-> -       tristate "Example test for KUnit"
-> +       tristate "Example test for KUnit" if !KUNIT_RUN_ALL
-> +       default KUNIT_RUN_ALL
->         help
->           Enables an example unit test that illustrates some of the basic
->           features of KUnit. This test only exists to help new users understand
-> @@ -41,4 +44,10 @@ config KUNIT_EXAMPLE_TEST
->           is intended for curious hackers who would like to understand how to
->           use KUnit for kernel development.
->
-> +config KUNIT_RUN_ALL
-> +       tristate "KUnit run all test"
-> +       help
-> +         Enables all KUnit tests. If they can be enabled.
-> +         That depends on if KUnit is enabled as a module or builtin.
-> +
+Christian
 
-s/tests. If/tests, if/ ?
-
->  endif # KUNIT
-> diff --git a/security/apparmor/Kconfig b/security/apparmor/Kconfig
-> index 0fe336860773..c4648426ea5d 100644
-> --- a/security/apparmor/Kconfig
-> +++ b/security/apparmor/Kconfig
-> @@ -70,8 +70,9 @@ config SECURITY_APPARMOR_DEBUG_MESSAGES
->           the kernel message buffer.
->
->  config SECURITY_APPARMOR_KUNIT_TEST
-> -       bool "Build KUnit tests for policy_unpack.c"
-> +       bool "Build KUnit tests for policy_unpack.c" if !KUNIT_RUN_ALL
->         depends on KUNIT=y && SECURITY_APPARMOR
-> +       default KUNIT_RUN_ALL
->         help
->           This builds the AppArmor KUnit tests.
->
-> --
-> 2.20.1
->
+[1] https://www.python.org/dev/peps/pep-0578/
+[2] https://github.com/nullbites/SnakeEater/blob/master/SnakeEater2.py
