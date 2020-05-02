@@ -1,94 +1,128 @@
-Return-Path: <SRS0=mFfD=6P=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=MZfy=6Q=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADD77C4724C
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 May 2020 20:36:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 025F7C47254
+	for <linux-security-module@archiver.kernel.org>; Sat,  2 May 2020 02:11:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 829A021835
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 May 2020 20:36:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D51852192A
+	for <linux-security-module@archiver.kernel.org>; Sat,  2 May 2020 02:11:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="FX9Weop6"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GoAOXqYv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726692AbgEAUgK (ORCPT
+        id S1726463AbgEBCL3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 1 May 2020 16:36:10 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:38658 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726463AbgEAUgK (ORCPT
+        Fri, 1 May 2020 22:11:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57186 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726565AbgEBCL2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 1 May 2020 16:36:10 -0400
-Received: from [10.137.106.115] (unknown [131.107.174.243])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 2E03E20B717B;
-        Fri,  1 May 2020 13:36:09 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 2E03E20B717B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1588365369;
-        bh=cyxau+BJRB8pNdZIKeMiXqeTQ9iFyycCE0oPRNjr7fo=;
-        h=From:Subject:To:Cc:References:Date:In-Reply-To:From;
-        b=FX9Weop6wlrng0/8hGiSCdvgxdFkS+Z1/o9Fe4MU2xRO9DBB4XKEBWREI7DJ2vIxB
-         mVkhUIl3E7l3C9Q95xLWCgPgC+JrcQHOEv14018rn+OSDBX0RpMUzq2jsbqtw2LFQW
-         qxY32+/8JumhhaegNkX6DhGnshtSVVHR7REqYTnw=
-From:   Deven Bowers <deven.desai@linux.microsoft.com>
-Subject: Re: [PATCH v4 1/5] fs: Add support for an O_MAYEXEC flag on
- openat2(2)
-To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        linux-kernel@vger.kernel.org
-Cc:     Aleksa Sarai <cyphar@cyphar.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christian Heimes <christian@python.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Eric Chiang <ericchiang@google.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-References: <20200430132320.699508-1-mic@digikod.net>
- <20200430132320.699508-2-mic@digikod.net>
-Message-ID: <12e3c9f0-a419-53a9-f404-7ce206709fe4@linux.microsoft.com>
-Date:   Fri, 1 May 2020 13:36:08 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        Fri, 1 May 2020 22:11:28 -0400
+Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85AC2C08E934
+        for <linux-security-module@vger.kernel.org>; Fri,  1 May 2020 19:11:28 -0700 (PDT)
+Received: by mail-wm1-x342.google.com with SMTP id v8so10954618wma.0
+        for <linux-security-module@vger.kernel.org>; Fri, 01 May 2020 19:11:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DxgeZ4dWQbsgxzC3vr4Uf0z6ga9GPtUvmnQ6rfH9mnw=;
+        b=GoAOXqYvnqNaHnqw0sl6wxaUTEEROMaaJ5wtFkTK5JBEL5n2G2yvGvhs3s05djne9u
+         Z0Nm572hdR8ZAqHgELOeTbhCxmoiHUC726/03InwwU0piYRV48UG/j+BM16uSqBf7VFT
+         3/4Bks7Dn7b3YYiGicAkJq043PppsvbGx0CWk1jV7TbiQ2eZ698CTHttNGU9GMA+gSlD
+         yy5AuwsFaLV1/DF+ulL0gMVwg0fBWYh58QliUQqii9fRHedY1IHl5AtDR8kM7dLRpvvV
+         Geu2ui5FWXP3BSoTCYRcP8EFX/JKjNL7AXTEBtblQXJ+7oX2W9r8tZjBd+6ylNmZDSNY
+         yEWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DxgeZ4dWQbsgxzC3vr4Uf0z6ga9GPtUvmnQ6rfH9mnw=;
+        b=da1MlnW+9j39GjMo3weO9gmx1WDYIzFGH86tUzMUN3oiRAlQzsHXOgX1NozKmOcXDR
+         oOSq3mDU6e//jVw0Cge3cDonHNHsKCiDLJPFZ5q9LRX/RuIu508Q7A8JhZpKznX7lzA1
+         62Z9giLKpLMzkRkAogYAoBEup3KbOcakuldA0syQE58x7ml67pYEqBGawtKRJSJiD624
+         gKUxN64zYUk9BMgP9sOdmRF6UX7SNTc1UtAyhNrproqKb+Ppsf46EeRog50EadiXqq8G
+         12Y+qzzObr66ZQoAzOpvgARsJWCq2ROZkkWzIaHgb0YU90X7/91UNZHLrnE54/7LF8gO
+         cevQ==
+X-Gm-Message-State: AGi0PuY3/NE/XoPMc7PNSOWZPD0SxoEqCPKfnu0eC1Q+8GUougSrFNQN
+        cpLCfHzeb0hN0buaU4xi/u3hem2YZfQvGWt+MaAz3Q==
+X-Google-Smtp-Source: APiQypLDIvRbUKevZsGcEO30n6w7WQseNzEj38FrNcXYHjaeCNVPqKzvEB/q8lL2AFg/XGQTwq2/IwPCqTdYBakWPhw=
+X-Received: by 2002:a1c:dd8a:: with SMTP id u132mr2195716wmg.87.1588385486740;
+ Fri, 01 May 2020 19:11:26 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200430132320.699508-2-mic@digikod.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20200501083510.1413-1-anders.roxell@linaro.org> <CAFd5g45C98_70Utp=QBWg_tKxaUMJ-ArQvjWbG9q6=dixfHBxw@mail.gmail.com>
+In-Reply-To: <CAFd5g45C98_70Utp=QBWg_tKxaUMJ-ArQvjWbG9q6=dixfHBxw@mail.gmail.com>
+From:   David Gow <davidgow@google.com>
+Date:   Sat, 2 May 2020 10:11:15 +0800
+Message-ID: <CABVgOSkAAb7tyjhdqFZmyKyknaxz_sM_o3=bK6cL6Ld4wFxkRQ@mail.gmail.com>
+Subject: Re: [PATCH] kunit: Kconfig: enable a KUNIT_RUN_ALL fragment
+To:     Brendan Higgins <brendanhiggins@google.com>
+Cc:     Anders Roxell <anders.roxell@linaro.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "Theodore Ts'o" <tytso@mit.edu>, adilger.kernel@dilger.ca,
+        Marco Elver <elver@google.com>,
+        John Johansen <john.johansen@canonical.com>, jmorris@namei.org,
+        serge@hallyn.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-ext4@vger.kernel.org, kasan-dev <kasan-dev@googlegroups.com>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        KUnit Development <kunit-dev@googlegroups.com>,
+        linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Sat, May 2, 2020 at 4:31 AM Brendan Higgins
+<brendanhiggins@google.com> wrote:
+>
+> On Fri, May 1, 2020 at 1:35 AM Anders Roxell <anders.roxell@linaro.org> wrote:
+> >
+> > Make it easier to enable all KUnit fragments.  This is needed for kernel
+> > test-systems, so its easy to get all KUnit tests enabled and if new gets
+> > added they will be enabled as well.  Fragments that has to be builtin
+> > will be missed if CONFIG_KUNIT_RUN_ALL is set as a module.
+> >
+> > Adding 'if !KUNIT_RUN_ALL' so individual test can be turned of if
+> > someone wants that even though KUNIT_RUN_ALL is enabled.
+>
+> I would LOVE IT, if you could make this work! I have been trying to
+> figure out the best way to run all KUnit tests for a long time now.
+>
+> That being said, I am a bit skeptical that this approach will be much
+> more successful than just using allyesconfig. Either way, there are
+> tests coming down the pipeline that are incompatible with each other
+> (the KASAN test and the KCSAN test will be incompatible). Even so,
+> tests like the apparmor test require a lot of non-default
+> configuration to compile. In the end, I am not sure how many tests we
+> will really be able to turn on this way.
+>
+> Thoughts?
 
+I think there's still some value in this which the allyesconfig option
+doesn't provide. As you point out, it's not possible to have a generic
+"run all tests" option due to potential conflicting dependencies, but
+this does provide a way to run all tests for things enabled in the
+current config. This could be really useful for downstream developers
+who want a way of running all tests relevant to their config without
+the overhead of running irrelevant tests (e.g., for drivers they don't
+build). Using allyesconfig doesn't make that distinction.
 
-On 4/30/2020 6:23 AM, Mickaël Salaün wrote:
-> When the O_MAYEXEC flag is passed, openat2(2) may be subject to
-> additional restrictions depending on a security policy managed by the
-> kernel through a sysctl or implemented by an LSM thanks to the
-> inode_permission hook. 
-> This new flag is ignored by open(2) and openat(2).
+Ultimately, we'll probably still want something which enables a
+broader set of tests for upstream development: whether that's based on
+this, allyesconfig, or something else entirely remains to be seen, I
+think. I suspect we're going to end up with something
+subsystem-specific (having a kunitconfig per subsystem, or a testing
+line in MAINTAINERS or similar are ideas which have been brought up in
+the past).
 
-Reviewed-by: Deven Bowers <deven.desai@linux.microsoft.com>
+This is a great looking tool to have in the toolbox, though.
+
+-- David
