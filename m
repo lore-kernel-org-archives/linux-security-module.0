@@ -1,128 +1,143 @@
-Return-Path: <SRS0=MZfy=6Q=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=JC4w=6S=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 025F7C47254
-	for <linux-security-module@archiver.kernel.org>; Sat,  2 May 2020 02:11:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0452C47257
+	for <linux-security-module@archiver.kernel.org>; Mon,  4 May 2020 11:19:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D51852192A
-	for <linux-security-module@archiver.kernel.org>; Sat,  2 May 2020 02:11:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB86520661
+	for <linux-security-module@archiver.kernel.org>; Mon,  4 May 2020 11:19:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GoAOXqYv"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="pmQakzRL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726463AbgEBCL3 (ORCPT
+        id S1728104AbgEDLTB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 1 May 2020 22:11:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57186 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726565AbgEBCL2 (ORCPT
+        Mon, 4 May 2020 07:19:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50552 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726445AbgEDLTA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 1 May 2020 22:11:28 -0400
-Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85AC2C08E934
-        for <linux-security-module@vger.kernel.org>; Fri,  1 May 2020 19:11:28 -0700 (PDT)
-Received: by mail-wm1-x342.google.com with SMTP id v8so10954618wma.0
-        for <linux-security-module@vger.kernel.org>; Fri, 01 May 2020 19:11:28 -0700 (PDT)
+        Mon, 4 May 2020 07:19:00 -0400
+Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66175C061A0F
+        for <linux-security-module@vger.kernel.org>; Mon,  4 May 2020 04:19:00 -0700 (PDT)
+Received: by mail-ej1-x642.google.com with SMTP id pg17so13536165ejb.9
+        for <linux-security-module@vger.kernel.org>; Mon, 04 May 2020 04:19:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=szeredi.hu; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=DxgeZ4dWQbsgxzC3vr4Uf0z6ga9GPtUvmnQ6rfH9mnw=;
-        b=GoAOXqYvnqNaHnqw0sl6wxaUTEEROMaaJ5wtFkTK5JBEL5n2G2yvGvhs3s05djne9u
-         Z0Nm572hdR8ZAqHgELOeTbhCxmoiHUC726/03InwwU0piYRV48UG/j+BM16uSqBf7VFT
-         3/4Bks7Dn7b3YYiGicAkJq043PppsvbGx0CWk1jV7TbiQ2eZ698CTHttNGU9GMA+gSlD
-         yy5AuwsFaLV1/DF+ulL0gMVwg0fBWYh58QliUQqii9fRHedY1IHl5AtDR8kM7dLRpvvV
-         Geu2ui5FWXP3BSoTCYRcP8EFX/JKjNL7AXTEBtblQXJ+7oX2W9r8tZjBd+6ylNmZDSNY
-         yEWg==
+        bh=XnhHp4z6/JfitEDp77Ovs3sPoUEeRYCqXcr3ouUaioY=;
+        b=pmQakzRLRsJk/F4L60ClrnRIEH/nzG0J2iy0rKYUgm9VNbjh832jl9Yhbx2oimEt8s
+         vFC1RO5ii4yZoiTtkjqe1eNFHGh/eW+SuC+6Q09N1w662AYyuOTJLe8VyjMhwhk3LiIB
+         Ml5MAmKoGGI0sZPKcG5uSL6uzHCJDnFlRMuzU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=DxgeZ4dWQbsgxzC3vr4Uf0z6ga9GPtUvmnQ6rfH9mnw=;
-        b=da1MlnW+9j39GjMo3weO9gmx1WDYIzFGH86tUzMUN3oiRAlQzsHXOgX1NozKmOcXDR
-         oOSq3mDU6e//jVw0Cge3cDonHNHsKCiDLJPFZ5q9LRX/RuIu508Q7A8JhZpKznX7lzA1
-         62Z9giLKpLMzkRkAogYAoBEup3KbOcakuldA0syQE58x7ml67pYEqBGawtKRJSJiD624
-         gKUxN64zYUk9BMgP9sOdmRF6UX7SNTc1UtAyhNrproqKb+Ppsf46EeRog50EadiXqq8G
-         12Y+qzzObr66ZQoAzOpvgARsJWCq2ROZkkWzIaHgb0YU90X7/91UNZHLrnE54/7LF8gO
-         cevQ==
-X-Gm-Message-State: AGi0PuY3/NE/XoPMc7PNSOWZPD0SxoEqCPKfnu0eC1Q+8GUougSrFNQN
-        cpLCfHzeb0hN0buaU4xi/u3hem2YZfQvGWt+MaAz3Q==
-X-Google-Smtp-Source: APiQypLDIvRbUKevZsGcEO30n6w7WQseNzEj38FrNcXYHjaeCNVPqKzvEB/q8lL2AFg/XGQTwq2/IwPCqTdYBakWPhw=
-X-Received: by 2002:a1c:dd8a:: with SMTP id u132mr2195716wmg.87.1588385486740;
- Fri, 01 May 2020 19:11:26 -0700 (PDT)
+        bh=XnhHp4z6/JfitEDp77Ovs3sPoUEeRYCqXcr3ouUaioY=;
+        b=t9GTDs2uxs9telnJfFBraLLrlAWapalbAt8zXAXyl6XDfZ/C7MFq6RbGgPsPzyi+oy
+         +XP6G50FJ45PRU+Dz7WEZfessJwyOWCjZjyCtP13rxpMkoBTjyBuiSC5EYtaDy83auud
+         feaSVYFUDj5evce9qAgsnb2ItoCHqnr9K42kM+CBZERwT97GUy9+lbBvSMF9txRLWieQ
+         hiNUzrjxT+266sFQobe1DEnJVpmDdRztI0toYjPCZfoyhX3l3DOzyuUnMdp9C0zg71zW
+         tUfcikVujXfumVgM7U2bqQxjXXaCAu7n1HaFn3FyiEEGYFpQxBGaVSznOTXiM/LWZ4JE
+         Svmw==
+X-Gm-Message-State: AGi0PuYuOQh1fQgFzYuJgEZGzTVs98hovf1Revjd9wETnB2aAFH4RyNK
+        q8b0NxbEfWdrBGQrNI+kj8xomaazIimo4UGIZ2wCzA==
+X-Google-Smtp-Source: APiQypKtOEJXmmcQClOPLZPgv4ey3QaTiM7LQBxA26hvnZWHW0kpfX0633B0Kl2NTByXsbhh2QEjpKZCaStzxta0jNg=
+X-Received: by 2002:a17:906:841a:: with SMTP id n26mr14957699ejx.43.1588591138981;
+ Mon, 04 May 2020 04:18:58 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200501083510.1413-1-anders.roxell@linaro.org> <CAFd5g45C98_70Utp=QBWg_tKxaUMJ-ArQvjWbG9q6=dixfHBxw@mail.gmail.com>
-In-Reply-To: <CAFd5g45C98_70Utp=QBWg_tKxaUMJ-ArQvjWbG9q6=dixfHBxw@mail.gmail.com>
-From:   David Gow <davidgow@google.com>
-Date:   Sat, 2 May 2020 10:11:15 +0800
-Message-ID: <CABVgOSkAAb7tyjhdqFZmyKyknaxz_sM_o3=bK6cL6Ld4wFxkRQ@mail.gmail.com>
-Subject: Re: [PATCH] kunit: Kconfig: enable a KUNIT_RUN_ALL fragment
-To:     Brendan Higgins <brendanhiggins@google.com>
-Cc:     Anders Roxell <anders.roxell@linaro.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "Theodore Ts'o" <tytso@mit.edu>, adilger.kernel@dilger.ca,
-        Marco Elver <elver@google.com>,
-        John Johansen <john.johansen@canonical.com>, jmorris@namei.org,
-        serge@hallyn.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-ext4@vger.kernel.org, kasan-dev <kasan-dev@googlegroups.com>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        KUnit Development <kunit-dev@googlegroups.com>,
-        linux-security-module@vger.kernel.org
+References: <20200409212859.GH28467@miu.piliscsaba.redhat.com>
+ <20200501041444.GJ23230@ZenIV.linux.org.uk> <20200501073127.GB13131@miu.piliscsaba.redhat.com>
+ <CAEjxPJ6Tr-MD85yh-zRcCKwMTZ7bcw4vAXQ2=CjScG71ac4Vzw@mail.gmail.com>
+In-Reply-To: <CAEjxPJ6Tr-MD85yh-zRcCKwMTZ7bcw4vAXQ2=CjScG71ac4Vzw@mail.gmail.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Mon, 4 May 2020 13:18:47 +0200
+Message-ID: <CAJfpegvZ+ASrpbEpeKx-h3mK7fedd7EfgAfm7TL7dgPmy7tppg@mail.gmail.com>
+Subject: Re: [PATCH] vfs: allow unprivileged whiteout creation
+To:     Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, May 2, 2020 at 4:31 AM Brendan Higgins
-<brendanhiggins@google.com> wrote:
+On Fri, May 1, 2020 at 8:40 PM Stephen Smalley
+<stephen.smalley.work@gmail.com> wrote:
 >
-> On Fri, May 1, 2020 at 1:35 AM Anders Roxell <anders.roxell@linaro.org> wrote:
+> On Fri, May 1, 2020 at 3:34 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
 > >
-> > Make it easier to enable all KUnit fragments.  This is needed for kernel
-> > test-systems, so its easy to get all KUnit tests enabled and if new gets
-> > added they will be enabled as well.  Fragments that has to be builtin
-> > will be missed if CONFIG_KUNIT_RUN_ALL is set as a module.
+> > On Fri, May 01, 2020 at 05:14:44AM +0100, Al Viro wrote:
+> > > On Thu, Apr 09, 2020 at 11:28:59PM +0200, Miklos Szeredi wrote:
+> > > > From: Miklos Szeredi <mszeredi@redhat.com>
+> > > >
+> > > > Whiteouts, unlike real device node should not require privileges to create.
+> > > >
+> > > > The general concern with device nodes is that opening them can have side
+> > > > effects.  The kernel already avoids zero major (see
+> > > > Documentation/admin-guide/devices.txt).  To be on the safe side the patch
+> > > > explicitly forbids registering a char device with 0/0 number (see
+> > > > cdev_add()).
+> > > >
+> > > > This guarantees that a non-O_PATH open on a whiteout will fail with ENODEV;
+> > > > i.e. it won't have any side effect.
+> > >
+> > > >  int vfs_mknod(struct inode *dir, struct dentry *dentry, umode_t mode, dev_t dev)
+> > > >  {
+> > > > +   bool is_whiteout = S_ISCHR(mode) && dev == WHITEOUT_DEV;
+> > > >     int error = may_create(dir, dentry);
+> > > >
+> > > >     if (error)
+> > > >             return error;
+> > > >
+> > > > -   if ((S_ISCHR(mode) || S_ISBLK(mode)) && !capable(CAP_MKNOD))
+> > > > +   if ((S_ISCHR(mode) || S_ISBLK(mode)) && !capable(CAP_MKNOD) &&
+> > > > +       !is_whiteout)
+> > > >             return -EPERM;
+> > >
+> > > Hmm...  That exposes vfs_whiteout() to LSM; are you sure that you won't
+> > > end up with regressions for overlayfs on sufficiently weird setups?
 > >
-> > Adding 'if !KUNIT_RUN_ALL' so individual test can be turned of if
-> > someone wants that even though KUNIT_RUN_ALL is enabled.
+> > You're right.  OTOH, what can we do?  We can't fix the weird setups, only the
+> > distros/admins can.
+> >
+> > Can we just try this, and revert to calling ->mknod directly from overlayfs if
+> > it turns out to be a problem that people can't fix easily?
+> >
+> > I guess we could add a new ->whiteout security hook as well, but I'm not sure
+> > it's worth it.  Cc: LMS mailing list; patch re-added for context.
 >
-> I would LOVE IT, if you could make this work! I have been trying to
-> figure out the best way to run all KUnit tests for a long time now.
+> I feel like I am still missing context but IIUC this change is
+> allowing unprivileged userspace to explicitly call mknod(2) with the
+> whiteout device number and skip all permission checks (except the LSM
+> one). And then you are switching vfs_whiteout() over to using
+> vfs_mknod() internally since it no longer does permission checking and
+> that was why vfs_whiteout() was separate originally to avoid imposing
+> any checks on overlayfs-internal creation of whiteouts?
 >
-> That being said, I am a bit skeptical that this approach will be much
-> more successful than just using allyesconfig. Either way, there are
-> tests coming down the pipeline that are incompatible with each other
-> (the KASAN test and the KCSAN test will be incompatible). Even so,
-> tests like the apparmor test require a lot of non-default
-> configuration to compile. In the end, I am not sure how many tests we
-> will really be able to turn on this way.
->
-> Thoughts?
+> If that's correct, then it seems problematic since we have no way in
+> the LSM hook to distinguish the two cases (userspace invocation of
+> mknod(2) versus overlayfs-internal operation).  Don't know offhand
+> what credential is in effect in the overlayfs case (mounter or
+> current) but regardless Android seems to use current regardless, and
+> that could easily fail.
 
-I think there's still some value in this which the allyesconfig option
-doesn't provide. As you point out, it's not possible to have a generic
-"run all tests" option due to potential conflicting dependencies, but
-this does provide a way to run all tests for things enabled in the
-current config. This could be really useful for downstream developers
-who want a way of running all tests relevant to their config without
-the overhead of running irrelevant tests (e.g., for drivers they don't
-build). Using allyesconfig doesn't make that distinction.
+The major point is: whiteouts are *not* device files, not in the real
+sense, it just happens that whiteouts are represented by the file
+having a char/0/0 type.
 
-Ultimately, we'll probably still want something which enables a
-broader set of tests for upstream development: whether that's based on
-this, allyesconfig, or something else entirely remains to be seen, I
-think. I suspect we're going to end up with something
-subsystem-specific (having a kunitconfig per subsystem, or a testing
-line in MAINTAINERS or similar are ideas which have been brought up in
-the past).
+Also the fact that overlayfs invocation is indistinguishable from
+userspace invocation is very much on purpose.  Whiteout creation was
+the exception before this change, not the rule.
 
-This is a great looking tool to have in the toolbox, though.
+If you consider the above, how should this be handled from an LSM perspective?
 
--- David
+Thanks,
+Miklos
