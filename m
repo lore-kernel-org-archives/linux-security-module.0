@@ -2,168 +2,125 @@ Return-Path: <SRS0=J6Hd=6T=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 657ECC47254
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 May 2020 08:13:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EC73C47254
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 May 2020 09:59:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 387A520675
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 May 2020 08:13:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ds/TGo88"
+	by mail.kernel.org (Postfix) with ESMTP id 49DB2206E6
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 May 2020 09:59:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727931AbgEEINU (ORCPT
+        id S1728675AbgEEJ7W (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 5 May 2020 04:13:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48552 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726551AbgEEINR (ORCPT
+        Tue, 5 May 2020 05:59:22 -0400
+Received: from foss.arm.com ([217.140.110.172]:35942 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728268AbgEEJ7W (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 5 May 2020 04:13:17 -0400
-Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5ED88C061A10
-        for <linux-security-module@vger.kernel.org>; Tue,  5 May 2020 01:13:15 -0700 (PDT)
-Received: by mail-lj1-x241.google.com with SMTP id h4so639189ljg.12
-        for <linux-security-module@vger.kernel.org>; Tue, 05 May 2020 01:13:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=cCtbnn/mPSYMTovrACT2kKrxnwGdokswItkXqrNBN20=;
-        b=Ds/TGo88InOgXEcC2Gt5/VgiFUU8yBoN4mf50voWf0ReQi8v5PKgYBXhp/82AjMhqB
-         rTJsuC5+jFz4XMfzl/6020xwtmeCq6QkJs2++a/n+/kMYDSpiRAHYh1yF8UfJO5L7UwR
-         2DAf67oLsyBJ5mLJtL91w5TAlbn6wdGv9X5gfILWFZD9RbWmIJkxZ8WXX6BiBOpJ4ZZs
-         H0UY8zhoYXsuMzNUNAukprACSGCpQMCw7tvWQYxBu6+4K9+5sgqLkPHgIEuklCZyYvqd
-         iSoCM2UNPS79xcfwFMFQgG3A2znyPS1q8ogklxD926Qj892yKoqT7ioU+9X6DS6s78N4
-         KFkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cCtbnn/mPSYMTovrACT2kKrxnwGdokswItkXqrNBN20=;
-        b=ft85AyOnqBv9cQCsnv0meE8/rqa5o1a5mSoeTscuzFJu0tw0jvUiOLIQzbYn3NCEv9
-         1eVrTkCXd3ofWN+D2MXxGidvEv+rV07Oc5b8c+tffH9Pp3XuSbwwfRSxyUgmibdSEYv7
-         2hlZLH9P8pC9VbfCTMcRh4nVX5eRmCZse9jIp4Coiayy8fFcavFJurDi85EI/J6/+ZCW
-         c0UC3/KGdkJXR1tc4kAdxIcJjk7oNIeWDOVjYtyLwS6TF0GF1DIbWwuIhEPJM99LXAuB
-         pyHUc3LoFqNxnAyf4jrBLFu1drXqtDOfNjZcjbxxGlxQGyD5TG/LDU32xgR068LfVRhY
-         RQeg==
-X-Gm-Message-State: AGi0PuakyRfpuLSKFju9uIrh874wsMaPJR5KjBpsIBJESkTYt1uFYidB
-        Z8cm6KUQb70YPsEDI0jUOwcPGEJ/V2rdMIeh1evvuw==
-X-Google-Smtp-Source: APiQypJUpeM7dR82Dn4AY7wcHcK7ejTccxr/K+9YNhjOMoBLs1Z8eehQdWNAzTelKtxHX1iwrzM/YGhrn32nrSdwdS8=
-X-Received: by 2002:a2e:6a08:: with SMTP id f8mr1135471ljc.8.1588666393650;
- Tue, 05 May 2020 01:13:13 -0700 (PDT)
+        Tue, 5 May 2020 05:59:22 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0A77330E;
+        Tue,  5 May 2020 02:59:21 -0700 (PDT)
+Received: from C02TD0UTHF1T.local (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A74BF3F305;
+        Tue,  5 May 2020 02:59:13 -0700 (PDT)
+Date:   Tue, 5 May 2020 10:59:08 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Prakhar Srivastava <prsriva@linux.microsoft.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, devicetree@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, catalin.marinas@arm.com,
+        will@kernel.org, mpe@ellerman.id.au, benh@kernel.crashing.org,
+        paulus@samba.org, robh+dt@kernel.org, frowand.list@gmail.com,
+        zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, jmorris@namei.org,
+        serge@hallyn.com, pasha.tatashin@soleen.com, allison@lohutok.net,
+        kstewart@linuxfoundation.org, takahiro.akashi@linaro.org,
+        tglx@linutronix.de, vincenzo.frascino@arm.com,
+        masahiroy@kernel.org, james.morse@arm.com, bhsharma@redhat.com,
+        mbrugger@suse.com, hsinyi@chromium.org, tao.li@vivo.com,
+        christophe.leroy@c-s.fr, gregkh@linuxfoundation.org,
+        nramas@linux.microsoft.com, tusharsu@linux.microsoft.com,
+        balajib@linux.microsoft.com
+Subject: Re: [RFC][PATCH 0/2] Add support for using reserved memory for ima
+ buffer pass
+Message-ID: <20200505095620.GA82424@C02TD0UTHF1T.local>
+References: <20200504203829.6330-1-prsriva@linux.microsoft.com>
 MIME-Version: 1.0
-References: <20200501083510.1413-1-anders.roxell@linaro.org>
- <CAFd5g45C98_70Utp=QBWg_tKxaUMJ-ArQvjWbG9q6=dixfHBxw@mail.gmail.com> <CABVgOSkAAb7tyjhdqFZmyKyknaxz_sM_o3=bK6cL6Ld4wFxkRQ@mail.gmail.com>
-In-Reply-To: <CABVgOSkAAb7tyjhdqFZmyKyknaxz_sM_o3=bK6cL6Ld4wFxkRQ@mail.gmail.com>
-From:   Anders Roxell <anders.roxell@linaro.org>
-Date:   Tue, 5 May 2020 10:13:02 +0200
-Message-ID: <CADYN=9+AvFYgXKCrT_xwR50b0cPihgCiBvzOypOGNkho2GsvBA@mail.gmail.com>
-Subject: Re: [PATCH] kunit: Kconfig: enable a KUNIT_RUN_ALL fragment
-To:     David Gow <davidgow@google.com>
-Cc:     Brendan Higgins <brendanhiggins@google.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "Theodore Ts'o" <tytso@mit.edu>, adilger.kernel@dilger.ca,
-        Marco Elver <elver@google.com>,
-        John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-ext4@vger.kernel.org, kasan-dev <kasan-dev@googlegroups.com>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        KUnit Development <kunit-dev@googlegroups.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200504203829.6330-1-prsriva@linux.microsoft.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, 2 May 2020 at 04:11, David Gow <davidgow@google.com> wrote:
->
-> On Sat, May 2, 2020 at 4:31 AM Brendan Higgins
-> <brendanhiggins@google.com> wrote:
-> >
-> > On Fri, May 1, 2020 at 1:35 AM Anders Roxell <anders.roxell@linaro.org> wrote:
-> > >
-> > > Make it easier to enable all KUnit fragments.  This is needed for kernel
-> > > test-systems, so its easy to get all KUnit tests enabled and if new gets
-> > > added they will be enabled as well.  Fragments that has to be builtin
-> > > will be missed if CONFIG_KUNIT_RUN_ALL is set as a module.
-> > >
-> > > Adding 'if !KUNIT_RUN_ALL' so individual test can be turned of if
-> > > someone wants that even though KUNIT_RUN_ALL is enabled.
-> >
-> > I would LOVE IT, if you could make this work! I have been trying to
-> > figure out the best way to run all KUnit tests for a long time now.
-> >
-> > That being said, I am a bit skeptical that this approach will be much
-> > more successful than just using allyesconfig. Either way, there are
-> > tests coming down the pipeline that are incompatible with each other
-> > (the KASAN test and the KCSAN test will be incompatible). Even so,
-> > tests like the apparmor test require a lot of non-default
-> > configuration to compile. In the end, I am not sure how many tests we
-> > will really be able to turn on this way.
-> >
-> > Thoughts?
->
-> I think there's still some value in this which the allyesconfig option
-> doesn't provide. As you point out, it's not possible to have a generic
-> "run all tests" option due to potential conflicting dependencies, but
-> this does provide a way to run all tests for things enabled in the
-> current config. This could be really useful for downstream developers
-> who want a way of running all tests relevant to their config without
-> the overhead of running irrelevant tests (e.g., for drivers they don't
-> build).
+Hi Prakhar,
 
-It will solve that as well as for a tester doesn't have to go through all KUnit
-tests fragments to turn them on.
+On Mon, May 04, 2020 at 01:38:27PM -0700, Prakhar Srivastava wrote:
+> IMA during kexec(kexec file load) verifies the kernel signature and measures
+> the signature of the kernel. The signature in the logs can be used to verfiy the 
+> authenticity of the kernel. The logs don not get carried over kexec and thus
+> remote attesation cannot verify the signature of the running kernel.
+> 
+> Introduce an ABI to carry forward the ima logs over kexec.
+> Memory reserved via device tree reservation can be used to store and read
+> via the of_* functions.
 
-> Using allyesconfig doesn't make that distinction.
+This flow needs to work for:
 
-We could also create a config fragment file in kernel/configs/kunit.config
-where we set
-------start
-CONFIG_KUNIT=y
-CONFIG_KUNIT_RUN_ALL=y
-CONFIG_SECURITY_APPARMOR=y
-------end
+1) Pure DT
+2) DT + EFI memory map
+3) ACPI + EFI memory map
 
+... and if this is just for transiently passing the log, I don't think
+that a reserved memory region is the right thing to use, since they're
+supposed to be more permanent.
 
-So, these two can only be enabled if KUNIT=y
-CONFIG_KUNIT_DRIVER_PE_TEST=y
-CONFIG_PM_QOS_KUNIT_TEST=y
+This sounds analogous to passing the initrd, and should probably use
+properties under the chosen node (which can be used for all three boot
+flows above).
 
-and for this one we have a pre-request of SECURITY_APPARMOR=y
-CONFIG_SECURITY_APPARMOR_KUNIT_TEST=y
+For reference, how big is the IMA log likely to be? Does it need
+physically contiguous space?
 
-Other tests solves the dependencies with 'select' like
-CONFIG_EXT4_KUNIT_TESTS, that adds this row in
-fs/ext4/Kconfig, 'select EXT4_FS'
+Thanks,
+Mark.
 
-But I think we should try to minimize the number of 'select' statements,
-in order to avoid circular dependencies and unexpected behaviours.
-Maybe we should add the CONFIG_EXT4_FS=y into the kunit.config
-file instead ?
-
-
->
-> Ultimately, we'll probably still want something which enables a
-> broader set of tests for upstream development: whether that's based on
-> this, allyesconfig, or something else entirely remains to be seen, I
-> think. I suspect we're going to end up with something
-> subsystem-specific (having a kunitconfig per subsystem, or a testing
-> line in MAINTAINERS or similar are ideas which have been brought up in
-> the past).
->
-> This is a great looking tool to have in the toolbox, though.
-
-I agree!
-
-I'll prepare a patchset with individual patches as was suggested by Marco
-shortly.
-
-Cheers,
-Anders
+> 
+> Reserved memory stores the size(sizeof(size_t)) of the buffer in the starting
+> address, followed by the IMA log contents.
+> 
+> Tested on:
+>   arm64 with Uboot
+> 
+> Prakhar Srivastava (2):
+>   Add a layer of abstraction to use the memory reserved by device tree
+>     for ima buffer pass.
+>   Add support for ima buffer pass using reserved memory for arm64 kexec.
+>     Update the arch sepcific code path in kexec file load to store the
+>     ima buffer in the reserved memory. The same reserved memory is read
+>     on kexec or cold boot.
+> 
+>  arch/arm64/Kconfig                     |   1 +
+>  arch/arm64/include/asm/ima.h           |  22 ++++
+>  arch/arm64/include/asm/kexec.h         |   5 +
+>  arch/arm64/kernel/Makefile             |   1 +
+>  arch/arm64/kernel/ima_kexec.c          |  64 ++++++++++
+>  arch/arm64/kernel/machine_kexec_file.c |   1 +
+>  arch/powerpc/include/asm/ima.h         |   3 +-
+>  arch/powerpc/kexec/ima.c               |  14 ++-
+>  drivers/of/Kconfig                     |   6 +
+>  drivers/of/Makefile                    |   1 +
+>  drivers/of/of_ima.c                    | 165 +++++++++++++++++++++++++
+>  include/linux/of.h                     |  34 +++++
+>  security/integrity/ima/ima_kexec.c     |  15 ++-
+>  13 files changed, 325 insertions(+), 7 deletions(-)
+>  create mode 100644 arch/arm64/include/asm/ima.h
+>  create mode 100644 arch/arm64/kernel/ima_kexec.c
+>  create mode 100644 drivers/of/of_ima.c
+> 
+> -- 
+> 2.25.1
+> 
