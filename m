@@ -2,125 +2,115 @@ Return-Path: <SRS0=J6Hd=6T=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EC73C47254
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 May 2020 09:59:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86D0DC4725B
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 May 2020 10:27:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 49DB2206E6
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 May 2020 09:59:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 670EA20675
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 May 2020 10:27:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jpA4029p"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728675AbgEEJ7W (ORCPT
+        id S1725766AbgEEK1E (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 5 May 2020 05:59:22 -0400
-Received: from foss.arm.com ([217.140.110.172]:35942 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728268AbgEEJ7W (ORCPT
+        Tue, 5 May 2020 06:27:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41166 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728670AbgEEK1D (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 5 May 2020 05:59:22 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0A77330E;
-        Tue,  5 May 2020 02:59:21 -0700 (PDT)
-Received: from C02TD0UTHF1T.local (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A74BF3F305;
-        Tue,  5 May 2020 02:59:13 -0700 (PDT)
-Date:   Tue, 5 May 2020 10:59:08 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Prakhar Srivastava <prsriva@linux.microsoft.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, devicetree@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, catalin.marinas@arm.com,
-        will@kernel.org, mpe@ellerman.id.au, benh@kernel.crashing.org,
-        paulus@samba.org, robh+dt@kernel.org, frowand.list@gmail.com,
-        zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, jmorris@namei.org,
-        serge@hallyn.com, pasha.tatashin@soleen.com, allison@lohutok.net,
-        kstewart@linuxfoundation.org, takahiro.akashi@linaro.org,
-        tglx@linutronix.de, vincenzo.frascino@arm.com,
-        masahiroy@kernel.org, james.morse@arm.com, bhsharma@redhat.com,
-        mbrugger@suse.com, hsinyi@chromium.org, tao.li@vivo.com,
-        christophe.leroy@c-s.fr, gregkh@linuxfoundation.org,
-        nramas@linux.microsoft.com, tusharsu@linux.microsoft.com,
-        balajib@linux.microsoft.com
-Subject: Re: [RFC][PATCH 0/2] Add support for using reserved memory for ima
- buffer pass
-Message-ID: <20200505095620.GA82424@C02TD0UTHF1T.local>
-References: <20200504203829.6330-1-prsriva@linux.microsoft.com>
+        Tue, 5 May 2020 06:27:03 -0400
+Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1F18C0610D5
+        for <linux-security-module@vger.kernel.org>; Tue,  5 May 2020 03:27:01 -0700 (PDT)
+Received: by mail-lj1-x236.google.com with SMTP id e25so1045217ljg.5
+        for <linux-security-module@vger.kernel.org>; Tue, 05 May 2020 03:27:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=blGQJMoBvAS+iUdy6OjWgWZCgbDmhcjzl5awL9j79VQ=;
+        b=jpA4029pUaIVnF4l5PbVwW0LEra4+nkabdz0qEKiJpYh8EP7TB52OoKvjTZLfRHpnc
+         xwVpZZFisR3GARWRYbIp86xNASa+7K2ZN29F8TflMofeX8A1wgcrutrRov2QmOHCftnB
+         f2Nby+IcpbDf9Ux1zkpH1exN6WAs0S3Z7rlShX2tEhTOErYgTI8gr3NgJuEUZ9iXX8CP
+         4MvayBIM7sw+gf5FwkxCYvV0D56OuYUWbruy8qGMst2KgepBJVkakOuSVqHfil4Sm2C3
+         ra9kpmz7uaVBZHrkCHzzcs9M/MCHmtuB+zqpuqS0kCk5tirZf2ktYoGqUfgvujroKJiO
+         LqTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=blGQJMoBvAS+iUdy6OjWgWZCgbDmhcjzl5awL9j79VQ=;
+        b=GcQy9ZRYgVd7Y9ntZCeX18y4xPUyzbPkJJOWsEYmGspkORT1Rgtg2oL2FljWNpUOWc
+         CNbXPOMXToOkEVHdVHgEV8zNBPg6f12/rVZEIjNkCs99ZdJIQo4utQ7N9TG8ek9/dfNP
+         6uuUQh6S8tsgcvaO2O0D2dK66D6Cecqdls97GNQIc9UPh8dQMSSis7x7C93iOJE2EKKd
+         7jn7mP/a57tcVAQKaLqfRfvmsYX7Gqxk1L5cJFhTwgEQ3GBGfn7Z7Qm7CGBBLSOqro8e
+         Q9YA/IlWxjTZWamDRpFBtGIjd6KJtLHt4zrRufcd3KDbOvUfj7+mjEGGFfRNlpHVIptG
+         eejQ==
+X-Gm-Message-State: AGi0PuZVN+WO0wCmYBXyXTBMIWESR5VAJSt5DQQ08zi8hm7HYPsCCL5M
+        FM+j/Ok2A/H0+BGBmPrg8EkX1g==
+X-Google-Smtp-Source: APiQypKfa8VOGWn3WPZrzc/EhIZHCyr2xy8NZIclTsRKBVWbLEv8EvZCy1rPGqOMeOu9F7hKN9nnXA==
+X-Received: by 2002:a2e:3009:: with SMTP id w9mr1422695ljw.71.1588674419933;
+        Tue, 05 May 2020 03:26:59 -0700 (PDT)
+Received: from localhost (c-8c28e555.07-21-73746f28.bbcust.telenor.se. [85.229.40.140])
+        by smtp.gmail.com with ESMTPSA id u16sm1860861ljk.9.2020.05.05.03.26.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 May 2020 03:26:59 -0700 (PDT)
+From:   Anders Roxell <anders.roxell@linaro.org>
+To:     brendanhiggins@google.com, akpm@linux-foundation.org,
+        gregkh@linuxfoundation.org, tytso@mit.edu,
+        adilger.kernel@dilger.ca, john.johansen@canonical.com,
+        jmorris@namei.org, serge@hallyn.com
+Cc:     linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+        linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-security-module@vger.kernel.org, elver@google.com,
+        davidgow@google.com, Anders Roxell <anders.roxell@linaro.org>
+Subject: [PATCH v2 0/6] Enable as many KUnit tests as possible
+Date:   Tue,  5 May 2020 12:26:47 +0200
+Message-Id: <20200505102647.7862-1-anders.roxell@linaro.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200504203829.6330-1-prsriva@linux.microsoft.com>
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Prakhar,
+Hi,
 
-On Mon, May 04, 2020 at 01:38:27PM -0700, Prakhar Srivastava wrote:
-> IMA during kexec(kexec file load) verifies the kernel signature and measures
-> the signature of the kernel. The signature in the logs can be used to verfiy the 
-> authenticity of the kernel. The logs don not get carried over kexec and thus
-> remote attesation cannot verify the signature of the running kernel.
-> 
-> Introduce an ABI to carry forward the ima logs over kexec.
-> Memory reserved via device tree reservation can be used to store and read
-> via the of_* functions.
+This patchset will try to enable as many KUnit test fragments as
+possible for the current .config file.
+This will make it easier for both developers that tests their specific
+feature and also for test-systems that would like to get as much as
+possible for their current .config file.
 
-This flow needs to work for:
+I will send a separate KCSAN KUnit patch after this patchset since that
+isn't in mainline yet.
 
-1) Pure DT
-2) DT + EFI memory map
-3) ACPI + EFI memory map
+Since v1:
+Marco commented to split up the patches, and change a "." to a ",".
 
-... and if this is just for transiently passing the log, I don't think
-that a reserved memory region is the right thing to use, since they're
-supposed to be more permanent.
 
-This sounds analogous to passing the initrd, and should probably use
-properties under the chosen node (which can be used for all three boot
-flows above).
+Cheers,
+Anders
 
-For reference, how big is the IMA log likely to be? Does it need
-physically contiguous space?
+Anders Roxell (6):
+  kunit: Kconfig: enable a KUNIT_RUN_ALL fragment
+  kunit: default KUNIT_* fragments to KUNIT_RUN_ALL
+  lib: Kconfig.debug: default KUNIT_* fragments to KUNIT_RUN_ALL
+  drivers: base: default KUNIT_* fragments to KUNIT_RUN_ALL
+  fs: ext4: default KUNIT_* fragments to KUNIT_RUN_ALL
+  security: apparmor: default KUNIT_* fragments to KUNIT_RUN_ALL
 
-Thanks,
-Mark.
+ drivers/base/Kconfig      |  3 ++-
+ drivers/base/test/Kconfig |  3 ++-
+ fs/ext4/Kconfig           |  3 ++-
+ lib/Kconfig.debug         |  6 ++++--
+ lib/kunit/Kconfig         | 15 ++++++++++++---
+ security/apparmor/Kconfig |  3 ++-
+ 6 files changed, 24 insertions(+), 9 deletions(-)
 
-> 
-> Reserved memory stores the size(sizeof(size_t)) of the buffer in the starting
-> address, followed by the IMA log contents.
-> 
-> Tested on:
->   arm64 with Uboot
-> 
-> Prakhar Srivastava (2):
->   Add a layer of abstraction to use the memory reserved by device tree
->     for ima buffer pass.
->   Add support for ima buffer pass using reserved memory for arm64 kexec.
->     Update the arch sepcific code path in kexec file load to store the
->     ima buffer in the reserved memory. The same reserved memory is read
->     on kexec or cold boot.
-> 
->  arch/arm64/Kconfig                     |   1 +
->  arch/arm64/include/asm/ima.h           |  22 ++++
->  arch/arm64/include/asm/kexec.h         |   5 +
->  arch/arm64/kernel/Makefile             |   1 +
->  arch/arm64/kernel/ima_kexec.c          |  64 ++++++++++
->  arch/arm64/kernel/machine_kexec_file.c |   1 +
->  arch/powerpc/include/asm/ima.h         |   3 +-
->  arch/powerpc/kexec/ima.c               |  14 ++-
->  drivers/of/Kconfig                     |   6 +
->  drivers/of/Makefile                    |   1 +
->  drivers/of/of_ima.c                    | 165 +++++++++++++++++++++++++
->  include/linux/of.h                     |  34 +++++
->  security/integrity/ima/ima_kexec.c     |  15 ++-
->  13 files changed, 325 insertions(+), 7 deletions(-)
->  create mode 100644 arch/arm64/include/asm/ima.h
->  create mode 100644 arch/arm64/kernel/ima_kexec.c
->  create mode 100644 drivers/of/of_ima.c
-> 
-> -- 
-> 2.25.1
-> 
+-- 
+2.20.1
+
