@@ -2,88 +2,168 @@ Return-Path: <SRS0=J6Hd=6T=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5F91C47247
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 May 2020 00:16:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 657ECC47254
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 May 2020 08:13:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 918BF20661
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 May 2020 00:16:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 387A520675
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 May 2020 08:13:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="N4s+XP8H"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ds/TGo88"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728258AbgEEAQZ (ORCPT
+        id S1727931AbgEEINU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 4 May 2020 20:16:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59308 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728374AbgEEAQZ (ORCPT
+        Tue, 5 May 2020 04:13:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48552 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726551AbgEEINR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 4 May 2020 20:16:25 -0400
-Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78E70C061A10
-        for <linux-security-module@vger.kernel.org>; Mon,  4 May 2020 17:16:24 -0700 (PDT)
-Received: by mail-lf1-x144.google.com with SMTP id t11so11363110lfe.4
-        for <linux-security-module@vger.kernel.org>; Mon, 04 May 2020 17:16:24 -0700 (PDT)
+        Tue, 5 May 2020 04:13:17 -0400
+Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5ED88C061A10
+        for <linux-security-module@vger.kernel.org>; Tue,  5 May 2020 01:13:15 -0700 (PDT)
+Received: by mail-lj1-x241.google.com with SMTP id h4so639189ljg.12
+        for <linux-security-module@vger.kernel.org>; Tue, 05 May 2020 01:13:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=QiqUUss2jL8iYfIE6Bd+6noVnRyNqoTAQ9IVKOuRQgM=;
-        b=N4s+XP8Hut8idJW2OzJ7P2a4JzXglSpVAIJjOBw2Ld+5maAmt0BoeQ06cj4QDsgGDE
-         6NAcJbsXytHSsE4lwzCkdHu0rpMzM+wisgaZcziE5fWQOQV64jlS0LdKr7xstsB9UVpj
-         mvdwkKwFKgiksfSm/EgH/UxIAAWrqnO8bFFX0Lexs6cbcyu8KkMMItlCihp8z7iDO0ss
-         aNEAOQneXGQzOZoCkFT5iHrMhaq7DQ80aKybV35v5cm2xpXcpz7v57rzUH81ux+HoSU3
-         DZiwpOXUYwj1/gR1uVO5SGmB9WkBXR5UKZl8CKlSKBHoyL8UsOZlR+02AseogMgZ52Np
-         grdA==
+        bh=cCtbnn/mPSYMTovrACT2kKrxnwGdokswItkXqrNBN20=;
+        b=Ds/TGo88InOgXEcC2Gt5/VgiFUU8yBoN4mf50voWf0ReQi8v5PKgYBXhp/82AjMhqB
+         rTJsuC5+jFz4XMfzl/6020xwtmeCq6QkJs2++a/n+/kMYDSpiRAHYh1yF8UfJO5L7UwR
+         2DAf67oLsyBJ5mLJtL91w5TAlbn6wdGv9X5gfILWFZD9RbWmIJkxZ8WXX6BiBOpJ4ZZs
+         H0UY8zhoYXsuMzNUNAukprACSGCpQMCw7tvWQYxBu6+4K9+5sgqLkPHgIEuklCZyYvqd
+         iSoCM2UNPS79xcfwFMFQgG3A2znyPS1q8ogklxD926Qj892yKoqT7ioU+9X6DS6s78N4
+         KFkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=QiqUUss2jL8iYfIE6Bd+6noVnRyNqoTAQ9IVKOuRQgM=;
-        b=pX4PI5TOPhihjtPG3HzA3DK1bRl1uN71xckQh41g8QP9ZfHRsTzRlslCypfqGhb/Rk
-         RHDubhkAMtqEFov2pnPcYUB8LO4voq+Ndz5ac62JKesynxdV9B3o+MjMqVN5Ca4QOdcS
-         PcfqwyIkJHlZ0GjayUHCHbHiq+oy5ZSnurd2rnG4vCPQcpfucyrFGmIpzvYz8UeRWeM0
-         VFZev6xkeO+tKsH2vPMadKtEOAxuIvJtRZgnh/jpvHnYf9xpPiFleLS6LgVnia+IlVuy
-         PzYTpWN3Kxxjywh3Pz6f12NnqjDyXj6QfExUbxgqDSLDUuDfFMc0Q4fNlkVPflAnHDya
-         cEhA==
-X-Gm-Message-State: AGi0PuZSPBYznKtvxXIqu5EoU2wedRwILTytewb84hn1Rxrx0QP7mO/f
-        f9knJeQMlshv/kWR3wzhxW0AcmW8xzNkJa02vS2Y0w==
-X-Google-Smtp-Source: APiQypJGv5tcseONQbK5x2mnROWwvW0Pn8R67E8fsfoelBLNFOf4MQLot2TT1lmzTeAvYKM70sV8eZFtKle0oWz4pT4=
-X-Received: by 2002:a05:6512:104a:: with SMTP id c10mr5802lfb.184.1588637782543;
- Mon, 04 May 2020 17:16:22 -0700 (PDT)
+        bh=cCtbnn/mPSYMTovrACT2kKrxnwGdokswItkXqrNBN20=;
+        b=ft85AyOnqBv9cQCsnv0meE8/rqa5o1a5mSoeTscuzFJu0tw0jvUiOLIQzbYn3NCEv9
+         1eVrTkCXd3ofWN+D2MXxGidvEv+rV07Oc5b8c+tffH9Pp3XuSbwwfRSxyUgmibdSEYv7
+         2hlZLH9P8pC9VbfCTMcRh4nVX5eRmCZse9jIp4Coiayy8fFcavFJurDi85EI/J6/+ZCW
+         c0UC3/KGdkJXR1tc4kAdxIcJjk7oNIeWDOVjYtyLwS6TF0GF1DIbWwuIhEPJM99LXAuB
+         pyHUc3LoFqNxnAyf4jrBLFu1drXqtDOfNjZcjbxxGlxQGyD5TG/LDU32xgR068LfVRhY
+         RQeg==
+X-Gm-Message-State: AGi0PuakyRfpuLSKFju9uIrh874wsMaPJR5KjBpsIBJESkTYt1uFYidB
+        Z8cm6KUQb70YPsEDI0jUOwcPGEJ/V2rdMIeh1evvuw==
+X-Google-Smtp-Source: APiQypJUpeM7dR82Dn4AY7wcHcK7ejTccxr/K+9YNhjOMoBLs1Z8eehQdWNAzTelKtxHX1iwrzM/YGhrn32nrSdwdS8=
+X-Received: by 2002:a2e:6a08:: with SMTP id f8mr1135471ljc.8.1588666393650;
+ Tue, 05 May 2020 01:13:13 -0700 (PDT)
 MIME-Version: 1.0
-References: <1588627060-7399-1-git-send-email-zohar@linux.ibm.com>
-In-Reply-To: <1588627060-7399-1-git-send-email-zohar@linux.ibm.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Tue, 5 May 2020 02:15:56 +0200
-Message-ID: <CAG48ez2PwqoDBx0pkZKFHvMXHNqAc8AfuTR5oPoF-obHqUo0zQ@mail.gmail.com>
-Subject: Re: [RFC PATCH] ima: verify mprotect change is consistent with mmap policy
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     linux-integrity@vger.kernel.org,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>
+References: <20200501083510.1413-1-anders.roxell@linaro.org>
+ <CAFd5g45C98_70Utp=QBWg_tKxaUMJ-ArQvjWbG9q6=dixfHBxw@mail.gmail.com> <CABVgOSkAAb7tyjhdqFZmyKyknaxz_sM_o3=bK6cL6Ld4wFxkRQ@mail.gmail.com>
+In-Reply-To: <CABVgOSkAAb7tyjhdqFZmyKyknaxz_sM_o3=bK6cL6Ld4wFxkRQ@mail.gmail.com>
+From:   Anders Roxell <anders.roxell@linaro.org>
+Date:   Tue, 5 May 2020 10:13:02 +0200
+Message-ID: <CADYN=9+AvFYgXKCrT_xwR50b0cPihgCiBvzOypOGNkho2GsvBA@mail.gmail.com>
+Subject: Re: [PATCH] kunit: Kconfig: enable a KUNIT_RUN_ALL fragment
+To:     David Gow <davidgow@google.com>
+Cc:     Brendan Higgins <brendanhiggins@google.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "Theodore Ts'o" <tytso@mit.edu>, adilger.kernel@dilger.ca,
+        Marco Elver <elver@google.com>,
+        John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-ext4@vger.kernel.org, kasan-dev <kasan-dev@googlegroups.com>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        KUnit Development <kunit-dev@googlegroups.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, May 4, 2020 at 11:18 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
-> Files can be mmap'ed read/write and later changed to execute to circumvent
-> IMA's mmap appraise policy rules.  Due to locking issues (mmap semaphore
-> would be taken prior to i_mutex), files can not be measured or appraised at
-> this point.  Eliminate this integrity gap, by denying the mprotect
-> PROT_EXECUTE change, if an mmap appraise policy rule exists.
+On Sat, 2 May 2020 at 04:11, David Gow <davidgow@google.com> wrote:
+>
+> On Sat, May 2, 2020 at 4:31 AM Brendan Higgins
+> <brendanhiggins@google.com> wrote:
+> >
+> > On Fri, May 1, 2020 at 1:35 AM Anders Roxell <anders.roxell@linaro.org> wrote:
+> > >
+> > > Make it easier to enable all KUnit fragments.  This is needed for kernel
+> > > test-systems, so its easy to get all KUnit tests enabled and if new gets
+> > > added they will be enabled as well.  Fragments that has to be builtin
+> > > will be missed if CONFIG_KUNIT_RUN_ALL is set as a module.
+> > >
+> > > Adding 'if !KUNIT_RUN_ALL' so individual test can be turned of if
+> > > someone wants that even though KUNIT_RUN_ALL is enabled.
+> >
+> > I would LOVE IT, if you could make this work! I have been trying to
+> > figure out the best way to run all KUnit tests for a long time now.
+> >
+> > That being said, I am a bit skeptical that this approach will be much
+> > more successful than just using allyesconfig. Either way, there are
+> > tests coming down the pipeline that are incompatible with each other
+> > (the KASAN test and the KCSAN test will be incompatible). Even so,
+> > tests like the apparmor test require a lot of non-default
+> > configuration to compile. In the end, I am not sure how many tests we
+> > will really be able to turn on this way.
+> >
+> > Thoughts?
+>
+> I think there's still some value in this which the allyesconfig option
+> doesn't provide. As you point out, it's not possible to have a generic
+> "run all tests" option due to potential conflicting dependencies, but
+> this does provide a way to run all tests for things enabled in the
+> current config. This could be really useful for downstream developers
+> who want a way of running all tests relevant to their config without
+> the overhead of running irrelevant tests (e.g., for drivers they don't
+> build).
 
-Just keep in mind that there are other ways to create executable
-mappings containing controlled code; e.g. PROT_EXEC with
-MAP_ANONYMOUS, or writing to /proc/self/mem (which is a debugging API
-that works entirely without ever making the VMA writable - I had an
-old series to provide LSM hooks for that stuff at
-<https://lore.kernel.org/lkml/1478142286-18427-3-git-send-email-jann@thejh.net/>,
-but I guess I must have forgotten about it or something...).
+It will solve that as well as for a tester doesn't have to go through all KUnit
+tests fragments to turn them on.
+
+> Using allyesconfig doesn't make that distinction.
+
+We could also create a config fragment file in kernel/configs/kunit.config
+where we set
+------start
+CONFIG_KUNIT=y
+CONFIG_KUNIT_RUN_ALL=y
+CONFIG_SECURITY_APPARMOR=y
+------end
+
+
+So, these two can only be enabled if KUNIT=y
+CONFIG_KUNIT_DRIVER_PE_TEST=y
+CONFIG_PM_QOS_KUNIT_TEST=y
+
+and for this one we have a pre-request of SECURITY_APPARMOR=y
+CONFIG_SECURITY_APPARMOR_KUNIT_TEST=y
+
+Other tests solves the dependencies with 'select' like
+CONFIG_EXT4_KUNIT_TESTS, that adds this row in
+fs/ext4/Kconfig, 'select EXT4_FS'
+
+But I think we should try to minimize the number of 'select' statements,
+in order to avoid circular dependencies and unexpected behaviours.
+Maybe we should add the CONFIG_EXT4_FS=y into the kunit.config
+file instead ?
+
+
+>
+> Ultimately, we'll probably still want something which enables a
+> broader set of tests for upstream development: whether that's based on
+> this, allyesconfig, or something else entirely remains to be seen, I
+> think. I suspect we're going to end up with something
+> subsystem-specific (having a kunitconfig per subsystem, or a testing
+> line in MAINTAINERS or similar are ideas which have been brought up in
+> the past).
+>
+> This is a great looking tool to have in the toolbox, though.
+
+I agree!
+
+I'll prepare a patchset with individual patches as was suggested by Marco
+shortly.
+
+Cheers,
+Anders
