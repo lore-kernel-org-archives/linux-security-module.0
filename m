@@ -2,109 +2,137 @@ Return-Path: <SRS0=J6Hd=6T=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19399C47259
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 May 2020 14:18:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B3F5C47247
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 May 2020 14:58:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F114C20838
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 May 2020 14:18:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E891B206B9
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 May 2020 14:58:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729436AbgEEOSg (ORCPT
+        id S1729416AbgEEO6M (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 5 May 2020 10:18:36 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54208 "EHLO
-        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730192AbgEEOQz (ORCPT
+        Tue, 5 May 2020 10:58:12 -0400
+Received: from smtp-bc0a.mail.infomaniak.ch ([45.157.188.10]:34005 "EHLO
+        smtp-bc0a.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729123AbgEEO6M (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 5 May 2020 10:16:55 -0400
-Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 045E4H3k144875;
-        Tue, 5 May 2020 10:16:52 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 30sp8juqqw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 05 May 2020 10:16:52 -0400
-Received: from m0127361.ppops.net (m0127361.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 045E4MUL145111;
-        Tue, 5 May 2020 10:16:51 -0400
-Received: from ppma02fra.de.ibm.com (47.49.7a9f.ip4.static.sl-reverse.com [159.122.73.71])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 30sp8juqnu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 05 May 2020 10:16:50 -0400
-Received: from pps.filterd (ppma02fra.de.ibm.com [127.0.0.1])
-        by ppma02fra.de.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 045EFKbq027122;
-        Tue, 5 May 2020 14:16:48 GMT
-Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
-        by ppma02fra.de.ibm.com with ESMTP id 30s0g5awdq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 05 May 2020 14:16:47 +0000
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 045EFZSd61211098
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 5 May 2020 14:15:35 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6616342041;
-        Tue,  5 May 2020 14:16:45 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A180842042;
-        Tue,  5 May 2020 14:16:44 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.200.227])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue,  5 May 2020 14:16:44 +0000 (GMT)
-Message-ID: <1588688204.5157.5.camel@linux.ibm.com>
-Subject: Re: [RFC PATCH] ima: verify mprotect change is consistent with mmap
- policy
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Jann Horn <jannh@google.com>
-Cc:     linux-integrity@vger.kernel.org,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Biggers <ebiggers@kernel.org>,
+        Tue, 5 May 2020 10:58:12 -0400
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 49GjWS0PVPzlhDCG;
+        Tue,  5 May 2020 16:57:40 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
+        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 49GjWP0npnzlvfC7;
+        Tue,  5 May 2020 16:57:37 +0200 (CEST)
+Subject: Re: [PATCH v3 0/5] Add support for RESOLVE_MAYEXEC
+To:     Christian Heimes <christian@python.org>,
+        Jann Horn <jannh@google.com>, Florian Weimer <fw@deneb.enyo.de>
+Cc:     kernel list <linux-kernel@vger.kernel.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Eric Chiang <ericchiang@google.com>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
         linux-security-module <linux-security-module@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>
-Date:   Tue, 05 May 2020 10:16:44 -0400
-In-Reply-To: <CAG48ez2PwqoDBx0pkZKFHvMXHNqAc8AfuTR5oPoF-obHqUo0zQ@mail.gmail.com>
-References: <1588627060-7399-1-git-send-email-zohar@linux.ibm.com>
-         <CAG48ez2PwqoDBx0pkZKFHvMXHNqAc8AfuTR5oPoF-obHqUo0zQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <20200428175129.634352-1-mic@digikod.net>
+ <CAG48ez1bKzh1YvbD_Lcg0AbMCH_cdZmrRRumU7UCJL=qPwNFpQ@mail.gmail.com>
+ <87blnb48a3.fsf@mid.deneb.enyo.de>
+ <CAG48ez2TphTj-VdDaSjvnr0Q8BhNmT3n86xYz4bF3wRJmAMsMw@mail.gmail.com>
+ <b78d2d0d-04cf-c0a9-bd88-20c6ec6705fd@python.org>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Message-ID: <8d47dfe6-1ff7-e5fe-d4d0-c2493db3fd63@digikod.net>
+Date:   Tue, 5 May 2020 16:57:36 +0200
+User-Agent: 
+MIME-Version: 1.0
+In-Reply-To: <b78d2d0d-04cf-c0a9-bd88-20c6ec6705fd@python.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
- definitions=2020-05-05_08:2020-05-04,2020-05-05 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
- malwarescore=0 suspectscore=0 priorityscore=1501 spamscore=0 clxscore=1011
- mlxscore=0 lowpriorityscore=0 mlxlogscore=999 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2005050109
+X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
+X-Antivirus-Code: 0x100000
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Jann,
 
-On Tue, 2020-05-05 at 02:15 +0200, Jann Horn wrote:
-> On Mon, May 4, 2020 at 11:18 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
-> > Files can be mmap'ed read/write and later changed to execute to circumvent
-> > IMA's mmap appraise policy rules.  Due to locking issues (mmap semaphore
-> > would be taken prior to i_mutex), files can not be measured or appraised at
-> > this point.  Eliminate this integrity gap, by denying the mprotect
-> > PROT_EXECUTE change, if an mmap appraise policy rule exists.
+On 01/05/2020 13:47, Christian Heimes wrote:
+> On 29/04/2020 00.01, Jann Horn wrote:
+>> On Tue, Apr 28, 2020 at 11:21 PM Florian Weimer <fw@deneb.enyo.de> wrote:
+>>> * Jann Horn:
+>>>
+>>>> Just as a comment: You'd probably also have to use RESOLVE_MAYEXEC in
+>>>> the dynamic linker.
+>>>
+>>> Absolutely.  In typical configurations, the kernel does not enforce
+>>> that executable mappings must be backed by files which are executable.
+>>> It's most obvious with using an explicit loader invocation to run
+>>> executables on noexec mounts.  RESOLVE_MAYEXEC is much more useful
+>>> than trying to reimplement the kernel permission checks (or what some
+>>> believe they should be) in userspace.
+>>
+>> Oh, good point.
+>>
+>> That actually seems like something Mickaël could add to his series? If
+>> someone turns on that knob for "When an interpreter wants to execute
+>> something, enforce that we have execute access to it", they probably
+>> also don't want it to be possible to just map files as executable? So
+>> perhaps when that flag is on, the kernel should either refuse to map
+>> anything as executable if it wasn't opened with RESOLVE_MAYEXEC or
+>> (less strict) if RESOLVE_MAYEXEC wasn't used, print a warning, then
+>> check whether the file is executable and bail out if not?
+>>
+>> A configuration where interpreters verify that scripts are executable,
+>> but other things can just mmap executable pages, seems kinda
+>> inconsistent...
 > 
-> Just keep in mind that there are other ways to create executable
-> mappings containing controlled code; e.g. PROT_EXEC with
-> MAP_ANONYMOUS, or writing to /proc/self/mem (which is a debugging API
-> that works entirely without ever making the VMA writable - I had an
-> old series to provide LSM hooks for that stuff at
-> <https://lore.kernel.org/lkml/1478142286-18427-3-git-send-email-jann@thejh.net/>,
-> but I guess I must have forgotten about it or something...).
+> +1
+> 
+> I worked with Steve Downer on Python PEP 578 [1] that added audit hooks
+> and PyFile_OpenCode() to CPython. A PyFile_OpenCode() implementation
+> with RESOLVE_MAYEXEC will hep to secure loading of Python code. But
+> Python also includes a wrapper of libffi. ctypes or cffi can load native
+> code from either shared libraries with dlopen() or execute native code
+> from mmap() regions. For example SnakeEater [2] is a clever attack that
+> abused memfd_create syscall and proc filesystem to execute code.
+> 
+> A consistent security policy must also ensure that mmap() PROT_EXEC
+> enforces the same restrictions as RESOLVE_MAYEXEC. The restriction
+> doesn't have be part of this patch, though.
+> 
+> Christian
+> 
+> [1] https://www.python.org/dev/peps/pep-0578/
+> [2] https://github.com/nullbites/SnakeEater/blob/master/SnakeEater2.py
 
-Sure.  These sound like memory attacks, which should be closed, but
-are probably out of scope for IMA.
+To be consistent, a "noexec" policy must indeed also restricts features
+such as mprotect(2) and mmap(2) which may enable to set arbitrary memory
+as executable. This can be restricted with SELinux (i.e. execmem,
+execmod,execheap and execstack permissions), PaX MPROTECT [1] or SARA [2].
 
-thanks,
-
-Mimi
+[1] https://pax.grsecurity.net/docs/mprotect.txt
+[2]
+https://lore.kernel.org/lkml/1562410493-8661-1-git-send-email-s.mesoraca16@gmail.com/
