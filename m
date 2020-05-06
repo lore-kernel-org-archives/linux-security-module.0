@@ -2,173 +2,181 @@ Return-Path: <SRS0=wiIN=6U=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9E46C28CBC
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 May 2020 10:33:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57C20C28CBC
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 May 2020 13:58:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A540520663
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 May 2020 10:33:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F6CA206DB
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 May 2020 13:58:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="t4a2X1xZ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q6HPTt+u"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728943AbgEFKdx (ORCPT
+        id S1728679AbgEFN63 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 6 May 2020 06:33:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41466 "EHLO
+        Wed, 6 May 2020 09:58:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45248 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728768AbgEFKdx (ORCPT
+        by vger.kernel.org with ESMTP id S1725915AbgEFN63 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 6 May 2020 06:33:53 -0400
-Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 621BDC061A0F
-        for <linux-security-module@vger.kernel.org>; Wed,  6 May 2020 03:33:52 -0700 (PDT)
-Received: by mail-lj1-x242.google.com with SMTP id j3so1770267ljg.8
-        for <linux-security-module@vger.kernel.org>; Wed, 06 May 2020 03:33:52 -0700 (PDT)
+        Wed, 6 May 2020 09:58:29 -0400
+Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01FF7C061A0F;
+        Wed,  6 May 2020 06:58:29 -0700 (PDT)
+Received: by mail-wm1-x343.google.com with SMTP id g12so2783341wmh.3;
+        Wed, 06 May 2020 06:58:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1rTt6LxaW/pHMjJunZzywGj8yOmnvtXY/IpJZLrkwj0=;
-        b=t4a2X1xZecTMAZKKfKloaMIBbKbLsi4VpQyqIWN1xF0DyDh1wVaRehTCJaZg2McT5O
-         HYJ0KfuCC6DXv3aXeqD5Vwy4k8q21/pCVGbunFsDZb2nIlgaBmr4apqE/EQpy/vLDkd8
-         MDFvBTOGgHO+TxmSLQWuOwNy0c8/4coKHUTxu7E6HNd55tCXva9mj7uHD+mT51/KMFJY
-         r7xAp6VJy25G+mWIQlCsDnFPYbpy6PL53rJ6yRT3lmIiGyDyh2o3xfoVaOFXKwrLUCK4
-         UjpCSUmfaix/bg0gfEkdJxZbbPdK2P6v5+JGizRJ0BjnVRzmyAAhWA6MkzD4YvrXtSEb
-         j/Hw==
+         :cc:content-transfer-encoding;
+        bh=+EZWEZLLTI3Gi05jCgh0gur+NH9htHBwJfh43Oi88+w=;
+        b=Q6HPTt+u3+89M2HFaPVRacO/JQ3o6TncSmdWSGOQ0aPRnnnZjOBQMYjCkj81udQqpM
+         z822xxWIPHed1tEBquN88P8vzAjlh+EsUFSF2Hst5yMyGKVo7g+Fwp8CpqvgHmCgtvU+
+         QnqhNYrsoleXRli8jMRR9IfkdLU4IBvPjcFCL0GYrZmdO3JRLCQ9T0ZuSPK0/QZUlXBV
+         m1ECS8ST0niSClCdgxrpbbzA/8B13pqxMz8FIft0JLf8RXaGDI2ZJXBf9JftnJJwenG8
+         ZnkPA1EkBHstMnBaleNuzPPikWJ66SMB46cXZnNG28/NhwLDZiuC6hPEL338zXOxNh+D
+         h+lQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1rTt6LxaW/pHMjJunZzywGj8yOmnvtXY/IpJZLrkwj0=;
-        b=BrnF9g//kB0S2hs0iGD7INuP06PouRaIwxfjfoz6PRwbAv5Ajf0SNF/ei5bY7rvr9X
-         Jdbf0x9D64L3EprMCRpwHIw0lCbaoVA3hsZtady7hkSLGuRS7H5cwVGnN3IpjrZOgbDl
-         jO1kJ4/pCLLKy4FnpTiLutyGUTO0sgN9YcP72gBv6fgqQvX1yyxAzRw6oWFpH9Wdqfgq
-         FGVmeB2N79sz6nq40NjbK5a6lFbTUct4ScdYKYROZ1VH8sYZULQFicrdD4hUgAwA+mDm
-         Unt07Xm4LI/g2m897JAbMxz+fqngMeyKJXQvasVg22HMEDRPKYyZhoD4rcq1ukhzHm86
-         sWXA==
-X-Gm-Message-State: AGi0PuajHonZJH7afsWPB4bx1n4bB4n83k1oeCaVYPMRwOik/coSC8Ll
-        jUZDhRxGZBKwbD0Wx/QSfWc+p2KxnpckaXW8x2CfXw==
-X-Google-Smtp-Source: APiQypJ2iFf2i42ytFK2XNMo32cD+nb2gyVuT/JFrTqbobcbJ/UpsVR9eFZeVYgFYeicoDgdzICiyNX3uSgZYLIIfJ8=
-X-Received: by 2002:a2e:9842:: with SMTP id e2mr4512086ljj.273.1588761230232;
- Wed, 06 May 2020 03:33:50 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=+EZWEZLLTI3Gi05jCgh0gur+NH9htHBwJfh43Oi88+w=;
+        b=fgTNRbuGBCwZx5YpgEBXomO9/IkxkZPqcmL+ccIvFkBrnqrdhGu1sxvY7c+u2HJa5a
+         mhRZA/CcFV0oP8XLatpGMiok3Ibwl8SqyEvDolwMoHY00Sf/Qx+KVfnrVqYLwE3T4jjt
+         cUT7hpPXiXVxYgl/5JGm+Jl/xwc6l6G846I8mcsJXsoU5hR5dvqyK+7zKrYA3PxDBoPy
+         XW8e3yMHnqTTuJZKomN+iBSB1yjrVGxrw6c5uguO2MmbiU53Tq8j+V7hnFiN/MmTJh6d
+         lnkF3mNVV8IE6wL+fsVqpTwDN5g7BKuGOnUvRjqtLv+CIoiJA2jRDXmdCjzKnOhPRnRg
+         Hbcw==
+X-Gm-Message-State: AGi0PuZIKrm5QSmOSD8XAD4T/yHowIwyFUrpMQV6ptUNciNts1+UMRja
+        vaXX3BrWX9JDU1OFypT8S0JQqYUNUwvPDn3mZ8c=
+X-Google-Smtp-Source: APiQypKjKQAId4IZ/DADa6i5YJiFkV0MIE/wVRudVIYBUwp4MA9TqjXOBxPzV8T9K3OYvXCy4DV8NSplZatxaHWSUKw=
+X-Received: by 2002:a7b:c3ca:: with SMTP id t10mr4560109wmj.94.1588773507683;
+ Wed, 06 May 2020 06:58:27 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200505102700.7912-1-anders.roxell@linaro.org> <CABVgOS=awiwi7APWr5HgU6Eht-VAygWPeQyNsCnAF09OLpR46A@mail.gmail.com>
-In-Reply-To: <CABVgOS=awiwi7APWr5HgU6Eht-VAygWPeQyNsCnAF09OLpR46A@mail.gmail.com>
-From:   Anders Roxell <anders.roxell@linaro.org>
-Date:   Wed, 6 May 2020 12:33:38 +0200
-Message-ID: <CADYN=9Jdwd=3Rh=wyzO7eOxtyTSm+JqjF385iQjfMocpz1A3YA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/6] kunit: Kconfig: enable a KUNIT_RUN_ALL fragment
-To:     David Gow <davidgow@google.com>
-Cc:     Brendan Higgins <brendanhiggins@google.com>,
-        John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        KUnit Development <kunit-dev@googlegroups.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-ext4@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Marco Elver <elver@google.com>
+References: <20200505153156.925111-1-mic@digikod.net> <d4616bc0-39df-5d6c-9f5b-d84cf6e65960@digikod.net>
+In-Reply-To: <d4616bc0-39df-5d6c-9f5b-d84cf6e65960@digikod.net>
+From:   "Lev R. Oshvang ." <levonshe@gmail.com>
+Date:   Wed, 6 May 2020 16:58:16 +0300
+Message-ID: <CAP22eLHres_shVWEC+2=wcKXRsQzfNKDAnyRd8yuO_gJ3Wi_JA@mail.gmail.com>
+Subject: Re: [PATCH v5 0/6] Add support for O_MAYEXEC
+To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc:     linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Eric Chiang <ericchiang@google.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mickael.salaun@ssi.gouv.fr>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        =?UTF-8?Q?Philippe_Tr=C3=A9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi David,
-
-Thank you for the review.
-
-On Wed, 6 May 2020 at 07:08, David Gow <davidgow@google.com> wrote:
+On Tue, May 5, 2020 at 6:36 PM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> w=
+rote:
 >
-> On Tue, May 5, 2020 at 6:27 PM Anders Roxell <anders.roxell@linaro.org> wrote:
+>
+> On 05/05/2020 17:31, Micka=C3=ABl Sala=C3=BCn wrote:
+> > Hi,
 > >
-> > Make it easier to enable all KUnit fragments.  This is needed for kernel
-> > test-systems, so its easy to get all KUnit tests enabled and if new gets
-> > added they will be enabled as well.  Fragments that has to be builtin
-> > will be missed if CONFIG_KUNIT_RUN_ALL is set as a module.
+> > This fifth patch series add new kernel configurations (OMAYEXEC_STATIC,
+> > OMAYEXEC_ENFORCE_MOUNT, and OMAYEXEC_ENFORCE_FILE) to enable to
+> > configure the security policy at kernel build time.  As requested by
+> > Mimi Zohar, I completed the series with one of her patches for IMA.
 > >
-> > Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-> > ---
-> >  lib/kunit/Kconfig | 6 ++++++
-> >  1 file changed, 6 insertions(+)
+> > The goal of this patch series is to enable to control script execution
+> > with interpreters help.  A new O_MAYEXEC flag, usable through
+> > openat2(2), is added to enable userspace script interpreter to delegate
+> > to the kernel (and thus the system security policy) the permission to
+> > interpret/execute scripts or other files containing what can be seen as
+> > commands.
 > >
-> > diff --git a/lib/kunit/Kconfig b/lib/kunit/Kconfig
-> > index 95d12e3d6d95..537f37bc8400 100644
-> > --- a/lib/kunit/Kconfig
-> > +++ b/lib/kunit/Kconfig
-> > @@ -41,4 +41,10 @@ config KUNIT_EXAMPLE_TEST
-> >           is intended for curious hackers who would like to understand how to
-> >           use KUnit for kernel development.
+> > A simple system-wide security policy can be enforced by the system
+> > administrator through a sysctl configuration consistent with the mount
+> > points or the file access rights.  The documentation patch explains the
+> > prerequisites.
 > >
-> > +config KUNIT_RUN_ALL
-> > +       tristate "KUnit run all test"
->
-> I'm not 100% sure about this name and description. It only actually
-> "runs" the tests if they're builtin (as modules, they'll only run when
-> loaded).
->
-> Would KUNIT_BUILD_ALL or KUNIT_ALL_TESTS
-
-I would like to go with KUNIT_ALL_TESTS if no one objects.
-
-> or similar be better?
->
-> It also, as mentioned, only really runs all available (i.e., with
-> dependencies met in the current .config) tests (as distinct from the
-> --alltests flag to kunit.py, which builds UML with allyesconfig), it
-> might be good to add this to the description or help.
->
-> Something like "Enable all KUnit tests" or "Enable all available KUnit
-> tests" (or even something about "all KUnit tests with satisfied
-> dependencies") might be clearer.
-
-I like "All KUnit tests with satisfied dependencies".
-
->
-> > +       help
-> > +         Enables all KUnit tests, if they can be enabled.
-> > +         That depends on if KUnit is enabled as a module or builtin.
-> > +
-> I like the first line here, but the second one could use a bit more
-> explanation. Maybe copy some of the boilerplate text from other tests,
-> e.g.:
->
->           KUnit tests run during boot and output the results to the debug log
->          in TAP format (http://testanything.org/). Only useful for kernel devs
->          running the KUnit test harness, and not intended for inclusion into a
->          production build.
->
->          For more information on KUnit and unit tests in general please refer
->          to the KUnit documentation in Documentation/dev-tools/kunit/.
->
->          If unsure, say N.
-
-Makes much more sense, thanks.
-
->
-> >  endif # KUNIT
-> > --
-> > 2.20.1
+> > Furthermore, the security policy can also be delegated to an LSM, eithe=
+r
+> > a MAC system or an integrity system.  For instance, the new kernel
+> > MAY_OPENEXEC flag closes a major IMA measurement/appraisal interpreter
+> > integrity gap by bringing the ability to check the use of scripts [1].
+> > Other uses are expected, such as for openat2(2) [2], SGX integration
+> > [3], bpffs [4] or IPE [5].
 > >
+> > Userspace needs to adapt to take advantage of this new feature.  For
+> > example, the PEP 578 [6] (Runtime Audit Hooks) enables Python 3.8 to be
+> > extended with policy enforcement points related to code interpretation,
+> > which can be used to align with the PowerShell audit features.
+> > Additional Python security improvements (e.g. a limited interpreter
+> > withou -c, stdin piping of code) are on their way.
+> >
+> > The initial idea come from CLIP OS 4 and the original implementation ha=
+s
+> > been used for more than 12 years:
+> > https://github.com/clipos-archive/clipos4_doc
+> >
+> > An introduction to O_MAYEXEC was given at the Linux Security Summit
+> > Europe 2018 - Linux Kernel Security Contributions by ANSSI:
+> > https://www.youtube.com/watch?v=3DchNjCRtPKQY&t=3D17m15s
+> > The "write xor execute" principle was explained at Kernel Recipes 2018 =
+-
+> > CLIP OS: a defense-in-depth OS:
+> > https://www.youtube.com/watch?v=3DPjRE0uBtkHU&t=3D11m14s
+> >
+> > This patch series can be applied on top of v5.7-rc4.  This can be teste=
+d
+> > with CONFIG_SYSCTL.  I would really appreciate constructive comments on
+> > this patch series.
+> >
+> > Previous version:
+> > https://lore.kernel.org/lkml/20200428175129.634352-1-mic@digikod.net/
 >
-> Otherwise, this is looking good. I've done some quick testing, and it
-> all seems to work for me. As long as it's clear what the difference
-> between this and other ways of running "all tests" (like the
-> --alltests kunit.py option),
+> The previous version (v4) is
+> https://lore.kernel.org/lkml/20200430132320.699508-1-mic@digikod.net/
 
-Do you think it should be made clearer in some way?
 
-> I'm all for including this in.
->
+Hi Michael
 
-Cheers,
-Anders
+I have couple of question
+1. Why you did not add O_MAYEXEC to open()?
+Some time ago (around v4.14) open() did not return EINVAL when
+VALID_OPEN_FLAGS check failed.
+Now it does, so I do not see a problem that interpreter will use
+simple open(),  ( Although that path might be manipulated, but file
+contents will be verified by IMA)
+2. When you apply a new flag to mount, it means that IMA will check
+all files under this mount and it does not matter whether the file in
+question is a script or not.
+IMHO it is too hard overhead for performance reasons.
+
+Regards,
+LEv
