@@ -2,181 +2,119 @@ Return-Path: <SRS0=wiIN=6U=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57C20C28CBC
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 May 2020 13:58:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0170C47256
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 May 2020 15:34:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2F6CA206DB
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 May 2020 13:58:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D13CF20A8B
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 May 2020 15:34:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q6HPTt+u"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="oEhUT0Uf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728679AbgEFN63 (ORCPT
+        id S1729428AbgEFPec (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 6 May 2020 09:58:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45248 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725915AbgEFN63 (ORCPT
+        Wed, 6 May 2020 11:34:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60256 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729353AbgEFPec (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 6 May 2020 09:58:29 -0400
-Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01FF7C061A0F;
-        Wed,  6 May 2020 06:58:29 -0700 (PDT)
-Received: by mail-wm1-x343.google.com with SMTP id g12so2783341wmh.3;
-        Wed, 06 May 2020 06:58:28 -0700 (PDT)
+        Wed, 6 May 2020 11:34:32 -0400
+Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 108F6C061A10
+        for <linux-security-module@vger.kernel.org>; Wed,  6 May 2020 08:34:32 -0700 (PDT)
+Received: by mail-pj1-x1044.google.com with SMTP id fu13so1043340pjb.5
+        for <linux-security-module@vger.kernel.org>; Wed, 06 May 2020 08:34:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=+EZWEZLLTI3Gi05jCgh0gur+NH9htHBwJfh43Oi88+w=;
-        b=Q6HPTt+u3+89M2HFaPVRacO/JQ3o6TncSmdWSGOQ0aPRnnnZjOBQMYjCkj81udQqpM
-         z822xxWIPHed1tEBquN88P8vzAjlh+EsUFSF2Hst5yMyGKVo7g+Fwp8CpqvgHmCgtvU+
-         QnqhNYrsoleXRli8jMRR9IfkdLU4IBvPjcFCL0GYrZmdO3JRLCQ9T0ZuSPK0/QZUlXBV
-         m1ECS8ST0niSClCdgxrpbbzA/8B13pqxMz8FIft0JLf8RXaGDI2ZJXBf9JftnJJwenG8
-         ZnkPA1EkBHstMnBaleNuzPPikWJ66SMB46cXZnNG28/NhwLDZiuC6hPEL338zXOxNh+D
-         h+lQ==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=Gb2TqqmmU2qOWGfoFSijSCwJM2igRhwccR0CWHmE4pM=;
+        b=oEhUT0Ufn+nJY7KEy1YZKbHTppMxHGRjgiK0K6/qIDtvjoNBRFfPPmvqXs7xjKpt0s
+         kypw0Y/2r1ktwvEChy0w9RutTZ4YC+netbwrszcqxir3JA/SZ0Cqn3v/vjD72T5EJ62W
+         dBqHktrHl5BDGJiZXZtUanyNjMJMcyXtmsjP4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=+EZWEZLLTI3Gi05jCgh0gur+NH9htHBwJfh43Oi88+w=;
-        b=fgTNRbuGBCwZx5YpgEBXomO9/IkxkZPqcmL+ccIvFkBrnqrdhGu1sxvY7c+u2HJa5a
-         mhRZA/CcFV0oP8XLatpGMiok3Ibwl8SqyEvDolwMoHY00Sf/Qx+KVfnrVqYLwE3T4jjt
-         cUT7hpPXiXVxYgl/5JGm+Jl/xwc6l6G846I8mcsJXsoU5hR5dvqyK+7zKrYA3PxDBoPy
-         XW8e3yMHnqTTuJZKomN+iBSB1yjrVGxrw6c5uguO2MmbiU53Tq8j+V7hnFiN/MmTJh6d
-         lnkF3mNVV8IE6wL+fsVqpTwDN5g7BKuGOnUvRjqtLv+CIoiJA2jRDXmdCjzKnOhPRnRg
-         Hbcw==
-X-Gm-Message-State: AGi0PuZIKrm5QSmOSD8XAD4T/yHowIwyFUrpMQV6ptUNciNts1+UMRja
-        vaXX3BrWX9JDU1OFypT8S0JQqYUNUwvPDn3mZ8c=
-X-Google-Smtp-Source: APiQypKjKQAId4IZ/DADa6i5YJiFkV0MIE/wVRudVIYBUwp4MA9TqjXOBxPzV8T9K3OYvXCy4DV8NSplZatxaHWSUKw=
-X-Received: by 2002:a7b:c3ca:: with SMTP id t10mr4560109wmj.94.1588773507683;
- Wed, 06 May 2020 06:58:27 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Gb2TqqmmU2qOWGfoFSijSCwJM2igRhwccR0CWHmE4pM=;
+        b=NAnzsu2eJ2lL5IxY63w9suGJzzY8StA2f1CFXeM3MURwDoHID6rUYDPhV+Ux2s2Zfh
+         x1ZhIe9Yjmfg8Iu04hoyYnwinyofC89C36bsQLk5CYAu8oDj5hk/KdZhaZ1XWh93AboQ
+         VtG9sqeNKuN6D+qwszIbJSW2VoDOIBOryxxO7bZtrljqtXwERMzrrAO84aDZUcliOaQS
+         rLSXmvVjIa302pT4Brif3DSFbM/G5Oku23JedTziVIhP0CEO+QaGm5yvmtjKB092CDMs
+         beP1NBOw0Im+EJnbHLR0vqu0zOBcseKl+aiF+WW1uVvHgke4PPOCsU/jq6xmLFfTN9q8
+         9uPA==
+X-Gm-Message-State: AGi0PuZjIJsEg54YTRor/QIy4vmG2xxELwSQ/D/RWQ7XDon8rkn0Y1bG
+        uXu5k5KTeOp0eip0poRSbN4YDUs14n4=
+X-Google-Smtp-Source: APiQypKAC5fjwvNCBfn2l3Itu4c/lAUzq6/AohL7JUYZevpFrxGdy1xepw7tko5JMzww4m0sOoG8Ug==
+X-Received: by 2002:a17:902:23:: with SMTP id 32mr8696193pla.40.1588779271527;
+        Wed, 06 May 2020 08:34:31 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id o1sm5230528pjs.39.2020.05.06.08.34.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 May 2020 08:34:30 -0700 (PDT)
+Date:   Wed, 6 May 2020 08:34:29 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] securityfs: Add missing d_delete() call on removal
+Message-ID: <202005060831.C05759E@keescook>
+References: <202005051626.7648DC65@keescook>
+ <20200506011431.GB23230@ZenIV.linux.org.uk>
+ <202005052024.2D7626C742@keescook>
+ <20200506040252.GC23230@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-References: <20200505153156.925111-1-mic@digikod.net> <d4616bc0-39df-5d6c-9f5b-d84cf6e65960@digikod.net>
-In-Reply-To: <d4616bc0-39df-5d6c-9f5b-d84cf6e65960@digikod.net>
-From:   "Lev R. Oshvang ." <levonshe@gmail.com>
-Date:   Wed, 6 May 2020 16:58:16 +0300
-Message-ID: <CAP22eLHres_shVWEC+2=wcKXRsQzfNKDAnyRd8yuO_gJ3Wi_JA@mail.gmail.com>
-Subject: Re: [PATCH v5 0/6] Add support for O_MAYEXEC
-To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc:     linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christian Heimes <christian@python.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Eric Chiang <ericchiang@google.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mickael.salaun@ssi.gouv.fr>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        =?UTF-8?Q?Philippe_Tr=C3=A9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200506040252.GC23230@ZenIV.linux.org.uk>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, May 5, 2020 at 6:36 PM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> w=
-rote:
->
->
-> On 05/05/2020 17:31, Micka=C3=ABl Sala=C3=BCn wrote:
-> > Hi,
-> >
-> > This fifth patch series add new kernel configurations (OMAYEXEC_STATIC,
-> > OMAYEXEC_ENFORCE_MOUNT, and OMAYEXEC_ENFORCE_FILE) to enable to
-> > configure the security policy at kernel build time.  As requested by
-> > Mimi Zohar, I completed the series with one of her patches for IMA.
-> >
-> > The goal of this patch series is to enable to control script execution
-> > with interpreters help.  A new O_MAYEXEC flag, usable through
-> > openat2(2), is added to enable userspace script interpreter to delegate
-> > to the kernel (and thus the system security policy) the permission to
-> > interpret/execute scripts or other files containing what can be seen as
-> > commands.
-> >
-> > A simple system-wide security policy can be enforced by the system
-> > administrator through a sysctl configuration consistent with the mount
-> > points or the file access rights.  The documentation patch explains the
-> > prerequisites.
-> >
-> > Furthermore, the security policy can also be delegated to an LSM, eithe=
-r
-> > a MAC system or an integrity system.  For instance, the new kernel
-> > MAY_OPENEXEC flag closes a major IMA measurement/appraisal interpreter
-> > integrity gap by bringing the ability to check the use of scripts [1].
-> > Other uses are expected, such as for openat2(2) [2], SGX integration
-> > [3], bpffs [4] or IPE [5].
-> >
-> > Userspace needs to adapt to take advantage of this new feature.  For
-> > example, the PEP 578 [6] (Runtime Audit Hooks) enables Python 3.8 to be
-> > extended with policy enforcement points related to code interpretation,
-> > which can be used to align with the PowerShell audit features.
-> > Additional Python security improvements (e.g. a limited interpreter
-> > withou -c, stdin piping of code) are on their way.
-> >
-> > The initial idea come from CLIP OS 4 and the original implementation ha=
-s
-> > been used for more than 12 years:
-> > https://github.com/clipos-archive/clipos4_doc
-> >
-> > An introduction to O_MAYEXEC was given at the Linux Security Summit
-> > Europe 2018 - Linux Kernel Security Contributions by ANSSI:
-> > https://www.youtube.com/watch?v=3DchNjCRtPKQY&t=3D17m15s
-> > The "write xor execute" principle was explained at Kernel Recipes 2018 =
--
-> > CLIP OS: a defense-in-depth OS:
-> > https://www.youtube.com/watch?v=3DPjRE0uBtkHU&t=3D11m14s
-> >
-> > This patch series can be applied on top of v5.7-rc4.  This can be teste=
-d
-> > with CONFIG_SYSCTL.  I would really appreciate constructive comments on
-> > this patch series.
-> >
-> > Previous version:
-> > https://lore.kernel.org/lkml/20200428175129.634352-1-mic@digikod.net/
->
-> The previous version (v4) is
-> https://lore.kernel.org/lkml/20200430132320.699508-1-mic@digikod.net/
+On Wed, May 06, 2020 at 05:02:52AM +0100, Al Viro wrote:
+> On Tue, May 05, 2020 at 08:28:33PM -0700, Kees Cook wrote:
+> > On Wed, May 06, 2020 at 02:14:31AM +0100, Al Viro wrote:
+> > > On Tue, May 05, 2020 at 04:40:35PM -0700, Kees Cook wrote:
+> > > > After using simple_unlink(), a call to d_delete() is needed in addition
+> > > > to dput().
+> > > > 
+> > > > Signed-off-by: Kees Cook <keescook@chromium.org>
+> > > > ---
+> > > > Is this correct? I went looking around and there are a lot of variations
+> > > > on the simple_unlink() pattern...
+> > > > 
+> > > > Many using explicit locking and combinations of d_drop(), __d_drop(), etc.
+> > > 
+> > > Quite a few of those should switch to simple_recursive_removal().  As for
+> > > securityfs...  d_drop() is _probably_ a saner variant, but looking at the
+> > > callers of that thing... at least IMA ones seem to be garbage.
+> > 
+> > Hmm, I dunno. I hadn't looked at these yet. I'm not sure what's needed
+> > for those cases.
+> > 
+> > Is my patch to add d_delete() correct, though? I'm trying to construct
+> > the right set of calls for pstore's filesystem, and I noticed that most
+> > will do simple_unlink(), d_delete(), dput(), but securityfs seemed to be
+> > missing it.
+> 
+> d_drop().  d_delete() is for the situations when you want the sucker
+> to become a hashed negative, if at all possible.
 
+I'm not sure what that means. :) Should stuff like apparmorfs be changed
+to d_drop()?
 
-Hi Michael
+> Re pstore: context, please.
 
-I have couple of question
-1. Why you did not add O_MAYEXEC to open()?
-Some time ago (around v4.14) open() did not return EINVAL when
-VALID_OPEN_FLAGS check failed.
-Now it does, so I do not see a problem that interpreter will use
-simple open(),  ( Although that path might be manipulated, but file
-contents will be verified by IMA)
-2. When you apply a new flag to mount, it means that IMA will check
-all files under this mount and it does not matter whether the file in
-question is a script or not.
-IMHO it is too hard overhead for performance reasons.
+Just posted the whole series:
+https://lore.kernel.org/lkml/20200506152114.50375-1-keescook@chromium.org/
 
-Regards,
-LEv
+But the specific question was driven by this patch:
+https://lore.kernel.org/lkml/20200506152114.50375-11-keescook@chromium.org/
+
+-- 
+Kees Cook
