@@ -2,94 +2,116 @@ Return-Path: <SRS0=wiIN=6U=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 178C9C38A2A
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 May 2020 21:10:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED0D3C28CBC
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 May 2020 22:49:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F1E0A2075E
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 May 2020 21:10:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C206F2076D
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 May 2020 22:49:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="apgnO1tx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729696AbgEFVKY (ORCPT
+        id S1730292AbgEFWtz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 6 May 2020 17:10:24 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:4834 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729614AbgEFVKX (ORCPT
+        Wed, 6 May 2020 18:49:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43904 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729243AbgEFWtz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 6 May 2020 17:10:23 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 046L2uck009087;
-        Wed, 6 May 2020 17:10:15 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 30ux6e5gpx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 06 May 2020 17:10:15 -0400
-Received: from m0098410.ppops.net (m0098410.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 046L32AI009603;
-        Wed, 6 May 2020 17:10:15 -0400
-Received: from ppma01fra.de.ibm.com (46.49.7a9f.ip4.static.sl-reverse.com [159.122.73.70])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 30ux6e5gnu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 06 May 2020 17:10:14 -0400
-Received: from pps.filterd (ppma01fra.de.ibm.com [127.0.0.1])
-        by ppma01fra.de.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 046L9irg032318;
-        Wed, 6 May 2020 21:10:12 GMT
-Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
-        by ppma01fra.de.ibm.com with ESMTP id 30s0g5c241-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 06 May 2020 21:10:12 +0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 046L90UQ66584994
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 6 May 2020 21:09:00 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 56C75A4054;
-        Wed,  6 May 2020 21:10:10 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0986BA405F;
-        Wed,  6 May 2020 21:10:09 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.197.80])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed,  6 May 2020 21:10:08 +0000 (GMT)
-Message-ID: <1588799408.4624.28.camel@linux.ibm.com>
-Subject: Re: [RFC][PATCH 1/3] evm: Move hooks outside LSM infrastructure
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>, david.safford@gmail.com,
-        viro@zeniv.linux.org.uk, jmorris@namei.org,
-        John Johansen <john.johansen@canonical.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
-Date:   Wed, 06 May 2020 17:10:08 -0400
-In-Reply-To: <1588794293.4624.21.camel@linux.ibm.com>
-References: <20200429073935.11913-1-roberto.sassu@huawei.com>
-         <1588794293.4624.21.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.676
- definitions=2020-05-06_09:2020-05-05,2020-05-06 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- adultscore=0 mlxscore=0 bulkscore=0 mlxlogscore=951 malwarescore=0
- spamscore=0 suspectscore=0 phishscore=0 priorityscore=1501 clxscore=1015
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2005060170
+        Wed, 6 May 2020 18:49:55 -0400
+Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07FA4C061A0F
+        for <linux-security-module@vger.kernel.org>; Wed,  6 May 2020 15:49:55 -0700 (PDT)
+Received: by mail-pj1-x1044.google.com with SMTP id a32so1734847pje.5
+        for <linux-security-module@vger.kernel.org>; Wed, 06 May 2020 15:49:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=Q2FUrzCimCoQvPDI8jhXkMBxIsQZ8fqLNRuB8pW8C9I=;
+        b=apgnO1tx03gYzmTiztou0ozl4DqE9Ke1CUls8XDLxiqo5GiuaT0cgajPeNIc1Nvgrh
+         QSR/aDtXJFrDbcw3pE4mo7iM3uXupATiB4zjUWXDBhAWz29oyPbkwjLQEjzRYt4t1HSV
+         HCgAaF82vmv4XqWI3sJU/yOu1FGAMo8m0rBsQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Q2FUrzCimCoQvPDI8jhXkMBxIsQZ8fqLNRuB8pW8C9I=;
+        b=KT7bjvnVGPEB3H/Y/KxZALr7UMHqQSWnN/1JE3r2g0avSC+8PvuARAdac5VRmgeM3F
+         YduyVbFaeoOX0jdyCP1QJGfP3R3bapDf+ZePh+ojYzuDjeoBLk+c3q25a0M/ey8x9JIr
+         o9DT/3zchQtv1kbyKDnJXnhJizt3vVexcnVGHJCuJj7Dyt/l9GVGdxRv2UCcLs8bsynA
+         RaWdPz/QXIMmMiDIAMkhbybEV6EqWPZhOP+8CTfBUBdKSftWtoXxmSqMxB7Pq2CLsenZ
+         MitQCfBOxxxd6eeCdDEKkTtHDGjzQpuWEd7VWkE/xv1w03xvx6LirzM5UkfK4C+nWIh0
+         01Lw==
+X-Gm-Message-State: AGi0Pub/AFVreyHMSKYSwvn+LQt8ESqbOf6ctfg/Gf4x5qYWDPtBbdYs
+        XDN7x118IPBONVH5zby/GnWtQg==
+X-Google-Smtp-Source: APiQypKzOSl6t5TXplgO53uZ+njke5Lpns5FHbM+l01D4h+BwwkOyeefVKk0O7oypj6oZi1uWRWTzA==
+X-Received: by 2002:a17:902:bd09:: with SMTP id p9mr10891853pls.214.1588805394525;
+        Wed, 06 May 2020 15:49:54 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id a30sm2294097pgm.44.2020.05.06.15.49.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 May 2020 15:49:53 -0700 (PDT)
+Date:   Wed, 6 May 2020 15:49:52 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] securityfs: Add missing d_delete() call on removal
+Message-ID: <202005061543.97CC065531@keescook>
+References: <202005051626.7648DC65@keescook>
+ <20200506011431.GB23230@ZenIV.linux.org.uk>
+ <202005052024.2D7626C742@keescook>
+ <20200506040252.GC23230@ZenIV.linux.org.uk>
+ <202005060831.C05759E@keescook>
+ <20200506184920.GD23230@ZenIV.linux.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200506184920.GD23230@ZenIV.linux.org.uk>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 2020-05-06 at 15:44 -0400, Mimi Zohar wrote:
-> Since copying the EVM HMAC or original signature isn't applicable, I
-> would prefer exploring an EVM portable and immutable signature only
-> solution.
+On Wed, May 06, 2020 at 07:49:20PM +0100, Al Viro wrote:
+> On Wed, May 06, 2020 at 08:34:29AM -0700, Kees Cook wrote:
+> 
+> > Just posted the whole series:
+> > https://lore.kernel.org/lkml/20200506152114.50375-1-keescook@chromium.org/
+> > 
+> > But the specific question was driven by this patch:
+> > https://lore.kernel.org/lkml/20200506152114.50375-11-keescook@chromium.org/
+> 
+> Yecchh...  First of all, you are leaving a dangling pointer in your
+> struct pstore_private ->dentry.  What's more, in your case d_delete()
 
-To prevent copying the EVM xattr, we added "security.evm" to
-/etc/xattr.conf.  To support copying just the EVM portable and
-immutable signatures will require a different solution.
+Yeah, good idea: I can wipe out the pstore_private->dentry at this point
+just for robustness. From what I could tell the evict got immediately
+called after the dput().
 
-Mimi
+> is definitely wrong - either there are other references to dentry
+> (in which case d_delete() is the same as d_drop()), or dput() right
+> after it will drive ->d_count to zero and since you end up using
+> simple_dentry_operations, dentry will be freed immediately after
+> that.
+
+Do you mean the d_drop() isn't needed? What happens if someone has
+the file open during this routine? The goal here is to make these files
+disappear so they'll go through evict.
+
+> I have not looked at the locking in that series yet, so no comments
+
+Yeah, I would not be surprised by some more locking issues, but I think
+it's an improvement over what was there. Most of the code seems to have
+been designed to be non-modular. :P
+
+> on the races, but in any case - that d_delete() is a misspelled d_drop().
+
+I'll change it; thanks!
+
+-- 
+Kees Cook
