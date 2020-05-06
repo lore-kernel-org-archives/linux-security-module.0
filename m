@@ -2,65 +2,120 @@ Return-Path: <SRS0=wiIN=6U=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F7A3C28CBC
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 May 2020 18:49:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E236AC38A24
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 May 2020 19:45:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6E43820708
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 May 2020 18:49:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6C902076D
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 May 2020 19:45:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730494AbgEFSta (ORCPT
+        id S1729411AbgEFTpH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 6 May 2020 14:49:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34574 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730112AbgEFSt3 (ORCPT
+        Wed, 6 May 2020 15:45:07 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50670 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729402AbgEFTpH (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 6 May 2020 14:49:29 -0400
-Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A6E6C061A0F;
-        Wed,  6 May 2020 11:49:29 -0700 (PDT)
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jWP6e-002KDg-8L; Wed, 06 May 2020 18:49:20 +0000
-Date:   Wed, 6 May 2020 19:49:20 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] securityfs: Add missing d_delete() call on removal
-Message-ID: <20200506184920.GD23230@ZenIV.linux.org.uk>
-References: <202005051626.7648DC65@keescook>
- <20200506011431.GB23230@ZenIV.linux.org.uk>
- <202005052024.2D7626C742@keescook>
- <20200506040252.GC23230@ZenIV.linux.org.uk>
- <202005060831.C05759E@keescook>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202005060831.C05759E@keescook>
+        Wed, 6 May 2020 15:45:07 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 046JebdV000769;
+        Wed, 6 May 2020 15:45:00 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 30u8t7a58p-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 06 May 2020 15:45:00 -0400
+Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 046JeaWT000630;
+        Wed, 6 May 2020 15:44:59 -0400
+Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 30u8t7a57n-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 06 May 2020 15:44:59 -0400
+Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
+        by ppma03ams.nl.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 046JUXjf028572;
+        Wed, 6 May 2020 19:44:57 GMT
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
+        by ppma03ams.nl.ibm.com with ESMTP id 30s0g5sugr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 06 May 2020 19:44:56 +0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 046Jisow524580
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 6 May 2020 19:44:54 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A9D294203F;
+        Wed,  6 May 2020 19:44:54 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8BA9542045;
+        Wed,  6 May 2020 19:44:53 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.197.80])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed,  6 May 2020 19:44:53 +0000 (GMT)
+Message-ID: <1588794293.4624.21.camel@linux.ibm.com>
+Subject: Re: [RFC][PATCH 1/3] evm: Move hooks outside LSM infrastructure
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>, david.safford@gmail.com,
+        viro@zeniv.linux.org.uk, jmorris@namei.org,
+        John Johansen <john.johansen@canonical.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
+Date:   Wed, 06 May 2020 15:44:53 -0400
+In-Reply-To: <20200429073935.11913-1-roberto.sassu@huawei.com>
+References: <20200429073935.11913-1-roberto.sassu@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.676
+ definitions=2020-05-06_09:2020-05-05,2020-05-06 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ adultscore=0 suspectscore=0 bulkscore=0 spamscore=0 mlxlogscore=999
+ malwarescore=0 priorityscore=1501 phishscore=0 clxscore=1011
+ impostorscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2005060154
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, May 06, 2020 at 08:34:29AM -0700, Kees Cook wrote:
+[Cc: John Johansen] 
 
-> Just posted the whole series:
-> https://lore.kernel.org/lkml/20200506152114.50375-1-keescook@chromium.org/
+On Wed, 2020-04-29 at 09:39 +0200, Roberto Sassu wrote:
+> EVM is a module for the protection of the integrity of file metadata. It
+> protects security-relevant extended attributes, and some file attributes
+> such as the UID and the GID. It protects their integrity with an HMAC or
+> with a signature.
 > 
-> But the specific question was driven by this patch:
-> https://lore.kernel.org/lkml/20200506152114.50375-11-keescook@chromium.org/
+> What makes EVM different from other LSMs is that it makes a security
+> decision depending on multiple pieces of information, which cannot be
+> managed atomically by the system.
+> 
+> Example: cp -a file.orig file.dest
+> 
+> If security.selinux, security.ima and security.evm must be preserved, cp
+> will invoke setxattr() for each xattr, and EVM performs a verification
+> during each operation. The problem is that copying security.evm from
+> file.orig to file.dest will likely break the following EVM verifications if
+> some metadata still have to be copied. EVM has no visibility on the
+> metadata of the source file, so it cannot determine when the copy can be
+> considered complete.
 
-Yecchh...  First of all, you are leaving a dangling pointer in your
-struct pstore_private ->dentry.  What's more, in your case d_delete()
-is definitely wrong - either there are other references to dentry
-(in which case d_delete() is the same as d_drop()), or dput() right
-after it will drive ->d_count to zero and since you end up using
-simple_dentry_operations, dentry will be freed immediately after
-that.
+I remember having a similar discussion in the past.  At the time,
+there wasn't EVM portable and immutable signature support, just the
+HMAC and original signature types.  Neither of these EVM xattrs types
+should be copied.
 
-I have not looked at the locking in that series yet, so no comments
-on the races, but in any case - that d_delete() is a misspelled d_drop().
+Calling evm_verifyxattr() is not limited to IMA, but may be called by
+other LSMs/subsystems as well.  At some point, there was some
+discussion about AppArmor calling it directly.  Not sure if that is
+still being discussed.
+
+Since copying the EVM HMAC or original signature isn't applicable, I
+would prefer exploring an EVM portable and immutable signature only
+solution.
+
+Mimi
