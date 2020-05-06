@@ -2,198 +2,358 @@ Return-Path: <SRS0=wiIN=6U=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D38BFC28CBC
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 May 2020 15:41:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EF55C28CBC
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 May 2020 15:52:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B462520A8B
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 May 2020 15:41:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1DEAB2070B
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 May 2020 15:52:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D9Cw1A+p"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729730AbgEFPlw (ORCPT
+        id S1729438AbgEFPwu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 6 May 2020 11:41:52 -0400
-Received: from mout-p-101.mailbox.org ([80.241.56.151]:24776 "EHLO
-        mout-p-101.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729066AbgEFPlu (ORCPT
+        Wed, 6 May 2020 11:52:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34908 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729417AbgEFPwu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 6 May 2020 11:41:50 -0400
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:105:465:1:2:0])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mout-p-101.mailbox.org (Postfix) with ESMTPS id 49HLRq0L5BzKmVK;
-        Wed,  6 May 2020 17:41:43 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp2.mailbox.org ([80.241.60.241])
-        by spamfilter03.heinlein-hosting.de (spamfilter03.heinlein-hosting.de [80.241.56.117]) (amavisd-new, port 10030)
-        with ESMTP id iNb9taX10f5N; Wed,  6 May 2020 17:41:38 +0200 (CEST)
-Date:   Thu, 7 May 2020 01:41:17 +1000
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     "Lev R. Oshvang ." <levonshe@gmail.com>
-Cc:     =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
-        linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christian Heimes <christian@python.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Eric Chiang <ericchiang@google.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mickael.salaun@ssi.gouv.fr>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Philippe =?utf-8?Q?Tr=C3=A9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v5 0/6] Add support for O_MAYEXEC
-Message-ID: <20200506154117.gibiibfytrdl4exo@yavin.dot.cyphar.com>
-References: <20200505153156.925111-1-mic@digikod.net>
- <d4616bc0-39df-5d6c-9f5b-d84cf6e65960@digikod.net>
- <CAP22eLHres_shVWEC+2=wcKXRsQzfNKDAnyRd8yuO_gJ3Wi_JA@mail.gmail.com>
+        Wed, 6 May 2020 11:52:50 -0400
+Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC11CC061A0F;
+        Wed,  6 May 2020 08:52:49 -0700 (PDT)
+Received: by mail-wm1-x342.google.com with SMTP id z6so3304440wml.2;
+        Wed, 06 May 2020 08:52:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=message-id:subject:from:to:cc:date:user-agent:mime-version
+         :content-transfer-encoding;
+        bh=NujNd5p3KMnkSu8gAxvw3p3DETQWNI8LN/tpvS+VUjI=;
+        b=D9Cw1A+pICgTVmMIYc7T0tgBhF0NEMFmdrguTm8fWubSM9UmxzlJ5G1/mhN0r54ULC
+         GH5ZL22gSUPbf1t9cL4QjpKwFm00syoS8mKznFu9Qw8UHdc/sDASghkdxcSFptoYoyMh
+         DiF0JlYi5U6vgvnx6PZyMYkQc1h/ZEtpVoItTMZHfKaMfVTvGdEN2oyjYOE8xHHJOFbE
+         7IKeSeyQWmGNbsBFEyXNa0B25Ewy2M1ci29FNPixlO2FcBIxlEfvE8KJxxag29/1KGh8
+         vFDe4GeY/hZFmwG3w2xhJiLv217pRGWIqDYMLqVAomAVD0hV91HRB1rhZQxN5AmnhhUj
+         WxPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:user-agent
+         :mime-version:content-transfer-encoding;
+        bh=NujNd5p3KMnkSu8gAxvw3p3DETQWNI8LN/tpvS+VUjI=;
+        b=RtquNU5SfLkjtgqMQ8IOu3jdH/dd6voGMdwWkyBDTrBTNbE609lsuk7D5qQfzXkW4v
+         IMFVhRf2e4n/QJX5gPWvWnPsimFVs04wZyPE1DI30KwlJINdaEd/J8aAepLcGWLKVB/W
+         hJ+QGYuhr0asouNZTisxDEUgu9ode5X0EfHN432c9M/NTlt0KxUnkFayAX47iQwbCdrU
+         Ei9dqTm7PCnR8+6l0YyP5kiDnFF5v4E74+hzsBimwQT0WRyD0WDd6p61wN91QHHW6fAi
+         3OkglXCGL1ozNZnaiPddlUx52EuXsk9J7fsh8bio2j0ZAlAj4QiifNiNFi5p5YAIDN0G
+         E7kA==
+X-Gm-Message-State: AGi0Pub7FqqRAvkfwIy3K7kTzl8/GS4c6N8zHCQ9dfDwegsK2EvbAUlw
+        +fNhYrrQF05Dvn7g3l/5cBysujvVhPk=
+X-Google-Smtp-Source: APiQypJXrz7AAjS/VTUh5ELL4ACM5AQJRjWqLv/OJitzlO9wFeTBnI33jvsHSdMJOjqciiU44wVlpQ==
+X-Received: by 2002:a1c:770e:: with SMTP id t14mr4957492wmi.187.1588780367963;
+        Wed, 06 May 2020 08:52:47 -0700 (PDT)
+Received: from localhost.localdomain ([62.31.71.236])
+        by smtp.gmail.com with ESMTPSA id h74sm2868439wrh.76.2020.05.06.08.52.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 May 2020 08:52:47 -0700 (PDT)
+Message-ID: <18e48255d68a1408b3e3152780f0e789df540059.camel@gmail.com>
+Subject: [PATCH] platform/x86: Export LPC attributes for the system SPI chip
+From:   Richard Hughes <hughsient@gmail.com>
+To:     platform-driver-x86@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org
+Date:   Wed, 06 May 2020 16:52:46 +0100
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.2 (3.36.2-1.fc32) 
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ljnqns477wlvxj5l"
-Content-Disposition: inline
-In-Reply-To: <CAP22eLHres_shVWEC+2=wcKXRsQzfNKDAnyRd8yuO_gJ3Wi_JA@mail.gmail.com>
-X-Rspamd-Queue-Id: BECC31754
-X-Rspamd-Score: -7.67 / 15.00 / 15.00
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Export standard LPC configuration values from various LPC/eSPI
+controllers. This allows userspace components such as fwupd to
+verify the most basic SPI protections are set correctly.
+For instance, checking BIOSWE is disabled and BLE is enabled.
 
---ljnqns477wlvxj5l
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+More cutting-edge checks (e.g. PRx and BootGuard) can be added
+once the basics are in place. Exporting these values from the
+kernel allows us to report the security level of the platform
+without rebooting and running an unsigned EFI binary like
+chipsec.
 
-On 2020-05-06, Lev R. Oshvang . <levonshe@gmail.com> wrote:
-> On Tue, May 5, 2020 at 6:36 PM Micka=EBl Sala=FCn <mic@digikod.net> wrote:
-> >
-> >
-> > On 05/05/2020 17:31, Micka=EBl Sala=FCn wrote:
-> > > Hi,
-> > >
-> > > This fifth patch series add new kernel configurations (OMAYEXEC_STATI=
-C,
-> > > OMAYEXEC_ENFORCE_MOUNT, and OMAYEXEC_ENFORCE_FILE) to enable to
-> > > configure the security policy at kernel build time.  As requested by
-> > > Mimi Zohar, I completed the series with one of her patches for IMA.
-> > >
-> > > The goal of this patch series is to enable to control script execution
-> > > with interpreters help.  A new O_MAYEXEC flag, usable through
-> > > openat2(2), is added to enable userspace script interpreter to delega=
-te
-> > > to the kernel (and thus the system security policy) the permission to
-> > > interpret/execute scripts or other files containing what can be seen =
-as
-> > > commands.
-> > >
-> > > A simple system-wide security policy can be enforced by the system
-> > > administrator through a sysctl configuration consistent with the mount
-> > > points or the file access rights.  The documentation patch explains t=
-he
-> > > prerequisites.
-> > >
-> > > Furthermore, the security policy can also be delegated to an LSM, eit=
-her
-> > > a MAC system or an integrity system.  For instance, the new kernel
-> > > MAY_OPENEXEC flag closes a major IMA measurement/appraisal interpreter
-> > > integrity gap by bringing the ability to check the use of scripts [1].
-> > > Other uses are expected, such as for openat2(2) [2], SGX integration
-> > > [3], bpffs [4] or IPE [5].
-> > >
-> > > Userspace needs to adapt to take advantage of this new feature.  For
-> > > example, the PEP 578 [6] (Runtime Audit Hooks) enables Python 3.8 to =
-be
-> > > extended with policy enforcement points related to code interpretatio=
-n,
-> > > which can be used to align with the PowerShell audit features.
-> > > Additional Python security improvements (e.g. a limited interpreter
-> > > withou -c, stdin piping of code) are on their way.
-> > >
-> > > The initial idea come from CLIP OS 4 and the original implementation =
-has
-> > > been used for more than 12 years:
-> > > https://github.com/clipos-archive/clipos4_doc
-> > >
-> > > An introduction to O_MAYEXEC was given at the Linux Security Summit
-> > > Europe 2018 - Linux Kernel Security Contributions by ANSSI:
-> > > https://www.youtube.com/watch?v=3DchNjCRtPKQY&t=3D17m15s
-> > > The "write xor execute" principle was explained at Kernel Recipes 201=
-8 -
-> > > CLIP OS: a defense-in-depth OS:
-> > > https://www.youtube.com/watch?v=3DPjRE0uBtkHU&t=3D11m14s
-> > >
-> > > This patch series can be applied on top of v5.7-rc4.  This can be tes=
-ted
-> > > with CONFIG_SYSCTL.  I would really appreciate constructive comments =
-on
-> > > this patch series.
-> > >
-> > > Previous version:
-> > > https://lore.kernel.org/lkml/20200428175129.634352-1-mic@digikod.net/
-> >
-> > The previous version (v4) is
-> > https://lore.kernel.org/lkml/20200430132320.699508-1-mic@digikod.net/
->=20
->=20
-> Hi Michael
->=20
-> I have couple of question
-> 1. Why you did not add O_MAYEXEC to open()?
-> Some time ago (around v4.14) open() did not return EINVAL when
-> VALID_OPEN_FLAGS check failed.
-> Now it does, so I do not see a problem that interpreter will use
-> simple open(),  ( Although that path might be manipulated, but file
-> contents will be verified by IMA)
+Signed-off-by: Richard Hughes <richard@hughsie.com>
+---
+ MAINTAINERS                          |   6 +
+ drivers/platform/x86/Kconfig         |  10 ++
+ drivers/platform/x86/Makefile        |   1 +
+ drivers/platform/x86/intel_spi_lpc.c | 183 +++++++++++++++++++++++++++
+ 4 files changed, 200 insertions(+)
+ create mode 100644 drivers/platform/x86/intel_spi_lpc.c
 
-You don't get -EINVAL from open() in the case of unknown flags, that's
-something only openat2() does in the open*() family. Hence why it's only
-introduced for openat2().
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 2926327e4976..2779a8d48f1c 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -401,6 +401,12 @@ L:	platform-driver-x86@vger.kernel.org
+ S:	Maintained
+ F:	drivers/platform/x86/i2c-multi-instantiate.c
+ 
++SPI LPC configuration
++M:	Richard Hughes <richard@hughsie.com>
++L:	platform-driver-x86@vger.kernel.org
++S:	Maintained
++F:	drivers/platform/x86/intel_spi_lpc.c
++
+ ACPI PMIC DRIVERS
+ M:	"Rafael J. Wysocki" <rjw@rjwysocki.net>
+ M:	Len Brown <lenb@kernel.org>
+diff --git a/drivers/platform/x86/Kconfig
+b/drivers/platform/x86/Kconfig
+index 0ad7ad8cf8e1..5f7441cde5e7 100644
+--- a/drivers/platform/x86/Kconfig
++++ b/drivers/platform/x86/Kconfig
+@@ -837,6 +837,16 @@ config INTEL_VBTN
+ 	  To compile this driver as a module, choose M here: the module
+will
+ 	  be called intel_vbtn.
+ 
++config INTEL_SPI_LPC
++	tristate "Intel SPI LPC configuration"
++	depends on SECURITY
++	help
++	  Export LPC configuration attributes for the system SPI chip.
++
++	  To compile this driver as a module, choose M here: the module
+will
++	  be called intel_spi_lpc.
++	  If unsure, say N.
++
+ config SURFACE3_WMI
+ 	tristate "Surface 3 WMI Driver"
+ 	depends on ACPI_WMI
+diff --git a/drivers/platform/x86/Makefile
+b/drivers/platform/x86/Makefile
+index 53408d965874..e8f6901bb165 100644
+--- a/drivers/platform/x86/Makefile
++++ b/drivers/platform/x86/Makefile
+@@ -78,6 +78,7 @@ obj-$(CONFIG_INTEL_INT0002_VGPIO)	+=
+intel_int0002_vgpio.o
+ obj-$(CONFIG_INTEL_MENLOW)		+= intel_menlow.o
+ obj-$(CONFIG_INTEL_OAKTRAIL)		+= intel_oaktrail.o
+ obj-$(CONFIG_INTEL_VBTN)		+= intel-vbtn.o
++obj-$(CONFIG_INTEL_SPI_LPC)		+= intel_spi_lpc.o
+ 
+ # Microsoft
+ obj-$(CONFIG_SURFACE3_WMI)		+= surface3-wmi.o
+diff --git a/drivers/platform/x86/intel_spi_lpc.c
+b/drivers/platform/x86/intel_spi_lpc.c
+new file mode 100644
+index 000000000000..dd573593a0f5
+--- /dev/null
++++ b/drivers/platform/x86/intel_spi_lpc.c
+@@ -0,0 +1,183 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * SPI LPC flash platform security driver
++ *
++ * Copyright 2020 (c) Richard Hughes (richard@hughsie.com)
++ *
++ * This file is licensed under  the terms of the GNU General Public
++ * License version 2. This program is licensed "as is" without any
++ * warranty of any kind, whether express or implied.
++ */
++
++#include <linux/module.h>
++#include <linux/security.h>
++#include <linux/pci.h>
++
++/* LPC bridge PCI config space registers */
++#define BIOS_CNTL_REG				0xDC
++#define BIOS_CNTL_WRITE_ENABLE_MASK		0x01
++#define BIOS_CNTL_LOCK_ENABLE_MASK		0x02
++#define BIOS_CNTL_WP_DISABLE_MASK		0x20
++
++/*
++ * This data only exists for exporting the supported PCI ids via
++ * MODULE_DEVICE_TABLE.  We do not actually register a pci_driver.
++ */
++static const struct pci_device_id pci_tbl[] = {
++	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x02a4)}, /* Comet Lake SPI */
++	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x34a4)}, /* Ice Lake-LP SPI
+*/
++	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x9c66)}, /* 8 Series SPI */
++	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x9ce6)}, /* Wildcat Point-LP
+GSPI */
++	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x9d2a)}, /* Sunrise Point-
+LP/SPI */
++	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x9d4e)}, /* Sunrise Point
+LPC/eSPI */
++	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x9da4)}, /* Cannon Point-LP
+SPI */
++	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0xa140)}, /* Sunrise Point-H
+LPC */
++	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0xa141)}, /* Sunrise Point-H
+LPC */
++	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0xa142)}, /* Sunrise Point-H
+LPC */
++	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0xa143)}, /* H110 LPC/eSPI */
++	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0xa144)}, /* H170 LPC/eSPI */
++	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0xa145)}, /* Z170 LPC/eSPI */
++	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0xa146)}, /* Q170 LPC/eSPI */
++	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0xa147)}, /* Q150 LPC/eSPI */
++	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0xa148)}, /* B150 LPC/eSPI */
++	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0xa149)}, /* C236 LPC/eSPI */
++	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0xa14a)}, /* C232 LPC/eSPI */
++	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0xa14b)}, /* Sunrise Point-H
+LPC */
++	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0xa14c)}, /* Sunrise Point-H
+LPC */
++	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0xa14d)}, /* QM170 LPC/eSPI */
++	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0xa14e)}, /* HM170 LPC/eSPI */
++	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0xa14f)}, /* Sunrise Point-H
+LPC */
++	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0xa150)}, /* CM236 LPC/eSPI */
++	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0xa151)}, /* Sunrise Point-H
+LPC */
++	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0xa152)}, /* HM175 LPC/eSPI */
++	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0xa153)}, /* QM175 LPC/eSPI */
++	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0xa154)}, /* CM238 LPC/eSPI */
++	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0xa155)}, /* Sunrise Point-H
+LPC */
++	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0xa1c1)}, /* C621 LPC/eSPI */
++	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0xa1c2)}, /* C622 LPC/eSPI */
++	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0xa1c3)}, /* C624 LPC/eSPI */
++	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0xa1c4)}, /* C625 LPC/eSPI */
++	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0xa1c5)}, /* C626 LPC/eSPI */
++	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0xa1c6)}, /* C627 LPC/eSPI */
++	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0xa1c7)}, /* C628 LPC/eSPI */
++	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0xa304)}, /* H370 LPC/eSPI */
++	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0xa305)}, /* Z390 LPC/eSPI */
++	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0xa306)}, /* Q370 LPC/eSPI */
++	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0xa30c)}, /* QM370 LPC/eSPI */
++	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0xa324)}, /* Cannon Lake PCH
+SPI */
++	{0, }
++};
++MODULE_DEVICE_TABLE(pci, pci_tbl);
++
++struct dentry *spi_dir;
++struct dentry *spi_bioswe;
++struct dentry *spi_ble;
++struct dentry *spi_smm_bwp;
++struct pci_dev *dev;
++const u8 bios_cntl_off = BIOS_CNTL_REG;
++
++static ssize_t bioswe_read(struct file *filp, char __user *buf,
++			   size_t count, loff_t *ppos)
++{
++	char tmp[2];
++	u8 bios_cntl_val;
++
++	pci_read_config_byte(dev, bios_cntl_off, &bios_cntl_val);
++	sprintf(tmp, "%d\n",
++		bios_cntl_val & BIOS_CNTL_WRITE_ENABLE_MASK ? 1 : 0);
++	return simple_read_from_buffer(buf, count, ppos, tmp,
+sizeof(tmp));
++}
++
++static const struct file_operations spi_bioswe_ops = {
++	.read  = bioswe_read,
++};
++
++static ssize_t ble_read(struct file *filp, char __user *buf,
++			size_t count, loff_t *ppos)
++{
++	char tmp[2];
++	u8 bios_cntl_val;
++
++	pci_read_config_byte(dev, bios_cntl_off, &bios_cntl_val);
++	sprintf(tmp, "%d\n",
++		bios_cntl_val & BIOS_CNTL_LOCK_ENABLE_MASK ? 1 : 0);
++	return simple_read_from_buffer(buf, count, ppos, tmp,
+sizeof(tmp));
++}
++
++static const struct file_operations spi_ble_ops = {
++	.read  = ble_read,
++};
++
++static ssize_t smm_bwp_read(struct file *filp, char __user *buf,
++			    size_t count, loff_t *ppos)
++{
++	char tmp[2];
++	u8 bios_cntl_val;
++
++	pci_read_config_byte(dev, bios_cntl_off, &bios_cntl_val);
++	sprintf(tmp, "%d\n",
++		bios_cntl_val & BIOS_CNTL_WP_DISABLE_MASK ? 1 : 0);
++	return simple_read_from_buffer(buf, count, ppos, tmp,
+sizeof(tmp));
++}
++
++static const struct file_operations spi_smm_bwp_ops = {
++	.read  = smm_bwp_read,
++};
++
++static int __init mod_init(void)
++{
++	int i;
++
++	/* Find SPI Controller */
++	for (i = 0; !dev && pci_tbl[i].vendor; ++i)
++		dev = pci_get_device(pci_tbl[i].vendor,
++				     pci_tbl[i].device, NULL);
++	if (!dev)
++		return -ENODEV;
++
++	spi_dir = securityfs_create_dir("spi", NULL);
++	if (IS_ERR(spi_dir))
++		return -1;
++
++	spi_bioswe =
++	    securityfs_create_file("bioswe",
++				   0600, spi_dir, NULL,
++				   &spi_bioswe_ops);
++	if (IS_ERR(spi_bioswe))
++		goto out;
++	spi_ble =
++	    securityfs_create_file("ble",
++				   0600, spi_dir, NULL,
++				   &spi_ble_ops);
++	if (IS_ERR(spi_ble))
++		goto out;
++	spi_smm_bwp =
++	    securityfs_create_file("smm_bwp",
++				   0600, spi_dir, NULL,
++				   &spi_smm_bwp_ops);
++	if (IS_ERR(spi_smm_bwp))
++		goto out;
++
++	return 0;
++out:
++	securityfs_remove(spi_bioswe);
++	securityfs_remove(spi_ble);
++	securityfs_remove(spi_smm_bwp);
++	securityfs_remove(spi_dir);
++	return -1;
++}
++
++static void __exit mod_exit(void)
++{
++	securityfs_remove(spi_bioswe);
++	securityfs_remove(spi_ble);
++	securityfs_remove(spi_smm_bwp);
++	securityfs_remove(spi_dir);
++}
++
++module_init(mod_init);
++module_exit(mod_exit);
++
++MODULE_DESCRIPTION("SPI LPC flash platform security driver");
++MODULE_AUTHOR("Richard Hughes <richard@hughsie.com>");
++MODULE_LICENSE("GPL");
 
-> 2. When you apply a new flag to mount, it means that IMA will check
-> all files under this mount and it does not matter whether the file in
-> question is a script or not.
-> IMHO it is too hard overhead for performance reasons.
->=20
-> Regards,
-> LEv
 
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---ljnqns477wlvxj5l
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXrLamgAKCRCdlLljIbnQ
-Eo2EAQDv6NtU9F0Nl45n0HGqLDKRn1IEH5GBUZwhlkUR72xbbAD8CqwZXGFnsYZB
-+Che7WXy1zSGWAJq84tQAqCqj97ABAQ=
-=EWAe
------END PGP SIGNATURE-----
-
---ljnqns477wlvxj5l--
