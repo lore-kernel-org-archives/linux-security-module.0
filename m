@@ -2,74 +2,149 @@ Return-Path: <SRS0=wiIN=6U=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A189C28CBC
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 May 2020 04:03:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EDAEC28CBC
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 May 2020 05:08:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1F81520752
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 May 2020 04:03:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26F29206DD
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 May 2020 05:08:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wJPP8upA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725440AbgEFEDD (ORCPT
+        id S1726408AbgEFFIo (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 6 May 2020 00:03:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37104 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725300AbgEFEDD (ORCPT
+        Wed, 6 May 2020 01:08:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47286 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725821AbgEFFIo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 6 May 2020 00:03:03 -0400
-Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53EC1C061A0F;
-        Tue,  5 May 2020 21:03:03 -0700 (PDT)
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jWBGm-001vcO-RN; Wed, 06 May 2020 04:02:53 +0000
-Date:   Wed, 6 May 2020 05:02:52 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] securityfs: Add missing d_delete() call on removal
-Message-ID: <20200506040252.GC23230@ZenIV.linux.org.uk>
-References: <202005051626.7648DC65@keescook>
- <20200506011431.GB23230@ZenIV.linux.org.uk>
- <202005052024.2D7626C742@keescook>
+        Wed, 6 May 2020 01:08:44 -0400
+Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C65A2C061A10
+        for <linux-security-module@vger.kernel.org>; Tue,  5 May 2020 22:08:43 -0700 (PDT)
+Received: by mail-wm1-x342.google.com with SMTP id e26so969191wmk.5
+        for <linux-security-module@vger.kernel.org>; Tue, 05 May 2020 22:08:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=SceWBPekDdFRfF48uePY+T85beg2UFKBaFBprKKK2Fs=;
+        b=wJPP8upA208Ny+tQsnui6Sto754+QGj6pbO1HMOcOxY9IevB+Y2kWGwCmsphMLAwBQ
+         JZYn79elyP3RMcZR5FJtGBFDeTd+33jhRiMJg68J5ODXT/KOt8dZ+3CJAZP9ruC0pZGc
+         q+dArPJ1yQdOD1LeSmVKKXcOGGLlUyRkrHKxnOabhaqR+arMfWH60wttfWHMMevee4FX
+         JFM+vzw+Vsxotnguy7oXnD56vKGxKLP3veW+dB/zcULcp6nRJUn8S3CUhVE9tTGKK/uW
+         ZFM/NA0CswW9mz4xTIS1SHDSxz8KFTlajxCkx4yqkkK31rDm5asI7c13XBmZXOtqxJAJ
+         QWlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=SceWBPekDdFRfF48uePY+T85beg2UFKBaFBprKKK2Fs=;
+        b=oV1pPfyxqryyC4Lzt6widytZYDkOr9gbiTkIkB1KNlZPg94cqW00H8BS0nc/MGfIW5
+         CFh77MaKal1ZzVGb8mcSYAWnuYgttFJzjgEiHSeuKjC7ZuT3GyVZMXONfzfggwrCgxWH
+         jGDvFDs7SHp4tpfqcrE6aZ9CLtgSyLN2xbkGiJ7AMjN7eM9z4W4PVXkvaGdMN2aUnR/n
+         xLgwXXGwZ4ByUC5hvb9rrSDkNABOKm3wyrhdA0qySw2PhVMg6OggpTdARRryLVHoc4Is
+         4rH2MPZZaTCXRsCjr//IyAAlMbhH7pi3ej5ZZvM3Pl5XjI84L+NotrqOPj8IQSYxfgu1
+         LXBg==
+X-Gm-Message-State: AGi0PubREHOb/w6K3Gh8kQpy4bQNMWjYCS0j+fO2vP+ENEMDbMe54Dcf
+        Ey88YuoOlOcW1BTJDvi2cKqfRh0EiRX/nV+5hvJQGA==
+X-Google-Smtp-Source: APiQypJNX4BgVrJFR/RUHwSg0Jle8zGp48NuEq3xnGQEUwVPLzkBzxFXRfnSysvWwLqFKiOdR8JsNgakOQ3SbPsyRaE=
+X-Received: by 2002:a1c:a512:: with SMTP id o18mr2258788wme.138.1588741722115;
+ Tue, 05 May 2020 22:08:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202005052024.2D7626C742@keescook>
+References: <20200505102700.7912-1-anders.roxell@linaro.org>
+In-Reply-To: <20200505102700.7912-1-anders.roxell@linaro.org>
+From:   David Gow <davidgow@google.com>
+Date:   Wed, 6 May 2020 13:08:30 +0800
+Message-ID: <CABVgOS=awiwi7APWr5HgU6Eht-VAygWPeQyNsCnAF09OLpR46A@mail.gmail.com>
+Subject: Re: [PATCH v2 1/6] kunit: Kconfig: enable a KUNIT_RUN_ALL fragment
+To:     Anders Roxell <anders.roxell@linaro.org>
+Cc:     Brendan Higgins <brendanhiggins@google.com>,
+        John Johansen <john.johansen@canonical.com>, jmorris@namei.org,
+        serge@hallyn.com, "Theodore Ts'o" <tytso@mit.edu>,
+        adilger.kernel@dilger.ca,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        KUnit Development <kunit-dev@googlegroups.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-ext4@vger.kernel.org, linux-security-module@vger.kernel.org,
+        Marco Elver <elver@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, May 05, 2020 at 08:28:33PM -0700, Kees Cook wrote:
-> On Wed, May 06, 2020 at 02:14:31AM +0100, Al Viro wrote:
-> > On Tue, May 05, 2020 at 04:40:35PM -0700, Kees Cook wrote:
-> > > After using simple_unlink(), a call to d_delete() is needed in addition
-> > > to dput().
-> > > 
-> > > Signed-off-by: Kees Cook <keescook@chromium.org>
-> > > ---
-> > > Is this correct? I went looking around and there are a lot of variations
-> > > on the simple_unlink() pattern...
-> > > 
-> > > Many using explicit locking and combinations of d_drop(), __d_drop(), etc.
-> > 
-> > Quite a few of those should switch to simple_recursive_removal().  As for
-> > securityfs...  d_drop() is _probably_ a saner variant, but looking at the
-> > callers of that thing... at least IMA ones seem to be garbage.
-> 
-> Hmm, I dunno. I hadn't looked at these yet. I'm not sure what's needed
-> for those cases.
-> 
-> Is my patch to add d_delete() correct, though? I'm trying to construct
-> the right set of calls for pstore's filesystem, and I noticed that most
-> will do simple_unlink(), d_delete(), dput(), but securityfs seemed to be
-> missing it.
+On Tue, May 5, 2020 at 6:27 PM Anders Roxell <anders.roxell@linaro.org> wrote:
+>
+> Make it easier to enable all KUnit fragments.  This is needed for kernel
+> test-systems, so its easy to get all KUnit tests enabled and if new gets
+> added they will be enabled as well.  Fragments that has to be builtin
+> will be missed if CONFIG_KUNIT_RUN_ALL is set as a module.
+>
+> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+> ---
+>  lib/kunit/Kconfig | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>
+> diff --git a/lib/kunit/Kconfig b/lib/kunit/Kconfig
+> index 95d12e3d6d95..537f37bc8400 100644
+> --- a/lib/kunit/Kconfig
+> +++ b/lib/kunit/Kconfig
+> @@ -41,4 +41,10 @@ config KUNIT_EXAMPLE_TEST
+>           is intended for curious hackers who would like to understand how to
+>           use KUnit for kernel development.
+>
+> +config KUNIT_RUN_ALL
+> +       tristate "KUnit run all test"
 
-d_drop().  d_delete() is for the situations when you want the sucker
-to become a hashed negative, if at all possible.
+I'm not 100% sure about this name and description. It only actually
+"runs" the tests if they're builtin (as modules, they'll only run when
+loaded).
 
-Re pstore: context, please.
+Would KUNIT_BUILD_ALL or KUNIT_ALL_TESTS or similar be better?
+
+It also, as mentioned, only really runs all available (i.e., with
+dependencies met in the current .config) tests (as distinct from the
+--alltests flag to kunit.py, which builds UML with allyesconfig), it
+might be good to add this to the description or help.
+
+Something like "Enable all KUnit tests" or "Enable all available KUnit
+tests" (or even something about "all KUnit tests with satisfied
+dependencies") might be clearer.
+
+> +       help
+> +         Enables all KUnit tests, if they can be enabled.
+> +         That depends on if KUnit is enabled as a module or builtin.
+> +
+I like the first line here, but the second one could use a bit more
+explanation. Maybe copy some of the boilerplate text from other tests,
+e.g.:
+
+          KUnit tests run during boot and output the results to the debug log
+         in TAP format (http://testanything.org/). Only useful for kernel devs
+         running the KUnit test harness, and not intended for inclusion into a
+         production build.
+
+         For more information on KUnit and unit tests in general please refer
+         to the KUnit documentation in Documentation/dev-tools/kunit/.
+
+         If unsure, say N.
+
+>  endif # KUNIT
+> --
+> 2.20.1
+>
+
+Otherwise, this is looking good. I've done some quick testing, and it
+all seems to work for me. As long as it's clear what the difference
+between this and other ways of running "all tests" (like the
+--alltests kunit.py option), I'm all for including this in.
+
+Cheers,
+-- David
