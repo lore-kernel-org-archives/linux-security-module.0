@@ -2,110 +2,173 @@ Return-Path: <SRS0=wiIN=6U=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C2AEC4725F
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 May 2020 09:41:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9E46C28CBC
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 May 2020 10:33:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F05882075E
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 May 2020 09:41:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A540520663
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 May 2020 10:33:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q9VGl04I"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="t4a2X1xZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729199AbgEFJlc (ORCPT
+        id S1728943AbgEFKdx (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 6 May 2020 05:41:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33226 "EHLO
+        Wed, 6 May 2020 06:33:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41466 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729072AbgEFJlb (ORCPT
+        by vger.kernel.org with ESMTP id S1728768AbgEFKdx (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 6 May 2020 05:41:31 -0400
-Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6ED2DC0610D5
-        for <linux-security-module@vger.kernel.org>; Wed,  6 May 2020 02:41:31 -0700 (PDT)
-Received: by mail-pl1-x642.google.com with SMTP id f8so268882plt.2
-        for <linux-security-module@vger.kernel.org>; Wed, 06 May 2020 02:41:31 -0700 (PDT)
+        Wed, 6 May 2020 06:33:53 -0400
+Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 621BDC061A0F
+        for <linux-security-module@vger.kernel.org>; Wed,  6 May 2020 03:33:52 -0700 (PDT)
+Received: by mail-lj1-x242.google.com with SMTP id j3so1770267ljg.8
+        for <linux-security-module@vger.kernel.org>; Wed, 06 May 2020 03:33:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=3DDovhauMkogXrTb9Ryx5FL/QviqwI6Y6CqY+5NUf+I=;
-        b=Q9VGl04I1Ad+Dbvc+uiDufa8ZJ1I95O88iQvrExlbyd0dBjQfw7k1ZnpT9vokfRZoq
-         3TyWH/918m4KX8t1xCfXFKZhmfyNjsvWrm4hN1PS957h64Fo803NipqyraoLiJPzOLsT
-         fGZjISK1IEzk3gZ334PXrMiZaXvyvE9iIOjdlLa3Dc7thCpguXyF4xhp84OqPDmeG+Rm
-         GJZCSpBtkmmshn52PgWyycZVyDwA7XGVv46WjoL2Hig6fWalWB23JkGiuIFST0LdR19S
-         XCHEDIUW4ls5t3mV3MGvsvLym0ewqzWZxx+SOI2V5DCLETyfTm2TAUMHR68aVe3Ofkm4
-         Ncfw==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1rTt6LxaW/pHMjJunZzywGj8yOmnvtXY/IpJZLrkwj0=;
+        b=t4a2X1xZecTMAZKKfKloaMIBbKbLsi4VpQyqIWN1xF0DyDh1wVaRehTCJaZg2McT5O
+         HYJ0KfuCC6DXv3aXeqD5Vwy4k8q21/pCVGbunFsDZb2nIlgaBmr4apqE/EQpy/vLDkd8
+         MDFvBTOGgHO+TxmSLQWuOwNy0c8/4coKHUTxu7E6HNd55tCXva9mj7uHD+mT51/KMFJY
+         r7xAp6VJy25G+mWIQlCsDnFPYbpy6PL53rJ6yRT3lmIiGyDyh2o3xfoVaOFXKwrLUCK4
+         UjpCSUmfaix/bg0gfEkdJxZbbPdK2P6v5+JGizRJ0BjnVRzmyAAhWA6MkzD4YvrXtSEb
+         j/Hw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=3DDovhauMkogXrTb9Ryx5FL/QviqwI6Y6CqY+5NUf+I=;
-        b=ZD1Cg3BYcv2kjqJ3DrIO6A4sMMQliZBh7zb4dg9jnhrf0K5LrI5xEymLP1k0YBgJxF
-         zbSSqErgFaDqhJXeV0AtRoBxCQHPVSjfwdJE9txkjw6efjgPlJwa0aaW6jzOvuWELmrT
-         /DKVUqIDEQBwky5kG4o6dVaBVeMI7+Q6TdIPpVbdQWvJenVHFqKwbi6BGOAL3xm0RTzn
-         J0WSgS9uCb/jW+XkuS+6ubNL9W4hMvBHHGOTpFWlMLoRUT4q/xNuJvt/kvwJefXTVyHP
-         8hxH84nO5p6eO0+Qy48mMRyNzlWP9kwGoTa1fFZPUB2xHgdEpdLjIrQ2MehmpMdXghbW
-         6t7w==
-X-Gm-Message-State: AGi0PuYIzmgNnMOUP0bszFw75Vl2wwcU7KCwy0zSgEv0gAtHsFM74co3
-        5qoSE/TjNKIq/LeFF7mjJyhbUg==
-X-Google-Smtp-Source: APiQypJep+vzKwYkiq8tNVcoRKBQqvygmDMiU3wmwYTRCujJ4dpxH504cMcQBD+J7HVm3fH3jpT+vw==
-X-Received: by 2002:a17:902:b187:: with SMTP id s7mr7558369plr.0.1588758090965;
-        Wed, 06 May 2020 02:41:30 -0700 (PDT)
-Received: from localhost.localdomain ([117.252.68.141])
-        by smtp.gmail.com with ESMTPSA id a2sm1337360pfg.106.2020.05.06.02.41.22
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 06 May 2020 02:41:30 -0700 (PDT)
-From:   Sumit Garg <sumit.garg@linaro.org>
-To:     jarkko.sakkinen@linux.intel.com, zohar@linux.ibm.com,
-        jejb@linux.ibm.com
-Cc:     dhowells@redhat.com, jens.wiklander@linaro.org, corbet@lwn.net,
-        jmorris@namei.org, serge@hallyn.com, casey@schaufler-ca.com,
-        janne.karhunen@gmail.com, daniel.thompson@linaro.org,
-        Markus.Wamser@mixed-mode.de, keyrings@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        op-tee@lists.trustedfirmware.org, tee-dev@lists.linaro.org,
-        Sumit Garg <sumit.garg@linaro.org>
-Subject: [PATCH v4 4/4] MAINTAINERS: Add entry for TEE based Trusted Keys
-Date:   Wed,  6 May 2020 15:10:17 +0530
-Message-Id: <1588758017-30426-5-git-send-email-sumit.garg@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1588758017-30426-1-git-send-email-sumit.garg@linaro.org>
-References: <1588758017-30426-1-git-send-email-sumit.garg@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1rTt6LxaW/pHMjJunZzywGj8yOmnvtXY/IpJZLrkwj0=;
+        b=BrnF9g//kB0S2hs0iGD7INuP06PouRaIwxfjfoz6PRwbAv5Ajf0SNF/ei5bY7rvr9X
+         Jdbf0x9D64L3EprMCRpwHIw0lCbaoVA3hsZtady7hkSLGuRS7H5cwVGnN3IpjrZOgbDl
+         jO1kJ4/pCLLKy4FnpTiLutyGUTO0sgN9YcP72gBv6fgqQvX1yyxAzRw6oWFpH9Wdqfgq
+         FGVmeB2N79sz6nq40NjbK5a6lFbTUct4ScdYKYROZ1VH8sYZULQFicrdD4hUgAwA+mDm
+         Unt07Xm4LI/g2m897JAbMxz+fqngMeyKJXQvasVg22HMEDRPKYyZhoD4rcq1ukhzHm86
+         sWXA==
+X-Gm-Message-State: AGi0PuajHonZJH7afsWPB4bx1n4bB4n83k1oeCaVYPMRwOik/coSC8Ll
+        jUZDhRxGZBKwbD0Wx/QSfWc+p2KxnpckaXW8x2CfXw==
+X-Google-Smtp-Source: APiQypJ2iFf2i42ytFK2XNMo32cD+nb2gyVuT/JFrTqbobcbJ/UpsVR9eFZeVYgFYeicoDgdzICiyNX3uSgZYLIIfJ8=
+X-Received: by 2002:a2e:9842:: with SMTP id e2mr4512086ljj.273.1588761230232;
+ Wed, 06 May 2020 03:33:50 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200505102700.7912-1-anders.roxell@linaro.org> <CABVgOS=awiwi7APWr5HgU6Eht-VAygWPeQyNsCnAF09OLpR46A@mail.gmail.com>
+In-Reply-To: <CABVgOS=awiwi7APWr5HgU6Eht-VAygWPeQyNsCnAF09OLpR46A@mail.gmail.com>
+From:   Anders Roxell <anders.roxell@linaro.org>
+Date:   Wed, 6 May 2020 12:33:38 +0200
+Message-ID: <CADYN=9Jdwd=3Rh=wyzO7eOxtyTSm+JqjF385iQjfMocpz1A3YA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/6] kunit: Kconfig: enable a KUNIT_RUN_ALL fragment
+To:     David Gow <davidgow@google.com>
+Cc:     Brendan Higgins <brendanhiggins@google.com>,
+        John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        KUnit Development <kunit-dev@googlegroups.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-ext4@vger.kernel.org,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Marco Elver <elver@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Add MAINTAINERS entry for TEE based Trusted Keys framework.
+Hi David,
 
-Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
----
- MAINTAINERS | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Thank you for the review.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index b816a45..fc8bf16 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -9403,6 +9403,14 @@ F:	include/keys/trusted-type.h
- F:	include/keys/trusted_tpm.h
- F:	security/keys/trusted-keys/
- 
-+KEYS-TRUSTED-TEE
-+M:	Sumit Garg <sumit.garg@linaro.org>
-+L:	linux-integrity@vger.kernel.org
-+L:	keyrings@vger.kernel.org
-+S:	Supported
-+F:	include/keys/trusted_tee.h
-+F:	security/keys/trusted-keys/trusted_tee.c
-+
- KEYS/KEYRINGS
- M:	David Howells <dhowells@redhat.com>
- M:	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
--- 
-2.7.4
+On Wed, 6 May 2020 at 07:08, David Gow <davidgow@google.com> wrote:
+>
+> On Tue, May 5, 2020 at 6:27 PM Anders Roxell <anders.roxell@linaro.org> wrote:
+> >
+> > Make it easier to enable all KUnit fragments.  This is needed for kernel
+> > test-systems, so its easy to get all KUnit tests enabled and if new gets
+> > added they will be enabled as well.  Fragments that has to be builtin
+> > will be missed if CONFIG_KUNIT_RUN_ALL is set as a module.
+> >
+> > Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+> > ---
+> >  lib/kunit/Kconfig | 6 ++++++
+> >  1 file changed, 6 insertions(+)
+> >
+> > diff --git a/lib/kunit/Kconfig b/lib/kunit/Kconfig
+> > index 95d12e3d6d95..537f37bc8400 100644
+> > --- a/lib/kunit/Kconfig
+> > +++ b/lib/kunit/Kconfig
+> > @@ -41,4 +41,10 @@ config KUNIT_EXAMPLE_TEST
+> >           is intended for curious hackers who would like to understand how to
+> >           use KUnit for kernel development.
+> >
+> > +config KUNIT_RUN_ALL
+> > +       tristate "KUnit run all test"
+>
+> I'm not 100% sure about this name and description. It only actually
+> "runs" the tests if they're builtin (as modules, they'll only run when
+> loaded).
+>
+> Would KUNIT_BUILD_ALL or KUNIT_ALL_TESTS
 
+I would like to go with KUNIT_ALL_TESTS if no one objects.
+
+> or similar be better?
+>
+> It also, as mentioned, only really runs all available (i.e., with
+> dependencies met in the current .config) tests (as distinct from the
+> --alltests flag to kunit.py, which builds UML with allyesconfig), it
+> might be good to add this to the description or help.
+>
+> Something like "Enable all KUnit tests" or "Enable all available KUnit
+> tests" (or even something about "all KUnit tests with satisfied
+> dependencies") might be clearer.
+
+I like "All KUnit tests with satisfied dependencies".
+
+>
+> > +       help
+> > +         Enables all KUnit tests, if they can be enabled.
+> > +         That depends on if KUnit is enabled as a module or builtin.
+> > +
+> I like the first line here, but the second one could use a bit more
+> explanation. Maybe copy some of the boilerplate text from other tests,
+> e.g.:
+>
+>           KUnit tests run during boot and output the results to the debug log
+>          in TAP format (http://testanything.org/). Only useful for kernel devs
+>          running the KUnit test harness, and not intended for inclusion into a
+>          production build.
+>
+>          For more information on KUnit and unit tests in general please refer
+>          to the KUnit documentation in Documentation/dev-tools/kunit/.
+>
+>          If unsure, say N.
+
+Makes much more sense, thanks.
+
+>
+> >  endif # KUNIT
+> > --
+> > 2.20.1
+> >
+>
+> Otherwise, this is looking good. I've done some quick testing, and it
+> all seems to work for me. As long as it's clear what the difference
+> between this and other ways of running "all tests" (like the
+> --alltests kunit.py option),
+
+Do you think it should be made clearer in some way?
+
+> I'm all for including this in.
+>
+
+Cheers,
+Anders
