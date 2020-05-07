@@ -2,123 +2,159 @@ Return-Path: <SRS0=9z6D=6V=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DF15C38A2A
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 May 2020 16:48:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD52FC38A2A
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 May 2020 17:05:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0748B21473
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 May 2020 16:48:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1871207DD
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 May 2020 17:05:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=dowhile0-org.20150623.gappssmtp.com header.i=@dowhile0-org.20150623.gappssmtp.com header.b="nGZT+7wo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726618AbgEGQsB (ORCPT
+        id S1726778AbgEGRFo (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 7 May 2020 12:48:01 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2163 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726074AbgEGQsB (ORCPT
+        Thu, 7 May 2020 13:05:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45468 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726491AbgEGRFn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 7 May 2020 12:48:01 -0400
-Received: from lhreml741-chm.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id F1CB7F4FD0BDC45C14F0;
-        Thu,  7 May 2020 17:47:58 +0100 (IST)
-Received: from fraeml702-chm.china.huawei.com (10.206.15.51) by
- lhreml741-chm.china.huawei.com (10.201.108.191) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
- 15.1.1913.5; Thu, 7 May 2020 17:47:58 +0100
-Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- fraeml702-chm.china.huawei.com (10.206.15.51) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1913.5; Thu, 7 May 2020 18:47:58 +0200
-Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
- fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.1913.007;
- Thu, 7 May 2020 18:47:58 +0200
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        "david.safford@gmail.com" <david.safford@gmail.com>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "John Johansen" <john.johansen@canonical.com>
-CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
-Subject: RE: [RFC][PATCH 1/3] evm: Move hooks outside LSM infrastructure
-Thread-Topic: [RFC][PATCH 1/3] evm: Move hooks outside LSM infrastructure
-Thread-Index: AQHWHfmwvisCdHYC6kmVk7fgFWuzYaibYCWAgAAX0QCAAMB1IIAAb0AAgAApg3A=
-Date:   Thu, 7 May 2020 16:47:58 +0000
-Message-ID: <750ab4e0990f47e4aea10d0e580b1074@huawei.com>
-References: <20200429073935.11913-1-roberto.sassu@huawei.com>
-         <1588794293.4624.21.camel@linux.ibm.com>
-         <1588799408.4624.28.camel@linux.ibm.com>
-         <ab879f9e66874736a40e9c566cadc272@huawei.com>
- <1588864628.5685.78.camel@linux.ibm.com>
-In-Reply-To: <1588864628.5685.78.camel@linux.ibm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.220.65.97]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Thu, 7 May 2020 13:05:43 -0400
+Received: from mail-il1-x142.google.com (mail-il1-x142.google.com [IPv6:2607:f8b0:4864:20::142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B52C0C05BD0A
+        for <linux-security-module@vger.kernel.org>; Thu,  7 May 2020 10:05:43 -0700 (PDT)
+Received: by mail-il1-x142.google.com with SMTP id t12so2365476ile.9
+        for <linux-security-module@vger.kernel.org>; Thu, 07 May 2020 10:05:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dowhile0-org.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=FhMdI68GxmM2/TpI4f24ZbSehXjdI3UOoYDFkcvNus8=;
+        b=nGZT+7woblZD8e8jFW2CJzEmOJ5BFpEdBvnaR5LRXjqJu2xRQTeUeJ5zXQPoQBv3OE
+         2ZZ5s42uP53sUUlFc9l4BT/xibKJfb4X5aViZjInG9k7iYrAFrBKulzKotIIf7ZPNV82
+         P/MreQjfGerW608Ii3/3QoUdE92RHrso8akpm6bR+AWbik7A5CU2Jdm9fIQrwwyniHOp
+         AnbND53KOc/oGT/S1P/EIlHU6mgKzwRBUPdaKzDsWlf29lfMi9lXTnnuq9t2qVYlbl93
+         QaUyZNdEujB6Jl6bdF+34vivxcPemyCnxwmOwQW8QMgkEpJG2xUVM/cFx4kzxs6Gz0Ya
+         fvlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FhMdI68GxmM2/TpI4f24ZbSehXjdI3UOoYDFkcvNus8=;
+        b=rrZtp3XPqaJhfB0jCMv/0rmdCCXChhhmQNanza/Up/fikz2rOiirpEh8gggXvRRQx/
+         JbhFE7PNHDIEeX1EjZpnRxDHhJZdGn2EmMXUMgNRyhUM9Rhgru8Jx50N2XreIr92v8lm
+         B3NyJ5QPbsbbnR2SpY1GZ7J8TgyingfN3zrSkclPRyetampPiAjuC87EMqYv7E/1zafu
+         GK7bpRzfP7unj45jVt0glZgx6P73og9zBMXY5A121dspbB22f2ajPbWxW61Yo/krSSaK
+         LSrSzOo44IPODU/Q011tS18RQ1GFEBQnYye0HoCNJsbXyPD1yrrnpXES5NG4NpqNF+9y
+         Tt2w==
+X-Gm-Message-State: AGi0PuadOApkxDPDdQhtkDyAeVyN/835zZnlYtDn6Iz9jomziIYExAuC
+        zzMO3kuUkLfCQ0DuEwu63/4SDeE9OpzYCasZw7BaDdIuF7s=
+X-Google-Smtp-Source: APiQypIEaxEPlu5s2U+5cAac/7UBCSdL/etDNK33LN2FlOhkvR23aOObctkvLIc2pQFBDrAA7Vpj4EHpHQ4Tnjy9jMg=
+X-Received: by 2002:a92:ddca:: with SMTP id d10mr16285146ilr.166.1588871142871;
+ Thu, 07 May 2020 10:05:42 -0700 (PDT)
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+References: <18e48255d68a1408b3e3152780f0e789df540059.camel@gmail.com>
+In-Reply-To: <18e48255d68a1408b3e3152780f0e789df540059.camel@gmail.com>
+From:   Javier Martinez Canillas <javier@dowhile0.org>
+Date:   Thu, 7 May 2020 19:05:31 +0200
+Message-ID: <CABxcv=kTL_grDUL00c_e2jyPD4hTtFS8Jze6pQBEz_arR6TPVA@mail.gmail.com>
+Subject: Re: [PATCH] platform/x86: Export LPC attributes for the system SPI chip
+To:     Richard Hughes <hughsient@gmail.com>
+Cc:     platform-driver-x86@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBNaW1pIFpvaGFyIFttYWlsdG86
-em9oYXJAbGludXguaWJtLmNvbV0NCj4gT24gVGh1LCAyMDIwLTA1LTA3IGF0IDA3OjUzICswMDAw
-LCBSb2JlcnRvIFNhc3N1IHdyb3RlOg0KPiA+ID4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0N
-Cj4gPiA+IEZyb206IE1pbWkgWm9oYXIgW21haWx0bzp6b2hhckBsaW51eC5pYm0uY29tXQ0KPiA+
-ID4gU2VudDogV2VkbmVzZGF5LCBNYXkgNiwgMjAyMCAxMToxMCBQTQ0KPiA+ID4gVG86IFJvYmVy
-dG8gU2Fzc3UgPHJvYmVydG8uc2Fzc3VAaHVhd2VpLmNvbT47DQo+IGRhdmlkLnNhZmZvcmRAZ21h
-aWwuY29tOw0KPiA+ID4gdmlyb0B6ZW5pdi5saW51eC5vcmcudWs7IGptb3JyaXNAbmFtZWkub3Jn
-OyBKb2huIEpvaGFuc2VuDQo+ID4gPiA8am9obi5qb2hhbnNlbkBjYW5vbmljYWwuY29tPg0KPiA+
-ID4gQ2M6IGxpbnV4LWZzZGV2ZWxAdmdlci5rZXJuZWwub3JnOyBsaW51eC1pbnRlZ3JpdHlAdmdl
-ci5rZXJuZWwub3JnOw0KPiBsaW51eC0NCj4gPiA+IHNlY3VyaXR5LW1vZHVsZUB2Z2VyLmtlcm5l
-bC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IFNpbHZpdQ0KPiA+ID4gVmxhc2Nl
-YW51IDxTaWx2aXUuVmxhc2NlYW51QGh1YXdlaS5jb20+DQo+ID4gPiBTdWJqZWN0OiBSZTogW1JG
-Q11bUEFUQ0ggMS8zXSBldm06IE1vdmUgaG9va3Mgb3V0c2lkZSBMU00NCj4gaW5mcmFzdHJ1Y3R1
-cmUNCj4gDQo+IFJvYmVydG8sIHBsZWFzZSBmaXggeW91ciBtYWlsZXIgb3IgYXQgbGVhc3QgbWFu
-dWFsbHkgcmVtb3ZlIHRoaXMgc29ydA0KPiBvZiBpbmZvIGZyb20gdGhlIGVtYWlsLg0KPiANCj4g
-PiA+DQo+ID4gPiBPbiBXZWQsIDIwMjAtMDUtMDYgYXQgMTU6NDQgLTA0MDAsIE1pbWkgWm9oYXIg
-d3JvdGU6DQo+ID4gPiA+IFNpbmNlIGNvcHlpbmcgdGhlIEVWTSBITUFDIG9yIG9yaWdpbmFsIHNp
-Z25hdHVyZSBpc24ndCBhcHBsaWNhYmxlLCBJDQo+ID4gPiA+IHdvdWxkIHByZWZlciBleHBsb3Jp
-bmcgYW4gRVZNIHBvcnRhYmxlIGFuZCBpbW11dGFibGUgc2lnbmF0dXJlIG9ubHkNCj4gPiA+ID4g
-c29sdXRpb24uDQo+ID4gPg0KPiA+ID4gVG8gcHJldmVudCBjb3B5aW5nIHRoZSBFVk0geGF0dHIs
-IHdlIGFkZGVkICJzZWN1cml0eS5ldm0iIHRvDQo+ID4gPiAvZXRjL3hhdHRyLmNvbmYuIMKgVG8g
-c3VwcG9ydCBjb3B5aW5nIGp1c3QgdGhlIEVWTSBwb3J0YWJsZSBhbmQNCj4gPiA+IGltbXV0YWJs
-ZSBzaWduYXR1cmVzIHdpbGwgcmVxdWlyZSBhIGRpZmZlcmVudCBzb2x1dGlvbi4NCj4gPg0KPiA+
-IFRoaXMgcGF0Y2ggc2V0IHJlbW92ZXMgdGhlIG5lZWQgZm9yIGlnbm9yaW5nIHNlY3VyaXR5LmV2
-bS4gSXQgY2FuIGJlDQo+IGFsd2F5cw0KPiA+IGNvcGllZCwgZXZlbiBpZiBpdCBpcyBhbiBITUFD
-LiBFVk0gd2lsbCB1cGRhdGUgaXQgb25seSB3aGVuIHZlcmlmaWNhdGlvbiBpbg0KPiA+IHRoZSBw
-cmUgaG9vayBpcyBzdWNjZXNzZnVsLiBDb21iaW5lZCB3aXRoIHRoZSBhYmlsaXR5IG9mIHByb3Rl
-Y3RpbmcgYQ0KPiBzdWJzZXQNCj4gPiBvZiBmaWxlcyB3aXRob3V0IGludHJvZHVjaW5nIGFuIEVW
-TSBwb2xpY3ksIHRoZXNlIGFkdmFudGFnZXMgc2VlbSB0bw0KPiA+IG91dHdlaWdoIHRoZSBlZmZv
-cnQgbmVjZXNzYXJ5IHRvIG1ha2UgdGhlIHN3aXRjaC4NCj4gDQo+IEFzIHRoZSBFVk0gZmlsZSBI
-TUFDIGFuZCBvcmlnaW5hbCBzaWduYXR1cmUgY29udGFpbiBpbm9kZSBzcGVjaWZpYw0KPiBpbmZv
-cm1hdGlvbiAoZWcuIGlfdmVyc2lvbiwgaV9nZW5lcmF0aW9uKSwgdGhlc2UgeGF0dHJzIGNhbm5v
-dCBldmVyIGJlDQo+IGNvcGllZC4gwqBUaGUgcHJvcG9zZWQgY2hhbmdlIGlzIGluIG9yZGVyIHRv
-IHN1cHBvcnQganVzdCB0aGUgbmV3IEVWTQ0KPiBzaWduYXR1cmVzLg0KDQpSaWdodCwgSSBkaWRu
-J3QgY29uc2lkZXIgaXQuDQoNCldvdWxkIGl0IG1ha2Ugc2Vuc2UgaW5zdGVhZCB0byBpbnRyb2R1
-Y2UgYW4gYWxpYXMgbGlrZSBzZWN1cml0eS5ldm1faW1tdXRhYmxlDQpzbyB0aGF0IHRoaXMgeGF0
-dHIgY2FuIGJlIGNvcGllZD8NCg0KPiBBdCBsZWFzdCBJTUEgZmlsZSBoYXNoZXMgc2hvdWxkIGFs
-d2F5cyBiZSB1c2VkIGluIGNvbmp1bmN0aW9uIHdpdGgNCj4gRVZNLiDCoEVWTSB4YXR0cnMgc2hv
-dWxkIGFsd2F5cyByZXF1aXJlIGEgc2VjdXJpdHkuaW1hIHhhdHRyIHRvIGJpbmQNCg0KSSBwcm9w
-b3NlZCB0byBlbmZvcmNlIHRoaXMgcmVzdHJpY3Rpb24gc29tZSB0aW1lIGFnbzoNCg0KaHR0cHM6
-Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9wYXRjaC8xMDk3OTM1MS8NCg0KSXMgaXQgb2sgdG8gZW5m
-b3JjZSBpdCBnbG9iYWxseT8NCg0KPiB0aGUgZmlsZSBtZXRhZGF0YSB0byB0aGUgZmlsZSBkYXRh
-LiDCoFRoZSBJTUEgYW5kIEVWTSBwb2xpY2llcyByZWFsbHkNCj4gbmVlZCB0byBiZSBpbiBzeW5j
-Lg0KDQpJdCB3b3VsZCBiZSBuaWNlLCBidXQgYXQgdGhlIG1vbWVudCBFVk0gY29uc2lkZXJzIGFs
-c28gZmlsZXMgdGhhdCBhcmUNCm5vdCBzZWxlY3RlZCBieSB0aGUgSU1BIHBvbGljeS4gQW4gZXhh
-bXBsZSBvZiB3aHkgdGhpcyBpcyBhIHByb2JsZW0gaXMNCnRoZSBhdWRpdCBzZXJ2aWNlIHRoYXQg
-ZmFpbHMgdG8gc3RhcnQgd2hlbiBpdCB0cmllcyB0byBhZGp1c3QgdGhlIHBlcm1pc3Npb25zDQpv
-ZiB0aGUgbG9nIGZpbGVzLiBUaG9zZSBmaWxlcyBkb24ndCBoYXZlIHNlY3VyaXR5LmV2bSBiZWNh
-dXNlIHRoZXkgYXJlDQpub3QgYXBwcmFpc2VkIGJ5IElNQSwgYnV0IEVWTSBkZW5pZXMgdGhlIG9w
-ZXJhdGlvbi4NCg0KUm9iZXJ0bw0KDQpIVUFXRUkgVEVDSE5PTE9HSUVTIER1ZXNzZWxkb3JmIEdt
-YkgsIEhSQiA1NjA2Mw0KTWFuYWdpbmcgRGlyZWN0b3I6IExpIFBlbmcsIExpIEppYW4sIFNoaSBZ
-YW5saQ0K
+Hello Richard,
+
+On Wed, May 6, 2020 at 5:52 PM Richard Hughes <hughsient@gmail.com> wrote:
+>
+> Export standard LPC configuration values from various LPC/eSPI
+> controllers. This allows userspace components such as fwupd to
+> verify the most basic SPI protections are set correctly.
+> For instance, checking BIOSWE is disabled and BLE is enabled.
+>
+> More cutting-edge checks (e.g. PRx and BootGuard) can be added
+> once the basics are in place. Exporting these values from the
+> kernel allows us to report the security level of the platform
+> without rebooting and running an unsigned EFI binary like
+> chipsec.
+>
+> Signed-off-by: Richard Hughes <richard@hughsie.com>
+> ---
+
+The patch looks good to me, I just have some small comments.
+
+> +config INTEL_SPI_LPC
+> +       tristate "Intel SPI LPC configuration"
+> +       depends on SECURITY
+
+Maybe "depends on SECURITYFS" instead? I would also add ||
+COMPILE_TEST to have more build coverage.
+
+Another option is to not even add a dependency here since the
+securityfs_*() functions are still defined if SECURITYFS isn't
+enabled. They just return -ENODEV.
+
+[snip]
+
+> +       spi_dir = securityfs_create_dir("spi", NULL);
+> +       if (IS_ERR(spi_dir))
+> +               return -1;
+> +
+> +       spi_bioswe =
+> +           securityfs_create_file("bioswe",
+> +                                  0600, spi_dir, NULL,
+> +                                  &spi_bioswe_ops);
+> +       if (IS_ERR(spi_bioswe))
+> +               goto out;
+> +       spi_ble =
+> +           securityfs_create_file("ble",
+> +                                  0600, spi_dir, NULL,
+> +                                  &spi_ble_ops);
+> +       if (IS_ERR(spi_ble))
+> +               goto out;
+> +       spi_smm_bwp =
+> +           securityfs_create_file("smm_bwp",
+> +                                  0600, spi_dir, NULL,
+> +                                  &spi_smm_bwp_ops);
+> +       if (IS_ERR(spi_smm_bwp))
+> +               goto out;
+> +
+> +       return 0;
+> +out:
+> +       securityfs_remove(spi_bioswe);
+> +       securityfs_remove(spi_ble);
+> +       securityfs_remove(spi_smm_bwp);
+
+I don't think this is needed since if smm_bwp was successfully created
+then it will never reach the error handling.
+
+> +       securityfs_remove(spi_dir);
+
+The convention is to remove these in the reverse order that were created, i.e:
+
+securityfs_remove(spi_ble);
+securityfs_remove(spi_bioswe);
+securityfs_remove(spi_dir);
+
+> +static void __exit mod_exit(void)
+> +{
+> +       securityfs_remove(spi_bioswe);
+> +       securityfs_remove(spi_ble);
+> +       securityfs_remove(spi_smm_bwp);
+> +       securityfs_remove(spi_dir);
+> +}
+> +
+
+Same here. It makes it easier if in the future other entries are added.
+
+I wonder if these new entries should be documented in
+Documentation/ABI/. Or maybe that's not a requirement for securityfs?
+
+Best regards,
+Javier
