@@ -2,165 +2,94 @@ Return-Path: <SRS0=9z6D=6V=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69B7DC38A24
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 May 2020 05:50:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 666A0C38A24
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 May 2020 05:50:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3EB6020753
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 May 2020 05:50:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31F8320753
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 May 2020 05:50:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="a30X84p9"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iAffVvEl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725910AbgEGFuG (ORCPT
+        id S1725862AbgEGFuy (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 7 May 2020 01:50:06 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:53950 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725793AbgEGFuG (ORCPT
+        Thu, 7 May 2020 01:50:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52856 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725857AbgEGFuy (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 7 May 2020 01:50:06 -0400
-Received: from [10.0.0.249] (c-24-19-135-168.hsd1.wa.comcast.net [24.19.135.168])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 0032A20B717B;
-        Wed,  6 May 2020 22:50:04 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0032A20B717B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1588830605;
-        bh=RUpzSogQyBsfsF8uRrUaHvzQm2ALKf57K82ip6cdAaY=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=a30X84p93MtdqmMPZmiBYv7G8klLTj0qcyl93LuHoTLgpulFY9yv1ku/aZlKbtyK6
-         CyDCJ1vIA7SQnmsoE4ks21SB+9satufY8x+LCve2QjF0IItO/Y9+ScdQw1zSVR6nje
-         f1Y8MnJYA2so0zJpDYs86HATPbT/imk90TUbGuLk=
-Subject: Re: [RFC][PATCH 0/2] Add support for using reserved memory for ima
- buffer pass
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, devicetree@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, catalin.marinas@arm.com,
-        will@kernel.org, mpe@ellerman.id.au, benh@kernel.crashing.org,
-        paulus@samba.org, robh+dt@kernel.org, frowand.list@gmail.com,
-        zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, jmorris@namei.org,
-        serge@hallyn.com, pasha.tatashin@soleen.com, allison@lohutok.net,
-        kstewart@linuxfoundation.org, takahiro.akashi@linaro.org,
-        tglx@linutronix.de, vincenzo.frascino@arm.com,
-        masahiroy@kernel.org, james.morse@arm.com, bhsharma@redhat.com,
-        mbrugger@suse.com, hsinyi@chromium.org, tao.li@vivo.com,
-        christophe.leroy@c-s.fr, gregkh@linuxfoundation.org,
-        nramas@linux.microsoft.com, tusharsu@linux.microsoft.com,
-        balajib@linux.microsoft.com
-References: <20200504203829.6330-1-prsriva@linux.microsoft.com>
- <20200505095620.GA82424@C02TD0UTHF1T.local>
-From:   Prakhar Srivastava <prsriva@linux.microsoft.com>
-Message-ID: <e8c7d74e-74bf-caa3-452d-23faa649e825@linux.microsoft.com>
-Date:   Wed, 6 May 2020 22:50:04 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        Thu, 7 May 2020 01:50:54 -0400
+Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B77EDC061A0F;
+        Wed,  6 May 2020 22:50:52 -0700 (PDT)
+Received: by mail-lj1-x241.google.com with SMTP id l19so4911890lje.10;
+        Wed, 06 May 2020 22:50:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Mq6HIDH5BrDBTzENE5J2lC+OBSXHG1cl8m7LfKfKF6E=;
+        b=iAffVvElIIkM/97CnrTukgk2THSnmjXrSSfqNZZioLnNn0ITW+wSquwB5M9i5fIQAD
+         1WcrpPYaHGfL38aTq6GqE7NP04pVzQRUwe5OaYNO6GYg6eI4A1x9AXWQ0hmRd2RtnOXP
+         l9ki8ATv/d2kf2w9vsalM2DbBUy0RepJzcNE31/TMNuGRKDzvef3HSEWei1pAl7SW59U
+         A8vP3ZmLcqD55jixIJyxMuz9RNERHbPbOqoqVcf8ARHh5wvbWGUuWeajZ1/FbKgGuC1x
+         pirH6PjU/IPWMG06SmkHUfyXlogr7ZJQtLltrEQD+dCef/DAyXESz+CDP9EcDkF6/ZSr
+         60yA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Mq6HIDH5BrDBTzENE5J2lC+OBSXHG1cl8m7LfKfKF6E=;
+        b=X11s4cwZeKt4kgx5ypCr42YHSyw5tGw4ZD4kV0AZ7Ynh4VVNnbp3765ZOgU+7G1hRk
+         MGXaoPJq2v5ez1Hu+Ji4BQllaUjaUHs51AR+MgPFGGEc7xmvsA7O1gDCHhbQtVnisgtM
+         dgatsGLe4ucWg3Iqd3aWAGK7qFDwEzgfGUJIuGsCidLJzpSEhOsuVzRl1C+CvDdaqe5O
+         sP/2sE4+59Meian01VULGSqssRwn/IsfZVA862e2NEpxIdJ2ZqB9IYUJiH9vdgHXzg/s
+         PhsBeKeMbWPZsa5jEbxUDoqdK8fMnbNAhRZ3KMKdvDXjgb8hw0Wqi15fmvuoj7toPSS3
+         qB9g==
+X-Gm-Message-State: AGi0PuZWjTR5Y0In7TepiqJzZT5JxIPa1Ftn1TjULw/ZDnSdESn0Funf
+        Q50OOfh9zlss/bbPM2g+blhSxHAwV33ECMXdLxw=
+X-Google-Smtp-Source: APiQypKApDz/cUh129GGJeJkYPhX5zGgi6wuKgYvKSMz/d2JSVOYgHdxKUpMEIF9IhUQV7nR7nDF9wIvBpIOaPUn78Y=
+X-Received: by 2002:a2e:990f:: with SMTP id v15mr7500790lji.7.1588830651087;
+ Wed, 06 May 2020 22:50:51 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200505095620.GA82424@C02TD0UTHF1T.local>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200430155240.68748-1-kpsingh@chromium.org> <alpine.LRH.2.21.2005011345380.29679@namei.org>
+In-Reply-To: <alpine.LRH.2.21.2005011345380.29679@namei.org>
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date:   Wed, 6 May 2020 22:50:39 -0700
+Message-ID: <CAADnVQLN-OtyzwzNwontLK9q3w3hPET2vDJWHhPs-cKqvmHuVQ@mail.gmail.com>
+Subject: Re: [PATCH bpf] security: Fix the default value of
+ fs_context_parse_param hook
+To:     James Morris <jmorris@namei.org>
+Cc:     KP Singh <kpsingh@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Mikko Ylinen <mikko.ylinen@linux.intel.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Kees Cook <keescook@chromium.org>, Jann Horn <jannh@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Mark,
+On Thu, Apr 30, 2020 at 8:46 PM James Morris <jmorris@namei.org> wrote:
+>
+> On Thu, 30 Apr 2020, KP Singh wrote:
+>
+> > From: KP Singh <kpsingh@google.com>
+> >
+>
+> Applied to:
+> git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git for-v5.7
+>
 
-This patch set currently only address the Pure DT implementation.
-EFI and ACPI implementations will be posted in subsequent patchsets.
-
-The logs are intended to be carried over the kexec and once read the
-logs are no longer needed and in prior conversation with James(
-https://lore.kernel.org/linux-arm-kernel/0053eb68-0905-4679-c97a-00c5cb6f1abb@arm.com/) 
-the apporach of using a chosen node doesn't
-support the case.
-
-The DT entries make the reservation permanent and thus doesnt need 
-kernel segments to be used for this, however using a chosen-node with
-reserved memory only changes the node information but memory still is
-reserved via reserved-memory section.
-
-On 5/5/20 2:59 AM, Mark Rutland wrote:
-> Hi Prakhar,
-> 
-> On Mon, May 04, 2020 at 01:38:27PM -0700, Prakhar Srivastava wrote:
->> IMA during kexec(kexec file load) verifies the kernel signature and measures
->> the signature of the kernel. The signature in the logs can be used to verfiy the
->> authenticity of the kernel. The logs don not get carried over kexec and thus
->> remote attesation cannot verify the signature of the running kernel.
->>
->> Introduce an ABI to carry forward the ima logs over kexec.
->> Memory reserved via device tree reservation can be used to store and read
->> via the of_* functions.
-> 
-> This flow needs to work for:
-> 
-> 1) Pure DT
-> 2) DT + EFI memory map
-> 3) ACPI + EFI memory map
-> 
-> ... and if this is just for transiently passing the log, I don't think
-> that a reserved memory region is the right thing to use, since they're
-> supposed to be more permanent.
-> 
-> This sounds analogous to passing the initrd, and should probably use
-> properties under the chosen node (which can be used for all three boot
-> flows above).
-> 
-> For reference, how big is the IMA log likely to be? Does it need
-> physically contiguous space?
-
-It purely depends on the policy used and the modules/files that are 
-accessed for my local testing over a kexec session the log in
-about 30KB.
-
-Current implementation expects enough contiguous memory to allocated to 
-carry forward the logs. If the log size exceeds the reserved memory the
-call will fail.
-
-Thanks,
-Prakhar Srivastava
-> 
-> Thanks,
-> Mark.
-> 
->>
->> Reserved memory stores the size(sizeof(size_t)) of the buffer in the starting
->> address, followed by the IMA log contents.
->>
->> Tested on:
->>    arm64 with Uboot
->>
->> Prakhar Srivastava (2):
->>    Add a layer of abstraction to use the memory reserved by device tree
->>      for ima buffer pass.
->>    Add support for ima buffer pass using reserved memory for arm64 kexec.
->>      Update the arch sepcific code path in kexec file load to store the
->>      ima buffer in the reserved memory. The same reserved memory is read
->>      on kexec or cold boot.
->>
->>   arch/arm64/Kconfig                     |   1 +
->>   arch/arm64/include/asm/ima.h           |  22 ++++
->>   arch/arm64/include/asm/kexec.h         |   5 +
->>   arch/arm64/kernel/Makefile             |   1 +
->>   arch/arm64/kernel/ima_kexec.c          |  64 ++++++++++
->>   arch/arm64/kernel/machine_kexec_file.c |   1 +
->>   arch/powerpc/include/asm/ima.h         |   3 +-
->>   arch/powerpc/kexec/ima.c               |  14 ++-
->>   drivers/of/Kconfig                     |   6 +
->>   drivers/of/Makefile                    |   1 +
->>   drivers/of/of_ima.c                    | 165 +++++++++++++++++++++++++
->>   include/linux/of.h                     |  34 +++++
->>   security/integrity/ima/ima_kexec.c     |  15 ++-
->>   13 files changed, 325 insertions(+), 7 deletions(-)
->>   create mode 100644 arch/arm64/include/asm/ima.h
->>   create mode 100644 arch/arm64/kernel/ima_kexec.c
->>   create mode 100644 drivers/of/of_ima.c
->>
->> -- 
->> 2.25.1
->>
+James,
+could you please send PR to Linus this week to make sure
+the fix makes it into the next -rc ?
+Few other people reported issues that are fixed by this patch.
+Thanks!
