@@ -2,158 +2,147 @@ Return-Path: <SRS0=9z6D=6V=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C32ADC38A24
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 May 2020 10:21:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A45B5C54E49
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 May 2020 13:06:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A01E32075E
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 May 2020 10:21:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83CCB208D6
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 May 2020 13:06:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CojCw9Fm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725923AbgEGKVm (ORCPT
+        id S1725953AbgEGNG4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 7 May 2020 06:21:42 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2162 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725857AbgEGKVl (ORCPT
+        Thu, 7 May 2020 09:06:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36292 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725939AbgEGNG4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 7 May 2020 06:21:41 -0400
-Received: from lhreml716-chm.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id A05E31662E4C4547931E;
-        Thu,  7 May 2020 11:21:38 +0100 (IST)
-Received: from fraeml712-chm.china.huawei.com (10.206.15.61) by
- lhreml716-chm.china.huawei.com (10.201.108.67) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1913.5; Thu, 7 May 2020 11:21:38 +0100
-Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- fraeml712-chm.china.huawei.com (10.206.15.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1913.5; Thu, 7 May 2020 12:21:38 +0200
-Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
- fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.1913.007;
- Thu, 7 May 2020 12:21:37 +0200
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        "mjg59@google.com" <mjg59@google.com>
-CC:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
-Subject: RE: [PATCH] ima: Allow imasig requirement to be satisfied by EVM
- portable signatures
-Thread-Topic: [PATCH] ima: Allow imasig requirement to be satisfied by EVM
- portable signatures
-Thread-Index: AQHWF772Ra31Za7Rnki0v4dh4iikmaiHEPYAgAEEbgCAFGpBIA==
-Date:   Thu, 7 May 2020 10:21:37 +0000
-Message-ID: <1e206d0da3dd485b90f88ba07dfdf140@huawei.com>
-References: <20200421092418.25151-1-roberto.sassu@huawei.com>
- <1587675102.5610.66.camel@linux.ibm.com>
- <735d0814399f430a8809af8c28b1a62d@huawei.com>
-In-Reply-To: <735d0814399f430a8809af8c28b1a62d@huawei.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.220.65.97]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Thu, 7 May 2020 09:06:56 -0400
+Received: from mail-oi1-x242.google.com (mail-oi1-x242.google.com [IPv6:2607:f8b0:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67560C05BD43;
+        Thu,  7 May 2020 06:06:55 -0700 (PDT)
+Received: by mail-oi1-x242.google.com with SMTP id o24so5098637oic.0;
+        Thu, 07 May 2020 06:06:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=JrKE0/k9TqvO63dFVD5bdAgHBAm+WjFMdax9qWxHqKs=;
+        b=CojCw9Fmh9zgr/0dIGJBy9xx9eWODCnoJMmbcD0f752ky4fgbcwRw7B9uOCFzQRteP
+         O2rqfKu0O73IQxAsBUNVFV+5qRjL6w/6Z4E8M+CWtfRdEF7SgdIqv4cWr9QErt9oJsy+
+         jvcNmhVrwy0jEDEA3z16tYXv1cKUu6B1tKL4lcF7T0uf19RthMQchvysM2Rzbg7XHXcV
+         2jm8Gvduu8R9jNUnn67MjsyYV+hbQ+JgW5mOitej7bNy4O84oi5OzqlpW06UvPp+9zVR
+         4aqsRg4qS05H8m0uUCO2eyQ4D/jDNHlDyZXtevyZcNDz1VIyS5MwcO9ADjmuvS064y2b
+         8+Ug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=JrKE0/k9TqvO63dFVD5bdAgHBAm+WjFMdax9qWxHqKs=;
+        b=HKSgkCe1nu19Tv87a4uhE8UkZPtgaFHWQ0CJMd4gz1FfKniNDJyNSoIg5VThkwwYoZ
+         5sdBAERJUm02Qubfg+25sFjXnPOXL0p5hJMv7UCCr3VAEhPo3FlgnMUMCdIulwxh6dDJ
+         riz35ZUwUYfirHLOQ926LVig7Xf8MNWjI9jmBLqiAXStUKocO+p/LuGVhqrzT9ubN7Sj
+         QKhyOGZKFW9yDiBB4a3RObqja2sGwOUrkY7eVzCQ6yEcYtW3t+opfi1D8Fx4U/vpJiJV
+         zkWGyHiVDmSUb8GLX/l0diZ1H98EzqHw5BsuFreyNxIlaix8L3nukRbULWf0sEEMF6gn
+         Carw==
+X-Gm-Message-State: AGi0Pub3aSIW7qAk6YqzycdE9ZEO/HUhdd2TaKh4ddEqzlLRVa1IOjCU
+        xEcwR2YGvjlQzePs8Wg1Zv92CgVZH4mmHGWla7c=
+X-Google-Smtp-Source: APiQypIk4Twgp18++aGpnhrRi6PUMUuxUCqdmRlUvlSXGSpcGj5jfGXT2YT7GXAqCLRLEIQmOdYavVVdR1znSrjovn8=
+X-Received: by 2002:aca:4c0b:: with SMTP id z11mr6337744oia.92.1588856814638;
+ Thu, 07 May 2020 06:06:54 -0700 (PDT)
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+References: <CAJFHJroyC8SAFJZuQxcwHqph5EQRg=MqFdvfnwbK35Cv-A-neA@mail.gmail.com>
+ <CAJfpegtWEMd_bCeULG13PACqPq5G5HbwKjMOnCoXyFQViXE0yQ@mail.gmail.com>
+ <CAEjxPJ56JXRr0MWxtekBhfNS7i8hFex2oiwqGYrh=m1cH9X4kg@mail.gmail.com> <CAJFHJrppbb1cUTq9w7G7E2RrV5CbYx54dAfk62tiZYCewcwXhg@mail.gmail.com>
+In-Reply-To: <CAJFHJrppbb1cUTq9w7G7E2RrV5CbYx54dAfk62tiZYCewcwXhg@mail.gmail.com>
+From:   Stephen Smalley <stephen.smalley.work@gmail.com>
+Date:   Thu, 7 May 2020 09:06:43 -0400
+Message-ID: <CAEjxPJ6LZowJJ1uQXa+NTSMA=y2AWatNKvtp3iDcH7kL4D-qcw@mail.gmail.com>
+Subject: Re: fuse doesn't use security_inode_init_security?
+To:     Chirantan Ekbote <chirantan@chromium.org>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        fuse-devel <fuse-devel@lists.sourceforge.net>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        LSM <linux-security-module@vger.kernel.org>,
+        virtio-fs-list <virtio-fs@redhat.com>,
+        SElinux list <selinux@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBsaW51eC1pbnRlZ3JpdHktb3du
-ZXJAdmdlci5rZXJuZWwub3JnIFttYWlsdG86bGludXgtaW50ZWdyaXR5LQ0KPiBvd25lckB2Z2Vy
-Lmtlcm5lbC5vcmddIE9uIEJlaGFsZiBPZiBSb2JlcnRvIFNhc3N1DQo+IFNlbnQ6IEZyaWRheSwg
-QXByaWwgMjQsIDIwMjAgMTI6NDAgUE0NCj4gVG86IE1pbWkgWm9oYXIgPHpvaGFyQGxpbnV4Lmli
-bS5jb20+OyBtamc1OUBnb29nbGUuY29tDQo+IENjOiBsaW51eC1pbnRlZ3JpdHlAdmdlci5rZXJu
-ZWwub3JnOyBsaW51eC1zZWN1cml0eS1tb2R1bGVAdmdlci5rZXJuZWwub3JnOw0KPiBsaW51eC1r
-ZXJuZWxAdmdlci5rZXJuZWwub3JnOyBTaWx2aXUgVmxhc2NlYW51DQo+IDxTaWx2aXUuVmxhc2Nl
-YW51QGh1YXdlaS5jb20+DQo+IFN1YmplY3Q6IFJFOiBbUEFUQ0hdIGltYTogQWxsb3cgaW1hc2ln
-IHJlcXVpcmVtZW50IHRvIGJlIHNhdGlzZmllZCBieSBFVk0NCj4gcG9ydGFibGUgc2lnbmF0dXJl
-cw0KPiANCj4gPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiA+IEZyb206IE1pbWkgWm9o
-YXIgW21haWx0bzp6b2hhckBsaW51eC5pYm0uY29tXQ0KPiA+IFNlbnQ6IFRodXJzZGF5LCBBcHJp
-bCAyMywgMjAyMCAxMDo1MiBQTQ0KPiA+IFRvOiBSb2JlcnRvIFNhc3N1IDxyb2JlcnRvLnNhc3N1
-QGh1YXdlaS5jb20+OyBtamc1OUBnb29nbGUuY29tDQo+ID4gQ2M6IGxpbnV4LWludGVncml0eUB2
-Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LXNlY3VyaXR5LQ0KPiBtb2R1bGVAdmdlci5rZXJuZWwub3Jn
-Ow0KPiA+IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IFNpbHZpdSBWbGFzY2VhbnUNCj4g
-PiA8U2lsdml1LlZsYXNjZWFudUBodWF3ZWkuY29tPg0KPiA+IFN1YmplY3Q6IFJlOiBbUEFUQ0hd
-IGltYTogQWxsb3cgaW1hc2lnIHJlcXVpcmVtZW50IHRvIGJlIHNhdGlzZmllZCBieQ0KPiBFVk0N
-Cj4gPiBwb3J0YWJsZSBzaWduYXR1cmVzDQo+ID4NCj4gPiBPbiBUdWUsIDIwMjAtMDQtMjEgYXQg
-MTE6MjQgKzAyMDAsIFJvYmVydG8gU2Fzc3Ugd3JvdGU6DQo+ID4gPiBTeXN0ZW0gYWRtaW5pc3Ry
-YXRvcnMgY2FuIHJlcXVpcmUgdGhhdCBhbGwgYWNjZXNzZWQgZmlsZXMgaGF2ZSBhIHNpZ25hdHVy
-ZQ0KPiA+ID4gYnkgc3BlY2lmeWluZyBhcHByYWlzZV90eXBlPWltYXNpZyBpbiBhIHBvbGljeSBy
-dWxlLg0KPiA+ID4NCj4gPiA+IEN1cnJlbnRseSwgb25seSBJTUEgc2lnbmF0dXJlcyBzYXRpc2Z5
-IHRoaXMgcmVxdWlyZW1lbnQuIEhvd2V2ZXIsIGFsc28NCj4gPiBFVk0NCj4gPiA+IHBvcnRhYmxl
-IHNpZ25hdHVyZXMgY2FuIHNhdGlzZnkgaXQuIE1ldGFkYXRhLCBpbmNsdWRpbmcgc2VjdXJpdHku
-aW1hLCBhcmUNCj4gPiA+IHNpZ25lZCBhbmQgY2Fubm90IGNoYW5nZS4NCj4gPg0KPiA+IFBsZWFz
-ZSBleHBhbmQgdGhpcyBwYXJhZ3JhcGggd2l0aCBhIHNob3J0IGNvbXBhcmlzb24gb2YgdGhlIHNl
-Y3VyaXR5DQo+ID4gZ3VhcmFudGVlcyBwcm92aWRlZCBieSBFVk0gaW1tdXRhYmxlLCBwb3J0YWJs
-ZSBzaWduYXR1cmVzIHZlcnN1cyBpbWEtDQo+ID4gc2lnLg0KPiA+DQo+ID4gPg0KPiA+ID4gVGhp
-cyBwYXRjaCBoZWxwcyBpbiB0aGUgc2NlbmFyaW9zIHdoZXJlIHN5c3RlbSBhZG1pbmlzdHJhdG9y
-cyB3YW50IHRvDQo+ID4gPiBlbmZvcmNlIHRoaXMgcmVzdHJpY3Rpb24gYnV0IG9ubHkgRVZNIHBv
-cnRhYmxlIHNpZ25hdHVyZXMgYXJlIGF2YWlsYWJsZS4NCj4gPg0KPiA+IFllcywgSSBhZ3JlZSBp
-dCAiaGVscHMiLCBidXQgd2Ugc3RpbGwgbmVlZCB0byBhZGRyZXNzIHRoZSBhYmlsaXR5IG9mDQo+
-ID4gc2V0dGluZy9yZW1vdmluZyBzZWN1cml0eS5pbWEsIHdoaWNoIGlzbid0IHBvc3NpYmxlIHdp
-dGggYW4gSU1BDQo+ID4gc2lnbmF0dXJlLiDCoFRoaXMgc291bmRzIGxpa2Ugd2UgbmVlZCB0byBk
-ZWZpbmUgYW4gaW1tdXRhYmxlIGZpbGUgaGFzaC4NCj4gDQo+IEkgZGlkbid0IHVuZGVyc3RhbmQu
-IENhbiB5b3UgZXhwbGFpbiBiZXR0ZXI/DQoNCk9rLCBnb3QgaXQuDQoNCkkgd291bGRuJ3QgZ3Jh
-bnQgYWNjZXNzIHRvIG5ldyBmaWxlIGRlcGVuZGluZyBvbiB0aGUgc2VjdXJpdHkuaW1hIHR5cGUN
-CmJ1dCBkZXBlbmRpbmcgb24gdGhlIElNQV9ESUdTSUcgYml0LiBJbiBib3RoIGNhc2VzLCBJTUEg
-c2lnbmF0dXJlIGFuZA0KRVZNIHBvcnRhYmxlIHNpZ25hdHVyZSwgdGhlIGJpdCBpcyBzZXQuDQoN
-ClRoZXJlIGlzIG9uZSByZW1haW5pbmcgaXNzdWUuIE1heWJlIHRoZSBzaWduYXR1cmUgaXMgcG9y
-dGFibGUsIGJ1dCB5b3UNCmRvbid0IGdldCBpdCBmcm9tIGV2bV92ZXJpZnl4YXR0cigpIGlmIHZl
-cmlmaWNhdGlvbiBmYWlscy4gVGhlcmUgaXMgYSBsZWdpdGltYXRlDQpjYXNlIHdoZW4gaXQgaGFw
-cGVucywgd2hpY2ggaXMgd2hlbiB5b3UgZXh0cmFjdCBhIGZpbGUgd2l0aCBhIHBvcnRhYmxlDQpz
-aWduYXR1cmUgd2l0aCB0YXIsIGFuZCB0aGUgaW5vZGUgdWlkL2dpZCBhcmUgbm90IHlldCBjb3Jy
-ZWN0IChmY2hvd24oKSBpcw0KY2FsbGVkIGxhdGVyIGFmdGVyIHRoZSBvcGVuKCkpLiBJbiB0aGlz
-IGNhc2UsIElNQV9ESUdTSUcgaXMgbm90IHNldCBhbmQgdGhlDQpvcGVuKCkgZmFpbHMuDQoNClRv
-IGF2b2lkIHRoaXMgaXNzdWUgSSB3b3VsZCBpbnRyb2R1Y2UgdGhlIG5ldyBzdGF0dXMgSU5URUdS
-SVRZX0ZBSUxfSU1NVVRBQkxFLA0Kc28gdGhhdCBJTUFfRElHU0lHIGlzIHNldCBldmVuIGlmIHRo
-ZSB2ZXJpZmljYXRpb24gb2YgdGhlIHBvcnRhYmxlIHNpZ25hdHVyZQ0KZmFpbHMuDQoNClJvYmVy
-dG8NCg0KSFVBV0VJIFRFQ0hOT0xPR0lFUyBEdWVzc2VsZG9yZiBHbWJILCBIUkIgNTYwNjMNCk1h
-bmFnaW5nIERpcmVjdG9yOiBMaSBQZW5nLCBMaSBKaWFuLCBTaGkgWWFubGkNCg0KDQo+IFRoYW5r
-cw0KPiANCj4gUm9iZXJ0bw0KPiANCj4gSFVBV0VJIFRFQ0hOT0xPR0lFUyBEdWVzc2VsZG9yZiBH
-bWJILCBIUkIgNTYwNjMNCj4gTWFuYWdpbmcgRGlyZWN0b3I6IExpIFBlbmcsIExpIEppYW4sIFNo
-aSBZYW5saQ0KPiANCj4gDQo+ID4gwqBXaGF0IGRvIHlvdSB0aGluaz8NCj4gPg0KPiA+ID4gVGhl
-IHBhdGNoIG1ha2VzIHRoZSBmb2xsb3dpbmcgY2hhbmdlczoNCj4gPiA+DQo+ID4gPiBmaWxlIHhh
-dHRyIHR5cGVzOg0KPiA+ID4gc2VjdXJpdHkuaW1hOiBJTUFfWEFUVFJfRElHRVNUL0lNQV9YQVRU
-Ul9ESUdFU1RfTkcNCj4gPiA+IHNlY3VyaXR5LmV2bTogRVZNX1hBVFRSX1BPUlRBQkxFX0RJR1NJ
-Rw0KPiA+ID4NCj4gPiA+IGV4ZWN2ZSgpLCBtbWFwKCksIG9wZW4oKSBiZWhhdmlvciAod2l0aCBh
-cHByYWlzZV90eXBlPWltYXNpZyk6DQo+ID4gPiBiZWZvcmU6IGRlbmllZCAoZmlsZSB3aXRob3V0
-IElNQSBzaWduYXR1cmUsIGltYXNpZyByZXF1aXJlbWVudCBub3QgbWV0KQ0KPiA+ID4gYWZ0ZXI6
-IGFsbG93ZWQgKGZpbGUgd2l0aCBFVk0gcG9ydGFibGUgc2lnbmF0dXJlLCBpbWFzaWcgcmVxdWly
-ZW1lbnQNCj4gbWV0KQ0KPiA+ID4NCj4gPiA+IG9wZW4oT19XUk9OTFkpIGJlaGF2aW9yICh3aXRo
-b3V0IGFwcHJhaXNlX3R5cGU9aW1hc2lnKToNCj4gPiA+IGJlZm9yZTogYWxsb3dlZCAoZmlsZSB3
-aXRob3V0IElNQSBzaWduYXR1cmUsIG5vdCBpbW11dGFibGUpDQo+ID4gPiBhZnRlcjogZGVuaWVk
-IChmaWxlIHdpdGggRVZNIHBvcnRhYmxlIHNpZ25hdHVyZSwgaW1tdXRhYmxlKQ0KPiA+ID4NCj4g
-PiA+IFNpZ25lZC1vZmYtYnk6IFJvYmVydG8gU2Fzc3UgPHJvYmVydG8uc2Fzc3VAaHVhd2VpLmNv
-bT4NCj4gPiA+IC0tLQ0KPiA+ID4gIHNlY3VyaXR5L2ludGVncml0eS9pbWEvaW1hX2FwcHJhaXNl
-LmMgfCAxNCArKysrKysrKystLS0tLQ0KPiA+ID4gIDEgZmlsZSBjaGFuZ2VkLCA5IGluc2VydGlv
-bnMoKyksIDUgZGVsZXRpb25zKC0pDQo+ID4gPg0KPiA+ID4gZGlmZiAtLWdpdCBhL3NlY3VyaXR5
-L2ludGVncml0eS9pbWEvaW1hX2FwcHJhaXNlLmMNCj4gPiBiL3NlY3VyaXR5L2ludGVncml0eS9p
-bWEvaW1hX2FwcHJhaXNlLmMNCj4gPiA+IGluZGV4IGE5NjQ5YjA0YjlmMS4uNjlhNmE5NThmODEx
-IDEwMDY0NA0KPiA+ID4gLS0tIGEvc2VjdXJpdHkvaW50ZWdyaXR5L2ltYS9pbWFfYXBwcmFpc2Uu
-Yw0KPiA+ID4gKysrIGIvc2VjdXJpdHkvaW50ZWdyaXR5L2ltYS9pbWFfYXBwcmFpc2UuYw0KPiA+
-ID4gQEAgLTIxOSwxMiArMjE5LDE2IEBAIHN0YXRpYyBpbnQgeGF0dHJfdmVyaWZ5KGVudW0gaW1h
-X2hvb2tzIGZ1bmMsDQo+ID4gc3RydWN0IGludGVncml0eV9paW50X2NhY2hlICppaW50LA0KPiA+
-ID4gIAkJaGFzaF9zdGFydCA9IDE7DQo+ID4gPiAgCQkvKiBmYWxsIHRocm91Z2ggKi8NCj4gPiA+
-ICAJY2FzZSBJTUFfWEFUVFJfRElHRVNUOg0KPiA+ID4gLQkJaWYgKGlpbnQtPmZsYWdzICYgSU1B
-X0RJR1NJR19SRVFVSVJFRCkgew0KPiA+ID4gLQkJCSpjYXVzZSA9ICJJTUEtc2lnbmF0dXJlLXJl
-cXVpcmVkIjsNCj4gPiA+IC0JCQkqc3RhdHVzID0gSU5URUdSSVRZX0ZBSUw7DQo+ID4gPiAtCQkJ
-YnJlYWs7DQo+ID4gPiArCQlpZiAoKnN0YXR1cyAhPSBJTlRFR1JJVFlfUEFTU19JTU1VVEFCTEUp
-IHsNCj4gPiA+ICsJCQlpZiAoaWludC0+ZmxhZ3MgJiBJTUFfRElHU0lHX1JFUVVJUkVEKSB7DQo+
-ID4gPiArCQkJCSpjYXVzZSA9ICJJTUEtc2lnbmF0dXJlLXJlcXVpcmVkIjsNCj4gPiA+ICsJCQkJ
-KnN0YXR1cyA9IElOVEVHUklUWV9GQUlMOw0KPiA+ID4gKwkJCQlicmVhazsNCj4gPiA+ICsJCQl9
-DQo+ID4gPiArCQkJY2xlYXJfYml0KElNQV9ESUdTSUcsICZpaW50LT5hdG9taWNfZmxhZ3MpOw0K
-PiA+ID4gKwkJfSBlbHNlIHsNCj4gPiA+ICsJCQlzZXRfYml0KElNQV9ESUdTSUcsICZpaW50LT5h
-dG9taWNfZmxhZ3MpOw0KPiA+ID4gIAkJfQ0KPiA+ID4gLQkJY2xlYXJfYml0KElNQV9ESUdTSUcs
-ICZpaW50LT5hdG9taWNfZmxhZ3MpOw0KPiA+ID4gIAkJaWYgKHhhdHRyX2xlbiAtIHNpemVvZih4
-YXR0cl92YWx1ZS0+dHlwZSkgLSBoYXNoX3N0YXJ0ID49DQo+ID4gPiAgCQkJCWlpbnQtPmltYV9o
-YXNoLT5sZW5ndGgpDQo+ID4gPiAgCQkJLyoNCj4gPg0KPiA+IE5pY2UhDQo+ID4NCj4gPiBNaW1p
-DQoNCg==
+On Thu, May 7, 2020 at 3:53 AM Chirantan Ekbote <chirantan@chromium.org> wrote:
+> On Sat, May 2, 2020 at 3:32 AM Stephen Smalley
+> <stephen.smalley.work@gmail.com> wrote:
+> >
+> >
+> > (cc selinux list)
+> >
+> > security_inode_init_security() calls the initxattrs callback to
+> > actually set each xattr in the backing store (if any), so unless you
+> > have a way to pass that to the daemon along with the create request
+> > the attribute won't be persisted with the file.  Setting the xattrs is
+> > supposed to be atomic with the file creation, not a separate
+> > setxattr() operation after creating the file, similar to ACL
+> > inheritance on new files.
+> >
+>
+> But it's not truly atomic, is it?  The underlying file system creates
+> the inode and then the inode_init_security selinux hook actually sets
+> the attributes.  What would happen if the computer lost power after
+> the file system driver created the inode but before the selinux hook
+> set the attributes?
+
+IIUC, in the case of ext4 and xfs at least, the setting of the
+security.selinux xattr is performed in the same transaction as the
+file create, so a crash will either yield a file that has its xattr
+set or no file at all.  This is also true of POSIX ACLs.  Labeled NFS
+(NFSv4.2) likewise is supposed to send the MAC label with the file
+create request and either create it with that label or not create it
+at all.  Note that nfs however uses security_dentry_init_security() to
+get the MAC label since it doesn't yet have an inode and MAC labels
+are a first class abstraction in NFS not merely xattrs.
+
+> > - deadlock during mount with userspace waiting for mount(2) to complete
+> > and the kernel blocked on requesting the security.selinux xattr of the
+> > root directory as part of superblock setup during mount
+>
+> I haven't personally run into this.  It Just Works, except for the
+> fscreate issue.
+
+Yes, this can be worked around in your fuse daemon if it supports
+handling getxattr during mount (e.g. multi-threaded, other threads can
+service the getxattr request while the mount(2) is still in progress).
+But not supported by stock fuse userspace IIUC.
+
+> I guess what I'm trying to understand is: what are the issues with
+> having the fuse driver call the inode_init_security hooks?  Even if
+> it's not something that can be turned on by default in mainline, I'd
+> like to evaluate whether we can turn it on locally in our restricted
+> environment.
+>
+> One issue is the lack of atomicity guarantees.  This is likely a
+> deal-breaker for general fuse usage.  However, I don't think it's an
+> issue for our restricted use of virtiofs because the attributes will
+> be set "atomically" from the guest userspace's perspective.  It won't
+> be atomic on the host side, but host processes don't have access to
+> those directories anyway.
+>
+> Are there any other issues?
+
+I don't have a problem with fuse calling the hook (either
+security_inode_init_security or security_dentry_init_security).  It is
+just a question of what it will do with the result (i.e. what its
+initxattr callback will do for the former or what it will do with the
+returned label in the latter). Optimally it will take the label
+information and bundle it up along with the create request to the
+daemon, which can then handle it as a single transaction.  Failing
+that, it needs to support setting the label in some manner during file
+creation that at least provides atomicity with respect to the user of
+the filesystem (the guest in your case).
