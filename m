@@ -1,117 +1,181 @@
-Return-Path: <SRS0=wiIN=6U=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=9z6D=6V=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED0D3C28CBC
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 May 2020 22:49:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3793C28CBC
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 May 2020 03:08:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C206F2076D
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 May 2020 22:49:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D2DC820838
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 May 2020 03:08:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="apgnO1tx"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SbDfHNsV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730292AbgEFWtz (ORCPT
+        id S1728215AbgEGDI0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 6 May 2020 18:49:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43904 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729243AbgEFWtz (ORCPT
+        Wed, 6 May 2020 23:08:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55914 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728000AbgEGDIZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 6 May 2020 18:49:55 -0400
-Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07FA4C061A0F
-        for <linux-security-module@vger.kernel.org>; Wed,  6 May 2020 15:49:55 -0700 (PDT)
-Received: by mail-pj1-x1044.google.com with SMTP id a32so1734847pje.5
-        for <linux-security-module@vger.kernel.org>; Wed, 06 May 2020 15:49:55 -0700 (PDT)
+        Wed, 6 May 2020 23:08:25 -0400
+Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D6ABC061A10
+        for <linux-security-module@vger.kernel.org>; Wed,  6 May 2020 20:08:23 -0700 (PDT)
+Received: by mail-wr1-x444.google.com with SMTP id e16so4504858wra.7
+        for <linux-security-module@vger.kernel.org>; Wed, 06 May 2020 20:08:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=Q2FUrzCimCoQvPDI8jhXkMBxIsQZ8fqLNRuB8pW8C9I=;
-        b=apgnO1tx03gYzmTiztou0ozl4DqE9Ke1CUls8XDLxiqo5GiuaT0cgajPeNIc1Nvgrh
-         QSR/aDtXJFrDbcw3pE4mo7iM3uXupATiB4zjUWXDBhAWz29oyPbkwjLQEjzRYt4t1HSV
-         HCgAaF82vmv4XqWI3sJU/yOu1FGAMo8m0rBsQ=
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gsgt81MlDlEnto/Qdmhwfg0yKkYAEa0cqpBxi8rVFIU=;
+        b=SbDfHNsVlfwga5HlZsXZUndrMHRULtSgVl0BqdUggNtB1qsob5uD0JyX829hO72zkR
+         cm/8xweeLd9jJO9m8puEA2KdLib1VQ8BLx8ALUobrhsRbyeEeyjETYOtW5+bFoF5iASD
+         ZE4hLHneOrzNo6QZ0kX0rw/CbBvg4b1fGD/G/3feDX49Cpyoi5nam9lIu9+edv+nA5DJ
+         aVR9G0FQKBxNogFDiSnECeq6gY1+oJEO2TuLnmCjUul/GzJfl2sMBspUtT4Bq/q3n53X
+         TKwTLnjHEybyfrEWSfTE+5M4PQMfS4uyumllO9W/XOePZvv7yo84bDog271sy0t6z9Im
+         yJoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Q2FUrzCimCoQvPDI8jhXkMBxIsQZ8fqLNRuB8pW8C9I=;
-        b=KT7bjvnVGPEB3H/Y/KxZALr7UMHqQSWnN/1JE3r2g0avSC+8PvuARAdac5VRmgeM3F
-         YduyVbFaeoOX0jdyCP1QJGfP3R3bapDf+ZePh+ojYzuDjeoBLk+c3q25a0M/ey8x9JIr
-         o9DT/3zchQtv1kbyKDnJXnhJizt3vVexcnVGHJCuJj7Dyt/l9GVGdxRv2UCcLs8bsynA
-         RaWdPz/QXIMmMiDIAMkhbybEV6EqWPZhOP+8CTfBUBdKSftWtoXxmSqMxB7Pq2CLsenZ
-         MitQCfBOxxxd6eeCdDEKkTtHDGjzQpuWEd7VWkE/xv1w03xvx6LirzM5UkfK4C+nWIh0
-         01Lw==
-X-Gm-Message-State: AGi0Pub/AFVreyHMSKYSwvn+LQt8ESqbOf6ctfg/Gf4x5qYWDPtBbdYs
-        XDN7x118IPBONVH5zby/GnWtQg==
-X-Google-Smtp-Source: APiQypKzOSl6t5TXplgO53uZ+njke5Lpns5FHbM+l01D4h+BwwkOyeefVKk0O7oypj6oZi1uWRWTzA==
-X-Received: by 2002:a17:902:bd09:: with SMTP id p9mr10891853pls.214.1588805394525;
-        Wed, 06 May 2020 15:49:54 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id a30sm2294097pgm.44.2020.05.06.15.49.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 May 2020 15:49:53 -0700 (PDT)
-Date:   Wed, 6 May 2020 15:49:52 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] securityfs: Add missing d_delete() call on removal
-Message-ID: <202005061543.97CC065531@keescook>
-References: <202005051626.7648DC65@keescook>
- <20200506011431.GB23230@ZenIV.linux.org.uk>
- <202005052024.2D7626C742@keescook>
- <20200506040252.GC23230@ZenIV.linux.org.uk>
- <202005060831.C05759E@keescook>
- <20200506184920.GD23230@ZenIV.linux.org.uk>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gsgt81MlDlEnto/Qdmhwfg0yKkYAEa0cqpBxi8rVFIU=;
+        b=HkoTE8EtjWXZdLzgCQU6X/kwQu9KlXtsiHXTLckJep+w67onzi3gJEDv3iyBpKHrw+
+         2Il9r2QkkgMHtp/qSoXLqQihjlKzyYlPFpQc17MwYaDEssRCabJhuCTGuvsM4KB3JJx3
+         FsYJXVEf8fPE/Cv+64Z1CZiCkW6+4HIAiduoVadcaBgSH5Y1VgDT4yjQtJUmh16nf8NZ
+         lZjJtUQja0movSa3ctsVAfalHO2N7AhJbN5x3/XiduftfkR2GBVUyfyRPcZkLEBNDkqL
+         cZ8DjcOflPAz+Yi4O0Euq5SiBX0vhQF5LUHRNaOBtoTFplwvRBNC/juHnoZXrjxsSIHJ
+         kXAw==
+X-Gm-Message-State: AGi0PubCdj6W7zkWuHiMLcMvvQj+nEtWSMk/YSZc2lpUkPgasJYzINOh
+        Mj51PKCIytt6MiJ54JlPcUX0zHVLobxINu7UIL1eEg==
+X-Google-Smtp-Source: APiQypJYBc+4MO14/l2sBXNv+eueA8YQH/AYbiQD4bmsfXP2t3f539TUHGl8HMJof9KUOufQG4S/sjUHWHRGOiOP17E=
+X-Received: by 2002:adf:fe51:: with SMTP id m17mr12501816wrs.414.1588820901909;
+ Wed, 06 May 2020 20:08:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200506184920.GD23230@ZenIV.linux.org.uk>
+References: <20200505102700.7912-1-anders.roxell@linaro.org>
+ <CABVgOS=awiwi7APWr5HgU6Eht-VAygWPeQyNsCnAF09OLpR46A@mail.gmail.com> <CADYN=9Jdwd=3Rh=wyzO7eOxtyTSm+JqjF385iQjfMocpz1A3YA@mail.gmail.com>
+In-Reply-To: <CADYN=9Jdwd=3Rh=wyzO7eOxtyTSm+JqjF385iQjfMocpz1A3YA@mail.gmail.com>
+From:   David Gow <davidgow@google.com>
+Date:   Thu, 7 May 2020 11:08:10 +0800
+Message-ID: <CABVgOSndkMOd0U+p=fMy0q-KdN29XERheY=3-3+dgVoeWf9m5g@mail.gmail.com>
+Subject: Re: [PATCH v2 1/6] kunit: Kconfig: enable a KUNIT_RUN_ALL fragment
+To:     Anders Roxell <anders.roxell@linaro.org>
+Cc:     Brendan Higgins <brendanhiggins@google.com>,
+        John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        KUnit Development <kunit-dev@googlegroups.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-ext4@vger.kernel.org,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Marco Elver <elver@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, May 06, 2020 at 07:49:20PM +0100, Al Viro wrote:
-> On Wed, May 06, 2020 at 08:34:29AM -0700, Kees Cook wrote:
-> 
-> > Just posted the whole series:
-> > https://lore.kernel.org/lkml/20200506152114.50375-1-keescook@chromium.org/
-> > 
-> > But the specific question was driven by this patch:
-> > https://lore.kernel.org/lkml/20200506152114.50375-11-keescook@chromium.org/
-> 
-> Yecchh...  First of all, you are leaving a dangling pointer in your
-> struct pstore_private ->dentry.  What's more, in your case d_delete()
+On Wed, May 6, 2020 at 6:33 PM Anders Roxell <anders.roxell@linaro.org> wrote:
+>
+> Hi David,
+>
+> Thank you for the review.
+>
+> On Wed, 6 May 2020 at 07:08, David Gow <davidgow@google.com> wrote:
+> >
+> > On Tue, May 5, 2020 at 6:27 PM Anders Roxell <anders.roxell@linaro.org> wrote:
+> > >
+> > > Make it easier to enable all KUnit fragments.  This is needed for kernel
+> > > test-systems, so its easy to get all KUnit tests enabled and if new gets
+> > > added they will be enabled as well.  Fragments that has to be builtin
+> > > will be missed if CONFIG_KUNIT_RUN_ALL is set as a module.
+> > >
+> > > Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+> > > ---
+> > >  lib/kunit/Kconfig | 6 ++++++
+> > >  1 file changed, 6 insertions(+)
+> > >
+> > > diff --git a/lib/kunit/Kconfig b/lib/kunit/Kconfig
+> > > index 95d12e3d6d95..537f37bc8400 100644
+> > > --- a/lib/kunit/Kconfig
+> > > +++ b/lib/kunit/Kconfig
+> > > @@ -41,4 +41,10 @@ config KUNIT_EXAMPLE_TEST
+> > >           is intended for curious hackers who would like to understand how to
+> > >           use KUnit for kernel development.
+> > >
+> > > +config KUNIT_RUN_ALL
+> > > +       tristate "KUnit run all test"
+> >
+> > I'm not 100% sure about this name and description. It only actually
+> > "runs" the tests if they're builtin (as modules, they'll only run when
+> > loaded).
+> >
+> > Would KUNIT_BUILD_ALL or KUNIT_ALL_TESTS
+>
+> I would like to go with KUNIT_ALL_TESTS if no one objects.
+>
 
-Yeah, good idea: I can wipe out the pstore_private->dentry at this point
-just for robustness. From what I could tell the evict got immediately
-called after the dput().
+Personally, I'm fine with that.
 
-> is definitely wrong - either there are other references to dentry
-> (in which case d_delete() is the same as d_drop()), or dput() right
-> after it will drive ->d_count to zero and since you end up using
-> simple_dentry_operations, dentry will be freed immediately after
-> that.
+Brendan, thoughts?
 
-Do you mean the d_drop() isn't needed? What happens if someone has
-the file open during this routine? The goal here is to make these files
-disappear so they'll go through evict.
+> > or similar be better?
+> >
+> > It also, as mentioned, only really runs all available (i.e., with
+> > dependencies met in the current .config) tests (as distinct from the
+> > --alltests flag to kunit.py, which builds UML with allyesconfig), it
+> > might be good to add this to the description or help.
+> >
+> > Something like "Enable all KUnit tests" or "Enable all available KUnit
+> > tests" (or even something about "all KUnit tests with satisfied
+> > dependencies") might be clearer.
+>
+> I like "All KUnit tests with satisfied dependencies".
+>
+> >
+> > > +       help
+> > > +         Enables all KUnit tests, if they can be enabled.
+> > > +         That depends on if KUnit is enabled as a module or builtin.
+> > > +
+> > I like the first line here, but the second one could use a bit more
+> > explanation. Maybe copy some of the boilerplate text from other tests,
+> > e.g.:
+> >
+> >           KUnit tests run during boot and output the results to the debug log
+> >          in TAP format (http://testanything.org/). Only useful for kernel devs
+> >          running the KUnit test harness, and not intended for inclusion into a
+> >          production build.
+> >
+> >          For more information on KUnit and unit tests in general please refer
+> >          to the KUnit documentation in Documentation/dev-tools/kunit/.
+> >
+> >          If unsure, say N.
+>
+> Makes much more sense, thanks.
+>
+> >
+> > >  endif # KUNIT
+> > > --
+> > > 2.20.1
+> > >
+> >
+> > Otherwise, this is looking good. I've done some quick testing, and it
+> > all seems to work for me. As long as it's clear what the difference
+> > between this and other ways of running "all tests" (like the
+> > --alltests kunit.py option),
+>
+> Do you think it should be made clearer in some way?
+>
 
-> I have not looked at the locking in that series yet, so no comments
+I think the changes above should do it.
 
-Yeah, I would not be surprised by some more locking issues, but I think
-it's an improvement over what was there. Most of the code seems to have
-been designed to be non-modular. :P
-
-> on the races, but in any case - that d_delete() is a misspelled d_drop().
-
-I'll change it; thanks!
-
--- 
-Kees Cook
+-- David
