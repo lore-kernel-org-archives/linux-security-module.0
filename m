@@ -2,133 +2,434 @@ Return-Path: <SRS0=9z6D=6V=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A08DCC38A2A
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 May 2020 15:17:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C516C54E4B
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 May 2020 16:03:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 88B592083B
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 May 2020 15:17:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FB6D20659
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 May 2020 16:03:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726778AbgEGPRl (ORCPT
+        id S1726495AbgEGQDQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 7 May 2020 11:17:41 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:29956 "EHLO
-        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726267AbgEGPRl (ORCPT
+        Thu, 7 May 2020 12:03:16 -0400
+Received: from namei.org ([65.99.196.166]:57536 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725969AbgEGQDP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 7 May 2020 11:17:41 -0400
-Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 047F4hU7112011;
-        Thu, 7 May 2020 11:17:28 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 30sp8n4cfc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 07 May 2020 11:17:26 -0400
-Received: from m0127361.ppops.net (m0127361.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 047F5Khg113846;
-        Thu, 7 May 2020 11:17:20 -0400
-Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 30sp8n4cb4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 07 May 2020 11:17:19 -0400
-Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
-        by ppma04ams.nl.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 047FAaca015722;
-        Thu, 7 May 2020 15:17:12 GMT
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
-        by ppma04ams.nl.ibm.com with ESMTP id 30s0g5uk0t-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 07 May 2020 15:17:12 +0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 047FHAFT33292412
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 7 May 2020 15:17:10 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 854BFAE053;
-        Thu,  7 May 2020 15:17:10 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 41963AE05A;
-        Thu,  7 May 2020 15:17:09 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.135.201])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu,  7 May 2020 15:17:09 +0000 (GMT)
-Message-ID: <1588864628.5685.78.camel@linux.ibm.com>
-Subject: Re: [RFC][PATCH 1/3] evm: Move hooks outside LSM infrastructure
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>,
-        "david.safford@gmail.com" <david.safford@gmail.com>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        John Johansen <john.johansen@canonical.com>
-Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
-Date:   Thu, 07 May 2020 11:17:08 -0400
-In-Reply-To: <ab879f9e66874736a40e9c566cadc272@huawei.com>
-References: <20200429073935.11913-1-roberto.sassu@huawei.com>
-         <1588794293.4624.21.camel@linux.ibm.com>
-         <1588799408.4624.28.camel@linux.ibm.com>
-         <ab879f9e66874736a40e9c566cadc272@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.676
- definitions=2020-05-07_09:2020-05-07,2020-05-07 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
- malwarescore=0 suspectscore=0 priorityscore=1501 spamscore=0 clxscore=1015
- mlxscore=0 lowpriorityscore=0 mlxlogscore=999 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2005070123
+        Thu, 7 May 2020 12:03:15 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id 047G2fNj024861;
+        Thu, 7 May 2020 16:02:41 GMT
+Date:   Fri, 8 May 2020 02:02:41 +1000 (AEST)
+From:   James Morris <jmorris@namei.org>
+To:     Daniel Colascione <dancol@google.com>,
+        Al Viro <viro@ftp.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>
+cc:     timmurray@google.com, selinux@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
+        nnk@google.com, Stephen Smalley <sds@tycho.nsa.gov>,
+        lokeshgidra@google.com
+Subject: Re: [PATCH v5 1/3] Add a new LSM-supporting anonymous inode
+ interface
+In-Reply-To: <20200401213903.182112-2-dancol@google.com>
+Message-ID: <alpine.LRH.2.21.2005080201220.15191@namei.org>
+References: <20200326200634.222009-1-dancol@google.com> <20200401213903.182112-1-dancol@google.com> <20200401213903.182112-2-dancol@google.com>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 2020-05-07 at 07:53 +0000, Roberto Sassu wrote:
-> > -----Original Message-----
-> > From: Mimi Zohar [mailto:zohar@linux.ibm.com]
-> > Sent: Wednesday, May 6, 2020 11:10 PM
-> > To: Roberto Sassu <roberto.sassu@huawei.com>; david.safford@gmail.com;
-> > viro@zeniv.linux.org.uk; jmorris@namei.org; John Johansen
-> > <john.johansen@canonical.com>
-> > Cc: linux-fsdevel@vger.kernel.org; linux-integrity@vger.kernel.org; linux-
-> > security-module@vger.kernel.org; linux-kernel@vger.kernel.org; Silviu
-> > Vlasceanu <Silviu.Vlasceanu@huawei.com>
-> > Subject: Re: [RFC][PATCH 1/3] evm: Move hooks outside LSM infrastructure
+On Wed, 1 Apr 2020, Daniel Colascione wrote:
 
-Roberto, please fix your mailer or at least manually remove this sort
-of info from the email.
-
-> > 
-> > On Wed, 2020-05-06 at 15:44 -0400, Mimi Zohar wrote:
-> > > Since copying the EVM HMAC or original signature isn't applicable, I
-> > > would prefer exploring an EVM portable and immutable signature only
-> > > solution.
-> > 
-> > To prevent copying the EVM xattr, we added "security.evm" to
-> > /etc/xattr.conf.  To support copying just the EVM portable and
-> > immutable signatures will require a different solution.
+> This change adds two new functions, anon_inode_getfile_secure and
+> anon_inode_getfd_secure, that create anonymous-node files with
+> individual non-S_PRIVATE inodes to which security modules can apply
+> policy. Existing callers continue using the original singleton-inode
+> kind of anonymous-inode file. We can transition anonymous inode users
+> to the new kind of anonymous inode in individual patches for the sake
+> of bisection and review.
 > 
-> This patch set removes the need for ignoring security.evm. It can be always
-> copied, even if it is an HMAC. EVM will update it only when verification in
-> the pre hook is successful. Combined with the ability of protecting a subset
-> of files without introducing an EVM policy, these advantages seem to
-> outweigh the effort necessary to make the switch.
+> The new functions accept an optional context_inode parameter that
+> callers can use to provide additional contextual information to
+> security modules, e.g., indicating that one anonymous struct file is a
+> logical child of another, allowing a security model to propagate
+> security information from one to the other.
+> 
+> Signed-off-by: Daniel Colascione <dancol@google.com>
 
-As the EVM file HMAC and original signature contain inode specific
-information (eg. i_version, i_generation), these xattrs cannot ever be
-copied.  The proposed change is in order to support just the new EVM
-signatures.
+Al, Andrew, wondering if you could look at these anon inode changes 
+before we merge this?
 
-At least IMA file hashes should always be used in conjunction with
-EVM.  EVM xattrs should always require a security.ima xattr to bind
-the file metadata to the file data.  The IMA and EVM policies really
-need to be in sync.
 
-Mimi
+
+> ---
+>  fs/anon_inodes.c            | 191 ++++++++++++++++++++++++++++--------
+>  include/linux/anon_inodes.h |  13 +++
+>  include/linux/lsm_hooks.h   |  11 +++
+>  include/linux/security.h    |   3 +
+>  security/security.c         |   9 ++
+>  5 files changed, 186 insertions(+), 41 deletions(-)
+> 
+> diff --git a/fs/anon_inodes.c b/fs/anon_inodes.c
+> index 89714308c25b..f87f221167cf 100644
+> --- a/fs/anon_inodes.c
+> +++ b/fs/anon_inodes.c
+> @@ -55,61 +55,108 @@ static struct file_system_type anon_inode_fs_type = {
+>  	.kill_sb	= kill_anon_super,
+>  };
+>  
+> -/**
+> - * anon_inode_getfile - creates a new file instance by hooking it up to an
+> - *                      anonymous inode, and a dentry that describe the "class"
+> - *                      of the file
+> - *
+> - * @name:    [in]    name of the "class" of the new file
+> - * @fops:    [in]    file operations for the new file
+> - * @priv:    [in]    private data for the new file (will be file's private_data)
+> - * @flags:   [in]    flags
+> - *
+> - * Creates a new file by hooking it on a single inode. This is useful for files
+> - * that do not need to have a full-fledged inode in order to operate correctly.
+> - * All the files created with anon_inode_getfile() will share a single inode,
+> - * hence saving memory and avoiding code duplication for the file/inode/dentry
+> - * setup.  Returns the newly created file* or an error pointer.
+> - */
+> -struct file *anon_inode_getfile(const char *name,
+> -				const struct file_operations *fops,
+> -				void *priv, int flags)
+> +static struct inode *anon_inode_make_secure_inode(
+> +	const char *name,
+> +	const struct inode *context_inode)
+> +{
+> +	struct inode *inode;
+> +	const struct qstr qname = QSTR_INIT(name, strlen(name));
+> +	int error;
+> +
+> +	inode = alloc_anon_inode(anon_inode_mnt->mnt_sb);
+> +	if (IS_ERR(inode))
+> +		return inode;
+> +	inode->i_flags &= ~S_PRIVATE;
+> +	error =	security_inode_init_security_anon(
+> +		inode, &qname, context_inode);
+> +	if (error) {
+> +		iput(inode);
+> +		return ERR_PTR(error);
+> +	}
+> +	return inode;
+> +}
+> +
+> +struct file *_anon_inode_getfile(const char *name,
+> +				 const struct file_operations *fops,
+> +				 void *priv, int flags,
+> +				 const struct inode *context_inode,
+> +				 bool secure)
+>  {
+> +	struct inode *inode;
+>  	struct file *file;
+>  
+> -	if (IS_ERR(anon_inode_inode))
+> -		return ERR_PTR(-ENODEV);
+> +	if (secure) {
+> +		inode =	anon_inode_make_secure_inode(
+> +			name, context_inode);
+> +		if (IS_ERR(inode))
+> +			return ERR_PTR(PTR_ERR(inode));
+> +	} else {
+> +		inode =	anon_inode_inode;
+> +		if (IS_ERR(inode))
+> +			return ERR_PTR(-ENODEV);
+> +		/*
+> +		 * We know the anon_inode inode count is always
+> +		 * greater than zero, so ihold() is safe.
+> +		 */
+> +		ihold(inode);
+> +	}
+>  
+> -	if (fops->owner && !try_module_get(fops->owner))
+> -		return ERR_PTR(-ENOENT);
+> +	if (fops->owner && !try_module_get(fops->owner)) {
+> +		file = ERR_PTR(-ENOENT);
+> +		goto err;
+> +	}
+>  
+> -	/*
+> -	 * We know the anon_inode inode count is always greater than zero,
+> -	 * so ihold() is safe.
+> -	 */
+> -	ihold(anon_inode_inode);
+> -	file = alloc_file_pseudo(anon_inode_inode, anon_inode_mnt, name,
+> +	file = alloc_file_pseudo(inode, anon_inode_mnt, name,
+>  				 flags & (O_ACCMODE | O_NONBLOCK), fops);
+>  	if (IS_ERR(file))
+>  		goto err;
+>  
+> -	file->f_mapping = anon_inode_inode->i_mapping;
+> +	file->f_mapping = inode->i_mapping;
+>  
+>  	file->private_data = priv;
+>  
+>  	return file;
+>  
+>  err:
+> -	iput(anon_inode_inode);
+> +	iput(inode);
+>  	module_put(fops->owner);
+>  	return file;
+>  }
+> -EXPORT_SYMBOL_GPL(anon_inode_getfile);
+>  
+>  /**
+> - * anon_inode_getfd - creates a new file instance by hooking it up to an
+> - *                    anonymous inode, and a dentry that describe the "class"
+> - *                    of the file
+> + * anon_inode_getfile_secure - creates a new file instance by hooking
+> + *                             it up to a new anonymous inode and a
+> + *                             dentry that describe the "class" of the
+> + *                             file.  Make it possible to use security
+> + *                             modules to control access to the
+> + *                             new file.
+> + *
+> + * @name:    [in]    name of the "class" of the new file
+> + * @fops:    [in]    file operations for the new file
+> + * @priv:    [in]    private data for the new file (will be file's private_data)
+> + * @flags:   [in]    flags
+> + *
+> + * Creates a new file by hooking it on an unspecified inode. This is
+> + * useful for files that do not need to have a full-fledged filesystem
+> + * to operate correctly.  All the files created with
+> + * anon_inode_getfile_secure() will have distinct inodes, avoiding
+> + * code duplication for the file/inode/dentry setup.  Returns the
+> + * newly created file* or an error pointer.
+> + */
+> +struct file *anon_inode_getfile_secure(const char *name,
+> +				       const struct file_operations *fops,
+> +				       void *priv, int flags,
+> +				       const struct inode *context_inode)
+> +{
+> +	return _anon_inode_getfile(
+> +		name, fops, priv, flags, context_inode, true);
+> +}
+> +EXPORT_SYMBOL_GPL(anon_inode_getfile_secure);
+> +
+> +/**
+> + * anon_inode_getfile - creates a new file instance by hooking it up to an
+> + *                      anonymous inode, and a dentry that describe the "class"
+> + *                      of the file
+>   *
+>   * @name:    [in]    name of the "class" of the new file
+>   * @fops:    [in]    file operations for the new file
+> @@ -118,12 +165,23 @@ EXPORT_SYMBOL_GPL(anon_inode_getfile);
+>   *
+>   * Creates a new file by hooking it on a single inode. This is useful for files
+>   * that do not need to have a full-fledged inode in order to operate correctly.
+> - * All the files created with anon_inode_getfd() will share a single inode,
+> + * All the files created with anon_inode_getfile() will share a single inode,
+>   * hence saving memory and avoiding code duplication for the file/inode/dentry
+> - * setup.  Returns new descriptor or an error code.
+> + * setup.  Returns the newly created file* or an error pointer.
+>   */
+> -int anon_inode_getfd(const char *name, const struct file_operations *fops,
+> -		     void *priv, int flags)
+> +struct file *anon_inode_getfile(const char *name,
+> +				const struct file_operations *fops,
+> +				void *priv, int flags)
+> +{
+> +	return _anon_inode_getfile(name, fops, priv, flags, NULL, false);
+> +}
+> +EXPORT_SYMBOL_GPL(anon_inode_getfile);
+> +
+> +static int _anon_inode_getfd(const char *name,
+> +			     const struct file_operations *fops,
+> +			     void *priv, int flags,
+> +			     const struct inode *context_inode,
+> +			     bool secure)
+>  {
+>  	int error, fd;
+>  	struct file *file;
+> @@ -133,7 +191,8 @@ int anon_inode_getfd(const char *name, const struct file_operations *fops,
+>  		return error;
+>  	fd = error;
+>  
+> -	file = anon_inode_getfile(name, fops, priv, flags);
+> +	file = _anon_inode_getfile(name, fops, priv, flags, context_inode,
+> +				   secure);
+>  	if (IS_ERR(file)) {
+>  		error = PTR_ERR(file);
+>  		goto err_put_unused_fd;
+> @@ -146,6 +205,57 @@ int anon_inode_getfd(const char *name, const struct file_operations *fops,
+>  	put_unused_fd(fd);
+>  	return error;
+>  }
+> +
+> +/**
+> + * anon_inode_getfd_secure - creates a new file instance by hooking it
+> + *                           up to a new anonymous inode and a dentry
+> + *                           that describe the "class" of the file.
+> + *                           Make it possible to use security modules
+> + *                           to control access to the new file.
+> + *
+> + * @name:    [in]    name of the "class" of the new file
+> + * @fops:    [in]    file operations for the new file
+> + * @priv:    [in]    private data for the new file (will be file's private_data)
+> + * @flags:   [in]    flags
+> + *
+> + * Creates a new file by hooking it on an unspecified inode. This is
+> + * useful for files that do not need to have a full-fledged filesystem
+> + * to operate correctly.  All the files created with
+> + * anon_inode_getfile_secure() will have distinct inodes, avoiding
+> + * code duplication for the file/inode/dentry setup.  Returns a newly
+> + * created file descriptor or an error code.
+> + */
+> +int anon_inode_getfd_secure(const char *name, const struct file_operations *fops,
+> +			    void *priv, int flags,
+> +			    const struct inode *context_inode)
+> +{
+> +	return _anon_inode_getfd(name, fops, priv, flags,
+> +				 context_inode, true);
+> +}
+> +EXPORT_SYMBOL_GPL(anon_inode_getfd_secure);
+> +
+> +/**
+> + * anon_inode_getfd - creates a new file instance by hooking it up to
+> + *                    an anonymous inode and a dentry that describe
+> + *                    the "class" of the file
+> + *
+> + * @name:    [in]    name of the "class" of the new file
+> + * @fops:    [in]    file operations for the new file
+> + * @priv:    [in]    private data for the new file (will be file's private_data)
+> + * @flags:   [in]    flags
+> + *
+> + * Creates a new file by hooking it on a single inode. This is
+> + * useful for files that do not need to have a full-fledged inode in
+> + * order to operate correctly.  All the files created with
+> + * anon_inode_getfile() will use the same singleton inode, reducing
+> + * memory use and avoiding code duplication for the file/inode/dentry
+> + * setup.  Returns a newly created file descriptor or an error code.
+> + */
+> +int anon_inode_getfd(const char *name, const struct file_operations *fops,
+> +		     void *priv, int flags)
+> +{
+> +	return _anon_inode_getfd(name, fops, priv, flags, NULL, false);
+> +}
+>  EXPORT_SYMBOL_GPL(anon_inode_getfd);
+>  
+>  static int __init anon_inode_init(void)
+> @@ -162,4 +272,3 @@ static int __init anon_inode_init(void)
+>  }
+>  
+>  fs_initcall(anon_inode_init);
+> -
+> diff --git a/include/linux/anon_inodes.h b/include/linux/anon_inodes.h
+> index d0d7d96261ad..67bd85d92dca 100644
+> --- a/include/linux/anon_inodes.h
+> +++ b/include/linux/anon_inodes.h
+> @@ -10,12 +10,25 @@
+>  #define _LINUX_ANON_INODES_H
+>  
+>  struct file_operations;
+> +struct inode;
+> +
+> +struct file *anon_inode_getfile_secure(const char *name,
+> +				       const struct file_operations *fops,
+> +				       void *priv, int flags,
+> +				       const struct inode *context_inode);
+>  
+>  struct file *anon_inode_getfile(const char *name,
+>  				const struct file_operations *fops,
+>  				void *priv, int flags);
+> +
+> +int anon_inode_getfd_secure(const char *name,
+> +			    const struct file_operations *fops,
+> +			    void *priv, int flags,
+> +			    const struct inode *context_inode);
+> +
+>  int anon_inode_getfd(const char *name, const struct file_operations *fops,
+>  		     void *priv, int flags);
+>  
+> +
+>  #endif /* _LINUX_ANON_INODES_H */
+>  
+> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> index 20d8cf194fb7..5434c1d285b2 100644
+> --- a/include/linux/lsm_hooks.h
+> +++ b/include/linux/lsm_hooks.h
+> @@ -215,6 +215,13 @@
+>   *	Returns 0 if @name and @value have been successfully set,
+>   *	-EOPNOTSUPP if no security attribute is needed, or
+>   *	-ENOMEM on memory allocation failure.
+> + * @inode_init_security_anon:
+> + *      Set up a secure anonymous inode.
+> + *      @inode contains the inode structure
+> + *      @name name of the anonymous inode class
+> + *      @context_inode optional related inode
+> + *	Returns 0 on success. Returns -EPERM if	the security module denies
+> + *	the creation of this inode.
+>   * @inode_create:
+>   *	Check permission to create a regular file.
+>   *	@dir contains inode structure of the parent of the new file.
+> @@ -1552,6 +1559,9 @@ union security_list_options {
+>  					const struct qstr *qstr,
+>  					const char **name, void **value,
+>  					size_t *len);
+> +	int (*inode_init_security_anon)(struct inode *inode,
+> +					const struct qstr *name,
+> +					const struct inode *context_inode);
+>  	int (*inode_create)(struct inode *dir, struct dentry *dentry,
+>  				umode_t mode);
+>  	int (*inode_link)(struct dentry *old_dentry, struct inode *dir,
+> @@ -1884,6 +1894,7 @@ struct security_hook_heads {
+>  	struct hlist_head inode_alloc_security;
+>  	struct hlist_head inode_free_security;
+>  	struct hlist_head inode_init_security;
+> +	struct hlist_head inode_init_security_anon;
+>  	struct hlist_head inode_create;
+>  	struct hlist_head inode_link;
+>  	struct hlist_head inode_unlink;
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index 64b19f050343..2108c3ce0666 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -320,6 +320,9 @@ void security_inode_free(struct inode *inode);
+>  int security_inode_init_security(struct inode *inode, struct inode *dir,
+>  				 const struct qstr *qstr,
+>  				 initxattrs initxattrs, void *fs_data);
+> +int security_inode_init_security_anon(struct inode *inode,
+> +				      const struct qstr *name,
+> +				      const struct inode *context_inode);
+>  int security_old_inode_init_security(struct inode *inode, struct inode *dir,
+>  				     const struct qstr *qstr, const char **name,
+>  				     void **value, size_t *len);
+> diff --git a/security/security.c b/security/security.c
+> index 565bc9b67276..70bfebada024 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -1033,6 +1033,15 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
+>  }
+>  EXPORT_SYMBOL(security_inode_init_security);
+>  
+> +int
+> +security_inode_init_security_anon(struct inode *inode,
+> +				  const struct qstr *name,
+> +				  const struct inode *context_inode)
+> +{
+> +	return call_int_hook(inode_init_security_anon, 0, inode, name,
+> +			     context_inode);
+> +}
+> +
+>  int security_old_inode_init_security(struct inode *inode, struct inode *dir,
+>  				     const struct qstr *qstr, const char **name,
+>  				     void **value, size_t *len)
+> 
+
+-- 
+James Morris
+<jmorris@namei.org>
+
