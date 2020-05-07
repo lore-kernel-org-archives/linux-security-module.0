@@ -2,159 +2,133 @@ Return-Path: <SRS0=9z6D=6V=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EC44C38A2A
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 May 2020 13:38:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A08DCC38A2A
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 May 2020 15:17:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7547520643
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 May 2020 13:38:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 88B592083B
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 May 2020 15:17:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727122AbgEGNie (ORCPT
+        id S1726778AbgEGPRl (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 7 May 2020 09:38:34 -0400
-Received: from smtp-bc0f.mail.infomaniak.ch ([45.157.188.15]:58235 "EHLO
-        smtp-bc0f.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725857AbgEGNi1 (ORCPT
+        Thu, 7 May 2020 11:17:41 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:29956 "EHLO
+        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726267AbgEGPRl (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 7 May 2020 09:38:27 -0400
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 49Hvg31J1fzlhS6J;
-        Thu,  7 May 2020 15:38:23 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
-        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 49Hvg01x5Gzlpmph;
-        Thu,  7 May 2020 15:38:20 +0200 (CEST)
-Subject: Re: [PATCH v5 0/6] Add support for O_MAYEXEC
-To:     David Laight <David.Laight@ACULAB.COM>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc:     Aleksa Sarai <cyphar@cyphar.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christian Heimes <christian@python.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Eric Chiang <ericchiang@google.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        "kernel-hardening@lists.openwall.com" 
-        <kernel-hardening@lists.openwall.com>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        Thu, 7 May 2020 11:17:41 -0400
+Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 047F4hU7112011;
+        Thu, 7 May 2020 11:17:28 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 30sp8n4cfc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 07 May 2020 11:17:26 -0400
+Received: from m0127361.ppops.net (m0127361.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 047F5Khg113846;
+        Thu, 7 May 2020 11:17:20 -0400
+Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 30sp8n4cb4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 07 May 2020 11:17:19 -0400
+Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
+        by ppma04ams.nl.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 047FAaca015722;
+        Thu, 7 May 2020 15:17:12 GMT
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
+        by ppma04ams.nl.ibm.com with ESMTP id 30s0g5uk0t-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 07 May 2020 15:17:12 +0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 047FHAFT33292412
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 7 May 2020 15:17:10 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 854BFAE053;
+        Thu,  7 May 2020 15:17:10 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 41963AE05A;
+        Thu,  7 May 2020 15:17:09 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.135.201])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu,  7 May 2020 15:17:09 +0000 (GMT)
+Message-ID: <1588864628.5685.78.camel@linux.ibm.com>
+Subject: Re: [RFC][PATCH 1/3] evm: Move hooks outside LSM infrastructure
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>,
+        "david.safford@gmail.com" <david.safford@gmail.com>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        John Johansen <john.johansen@canonical.com>
+Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
         "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
         "linux-security-module@vger.kernel.org" 
         <linux-security-module@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-References: <20200505153156.925111-1-mic@digikod.net>
- <20b24b9ca0a64afb9389722845738ec8@AcuMS.aculab.com>
- <907109c8-9b19-528a-726f-92c3f61c1563@digikod.net>
- <ad28ab5fe7854b41a575656e95b4da17@AcuMS.aculab.com>
- <64426377-7fc4-6f37-7371-2e2a584e3032@digikod.net>
- <635df0655b644408ac4822def8900383@AcuMS.aculab.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Message-ID: <1ced6f5f-7181-1dc5-2da7-abf4abd5ad23@digikod.net>
-Date:   Thu, 7 May 2020 15:38:19 +0200
-User-Agent: 
-MIME-Version: 1.0
-In-Reply-To: <635df0655b644408ac4822def8900383@AcuMS.aculab.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
+Date:   Thu, 07 May 2020 11:17:08 -0400
+In-Reply-To: <ab879f9e66874736a40e9c566cadc272@huawei.com>
+References: <20200429073935.11913-1-roberto.sassu@huawei.com>
+         <1588794293.4624.21.camel@linux.ibm.com>
+         <1588799408.4624.28.camel@linux.ibm.com>
+         <ab879f9e66874736a40e9c566cadc272@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
-X-Antivirus-Code: 0x100000
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.676
+ definitions=2020-05-07_09:2020-05-07,2020-05-07 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
+ malwarescore=0 suspectscore=0 priorityscore=1501 spamscore=0 clxscore=1015
+ mlxscore=0 lowpriorityscore=0 mlxlogscore=999 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2005070123
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Thu, 2020-05-07 at 07:53 +0000, Roberto Sassu wrote:
+> > -----Original Message-----
+> > From: Mimi Zohar [mailto:zohar@linux.ibm.com]
+> > Sent: Wednesday, May 6, 2020 11:10 PM
+> > To: Roberto Sassu <roberto.sassu@huawei.com>; david.safford@gmail.com;
+> > viro@zeniv.linux.org.uk; jmorris@namei.org; John Johansen
+> > <john.johansen@canonical.com>
+> > Cc: linux-fsdevel@vger.kernel.org; linux-integrity@vger.kernel.org; linux-
+> > security-module@vger.kernel.org; linux-kernel@vger.kernel.org; Silviu
+> > Vlasceanu <Silviu.Vlasceanu@huawei.com>
+> > Subject: Re: [RFC][PATCH 1/3] evm: Move hooks outside LSM infrastructure
 
-On 07/05/2020 11:44, David Laight wrote:
-> From: Mickaël Salaün <mic@digikod.net>
->> Sent: 07 May 2020 10:30
->> On 07/05/2020 11:00, David Laight wrote:
->>> From: Mickaël Salaün
->>>> Sent: 07 May 2020 09:37
->>> ...
->>>>> None of that description actually says what the patch actually does.
->>>>
->>>> "Add support for O_MAYEXEC" "to enable to control script execution".
->>>> What is not clear here? This seems well understood by other commenters.
->>>> The documentation patch and the talks can also help.
->>>
->>> I'm guessing that passing O_MAYEXEC to open() requests the kernel
->>> check for execute 'x' permissions (as well as read).
->>
->> Yes, but only with openat2().
+Roberto, please fix your mailer or at least manually remove this sort
+of info from the email.
+
+> > 
+> > On Wed, 2020-05-06 at 15:44 -0400, Mimi Zohar wrote:
+> > > Since copying the EVM HMAC or original signature isn't applicable, I
+> > > would prefer exploring an EVM portable and immutable signature only
+> > > solution.
+> > 
+> > To prevent copying the EVM xattr, we added "security.evm" to
+> > /etc/xattr.conf.  To support copying just the EVM portable and
+> > immutable signatures will require a different solution.
 > 
-> It can't matter if the flag is ignored.
-> It just means the kernel isn't enforcing the policy.
-> If openat2() fail because the flag is unsupported then
-> the application will need to retry without the flag.
+> This patch set removes the need for ignoring security.evm. It can be always
+> copied, even if it is an HMAC. EVM will update it only when verification in
+> the pre hook is successful. Combined with the ability of protecting a subset
+> of files without introducing an EVM policy, these advantages seem to
+> outweigh the effort necessary to make the switch.
 
-I don't get what you want to prove. Please read carefully the cover
-letter, the use case and the threat model.
+As the EVM file HMAC and original signature contain inode specific
+information (eg. i_version, i_generation), these xattrs cannot ever be
+copied.  The proposed change is in order to support just the new EVM
+signatures.
 
-> 
-> So if the user has any ability create executable files this
-> is all pointless (from a security point of view).
-> The user can either copy the file or copy in an interpreter
-> that doesn't request O_MAYEXEC.>
-> It might stop accidental issues, but nothing malicious.
+At least IMA file hashes should always be used in conjunction with
+EVM.  EVM xattrs should always require a security.ima xattr to bind
+the file metadata to the file data.  The IMA and EVM policies really
+need to be in sync.
 
-The execute permission (like the write permission) does not only depends
-on the permission set on files, but it also depends on the
-options/permission of their mount points, the MAC policy, etc. The
-initial use case to enforce O_MAYEXEC is to rely on the noexec mount option.
-
-If you want a consistent policy, you need to make one. Only dealing with
-file properties may not be enough. This is explain in the cover letter
-and the patches. If you allow all users to write and execute their
-files, then there is no point in enforcing anything with O_MAYEXEC.
-
-> 
->>> Then kernel policy determines whether 'read' access is actually enough,
->>> or whether 'x' access (possibly masked by mount permissions) is needed.
->>>
->>> If that is true, two lines say what is does.
->>
->> The "A simple system-wide security policy" paragraph introduce that, but
->> I'll highlight it in the next cover letter.
-> 
-> No it doesn't.
-> It just says there is some kind of policy that some flags change.
-> It doesn't say what is being checked for.
-
-It said "the mount points or the file access rights". Please take a look
-at the documentation patch.
-
-> 
->> The most important point is
->> to understand why it is required, before getting to how it will be
->> implemented.
-> 
-> But you don't say what is required.
-
-A consistent policy. Please take a look at the documentation patch which
-explains the remaining prerequisites. You can also take a look at the
-talks for further details.
-
-> Just a load of buzzword ramblings.
-
-It is a summary. Can you please suggest something better?
+Mimi
