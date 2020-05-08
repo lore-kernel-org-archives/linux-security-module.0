@@ -2,89 +2,131 @@ Return-Path: <SRS0=gDDV=6W=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23785C38A2A
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 May 2020 16:15:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD382C47255
+	for <linux-security-module@archiver.kernel.org>; Fri,  8 May 2020 17:08:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E50A921473
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 May 2020 16:15:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IiV4iQB3"
+	by mail.kernel.org (Postfix) with ESMTP id A92172083B
+	for <linux-security-module@archiver.kernel.org>; Fri,  8 May 2020 17:08:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728003AbgEHQPV (ORCPT
+        id S1727805AbgEHRIX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 8 May 2020 12:15:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36284 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727097AbgEHQPU (ORCPT
+        Fri, 8 May 2020 13:08:23 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:31736 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726750AbgEHRIX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 8 May 2020 12:15:20 -0400
-Received: from mail-ua1-x92f.google.com (mail-ua1-x92f.google.com [IPv6:2607:f8b0:4864:20::92f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64FB1C061A0C;
-        Fri,  8 May 2020 09:15:19 -0700 (PDT)
-Received: by mail-ua1-x92f.google.com with SMTP id r2so840287uam.7;
-        Fri, 08 May 2020 09:15:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=H08VnS9yN+xKAafxps5tOXIHVVVEZEkeV+pHeOLCkUs=;
-        b=IiV4iQB351V0o3+/IKLjE0pv+/BiItjXAYjBM/9voZElcUGdNR0JeqV3AnL1NgNhZ9
-         E3arqywo9Kf8Vfba4EF9iZhxeZsKTxNuZLAOCe5jzTokJEWHGzE2nt4yHD6IcBzj7aOV
-         liV0RLORYaLYQP0CsqxgEqV+zyW+KdVEXUGCEfyt8BsuRqGNRjosez9qxsEZW9/W3w+Z
-         RWAaA0aahrDtgR/UWMDVdSWow9SHdq7ilE5Noc+XS9bcgxWrONjCTv2659njp4pGtTXB
-         DtbHT3RKUO4wRivAwBxXC84dYt0s8jLt8Ve1I+xmIuOU8xCAb6lPXArWRGmo9dzBZ/8D
-         2LyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=H08VnS9yN+xKAafxps5tOXIHVVVEZEkeV+pHeOLCkUs=;
-        b=CTfDRwx0yGLvjvHloJJIBYHbL5CxZY8KZRF5bL4QedUVUPyrTRNt2dJkihvmc88Bdf
-         rgcS43RE13RlzQMJFh2dGmDdcsHtQrCeGOMn5OR62eX9tOHuXzrmt12XdnqjVvDfkzHP
-         cgeb5tjdMCSJoDkqoWiS2xPNn+81iN+eJ+/j0h9/BoL1Hyg4E2Fr4kARWI6LVOpk9tJ8
-         apj71xkHzNf/5qonWQSJpqsjw/qMiJ4Qe1hZiXdHuONS1BioCxN9HQIbEBnj0emD94ng
-         K+BY2YZ/vmf3CAtDj5Qbs6b64SQRBpwPH/8IJx2Qk07Yx7ojMQlq3k0M3Ptt+9HwWFMn
-         cH4Q==
-X-Gm-Message-State: AGi0PuZ4lRmq+NGu2Sg/cS+iDqbDXlqhNK9l8WYGR9HFWNN00RumP9tc
-        EpUECUNop5l8N9ckdLITU9HN/rS04iPmw7wwS6ALWScfJBg=
-X-Google-Smtp-Source: APiQypLcwuh8PghrglYPTSth/y/LPBsSdzEwa2RZm4Nk+O5Ht4lYsKlluPFmebTLSbgM3Wqv8H4P3tW1UqmMKpxpws0=
-X-Received: by 2002:ab0:7298:: with SMTP id w24mr2880926uao.95.1588954518198;
- Fri, 08 May 2020 09:15:18 -0700 (PDT)
-MIME-Version: 1.0
-References: <18e48255d68a1408b3e3152780f0e789df540059.camel@gmail.com>
- <aa217de398584fa7846cf4ac0c872036@AUSX13MPC101.AMER.DELL.COM>
- <CAD2FfiEk8Fq3=i_3NHvtuwip=-v_cGfnYSowdPi86U_BcgP2gQ@mail.gmail.com>
- <61c7782cd2e64bb9ab2aaf6a016bbb6c@AUSX13MPC101.AMER.DELL.COM>
- <CAD2FfiGweUHNJGdj7OUQFxEhQBYvMCbuWM-+ez=SpN=HbcaS4Q@mail.gmail.com>
- <70757953c25645baac2dddd7c6924d05@AUSX13MPC101.AMER.DELL.COM> <20200508082028.GP487496@lahna.fi.intel.com>
-In-Reply-To: <20200508082028.GP487496@lahna.fi.intel.com>
-From:   Richard Hughes <hughsient@gmail.com>
-Date:   Fri, 8 May 2020 17:15:07 +0100
-Message-ID: <CAD2FfiG2c4iXmTjUpQAUqRVBVyH0Hm4VfO5PBTXf03VXHR22ng@mail.gmail.com>
-Subject: Re: [PATCH] platform/x86: Export LPC attributes for the system SPI chip
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc:     Mario Limonciello <Mario.Limonciello@dell.com>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>
+        Fri, 8 May 2020 13:08:23 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 048H1aow181718;
+        Fri, 8 May 2020 13:08:12 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 30vtw0tstj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 08 May 2020 13:08:11 -0400
+Received: from m0098416.ppops.net (m0098416.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 048H2GHA183411;
+        Fri, 8 May 2020 13:08:11 -0400
+Received: from ppma01fra.de.ibm.com (46.49.7a9f.ip4.static.sl-reverse.com [159.122.73.70])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 30vtw0tssw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 08 May 2020 13:08:11 -0400
+Received: from pps.filterd (ppma01fra.de.ibm.com [127.0.0.1])
+        by ppma01fra.de.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 048H4s14002508;
+        Fri, 8 May 2020 17:08:09 GMT
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
+        by ppma01fra.de.ibm.com with ESMTP id 30s0g5dn2c-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 08 May 2020 17:08:09 +0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 048H87PH8847814
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 8 May 2020 17:08:07 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 37D1EA405C;
+        Fri,  8 May 2020 17:08:07 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C3B4FA4065;
+        Fri,  8 May 2020 17:08:05 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.139.55])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri,  8 May 2020 17:08:05 +0000 (GMT)
+Message-ID: <1588957684.5146.70.camel@linux.ibm.com>
+Subject: Re: [RFC][PATCH 1/3] evm: Move hooks outside LSM infrastructure
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>,
+        "david.safford@gmail.com" <david.safford@gmail.com>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        John Johansen <john.johansen@canonical.com>
+Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
+Date:   Fri, 08 May 2020 13:08:04 -0400
+In-Reply-To: <84e6acad739a415aa3e2457b5c37979f@huawei.com>
+References: <20200429073935.11913-1-roberto.sassu@huawei.com>
+         <1588794293.4624.21.camel@linux.ibm.com>
+         <1588799408.4624.28.camel@linux.ibm.com>
+         <ab879f9e66874736a40e9c566cadc272@huawei.com>
+         <1588864628.5685.78.camel@linux.ibm.com>
+         <750ab4e0990f47e4aea10d0e580b1074@huawei.com>
+         <1588884313.5685.110.camel@linux.ibm.com>
+         <84e6acad739a415aa3e2457b5c37979f@huawei.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.676
+ definitions=2020-05-08_15:2020-05-08,2020-05-08 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxscore=0
+ clxscore=1015 mlxlogscore=999 phishscore=0 suspectscore=0 adultscore=0
+ lowpriorityscore=0 priorityscore=1501 spamscore=0 impostorscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2005080142
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 8 May 2020 at 09:20, Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
-> Thanks for the information. I actually prefer that this would be in a
-> separate driver because I do not want distros to enable intel-spi just
-> for this. It is really only meant for special setups where firmware
-> upgrade/access flow has been thoroughly tested.
+On Fri, 2020-05-08 at 10:20 +0000, Roberto Sassu wrote:
+> > From: Mimi Zohar [mailto:zohar@linux.ibm.com]
+> > On Thu, 2020-05-07 at 16:47 +0000, Roberto Sassu wrote:
 
-Do you think the driver should be part of mtd (e.g. something like
-drivers/mtd/spi-nor/controllers/intel-spi-pci-lpc.c) or be something
-like I proposed in drivers/platform/x86? Ideas very welcome, thanks.
+<snip>
 
-Richard
+> > > > the file metadata to the file data.  The IMA and EVM policies really
+> > > > need to be in sync.
+> > >
+> > > It would be nice, but at the moment EVM considers also files that are
+> > > not selected by the IMA policy. An example of why this is a problem is
+> > > the audit service that fails to start when it tries to adjust the permissions
+> > > of the log files. Those files don't have security.evm because they are
+> > > not appraised by IMA, but EVM denies the operation.
+> > 
+> > No, this is a timing issue as to whether or not the builtin policy or
+> > a custom policy has been loaded.  A custom policy could exclude the
+> > log files based on LSM labels, but they are included in the builtin
+> > policy.
+> 
+> Yes, I was referring to a custom policy. In this case, EVM will not adapt
+> to the custom policy but still verifies all files. If access control is done
+> exclusively by IMA at the time evm_verifyxattr() is called, we wouldn't
+> need to add security.evm to all files.
+
+Roberto, EVM is only triggered by IMA, unless you've modified the
+kernel to do otherwise.
+
+I'm not interested in a complicated solution, just one that addresses
+the new EVM immutable and portable signature.  It might require EVM
+HMAC, IMA differentiating between a new file and an existing file, or
+it might require writing the new EVM signature last, after all the
+other xattrs or metadata are updated.  Please nothing that changes
+existing expectations.
+
+Mimi
