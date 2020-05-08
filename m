@@ -2,134 +2,156 @@ Return-Path: <SRS0=gDDV=6W=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9278C47257
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 May 2020 14:02:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7517FC38A2A
+	for <linux-security-module@archiver.kernel.org>; Fri,  8 May 2020 15:45:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A506220736
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 May 2020 14:02:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 508FF2173E
+	for <linux-security-module@archiver.kernel.org>; Fri,  8 May 2020 15:45:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727831AbgEHOCc (ORCPT
+        id S1728260AbgEHPpy (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 8 May 2020 10:02:32 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60260 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726636AbgEHOCc (ORCPT
+        Fri, 8 May 2020 11:45:54 -0400
+Received: from mga14.intel.com ([192.55.52.115]:62555 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727116AbgEHPpy (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 8 May 2020 10:02:32 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 048DYap3030733;
-        Fri, 8 May 2020 10:01:19 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 30vtsr5dtv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 08 May 2020 10:01:18 -0400
-Received: from m0098404.ppops.net (m0098404.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 048DYi4n031919;
-        Fri, 8 May 2020 10:01:17 -0400
-Received: from ppma01fra.de.ibm.com (46.49.7a9f.ip4.static.sl-reverse.com [159.122.73.70])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 30vtsr5dsa-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 08 May 2020 10:01:17 -0400
-Received: from pps.filterd (ppma01fra.de.ibm.com [127.0.0.1])
-        by ppma01fra.de.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 048Dt2vA010653;
-        Fri, 8 May 2020 14:01:14 GMT
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
-        by ppma01fra.de.ibm.com with ESMTP id 30s0g5dhkb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 08 May 2020 14:01:14 +0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 048E1CFE43319440
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 8 May 2020 14:01:12 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E49F311C064;
-        Fri,  8 May 2020 14:01:11 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2A93011C052;
-        Fri,  8 May 2020 14:01:08 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.139.55])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri,  8 May 2020 14:01:08 +0000 (GMT)
-Message-ID: <1588946467.5146.6.camel@linux.ibm.com>
-Subject: Re: [PATCH v5 0/6] Add support for O_MAYEXEC
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     "Lev R. Oshvang ." <levonshe@gmail.com>,
-        =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc:     David Laight <David.Laight@aculab.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christian Heimes <christian@python.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Eric Chiang <ericchiang@google.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>,
-        Philippe =?ISO-8859-1?Q?Tr=E9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        "kernel-hardening@lists.openwall.com" 
-        <kernel-hardening@lists.openwall.com>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Date:   Fri, 08 May 2020 10:01:07 -0400
-In-Reply-To: <CAP22eLFmNkeQNbmQ_SAbnrDUnv2W-zYJ+ijnE22C3ph2vUiQiQ@mail.gmail.com>
-References: <20200505153156.925111-1-mic@digikod.net>
-         <20b24b9ca0a64afb9389722845738ec8@AcuMS.aculab.com>
-         <907109c8-9b19-528a-726f-92c3f61c1563@digikod.net>
-         <ad28ab5fe7854b41a575656e95b4da17@AcuMS.aculab.com>
-         <64426377-7fc4-6f37-7371-2e2a584e3032@digikod.net>
-         <635df0655b644408ac4822def8900383@AcuMS.aculab.com>
-         <1ced6f5f-7181-1dc5-2da7-abf4abd5ad23@digikod.net>
-         <CAP22eLFmNkeQNbmQ_SAbnrDUnv2W-zYJ+ijnE22C3ph2vUiQiQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.676
- definitions=2020-05-08_13:2020-05-08,2020-05-08 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=932
- lowpriorityscore=0 spamscore=0 mlxscore=0 malwarescore=0 clxscore=1011
- adultscore=0 phishscore=0 priorityscore=1501 bulkscore=0 impostorscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2005080116
+        Fri, 8 May 2020 11:45:54 -0400
+IronPort-SDR: +yd/cQ4CtZ7SsM3ZCY+iu3EDEnr2cL1l+EeenYgwat+T4izcUC5cNHBKXm9rvzOqZWCLO+pD90
+ giXRzZeVzjlw==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2020 08:45:53 -0700
+IronPort-SDR: kML9TWEw7QXFXDMKy14JPIY8Gk7mkGgTQgp+h9sR24hccB5Fq44lwLMHP5E/u0FvVNWCez+pxd
+ ErBoROaXN98A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,368,1583222400"; 
+   d="scan'208";a="285506118"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.147])
+  by fmsmga004.fm.intel.com with ESMTP; 08 May 2020 08:45:53 -0700
+Date:   Fri, 8 May 2020 08:45:53 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH 10/11] fs: remove __vfs_read
+Message-ID: <20200508154552.GB1431382@iweiny-DESK2.sc.intel.com>
+References: <20200508092222.2097-1-hch@lst.de>
+ <20200508092222.2097-11-hch@lst.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200508092222.2097-11-hch@lst.de>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 2020-05-08 at 10:15 +0300, Lev R. Oshvang . wrote:
+On Fri, May 08, 2020 at 11:22:21AM +0200, Christoph Hellwig wrote:
+> Fold it into the two callers.
 
-> I can suggest something better ( I believe)
-> Some time ago I proposed patch to IMA -  Add suffix in IMA policy rule criteria
-> It allows IMA to verify scripts, configuration files and even single file.
-> It is very simple and does not depend on open flags.
-> Mimi Zohar decided not to include this patch on the reason it tries to
-> protect the file name.
-> ( Why ??).
+In 5.7-rc4, it looks like __vfs_read() is called from
+security/integrity/iint.c
 
-Your patch relies on the filename, but does nothing to protect it. 
+Was that removed somewhere prior to this patch?
 
-Mimi
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  fs/read_write.c    | 43 +++++++++++++++++++++----------------------
+>  include/linux/fs.h |  1 -
+>  2 files changed, 21 insertions(+), 23 deletions(-)
+> 
+> diff --git a/fs/read_write.c b/fs/read_write.c
+> index 0ffbed5fd8136..f0009b506014c 100644
+> --- a/fs/read_write.c
+> +++ b/fs/read_write.c
+> @@ -419,17 +419,6 @@ static ssize_t new_sync_read(struct file *filp, char __user *buf, size_t len, lo
+>  	return ret;
+>  }
+>  
+> -ssize_t __vfs_read(struct file *file, char __user *buf, size_t count,
+> -		   loff_t *pos)
+> -{
+> -	if (file->f_op->read)
+> -		return file->f_op->read(file, buf, count, pos);
+> -	else if (file->f_op->read_iter)
+> -		return new_sync_read(file, buf, count, pos);
+> -	else
+> -		return -EINVAL;
+> -}
+> -
+>  ssize_t __kernel_read(struct file *file, void *buf, size_t count, loff_t *pos)
+>  {
+>  	mm_segment_t old_fs = get_fs();
+> @@ -441,7 +430,12 @@ ssize_t __kernel_read(struct file *file, void *buf, size_t count, loff_t *pos)
+>  	if (count > MAX_RW_COUNT)
+>  		count =  MAX_RW_COUNT;
+>  	set_fs(KERNEL_DS);
+> -	ret = __vfs_read(file, (void __user *)buf, count, pos);
+> +	if (file->f_op->read)
+> +		ret = file->f_op->read(file, (void __user *)buf, count, pos);
+> +	else if (file->f_op->read_iter)
+> +		ret = new_sync_read(file, (void __user *)buf, count, pos);
+> +	else
+> +		ret = -EINVAL;
+>  	set_fs(old_fs);
+>  	if (ret > 0) {
+>  		fsnotify_access(file);
+> @@ -474,17 +468,22 @@ ssize_t vfs_read(struct file *file, char __user *buf, size_t count, loff_t *pos)
+>  		return -EFAULT;
+>  
+>  	ret = rw_verify_area(READ, file, pos, count);
+> -	if (!ret) {
+> -		if (count > MAX_RW_COUNT)
+> -			count =  MAX_RW_COUNT;
+> -		ret = __vfs_read(file, buf, count, pos);
+> -		if (ret > 0) {
+> -			fsnotify_access(file);
+> -			add_rchar(current, ret);
+> -		}
+> -		inc_syscr(current);
+> -	}
+> +	if (ret)
+> +		return ret;
+> +	if (count > MAX_RW_COUNT)
+> +		count =  MAX_RW_COUNT;
+
+Couldn't this clean up still happen while keeping __vfs_read()?
+
+Ira
+
+> +	if (file->f_op->read)
+> +		ret = file->f_op->read(file, buf, count, pos);
+> +	else if (file->f_op->read_iter)
+> +		ret = new_sync_read(file, buf, count, pos);
+> +	else
+> +		ret = -EINVAL;
+> +	if (ret > 0) {
+> +		fsnotify_access(file);
+> +		add_rchar(current, ret);
+> +	}
+> +	inc_syscr(current);
+>  	return ret;
+>  }
+>  
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 6441aaa25f8f2..4c10a07a36178 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -1905,7 +1905,6 @@ ssize_t rw_copy_check_uvector(int type, const struct iovec __user * uvector,
+>  			      struct iovec *fast_pointer,
+>  			      struct iovec **ret_pointer);
+>  
+> -extern ssize_t __vfs_read(struct file *, char __user *, size_t, loff_t *);
+>  extern ssize_t vfs_read(struct file *, char __user *, size_t, loff_t *);
+>  extern ssize_t vfs_write(struct file *, const char __user *, size_t, loff_t *);
+>  extern ssize_t vfs_readv(struct file *, const struct iovec __user *,
+> -- 
+> 2.26.2
+> 
