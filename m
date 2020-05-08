@@ -2,141 +2,203 @@ Return-Path: <SRS0=gDDV=6W=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86ABBC38A2A
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 May 2020 04:54:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08DB2C47257
+	for <linux-security-module@archiver.kernel.org>; Fri,  8 May 2020 07:16:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 55BCB20731
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 May 2020 04:54:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DAE4C208D6
+	for <linux-security-module@archiver.kernel.org>; Fri,  8 May 2020 07:16:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jMu44hv/"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kjfHOAJu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725971AbgEHEyT (ORCPT
+        id S1726701AbgEHHQJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 8 May 2020 00:54:19 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:58991 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725865AbgEHEyS (ORCPT
+        Fri, 8 May 2020 03:16:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36914 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726009AbgEHHQJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 8 May 2020 00:54:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1588913657;
-        h=from:from:reply-to:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=W+BH4TenlCplFqY4LfV4/xPxDpNHfh9hRZl8/P0YOWA=;
-        b=jMu44hv/uGIfGIacGSfHEyXuTB/MXfdqWW+fQcJOhyWmWsqRgt2An/7IBXhtQ3Fc6TTbIH
-        4m6J46b92hsiiGD1X8LKXuuimKhIqWcJNusLrByB942DV6iT3UVxjTmuI3jQK1kVOlzcDf
-        CCjrktvvFhzQM4XZviiWZQ418CevwOQ=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-166-nVgfAIAdPcO6JmsIFAipeQ-1; Fri, 08 May 2020 00:54:14 -0400
-X-MC-Unique: nVgfAIAdPcO6JmsIFAipeQ-1
-Received: by mail-qv1-f69.google.com with SMTP id ce16so581065qvb.15
-        for <linux-security-module@vger.kernel.org>; Thu, 07 May 2020 21:54:14 -0700 (PDT)
+        Fri, 8 May 2020 03:16:09 -0400
+Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECF59C05BD43;
+        Fri,  8 May 2020 00:16:08 -0700 (PDT)
+Received: by mail-wr1-x443.google.com with SMTP id h9so632907wrt.0;
+        Fri, 08 May 2020 00:16:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=f98ody5ofivvfpEVB+MHkT0+pvj3EG0oyyJsAVjVUX8=;
+        b=kjfHOAJu6QRyi7ROjFuMXA71cr7WC63FyOi9OXIFsSs1IZHl3a5eLuk7zueS2zm7wS
+         Sn6o5f+HUqh43jMlFmz+HHxETZ2OBeTwunPGVNL7MO8847t2QuGNIr8R4zdJPdSwCv42
+         P3/G3ZpoYpIh5YhbKAb05sU6vgNQukPk/o1ZkUZBdscLQLwkDn5v2y9GFaEqpgpvdZ1x
+         WFH7fivD1ab/1TL4RUu81yHfqjJlMK4MdUFLfPYCWTUaKsdftGrWJuyBA67hoYyJOrz3
+         X935R4kxNudrg8grDnLRlBUs1a2CyhbJM3IEaMnm9QhIi1/zVbrIXym0wInbvszrFbVI
+         fO5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
-         :mail-followup-to:references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to;
-        bh=W+BH4TenlCplFqY4LfV4/xPxDpNHfh9hRZl8/P0YOWA=;
-        b=I4XzpJ+gg3T6/EwWWyJZUoWeNA4Ky3Thq3RVOd+rONck70+1o4gZX4iH2DiAzzOHg/
-         wkjaM3o8+/UEEVCWKugTbtuAjEJESy5wjHRkkBwd83ISdPERBbqhbZzQ+45ojeFgK/pv
-         jVeimTZ+Rmpbu9CFXJ/01mqXGc92jMTQylvLI2jtMsoGKBjyMTcui6dInRzYn6h9LuQw
-         plnF8wLHrtycyf6cAOBfuBQpxM3JsuWGZsujQCBP4H0ETGBSPrGaF4BqqbksJvbSxSeO
-         F7lf0QZIb7oxMXzCPjIDEaEMl8P6NA/ZIWJYGaeikSxPaaWaksJcfYC1Ilr0hHq6yKPR
-         YWBg==
-X-Gm-Message-State: AGi0Puawcpku/ii1PcWrPRB+yRfPzZJVsLlh56mNpFyro6Eri4O6X/yR
-        or3kY+w4r6JG7rrg0MeCW6LO9G4FCXgnbAPu7FsNpJASjluFrKW+Nl9AJDcwRSG0PeakPwbpxmV
-        mRN4rBlyiv53QDqyE5zBz1p2zqajex+gS9A+a
-X-Received: by 2002:a05:620a:137a:: with SMTP id d26mr981418qkl.326.1588913653470;
-        Thu, 07 May 2020 21:54:13 -0700 (PDT)
-X-Google-Smtp-Source: APiQypKpCzh7dC75r/MEmmnhuO4dvSN1lWqIA2UHRHPDduq9JF8X3WqJrMJ1jfKbHh4DRXapi4o3bQ==
-X-Received: by 2002:a05:620a:137a:: with SMTP id d26mr981403qkl.326.1588913653191;
-        Thu, 07 May 2020 21:54:13 -0700 (PDT)
-Received: from localhost (ip70-163-223-149.ph.ph.cox.net. [70.163.223.149])
-        by smtp.gmail.com with ESMTPSA id j20sm565484qtr.5.2020.05.07.21.54.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 May 2020 21:54:12 -0700 (PDT)
-Date:   Thu, 7 May 2020 21:54:10 -0700
-From:   Jerry Snitselaar <jsnitsel@redhat.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Roberto Sassu <roberto.sassu@huawei.com>,
-        James.Bottomley@hansenpartnership.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v4 1/7] ima: Switch to ima_hash_algo for boot aggregate
-Message-ID: <20200508045410.t7gawyklyecupe2u@cantor>
-Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
-Mail-Followup-To: Mimi Zohar <zohar@linux.ibm.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        James.Bottomley@hansenpartnership.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-        silviu.vlasceanu@huawei.com, stable@vger.kernel.org
-References: <20200325104712.25694-1-roberto.sassu@huawei.com>
- <20200325104712.25694-2-roberto.sassu@huawei.com>
- <1585871617.7311.5.camel@linux.ibm.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=f98ody5ofivvfpEVB+MHkT0+pvj3EG0oyyJsAVjVUX8=;
+        b=URxO9VEsgf+M2zGldoyO6YKWD4BLtnBsw69KBt8ETURD9hHpkkOviUAceCjh+B7r8n
+         ktXvkyhClti4kwv/Vf8Y9kC4ugqYWtQvekuwU9LjXsqSlVtLh9/tPaYqcZ7xFzP1zRY5
+         ObIPidtD0QgIXSsDTo5Y1bwWgf8lgNPu9R5dXiDg72wy6jggBsBZ/Jf5jhFcZW3s5K3b
+         iLeaBFzgh2XsBJfibIidllFvtgni/Gsra1aek7290bgeKpKmlYabjGHG4nWpRKKdYv2x
+         aFPsV9W44mIMeHI5hThlp9QdRCf8WlzOx5w4j4iBZFxfcEQhxnJmFoaZrspbxWyzGo/q
+         7q9w==
+X-Gm-Message-State: AGi0PuaMen0VI7pPUWdMtwA6LGI4IRJom9J/V9/RuVeklKbhTOfoA2Ng
+        dva7t/p4djdXlSO7OXAF9r4OG6kbR6/RPYXFrtw=
+X-Google-Smtp-Source: APiQypJ9eUdgZ6U6tTq3eG//0ZlXZwAD2BqFXPXDJ2zwThqIwa9D2I1/m6cN5rQn8vBGsZhz0fAMbykk4S3gUX8ZBTU=
+X-Received: by 2002:a5d:4950:: with SMTP id r16mr1277974wrs.350.1588922167648;
+ Fri, 08 May 2020 00:16:07 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1585871617.7311.5.camel@linux.ibm.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Disposition: inline
+References: <20200505153156.925111-1-mic@digikod.net> <20b24b9ca0a64afb9389722845738ec8@AcuMS.aculab.com>
+ <907109c8-9b19-528a-726f-92c3f61c1563@digikod.net> <ad28ab5fe7854b41a575656e95b4da17@AcuMS.aculab.com>
+ <64426377-7fc4-6f37-7371-2e2a584e3032@digikod.net> <635df0655b644408ac4822def8900383@AcuMS.aculab.com>
+ <1ced6f5f-7181-1dc5-2da7-abf4abd5ad23@digikod.net>
+In-Reply-To: <1ced6f5f-7181-1dc5-2da7-abf4abd5ad23@digikod.net>
+From:   "Lev R. Oshvang ." <levonshe@gmail.com>
+Date:   Fri, 8 May 2020 10:15:56 +0300
+Message-ID: <CAP22eLFmNkeQNbmQ_SAbnrDUnv2W-zYJ+ijnE22C3ph2vUiQiQ@mail.gmail.com>
+Subject: Re: [PATCH v5 0/6] Add support for O_MAYEXEC
+To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc:     David Laight <David.Laight@aculab.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Eric Chiang <ericchiang@google.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mickael.salaun@ssi.gouv.fr>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        =?UTF-8?Q?Philippe_Tr=C3=A9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        "kernel-hardening@lists.openwall.com" 
+        <kernel-hardening@lists.openwall.com>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu Apr 02 20, Mimi Zohar wrote:
->Hi Roberto,
+On Thu, May 7, 2020 at 4:38 PM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> w=
+rote:
 >
->On Wed, 2020-03-25 at 11:47 +0100, Roberto Sassu wrote:
->> boot_aggregate is the first entry of IMA measurement list. Its purpose is
->> to link pre-boot measurements to IMA measurements. As IMA was designed to
->> work with a TPM 1.2, the SHA1 PCR bank was always selected even if a
->> TPM 2.0 with support for stronger hash algorithms is available.
->>
->> This patch first tries to find a PCR bank with the IMA default hash
->> algorithm. If it does not find it, it selects the SHA256 PCR bank for
->> TPM 2.0 and SHA1 for TPM 1.2. Ultimately, it selects SHA1 also for TPM 2.0
->> if the SHA256 PCR bank is not found.
->>
->> If none of the PCR banks above can be found, boot_aggregate file digest is
->> filled with zeros, as for TPM bypass, making it impossible to perform a
->> remote attestation of the system.
->>
->> Cc: stable@vger.kernel.org # 5.1.x
->> Fixes: 879b589210a9 ("tpm: retrieve digest size of unknown algorithms with PCR read")
->> Reported-by: Jerry Snitselaar <jsnitsel@redhat.com>
->> Suggested-by: James Bottomley <James.Bottomley@HansenPartnership.com>
->> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 >
->Thank you!  This patch set is now queued in next-integrity-testing
->during the open window.  Jerry, I assume this works for you.  Could we
->get your tag?
+> On 07/05/2020 11:44, David Laight wrote:
+> > From: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+> >> Sent: 07 May 2020 10:30
+> >> On 07/05/2020 11:00, David Laight wrote:
+> >>> From: Micka=C3=ABl Sala=C3=BCn
+> >>>> Sent: 07 May 2020 09:37
+> >>> ...
+> >>>>> None of that description actually says what the patch actually does=
+.
+> >>>>
+> >>>> "Add support for O_MAYEXEC" "to enable to control script execution".
+> >>>> What is not clear here? This seems well understood by other commente=
+rs.
+> >>>> The documentation patch and the talks can also help.
+> >>>
+> >>> I'm guessing that passing O_MAYEXEC to open() requests the kernel
+> >>> check for execute 'x' permissions (as well as read).
+> >>
+> >> Yes, but only with openat2().
+> >
+> > It can't matter if the flag is ignored.
+> > It just means the kernel isn't enforcing the policy.
+> > If openat2() fail because the flag is unsupported then
+> > the application will need to retry without the flag.
 >
->thanks!
+> I don't get what you want to prove. Please read carefully the cover
+> letter, the use case and the threat model.
 >
->Mimi
+> >
+> > So if the user has any ability create executable files this
+> > is all pointless (from a security point of view).
+> > The user can either copy the file or copy in an interpreter
+> > that doesn't request O_MAYEXEC.>
+> > It might stop accidental issues, but nothing malicious.
 >
+> The execute permission (like the write permission) does not only depends
+> on the permission set on files, but it also depends on the
+> options/permission of their mount points, the MAC policy, etc. The
+> initial use case to enforce O_MAYEXEC is to rely on the noexec mount opti=
+on.
+>
+> If you want a consistent policy, you need to make one. Only dealing with
+> file properties may not be enough. This is explain in the cover letter
+> and the patches. If you allow all users to write and execute their
+> files, then there is no point in enforcing anything with O_MAYEXEC.
+>
+> >
+> >>> Then kernel policy determines whether 'read' access is actually enoug=
+h,
+> >>> or whether 'x' access (possibly masked by mount permissions) is neede=
+d.
+> >>>
+> >>> If that is true, two lines say what is does.
+> >>
+> >> The "A simple system-wide security policy" paragraph introduce that, b=
+ut
+> >> I'll highlight it in the next cover letter.
+> >
+> > No it doesn't.
+> > It just says there is some kind of policy that some flags change.
+> > It doesn't say what is being checked for.
+>
+> It said "the mount points or the file access rights". Please take a look
+> at the documentation patch.
+>
+> >
+> >> The most important point is
+> >> to understand why it is required, before getting to how it will be
+> >> implemented.
+> >
+> > But you don't say what is required.
+>
+> A consistent policy. Please take a look at the documentation patch which
+> explains the remaining prerequisites. You can also take a look at the
+> talks for further details.
+>
+> > Just a load of buzzword ramblings.
+>
+> It is a summary. Can you please suggest something better?
 
-Hi Mimi,
+I can suggest something better ( I believe)
+Some time ago I proposed patch to IMA -  Add suffix in IMA policy rule crit=
+eria
+It allows IMA to verify scripts, configuration files and even single file.
+It is very simple and does not depend on open flags.
+Mimi Zohar decided not to include this patch on the reason it tries to
+protect the file name.
+( Why ??).
 
-Yes, I no longer get the errors with this patch.
-
-
-Tested-by: Jerry Snitselaar <jsnitsel@redhat.com>
-
-
-Regards,
-Jerry
-
+https://lore.kernel.org/linux-integrity/20200330122434.GB28214@kl/
