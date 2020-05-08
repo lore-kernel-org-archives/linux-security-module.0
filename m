@@ -2,93 +2,60 @@ Return-Path: <SRS0=gDDV=6W=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CB1DC38A2A
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 May 2020 08:20:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55CFDC38A2A
+	for <linux-security-module@archiver.kernel.org>; Fri,  8 May 2020 09:22:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 42451208D6
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 May 2020 08:20:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E3DE208CA
+	for <linux-security-module@archiver.kernel.org>; Fri,  8 May 2020 09:22:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RmPbrrz6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726751AbgEHIUc (ORCPT
+        id S1726750AbgEHJW1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 8 May 2020 04:20:32 -0400
-Received: from mga07.intel.com ([134.134.136.100]:39910 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726616AbgEHIUc (ORCPT
+        Fri, 8 May 2020 05:22:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56510 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726746AbgEHJWZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 8 May 2020 04:20:32 -0400
-IronPort-SDR: UXG57jDr92DaMwZShoJKPxHvEjccCq6sIxV+7w+FYvEVi5JuBPAbOKKtvG8YrnPbf6AAUmnLOv
- YpnFUggHJshw==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2020 01:20:31 -0700
-IronPort-SDR: 9aXlZSI1bfKt+fDdEciy7ghyycxKD/Qj/NyoBHxv4dgiWR0JY/Pspy4wKv7QcwKhEh+Jqe6pP+
- 9qXej/XqGcTQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.73,366,1583222400"; 
-   d="scan'208";a="370377902"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
-  by fmsmga001.fm.intel.com with SMTP; 08 May 2020 01:20:29 -0700
-Received: by lahna (sSMTP sendmail emulation); Fri, 08 May 2020 11:20:28 +0300
-Date:   Fri, 8 May 2020 11:20:28 +0300
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Mario.Limonciello@dell.com
-Cc:     hughsient@gmail.com, platform-driver-x86@vger.kernel.org,
+        Fri, 8 May 2020 05:22:25 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E0C8C05BD43;
+        Fri,  8 May 2020 02:22:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=AKGiii+IEqZ9gOggsApEG4tziI6/WJ3l0tT79BlKIwg=; b=RmPbrrz6Kk0e6owaqjS+q2eHbU
+        G5BKQrZTgzS+1A3FFzmk3b7wy4DTLWkQd8a7NAuzT8d8t14rR1vTvys767YOwnPVrGwqgrtuE+vyX
+        YaxjCyrnZtyyrQ1/6nJ8rhvBdFhERzYQjcrxS0L0bx8HWNmofhBq5k6fjzMIL78fTlIAejMv8n9vW
+        HNWb1r/s9cojIFQwCUsY6eONwjWH0xupnhlBHcOdOzRL4cvHlagNARHeQ2qr+9IYpnKc8kgThYFXO
+        1u4Mym4f3mrlfPIReyhTB4vp3yD8s4Tj3iC8R84YnlaKZFTivOFjQbyPOH6doWYfEp/V7qE3w8GNu
+        YpFgMDdA==;
+Received: from [2001:4bb8:180:9d3f:90d7:9df8:7cd:3504] (helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jWzD6-0008IN-P0; Fri, 08 May 2020 09:22:25 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-security-module@vger.kernel.org
-Subject: Re: [PATCH] platform/x86: Export LPC attributes for the system SPI
- chip
-Message-ID: <20200508082028.GP487496@lahna.fi.intel.com>
-References: <18e48255d68a1408b3e3152780f0e789df540059.camel@gmail.com>
- <aa217de398584fa7846cf4ac0c872036@AUSX13MPC101.AMER.DELL.COM>
- <CAD2FfiEk8Fq3=i_3NHvtuwip=-v_cGfnYSowdPi86U_BcgP2gQ@mail.gmail.com>
- <61c7782cd2e64bb9ab2aaf6a016bbb6c@AUSX13MPC101.AMER.DELL.COM>
- <CAD2FfiGweUHNJGdj7OUQFxEhQBYvMCbuWM-+ez=SpN=HbcaS4Q@mail.gmail.com>
- <70757953c25645baac2dddd7c6924d05@AUSX13MPC101.AMER.DELL.COM>
+Subject: clean up kernel_{read,write} & friends
+Date:   Fri,  8 May 2020 11:22:11 +0200
+Message-Id: <20200508092222.2097-1-hch@lst.de>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <70757953c25645baac2dddd7c6924d05@AUSX13MPC101.AMER.DELL.COM>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, May 07, 2020 at 08:03:21PM +0000, Mario.Limonciello@dell.com wrote:
-> > -----Original Message-----
-> > From: Richard Hughes <hughsient@gmail.com>
-> > Sent: Thursday, May 7, 2020 2:49 PM
-> > To: Limonciello, Mario
-> > Cc: Platform Driver; linux-security-module; mika.westerberg@linux.intel.com
-> > Subject: Re: [PATCH] platform/x86: Export LPC attributes for the system SPI
-> > chip
-> > 
-> > 
-> > [EXTERNAL EMAIL]
-> > 
-> > On Thu, 7 May 2020 at 20:22, <Mario.Limonciello@dell.com> wrote:
-> > > By default the driver exposes SPI serial flash contents as read-only but it
-> > can
-> > > be changed from kernel command line, passing “intel-spi.writeable=1”.
-> > 
-> > Ahh, that was the bit I didn't know; having the SPI as readonly by
-> > default is certainly a good idea, and probably sane enough to enable
-> > for Fedora/RHEL as you still need to "do" something manual to enable
-> > SPI writing. I guess I can add my securityfs additions to
-> > intel-spi-pci.c with Mikas approval.
-> > 
-> > Richard
-> 
-> Mika,
-> 
-> Since you're being joined into the thread late, here is the context:
-> https://www.spinics.net/lists/platform-driver-x86/msg21646.html
+Hi Al,
 
-Thanks for the information. I actually prefer that this would be in a
-separate driver because I do not want distros to enable intel-spi just
-for this. It is really only meant for special setups where firmware
-upgrade/access flow has been thoroughly tested.
+this series fixes a few issues and cleans up the helpers that read from
+or write to kernel space buffers, and ensures that we don't change the
+address limit if we are using the ->read_iter and ->write_iter methods
+that don't need the changed address limit.
