@@ -2,102 +2,70 @@ Return-Path: <SRS0=gDDV=6W=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6BBFC47247
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 May 2020 01:21:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDD0EC35280
+	for <linux-security-module@archiver.kernel.org>; Fri,  8 May 2020 02:45:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AB725208E4
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 May 2020 01:21:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="NucDWMIH"
+	by mail.kernel.org (Postfix) with ESMTP id A7FA9208CA
+	for <linux-security-module@archiver.kernel.org>; Fri,  8 May 2020 02:45:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1588905905;
+	bh=jbzlnIkQDf+mSuSI4o/HjVxh4ISuq+Bo4gJsQYBzwm4=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
+	b=s088ZFSdT3GP4DEEWRFu637mDo1kN+EYhUh9afdWi33PyVSP6dIr0KnJwwFsRhlOG
+	 bSbG4PgCY65UpNS1bAETRENGPGGw3VQRMbP5YTKe4S99XDuRJvKdrxvS2457QQ39mo
+	 RTH39H4JTYdtGfLqpncgftMFn9hI+k2TVPAs0PvQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726533AbgEHBVa (ORCPT
+        id S1726542AbgEHCpF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 7 May 2020 21:21:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37980 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726495AbgEHBVa (ORCPT
+        Thu, 7 May 2020 22:45:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54664 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726509AbgEHCpE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 7 May 2020 21:21:30 -0400
-Received: from ozlabs.org (ozlabs.org [IPv6:2401:3900:2:1::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 995C0C05BD43;
-        Thu,  7 May 2020 18:21:29 -0700 (PDT)
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 49JCGC0TrHz9sSk;
-        Fri,  8 May 2020 11:21:23 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1588900885;
-        bh=fn1FAITXWrHoD5p0YkLk4NDvgXCTxZCopaiWSoAE24M=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=NucDWMIHzyEWKhv2Jpz5V57pCJSGVwKFECNyZ49I5pY1ukFXmrdSaz/00q2KpJDbG
-         EWLv3FYAKffEQaBXd+sOR9qlvTBznRmAqjavXEhcZjrKMl21SATXigYcr4tbNlyzQh
-         LO51vcA7p09iXpAntaH3rroJpzap350FUwdpbwPhGyiGuMajhFMQvdhcwTjZk4XvX6
-         G0uZxVdYMDn1xLuA7ffyANP3YNjHI4Dm3OcCE7Iyy/sdLK4IVaRP0dKDCAajrN0BVY
-         oKN7dnuctm+yzNgINA/ovWbnsNKaMaQHaqsWKxt52evUDbcrR1oWWSEzL2otnQG0AY
-         Py7s4KqVpoUUA==
-Date:   Fri, 8 May 2020 11:21:21 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     madhuparnabhowmik10@gmail.com, jmorris@namei.org, serge@hallyn.com,
-        paulmck@kernel.org, linux-integrity@vger.kernel.org,
+        Thu, 7 May 2020 22:45:04 -0400
+Subject: Re: [GIT PULL] security: Fix the default value of
+ fs_context_parse_param hook
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1588905904;
+        bh=jbzlnIkQDf+mSuSI4o/HjVxh4ISuq+Bo4gJsQYBzwm4=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=iNvAuJlVihS3un/C6oOekG+567upSrHPiWTkhroxIFUNJavvThl/z0kITLwjKsVUR
+         WhhsnPfGu+Y55ML+tpd9CJl2zloRZHDtSPwIVwW0E8wur0s7nIZ5c9RZe+W7vBZ0iw
+         4CA/VxIi80ceBjjDPJCRd0mz05QJqIJjfz8KTWIw=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <alpine.LRH.2.21.2005080942390.15191@namei.org>
+References: <alpine.LRH.2.21.2005080942390.15191@namei.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <alpine.LRH.2.21.2005080942390.15191@namei.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git
+ for-v5.7
+X-PR-Tracked-Commit-Id: 54261af473be4c5481f6196064445d2945f2bdab
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 79dede78c0573618e3137d3d8cbf78c84e25fabd
+Message-Id: <158890590444.28720.16406974480455612819.pr-tracker-bot@kernel.org>
+Date:   Fri, 08 May 2020 02:45:04 +0000
+To:     James Morris <jmorris@namei.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, joel@joelfernandes.org,
-        frextrite@gmail.com, linux-kernel-mentees@lists.linuxfoundation.org
-Subject: Re: [PATCH] integrity: evm: Fix RCU list related warnings.
-Message-ID: <20200508112121.6f665d74@canb.auug.org.au>
-In-Reply-To: <1588897421.5685.152.camel@linux.ibm.com>
-References: <20200430160205.17798-1-madhuparnabhowmik10@gmail.com>
-        <20200508101402.267ca0f2@canb.auug.org.au>
-        <1588897421.5685.152.camel@linux.ibm.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/.D+o4SMW3l1UQxFqbqJwcNG";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+        linux-kernel@vger.kernel.org, KP Singh <kpsingh@google.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
---Sig_/.D+o4SMW3l1UQxFqbqJwcNG
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+The pull request you sent on Fri, 8 May 2020 09:45:11 +1000 (AEST):
 
-Hi Mimi,
+> git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git for-v5.7
 
-On Thu, 07 May 2020 20:23:41 -0400 Mimi Zohar <zohar@linux.ibm.com> wrote:
->
-> Sorry for the delay in pushing this and other fixes to the next-
-> integrity branch. =C2=A0It's in my next-integrity-testing branch.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/79dede78c0573618e3137d3d8cbf78c84e25fabd
 
-OK, thanks.
+Thank you!
 
-> This isn't a bug per-se, just annotating the reason for the lack of
-> locking.
-
-Yes, but these warnings stop the syzbot's testing in its tracks :-(
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/.D+o4SMW3l1UQxFqbqJwcNG
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl60tBEACgkQAVBC80lX
-0Gy1kQf7BffVVaIpxbElKwALAau8rs7TlHqdions0ViHqWb9XbhY3sNQ1phj1nt5
-QORcaLptQ5HmVAVz227Gdg15fnkJPeHg0/w5rUHyzV7f8PePzYE9wZGVvOik+9Sg
-1d1QxHj8AHnRM+Ag+zCc7erThznlgkSKnMOWHonbV73Li9C9aGYE9jTE3L7rFcuh
-b1AN0cliyojwb4E9bIbadn3fSUXivHKR0kHFcx5OFLZmsimBVjMYI19tZQm1RslG
-HYHdEDBG2uGLgVRF6O53nj4FMTVNHJuMNa/gSJU/FgZIF5vAGnSuEE6od7LhT++3
-+/bdVfFcjwWMKQ447SfxBZXwlos1Mg==
-=FC49
------END PGP SIGNATURE-----
-
---Sig_/.D+o4SMW3l1UQxFqbqJwcNG--
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
