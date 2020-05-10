@@ -2,163 +2,120 @@ Return-Path: <SRS0=CsWO=6Y=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 455BFC54E8B
-	for <linux-security-module@archiver.kernel.org>; Sun, 10 May 2020 09:28:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E021DC38A2A
+	for <linux-security-module@archiver.kernel.org>; Sun, 10 May 2020 19:38:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 29A9320820
-	for <linux-security-module@archiver.kernel.org>; Sun, 10 May 2020 09:28:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BDD25206A3
+	for <linux-security-module@archiver.kernel.org>; Sun, 10 May 2020 19:38:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1589139524;
+	bh=zWd4cAEpL4YcnjKHepZKvaA1uFfEzxHy65/iMOgTYm8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=W4PIu9au6Ss4n+GhClV8qeFlhGAOVOxL8X/ryNU6zvPJOQOadwy8iAF6oCBp0Rh0m
+	 wRGbiMDb7TbFccu6KEQYtNURfX8zkmWZt4evh86L4rb5yvK4XiPMpyuY4zWlgWKeqJ
+	 cE2AylTgWrzJqX/+lNqys0OFMu5KrVr5OrsMd2Co=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728021AbgEJJ20 (ORCPT
+        id S1729186AbgEJTio (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 10 May 2020 05:28:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52540 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726104AbgEJJ20 (ORCPT
+        Sun, 10 May 2020 15:38:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33682 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729032AbgEJTin (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 10 May 2020 05:28:26 -0400
-Received: from smtp-190b.mail.infomaniak.ch (smtp-190b.mail.infomaniak.ch [IPv6:2001:1600:3:17::190b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFD60C061A0C
-        for <linux-security-module@vger.kernel.org>; Sun, 10 May 2020 02:28:25 -0700 (PDT)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 49Kdz73c83zlhlbf;
-        Sun, 10 May 2020 11:28:19 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 49Kdz52pvmzmgvLW;
-        Sun, 10 May 2020 11:28:17 +0200 (CEST)
-Subject: Re: [RFC PATCH v3 00/12] Integrity Policy Enforcement LSM (IPE)
-To:     deven.desai@linux.microsoft.com, agk@redhat.com, axboe@kernel.dk,
-        snitzer@redhat.com, jmorris@namei.org, serge@hallyn.com,
-        zohar@linux.ibm.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, dm-devel@redhat.com,
-        linux-block@vger.kernel.org, jannh@google.com
-Cc:     tyhicks@linux.microsoft.com, pasha.tatashin@soleen.com,
-        sashal@kernel.org, jaskarankhurana@linux.microsoft.com,
-        nramas@linux.microsoft.com, mdsakib@linux.microsoft.com,
-        linux-kernel@vger.kernel.org, corbet@lwn.net
-References: <20200415162550.2324-1-deven.desai@linux.microsoft.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Message-ID: <b07ac7e1-7cf5-92c9-81d0-64174c3d5024@digikod.net>
-Date:   Sun, 10 May 2020 11:28:16 +0200
-User-Agent: 
+        Sun, 10 May 2020 15:38:43 -0400
+Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16E39C061A0C
+        for <linux-security-module@vger.kernel.org>; Sun, 10 May 2020 12:38:42 -0700 (PDT)
+Received: by mail-lj1-x241.google.com with SMTP id a21so7163327ljj.11
+        for <linux-security-module@vger.kernel.org>; Sun, 10 May 2020 12:38:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GOt0HOaqZfjjxJE5mAqOm47sbC7ffDpQA2P+1UtM4RE=;
+        b=MvdUhg89yXtJF0t/lWJcuLrr+bpGqVPlxoPK/Zhq2QqXYyp7vcGmiSrZl+n0GURWqw
+         V64Z4RvbsMsrTzRFhphZJ44YD55cIcu0w/FHaiF/arWpo9zjG6+ztNZG5zl1l+5WIhmf
+         vjboKU8xNCyk7pZgwioS1lDPWOU6mzJy+CNac=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GOt0HOaqZfjjxJE5mAqOm47sbC7ffDpQA2P+1UtM4RE=;
+        b=i/uev5bKqIovyBgEnDb19yt5DZ8yqq870yGOnNkltW8QXkgzxoi3IgDHJmAtPIhcsS
+         BmeLig/bfuCKmgLNNfcRU2tIy/Cb5Pea1NBC2G68wfsPzDo9bhpo1zN/jVjiSXV/3CZ8
+         WAI/ly/WX2oBI10NCwYV/UJTsy3gE+/hJUc524+5N2qRp/Eo+9ai/C19qunYy+1wYv1b
+         TYwjvQvB+QiO2tBfa7dhwAYY8SALvtBigqi3cwzTQskCsibd0V88v9sFXYqXA35FkB5I
+         xgub7PKKUB7LaV2BGWXdzVracrPEowBnj2wm1YXHbjHoKmdhywLXolEOpGmuJjH27tTU
+         8fQA==
+X-Gm-Message-State: AOAM532w3RcLSVd/fEFwLGw7E4TzB4iV6cKkpjjf1CMyIsd8KRJB2FSJ
+        MykIjk9ciFr5/2Z9w9C6JVDNPWUTyUs=
+X-Google-Smtp-Source: ABdhPJx6mODISDy+ZUtlvz+y8mPr5uy3ha+UpHmBD8f4xFF4KsAspswx7Q0djQZvisFlTi14Mdtf4A==
+X-Received: by 2002:a2e:82c7:: with SMTP id n7mr8247856ljh.47.1589139518306;
+        Sun, 10 May 2020 12:38:38 -0700 (PDT)
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com. [209.85.208.179])
+        by smtp.gmail.com with ESMTPSA id f24sm8848383lfk.36.2020.05.10.12.38.36
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 10 May 2020 12:38:37 -0700 (PDT)
+Received: by mail-lj1-f179.google.com with SMTP id w20so7195560ljj.0
+        for <linux-security-module@vger.kernel.org>; Sun, 10 May 2020 12:38:36 -0700 (PDT)
+X-Received: by 2002:a2e:87d9:: with SMTP id v25mr7886930ljj.241.1589139516386;
+ Sun, 10 May 2020 12:38:36 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200415162550.2324-1-deven.desai@linux.microsoft.com>
-Content-Type: text/plain; charset=iso-8859-15
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
-X-Antivirus-Code: 0x100000
+References: <87h7wujhmz.fsf@x220.int.ebiederm.org> <87sgga6ze4.fsf@x220.int.ebiederm.org>
+ <87v9l4zyla.fsf_-_@x220.int.ebiederm.org> <87eerszyim.fsf_-_@x220.int.ebiederm.org>
+ <ee83587b-8a1c-3c4f-cc0f-7bc98afabae1@I-love.SAKURA.ne.jp>
+In-Reply-To: <ee83587b-8a1c-3c4f-cc0f-7bc98afabae1@I-love.SAKURA.ne.jp>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sun, 10 May 2020 12:38:20 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgQ2ovXMW=5ZHCpowkE1PwPQSL7oV4YXzBxd6eqNRXxnQ@mail.gmail.com>
+Message-ID: <CAHk-=wgQ2ovXMW=5ZHCpowkE1PwPQSL7oV4YXzBxd6eqNRXxnQ@mail.gmail.com>
+Subject: Re: [PATCH 3/5] exec: Remove recursion from search_binary_handler
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Rob Landley <rob@landley.net>,
+        Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Andy Lutomirski <luto@amacapital.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Sat, May 9, 2020 at 9:30 PM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+>
+> Wouldn't this change cause
+>
+>         if (fd_binary > 0)
+>                 ksys_close(fd_binary);
+>         bprm->interp_flags = 0;
+>         bprm->interp_data = 0;
+>
+> not to be called when "Search for the interpreter" failed?
 
-On 15/04/2020 18:25, deven.desai@linux.microsoft.com wrote:
-> From: Deven Bowers <deven.desai@linux.microsoft.com>
-> 
-> Overview:
-> ------------------------------------
-> 
-> IPE is a Linux Security Module which allows for a configurable
-> policy to enforce integrity requirements on the whole system. It
-> attempts to solve the issue of Code Integrity: that any code being
-> executed (or files being read), are identical to the version that
-> was built by a trusted source.
-> 
-> The type of system for which IPE is designed for use is an embedded device
-> with a specific purpose (e.g. network firewall device in a data center),
-> where all software and configuration is built and provisioned by the owner.
-> 
-> Specifically, a system which leverages IPE is not intended for general
-> purpose computing and does not utilize any software or configuration
-> built by a third party. An ideal system to leverage IPE has both mutable
-> and immutable components, however, all binary executable code is immutable.
-> 
-> The scope of IPE is constrained to the OS. It is assumed that platform
-> firmware verifies the the kernel and optionally the root filesystem (e.g.
-> via U-Boot verified boot). IPE then utilizes LSM hooks to enforce a
-> flexible, kernel-resident integrity verification policy.
-> 
-> IPE differs from other LSMs which provide integrity checking (for instance,
-> IMA), as it has no dependency on the filesystem metadata itself. The
-> attributes that IPE checks are deterministic properties that exist solely
-> in the kernel. Additionally, IPE provides no additional mechanisms of
-> verifying these files (e.g. IMA Signatures) - all of the attributes of
-> verifying files are existing features within the kernel, such as dm-verity
-> or fsverity.
-> 
-> IPE provides a policy that allows owners of the system to easily specify
-> integrity requirements and uses dm-verity signatures to simplify the
-> authentication of allowed objects like authorized code and data.
-> 
-> IPE supports two modes, permissive (similar to SELinux's permissive mode)
-> and enforce. Permissive mode performs the same checks, and logs policy
-> violations as enforce mode, but will not enforce the policy. This allows
-> users to test policies before enforcing them.
-> 
-> The default mode is enforce, and can be changed via the kernel commandline
-> parameter `ipe.enforce=(0|1)`, or the sysctl `ipe.enforce=(0|1)`. The
-> ability to switch modes can be compiled out of the LSM via setting the
-> config CONFIG_SECURITY_IPE_PERMISSIVE_SWITCH to N.
-> 
-> IPE additionally supports success auditing. When enabled, all events
-> that pass IPE policy and are not blocked will emit an audit event. This
-> is disabled by default, and can be enabled via the kernel commandline
-> `ipe.success_audit=(0|1)` or the sysctl `ipe.success_audit=(0|1)`.
-> 
-> Policies can be staged at runtime through securityfs and activated through
-> sysfs. Please see the Deploying Policies section of this cover letter for
-> more information.
-> 
-> The IPE LSM is compiled under CONFIG_SECURITY_IPE.
-> 
-> Policy:
-> ------------------------------------
-> 
-> IPE policy is designed to be both forward compatible and backwards
-> compatible. There is one required line, at the top of the policy,
-> indicating the policy name, and the policy version, for instance:
-> 
->   policy_name="Ex Policy" policy_version=0.0.0
-> 
-> The policy version indicates the current version of the policy (NOT the
-> policy syntax version). This is used to prevent roll-back of policy to
-> potentially insecure previous versions of the policy.
-> 
-> The next portion of IPE policy, are rules. Rules are formed by key=value
-> pairs, known as properties. IPE rules require two properties: "action",
-> which determines what IPE does when it encounters a match against the
-> policy, and "op", which determines when that rule should be evaluated.
-> Thus, a minimal rule is:
-> 
->   op=EXECUTE action=ALLOW
-> 
-> This example will allow any execution. Additional properties are used to
-> restrict attributes about the files being evaluated. These properties are
-> intended to be deterministic attributes that are resident in the kernel.
-> Available properties for IPE described in the properties section of this
-> cover-letter, the repository available in Appendix A, and the kernel
-> documentation page.
-> 
-> Order does not matter for the rule's properties - they can be listed in
-> any order, however it is encouraged to have the "op" property be first,
-> and the "action" property be last, for readability.
-> 
-> Additionally, rules are evaluated top-to-bottom. As a result, any
-> revocation rules, or denies should be placed early in the file to ensure
-> that these rules are evaluated before a rule with "action=ALLOW" is hit.
-> 
-> IPE policy is designed to be forward compatible and backwards compatible,
-> thus any failure to parse a rule will result in the line being ignored,
-> and a warning being emitted. If backwards compatibility is not required,
-> the kernel commandline parameter and sysctl, ipe.strict_parse can be
-> enabled, which will cause these warnings to be fatal.
+Good catch. We seem to have some subtle magic wrt the fd_binary file
+descriptor, which depends on the recursive behavior.
 
-Ignoring unknown command may lead to inconsistent beaviors. To achieve
-forward compatibility, I think it would be better to never ignore
-unknown rule but to give a way to userspace to known what is the current
-kernel ABI. This could be done with a securityfs file listing the
-current policy grammar.
+I'm not seeing how to fix it cleanly with the "turn it into a loop".
+Basically, that binfmt_misc use-case isn't really a tail-call.
+
+Eric, ideas?
+
+                 Linus
