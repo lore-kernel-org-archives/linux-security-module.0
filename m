@@ -2,406 +2,99 @@ Return-Path: <SRS0=NXRd=6Z=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53C18C54E8D
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 May 2020 19:23:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B347C47255
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 May 2020 20:08:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 393F5206CC
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 May 2020 19:23:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F195206D5
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 May 2020 20:08:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UYrJjecL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731546AbgEKTXU (ORCPT
+        id S1731523AbgEKUIn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 11 May 2020 15:23:20 -0400
-Received: from smtp-bc0e.mail.infomaniak.ch ([45.157.188.14]:42205 "EHLO
-        smtp-bc0e.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731425AbgEKTWT (ORCPT
+        Mon, 11 May 2020 16:08:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36020 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727873AbgEKUIn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 11 May 2020 15:22:19 -0400
-Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 49LW604ZsKzlhPr8;
-        Mon, 11 May 2020 21:22:16 +0200 (CEST)
-Received: from localhost (unknown [94.23.54.103])
-        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 49LW601z8KzlhDnW;
-        Mon, 11 May 2020 21:22:16 +0200 (CEST)
-From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To:     linux-kernel@vger.kernel.org
-Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mickael.salaun@ssi.gouv.fr>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-security-module@vger.kernel.org, x86@kernel.org
-Subject: [PATCH v17 09/10] samples/landlock: Add a sandbox manager example
-Date:   Mon, 11 May 2020 21:21:55 +0200
-Message-Id: <20200511192156.1618284-10-mic@digikod.net>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20200511192156.1618284-1-mic@digikod.net>
-References: <20200511192156.1618284-1-mic@digikod.net>
+        Mon, 11 May 2020 16:08:43 -0400
+Received: from mail-vs1-xe41.google.com (mail-vs1-xe41.google.com [IPv6:2607:f8b0:4864:20::e41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41E5FC061A0C;
+        Mon, 11 May 2020 13:08:43 -0700 (PDT)
+Received: by mail-vs1-xe41.google.com with SMTP id y13so444326vsk.8;
+        Mon, 11 May 2020 13:08:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Ftnhm3Zr3OB7tltZPhctvozPIZtqWAy6wfMsbhYuLqM=;
+        b=UYrJjecLdCXE2oyNHV1wvVWIixMiuQMWDDpFgFVGKxB3uvKICUZNTKx7iZTusWpnv9
+         98CMxMYmmm1MaVao8NGzPtcnWv0yVrlblv9O/QYsgOwP65UHxeYESnp2Uu4xCEKL7ual
+         7ZZbbwsEOLAMIgVaIpPg6z2c/juibKOvKGUpllCDzYyO3UNIO5W2KUTgV1JJ0C+QchQz
+         6XmnoE5GKOuRgHAigGHBWhmApXk23a7BJTe5PasQpBz8as42g7tMmzQ6wufQyRKyVElf
+         +xaDCSmBzpo4q+XaLkCtqCepgv/UM+0Gpc4cQYL6rDIcW8oxvZUzXnHMRDa/s0nNIGqD
+         kdYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Ftnhm3Zr3OB7tltZPhctvozPIZtqWAy6wfMsbhYuLqM=;
+        b=mQm59nee//pa0aucZOZ+z8WJ+Zg7sgjzgwQ3kH1mc0wWJ0FvlQ6qPY2b2GnWRPh27w
+         1OV05vUmi0srSrpRBmWUWBjm/3LhYaq3PYsOIL7XcyWYX5se3P2bU/i/Z907It7caaZi
+         SHeThwRHWJ3Te+BQ9mO3HgAyKZNcr6ntz61S5At1wVErai4qY+yww7oYBvsHflMSEZ5M
+         Sf2HygTlZ9pAEwxZnzvumhMsRRgFw1oa0VRdjNHC/PCHvtV5JvbE+ALQKJ/D7QjSz//u
+         +r5mQHBw3bwK0iyikk5Hd6rgM9LEQPiavLDCPL3JR77m34jswCmXVrgTtTACrw09XwQ6
+         KW+g==
+X-Gm-Message-State: AGi0Pua9zi9EJWSUGf2DbyApp9FZOASafTniJgbDnCJZu/XFOeC4Js32
+        gedrnGCevfNOeJNy/8ueusTXOE4qro2Ywkem99PmckByCzM=
+X-Google-Smtp-Source: APiQypIvyaUOCT6biuJoQH0SW5M4ECNUvmnVuSzZNfzpLuyJOeuQB5thdX2N65PDxf8XMYxtIKxa31b2NYYJSEWzB9s=
+X-Received: by 2002:a05:6102:1c:: with SMTP id j28mr13087496vsp.209.1589227722487;
+ Mon, 11 May 2020 13:08:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
-X-Antivirus-Code: 0x100000
+References: <18e48255d68a1408b3e3152780f0e789df540059.camel@gmail.com>
+ <aa217de398584fa7846cf4ac0c872036@AUSX13MPC101.AMER.DELL.COM>
+ <CAD2FfiEk8Fq3=i_3NHvtuwip=-v_cGfnYSowdPi86U_BcgP2gQ@mail.gmail.com>
+ <61c7782cd2e64bb9ab2aaf6a016bbb6c@AUSX13MPC101.AMER.DELL.COM>
+ <CAD2FfiGweUHNJGdj7OUQFxEhQBYvMCbuWM-+ez=SpN=HbcaS4Q@mail.gmail.com>
+ <70757953c25645baac2dddd7c6924d05@AUSX13MPC101.AMER.DELL.COM>
+ <20200508082028.GP487496@lahna.fi.intel.com> <CAD2FfiG2c4iXmTjUpQAUqRVBVyH0Hm4VfO5PBTXf03VXHR22ng@mail.gmail.com>
+ <20200511104504.GK487496@lahna.fi.intel.com> <CAD2FfiHn0PNaC3aFXE-hn9Mmtt5JW_D8BK0hOScYXR9EJLNbcw@mail.gmail.com>
+ <20200511162811.GA487496@lahna.fi.intel.com>
+In-Reply-To: <20200511162811.GA487496@lahna.fi.intel.com>
+From:   Richard Hughes <hughsient@gmail.com>
+Date:   Mon, 11 May 2020 21:08:31 +0100
+Message-ID: <CAD2FfiHo1EzRupjgKhtLX0Zguq-bVeW5+u_PNQGAzV0x+AtfVw@mail.gmail.com>
+Subject: Re: [PATCH] platform/x86: Export LPC attributes for the system SPI chip
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     Mario Limonciello <Mario.Limonciello@dell.com>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Add a basic sandbox tool to launch a command which can only access a
-whitelist of file hierarchies in a read-only or read-write way.
+On Mon, 11 May 2020 at 17:28, Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
+> #if IS_ENABLED(CONFIG_SECURITY)
+> static int lpc_ich_init_securityfs(struct pci_dev *dev)
 
-Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Cc: James Morris <jmorris@namei.org>
-Cc: Jann Horn <jannh@google.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Serge E. Hallyn <serge@hallyn.com>
----
+I've done that, thanks.
 
-Changes since v16:
-* Switch syscall attribute pointer and size arguments.
+> For the security stuff you are adding, do you need to look at the PCI
+> device registers as well?
 
-Changes since v15:
-* Update access right names.
-* Properly assign access right to files according to the new related
-  syscall restriction.
-* Replace "select" with "depends on" HEADERS_INSTALL (suggested by Randy
-  Dunlap).
+No, just the config space. I guess at some point I might want to put
+some of the chipsec vulnerability checks into the module, although I'm
+not happy adding anything remotely dangerous.
 
-Changes since v14:
-* Fix Kconfig dependency.
-* Remove access rights that may be required for FD-only requests:
-  mmap, truncate, getattr, lock, chmod, chown, chgrp, ioctl.
-* Fix useless hardcoded syscall number.
-* Use execvpe().
-* Follow symlinks.
-* Extend help with common file paths.
-* Constify variables.
-* Clean up comments.
-* Improve error message.
+>   $ scripts/get_maintainers.pl path/to/the/patch
 
-Changes since v11:
-* Add back the filesystem sandbox manager and update it to work with the
-  new Landlock syscall.
+Will do, thanks. I'll polish up the list of DIDs and submit it again.
 
-Previous changes:
-https://lore.kernel.org/lkml/20190721213116.23476-9-mic@digikod.net/
----
- samples/Kconfig              |   7 ++
- samples/Makefile             |   1 +
- samples/landlock/.gitignore  |   1 +
- samples/landlock/Makefile    |  15 +++
- samples/landlock/sandboxer.c | 228 +++++++++++++++++++++++++++++++++++
- 5 files changed, 252 insertions(+)
- create mode 100644 samples/landlock/.gitignore
- create mode 100644 samples/landlock/Makefile
- create mode 100644 samples/landlock/sandboxer.c
-
-diff --git a/samples/Kconfig b/samples/Kconfig
-index 9d236c346de5..5ec43a732b10 100644
---- a/samples/Kconfig
-+++ b/samples/Kconfig
-@@ -120,6 +120,13 @@ config SAMPLE_HIDRAW
- 	bool "hidraw sample"
- 	depends on HEADERS_INSTALL
- 
-+config SAMPLE_LANDLOCK
-+	bool "Build Landlock sample code"
-+	depends on HEADERS_INSTALL
-+	help
-+	  Build a simple Landlock sandbox manager able to launch a process
-+	  restricted by a user-defined filesystem access-control security policy.
-+
- config SAMPLE_PIDFD
- 	bool "pidfd sample"
- 	depends on HEADERS_INSTALL
-diff --git a/samples/Makefile b/samples/Makefile
-index f8f847b4f61f..61a2bd216f53 100644
---- a/samples/Makefile
-+++ b/samples/Makefile
-@@ -11,6 +11,7 @@ obj-$(CONFIG_SAMPLE_KDB)		+= kdb/
- obj-$(CONFIG_SAMPLE_KFIFO)		+= kfifo/
- obj-$(CONFIG_SAMPLE_KOBJECT)		+= kobject/
- obj-$(CONFIG_SAMPLE_KPROBES)		+= kprobes/
-+subdir-$(CONFIG_SAMPLE_LANDLOCK)	+= landlock
- obj-$(CONFIG_SAMPLE_LIVEPATCH)		+= livepatch/
- subdir-$(CONFIG_SAMPLE_PIDFD)		+= pidfd
- obj-$(CONFIG_SAMPLE_QMI_CLIENT)		+= qmi/
-diff --git a/samples/landlock/.gitignore b/samples/landlock/.gitignore
-new file mode 100644
-index 000000000000..f43668b2d318
---- /dev/null
-+++ b/samples/landlock/.gitignore
-@@ -0,0 +1 @@
-+/sandboxer
-diff --git a/samples/landlock/Makefile b/samples/landlock/Makefile
-new file mode 100644
-index 000000000000..9dfb571641ba
---- /dev/null
-+++ b/samples/landlock/Makefile
-@@ -0,0 +1,15 @@
-+# SPDX-License-Identifier: BSD-3-Clause
-+
-+hostprogs-y := sandboxer
-+
-+always := $(hostprogs-y)
-+
-+KBUILD_HOSTCFLAGS += -I$(objtree)/usr/include
-+
-+.PHONY: all clean
-+
-+all:
-+	$(MAKE) -C ../.. samples/landlock/
-+
-+clean:
-+	$(MAKE) -C ../.. M=samples/landlock/ clean
-diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
-new file mode 100644
-index 000000000000..e0059706c11f
---- /dev/null
-+++ b/samples/landlock/sandboxer.c
-@@ -0,0 +1,228 @@
-+// SPDX-License-Identifier: BSD-3-Clause
-+/*
-+ * Simple Landlock sandbox manager able to launch a process restricted by a
-+ * user-defined filesystem access-control security policy.
-+ *
-+ * Copyright © 2017-2020 Mickaël Salaün <mic@digikod.net>
-+ * Copyright © 2020 ANSSI
-+ */
-+
-+#define _GNU_SOURCE
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <linux/landlock.h>
-+#include <linux/prctl.h>
-+#include <stddef.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <sys/prctl.h>
-+#include <sys/stat.h>
-+#include <sys/syscall.h>
-+#include <unistd.h>
-+
-+#ifndef landlock
-+static inline int landlock(const unsigned int command,
-+		const unsigned int options, void *const attr_ptr,
-+		const size_t attr_size)
-+{
-+	errno = 0;
-+	return syscall(__NR_landlock, command, options, attr_ptr, attr_size,
-+			NULL, 0);
-+}
-+#endif
-+
-+#define ENV_FS_RO_NAME "LL_FS_RO"
-+#define ENV_FS_RW_NAME "LL_FS_RW"
-+#define ENV_PATH_TOKEN ":"
-+
-+static int parse_path(char *env_path, const char ***const path_list)
-+{
-+	int i, path_nb = 0;
-+
-+	if (env_path) {
-+		path_nb++;
-+		for (i = 0; env_path[i]; i++) {
-+			if (env_path[i] == ENV_PATH_TOKEN[0])
-+				path_nb++;
-+		}
-+	}
-+	*path_list = malloc(path_nb * sizeof(**path_list));
-+	for (i = 0; i < path_nb; i++)
-+		(*path_list)[i] = strsep(&env_path, ENV_PATH_TOKEN);
-+
-+	return path_nb;
-+}
-+
-+#define ACCESS_FILE ( \
-+	LANDLOCK_ACCESS_FS_EXECUTE | \
-+	LANDLOCK_ACCESS_FS_WRITE_FILE | \
-+	LANDLOCK_ACCESS_FS_READ_FILE)
-+
-+static int populate_ruleset(
-+		const struct landlock_attr_features *const attr_features,
-+		const char *const env_var, const int ruleset_fd,
-+		const __u64 allowed_access)
-+{
-+	int path_nb, i;
-+	char *env_path_name;
-+	const char **path_list = NULL;
-+	struct landlock_attr_path_beneath path_beneath = {
-+		.ruleset_fd = ruleset_fd,
-+		.parent_fd = -1,
-+	};
-+
-+	env_path_name = getenv(env_var);
-+	if (!env_path_name) {
-+		fprintf(stderr, "Missing environment variable %s\n", env_var);
-+		return 1;
-+	}
-+	env_path_name = strdup(env_path_name);
-+	unsetenv(env_var);
-+	path_nb = parse_path(env_path_name, &path_list);
-+	if (path_nb == 1 && path_list[0][0] == '\0') {
-+		fprintf(stderr, "Missing path in %s\n", env_var);
-+		goto err_free_name;
-+	}
-+
-+	for (i = 0; i < path_nb; i++) {
-+		struct stat statbuf;
-+
-+		path_beneath.parent_fd = open(path_list[i], O_PATH |
-+				O_CLOEXEC);
-+		if (path_beneath.parent_fd < 0) {
-+			fprintf(stderr, "Failed to open \"%s\": %s\n",
-+					path_list[i],
-+					strerror(errno));
-+			goto err_free_name;
-+		}
-+		if (fstat(path_beneath.parent_fd, &statbuf)) {
-+			close(path_beneath.parent_fd);
-+			goto err_free_name;
-+		}
-+		/* Follows a best-effort approach. */
-+		path_beneath.allowed_access = allowed_access &
-+			attr_features->access_fs;
-+		if (!S_ISDIR(statbuf.st_mode))
-+			path_beneath.allowed_access &= ACCESS_FILE;
-+		if (landlock(LANDLOCK_CMD_ADD_RULE,
-+					LANDLOCK_OPT_ADD_RULE_PATH_BENEATH,
-+					&path_beneath, sizeof(path_beneath))) {
-+			fprintf(stderr, "Failed to update the ruleset with \"%s\": %s\n",
-+					path_list[i], strerror(errno));
-+			close(path_beneath.parent_fd);
-+			goto err_free_name;
-+		}
-+		close(path_beneath.parent_fd);
-+	}
-+	free(env_path_name);
-+	return 0;
-+
-+err_free_name:
-+	free(env_path_name);
-+	return 1;
-+}
-+
-+#define ACCESS_FS_ROUGHLY_READ ( \
-+	LANDLOCK_ACCESS_FS_EXECUTE | \
-+	LANDLOCK_ACCESS_FS_READ_FILE | \
-+	LANDLOCK_ACCESS_FS_READ_DIR | \
-+	LANDLOCK_ACCESS_FS_CHROOT)
-+
-+#define ACCESS_FS_ROUGHLY_WRITE ( \
-+	LANDLOCK_ACCESS_FS_WRITE_FILE | \
-+	LANDLOCK_ACCESS_FS_REMOVE_DIR | \
-+	LANDLOCK_ACCESS_FS_REMOVE_FILE | \
-+	LANDLOCK_ACCESS_FS_MAKE_CHAR | \
-+	LANDLOCK_ACCESS_FS_MAKE_DIR | \
-+	LANDLOCK_ACCESS_FS_MAKE_REG | \
-+	LANDLOCK_ACCESS_FS_MAKE_SOCK | \
-+	LANDLOCK_ACCESS_FS_MAKE_FIFO | \
-+	LANDLOCK_ACCESS_FS_MAKE_BLOCK | \
-+	LANDLOCK_ACCESS_FS_MAKE_SYM)
-+
-+int main(const int argc, char *const argv[], char *const *const envp)
-+{
-+	const char *cmd_path;
-+	char *const *cmd_argv;
-+	int ruleset_fd;
-+	struct landlock_attr_features attr_features;
-+	struct landlock_attr_ruleset ruleset = {
-+		.handled_access_fs = ACCESS_FS_ROUGHLY_READ |
-+			ACCESS_FS_ROUGHLY_WRITE,
-+	};
-+	struct landlock_attr_enforce attr_enforce = {};
-+
-+	if (argc < 2) {
-+		fprintf(stderr, "usage: %s=\"...\" %s=\"...\" %s <cmd> [args]...\n\n",
-+				ENV_FS_RO_NAME, ENV_FS_RW_NAME, argv[0]);
-+		fprintf(stderr, "Launch a command in a restricted environment.\n\n");
-+		fprintf(stderr, "Environment variables containing paths, each separated by a colon:\n");
-+		fprintf(stderr, "* %s: list of paths allowed to be used in a read-only way.\n",
-+				ENV_FS_RO_NAME);
-+		fprintf(stderr, "* %s: list of paths allowed to be used in a read-write way.\n",
-+				ENV_FS_RO_NAME);
-+		fprintf(stderr, "\nexample:\n"
-+				"%s=\"/bin:/lib:/usr:/proc:/etc:/dev/urandom\" "
-+				"%s=\"/dev/null:/dev/full:/dev/zero:/dev/pts:/tmp\" "
-+				"%s bash -i\n",
-+				ENV_FS_RO_NAME, ENV_FS_RW_NAME, argv[0]);
-+		return 1;
-+	}
-+
-+	if (landlock(LANDLOCK_CMD_GET_FEATURES, LANDLOCK_OPT_GET_FEATURES,
-+				&attr_features, sizeof(attr_features))) {
-+		perror("Failed to probe the Landlock supported features");
-+		switch (errno) {
-+		case ENOSYS:
-+			fprintf(stderr, "Hint: this kernel does not support Landlock.\n");
-+			break;
-+		case ENOPKG:
-+			fprintf(stderr, "Hint: Landlock is currently disabled. It can be enabled in the kernel configuration or at boot with the \"lsm=landlock\" parameter.\n");
-+			break;
-+		}
-+		return 1;
-+	}
-+	/* Follows a best-effort approach. */
-+	ruleset.handled_access_fs &= attr_features.access_fs;
-+	ruleset_fd = landlock(LANDLOCK_CMD_CREATE_RULESET,
-+			LANDLOCK_OPT_CREATE_RULESET, &ruleset,
-+			sizeof(ruleset));
-+	if (ruleset_fd < 0) {
-+		perror("Failed to create a ruleset");
-+		return 1;
-+	}
-+	if (populate_ruleset(&attr_features, ENV_FS_RO_NAME, ruleset_fd,
-+				ACCESS_FS_ROUGHLY_READ)) {
-+		goto err_close_ruleset;
-+	}
-+	if (populate_ruleset(&attr_features, ENV_FS_RW_NAME, ruleset_fd,
-+				ACCESS_FS_ROUGHLY_READ |
-+				ACCESS_FS_ROUGHLY_WRITE)) {
-+		goto err_close_ruleset;
-+	}
-+	if (prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0)) {
-+		perror("Failed to restrict privileges");
-+		goto err_close_ruleset;
-+	}
-+	attr_enforce.ruleset_fd = ruleset_fd;
-+	if (landlock(LANDLOCK_CMD_ENFORCE_RULESET,
-+				LANDLOCK_OPT_ENFORCE_RULESET, &attr_enforce,
-+				sizeof(attr_enforce))) {
-+		perror("Failed to enforce ruleset");
-+		goto err_close_ruleset;
-+	}
-+	close(ruleset_fd);
-+
-+	cmd_path = argv[1];
-+	cmd_argv = argv + 1;
-+	execvpe(cmd_path, cmd_argv, envp);
-+	fprintf(stderr, "Failed to execute \"%s\": %s\n", cmd_path,
-+			strerror(errno));
-+	fprintf(stderr, "Hint: access to the binary, the interpreter or shared libraries may be denied.\n");
-+	return 1;
-+
-+err_close_ruleset:
-+	close(ruleset_fd);
-+	return 1;
-+}
--- 
-2.26.2
-
+Richard.
