@@ -2,176 +2,75 @@ Return-Path: <SRS0=NXRd=6Z=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1AA9C47255
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 May 2020 21:37:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C834C54E8D
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 May 2020 21:54:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A365F206F5
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 May 2020 21:37:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 590FE2075E
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 May 2020 21:54:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727778AbgEKVhE (ORCPT
+        id S1727940AbgEKVy3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 11 May 2020 17:37:04 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55102 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725904AbgEKVhD (ORCPT
+        Mon, 11 May 2020 17:54:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52654 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727930AbgEKVy2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 11 May 2020 17:37:03 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 04BLX31O014735;
-        Mon, 11 May 2020 17:36:56 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 30wrw4ev5r-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 11 May 2020 17:36:56 -0400
-Received: from m0098413.ppops.net (m0098413.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 04BLZpxi021911;
-        Mon, 11 May 2020 17:36:55 -0400
-Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 30wrw4ev56-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 11 May 2020 17:36:55 -0400
-Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
-        by ppma04ams.nl.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 04BLPMWh000485;
-        Mon, 11 May 2020 21:36:54 GMT
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
-        by ppma04ams.nl.ibm.com with ESMTP id 30wm55d4y9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 11 May 2020 21:36:54 +0000
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 04BLapNm2752984
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 11 May 2020 21:36:51 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B467F42047;
-        Mon, 11 May 2020 21:36:51 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9CADE42041;
-        Mon, 11 May 2020 21:36:50 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.225.244])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 11 May 2020 21:36:50 +0000 (GMT)
-Message-ID: <1589233010.5091.49.camel@linux.ibm.com>
-Subject: Re: [RFC][PATCH 1/3] evm: Move hooks outside LSM infrastructure
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>,
-        "david.safford@gmail.com" <david.safford@gmail.com>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        John Johansen <john.johansen@canonical.com>
-Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
-Date:   Mon, 11 May 2020 17:36:50 -0400
-In-Reply-To: <414644a0be9e4af880452f4b5079aba1@huawei.com>
-References: <20200429073935.11913-1-roberto.sassu@huawei.com>
-         <1588794293.4624.21.camel@linux.ibm.com>
-         <1588799408.4624.28.camel@linux.ibm.com>
-         <ab879f9e66874736a40e9c566cadc272@huawei.com>
-         <1588864628.5685.78.camel@linux.ibm.com>
-         <750ab4e0990f47e4aea10d0e580b1074@huawei.com>
-         <1588884313.5685.110.camel@linux.ibm.com>
-         <84e6acad739a415aa3e2457b5c37979f@huawei.com>
-         <1588957684.5146.70.camel@linux.ibm.com>
-         <414644a0be9e4af880452f4b5079aba1@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
+        Mon, 11 May 2020 17:54:28 -0400
+Received: from smtp-42ab.mail.infomaniak.ch (smtp-42ab.mail.infomaniak.ch [IPv6:2001:1600:3:17::42ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAE74C05BD09;
+        Mon, 11 May 2020 14:54:28 -0700 (PDT)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 49LZTY342WzlhGkQ;
+        Mon, 11 May 2020 23:54:25 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
+        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 49LZTW6g0pzlhpJn;
+        Mon, 11 May 2020 23:54:23 +0200 (CEST)
+Subject: Re: [PATCH v17 00/10] Landlock LSM
+To:     linux-kernel@vger.kernel.org
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-security-module@vger.kernel.org, x86@kernel.org
+References: <20200511192156.1618284-1-mic@digikod.net>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Message-ID: <91cab792-5a13-c71f-a8cb-782be21d86f5@digikod.net>
+Date:   Mon, 11 May 2020 23:54:23 +0200
+User-Agent: 
+MIME-Version: 1.0
+In-Reply-To: <20200511192156.1618284-1-mic@digikod.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: fr
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.676
- definitions=2020-05-11_10:2020-05-11,2020-05-11 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
- spamscore=0 impostorscore=0 malwarescore=0 lowpriorityscore=0
- priorityscore=1501 mlxscore=0 clxscore=1015 adultscore=0 mlxlogscore=999
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2005110159
+X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
+X-Antivirus-Code: 0x100000
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 2020-05-11 at 14:13 +0000, Roberto Sassu wrote:
-> > From: Mimi Zohar [mailto:zohar@linux.ibm.com]
-> > Sent: Friday, May 8, 2020 7:08 PM
-> > On Fri, 2020-05-08 at 10:20 +0000, Roberto Sassu wrote:
-> > > > From: Mimi Zohar [mailto:zohar@linux.ibm.com]
-> > > > On Thu, 2020-05-07 at 16:47 +0000, Roberto Sassu wrote:
-> > 
-> > <snip>
-> > 
-> > > > > > the file metadata to the file data.  The IMA and EVM policies really
-> > > > > > need to be in sync.
-> > > > >
-> > > > > It would be nice, but at the moment EVM considers also files that are
-> > > > > not selected by the IMA policy. An example of why this is a problem is
-> > > > > the audit service that fails to start when it tries to adjust the
-> > permissions
-> > > > > of the log files. Those files don't have security.evm because they are
-> > > > > not appraised by IMA, but EVM denies the operation.
-> > > >
-> > > > No, this is a timing issue as to whether or not the builtin policy or
-> > > > a custom policy has been loaded.  A custom policy could exclude the
-> > > > log files based on LSM labels, but they are included in the builtin
-> > > > policy.
-> > >
-> > > Yes, I was referring to a custom policy. In this case, EVM will not adapt
-> > > to the custom policy but still verifies all files. If access control is done
-> > > exclusively by IMA at the time evm_verifyxattr() is called, we wouldn't
-> > > need to add security.evm to all files.
-> > 
-> > Roberto, EVM is only triggered by IMA, unless you've modified the
-> > kernel to do otherwise.
-> 
-> EVM would deny xattr/attr operations even if IMA is disabled in the
-> kernel configuration. For example, evm_setxattr() returns the value
-> from evm_protect_xattr(). IMA is not involved there.
 
-Commit ae1ba1676b88 ("EVM: Allow userland to permit modification of
-EVM-protected metadata") introduced EVM_ALLOW_METADATA_WRITES to allow
-writing the EVM portable and immutable file signatures. 
-
+On 11/05/2020 21:21, Mickaël Salaün wrote:
+> Hi,
 > 
-> > I'm not interested in a complicated solution, just one that addresses
-> > the new EVM immutable and portable signature.  It might require EVM
-> > HMAC, IMA differentiating between a new file and an existing file, or:q
-
-> > it might require writing the new EVM signature last, after all the
-> > other xattrs or metadata are updated.  Please nothing that changes
-> > existing expectations.
+> This new patch series brings some improvements and add new tests:
 > 
-> Ok. Introducing the new status INTEGRITY_FAIL_IMMUTABLE, as I
-> mentioned in '[PATCH] ima: Allow imasig requirement to be satisfied by
-> EVM portable signatures' seems to have an additional benefit. We
-> could introduce an additional exception in evm_protect_xattr(), other
-> than INTEGRITY_NOXATTRS, as we know that xattr/attr update won't
-> cause HMAC update.
+> Use smaller userspace structures (attributes) to save space, and check
+> at built time that every attribute don't contain hole and are 8-bits
+> aligned.
 
-Refer to Documentation/ABI/testing/evm describes on how to permit
-writing the security.evm signatures.
-> 
-> However, it won't work unless the IMA policy says that the file should
-> be appraised when the mknod() system call is executed. Otherwise,
-> integrity_iint_cache is not created for the file and the IMA_NEW_FILE
-> flag is not set.
-> 
-> Granting an exception for INTEGRITY_FAIL_IMMUTABLE solves the case
-> where security.evm is the first xattr set. If a protected xattr is the first to
-> be added, then we also have to handle the INTEGRITY_NOLABEL error.
-> It should be fine to add an exception for this error if the HMAC key is not
-> loaded.
-> 
-> This still does not solve all problems. INTEGRITY_NOLABEL cannot be
-> ignored if the HMAC key is loaded, which means that all files need to be
-> protected by EVM to avoid issues like the one I described (auditd).
-
-The application still needs to defer writing the EVM portable and
-immutable file signatures until after all the other xattrs are written
-otherwise it won't validate.
-
-Mimi
+8-bytes aligned, of course.
