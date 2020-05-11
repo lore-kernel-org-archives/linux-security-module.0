@@ -2,325 +2,176 @@ Return-Path: <SRS0=NXRd=6Z=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12199C54E8D
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 May 2020 21:18:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1AA9C47255
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 May 2020 21:37:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E7DAB20661
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 May 2020 21:18:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="EwKfi3+h"
+	by mail.kernel.org (Postfix) with ESMTP id A365F206F5
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 May 2020 21:37:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726553AbgEKVS1 (ORCPT
+        id S1727778AbgEKVhE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 11 May 2020 17:18:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47088 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726532AbgEKVS1 (ORCPT
+        Mon, 11 May 2020 17:37:04 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55102 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725904AbgEKVhD (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 11 May 2020 17:18:27 -0400
-Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8DCDC061A0C
-        for <linux-security-module@vger.kernel.org>; Mon, 11 May 2020 14:18:25 -0700 (PDT)
-Received: by mail-pl1-x641.google.com with SMTP id u22so4440498plq.12
-        for <linux-security-module@vger.kernel.org>; Mon, 11 May 2020 14:18:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=GxSruKmA2bVgy2K4+WkymzUTkS1gnJsJUC47X7HGuw8=;
-        b=EwKfi3+hJDWZ8/AeaZnpGHoqH6Kcbn3pIZMuRsFGvZIL80r6CJy070DkChxmmGK2fG
-         7WoORQoH5aNIKpqth43z3WE328yeHngrUwOvfgV2ZpW75R++NnIiTV22MYbsZMa9B1HV
-         lwxydVAz8ZkQ6j1CP3zxv4sMDONCi9iK7naYE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=GxSruKmA2bVgy2K4+WkymzUTkS1gnJsJUC47X7HGuw8=;
-        b=abXKsFVuQXlP4vRSEznD/RUFy57r+Rne43gJ6wfJqwNbygckTloUfVLiZlas3YyorE
-         DpYERqanIrr4jTBi4b8zfxTVk2uJmrdmpItoFZb/0tXBSCY1lJ91l4QR+c9V3N5cG/KD
-         rr0g3uBj2eztzveZi6Gz/jcm6kVNbUeWxRmeZfguF9891j2RBkoxkxoT9uAe9eSoorHr
-         Vfrqr0MFc/8EUINz4QJZqdQOY22NszsBn0vRocnqU8Ckf6h0rBxTUkg3R2WjzyruJkvt
-         jYuMF0x9/nU/QYwXhVU883D8niZei6kRwPO+isN4p4Aq6Am7UkRbTie+Gzlo1yebVi7J
-         L+qg==
-X-Gm-Message-State: AGi0PuaERexCMDyMkBB4QIzc+8bJMPTw0ShSa8MrYv2WcpNj4bZ3kdqh
-        iy+2IxdeNEf0GbB7RJJUOg7Lgw==
-X-Google-Smtp-Source: APiQypIQTSd9p1Hcvj1g6YAF7Rt7WW61eGi49zkjg5ig+hvMKX8MGOBSXbVNH7xwhe+a038HXAfJ3w==
-X-Received: by 2002:a17:902:8496:: with SMTP id c22mr17155337plo.182.1589231904878;
-        Mon, 11 May 2020 14:18:24 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id a23sm9923384pfo.145.2020.05.11.14.18.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 May 2020 14:18:23 -0700 (PDT)
-Date:   Mon, 11 May 2020 14:18:22 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Rob Landley <rob@landley.net>,
-        Bernd Edlinger <bernd.edlinger@hotmail.de>,
-        linux-fsdevel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        linux-security-module@vger.kernel.org,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Andy Lutomirski <luto@amacapital.net>
-Subject: Re: [PATCH 2/5] exec: Directly call security_bprm_set_creds from
- __do_execve_file
-Message-ID: <202005111245.6E390B46@keescook>
-References: <87h7wujhmz.fsf@x220.int.ebiederm.org>
- <87sgga6ze4.fsf@x220.int.ebiederm.org>
- <87v9l4zyla.fsf_-_@x220.int.ebiederm.org>
- <87k11kzyjm.fsf_-_@x220.int.ebiederm.org>
- <202005101929.A4374D0F56@keescook>
- <87y2pytnvq.fsf@x220.int.ebiederm.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87y2pytnvq.fsf@x220.int.ebiederm.org>
+        Mon, 11 May 2020 17:37:03 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 04BLX31O014735;
+        Mon, 11 May 2020 17:36:56 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 30wrw4ev5r-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 11 May 2020 17:36:56 -0400
+Received: from m0098413.ppops.net (m0098413.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 04BLZpxi021911;
+        Mon, 11 May 2020 17:36:55 -0400
+Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 30wrw4ev56-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 11 May 2020 17:36:55 -0400
+Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
+        by ppma04ams.nl.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 04BLPMWh000485;
+        Mon, 11 May 2020 21:36:54 GMT
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
+        by ppma04ams.nl.ibm.com with ESMTP id 30wm55d4y9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 11 May 2020 21:36:54 +0000
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 04BLapNm2752984
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 11 May 2020 21:36:51 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B467F42047;
+        Mon, 11 May 2020 21:36:51 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9CADE42041;
+        Mon, 11 May 2020 21:36:50 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.225.244])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 11 May 2020 21:36:50 +0000 (GMT)
+Message-ID: <1589233010.5091.49.camel@linux.ibm.com>
+Subject: Re: [RFC][PATCH 1/3] evm: Move hooks outside LSM infrastructure
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>,
+        "david.safford@gmail.com" <david.safford@gmail.com>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        John Johansen <john.johansen@canonical.com>
+Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
+Date:   Mon, 11 May 2020 17:36:50 -0400
+In-Reply-To: <414644a0be9e4af880452f4b5079aba1@huawei.com>
+References: <20200429073935.11913-1-roberto.sassu@huawei.com>
+         <1588794293.4624.21.camel@linux.ibm.com>
+         <1588799408.4624.28.camel@linux.ibm.com>
+         <ab879f9e66874736a40e9c566cadc272@huawei.com>
+         <1588864628.5685.78.camel@linux.ibm.com>
+         <750ab4e0990f47e4aea10d0e580b1074@huawei.com>
+         <1588884313.5685.110.camel@linux.ibm.com>
+         <84e6acad739a415aa3e2457b5c37979f@huawei.com>
+         <1588957684.5146.70.camel@linux.ibm.com>
+         <414644a0be9e4af880452f4b5079aba1@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.676
+ definitions=2020-05-11_10:2020-05-11,2020-05-11 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
+ spamscore=0 impostorscore=0 malwarescore=0 lowpriorityscore=0
+ priorityscore=1501 mlxscore=0 clxscore=1015 adultscore=0 mlxlogscore=999
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2005110159
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, May 11, 2020 at 11:52:41AM -0500, Eric W. Biederman wrote:
-> Kees Cook <keescook@chromium.org> writes:
+On Mon, 2020-05-11 at 14:13 +0000, Roberto Sassu wrote:
+> > From: Mimi Zohar [mailto:zohar@linux.ibm.com]
+> > Sent: Friday, May 8, 2020 7:08 PM
+> > On Fri, 2020-05-08 at 10:20 +0000, Roberto Sassu wrote:
+> > > > From: Mimi Zohar [mailto:zohar@linux.ibm.com]
+> > > > On Thu, 2020-05-07 at 16:47 +0000, Roberto Sassu wrote:
+> > 
+> > <snip>
+> > 
+> > > > > > the file metadata to the file data.  The IMA and EVM policies really
+> > > > > > need to be in sync.
+> > > > >
+> > > > > It would be nice, but at the moment EVM considers also files that are
+> > > > > not selected by the IMA policy. An example of why this is a problem is
+> > > > > the audit service that fails to start when it tries to adjust the
+> > permissions
+> > > > > of the log files. Those files don't have security.evm because they are
+> > > > > not appraised by IMA, but EVM denies the operation.
+> > > >
+> > > > No, this is a timing issue as to whether or not the builtin policy or
+> > > > a custom policy has been loaded.  A custom policy could exclude the
+> > > > log files based on LSM labels, but they are included in the builtin
+> > > > policy.
+> > >
+> > > Yes, I was referring to a custom policy. In this case, EVM will not adapt
+> > > to the custom policy but still verifies all files. If access control is done
+> > > exclusively by IMA at the time evm_verifyxattr() is called, we wouldn't
+> > > need to add security.evm to all files.
+> > 
+> > Roberto, EVM is only triggered by IMA, unless you've modified the
+> > kernel to do otherwise.
 > 
-> > On Sat, May 09, 2020 at 02:41:17PM -0500, Eric W. Biederman wrote:
-> >> 
-> >> Now that security_bprm_set_creds is no longer responsible for calling
-> >> cap_bprm_set_creds, security_bprm_set_creds only does something for
-> >> the primary file that is being executed (not any interpreters it may
-> >> have).  Therefore call security_bprm_set_creds from __do_execve_file,
-> >> instead of from prepare_binprm so that it is only called once, and
-> >> remove the now unnecessary called_set_creds field of struct binprm.
-> >> 
-> >> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
-> >> ---
-> >>  fs/exec.c                  | 11 +++++------
-> >>  include/linux/binfmts.h    |  6 ------
-> >>  security/apparmor/domain.c |  3 ---
-> >>  security/selinux/hooks.c   |  2 --
-> >>  security/smack/smack_lsm.c |  3 ---
-> >>  security/tomoyo/tomoyo.c   |  6 ------
-> >>  6 files changed, 5 insertions(+), 26 deletions(-)
-> >> 
-> >> diff --git a/fs/exec.c b/fs/exec.c
-> >> index 765bfd51a546..635b5085050c 100644
-> >> --- a/fs/exec.c
-> >> +++ b/fs/exec.c
-> >> @@ -1635,12 +1635,6 @@ int prepare_binprm(struct linux_binprm *bprm)
-> >>  
-> >>  	bprm_fill_uid(bprm);
-> >>  
-> >> -	/* fill in binprm security blob */
-> >> -	retval = security_bprm_set_creds(bprm);
-> >> -	if (retval)
-> >> -		return retval;
-> >> -	bprm->called_set_creds = 1;
-> >> -
-> >>  	retval = cap_bprm_set_creds(bprm);
-> >>  	if (retval)
-> >>  		return retval;
-> >> @@ -1858,6 +1852,11 @@ static int __do_execve_file(int fd, struct filename *filename,
-> >>  	if (retval < 0)
-> >>  		goto out;
-> >>  
-> >> +	/* fill in binprm security blob */
-> >> +	retval = security_bprm_set_creds(bprm);
-> >> +	if (retval)
-> >> +		goto out;
-> >> +
-> >>  	retval = prepare_binprm(bprm);
-> >>  	if (retval < 0)
-> >>  		goto out;
-> >> 
-> >
-> > Here I go with a Sunday night review, so hopefully I'm thinking better
-> > than Friday night's review, but I *think* this patch is broken from
-> > the LSM sense of the world in that security_bprm_set_creds() is getting
-> > called _before_ the creds actually get fully set (in prepare_binprm()
-> > by the calls to bprm_fill_uid(), cap_bprm_set_creds(), and
-> > check_unsafe_exec()).
-> >
-> > As a specific example, see the setting of LSM_UNSAFE_NO_NEW_PRIVS in
-> > bprm->unsafe during check_unsafe_exec(), which must happen after
-> > bprm_fill_uid(bprm) and cap_bprm_set_creds(bprm), to have a "true" view
-> > of the execution privileges. Apparmor checks for this flag in its
-> > security_bprm_set_creds() hook. Similarly do selinux, smack, etc...
+> EVM would deny xattr/attr operations even if IMA is disabled in the
+> kernel configuration. For example, evm_setxattr() returns the value
+> from evm_protect_xattr(). IMA is not involved there.
+
+Commit ae1ba1676b88 ("EVM: Allow userland to permit modification of
+EVM-protected metadata") introduced EVM_ALLOW_METADATA_WRITES to allow
+writing the EVM portable and immutable file signatures. 
+
 > 
-> I think you are getting prepare_binprm confused with prepare_bprm_creds.
-> Understandable given the similarity of their names.
+> > I'm not interested in a complicated solution, just one that addresses
+> > the new EVM immutable and portable signature.  It might require EVM
+> > HMAC, IMA differentiating between a new file and an existing file, or:q
 
-I fixated on a bad example, having confused myself about when
-check_unsafe_exec() happens. My original concern (with the bad example)
-was that the LSM is having security_bprm_set_creds() called before the
-new cred in bprm->cred has been initialized with all the correct uid/gid,
-caps, and associated flags.
-
-But anything associated with capabilities should be confined to the
-commoncap LSM, though there is "leakage" into the uid/gid states and some
-bprm state (more on this later). That said, as you also found, I can't
-find any LSM that examines those fields of the cred (I had stopped this
-research last night when I saw check_unsafe_exec() and confused myself);
-they're all looking at other bprm state not associated with caps and uid
-changes (file, unsafe_exec, security field of new cred, etc). So that's
-very good! That means we've actually kept a bright line between things
-here -- whew.
-
-> > The security_bprm_set_creds() boundary for LSM is to see the "final"
-> > state of the process privileges, and that needs to happen after
-> > bprm_fill_uid(), cap_bprm_set_creds(), and check_unsafe_exec() have all
-> > finished.
-> >
-> > So, as it stands, I don't think this will work, but perhaps it can still
-> > be rearranged to avoid the called_set_creds silliness. I'll look more
-> > this week...
+> > it might require writing the new EVM signature last, after all the
+> > other xattrs or metadata are updated.  Please nothing that changes
+> > existing expectations.
 > 
-> If you look at the flow of the code in __do_execve_file before this
-> change it is:
+> Ok. Introducing the new status INTEGRITY_FAIL_IMMUTABLE, as I
+> mentioned in '[PATCH] ima: Allow imasig requirement to be satisfied by
+> EVM portable signatures' seems to have an additional benefit. We
+> could introduce an additional exception in evm_protect_xattr(), other
+> than INTEGRITY_NOXATTRS, as we know that xattr/attr update won't
+> cause HMAC update.
+
+Refer to Documentation/ABI/testing/evm describes on how to permit
+writing the security.evm signatures.
 > 
-> 	prepare_bprm_creds()
->         check_unsafe_exec()
+> However, it won't work unless the IMA policy says that the file should
+> be appraised when the mknod() system call is executed. Otherwise,
+> integrity_iint_cache is not created for the file and the IMA_NEW_FILE
+> flag is not set.
 > 
-> 	...
+> Granting an exception for INTEGRITY_FAIL_IMMUTABLE solves the case
+> where security.evm is the first xattr set. If a protected xattr is the first to
+> be added, then we also have to handle the INTEGRITY_NOLABEL error.
+> It should be fine to add an exception for this error if the HMAC key is not
+> loaded.
 > 
->         prepare_binprm()
->         	bprm_file_uid()
+> This still does not solve all problems. INTEGRITY_NOLABEL cannot be
+> ignored if the HMAC key is loaded, which means that all files need to be
+> protected by EVM to avoid issues like the one I described (auditd).
 
-(bprm_fill_uid(), but yes)
+The application still needs to defer writing the EVM portable and
+immutable file signatures until after all the other xattrs are written
+otherwise it won't validate.
 
->                 	bprm->cred->euid = current_euid()
->                         bprm->cred->egid = current_egid()
-> 		security_bprm_set_creds()
->                 	for_each_lsm()
->                         	lsm->bprm_set_creds()
->                                 	if (called_set_creds)
->                                         	return;
->                                         ...
-> 		bprm->called_set_creds = 1;
-> 	...
-> 
-> 	exec_binprm()
->         	search_binary_handler()
->                 	security_bprm_check()
->                         	tomoyo_bprm_check_security()
->                                 ima_bprm_check()
->    			load_script()
->                         	prepare_binprm()
->                                 	/* called_set_creds already == 1 */
->                                 	bprm_file_uid()
->                                         security_bprm_set_creds()
-> 			                	for_each_lsm()
-> 			                        	lsm->bprm_set_creds()
-> 		                                	if (called_set_creds)
->                 		                        	return;
->                                 		        ...
->                                 search_binary_handler()
->                                 	security_bprm_check_security()
->                                         load_elf_binary()
->                                         	...
->                                                 setup_new_exec
->                                                 ...
-> 
-> 
-> Assuming you are executing a shell script.
-> 
-> Now bprm_file_uid is written with the assumption that it will be called
-> multiple times and it reinitializes all of it's variables each time.
-
-Right -- and the same is true for cap_bprm_set_creds() (in that
-it needs to be run multiple times and depends on the work done in
-bprm_fill_uid()). If we encounter a future use-case for having other
-LSMs call out here multiple time, we can introduce a new LSM hook.
-
-> As you can see in above the implementations of bprm_set_creds() only
-> really execute before called_set_creds is set, aka the first time.
-> They in no way see the final state.
-> 
-> Further when I looked as those hooks they were not looking at the values
-> set by bprm_file_uid at all.  There were busy with the values their
-> they needed to set in that hook for their particular lsm.
-
-Agreed (though I'd love some other LSM eyes on this conclusion).
-
-> So while in theory I can see the danger of moving above bprm_file_uid
-> I don't see anything in practice that would be a problem.
-> 
-> Further by moving the call of security_bprm_set_creds out of
-> prepare_binprm int __do_execve_file just before the call of
-> prepare_binprm I am just moving the call above binprm_fill_uid
-> and nothing else.
-> 
-> So I think you just confused prepare_bprm_creds with prepare_binprm.
-> As most of your criticisms appear valid in that case.  Can you take a
-> second look?
-
-So, in earlier attempts to clean up code near all this, I removed the
-LSM's bprm_secureexec hook, which only commoncap was using to impart
-details about privilege elevation. I switched the semantics to having LSMs
-set bprm->secureexec to true (but never to zero). Since commoncap's idea
-of "was I elevated?" might repeatedly change, I had to store its results
-"privately" in the bprm, which got us cap_elevated (in 46d98eb4e1d2):
-
-c425e189ffd7 ("binfmt: Introduce secureexec flag")
-993b3ab0642e ("apparmor: Refactor to remove bprm_secureexec hook")
-62874c3adf70 ("selinux: Refactor to remove bprm_secureexec hook")
-46d98eb4e1d2 ("commoncap: Refactor to remove bprm_secureexec hook")
-ee67ae7ef6ff ("commoncap: Move cap_elevated calculation into bprm_set_creds")
-2af622802696 ("LSM: drop bprm_secureexec hook")
-
-So, given the special-case nature of capabilities here, this does seem
-to be the right choice (assuming we're not missing something in the
-other LSMs). As such, I think the comment for cap_elevated needs to be
-updated to reflect the change to function call flow, and to specify it
-cannot be used by the other LSMs. Maybe something like:
-
-               /*
-                * True if most recent call to cap_bprm_set_creds()
-                * (due to multiple prepare_binprm() calls from the
-                * binfmt_script/misc handlers) resulted in elevated
-                * privileges. This is used internally by fs/exec.c
-		* to set bprm->secureexec.
-                */
-               cap_elevated:1,
-
-And that brings us to naming. Whee. I think we should make the following
-name changes:
-
-bprm_fill_uid      ->	bprm_establish_privileges
-cap_bprm_set_creds ->	cap_establish_privileges
-
-Finally, I think we should update the comment on bprm_set_creds (which,
-actually, I think is the correct name now) to something like:
-
- * @bprm_set_creds:
- *	Save security information in the @bprm->cred->security field,
- *	typically based on information about the bprm->file, for later
- *	use during the @bprm_committing_creds hook. Specifically
- *	the credentials themselves (uid, gid, etc), are not finalized
- *	yet and must not be examined until the @bprm_committing_creds
- *	hook.
- *      This hook is called once, after the creds structure has been
- *	allocated.
- *      The hook must set @bprm->secureexec to 1 if a "secure exec"
- *	has happened as a result of this hook call. The flag is used to
- *      indicate the need for a sanitized execution environment, and is
- *      also passed in the ELF auxiliary table on the initial stack to
- *      indicate whether libc should enable secure mode.
- *	This hook may also optionally check LSM-specific permissions
- *	(e.g. for transitions between security domains).
- *      @bprm contains the linux_binprm structure.
- *      Return 0 if the hook is successful and permission is granted.
-
--Kees
-
--- 
-Kees Cook
+Mimi
