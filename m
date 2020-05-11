@@ -2,31 +2,31 @@ Return-Path: <SRS0=NXRd=6Z=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.7 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50E67C54E8F
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 May 2020 19:23:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76559C54E8F
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 May 2020 19:23:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3603220752
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 May 2020 19:23:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 636512078E
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 May 2020 19:23:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731505AbgEKTXF (ORCPT
+        id S1731442AbgEKTWU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 11 May 2020 15:23:05 -0400
-Received: from smtp-bc0a.mail.infomaniak.ch ([45.157.188.10]:54083 "EHLO
-        smtp-bc0a.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731483AbgEKTWk (ORCPT
+        Mon, 11 May 2020 15:22:20 -0400
+Received: from smtp-42ac.mail.infomaniak.ch ([84.16.66.172]:36407 "EHLO
+        smtp-42ac.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731407AbgEKTWU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 11 May 2020 15:22:40 -0400
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 49LW5p4RbfzlhKHH;
-        Mon, 11 May 2020 21:22:06 +0200 (CEST)
+        Mon, 11 May 2020 15:22:20 -0400
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 49LW5y0yr1zlhTQg;
+        Mon, 11 May 2020 21:22:14 +0200 (CEST)
 Received: from localhost (unknown [94.23.54.103])
-        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 49LW5p1x6hzlhFjg;
-        Mon, 11 May 2020 21:22:06 +0200 (CEST)
+        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 49LW5x5m3SzlhHR1;
+        Mon, 11 May 2020 21:22:13 +0200 (CEST)
 From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To:     linux-kernel@vger.kernel.org
 Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
@@ -46,9 +46,9 @@ Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
         linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
         linux-security-module@vger.kernel.org, x86@kernel.org
-Subject: [PATCH v17 01/10] landlock: Add object management
-Date:   Mon, 11 May 2020 21:21:47 +0200
-Message-Id: <20200511192156.1618284-2-mic@digikod.net>
+Subject: [PATCH v17 07/10] arch: Wire up landlock() syscall
+Date:   Mon, 11 May 2020 21:21:53 +0200
+Message-Id: <20200511192156.1618284-8-mic@digikod.net>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200511192156.1618284-1-mic@digikod.net>
 References: <20200511192156.1618284-1-mic@digikod.net>
@@ -61,28 +61,10 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-A Landlock object enables to identify a kernel object (e.g. an inode).
-A Landlock rule is a set of access rights allowed on an object.  Rules
-are grouped in rulesets that may be tied to a set of processes (i.e.
-subjects) to enforce a scoped access-control (i.e. a domain).
-
-Because Landlock's goal is to empower any process (especially
-unprivileged ones) to sandbox themselves, we can't rely on a system-wide
-object identification such as file extended attributes.  Indeed, we need
-innocuous, composable and modular access-controls.
-
-The main challenge with these constraints is to identify kernel objects
-while this identification is useful (i.e. when a security policy makes
-use of this object).  But this identification data should be freed once
-no policy is using it.  This ephemeral tagging should not and may not be
-written in the filesystem.  We then need to manage the lifetime of a
-rule according to the lifetime of its object.  To avoid a global lock,
-this implementation make use of RCU and counters to safely reference
-objects.
-
-A following commit uses this generic object management for inodes.
+Wire up the landlock() system call for all architectures.
 
 Signed-off-by: Mickaël Salaün <mic@digikod.net>
+Cc: Arnd Bergmann <arnd@arndb.de>
 Cc: James Morris <jmorris@namei.org>
 Cc: Jann Horn <jannh@google.com>
 Cc: Kees Cook <keescook@chromium.org>
@@ -90,301 +72,222 @@ Cc: Serge E. Hallyn <serge@hallyn.com>
 ---
 
 Changes since v14:
-* Simplify the object, rule and ruleset management at the expense of a
-  less aggressive memory freeing (contributed by Jann Horn, with
-  additional modifications):
-  - Remove object->list aggregating the rules tied to an object.
-  - Remove landlock_get_object(), landlock_drop_object(),
-    {get,put}_object_cleaner() and landlock_rule_is_disabled().
-  - Rewrite landlock_put_object() to use a more simple mechanism
-    (no tricky RCU).
-  - Replace enum landlock_object_type and landlock_release_object() with
-    landlock_object_underops->release()
-  - Adjust unions and Sparse annotations.
-  Cf. https://lore.kernel.org/lkml/CAG48ez21bEn0wL1bbmTiiu8j9jP5iEWtHOwz4tURUJ+ki0ydYw@mail.gmail.com/
-* Merge struct landlock_rule into landlock_ruleset_elem to simplify the
-  rule management.
-* Constify variables.
-* Improve kernel documentation.
-* Cosmetic variable renames.
-* Remove the "default" in the Kconfig (suggested by Jann Horn).
-* Only use refcount_inc() through getter helpers.
-* Update Kconfig description.
+* Add all architectures.
 
 Changes since v13:
-* New dedicated implementation, removing the need for eBPF.
-
-Previous changes:
-https://lore.kernel.org/lkml/20190721213116.23476-6-mic@digikod.net/
+* New implementation.
 ---
- MAINTAINERS                | 10 +++++
- security/Kconfig           |  1 +
- security/Makefile          |  2 +
- security/landlock/Kconfig  | 18 ++++++++
- security/landlock/Makefile |  3 ++
- security/landlock/object.c | 66 +++++++++++++++++++++++++++
- security/landlock/object.h | 91 ++++++++++++++++++++++++++++++++++++++
- 7 files changed, 191 insertions(+)
- create mode 100644 security/landlock/Kconfig
- create mode 100644 security/landlock/Makefile
- create mode 100644 security/landlock/object.c
- create mode 100644 security/landlock/object.h
+ arch/alpha/kernel/syscalls/syscall.tbl      | 1 +
+ arch/arm/tools/syscall.tbl                  | 1 +
+ arch/arm64/include/asm/unistd.h             | 2 +-
+ arch/arm64/include/asm/unistd32.h           | 2 ++
+ arch/ia64/kernel/syscalls/syscall.tbl       | 1 +
+ arch/m68k/kernel/syscalls/syscall.tbl       | 1 +
+ arch/microblaze/kernel/syscalls/syscall.tbl | 1 +
+ arch/mips/kernel/syscalls/syscall_n32.tbl   | 1 +
+ arch/mips/kernel/syscalls/syscall_n64.tbl   | 1 +
+ arch/mips/kernel/syscalls/syscall_o32.tbl   | 1 +
+ arch/parisc/kernel/syscalls/syscall.tbl     | 1 +
+ arch/powerpc/kernel/syscalls/syscall.tbl    | 1 +
+ arch/s390/kernel/syscalls/syscall.tbl       | 1 +
+ arch/sh/kernel/syscalls/syscall.tbl         | 1 +
+ arch/sparc/kernel/syscalls/syscall.tbl      | 1 +
+ arch/x86/entry/syscalls/syscall_32.tbl      | 1 +
+ arch/x86/entry/syscalls/syscall_64.tbl      | 1 +
+ arch/xtensa/kernel/syscalls/syscall.tbl     | 1 +
+ include/uapi/asm-generic/unistd.h           | 4 +++-
+ 19 files changed, 22 insertions(+), 2 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 091ec22c1a23..011349c9c6c6 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -9487,6 +9487,16 @@ F:	net/core/sock_map.c
- F:	net/ipv4/tcp_bpf.c
- F:	net/ipv4/udp_bpf.c
+diff --git a/arch/alpha/kernel/syscalls/syscall.tbl b/arch/alpha/kernel/syscalls/syscall.tbl
+index 36d42da7466a..424f1f7f4ea8 100644
+--- a/arch/alpha/kernel/syscalls/syscall.tbl
++++ b/arch/alpha/kernel/syscalls/syscall.tbl
+@@ -477,3 +477,4 @@
+ # 545 reserved for clone3
+ 547	common	openat2				sys_openat2
+ 548	common	pidfd_getfd			sys_pidfd_getfd
++549	common	landlock			sys_landlock
+diff --git a/arch/arm/tools/syscall.tbl b/arch/arm/tools/syscall.tbl
+index 4d1cf74a2caa..46b49724da4a 100644
+--- a/arch/arm/tools/syscall.tbl
++++ b/arch/arm/tools/syscall.tbl
+@@ -451,3 +451,4 @@
+ 435	common	clone3				sys_clone3
+ 437	common	openat2				sys_openat2
+ 438	common	pidfd_getfd			sys_pidfd_getfd
++439	common	landlock			sys_landlock
+diff --git a/arch/arm64/include/asm/unistd.h b/arch/arm64/include/asm/unistd.h
+index 803039d504de..3b859596840d 100644
+--- a/arch/arm64/include/asm/unistd.h
++++ b/arch/arm64/include/asm/unistd.h
+@@ -38,7 +38,7 @@
+ #define __ARM_NR_compat_set_tls		(__ARM_NR_COMPAT_BASE + 5)
+ #define __ARM_NR_COMPAT_END		(__ARM_NR_COMPAT_BASE + 0x800)
  
-+LANDLOCK SECURITY MODULE
-+M:	Mickaël Salaün <mic@digikod.net>
-+L:	linux-security-module@vger.kernel.org
-+S:	Supported
-+W:	https://landlock.io
-+T:	git https://github.com/landlock-lsm/linux.git
-+F:	security/landlock/
-+K:	landlock
-+K:	LANDLOCK
-+
- LANTIQ / INTEL Ethernet drivers
- M:	Hauke Mehrtens <hauke@hauke-m.de>
- L:	netdev@vger.kernel.org
-diff --git a/security/Kconfig b/security/Kconfig
-index cd3cc7da3a55..582fd777a757 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -238,6 +238,7 @@ source "security/loadpin/Kconfig"
- source "security/yama/Kconfig"
- source "security/safesetid/Kconfig"
- source "security/lockdown/Kconfig"
-+source "security/landlock/Kconfig"
+-#define __NR_compat_syscalls		439
++#define __NR_compat_syscalls		440
+ #endif
  
- source "security/integrity/Kconfig"
+ #define __ARCH_WANT_SYS_CLONE
+diff --git a/arch/arm64/include/asm/unistd32.h b/arch/arm64/include/asm/unistd32.h
+index c1c61635f89c..a24fe33f7c0d 100644
+--- a/arch/arm64/include/asm/unistd32.h
++++ b/arch/arm64/include/asm/unistd32.h
+@@ -883,6 +883,8 @@ __SYSCALL(__NR_clone3, sys_clone3)
+ __SYSCALL(__NR_openat2, sys_openat2)
+ #define __NR_pidfd_getfd 438
+ __SYSCALL(__NR_pidfd_getfd, sys_pidfd_getfd)
++#define __NR_landlock 439
++__SYSCALL(__NR_landlock, sys_landlock)
  
-diff --git a/security/Makefile b/security/Makefile
-index 22e73a3482bd..b8380650bfb1 100644
---- a/security/Makefile
-+++ b/security/Makefile
-@@ -13,6 +13,7 @@ subdir-$(CONFIG_SECURITY_LOADPIN)	+= loadpin
- subdir-$(CONFIG_SECURITY_SAFESETID)    += safesetid
- subdir-$(CONFIG_SECURITY_LOCKDOWN_LSM)	+= lockdown
- subdir-$(CONFIG_BPF_LSM)		+= bpf
-+subdir-$(CONFIG_SECURITY_LANDLOCK)		+= landlock
+ /*
+  * Please add new compat syscalls above this comment and update
+diff --git a/arch/ia64/kernel/syscalls/syscall.tbl b/arch/ia64/kernel/syscalls/syscall.tbl
+index 042911e670b8..c311696e0f5f 100644
+--- a/arch/ia64/kernel/syscalls/syscall.tbl
++++ b/arch/ia64/kernel/syscalls/syscall.tbl
+@@ -358,3 +358,4 @@
+ # 435 reserved for clone3
+ 437	common	openat2				sys_openat2
+ 438	common	pidfd_getfd			sys_pidfd_getfd
++439	common	landlock			sys_landlock
+diff --git a/arch/m68k/kernel/syscalls/syscall.tbl b/arch/m68k/kernel/syscalls/syscall.tbl
+index f4f49fcb76d0..d73a43d235d3 100644
+--- a/arch/m68k/kernel/syscalls/syscall.tbl
++++ b/arch/m68k/kernel/syscalls/syscall.tbl
+@@ -437,3 +437,4 @@
+ 435	common	clone3				__sys_clone3
+ 437	common	openat2				sys_openat2
+ 438	common	pidfd_getfd			sys_pidfd_getfd
++439	common	landlock			sys_landlock
+diff --git a/arch/microblaze/kernel/syscalls/syscall.tbl b/arch/microblaze/kernel/syscalls/syscall.tbl
+index 4c67b11f9c9e..f3927af7716f 100644
+--- a/arch/microblaze/kernel/syscalls/syscall.tbl
++++ b/arch/microblaze/kernel/syscalls/syscall.tbl
+@@ -443,3 +443,4 @@
+ 435	common	clone3				sys_clone3
+ 437	common	openat2				sys_openat2
+ 438	common	pidfd_getfd			sys_pidfd_getfd
++439	common	landlock			sys_landlock
+diff --git a/arch/mips/kernel/syscalls/syscall_n32.tbl b/arch/mips/kernel/syscalls/syscall_n32.tbl
+index 1f9e8ad636cc..e467033ec474 100644
+--- a/arch/mips/kernel/syscalls/syscall_n32.tbl
++++ b/arch/mips/kernel/syscalls/syscall_n32.tbl
+@@ -376,3 +376,4 @@
+ 435	n32	clone3				__sys_clone3
+ 437	n32	openat2				sys_openat2
+ 438	n32	pidfd_getfd			sys_pidfd_getfd
++439	n32	landlock			sys_landlock
+diff --git a/arch/mips/kernel/syscalls/syscall_n64.tbl b/arch/mips/kernel/syscalls/syscall_n64.tbl
+index c0b9d802dbf6..1930ba6c75b7 100644
+--- a/arch/mips/kernel/syscalls/syscall_n64.tbl
++++ b/arch/mips/kernel/syscalls/syscall_n64.tbl
+@@ -352,3 +352,4 @@
+ 435	n64	clone3				__sys_clone3
+ 437	n64	openat2				sys_openat2
+ 438	n64	pidfd_getfd			sys_pidfd_getfd
++439	n64	landlock			sys_landlock
+diff --git a/arch/mips/kernel/syscalls/syscall_o32.tbl b/arch/mips/kernel/syscalls/syscall_o32.tbl
+index ac586774c980..0a66f190ae3d 100644
+--- a/arch/mips/kernel/syscalls/syscall_o32.tbl
++++ b/arch/mips/kernel/syscalls/syscall_o32.tbl
+@@ -425,3 +425,4 @@
+ 435	o32	clone3				__sys_clone3
+ 437	o32	openat2				sys_openat2
+ 438	o32	pidfd_getfd			sys_pidfd_getfd
++439	o32	landlock			sys_landlock
+diff --git a/arch/parisc/kernel/syscalls/syscall.tbl b/arch/parisc/kernel/syscalls/syscall.tbl
+index 52a15f5cd130..93ddc36a660e 100644
+--- a/arch/parisc/kernel/syscalls/syscall.tbl
++++ b/arch/parisc/kernel/syscalls/syscall.tbl
+@@ -435,3 +435,4 @@
+ 435	common	clone3				sys_clone3_wrapper
+ 437	common	openat2				sys_openat2
+ 438	common	pidfd_getfd			sys_pidfd_getfd
++439	common	landlock			sys_landlock
+diff --git a/arch/powerpc/kernel/syscalls/syscall.tbl b/arch/powerpc/kernel/syscalls/syscall.tbl
+index 220ae11555f2..34ca2cd82d4e 100644
+--- a/arch/powerpc/kernel/syscalls/syscall.tbl
++++ b/arch/powerpc/kernel/syscalls/syscall.tbl
+@@ -527,3 +527,4 @@
+ 435	spu	clone3				sys_ni_syscall
+ 437	common	openat2				sys_openat2
+ 438	common	pidfd_getfd			sys_pidfd_getfd
++439	common	landlock			sys_landlock
+diff --git a/arch/s390/kernel/syscalls/syscall.tbl b/arch/s390/kernel/syscalls/syscall.tbl
+index bd7bd3581a0f..b4233c9c7421 100644
+--- a/arch/s390/kernel/syscalls/syscall.tbl
++++ b/arch/s390/kernel/syscalls/syscall.tbl
+@@ -440,3 +440,4 @@
+ 435  common	clone3			sys_clone3			sys_clone3
+ 437  common	openat2			sys_openat2			sys_openat2
+ 438  common	pidfd_getfd		sys_pidfd_getfd			sys_pidfd_getfd
++439  common	landlock		sys_landlock			sys_landlock
+diff --git a/arch/sh/kernel/syscalls/syscall.tbl b/arch/sh/kernel/syscalls/syscall.tbl
+index c7a30fcd135f..49fd37c18528 100644
+--- a/arch/sh/kernel/syscalls/syscall.tbl
++++ b/arch/sh/kernel/syscalls/syscall.tbl
+@@ -440,3 +440,4 @@
+ # 435 reserved for clone3
+ 437	common	openat2				sys_openat2
+ 438	common	pidfd_getfd			sys_pidfd_getfd
++439	common	landlock			sys_landlock
+diff --git a/arch/sparc/kernel/syscalls/syscall.tbl b/arch/sparc/kernel/syscalls/syscall.tbl
+index f13615ecdecc..33e2a9d55bdd 100644
+--- a/arch/sparc/kernel/syscalls/syscall.tbl
++++ b/arch/sparc/kernel/syscalls/syscall.tbl
+@@ -483,3 +483,4 @@
+ # 435 reserved for clone3
+ 437	common	openat2			sys_openat2
+ 438	common	pidfd_getfd			sys_pidfd_getfd
++439	common	landlock			sys_landlock
+diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
+index 54581ac671b4..b350580405b3 100644
+--- a/arch/x86/entry/syscalls/syscall_32.tbl
++++ b/arch/x86/entry/syscalls/syscall_32.tbl
+@@ -442,3 +442,4 @@
+ 435	i386	clone3			sys_clone3
+ 437	i386	openat2			sys_openat2
+ 438	i386	pidfd_getfd		sys_pidfd_getfd
++439	i386	landlock		sys_landlock
+diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
+index 37b844f839bc..b6efdd813978 100644
+--- a/arch/x86/entry/syscalls/syscall_64.tbl
++++ b/arch/x86/entry/syscalls/syscall_64.tbl
+@@ -359,6 +359,7 @@
+ 435	common	clone3			sys_clone3
+ 437	common	openat2			sys_openat2
+ 438	common	pidfd_getfd		sys_pidfd_getfd
++439	common	landlock		sys_landlock
  
- # always enable default capabilities
- obj-y					+= commoncap.o
-@@ -30,6 +31,7 @@ obj-$(CONFIG_SECURITY_YAMA)		+= yama/
- obj-$(CONFIG_SECURITY_LOADPIN)		+= loadpin/
- obj-$(CONFIG_SECURITY_SAFESETID)       += safesetid/
- obj-$(CONFIG_SECURITY_LOCKDOWN_LSM)	+= lockdown/
-+obj-$(CONFIG_SECURITY_LANDLOCK)	+= landlock/
- obj-$(CONFIG_CGROUP_DEVICE)		+= device_cgroup.o
- obj-$(CONFIG_BPF_LSM)			+= bpf/
+ #
+ # x32-specific system call numbers start at 512 to avoid cache impact
+diff --git a/arch/xtensa/kernel/syscalls/syscall.tbl b/arch/xtensa/kernel/syscalls/syscall.tbl
+index 85a9ab1bc04d..84fc6db485ef 100644
+--- a/arch/xtensa/kernel/syscalls/syscall.tbl
++++ b/arch/xtensa/kernel/syscalls/syscall.tbl
+@@ -408,3 +408,4 @@
+ 435	common	clone3				sys_clone3
+ 437	common	openat2				sys_openat2
+ 438	common	pidfd_getfd			sys_pidfd_getfd
++439	common	landlock			sys_landlock
+diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
+index 3a3201e4618e..31d5814ddb13 100644
+--- a/include/uapi/asm-generic/unistd.h
++++ b/include/uapi/asm-generic/unistd.h
+@@ -855,9 +855,11 @@ __SYSCALL(__NR_clone3, sys_clone3)
+ __SYSCALL(__NR_openat2, sys_openat2)
+ #define __NR_pidfd_getfd 438
+ __SYSCALL(__NR_pidfd_getfd, sys_pidfd_getfd)
++#define __NR_landlock 439
++__SYSCALL(__NR_landlock, sys_landlock)
  
-diff --git a/security/landlock/Kconfig b/security/landlock/Kconfig
-new file mode 100644
-index 000000000000..9ec7593a534a
---- /dev/null
-+++ b/security/landlock/Kconfig
-@@ -0,0 +1,18 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+
-+config SECURITY_LANDLOCK
-+	bool "Landlock support"
-+	depends on SECURITY
-+	select SECURITY_PATH
-+	help
-+	  Landlock is a safe sandboxing mechanism which enables processes to
-+	  restrict themselves (and their future children) by gradually
-+	  enforcing tailored access control policies.  A security policy is a
-+	  set of access rights (e.g. open a file in read-only, make a
-+	  directory) tied to a file hierarchy.  The configuration can be set by
-+	  any processes, including unprivileged ones, thanks to the landlock()
-+	  system call.
-+
-+	  See Documentation/security/landlock/ for further information.
-+
-+	  If you are unsure how to answer this question, answer N.
-diff --git a/security/landlock/Makefile b/security/landlock/Makefile
-new file mode 100644
-index 000000000000..cb6deefbf4c0
---- /dev/null
-+++ b/security/landlock/Makefile
-@@ -0,0 +1,3 @@
-+obj-$(CONFIG_SECURITY_LANDLOCK) := landlock.o
-+
-+landlock-y := object.o
-diff --git a/security/landlock/object.c b/security/landlock/object.c
-new file mode 100644
-index 000000000000..27da1ed45eaf
---- /dev/null
-+++ b/security/landlock/object.c
-@@ -0,0 +1,66 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Landlock LSM - Object management
-+ *
-+ * Copyright © 2016-2020 Mickaël Salaün <mic@digikod.net>
-+ * Copyright © 2018-2020 ANSSI
-+ */
-+
-+#include <linux/bug.h>
-+#include <linux/compiler_types.h>
-+#include <linux/kernel.h>
-+#include <linux/rcupdate.h>
-+#include <linux/refcount.h>
-+#include <linux/slab.h>
-+#include <linux/spinlock.h>
-+
-+#include "object.h"
-+
-+struct landlock_object *landlock_create_object(
-+		const struct landlock_object_underops *underops,
-+		void *const underobj)
-+{
-+	struct landlock_object *new_object;
-+
-+	if (WARN_ON_ONCE(!underops || !underobj))
-+		return NULL;
-+	new_object = kzalloc(sizeof(*new_object), GFP_KERNEL);
-+	if (!new_object)
-+		return NULL;
-+	refcount_set(&new_object->usage, 1);
-+	spin_lock_init(&new_object->lock);
-+	new_object->underops = underops;
-+	new_object->underobj = underobj;
-+	return new_object;
-+}
-+
-+/*
-+ * The caller must own the object (i.e. thanks to object->usage) to safely put
-+ * it.
-+ */
-+void landlock_put_object(struct landlock_object *const object)
-+{
-+	/*
-+	 * The call to @object->underops->release(object) might sleep e.g.,
-+	 * because of iput().
-+	 */
-+	might_sleep();
-+	if (!object)
-+		return;
-+
-+	/*
-+	 * If the @object's refcount can't drop to zero, we can just decrement
-+	 * the refcount without holding a lock. Otherwise, the decrement must
-+	 * happen under @object->lock for synchronization with things like
-+	 * get_inode_object().
-+	 */
-+	if (refcount_dec_and_lock(&object->usage, &object->lock)) {
-+		__acquire(&object->lock);
-+		/*
-+		 * With @object->lock initially held, remove the reference from
-+		 * @object->underobj to @object (if it still exists).
-+		 */
-+		object->underops->release(object);
-+		kfree_rcu(object, rcu_free);
-+	}
-+}
-diff --git a/security/landlock/object.h b/security/landlock/object.h
-new file mode 100644
-index 000000000000..942bc0e18064
---- /dev/null
-+++ b/security/landlock/object.h
-@@ -0,0 +1,91 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Landlock LSM - Object management
-+ *
-+ * Copyright © 2016-2020 Mickaël Salaün <mic@digikod.net>
-+ * Copyright © 2018-2020 ANSSI
-+ */
-+
-+#ifndef _SECURITY_LANDLOCK_OBJECT_H
-+#define _SECURITY_LANDLOCK_OBJECT_H
-+
-+#include <linux/compiler_types.h>
-+#include <linux/refcount.h>
-+#include <linux/spinlock.h>
-+
-+struct landlock_object;
-+
-+/**
-+ * struct landlock_object_underops - Operations on an underlying object
-+ */
-+struct landlock_object_underops {
-+	/**
-+	 * @release: Releases the underlying object (e.g. iput() for an inode).
-+	 */
-+	void (*release)(struct landlock_object *const object)
-+		__releases(object->lock);
-+};
-+
-+/**
-+ * struct landlock_object - Security blob tied to a kernel object
-+ *
-+ * The goal of this structure is to enable to tie a set of ephemeral access
-+ * rights (pertaining to different domains) to a kernel object (e.g an inode)
-+ * in a safe way.  This imply to handle concurrent use and modification.
-+ *
-+ * The lifetime of a &struct landlock_object depends of the rules referring to
-+ * it.
-+ */
-+struct landlock_object {
-+	/**
-+	 * @usage: This counter is used to tie an object to the rules matching
-+	 * it or to keep it alive while adding a new rule.  If this counter
-+	 * reaches zero, this struct must not be modified, but this counter can
-+	 * still be read from within an RCU read-side critical section.  When
-+	 * adding a new rule to an object with a usage counter of zero, we must
-+	 * wait until the pointer to this object is set to NULL (or recycled).
-+	 */
-+	refcount_t usage;
-+	/**
-+	 * @lock: Guards against concurrent modifications.  This lock must be
-+	 * from the time @usage drops to zero until any weak references from
-+	 * @underobj to this object have been cleaned up.
-+	 *
-+	 * Lock ordering: inode->i_lock nests inside this.
-+	 */
-+	spinlock_t lock;
-+	/**
-+	 * @underobj: Used when cleaning up an object and to mark an object as
-+	 * tied to its underlying kernel structure.  This pointer is protected
-+	 * by @lock.  Cf. landlock_release_inodes() and release_inode().
-+	 */
-+	void *underobj;
-+	union {
-+		/**
-+		 * @rcu_free: Enables lockless use of @usage, @lock and
-+		 * @underobj from within an RCU read-side critical section.
-+		 * @rcu_free and @underops are only used by
-+		 * landlock_put_object().
-+		 */
-+		struct rcu_head rcu_free;
-+		/**
-+		 * @underops: Enables landlock_put_object() to release the
-+		 * underlying object (e.g. inode).
-+		 */
-+		const struct landlock_object_underops *underops;
-+	};
-+};
-+
-+struct landlock_object *landlock_create_object(
-+		const struct landlock_object_underops *const underops,
-+		void *const underojb);
-+
-+void landlock_put_object(struct landlock_object *const object);
-+
-+static inline void landlock_get_object(struct landlock_object *const object)
-+{
-+	if (object)
-+		refcount_inc(&object->usage);
-+}
-+
-+#endif /* _SECURITY_LANDLOCK_OBJECT_H */
+ #undef __NR_syscalls
+-#define __NR_syscalls 439
++#define __NR_syscalls 440
+ 
+ /*
+  * 32 bit systems traditionally used different
 -- 
 2.26.2
 
