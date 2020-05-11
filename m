@@ -2,165 +2,129 @@ Return-Path: <SRS0=NXRd=6Z=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DFBAC47255
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 May 2020 03:15:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6E05C47255
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 May 2020 10:41:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3AAC7207FF
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 May 2020 03:15:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Nw8KjYth"
+	by mail.kernel.org (Postfix) with ESMTP id C6219207DD
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 May 2020 10:41:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728237AbgEKDPi (ORCPT
+        id S1728613AbgEKKlR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 10 May 2020 23:15:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47738 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726013AbgEKDPi (ORCPT
+        Mon, 11 May 2020 06:41:17 -0400
+Received: from mga02.intel.com ([134.134.136.20]:33003 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728209AbgEKKlR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 10 May 2020 23:15:38 -0400
-Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10422C061A0E
-        for <linux-security-module@vger.kernel.org>; Sun, 10 May 2020 20:15:37 -0700 (PDT)
-Received: by mail-pg1-x544.google.com with SMTP id n11so3915878pgl.9
-        for <linux-security-module@vger.kernel.org>; Sun, 10 May 2020 20:15:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=biu5X9JLtv6WRnXKVc8xUOK25p8WSyjfbFSVrSRcQ9E=;
-        b=Nw8KjYthz4ugGIkV7t+7zKTL/p5keRxvml5MguBls6kEJ9EldeSye3ObC588Q8BAk1
-         PBVypmzmrpBdBzfm6v8KgM/kk6TTWzuZb3fU3mex1KLOrZEjkktJhJIoOXb4Sctg6rH3
-         1uiLOHVzfAGh/1qBgXTHEQehQu7xwjJyP815o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=biu5X9JLtv6WRnXKVc8xUOK25p8WSyjfbFSVrSRcQ9E=;
-        b=ozyDtXvr/Ee53byUiqYEFxxJ+7tBK/N4go1VuIGpMKqwRn0eoT9l2VZuS+alsutkkT
-         o75xUVlSPWc3sZc/1K9PemHHbzT+QrktDCd5XrV+XYmI4iSVV8M9ECyITcZAttnN9ycE
-         YEtZtabgaTTCH3K2Tr5b33bqpSE0b3Io8+obFiPhvBN4r+Ptyb++tP3ipagGn+GFyicv
-         IlTJs0veNLr9pBYSnHnYKilcAWTVqI3E8Kx8d8AH+g61RfkVjXnyZS+l1q7ZhtayNZoM
-         dqyWBDoac3VJrelHPbAHblA0892pjjXZbqqD8Mdm1lj3q/Phc/XNShuuNAzKMSuS/fVg
-         dLQQ==
-X-Gm-Message-State: AGi0PuZktdXw4gJoT1sOC8pwmtGhaYCdAmubGRn8BZVy2xIukhG3AToD
-        ULN/yap8NameXkNAUS5OxaBXrw==
-X-Google-Smtp-Source: APiQypJxhmyeJZSarW6LgvJTnaApg7gY80iM7fHvZ9PNI7Twn0eOw6d19/FzRXiOud1ybxNdArL8xA==
-X-Received: by 2002:aa7:958f:: with SMTP id z15mr13543700pfj.10.1589166936598;
-        Sun, 10 May 2020 20:15:36 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id w75sm7834318pfc.156.2020.05.10.20.15.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 May 2020 20:15:35 -0700 (PDT)
-Date:   Sun, 10 May 2020 20:15:34 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Rob Landley <rob@landley.net>,
-        Bernd Edlinger <bernd.edlinger@hotmail.de>,
-        linux-fsdevel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        linux-security-module@vger.kernel.org,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Andy Lutomirski <luto@amacapital.net>
-Subject: Re: [PATCH 2/5] exec: Directly call security_bprm_set_creds from
- __do_execve_file
-Message-ID: <202005101929.A4374D0F56@keescook>
-References: <87h7wujhmz.fsf@x220.int.ebiederm.org>
- <87sgga6ze4.fsf@x220.int.ebiederm.org>
- <87v9l4zyla.fsf_-_@x220.int.ebiederm.org>
- <87k11kzyjm.fsf_-_@x220.int.ebiederm.org>
+        Mon, 11 May 2020 06:41:17 -0400
+IronPort-SDR: 2UMKUjRWNfb8JKnWCPRPsYlPKZgLbI/JbeiyQsZ3bA2GbbaXFj0LeOdLT4iNJk1fleO6goOf2I
+ yq4yiWGpz8LA==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 May 2020 03:41:16 -0700
+IronPort-SDR: xFEZE12xISkmwQY8B7HEN57E2P3BZfQe77usOg03sOuMSgJNonsFa9TagqIDy/oxFpoIOyck2j
+ Uloyi0kyLuRA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,379,1583222400"; 
+   d="scan'208";a="371183021"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
+  by fmsmga001.fm.intel.com with SMTP; 11 May 2020 03:41:13 -0700
+Received: by lahna (sSMTP sendmail emulation); Mon, 11 May 2020 13:41:13 +0300
+Date:   Mon, 11 May 2020 13:41:13 +0300
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Mario.Limonciello@dell.com
+Cc:     hughsient@gmail.com, platform-driver-x86@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH] platform/x86: Export LPC attributes for the system SPI
+ chip
+Message-ID: <20200511104113.GJ487496@lahna.fi.intel.com>
+References: <18e48255d68a1408b3e3152780f0e789df540059.camel@gmail.com>
+ <aa217de398584fa7846cf4ac0c872036@AUSX13MPC101.AMER.DELL.COM>
+ <CAD2FfiEk8Fq3=i_3NHvtuwip=-v_cGfnYSowdPi86U_BcgP2gQ@mail.gmail.com>
+ <61c7782cd2e64bb9ab2aaf6a016bbb6c@AUSX13MPC101.AMER.DELL.COM>
+ <CAD2FfiGweUHNJGdj7OUQFxEhQBYvMCbuWM-+ez=SpN=HbcaS4Q@mail.gmail.com>
+ <70757953c25645baac2dddd7c6924d05@AUSX13MPC101.AMER.DELL.COM>
+ <20200508082028.GP487496@lahna.fi.intel.com>
+ <34e4985da20747a780971b8ce7cd83ab@AUSX13MPC105.AMER.DELL.COM>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <87k11kzyjm.fsf_-_@x220.int.ebiederm.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <34e4985da20747a780971b8ce7cd83ab@AUSX13MPC105.AMER.DELL.COM>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, May 09, 2020 at 02:41:17PM -0500, Eric W. Biederman wrote:
+On Fri, May 08, 2020 at 05:27:12PM +0000, Mario.Limonciello@dell.com wrote:
+> > -----Original Message-----
+> > From: platform-driver-x86-owner@vger.kernel.org <platform-driver-x86-
+> > owner@vger.kernel.org> On Behalf Of Mika Westerberg
+> > Sent: Friday, May 8, 2020 3:20 AM
+> > To: Limonciello, Mario
+> > Cc: hughsient@gmail.com; platform-driver-x86@vger.kernel.org; linux-
+> > security-module@vger.kernel.org
+> > Subject: Re: [PATCH] platform/x86: Export LPC attributes for the system
+> > SPI chip
+> > 
+> > 
+> > [EXTERNAL EMAIL]
+> > 
+> > On Thu, May 07, 2020 at 08:03:21PM +0000, Mario.Limonciello@dell.com
+> > wrote:
+> > > > -----Original Message-----
+> > > > From: Richard Hughes <hughsient@gmail.com>
+> > > > Sent: Thursday, May 7, 2020 2:49 PM
+> > > > To: Limonciello, Mario
+> > > > Cc: Platform Driver; linux-security-module;
+> > mika.westerberg@linux.intel.com
+> > > > Subject: Re: [PATCH] platform/x86: Export LPC attributes for the
+> > system SPI
+> > > > chip
+> > > >
+> > > >
+> > > > [EXTERNAL EMAIL]
+> > > >
+> > > > On Thu, 7 May 2020 at 20:22, <Mario.Limonciello@dell.com> wrote:
+> > > > > By default the driver exposes SPI serial flash contents as read-
+> > only but it
+> > > > can
+> > > > > be changed from kernel command line, passing “intel-
+> > spi.writeable=1”.
+> > > >
+> > > > Ahh, that was the bit I didn't know; having the SPI as readonly by
+> > > > default is certainly a good idea, and probably sane enough to enable
+> > > > for Fedora/RHEL as you still need to "do" something manual to enable
+> > > > SPI writing. I guess I can add my securityfs additions to
+> > > > intel-spi-pci.c with Mikas approval.
+> > > >
+> > > > Richard
+> > >
+> > > Mika,
+> > >
+> > > Since you're being joined into the thread late, here is the context:
+> > > https://www.spinics.net/lists/platform-driver-x86/msg21646.html
+> > 
+> > Thanks for the information. I actually prefer that this would be in a
+> > separate driver because I do not want distros to enable intel-spi just
+> > for this. It is really only meant for special setups where firmware
+> > upgrade/access flow has been thoroughly tested.
 > 
-> Now that security_bprm_set_creds is no longer responsible for calling
-> cap_bprm_set_creds, security_bprm_set_creds only does something for
-> the primary file that is being executed (not any interpreters it may
-> have).  Therefore call security_bprm_set_creds from __do_execve_file,
-> instead of from prepare_binprm so that it is only called once, and
-> remove the now unnecessary called_set_creds field of struct binprm.
+> Mika,
 > 
-> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
-> ---
->  fs/exec.c                  | 11 +++++------
->  include/linux/binfmts.h    |  6 ------
->  security/apparmor/domain.c |  3 ---
->  security/selinux/hooks.c   |  2 --
->  security/smack/smack_lsm.c |  3 ---
->  security/tomoyo/tomoyo.c   |  6 ------
->  6 files changed, 5 insertions(+), 26 deletions(-)
-> 
-> diff --git a/fs/exec.c b/fs/exec.c
-> index 765bfd51a546..635b5085050c 100644
-> --- a/fs/exec.c
-> +++ b/fs/exec.c
-> @@ -1635,12 +1635,6 @@ int prepare_binprm(struct linux_binprm *bprm)
->  
->  	bprm_fill_uid(bprm);
->  
-> -	/* fill in binprm security blob */
-> -	retval = security_bprm_set_creds(bprm);
-> -	if (retval)
-> -		return retval;
-> -	bprm->called_set_creds = 1;
-> -
->  	retval = cap_bprm_set_creds(bprm);
->  	if (retval)
->  		return retval;
-> @@ -1858,6 +1852,11 @@ static int __do_execve_file(int fd, struct filename *filename,
->  	if (retval < 0)
->  		goto out;
->  
-> +	/* fill in binprm security blob */
-> +	retval = security_bprm_set_creds(bprm);
-> +	if (retval)
-> +		goto out;
-> +
->  	retval = prepare_binprm(bprm);
->  	if (retval < 0)
->  		goto out;
-> 
+> Thanks for those comments and context on that driver.  Considering this,
+> what do you think about as part of this new driver, moving the list of
+> supported IDs in there to something that can be sourced by both drivers?
+> I think it should help avoid having to keep the two lists fully in sync
+> as new silicon comes out.
 
-Here I go with a Sunday night review, so hopefully I'm thinking better
-than Friday night's review, but I *think* this patch is broken from
-the LSM sense of the world in that security_bprm_set_creds() is getting
-called _before_ the creds actually get fully set (in prepare_binprm()
-by the calls to bprm_fill_uid(), cap_bprm_set_creds(), and
-check_unsafe_exec()).
+Hi,
 
-As a specific example, see the setting of LSM_UNSAFE_NO_NEW_PRIVS in
-bprm->unsafe during check_unsafe_exec(), which must happen after
-bprm_fill_uid(bprm) and cap_bprm_set_creds(bprm), to have a "true" view
-of the execution privileges. Apparmor checks for this flag in its
-security_bprm_set_creds() hook. Similarly do selinux, smack, etc...
-
-The security_bprm_set_creds() boundary for LSM is to see the "final"
-state of the process privileges, and that needs to happen after
-bprm_fill_uid(), cap_bprm_set_creds(), and check_unsafe_exec() have all
-finished.
-
-So, as it stands, I don't think this will work, but perhaps it can still
-be rearranged to avoid the called_set_creds silliness. I'll look more
-this week...
-
--Kees
-
--- 
-Kees Cook
+Since this is binding to the LPC/eSPI device I think you may be adding
+this functionality to drivers/mfd/lpc_ich.c. It is also filling the data
+for intel-spi so it is natural place to re-use the code. I actually
+think it already has some of these PCI IDs.
