@@ -2,106 +2,117 @@ Return-Path: <SRS0=NXRd=6Z=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92EF9C54E8D
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 May 2020 18:03:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD791C47255
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 May 2020 19:04:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 75222206B9
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 May 2020 18:03:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA4B820736
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 May 2020 19:04:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="QiKdEKor"
+	dkim=pass (2048-bit key) header.d=landley-net.20150623.gappssmtp.com header.i=@landley-net.20150623.gappssmtp.com header.b="E5S6DY5d"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731045AbgEKSDd (ORCPT
+        id S1731222AbgEKTEM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 11 May 2020 14:03:33 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:33770 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726891AbgEKSDc (ORCPT
+        Mon, 11 May 2020 15:04:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54198 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731163AbgEKTEM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 11 May 2020 14:03:32 -0400
-Received: from [10.137.106.115] (unknown [131.107.174.243])
-        by linux.microsoft.com (Postfix) with ESMTPSA id A459320B717B;
-        Mon, 11 May 2020 11:03:31 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A459320B717B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1589220212;
-        bh=rwCBjFjDRVRa/3cB9IsEzNvfLiKX6lRSr9M18CC7//4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=QiKdEKorw3cyT1qWZiMET9W5veSrPG4eNvJe3qaXWcFMXz1t90fAPlv3CSYWjU6is
-         1U+rcd04LKlXY+H4saO7e/yVSmO+N7R04feR23EWhVyWDS+8htuwyPBoJbD80fxF69
-         MRo3aLdTplD7OzjW3HYeo901uWPxV5t777MZqC54=
-Subject: Re: [RFC PATCH v3 00/12] Integrity Policy Enforcement LSM (IPE)
-To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        agk@redhat.com, axboe@kernel.dk, snitzer@redhat.com,
-        jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, dm-devel@redhat.com,
-        linux-block@vger.kernel.org, jannh@google.com
-Cc:     tyhicks@linux.microsoft.com, pasha.tatashin@soleen.com,
-        sashal@kernel.org, jaskarankhurana@linux.microsoft.com,
-        nramas@linux.microsoft.com, mdsakib@linux.microsoft.com,
-        linux-kernel@vger.kernel.org, corbet@lwn.net
-References: <20200415162550.2324-1-deven.desai@linux.microsoft.com>
- <b07ac7e1-7cf5-92c9-81d0-64174c3d5024@digikod.net>
-From:   Deven Bowers <deven.desai@linux.microsoft.com>
-Message-ID: <0001755a-6b2a-b13b-960c-eb0b065c8e3c@linux.microsoft.com>
-Date:   Mon, 11 May 2020 11:03:31 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        Mon, 11 May 2020 15:04:12 -0400
+Received: from mail-ot1-x343.google.com (mail-ot1-x343.google.com [IPv6:2607:f8b0:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07E5EC061A0E
+        for <linux-security-module@vger.kernel.org>; Mon, 11 May 2020 12:04:11 -0700 (PDT)
+Received: by mail-ot1-x343.google.com with SMTP id k110so8474772otc.2
+        for <linux-security-module@vger.kernel.org>; Mon, 11 May 2020 12:04:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=landley-net.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=s73sYUjU2T+59AL45Tu6TCysxqjsop1IGHTRXXypctk=;
+        b=E5S6DY5dOJAQJ1y0RjFlD/g9ZJgf1fK9Qa/tgwB0E5Z9j1UTeta7QmykD9FZ30bOni
+         c4DVq96s2Evv7V9KaW8OQhxbMXwoepXtudd6kQBCa0dJySxYJmwTUrwF2+oRTKC9ExjM
+         gjI+gsIZtPs/bQ+CEiDeOzXyiAhkG5gTCLG6eca9ZRGsF5kXUQvmXWk2zEj5UhOhWuXa
+         hFfBbR18/T3k5p7wj0/LC2+XlwCvrJcFZIIGpWEZHY/IlzLM4XaQkuhODDxDAldBSqfq
+         Zvh1PkSumtOA9HVXZnMw8PSWuZdBo3yLIU5xWM/ii+gXYIVomaFt0qBQWmDt+mvi3Hs0
+         9cfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=s73sYUjU2T+59AL45Tu6TCysxqjsop1IGHTRXXypctk=;
+        b=uBxGBwqbxIK/KvF320iTbwh06sLCFJNQs6JAD0IbSYhWAqP6HyNy3iCV4o8ds5tnZj
+         5mIMMe3yFKHU3wrT2rBuzd0uBJ9ApzgtqQMXROuhXFeF6YEbwqUPQRPNZ4jqpggnZCyJ
+         paKTaWer4zLbCRzojPy8CGLO7OJCeKiN5wgj4vHdU9mGhsX4gMOls7zyIaGhuo0IZChT
+         rZodvldo5IMpgjXgQMpx2FiHDIWJ2tsLh8tJOrQwmUhIs4iovY5iUnc95TzjyMrOzlbr
+         fcNMjpfCfT0X0UHONFSVQ8oxAvlDkIm6l7RpL1U1VIcnx2Ge5TurtmqGmEK5shgecOy5
+         Z5bQ==
+X-Gm-Message-State: AGi0PuaIK8MmO/W6BEAm2Sx3/NqZc13WN16bsl+AG2bj18zj0kqC60h7
+        UIVXhQ7/qMysLZcib9mEV2it9Q==
+X-Google-Smtp-Source: APiQypJIVFT+ZCv+tK80xUXbracodPGzrtONiD0MTwj6mM4HCs3oxADGxVBontAQ8QNSI/IJI96jVw==
+X-Received: by 2002:a05:6830:22e8:: with SMTP id t8mr14366049otc.229.1589223851277;
+        Mon, 11 May 2020 12:04:11 -0700 (PDT)
+Received: from [192.168.86.21] ([136.62.4.88])
+        by smtp.gmail.com with ESMTPSA id a7sm2848586otr.15.2020.05.11.12.04.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 May 2020 12:04:10 -0700 (PDT)
+Subject: Re: [PATCH 3/5] exec: Remove recursion from search_binary_handler
+To:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Andy Lutomirski <luto@amacapital.net>, dalias@libc.org
+References: <87h7wujhmz.fsf@x220.int.ebiederm.org>
+ <87sgga6ze4.fsf@x220.int.ebiederm.org>
+ <87v9l4zyla.fsf_-_@x220.int.ebiederm.org>
+ <87eerszyim.fsf_-_@x220.int.ebiederm.org>
+ <ee83587b-8a1c-3c4f-cc0f-7bc98afabae1@I-love.SAKURA.ne.jp>
+ <CAHk-=wgQ2ovXMW=5ZHCpowkE1PwPQSL7oV4YXzBxd6eqNRXxnQ@mail.gmail.com>
+ <87sgg6v8we.fsf@x220.int.ebiederm.org>
+From:   Rob Landley <rob@landley.net>
+Message-ID: <f33135b7-caa2-94f3-7563-fab6a1f5da0f@landley.net>
+Date:   Mon, 11 May 2020 14:10:23 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-In-Reply-To: <b07ac7e1-7cf5-92c9-81d0-64174c3d5024@digikod.net>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
+In-Reply-To: <87sgg6v8we.fsf@x220.int.ebiederm.org>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On 5/11/20 9:33 AM, Eric W. Biederman wrote:
+> What I do see is that interp_data is just a parameter that is smuggled
+> into the call of search binary handler.  And the next binary handler
+> needs to be binfmt_elf for it to make much sense, as only binfmt_elf
+> (and binfmt_elf_fdpic) deals with BINPRM_FLAGS_EXECFD.
 
+The binfmt_elf_fdpic driver is separate from binfmt_elf for the same reason
+ext2/ext3/ext4 used to have 3 drivers: fdpic is really just binfmt_elf with the
+4 main sections (text, data, bss, rodata) able to move independently of each
+other (each tracked with its own base pointer).
 
-On 5/10/2020 2:28 AM, Mickaël Salaün wrote:
+It's kind of -fPIE on steroids, and various security people have sniffed at it
+over the years to give ASLR more degrees of freedom on with-MMU systems. Many
+moons ago Rich Felker proposed teaching the fdpic loader how to load normal ELF
+binaries so there's just the one loader (there's a flag in the ELF header to say
+whether the sections are independent or not).
 
-[...snip]
-
->>
->> Additionally, rules are evaluated top-to-bottom. As a result, any
->> revocation rules, or denies should be placed early in the file to ensure
->> that these rules are evaluated before a rule with "action=ALLOW" is hit.
->>
->> IPE policy is designed to be forward compatible and backwards compatible,
->> thus any failure to parse a rule will result in the line being ignored,
->> and a warning being emitted. If backwards compatibility is not required,
->> the kernel commandline parameter and sysctl, ipe.strict_parse can be
->> enabled, which will cause these warnings to be fatal.
-> 
-> Ignoring unknown command may lead to inconsistent beaviors. To achieve
-> forward compatibility, I think it would be better to never ignore
-> unknown rule but to give a way to userspace to known what is the current
-> kernel ABI. This could be done with a securityfs file listing the
-> current policy grammar.
-> 
-
-That's a fair point. From a manual perspective, I think this is fine.
-A human-user can interpret a grammar successfully on their own when new
-syntax is introduced.
-
- From a producing API perspective, I'd have to think about it a bit 
-more. Ideally, the grammar would be structured in such a way that the 
-userland
-interpreter of this grammar would not have to be updated once new syntax
-is introduced, avoiding the need to update the userland binary. To do so
-generically ("op=%s") is easy, but doesn't necessarily convey sufficient
-information (what happens when a new "op" token is introduced?). I think
-this may come down to regular expression representations of valid values
-for these tokens, which worries me as regular expressions are incredibly
-error-prone[1].
-
-I'll see what I can come up with regarding this.
-
-
-[1] 
-https://blog.cloudflare.com/details-of-the-cloudflare-outage-on-july-2-2019/
+Rob
