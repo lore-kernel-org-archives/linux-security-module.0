@@ -2,128 +2,132 @@ Return-Path: <SRS0=NXRd=6Z=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7875C54E8D
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 May 2020 13:42:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A33CC47255
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 May 2020 14:13:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8D6C42080C
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 May 2020 13:42:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AxEioQ6g"
+	by mail.kernel.org (Postfix) with ESMTP id 1AC0020708
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 May 2020 14:13:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729724AbgEKNmg (ORCPT
+        id S1730300AbgEKONz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 11 May 2020 09:42:36 -0400
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:32285 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726438AbgEKNmg (ORCPT
+        Mon, 11 May 2020 10:13:55 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2185 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730227AbgEKONz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 11 May 2020 09:42:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1589204555;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=a+4ueUpxmGyJDhdbyflC74SPtwDyNM5MVN9jc/tyoSI=;
-        b=AxEioQ6gtfDKApfSJ0M5QyFLyW5aMGaBQnZK+XgD6zRzuNiAr/9q1S9wlKN6GKg9scukNE
-        mRBpTSasC+DBhOTbuICh/t+BK5uynAKBpsho8neKjDvQ48PQOWDBeBj2T7RvwU42NvJ86e
-        zPljbWTNqVGUJhESS1vLlMxhi3T9PR0=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-401-32cw__SJPtu_XXRNinLaqA-1; Mon, 11 May 2020 09:42:33 -0400
-X-MC-Unique: 32cw__SJPtu_XXRNinLaqA-1
-Received: by mail-qv1-f70.google.com with SMTP id bm3so9705711qvb.0
-        for <linux-security-module@vger.kernel.org>; Mon, 11 May 2020 06:42:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=a+4ueUpxmGyJDhdbyflC74SPtwDyNM5MVN9jc/tyoSI=;
-        b=eGuPsDH/eXuAf7A1+gJKKi8S+StnGOlB7Ci5fXXL59R2b/imzYpN68ANtKczYZ3a1r
-         7WDUkMs56W4QstGw8CVFUP0F6vgjfOp/uUBRXA0WEuOhSC3l4NN+xmSxHErYFA2P7AAF
-         LyXrlhIpwhcJR6p2hIOZ3f3ceys1CUnwaHe+uAPohE6Adb9VVqRPO02LIRprl8jk7cmT
-         0Hf556i1lXTTfdckEC0eAeWkZIyodo9rfpGLGOzchJzbzh6OPxcbeZv6qxgQ8Cq0d40r
-         AgQKtlHOMFNWRg3L05XrbaNa2hI/mcM/Mb+VknKaCMsT3j7i4wPDcWb9FM4n14JBhyCd
-         /mjA==
-X-Gm-Message-State: AGi0PubwStTP1nb5UkHPt9RdG5o/4DKxvDFw2TAfZAcunnvHU0fcwHHi
-        gVZ53zRkW5zGtZiFIaqgAw4jfsJExnpiJlMH2VoYB74k3RUf/rG7mJ/rKRZY4HLWA1Mnf7VHp4l
-        xKA4wHnAnQ6qujJZYel40j2+FCfpCwnxU8G1C
-X-Received: by 2002:ac8:73c1:: with SMTP id v1mr2550415qtp.320.1589204552988;
-        Mon, 11 May 2020 06:42:32 -0700 (PDT)
-X-Google-Smtp-Source: APiQypJ4405i17T0JRi13ewE3f6GCn+QSzyzZe5yeFSXc+m6vqXV/0lUH1IRX3bFPNx4UEMXZUpqcQ==
-X-Received: by 2002:ac8:73c1:: with SMTP id v1mr2550390qtp.320.1589204552670;
-        Mon, 11 May 2020 06:42:32 -0700 (PDT)
-Received: from dev.jcline.org ([136.56.87.133])
-        by smtp.gmail.com with ESMTPSA id c63sm7973124qkf.131.2020.05.11.06.42.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 May 2020 06:42:31 -0700 (PDT)
-Date:   Mon, 11 May 2020 09:42:30 -0400
-From:   Jeremy Cline <jcline@redhat.com>
-To:     James Morris <jmorris@namei.org>
-Cc:     "Serge E . Hallyn" <serge@hallyn.com>,
-        Matthew Garrett <matthewgarrett@google.com>,
-        David Howells <dhowells@redhat.com>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, "Frank Ch . Eigler" <fche@redhat.com>
-Subject: Re: [PATCH] lockdown: Allow unprivileged users to see lockdown status
-Message-ID: <20200511134230.GA2311339@dev.jcline.org>
-References: <20200220151738.1492852-1-jcline@redhat.com>
- <alpine.LRH.2.21.2002220351010.18183@namei.org>
+        Mon, 11 May 2020 10:13:55 -0400
+Received: from lhreml719-chm.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id 71607F49943FEEF7C06D;
+        Mon, 11 May 2020 15:13:53 +0100 (IST)
+Received: from fraeml702-chm.china.huawei.com (10.206.15.51) by
+ lhreml719-chm.china.huawei.com (10.201.108.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
+ 15.1.1913.5; Mon, 11 May 2020 15:13:53 +0100
+Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
+ fraeml702-chm.china.huawei.com (10.206.15.51) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1913.5; Mon, 11 May 2020 16:13:52 +0200
+Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
+ fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.1913.007;
+ Mon, 11 May 2020 16:13:52 +0200
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        "david.safford@gmail.com" <david.safford@gmail.com>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "John Johansen" <john.johansen@canonical.com>
+CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
+Subject: RE: [RFC][PATCH 1/3] evm: Move hooks outside LSM infrastructure
+Thread-Topic: [RFC][PATCH 1/3] evm: Move hooks outside LSM infrastructure
+Thread-Index: AQHWHfmwvisCdHYC6kmVk7fgFWuzYaibYCWAgAAX0QCAAMB1IIAAb0AAgAApg3CAADIngIAAzgGAgACHqACABHSroA==
+Date:   Mon, 11 May 2020 14:13:52 +0000
+Message-ID: <414644a0be9e4af880452f4b5079aba1@huawei.com>
+References: <20200429073935.11913-1-roberto.sassu@huawei.com>
+         <1588794293.4624.21.camel@linux.ibm.com>
+         <1588799408.4624.28.camel@linux.ibm.com>
+         <ab879f9e66874736a40e9c566cadc272@huawei.com>
+         <1588864628.5685.78.camel@linux.ibm.com>
+         <750ab4e0990f47e4aea10d0e580b1074@huawei.com>
+         <1588884313.5685.110.camel@linux.ibm.com>
+         <84e6acad739a415aa3e2457b5c37979f@huawei.com>
+ <1588957684.5146.70.camel@linux.ibm.com>
+In-Reply-To: <1588957684.5146.70.camel@linux.ibm.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.47.12.51]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-In-Reply-To: <alpine.LRH.2.21.2002220351010.18183@namei.org>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, Feb 22, 2020 at 03:51:24AM +1100, James Morris wrote:
-> On Thu, 20 Feb 2020, Jeremy Cline wrote:
-> 
-> > A number of userspace tools, such as systemtap, need a way to see the
-> > current lockdown state so they can gracefully deal with the kernel being
-> > locked down. The state is already exposed in
-> > /sys/kernel/security/lockdown, but is only readable by root. Adjust the
-> > permissions so unprivileged users can read the state.
-> > 
-> > Fixes: 000d388ed3bb ("security: Add a static lockdown policy LSM")
-> > Cc: Frank Ch. Eigler <fche@redhat.com>
-> > Signed-off-by: Jeremy Cline <jcline@redhat.com>
-> 
-> Looks fine to me, any objection from Matthew or others?
-> 
-
-Can we take resounding silence as no objections?
-
-- Jeremy
-
-> > ---
-> >  security/lockdown/lockdown.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
-> > index 5a952617a0eb..87cbdc64d272 100644
-> > --- a/security/lockdown/lockdown.c
-> > +++ b/security/lockdown/lockdown.c
-> > @@ -150,7 +150,7 @@ static int __init lockdown_secfs_init(void)
-> >  {
-> >  	struct dentry *dentry;
-> >  
-> > -	dentry = securityfs_create_file("lockdown", 0600, NULL, NULL,
-> > +	dentry = securityfs_create_file("lockdown", 0644, NULL, NULL,
-> >  					&lockdown_ops);
-> >  	return PTR_ERR_OR_ZERO(dentry);
-> >  }
-> > 
-> 
-> -- 
-> James Morris
-> <jmorris@namei.org>
-> 
-
+PiBGcm9tOiBNaW1pIFpvaGFyIFttYWlsdG86em9oYXJAbGludXguaWJtLmNvbV0NCj4gU2VudDog
+RnJpZGF5LCBNYXkgOCwgMjAyMCA3OjA4IFBNDQo+IE9uIEZyaSwgMjAyMC0wNS0wOCBhdCAxMDoy
+MCArMDAwMCwgUm9iZXJ0byBTYXNzdSB3cm90ZToNCj4gPiA+IEZyb206IE1pbWkgWm9oYXIgW21h
+aWx0bzp6b2hhckBsaW51eC5pYm0uY29tXQ0KPiA+ID4gT24gVGh1LCAyMDIwLTA1LTA3IGF0IDE2
+OjQ3ICswMDAwLCBSb2JlcnRvIFNhc3N1IHdyb3RlOg0KPiANCj4gPHNuaXA+DQo+IA0KPiA+ID4g
+PiA+IHRoZSBmaWxlIG1ldGFkYXRhIHRvIHRoZSBmaWxlIGRhdGEuIMKgVGhlIElNQSBhbmQgRVZN
+IHBvbGljaWVzIHJlYWxseQ0KPiA+ID4gPiA+IG5lZWQgdG8gYmUgaW4gc3luYy4NCj4gPiA+ID4N
+Cj4gPiA+ID4gSXQgd291bGQgYmUgbmljZSwgYnV0IGF0IHRoZSBtb21lbnQgRVZNIGNvbnNpZGVy
+cyBhbHNvIGZpbGVzIHRoYXQgYXJlDQo+ID4gPiA+IG5vdCBzZWxlY3RlZCBieSB0aGUgSU1BIHBv
+bGljeS4gQW4gZXhhbXBsZSBvZiB3aHkgdGhpcyBpcyBhIHByb2JsZW0gaXMNCj4gPiA+ID4gdGhl
+IGF1ZGl0IHNlcnZpY2UgdGhhdCBmYWlscyB0byBzdGFydCB3aGVuIGl0IHRyaWVzIHRvIGFkanVz
+dCB0aGUNCj4gcGVybWlzc2lvbnMNCj4gPiA+ID4gb2YgdGhlIGxvZyBmaWxlcy4gVGhvc2UgZmls
+ZXMgZG9uJ3QgaGF2ZSBzZWN1cml0eS5ldm0gYmVjYXVzZSB0aGV5IGFyZQ0KPiA+ID4gPiBub3Qg
+YXBwcmFpc2VkIGJ5IElNQSwgYnV0IEVWTSBkZW5pZXMgdGhlIG9wZXJhdGlvbi4NCj4gPiA+DQo+
+ID4gPiBObywgdGhpcyBpcyBhIHRpbWluZyBpc3N1ZSBhcyB0byB3aGV0aGVyIG9yIG5vdCB0aGUg
+YnVpbHRpbiBwb2xpY3kgb3INCj4gPiA+IGEgY3VzdG9tIHBvbGljeSBoYXMgYmVlbiBsb2FkZWQu
+IMKgQSBjdXN0b20gcG9saWN5IGNvdWxkIGV4Y2x1ZGUgdGhlDQo+ID4gPiBsb2cgZmlsZXMgYmFz
+ZWQgb24gTFNNIGxhYmVscywgYnV0IHRoZXkgYXJlIGluY2x1ZGVkIGluIHRoZSBidWlsdGluDQo+
+ID4gPiBwb2xpY3kuDQo+ID4NCj4gPiBZZXMsIEkgd2FzIHJlZmVycmluZyB0byBhIGN1c3RvbSBw
+b2xpY3kuIEluIHRoaXMgY2FzZSwgRVZNIHdpbGwgbm90IGFkYXB0DQo+ID4gdG8gdGhlIGN1c3Rv
+bSBwb2xpY3kgYnV0IHN0aWxsIHZlcmlmaWVzIGFsbCBmaWxlcy4gSWYgYWNjZXNzIGNvbnRyb2wg
+aXMgZG9uZQ0KPiA+IGV4Y2x1c2l2ZWx5IGJ5IElNQSBhdCB0aGUgdGltZSBldm1fdmVyaWZ5eGF0
+dHIoKSBpcyBjYWxsZWQsIHdlIHdvdWxkbid0DQo+ID4gbmVlZCB0byBhZGQgc2VjdXJpdHkuZXZt
+IHRvIGFsbCBmaWxlcy4NCj4gDQo+IFJvYmVydG8sIEVWTSBpcyBvbmx5IHRyaWdnZXJlZCBieSBJ
+TUEsIHVubGVzcyB5b3UndmUgbW9kaWZpZWQgdGhlDQo+IGtlcm5lbCB0byBkbyBvdGhlcndpc2Uu
+DQoNCkVWTSB3b3VsZCBkZW55IHhhdHRyL2F0dHIgb3BlcmF0aW9ucyBldmVuIGlmIElNQSBpcyBk
+aXNhYmxlZCBpbiB0aGUNCmtlcm5lbCBjb25maWd1cmF0aW9uLiBGb3IgZXhhbXBsZSwgZXZtX3Nl
+dHhhdHRyKCkgcmV0dXJucyB0aGUgdmFsdWUNCmZyb20gZXZtX3Byb3RlY3RfeGF0dHIoKS4gSU1B
+IGlzIG5vdCBpbnZvbHZlZCB0aGVyZS4NCg0KPiBJJ20gbm90IGludGVyZXN0ZWQgaW4gYSBjb21w
+bGljYXRlZCBzb2x1dGlvbiwganVzdCBvbmUgdGhhdCBhZGRyZXNzZXMNCj4gdGhlIG5ldyBFVk0g
+aW1tdXRhYmxlIGFuZCBwb3J0YWJsZSBzaWduYXR1cmUuIMKgSXQgbWlnaHQgcmVxdWlyZSBFVk0N
+Cj4gSE1BQywgSU1BIGRpZmZlcmVudGlhdGluZyBiZXR3ZWVuIGEgbmV3IGZpbGUgYW5kIGFuIGV4
+aXN0aW5nIGZpbGUsIG9yDQo+IGl0IG1pZ2h0IHJlcXVpcmUgd3JpdGluZyB0aGUgbmV3IEVWTSBz
+aWduYXR1cmUgbGFzdCwgYWZ0ZXIgYWxsIHRoZQ0KPiBvdGhlciB4YXR0cnMgb3IgbWV0YWRhdGEg
+YXJlIHVwZGF0ZWQuIMKgUGxlYXNlIG5vdGhpbmcgdGhhdCBjaGFuZ2VzDQo+IGV4aXN0aW5nIGV4
+cGVjdGF0aW9ucy4NCg0KT2suIEludHJvZHVjaW5nIHRoZSBuZXcgc3RhdHVzIElOVEVHUklUWV9G
+QUlMX0lNTVVUQUJMRSwgYXMgSQ0KbWVudGlvbmVkIGluICdbUEFUQ0hdIGltYTogQWxsb3cgaW1h
+c2lnIHJlcXVpcmVtZW50IHRvIGJlIHNhdGlzZmllZCBieQ0KRVZNIHBvcnRhYmxlIHNpZ25hdHVy
+ZXMnIHNlZW1zIHRvIGhhdmUgYW4gYWRkaXRpb25hbCBiZW5lZml0LiBXZQ0KY291bGQgaW50cm9k
+dWNlIGFuIGFkZGl0aW9uYWwgZXhjZXB0aW9uIGluIGV2bV9wcm90ZWN0X3hhdHRyKCksIG90aGVy
+DQp0aGFuIElOVEVHUklUWV9OT1hBVFRSUywgYXMgd2Uga25vdyB0aGF0IHhhdHRyL2F0dHIgdXBk
+YXRlIHdvbid0DQpjYXVzZSBITUFDIHVwZGF0ZS4NCg0KSG93ZXZlciwgaXQgd29uJ3Qgd29yayB1
+bmxlc3MgdGhlIElNQSBwb2xpY3kgc2F5cyB0aGF0IHRoZSBmaWxlIHNob3VsZA0KYmUgYXBwcmFp
+c2VkIHdoZW4gdGhlIG1rbm9kKCkgc3lzdGVtIGNhbGwgaXMgZXhlY3V0ZWQuIE90aGVyd2lzZSwN
+CmludGVncml0eV9paW50X2NhY2hlIGlzIG5vdCBjcmVhdGVkIGZvciB0aGUgZmlsZSBhbmQgdGhl
+IElNQV9ORVdfRklMRQ0KZmxhZyBpcyBub3Qgc2V0Lg0KDQpHcmFudGluZyBhbiBleGNlcHRpb24g
+Zm9yIElOVEVHUklUWV9GQUlMX0lNTVVUQUJMRSBzb2x2ZXMgdGhlIGNhc2UNCndoZXJlIHNlY3Vy
+aXR5LmV2bSBpcyB0aGUgZmlyc3QgeGF0dHIgc2V0LiBJZiBhIHByb3RlY3RlZCB4YXR0ciBpcyB0
+aGUgZmlyc3QgdG8NCmJlIGFkZGVkLCB0aGVuIHdlIGFsc28gaGF2ZSB0byBoYW5kbGUgdGhlIElO
+VEVHUklUWV9OT0xBQkVMIGVycm9yLg0KSXQgc2hvdWxkIGJlIGZpbmUgdG8gYWRkIGFuIGV4Y2Vw
+dGlvbiBmb3IgdGhpcyBlcnJvciBpZiB0aGUgSE1BQyBrZXkgaXMgbm90DQpsb2FkZWQuDQoNClRo
+aXMgc3RpbGwgZG9lcyBub3Qgc29sdmUgYWxsIHByb2JsZW1zLiBJTlRFR1JJVFlfTk9MQUJFTCBj
+YW5ub3QgYmUNCmlnbm9yZWQgaWYgdGhlIEhNQUMga2V5IGlzIGxvYWRlZCwgd2hpY2ggbWVhbnMg
+dGhhdCBhbGwgZmlsZXMgbmVlZCB0byBiZQ0KcHJvdGVjdGVkIGJ5IEVWTSB0byBhdm9pZCBpc3N1
+ZXMgbGlrZSB0aGUgb25lIEkgZGVzY3JpYmVkIChhdWRpdGQpLg0KDQpSb2JlcnRvDQoNCkhVQVdF
+SSBURUNITk9MT0dJRVMgRHVlc3NlbGRvcmYgR21iSCwgSFJCIDU2MDYzDQpNYW5hZ2luZyBEaXJl
+Y3RvcjogTGkgUGVuZywgTGkgSmlhbiwgU2hpIFlhbmxpDQo=
