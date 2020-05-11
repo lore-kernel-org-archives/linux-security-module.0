@@ -2,298 +2,142 @@ Return-Path: <SRS0=NXRd=6Z=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65239C54E8E
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 May 2020 15:40:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C82DFC47255
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 May 2020 16:28:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3629D2070B
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 May 2020 15:40:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IxQyIcIO"
+	by mail.kernel.org (Postfix) with ESMTP id A4071206DB
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 May 2020 16:28:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730384AbgEKPku (ORCPT
+        id S1730635AbgEKQ2P (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 11 May 2020 11:40:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50686 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730362AbgEKPkt (ORCPT
+        Mon, 11 May 2020 12:28:15 -0400
+Received: from mga04.intel.com ([192.55.52.120]:6889 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729463AbgEKQ2P (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 11 May 2020 11:40:49 -0400
-Received: from mail-vs1-xe41.google.com (mail-vs1-xe41.google.com [IPv6:2607:f8b0:4864:20::e41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB7BBC061A0C;
-        Mon, 11 May 2020 08:40:48 -0700 (PDT)
-Received: by mail-vs1-xe41.google.com with SMTP id x136so5859302vsx.2;
-        Mon, 11 May 2020 08:40:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=EQgkehogAsFB8h7YfU80jzq8Qa80rCdq/G0mVkNPbQU=;
-        b=IxQyIcIOvnDkHwb3enYGhVI3PiBUk2GM4Jb1H/l3Eiv38Dwm+/LGDDiE5i5ZkEi4Yx
-         w4Xq2PdTMsV5/oLqgZqfHdsP6Men+9dRDa88Ge00bagCq1GQkU3Odwa5/1ormqSQXMbR
-         MWve6iJg5xEWJuQ1oglUO1VPiAhGsY0hSfSpRDmsoVIjXDT5iD0jUgEPzKMF/hw5Y6r2
-         UFAze32DLshGZGkV/3Z5ROAtNrNkIRv/7o3r2MmV62e8oAn+/a7OaXSz5eka/3Nqn7Vj
-         IsWz9IbfvLBJ8oq+9834a+R8okYSr35CX5enR+VYouUUlW6di2yksMfevBmA7HiGh4hc
-         w1xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EQgkehogAsFB8h7YfU80jzq8Qa80rCdq/G0mVkNPbQU=;
-        b=cNoclAGe66O7izNO6FnhkuT9k4JWl3ThSrbsoiZbnLoj6If2c+tb+1Vx8P2uH9gI1o
-         tMTlM3iyTC0Ul8QQUfTf+HYXrJsMcy5VQOqSkmD2ciANFF1gOSrJHFPy3zE3JNp+H+7+
-         H1wqBatnG+HIboHPv7M/8r+B8L5DuzLsNUOoILfBZYSTdmoTfClgrnDItWTwBtyWuvK6
-         QFdpmM5DYrp+GbusSytDd/gyUn4A5Hn8G93UbaACgvvr79WjP8HLklHwZOuxD/kGnolw
-         iilwetr7cuXkV8uscP49i0EivZ88NA53aXLFLvDr6vNsmHOcZSGL78nn1SfH59JVfZHc
-         dEKA==
-X-Gm-Message-State: AGi0PuYZayr+f0ldeIBH85nSvGgMi2DxAJU8ZuxawsBkAqvUEaN4n1HN
-        RQwDvDiXTH5mAlFTw51/3UXQ07A52ejKjizrGus=
-X-Google-Smtp-Source: APiQypLAJYC1V0Jr6dK931PEPPRzQKFaoHSzytI2ps/b6WPIQDpKuY7HveAs/2cwETRmO8YnYJA5iFLPW7mreTf0UBg=
-X-Received: by 2002:a67:ec89:: with SMTP id h9mr12146393vsp.3.1589211648025;
- Mon, 11 May 2020 08:40:48 -0700 (PDT)
-MIME-Version: 1.0
+        Mon, 11 May 2020 12:28:15 -0400
+IronPort-SDR: ZeE+8LLUCMyZvY18bc+uSNSqDiM3q2jWTiWXWYLEofpGi4RBtxNo96c/imBZVIR9t4ntRKA2g6
+ KR08i758CtPA==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 May 2020 09:28:14 -0700
+IronPort-SDR: tPxYopzJGX1WjR5PKzi59Zu55kRojt6kgE1DEfCLx+VLCugzI/fgVSNf8HZQZEji2DVDyPsAJZ
+ 7YYE5xeyI8Lg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,380,1583222400"; 
+   d="scan'208";a="371273305"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
+  by fmsmga001.fm.intel.com with SMTP; 11 May 2020 09:28:12 -0700
+Received: by lahna (sSMTP sendmail emulation); Mon, 11 May 2020 19:28:11 +0300
+Date:   Mon, 11 May 2020 19:28:11 +0300
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Richard Hughes <hughsient@gmail.com>
+Cc:     Mario Limonciello <Mario.Limonciello@dell.com>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH] platform/x86: Export LPC attributes for the system SPI
+ chip
+Message-ID: <20200511162811.GA487496@lahna.fi.intel.com>
 References: <18e48255d68a1408b3e3152780f0e789df540059.camel@gmail.com>
  <aa217de398584fa7846cf4ac0c872036@AUSX13MPC101.AMER.DELL.COM>
  <CAD2FfiEk8Fq3=i_3NHvtuwip=-v_cGfnYSowdPi86U_BcgP2gQ@mail.gmail.com>
  <61c7782cd2e64bb9ab2aaf6a016bbb6c@AUSX13MPC101.AMER.DELL.COM>
  <CAD2FfiGweUHNJGdj7OUQFxEhQBYvMCbuWM-+ez=SpN=HbcaS4Q@mail.gmail.com>
  <70757953c25645baac2dddd7c6924d05@AUSX13MPC101.AMER.DELL.COM>
- <20200508082028.GP487496@lahna.fi.intel.com> <CAD2FfiG2c4iXmTjUpQAUqRVBVyH0Hm4VfO5PBTXf03VXHR22ng@mail.gmail.com>
+ <20200508082028.GP487496@lahna.fi.intel.com>
+ <CAD2FfiG2c4iXmTjUpQAUqRVBVyH0Hm4VfO5PBTXf03VXHR22ng@mail.gmail.com>
  <20200511104504.GK487496@lahna.fi.intel.com>
-In-Reply-To: <20200511104504.GK487496@lahna.fi.intel.com>
-From:   Richard Hughes <hughsient@gmail.com>
-Date:   Mon, 11 May 2020 16:40:36 +0100
-Message-ID: <CAD2FfiHn0PNaC3aFXE-hn9Mmtt5JW_D8BK0hOScYXR9EJLNbcw@mail.gmail.com>
-Subject: Re: [PATCH] platform/x86: Export LPC attributes for the system SPI chip
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc:     Mario Limonciello <Mario.Limonciello@dell.com>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>
-Content-Type: multipart/mixed; boundary="000000000000c1a83b05a5612ba1"
+ <CAD2FfiHn0PNaC3aFXE-hn9Mmtt5JW_D8BK0hOScYXR9EJLNbcw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAD2FfiHn0PNaC3aFXE-hn9Mmtt5JW_D8BK0hOScYXR9EJLNbcw@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
---000000000000c1a83b05a5612ba1
-Content-Type: text/plain; charset="UTF-8"
+On Mon, May 11, 2020 at 04:40:36PM +0100, Richard Hughes wrote:
+> On Mon, 11 May 2020 at 11:45, Mika Westerberg
+> <mika.westerberg@linux.intel.com> wrote:
+> > I think you may want to look at drivers/mfd/lpc_ich.c and see if some of
+> > this can be placed there. It is the "LPC" driver that binds to the
+> > LPC/eSPI PCI device so it already has at least some of these PCI IDs.
+> 
+> Ahh, that's useful, thanks. I've attached something based on lpc_ich
+> that works, although there are a few things needing discussion:
+> 
+> * Some of the reported eSPI IDs are missing, and I can't easily find
+> references to them in the official Intel specifications. Do you need
+> me to hunt them down, or can I add DIDs without referencing a document
+> number? I can certainly split out the new DIDs and the securityfs
+> stuff when this patchset looks half-acceptable.
 
-On Mon, 11 May 2020 at 11:45, Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
-> I think you may want to look at drivers/mfd/lpc_ich.c and see if some of
-> this can be placed there. It is the "LPC" driver that binds to the
-> LPC/eSPI PCI device so it already has at least some of these PCI IDs.
+I don't think you need to hunt them down. It should be fine to add PCI
+IDs to the driver without reference document. Of course I'm not the
+maintainer of this driver but I suspect nobody cares.
 
-Ahh, that's useful, thanks. I've attached something based on lpc_ich
-that works, although there are a few things needing discussion:
+> * Do you want the CONFIG_SECURITY functionality put in a different
+> file, perhaps with a different Kconfig entry? e.g. LPC_SCH_SECURITYFS
+> -- if so, how do you want the hooks implemented? Declare a dummy
+> lpc_ich_init_securityfs() if there is no support for securityfs like
+> iommu does? Put the securityfs dentries static in this new file rather
+> than in the lpc_ich_priv struct? Any advice welcome.
 
-* Some of the reported eSPI IDs are missing, and I can't easily find
-references to them in the official Intel specifications. Do you need
-me to hunt them down, or can I add DIDs without referencing a document
-number? I can certainly split out the new DIDs and the securityfs
-stuff when this patchset looks half-acceptable.
+If it depends on that functionality then you may simply add something
+like this in lpc_ich.c:
 
-* Do you want the CONFIG_SECURITY functionality put in a different
-file, perhaps with a different Kconfig entry? e.g. LPC_SCH_SECURITYFS
--- if so, how do you want the hooks implemented? Declare a dummy
-lpc_ich_init_securityfs() if there is no support for securityfs like
-iommu does? Put the securityfs dentries static in this new file rather
-than in the lpc_ich_priv struct? Any advice welcome.
+#if IS_ENABLED(CONFIG_SECURITY)
+static int lpc_ich_init_securityfs(struct pci_dev *dev)
+{
+	...
+}
+#else
+static inline int lpc_ich_init_securityfs(struct pci_dev *dev) { return 0; }
+#endif
 
-* My hardware seems to not set RCBA and so res->start never gets
-defined.I don't think it's a problem from my naive point of view, but
-the -ENODEV is presumably there for a reason.
+I mean empty stubs when the feature is not enabled so the callers can
+always call them. This avoids most ugly #ifdefs.
 
-If you want the patch inline, that's fine too, please just ask and I
-can resend. Thanks for your help so far, and sorry for all the silly
-mistakes -- I'm new to all this kernel stuff.
+> * My hardware seems to not set RCBA and so res->start never gets
+> defined.I don't think it's a problem from my naive point of view, but
+> the -ENODEV is presumably there for a reason.
 
-Richard.
+Yes, so for these recent CPUs the SPI-NOR is actually a PCI device
+itself so it is not exposed through LPC/eSPI. In many cases the device
+is disabled by the BIOS so you can't see it if you run lspci. For
+example my SPT based laptop the device is not visible.
 
---000000000000c1a83b05a5612ba1
-Content-Type: text/x-patch; charset="US-ASCII"; 
-	name="0001-mfd-Export-LPC-attributes-for-the-system-SPI-chip.patch"
-Content-Disposition: attachment; 
-	filename="0001-mfd-Export-LPC-attributes-for-the-system-SPI-chip.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_ka2nijdh0>
-X-Attachment-Id: f_ka2nijdh0
+For the security stuff you are adding, do you need to look at the PCI
+device registers as well? Then some of these bits (at least WPD) is part
+of the config space of that device. In that case lpc_ich may not be the
+right place for this after all.
 
-RnJvbSBjNzE0MTYyZjZmZmVkNDE5ZTUzOGZhZGVkZmIyN2I3MzVlODgyYjAzIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBSaWNoYXJkIEh1Z2hlcyA8cmljaGFyZEBodWdoc2llLmNvbT4K
-RGF0ZTogTW9uLCAxMSBNYXkgMjAyMCAxNDoxOToyNyArMDEwMApTdWJqZWN0OiBbUEFUQ0hdIG1m
-ZDogRXhwb3J0IExQQyBhdHRyaWJ1dGVzIGZvciB0aGUgc3lzdGVtIFNQSSBjaGlwCgpFeHBvcnQg
-c3RhbmRhcmQgU1BJLXNwZWNpZmljIGNvbmZpZyB2YWx1ZXMgZnJvbSB2YXJpb3VzIExQQyBjb250
-cm9sbGVycy4KVGhpcyBhbGxvd3MgdXNlcnNwYWNlIGNvbXBvbmVudHMgc3VjaCBhcyBmd3VwZCB0
-byB2ZXJpZnkgdGhlIG1vc3QgYmFzaWMgU1BJCnByb3RlY3Rpb25zIGFyZSBzZXQgY29ycmVjdGx5
-LiBGb3IgaW5zdGFuY2UsIGNoZWNraW5nIEJJT1NXRSBpcyBkaXNhYmxlZAphbmQgQkxFIGlzIGVu
-YWJsZWQuCgpFeHBvcnRpbmcgdGhlc2UgdmFsdWVzIGZyb20gdGhlIGtlcm5lbCBhbGxvd3MgdXMg
-dG8gcmVwb3J0IHRoZSBzZWN1cml0eQpsZXZlbCBvZiB0aGUgcGxhdGZvcm0gd2l0aG91dCByZWJv
-b3RpbmcgYW5kIHJ1bm5pbmcgYW4gRUZJIGJpbmFyeSBsaWtlCmNoaXBzZWMuCgpTaWduZWQtb2Zm
-LWJ5OiBSaWNoYXJkIEh1Z2hlcyA8cmljaGFyZEBodWdoc2llLmNvbT4KLS0tCiBEb2N1bWVudGF0
-aW9uL0FCSS90ZXN0aW5nL3N5c2ZzLXNlY3VyaXR5LXNwaSB8ICAxNyArKwogZHJpdmVycy9tZmQv
-bHBjX2ljaC5jICAgICAgICAgICAgICAgICAgICAgICAgfCAxNTUgKysrKysrKysrKysrKysrKysr
-LQogaW5jbHVkZS9saW51eC9wbGF0Zm9ybV9kYXRhL2ludGVsLXNwaS5oICAgICAgfCAgIDYgKy0K
-IDMgZmlsZXMgY2hhbmdlZCwgMTcyIGluc2VydGlvbnMoKyksIDYgZGVsZXRpb25zKC0pCiBjcmVh
-dGUgbW9kZSAxMDA2NDQgRG9jdW1lbnRhdGlvbi9BQkkvdGVzdGluZy9zeXNmcy1zZWN1cml0eS1z
-cGkKCmRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL0FCSS90ZXN0aW5nL3N5c2ZzLXNlY3VyaXR5
-LXNwaSBiL0RvY3VtZW50YXRpb24vQUJJL3Rlc3Rpbmcvc3lzZnMtc2VjdXJpdHktc3BpCm5ldyBm
-aWxlIG1vZGUgMTAwNjQ0CmluZGV4IDAwMDAwMDAwMDAwMC4uZWU4NjdiMTM2NmY5Ci0tLSAvZGV2
-L251bGwKKysrIGIvRG9jdW1lbnRhdGlvbi9BQkkvdGVzdGluZy9zeXNmcy1zZWN1cml0eS1zcGkK
-QEAgLTAsMCArMSwxNyBAQAorV2hhdDogICAgICAgICAgIC9zeXMva2VybmVsL3NlY3VyaXR5L3Nw
-aS9iaW9zd2UKK0RhdGU6ICAgICAgICAgICBNYXkgMjAyMAorQ29udGFjdDogICAgICAgIHBsYXRm
-b3JtLWRyaXZlci14ODZAdmdlci5rZXJuZWwub3JnCitEZXNjcmlwdGlvbjogICAgSWYgdGhlIHN5
-c3RlbSBmaXJtd2FyZSBzZXQgQklPUyBXcml0ZSBFbmFibGUuCisJCTA6IHdyaXRlcyBkaXNhYmxl
-ZCwgMTogd3JpdGVzIGVuYWJsZWQuCisKK1doYXQ6ICAgICAgICAgICAvc3lzL2tlcm5lbC9zZWN1
-cml0eS9zcGkvYmxlCitEYXRlOiAgICAgICAgICAgTWF5IDIwMjAKK0NvbnRhY3Q6ICAgICAgICBw
-bGF0Zm9ybS1kcml2ZXIteDg2QHZnZXIua2VybmVsLm9yZworRGVzY3JpcHRpb246ICAgIElmIHRo
-ZSBzeXN0ZW0gZmlybXdhcmUgc2V0IEJpb3MgTG9jayBFbmFibGUuCisJCTA6IFNNTSBsb2NrIGRp
-c2FibGVkLCAxOiBTTU0gbG9jayBlbmFibGVkLgorCitXaGF0OiAgICAgICAgICAgL3N5cy9rZXJu
-ZWwvc2VjdXJpdHkvc3BpL3NtbV9id3AKK0RhdGU6ICAgICAgICAgICBNYXkgMjAyMAorQ29udGFj
-dDogICAgICAgIHBsYXRmb3JtLWRyaXZlci14ODZAdmdlci5rZXJuZWwub3JnCitEZXNjcmlwdGlv
-bjogICAgSWYgdGhlIHN5c3RlbSBmaXJtd2FyZSBzZXQgU01NIEJpb3MgV3JpdGUgUHJvdGVjdC4K
-KwkJMDogd3JpdGVzIGRpc2FibGVkIHVubGVzcyBpbiBTTU0sIDE6IHdyaXRlcyBlbmFibGVkLgpk
-aWZmIC0tZ2l0IGEvZHJpdmVycy9tZmQvbHBjX2ljaC5jIGIvZHJpdmVycy9tZmQvbHBjX2ljaC5j
-CmluZGV4IDNiYmIyOWE3ZTdhNS4uZmYxYjAzZjY3MzA3IDEwMDY0NAotLS0gYS9kcml2ZXJzL21m
-ZC9scGNfaWNoLmMKKysrIGIvZHJpdmVycy9tZmQvbHBjX2ljaC5jCkBAIC0zMyw2ICszMyw4IEBA
-CiAgKglkb2N1bWVudCBudW1iZXIgMzIyMTY5LTAwMSwgMzIyMTcwLTAwMzogNSBTZXJpZXMsIDM0
-MDAgU2VyaWVzIChQQ0gpCiAgKglkb2N1bWVudCBudW1iZXIgMzIwMDY2LTAwMywgMzIwMjU3LTAw
-ODogRVA4MDU5NyAoSUlDSCkKICAqCWRvY3VtZW50IG51bWJlciAzMjQ2NDUtMDAxLCAzMjQ2NDYt
-MDAxOiBDb3VnYXIgUG9pbnQgKENQVCkKKyAqCWRvY3VtZW50IG51bWJlciAzMzI2OTAtMDA2LCAz
-MzI2OTEtMDAzOiBDMjMwIChDUFQpCisgKglkb2N1bWVudCBudW1iZXIgMzM3ODY3LTAwMywgMzM3
-ODY4LTAwMjogQ2Fubm9uIFBvaW50IChQQ0gpCiAgKi8KIAogI2RlZmluZSBwcl9mbXQoZm10KSBL
-QlVJTERfTU9ETkFNRSAiOiAiIGZtdApAQCAtNDYsNiArNDgsMTAgQEAKICNpbmNsdWRlIDxsaW51
-eC9tZmQvbHBjX2ljaC5oPgogI2luY2x1ZGUgPGxpbnV4L3BsYXRmb3JtX2RhdGEvaXRjb193ZHQu
-aD4KIAorI2lmZGVmIENPTkZJR19TRUNVUklUWQorI2luY2x1ZGUgPGxpbnV4L3NlY3VyaXR5Lmg+
-CisjZW5kaWYKKwogI2RlZmluZSBBQ1BJQkFTRQkJMHg0MAogI2RlZmluZSBBQ1BJQkFTRV9HUEVf
-T0ZGCTB4MjgKICNkZWZpbmUgQUNQSUJBU0VfR1BFX0VORAkweDJmCkBAIC02OCw2ICs3NCw4IEBA
-CiAjZGVmaW5lIFNQSUJBU0VfTFBUX1NaCQk1MTIKICNkZWZpbmUgQkNSCQkJMHhkYwogI2RlZmlu
-ZSBCQ1JfV1BECQkJQklUKDApCisjZGVmaW5lIEJDUl9CTEUJCQlCSVQoMSkKKyNkZWZpbmUgQkNS
-X1NNTV9CV1AJCUJJVCg1KQogCiAjZGVmaW5lIFNQSUJBU0VfQVBMX1NaCQk0MDk2CiAKQEAgLTkz
-LDYgKzEwMSwxMyBAQCBzdHJ1Y3QgbHBjX2ljaF9wcml2IHsKIAlpbnQgYWJhc2Vfc2F2ZTsJCS8q
-IENhY2hlZCBBQ1BJIGJhc2UgdmFsdWUgKi8KIAlpbnQgYWN0cmxfcGJhc2Vfc2F2ZTsJCS8qIENh
-Y2hlZCBBQ1BJIGNvbnRyb2wgb3IgUE1DIGJhc2UgdmFsdWUgKi8KIAlpbnQgZ2N0cmxfc2F2ZTsJ
-CS8qIENhY2hlZCBHUElPIGNvbnRyb2wgdmFsdWUgKi8KKworI2lmZGVmIENPTkZJR19TRUNVUklU
-WQorCXN0cnVjdCBkZW50cnkgKnNwaV9kaXI7CQkvKiBTZWN1cml0eUZTIGVudHJpZXMgKi8KKwlz
-dHJ1Y3QgZGVudHJ5ICpzcGlfYmlvc3dlOworCXN0cnVjdCBkZW50cnkgKnNwaV9ibGU7CisJc3Ry
-dWN0IGRlbnRyeSAqc3BpX3NtbV9id3A7CisjZW5kaWYKIH07CiAKIHN0YXRpYyBzdHJ1Y3QgcmVz
-b3VyY2Ugd2R0X2ljaF9yZXNbXSA9IHsKQEAgLTIyMSw2ICsyMzYsOSBAQCBlbnVtIGxwY19jaGlw
-c2V0cyB7CiAJTFBDX0FQTCwJLyogQXBvbGxvIExha2UgU29DICovCiAJTFBDX0dMSywJLyogR2Vt
-aW5pIExha2UgU29DICovCiAJTFBDX0NPVUdBUk1PVU5UQUlOLC8qIENvdWdhciBNb3VudGFpbiBT
-b0MqLworCUxQQ19TUFQsCS8qIFN1bnJpc2UgUG9pbnQgKi8KKwlMUENfS0xLLAkvKiBLYWJ5IExh
-a2UgKi8KKwlMUENfQ05QVCwJLyogQ2Fubm9uIFBvaW50ICovCiB9OwogCiBzdGF0aWMgc3RydWN0
-IGxwY19pY2hfaW5mbyBscGNfY2hpcHNldF9pbmZvW10gPSB7CkBAIC01NTcsNiArNTc1LDE4IEBA
-IHN0YXRpYyBzdHJ1Y3QgbHBjX2ljaF9pbmZvIGxwY19jaGlwc2V0X2luZm9bXSA9IHsKIAkJLm5h
-bWUgPSAiQ291Z2FyIE1vdW50YWluIFNvQyIsCiAJCS5pVENPX3ZlcnNpb24gPSAzLAogCX0sCisJ
-W0xQQ19TUFRdID0geworCQkubmFtZSA9ICJTdW5yaXNlIFBvaW50IiwKKwkJLnNwaV90eXBlID0g
-SU5URUxfU1BJX0xQVCwKKwl9LAorCVtMUENfS0xLXSA9IHsKKwkJLm5hbWUgPSAiS2FieSBMYWtl
-LUgiLAorCQkuc3BpX3R5cGUgPSBJTlRFTF9TUElfTFBULAorCX0sCisJW0xQQ19DTlBUXSA9IHsK
-KwkJLm5hbWUgPSAiQ2Fubm9uIFBvaW50IiwKKwkJLnNwaV90eXBlID0gSU5URUxfU1BJX0xQVCwK
-Kwl9LAogfTsKIAogLyoKQEAgLTc5Miw2ICs4MjIsMjEgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBw
-Y2lfZGV2aWNlX2lkIGxwY19pY2hfaWRzW10gPSB7CiAJeyBQQ0lfVkRFVklDRShJTlRFTCwgMHg5
-Y2M2KSwgTFBDX1dQVF9MUH0sCiAJeyBQQ0lfVkRFVklDRShJTlRFTCwgMHg5Y2M3KSwgTFBDX1dQ
-VF9MUH0sCiAJeyBQQ0lfVkRFVklDRShJTlRFTCwgMHg5Y2M5KSwgTFBDX1dQVF9MUH0sCisJeyBQ
-Q0lfVkRFVklDRShJTlRFTCwgMHg5ZGE0KSwgTFBDX0NOUFR9LAorCXsgUENJX1ZERVZJQ0UoSU5U
-RUwsIDB4YTE0MyksIExQQ19TUFR9LAorCXsgUENJX1ZERVZJQ0UoSU5URUwsIDB4YTE0NCksIExQ
-Q19TUFR9LAorCXsgUENJX1ZERVZJQ0UoSU5URUwsIDB4YTE0NSksIExQQ19TUFR9LAorCXsgUENJ
-X1ZERVZJQ0UoSU5URUwsIDB4YTE0NiksIExQQ19TUFR9LAorCXsgUENJX1ZERVZJQ0UoSU5URUws
-IDB4YTE0NyksIExQQ19TUFR9LAorCXsgUENJX1ZERVZJQ0UoSU5URUwsIDB4YTE0OCksIExQQ19T
-UFR9LAorCXsgUENJX1ZERVZJQ0UoSU5URUwsIDB4YTE0OSksIExQQ19TUFR9LAorCXsgUENJX1ZE
-RVZJQ0UoSU5URUwsIDB4YTE0YSksIExQQ19TUFR9LAorCXsgUENJX1ZERVZJQ0UoSU5URUwsIDB4
-YTE0ZCksIExQQ19TUFR9LAorCXsgUENJX1ZERVZJQ0UoSU5URUwsIDB4YTE0ZSksIExQQ19TUFR9
-LAorCXsgUENJX1ZERVZJQ0UoSU5URUwsIDB4YTE1MCksIExQQ19TUFR9LAorCXsgUENJX1ZERVZJ
-Q0UoSU5URUwsIDB4YTE1MiksIExQQ19LTEt9LAorCXsgUENJX1ZERVZJQ0UoSU5URUwsIDB4YTE1
-MyksIExQQ19LTEt9LAorCXsgUENJX1ZERVZJQ0UoSU5URUwsIDB4YTE1NCksIExQQ19LTEt9LAog
-CXsgUENJX1ZERVZJQ0UoSU5URUwsIDB4YTFjMSksIExQQ19MRVdJU0JVUkd9LAogCXsgUENJX1ZE
-RVZJQ0UoSU5URUwsIDB4YTFjMiksIExQQ19MRVdJU0JVUkd9LAogCXsgUENJX1ZERVZJQ0UoSU5U
-RUwsIDB4YTFjMyksIExQQ19MRVdJU0JVUkd9LApAQCAtMTA4Myw2ICsxMTI4LDkzIEBAIHN0YXRp
-YyBpbnQgbHBjX2ljaF9pbml0X3dkdChzdHJ1Y3QgcGNpX2RldiAqZGV2KQogCXJldHVybiByZXQ7
-CiB9CiAKKyNpZmRlZiBDT05GSUdfU0VDVVJJVFkKK3N0YXRpYyBzc2l6ZV90IGJpb3N3ZV9yZWFk
-KHN0cnVjdCBmaWxlICpmaWxwLCBjaGFyIF9fdXNlciAqYnVmLAorCQkJICAgc2l6ZV90IGNvdW50
-LCBsb2ZmX3QgKnBwb3MpCit7CisJc3RydWN0IGludGVsX3NwaV9ib2FyZGluZm8gKmluZm8gPSBs
-cGNfaWNoX3NwaV9jZWxsLnBsYXRmb3JtX2RhdGE7CisJY2hhciB0bXBbMl07CisKKwlzcHJpbnRm
-KHRtcCwgIiVkXG4iLCBpbmZvLT53cml0ZWFibGUgPyAxIDogMCk7CisJcmV0dXJuIHNpbXBsZV9y
-ZWFkX2Zyb21fYnVmZmVyKGJ1ZiwgY291bnQsIHBwb3MsIHRtcCwgc2l6ZW9mKHRtcCkpOworfQor
-CitzdGF0aWMgY29uc3Qgc3RydWN0IGZpbGVfb3BlcmF0aW9ucyBzcGlfYmlvc3dlX29wcyA9IHsK
-KwkucmVhZCAgPSBiaW9zd2VfcmVhZCwKK307CisKK3N0YXRpYyBzc2l6ZV90IGJsZV9yZWFkKHN0
-cnVjdCBmaWxlICpmaWxwLCBjaGFyIF9fdXNlciAqYnVmLAorCQkJc2l6ZV90IGNvdW50LCBsb2Zm
-X3QgKnBwb3MpCit7CisJc3RydWN0IGludGVsX3NwaV9ib2FyZGluZm8gKmluZm8gPSBscGNfaWNo
-X3NwaV9jZWxsLnBsYXRmb3JtX2RhdGE7CisJY2hhciB0bXBbMl07CisKKwlzcHJpbnRmKHRtcCwg
-IiVkXG4iLCBpbmZvLT5ibGUgPyAxIDogMCk7CisJcmV0dXJuIHNpbXBsZV9yZWFkX2Zyb21fYnVm
-ZmVyKGJ1ZiwgY291bnQsIHBwb3MsIHRtcCwgc2l6ZW9mKHRtcCkpOworfQorCitzdGF0aWMgY29u
-c3Qgc3RydWN0IGZpbGVfb3BlcmF0aW9ucyBzcGlfYmxlX29wcyA9IHsKKwkucmVhZCAgPSBibGVf
-cmVhZCwKK307CisKK3N0YXRpYyBzc2l6ZV90IHNtbV9id3BfcmVhZChzdHJ1Y3QgZmlsZSAqZmls
-cCwgY2hhciBfX3VzZXIgKmJ1ZiwKKwkJCSAgICBzaXplX3QgY291bnQsIGxvZmZfdCAqcHBvcykK
-K3sKKwlzdHJ1Y3QgaW50ZWxfc3BpX2JvYXJkaW5mbyAqaW5mbyA9IGxwY19pY2hfc3BpX2NlbGwu
-cGxhdGZvcm1fZGF0YTsKKwljaGFyIHRtcFsyXTsKKworCXNwcmludGYodG1wLCAiJWRcbiIsIGlu
-Zm8tPnNtbV9id3AgPyAxIDogMCk7CisJcmV0dXJuIHNpbXBsZV9yZWFkX2Zyb21fYnVmZmVyKGJ1
-ZiwgY291bnQsIHBwb3MsIHRtcCwgc2l6ZW9mKHRtcCkpOworfQorCitzdGF0aWMgY29uc3Qgc3Ry
-dWN0IGZpbGVfb3BlcmF0aW9ucyBzcGlfc21tX2J3cF9vcHMgPSB7CisJLnJlYWQgID0gc21tX2J3
-cF9yZWFkLAorfTsKKworc3RhdGljIGludCBscGNfaWNoX2luaXRfc2VjdXJpdHlmcyhzdHJ1Y3Qg
-cGNpX2RldiAqZGV2KQoreworCXN0cnVjdCBscGNfaWNoX3ByaXYgKnByaXYgPSBwY2lfZ2V0X2Ry
-dmRhdGEoZGV2KTsKKworCXByaXYtPnNwaV9kaXIgPSBzZWN1cml0eWZzX2NyZWF0ZV9kaXIoInNw
-aSIsIE5VTEwpOworCWlmIChJU19FUlIocHJpdi0+c3BpX2RpcikpCisJCXJldHVybiAtMTsKKwor
-CXByaXYtPnNwaV9iaW9zd2UgPQorCSAgICBzZWN1cml0eWZzX2NyZWF0ZV9maWxlKCJiaW9zd2Ui
-LAorCQkJCSAgIDA2MDAsIHByaXYtPnNwaV9kaXIsIGRldiwKKwkJCQkgICAmc3BpX2Jpb3N3ZV9v
-cHMpOworCWlmIChJU19FUlIocHJpdi0+c3BpX2Jpb3N3ZSkpCisJCWdvdG8gb3V0OworCXByaXYt
-PnNwaV9ibGUgPQorCSAgICBzZWN1cml0eWZzX2NyZWF0ZV9maWxlKCJibGUiLAorCQkJCSAgIDA2
-MDAsIHByaXYtPnNwaV9kaXIsIGRldiwKKwkJCQkgICAmc3BpX2JsZV9vcHMpOworCWlmIChJU19F
-UlIocHJpdi0+c3BpX2JsZSkpCisJCWdvdG8gb3V0OworCXByaXYtPnNwaV9zbW1fYndwID0KKwkg
-ICAgc2VjdXJpdHlmc19jcmVhdGVfZmlsZSgic21tX2J3cCIsCisJCQkJICAgMDYwMCwgcHJpdi0+
-c3BpX2RpciwgZGV2LAorCQkJCSAgICZzcGlfc21tX2J3cF9vcHMpOworCWlmIChJU19FUlIocHJp
-di0+c3BpX3NtbV9id3ApKQorCQlnb3RvIG91dDsKKwlyZXR1cm4gMDsKK291dDoKKwlzZWN1cml0
-eWZzX3JlbW92ZShwcml2LT5zcGlfYmxlKTsKKwlzZWN1cml0eWZzX3JlbW92ZShwcml2LT5zcGlf
-Ymlvc3dlKTsKKwlzZWN1cml0eWZzX3JlbW92ZShwcml2LT5zcGlfZGlyKTsKKwlyZXR1cm4gLTE7
-Cit9CisKK3N0YXRpYyB2b2lkIGxwY19pY2hfdW5pbml0X3NlY3VyaXR5ZnMoc3RydWN0IHBjaV9k
-ZXYgKmRldikKK3sKKwlzdHJ1Y3QgbHBjX2ljaF9wcml2ICpwcml2ID0gcGNpX2dldF9kcnZkYXRh
-KGRldik7CisJc2VjdXJpdHlmc19yZW1vdmUocHJpdi0+c3BpX3NtbV9id3ApOworCXNlY3VyaXR5
-ZnNfcmVtb3ZlKHByaXYtPnNwaV9ibGUpOworCXNlY3VyaXR5ZnNfcmVtb3ZlKHByaXYtPnNwaV9i
-aW9zd2UpOworCXNlY3VyaXR5ZnNfcmVtb3ZlKHByaXYtPnNwaV9kaXIpOworfQorI2VuZGlmCisK
-IHN0YXRpYyBpbnQgbHBjX2ljaF9pbml0X3NwaShzdHJ1Y3QgcGNpX2RldiAqZGV2KQogewogCXN0
-cnVjdCBscGNfaWNoX3ByaXYgKnByaXYgPSBwY2lfZ2V0X2RydmRhdGEoZGV2KTsKQEAgLTExMTIs
-OSArMTI0NCwxMSBAQCBzdGF0aWMgaW50IGxwY19pY2hfaW5pdF9zcGkoc3RydWN0IHBjaV9kZXYg
-KmRldikKIAkJCXJlcy0+c3RhcnQgPSBzcGlfYmFzZSArIFNQSUJBU0VfTFBUOwogCQkJcmVzLT5l
-bmQgPSByZXMtPnN0YXJ0ICsgU1BJQkFTRV9MUFRfU1ogLSAxOwogCi0JCQlwY2lfcmVhZF9jb25m
-aWdfZHdvcmQoZGV2LCBCQ1IsICZiY3IpOwotCQkJaW5mby0+d3JpdGVhYmxlID0gISEoYmNyICYg
-QkNSX1dQRCk7CiAJCX0KKwkJcGNpX3JlYWRfY29uZmlnX2R3b3JkKGRldiwgQkNSLCAmYmNyKTsK
-KwkJaW5mby0+d3JpdGVhYmxlID0gISEoYmNyICYgQkNSX1dQRCk7CisJCWluZm8tPmJsZSA9ICEh
-KGJjciAmIEJDUl9CTEUpOworCQlpbmZvLT5zbW1fYndwID0gISEoYmNyICYgQkNSX1NNTV9CV1Ap
-OwogCQlicmVhazsKIAogCWNhc2UgSU5URUxfU1BJX0JYVDogewpAQCAtMTEzNiw2ICsxMjcwLDgg
-QEAgc3RhdGljIGludCBscGNfaWNoX2luaXRfc3BpKHN0cnVjdCBwY2lfZGV2ICpkZXYpCiAKIAkJ
-CXBjaV9idXNfcmVhZF9jb25maWdfZHdvcmQoYnVzLCBzcGksIEJDUiwgJmJjcik7CiAJCQlpbmZv
-LT53cml0ZWFibGUgPSAhIShiY3IgJiBCQ1JfV1BEKTsKKwkJCWluZm8tPmJsZSA9ICEhKGJjciAm
-IEJDUl9CTEUpOworCQkJaW5mby0+c21tX2J3cCA9ICEhKGJjciAmIEJDUl9TTU1fQldQKTsKIAkJ
-fQogCiAJCXBjaV9idXNfd3JpdGVfY29uZmlnX2J5dGUoYnVzLCBwMnNiLCAweGUxLCAweDEpOwpA
-QCAtMTE0Niw4ICsxMjgyLDkgQEAgc3RhdGljIGludCBscGNfaWNoX2luaXRfc3BpKHN0cnVjdCBw
-Y2lfZGV2ICpkZXYpCiAJCXJldHVybiAtRUlOVkFMOwogCX0KIAotCWlmICghcmVzLT5zdGFydCkK
-LQkJcmV0dXJuIC1FTk9ERVY7CisvLyBGSVhNRTogbm8gYmFzZSBhZGRyZXNzPworLy8JaWYgKCFy
-ZXMtPnN0YXJ0KQorLy8JCXJldHVybiAtRU5PREVWOwogCiAJbHBjX2ljaF9zcGlfY2VsbC5wbGF0
-Zm9ybV9kYXRhID0gaW5mbzsKIAlscGNfaWNoX3NwaV9jZWxsLnBkYXRhX3NpemUgPSBzaXplb2Yo
-KmluZm8pOwpAQCAtMTIwMSw4ICsxMzM4LDEzIEBAIHN0YXRpYyBpbnQgbHBjX2ljaF9wcm9iZShz
-dHJ1Y3QgcGNpX2RldiAqZGV2LAogCiAJaWYgKGxwY19jaGlwc2V0X2luZm9bcHJpdi0+Y2hpcHNl
-dF0uc3BpX3R5cGUpIHsKIAkJcmV0ID0gbHBjX2ljaF9pbml0X3NwaShkZXYpOwotCQlpZiAoIXJl
-dCkKKwkJaWYgKCFyZXQpIHsKKyNpZmRlZiBDT05GSUdfU0VDVVJJVFkKKwkJCWlmIChscGNfaWNo
-X2luaXRfc2VjdXJpdHlmcyAoZGV2KSkKKwkJCQlyZXR1cm4gLUVJTlZBTDsKKyNlbmRpZgogCQkJ
-Y2VsbF9hZGRlZCA9IHRydWU7CisJCX0KIAl9CiAKIAkvKgpAQCAtMTIyMSw2ICsxMzYzLDkgQEAg
-c3RhdGljIGludCBscGNfaWNoX3Byb2JlKHN0cnVjdCBwY2lfZGV2ICpkZXYsCiBzdGF0aWMgdm9p
-ZCBscGNfaWNoX3JlbW92ZShzdHJ1Y3QgcGNpX2RldiAqZGV2KQogewogCW1mZF9yZW1vdmVfZGV2
-aWNlcygmZGV2LT5kZXYpOworI2lmZGVmIENPTkZJR19TRUNVUklUWQorCWxwY19pY2hfdW5pbml0
-X3NlY3VyaXR5ZnMoZGV2KTsKKyNlbmRpZgogCWxwY19pY2hfcmVzdG9yZV9jb25maWdfc3BhY2Uo
-ZGV2KTsKIH0KIApkaWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51eC9wbGF0Zm9ybV9kYXRhL2ludGVs
-LXNwaS5oIGIvaW5jbHVkZS9saW51eC9wbGF0Zm9ybV9kYXRhL2ludGVsLXNwaS5oCmluZGV4IDdm
-NTNhNWM2ZjM1ZS4uODMwNDViNjFmZmMzIDEwMDY0NAotLS0gYS9pbmNsdWRlL2xpbnV4L3BsYXRm
-b3JtX2RhdGEvaW50ZWwtc3BpLmgKKysrIGIvaW5jbHVkZS9saW51eC9wbGF0Zm9ybV9kYXRhL2lu
-dGVsLXNwaS5oCkBAIC0xOSwxMSArMTksMTUgQEAgZW51bSBpbnRlbF9zcGlfdHlwZSB7CiAvKioK
-ICAqIHN0cnVjdCBpbnRlbF9zcGlfYm9hcmRpbmZvIC0gQm9hcmQgc3BlY2lmaWMgZGF0YSBmb3Ig
-SW50ZWwgU1BJIGRyaXZlcgogICogQHR5cGU6IFR5cGUgd2hpY2ggdGhpcyBjb250cm9sbGVyIGlz
-IGNvbXBhdGlibGUgd2l0aAotICogQHdyaXRlYWJsZTogVGhlIGNoaXAgaXMgd3JpdGVhYmxlCisg
-KiBAd3JpdGVhYmxlOiBUaGUgY2hpcCBpcyB3cml0ZWFibGUsIGEuay5hLiBCSU9TV0UKKyAqIEBi
-bGU6IGEgU01NIGlzIHJhaXNlZCB3aGVuIHNldHRpbmcgQklPU1dFCisgKiBAc21tX2J3cDogdGhl
-IEJJT1MgcmVnaW9uIGlzIG5vbi13cml0YWJsZSB1bmxlc3MgYWxsIHByb2Nlc3NvcnMgYXJlIGlu
-IFNNTQogICovCiBzdHJ1Y3QgaW50ZWxfc3BpX2JvYXJkaW5mbyB7CiAJZW51bSBpbnRlbF9zcGlf
-dHlwZSB0eXBlOwogCWJvb2wgd3JpdGVhYmxlOworCWJvb2wgYmxlOworCWJvb2wgc21tX2J3cDsK
-IH07CiAKICNlbmRpZiAvKiBJTlRFTF9TUElfUERBVEFfSCAqLwotLSAKMi4yNi4yCgo=
---000000000000c1a83b05a5612ba1--
+> If you want the patch inline, that's fine too, please just ask and I
+> can resend. Thanks for your help so far, and sorry for all the silly
+> mistakes -- I'm new to all this kernel stuff.
+
+No problem :)
+
+Typically inline is good. I suggest you to run
+
+  $ scripts/get_maintainers.pl path/to/the/patch
+
+and see who actually maintains this thing. Then, based on the above, if
+you still add it this driver you can send the patch again (I suggest to
+use git send-email) and Cc the maintainer(s). Actually there is this
+entry in MAINTAINERS:
+
+ICH LPC AND GPIO DRIVER
+M:      Peter Tyser <ptyser@xes-inc.com>
+S:      Maintained
+F:      drivers/gpio/gpio-ich.c
+F:      drivers/mfd/lpc_ich.c
+
+So you should Cc Peter as well. And also the MFD maintainer (Lee Jones)
+but get_maintainers.pl should list him.
