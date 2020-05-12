@@ -2,170 +2,114 @@ Return-Path: <SRS0=p3Qd=62=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FCBDC2D0FB
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 22:56:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88105C2D0F8
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 23:01:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7F427206F5
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 22:56:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6398220747
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 23:01:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="N9/eEWjx"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uhy6KSbM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728220AbgELW4u (ORCPT
+        id S1731598AbgELXBQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 12 May 2020 18:56:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60792 "EHLO
+        Tue, 12 May 2020 19:01:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33308 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731308AbgELW4t (ORCPT
+        with ESMTP id S1725938AbgELXBO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 12 May 2020 18:56:49 -0400
-Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83D18C061A0C
-        for <linux-security-module@vger.kernel.org>; Tue, 12 May 2020 15:56:49 -0700 (PDT)
-Received: by mail-pj1-x1042.google.com with SMTP id s69so1961956pjb.4
-        for <linux-security-module@vger.kernel.org>; Tue, 12 May 2020 15:56:49 -0700 (PDT)
+        Tue, 12 May 2020 19:01:14 -0400
+Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86BC8C061A0C;
+        Tue, 12 May 2020 16:01:14 -0700 (PDT)
+Received: by mail-pg1-x544.google.com with SMTP id n11so6865249pgl.9;
+        Tue, 12 May 2020 16:01:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=IXpIsoQged7M/ri/embTMdJh9eC3HGIEafUuSr0Sgp4=;
-        b=N9/eEWjx4KryymG7ZL/gSXanLr0DYNDcTqpqniqQuUXfGEZEOCiOVCUM31Rkg5hbPF
-         RYrLa1KR6sZdrXCo182VyfY9tc7Dc8vFc162i/vIcqYJQGy8FcEAaac5BV+8lc+P9xKZ
-         wBGT4FqmIHHPX2e1wzE8uLoPmiAHm59yHXR8U=
+         :content-disposition:in-reply-to;
+        bh=Lkp9exZ0uzOe9ulySGpCwFGvLvSbRWhZCdrUhtlCelY=;
+        b=Uhy6KSbMUIq2krLCXmjhn4rx8FhpDkxiPnHthvjbGl0bO/xtleadW4qlUkLnrNPi2x
+         odTP9tLL/Cdl1jh8gsdGNS5Qo15G4Rzx+hd/f4daaYtsmzKakB80VHBE8r1K6oEflPLZ
+         wmApeZLYC1Sm8XTmG8GlBvH3/QF5EcSFtkziSsj7jNMEevcD5zRwnRPg7KLNhCi/7V8G
+         HlBnSCVmirNJ5cxR9zomMf3FI6GGDVBgZLWZlnLew5EmZhu6El21YTHvciv+X7JLtSfJ
+         3X5EM207nPNLsfcndQVPlBWxTANPSvx8kKficr2A3oIpswl3bDGyokiPo08xmtPeSlgW
+         1D1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=IXpIsoQged7M/ri/embTMdJh9eC3HGIEafUuSr0Sgp4=;
-        b=dczQpzmvVkpJ9FqYiHofwHT7nnwdqSXcPKVEtBqXcDzS/L8aczOWi70iIsrkNNKluv
-         U+KCM3Mdc3dR5km886Iqx3BTzHkHtxL4+dq1NUDxbnfspYsV9JLco1JJWIjAKekvzf62
-         KN6oIHvTSeU1va274fooaaGXV5EN2q6sbD9oxbYKgDaRHDb7OHu8umhqBVlV+S2w2faQ
-         xzTlniH9dsFg/zMxwowZFxkSR9wFzlLvchym9Iffp+RSKs+KBkdDeTySniXZjwKMg6d5
-         oPSa1tCI+cz3QAkMKVvXNErgmeuOK21TRn99vPNUvdMbLIYbfIXgOsMMFO92nQPt5Fzf
-         yMuQ==
-X-Gm-Message-State: AGi0PuZPbUCxuVSWQ8egPjjVne7rTjqABEfVya0PQkjg0hjvYBCB5fP0
-        7cVJ4PZaho2lkBSpgYW01O5XJQ==
-X-Google-Smtp-Source: APiQypKzgC0TF704AZj7wxJgs6uVQ1eXdDqzXBGagWKY3u4jWSDcjnfhuh2eV/DDEm8B+zOSyJm0Nw==
-X-Received: by 2002:a17:90a:7788:: with SMTP id v8mr30342795pjk.111.1589324208728;
-        Tue, 12 May 2020 15:56:48 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id u5sm11217857pgi.70.2020.05.12.15.56.47
+         :mime-version:content-disposition:in-reply-to;
+        bh=Lkp9exZ0uzOe9ulySGpCwFGvLvSbRWhZCdrUhtlCelY=;
+        b=T65ya+AP5BjqDmuTLCZ7JxNpzhHsi3Aesb2+ptbZvfHzD5z5sTxMvblSNlJKFWfE6O
+         E5AcRGZFFi/ERpH7rWSA6gyadF0wi4VAfv2LoQfXk6wHS7WpgYW1aPEEQ+1Lufp7Jvsr
+         QVR7+iixnq9zK+HjoNSMd9cO5RaWhCgX/s/SF9rb3mxCKb+LvSFmItNCFY+7y4Lpdfmu
+         PeI7lCtHJ3QLgBQZyH11Azj6+JRy51+eR5xtAKs43h8R4YVIJICyJbNqeeVTmyvVW0ma
+         pgJ0bKUBwRfPDyVeOGSi7d6I3lrmgDZsimo4r3J6pG2yvnlgca8fs631SvyHL6Nc3y0Y
+         PTjw==
+X-Gm-Message-State: AGi0PubB2YmShexg5Ugkks5hP33zJze3ehP87NeF3Mdy0AaUBuXFl9dk
+        6/dyEZBae6SqsWZ9KgzWh4M=
+X-Google-Smtp-Source: APiQypL6sC2EeqdTezP31wEP87GDKMOvl0zUN9UdDX5R5ZyktmQnU/cfe8WZIACklOupws2p4X0cpQ==
+X-Received: by 2002:a63:4f0f:: with SMTP id d15mr21472347pgb.339.1589324474036;
+        Tue, 12 May 2020 16:01:14 -0700 (PDT)
+Received: from ast-mbp ([2620:10d:c090:400::5:68dc])
+        by smtp.gmail.com with ESMTPSA id w125sm11446409pgw.22.2020.05.12.16.01.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 May 2020 15:56:47 -0700 (PDT)
-Date:   Tue, 12 May 2020 15:56:46 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Christian Heimes <christian@python.org>
-Cc:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-        linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Eric Chiang <ericchiang@google.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Philippe =?iso-8859-1?Q?Tr=E9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v5 1/6] fs: Add support for an O_MAYEXEC flag on
- openat2(2)
-Message-ID: <202005121555.0A446763@keescook>
-References: <20200505153156.925111-1-mic@digikod.net>
- <20200505153156.925111-2-mic@digikod.net>
- <202005121258.4213DC8A2@keescook>
- <0c70debd-e79e-d514-06c6-4cd1e021fa8b@python.org>
+        Tue, 12 May 2020 16:01:13 -0700 (PDT)
+Date:   Tue, 12 May 2020 16:01:11 -0700
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     Daniel Borkmann <daniel@iogearbox.net>
+Cc:     davem@davemloft.net, netdev@vger.kernel.org, bpf@vger.kernel.org,
+        kernel-team@fb.com, linux-security-module@vger.kernel.org,
+        acme@redhat.com, jamorris@linux.microsoft.com, jannh@google.com,
+        kpsingh@google.com
+Subject: Re: [PATCH v5 bpf-next 2/3] bpf: implement CAP_BPF
+Message-ID: <20200512230111.xvuenymehvzhhmot@ast-mbp>
+References: <20200508215340.41921-1-alexei.starovoitov@gmail.com>
+ <20200508215340.41921-3-alexei.starovoitov@gmail.com>
+ <311508c5-b80f-498e-2d0a-b98fe751ead9@iogearbox.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <0c70debd-e79e-d514-06c6-4cd1e021fa8b@python.org>
+In-Reply-To: <311508c5-b80f-498e-2d0a-b98fe751ead9@iogearbox.net>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, May 12, 2020 at 11:40:35PM +0200, Christian Heimes wrote:
-> On 12/05/2020 23.05, Kees Cook wrote:
-> > On Tue, May 05, 2020 at 05:31:51PM +0200, Mickaël Salaün wrote:
-> >> When the O_MAYEXEC flag is passed, openat2(2) may be subject to
-> >> additional restrictions depending on a security policy managed by the
-> >> kernel through a sysctl or implemented by an LSM thanks to the
-> >> inode_permission hook.  This new flag is ignored by open(2) and
-> >> openat(2).
-> >>
-> >> The underlying idea is to be able to restrict scripts interpretation
-> >> according to a policy defined by the system administrator.  For this to
-> >> be possible, script interpreters must use the O_MAYEXEC flag
-> >> appropriately.  To be fully effective, these interpreters also need to
-> >> handle the other ways to execute code: command line parameters (e.g.,
-> >> option -e for Perl), module loading (e.g., option -m for Python), stdin,
-> >> file sourcing, environment variables, configuration files, etc.
-> >> According to the threat model, it may be acceptable to allow some script
-> >> interpreters (e.g. Bash) to interpret commands from stdin, may it be a
-> >> TTY or a pipe, because it may not be enough to (directly) perform
-> >> syscalls.  Further documentation can be found in a following patch.
-> > 
-> > You touch on this lightly in the cover letter, but it seems there are
-> > plans for Python to restrict stdin parsing? Are there patches pending
-> > anywhere for other interpreters? (e.g. does CLIP OS have such patches?)
-> > 
-> > There's always a push-back against adding features that have external
-> > dependencies, and then those external dependencies can't happen without
-> > the kernel first adding a feature. :) I like getting these catch-22s
-> > broken, and I think the kernel is the right place to start, especially
-> > since the threat model (and implementation) is already proven out in
-> > CLIP OS, and now with IMA. So, while the interpreter side of this is
-> > still under development, this gives them the tool they need to get it
-> > done on the kernel side. So showing those pieces (as you've done) is
-> > great, and I think finding a little bit more detail here would be even
-> > better.
+On Tue, May 12, 2020 at 10:27:33PM +0200, Daniel Borkmann wrote:
+> On 5/8/20 11:53 PM, Alexei Starovoitov wrote:
+> [...]
+> > @@ -2880,8 +2933,6 @@ static int bpf_prog_test_run(const union bpf_attr *attr,
+> >   	struct bpf_prog *prog;
+> >   	int ret = -ENOTSUPP;
+> > -	if (!capable(CAP_SYS_ADMIN))
+> > -		return -EPERM;
 > 
-> Hi,
-> 
-> Python core dev here.
-> 
-> Yes, there are plans to use feature for Python in combination with
-> additional restrictions. For backwards compatibility reasons we cannot
-> change the behavior of the default Python interpreter. I have plans to
-> provide a restricted Python binary that prohibits piping from stdin,
-> disables -c "some_code()", restricts import locations, and a couple of
-> other things. O_MAYEXEC flag makes it easier to block imports from
-> noexec filesystems.
-> 
-> My PoC [1] for a talk [2] last year is inspired by IMA appraisal and a
-> previous talk by Mickaël on O_MAYEXEC.
-> 
-> Christian
-> 
-> [1] https://github.com/zooba/spython/blob/master/linux_xattr/spython.c
-> [2]
-> https://speakerdeck.com/tiran/europython-2019-auditing-hooks-and-security-transparency-for-cpython
+> Should above be under bpf_capable() as well or is the intention to really let
+> (fully) unpriv users run sk_filter test progs here? I would assume only progs
+> that have prior been loaded under bpf_capable() should suffice, so no need to
+> lower the bar for now, no?
 
-Ah, fantastic; thank you! Yes, this will go a long way for helping
-demonstration to other folks that there are people who will be using
-this feature. :)
+Unpriv can load sk_filter and attach to a socket. Then send data through
+the socket to trigger execution.
+bpf_prog_test_run is doing the same prog execution without creating a socket.
+What is the concern?
 
--- 
-Kees Cook
+> >   	if (CHECK_ATTR(BPF_PROG_TEST_RUN))
+> >   		return -EINVAL;
+> > @@ -3163,7 +3214,7 @@ static int bpf_prog_get_info_by_fd(struct bpf_prog *prog,
+> >   	info.run_time_ns = stats.nsecs;
+> >   	info.run_cnt = stats.cnt;
+> > -	if (!capable(CAP_SYS_ADMIN)) {
+> > +	if (!bpf_capable()) {
+> 
+> Given the JIT dump this also exposes addresses when bpf_dump_raw_ok() passes.
+> I presume okay, but should probably be documented given CAP_SYS_ADMIN isn't
+> required anymore?
+
+Exactly. dump_raw_ok() is there. I'm not even sure why this cap_sys_admin
+check is there. It looks like it can be completely removed, but I didn't
+want to go that far in this set.
