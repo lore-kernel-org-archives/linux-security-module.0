@@ -2,62 +2,62 @@ Return-Path: <SRS0=p3Qd=62=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E06AC2D0F7
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 21:06:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8154AC2D0F8
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 21:09:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 49ACA20740
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 21:06:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5FC8820659
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 21:09:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fWqISwwR"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kvOR1LBv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729942AbgELVGC (ORCPT
+        id S1731254AbgELVJp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 12 May 2020 17:06:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43400 "EHLO
+        Tue, 12 May 2020 17:09:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725950AbgELVGB (ORCPT
+        by vger.kernel.org with ESMTP id S1726324AbgELVJp (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 12 May 2020 17:06:01 -0400
-Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95133C061A0E
-        for <linux-security-module@vger.kernel.org>; Tue, 12 May 2020 14:06:01 -0700 (PDT)
-Received: by mail-pg1-x544.google.com with SMTP id b8so6732320pgi.11
-        for <linux-security-module@vger.kernel.org>; Tue, 12 May 2020 14:06:01 -0700 (PDT)
+        Tue, 12 May 2020 17:09:45 -0400
+Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B38F4C061A0C
+        for <linux-security-module@vger.kernel.org>; Tue, 12 May 2020 14:09:43 -0700 (PDT)
+Received: by mail-pg1-x542.google.com with SMTP id a4so6762647pgc.0
+        for <linux-security-module@vger.kernel.org>; Tue, 12 May 2020 14:09:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=j5G1rGAozMzMgyU1JqMyrq0LCgr5U8CbIe+eoAehnBE=;
-        b=fWqISwwRV1Cp0p3hEIqz2JPs/e51xAIhgluD2cuw0MLbuwAWZiAixmlmK1amD62n0U
-         zEQ5N4AJ8vz2XOrZ+RhHCzUw5fVQcoBhK7chafzRSx6BalK67W842qUqQqIuEGuNgMus
-         4D8mn/v3Y3cMZJodmDA2PR3tRpAyvxPruVwsA=
+        bh=4SiIjIE0HqgktULUkxH4huGvPI4IR97vaLn7SaMgRvw=;
+        b=kvOR1LBvbXHsTdtL2TP6eGDZfFC1ooMf5iQTDsBYgNoJtSbpgX4ulckTUbNODBqoP7
+         riZzlWq93xqkYi3zXErNHAHy+/gZ9NrBfN7Gye2AF282HV8iGeljGnl6WQLR0VRh/DEO
+         vErb11z8cHI5SW+sUPYZCGttNjJuR7vSpITj4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to;
-        bh=j5G1rGAozMzMgyU1JqMyrq0LCgr5U8CbIe+eoAehnBE=;
-        b=sdpPOa1zwhAmYgIxAPRXy29Tj3VSt60jvzXlTcI8smcD1doGXd+Q/NLCOR/oq8gXIK
-         WlinQCbPXjOMUdmGba5Dc+PYvCBhK5qXLbfkkKbS7JZvpYsFnimV7KrU0rmgYWZDX05Q
-         14ghNu4arh/iMg4zKHUbjNWca4Nz+JwiJ+HRAaihPhhWWTZG9UNoL51rASKplUhwXLrr
-         o4hVRAAOe5qW4shu7rajA2/yroCGQ5oRUl+NIwZJ2P0FstjL4iMMLkWpr9TREiDfp1g+
-         iNdoSWWHx4+JrMeB+A9101sXwZMZUWKOxsWih2leBCF8FbdOJssG1aOBMkG3+ijD2Qn/
-         frkg==
-X-Gm-Message-State: AGi0PuaWaD3siRSBlaz4zuazW77rAjzukFvMC1WNB6XHiZmWOBARXVeT
-        L9zbOWU+GQsJ8NeeiGwQHJjxYg==
-X-Google-Smtp-Source: APiQypKxymAGHHHmKkMira04oLA2EHbqSrasctJGjgDtYRDvErfuyi2FNoZWH/riiCdh9qC4B+d6Ug==
-X-Received: by 2002:a63:111e:: with SMTP id g30mr20764600pgl.446.1589317561085;
-        Tue, 12 May 2020 14:06:01 -0700 (PDT)
+        bh=4SiIjIE0HqgktULUkxH4huGvPI4IR97vaLn7SaMgRvw=;
+        b=mUtgAnQGAKMKdM/JQwTToR49inaizzalw5ZoVfh0h7KAK7QCPRYuWZy9nC3yZv+4a3
+         5uX8xHMQ0crVS6O4uXNs5xNkpNYYmVq0O/fvjPTA/ZyljWf08IweO87VSGT2PpFpeB8I
+         QAZcAqMIInL9oz9vYZxs3A+l56BJptxvSNUwIESVhqEnhZyxFN/aevNmKQR8M5oSTsOW
+         NK+uNEgyzkTpoSK7TsDL4kili+MvbmcuYvlp538oLGyfTgX5sJuDn+cgOqL4NJw8Jare
+         eYQy1zuYK36EE52Feex1mJpDRIBoWrRo3VLqakoyds5NYJbACsJ08/q/6kRmAzSmfYvi
+         ljYA==
+X-Gm-Message-State: AOAM5329QwadDB6zBbExE65VefPPObKbvxCWhiJ4Vu1B2Cqt6x1Nrl7v
+        gKwNNbGHfFrSBBmSfIEb/sygiQ==
+X-Google-Smtp-Source: ABdhPJxt840LEl+4pcP5gOb8tskJnRcbgXJ1+UHrDACNk2Ju97S34FmnGoVr6OI4La30DBmSgA2nPQ==
+X-Received: by 2002:a63:c04a:: with SMTP id z10mr8594229pgi.430.1589317783313;
+        Tue, 12 May 2020 14:09:43 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id p9sm4128699pgb.19.2020.05.12.14.05.59
+        by smtp.gmail.com with ESMTPSA id g17sm2433251pgg.43.2020.05.12.14.09.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 May 2020 14:05:59 -0700 (PDT)
-Date:   Tue, 12 May 2020 14:05:58 -0700
+        Tue, 12 May 2020 14:09:42 -0700 (PDT)
+Date:   Tue, 12 May 2020 14:09:41 -0700
 From:   Kees Cook <keescook@chromium.org>
 To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
 Cc:     linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
@@ -90,91 +90,70 @@ Cc:     linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
         linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v5 1/6] fs: Add support for an O_MAYEXEC flag on
- openat2(2)
-Message-ID: <202005121258.4213DC8A2@keescook>
+Subject: Re: [PATCH v5 2/6] fs: Add a MAY_EXECMOUNT flag to infer the noexec
+ mount property
+Message-ID: <202005121407.A339D31A@keescook>
 References: <20200505153156.925111-1-mic@digikod.net>
- <20200505153156.925111-2-mic@digikod.net>
+ <20200505153156.925111-3-mic@digikod.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200505153156.925111-2-mic@digikod.net>
+In-Reply-To: <20200505153156.925111-3-mic@digikod.net>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, May 05, 2020 at 05:31:51PM +0200, Mickaël Salaün wrote:
-> When the O_MAYEXEC flag is passed, openat2(2) may be subject to
-> additional restrictions depending on a security policy managed by the
-> kernel through a sysctl or implemented by an LSM thanks to the
-> inode_permission hook.  This new flag is ignored by open(2) and
-> openat(2).
+On Tue, May 05, 2020 at 05:31:52PM +0200, Mickaël Salaün wrote:
+> This new MAY_EXECMOUNT flag enables to check if the underlying mount
+> point of an inode is marked as executable.  This is useful to implement
+> a security policy taking advantage of the noexec mount option.
 > 
-> The underlying idea is to be able to restrict scripts interpretation
-> according to a policy defined by the system administrator.  For this to
-> be possible, script interpreters must use the O_MAYEXEC flag
-> appropriately.  To be fully effective, these interpreters also need to
-> handle the other ways to execute code: command line parameters (e.g.,
-> option -e for Perl), module loading (e.g., option -m for Python), stdin,
-> file sourcing, environment variables, configuration files, etc.
-> According to the threat model, it may be acceptable to allow some script
-> interpreters (e.g. Bash) to interpret commands from stdin, may it be a
-> TTY or a pipe, because it may not be enough to (directly) perform
-> syscalls.  Further documentation can be found in a following patch.
-
-You touch on this lightly in the cover letter, but it seems there are
-plans for Python to restrict stdin parsing? Are there patches pending
-anywhere for other interpreters? (e.g. does CLIP OS have such patches?)
-
-There's always a push-back against adding features that have external
-dependencies, and then those external dependencies can't happen without
-the kernel first adding a feature. :) I like getting these catch-22s
-broken, and I think the kernel is the right place to start, especially
-since the threat model (and implementation) is already proven out in
-CLIP OS, and now with IMA. So, while the interpreter side of this is
-still under development, this gives them the tool they need to get it
-done on the kernel side. So showing those pieces (as you've done) is
-great, and I think finding a little bit more detail here would be even
-better.
-
-> A simple security policy implementation, configured through a dedicated
-> sysctl, is available in a following patch.
-> 
-> This is an updated subset of the patch initially written by Vincent
-> Strubel for CLIP OS 4:
-> https://github.com/clipos-archive/src_platform_clip-patches/blob/f5cb330d6b684752e403b4e41b39f7004d88e561/1901_open_mayexec.patch
-> This patch has been used for more than 11 years with customized script
-> interpreters.  Some examples (with the original name O_MAYEXEC) can be
-> found here:
-> https://github.com/clipos-archive/clipos4_portage-overlay/search?q=O_MAYEXEC
+> This flag is set according to path_noexec(), which checks if a mount
+> point is mounted with MNT_NOEXEC or if the underlying superblock is
+> SB_I_NOEXEC.
 > 
 > Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> Signed-off-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
-> Signed-off-by: Vincent Strubel <vincent.strubel@ssi.gouv.fr>
-
-nit: this needs to be reordered. It's expected that the final SoB
-matches the sender. If you're trying to show co-authorship, please
-see:
-
-https://www.kernel.org/doc/html/latest/process/submitting-patches.html#when-to-use-acked-by-cc-and-co-developed-by
-
-Based on what I've inferred about author ordering, I think you want:
-
-Co-developed-by: Vincent Strubel <vincent.strubel@ssi.gouv.fr>
-Signed-off-by: Vincent Strubel <vincent.strubel@ssi.gouv.fr>
-Co-developed-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
-Signed-off-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
-Co-developed-by: Mickaël Salaün <mic@digikod.net>
-Signed-off-by: Mickaël Salaün <mic@digikod.net>
-
-> Reviewed-by: Deven Bowers <deven.desai@linux.microsoft.com>
+> Reviewed-by: Philippe Trébuchet <philippe.trebuchet@ssi.gouv.fr>
+> Reviewed-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
 > Cc: Aleksa Sarai <cyphar@cyphar.com>
 > Cc: Al Viro <viro@zeniv.linux.org.uk>
 > Cc: Kees Cook <keescook@chromium.org>
+> ---
+>  fs/namei.c         | 2 ++
+>  include/linux/fs.h | 2 ++
+>  2 files changed, 4 insertions(+)
+> 
+> diff --git a/fs/namei.c b/fs/namei.c
+> index a320371899cf..33b6d372e74a 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -2849,6 +2849,8 @@ static int may_open(const struct path *path, int acc_mode, int flag)
+>  		break;
+>  	}
+>  
+> +	/* Pass the mount point executability. */
+> +	acc_mode |= path_noexec(path) ? 0 : MAY_EXECMOUNT;
+>  	error = inode_permission(inode, MAY_OPEN | acc_mode);
+>  	if (error)
+>  		return error;
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 313c934de9ee..79435fca6c3e 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -103,6 +103,8 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
+>  #define MAY_NOT_BLOCK		0x00000080
+>  /* the inode is opened with O_MAYEXEC */
+>  #define MAY_OPENEXEC		0x00000100
+> +/* the mount point is marked as executable */
+> +#define MAY_EXECMOUNT		0x00000200
+>  
+>  /*
+>   * flags in file.f_mode.  Note that FMODE_READ and FMODE_WRITE must correspond
 
-Everything else appears good to me, but Al and Aleksa know VFS internals
-way better. :)
+I find this name unintuitive, but I cannot think of anything better,
+since I think my problem is that "MAY" doesn't map to the language I
+want to use to describe what this flag is indicating.
 
 Reviewed-by: Kees Cook <keescook@chromium.org>
 
