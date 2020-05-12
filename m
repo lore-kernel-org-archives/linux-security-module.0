@@ -2,197 +2,194 @@ Return-Path: <SRS0=p3Qd=62=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE437C2D0F6
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 17:49:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5FAACA90AF
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 18:25:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AAFE3206A5
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 17:49:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C7EF20720
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 18:25:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="az9qtCtx"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CtYBPA6y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726055AbgELRtk (ORCPT
+        id S1728240AbgELSZV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 12 May 2020 13:49:40 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:41738 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725554AbgELRtj (ORCPT
+        Tue, 12 May 2020 14:25:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46698 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726324AbgELSZV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 12 May 2020 13:49:39 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 04CHXA5E161167;
-        Tue, 12 May 2020 17:49:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type : in-reply-to;
- s=corp-2020-01-29; bh=Mkh8GoveSy71S2uynw0exMpKGBlYfJ4yRqogZfsF/Vo=;
- b=az9qtCtxpcAV7j7x0NkX6oDdwrflYUB4tduJ9hd4MiA76p+B1CV5IYS1cajq8oqWuWbO
- jZ5CRgEnxT0RueNWnwbjuRQ05KHvmgnkrEUxkEUAgGUl4QGIsxgzhINlBuZYbjc0/Yq/
- 2IWHYx81/3GDTgvNj3pip9msoSiQbMt4su74HqKiiPo1jL0QL1jsAaCpO48mJmZ/1wgF
- B17zhwloc2tNDBhX51fCmOcy240VyoaZxbAGx3OVT9ksRxb21Wq57WcJV86pRM1THYjA
- 8nfUjH4qzI2x3dMJjZRqq1benphxsoqeNwJeOoWlp2XhdrY0k4RpkA0YoAWUXumst3Ud iw== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2120.oracle.com with ESMTP id 30x3mbvg8w-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 12 May 2020 17:49:18 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 04CHWZGJ143384;
-        Tue, 12 May 2020 17:47:18 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3020.oracle.com with ESMTP id 30xbgkf75x-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 12 May 2020 17:47:17 +0000
-Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 04CHlFmd025612;
-        Tue, 12 May 2020 17:47:15 GMT
-Received: from mwanda (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 12 May 2020 10:47:14 -0700
-Date:   Tue, 12 May 2020 20:47:06 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@nokia.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH v2] evm: Fix a small race in init_desc()
-Message-ID: <20200512174706.GA298379@mwanda>
+        Tue, 12 May 2020 14:25:21 -0400
+Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1B20C061A0C;
+        Tue, 12 May 2020 11:25:19 -0700 (PDT)
+Received: by mail-pg1-x544.google.com with SMTP id u5so3930295pgn.5;
+        Tue, 12 May 2020 11:25:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=3omL/UEu8fdXfy2ixt1kVFwU1RsnLoPQUztZRMXLrZM=;
+        b=CtYBPA6yDdD8BLTbRmVC5toat11nC5DU0rteCRDtDgChNiYwBTndb27VC9gJHJz81+
+         kjA74buH/kehzeLbYkuajQeZe9vb6+HgIzRaISDRYFtrF2fTS4PWX8jmycMIRLCUOC5D
+         PrSvKAg8mE48NADnsn2E0KC+vGE6FfrGxk9KoaB7dVSyFJmXlPup33AQUEqFpkwb2ml8
+         yn6MACncNfUOTdZDw0UGlHMRc16cp2ovN8QduxGYR93ntI0prnVbwn0fNelNoXQZa4rs
+         +Q+4niG/QvYDNej0fRm4IYL8WrOAkE6YN+ttvsjXYr73A/SG9wGFTxO1UXKiRbjpMggH
+         IJRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=3omL/UEu8fdXfy2ixt1kVFwU1RsnLoPQUztZRMXLrZM=;
+        b=RcDfSdNUKcuDrujDXWU3/2bT261kMtDtEryn6UAu+Q/+wHYAF2f4ALaIdW9a0VFFm3
+         oXurNltX5qm4kzVlr24Cla/vfvYnwZFz6DTGsRFcbXzvELPhfxm/KakIYlC9E79/LyA/
+         PiSK6gbrazkvRCEN1T00JrjMCUiqylEvZhQ+Q04cFWGNP06elJiUcObnrU5vJtBlHYos
+         fV+oagsrMFNBRHBrioNUa0MpaTqf441GQc+IaRedoFxwH90+fTj6FNpyOJgz6EV6gZr0
+         /NB9W6u9QKUP0iKkeHQjSVBMrjYcNwZWfIJ6xFhq3QTeymE7MSJ9QXVwevMiYIuRIFlT
+         uIzg==
+X-Gm-Message-State: AGi0PubQgn0wRiyNlI/ArLWtUscLyOEBTDFsJYCoDyx2B0Jwv5gzz15O
+        pURhvLI7YVF9X8gy2vyMC4w=
+X-Google-Smtp-Source: APiQypIWpLcEcettIN+nyXJe33Kig+nEVBGULCVAn7w8glrTX8e4C5FCJ9Vg8lM7L6xqmIDUDrArdQ==
+X-Received: by 2002:a62:76c1:: with SMTP id r184mr23102842pfc.155.1589307919317;
+        Tue, 12 May 2020 11:25:19 -0700 (PDT)
+Received: from ast-mbp ([2620:10d:c090:400::5:c3f6])
+        by smtp.gmail.com with ESMTPSA id 1sm10699212pgy.77.2020.05.12.11.25.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 May 2020 11:25:18 -0700 (PDT)
+Date:   Tue, 12 May 2020 11:25:15 -0700
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     Daniel Borkmann <daniel@iogearbox.net>
+Cc:     davem@davemloft.net, netdev@vger.kernel.org, bpf@vger.kernel.org,
+        kernel-team@fb.com, linux-security-module@vger.kernel.org,
+        acme@redhat.com, jamorris@linux.microsoft.com, jannh@google.com,
+        kpsingh@google.com
+Subject: Re: [PATCH v5 bpf-next 2/3] bpf: implement CAP_BPF
+Message-ID: <20200512182515.7kvp6lvtnsij4jvj@ast-mbp>
+References: <20200508215340.41921-1-alexei.starovoitov@gmail.com>
+ <20200508215340.41921-3-alexei.starovoitov@gmail.com>
+ <2aac2366-151a-5ae1-d65f-9232433f425f@iogearbox.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c7743ab21a574eeeac40d783e0b8581c@huawei.com>
-X-Mailer: git-send-email haha only kidding
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9619 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxlogscore=999
- spamscore=0 suspectscore=2 phishscore=0 bulkscore=0 mlxscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2005120133
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9619 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 impostorscore=0
- mlxscore=0 suspectscore=2 bulkscore=0 mlxlogscore=999 phishscore=0
- malwarescore=0 lowpriorityscore=0 spamscore=0 adultscore=0 clxscore=1011
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2005120133
+In-Reply-To: <2aac2366-151a-5ae1-d65f-9232433f425f@iogearbox.net>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This patch avoids a kernel panic due to accessing an error pointer set by
-crypto_alloc_shash(). It occurs especially when there are many files that
-require an unsupported algorithm, as it would increase the likelihood of
-the following race condition.
+On Tue, May 12, 2020 at 04:35:41PM +0200, Daniel Borkmann wrote:
+> On 5/8/20 11:53 PM, Alexei Starovoitov wrote:
+> > From: Alexei Starovoitov <ast@kernel.org>
+> > 
+> > Implement permissions as stated in uapi/linux/capability.h
+> > In order to do that the verifier allow_ptr_leaks flag is split
+> > into allow_ptr_leaks and bpf_capable flags and they are set as:
+> >    env->allow_ptr_leaks = perfmon_capable();
+> >    env->bpf_capable = bpf_capable();
+> > 
+> > bpf_capable enables bounded loops, variable stack access and other verifier features.
+> > allow_ptr_leaks enable ptr leaks, ptr conversions, subtraction of pointers, etc.
+> > It also disables side channel mitigations.
+> > 
+> > That means that the networking BPF program loaded with CAP_BPF + CAP_NET_ADMIN will
+> > have speculative checks done by the verifier and other spectre mitigation applied.
+> > Such networking BPF program will not be able to leak kernel pointers.
+> 
+> I don't quite follow this part in the code below yet, see my comments.
+> 
+> > Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+> [...]
+> > diff --git a/include/linux/bpf_verifier.h b/include/linux/bpf_verifier.h
+> > index 6abd5a778fcd..c32a7880fa62 100644
+> > --- a/include/linux/bpf_verifier.h
+> > +++ b/include/linux/bpf_verifier.h
+> > @@ -375,6 +375,7 @@ struct bpf_verifier_env {
+> >   	u32 used_map_cnt;		/* number of used maps */
+> >   	u32 id_gen;			/* used to generate unique reg IDs */
+> >   	bool allow_ptr_leaks;
+> > +	bool bpf_capable;
+> >   	bool seen_direct_write;
+> >   	struct bpf_insn_aux_data *insn_aux_data; /* array of per-insn state */
+> >   	const struct bpf_line_info *prev_linfo;
+> > diff --git a/kernel/bpf/arraymap.c b/kernel/bpf/arraymap.c
+> > index 95d77770353c..264a9254dc39 100644
+> > --- a/kernel/bpf/arraymap.c
+> > +++ b/kernel/bpf/arraymap.c
+> > @@ -77,7 +77,7 @@ static struct bpf_map *array_map_alloc(union bpf_attr *attr)
+> >   	bool percpu = attr->map_type == BPF_MAP_TYPE_PERCPU_ARRAY;
+> >   	int ret, numa_node = bpf_map_attr_numa_node(attr);
+> >   	u32 elem_size, index_mask, max_entries;
+> > -	bool unpriv = !capable(CAP_SYS_ADMIN);
+> > +	bool unpriv = !bpf_capable();
+> 
+> So here progs loaded with CAP_BPF will have spectre mitigations bypassed which
+> is the opposite of above statement, no?
 
-Imagine we have two threads and in the first thread crypto_alloc_shash()
-fails and returns an error pointer.
+right. good catch, but now I'm not sure it was such a good call to toss
+spectre into cap_perfmon. It probably should be disabled under cap_bpf.
 
-		*tfm = crypto_alloc_shash(algo, 0, CRYPTO_NOLOAD);
-		if (IS_ERR(*tfm)) {
-			rc = PTR_ERR(*tfm); <--- FIRST THREAD HERE!
-			pr_err("Can not allocate %s (reason: %ld)\n", algo, rc);
-			*tfm = NULL;
+> >   	u64 cost, array_size, mask64;
+> >   	struct bpf_map_memory mem;
+> >   	struct bpf_array *array;
+> [...]
+> > diff --git a/kernel/bpf/core.c b/kernel/bpf/core.c
+> > index 6aa11de67315..8f421dd0c4cf 100644
+> > --- a/kernel/bpf/core.c
+> > +++ b/kernel/bpf/core.c
+> > @@ -646,7 +646,7 @@ static bool bpf_prog_kallsyms_verify_off(const struct bpf_prog *fp)
+> >   void bpf_prog_kallsyms_add(struct bpf_prog *fp)
+> >   {
+> >   	if (!bpf_prog_kallsyms_candidate(fp) ||
+> > -	    !capable(CAP_SYS_ADMIN))
+> > +	    !bpf_capable())
+> >   		return;
+> >   	bpf_prog_ksym_set_addr(fp);
+> > @@ -824,7 +824,7 @@ static int bpf_jit_charge_modmem(u32 pages)
+> >   {
+> >   	if (atomic_long_add_return(pages, &bpf_jit_current) >
+> >   	    (bpf_jit_limit >> PAGE_SHIFT)) {
+> > -		if (!capable(CAP_SYS_ADMIN)) {
+> > +		if (!bpf_capable()) {
+> 
+> Should there still be an upper charge on module mem for !CAP_SYS_ADMIN?
 
-And the second thread is here:
+hmm. cap_bpf is a subset of cap_sys_admin. I don't see a reason
+to keep requiring cap_sys_admin here.
 
-	if (*tfm == NULL) {  <--- SECOND THREAD HERE!
-		mutex_lock(&mutex);
-		if (*tfm)
-			goto out;
+> 
+> >   			atomic_long_sub(pages, &bpf_jit_current);
+> >   			return -EPERM;
+> >   		}
+> [...]
+> > diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+> > index 70ad009577f8..a6893746cd87 100644
+> > --- a/kernel/bpf/verifier.c
+> > +++ b/kernel/bpf/verifier.c
+> [...]
+> > @@ -3428,7 +3429,7 @@ static int check_stack_boundary(struct bpf_verifier_env *env, int regno,
+> >   		 * Spectre masking for stack ALU.
+> >   		 * See also retrieve_ptr_limit().
+> >   		 */
+> > -		if (!env->allow_ptr_leaks) {
+> > +		if (!env->bpf_capable) {
+> 
+> This needs to stay on env->allow_ptr_leaks, the can_skip_alu_sanitation() does
+> check on env->allow_ptr_leaks as well, otherwise this breaks spectre mitgation
+> when masking alu.
 
-Since "*tfm" is non-NULL, we assume that it is valid and that leads to
-a crash when it dereferences "*tfm".
+The patch kept it in can_skip_alu_sanitation(), but I missed it here.
+Don't really recall the details of discussion around
+commit 088ec26d9c2d ("bpf: Reject indirect var_off stack access in unpriv mode")
 
-	desc = kmalloc(sizeof(*desc) + crypto_shash_descsize(*tfm),
-                                                             ^^^^
-
-This patch fixes the problem by introducing a temporary "tmp_tfm" and
-only setting "*tfm" at the very end after everything has succeeded.  The
-other change is that I reversed the initial "if (!*tfm) {" condition and
-pull the code in one indent level.
-
-Cc: stable@vger.kernel.org
-Fixes: d46eb3699502b ("evm: crypto hash replaced by shash")
-Reported-by: Roberto Sassu <roberto.sassu@huawei.com>
-Reported-by: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-v2: I folded mine patch together with Roberto's
-
- security/integrity/evm/evm_crypto.c | 44 ++++++++++++++---------------
- 1 file changed, 22 insertions(+), 22 deletions(-)
-
-diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
-index 35682852ddea9..c9f7206591b30 100644
---- a/security/integrity/evm/evm_crypto.c
-+++ b/security/integrity/evm/evm_crypto.c
-@@ -73,7 +73,7 @@ static struct shash_desc *init_desc(char type, uint8_t hash_algo)
- {
- 	long rc;
- 	const char *algo;
--	struct crypto_shash **tfm;
-+	struct crypto_shash **tfm, *tmp_tfm;
- 	struct shash_desc *desc;
- 
- 	if (type == EVM_XATTR_HMAC) {
-@@ -91,31 +91,31 @@ static struct shash_desc *init_desc(char type, uint8_t hash_algo)
- 		algo = hash_algo_name[hash_algo];
- 	}
- 
--	if (*tfm == NULL) {
--		mutex_lock(&mutex);
--		if (*tfm)
--			goto out;
--		*tfm = crypto_alloc_shash(algo, 0, CRYPTO_NOLOAD);
--		if (IS_ERR(*tfm)) {
--			rc = PTR_ERR(*tfm);
--			pr_err("Can not allocate %s (reason: %ld)\n", algo, rc);
--			*tfm = NULL;
-+	if (*tfm)
-+		goto alloc;
-+	mutex_lock(&mutex);
-+	if (*tfm)
-+		goto unlock;
-+
-+	tmp_tfm = crypto_alloc_shash(algo, 0, CRYPTO_NOLOAD);
-+	if (IS_ERR(tmp_tfm)) {
-+		pr_err("Can not allocate %s (reason: %ld)\n", algo,
-+		       PTR_ERR(tmp_tfm));
-+		mutex_unlock(&mutex);
-+		return ERR_CAST(tmp_tfm);
-+	}
-+	if (type == EVM_XATTR_HMAC) {
-+		rc = crypto_shash_setkey(tmp_tfm, evmkey, evmkey_len);
-+		if (rc) {
-+			crypto_free_shash(tmp_tfm);
- 			mutex_unlock(&mutex);
- 			return ERR_PTR(rc);
- 		}
--		if (type == EVM_XATTR_HMAC) {
--			rc = crypto_shash_setkey(*tfm, evmkey, evmkey_len);
--			if (rc) {
--				crypto_free_shash(*tfm);
--				*tfm = NULL;
--				mutex_unlock(&mutex);
--				return ERR_PTR(rc);
--			}
--		}
--out:
--		mutex_unlock(&mutex);
- 	}
--
-+	*tfm = tmp_tfm;
-+unlock:
-+	mutex_unlock(&mutex);
-+alloc:
- 	desc = kmalloc(sizeof(*desc) + crypto_shash_descsize(*tfm),
- 			GFP_KERNEL);
- 	if (!desc)
--- 
-2.26.2
-
+So thinking all over this bit will effectively disable variable
+stack access which is one of main usability features.
+So for v6 I'm thinking to put spectre bypass into cap_bpf.
+allow_ptr_leak will mean only what the name says: pointer leaks only.
+cap_bpf should not be given to user processes that want to become root
+via spectre side channels.
+I think it's a usability trade-off for cap_bpf.
+Without indirect var under cap_bpf too many networking progs will be forced to use
+cap_bpf+net_net_admin+cap_perfmon only to pass the verifier
+while they don't really care about reading arbitrary memory via cap_perfmon.
