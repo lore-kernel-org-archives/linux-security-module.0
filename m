@@ -2,146 +2,134 @@ Return-Path: <SRS0=p3Qd=62=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C98BDC54E8D
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 15:31:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEA3AC2D0F6
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 15:46:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AEB5E206D3
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 15:31:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE06C20674
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 15:46:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bbL8Ikt9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730630AbgELPbF (ORCPT
+        id S1730238AbgELPqu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 12 May 2020 11:31:05 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2199 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725912AbgELPbE (ORCPT
+        Tue, 12 May 2020 11:46:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50324 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726465AbgELPqu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 12 May 2020 11:31:04 -0400
-Received: from lhreml720-chm.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id 875C7694F362539982F7;
-        Tue, 12 May 2020 16:31:02 +0100 (IST)
-Received: from fraeml704-chm.china.huawei.com (10.206.15.53) by
- lhreml720-chm.china.huawei.com (10.201.108.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
- 15.1.1913.5; Tue, 12 May 2020 16:31:02 +0100
-Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- fraeml704-chm.china.huawei.com (10.206.15.53) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1913.5; Tue, 12 May 2020 17:31:01 +0200
-Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
- fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.1913.007;
- Tue, 12 May 2020 17:31:01 +0200
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        "david.safford@gmail.com" <david.safford@gmail.com>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "John Johansen" <john.johansen@canonical.com>,
-        "matthewgarrett@google.com" <matthewgarrett@google.com>
-CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        Tue, 12 May 2020 11:46:50 -0400
+Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B3DFC061A0C;
+        Tue, 12 May 2020 08:46:50 -0700 (PDT)
+Received: by mail-pf1-x443.google.com with SMTP id y25so6544071pfn.5;
+        Tue, 12 May 2020 08:46:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=tNSRPzmWFClYADxe1xlIlfleHzW5u7iF+WTFSYv3NX8=;
+        b=bbL8Ikt95mBCHHnYF3umxtLlaV3QpoKK1R3R8/mLHysdhED0kL+/q03uTCyF6YCFAe
+         9ibDh/kKIX9ONLWK4rBi5RXlJPxagQNZES7O6F5iuMpabJBXeK1ud76/yjQKrEMnTzFt
+         pZpdrlp2TNm80ZP8xAzjaValWJRsjsWF/1RDcKCkpXrjhiu+PSbO9rLRyGNtwOZ3hjwS
+         cnkucLziNWtzstvn5IwyXLOfd2XVB96F/mht/LreGA5Hl45zdBX5n0hTgVesNzaosuuT
+         Cm0msfXmP7EIHmiT7YRK2NTI0wc868blqtQMrydhGQqgrNJwBTbZkWLp+ydyYB9BysJg
+         aqlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=tNSRPzmWFClYADxe1xlIlfleHzW5u7iF+WTFSYv3NX8=;
+        b=sp3b8/aB7WUcNS0MRqIugYFMu4q/VtJkJTWI4U8PqxYvz5WvqEwDmUpi6OFleFW7sA
+         /zdL5k+kUOYp1g+h+5IpqwtdikGcv9+SO2uAIuLB06EbBh+lBpeoG0RefJL59trAw9CZ
+         YPLdphyeGQcH1XZJuAFNRRdUjHRi4F/4lyv7kMGd0E/7KR/13qQE8Y5d2O93WwGC1y85
+         +1G50CW/vX58eS+jgn2bYIQm3XRXo7NfFDImn2Fi0ihhJIVpDjgTNgssESLBEJ1buzUs
+         Ssrz2vSDVSCIO7dIY09NE8GhHVEzV9FO+N6RMzz8c7dupO2+8sRcdCOpDXcGUHZsMmfD
+         r9QQ==
+X-Gm-Message-State: AOAM533PEPPd6BtRv84b1ofQcJJjDJG5+DNE6D7wPyfAAW0NGLtxn6l3
+        q3ZPNZ7RS6FasuTdu1qMqcA=
+X-Google-Smtp-Source: ABdhPJzQpiDEYvWK/wW423EPySwX4fbTeuiCmvv4YE1jKSbcdLdtaBQ3V7V0ODDlQbjrjQoEGG518w==
+X-Received: by 2002:a63:3114:: with SMTP id x20mr6644562pgx.52.1589298409771;
+        Tue, 12 May 2020 08:46:49 -0700 (PDT)
+Received: from ast-mbp ([2620:10d:c090:400::5:c3f6])
+        by smtp.gmail.com with ESMTPSA id m8sm12795650pjz.27.2020.05.12.08.46.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 May 2020 08:46:48 -0700 (PDT)
+Date:   Tue, 12 May 2020 08:46:45 -0700
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     Jordan Glover <Golden_Miller83@protonmail.ch>
+Cc:     "sdf@google.com" <sdf@google.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "daniel@iogearbox.net" <daniel@iogearbox.net>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+        "kernel-team@fb.com" <kernel-team@fb.com>,
         "linux-security-module@vger.kernel.org" 
         <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
-Subject: RE: [RFC][PATCH 1/3] evm: Move hooks outside LSM infrastructure
-Thread-Topic: [RFC][PATCH 1/3] evm: Move hooks outside LSM infrastructure
-Thread-Index: AQHWHfmwvisCdHYC6kmVk7fgFWuzYaibYCWAgAAX0QCAAMB1IIAAb0AAgAApg3CAADIngIAAzgGAgACHqACABHSroIAAjWsAgAC7FtCAAFxigIAAJvQA
-Date:   Tue, 12 May 2020 15:31:01 +0000
-Message-ID: <d3f4a53e386d4bb1b8c608ac8b6bec1f@huawei.com>
-References: <20200429073935.11913-1-roberto.sassu@huawei.com>
-         <1588794293.4624.21.camel@linux.ibm.com>
-         <1588799408.4624.28.camel@linux.ibm.com>
-         <ab879f9e66874736a40e9c566cadc272@huawei.com>
-         <1588864628.5685.78.camel@linux.ibm.com>
-         <750ab4e0990f47e4aea10d0e580b1074@huawei.com>
-         <1588884313.5685.110.camel@linux.ibm.com>
-         <84e6acad739a415aa3e2457b5c37979f@huawei.com>
-         <1588957684.5146.70.camel@linux.ibm.com>
-         <414644a0be9e4af880452f4b5079aba1@huawei.com>
-         <1589233010.5091.49.camel@linux.ibm.com>
-         <09ee169cfd70492cb526bcb30f99d693@huawei.com>
- <1589293025.5098.53.camel@linux.ibm.com>
-In-Reply-To: <1589293025.5098.53.camel@linux.ibm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.47.12.77]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        "acme@redhat.com" <acme@redhat.com>,
+        "jamorris@linux.microsoft.com" <jamorris@linux.microsoft.com>,
+        "jannh@google.com" <jannh@google.com>,
+        "kpsingh@google.com" <kpsingh@google.com>
+Subject: Re: [PATCH v5 bpf-next 2/3] bpf: implement CAP_BPF
+Message-ID: <20200512154645.rypojoidxtvbvwp4@ast-mbp>
+References: <20200508215340.41921-1-alexei.starovoitov@gmail.com>
+ <20200508215340.41921-3-alexei.starovoitov@gmail.com>
+ <20200512001210.GA235661@google.com>
+ <20200512023641.jupgmhpliblkli4t@ast-mbp.dhcp.thefacebook.com>
+ <ZHW2pvJicBV52gi3gjsDNXDF6t7BteEoHKvEGeVueRPPDrEKGR0OMJjTlulOoOrDNNwcK2c7HE1lNEQw8F2G6SEGCCIAekGoY0T_cnJ-oSc=@protonmail.ch>
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZHW2pvJicBV52gi3gjsDNXDF6t7BteEoHKvEGeVueRPPDrEKGR0OMJjTlulOoOrDNNwcK2c7HE1lNEQw8F2G6SEGCCIAekGoY0T_cnJ-oSc=@protonmail.ch>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-PiBGcm9tOiBvd25lci1saW51eC1zZWN1cml0eS1tb2R1bGVAdmdlci5rZXJuZWwub3JnIFttYWls
-dG86b3duZXItbGludXgtDQo+IHNlY3VyaXR5LW1vZHVsZUB2Z2VyLmtlcm5lbC5vcmddIE9uIEJl
-aGFsZiBPZiBNaW1pIFpvaGFyDQo+IFNlbnQ6IFR1ZXNkYXksIE1heSAxMiwgMjAyMCA0OjE3IFBN
-DQo+IE9uIFR1ZSwgMjAyMC0wNS0xMiBhdCAwNzo1NCArMDAwMCwgUm9iZXJ0byBTYXNzdSB3cm90
-ZToNCj4gPiA+ID4gPiBSb2JlcnRvLCBFVk0gaXMgb25seSB0cmlnZ2VyZWQgYnkgSU1BLCB1bmxl
-c3MgeW91J3ZlIG1vZGlmaWVkIHRoZQ0KPiA+ID4gPiA+IGtlcm5lbCB0byBkbyBvdGhlcndpc2Uu
-DQo+ID4gPiA+DQo+ID4gPiA+IEVWTSB3b3VsZCBkZW55IHhhdHRyL2F0dHIgb3BlcmF0aW9ucyBl
-dmVuIGlmIElNQSBpcyBkaXNhYmxlZCBpbiB0aGUNCj4gPiA+ID4ga2VybmVsIGNvbmZpZ3VyYXRp
-b24uIEZvciBleGFtcGxlLCBldm1fc2V0eGF0dHIoKSByZXR1cm5zIHRoZSB2YWx1ZQ0KPiA+ID4g
-PiBmcm9tIGV2bV9wcm90ZWN0X3hhdHRyKCkuIElNQSBpcyBub3QgaW52b2x2ZWQgdGhlcmUuDQo+
-ID4gPg0KPiA+ID4gQ29tbWl0wqBhZTFiYTE2NzZiODggKCJFVk06IEFsbG93IHVzZXJsYW5kIHRv
-IHBlcm1pdCBtb2RpZmljYXRpb24gb2YNCj4gPiA+IEVWTS1wcm90ZWN0ZWQgbWV0YWRhdGEiKQ0K
-PiBpbnRyb2R1Y2VkwqBFVk1fQUxMT1dfTUVUQURBVEFfV1JJVEVTDQo+ID4gPiB0byBhbGxvdyB3
-cml0aW5nIHRoZSBFVk0gcG9ydGFibGUgYW5kIGltbXV0YWJsZSBmaWxlIHNpZ25hdHVyZXMuDQo+
-ID4NCj4gPiBBY2NvcmRpbmcgdG8gRG9jdW1lbnRhdGlvbi9BQkkvdGVzdGluZy9ldm06DQo+ID4N
-Cj4gPiBOb3RlIHRoYXQgb25jZSBhIGtleSBoYXMgYmVlbiBsb2FkZWQsIGl0IHdpbGwgbm8gbG9u
-Z2VyIGJlDQo+ID4gcG9zc2libGUgdG8gZW5hYmxlIG1ldGFkYXRhIG1vZGlmaWNhdGlvbi4NCj4g
-DQo+IE5vdCBhbnkga2V5LCBidXQgdGhlIEhNQUMga2V5Lg0KPiANCj4gMsKgwqDCoMKgwqDCoMKg
-wqDCoFBlcm1pdCBtb2RpZmljYXRpb24gb2YgRVZNLXByb3RlY3RlZCBtZXRhZGF0YSBhdA0KPiDC
-oCDCoCDCoCDCoCDCoCBydW50aW1lLiBOb3Qgc3VwcG9ydGVkIGlmIEhNQUMgdmFsaWRhdGlvbiBh
-bmQNCj4gwqAgwqAgwqAgwqAgwqAgY3JlYXRpb24gaXMgZW5hYmxlZC4NCg0KI2lmZGVmIENPTkZJ
-R19FVk1fTE9BRF9YNTA5DQp2b2lkIF9faW5pdCBldm1fbG9hZF94NTA5KHZvaWQpDQp7DQpbLi4u
-XQ0KICAgICAgICByYyA9IGludGVncml0eV9sb2FkX3g1MDkoSU5URUdSSVRZX0tFWVJJTkdfRVZN
-LCBDT05GSUdfRVZNX1g1MDlfUEFUSCk7DQogICAgICAgIGlmICghcmMpDQogICAgICAgICAgICAg
-ICAgZXZtX2luaXRpYWxpemVkIHw9IEVWTV9JTklUX1g1MDk7DQoNCg0Kc3RhdGljIHNzaXplX3Qg
-ZXZtX3dyaXRlX2tleShzdHJ1Y3QgZmlsZSAqZmlsZSwgY29uc3QgY2hhciBfX3VzZXIgKmJ1ZiwN
-CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgc2l6ZV90IGNvdW50LCBsb2ZmX3QgKnBwb3Mp
-DQp7DQpbLi4uXQ0KICAgICAgICAvKiBEb24ndCBhbGxvdyBhIHJlcXVlc3QgdG8gZnJlc2hseSBl
-bmFibGUgbWV0YWRhdGEgd3JpdGVzIGlmDQogICAgICAgICAqIGtleXMgYXJlIGxvYWRlZC4NCiAg
-ICAgICAgICovDQogICAgICAgIGlmICgoaSAmIEVWTV9BTExPV19NRVRBREFUQV9XUklURVMpICYm
-DQogICAgICAgICAgICAoKGV2bV9pbml0aWFsaXplZCAmIEVWTV9LRVlfTUFTSykgIT0gMCkgJiYN
-CiAgICAgICAgICAgICEoZXZtX2luaXRpYWxpemVkICYgRVZNX0FMTE9XX01FVEFEQVRBX1dSSVRF
-UykpDQogICAgICAgICAgICAgICAgcmV0dXJuIC1FUEVSTTsNCg0KU2hvdWxkIGhhdmUgYmVlbjoN
-Cg0KICAgICAgICBpZiAoKGkgJiBFVk1fQUxMT1dfTUVUQURBVEFfV1JJVEVTKSAmJg0KICAgICAg
-ICAgICAgKChldm1faW5pdGlhbGl6ZWQgJiBFVk1fSU5JVF9ITUFDKSAhPSAwKSAmJg0KICAgICAg
-ICAgICAgIShldm1faW5pdGlhbGl6ZWQgJiBFVk1fQUxMT1dfTUVUQURBVEFfV1JJVEVTKSkNCiAg
-ICAgICAgICAgICAgICByZXR1cm4gLUVQRVJNOw0KDQo+IEVhY2ggdGltZSB0aGUgRVZNIHByb3Rl
-Y3RlZCBmaWxlIG1ldGFkYXRhIGlzIHVwZGF0ZWQsIHRoZSBFVk0gSE1BQyBpcw0KPiB1cGRhdGVk
-LCBhc3N1bWluZyB0aGUgZXhpc3RpbmcgRVZNIEhNQUMgaXMgdmFsaWQuIMKgVXNlcnNwYWNlIHNo
-b3VsZA0KPiBub3QgaGF2ZSBhY2Nlc3MgdG8gdGhlIEhNQUMga2V5LCBzbyB3ZSBvbmx5IGFsbG93
-IHdyaXRpbmcgRVZNDQo+IHNpZ25hdHVyZXMuDQo+IA0KPiBUaGUgb25seSBkaWZmZXJlbmNlIGJl
-dHdlZW4gd3JpdGluZyB0aGUgb3JpZ2luYWwgRVZNIHNpZ25hdHVyZSBhbmQgdGhlDQo+IG5ldyBw
-b3J0YWJsZSBhbmQgaW1tdXRhYmxlIHNpZ25hdHVyZSBpcyB0aGUgc2VjdXJpdHkuaW1hIHhhdHRy
-DQo+IHJlcXVpcmVtZW50LiDCoFNpbmNlIHRoZSBuZXcgRVZNIHNpZ25hdHVyZSBkb2VzIG5vdCBp
-bmNsdWRlIHRoZQ0KPiBmaWxlc3lzdGVtIHNwZWNpZmljIGRhdGEsIHNvbWV0aGluZyBlbHNlIG5l
-ZWRzIHRvIGJpbmQgdGhlIGZpbGUNCj4gbWV0YWRhdGEgdG8gdGhlIGZpbGUgZGF0YS4gwqBUaHVz
-IHRoZSBJTUEgeGF0dHIgcmVxdWlyZW1lbnQuDQo+IA0KPiBBc3N1bWluZyB0aGF0IHRoZSBuZXcg
-RVZNIHNpZ25hdHVyZSBpcyB3cml0dGVuIGxhc3QsIGFzIGxvbmcgYXMgdGhlcmUNCj4gaXMgYW4g
-SU1BIHhhdHRyLCB0aGVyZSBzaG91bGRuJ3QgYmUgYSBwcm9ibGVtIHdyaXRpbmcgdGhlIG5ldyBF
-Vk0NCj4gc2lnbmF0dXJlLg0KDQogICAgICAgIC8qIGZpcnN0IG5lZWQgdG8ga25vdyB0aGUgc2ln
-IHR5cGUgKi8NCiAgICAgICAgcmMgPSB2ZnNfZ2V0eGF0dHJfYWxsb2MoZGVudHJ5LCBYQVRUUl9O
-QU1FX0VWTSwgKGNoYXIgKiopJnhhdHRyX2RhdGEsIDAsDQogICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgIEdGUF9OT0ZTKTsNCiAgICAgICAgaWYgKHJjIDw9IDApIHsNCiAgICAgICAgICAg
-ICAgICBldm1fc3RhdHVzID0gSU5URUdSSVRZX0ZBSUw7DQogICAgICAgICAgICAgICAgaWYgKHJj
-ID09IC1FTk9EQVRBKSB7DQogICAgICAgICAgICAgICAgICAgICAgICByYyA9IGV2bV9maW5kX3By
-b3RlY3RlZF94YXR0cnMoZGVudHJ5KTsNCiAgICAgICAgICAgICAgICAgICAgICAgIGlmIChyYyA+
-IDApDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGV2bV9zdGF0dXMgPSBJTlRFR1JJ
-VFlfTk9MQUJFTDsNCiAgICAgICAgICAgICAgICAgICAgICAgIGVsc2UgaWYgKHJjID09IDApDQog
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGV2bV9zdGF0dXMgPSBJTlRFR1JJVFlfTk9Y
-QVRUUlM7IC8qIG5ldyBmaWxlICovDQoNCklmIEVWTV9BTExPV19NRVRBREFUQV9XUklURVMgaXMg
-Y2xlYXJlZCwgb25seSB0aGUgZmlyc3QgeGF0dHINCmNhbiBiZSB3cml0dGVuIChzdGF0dXMgSU5U
-RUdSSVRZX05PWEFUVFJTIGlzIG9rKS4gQWZ0ZXIsDQpldm1fZmluZF9wcm90ZWN0ZWRfeGF0dHJz
-KCkgcmV0dXJucyByYyA+IDAsIHNvIHRoZSBzdGF0dXMgaXMNCklOVEVHUklUWV9OT0xBQkVMLCB3
-aGljaCBpcyBub3QgaWdub3JlZCBieSBldm1fcHJvdGVjdF94YXR0cigpLg0KDQpSb2JlcnRvDQoN
-CkhVQVdFSSBURUNITk9MT0dJRVMgRHVlc3NlbGRvcmYgR21iSCwgSFJCIDU2MDYzDQpNYW5hZ2lu
-ZyBEaXJlY3RvcjogTGkgUGVuZywgTGkgSmlhbiwgU2hpIFlhbmxpDQo=
+On Tue, May 12, 2020 at 12:50:05PM +0000, Jordan Glover wrote:
+> On Tuesday, May 12, 2020 2:36 AM, Alexei Starovoitov <alexei.starovoitov@gmail.com> wrote:
+> 
+> > On Mon, May 11, 2020 at 05:12:10PM -0700, sdf@google.com wrote:
+> >
+> > > On 05/08, Alexei Starovoitov wrote:
+> > >
+> > > > From: Alexei Starovoitov ast@kernel.org
+> > > > [..]
+> > > > @@ -3932,7 +3977,7 @@ SYSCALL_DEFINE3(bpf, int, cmd, union bpf_attr
+> > > > __user *, uattr, unsigned int, siz
+> > > > union bpf_attr attr;
+> > > > int err;
+> > >
+> > > > -   if (sysctl_unprivileged_bpf_disabled && !capable(CAP_SYS_ADMIN))
+> > > >
+> > > > -   if (sysctl_unprivileged_bpf_disabled && !bpf_capable())
+> > > >     return -EPERM;
+> > > >     This is awesome, thanks for reviving the effort!
+> > > >
+> > >
+> > > One question I have about this particular snippet:
+> > > Does it make sense to drop bpf_capable checks for the operations
+> > > that work on a provided fd?
+> >
+> > Above snippet is for the case when sysctl switches unpriv off.
+> > It was a big hammer and stays big hammer.
+> > I certainly would like to improve the situation, but I suspect
+> > the folks who turn that sysctl knob on are simply paranoid about bpf
+> > and no amount of reasoning would turn them around.
+> >
+> 
+> Without CAP_BPF, sysctl was the only option to keep you safe from flow
+> of bpf vulns. You didn't had to be paranoid about that.
+
+In the year 2020 there were three verifier bugs that could have been exploited
+through unpriv. All three were found by new kBdysch fuzzer. In 2019 there was
+nothing. Not because people didn't try, but because syzbot fuzzer reached its
+limit. This cap_bpf will help fuzzers find a new set of bugs.
+
+The pace of bpf development is accelerating, so there will be more bugs found
+and introduced in the verifier. Folks that run the very latest kernel are
+taking that risk along with the risk associated with other new kernel features.
+Yet other features don't have sysctls to disable them.
