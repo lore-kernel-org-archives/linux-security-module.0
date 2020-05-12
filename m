@@ -2,173 +2,139 @@ Return-Path: <SRS0=p3Qd=62=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F54CC54E8D
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 13:43:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44FEEC54E4A
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 14:17:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 394ED20675
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 13:43:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 257D4206D3
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 14:17:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730053AbgELNnz convert rfc822-to-8bit (ORCPT
+        id S1729936AbgELORa (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 12 May 2020 09:43:55 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2198 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726891AbgELNnz (ORCPT
+        Tue, 12 May 2020 10:17:30 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:2956 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729336AbgELORa (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 12 May 2020 09:43:55 -0400
-Received: from lhreml718-chm.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id 661F7554DE7C1AF8E32F;
-        Tue, 12 May 2020 14:43:53 +0100 (IST)
-Received: from fraeml704-chm.china.huawei.com (10.206.15.53) by
- lhreml718-chm.china.huawei.com (10.201.108.69) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
- 15.1.1913.5; Tue, 12 May 2020 14:43:53 +0100
-Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- fraeml704-chm.china.huawei.com (10.206.15.53) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1913.5; Tue, 12 May 2020 15:43:52 +0200
-Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
- fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.1913.007;
- Tue, 12 May 2020 15:43:52 +0200
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Mimi Zohar <zohar@linux.ibm.com>
-CC:     James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
+        Tue, 12 May 2020 10:17:30 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 04CEBH1m009256;
+        Tue, 12 May 2020 10:17:12 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 30ws5f45jh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 12 May 2020 10:17:12 -0400
+Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 04CEBVxM010678;
+        Tue, 12 May 2020 10:17:11 -0400
+Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 30ws5f45gf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 12 May 2020 10:17:11 -0400
+Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
+        by ppma04ams.nl.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 04CEGHW2001007;
+        Tue, 12 May 2020 14:17:09 GMT
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
+        by ppma04ams.nl.ibm.com with ESMTP id 30wm55en15-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 12 May 2020 14:17:09 +0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 04CEH7du46203022
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 12 May 2020 14:17:07 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EAF424C064;
+        Tue, 12 May 2020 14:17:06 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AC2FB4C046;
+        Tue, 12 May 2020 14:17:05 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.144.67])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 12 May 2020 14:17:05 +0000 (GMT)
+Message-ID: <1589293025.5098.53.camel@linux.ibm.com>
+Subject: Re: [RFC][PATCH 1/3] evm: Move hooks outside LSM infrastructure
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>,
+        "david.safford@gmail.com" <david.safford@gmail.com>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        John Johansen <john.johansen@canonical.com>,
+        "matthewgarrett@google.com" <matthewgarrett@google.com>
+Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
         "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
         "linux-security-module@vger.kernel.org" 
         <linux-security-module@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
-Subject: RE: [PATCH] evm: Fix a small race in init_desc()
-Thread-Topic: [PATCH] evm: Fix a small race in init_desc()
-Thread-Index: AQHWKGALS6wWEHovpU+0Qv/QmQu7IqikdX+g
-Date:   Tue, 12 May 2020 13:43:52 +0000
-Message-ID: <c7743ab21a574eeeac40d783e0b8581c@huawei.com>
-References: <20200512130410.GB2056@kadam> <20200512131917.GA287386@mwanda>
-In-Reply-To: <20200512131917.GA287386@mwanda>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.47.12.77]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Date:   Tue, 12 May 2020 10:17:05 -0400
+In-Reply-To: <09ee169cfd70492cb526bcb30f99d693@huawei.com>
+References: <20200429073935.11913-1-roberto.sassu@huawei.com>
+         <1588794293.4624.21.camel@linux.ibm.com>
+         <1588799408.4624.28.camel@linux.ibm.com>
+         <ab879f9e66874736a40e9c566cadc272@huawei.com>
+         <1588864628.5685.78.camel@linux.ibm.com>
+         <750ab4e0990f47e4aea10d0e580b1074@huawei.com>
+         <1588884313.5685.110.camel@linux.ibm.com>
+         <84e6acad739a415aa3e2457b5c37979f@huawei.com>
+         <1588957684.5146.70.camel@linux.ibm.com>
+         <414644a0be9e4af880452f4b5079aba1@huawei.com>
+         <1589233010.5091.49.camel@linux.ibm.com>
+         <09ee169cfd70492cb526bcb30f99d693@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.676
+ definitions=2020-05-12_03:2020-05-11,2020-05-12 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
+ phishscore=0 spamscore=0 impostorscore=0 malwarescore=0 mlxlogscore=999
+ lowpriorityscore=0 bulkscore=0 adultscore=0 priorityscore=1501 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2005120106
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-> From: linux-integrity-owner@vger.kernel.org [mailto:linux-integrity-
-> owner@vger.kernel.org] On Behalf Of Dan Carpenter
-> Sent: Tuesday, May 12, 2020 3:19 PM
-> Subject: [PATCH] evm: Fix a small race in init_desc()
+On Tue, 2020-05-12 at 07:54 +0000, Roberto Sassu wrote:
+> > > > Roberto, EVM is only triggered by IMA, unless you've modified the
+> > > > kernel to do otherwise.
+> > >
+> > > EVM would deny xattr/attr operations even if IMA is disabled in the
+> > > kernel configuration. For example, evm_setxattr() returns the value
+> > > from evm_protect_xattr(). IMA is not involved there.
+> > 
+> > Commit ae1ba1676b88 ("EVM: Allow userland to permit modification of
+> > EVM-protected metadata") introduced EVM_ALLOW_METADATA_WRITES
+> > to allow writing the EVM portable and immutable file signatures.
 > 
-> The IS_ERR_OR_NULL() function has two conditions and if we got really
-> unlucky we could hit a race where "ptr" started as an error pointer and
-> then was set to NULL.  Both conditions would be false even though the
-> pointer at the end was NULL.
+> According to Documentation/ABI/testing/evm:
 > 
-> This patch fixes the problem by ensuring that "*tfm" can only be NULL
-> or valid.  I have introduced a "tmp_tfm" variable to make that work.  I
-> also reversed a condition and pulled the code in one tab.
-> 
-> Reported-by: Roberto Sassu <roberto.sassu@huawei.com>
-> Fixes: 53de3b080d5e: "evm: Check also if *tfm is an error pointer in
-> init_desc()"
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> I just had a go at the fix.  I'm not super wedded to this solution, but
-> I hoped it was nice.
+> Note that once a key has been loaded, it will no longer be
+> possible to enable metadata modification.
 
-Thanks. I think you can merge both patches in one, as the first one
-is not yet pulled.
+Not any key, but the HMAC key.
+ 
+2         Permit modification of EVM-protected metadata at
+          runtime. Not supported if HMAC validation and
+          creation is enabled.
 
-Roberto
+Each time the EVM protected file metadata is updated, the EVM HMAC is
+updated, assuming the existing EVM HMAC is valid.  Userspace should
+not have access to the HMAC key, so we only allow writing EVM
+signatures.
 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Li Peng, Li Jian, Shi Yanli
+The only difference between writing the original EVM signature and the
+new portable and immutable signature is the security.ima xattr
+requirement.  Since the new EVM signature does not include the
+filesystem specific data, something else needs to bind the file
+metadata to the file data.  Thus the IMA xattr requirement.
 
+Assuming that the new EVM signature is written last, as long as there
+is an IMA xattr, there shouldn't be a problem writing the new EVM
+signature.
 
->  security/integrity/evm/evm_crypto.c | 44 ++++++++++++++---------------
->  1 file changed, 22 insertions(+), 22 deletions(-)
-> 
-> diff --git a/security/integrity/evm/evm_crypto.c
-> b/security/integrity/evm/evm_crypto.c
-> index 5d3789edab71f..168c3b78ac47b 100644
-> --- a/security/integrity/evm/evm_crypto.c
-> +++ b/security/integrity/evm/evm_crypto.c
-> @@ -73,7 +73,7 @@ static struct shash_desc *init_desc(char type, uint8_t
-> hash_algo)
->  {
->  	long rc;
->  	const char *algo;
-> -	struct crypto_shash **tfm;
-> +	struct crypto_shash **tfm, *tmp_tfm;
->  	struct shash_desc *desc;
-> 
->  	if (type == EVM_XATTR_HMAC) {
-> @@ -91,31 +91,31 @@ static struct shash_desc *init_desc(char type, uint8_t
-> hash_algo)
->  		algo = hash_algo_name[hash_algo];
->  	}
-> 
-> -	if (IS_ERR_OR_NULL(*tfm)) {
-> -		mutex_lock(&mutex);
-> -		if (*tfm)
-> -			goto out;
-> -		*tfm = crypto_alloc_shash(algo, 0, CRYPTO_NOLOAD);
-> -		if (IS_ERR(*tfm)) {
-> -			rc = PTR_ERR(*tfm);
-> -			pr_err("Can not allocate %s (reason: %ld)\n", algo,
-> rc);
-> -			*tfm = NULL;
-> +	if (*tfm)
-> +		goto alloc;
-> +	mutex_lock(&mutex);
-> +	if (*tfm)
-> +		goto unlock;
-> +
-> +	tmp_tfm = crypto_alloc_shash(algo, 0, CRYPTO_NOLOAD);
-> +	if (IS_ERR(tmp_tfm)) {
-> +		pr_err("Can not allocate %s (reason: %ld)\n", algo,
-> +		       PTR_ERR(tmp_tfm));
-> +		mutex_unlock(&mutex);
-> +		return ERR_CAST(tmp_tfm);
-> +	}
-> +	if (type == EVM_XATTR_HMAC) {
-> +		rc = crypto_shash_setkey(tmp_tfm, evmkey, evmkey_len);
-> +		if (rc) {
-> +			crypto_free_shash(tmp_tfm);
->  			mutex_unlock(&mutex);
->  			return ERR_PTR(rc);
->  		}
-> -		if (type == EVM_XATTR_HMAC) {
-> -			rc = crypto_shash_setkey(*tfm, evmkey,
-> evmkey_len);
-> -			if (rc) {
-> -				crypto_free_shash(*tfm);
-> -				*tfm = NULL;
-> -				mutex_unlock(&mutex);
-> -				return ERR_PTR(rc);
-> -			}
-> -		}
-> -out:
-> -		mutex_unlock(&mutex);
->  	}
-> -
-> +	*tfm = tmp_tfm;
-> +unlock:
-> +	mutex_unlock(&mutex);
-> +alloc:
->  	desc = kmalloc(sizeof(*desc) + crypto_shash_descsize(*tfm),
->  			GFP_KERNEL);
->  	if (!desc)
-> --
-> 2.26.2
-
+Mimi
