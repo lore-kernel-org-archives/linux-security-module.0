@@ -2,142 +2,164 @@ Return-Path: <SRS0=p3Qd=62=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E694CA90AF
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 16:03:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51010CA90AF
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 16:31:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 163972054F
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 16:03:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="gLg6PpJ7"
+	by mail.kernel.org (Postfix) with ESMTP id 34FB8206CC
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 16:31:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726055AbgELQDR (ORCPT
+        id S1728054AbgELQbj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 12 May 2020 12:03:17 -0400
-Received: from sonic309-27.consmr.mail.ne1.yahoo.com ([66.163.184.153]:45775
-        "EHLO sonic309-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728957AbgELQDR (ORCPT
+        Tue, 12 May 2020 12:31:39 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2200 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727778AbgELQbj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 12 May 2020 12:03:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1589299396; bh=o4V6Ojns+3S3dbpqfxxqD6QRxuVDE62B+SyjLJ3t7b4=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=gLg6PpJ7WCknSootPWo2iQEM1rlWa97uSwVzexUYN7rPmyZHZh3QSj6QDZjdD3st/6PYNUqvRiVdI/rMjZCpfhYNE+fRMOo6c/WBsz0nIy64Wrp45zbrEc28RtxFUq46LGCDAzkKdmHaCV90fuTHnreLBCYFFjGos3Gv77NIAZFd+tK5bpn35KoDD/rQ76/blLbiKyxUSYvIqGdf00ZQsYkEL6o1oLrjEcdewl+75h2klo+ibNLPA4kC8zSCu8AAK81mBlDGa4sUhkC9QHUsLOl9OkNtk20l87v3AKx9FqBwnGDsFSRQ6y0nm7lucji+9EwGLO/wDg92SBK59wKM5Q==
-X-YMail-OSG: 4D_LO8QVM1m_xXQJdRYpgpEcXPp55XTdXvGeMR__d9pD3ug_V6ZNE2xzAnG0nNJ
- lSKe3EpVVYph0.gZA3JJsnSmzQyNr2SBdC2scEPTWGG5c27qDf_3Mb9zgxc_5jNZX9l96ZZazDPS
- sqtPgLwQh8SPXa7biUBuT0buJC9b3TBQlRkRa5d4paLle_Lp.LG_OBQ32JWxcwGVN9f4HbuuCTfS
- VV_hgqp0N8OEBrexT9iJo9QvErfWYYvsOvkQPy8iHNGL1.dfhAGkfJAvsM.dq4M_QE.aEQDvF8EA
- P8WattHiSmeHuwvF4sijw1eLooiYHfKyiL1AGK.ZElKPpntG6H36atL0c1H8VawiYx9I0LGjgu5O
- 5bKuhrjQiTDRtQOy4dcD0i1p_udEoowv9mU2SfUg06WzyN0al8EQPyUpzZaeJ5Kbjsw2D5Mf75ao
- M4QDU4TfF6jquweuEw.sX59BTH15griRUk6cFH4ePWstdAFlG7qNaE3jYH1m5v7pbU5bEVXhyUJ4
- scRBanD45vcjQWZYdLPZi2NlKhNZBT555VFzzRJrNceS.xcs_0C_DydzGs4xQWFG2VwqRMtz6bvc
- 2RIERZESbNHbkCt9YiWrvy0EIInE787Sz4EU4LmYkLF4ww6o9GYJ4POgfH7ByykOQSr89_uGpJ9U
- QN47rJ4jI.vbA.FHQNouo3Y.u3KXJ8Kh7TfGzrhJWPJTqh2v3z3JdZhyGghxrVMCOqp4gBYhsMqU
- D6UkQ_Z7y55CsjhMcNyrl6W4q1gVE8mUZHBka8KCc0V69wmhol4RuJcMHob0ZupolRNtLX2NQjgb
- amSIi6swN6SNIYS.odEUk7_yB3y4OsOqmVnf6TL97YpHUUBG160Pu_lai.xjcgGAjZocb6ZDZ9hV
- Zh3DqOlV1ssAb7JgU2pLpSKe5.co8Dl5Vfa4lfplzQWx1hEgTHXUECphzDCPLCiLZa6Y_7LWMj5V
- rHNGOVSMPhKwhiOFfx9gyeFSGpKtcjqiY0O91odCFjKUHScKF.rD4J8RO1UKadVPFoF.FU89pU_i
- cCYaFNHmY9gI.GMGa.lxp3cEG6dy8OWCat54eJHcBuuFYcguFl..jChETNWkn86zxWNIcbf4y2HB
- 5Zufe6tIWTRbAfACPB3GjiNW9pI4VniYDNqOhwx2Hv5ZkSOOOI39jRshnhD6jSnPrW6JnPTI8cqx
- VXndXl9Ox7yOV1czy_9CHdd5c5kSezwxf0wSXzpoYQlAw4n.fI3jvEiAnYqAok0.383pksx3ZfmL
- LBw_TWLPikYh5ztgp9AO4vbihLFfMeQFG28Nhh.asE4OqbZBrmOeTG2IAXLRTRTnw8CbMRq5jjMQ
- mLBZzgVG2v1AJFQSJi7EBiXeaBDJar1B04FoJzClL6RAZSLSi3VezNDvW4pph71Tked58lIbw3mU
- C.poTJVBdUjN06vmgQiVn81V75IgdFrXkp4TMQZSf
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Tue, 12 May 2020 16:03:16 +0000
-Received: by smtp421.mail.ne1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID aed177487a27b3c5dbe2321e7c5309d3;
-          Tue, 12 May 2020 16:03:14 +0000 (UTC)
-Subject: Re: [PATCH -next] Smack: Remove unused inline function
- smk_ad_setfield_u_fs_path_mnt
-To:     YueHaibing <yuehaibing@huawei.com>, jmorris@namei.org,
-        serge@hallyn.com, tglx@linutronix.de
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <20200509112019.54164-1-yuehaibing@huawei.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Autocrypt: addr=casey@schaufler-ca.com; keydata=
- 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
- abzjfg==
-Message-ID: <771984b0-6a0f-8bcf-340a-8e6f492cbe73@schaufler-ca.com>
-Date:   Tue, 12 May 2020 09:03:13 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
-MIME-Version: 1.0
-In-Reply-To: <20200509112019.54164-1-yuehaibing@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+        Tue, 12 May 2020 12:31:39 -0400
+Received: from lhreml731-chm.china.huawei.com (unknown [172.18.7.106])
+        by Forcepoint Email with ESMTP id 6A6C8B1834534D466D91;
+        Tue, 12 May 2020 17:31:32 +0100 (IST)
+Received: from fraeml703-chm.china.huawei.com (10.206.15.52) by
+ lhreml731-chm.china.huawei.com (10.201.108.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
+ 15.1.1913.5; Tue, 12 May 2020 17:31:32 +0100
+Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
+ fraeml703-chm.china.huawei.com (10.206.15.52) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1913.5; Tue, 12 May 2020 18:31:31 +0200
+Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
+ fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.1913.007;
+ Tue, 12 May 2020 18:31:31 +0200
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        "david.safford@gmail.com" <david.safford@gmail.com>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "John Johansen" <john.johansen@canonical.com>,
+        "matthewgarrett@google.com" <matthewgarrett@google.com>
+CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
+Subject: RE: [RFC][PATCH 1/3] evm: Move hooks outside LSM infrastructure
+Thread-Topic: [RFC][PATCH 1/3] evm: Move hooks outside LSM infrastructure
+Thread-Index: AQHWHfmwvisCdHYC6kmVk7fgFWuzYaibYCWAgAAX0QCAAMB1IIAAb0AAgAApg3CAADIngIAAzgGAgACHqACABHSroIAAjWsAgAC7FtCAAFxigIAAJvQA///zHACAACsKoA==
+Date:   Tue, 12 May 2020 16:31:31 +0000
+Message-ID: <fcdb168d27214b5e85c3b741f184cde9@huawei.com>
+References: <20200429073935.11913-1-roberto.sassu@huawei.com>
+         <1588794293.4624.21.camel@linux.ibm.com>
+         <1588799408.4624.28.camel@linux.ibm.com>
+         <ab879f9e66874736a40e9c566cadc272@huawei.com>
+         <1588864628.5685.78.camel@linux.ibm.com>
+         <750ab4e0990f47e4aea10d0e580b1074@huawei.com>
+         <1588884313.5685.110.camel@linux.ibm.com>
+         <84e6acad739a415aa3e2457b5c37979f@huawei.com>
+         <1588957684.5146.70.camel@linux.ibm.com>
+         <414644a0be9e4af880452f4b5079aba1@huawei.com>
+         <1589233010.5091.49.camel@linux.ibm.com>
+         <09ee169cfd70492cb526bcb30f99d693@huawei.com>
+         <1589293025.5098.53.camel@linux.ibm.com>
+         <d3f4a53e386d4bb1b8c608ac8b6bec1f@huawei.com>
+ <1589298622.5098.67.camel@linux.ibm.com>
+In-Reply-To: <1589298622.5098.67.camel@linux.ibm.com>
+Accept-Language: en-US
 Content-Language: en-US
-X-Mailer: WebService/1.1.15902 hermes Apache-HttpAsyncClient/4.1.4 (Java/11.0.6)
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.47.12.77]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 5/9/2020 4:20 AM, YueHaibing wrote:
-> commit a269434d2fb4 ("LSM: separate LSM_AUDIT_DATA_DENTRY from LSM_AUDIT_DATA_PATH")
-> left behind this, remove it.
->
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-
-I have taken this. Thank you.
-
-> ---
->  security/smack/smack.h | 4 ----
->  1 file changed, 4 deletions(-)
->
-> diff --git a/security/smack/smack.h b/security/smack/smack.h
-> index 62529f382942..f244c9d10004 100644
-> --- a/security/smack/smack.h
-> +++ b/security/smack/smack.h
-> @@ -505,10 +505,6 @@ static inline void smk_ad_setfield_u_fs_path_dentry(struct smk_audit_info *a,
->  						    struct dentry *d)
->  {
->  }
-> -static inline void smk_ad_setfield_u_fs_path_mnt(struct smk_audit_info *a,
-> -						 struct vfsmount *m)
-> -{
-> -}
->  static inline void smk_ad_setfield_u_fs_inode(struct smk_audit_info *a,
->  					      struct inode *i)
->  {
+PiBGcm9tOiBNaW1pIFpvaGFyIFttYWlsdG86em9oYXJAbGludXguaWJtLmNvbV0NCj4gU2VudDog
+VHVlc2RheSwgTWF5IDEyLCAyMDIwIDU6NTAgUE0NCj4gT24gVHVlLCAyMDIwLTA1LTEyIGF0IDE1
+OjMxICswMDAwLCBSb2JlcnRvIFNhc3N1IHdyb3RlOg0KPiA+ID4gRnJvbTogb3duZXItbGludXgt
+c2VjdXJpdHktbW9kdWxlQHZnZXIua2VybmVsLm9yZyBbbWFpbHRvOm93bmVyLQ0KPiBsaW51eC0N
+Cj4gPiA+IHNlY3VyaXR5LW1vZHVsZUB2Z2VyLmtlcm5lbC5vcmddIE9uIEJlaGFsZiBPZiBNaW1p
+IFpvaGFyDQo+ID4gPiBTZW50OiBUdWVzZGF5LCBNYXkgMTIsIDIwMjAgNDoxNyBQTQ0KPiA+ID4g
+T24gVHVlLCAyMDIwLTA1LTEyIGF0IDA3OjU0ICswMDAwLCBSb2JlcnRvIFNhc3N1IHdyb3RlOg0K
+PiA+ID4gPiA+ID4gPiBSb2JlcnRvLCBFVk0gaXMgb25seSB0cmlnZ2VyZWQgYnkgSU1BLCB1bmxl
+c3MgeW91J3ZlIG1vZGlmaWVkDQo+IHRoZQ0KPiA+ID4gPiA+ID4gPiBrZXJuZWwgdG8gZG8gb3Ro
+ZXJ3aXNlLg0KPiA+ID4gPiA+ID4NCj4gPiA+ID4gPiA+IEVWTSB3b3VsZCBkZW55IHhhdHRyL2F0
+dHIgb3BlcmF0aW9ucyBldmVuIGlmIElNQSBpcyBkaXNhYmxlZCBpbg0KPiB0aGUNCj4gPiA+ID4g
+PiA+IGtlcm5lbCBjb25maWd1cmF0aW9uLiBGb3IgZXhhbXBsZSwgZXZtX3NldHhhdHRyKCkgcmV0
+dXJucyB0aGUNCj4gdmFsdWUNCj4gPiA+ID4gPiA+IGZyb20gZXZtX3Byb3RlY3RfeGF0dHIoKS4g
+SU1BIGlzIG5vdCBpbnZvbHZlZCB0aGVyZS4NCj4gPiA+ID4gPg0KPiA+ID4gPiA+IENvbW1pdMKg
+YWUxYmExNjc2Yjg4ICgiRVZNOiBBbGxvdyB1c2VybGFuZCB0byBwZXJtaXQgbW9kaWZpY2F0aW9u
+DQo+IG9mDQo+ID4gPiA+ID4gRVZNLXByb3RlY3RlZCBtZXRhZGF0YSIpDQo+ID4gPiBpbnRyb2R1
+Y2VkwqBFVk1fQUxMT1dfTUVUQURBVEFfV1JJVEVTDQo+ID4gPiA+ID4gdG8gYWxsb3cgd3JpdGlu
+ZyB0aGUgRVZNIHBvcnRhYmxlIGFuZCBpbW11dGFibGUgZmlsZSBzaWduYXR1cmVzLg0KPiA+ID4g
+Pg0KPiA+ID4gPiBBY2NvcmRpbmcgdG8gRG9jdW1lbnRhdGlvbi9BQkkvdGVzdGluZy9ldm06DQo+
+ID4gPiA+DQo+ID4gPiA+IE5vdGUgdGhhdCBvbmNlIGEga2V5IGhhcyBiZWVuIGxvYWRlZCwgaXQg
+d2lsbCBubyBsb25nZXIgYmUNCj4gPiA+ID4gcG9zc2libGUgdG8gZW5hYmxlIG1ldGFkYXRhIG1v
+ZGlmaWNhdGlvbi4NCj4gPiA+DQo+ID4gPiBOb3QgYW55IGtleSwgYnV0IHRoZSBITUFDIGtleS4N
+Cj4gPiA+DQo+ID4gPiAywqDCoMKgwqDCoMKgwqDCoMKgUGVybWl0IG1vZGlmaWNhdGlvbiBvZiBF
+Vk0tcHJvdGVjdGVkIG1ldGFkYXRhIGF0DQo+ID4gPiDCoCDCoCDCoCDCoCDCoCBydW50aW1lLiBO
+b3Qgc3VwcG9ydGVkIGlmIEhNQUMgdmFsaWRhdGlvbiBhbmQNCj4gPiA+IMKgIMKgIMKgIMKgIMKg
+IGNyZWF0aW9uIGlzIGVuYWJsZWQuDQo+ID4NCj4gPiAjaWZkZWYgQ09ORklHX0VWTV9MT0FEX1g1
+MDkNCj4gPiB2b2lkIF9faW5pdCBldm1fbG9hZF94NTA5KHZvaWQpDQo+ID4gew0KPiA+IFsuLi5d
+DQo+ID4gICAgICAgICByYyA9IGludGVncml0eV9sb2FkX3g1MDkoSU5URUdSSVRZX0tFWVJJTkdf
+RVZNLA0KPiBDT05GSUdfRVZNX1g1MDlfUEFUSCk7DQo+ID4gICAgICAgICBpZiAoIXJjKQ0KPiA+
+ICAgICAgICAgICAgICAgICBldm1faW5pdGlhbGl6ZWQgfD0gRVZNX0lOSVRfWDUwOTsNCj4gPg0K
+PiA+DQo+ID4gc3RhdGljIHNzaXplX3QgZXZtX3dyaXRlX2tleShzdHJ1Y3QgZmlsZSAqZmlsZSwg
+Y29uc3QgY2hhciBfX3VzZXIgKmJ1ZiwNCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+IHNpemVfdCBjb3VudCwgbG9mZl90ICpwcG9zKQ0KPiA+IHsNCj4gPiBbLi4uXQ0KPiA+ICAgICAg
+ICAgLyogRG9uJ3QgYWxsb3cgYSByZXF1ZXN0IHRvIGZyZXNobHkgZW5hYmxlIG1ldGFkYXRhIHdy
+aXRlcyBpZg0KPiA+ICAgICAgICAgICoga2V5cyBhcmUgbG9hZGVkLg0KPiA+ICAgICAgICAgICov
+DQo+ID4gICAgICAgICBpZiAoKGkgJiBFVk1fQUxMT1dfTUVUQURBVEFfV1JJVEVTKSAmJg0KPiA+
+ICAgICAgICAgICAgICgoZXZtX2luaXRpYWxpemVkICYgRVZNX0tFWV9NQVNLKSAhPSAwKSAmJg0K
+PiA+ICAgICAgICAgICAgICEoZXZtX2luaXRpYWxpemVkICYgRVZNX0FMTE9XX01FVEFEQVRBX1dS
+SVRFUykpDQo+ID4gICAgICAgICAgICAgICAgIHJldHVybiAtRVBFUk07DQo+ID4NCj4gPiBTaG91
+bGQgaGF2ZSBiZWVuOg0KPiA+DQo+ID4gICAgICAgICBpZiAoKGkgJiBFVk1fQUxMT1dfTUVUQURB
+VEFfV1JJVEVTKSAmJg0KPiA+ICAgICAgICAgICAgICgoZXZtX2luaXRpYWxpemVkICYgRVZNX0lO
+SVRfSE1BQykgIT0gMCkgJiYNCj4gPiAgICAgICAgICAgICAhKGV2bV9pbml0aWFsaXplZCAmIEVW
+TV9BTExPV19NRVRBREFUQV9XUklURVMpKQ0KPiA+ICAgICAgICAgICAgICAgICByZXR1cm4gLUVQ
+RVJNOw0KPiANCj4gT2sNCj4gDQo+ID4NCj4gPiA+IEVhY2ggdGltZSB0aGUgRVZNIHByb3RlY3Rl
+ZCBmaWxlIG1ldGFkYXRhIGlzIHVwZGF0ZWQsIHRoZSBFVk0gSE1BQw0KPiBpcw0KPiA+ID4gdXBk
+YXRlZCwgYXNzdW1pbmcgdGhlIGV4aXN0aW5nIEVWTSBITUFDIGlzIHZhbGlkLiDCoFVzZXJzcGFj
+ZSBzaG91bGQNCj4gPiA+IG5vdCBoYXZlIGFjY2VzcyB0byB0aGUgSE1BQyBrZXksIHNvIHdlIG9u
+bHkgYWxsb3cgd3JpdGluZyBFVk0NCj4gPiA+IHNpZ25hdHVyZXMuDQo+ID4gPg0KPiA+ID4gVGhl
+IG9ubHkgZGlmZmVyZW5jZSBiZXR3ZWVuIHdyaXRpbmcgdGhlIG9yaWdpbmFsIEVWTSBzaWduYXR1
+cmUgYW5kIHRoZQ0KPiA+ID4gbmV3IHBvcnRhYmxlIGFuZCBpbW11dGFibGUgc2lnbmF0dXJlIGlz
+IHRoZSBzZWN1cml0eS5pbWEgeGF0dHINCj4gPiA+IHJlcXVpcmVtZW50LiDCoFNpbmNlIHRoZSBu
+ZXcgRVZNIHNpZ25hdHVyZSBkb2VzIG5vdCBpbmNsdWRlIHRoZQ0KPiA+ID4gZmlsZXN5c3RlbSBz
+cGVjaWZpYyBkYXRhLCBzb21ldGhpbmcgZWxzZSBuZWVkcyB0byBiaW5kIHRoZSBmaWxlDQo+ID4g
+PiBtZXRhZGF0YSB0byB0aGUgZmlsZSBkYXRhLiDCoFRodXMgdGhlIElNQSB4YXR0ciByZXF1aXJl
+bWVudC4NCj4gPiA+DQo+ID4gPiBBc3N1bWluZyB0aGF0IHRoZSBuZXcgRVZNIHNpZ25hdHVyZSBp
+cyB3cml0dGVuIGxhc3QsIGFzIGxvbmcgYXMgdGhlcmUNCj4gPiA+IGlzIGFuIElNQSB4YXR0ciwg
+dGhlcmUgc2hvdWxkbid0IGJlIGEgcHJvYmxlbSB3cml0aW5nIHRoZSBuZXcgRVZNDQo+ID4gPiBz
+aWduYXR1cmUuDQo+ID4NCj4gPiAgICAgICAgIC8qIGZpcnN0IG5lZWQgdG8ga25vdyB0aGUgc2ln
+IHR5cGUgKi8NCj4gPiAgICAgICAgIHJjID0gdmZzX2dldHhhdHRyX2FsbG9jKGRlbnRyeSwgWEFU
+VFJfTkFNRV9FVk0sIChjaGFyDQo+ICoqKSZ4YXR0cl9kYXRhLCAwLA0KPiA+ICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgR0ZQX05PRlMpOw0KPiA+ICAgICAgICAgaWYgKHJjIDw9IDAp
+IHsNCj4gPiAgICAgICAgICAgICAgICAgZXZtX3N0YXR1cyA9IElOVEVHUklUWV9GQUlMOw0KPiA+
+ICAgICAgICAgICAgICAgICBpZiAocmMgPT0gLUVOT0RBVEEpIHsNCj4gPiAgICAgICAgICAgICAg
+ICAgICAgICAgICByYyA9IGV2bV9maW5kX3Byb3RlY3RlZF94YXR0cnMoZGVudHJ5KTsNCj4gPiAg
+ICAgICAgICAgICAgICAgICAgICAgICBpZiAocmMgPiAwKQ0KPiA+ICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgZXZtX3N0YXR1cyA9IElOVEVHUklUWV9OT0xBQkVMOw0KPiA+ICAgICAg
+ICAgICAgICAgICAgICAgICAgIGVsc2UgaWYgKHJjID09IDApDQo+ID4gICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICBldm1fc3RhdHVzID0gSU5URUdSSVRZX05PWEFUVFJTOyAvKiBuZXcg
+ZmlsZSAqLw0KPiA+DQo+ID4gSWYgRVZNX0FMTE9XX01FVEFEQVRBX1dSSVRFUyBpcyBjbGVhcmVk
+LCBvbmx5IHRoZSBmaXJzdCB4YXR0cg0KPiA+IGNhbiBiZSB3cml0dGVuIChzdGF0dXMgSU5URUdS
+SVRZX05PWEFUVFJTIGlzIG9rKS4gQWZ0ZXIsDQo+ID4gZXZtX2ZpbmRfcHJvdGVjdGVkX3hhdHRy
+cygpIHJldHVybnMgcmMgPiAwLCBzbyB0aGUgc3RhdHVzIGlzDQo+ID4gSU5URUdSSVRZX05PTEFC
+RUwsIHdoaWNoIGlzIG5vdCBpZ25vcmVkIGJ5IGV2bV9wcm90ZWN0X3hhdHRyKCkuDQo+IA0KPiBX
+aXRoIEVWTSBITUFDIGVuYWJsZWQsIGFzIGEgcmVzdWx0IG9mIHdyaXRpbmcgdGhlIGZpcnN0IHBy
+b3RlY3RlZA0KPiB4YXR0ciwgYW4gRVZNIEhNQUMgc2hvdWxkIGJlIGNhbGN1bGF0ZWQgYW5kIHdy
+aXR0ZW4gaW4NCj4gZXZtX2lub2RlX3Bvc3Rfc2V0eGF0dHIoKS4NCg0KVG8gc29sdmUgdGhlIG9y
+ZGVyaW5nIGlzc3VlLCB3b3VsZG4ndCBhbGxvd2luZyBzZXR4YXR0cigpIG9uIGEgZmlsZQ0Kd2l0
+aCBwb3J0YWJsZSBzaWduYXR1cmUgdGhhdCBkb2VzIG5vdCB5ZXQgcGFzcyB2ZXJpZmljYXRpb24g
+YmUgc2FmZT8NCmV2bV91cGRhdGVfZXZteGF0dHIoKSBjaGVja3MgaWYgdGhlIHNpZ25hdHVyZSBp
+cyBwb3J0YWJsZSBhbmQNCmlmIHllcywgZG9lcyBub3QgY2FsY3VsYXRlIHRoZSBITUFDLg0KDQpS
+b2JlcnRvDQoNCkhVQVdFSSBURUNITk9MT0dJRVMgRHVlc3NlbGRvcmYgR21iSCwgSFJCIDU2MDYz
+DQpNYW5hZ2luZyBEaXJlY3RvcjogTGkgUGVuZywgTGkgSmlhbiwgU2hpIFlhbmxpDQo=
