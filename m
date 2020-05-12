@@ -2,136 +2,81 @@ Return-Path: <SRS0=p3Qd=62=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6FE0C54E8E
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 02:36:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 162F1C54E4B
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 06:44:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B2DBC206B7
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 02:36:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sdbzlbOr"
+	by mail.kernel.org (Postfix) with ESMTP id EF1C120733
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 06:44:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728575AbgELCgs (ORCPT
+        id S1725933AbgELGoF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 11 May 2020 22:36:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39868 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727892AbgELCgr (ORCPT
+        Tue, 12 May 2020 02:44:05 -0400
+Received: from mga03.intel.com ([134.134.136.65]:36714 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725536AbgELGoF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 11 May 2020 22:36:47 -0400
-Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7472C061A0C;
-        Mon, 11 May 2020 19:36:46 -0700 (PDT)
-Received: by mail-pg1-x541.google.com with SMTP id l12so5454332pgr.10;
-        Mon, 11 May 2020 19:36:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=DwkcJJkezbH+OWBWg9sYsAUeeDyjJOTxj4zpwJqjZ4E=;
-        b=sdbzlbOrjwmsl7fIXziSB8ouemN32bhCfJlEE6Sb535bIEHiOXnhG0vJ8BglktXAQF
-         DjDnLRrV/hTUFqc/+1SwtkVG+iElBYtklhABoqPNchhrBpY5bG1HeOzNMaxDKtafkGJz
-         SI/96Du+EZJcc5EKDdlibWvR3pEuiNXjBM7uBqoy6jWkDOoNl7jTczW0+ugbwf6iNRCa
-         GWAXIFKWjIRGb3pCug4Doqdd6hB5f6ZgOWWtIgNVO0KOG7VwkYQFy3YrD9lRjBPGcds3
-         mitjPhb1BwwfVacawQtR+gaNv0omphZMC4G/+KD3Cci9ehu4UxkXDlXzlBzSPk95HW5e
-         EIaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=DwkcJJkezbH+OWBWg9sYsAUeeDyjJOTxj4zpwJqjZ4E=;
-        b=LBzFidtk7XcOFvddkWx4qFh73qTpQzE1dymMrI+10lEcfkCJgcpbHRw+i4ddRbQSGt
-         3v7vjyCFudxqlCxpJokiczcxO+Atw1K+PlxGKq0ynQ+WIoj7MpauqSswbMMpjbTV/7kl
-         LShja888QVlcQXbcoPal3V2zV0n/KQqkBtlErmxIRlbdP/gpod+wYaDf3XB9GCXPO/VX
-         i8RGKldtkrnSaJWoMT0FvCUfFDbHzdSFkG9qnqWa4eq8j5dg34VZN3XTPJWy3WO1WVtZ
-         6TqcfsiwiMnSIH3YcLFsVzlldsWMszkXMT3tRfZ9iF6PUZfCw+yBPImFNvxBWF7zTyGg
-         kcuQ==
-X-Gm-Message-State: AGi0PuZliJsu8GD7SXRyxl9bm5AqCWFQPCqcr6yUFhI4y6C0HMfA0zDP
-        Y0nYR7gKHXmT0gevV/5elu4=
-X-Google-Smtp-Source: APiQypKl87mtTb2xr/0j9uvsdmMZKI3mlnm59JiOJrw2mZvT9j/EGTWcVTvVe1f6mfoH6pUosYlzGQ==
-X-Received: by 2002:a63:6d86:: with SMTP id i128mr10798050pgc.432.1589251006272;
-        Mon, 11 May 2020 19:36:46 -0700 (PDT)
-Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:400::5:1c7e])
-        by smtp.gmail.com with ESMTPSA id a200sm10217618pfa.201.2020.05.11.19.36.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 May 2020 19:36:45 -0700 (PDT)
-Date:   Mon, 11 May 2020 19:36:41 -0700
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     sdf@google.com
-Cc:     davem@davemloft.net, daniel@iogearbox.net, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, kernel-team@fb.com,
-        linux-security-module@vger.kernel.org, acme@redhat.com,
-        jamorris@linux.microsoft.com, jannh@google.com, kpsingh@google.com
-Subject: Re: [PATCH v5 bpf-next 2/3] bpf: implement CAP_BPF
-Message-ID: <20200512023641.jupgmhpliblkli4t@ast-mbp.dhcp.thefacebook.com>
-References: <20200508215340.41921-1-alexei.starovoitov@gmail.com>
- <20200508215340.41921-3-alexei.starovoitov@gmail.com>
- <20200512001210.GA235661@google.com>
+        Tue, 12 May 2020 02:44:05 -0400
+IronPort-SDR: wFOhgeAH8h4OSLqYLn39dbUs4GFc65S1NAE052uJmg0XEoF+syBIw4YrKAofBXJMrzwckqdY15
+ df/RCuK4xBag==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 May 2020 23:44:04 -0700
+IronPort-SDR: Xl0uZ7EF12TbnJ0IwesxKzMMp6T45wVEjSdzvJIxVhtqPWqZ+R/3uMA/M0KTOQ6jewdxlYxgyx
+ pkOF3oXHQkAg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,382,1583222400"; 
+   d="scan'208";a="371468564"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
+  by fmsmga001.fm.intel.com with SMTP; 11 May 2020 23:44:02 -0700
+Received: by lahna (sSMTP sendmail emulation); Tue, 12 May 2020 09:44:01 +0300
+Date:   Tue, 12 May 2020 09:44:01 +0300
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Richard Hughes <hughsient@gmail.com>
+Cc:     Mario Limonciello <Mario.Limonciello@dell.com>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH] platform/x86: Export LPC attributes for the system SPI
+ chip
+Message-ID: <20200512064401.GF487496@lahna.fi.intel.com>
+References: <CAD2FfiEk8Fq3=i_3NHvtuwip=-v_cGfnYSowdPi86U_BcgP2gQ@mail.gmail.com>
+ <61c7782cd2e64bb9ab2aaf6a016bbb6c@AUSX13MPC101.AMER.DELL.COM>
+ <CAD2FfiGweUHNJGdj7OUQFxEhQBYvMCbuWM-+ez=SpN=HbcaS4Q@mail.gmail.com>
+ <70757953c25645baac2dddd7c6924d05@AUSX13MPC101.AMER.DELL.COM>
+ <20200508082028.GP487496@lahna.fi.intel.com>
+ <CAD2FfiG2c4iXmTjUpQAUqRVBVyH0Hm4VfO5PBTXf03VXHR22ng@mail.gmail.com>
+ <20200511104504.GK487496@lahna.fi.intel.com>
+ <CAD2FfiHn0PNaC3aFXE-hn9Mmtt5JW_D8BK0hOScYXR9EJLNbcw@mail.gmail.com>
+ <20200511162811.GA487496@lahna.fi.intel.com>
+ <CAD2FfiHo1EzRupjgKhtLX0Zguq-bVeW5+u_PNQGAzV0x+AtfVw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200512001210.GA235661@google.com>
+In-Reply-To: <CAD2FfiHo1EzRupjgKhtLX0Zguq-bVeW5+u_PNQGAzV0x+AtfVw@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, May 11, 2020 at 05:12:10PM -0700, sdf@google.com wrote:
-> On 05/08, Alexei Starovoitov wrote:
-> > From: Alexei Starovoitov <ast@kernel.org>
-> [..]
-> > @@ -3932,7 +3977,7 @@ SYSCALL_DEFINE3(bpf, int, cmd, union bpf_attr
-> > __user *, uattr, unsigned int, siz
-> >   	union bpf_attr attr;
-> >   	int err;
+On Mon, May 11, 2020 at 09:08:31PM +0100, Richard Hughes wrote:
+> > For the security stuff you are adding, do you need to look at the PCI
+> > device registers as well?
 > 
-> > -	if (sysctl_unprivileged_bpf_disabled && !capable(CAP_SYS_ADMIN))
-> > +	if (sysctl_unprivileged_bpf_disabled && !bpf_capable())
-> >   		return -EPERM;
-> This is awesome, thanks for reviving the effort!
-> 
-> One question I have about this particular snippet:
-> Does it make sense to drop bpf_capable checks for the operations
-> that work on a provided fd?
+> No, just the config space. I guess at some point I might want to put
+> some of the chipsec vulnerability checks into the module, although I'm
+> not happy adding anything remotely dangerous.
 
-Above snippet is for the case when sysctl switches unpriv off.
-It was a big hammer and stays big hammer.
-I certainly would like to improve the situation, but I suspect
-the folks who turn that sysctl knob on are simply paranoid about bpf
-and no amount of reasoning would turn them around.
+I mean for the SPI-NOR controller PCI device registers (not the LPC PCI
+device, sorry about not being clear), like config space. Typically it is
+PCI device 1f.5 and in that case you can't use the LPC driver because it
+should not touch other devices than what it is bound to (OK, there are
+exceptions but still).
 
-> The use-case I have in mind is as follows:
-> * privileged (CAP_BPF) process loads the programs/maps and pins
->   them at some known location
-> * unprivileged process opens up those pins and does the following:
->   * prepares the maps (and will later on read them)
->   * does SO_ATTACH_BPF/SO_ATTACH_REUSEPORT_EBPF which afaik don't
->     require any capabilities
-> 
-> This essentially pushes some of the permission checks into a fs layer. So
-> whoever has a file descriptor (via unix sock or open) can do BPF operations
-> on the object that represents it.
-
-cap_bpf doesn't change things in that regard.
-Two cases here:
-sysctl_unprivileged_bpf_disabled==0:
-  Unpriv can load socket_filter prog type and unpriv can attach it
-  via SO_ATTACH_BPF/SO_ATTACH_REUSEPORT_EBPF.
-sysctl_unprivileged_bpf_disabled==1:
-  cap_sys_admin can load socket_filter and unpriv can attach it.
-
-With addition of cap_bpf in the second case cap_bpf process can
-load socket_filter too.
-It doesn't mean that permissions are pushed into fs layer.
-I'm not sure that relaxing of sysctl_unprivileged_bpf_disabled
-will be well received.
-Are you proposing to selectively allow certain bpf syscall commands
-even when sysctl_unprivileged_bpf_disabled==1 ?
-Like allow unpriv to do BPF_OBJ_GET to get an fd from bpffs ?
-And allow unpriv to do map_update ? 
-It makes complete sense to me, but I'd like to argue about that
-independently from this cap_bpf set.
-We can relax that sysctl later.
+If that's the case then I guess this should go to intel-spi-pci/platform
+drivers after all. I think one option is that we add Kconfig option that
+makes the driver load but only provide the security bits without
+actually calling intel_spi_probe().
