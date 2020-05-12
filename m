@@ -2,177 +2,181 @@ Return-Path: <SRS0=p3Qd=62=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1FADC2D0F7
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 18:39:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABA4EC2D0F6
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 18:46:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9D6CB20784
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 18:39:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TKIZUple"
+	by mail.kernel.org (Postfix) with ESMTP id 9639C23127
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 18:46:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730881AbgELSjR (ORCPT
+        id S1730223AbgELSql (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 12 May 2020 14:39:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48846 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725950AbgELSjQ (ORCPT
+        Tue, 12 May 2020 14:46:41 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:36668 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726465AbgELSqk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 12 May 2020 14:39:16 -0400
-Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52CBDC061A0C;
-        Tue, 12 May 2020 11:39:15 -0700 (PDT)
-Received: by mail-pf1-x444.google.com with SMTP id z1so6775321pfn.3;
-        Tue, 12 May 2020 11:39:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=DjcujlJce+yGdTM56KR+siVfTTDonJGCqjFrtlrB12E=;
-        b=TKIZUpleOm+PkJ9tqBZBzNyIrq3m78JQFWKHIGSEqtcLQ6LODxtCb/m4luvQRtRCZB
-         YF8jVeEnDCHolzy3z4aaw6G+IAUWpl5/o8dIMthPyFEKYdI3YjcX4WtBiwD6nO6vNmVZ
-         DzohTK35FNyHiiwZq0QhghkvgzykP8E6nX6b5zl3s25ntYD2rf8n4PQYZUQb5cUFGq3P
-         CXxL1tW/RcklACqpdbU3eZeWt+QXV2I4/GLn6DBRTu3f17iQMICCpp7kXK19NZcxB7rG
-         LQ2b6Wk7ueK/vM9+kTiltDdga69+ZfqqYAnB7kybfnraNEgq6FRZJ6pf6Zt2ZFBOJI0Y
-         5BAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=DjcujlJce+yGdTM56KR+siVfTTDonJGCqjFrtlrB12E=;
-        b=sVkHTOWCLb5qrTR9/Fag85FkFc29wAJAmnWc3lBzWRjkipfwyfc3K7X6FdHtq81X/u
-         Q4O8lOjU/IqPCEuSYJ6vEt6xVwlScp53CR9iKWcqrmmDq276vl/4YqZnpGJ5SBFoZ7jM
-         S6yRHzBafzc1Js2fuDIUUSua3+5Aew/Pdy/kMI+Iu0n485sA9AXji0QMA0IjUJHI+fNN
-         8HzC/z4T9VRsViP48+OBDkievnnmXe0U9kA3qX70TloX/hMol5eVDqspGRKp4iyVm6Sy
-         7MD3sQ48xyE2FZ/XOym3ySw9VZSNuFK7pcJL7NPYwE5n8yKfzNqM5I6cAt4/yrs7xgOE
-         oFtw==
-X-Gm-Message-State: AGi0PuZ0aPqs/rlZh+jYavluj3ox6gxJs/Otny5xinUvrULhiPHG0ZYB
-        G0M3w23hXNJgWFmhGVPF19xCMKEr
-X-Google-Smtp-Source: APiQypINbdHjYVXKeWBxAYbOqHUnfaB4UJzqJskMbX8OGHkD/+fXFaDcOlnD+ANXQjOFUfCx3HRsUg==
-X-Received: by 2002:a63:e542:: with SMTP id z2mr19775152pgj.165.1589308754589;
-        Tue, 12 May 2020 11:39:14 -0700 (PDT)
-Received: from ast-mbp ([2620:10d:c090:400::5:c3f6])
-        by smtp.gmail.com with ESMTPSA id l15sm13732315pjk.56.2020.05.12.11.39.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 May 2020 11:39:13 -0700 (PDT)
-Date:   Tue, 12 May 2020 11:39:11 -0700
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     sdf@google.com
-Cc:     davem@davemloft.net, daniel@iogearbox.net, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, kernel-team@fb.com,
-        linux-security-module@vger.kernel.org, acme@redhat.com,
-        jamorris@linux.microsoft.com, jannh@google.com, kpsingh@google.com
-Subject: Re: [PATCH v5 bpf-next 2/3] bpf: implement CAP_BPF
-Message-ID: <20200512183911.cr365b7etucyxgpz@ast-mbp>
-References: <20200508215340.41921-1-alexei.starovoitov@gmail.com>
- <20200508215340.41921-3-alexei.starovoitov@gmail.com>
- <20200512001210.GA235661@google.com>
- <20200512023641.jupgmhpliblkli4t@ast-mbp.dhcp.thefacebook.com>
- <20200512155411.GB235661@google.com>
+        Tue, 12 May 2020 14:46:40 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jYZvH-0007rr-9u; Tue, 12 May 2020 12:46:35 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jYZv7-0007UG-JY; Tue, 12 May 2020 12:46:35 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Rob Landley <rob@landley.net>,
+        Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Andy Lutomirski <luto@amacapital.net>
+References: <87h7wujhmz.fsf@x220.int.ebiederm.org>
+        <87sgga6ze4.fsf@x220.int.ebiederm.org>
+        <87v9l4zyla.fsf_-_@x220.int.ebiederm.org>
+        <87eerszyim.fsf_-_@x220.int.ebiederm.org>
+        <ee83587b-8a1c-3c4f-cc0f-7bc98afabae1@I-love.SAKURA.ne.jp>
+        <CAHk-=wgQ2ovXMW=5ZHCpowkE1PwPQSL7oV4YXzBxd6eqNRXxnQ@mail.gmail.com>
+        <87sgg6v8we.fsf@x220.int.ebiederm.org>
+        <202005111428.B094E3B76A@keescook>
+Date:   Tue, 12 May 2020 13:42:53 -0500
+In-Reply-To: <202005111428.B094E3B76A@keescook> (Kees Cook's message of "Mon,
+        11 May 2020 14:55:27 -0700")
+Message-ID: <874kslq9jm.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200512155411.GB235661@google.com>
+Content-Type: text/plain
+X-XM-SPF: eid=1jYZv7-0007UG-JY;;;mid=<874kslq9jm.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19mzgJAcFNyQdQ94l+XWLB+0NtEuzgOx8c=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH 3/5] exec: Remove recursion from search_binary_handler
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, May 12, 2020 at 08:54:11AM -0700, sdf@google.com wrote:
-> On 05/11, Alexei Starovoitov wrote:
-> > On Mon, May 11, 2020 at 05:12:10PM -0700, sdf@google.com wrote:
-> > > On 05/08, Alexei Starovoitov wrote:
-> > > > From: Alexei Starovoitov <ast@kernel.org>
-> > > [..]
-> > > > @@ -3932,7 +3977,7 @@ SYSCALL_DEFINE3(bpf, int, cmd, union bpf_attr
-> > > > __user *, uattr, unsigned int, siz
-> > > >   	union bpf_attr attr;
-> > > >   	int err;
-> > >
-> > > > -	if (sysctl_unprivileged_bpf_disabled && !capable(CAP_SYS_ADMIN))
-> > > > +	if (sysctl_unprivileged_bpf_disabled && !bpf_capable())
-> > > >   		return -EPERM;
-> > > This is awesome, thanks for reviving the effort!
-> > >
-> > > One question I have about this particular snippet:
-> > > Does it make sense to drop bpf_capable checks for the operations
-> > > that work on a provided fd?
-> 
-> > Above snippet is for the case when sysctl switches unpriv off.
-> > It was a big hammer and stays big hammer.
-> > I certainly would like to improve the situation, but I suspect
-> > the folks who turn that sysctl knob on are simply paranoid about bpf
-> > and no amount of reasoning would turn them around.
-> Yeah, and we do use it unfortunately :-( I suppose we still would
-> like to keep it that way for a while, but maybe start relaxing
-> some operations a bit.
+Kees Cook <keescook@chromium.org> writes:
 
-I suspect that was done couple years ago when spectre was just discovered and
-the verifier wasn't doing speculative analysis.
-If your security folks still insist on that sysctl they either didn't
-follow bpf development or paranoid.
-If former is the case I would love to openly discuss all the advances in
-the verification logic to prevent side channels.
-The verifier is doing amazing job finding bad assembly code.
-There is no other tool that is similarly capable.
-All compilers and static analyzers are no where close to the level
-of sophistication that the verifier has in detection of bad speculation.
+> On Mon, May 11, 2020 at 09:33:21AM -0500, Eric W. Biederman wrote:
+>> Linus Torvalds <torvalds@linux-foundation.org> writes:
+>> 
+>> > On Sat, May 9, 2020 at 9:30 PM Tetsuo Handa
+>> > <penguin-kernel@i-love.sakura.ne.jp> wrote:
+>> >>
+>> >> Wouldn't this change cause
+>> >>
+>> >>         if (fd_binary > 0)
+>> >>                 ksys_close(fd_binary);
+>> >>         bprm->interp_flags = 0;
+>> >>         bprm->interp_data = 0;
+>> >>
+>> >> not to be called when "Search for the interpreter" failed?
+>> >
+>> > Good catch. We seem to have some subtle magic wrt the fd_binary file
+>> > descriptor, which depends on the recursive behavior.
+>> 
+>> Yes.  I Tetsuo I really appreciate you noticing this.  This is exactly
+>> the kind of behavior I am trying to flush out and keep from being
+>> hidden.
+>> 
+>> > I'm not seeing how to fix it cleanly with the "turn it into a loop".
+>> > Basically, that binfmt_misc use-case isn't really a tail-call.
+>> 
+>> I have reservations about installing a new file descriptor before
+>> we process the close on exec logic and the related security modules
+>> closing file descriptors that your new credentials no longer give
+>> you access to logic.
+>
+> Hm, this does feel odd. In looking at this, it seems like this file
+> never gets close-on-exec set, and doesn't have its flags changed from
+> its original open:
+>                 .open_flag = O_LARGEFILE | O_RDONLY | __FMODE_EXEC,
+> only the UMH path through exec doesn't explicitly open a file by name
+> from what I can see, so we'll only have these flags.
+>
+>> I haven't yet figured out how opening a file descriptor during exec
+>> should fit into all of that.
+>> 
+>> What I do see is that interp_data is just a parameter that is smuggled
+>> into the call of search binary handler.  And the next binary handler
+>> needs to be binfmt_elf for it to make much sense, as only binfmt_elf
+>> (and binfmt_elf_fdpic) deals with BINPRM_FLAGS_EXECFD.
+>> 
+>> So I think what needs to happen is to rename bprm->interp_data to
+>> bprm->execfd, remove BINPRM_FLAGS_EXECFD and make closing that file
+>> descriptor free_bprm's responsiblity.
+>
+> Yeah, I would agree. As far as the close handling, I don't think there
+> is a difference here: it interp_data was closed on the binfmt_misc.c
+> error path, and in the new world it would be the exec error path -- both
+> would be under the original credentials.
+>
+>> I hope such a change will make it easier to see all of the pieces that
+>> are intereacting during exec.
+>
+> Right -- I'm not sure which piece should "consume" bprm->execfd though,
+> which I think is what you're asking next...
+>
+>> I am still asking: is the installation of that file descriptor useful if
+>> it is not exported passed to userspace as an AT_EXECFD note?
+>> 
+>> I will dig in and see what I can come up with.
+>
+> Should binfmt_misc do the install, or can the consuming binfmt do it?
+> i.e. when binfmt_elf sees bprm->execfd, does it perform the install
+> instead?
 
-> > > The use-case I have in mind is as follows:
-> > > * privileged (CAP_BPF) process loads the programs/maps and pins
-> > >   them at some known location
-> > > * unprivileged process opens up those pins and does the following:
-> > >   * prepares the maps (and will later on read them)
-> > >   * does SO_ATTACH_BPF/SO_ATTACH_REUSEPORT_EBPF which afaik don't
-> > >     require any capabilities
-> > >
-> > > This essentially pushes some of the permission checks into a fs layer.
-> > So
-> > > whoever has a file descriptor (via unix sock or open) can do BPF
-> > operations
-> > > on the object that represents it.
-> 
-> > cap_bpf doesn't change things in that regard.
-> > Two cases here:
-> > sysctl_unprivileged_bpf_disabled==0:
-> >    Unpriv can load socket_filter prog type and unpriv can attach it
-> >    via SO_ATTACH_BPF/SO_ATTACH_REUSEPORT_EBPF.
-> > sysctl_unprivileged_bpf_disabled==1:
-> >    cap_sys_admin can load socket_filter and unpriv can attach it.
-> Sorry, I wasn't clear enough, I was talking about unpriv_bpf_disabled=1
-> case.
-> 
-> > With addition of cap_bpf in the second case cap_bpf process can
-> > load socket_filter too.
-> > It doesn't mean that permissions are pushed into fs layer.
-> > I'm not sure that relaxing of sysctl_unprivileged_bpf_disabled
-> > will be well received.
-> > Are you proposing to selectively allow certain bpf syscall commands
-> > even when sysctl_unprivileged_bpf_disabled==1 ?
-> > Like allow unpriv to do BPF_OBJ_GET to get an fd from bpffs ?
-> > And allow unpriv to do map_update ?
-> Yes, that's the gist of what I'm proposing. Allow the operations that
-> work on fd even with unpriv_bpf_disabled=1. The assumption that
-> obtaining fd requires a privileged operation on its own and
-> should give enough protection.
+I am still thinking about this one, but here is where I am at.  At a
+practical level passing the file descriptor of the script to interpreter
+seems like something we should encourage in the long term.  It removes
+races and it is cheaper because then the interpreter does not have to
+turn around and open the script itself.
 
-I agree.
 
-> 
-> > It makes complete sense to me, but I'd like to argue about that
-> > independently from this cap_bpf set.
-> > We can relax that sysctl later.
-> Ack, thanks, let me bring it up again later, when we get to the cap_bpf
-> state.
 
-Thanks for the feedback.
-Just to make sure we're on the same page let me clarify one more thing.
-The state of cap_bpf in this patch set is not the final state of bpf
-security in general. We were stuck on cap_bpf proposal since september.
-bpf community lost many months of what could have been gradual
-improvements in bpf safety and security.
-This cap_bpf is a way to get us unstuck. There will be many more
-security related patches that improve safety, security and usability.
+Strictly speaking binfmt_misc should not need to close the file
+descriptor in binfmt_misc because we have already unshared the files
+struct and reset_files_struct should handle restoring it.
+
+Calling fd_install in binfmt_misc still seems wrong, as that exposes
+the new file descriptor to user space with the old creds.
+
+It is possible although unlikely for userspace to find the file
+descriptor without consulting AT_EXECFD so just to be conservative I
+think we should install the file descriptor in begin_new_exec even if
+the next interpreter does not support AT_EXECFD.
+
+
+I am still working on how to handle recursive binfmts but I suspect it
+is just a matter of having an array of struct files in struct
+linux_binprm.
+
+
+Eric
+
+
+
+
+
+
+
+
