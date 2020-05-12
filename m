@@ -6,77 +6,161 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 162F1C54E4B
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 06:44:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A60AC54E4B
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 07:54:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EF1C120733
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 06:44:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3CCC220643
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 07:54:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725933AbgELGoF (ORCPT
+        id S1728416AbgELHyq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 12 May 2020 02:44:05 -0400
-Received: from mga03.intel.com ([134.134.136.65]:36714 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725536AbgELGoF (ORCPT
+        Tue, 12 May 2020 03:54:46 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2190 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726067AbgELHyq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 12 May 2020 02:44:05 -0400
-IronPort-SDR: wFOhgeAH8h4OSLqYLn39dbUs4GFc65S1NAE052uJmg0XEoF+syBIw4YrKAofBXJMrzwckqdY15
- df/RCuK4xBag==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 May 2020 23:44:04 -0700
-IronPort-SDR: Xl0uZ7EF12TbnJ0IwesxKzMMp6T45wVEjSdzvJIxVhtqPWqZ+R/3uMA/M0KTOQ6jewdxlYxgyx
- pkOF3oXHQkAg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.73,382,1583222400"; 
-   d="scan'208";a="371468564"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
-  by fmsmga001.fm.intel.com with SMTP; 11 May 2020 23:44:02 -0700
-Received: by lahna (sSMTP sendmail emulation); Tue, 12 May 2020 09:44:01 +0300
-Date:   Tue, 12 May 2020 09:44:01 +0300
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Richard Hughes <hughsient@gmail.com>
-Cc:     Mario Limonciello <Mario.Limonciello@dell.com>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH] platform/x86: Export LPC attributes for the system SPI
- chip
-Message-ID: <20200512064401.GF487496@lahna.fi.intel.com>
-References: <CAD2FfiEk8Fq3=i_3NHvtuwip=-v_cGfnYSowdPi86U_BcgP2gQ@mail.gmail.com>
- <61c7782cd2e64bb9ab2aaf6a016bbb6c@AUSX13MPC101.AMER.DELL.COM>
- <CAD2FfiGweUHNJGdj7OUQFxEhQBYvMCbuWM-+ez=SpN=HbcaS4Q@mail.gmail.com>
- <70757953c25645baac2dddd7c6924d05@AUSX13MPC101.AMER.DELL.COM>
- <20200508082028.GP487496@lahna.fi.intel.com>
- <CAD2FfiG2c4iXmTjUpQAUqRVBVyH0Hm4VfO5PBTXf03VXHR22ng@mail.gmail.com>
- <20200511104504.GK487496@lahna.fi.intel.com>
- <CAD2FfiHn0PNaC3aFXE-hn9Mmtt5JW_D8BK0hOScYXR9EJLNbcw@mail.gmail.com>
- <20200511162811.GA487496@lahna.fi.intel.com>
- <CAD2FfiHo1EzRupjgKhtLX0Zguq-bVeW5+u_PNQGAzV0x+AtfVw@mail.gmail.com>
+        Tue, 12 May 2020 03:54:46 -0400
+Received: from lhreml707-chm.china.huawei.com (unknown [172.18.7.106])
+        by Forcepoint Email with ESMTP id 22CA67EF6883194331E5;
+        Tue, 12 May 2020 08:54:43 +0100 (IST)
+Received: from fraeml705-chm.china.huawei.com (10.206.15.54) by
+ lhreml707-chm.china.huawei.com (10.201.108.56) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1913.5; Tue, 12 May 2020 08:54:42 +0100
+Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
+ fraeml705-chm.china.huawei.com (10.206.15.54) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1913.5; Tue, 12 May 2020 09:54:42 +0200
+Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
+ fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.1913.007;
+ Tue, 12 May 2020 09:54:42 +0200
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        "david.safford@gmail.com" <david.safford@gmail.com>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "John Johansen" <john.johansen@canonical.com>,
+        "matthewgarrett@google.com" <matthewgarrett@google.com>
+CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
+Subject: RE: [RFC][PATCH 1/3] evm: Move hooks outside LSM infrastructure
+Thread-Topic: [RFC][PATCH 1/3] evm: Move hooks outside LSM infrastructure
+Thread-Index: AQHWHfmwvisCdHYC6kmVk7fgFWuzYaibYCWAgAAX0QCAAMB1IIAAb0AAgAApg3CAADIngIAAzgGAgACHqACABHSroIAAjWsAgAC7FtA=
+Date:   Tue, 12 May 2020 07:54:42 +0000
+Message-ID: <09ee169cfd70492cb526bcb30f99d693@huawei.com>
+References: <20200429073935.11913-1-roberto.sassu@huawei.com>
+         <1588794293.4624.21.camel@linux.ibm.com>
+         <1588799408.4624.28.camel@linux.ibm.com>
+         <ab879f9e66874736a40e9c566cadc272@huawei.com>
+         <1588864628.5685.78.camel@linux.ibm.com>
+         <750ab4e0990f47e4aea10d0e580b1074@huawei.com>
+         <1588884313.5685.110.camel@linux.ibm.com>
+         <84e6acad739a415aa3e2457b5c37979f@huawei.com>
+         <1588957684.5146.70.camel@linux.ibm.com>
+         <414644a0be9e4af880452f4b5079aba1@huawei.com>
+ <1589233010.5091.49.camel@linux.ibm.com>
+In-Reply-To: <1589233010.5091.49.camel@linux.ibm.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.47.12.77]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAD2FfiHo1EzRupjgKhtLX0Zguq-bVeW5+u_PNQGAzV0x+AtfVw@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, May 11, 2020 at 09:08:31PM +0100, Richard Hughes wrote:
-> > For the security stuff you are adding, do you need to look at the PCI
-> > device registers as well?
-> 
-> No, just the config space. I guess at some point I might want to put
-> some of the chipsec vulnerability checks into the module, although I'm
-> not happy adding anything remotely dangerous.
-
-I mean for the SPI-NOR controller PCI device registers (not the LPC PCI
-device, sorry about not being clear), like config space. Typically it is
-PCI device 1f.5 and in that case you can't use the LPC driver because it
-should not touch other devices than what it is bound to (OK, there are
-exceptions but still).
-
-If that's the case then I guess this should go to intel-spi-pci/platform
-drivers after all. I think one option is that we add Kconfig option that
-makes the driver load but only provide the security bits without
-actually calling intel_spi_probe().
+PiBGcm9tOiBNaW1pIFpvaGFyIFttYWlsdG86em9oYXJAbGludXguaWJtLmNvbV0NCj4gU2VudDog
+TW9uZGF5LCBNYXkgMTEsIDIwMjAgMTE6MzcgUE0NCj4gT24gTW9uLCAyMDIwLTA1LTExIGF0IDE0
+OjEzICswMDAwLCBSb2JlcnRvIFNhc3N1IHdyb3RlOg0KPiA+ID4gRnJvbTogTWltaSBab2hhciBb
+bWFpbHRvOnpvaGFyQGxpbnV4LmlibS5jb21dDQo+ID4gPiBTZW50OiBGcmlkYXksIE1heSA4LCAy
+MDIwIDc6MDggUE0NCj4gPiA+IE9uIEZyaSwgMjAyMC0wNS0wOCBhdCAxMDoyMCArMDAwMCwgUm9i
+ZXJ0byBTYXNzdSB3cm90ZToNCj4gPiA+ID4gPiBGcm9tOiBNaW1pIFpvaGFyIFttYWlsdG86em9o
+YXJAbGludXguaWJtLmNvbV0NCj4gPiA+ID4gPiBPbiBUaHUsIDIwMjAtMDUtMDcgYXQgMTY6NDcg
+KzAwMDAsIFJvYmVydG8gU2Fzc3Ugd3JvdGU6DQo+ID4gPg0KPiA+ID4gPHNuaXA+DQo+ID4gPg0K
+PiA+ID4gPiA+ID4gPiB0aGUgZmlsZSBtZXRhZGF0YSB0byB0aGUgZmlsZSBkYXRhLiDCoFRoZSBJ
+TUEgYW5kIEVWTSBwb2xpY2llcw0KPiByZWFsbHkNCj4gPiA+ID4gPiA+ID4gbmVlZCB0byBiZSBp
+biBzeW5jLg0KPiA+ID4gPiA+ID4NCj4gPiA+ID4gPiA+IEl0IHdvdWxkIGJlIG5pY2UsIGJ1dCBh
+dCB0aGUgbW9tZW50IEVWTSBjb25zaWRlcnMgYWxzbyBmaWxlcyB0aGF0DQo+IGFyZQ0KPiA+ID4g
+PiA+ID4gbm90IHNlbGVjdGVkIGJ5IHRoZSBJTUEgcG9saWN5LiBBbiBleGFtcGxlIG9mIHdoeSB0
+aGlzIGlzIGENCj4gcHJvYmxlbSBpcw0KPiA+ID4gPiA+ID4gdGhlIGF1ZGl0IHNlcnZpY2UgdGhh
+dCBmYWlscyB0byBzdGFydCB3aGVuIGl0IHRyaWVzIHRvIGFkanVzdCB0aGUNCj4gPiA+IHBlcm1p
+c3Npb25zDQo+ID4gPiA+ID4gPiBvZiB0aGUgbG9nIGZpbGVzLiBUaG9zZSBmaWxlcyBkb24ndCBo
+YXZlIHNlY3VyaXR5LmV2bSBiZWNhdXNlIHRoZXkNCj4gYXJlDQo+ID4gPiA+ID4gPiBub3QgYXBw
+cmFpc2VkIGJ5IElNQSwgYnV0IEVWTSBkZW5pZXMgdGhlIG9wZXJhdGlvbi4NCj4gPiA+ID4gPg0K
+PiA+ID4gPiA+IE5vLCB0aGlzIGlzIGEgdGltaW5nIGlzc3VlIGFzIHRvIHdoZXRoZXIgb3Igbm90
+IHRoZSBidWlsdGluIHBvbGljeSBvcg0KPiA+ID4gPiA+IGEgY3VzdG9tIHBvbGljeSBoYXMgYmVl
+biBsb2FkZWQuIMKgQSBjdXN0b20gcG9saWN5IGNvdWxkIGV4Y2x1ZGUgdGhlDQo+ID4gPiA+ID4g
+bG9nIGZpbGVzIGJhc2VkIG9uIExTTSBsYWJlbHMsIGJ1dCB0aGV5IGFyZSBpbmNsdWRlZCBpbiB0
+aGUgYnVpbHRpbg0KPiA+ID4gPiA+IHBvbGljeS4NCj4gPiA+ID4NCj4gPiA+ID4gWWVzLCBJIHdh
+cyByZWZlcnJpbmcgdG8gYSBjdXN0b20gcG9saWN5LiBJbiB0aGlzIGNhc2UsIEVWTSB3aWxsIG5v
+dCBhZGFwdA0KPiA+ID4gPiB0byB0aGUgY3VzdG9tIHBvbGljeSBidXQgc3RpbGwgdmVyaWZpZXMg
+YWxsIGZpbGVzLiBJZiBhY2Nlc3MgY29udHJvbCBpcyBkb25lDQo+ID4gPiA+IGV4Y2x1c2l2ZWx5
+IGJ5IElNQSBhdCB0aGUgdGltZSBldm1fdmVyaWZ5eGF0dHIoKSBpcyBjYWxsZWQsIHdlIHdvdWxk
+bid0DQo+ID4gPiA+IG5lZWQgdG8gYWRkIHNlY3VyaXR5LmV2bSB0byBhbGwgZmlsZXMuDQo+ID4g
+Pg0KPiA+ID4gUm9iZXJ0bywgRVZNIGlzIG9ubHkgdHJpZ2dlcmVkIGJ5IElNQSwgdW5sZXNzIHlv
+dSd2ZSBtb2RpZmllZCB0aGUNCj4gPiA+IGtlcm5lbCB0byBkbyBvdGhlcndpc2UuDQo+ID4NCj4g
+PiBFVk0gd291bGQgZGVueSB4YXR0ci9hdHRyIG9wZXJhdGlvbnMgZXZlbiBpZiBJTUEgaXMgZGlz
+YWJsZWQgaW4gdGhlDQo+ID4ga2VybmVsIGNvbmZpZ3VyYXRpb24uIEZvciBleGFtcGxlLCBldm1f
+c2V0eGF0dHIoKSByZXR1cm5zIHRoZSB2YWx1ZQ0KPiA+IGZyb20gZXZtX3Byb3RlY3RfeGF0dHIo
+KS4gSU1BIGlzIG5vdCBpbnZvbHZlZCB0aGVyZS4NCj4gDQo+IENvbW1pdMKgYWUxYmExNjc2Yjg4
+ICgiRVZNOiBBbGxvdyB1c2VybGFuZCB0byBwZXJtaXQgbW9kaWZpY2F0aW9uIG9mDQo+IEVWTS1w
+cm90ZWN0ZWQgbWV0YWRhdGEiKSBpbnRyb2R1Y2VkwqBFVk1fQUxMT1dfTUVUQURBVEFfV1JJVEVT
+DQo+IHRvIGFsbG93DQo+IHdyaXRpbmcgdGhlIEVWTSBwb3J0YWJsZSBhbmQgaW1tdXRhYmxlIGZp
+bGUgc2lnbmF0dXJlcy4NCg0KQWNjb3JkaW5nIHRvIERvY3VtZW50YXRpb24vQUJJL3Rlc3Rpbmcv
+ZXZtOg0KDQpOb3RlIHRoYXQgb25jZSBhIGtleSBoYXMgYmVlbiBsb2FkZWQsIGl0IHdpbGwgbm8g
+bG9uZ2VyIGJlDQpwb3NzaWJsZSB0byBlbmFibGUgbWV0YWRhdGEgbW9kaWZpY2F0aW9uLg0KDQpX
+ZSBsb2FkIHRoZSBFVk0ga2V5IGZyb20gL2V0Yy9rZXlzL3g1MDlfZXZtLmRlciwgZHVyaW5nIGtl
+cm5lbA0KaW5pdGlhbGl6YXRpb24sIHdoaWNoIGV4Y2x1ZGVzIHRoZSBwb3NzaWJpbGl0eSBvZiB1
+c2luZyB0aGF0IGZsYWcuIERlZmVycmluZw0KdGhlIGxvYWRpbmcgb2YgdGhlIGtleSBpcyBub3Qg
+cG9zc2libGUgaWYgdGhhdCBrZXkgaXMgdXNlZCBmb3IgYXBwcmFpc2FsIGFuZA0KZW5mb3JjZW1l
+bnQgaXMgZW5hYmxlZCBmcm9tIHRoZSBiZWdpbm5pbmcuDQoNCkFsc28sIG9uY2UgdGhlIGZsYWcg
+aXMgY2xlYXJlZCBwb3J0YWJsZSBzaWduYXR1cmVzIGNhbm5vdCBiZSBpbnN0YWxsZWQNCnVudGls
+IHJlYm9vdC4gVGhpcyBzZWVtcyBhIGJpZyBsaW1pdGF0aW9uIGVzcGVjaWFsbHkgd2hlbiBzb2Z0
+d2FyZQ0KdXBkYXRlcyBhcmUgaW5zdGFsbGVkIG9uIGEgcnVubmluZyBzeXN0ZW0uDQoNCj4gPiA+
+IEknbSBub3QgaW50ZXJlc3RlZCBpbiBhIGNvbXBsaWNhdGVkIHNvbHV0aW9uLCBqdXN0IG9uZSB0
+aGF0IGFkZHJlc3Nlcw0KPiA+ID4gdGhlIG5ldyBFVk0gaW1tdXRhYmxlIGFuZCBwb3J0YWJsZSBz
+aWduYXR1cmUuIMKgSXQgbWlnaHQgcmVxdWlyZSBFVk0NCj4gPiA+IEhNQUMsIElNQSBkaWZmZXJl
+bnRpYXRpbmcgYmV0d2VlbiBhIG5ldyBmaWxlIGFuZCBhbiBleGlzdGluZyBmaWxlLCBvcjpxDQo+
+IA0KPiA+ID4gaXQgbWlnaHQgcmVxdWlyZSB3cml0aW5nIHRoZSBuZXcgRVZNIHNpZ25hdHVyZSBs
+YXN0LCBhZnRlciBhbGwgdGhlDQo+ID4gPiBvdGhlciB4YXR0cnMgb3IgbWV0YWRhdGEgYXJlIHVw
+ZGF0ZWQuIMKgUGxlYXNlIG5vdGhpbmcgdGhhdCBjaGFuZ2VzDQo+ID4gPiBleGlzdGluZyBleHBl
+Y3RhdGlvbnMuDQo+ID4NCj4gPiBPay4gSW50cm9kdWNpbmcgdGhlIG5ldyBzdGF0dXMgSU5URUdS
+SVRZX0ZBSUxfSU1NVVRBQkxFLCBhcyBJDQo+ID4gbWVudGlvbmVkIGluICdbUEFUQ0hdIGltYTog
+QWxsb3cgaW1hc2lnIHJlcXVpcmVtZW50IHRvIGJlIHNhdGlzZmllZCBieQ0KPiA+IEVWTSBwb3J0
+YWJsZSBzaWduYXR1cmVzJyBzZWVtcyB0byBoYXZlIGFuIGFkZGl0aW9uYWwgYmVuZWZpdC4gV2UN
+Cj4gPiBjb3VsZCBpbnRyb2R1Y2UgYW4gYWRkaXRpb25hbCBleGNlcHRpb24gaW4gZXZtX3Byb3Rl
+Y3RfeGF0dHIoKSwgb3RoZXINCj4gPiB0aGFuIElOVEVHUklUWV9OT1hBVFRSUywgYXMgd2Uga25v
+dyB0aGF0IHhhdHRyL2F0dHIgdXBkYXRlIHdvbid0DQo+ID4gY2F1c2UgSE1BQyB1cGRhdGUuDQo+
+IA0KPiBSZWZlciB0byBEb2N1bWVudGF0aW9uL0FCSS90ZXN0aW5nL2V2bSBkZXNjcmliZXMgb24g
+aG93IHRvIHBlcm1pdA0KPiB3cml0aW5nIHRoZSBzZWN1cml0eS5ldm0gc2lnbmF0dXJlcy4NCg0K
+SXQgZG9lc24ndCBzZWVtIHRoZXJlIGlzIGEgc29sdXRpb24gZm9yIGFkZGluZyBwb3J0YWJsZSBz
+aWduYXR1cmVzIGF0DQpydW4tdGltZS4NCg0KPiA+IEhvd2V2ZXIsIGl0IHdvbid0IHdvcmsgdW5s
+ZXNzIHRoZSBJTUEgcG9saWN5IHNheXMgdGhhdCB0aGUgZmlsZSBzaG91bGQNCj4gPiBiZSBhcHBy
+YWlzZWQgd2hlbiB0aGUgbWtub2QoKSBzeXN0ZW0gY2FsbCBpcyBleGVjdXRlZC4gT3RoZXJ3aXNl
+LA0KPiA+IGludGVncml0eV9paW50X2NhY2hlIGlzIG5vdCBjcmVhdGVkIGZvciB0aGUgZmlsZSBh
+bmQgdGhlIElNQV9ORVdfRklMRQ0KPiA+IGZsYWcgaXMgbm90IHNldC4NCj4gPg0KPiA+IEdyYW50
+aW5nIGFuIGV4Y2VwdGlvbiBmb3IgSU5URUdSSVRZX0ZBSUxfSU1NVVRBQkxFIHNvbHZlcyB0aGUg
+Y2FzZQ0KPiA+IHdoZXJlIHNlY3VyaXR5LmV2bSBpcyB0aGUgZmlyc3QgeGF0dHIgc2V0LiBJZiBh
+IHByb3RlY3RlZCB4YXR0ciBpcyB0aGUgZmlyc3QgdG8NCj4gPiBiZSBhZGRlZCwgdGhlbiB3ZSBh
+bHNvIGhhdmUgdG8gaGFuZGxlIHRoZSBJTlRFR1JJVFlfTk9MQUJFTCBlcnJvci4NCj4gPiBJdCBz
+aG91bGQgYmUgZmluZSB0byBhZGQgYW4gZXhjZXB0aW9uIGZvciB0aGlzIGVycm9yIGlmIHRoZSBI
+TUFDIGtleSBpcyBub3QNCj4gPiBsb2FkZWQuDQo+ID4NCj4gPiBUaGlzIHN0aWxsIGRvZXMgbm90
+IHNvbHZlIGFsbCBwcm9ibGVtcy4gSU5URUdSSVRZX05PTEFCRUwgY2Fubm90IGJlDQo+ID4gaWdu
+b3JlZCBpZiB0aGUgSE1BQyBrZXkgaXMgbG9hZGVkLCB3aGljaCBtZWFucyB0aGF0IGFsbCBmaWxl
+cyBuZWVkIHRvIGJlDQo+ID4gcHJvdGVjdGVkIGJ5IEVWTSB0byBhdm9pZCBpc3N1ZXMgbGlrZSB0
+aGUgb25lIEkgZGVzY3JpYmVkIChhdWRpdGQpLg0KPiANCj4gVGhlIGFwcGxpY2F0aW9uIHN0aWxs
+IG5lZWRzIHRvIGRlZmVyIHdyaXRpbmcgdGhlIEVWTSBwb3J0YWJsZSBhbmQNCj4gaW1tdXRhYmxl
+IGZpbGUgc2lnbmF0dXJlcyB1bnRpbCBhZnRlciBhbGwgdGhlIG90aGVyIHhhdHRycyBhcmUgd3Jp
+dHRlbg0KPiBvdGhlcndpc2UgaXQgd29uJ3QgdmFsaWRhdGUuDQoNCkVWTSB3b24ndCBhbGxvdyB0
+aGF0IGJlY2F1c2UgYXQgdGhlIHNlY29uZCBzZXR4YXR0cigpIGl0IHdpbGwgZmluZCB0aGF0DQpz
+ZWN1cml0eS5ldm0gaXMgbWlzc2luZy4NCg0KUm9iZXJ0bw0KDQpIVUFXRUkgVEVDSE5PTE9HSUVT
+IER1ZXNzZWxkb3JmIEdtYkgsIEhSQiA1NjA2Mw0KTWFuYWdpbmcgRGlyZWN0b3I6IExpIFBlbmcs
+IExpIEppYW4sIFNoaSBZYW5saQ0K
