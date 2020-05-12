@@ -2,97 +2,188 @@ Return-Path: <SRS0=p3Qd=62=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	FREEMAIL_REPLYTO_END_DIGIT,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A8F3C54E4A
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 12:57:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5DE2C54E8E
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 13:04:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CB6D9206D3
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 12:57:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 95C76207DD
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 13:04:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=protonmail.ch header.i=@protonmail.ch header.b="g7X3HR6L"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ggHqjCOP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729336AbgELM5B (ORCPT
+        id S1729987AbgELNEa (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 12 May 2020 08:57:01 -0400
-Received: from mail-40132.protonmail.ch ([185.70.40.132]:57243 "EHLO
-        mail-40132.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728085AbgELM5B (ORCPT
+        Tue, 12 May 2020 09:04:30 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:53910 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725923AbgELNE3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 12 May 2020 08:57:01 -0400
-Date:   Tue, 12 May 2020 12:50:05 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.ch;
-        s=protonmail; t=1589287814;
-        bh=Ld4AfSh+DgbNYfTa4km0zAH2heXRaC9744zQhOSEfVA=;
-        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:From;
-        b=g7X3HR6LjSKU408SSycP5+qZ7bsrExg9BB9V21BFxGsOsmiCHhQjL14by8nlA0Yxh
-         SRIrMUZ5yNPvyd5BEoAqszvBT4UeNdAo8fvPg3nZ425mf4uPriQuuVpFHEOSSg/XHR
-         oTMt5G4BvmC2I8GO4Zj9MpdlWoWQkSbcQJwUlNBQ=
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-From:   Jordan Glover <Golden_Miller83@protonmail.ch>
-Cc:     "sdf@google.com" <sdf@google.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-        "kernel-team@fb.com" <kernel-team@fb.com>,
+        Tue, 12 May 2020 09:04:29 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 04CD2G0A056223;
+        Tue, 12 May 2020 13:04:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=boOY3CvcqQO7NPUstrQQuok4LQP9n5pK2U+XHjDtKrc=;
+ b=ggHqjCOPf2nPIMYn/yL42kYZ47vr4vq+XJj6Zvv/M8vmZ9J8HYbZ2/z86clTatR5kSG4
+ LWlg24zMFiCwlqSnGP2oHjlr6DvfgQm+wgn5H1rnp3NQRoY4j6usfcx/rmfRLtwLNZZw
+ pv6REuyepHKeQfLygHK5NKMUD8/FSl4dZ53cL4L/DF+niobsgCds9lm9lZA0VoONt0ps
+ lC2O6Q/ukxvmmsqpr20jbIwyZT6tYSVdzVmJ5nW21U5dOISiDN/6H6Ip+t5qwDyUTfmu
+ fd6KALzk6NQMuA9jCrvJNi5CwJNAY9bfb/F73zMt151wEiP2jGiwtH3K10i240PxYkKP MQ== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 30x3gmjuf9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 12 May 2020 13:04:21 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 04CD2XJW142283;
+        Tue, 12 May 2020 13:04:20 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 30xbgjhp42-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 12 May 2020 13:04:18 +0000
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 04CD4Htx012919;
+        Tue, 12 May 2020 13:04:17 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 12 May 2020 06:04:17 -0700
+Date:   Tue, 12 May 2020 16:04:11 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
         "linux-security-module@vger.kernel.org" 
         <linux-security-module@vger.kernel.org>,
-        "acme@redhat.com" <acme@redhat.com>,
-        "jamorris@linux.microsoft.com" <jamorris@linux.microsoft.com>,
-        "jannh@google.com" <jannh@google.com>,
-        "kpsingh@google.com" <kpsingh@google.com>
-Reply-To: Jordan Glover <Golden_Miller83@protonmail.ch>
-Subject: Re: [PATCH v5 bpf-next 2/3] bpf: implement CAP_BPF
-Message-ID: <ZHW2pvJicBV52gi3gjsDNXDF6t7BteEoHKvEGeVueRPPDrEKGR0OMJjTlulOoOrDNNwcK2c7HE1lNEQw8F2G6SEGCCIAekGoY0T_cnJ-oSc=@protonmail.ch>
-In-Reply-To: <20200512023641.jupgmhpliblkli4t@ast-mbp.dhcp.thefacebook.com>
-References: <20200508215340.41921-1-alexei.starovoitov@gmail.com>
- <20200508215340.41921-3-alexei.starovoitov@gmail.com>
- <20200512001210.GA235661@google.com>
- <20200512023641.jupgmhpliblkli4t@ast-mbp.dhcp.thefacebook.com>
+        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
+Subject: Re: [bug report] evm: Check also if *tfm is an error pointer in
+ init_desc()
+Message-ID: <20200512130410.GB2056@kadam>
+References: <20200512104809.GA262740@mwanda>
+ <267804d00f2e457186509a6ae40c9c7f@huawei.com>
+ <20200512123414.GA2056@kadam>
+ <7fbab163eb76459a82ebe94c577a4954@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7fbab163eb76459a82ebe94c577a4954@huawei.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9618 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxlogscore=999
+ spamscore=0 suspectscore=2 phishscore=0 bulkscore=0 mlxscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2005120098
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9618 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxlogscore=999
+ clxscore=1015 spamscore=0 lowpriorityscore=0 phishscore=0 bulkscore=0
+ malwarescore=0 priorityscore=1501 mlxscore=0 suspectscore=2
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2005120098
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tuesday, May 12, 2020 2:36 AM, Alexei Starovoitov <alexei.starovoitov@gm=
-ail.com> wrote:
-
-> On Mon, May 11, 2020 at 05:12:10PM -0700, sdf@google.com wrote:
->
-> > On 05/08, Alexei Starovoitov wrote:
-> >
-> > > From: Alexei Starovoitov ast@kernel.org
-> > > [..]
-> > > @@ -3932,7 +3977,7 @@ SYSCALL_DEFINE3(bpf, int, cmd, union bpf_attr
-> > > __user *, uattr, unsigned int, siz
-> > > union bpf_attr attr;
-> > > int err;
-> >
-> > > -   if (sysctl_unprivileged_bpf_disabled && !capable(CAP_SYS_ADMIN))
+On Tue, May 12, 2020 at 12:45:06PM +0000, Roberto Sassu wrote:
+> > From: owner-linux-security-module@vger.kernel.org [mailto:owner-linux-
+> > security-module@vger.kernel.org] On Behalf Of Dan Carpenter
+> > Sent: Tuesday, May 12, 2020 2:34 PM
+> > On Tue, May 12, 2020 at 11:31:53AM +0000, Roberto Sassu wrote:
+> > > > From: Dan Carpenter [mailto:dan.carpenter@oracle.com]
+> > > > Sent: Tuesday, May 12, 2020 12:48 PM
+> > > >
+> > > > Hello Roberto Sassu,
+> > > >
+> > > > The patch 53de3b080d5e: "evm: Check also if *tfm is an error pointer
+> > > > in init_desc()" from Apr 27, 2020, leads to the following static
+> > > > checker warning:
+> > > >
+> > > > 	security/integrity/evm/evm_crypto.c:119 init_desc()
+> > > > 	error: '*tfm' dereferencing possible ERR_PTR()
+> > > >
+> > > > security/integrity/evm/evm_crypto.c
+> > > >     89
+> > > >     90                  tfm = &evm_tfm[hash_algo];
+> > > >     91                  algo = hash_algo_name[hash_algo];
+> > > >     92          }
+> > > >     93
+> > > >     94          if (IS_ERR_OR_NULL(*tfm)) {
+> > > >
+> > > > This used to be a "if (!*tfm)" check.
+> > > >
+> > > >     95                  mutex_lock(&mutex);
+> > > >     96                  if (*tfm)
+> > > >     97                          goto out;
+> > > >
+> > > > Then we test again with the lock held.  But in the new code if "*tfm"
+> > > > is an error pointer then we jump directly to the unlock and crash on the
+> > > > next line.  I can't see how the commit would fix anything.
 > > >
-> > > -   if (sysctl_unprivileged_bpf_disabled && !bpf_capable())
-> > >     return -EPERM;
-> > >     This is awesome, thanks for reviving the effort!
+> > > Hello Dan
 > > >
-> >
-> > One question I have about this particular snippet:
-> > Does it make sense to drop bpf_capable checks for the operations
-> > that work on a provided fd?
->
-> Above snippet is for the case when sysctl switches unpriv off.
-> It was a big hammer and stays big hammer.
-> I certainly would like to improve the situation, but I suspect
-> the folks who turn that sysctl knob on are simply paranoid about bpf
-> and no amount of reasoning would turn them around.
->
+> > > you are right. The fix should be applied in both places.
+> > >
+> > > if (!IS_ERR_OR_NULL(*tfm))
+> > > 	goto out;
+> > 
+> > No.  I was wrong.
+> > 
+> > >
+> > > >     98                  *tfm = crypto_alloc_shash(algo, 0, CRYPTO_NOLOAD);
+> > > >     99                  if (IS_ERR(*tfm)) {
+> > > >    100                          rc = PTR_ERR(*tfm);
+> > > >    101                          pr_err("Can not allocate %s (reason: %ld)\n", algo, rc);
+> > > >    102                          *tfm = NULL;
+> > > >    103                          mutex_unlock(&mutex);
+> > > >    104                          return ERR_PTR(rc);
+> > > >    105                  }
+> > > >    106                  if (type == EVM_XATTR_HMAC) {
+> > > >    107                          rc = crypto_shash_setkey(*tfm, evmkey,
+> > evmkey_len);
+> > > >    108                          if (rc) {
+> > > >    109                                  crypto_free_shash(*tfm);
+> > > >    110                                  *tfm = NULL;
+> > > >    111                                  mutex_unlock(&mutex);
+> > > >    112                                  return ERR_PTR(rc);
+> > > >    113                          }
+> > > >    114                  }
+> > > >    115  out:
+> > > >    116                  mutex_unlock(&mutex);
+> > > >    117          }
+> > > >    118
+> > > >    119          desc = kmalloc(sizeof(*desc) + crypto_shash_descsize(*tfm),
+> > > >                                                                      ^^^^
+> > > > I don't understand how using *tfm outside of a lock is safe at all
+> > > > anyway.
+> > >
+> > > I think the purpose of the mutex is just to  prevent two concurrent
+> > > allocations. Later, it should not be a problem, as *tfm is never freed.
+> > >
+> > 
+> > Actually by the time we take the lock then *tfm is either valid or NULL
+> > so this code works.  It's confusing though.
+> 
+> static inline bool __must_check IS_ERR_OR_NULL(__force const void *ptr)
+> {
+>         return unlikely(!ptr) || IS_ERR_VALUE((unsigned long)ptr);
+> }
+> 
+> CPU#1			CPU#2
+> 			*tfm = crypto_alloc_shash(algo, 0, CRYPTO_NOLOAD);
+> unlikely(!ptr)
+> 			*tfm = NULL;
+> IS_ERR_VALUE((unsigned long)ptr);
+> 
+> desc = kmalloc(sizeof(*desc) + crypto_shash_descsize(*tfm),
+> 
+> Could this happen?
 
-Without CAP_BPF, sysctl was the only option to keep you safe from flow
-of bpf vulns. You didn't had to be paranoid about that.
+Yeah.  Huh.  That's true.  Good eyes.
 
-Jordan
+I feel like this would be more clear as well if we used a temporary
+variable instead of working directly on "*tfm".
+
+regards,
+dan carpenter
