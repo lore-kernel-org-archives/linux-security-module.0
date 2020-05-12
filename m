@@ -2,143 +2,97 @@ Return-Path: <SRS0=p3Qd=62=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 151E3C2D0F7
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 20:35:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAD09C2D0F7
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 20:37:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E560420740
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 20:35:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B5D3720784
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 20:37:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VquWJTl/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731218AbgELUfp (ORCPT
+        id S1725987AbgELUh0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 12 May 2020 16:35:45 -0400
-Received: from out02.mta.xmission.com ([166.70.13.232]:42488 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731183AbgELUfo (ORCPT
+        Tue, 12 May 2020 16:37:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38962 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725938AbgELUh0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 12 May 2020 16:35:44 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jYbch-0002xz-HY; Tue, 12 May 2020 14:35:31 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jYbcg-0006hZ-NY; Tue, 12 May 2020 14:35:31 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Rob Landley <rob@landley.net>,
-        Bernd Edlinger <bernd.edlinger@hotmail.de>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Andy Lutomirski <luto@amacapital.net>
-References: <87h7wujhmz.fsf@x220.int.ebiederm.org>
-        <87sgga6ze4.fsf@x220.int.ebiederm.org>
-        <87v9l4zyla.fsf_-_@x220.int.ebiederm.org>
-        <87eerszyim.fsf_-_@x220.int.ebiederm.org>
-        <ee83587b-8a1c-3c4f-cc0f-7bc98afabae1@I-love.SAKURA.ne.jp>
-        <CAHk-=wgQ2ovXMW=5ZHCpowkE1PwPQSL7oV4YXzBxd6eqNRXxnQ@mail.gmail.com>
-        <87sgg6v8we.fsf@x220.int.ebiederm.org>
-        <202005111428.B094E3B76A@keescook>
-        <874kslq9jm.fsf@x220.int.ebiederm.org>
-        <202005121218.ED0B728DA@keescook>
-Date:   Tue, 12 May 2020 15:31:57 -0500
-In-Reply-To: <202005121218.ED0B728DA@keescook> (Kees Cook's message of "Tue,
-        12 May 2020 12:25:24 -0700")
-Message-ID: <87lflwq4hu.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Tue, 12 May 2020 16:37:26 -0400
+Received: from mail-vs1-xe41.google.com (mail-vs1-xe41.google.com [IPv6:2607:f8b0:4864:20::e41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5047C061A0C;
+        Tue, 12 May 2020 13:37:25 -0700 (PDT)
+Received: by mail-vs1-xe41.google.com with SMTP id e10so8702741vsp.12;
+        Tue, 12 May 2020 13:37:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+3Spc78U/N6XjhGZXt18IfDs/uw+nEmxOU/UHCVmAu0=;
+        b=VquWJTl/bAhNE5y+HVyOduy2Bc/6gYWcd+z/NJV1EQbfucayOcA3CNQMc461Y2rmHR
+         ZzobrLJpn4C9QRqTtHijNEw/gipYDLl7lI/oG4zQ/jlDYKmycgf0KTahG5F9epaXmq6s
+         Y7NUmybTgcH0pE5qrGfqjeE2USELQjSrDI5Zc56QfNH9yJtHwSlPDZBjx5s5t3VlmduH
+         06jUnTS/NfcSCZuxPNYUA9V0vjdDG8Ltb+Q1kKmKCex36IbuR/3e7My0JANnt1R6yLFQ
+         RlX9qDPZRm03R07oQjl2upxYF83AYwyFdG/N+z00xoajZ7gIYh9nP+xZ2+Rezawoz7zK
+         TGvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+3Spc78U/N6XjhGZXt18IfDs/uw+nEmxOU/UHCVmAu0=;
+        b=NP5vwmWWERc/wLlYOii1kuSG4tJGI1ykMkD/yLQLlRRRm0qn3DeKdjzgcGCxxUSrvc
+         KmI9FP++7shOp1/5iASTa3jo9OAULWaLyUdnOELaCl/jT+XHBmFXi4oJqNsyIaOuVqdM
+         HxKY6cF8GYhfFcndhQ3Lnzd0daX7ZnAWJ+wKWZ3COPw3YPn7r7Qoa2E61pZ6HEx5nl1B
+         eAszf9YzIONWp3tIpAfLeneBuZt1PKq89H4B0aa8KNCsqOSRxtiR6e3p8B3NiC84Ty7I
+         sqPvnzqggdtcAQrg5B8ZBuobdgp69MrYkn/FGHWCkUDqxEWghEdmY06Z1w3tigic5Rv8
+         dZhA==
+X-Gm-Message-State: AGi0PuY1YlLfV8szqRwvKlilADze7Ze1z9r/pQXnTJDx4D1NTgbkzwzj
+        vNpvKPKO2Zjl0ctnMBvZf39oFdnz5+CvlBn5Qd2/IeBuOpM=
+X-Google-Smtp-Source: APiQypJAcGYX8xew4K3dHgTLC/NKBFWjtQAMXZ7xDDLKp2BWHmOWrAnYgAHrLU1C92FsGghwc0pJtqYd5dn/ssbujeU=
+X-Received: by 2002:a67:fb06:: with SMTP id d6mr16684070vsr.66.1589315844877;
+ Tue, 12 May 2020 13:37:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1jYbcg-0006hZ-NY;;;mid=<87lflwq4hu.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+qsyyfmYubd8DotJ8yuQl163vwuqW1glQ=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [PATCH 3/5] exec: Remove recursion from search_binary_handler
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+References: <CAD2FfiEk8Fq3=i_3NHvtuwip=-v_cGfnYSowdPi86U_BcgP2gQ@mail.gmail.com>
+ <61c7782cd2e64bb9ab2aaf6a016bbb6c@AUSX13MPC101.AMER.DELL.COM>
+ <CAD2FfiGweUHNJGdj7OUQFxEhQBYvMCbuWM-+ez=SpN=HbcaS4Q@mail.gmail.com>
+ <70757953c25645baac2dddd7c6924d05@AUSX13MPC101.AMER.DELL.COM>
+ <20200508082028.GP487496@lahna.fi.intel.com> <CAD2FfiG2c4iXmTjUpQAUqRVBVyH0Hm4VfO5PBTXf03VXHR22ng@mail.gmail.com>
+ <20200511104504.GK487496@lahna.fi.intel.com> <CAD2FfiHn0PNaC3aFXE-hn9Mmtt5JW_D8BK0hOScYXR9EJLNbcw@mail.gmail.com>
+ <20200511162811.GA487496@lahna.fi.intel.com> <CAD2FfiHo1EzRupjgKhtLX0Zguq-bVeW5+u_PNQGAzV0x+AtfVw@mail.gmail.com>
+ <20200512064401.GF487496@lahna.fi.intel.com>
+In-Reply-To: <20200512064401.GF487496@lahna.fi.intel.com>
+From:   Richard Hughes <hughsient@gmail.com>
+Date:   Tue, 12 May 2020 21:37:13 +0100
+Message-ID: <CAD2FfiEOqTUO-XOgar1RtR9PtXWf4tKtsdZX6oS-Q-_y=k6tig@mail.gmail.com>
+Subject: Re: [PATCH] platform/x86: Export LPC attributes for the system SPI chip
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     Mario Limonciello <Mario.Limonciello@dell.com>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Kees Cook <keescook@chromium.org> writes:
+On Tue, 12 May 2020 at 07:44, Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
+> I mean for the SPI-NOR controller PCI device registers (not the LPC PCI
+> device, sorry about not being clear), like config space.
 
-> On Tue, May 12, 2020 at 01:42:53PM -0500, Eric W. Biederman wrote:
->> Kees Cook <keescook@chromium.org> writes:
->> > Should binfmt_misc do the install, or can the consuming binfmt do it?
->> > i.e. when binfmt_elf sees bprm->execfd, does it perform the install
->> > instead?
->> 
->> I am still thinking about this one, but here is where I am at.  At a
->> practical level passing the file descriptor of the script to interpreter
->> seems like something we should encourage in the long term.  It removes
->> races and it is cheaper because then the interpreter does not have to
->> turn around and open the script itself.
->
-> Yeah, this does sounds pretty good, though I have concerns about doing
-> it for a process that isn't expecting it. I've seen a lot of bad code
-> make assumptions about initial fd numbers. :(
+I don't think I need to care about those, but I'll admit I'm a bit of
+a newbie with all the terminology. I'll respin the patch now and cc
+you on the new version too.
 
-Yes.  That is definitely a concern.
+> If that's the case then I guess this should go to intel-spi-pci/platform
+> drivers after all. I think one option is that we add Kconfig option that
+> makes the driver load but only provide the security bits without
+> actually calling intel_spi_probe().
 
->> Strictly speaking binfmt_misc should not need to close the file
->> descriptor in binfmt_misc because we have already unshared the files
->> struct and reset_files_struct should handle restoring it.
->
-> If I get what you mean, I agree. The error case is fine.
->
->> Calling fd_install in binfmt_misc still seems wrong, as that exposes
->> the new file descriptor to user space with the old creds.
->
-> I haven't dug into the details here -- is there a real risk here? The
-> old creds are what opened the file originally for the exec. Are you
-> thinking about executable-but-not-readable files?
+I think getting distros to enable any of the SPI_INTEL_SPI* options
+might be an uphill battle.
 
-I am thinking about looking in proc/<pid>/fd and maybe opening those
-files.  That access is gated by ptrace_may_access which is gated
-by the process credentials. So I know strictly speaking it is wrong.
-
-I think you are correct that it would only allow access to a file that
-could be accessed another way.  Even execveat at a quick glance appears
-to go through the orinary permission checks of open.
-
-The current code is definitely a maintenance pitfall as it install state
-into the process early.
-
->> It is possible although unlikely for userspace to find the file
->> descriptor without consulting AT_EXECFD so just to be conservative I
->> think we should install the file descriptor in begin_new_exec even if
->> the next interpreter does not support AT_EXECFD.
->
-> I think universally installing the fd needs to be a distinct patch --
-> it's going to have a lot of consequences, IMO. We can certainly deal
-> with them, but I don't think it should be part of this clean-up series.
-
-I meant generically installing the fd not universally installing it.
-
->> I am still working on how to handle recursive binfmts but I suspect it
->> is just a matter of having an array of struct files in struct
->> linux_binprm.
->
-> If install is left if binfmt_misc, then the recursive problem goes away,
-> yes?
-
-I don't think leaving the install in binfmt_misc is responsible at this
-point.
-
-Eric
+Richard.
