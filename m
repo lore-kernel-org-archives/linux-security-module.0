@@ -2,160 +2,104 @@ Return-Path: <SRS0=p3Qd=62=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8154AC2D0F8
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 21:09:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C7B8C2D0F8
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 21:10:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5FC8820659
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 21:09:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2216C20740
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 21:10:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kvOR1LBv"
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="V6uqoOFX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731254AbgELVJp (ORCPT
+        id S1726661AbgELVKT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 12 May 2020 17:09:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43974 "EHLO
+        Tue, 12 May 2020 17:10:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44072 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726324AbgELVJp (ORCPT
+        by vger.kernel.org with ESMTP id S1726324AbgELVKT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 12 May 2020 17:09:45 -0400
-Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B38F4C061A0C
-        for <linux-security-module@vger.kernel.org>; Tue, 12 May 2020 14:09:43 -0700 (PDT)
-Received: by mail-pg1-x542.google.com with SMTP id a4so6762647pgc.0
-        for <linux-security-module@vger.kernel.org>; Tue, 12 May 2020 14:09:43 -0700 (PDT)
+        Tue, 12 May 2020 17:10:19 -0400
+Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3FB2C061A0C
+        for <linux-security-module@vger.kernel.org>; Tue, 12 May 2020 14:10:18 -0700 (PDT)
+Received: by mail-ej1-x643.google.com with SMTP id s21so4146414ejd.2
+        for <linux-security-module@vger.kernel.org>; Tue, 12 May 2020 14:10:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=4SiIjIE0HqgktULUkxH4huGvPI4IR97vaLn7SaMgRvw=;
-        b=kvOR1LBvbXHsTdtL2TP6eGDZfFC1ooMf5iQTDsBYgNoJtSbpgX4ulckTUbNODBqoP7
-         riZzlWq93xqkYi3zXErNHAHy+/gZ9NrBfN7Gye2AF282HV8iGeljGnl6WQLR0VRh/DEO
-         vErb11z8cHI5SW+sUPYZCGttNjJuR7vSpITj4=
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=CSpdh7Z7zMPtWlBdq88/5LdKyaeey1hMdM035dkEBxs=;
+        b=V6uqoOFX6u2CvdHUUrupnk8+21Ued+g4DNiWbLRHdYnw2mPYGFa0LlYwZnjQ5yfRgZ
+         UZNy0mo918STQefgWOKbLS0E4C74SKRT95qgXdfKBN/hYX2/Nzecm6BSbIcOGBW2Ru+y
+         mIM/uO6R7sr0pcImYebX8/FQQSEAkMLlMakFrsajHRBl8kvMquq5aAUgIXXLzwO17teM
+         2kooftAYyD89CGJIzuWl18J4j168p1dkHOV3oamVuCohv8X2upXNRxcFK9XpBJhPp/vq
+         +s+7O5nkvCh/vIsWV2DRt29mgqQRG3EncagOPcNGG+ps6EdZsJ+UW8SnUiF4ulHfHv2D
+         yiPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=4SiIjIE0HqgktULUkxH4huGvPI4IR97vaLn7SaMgRvw=;
-        b=mUtgAnQGAKMKdM/JQwTToR49inaizzalw5ZoVfh0h7KAK7QCPRYuWZy9nC3yZv+4a3
-         5uX8xHMQ0crVS6O4uXNs5xNkpNYYmVq0O/fvjPTA/ZyljWf08IweO87VSGT2PpFpeB8I
-         QAZcAqMIInL9oz9vYZxs3A+l56BJptxvSNUwIESVhqEnhZyxFN/aevNmKQR8M5oSTsOW
-         NK+uNEgyzkTpoSK7TsDL4kili+MvbmcuYvlp538oLGyfTgX5sJuDn+cgOqL4NJw8Jare
-         eYQy1zuYK36EE52Feex1mJpDRIBoWrRo3VLqakoyds5NYJbACsJ08/q/6kRmAzSmfYvi
-         ljYA==
-X-Gm-Message-State: AOAM5329QwadDB6zBbExE65VefPPObKbvxCWhiJ4Vu1B2Cqt6x1Nrl7v
-        gKwNNbGHfFrSBBmSfIEb/sygiQ==
-X-Google-Smtp-Source: ABdhPJxt840LEl+4pcP5gOb8tskJnRcbgXJ1+UHrDACNk2Ju97S34FmnGoVr6OI4La30DBmSgA2nPQ==
-X-Received: by 2002:a63:c04a:: with SMTP id z10mr8594229pgi.430.1589317783313;
-        Tue, 12 May 2020 14:09:43 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id g17sm2433251pgg.43.2020.05.12.14.09.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 May 2020 14:09:42 -0700 (PDT)
-Date:   Tue, 12 May 2020 14:09:41 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc:     linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christian Heimes <christian@python.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Eric Chiang <ericchiang@google.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Philippe =?iso-8859-1?Q?Tr=E9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v5 2/6] fs: Add a MAY_EXECMOUNT flag to infer the noexec
- mount property
-Message-ID: <202005121407.A339D31A@keescook>
-References: <20200505153156.925111-1-mic@digikod.net>
- <20200505153156.925111-3-mic@digikod.net>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=CSpdh7Z7zMPtWlBdq88/5LdKyaeey1hMdM035dkEBxs=;
+        b=L0pMMn+yE+CKGF4hidfn8XKqchIHOMEcP9v8wtaVCC1vwJkBcXaS9mPWix9JIkoWF7
+         3O6S/0uHyWROxT0PEK+OLXFb7ewpvQpBgGLYt43RIpykX4w0//Vgo9Wv/3t/xiDv9tuT
+         SRO+uoFfz1Tz+JnkM+RCLhGCIMHkVYaOSXiLoVBzyfkbhzd+pfHnQomWs2nJLm8R++RD
+         ANG3fzKtGp87aqf47RJxyW9SWFYErjQwGOd2IzHMkm6NiNBzZ/wO8l4kVTp6mvbTuEwr
+         V7/eX2FJ7q5vqX6TlACdMqmbH2t5N1Zm0ShLOWkhfEPzysYipQRNNjkZx/c0zf2JDVEb
+         aW7A==
+X-Gm-Message-State: AOAM532WUt6TTrOe3sP/e9tvQmxTYa9KakRyGE0EoIFwNHfnPJWM2RiB
+        3O2qn4wy6wvk1WJP6ZugLcGwIoRspTxp/8grKQ5q
+X-Google-Smtp-Source: ABdhPJz+HF0Y3QZDTXTT1RKvc6wFDQInr2HtM/6l1XFoAqWd56N9wJf0k+oVX+KBsVBP4gA/meeU9qtSiL+UJYblbf0=
+X-Received: by 2002:a17:906:6841:: with SMTP id a1mr8378690ejs.271.1589317817246;
+ Tue, 12 May 2020 14:10:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200505153156.925111-3-mic@digikod.net>
+References: <07d99ae197bfdb2964931201db67b6cd0b38db5b.1589276729.git.pabeni@redhat.com>
+In-Reply-To: <07d99ae197bfdb2964931201db67b6cd0b38db5b.1589276729.git.pabeni@redhat.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 12 May 2020 17:10:05 -0400
+Message-ID: <CAHC9VhRK+k8zwCLCMRBmjPFCYuK=BEn4Gq4vhEngedMqhuPsDA@mail.gmail.com>
+Subject: Re: [PATCH net] netlabel: cope with NULL catmap
+To:     Paolo Abeni <pabeni@redhat.com>
+Cc:     netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        linux-security-module@vger.kernel.org, ppandit@redhat.com,
+        Matthew Sheets <matthew.sheets@gd-ms.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, May 05, 2020 at 05:31:52PM +0200, Mickaël Salaün wrote:
-> This new MAY_EXECMOUNT flag enables to check if the underlying mount
-> point of an inode is marked as executable.  This is useful to implement
-> a security policy taking advantage of the noexec mount option.
-> 
-> This flag is set according to path_noexec(), which checks if a mount
-> point is mounted with MNT_NOEXEC or if the underlying superblock is
-> SB_I_NOEXEC.
-> 
-> Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> Reviewed-by: Philippe Trébuchet <philippe.trebuchet@ssi.gouv.fr>
-> Reviewed-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
-> Cc: Aleksa Sarai <cyphar@cyphar.com>
-> Cc: Al Viro <viro@zeniv.linux.org.uk>
-> Cc: Kees Cook <keescook@chromium.org>
+On Tue, May 12, 2020 at 8:44 AM Paolo Abeni <pabeni@redhat.com> wrote:
+>
+> The cipso and calipso code can set the MLS_CAT attribute on
+> successful parsing, even if the corresponding catmap has
+> not been allocated, as per current configuration and external
+> input.
+>
+> Later, selinux code tries to access the catmap if the MLS_CAT flag
+> is present via netlbl_catmap_getlong(). That may cause null ptr
+> dereference while processing incoming network traffic.
+>
+> Address the issue setting the MLS_CAT flag only if the catmap is
+> really allocated. Additionally let netlbl_catmap_getlong() cope
+> with NULL catmap.
+>
+> Reported-by: Matthew Sheets <matthew.sheets@gd-ms.com>
+> Fixes: 4b8feff251da ("netlabel: fix the horribly broken catmap functions")
+> Fixes: ceba1832b1b2 ("calipso: Set the calipso socket label to match the secattr.")
+> Signed-off-by: Paolo Abeni <pabeni@redhat.com>
 > ---
->  fs/namei.c         | 2 ++
->  include/linux/fs.h | 2 ++
->  2 files changed, 4 insertions(+)
-> 
-> diff --git a/fs/namei.c b/fs/namei.c
-> index a320371899cf..33b6d372e74a 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -2849,6 +2849,8 @@ static int may_open(const struct path *path, int acc_mode, int flag)
->  		break;
->  	}
->  
-> +	/* Pass the mount point executability. */
-> +	acc_mode |= path_noexec(path) ? 0 : MAY_EXECMOUNT;
->  	error = inode_permission(inode, MAY_OPEN | acc_mode);
->  	if (error)
->  		return error;
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 313c934de9ee..79435fca6c3e 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -103,6 +103,8 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
->  #define MAY_NOT_BLOCK		0x00000080
->  /* the inode is opened with O_MAYEXEC */
->  #define MAY_OPENEXEC		0x00000100
-> +/* the mount point is marked as executable */
-> +#define MAY_EXECMOUNT		0x00000200
->  
->  /*
->   * flags in file.f_mode.  Note that FMODE_READ and FMODE_WRITE must correspond
+>  net/ipv4/cipso_ipv4.c        | 6 ++++--
+>  net/ipv6/calipso.c           | 3 ++-
+>  net/netlabel/netlabel_kapi.c | 6 ++++++
+>  3 files changed, 12 insertions(+), 3 deletions(-)
 
-I find this name unintuitive, but I cannot think of anything better,
-since I think my problem is that "MAY" doesn't map to the language I
-want to use to describe what this flag is indicating.
+Seems reasonable to me, thanks Paolo.
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+Acked-by: Paul Moore <paul@paul-moore.com>
 
 -- 
-Kees Cook
+paul moore
+www.paul-moore.com
