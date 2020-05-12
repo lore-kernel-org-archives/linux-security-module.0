@@ -2,104 +2,132 @@ Return-Path: <SRS0=p3Qd=62=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A3D1C2D0F8
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 23:10:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A197C2D0F8
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 23:47:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2B69520753
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 23:10:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1589325001;
-	bh=21shcGboZ/UI67vsNX5V9akXKBR0/nMcHkMB8JizcQ8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=jpbTZmEM63HRs2Bgvxm0+EJDiZYCJdsOuToK0tJZfLchEWjSOnKWFBDA2j3utc+qp
-	 BhK77wA/i8ot6pPJ3exqRGvwzdHvuTzsJAE76XQLbhYYqSFau8dkYA/BvoYKP4CrIh
-	 UZS9Sr2sc+SPx317Q83U+pxw3tx95JUjKAiorfPs=
+	by mail.kernel.org (Postfix) with ESMTP id 2330920747
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 23:47:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Xd5AlNqU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731313AbgELXJ6 (ORCPT
+        id S1729215AbgELXrS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 12 May 2020 19:09:58 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:40806 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725938AbgELXJ6 (ORCPT
+        Tue, 12 May 2020 19:47:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40424 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728220AbgELXrS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 12 May 2020 19:09:58 -0400
-Received: by mail-oi1-f195.google.com with SMTP id v128so2972117oia.7;
-        Tue, 12 May 2020 16:09:57 -0700 (PDT)
+        Tue, 12 May 2020 19:47:18 -0400
+Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E78D9C061A0E
+        for <linux-security-module@vger.kernel.org>; Tue, 12 May 2020 16:47:16 -0700 (PDT)
+Received: by mail-pg1-x543.google.com with SMTP id u35so3929341pgk.6
+        for <linux-security-module@vger.kernel.org>; Tue, 12 May 2020 16:47:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=N1bVDPVoG6ytQwUsDy8H27cU1uUByM6L4oJDmg1UcHY=;
+        b=Xd5AlNqUyqa5uevb82kFVRNWgJc4lnvPLl2on8kfIv/uv+g8vxQ9dGBJFLbWtLIDRP
+         JSQcp54jIaNJhB0NVPwzNjFlX6LcqAX9z8zSDwNohzAWR4gXbprlhPjWN1YyuRl4Bzfw
+         pPSz+ZEIBEy1PBgcBn9P5S0RJobVsxwgU1JAg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=TjYd3leSKKn51ZfY7qRcr7llrPytDm0GdCIEZD2j8C0=;
-        b=YOcW1N/aZdkNavfBhDLaPPKkCJpdD0SC0EMMo/CW1nENoZkg5aEIo6bYvKbmffD4X1
-         CpySzjC7Hel/chlTNGwzBwd7jlrviOHs7IsRRZO05yzYV5/la3SjrgUdraxs2srAo0JN
-         k+fvGe+iAMogHhPoKpduAbzlJVIYQdSLVCbNf683JQIUWbE9bexnLH4MAn2E05/CUW5Z
-         WvJ/umlU21AIS6KAs4eT3QmxF8ZZgsatauhezwgjsy1wlsKSQey3AtK7KYSIs40HEJP+
-         lkl0WK8ajuJ6QWWvGUjAxrsWCd2OY/kzjyTDj/YfbbsCBKdjhLxQLjeM/JPSw/QRdS8u
-         v5CQ==
-X-Gm-Message-State: AGi0PuZAWZFjJXhhxZ3Q5uBdtblrrex3FIgWhfSO8TgzGargqS/EtK9X
-        JamKUDjbk+VJpRBS8NVx560jTW2OnA==
-X-Google-Smtp-Source: APiQypIp6z6XpDyeSpU/MQIh4PPKcXp8UTWOTpvjD0Pwk05Fb3joF3Y1t4vigT4+SMH68vOz8q6/qQ==
-X-Received: by 2002:aca:c68b:: with SMTP id w133mr23020989oif.27.1589324996924;
-        Tue, 12 May 2020 16:09:56 -0700 (PDT)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id 34sm385316otq.67.2020.05.12.16.09.54
+         :mime-version:content-disposition:in-reply-to;
+        bh=N1bVDPVoG6ytQwUsDy8H27cU1uUByM6L4oJDmg1UcHY=;
+        b=uFlRjhiU3m+EJIupy0NXLvGML0HPEODIGZ6QdWvTvEU9k4sb5tMDY3wj0VXEw7Oxm3
+         deCY5bjYHAPHrMwYghMIYqYIJ6iXTUV/pJLAb7D9dme+K6JEdGG4Sg9jdHxFfIDSmLsj
+         G8ZyC7m77E4XYJhsDX50McFmYLCSn5jsiZkeCnYvwpaqLfbYk66z8BRS0URNHmaJ6OPx
+         xC6U9fivaCWN81gz3XSahVp11ccXCVnp0r01mLOu+uq8TeOg357Xk1tHaUEPVqcWKgCa
+         uSK35BrTSuThb4B6HvMzzV31oePDV3VJoJIolkDgKRmIHRZy7lpOzzgYzR9s6xhJPe4t
+         aL8A==
+X-Gm-Message-State: AGi0PubQKoV88P+KbXzh8BtkKWlBovp24Lj3W+Tza+5h+E3bkeTlSM5z
+        HrAnQl2FiRYybef5MCifdhgIgQ==
+X-Google-Smtp-Source: APiQypLwHnNOyZgGCIToGkDBHxSScBz+H/qybjJmf7uN9nNY8ZiE4xAZfpg+M67XRGGVV7oYCqqYRQ==
+X-Received: by 2002:a63:c80e:: with SMTP id z14mr21445995pgg.170.1589327236437;
+        Tue, 12 May 2020 16:47:16 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id h15sm13078255pfr.161.2020.05.12.16.47.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 May 2020 16:09:56 -0700 (PDT)
-Received: (nullmailer pid 16218 invoked by uid 1000);
-        Tue, 12 May 2020 23:09:54 -0000
-Date:   Tue, 12 May 2020 18:09:54 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Prakhar Srivastava <prsriva@linux.microsoft.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, devicetree@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, catalin.marinas@arm.com,
-        will@kernel.org, mpe@ellerman.id.au, benh@kernel.crashing.org,
-        paulus@samba.org, frowand.list@gmail.com, zohar@linux.ibm.com,
-        dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
-        pasha.tatashin@soleen.com, allison@lohutok.net,
-        kstewart@linuxfoundation.org, takahiro.akashi@linaro.org,
-        tglx@linutronix.de, vincenzo.frascino@arm.com,
-        mark.rutland@arm.com, masahiroy@kernel.org, james.morse@arm.com,
-        bhsharma@redhat.com, mbrugger@suse.com, hsinyi@chromium.org,
-        tao.li@vivo.com, christophe.leroy@c-s.fr,
-        gregkh@linuxfoundation.org, nramas@linux.microsoft.com,
-        tusharsu@linux.microsoft.com, balajib@linux.microsoft.com
-Subject: Re: [RFC][PATCH 1/2] Add a layer of abstraction to use the memory
- reserved by device tree for ima buffer pass.
-Message-ID: <20200512230954.GB2654@bogus>
-References: <20200504203829.6330-1-prsriva@linux.microsoft.com>
- <20200504203829.6330-2-prsriva@linux.microsoft.com>
+        Tue, 12 May 2020 16:47:15 -0700 (PDT)
+Date:   Tue, 12 May 2020 16:47:14 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Rob Landley <rob@landley.net>,
+        Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Andy Lutomirski <luto@amacapital.net>
+Subject: Re: [PATCH 3/5] exec: Remove recursion from search_binary_handler
+Message-ID: <202005121625.20B35A3@keescook>
+References: <87v9l4zyla.fsf_-_@x220.int.ebiederm.org>
+ <87eerszyim.fsf_-_@x220.int.ebiederm.org>
+ <ee83587b-8a1c-3c4f-cc0f-7bc98afabae1@I-love.SAKURA.ne.jp>
+ <CAHk-=wgQ2ovXMW=5ZHCpowkE1PwPQSL7oV4YXzBxd6eqNRXxnQ@mail.gmail.com>
+ <87sgg6v8we.fsf@x220.int.ebiederm.org>
+ <202005111428.B094E3B76A@keescook>
+ <874kslq9jm.fsf@x220.int.ebiederm.org>
+ <202005121218.ED0B728DA@keescook>
+ <87lflwq4hu.fsf@x220.int.ebiederm.org>
+ <202005121606.5575978B@keescook>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200504203829.6330-2-prsriva@linux.microsoft.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <202005121606.5575978B@keescook>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, May 04, 2020 at 01:38:28PM -0700, Prakhar Srivastava wrote:
-> Introduce a device tree layer for to read and store ima buffer
-> from the reserved memory section of a device tree.
+On Tue, May 12, 2020 at 04:08:56PM -0700, Kees Cook wrote:
+> I'm nearly certain the answer is "yes", but I wonder if we should stop
+> for a moment and ask "does anything still use MISC_FMT_OPEN_BINARY ? It
+> looks like either "O" or "C" binfmt_misc registration flag. My installed
+> binfmts on Ubuntu don't use them...
+> 
+> I'm currently pulling a list of all the packages in Debian than depend
+> on the binfmt-support package and checking their flags.
 
-But why do I need 'a layer of abstraction'? I don't like them.
+So, binfmt-support in Debian doesn't in _support_ MISC_FMT_OPEN_BINARY
+("O"):
 
-> Signed-off-by: Prakhar Srivastava <prsriva@linux.microsoft.com>
-> ---
->  drivers/of/Kconfig  |   6 ++
->  drivers/of/Makefile |   1 +
->  drivers/of/of_ima.c | 165 ++++++++++++++++++++++++++++++++++++++++++++
 
-Who are the users of this code and why does it need to be here? Most 
-code for specific bindings are not in drivers/of/ but with the user. It 
-doesn't sound like there's more than 1 user.
+        credentials =
+                (binfmt->credentials && !strcmp (binfmt->credentials, "yes"))
+                ? "C" : "";
+        preserve = (binfmt->preserve && !strcmp (binfmt->preserve, "yes"))
+                ? "P" : "";
+        fix_binary =
+                (binfmt->fix_binary && !strcmp (binfmt->fix_binary, "yes"))
+                ? "F" : "";
+...
+        regstring = xasprintf (":%s:%c:%s:%s:%s:%s:%s%s%s\n",
+                               name, type, binfmt->offset, binfmt->magic,
+                               binfmt->mask, interpreter,
+                               credentials, preserve, fix_binary);
 
->  include/linux/of.h  |  34 +++++++++
->  4 files changed, 206 insertions(+)
->  create mode 100644 drivers/of/of_ima.c
+However, "credentials" ("C") does imply MISC_FMT_OPEN_BINARY.
+
+
+I looked at every Debian package using binfmt-support, and "only" qemu
+uses "credential".
+
+And now I wonder if qemu actually uses the resulting AT_EXECFD ...
+
+-- 
+Kees Cook
