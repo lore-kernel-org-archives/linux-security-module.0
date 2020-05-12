@@ -2,164 +2,138 @@ Return-Path: <SRS0=p3Qd=62=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51010CA90AF
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 16:31:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC2AECA90AF
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 17:34:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 34FB8206CC
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 16:31:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F7A9206B8
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 17:34:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728054AbgELQbj (ORCPT
+        id S1730149AbgELReq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 12 May 2020 12:31:39 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2200 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727778AbgELQbj (ORCPT
+        Tue, 12 May 2020 13:34:46 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:44347 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725554AbgELReq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 12 May 2020 12:31:39 -0400
-Received: from lhreml731-chm.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id 6A6C8B1834534D466D91;
-        Tue, 12 May 2020 17:31:32 +0100 (IST)
-Received: from fraeml703-chm.china.huawei.com (10.206.15.52) by
- lhreml731-chm.china.huawei.com (10.201.108.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
- 15.1.1913.5; Tue, 12 May 2020 17:31:32 +0100
-Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- fraeml703-chm.china.huawei.com (10.206.15.52) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1913.5; Tue, 12 May 2020 18:31:31 +0200
-Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
- fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.1913.007;
- Tue, 12 May 2020 18:31:31 +0200
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        "david.safford@gmail.com" <david.safford@gmail.com>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "John Johansen" <john.johansen@canonical.com>,
-        "matthewgarrett@google.com" <matthewgarrett@google.com>
-CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
-Subject: RE: [RFC][PATCH 1/3] evm: Move hooks outside LSM infrastructure
-Thread-Topic: [RFC][PATCH 1/3] evm: Move hooks outside LSM infrastructure
-Thread-Index: AQHWHfmwvisCdHYC6kmVk7fgFWuzYaibYCWAgAAX0QCAAMB1IIAAb0AAgAApg3CAADIngIAAzgGAgACHqACABHSroIAAjWsAgAC7FtCAAFxigIAAJvQA///zHACAACsKoA==
-Date:   Tue, 12 May 2020 16:31:31 +0000
-Message-ID: <fcdb168d27214b5e85c3b741f184cde9@huawei.com>
-References: <20200429073935.11913-1-roberto.sassu@huawei.com>
-         <1588794293.4624.21.camel@linux.ibm.com>
-         <1588799408.4624.28.camel@linux.ibm.com>
-         <ab879f9e66874736a40e9c566cadc272@huawei.com>
-         <1588864628.5685.78.camel@linux.ibm.com>
-         <750ab4e0990f47e4aea10d0e580b1074@huawei.com>
-         <1588884313.5685.110.camel@linux.ibm.com>
-         <84e6acad739a415aa3e2457b5c37979f@huawei.com>
-         <1588957684.5146.70.camel@linux.ibm.com>
-         <414644a0be9e4af880452f4b5079aba1@huawei.com>
-         <1589233010.5091.49.camel@linux.ibm.com>
-         <09ee169cfd70492cb526bcb30f99d693@huawei.com>
-         <1589293025.5098.53.camel@linux.ibm.com>
-         <d3f4a53e386d4bb1b8c608ac8b6bec1f@huawei.com>
- <1589298622.5098.67.camel@linux.ibm.com>
-In-Reply-To: <1589298622.5098.67.camel@linux.ibm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.47.12.77]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Tue, 12 May 2020 13:34:46 -0400
+Received: from static-50-53-45-43.bvtn.or.frontiernet.net ([50.53.45.43] helo=[192.168.192.153])
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <john.johansen@canonical.com>)
+        id 1jYYnh-0003MC-7v; Tue, 12 May 2020 17:34:41 +0000
+Subject: Re: [PATCH v3 6/6] security: apparmor: default KUNIT_* fragments to
+ KUNIT_ALL_TESTS
+To:     Anders Roxell <anders.roxell@linaro.org>, jmorris@namei.org,
+        serge@hallyn.com
+Cc:     gregkh@linuxfoundation.org, tytso@mit.edu,
+        adilger.kernel@dilger.ca, akpm@linux-foundation.org,
+        brendanhiggins@google.com, linux-kselftest@vger.kernel.org,
+        kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-security-module@vger.kernel.org,
+        elver@google.com, davidgow@google.com
+References: <20200511131442.30002-1-anders.roxell@linaro.org>
+From:   John Johansen <john.johansen@canonical.com>
+Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
+ LS0tLS1CRUdJTiBQR1AgUFVCTElDIEtFWSBCTE9DSy0tLS0tCgptUUlOQkU1bXJQb0JFQURB
+ azE5UHNnVmdCS2tJbW1SMmlzUFE2bzdLSmhUVEtqSmR3VmJrV1NuTm4rbzZVcDVrCm5LUDFm
+ NDlFQlFsY2VXZzF5cC9Od2JSOGFkK2VTRU8vdW1hL0srUHFXdkJwdEtDOVNXRDk3Rkc0dUI0
+ L2Nhb20KTEVVOTdzTFFNdG52R1dkeHJ4VlJHTTRhbnpXWU1neno1VFptSWlWVFo0M091NVZw
+ YVMxVnoxWlN4UDNoL3hLTgpaci9UY1c1V1FhaTh1M1BXVm5ia2poU1pQSHYxQmdoTjY5cXhF
+ UG9tckpCbTFnbXR4M1ppVm1GWGx1d1RtVGdKCk9rcEZvbDduYkowaWxuWUhyQTdTWDNDdFIx
+ dXBlVXBNYS9XSWFuVk85NldkVGpISElhNDNmYmhtUXViZTR0eFMKM0ZjUUxPSlZxUXN4NmxF
+ OUI3cUFwcG05aFExMHFQV3dkZlB5LyswVzZBV3ROdTVBU2lHVkNJbld6bDJIQnFZZAovWmxs
+ OTN6VXErTklvQ244c0RBTTlpSCt3dGFHRGNKeXdJR0luK2VkS050SzcyQU1nQ2hUZy9qMVpv
+ V0g2WmVXClBqdVVmdWJWelp0bzFGTW9HSi9TRjRNbWRRRzFpUU50ZjRzRlpiRWdYdXk5Y0dp
+ MmJvbUYwenZ5QkpTQU5weGwKS05CRFlLek42S3owOUhVQWtqbEZNTmdvbUwvY2pxZ0FCdEF4
+ NTlMK2RWSVpmYUYyODFwSWNVWnp3dmg1K0pvRwplT1c1dUJTTWJFN0wzOG5zem9veWtJSjVY
+ ckFjaGtKeE5mejdrK0ZuUWVLRWtOekVkMkxXYzNRRjRCUVpZUlQ2ClBISGdhM1JneWtXNSsx
+ d1RNcUpJTGRtdGFQYlhyRjNGdm5WMExSUGN2NHhLeDdCM2ZHbTd5Z2Rvb3dBUkFRQUIKdEIx
+ S2IyaHVJRXB2YUdGdWMyVnVJRHhxYjJodVFHcHFiWGd1Ym1WMFBva0NPZ1FUQVFvQUpBSWJB
+ d1VMQ1FnSApBd1VWQ2drSUN3VVdBZ01CQUFJZUFRSVhnQVVDVG8wWVZ3SVpBUUFLQ1JBRkx6
+ WndHTlhEMkx4SkQvOVRKWkNwCndsbmNUZ1llcmFFTWVEZmtXdjhjMUlzTTFqMEFtRTRWdEwr
+ ZkU3ODBaVlA5Z2tqZ2tkWVN4dDdlY0VUUFRLTWEKWlNpc3JsMVJ3cVUwb29nWGRYUVNweHJH
+ SDAxaWN1LzJuMGpjWVNxWUtnZ1B4eTc4QkdzMkxacTRYUGZKVFptSApaR25YR3EvZURyL21T
+ bmowYWF2QkptTVo2amJpUHo2eUh0QllQWjlmZG84YnRjendQNDFZZVdvSXUyNi84SUk2CmYw
+ WG0zVkM1b0FhOHY3UmQrUldaYThUTXdsaHpIRXh4ZWwzanRJN0l6ek9zbm1FOS84RG0wQVJE
+ NWlUTENYd1IKMWN3SS9KOUJGL1MxWHY4UE4xaHVUM0l0Q05kYXRncDh6cW9Ka2dQVmptdnlM
+ NjRRM2ZFa1liZkhPV3NhYmE5LwprQVZ0Qk56OVJURmg3SUhEZkVDVmFUb3VqQmQ3QnRQcXIr
+ cUlqV0ZhZEpEM0k1ZUxDVkp2VnJyb2xyQ0FUbEZ0Ck4zWWtRczZKbjFBaUlWSVUzYkhSOEdq
+ ZXZnejVMbDZTQ0dIZ1Jya3lScG5TWWFVL3VMZ24zN042QVl4aS9RQUwKK2J5M0N5RUZManpX
+ QUV2eVE4YnEzSXVjbjdKRWJoUy9KLy9kVXFMb2VVZjh0c0dpMDB6bXJJVFpZZUZZQVJoUQpN
+ dHNmaXpJclZEdHoxaVBmL1pNcDVnUkJuaXlqcFhuMTMxY20zTTNndjZIclFzQUdubjhBSnJ1
+ OEdEaTVYSllJCmNvLzEreC9xRWlOMm5DbGFBT3BiaHpOMmVVdlBEWTVXMHEzYkEvWnAybWZH
+ NTJ2YlJJK3RRMEJyMUhkL3ZzbnQKVUhPOTAzbU1aZXAyTnpOM0JaNXFFdlB2RzRyVzVacTJE
+ cHliV2JRclNtOW9iaUJLYjJoaGJuTmxiaUE4YW05bwpiaTVxYjJoaGJuTmxia0JqWVc1dmJt
+ bGpZV3d1WTI5dFBva0NOd1FUQVFvQUlRVUNUbzBYV2dJYkF3VUxDUWdICkF3VVZDZ2tJQ3dV
+ V0FnTUJBQUllQVFJWGdBQUtDUkFGTHpad0dOWEQySXRNRC85anliYzg3ZE00dUFIazZ5Tk0K
+ TjBZL0JGbW10VFdWc09CaHFPbm9iNGkzOEJyRE8yQzFoUUNQQ1FlNExMczEvNHB0ZW92UXQ4
+ QjJGeXJQVmp3Zwo3alpUSE5LNzRyNmxDQ1Z4eDN5dTFCN1U5UG80VlRrY3NsVmIxL3FtV3V4
+ OFhXY040eXZrVHFsTCtHeHB5Sm45CjlaWmZmWEpjNk9oNlRtT2ZiS0d2TXV1djVhclNJQTNK
+ SEZMZjlhTHZadEExaXNKVXI3cFM5YXBnOXVUVUdVcDcKd2ZWMFdUNlQzZUczbXRVVTJ1cDVK
+ VjQ4NTBMMDVqSFM2dVdpZS9ZK3lmSk9iaXlyeE4vNlpxVzVHb25oTEJxLwptc3pjVjV2QlQz
+ QkRWZTNSdkY2WGRNOU9oUG4xK1k4MXg1NCt2UTExM044aUx3RjdHR2ExNFp5SVZBTlpEMEkw
+ CkhqUnZhMmsvUnFJUlR6S3l1UEg1cGtsY0tIVlBFRk1tT3pNVCtGT294Tmp2Uys3K3dHMktN
+ RFlFbUhQcjFQSkIKWlNaZUh6SzE5dGZhbFBNcHBGeGkrc3lZTGFnTjBtQjdKSFF3WTdjclV1
+ T0RoeWNxNjBZVnoxdGFFeWd1M1l2MgoyL0kxRUNHSHZLSEc2d2M5MG80M0MvZWxIRUNYbkVo
+ N3RLcGxEY3BJQytPQ21NeEtIaFI0NitYY1p2Z3c0RGdiCjdjYTgzZVFSM0NHODlMdlFwVzJM
+ TEtFRUJEajdoWmhrTGJra1BSWm0zdzhKWTQ0YXc4VnRneFdkblNFTUNMeEwKSU9OaDZ1Wjcv
+ L0RZVnRjSWFNSllrZWJhWnRHZENwMElnVVpiMjQvVmR2WkNZYk82MkhrLzNWbzFuWHdIVUVz
+ Mwo2RC92MWJUMFJaRmk2OUxnc0NjT2N4NGdZTGtDRFFST1pxejZBUkFBb3F3NmtrQmhXeU0x
+ ZnZnYW1BVmplWjZuCktFZm5SV2JrQzk0TDFFc0pMdXAzV2IyWDBBQk5PSFNrYlNENHBBdUMy
+ dEtGL0VHQnQ1Q1A3UWRWS1JHY1F6QWQKNmIyYzFJZHk5Ukx3Nnc0Z2krbm4vZDFQbTFra1lo
+ a1NpNXpXYUlnMG01UlFVaytFbDh6a2Y1dGNFLzFOMFo1TwpLMkpoandGdTViWDBhMGw0Y0ZH
+ V1ZRRWNpVk1ES1J0eE1qRXRrM1N4RmFsbTZaZFEycHAyODIyY2xucTR6WjltCld1MWQyd2F4
+ aXorYjVJYTR3ZURZYTduNDFVUmNCRVViSkFnbmljSmtKdENUd3lJeElXMktuVnlPcmp2a1F6
+ SUIKdmFQMEZkUDJ2dlpvUE1kbENJek9sSWtQTGd4RTBJV3VlVFhlQkpoTnMwMXBiOGJMcW1U
+ SU1sdTRMdkJFTEEvdgplaWFqajVzOHk1NDJIL2FIc2ZCZjRNUVVoSHhPL0JaVjdoMDZLU1Vm
+ SWFZN09nQWdLdUdOQjNVaWFJVVM1K2E5CmduRU9RTER4S1J5L2E3UTF2OVMrTnZ4KzdqOGlI
+ M2prUUpoeFQ2WkJoWkdSeDBna0gzVCtGMG5ORG01TmFKVXMKYXN3Z0pycUZaa1VHZDJNcm0x
+ cW5Ld1hpQXQ4U0ljRU5kcTMzUjBLS0tSQzgwWGd3ajhKbjMwdlhMU0crTk8xRwpIMFVNY0F4
+ TXd5L3B2azZMVTVKR2paUjczSjVVTFZoSDRNTGJEZ2dEM21QYWlHOCtmb3RUckpVUHFxaGc5
+ aHlVCkVQcFlHN3NxdDc0WG43OStDRVpjakxIenlsNnZBRkUyVzBreGxMdFF0VVpVSE8zNmFm
+ RnY4cUdwTzNacVB2akIKVXVhdFhGNnR2VVFDd2YzSDZYTUFFUUVBQVlrQ0h3UVlBUW9BQ1FV
+ Q1RtYXMrZ0liREFBS0NSQUZMelp3R05YRAoyRC9YRC8wZGRNLzRhaTFiK1RsMWp6bkthalgz
+ a0crTWVFWWVJNGY0MHZjbzNyT0xyblJHRk9jYnl5ZlZGNjlNCktlcGllNE93b0kxamNUVTBB
+ RGVjbmJXbkROSHByMFNjenhCTXJvM2Juckxoc212anVuVFlJdnNzQlp0QjRhVkoKanVMSUxQ
+ VWxuaEZxYTdmYlZxMFpRamJpVi9ydDJqQkVOZG05cGJKWjZHam5wWUljQWJQQ0NhL2ZmTDQv
+ U1FSUwpZSFhvaEdpaVM0eTVqQlRtSzVsdGZld0xPdzAyZmtleEgrSUpGcnJHQlhEU2c2bjJT
+ Z3hubisrTkYzNGZYY205CnBpYXczbUtzSUNtKzBoZE5oNGFmR1o2SVdWOFBHMnRlb29WRHA0
+ ZFlpaCsreFgvWFM4ekJDYzFPOXc0bnpsUDIKZ0t6bHFTV2JoaVdwaWZSSkJGYTRXdEFlSlRk
+ WFlkMzdqL0JJNFJXV2hueXc3YUFQTkdqMzN5dEdITlVmNlJvMgovanRqNHRGMXkvUUZYcWpK
+ Ry93R2pwZHRSZmJ0VWpxTEhJc3ZmUE5OSnEvOTU4cDc0bmRBQ2lkbFdTSHpqK09wCjI2S3Bi
+ Rm5td05PMHBzaVVzbmh2SEZ3UE8vdkFibDNSc1I1KzBSbytodnMyY0VtUXV2OXIvYkRsQ2Zw
+ enAydDMKY0srcmh4VXFpc094OERaZnoxQm5rYW9DUkZidnZ2ays3TC9mb21QbnRHUGtxSmNp
+ WUU4VEdIa1p3MWhPa3UrNApPb00yR0I1bkVEbGorMlRGL2pMUStFaXBYOVBrUEpZdnhmUmxD
+ NmRLOFBLS2ZYOUtkZm1BSWNnSGZuVjFqU24rCjh5SDJkakJQdEtpcVcwSjY5YUlzeXg3aVYv
+ MDNwYVBDakpoN1hxOXZBenlkTjVVL1VBPT0KPTZQL2IKLS0tLS1FTkQgUEdQIFBVQkxJQyBL
+ RVkgQkxPQ0stLS0tLQo=
+Organization: Canonical
+Message-ID: <9ab1527a-b02c-4f11-ccaa-4ce8b50cceaa@canonical.com>
+Date:   Tue, 12 May 2020 10:34:37 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+In-Reply-To: <20200511131442.30002-1-anders.roxell@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-PiBGcm9tOiBNaW1pIFpvaGFyIFttYWlsdG86em9oYXJAbGludXguaWJtLmNvbV0NCj4gU2VudDog
-VHVlc2RheSwgTWF5IDEyLCAyMDIwIDU6NTAgUE0NCj4gT24gVHVlLCAyMDIwLTA1LTEyIGF0IDE1
-OjMxICswMDAwLCBSb2JlcnRvIFNhc3N1IHdyb3RlOg0KPiA+ID4gRnJvbTogb3duZXItbGludXgt
-c2VjdXJpdHktbW9kdWxlQHZnZXIua2VybmVsLm9yZyBbbWFpbHRvOm93bmVyLQ0KPiBsaW51eC0N
-Cj4gPiA+IHNlY3VyaXR5LW1vZHVsZUB2Z2VyLmtlcm5lbC5vcmddIE9uIEJlaGFsZiBPZiBNaW1p
-IFpvaGFyDQo+ID4gPiBTZW50OiBUdWVzZGF5LCBNYXkgMTIsIDIwMjAgNDoxNyBQTQ0KPiA+ID4g
-T24gVHVlLCAyMDIwLTA1LTEyIGF0IDA3OjU0ICswMDAwLCBSb2JlcnRvIFNhc3N1IHdyb3RlOg0K
-PiA+ID4gPiA+ID4gPiBSb2JlcnRvLCBFVk0gaXMgb25seSB0cmlnZ2VyZWQgYnkgSU1BLCB1bmxl
-c3MgeW91J3ZlIG1vZGlmaWVkDQo+IHRoZQ0KPiA+ID4gPiA+ID4gPiBrZXJuZWwgdG8gZG8gb3Ro
-ZXJ3aXNlLg0KPiA+ID4gPiA+ID4NCj4gPiA+ID4gPiA+IEVWTSB3b3VsZCBkZW55IHhhdHRyL2F0
-dHIgb3BlcmF0aW9ucyBldmVuIGlmIElNQSBpcyBkaXNhYmxlZCBpbg0KPiB0aGUNCj4gPiA+ID4g
-PiA+IGtlcm5lbCBjb25maWd1cmF0aW9uLiBGb3IgZXhhbXBsZSwgZXZtX3NldHhhdHRyKCkgcmV0
-dXJucyB0aGUNCj4gdmFsdWUNCj4gPiA+ID4gPiA+IGZyb20gZXZtX3Byb3RlY3RfeGF0dHIoKS4g
-SU1BIGlzIG5vdCBpbnZvbHZlZCB0aGVyZS4NCj4gPiA+ID4gPg0KPiA+ID4gPiA+IENvbW1pdMKg
-YWUxYmExNjc2Yjg4ICgiRVZNOiBBbGxvdyB1c2VybGFuZCB0byBwZXJtaXQgbW9kaWZpY2F0aW9u
-DQo+IG9mDQo+ID4gPiA+ID4gRVZNLXByb3RlY3RlZCBtZXRhZGF0YSIpDQo+ID4gPiBpbnRyb2R1
-Y2VkwqBFVk1fQUxMT1dfTUVUQURBVEFfV1JJVEVTDQo+ID4gPiA+ID4gdG8gYWxsb3cgd3JpdGlu
-ZyB0aGUgRVZNIHBvcnRhYmxlIGFuZCBpbW11dGFibGUgZmlsZSBzaWduYXR1cmVzLg0KPiA+ID4g
-Pg0KPiA+ID4gPiBBY2NvcmRpbmcgdG8gRG9jdW1lbnRhdGlvbi9BQkkvdGVzdGluZy9ldm06DQo+
-ID4gPiA+DQo+ID4gPiA+IE5vdGUgdGhhdCBvbmNlIGEga2V5IGhhcyBiZWVuIGxvYWRlZCwgaXQg
-d2lsbCBubyBsb25nZXIgYmUNCj4gPiA+ID4gcG9zc2libGUgdG8gZW5hYmxlIG1ldGFkYXRhIG1v
-ZGlmaWNhdGlvbi4NCj4gPiA+DQo+ID4gPiBOb3QgYW55IGtleSwgYnV0IHRoZSBITUFDIGtleS4N
-Cj4gPiA+DQo+ID4gPiAywqDCoMKgwqDCoMKgwqDCoMKgUGVybWl0IG1vZGlmaWNhdGlvbiBvZiBF
-Vk0tcHJvdGVjdGVkIG1ldGFkYXRhIGF0DQo+ID4gPiDCoCDCoCDCoCDCoCDCoCBydW50aW1lLiBO
-b3Qgc3VwcG9ydGVkIGlmIEhNQUMgdmFsaWRhdGlvbiBhbmQNCj4gPiA+IMKgIMKgIMKgIMKgIMKg
-IGNyZWF0aW9uIGlzIGVuYWJsZWQuDQo+ID4NCj4gPiAjaWZkZWYgQ09ORklHX0VWTV9MT0FEX1g1
-MDkNCj4gPiB2b2lkIF9faW5pdCBldm1fbG9hZF94NTA5KHZvaWQpDQo+ID4gew0KPiA+IFsuLi5d
-DQo+ID4gICAgICAgICByYyA9IGludGVncml0eV9sb2FkX3g1MDkoSU5URUdSSVRZX0tFWVJJTkdf
-RVZNLA0KPiBDT05GSUdfRVZNX1g1MDlfUEFUSCk7DQo+ID4gICAgICAgICBpZiAoIXJjKQ0KPiA+
-ICAgICAgICAgICAgICAgICBldm1faW5pdGlhbGl6ZWQgfD0gRVZNX0lOSVRfWDUwOTsNCj4gPg0K
-PiA+DQo+ID4gc3RhdGljIHNzaXplX3QgZXZtX3dyaXRlX2tleShzdHJ1Y3QgZmlsZSAqZmlsZSwg
-Y29uc3QgY2hhciBfX3VzZXIgKmJ1ZiwNCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-IHNpemVfdCBjb3VudCwgbG9mZl90ICpwcG9zKQ0KPiA+IHsNCj4gPiBbLi4uXQ0KPiA+ICAgICAg
-ICAgLyogRG9uJ3QgYWxsb3cgYSByZXF1ZXN0IHRvIGZyZXNobHkgZW5hYmxlIG1ldGFkYXRhIHdy
-aXRlcyBpZg0KPiA+ICAgICAgICAgICoga2V5cyBhcmUgbG9hZGVkLg0KPiA+ICAgICAgICAgICov
-DQo+ID4gICAgICAgICBpZiAoKGkgJiBFVk1fQUxMT1dfTUVUQURBVEFfV1JJVEVTKSAmJg0KPiA+
-ICAgICAgICAgICAgICgoZXZtX2luaXRpYWxpemVkICYgRVZNX0tFWV9NQVNLKSAhPSAwKSAmJg0K
-PiA+ICAgICAgICAgICAgICEoZXZtX2luaXRpYWxpemVkICYgRVZNX0FMTE9XX01FVEFEQVRBX1dS
-SVRFUykpDQo+ID4gICAgICAgICAgICAgICAgIHJldHVybiAtRVBFUk07DQo+ID4NCj4gPiBTaG91
-bGQgaGF2ZSBiZWVuOg0KPiA+DQo+ID4gICAgICAgICBpZiAoKGkgJiBFVk1fQUxMT1dfTUVUQURB
-VEFfV1JJVEVTKSAmJg0KPiA+ICAgICAgICAgICAgICgoZXZtX2luaXRpYWxpemVkICYgRVZNX0lO
-SVRfSE1BQykgIT0gMCkgJiYNCj4gPiAgICAgICAgICAgICAhKGV2bV9pbml0aWFsaXplZCAmIEVW
-TV9BTExPV19NRVRBREFUQV9XUklURVMpKQ0KPiA+ICAgICAgICAgICAgICAgICByZXR1cm4gLUVQ
-RVJNOw0KPiANCj4gT2sNCj4gDQo+ID4NCj4gPiA+IEVhY2ggdGltZSB0aGUgRVZNIHByb3RlY3Rl
-ZCBmaWxlIG1ldGFkYXRhIGlzIHVwZGF0ZWQsIHRoZSBFVk0gSE1BQw0KPiBpcw0KPiA+ID4gdXBk
-YXRlZCwgYXNzdW1pbmcgdGhlIGV4aXN0aW5nIEVWTSBITUFDIGlzIHZhbGlkLiDCoFVzZXJzcGFj
-ZSBzaG91bGQNCj4gPiA+IG5vdCBoYXZlIGFjY2VzcyB0byB0aGUgSE1BQyBrZXksIHNvIHdlIG9u
-bHkgYWxsb3cgd3JpdGluZyBFVk0NCj4gPiA+IHNpZ25hdHVyZXMuDQo+ID4gPg0KPiA+ID4gVGhl
-IG9ubHkgZGlmZmVyZW5jZSBiZXR3ZWVuIHdyaXRpbmcgdGhlIG9yaWdpbmFsIEVWTSBzaWduYXR1
-cmUgYW5kIHRoZQ0KPiA+ID4gbmV3IHBvcnRhYmxlIGFuZCBpbW11dGFibGUgc2lnbmF0dXJlIGlz
-IHRoZSBzZWN1cml0eS5pbWEgeGF0dHINCj4gPiA+IHJlcXVpcmVtZW50LiDCoFNpbmNlIHRoZSBu
-ZXcgRVZNIHNpZ25hdHVyZSBkb2VzIG5vdCBpbmNsdWRlIHRoZQ0KPiA+ID4gZmlsZXN5c3RlbSBz
-cGVjaWZpYyBkYXRhLCBzb21ldGhpbmcgZWxzZSBuZWVkcyB0byBiaW5kIHRoZSBmaWxlDQo+ID4g
-PiBtZXRhZGF0YSB0byB0aGUgZmlsZSBkYXRhLiDCoFRodXMgdGhlIElNQSB4YXR0ciByZXF1aXJl
-bWVudC4NCj4gPiA+DQo+ID4gPiBBc3N1bWluZyB0aGF0IHRoZSBuZXcgRVZNIHNpZ25hdHVyZSBp
-cyB3cml0dGVuIGxhc3QsIGFzIGxvbmcgYXMgdGhlcmUNCj4gPiA+IGlzIGFuIElNQSB4YXR0ciwg
-dGhlcmUgc2hvdWxkbid0IGJlIGEgcHJvYmxlbSB3cml0aW5nIHRoZSBuZXcgRVZNDQo+ID4gPiBz
-aWduYXR1cmUuDQo+ID4NCj4gPiAgICAgICAgIC8qIGZpcnN0IG5lZWQgdG8ga25vdyB0aGUgc2ln
-IHR5cGUgKi8NCj4gPiAgICAgICAgIHJjID0gdmZzX2dldHhhdHRyX2FsbG9jKGRlbnRyeSwgWEFU
-VFJfTkFNRV9FVk0sIChjaGFyDQo+ICoqKSZ4YXR0cl9kYXRhLCAwLA0KPiA+ICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgR0ZQX05PRlMpOw0KPiA+ICAgICAgICAgaWYgKHJjIDw9IDAp
-IHsNCj4gPiAgICAgICAgICAgICAgICAgZXZtX3N0YXR1cyA9IElOVEVHUklUWV9GQUlMOw0KPiA+
-ICAgICAgICAgICAgICAgICBpZiAocmMgPT0gLUVOT0RBVEEpIHsNCj4gPiAgICAgICAgICAgICAg
-ICAgICAgICAgICByYyA9IGV2bV9maW5kX3Byb3RlY3RlZF94YXR0cnMoZGVudHJ5KTsNCj4gPiAg
-ICAgICAgICAgICAgICAgICAgICAgICBpZiAocmMgPiAwKQ0KPiA+ICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgZXZtX3N0YXR1cyA9IElOVEVHUklUWV9OT0xBQkVMOw0KPiA+ICAgICAg
-ICAgICAgICAgICAgICAgICAgIGVsc2UgaWYgKHJjID09IDApDQo+ID4gICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICBldm1fc3RhdHVzID0gSU5URUdSSVRZX05PWEFUVFJTOyAvKiBuZXcg
-ZmlsZSAqLw0KPiA+DQo+ID4gSWYgRVZNX0FMTE9XX01FVEFEQVRBX1dSSVRFUyBpcyBjbGVhcmVk
-LCBvbmx5IHRoZSBmaXJzdCB4YXR0cg0KPiA+IGNhbiBiZSB3cml0dGVuIChzdGF0dXMgSU5URUdS
-SVRZX05PWEFUVFJTIGlzIG9rKS4gQWZ0ZXIsDQo+ID4gZXZtX2ZpbmRfcHJvdGVjdGVkX3hhdHRy
-cygpIHJldHVybnMgcmMgPiAwLCBzbyB0aGUgc3RhdHVzIGlzDQo+ID4gSU5URUdSSVRZX05PTEFC
-RUwsIHdoaWNoIGlzIG5vdCBpZ25vcmVkIGJ5IGV2bV9wcm90ZWN0X3hhdHRyKCkuDQo+IA0KPiBX
-aXRoIEVWTSBITUFDIGVuYWJsZWQsIGFzIGEgcmVzdWx0IG9mIHdyaXRpbmcgdGhlIGZpcnN0IHBy
-b3RlY3RlZA0KPiB4YXR0ciwgYW4gRVZNIEhNQUMgc2hvdWxkIGJlIGNhbGN1bGF0ZWQgYW5kIHdy
-aXR0ZW4gaW4NCj4gZXZtX2lub2RlX3Bvc3Rfc2V0eGF0dHIoKS4NCg0KVG8gc29sdmUgdGhlIG9y
-ZGVyaW5nIGlzc3VlLCB3b3VsZG4ndCBhbGxvd2luZyBzZXR4YXR0cigpIG9uIGEgZmlsZQ0Kd2l0
-aCBwb3J0YWJsZSBzaWduYXR1cmUgdGhhdCBkb2VzIG5vdCB5ZXQgcGFzcyB2ZXJpZmljYXRpb24g
-YmUgc2FmZT8NCmV2bV91cGRhdGVfZXZteGF0dHIoKSBjaGVja3MgaWYgdGhlIHNpZ25hdHVyZSBp
-cyBwb3J0YWJsZSBhbmQNCmlmIHllcywgZG9lcyBub3QgY2FsY3VsYXRlIHRoZSBITUFDLg0KDQpS
-b2JlcnRvDQoNCkhVQVdFSSBURUNITk9MT0dJRVMgRHVlc3NlbGRvcmYgR21iSCwgSFJCIDU2MDYz
-DQpNYW5hZ2luZyBEaXJlY3RvcjogTGkgUGVuZywgTGkgSmlhbiwgU2hpIFlhbmxpDQo=
+On 5/11/20 6:14 AM, Anders Roxell wrote:
+> This makes it easier to enable all KUnit fragments.
+> 
+> Adding 'if !KUNIT_ALL_TESTS' so individual tests can not be turned off.
+> Therefore if KUNIT_ALL_TESTS is enabled that will hide the prompt in
+> menuconfig.
+> 
+> Reviewed-by: David Gow <davidgow@google.com>
+> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+
+Acked-by: John Johansen <john.johansen@canonical.com>
+
