@@ -2,134 +2,198 @@ Return-Path: <SRS0=p3Qd=62=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEA3AC2D0F6
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 15:46:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82CC8C2D0F6
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 15:50:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AE06C20674
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 15:46:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bbL8Ikt9"
+	by mail.kernel.org (Postfix) with ESMTP id 5E6B1206DD
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 15:50:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730238AbgELPqu (ORCPT
+        id S1726492AbgELPuv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 12 May 2020 11:46:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50324 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726465AbgELPqu (ORCPT
+        Tue, 12 May 2020 11:50:51 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:32094 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726388AbgELPuv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 12 May 2020 11:46:50 -0400
-Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B3DFC061A0C;
-        Tue, 12 May 2020 08:46:50 -0700 (PDT)
-Received: by mail-pf1-x443.google.com with SMTP id y25so6544071pfn.5;
-        Tue, 12 May 2020 08:46:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=tNSRPzmWFClYADxe1xlIlfleHzW5u7iF+WTFSYv3NX8=;
-        b=bbL8Ikt95mBCHHnYF3umxtLlaV3QpoKK1R3R8/mLHysdhED0kL+/q03uTCyF6YCFAe
-         9ibDh/kKIX9ONLWK4rBi5RXlJPxagQNZES7O6F5iuMpabJBXeK1ud76/yjQKrEMnTzFt
-         pZpdrlp2TNm80ZP8xAzjaValWJRsjsWF/1RDcKCkpXrjhiu+PSbO9rLRyGNtwOZ3hjwS
-         cnkucLziNWtzstvn5IwyXLOfd2XVB96F/mht/LreGA5Hl45zdBX5n0hTgVesNzaosuuT
-         Cm0msfXmP7EIHmiT7YRK2NTI0wc868blqtQMrydhGQqgrNJwBTbZkWLp+ydyYB9BysJg
-         aqlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=tNSRPzmWFClYADxe1xlIlfleHzW5u7iF+WTFSYv3NX8=;
-        b=sp3b8/aB7WUcNS0MRqIugYFMu4q/VtJkJTWI4U8PqxYvz5WvqEwDmUpi6OFleFW7sA
-         /zdL5k+kUOYp1g+h+5IpqwtdikGcv9+SO2uAIuLB06EbBh+lBpeoG0RefJL59trAw9CZ
-         YPLdphyeGQcH1XZJuAFNRRdUjHRi4F/4lyv7kMGd0E/7KR/13qQE8Y5d2O93WwGC1y85
-         +1G50CW/vX58eS+jgn2bYIQm3XRXo7NfFDImn2Fi0ihhJIVpDjgTNgssESLBEJ1buzUs
-         Ssrz2vSDVSCIO7dIY09NE8GhHVEzV9FO+N6RMzz8c7dupO2+8sRcdCOpDXcGUHZsMmfD
-         r9QQ==
-X-Gm-Message-State: AOAM533PEPPd6BtRv84b1ofQcJJjDJG5+DNE6D7wPyfAAW0NGLtxn6l3
-        q3ZPNZ7RS6FasuTdu1qMqcA=
-X-Google-Smtp-Source: ABdhPJzQpiDEYvWK/wW423EPySwX4fbTeuiCmvv4YE1jKSbcdLdtaBQ3V7V0ODDlQbjrjQoEGG518w==
-X-Received: by 2002:a63:3114:: with SMTP id x20mr6644562pgx.52.1589298409771;
-        Tue, 12 May 2020 08:46:49 -0700 (PDT)
-Received: from ast-mbp ([2620:10d:c090:400::5:c3f6])
-        by smtp.gmail.com with ESMTPSA id m8sm12795650pjz.27.2020.05.12.08.46.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 May 2020 08:46:48 -0700 (PDT)
-Date:   Tue, 12 May 2020 08:46:45 -0700
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     Jordan Glover <Golden_Miller83@protonmail.ch>
-Cc:     "sdf@google.com" <sdf@google.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-        "kernel-team@fb.com" <kernel-team@fb.com>,
+        Tue, 12 May 2020 11:50:51 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 04CFZgS0193662;
+        Tue, 12 May 2020 11:50:29 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 30wrw55wxr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 12 May 2020 11:50:29 -0400
+Received: from m0098413.ppops.net (m0098413.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 04CFbG10007232;
+        Tue, 12 May 2020 11:50:28 -0400
+Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 30wrw55wx9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 12 May 2020 11:50:28 -0400
+Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
+        by ppma04ams.nl.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 04CFoBnV004421;
+        Tue, 12 May 2020 15:50:27 GMT
+Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
+        by ppma04ams.nl.ibm.com with ESMTP id 30wm55esms-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 12 May 2020 15:50:26 +0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 04CFnDnQ64225606
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 12 May 2020 15:49:13 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C3292A405C;
+        Tue, 12 May 2020 15:50:24 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6C4B7A405F;
+        Tue, 12 May 2020 15:50:23 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.144.67])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 12 May 2020 15:50:23 +0000 (GMT)
+Message-ID: <1589298622.5098.67.camel@linux.ibm.com>
+Subject: Re: [RFC][PATCH 1/3] evm: Move hooks outside LSM infrastructure
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>,
+        "david.safford@gmail.com" <david.safford@gmail.com>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        John Johansen <john.johansen@canonical.com>,
+        "matthewgarrett@google.com" <matthewgarrett@google.com>
+Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
         "linux-security-module@vger.kernel.org" 
         <linux-security-module@vger.kernel.org>,
-        "acme@redhat.com" <acme@redhat.com>,
-        "jamorris@linux.microsoft.com" <jamorris@linux.microsoft.com>,
-        "jannh@google.com" <jannh@google.com>,
-        "kpsingh@google.com" <kpsingh@google.com>
-Subject: Re: [PATCH v5 bpf-next 2/3] bpf: implement CAP_BPF
-Message-ID: <20200512154645.rypojoidxtvbvwp4@ast-mbp>
-References: <20200508215340.41921-1-alexei.starovoitov@gmail.com>
- <20200508215340.41921-3-alexei.starovoitov@gmail.com>
- <20200512001210.GA235661@google.com>
- <20200512023641.jupgmhpliblkli4t@ast-mbp.dhcp.thefacebook.com>
- <ZHW2pvJicBV52gi3gjsDNXDF6t7BteEoHKvEGeVueRPPDrEKGR0OMJjTlulOoOrDNNwcK2c7HE1lNEQw8F2G6SEGCCIAekGoY0T_cnJ-oSc=@protonmail.ch>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZHW2pvJicBV52gi3gjsDNXDF6t7BteEoHKvEGeVueRPPDrEKGR0OMJjTlulOoOrDNNwcK2c7HE1lNEQw8F2G6SEGCCIAekGoY0T_cnJ-oSc=@protonmail.ch>
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
+Date:   Tue, 12 May 2020 11:50:22 -0400
+In-Reply-To: <d3f4a53e386d4bb1b8c608ac8b6bec1f@huawei.com>
+References: <20200429073935.11913-1-roberto.sassu@huawei.com>
+         <1588794293.4624.21.camel@linux.ibm.com>
+         <1588799408.4624.28.camel@linux.ibm.com>
+         <ab879f9e66874736a40e9c566cadc272@huawei.com>
+         <1588864628.5685.78.camel@linux.ibm.com>
+         <750ab4e0990f47e4aea10d0e580b1074@huawei.com>
+         <1588884313.5685.110.camel@linux.ibm.com>
+         <84e6acad739a415aa3e2457b5c37979f@huawei.com>
+         <1588957684.5146.70.camel@linux.ibm.com>
+         <414644a0be9e4af880452f4b5079aba1@huawei.com>
+         <1589233010.5091.49.camel@linux.ibm.com>
+         <09ee169cfd70492cb526bcb30f99d693@huawei.com>
+         <1589293025.5098.53.camel@linux.ibm.com>
+         <d3f4a53e386d4bb1b8c608ac8b6bec1f@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.676
+ definitions=2020-05-12_04:2020-05-11,2020-05-12 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
+ spamscore=0 impostorscore=0 malwarescore=0 lowpriorityscore=0
+ priorityscore=1501 mlxscore=0 clxscore=1015 adultscore=0 mlxlogscore=999
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2005120115
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, May 12, 2020 at 12:50:05PM +0000, Jordan Glover wrote:
-> On Tuesday, May 12, 2020 2:36 AM, Alexei Starovoitov <alexei.starovoitov@gmail.com> wrote:
-> 
-> > On Mon, May 11, 2020 at 05:12:10PM -0700, sdf@google.com wrote:
-> >
-> > > On 05/08, Alexei Starovoitov wrote:
-> > >
-> > > > From: Alexei Starovoitov ast@kernel.org
-> > > > [..]
-> > > > @@ -3932,7 +3977,7 @@ SYSCALL_DEFINE3(bpf, int, cmd, union bpf_attr
-> > > > __user *, uattr, unsigned int, siz
-> > > > union bpf_attr attr;
-> > > > int err;
-> > >
-> > > > -   if (sysctl_unprivileged_bpf_disabled && !capable(CAP_SYS_ADMIN))
+On Tue, 2020-05-12 at 15:31 +0000, Roberto Sassu wrote:
+> > From: owner-linux-security-module@vger.kernel.org [mailto:owner-linux-
+> > security-module@vger.kernel.org] On Behalf Of Mimi Zohar
+> > Sent: Tuesday, May 12, 2020 4:17 PM
+> > On Tue, 2020-05-12 at 07:54 +0000, Roberto Sassu wrote:
+> > > > > > Roberto, EVM is only triggered by IMA, unless you've modified the
+> > > > > > kernel to do otherwise.
+> > > > >
+> > > > > EVM would deny xattr/attr operations even if IMA is disabled in the
+> > > > > kernel configuration. For example, evm_setxattr() returns the value
+> > > > > from evm_protect_xattr(). IMA is not involved there.
 > > > >
-> > > > -   if (sysctl_unprivileged_bpf_disabled && !bpf_capable())
-> > > >     return -EPERM;
-> > > >     This is awesome, thanks for reviving the effort!
-> > > >
+> > > > Commit ae1ba1676b88 ("EVM: Allow userland to permit modification of
+> > > > EVM-protected metadata")
+> > introduced EVM_ALLOW_METADATA_WRITES
+> > > > to allow writing the EVM portable and immutable file signatures.
 > > >
-> > > One question I have about this particular snippet:
-> > > Does it make sense to drop bpf_capable checks for the operations
-> > > that work on a provided fd?
-> >
-> > Above snippet is for the case when sysctl switches unpriv off.
-> > It was a big hammer and stays big hammer.
-> > I certainly would like to improve the situation, but I suspect
-> > the folks who turn that sysctl knob on are simply paranoid about bpf
-> > and no amount of reasoning would turn them around.
-> >
+> > > According to Documentation/ABI/testing/evm:
+> > >
+> > > Note that once a key has been loaded, it will no longer be
+> > > possible to enable metadata modification.
+> > 
+> > Not any key, but the HMAC key.
+> > 
+> > 2         Permit modification of EVM-protected metadata at
+> >           runtime. Not supported if HMAC validation and
+> >           creation is enabled.
 > 
-> Without CAP_BPF, sysctl was the only option to keep you safe from flow
-> of bpf vulns. You didn't had to be paranoid about that.
+> #ifdef CONFIG_EVM_LOAD_X509
+> void __init evm_load_x509(void)
+> {
+> [...]
+>         rc = integrity_load_x509(INTEGRITY_KEYRING_EVM, CONFIG_EVM_X509_PATH);
+>         if (!rc)
+>                 evm_initialized |= EVM_INIT_X509;
+> 
+> 
+> static ssize_t evm_write_key(struct file *file, const char __user *buf,
+>                              size_t count, loff_t *ppos)
+> {
+> [...]
+>         /* Don't allow a request to freshly enable metadata writes if
+>          * keys are loaded.
+>          */
+>         if ((i & EVM_ALLOW_METADATA_WRITES) &&
+>             ((evm_initialized & EVM_KEY_MASK) != 0) &&
+>             !(evm_initialized & EVM_ALLOW_METADATA_WRITES))
+>                 return -EPERM;
+> 
+> Should have been:
+> 
+>         if ((i & EVM_ALLOW_METADATA_WRITES) &&
+>             ((evm_initialized & EVM_INIT_HMAC) != 0) &&
+>             !(evm_initialized & EVM_ALLOW_METADATA_WRITES))
+>                 return -EPERM;
 
-In the year 2020 there were three verifier bugs that could have been exploited
-through unpriv. All three were found by new kBdysch fuzzer. In 2019 there was
-nothing. Not because people didn't try, but because syzbot fuzzer reached its
-limit. This cap_bpf will help fuzzers find a new set of bugs.
+Ok
 
-The pace of bpf development is accelerating, so there will be more bugs found
-and introduced in the verifier. Folks that run the very latest kernel are
-taking that risk along with the risk associated with other new kernel features.
-Yet other features don't have sysctls to disable them.
+> 
+> > Each time the EVM protected file metadata is updated, the EVM HMAC is
+> > updated, assuming the existing EVM HMAC is valid.  Userspace should
+> > not have access to the HMAC key, so we only allow writing EVM
+> > signatures.
+> > 
+> > The only difference between writing the original EVM signature and the
+> > new portable and immutable signature is the security.ima xattr
+> > requirement.  Since the new EVM signature does not include the
+> > filesystem specific data, something else needs to bind the file
+> > metadata to the file data.  Thus the IMA xattr requirement.
+> > 
+> > Assuming that the new EVM signature is written last, as long as there
+> > is an IMA xattr, there shouldn't be a problem writing the new EVM
+> > signature.
+> 
+>         /* first need to know the sig type */
+>         rc = vfs_getxattr_alloc(dentry, XATTR_NAME_EVM, (char **)&xattr_data, 0,
+>                                 GFP_NOFS);
+>         if (rc <= 0) {
+>                 evm_status = INTEGRITY_FAIL;
+>                 if (rc == -ENODATA) {
+>                         rc = evm_find_protected_xattrs(dentry);
+>                         if (rc > 0)
+>                                 evm_status = INTEGRITY_NOLABEL;
+>                         else if (rc == 0)
+>                                 evm_status = INTEGRITY_NOXATTRS; /* new file */
+> 
+> If EVM_ALLOW_METADATA_WRITES is cleared, only the first xattr
+> can be written (status INTEGRITY_NOXATTRS is ok). After,
+> evm_find_protected_xattrs() returns rc > 0, so the status is
+> INTEGRITY_NOLABEL, which is not ignored by evm_protect_xattr().
+
+With EVM HMAC enabled, as a result of writing the first protected
+xattr, an EVM HMAC should be calculated and written in
+evm_inode_post_setxattr().
+
+Mimi
