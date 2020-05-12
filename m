@@ -2,114 +2,191 @@ Return-Path: <SRS0=p3Qd=62=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88105C2D0F8
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 23:01:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3804BC2D0FB
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 23:05:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6398220747
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 23:01:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uhy6KSbM"
+	by mail.kernel.org (Postfix) with ESMTP id 1826620747
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 May 2020 23:05:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1589324715;
+	bh=5L6Gn59sH4XQ8DMvoTmBzGZf+vn/VCcugVaqyM3Bkzk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=h9E6jgRpMByyOGoVtO3dsWtVMGpdNbA5mn7ICQJtm/jfA/REx0eag9IT6rOR2Y2Or
+	 eBy6zc9B4pObKkZjxOku3q+4B/Rryv5bhe/iAcE2TkeL0FHqs1+e54gyydGxk66rcv
+	 L8ZH2ytfuFRUOGcoyH2RJo5FTb3bL19dBt1iFiio=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731598AbgELXBQ (ORCPT
+        id S1731291AbgELXFO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 12 May 2020 19:01:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33308 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725938AbgELXBO (ORCPT
+        Tue, 12 May 2020 19:05:14 -0400
+Received: from mail-oo1-f66.google.com ([209.85.161.66]:41309 "EHLO
+        mail-oo1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725938AbgELXFO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 12 May 2020 19:01:14 -0400
-Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86BC8C061A0C;
-        Tue, 12 May 2020 16:01:14 -0700 (PDT)
-Received: by mail-pg1-x544.google.com with SMTP id n11so6865249pgl.9;
-        Tue, 12 May 2020 16:01:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=Lkp9exZ0uzOe9ulySGpCwFGvLvSbRWhZCdrUhtlCelY=;
-        b=Uhy6KSbMUIq2krLCXmjhn4rx8FhpDkxiPnHthvjbGl0bO/xtleadW4qlUkLnrNPi2x
-         odTP9tLL/Cdl1jh8gsdGNS5Qo15G4Rzx+hd/f4daaYtsmzKakB80VHBE8r1K6oEflPLZ
-         wmApeZLYC1Sm8XTmG8GlBvH3/QF5EcSFtkziSsj7jNMEevcD5zRwnRPg7KLNhCi/7V8G
-         HlBnSCVmirNJ5cxR9zomMf3FI6GGDVBgZLWZlnLew5EmZhu6El21YTHvciv+X7JLtSfJ
-         3X5EM207nPNLsfcndQVPlBWxTANPSvx8kKficr2A3oIpswl3bDGyokiPo08xmtPeSlgW
-         1D1A==
+        Tue, 12 May 2020 19:05:14 -0400
+Received: by mail-oo1-f66.google.com with SMTP id t3so3076239oou.8;
+        Tue, 12 May 2020 16:05:12 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Lkp9exZ0uzOe9ulySGpCwFGvLvSbRWhZCdrUhtlCelY=;
-        b=T65ya+AP5BjqDmuTLCZ7JxNpzhHsi3Aesb2+ptbZvfHzD5z5sTxMvblSNlJKFWfE6O
-         E5AcRGZFFi/ERpH7rWSA6gyadF0wi4VAfv2LoQfXk6wHS7WpgYW1aPEEQ+1Lufp7Jvsr
-         QVR7+iixnq9zK+HjoNSMd9cO5RaWhCgX/s/SF9rb3mxCKb+LvSFmItNCFY+7y4Lpdfmu
-         PeI7lCtHJ3QLgBQZyH11Azj6+JRy51+eR5xtAKs43h8R4YVIJICyJbNqeeVTmyvVW0ma
-         pgJ0bKUBwRfPDyVeOGSi7d6I3lrmgDZsimo4r3J6pG2yvnlgca8fs631SvyHL6Nc3y0Y
-         PTjw==
-X-Gm-Message-State: AGi0PubB2YmShexg5Ugkks5hP33zJze3ehP87NeF3Mdy0AaUBuXFl9dk
-        6/dyEZBae6SqsWZ9KgzWh4M=
-X-Google-Smtp-Source: APiQypL6sC2EeqdTezP31wEP87GDKMOvl0zUN9UdDX5R5ZyktmQnU/cfe8WZIACklOupws2p4X0cpQ==
-X-Received: by 2002:a63:4f0f:: with SMTP id d15mr21472347pgb.339.1589324474036;
-        Tue, 12 May 2020 16:01:14 -0700 (PDT)
-Received: from ast-mbp ([2620:10d:c090:400::5:68dc])
-        by smtp.gmail.com with ESMTPSA id w125sm11446409pgw.22.2020.05.12.16.01.12
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=XSdR85TAgJOs38DEsZUyX0dfieZdKEmO5MKyADhHcpo=;
+        b=NcQjP7BHlZMbcdCdChoCutzNNtPG6tQ7ulx3OiXJhrNS8Q0/wFGINaNWmmXiJPRslI
+         IYyh/vy+7oBMx2G+jayaMTGsFf+AUZ7HAU5WHP7/s6Emyt8ZH4NOp0aty+xSBKaZvCqi
+         3mUR31bBUA+lFdjCxCEg9wyfkHZ0dx2QanryYEfkJtnFC60frRkwl3DcrA2purNE6jco
+         RjebZ7l22nkIyoq1fELOFYCfWSSStw9vk4FRZ1tqDATjwVjcqYod9vQU17ExuntF/mzR
+         NFns83E4y0KwkIWU8ogurmEKpjWGy3D8pfXIVC5wP+A/Kltq7ergycZU50uB8QH8wlrH
+         Pq4A==
+X-Gm-Message-State: AGi0PuZr/bRPANgnBWMTGYvAy/gWEpeM+ggo1xnLeC2tbuFdylrVeiKH
+        w6CpalTgnEvNsZ3jCcYEcA==
+X-Google-Smtp-Source: APiQypJzTOsA4MMcw+8ySuTf7bsiFc+0EPM0GrRH186HNMYZE+s5iB7eFAI4H9VokzQcmzwFYB4qXw==
+X-Received: by 2002:a4a:9413:: with SMTP id h19mr15437109ooi.52.1589324712398;
+        Tue, 12 May 2020 16:05:12 -0700 (PDT)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id f8sm1601703oto.47.2020.05.12.16.05.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 May 2020 16:01:13 -0700 (PDT)
-Date:   Tue, 12 May 2020 16:01:11 -0700
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     Daniel Borkmann <daniel@iogearbox.net>
-Cc:     davem@davemloft.net, netdev@vger.kernel.org, bpf@vger.kernel.org,
-        kernel-team@fb.com, linux-security-module@vger.kernel.org,
-        acme@redhat.com, jamorris@linux.microsoft.com, jannh@google.com,
-        kpsingh@google.com
-Subject: Re: [PATCH v5 bpf-next 2/3] bpf: implement CAP_BPF
-Message-ID: <20200512230111.xvuenymehvzhhmot@ast-mbp>
-References: <20200508215340.41921-1-alexei.starovoitov@gmail.com>
- <20200508215340.41921-3-alexei.starovoitov@gmail.com>
- <311508c5-b80f-498e-2d0a-b98fe751ead9@iogearbox.net>
+        Tue, 12 May 2020 16:05:11 -0700 (PDT)
+Received: (nullmailer pid 9890 invoked by uid 1000);
+        Tue, 12 May 2020 23:05:09 -0000
+Date:   Tue, 12 May 2020 18:05:09 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Prakhar Srivastava <prsriva@linux.microsoft.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, devicetree@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, catalin.marinas@arm.com,
+        will@kernel.org, mpe@ellerman.id.au, benh@kernel.crashing.org,
+        paulus@samba.org, frowand.list@gmail.com, zohar@linux.ibm.com,
+        dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
+        pasha.tatashin@soleen.com, allison@lohutok.net,
+        kstewart@linuxfoundation.org, takahiro.akashi@linaro.org,
+        tglx@linutronix.de, vincenzo.frascino@arm.com,
+        masahiroy@kernel.org, james.morse@arm.com, bhsharma@redhat.com,
+        mbrugger@suse.com, hsinyi@chromium.org, tao.li@vivo.com,
+        christophe.leroy@c-s.fr, gregkh@linuxfoundation.org,
+        nramas@linux.microsoft.com, tusharsu@linux.microsoft.com,
+        balajib@linux.microsoft.com
+Subject: Re: [RFC][PATCH 0/2] Add support for using reserved memory for ima
+ buffer pass
+Message-ID: <20200512230509.GA2654@bogus>
+References: <20200504203829.6330-1-prsriva@linux.microsoft.com>
+ <20200505095620.GA82424@C02TD0UTHF1T.local>
+ <e8c7d74e-74bf-caa3-452d-23faa649e825@linux.microsoft.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <311508c5-b80f-498e-2d0a-b98fe751ead9@iogearbox.net>
+In-Reply-To: <e8c7d74e-74bf-caa3-452d-23faa649e825@linux.microsoft.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, May 12, 2020 at 10:27:33PM +0200, Daniel Borkmann wrote:
-> On 5/8/20 11:53 PM, Alexei Starovoitov wrote:
-> [...]
-> > @@ -2880,8 +2933,6 @@ static int bpf_prog_test_run(const union bpf_attr *attr,
-> >   	struct bpf_prog *prog;
-> >   	int ret = -ENOTSUPP;
-> > -	if (!capable(CAP_SYS_ADMIN))
-> > -		return -EPERM;
+On Wed, May 06, 2020 at 10:50:04PM -0700, Prakhar Srivastava wrote:
+> Hi Mark,
+
+Please don't top post.
+
+> This patch set currently only address the Pure DT implementation.
+> EFI and ACPI implementations will be posted in subsequent patchsets.
 > 
-> Should above be under bpf_capable() as well or is the intention to really let
-> (fully) unpriv users run sk_filter test progs here? I would assume only progs
-> that have prior been loaded under bpf_capable() should suffice, so no need to
-> lower the bar for now, no?
-
-Unpriv can load sk_filter and attach to a socket. Then send data through
-the socket to trigger execution.
-bpf_prog_test_run is doing the same prog execution without creating a socket.
-What is the concern?
-
-> >   	if (CHECK_ATTR(BPF_PROG_TEST_RUN))
-> >   		return -EINVAL;
-> > @@ -3163,7 +3214,7 @@ static int bpf_prog_get_info_by_fd(struct bpf_prog *prog,
-> >   	info.run_time_ns = stats.nsecs;
-> >   	info.run_cnt = stats.cnt;
-> > -	if (!capable(CAP_SYS_ADMIN)) {
-> > +	if (!bpf_capable()) {
+> The logs are intended to be carried over the kexec and once read the
+> logs are no longer needed and in prior conversation with James(
+> https://lore.kernel.org/linux-arm-kernel/0053eb68-0905-4679-c97a-00c5cb6f1abb@arm.com/)
+> the apporach of using a chosen node doesn't
+> support the case.
 > 
-> Given the JIT dump this also exposes addresses when bpf_dump_raw_ok() passes.
-> I presume okay, but should probably be documented given CAP_SYS_ADMIN isn't
-> required anymore?
+> The DT entries make the reservation permanent and thus doesnt need kernel
+> segments to be used for this, however using a chosen-node with
+> reserved memory only changes the node information but memory still is
+> reserved via reserved-memory section.
 
-Exactly. dump_raw_ok() is there. I'm not even sure why this cap_sys_admin
-check is there. It looks like it can be completely removed, but I didn't
-want to go that far in this set.
+I think Mark's point was whether it needs to be permanent. We don't 
+hardcode the initrd address for example.
+
+> On 5/5/20 2:59 AM, Mark Rutland wrote:
+> > Hi Prakhar,
+> > 
+> > On Mon, May 04, 2020 at 01:38:27PM -0700, Prakhar Srivastava wrote:
+> > > IMA during kexec(kexec file load) verifies the kernel signature and measures
+
+What's IMA?
+
+> > > the signature of the kernel. The signature in the logs can be used to verfiy the
+> > > authenticity of the kernel. The logs don not get carried over kexec and thus
+> > > remote attesation cannot verify the signature of the running kernel.
+> > > 
+> > > Introduce an ABI to carry forward the ima logs over kexec.
+> > > Memory reserved via device tree reservation can be used to store and read
+> > > via the of_* functions.
+> > 
+> > This flow needs to work for:
+> > 
+> > 1) Pure DT
+> > 2) DT + EFI memory map
+> > 3) ACPI + EFI memory map
+> > 
+> > ... and if this is just for transiently passing the log, I don't think
+> > that a reserved memory region is the right thing to use, since they're
+> > supposed to be more permanent.
+> > 
+> > This sounds analogous to passing the initrd, and should probably use
+> > properties under the chosen node (which can be used for all three boot
+> > flows above).
+> > 
+> > For reference, how big is the IMA log likely to be? Does it need
+> > physically contiguous space?
+> 
+> It purely depends on the policy used and the modules/files that are accessed
+> for my local testing over a kexec session the log in
+> about 30KB.
+> 
+> Current implementation expects enough contiguous memory to allocated to
+> carry forward the logs. If the log size exceeds the reserved memory the
+> call will fail.
+> 
+> Thanks,
+> Prakhar Srivastava
+> > 
+> > Thanks,
+> > Mark.
+> > 
+> > > 
+> > > Reserved memory stores the size(sizeof(size_t)) of the buffer in the starting
+> > > address, followed by the IMA log contents.
+> > > 
+> > > Tested on:
+> > >    arm64 with Uboot
+> > > 
+> > > Prakhar Srivastava (2):
+> > >    Add a layer of abstraction to use the memory reserved by device tree
+> > >      for ima buffer pass.
+> > >    Add support for ima buffer pass using reserved memory for arm64 kexec.
+> > >      Update the arch sepcific code path in kexec file load to store the
+> > >      ima buffer in the reserved memory. The same reserved memory is read
+> > >      on kexec or cold boot.
+> > > 
+> > >   arch/arm64/Kconfig                     |   1 +
+> > >   arch/arm64/include/asm/ima.h           |  22 ++++
+> > >   arch/arm64/include/asm/kexec.h         |   5 +
+> > >   arch/arm64/kernel/Makefile             |   1 +
+> > >   arch/arm64/kernel/ima_kexec.c          |  64 ++++++++++
+> > >   arch/arm64/kernel/machine_kexec_file.c |   1 +
+> > >   arch/powerpc/include/asm/ima.h         |   3 +-
+> > >   arch/powerpc/kexec/ima.c               |  14 ++-
+> > >   drivers/of/Kconfig                     |   6 +
+> > >   drivers/of/Makefile                    |   1 +
+> > >   drivers/of/of_ima.c                    | 165 +++++++++++++++++++++++++
+> > >   include/linux/of.h                     |  34 +++++
+> > >   security/integrity/ima/ima_kexec.c     |  15 ++-
+> > >   13 files changed, 325 insertions(+), 7 deletions(-)
+> > >   create mode 100644 arch/arm64/include/asm/ima.h
+> > >   create mode 100644 arch/arm64/kernel/ima_kexec.c
+> > >   create mode 100644 drivers/of/of_ima.c
+> > > 
+> > > -- 
+> > > 2.25.1
+> > > 
