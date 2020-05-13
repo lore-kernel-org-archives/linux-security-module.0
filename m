@@ -2,300 +2,131 @@ Return-Path: <SRS0=p5JF=63=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1E6AC433E0
-	for <linux-security-module@archiver.kernel.org>; Wed, 13 May 2020 23:04:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7853C433E1
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 May 2020 23:13:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0558E20675
-	for <linux-security-module@archiver.kernel.org>; Wed, 13 May 2020 23:04:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F1FFD2054F
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 May 2020 23:13:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mtv/fHeC"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="a5Qhy201"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732311AbgEMXEI (ORCPT
+        id S1728315AbgEMXNm (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 13 May 2020 19:04:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60678 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731815AbgEMXEH (ORCPT
+        Wed, 13 May 2020 19:13:42 -0400
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:27744 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1732321AbgEMXNm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 13 May 2020 19:04:07 -0400
-Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E895C061A0C;
-        Wed, 13 May 2020 16:04:06 -0700 (PDT)
-Received: by mail-pj1-x1042.google.com with SMTP id q24so11626128pjd.1;
-        Wed, 13 May 2020 16:04:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=R0TzPmISdcMqHvmE7QsPNNAq61zop0SzUXYI+ioXbng=;
-        b=Mtv/fHeCMVTqBWpiQ/ba0qoZDU3J8WP8bU4k0O4NsJWKLXa/BdaD/yLaX7n3XMeomE
-         2G1wycdGZPMKu2tN3bSRQapDn0L5LD//5ljbIVtmGwiabmD9cK6w8JCdde/4+hFZvjdA
-         EnVJ3X2L/mA6ZOu9at4A0VSIt0VJpgdyFtvGEdg8c089b74n+dzPU+9yK5se+NnYQyu1
-         dmn7l8Ns99iO7lg/dyrMmVcmJJd3aPheVcbCa7Tm156iyRphAbIBsbXqmTABSq1+4pkY
-         TXeCjz3ALNQ4vKaEZ069HT9SaPR1zu5B6Wpi0O5uJSzEmz2Sqwe2R/GBo4Jzq64y6e6F
-         E/7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=R0TzPmISdcMqHvmE7QsPNNAq61zop0SzUXYI+ioXbng=;
-        b=azrkyLOs1+3vEx2SGsRywfjhPoDpID2/7es/2k2HyRBRp34TbVejJdnkvuuN1Gjlvg
-         Px2JX6eD2UYbj2ZigAM239ZFvJ50H3ZbEKwXEfVVqMJcqdgv3cDeK2SjdsKoFCuv9PDI
-         8v0FzYKc30+pKSch2Ek5QsSdtP1151leReLdxdeQk9w6Q5+/IxpQr35hEGZcx/dX2yX1
-         +o1uYWBwzZp8lj88JBYwtAzz4iPg67wyenv+8dWcvh8g7DGCYbgzpUwAKsm1XOj5R0sV
-         sLRWy0ubi1tnkY/DZrLwO6FUaOCC0AuWrz5xX4iHSqVpsfujH4tYw3TJXLEzxqYznLvV
-         XqQA==
-X-Gm-Message-State: AOAM530JYXCVISTE2QlvDgTwMJ9XXPg9r/CeaWUalo0a+vcaUc/rG2Xc
-        hMtRTbLgsa5d60eH48V4iE0=
-X-Google-Smtp-Source: ABdhPJy8d74W314xU44j8ltm3INfBBRpO+kpR01K1UhKLb/PqrVgij7tmpeT22Y72nTxohj5B55asw==
-X-Received: by 2002:a17:902:261:: with SMTP id 88mr1425932plc.152.1589411045765;
-        Wed, 13 May 2020 16:04:05 -0700 (PDT)
-Received: from ast-mbp.thefacebook.com ([163.114.132.7])
-        by smtp.gmail.com with ESMTPSA id t23sm16558706pji.32.2020.05.13.16.04.03
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 13 May 2020 16:04:04 -0700 (PDT)
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     davem@davemloft.net
-Cc:     daniel@iogearbox.net, netdev@vger.kernel.org, bpf@vger.kernel.org,
-        kernel-team@fb.com, linux-security-module@vger.kernel.org,
-        acme@redhat.com, jamorris@linux.microsoft.com, jannh@google.com,
-        kpsingh@google.com
-Subject: [PATCH v7 bpf-next 3/3] selftests/bpf: use CAP_BPF and CAP_PERFMON in tests
-Date:   Wed, 13 May 2020 16:03:55 -0700
-Message-Id: <20200513230355.7858-4-alexei.starovoitov@gmail.com>
-X-Mailer: git-send-email 2.13.5
-In-Reply-To: <20200513230355.7858-1-alexei.starovoitov@gmail.com>
-References: <20200513230355.7858-1-alexei.starovoitov@gmail.com>
+        Wed, 13 May 2020 19:13:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1589411619;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=ZmMD6XDgyrg0kIPXb2cMEKa1A3azrPgvq+3AzZZ9RcQ=;
+        b=a5Qhy201W4tBuL2ZziApVeE9mAYN7wDsBEVEJvDGvgqGaLTO+1GH0doMx2Nkdf2Pf3rsL6
+        GguQDj8TFoyKeO3+RMhM9O31by+F9b5f7iNtcnTF94N8rVTxR473NoSWKDlFruc2gDgOE1
+        sRTOmIqrv0HQuEL6lSHCaJrpd9FFyG0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-394-Q9t9zeVRNwCXxVJMkBsddA-1; Wed, 13 May 2020 19:13:35 -0400
+X-MC-Unique: Q9t9zeVRNwCXxVJMkBsddA-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E2DA118FE860;
+        Wed, 13 May 2020 23:13:33 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-112-59.rdu2.redhat.com [10.10.112.59])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2E6F45C1D3;
+        Wed, 13 May 2020 23:13:32 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAEjxPJ4=ZN_jKP2nX5mrMA3OxC8XLsYEmCPCD-78H4XQw=_hCA@mail.gmail.com>
+References: <CAEjxPJ4=ZN_jKP2nX5mrMA3OxC8XLsYEmCPCD-78H4XQw=_hCA@mail.gmail.com> <CAEjxPJ6pFdDfm55pv9bT3CV5DTFF9VqzRmG_Xi5bKNxPaGuOLg@mail.gmail.com> <158932282880.2885325.2688622278854566047.stgit@warthog.procyon.org.uk>
+To:     Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc:     dhowells@redhat.com,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        keyrings@vger.kernel.org, SElinux list <selinux@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] keys: Make the KEY_NEED_* perms an enum rather than a mask
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3611506.1589411611.1@warthog.procyon.org.uk>
+Date:   Thu, 14 May 2020 00:13:31 +0100
+Message-ID: <3611507.1589411611@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Alexei Starovoitov <ast@kernel.org>
+Stephen Smalley <stephen.smalley.work@gmail.com> wrote:
 
-Make all test_verifier test exercise CAP_BPF and CAP_PERFMON
+> >  (3) An override due to CAP_SYS_ADMIN.
+> 
+> CAP_SYS_ADMIN should never skip SELinux checking.  Even for Smack,
+> there is a separate capability (CAP_MAC_ADMIN) for that purpose.
 
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
----
- tools/testing/selftests/bpf/test_verifier.c   | 44 +++++++++++++++----
- tools/testing/selftests/bpf/verifier/calls.c  | 16 +++----
- .../selftests/bpf/verifier/dead_code.c        | 10 ++---
- 3 files changed, 49 insertions(+), 21 deletions(-)
+The LSM doesn't get consulted at the moment.  With this patch, it will get
+consulted.
 
-diff --git a/tools/testing/selftests/bpf/test_verifier.c b/tools/testing/selftests/bpf/test_verifier.c
-index 21a1ce219c1c..78a6bae56ea6 100644
---- a/tools/testing/selftests/bpf/test_verifier.c
-+++ b/tools/testing/selftests/bpf/test_verifier.c
-@@ -818,10 +818,18 @@ static void do_test_fixup(struct bpf_test *test, enum bpf_prog_type prog_type,
- 	}
- }
- 
-+struct libcap {
-+	struct __user_cap_header_struct hdr;
-+	struct __user_cap_data_struct data[2];
-+};
-+
- static int set_admin(bool admin)
- {
- 	cap_t caps;
--	const cap_value_t cap_val = CAP_SYS_ADMIN;
-+	/* need CAP_BPF, CAP_NET_ADMIN, CAP_PERFMON to load progs */
-+	const cap_value_t cap_net_admin = CAP_NET_ADMIN;
-+	const cap_value_t cap_sys_admin = CAP_SYS_ADMIN;
-+	struct libcap *cap;
- 	int ret = -1;
- 
- 	caps = cap_get_proc();
-@@ -829,11 +837,26 @@ static int set_admin(bool admin)
- 		perror("cap_get_proc");
- 		return -1;
- 	}
--	if (cap_set_flag(caps, CAP_EFFECTIVE, 1, &cap_val,
-+	cap = (struct libcap *)caps;
-+	if (cap_set_flag(caps, CAP_EFFECTIVE, 1, &cap_sys_admin, CAP_CLEAR)) {
-+		perror("cap_set_flag clear admin");
-+		goto out;
-+	}
-+	if (cap_set_flag(caps, CAP_EFFECTIVE, 1, &cap_net_admin,
- 				admin ? CAP_SET : CAP_CLEAR)) {
--		perror("cap_set_flag");
-+		perror("cap_set_flag set_or_clear net");
- 		goto out;
- 	}
-+	/* libcap is likely old and simply ignores CAP_BPF and CAP_PERFMON,
-+	 * so update effective bits manually
-+	 */
-+	if (admin) {
-+		cap->data[1].effective |= 1 << (38 /* CAP_PERFMON */ - 32);
-+		cap->data[1].effective |= 1 << (39 /* CAP_BPF */ - 32);
-+	} else {
-+		cap->data[1].effective &= ~(1 << (38 - 32));
-+		cap->data[1].effective &= ~(1 << (39 - 32));
-+	}
- 	if (cap_set_proc(caps)) {
- 		perror("cap_set_proc");
- 		goto out;
-@@ -1067,9 +1090,11 @@ static void do_test_single(struct bpf_test *test, bool unpriv,
- 
- static bool is_admin(void)
- {
-+	cap_flag_value_t net_priv = CAP_CLEAR;
-+	bool perfmon_priv = false;
-+	bool bpf_priv = false;
-+	struct libcap *cap;
- 	cap_t caps;
--	cap_flag_value_t sysadmin = CAP_CLEAR;
--	const cap_value_t cap_val = CAP_SYS_ADMIN;
- 
- #ifdef CAP_IS_SUPPORTED
- 	if (!CAP_IS_SUPPORTED(CAP_SETFCAP)) {
-@@ -1082,11 +1107,14 @@ static bool is_admin(void)
- 		perror("cap_get_proc");
- 		return false;
- 	}
--	if (cap_get_flag(caps, cap_val, CAP_EFFECTIVE, &sysadmin))
--		perror("cap_get_flag");
-+	cap = (struct libcap *)caps;
-+	bpf_priv = cap->data[1].effective & (1 << (39/* CAP_BPF */ - 32));
-+	perfmon_priv = cap->data[1].effective & (1 << (38/* CAP_PERFMON */ - 32));
-+	if (cap_get_flag(caps, CAP_NET_ADMIN, CAP_EFFECTIVE, &net_priv))
-+		perror("cap_get_flag NET");
- 	if (cap_free(caps))
- 		perror("cap_free");
--	return (sysadmin == CAP_SET);
-+	return bpf_priv && perfmon_priv && net_priv == CAP_SET;
- }
- 
- static void get_unpriv_disabled()
-diff --git a/tools/testing/selftests/bpf/verifier/calls.c b/tools/testing/selftests/bpf/verifier/calls.c
-index 2d752c4f8d9d..7629a0cebb9b 100644
---- a/tools/testing/selftests/bpf/verifier/calls.c
-+++ b/tools/testing/selftests/bpf/verifier/calls.c
-@@ -19,7 +19,7 @@
- 	BPF_MOV64_IMM(BPF_REG_0, 2),
- 	BPF_EXIT_INSN(),
- 	},
--	.errstr_unpriv = "function calls to other bpf functions are allowed for root only",
-+	.errstr_unpriv = "function calls to other bpf functions are allowed for",
- 	.result_unpriv = REJECT,
- 	.result = ACCEPT,
- 	.retval = 1,
-@@ -315,7 +315,7 @@
- 	BPF_MOV64_REG(BPF_REG_0, BPF_REG_1),
- 	BPF_EXIT_INSN(),
- 	},
--	.errstr_unpriv = "allowed for root only",
-+	.errstr_unpriv = "allowed for",
- 	.result_unpriv = REJECT,
- 	.result = ACCEPT,
- 	.retval = POINTER_VALUE,
-@@ -346,7 +346,7 @@
- 	BPF_ALU64_REG(BPF_ADD, BPF_REG_0, BPF_REG_2),
- 	BPF_EXIT_INSN(),
- 	},
--	.errstr_unpriv = "allowed for root only",
-+	.errstr_unpriv = "allowed for",
- 	.result_unpriv = REJECT,
- 	.result = ACCEPT,
- 	.retval = TEST_DATA_LEN + TEST_DATA_LEN - ETH_HLEN - ETH_HLEN,
-@@ -397,7 +397,7 @@
- 	BPF_MOV64_IMM(BPF_REG_0, 1),
- 	BPF_EXIT_INSN(),
- 	},
--	.errstr_unpriv = "function calls to other bpf functions are allowed for root only",
-+	.errstr_unpriv = "function calls to other bpf functions are allowed for",
- 	.fixup_map_hash_48b = { 3 },
- 	.result_unpriv = REJECT,
- 	.result = ACCEPT,
-@@ -1064,7 +1064,7 @@
- 	BPF_MOV64_IMM(BPF_REG_0, 0),
- 	BPF_EXIT_INSN(),
- 	},
--	.errstr_unpriv = "allowed for root only",
-+	.errstr_unpriv = "allowed for",
- 	.result_unpriv = REJECT,
- 	.errstr = "R0 !read_ok",
- 	.result = REJECT,
-@@ -1977,7 +1977,7 @@
- 	BPF_EXIT_INSN(),
- 	},
- 	.prog_type = BPF_PROG_TYPE_SOCKET_FILTER,
--	.errstr_unpriv = "function calls to other bpf functions are allowed for root only",
-+	.errstr_unpriv = "function calls to other bpf functions are allowed for",
- 	.result_unpriv = REJECT,
- 	.result = ACCEPT,
- },
-@@ -2003,7 +2003,7 @@
- 	BPF_EXIT_INSN(),
- 	},
- 	.prog_type = BPF_PROG_TYPE_SOCKET_FILTER,
--	.errstr_unpriv = "function calls to other bpf functions are allowed for root only",
-+	.errstr_unpriv = "function calls to other bpf functions are allowed for",
- 	.errstr = "!read_ok",
- 	.result = REJECT,
- },
-@@ -2028,7 +2028,7 @@
- 	BPF_EXIT_INSN(),
- 	},
- 	.prog_type = BPF_PROG_TYPE_SOCKET_FILTER,
--	.errstr_unpriv = "function calls to other bpf functions are allowed for root only",
-+	.errstr_unpriv = "function calls to other bpf functions are allowed for",
- 	.errstr = "!read_ok",
- 	.result = REJECT,
- },
-diff --git a/tools/testing/selftests/bpf/verifier/dead_code.c b/tools/testing/selftests/bpf/verifier/dead_code.c
-index 50a8a63be4ac..5cf361d8eb1c 100644
---- a/tools/testing/selftests/bpf/verifier/dead_code.c
-+++ b/tools/testing/selftests/bpf/verifier/dead_code.c
-@@ -85,7 +85,7 @@
- 	BPF_MOV64_IMM(BPF_REG_0, 12),
- 	BPF_EXIT_INSN(),
- 	},
--	.errstr_unpriv = "function calls to other bpf functions are allowed for root only",
-+	.errstr_unpriv = "function calls to other bpf functions are allowed for",
- 	.result_unpriv = REJECT,
- 	.result = ACCEPT,
- 	.retval = 7,
-@@ -103,7 +103,7 @@
- 	BPF_MOV64_IMM(BPF_REG_0, 12),
- 	BPF_EXIT_INSN(),
- 	},
--	.errstr_unpriv = "function calls to other bpf functions are allowed for root only",
-+	.errstr_unpriv = "function calls to other bpf functions are allowed for",
- 	.result_unpriv = REJECT,
- 	.result = ACCEPT,
- 	.retval = 7,
-@@ -121,7 +121,7 @@
- 	BPF_RAW_INSN(BPF_JMP | BPF_CALL, 0, 1, 0, -5),
- 	BPF_EXIT_INSN(),
- 	},
--	.errstr_unpriv = "function calls to other bpf functions are allowed for root only",
-+	.errstr_unpriv = "function calls to other bpf functions are allowed for",
- 	.result_unpriv = REJECT,
- 	.result = ACCEPT,
- 	.retval = 7,
-@@ -137,7 +137,7 @@
- 	BPF_MOV64_REG(BPF_REG_0, BPF_REG_1),
- 	BPF_EXIT_INSN(),
- 	},
--	.errstr_unpriv = "function calls to other bpf functions are allowed for root only",
-+	.errstr_unpriv = "function calls to other bpf functions are allowed for",
- 	.result_unpriv = REJECT,
- 	.result = ACCEPT,
- 	.retval = 2,
-@@ -152,7 +152,7 @@
- 	BPF_MOV64_REG(BPF_REG_0, BPF_REG_1),
- 	BPF_EXIT_INSN(),
- 	},
--	.errstr_unpriv = "function calls to other bpf functions are allowed for root only",
-+	.errstr_unpriv = "function calls to other bpf functions are allowed for",
- 	.result_unpriv = REJECT,
- 	.result = ACCEPT,
- 	.retval = 2,
--- 
-2.23.0
+> >  (4) An override due to an instantiation token being present.
+> 
+> Not sure what this means but again we shouldn't skip SELinux checking
+> based on mere possession of an object capability (not a POSIX
+> capability).
+
+The kernel has delegated the instantiation of a key to the calling process and
+has given it a temporary key of type ".request_key_auth" which it has put into
+force with keyctl(KEYCTL_ASSUME_AUTHORITY).
+
+This authorisation token grants the caller the ability to (a) perform
+operations on the key it wouldn't otherwise have permission to do, (b) use the
+key instantiation keyctls and (c) temporarily search the keyrings of the
+caller of request_key() using the creds of that caller and to read/use the
+keys found therein if the caller was permitted to do so.
+
+> It would be better if the permission indicated the actual operation
+> (e.g. KEY_NEED_INVALIDATE_SPECIAL), and the decision whether to permit
+> CAP_SYS_ADMIN processes to override was left to the security modules.
+> SELinux doesn't automatically allow CAP_SYS_ADMIN processes to do
+> everything.
+
+These individual permissions don't exist yet.  I have an ACL patchset that
+allows me to add a greater range - though there's issues with SELinux there
+also.
+
+Also, the keyrings are specially marked to say that the sysadmin is allowed to
+flush them at the moment - but that can go away with the ACL stuff.
+
+> > +       switch (need_perm) {
+> > +       case KEY_NEED_UNLINK:
+> > +       case KEY_SYSADMIN_OVERRIDE:
+> > +       case KEY_AUTHTOKEN_OVERRIDE:
+> > +       case KEY_DEFER_PERM_CHECK:
+> >                 return 0;
+> 
+> We really shouldn't be skipping any/all checking on CAP_SYS_ADMIN or
+> an AUTHTOKEN; those should still be subject to MAC policy.
+
+I'm not sure how to do that.
+
+Note that KEY_NEED_UNLINK *must not* be overruled by the MAC policy.  The
+value is only there because lookup_user_key() requires something to be put
+into that parameter - it's more of a courtesy thing, I suppose.
+
+Why should AUTHTOKEN be subject to MAC policy?  The kernel has told the
+process to go and instantiate a key.  It shouldn't really then turn around and
+tell the process "oh, but you're not actually allowed to do that".
+
+David
 
