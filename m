@@ -2,149 +2,175 @@ Return-Path: <SRS0=p5JF=63=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DAB6C2D0F6
-	for <linux-security-module@archiver.kernel.org>; Wed, 13 May 2020 02:32:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F6F6C2D0FB
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 May 2020 03:19:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 66D5D206F5
-	for <linux-security-module@archiver.kernel.org>; Wed, 13 May 2020 02:32:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6098220714
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 May 2020 03:19:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=landley-net.20150623.gappssmtp.com header.i=@landley-net.20150623.gappssmtp.com header.b="zro3iuWt"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GV7cK/us"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728056AbgEMCct (ORCPT
+        id S1728475AbgEMDTe (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 12 May 2020 22:32:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37894 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726317AbgEMCct (ORCPT
+        Tue, 12 May 2020 23:19:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45068 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725898AbgEMDTe (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 12 May 2020 22:32:49 -0400
-Received: from mail-oi1-x244.google.com (mail-oi1-x244.google.com [IPv6:2607:f8b0:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E002C061A0C
-        for <linux-security-module@vger.kernel.org>; Tue, 12 May 2020 19:32:49 -0700 (PDT)
-Received: by mail-oi1-x244.google.com with SMTP id 19so20144085oiy.8
-        for <linux-security-module@vger.kernel.org>; Tue, 12 May 2020 19:32:49 -0700 (PDT)
+        Tue, 12 May 2020 23:19:34 -0400
+Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91C9FC061A0C;
+        Tue, 12 May 2020 20:19:34 -0700 (PDT)
+Received: by mail-pg1-x541.google.com with SMTP id r22so5555570pga.12;
+        Tue, 12 May 2020 20:19:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=landley-net.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=w05U4Ty4fjXvusSYkJgWcKh14hiK/1j5qmU3u7mm4Gk=;
-        b=zro3iuWtE97dmQ2yHOnvFSySz6cnEaOXpjCj7UrvI6HN1BoVBQATbBys+y8DGiKzn8
-         4e6gLMlpVYQR4pf6Sd/w32BfJdggxxqXNsZhm02yjJkagHlLAHfiKdHcve3uHOH6m4f1
-         QJB7XnkShMgbga+ToPaDQ7SoC0ox+6cG4W8sXyO4YkgFLoyu2SLqtgwOwoGjJc0SNBvx
-         m0fyuQ265Gx9qXMmG/6jCzVx6SjOJvkL2vpE0aZWoJ1fUl0NV3i53l9+SjWzeWiwOfvz
-         ahm888waBPeeJ5ZLoVKa6U7TJFqjxlUKCgdF2YMnqpAg3dBmWVdgKm6CIfZ6HweoHeQZ
-         pyTg==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=Cgnn7BGEcuG0spKsjYgMQ/THavfuvltSX7ieTOwC2yo=;
+        b=GV7cK/usrddCUvcVGqLj9GNIIzdZnGxXOiRDUPgASBMawqSnNcsaT2QXszxHx4dgJ+
+         ijyoEi2VnrlgeXQmbogQDzZhiFBMohhPHwfOYASwaBgPOzva7Og7WIRCbqF2k3LQ9mMc
+         sVUhlcV3kc6mokt4vH/rKlRrNQO1OBH9gAGqyxmWPLf4wuGGjD14fFjAf1/ROEhSQ7Fw
+         JSJkmr3g+ZOJvKhiapDjs6bkWUUD1swiG4ZbQ6zfIC/0f9aH9bh4yg0905xZr+GzlAUf
+         5XgNMSAmzLFH/hJHG6cHgLZdnBR48GlgpRCDq6IqMF/5jUJlS7MY1cr0/W9tR44xs2fv
+         ASAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=w05U4Ty4fjXvusSYkJgWcKh14hiK/1j5qmU3u7mm4Gk=;
-        b=GIj+JrTrk2ffoMH2srXSh0MoskWDtlf58jYK5vjQr+h3kijhCoKW1fPEAHbSqOKp2l
-         DFeAl0ihQIdfxdVQCR2KWkYLqj5QjcmlcA4aBNGmXkl84X6lz/uwqr2VixW4Cyf02BFg
-         p7vcvWiBzary1eDUGYB4vX26hDcmeWVaQ17BdcUzCLLPILl5CxK875k2lh5WGRvAV08+
-         IqOmcbIleRKqH2bT1+MOEOWQkbycT4M+MwA9JXF092QaMEnbDGYmABJTlIHIpgN5klhq
-         oLbukc8PCCdcR6ArY25anUaOpOZ+/PrLCLaEJycOUhe4FJWPqzda04w1XoPLqMacm4Rs
-         Pn4g==
-X-Gm-Message-State: AGi0PuZK3Uy/WKiACVppTjD6LrIaQxlkAsTpLu5iJNw7M/0ze9IxO404
-        kPY/AhIPlbBoHcoGqKOp7PkOIg==
-X-Google-Smtp-Source: APiQypKejIA0kmvj/Qz9PYOoadZzdtDminPHwnrVp5To0Q93DoZzo/+2d+BBBnoTnejQtKo4vIlOMw==
-X-Received: by 2002:aca:1007:: with SMTP id 7mr26354929oiq.139.1589337168640;
-        Tue, 12 May 2020 19:32:48 -0700 (PDT)
-Received: from [192.168.86.21] ([136.62.4.88])
-        by smtp.gmail.com with ESMTPSA id m189sm5841682oig.12.2020.05.12.19.32.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 May 2020 19:32:47 -0700 (PDT)
-Subject: Re: [PATCH 3/5] exec: Remove recursion from search_binary_handler
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Bernd Edlinger <bernd.edlinger@hotmail.de>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Andy Lutomirski <luto@amacapital.net>
-References: <87h7wujhmz.fsf@x220.int.ebiederm.org>
- <87sgga6ze4.fsf@x220.int.ebiederm.org>
- <87v9l4zyla.fsf_-_@x220.int.ebiederm.org>
- <87eerszyim.fsf_-_@x220.int.ebiederm.org>
- <ee83587b-8a1c-3c4f-cc0f-7bc98afabae1@I-love.SAKURA.ne.jp>
- <CAHk-=wgQ2ovXMW=5ZHCpowkE1PwPQSL7oV4YXzBxd6eqNRXxnQ@mail.gmail.com>
- <87sgg6v8we.fsf@x220.int.ebiederm.org> <202005111428.B094E3B76A@keescook>
- <874kslq9jm.fsf@x220.int.ebiederm.org>
- <CAHk-=wjhmoGLcMgcDB0rT-n6waC+rdnjU3FRKAwSTMSG=gaK9Q@mail.gmail.com>
-From:   Rob Landley <rob@landley.net>
-Message-ID: <6f282d0a-b448-14e9-cd4f-92cce99cc36f@landley.net>
-Date:   Tue, 12 May 2020 21:39:29 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
-MIME-Version: 1.0
-In-Reply-To: <CAHk-=wjhmoGLcMgcDB0rT-n6waC+rdnjU3FRKAwSTMSG=gaK9Q@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Cgnn7BGEcuG0spKsjYgMQ/THavfuvltSX7ieTOwC2yo=;
+        b=D/Kj1Hs51iu9VSULafvJJexrOxj7iQ3bSTq1TwJMy1Xx2IwmIBSgc9sDjd7JzEM25g
+         CppGW3P0e6WMiz5uM0042E9bf8zS45DK09gbEn3Db5KfWx5v3M2A70ulsdqYoG6IX9dt
+         abE6YkHIeDWyWy374K5phBWPmOzpUrFk3EaJJE30jKIclAlZxqu9wXNLd7vuYz4Q3Mar
+         l8I/2OgjUh7bkIcNy/cM4/A65IdPdoms58mkQqweELm+ziHchVzWkNnBbH4oLaYj9WxT
+         xx5SIzRxf1z4vWwXGTJzk/GkCSlTxYfxgbwZlrxwSF3scmdd0PsQtJk9g6VJ0vr4iuZn
+         HA+Q==
+X-Gm-Message-State: AOAM532Sa2S58MF/qDQPXCzDFwdaSPz6ER//OElLtB7YOKPnNMYPljaY
+        NXenyEueiDyE4g+AvFFnWr4=
+X-Google-Smtp-Source: ABdhPJwvEjKC6Qwup/1awvUhKHaFARTRhQ7CYWgQ3fAzzMyWsW3HEmmFHM9ywQuI19r7o42nkZkaRA==
+X-Received: by 2002:a63:3546:: with SMTP id c67mr4493734pga.379.1589339973974;
+        Tue, 12 May 2020 20:19:33 -0700 (PDT)
+Received: from ast-mbp.thefacebook.com ([163.114.132.1])
+        by smtp.gmail.com with ESMTPSA id f70sm13206415pfa.17.2020.05.12.20.19.31
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 12 May 2020 20:19:32 -0700 (PDT)
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     davem@davemloft.net
+Cc:     daniel@iogearbox.net, netdev@vger.kernel.org, bpf@vger.kernel.org,
+        kernel-team@fb.com, linux-security-module@vger.kernel.org,
+        acme@redhat.com, jamorris@linux.microsoft.com, jannh@google.com,
+        kpsingh@google.com
+Subject: [PATCH v6 bpf-next 0/3] Introduce CAP_BPF
+Date:   Tue, 12 May 2020 20:19:27 -0700
+Message-Id: <20200513031930.86895-1-alexei.starovoitov@gmail.com>
+X-Mailer: git-send-email 2.13.5
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+From: Alexei Starovoitov <ast@kernel.org>
 
+v5->v6:
+- split allow_ptr_leaks into four flags.
+- retain bpf_jit_limit under cap_sys_admin.
+- fixed few other issues spotted by Daniel.
 
-On 5/12/20 7:20 PM, Linus Torvalds wrote:
-> On Tue, May 12, 2020 at 11:46 AM Eric W. Biederman
-> <ebiederm@xmission.com> wrote:
->>
->> I am still thinking about this one, but here is where I am at.  At a
->> practical level passing the file descriptor of the script to interpreter
->> seems like something we should encourage in the long term.  It removes
->> races and it is cheaper because then the interpreter does not have to
->> turn around and open the script itself.
-> 
-> Yeah, I think we should continue to support it, because I think it's
-> the right thing to do (and we might just end up having compatibility
-> issues if we don't).
-...
->> It is possible although unlikely for userspace to find the file
->> descriptor without consulting AT_EXECFD so just to be conservative I
->> think we should install the file descriptor in begin_new_exec even if
->> the next interpreter does not support AT_EXECFD.
-> 
-> Ack. I think the AT_EXECFD thing is a sign that this isn't internal to
-> binfmt_misc, but it also shouldn't be gating this issue. In reality,
-> ELF is the only real binary format that matters - the script/misc
-> binfmts are just indirection entries - and it supports AT_EXECFD, so
-> let's just ignore the theoretical case of "maybe nobody exposes it".
+v4->v5:
 
-Would this potentially make the re-exec-yourself case easier to do at some
-point? (Which nommu needs to do, and /proc/self/exe isn't always available.)
+Split BPF operations that are allowed under CAP_SYS_ADMIN into combination of
+CAP_BPF, CAP_PERFMON, CAP_NET_ADMIN and keep some of them under CAP_SYS_ADMIN.
 
-Here's the first time I asked about that:
+The user process has to have
+- CAP_BPF to create maps and do other sys_bpf() commands
+- CAP_BPF and CAP_PERFMON to load tracing programs.
+- CAP_BPF and CAP_NET_ADMIN to load networking programs.
+(or CAP_SYS_ADMIN for backward compatibility).
 
-https://lore.kernel.org/lkml/200612261823.07927.rob@landley.net/
+CAP_BPF solves three main goals:
+1. provides isolation to user space processes that drop CAP_SYS_ADMIN and switch to CAP_BPF.
+   More on this below. This is the major difference vs v4 set back from Sep 2019.
+2. makes networking BPF progs more secure, since CAP_BPF + CAP_NET_ADMIN
+   prevents pointer leaks and arbitrary kernel memory access.
+3. enables fuzzers to exercise all of the verifier logic. Eventually finding bugs
+   and making BPF infra more secure. Currently fuzzers run in unpriv.
+   They will be able to run with CAP_BPF.
 
-Here's the most recent:
+The patchset is long overdue follow-up from the last plumbers conference.
+Comparing to what was discussed at LPC the CAP* checks at attach time are gone.
+For tracing progs the CAP_SYS_ADMIN check was done at load time only. There was
+no check at attach time. For networking and cgroup progs CAP_SYS_ADMIN was
+required at load time and CAP_NET_ADMIN at attach time, but there are several
+ways to bypass CAP_NET_ADMIN:
+- if networking prog is using tail_call writing FD into prog_array will
+  effectively attach it, but bpf_map_update_elem is an unprivileged operation.
+- freplace prog with CAP_SYS_ADMIN can replace networking prog
 
-https://lkml.org/lkml/2017/9/5/246
+Consolidating all CAP checks at load time makes security model similar to
+open() syscall. Once the user got an FD it can do everything with it.
+read/write/poll don't check permissions. The same way when bpf_prog_load
+command returns an FD the user can do everything (including attaching,
+detaching, and bpf_test_run).
 
-Here's someone else asking and being basically told "chroot isn't a thing":
+The important design decision is to allow ID->FD transition for
+CAP_SYS_ADMIN only. What it means that user processes can run
+with CAP_BPF and CAP_NET_ADMIN and they will not be able to affect each
+other unless they pass FDs via scm_rights or via pinning in bpffs.
+ID->FD is a mechanism for human override and introspection.
+An admin can do 'sudo bpftool prog ...'. It's possible to enforce via LSM that
+only bpftool binary does bpf syscall with CAP_SYS_ADMIN and the rest of user
+space processes do bpf syscall with CAP_BPF isolating bpf objects (progs, maps,
+links) that are owned by such processes from each other.
 
-http://lkml.iu.edu/hypermail/linux/kernel/0906.3/00584.html
+Another significant change from LPC is that the verifier checks are split into
+four flags. The allow_ptr_leaks flag allows pointer manipulations. The
+bpf_capable flag enables all modern verifier features like bpf-to-bpf calls,
+BTF, bounded loops, dead code elimination, etc. All the goodness. The
+bypass_spec_v1 flag enables indirect stack access from bpf programs and
+disables speculative analysis and bpf array mitigations. The bypass_spec_v4
+flag disables store sanitation. That allows networking progs with CAP_BPF +
+CAP_NET_ADMIN enjoy modern verifier features while being more secure.
 
-(See also "CVE-2019-5736" and the workarounds thereto.)
+Some networking progs may need CAP_BPF + CAP_NET_ADMIN + CAP_PERFMON,
+since subtracting pointers (like skb->data_end - skb->data) is a pointer leak,
+but the verifier may get smarter in the future.
 
-Rob
+Please see patches for more details.
 
-P.S. Yes I'm aware it would only work properly with static binaries. Not the
-first thing that's true for.
+Alexei Starovoitov (3):
+  bpf, capability: Introduce CAP_BPF
+  bpf: implement CAP_BPF
+  selftests/bpf: use CAP_BPF and CAP_PERFMON in tests
+
+ drivers/media/rc/bpf-lirc.c                   |  2 +-
+ include/linux/bpf.h                           | 18 +++-
+ include/linux/bpf_verifier.h                  |  3 +
+ include/linux/capability.h                    |  5 ++
+ include/uapi/linux/capability.h               | 34 +++++++-
+ kernel/bpf/arraymap.c                         | 10 +--
+ kernel/bpf/bpf_struct_ops.c                   |  2 +-
+ kernel/bpf/core.c                             |  2 +-
+ kernel/bpf/cpumap.c                           |  2 +-
+ kernel/bpf/hashtab.c                          |  4 +-
+ kernel/bpf/helpers.c                          |  4 +-
+ kernel/bpf/lpm_trie.c                         |  2 +-
+ kernel/bpf/map_in_map.c                       |  2 +-
+ kernel/bpf/queue_stack_maps.c                 |  2 +-
+ kernel/bpf/reuseport_array.c                  |  2 +-
+ kernel/bpf/stackmap.c                         |  2 +-
+ kernel/bpf/syscall.c                          | 87 ++++++++++++++-----
+ kernel/bpf/verifier.c                         | 37 ++++----
+ kernel/trace/bpf_trace.c                      |  3 +
+ net/core/bpf_sk_storage.c                     |  4 +-
+ net/core/filter.c                             |  4 +-
+ security/selinux/include/classmap.h           |  4 +-
+ tools/testing/selftests/bpf/test_verifier.c   | 44 ++++++++--
+ tools/testing/selftests/bpf/verifier/calls.c  | 16 ++--
+ .../selftests/bpf/verifier/dead_code.c        | 10 +--
+ 25 files changed, 221 insertions(+), 84 deletions(-)
+
+-- 
+2.23.0
+
