@@ -2,49 +2,64 @@ Return-Path: <SRS0=p5JF=63=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BE68C433DF
-	for <linux-security-module@archiver.kernel.org>; Wed, 13 May 2020 22:12:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92240C433E1
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 May 2020 22:48:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5941520727
-	for <linux-security-module@archiver.kernel.org>; Wed, 13 May 2020 22:12:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1589407933;
-	bh=GV/563MM7mfJ5kgZQMtPYK3qifQTKvZPMYMdtCfkpg4=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:List-ID:From;
-	b=JJ2sFAk/1h7CtC6NYvfRznV4UWRvRIrwq6yIEwxh4V2uKWOdMHOR5ZaaZ9029KBOU
-	 m1IKcBZYBmyk1wIe/A/WczIo2PgsSnPS7UbRyzb+eyzxTx0HY9IqwQKMxj5BgSjDPK
-	 SY+aUCJ6S4JawwQcLhPcbMngWLYFWqr82yQ0g/A4=
+	by mail.kernel.org (Postfix) with ESMTP id 974B7207BB
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 May 2020 22:48:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="JGD7HQd4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730739AbgEMWMJ (ORCPT
+        id S1731704AbgEMWsP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 13 May 2020 18:12:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41886 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730064AbgEMWMI (ORCPT
+        Wed, 13 May 2020 18:48:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58200 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731678AbgEMWsO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 13 May 2020 18:12:08 -0400
-Received: from localhost.localdomain (pool-96-246-152-186.nycmny.fios.verizon.net [96.246.152.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D8BC2205ED;
-        Wed, 13 May 2020 22:12:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1589407927;
-        bh=GV/563MM7mfJ5kgZQMtPYK3qifQTKvZPMYMdtCfkpg4=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=QnPxg2o6WRGBCwquEmJwsTp9lab8RyunbaH6LJWNZVMAa+vsaO6yi1Gh/WhPrcSaB
-         hPLr7mpacQrrP+TT/6Fz0YhgShEVqUV9yZY1x46w+KlFOdGienxqLp8Trk96SbD4Ep
-         u6J8Ozjqn/PIgG9D3/Bf5UaKrfeaywoNQfJJhUEo=
-Message-ID: <1589407924.5098.208.camel@kernel.org>
+        Wed, 13 May 2020 18:48:14 -0400
+Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FDA3C05BD09
+        for <linux-security-module@vger.kernel.org>; Wed, 13 May 2020 15:48:14 -0700 (PDT)
+Received: by mail-pj1-x1042.google.com with SMTP id a5so11714191pjh.2
+        for <linux-security-module@vger.kernel.org>; Wed, 13 May 2020 15:48:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=H+AfxUaMnhwNQoaeoLBhnhy670cA4ggBoeJoS1eRurw=;
+        b=JGD7HQd4cFtwAgY6blAgbXdG6kcGmAAG1VWu80Jyf2foqmg/CPidgYdJYYyspMDrP4
+         /EVgNm2nMhqtWEvVGt5m0mjK4HAef18Jhth28pHYJDCID+v52/KeMHGrvvt4kUngLxIi
+         v69i+/VoYcfURFZw1kflWQB7jS9mJAyZnR3NM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=H+AfxUaMnhwNQoaeoLBhnhy670cA4ggBoeJoS1eRurw=;
+        b=IWzcAeVyuE4mtgbLLLgkxWvDTLLVVxVu6PJRE+5GQeP+0YeqHOMP2gNbrj4OomSNBy
+         abwOoPELnDa4etr4pPC0WDb6mzJVqmxSLyC67Kfmx+5EgKv39VLNTmJ6gb2bjIRSpW7Q
+         ctnzh6vJ/TAnUu6uZxRI97gU8MM2w+1QhO4wJmR2S+3L3GCZAvcIsHgDHiCmTHPIv+2W
+         GWbBiFLhtJ/GiHyinqhyAFTE6nPUIx7QUQ37G+yiROUZaEMwudE2gGO/6fP4hjSnNFPu
+         qaoMRbK8gfKK/BhQfqpD4cBZjEjdncEeUb9jkbbNtqsEGqDD8pWD3iJ/aNoKzxCVssli
+         mgEw==
+X-Gm-Message-State: AOAM530A1PMNBfJhh+1F/Pvkf0XZtL4RyfchsX1T0Vi9bThR+Zm/e7yA
+        ngpSit0jwwC28PuNwc3VH2ZlJQ==
+X-Google-Smtp-Source: ABdhPJybl/6AytHcx4YvEW8rJAb5cTYd9TKvgTzZxRiFPIg0ucMe2oMrD9kjvJc/qEKo/373gAT/Yg==
+X-Received: by 2002:a17:902:465:: with SMTP id 92mr1264035ple.227.1589410093370;
+        Wed, 13 May 2020 15:48:13 -0700 (PDT)
+Received: from [10.136.13.65] ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id f64sm16806846pjd.5.2020.05.13.15.48.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 May 2020 15:48:12 -0700 (PDT)
 Subject: Re: [PATCH v5 1/7] fs: introduce kernel_pread_file* support
-From:   Mimi Zohar <zohar@kernel.org>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     Scott Branden <scott.branden@broadcom.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+To:     Mimi Zohar <zohar@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         David Brown <david.brown@linaro.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Shuah Khan <shuah@kernel.org>, bjorn.andersson@linaro.org,
@@ -63,67 +78,78 @@ Cc:     Scott Branden <scott.branden@broadcom.com>,
         Andy Gross <agross@kernel.org>,
         linux-security-module <linux-security-module@vger.kernel.org>,
         linux-integrity <linux-integrity@vger.kernel.org>
-Date:   Wed, 13 May 2020 18:12:04 -0400
-In-Reply-To: <20200513212847.GT11244@42.do-not-panic.com>
 References: <20200508002739.19360-1-scott.branden@broadcom.com>
-         <20200508002739.19360-2-scott.branden@broadcom.com>
-         <1589395153.5098.158.camel@kernel.org>
-         <0e6b5f65-8c61-b02e-7d35-b4ae52aebcf3@broadcom.com>
-         <1589396593.5098.166.camel@kernel.org>
-         <e1b92047-7003-0615-3d58-1388ec27c78a@broadcom.com>
-         <1589398747.5098.178.camel@kernel.org>
-         <a228ae0f-d551-e0e8-446e-5ae63462c520@broadcom.com>
-         <1589404814.5098.185.camel@kernel.org>
-         <20200513212847.GT11244@42.do-not-panic.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
+ <20200508002739.19360-2-scott.branden@broadcom.com>
+ <1589395153.5098.158.camel@kernel.org>
+ <0e6b5f65-8c61-b02e-7d35-b4ae52aebcf3@broadcom.com>
+ <1589396593.5098.166.camel@kernel.org>
+ <e1b92047-7003-0615-3d58-1388ec27c78a@broadcom.com>
+ <1589398747.5098.178.camel@kernel.org>
+ <a228ae0f-d551-e0e8-446e-5ae63462c520@broadcom.com>
+ <1589404814.5098.185.camel@kernel.org>
+ <20200513212847.GT11244@42.do-not-panic.com>
+ <1589407924.5098.208.camel@kernel.org>
+From:   Scott Branden <scott.branden@broadcom.com>
+Message-ID: <f8de785c-60df-3fec-c2c6-b1dd2c77db17@broadcom.com>
+Date:   Wed, 13 May 2020 15:48:08 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
+MIME-Version: 1.0
+In-Reply-To: <1589407924.5098.208.camel@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 2020-05-13 at 21:28 +0000, Luis Chamberlain wrote:
-> On Wed, May 13, 2020 at 05:20:14PM -0400, Mimi Zohar wrote:
-> > On Wed, 2020-05-13 at 12:41 -0700, Scott Branden wrote:
-> > > 
-> > > On 2020-05-13 12:39 p.m., Mimi Zohar wrote:
-> > > > On Wed, 2020-05-13 at 12:18 -0700, Scott Branden wrote:
-> > > >> On 2020-05-13 12:03 p.m., Mimi Zohar wrote:
-> > > >>> On Wed, 2020-05-13 at 11:53 -0700, Scott Branden wrote:
-> > > >> Even if the kernel successfully verified the firmware file signature it
-> > > >> would just be wasting its time.  The kernel in these use cases is not always
-> > > >> trusted.  The device needs to authenticate the firmware image itself.
-> > > > There are also environments where the kernel is trusted and limits the
-> > > > firmware being provided to the device to one which they signed.
-> > > >
-> > > >>> The device firmware is being downloaded piecemeal from somewhere and
-> > > >>> won't be measured?
-> > > >> It doesn't need to be measured for current driver needs.
-> > > > Sure the device doesn't need the kernel measuring the firmware, but
-> > > > hardened environments do measure firmware.
-> > > >
-> > > >> If someone has such need the infrastructure could be added to the kernel
-> > > >> at a later date.  Existing functionality is not broken in any way by
-> > > >> this patch series.
-> > > > Wow!  You're saying that your patch set takes precedence over the
-> > > > existing expectations and can break them.
-> > > Huh? I said existing functionality is NOT broken by this patch series.
-> > 
-> > Assuming a system is configured to measure and appraise firmware
-> > (rules below), with this change the firmware file will not be properly
-> > measured and will fail signature verification.
-> > 
-> > Sample IMA policy rules:
-> > measure func=FIRMWARE_CHECK
-> > appraise func=FIRMWARE_CHECK appraise_type=imasig
-> 
-> Would a pre and post lsm hook for pread do it?
 
-IMA currently measures and verifies the firmware file signature on the
-post hook.  The file is read once into a buffer.  With this change,
-IMA would need to be on the pre hook, to read the entire file,
-calculating the file hash and verifying the file signature.  Basically
-the firmware would be read once for IMA and again for the device.
 
-Mimi
+On 2020-05-13 3:12 p.m., Mimi Zohar wrote:
+> On Wed, 2020-05-13 at 21:28 +0000, Luis Chamberlain wrote:
+>> On Wed, May 13, 2020 at 05:20:14PM -0400, Mimi Zohar wrote:
+>>> On Wed, 2020-05-13 at 12:41 -0700, Scott Branden wrote:
+>>>> On 2020-05-13 12:39 p.m., Mimi Zohar wrote:
+>>>>> On Wed, 2020-05-13 at 12:18 -0700, Scott Branden wrote:
+>>>>>> On 2020-05-13 12:03 p.m., Mimi Zohar wrote:
+>>>>>>> On Wed, 2020-05-13 at 11:53 -0700, Scott Branden wrote:
+>>>>>> Even if the kernel successfully verified the firmware file signature it
+>>>>>> would just be wasting its time.  The kernel in these use cases is not always
+>>>>>> trusted.  The device needs to authenticate the firmware image itself.
+>>>>> There are also environments where the kernel is trusted and limits the
+>>>>> firmware being provided to the device to one which they signed.
+>>>>>
+>>>>>>> The device firmware is being downloaded piecemeal from somewhere and
+>>>>>>> won't be measured?
+>>>>>> It doesn't need to be measured for current driver needs.
+>>>>> Sure the device doesn't need the kernel measuring the firmware, but
+>>>>> hardened environments do measure firmware.
+>>>>>
+>>>>>> If someone has such need the infrastructure could be added to the kernel
+>>>>>> at a later date.  Existing functionality is not broken in any way by
+>>>>>> this patch series.
+>>>>> Wow!  You're saying that your patch set takes precedence over the
+>>>>> existing expectations and can break them.
+>>>> Huh? I said existing functionality is NOT broken by this patch series.
+>>> Assuming a system is configured to measure and appraise firmware
+>>> (rules below), with this change the firmware file will not be properly
+>>> measured and will fail signature verification.
+So no existing functionality has been broken.
+>>>
+>>> Sample IMA policy rules:
+>>> measure func=FIRMWARE_CHECK
+>>> appraise func=FIRMWARE_CHECK appraise_type=imasig
+>> Would a pre and post lsm hook for pread do it?
+> IMA currently measures and verifies the firmware file signature on the
+> post hook.  The file is read once into a buffer.  With this change,
+> IMA would need to be on the pre hook, to read the entire file,
+> calculating the file hash and verifying the file signature.  Basically
+> the firmware would be read once for IMA and again for the device.
+The entire file may not fit into available memory to measure and 
+verify.  Hence the reason for a partial read.
+
+Is there some way we could add a flag when calling the 
+request_firmware_into_buf to indicate it is ok that the data requested 
+does not need to be measured?
+> Mimi
+
