@@ -6,86 +6,84 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95291C433DF
-	for <linux-security-module@archiver.kernel.org>; Wed, 13 May 2020 23:16:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EE00C433DF
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 May 2020 23:25:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A15A52054F
-	for <linux-security-module@archiver.kernel.org>; Wed, 13 May 2020 23:16:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C162205ED
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 May 2020 23:25:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WPng1vyG"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D5oE+q1o"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732514AbgEMXQW (ORCPT
+        id S1732525AbgEMXZ0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 13 May 2020 19:16:22 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:21771 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1732408AbgEMXQV (ORCPT
+        Wed, 13 May 2020 19:25:26 -0400
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:28163 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732374AbgEMXZ0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 13 May 2020 19:16:21 -0400
+        Wed, 13 May 2020 19:25:26 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1589411780;
+        s=mimecast20190719; t=1589412325;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=T5AJR2WaKjGAcCSypFEIypZ7FO4lpByrCMG2GJChQq0=;
-        b=WPng1vyGWkw06dZkGmSLWz6xabXNkDmho9BTJ7Yy38X0eWSsCm0VUbdZsELFBvNKyC6YV3
-        +FNKXUJIw1HhyDN0eMyEtBdvZ87xIA70H9djjniJg9xeoC1ogF4J0BOriYKok1bdMNEmdC
-        yE6ACHy2Pdoe2sofxNBIO8TQl/gphmo=
+        bh=PRvLFN1ITMU2V/ezwJVoycF2INOx4EKs0X6HDBhlvdA=;
+        b=D5oE+q1op8nTHw04B0+bNmb9pzyNBipQZnDvvAom1Xquy3DDYGnjBIsWAbRhfwculPYvp3
+        itYVSQEfVJnTcWb4tTTefjLoBLVxxC/h0pSmwvP20lFuH+YbAmgthzgYCBh8Ets6lu+s63
+        i8Qpx66OF3/efbSFl8FNlFvOvkmQ6SA=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-146-E8cGbxnwNDOYTGRpB5xLtA-1; Wed, 13 May 2020 19:16:16 -0400
-X-MC-Unique: E8cGbxnwNDOYTGRpB5xLtA-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+ us-mta-17-Q3t3JDRnPuyTFHa4LvzaUg-1; Wed, 13 May 2020 19:25:23 -0400
+X-MC-Unique: Q3t3JDRnPuyTFHa4LvzaUg-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id F20E7461;
-        Wed, 13 May 2020 23:16:14 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A87E580183C;
+        Wed, 13 May 2020 23:25:21 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-112-59.rdu2.redhat.com [10.10.112.59])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5221F600DB;
-        Wed, 13 May 2020 23:16:13 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0FAED6E708;
+        Wed, 13 May 2020 23:25:19 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
 From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAHC9VhQhYz8xZ6MGv0S9q2D-gReb0Pqqb=2+oX=NVuxb_F5WfA@mail.gmail.com>
-References: <CAHC9VhQhYz8xZ6MGv0S9q2D-gReb0Pqqb=2+oX=NVuxb_F5WfA@mail.gmail.com> <CAEjxPJ6pFdDfm55pv9bT3CV5DTFF9VqzRmG_Xi5bKNxPaGuOLg@mail.gmail.com> <158932282880.2885325.2688622278854566047.stgit@warthog.procyon.org.uk>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     dhowells@redhat.com,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
+In-Reply-To: <004ec27a-cc3a-c75c-952b-ff371b82b8d1@schaufler-ca.com>
+References: <004ec27a-cc3a-c75c-952b-ff371b82b8d1@schaufler-ca.com> <CAEjxPJ6pFdDfm55pv9bT3CV5DTFF9VqzRmG_Xi5bKNxPaGuOLg@mail.gmail.com> <158932282880.2885325.2688622278854566047.stgit@warthog.procyon.org.uk>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     dhowells@redhat.com, stephen.smalley.work@gmail.com,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        keyrings@vger.kernel.org, selinux@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+        Paul Moore <paul@paul-moore.com>, keyrings@vger.kernel.org,
+        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Subject: Re: [PATCH] keys: Make the KEY_NEED_* perms an enum rather than a mask
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3611714.1589411772.1@warthog.procyon.org.uk>
-Date:   Thu, 14 May 2020 00:16:12 +0100
-Message-ID: <3611715.1589411772@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-ID: <3612471.1589412319.1@warthog.procyon.org.uk>
+Date:   Thu, 14 May 2020 00:25:19 +0100
+Message-ID: <3612472.1589412319@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Paul Moore <paul@paul-moore.com> wrote:
+Casey Schaufler <casey@schaufler-ca.com> wrote:
 
-> > +       case KEY_NEED_VIEW:     perm = KEY__VIEW;       break;
-> > +       case KEY_NEED_READ:     perm = KEY__READ;       break;
-> > +       case KEY_NEED_WRITE:    perm = KEY__WRITE;      break;
-> > +       case KEY_NEED_SEARCH:   perm = KEY__SEARCH;     break;
-> > +       case KEY_NEED_LINK:     perm = KEY__LINK;       break;
-> > +       case KEY_NEED_SETATTR:  perm = KEY__SETATTR;    break;
-> 
-> Please don't put the case statements all on one line, use the more
-> traditional multi-line format.  For example:
-> 
->   case KEY_NEED_SETATTR:
->           perm = KEY__SETATTR;
->           break;
+> > -	if (perm & ~KEY_NEED_ALL)
+> > -		return -EINVAL;
+> > +	switch (need_perm) {
+> > +	default:
+> > +		return -EACCES;
+> ...
+> Is the change from -EINVAL to -EACCES a bug fix?
+> Does it introduce an incompatibility?
 
-Tabulation was invented something like 6000 years ago for just this kind of
-purpose;-)  It's less readable your way, but whatever...
+It shouldn't happen.  All the actual cases should be covered explicitly in the
+switch.  It's to catch a programming issue in the kernel where a new value
+gets added to the enum but not propagated to all the places that check for it.
+
+I'd actually prefer it to be something even more obvious, especially as EINVAL
+is so widely used in the kernel.  Should I put a WARN_ON in there?
 
 David
 
