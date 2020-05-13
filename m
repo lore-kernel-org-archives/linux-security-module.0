@@ -2,144 +2,181 @@ Return-Path: <SRS0=p5JF=63=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 022FCC433DF
-	for <linux-security-module@archiver.kernel.org>; Wed, 13 May 2020 23:00:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20445C433E0
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 May 2020 23:04:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0BFCD20659
-	for <linux-security-module@archiver.kernel.org>; Wed, 13 May 2020 23:00:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1589410850;
-	bh=VVjNDeeIgYoZFS50soF+P5zbE1stcrvByt0YiN6Be34=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:List-ID:From;
-	b=SoYQrIQLAW71x4l4/62828y8NFWzR3GNBcmgFIkhc/H3jbSw8Fo13ZA90TJ2ChBmV
-	 lJSkm+QQggHzI5172OB/DCKY+IAOxGiOhN8glM8zpwU0Ifnlp69wXtaRBPLrBPYkcY
-	 a/T74GGHIua/XjnRHm3i3xJx69xJNE6idPjsgta8=
+	by mail.kernel.org (Postfix) with ESMTP id 2B60120675
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 May 2020 23:04:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="osmhLP3c"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732164AbgEMXAr (ORCPT
+        id S1732236AbgEMXD7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 13 May 2020 19:00:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38196 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731815AbgEMXAr (ORCPT
+        Wed, 13 May 2020 19:03:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60652 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731815AbgEMXD6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 13 May 2020 19:00:47 -0400
-Received: from localhost.localdomain (pool-96-246-152-186.nycmny.fios.verizon.net [96.246.152.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CF5FF2053B;
-        Wed, 13 May 2020 23:00:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1589410846;
-        bh=VVjNDeeIgYoZFS50soF+P5zbE1stcrvByt0YiN6Be34=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=iyf3QafJgjWbHnErgMyhd1vfA3wniNq2U4Qt3zp+q7cWJuqp24NxT1b5N/pMCeR+L
-         GQmpCyucvUhwMdZbUsIxGAp+8ttCTKSWpqtwxvb9jVPWwDOTg7bBg51Do/syJkRlOW
-         cb+Iv/JK3W8I9m+N+N9VhcffQLDEuI4BuckjWZq8=
-Message-ID: <1589410843.5098.220.camel@kernel.org>
-Subject: Re: [PATCH v5 1/7] fs: introduce kernel_pread_file* support
-From:   Mimi Zohar <zohar@kernel.org>
-To:     Scott Branden <scott.branden@broadcom.com>,
-        Luis Chamberlain <mcgrof@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Brown <david.brown@linaro.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>, bjorn.andersson@linaro.org,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Olof Johansson <olof@lixom.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        Takashi Iwai <tiwai@suse.de>, linux-kselftest@vger.kernel.org,
-        Andy Gross <agross@kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>
-Date:   Wed, 13 May 2020 19:00:43 -0400
-In-Reply-To: <f8de785c-60df-3fec-c2c6-b1dd2c77db17@broadcom.com>
-References: <20200508002739.19360-1-scott.branden@broadcom.com>
-         <20200508002739.19360-2-scott.branden@broadcom.com>
-         <1589395153.5098.158.camel@kernel.org>
-         <0e6b5f65-8c61-b02e-7d35-b4ae52aebcf3@broadcom.com>
-         <1589396593.5098.166.camel@kernel.org>
-         <e1b92047-7003-0615-3d58-1388ec27c78a@broadcom.com>
-         <1589398747.5098.178.camel@kernel.org>
-         <a228ae0f-d551-e0e8-446e-5ae63462c520@broadcom.com>
-         <1589404814.5098.185.camel@kernel.org>
-         <20200513212847.GT11244@42.do-not-panic.com>
-         <1589407924.5098.208.camel@kernel.org>
-         <f8de785c-60df-3fec-c2c6-b1dd2c77db17@broadcom.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Wed, 13 May 2020 19:03:58 -0400
+Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0FA9C061A0C;
+        Wed, 13 May 2020 16:03:58 -0700 (PDT)
+Received: by mail-pl1-x641.google.com with SMTP id t16so407864plo.7;
+        Wed, 13 May 2020 16:03:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=er1ssAfIglw+q0hDY8np74FfThJJmd84hpOCUTP7dkY=;
+        b=osmhLP3cuWZJtXCWtXsCvPrNdLB5y+ADdX1C0BGXcK57LgqSbCl6t+rsu+AdpxI42u
+         eYNtTTTDwu8a9iP4BHdUNljcd4g5bNLnXYdJPZZ8YzofNYOMjoYtfuL9yoeNnfIzMa/G
+         4qYIGFD0mpqkazY25R8SYW7SWENiWlvjRMMH18ylErq1nbiQeXHluW12NK9yYjCZNW0K
+         E98/fLFksS1VGuoWp5kOwa1LlT8VTBGd18LEhfgmtveTGGl/eY77eW3YQu4hlH4fmkIE
+         FvbPQzoEoKPJ+F2zvckGNJrXZIjJ01EZ/72MGs0SAmBpizY9E24kiH8P34WGRHKhvyxD
+         N86g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=er1ssAfIglw+q0hDY8np74FfThJJmd84hpOCUTP7dkY=;
+        b=Naz+k2ZY8bMCsJKkEUZYaEilIEnO6c8AXkKD6pUWSMqAFiv7gwVFxeleXBhzhQ0eyM
+         ZOvqevqgxa0R08H9gOEh3M3zYvWUspBDmgtYpqqhaye/eNKWDPE/dpFX3OvHrots/N45
+         6iY2O8uJ6HhHAS5l0Uf3m+fIXlhjWsrmQosdBrUdAwf9DsHIXjNz5eInhcSdUUsml4/q
+         6fI1nQJw0lXlt4AYbMR9/KJ+Ys/j0p3qU+ii6bIRNfBTsyc0G/QtTkIdsTGfnK4ZbFJM
+         FaLEIupzk/JqYXu4HsDFxfodfSAak0MJYAkfGQnC4plyUN0/QyhjZw7RDOqjvlSdrEe+
+         o6mQ==
+X-Gm-Message-State: AOAM533GKFc2epjv8QdVoWKuchVra5JMRv7IKxY5zeDD6C0/yLIWTP0t
+        0nXHmSVmQGXd1HRm55qomMRqrRsq
+X-Google-Smtp-Source: ABdhPJxhJZqAjGCUiZ1BCBg6z5R7UnF23i0uL4yUqhJbrN/OorhOTeqDT5eXqmJvb0KYZCewEU8FDA==
+X-Received: by 2002:a17:902:6b01:: with SMTP id o1mr1473753plk.64.1589411038068;
+        Wed, 13 May 2020 16:03:58 -0700 (PDT)
+Received: from ast-mbp.thefacebook.com ([163.114.132.7])
+        by smtp.gmail.com with ESMTPSA id t23sm16558706pji.32.2020.05.13.16.03.56
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 13 May 2020 16:03:57 -0700 (PDT)
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     davem@davemloft.net
+Cc:     daniel@iogearbox.net, netdev@vger.kernel.org, bpf@vger.kernel.org,
+        kernel-team@fb.com, linux-security-module@vger.kernel.org,
+        acme@redhat.com, jamorris@linux.microsoft.com, jannh@google.com,
+        kpsingh@google.com
+Subject: [PATCH v7 bpf-next 0/3] Introduce CAP_BPF
+Date:   Wed, 13 May 2020 16:03:52 -0700
+Message-Id: <20200513230355.7858-1-alexei.starovoitov@gmail.com>
+X-Mailer: git-send-email 2.13.5
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 2020-05-13 at 15:48 -0700, Scott Branden wrote:
-> 
-> On 2020-05-13 3:12 p.m., Mimi Zohar wrote:
-> > On Wed, 2020-05-13 at 21:28 +0000, Luis Chamberlain wrote:
-> >> On Wed, May 13, 2020 at 05:20:14PM -0400, Mimi Zohar wrote:
-> >>> On Wed, 2020-05-13 at 12:41 -0700, Scott Branden wrote:
-> >>>> On 2020-05-13 12:39 p.m., Mimi Zohar wrote:
-> >>>>> On Wed, 2020-05-13 at 12:18 -0700, Scott Branden wrote:
-> >>>>>> On 2020-05-13 12:03 p.m., Mimi Zohar wrote:
-> >>>>>>> On Wed, 2020-05-13 at 11:53 -0700, Scott Branden wrote:
-> >>>>>> Even if the kernel successfully verified the firmware file signature it
-> >>>>>> would just be wasting its time.  The kernel in these use cases is not always
-> >>>>>> trusted.  The device needs to authenticate the firmware image itself.
-> >>>>> There are also environments where the kernel is trusted and limits the
-> >>>>> firmware being provided to the device to one which they signed.
-> >>>>>
-> >>>>>>> The device firmware is being downloaded piecemeal from somewhere and
-> >>>>>>> won't be measured?
-> >>>>>> It doesn't need to be measured for current driver needs.
-> >>>>> Sure the device doesn't need the kernel measuring the firmware, but
-> >>>>> hardened environments do measure firmware.
-> >>>>>
-> >>>>>> If someone has such need the infrastructure could be added to the kernel
-> >>>>>> at a later date.  Existing functionality is not broken in any way by
-> >>>>>> this patch series.
-> >>>>> Wow!  You're saying that your patch set takes precedence over the
-> >>>>> existing expectations and can break them.
-> >>>> Huh? I said existing functionality is NOT broken by this patch series.
-> >>> Assuming a system is configured to measure and appraise firmware
-> >>> (rules below), with this change the firmware file will not be properly
-> >>> measured and will fail signature verification.
-> So no existing functionality has been broken.
-> >>>
-> >>> Sample IMA policy rules:
-> >>> measure func=FIRMWARE_CHECK
-> >>> appraise func=FIRMWARE_CHECK appraise_type=imasig
-> >> Would a pre and post lsm hook for pread do it?
-> > IMA currently measures and verifies the firmware file signature on the
-> > post hook.  The file is read once into a buffer.  With this change,
-> > IMA would need to be on the pre hook, to read the entire file,
-> > calculating the file hash and verifying the file signature.  Basically
-> > the firmware would be read once for IMA and again for the device.
-> The entire file may not fit into available memory to measure and 
-> verify.  Hence the reason for a partial read.
+From: Alexei Starovoitov <ast@kernel.org>
 
-Previously, IMA pre-read the file in page size chunks in order to
-calculate the file hash.  To avoid reading the file twice, the file is
-now read into a buffer.
+v6->v7:
+- permit SK_REUSEPORT program type under CAP_BPF as suggested by Marek Majkowski.
+  It's equivalent to SOCKET_FILTER which is unpriv.
 
-> 
-> Is there some way we could add a flag when calling the 
-> request_firmware_into_buf to indicate it is ok that the data requested 
-> does not need to be measured?
+v5->v6:
+- split allow_ptr_leaks into four flags.
+- retain bpf_jit_limit under cap_sys_admin.
+- fixed few other issues spotted by Daniel.
 
-The decision as to what needs to be measured is a policy decision left
-up to the system owner, which they express by loading an IMA policy.
+v4->v5:
 
-Mimi
+Split BPF operations that are allowed under CAP_SYS_ADMIN into combination of
+CAP_BPF, CAP_PERFMON, CAP_NET_ADMIN and keep some of them under CAP_SYS_ADMIN.
+
+The user process has to have
+- CAP_BPF to create maps, do other sys_bpf() commands and load SK_REUSEPORT progs.
+  Note: dev_map, sock_hash, sock_map map types still require CAP_NET_ADMIN.
+  That could be relaxed in the future.
+- CAP_BPF and CAP_PERFMON to load tracing programs.
+- CAP_BPF and CAP_NET_ADMIN to load networking programs.
+(or CAP_SYS_ADMIN for backward compatibility).
+
+CAP_BPF solves three main goals:
+1. provides isolation to user space processes that drop CAP_SYS_ADMIN and switch to CAP_BPF.
+   More on this below. This is the major difference vs v4 set back from Sep 2019.
+2. makes networking BPF progs more secure, since CAP_BPF + CAP_NET_ADMIN
+   prevents pointer leaks and arbitrary kernel memory access.
+3. enables fuzzers to exercise all of the verifier logic. Eventually finding bugs
+   and making BPF infra more secure. Currently fuzzers run in unpriv.
+   They will be able to run with CAP_BPF.
+
+The patchset is long overdue follow-up from the last plumbers conference.
+Comparing to what was discussed at LPC the CAP* checks at attach time are gone.
+For tracing progs the CAP_SYS_ADMIN check was done at load time only. There was
+no check at attach time. For networking and cgroup progs CAP_SYS_ADMIN was
+required at load time and CAP_NET_ADMIN at attach time, but there are several
+ways to bypass CAP_NET_ADMIN:
+- if networking prog is using tail_call writing FD into prog_array will
+  effectively attach it, but bpf_map_update_elem is an unprivileged operation.
+- freplace prog with CAP_SYS_ADMIN can replace networking prog
+
+Consolidating all CAP checks at load time makes security model similar to
+open() syscall. Once the user got an FD it can do everything with it.
+read/write/poll don't check permissions. The same way when bpf_prog_load
+command returns an FD the user can do everything (including attaching,
+detaching, and bpf_test_run).
+
+The important design decision is to allow ID->FD transition for
+CAP_SYS_ADMIN only. What it means that user processes can run
+with CAP_BPF and CAP_NET_ADMIN and they will not be able to affect each
+other unless they pass FDs via scm_rights or via pinning in bpffs.
+ID->FD is a mechanism for human override and introspection.
+An admin can do 'sudo bpftool prog ...'. It's possible to enforce via LSM that
+only bpftool binary does bpf syscall with CAP_SYS_ADMIN and the rest of user
+space processes do bpf syscall with CAP_BPF isolating bpf objects (progs, maps,
+links) that are owned by such processes from each other.
+
+Another significant change from LPC is that the verifier checks are split into
+four flags. The allow_ptr_leaks flag allows pointer manipulations. The
+bpf_capable flag enables all modern verifier features like bpf-to-bpf calls,
+BTF, bounded loops, dead code elimination, etc. All the goodness. The
+bypass_spec_v1 flag enables indirect stack access from bpf programs and
+disables speculative analysis and bpf array mitigations. The bypass_spec_v4
+flag disables store sanitation. That allows networking progs with CAP_BPF +
+CAP_NET_ADMIN enjoy modern verifier features while being more secure.
+
+Some networking progs may need CAP_BPF + CAP_NET_ADMIN + CAP_PERFMON,
+since subtracting pointers (like skb->data_end - skb->data) is a pointer leak,
+but the verifier may get smarter in the future.
+
+Please see patches for more details.
+
+Alexei Starovoitov (3):
+  bpf, capability: Introduce CAP_BPF
+  bpf: implement CAP_BPF
+  selftests/bpf: use CAP_BPF and CAP_PERFMON in tests
+
+ drivers/media/rc/bpf-lirc.c                   |  2 +-
+ include/linux/bpf.h                           | 18 +++-
+ include/linux/bpf_verifier.h                  |  3 +
+ include/linux/capability.h                    |  5 ++
+ include/uapi/linux/capability.h               | 34 ++++++-
+ kernel/bpf/arraymap.c                         | 10 +--
+ kernel/bpf/bpf_struct_ops.c                   |  2 +-
+ kernel/bpf/core.c                             |  2 +-
+ kernel/bpf/cpumap.c                           |  2 +-
+ kernel/bpf/hashtab.c                          |  4 +-
+ kernel/bpf/helpers.c                          |  4 +-
+ kernel/bpf/lpm_trie.c                         |  2 +-
+ kernel/bpf/map_in_map.c                       |  2 +-
+ kernel/bpf/queue_stack_maps.c                 |  2 +-
+ kernel/bpf/reuseport_array.c                  |  2 +-
+ kernel/bpf/stackmap.c                         |  2 +-
+ kernel/bpf/syscall.c                          | 89 ++++++++++++++-----
+ kernel/bpf/verifier.c                         | 37 ++++----
+ kernel/trace/bpf_trace.c                      |  3 +
+ net/core/bpf_sk_storage.c                     |  4 +-
+ net/core/filter.c                             |  4 +-
+ security/selinux/include/classmap.h           |  4 +-
+ tools/testing/selftests/bpf/test_verifier.c   | 44 +++++++--
+ tools/testing/selftests/bpf/verifier/calls.c  | 16 ++--
+ .../selftests/bpf/verifier/dead_code.c        | 10 +--
+ 25 files changed, 223 insertions(+), 84 deletions(-)
+
+-- 
+2.23.0
+
