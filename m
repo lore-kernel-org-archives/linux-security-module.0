@@ -6,122 +6,198 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 875B5C433DF
-	for <linux-security-module@archiver.kernel.org>; Wed, 13 May 2020 19:52:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D160CC433E2
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 May 2020 21:14:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2F04A206A5
-	for <linux-security-module@archiver.kernel.org>; Wed, 13 May 2020 19:52:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1589399541;
-	bh=yChfl6bW7pHHSbBVahran9Uag3HId9/L3hOJcUfAW9o=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=rXcGWYlZiUt84ufk+a9gkzncggHH2gzLZhmX7kCEuD1ZvYYOTsqzy15xmnwFVRIgA
-	 5IZVYdTFcMelWyAUKBS5Xv454lnW91HaWN/aarCK3aolc9s1wfWNcoerUOxlpQDRCr
-	 XxBoqznGQgoMv8T5rRN4NrQ9BIITdkuxX4/rF27o=
+	by mail.kernel.org (Postfix) with ESMTP id CCA6520575
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 May 2020 21:14:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="hmqTagrk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390607AbgEMTwT (ORCPT
+        id S1728433AbgEMVOw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 13 May 2020 15:52:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58802 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2390158AbgEMTwT (ORCPT
+        Wed, 13 May 2020 17:14:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43534 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728408AbgEMVOu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 13 May 2020 15:52:19 -0400
-Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30210C061A0C
-        for <linux-security-module@vger.kernel.org>; Wed, 13 May 2020 12:52:19 -0700 (PDT)
-Received: by mail-lj1-x243.google.com with SMTP id f18so898152lja.13
-        for <linux-security-module@vger.kernel.org>; Wed, 13 May 2020 12:52:19 -0700 (PDT)
+        Wed, 13 May 2020 17:14:50 -0400
+Received: from mail-qk1-x741.google.com (mail-qk1-x741.google.com [IPv6:2607:f8b0:4864:20::741])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 784C9C061A0F
+        for <linux-security-module@vger.kernel.org>; Wed, 13 May 2020 14:14:49 -0700 (PDT)
+Received: by mail-qk1-x741.google.com with SMTP id y22so924887qki.3
+        for <linux-security-module@vger.kernel.org>; Wed, 13 May 2020 14:14:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
+        d=cloudflare.com; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=imHJ5IQrcOcblMTfzv1B9XBBsSAMPE3kPxQA9myjXSo=;
-        b=WQAwRDY0UxVZ0mZJR9kVnssScJrq1sN4tD98t4V9W35y8XGCwm/KxMQqToQil5ltO9
-         GFUoMNp/kFEbFvuKrggepy5FbHzhYuRUmjv8amxmBrzK6q3yS0RJcPigPs+hBK67907L
-         GVp+95DOu4oDEqAYtYvxlr8n8Tbt3B0dOxjF4=
+        bh=26k2U+qWGSWeHztuUp6d2PF6l57b502E7BsHG3bV7Kw=;
+        b=hmqTagrkwBq4YN3N6zPB2PA1vADY8DMubtCBZvL2pdiG4o8oImNTTe6qQ4UTazM0n8
+         BDiY6g6i8Hn3IngXLtJ79u5GM7yNpKZ8a5Hb3O3AK62WMzJQqkhTiqMdZw0H4PZilt7E
+         xxTAW1wa3Vx6aDbTTLzCgs1an6/7i7QUwodgI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=imHJ5IQrcOcblMTfzv1B9XBBsSAMPE3kPxQA9myjXSo=;
-        b=AX4tLmDh4oSR29srJ1ZexruNdEQmDiMACOwwOedy+FRHvVej7F14liZvHsCiyEv8uy
-         WxdVjdoMtZgd9gMfaaNrVleKbFT7aSRdaS5/Iy/L50jzbJY4wWmiR4fGo6/O4xeCk0Jr
-         27Ja7W5SGahVVYFmZE8fIkmvsJXvEpDDD2Q4EYE1lGhA/45uZmpjLrpNqDSSyH8csHrh
-         0AlOyaEUugRS9ALomHFC24urz6rXmBQqhsKDLfsxBstDCfMnM5/GY1NX6yOstOylbO1v
-         he7eAknvtMgTiJdy+j1AHnyiQL0kYst91MqNF5nTeHctt8Mjaa6CGxix9QttMz01g4vf
-         k8zQ==
-X-Gm-Message-State: AOAM532oOApyMMq8ZREb+kVG0/ERaJw8eI1vglgwSDS+AU370nwBgXH5
-        +HumKBxkyt7MQFt9e6vKoUaOGR/wThg=
-X-Google-Smtp-Source: ABdhPJyLQkExhVbDIIyuMONaJsViXLD5UT355o+jR4fxQg0ClZxrEucTdzDqd1AM+C/8OCeE5mbx1Q==
-X-Received: by 2002:a2e:994a:: with SMTP id r10mr426676ljj.105.1589399536959;
-        Wed, 13 May 2020 12:52:16 -0700 (PDT)
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com. [209.85.167.53])
-        by smtp.gmail.com with ESMTPSA id h18sm282612ljm.18.2020.05.13.12.52.15
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 May 2020 12:52:16 -0700 (PDT)
-Received: by mail-lf1-f53.google.com with SMTP id c21so583094lfb.3
-        for <linux-security-module@vger.kernel.org>; Wed, 13 May 2020 12:52:15 -0700 (PDT)
-X-Received: by 2002:a19:6e4e:: with SMTP id q14mr699711lfk.192.1589399535404;
- Wed, 13 May 2020 12:52:15 -0700 (PDT)
+        bh=26k2U+qWGSWeHztuUp6d2PF6l57b502E7BsHG3bV7Kw=;
+        b=WaGFaeKVPS7/sVPcq6MjTsR71mELeRb17l+5bibRl51kE1GHxi4yDNet56qtzeMI2W
+         BPdVJGUeOgigNJ2CRYqsHKF5SKfdMWmUGtbLQ0ZlVEjKk5dbkTURmc5c9ZH2gXXuL+mN
+         sNUUF8Qk7+vO1h/v0qTT1a6zYtTr+gsUUo4E+Z0dyHXGCO+cph41yFVr2in4yEJB6ono
+         xlip7d79kkc5TQuS6EshpcYiq3kP5DVYkQd5V1wEXSTUnWXiYIwXmhnwWkMwGkQHvWvq
+         2iDuzm4eKJSwUm5patqGwy4SzzbhF9JIYi/1RvR7745Fi61Rgljw/6CFRFwHwalNmCzO
+         n8Jw==
+X-Gm-Message-State: AOAM532jJQ2O6/BoHIBq1sCeI19Rh8dLlCfvbuNjcWQ/ybBcO5J1xR8S
+        xVnU5tUdIpOMFarY/KyqrB7zyfrwg3AOzaJhcHpEjg==
+X-Google-Smtp-Source: ABdhPJwyLwkh+Z+nGiq30nDEqDSwapL8UBhyZ6SWCCEMD/iJR5qN086AjCeolLUJpALni6A7zZ9PJjnrj93RkArI654=
+X-Received: by 2002:a37:9d4f:: with SMTP id g76mr1709510qke.235.1589404488363;
+ Wed, 13 May 2020 14:14:48 -0700 (PDT)
 MIME-Version: 1.0
-References: <87h7wujhmz.fsf@x220.int.ebiederm.org> <87sgga6ze4.fsf@x220.int.ebiederm.org>
- <87v9l4zyla.fsf_-_@x220.int.ebiederm.org> <87eerszyim.fsf_-_@x220.int.ebiederm.org>
- <ee83587b-8a1c-3c4f-cc0f-7bc98afabae1@I-love.SAKURA.ne.jp>
- <CAHk-=wgQ2ovXMW=5ZHCpowkE1PwPQSL7oV4YXzBxd6eqNRXxnQ@mail.gmail.com>
- <87sgg6v8we.fsf@x220.int.ebiederm.org> <202005111428.B094E3B76A@keescook>
- <874kslq9jm.fsf@x220.int.ebiederm.org> <CAHk-=wjhmoGLcMgcDB0rT-n6waC+rdnjU3FRKAwSTMSG=gaK9Q@mail.gmail.com>
- <6f282d0a-b448-14e9-cd4f-92cce99cc36f@landley.net>
-In-Reply-To: <6f282d0a-b448-14e9-cd4f-92cce99cc36f@landley.net>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 13 May 2020 12:51:59 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjgYDMabsEDW_W3iU0jD8RhndQAMhR2HSMkMZ3rTCQbVg@mail.gmail.com>
-Message-ID: <CAHk-=wjgYDMabsEDW_W3iU0jD8RhndQAMhR2HSMkMZ3rTCQbVg@mail.gmail.com>
-Subject: Re: [PATCH 3/5] exec: Remove recursion from search_binary_handler
-To:     Rob Landley <rob@landley.net>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Bernd Edlinger <bernd.edlinger@hotmail.de>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Andy Lutomirski <luto@amacapital.net>
+References: <20200513031930.86895-1-alexei.starovoitov@gmail.com>
+ <CAJPywT+c8uvi2zgUD_jObmi9T6j50THzjQHg-mudNrEC2HuJvg@mail.gmail.com>
+ <20200513175301.43lxbckootoefrow@ast-mbp.dhcp.thefacebook.com>
+ <CAJPywTKUmzDObSurppiH4GCJquDTnVWKLH48JNB=8RNcb5TiCQ@mail.gmail.com> <20200513185452.6dvzhpz5sgs7hcti@ast-mbp.dhcp.thefacebook.com>
+In-Reply-To: <20200513185452.6dvzhpz5sgs7hcti@ast-mbp.dhcp.thefacebook.com>
+From:   Marek Majkowski <marek@cloudflare.com>
+Date:   Wed, 13 May 2020 22:14:37 +0100
+Message-ID: <CAJPywTLneBjG6Lx7mS6GG-D93XHa1s1_aSGMoMjnfmMNrzvEnQ@mail.gmail.com>
+Subject: Re: [PATCH v6 bpf-next 0/3] Introduce CAP_BPF
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     David Miller <davem@davemloft.net>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        network dev <netdev@vger.kernel.org>, bpf@vger.kernel.org,
+        kernel-team@fb.com, linux-security-module@vger.kernel.org,
+        acme@redhat.com, jamorris@linux.microsoft.com,
+        Jann Horn <jannh@google.com>, KP Singh <kpsingh@google.com>,
+        kernel-team <kernel-team@cloudflare.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, May 12, 2020 at 7:32 PM Rob Landley <rob@landley.net> wrote:
+On Wed, May 13, 2020 at 7:54 PM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
 >
-> On 5/12/20 7:20 PM, Linus Torvalds wrote:
-> > Ack. I think the AT_EXECFD thing is a sign that this isn't internal to
-> > binfmt_misc, but it also shouldn't be gating this issue. In reality,
-> > ELF is the only real binary format that matters - the script/misc
-> > binfmts are just indirection entries - and it supports AT_EXECFD, so
-> > let's just ignore the theoretical case of "maybe nobody exposes it".
+> On Wed, May 13, 2020 at 07:30:05PM +0100, Marek Majkowski wrote:
+> > On Wed, May 13, 2020 at 6:53 PM Alexei Starovoitov
+> > <alexei.starovoitov@gmail.com> wrote:
+> > > On Wed, May 13, 2020 at 11:50:42AM +0100, Marek Majkowski wrote:
+> > > > On Wed, May 13, 2020 at 4:19 AM Alexei Starovoitov
+> > > > <alexei.starovoitov@gmail.com> wrote:
+> > > > >
+> > > > > CAP_BPF solves three main goals:
+> > > > > 1. provides isolation to user space processes that drop CAP_SYS_ADMIN and switch to CAP_BPF.
+> > > > >    More on this below. This is the major difference vs v4 set back from Sep 2019.
+> > > > > 2. makes networking BPF progs more secure, since CAP_BPF + CAP_NET_ADMIN
+> > > > >    prevents pointer leaks and arbitrary kernel memory access.
+> > > > > 3. enables fuzzers to exercise all of the verifier logic. Eventually finding bugs
+> > > > >    and making BPF infra more secure. Currently fuzzers run in unpriv.
+> > > > >    They will be able to run with CAP_BPF.
+> > > > >
+> > > >
+> > > > Alexei, looking at this from a user point of view, this looks fine.
+> > > >
+> > > > I'm slightly worried about REUSEPORT_EBPF. Currently without your
+> > > > patch, as far as I understand it:
+> > > >
+> > > > - You can load SOCKET_FILTER and SO_ATTACH_REUSEPORT_EBPF without any
+> > > > permissions
+> > >
+> > > correct.
+> > >
+> > > > - For loading BPF_PROG_TYPE_SK_REUSEPORT program and for SOCKARRAY map
+> > > > creation CAP_SYS_ADMIN is needed. But again, no permissions check for
+> > > > SO_ATTACH_REUSEPORT_EBPF later.
+> > >
+> > > correct. With clarification that attaching process needs to own
+> > > FD of prog and FD of socket.
+> > >
+> > > > If I read the patchset correctly, the former SOCKET_FILTER case
+> > > > remains as it is and is not affected in any way by presence or absence
+> > > > of CAP_BPF.
+> > >
+> > > correct. As commit log says:
+> > > "Existing unprivileged BPF operations are not affected."
+> > >
+> > > > The latter case is different. Presence of CAP_BPF is sufficient for
+> > > > map creation, but not sufficient for loading SK_REUSEPORT program. It
+> > > > still requires CAP_SYS_ADMIN.
+> > >
+> > > Not quite.
+> > > The patch will allow BPF_PROG_TYPE_SK_REUSEPORT progs to be loaded
+> > > with CAP_BPF + CAP_NET_ADMIN.
+> > > Since this type of progs is clearly networking type I figured it's
+> > > better to be consistent with the rest of networking types.
+> > > Two unpriv types SOCKET_FILTER and CGROUP_SKB is the only exception.
+> >
+> > Ok, this is the controversy. It made sense to restrict SK_REUSEPORT
+> > programs in the past, because programs needed CAP_NET_ADMIN to create
+> > SOCKARRAY anyway.
 >
-> Would this potentially make the re-exec-yourself case easier to do at some
-> point? (Which nommu needs to do, and /proc/self/exe isn't always available.)
+> Not quite. Currently sockarray needs CAP_SYS_ADMIN to create
+> which makes little sense from security pov.
+> CAP_BPF relaxes it CAP_BPF or CAP_SYS_ADMIN.
+>
+> > Now we change this and CAP_BPF is sufficient for
+> > maps - I don't see why CAP_BPF is not sufficient for SK_REUSEPORT
+> > programs. From a user point of view I don't get why this additional
+> > CAP_NET_ADMIN is needed.
+>
+> That actually bring another point. I'm not changing sock_map,
+> sock_hash, dev_map requirements yet. All three still require CAP_NET_ADMIN.
+> We can relax them to CAP_BPF _or_ CAP_NET_ADMIN in the future,
+> but I'd like to do that in the follow up.
 
-AT_EXECFD may be an ELF thing, but normal ELF binaries don't do that
-"we have a fd". So it only triggers for binfmt_misc (and only when the
-flag is set for "I want the fd").
+Agreed, we can discuss relaxation of SOCKMAP in the future.
 
-So no, this wouldn't help re-exec-yourself in general.
+> > > > I think it's a good opportunity to relax
+> > > > this CAP_SYS_ADMIN requirement. I think the presence of CAP_BPF should
+> > > > be sufficient for loading BPF_PROG_TYPE_SK_REUSEPORT.
+> > > >
+> > > > Our specific use case is simple - we want an application program -
+> > > > like nginx - to control REUSEPORT programs. We will grant it CAP_BPF,
+> > > > but we don't want to grant it CAP_SYS_ADMIN.
+> > >
+> > > You'll be able to grant nginx CAP_BPF + CAP_NET_ADMIN to load SK_REUSEPORT
+> > > and unpriv child process will be able to attach just like before if
+> > > it has right FDs.
+> > > I suspect your load balancer needs CAP_NET_ADMIN already anyway due to
+> > > use of XDP and TC progs.
+> > > So granting CAP_BPF + CAP_NET_ADMIN should cover all bpf prog needs.
+> > > Does it address your concern?
+> >
+> > Load balancer (XDP+TC) is another layer and permissions there are not
+> > a problem. The specific issue is nginx (port 443) and QUIC. QUIC is
+> > UDP and due to the nginx design we must use REUSEPORT groups to
+> > balance the load across workers. This is fine and could be done with a
+> > simple SOCK_FILTER - we don't need to grant nginx any permissions,
+> > apart from CAP_NET_BIND_SERVICE.
+> >
+> > We would like to make the REUSEPORT program more complex to take
+> > advantage of REUSEPORT_EBPF for stickyness (restarting server without
+> > interfering with existing flows), we are happy to grant nginx CAP_BPF,
+> > but we are not happy to grant it CAP_NET_ADMIN. Requiring this CAP for
+> > REUSEPORT severely restricts the API usability for us.
+> >
+> > In my head REUSEPORT_EBPF is much closer to SOCKET_FILTER. I
+> > understand why it needed capabilities before (map creation) and I
+> > argue these reasons go away in CAP_BPF world. I assume that any
+> > service (with CAP_BPF) should be able to use reuseport to distribute
+> > packets within its own sockets.  Let me know if I'm missing something.
+>
+> Fair enough. We can include SK_REUSEPORT prog type as part of CAP_BPF alone.
+> But will it truly achieve what you want?
 
-Although I guess we could add an ELF section note that does that whole
-"executable fd" thing for other things too.
+It will make the security model much more useful and sane for me and
+other users of stuff that depends on SK_REUSEPORT (like nginx + UDP).
+So yes, long-term it will help. Thanks.
 
-Everything is possible in theory..
+> You still need CAP_NET_ADMIN for sock_hash which you're using.
+> Are you saying it's part of the different process that has that cap_net_admin
+> and nginx will be fine with cap_bpf + cap_net_bind_service ?
 
-               Linus
+At this moment good old SOCKARRAY is sufficient. Having both SOCKARRAY
+and SK_REUSEPORT_EBPF depend only on CAP_BPF is a good start. Thanks
+for considering that. We can discuss relaxation of SOCKMAP in the
+future.
+
+Marek
