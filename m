@@ -2,108 +2,107 @@ Return-Path: <SRS0=p5JF=63=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F9B5C2D0FA
-	for <linux-security-module@archiver.kernel.org>; Wed, 13 May 2020 13:13:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBA8BCA90AF
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 May 2020 14:19:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 497FE2124E
-	for <linux-security-module@archiver.kernel.org>; Wed, 13 May 2020 13:13:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8508920675
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 May 2020 14:19:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1589375623;
-	bh=s01ww56Iy2HzE2HrtXMqzEaC/e/ByugBCl1owjcPo1k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=OFwQp5sAi+QeHlPJnsqaomC3pl0VB8XJnXOfusn4LyCbW3MaYhhisf8F1I6WsXdUc
-	 PtzQIAOKS5EMIepQ0lB8gTQuRDPLHk3xQCEs1/Go+s/cAMjJY6zUeTBsYxhhOxirw5
-	 PPVNeRAW2wzyihsOJe3kIVrvdGjODGS+hw2j2Ew4=
+	s=default; t=1589379580;
+	bh=XCp5F/lYiyuFT5h0NEXzypxvSnrMq5SZYIt8WXe6LVw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=s/2J9ie1OBFBNec9mpvZM9ja/cr9/5NhISJgonwDKH0V/0+hEAEtaFboX2yNQf4DS
+	 gRBrGV5IsrJ3LiThWNQnV/dVtE8SyJJzUdMKsUgXO3mrnXH/IkfGxBh9nidbZakXAE
+	 T2so70plO52ETSQMswhW/V6j83PA8N1jEZUAhImg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732901AbgEMNNm (ORCPT
+        id S2388931AbgEMOTk (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 13 May 2020 09:13:42 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:46917 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725925AbgEMNNj (ORCPT
+        Wed, 13 May 2020 10:19:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47374 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1733142AbgEMOTj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 13 May 2020 09:13:39 -0400
-Received: by mail-pg1-f196.google.com with SMTP id p21so1908150pgm.13;
-        Wed, 13 May 2020 06:13:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=uq9dGFS0JVEQgrQR7OlP7twEZ+C/lLS/sMFl5mNJPHU=;
-        b=Q7ttVilNlu+0UxHRSUg7h2tBi0EnQxJFitrkJkJeV8bATveqhijQRuG7USaliPTZ04
-         vyEzxvQA4nV1V//9jCcM3ifCH2RkzEK7CgQOdvho1hvN/1qvxFOpwwe3MkKYvd+sxhxu
-         8AP/cwTn0/4R8vpqykva99/GfhJZO2MGOPmHae/l5n70aViy0nnHJtnxO9aXddbNiuxi
-         PeanzS73DjhbmvlJhBImSGTAEGMYKd+I5E+gJ6RfuyZmX2Nyu+kps4wAb1xv9Nl9EGr5
-         0rHPwRjLSmj6GtMWWJEtHFcgQi1x/t/Xe1+t31a1yc2lOPrCBediE+eJ4tvQRj8vNF9C
-         84Tw==
-X-Gm-Message-State: AGi0PuayJdtyH4SRdDIc+kIMSGyRItjO9wX3XW1FauYwE4YsRzE30494
-        C7B3gVmKeTj278nfTLVYB0w=
-X-Google-Smtp-Source: APiQypKxV8QSG1pho/PpbgmnF61eWRfmHsoySCpOwBrcsRDeAgIsQVdeiZfuuDmDB1tV1uEtV4xZlg==
-X-Received: by 2002:a63:d24a:: with SMTP id t10mr24091301pgi.326.1589375617458;
-        Wed, 13 May 2020 06:13:37 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id d20sm15112860pjs.12.2020.05.13.06.13.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 May 2020 06:13:36 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 4C2B54063E; Wed, 13 May 2020 13:13:35 +0000 (UTC)
-Date:   Wed, 13 May 2020 13:13:35 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Al Viro <viro@zeniv.linux.org.uk>, keescook@chromium.org,
-        Scott Branden <scott.branden@broadcom.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        linux-security-module@vger.kernel.org, jmorris@namei.org,
-        serge@hallyn.com, ast@kernel.org, daniel@iogearbox.net,
-        kafai@fb.com, songliubraving@fb.com, yhs@fb.com, andriin@fb.com,
-        john.fastabend@gmail.com, kpsingh@chromium.org
-Cc:     Shuah Khan <skhan@linuxfoundation.org>, axboe@kernel.dk,
-        zohar@linux.vnet.ibm.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] fs: avoid fdput() after failed fdget() in
- kernel_read_file_from_fd()
-Message-ID: <20200513131335.GN11244@42.do-not-panic.com>
+        Wed, 13 May 2020 10:19:39 -0400
+Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F25A220708;
+        Wed, 13 May 2020 14:19:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1589379579;
+        bh=XCp5F/lYiyuFT5h0NEXzypxvSnrMq5SZYIt8WXe6LVw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=uOJGUSp5I2Fhby38cG8aJB5ujSNOpddNlZHsiqZbn37fuENgE22NYAwW53wpZU6TE
+         MhNxw4iMQFX9TOzBv4/GTYMM6NmU8ZRogVMufoD8nEujm43LPGYyH6WdGhjmZ89W8B
+         Ah8qptaWTjtm601fRZr25nbACz19TyBVIol8MdoE=
+Received: by mail-ua1-f44.google.com with SMTP id r2so6105393uam.7;
+        Wed, 13 May 2020 07:19:39 -0700 (PDT)
+X-Gm-Message-State: AGi0PubOpjyrhBhJsp1c1HERHhWm7SsLiUirirkzOMfsBRG9RMVf5DiJ
+        TCXr7YcAJmZUIQtLKENo4bVpw0tkAxMrmfF+dSg=
+X-Google-Smtp-Source: APiQypK0Z3eeJRCbcDNHMvprSx0ZZ2CAJhP4go8hTJZBChpwnx4JHb3r9jdcrxmUSeo5vLo9P/JwjJDtE5yuwipHIKs=
+X-Received: by 2002:a9f:2c96:: with SMTP id w22mr21303032uaj.14.1589379578140;
+ Wed, 13 May 2020 07:19:38 -0700 (PDT)
+MIME-Version: 1.0
 References: <cover.1589311577.git.skhan@linuxfoundation.org>
  <1159d74f88d100521c568037327ebc8ec7ffc6ef.1589311577.git.skhan@linuxfoundation.org>
- <20200513054950.GT23230@ZenIV.linux.org.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200513054950.GT23230@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+ <20200513054950.GT23230@ZenIV.linux.org.uk> <20200513131335.GN11244@42.do-not-panic.com>
+In-Reply-To: <20200513131335.GN11244@42.do-not-panic.com>
+From:   Luis Chamberlain <mcgrof@kernel.org>
+Date:   Wed, 13 May 2020 08:19:25 -0600
+X-Gmail-Original-Message-ID: <CAB=NE6WdYcURTxNLngMk3+JQfNHG2MX1oE_Mv08G5zcw=mPOyw@mail.gmail.com>
+Message-ID: <CAB=NE6WdYcURTxNLngMk3+JQfNHG2MX1oE_Mv08G5zcw=mPOyw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] fs: avoid fdput() after failed fdget() in kernel_read_file_from_fd()
+To:     Al Viro <viro@zeniv.linux.org.uk>,
+        Kees Cook <keescook@chromium.org>,
+        Scott Branden <scott.branden@broadcom.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@chromium.org>
+Cc:     Shuah Khan <skhan@linuxfoundation.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, May 13, 2020 at 06:49:50AM +0100, Al Viro wrote:
-> On Tue, May 12, 2020 at 01:43:05PM -0600, Shuah Khan wrote:
-> > diff --git a/fs/exec.c b/fs/exec.c
-> > index 06b4c550af5d..ea24bdce939d 100644
-> > --- a/fs/exec.c
-> > +++ b/fs/exec.c
-> > @@ -1021,8 +1021,8 @@ int kernel_read_file_from_fd(int fd, void **buf, loff_t *size, loff_t max_size,
-> >  		goto out;
-> >  
-> >  	ret = kernel_read_file(f.file, buf, size, max_size, id);
-> > -out:
-> >  	fdput(f);
-> > +out:
-> >  	return ret;
-> 
-> Incidentally, why is that thing exported?
+On Wed, May 13, 2020 at 7:13 AM Luis Chamberlain <mcgrof@kernel.org> wrote:
+>
+> On Wed, May 13, 2020 at 06:49:50AM +0100, Al Viro wrote:
+> > On Tue, May 12, 2020 at 01:43:05PM -0600, Shuah Khan wrote:
+> > > diff --git a/fs/exec.c b/fs/exec.c
+> > > index 06b4c550af5d..ea24bdce939d 100644
+> > > --- a/fs/exec.c
+> > > +++ b/fs/exec.c
+> > > @@ -1021,8 +1021,8 @@ int kernel_read_file_from_fd(int fd, void **buf, loff_t *size, loff_t max_size,
+> > >             goto out;
+> > >
+> > >     ret = kernel_read_file(f.file, buf, size, max_size, id);
+> > > -out:
+> > >     fdput(f);
+> > > +out:
+> > >     return ret;
+> >
+> > Incidentally, why is that thing exported?
+>
+> Both kernel_read_file_from_fd() and kernel_read_file() are exported
+> because they have users, however kernel_read_file() only has security
+> stuff as a user. Do we want to get rid of the lsm hook for it?
 
-Both kernel_read_file_from_fd() and kernel_read_file() are exported
-because they have users, however kernel_read_file() only has security
-stuff as a user. Do we want to get rid of the lsm hook for it?
-
-I also have some non-posted patches which tucks away these kernel_read*()
-exports under a symbol namespace, to avoid wide-spread use / abuse on
-areas in the kernel, so I'd be happy to take this on if we want to
-remove it export / lsm hook as part of my series. I did this as there
-is another series of patches for a new driver which extend these family
-of functions with a now pread() variant....
+Alright, yeah just the export needs to be removed. I have a patch
+series dealing with these callers so will add it to my queue.
 
   Luis
