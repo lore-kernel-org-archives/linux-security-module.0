@@ -2,67 +2,167 @@ Return-Path: <SRS0=p5JF=63=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33683C433E0
-	for <linux-security-module@archiver.kernel.org>; Wed, 13 May 2020 18:18:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01B3AC433DF
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 May 2020 18:30:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CC1852065C
-	for <linux-security-module@archiver.kernel.org>; Wed, 13 May 2020 18:18:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 613ED20671
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 May 2020 18:30:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NasOCRNj"
+	dkim=pass (1024-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="e+M7d/cK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390129AbgEMSSB (ORCPT
+        id S2390090AbgEMSaS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 13 May 2020 14:18:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43812 "EHLO
+        Wed, 13 May 2020 14:30:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45766 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1733175AbgEMSSA (ORCPT
+        by vger.kernel.org with ESMTP id S1733310AbgEMSaR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 13 May 2020 14:18:00 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60BFEC061A0C;
-        Wed, 13 May 2020 11:18:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=6a106r24oix+PzCyy+USaUUOw38g4Aznt/gPVHR4CZk=; b=NasOCRNjdTTlMhsT2lorgYHFy5
-        QBRktg40d0jEZqAChN2WrlD0midarXRz0wMmnjfyZAEWjK10RPb+fyJgygSYNPHhSN3J8qKu2+O7I
-        XfXm/8V6OQ+FXQI7MtR8o2Fz6DhA+E6/F7FgKLj2gjQFDotR2yUxJFdLq4RRd9sG9k+oS68wOMGI9
-        rfrhF+VUYXPGzU3vUHzYYoePYrH95pF/7yNphdB3+gZo/uJ0MD2eIc0TIg+HvIoLc1Wil5CzV7Yzf
-        P6Y9VbfQ6J6sobDlUhm45wV70aKwIR5eXOgEtIVWxy2cIzyBwJrg41GCqC2clcM21YaCIYzrNsMPo
-        Khn3K6Lg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jYvwm-0006WX-HZ; Wed, 13 May 2020 18:17:36 +0000
-Date:   Wed, 13 May 2020 11:17:36 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     viro@zeniv.linux.org.uk, gregkh@linuxfoundation.org,
-        rafael@kernel.org, ebiederm@xmission.com, jeyu@kernel.org,
-        jmorris@namei.org, keescook@chromium.org, paul@paul-moore.com,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        nayna@linux.ibm.com, zohar@linux.ibm.com,
-        scott.branden@broadcom.com, dan.carpenter@oracle.com,
-        skhan@linuxfoundation.org, geert@linux-m68k.org,
-        tglx@linutronix.de, bauerman@linux.ibm.com, dhowells@redhat.com,
-        linux-integrity@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        kexec@lists.infradead.org, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] fs: reduce export usage of kerne_read*() calls
-Message-ID: <20200513181736.GA24342@infradead.org>
-References: <20200513152108.25669-1-mcgrof@kernel.org>
+        Wed, 13 May 2020 14:30:17 -0400
+Received: from mail-qt1-x841.google.com (mail-qt1-x841.google.com [IPv6:2607:f8b0:4864:20::841])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADC54C061A0F
+        for <linux-security-module@vger.kernel.org>; Wed, 13 May 2020 11:30:17 -0700 (PDT)
+Received: by mail-qt1-x841.google.com with SMTP id r8so626589qtm.11
+        for <linux-security-module@vger.kernel.org>; Wed, 13 May 2020 11:30:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ZHRshdycZcrgsKSC7G/+rPgPxIFT4T/W2PZGPaf8g7Y=;
+        b=e+M7d/cKDZE39K+/aMgWXcMSGZmt1uxAOYNT6hf+iiI3ljnUpkERkiR1JrjmaPk1BI
+         DBnGiZNMu4j5e0MLs3cB1cil6P7AwbhyLS2N/jRgQo43eh7Whk3MGeecwIKNLWEWSxbQ
+         QqYT1FK+T2aYLJuk/5v8k1hyaFrRMPuZ9XgSU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZHRshdycZcrgsKSC7G/+rPgPxIFT4T/W2PZGPaf8g7Y=;
+        b=PaVyQRO0i157BGJVDNtAFmgEFnQUklFlGxixy7nYGPv/sDFiA5HFlucUEGtcB68v/n
+         wwtkEeqhNd/SiZJvOR8VrXs+Y3+5PLFxlaIgiRV4cvxT0HTSEnmAfSQ92J4qdHvcWpB4
+         PX7vwox8fSvS1/Jcujv/OxR4dsANDlhUXn2FUDRXK8TzlvsVqHJ6InuTTsKFZ/jz4bF5
+         +VtnJhI+nJODe3K4EMGxyd/op0y4A/xt27Vig2kJMmQ+4h9WB7HFqkznHqSVRrkG260L
+         p8eE6siIr0mu0XKmmnkN1OZuulv3aVfCRQSS8mC2U/S+In9HkXYrQKz+IxFgOqH9xjEK
+         2MSg==
+X-Gm-Message-State: AOAM530JXSpTrkJGszTSzfebkMZNyKB7J9o4sDcq2MMFN0g4eA1WtDnv
+        9H9xqL53Bncm2vMr/PYxzTCX8mFihJpe/n28679CFQ==
+X-Google-Smtp-Source: ABdhPJx0vBpemsU3aq8SJB4eiYo93tub4OTvs4jnwtPJ46YCN4afYycte2hbfyf/wqrxxmtQat2ZoQ4ja3jWYTCRTPM=
+X-Received: by 2002:ac8:24e7:: with SMTP id t36mr464196qtt.98.1589394616579;
+ Wed, 13 May 2020 11:30:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200513152108.25669-1-mcgrof@kernel.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <20200513031930.86895-1-alexei.starovoitov@gmail.com>
+ <CAJPywT+c8uvi2zgUD_jObmi9T6j50THzjQHg-mudNrEC2HuJvg@mail.gmail.com> <20200513175301.43lxbckootoefrow@ast-mbp.dhcp.thefacebook.com>
+In-Reply-To: <20200513175301.43lxbckootoefrow@ast-mbp.dhcp.thefacebook.com>
+From:   Marek Majkowski <marek@cloudflare.com>
+Date:   Wed, 13 May 2020 19:30:05 +0100
+Message-ID: <CAJPywTKUmzDObSurppiH4GCJquDTnVWKLH48JNB=8RNcb5TiCQ@mail.gmail.com>
+Subject: Re: [PATCH v6 bpf-next 0/3] Introduce CAP_BPF
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     David Miller <davem@davemloft.net>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        network dev <netdev@vger.kernel.org>, bpf@vger.kernel.org,
+        kernel-team@fb.com, linux-security-module@vger.kernel.org,
+        acme@redhat.com, jamorris@linux.microsoft.com,
+        Jann Horn <jannh@google.com>, kpsingh@google.com,
+        kernel-team <kernel-team@cloudflare.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Can you also move kernel_read_* out of fs.h?  That header gets pulled
-in just about everywhere and doesn't really need function not related
-to the general fs interface.
+On Wed, May 13, 2020 at 6:53 PM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
+> On Wed, May 13, 2020 at 11:50:42AM +0100, Marek Majkowski wrote:
+> > On Wed, May 13, 2020 at 4:19 AM Alexei Starovoitov
+> > <alexei.starovoitov@gmail.com> wrote:
+> > >
+> > > CAP_BPF solves three main goals:
+> > > 1. provides isolation to user space processes that drop CAP_SYS_ADMIN and switch to CAP_BPF.
+> > >    More on this below. This is the major difference vs v4 set back from Sep 2019.
+> > > 2. makes networking BPF progs more secure, since CAP_BPF + CAP_NET_ADMIN
+> > >    prevents pointer leaks and arbitrary kernel memory access.
+> > > 3. enables fuzzers to exercise all of the verifier logic. Eventually finding bugs
+> > >    and making BPF infra more secure. Currently fuzzers run in unpriv.
+> > >    They will be able to run with CAP_BPF.
+> > >
+> >
+> > Alexei, looking at this from a user point of view, this looks fine.
+> >
+> > I'm slightly worried about REUSEPORT_EBPF. Currently without your
+> > patch, as far as I understand it:
+> >
+> > - You can load SOCKET_FILTER and SO_ATTACH_REUSEPORT_EBPF without any
+> > permissions
+>
+> correct.
+>
+> > - For loading BPF_PROG_TYPE_SK_REUSEPORT program and for SOCKARRAY map
+> > creation CAP_SYS_ADMIN is needed. But again, no permissions check for
+> > SO_ATTACH_REUSEPORT_EBPF later.
+>
+> correct. With clarification that attaching process needs to own
+> FD of prog and FD of socket.
+>
+> > If I read the patchset correctly, the former SOCKET_FILTER case
+> > remains as it is and is not affected in any way by presence or absence
+> > of CAP_BPF.
+>
+> correct. As commit log says:
+> "Existing unprivileged BPF operations are not affected."
+>
+> > The latter case is different. Presence of CAP_BPF is sufficient for
+> > map creation, but not sufficient for loading SK_REUSEPORT program. It
+> > still requires CAP_SYS_ADMIN.
+>
+> Not quite.
+> The patch will allow BPF_PROG_TYPE_SK_REUSEPORT progs to be loaded
+> with CAP_BPF + CAP_NET_ADMIN.
+> Since this type of progs is clearly networking type I figured it's
+> better to be consistent with the rest of networking types.
+> Two unpriv types SOCKET_FILTER and CGROUP_SKB is the only exception.
+
+Ok, this is the controversy. It made sense to restrict SK_REUSEPORT
+programs in the past, because programs needed CAP_NET_ADMIN to create
+SOCKARRAY anyway. Now we change this and CAP_BPF is sufficient for
+maps - I don't see why CAP_BPF is not sufficient for SK_REUSEPORT
+programs. From a user point of view I don't get why this additional
+CAP_NET_ADMIN is needed.
+
+> > I think it's a good opportunity to relax
+> > this CAP_SYS_ADMIN requirement. I think the presence of CAP_BPF should
+> > be sufficient for loading BPF_PROG_TYPE_SK_REUSEPORT.
+> >
+> > Our specific use case is simple - we want an application program -
+> > like nginx - to control REUSEPORT programs. We will grant it CAP_BPF,
+> > but we don't want to grant it CAP_SYS_ADMIN.
+>
+> You'll be able to grant nginx CAP_BPF + CAP_NET_ADMIN to load SK_REUSEPORT
+> and unpriv child process will be able to attach just like before if
+> it has right FDs.
+> I suspect your load balancer needs CAP_NET_ADMIN already anyway due to
+> use of XDP and TC progs.
+> So granting CAP_BPF + CAP_NET_ADMIN should cover all bpf prog needs.
+> Does it address your concern?
+
+Load balancer (XDP+TC) is another layer and permissions there are not
+a problem. The specific issue is nginx (port 443) and QUIC. QUIC is
+UDP and due to the nginx design we must use REUSEPORT groups to
+balance the load across workers. This is fine and could be done with a
+simple SOCK_FILTER - we don't need to grant nginx any permissions,
+apart from CAP_NET_BIND_SERVICE.
+
+We would like to make the REUSEPORT program more complex to take
+advantage of REUSEPORT_EBPF for stickyness (restarting server without
+interfering with existing flows), we are happy to grant nginx CAP_BPF,
+but we are not happy to grant it CAP_NET_ADMIN. Requiring this CAP for
+REUSEPORT severely restricts the API usability for us.
+
+In my head REUSEPORT_EBPF is much closer to SOCKET_FILTER. I
+understand why it needed capabilities before (map creation) and I
+argue these reasons go away in CAP_BPF world. I assume that any
+service (with CAP_BPF) should be able to use reuseport to distribute
+packets within its own sockets.  Let me know if I'm missing something.
+
+Marek
