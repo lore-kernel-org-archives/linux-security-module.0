@@ -2,52 +2,55 @@ Return-Path: <SRS0=p5JF=63=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F09C8C2D0F8
-	for <linux-security-module@archiver.kernel.org>; Wed, 13 May 2020 06:57:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A588C2D0FD
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 May 2020 06:57:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CA10320708
-	for <linux-security-module@archiver.kernel.org>; Wed, 13 May 2020 06:57:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C70520708
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 May 2020 06:57:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="i1/ludAP"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Cpy9yo5p"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729796AbgEMG5B (ORCPT
+        id S1730057AbgEMG5E (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 13 May 2020 02:57:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50544 "EHLO
+        Wed, 13 May 2020 02:57:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50552 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726020AbgEMG5B (ORCPT
+        with ESMTP id S1726020AbgEMG5D (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 13 May 2020 02:57:01 -0400
+        Wed, 13 May 2020 02:57:03 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13D21C061A0C;
-        Tue, 12 May 2020 23:57:01 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44102C061A0C;
+        Tue, 12 May 2020 23:57:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-        Content-ID:Content-Description:In-Reply-To:References;
-        bh=OLeobDoK3cSodaOvhpXxRj41TUTb5dB2QsKr9Upwg1E=; b=i1/ludAPWoPD/7vlde8gjhEzPJ
-        UGpXQOfEoZkrNj9JE/Ed2qP6j0F8Bbjow7TLTPtSKLCqrpC4f+aTZ4XxAVx7cuYtIKUePo5rGioan
-        z7b0OchS8Hy+kmEu21uQKNW/fkcHVYsbs+P8rwVysWEhVCsOCaon18JuGLVyh37/DpeyR0hn0Y4Gr
-        yG4rDV6dh+anzTzDpAyv3yIogor/Apc3ZZ/Jc9qxVAbdZQ4GssWNqx+hlDWjkAK1mI4fB6EWTIBXD
-        iBh5VBO//ZcgP6tfERldIMAZdp+RndLNQ4zILLtdvnkosb2pHc+0ykuyQ/sHsL6WfYjriTRqNqc42
-        tl+YxUQQ==;
+        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
+        :Reply-To:Content-Type:Content-ID:Content-Description;
+        bh=e06V50DvlSAd0cjThq/uEzcBoN3nGl+GOyNKKGYH+cE=; b=Cpy9yo5pJaasmJZsjzEAZa0x5+
+        gwmF1NxkUhySvtE4qn/S4sEiFThHS+Kf2wfJsyUXCtdxOjhJCemsH620xTWSg9It1OkVL12ImlWuX
+        sKjjRO3xKjeb0GaAtwvAWEGPTKomzP07xsg7XavQX6YYU4grcmeva7yxxz85nsKrKj29X2E8DX7e3
+        ictdHvmVK71ERYZqFi2ci5q7HgilydEoAZm07OF+vpNKp4fL1xZzDwVufvNMosdns1CGasPEH1L1f
+        ce5m/KudHyk/nY6jDXg5+VanH9GKV8PDv0o+nBJPz0wpnnVJ/kikwdDRPdv0sckZoPjqirShS6lTf
+        FvXD7b8w==;
 Received: from [2001:4bb8:180:9d3f:c70:4a89:bc61:2] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jYlK6-0003UK-6h; Wed, 13 May 2020 06:56:58 +0000
+        id 1jYlK8-0003UW-S1; Wed, 13 May 2020 06:57:01 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Al Viro <viro@zeniv.linux.org.uk>
 Cc:     Ian Kent <raven@themaw.net>, David Howells <dhowells@redhat.com>,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         netfilter-devel@vger.kernel.org
-Subject: clean up kernel_{read,write} & friends v2
-Date:   Wed, 13 May 2020 08:56:42 +0200
-Message-Id: <20200513065656.2110441-1-hch@lst.de>
+Subject: [PATCH 01/14] cachefiles: switch to kernel_write
+Date:   Wed, 13 May 2020 08:56:43 +0200
+Message-Id: <20200513065656.2110441-2-hch@lst.de>
 X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20200513065656.2110441-1-hch@lst.de>
+References: <20200513065656.2110441-1-hch@lst.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
@@ -55,13 +58,26 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Al,
+__kernel_write doesn't take a sb_writers references, which we need here.
 
-this series fixes a few issues and cleans up the helpers that read from
-or write to kernel space buffers, and ensures that we don't change the
-address limit if we are using the ->read_iter and ->write_iter methods
-that don't need the changed address limit.
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ fs/cachefiles/rdwr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Changes since v1:
- - __kernel_write must not take sb_writers
- - unexported __kernel_write
+diff --git a/fs/cachefiles/rdwr.c b/fs/cachefiles/rdwr.c
+index 1dc97f2d62013..c0b99ccd9a79f 100644
+--- a/fs/cachefiles/rdwr.c
++++ b/fs/cachefiles/rdwr.c
+@@ -937,7 +937,7 @@ int cachefiles_write_page(struct fscache_storage *op, struct page *page)
+ 	}
+ 
+ 	data = kmap(page);
+-	ret = __kernel_write(file, data, len, &pos);
++	ret = kernel_write(file, data, len, &pos);
+ 	kunmap(page);
+ 	fput(file);
+ 	if (ret != len)
+-- 
+2.26.2
+
