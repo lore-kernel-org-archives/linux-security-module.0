@@ -2,98 +2,138 @@ Return-Path: <SRS0=SKQR=64=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D0FCC433DF
-	for <linux-security-module@archiver.kernel.org>; Thu, 14 May 2020 02:44:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06505C433DF
+	for <linux-security-module@archiver.kernel.org>; Thu, 14 May 2020 03:05:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3D2CD20659
-	for <linux-security-module@archiver.kernel.org>; Thu, 14 May 2020 02:44:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E473F20690
+	for <linux-security-module@archiver.kernel.org>; Thu, 14 May 2020 03:05:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ER81wy6N"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726087AbgENCoA (ORCPT
+        id S1726005AbgENDFN (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 13 May 2020 22:44:00 -0400
-Received: from namei.org ([65.99.196.166]:58798 "EHLO namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725874AbgENCoA (ORCPT
+        Wed, 13 May 2020 23:05:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41662 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725938AbgENDFN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 13 May 2020 22:44:00 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id 04E2hjXO030913;
-        Thu, 14 May 2020 02:43:45 GMT
-Date:   Thu, 14 May 2020 12:43:45 +1000 (AEST)
-From:   James Morris <jmorris@namei.org>
-To:     Jeremy Cline <jcline@redhat.com>
-cc:     "Serge E . Hallyn" <serge@hallyn.com>,
-        Matthew Garrett <matthewgarrett@google.com>,
-        David Howells <dhowells@redhat.com>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, "Frank Ch . Eigler" <fche@redhat.com>
-Subject: Re: [PATCH] lockdown: Allow unprivileged users to see lockdown
- status
-In-Reply-To: <20200511134230.GA2311339@dev.jcline.org>
-Message-ID: <alpine.LRH.2.21.2005141242200.30052@namei.org>
-References: <20200220151738.1492852-1-jcline@redhat.com> <alpine.LRH.2.21.2002220351010.18183@namei.org> <20200511134230.GA2311339@dev.jcline.org>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        Wed, 13 May 2020 23:05:13 -0400
+Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0F80C05BD43
+        for <linux-security-module@vger.kernel.org>; Wed, 13 May 2020 20:05:12 -0700 (PDT)
+Received: by mail-pf1-x442.google.com with SMTP id v63so656955pfb.10
+        for <linux-security-module@vger.kernel.org>; Wed, 13 May 2020 20:05:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=RI4af4t+Hr3cwRvViCD0C0VTSsdcgl2WIZRjAD5Dbd8=;
+        b=ER81wy6Nm4qqHe6/4nA1T72QieIUsDZr9xcEPXqlwCuu1bwbRzbDDp76o/GaGyv6ZN
+         LhIsA3q1GqyyyLFIO5q4UxMKZ/DLFp4DOO12AImeksODZzTLEOUUYcEhUXA8eb5xmUfr
+         WADVBn7cABTbN0GqYscdMzowjTlrjm+0sez/I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=RI4af4t+Hr3cwRvViCD0C0VTSsdcgl2WIZRjAD5Dbd8=;
+        b=A3i1Ka3yOsQ67JGgGZhNxijnJ0KGGnxB/xaKvoFgHR9i7Nq/LyX6bnmoNcVdqUxc7/
+         gQAV4ahz5tYC4fCbK9xSWCMdCOLTWKmUYvBrQdZqvMQt7htPws8UxhJbS8z8PeT8A7IJ
+         GLyw0AZuYjt7WLDzKPL5+eyXMGwh32akTXFoNl5L1mnCoVP/e71MPuEZBKqs5VK4KI6o
+         6Lv8mttKMDxG2o5SMznLdmBjuSMT1aS2Az87AeXIVaz0aj8k78MA5Xrqfxy96GimhZmO
+         AT1PTQP5x6sREcrdWSRR62NuOkzRkrNKOTLmiuEayIV9CsSrTVLI/Vjg7nCpz7jULnim
+         KIaQ==
+X-Gm-Message-State: AOAM530SLePVwtdh9jZfHycMiWZtrrWeF+rmvLubbotENFFBrHqyGf7f
+        Jrc/ZnYngBLJsYXjqCVs9qBoBA==
+X-Google-Smtp-Source: ABdhPJyv6W4n0Q3ekaCcNquQfPEI0ohUKwE+N8w+M8dJ+JkwyMY+fS9GmFM65yiwziqJLP/Q/8otoA==
+X-Received: by 2002:aa7:958f:: with SMTP id z15mr2213370pfj.10.1589425512261;
+        Wed, 13 May 2020 20:05:12 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id z7sm818011pff.47.2020.05.13.20.05.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 May 2020 20:05:11 -0700 (PDT)
+Date:   Wed, 13 May 2020 20:05:09 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Eric Chiang <ericchiang@google.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Philippe =?iso-8859-1?Q?Tr=E9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH v5 3/6] fs: Enable to enforce noexec mounts or file exec
+ through O_MAYEXEC
+Message-ID: <202005132002.91B8B63@keescook>
+References: <20200505153156.925111-1-mic@digikod.net>
+ <20200505153156.925111-4-mic@digikod.net>
+ <CAEjxPJ7y2G5hW0WTH0rSrDZrorzcJ7nrQBjfps2OWV5t1BUYHw@mail.gmail.com>
+ <202005131525.D08BFB3@keescook>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202005131525.D08BFB3@keescook>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 11 May 2020, Jeremy Cline wrote:
+On Wed, May 13, 2020 at 04:27:39PM -0700, Kees Cook wrote:
+> Like, couldn't just the entire thing just be:
+> 
+> diff --git a/fs/namei.c b/fs/namei.c
+> index a320371899cf..0ab18e19f5da 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -2849,6 +2849,13 @@ static int may_open(const struct path *path, int acc_mode, int flag)
+>  		break;
+>  	}
+>  
+> +	if (unlikely(mask & MAY_OPENEXEC)) {
+> +		if (sysctl_omayexec_enforce & OMAYEXEC_ENFORCE_MOUNT &&
+> +		    path_noexec(path))
+> +			return -EACCES;
+> +		if (sysctl_omayexec_enforce & OMAYEXEC_ENFORCE_FILE)
+> +			acc_mode |= MAY_EXEC;
+> +	}
+>  	error = inode_permission(inode, MAY_OPEN | acc_mode);
+>  	if (error)
+>  		return error;
+> 
 
-> On Sat, Feb 22, 2020 at 03:51:24AM +1100, James Morris wrote:
-> > On Thu, 20 Feb 2020, Jeremy Cline wrote:
-> > 
-> > > A number of userspace tools, such as systemtap, need a way to see the
-> > > current lockdown state so they can gracefully deal with the kernel being
-> > > locked down. The state is already exposed in
-> > > /sys/kernel/security/lockdown, but is only readable by root. Adjust the
-> > > permissions so unprivileged users can read the state.
-> > > 
-> > > Fixes: 000d388ed3bb ("security: Add a static lockdown policy LSM")
-> > > Cc: Frank Ch. Eigler <fche@redhat.com>
-> > > Signed-off-by: Jeremy Cline <jcline@redhat.com>
-> > 
-> > Looks fine to me, any objection from Matthew or others?
-> > 
-> 
-> Can we take resounding silence as no objections?
+FYI, I've confirmed this now. Effectively with patch 2 dropped, patch 3
+reduced to this plus the Kconfig and sysctl changes, the self tests
+pass.
 
-Please resend and I'll apply it to my tree.
-
-> 
-> - Jeremy
-> 
-> > > ---
-> > >  security/lockdown/lockdown.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
-> > > index 5a952617a0eb..87cbdc64d272 100644
-> > > --- a/security/lockdown/lockdown.c
-> > > +++ b/security/lockdown/lockdown.c
-> > > @@ -150,7 +150,7 @@ static int __init lockdown_secfs_init(void)
-> > >  {
-> > >  	struct dentry *dentry;
-> > >  
-> > > -	dentry = securityfs_create_file("lockdown", 0600, NULL, NULL,
-> > > +	dentry = securityfs_create_file("lockdown", 0644, NULL, NULL,
-> > >  					&lockdown_ops);
-> > >  	return PTR_ERR_OR_ZERO(dentry);
-> > >  }
-> > > 
-> > 
-> > -- 
-> > James Morris
-> > <jmorris@namei.org>
-> > 
-> 
+I think this makes things much cleaner and correct.
 
 -- 
-James Morris
-<jmorris@namei.org>
-
+Kees Cook
