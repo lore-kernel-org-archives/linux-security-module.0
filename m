@@ -2,65 +2,87 @@ Return-Path: <SRS0=SKQR=64=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68678C433DF
-	for <linux-security-module@archiver.kernel.org>; Thu, 14 May 2020 17:28:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D364C433E2
+	for <linux-security-module@archiver.kernel.org>; Thu, 14 May 2020 17:32:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 49F7B206DC
-	for <linux-security-module@archiver.kernel.org>; Thu, 14 May 2020 17:28:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 33CF8206DC
+	for <linux-security-module@archiver.kernel.org>; Thu, 14 May 2020 17:32:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726032AbgENR2U (ORCPT
+        id S1726197AbgENRcP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 14 May 2020 13:28:20 -0400
-Received: from namei.org ([65.99.196.166]:58990 "EHLO namei.org"
+        Thu, 14 May 2020 13:32:15 -0400
+Received: from namei.org ([65.99.196.166]:59018 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726050AbgENR2U (ORCPT
+        id S1726027AbgENRcP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 14 May 2020 13:28:20 -0400
+        Thu, 14 May 2020 13:32:15 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id 04EHS8QU026941;
-        Thu, 14 May 2020 17:28:08 GMT
-Date:   Fri, 15 May 2020 03:28:08 +1000 (AEST)
+        by namei.org (8.14.4/8.14.4) with ESMTP id 04EHVcqA027184;
+        Thu, 14 May 2020 17:31:38 GMT
+Date:   Fri, 15 May 2020 03:31:38 +1000 (AEST)
 From:   James Morris <jmorris@namei.org>
-To:     Jeremy Cline <jcline@redhat.com>
-cc:     "Serge E . Hallyn" <serge@hallyn.com>,
-        Matthew Garrett <matthewgarrett@google.com>,
-        David Howells <dhowells@redhat.com>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, "Frank Ch . Eigler" <fche@redhat.com>
-Subject: Re: [PATCH RESEND] lockdown: Allow unprivileged users to see lockdown
- status
-In-Reply-To: <20200514140546.826698-1-jcline@redhat.com>
-Message-ID: <alpine.LRH.2.21.2005150327590.26489@namei.org>
-References: <20200220151738.1492852-1-jcline@redhat.com> <20200514140546.826698-1-jcline@redhat.com>
+To:     =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-security-module@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH v17 05/10] fs,landlock: Support filesystem
+ access-control
+In-Reply-To: <c159d845-6108-4b67-6527-405589fa5382@digikod.net>
+Message-ID: <alpine.LRH.2.21.2005150329580.26489@namei.org>
+References: <20200511192156.1618284-1-mic@digikod.net> <20200511192156.1618284-6-mic@digikod.net> <alpine.LRH.2.21.2005141335280.30052@namei.org> <c159d845-6108-4b67-6527-405589fa5382@digikod.net>
 User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: multipart/mixed; boundary="1665246916-621977297-1589477498=:26489"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 14 May 2020, Jeremy Cline wrote:
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-> A number of userspace tools, such as systemtap, need a way to see the
-> current lockdown state so they can gracefully deal with the kernel being
-> locked down. The state is already exposed in
-> /sys/kernel/security/lockdown, but is only readable by root. Adjust the
-> permissions so unprivileged users can read the state.
+--1665246916-621977297-1589477498=:26489
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+
+On Thu, 14 May 2020, Mickaël Salaün wrote:
+
+> > This needs to be converted to the LSM API via superblock blob stacking.
+> > 
+> > See Casey's old patch: 
+> > https://lore.kernel.org/linux-security-module/20190829232935.7099-2-casey@schaufler-ca.com/
 > 
-> Fixes: 000d388ed3bb ("security: Add a static lockdown policy LSM")
-> Cc: Frank Ch. Eigler <fche@redhat.com>
-> Signed-off-by: Jeremy Cline <jcline@redhat.com>
+> s_landlock_inode_refs is quite similar to s_fsnotify_inode_refs, but I
+> can do it once the superblock security blob patch is upstream. Is it a
+> blocker for now? What is the current status of lbs_superblock?
 
-Applied to
-git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-general
+Yes it is a blocker. Landlock should not be adding its own functions in 
+core code, it should be using the LSM API (and extending that as needed).
 
+> Anyway, we also need to have a call to landlock_release_inodes() in
+> generic_shutdown_super(), which does not fit the LSM framework, and I
+> think it is not an issue. Landlock handling of inodes is quite similar
+> to fsnotify.
+
+fsnotify is not an LSM.
 
 -- 
 James Morris
 <jmorris@namei.org>
 
+--1665246916-621977297-1589477498=:26489--
