@@ -2,143 +2,140 @@ Return-Path: <SRS0=SKQR=64=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20562C433E0
-	for <linux-security-module@archiver.kernel.org>; Thu, 14 May 2020 12:08:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB72DC433DF
+	for <linux-security-module@archiver.kernel.org>; Thu, 14 May 2020 12:22:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EE002206DA
-	for <linux-security-module@archiver.kernel.org>; Thu, 14 May 2020 12:08:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B47620722
+	for <linux-security-module@archiver.kernel.org>; Thu, 14 May 2020 12:22:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LXh7ffCZ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i5amiZT4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726665AbgENMIv (ORCPT
+        id S1726872AbgENMWN (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 14 May 2020 08:08:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41636 "EHLO
+        Thu, 14 May 2020 08:22:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43702 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726660AbgENMIv (ORCPT
+        by vger.kernel.org with ESMTP id S1725955AbgENMWM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 14 May 2020 08:08:51 -0400
+        Thu, 14 May 2020 08:22:12 -0400
 Received: from mail-oi1-x242.google.com (mail-oi1-x242.google.com [IPv6:2607:f8b0:4864:20::242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0B9DC061A0C;
-        Thu, 14 May 2020 05:08:50 -0700 (PDT)
-Received: by mail-oi1-x242.google.com with SMTP id o7so24332965oif.2;
-        Thu, 14 May 2020 05:08:50 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67EA2C061A0C;
+        Thu, 14 May 2020 05:22:12 -0700 (PDT)
+Received: by mail-oi1-x242.google.com with SMTP id 19so24335479oiy.8;
+        Thu, 14 May 2020 05:22:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=A+X9SCzjiHq5xXgLxlXuhaaCXkfZMoRwiWFaO63ED7k=;
-        b=LXh7ffCZ7cFjoQko7M2UBg/zWq9p8aiPR4eTHds9VYRdP1309rHAnoalOJjBr6ct7V
-         +0sQS3y3xK3pOva3kdEuZIdgv76Bl7sL/iSq+BcPnLZhA9NLY7TKn1+thhpQ/oWWrHsB
-         VLL0qE6Ex4lnVSR5TLvsMdnSzRhng1i/ALcL+I9hsvl5HlHxyvMXYSKYC3jzOO31bPGd
-         JbBtNi0uxGrtGsAKckHXlPyJssie6gwIQ6ph+GUxyUEYSWGGdV3Qn3rgjKRMk1O0sSad
-         wx1toFTSknj55aWQiV85BilRi7oKURdVecJotHMaNv2G/ooYLS8MQU1MEMqBnWk+kMuX
-         f5jw==
+        bh=nF6vAAaP1cfceYeXNm1y8xNSuJkqKIzjNDIfaM3hC6U=;
+        b=i5amiZT4SYTxnRSl42OFApQUVQWMEMCzpzva6IzJpZUA8ComrOQCQAsHjrgthqm5Ti
+         GtsNDdoRqE46Qt9PLanUT5TY2Bl0VFqUiHu5M0QIg6duIlNkLuQe8qJr+kir6XgqdVfD
+         5/SOQWjTz2Km5dz+pfxkh7zPj9KPJ94r2/Ag3If3AMmreLm/vSOzM8UVd2wlUJy4XxrC
+         Y3Y61W6yaKPCDHY9edStqeGLglJrTL68OjZ0vcd54XZi+j9Fq2kDYMrFFSRcy9rIFy7A
+         nX7z+uQKUg5PTswBiYuT5Cmq5JDIibyvxwL2OfL1jJvso9rIPZInZKoazLpB6dSHSd6h
+         W5UA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=A+X9SCzjiHq5xXgLxlXuhaaCXkfZMoRwiWFaO63ED7k=;
-        b=kckoFkEbgvGRtDwYwhkUvFlqdX3kngxI9RN1jr/IKllx9E692RWnB8b6yeuSvelNPC
-         3FKE501weeWfAEU4YSPYCz2yUAQ1dOzSHwQVZgbr5sa5oFPvL02SRBb+CsiPVkCgakkT
-         yPMCVRHq8hT5Tmp1QrkOHCb6D8KnhfMtfSPtgK7uFqAmH6narOdfsksjp5wLK9bUJjMO
-         aeIgBaPNvFcwwhYFvTZJ/kZNm6zmLfMqrLEd9vQs9OgIMJBGU8ba6rh1Ne8t1+U5c2OO
-         r87riGUyEK/4jAT1pV9zrGK2sgGObJFt4mvNglCCBZZRjaram2d6q7800iQtQRDw1p9V
-         bTYA==
-X-Gm-Message-State: AGi0PuYX8SZrXNaaB2d3SWkx9d2hBiMYSY0D20s2wDAQ/5erUmEcVA6m
-        PGJr+1s8fb7gpFOhir/KtFHIuJYJiXsaGSzlkoQ=
-X-Google-Smtp-Source: APiQypLdoNDtunLrzwY6UJBNb235eqap5Q5UO40EngNC8q2E7hBU6FcwYjZpL5ZutjYp3Tl1ArRVXwI9XIMfB500shk=
-X-Received: by 2002:aca:5e0b:: with SMTP id s11mr28806064oib.160.1589458130415;
- Thu, 14 May 2020 05:08:50 -0700 (PDT)
+        bh=nF6vAAaP1cfceYeXNm1y8xNSuJkqKIzjNDIfaM3hC6U=;
+        b=MQ39zqs14DLM3VQ7p9t3vbeDNtDHsjP6cG6wPaQU5ko4EVj8OPCrHURZVqvqJZQEjR
+         xYFgZ2IHvhWma5FQqpAnV/Auyzgc7ILvAQ2nYevjUrnzWr/cDAFGtbYUolo+E2j01GUF
+         e2lEpZ1KrfPvlD2e8f+bP65sGvaKS8+UQXWTLK84mbeOFHgRVE85XxbCHGCGzw30CWQh
+         yem5UVEt62yF1arUIeUNjmwpGPXKLro6CufBLwA7cdv6uv9WHGj+12gpUkNgD4nFIfRI
+         tvMv5eZYLJjVeYeA9Ju67ZOnuNEUz6W8Y2//VKgFgMoCUex96nprviL315pGovXOm5lq
+         XTYg==
+X-Gm-Message-State: AGi0PuaX/OaN7e36MsaFOlucejx2OLsJjDL54UsicGOfEsLCxRv7i0Jl
+        Lm++Po43m1hTJZZDxaSx5Ys41VLkHD7tOIKyJK4=
+X-Google-Smtp-Source: APiQypKvnbVkSBLslf8tuVKDqGZ9R3qBIciw1yU8Il1eGXOPA175sNtg+n/Z5A2Hq8fDCIabdLt9q9wcWPA/Ns3WUPQ=
+X-Received: by 2002:aca:5e0b:: with SMTP id s11mr28839792oib.160.1589458931895;
+ Thu, 14 May 2020 05:22:11 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAEjxPJ6pFdDfm55pv9bT3CV5DTFF9VqzRmG_Xi5bKNxPaGuOLg@mail.gmail.com>
- <158932282880.2885325.2688622278854566047.stgit@warthog.procyon.org.uk>
- <CAEjxPJ4=ZN_jKP2nX5mrMA3OxC8XLsYEmCPCD-78H4XQw=_hCA@mail.gmail.com> <3611507.1589411611@warthog.procyon.org.uk>
-In-Reply-To: <3611507.1589411611@warthog.procyon.org.uk>
+References: <20200505153156.925111-1-mic@digikod.net> <20200505153156.925111-4-mic@digikod.net>
+ <CAEjxPJ7y2G5hW0WTH0rSrDZrorzcJ7nrQBjfps2OWV5t1BUYHw@mail.gmail.com>
+ <202005131525.D08BFB3@keescook> <202005132002.91B8B63@keescook>
+In-Reply-To: <202005132002.91B8B63@keescook>
 From:   Stephen Smalley <stephen.smalley.work@gmail.com>
-Date:   Thu, 14 May 2020 08:08:39 -0400
-Message-ID: <CAEjxPJ5Dw0Lf6DnUL01XSJZF9zu-ACnmxOkC0VHxGTzGcmbpRQ@mail.gmail.com>
-Subject: Re: [PATCH] keys: Make the KEY_NEED_* perms an enum rather than a mask
-To:     David Howells <dhowells@redhat.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        keyrings@vger.kernel.org, SElinux list <selinux@vger.kernel.org>,
+Date:   Thu, 14 May 2020 08:22:01 -0400
+Message-ID: <CAEjxPJ7WjeQAz3XSCtgpYiRtH+Jx-UkSTaEcnVyz_jwXKE3dkw@mail.gmail.com>
+Subject: Re: [PATCH v5 3/6] fs: Enable to enforce noexec mounts or file exec
+ through O_MAYEXEC
+To:     Kees Cook <keescook@chromium.org>
+Cc:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Eric Chiang <ericchiang@google.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mickael.salaun@ssi.gouv.fr>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        =?UTF-8?Q?Philippe_Tr=C3=A9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
         LSM List <linux-security-module@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, May 13, 2020 at 7:13 PM David Howells <dhowells@redhat.com> wrote:
+On Wed, May 13, 2020 at 11:05 PM Kees Cook <keescook@chromium.org> wrote:
 >
-> Stephen Smalley <stephen.smalley.work@gmail.com> wrote:
->
-> > >  (3) An override due to CAP_SYS_ADMIN.
+> On Wed, May 13, 2020 at 04:27:39PM -0700, Kees Cook wrote:
+> > Like, couldn't just the entire thing just be:
 > >
-> > CAP_SYS_ADMIN should never skip SELinux checking.  Even for Smack,
-> > there is a separate capability (CAP_MAC_ADMIN) for that purpose.
->
-> The LSM doesn't get consulted at the moment.  With this patch, it will get
-> consulted.
->
-> > >  (4) An override due to an instantiation token being present.
+> > diff --git a/fs/namei.c b/fs/namei.c
+> > index a320371899cf..0ab18e19f5da 100644
+> > --- a/fs/namei.c
+> > +++ b/fs/namei.c
+> > @@ -2849,6 +2849,13 @@ static int may_open(const struct path *path, int acc_mode, int flag)
+> >               break;
+> >       }
 > >
-> > Not sure what this means but again we shouldn't skip SELinux checking
-> > based on mere possession of an object capability (not a POSIX
-> > capability).
->
-> The kernel has delegated the instantiation of a key to the calling process and
-> has given it a temporary key of type ".request_key_auth" which it has put into
-> force with keyctl(KEYCTL_ASSUME_AUTHORITY).
->
-> This authorisation token grants the caller the ability to (a) perform
-> operations on the key it wouldn't otherwise have permission to do, (b) use the
-> key instantiation keyctls and (c) temporarily search the keyrings of the
-> caller of request_key() using the creds of that caller and to read/use the
-> keys found therein if the caller was permitted to do so.
->
-> > It would be better if the permission indicated the actual operation
-> > (e.g. KEY_NEED_INVALIDATE_SPECIAL), and the decision whether to permit
-> > CAP_SYS_ADMIN processes to override was left to the security modules.
-> > SELinux doesn't automatically allow CAP_SYS_ADMIN processes to do
-> > everything.
->
-> These individual permissions don't exist yet.  I have an ACL patchset that
-> allows me to add a greater range - though there's issues with SELinux there
-> also.
->
-> Also, the keyrings are specially marked to say that the sysadmin is allowed to
-> flush them at the moment - but that can go away with the ACL stuff.
->
-> > > +       switch (need_perm) {
-> > > +       case KEY_NEED_UNLINK:
-> > > +       case KEY_SYSADMIN_OVERRIDE:
-> > > +       case KEY_AUTHTOKEN_OVERRIDE:
-> > > +       case KEY_DEFER_PERM_CHECK:
-> > >                 return 0;
+> > +     if (unlikely(mask & MAY_OPENEXEC)) {
+> > +             if (sysctl_omayexec_enforce & OMAYEXEC_ENFORCE_MOUNT &&
+> > +                 path_noexec(path))
+> > +                     return -EACCES;
+> > +             if (sysctl_omayexec_enforce & OMAYEXEC_ENFORCE_FILE)
+> > +                     acc_mode |= MAY_EXEC;
+> > +     }
+> >       error = inode_permission(inode, MAY_OPEN | acc_mode);
+> >       if (error)
+> >               return error;
 > >
-> > We really shouldn't be skipping any/all checking on CAP_SYS_ADMIN or
-> > an AUTHTOKEN; those should still be subject to MAC policy.
 >
-> I'm not sure how to do that.
+> FYI, I've confirmed this now. Effectively with patch 2 dropped, patch 3
+> reduced to this plus the Kconfig and sysctl changes, the self tests
+> pass.
 >
-> Note that KEY_NEED_UNLINK *must not* be overruled by the MAC policy.  The
-> value is only there because lookup_user_key() requires something to be put
-> into that parameter - it's more of a courtesy thing, I suppose.
->
-> Why should AUTHTOKEN be subject to MAC policy?  The kernel has told the
-> process to go and instantiate a key.  It shouldn't really then turn around and
-> tell the process "oh, but you're not actually allowed to do that".
+> I think this makes things much cleaner and correct.
 
-On what basis did the kernel authorize the process to instantiate the
-key?  At what point did a security module get involved in the decision
-as to what process(es) are authorize to instantiate a key,
-particularly for a process with a different credential/security
-context?
+I think that covers inode-based security modules but not path-based
+ones (they don't implement the inode_permission hook).  For those, I
+would tentatively guess that we need to make sure FMODE_EXEC is set on
+the open file and then they need to check for that in their file_open
+hooks.
