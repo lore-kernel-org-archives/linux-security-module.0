@@ -2,95 +2,91 @@ Return-Path: <SRS0=SKQR=64=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7D02C433E1
-	for <linux-security-module@archiver.kernel.org>; Thu, 14 May 2020 10:40:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63ACBC433E0
+	for <linux-security-module@archiver.kernel.org>; Thu, 14 May 2020 11:00:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 88C7420722
-	for <linux-security-module@archiver.kernel.org>; Thu, 14 May 2020 10:40:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 421C520575
+	for <linux-security-module@archiver.kernel.org>; Thu, 14 May 2020 11:00:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726094AbgENKkd (ORCPT
+        id S1726161AbgENLAS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 14 May 2020 06:40:33 -0400
-Received: from smtp-8fac.mail.infomaniak.ch ([83.166.143.172]:45329 "EHLO
-        smtp-8fac.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725978AbgENKkc (ORCPT
+        Thu, 14 May 2020 07:00:18 -0400
+Received: from mga09.intel.com ([134.134.136.24]:3191 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726050AbgENLAS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 14 May 2020 06:40:32 -0400
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 49N7N05RDVzlhpy6;
-        Thu, 14 May 2020 12:40:00 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 49N7Mz3W0czljKBC;
-        Thu, 14 May 2020 12:39:59 +0200 (CEST)
-Subject: Re: [PATCH v17 05/10] fs,landlock: Support filesystem access-control
-To:     James Morris <jmorris@namei.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Cc:     linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Arnd Bergmann <arnd@arndb.de>,
+        Thu, 14 May 2020 07:00:18 -0400
+IronPort-SDR: 7zE17mieHWjU8HMaKv7DYZAAdsh6wqKN+NG98zu2j1IhG2vws4dyfrlUlfEuSc3ZR1Lnba+BOj
+ avoLbm4G1yGw==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2020 04:00:18 -0700
+IronPort-SDR: +hjyVdlN/1wv/Xi+U2sxAq4ZTMYwlT0QzVkU+LLuYg4r5MEGzhAP7TfGAceLDIWol6y92b3p5S
+ XyNV5Afk68Mw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,391,1583222400"; 
+   d="scan'208";a="280819242"
+Received: from apogrebi-mobl2.ger.corp.intel.com ([10.249.39.119])
+  by orsmga002.jf.intel.com with ESMTP; 14 May 2020 04:00:14 -0700
+Message-ID: <3efc41d3ba70d253e30187485459a724a36bb5a9.camel@linux.intel.com>
+Subject: Re: [PATCH] keys: Make the KEY_NEED_* perms an enum rather than a
+ mask
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     David Howells <dhowells@redhat.com>, stephen.smalley.work@gmail.com
+Cc:     Paul Moore <paul@paul-moore.com>,
         Casey Schaufler <casey@schaufler-ca.com>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-security-module@vger.kernel.org, x86@kernel.org
-References: <20200511192156.1618284-1-mic@digikod.net>
- <20200511192156.1618284-6-mic@digikod.net>
- <alpine.LRH.2.21.2005141335280.30052@namei.org>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Message-ID: <c159d845-6108-4b67-6527-405589fa5382@digikod.net>
-Date:   Thu, 14 May 2020 12:39:58 +0200
-User-Agent: 
+        keyrings@vger.kernel.org, selinux@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Thu, 14 May 2020 14:00:14 +0300
+In-Reply-To: <158932282880.2885325.2688622278854566047.stgit@warthog.procyon.org.uk>
+References: <CAEjxPJ6pFdDfm55pv9bT3CV5DTFF9VqzRmG_Xi5bKNxPaGuOLg@mail.gmail.com>
+         <158932282880.2885325.2688622278854566047.stgit@warthog.procyon.org.uk>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.1-2 
 MIME-Version: 1.0
-In-Reply-To: <alpine.LRH.2.21.2005141335280.30052@namei.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
-X-Antivirus-Code: 0x100000
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Tue, 2020-05-12 at 23:33 +0100, David Howells wrote:
+> Since the meaning of combining the KEY_NEED_* constants is undefined, make
+> it so that you can't do that by turning them into an enum.
+> 
+> The enum is also given some extra values to represent special
+> circumstances, such as:
+> 
+>  (1) The '0' value is reserved and causes a warning to trap the parameter
+>      being unset.
+> 
+>  (2) The key is to be unlinked and we require no permissions on it, only
+>      the keyring, (this replaces the KEY_LOOKUP_FOR_UNLINK flag).
+> 
+>  (3) An override due to CAP_SYS_ADMIN.
+> 
+>  (4) An override due to an instantiation token being present.
+> 
+>  (5) The permissions check is being deferred to later key_permission()
+>      calls.
+> 
+> The extra values give the opportunity for LSMs to audit these situations.
+> 
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> cc: Paul Moore <paul@paul-moore.com>
+> cc: Stephen Smalley <stephen.smalley.work@gmail.com>
+> cc: Casey Schaufler <casey@schaufler-ca.com>
+> cc: keyrings@vger.kernel.org
+> cc: selinux@vger.kernel.org
 
-On 14/05/2020 05:37, James Morris wrote:
-> On Mon, 11 May 2020, Mickaël Salaün wrote:
-> 
-> 
->> diff --git a/include/linux/fs.h b/include/linux/fs.h
->> index 45cc10cdf6dd..2276642f8e05 100644
->> --- a/include/linux/fs.h
->> +++ b/include/linux/fs.h
->> @@ -1517,6 +1517,11 @@ struct super_block {
->>  	/* Pending fsnotify inode refs */
->>  	atomic_long_t s_fsnotify_inode_refs;
->>  
->> +#ifdef CONFIG_SECURITY_LANDLOCK
->> +	/* References to Landlock underlying objects */
->> +	atomic_long_t s_landlock_inode_refs;
->> +#endif
->> +
-> 
-> This needs to be converted to the LSM API via superblock blob stacking.
-> 
-> See Casey's old patch: 
-> https://lore.kernel.org/linux-security-module/20190829232935.7099-2-casey@schaufler-ca.com/
+So extensive comments already from Stephen and Paul that I'll just
+wait for the next version (agree with the idea though).
 
-s_landlock_inode_refs is quite similar to s_fsnotify_inode_refs, but I
-can do it once the superblock security blob patch is upstream. Is it a
-blocker for now? What is the current status of lbs_superblock?
+/Jarkko
 
-Anyway, we also need to have a call to landlock_release_inodes() in
-generic_shutdown_super(), which does not fit the LSM framework, and I
-think it is not an issue. Landlock handling of inodes is quite similar
-to fsnotify.
