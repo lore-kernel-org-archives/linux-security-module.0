@@ -2,151 +2,168 @@ Return-Path: <SRS0=SKQR=64=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F1ABC433DF
-	for <linux-security-module@archiver.kernel.org>; Thu, 14 May 2020 15:00:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AEABC433E0
+	for <linux-security-module@archiver.kernel.org>; Thu, 14 May 2020 15:45:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 50B9B205CB
-	for <linux-security-module@archiver.kernel.org>; Thu, 14 May 2020 15:00:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 438132065D
+	for <linux-security-module@archiver.kernel.org>; Thu, 14 May 2020 15:45:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WeBSVMSY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728043AbgENPA2 (ORCPT
+        id S1726582AbgENPpS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 14 May 2020 11:00:28 -0400
-Received: from out02.mta.xmission.com ([166.70.13.232]:60264 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727991AbgENPA1 (ORCPT
+        Thu, 14 May 2020 11:45:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47364 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726146AbgENPpR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 14 May 2020 11:00:27 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jZFLM-0008Eb-OC; Thu, 14 May 2020 09:00:16 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jZFLI-0002l2-0S; Thu, 14 May 2020 09:00:16 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Rob Landley <rob@landley.net>,
-        Bernd Edlinger <bernd.edlinger@hotmail.de>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Thu, 14 May 2020 11:45:17 -0400
+Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9A5BC061A0C
+        for <linux-security-module@vger.kernel.org>; Thu, 14 May 2020 08:45:15 -0700 (PDT)
+Received: by mail-pj1-x1042.google.com with SMTP id q24so12612109pjd.1
+        for <linux-security-module@vger.kernel.org>; Thu, 14 May 2020 08:45:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=C14dFYivD8qv8BpAvB7kTDBgmObt0Bwj81tS0Zc4/E8=;
+        b=WeBSVMSYQ4gtB5dULeEkKU/Ya0fz/EW/RpuUt7D8OeJEBKAKV2pF5kPidP02iOR39J
+         G1MttEPeItqlTkRXkO6DaVmCrP7nH7+PO7my0CuD5d86lDI5xv46HrYCZiFQuNjdOnTz
+         5lq27uwgV1aYUO8FPK6JNzqOwNdl1+mzKbYGk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=C14dFYivD8qv8BpAvB7kTDBgmObt0Bwj81tS0Zc4/E8=;
+        b=T2AjRp4F4XDaEL9PhG4H020BU+WNgExpLdfR4bu3oRmr/ZSyKNEN908QJKhypCdu78
+         lK647HN04j5Pk2hkmOGl5/yudpQlDzYzRToNV5hImqvbSDVQDPK26MQDoRpYM8+6MkD1
+         pOSxsoHq1QYFh810FdKXuvqI1lnp17c6qPNMSIWgMQGbOUkTPXfwmnB5CErzwDoI5WkQ
+         ZnBeeJitilNW5yWSK3scjpnS43tOEGUiWXFXmOFLB7KEjoyf/5aNZSJ14g+rrQa0wbr3
+         ayziew+kt3uG9J08asktcLx/BnxTBHBKk5JyrPZnlUZxsrE9Ph+23GNMvtliMrJkTmjk
+         TdNQ==
+X-Gm-Message-State: AOAM533D5z5LUU7v6emLbaR2FyqyshqpR5PaWnsybHzssddbD9wdU3mc
+        8Yz3aqkAXMl5cO2g8YxhdFAsBQ==
+X-Google-Smtp-Source: ABdhPJyhzYoT7OtYhHCXKJ4eWD6sNRzKX5qxh8oQ2rT3RB19/hswKImd/xT2ezGyqupFNS8qGCcfOg==
+X-Received: by 2002:a17:902:c113:: with SMTP id 19mr4514772pli.95.1589471115414;
+        Thu, 14 May 2020 08:45:15 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id e15sm1909094pfh.23.2020.05.14.08.45.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 May 2020 08:45:14 -0700 (PDT)
+Date:   Thu, 14 May 2020 08:45:13 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Eric Chiang <ericchiang@google.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Philippe =?iso-8859-1?Q?Tr=E9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
         LSM List <linux-security-module@vger.kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Andy Lutomirski <luto@amacapital.net>
-References: <87eerszyim.fsf_-_@x220.int.ebiederm.org>
-        <ee83587b-8a1c-3c4f-cc0f-7bc98afabae1@I-love.SAKURA.ne.jp>
-        <CAHk-=wgQ2ovXMW=5ZHCpowkE1PwPQSL7oV4YXzBxd6eqNRXxnQ@mail.gmail.com>
-        <87sgg6v8we.fsf@x220.int.ebiederm.org>
-        <202005111428.B094E3B76A@keescook>
-        <874kslq9jm.fsf@x220.int.ebiederm.org>
-        <202005121218.ED0B728DA@keescook>
-        <87lflwq4hu.fsf@x220.int.ebiederm.org>
-        <202005121606.5575978B@keescook> <202005121625.20B35A3@keescook>
-        <202005121649.4ED677068@keescook>
-Date:   Thu, 14 May 2020 09:56:36 -0500
-In-Reply-To: <202005121649.4ED677068@keescook> (Kees Cook's message of "Tue,
-        12 May 2020 16:51:29 -0700")
-Message-ID: <87sgg2ftuj.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH v5 3/6] fs: Enable to enforce noexec mounts or file exec
+ through O_MAYEXEC
+Message-ID: <202005140830.2475344F86@keescook>
+References: <20200505153156.925111-1-mic@digikod.net>
+ <20200505153156.925111-4-mic@digikod.net>
+ <CAEjxPJ7y2G5hW0WTH0rSrDZrorzcJ7nrQBjfps2OWV5t1BUYHw@mail.gmail.com>
+ <202005131525.D08BFB3@keescook>
+ <202005132002.91B8B63@keescook>
+ <CAEjxPJ7WjeQAz3XSCtgpYiRtH+Jx-UkSTaEcnVyz_jwXKE3dkw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1jZFLI-0002l2-0S;;;mid=<87sgg2ftuj.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX184UonXunbqRpJTjGc7cdgy0PX4+YlZfjw=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [PATCH 3/5] exec: Remove recursion from search_binary_handler
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAEjxPJ7WjeQAz3XSCtgpYiRtH+Jx-UkSTaEcnVyz_jwXKE3dkw@mail.gmail.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Kees Cook <keescook@chromium.org> writes:
+On Thu, May 14, 2020 at 08:22:01AM -0400, Stephen Smalley wrote:
+> On Wed, May 13, 2020 at 11:05 PM Kees Cook <keescook@chromium.org> wrote:
+> >
+> > On Wed, May 13, 2020 at 04:27:39PM -0700, Kees Cook wrote:
+> > > Like, couldn't just the entire thing just be:
+> > >
+> > > diff --git a/fs/namei.c b/fs/namei.c
+> > > index a320371899cf..0ab18e19f5da 100644
+> > > --- a/fs/namei.c
+> > > +++ b/fs/namei.c
+> > > @@ -2849,6 +2849,13 @@ static int may_open(const struct path *path, int acc_mode, int flag)
+> > >               break;
+> > >       }
+> > >
+> > > +     if (unlikely(mask & MAY_OPENEXEC)) {
+> > > +             if (sysctl_omayexec_enforce & OMAYEXEC_ENFORCE_MOUNT &&
+> > > +                 path_noexec(path))
+> > > +                     return -EACCES;
+> > > +             if (sysctl_omayexec_enforce & OMAYEXEC_ENFORCE_FILE)
+> > > +                     acc_mode |= MAY_EXEC;
+> > > +     }
+> > >       error = inode_permission(inode, MAY_OPEN | acc_mode);
+> > >       if (error)
+> > >               return error;
+> > >
+> >
+> > FYI, I've confirmed this now. Effectively with patch 2 dropped, patch 3
+> > reduced to this plus the Kconfig and sysctl changes, the self tests
+> > pass.
+> >
+> > I think this makes things much cleaner and correct.
+> 
+> I think that covers inode-based security modules but not path-based
+> ones (they don't implement the inode_permission hook).  For those, I
+> would tentatively guess that we need to make sure FMODE_EXEC is set on
+> the open file and then they need to check for that in their file_open
+> hooks.
 
-> On Tue, May 12, 2020 at 04:47:14PM -0700, Kees Cook wrote:
->> And now I wonder if qemu actually uses the resulting AT_EXECFD ...
->
-> It does, though I'm not sure if this is to support crossing mount points,
-> dropping privileges, or something else, since it does fall back to just
-> trying to open the file.
->
->     execfd = qemu_getauxval(AT_EXECFD);
->     if (execfd == 0) {
->         execfd = open(filename, O_RDONLY);
->         if (execfd < 0) {
->             printf("Error while loading %s: %s\n", filename, strerror(errno));
->             _exit(EXIT_FAILURE);
->         }
->     }
+I kept confusing myself about what order things happened in, so I made
+these handy notes about the call graph:
 
-My hunch is that the fallback exists from a time when the kernel did not
-implement AT_EXECFD, or so that qemu can run on kernels that don't
-implement AT_EXECFD.  It doesn't really matter unless the executable is
-suid, or otherwise changes privileges.
+openat2(dfd, char * filename, open_how)
+    do_filp_open(dfd, filename, open_flags)
+        path_openat(nameidata, open_flags, flags)
+            do_open(nameidata, file, open_flags) 
+                may_open(path, acc_mode, open_flag)
+                    inode_permission(inode, MAY_OPEN | acc_mode)
+                        security_inode_permission(inode, acc_mode)
+                vfs_open(path, file)
+                    do_dentry_open(file, path->dentry->d_inode, open)
+                        if (unlikely(f->f_flags & FMODE_EXEC && !S_ISREG(inode->i_mode))) ...
+                        security_file_open(f)
+                        open()
 
+So, it looks like adding FMODE_EXEC into f_flags in do_open() is needed in
+addition to injecting MAY_EXEC into acc_mode in do_open()? Hmmm
 
-I looked into this a bit to remind myself why exec works the way it
-works, with changing privileges.
-
-The classic attack is pointing a symlink at a #! script that is suid or
-otherwise changes privileges.  The kernel will open the script and set
-the privileges, read the interpreter from the first line, and proceed to
-exec the interpreter.  The interpreter will then open the script using
-the pathname supplied by the kernel.  The name of the symlink.
-Before the interpreter reopens the script the attack would replace
-the symlink with a script that does something else, but gets to run
-with the privileges of the script.
-
-
-Defending against that time of check vs time of use attack is why
-bprm_fill_uid, and cap_bprm_set_creds use the credentials derived from
-the interpreter instead of the credentials derived from the script.
-
-
-The other defense is to replace the pathname of the executable that the
-intepreter will open with /dev/fd/N.
-
-All of this predates Linux entirely.  I do remember this was fixed at
-some point in Linux but I don't remember the details.  I can just read
-the solution that was picked in the code.
-
-
-
-All of this makes me wonder how are the LSMs protected against this
-attack.
-
-Let's see the following LSMS implement brpm_set_creds:
-tomoyo   - Abuses bprm_set_creds to call tomoyo_load_policy [ safe ]
-smack    - Requires CAP_MAC_ADMIN to smack setxattrs        [ vulnerable? ]
-           Uses those xattrs in smack_bprm_set_creds
-apparmor - Everything is based on names so the symlink      [ safe? ]
-           attack won't work as it has the wrong name.
-           As long as the trusted names can't be renamed
-           apparmor appears good.
-selinux  - Appears to let anyone set selinux xattrs         [ safe? ]
-           Requires permission for a sid transfer
-           As the attack appears not to allow anything that
-           would not be allowed anyway it looks like selinux
-           is safe.
-
-LSM folks, especially Casey am I reading this correctly?  Did I
-correctly infer how your LSMs deal with the time of check to time of use
-attack on the script name?
-
-Eric
-
+-- 
+Kees Cook
