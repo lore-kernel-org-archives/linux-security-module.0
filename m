@@ -2,87 +2,132 @@ Return-Path: <SRS0=SKQR=64=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D364C433E2
-	for <linux-security-module@archiver.kernel.org>; Thu, 14 May 2020 17:32:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7BFAC433E0
+	for <linux-security-module@archiver.kernel.org>; Thu, 14 May 2020 18:22:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 33CF8206DC
-	for <linux-security-module@archiver.kernel.org>; Thu, 14 May 2020 17:32:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8CCA920671
+	for <linux-security-module@archiver.kernel.org>; Thu, 14 May 2020 18:22:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726197AbgENRcP (ORCPT
+        id S1726950AbgENSWR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 14 May 2020 13:32:15 -0400
-Received: from namei.org ([65.99.196.166]:59018 "EHLO namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726027AbgENRcP (ORCPT
+        Thu, 14 May 2020 14:22:17 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39696 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726075AbgENSWQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 14 May 2020 13:32:15 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id 04EHVcqA027184;
-        Thu, 14 May 2020 17:31:38 GMT
-Date:   Fri, 15 May 2020 03:31:38 +1000 (AEST)
-From:   James Morris <jmorris@namei.org>
-To:     =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-security-module@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH v17 05/10] fs,landlock: Support filesystem
- access-control
-In-Reply-To: <c159d845-6108-4b67-6527-405589fa5382@digikod.net>
-Message-ID: <alpine.LRH.2.21.2005150329580.26489@namei.org>
-References: <20200511192156.1618284-1-mic@digikod.net> <20200511192156.1618284-6-mic@digikod.net> <alpine.LRH.2.21.2005141335280.30052@namei.org> <c159d845-6108-4b67-6527-405589fa5382@digikod.net>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="1665246916-621977297-1589477498=:26489"
+        Thu, 14 May 2020 14:22:16 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 04EIJAGZ051328;
+        Thu, 14 May 2020 14:21:57 -0400
+Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 310x56a4xb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 14 May 2020 14:21:57 -0400
+Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
+        by ppma03ams.nl.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 04EIB0Ih019287;
+        Thu, 14 May 2020 18:21:55 GMT
+Received: from b06avi18878370.portsmouth.uk.ibm.com (b06avi18878370.portsmouth.uk.ibm.com [9.149.26.194])
+        by ppma03ams.nl.ibm.com with ESMTP id 3100ubc5h3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 14 May 2020 18:21:55 +0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 04EILrK665733002
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 14 May 2020 18:21:53 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 74F104C044;
+        Thu, 14 May 2020 18:21:53 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 511364C04E;
+        Thu, 14 May 2020 18:21:52 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.165.117])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 14 May 2020 18:21:52 +0000 (GMT)
+Message-ID: <1589480510.4757.5.camel@linux.ibm.com>
+Subject: Re: [PATCH v2] evm: Fix a small race in init_desc()
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Krzysztof Struczynski <krzysztof.struczynski@huawei.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@nokia.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Date:   Thu, 14 May 2020 14:21:50 -0400
+In-Reply-To: <19452750e36d462088f4fca3d627a090@huawei.com>
+References: <c7743ab21a574eeeac40d783e0b8581c@huawei.com>
+         <20200512174706.GA298379@mwanda>
+         <a30fdceccef443b0a6ac8e0b06b83efc@huawei.com>
+         <19452750e36d462088f4fca3d627a090@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.676
+ definitions=2020-05-14_05:2020-05-14,2020-05-14 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
+ mlxscore=0 bulkscore=0 priorityscore=1501 mlxlogscore=999 impostorscore=0
+ adultscore=0 clxscore=1011 cotscore=-2147483648 lowpriorityscore=0
+ suspectscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2004280000 definitions=main-2005140156
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
-
---1665246916-621977297-1589477498=:26489
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-
-On Thu, 14 May 2020, Mickaël Salaün wrote:
-
-> > This needs to be converted to the LSM API via superblock blob stacking.
+On Thu, 2020-05-14 at 07:11 +0000, Krzysztof Struczynski wrote:
+> > > From: Dan Carpenter [mailto:dan.carpenter@oracle.com]
+> > > This patch avoids a kernel panic due to accessing an error pointer set
+> > > by crypto_alloc_shash(). It occurs especially when there are many
+> > > files that require an unsupported algorithm, as it would increase the
+> > > likelihood of the following race condition.
+> > >
+> > > Imagine we have two threads and in the first thread
+> > > crypto_alloc_shash() fails and returns an error pointer.
+> > >
+> > > 		*tfm = crypto_alloc_shash(algo, 0, CRYPTO_NOLOAD);
+> > > 		if (IS_ERR(*tfm)) {
+> > > 			rc = PTR_ERR(*tfm); <--- FIRST THREAD HERE!
+> > > 			pr_err("Can not allocate %s (reason: %ld)\n", algo, rc);
+> > > 			*tfm = NULL;
+> > >
+> > > And the second thread is here:
+> > >
+> > > 	if (*tfm == NULL) {  <--- SECOND THREAD HERE!
+> > > 		mutex_lock(&mutex);
+> > > 		if (*tfm)
+> > > 			goto out;
+> > >
+> > > Since "*tfm" is non-NULL, we assume that it is valid and that leads to
+> > > a crash when it dereferences "*tfm".
+> > >
+> > > 	desc = kmalloc(sizeof(*desc) + crypto_shash_descsize(*tfm),
+> > >                                                              ^^^^
+> > >
+> > > This patch fixes the problem by introducing a temporary "tmp_tfm" and
+> > > only setting "*tfm" at the very end after everything has succeeded.
+> > > The other change is that I reversed the initial "if (!*tfm) {"
+> > > condition and pull the code in one indent level.
+> > >
+> > > Cc: stable@vger.kernel.org
+> > > Fixes: d46eb3699502b ("evm: crypto hash replaced by shash")
+> > > Reported-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > > Reported-by: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
+> > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > > 
-> > See Casey's old patch: 
-> > https://lore.kernel.org/linux-security-module/20190829232935.7099-2-casey@schaufler-ca.com/
+> > Acked-by: Roberto Sassu <roberto.sassu@huawei.com>
 > 
-> s_landlock_inode_refs is quite similar to s_fsnotify_inode_refs, but I
-> can do it once the superblock security blob patch is upstream. Is it a
-> blocker for now? What is the current status of lbs_superblock?
+> Acked-by: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
 
-Yes it is a blocker. Landlock should not be adding its own functions in 
-core code, it should be using the LSM API (and extending that as needed).
+Thanks, Roberto and Krzysztof.
 
-> Anyway, we also need to have a call to landlock_release_inodes() in
-> generic_shutdown_super(), which does not fit the LSM framework, and I
-> think it is not an issue. Landlock handling of inodes is quite similar
-> to fsnotify.
+This patch is now queued in the "fixes" branch.
 
-fsnotify is not an LSM.
-
--- 
-James Morris
-<jmorris@namei.org>
-
---1665246916-621977297-1589477498=:26489--
+Mimi
