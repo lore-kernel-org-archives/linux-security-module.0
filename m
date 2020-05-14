@@ -2,147 +2,75 @@ Return-Path: <SRS0=SKQR=64=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A649C433E1
-	for <linux-security-module@archiver.kernel.org>; Thu, 14 May 2020 19:28:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C580C433DF
+	for <linux-security-module@archiver.kernel.org>; Thu, 14 May 2020 19:37:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 030FB2065C
-	for <linux-security-module@archiver.kernel.org>; Thu, 14 May 2020 19:28:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 530682065C
+	for <linux-security-module@archiver.kernel.org>; Thu, 14 May 2020 19:37:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726132AbgENT2U (ORCPT
+        id S1728282AbgENThj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 14 May 2020 15:28:20 -0400
-Received: from smtp-bc0b.mail.infomaniak.ch ([45.157.188.11]:34773 "EHLO
-        smtp-bc0b.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725975AbgENT2T (ORCPT
+        Thu, 14 May 2020 15:37:39 -0400
+Received: from namei.org ([65.99.196.166]:59072 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726667AbgENThj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 14 May 2020 15:28:19 -0400
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 49NM5Y60DmzlhGVS;
-        Thu, 14 May 2020 21:28:17 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 49NM5X23j6zljVWn;
-        Thu, 14 May 2020 21:28:16 +0200 (CEST)
-Subject: Re: [RFC PATCH v3 00/12] Integrity Policy Enforcement LSM (IPE)
-To:     Deven Bowers <deven.desai@linux.microsoft.com>, agk@redhat.com,
-        axboe@kernel.dk, snitzer@redhat.com, jmorris@namei.org,
-        serge@hallyn.com, zohar@linux.ibm.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, dm-devel@redhat.com,
-        linux-block@vger.kernel.org, jannh@google.com
-Cc:     tyhicks@linux.microsoft.com, pasha.tatashin@soleen.com,
-        sashal@kernel.org, jaskarankhurana@linux.microsoft.com,
-        nramas@linux.microsoft.com, mdsakib@linux.microsoft.com,
-        linux-kernel@vger.kernel.org, corbet@lwn.net
-References: <20200415162550.2324-1-deven.desai@linux.microsoft.com>
- <b07ac7e1-7cf5-92c9-81d0-64174c3d5024@digikod.net>
- <0001755a-6b2a-b13b-960c-eb0b065c8e3c@linux.microsoft.com>
- <8ba7b15f-de91-40f7-fc95-115228345fce@linux.microsoft.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Message-ID: <44fb36ae-959d-4ff7-ed1f-ccfc2e292232@digikod.net>
-Date:   Thu, 14 May 2020 21:28:15 +0200
-User-Agent: 
+        Thu, 14 May 2020 15:37:39 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id 04EJb3d8007993;
+        Thu, 14 May 2020 19:37:03 GMT
+Date:   Fri, 15 May 2020 05:37:03 +1000 (AEST)
+From:   James Morris <jmorris@namei.org>
+To:     =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-security-module@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH v17 05/10] fs,landlock: Support filesystem
+ access-control
+In-Reply-To: <2561827e-020c-9a76-98ae-9514904c69f9@digikod.net>
+Message-ID: <alpine.LRH.2.21.2005150536440.7929@namei.org>
+References: <20200511192156.1618284-1-mic@digikod.net> <20200511192156.1618284-6-mic@digikod.net> <alpine.LRH.2.21.2005141335280.30052@namei.org> <c159d845-6108-4b67-6527-405589fa5382@digikod.net> <alpine.LRH.2.21.2005150329580.26489@namei.org>
+ <2561827e-020c-9a76-98ae-9514904c69f9@digikod.net>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <8ba7b15f-de91-40f7-fc95-115228345fce@linux.microsoft.com>
-Content-Type: text/plain; charset=iso-8859-15
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
-X-Antivirus-Code: 0x100000
+Content-Type: multipart/mixed; boundary="1665246916-72433049-1589485024=:7929"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-On 12/05/2020 22:46, Deven Bowers wrote:
-> 
-> 
-> On 5/11/2020 11:03 AM, Deven Bowers wrote:
->>
->>
->> On 5/10/2020 2:28 AM, Mickaël Salaün wrote:
->>
->> [...snip]
->>
->>>>
->>>> Additionally, rules are evaluated top-to-bottom. As a result, any
->>>> revocation rules, or denies should be placed early in the file to
->>>> ensure
->>>> that these rules are evaluated before a rule with "action=ALLOW" is
->>>> hit.
->>>>
->>>> IPE policy is designed to be forward compatible and backwards
->>>> compatible,
->>>> thus any failure to parse a rule will result in the line being ignored,
->>>> and a warning being emitted. If backwards compatibility is not
->>>> required,
->>>> the kernel commandline parameter and sysctl, ipe.strict_parse can be
->>>> enabled, which will cause these warnings to be fatal.
->>>
->>> Ignoring unknown command may lead to inconsistent beaviors. To achieve
->>> forward compatibility, I think it would be better to never ignore
->>> unknown rule but to give a way to userspace to known what is the current
->>> kernel ABI. This could be done with a securityfs file listing the
->>> current policy grammar.
->>>
->>
->> That's a fair point. From a manual perspective, I think this is fine.
->> A human-user can interpret a grammar successfully on their own when new
->> syntax is introduced.
->>
->>  From a producing API perspective, I'd have to think about it a bit
->> more. Ideally, the grammar would be structured in such a way that the
->> userland
->> interpreter of this grammar would not have to be updated once new syntax
->> is introduced, avoiding the need to update the userland binary. To do so
->> generically ("op=%s") is easy, but doesn't necessarily convey sufficient
->> information (what happens when a new "op" token is introduced?). I think
->> this may come down to regular expression representations of valid values
->> for these tokens, which worries me as regular expressions are incredibly
->> error-prone[1].
->>
->> I'll see what I can come up with regarding this.
-> 
-> I have not found a way that I like to expose some kind of grammar
-> through securityfs that can be understood by usermode to parse the
-> policy. Here's what I propose as a compromise:
-> 
->     1. I remove the unknown command behavior. This address your
-> first point about inconsistent behaviors, and effectively removes the
-> strict_parse sysctl (as it is always enabled).
-> 
->     2. I introduce a versioning system for the properties
-> themselves. The valid set of properties and their versions
-> can be found in securityfs, under say, ipe/config in a key=value
-> format where `key` indicates the understood token, and `value`
-> indicates their current version. For example:
-> 
->     $ cat $SECURITYFS/ipe/config
->     op=1
->     action=1
->     policy_name=1
->     policy_version=1
->     dmverity_signature=1
->     dmverity_roothash=1
->     boot_verified=1
+--1665246916-72433049-1589485024=:7929
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 
-The name ipe/config sounds like a file to configure IPE. Maybe something
-like ipe/config_abi or ipe/config_grammar?
+On Thu, 14 May 2020, MickaÃ«l SalaÃ¼n wrote:
 
+> > fsnotify is not an LSM.
 > 
-> if new syntax is introduced, the version number is increased.
-> 
->     3. The format of those versions are documented as part of
-> the admin-guide around IPE. If user-mode at that point wants to rip
-> the documentation formats and correlate with the versioning, then
-> it fulfills the same functionality as above, with out the complexity
-> around exposing a parsing grammar and interpreting it on-the-fly.
-> Many of these are unlikely to move past version 1, however.
-> 
-> Thoughts?
-> 
+> Yes, so I'll need to add a new LSM hook for this (release) call, right?
 
-That seems reasonable.
+Unless an existing one will work.
+
+-- 
+James Morris
+<jmorris@namei.org>
+
+--1665246916-72433049-1589485024=:7929--
