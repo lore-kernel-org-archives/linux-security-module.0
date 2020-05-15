@@ -2,34 +2,34 @@ Return-Path: <SRS0=nEb1=65=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD2FEC433DF
-	for <linux-security-module@archiver.kernel.org>; Fri, 15 May 2020 19:26:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E22DC433DF
+	for <linux-security-module@archiver.kernel.org>; Fri, 15 May 2020 20:14:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7DA2A2070A
-	for <linux-security-module@archiver.kernel.org>; Fri, 15 May 2020 19:26:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1293E2070A
+	for <linux-security-module@archiver.kernel.org>; Fri, 15 May 2020 20:14:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726212AbgEOT0L (ORCPT
+        id S1726183AbgEOUOY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 15 May 2020 15:26:11 -0400
-Received: from raptor.unsafe.ru ([5.9.43.93]:50062 "EHLO raptor.unsafe.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726144AbgEOT0K (ORCPT
+        Fri, 15 May 2020 16:14:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60650 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726168AbgEOUOY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 15 May 2020 15:26:10 -0400
-Received: from comp-core-i7-2640m-0182e6 (ip-89-102-33-211.net.upcbroadband.cz [89.102.33.211])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by raptor.unsafe.ru (Postfix) with ESMTPSA id 4FC8020A0B;
-        Fri, 15 May 2020 19:26:05 +0000 (UTC)
-Date:   Fri, 15 May 2020 21:25:59 +0200
-From:   Alexey Gladkov <gladkov.alexey@gmail.com>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Fri, 15 May 2020 16:14:24 -0400
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04CA9C061A0C;
+        Fri, 15 May 2020 13:14:23 -0700 (PDT)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jZgiT-009GPf-NM; Fri, 15 May 2020 20:13:57 +0000
+Date:   Fri, 15 May 2020 21:13:57 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Alexey Gladkov <gladkov.alexey@gmail.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
         syzbot <syzbot+c1af344512918c61362c@syzkaller.appspotmail.com>,
         jmorris@namei.org, linux-kernel@vger.kernel.org,
         linux-next@vger.kernel.org, linux-security-module@vger.kernel.org,
@@ -38,69 +38,53 @@ Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>
 Subject: Re: linux-next boot error: general protection fault in
  tomoyo_get_local_path
-Message-ID: <20200515192559.e5ofmmzxdviierkb@comp-core-i7-2640m-0182e6>
+Message-ID: <20200515201357.GG23230@ZenIV.linux.org.uk>
 References: <0000000000002f0c7505a5b0e04c@google.com>
  <c3461e26-1407-2262-c709-dac0df3da2d0@i-love.sakura.ne.jp>
- <87lfltcbc4.fsf@x220.int.ebiederm.org>
+ <72cb7aea-92bd-d71b-2f8a-63881a35fad8@i-love.sakura.ne.jp>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87lfltcbc4.fsf@x220.int.ebiederm.org>
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.1 (raptor.unsafe.ru [5.9.43.93]); Fri, 15 May 2020 19:26:08 +0000 (UTC)
+In-Reply-To: <72cb7aea-92bd-d71b-2f8a-63881a35fad8@i-love.sakura.ne.jp>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, May 15, 2020 at 01:16:59PM -0500, Eric W. Biederman wrote:
-> Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp> writes:
-> 
+On Sat, May 16, 2020 at 12:36:28AM +0900, Tetsuo Handa wrote:
+> On 2020/05/16 0:18, Tetsuo Handa wrote:
 > > This is
-> >
+> > 
 > >         if (sb->s_magic == PROC_SUPER_MAGIC && *pos == '/') {
 > >                 char *ep;
 > >                 const pid_t pid = (pid_t) simple_strtoul(pos + 1, &ep, 10);
 > >                 struct pid_namespace *proc_pidns = proc_pid_ns(d_inode(dentry)); // <= here
-> >
+> > 
 > >                 if (*ep == '/' && pid && pid ==
 > >                     task_tgid_nr_ns(current, proc_pidns)) {
-> >
+> > 
 > > which was added by commit c59f415a7cb6e1e1 ("Use proc_pid_ns() to get pid_namespace from the proc superblock").
-> >
+> > 
 > > @@ -161,9 +162,10 @@ static char *tomoyo_get_local_path(struct dentry *dentry, char * const buffer,
 > >         if (sb->s_magic == PROC_SUPER_MAGIC && *pos == '/') {
 > >                 char *ep;
 > >                 const pid_t pid = (pid_t) simple_strtoul(pos + 1, &ep, 10);
 > > +               struct pid_namespace *proc_pidns = proc_pid_ns(d_inode(dentry));
-> >
+> > 
 > >                 if (*ep == '/' && pid && pid ==
 > > -                   task_tgid_nr_ns(current, sb->s_fs_info)) {
 > > +                   task_tgid_nr_ns(current, proc_pidns)) {
 > >                         pos = ep - 5;
 > >                         if (pos < buffer)
 > >                                 goto out;
-> >
+> > 
 > > Alexey and Eric, any clue?
+> > 
 > 
-> Looking at the stack backtrace this is happening as part of creating a
-> file or a device node.  The dentry that is passed in most likely
-> comes from d_alloc_parallel.  So we have d_inode == NULL.
-> 
-> I want to suggest doing the very simple fix:
-> 
-> -	if (sb->s_magic == PROC_SUPER_MAGIC && *pos == '/') {
-> +	if (sb->s_magic == PROC_SUPER_MAGIC && *pos == '/' && denty->d_inode) {
-> 
-> But I don't know if there are any other security hooks early in lookup,
-> that could be called for an already existing dentry.
-> 
-> So it looks like we need a version proc_pid_ns that works for a dentry,
-> or a superblock.
-> 
-> Alex do you think you can code up an patch against my proc-next branch
-> to fix this?
+> A similar bug (racing inode destruction with open() on proc filesystem) was fixed as
+> commit 6f7c41374b62fd80 ("tomoyo: Don't use nifty names on sockets."). Then, it might
+> not be safe to replace dentry->d_sb->s_fs_info with dentry->d_inode->i_sb->s_fs_info .
 
-Sure.
-
--- 
-Rgrds, legion
-
+Could you explain why do you want to bother with d_inode() anyway?  Anything that
+does dentry->d_inode->i_sb can bloody well use dentry->d_sb.  And that's never
+changed over the struct dentry lifetime - ->d_sb is set on allocation and never
+modified afterwards.
