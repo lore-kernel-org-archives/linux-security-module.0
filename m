@@ -2,140 +2,87 @@ Return-Path: <SRS0=nEb1=65=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83BA3C433E0
-	for <linux-security-module@archiver.kernel.org>; Fri, 15 May 2020 21:28:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1C20C433E0
+	for <linux-security-module@archiver.kernel.org>; Fri, 15 May 2020 21:29:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 58DB620709
-	for <linux-security-module@archiver.kernel.org>; Fri, 15 May 2020 21:28:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C8D02070A
+	for <linux-security-module@archiver.kernel.org>; Fri, 15 May 2020 21:29:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1589578181;
+	bh=x7AeCB/NMW/ZzWDGMR7CXe91vN9bHMzx7bJOc8s7Sjc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=dbpyAzPPd1C3IhhgHg40b0+nURA7nHdCJNfNrbCEMFnyWtDWKHySH2dzR3lAykan6
+	 GzOzt1rsp/4udnen5FQ+DAaC4yXLAIjeuYGhXLtdyCLVlk04CdkMZkvVC9QL4E45p9
+	 FIhjdSu9H0UJHixDzfP38HmI3Ugx9yWjY6EybNeg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726707AbgEOV2H (ORCPT
+        id S1728078AbgEOV3h (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 15 May 2020 17:28:07 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:42993 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726261AbgEOV2H (ORCPT
+        Fri, 15 May 2020 17:29:37 -0400
+Received: from mail-pj1-f66.google.com ([209.85.216.66]:40350 "EHLO
+        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727942AbgEOV3g (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 15 May 2020 17:28:07 -0400
-Received: from static-50-53-45-43.bvtn.or.frontiernet.net ([50.53.45.43] helo=[192.168.192.153])
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <john.johansen@canonical.com>)
-        id 1jZhsA-0008OC-Ir; Fri, 15 May 2020 21:28:02 +0000
-Subject: Re: [PATCH -next] apparmor: Use true and false for bool variable
-To:     Zou Wei <zou_wei@huawei.com>, jmorris@namei.org, serge@hallyn.com
-Cc:     linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1588074741-73393-1-git-send-email-zou_wei@huawei.com>
-From:   John Johansen <john.johansen@canonical.com>
-Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
- LS0tLS1CRUdJTiBQR1AgUFVCTElDIEtFWSBCTE9DSy0tLS0tCgptUUlOQkU1bXJQb0JFQURB
- azE5UHNnVmdCS2tJbW1SMmlzUFE2bzdLSmhUVEtqSmR3VmJrV1NuTm4rbzZVcDVrCm5LUDFm
- NDlFQlFsY2VXZzF5cC9Od2JSOGFkK2VTRU8vdW1hL0srUHFXdkJwdEtDOVNXRDk3Rkc0dUI0
- L2Nhb20KTEVVOTdzTFFNdG52R1dkeHJ4VlJHTTRhbnpXWU1neno1VFptSWlWVFo0M091NVZw
- YVMxVnoxWlN4UDNoL3hLTgpaci9UY1c1V1FhaTh1M1BXVm5ia2poU1pQSHYxQmdoTjY5cXhF
- UG9tckpCbTFnbXR4M1ppVm1GWGx1d1RtVGdKCk9rcEZvbDduYkowaWxuWUhyQTdTWDNDdFIx
- dXBlVXBNYS9XSWFuVk85NldkVGpISElhNDNmYmhtUXViZTR0eFMKM0ZjUUxPSlZxUXN4NmxF
- OUI3cUFwcG05aFExMHFQV3dkZlB5LyswVzZBV3ROdTVBU2lHVkNJbld6bDJIQnFZZAovWmxs
- OTN6VXErTklvQ244c0RBTTlpSCt3dGFHRGNKeXdJR0luK2VkS050SzcyQU1nQ2hUZy9qMVpv
- V0g2WmVXClBqdVVmdWJWelp0bzFGTW9HSi9TRjRNbWRRRzFpUU50ZjRzRlpiRWdYdXk5Y0dp
- MmJvbUYwenZ5QkpTQU5weGwKS05CRFlLek42S3owOUhVQWtqbEZNTmdvbUwvY2pxZ0FCdEF4
- NTlMK2RWSVpmYUYyODFwSWNVWnp3dmg1K0pvRwplT1c1dUJTTWJFN0wzOG5zem9veWtJSjVY
- ckFjaGtKeE5mejdrK0ZuUWVLRWtOekVkMkxXYzNRRjRCUVpZUlQ2ClBISGdhM1JneWtXNSsx
- d1RNcUpJTGRtdGFQYlhyRjNGdm5WMExSUGN2NHhLeDdCM2ZHbTd5Z2Rvb3dBUkFRQUIKdEIx
- S2IyaHVJRXB2YUdGdWMyVnVJRHhxYjJodVFHcHFiWGd1Ym1WMFBva0NPZ1FUQVFvQUpBSWJB
- d1VMQ1FnSApBd1VWQ2drSUN3VVdBZ01CQUFJZUFRSVhnQVVDVG8wWVZ3SVpBUUFLQ1JBRkx6
- WndHTlhEMkx4SkQvOVRKWkNwCndsbmNUZ1llcmFFTWVEZmtXdjhjMUlzTTFqMEFtRTRWdEwr
- ZkU3ODBaVlA5Z2tqZ2tkWVN4dDdlY0VUUFRLTWEKWlNpc3JsMVJ3cVUwb29nWGRYUVNweHJH
- SDAxaWN1LzJuMGpjWVNxWUtnZ1B4eTc4QkdzMkxacTRYUGZKVFptSApaR25YR3EvZURyL21T
- bmowYWF2QkptTVo2amJpUHo2eUh0QllQWjlmZG84YnRjendQNDFZZVdvSXUyNi84SUk2CmYw
- WG0zVkM1b0FhOHY3UmQrUldaYThUTXdsaHpIRXh4ZWwzanRJN0l6ek9zbm1FOS84RG0wQVJE
- NWlUTENYd1IKMWN3SS9KOUJGL1MxWHY4UE4xaHVUM0l0Q05kYXRncDh6cW9Ka2dQVmptdnlM
- NjRRM2ZFa1liZkhPV3NhYmE5LwprQVZ0Qk56OVJURmg3SUhEZkVDVmFUb3VqQmQ3QnRQcXIr
- cUlqV0ZhZEpEM0k1ZUxDVkp2VnJyb2xyQ0FUbEZ0Ck4zWWtRczZKbjFBaUlWSVUzYkhSOEdq
- ZXZnejVMbDZTQ0dIZ1Jya3lScG5TWWFVL3VMZ24zN042QVl4aS9RQUwKK2J5M0N5RUZManpX
- QUV2eVE4YnEzSXVjbjdKRWJoUy9KLy9kVXFMb2VVZjh0c0dpMDB6bXJJVFpZZUZZQVJoUQpN
- dHNmaXpJclZEdHoxaVBmL1pNcDVnUkJuaXlqcFhuMTMxY20zTTNndjZIclFzQUdubjhBSnJ1
- OEdEaTVYSllJCmNvLzEreC9xRWlOMm5DbGFBT3BiaHpOMmVVdlBEWTVXMHEzYkEvWnAybWZH
- NTJ2YlJJK3RRMEJyMUhkL3ZzbnQKVUhPOTAzbU1aZXAyTnpOM0JaNXFFdlB2RzRyVzVacTJE
- cHliV2JRclNtOW9iaUJLYjJoaGJuTmxiaUE4YW05bwpiaTVxYjJoaGJuTmxia0JqWVc1dmJt
- bGpZV3d1WTI5dFBva0NOd1FUQVFvQUlRVUNUbzBYV2dJYkF3VUxDUWdICkF3VVZDZ2tJQ3dV
- V0FnTUJBQUllQVFJWGdBQUtDUkFGTHpad0dOWEQySXRNRC85anliYzg3ZE00dUFIazZ5Tk0K
- TjBZL0JGbW10VFdWc09CaHFPbm9iNGkzOEJyRE8yQzFoUUNQQ1FlNExMczEvNHB0ZW92UXQ4
- QjJGeXJQVmp3Zwo3alpUSE5LNzRyNmxDQ1Z4eDN5dTFCN1U5UG80VlRrY3NsVmIxL3FtV3V4
- OFhXY040eXZrVHFsTCtHeHB5Sm45CjlaWmZmWEpjNk9oNlRtT2ZiS0d2TXV1djVhclNJQTNK
- SEZMZjlhTHZadEExaXNKVXI3cFM5YXBnOXVUVUdVcDcKd2ZWMFdUNlQzZUczbXRVVTJ1cDVK
- VjQ4NTBMMDVqSFM2dVdpZS9ZK3lmSk9iaXlyeE4vNlpxVzVHb25oTEJxLwptc3pjVjV2QlQz
- QkRWZTNSdkY2WGRNOU9oUG4xK1k4MXg1NCt2UTExM044aUx3RjdHR2ExNFp5SVZBTlpEMEkw
- CkhqUnZhMmsvUnFJUlR6S3l1UEg1cGtsY0tIVlBFRk1tT3pNVCtGT294Tmp2Uys3K3dHMktN
- RFlFbUhQcjFQSkIKWlNaZUh6SzE5dGZhbFBNcHBGeGkrc3lZTGFnTjBtQjdKSFF3WTdjclV1
- T0RoeWNxNjBZVnoxdGFFeWd1M1l2MgoyL0kxRUNHSHZLSEc2d2M5MG80M0MvZWxIRUNYbkVo
- N3RLcGxEY3BJQytPQ21NeEtIaFI0NitYY1p2Z3c0RGdiCjdjYTgzZVFSM0NHODlMdlFwVzJM
- TEtFRUJEajdoWmhrTGJra1BSWm0zdzhKWTQ0YXc4VnRneFdkblNFTUNMeEwKSU9OaDZ1Wjcv
- L0RZVnRjSWFNSllrZWJhWnRHZENwMElnVVpiMjQvVmR2WkNZYk82MkhrLzNWbzFuWHdIVUVz
- Mwo2RC92MWJUMFJaRmk2OUxnc0NjT2N4NGdZTGtDRFFST1pxejZBUkFBb3F3NmtrQmhXeU0x
- ZnZnYW1BVmplWjZuCktFZm5SV2JrQzk0TDFFc0pMdXAzV2IyWDBBQk5PSFNrYlNENHBBdUMy
- dEtGL0VHQnQ1Q1A3UWRWS1JHY1F6QWQKNmIyYzFJZHk5Ukx3Nnc0Z2krbm4vZDFQbTFra1lo
- a1NpNXpXYUlnMG01UlFVaytFbDh6a2Y1dGNFLzFOMFo1TwpLMkpoandGdTViWDBhMGw0Y0ZH
- V1ZRRWNpVk1ES1J0eE1qRXRrM1N4RmFsbTZaZFEycHAyODIyY2xucTR6WjltCld1MWQyd2F4
- aXorYjVJYTR3ZURZYTduNDFVUmNCRVViSkFnbmljSmtKdENUd3lJeElXMktuVnlPcmp2a1F6
- SUIKdmFQMEZkUDJ2dlpvUE1kbENJek9sSWtQTGd4RTBJV3VlVFhlQkpoTnMwMXBiOGJMcW1U
- SU1sdTRMdkJFTEEvdgplaWFqajVzOHk1NDJIL2FIc2ZCZjRNUVVoSHhPL0JaVjdoMDZLU1Vm
- SWFZN09nQWdLdUdOQjNVaWFJVVM1K2E5CmduRU9RTER4S1J5L2E3UTF2OVMrTnZ4KzdqOGlI
- M2prUUpoeFQ2WkJoWkdSeDBna0gzVCtGMG5ORG01TmFKVXMKYXN3Z0pycUZaa1VHZDJNcm0x
- cW5Ld1hpQXQ4U0ljRU5kcTMzUjBLS0tSQzgwWGd3ajhKbjMwdlhMU0crTk8xRwpIMFVNY0F4
- TXd5L3B2azZMVTVKR2paUjczSjVVTFZoSDRNTGJEZ2dEM21QYWlHOCtmb3RUckpVUHFxaGc5
- aHlVCkVQcFlHN3NxdDc0WG43OStDRVpjakxIenlsNnZBRkUyVzBreGxMdFF0VVpVSE8zNmFm
- RnY4cUdwTzNacVB2akIKVXVhdFhGNnR2VVFDd2YzSDZYTUFFUUVBQVlrQ0h3UVlBUW9BQ1FV
- Q1RtYXMrZ0liREFBS0NSQUZMelp3R05YRAoyRC9YRC8wZGRNLzRhaTFiK1RsMWp6bkthalgz
- a0crTWVFWWVJNGY0MHZjbzNyT0xyblJHRk9jYnl5ZlZGNjlNCktlcGllNE93b0kxamNUVTBB
- RGVjbmJXbkROSHByMFNjenhCTXJvM2Juckxoc212anVuVFlJdnNzQlp0QjRhVkoKanVMSUxQ
- VWxuaEZxYTdmYlZxMFpRamJpVi9ydDJqQkVOZG05cGJKWjZHam5wWUljQWJQQ0NhL2ZmTDQv
- U1FSUwpZSFhvaEdpaVM0eTVqQlRtSzVsdGZld0xPdzAyZmtleEgrSUpGcnJHQlhEU2c2bjJT
- Z3hubisrTkYzNGZYY205CnBpYXczbUtzSUNtKzBoZE5oNGFmR1o2SVdWOFBHMnRlb29WRHA0
- ZFlpaCsreFgvWFM4ekJDYzFPOXc0bnpsUDIKZ0t6bHFTV2JoaVdwaWZSSkJGYTRXdEFlSlRk
- WFlkMzdqL0JJNFJXV2hueXc3YUFQTkdqMzN5dEdITlVmNlJvMgovanRqNHRGMXkvUUZYcWpK
- Ry93R2pwZHRSZmJ0VWpxTEhJc3ZmUE5OSnEvOTU4cDc0bmRBQ2lkbFdTSHpqK09wCjI2S3Bi
- Rm5td05PMHBzaVVzbmh2SEZ3UE8vdkFibDNSc1I1KzBSbytodnMyY0VtUXV2OXIvYkRsQ2Zw
- enAydDMKY0srcmh4VXFpc094OERaZnoxQm5rYW9DUkZidnZ2ays3TC9mb21QbnRHUGtxSmNp
- WUU4VEdIa1p3MWhPa3UrNApPb00yR0I1bkVEbGorMlRGL2pMUStFaXBYOVBrUEpZdnhmUmxD
- NmRLOFBLS2ZYOUtkZm1BSWNnSGZuVjFqU24rCjh5SDJkakJQdEtpcVcwSjY5YUlzeXg3aVYv
- MDNwYVBDakpoN1hxOXZBenlkTjVVL1VBPT0KPTZQL2IKLS0tLS1FTkQgUEdQIFBVQkxJQyBL
- RVkgQkxPQ0stLS0tLQo=
-Organization: Canonical
-Message-ID: <375c4f44-85c8-c2ab-5799-9152d079b129@canonical.com>
-Date:   Fri, 15 May 2020 14:28:00 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        Fri, 15 May 2020 17:29:36 -0400
+Received: by mail-pj1-f66.google.com with SMTP id fu13so1558325pjb.5;
+        Fri, 15 May 2020 14:29:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=pYa0xileFKL+iC5XDDg4dnFXtyyvns7Y/zYemD6hOLM=;
+        b=gMTNjZ4bDGtefHm3LrL+FxL97FY9KGd1W+xg4axUYkFCjqSTVOzb2V6U5cVGh9LiRO
+         oCi98zFFeFQ2Z6kBEtAEgSh6lNtbRaT+fqIDT9Zcpf7v7XQEOQ84U44yPce7y7YBjz+C
+         +9dmQXOgFjEjCcr9ZbQpjbaW4rO09VV6eXThGLwkXmfzY4PV1cfRzlj2rNKginBlo2uS
+         8D2t7sR37C0cbGSkHjfm90IVEmgwPPEWOkeoYeSEv8VWh5vUI9BcB2c3BzYvs+/ujh+r
+         i3jmgUe8oj3QYDFMCNdfgQasY+kOpbdkFN/bKbzIe/69PVYK9MySfHW9yc/wYdSWVGrR
+         7PkQ==
+X-Gm-Message-State: AOAM530nJwjojty/LqA4N9iS9t5flIvg1nA6LOxR9jDO7L/soZnqwIj1
+        UfKxG+rK3D1XKfXuBOZorAg=
+X-Google-Smtp-Source: ABdhPJxPAb82N40CtrgVa22e2Jx7aU8YwsQhmb49exg+lY4xmlnjWtUKTOMO5be5VLroJHQEhh4qMQ==
+X-Received: by 2002:a17:902:a5c2:: with SMTP id t2mr5435815plq.151.1589578175373;
+        Fri, 15 May 2020 14:29:35 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id k5sm2225238pjl.32.2020.05.15.14.29.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 May 2020 14:29:34 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id 9F48140246; Fri, 15 May 2020 21:29:33 +0000 (UTC)
+Date:   Fri, 15 May 2020 21:29:33 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     viro@zeniv.linux.org.uk, gregkh@linuxfoundation.org,
+        rafael@kernel.org, ebiederm@xmission.com, jeyu@kernel.org,
+        jmorris@namei.org, keescook@chromium.org, paul@paul-moore.com,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        nayna@linux.ibm.com, zohar@linux.ibm.com,
+        scott.branden@broadcom.com, dan.carpenter@oracle.com,
+        skhan@linuxfoundation.org, geert@linux-m68k.org,
+        tglx@linutronix.de, bauerman@linux.ibm.com, dhowells@redhat.com,
+        linux-integrity@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        kexec@lists.infradead.org, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] fs: reduce export usage of kerne_read*() calls
+Message-ID: <20200515212933.GD11244@42.do-not-panic.com>
+References: <20200513152108.25669-1-mcgrof@kernel.org>
+ <20200513181736.GA24342@infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <1588074741-73393-1-git-send-email-zou_wei@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200513181736.GA24342@infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 4/28/20 4:52 AM, Zou Wei wrote:
-> Fixes coccicheck warnings:
-> 
-> security/apparmor/file.c:162:9-10: WARNING: return of 0/1 in function 'is_deleted' with return type bool
-> security/apparmor/file.c:362:9-10: WARNING: return of 0/1 in function 'xindex_is_subset' with return type bool
-> security/apparmor/policy_unpack.c:246:9-10: WARNING: return of 0/1 in function 'unpack_X' with return type bool
-> security/apparmor/policy_unpack.c:292:9-10: WARNING: return of 0/1 in function 'unpack_nameX' with return type bool
-> security/apparmor/policy_unpack.c:646:8-9: WARNING: return of 0/1 in function 'unpack_rlimits' with return type bool
-> security/apparmor/policy_unpack.c:604:8-9: WARNING: return of 0/1 in function 'unpack_secmark' with return type bool
-> security/apparmor/policy_unpack.c:538:8-9: WARNING: return of 0/1 in function 'unpack_trans_table' with return type bool
-> security/apparmor/policy_unpack.c:327:9-10: WARNING: return of 0/1 in function 'unpack_u32' with return type bool
-> security/apparmor/policy_unpack.c:345:9-10: WARNING: return of 0/1 in function 'unpack_u64' with return type bool
-> security/apparmor/policy_unpack.c:309:9-10: WARNING: return of 0/1 in function 'unpack_u8' with return type bool
-> security/apparmor/policy_unpack.c:568:8-9: WARNING: return of 0/1 in function 'unpack_xattrs' with return type bool
-> security/apparmor/policy_unpack.c:1007:10-11: WARNING: return of 0/1 in function 'verify_dfa_xindex' with return type bool
-> security/apparmor/policy_unpack.c:997:9-10: WARNING: return of 0/1 in function 'verify_xindex' with return type bool
-> 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Zou Wei <zou_wei@huawei.com>
+On Wed, May 13, 2020 at 11:17:36AM -0700, Christoph Hellwig wrote:
+> Can you also move kernel_read_* out of fs.h?  That header gets pulled
+> in just about everywhere and doesn't really need function not related
+> to the general fs interface.
 
-thanks, applied to apparmor-next
+Sure, where should I dump these?
+
+  Luis
