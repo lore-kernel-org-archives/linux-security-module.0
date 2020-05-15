@@ -2,146 +2,133 @@ Return-Path: <SRS0=nEb1=65=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5ADDC433E3
-	for <linux-security-module@archiver.kernel.org>; Fri, 15 May 2020 14:44:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 609D3C433E1
+	for <linux-security-module@archiver.kernel.org>; Fri, 15 May 2020 14:46:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B2EA720671
-	for <linux-security-module@archiver.kernel.org>; Fri, 15 May 2020 14:44:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RdHJ14yy"
+	by mail.kernel.org (Postfix) with ESMTP id 4763C20671
+	for <linux-security-module@archiver.kernel.org>; Fri, 15 May 2020 14:46:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726601AbgEOOoA (ORCPT
+        id S1726144AbgEOOqT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 15 May 2020 10:44:00 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:35827 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726610AbgEOOn7 (ORCPT
+        Fri, 15 May 2020 10:46:19 -0400
+Received: from mail-io1-f70.google.com ([209.85.166.70]:49705 "EHLO
+        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726168AbgEOOqT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 15 May 2020 10:43:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1589553837;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=hR6lCjnUOV2j2gabpoQGpgvPB5RUTChOvM8hrmj3dmQ=;
-        b=RdHJ14yymja0gFB88CoZ2hagTm4vSMsUZOuUMPqDpFZO9XFwM3NilOVK4jOd+jUzDWURpj
-        mLY73Gp9SQ+/5bYr7LwCT0UFeANcfkegKygguGM6PNPsh++dOsZNkXziRVUwt8O19DrNCo
-        shDQ4qXjEQvmGGR7MwqCD1XTwjZyLtA=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-102-IBhV3vZSOp6wkLbJJ_diLA-1; Fri, 15 May 2020 10:43:52 -0400
-X-MC-Unique: IBhV3vZSOp6wkLbJJ_diLA-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C02C78018A2;
-        Fri, 15 May 2020 14:43:47 +0000 (UTC)
-Received: from oldenburg2.str.redhat.com (ovpn-112-77.ams2.redhat.com [10.36.112.77])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8C92A5C241;
-        Fri, 15 May 2020 14:43:39 +0000 (UTC)
-From:   Florian Weimer <fweimer@redhat.com>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Christian Heimes <christian@python.org>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        John Johansen <john.johansen@canonical.com>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        "Lev R. Oshvang ." <levonshe@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Eric Chiang <ericchiang@google.com>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mickael.salaun@ssi.gouv.fr>,
-        Philippe =?utf-8?Q?Tr=C3=A9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>
-Subject: Re: How about just O_EXEC? (was Re: [PATCH v5 3/6] fs: Enable to enforce noexec mounts or file exec through O_MAYEXEC)
-References: <20200505153156.925111-4-mic@digikod.net>
-        <CAEjxPJ7y2G5hW0WTH0rSrDZrorzcJ7nrQBjfps2OWV5t1BUYHw@mail.gmail.com>
-        <202005131525.D08BFB3@keescook> <202005132002.91B8B63@keescook>
-        <CAEjxPJ7WjeQAz3XSCtgpYiRtH+Jx-UkSTaEcnVyz_jwXKE3dkw@mail.gmail.com>
-        <202005140830.2475344F86@keescook>
-        <CAEjxPJ4R_juwvRbKiCg5OGuhAi1ZuVytK4fKCDT_kT6VKc8iRg@mail.gmail.com>
-        <b740d658-a2da-5773-7a10-59a0ca52ac6b@digikod.net>
-        <202005142343.D580850@keescook>
-        <87a729wpu1.fsf@oldenburg2.str.redhat.com>
-        <202005150732.17C5EE0@keescook>
-Date:   Fri, 15 May 2020 16:43:37 +0200
-In-Reply-To: <202005150732.17C5EE0@keescook> (Kees Cook's message of "Fri, 15
-        May 2020 07:37:16 -0700")
-Message-ID: <87r1vluuli.fsf@oldenburg2.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.3 (gnu/linux)
+        Fri, 15 May 2020 10:46:19 -0400
+Received: by mail-io1-f70.google.com with SMTP id h17so2346864ior.16
+        for <linux-security-module@vger.kernel.org>; Fri, 15 May 2020 07:46:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=wXyOTzOwNpQWxRAOCFHlAYrbFGtbhU05IkgQflD0FCs=;
+        b=EXjhXD35l1JwReypB6NAfPKioTsV/7j60pw6KBe+Dk3ro8tCWf33Fxd9n+vMJA1/cU
+         efmKM0pt/6yPNwZPm4pV3D/aaFWBe+BJtKk7I7XP0zsrN3TDMSSXbVzVAXu1OyNNwE7/
+         wHr04Zk0z3BSDzsWyruRZPbcnfNWk3anJw2caJxmaZTHoXehWd4e+9CsZa6M4y8EOjOh
+         AzrARj3opX0Ht5wg4wV4RJi+Je6ydrqPDPYSqmL4/BEOzdUI7y9Lw1qP+qhXqf/EY/Kd
+         JeOcsxxCqPGZ62HS7In6ygHCGdww43tZ/LIiIEQ8W2cuyUiFKVU6YUctKtInteT1GTuh
+         eRUA==
+X-Gm-Message-State: AOAM53278KhU9gAMY4pbZflFbcVwRtcBrVpWhMkR81+X6yi8oEP0pwf2
+        Fx/v+B48U9FNm2fbIeVE/yw9fpeEnGP3m0HN3t2E5usiK7FK
+X-Google-Smtp-Source: ABdhPJwEpCBUkuyWlRJR0cPCXLdMPcfNuCJYqNNgs2xymqU3pCv2iU3l4PSe7E5RutqjrAL+T9BFNEnK7BRERQm1G5qG75pcEZvw
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Received: by 2002:a02:bb8a:: with SMTP id g10mr3742917jan.130.1589553977558;
+ Fri, 15 May 2020 07:46:17 -0700 (PDT)
+Date:   Fri, 15 May 2020 07:46:17 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000002f0c7505a5b0e04c@google.com>
+Subject: linux-next boot error: general protection fault in tomoyo_get_local_path
+From:   syzbot <syzbot+c1af344512918c61362c@syzkaller.appspotmail.com>
+To:     jmorris@namei.org, linux-kernel@vger.kernel.org,
+        linux-next@vger.kernel.org, linux-security-module@vger.kernel.org,
+        penguin-kernel@I-love.SAKURA.ne.jp, serge@hallyn.com,
+        sfr@canb.auug.org.au, syzkaller-bugs@googlegroups.com,
+        takedakn@nttdata.co.jp
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-* Kees Cook:
+Hello,
 
-> On Fri, May 15, 2020 at 10:43:34AM +0200, Florian Weimer wrote:
->> * Kees Cook:
->> 
->> > Maybe I've missed some earlier discussion that ruled this out, but I
->> > couldn't find it: let's just add O_EXEC and be done with it. It actually
->> > makes the execve() path more like openat2() and is much cleaner after
->> > a little refactoring. Here are the results, though I haven't emailed it
->> > yet since I still want to do some more testing:
->> > https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/log/?h=kspp/o_exec/v1
->> 
->> I think POSIX specifies O_EXEC in such a way that it does not confer
->> read permissions.  This seems incompatible with what we are trying to
->> achieve here.
->
-> I was trying to retain this behavior, since we already make this
-> distinction between execve() and uselib() with the MAY_* flags:
->
-> execve():
->         struct open_flags open_exec_flags = {
->                 .open_flag = O_LARGEFILE | O_RDONLY | __FMODE_EXEC,
->                 .acc_mode = MAY_EXEC,
->
-> uselib():
->         static const struct open_flags uselib_flags = {
->                 .open_flag = O_LARGEFILE | O_RDONLY | __FMODE_EXEC,
->                 .acc_mode = MAY_READ | MAY_EXEC,
->
-> I tried to retain this in my proposal, in the O_EXEC does not imply
-> MAY_READ:
+syzbot found the following crash on:
 
-That doesn't quite parse for me, sorry.
+HEAD commit:    bdecf38f Add linux-next specific files for 20200515
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=155a43b2100000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=27a5e30c87a59937
+dashboard link: https://syzkaller.appspot.com/bug?extid=c1af344512918c61362c
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
 
-The point is that the script interpreter actually needs to *read* those
-files in order to execute them.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+c1af344512918c61362c@syzkaller.appspotmail.com
 
-Thanks,
-Florian
+general protection fault, probably for non-canonical address 0xdffffc0000000005: 0000 [#1] PREEMPT SMP KASAN
+KASAN: null-ptr-deref in range [0x0000000000000028-0x000000000000002f]
+CPU: 0 PID: 6698 Comm: sshd Not tainted 5.7.0-rc5-next-20200515-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:tomoyo_get_local_path+0x450/0x800 security/tomoyo/realpath.c:165
+Code: 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 b4 03 00 00 48 b8 00 00 00 00 00 fc ff df 4d 8b 7f 60 49 8d 7f 28 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 85 87 03 00 00 48 b8 00 00 00 00 00 fc ff df 4d 8b
+RSP: 0018:ffffc900063d7450 EFLAGS: 00010206
+RAX: dffffc0000000000 RBX: ffff88809975c000 RCX: ffffffff8363deda
+RDX: 0000000000000005 RSI: ffffffff8363dee8 RDI: 0000000000000028
+RBP: 1ffff92000c7ae8b R08: ffff8880a47644c0 R09: fffffbfff155a0a2
+R10: ffffffff8aad050f R11: fffffbfff155a0a1 R12: ffff88809df3cfea
+R13: ffff88809df3c000 R14: 0000000000001a2a R15: 0000000000000000
+FS:  00007efe13ce28c0(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055e78cf578f5 CR3: 00000000987ed000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ tomoyo_realpath_from_path+0x393/0x620 security/tomoyo/realpath.c:282
+ tomoyo_get_realpath security/tomoyo/file.c:151 [inline]
+ tomoyo_path_number_perm+0x1c2/0x4d0 security/tomoyo/file.c:723
+ tomoyo_path_mknod+0x10d/0x190 security/tomoyo/tomoyo.c:246
+ security_path_mknod+0x116/0x180 security/security.c:1072
+ may_o_create fs/namei.c:2905 [inline]
+ lookup_open+0x5ae/0x1320 fs/namei.c:3046
+ open_last_lookups fs/namei.c:3155 [inline]
+ path_openat+0x93c/0x27f0 fs/namei.c:3343
+ do_filp_open+0x192/0x260 fs/namei.c:3373
+ do_sys_openat2+0x585/0x7d0 fs/open.c:1179
+ do_sys_open+0xc3/0x140 fs/open.c:1195
+ do_syscall_64+0xf6/0x7d0 arch/x86/entry/common.c:295
+ entry_SYSCALL_64_after_hwframe+0x49/0xb3
+RIP: 0033:0x7efe11e4b6f0
+Code: 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 83 3d 19 30 2c 00 00 75 10 b8 02 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 31 c3 48 83 ec 08 e8 fe 9d 01 00 48 89 04 24
+RSP: 002b:00007ffc3d0894d8 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
+RAX: ffffffffffffffda RBX: 000055e78f0bc110 RCX: 00007efe11e4b6f0
+RDX: 00000000000001b6 RSI: 0000000000000241 RDI: 000055e78cf578f5
+RBP: 0000000000000004 R08: 0000000000000004 R09: 0000000000000001
+R10: 0000000000000240 R11: 0000000000000246 R12: 000055e78cf2851e
+R13: 0000000000000001 R14: 0000000000000000 R15: 0000000000000000
+Modules linked in:
+---[ end trace 0a58064de06d50f4 ]---
+RIP: 0010:tomoyo_get_local_path+0x450/0x800 security/tomoyo/realpath.c:165
+Code: 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 b4 03 00 00 48 b8 00 00 00 00 00 fc ff df 4d 8b 7f 60 49 8d 7f 28 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 85 87 03 00 00 48 b8 00 00 00 00 00 fc ff df 4d 8b
+RSP: 0018:ffffc900063d7450 EFLAGS: 00010206
+RAX: dffffc0000000000 RBX: ffff88809975c000 RCX: ffffffff8363deda
+RDX: 0000000000000005 RSI: ffffffff8363dee8 RDI: 0000000000000028
+RBP: 1ffff92000c7ae8b R08: ffff8880a47644c0 R09: fffffbfff155a0a2
+R10: ffffffff8aad050f R11: fffffbfff155a0a1 R12: ffff88809df3cfea
+R13: ffff88809df3c000 R14: 0000000000001a2a R15: 0000000000000000
+FS:  00007efe13ce28c0(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055dfe16c15f8 CR3: 00000000987ed000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
