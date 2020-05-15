@@ -2,228 +2,108 @@ Return-Path: <SRS0=nEb1=65=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0C04C433DF
-	for <linux-security-module@archiver.kernel.org>; Fri, 15 May 2020 16:45:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D508C433E0
+	for <linux-security-module@archiver.kernel.org>; Fri, 15 May 2020 18:21:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 75CCE207F9
-	for <linux-security-module@archiver.kernel.org>; Fri, 15 May 2020 16:45:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D3sAptoO"
+	by mail.kernel.org (Postfix) with ESMTP id 2669B20727
+	for <linux-security-module@archiver.kernel.org>; Fri, 15 May 2020 18:21:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726179AbgEOQpd (ORCPT
+        id S1726197AbgEOSU6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 15 May 2020 12:45:33 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:52087 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726170AbgEOQpc (ORCPT
+        Fri, 15 May 2020 14:20:58 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:49858 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726191AbgEOSU5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 15 May 2020 12:45:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1589561131;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=+IBvKYnMRct6wIVYk1OHcT0bp5/WnDeiDsV8CVPaV/4=;
-        b=D3sAptoOvQpfkIARrvjwVxmdHn+JEgmYt70MeiuV02ffU083VJb5trz8l3RoW4uLRm4FEJ
-        tPdWq2UuXk22xF+Yp5Abgpntod1L6QxUpAUS7BnTSFM4InG7UMJYkuWffPLYgB9X8mTFE1
-        8C+Q9yIAvLdVOHvBk4dQRGJYlBV8Wso=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-311-00j2DJWnOzuUdvc1IhJFqw-1; Fri, 15 May 2020 12:45:29 -0400
-X-MC-Unique: 00j2DJWnOzuUdvc1IhJFqw-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9AF0218B6450;
-        Fri, 15 May 2020 16:45:12 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-112-95.rdu2.redhat.com [10.10.112.95])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 94C9C579A0;
-        Fri, 15 May 2020 16:45:10 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAEjxPJ5wW2qHYDsqKr5rjnRJ++4f2LXobCQkKZvWCSb_j0WN6w@mail.gmail.com>
-References: <CAEjxPJ5wW2qHYDsqKr5rjnRJ++4f2LXobCQkKZvWCSb_j0WN6w@mail.gmail.com> <CAEjxPJ6pFdDfm55pv9bT3CV5DTFF9VqzRmG_Xi5bKNxPaGuOLg@mail.gmail.com> <158932282880.2885325.2688622278854566047.stgit@warthog.procyon.org.uk> <CAEjxPJ4=ZN_jKP2nX5mrMA3OxC8XLsYEmCPCD-78H4XQw=_hCA@mail.gmail.com> <3999877.1589475539@warthog.procyon.org.uk>
-To:     Stephen Smalley <stephen.smalley.work@gmail.com>
-Cc:     dhowells@redhat.com,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        keyrings@vger.kernel.org, SElinux list <selinux@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] keys: Move permissions checking decisions into the checking code
+        Fri, 15 May 2020 14:20:57 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jZewv-0000TY-Jb; Fri, 15 May 2020 12:20:46 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jZewl-0004yB-GR; Fri, 15 May 2020 12:20:42 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Alexey Gladkov <gladkov.alexey@gmail.com>,
+        syzbot <syzbot+c1af344512918c61362c@syzkaller.appspotmail.com>,
+        jmorris@namei.org, linux-kernel@vger.kernel.org,
+        linux-next@vger.kernel.org, linux-security-module@vger.kernel.org,
+        serge@hallyn.com, sfr@canb.auug.org.au,
+        syzkaller-bugs@googlegroups.com,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <0000000000002f0c7505a5b0e04c@google.com>
+        <c3461e26-1407-2262-c709-dac0df3da2d0@i-love.sakura.ne.jp>
+Date:   Fri, 15 May 2020 13:16:59 -0500
+In-Reply-To: <c3461e26-1407-2262-c709-dac0df3da2d0@i-love.sakura.ne.jp>
+        (Tetsuo Handa's message of "Sat, 16 May 2020 00:18:00 +0900")
+Message-ID: <87lfltcbc4.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <196729.1589561109.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Fri, 15 May 2020 17:45:09 +0100
-Message-ID: <196730.1589561109@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Type: text/plain
+X-XM-SPF: eid=1jZewl-0004yB-GR;;;mid=<87lfltcbc4.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/5CZAGXdnSF9gJYpnj+DVwF9M3wdqkovE=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: linux-next boot error: general protection fault in tomoyo_get_local_path
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Stephen Smalley <stephen.smalley.work@gmail.com> wrote:
+Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp> writes:
 
-> >      (1) KEY_FLAG_KEEP in key->flags - The key may not be deleted and/=
-or things
-> >          may not be removed from the keyring.
-> =
+> This is
+>
+>         if (sb->s_magic == PROC_SUPER_MAGIC && *pos == '/') {
+>                 char *ep;
+>                 const pid_t pid = (pid_t) simple_strtoul(pos + 1, &ep, 10);
+>                 struct pid_namespace *proc_pidns = proc_pid_ns(d_inode(dentry)); // <= here
+>
+>                 if (*ep == '/' && pid && pid ==
+>                     task_tgid_nr_ns(current, proc_pidns)) {
+>
+> which was added by commit c59f415a7cb6e1e1 ("Use proc_pid_ns() to get pid_namespace from the proc superblock").
+>
+> @@ -161,9 +162,10 @@ static char *tomoyo_get_local_path(struct dentry *dentry, char * const buffer,
+>         if (sb->s_magic == PROC_SUPER_MAGIC && *pos == '/') {
+>                 char *ep;
+>                 const pid_t pid = (pid_t) simple_strtoul(pos + 1, &ep, 10);
+> +               struct pid_namespace *proc_pidns = proc_pid_ns(d_inode(dentry));
+>
+>                 if (*ep == '/' && pid && pid ==
+> -                   task_tgid_nr_ns(current, sb->s_fs_info)) {
+> +                   task_tgid_nr_ns(current, proc_pidns)) {
+>                         pos = ep - 5;
+>                         if (pos < buffer)
+>                                 goto out;
+>
+> Alexey and Eric, any clue?
 
-> Why can't they be deleted / removed?  They can't ever be deleted or
-> removed or for some period of time?
+Looking at the stack backtrace this is happening as part of creating a
+file or a device node.  The dentry that is passed in most likely
+comes from d_alloc_parallel.  So we have d_inode == NULL.
 
-This is only settable internally to keep special keys, such as the blackli=
-st
-loaded from the EFI BIOS, from being removed.
+I want to suggest doing the very simple fix:
 
-> >      (2) KEY_FLAG_ROOT_CAN_CLEAR in key->flags - The keyring can be cl=
-eared by
-> >          CAP_SYS_ADMIN.
-> =
+-	if (sb->s_magic == PROC_SUPER_MAGIC && *pos == '/') {
++	if (sb->s_magic == PROC_SUPER_MAGIC && *pos == '/' && denty->d_inode) {
 
-> Why do some keyrings get this flag and others do not?  Under what
-> conditions?  Why is CAP_SYS_ADMIN the right capability for this?
-> =
+But I don't know if there are any other security hooks early in lookup,
+that could be called for an already existing dentry.
 
-> >      (3) KEY_FLAG_ROOT_CAN_INVAL in key->flags - The key can be invali=
-dated by
-> >          CAP_SYS_ADMIN.
-> =
+So it looks like we need a version proc_pid_ns that works for a dentry,
+or a superblock.
 
-> Ditto.
+Alex do you think you can code up an patch against my proc-next branch
+to fix this?
 
-So that the sysadmin can clear, say, the NFS idmapper keyring or invalidat=
-e
-DNS lookup keys.
-
-> >      (4) An appropriate auth token being set in cred->request_key_auth=
- that
-> >          gives a process transient permission to view and instantiate =
-a key.
-> >          This is used by the kernel to delegate instantiation to users=
-pace.
-> =
-
-> Is this ever allowed across different credentials?
-
-The kernel upcalls by spawning a daemon.  I want to change this as it's no=
-t
-compatible with containers since namespaces make this problematic.
-
-> When?
-
-The request_key() system call will do this.  The normal use case is someth=
-ing
-like the AFS filesystem asking for a key so that it can do an operation.  =
-The
-possibility exists for the kernel to upcall, say, to something that does a=
-klog
-on behalf of the user - but aklog in turn needs to get the TGT out of the
-keyrings.
-
-> Why?  Is there a check between the different credentials before the
-> auth token is created?
-
-No.  I don't even know what the target creds will necessarily be at this
-point.
-
-> >     Note that this requires some tweaks to the testsuite as some of th=
-e
-> >     error codes change.
-> =
-
-> Which testsuite?  keyring or selinux or both?
-
-The keyring testsuite.  No idea about the SELinux one.
-
-> What error codes change (from what to what)?  Does this constitute an AB=
-I
-> change?
-
-The following:
-
- (1) Passing the wrong type of key to KEYCTL_DH_COMPUTE now gets you
-     EOPNOTSUPP rather than ENOKEY.  This is now as documented in the manu=
-al
-     page.
-
- (2) Passing key ID 0 or an invalid negative key ID to KEYCTL_DH_COMPUTE n=
-ow
-     gets you EINVAL rather than ENOKEY.
-
- (3) Passing key ID 0 or an invalid negative key ID to KEYCTL_READ now get=
-s
-     you EINVAL rather than ENOKEY.
-
-Technically, it consistutes an ABI change, I suppose, but I think it is
-probably sufficiently minor.
-
-Or maybe on (2) and (3) I should go the other way.  You get ENOKEY for inv=
-alid
-key IDs (such as 0 or unsupported negative ones) across all callers of
-lookup_user_key().  This would at least by consistent with the manual page=
-s.
-
-> I like moving more of the permission checking logic into the security
-> modules and giving them greater visibility and control.  That said, I
-> am somewhat concerned by the scale of this change, by the extent to
-> which you are exposing keyring internals inside the security modules,
-> and by the extent to which logic is getting duplicated in each
-> security module.
-
-It's what you asked for.
-
-Now, I don't know if the LSM needs to know that the main keyutils permissi=
-ons
-checker invoked an override.  At least one of the overrides will have gone
-through the LSM anyway when capable() was called.
-
-> I'd suggest a more incremental approach, e.g. start with just the enum
-> patch, then migrate the easy cases, then consider the more complicated
-> cases.  And possibly we need multiple different security hooks for the
-> keyring subsystem that are more specialized for the complicated cases.  =
-If
-> we authorize the delegation up front, we don't need to check it later.
-
-I'll consider it.  But I really need to get what I'm going to include in t=
-he
-middle of the notifications patchset sorted now - or risk the notification=
-s
-and fsinfo patchsets getting bumped again.
-
-Maybe what's needed is a pair of hooks whereby the call to capable() is
-replaced with LSM hook specifically to ask about the overrides:
-
-	security_key_use_sysadmin_override(key, cred);
-	security_key_use_construction_override(key, cred);
-
-And/or a hook to ask whether the process is allowed to do the request_key(=
-)
-call that they want:
-
-	security_request_key(struct key_type *type,
-			     const char *description,
-			     struct key_tag *domain_tag,
-			     const void *callout_info,
-			     size_t callout_len,
-			     void *aux);
-
-I don't really want to do a "can the kernel delegate to process X?" hook j=
-ust
-at the moment, since I want to change/extend that code and I don't want to
-commit to any particular security information being present yet.
-
-I can go back to the enum patch for the moment if you and Casey can put up
-with that for the moment?
-
-David
-
+Eric
