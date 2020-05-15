@@ -2,77 +2,94 @@ Return-Path: <SRS0=nEb1=65=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5908C433DF
-	for <linux-security-module@archiver.kernel.org>; Fri, 15 May 2020 15:21:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A248C433E0
+	for <linux-security-module@archiver.kernel.org>; Fri, 15 May 2020 15:37:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BEEDA20709
-	for <linux-security-module@archiver.kernel.org>; Fri, 15 May 2020 15:21:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LEEhWFrK"
+	by mail.kernel.org (Postfix) with ESMTP id 3F9EA207D0
+	for <linux-security-module@archiver.kernel.org>; Fri, 15 May 2020 15:37:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726907AbgEOPV1 (ORCPT
+        id S1726615AbgEOPhN (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 15 May 2020 11:21:27 -0400
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:52082 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726275AbgEOPV0 (ORCPT
+        Fri, 15 May 2020 11:37:13 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:56988 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726183AbgEOPhM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 15 May 2020 11:21:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1589556085;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=u9/34K8DyCduL8IGZODiZffSbWOR6EGIIlhbYFcxqDY=;
-        b=LEEhWFrKFyNtyUOvO7XF5d2u7iTR8ey9xcuDHwPJWk6KS8eJGl8ZKzBcFiz6thnDaDXTMk
-        ndQZtXGr+1Vaj/v3LeOmPCQo/xOat+m+meX6cjGaEda+cfYF4KZvDyArGQYRq1h+IjHOC/
-        P1mnp/ZgPXW+XCHFLEZPKFcL4smGOKg=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-407-2obm2pHAMP6xdBmL5MUTMQ-1; Fri, 15 May 2020 11:21:21 -0400
-X-MC-Unique: 2obm2pHAMP6xdBmL5MUTMQ-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CEB62801503;
-        Fri, 15 May 2020 15:21:19 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-112-95.rdu2.redhat.com [10.10.112.95])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 523332E16E;
-        Fri, 15 May 2020 15:21:18 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20200513065656.2110441-2-hch@lst.de>
-References: <20200513065656.2110441-2-hch@lst.de> <20200513065656.2110441-1-hch@lst.de>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     dhowells@redhat.com, Al Viro <viro@zeniv.linux.org.uk>,
-        Ian Kent <raven@themaw.net>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        netfilter-devel@vger.kernel.org
-Subject: Re: [PATCH 01/14] cachefiles: switch to kernel_write
+        Fri, 15 May 2020 11:37:12 -0400
+Received: from fsav405.sakura.ne.jp (fsav405.sakura.ne.jp [133.242.250.104])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 04FFaX5p011041;
+        Sat, 16 May 2020 00:36:33 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav405.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav405.sakura.ne.jp);
+ Sat, 16 May 2020 00:36:33 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav405.sakura.ne.jp)
+Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 04FFaXJU011017
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Sat, 16 May 2020 00:36:33 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: linux-next boot error: general protection fault in
+ tomoyo_get_local_path
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+To:     Alexey Gladkov <gladkov.alexey@gmail.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     syzbot <syzbot+c1af344512918c61362c@syzkaller.appspotmail.com>,
+        jmorris@namei.org, linux-kernel@vger.kernel.org,
+        linux-next@vger.kernel.org, linux-security-module@vger.kernel.org,
+        serge@hallyn.com, sfr@canb.auug.org.au,
+        syzkaller-bugs@googlegroups.com,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <0000000000002f0c7505a5b0e04c@google.com>
+ <c3461e26-1407-2262-c709-dac0df3da2d0@i-love.sakura.ne.jp>
+Message-ID: <72cb7aea-92bd-d71b-2f8a-63881a35fad8@i-love.sakura.ne.jp>
+Date:   Sat, 16 May 2020 00:36:28 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <129175.1589556077.1@warthog.procyon.org.uk>
-Date:   Fri, 15 May 2020 16:21:17 +0100
-Message-ID: <129176.1589556077@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+In-Reply-To: <c3461e26-1407-2262-c709-dac0df3da2d0@i-love.sakura.ne.jp>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Christoph Hellwig <hch@lst.de> wrote:
-
-> __kernel_write doesn't take a sb_writers references, which we need here.
+On 2020/05/16 0:18, Tetsuo Handa wrote:
+> This is
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+>         if (sb->s_magic == PROC_SUPER_MAGIC && *pos == '/') {
+>                 char *ep;
+>                 const pid_t pid = (pid_t) simple_strtoul(pos + 1, &ep, 10);
+>                 struct pid_namespace *proc_pidns = proc_pid_ns(d_inode(dentry)); // <= here
+> 
+>                 if (*ep == '/' && pid && pid ==
+>                     task_tgid_nr_ns(current, proc_pidns)) {
+> 
+> which was added by commit c59f415a7cb6e1e1 ("Use proc_pid_ns() to get pid_namespace from the proc superblock").
+> 
+> @@ -161,9 +162,10 @@ static char *tomoyo_get_local_path(struct dentry *dentry, char * const buffer,
+>         if (sb->s_magic == PROC_SUPER_MAGIC && *pos == '/') {
+>                 char *ep;
+>                 const pid_t pid = (pid_t) simple_strtoul(pos + 1, &ep, 10);
+> +               struct pid_namespace *proc_pidns = proc_pid_ns(d_inode(dentry));
+> 
+>                 if (*ep == '/' && pid && pid ==
+> -                   task_tgid_nr_ns(current, sb->s_fs_info)) {
+> +                   task_tgid_nr_ns(current, proc_pidns)) {
+>                         pos = ep - 5;
+>                         if (pos < buffer)
+>                                 goto out;
+> 
+> Alexey and Eric, any clue?
+> 
 
-Reviewed-by: David Howells <dhowells@redhat.com>
-
+A similar bug (racing inode destruction with open() on proc filesystem) was fixed as
+commit 6f7c41374b62fd80 ("tomoyo: Don't use nifty names on sockets."). Then, it might
+not be safe to replace dentry->d_sb->s_fs_info with dentry->d_inode->i_sb->s_fs_info .
