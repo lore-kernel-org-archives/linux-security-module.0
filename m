@@ -2,123 +2,114 @@ Return-Path: <SRS0=aSrS=7A=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83F00C433E1
-	for <linux-security-module@archiver.kernel.org>; Mon, 18 May 2020 07:27:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02203C433DF
+	for <linux-security-module@archiver.kernel.org>; Mon, 18 May 2020 08:08:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6408C20657
-	for <linux-security-module@archiver.kernel.org>; Mon, 18 May 2020 07:27:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CxwDHCZ+"
+	by mail.kernel.org (Postfix) with ESMTP id DE71C20825
+	for <linux-security-module@archiver.kernel.org>; Mon, 18 May 2020 08:08:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727098AbgERH04 (ORCPT
+        id S1727823AbgERIIB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 18 May 2020 03:26:56 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:36885 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726992AbgERH0z (ORCPT
+        Mon, 18 May 2020 04:08:01 -0400
+Received: from mga05.intel.com ([192.55.52.43]:39327 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726489AbgERIIB (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 18 May 2020 03:26:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1589786814;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=b/DaoBS5+cv0POCp9ooXqRzsTuOXn2M8MJgW8T9wUD0=;
-        b=CxwDHCZ+31/rHf5KGQE7TxPXxDvXGm1R1Xh1RyIw78bafb9YU8sSe+1+HaB/DHMYyb6+Nu
-        L9j4BWqbC8FjhQ+wzMADqGbRzrWBhOFL4dt6vWguOP+HE5fACh+DgCqjXsxs247YT2qr0P
-        eEHsN1NZpYPwSu7sUltTD414IHUdZjM=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-324-dXOuRvKLNjK0fPagzimQ0g-1; Mon, 18 May 2020 03:26:49 -0400
-X-MC-Unique: dXOuRvKLNjK0fPagzimQ0g-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 771CA56C8E;
-        Mon, 18 May 2020 07:26:44 +0000 (UTC)
-Received: from oldenburg2.str.redhat.com (ovpn-112-142.ams2.redhat.com [10.36.112.142])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3C4A910013D9;
-        Mon, 18 May 2020 07:26:36 +0000 (UTC)
-From:   Florian Weimer <fweimer@redhat.com>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Christian Heimes <christian@python.org>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        John Johansen <john.johansen@canonical.com>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        "Lev R. Oshvang ." <levonshe@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Eric Chiang <ericchiang@google.com>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mickael.salaun@ssi.gouv.fr>,
-        Philippe =?utf-8?Q?Tr=C3=A9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        Mon, 18 May 2020 04:08:01 -0400
+IronPort-SDR: JCZMkKKJR4Kr23QXcpe8XWVa+tVi59ElZjkFlgzjldeqO2TzY19XQudIL718wDPxFMnJWVCMkT
+ MdfhpHrh5dOg==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 May 2020 01:08:00 -0700
+IronPort-SDR: Fxj0lLv4iFb/AfQRyiua2C4SMA0we5GzREgkDRBDWvaBVNhNCHRSeAwkOwGunlQqYRQXxLFkg+
+ QPXD6wR9x7Kw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,406,1583222400"; 
+   d="scan'208";a="288485760"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga004.fm.intel.com with ESMTP; 18 May 2020 01:08:00 -0700
+Received: from [10.249.230.167] (abudanko-mobl.ccr.corp.intel.com [10.249.230.167])
+        by linux.intel.com (Postfix) with ESMTP id 638A85803C5;
+        Mon, 18 May 2020 01:07:56 -0700 (PDT)
+Subject: Re: [PATCH v3 0/3] perf: make Perf tool aware of SELinux access
+ control
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Andi Kleen <ak@linux.intel.com>,
         linux-kernel <linux-kernel@vger.kernel.org>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>
-Subject: Re: How about just O_EXEC? (was Re: [PATCH v5 3/6] fs: Enable to enforce noexec mounts or file exec through O_MAYEXEC)
-References: <202005131525.D08BFB3@keescook> <202005132002.91B8B63@keescook>
-        <CAEjxPJ7WjeQAz3XSCtgpYiRtH+Jx-UkSTaEcnVyz_jwXKE3dkw@mail.gmail.com>
-        <202005140830.2475344F86@keescook>
-        <CAEjxPJ4R_juwvRbKiCg5OGuhAi1ZuVytK4fKCDT_kT6VKc8iRg@mail.gmail.com>
-        <b740d658-a2da-5773-7a10-59a0ca52ac6b@digikod.net>
-        <202005142343.D580850@keescook>
-        <87a729wpu1.fsf@oldenburg2.str.redhat.com>
-        <202005150732.17C5EE0@keescook>
-        <87r1vluuli.fsf@oldenburg2.str.redhat.com>
-        <202005150847.2B1ED8F81@keescook>
-Date:   Mon, 18 May 2020 09:26:34 +0200
-In-Reply-To: <202005150847.2B1ED8F81@keescook> (Kees Cook's message of "Fri,
-        15 May 2020 08:50:16 -0700")
-Message-ID: <87ftbxg0ut.fsf@oldenburg2.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.3 (gnu/linux)
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>
+References: <0fffd9e2-1f22-a0c2-c2e3-cb7f4bb89d66@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <a143e9e8-d800-1dc9-ee7b-7125596a1e7e@linux.intel.com>
+Date:   Mon, 18 May 2020 11:07:55 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
+In-Reply-To: <0fffd9e2-1f22-a0c2-c2e3-cb7f4bb89d66@linux.intel.com>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-* Kees Cook:
+Hi,
 
-> I think I misunderstood what you meant (Micka=C3=83=C2=ABl got me sorted =
-out
-> now). If O_EXEC is already meant to be "EXEC and _not_ READ nor WRITE",
-> then yes, this new flag can't be O_EXEC. I was reading the glibc
-> documentation (which treats it as a permission bit flag, not POSIX,
-> which treats it as a complete mode description).
-
-I see.  I think this part of the manual is actually very Hurd-specific
-(before the O_ACCMODE description).  I'll see if I can make this clearer
-in the markup.
+Is there anything else that could be done from my side to move this forward?
 
 Thanks,
-Florian
+Alexey
 
+On 30.04.2020 10:06, Alexey Budankov wrote:
+> 
+> Changes in v3:
+> - mention "CAP_PERFMON or CAP_SYS_ADMIN" instead of sole CAP_PERFMON or 
+>   CAP_SYS_ADMIN capability in the docs and messages to support use case
+>   of newer Perf tool on kernel w/o CAP_PERFMON
+> - reverted double new line in "No permission to enable %s event.\n\n"
+> - updated security.txt content with new messages wording
+> 
+> v2: https://lore.kernel.org/lkml/66f2975b-4a69-b428-7dc5-d9aa40b3c673@linux.intel.com/
+> 
+> Changes in v2:
+> - implemented minor doc and code changes to substitute CAP_SYS_ADMIN
+>   with CAP_PERFMON capability;
+> - introduced Perf doc file with instructions on how to enable and use
+>   perf_event LSM hooks for mandatory access control to perf_event_open()
+>   syscall;
+> 
+> v1: https://lore.kernel.org/lkml/b8a0669e-36e4-a0e8-fd35-3dbd890d2170@linux.intel.com/
+> 
+> repo: git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git perf/core
+> sha1: ee097e8ee56f8867cbbf45fe2a06f6b9e660c39c
+> 
+> 
+> Extend Perf tool with the check of /sys/fs/selinux/enforce value and notify 
+> in case access to perf_event_open() syscall is restricted by the enforced 
+> SELinux policy settings. See new added security.txt file for exact steps
+> how the changes look like and how to test the patch set.
+> 
+> ---
+> Alexey Budankov (3):
+>   perf docs: extend CAP_SYS_ADMIN with CAP_PERFMON where needed
+>   perf tool: make Perf tool aware of SELinux access control
+>   perf docs: introduce security.txt file to document related issues
+> 
+>  tools/perf/Documentation/perf-intel-pt.txt |   2 +-
+>  tools/perf/Documentation/security.txt      | 237 +++++++++++++++++++++
+>  tools/perf/util/cloexec.c                  |   4 +-
+>  tools/perf/util/evsel.c                    |  39 ++--
+>  4 files changed, 264 insertions(+), 18 deletions(-)
+>  create mode 100644 tools/perf/Documentation/security.txt
+> 
