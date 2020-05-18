@@ -2,193 +2,183 @@ Return-Path: <SRS0=aSrS=7A=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45CE3C433E0
-	for <linux-security-module@archiver.kernel.org>; Mon, 18 May 2020 20:43:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99A70C433E3
+	for <linux-security-module@archiver.kernel.org>; Mon, 18 May 2020 21:43:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 21E6920853
-	for <linux-security-module@archiver.kernel.org>; Mon, 18 May 2020 20:43:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65F71205CB
+	for <linux-security-module@archiver.kernel.org>; Mon, 18 May 2020 21:43:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="DCkLVQEE"
+	dkim=pass (1024-bit key) header.d=intel.onmicrosoft.com header.i=@intel.onmicrosoft.com header.b="IDUUdhUQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727832AbgERUnG (ORCPT
+        id S1728148AbgERVnK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 18 May 2020 16:43:06 -0400
-Received: from sonic316-27.consmr.mail.ne1.yahoo.com ([66.163.187.153]:37384
-        "EHLO sonic316-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726721AbgERUnG (ORCPT
+        Mon, 18 May 2020 17:43:10 -0400
+Received: from mga12.intel.com ([192.55.52.136]:58969 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726443AbgERVnK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 18 May 2020 16:43:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1589834585; bh=ZaPSmBKZ5df8a3P62XIc9RvmXw+rVidjI0jKXOkwTBg=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=DCkLVQEEaYNRDpG+PniSrj9nNrJIqec0rKl9GORELi5pFHh+Q48MvdMFZ13UuDiMXV9mjbSqxX0wfnKBTtZXbGiF54hIWjqyL6C4dL8YXcoEyCVl2J1G7NDyontPFFevsfK9SFblk1TdmFeIhx8T3e/5Z8jp0E1+OZFok8WrQMLgQefG3u7pLXqsGLsScOE2OKeHXUaefylDu9VkbtiZWLwmmMFHZ4rX3brPKhXKGfbfmCwsAHePqMlmp48CowlUxMwOSqww8tBvoqcoFtD2E/RfEZdfcHZre5m7a7tQ09ujPoahsc7g1qx2l1/GuIeedgKgZ4s/DCTjQaULwAWUyA==
-X-YMail-OSG: QQ2Pmo8VM1nzKZV9eSey2PDRZnytyVUgJQ2i9k9DIzz1Dw18W7cY4uOaGLKZXd5
- BeUNrPjKKYXeTvsFBPY5c1jdheJ7qlGd7K7M9N8b1lxVLHiR0SfJfhbE51j838rUynK_tS3FZQeg
- i1EpvUdNsrcacmsUl_kKekQF4NrGU_Ul2w_rGjaM7D8sbf6yW7CR7GCk45SZpRR4Lj7slvN6vPpG
- R.ydB1i_6YLAG.CI7MZiL1wcub9eIvC3otX6nOlFV5X6RD7mfhuRjgXVzYDlqVN8KU4Ok5BqG05I
- 0hJQolU9rJHtuUcbHR0mS5xgCppWUv_9KGnUFEc8fqiynY8XknioXRAjh2a3SXA7qSfQ7MZdvo2.
- noiaItbqU2eX7uhmk0gfVVHYBVgp7WBC1RiKa9TtAnRPuSgKpcPundNk_1_l6bT8nyZCeoQFpH11
- trkRRbpyacF4lDMC__GSuMkadkTshskcSghUm8ja.t30bK_utaEW_YP7TgFJZ.Kkgsv0y38Tevfi
- ZcCxgGBHXx3eX7at7walf4KYyRDtLztNJYbn0GoOfEwfUckjyXDu1Ucmm1Tw_.qqjiOh7pcoPjjn
- 2Zw5jOD1BdZqJf8a8Civ5iCP49XAzssMzFi49VVX97v.DbAPsR4QwMnxxUH6g.n8Vsf392jQZnMN
- rsp.qNwHJgLNoAApXk0c0YIfuSkt.mNCOgHdy5kXE6HJ_gTm9g2YWd.hydP313wzp68O2gFk_KOO
- ALMKPcFOLYA9Z3OdL5e8HzLlrQrxzYBlOleMneytyIcKvHZaSdqljg0cudUxO8duGjTmL8AjuixV
- d.Cm6ZDD0bIZAZN2WMmvDMpDnG.o_wGAdJCD9KKfPUeDZRflqdZnSB0HjREFnB700h5klvyfMGoM
- LD3xysyYlJp7PCWKiRFOBFaHCVOk5sfjbGDkn0LSrCej8J8Tn5XoAjmAmCYXBb_GifE6jkBnpP0l
- hEWLbDh80EOhJSDxJoYoLlSJaXEGcwNDv8WZWAGgfe.6VgUb.4zzLnRGU89epG4gosdCASePzd5Z
- hZZIGIKqxHgioKOshypXDExsN4usO5EHUO_ZprzKIj31Y7FoBv4f5NZBYmhevVh9aXb_W6sQ69_g
- w11_PFHUJZUCUOrqMXztfAQB4FAYQ_jivzXdDFckYd7rsBO82hcd9S_3Ux5AHfL34R7JJPbJrtY8
- JmWFAKjOz483zg59L6Mw2dG04EjkrhL4yAneccZAvnF3Gl.RLxuuhmgHPVfvXgwnNUVTyF3wMx3C
- GIYTvXWwdsIreLZILQj5RyPAvdvadmjHFHdUr8CWxslZwLuIX2KclrSDquMFzzZ_bL8HT2mjRkGJ
- efOuzkd7bD7724rnTIewiUi7a6DajKvD1rCjRR1lokwygC88upiL6joUiqtvWPvBirQMfKn._JfE
- 7Q_Gd50W2KDDyMcQGmA--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Mon, 18 May 2020 20:43:05 +0000
-Received: by smtp405.mail.ne1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 4cb43f4b09468ed915d9936384691d5b;
-          Mon, 18 May 2020 20:42:59 +0000 (UTC)
-Subject: Re: [PATCH v17 20/23] Audit: Add a new record for multiple subject
- LSM attributes
-To:     Stephen Smalley <stephen.smalley.work@gmail.com>
-Cc:     casey.schaufler@intel.com, James Morris <jmorris@namei.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        SElinux list <selinux@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        John Johansen <john.johansen@canonical.com>,
-        penguin-kernel@i-love.sakura.ne.jp,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>, linux-audit@redhat.com,
-        Steve Grubb <sgrubb@redhat.com>,
-        Richard Guy Briggs <rgb@redhat.com>
-References: <20200514221142.11857-1-casey@schaufler-ca.com>
- <20200514221142.11857-21-casey@schaufler-ca.com>
- <CAEjxPJ67cA_A-Oh72EGgmCrP6k9x0PuaU2q7UL9eOc+J6Do0zQ@mail.gmail.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Autocrypt: addr=casey@schaufler-ca.com; keydata=
- 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
- abzjfg==
-Message-ID: <9cabbb54-69e6-91e6-88f8-e76d53da2a77@schaufler-ca.com>
-Date:   Mon, 18 May 2020 13:42:58 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
-MIME-Version: 1.0
-In-Reply-To: <CAEjxPJ67cA_A-Oh72EGgmCrP6k9x0PuaU2q7UL9eOc+J6Do0zQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+        Mon, 18 May 2020 17:43:10 -0400
+IronPort-SDR: sm3eTytFtLjuqdZWjCaItFSY/SObBsuRAzI1s8q3jYVVbsgdF78XMEgVaVD4qwiqNgPjho6PXw
+ eP9rg3zRqjBA==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 May 2020 14:43:09 -0700
+IronPort-SDR: HJ/ULQ/K1fJ0BMuFQ569kMwVHp9OSZfP3g4O5Xb+ogLoWPMD2w8Hc0ebi9K6ov0psiG6fVd+IJ
+ YhCTdGlaarMA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,407,1583222400"; 
+   d="scan'208";a="465902653"
+Received: from orsmsx106.amr.corp.intel.com ([10.22.225.133])
+  by fmsmga006.fm.intel.com with ESMTP; 18 May 2020 14:43:09 -0700
+Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
+ ORSMSX106.amr.corp.intel.com (10.22.225.133) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Mon, 18 May 2020 14:43:09 -0700
+Received: from orsmsx608.amr.corp.intel.com (10.22.229.21) by
+ ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Mon, 18 May 2020 14:43:08 -0700
+Received: from ORSEDG002.ED.cps.intel.com (10.7.248.5) by
+ orsmsx608.amr.corp.intel.com (10.22.229.21) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5
+ via Frontend Transport; Mon, 18 May 2020 14:43:08 -0700
+Received: from NAM02-BL2-obe.outbound.protection.outlook.com (104.47.38.50) by
+ edgegateway.intel.com (134.134.137.101) with Microsoft SMTP Server (TLS) id
+ 14.3.439.0; Mon, 18 May 2020 14:43:06 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Qnwpn065VfsNozquKx8bXULlGFucBjOH9aKQ9eKHSZ/SiLQZP28eQVHxdJI+VbDc36lsCZlqcMdBWumNsHv3sOnnxQ4nQ8OAHtcPnw6VkzDzqxZtKG8hGZdiKH+qTTRzBByskF0Mm7pV/z3+WLgr/+YpF9/+Shd5cy2o9gsWojLN6L2raItqSqzfiWB5dRD3vffaRCzmnFv6Zfg/byvZFpdw2Ce4ek8e3s/2kb8Th/BDzUO1af+TyxEQBwlEQcW/ABbTjdNbAq7gBbTXU5eYC+utUfQHjOuj/bKpGa4cqi955ArZuxVIomux/zQnQm5w4e4qnNawyjluxvoREUzQHg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DvBZdcEY9qXzEjJgJCbn5o7XWSCIidZ0Epz3Vt7lXuk=;
+ b=Mdb8ZflZfmY1XYoAGp/cHAP3jt3LWturpw9aE+aofUZTX1g5I3O0adf/X9Ll6WiOE2M6Bv8shFRLjv4X1a3VeY758NpTO/dVxK033mNux5WheK1dxJ90kS9WMUFkqztxXCI1SmKjqv+oUTlXuCdFdiwIDFloldyVo2amsRdHce8GcwYx0O6GXTLr0mNFeOSke0RCMUoDx/WZX/FV9YQ3nCuM0heHcKH/wzBHZ/oo/AiYZ9WFTr8dTxpWP703JXkbVTTfKPIWrvHnam7yIf4288FcpVgJDzWm87DFqBOfhjjxkpmZbCNDWKGIvqoIaS+Ta1IhHrPb8m+2pLHuwnYReg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=intel.onmicrosoft.com;
+ s=selector2-intel-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DvBZdcEY9qXzEjJgJCbn5o7XWSCIidZ0Epz3Vt7lXuk=;
+ b=IDUUdhUQNcNIfuc4U2J8JUWtnEzvYnV05Siy65PmOFf3fB1z/y/PySrtfqSwDRSojoBZQ+S8oTeVs+eqRnCn74qzfM6oOJzErk8BqtlHgbrS8ZEy2A32OtR6auaHnhw6WL7J/NdhMNCaJTsvqoVCD4eabcsW4SzuJEx5JomrMRU=
+Received: from CY4PR11MB1799.namprd11.prod.outlook.com (2603:10b6:903:125::7)
+ by CY4PR11MB1365.namprd11.prod.outlook.com (2603:10b6:903:22::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3000.26; Mon, 18 May
+ 2020 21:43:04 +0000
+Received: from CY4PR11MB1799.namprd11.prod.outlook.com
+ ([fe80::109c:9a02:992b:b0a7]) by CY4PR11MB1799.namprd11.prod.outlook.com
+ ([fe80::109c:9a02:992b:b0a7%12]) with mapi id 15.20.3000.034; Mon, 18 May
+ 2020 21:43:04 +0000
+From:   "Schaufler, Casey" <casey.schaufler@intel.com>
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>
+CC:     James Morris <jamorris@linux.microsoft.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        "Daniel Borkmann" <daniel@iogearbox.net>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Subject: RE: [PATCH] security: fix the default value of secid_to_secctx hook
+Thread-Topic: [PATCH] security: fix the default value of secid_to_secctx hook
+Thread-Index: AQHWKIVYU9SRjEtxq02Y3BoxruD5UKimRQCAgAG5zwCAAAFDgIAB0EIAgACQAwCABAiYMA==
+Date:   Mon, 18 May 2020 21:43:04 +0000
+Message-ID: <CY4PR11MB17990BA2B00B4CEB167057C9FDB80@CY4PR11MB1799.namprd11.prod.outlook.com>
+References: <20200512174607.9630-1-anders.roxell@linaro.org>
+ <CAADnVQK6cka9i_GGz3OcjaNiEQEZYwgCLsn-S_Bkm-OWPJZb_w@mail.gmail.com>
+ <alpine.LRH.2.21.2005141243120.53197@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.inter>
+ <CAADnVQJRsknY7+3zwXR-N4e6oC6E87Z32Msg4EXaM8iyB=R3qQ@mail.gmail.com>
+ <CAADnVQ+WXa62R6A=nk1kOTbX8MqkbMEKDx=5KCdx5Th0NnFm7Q@mail.gmail.com>
+ <CAK8P3a3CBtitXnzQf3gLx4mXuvDoVZiwwi33iCDNvtG-0jBSwQ@mail.gmail.com>
+In-Reply-To: <CAK8P3a3CBtitXnzQf3gLx4mXuvDoVZiwwi33iCDNvtG-0jBSwQ@mail.gmail.com>
+Accept-Language: en-US
 Content-Language: en-US
-X-Mailer: WebService/1.1.15960 hermes_yahoo Apache-HttpAsyncClient/4.1.4 (Java/11.0.6)
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-reaction: no-action
+dlp-version: 11.2.0.6
+authentication-results: arndb.de; dkim=none (message not signed)
+ header.d=none;arndb.de; dmarc=none action=none header.from=intel.com;
+x-originating-ip: [134.134.136.208]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: f0696a41-699a-4a7e-dcd0-08d7fb74723b
+x-ms-traffictypediagnostic: CY4PR11MB1365:
+x-microsoft-antispam-prvs: <CY4PR11MB1365FCB8CE85FAC1981F95B0FDB80@CY4PR11MB1365.namprd11.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8882;
+x-forefront-prvs: 04073E895A
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: DNWgpN6Xr/ZaFwY1sMnYoZ9E1TWdeFC2bGpisC1+rShjc1If3J9BMokhivYagS3CbjdVoq5cN+6RhKEBh5XQX/7uJoLZLXBOk4bPa0QfZst5tEJLR/23VF3+pZHZRb0TPoWDdH6nDbjbU6/DyIg7+v1C7wzrZUCT36F4UFfd92hz8NhTNlVhgg92ei5AE33IMdAQtuHA1gjvRz1nkgvbVFFaIMeZnfOOvYzrO32zW1dTJ+Brg2qs/Y5UaARRcdMIb1AtQI9VtiQ5Z3Nsp9BRxIVORq3bLuTqa0jusEuavZ/LgzQAhlRM5HjFJ5ENWHS4cG1CYKFKsEyo3JuO9tKPGleWUM5KVLKJkmLhzKL0zkjXP0vjKMLzGKlC7mUPubgM0IqHSYilzOgb2RaNpB66ILEwaTZA2u1STJI8j89hTAWH0ziAp1JheBuiEmYS0zvR
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY4PR11MB1799.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(396003)(136003)(376002)(39860400002)(346002)(366004)(2906002)(4326008)(66946007)(66446008)(64756008)(66556008)(66476007)(76116006)(8936002)(5660300002)(478600001)(86362001)(53546011)(7696005)(6506007)(8676002)(71200400001)(110136005)(316002)(54906003)(15650500001)(186003)(26005)(33656002)(7416002)(9686003)(55016002)(52536014);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata: mbZS6ggiY5xNyJmijBOlV989MkRNYH3k1ewNRd4/rGeJ436YLZcsrIfYFXHNCVNHeqSOJ8pvz3YKcZOncGdAF069kK4WUOMLbEceikBNB3+I/67rScZ8w5sR7aOcNrddMGcbYEB3ULob4BEj9METdhc0SpTayM+PyWWaj1zcZot91s0EkjYh47Ka8KAQUodpSKhrhcJ7kOH/JOje8INbwjxf+pbQH4uO/gMF9+Z24F2mXgzff6aJXylDrFNNVXVhbYbGEavvDIp2hVFx3SYP+FxVY88LTPP/1UtRXQCzd9RuMyzHW7iKVomy1jV9WK9khH/IakM3ZShMQnCkO1ZvbIak9p/czw015QbyELazK0JHWSkyog5F9n0QxBdckv8mJeYwVYKJmttwfa55UnudGf/SIT6DkaQHuVLSMJYYIZlaiLn/JkJx3nXfRZKxljHCCxqhLQ7FITp6tSnX5QbWsw9DaIKT36kq2xPlmOC6/0Ef1o6UpIy1NrxY7zlVGqUl
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: f0696a41-699a-4a7e-dcd0-08d7fb74723b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 May 2020 21:43:04.5939
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: /kGcvgKFtgXktkCGIc26V1KiWrRQ3F36oBX66UfAcNinKJ2LDtWoWYZnsj/ujeOrMbRndqmWegyQDM/dAjV5Hdip2ixce2W7uMpTwCjnqBc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR11MB1365
+X-OriginatorOrg: intel.com
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 5/18/2020 11:02 AM, Stephen Smalley wrote:
-> On Thu, May 14, 2020 at 7:30 PM Casey Schaufler <casey@schaufler-ca.com=
-> wrote:
->> Create a new audit record type to contain the subject information
->> when there are multiple security modules that require such data.
->> This record is emitted before the other records for the event, but
->> is linked with the same timestamp and serial number.
->>
->> Reviewed-by: Kees Cook <keescook@chromium.org>
->> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
->> Cc: linux-audit@redhat.com
->> ---
-> With this patch, I see userspace audit records like this one:
->
-> type=3DSYSTEM_BOOT msg=3Daudit(1589816792.181:103): pid=3D789 uid=3D0
-> auid=3D4294967295 ses=3D4294967295 subj=3D? subj=3Dsystem_u:system_r:in=
-it_t:s0
-> msg=3D' comm=3D"systemd-update-utmp"
-> exe=3D"/usr/lib/systemd/systemd-update-utmp" hostname=3D? addr=3D?
-> terminal=3D? res=3Dsuccess'
->
-> I'm guessing that userspace is appending the second subj=3D field when
-> it sees subj=3D? or otherwise is missing subj=3D information?
-
-I haven't looked at the userspace code, but I expect you're right.
-It looks like there will need to be some change in the userspace
-for the multiple LSM case. The "completion" shown here isn't correct,
-because it only fills in one of the subject attributes, not both.
-
-> Then we have kernel audit records like this:
->
-> type=3DPROCTITLE msg=3Daudit(1589816791.959:101): proctitle=3D2F7362696=
-E2F617564697463
-> 746C002D52002F6574632F61756469742F61756469742E72756C6573
-> type=3DSYSCALL msg=3Daudit(1589816791.959:101): arch=3Dc000003e syscall=
-=3D44
-> success=3Dyes exit=3D1056 a0=3D3 a1=3D7fff9ccc98a0 a2=3D420 a3=3D0 item=
-s=3D0
-> ppid=3D773 pid=3D783 auid=3D4294967295 uid=3D0 gid=3D0 euid=3D0 suid=3D=
-0 fsuid=3D0
-> egid=3D0 sgid=3D0 fsgid=3D0 tty=3D(none) ses=3D4294967295 comm=3D"audit=
-ctl"
-> exe=3D"/usr/sbin/auditctl" subj=3D? key=3D(null)
-> type=3DUNKNOWN[1420] msg=3Daudit(1589816791.959:101):
-> subj_selinux=3Dsystem_u:system_r:unconfined_service_t:s0
-> subj_apparmor=3D=3Dunconfined
-> type=3DCONFIG_CHANGE msg=3Daudit(1589816791.959:101): auid=3D4294967295=
-
-> ses=3D4294967295 subj=3D? op=3Dadd_rule key=3D(null) list=3D1 res=3D1
-> type=3DUNKNOWN[1420] msg=3Daudit(1589816791.959:101):
-> subj_selinux=3Dsystem_u:system_r:unconfined_service_t:s0
-> subj_apparmor=3D=3Dunconfined
->
-> where we are getting multiple copies of the new record type, one for
-> each record type that had subj=3D?.
-
-While obviously wasteful, the type=3D1420 behavior is consistent with
-the subj=3D? behavior, which is to duplicate the subj=3D value. I know
-we've got enough hobgoblins in the audit system that we don't need
-to add any more in the name of a foolish consistency.
-
-> Not sure what it is the audit folks want here.
-
-I doubt that redundant type=3D1420 records are a good idea, but having
-seen some of the other active threads about useless fields I am not
-going to assume what is most appropriate.
-
-> This is with multiple LSMs enabled; need to confirm that no change
-> occurs if only one is enabled.
-
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBsaW51eC1rZXJuZWwtb3duZXJA
+dmdlci5rZXJuZWwub3JnIDxsaW51eC1rZXJuZWwtDQo+IG93bmVyQHZnZXIua2VybmVsLm9yZz4g
+T24gQmVoYWxmIE9mIEFybmQgQmVyZ21hbm4NCj4gU2VudDogU2F0dXJkYXksIE1heSAxNiwgMjAy
+MCAxOjA1IEFNDQo+IFRvOiBBbGV4ZWkgU3Rhcm92b2l0b3YgPGFsZXhlaS5zdGFyb3ZvaXRvdkBn
+bWFpbC5jb20+DQo+IENjOiBKYW1lcyBNb3JyaXMgPGphbW9ycmlzQGxpbnV4Lm1pY3Jvc29mdC5j
+b20+OyBBbmRlcnMgUm94ZWxsDQo+IDxhbmRlcnMucm94ZWxsQGxpbmFyby5vcmc+OyBBbGV4ZWkg
+U3Rhcm92b2l0b3YgPGFzdEBrZXJuZWwub3JnPjsgRGFuaWVsDQo+IEJvcmttYW5uIDxkYW5pZWxA
+aW9nZWFyYm94Lm5ldD47IExLTUwgPGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc+Ow0KPiBO
+ZXR3b3JrIERldmVsb3BtZW50IDxuZXRkZXZAdmdlci5rZXJuZWwub3JnPjsgYnBmDQo+IDxicGZA
+dmdlci5rZXJuZWwub3JnPg0KPiBTdWJqZWN0OiBSZTogW1BBVENIXSBzZWN1cml0eTogZml4IHRo
+ZSBkZWZhdWx0IHZhbHVlIG9mIHNlY2lkX3RvX3NlY2N0eCBob29rDQoNCkkgd291bGQgKnJlYWxs
+eSogYXBwcmVjaWF0ZSBpdCBpZiBkaXNjdXNzaW9ucyBhYm91dCB0aGUgTFNNIGluZnJhc3RydWN0
+dXJlDQp3aGVyZSBkb25lIG9uIHRoZSBsaW51eC1zZWN1cml0eS1tb2R1bGUgbWFpbCBsaXN0LiAo
+YWRkZWQgdG8gQ0MpLg0KDQo+IA0KPiBPbiBTYXQsIE1heSAxNiwgMjAyMCBhdCAxOjI5IEFNIEFs
+ZXhlaSBTdGFyb3ZvaXRvdg0KPiA8YWxleGVpLnN0YXJvdm9pdG92QGdtYWlsLmNvbT4gd3JvdGU6
+DQo+ID4NCj4gPiBPbiBUaHUsIE1heSAxNCwgMjAyMCBhdCAxMjo0NyBQTSBBbGV4ZWkgU3Rhcm92
+b2l0b3YNCj4gPiA8YWxleGVpLnN0YXJvdm9pdG92QGdtYWlsLmNvbT4gd3JvdGU6DQo+ID4gPg0K
+PiA+ID4gT24gVGh1LCBNYXkgMTQsIDIwMjAgYXQgMTI6NDMgUE0gSmFtZXMgTW9ycmlzDQo+ID4g
+PiA8amFtb3JyaXNAbGludXgubWljcm9zb2Z0LmNvbT4gd3JvdGU6DQo+ID4gPiA+DQo+ID4gPiA+
+IE9uIFdlZCwgMTMgTWF5IDIwMjAsIEFsZXhlaSBTdGFyb3ZvaXRvdiB3cm90ZToNCj4gPiA+ID4N
+Cj4gPiA+ID4gPiBKYW1lcywNCj4gPiA+ID4gPg0KPiA+ID4gPiA+IHNpbmNlIHlvdSB0b29rIHRo
+ZSBwcmV2aW91cyBzaW1pbGFyIHBhdGNoIGFyZSB5b3UgZ29pbmcgdG8gcGljayB0aGlzDQo+ID4g
+PiA+ID4gb25lIHVwIGFzIHdlbGw/DQo+ID4gPiA+ID4gT3Igd2UgY2FuIHJvdXRlIGl0IHZpYSBi
+cGYgdHJlZSB0byBMaW51cyBhc2FwLg0KPiA+ID4gPg0KPiA+ID4gPiBSb3V0aW5nIHZpYSB5b3Vy
+IHRyZWUgaXMgZmluZS4NCj4gPiA+DQo+ID4gPiBQZXJmZWN0Lg0KPiA+ID4gQXBwbGllZCB0byBi
+cGYgdHJlZS4gVGhhbmtzIGV2ZXJ5b25lLg0KPiA+DQo+ID4gTG9va3MgbGlrZSBpdCB3YXMgYSB3
+cm9uZyBmaXguDQo+ID4gSXQgYnJlYWtzIGF1ZGl0IGxpa2UgdGhpczoNCj4gPiBzdWRvIGF1ZGl0
+Y3RsIC1lIDANCj4gPiBbICAgODguNDAwMjk2XSBhdWRpdDogZXJyb3IgaW4gYXVkaXRfbG9nX3Rh
+c2tfY29udGV4dA0KPiA+IFsgICA4OC40MDA5NzZdIGF1ZGl0OiBlcnJvciBpbiBhdWRpdF9sb2df
+dGFza19jb250ZXh0DQo+ID4gWyAgIDg4LjQwMTU5N10gYXVkaXQ6IHR5cGU9MTMwNSBhdWRpdCgx
+NTg5NTg0OTUxLjE5ODo4OSk6IG9wPXNldA0KPiA+IGF1ZGl0X2VuYWJsZWQ9MCBvbGQ9MSBhdWlk
+PTAgc2VzPTEgcmVzPTANCj4gPiBbICAgODguNDAyNjkxXSBhdWRpdDogdHlwZT0xMzAwIGF1ZGl0
+KDE1ODk1ODQ5NTEuMTk4Ojg5KToNCj4gPiBhcmNoPWMwMDAwMDNlIHN5c2NhbGw9NDQgc3VjY2Vz
+cz15ZXMgZXhpdD01MiBhMD0zIGExPTdmZmU0MmEzNzQwMA0KPiA+IGEyPTM0IGEzPTAgaXRlbXM9
+MCBwcGlkPTIyNTAgcGlkPTIyNTEgYXVpZD0wIHVpZD0wIGdpZD0wIGV1aWQ9MCBzdWlkPTANCj4g
+PiBmc3VpZD0wIGVnaWQ9MCBzZ2lkPTAgZnNnaWQ9MCB0dHk9dHR5UzAgc2UpDQo+ID4gWyAgIDg4
+LjQwNTU4N10gYXVkaXQ6IHR5cGU9MTMyNyBhdWRpdCgxNTg5NTg0OTUxLjE5ODo4OSk6DQo+ID4g
+cHJvY3RpdGxlPTYxNzU2NDY5NzQ2Mzc0NkMwMDJENjUwMDMwDQo+ID4gRXJyb3Igc2VuZGluZyBl
+bmFibGUgcmVxdWVzdCAoT3BlcmF0aW9uIG5vdCBzdXBwb3J0ZWQpDQo+ID4NCj4gPiB3aGVuIENP
+TkZJR19MU009IGhhcyAiYnBmIiBpbiBpdC4NCj4gDQo+IERvIHlvdSBoYXZlIG1vcmUgdGhhbiBv
+bmUgTFNNIGVuYWJsZWQ/IEl0IGxvb2tzIGxpa2UNCj4gdGhlIHByb2JsZW0gd2l0aCBzZWN1cml0
+eV9zZWNpZF90b19zZWNjdHgoKSBpcyBub3cgdGhhdCBpdA0KPiByZXR1cm5zIGFuIGVycm9yIGlm
+IGFueSBvZiB0aGUgTFNNcyBmYWlsIGFuZCB0aGUgY2FsbGVyIGV4cGVjdHMNCj4gaXQgdG8gc3Vj
+Y2VlZCBpZiBhdCBsZWFzdCBvbmUgb2YgdGhlbSBzZXRzIHRoZSBzZWNkYXRhIHBvaW50ZXIuDQo+
+IA0KPiBUaGUgcHJvYmxlbSBlYXJsaWVyIHdhcyB0aGF0IHRoZSBjYWxsIHN1Y2NlZWRlZCBldmVu
+IHRob3VnaA0KPiBubyBMU00gaGFkIHNldCB0aGUgcG9pbnRlci4NCj4gDQo+IFdoYXQgaXMgdGhl
+IGJlaGF2aW9yIHdlIGFjdHVhbGx5IGV4cGVjdCBmcm9tIHRoaXMgZnVuY3Rpb24gaWYNCj4gbXVs
+dGlwbGUgTFNNIGFyZSBsb2FkZWQ/DQo+IA0KPiAgICAgICAgQXJuZA0K
