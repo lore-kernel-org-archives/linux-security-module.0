@@ -2,247 +2,204 @@ Return-Path: <SRS0=aSrS=7A=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8E31C433DF
-	for <linux-security-module@archiver.kernel.org>; Mon, 18 May 2020 18:08:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97C5AC433DF
+	for <linux-security-module@archiver.kernel.org>; Mon, 18 May 2020 20:16:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A850520715
-	for <linux-security-module@archiver.kernel.org>; Mon, 18 May 2020 18:08:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6EF3020674
+	for <linux-security-module@archiver.kernel.org>; Mon, 18 May 2020 20:16:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Q9rpHpZs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387489AbgERSIX (ORCPT
+        id S1726727AbgERUQv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 18 May 2020 14:08:23 -0400
-Received: from raptor.unsafe.ru ([5.9.43.93]:35962 "EHLO raptor.unsafe.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733067AbgERSHv (ORCPT
+        Mon, 18 May 2020 16:16:51 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:33120 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726367AbgERUQu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 18 May 2020 14:07:51 -0400
-Received: from comp-core-i7-2640m-0182e6.redhat.com (ip-89-102-33-211.net.upcbroadband.cz [89.102.33.211])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by raptor.unsafe.ru (Postfix) with ESMTPSA id 9201D20479;
-        Mon, 18 May 2020 18:07:42 +0000 (UTC)
-From:   Alexey Gladkov <gladkov.alexey@gmail.com>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        syzbot <syzbot+c1af344512918c61362c@syzkaller.appspotmail.com>,
-        jmorris@namei.org, linux-next@vger.kernel.org,
-        linux-security-module@vger.kernel.org, serge@hallyn.com,
-        sfr@canb.auug.org.au, syzkaller-bugs@googlegroups.com,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: [PATCH v4] proc: proc_pid_ns takes super_block as an argument
-Date:   Mon, 18 May 2020 20:07:38 +0200
-Message-Id: <20200518180738.2939611-1-gladkov.alexey@gmail.com>
-X-Mailer: git-send-email 2.25.4
-In-Reply-To: <87lfltcbc4.fsf@x220.int.ebiederm.org>
-References: <87lfltcbc4.fsf@x220.int.ebiederm.org>
+        Mon, 18 May 2020 16:16:50 -0400
+Received: from [10.0.0.249] (c-24-19-135-168.hsd1.wa.comcast.net [24.19.135.168])
+        by linux.microsoft.com (Postfix) with ESMTPSA id B920020B717B;
+        Mon, 18 May 2020 13:16:47 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B920020B717B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1589833008;
+        bh=AiI1FEEKEhOSrRhQ3c3bzHp2AdpU5JROR/niu6Z306c=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Q9rpHpZs48Mpes4cY2X39QKx5IHfkdJ2/ypAKpCbktJA44bsoqYL1qMcBcBSTW9p5
+         LHN4E3zh7SF3PFrLthW/mOP2AZ4w/yRpivRy3xr3z1z6XI3XZsB+CoVnEK8V9BVqd7
+         xBcJTcqKWHBuaojsIpeQnTElvTyd/b7Z6be2k15E=
+Subject: Re: [RFC][PATCH 0/2] Add support for using reserved memory for ima
+ buffer pass
+To:     Rob Herring <robh@kernel.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, devicetree@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, catalin.marinas@arm.com,
+        will@kernel.org, mpe@ellerman.id.au, benh@kernel.crashing.org,
+        paulus@samba.org, frowand.list@gmail.com, zohar@linux.ibm.com,
+        dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
+        pasha.tatashin@soleen.com, allison@lohutok.net,
+        kstewart@linuxfoundation.org, takahiro.akashi@linaro.org,
+        tglx@linutronix.de, vincenzo.frascino@arm.com,
+        masahiroy@kernel.org, james.morse@arm.com, bhsharma@redhat.com,
+        mbrugger@suse.com, hsinyi@chromium.org, tao.li@vivo.com,
+        christophe.leroy@c-s.fr, gregkh@linuxfoundation.org,
+        nramas@linux.microsoft.com, tusharsu@linux.microsoft.com,
+        balajib@linux.microsoft.com
+References: <20200504203829.6330-1-prsriva@linux.microsoft.com>
+ <20200505095620.GA82424@C02TD0UTHF1T.local>
+ <e8c7d74e-74bf-caa3-452d-23faa649e825@linux.microsoft.com>
+ <20200512230509.GA2654@bogus>
+From:   Prakhar Srivastava <prsriva@linux.microsoft.com>
+Message-ID: <7701df90-a68b-b710-4279-9d64e45ee792@linux.microsoft.com>
+Date:   Mon, 18 May 2020 13:16:47 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.1 (raptor.unsafe.ru [5.9.43.93]); Mon, 18 May 2020 18:07:45 +0000 (UTC)
+In-Reply-To: <20200512230509.GA2654@bogus>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-syzbot found that
 
-  touch /proc/testfile
 
-causes NULL pointer dereference at tomoyo_get_local_path()
-because inode of the dentry is NULL.
+On 5/12/20 4:05 PM, Rob Herring wrote:
+> On Wed, May 06, 2020 at 10:50:04PM -0700, Prakhar Srivastava wrote:
+>> Hi Mark,
+> 
+> Please don't top post.
+> 
+>> This patch set currently only address the Pure DT implementation.
+>> EFI and ACPI implementations will be posted in subsequent patchsets.
+>>
+>> The logs are intended to be carried over the kexec and once read the
+>> logs are no longer needed and in prior conversation with James(
+>> https://lore.kernel.org/linux-arm-kernel/0053eb68-0905-4679-c97a-00c5cb6f1abb@arm.com/)
+>> the apporach of using a chosen node doesn't
+>> support the case.
+>>
+>> The DT entries make the reservation permanent and thus doesnt need kernel
+>> segments to be used for this, however using a chosen-node with
+>> reserved memory only changes the node information but memory still is
+>> reserved via reserved-memory section.
+> 
+> I think Mark's point was whether it needs to be permanent. We don't
+> hardcode the initrd address for example.
+> 
+Thankyou for clarifying my misunderstanding, i am modelling this keeping 
+to the TPM log implementation that uses a reserved memory. I will rev up 
+the version with chosen-node support.
+That will make the memory reservation free after use.
 
-Before c59f415a7cb6, Tomoyo received pid_ns from proc's s_fs_info
-directly. Since proc_pid_ns() can only work with inode, using it in
-the tomoyo_get_local_path() was wrong.
 
-To avoid creating more functions for getting proc_ns, change the
-argument type of the proc_pid_ns() function. Then, Tomoyo can use
-the existing super_block to get pid_ns.
+>> On 5/5/20 2:59 AM, Mark Rutland wrote:
+>>> Hi Prakhar,
+>>>
+>>> On Mon, May 04, 2020 at 01:38:27PM -0700, Prakhar Srivastava wrote:
+>>>> IMA during kexec(kexec file load) verifies the kernel signature and measures
+> 
+> What's IMAIMA is a LSM attempting to detect if files have been accidentally or 
+maliciously altered, both remotely and locally, it can also be used
+to appraise a file's measurement against a "good" value stored as an 
+extended attribute, and enforce local file integrity.
 
-Reported-by: syzbot+c1af344512918c61362c@syzkaller.appspotmail.com
-Fixes: c59f415a7cb6 ("Use proc_pid_ns() to get pid_namespace from the proc superblock")
-Signed-off-by: Alexey Gladkov <gladkov.alexey@gmail.com>
----
- fs/locks.c                 |  4 ++--
- fs/proc/array.c            |  2 +-
- fs/proc/base.c             | 10 +++++-----
- fs/proc/self.c             |  2 +-
- fs/proc/thread_self.c      |  2 +-
- include/linux/proc_fs.h    |  4 ++--
- kernel/fork.c              |  2 +-
- net/ipv6/ip6_flowlabel.c   |  2 +-
- security/tomoyo/realpath.c |  2 +-
- 9 files changed, 15 insertions(+), 15 deletions(-)
+IMA also validates and measures the signers of the kernel and initrd
+during kexec. The measurements are extended to PCR 10(configurable) and 
+the logs stored in memory, however once kexec'd the logs are lost. Kexec 
+is used as secondary boot loader in may use cases and loosing the signer
+creates a security hole.
 
-diff --git a/fs/locks.c b/fs/locks.c
-index 399c5dbb72c4..ab702d6efb55 100644
---- a/fs/locks.c
-+++ b/fs/locks.c
-@@ -2823,7 +2823,7 @@ static void lock_get_status(struct seq_file *f, struct file_lock *fl,
- {
- 	struct inode *inode = NULL;
- 	unsigned int fl_pid;
--	struct pid_namespace *proc_pidns = proc_pid_ns(file_inode(f->file));
-+	struct pid_namespace *proc_pidns = proc_pid_ns(file_inode(f->file)->i_sb);
- 
- 	fl_pid = locks_translate_pid(fl, proc_pidns);
- 	/*
-@@ -2901,7 +2901,7 @@ static int locks_show(struct seq_file *f, void *v)
- {
- 	struct locks_iterator *iter = f->private;
- 	struct file_lock *fl, *bfl;
--	struct pid_namespace *proc_pidns = proc_pid_ns(file_inode(f->file));
-+	struct pid_namespace *proc_pidns = proc_pid_ns(file_inode(f->file)->i_sb);
- 
- 	fl = hlist_entry(v, struct file_lock, fl_link);
- 
-diff --git a/fs/proc/array.c b/fs/proc/array.c
-index 8e16f14bb05a..043311014db2 100644
---- a/fs/proc/array.c
-+++ b/fs/proc/array.c
-@@ -728,7 +728,7 @@ static int children_seq_show(struct seq_file *seq, void *v)
- {
- 	struct inode *inode = file_inode(seq->file);
- 
--	seq_printf(seq, "%d ", pid_nr_ns(v, proc_pid_ns(inode)));
-+	seq_printf(seq, "%d ", pid_nr_ns(v, proc_pid_ns(inode->i_sb)));
- 	return 0;
- }
- 
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index 5a307b3bb2d1..30c9fceca0b7 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -754,7 +754,7 @@ static const struct inode_operations proc_def_inode_operations = {
- static int proc_single_show(struct seq_file *m, void *v)
- {
- 	struct inode *inode = m->private;
--	struct pid_namespace *ns = proc_pid_ns(inode);
-+	struct pid_namespace *ns = proc_pid_ns(inode->i_sb);
- 	struct pid *pid = proc_pid(inode);
- 	struct task_struct *task;
- 	int ret;
-@@ -1423,7 +1423,7 @@ static const struct file_operations proc_fail_nth_operations = {
- static int sched_show(struct seq_file *m, void *v)
- {
- 	struct inode *inode = m->private;
--	struct pid_namespace *ns = proc_pid_ns(inode);
-+	struct pid_namespace *ns = proc_pid_ns(inode->i_sb);
- 	struct task_struct *p;
- 
- 	p = get_proc_task(inode);
-@@ -2466,7 +2466,7 @@ static int proc_timers_open(struct inode *inode, struct file *file)
- 		return -ENOMEM;
- 
- 	tp->pid = proc_pid(inode);
--	tp->ns = proc_pid_ns(inode);
-+	tp->ns = proc_pid_ns(inode->i_sb);
- 	return 0;
- }
- 
-@@ -3377,7 +3377,7 @@ int proc_pid_readdir(struct file *file, struct dir_context *ctx)
- {
- 	struct tgid_iter iter;
- 	struct proc_fs_info *fs_info = proc_sb_info(file_inode(file)->i_sb);
--	struct pid_namespace *ns = proc_pid_ns(file_inode(file));
-+	struct pid_namespace *ns = proc_pid_ns(file_inode(file)->i_sb);
- 	loff_t pos = ctx->pos;
- 
- 	if (pos >= PID_MAX_LIMIT + TGID_OFFSET)
-@@ -3730,7 +3730,7 @@ static int proc_task_readdir(struct file *file, struct dir_context *ctx)
- 	/* f_version caches the tgid value that the last readdir call couldn't
- 	 * return. lseek aka telldir automagically resets f_version to 0.
- 	 */
--	ns = proc_pid_ns(inode);
-+	ns = proc_pid_ns(inode->i_sb);
- 	tid = (int)file->f_version;
- 	file->f_version = 0;
- 	for (task = first_tid(proc_pid(inode), tid, ctx->pos - 2, ns);
-diff --git a/fs/proc/self.c b/fs/proc/self.c
-index 309301ac0136..ca5158fa561c 100644
---- a/fs/proc/self.c
-+++ b/fs/proc/self.c
-@@ -12,7 +12,7 @@ static const char *proc_self_get_link(struct dentry *dentry,
- 				      struct inode *inode,
- 				      struct delayed_call *done)
- {
--	struct pid_namespace *ns = proc_pid_ns(inode);
-+	struct pid_namespace *ns = proc_pid_ns(inode->i_sb);
- 	pid_t tgid = task_tgid_nr_ns(current, ns);
- 	char *name;
- 
-diff --git a/fs/proc/thread_self.c b/fs/proc/thread_self.c
-index 2493cbbdfa6f..ac284f409568 100644
---- a/fs/proc/thread_self.c
-+++ b/fs/proc/thread_self.c
-@@ -12,7 +12,7 @@ static const char *proc_thread_self_get_link(struct dentry *dentry,
- 					     struct inode *inode,
- 					     struct delayed_call *done)
- {
--	struct pid_namespace *ns = proc_pid_ns(inode);
-+	struct pid_namespace *ns = proc_pid_ns(inode->i_sb);
- 	pid_t tgid = task_tgid_nr_ns(current, ns);
- 	pid_t pid = task_pid_nr_ns(current, ns);
- 	char *name;
-diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
-index 2cb424e6f36a..6ec524d8842c 100644
---- a/include/linux/proc_fs.h
-+++ b/include/linux/proc_fs.h
-@@ -202,9 +202,9 @@ int open_related_ns(struct ns_common *ns,
- 		   struct ns_common *(*get_ns)(struct ns_common *ns));
- 
- /* get the associated pid namespace for a file in procfs */
--static inline struct pid_namespace *proc_pid_ns(const struct inode *inode)
-+static inline struct pid_namespace *proc_pid_ns(struct super_block *sb)
- {
--	return proc_sb_info(inode->i_sb)->pid_ns;
-+	return proc_sb_info(sb)->pid_ns;
- }
- 
- #endif /* _LINUX_PROC_FS_H */
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 4385f3d639f2..e7bdaccad942 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -1745,7 +1745,7 @@ static void pidfd_show_fdinfo(struct seq_file *m, struct file *f)
- 	pid_t nr = -1;
- 
- 	if (likely(pid_has_task(pid, PIDTYPE_PID))) {
--		ns = proc_pid_ns(file_inode(m->file));
-+		ns = proc_pid_ns(file_inode(m->file)->i_sb);
- 		nr = pid_nr_ns(pid, ns);
- 	}
- 
-diff --git a/net/ipv6/ip6_flowlabel.c b/net/ipv6/ip6_flowlabel.c
-index d64b83e85642..ce4fbba4acce 100644
---- a/net/ipv6/ip6_flowlabel.c
-+++ b/net/ipv6/ip6_flowlabel.c
-@@ -779,7 +779,7 @@ static void *ip6fl_seq_start(struct seq_file *seq, loff_t *pos)
- {
- 	struct ip6fl_iter_state *state = ip6fl_seq_private(seq);
- 
--	state->pid_ns = proc_pid_ns(file_inode(seq->file));
-+	state->pid_ns = proc_pid_ns(file_inode(seq->file)->i_sb);
- 
- 	rcu_read_lock_bh();
- 	return *pos ? ip6fl_get_idx(seq, *pos - 1) : SEQ_START_TOKEN;
-diff --git a/security/tomoyo/realpath.c b/security/tomoyo/realpath.c
-index 08b096e2f7e3..df4798980416 100644
---- a/security/tomoyo/realpath.c
-+++ b/security/tomoyo/realpath.c
-@@ -162,7 +162,7 @@ static char *tomoyo_get_local_path(struct dentry *dentry, char * const buffer,
- 	if (sb->s_magic == PROC_SUPER_MAGIC && *pos == '/') {
- 		char *ep;
- 		const pid_t pid = (pid_t) simple_strtoul(pos + 1, &ep, 10);
--		struct pid_namespace *proc_pidns = proc_pid_ns(d_inode(dentry));
-+		struct pid_namespace *proc_pidns = proc_pid_ns(sb);
- 
- 		if (*ep == '/' && pid && pid ==
- 		    task_tgid_nr_ns(current, proc_pidns)) {
--- 
-2.25.4
+This patch is an implementation to carry over the logs and making it
+possible to remotely validate the signers of the kernel and initrd. Such 
+a support exits only in powerpc.
+This patch makes the carry over of logs architecture independent and 
+puts the complexity in a driver.
 
+Thanks,
+Prakhar
+> 
+>>>> the signature of the kernel. The signature in the logs can be used to verfiy the
+>>>> authenticity of the kernel. The logs don not get carried over kexec and thus
+>>>> remote attesation cannot verify the signature of the running kernel.
+>>>>
+>>>> Introduce an ABI to carry forward the ima logs over kexec.
+>>>> Memory reserved via device tree reservation can be used to store and read
+>>>> via the of_* functions.
+>>>
+>>> This flow needs to work for:
+>>>
+>>> 1) Pure DT
+>>> 2) DT + EFI memory map
+>>> 3) ACPI + EFI memory map
+>>>
+>>> ... and if this is just for transiently passing the log, I don't think
+>>> that a reserved memory region is the right thing to use, since they're
+>>> supposed to be more permanent.
+>>>
+>>> This sounds analogous to passing the initrd, and should probably use
+>>> properties under the chosen node (which can be used for all three boot
+>>> flows above).
+>>>
+>>> For reference, how big is the IMA log likely to be? Does it need
+>>> physically contiguous space?
+>>
+>> It purely depends on the policy used and the modules/files that are accessed
+>> for my local testing over a kexec session the log in
+>> about 30KB.
+>>
+>> Current implementation expects enough contiguous memory to allocated to
+>> carry forward the logs. If the log size exceeds the reserved memory the
+>> call will fail.
+>>
+>> Thanks,
+>> Prakhar Srivastava
+>>>
+>>> Thanks,
+>>> Mark.
+>>>
+>>>>
+>>>> Reserved memory stores the size(sizeof(size_t)) of the buffer in the starting
+>>>> address, followed by the IMA log contents.
+>>>>
+>>>> Tested on:
+>>>>     arm64 with Uboot
+>>>>
+>>>> Prakhar Srivastava (2):
+>>>>     Add a layer of abstraction to use the memory reserved by device tree
+>>>>       for ima buffer pass.
+>>>>     Add support for ima buffer pass using reserved memory for arm64 kexec.
+>>>>       Update the arch sepcific code path in kexec file load to store the
+>>>>       ima buffer in the reserved memory. The same reserved memory is read
+>>>>       on kexec or cold boot.
+>>>>
+>>>>    arch/arm64/Kconfig                     |   1 +
+>>>>    arch/arm64/include/asm/ima.h           |  22 ++++
+>>>>    arch/arm64/include/asm/kexec.h         |   5 +
+>>>>    arch/arm64/kernel/Makefile             |   1 +
+>>>>    arch/arm64/kernel/ima_kexec.c          |  64 ++++++++++
+>>>>    arch/arm64/kernel/machine_kexec_file.c |   1 +
+>>>>    arch/powerpc/include/asm/ima.h         |   3 +-
+>>>>    arch/powerpc/kexec/ima.c               |  14 ++-
+>>>>    drivers/of/Kconfig                     |   6 +
+>>>>    drivers/of/Makefile                    |   1 +
+>>>>    drivers/of/of_ima.c                    | 165 +++++++++++++++++++++++++
+>>>>    include/linux/of.h                     |  34 +++++
+>>>>    security/integrity/ima/ima_kexec.c     |  15 ++-
+>>>>    13 files changed, 325 insertions(+), 7 deletions(-)
+>>>>    create mode 100644 arch/arm64/include/asm/ima.h
+>>>>    create mode 100644 arch/arm64/kernel/ima_kexec.c
+>>>>    create mode 100644 drivers/of/of_ima.c
+>>>>
+>>>> -- 
+>>>> 2.25.1
+>>>>
