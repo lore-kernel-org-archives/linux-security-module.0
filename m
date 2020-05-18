@@ -2,127 +2,77 @@ Return-Path: <SRS0=aSrS=7A=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 542BFC433DF
-	for <linux-security-module@archiver.kernel.org>; Mon, 18 May 2020 15:21:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15641C433DF
+	for <linux-security-module@archiver.kernel.org>; Mon, 18 May 2020 15:37:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 349FD207D3
-	for <linux-security-module@archiver.kernel.org>; Mon, 18 May 2020 15:21:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="htaIZ7s8"
+	by mail.kernel.org (Postfix) with ESMTP id E954E207E8
+	for <linux-security-module@archiver.kernel.org>; Mon, 18 May 2020 15:37:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728335AbgERPVL (ORCPT
+        id S1727020AbgERPhe (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 18 May 2020 11:21:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37560 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728319AbgERPVL (ORCPT
+        Mon, 18 May 2020 11:37:34 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:57636 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726958AbgERPhe (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 18 May 2020 11:21:11 -0400
-Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 300DAC05BD0D
-        for <linux-security-module@vger.kernel.org>; Mon, 18 May 2020 08:21:11 -0700 (PDT)
-Received: by mail-pf1-x444.google.com with SMTP id x2so5101376pfx.7
-        for <linux-security-module@vger.kernel.org>; Mon, 18 May 2020 08:21:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=8eIa0Vhcalrg30hExhgbFyLNmHPU3sV6rgHITb5pZ5w=;
-        b=htaIZ7s8kHdd9JhXfpJr62T+PbcWV0P9HH48JxCHos2qCOwdAffTSsVfouROZN6Mcx
-         OsT1n9x1239rkbG6hdpojAEmxPN0Ini8eKc3MOs0rk/oWTZl1F9JjZbGrWGPiJf+w5zL
-         YtiyZ9HL2YUsIAekksROIFa5+16FSNv2M8/J8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=8eIa0Vhcalrg30hExhgbFyLNmHPU3sV6rgHITb5pZ5w=;
-        b=bsSN1xczWAJyDxQxO4Uun9F8JEYo+NxnVIKd0luY95+v0i++fRGJHLF1Tcws/oQWsU
-         PlQyI5pCO4DiLLLVQxOtdvc+I1O0caTVqy1TXik3qPpauv1mt8sU7X6a/Ab3ylbq4XIK
-         Or8HDp4cDvTeHuSPwVUqKKwbJS1GlNx13RtaH55dRlCRfLNiGhFmZzRA6rNqv+7WFAqx
-         uIWIfiGq/q9KX2Ga3EkQ3q3+8sj6zwIJI7HPRgQVmAXzKvY+WxyA99kxWc8mB4II2/U1
-         luuF2aOBJGQXxzQxsd7yer1jkXrMfG+YtYuhNmHM7kN7zVxExrBUXGBzA7tu50A1pCDj
-         eyqQ==
-X-Gm-Message-State: AOAM532k1zWksp4R6TjAWE3nz47CQWAJM2qUTNCDqktcK3E6UszblE33
-        Ia+LqNgYn/YwYz2frfAFCFNiyg==
-X-Google-Smtp-Source: ABdhPJzV/8/H/dtCPYbOvT1/Nbv8m+JVx3a0WuH1CfwiIsZx/wce2vLAkKKd/khb6PmDQ5vsnT0fng==
-X-Received: by 2002:a63:1415:: with SMTP id u21mr15114423pgl.366.1589815270596;
-        Mon, 18 May 2020 08:21:10 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id h7sm6207978pgg.17.2020.05.18.08.21.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 May 2020 08:21:09 -0700 (PDT)
-Date:   Mon, 18 May 2020 08:21:08 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Luis Chamberlain <mcgrof@kernel.org>, viro@zeniv.linux.org.uk,
-        gregkh@linuxfoundation.org, rafael@kernel.org,
-        ebiederm@xmission.com, jeyu@kernel.org, jmorris@namei.org,
-        paul@paul-moore.com, stephen.smalley.work@gmail.com,
-        eparis@parisplace.org, nayna@linux.ibm.com,
-        scott.branden@broadcom.com, dan.carpenter@oracle.com,
-        skhan@linuxfoundation.org, geert@linux-m68k.org,
-        tglx@linutronix.de, bauerman@linux.ibm.com, dhowells@redhat.com,
-        linux-integrity@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        kexec@lists.infradead.org, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] fs: reduce export usage of kerne_read*() calls
-Message-ID: <202005180820.46CEF3C2@keescook>
-References: <20200513152108.25669-1-mcgrof@kernel.org>
- <20200513181736.GA24342@infradead.org>
- <20200515212933.GD11244@42.do-not-panic.com>
- <20200518062255.GB15641@infradead.org>
- <1589805462.5111.107.camel@linux.ibm.com>
+        Mon, 18 May 2020 11:37:34 -0400
+Received: from fsav404.sakura.ne.jp (fsav404.sakura.ne.jp [133.242.250.103])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 04IFaqlj007747;
+        Tue, 19 May 2020 00:36:52 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav404.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav404.sakura.ne.jp);
+ Tue, 19 May 2020 00:36:52 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav404.sakura.ne.jp)
+Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 04IFacsP007670
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Tue, 19 May 2020 00:36:51 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH v3] proc: proc_pid_ns takes super_block as an argument
+To:     Alexey Gladkov <gladkov.alexey@gmail.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        syzbot <syzbot+c1af344512918c61362c@syzkaller.appspotmail.com>,
+        jmorris@namei.org, linux-next@vger.kernel.org,
+        linux-security-module@vger.kernel.org, serge@hallyn.com,
+        sfr@canb.auug.org.au, syzkaller-bugs@googlegroups.com,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <87lfltcbc4.fsf@x220.int.ebiederm.org>
+ <20200518150818.2929164-1-gladkov.alexey@gmail.com>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <ffcf787e-8380-96e8-0432-54742140f490@i-love.sakura.ne.jp>
+Date:   Tue, 19 May 2020 00:36:34 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1589805462.5111.107.camel@linux.ibm.com>
+In-Reply-To: <20200518150818.2929164-1-gladkov.alexey@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, May 18, 2020 at 08:37:42AM -0400, Mimi Zohar wrote:
-> Hi Christoph,
-> 
-> On Sun, 2020-05-17 at 23:22 -0700, Christoph Hellwig wrote:
-> > On Fri, May 15, 2020 at 09:29:33PM +0000, Luis Chamberlain wrote:
-> > > On Wed, May 13, 2020 at 11:17:36AM -0700, Christoph Hellwig wrote:
-> > > > Can you also move kernel_read_* out of fs.h?  That header gets pulled
-> > > > in just about everywhere and doesn't really need function not related
-> > > > to the general fs interface.
-> > > 
-> > > Sure, where should I dump these?
-> > 
-> > Maybe a new linux/kernel_read_file.h?  Bonus points for a small top
-> > of the file comment explaining the point of the interface, which I
-> > still don't get :)
-> 
-> Instead of rolling your own method of having the kernel read a file,
-> which requires call specific security hooks, this interface provides a
-> single generic set of pre and post security hooks.  The
-> kernel_read_file_id enumeration permits the security hook to
-> differentiate between callers.
-> 
-> To comply with secure and trusted boot concepts, a file cannot be
-> accessible to the caller until after it has been measured and/or the
-> integrity (hash/signature) appraised.
-> 
-> In some cases, the file was previously read twice, first to measure
-> and/or appraise the file and then read again into a buffer for
-> use.  This interface reads the file into a buffer once, calls the
-> generic post security hook, before providing the buffer to the caller.
->  (Note using firmware pre-allocated memory might be an issue.)
-> 
-> Partial reading firmware will result in needing to pre-read the entire
-> file, most likely on the security pre hook.
+I would shorten like below:
 
-Well described! :)
+syzbot found that
 
--- 
-Kees Cook
+  touch /proc/testfile
+
+causes NULL pointer dereference at tomoyo_get_local_path()
+because inode of the dentry is NULL.
+
+Before c59f415a7cb6, Tomoyo received pid_ns from proc's s_fs_info
+directly. Since proc_pid_ns() can only work with inode, using it in
+the tomoyo_get_local_path() was wrong.
+
+To avoid creating more functions for getting proc_ns, change the
+argument type of the proc_pid_ns() function. Then, Tomoyo can use
+the existing super_block to get pid_ns.
+
