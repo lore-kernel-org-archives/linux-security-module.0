@@ -2,260 +2,128 @@ Return-Path: <SRS0=aSrS=7A=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FC0AC433E0
-	for <linux-security-module@archiver.kernel.org>; Mon, 18 May 2020 12:12:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B0B5C433DF
+	for <linux-security-module@archiver.kernel.org>; Mon, 18 May 2020 12:38:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 224A420643
-	for <linux-security-module@archiver.kernel.org>; Mon, 18 May 2020 12:12:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C999920674
+	for <linux-security-module@archiver.kernel.org>; Mon, 18 May 2020 12:38:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727123AbgERMMo (ORCPT
+        id S1726758AbgERMix (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 18 May 2020 08:12:44 -0400
-Received: from out02.mta.xmission.com ([166.70.13.232]:42580 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727036AbgERMMo (ORCPT
+        Mon, 18 May 2020 08:38:53 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:22500 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726739AbgERMiw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 18 May 2020 08:12:44 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jaedL-0004j4-Ep; Mon, 18 May 2020 06:12:39 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jaedJ-0004sd-HX; Mon, 18 May 2020 06:12:38 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Alexey Gladkov <gladkov.alexey@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        syzbot <syzbot+c1af344512918c61362c@syzkaller.appspotmail.com>,
-        jmorris@namei.org, linux-next@vger.kernel.org,
-        linux-security-module@vger.kernel.org, serge@hallyn.com,
-        sfr@canb.auug.org.au, syzkaller-bugs@googlegroups.com,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-References: <87lfltcbc4.fsf@x220.int.ebiederm.org>
-        <20200518111716.2896385-1-gladkov.alexey@gmail.com>
-Date:   Mon, 18 May 2020 07:08:57 -0500
-In-Reply-To: <20200518111716.2896385-1-gladkov.alexey@gmail.com> (Alexey
-        Gladkov's message of "Mon, 18 May 2020 13:17:16 +0200")
-Message-ID: <871rnh78di.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1jaedJ-0004sd-HX;;;mid=<871rnh78di.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+ENvkon5yFM3OHHG8fnme7wq0ctbup0rM=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [PATCH v2] proc: proc_pid_ns takes super_block as an argument
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+        Mon, 18 May 2020 08:38:52 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 04ICX7lY088693;
+        Mon, 18 May 2020 08:37:52 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 31292e4yye-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 18 May 2020 08:37:51 -0400
+Received: from m0098393.ppops.net (m0098393.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 04ICYhbj094964;
+        Mon, 18 May 2020 08:37:51 -0400
+Received: from ppma03fra.de.ibm.com (6b.4a.5195.ip4.static.sl-reverse.com [149.81.74.107])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 31292e4yx8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 18 May 2020 08:37:50 -0400
+Received: from pps.filterd (ppma03fra.de.ibm.com [127.0.0.1])
+        by ppma03fra.de.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 04ICa50C017752;
+        Mon, 18 May 2020 12:37:48 GMT
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
+        by ppma03fra.de.ibm.com with ESMTP id 3127t5hnhx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 18 May 2020 12:37:48 +0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 04ICbjrD24838244
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 18 May 2020 12:37:45 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6BD284C059;
+        Mon, 18 May 2020 12:37:45 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9F7144C04E;
+        Mon, 18 May 2020 12:37:42 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.145.145])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 18 May 2020 12:37:42 +0000 (GMT)
+Message-ID: <1589805462.5111.107.camel@linux.ibm.com>
+Subject: Re: [PATCH 0/3] fs: reduce export usage of kerne_read*() calls
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Christoph Hellwig <hch@infradead.org>,
+        Luis Chamberlain <mcgrof@kernel.org>
+Cc:     viro@zeniv.linux.org.uk, gregkh@linuxfoundation.org,
+        rafael@kernel.org, ebiederm@xmission.com, jeyu@kernel.org,
+        jmorris@namei.org, keescook@chromium.org, paul@paul-moore.com,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        nayna@linux.ibm.com, scott.branden@broadcom.com,
+        dan.carpenter@oracle.com, skhan@linuxfoundation.org,
+        geert@linux-m68k.org, tglx@linutronix.de, bauerman@linux.ibm.com,
+        dhowells@redhat.com, linux-integrity@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, kexec@lists.infradead.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Mon, 18 May 2020 08:37:42 -0400
+In-Reply-To: <20200518062255.GB15641@infradead.org>
+References: <20200513152108.25669-1-mcgrof@kernel.org>
+         <20200513181736.GA24342@infradead.org>
+         <20200515212933.GD11244@42.do-not-panic.com>
+         <20200518062255.GB15641@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.676
+ definitions=2020-05-18_05:2020-05-15,2020-05-18 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1011
+ lowpriorityscore=0 adultscore=0 impostorscore=0 bulkscore=0
+ priorityscore=1501 mlxlogscore=999 mlxscore=0 suspectscore=0 spamscore=0
+ malwarescore=0 cotscore=-2147483648 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2004280000 definitions=main-2005180114
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Alexey Gladkov <gladkov.alexey@gmail.com> writes:
+Hi Christoph,
 
-> The proc_pid_ns() can be used for both inode and dentry. To avoid making
-> two identical functions, change the argument type of the proc_pid_ns().
->
-> Link: https://lore.kernel.org/lkml/c3461e26-1407-2262-c709-dac0df3da2d0@i-love.sakura.ne.jp/
-> Reported-by: syzbot+c1af344512918c61362c@syzkaller.appspotmail.com
-> Signed-off-by: Alexey Gladkov <gladkov.alexey@gmail.com>
+On Sun, 2020-05-17 at 23:22 -0700, Christoph Hellwig wrote:
+> On Fri, May 15, 2020 at 09:29:33PM +0000, Luis Chamberlain wrote:
+> > On Wed, May 13, 2020 at 11:17:36AM -0700, Christoph Hellwig wrote:
+> > > Can you also move kernel_read_* out of fs.h?  That header gets pulled
+> > > in just about everywhere and doesn't really need function not related
+> > > to the general fs interface.
+> > 
+> > Sure, where should I dump these?
+> 
+> Maybe a new linux/kernel_read_file.h?  Bonus points for a small top
+> of the file comment explaining the point of the interface, which I
+> still don't get :)
 
-So overall this looks good.
+Instead of rolling your own method of having the kernel read a file,
+which requires call specific security hooks, this interface provides a
+single generic set of pre and post security hooks.  The
+kernel_read_file_id enumeration permits the security hook to
+differentiate between callers.
 
-However, the description leaves a little bit to be desired as it does
-not describe why it is bad to use dentry->d_sb.  A fixes tag would be
-nice if for no other reason than to help anyone who decides to backport
-this.
+To comply with secure and trusted boot concepts, a file cannot be
+accessible to the caller until after it has been measured and/or the
+integrity (hash/signature) appraised.
 
-And can you please compile test this?
+In some cases, the file was previously read twice, first to measure
+and/or appraise the file and then read again into a buffer for
+use.  This interface reads the file into a buffer once, calls the
+generic post security hook, before providing the buffer to the caller.
+ (Note using firmware pre-allocated memory might be an issue.)
 
-There is a very silly typo in proc that keeps this from compiling.
+Partial reading firmware will result in needing to pre-read the entire
+file, most likely on the security pre hook.
 
-Thank you,
-Eric
-
-> ---
->  fs/locks.c                 |  4 ++--
->  fs/proc/array.c            |  2 +-
->  fs/proc/base.c             | 10 +++++-----
->  fs/proc/self.c             |  2 +-
->  fs/proc/thread_self.c      |  2 +-
->  include/linux/proc_fs.h    |  4 ++--
->  kernel/fork.c              |  2 +-
->  net/ipv6/ip6_flowlabel.c   |  2 +-
->  security/tomoyo/realpath.c |  2 +-
->  9 files changed, 15 insertions(+), 15 deletions(-)
->
-> diff --git a/fs/locks.c b/fs/locks.c
-> index 399c5dbb72c4..ab702d6efb55 100644
-> --- a/fs/locks.c
-> +++ b/fs/locks.c
-> @@ -2823,7 +2823,7 @@ static void lock_get_status(struct seq_file *f, struct file_lock *fl,
->  {
->  	struct inode *inode = NULL;
->  	unsigned int fl_pid;
-> -	struct pid_namespace *proc_pidns = proc_pid_ns(file_inode(f->file));
-> +	struct pid_namespace *proc_pidns = proc_pid_ns(file_inode(f->file)->i_sb);
->  
->  	fl_pid = locks_translate_pid(fl, proc_pidns);
->  	/*
-> @@ -2901,7 +2901,7 @@ static int locks_show(struct seq_file *f, void *v)
->  {
->  	struct locks_iterator *iter = f->private;
->  	struct file_lock *fl, *bfl;
-> -	struct pid_namespace *proc_pidns = proc_pid_ns(file_inode(f->file));
-> +	struct pid_namespace *proc_pidns = proc_pid_ns(file_inode(f->file)->i_sb);
->  
->  	fl = hlist_entry(v, struct file_lock, fl_link);
->  
-> diff --git a/fs/proc/array.c b/fs/proc/array.c
-> index 8e16f14bb05a..a4d4763731e0 100644
-> --- a/fs/proc/array.c
-> +++ b/fs/proc/array.c
-> @@ -728,7 +728,7 @@ static int children_seq_show(struct seq_file *seq, void *v)
->  {
->  	struct inode *inode = file_inode(seq->file);
->  
-> -	seq_printf(seq, "%d ", pid_nr_ns(v, proc_pid_ns(inode)));
-> +	seq_printf(seq, "%d ", pid_nr_ns(v, proc_pid_ns(inode)->i_sb));
->  	return 0;
->  }
->  
-> diff --git a/fs/proc/base.c b/fs/proc/base.c
-> index 5a307b3bb2d1..30c9fceca0b7 100644
-> --- a/fs/proc/base.c
-> +++ b/fs/proc/base.c
-> @@ -754,7 +754,7 @@ static const struct inode_operations proc_def_inode_operations = {
->  static int proc_single_show(struct seq_file *m, void *v)
->  {
->  	struct inode *inode = m->private;
-> -	struct pid_namespace *ns = proc_pid_ns(inode);
-> +	struct pid_namespace *ns = proc_pid_ns(inode->i_sb);
->  	struct pid *pid = proc_pid(inode);
->  	struct task_struct *task;
->  	int ret;
-> @@ -1423,7 +1423,7 @@ static const struct file_operations proc_fail_nth_operations = {
->  static int sched_show(struct seq_file *m, void *v)
->  {
->  	struct inode *inode = m->private;
-> -	struct pid_namespace *ns = proc_pid_ns(inode);
-> +	struct pid_namespace *ns = proc_pid_ns(inode->i_sb);
->  	struct task_struct *p;
->  
->  	p = get_proc_task(inode);
-> @@ -2466,7 +2466,7 @@ static int proc_timers_open(struct inode *inode, struct file *file)
->  		return -ENOMEM;
->  
->  	tp->pid = proc_pid(inode);
-> -	tp->ns = proc_pid_ns(inode);
-> +	tp->ns = proc_pid_ns(inode->i_sb);
->  	return 0;
->  }
->  
-> @@ -3377,7 +3377,7 @@ int proc_pid_readdir(struct file *file, struct dir_context *ctx)
->  {
->  	struct tgid_iter iter;
->  	struct proc_fs_info *fs_info = proc_sb_info(file_inode(file)->i_sb);
-> -	struct pid_namespace *ns = proc_pid_ns(file_inode(file));
-> +	struct pid_namespace *ns = proc_pid_ns(file_inode(file)->i_sb);
->  	loff_t pos = ctx->pos;
->  
->  	if (pos >= PID_MAX_LIMIT + TGID_OFFSET)
-> @@ -3730,7 +3730,7 @@ static int proc_task_readdir(struct file *file, struct dir_context *ctx)
->  	/* f_version caches the tgid value that the last readdir call couldn't
->  	 * return. lseek aka telldir automagically resets f_version to 0.
->  	 */
-> -	ns = proc_pid_ns(inode);
-> +	ns = proc_pid_ns(inode->i_sb);
->  	tid = (int)file->f_version;
->  	file->f_version = 0;
->  	for (task = first_tid(proc_pid(inode), tid, ctx->pos - 2, ns);
-> diff --git a/fs/proc/self.c b/fs/proc/self.c
-> index 309301ac0136..ca5158fa561c 100644
-> --- a/fs/proc/self.c
-> +++ b/fs/proc/self.c
-> @@ -12,7 +12,7 @@ static const char *proc_self_get_link(struct dentry *dentry,
->  				      struct inode *inode,
->  				      struct delayed_call *done)
->  {
-> -	struct pid_namespace *ns = proc_pid_ns(inode);
-> +	struct pid_namespace *ns = proc_pid_ns(inode->i_sb);
->  	pid_t tgid = task_tgid_nr_ns(current, ns);
->  	char *name;
->  
-> diff --git a/fs/proc/thread_self.c b/fs/proc/thread_self.c
-> index 2493cbbdfa6f..ac284f409568 100644
-> --- a/fs/proc/thread_self.c
-> +++ b/fs/proc/thread_self.c
-> @@ -12,7 +12,7 @@ static const char *proc_thread_self_get_link(struct dentry *dentry,
->  					     struct inode *inode,
->  					     struct delayed_call *done)
->  {
-> -	struct pid_namespace *ns = proc_pid_ns(inode);
-> +	struct pid_namespace *ns = proc_pid_ns(inode->i_sb);
->  	pid_t tgid = task_tgid_nr_ns(current, ns);
->  	pid_t pid = task_pid_nr_ns(current, ns);
->  	char *name;
-> diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
-> index 2cb424e6f36a..6ec524d8842c 100644
-> --- a/include/linux/proc_fs.h
-> +++ b/include/linux/proc_fs.h
-> @@ -202,9 +202,9 @@ int open_related_ns(struct ns_common *ns,
->  		   struct ns_common *(*get_ns)(struct ns_common *ns));
->  
->  /* get the associated pid namespace for a file in procfs */
-> -static inline struct pid_namespace *proc_pid_ns(const struct inode *inode)
-> +static inline struct pid_namespace *proc_pid_ns(struct super_block *sb)
->  {
-> -	return proc_sb_info(inode->i_sb)->pid_ns;
-> +	return proc_sb_info(sb)->pid_ns;
->  }
->  
->  #endif /* _LINUX_PROC_FS_H */
-> diff --git a/kernel/fork.c b/kernel/fork.c
-> index 4385f3d639f2..e7bdaccad942 100644
-> --- a/kernel/fork.c
-> +++ b/kernel/fork.c
-> @@ -1745,7 +1745,7 @@ static void pidfd_show_fdinfo(struct seq_file *m, struct file *f)
->  	pid_t nr = -1;
->  
->  	if (likely(pid_has_task(pid, PIDTYPE_PID))) {
-> -		ns = proc_pid_ns(file_inode(m->file));
-> +		ns = proc_pid_ns(file_inode(m->file)->i_sb);
->  		nr = pid_nr_ns(pid, ns);
->  	}
->  
-> diff --git a/net/ipv6/ip6_flowlabel.c b/net/ipv6/ip6_flowlabel.c
-> index d64b83e85642..ce4fbba4acce 100644
-> --- a/net/ipv6/ip6_flowlabel.c
-> +++ b/net/ipv6/ip6_flowlabel.c
-> @@ -779,7 +779,7 @@ static void *ip6fl_seq_start(struct seq_file *seq, loff_t *pos)
->  {
->  	struct ip6fl_iter_state *state = ip6fl_seq_private(seq);
->  
-> -	state->pid_ns = proc_pid_ns(file_inode(seq->file));
-> +	state->pid_ns = proc_pid_ns(file_inode(seq->file)->i_sb);
->  
->  	rcu_read_lock_bh();
->  	return *pos ? ip6fl_get_idx(seq, *pos - 1) : SEQ_START_TOKEN;
-> diff --git a/security/tomoyo/realpath.c b/security/tomoyo/realpath.c
-> index 08b096e2f7e3..df4798980416 100644
-> --- a/security/tomoyo/realpath.c
-> +++ b/security/tomoyo/realpath.c
-> @@ -162,7 +162,7 @@ static char *tomoyo_get_local_path(struct dentry *dentry, char * const buffer,
->  	if (sb->s_magic == PROC_SUPER_MAGIC && *pos == '/') {
->  		char *ep;
->  		const pid_t pid = (pid_t) simple_strtoul(pos + 1, &ep, 10);
-> -		struct pid_namespace *proc_pidns = proc_pid_ns(d_inode(dentry));
-> +		struct pid_namespace *proc_pidns = proc_pid_ns(sb);
->  
->  		if (*ep == '/' && pid && pid ==
->  		    task_tgid_nr_ns(current, proc_pidns)) {
+Mimi
