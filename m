@@ -2,195 +2,147 @@ Return-Path: <SRS0=coct=7B=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3508C433E2
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 May 2020 02:23:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5C32C433DF
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 May 2020 07:34:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 875B620715
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 May 2020 02:23:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB7A22075F
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 May 2020 07:34:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727123AbgESCXq (ORCPT
+        id S1728357AbgESHeX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 18 May 2020 22:23:46 -0400
-Received: from mout-p-201.mailbox.org ([80.241.56.171]:12746 "EHLO
-        mout-p-201.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726302AbgESCXp (ORCPT
+        Tue, 19 May 2020 03:34:23 -0400
+Received: from mga06.intel.com ([134.134.136.31]:6668 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725996AbgESHeX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 18 May 2020 22:23:45 -0400
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mout-p-201.mailbox.org (Postfix) with ESMTPS id 49R0714S3fzQlJp;
-        Tue, 19 May 2020 04:23:41 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp1.mailbox.org ([80.241.60.240])
-        by spamfilter03.heinlein-hosting.de (spamfilter03.heinlein-hosting.de [80.241.56.117]) (amavisd-new, port 10030)
-        with ESMTP id DZqWh7er1wSe; Tue, 19 May 2020 04:23:34 +0200 (CEST)
-Date:   Tue, 19 May 2020 12:23:07 +1000
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Florian Weimer <fweimer@redhat.com>,
-        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Christian Heimes <christian@python.org>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        John Johansen <john.johansen@canonical.com>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        "Lev R. Oshvang ." <levonshe@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Eric Chiang <ericchiang@google.com>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mickael.salaun@ssi.gouv.fr>,
-        Philippe =?utf-8?Q?Tr=C3=A9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        Tue, 19 May 2020 03:34:23 -0400
+IronPort-SDR: BXL9YI/ypoiJbt+8oE0oFIUWFgjvCj/dRrO1qYOn4c/bTcYdSBpYDF5RsyoViPg2fbBf/9I3ef
+ 4+SNzMrn629g==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2020 00:34:22 -0700
+IronPort-SDR: Blu/9zIQ7wFZBkWMbQjohPpeAbG6EwVuLapMalKVYr5osIL8cdT841osR8otHH1WiNs9LWOHFE
+ WTb4NRLHDbmA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,409,1583222400"; 
+   d="scan'208";a="308331886"
+Received: from linux.intel.com ([10.54.29.200])
+  by FMSMGA003.fm.intel.com with ESMTP; 19 May 2020 00:34:21 -0700
+Received: from [10.249.225.158] (abudanko-mobl.ccr.corp.intel.com [10.249.225.158])
+        by linux.intel.com (Postfix) with ESMTP id 52D6C580613;
+        Tue, 19 May 2020 00:34:19 -0700 (PDT)
+Subject: Re: [PATCH v3 2/3] perf tool: make Perf tool aware of SELinux access
+ control
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+Cc:     Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Andi Kleen <ak@linux.intel.com>,
         linux-kernel <linux-kernel@vger.kernel.org>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>
-Subject: Re: How about just O_EXEC? (was Re: [PATCH v5 3/6] fs: Enable to
- enforce noexec mounts or file exec through O_MAYEXEC)
-Message-ID: <20200519022307.oqpdb4vzghs3coyi@yavin.dot.cyphar.com>
-References: <202005132002.91B8B63@keescook>
- <CAEjxPJ7WjeQAz3XSCtgpYiRtH+Jx-UkSTaEcnVyz_jwXKE3dkw@mail.gmail.com>
- <202005140830.2475344F86@keescook>
- <CAEjxPJ4R_juwvRbKiCg5OGuhAi1ZuVytK4fKCDT_kT6VKc8iRg@mail.gmail.com>
- <b740d658-a2da-5773-7a10-59a0ca52ac6b@digikod.net>
- <202005142343.D580850@keescook>
- <87a729wpu1.fsf@oldenburg2.str.redhat.com>
- <202005150732.17C5EE0@keescook>
- <87r1vluuli.fsf@oldenburg2.str.redhat.com>
- <202005150847.2B1ED8F81@keescook>
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>
+References: <0fffd9e2-1f22-a0c2-c2e3-cb7f4bb89d66@linux.intel.com>
+ <819338ce-d160-4a2f-f1aa-d756a2e7c6fc@linux.intel.com>
+ <20200518155843.GF24211@kernel.org>
+ <d10fd4b0-d516-cf16-4379-c5299d0c5cc3@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <74f8d079-39ef-756e-7e43-ba4c897fd441@linux.intel.com>
+Date:   Tue, 19 May 2020 10:34:18 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="nmvvtdsznpppdmip"
-Content-Disposition: inline
-In-Reply-To: <202005150847.2B1ED8F81@keescook>
-X-Rspamd-Queue-Id: 7E02D177E
-X-Rspamd-Score: -7.06 / 15.00 / 15.00
+In-Reply-To: <d10fd4b0-d516-cf16-4379-c5299d0c5cc3@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 
---nmvvtdsznpppdmip
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 18.05.2020 19:43, Alexey Budankov wrote:
+> 
+> On 18.05.2020 18:58, Arnaldo Carvalho de Melo wrote:
+>> Em Thu, Apr 30, 2020 at 10:15:57AM +0300, Alexey Budankov escreveu:
+>>>
+>>> Implement selinux sysfs check to see the system is in enforcing
+>>> mode and print warning message with pointer to check audit logs.
+>>
+>> There were some changes in this area meanwhile, so I had to apply the
+>> evsel.c by hand, when I push this please double check everything is ok,
+> 
+> Will do. I appreciate your integrating effort.
 
-On 2020-05-15, Kees Cook <keescook@chromium.org> wrote:
-> On Fri, May 15, 2020 at 04:43:37PM +0200, Florian Weimer wrote:
-> > * Kees Cook:
-> >=20
-> > > On Fri, May 15, 2020 at 10:43:34AM +0200, Florian Weimer wrote:
-> > >> * Kees Cook:
-> > >>=20
-> > >> > Maybe I've missed some earlier discussion that ruled this out, but=
- I
-> > >> > couldn't find it: let's just add O_EXEC and be done with it. It ac=
-tually
-> > >> > makes the execve() path more like openat2() and is much cleaner af=
-ter
-> > >> > a little refactoring. Here are the results, though I haven't email=
-ed it
-> > >> > yet since I still want to do some more testing:
-> > >> > https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/log=
-/?h=3Dkspp/o_exec/v1
-> > >>=20
-> > >> I think POSIX specifies O_EXEC in such a way that it does not confer
-> > >> read permissions.  This seems incompatible with what we are trying to
-> > >> achieve here.
-> > >
-> > > I was trying to retain this behavior, since we already make this
-> > > distinction between execve() and uselib() with the MAY_* flags:
-> > >
-> > > execve():
-> > >         struct open_flags open_exec_flags =3D {
-> > >                 .open_flag =3D O_LARGEFILE | O_RDONLY | __FMODE_EXEC,
-> > >                 .acc_mode =3D MAY_EXEC,
-> > >
-> > > uselib():
-> > >         static const struct open_flags uselib_flags =3D {
-> > >                 .open_flag =3D O_LARGEFILE | O_RDONLY | __FMODE_EXEC,
-> > >                 .acc_mode =3D MAY_READ | MAY_EXEC,
-> > >
-> > > I tried to retain this in my proposal, in the O_EXEC does not imply
-> > > MAY_READ:
-> >=20
-> > That doesn't quite parse for me, sorry.
-> >=20
-> > The point is that the script interpreter actually needs to *read* those
-> > files in order to execute them.
->=20
-> I think I misunderstood what you meant (Micka=EBl got me sorted out
-> now). If O_EXEC is already meant to be "EXEC and _not_ READ nor WRITE",
-> then yes, this new flag can't be O_EXEC. I was reading the glibc
-> documentation (which treats it as a permission bit flag, not POSIX,
-> which treats it as a complete mode description).
+Checked at tmp.perf/core branch. The message looks like this:
 
-On the other hand, if we had O_EXEC (or O_EXONLY a-la O_RDONLY) then the
-interpreter could re-open the file descriptor as O_RDONLY after O_EXEC
-succeeds. Not ideal, but I don't think it's a deal-breaker.
+[root@nntvtune39 acme.tmp]# tools/perf/perf stat
+Error:
+Access to performance monitoring and observability operations is limited.
+Enforced MAC policy settings (SELinux) can limit access to performance
+monitoring and observability operations. Inspect system audit records for
+more perf_event access control information and adjusting the policy.
+Consider adjusting /proc/sys/kernel/perf_event_paranoid setting to open
+access to performance monitoring and observability operations for users
+without CAP_PERFMON or CAP_SYS_ADMIN Linux capability.
+perf_event_paranoid setting is 2:
+  -1: Allow use of (almost) all events by all users
+      Ignore mlock limit after perf_event_mlock_kb without CAP_IPC_LOCK
+>= 0: Disallow raw and ftrace function tracepoint access
+>= 1: Disallow CPU event access
+>= 2: Disallow kernel profiling
+To make the adjusted perf_event_paranoid setting permanent preserve it
+in /etc/sysctl.conf (e.g. kernel.perf_event_paranoid = <setting>)
 
-Regarding O_MAYEXEC, I do feel a little conflicted.
+Edited patch at security.txt didn't apply cleanly. It requires white space
+prior tab in the first block for wake_alarm etc till perfmon:
 
-I do understand that its goal is not to be what O_EXEC was supposed to
-be (which is loosely what O_PATH has effectively become), so I think
-that this is not really a huge problem -- especially since you could
-just do O_MAYEXEC|O_PATH if you wanted to disallow reading explicitly.
-It would be nice to have an O_EXONLY concept, but it's several decades
-too late to make it mandatory (and making it optional has questionable
-utility IMHO).
+---8<---
+diff -Nura a/policy/flask/access_vectors b/policy/flask/access_vectors
+--- a/policy/flask/access_vectors	2020-02-04 18:19:53.000000000 +0300
++++ b/policy/flask/access_vectors	2020-02-28 23:37:25.000000000 +0300
+@@ -174,6 +174,7 @@
+ 	wake_alarm
+ 	block_suspend
+ 	audit_read
++	perfmon
+ }
 
-However, the thing I still feel mildly conflicted about is the sysctl. I
-do understand the argument for it (ultimately, whether O_MAYEXEC is
-usable on a system depends on the distribution) but it means that any
-program which uses O_MAYEXEC cannot rely on it to provide the security
-guarantees they expect. Even if the program goes and reads the sysctl
-value, it could change underneath them. If this is just meant to be a
-best-effort protection then this doesn't matter too much, but I just
-feel uneasy about these kinds of best-effort protections.
+ #
+@@ -1099,3 +1100,15 @@
 
-I do wonder if we could require that fexecve(3) can only be done with
-file descriptors that have been opened with O_MAYEXEC (obviously this
-would also need to be a sysctl -- *sigh*). This would tie in to some of
-the magic-link changes I wanted to push (namely, upgrade_mask).
+ class xdp_socket
+ inherits socket
++
++class perf_event
++{
++	open
++	cpu
++	kernel
++	tracepoint
++	read
++	write
++}
++
++
+diff -Nura a/policy/flask/security_classes b/policy/flask/security_classes
+--- a/policy/flask/security_classes	2020-02-04 18:19:53.000000000 +0300
++++ b/policy/flask/security_classes	2020-02-28 21:35:17.000000000 +0300
+@@ -200,4 +200,6 @@
 
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
+ class xdp_socket
 
---nmvvtdsznpppdmip
-Content-Type: application/pgp-signature; name="signature.asc"
++class perf_event
++
+ # FLASK
 
------BEGIN PGP SIGNATURE-----
+---8<---
 
-iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXsNDCAAKCRCdlLljIbnQ
-Ep1qAQCjFv2VG5NQz8tGYkrTeOm2XgvCB0zQ3mmGYhFYEMKpYgD+J4hGIJA2Uqq8
-NSOE5oY1uvmG7wnuYY2/cbJlZVeF/Ao=
-=GDei
------END PGP SIGNATURE-----
-
---nmvvtdsznpppdmip--
+~Alexey
