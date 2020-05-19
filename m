@@ -2,147 +2,104 @@ Return-Path: <SRS0=coct=7B=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5C32C433DF
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 May 2020 07:34:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DF3CC433E0
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 May 2020 08:12:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BB7A22075F
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 May 2020 07:34:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F2E52207D8
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 May 2020 08:11:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728357AbgESHeX (ORCPT
+        id S1727084AbgESILz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 19 May 2020 03:34:23 -0400
-Received: from mga06.intel.com ([134.134.136.31]:6668 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725996AbgESHeX (ORCPT
+        Tue, 19 May 2020 04:11:55 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:38102 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726318AbgESILz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 19 May 2020 03:34:23 -0400
-IronPort-SDR: BXL9YI/ypoiJbt+8oE0oFIUWFgjvCj/dRrO1qYOn4c/bTcYdSBpYDF5RsyoViPg2fbBf/9I3ef
- 4+SNzMrn629g==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2020 00:34:22 -0700
-IronPort-SDR: Blu/9zIQ7wFZBkWMbQjohPpeAbG6EwVuLapMalKVYr5osIL8cdT841osR8otHH1WiNs9LWOHFE
- WTb4NRLHDbmA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.73,409,1583222400"; 
-   d="scan'208";a="308331886"
-Received: from linux.intel.com ([10.54.29.200])
-  by FMSMGA003.fm.intel.com with ESMTP; 19 May 2020 00:34:21 -0700
-Received: from [10.249.225.158] (abudanko-mobl.ccr.corp.intel.com [10.249.225.158])
-        by linux.intel.com (Postfix) with ESMTP id 52D6C580613;
-        Tue, 19 May 2020 00:34:19 -0700 (PDT)
-Subject: Re: [PATCH v3 2/3] perf tool: make Perf tool aware of SELinux access
- control
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-Cc:     Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-References: <0fffd9e2-1f22-a0c2-c2e3-cb7f4bb89d66@linux.intel.com>
- <819338ce-d160-4a2f-f1aa-d756a2e7c6fc@linux.intel.com>
- <20200518155843.GF24211@kernel.org>
- <d10fd4b0-d516-cf16-4379-c5299d0c5cc3@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <74f8d079-39ef-756e-7e43-ba4c897fd441@linux.intel.com>
-Date:   Tue, 19 May 2020 10:34:18 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        Tue, 19 May 2020 04:11:55 -0400
+Received: from ip5f5af183.dynamic.kabel-deutschland.de ([95.90.241.131] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1jaxLb-0000Ea-Hq; Tue, 19 May 2020 08:11:35 +0000
+Date:   Tue, 19 May 2020 10:11:34 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Jann Horn <jannh@google.com>, Kees Cook <keescook@chromium.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Eric Biggers <ebiggers3@gmail.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/4] exec: Change uselib(2) IS_SREG() failure to EACCES
+Message-ID: <20200519081134.voejjt77b3qjf22h@wittgenstein>
+References: <20200518055457.12302-1-keescook@chromium.org>
+ <20200518055457.12302-2-keescook@chromium.org>
+ <20200518130251.zih2s32q2rxhxg6f@wittgenstein>
+ <CAG48ez1FspvvypJSO6badG7Vb84KtudqjRk1D7VyHRm06AiEbQ@mail.gmail.com>
+ <20200518144627.sv5nesysvtgxwkp7@wittgenstein>
+ <87blmk3ig4.fsf@x220.int.ebiederm.org>
 MIME-Version: 1.0
-In-Reply-To: <d10fd4b0-d516-cf16-4379-c5299d0c5cc3@linux.intel.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <87blmk3ig4.fsf@x220.int.ebiederm.org>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-On 18.05.2020 19:43, Alexey Budankov wrote:
+On Mon, May 18, 2020 at 06:57:15PM -0500, Eric W. Biederman wrote:
+> Christian Brauner <christian.brauner@ubuntu.com> writes:
 > 
-> On 18.05.2020 18:58, Arnaldo Carvalho de Melo wrote:
->> Em Thu, Apr 30, 2020 at 10:15:57AM +0300, Alexey Budankov escreveu:
->>>
->>> Implement selinux sysfs check to see the system is in enforcing
->>> mode and print warning message with pointer to check audit logs.
->>
->> There were some changes in this area meanwhile, so I had to apply the
->> evsel.c by hand, when I push this please double check everything is ok,
+> > On Mon, May 18, 2020 at 04:43:20PM +0200, Jann Horn wrote:
+> >> On Mon, May 18, 2020 at 3:03 PM Christian Brauner
+> >> <christian.brauner@ubuntu.com> wrote:
+> >> > Also - gulp (puts on flame proof suit) - may I suggest we check if there
+> >> > are any distros out there that still set CONFIG_USELIB=y
+> >> 
+> >> Debian seems to have it enabled on x86...
+> >> 
+> >> https://salsa.debian.org/kernel-team/linux/-/blob/master/debian/config/kernelarch-x86/config#L1896
+> >> 
+> >> A random Ubuntu 19.10 VM I have here has it enabled, too.
+> >
+> > I wonder if there's any program - apart from _ancient_ glibc out there
+> > that actually use it...
+> > I looked at uselib in codsearch but the results were quite unspecific
+> > but I didn't look too close.
 > 
-> Will do. I appreciate your integrating effort.
+> So the thing to do is to have a polite word with people who build Ubuntu
+> and Debian kernels and get them to disable the kernel .config.
 
-Checked at tmp.perf/core branch. The message looks like this:
+Yeah, I think that's a sane thing to do.
+I filed a bug for Ubuntu to start a discussion. I can't see an obvious
+reason why not.
 
-[root@nntvtune39 acme.tmp]# tools/perf/perf stat
-Error:
-Access to performance monitoring and observability operations is limited.
-Enforced MAC policy settings (SELinux) can limit access to performance
-monitoring and observability operations. Inspect system audit records for
-more perf_event access control information and adjusting the policy.
-Consider adjusting /proc/sys/kernel/perf_event_paranoid setting to open
-access to performance monitoring and observability operations for users
-without CAP_PERFMON or CAP_SYS_ADMIN Linux capability.
-perf_event_paranoid setting is 2:
-  -1: Allow use of (almost) all events by all users
-      Ignore mlock limit after perf_event_mlock_kb without CAP_IPC_LOCK
->= 0: Disallow raw and ftrace function tracepoint access
->= 1: Disallow CPU event access
->= 2: Disallow kernel profiling
-To make the adjusted perf_event_paranoid setting permanent preserve it
-in /etc/sysctl.conf (e.g. kernel.perf_event_paranoid = <setting>)
+> 
+> A quick look suggets it is already disabled in RHEL8.  It cannot be
+> disabled in RHEL7.
+> 
+> Then in a few years we can come back and discuss removing the uselib
+> system call, base on no distributions having it enabled.
+> 
+> If it was only libc4 and libc5 that used the uselib system call then it
+> can probably be removed after enough time.
+> 
+> We can probably reorganize the code before the point it is clearly safe
+> to drop support for USELIB to keep it off to the side so USELIB does not
+> have any ongoing mainteance costs.
+> 
+> For this patchset I think we need to assume uselib will need to be
+> maintained for a bit longer.
 
-Edited patch at security.txt didn't apply cleanly. It requires white space
-prior tab in the first block for wake_alarm etc till perfmon:
+Yeah, agreed. It doesn't matter as long as we have a plan for the future
+to remove it. I don't think keeping this cruft around forever should be
+the only outlook.
 
----8<---
-diff -Nura a/policy/flask/access_vectors b/policy/flask/access_vectors
---- a/policy/flask/access_vectors	2020-02-04 18:19:53.000000000 +0300
-+++ b/policy/flask/access_vectors	2020-02-28 23:37:25.000000000 +0300
-@@ -174,6 +174,7 @@
- 	wake_alarm
- 	block_suspend
- 	audit_read
-+	perfmon
- }
-
- #
-@@ -1099,3 +1100,15 @@
-
- class xdp_socket
- inherits socket
-+
-+class perf_event
-+{
-+	open
-+	cpu
-+	kernel
-+	tracepoint
-+	read
-+	write
-+}
-+
-+
-diff -Nura a/policy/flask/security_classes b/policy/flask/security_classes
---- a/policy/flask/security_classes	2020-02-04 18:19:53.000000000 +0300
-+++ b/policy/flask/security_classes	2020-02-28 21:35:17.000000000 +0300
-@@ -200,4 +200,6 @@
-
- class xdp_socket
-
-+class perf_event
-+
- # FLASK
-
----8<---
-
-~Alexey
+Christian
