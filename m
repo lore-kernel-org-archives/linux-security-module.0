@@ -2,214 +2,89 @@ Return-Path: <SRS0=coct=7B=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 965CCC433E2
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 May 2020 10:13:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C659C433DF
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 May 2020 12:00:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7B24920849
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 May 2020 10:13:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 578BF2072C
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 May 2020 12:00:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726880AbgESKNr (ORCPT
+        id S1728626AbgESMA3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 19 May 2020 06:13:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44966 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726121AbgESKNr (ORCPT
+        Tue, 19 May 2020 08:00:29 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:55794 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726949AbgESMA2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 19 May 2020 06:13:47 -0400
-Received: from smtp-8fa9.mail.infomaniak.ch (smtp-8fa9.mail.infomaniak.ch [IPv6:2001:1600:3:17::8fa9])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8BF8C061A0C
-        for <linux-security-module@vger.kernel.org>; Tue, 19 May 2020 03:13:46 -0700 (PDT)
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 49RBYF2vl5zlhWfh;
-        Tue, 19 May 2020 12:13:37 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
-        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 49RBY15MbkzlkJkD;
-        Tue, 19 May 2020 12:13:25 +0200 (CEST)
-Subject: Re: How about just O_EXEC? (was Re: [PATCH v5 3/6] fs: Enable to
- enforce noexec mounts or file exec through O_MAYEXEC)
-To:     Aleksa Sarai <cyphar@cyphar.com>, Kees Cook <keescook@chromium.org>
-Cc:     Florian Weimer <fweimer@redhat.com>,
+        Tue, 19 May 2020 08:00:28 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jb0v1-00053s-PB; Tue, 19 May 2020 06:00:23 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jb0uu-0004Bg-MP; Tue, 19 May 2020 06:00:23 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Andreas Schwab <schwab@linux-m68k.org>
+Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Christian Heimes <christian@python.org>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        John Johansen <john.johansen@canonical.com>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        "Lev R. Oshvang ." <levonshe@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Eric Chiang <ericchiang@google.com>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>,
-        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>
-References: <202005132002.91B8B63@keescook>
- <CAEjxPJ7WjeQAz3XSCtgpYiRtH+Jx-UkSTaEcnVyz_jwXKE3dkw@mail.gmail.com>
- <202005140830.2475344F86@keescook>
- <CAEjxPJ4R_juwvRbKiCg5OGuhAi1ZuVytK4fKCDT_kT6VKc8iRg@mail.gmail.com>
- <b740d658-a2da-5773-7a10-59a0ca52ac6b@digikod.net>
- <202005142343.D580850@keescook> <87a729wpu1.fsf@oldenburg2.str.redhat.com>
- <202005150732.17C5EE0@keescook> <87r1vluuli.fsf@oldenburg2.str.redhat.com>
- <202005150847.2B1ED8F81@keescook>
- <20200519022307.oqpdb4vzghs3coyi@yavin.dot.cyphar.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Message-ID: <1477d3d7-4b36-afad-7077-a38f42322238@digikod.net>
-Date:   Tue, 19 May 2020 12:13:10 +0200
-User-Agent: 
+        Andrew Morton <akpm@linux-foundation.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Eric Biggers <ebiggers3@gmail.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>
+References: <20200518055457.12302-1-keescook@chromium.org>
+        <20200518055457.12302-2-keescook@chromium.org>
+        <20200518130251.zih2s32q2rxhxg6f@wittgenstein>
+        <CAG48ez1FspvvypJSO6badG7Vb84KtudqjRk1D7VyHRm06AiEbQ@mail.gmail.com>
+        <20200518144627.sv5nesysvtgxwkp7@wittgenstein>
+        <87blmk3ig4.fsf@x220.int.ebiederm.org> <87mu64uxq1.fsf@igel.home>
+Date:   Tue, 19 May 2020 06:56:36 -0500
+In-Reply-To: <87mu64uxq1.fsf@igel.home> (Andreas Schwab's message of "Tue, 19
+        May 2020 10:37:26 +0200")
+Message-ID: <87sgfwuoi3.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20200519022307.oqpdb4vzghs3coyi@yavin.dot.cyphar.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
-X-Antivirus-Code: 0x100000
+Content-Type: text/plain
+X-XM-SPF: eid=1jb0uu-0004Bg-MP;;;mid=<87sgfwuoi3.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18KHCvzrkAL+KkT291e5MaUNnZX1ztiKf4=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH 1/4] exec: Change uselib(2) IS_SREG() failure to EACCES
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Andreas Schwab <schwab@linux-m68k.org> writes:
 
-On 19/05/2020 04:23, Aleksa Sarai wrote:
-> On 2020-05-15, Kees Cook <keescook@chromium.org> wrote:
->> On Fri, May 15, 2020 at 04:43:37PM +0200, Florian Weimer wrote:
->>> * Kees Cook:
->>>
->>>> On Fri, May 15, 2020 at 10:43:34AM +0200, Florian Weimer wrote:
->>>>> * Kees Cook:
->>>>>
->>>>>> Maybe I've missed some earlier discussion that ruled this out, but I
->>>>>> couldn't find it: let's just add O_EXEC and be done with it. It actually
->>>>>> makes the execve() path more like openat2() and is much cleaner after
->>>>>> a little refactoring. Here are the results, though I haven't emailed it
->>>>>> yet since I still want to do some more testing:
->>>>>> https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/log/?h=kspp/o_exec/v1
->>>>>
->>>>> I think POSIX specifies O_EXEC in such a way that it does not confer
->>>>> read permissions.  This seems incompatible with what we are trying to
->>>>> achieve here.
->>>>
->>>> I was trying to retain this behavior, since we already make this
->>>> distinction between execve() and uselib() with the MAY_* flags:
->>>>
->>>> execve():
->>>>         struct open_flags open_exec_flags = {
->>>>                 .open_flag = O_LARGEFILE | O_RDONLY | __FMODE_EXEC,
->>>>                 .acc_mode = MAY_EXEC,
->>>>
->>>> uselib():
->>>>         static const struct open_flags uselib_flags = {
->>>>                 .open_flag = O_LARGEFILE | O_RDONLY | __FMODE_EXEC,
->>>>                 .acc_mode = MAY_READ | MAY_EXEC,
->>>>
->>>> I tried to retain this in my proposal, in the O_EXEC does not imply
->>>> MAY_READ:
->>>
->>> That doesn't quite parse for me, sorry.
->>>
->>> The point is that the script interpreter actually needs to *read* those
->>> files in order to execute them.
->>
->> I think I misunderstood what you meant (Mickaël got me sorted out
->> now). If O_EXEC is already meant to be "EXEC and _not_ READ nor WRITE",
->> then yes, this new flag can't be O_EXEC. I was reading the glibc
->> documentation (which treats it as a permission bit flag, not POSIX,
->> which treats it as a complete mode description).
-> 
-> On the other hand, if we had O_EXEC (or O_EXONLY a-la O_RDONLY) then the
-> interpreter could re-open the file descriptor as O_RDONLY after O_EXEC
-> succeeds. Not ideal, but I don't think it's a deal-breaker.
-> 
-> Regarding O_MAYEXEC, I do feel a little conflicted.
-> 
-> I do understand that its goal is not to be what O_EXEC was supposed to
-> be (which is loosely what O_PATH has effectively become), so I think
-> that this is not really a huge problem -- especially since you could
-> just do O_MAYEXEC|O_PATH if you wanted to disallow reading explicitly.
-> It would be nice to have an O_EXONLY concept, but it's several decades
-> too late to make it mandatory (and making it optional has questionable
-> utility IMHO).
-> 
-> However, the thing I still feel mildly conflicted about is the sysctl. I
-> do understand the argument for it (ultimately, whether O_MAYEXEC is
-> usable on a system depends on the distribution) but it means that any
-> program which uses O_MAYEXEC cannot rely on it to provide the security
-> guarantees they expect. Even if the program goes and reads the sysctl
-> value, it could change underneath them. If this is just meant to be a
-> best-effort protection then this doesn't matter too much, but I just
-> feel uneasy about these kinds of best-effort protections.
+> On Mai 18 2020, Eric W. Biederman wrote:
+>
+>> If it was only libc4 and libc5 that used the uselib system call then it
+>> can probably be removed after enough time.
+>
+> Only libc4 used it, libc5 was already ELF.
 
-I think there is a cognitive bias here. There is a difference between
-application-centric policies and system policies. For example, openat2
-RESOLVE_* flags targets application developers and are self-sufficient:
-the kernel provides features (applied to FDs, owned and managed by user
-space) which must be known (by the application) to be supported (by the
-kernel), otherwise the application may give more privileges than
-expected. However, the O_MAYEXEC flag targets system administrators: it
-does not make sense to enable an application to know nor enforce the
-system(-wide) policy, but only to enable applications to follow this
-policy (i.e. best-effort *from the application developer point of
-view*). Indeed, access-control such as file executability depends on
-multiple layers (e.g. file permission, mount options, ACL, SELinux
-policy), most of them managed and enforced in a consistent way by
-(multiple parts of) the system.
+binfmt_elf.c supports uselib.  In a very a.out ish way.  Do you know if
+that support was ever used?
 
-Applications should not and it does not make sense for them to expect
-anything from O_MAYEXEC. This flag only enables the system to enforce a
-security policy and that's all. It is really a different use case than
-FD management. This feature is meant to extend the system ability thanks
-to applications collaboration. Here the sysctl should not be looked at
-by applications, the same way an application should not look at the
-currently enforced SELinux policy nor the mount options. An application
-may be launched differently according to the system-wide policy, but
-this is again a system configuration. There is a difference between ABI
-compatibility (i.e. does this feature is supported by the kernel?) and
-system-wide security policy (what is the policy of the running system?),
-in which case (common) applications should not care about system-wide
-policy management but only care about policy enforcement (at their
-level, if it makes sense from the system point of view). If the feature
-is not provided by the system, then it is not the job of applications to
-change their behavior, which means applications do their job by using
-O_MAYEXEC but they do not care if it is enforce or not. It does not make
-sense for an application to stop because the system does not provide a
-system-centric security feature, moreover based on system introspection
-(i.e. through sysctl read). It is the system role to provide and
-*manage* other components executability.
+If we are truly talking a.out only we should be able to make uselib
+conditional on a.out support in the kernel which is strongly mostly
+disabled at this point.
 
-More explanation can be found in a separate thread:
-https://lore.kernel.org/lkml/d5df691d-bfcb-2106-08a2-cfe589b0a86c@digikod.net/
+I am wondering if there are source trees for libc4 or libc5 around
+anywhere that we can look at to see how usage of uselib evolved.
 
-> 
-> I do wonder if we could require that fexecve(3) can only be done with
-> file descriptors that have been opened with O_MAYEXEC (obviously this
-> would also need to be a sysctl -- *sigh*). This would tie in to some of
-> the magic-link changes I wanted to push (namely, upgrade_mask).
-> 
-
-An O_EXEC flag could make sense for execveat(2), but O_MAYEXEC targets a
-different and complementary use case. See
-https://lore.kernel.org/lkml/1e2f6913-42f2-3578-28ed-567f6a4bdda1@digikod.net/
-But again, see the above comment about the rational of system-wide
-policy management.
+Eric
