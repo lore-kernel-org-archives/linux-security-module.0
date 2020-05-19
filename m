@@ -2,138 +2,181 @@ Return-Path: <SRS0=coct=7B=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B2ACC433DF
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 May 2020 18:10:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BF13C433DF
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 May 2020 18:10:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 223BF204EA
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 May 2020 18:10:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DEDA8204EA
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 May 2020 18:10:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="G872pkcm"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LE/0Ovwg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729197AbgESSKP (ORCPT
+        id S1728686AbgESSKT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 19 May 2020 14:10:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34804 "EHLO
+        Tue, 19 May 2020 14:10:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34816 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727814AbgESSKP (ORCPT
+        with ESMTP id S1726059AbgESSKS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 19 May 2020 14:10:15 -0400
-Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06A1AC08C5C2
-        for <linux-security-module@vger.kernel.org>; Tue, 19 May 2020 11:10:14 -0700 (PDT)
-Received: by mail-pl1-x643.google.com with SMTP id s20so220678plp.6
-        for <linux-security-module@vger.kernel.org>; Tue, 19 May 2020 11:10:14 -0700 (PDT)
+        Tue, 19 May 2020 14:10:18 -0400
+Received: from mail-qk1-x742.google.com (mail-qk1-x742.google.com [IPv6:2607:f8b0:4864:20::742])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79EC2C08C5C0;
+        Tue, 19 May 2020 11:10:18 -0700 (PDT)
+Received: by mail-qk1-x742.google.com with SMTP id i14so446875qka.10;
+        Tue, 19 May 2020 11:10:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=jDYo4m5PP7xufMNqX2IQkJ1zE2G71qHXVTGfdTFjKEY=;
-        b=G872pkcm8w6Qv241zfp28F0Fi28C447LZGFxMoMou558duvg393y5a4Y+yvm4hpY23
-         /B3SoivGMflaBaRqQXD0/Tt4XmF8m6Ru1YrRQBVVftz1Vjj8MjKTaYP8ziUFmvhgimd5
-         q9FHPEqaNOcBWF2dh/VDjEYZ5KzcghWUGivs0=
+        bh=iwpPJt2yMen3dAchpxwcGWHXokS5E7NEgrzxrlcQf0A=;
+        b=LE/0OvwgoiDM/Oive5tQoDLGIRnxacncryO/pATHoLjnUjGAOqLPmP5OQOEY51kKs5
+         g7PsAYSt/56Q2G8d9dcbQeYHoVTJWmmir+c474IxG/dLY5wAMQ8qFu/sCHEt5+K+RFBm
+         bab8xFa8Wd014U843wb4QI9yqpbBgy63VuiVYuEDGC2obQ4FdQunK6cguzIh3LRwFsM/
+         penA6cEzIlo4TlH1J3E1JgR3vWLYeNGv6htysp4m4vBMWtvZXHd/07OIpzFm+4LQ90SV
+         tcK+ak6BjtFxezO2eh2Oa1I+ohBrbCZWsQKuHfcpHgriH1O0a6/RsCNhK3npaP6aF0pK
+         MmKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=jDYo4m5PP7xufMNqX2IQkJ1zE2G71qHXVTGfdTFjKEY=;
-        b=E3Ok/1tUMiCww+/7R9vCEPrVRhhPcNgrHwb8Pot4oEfm1tj3d2H9fQLuV5JKWlcRNb
-         t0o3euiz1k/JBlbIMWOaWa2D0+wTqK4aOMR7aJ/3xrtLO16pVAZ4v0GGWEZg/DFhXGYP
-         wm6KHQiqNo1XYMYoSQXfhJ+g1JHvaEROpSnMEZ2u6tZJdSS0wqVUKR9X0iDi+GrBUUqF
-         +tyKtxZB+v52pQnrsL6WVzufO/c+T1EaEovQ2iCMurwzlEZPeBc71TWmnkm7dauPBWN0
-         txQrkn59g2CZ5r5sEAZi46y8Zysvnirlxmm2r38pZKFCzNzgH4F573znyYSTVZSfe3VN
-         Bb1Q==
-X-Gm-Message-State: AOAM53005Y2BY+8C6sIpSByZbf+frsBRqx4IcMtNufz5DiWUP7+EaqdC
-        lsscdDOGwbInNgrq1TFchsAM0A==
-X-Google-Smtp-Source: ABdhPJyOVFXnc+Pfx1v9jQO9B9KqYsUGKOm81RvBW5K5UxYTvg5PBkCKO2dKISXN+l0RgynZFoT3yw==
-X-Received: by 2002:a17:90a:6d90:: with SMTP id a16mr821079pjk.138.1589911814441;
-        Tue, 19 May 2020 11:10:14 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id s13sm138380pfh.118.2020.05.19.11.10.13
+        bh=iwpPJt2yMen3dAchpxwcGWHXokS5E7NEgrzxrlcQf0A=;
+        b=qvO4+Hb7V0++ZB3pFQ0D65A88A2QxapqctgOYipv39IeIjGshAlueGhog3Wus61jNC
+         zbxdvkUGODVsXCtkeY6NGbmyVZ6plD6B1evxJ8WLAG3A0Hcd+UJXdVCcEdvog1T3sNck
+         FW7KpQXeyxpPYUeU3Gqeb3GtNdxJbxoZ4f6wl1liuBVA13stJV70ZNyrfsX0r/9lbKS8
+         tEQGbFl7lh7M5zXt/sCQaFGcXvIkICcCLY5RIjZKfZT+zfvEjd7JfaxH8Ba2lZE0LW71
+         Unb18gQR5meCFWnnb66tMn3HvAFA6WHu5qLB0xxJCLuC/ojkNcvUC+jpHuCexI928mLZ
+         Iopg==
+X-Gm-Message-State: AOAM533MAl5xDUELOdjcyVb971duE2Cj88LV9lA0gEh/nUY4F0MjU7Tl
+        5Yp3KBlgyWYuU5kdRzjBkik=
+X-Google-Smtp-Source: ABdhPJzLYumTZTo5mjr9Ku5onVV55vuLLLIO03w35YZTTQjKxEO8buyxCwBzRdYjR+vORcMmnvSTcw==
+X-Received: by 2002:a05:620a:747:: with SMTP id i7mr712123qki.346.1589911817366;
+        Tue, 19 May 2020 11:10:17 -0700 (PDT)
+Received: from quaco.ghostprotocols.net ([179.97.37.151])
+        by smtp.gmail.com with ESMTPSA id y140sm207197qkb.127.2020.05.19.11.10.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 May 2020 11:10:13 -0700 (PDT)
-Date:   Tue, 19 May 2020 11:10:12 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Rob Landley <rob@landley.net>,
-        Bernd Edlinger <bernd.edlinger@hotmail.de>,
-        linux-fsdevel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        linux-security-module@vger.kernel.org,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Andy Lutomirski <luto@amacapital.net>
-Subject: Re: [PATCH v2 2/8] exec: Factor security_bprm_creds_for_exec out of
- security_bprm_set_creds
-Message-ID: <202005191108.7A6E97831@keescook>
-References: <87h7wujhmz.fsf@x220.int.ebiederm.org>
- <87sgga6ze4.fsf@x220.int.ebiederm.org>
- <87v9l4zyla.fsf_-_@x220.int.ebiederm.org>
- <877dx822er.fsf_-_@x220.int.ebiederm.org>
- <87v9kszrzh.fsf_-_@x220.int.ebiederm.org>
+        Tue, 19 May 2020 11:10:16 -0700 (PDT)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 01B2240AFD; Tue, 19 May 2020 15:10:13 -0300 (-03)
+Date:   Tue, 19 May 2020 15:10:13 -0300
+To:     Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH v3 2/3] perf tool: make Perf tool aware of SELinux access
+ control
+Message-ID: <20200519181013.GA28228@kernel.org>
+References: <0fffd9e2-1f22-a0c2-c2e3-cb7f4bb89d66@linux.intel.com>
+ <819338ce-d160-4a2f-f1aa-d756a2e7c6fc@linux.intel.com>
+ <20200518155843.GF24211@kernel.org>
+ <d10fd4b0-d516-cf16-4379-c5299d0c5cc3@linux.intel.com>
+ <74f8d079-39ef-756e-7e43-ba4c897fd441@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87v9kszrzh.fsf_-_@x220.int.ebiederm.org>
+In-Reply-To: <74f8d079-39ef-756e-7e43-ba4c897fd441@linux.intel.com>
+X-Url:  http://acmel.wordpress.com
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, May 18, 2020 at 07:30:10PM -0500, Eric W. Biederman wrote:
+Em Tue, May 19, 2020 at 10:34:18AM +0300, Alexey Budankov escreveu:
 > 
-> Today security_bprm_set_creds has several implementations:
-> apparmor_bprm_set_creds, cap_bprm_set_creds, selinux_bprm_set_creds,
-> smack_bprm_set_creds, and tomoyo_bprm_set_creds.
+> On 18.05.2020 19:43, Alexey Budankov wrote:
+> > 
+> > On 18.05.2020 18:58, Arnaldo Carvalho de Melo wrote:
+> >> Em Thu, Apr 30, 2020 at 10:15:57AM +0300, Alexey Budankov escreveu:
+> >>>
+> >>> Implement selinux sysfs check to see the system is in enforcing
+> >>> mode and print warning message with pointer to check audit logs.
+> >>
+> >> There were some changes in this area meanwhile, so I had to apply the
+> >> evsel.c by hand, when I push this please double check everything is ok,
+> > 
+> > Will do. I appreciate your integrating effort.
 > 
-> Except for cap_bprm_set_creds they all test bprm->called_set_creds and
-> return immediately if it is true.  The function cap_bprm_set_creds
-> ignores bprm->calld_sed_creds entirely.
+> Checked at tmp.perf/core branch. The message looks like this:
 > 
-> Create a new LSM hook security_bprm_creds_for_exec that is called just
-> before prepare_binprm in __do_execve_file, resulting in a LSM hook
-> that is called exactly once for the entire of exec.  Modify the bits
-> of security_bprm_set_creds that only want to be called once per exec
-> into security_bprm_creds_for_exec, leaving only cap_bprm_set_creds
-> behind.
+> [root@nntvtune39 acme.tmp]# tools/perf/perf stat
+> Error:
+> Access to performance monitoring and observability operations is limited.
+> Enforced MAC policy settings (SELinux) can limit access to performance
+> monitoring and observability operations. Inspect system audit records for
+> more perf_event access control information and adjusting the policy.
+> Consider adjusting /proc/sys/kernel/perf_event_paranoid setting to open
+> access to performance monitoring and observability operations for users
+> without CAP_PERFMON or CAP_SYS_ADMIN Linux capability.
+> perf_event_paranoid setting is 2:
+>   -1: Allow use of (almost) all events by all users
+>       Ignore mlock limit after perf_event_mlock_kb without CAP_IPC_LOCK
+> >= 0: Disallow raw and ftrace function tracepoint access
+> >= 1: Disallow CPU event access
+> >= 2: Disallow kernel profiling
+> To make the adjusted perf_event_paranoid setting permanent preserve it
+> in /etc/sysctl.conf (e.g. kernel.perf_event_paranoid = <setting>)
 > 
-> Remove bprm->called_set_creds all of it's former users have been moved
-> to security_bprm_creds_for_exec.
-> 
-> Add or upate comments a appropriate to bring them up to date and
-> to reflect this change.
+> Edited patch at security.txt didn't apply cleanly. It requires white space
+> prior tab in the first block for wake_alarm etc till perfmon:
 
-Yup, awesome. One nit below.
-
-Reviewed-by: Kees Cook <keescook@chromium.org>
-
-> [...]
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index 0b4e32161b77..718345dd76bb 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> [...]
-> @@ -2297,8 +2297,6 @@ static int selinux_bprm_set_creds(struct linux_binprm *bprm)
->  
->  	/* SELinux context only depends on initial program or script and not
->  	 * the script interpreter */
-> -	if (bprm->called_set_creds)
-> -		return 0;
->  
->  	old_tsec = selinux_cred(current_cred());
->  	new_tsec = selinux_cred(bprm->cred);
-
-As you've done in the other LSMs, I think this comment can be removed
-(or moved to the top of the function) too.
+I see, I'll leave it there then so that it applies cleanly to those
+policy files.
+ 
+> ---8<---
+> diff -Nura a/policy/flask/access_vectors b/policy/flask/access_vectors
+> --- a/policy/flask/access_vectors	2020-02-04 18:19:53.000000000 +0300
+> +++ b/policy/flask/access_vectors	2020-02-28 23:37:25.000000000 +0300
+> @@ -174,6 +174,7 @@
+>  	wake_alarm
+>  	block_suspend
+>  	audit_read
+> +	perfmon
+>  }
+> 
+>  #
+> @@ -1099,3 +1100,15 @@
+> 
+>  class xdp_socket
+>  inherits socket
+> +
+> +class perf_event
+> +{
+> +	open
+> +	cpu
+> +	kernel
+> +	tracepoint
+> +	read
+> +	write
+> +}
+> +
+> +
+> diff -Nura a/policy/flask/security_classes b/policy/flask/security_classes
+> --- a/policy/flask/security_classes	2020-02-04 18:19:53.000000000 +0300
+> +++ b/policy/flask/security_classes	2020-02-28 21:35:17.000000000 +0300
+> @@ -200,4 +200,6 @@
+> 
+>  class xdp_socket
+> 
+> +class perf_event
+> +
+>  # FLASK
+> 
+> ---8<---
+> 
+> ~Alexey
 
 -- 
-Kees Cook
+
+- Arnaldo
