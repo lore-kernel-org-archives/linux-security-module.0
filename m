@@ -2,181 +2,149 @@ Return-Path: <SRS0=coct=7B=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BF13C433DF
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 May 2020 18:10:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86650C433E0
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 May 2020 18:21:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DEDA8204EA
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 May 2020 18:10:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 68D61207C4
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 May 2020 18:21:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LE/0Ovwg"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Eab3V0ae"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728686AbgESSKT (ORCPT
+        id S1728003AbgESSVh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 19 May 2020 14:10:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34816 "EHLO
+        Tue, 19 May 2020 14:21:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36574 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726059AbgESSKS (ORCPT
+        with ESMTP id S1726697AbgESSVh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 19 May 2020 14:10:18 -0400
-Received: from mail-qk1-x742.google.com (mail-qk1-x742.google.com [IPv6:2607:f8b0:4864:20::742])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79EC2C08C5C0;
-        Tue, 19 May 2020 11:10:18 -0700 (PDT)
-Received: by mail-qk1-x742.google.com with SMTP id i14so446875qka.10;
-        Tue, 19 May 2020 11:10:18 -0700 (PDT)
+        Tue, 19 May 2020 14:21:37 -0400
+Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66255C08C5C0
+        for <linux-security-module@vger.kernel.org>; Tue, 19 May 2020 11:21:37 -0700 (PDT)
+Received: by mail-pg1-x543.google.com with SMTP id p30so201114pgl.11
+        for <linux-security-module@vger.kernel.org>; Tue, 19 May 2020 11:21:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=iwpPJt2yMen3dAchpxwcGWHXokS5E7NEgrzxrlcQf0A=;
-        b=LE/0OvwgoiDM/Oive5tQoDLGIRnxacncryO/pATHoLjnUjGAOqLPmP5OQOEY51kKs5
-         g7PsAYSt/56Q2G8d9dcbQeYHoVTJWmmir+c474IxG/dLY5wAMQ8qFu/sCHEt5+K+RFBm
-         bab8xFa8Wd014U843wb4QI9yqpbBgy63VuiVYuEDGC2obQ4FdQunK6cguzIh3LRwFsM/
-         penA6cEzIlo4TlH1J3E1JgR3vWLYeNGv6htysp4m4vBMWtvZXHd/07OIpzFm+4LQ90SV
-         tcK+ak6BjtFxezO2eh2Oa1I+ohBrbCZWsQKuHfcpHgriH1O0a6/RsCNhK3npaP6aF0pK
-         MmKw==
+        bh=Q5UHC553rY05IEMbXCgL1ZU4LhfKGIJXOMI9F65WCM0=;
+        b=Eab3V0aeJWywuatvac89Xj4XfyMtuFx+KgHTWt/TJ0ol7YVVNUJR29bRRwtmUXTfNv
+         TJanh8oN4Dslf95TZKpQ7qOUzyj/NLKttxV/yLvC5qRMUVUm1q23QwzohNMEBsTQIMPe
+         5G/981yXHcsvGBAwRdLh/CFiEL2sWB7oDcJDc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=iwpPJt2yMen3dAchpxwcGWHXokS5E7NEgrzxrlcQf0A=;
-        b=qvO4+Hb7V0++ZB3pFQ0D65A88A2QxapqctgOYipv39IeIjGshAlueGhog3Wus61jNC
-         zbxdvkUGODVsXCtkeY6NGbmyVZ6plD6B1evxJ8WLAG3A0Hcd+UJXdVCcEdvog1T3sNck
-         FW7KpQXeyxpPYUeU3Gqeb3GtNdxJbxoZ4f6wl1liuBVA13stJV70ZNyrfsX0r/9lbKS8
-         tEQGbFl7lh7M5zXt/sCQaFGcXvIkICcCLY5RIjZKfZT+zfvEjd7JfaxH8Ba2lZE0LW71
-         Unb18gQR5meCFWnnb66tMn3HvAFA6WHu5qLB0xxJCLuC/ojkNcvUC+jpHuCexI928mLZ
-         Iopg==
-X-Gm-Message-State: AOAM533MAl5xDUELOdjcyVb971duE2Cj88LV9lA0gEh/nUY4F0MjU7Tl
-        5Yp3KBlgyWYuU5kdRzjBkik=
-X-Google-Smtp-Source: ABdhPJzLYumTZTo5mjr9Ku5onVV55vuLLLIO03w35YZTTQjKxEO8buyxCwBzRdYjR+vORcMmnvSTcw==
-X-Received: by 2002:a05:620a:747:: with SMTP id i7mr712123qki.346.1589911817366;
-        Tue, 19 May 2020 11:10:17 -0700 (PDT)
-Received: from quaco.ghostprotocols.net ([179.97.37.151])
-        by smtp.gmail.com with ESMTPSA id y140sm207197qkb.127.2020.05.19.11.10.15
+        bh=Q5UHC553rY05IEMbXCgL1ZU4LhfKGIJXOMI9F65WCM0=;
+        b=eC9gUd417duzmQ3pvtv8hd+zp7oaFzAvJ0nO5a+P4mMC8BSVcFB+cq5N5gUNHjEkAj
+         2Not/ECHGbYLZ4aK/Mz4RRjs9ke+2iBojdJVAFimgH9Q6PcPjMCfP43AnQMMI3LaS+Mv
+         1FhFMbkUeU1+z8b04iJuVYR2ab8yr/IL8qVOk0YO6Zp4MW5g2kFcxtaUVDduj+hwtyQ6
+         sQHrtuKj/pFsknCv179Zt5dFuvl73wJdWwwht2I7/CiQndFFrYCgpZHdq78f6rsC5s8B
+         nJwM0o2G7A+LsFeGGhoe8PNjPxMt9tteJzHXG3rD6xn/bE5lziYBPVMGrpAGQ6cSzUy5
+         K8GQ==
+X-Gm-Message-State: AOAM532zPu1liFdLM+YihBkIeHcB3dThO9SmTXztwzilrJQwqY1SFbyu
+        UGNSJvbShkeuswUEHLH8Q4FCCQ==
+X-Google-Smtp-Source: ABdhPJzynbql9pKULdgukQFTy4Z4t7DJQ/sjiUfpzwdYxlnUTNW41tR9eCeNK8c47FummadelJ5jQw==
+X-Received: by 2002:a63:1451:: with SMTP id 17mr472860pgu.242.1589912496698;
+        Tue, 19 May 2020 11:21:36 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id d184sm147336pfc.130.2020.05.19.11.21.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 May 2020 11:10:16 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 01B2240AFD; Tue, 19 May 2020 15:10:13 -0300 (-03)
-Date:   Tue, 19 May 2020 15:10:13 -0300
-To:     Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH v3 2/3] perf tool: make Perf tool aware of SELinux access
- control
-Message-ID: <20200519181013.GA28228@kernel.org>
-References: <0fffd9e2-1f22-a0c2-c2e3-cb7f4bb89d66@linux.intel.com>
- <819338ce-d160-4a2f-f1aa-d756a2e7c6fc@linux.intel.com>
- <20200518155843.GF24211@kernel.org>
- <d10fd4b0-d516-cf16-4379-c5299d0c5cc3@linux.intel.com>
- <74f8d079-39ef-756e-7e43-ba4c897fd441@linux.intel.com>
+        Tue, 19 May 2020 11:21:35 -0700 (PDT)
+Date:   Tue, 19 May 2020 11:21:34 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Rob Landley <rob@landley.net>,
+        Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        linux-fsdevel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        linux-security-module@vger.kernel.org,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Andy Lutomirski <luto@amacapital.net>
+Subject: Re: [PATCH v2 3/8] exec: Convert security_bprm_set_creds into
+ security_bprm_repopulate_creds
+Message-ID: <202005191111.9B389D33@keescook>
+References: <87h7wujhmz.fsf@x220.int.ebiederm.org>
+ <87sgga6ze4.fsf@x220.int.ebiederm.org>
+ <87v9l4zyla.fsf_-_@x220.int.ebiederm.org>
+ <877dx822er.fsf_-_@x220.int.ebiederm.org>
+ <87o8qkzrxp.fsf_-_@x220.int.ebiederm.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <74f8d079-39ef-756e-7e43-ba4c897fd441@linux.intel.com>
-X-Url:  http://acmel.wordpress.com
+In-Reply-To: <87o8qkzrxp.fsf_-_@x220.int.ebiederm.org>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Em Tue, May 19, 2020 at 10:34:18AM +0300, Alexey Budankov escreveu:
+On Mon, May 18, 2020 at 07:31:14PM -0500, Eric W. Biederman wrote:
 > 
-> On 18.05.2020 19:43, Alexey Budankov wrote:
-> > 
-> > On 18.05.2020 18:58, Arnaldo Carvalho de Melo wrote:
-> >> Em Thu, Apr 30, 2020 at 10:15:57AM +0300, Alexey Budankov escreveu:
-> >>>
-> >>> Implement selinux sysfs check to see the system is in enforcing
-> >>> mode and print warning message with pointer to check audit logs.
-> >>
-> >> There were some changes in this area meanwhile, so I had to apply the
-> >> evsel.c by hand, when I push this please double check everything is ok,
-> > 
-> > Will do. I appreciate your integrating effort.
+> Rename bprm->cap_elevated to bprm->active_secureexec and initialize it
+> in prepare_binprm instead of in cap_bprm_set_creds.  Initializing
+> bprm->active_secureexec in prepare_binprm allows multiple
+> implementations of security_bprm_repopulate_creds to play nicely with
+> each other.
 > 
-> Checked at tmp.perf/core branch. The message looks like this:
+> Rename security_bprm_set_creds to security_bprm_reopulate_creds to
+> emphasize that this path recomputes part of bprm->cred.  This
+> recomputation avoids the time of check vs time of use problems that
+> are inherent in unix #! interpreters.
 > 
-> [root@nntvtune39 acme.tmp]# tools/perf/perf stat
-> Error:
-> Access to performance monitoring and observability operations is limited.
-> Enforced MAC policy settings (SELinux) can limit access to performance
-> monitoring and observability operations. Inspect system audit records for
-> more perf_event access control information and adjusting the policy.
-> Consider adjusting /proc/sys/kernel/perf_event_paranoid setting to open
-> access to performance monitoring and observability operations for users
-> without CAP_PERFMON or CAP_SYS_ADMIN Linux capability.
-> perf_event_paranoid setting is 2:
->   -1: Allow use of (almost) all events by all users
->       Ignore mlock limit after perf_event_mlock_kb without CAP_IPC_LOCK
-> >= 0: Disallow raw and ftrace function tracepoint access
-> >= 1: Disallow CPU event access
-> >= 2: Disallow kernel profiling
-> To make the adjusted perf_event_paranoid setting permanent preserve it
-> in /etc/sysctl.conf (e.g. kernel.perf_event_paranoid = <setting>)
-> 
-> Edited patch at security.txt didn't apply cleanly. It requires white space
-> prior tab in the first block for wake_alarm etc till perfmon:
+> In short two renames and a move in the location of initializing
+> bprm->active_secureexec.
 
-I see, I'll leave it there then so that it applies cleanly to those
-policy files.
- 
-> ---8<---
-> diff -Nura a/policy/flask/access_vectors b/policy/flask/access_vectors
-> --- a/policy/flask/access_vectors	2020-02-04 18:19:53.000000000 +0300
-> +++ b/policy/flask/access_vectors	2020-02-28 23:37:25.000000000 +0300
-> @@ -174,6 +174,7 @@
->  	wake_alarm
->  	block_suspend
->  	audit_read
-> +	perfmon
->  }
-> 
->  #
-> @@ -1099,3 +1100,15 @@
-> 
->  class xdp_socket
->  inherits socket
-> +
-> +class perf_event
-> +{
-> +	open
-> +	cpu
-> +	kernel
-> +	tracepoint
-> +	read
-> +	write
-> +}
-> +
-> +
-> diff -Nura a/policy/flask/security_classes b/policy/flask/security_classes
-> --- a/policy/flask/security_classes	2020-02-04 18:19:53.000000000 +0300
-> +++ b/policy/flask/security_classes	2020-02-28 21:35:17.000000000 +0300
-> @@ -200,4 +200,6 @@
-> 
->  class xdp_socket
-> 
-> +class perf_event
-> +
->  # FLASK
-> 
-> ---8<---
-> 
-> ~Alexey
+I like this much better than the direct call to the capabilities hook.
+Thanks!
+
+Reviewed-by: Kees Cook <keescook@chromium.org>
+
+One nit is a bikeshed on the name "active_secureexec", since
+the word "active" isn't really associated with any other part of the
+binfmt logic. It's supposed to be "latest state from the binfmt loop",
+so instead of "active", I considered these words that I also didn't
+like: "current", "this", "recent", and "now". Is "latest" better than
+"active"? Probably not.
+
+> [...]
+> diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
+> index d1217fcdedea..8605ab4a0f89 100644
+> --- a/include/linux/binfmts.h
+> +++ b/include/linux/binfmts.h
+> @@ -27,10 +27,10 @@ struct linux_binprm {
+>  	unsigned long argmin; /* rlimit marker for copy_strings() */
+>  	unsigned int
+>  		/*
+> -		 * True if most recent call to cap_bprm_set_creds
+> +		 * True if most recent call to security_bprm_set_creds
+>  		 * resulted in elevated privileges.
+>  		 */
+> -		cap_elevated:1,
+> +		active_secureexec:1,
+
+Also, I'd like it if this comment could be made more verbose as well, for
+anyone trying to understand the binfmt execution flow for the first time.
+Perhaps:
+
+		/*
+		 * Must be set True during the any call to
+		 * bprm_set_creds hook where the execution would
+		 * reuslt in elevated privileges. (The hook can be
+		 * called multiple times during nested interpreter
+		 * resolution across binfmt_script, binfmt_misc, etc).
+		 */
+
 
 -- 
-
-- Arnaldo
+Kees Cook
