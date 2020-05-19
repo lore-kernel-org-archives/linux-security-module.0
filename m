@@ -2,162 +2,227 @@ Return-Path: <SRS0=coct=7B=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E9B1C433DF
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 May 2020 20:38:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 171F9C433E0
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 May 2020 21:17:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D7D1B2072C
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 May 2020 20:38:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C744C20758
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 May 2020 21:17:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bdpue+Oj"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hpwirQ0X"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726775AbgESUiB (ORCPT
+        id S1726304AbgESVRZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 19 May 2020 16:38:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58242 "EHLO
+        Tue, 19 May 2020 17:17:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36222 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725885AbgESUiA (ORCPT
+        with ESMTP id S1726064AbgESVRZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 19 May 2020 16:38:00 -0400
-Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97B61C08C5C0
-        for <linux-security-module@vger.kernel.org>; Tue, 19 May 2020 13:38:00 -0700 (PDT)
-Received: by mail-pg1-x544.google.com with SMTP id f4so355109pgi.10
-        for <linux-security-module@vger.kernel.org>; Tue, 19 May 2020 13:38:00 -0700 (PDT)
+        Tue, 19 May 2020 17:17:25 -0400
+Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05E69C08C5C0
+        for <linux-security-module@vger.kernel.org>; Tue, 19 May 2020 14:17:25 -0700 (PDT)
+Received: by mail-pg1-x541.google.com with SMTP id u5so406822pgn.5
+        for <linux-security-module@vger.kernel.org>; Tue, 19 May 2020 14:17:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=1ajSll4bK53Qb2Ak/L8hDSxkSGAnkpDcgNlbRYtpvdY=;
-        b=bdpue+Ojf13IRe6EAqF+S2fM9FW1U9KJIwBTq1d4UtGhfpgkzxqbNMwL2t9gD/HgLg
-         dzeF1gIHEz8PErdvGj7aC4MbQMcPkV3d3d2qYtkVu2Wif68mY8/Wm6UD9TIbyOM18bXQ
-         GIF7TGksPetl0XqMWhyuq9wcVAqbqi+bOu8+A=
+        bh=Cz7ypDwiQcY75biLKEJQMmwCg/gVg2A/D/by2yCpR7U=;
+        b=hpwirQ0Xs1SorucIF2v9uRq9u46loiYGcq4NK3JplwhSqVwyhavNf0YBGEMwX0Bma4
+         0qiabCHNEWCuGkSTjRhFXEwKkHxrDYGRFoHjGzsfnqLEIv9+DK/ZHc5YRuhfY23dKBN2
+         AHQMsFVocsK8Gz4nmxoV8PjJo6Hfj0jub8qS0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=1ajSll4bK53Qb2Ak/L8hDSxkSGAnkpDcgNlbRYtpvdY=;
-        b=IFqehqGJuRgq0O0GDi5n8fcfoIF8TZ28GxwYWRjk9wIG5g/LGO8Hgn3XaV2I5FCBKP
-         DaU1lYYep/w35yeV3w66Gpe5dXfMELR2Ym2AYPpoDJ7SNrVu3NDVJrjPKCHHg7YM6mcO
-         SlEqfqo37Uh9lUZLAi0wjK8W2rPZgMIzjvsckBJQT76kbctmjDGlWeG403jZMX4k4pIq
-         obGbBwUI7PjaJ/at6iO8ijyHLd8w8IF2xfRdO1FFyFmCbPU3LB2+8aqohUUO2pWO+Jzm
-         DRS9IBw1psinoiMpt9WY9LF1tPf7WyEZAwJVXIoj2M/luPscljtmDG/5Lg4ORU9P/EhR
-         wLRQ==
-X-Gm-Message-State: AOAM531Jf5sWTEO/J+bfmguFPziUk9Uc8RcevINl3C0dvKe/yfxroL4n
-        G6iDnjlLYzMKbNpzwAIHRYR9Ug==
-X-Google-Smtp-Source: ABdhPJzOaJoPTT49vaOBrznFkW9TmN9W+ndpxwI48V37k7vrHTnQHLcXHDI+QItVM51xmiO2ue42TQ==
-X-Received: by 2002:aa7:91da:: with SMTP id z26mr954615pfa.18.1589920680112;
-        Tue, 19 May 2020 13:38:00 -0700 (PDT)
+        bh=Cz7ypDwiQcY75biLKEJQMmwCg/gVg2A/D/by2yCpR7U=;
+        b=o/8pmtOi2DMJ6jQ1K7M0oavjXEwNODzyn96gTtuwyBPsixGAA7P4ATHB0UQJMYNEra
+         uLjBTeLWmLzv0Pn6G4mCh5xWuHDS1Z+S/vazAYl4tNfI/cO8InYQZUEvzqGVCS3QWUU8
+         IOmsJQ0cEyi1yS6vVphDS8kFSZGPLmFTzeObFw6jFRbkEDV2a7h++SfVoES3QDOaoNmB
+         VqmJmjviVjdIiVb9sE2tPh+gsyum3DgpNSOz0l6HXTAAqI+9vRf7SQiXA7EoKp68jK+/
+         YNaYccKD5dncTJZu54Kf8pzUhFqc6vSQlwDP3XWgy6RITZ89w871rcgk01YUzYOhMUW7
+         3JDQ==
+X-Gm-Message-State: AOAM531brk7W9BeeZoR+wPD+icAYD2jR8oD/lq8Lo3cqXtnzNudIi8EI
+        n3Yk3M39fSmWI1oXmaWf1zv9mQ==
+X-Google-Smtp-Source: ABdhPJxbEob6J6f6hJy0GeqN5fD4zEgoeNcFb9XU7fUpXsQJwNl9Ou6crVqMvKvg1aajIHr6QDJ0Ww==
+X-Received: by 2002:a62:7c94:: with SMTP id x142mr1036481pfc.155.1589923044367;
+        Tue, 19 May 2020 14:17:24 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id i184sm278051pgc.36.2020.05.19.13.37.58
+        by smtp.gmail.com with ESMTPSA id p62sm334352pfb.93.2020.05.19.14.17.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 May 2020 13:37:59 -0700 (PDT)
-Date:   Tue, 19 May 2020 13:37:57 -0700
+        Tue, 19 May 2020 14:17:23 -0700 (PDT)
+Date:   Tue, 19 May 2020 14:17:22 -0700
 From:   Kees Cook <keescook@chromium.org>
 To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Rob Landley <rob@landley.net>,
-        Bernd Edlinger <bernd.edlinger@hotmail.de>,
-        linux-fsdevel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        linux-security-module@vger.kernel.org,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Andy Lutomirski <luto@amacapital.net>
-Subject: Re: [PATCH v2 8/8] exec: Remove recursion from search_binary_handler
-Message-ID: <202005191320.230EFDFCB@keescook>
-References: <87h7wujhmz.fsf@x220.int.ebiederm.org>
- <87sgga6ze4.fsf@x220.int.ebiederm.org>
- <87v9l4zyla.fsf_-_@x220.int.ebiederm.org>
- <877dx822er.fsf_-_@x220.int.ebiederm.org>
- <87sgfwyd84.fsf_-_@x220.int.ebiederm.org>
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Eric Biggers <ebiggers3@gmail.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        John Johansen <john.johansen@canonical.com>
+Subject: Re: [PATCH 0/4] Relocate execve() sanity checks
+Message-ID: <202005191342.97EE972E3@keescook>
+References: <20200518055457.12302-1-keescook@chromium.org>
+ <87a724t153.fsf@x220.int.ebiederm.org>
+ <202005190918.D2BD83F7C@keescook>
+ <87o8qjstyw.fsf@x220.int.ebiederm.org>
+ <202005191052.0A6B1D5843@keescook>
+ <87sgfvrckr.fsf@x220.int.ebiederm.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87sgfwyd84.fsf_-_@x220.int.ebiederm.org>
+In-Reply-To: <87sgfvrckr.fsf@x220.int.ebiederm.org>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, May 18, 2020 at 07:34:19PM -0500, Eric W. Biederman wrote:
+On Tue, May 19, 2020 at 01:42:28PM -0500, Eric W. Biederman wrote:
+> Kees Cook <keescook@chromium.org> writes:
 > 
-> Recursion in kernel code is generally a bad idea as it can overflow
-> the kernel stack.  Recursion in exec also hides that the code is
-> looping and that the loop changes bprm->file.
+> > On Tue, May 19, 2020 at 12:41:27PM -0500, Eric W. Biederman wrote:
+> >> Kees Cook <keescook@chromium.org> writes:
+> >> > and given the LSM hooks, I think the noexec check is too late as well.
+> >> > (This is especially true for the coming O_MAYEXEC series, which will
+> >> > absolutely need those tests earlier as well[1] -- the permission checking
+> >> > is then in the correct place: during open, not exec.) I think the only
+> >> > question is about leaving the redundant checks in fs/exec.c, which I
+> >> > think are a cheap way to retain a sense of robustness.
+> >> 
+> >> The trouble is when someone passes through changes one of the permission
+> >> checks for whatever reason (misses that they are duplicated in another
+> >> location) and things then fail in some very unexpected way.
+> >
+> > Do you think this series should drop the "late" checks in fs/exec.c?
+> > Honestly, the largest motivation for me to move the checks earlier as
+> > I've done is so that other things besides execve() can use FMODE_EXEC
+> > during open() and receive the same sanity-checking as execve() (i.e the
+> > O_MAYEXEC series -- the details are still under discussion but this
+> > cleanup will be needed regardless).
 > 
-> Instead of recursing in search_binary_handler have the methods that
-> would recurse set bprm->interpreter and return 0.  Modify exec_binprm
-> to loop when bprm->interpreter is set.  Consolidate all of the
-> reassignments of bprm->file in that loop to make it clear what is
-> going on.
-> 
-> The structure of the new loop in exec_binprm is that all errors return
-> immediately, while successful completion (ret == 0 &&
-> !bprm->interpreter) just breaks out of the loop and runs what
-> exec_bprm has always run upon successful completion.
-> 
-> Fail if the an interpreter is being call after execfd has been set.
-> The code has never properly handled an interpreter being called with
-> execfd being set and with reassignments of bprm->file and the
-> assignment of bprm->executable in generic code it has finally become
-> possible to test and fail when if this problematic condition happens.
-> 
-> With the reassignments of bprm->file and the assignment of
-> bprm->executable moved into the generic code add a test to see if
-> bprm->executable is being reassigned.
-> 
-> In search_binary_handler remove the test for !bprm->file.  With all
-> reassignments of bprm->file moved to exec_binprm bprm->file can never
-> be NULL in search_binary_handler.
-> 
-> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+> I think this series should drop the "late" checks in fs/exec.c  It feels
+> less error prone, and it feels like that would transform this into
+> something Linus would be eager to merge because series becomes a cleanup
+> that reduces line count.
 
-Lovely!
+Yeah, that was my initial sense too. I just started to get nervous about
+removing the long-standing exec sanity checks. ;)
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+> I haven't been inside of open recently enough to remember if the
+> location you are putting the check fundamentally makes sense.  But the
+> O_MAYEXEC bits make a pretty strong case that something of the sort
+> needs to happen.
 
-I spent some time following the file lifetimes of deny/allow_write_access()
-and the fget/fput() paths. It all looks correct to me; it's tricky
-(especially bprm->executable) but so very much cleaner than before. :)
+Right. I *think* it's correct place for now, based on my understanding
+of the call graph (which is why I included it in the commit logs).
 
-The only suggestion I could come up with is more comments (surprise) to
-help anyone new to this loop realize what the "common" path is (and
-similarly, a compiler hint too):
+> I took a quick look but I can not see clearly where path_noexec
+> and the regular file tests should go.
+> 
+> I do see that you have code duplication with faccessat which suggests
+> that you haven't put the checks in the right place.
 
-diff --git a/fs/exec.c b/fs/exec.c
-index a9f421ec9e27..738051a698e1 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1790,15 +1790,19 @@ static int exec_binprm(struct linux_binprm *bprm)
- 	/* This allows 4 levels of binfmt rewrites before failing hard. */
- 	for (depth = 0;; depth++) {
- 		struct file *exec;
-+
- 		if (depth > 5)
- 			return -ELOOP;
- 
- 		ret = search_binary_handler(bprm);
-+		/* Unrecoverable error, give up. */
- 		if (ret < 0)
- 			return ret;
--		if (!bprm->interpreter)
-+		/* Found final handler, start execution. */
-+		if (likely(!bprm->interpreter))
- 			break;
- 
-+		/* Found an interpreter, so try again and attempt to run it. */
- 		exec = bprm->file;
- 		bprm->file = bprm->interpreter;
- 		bprm->interpreter = NULL;
+Yeah, I have notes on the similar call sites (which I concluded, perhaps
+wrongly) to ignore:
+
+do_faccessat()
+    user_path_at(dfd, filename, lookup_flags, &path);
+    if (acc_mode & MAY_EXEC .... path_noexec()
+    inode_permission(inode, mode | MAY_ACCESS);
+
+This appears to be strictly advisory, and the path_noexec() test is
+there to, perhaps, avoid surprises when doing access() then fexecve()?
+I would note, however, that that path-based LSMs appear to have no hook
+in this call graph at all. I was expecting a call like:
+
+	security_file_permission(..., mode | MAY_ACCESS)
+
+but I couldn't find one (or anything like it), so only
+inode_permission() is being tested (which means also the existing
+execve() late tests are missed, and the newly added S_ISREG() test from
+do_dentry_open() is missed).
+
+
+prctl_set_mm_exe_file()
+    err = -EACCESS;
+    if (!S_ISREG(inode->i_mode) || path_noexec(&exe.file->f_path))
+        goto exit;
+    err = inode_permission(inode, MAY_EXEC);
+
+This is similar (no path-based LSM hooks present, only inode_permission()
+used for permission checking), but it is at least gated by CAP_SYS_ADMIN.
+
+
+And this bring me to a related question from my review: does
+dentry_open() intentionally bypass security_inode_permission()? I.e. it
+calls vfs_open() not do_open():
+
+openat2(dfd, char * filename, open_how)
+    build_open_flags(open_how, open_flags)
+    do_filp_open(dfd, filename, open_flags)
+        path_openat(nameidata, open_flags, flags)
+            file = alloc_empty_file(open_flags, current_cred());
+            do_open(nameidata, file, open_flags)
+                may_open(path, acc_mode, open_flag)
+                    inode_permission(inode, MAY_OPEN | acc_mode)
+                        security_inode_permission(inode, acc_mode)
+                vfs_open(path, file)
+                    do_dentry_open(file, path->dentry->d_inode, open)
+                        if (unlikely(f->f_flags & FMODE_EXEC && !S_ISREG(inode->i_mode))) ...
+                        security_file_open(f)
+                                /* path-based LSMs check for open here
+				 * and use FMODE_* flags to determine how a file
+                                 * is being opened. */
+                        open()
+
+vs
+
+dentry_open(path, flags, cred)
+        f = alloc_empty_file(flags, cred);
+        vfs_open(path, f);
+
+I would expect dentry_open() to mostly duplicate a bunch of
+path_openat(), but it lacks the may_open() call, etc.
+
+I really got the feeling that there was some new conceptual split needed
+inside do_open() where the nameidata details have been finished, after
+we've gained the "file" information, but before we've lost the "path"
+information. For example, may_open(path, ...) has no sense of "file",
+though it does do the inode_permission() call.
+
+Note also that may_open() is used in do_tmpfile() too, and has a comment
+implying it needs to be checking only a subset of the path details. So
+I'm not sure how to split things up.
+
+So, that's why I put the new checks just before the may_open() call in
+do_open(): it's the most central, positions itself correctly for dealing
+with O_MAYEXEC, and doesn't appear to make any existing paths worse.
+
+> I am wondering if we need something distinct to request the type of the
+> file being opened versus execute permissions.
+
+Well, this is why I wanted to centralize it -- the knowledge of how a
+file is going to be used needs to be tested both by the core VFS
+(S_ISREG, path_noexec) and the LSMs. Things were inconsistent before.
+
+> All I know is being careful and putting the tests in a good logical
+> place makes the code more maintainable, whereas not being careful
+> results in all kinds of sharp corners that might be exploitable.
+> So I think it is worth digging in and figuring out where those checks
+> should live.  Especially so that code like faccessat does not need
+> to duplicate them.
+
+I think this is the right place with respect to execve(), though I think
+there are other cases that could use to be improved (or at least made
+more consistent).
+
+-Kees
 
 -- 
 Kees Cook
