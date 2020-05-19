@@ -2,67 +2,70 @@ Return-Path: <SRS0=coct=7B=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A59D9C433E0
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 May 2020 21:55:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D64DC433E0
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 May 2020 21:59:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7FBFA20578
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 May 2020 21:55:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E48A620657
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 May 2020 21:59:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kKzJ3E2y"
+	dkim=pass (2048-bit key) header.d=landley-net.20150623.gappssmtp.com header.i=@landley-net.20150623.gappssmtp.com header.b="ftiUb59L"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726290AbgESVzy (ORCPT
+        id S1726862AbgESV7H (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 19 May 2020 17:55:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42262 "EHLO
+        Tue, 19 May 2020 17:59:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42766 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726064AbgESVzx (ORCPT
+        with ESMTP id S1726064AbgESV7G (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 19 May 2020 17:55:53 -0400
-Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45CD0C08C5C1
-        for <linux-security-module@vger.kernel.org>; Tue, 19 May 2020 14:55:52 -0700 (PDT)
-Received: by mail-pl1-x644.google.com with SMTP id b12so420268plz.13
-        for <linux-security-module@vger.kernel.org>; Tue, 19 May 2020 14:55:52 -0700 (PDT)
+        Tue, 19 May 2020 17:59:06 -0400
+Received: from mail-ot1-x344.google.com (mail-ot1-x344.google.com [IPv6:2607:f8b0:4864:20::344])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A43CBC08C5C0
+        for <linux-security-module@vger.kernel.org>; Tue, 19 May 2020 14:59:06 -0700 (PDT)
+Received: by mail-ot1-x344.google.com with SMTP id v17so896901ote.0
+        for <linux-security-module@vger.kernel.org>; Tue, 19 May 2020 14:59:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=AXHGDEKcsJjKOPTlCgs9XONcU2hu7j0lHWKKVgvqbX8=;
-        b=kKzJ3E2y7F20KDgtPNfkIGsoFlOgPW0ZUtSNswoJwWn46hmaeGVtf97mTyZ9XKQFBN
-         jNtLbgbwLyzJSnncL0pXFn/jO/oqtPjWPpy3eWv8nx2ozpOQGJp7QCSPtKldOFQ7cXbb
-         yu4LTh1HLTFgYuHY8cmmLJXIQV/x9qPousf3Y=
+        d=landley-net.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=aJ30tY44Y1IVnHTs0oYR9AupzvvK3j296liG3N8OpVo=;
+        b=ftiUb59LkFILedozGY9XVYdMy2l42E9hAhepGXbGxUyVa+wAu6aqRNDMJALil6/O8J
+         booNhbKuCLrJsvfeGYjMVBbrzm+mRolULhd3N/LGe1R7ZdYQZzgHYrtpJe1Rq05peuT4
+         SQk27e6lcCUHwKixSX6yhM/JFqcggLFmwNd5gg8N9HHaBZCEayCGGf3J4Ks/Kpuj9Pej
+         A3YhDP9GJDMu627RGDh+4viwdlrocpgf05zpzxRYjp5SXVWViTZ+1x5ji3fdzeawktay
+         3oKrus4lO58304pOZVtJGawndLbdhjykoMteObMV2UkVXKcxGi2g6rBzwPJLXHgcEHzI
+         m1/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=AXHGDEKcsJjKOPTlCgs9XONcU2hu7j0lHWKKVgvqbX8=;
-        b=e5xbHh/FeoeTtYiHvI4kKBZ6pNYj+8KiHK1qh0XS1KxVlTluUHTPZ0saKz5myEqXhB
-         9HS/0np5+Qp2CCrMAkUK3vFyW8MyiVomYFUvAl2cJWmk/QC41Qlqa17G6su2Iu29DC2w
-         LI2R23T4qEC0k62TdRXwn6zSk3LhpX1oK9LAuxBF6nzci02tYN+s/niyPqmg0IAL0Fcz
-         K/fIME72mq9rjETzmMfL+as1sZqGtS3+KeevXUbzfwZ5UxqRIAipWmdQhmkMPuIx0N+v
-         g7plDpE5LQDbs2r37VIXANAzexhw2sOJUY9Fx1ktjt5krkfZYlW51LIGaYz93RgwUOi1
-         kX3Q==
-X-Gm-Message-State: AOAM531gKPSW+vdp6C90cpSwlwdhKTxBGWZovjyQGEowqzoO2yX3J71i
-        NNj62eYD8UQQq7Ldp95FBYNcSA==
-X-Google-Smtp-Source: ABdhPJx+rEHTNe20I/vdcru/cq9D/lqLHOWgUntNkLbp/wnGkN1jiGXaUPlHlTzei7lMcdSYfDwJAA==
-X-Received: by 2002:a17:902:be08:: with SMTP id r8mr1506428pls.260.1589925351640;
-        Tue, 19 May 2020 14:55:51 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id c63sm386943pfc.2.2020.05.19.14.55.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 May 2020 14:55:50 -0700 (PDT)
-Date:   Tue, 19 May 2020 14:55:49 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=aJ30tY44Y1IVnHTs0oYR9AupzvvK3j296liG3N8OpVo=;
+        b=gecBdwFlh+E2fvIamZh8jEU2iqCZ9ItcX3CqJC4V8NKo/6KhJhdw9RAwyjopTdq8se
+         k+7E/01hDjvK9Wd6l8OVAejgFE7xVqHqSwqZ9gazKvu9fCisXoGbAHLFs4agqsk3LSXJ
+         29CIA0lgVsSGw+LrexqyVx83TzInzsCj5D7t0M8FXIdEneTWZCMp/UTRFTYqwzECSqqw
+         JN1Ev5U4Z64kS/jlDU8VKxymG9DkLc0dn4ABXK0BcJbdF3LZACoWJx47oA0bP2t3bS44
+         mp1sDr+0HslY0kWXaLvLwTNBUR7o33aYWPXltpgRVAPKKKUPwINcdHRW39CrdMn+FSOn
+         g3FA==
+X-Gm-Message-State: AOAM530RUx+m2zTKmI8fA5oCOfxKQ6z1rCOUXC2Fq6m+5AUKHJfREJpS
+        PL0KkpUz/1s8QwzyVGF4E8UiVw==
+X-Google-Smtp-Source: ABdhPJz5fkUdyC6I3ITtCnUF9yioNlVJohurqkOOttvOIHzsFSgiV696yiAtufwGdVlHGXJPR6FFyw==
+X-Received: by 2002:a9d:7657:: with SMTP id o23mr694391otl.255.1589925546087;
+        Tue, 19 May 2020 14:59:06 -0700 (PDT)
+Received: from [192.168.86.21] ([136.62.4.88])
+        by smtp.gmail.com with ESMTPSA id k7sm235221otp.46.2020.05.19.14.59.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 19 May 2020 14:59:05 -0700 (PDT)
+Subject: Re: [PATCH v2 7/8] exec: Generic execfd support
+To:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        linux-kernel@vger.kernel.org
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
         Greg Ungerer <gerg@linux-m68k.org>,
-        Rob Landley <rob@landley.net>,
         Bernd Edlinger <bernd.edlinger@hotmail.de>,
         linux-fsdevel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
         Alexey Dobriyan <adobriyan@gmail.com>,
@@ -72,54 +75,45 @@ Cc:     linux-kernel@vger.kernel.org,
         James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
         Andy Lutomirski <luto@amacapital.net>
-Subject: Re: [PATCH v2 0/8] exec: Control flow simplifications
-Message-ID: <202005191442.515A0ED@keescook>
 References: <87h7wujhmz.fsf@x220.int.ebiederm.org>
  <87sgga6ze4.fsf@x220.int.ebiederm.org>
  <87v9l4zyla.fsf_-_@x220.int.ebiederm.org>
  <877dx822er.fsf_-_@x220.int.ebiederm.org>
+ <87y2poyd91.fsf_-_@x220.int.ebiederm.org>
+From:   Rob Landley <rob@landley.net>
+Message-ID: <adaced72-d757-e3e4-cfeb-5512533d0aa5@landley.net>
+Date:   Tue, 19 May 2020 16:59:06 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <877dx822er.fsf_-_@x220.int.ebiederm.org>
+In-Reply-To: <87y2poyd91.fsf_-_@x220.int.ebiederm.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, May 18, 2020 at 07:29:00PM -0500, Eric W. Biederman wrote:
->  arch/alpha/kernel/binfmt_loader.c  | 11 +----
->  fs/binfmt_elf.c                    |  4 +-
->  fs/binfmt_elf_fdpic.c              |  4 +-
->  fs/binfmt_em86.c                   | 13 +----
->  fs/binfmt_misc.c                   | 69 ++++-----------------------
->  fs/binfmt_script.c                 | 82 ++++++++++++++------------------
->  fs/exec.c                          | 97 ++++++++++++++++++++++++++------------
->  include/linux/binfmts.h            | 36 ++++++--------
->  include/linux/lsm_hook_defs.h      |  3 +-
->  include/linux/lsm_hooks.h          | 52 +++++++++++---------
->  include/linux/security.h           | 14 ++++--
->  kernel/cred.c                      |  3 ++
->  security/apparmor/domain.c         |  7 +--
->  security/apparmor/include/domain.h |  2 +-
->  security/apparmor/lsm.c            |  2 +-
->  security/commoncap.c               |  9 ++--
->  security/security.c                |  9 +++-
->  security/selinux/hooks.c           |  8 ++--
->  security/smack/smack_lsm.c         |  9 ++--
->  security/tomoyo/tomoyo.c           | 12 ++---
->  20 files changed, 202 insertions(+), 244 deletions(-)
+On 5/18/20 7:33 PM, Eric W. Biederman wrote:
+> 
+> Most of the support for passing the file descriptor of an executable
+> to an interpreter already lives in the generic code and in binfmt_elf.
+> Rework the fields in binfmt_elf that deal with executable file
+> descriptor passing to make executable file descriptor passing a first
+> class concept.
 
-Oh, BTW, heads up on this (trivially but annoyingly) conflicting with
-the copy_strings_kernel/copy_string/kernel change:
+I was reading this to try to figure out how to do execve(NULL, argv[], envp) to
+re-exec self after a vfork() in a chroot with no /proc, and hit the most trivial
+quibble ever:
 
-https://ozlabs.org/~akpm/mmotm/broken-out/exec-simplify-the-copy_strings_kernel-calling-convention.patch
+> --- a/fs/exec.c
+> +++ b/fs/exec.c
+> @@ -1323,7 +1323,10 @@ int begin_new_exec(struct linux_binprm * bprm)
+>  	 */
+>  	set_mm_exe_file(bprm->mm, bprm->file);
+>  
+> +	/* If the binary is not readable than enforce mm->dumpable=0 */
 
-Is it worth pulling that and these into your tree?
+then
 
-https://ozlabs.org/~akpm/mmotm/broken-out/exec-open-code-copy_string_kernel.patch
-
-https://ozlabs.org/~akpm/mmotm/broken-out/umh-fix-refcount-underflow-in-fork_usermode_blob.patch
-
-
--- 
-Kees Cook
+Rob
