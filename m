@@ -6,29 +6,43 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DF3CC433E0
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 May 2020 08:12:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9B04C433E5
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 May 2020 08:37:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F2E52207D8
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 May 2020 08:11:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 849E0204EA
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 May 2020 08:37:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727084AbgESILz (ORCPT
+        id S1728224AbgESIhd (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 19 May 2020 04:11:55 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:38102 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726318AbgESILz (ORCPT
+        Tue, 19 May 2020 04:37:33 -0400
+Received: from mail-out.m-online.net ([212.18.0.9]:40654 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726880AbgESIhc (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 19 May 2020 04:11:55 -0400
-Received: from ip5f5af183.dynamic.kabel-deutschland.de ([95.90.241.131] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1jaxLb-0000Ea-Hq; Tue, 19 May 2020 08:11:35 +0000
-Date:   Tue, 19 May 2020 10:11:34 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Jann Horn <jannh@google.com>, Kees Cook <keescook@chromium.org>,
+        Tue, 19 May 2020 04:37:32 -0400
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+        by mail-out.m-online.net (Postfix) with ESMTP id 49R8QK0Grqz1qrf4;
+        Tue, 19 May 2020 10:37:29 +0200 (CEST)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
+        by mail.m-online.net (Postfix) with ESMTP id 49R8QJ5zQ7z1qsq7;
+        Tue, 19 May 2020 10:37:28 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
+        with ESMTP id slUeY5zBMP1u; Tue, 19 May 2020 10:37:27 +0200 (CEST)
+X-Auth-Info: FqBIyAr0MyUGIS5Ip8Q7OSzRYusW2FcZjUE71QeBiiTFJFnlwZ4bNMhWHvnp6j06
+Received: from igel.home (ppp-46-244-171-2.dynamic.mnet-online.de [46.244.171.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.mnet-online.de (Postfix) with ESMTPSA;
+        Tue, 19 May 2020 10:37:27 +0200 (CEST)
+Received: by igel.home (Postfix, from userid 1000)
+        id C49402C0C39; Tue, 19 May 2020 10:37:26 +0200 (CEST)
+From:   Andreas Schwab <schwab@linux-m68k.org>
+To:     ebiederm@xmission.com (Eric W. Biederman)
+Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
         Andrew Morton <akpm@linux-foundation.org>,
         Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
@@ -39,67 +53,34 @@ Cc:     Jann Horn <jannh@google.com>, Kees Cook <keescook@chromium.org>,
         Linux API <linux-api@vger.kernel.org>,
         kernel list <linux-kernel@vger.kernel.org>
 Subject: Re: [PATCH 1/4] exec: Change uselib(2) IS_SREG() failure to EACCES
-Message-ID: <20200519081134.voejjt77b3qjf22h@wittgenstein>
 References: <20200518055457.12302-1-keescook@chromium.org>
- <20200518055457.12302-2-keescook@chromium.org>
- <20200518130251.zih2s32q2rxhxg6f@wittgenstein>
- <CAG48ez1FspvvypJSO6badG7Vb84KtudqjRk1D7VyHRm06AiEbQ@mail.gmail.com>
- <20200518144627.sv5nesysvtgxwkp7@wittgenstein>
- <87blmk3ig4.fsf@x220.int.ebiederm.org>
+        <20200518055457.12302-2-keescook@chromium.org>
+        <20200518130251.zih2s32q2rxhxg6f@wittgenstein>
+        <CAG48ez1FspvvypJSO6badG7Vb84KtudqjRk1D7VyHRm06AiEbQ@mail.gmail.com>
+        <20200518144627.sv5nesysvtgxwkp7@wittgenstein>
+        <87blmk3ig4.fsf@x220.int.ebiederm.org>
+X-Yow:  Two with FLUFFO, hold th' BEETS..side of SOYETTES!
+Date:   Tue, 19 May 2020 10:37:26 +0200
+In-Reply-To: <87blmk3ig4.fsf@x220.int.ebiederm.org> (Eric W. Biederman's
+        message of "Mon, 18 May 2020 18:57:15 -0500")
+Message-ID: <87mu64uxq1.fsf@igel.home>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.0.91 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <87blmk3ig4.fsf@x220.int.ebiederm.org>
+Content-Type: text/plain
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, May 18, 2020 at 06:57:15PM -0500, Eric W. Biederman wrote:
-> Christian Brauner <christian.brauner@ubuntu.com> writes:
-> 
-> > On Mon, May 18, 2020 at 04:43:20PM +0200, Jann Horn wrote:
-> >> On Mon, May 18, 2020 at 3:03 PM Christian Brauner
-> >> <christian.brauner@ubuntu.com> wrote:
-> >> > Also - gulp (puts on flame proof suit) - may I suggest we check if there
-> >> > are any distros out there that still set CONFIG_USELIB=y
-> >> 
-> >> Debian seems to have it enabled on x86...
-> >> 
-> >> https://salsa.debian.org/kernel-team/linux/-/blob/master/debian/config/kernelarch-x86/config#L1896
-> >> 
-> >> A random Ubuntu 19.10 VM I have here has it enabled, too.
-> >
-> > I wonder if there's any program - apart from _ancient_ glibc out there
-> > that actually use it...
-> > I looked at uselib in codsearch but the results were quite unspecific
-> > but I didn't look too close.
-> 
-> So the thing to do is to have a polite word with people who build Ubuntu
-> and Debian kernels and get them to disable the kernel .config.
+On Mai 18 2020, Eric W. Biederman wrote:
 
-Yeah, I think that's a sane thing to do.
-I filed a bug for Ubuntu to start a discussion. I can't see an obvious
-reason why not.
-
-> 
-> A quick look suggets it is already disabled in RHEL8.  It cannot be
-> disabled in RHEL7.
-> 
-> Then in a few years we can come back and discuss removing the uselib
-> system call, base on no distributions having it enabled.
-> 
 > If it was only libc4 and libc5 that used the uselib system call then it
 > can probably be removed after enough time.
-> 
-> We can probably reorganize the code before the point it is clearly safe
-> to drop support for USELIB to keep it off to the side so USELIB does not
-> have any ongoing mainteance costs.
-> 
-> For this patchset I think we need to assume uselib will need to be
-> maintained for a bit longer.
 
-Yeah, agreed. It doesn't matter as long as we have a plan for the future
-to remove it. I don't think keeping this cruft around forever should be
-the only outlook.
+Only libc4 used it, libc5 was already ELF.
 
-Christian
+Andreas.
+
+-- 
+Andreas Schwab, schwab@linux-m68k.org
+GPG Key fingerprint = 7578 EB47 D4E5 4D69 2510  2552 DF73 E780 A9DA AEC1
+"And now for something completely different."
