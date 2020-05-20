@@ -2,125 +2,124 @@ Return-Path: <SRS0=Q/5P=7C=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 946AAC433E0
-	for <linux-security-module@archiver.kernel.org>; Wed, 20 May 2020 12:56:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D25A3C433E1
+	for <linux-security-module@archiver.kernel.org>; Wed, 20 May 2020 13:06:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 71A48207C4
-	for <linux-security-module@archiver.kernel.org>; Wed, 20 May 2020 12:56:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FcM3iKpm"
+	by mail.kernel.org (Postfix) with ESMTP id B6EFE206BE
+	for <linux-security-module@archiver.kernel.org>; Wed, 20 May 2020 13:06:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726754AbgETM4Z (ORCPT
+        id S1726486AbgETNGm (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 20 May 2020 08:56:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41674 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726570AbgETM4Y (ORCPT
+        Wed, 20 May 2020 09:06:42 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:39646 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726435AbgETNGk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 20 May 2020 08:56:24 -0400
-Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B97D0C061A0F
-        for <linux-security-module@vger.kernel.org>; Wed, 20 May 2020 05:56:23 -0700 (PDT)
-Received: by mail-wr1-x443.google.com with SMTP id l11so3079377wru.0
-        for <linux-security-module@vger.kernel.org>; Wed, 20 May 2020 05:56:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=FRf0IXb8hQkrdaL1fqV3l4f1s2bF25mDJk/8LzKBDyk=;
-        b=FcM3iKpmGOIcheIq2sv7UBjccYXgY5UfnFjB4xNjwyYn/tsB62nOO1DlESb5YDOJW0
-         sqFXADpYAoyt8FhrnVZr8S0nV8jXbRhFgVllGSXhkdtwDwjB2N1piQYgke2bBl7yz4Cu
-         VYa9mPs5vM6n6ad8Zc7RtsTFPTTusIOL3Oj7Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=FRf0IXb8hQkrdaL1fqV3l4f1s2bF25mDJk/8LzKBDyk=;
-        b=ZeFplFAPLC4XBqSRcdrsIqUc1bRcMToa2nX9eF3/CW7OQ1n7lw1ksfGyu0DEAAohYs
-         sYO9w04lSyZnKF8lBlJ5W5HJiE5Wl5XpojCtKBT7KVw/bPTR1DPprVZjXhblbUCCX+AC
-         YxTtag9omuOjNGZaFcypgA/TbtoCcn7P78fWaPm1RHXJ+r1ZR/HucHPfHTlYzohQpruQ
-         /g7NRMBOA+Y4P40mFyZMtP+bTUSiolbCwElfY+I5p00/cWzL5jQT2FVqat2knYNXPCKd
-         28nrOxYQ7d+s7otZN2Ayj4em3LwoRoVDJFDaNSmHapJDHf3UCwTYYcK+/4qcW4AnWDmK
-         HnUw==
-X-Gm-Message-State: AOAM5329sYFdpxpYfhOUOsv7zKeLHwAwhuz/GgTa4urjervRkUcSa+6x
-        yVAPbhgFHhjR+4uoHfpWGUIuVg==
-X-Google-Smtp-Source: ABdhPJzZTIkt68m48X0Gd2mSWXMTScvuAo6k7MEMXpKVIa3O8ND+TYDMoHIr5dtTngUw3l1H6DOPPg==
-X-Received: by 2002:adf:e703:: with SMTP id c3mr4169330wrm.252.1589979382402;
-        Wed, 20 May 2020 05:56:22 -0700 (PDT)
-Received: from kpsingh.zrh.corp.google.com ([81.6.44.51])
-        by smtp.gmail.com with ESMTPSA id i11sm2961978wrc.35.2020.05.20.05.56.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 May 2020 05:56:21 -0700 (PDT)
-From:   KP Singh <kpsingh@chromium.org>
-To:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
+        Wed, 20 May 2020 09:06:40 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jbOQc-0007Zb-8X; Wed, 20 May 2020 07:06:34 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jbOQb-0006Q7-Dy; Wed, 20 May 2020 07:06:34 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Kees Cook <keescook@chromium.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Rob Landley <rob@landley.net>,
+        Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        linux-fsdevel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        linux-security-module@vger.kernel.org,
         James Morris <jmorris@namei.org>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Subject: [PATCH bpf] security: Fix hook iteration for secid_to_secctx
-Date:   Wed, 20 May 2020 14:56:16 +0200
-Message-Id: <20200520125616.193765-1-kpsingh@chromium.org>
-X-Mailer: git-send-email 2.26.2.761.g0e0b3e54be-goog
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Christoph Hellwig <hch@infradead.org>
+References: <87h7wujhmz.fsf@x220.int.ebiederm.org>
+        <87sgga6ze4.fsf@x220.int.ebiederm.org>
+        <87v9l4zyla.fsf_-_@x220.int.ebiederm.org>
+        <877dx822er.fsf_-_@x220.int.ebiederm.org>
+        <202005191442.515A0ED@keescook>
+Date:   Wed, 20 May 2020 08:02:51 -0500
+In-Reply-To: <202005191442.515A0ED@keescook> (Kees Cook's message of "Tue, 19
+        May 2020 14:55:49 -0700")
+Message-ID: <87r1vekbd0.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-XM-SPF: eid=1jbOQb-0006Q7-Dy;;;mid=<87r1vekbd0.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19uA8zRl9AyhKnD0V7yz6o0yeiwCD3dOiE=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH v2 0/8] exec: Control flow simplifications
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: KP Singh <kpsingh@google.com>
+Kees Cook <keescook@chromium.org> writes:
 
-secid_to_secctx is not stackable, and since the BPF LSM registers this
-hook by default, the call_int_hook logic is not suitable which
-"bails-on-fail" and casues issues when other LSMs register this hook and
-eventually breaks Audit.
+> On Mon, May 18, 2020 at 07:29:00PM -0500, Eric W. Biederman wrote:
+>>  arch/alpha/kernel/binfmt_loader.c  | 11 +----
+>>  fs/binfmt_elf.c                    |  4 +-
+>>  fs/binfmt_elf_fdpic.c              |  4 +-
+>>  fs/binfmt_em86.c                   | 13 +----
+>>  fs/binfmt_misc.c                   | 69 ++++-----------------------
+>>  fs/binfmt_script.c                 | 82 ++++++++++++++------------------
+>>  fs/exec.c                          | 97 ++++++++++++++++++++++++++------------
+>>  include/linux/binfmts.h            | 36 ++++++--------
+>>  include/linux/lsm_hook_defs.h      |  3 +-
+>>  include/linux/lsm_hooks.h          | 52 +++++++++++---------
+>>  include/linux/security.h           | 14 ++++--
+>>  kernel/cred.c                      |  3 ++
+>>  security/apparmor/domain.c         |  7 +--
+>>  security/apparmor/include/domain.h |  2 +-
+>>  security/apparmor/lsm.c            |  2 +-
+>>  security/commoncap.c               |  9 ++--
+>>  security/security.c                |  9 +++-
+>>  security/selinux/hooks.c           |  8 ++--
+>>  security/smack/smack_lsm.c         |  9 ++--
+>>  security/tomoyo/tomoyo.c           | 12 ++---
+>>  20 files changed, 202 insertions(+), 244 deletions(-)
+>
+> Oh, BTW, heads up on this (trivially but annoyingly) conflicting with
+> the copy_strings_kernel/copy_string/kernel change:
+>
+> https://ozlabs.org/~akpm/mmotm/broken-out/exec-simplify-the-copy_strings_kernel-calling-convention.patch
+>
+> Is it worth pulling that and these into your tree?
+>
+> https://ozlabs.org/~akpm/mmotm/broken-out/exec-open-code-copy_string_kernel.patch
+>
+> https://ozlabs.org/~akpm/mmotm/broken-out/umh-fix-refcount-underflow-in-fork_usermode_blob.patch
 
-In order to fix this, directly iterate over the security hooks instead
-of using call_int_hook as suggested in:
+Good question.  It is part of the greater set_fs removal work, and I
+don't want to mess that up.
 
-https: //lore.kernel.org/bpf/9d0eb6c6-803a-ff3a-5603-9ad6d9edfc00@schaufler-ca.com/#t
+I would love to give copy_string_kernel a length parameter so
+binfmt_script did not have to modify it's buffer or copy the string,
+before calling copy_string_kernel.
 
-Fixes: 98e828a0650f ("security: Refactor declaration of LSM hooks")
-Fixes: 625236ba3832 ("security: Fix the default value of secid_to_secctx hook"
-Reported-by: Alexei Starovoitov <ast@kernel.org>
-Signed-off-by: KP Singh <kpsingh@google.com>
----
- security/security.c | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+Hmm.  I already have to call strdup on i_name in brpm_change_interp.
+So I probably just want to bite the bullet and figure out a way to do
+strdup earlier.
 
-diff --git a/security/security.c b/security/security.c
-index 7fed24b9d57e..51de970fbb1e 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1965,8 +1965,20 @@ EXPORT_SYMBOL(security_ismaclabel);
- 
- int security_secid_to_secctx(u32 secid, char **secdata, u32 *seclen)
- {
--	return call_int_hook(secid_to_secctx, -EOPNOTSUPP, secid, secdata,
--				seclen);
-+	struct security_hook_list *hp;
-+	int rc;
-+
-+	/*
-+	 * Currently, only one LSM can implement secid_to_secctx (i.e this
-+	 * LSM hook is not "stackable").
-+	 */
-+	hlist_for_each_entry(hp, &security_hook_heads.secid_to_secctx, list) {
-+		rc = hp->hook.secid_to_secctx(secid, secdata, seclen);
-+		if (rc != LSM_RET_DEFAULT(secid_to_secctx))
-+			return rc;
-+	}
-+
-+	return LSM_RET_DEFAULT(secid_to_secctx);
- }
- EXPORT_SYMBOL(security_secid_to_secctx);
- 
--- 
-2.26.2.761.g0e0b3e54be-goog
+So unless it makes things easier for Andrew I think it is probably
+easier to live with the conflict for now, and use this conversation
+as inspiration for my next round of cleanups of binfmt_misc.
+
+Eric
 
