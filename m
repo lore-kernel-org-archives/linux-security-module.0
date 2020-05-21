@@ -2,141 +2,70 @@ Return-Path: <SRS0=9GoG=7D=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DE4CC433E0
-	for <linux-security-module@archiver.kernel.org>; Thu, 21 May 2020 23:06:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9609C433E0
+	for <linux-security-module@archiver.kernel.org>; Thu, 21 May 2020 23:50:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EEBAB20823
-	for <linux-security-module@archiver.kernel.org>; Thu, 21 May 2020 23:06:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85C6920823
+	for <linux-security-module@archiver.kernel.org>; Thu, 21 May 2020 23:50:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1590102362;
-	bh=P1jeoOmkuQys8O/5KShp1h4j+v/r/jvzvMQiBaCGXUA=;
-	h=Date:From:To:Cc:Subject:List-ID:From;
-	b=HSwLkDkVsdo/BTpCLtbN0AZcV1GxyEQ/mQHG1H9tp9II30PgBuTdM2J/rciFIG/m5
-	 uiERhpX/Gu5BVBmvT3jTcJ91nDZ0YSpPI8sl4/vh+lUnbwPyt7kXUzPBusm4Pnz3Pu
-	 pngVMVzsN/FWGaRrnlRbV/B/bu1sj0Lz8hGjBkGw=
+	s=default; t=1590105004;
+	bh=HjNf7SWN8ezpCTP8PfgpBvtzLLjYQPpKpLsmvOe3gjo=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
+	b=QB1WTZLIIZFneOulu1eOs0SAuQjzRSCjVqdiJzJ5PSoHK5rkyUWNLGC8A0ekBo0uA
+	 FALhHhwDhSLfsXPj9fQxTDigMrevmzjg0ju8DNyNQSqA0nck/A78lIBw0cJoNlT/0e
+	 fxBtLV3/0bicN2LlFpG3czzo5Osofzjz+MfTIPts=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730626AbgEUXGB (ORCPT
+        id S1729211AbgEUXuE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 21 May 2020 19:06:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53146 "EHLO mail.kernel.org"
+        Thu, 21 May 2020 19:50:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50098 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730041AbgEUXGB (ORCPT
+        id S1728881AbgEUXuD (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 21 May 2020 19:06:01 -0400
-Received: from embeddedor (unknown [189.207.59.248])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BAF88207F9;
-        Thu, 21 May 2020 23:05:59 +0000 (UTC)
+        Thu, 21 May 2020 19:50:03 -0400
+Subject: Re: [GIT PULL] apparmor bug fixes for v5.7-rc6
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1590102360;
-        bh=P1jeoOmkuQys8O/5KShp1h4j+v/r/jvzvMQiBaCGXUA=;
-        h=Date:From:To:Cc:Subject:From;
-        b=kjPULzZ9+vdGSNsCk+ICfxYRoVBIOI+MIGmNveAC203FdJXa8MM2KqRQwPrsB5WTP
-         Hd1WLCThXNMhcz0Aa7ps91f0RAECthDDyO7Q4bHQ9aOLc8gK8aYdifRf1Q3d939mHf
-         1VFgtiIQkJ85EL12T+jWB/tPAznRNsrvIn2eX2io=
-Date:   Thu, 21 May 2020 18:10:49 -0500
-From:   "Gustavo A. R. Silva" <gustavoars@kernel.org>
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] security: integrity: Replace zero-length array with
- flexible-array member
-Message-ID: <20200521231049.GA28765@embeddedor>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        s=default; t=1590105003;
+        bh=HjNf7SWN8ezpCTP8PfgpBvtzLLjYQPpKpLsmvOe3gjo=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=olNvMVVjuDwxtMZu8h7DR0/n4wfOh5GGjcLFNNPRsG0KmCCL44qFCpygJjBK0lIpD
+         ZL3mpS5O1Vp437xIiwDAjscVvorX128l/kpkY5yZsmJ9hJy76CSPVUDXotNCl8b7B6
+         Yj3E58yDmnTvSFiwaNHc4QbGmm6UxJZoFnn5DAZ4=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <3155dfe9-0b22-9519-f84f-152542606325@canonical.com>
+References: <3155dfe9-0b22-9519-f84f-152542606325@canonical.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <3155dfe9-0b22-9519-f84f-152542606325@canonical.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jj/linux-apparmor
+ tags/apparmor-pr-2020-05-21
+X-PR-Tracked-Commit-Id: c54d481d71c6849e044690d3960aaebc730224cc
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 051143e1602d90ea71887d92363edd539d411de5
+Message-Id: <159010500353.16226.13758404686922498666.pr-tracker-bot@kernel.org>
+Date:   Thu, 21 May 2020 23:50:03 +0000
+To:     John Johansen <john.johansen@canonical.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        LKLM <linux-kernel@vger.kernel.org>,
+        "open list:SECURITY SUBSYSTEM" 
+        <linux-security-module@vger.kernel.org>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
+The pull request you sent on Thu, 21 May 2020 16:01:42 -0700:
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
+> git://git.kernel.org/pub/scm/linux/kernel/git/jj/linux-apparmor tags/apparmor-pr-2020-05-21
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertently introduced[3] to the codebase from now on.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/051143e1602d90ea71887d92363edd539d411de5
 
-Also, notice that, dynamic memory allocations won't be affected by
-this change:
+Thank you!
 
-"Flexible array members have incomplete type, and so the sizeof operator
-may not be applied. As a quirk of the original implementation of
-zero-length arrays, sizeof evaluates to zero."[1]
-
-sizeof(flexible-array-member) triggers a warning because flexible array
-members have incomplete type[1]. There are some instances of code in
-which the sizeof operator is being incorrectly/erroneously applied to
-zero-length arrays and the result is zero. Such instances may be hiding
-some bugs. So, this work (flexible-array member conversions) will also
-help to get completely rid of those sorts of issues.
-
-This issue was found with the help of Coccinelle.
-
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-
-Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
----
- security/integrity/ima/ima.h   | 2 +-
- security/integrity/integrity.h | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 02796473238b6..3ec963ff3bc19 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -100,7 +100,7 @@ struct ima_template_entry {
- 	struct tpm_digest *digests;
- 	struct ima_template_desc *template_desc; /* template descriptor */
- 	u32 template_data_len;
--	struct ima_field_data template_data[0];	/* template related data */
-+	struct ima_field_data template_data[];	/* template related data */
- };
- 
- struct ima_queue_entry {
-diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
-index 298b73794d8b1..16c1894c29bb0 100644
---- a/security/integrity/integrity.h
-+++ b/security/integrity/integrity.h
-@@ -107,7 +107,7 @@ struct ima_digest_data {
- 		} ng;
- 		u8 data[2];
- 	} xattr;
--	u8 digest[0];
-+	u8 digest[];
- } __packed;
- 
- /*
-@@ -119,7 +119,7 @@ struct signature_v2_hdr {
- 	uint8_t	hash_algo;	/* Digest algorithm [enum hash_algo] */
- 	__be32 keyid;		/* IMA key identifier - not X509/PGP specific */
- 	__be16 sig_size;	/* signature size */
--	uint8_t sig[0];		/* signature payload */
-+	uint8_t sig[];		/* signature payload */
- } __packed;
- 
- /* integrity data associated with an inode */
 -- 
-2.26.2
-
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
