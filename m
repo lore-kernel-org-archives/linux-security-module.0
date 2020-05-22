@@ -2,196 +2,335 @@ Return-Path: <SRS0=AIhG=7E=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A451C433E0
-	for <linux-security-module@archiver.kernel.org>; Fri, 22 May 2020 04:51:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5E08C433E1
+	for <linux-security-module@archiver.kernel.org>; Fri, 22 May 2020 05:55:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4475820663
-	for <linux-security-module@archiver.kernel.org>; Fri, 22 May 2020 04:51:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CD7C20757
+	for <linux-security-module@archiver.kernel.org>; Fri, 22 May 2020 05:55:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=landley-net.20150623.gappssmtp.com header.i=@landley-net.20150623.gappssmtp.com header.b="YUdG876P"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AS6HEAfr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726286AbgEVEvT (ORCPT
+        id S1728198AbgEVFzY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 22 May 2020 00:51:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48440 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727924AbgEVEvT (ORCPT
+        Fri, 22 May 2020 01:55:24 -0400
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:30211 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726449AbgEVFzX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 22 May 2020 00:51:19 -0400
-Received: from mail-ot1-x342.google.com (mail-ot1-x342.google.com [IPv6:2607:f8b0:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9246EC061A0E
-        for <linux-security-module@vger.kernel.org>; Thu, 21 May 2020 21:51:18 -0700 (PDT)
-Received: by mail-ot1-x342.google.com with SMTP id v17so7395694ote.0
-        for <linux-security-module@vger.kernel.org>; Thu, 21 May 2020 21:51:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=landley-net.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=k2vrBoOQ9EETAdJub3TPOSyUEEBeAVV+/1nPCZoKSCA=;
-        b=YUdG876PBuoWeuTwZEzqf5Q4iudaCv0TLlfWhk+qMWvqkLW/cyTPwaPEXSCHnUaRte
-         pqqxOexa01y7orMgoydT8OLYzm6Jnt9aCaPV8ccQw7tonhT5b7nY8saHYgm6Zz7ZaPkS
-         /PGE3v6jfnkEl5WmfW3hCIIXtGxEQfqic8sOmuDnhd0YD+YZtVguqKwslNB7SnFmovzc
-         1C5xC6JE9bu2U3EEQ8dHyqq1y2Pia3vMvx21LLgND67asnZSWqlGfRb2aXSIWAmxvhv0
-         y1yZk+Bu79IaX1jmXOqDkuz1tY+wtwI2TC8pARdarguH2mpqqVcTdOc0qGW7koZkN+MB
-         YuHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=k2vrBoOQ9EETAdJub3TPOSyUEEBeAVV+/1nPCZoKSCA=;
-        b=UGNNmahp+Cf8v2RdUfOnN/DeRXoZC/UuOtpNuqDDFiSdEQgi8naNuNEyjKKcE4WDGG
-         MLg3ZAXQcXp97fTPksRQLtR6H3Qt12Xeeo7kp78B6zVdyAKX61cO7yMsE/wt2Ng28VUu
-         Y1hwVQS3nWRfXbicgCqx5f79qwJvY4ILVEatKSf8f552NUSlvAGh2sxwU1MMYzCoIsDU
-         iPxhs7oX8dFe++s7+dXhRnNFLGuKX7+50suqpSM6/ZmbEhKQM6ugCtDqPpaviKdVViIt
-         wmRIAxTqmbxPBKylp6Y7fQEYoOMpZ/MRygZRRWp1IaeK41KTiBCRi8XYCgD8m30ASN3W
-         C/6Q==
-X-Gm-Message-State: AOAM531hhcTFasVDDYmIMJsQfiytwNXs2FguCHPABxiKDrD6Xj5YAkzP
-        0jTNMy3GOJKvEIJTxSBSGtJzuA==
-X-Google-Smtp-Source: ABdhPJzkecxfonQTZASI2btg19lTvEFVD3+S1qpuQDgodr0t8yksLVLLZyT9CIvBtnHoK2Ch3kApVQ==
-X-Received: by 2002:a05:6830:100a:: with SMTP id a10mr10480942otp.244.1590123077647;
-        Thu, 21 May 2020 21:51:17 -0700 (PDT)
-Received: from [192.168.86.21] ([136.62.4.88])
-        by smtp.gmail.com with ESMTPSA id f3sm2200191otq.20.2020.05.21.21.51.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 May 2020 21:51:16 -0700 (PDT)
-Subject: Re: [PATCH v2 7/8] exec: Generic execfd support
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Bernd Edlinger <bernd.edlinger@hotmail.de>,
-        linux-fsdevel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
+        Fri, 22 May 2020 01:55:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1590126920;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=rLKxeVDwjfxiw38I4xWn7gigjYTT0PUzgJGXylCWNk8=;
+        b=AS6HEAfrGuULVNOeqSerNll5M/joepoElQ8y279wwxPlHu1UiTqC8JCxTxfbpQsyl6n2xY
+        MiKh6xh3+ncJLTf4RgKn4NQ2SvNlcLNjvQa9GNBu7A7OU6DPR+D0hSJkxmQwZL7IO1tHXn
+        5QzDY3VwIfSxXXC2mBesq9FR66dmAOU=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-257-TieoHGhBNBeZcN6oR4X9RA-1; Fri, 22 May 2020 01:55:17 -0400
+X-MC-Unique: TieoHGhBNBeZcN6oR4X9RA-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 30836EC1A0;
+        Fri, 22 May 2020 05:55:14 +0000 (UTC)
+Received: from dcbz.redhat.com (ovpn-112-157.ams2.redhat.com [10.36.112.157])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id DB8166248F;
+        Fri, 22 May 2020 05:54:59 +0000 (UTC)
+From:   Adrian Reber <areber@redhat.com>
+To:     Christian Brauner <christian.brauner@ubuntu.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Pavel Emelyanov <ovzxemul@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
+        =?UTF-8?q?Micha=C5=82=20C=C5=82api=C5=84ski?= 
+        <mclapinski@google.com>, Kamil Yurtsever <kyurtsever@google.com>,
+        Dirk Petersen <dipeit@gmail.com>,
+        Christine Flood <chf@redhat.com>
+Cc:     Mike Rapoport <rppt@linux.ibm.com>,
+        Radostin Stoyanov <rstoyanov1@gmail.com>,
+        Adrian Reber <areber@redhat.com>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        Serge Hallyn <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Sargun Dhillon <sargun@sargun.me>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Aaron Goidel <acgoide@tycho.nsa.gov>,
         linux-security-module@vger.kernel.org,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Andy Lutomirski <luto@amacapital.net>
-References: <87h7wujhmz.fsf@x220.int.ebiederm.org>
- <87sgga6ze4.fsf@x220.int.ebiederm.org>
- <87v9l4zyla.fsf_-_@x220.int.ebiederm.org>
- <877dx822er.fsf_-_@x220.int.ebiederm.org>
- <87y2poyd91.fsf_-_@x220.int.ebiederm.org>
- <adaced72-d757-e3e4-cfeb-5512533d0aa5@landley.net>
- <874ksaioc6.fsf@x220.int.ebiederm.org>
- <fc2cf2a7-e1a7-3170-32c9-43e593636799@landley.net>
- <87r1vcd4wo.fsf@x220.int.ebiederm.org>
-From:   Rob Landley <rob@landley.net>
-Message-ID: <6ce125fd-4fb1-8c39-a9a9-098391f2016a@landley.net>
-Date:   Thu, 21 May 2020 23:51:20 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        linux-kernel@vger.kernel.org, selinux@vger.kernel.org,
+        Eric Paris <eparis@parisplace.org>,
+        Jann Horn <jannh@google.com>
+Subject: [PATCH] capabilities: Introduce CAP_RESTORE
+Date:   Fri, 22 May 2020 07:53:50 +0200
+Message-Id: <20200522055350.806609-1-areber@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <87r1vcd4wo.fsf@x220.int.ebiederm.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 5/21/20 10:28 PM, Eric W. Biederman wrote:
-> 
-> Rob Landley <rob@landley.net> writes:
-> 
->> On 5/20/20 11:05 AM, Eric W. Biederman wrote:
-> 
->> Toybox would _like_ proc mounted, but can't assume it. I'm writing a new
->> bash-compatible shell with nommu support, which means in order to do subshell
->> and background tasks if (!CONFIG_FORK) I need to create a pipe pair, vfork(),
->> have the child exec itself to unblock the parent, and then read the context data
->> that just got discarded through the pipe from the parent. ("Wheee." And you can
->> quote me on that.)
-> 
-> Do you have clone(CLONE_VM) ?  If my quick skim of the kernel sources is
-> correct that should be the same as vfork except without causing the
-> parent to wait for you.  Which I think would remove the need to reexec
-> yourself.
+This enables CRIU to checkpoint and restore a process as non-root.
 
-As with perpetual motion, that only seems like it would work if you don't
-understand what's going on.
+Over the last years CRIU upstream has been asked a couple of time if it
+is possible to checkpoint and restore a process as non-root. The answer
+usually was: 'almost'.
 
-A nommu system uses physical addresses, not virtual ones, so every process sees
-the same addresses. So if I allocate a new block of memory and memcpy the
-contents of the old one into the new one, any pointers in the copy point back
-into the ORIGINAL block of memory. Trying to adjust the pointers in the copy is
-the exact same problem as trying to do garbage collection in C: it's an AI
-complete problem.
+The main blocker to restore a process was that selecting the PID of the
+restored process, which is necessary for CRIU, is guarded by CAP_SYS_ADMIN.
 
-Any attempt to "implement a full fork" on nommu hits this problem: copying an
-existing mapping to a new address range means any address values in the new
-mapping point into the OLD mapping. Things like fdpic fix this up at exec time
-(traversing elf tables and relocating), but not at runtime. If you can solve the
-"relocate at runtime all addresses within an existing mapping, and all other
-mappings that might point to this mapping, including local variables on the
-stack that point to a structure member or halfway into a string rather than the
-start of an allocation, without adjusting unrelated values coincidentally within
-RANGE of a mapping" problem, THEN you can fork on a nommu system.
+In the last two years the questions about checkpoint/restore as non-root
+have increased and especially in the last few months we have seen
+multiple people inventing workarounds.
 
-What vfork() does is pause the parent and have the child continue AS the parent
-for a bit (with the system call returning 0). The child starts with all the same
-memory mappings the parent has (usually not even a new stack). The child has a
-new PID and new resources like its own file descriptor table so close() and
-open() don't affect the parent, but if you change a global that's visible to the
-parent when it resumes (ant often local variables too: don't return from the
-function that called vfork() because if you DON'T have a new stack it'll stomp
-the return address the parent needs when IT does it). If the child calls
-malloc() the parent needs to free it because it's same heap (because same
-mapping of the same physical memory).
+The use-cases so far and their workarounds:
 
-Then when the child is ready to discard all those mappings (due to calling
-either execve() or _exit(), those are the only two options), the parent resumes
-from where it left off with the PID of the child as the system call return value.
+ * Checkpoint/Restore in an HPC environment in combination with
+   a resource manager distributing jobs. Users are always running
+   as non root, but there was the desire to provide a way to
+   checkpoint and restore long running jobs.
+   Workaround: setuid wrapper to start CRIU as root as non-root
+   https://github.com/FredHutch/slurm-examples/blob/master/checkpointer/lib/checkpointer/checkpointer-suid.c
+ * Another use case to checkpoint/restore processes as non-root
+   uses as workaround a non privileged process which cycles through
+   PIDs by calling fork() as fast as possible with a rate of
+   100,000 pids/s instead of writing to ns_last_pid
+   https://github.com/twosigma/set_ns_last_pid
+ * Fast Java startup using checkpoint/restore.
+   We have been in contact with JVM developers who are integrating
+   CRIU into a JVM to decrease the startup time.
+   Workaround so far: patch out CAP_SYS_ADMIN checks in the kernel
+ * Container migration as non root. There are people already
+   using CRIU to migrate containers as non-root. The solution
+   there is to run it in a user namespace. So if you are able
+   to carefully setup your environment with the namespaces
+   it is already possible to restore a container/process as non-root.
+   Unfortunately it is not always possible to setup an environment
+   in such a way and for easier access to non-root based container
+   migration this patch is also required.
 
-The reason the child pauses the parent is so only one process is ever using
-those mappings at a given time. Otherwise they're acting like threads without
-locking, and usually both are sharing a stack.
+There are probably a few more things guarded by CAP_SYS_ADMIN required
+to run checkpoint/restore as non-root, but by applying this patch I can
+already checkpoint and restore processes as non-root. As there are
+already multiple workarounds I would prefer to do it correctly in the
+kernel to avoid that CRIU users are starting to invent more workarounds.
 
-P.S. You can use threads _instead_ of fork for some stuff on nommu, but that's
-its own can of worms. You still need to vfork() when you do create a child
-process you're going to exec, so it doesn't go away, you're just requiring
-multiple techniques simultaneously to handle a special case.
+I have used the following tests to verify that this change works as
+expected by setting the new capability CAP_RESTORE on the two resulting
+test binaries:
 
-P.P.S. vfork() is useful on mmu systems to solve the "don't fork from a thread"
-problem. You can vfork() from a thread cheaply and reliably and it only pauses
-the one thread you forked from, not every thread in the whole process. If you
-fork() from a heavily threadded process you can cause a multi-milisecond latency
-spike because even with an mmu the copy on write "keep track of what's shared by
-what" generally can't handle the "threads AND processes sharing mappings" case,
-so it just gives up and copies it all at fork time, in one go, holding a big
-lock while doing so. This causes a large latency spike which vfork() avoids.
-(And can cause a large wasteful allocation and memory dirtying which is
-immediately freed.)
+$ cat ns_last_pid.c
+ // http://efiop-notes.blogspot.com/2014/06/how-to-set-pid-using-nslastpid.html
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
+ #include <sys/file.h>
+ #include <sys/types.h>
+ #include <unistd.h>
 
->>> The file descriptor is stored in mm->exe_file.
->>> Probably the most straight forward implementation is to allow
->>> execveat(AT_EXE_FILE, ...).
->>
->> Cool, that works.
->>
->>> You can look at binfmt_misc for how to reopen an open file descriptor.
->>
->> Added to the todo heap.
-> 
-> Yes I don't think it would be a lot of code.
-> 
-> I think you might be better served with clone(CLONE_VM) as it doesn't
-> block so you don't need to feed yourself your context over a pipe.
+int main(int argc, char *argv[])
+{
+	pid_t pid, new_pid;
+	char buf[32];
+	int fd;
 
-Except that doesn't fix it.
+	if (argc != 2)
+		return 1;
 
-Yes I could use threads instead, but the cure is worse than the disease and the
-result is your shell background processes are threads rather than independent
-processes (is $$ reporting PID or TID, I really don't want to go there).
+	printf("Opening ns_last_pid...\n");
+	fd = open("/proc/sys/kernel/ns_last_pid", O_RDWR | O_CREAT, 0644);
+	if (fd < 0) {
+		perror("Cannot open ns_last_pid");
+		return 1;
+	}
 
-> Eric
+	printf("Locking ns_last_pid...\n");
+	if (flock(fd, LOCK_EX)) {
+		close(fd);
+		printf("Cannot lock ns_last_pid\n");
+		return 1;
+	}
 
-Rob
+	pid = atoi(argv[1]);
+	snprintf(buf, sizeof(buf), "%d", pid - 1);
+	printf("Writing pid-1 to ns_last_pid...\n");
+	if (write(fd, buf, strlen(buf)) != strlen(buf)) {
+		printf("Cannot write to buf\n");
+		return 1;
+	}
+
+	printf("Forking...\n");
+	new_pid = fork();
+	if (new_pid == 0) {
+		printf("I am the child!\n");
+		exit(0);
+	} else if (new_pid == pid)
+		printf("I am the parent. My child got the pid %d!\n", new_pid);
+	else
+		printf("pid (%d) does not match expected pid (%d)\n", new_pid, pid);
+
+	printf("Cleaning up...\n");
+	if (flock(fd, LOCK_UN))
+		printf("Cannot unlock\n");
+	close(fd);
+	return 0;
+}
+$ id -u; /home/libcap/ns_last_pid 300000
+1001
+Opening ns_last_pid...
+Locking ns_last_pid...
+Writing pid-1 to ns_last_pid...
+Forking...
+I am the parent. My child got the pid 300000!
+I am the child!
+Cleaning up...
+
+For the clone3() based approach:
+$ cat clone3_set_tid.c
+ #define _GNU_SOURCE
+ #include <linux/sched.h>
+ #include <stdint.h>
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <sys/syscall.h>
+ #include <unistd.h>
+
+ #define ptr_to_u64(ptr) ((__u64)((uintptr_t)(ptr)))
+
+int main(int argc, char *argv[])
+{
+	struct clone_args c_args = { };
+	pid_t pid, new_pid;
+
+	if (argc != 2)
+		return 1;
+
+	pid = atoi(argv[1]);
+	c_args.set_tid = ptr_to_u64(&pid);
+	c_args.set_tid_size = 1;
+
+	printf("Forking...\n");
+	new_pid = syscall(__NR_clone3, &c_args, sizeof(c_args));
+	if (new_pid == 0) {
+		printf("I am the child!\n");
+		exit(0);
+	} else if (new_pid == pid)
+		printf("I am the parent. My child got the pid %d!\n", new_pid);
+	else
+		printf("pid (%d) does not match expected pid (%d)\n", new_pid, pid);
+	printf("Done\n");
+
+	return 0;
+}
+$ id -u; /home/libcap/clone3_set_tid 300000
+1001
+Forking...
+I am the parent. My child got the pid 300000!
+Done
+I am the child!
+
+Signed-off-by: Adrian Reber <areber@redhat.com>
+---
+ include/linux/capability.h          | 5 +++++
+ include/uapi/linux/capability.h     | 9 ++++++++-
+ kernel/pid.c                        | 2 +-
+ kernel/pid_namespace.c              | 2 +-
+ security/selinux/include/classmap.h | 5 +++--
+ 5 files changed, 18 insertions(+), 5 deletions(-)
+
+diff --git a/include/linux/capability.h b/include/linux/capability.h
+index b4345b38a6be..1278313cb2bc 100644
+--- a/include/linux/capability.h
++++ b/include/linux/capability.h
+@@ -261,6 +261,11 @@ static inline bool bpf_capable(void)
+ 	return capable(CAP_BPF) || capable(CAP_SYS_ADMIN);
+ }
+ 
++static inline bool restore_ns_capable(struct user_namespace *ns)
++{
++	return ns_capable(ns, CAP_RESTORE) || ns_capable(ns, CAP_SYS_ADMIN);
++}
++
+ /* audit system wants to get cap info from files as well */
+ extern int get_vfs_caps_from_disk(const struct dentry *dentry, struct cpu_vfs_cap_data *cpu_caps);
+ 
+diff --git a/include/uapi/linux/capability.h b/include/uapi/linux/capability.h
+index c7372180a0a9..4bcc4e3d41ff 100644
+--- a/include/uapi/linux/capability.h
++++ b/include/uapi/linux/capability.h
+@@ -406,7 +406,14 @@ struct vfs_ns_cap_data {
+  */
+ #define CAP_BPF			39
+ 
+-#define CAP_LAST_CAP         CAP_BPF
++
++/* Allow checkpoint/restore related operations */
++/* Allow PID selection during clone3() */
++/* Allow writing to ns_last_pid */
++
++#define CAP_RESTORE		40
++
++#define CAP_LAST_CAP         CAP_RESTORE
+ 
+ #define cap_valid(x) ((x) >= 0 && (x) <= CAP_LAST_CAP)
+ 
+diff --git a/kernel/pid.c b/kernel/pid.c
+index 3122043fe364..bbc26f2bcff6 100644
+--- a/kernel/pid.c
++++ b/kernel/pid.c
+@@ -198,7 +198,7 @@ struct pid *alloc_pid(struct pid_namespace *ns, pid_t *set_tid,
+ 			if (tid != 1 && !tmp->child_reaper)
+ 				goto out_free;
+ 			retval = -EPERM;
+-			if (!ns_capable(tmp->user_ns, CAP_SYS_ADMIN))
++			if (!restore_ns_capable(tmp->user_ns))
+ 				goto out_free;
+ 			set_tid_size--;
+ 		}
+diff --git a/kernel/pid_namespace.c b/kernel/pid_namespace.c
+index 0e5ac162c3a8..f58186b31ce6 100644
+--- a/kernel/pid_namespace.c
++++ b/kernel/pid_namespace.c
+@@ -269,7 +269,7 @@ static int pid_ns_ctl_handler(struct ctl_table *table, int write,
+ 	struct ctl_table tmp = *table;
+ 	int ret, next;
+ 
+-	if (write && !ns_capable(pid_ns->user_ns, CAP_SYS_ADMIN))
++	if (write && !restore_ns_capable(pid_ns->user_ns))
+ 		return -EPERM;
+ 
+ 	/*
+diff --git a/security/selinux/include/classmap.h b/security/selinux/include/classmap.h
+index 98e1513b608a..f8b8f12a6ebd 100644
+--- a/security/selinux/include/classmap.h
++++ b/security/selinux/include/classmap.h
+@@ -27,9 +27,10 @@
+ 	    "audit_control", "setfcap"
+ 
+ #define COMMON_CAP2_PERMS  "mac_override", "mac_admin", "syslog", \
+-		"wake_alarm", "block_suspend", "audit_read", "perfmon", "bpf"
++		"wake_alarm", "block_suspend", "audit_read", "perfmon", "bpf", \
++		"restore"
+ 
+-#if CAP_LAST_CAP > CAP_BPF
++#if CAP_LAST_CAP > CAP_RESTORE
+ #error New capability defined, please update COMMON_CAP2_PERMS.
+ #endif
+ 
+
+base-commit: e8f3274774b45b5f4e9e3d5cad7ff9f43ae3add5
+-- 
+2.26.2
+
