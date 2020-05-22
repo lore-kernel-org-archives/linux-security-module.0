@@ -1,71 +1,107 @@
-Return-Path: <SRS0=9GoG=7D=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=AIhG=7E=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9609C433E0
-	for <linux-security-module@archiver.kernel.org>; Thu, 21 May 2020 23:50:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28873C433E1
+	for <linux-security-module@archiver.kernel.org>; Fri, 22 May 2020 03:32:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 85C6920823
-	for <linux-security-module@archiver.kernel.org>; Thu, 21 May 2020 23:50:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1590105004;
-	bh=HjNf7SWN8ezpCTP8PfgpBvtzLLjYQPpKpLsmvOe3gjo=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=QB1WTZLIIZFneOulu1eOs0SAuQjzRSCjVqdiJzJ5PSoHK5rkyUWNLGC8A0ekBo0uA
-	 FALhHhwDhSLfsXPj9fQxTDigMrevmzjg0ju8DNyNQSqA0nck/A78lIBw0cJoNlT/0e
-	 fxBtLV3/0bicN2LlFpG3czzo5Osofzjz+MfTIPts=
+	by mail.kernel.org (Postfix) with ESMTP id 0F17020748
+	for <linux-security-module@archiver.kernel.org>; Fri, 22 May 2020 03:32:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729211AbgEUXuE (ORCPT
+        id S1727914AbgEVDcb (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 21 May 2020 19:50:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50098 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728881AbgEUXuD (ORCPT
+        Thu, 21 May 2020 23:32:31 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:38556 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727024AbgEVDca (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 21 May 2020 19:50:03 -0400
-Subject: Re: [GIT PULL] apparmor bug fixes for v5.7-rc6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1590105003;
-        bh=HjNf7SWN8ezpCTP8PfgpBvtzLLjYQPpKpLsmvOe3gjo=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=olNvMVVjuDwxtMZu8h7DR0/n4wfOh5GGjcLFNNPRsG0KmCCL44qFCpygJjBK0lIpD
-         ZL3mpS5O1Vp437xIiwDAjscVvorX128l/kpkY5yZsmJ9hJy76CSPVUDXotNCl8b7B6
-         Yj3E58yDmnTvSFiwaNHc4QbGmm6UxJZoFnn5DAZ4=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <3155dfe9-0b22-9519-f84f-152542606325@canonical.com>
-References: <3155dfe9-0b22-9519-f84f-152542606325@canonical.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <3155dfe9-0b22-9519-f84f-152542606325@canonical.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jj/linux-apparmor
- tags/apparmor-pr-2020-05-21
-X-PR-Tracked-Commit-Id: c54d481d71c6849e044690d3960aaebc730224cc
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 051143e1602d90ea71887d92363edd539d411de5
-Message-Id: <159010500353.16226.13758404686922498666.pr-tracker-bot@kernel.org>
-Date:   Thu, 21 May 2020 23:50:03 +0000
-To:     John Johansen <john.johansen@canonical.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        LKLM <linux-kernel@vger.kernel.org>,
-        "open list:SECURITY SUBSYSTEM" 
-        <linux-security-module@vger.kernel.org>
+        Thu, 21 May 2020 23:32:30 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jbyQ5-0003kP-Qo; Thu, 21 May 2020 21:32:25 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jbyQ3-0005Zy-E7; Thu, 21 May 2020 21:32:25 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Rob Landley <rob@landley.net>
+Cc:     linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        linux-fsdevel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        linux-security-module@vger.kernel.org,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Andy Lutomirski <luto@amacapital.net>
+References: <87h7wujhmz.fsf@x220.int.ebiederm.org>
+        <87sgga6ze4.fsf@x220.int.ebiederm.org>
+        <87v9l4zyla.fsf_-_@x220.int.ebiederm.org>
+        <877dx822er.fsf_-_@x220.int.ebiederm.org>
+        <87y2poyd91.fsf_-_@x220.int.ebiederm.org>
+        <adaced72-d757-e3e4-cfeb-5512533d0aa5@landley.net>
+        <874ksaioc6.fsf@x220.int.ebiederm.org>
+        <fc2cf2a7-e1a7-3170-32c9-43e593636799@landley.net>
+Date:   Thu, 21 May 2020 22:28:39 -0500
+In-Reply-To: <fc2cf2a7-e1a7-3170-32c9-43e593636799@landley.net> (Rob Landley's
+        message of "Thu, 21 May 2020 17:50:41 -0500")
+Message-ID: <87r1vcd4wo.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-XM-SPF: eid=1jbyQ3-0005Zy-E7;;;mid=<87r1vcd4wo.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/3+/zmcrzojQSjNrpeoIT45VaWKsfVFlI=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH v2 7/8] exec: Generic execfd support
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The pull request you sent on Thu, 21 May 2020 16:01:42 -0700:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/jj/linux-apparmor tags/apparmor-pr-2020-05-21
+Rob Landley <rob@landley.net> writes:
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/051143e1602d90ea71887d92363edd539d411de5
+> On 5/20/20 11:05 AM, Eric W. Biederman wrote:
 
-Thank you!
+> Toybox would _like_ proc mounted, but can't assume it. I'm writing a new
+> bash-compatible shell with nommu support, which means in order to do subshell
+> and background tasks if (!CONFIG_FORK) I need to create a pipe pair, vfork(),
+> have the child exec itself to unblock the parent, and then read the context data
+> that just got discarded through the pipe from the parent. ("Wheee." And you can
+> quote me on that.)
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+Do you have clone(CLONE_VM) ?  If my quick skim of the kernel sources is
+correct that should be the same as vfork except without causing the
+parent to wait for you.  Which I think would remove the need to reexec
+yourself.
+
+>> The file descriptor is stored in mm->exe_file.
+>> Probably the most straight forward implementation is to allow
+>> execveat(AT_EXE_FILE, ...).
+>
+> Cool, that works.
+>
+>> You can look at binfmt_misc for how to reopen an open file descriptor.
+>
+> Added to the todo heap.
+
+Yes I don't think it would be a lot of code.
+
+I think you might be better served with clone(CLONE_VM) as it doesn't
+block so you don't need to feed yourself your context over a pipe.
+
+Eric
