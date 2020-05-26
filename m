@@ -1,111 +1,130 @@
-Return-Path: <SRS0=MBBW=7H=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=6tJK=7I=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-5.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32BCFC433E0
-	for <linux-security-module@archiver.kernel.org>; Mon, 25 May 2020 21:53:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCDD4C433E0
+	for <linux-security-module@archiver.kernel.org>; Tue, 26 May 2020 03:46:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 053F52071C
-	for <linux-security-module@archiver.kernel.org>; Mon, 25 May 2020 21:53:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iY2tvaDk"
+	by mail.kernel.org (Postfix) with ESMTP id A589C20812
+	for <linux-security-module@archiver.kernel.org>; Tue, 26 May 2020 03:46:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389290AbgEYVxj (ORCPT
+        id S1725265AbgEZDqP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 25 May 2020 17:53:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60654 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388994AbgEYVxi (ORCPT
+        Mon, 25 May 2020 23:46:15 -0400
+Received: from mail-io1-f71.google.com ([209.85.166.71]:52969 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725263AbgEZDqP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 25 May 2020 17:53:38 -0400
-Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7231AC05BD43
-        for <linux-security-module@vger.kernel.org>; Mon, 25 May 2020 14:53:38 -0700 (PDT)
-Received: by mail-lj1-x244.google.com with SMTP id z6so22124452ljm.13
-        for <linux-security-module@vger.kernel.org>; Mon, 25 May 2020 14:53:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3v101aASCPTejbg2jVfRLiyg4GeM0gg8VBZ5PDSH1ag=;
-        b=iY2tvaDk5p5YH0iGs/a+wJsGtGT8KQPYOcxHmPLgAU+qx+6O5I1SNr/jyAMm1ptXcs
-         xB2MhF2XN8ymMN9NU6RqOYL/nI4prBnS1vmF+82k4BLMwvUR52gZ+UZp7b0cY4BonHyO
-         gRuXV1eHfIMukPkHZeKrfWm6c9UlUSn/xs5bz5Bxb4RQ3HwEcPWS1oKeh0PVT0L7NFNT
-         +N+PVSjfZj+VOxFegAc8rIHKmBEdKt0LQVlwRP2nOjsyiiOCiV3fXky+4n8lQ6FCeMLv
-         qbkkqo1rA9z49AODENtIvaT2c6gHV7EXS0TVRHz5BbstuWtgWAPRxmMCBUow6rRHEK0q
-         B7UA==
+        Mon, 25 May 2020 23:46:15 -0400
+Received: by mail-io1-f71.google.com with SMTP id p8so1009278ios.19
+        for <linux-security-module@vger.kernel.org>; Mon, 25 May 2020 20:46:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3v101aASCPTejbg2jVfRLiyg4GeM0gg8VBZ5PDSH1ag=;
-        b=Gf6EjPo0AnMFhSa9m2j6gsZecAFjkyUl2fN2pcDNS9HsRmbfMpQEzKd0UxxWfuZrFo
-         OB2BpPENKVKcYMO7uzK7k/V3vMCSBQo5x6KL4mfc1dnZ+Bi4kKPUjlEF8D7i3jXoutDc
-         RKyLgC46leL3Mgjg367RgX+T0CbIiU1swksuqyibuTeTV5jZjbx/rXF/44PTQMadix/Q
-         ttflzuxAe12EkK/CeDHUGycQ6wHPnFbjBs3GNvHYULz8+IGnHjZFMzLWHGDfyV0wRpWx
-         mzOrmpFYKUuqM65BG34LEO1R1I/nO/Cudk0uaaVphkg46DYdK+IYFKhQlrDAziV8OWLu
-         +UyQ==
-X-Gm-Message-State: AOAM532cegn9O+YrC2cLjDnE+gpBS4yYLa5pcveQwIqv+7+Mx+vzv/Fe
-        W7iucSIl4iI/wr8HkM3+SZ7wr7RfSk379hMWuXXx7Q==
-X-Google-Smtp-Source: ABdhPJyKnh55r9ZmX+xYxnzN5U0nGuxPhLb6UCsL+iO/1S19+yDruhYy4O1R6Zoj4FsxXdc6DmU+OY95cKBKyVGfyqM=
-X-Received: by 2002:a2e:9455:: with SMTP id o21mr2832190ljh.415.1590443616555;
- Mon, 25 May 2020 14:53:36 -0700 (PDT)
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=FygU0grI+bkcvE0/tZ2c6MWT1VSUmVI/0YBfDJK44v0=;
+        b=iV1vhVLRFL6Z0f+7ygJnhy2Hs6pWmB5RsyEzcb8m6ty0osFvpXfVt1+Py74TgUdR7H
+         KpDw49SiU7fDpglB5hG9PpeNmEf79xjSREHZ95TJzPFx/LAfdj0oX+4Pmsb8geHPWtkS
+         i3YOcmBsxUEmI4Y5w0EEpxYtgFWuUgxiTHr2z0q5yz4lzE4Dg4f4nJqSLN6kiG6vrT3l
+         xr/uqJ3VOulYeHAH/5dC+0EN4LRyTq+wr7ocd/urwfcL4E2bwd5lfZpFL2x3ewN2T0UZ
+         Vxvr44KZhXp74NcIlH9YtVIhVMWSX29yDmkhc1zdim14idU3rlWrHN9eKbMRbVXV62lI
+         NkBQ==
+X-Gm-Message-State: AOAM531qv+AeXXDD1TOr1B0L/pvVfTILuSzmCa5CIqtgWBnl1WTp9RUn
+        wkizQ9kLlIWpXoCaXPRNvYnXJuFK1P1QMf+pg++Q2eM3E6bS
+X-Google-Smtp-Source: ABdhPJyeDYLP4rScU7LxmN0VShaRSdid+cuDEJCi8qeQ9F5DW1VQNshOBs0PXP+3c+FIFj6nI3nukr/ZgLf3ncHl16neANrKhP9c
 MIME-Version: 1.0
-References: <20200522055350.806609-1-areber@redhat.com>
-In-Reply-To: <20200522055350.806609-1-areber@redhat.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Mon, 25 May 2020 23:53:10 +0200
-Message-ID: <CAG48ez3rh2a3PYRRkcu50LU9qPCaeOE8BJL=AmTwDD3qcA+xFA@mail.gmail.com>
-Subject: Re: [PATCH] capabilities: Introduce CAP_RESTORE
-To:     Adrian Reber <areber@redhat.com>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Pavel Emelyanov <ovzxemul@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Andrei Vagin <avagin@gmail.com>,
-        Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
-        =?UTF-8?B?TWljaGHFgiBDxYJhcGnFhHNraQ==?= <mclapinski@google.com>,
-        Kamil Yurtsever <kyurtsever@google.com>,
-        Dirk Petersen <dipeit@gmail.com>,
-        Christine Flood <chf@redhat.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Radostin Stoyanov <rstoyanov1@gmail.com>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        Serge Hallyn <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Sargun Dhillon <sargun@sargun.me>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Aaron Goidel <acgoide@tycho.nsa.gov>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        SElinux list <selinux@vger.kernel.org>,
-        Eric Paris <eparis@parisplace.org>
+X-Received: by 2002:a05:6602:2f06:: with SMTP id q6mr15497020iow.135.1590464774531;
+ Mon, 25 May 2020 20:46:14 -0700 (PDT)
+Date:   Mon, 25 May 2020 20:46:14 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000e9f3e705a684ef9a@google.com>
+Subject: general protection fault in tomoyo_check_acl
+From:   syzbot <syzbot+cff8c4c75acd8c6fb842@syzkaller.appspotmail.com>
+To:     jmorris@namei.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        penguin-kernel@I-love.SAKURA.ne.jp, serge@hallyn.com,
+        syzkaller-bugs@googlegroups.com, takedakn@nttdata.co.jp
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, May 22, 2020 at 7:55 AM Adrian Reber <areber@redhat.com> wrote:
-> This enables CRIU to checkpoint and restore a process as non-root.
->
-> Over the last years CRIU upstream has been asked a couple of time if it
-> is possible to checkpoint and restore a process as non-root. The answer
-> usually was: 'almost'.
->
-> The main blocker to restore a process was that selecting the PID of the
-> restored process, which is necessary for CRIU, is guarded by CAP_SYS_ADMIN.
+Hello,
 
-And if you were restoring the process into your own PID namespace, so
-that you actually have a guarantee that this isn't going to blow up in
-your face because one of your PIDs is allocated for a different
-process, this part of the problem could be simplified.
+syzbot found the following crash on:
 
-I don't get why your users are fine with a "oh it kinda works 99% of
-the time but sometimes it randomly doesn't and then you have to go
-reboot or whatever" model.
+HEAD commit:    d2f8825a Merge tag 'for_linus' of git://git.kernel.org/pub..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13c55922100000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b3368ce0cc5f5ace
+dashboard link: https://syzkaller.appspot.com/bug?extid=cff8c4c75acd8c6fb842
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+cff8c4c75acd8c6fb842@syzkaller.appspotmail.com
+
+general protection fault, probably for non-canonical address 0xe000026660000003: 0000 [#1] PREEMPT SMP KASAN
+KASAN: probably user-memory-access in range [0x0000333300000018-0x000033330000001f]
+CPU: 0 PID: 12489 Comm: systemd-rfkill Not tainted 5.7.0-rc6-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:tomoyo_check_acl+0xa9/0x3e0 security/tomoyo/domain.c:173
+Code: 00 0f 85 2d 03 00 00 49 8b 1c 24 49 39 dc 0f 84 bd 01 00 00 e8 28 65 14 fe 48 8d 7b 18 48 89 f8 48 89 fa 48 c1 e8 03 83 e2 07 <0f> b6 04 28 38 d0 7f 08 84 c0 0f 85 a7 02 00 00 44 0f b6 73 18 31
+RSP: 0018:ffffc90016987bc8 EFLAGS: 00010246
+RAX: 0000066660000003 RBX: 0000333300000000 RCX: ffffffff835ed028
+RDX: 0000000000000000 RSI: ffffffff835ecff8 RDI: 0000333300000018
+RBP: dffffc0000000000 R08: ffff8880a1cce1c0 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: ffff8880a72db990
+R13: ffffc90016987c80 R14: 0000000000000033 R15: 0000000000000002
+FS:  00007f9e4b6ba8c0(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f9e4b399e30 CR3: 000000004df8d000 CR4: 00000000001426f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ tomoyo_path_number_perm+0x314/0x4d0 security/tomoyo/file.c:733
+ security_file_ioctl+0x6c/0xb0 security/security.c:1460
+ ksys_ioctl+0x50/0x180 fs/ioctl.c:765
+ __do_sys_ioctl fs/ioctl.c:780 [inline]
+ __se_sys_ioctl fs/ioctl.c:778 [inline]
+ __x64_sys_ioctl+0x6f/0xb0 fs/ioctl.c:778
+ do_syscall_64+0xf6/0x7d0 arch/x86/entry/common.c:295
+ entry_SYSCALL_64_after_hwframe+0x49/0xb3
+RIP: 0033:0x7f9e4adab80a
+Code: ff e9 62 fe ff ff 66 2e 0f 1f 84 00 00 00 00 00 53 49 89 f0 48 63 ff be 01 54 00 00 b8 10 00 00 00 48 83 ec 30 48 89 e2 0f 05 <48> 3d 00 f0 ff ff 77 6e 85 c0 89 c3 75 5c 8b 04 24 8b 54 24 0c 4c
+RSP: 002b:00007fffcc16ea20 EFLAGS: 00000202 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 0000000000000007 RCX: 00007f9e4adab80a
+RDX: 00007fffcc16ea20 RSI: 0000000000005401 RDI: 0000000000000002
+RBP: 0000000000000007 R08: 00007fffcc16ea60 R09: 0000000000000000
+R10: 0000000000020d50 R11: 0000000000000202 R12: 000056153471ef90
+R13: 00007fffcc16ec30 R14: 0000000000000000 R15: 0000000000000000
+Modules linked in:
+---[ end trace 1f05c0d7f6671379 ]---
+RIP: 0010:tomoyo_check_acl+0xa9/0x3e0 security/tomoyo/domain.c:173
+Code: 00 0f 85 2d 03 00 00 49 8b 1c 24 49 39 dc 0f 84 bd 01 00 00 e8 28 65 14 fe 48 8d 7b 18 48 89 f8 48 89 fa 48 c1 e8 03 83 e2 07 <0f> b6 04 28 38 d0 7f 08 84 c0 0f 85 a7 02 00 00 44 0f b6 73 18 31
+RSP: 0018:ffffc90016987bc8 EFLAGS: 00010246
+RAX: 0000066660000003 RBX: 0000333300000000 RCX: ffffffff835ed028
+RDX: 0000000000000000 RSI: ffffffff835ecff8 RDI: 0000333300000018
+RBP: dffffc0000000000 R08: ffff8880a1cce1c0 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: ffff8880a72db990
+R13: ffffc90016987c80 R14: 0000000000000033 R15: 0000000000000002
+FS:  00007f9e4b6ba8c0(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055f7b8031310 CR3: 000000004df8d000 CR4: 00000000001426f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
