@@ -2,115 +2,199 @@ Return-Path: <SRS0=6tJK=7I=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3376C433E1
-	for <linux-security-module@archiver.kernel.org>; Tue, 26 May 2020 19:52:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 216A4C433DF
+	for <linux-security-module@archiver.kernel.org>; Tue, 26 May 2020 20:44:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AF83C207D8
-	for <linux-security-module@archiver.kernel.org>; Tue, 26 May 2020 19:52:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8711207CB
+	for <linux-security-module@archiver.kernel.org>; Tue, 26 May 2020 20:44:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bnWhzRKV"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="olk2fkRf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390419AbgEZTwD (ORCPT
+        id S2390624AbgEZUor (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 26 May 2020 15:52:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40606 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389346AbgEZTwC (ORCPT
+        Tue, 26 May 2020 16:44:47 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:52886 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389486AbgEZUor (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 26 May 2020 15:52:02 -0400
-Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93EB8C03E96E
-        for <linux-security-module@vger.kernel.org>; Tue, 26 May 2020 12:52:01 -0700 (PDT)
-Received: by mail-lf1-x144.google.com with SMTP id c12so13045559lfc.10
-        for <linux-security-module@vger.kernel.org>; Tue, 26 May 2020 12:52:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=eBEPuPRe4Vv2CIYhMh2f1CuE2rLakV/r952j5euzgs8=;
-        b=bnWhzRKVsaWXVi38IqofrgRQO1+O7g9G0wdnz61VvLTxmGpf0Fg8OK7MAptjxxMn3T
-         kHaTgIILdbWOUvZ50Uyaodde5Gj5I8XzkPC6W7EQK+hxASYjt5Sh36CvVntc1Ox6e4AM
-         6rDBHoaKOeBgjFYeUVH8aJzZGm+JLhmsB+9sI8gsqKrdVDncLLtGJ98HUrkDNkVhKNmf
-         qwfCbSXVlKEzR3ziDVHFYZMhK/sFnYDl6XrECA+oMoNnDGkkgT7L0UZcyjdkgz3nnMMq
-         gKTv9rkTMxjDqh+JFrLhdYXj6IWJwGLH4WZExZxsbyKo6fpi38b+eoChPqqLK+RQf2k+
-         Bhiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=eBEPuPRe4Vv2CIYhMh2f1CuE2rLakV/r952j5euzgs8=;
-        b=dZVKIP40xTrVwAdRwub0nNqP3NuLF9Qw4aXHxnhzJieJRfEfliSZTIN2TqnBjw4Ow7
-         UaFe06ThXXnMRD+CJPHnJasJFeORy/0yjJ5RAaMIdVTyeQpmBpdtsRGpLtjf7dO4scbS
-         1j645TLGI8tvKbEwNJneswNcDuLo+HJsrs3rL4MZwutSVjdHcre1JjdUJoRWGyIEH0g8
-         mii/anVFAPtUcezLA8oSe4DrNZuxpTHuKph5M7iHi7DBbg0x1+8PgP2EvRxYQubmOYZ6
-         eYy4P2zgGlytWOJnmXZSAE8Gp4j1k68WI0eyUixjDDVFmMMedv6tTxyNkHduQddF1TwO
-         QU9w==
-X-Gm-Message-State: AOAM533118jTmxP59L33r3oCN/tBoabz5TmSQD9VMBxWwRbg1zlZsS9u
-        aygYXN7LJ/alLJqflQrHWNPVQ/QWs9PrhEh8GzpBAA==
-X-Google-Smtp-Source: ABdhPJzlR6LQriHCuEiGE/6Qirb1H9ZITawQCPoXz9As27TgLBKfSZTPQcDuOcWf7Fk6FiSnZhxZUdI8yRzAAC8OiFQ=
-X-Received: by 2002:a05:6512:6ca:: with SMTP id u10mr1293382lff.184.1590522719828;
- Tue, 26 May 2020 12:51:59 -0700 (PDT)
+        Tue, 26 May 2020 16:44:47 -0400
+Received: by linux.microsoft.com (Postfix, from userid 1029)
+        id 2C25420B717B; Tue, 26 May 2020 13:44:45 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 2C25420B717B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1590525885;
+        bh=bFXC2Zh5D+I68ggrZKLkI2DpVS0uyoI3IfAdnK2YDA0=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=olk2fkRfYTmHWVnOEJgWmvdb9kqKsOIxBirUKfxKOh2x/rNdAuN7objslotuhcg/F
+         tu+WrrTYUk1xit3OKtRtTRmj1/csitNlv+beFg1IIadF1sNipjQK5uyqqQ5mKp/18c
+         8Wiup0o53J2BhaLhCbWA24HTXQBBu3J6qLV3cPcI=
+Received: from localhost (localhost [127.0.0.1])
+        by linux.microsoft.com (Postfix) with ESMTP id 284A430705CE;
+        Tue, 26 May 2020 13:44:45 -0700 (PDT)
+Date:   Tue, 26 May 2020 13:44:45 -0700 (PDT)
+From:   Jaskaran Singh Khurana <jaskarankhurana@linux.microsoft.com>
+X-X-Sender: jaskarankhurana@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net
+To:     =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+cc:     Deven Bowers <deven.desai@linux.microsoft.com>, agk@redhat.com,
+        axboe@kernel.dk, snitzer@redhat.com, jmorris@namei.org,
+        serge@hallyn.com, zohar@linux.ibm.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, dm-devel@redhat.com,
+        linux-block@vger.kernel.org, jannh@google.com,
+        tyhicks@linux.microsoft.com, pasha.tatashin@soleen.com,
+        sashal@kernel.org, nramas@linux.microsoft.com,
+        mdsakib@linux.microsoft.com, linux-kernel@vger.kernel.org,
+        corbet@lwn.net
+Subject: Re: [RFC PATCH v3 00/12] Integrity Policy Enforcement LSM (IPE)
+In-Reply-To: <alpine.LRH.2.21.2005161420490.8455@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.inter>
+Message-ID: <alpine.LRH.2.21.2005261343540.83057@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.inter>
+References: <20200415162550.2324-1-deven.desai@linux.microsoft.com> <b07ac7e1-7cf5-92c9-81d0-64174c3d5024@digikod.net> <0001755a-6b2a-b13b-960c-eb0b065c8e3c@linux.microsoft.com> <8ba7b15f-de91-40f7-fc95-115228345fce@linux.microsoft.com>
+ <44fb36ae-959d-4ff7-ed1f-ccfc2e292232@digikod.net> <alpine.LRH.2.21.2005161420490.8455@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.inter>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-References: <20200522055350.806609-1-areber@redhat.com> <dc86dffb-c7f8-15bb-db4e-be135da650cc@schaufler-ca.com>
- <20200525080541.GF104922@dcbz.redhat.com> <877dwybxvi.fsf@x220.int.ebiederm.org>
- <CALKUemw0UZ67yaDwAomHh0n8QZfjd52QvgEXTJ4R3JSrQjZX9g@mail.gmail.com>
-In-Reply-To: <CALKUemw0UZ67yaDwAomHh0n8QZfjd52QvgEXTJ4R3JSrQjZX9g@mail.gmail.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Tue, 26 May 2020 21:51:33 +0200
-Message-ID: <CAG48ez3PFoy11H11so-xXSJf4HM6Ndkufxk40sLj8JFvO6+BPQ@mail.gmail.com>
-Subject: Re: [PATCH] capabilities: Introduce CAP_RESTORE
-To:     Christine Flood <chf@redhat.com>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Adrian Reber <areber@redhat.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Pavel Emelyanov <ovzxemul@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Andrei Vagin <avagin@gmail.com>,
-        Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
-        =?UTF-8?B?TWljaGHFgiBDxYJhcGnFhHNraQ==?= <mclapinski@google.com>,
-        Kamil Yurtsever <kyurtsever@google.com>,
-        Dirk Petersen <dipeit@gmail.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Radostin Stoyanov <rstoyanov1@gmail.com>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        Serge Hallyn <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Sargun Dhillon <sargun@sargun.me>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Aaron Goidel <acgoide@tycho.nsa.gov>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        SElinux list <selinux@vger.kernel.org>,
-        Eric Paris <eparis@parisplace.org>,
-        "Haley, Andrew" <aph@redhat.com>,
-        "Bhole, Deepak" <dbhole@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/mixed; boundary="656392-1229694672-1590525885=:83057"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, May 26, 2020 at 9:01 PM Christine Flood <chf@redhat.com> wrote:
-> Java applications suffer from slow startup times due to dynamic class loa=
-ding and warming up the Just In Time compilers.  Not all Java users have ro=
-ot access on their machines.  Enabling CRIU in user mode solves this proble=
-m for us.  We are about to release a user library that will allow check poi=
-nting Java from within Java.  Having to run this as root would severely lim=
-it its utility.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Have you looked into whether it would be practical to restore the
-saved process state with different PIDs, and then fix up all places
-that might have stored the old PIDs? As long as all threads are
-managed by the JVM, that might be doable, right?
+--656392-1229694672-1590525885=:83057
+Content-Type: text/plain; charset=iso-8859-15; format=flowed
+Content-Transfer-Encoding: 8BIT
 
-If you did that, you would also solve the problem of not being able to
-start two copies of the same image (because their PIDs would collide)
-or randomly not being able to start processes (because their PIDs
-collide with other existing things).
+Hello Mickael,
+
+Could you please share your thoughts for the below proposal.
+
+Regards,
+JK
+
+On Sat, 16 May 2020, Jaskaran Singh Khurana wrote:
+
+>
+> Hello Mickael,
+>
+> On Thu, 14 May 2020, Mickaël Salaün wrote:
+>
+>>
+>>  On 12/05/2020 22:46, Deven Bowers wrote:
+>>> 
+>>>
+>>>  On 5/11/2020 11:03 AM, Deven Bowers wrote:
+>>>> 
+>>>>
+>>>>  On 5/10/2020 2:28 AM, Mickaël Salaün wrote:
+>>>>
+>>>>  [...snip]
+>>>> 
+>>>>>>
+>>>>>>  Additionally, rules are evaluated top-to-bottom. As a result, any
+>>>>>>  revocation rules, or denies should be placed early in the file to
+>>>>>>  ensure
+>>>>>>  that these rules are evaluated before a rule with "action=ALLOW" is
+>>>>>>  hit.
+>>>>>>
+>>>>>>  IPE policy is designed to be forward compatible and backwards
+>>>>>>  compatible,
+>>>>>>  thus any failure to parse a rule will result in the line being
+>>>>>>  ignored,
+>>>>>>  and a warning being emitted. If backwards compatibility is not
+>>>>>>  required,
+>>>>>>  the kernel commandline parameter and sysctl, ipe.strict_parse can be
+>>>>>>  enabled, which will cause these warnings to be fatal.
+>>>>>
+>>>>>  Ignoring unknown command may lead to inconsistent beaviors. To achieve
+>>>>>  forward compatibility, I think it would be better to never ignore
+>>>>>  unknown rule but to give a way to userspace to known what is the
+>>>>>  current
+>>>>>  kernel ABI. This could be done with a securityfs file listing the
+>>>>>  current policy grammar.
+>>>>> 
+>>>>
+>>>>  That's a fair point. From a manual perspective, I think this is fine.
+>>>>  A human-user can interpret a grammar successfully on their own when new
+>>>>  syntax is introduced.
+>>>>
+>>>>   From a producing API perspective, I'd have to think about it a bit
+>>>>  more. Ideally, the grammar would be structured in such a way that the
+>>>>  userland
+>>>>  interpreter of this grammar would not have to be updated once new syntax
+>>>>  is introduced, avoiding the need to update the userland binary. To do so
+>>>>  generically ("op=%s") is easy, but doesn't necessarily convey sufficient
+>>>>  information (what happens when a new "op" token is introduced?). I think
+>>>>  this may come down to regular expression representations of valid values
+>>>>  for these tokens, which worries me as regular expressions are incredibly
+>>>>  error-prone[1].
+>>>>
+>>>>  I'll see what I can come up with regarding this.
+>>>
+>>>  I have not found a way that I like to expose some kind of grammar
+>>>  through securityfs that can be understood by usermode to parse the
+>>>  policy. Here's what I propose as a compromise:
+>>>
+>>>      1. I remove the unknown command behavior. This address your
+>>>  first point about inconsistent behaviors, and effectively removes the
+>>>  strict_parse sysctl (as it is always enabled).
+>>>
+>>>      2. I introduce a versioning system for the properties
+>>>  themselves. The valid set of properties and their versions
+>>>  can be found in securityfs, under say, ipe/config in a key=value
+>>>  format where `key` indicates the understood token, and `value`
+>>>  indicates their current version. For example:
+>>>
+>>>      $ cat $SECURITYFS/ipe/config
+>>>      op=1
+>>>      action=1
+>>>      policy_name=1
+>>>      policy_version=1
+>>>      dmverity_signature=1
+>>>      dmverity_roothash=1
+>>>      boot_verified=1
+>>
+>>  The name ipe/config sounds like a file to configure IPE. Maybe something
+>>  like ipe/config_abi or ipe/config_grammar?
+>> 
+>>>
+>>>  if new syntax is introduced, the version number is increased.
+>>>
+>>>      3. The format of those versions are documented as part of
+>>>  the admin-guide around IPE. If user-mode at that point wants to rip
+>>>  the documentation formats and correlate with the versioning, then
+>>>  it fulfills the same functionality as above, with out the complexity
+>>>  around exposing a parsing grammar and interpreting it on-the-fly.
+>>>  Many of these are unlikely to move past version 1, however.
+>>>
+>>>  Thoughts?
+>>> 
+>>
+>>  That seems reasonable.
+>> 
+>
+> There is a use case for not having strict parsing in the cloud world where 
+> there are multiple versions of OS deployed across a large number of systems 
+> say 100,000 nodes. An OS update can take weeks to complete across all the 
+> nodes, and we end up having a heterogeneous mix of OS versions.
+>
+> Without non-strict parsing, to fix an issue in a policy we will need to 
+> update the various versions of the policy (one each for all OS versions
+> which have different IPE policy schema). We will lose the agility we need to 
+> fix and deploy something urgently in the policy, the nodes might be failing 
+> some critical workloads meanwhile. All the various versions of the policy 
+> will need to be changed and production signed then deployed etc. Further some 
+> versions might introduce newer issues and we will need to see what all 
+> versions of the policy have that bug.
+>
+> I propose keeping the non-strict option as well to cater to this use case. 
+> Let me know your thoughts on this.
+>
+> Regards,
+> JK
+>
+--656392-1229694672-1590525885=:83057--
