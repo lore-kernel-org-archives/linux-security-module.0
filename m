@@ -2,157 +2,146 @@ Return-Path: <SRS0=6tJK=7I=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20581C433DF
-	for <linux-security-module@archiver.kernel.org>; Tue, 26 May 2020 14:04:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04D4CC433E0
+	for <linux-security-module@archiver.kernel.org>; Tue, 26 May 2020 16:33:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F3CD6208A9
-	for <linux-security-module@archiver.kernel.org>; Tue, 26 May 2020 14:04:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D1E1120776
+	for <linux-security-module@archiver.kernel.org>; Tue, 26 May 2020 16:33:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="S1vl8LNQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728148AbgEZOEu (ORCPT
+        id S1728686AbgEZQdl (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 26 May 2020 10:04:50 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:46256 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726856AbgEZOEu (ORCPT
+        Tue, 26 May 2020 12:33:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37792 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728350AbgEZQdk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 26 May 2020 10:04:50 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jdaC5-0003Ev-6o; Tue, 26 May 2020 08:04:37 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jdaAo-0000EQ-TA; Tue, 26 May 2020 08:04:36 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Adrian Reber <areber@redhat.com>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Pavel Emelyanov <ovzxemul@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Andrei Vagin <avagin@gmail.com>,
-        Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
-        =?utf-8?B?TWljaGHFgiBDxYJhcGnFhHNraQ==?= <mclapinski@google.com>,
-        Kamil Yurtsever <kyurtsever@google.com>,
-        Dirk Petersen <dipeit@gmail.com>,
-        Christine Flood <chf@redhat.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Radostin Stoyanov <rstoyanov1@gmail.com>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        Serge Hallyn <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Sargun Dhillon <sargun@sargun.me>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Aaron Goidel <acgoide@tycho.nsa.gov>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, selinux@vger.kernel.org,
-        Eric Paris <eparis@parisplace.org>,
-        Jann Horn <jannh@google.com>
-References: <20200522055350.806609-1-areber@redhat.com>
-        <dc86dffb-c7f8-15bb-db4e-be135da650cc@schaufler-ca.com>
-        <20200525080541.GF104922@dcbz.redhat.com>
-Date:   Tue, 26 May 2020 08:59:29 -0500
-In-Reply-To: <20200525080541.GF104922@dcbz.redhat.com> (Adrian Reber's message
-        of "Mon, 25 May 2020 10:05:41 +0200")
-Message-ID: <877dwybxvi.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Tue, 26 May 2020 12:33:40 -0400
+Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37359C03E96F
+        for <linux-security-module@vger.kernel.org>; Tue, 26 May 2020 09:33:40 -0700 (PDT)
+Received: by mail-wr1-x443.google.com with SMTP id x14so15672695wrp.2
+        for <linux-security-module@vger.kernel.org>; Tue, 26 May 2020 09:33:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=3d51jgWtfOexQMR16pUfp1Ft+cFFsdNIgNCbJ0oO6z8=;
+        b=S1vl8LNQNGh9Z9oQEIaEr3gX4dBzKdAj9yZBl9C8Z9eB9PxSDAHYk+yztCPZT/cc5o
+         EiTXiXfHkY+NQVCYy4gS0Vd+ufYrK/Nqn88WnMiNYw8VNbr//5v5JAfanWXjVaa4UPa/
+         IXmxKiSMm+hlWLN126CkuJ2x4CDQDobvrDzb8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=3d51jgWtfOexQMR16pUfp1Ft+cFFsdNIgNCbJ0oO6z8=;
+        b=b2msHo0MUWoK8eXUNRxKxvE8Ddmr+F7Z0yJ1bKeEsCefnDCuPXoAsEWv+pChUI3VlA
+         /2jc2S+g/oNZWMpv4E/iM+XIqMcdHyP/nYVnP0rkpZlFBhNqFPvEsxiBTXoMHbqq8zvd
+         GDF72d4XzUTOWCiu6x5A4l86xD91WnqGXFifV1gLnFEMFmsw+Ra/lT9KF26G8awcJbKn
+         pr1xL9FGJf3XYF55RMCtBv7oiJOkdUBaE03sENOZurGiJNyBC4ISw7xQ1uLNUxxEo8NK
+         2B+N6Eg1GZlOBlLdSZUzOXAV0/jfh2saqo6nCwBK4NXcy80JmfkTpkquenzhNF2G61I1
+         kB4g==
+X-Gm-Message-State: AOAM5311OMgtUlxb+A3yd5GfNfayfOI9IoWgtBaVzRtRY1U7TjOxgwWx
+        +1LypDS7WCq4nMVLK20uIx2CNJ1Ihps=
+X-Google-Smtp-Source: ABdhPJySwURRYLxVZfz9zYM60ZLeI2UfSrRa2z7iq8zE9ysrRYMQUfSNRCioM6c/ISpeYj/hrPKyAw==
+X-Received: by 2002:a05:6000:110b:: with SMTP id z11mr22098919wrw.16.1590510818551;
+        Tue, 26 May 2020 09:33:38 -0700 (PDT)
+Received: from kpsingh.zrh.corp.google.com ([81.6.44.51])
+        by smtp.gmail.com with ESMTPSA id k17sm48654wmj.15.2020.05.26.09.33.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 May 2020 09:33:37 -0700 (PDT)
+From:   KP Singh <kpsingh@chromium.org>
+To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        bpf@vger.kernel.org, linux-security-module@vger.kernel.org
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        James Morris <jmorris@namei.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Florent Revest <revest@chromium.org>
+Subject: [PATCH bpf-next 0/4] Generalizing bpf_local_storage
+Date:   Tue, 26 May 2020 18:33:32 +0200
+Message-Id: <20200526163336.63653-1-kpsingh@chromium.org>
+X-Mailer: git-send-email 2.27.0.rc0.183.gde8f92d652-goog
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1jdaAo-0000EQ-TA;;;mid=<877dwybxvi.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX184zXKTFqE/g2hdbG7ONqk2DTs8REhARQ8=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [PATCH] capabilities: Introduce CAP_RESTORE
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Adrian Reber <areber@redhat.com> writes:
+From: KP Singh <kpsingh@google.com>
 
-> On Fri, May 22, 2020 at 09:40:37AM -0700, Casey Schaufler wrote:
+bpf_sk_storage can already be used by some BPF program types to annotate
+socket objects. These annotations are managed with the life-cycle of the
+object (i.e. freed when the object is freed) which makes BPF programs
+much simpler and less prone to errors and leaks.
 
->> What are the other blockers? Are you going to suggest additional new
->> capabilities to clear them?
->
-> As mentioned somewhere else access to /proc/<pid>/map_files/ would be
-> helpful. Right now I am testing with a JVM and it works without root
-> just with the attached patch. Without access to /proc/<pid>/map_files/
-> not everything CRIU can do will actually work, but we are a lot closer
-> to what our users have been asking for.
+This patch series:
 
-The current permission checks on /proc/<pid>/map_files/ are simply
-someone being over-cautious.
+* Generalizes the bpf_sk_storage infrastructure to allow easy
+  implementation of local storage for other objects
+* Implements local storage for inodes
+* Makes both bpf_{sk, inode}_storage available to LSM programs.
 
-Someone needs to think through the threat landscape and figure out what
-permission checks are actually needed.
+Local storage is safe to use in LSM programs as the attachment sites are
+limited and the owning object won't be freed, however, this is not the
+case for tracing. Usage in tracing is expected to follow a white-list
+based approach similar to the d_path helper
+(https://lore.kernel.org/bpf/20200506132946.2164578-1-jolsa@kernel.org).
 
-Making the permission check ns_capable instead of capable is a
-no-brainer.  Figuring out which user_ns to test against might be a
-we bit harder.
-
-We could probably even allow the owner of the process to open the files
-but that requires someone doing the work of thinking through how
-being able to opening files that you have mmaped might be a problem.
-
->> > There are probably a few more things guarded by CAP_SYS_ADMIN required
->> > to run checkpoint/restore as non-root,
->> 
->> If you need CAP_SYS_ADMIN anyway you're not gaining anything by
->> separating out CAP_RESTORE.
->
-> No, as described we can checkpoint and restore a JVM with this patch and
-> it also solves the problem the set_ns_last_pid fork() loop daemon tries
-> to solve. It is not enough to support the full functionality of CRIU as
-> map_files is also important, but we do not need CAP_SYS_ADMIN and
-> CAP_RESTORE. Only CAP_RESTORE would be necessary.
->
-> With a new capability users can enable checkpoint/restore as non-root
-> without giving CRIU access to any of the other possibilities offered by
-> CAP_SYS_ADMIN. Setting a PID and map_files have been introduced for CRIU
-> and used to live behind CONFIG_CHECKPOINT_RESTORE. Having a capability
-> for checkpoint/restore would make it easier for CRIU users to run it as
-> non-root and make it very clear what is possible when giving CRIU the
-> new capability. No other things would be allowed than necessary for
-> checkpoint/restore. Setting a PID is most important for the restore part
-> and reading map_files would be helpful during checkpoint. So it actually
-> should be called CAP_CHECKPOINT_RESTORE as Christian mentioned in
-> another email.
-
-Please if one is for checkpoint and one is for restore asking for a pair
-of capabilities is probably more appropriate.
-
->> >  but by applying this patch I can
->> > already checkpoint and restore processes as non-root. As there are
->> > already multiple workarounds I would prefer to do it correctly in the
->> > kernel to avoid that CRIU users are starting to invent more workarounds.
->> 
->> You've presented a couple of really inappropriate implementations
->> that would qualify as workarounds. But the other two are completely
->> appropriate within the system security policy. They don't "get around"
->> the problem, they use existing mechanisms as they are intended.
->
-> I agree with the user namespace approach to be appropriate, but not the
-> CAP_SYS_ADMIN approach as CRIU only needs a tiny subset (2 things) of
-> what CAP_SYS_ADMIN allows.
+Access to local storage would allow LSM programs to implement stateful
+detections like detecting the unlink of a running executable from the
+examples shared as a part of the KRSI series
+https://lore.kernel.org/bpf/20200329004356.27286-1-kpsingh@chromium.org/
+and
+https://github.com/sinkap/linux-krsi/blob/patch/v1/examples/samples/bpf/lsm_detect_exec_unlink.c
 
 
-If we are only talking 2 things can you please include in your patchset
-a patch enabling those 2 things?
+*** BLURB HERE ***
 
-But even more than this we need a request that asks not for the least
-you can possibly ask for but asks for what you need to do a good job.
+KP Singh (4):
+  bpf: Generalize bpf_sk_storage
+  bpf: Implement bpf_local_storage for inodes
+  bpf: Allow local storage to be used from LSM programs
+  bpf: Add selftests for local_storage
 
-I am having visions of a recurring discussion that says can we add one
-more permission check to CAP_RESTORE or CAP_CHECKPOINT when they are
-things we could know today.
+ fs/inode.c                                    |    3 +
+ .../bpf_local_storage.h}                      |   14 +-
+ include/linux/bpf_types.h                     |    1 +
+ include/linux/fs.h                            |    5 +
+ include/net/sock.h                            |    4 +-
+ include/uapi/linux/bpf.h                      |   54 +-
+ kernel/bpf/Makefile                           |    4 +
+ kernel/bpf/bpf_local_storage.c                | 1595 +++++++++++++++++
+ kernel/bpf/bpf_lsm.c                          |   20 +-
+ kernel/bpf/cgroup.c                           |    2 +-
+ kernel/bpf/syscall.c                          |    3 +-
+ kernel/bpf/verifier.c                         |   10 +
+ net/bpf/test_run.c                            |    2 +-
+ net/core/Makefile                             |    1 -
+ net/core/bpf_sk_storage.c                     | 1183 ------------
+ net/core/filter.c                             |    2 +-
+ net/core/sock.c                               |    2 +-
+ net/ipv4/bpf_tcp_ca.c                         |    2 +-
+ net/ipv4/inet_diag.c                          |    2 +-
+ tools/bpf/bpftool/map.c                       |    1 +
+ tools/include/uapi/linux/bpf.h                |   54 +-
+ tools/lib/bpf/libbpf_probes.c                 |    5 +-
+ .../bpf/prog_tests/test_local_storage.c       |   60 +
+ .../selftests/bpf/progs/local_storage.c       |  139 ++
+ 24 files changed, 1959 insertions(+), 1209 deletions(-)
+ rename include/{net/bpf_sk_storage.h => linux/bpf_local_storage.h} (72%)
+ create mode 100644 kernel/bpf/bpf_local_storage.c
+ delete mode 100644 net/core/bpf_sk_storage.c
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/test_local_storage.c
+ create mode 100644 tools/testing/selftests/bpf/progs/local_storage.c
 
-Eric
+-- 
+2.27.0.rc0.183.gde8f92d652-goog
+
