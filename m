@@ -2,81 +2,67 @@ Return-Path: <SRS0=Z1sm=7J=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C032C433DF
-	for <linux-security-module@archiver.kernel.org>; Wed, 27 May 2020 15:57:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76460C433DF
+	for <linux-security-module@archiver.kernel.org>; Wed, 27 May 2020 16:41:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 37B8720776
-	for <linux-security-module@archiver.kernel.org>; Wed, 27 May 2020 15:57:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F11920721
+	for <linux-security-module@archiver.kernel.org>; Wed, 27 May 2020 16:41:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="SBiTn4kN"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="VD4+c/Wp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388526AbgE0P5P (ORCPT
+        id S1729665AbgE0Qlb (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 27 May 2020 11:57:15 -0400
-Received: from sonic316-26.consmr.mail.ne1.yahoo.com ([66.163.187.152]:43254
-        "EHLO sonic316-26.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730905AbgE0P5L (ORCPT
+        Wed, 27 May 2020 12:41:31 -0400
+Received: from sonic307-15.consmr.mail.ne1.yahoo.com ([66.163.190.38]:35443
+        "EHLO sonic307-15.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729189AbgE0Qlb (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 27 May 2020 11:57:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1590595030; bh=aS82V6kxKg54XgsMZiRIuOGcGsquTWw+tog/a3lXb5c=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=SBiTn4kNP7DLsMxceH9sA0CL1+UhjbyDE02A7hmOqT2N3/rNDAISuE2sBekkMAfmdNg/rNr2JXPQkV+jinN3sE46IpUOOX7YYcoXZBf3dS6MeF3OmLius2T+Lmxcnts7jK08x7VXzfZjIo6xUeiamFABsn7zh0hYO3o0ihHAnDYp/7wrQxlclCFOW5oevTInlEzIqIP2JL1ZkOXlIP/TtqFaWkPQYSnNasjL3mej7b4pc9EyP2Fdnb7B1q37b1gMCIvVM6t5ncXtsiBW8rqXvkEBN3159BZkfjYP4ZybIHez6doMWYlRbTDOpTPQrqbRd9coLSMQNNbY8szpnVUSIQ==
-X-YMail-OSG: ZLhoryUVM1kyNE0qyNgS156jwGpJDg0_x4X9CfqyCIp3oz9NVAKMvYPlo5xcoW8
- yz6RSnypir4jwWtuYHv4hXxOCLAg9HAH78RfueJceHRU2Xp8Nr6piLyY1o6oOtwfurRc9O5QxvGE
- HMNz5FsILLz4unz0YaAvLhllEH8o4qROTaFTLA72mflZOERc0U3qOFSTqYKLQ6kxI.uaAxZ31ymy
- i_VFYV60Za.3PS0QNIEo9mt52ZQ3aYdJryjrtlMayPN36Uwy55Lflia5kj1OBLKuMjyMpgpG.w_x
- Cqk4_ZSXPfHffZ9iINutp3SuJNUMnF2lTT0emtBn1Jw_oqaofU8Wwn0FY2E9BBGwaGeya8TotNCi
- ji0UKEFTiNzPQ7Pw11W9UVwgj0GpT0.1qcMVvwEW5_7CT0LO4W1XB0zUnSagdKS.znA4w6267WqL
- Dbnri.rFwjQSS84fur1n0WLTWdag3FWGBRQx6ZhBxuUq5RpBx_Lcg4RUFMKi7NNDkM7Vepr9CNix
- GlDiurXFAoiEZPfqha5MW_D6GcTk0Pjx9WnOn9Fmot9AuhZgMO2Bq6WFiq2KOKLBmyJQAleC.OfI
- _vMvLsxncoRqD_AxaVo4ccR06W3mlEgtxui8Q5fw8DKCj9MCZ0Z12ZVgcmmKT9dPPmEt.cOhn2tH
- q0oxSjgl7OQ2M1I8DN18rShnKbkc9l5T_rgsbCU7.P1rbnf8D9MFnPnPd7Pm2Gzmcl7B5z4Et49C
- cm3bcoEEnlDPBXOOwaDDIJCYgzYSpAF4vNU0YknsvSwmRLqCiRvyTD21Lcfg7ZIndXpSOd9x2LU1
- thdaaWnqOlE1C7zPfLbkXqz6ORt3cSVxyKe3tLf3ayjVuOCtOLV5SCdIetzOcDclfBxw3munQbju
- h.TXAr.DwBs67fX.i69T8v2RoELBXHdmgSBE.d9eY6FXf3Lx.oE1v0ZKU9bfBwvsz_axQI7oNA9u
- xhBWENvaMEYZqoGlROmCKVUy16ZNsbxVv7MMbUZwxPPQMAV1OgFwxJNIhGHpoHUmSWrAcUNG2FRE
- cPpckBJmq_PtBuDaat5CaEZeo6wNA01POAvIQvYmHmuHX6bBlR7dBROy9OS6wMNccWFSj092Bq2c
- 66L4npDH40vmzy60K5GZXW_Mqe3Hx36mWs_j7My7fSFJBBrYMY.tXSsN4xObI9uHanE8gApDxvdH
- YIkjALR9p6znZvkq6VRClpN0lSBMTty1FNFfo76.OhSqm63aNkGi2d_lgW_tSGG67UoGDCJC8TGG
- LhJhd.PGdcK02YdAIHZ8faka5YILV1ouYrL7VGnykUl_WBh1QLblWbT9Ac1b8jvyM72_3M8bj4L6
- WSqTItFYQqVowRocz6fkZyUUT6czFhPXDl_lYkYVwCHYxk1tSq4WxuvFLFGTPbDHazDJEkJnp_Xn
- aMdGw9dMwk0w3Vs5K9Q--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Wed, 27 May 2020 15:57:10 +0000
-Received: by smtp404.mail.ne1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID b498316bc3c2f4687f9c4237971a7493;
-          Wed, 27 May 2020 15:57:06 +0000 (UTC)
-Subject: Re: [PATCH] capabilities: Introduce CAP_RESTORE
-To:     Adrian Reber <areber@redhat.com>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Pavel Emelyanov <ovzxemul@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Andrei Vagin <avagin@gmail.com>,
-        Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
-        =?UTF-8?B?TWljaGHFgiBDxYJhcGnFhHNraQ==?= <mclapinski@google.com>,
-        Kamil Yurtsever <kyurtsever@google.com>,
-        Dirk Petersen <dipeit@gmail.com>,
-        Christine Flood <chf@redhat.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Radostin Stoyanov <rstoyanov1@gmail.com>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        Serge Hallyn <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Sargun Dhillon <sargun@sargun.me>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Aaron Goidel <acgoide@tycho.nsa.gov>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, selinux@vger.kernel.org,
-        Eric Paris <eparis@parisplace.org>,
-        Jann Horn <jannh@google.com>,
+        Wed, 27 May 2020 12:41:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1590597689; bh=WFz2psKHCfQhmvtHPrIqBJFxV5x1yMU8wLknvksbfFM=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=VD4+c/WpVzlruHaW5np7TGoKLUdDWnPfRhfTk0obj3AVdoaEFxtYzwW1fdTmOpqQyYYjep26kiRR7/Xy+BKwSKV7tnMpIkUn/z7Wxsd1yujmf4llsizwQCVVrpxN/tthF6evcubQbN7cI3mJLa87T4OfjDm+GztWTpuMCRVkVuKN85imNynIUk8965dVR+Zc3IofaKhLweUjAlxAowVIYUH9AHKvi+0hgk0NhjE/HjcchzYZa0EXGBTBud/nbap35Ndx97UpRc/4FuP3Pkb9ucW2x7dmAX4VrGF3Bdkd4ZW8bTw3dVa4geKxF1vN31+VBGK4CkVfp6rGF+Z7jcv2Xg==
+X-YMail-OSG: 9u6BTg0VM1lMkijTQSIzP5WDh2TdWCnf_YcdA9GomtFLkBiK2ISamQRwEK8hmLD
+ L4b6dET2gJW98QlYlV.4s.hiy_IO3ctnrXltFOmpCp3QTV1taYlY.UmLOB07DwrBlPPNLRsHBhkz
+ XZzZRL1bWWhTVITf55rODQDT3Wut0Sok6hrLQAbKpwgPDC1K4dbZPv1oa6rdxS4ua8p1V3B3xOw_
+ 8RQr_eFE8N9QjAUPwU6BI4wzV...U.ICd0YL.lxYvnXqFHSKeQW_1LaPV5LiciJm6ghSNSYqsQz5
+ 2kxrL5pQAPeI4Hhzap7MEU9xAY5tOEP07TmKzXYaeFczvHnxXW0r1BpJxK83mpkHsErzlVZ22AKQ
+ O4LTS9THgZsrUPgZGtEXoBkoltkfsDD4jfLyPWk.BypRBFj2VlNB8EVnaVxrwbBUBP7Of_N7QwEz
+ 5ujEwfhvRJ2z8zTlZFZ0yjKx_fF7vL7_ovkKMPmQB87Ty41OmU.ONq9AY7XroRMmnN6j0G3QjxbJ
+ 1a82STOjNVWhQI7aA65R81264GkfHtBvcDOicYXxZhhi78gPkyiKvT4RGmqROJDGIt.58t0ZTUaw
+ KZQpsDkloSRxoZaEHYKBlm5u3A7GPnZIewBxfpIf73LIAGqXarRkwMnrQRNOi.9QQEZb8KS_CTNg
+ bDiWDN3t54Bnjrx6cpQnV9pFNVMdmD3tygPHAP8QJz_mo7_GmWo2HHNFecmsK.qa7jYVTcNU1MwR
+ 3GmJ0AJ4vObe7I0Z0OmpWuk.ujxpzMF_LQuFk.PgRJdFLyuMMK7gbEFLhuBZICB8RxqABpjzSJdK
+ xFwPDyG_Y6srXxLwz1xwAKT2qa867mlMpqBJ7L4ZGXF.ruD2Frxdbs4w0tiDJhnHwLVff4eDAd5Z
+ maLWnWK0avuyGd.He30MyvFSEXTpwIaUDiVVzyAkxAgf1hMBeqjAEuyttBC0HVA37KAWMmewDVJy
+ tXmQu_Bkqqsoc8TFW3arf0bMhItHWEha5M8TzAQGjZXc9rU8WZYMoOwymWwTyGdk6rp0.veWK0gq
+ oWvbqmBh7TBUm7MLCWyBOm8RuDIpRVfdZ8e7clw5ZUr5bPJ3epvBnKns65p6cJ4qZnk64j0X45Z0
+ GKNF6LA.ZGj1nL4DClLXW6f37D93IC8YJ1VdeS_isEl_VXJmxh4j7.fNuiI1QQsqYP9La.91wuGj
+ q265ZqfUGG.N3pa3Nk3CNjuKfzU.fWuw8PRukMWJM5eQvtiCch0rBf5D.CMh5QjnGEM0gPhTMF_y
+ RFs2TGDjnMRsKz1fp0aQNC38Q9MonIzc1XtvDQZ0RywjNgDInTtE7uHPNfs7Sor0k_qeelE24TXe
+ 2Wf6azcstzuMjO2tmwQA44QicJzgYdBPP8O0kni8_qDpFvF81g0HEnmpwGmc_FpomTz2ideLLolk
+ eAjWcQAZ2H.6csdexi912yeuGbD7hpO4su8P_Ij14asc0i6IF6Qcu.57FoedNpQBBLfL8Ot8seFR
+ .OBS0iUE4
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic307.consmr.mail.ne1.yahoo.com with HTTP; Wed, 27 May 2020 16:41:29 +0000
+Received: by smtp426.mail.ne1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 0a021d393f0279ac5d0e653381de71d2;
+          Wed, 27 May 2020 16:41:26 +0000 (UTC)
+Subject: Re: [PATCH bpf-next 2/4] bpf: Implement bpf_local_storage for inodes
+To:     KP Singh <kpsingh@chromium.org>,
+        Christoph Hellwig <hch@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        James Morris <jmorris@namei.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Florent Revest <revest@chromium.org>,
         Casey Schaufler <casey@schaufler-ca.com>
-References: <20200522055350.806609-1-areber@redhat.com>
- <dc86dffb-c7f8-15bb-db4e-be135da650cc@schaufler-ca.com>
- <20200525080541.GF104922@dcbz.redhat.com>
- <a75f3f71-66cf-e615-2cd5-86ac65a3bbdc@schaufler-ca.com>
- <20200527134842.GA250149@dcbz.redhat.com>
+References: <20200526163336.63653-1-kpsingh@chromium.org>
+ <20200526163336.63653-3-kpsingh@chromium.org>
+ <20200527050823.GA31860@infradead.org> <20200527123840.GA12958@google.com>
 From:   Casey Schaufler <casey@schaufler-ca.com>
 Autocrypt: addr=casey@schaufler-ca.com; keydata=
  mQINBFzV9HABEAC/mmv3jeJyF7lR7QhILYg1+PeBLIMZv7KCzBSc/4ZZipoWdmr77Lel/RxQ
@@ -122,12 +108,12 @@ Autocrypt: addr=casey@schaufler-ca.com; keydata=
  wQ1QL4o4t1hviM7LyoflsCLnQFJh6RSBhBpKQinMJl/z0A6NYDkQi6vEGMDBWX/M2vk9Jvwa
  v0cEBfY3Z5oFgkh7BUORsu1V+Hn0fR/Lqq/Pyq+nTR26WzGDkolLsDr3IH0TiAVH5ZuPxyz6
  abzjfg==
-Message-ID: <f43921ac-2e55-7d9d-406a-d0f4cfd8ff93@schaufler-ca.com>
-Date:   Wed, 27 May 2020 08:57:04 -0700
+Message-ID: <f933521f-6370-c9ba-d662-703c1ebc7c03@schaufler-ca.com>
+Date:   Wed, 27 May 2020 09:41:25 -0700
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
  Thunderbird/68.8.0
 MIME-Version: 1.0
-In-Reply-To: <20200527134842.GA250149@dcbz.redhat.com>
+In-Reply-To: <20200527123840.GA12958@google.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 Content-Language: en-US
@@ -136,55 +122,53 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 5/27/2020 6:48 AM, Adrian Reber wrote:
-> On Mon, May 25, 2020 at 11:55:20AM -0700, Casey Schaufler wrote:
->> On 5/25/2020 1:05 AM, Adrian Reber wrote:
->>> On Fri, May 22, 2020 at 09:40:37AM -0700, Casey Schaufler wrote:
->>>> On 5/21/2020 10:53 PM, Adrian Reber wrote:
->>>>> This enables CRIU to checkpoint and restore a process as non-root.
->>>> I know it sounds pedantic, but could you spell out CRIU once?
->>>> While I know that everyone who cares either knows or can guess
->>>> what you're talking about, it may be a mystery to some of the
->>>> newer kernel developers.
->>> Sure. CRIU - Checkpoint/Restore In Userspace.
->> Thanks. I blew out my acronym processor in the 1990's while
->> working on trusted Unix system security evaluations.
->>
->>>>> Over the last years CRIU upstream has been asked a couple of time i=
-f it
->>>>> is possible to checkpoint and restore a process as non-root. The an=
-swer
->>>>> usually was: 'almost'.
->>>>>
->>>>> The main blocker to restore a process was that selecting the PID of=
- the
->>>>> restored process, which is necessary for CRIU, is guarded by CAP_SY=
-S_ADMIN.
->>>> What are the other blockers? Are you going to suggest additional new=
-
->>>> capabilities to clear them?
->>> As mentioned somewhere else access to /proc/<pid>/map_files/ would be=
-
->>> helpful. Right now I am testing with a JVM and it works without root
->>> just with the attached patch. Without access to /proc/<pid>/map_files=
-/
->>> not everything CRIU can do will actually work, but we are a lot close=
-r
->>> to what our users have been asking for.
->> Are you talking about read access to map_files owned by other users
->> or write access to map_files for the current user?
-> If I understand part of CRIU correctly, then we only need read-access
-> for the current user. I am sure Andrei, Pavel or Cyrill will correct me=
-
-> if I am wrong concerning map_files.
-
-If I do "ls -l /proc/self/map_files" I get the link name and link content=
+On 5/27/2020 5:38 AM, KP Singh wrote:
+> On 26-May 22:08, Christoph Hellwig wrote:
+>> On Tue, May 26, 2020 at 06:33:34PM +0200, KP Singh wrote:
+>>> From: KP Singh <kpsingh@google.com>
+>>>
+>>> Similar to bpf_local_storage for sockets, add local storage for inode=
+s.
+>>> The life-cycle of storage is managed with the life-cycle of the inode=
 =2E
-While I can't open /proc/self/map_files/7fbde0c3200-7fbde0c3300 I can rea=
-d
-that it points to /usr/lib64/ld-2.30.so, which is something I can open=20
-and read. Sure, it's an extra step, but it's no big deal. It does raise t=
-he
-question of what value comes from disallowing open via the symlink.
+>>> i.e. the storage is destroyed along with the owning inode.
+>>>
+>>> Since, the intention is to use this in LSM programs, the destruction =
+is
+>>> done after security_inode_free in __destroy_inode.
+>> NAK onbloating the inode structure.  Please find an out of line way
+>> to store your information.
+> The other alternative is to use lbs_inode (security blobs) and we can
+> do this without adding fields to struct inode.
 
+This is the correct approach, and always has been. This isn't the
+first ( or second :( ) case where the correct behavior for an LSM
+has been pretty darn obvious, but you've taken a different approach
+for no apparent reason.
+
+> Here is a rough diff (only illustrative, won't apply cleanly) of the
+> changes needed to this patch:
+>
+>  https://gist.github.com/sinkap/1d213d17fb82a5e8ffdc3f320ec37d79
+
+To do just a little nit-picking, please use bpf_inode() instead of
+bpf_inode_storage(). This is in keeping with the convention used by
+the other security modules. Sticking with the existing convention
+makes it easier for people (and tools) that work with multiple
+security modules.
+
+> Once tracing has gets a whitelist based access to inode storage, I
+> guess it, too, can use bpf_local_storage for inodes
+
+Only within the BPF module. Your sentence above is slightly garbled,
+so I'm not really sure what you're saying, but if you're suggesting
+that tracing code outside of the BPF security module can use the
+BPF inode data, the answer is a resounding "no".
+
+>  if CONFIG_BPF_LSM
+> is enabled. Does this sound reasonable to the BPF folks?
+>
+> - KP
+>
+>
 
