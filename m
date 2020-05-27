@@ -2,141 +2,128 @@ Return-Path: <SRS0=Z1sm=7J=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43941C433E0
-	for <linux-security-module@archiver.kernel.org>; Wed, 27 May 2020 17:09:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 868A2C433DF
+	for <linux-security-module@archiver.kernel.org>; Wed, 27 May 2020 18:06:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1D8F720873
-	for <linux-security-module@archiver.kernel.org>; Wed, 27 May 2020 17:09:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Qtq4RcWn"
+	by mail.kernel.org (Postfix) with ESMTP id 71D882075A
+	for <linux-security-module@archiver.kernel.org>; Wed, 27 May 2020 18:06:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731170AbgE0RJS (ORCPT
+        id S2389089AbgE0SF6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 27 May 2020 13:09:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41238 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731130AbgE0RJR (ORCPT
+        Wed, 27 May 2020 14:05:58 -0400
+Received: from mxo2.dft.dmz.twosigma.com ([208.77.212.182]:56563 "EHLO
+        mxo2.dft.dmz.twosigma.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389069AbgE0SF5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 27 May 2020 13:09:17 -0400
-Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93DEFC03E97D
-        for <linux-security-module@vger.kernel.org>; Wed, 27 May 2020 10:09:17 -0700 (PDT)
-Received: by mail-wr1-x442.google.com with SMTP id l10so2042878wrr.10
-        for <linux-security-module@vger.kernel.org>; Wed, 27 May 2020 10:09:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=N7BcF2YbmFlnYsgsgnhG+rP4MiM9BYbCfVaOcHA0CmE=;
-        b=Qtq4RcWnFirDNuZdCyVBt5tPFqmhvzYSUFkVjQjHkQBc6IkA+WeniGp5LmnT8OVVfB
-         UE9q1ImGpjLTJce6qJy6hzRVPiHuV5AmS4EJxRkfHzrKJ9QHTdXlw8wjGUt2+zXOLkZn
-         Se1DyUC2fMvdHcPa6G5vi/3874MVikhkzprOA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=N7BcF2YbmFlnYsgsgnhG+rP4MiM9BYbCfVaOcHA0CmE=;
-        b=bQOhs06OyBBY5jLJAHGRGxz3u9PcrxBsq9VjnG2wtQ0iCIId89EIZnDrxhaL5FZfnX
-         bngnWIn1dA1L/KlwFBeYBwfAHjvVEpncquwSGoNI92C7lxI78HPZUQgb+CGu/lxwOZ3S
-         teQUkvjDJ0GbgW9cO7YsGmaCWkad/LUhc9jhJ4CSmf5Tf2ikYV2Zl5z8dk8EiJ+jtKiw
-         AKOKTguRRi3QM8eA6y0bLHkap3v4EEz7UqgHC/6mBRhPzO4gFgGAgkbh1YxYgz0Msfl/
-         yvgz6D8WQHPlKQwS+EXLQ2A9CqY6X1BPsyMtcPqrJURSgf2NT4PKbVLo8fPtiEYME4jz
-         slKQ==
-X-Gm-Message-State: AOAM532V+YW7uh1iDq6OQNJ0bapMSFZZn+j4etZCTZPUJvb+R/NTg1iu
-        acCCRF1IZNXiCvnshns6bcgib7tU40xtVDaGHJuT2j+G
-X-Google-Smtp-Source: ABdhPJzb9gs//rirYU8Ktj397bVqkAAUoWJzxzq0eYzi6ZVCA4steGmUtKbIrEXVz5r+7fo8CuNrI6m8cpFs8ONaSh0=
-X-Received: by 2002:a5d:4e88:: with SMTP id e8mr14770779wru.188.1590599356306;
- Wed, 27 May 2020 10:09:16 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200526163336.63653-1-kpsingh@chromium.org> <20200526163336.63653-3-kpsingh@chromium.org>
- <20200527050823.GA31860@infradead.org> <20200527123840.GA12958@google.com> <f933521f-6370-c9ba-d662-703c1ebc7c03@schaufler-ca.com>
-In-Reply-To: <f933521f-6370-c9ba-d662-703c1ebc7c03@schaufler-ca.com>
-From:   KP Singh <kpsingh@chromium.org>
-Date:   Wed, 27 May 2020 19:09:05 +0200
-Message-ID: <CACYkzJ6f0=r4h9sNqnXp_uBnHu=b6oGQFFGOv7H65UMOjtNKaw@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 2/4] bpf: Implement bpf_local_storage for inodes
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, bpf <bpf@vger.kernel.org>,
-        Linux Security Module list 
+        Wed, 27 May 2020 14:05:57 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mxo2.dft.dmz.twosigma.com (Postfix) with ESMTP id 49XJfW6xgJz7t8y;
+        Wed, 27 May 2020 18:05:55 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at twosigma.com
+Received: from mxo2.dft.dmz.twosigma.com ([127.0.0.1])
+        by localhost (mxo2.dft.dmz.twosigma.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id qUylFl1ppg4g; Wed, 27 May 2020 18:05:55 +0000 (UTC)
+Received: from exmbdft5.ad.twosigma.com (exmbdft5.ad.twosigma.com [172.22.1.56])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mxo2.dft.dmz.twosigma.com (Postfix) with ESMTPS id 49XJfW65r7z3wZ5;
+        Wed, 27 May 2020 18:05:55 +0000 (UTC)
+Received: from EXMBDFT11.ad.twosigma.com (172.23.162.14) by
+ exmbdft5.ad.twosigma.com (172.22.1.56) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Wed, 27 May 2020 18:05:55 +0000
+Received: from EXMBDFT11.ad.twosigma.com ([fe80::8d66:2326:5416:86a9]) by
+ EXMBDFT11.ad.twosigma.com ([fe80::8d66:2326:5416:86a9%19]) with mapi id
+ 15.00.1497.000; Wed, 27 May 2020 18:05:55 +0000
+From:   Nicolas Viennot <Nicolas.Viennot@twosigma.com>
+To:     Christian Brauner <christian.brauner@ubuntu.com>,
+        Adrian Reber <areber@redhat.com>
+CC:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Pavel Emelyanov <ovzxemul@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        =?utf-8?B?TWljaGHFgiBDxYJhcGnFhHNraQ==?= <mclapinski@google.com>,
+        Kamil Yurtsever <kyurtsever@google.com>,
+        "Dirk Petersen" <dipeit@gmail.com>,
+        Christine Flood <chf@redhat.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Radostin Stoyanov <rstoyanov1@gmail.com>,
+        "Cyrill Gorcunov" <gorcunov@openvz.org>,
+        Serge Hallyn <serge@hallyn.com>,
+        "Stephen Smalley" <stephen.smalley.work@gmail.com>,
+        Sargun Dhillon <sargun@sargun.me>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "linux-security-module@vger.kernel.org" 
         <linux-security-module@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        James Morris <jmorris@namei.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Florent Revest <revest@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        Eric Paris <eparis@parisplace.org>,
+        Jann Horn <jannh@google.com>
+Subject: RE: [PATCH] capabilities: Introduce CAP_RESTORE
+Thread-Topic: [PATCH] capabilities: Introduce CAP_RESTORE
+Thread-Index: AQHWM2XfaDM8D7CUOUK8NWcR6t6ZmKi7+1qAgAAVMoCAACZxcA==
+Date:   Wed, 27 May 2020 18:05:55 +0000
+Message-ID: <d5ecde0c94014a4fad090e44377e9852@EXMBDFT11.ad.twosigma.com>
+References: <20200522055350.806609-1-areber@redhat.com>
+ <dc86dffb-c7f8-15bb-db4e-be135da650cc@schaufler-ca.com>
+ <20200525080541.GF104922@dcbz.redhat.com>
+ <877dwybxvi.fsf@x220.int.ebiederm.org>
+ <20200527141403.GC250149@dcbz.redhat.com>
+ <20200527152955.jbbipgb6icb4nwgv@wittgenstein>
+In-Reply-To: <20200527152955.jbbipgb6icb4nwgv@wittgenstein>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [192.168.118.183]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, May 27, 2020 at 6:41 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->
-> On 5/27/2020 5:38 AM, KP Singh wrote:
-> > On 26-May 22:08, Christoph Hellwig wrote:
-> >> On Tue, May 26, 2020 at 06:33:34PM +0200, KP Singh wrote:
-> >>> From: KP Singh <kpsingh@google.com>
-> >>>
-> >>> Similar to bpf_local_storage for sockets, add local storage for inodes.
-> >>> The life-cycle of storage is managed with the life-cycle of the inode.
-> >>> i.e. the storage is destroyed along with the owning inode.
-> >>>
-> >>> Since, the intention is to use this in LSM programs, the destruction is
-> >>> done after security_inode_free in __destroy_inode.
-> >> NAK onbloating the inode structure.  Please find an out of line way
-> >> to store your information.
-> > The other alternative is to use lbs_inode (security blobs) and we can
-> > do this without adding fields to struct inode.
->
-> This is the correct approach, and always has been. This isn't the
-> first ( or second :( ) case where the correct behavior for an LSM
-> has been pretty darn obvious, but you've taken a different approach
-> for no apparent reason.
->
-> > Here is a rough diff (only illustrative, won't apply cleanly) of the
-> > changes needed to this patch:
-> >
-> >  https://gist.github.com/sinkap/1d213d17fb82a5e8ffdc3f320ec37d79
->
-> To do just a little nit-picking, please use bpf_inode() instead of
-> bpf_inode_storage(). This is in keeping with the convention used by
-> the other security modules. Sticking with the existing convention
-> makes it easier for people (and tools) that work with multiple
-> security modules.
->
-> > Once tracing has gets a whitelist based access to inode storage, I
-> > guess it, too, can use bpf_local_storage for inodes
->
-> Only within the BPF module. Your sentence above is slightly garbled,
-> so I'm not really sure what you're saying, but if you're suggesting
-> that tracing code outside of the BPF security module can use the
-> BPF inode data, the answer is a resounding "no".
-
-This is why I wanted to add a separate pointer in struct inode so that
-we could share the implementation with tracing. bpf_local_storage
-is managed (per-program+per-type of storage) with separate BPF maps.
-So, it can be easily shared between two programs (and
-program types) without them clobbering over each other.
-
-I guess we can have separate pointers for tracing,
-use the pointer in the security blob for the LSM and discuss this separately
-if and when we use this for tracing and keep this series patches scoped to
-BPF_PROG_TYPE_LSM.
-
-- KP
-
->
-> >  if CONFIG_BPF_LSM
-> > is enabled. Does this sound reasonable to the BPF folks?
-> >
-> > - KP
-> >
-> >
->
+PiA+IEFsc28gaW4gdGhpcyB0aHJlYWQgS2FtaWwgbWVudGlvbmVkIHRoYXQgdGhleSBhbHNvIG5l
+ZWQgY2FsbGluZyBwcmN0bCANCj4gPiB3aXRoIFBSX1NFVF9NTSBkdXJpbmcgcmVzdG9yZSBpbiB0
+aGVpciBwcm9kdWN0aW9uIHNldHVwLg0KPg0KPiBXZSdyZSB1c2luZyB0aGF0IGFzIHdlbGwgYnV0
+IGl0IHJlYWxseSBmZWVscyBsaWtlIHRoaXM6DQo+DQo+CXByY3RsX21hcCA9IChzdHJ1Y3QgcHJj
+dGxfbW1fbWFwKXsNCj4JICAgIC5zdGFydF9jb2RlID0gc3RhcnRfY29kZSwNCj4JICAgIC5lbmRf
+Y29kZSA9IGVuZF9jb2RlLA0KPgkgICAgLnN0YXJ0X3N0YWNrID0gc3RhcnRfc3RhY2ssDQo+CSAg
+ICAuc3RhcnRfZGF0YSA9IHN0YXJ0X2RhdGEsDQo+CSAgICAuZW5kX2RhdGEgPSBlbmRfZGF0YSwN
+Cj4JICAgIC5zdGFydF9icmsgPSBzdGFydF9icmssDQo+CSAgICAuYnJrID0gYnJrX3ZhbCwNCj4J
+ICAgIC5hcmdfc3RhcnQgPSBhcmdfc3RhcnQsDQo+CSAgICAuYXJnX2VuZCA9IGFyZ19lbmQsDQo+
+CSAgICAuZW52X3N0YXJ0ID0gZW52X3N0YXJ0LA0KPgkgICAgLmVudl9lbmQgPSBlbnZfZW5kLA0K
+PgkgICAgLmF1eHYgPSBOVUxMLA0KPgkgICAgLmF1eHZfc2l6ZSA9IDAsDQo+CSAgICAuZXhlX2Zk
+ID0gLTEsDQo+CX07DQo+DQo+IHNob3VsZCBiZWxvbmcgdW5kZXIgbnNfY2FwYWJsZShDQVBfU1lT
+X0FETUlOKS4gV2h5IGlzIHRoYXQgbmVjZXNzYXJ5IHRvIHJlbGF4Pw0KDQpXaGVuIHRoZSBwcmN0
+bChQUl9TRVRfTU1fTUFQLi4uKSwgdGhlIG9ubHkgcHJpdmlsZWdlZCBvcGVyYXRpb24gaXMgdG8g
+Y2hhbmdlIHRoZSBzeW1saW5rIG9mIC9wcm9jL3NlbGYvZXhlIHZpYSBzZXRfbW1fZXhlX2ZpbGUo
+KS4NClNlZSBodHRwczovL2dpdGh1Yi5jb20vdG9ydmFsZHMvbGludXgvYmxvYi80NDRmYzVjZGU2
+NDMzMDY2MWJmNTk5NDRjNDM4NDRlN2Q0YzJjY2Q4L2tlcm5lbC9zeXMuYyNMMjAwMS1MMjAwNA0K
+SXQgbmVlZHMgQ0FQX1NZU19BRE1JTiBvZiB0aGUgY3VycmVudCBuYW1lc3BhY2UuDQoNCkkgd291
+bGQgYXJndWUgdGhhdCBzZXR0aW5nIHRoZSBjdXJyZW50IHByb2Nlc3MgZXhlIGZpbGUgY2hlY2sg
+c2hvdWxkIGp1c3QgYmUgcmVkdWNlZCB0byBhICJjYW4geW91IHB0cmFjZSBhIGNoaWxkcmVuIiBj
+aGVjay4NCkhlcmUncyB3aHk6IGFueSBwcm9jZXNzIGNhbiBtYXNxdWVyYWRlIGludG8gYW5vdGhl
+ciBleGVjdXRhYmxlIHdpdGggcHRyYWNlLg0KT25lIGNhbiBmb3JrIGEgY2hpbGQsIHB0cmFjZSBp
+dCwgaGF2ZSB0aGUgY2hpbGQgZXhlY3ZlKCJ0YXJnZXRfZXhlIiksIHRoZW4gcmVwbGFjZSBpdHMg
+bWVtb3J5IGNvbnRlbnQgd2l0aCBhbiBhcmJpdHJhcnkgcHJvZ3JhbS4NCldpdGggQ1JJVSdzIGxp
+YmNvbXBlbCBwYXJhc2l0ZSBtZWNoYW5pc20gKGh0dHBzOi8vY3JpdS5vcmcvQ29tcGVsKSB0aGlz
+IGlzIGZhaXJseSBlYXN5IHRvIGltcGxlbWVudC4NCkluIGZhY3QsIHdlIGNvdWxkIG1vZGlmeSBD
+UklVIHRvIGRvIGp1c3QgdGhhdCAoYnV0IHdpdGggYSBmYWlyIGFtb3VudCBvZiBlZmZvcnRzIGR1
+ZSB0byB0aGUgd2F5IENSSVUgaXMgd3JpdHRlbiksDQphbmQgbm90IHJlbHkgb24gYmVpbmcgYWJs
+ZSB0byBTRVRfTU1fRVhFX0ZJTEUgdmlhIHByY3RsKCkuIEluIHR1cm4sIHRoYXQgd291bGQgZ2l2
+ZSBhbiBlYXN5IHdheSB0byBtYXNxdWVyYWRlIGFueSBwcm9jZXNzDQppbnRvIGFub3RoZXIgb25l
+LCBwcm92aWRlZCB0aGF0IG9uZSBjYW4gcHRyYWNlIGEgY2hpbGQuDQoNCldoZW4gbm90IHVzaW5n
+IFBSX1NFVF9NTV9NQVAsIGJ1dCB1c2luZyBTRVRfTU1fRVhFX0ZJTEUsIHRoZSBDQVBfUkVTT1VS
+Q0VTIGF0IHRoZSByb290IG5hbWVzcGFjZSBsZXZlbCBpcyByZXF1aXJlZDoNCmh0dHBzOi8vZ2l0
+aHViLmNvbS90b3J2YWxkcy9saW51eC9ibG9iLzQ0NGZjNWNkZTY0MzMwNjYxYmY1OTk0NGM0Mzg0
+NGU3ZDRjMmNjZDgva2VybmVsL3N5cy5jI0wyMTA5DQpUaGlzIHNlZW1zIGluY29uc2lzdGVudC4g
+QWxzbyBmb3Igc29tZSByZWFzb24gY2hhbmdpbmcgYXV4diBpcyBub3QgcHJpdmlsZWdlZCBpZiB1
+c2luZyBwcmN0bCB2aWEgdGhlIE1NX01BUCBtZWNoYW5pc20sIGJ1dCBpcyBwcml2aWxlZ2VkIG90
+aGVyd2lzZS4NCg==
