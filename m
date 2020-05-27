@@ -2,74 +2,132 @@ Return-Path: <SRS0=Z1sm=7J=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE6FDC433E0
-	for <linux-security-module@archiver.kernel.org>; Wed, 27 May 2020 05:08:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B0D5C433E0
+	for <linux-security-module@archiver.kernel.org>; Wed, 27 May 2020 11:49:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 94C9B207E8
-	for <linux-security-module@archiver.kernel.org>; Wed, 27 May 2020 05:08:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4447C20873
+	for <linux-security-module@archiver.kernel.org>; Wed, 27 May 2020 11:49:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ka1XYDa8"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dZ2EO3Ld"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726802AbgE0FIb (ORCPT
+        id S1728177AbgE0Ltd (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 27 May 2020 01:08:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42138 "EHLO
+        Wed, 27 May 2020 07:49:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47730 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725379AbgE0FIa (ORCPT
+        with ESMTP id S1726516AbgE0Lt3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 27 May 2020 01:08:30 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B56DFC061A0F;
-        Tue, 26 May 2020 22:08:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=XC2Shs5lNCGSRyWc4oHtMietNdOJX+rOUehgxOJwmi0=; b=ka1XYDa8ifbdK426quZ1uqtWdj
-        Zi6vV97cDDIL4upmEch9K8LFoJFKV5fINg4EjpgJK0nqDSxSMk1q2rQtAwwC1uQIbiEzqnDI1z9Cn
-        qEFFnSP4My9HuxZ90+W9+Q5V2Ri5QzD6F9qSMSRE/UM5R1zqo4L7vgQvNEHf1XIc6MAcpysCeMmmN
-        agyuFe2MwhAFEbJx8U3BoE95NXZp/zvGVtGl1XPcjTZsfPtghEzMBhWgW+AcUXfATsY8Fu8NKiFh5
-        WU+KGw6JXidH38HMCImS3JbCxELvaKn/gwaFvoUHEs1G6en5TmZBTSHrHa+RPIgF6QgjFyggFuB4g
-        FKtMtTfw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jdoIh-0008P7-UA; Wed, 27 May 2020 05:08:23 +0000
-Date:   Tue, 26 May 2020 22:08:23 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     KP Singh <kpsingh@chromium.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        James Morris <jmorris@namei.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Florent Revest <revest@chromium.org>
-Subject: Re: [PATCH bpf-next 2/4] bpf: Implement bpf_local_storage for inodes
-Message-ID: <20200527050823.GA31860@infradead.org>
-References: <20200526163336.63653-1-kpsingh@chromium.org>
- <20200526163336.63653-3-kpsingh@chromium.org>
+        Wed, 27 May 2020 07:49:29 -0400
+Received: from mail-lf1-x143.google.com (mail-lf1-x143.google.com [IPv6:2a00:1450:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07AE1C03E97A
+        for <linux-security-module@vger.kernel.org>; Wed, 27 May 2020 04:49:29 -0700 (PDT)
+Received: by mail-lf1-x143.google.com with SMTP id h188so14296998lfd.7
+        for <linux-security-module@vger.kernel.org>; Wed, 27 May 2020 04:49:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1eb8hhRgWhldc6gNCY/BHu4k6Mc3ON849X4b3k08UMU=;
+        b=dZ2EO3LdRXmW0rb/PbGBy5/ATbLPpBSpne2iHWL8g4cHa5pFCH5GCbOAD7jC3Kzi3S
+         MISYPGpgS2exm9jQV0gLr3s2v7seE3tyMVMGbhwvcq5KWBC2lbp4WRogLsHJmD56dSoF
+         SaGqBkdQFcT/Q8+h09FriRhyy32nZ8Qbam2ia6qehADmirwsw9FzofuUIssUXiEf/O1M
+         PNKyMGSEEuXIahADQmZbrbIFZkk9iuRkEcQbQIaG2M4cssRD0uw+ZxOkNkqohemuxYe7
+         g5KMFqDZR/29AuHUIPPzijSDWnAEbdNVWRVRrdnecAjUZPqBYLoGLUucygRKxHZITQJs
+         lRlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1eb8hhRgWhldc6gNCY/BHu4k6Mc3ON849X4b3k08UMU=;
+        b=LHFBSBULCOWaUZiaxxoMLZbYU/zH6FYgH/SQKDjBbj8X11w90GzFEX0Nxfb2QRS9Hc
+         83CigOLFYiVWG1AACM95Knbfn/baqyyaZkQ7fjVzalRAJ2K62d6wDslNUBS/PRBc52OY
+         rHcaMgckqLqXriivYaojBSKU2Oyjf8uBS7e2AXipvBQJJhxVfcbYRjjWx73VUgt2fMc6
+         fCanoiws0aBa9yYYXvXGjUQ/Mb4QmC2omDnFw/Gqiki61YdD2FN9+QC6PBYMc3t5aZ/h
+         Cja8RAUdX0YybgvcX4y4Qdyg5qa7WRllQGIR5xkgefY4RxVafQHO7PJ/essivNVWEjw6
+         uF8g==
+X-Gm-Message-State: AOAM530sqWPp+9e1+2YLUUB3pdYgambwP+TbJusopO+9UyI1K/o5mhzh
+        SPs9+L1591i7QAHnrpXIDE+XwThEgDB37gYDpdYXAQ==
+X-Google-Smtp-Source: ABdhPJxtfHGgD1x+0sGWQDtxJJeB9uCl6Feg/5utDqmnhP3TYYxI7kATndRbmt63ldid6mOZbKhfx/ZSXQlPvqovUXQ=
+X-Received: by 2002:a05:6512:1051:: with SMTP id c17mr2908078lfb.206.1590580167403;
+ Wed, 27 May 2020 04:49:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200526163336.63653-3-kpsingh@chromium.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <20200511131350.29638-1-anders.roxell@linaro.org>
+In-Reply-To: <20200511131350.29638-1-anders.roxell@linaro.org>
+From:   Anders Roxell <anders.roxell@linaro.org>
+Date:   Wed, 27 May 2020 13:49:16 +0200
+Message-ID: <CADYN=9LkA2h6dANREfPQq4iDvVEJX1wAdxjv31mpVBkaM_g0ZQ@mail.gmail.com>
+Subject: Re: [PATCH v3 0/6] Enable as many KUnit tests as possible
+To:     Brendan Higgins <brendanhiggins@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Cc:     "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        KUnit Development <kunit-dev@googlegroups.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-ext4@vger.kernel.org,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Marco Elver <elver@google.com>, David Gow <davidgow@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, May 26, 2020 at 06:33:34PM +0200, KP Singh wrote:
-> From: KP Singh <kpsingh@google.com>
-> 
-> Similar to bpf_local_storage for sockets, add local storage for inodes.
-> The life-cycle of storage is managed with the life-cycle of the inode.
-> i.e. the storage is destroyed along with the owning inode.
-> 
-> Since, the intention is to use this in LSM programs, the destruction is
-> done after security_inode_free in __destroy_inode.
+Hi all,
 
-NAK onbloating the inode structure.  Please find an out of line way
-to store your information.
+Friendly ping: who can take this?
+
+Cheers,
+Anders
+
+On Mon, 11 May 2020 at 15:14, Anders Roxell <anders.roxell@linaro.org> wrote:
+>
+> Hi,
+>
+> This patchset will try to enable as many KUnit test fragments as
+> possible for the current .config file.
+> This will make it easier for both developers that tests their specific
+> feature and also for test-systems that would like to get as much as
+> possible for their current .config file.
+>
+> I will send a separate KCSAN KUnit patch after this patchset since that
+> isn't in mainline yet.
+>
+> Since v2:
+> Fixed David's comments. KUNIT_RUN_ALL -> KUNIT_ALL_TESTS, and he
+> suggested a great help text.
+>
+> Since v1:
+> Marco commented to split up the patches, and change a "." to a ",".
+>
+>
+> Cheers,
+> Anders
+>
+> Anders Roxell (6):
+>   kunit: Kconfig: enable a KUNIT_ALL_TESTS fragment
+>   kunit: default KUNIT_* fragments to KUNIT_ALL_TESTS
+>   lib: Kconfig.debug: default KUNIT_* fragments to KUNIT_ALL_TESTS
+>   drivers: base: default KUNIT_* fragments to KUNIT_ALL_TESTS
+>   fs: ext4: default KUNIT_* fragments to KUNIT_ALL_TESTS
+>   security: apparmor: default KUNIT_* fragments to KUNIT_ALL_TESTS
+>
+>  drivers/base/Kconfig      |  3 ++-
+>  drivers/base/test/Kconfig |  3 ++-
+>  fs/ext4/Kconfig           |  3 ++-
+>  lib/Kconfig.debug         |  6 ++++--
+>  lib/kunit/Kconfig         | 23 ++++++++++++++++++++---
+>  security/apparmor/Kconfig |  3 ++-
+>  6 files changed, 32 insertions(+), 9 deletions(-)
+>
+> --
+> 2.20.1
+>
