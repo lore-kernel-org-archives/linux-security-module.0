@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E9A9C433E0
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 May 2020 15:52:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 303C6C433E0
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 May 2020 15:53:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 32C3C2053B
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 May 2020 15:52:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 159892053B
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 May 2020 15:53:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404603AbgE1Pwi (ORCPT
+        id S2404658AbgE1PxL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 28 May 2020 11:52:38 -0400
-Received: from out02.mta.xmission.com ([166.70.13.232]:52566 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404565AbgE1Pwi (ORCPT
+        Thu, 28 May 2020 11:53:11 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:33262 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404565AbgE1PxJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 28 May 2020 11:52:38 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        Thu, 28 May 2020 11:53:09 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.90_1)
         (envelope-from <ebiederm@xmission.com>)
-        id 1jeKpg-0005EG-KT; Thu, 28 May 2020 09:52:36 -0600
+        id 1jeKqC-0001W7-C9; Thu, 28 May 2020 09:53:08 -0600
 Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.87)
         (envelope-from <ebiederm@xmission.com>)
-        id 1jeKpf-00033R-Pz; Thu, 28 May 2020 09:52:36 -0600
+        id 1jeKq6-0007zz-5k; Thu, 28 May 2020 09:53:07 -0600
 From:   ebiederm@xmission.com (Eric W. Biederman)
 To:     <linux-kernel@vger.kernel.org>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
@@ -51,67 +51,67 @@ References: <87h7wujhmz.fsf@x220.int.ebiederm.org>
         <87v9l4zyla.fsf_-_@x220.int.ebiederm.org>
         <877dx822er.fsf_-_@x220.int.ebiederm.org>
         <87k10wysqz.fsf_-_@x220.int.ebiederm.org>
-Date:   Thu, 28 May 2020 10:48:44 -0500
+Date:   Thu, 28 May 2020 10:49:10 -0500
 In-Reply-To: <87k10wysqz.fsf_-_@x220.int.ebiederm.org> (Eric W. Biederman's
         message of "Thu, 28 May 2020 10:38:28 -0500")
-Message-ID: <87a71sxdpf.fsf_-_@x220.int.ebiederm.org>
+Message-ID: <874ks0xdop.fsf_-_@x220.int.ebiederm.org>
 User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
-X-XM-SPF: eid=1jeKpf-00033R-Pz;;;mid=<87a71sxdpf.fsf_-_@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX19L2GQX5s9eCjNWe4gHmrLWVMHrvsxnIhk=
+X-XM-SPF: eid=1jeKq6-0007zz-5k;;;mid=<874ks0xdop.fsf_-_@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/ELoUISo4voXjVc4cOnoi5+XqInd2HxUI=
 X-SA-Exim-Connect-IP: 68.227.160.95
 X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: [PATCH 07/11] exec: Set saved, fs, and effective ids together in bprm_fill_uid
+Subject: [PATCH 08/11] exec: In bprm_fill_uid remove unnecessary no new privs check
 X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 
-Now that there is only one place in bprm_fill_uid where the
-euid and the egid are set, move setting of the saved, and the
-fs ids to that place.
+When the no new privs code was added[1], a test was added to
+cap_bprm_set_creds to ensure that the credential change were always
+reverted if no new privs was set.
 
-This makes it clear that this is the only location in the function
-that changes these ids.
+That test has been refactored into a test to not make the credential
+change in bprm_fill_uid when no new privs is set.  Remove that
+unncessary test as it can now been seen by a quick inspection that
+execution can never make it to the test with no new privs set.
 
+The same change[1] also added a test that guaranteed the credentials
+would never change when no_new_privs was set, so the test I am removing
+was never necessary but historically that was far from obvious.
+
+[1]: 259e5e6c75a9 ("Add PR_{GET,SET}_NO_NEW_PRIVS to prevent execve from granting privs")
 Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 ---
- fs/exec.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ fs/exec.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
 diff --git a/fs/exec.c b/fs/exec.c
-index 123402f218fe..8dd7254931dc 100644
+index 8dd7254931dc..af108ecf9632 100644
 --- a/fs/exec.c
 +++ b/fs/exec.c
-@@ -1639,23 +1639,20 @@ static void bprm_fill_uid(struct linux_binprm *bprm)
- 		if (!need_cap ||
- 		    (ns_capable(new->user_ns, CAP_SETUID) &&
- 		     !(bprm->unsafe & LSM_UNSAFE_NO_NEW_PRIVS)))
--			new->euid = uid;
-+			new->suid = new->fsuid = new->euid = uid;
+@@ -1636,16 +1636,12 @@ static void bprm_fill_uid(struct linux_binprm *bprm)
+ 
+ 	if (mode & S_ISUID) {
+ 		bprm->per_clear = 1;
+-		if (!need_cap ||
+-		    (ns_capable(new->user_ns, CAP_SETUID) &&
+-		     !(bprm->unsafe & LSM_UNSAFE_NO_NEW_PRIVS)))
++		if (!need_cap || ns_capable(new->user_ns, CAP_SETUID))
+ 			new->suid = new->fsuid = new->euid = uid;
  	}
  	if ((mode & (S_ISGID | S_IXGRP)) == (S_ISGID | S_IXGRP)) {
  		bprm->per_clear = 1;
- 		if (!need_cap ||
- 		    (ns_capable(new->user_ns, CAP_SETGID) &&
- 		     !(bprm->unsafe & LSM_UNSAFE_NO_NEW_PRIVS)))
--			new->egid = gid;
-+			new->sgid = new->fsgid = new->egid = gid;
+-		if (!need_cap ||
+-		    (ns_capable(new->user_ns, CAP_SETGID) &&
+-		     !(bprm->unsafe & LSM_UNSAFE_NO_NEW_PRIVS)))
++		if (!need_cap || ns_capable(new->user_ns, CAP_SETGID))
+ 			new->sgid = new->fsgid = new->egid = gid;
  	}
  
- after_setid:
- 	/* Will the new creds have multiple uids or gids? */
- 	if (!uid_eq(new->euid, new->uid) || !gid_eq(new->egid, new->gid))
- 		bprm->secureexec = 1;
--
--	new->suid = new->fsuid = new->euid;
--	new->sgid = new->fsgid = new->egid;
- }
- 
- /*
 -- 
 2.25.0
 
