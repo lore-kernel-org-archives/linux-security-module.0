@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCCF9C433DF
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 May 2020 12:05:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 497FAC433E0
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 May 2020 12:11:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BDF3721548
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 May 2020 12:05:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A49B215A4
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 May 2020 12:11:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1590667539;
+	s=default; t=1590667885;
 	bh=prOMc/RStpaK3YUH4KzHyr5ESVXotKLWP1/xmvu8a7w=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=GzZZ8uQfdTRONEHVNursYhKmoLom+1J4rrU5COFQHKI29bZzupZjeXJbu9aEytVDu
-	 CMc7oQknzzGvp9ptRMxs6qU44TvdhI0NawTZqlVmTPlZjQgU+K7oDdxHw4wtzC/l4E
-	 HzH1/cCu7mfUk3sRB/MzQEO3De5MgsNBoWI6djJQ=
+	b=2ZeaWp0tJbbkXEOwBfzhgs5AJt0enbAPkg6lFcZhuo+P7J0l6tC0L+M0q+HH8WhFW
+	 g2R3mQB0xFwUHvffsKToeRx8qAgTtNA56BuERGBXGDLSXu/daYF+JmAolJn+8jdDWC
+	 akEszkysVzZV6VMGAu67kH0DEW1WCRPdN329w5oI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389309AbgE1MFb (ORCPT
+        id S2388634AbgE1L4I (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 28 May 2020 08:05:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49304 "EHLO mail.kernel.org"
+        Thu, 28 May 2020 07:56:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48106 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388746AbgE1L47 (ORCPT
+        id S2388628AbgE1L4G (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 28 May 2020 07:56:59 -0400
+        Thu, 28 May 2020 07:56:06 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C1ED32158C;
-        Thu, 28 May 2020 11:56:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 38E2120C56;
+        Thu, 28 May 2020 11:56:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1590667018;
+        s=default; t=1590666966;
         bh=prOMc/RStpaK3YUH4KzHyr5ESVXotKLWP1/xmvu8a7w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ew3Hp2CiAAFPfGhjVISk9gRB1awnu9QBcOqXAAhWyNy7954ADKWkcrtBPi22F28ne
-         /fTisDf45FRPOtkVvVyYvWdyc918DYDKQgakk/kzQodh5Eb7AiqNQzqC57P67iYhkK
-         TY90Vzf+syJL/WlX6fmixk/tCIoyE0mWfjQEE44M=
+        b=WtTC5QgYm9VwivYGL1j3SKKw5k9Gs5N0+A5SAePlj3Oantzq+FdaiDuIehAUI3s+a
+         brW/DAwmhxY8O+vXp8WJTSnhPG3Qc4IYDlNz8J846s6mK0La777XlHPDo97PnuiC7R
+         u5EFz9z401v5glv5z3A9clP4C6pQQNHwvibi+MEY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>,
@@ -49,12 +49,12 @@ Cc:     Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>,
         Sasha Levin <sashal@kernel.org>,
         linux-ima-devel@lists.sourceforge.net,
         linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 03/26] evm: Fix RCU list related warnings
-Date:   Thu, 28 May 2020 07:56:31 -0400
-Message-Id: <20200528115654.1406165-3-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.6 04/47] evm: Fix RCU list related warnings
+Date:   Thu, 28 May 2020 07:55:17 -0400
+Message-Id: <20200528115600.1405808-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200528115654.1406165-1-sashal@kernel.org>
-References: <20200528115654.1406165-1-sashal@kernel.org>
+In-Reply-To: <20200528115600.1405808-1-sashal@kernel.org>
+References: <20200528115600.1405808-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
