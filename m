@@ -4,41 +4,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35729C433E0
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 May 2020 05:40:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6064C433DF
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 May 2020 05:41:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1512520899
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 May 2020 05:40:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9662020899
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 May 2020 05:41:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Xa/oTOAh"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dkuzcaFO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727878AbgE1Fkz (ORCPT
+        id S1728044AbgE1FlP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 28 May 2020 01:40:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44672 "EHLO
+        Thu, 28 May 2020 01:41:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44730 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725984AbgE1Fky (ORCPT
+        with ESMTP id S1728040AbgE1FlN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 28 May 2020 01:40:54 -0400
+        Thu, 28 May 2020 01:41:13 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E1E7C05BD1E;
-        Wed, 27 May 2020 22:40:54 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E08B9C05BD1E;
+        Wed, 27 May 2020 22:41:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=IeHy1UWBjGCugKPZsL/McSR8vAod70zeUAWlcMoC1+A=; b=Xa/oTOAhhpZ8du9OaOuGoXzKBa
-        JBqSCM9urQjq5Mvj/UHs52DmSBe5PCEOAHm2kTv4BwJ9QDtVwXJXxjS1Aw1EoCu8OfEkkLj7vyXHw
-        kyEGjhj5ox9glYGjcUXxIIYPcDCELAHGI+MMv97q1X9OadIon81Cyk/Ogm7uEQ6uQCnTJIQMWkLSz
-        Z6b7YFbiwwGRF0h7SUMA6Ymh9rGD6sNNbe34Mx3nundu0YA1voT3xjxnPegj+ZnzC6cufrawnlHkf
-        B9OfEFdFcYwPM5amrzYVL5gg3+gvZx+EulLBiXnHTlKmvuCH1cVy4n/ij4tzlCAv7t630KlzMitQw
-        n0FrmPZg==;
+        bh=axSbbRT9BzCYIqAhw6GFe8AhXOOBJWbdO6tNDMRT5zc=; b=dkuzcaFOGVWl7HLb4dvVTdVQFD
+        YxsLjpcAD4ZLLeZkr9HS7wVdkRoGwwN04Pc90TeEZU/fT+xPc3rp3NN6Ww3DHSzAIEw+gGcGjWygn
+        KJsabZNsS3f7dC7N14Pe1PgFQmTxCscp/n2Jl3BY+Zfr0a4xgvXwKeAJFIJ+rO+DPVzlGAjJYJfL+
+        wibZiuqpZPw92s02a79SOqAiFh/X6vlyy0ea638oUv4pKrhOdJplMKWlYGjeHYNT4szyI0t9ZOt49
+        hPcPGcIdkRXV/nTTyN4gYNDYrxl2TgvAlmWNaVmqp3w71R2iDy8WDCb6n8rEmtbPtFmQ50IOjgyfv
+        0BLNNvxw==;
 Received: from p4fdb1ad2.dip0.t-ipconnect.de ([79.219.26.210] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jeBHf-0002Ji-3L; Thu, 28 May 2020 05:40:51 +0000
+        id 1jeBHx-0002Ow-Uc; Thu, 28 May 2020 05:41:10 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Al Viro <viro@zeniv.linux.org.uk>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
@@ -47,9 +47,9 @@ Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         netfilter-devel@vger.kernel.org
-Subject: [PATCH 02/14] autofs: switch to kernel_write
-Date:   Thu, 28 May 2020 07:40:31 +0200
-Message-Id: <20200528054043.621510-3-hch@lst.de>
+Subject: [PATCH 09/14] fs: don't change the address limit for ->write_iter in __kernel_write
+Date:   Thu, 28 May 2020 07:40:38 +0200
+Message-Id: <20200528054043.621510-10-hch@lst.de>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200528054043.621510-1-hch@lst.de>
 References: <20200528054043.621510-1-hch@lst.de>
@@ -60,29 +60,72 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-While pipes don't really need sb_writers projection, __kernel_write is an
-interface better kept private, and the additional rw_verify_area does not
-hurt here.
+If we write to a file that implements ->write_iter there is no need
+to change the address limit if we send a kvec down.  Implement that
+case, and prefer it over using plain ->write with a changed address
+limit if available.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
-Acked-by: Ian Kent <raven@themaw.net>
 ---
- fs/autofs/waitq.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/read_write.c | 34 ++++++++++++++++++++++------------
+ 1 file changed, 22 insertions(+), 12 deletions(-)
 
-diff --git a/fs/autofs/waitq.c b/fs/autofs/waitq.c
-index b04c528b19d34..74c886f7c51cb 100644
---- a/fs/autofs/waitq.c
-+++ b/fs/autofs/waitq.c
-@@ -53,7 +53,7 @@ static int autofs_write(struct autofs_sb_info *sbi,
+diff --git a/fs/read_write.c b/fs/read_write.c
+index 3bcb084f160de..8cfca5f8fc3ce 100644
+--- a/fs/read_write.c
++++ b/fs/read_write.c
+@@ -489,10 +489,9 @@ static ssize_t new_sync_write(struct file *filp, const char __user *buf, size_t
+ }
  
- 	mutex_lock(&sbi->pipe_mutex);
- 	while (bytes) {
--		wr = __kernel_write(file, data, bytes, &file->f_pos);
-+		wr = kernel_write(file, data, bytes, &file->f_pos);
- 		if (wr <= 0)
- 			break;
- 		data += wr;
+ /* caller is responsible for file_start_write/file_end_write */
+-ssize_t __kernel_write(struct file *file, const void *buf, size_t count, loff_t *pos)
++ssize_t __kernel_write(struct file *file, const void *buf, size_t count,
++		loff_t *pos)
+ {
+-	mm_segment_t old_fs;
+-	const char __user *p;
+ 	ssize_t ret;
+ 
+ 	if (!(file->f_mode & FMODE_WRITE))
+@@ -500,18 +499,29 @@ ssize_t __kernel_write(struct file *file, const void *buf, size_t count, loff_t
+ 	if (!(file->f_mode & FMODE_CAN_WRITE))
+ 		return -EINVAL;
+ 
+-	old_fs = get_fs();
+-	set_fs(KERNEL_DS);
+-	p = (__force const char __user *)buf;
+ 	if (count > MAX_RW_COUNT)
+ 		count =  MAX_RW_COUNT;
+-	if (file->f_op->write)
+-		ret = file->f_op->write(file, p, count, pos);
+-	else if (file->f_op->write_iter)
+-		ret = new_sync_write(file, p, count, pos);
+-	else
++	if (file->f_op->write_iter) {
++		struct kvec iov = { .iov_base = (void *)buf, .iov_len = count };
++		struct kiocb kiocb;
++		struct iov_iter iter;
++
++		init_sync_kiocb(&kiocb, file);
++		kiocb.ki_pos = *pos;
++		iov_iter_kvec(&iter, WRITE, &iov, 1, count);
++		ret = file->f_op->write_iter(&kiocb, &iter);
++		if (ret > 0)
++			*pos = kiocb.ki_pos;
++	} else if (file->f_op->write) {
++		mm_segment_t old_fs = get_fs();
++
++		set_fs(KERNEL_DS);
++		ret = file->f_op->write(file, (__force const char __user *)buf,
++				count, pos);
++		set_fs(old_fs);
++	} else {
+ 		ret = -EINVAL;
+-	set_fs(old_fs);
++	}
+ 	if (ret > 0) {
+ 		fsnotify_modify(file);
+ 		add_wchar(current, ret);
 -- 
 2.26.2
 
