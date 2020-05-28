@@ -2,125 +2,103 @@ Return-Path: <SRS0=XUZh=7K=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B73E1C433DF
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 May 2020 15:54:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75901C433E1
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 May 2020 18:43:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A232C2053B
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 May 2020 15:54:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5AB0E2078C
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 May 2020 18:43:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1590691417;
+	bh=LYXtWfNqWbRlHIsJLxFEA9ZSQ83RZwJtt6Vuc/kRjK4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=WYiqu4Km7GLshkIY52S9RPxWh87u9Ev4h2lDLKWZ587tylPGL+urMUBGif2siQMo9
+	 f3lLVrrBKi6oJxKEK2jWgld6dOIk9QwUFM5FhOPWmr4KyKh1mBw59xe5Y1TgIawBiP
+	 PFI67Izy68BVglb59ogc6MHqFQMLU11cjzWDrqBE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404778AbgE1Pye (ORCPT
+        id S2391488AbgE1Snf (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 28 May 2020 11:54:34 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:49760 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404774AbgE1Pyc (ORCPT
+        Thu, 28 May 2020 14:43:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53440 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391499AbgE1Snd (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 28 May 2020 11:54:32 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jeKrU-0004Y0-Lc; Thu, 28 May 2020 09:54:29 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jeKrT-0008Bp-Qq; Thu, 28 May 2020 09:54:28 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     <linux-kernel@vger.kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Rob Landley <rob@landley.net>,
-        Bernd Edlinger <bernd.edlinger@hotmail.de>,
-        <linux-fsdevel@vger.kernel.org>, Al Viro <viro@ZenIV.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        linux-security-module@vger.kernel.org,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Andy Lutomirski <luto@amacapital.net>
-References: <87h7wujhmz.fsf@x220.int.ebiederm.org>
-        <87sgga6ze4.fsf@x220.int.ebiederm.org>
-        <87v9l4zyla.fsf_-_@x220.int.ebiederm.org>
-        <877dx822er.fsf_-_@x220.int.ebiederm.org>
-        <87k10wysqz.fsf_-_@x220.int.ebiederm.org>
-Date:   Thu, 28 May 2020 10:50:36 -0500
-In-Reply-To: <87k10wysqz.fsf_-_@x220.int.ebiederm.org> (Eric W. Biederman's
-        message of "Thu, 28 May 2020 10:38:28 -0500")
-Message-ID: <87mu5svz1v.fsf_-_@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Thu, 28 May 2020 14:43:33 -0400
+Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77F40C08C5C9
+        for <linux-security-module@vger.kernel.org>; Thu, 28 May 2020 11:43:33 -0700 (PDT)
+Received: by mail-lj1-x241.google.com with SMTP id q2so34665744ljm.10
+        for <linux-security-module@vger.kernel.org>; Thu, 28 May 2020 11:43:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=V9I7snvnyR6f67pT5aVMg4qxsNA0F9Vag9hIROGL8vg=;
+        b=P8nw8P71cxagqSPVUA9Kzi2wkC951thaYnOwz/e4kiPGKd2Zew+YultOwwJeyFp5h7
+         zM7l8zOFEFg42p7pHhMVJLHi7CpftdQASS+eM/OM/B4nVtTeHsdqVgzMglyZy3GmUpst
+         EXyW/r86HANnDshbNT+Vi8bmm9fl991ACFIhI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=V9I7snvnyR6f67pT5aVMg4qxsNA0F9Vag9hIROGL8vg=;
+        b=T9K9BNSx+XC7HXPAngQ/CJbeMD+36l1oigFpJhOTW1j+UR6t1Gf85e65WyskUMkyXS
+         Iom83wB0hCImnH01wLkY07xMllY/8+6yYt7VjUGDmOJA0Viyt6hZZbXGojJG3kNFBOVg
+         MiWPC2lDzi32kn1a5JEmnBP30IjOHWAMrLzLCQycZFeJ6tdIR4hoFEVJDXMEds+nGPwO
+         fenqdaPg641mAdWjXnfjfYb5XlXGPZC+CsDHfJRh2+kcyUgTFL6J4q4zJHnCfbjckJSR
+         igo/qYiod9QFz09nKYbyAxI23zDjyOiay7qdQEErwmhObK6MKekiPXldoGr8vG0r82Mm
+         yc6Q==
+X-Gm-Message-State: AOAM5331RfpjQKf6HG20jqOAd3UPCf36Svx3J6rWCPQQkTdaGbD0aCk9
+        smGq1WUS2FuMXzTrdlGBP3nIrlGWJnc=
+X-Google-Smtp-Source: ABdhPJxjeP49udSVLJ4G/lANRnnRNjBxYx2JRukdPS9rTQxOgXfAe82HjywiDjUkDiVR0puGNd0qfQ==
+X-Received: by 2002:a2e:95d2:: with SMTP id y18mr2062240ljh.342.1590691410916;
+        Thu, 28 May 2020 11:43:30 -0700 (PDT)
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
+        by smtp.gmail.com with ESMTPSA id a15sm1825646ljj.27.2020.05.28.11.43.29
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 May 2020 11:43:30 -0700 (PDT)
+Received: by mail-lj1-f174.google.com with SMTP id b6so34735376ljj.1
+        for <linux-security-module@vger.kernel.org>; Thu, 28 May 2020 11:43:29 -0700 (PDT)
+X-Received: by 2002:a2e:b16e:: with SMTP id a14mr2040017ljm.70.1590691409213;
+ Thu, 28 May 2020 11:43:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1jeKrT-0008Bp-Qq;;;mid=<87mu5svz1v.fsf_-_@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+MHtH6hLkB3oWNuRodn+5tMsim9ktuu6s=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: [PATCH 11/11] exec: Remove the label after_setid from bprm_fill_uid
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+References: <20200528054043.621510-1-hch@lst.de> <20200528054043.621510-10-hch@lst.de>
+In-Reply-To: <20200528054043.621510-10-hch@lst.de>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 28 May 2020 11:43:13 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgpnR9sBeie_z0xA3mYzG50Oiw1jZjyHt0eLX6p45ARvQ@mail.gmail.com>
+Message-ID: <CAHk-=wgpnR9sBeie_z0xA3mYzG50Oiw1jZjyHt0eLX6p45ARvQ@mail.gmail.com>
+Subject: Re: [PATCH 09/14] fs: don't change the address limit for ->write_iter
+ in __kernel_write
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>,
+        David Howells <dhowells@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        NetFilter <netfilter-devel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Wed, May 27, 2020 at 10:41 PM Christoph Hellwig <hch@lst.de> wrote:
+>
+> -ssize_t __kernel_write(struct file *file, const void *buf, size_t count, loff_t *pos)
+> +ssize_t __kernel_write(struct file *file, const void *buf, size_t count,
+> +               loff_t *pos)
 
-There is nothing past the label after_setid in bprm_fill_uid so
-replace code that jumps to it with return, and delete
-the label entirely.
+Please don't do these kinds of pointless whitespace changes.
 
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
----
- fs/exec.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+If you have an actual 80x25 vt100 sitting in a corner, it's not really
+conducive to kernel development any more.
 
-diff --git a/fs/exec.c b/fs/exec.c
-index fc4edc7517a6..ccb552fcdcff 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1598,15 +1598,15 @@ static void bprm_fill_uid(struct linux_binprm *bprm)
- 	kgid_t gid;
- 
- 	if (!mnt_may_suid(bprm->file->f_path.mnt))
--		goto after_setid;
-+		return;
- 
- 	if (task_no_new_privs(current))
--		goto after_setid;
-+		return;
- 
- 	inode = bprm->file->f_path.dentry->d_inode;
- 	mode = READ_ONCE(inode->i_mode);
- 	if (!(mode & (S_ISUID|S_ISGID)))
--		goto after_setid;
-+		return;
- 
- 	/* Be careful if suid/sgid is set */
- 	inode_lock(inode);
-@@ -1620,7 +1620,7 @@ static void bprm_fill_uid(struct linux_binprm *bprm)
- 	/* We ignore suid/sgid if there are no mappings for them in the ns */
- 	if (!kuid_has_mapping(new->user_ns, uid) ||
- 	    !kgid_has_mapping(new->user_ns, gid))
--		goto after_setid;
-+		return;
- 
- 	/*
- 	 * Is the root directory and working directory shared or is
-@@ -1647,9 +1647,6 @@ static void bprm_fill_uid(struct linux_binprm *bprm)
- 		bprm->secureexec = 1;
- 		new->sgid = new->fsgid = new->egid = gid;
- 	}
--
--after_setid:
--	;
- }
- 
- /*
--- 
-2.25.0
+Yes, yes, we'd like to have shorter lines for new code, but no, don't
+do silly line breaks that just makes old code look and grep worse.
 
+             Linus
