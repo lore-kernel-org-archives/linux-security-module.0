@@ -2,79 +2,77 @@ Return-Path: <SRS0=XUZh=7K=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75901C433E1
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 May 2020 18:43:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7538EC433DF
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 May 2020 18:51:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5AB0E2078C
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 May 2020 18:43:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 57B662073B
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 May 2020 18:51:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1590691417;
-	bh=LYXtWfNqWbRlHIsJLxFEA9ZSQ83RZwJtt6Vuc/kRjK4=;
+	s=default; t=1590691908;
+	bh=ET8yM6AWMNpDjaCHAyz3Kke+AsO4jCxWygmB2OrK0MQ=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=WYiqu4Km7GLshkIY52S9RPxWh87u9Ev4h2lDLKWZ587tylPGL+urMUBGif2siQMo9
-	 f3lLVrrBKi6oJxKEK2jWgld6dOIk9QwUFM5FhOPWmr4KyKh1mBw59xe5Y1TgIawBiP
-	 PFI67Izy68BVglb59ogc6MHqFQMLU11cjzWDrqBE=
+	b=bSx3MHMbU6BkwEesA4SR03QR9aUkT9hrUEl0mNVa4dM47Z5nvShQ5fQ07dyObeFcu
+	 /w2q8pKgnBqDMC93g8fjiu2o7jJvo6zN0bj/nyspdHoCMkZVI750GW8VctjTgSCpJC
+	 9gFh3NhDeLIkRek9v8easi58cbGgfIh1/1ytdxNc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391488AbgE1Snf (ORCPT
+        id S2405993AbgE1Svn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 28 May 2020 14:43:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53440 "EHLO
+        Thu, 28 May 2020 14:51:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54720 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391499AbgE1Snd (ORCPT
+        with ESMTP id S2405951AbgE1Svm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 28 May 2020 14:43:33 -0400
-Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77F40C08C5C9
-        for <linux-security-module@vger.kernel.org>; Thu, 28 May 2020 11:43:33 -0700 (PDT)
-Received: by mail-lj1-x241.google.com with SMTP id q2so34665744ljm.10
-        for <linux-security-module@vger.kernel.org>; Thu, 28 May 2020 11:43:33 -0700 (PDT)
+        Thu, 28 May 2020 14:51:42 -0400
+Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C3D1C08C5C9
+        for <linux-security-module@vger.kernel.org>; Thu, 28 May 2020 11:51:42 -0700 (PDT)
+Received: by mail-lf1-x142.google.com with SMTP id h188so17215447lfd.7
+        for <linux-security-module@vger.kernel.org>; Thu, 28 May 2020 11:51:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=V9I7snvnyR6f67pT5aVMg4qxsNA0F9Vag9hIROGL8vg=;
-        b=P8nw8P71cxagqSPVUA9Kzi2wkC951thaYnOwz/e4kiPGKd2Zew+YultOwwJeyFp5h7
-         zM7l8zOFEFg42p7pHhMVJLHi7CpftdQASS+eM/OM/B4nVtTeHsdqVgzMglyZy3GmUpst
-         EXyW/r86HANnDshbNT+Vi8bmm9fl991ACFIhI=
+        bh=AhLg0g9nIVFkh8Xej4e2gvlmNSMTD4F2E/T/7QsRMv8=;
+        b=AYcUjneN2MB3Dg+M1pugzVZJdxa872FQyc0afbyKSWW1oWb/d1rwk9bn7+CzdK3mHa
+         tArLlEWWcS0pmgUdgvh4UhxapiHNyCYitzgmuPpFaFrB1CcK1PCfLpwMLGY/rt9ZbGVr
+         HuHNIUVtpMtoMJZ4AirU8Bfo1+H2VgFd0PSHQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=V9I7snvnyR6f67pT5aVMg4qxsNA0F9Vag9hIROGL8vg=;
-        b=T9K9BNSx+XC7HXPAngQ/CJbeMD+36l1oigFpJhOTW1j+UR6t1Gf85e65WyskUMkyXS
-         Iom83wB0hCImnH01wLkY07xMllY/8+6yYt7VjUGDmOJA0Viyt6hZZbXGojJG3kNFBOVg
-         MiWPC2lDzi32kn1a5JEmnBP30IjOHWAMrLzLCQycZFeJ6tdIR4hoFEVJDXMEds+nGPwO
-         fenqdaPg641mAdWjXnfjfYb5XlXGPZC+CsDHfJRh2+kcyUgTFL6J4q4zJHnCfbjckJSR
-         igo/qYiod9QFz09nKYbyAxI23zDjyOiay7qdQEErwmhObK6MKekiPXldoGr8vG0r82Mm
-         yc6Q==
-X-Gm-Message-State: AOAM5331RfpjQKf6HG20jqOAd3UPCf36Svx3J6rWCPQQkTdaGbD0aCk9
-        smGq1WUS2FuMXzTrdlGBP3nIrlGWJnc=
-X-Google-Smtp-Source: ABdhPJxjeP49udSVLJ4G/lANRnnRNjBxYx2JRukdPS9rTQxOgXfAe82HjywiDjUkDiVR0puGNd0qfQ==
-X-Received: by 2002:a2e:95d2:: with SMTP id y18mr2062240ljh.342.1590691410916;
-        Thu, 28 May 2020 11:43:30 -0700 (PDT)
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
-        by smtp.gmail.com with ESMTPSA id a15sm1825646ljj.27.2020.05.28.11.43.29
+        bh=AhLg0g9nIVFkh8Xej4e2gvlmNSMTD4F2E/T/7QsRMv8=;
+        b=lmZClhLfTwJ1FCO8XdmhWYXzioxhUmjDm1HXM+J6huSyVPT9CKTa4VT+qweB9sjiK6
+         CybC2oKbPdNTgFJQUTFSbShTGLzDjwdTqJ1mUgl5Jxv/rmbK6NVxMIAE6gvp+Li6Wm1s
+         jRoi2Repx0Iz8TRq7z0fevRm7aq4t+9//Ei0Y0nxANDV6PApfYOqxCcifQVjgZRbY6po
+         Vsr39N39CVh+7nS/1LJOE//IeKuksQ4tdMjEhxX1pMg+CEvSuhbUPqa95CYMxLSJIA/r
+         UbpgKDbaZkt/9BTcQTJNV+Voe48kawIN0ToUfu6yz5FwVJOCnDzHY51FYtghsGlmsQs9
+         bhWw==
+X-Gm-Message-State: AOAM531zTYb9t6TUYdwbq/UaKEJSN/0bnkmqqIMvOSh9YCBY1jOu5L5v
+        HstPrN7G7Rz2+p03+fy/+PH3Jyn/D3Y=
+X-Google-Smtp-Source: ABdhPJwedB/+S/VwOgCf2xgAkNPA0h3aS7iZzeUvh7tmJhC3CWCz+icrKqfTHaIfWlE17M8HB/bh3g==
+X-Received: by 2002:ac2:5a4c:: with SMTP id r12mr2379611lfn.10.1590691899028;
+        Thu, 28 May 2020 11:51:39 -0700 (PDT)
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
+        by smtp.gmail.com with ESMTPSA id h16sm834642lja.87.2020.05.28.11.51.37
         for <linux-security-module@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 May 2020 11:43:30 -0700 (PDT)
-Received: by mail-lj1-f174.google.com with SMTP id b6so34735376ljj.1
-        for <linux-security-module@vger.kernel.org>; Thu, 28 May 2020 11:43:29 -0700 (PDT)
-X-Received: by 2002:a2e:b16e:: with SMTP id a14mr2040017ljm.70.1590691409213;
- Thu, 28 May 2020 11:43:29 -0700 (PDT)
+        Thu, 28 May 2020 11:51:38 -0700 (PDT)
+Received: by mail-lj1-f169.google.com with SMTP id z18so34692925lji.12
+        for <linux-security-module@vger.kernel.org>; Thu, 28 May 2020 11:51:37 -0700 (PDT)
+X-Received: by 2002:a2e:8090:: with SMTP id i16mr1927771ljg.421.1590691897249;
+ Thu, 28 May 2020 11:51:37 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200528054043.621510-1-hch@lst.de> <20200528054043.621510-10-hch@lst.de>
-In-Reply-To: <20200528054043.621510-10-hch@lst.de>
+References: <20200528054043.621510-1-hch@lst.de>
+In-Reply-To: <20200528054043.621510-1-hch@lst.de>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 28 May 2020 11:43:13 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgpnR9sBeie_z0xA3mYzG50Oiw1jZjyHt0eLX6p45ARvQ@mail.gmail.com>
-Message-ID: <CAHk-=wgpnR9sBeie_z0xA3mYzG50Oiw1jZjyHt0eLX6p45ARvQ@mail.gmail.com>
-Subject: Re: [PATCH 09/14] fs: don't change the address limit for ->write_iter
- in __kernel_write
+Date:   Thu, 28 May 2020 11:51:21 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wj3iGQqjpvc+gf6+C29Jo4COj6OQQFzdY0h5qvYKTdCow@mail.gmail.com>
+Message-ID: <CAHk-=wj3iGQqjpvc+gf6+C29Jo4COj6OQQFzdY0h5qvYKTdCow@mail.gmail.com>
+Subject: Re: clean up kernel_{read,write} & friends v2
 To:     Christoph Hellwig <hch@lst.de>
 Cc:     Al Viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>,
         David Howells <dhowells@redhat.com>,
@@ -87,18 +85,33 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, May 27, 2020 at 10:41 PM Christoph Hellwig <hch@lst.de> wrote:
+On Wed, May 27, 2020 at 10:40 PM Christoph Hellwig <hch@lst.de> wrote:
 >
-> -ssize_t __kernel_write(struct file *file, const void *buf, size_t count, loff_t *pos)
-> +ssize_t __kernel_write(struct file *file, const void *buf, size_t count,
-> +               loff_t *pos)
+> this series fixes a few issues and cleans up the helpers that read from
+> or write to kernel space buffers, and ensures that we don't change the
+> address limit if we are using the ->read_iter and ->write_iter methods
+> that don't need the changed address limit.
 
-Please don't do these kinds of pointless whitespace changes.
+Apart from the "please don't mix irrelevant whitespace changes with
+other changes" comment, this looks fine to me.
 
-If you have an actual 80x25 vt100 sitting in a corner, it's not really
-conducive to kernel development any more.
+And a rant related to that change: I'm really inclined to remove the
+checkpatch check for 80 columns entirely, but it shouldn't have been
+triggering for old lines even now.
 
-Yes, yes, we'd like to have shorter lines for new code, but no, don't
-do silly line breaks that just makes old code look and grep worse.
+Or maybe make it check for something more reasonable, like 100 characters.
 
-             Linus
+I find it ironic and annoying how "checkpatch" warns about that silly
+legacy limit, when checkpatch itself then on the very next few lines
+has a line that is 124 columns wide
+
+And yes, that 124 character line has a good reason for it. But that's
+kind of the point. There are lots of perfectly fine reasons for longer
+lines.
+
+I'd much rather check for "no deep indentation" or "no unnecessarily
+complex conditionals" or other issues that are more likely to be
+_real_ problems.  But do we really have 80x25 terminals any more that
+we'd care about?
+
+               Linus
