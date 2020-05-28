@@ -2,116 +2,152 @@ Return-Path: <SRS0=XUZh=7K=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A606C433E2
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 May 2020 19:14:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31751C433DF
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 May 2020 19:21:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F062F207BC
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 May 2020 19:13:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1590693240;
-	bh=MnWgaBTeNmlOTB8V+xlxOASVA93eFmB3RvbSfIKHG2I=;
-	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
-	b=HdFg9Tx078GsUylW5fAuO8vZi9tBdFdOj1S7fdm/QlTteJwhCnnoiBLHnWE55lbZd
-	 6UjOlYagu3hV2279734AjbH/Gkw4dDTEsZlmiCbcq7IA5C6KjRhtmEeqmpV0jwuVNf
-	 YBfcELs1QelnNcYXIf9KU9b/53unddaHu17B8eXw=
+	by mail.kernel.org (Postfix) with ESMTP id 195DF2078C
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 May 2020 19:21:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406241AbgE1TN7 (ORCPT
+        id S2406347AbgE1TV0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 28 May 2020 15:13:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58222 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406212AbgE1TN4 (ORCPT
+        Thu, 28 May 2020 15:21:26 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:54248 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406320AbgE1TVU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 28 May 2020 15:13:56 -0400
-Received: from mail-oi1-x243.google.com (mail-oi1-x243.google.com [IPv6:2607:f8b0:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71AA4C08C5C8
-        for <linux-security-module@vger.kernel.org>; Thu, 28 May 2020 12:13:56 -0700 (PDT)
-Received: by mail-oi1-x243.google.com with SMTP id y85so164797oie.11
-        for <linux-security-module@vger.kernel.org>; Thu, 28 May 2020 12:13:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=2Aid1A7qAbnqwEDuFuiLArV71skaojblrB/GGrrY4cY=;
-        b=e/SbMRNYoY+hzrbh8kw6sZOUW7BIjelH8o7w/nPznUrHvOqGBfMGSY/ZJvwbvzX9b9
-         ujhnDk+WqjX72eLW0c/Oi38lUQJGxsN4bJLsbijzFtd1H7cAGfx3r/ThZzPxX3EIUSBU
-         fYXf/OsO7yEZJsIlQbVUCFveqN8DcltBNmHx4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=2Aid1A7qAbnqwEDuFuiLArV71skaojblrB/GGrrY4cY=;
-        b=K/CycZDFOLutD6vI2rgMJtnaXq4JFe+RiYAbIbmhbMkh+spyIAedUDcyowkIn9koqI
-         AUPJUTH7Xzo5D50txSkZxy9t73tQi+VXmiC7mW5mKhz2FPFgpHASCv6Q+7+080+10LOE
-         vyRrwhw2UW5WOrZQWpKx2Q4O7ba6NxgrMUWDxIXlWHKPirHsH1KXBljcc3zQbWyERvzn
-         1eiWAGiihq5eTPiwfg4zMDWoS/1pk3iqond2BVfofkUBC9+1feZ11bPy2FawtQz/K4z5
-         Zl4z4Pq/BkiF+FXjAHZ3zXBFWv04lts+4zEbc4lMzV+LzHdjNUoDlpc5eFVcnDIhX27U
-         Hw+g==
-X-Gm-Message-State: AOAM532lDjNprwTo4JD2tQ/mpMW8zbrf5gQ0gNurWW9ApuUE6XW/Oih7
-        EgqNdv0Oa93PtO1XF2rf1O6lyQ==
-X-Google-Smtp-Source: ABdhPJy8uruNUiwWVk93BXNeRvSwBhf7iaLMvdmzo0+duEh9lWnm2W57Ul89YuTANAlkrm/ZuJlOKA==
-X-Received: by 2002:a05:6808:117:: with SMTP id b23mr3149973oie.143.1590693235796;
-        Thu, 28 May 2020 12:13:55 -0700 (PDT)
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
-        by smtp.gmail.com with ESMTPSA id k3sm829951oia.41.2020.05.28.12.13.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 May 2020 12:13:55 -0700 (PDT)
-Subject: Re: [PATCH v3 0/6] Enable as many KUnit tests as possible
-To:     Brendan Higgins <brendanhiggins@google.com>,
-        Anders Roxell <anders.roxell@linaro.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        John Johansen <john.johansen@canonical.com>,
+        Thu, 28 May 2020 15:21:20 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jeO5a-0000xN-0J; Thu, 28 May 2020 13:21:14 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jeO5Y-0002Ld-TF; Thu, 28 May 2020 13:21:13 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Rob Landley <rob@landley.net>,
+        Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
         James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        KUnit Development <kunit-dev@googlegroups.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-ext4@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Marco Elver <elver@google.com>,
-        David Gow <davidgow@google.com>, skhan@linuxfoundation.org
-References: <20200511131350.29638-1-anders.roxell@linaro.org>
- <CADYN=9LkA2h6dANREfPQq4iDvVEJX1wAdxjv31mpVBkaM_g0ZQ@mail.gmail.com>
- <CAFd5g452oiRpMa3S=F9wFsb9SRKBYXJFuusge+6=zCEFX74kYQ@mail.gmail.com>
-From:   Shuah Khan <skhan@linuxfoundation.org>
-Message-ID: <76811e1b-c26f-53ac-5703-104aacd06666@linuxfoundation.org>
-Date:   Thu, 28 May 2020 13:13:53 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        Andy Lutomirski <luto@amacapital.net>
+References: <87h7wujhmz.fsf@x220.int.ebiederm.org>
+        <87sgga6ze4.fsf@x220.int.ebiederm.org>
+        <87v9l4zyla.fsf_-_@x220.int.ebiederm.org>
+        <877dx822er.fsf_-_@x220.int.ebiederm.org>
+        <87k10wysqz.fsf_-_@x220.int.ebiederm.org>
+        <87eer4ysm5.fsf_-_@x220.int.ebiederm.org>
+        <CAHk-=wgQAgKnEX3V_vep3Ah392tjiekDspnu+y6kkx2oFZBV=g@mail.gmail.com>
+Date:   Thu, 28 May 2020 14:17:19 -0500
+In-Reply-To: <CAHk-=wgQAgKnEX3V_vep3Ah392tjiekDspnu+y6kkx2oFZBV=g@mail.gmail.com>
+        (Linus Torvalds's message of "Thu, 28 May 2020 12:04:12 -0700")
+Message-ID: <87pnanvphc.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <CAFd5g452oiRpMa3S=F9wFsb9SRKBYXJFuusge+6=zCEFX74kYQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-XM-SPF: eid=1jeO5Y-0002Ld-TF;;;mid=<87pnanvphc.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1+Syvr95fcCE2Yrct5NG1ay+23m265eGRY=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH 01/11] exec: Reduce bprm->per_clear to a single bit
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 5/28/20 1:07 PM, Brendan Higgins wrote:
-> On Wed, May 27, 2020 at 4:49 AM Anders Roxell <anders.roxell@linaro.org> wrote:
+Linus Torvalds <torvalds@linux-foundation.org> writes:
+
+> On Thu, May 28, 2020 at 8:45 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
 >>
->> Hi all,
->>
->> Friendly ping: who can take this?
-> 
-> Sorry, I just reviewed the last patch.
-> 
-> Shuah, do you mind picking this up for 5.8?
-> 
+>> -       me->personality &= ~bprm->per_clear;
+>> +       if (bprm->per_clear)
+>> +               me->personality &= ~PER_CLEAR_ON_SETID;\
+>
+> My only problem with this patch is that I find that 'per_clear' thing
+> to be a horrid horrid name,
+>
+> Obviously the name didn't change, but the use *did* change, and as
+> such the name got worse. It used do do things like
+>
+>                bprm->per_clear |= PER_CLEAR_ON_SETID;
+>
+> and now it does
+>
+>                bprm->per_clear = 1;
+>
+> and honestly, there's a lot more semantic context in the old code that
+> is now missing entirely. At least you used to be able to grep for
+> PER_CLEAR_ON_SETID and it would make you go "Ahh.."
+>
+> Put another way, I can kind of see what a line like
+>
+>                bprm->per_clear |= PER_CLEAR_ON_SETID;
+>
+> does, simply because now it kind of hints at what is up.
+>
+> But what the heck does
+>
+>                bprm->per_clear = 1;
+>
+> mean? Nothing. You have to really know the code. "per_clear" makes no
+> sense, and now it's a short line that doesn't need to be that short.
+>
+> I think "bprm->clear_personality_bits" would maybe describe what the
+> _effect_ of that field is. It doesn't explain _why_, but it at least
+> explains "what" much better than "per_clear", which just makes me go
+> "per what?".
+>
+> Alternatively, "bprm->creds_changed" would describe what the bit
+> conceptually is about, and code like
+>
+>           if (bprm->creds_changed)
+>                   me->personality &= ~PER_CLEAR_ON_SETID;\
+>
+> looks sensible to me and kind of matches the comment about the
+> PER_CLEAR_ON_SETID bits are.
+>
+> So I think that using a bitfield is fine, but I'd really like it to be
+> named something much better.
+>
+> Plus changing the name means that you can't have any code that now
+> mistakenly uses the new semantics but expects the old bitmask.
+> Generally when something changes semantics that radically, you want to
+> make sure the type changes sufficiently that any out-of-tree patch
+> that hasn't been merged yet will get a clear warning or error if
+> people don't realize.
+>
+> Please?
 
-Yup. Will do. I was watching this thread waiting for your
-Ack. I will apply it once.
+Yes.  That will make a very nice change to the patch.
 
-thanks,
--- Shuah
+I think I will go with bprm->clear_unsafe_personality_bits or
+something to that effect. 
 
+I would really love to have a bit that means creds_changes or
+privilegeds_elevated.  But right now we have 2 of two fields that mean
+essentially that (per_clear and secureexec) and they don't agree on when
+they get set.
+
+I will make them agree as much as possible, and this patchset is a first
+step in that direction but until we can actually make them agree, I want
+to keep them both grounded in what they do.  That way it is possible to
+have a reasonable discussion on when they should be set.
+
+Eric
