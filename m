@@ -6,96 +6,127 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82409C433E0
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 May 2020 19:26:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C03AC433E1
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 May 2020 19:29:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6AD52207BC
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 May 2020 19:26:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2AA22207BC
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 May 2020 19:29:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406490AbgE1TZx (ORCPT
+        id S2406363AbgE1T3f (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 28 May 2020 15:25:53 -0400
-Received: from out02.mta.xmission.com ([166.70.13.232]:38176 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406352AbgE1TZw (ORCPT
+        Thu, 28 May 2020 15:29:35 -0400
+Received: from smtprelay0093.hostedemail.com ([216.40.44.93]:55222 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2406289AbgE1T3e (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 28 May 2020 15:25:52 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jeOA2-0003ht-6V; Thu, 28 May 2020 13:25:50 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jeOA1-0008Pm-5i; Thu, 28 May 2020 13:25:49 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Rob Landley <rob@landley.net>,
-        Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        Thu, 28 May 2020 15:29:34 -0400
+X-Greylist: delayed 439 seconds by postgrey-1.27 at vger.kernel.org; Thu, 28 May 2020 15:29:33 EDT
+Received: from smtprelay.hostedemail.com (10.5.19.251.rfc1918.com [10.5.19.251])
+        by smtpgrave04.hostedemail.com (Postfix) with ESMTP id F0BBE1816084F;
+        Thu, 28 May 2020 19:22:18 +0000 (UTC)
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay02.hostedemail.com (Postfix) with ESMTP id E2F38AE562;
+        Thu, 28 May 2020 19:22:10 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: whip46_381349b26d5d
+X-Filterd-Recvd-Size: 3543
+Received: from XPS-9350.home (unknown [47.151.136.130])
+        (Authenticated sender: joe@perches.com)
+        by omf13.hostedemail.com (Postfix) with ESMTPA;
+        Thu, 28 May 2020 19:22:09 +0000 (UTC)
+Message-ID: <f68b7797aa73452d99508bdaf2801b3d141e7a69.camel@perches.com>
+Subject: Re: clean up kernel_{read,write} & friends v2
+From:   Joe Perches <joe@perches.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Christoph Hellwig <hch@lst.de>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>,
+        David Howells <dhowells@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
         LSM List <linux-security-module@vger.kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Andy Lutomirski <luto@amacapital.net>
-References: <87h7wujhmz.fsf@x220.int.ebiederm.org>
-        <87sgga6ze4.fsf@x220.int.ebiederm.org>
-        <87v9l4zyla.fsf_-_@x220.int.ebiederm.org>
-        <877dx822er.fsf_-_@x220.int.ebiederm.org>
-        <87k10wysqz.fsf_-_@x220.int.ebiederm.org>
-        <87y2pcvz3b.fsf_-_@x220.int.ebiederm.org>
-        <CAHk-=wiAG4tpPoWsWSqHbyMZDnWR8RHUpbwxB9_tdAqbE59NxA@mail.gmail.com>
-Date:   Thu, 28 May 2020 14:21:57 -0500
-In-Reply-To: <CAHk-=wiAG4tpPoWsWSqHbyMZDnWR8RHUpbwxB9_tdAqbE59NxA@mail.gmail.com>
-        (Linus Torvalds's message of "Thu, 28 May 2020 12:08:02 -0700")
-Message-ID: <875zcfvp9m.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        NetFilter <netfilter-devel@vger.kernel.org>
+Date:   Thu, 28 May 2020 12:22:08 -0700
+In-Reply-To: <CAHk-=wj3iGQqjpvc+gf6+C29Jo4COj6OQQFzdY0h5qvYKTdCow@mail.gmail.com>
+References: <20200528054043.621510-1-hch@lst.de>
+         <CAHk-=wj3iGQqjpvc+gf6+C29Jo4COj6OQQFzdY0h5qvYKTdCow@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.36.2-0ubuntu1 
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1jeOA1-0008Pm-5i;;;mid=<875zcfvp9m.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/beXd4KA5c+7dsn0MqQrGKegUPWaEyJac=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [PATCH 09/11] exec: In bprm_fill_uid only set per_clear when honoring suid or sgid
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Linus Torvalds <torvalds@linux-foundation.org> writes:
+On Thu, 2020-05-28 at 11:51 -0700, Linus Torvalds wrote:
+> On Wed, May 27, 2020 at 10:40 PM Christoph Hellwig <hch@lst.de> wrote:
+> > this series fixes a few issues and cleans up the helpers that read from
+> > or write to kernel space buffers, and ensures that we don't change the
+> > address limit if we are using the ->read_iter and ->write_iter methods
+> > that don't need the changed address limit.
+> 
+> Apart from the "please don't mix irrelevant whitespace changes with
+> other changes" comment, this looks fine to me.
+> 
+> And a rant related to that change: I'm really inclined to remove the
+> checkpatch check for 80 columns entirely, but it shouldn't have been
+> triggering for old lines even now.
+> 
+> Or maybe make it check for something more reasonable, like 100 characters.
+> 
+> I find it ironic and annoying how "checkpatch" warns about that silly
+> legacy limit, when checkpatch itself then on the very next few lines
+> has a line that is 124 columns wide
 
-> On Thu, May 28, 2020 at 8:53 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
->>
->> It makes no sense to set active_per_clear when the kernel decides not
->> to honor the executables setuid or or setgid bits.  Instead set
->> active_per_clear when the kernel actually decides to honor the suid or
->> sgid permission bits of an executable.
->
-> You seem to be confused about the naming yourself.
->
-> You talk about "active_per_clear", but the code is about "per_clear". WTF?
+Yeah.  perl ain't c.
 
-I figured out how to kill active_per_clear see (3/11) and I failed to
-update the patch description here.
+And this discussion has been had many times.
 
-I think active_ is a louzy suffix but since it all goes away in patch 3
-when I remove the recomputation and the need to have two versions of the
-setting I think it is probably good enough.
+Here's one from 2009
+https://lkml.org/lkml/2009/12/15/490
 
-Eric
+Another from 2012
+https://lkml.org/lkml/2012/2/5/141
 
+Line lengths checks are normally pretty silly.
 
+Hard limits at 80 really don't work well, especially with
+some of the 25+ character length identifiers used today.
 
+I think a line length warning at 132 is generally reasonable
+but it could depend on complexity and identifier lengths.
 
+> And yes, that 124 character line has a good reason for it. But that's
+> kind of the point. There are lots of perfectly fine reasons for longer
+> lines.
+> 
+> I'd much rather check for "no deep indentation" or "no unnecessarily
+> complex conditionals" or other issues that are more likely to be
+> _real_ problems.
+
+That deep indentation test already exists at 6 tabs.
+Maybe it should be 5 instead.  Or maybe even 4, but
+that's a pretty easy to need and common use case.
+
+Tab depth use in the kernel is more or less
+
+$ git grep -Poh '^\t+(if|do|while|for|switch)\b' | \
+  sed -r 's/\w+//g' | \
+  awk '{print length($0);}' | \
+  sort | uniq -c | sort -rn
+ 903993 1
+ 339059 2
+  89334 3
+  18216 4
+   3282 5
+    605 6
+    148 7
+     36 8
+      4 9
+      1 10
+
+> But do we really have 80x25 terminals any more that
+> we'd care about?
+
+trivial btw: VT100s were 80x24 or 132x24, PCs were 80x25
 
 
