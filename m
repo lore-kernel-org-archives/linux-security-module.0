@@ -2,104 +2,142 @@ Return-Path: <SRS0=XUZh=7K=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B7CBC433E0
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 May 2020 19:05:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76CEEC433DF
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 May 2020 19:07:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E1B4F207BC
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 May 2020 19:05:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1590692738;
-	bh=cJLAhlnq2OqUbmFc8bQXuSL6bgPrceDFYO9vPJzGUCY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=PreCW4pnFCja8ZXgVe3q6lLMVWojIbWFHMISVbLWUFbXxTFC7VUGNv+tMJIy+dgbI
-	 aoN7+Dq14iUKFMqZIbJ/ndd0k4gCPEcKD80ICPuCCMvcJR1z5hF845HMYYmTPJf5hw
-	 bssWLfYZnhqrcJ7Qte0yabugD+TxLE/kd2d7aick=
+	by mail.kernel.org (Postfix) with ESMTP id 5CF2C206A1
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 May 2020 19:07:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uDW5ODyy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406123AbgE1TFi (ORCPT
+        id S2406197AbgE1TH1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 28 May 2020 15:05:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56896 "EHLO
+        Thu, 28 May 2020 15:07:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57186 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406101AbgE1TFh (ORCPT
+        with ESMTP id S2406191AbgE1THY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 28 May 2020 15:05:37 -0400
-Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD54EC08C5C6
-        for <linux-security-module@vger.kernel.org>; Thu, 28 May 2020 12:05:35 -0700 (PDT)
-Received: by mail-lf1-x141.google.com with SMTP id z206so13578869lfc.6
-        for <linux-security-module@vger.kernel.org>; Thu, 28 May 2020 12:05:35 -0700 (PDT)
+        Thu, 28 May 2020 15:07:24 -0400
+Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B99DC08C5C7
+        for <linux-security-module@vger.kernel.org>; Thu, 28 May 2020 12:07:24 -0700 (PDT)
+Received: by mail-pj1-x1043.google.com with SMTP id fs4so1055pjb.5
+        for <linux-security-module@vger.kernel.org>; Thu, 28 May 2020 12:07:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=AIM8xuF5VWjvw+TNdHJ4kiSd5AWmWcoZ3yv55b5QhmI=;
-        b=FUIN+4JKj2QxyK8i6JHV7/j7vy5lRuVpANaKoY2Mlj+WNN0OnhModMVphPtln7hTfr
-         6e2HXcUIfOAsDiHQ1XL5v8z2Xgu1ZqPPoh0MtrHTKjhMN1uPF2+2fHIA2yVkvBMEgomb
-         B5DSvFfThv/idiSSPqFeMZtDs8M840ZwViIm0=
+        bh=VwOVkU0O5MPTy6BNN6XbEIcSAUqdb5AHofI+QJezuPI=;
+        b=uDW5ODyyxREse/z9nXtUVNzYSUM3rxmiKouMrW0jQ4pjS6v1fwxsd/yw3a/ZOhLjGv
+         +jxGfyDsoKrn60aSTMmdCEZ2GchIZiuChuz/1AE6nf0dyurPkh4aVOWLNA/wdcuWoQmU
+         oOrU3dKuigLmoTXchnDB47CeNglHPROppF6lxw+UKA//5w9cqkkW8LdHMQHyPK6SUGyO
+         GCbw8fY9NUY6foqe4PtpNWnbJ82ESuHOCefXC/FkqMmVTJWfp1TBB+jyO+x91mphMZEI
+         wdves0btscFepzUrFDrHsvalWOOYRZfS5Kyq0euFgY4kpm6EmhBKzRzD4vzd8i8gIdpz
+         gLHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=AIM8xuF5VWjvw+TNdHJ4kiSd5AWmWcoZ3yv55b5QhmI=;
-        b=jPsHOflbUz4I2itYbNXBW/g2ATPcQfJjw20JTmlMDZbOpSaWIBWn0lKxsNVjngE5hy
-         yM2mULLExUm1enPbD7iDO/Fwq9LX6GpzMuvXxUGSvI+Zrswfi2qvjuCH4ELEMD+kUOYv
-         snWjEXkSPwP0bqA4XVY4tTGGwyfNedVxtJia/Bdu6YJ5uz3k2WB+jNBPkgWUYKYd555P
-         XtE4KvL4l5t/ppCpneVXAQCD2+HOGpPLsA4UGBvO1CN7suU3dvu+28hCjMS3n8xen4/s
-         pIIxwb3JGMwC6Zm5mLJ76UWEhlDhCyFUgzbM03tJaaB6qC7z2XSx+sJa4ch/Bq7gIvG6
-         GBEg==
-X-Gm-Message-State: AOAM5304TcXR13YJB0Hn2pXVc4pusnT6OVBV3HLvlDK4SCGEviiST0yg
-        q2IVFFaid9b4IUYnXmldxSAr1KzEUjw=
-X-Google-Smtp-Source: ABdhPJz+Gx5UTHNDu0bB0D2uN/8xC9b/dfSCUvCaieTY49ckzEo4TifoK+VgobNfPX6Zv8QqTo8llQ==
-X-Received: by 2002:a19:8447:: with SMTP id g68mr2448477lfd.132.1590692733479;
-        Thu, 28 May 2020 12:05:33 -0700 (PDT)
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
-        by smtp.gmail.com with ESMTPSA id e10sm1820065ljp.108.2020.05.28.12.05.32
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 May 2020 12:05:32 -0700 (PDT)
-Received: by mail-lf1-f54.google.com with SMTP id d7so6050532lfi.12
-        for <linux-security-module@vger.kernel.org>; Thu, 28 May 2020 12:05:32 -0700 (PDT)
-X-Received: by 2002:a19:6a0e:: with SMTP id u14mr2356099lfu.192.1590692731704;
- Thu, 28 May 2020 12:05:31 -0700 (PDT)
+        bh=VwOVkU0O5MPTy6BNN6XbEIcSAUqdb5AHofI+QJezuPI=;
+        b=hvqXMincLsopHTeXol7AU+cOBbrHOpYv3T+TdC25JDbdLiL/xFi/A1eFuZt2BeAePi
+         Nh1BSQvMKPl42LDdUly3MENYAD9LkcuBON/ksSJsD9URqMWY/n/BdJszxzDcDG649QVX
+         tPRUTShJXrnuyz/bkrJLbCnvTAonqUxc6ZsLy+/jKD2EP1CIlvvsMM/b5zBpYqfU8UjK
+         w9E9M6o9cD51cQTEsziofDA+CLhVPp4JBi81MiQOO2U1A2HLnIdsl+ahdb09/+YyWR1X
+         QmHUvAHlNTSZMSa3RsWMy2DVd6CH0/QRDZBTsJzyY4YvR4DBrPTxvXPEDU2BiYHKpgId
+         q4aA==
+X-Gm-Message-State: AOAM531tPV7oqxzXMgfjOlIok+8XKM2bMgPGc/htnQETWBmOAd7JW+t9
+        Il4jiP95lJz+OI7Fndq/QkTfwZOrS41/tJ536bhW/g==
+X-Google-Smtp-Source: ABdhPJyHjlcrtJrC+9HghnaFLvsYtvx90pMxGJn0t37UYFwj6H/4l9P4f/thKbVZ/294rQqkIqrgjWfA3AjwOQYQKbs=
+X-Received: by 2002:a17:90a:17ed:: with SMTP id q100mr4950842pja.80.1590692843445;
+ Thu, 28 May 2020 12:07:23 -0700 (PDT)
 MIME-Version: 1.0
-References: <87h7wujhmz.fsf@x220.int.ebiederm.org> <87sgga6ze4.fsf@x220.int.ebiederm.org>
- <87v9l4zyla.fsf_-_@x220.int.ebiederm.org> <877dx822er.fsf_-_@x220.int.ebiederm.org>
- <87k10wysqz.fsf_-_@x220.int.ebiederm.org> <878shcyskx.fsf_-_@x220.int.ebiederm.org>
-In-Reply-To: <878shcyskx.fsf_-_@x220.int.ebiederm.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 28 May 2020 12:05:15 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whbYiVkYy0KpjssAEiEApEUogKpyL1VFWNic4wSp9iDYg@mail.gmail.com>
-Message-ID: <CAHk-=whbYiVkYy0KpjssAEiEApEUogKpyL1VFWNic4wSp9iDYg@mail.gmail.com>
-Subject: Re: [PATCH 02/11] exec: Introduce active_per_clear the per file
- version of per_clear
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Rob Landley <rob@landley.net>,
-        Bernd Edlinger <bernd.edlinger@hotmail.de>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
+References: <20200511131350.29638-1-anders.roxell@linaro.org> <CADYN=9LkA2h6dANREfPQq4iDvVEJX1wAdxjv31mpVBkaM_g0ZQ@mail.gmail.com>
+In-Reply-To: <CADYN=9LkA2h6dANREfPQq4iDvVEJX1wAdxjv31mpVBkaM_g0ZQ@mail.gmail.com>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Thu, 28 May 2020 12:07:13 -0700
+Message-ID: <CAFd5g452oiRpMa3S=F9wFsb9SRKBYXJFuusge+6=zCEFX74kYQ@mail.gmail.com>
+Subject: Re: [PATCH v3 0/6] Enable as many KUnit tests as possible
+To:     Anders Roxell <anders.roxell@linaro.org>,
+        Shuah Khan <skhan@linuxfoundation.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        John Johansen <john.johansen@canonical.com>,
         James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
-        Andy Lutomirski <luto@amacapital.net>
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        KUnit Development <kunit-dev@googlegroups.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-ext4@vger.kernel.org,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Marco Elver <elver@google.com>, David Gow <davidgow@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-As per the naming of "per_clear", I find the "active_per_clear" name
-even more confusing.
+On Wed, May 27, 2020 at 4:49 AM Anders Roxell <anders.roxell@linaro.org> wrote:
+>
+> Hi all,
+>
+> Friendly ping: who can take this?
 
-It has all the same issues, but doubled down. What does "active" mean?
+Sorry, I just reviewed the last patch.
 
-              Linus
+Shuah, do you mind picking this up for 5.8?
+
+> Cheers,
+> Anders
+>
+> On Mon, 11 May 2020 at 15:14, Anders Roxell <anders.roxell@linaro.org> wrote:
+> >
+> > Hi,
+> >
+> > This patchset will try to enable as many KUnit test fragments as
+> > possible for the current .config file.
+> > This will make it easier for both developers that tests their specific
+> > feature and also for test-systems that would like to get as much as
+> > possible for their current .config file.
+> >
+> > I will send a separate KCSAN KUnit patch after this patchset since that
+> > isn't in mainline yet.
+> >
+> > Since v2:
+> > Fixed David's comments. KUNIT_RUN_ALL -> KUNIT_ALL_TESTS, and he
+> > suggested a great help text.
+> >
+> > Since v1:
+> > Marco commented to split up the patches, and change a "." to a ",".
+> >
+> >
+> > Cheers,
+> > Anders
+> >
+> > Anders Roxell (6):
+> >   kunit: Kconfig: enable a KUNIT_ALL_TESTS fragment
+> >   kunit: default KUNIT_* fragments to KUNIT_ALL_TESTS
+> >   lib: Kconfig.debug: default KUNIT_* fragments to KUNIT_ALL_TESTS
+> >   drivers: base: default KUNIT_* fragments to KUNIT_ALL_TESTS
+> >   fs: ext4: default KUNIT_* fragments to KUNIT_ALL_TESTS
+> >   security: apparmor: default KUNIT_* fragments to KUNIT_ALL_TESTS
+> >
+> >  drivers/base/Kconfig      |  3 ++-
+> >  drivers/base/test/Kconfig |  3 ++-
+> >  fs/ext4/Kconfig           |  3 ++-
+> >  lib/Kconfig.debug         |  6 ++++--
+> >  lib/kunit/Kconfig         | 23 ++++++++++++++++++++---
+> >  security/apparmor/Kconfig |  3 ++-
+> >  6 files changed, 32 insertions(+), 9 deletions(-)
+> >
+> > --
+> > 2.20.1
+> >
+
+Thanks!
