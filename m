@@ -4,32 +4,32 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A0D6C433E0
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 May 2020 15:47:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69FEAC433E0
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 May 2020 15:47:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 171D8207BC
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 May 2020 15:47:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49205207F5
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 May 2020 15:47:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404701AbgE1PrS (ORCPT
+        id S2404611AbgE1Prz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 28 May 2020 11:47:18 -0400
-Received: from out02.mta.xmission.com ([166.70.13.232]:50642 "EHLO
+        Thu, 28 May 2020 11:47:55 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:50942 "EHLO
         out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404679AbgE1PrF (ORCPT
+        with ESMTP id S2404544AbgE1Pry (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 28 May 2020 11:47:05 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
+        Thu, 28 May 2020 11:47:54 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
         by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.90_1)
         (envelope-from <ebiederm@xmission.com>)
-        id 1jeKkJ-0004Qw-2N; Thu, 28 May 2020 09:47:03 -0600
+        id 1jeKl6-0004W3-WE; Thu, 28 May 2020 09:47:53 -0600
 Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.87)
         (envelope-from <ebiederm@xmission.com>)
-        id 1jeKkH-00024D-UJ; Thu, 28 May 2020 09:47:02 -0600
+        id 1jeKl5-00075p-Nb; Thu, 28 May 2020 09:47:52 -0600
 From:   ebiederm@xmission.com (Eric W. Biederman)
 To:     <linux-kernel@vger.kernel.org>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
@@ -51,20 +51,20 @@ References: <87h7wujhmz.fsf@x220.int.ebiederm.org>
         <87v9l4zyla.fsf_-_@x220.int.ebiederm.org>
         <877dx822er.fsf_-_@x220.int.ebiederm.org>
         <87k10wysqz.fsf_-_@x220.int.ebiederm.org>
-Date:   Thu, 28 May 2020 10:43:09 -0500
+Date:   Thu, 28 May 2020 10:44:00 -0500
 In-Reply-To: <87k10wysqz.fsf_-_@x220.int.ebiederm.org> (Eric W. Biederman's
         message of "Thu, 28 May 2020 10:38:28 -0500")
-Message-ID: <87wo4wxdyq.fsf_-_@x220.int.ebiederm.org>
+Message-ID: <87r1v4xdxb.fsf_-_@x220.int.ebiederm.org>
 User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
-X-XM-SPF: eid=1jeKkH-00024D-UJ;;;mid=<87wo4wxdyq.fsf_-_@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+4yct8JYeIUy8W9FZXXCz8gjMVFKhpUuQ=
+X-XM-SPF: eid=1jeKl5-00075p-Nb;;;mid=<87r1v4xdxb.fsf_-_@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19VmBdjmZhr7D8UoDa9++wsyncidLVa1jw=
 X-SA-Exim-Connect-IP: 68.227.160.95
 X-SA-Exim-Mail-From: ebiederm@xmission.com
 Subject: [PATCH 04/11] exec: Move uid/gid handling from creds_from_file into bprm_fill_uid
 X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
