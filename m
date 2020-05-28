@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F26D9C433DF
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 May 2020 05:41:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15AD3C433E0
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 May 2020 05:41:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D1F742089D
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 May 2020 05:41:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7C3120899
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 May 2020 05:41:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="taesqRkS"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="M7xMSmzt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728143AbgE1Flc (ORCPT
+        id S1728073AbgE1FlT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 28 May 2020 01:41:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44776 "EHLO
+        Thu, 28 May 2020 01:41:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44742 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727105AbgE1Fl1 (ORCPT
+        with ESMTP id S1728069AbgE1FlQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 28 May 2020 01:41:27 -0400
+        Thu, 28 May 2020 01:41:16 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F17EFC05BD1E;
-        Wed, 27 May 2020 22:41:26 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78C73C05BD1E;
+        Wed, 27 May 2020 22:41:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=5X3G8p2gpeq1mWhpOrbRnLoYssjgaGtuSsqN+ape3Fw=; b=taesqRkSyAIu/2pRL+KOySjFhB
-        TtDF0spTbSsTcQcYEPzf2Xmk+u9SrWaeiUz7FKdnwI3eDaBkdhFATqSDy0i/tUSaWJbuVXaA81uFB
-        L5LMUM5VHRtiu+OmIVREgnc/f9BqnApHYE8W/M6wh296l/FsUV3pq5V7nkguM+uzMBgkvJ4+SDK4e
-        FX/KWuchAoMHUAePKpzWoNFOkusxGaycL3QI4w3QBVf4nAk5u7qZ4C58iQzb0UfuU4I5/aMKJ4TTu
-        qVqApMY1QvyibhhK6mE2aApD4C36fsXbEQbqFryR7NghXc/f2aowUTV0GCuZjZtOAWYlW02c+hGSK
-        q7BiKACg==;
+        bh=9a0yuZ9jbeWWLZ6wdj7/oXrc5yC9mMpHwfG04VNOeCA=; b=M7xMSmztFHAzOggW+dpxqIqIlt
+        NzGNtVdU1jRI3uxrrEAZRnXY0N0IqqarK715bHKSTxJFuwD1+HcwaX5Ia/QqyzlRWtXIyIvCZ6dIw
+        LGmT4rLbNVboHYpbsvj6LzHQ8JZcQt5SX/asuSYp9mi5o+Rf3vwclhtm0aqfQnDdi/nR2K+x4EnwG
+        EmxDyzUWEl7lKKIpjlulk9ZLOlbalGHBh0pBOGqITNC6J33UJeVdFNG5xbgeRPcVbkzViBTve/24/
+        Y01dRqMlSw83VubX4LK0x1UqEsRNHOyDTAT2mSevyKfyJhGdLa0SCZaDVAv/S5SCiQFu+5RN3t+fR
+        JnYST7MA==;
 Received: from p4fdb1ad2.dip0.t-ipconnect.de ([79.219.26.210] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jeBIB-0002St-VR; Thu, 28 May 2020 05:41:24 +0000
+        id 1jeBI0-0002PW-Mw; Thu, 28 May 2020 05:41:13 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Al Viro <viro@zeniv.linux.org.uk>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
@@ -47,9 +47,9 @@ Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         netfilter-devel@vger.kernel.org
-Subject: [PATCH 14/14] fs: don't change the address limit for ->read_iter in __kernel_read
-Date:   Thu, 28 May 2020 07:40:43 +0200
-Message-Id: <20200528054043.621510-15-hch@lst.de>
+Subject: [PATCH 10/14] fs: add a __kernel_read helper
+Date:   Thu, 28 May 2020 07:40:39 +0200
+Message-Id: <20200528054043.621510-11-hch@lst.de>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200528054043.621510-1-hch@lst.de>
 References: <20200528054043.621510-1-hch@lst.de>
@@ -60,60 +60,59 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-If we read to a file that implements ->read_iter there is no need
-to change the address limit if we send a kvec down.  Implement that
-case, and prefer it over using plain ->read with a changed address
-limit if available.
+This is the counterpart to __kernel_write, and skip the rw_verify_area
+call compared to kernel_read.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/read_write.c | 24 +++++++++++++++++-------
- 1 file changed, 17 insertions(+), 7 deletions(-)
+ fs/read_write.c    | 21 +++++++++++++++++++++
+ include/linux/fs.h |  1 +
+ 2 files changed, 22 insertions(+)
 
 diff --git a/fs/read_write.c b/fs/read_write.c
-index 46ddfce17e839..c93acbd8bf5a3 100644
+index 8cfca5f8fc3ce..bd12af8a895c8 100644
 --- a/fs/read_write.c
 +++ b/fs/read_write.c
-@@ -421,7 +421,6 @@ static ssize_t new_sync_read(struct file *filp, char __user *buf, size_t len, lo
+@@ -430,6 +430,27 @@ ssize_t __vfs_read(struct file *file, char __user *buf, size_t count,
+ 		return -EINVAL;
+ }
  
- ssize_t __kernel_read(struct file *file, void *buf, size_t count, loff_t *pos)
- {
--	mm_segment_t old_fs = get_fs();
- 	ssize_t ret;
- 
- 	if (!(file->f_mode & FMODE_CAN_READ))
-@@ -429,14 +428,25 @@ ssize_t __kernel_read(struct file *file, void *buf, size_t count, loff_t *pos)
- 
- 	if (count > MAX_RW_COUNT)
- 		count =  MAX_RW_COUNT;
--	set_fs(KERNEL_DS);
--	if (file->f_op->read)
-+	if (file->f_op->read_iter) {
-+		struct kvec iov = { .iov_base = buf, .iov_len = count };
-+		struct kiocb kiocb;
-+		struct iov_iter iter;
++ssize_t __kernel_read(struct file *file, void *buf, size_t count, loff_t *pos)
++{
++	mm_segment_t old_fs = get_fs();
++	ssize_t ret;
 +
-+		init_sync_kiocb(&kiocb, file);
-+		kiocb.ki_pos = *pos;
-+		iov_iter_kvec(&iter, READ, &iov, 1, count);
-+		ret = file->f_op->read_iter(&kiocb, &iter);
-+		*pos = kiocb.ki_pos;
-+	} else if (file->f_op->read) {
-+		mm_segment_t old_fs = get_fs();
++	if (!(file->f_mode & FMODE_CAN_READ))
++		return -EINVAL;
 +
-+		set_fs(KERNEL_DS);
- 		ret = file->f_op->read(file, (void __user *)buf, count, pos);
--	else if (file->f_op->read_iter)
--		ret = new_sync_read(file, (void __user *)buf, count, pos);
--	else
-+		set_fs(old_fs);
-+	} else {
- 		ret = -EINVAL;
--	set_fs(old_fs);
++	if (count > MAX_RW_COUNT)
++		count =  MAX_RW_COUNT;
++	set_fs(KERNEL_DS);
++	ret = __vfs_read(file, (void __user *)buf, count, pos);
++	set_fs(old_fs);
++	if (ret > 0) {
++		fsnotify_access(file);
++		add_rchar(current, ret);
 +	}
- 	if (ret > 0) {
- 		fsnotify_access(file);
- 		add_rchar(current, ret);
++	inc_syscr(current);
++	return ret;
++}
++
+ ssize_t kernel_read(struct file *file, void *buf, size_t count, loff_t *pos)
+ {
+ 	mm_segment_t old_fs;
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 21f126957c2cf..6441aaa25f8f2 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3011,6 +3011,7 @@ extern int kernel_read_file_from_path_initns(const char *, void **, loff_t *, lo
+ extern int kernel_read_file_from_fd(int, void **, loff_t *, loff_t,
+ 				    enum kernel_read_file_id);
+ extern ssize_t kernel_read(struct file *, void *, size_t, loff_t *);
++ssize_t __kernel_read(struct file *file, void *buf, size_t count, loff_t *pos);
+ extern ssize_t kernel_write(struct file *, const void *, size_t, loff_t *);
+ extern ssize_t __kernel_write(struct file *, const void *, size_t, loff_t *);
+ extern struct file * open_exec(const char *);
 -- 
 2.26.2
 
