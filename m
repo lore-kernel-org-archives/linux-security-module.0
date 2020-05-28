@@ -2,190 +2,152 @@ Return-Path: <SRS0=XUZh=7K=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E270C433E0
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 May 2020 09:49:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7C7BC433E0
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 May 2020 12:03:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 37E2F20B80
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 May 2020 09:49:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9BF4215A4
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 May 2020 12:03:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1590667402;
+	bh=5J7NALb6RK7TOv0ylJHhaJY8+SNpxeudsxz5OEu+xro=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=PmtpDPhYqeWCTKcuVKLwUhuQLgziPJD1QvXpEhP6cTiPJFXVFZOCpQeKylZEVejGN
+	 ETeLE1t5Xua61bYufybQ6dsbZhoRrKXwMLIv9QgTnljQCWO0IKJ4IG9Yy0G1uZYqoK
+	 wyZobTewu2CqZbi9ruSRfiM/S4713+0kF8LrcIeY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728449AbgE1JtI (ORCPT
+        id S2388980AbgE1MDV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 28 May 2020 05:49:08 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:46125 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728300AbgE1JtI (ORCPT
+        Thu, 28 May 2020 08:03:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49964 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389020AbgE1L5a (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 28 May 2020 05:49:08 -0400
-Received: from ip5f5af183.dynamic.kabel-deutschland.de ([95.90.241.131] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1jeF9V-0002NQ-9d; Thu, 28 May 2020 09:48:41 +0000
-Date:   Thu, 28 May 2020 11:48:39 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Nicolas Viennot <Nicolas.Viennot@twosigma.com>
-Cc:     Adrian Reber <areber@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Pavel Emelyanov <ovzxemul@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Andrei Vagin <avagin@gmail.com>,
-        =?utf-8?B?TWljaGHFgiBDxYJhcGnFhHNraQ==?= <mclapinski@google.com>,
-        Kamil Yurtsever <kyurtsever@google.com>,
-        Dirk Petersen <dipeit@gmail.com>,
-        Christine Flood <chf@redhat.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Radostin Stoyanov <rstoyanov1@gmail.com>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        Serge Hallyn <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Sargun Dhillon <sargun@sargun.me>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        Eric Paris <eparis@parisplace.org>,
-        Jann Horn <jannh@google.com>
-Subject: Re: [PATCH] capabilities: Introduce CAP_RESTORE
-Message-ID: <20200528094839.gw7aqd3xs3kix273@wittgenstein>
-References: <20200522055350.806609-1-areber@redhat.com>
- <dc86dffb-c7f8-15bb-db4e-be135da650cc@schaufler-ca.com>
- <20200525080541.GF104922@dcbz.redhat.com>
- <877dwybxvi.fsf@x220.int.ebiederm.org>
- <20200527141403.GC250149@dcbz.redhat.com>
- <20200527152955.jbbipgb6icb4nwgv@wittgenstein>
- <d5ecde0c94014a4fad090e44377e9852@EXMBDFT11.ad.twosigma.com>
+        Thu, 28 May 2020 07:57:30 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 23AB021655;
+        Thu, 28 May 2020 11:57:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1590667049;
+        bh=5J7NALb6RK7TOv0ylJHhaJY8+SNpxeudsxz5OEu+xro=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=GMhhWJRIRM1rtrP2sszB3QL6gILzw0ryKX1hE+6hwQsXoU1Qrwj03/JCjeZMrBu6a
+         jJQT2xhekoMuU54mDS4WH9lvm/Q6mYU5uCZlAnuGZ3XBEMSaOW5fpDLeJC5kQzJn3Z
+         qrlxb9Gz7H2EHs8TqL8658JBcwhqtuMkq7GtC2PM=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>,
+        kernel test robot <lkp@intel.com>,
+        "Paul E . McKenney" <paulmck@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-ima-devel@lists.sourceforge.net,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 03/17] evm: Fix RCU list related warnings
+Date:   Thu, 28 May 2020 07:57:10 -0400
+Message-Id: <20200528115724.1406376-3-sashal@kernel.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200528115724.1406376-1-sashal@kernel.org>
+References: <20200528115724.1406376-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <d5ecde0c94014a4fad090e44377e9852@EXMBDFT11.ad.twosigma.com>
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, May 27, 2020 at 06:05:55PM +0000, Nicolas Viennot wrote:
-> > > Also in this thread Kamil mentioned that they also need calling prctl 
-> > > with PR_SET_MM during restore in their production setup.
-> >
-> > We're using that as well but it really feels like this:
-> >
-> >	prctl_map = (struct prctl_mm_map){
-> >	    .start_code = start_code,
-> >	    .end_code = end_code,
-> >	    .start_stack = start_stack,
-> >	    .start_data = start_data,
-> >	    .end_data = end_data,
-> >	    .start_brk = start_brk,
-> >	    .brk = brk_val,
-> >	    .arg_start = arg_start,
-> >	    .arg_end = arg_end,
-> >	    .env_start = env_start,
-> >	    .env_end = env_end,
-> >	    .auxv = NULL,
-> >	    .auxv_size = 0,
-> >	    .exe_fd = -1,
-> >	};
-> >
-> > should belong under ns_capable(CAP_SYS_ADMIN). Why is that necessary to relax?
-> 
-> When the prctl(PR_SET_MM_MAP...), the only privileged operation is to change the symlink of /proc/self/exe via set_mm_exe_file().
-> See https://github.com/torvalds/linux/blob/444fc5cde64330661bf59944c43844e7d4c2ccd8/kernel/sys.c#L2001-L2004
-> It needs CAP_SYS_ADMIN of the current namespace.
+From: Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
 
-This already has been relaxed before (see commit below) and why I'm at
-least symbolically pushing back is that I'm getting worried that we're
-just removing restrictions left and right and making kernel interfaces
-available to fully unprivileged user that very much seem to belong into
-the realm of local cap_sys_admin.
+[ Upstream commit 770f60586d2af0590be263f55fd079226313922c ]
 
-    prctl: Allow local CAP_SYS_ADMIN changing exe_file
+This patch fixes the following warning and few other instances of
+traversal of evm_config_xattrnames list:
 
-    During checkpointing and restore of userspace tasks
-    we bumped into the situation, that it's not possible
-    to restore the tasks, which user namespace does not
-    have uid 0 or gid 0 mapped.
+[   32.848432] =============================
+[   32.848707] WARNING: suspicious RCU usage
+[   32.848966] 5.7.0-rc1-00006-ga8d5875ce5f0b #1 Not tainted
+[   32.849308] -----------------------------
+[   32.849567] security/integrity/evm/evm_main.c:231 RCU-list traversed in non-reader section!!
 
-    People create user namespace mappings like they want,
-    and there is no a limitation on obligatory uid and gid
-    "must be mapped". So, if there is no uid 0 or gid 0
-    in the mapping, it's impossible to restore mm->exe_file
-    of the processes belonging to this user namespace.
+Since entries are only added to the list and never deleted, use
+list_for_each_entry_lockless() instead of list_for_each_entry_rcu for
+traversing the list.  Also, add a relevant comment in evm_secfs.c to
+indicate this fact.
 
-    Also, there is no a workaround. It's impossible
-    to create a temporary uid/gid mapping, because
-    only one write to /proc/[pid]/uid_map and gid_map
-    is allowed during a namespace lifetime.
-    If there is an entry, then no more mapings can't be
-    written. If there isn't an entry, we can't write
-    there too, otherwise user task won't be able
-    to do that in the future.
+Reported-by: kernel test robot <lkp@intel.com>
+Suggested-by: Paul E. McKenney <paulmck@kernel.org>
+Signed-off-by: Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
+Acked-by: Paul E. McKenney <paulmck@kernel.org> (RCU viewpoint)
+Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ security/integrity/evm/evm_crypto.c | 2 +-
+ security/integrity/evm/evm_main.c   | 4 ++--
+ security/integrity/evm/evm_secfs.c  | 9 ++++++++-
+ 3 files changed, 11 insertions(+), 4 deletions(-)
 
-    The patch changes the check, and looks for CAP_SYS_ADMIN
-    instead of zero uid and gid. This allows to restore
-    a task independently of its user namespace mappings.
+diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
+index f0878d81dcef..d20f5792761c 100644
+--- a/security/integrity/evm/evm_crypto.c
++++ b/security/integrity/evm/evm_crypto.c
+@@ -215,7 +215,7 @@ static int evm_calc_hmac_or_hash(struct dentry *dentry,
+ 	data->hdr.length = crypto_shash_digestsize(desc->tfm);
+ 
+ 	error = -ENODATA;
+-	list_for_each_entry_rcu(xattr, &evm_config_xattrnames, list) {
++	list_for_each_entry_lockless(xattr, &evm_config_xattrnames, list) {
+ 		bool is_ima = false;
+ 
+ 		if (strcmp(xattr->name, XATTR_NAME_IMA) == 0)
+diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+index 7f3f54d89a6e..e11d860fdce4 100644
+--- a/security/integrity/evm/evm_main.c
++++ b/security/integrity/evm/evm_main.c
+@@ -102,7 +102,7 @@ static int evm_find_protected_xattrs(struct dentry *dentry)
+ 	if (!(inode->i_opflags & IOP_XATTR))
+ 		return -EOPNOTSUPP;
+ 
+-	list_for_each_entry_rcu(xattr, &evm_config_xattrnames, list) {
++	list_for_each_entry_lockless(xattr, &evm_config_xattrnames, list) {
+ 		error = __vfs_getxattr(dentry, inode, xattr->name, NULL, 0);
+ 		if (error < 0) {
+ 			if (error == -ENODATA)
+@@ -233,7 +233,7 @@ static int evm_protected_xattr(const char *req_xattr_name)
+ 	struct xattr_list *xattr;
+ 
+ 	namelen = strlen(req_xattr_name);
+-	list_for_each_entry_rcu(xattr, &evm_config_xattrnames, list) {
++	list_for_each_entry_lockless(xattr, &evm_config_xattrnames, list) {
+ 		if ((strlen(xattr->name) == namelen)
+ 		    && (strncmp(req_xattr_name, xattr->name, namelen) == 0)) {
+ 			found = 1;
+diff --git a/security/integrity/evm/evm_secfs.c b/security/integrity/evm/evm_secfs.c
+index 77de71b7794c..f112ca593adc 100644
+--- a/security/integrity/evm/evm_secfs.c
++++ b/security/integrity/evm/evm_secfs.c
+@@ -237,7 +237,14 @@ static ssize_t evm_write_xattrs(struct file *file, const char __user *buf,
+ 		goto out;
+ 	}
+ 
+-	/* Guard against races in evm_read_xattrs */
++	/*
++	 * xattr_list_mutex guards against races in evm_read_xattrs().
++	 * Entries are only added to the evm_config_xattrnames list
++	 * and never deleted. Therefore, the list is traversed
++	 * using list_for_each_entry_lockless() without holding
++	 * the mutex in evm_calc_hmac_or_hash(), evm_find_protected_xattrs()
++	 * and evm_protected_xattr().
++	 */
+ 	mutex_lock(&xattr_list_mutex);
+ 	list_for_each_entry(tmp, &evm_config_xattrnames, list) {
+ 		if (strcmp(xattr->name, tmp->name) == 0) {
+-- 
+2.25.1
 
-> 
-> I would argue that setting the current process exe file check should just be reduced to a "can you ptrace a children" check.
-> Here's why: any process can masquerade into another executable with ptrace.
-> One can fork a child, ptrace it, have the child execve("target_exe"), then replace its memory content with an arbitrary program.
-
-Then it should probably be relaxed to CAP_SYS_PTRACE in the user
-namespace and not CAP_CHECKPOINT_RESTORE. (But apparently you also have
-a way of achieving what you want anyway. Imho, it's not necessarily
-wrong to require a bit more work when you want something like fully
-unprivileged c/r that's a rather special interest group.)
-
-> With CRIU's libcompel parasite mechanism (https://criu.org/Compel) this is fairly easy to implement.
-> In fact, we could modify CRIU to do just that (but with a fair amount of efforts due to the way CRIU is written),
-> and not rely on being able to SET_MM_EXE_FILE via prctl(). In turn, that would give an easy way to masquerade any process
-> into another one, provided that one can ptrace a child.
-> 
-> When not using PR_SET_MM_MAP, but using SET_MM_EXE_FILE, the CAP_RESOURCES at the root namespace level is required:
-> https://github.com/torvalds/linux/blob/444fc5cde64330661bf59944c43844e7d4c2ccd8/kernel/sys.c#L2109
-> This seems inconsistent. Also for some reason changing auxv is not privileged if using prctl via the MM_MAP mechanism, but is privileged otherwise.
-
-Fwiw, it always helps if people take the time to dig through the history
-of specifc changes. That usually helps explain why things ended up as
-confusing as they are now:
-
-	commit f606b77f1a9e362451aca8f81d8f36a3a112139e
-	Author: Cyrill Gorcunov <gorcunov@openvz.org>
-	Date:   Thu Oct 9 15:27:37 2014 -0700
-	
-	    prctl: PR_SET_MM -- introduce PR_SET_MM_MAP operation
-	
-	    During development of c/r we've noticed that in case if we need to support
-	    user namespaces we face a problem with capabilities in prctl(PR_SET_MM,
-	    ...) call, in particular once new user namespace is created
-	    capable(CAP_SYS_RESOURCE) no longer passes.
-	
-	    A approach is to eliminate CAP_SYS_RESOURCE check but pass all new values
-	    in one bundle, which would allow the kernel to make more intensive test
-
-[snip]
-
-	Still note that updating exe-file link now doesn't require sys-resource
-    	capability anymore, after all there is no much profit in preventing setup
-    	own file link (there are a number of ways to execute own code -- ptrace,
-    	ld-preload, so that the only reliable way to find which exactly code is
-    	executed is to inspect running program memory).  Still we require the
-    	caller to be at least user-namespace root user.
-
-    	I believe the old interface should be deprecated and ripped off in a
-    	couple of kernel releases if no one against.
-
-Sine you already have an interface that works and the argument for the
-new interface is that it let's the kernel do better validation if all
-arguments be passed at once I don't see the point in removing the
-CAP_SYS_RESOURCE restricting from the old interface possible introducing
-more maintenance burden or bugs when changing this. It would also
-encourage users to use an interface that even c/r people seemed to have
-viewed as being deprecated.
-
-Christian
