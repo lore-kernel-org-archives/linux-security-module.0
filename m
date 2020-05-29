@@ -2,181 +2,194 @@ Return-Path: <SRS0=ngOM=7L=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 292E8C433DF
-	for <linux-security-module@archiver.kernel.org>; Fri, 29 May 2020 19:19:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C709C433E1
+	for <linux-security-module@archiver.kernel.org>; Fri, 29 May 2020 19:27:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 04D6520723
-	for <linux-security-module@archiver.kernel.org>; Fri, 29 May 2020 19:19:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1590779967;
-	bh=wI+/kMrA9GhjxeBwubeLYcKLqzRSiFv0lgXwmLa3XuY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=edRLtqzg29IusM7M2NzvAaY3z88TMaUMRF4d/SbSKqCupBuN4Q9jqXUiDsty9a4Ly
-	 nHjhkzaSi9cTP1CrV6Py2yiARru6H+Ah5bibhvXrY+k47Svtas47YS7s79YNAG9QDZ
-	 djFjFjeJSbgBlUUMmaZtlTdQkgensKFJ6KPbyaKo=
+	by mail.kernel.org (Postfix) with ESMTP id 4EB2020810
+	for <linux-security-module@archiver.kernel.org>; Fri, 29 May 2020 19:27:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="C3BYX09W"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727117AbgE2TTZ (ORCPT
+        id S1726487AbgE2T1H (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 29 May 2020 15:19:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57670 "EHLO
+        Fri, 29 May 2020 15:27:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58854 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726966AbgE2TTY (ORCPT
+        with ESMTP id S1726866AbgE2T1G (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 29 May 2020 15:19:24 -0400
-Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13F66C03E969
-        for <linux-security-module@vger.kernel.org>; Fri, 29 May 2020 12:19:24 -0700 (PDT)
-Received: by mail-lj1-x242.google.com with SMTP id c11so627203ljn.2
-        for <linux-security-module@vger.kernel.org>; Fri, 29 May 2020 12:19:23 -0700 (PDT)
+        Fri, 29 May 2020 15:27:06 -0400
+Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52EE1C08C5C8
+        for <linux-security-module@vger.kernel.org>; Fri, 29 May 2020 12:27:06 -0700 (PDT)
+Received: by mail-pl1-x643.google.com with SMTP id x11so1629575plv.9
+        for <linux-security-module@vger.kernel.org>; Fri, 29 May 2020 12:27:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vo9kcqH3+r49rRyfr5F53x5hhASyTdSUh1QFspC2AyA=;
-        b=NLTb+v6BJYCqO+v7twCPV6ZmPrFD83aAxXEWTUdawlUiCz2SyXVz4O/AOpY8YEuVP6
-         9YhQkmR2+9ilOO6XVHF+SolA9uT3QoTV7VuPoTF/1gB1t6wb7vZZm9UpNYYZuiTecknY
-         S3TZuhMi7aCqd/4zIdlB499SzVqQ4Eyuj6l7M=
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=o/t21DOf3N4tU3q9CHLKe4uAPhKpGjNd6jUKhRTo7Pw=;
+        b=C3BYX09WdYjGq3THgqRtIpX1kmXGTzdTjyvnJTXDcMbGuWUQAZA0ntUajAy2AsM5J3
+         4BT26rKrS9RgdJAeimaPzZLqBvcCEj00rQymm1Tt8jqS/LEc6HqrTjT6xASBAQqzQMig
+         iHpw94VcQUYfOzJffP6KUqLz/ZEdLCyigHOUI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vo9kcqH3+r49rRyfr5F53x5hhASyTdSUh1QFspC2AyA=;
-        b=gufOvh2AEQnte6+hPKcJcesrDlvXBOR6/SnXMkr02bdol3cbjuR60iIvpo/89bxAav
-         2apig7zEIwQB5bJEnmLUJwReFRMVpmBpO+CxrXlnGg9yFjG9JTcPCyIHD25EVwRbwlpC
-         03cH8WVYZKLtiqKz9+uK76hAbk5qz8hS5dnNTp+5fcG4065IC2bxh6OcM8FX1GpzADRG
-         Lv2XkQwpzBJl45EMCyjugV8wMw9Hs3hGMUH5A8NSX2V+o9Qj/9VmgZcPOVncyD6Y9Xm4
-         PmIEFwmzvBmj4mpAiuunJbFRDg38uN8jIVv8fJGanpGXiZcUfaya0I2HIIFPSlTPV40K
-         96OQ==
-X-Gm-Message-State: AOAM533G+P6p1rJvTrrd+nf9E5UEhTC9zoyBhIYVqolJg5p4YKK/7Wft
-        V3vXVsTdSkHgOeMfqW0r8R3UNHVSzM8=
-X-Google-Smtp-Source: ABdhPJzKphhAqfQmpJmHqu+JvORkcc6fjfMX1PQFNq1eD9AYe33jtKu8XFmHNTlcNhuQtQhrTBstNg==
-X-Received: by 2002:a2e:5451:: with SMTP id y17mr1782351ljd.223.1590779961145;
-        Fri, 29 May 2020 12:19:21 -0700 (PDT)
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com. [209.85.208.181])
-        by smtp.gmail.com with ESMTPSA id v22sm2168541ljj.75.2020.05.29.12.19.19
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 May 2020 12:19:19 -0700 (PDT)
-Received: by mail-lj1-f181.google.com with SMTP id s1so642778ljo.0
-        for <linux-security-module@vger.kernel.org>; Fri, 29 May 2020 12:19:19 -0700 (PDT)
-X-Received: by 2002:a2e:b16e:: with SMTP id a14mr4488600ljm.70.1590779959015;
- Fri, 29 May 2020 12:19:19 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=o/t21DOf3N4tU3q9CHLKe4uAPhKpGjNd6jUKhRTo7Pw=;
+        b=BmZG86NBISuC60OmgHN3uFMM5Vns/3iMkPOqkpVmdtmxTla3UlkqKoJ7MM1/F/sB70
+         VNeqbgaTKXaA80sVOmiGMft1RX8snp6Q/uV0p1PGyill4ZVv6t7zCcxIt7Ze3PYckWeH
+         eFow2QsfpZEDt1PAk5xbP2TiFJ58+q4vgFmvIDKSBwZeC/Zx1pURt+ph/oozLlyJyxQD
+         /asYIXcVtK0VDYpU5XU+aAQCh+j3QUO2l9/fzYix86F3dyQM+Kpctn1gUGduMADC2oxf
+         TZlp73jpFkBWCeNlkmf29SfVQ/ix2wlKaTHocne1aYQj5v7OAMRPiVnMRe2EBaw38fVH
+         a0kQ==
+X-Gm-Message-State: AOAM532vZO4PCNwnQ2xeavfS+LT/052oJGCfWzIIDcTaRSSGW3O4cgvm
+        98r0JyZjWrsVtFS0Op8Tdi11jyjzIQ3/fw==
+X-Google-Smtp-Source: ABdhPJwpDHVpkT7XWfMKgzeXt9Zai0pArlJJUrlzK2q7jlmWeLfEStY3jHhhr3icXxEA51QG3pIaow==
+X-Received: by 2002:a17:90a:cb13:: with SMTP id z19mr103549pjt.169.1590780425670;
+        Fri, 29 May 2020 12:27:05 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id h3sm2246320pfr.2.2020.05.29.12.27.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 May 2020 12:27:04 -0700 (PDT)
+Date:   Fri, 29 May 2020 12:27:03 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     "zhujianwei (C)" <zhujianwei7@huawei.com>,
+        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        Hehuazhen <hehuazhen@huawei.com>,
+        Lennart Poettering <lennart@poettering.net>,
+        Christian Ehrhardt <christian.ehrhardt@canonical.com>,
+        Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>
+Subject: Re: new seccomp mode aims to improve performance
+Message-ID: <202005291043.A63D910A8@keescook>
+References: <c22a6c3cefc2412cad00ae14c1371711@huawei.com>
+ <CAADnVQLnFuOR+Xk1QXpLFGHx-8StPCye7j5UgKbBoLrmKtygQA@mail.gmail.com>
+ <202005290903.11E67AB0FD@keescook>
 MIME-Version: 1.0
-References: <CAHk-=wj3iGQqjpvc+gf6+C29Jo4COj6OQQFzdY0h5qvYKTdCow@mail.gmail.com>
- <20200528054043.621510-1-hch@lst.de> <22778.1590697055@warthog.procyon.org.uk>
- <f89f0f7f-83b4-72c6-7d08-cb6eaeccd443@schaufler-ca.com> <3aea7a1c10e94ea2964fa837ae7d8fe2@AcuMS.aculab.com>
-In-Reply-To: <3aea7a1c10e94ea2964fa837ae7d8fe2@AcuMS.aculab.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 29 May 2020 12:19:02 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjR0H3+2ba0UUWwoYzYBH0GX9yTf5dj2MZyo0xvyzvJnA@mail.gmail.com>
-Message-ID: <CAHk-=wjR0H3+2ba0UUWwoYzYBH0GX9yTf5dj2MZyo0xvyzvJnA@mail.gmail.com>
-Subject: Re: clean up kernel_{read,write} & friends v2
-To:     David Laight <David.Laight@aculab.com>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        David Howells <dhowells@redhat.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Al Viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        NetFilter <netfilter-devel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202005290903.11E67AB0FD@keescook>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, May 29, 2020 at 6:08 AM David Laight <David.Laight@aculab.com> wrote:
->
-> A wide monitor is for looking at lots of files.
+On Fri, May 29, 2020 at 09:09:28AM -0700, Kees Cook wrote:
+> On Fri, May 29, 2020 at 08:43:56AM -0700, Alexei Starovoitov wrote:
+> > I don't think your hunch at where cpu is spending cycles is correct.
+> > Could you please do two experiments:
+> > 1. try trivial seccomp bpf prog that simply returns 'allow'
+> > 2. replace bpf_prog_run_pin_on_cpu() in seccomp.c with C code
+> >   that returns 'allow' and make sure it's noinline or in a different C file,
+> >   so that compiler doesn't optimize the whole seccomp_run_filters() into a nop.
+> > 
+> > Then measure performance of both.
+> > I bet you'll see exactly the same numbers.
+> 
+> Android has already done this, it appeared to not be the same. Calling
+> into a SECCOMP_RET_ALLOW filter had a surprisingly high cost. I'll see
+> if I can get you the numbers. I was frankly quite surprised -- I
+> understood the bulk of the seccomp overhead to be in taking the TIF_WORK
+> path, copying arguments, etc, but something else is going on there.
 
-Not necessarily.
+So while it's not the Android measurements, here's what I'm seeing on
+x86_64 (this is hardly a perfect noiseless benchmark, but sampling error
+appears to close to 1%):
 
-Excessive line breaks are BAD. They cause real and every-day problems.
 
-They cause problems for things like "grep" both in the patterns and in
-the output, since grep (and a lot of other very basic unix utilities)
-is fundamentally line-based.
+net.core.bpf_jit_enable=0:
 
-So the fact is, many of us have long long since skipped the whole
-"80-column terminal" model, for the same reason that we have many more
-lines than 25 lines visible at a time.
+Benchmarking 16777216 samples...
+10.633756139 - 0.004359714 = 10629396425
+getpid native: 633 ns
+23.008737499 - 10.633967641 = 12374769858
+getpid RET_ALLOW 1 filter: 737 ns
+36.723141843 - 23.008975696 = 13714166147
+getpid RET_ALLOW 2 filters: 817 ns
+47.751422021 - 36.723345630 = 11028076391
+getpid BPF-less allow: 657 ns
+Estimated total seccomp overhead for 1 filter: 104 ns
+Estimated total seccomp overhead for 2 filters: 184 ns
+Estimated seccomp per-filter overhead: 80 ns
+Estimated seccomp entry overhead: 24 ns
+Estimated BPF overhead per filter: 80 ns
 
-And honestly, I don't want to see patches that make the kernel reading
-experience worse for me and likely for the vast majority of people,
-based on the argument that some odd people have small terminal
-windows.
 
-If you or Christoph have 80 character lines, you'll get possibly ugly
-wrapped output. Tough. That's _your_ choice. Your hardware limitations
-shouldn't be a pain for the rest of us.
+net.core.bpf_jit_enable=1:
+net.core.bpf_jit_harden=1:
 
-Longer lines are fundamentally useful. My monitor is not only a lot
-wider than it is tall, my fonts are universally narrower than they are
-tall. Long lines are natural.
+Benchmarking 16777216 samples...
+31.939978606 - 21.275190689 = 10664787917
+getpid native: 635 ns
+43.324592380 - 31.940794751 = 11383797629
+getpid RET_ALLOW 1 filter: 678 ns
+55.001650599 - 43.326293248 = 11675357351
+getpid RET_ALLOW 2 filters: 695 ns
+65.986452855 - 55.002249904 = 10984202951
+getpid BPF-less allow: 654 ns
+Estimated total seccomp overhead for 1 filter: 43 ns
+Estimated total seccomp overhead for 2 filters: 60 ns
+Estimated seccomp per-filter overhead: 17 ns
+Estimated seccomp entry overhead: 26 ns
+Estimated BPF overhead per filter: 24 ns
 
-When I tile my terminal windows on my display, I can have 6 terminals
-visible at one time, and that's because I have them three wide. And I
-could still fit 80% of a fourth one side-by-side.
 
-And guess what? That's with my default "100x50" terminal window (go to
-your gnome terminal settings, you'll find that the 80x25 thing is just
-an initial default that you can change), not with some 80x25 one. And
-that's with a font that has anti-aliasing and isn't some pixelated
-mess.
+net.core.bpf_jit_enable=1:
+net.core.bpf_jit_harden=0:
 
-And most of my terminals actually end up being dragged wider and
-taller than that. I checked, and my main one is 142x76 characters
-right now, because it turns out that wider (and taller) terminals are
-useful not just for source code.
+Benchmarking 16777216 samples...
+10.684681435 - 0.004198682 = 10680482753
+getpid native: 636 ns
+22.050823167 - 10.685571417 = 11365251750
+getpid RET_ALLOW 1 filter: 677 ns
+33.714134291 - 22.051100183 = 11663034108
+getpid RET_ALLOW 2 filters: 695 ns
+44.793312551 - 33.714383001 = 11078929550
+getpid BPF-less allow: 660 ns
+Estimated total seccomp overhead for 1 filter: 41 ns
+Estimated total seccomp overhead for 2 filters: 59 ns
+Estimated seccomp per-filter overhead: 18 ns
+Estimated seccomp entry overhead: 23 ns
+Estimated BPF overhead per filter: 17 ns
 
-Have you looked at "ps ax" output lately? Or used "top"? Or done "git
-diff --stat" or any number of things where it turns out that 80x25 is
-really really limiting, and is simply NO LONGER RELEVANT to most of
-us.
 
-So no. I do not care about somebody with a 80x25 terminal window
-getting line wrapping.
+The above is from my (very dangerous!) benchmarking patch[1].
 
-For exactly the same reason I find it completely irrelevant if
-somebody says that their kernel compile takes 10 hours because they
-are doing kernel development on a Raspberry PI with 4GB of RAM.
+So, with the layered nature of seccomp filters there's a reasonable gain
+to be seen for a O(1) bitmap lookup to skip running even a single filter,
+even for the fastest BPF mode.
 
-People with restrictive hardware shouldn't make it more inconvenient
-for people who have better resources. Yes, we'll accommodate things to
-within reasonable limits. But no, 80-column terminals in 2020 isn't
-"reasonable" any more as far as I'm concerned. People commonly used
-132-column terminals even back in the 80's, for chrissake, don't try
-to make 80 columns some immovable standard.
+Not that we need to optimize for the pathological case, but this would
+be especially useful for cases like systemd, which appears to be
+constructing seccomp filters very inefficiently maybe on a per-syscall[3]
+basis? For example, systemd-resolved has 32 (!) seccomp filters
+attached[2]:
 
-If you choose to use a 80-column terminal, you can live with the line
-wrapping. It's just that simple.
+# grep ^Seccomp_filters /proc/$(pidof systemd-resolved)/status
+Seccomp_filters:        32
 
-And longer lines are simply useful. Part of that is that we aren't
-programming in the 80's any more, and our source code is fundamentally
-wider as a result.
+# grep SystemCall /lib/systemd/system/systemd-resolved.service
+SystemCallArchitectures=native
+SystemCallErrorNumber=EPERM
+SystemCallFilter=@system-service
 
-Yes, local iteration variables are still called 'i', because more
-context just isn't helpful for some anonymous counter. Being concise
-is still a good thing, and overly verbose names are not inherently
-better.
+I'd like to better understand what they're doing, but haven't had time
+to dig in. (The systemd devel mailing list requires subscription, so
+I've directly CCed some systemd folks that have touched seccomp there
+recently. Hi! The starts of this thread is here[4].)
 
-But still - it's entirely reasonable to have variable names that are
-10-15 characters and it makes the code more legible. Writing things
-out instead of using abbreviations etc.
+-Kees
 
-And yes, we do use wide tabs, because that makes indentation something
-you can visually see in the structure at a glance and on a
-whole-function basis, rather than something you have to try to
-visually "line up" things for or count spaces.
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/commit/?h=seccomp/benchmark-bpf&id=20cc7d8f4238ea3bc1798f204bb865f4994cca27
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/commit/?h=for-next/seccomp&id=9d06f16f463cef5c445af9738efed2bfe4c64730
+[3] https://www.freedesktop.org/software/systemd/man/systemd.exec.html#SystemCallFilter=
+[4] https://lore.kernel.org/bpf/c22a6c3cefc2412cad00ae14c1371711@huawei.com/
 
-So we have lots of fairly fundamental issues that fairly easily make
-for longer lines in many circumstances.
-
-And yes, we do line breaks at some point. But there really isn't any
-reason to make that point be 80 columns any more.
-
-                  Linus
+-- 
+Kees Cook
