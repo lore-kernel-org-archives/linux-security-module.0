@@ -2,211 +2,223 @@ Return-Path: <SRS0=ngOM=7L=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA4F7C433E1
-	for <linux-security-module@archiver.kernel.org>; Fri, 29 May 2020 21:24:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6A4BC433E0
+	for <linux-security-module@archiver.kernel.org>; Fri, 29 May 2020 22:02:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6E2A020776
-	for <linux-security-module@archiver.kernel.org>; Fri, 29 May 2020 21:24:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73FAB20897
+	for <linux-security-module@archiver.kernel.org>; Fri, 29 May 2020 22:02:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RON1Jx7d"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="c88/l/pQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728166AbgE2VYv (ORCPT
+        id S1728373AbgE2WCu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 29 May 2020 17:24:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48914 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727879AbgE2VYu (ORCPT
+        Fri, 29 May 2020 18:02:50 -0400
+Received: from sonic309-27.consmr.mail.ne1.yahoo.com ([66.163.184.153]:34017
+        "EHLO sonic309-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728721AbgE2WCt (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 29 May 2020 17:24:50 -0400
-Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AE90C03E969
-        for <linux-security-module@vger.kernel.org>; Fri, 29 May 2020 14:24:49 -0700 (PDT)
-Received: by mail-pf1-x442.google.com with SMTP id f3so439323pfd.11
-        for <linux-security-module@vger.kernel.org>; Fri, 29 May 2020 14:24:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=D4XvzccK0xuuOxPVRAAoMtzFaRjIX/ZkQiWNAhxPFLA=;
-        b=RON1Jx7dOzYu+YHprq0o6tiT6Yv2AJ9MlOS/A/Nuono2hH/bCcRvNgoMbMInHMuCJb
-         TTx63JMbKAOZhxwpGi8uy4l9LdwxdBZmmxOq+bMRXYk7rC6u1Ts7NlZPXhm1wMafChz0
-         hNFUuluNC9zd9xt4v5wBqJbchJIASDUzkdTTE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=D4XvzccK0xuuOxPVRAAoMtzFaRjIX/ZkQiWNAhxPFLA=;
-        b=G/HaxdFUafBK7M4hJ5o0QUHTY01IFupYX2DA3yNTQnG57EPUSQEUbmfUvsILJhCD8d
-         Ockf/q46AGZpTdrlN6lh55dWYQdEESzv4+zcO+KASGeoVwtuB4u/YKJ/qKR90QdHM71j
-         oyCNvDAl8IvXjTVtYZyS5Qgs5OwaCBTFUx0yBoAGOuKcyg0mE9cvsJtdcFRuKPZQQ70e
-         CjnhM1GnAYTQdLqb7ZRl0wIZlNQxOTwOGBiKqboYaOEYqpUpLdpjw5JHOXoEhk91yrml
-         n20iSR/5b+vurRFjwkeurnOePVStTmQtgrlZ42+kN3cSco2wF17ryzLS4ssObVk9IFTy
-         9axQ==
-X-Gm-Message-State: AOAM531J0mMOMsyMjKtaUdWs2qn9S5fcvbdaw1g9HbrptXw0cqGz5TVw
-        nojUMl1pVc37/POfyJ0YPoDpgA==
-X-Google-Smtp-Source: ABdhPJx19G73LsHEx0RQVpMqVyTccPM6mmiPuIW/RTCEwlk0mpgkD9B1OZq0r63Cob8gJllfSSl6pA==
-X-Received: by 2002:a62:fc52:: with SMTP id e79mr10893035pfh.297.1590787488823;
-        Fri, 29 May 2020 14:24:48 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id w206sm2029579pfc.28.2020.05.29.14.24.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 May 2020 14:24:47 -0700 (PDT)
-Date:   Fri, 29 May 2020 14:24:46 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Rob Landley <rob@landley.net>,
-        Bernd Edlinger <bernd.edlinger@hotmail.de>,
-        linux-fsdevel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        linux-security-module@vger.kernel.org,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Andy Lutomirski <luto@amacapital.net>
-Subject: Re: [PATCH 2/2] exec: Compute file based creds only once
-Message-ID: <202005291406.52E27AF8@keescook>
-References: <87h7wujhmz.fsf@x220.int.ebiederm.org>
- <87sgga6ze4.fsf@x220.int.ebiederm.org>
- <87v9l4zyla.fsf_-_@x220.int.ebiederm.org>
- <877dx822er.fsf_-_@x220.int.ebiederm.org>
- <87k10wysqz.fsf_-_@x220.int.ebiederm.org>
- <87d06mr8ps.fsf_-_@x220.int.ebiederm.org>
- <871rn2r8m6.fsf_-_@x220.int.ebiederm.org>
+        Fri, 29 May 2020 18:02:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1590789768; bh=mEj+xfzKlw4Ib7x5AQ10oWbC2hqZKkrwlMK84MkhhpI=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=c88/l/pQJgxvc0MmnUAl5HrXokW6XiILcttim2Qoqmyy3gQF6CsjkOC0zZxZp6SXkRnRu5N2+GGH6Wztygl1i/tfh/3+vtO78BGcx39QG4uG1C/HHhVHRv9BmWNiIfRPMo2hO8oedEGRwSZcFPAjvp1mO0rYCR+PHOhe7VmyePT0umkmnrlP7InzYhMqimliRfniWJnnh458MBiI+eFXdE1DRcsF6y66Ctk7INCypzndds9u6HPgbmpeA9JssPvwvgY6qVzRIUIGQVN+gPh3pFwEuWeNHUfGsKIjcFADUlEGP0nJLoLw2ltlLPa4YDGGn3Szbu6a/8pYsRJ61IPNFQ==
+X-YMail-OSG: BbHTdY0VM1l_f3uGlIt31U3Z7YOjnIP8_01nB_WwQppkYchHpCO3knH_x467xSC
+ cN5Y_P4sR1wed9Ixzc_W5.SfVJusYlgQj5gALvW4amsGAG93fuFVj9Jw8klt5YSSiwHyrj_Vui9E
+ lAZkbGhf.gtLCSyucpKECJAJUD6afb6PDcmYmeBbYRKmkijIvs5QK7hUZ4OpWbOKIq5C3TTTo5E6
+ vOsmRMMnxNNNBDJCXIrG.xVbxYMigJFLhQ_W04koNYJR27xMRHRhieHpfky6RMYzk252XTW0FGR6
+ awBMBESOGaP_9olDkoKkUqfh8U9bqGmIlRJG4S9QWZlCM_9T0mhEL_YCRaA1V_sLZpLb4mYKFltQ
+ I3rq3hspfH44q9100HSRubIaka8T6VQpM8PIqrb_7sgAgoFDBqe37Agj0h9qial5zgE1siSzIln0
+ kV2JkTZGdu0lUJfKupl4M84UUBRdynDwnUkugGXjCsLJK17K3arocsZ4OVb5H0h0LPWTXNEPYHYi
+ 1ObX05LNnPM27nIE8cwPmizDZKn_2YzY5X6.OnW4y_Yzaf1b6x8jJUwYPQ3ihb5n9JMsEtnn5xKF
+ faaIIe6Y2LWaqh3j9ZbNMH0A0K0MrnZpPvJGCsD84uO1lCzDN1AnBMot3Y0NRObsB3zOSWY1Mncq
+ tx0nOVrBfny8ADKwhqCh6cH_0a.785a6JwN87p5rtsj1sS03THKg2EclEcWHPGtmgIDE517a1089
+ M9pCsYdjgeILDkjJWSpDwHq5qI37Y3DjknLpQPOxV6Npt4787_Xxq7jMwd2FdpdJ60ij2FrWIaxn
+ G0VBKRVKguZd_AK1ELoVZ8iRH1q_qYmIaoQwtugZxYkqANZhugzD9xJccyw4co3M_ln6SG1WIRUn
+ s05vsuve.v2Q1D.Eax0lIvdX.6UJBThM0AIRRFm.3jcAdbLol5zetpPVEeo8JBLbuJFO.cAFwVwo
+ 1FZJco4gK15YRUWfhN9Qsjxk6rnwweHi3ALHhwQnzCH89x93jDXXm30XKetT9KU_55w0SjrN9cjy
+ V32bR6hLjyYD0c1m6DMEZFLMeXVwyo7Zsjpu_zju.Qm3FwruGJI6FJn5yYJXkb6ZnUpMbAUjxG68
+ e_1_ZSftnrnD7Ax158.N_sByg1pB01ZxnJgGUPPQ0iJh55n0u6Nq57BHpaRMTrHHLBfFJ5WRjTN2
+ YJkw.KTLMpBx9gQZ7l6O2yCyw0zcNxBOLo41i78o3scQKnJv8T57GRzjOiY3VHiqRNz47.PfElN1
+ 2sxNYeG1fFJG7FVDpTc_gDm8NB4uZrXy1P1xEZXbVODsUUFqJRjFwmbyiQv.Q1KsSo8297f_7trq
+ IK0Y5PC6O0PpZS9mLXIu4tvI_gvED9gt7g.QcQBxSSO5tqZGQU74Ln9HMcxBnaeJnQ4SPQCXAYtm
+ plMdPL99pzw3qgfZjlqJ0
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Fri, 29 May 2020 22:02:48 +0000
+Received: by smtp420.mail.ne1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 20de778416897511a1a9920cd4567e13;
+          Fri, 29 May 2020 22:02:46 +0000 (UTC)
+Subject: Re: clean up kernel_{read,write} & friends v2
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        David Laight <David.Laight@aculab.com>
+Cc:     David Howells <dhowells@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Al Viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        NetFilter <netfilter-devel@vger.kernel.org>
+References: <CAHk-=wj3iGQqjpvc+gf6+C29Jo4COj6OQQFzdY0h5qvYKTdCow@mail.gmail.com>
+ <20200528054043.621510-1-hch@lst.de>
+ <22778.1590697055@warthog.procyon.org.uk>
+ <f89f0f7f-83b4-72c6-7d08-cb6eaeccd443@schaufler-ca.com>
+ <3aea7a1c10e94ea2964fa837ae7d8fe2@AcuMS.aculab.com>
+ <CAHk-=wjR0H3+2ba0UUWwoYzYBH0GX9yTf5dj2MZyo0xvyzvJnA@mail.gmail.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Autocrypt: addr=casey@schaufler-ca.com; keydata=
+ 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
+ abzjfg==
+Message-ID: <7b6a91a5-8c6d-044f-f675-800e0157dc39@schaufler-ca.com>
+Date:   Fri, 29 May 2020 15:02:45 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <871rn2r8m6.fsf_-_@x220.int.ebiederm.org>
+In-Reply-To: <CAHk-=wjR0H3+2ba0UUWwoYzYBH0GX9yTf5dj2MZyo0xvyzvJnA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+X-Mailer: WebService/1.1.15959 hermes_yahoo Apache-HttpAsyncClient/4.1.4 (Java/11.0.6)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, May 29, 2020 at 11:47:29AM -0500, Eric W. Biederman wrote:
-> Move the computation of creds from prepare_binfmt into begin_new_exec
-> so that the creds need only be computed once.  This is just code
-> reorganization no semantic changes of any kind are made.
-> 
-> Moving the computation is safe.  I have looked through the kernel and
-> verified none of the binfmts look at bprm->cred directly, and that
-> there are no helpers that look at bprm->cred indirectly.  Which means
-> that it is not a problem to compute the bprm->cred later in the
-> execution flow as it is not used until it becomes current->cred.
-> 
-> A new function bprm_creds_from_file is added to contain the work that
-> needs to be done.  bprm_creds_from_file first computes which file
-> bprm->executable or most likely bprm->file that the bprm->creds
-> will be computed from.
-> 
-> The funciton bprm_fill_uid is updated to receive the file instead of
-> accessing bprm->file.  The now unnecessary work needed to reset the
-> bprm->cred->euid, and bprm->cred->egid is removed from brpm_fill_uid.
-> A small comment to document that bprm_fill_uid now only deals with the
-> work to handle suid and sgid files.  The default case is already
-> heandled by prepare_exec_creds.
-> 
-> The function security_bprm_repopulate_creds is renamed
-> security_bprm_creds_from_file and now is explicitly passed the file
-> from which to compute the creds.  The documentation of the
-> bprm_creds_from_file security hook is updated to explain when the hook
-> is called and what it needs to do.  The file is passed from
-> cap_bprm_creds_from_file into get_file_caps so that the caps are
-> computed for the appropriate file.  The now unnecessary work in
-> cap_bprm_creds_from_file to reset the ambient capabilites has been
-> removed.  A small comment to document that the work of
-> cap_bprm_creds_from_file is to read capabilities from the files
-> secureity attribute and derive capabilities from the fact the
-> user had uid 0 has been added.
-> 
-> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+On 5/29/2020 12:19 PM, Linus Torvalds wrote:
+> On Fri, May 29, 2020 at 6:08 AM David Laight <David.Laight@aculab.com> =
+wrote:
+>> A wide monitor is for looking at lots of files.
+> Not necessarily.
+>
+> Excessive line breaks are BAD. They cause real and every-day problems.
+>
+> They cause problems for things like "grep" both in the patterns and in
+> the output, since grep (and a lot of other very basic unix utilities)
+> is fundamentally line-based.
+>
+> So the fact is, many of us have long long since skipped the whole
+> "80-column terminal" model, for the same reason that we have many more
+> lines than 25 lines visible at a time.
+>
+> And honestly, I don't want to see patches that make the kernel reading
+> experience worse for me and likely for the vast majority of people,
+> based on the argument that some odd people have small terminal
+> windows.
+>
+> If you or Christoph have 80 character lines, you'll get possibly ugly
+> wrapped output. Tough. That's _your_ choice. Your hardware limitations
+> shouldn't be a pain for the rest of us.
+>
+> Longer lines are fundamentally useful. My monitor is not only a lot
+> wider than it is tall, my fonts are universally narrower than they are
+> tall. Long lines are natural.
+>
+> When I tile my terminal windows on my display, I can have 6 terminals
+> visible at one time, and that's because I have them three wide. And I
+> could still fit 80% of a fourth one side-by-side.
+>
+> And guess what? That's with my default "100x50" terminal window (go to
+> your gnome terminal settings, you'll find that the 80x25 thing is just
+> an initial default that you can change), not with some 80x25 one. And
+> that's with a font that has anti-aliasing and isn't some pixelated
+> mess.
+>
+> And most of my terminals actually end up being dragged wider and
+> taller than that. I checked, and my main one is 142x76 characters
+> right now, because it turns out that wider (and taller) terminals are
+> useful not just for source code.
+>
+> Have you looked at "ps ax" output lately? Or used "top"? Or done "git
+> diff --stat" or any number of things where it turns out that 80x25 is
+> really really limiting, and is simply NO LONGER RELEVANT to most of
+> us.
+>
+> So no. I do not care about somebody with a 80x25 terminal window
+> getting line wrapping.
 
-This all looks good to me. Small notes below...
+The first law of good C programming is:
+	"Thou shalt adhere to the One True Brace Style"
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+It extrapolates into indentation, line width, and a number of
+other things. Since Linux is a trademark of Linus Torvalds,
+you get to define what the "One Truth" is. Time to resize my
+terminals.
 
-> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-> index cd3dd0afceb5..37bb3df751c6 100644
-> --- a/include/linux/lsm_hooks.h
-> +++ b/include/linux/lsm_hooks.h
-> @@ -44,18 +44,18 @@
->   *	request libc enable secure mode.
->   *	@bprm contains the linux_binprm structure.
->   *	Return 0 if the hook is successful and permission is granted.
-> - * @bprm_repopulate_creds:
-> - *	Assuming that the relevant bits of @bprm->cred->security have been
-> - *	previously set, examine @bprm->file and regenerate them.  This is
-> - *	so that the credentials derived from the interpreter the code is
-> - *	actually going to run are used rather than credentials derived
-> - *	from a script.  This done because the interpreter binary needs to
-> - *	reopen script, and may end up opening something completely different.
-> - *	This hook may also optionally check permissions (e.g. for
-> - *	transitions between security domains).
-> - *	The hook must set @bprm->active_secureexec to 1 if AT_SECURE should be set to
-> + * @bprm_creds_from_file:
-> + *	If @file is setpcap, suid, sgid or otherwise marked to change
-> + *	privilege upon exec, update @bprm->cred to reflect that change.
-> + *	This is called after finding the binary that will be executed.
-> + *	without an interpreter.  This ensures that the credentials will not
-> + *	be derived from a script that the binary will need to reopen, which
-> + *	when reopend may end up being a completely different file.  This
-> + *	hook may also optionally check permissions (e.g. for transitions
-> + *	between security domains).
-> + *	The hook must set @bprm->secureexec to 1 if AT_SECURE should be set to
->   *	request libc enable secure mode.
-> - *	The hook must set @bprm->pf_per_clear to the personality flags that
-> + *	The hook must set @bprm->per_clear to the personality flags that
+>
+> For exactly the same reason I find it completely irrelevant if
+> somebody says that their kernel compile takes 10 hours because they
+> are doing kernel development on a Raspberry PI with 4GB of RAM.
+>
+> People with restrictive hardware shouldn't make it more inconvenient
+> for people who have better resources. Yes, we'll accommodate things to
+> within reasonable limits. But no, 80-column terminals in 2020 isn't
+> "reasonable" any more as far as I'm concerned. People commonly used
+> 132-column terminals even back in the 80's, for chrissake, don't try
+> to make 80 columns some immovable standard.
+>
+> If you choose to use a 80-column terminal, you can live with the line
+> wrapping. It's just that simple.
+>
+> And longer lines are simply useful. Part of that is that we aren't
+> programming in the 80's any more, and our source code is fundamentally
+> wider as a result.
+>
+> Yes, local iteration variables are still called 'i', because more
+> context just isn't helpful for some anonymous counter. Being concise
+> is still a good thing, and overly verbose names are not inherently
+> better.
+>
+> But still - it's entirely reasonable to have variable names that are
+> 10-15 characters and it makes the code more legible. Writing things
+> out instead of using abbreviations etc.
+>
+> And yes, we do use wide tabs, because that makes indentation something
+> you can visually see in the structure at a glance and on a
+> whole-function basis, rather than something you have to try to
+> visually "line up" things for or count spaces.
+>
+> So we have lots of fairly fundamental issues that fairly easily make
+> for longer lines in many circumstances.
+>
+> And yes, we do line breaks at some point. But there really isn't any
+> reason to make that point be 80 columns any more.
+>
+>                   Linus
 
-Here and the other per_clear comment have language that doesn't quite
-line up with how hooks should deal with the bits. They should not "set
-it to" the personality flags they want clear, they need to "add the
-bits" they want to see cleared. i.e I don't want something thinking
-they're the only one touching per_clear, so they should never do:
-	bprm->per_clear = PER_CLEAR_ON_SETID;
-but always:
-	bprm->per_clear |= PER_CLEAR_ON_SETID;
-
-How about:
-
-The hook must set @bprm->per_clear with any personality flag bits that
-
-> diff --git a/security/commoncap.c b/security/commoncap.c
-
-Not about this patch, but while looking through this file, I see:
-
-int cap_bprm_set_creds(struct linux_binprm *bprm)
-{
-	...
-	*capability manipulations*
-
-        if (WARN_ON(!cap_ambient_invariant_ok(new)))
-                return -EPERM;
-
-        if (nonroot_raised_pE(new, old, root_uid, has_fcap)) {
-                ret = audit_log_bprm_fcaps(bprm, new, old);
-                if (ret < 0)
-                        return ret;
-        }
-
-        new->securebits &= ~issecure_mask(SECURE_KEEP_CAPS);
-
-        if (WARN_ON(!cap_ambient_invariant_ok(new)))
-                return -EPERM;
-	...
-}
-
-The cap_ambient_invariant_ok() test is needlessly repeated: it doesn't
-examine securebits, and nonroot_raised_pE appears to have no
-side-effects.
-
-One of those can be dropped, yes?
-
--- 
-Kees Cook
