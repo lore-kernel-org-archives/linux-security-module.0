@@ -6,71 +6,80 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 571C3C433E0
-	for <linux-security-module@archiver.kernel.org>; Fri, 29 May 2020 12:49:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0219DC433DF
+	for <linux-security-module@archiver.kernel.org>; Fri, 29 May 2020 13:08:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 38A1020B80
-	for <linux-security-module@archiver.kernel.org>; Fri, 29 May 2020 12:49:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8DAD207BC
+	for <linux-security-module@archiver.kernel.org>; Fri, 29 May 2020 13:08:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726936AbgE2MtC (ORCPT
+        id S1726939AbgE2NIo (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 29 May 2020 08:49:02 -0400
-Received: from szxga02-in.huawei.com ([45.249.212.188]:2091 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726467AbgE2MtC (ORCPT
+        Fri, 29 May 2020 09:08:44 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:54216 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726905AbgE2NIo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 29 May 2020 08:49:02 -0400
-Received: from DGGEMM404-HUB.china.huawei.com (unknown [172.30.72.57])
-        by Forcepoint Email with ESMTP id 322494E5EEF6D4F22BB4;
-        Fri, 29 May 2020 20:48:59 +0800 (CST)
-Received: from dggema707-chm.china.huawei.com (10.3.20.71) by
- DGGEMM404-HUB.china.huawei.com (10.3.20.212) with Microsoft SMTP Server (TLS)
- id 14.3.487.0; Fri, 29 May 2020 20:48:58 +0800
-Received: from dggema758-chm.china.huawei.com (10.1.198.200) by
- dggema707-chm.china.huawei.com (10.3.20.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1913.5; Fri, 29 May 2020 20:48:58 +0800
-Received: from dggema758-chm.china.huawei.com ([10.9.48.193]) by
- dggema758-chm.china.huawei.com ([10.9.48.193]) with mapi id 15.01.1913.007;
- Fri, 29 May 2020 20:48:58 +0800
-From:   "zhujianwei (C)" <zhujianwei7@huawei.com>
-To:     "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-CC:     Hehuazhen <hehuazhen@huawei.com>
-Subject: new seccomp mode aims to improve performance
-Thread-Topic: new seccomp mode aims to improve performance
-Thread-Index: AdY1q17j91IY6CMiRsq40mFg/pmPzw==
-Date:   Fri, 29 May 2020 12:48:58 +0000
-Message-ID: <c22a6c3cefc2412cad00ae14c1371711@huawei.com>
-Accept-Language: en-US
-Content-Language: zh-CN
+        Fri, 29 May 2020 09:08:44 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-161-wf7UIPeDN4i-o46VjjC7yA-1; Fri, 29 May 2020 14:08:38 +0100
+X-MC-Unique: wf7UIPeDN4i-o46VjjC7yA-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Fri, 29 May 2020 14:08:37 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Fri, 29 May 2020 14:08:37 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Casey Schaufler' <casey@schaufler-ca.com>,
+        David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+CC:     Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>,
+        "Ian Kent" <raven@themaw.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        NetFilter <netfilter-devel@vger.kernel.org>
+Subject: RE: clean up kernel_{read,write} & friends v2
+Thread-Topic: clean up kernel_{read,write} & friends v2
+Thread-Index: AQHWNTXe+VR+bJMIqUC4MAVNRYcECKi/CPyQ
+Date:   Fri, 29 May 2020 13:08:37 +0000
+Message-ID: <3aea7a1c10e94ea2964fa837ae7d8fe2@AcuMS.aculab.com>
+References: <CAHk-=wj3iGQqjpvc+gf6+C29Jo4COj6OQQFzdY0h5qvYKTdCow@mail.gmail.com>
+ <20200528054043.621510-1-hch@lst.de>
+ <22778.1590697055@warthog.procyon.org.uk>
+ <f89f0f7f-83b4-72c6-7d08-cb6eaeccd443@schaufler-ca.com>
+In-Reply-To: <f89f0f7f-83b4-72c6-7d08-cb6eaeccd443@schaufler-ca.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-originating-ip: [10.166.215.96]
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-SGksIGFsbA0KDQqhoaGhV2UncmUgdXNpbmcgc2VjY29tcCB0byBpbmNyZWFzZSBjb250YWluZXIg
-c2VjdXJpdHksIGJ1dCBicGYgcnVsZXMgZmlsdGVyIGNhdXNlcyBwZXJmb3JtYW5jZSB0byBkZXRl
-cmlvcmF0ZS4gU28sIGlzIHRoZXJlIGEgZ29vZCBzb2x1dGlvbiB0byBpbXByb3ZlIHBlcmZvcm1h
-bmNlLCBvciBjYW4gd2UgYWRkIGEgc2ltcGxpZmllZCBzZWNjb21wIG1vZGUgdG8gaW1wcm92ZSBw
-ZXJmb3JtYW5jZT8NCqGhoaENCqGhoaEvLyBQc2V1ZG8gY29kZQ0KoaGhoWludCBfX3NlY3VyZV9j
-b21wdXRpbmcoaW50IHRoaXNfc3lzY2FsbCkNCqGhoaF7DQqhoaGhCS4uLg0KoaGhoQlzd2l0Y2gg
-KG1vZGUpIHsNCqGhoaEJY2FzZSBTRUNDT01QX01PREVfU1RSSUNUOg0KoaGhoQkJLi4uDQqhoaGh
-CWNhc2UgU0VDQ09NUF9NT0RFX0ZJTFRFUjoNCqGhoaEJCS4uLg0KoaGhoQljYXNlIFNFQ0NPTVBf
-TU9ERV9MSUdIVF9GSUxURVI6DQqhoaGhCQkvL2RvIGxpZ2h0IHN5c2NhbGwgZmlsdGVyLg0KoaGh
-oQkJLi4uDQqhoaGhCQlicmVhazsNCqGhoaEJfQ0KoaGhoQkuLi4NCqGhoaF9DQqhoaGhCQkNCqGh
-oaFpbnQgbGlnaHRfc3lzY2FsbF9maWx0ZXIoaW50IHN5c2NhbGxfbnVtKSB7DQqhoaGhCWlmKHNj
-bm8gPiBTWVNOVU1fTUFYKSB7DQqhoaGhCQkuLi4NCqGhoaEJCXJldHVybiAtRUFDQ0VTUzsNCqGh
-oaEJfQ0KoaGhoQ0KoaGhoQlib29sICpmaWx0ZXJfbWFwID0gZ2V0X2ZpbHRlcl9tYXAoY3VycmVu
-dCk7DQqhoaGhCWlmKGZpbHRlcl9tYXAgPT0gTlVMTCkgew0KoaGhoQkJLi4uDQqhoaGhCQlyZXR1
-cm4gLUVGQVVMVDsNCqGhoaEJfQ0KoaGhoQ0KoaGhoQlpZihmaWx0ZXJfbWFwW3N5c2NhbGxfbnVt
-XSA9PSB0cnVlKSB7DQqhoaGhCQkuLi4NCqGhoaEJCXJldHVybiAwOw0KoaGhoQl9IGVsc2Ugew0K
-oaGhoQkJLi4uDQqhoaGhCQlyZXR1cm4gLUVBQ0NFU1M7DQqhoaGhCX0NCqGhoaEJLi4uDQqhoaGh
-fQ0K
+RnJvbTogQ2FzZXkgU2NoYXVmbGVyDQo+IFNlbnQ6IDI4IE1heSAyMDIwIDIyOjIxDQo+IEl0J3Mg
+dHJ1ZSwgbm9ib2R5IHVzZXMgYSBUVFkzMyBhbnltb3JlLiBUaG9zZSBvZiB1cyB3aG8gaGF2ZSBk
+b25lIHNvDQo+IHVuZGVyc3RhbmQgaG93ICJ7IiBpcyBwcmVmZXJhYmxlIHRvICJCRUdJTiIgYW5k
+IHdoeSB0YWJzIGFyZSBiZXR0ZXIgdGhhbg0KPiBtdWx0aXBsZSBzcGFjZXMuIEEgbmFycm93ICJ0
+ZXJtaW5hbCIgcmVxdWlyZXMgbGVzcyBuZWNrIGFuZCBtb3VzZSBtb3ZlbWVudC4NCj4gQW55IHdp
+ZHRoIGxpbWl0IGlzIGFyYml0cmFyeSwgc28gdG8gdGhlIGV4dGVudCBhbnlvbmUgbWlnaHQgY2Fy
+ZSwgSSBhZHZvY2F0ZQ0KPiA4MCBmb3JldmVyLg0KDQpBIHdpZGUgbW9uaXRvciBpcyBmb3IgbG9v
+a2luZyBhdCBsb3RzIG9mIGZpbGVzLg0KTm90IGRlYWQgc3BhY2UgYmVjYXVzZSBvZiBkZWVwIGlu
+dGVudHMgYW5kIHZlcnkgbG9uZyB2YXJpYWJsZSBuYW1lcy4NCg0KQWx0aG91Z2ggaSBkb24ndCB1
+bmRlcnN0YW5kIHRoZSAnaW5kZW50IGNvbnRpbnVhdGlvbnMgdW5kZXIgIigiJyBydWxlLg0KSXQg
+aGlkZXMgc29tZSBpbmRlbnRzIGFuZCBtYWtlcyBvdGhlciBleGNlc3NpdmUuDQpBIHNpbXBsZSAn
+ZG91YmxlIGluZGVudCcgKG9yIGhhbGYgaW5kZW50KSBtYWtlcyBjb2RlIG1vcmUgcmVhZGFibGUu
+DQoNCkEgZGlmZmVyZW50IHJ1bGUgZm9yIGZ1bmN0aW9uIGRlZmluaXRpb25zIHdvdWxkIG1ha2Ug
+cmVhbCBzZW5zZS4NClRoZXkgb25seSBuZWVkIGEgc2luZ2xlIGluZGVudCAtIHRoZSAneycgbWFy
+a3MgdGhlIGVuZC4NCg0KCURhdmlkDQoNCi0NClJlZ2lzdGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwg
+QnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24gS2V5bmVzLCBNSzEgMVBULCBVSw0KUmVn
+aXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
+
