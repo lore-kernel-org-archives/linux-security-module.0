@@ -2,169 +2,60 @@ Return-Path: <SRS0=ngOM=7L=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A571C433E1
-	for <linux-security-module@archiver.kernel.org>; Fri, 29 May 2020 11:29:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5434C433E0
+	for <linux-security-module@archiver.kernel.org>; Fri, 29 May 2020 12:32:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4DE212074D
-	for <linux-security-module@archiver.kernel.org>; Fri, 29 May 2020 11:29:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C891C20814
+	for <linux-security-module@archiver.kernel.org>; Fri, 29 May 2020 12:32:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726864AbgE2L33 (ORCPT
+        id S1726954AbgE2Mcn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 29 May 2020 07:29:29 -0400
-Received: from smtp-42aa.mail.infomaniak.ch ([84.16.66.170]:52825 "EHLO
-        smtp-42aa.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726838AbgE2L32 (ORCPT
+        Fri, 29 May 2020 08:32:43 -0400
+Received: from verein.lst.de ([213.95.11.211]:32812 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726920AbgE2Mcn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 29 May 2020 07:29:28 -0400
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 49YMm60yXyzlhZsb;
-        Fri, 29 May 2020 13:29:26 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
-        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 49YMm15fmSzlhFhw;
-        Fri, 29 May 2020 13:29:21 +0200 (CEST)
-Subject: Re: [PATCH v18 07/12] landlock: Support filesystem access-control
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
-        Jeff Dike <jdike@addtoit.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>,
-        Richard Weinberger <richard@nod.at>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
+        Fri, 29 May 2020 08:32:43 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 8B0A968B02; Fri, 29 May 2020 14:32:39 +0200 (CEST)
+Date:   Fri, 29 May 2020 14:32:39 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>,
+        Ian Kent <raven@themaw.net>,
+        David Howells <dhowells@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kselftest@vger.kernel.org,
         LSM List <linux-security-module@vger.kernel.org>,
-        x86@kernel.org
-References: <20200526205322.23465-1-mic@digikod.net>
- <20200526205322.23465-8-mic@digikod.net>
- <CAOQ4uxibpDTyjCJWLGG9jr-Gv9PwO==o50b9O8HGQeUfVMDFag@mail.gmail.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Message-ID: <8e76c2ed-1725-f0a5-bcfc-317c4277af3b@digikod.net>
-Date:   Fri, 29 May 2020 13:29:20 +0200
-User-Agent: 
+        NetFilter <netfilter-devel@vger.kernel.org>
+Subject: Re: [PATCH 09/14] fs: don't change the address limit for
+ ->write_iter in __kernel_write
+Message-ID: <20200529123239.GA28608@lst.de>
+References: <20200528054043.621510-1-hch@lst.de> <20200528054043.621510-10-hch@lst.de> <CAHk-=wgpnR9sBeie_z0xA3mYzG50Oiw1jZjyHt0eLX6p45ARvQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAOQ4uxibpDTyjCJWLGG9jr-Gv9PwO==o50b9O8HGQeUfVMDFag@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
-X-Antivirus-Code: 0x100000
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wgpnR9sBeie_z0xA3mYzG50Oiw1jZjyHt0eLX6p45ARvQ@mail.gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-On 27/05/2020 05:07, Amir Goldstein wrote:
-> On Wed, May 27, 2020 at 3:36 AM Mickaël Salaün <mic@digikod.net> wrote:
->>
->> Thanks to the Landlock objects and ruleset, it is possible to identify
->> inodes according to a process's domain.  To enable an unprivileged
->> process to express a file hierarchy, it first needs to open a directory
->> (or a file) and pass this file descriptor to the kernel through
->> landlock(2).  When checking if a file access request is allowed, we walk
->> from the requested dentry to the real root, following the different
->> mount layers.  The access to each "tagged" inodes are collected
->> according to their rule layer level, and ANDed to create access to the
->> requested file hierarchy.  This makes possible to identify a lot of
->> files without tagging every inodes nor modifying the filesystem, while
->> still following the view and understanding the user has from the
->> filesystem.
->>
+On Thu, May 28, 2020 at 11:43:13AM -0700, Linus Torvalds wrote:
+> On Wed, May 27, 2020 at 10:41 PM Christoph Hellwig <hch@lst.de> wrote:
+> >
+> > -ssize_t __kernel_write(struct file *file, const void *buf, size_t count, loff_t *pos)
+> > +ssize_t __kernel_write(struct file *file, const void *buf, size_t count,
+> > +               loff_t *pos)
 > 
-> Hi Mickael,
+> Please don't do these kinds of pointless whitespace changes.
 > 
-> Nice work! I am interested in the problem of system wide file access
-> rules based on directory hierarchy [1][2]. Not the same problem, but
-> with obvious overlaps.
+> If you have an actual 80x25 vt100 sitting in a corner, it's not really
+> conducive to kernel development any more.
 
-Interesting. Landlock's goal is to restrict a set of processes, which
-can be a container.
-
-> 
-> I sketched this untested POC [2] a while ago -
-> It introduces the concept of "border control" LSM hooks to avoid the
-> need to check which sections in the hierarchy an inode belongs to
-> on every syscall.
-> 
-> With this, you could cache a topology with id's per section and
-> cache the section id + topology generation in the inode's security state.
-> When inode crosses border control hooks, it's section id is updated.
-> When directory hierarchy topology changes, some or all of the cached
-> section id's are invalidated and rules <-> sections relations may need
-> to be changed.
-> 
-> Do you think something like that could be useful for landlock?
-
-Because Landlock deals with unprivileged sandboxing, we must manage
-multiple layers. The current implementation in Landlock, according to
-the unprivileged constraints, is explained here:
-https://lore.kernel.org/lkml/e07fe473-1801-01cc-12ae-b3167f95250e@digikod.net/
-
-As briefly explained in this patch [1] [2], in the case of Landlock,
-being able to change the filesystem layout/topology may lead to
-privilege escalation. Currently, Landlock forbids inode reparenting, but
-I plan to implement a multilayer partial ordering mechanism to relax
-this constraint while still enforcing all layered policies. A short-term
-approach could also relaxes the first layer, but we need to think
-carefully about the potential implications (including ABI compatibility).
-
-[1]
-https://github.com/landlock-lsm/linux/commit/b670df6c5add5cf96870327871c35fccb97a0dd8#diff-39adb7412180a73fe7c6b91ae5435a5bR354
-(must clic on "Load diff")
-[2]
-https://github.com/landlock-lsm/linux/commit/b670df6c5add5cf96870327871c35fccb97a0dd8#diff-39adb7412180a73fe7c6b91ae5435a5bR450
-(must clic on "Load diff")
-
-I think Landlock could help in your use case, but could you clarify your
-thread model please?
-
-The main issue right now with Landlock is to deal with overlayfs.
-Indeed, Landlock's check_access_path() does not work with
-orphaned/private mounts like overlayfs layers (cf. ovl_path_real() and
-ovl_path_open()). Do you have an idea how to solve this properly? Could
-we add a "virtual" mount point to these layers to identify dentries they
-are anchored to?
-
-> 
-> Note that the POC is using d_mountpoint() as the only type of "fence"
-> mark. It is sufficient for controlling rename in and out of containers, so
-> I just used an already available dentry flag for "fence".
-> If the border control hook concept is useful, this could be extended to
-> a more generic d_border_passing(), with some internal kernel API
-> to manage it and with all the bike shedding that comes with it...
-
-Why not just compare struct path->mnt using the current hooks?
-
-About performances, I also thought that walking through every path
-directories would be an important issue, but after some quick benchmark
-(with and for Landlock) I'm not sure anymore. A caching mechanism may be
-useful but it should not be needed from the start.
-
-> 
-> Thanks,
-> Amir.
-
-I would like to be in Cc in your next "fanotify and LSM path hooks"
-emails. Thanks.
-
-> 
-> [1] https://lore.kernel.org/linux-fsdevel/CAOQ4uxhBVhyyJv0+xSFQiGQEj60AbD3SADfKK40uAiC4GF2p9Q@mail.gmail.com/
-> [2] https://lore.kernel.org/linux-fsdevel/CAOQ4uxgn=YNj8cJuccx2KqxEVGZy1z3DBVYXrD=Mc7Dc=Je+-w@mail.gmail.com/
-> [3] https://github.com/amir73il/linux/commits/rename_xmnt
-> 
+I have real 80x25 xterms, as that allows me to comfortably fit 4 of
+them onto my latop screen.
