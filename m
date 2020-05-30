@@ -2,470 +2,257 @@ Return-Path: <SRS0=vtOa=7M=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB153C433E0
-	for <linux-security-module@archiver.kernel.org>; Sat, 30 May 2020 17:31:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B4B9C433E0
+	for <linux-security-module@archiver.kernel.org>; Sat, 30 May 2020 22:14:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7A0B32077D
-	for <linux-security-module@archiver.kernel.org>; Sat, 30 May 2020 17:31:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 18DE4206F0
+	for <linux-security-module@archiver.kernel.org>; Sat, 30 May 2020 22:14:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NcDvenTz"
+	dkim=pass (2048-bit key) header.d=dilger-ca.20150623.gappssmtp.com header.i=@dilger-ca.20150623.gappssmtp.com header.b="CAKZdEQw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728999AbgE3RbC (ORCPT
+        id S1729314AbgE3WOG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 30 May 2020 13:31:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38742 "EHLO
+        Sat, 30 May 2020 18:14:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728927AbgE3RbB (ORCPT
+        with ESMTP id S1729299AbgE3WOG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 30 May 2020 13:31:01 -0400
-Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 680CEC08C5C9
-        for <linux-security-module@vger.kernel.org>; Sat, 30 May 2020 10:31:00 -0700 (PDT)
-Received: by mail-pf1-x441.google.com with SMTP id f3so1373536pfd.11
-        for <linux-security-module@vger.kernel.org>; Sat, 30 May 2020 10:31:00 -0700 (PDT)
+        Sat, 30 May 2020 18:14:06 -0400
+Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA343C08C5C9
+        for <linux-security-module@vger.kernel.org>; Sat, 30 May 2020 15:14:05 -0700 (PDT)
+Received: by mail-pj1-x1044.google.com with SMTP id nm22so2635271pjb.4
+        for <linux-security-module@vger.kernel.org>; Sat, 30 May 2020 15:14:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=jPHQQSCP51cGkFJo8bfZa15z37GswJuwTn/le7SylYU=;
-        b=NcDvenTzIUA/BlQTQo1nYfs7LYvRYIe7ehSI8QgDnUTwlkaB3wxPeOae1Q2pGzUar7
-         TZ2lYi1+3j6GN0vmXsjTHfW7FZ4yjZ0Y7V37N6qp4jV/vAezfB8BBU/RSRHp6Lhw8/wR
-         IoT5xfto+VY2pTxKlWUW1mp40XNsM/9+4RTt8=
+        d=dilger-ca.20150623.gappssmtp.com; s=20150623;
+        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
+         :references;
+        bh=8sism75zVT9pduqsvpPRRhWEaW/18m+btjuZdwKkiCw=;
+        b=CAKZdEQwT0plXobzxfL58PrCDLJtv4jHFVRDD0w3EALaSlzRVsnW1FMeEpX8DKIdrr
+         D3d3Y2C7Ks0liwfyZ0VdsBySPBJD/HpBQL/rEkhGsgOXzGktxLL+yIovSotoqoMX0paI
+         KR3TJF41EiQx1tJMId3EV2qrifWb7SPlsi1t5GAzniipnBdE9cV+61Lm329rXhm0qf12
+         IvO0S01eGLQsNcoue2mhrladjTUzeDrJXwpRuXEON4617o1hN88MtzS7ANB/B+BBGpHA
+         R1XgHVwTUhvoDFM6Dyi4XPHE8ZGNN4SeBVNDiOsmlWbDf35LiSw9pKaI09EGiNRwz4hq
+         +jTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=jPHQQSCP51cGkFJo8bfZa15z37GswJuwTn/le7SylYU=;
-        b=n2AuLCYvlfpuV04ZCevGYC1jO4YlCIOuiH86LAb0VI6B5Lmof/4oeqb78PSPIDFsc1
-         8l696AGcEid+ZMs4EQoql+yus+wRl6CU8gqU862efhUO9pGudCyyF+3acVGZDMqyHO6/
-         0VCO1BT/w4yZrKo1fLo3GUUY2ZKKW12MJs93UfyiH+cfr62Fzg6lE/V8vMtP9DqWPX0A
-         85BiKq+7Ty1fhDp81BxPiX1+IP6nrlUfQekS+IK7bTMaQjMEexpCaFZnt9nTND3vlI1Y
-         5Quj0OO7NA8yyc/XCZ6CQHCvcivsLSG52Z8YFPfbFJjButUYmObF3rRitcQ8/PcqVoWo
-         7FAg==
-X-Gm-Message-State: AOAM5309L7PyO4DOfriYryLScEWcacIP77AwAcvhjVZBmFiLkmC9Yw99
-        iAxH9L70DaFqi6Px+jIZ93yL+w==
-X-Google-Smtp-Source: ABdhPJyAnjhczssUcGe0J2dpA0nHZjMDdFDg5X8MuZj4xiOAvzcNX5gH8XXQcuUzB8NccHe7cB0SFQ==
-X-Received: by 2002:a05:6a00:1510:: with SMTP id q16mr13446701pfu.311.1590859859638;
-        Sat, 30 May 2020 10:30:59 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id 192sm9648362pfz.198.2020.05.30.10.30.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 30 May 2020 10:30:58 -0700 (PDT)
-Date:   Sat, 30 May 2020 10:30:57 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Gabriel Krisman Bertazi <krisman@collabora.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com, Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Will Drewry <wad@chromium.org>,
-        "H . Peter Anvin" <hpa@zytor.com>, Paul Gofman <gofmanp@gmail.com>,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH RFC] seccomp: Implement syscall isolation based on memory
- areas
-Message-ID: <202005300923.B245392C@keescook>
-References: <20200530055953.817666-1-krisman@collabora.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200530055953.817666-1-krisman@collabora.com>
+        h=x-gm-message-state:from:message-id:mime-version:subject:date
+         :in-reply-to:cc:to:references;
+        bh=8sism75zVT9pduqsvpPRRhWEaW/18m+btjuZdwKkiCw=;
+        b=Sk7CgIShnPU+UBziQ3KPcFr/2D6mLtZbYoR2eEtlDXbIh8D2o73iJzIZJeeQ+9O8g6
+         Us+ISDB0SNi0MwAzxhCCLuPQbw2vcJrNekgTYRWcV+fxrEyCgJalvpEjx1DxQ/wYdZqU
+         iYfvcVx2el+swrQjUz4tdGIavOSfnFDp2dRyHQqGpZL6iJ39QQ0tI3MXyKpKafBVI9OM
+         9EqHfvBoapZKR7wdUShXYDAGDX2N+0GXXPwPcKrsog983NuGLBBr9MywfNu9//m8PeGr
+         nxkLOZhNY3DzRd6HGQGcrtQZ5MpgQAaX94zwhlI9C2OD37ETvRiTBE0u633Axb+PsfoZ
+         wcoA==
+X-Gm-Message-State: AOAM531WIdmwUe45xSs6LFORSPnhGGYdQHI4VryNLM8hOexyMwDtLMzs
+        BQ+tbj8M9ikzumynN3URLq7new==
+X-Google-Smtp-Source: ABdhPJwzY7gMyB0U3nUlbkYYd3ziIExhobvoRE5Z1j4/rP5DoG3B0FTXaLG3+sL+CuYQfMOYBmrZNw==
+X-Received: by 2002:a17:90b:245:: with SMTP id fz5mr3098009pjb.138.1590876845267;
+        Sat, 30 May 2020 15:14:05 -0700 (PDT)
+Received: from [192.168.10.160] (S0106a84e3fe4b223.cg.shawcable.net. [70.77.216.213])
+        by smtp.gmail.com with ESMTPSA id 140sm7528024pfy.95.2020.05.30.15.14.03
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 30 May 2020 15:14:04 -0700 (PDT)
+From:   Andreas Dilger <adilger@dilger.ca>
+Message-Id: <F5AE90A2-1661-4B8E-A884-C3CBAB0F603F@dilger.ca>
+Content-Type: multipart/signed;
+ boundary="Apple-Mail=_83631672-66E3-42A2-A44C-BB2762691B7E";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Subject: Re: [PATCH] checkpatch/coding-style: Allow 100 column lines
+Date:   Sat, 30 May 2020 16:14:01 -0600
+In-Reply-To: <9c360bfa43580ce7726dd3d9d247f1216a690ef0.camel@perches.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        David Laight <David.Laight@aculab.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        David Howells <dhowells@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Al Viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        NetFilter <netfilter-devel@vger.kernel.org>
+To:     Joe Perches <joe@perches.com>
+References: <CAHk-=wj3iGQqjpvc+gf6+C29Jo4COj6OQQFzdY0h5qvYKTdCow@mail.gmail.com>
+ <20200528054043.621510-1-hch@lst.de>
+ <22778.1590697055@warthog.procyon.org.uk>
+ <f89f0f7f-83b4-72c6-7d08-cb6eaeccd443@schaufler-ca.com>
+ <3aea7a1c10e94ea2964fa837ae7d8fe2@AcuMS.aculab.com>
+ <CAHk-=wjR0H3+2ba0UUWwoYzYBH0GX9yTf5dj2MZyo0xvyzvJnA@mail.gmail.com>
+ <9c360bfa43580ce7726dd3d9d247f1216a690ef0.camel@perches.com>
+X-Mailer: Apple Mail (2.3273)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, May 30, 2020 at 01:59:53AM -0400, Gabriel Krisman Bertazi wrote:
-> Modern Windows applications are executing system call instructions
-> directly from the application's code without going through the WinAPI.
-> This breaks Wine emulation, because it doesn't have a chance to
-> intercept and emulate these syscalls before they are submitted to Linux.
-> 
-> In addition, we cannot simply trap every system call of the application
-> to userspace using PTRACE_SYSEMU, because performance would suffer,
-> since our main use case is to run Windows games over Linux.  Therefore,
-> we need some in-kernel filtering to decide whether the syscall was
-> issued by the wine code or by the windows application.
 
-Interesting use-case! It seems like you're in the position of needing to
-invert the assumption about syscalls: before you knew everything going
-through WinAPI needed emulation, and now you need to assume everything
-not going through a native library needs emulation. Oof.
+--Apple-Mail=_83631672-66E3-42A2-A44C-BB2762691B7E
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=us-ascii
 
-Is it possible to disassemble and instrument the Windows code to insert
-breakpoints (or emulation calls) at all the Windows syscall points?
+On May 29, 2020, at 5:12 PM, Joe Perches <joe@perches.com> wrote:
+>=20
+> Change the maximum allowed line length to 100 from 80.
 
-> [...]
-> * Why not SECCOMP_MODE_FILTER?
-> 
-> We experimented with dynamically generating BPF filters for whitelisted
-> memory regions and using SECCOMP_MODE_FILTER, but there are a few
-> reasons why it isn't enough nor a good idea for our use case:
-> 
-> 1. We cannot set the filters at program initialization time and forget
-> about it, since there is no way of knowing which modules will be loaded,
-> whether native and windows.  Filter would need a way to be updated
-> frequently during game execution.
-> 
-> 2. We cannot predict which Linux libraries will issue syscalls directly.
-> Most of the time, whitelisting libc and a few other libraries is enough,
-> but there are no guarantees other Linux libraries won't issue syscalls
-> directly and break the execution.  Adding every linux library that is
-> loaded also has a large performance cost due to the large resulting
-> filter.
+What is the benefit/motivation for changing this?  The vast majority
+of files are wrapped at 80 columns, and if some files start being
+wrapped at 100 columns they will either display poorly on 80-column
+terminals, or a lot of dead space will show in 100-column terminals.
 
-Just so I can understand the expected use: given the dynamic nature of
-the library loading, how would Wine be marking the VMAs?
-
-> 3. As I mentioned before, performance is critical.  In our testing with
-> just a single memory segment blacklisted/whitelisted, the minimum size
-> of a bpf filter would be 4 instructions.  In that scenario,
-> SECCOMP_MODE_FILTER added an average overhead of 10% to the execution
-> time of sysinfo(2) in comparison to seccomp disabled, while the impact
-> of SECCOMP_MODE_MEMMAP was averaged around 1.5%.
-
-Was the BPF JIT enabled? I was recently examining filter performance too:
-https://lore.kernel.org/linux-security-module/202005291043.A63D910A8@keescook/
-
-> Indeed, points 1 and 2 could be worked around with some userspace work
-> and improved SECCOMP_MODE_FILTER support, but at a high performance and
-> some stability cost, to obtain the semantics we want.  Still, the
-> performance would suffer, and SECCOMP_MODE_MEMMAP is non intrusive
-> enough that I believe it should be considered as an upstream solution.
-
-It looks like you're using SECCOMP_RET_TRAP for this? Signal handling
-can be pretty slow. Did you try SECCOMP_RET_USER_NOTIF?
-
-> Sending as an RFC for now to get the discussion started.  In particular:
-> 
-> 1) Would this design be acceptable?
-
-Maybe? I want to spend a little time exploring alternatives first. :)
-
-> 2) I'm not comfortable with using the high part of vm_flags, though I'm
-> not sure where else it would fit.  Suggestions?
-
-I don't know this area very well. Hopefully some of the mm folks can
-comment on it. It seems like there needs to be a more dynamic way mark
-VMAs for arbitrary purposes (since this isn't _actually_ a PROT* flag,
-it's just a marking for seccomp to check).
-
-Regardless, here's a review of the specifics of patch, without regard to
-the design question above. :)
-
-> 
-> CC: Thomas Gleixner <tglx@linutronix.de>
-> CC: Kees Cook <keescook@chromium.org>
-> CC: Andy Lutomirski <luto@amacapital.net>
-> CC: Will Drewry <wad@chromium.org>
-> CC: H. Peter Anvin <hpa@zytor.com>
-> CC: Paul Gofman <gofmanp@gmail.com>
-> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+> Miscellanea:
+>=20
+> o to avoid unnecessary whitespace changes in files,
+>  checkpatch will no longer emit a warning about line length
+>  when scanning files unless --strict is also used
+> o Add a bit to coding-style about alignment to open parenthesis
+>=20
+> Signed-off-by: Joe Perches <joe@perches.com>
 > ---
->  arch/Kconfig                           | 21 +++++++++
->  arch/x86/Kconfig                       |  1 +
->  include/linux/mm.h                     |  8 ++++
->  include/linux/mman.h                   |  4 +-
->  include/uapi/asm-generic/mman-common.h |  2 +
->  include/uapi/linux/seccomp.h           |  2 +
->  kernel/seccomp.c                       | 59 ++++++++++++++++++++++++++
->  mm/mprotect.c                          |  2 +-
->  8 files changed, 97 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/Kconfig b/arch/Kconfig
-> index 786a85d4ad40..e5c10231c9c2 100644
-> --- a/arch/Kconfig
-> +++ b/arch/Kconfig
-> @@ -471,6 +471,27 @@ config SECCOMP_FILTER
->  
->  	  See Documentation/userspace-api/seccomp_filter.rst for details.
->  
-> +config HAVE_ARCH_SECCOMP_MEMMAP
-> +	bool
-> +	help
-> +	  An arch should select this symbol if it provides all of these things:
-> +	  - syscall_get_arch()
-> +	  - syscall_get_arguments()
-> +	  - syscall_rollback()
-> +	  - syscall_set_return_value()
-> +	  - SIGSYS siginfo_t support
-> +	  - secure_computing is called from a ptrace_event()-safe context
-> +	  - secure_computing return value is checked and a return value of -1
-> +	    results in the system call being skipped immediately.
-> +	  - seccomp syscall wired up
+> Documentation/process/coding-style.rst | 25 ++++++++++++++++---------
+> scripts/checkpatch.pl                  | 14 +++++++++-----
+> 2 files changed, 25 insertions(+), 14 deletions(-)
+>=20
+> diff --git a/Documentation/process/coding-style.rst =
+b/Documentation/process/coding-style.rst
+> index acb2f1b36350..55b148e9c6b8 100644
+> --- a/Documentation/process/coding-style.rst
+> +++ b/Documentation/process/coding-style.rst
+> @@ -84,15 +84,22 @@ Get a decent editor and don't leave whitespace at =
+the end of lines.
+> Coding style is all about readability and maintainability using =
+commonly
+> available tools.
+>=20
+> -The limit on the length of lines is 80 columns and this is a strongly
+> -preferred limit.
+> -
+> -Statements longer than 80 columns will be broken into sensible =
+chunks, unless
+> -exceeding 80 columns significantly increases readability and does not =
+hide
+> -information. Descendants are always substantially shorter than the =
+parent and
+> -are placed substantially to the right. The same applies to function =
+headers
+> -with a long argument list. However, never break user-visible strings =
+such as
+> -printk messages, because that breaks the ability to grep for them.
+> +The preferred limit on the length of a single line is 80 columns.
 > +
-> +config SECCOMP_MEMMAP
-> +	def_bool y
-> +	depends on HAVE_ARCH_SECCOMP_MEMMAP && SECCOMP
-> +	help
-> +	  Enable tasks to trap syscalls based on the page that triggered
-> +	  the syscall.
+> +Statements longer than 80 columns should be broken into sensible =
+chunks,
+> +unless exceeding 80 columns significantly increases readability and =
+does
+> +not hide information.
 > +
-
-Since I don't see anything distinct in the requirements for
-SECCOMP_MEMMAP, so I don't think it needs a separate CONFIG: it is almost
-entirely built on the SECCOMP_FILTER infrastructure. I'd just drop the
-CONFIGs.
-
->  config HAVE_ARCH_STACKLEAK
->  	bool
->  	help
-> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> index 2d3f963fd6f1..70998b01c533 100644
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -145,6 +145,7 @@ config X86
->  	select HAVE_ARCH_COMPAT_MMAP_BASES	if MMU && COMPAT
->  	select HAVE_ARCH_PREL32_RELOCATIONS
->  	select HAVE_ARCH_SECCOMP_FILTER
-> +	select HAVE_ARCH_SECCOMP_MEMMAP
-
-(and it's not arch-specific)
-
->  	select HAVE_ARCH_THREAD_STRUCT_WHITELIST
->  	select HAVE_ARCH_STACKLEAK
->  	select HAVE_ARCH_TRACEHOOK
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 5a323422d783..6271fb7fd5bc 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -294,11 +294,13 @@ extern unsigned int kobjsize(const void *objp);
->  #define VM_HIGH_ARCH_BIT_2	34	/* bit only usable on 64-bit architectures */
->  #define VM_HIGH_ARCH_BIT_3	35	/* bit only usable on 64-bit architectures */
->  #define VM_HIGH_ARCH_BIT_4	36	/* bit only usable on 64-bit architectures */
-> +#define VM_HIGH_ARCH_BIT_5	37	/* bit only usable on 64-bit architectures */
->  #define VM_HIGH_ARCH_0	BIT(VM_HIGH_ARCH_BIT_0)
->  #define VM_HIGH_ARCH_1	BIT(VM_HIGH_ARCH_BIT_1)
->  #define VM_HIGH_ARCH_2	BIT(VM_HIGH_ARCH_BIT_2)
->  #define VM_HIGH_ARCH_3	BIT(VM_HIGH_ARCH_BIT_3)
->  #define VM_HIGH_ARCH_4	BIT(VM_HIGH_ARCH_BIT_4)
-> +#define VM_HIGH_ARCH_5	BIT(VM_HIGH_ARCH_BIT_5)
->  #endif /* CONFIG_ARCH_USES_HIGH_VMA_FLAGS */
->  
->  #ifdef CONFIG_ARCH_HAS_PKEYS
-> @@ -340,6 +342,12 @@ extern unsigned int kobjsize(const void *objp);
->  # define VM_GROWSUP	VM_NONE
->  #endif
->  
-> +#if defined(CONFIG_X86)
-> +# define VM_NOSYSCALL	VM_HIGH_ARCH_5
-> +#else
-> +# define VM_NOSYSCALL	VM_NONE
-> +#endif
+> +Statements may be up to 100 columns when appropriate.
 > +
->  /* Bits set in the VMA until the stack is in its final location */
->  #define VM_STACK_INCOMPLETE_SETUP	(VM_RAND_READ | VM_SEQ_READ)
->  
-
-I have no idea what the correct way to mark VMAs would be. As you
-mentioned, this seems ... wrong. :)
-
-> diff --git a/include/linux/mman.h b/include/linux/mman.h
-> index 4b08e9c9c538..a5ca42eb685a 100644
-> --- a/include/linux/mman.h
-> +++ b/include/linux/mman.h
-> @@ -94,7 +94,8 @@ static inline void vm_unacct_memory(long pages)
->   */
->  static inline bool arch_validate_prot(unsigned long prot, unsigned long addr)
->  {
-> -	return (prot & ~(PROT_READ | PROT_WRITE | PROT_EXEC | PROT_SEM)) == 0;
-> +	return (prot & ~(PROT_READ | PROT_WRITE | PROT_EXEC | PROT_SEM
-> +			 | PROT_NOSYSCALL)) == 0;
->  }
->  #define arch_validate_prot arch_validate_prot
->  #endif
-> @@ -119,6 +120,7 @@ calc_vm_prot_bits(unsigned long prot, unsigned long pkey)
->  	return _calc_vm_trans(prot, PROT_READ,  VM_READ ) |
->  	       _calc_vm_trans(prot, PROT_WRITE, VM_WRITE) |
->  	       _calc_vm_trans(prot, PROT_EXEC,  VM_EXEC) |
-> +	       _calc_vm_trans(prot, PROT_NOSYSCALL, VM_NOSYSCALL) |
->  	       arch_calc_vm_prot_bits(prot, pkey);
->  }
->  
-> diff --git a/include/uapi/asm-generic/mman-common.h b/include/uapi/asm-generic/mman-common.h
-> index f94f65d429be..4eafbaa3f4bc 100644
-> --- a/include/uapi/asm-generic/mman-common.h
-> +++ b/include/uapi/asm-generic/mman-common.h
-> @@ -13,6 +13,8 @@
->  #define PROT_SEM	0x8		/* page may be used for atomic ops */
->  /*			0x10		   reserved for arch-specific use */
->  /*			0x20		   reserved for arch-specific use */
-> +#define PROT_NOSYSCALL	0x40		/* page cannot trigger syscalls */
+> +Descendants are always substantially shorter than the parent and are
+> +are placed substantially to the right.  A very commonly used style
+> +is to align descendants to a function open parenthesis.
 > +
->  #define PROT_NONE	0x0		/* page can not be accessed */
->  #define PROT_GROWSDOWN	0x01000000	/* mprotect flag: extend change to start of growsdown vma */
->  #define PROT_GROWSUP	0x02000000	/* mprotect flag: extend change to end of growsup vma */
-
-AIUI, all of the above is to plumb the VMA marking through an mprotect()
-call. I wonder if perhaps madvise() would be better? I'm not sure how
-tight we are on new flags there, but I think it would be cleaner to use
-that interface. Take a look at MADV_WIPEONFORK / VM_WIPEONFORK.
-
-> diff --git a/include/uapi/linux/seccomp.h b/include/uapi/linux/seccomp.h
-> index c1735455bc53..c7d042a409e7 100644
-> --- a/include/uapi/linux/seccomp.h
-> +++ b/include/uapi/linux/seccomp.h
-> @@ -10,12 +10,14 @@
->  #define SECCOMP_MODE_DISABLED	0 /* seccomp is not in use. */
->  #define SECCOMP_MODE_STRICT	1 /* uses hard-coded filter. */
->  #define SECCOMP_MODE_FILTER	2 /* uses user-supplied filter. */
-> +#define SECCOMP_MODE_MEMMAP	3 /* Lock syscalls per memory region. */
-
-Making this incompatible with FILTER might cause problems for the future
-(more and more process launchers are starting to set filters).
-
-So this would, perhaps, be a new flag for struct seccomp, rather than a
-new operating mode.
-
->  
->  /* Valid operations for seccomp syscall. */
->  #define SECCOMP_SET_MODE_STRICT		0
->  #define SECCOMP_SET_MODE_FILTER		1
->  #define SECCOMP_GET_ACTION_AVAIL	2
->  #define SECCOMP_GET_NOTIF_SIZES		3
-> +#define SECCOMP_SET_MODE_MEMMAP		4
->  
->  /* Valid flags for SECCOMP_SET_MODE_FILTER */
->  #define SECCOMP_FILTER_FLAG_TSYNC		(1UL << 0)
-> diff --git a/kernel/seccomp.c b/kernel/seccomp.c
-> index 55a6184f5990..ebf09b02db8d 100644
-> --- a/kernel/seccomp.c
-> +++ b/kernel/seccomp.c
-> @@ -930,6 +930,55 @@ static int __seccomp_filter(int this_syscall, const struct seccomp_data *sd,
->  }
->  #endif
->  
-> +#ifdef CONFIG_SECCOMP_MEMMAP
-> +static int __seccomp_memmap(int this_syscall, const struct seccomp_data *sd)
-> +{
-> +	struct vm_area_struct *vma = find_vma(current->mm,
-> +					      sd->instruction_pointer);
-> +	if (!vma)
-> +		BUG();
-
-No new kernel code should use BUG:
-https://www.kernel.org/doc/html/latest/process/deprecated.html#bug-and-bug-on
-
-I would maybe pr_warn_once(), but then treat it as if it was marked with
-VM_NOSYSCALL.
-
+> +These same rules are applied to function headers with a long argument =
+list.
 > +
-> +	if (!(vma->vm_flags & VM_NOSYSCALL))
-> +		return 0;
-> +
-> +	syscall_rollback(current, task_pt_regs(current));
-> +	seccomp_send_sigsys(this_syscall, 0);
-> +
-> +	seccomp_log(this_syscall, SIGSYS, SECCOMP_RET_TRAP, true);
-> +
-> +	return -1;
-> +}
+> +However, never break user-visible strings such as printk messages =
+because
+> +that breaks the ability to grep for them.
+>=20
+>=20
+> 3) Placing Braces and Spaces
+> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+> index dd750241958b..5f00df2c3f59 100755
+> --- a/scripts/checkpatch.pl
+> +++ b/scripts/checkpatch.pl
+> @@ -53,7 +53,7 @@ my %ignore_type =3D ();
+> my @ignore =3D ();
+> my $help =3D 0;
+> my $configuration_file =3D ".checkpatch.conf";
+> -my $max_line_length =3D 80;
+> +my $max_line_length =3D 100;
+> my $ignore_perl_version =3D 0;
+> my $minimum_perl_version =3D 5.10.0;
+> my $min_conf_desc_length =3D 4;
+> @@ -99,9 +99,11 @@ Options:
+>   --types TYPE(,TYPE2...)    show only these comma separated message =
+types
+>   --ignore TYPE(,TYPE2...)   ignore various comma separated message =
+types
+>   --show-types               show the specific message type in the =
+output
+> -  --max-line-length=3Dn        set the maximum line length, if =
+exceeded, warn
+> +  --max-line-length=3Dn        set the maximum line length, (default =
+$max_line_length)
+> +                             if exceeded, warn on patches
+> +                             requires --strict for use with --file
+>   --min-conf-desc-length=3Dn   set the min description length, if =
+shorter, warn
+> -  --tab-size=3Dn               set the number of spaces for tab =
+(default 8)
+> +  --tab-size=3Dn               set the number of spaces for tab =
+(default $tabsize)
+>   --root=3DPATH                PATH to the kernel tree root
+>   --no-summary               suppress the per-file summary
+>   --mailback                 only produce a report in case of =
+warnings/errors
+> @@ -3282,8 +3284,10 @@ sub process {
+>=20
+> 			if ($msg_type ne "" &&
+> 			    (show_type("LONG_LINE") || =
+show_type($msg_type))) {
+> -				WARN($msg_type,
+> -				     "line over $max_line_length =
+characters\n" . $herecurr);
+> +				my $msg_level =3D \&WARN;
+> +				$msg_level =3D \&CHK if ($file);
+> +				&{$msg_level}($msg_type,
+> +					      "line length of $length =
+exceeds $max_line_length columns\n" . $herecurr);
+> 			}
+> 		}
+>=20
+>=20
 
-This really just looks like an ip_address filter, but I get what you
-mean about stacking filters, etc. This may finally be the day we turn to
-eBPF in seccomp, since that would give you access to using a map lookup
-on ip_address, and the map could be updated externally (removing the
-need for the madvise() changes).
 
-> +
-> +static long seccomp_set_mode_memmap(unsigned int flags)
-> +{
-> +	const unsigned long seccomp_mode = SECCOMP_MODE_MEMMAP;
-> +	long ret = 0;
-> +
-> +	if (flags & SECCOMP_FILTER_FLAG_TSYNC)
-> +		return -EINVAL;
+Cheers, Andreas
 
-This should just test for any bits in flags. TSYNC + memmap should be
-avoided, IMO.
 
-> +
-> +	spin_lock_irq(&current->sighand->siglock);
-> +
-> +	if (seccomp_may_assign_mode(seccomp_mode))
-> +		seccomp_assign_mode(current, seccomp_mode, flags);
-> +	else
-> +		ret = -EINVAL;
-> +
-> +	spin_unlock_irq(&current->sighand->siglock);
-> +
-> +	return ret;
-> +}
-> +#else
-> +static int __seccomp_memmap(int this_syscall, const struct seccomp_data *sd)
-> +{
-> +	BUG();
-> +}
-> +static long seccomp_set_mode_memmap(unsigned int flags)
-> +{
-> +	return -EINVAL;
-> +}
-> +#endif /* CONFIG_SECCOMP_MEMMAP */
-> +
->  int __secure_computing(const struct seccomp_data *sd)
->  {
->  	int mode = current->seccomp.mode;
-> @@ -948,6 +997,8 @@ int __secure_computing(const struct seccomp_data *sd)
->  		return 0;
->  	case SECCOMP_MODE_FILTER:
->  		return __seccomp_filter(this_syscall, sd, false);
-> +	case SECCOMP_MODE_MEMMAP:
-> +		return __seccomp_memmap(this_syscall, sd);
->  	default:
->  		BUG();
->  	}
-> @@ -1425,6 +1476,10 @@ static long do_seccomp(unsigned int op, unsigned int flags,
->  			return -EINVAL;
->  
->  		return seccomp_get_notif_sizes(uargs);
-> +	case SECCOMP_SET_MODE_MEMMAP:
-> +		if (uargs != NULL)
-> +			return -EINVAL;
-> +		return seccomp_set_mode_memmap(flags);
->  	default:
->  		return -EINVAL;
->  	}
-> @@ -1462,6 +1517,10 @@ long prctl_set_seccomp(unsigned long seccomp_mode, void __user *filter)
->  		op = SECCOMP_SET_MODE_FILTER;
->  		uargs = filter;
->  		break;
-> +	case SECCOMP_MODE_MEMMAP:
-> +		op = SECCOMP_SET_MODE_MEMMAP;
-> +		uargs = NULL;
-> +		break;
 
-The prctl() interface is deprecated, so no new features should be added
-there.
 
->  	default:
->  		return -EINVAL;
->  	}
-> diff --git a/mm/mprotect.c b/mm/mprotect.c
-> index 494192ca954b..6b5c00e8bbdc 100644
-> --- a/mm/mprotect.c
-> +++ b/mm/mprotect.c
-> @@ -591,7 +591,7 @@ static int do_mprotect_pkey(unsigned long start, size_t len,
->  		 * cleared from the VMA.
->  		 */
->  		mask_off_old_flags = VM_READ | VM_WRITE | VM_EXEC |
-> -					VM_FLAGS_CLEAR;
-> +			VM_NOSYSCALL | VM_FLAGS_CLEAR;
->  
->  		new_vma_pkey = arch_override_mprotect_pkey(vma, prot, pkey);
->  		newflags = calc_vm_prot_bits(prot, new_vma_pkey);
-> -- 
-> 2.27.0.rc2
-> 
 
-So, yes, interesting. I'll continue to think about how this could work
-best. Can you share what your filters looked like when you were
-originally trying those?
 
-Thanks!
+--Apple-Mail=_83631672-66E3-42A2-A44C-BB2762691B7E
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
 
--Kees
+-----BEGIN PGP SIGNATURE-----
+Comment: GPGTools - http://gpgtools.org
 
--- 
-Kees Cook
+iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAl7S2qkACgkQcqXauRfM
+H+AkRA//RZmP8frfFpi0pH85h7onJK9vtI9wxpcARaYob2jCUehjiSxeetTlAwJE
++SX1+sZeCoghXelyFESfWG1p65jRiZhWjVMT7pxj5mVAd9leBVjkgwYwbALLiffz
+wg/SmDTR7LIGMR/1xqATTzwVDpLO1yj6nwVyAG8WDaMiiya4EEjxPtGaCGJ/Yo+K
+GSqY2ix/NKHhwgAdwduOjrY3OSCUziByrwibr8p7qi4jAFs2J+2vE65AqY05RLnZ
+vyPuh7h1bGr2tlaapHJn4b2AaWSttJ5Cj3lCBwPDv4yZE2CIY0gcw7d2txWh+hvE
+5Q9SBeLVNGs0XddUV6ebvZhtaSWi1qi6OyTyjX9v7vzUPZF7kUtAIp9X3Ewx2PJu
+POGu2JkdbN0jzt7Ur+IyoNZY+uzidTlpACTQU/ZlfISuhAnOjgFJfFRTEHI+aD8G
+zs2UoawmSLKPnVSDWv8MxYtw7uH5yJw1WL7NVMK55ofBimRXFrgsTwL678A1LWZx
+7OLhQUvUtduxff13+DNc03zEkgMv9iyFw8VmzQbxiwG2yWnH93RiuHOzIf1uPOdA
+y42Aq0KZIeF7U4yJkPFvZuRyoaKSrjuY7Y8DrGn4MD8qW0S0s64DuiuMrYrNjuCK
+0n9NBCorgBVUaroHaek0MUch8N/DvsMt84yttZAoryaBqN9jDZ0=
+=qASh
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_83631672-66E3-42A2-A44C-BB2762691B7E--
