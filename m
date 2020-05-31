@@ -2,169 +2,284 @@ Return-Path: <SRS0=UHBo=7N=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA5D8C433E1
-	for <linux-security-module@archiver.kernel.org>; Sun, 31 May 2020 17:10:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A558EC433E1
+	for <linux-security-module@archiver.kernel.org>; Sun, 31 May 2020 17:19:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 855E3206E2
-	for <linux-security-module@archiver.kernel.org>; Sun, 31 May 2020 17:10:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7649B207BB
+	for <linux-security-module@archiver.kernel.org>; Sun, 31 May 2020 17:19:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BtXzKiC4"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bp29/DVJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726081AbgEaRK0 (ORCPT
+        id S1728166AbgEaRTW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 31 May 2020 13:10:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60056 "EHLO
+        Sun, 31 May 2020 13:19:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725912AbgEaRK0 (ORCPT
+        with ESMTP id S1726193AbgEaRTT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 31 May 2020 13:10:26 -0400
-Received: from mail-qt1-x841.google.com (mail-qt1-x841.google.com [IPv6:2607:f8b0:4864:20::841])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFA00C061A0E;
-        Sun, 31 May 2020 10:10:24 -0700 (PDT)
-Received: by mail-qt1-x841.google.com with SMTP id u17so4854884qtq.1;
-        Sun, 31 May 2020 10:10:24 -0700 (PDT)
+        Sun, 31 May 2020 13:19:19 -0400
+Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95A43C061A0E;
+        Sun, 31 May 2020 10:19:19 -0700 (PDT)
+Received: by mail-pf1-x441.google.com with SMTP id g5so2341503pfm.10;
+        Sun, 31 May 2020 10:19:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=RDQSd8wT/WGJwb5uvCrzE3OEzD02oi7ERDrzQUh3UCY=;
-        b=BtXzKiC4TDiIzWZtHfOHlC1Aa4nHpc9ThwWj7n5nGbDCJRZHDDn8WPeB4EFobLU7+m
-         5kLjuwESbDF/z9DRY5STypx4CSIbKbn5MhfHYFzWcU8xYsJqFUdO9DhYBP1RipE6OW08
-         E7OoU7ZRFh0xHoLfbJRQqnvoi8rhh6zwZ306aE7XCBbPwBAbtfPObNUsKbTkoXBMBSWL
-         W2HbTJ4VhnYPhCwOI2AWRDK+2ZCAXlsrwDz9crE+47V+ky9wGIHLBBcPAImmav6DVe7s
-         5l/VrguT19iFz1oPGjpnGxCYY9JZNPne8Y8IijgWK7pXX5ZXWDZTyLSgCHk/q5fz6EwJ
-         G7cw==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=0NoqoLgeFV05DwStme6AY8HWmUhYmSoSETzNa4bMDsM=;
+        b=bp29/DVJEfBLIyIdCDBJ3UqDJ+xLd82ss6uIJt/00FgFMbz/S4Gl4vPr5u4kYjkZ56
+         JksrUcYZ0Wr8qEqKciMSFkiCTdM2xxbZSUt+v2pjkwoB2/vZgF6e8+w9H8zFozI5E0m2
+         Y0CNkch4nNwbRKGEWo0L3H2byr4QhL+AV/bMN9dWlY12Dn8XvpbFY0i6bystBI2p9wIh
+         qIBs2TmyPXWaBR0wrRM3i5JzMH9fX9tUk5OsK1GQC4dRCe9uOJbLdeweyG+VaPXhpV3a
+         PL+ED8ksHuRx9pEPdRdrYN3ouurh4q3+0ZB7K690wlwvEnxzHlRKiHC573owPk5hxcoY
+         zrdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-transfer-encoding:content-language;
-        bh=RDQSd8wT/WGJwb5uvCrzE3OEzD02oi7ERDrzQUh3UCY=;
-        b=IJfhyH3PzmKOinINmd1Vi8DxccJDpqpfKvIGw7ney2uZ6dx6+s2lkEK6LjhGhewxMN
-         sqzfcphIGMP3KO3Ga4R9p0cjBvuWlQERhmL4zz053nO/y6K9QbUd2Dfhda8mS5auCm/B
-         s62Y9nXeUYSOaFD8LNbpxuLy4xyFqamev+Zze2yBSmA4nTvDkw0HBlm+YHh0RLlCaJzs
-         nSSvnlYfPCVz2j1tebzAfLv4GZJVGFEeZsK6mXrew3NUT6IEcBFY3+rNH5jpRGe6n1hM
-         SwyEJQa+t8y1h2EQX/A7AyxuD1jn7qq16ckYrwt6vykhRkS/E7gB0o0dURZZKjCocoR/
-         wV2A==
-X-Gm-Message-State: AOAM531V6zl32OJe/biakIkySbNJT34uNvasZPvh7ZEF8E1NPC8+/6/g
-        I4jeIFtCye1TED1Yp1R6fxkdkiQwJTzA9A==
-X-Google-Smtp-Source: ABdhPJzvsUZxaa9DWn0omzsk23n+GSvUI4ajQFp6XgKr3hKULInMP45+bW1x5b8bLhCB0i3U8PXcCA==
-X-Received: by 2002:ac8:b48:: with SMTP id m8mr18463869qti.206.1590945023926;
-        Sun, 31 May 2020 10:10:23 -0700 (PDT)
-Received: from [192.168.1.62] (89-178-168-199.broadband.corbina.ru. [89.178.168.199])
-        by smtp.gmail.com with ESMTPSA id w94sm13295959qte.19.2020.05.31.10.10.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 31 May 2020 10:10:23 -0700 (PDT)
-Subject: Re: [PATCH RFC] seccomp: Implement syscall isolation based on memory
- areas
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Gabriel Krisman Bertazi <krisman@collabora.com>,
-        Kees Cook <keescook@chromium.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, kernel@collabora.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Will Drewry <wad@chromium.org>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        linux-security-module@vger.kernel.org,
-        Zebediah Figura <zfigura@codeweavers.com>
-References: <20200530055953.817666-1-krisman@collabora.com>
- <202005300923.B245392C@keescook> <851rn0ejg9.fsf@collabora.com>
- <9a512096-7707-3fc6-34ba-22f969c0f964@gmail.com>
- <20200531164938.GF19604@bombadil.infradead.org>
-From:   Paul Gofman <gofmanp@gmail.com>
-Autocrypt: addr=gofmanp@gmail.com; prefer-encrypt=mutual; keydata=
- mQINBF0Dv54BEAC1ATtFV/oNVw7bEH41UKUhzGR3FkorCsQuLZmSV8/ztVoukgl16O9FTd+Z
- T3nMiT5hEo4EfO7IcmXPputpKnxBAcAxW78i3kd6dgYs56/F56R5g+0RGqojuA+nx1ij+Cg3
- erbaq6Zrg3jMjiSIiT1O9fHEj1xT5QCX3IhEyMX+Gg5HAM/fw5O059S7i9Dmz9d/7FgkLsr8
- PS/pA+dQcC3R59/Be8MqjtnnfTlp+X7JFrcfJ50bGdMf4Cs3L3OsaUtydO/Znp3snPPBJktE
- fti9DCPcJskwN14S9yyRVj75pib2thLHmcWOTbFw+MOHzhk1K47QOSQgoHPd7QvegmDiUOJa
- 8gCCCLnNY+oIRP93a1lIm7YOab3TeImU5DcJ6S/+kyXw9qlJxhrzKdERJDGkEXP/3/tsnD8q
- 5sEO8GM9AppAxzkthZV98gKPOs+AAQBPN9Mmxa2/o7zv6WAvkGpkIH/FT3mTmRy0O28KvFbS
- hPT+gttvWK/qbp7oWTAuzooMAJkUUhSI7I3vBkMi9vkIqg5/qABzMSqlKT8KbY1mF/nmNSjU
- 6Ll00YF7S+JKs6wNrfno0FOcunmWDASPDgFwhYeisfp8WKJus3YQGyaBTRs4t2E1ByerwL8j
- jYI9yoiTq1bL/L4Nqqbn8KMZiivT8HJsakajDcp731tBx3Bz7wARAQABtB9QYXVsIEdvZm1h
- biA8Z29mbWFucEBnbWFpbC5jb20+iQJUBBMBCAA+FiEE93VbXkH8WtnRV1uUdaTRGwGRWYQF
- Al0Dv54CGwMFCQWkjnIFCwkIBwIGFQoJCAsCBBYCAwECHgECF4AACgkQdaTRGwGRWYQA3w/7
- B1LJrjzAM/a4JlTLKJfy+fYubUQVbfnTona2vbS/KY1mHeF2t0QKtNVJH5EJhG6lgqyOhgOI
- IBhStLjgwUldE6de/RZ0b6QWYptejhGBdmOQz5+buT0yetlL2As/R1szlrazMg6OwY4INwZk
- 6HAl+yXUONShHgS2KDIcrF1Q8cR2poGE1QkvORy7livr2TgXwkMdC7ypJbZp8iaEx5Qg2saM
- QMHxcTmt0O3ONyx70UlSLbvXLbHfyuVBaK1clkToJ0/YVBW9U1TwDDJ20Qc/VZKGeoaXOiHI
- pflaFXlw0vu6sMzyFX3xBcztI98yG4CsNhkShAWrUCXKd3ZVi+3ClCxy62dtax0xP08lhvMz
- HpmK7bK5xzmXIoXdDrbsSQ7KLk1S2fAryoyfTTyUv/wcQUf17VcEMPHOLgcFbuEDCK1znHR4
- v+dRCtN+r3o43LKOwdW3cB8fry4633gsjReH9uwmWT/UIvlYVOk4qDFDkmGTEBhq09unFCeh
- t9CIjVlNYhf2SERFHCzlSqjQ/c5BaoSHNp4gZK2TcLcg5vESwIq/KDcjGs1/D+pipNRLvARl
- jroKwMuD1vj4TApoGv9RxLmuig4YAlDiFDttQtDYGoLR0adHJgQOywt5YQ2niWs6VdAtFkZe
- kanKIcB83kMKycOGy1vO9n0lWcGivQ4I9Be5Ag0EXQO/ngEQALd9fU7Z2uqT4qzxpegvCPyw
- 0jryornhJPJHK5kgJJ51qXn110vypMQGunUoQQgalIZOGw7Bt00TY9l88mGsNVZvUGeOxx5o
- ZEoyCkdqxcooc6k9M6caTidBUk3ci0b2wNNTVloP6rApMz9BKqXgPDfzcfRe89cFFVIkRnPC
- qH5V3VrjWvW7UuCNKgJ56D87dLLH0GkNWlWkd1UwUHm/hnz4RDOatrpD29aYsNnVnAzkrabq
- 3iOXb486DG8se5OqUomd5s6plyt7LnogS5Po1kYOGiMWBnnhD5c7S94ttK2goI49JRpRhSCm
- pbzZBTjJQac34qhFmn2811E5OI/tbOGQoaFG4hm4A0UP0M2PPMiWcfE2Sc4v+aIOGJl4VfDP
- WbV/rfL2FTVkR9UBbRUACQ9G2eKSSeVNmMcXtHtCO0ehMWGEwAHzI4ZIRAriy25rDGy12AuJ
- eJ5Yi4Lpbk/T7y7R4j+pfNnF2Ew++Z0/WPVCN0UltA65lpw4ka/hCgOwmc29bFQZUwmHn7LN
- KLjJB2sna0QFVMf+I5fanMdAA0frzkzVsL8nkA79ttZAJ3J/JU/6iFChcUfS5qdddrl5at59
- IohNxU2wOrdTxxKnPD/pLfMJcQrgn0L1STd+cQ1atmxDz/82zxWZ2EfrC4RQ2Sbkk7GFDJwu
- pNw4I/wInfo5ABEBAAGJAjwEGAEIACYWIQT3dVteQfxa2dFXW5R1pNEbAZFZhAUCXQO/ngIb
- DAUJBaSOcgAKCRB1pNEbAZFZhGzcD/wPyxVIDxJI1zBYkbGx1b2tfZ5ungzBF4Pv/TRBL8Xl
- ouTRq8E2Uhcbr3PIL+AnL697XoKZC8iIvggqWTeLxNVFkakfAogUGnyFjHKRHtzFKEFyBtAd
- F4nbMqbbxDI/YMvbtbQxg9E1v0SM4zQxVTaSkKJCvmuPS7MWT54lKxDPtjazkTjHXWHMqSQ/
- MVUpuBbIrEPqqLxVt6tpM6Dnyr0Ttb33h8vytLsoS2e65IDq6QCRfuypladHkK+zIiZLTtwL
- cRL+ZCepxm28Vfw1/lWSzCP/haWLcCmxWgQvXBmHb1FuTgSw1BO0ni/F6gzDZW1CPmbcsPO/
- KEwkIMCF3/JzNDLiTC1cfnaSIDeMsPyU16Nv5v849Tkh1GvikyfDk49QVqjph/tQ8lKg1Imu
- ciR6z5o1avxdf4+E7IkJyDItxCxo0rNrZoLb9qvwgRcI4XP0Y4pw01iHXRff8/RDVTCmxUau
- Qhr4fPQqB3v+P2iWtyEPiT2jiUiASeHprY0PJzz/X4uIcJM4286D6f2Lxt4XPZBfM4h6082p
- lhxeUnfUGYARdiQF6hVUmmXaXkCZPoakovWwbGmL2l7bbAPdcwlrsqM95wqJ72WFxxYP96OO
- 2YVmrcr1e5NKsu7izqjiu+JS70BAHhy2BOyqI4f89DzW0u3jfMNC9jqliWwo7zRCPA==
-Message-ID: <c007e3e9-e915-16f3-de31-c811ad37c44c@gmail.com>
-Date:   Sun, 31 May 2020 20:10:18 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=0NoqoLgeFV05DwStme6AY8HWmUhYmSoSETzNa4bMDsM=;
+        b=X+QXRvfFC1bsoGRlLhcdcwY0n/nuH2695va1ZD4LlBPWVoUH1XPmqPJFEuCpKHbeUe
+         fR5JiWqQC3BTYhgruLSBNkNjX5Mv26steCHAey/z7UM7jNwsIXL5Hzkw5Q1KsRKZb8sP
+         Lv2F0RJvlZU9ZoTDfA7oQq6cHvMII4omDYIW9slbAGNyMCSPLEwi/WcRVkQCUB57oFv3
+         P5norjtwQHyuBXQuF8sYQ3TaKxr2Qa2TrcMspfOGuvamgZHkyckEiZq6MC5AOrYwoThM
+         ef1hhP9ry029OnUFyaVa+hEaAnA6YKdpdSZNy+FjK4HruRqoh3VuohJ6q4mxzbsifMJg
+         HwvA==
+X-Gm-Message-State: AOAM532sdxwRqBR7TZUGzINLLjhPnETd48vdmfkNpoubsgw56b5MXbtK
+        8GPGffLbx1pFogU7MJXaWzLhdg90
+X-Google-Smtp-Source: ABdhPJy29IWuxxHi6iPZpFGhGmaPW4Gylj3OcVtJcrTRlrQJeuiPWlNqKTWPys/AZ3BvOv+MaBjCbQ==
+X-Received: by 2002:a05:6a00:2b0:: with SMTP id q16mr1187613pfs.104.1590945558897;
+        Sun, 31 May 2020 10:19:18 -0700 (PDT)
+Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:400::5:6ddc])
+        by smtp.gmail.com with ESMTPSA id 2sm12046502pfd.163.2020.05.31.10.19.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 31 May 2020 10:19:17 -0700 (PDT)
+Date:   Sun, 31 May 2020 10:19:15 -0700
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     "zhujianwei (C)" <zhujianwei7@huawei.com>,
+        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        Hehuazhen <hehuazhen@huawei.com>,
+        Lennart Poettering <lennart@poettering.net>,
+        Christian Ehrhardt <christian.ehrhardt@canonical.com>,
+        Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
+        daniel@iogearbox.net, netdev@vger.kernel.org
+Subject: Re: new seccomp mode aims to improve performance
+Message-ID: <20200531171915.wsxvdjeetmhpsdv2@ast-mbp.dhcp.thefacebook.com>
+References: <c22a6c3cefc2412cad00ae14c1371711@huawei.com>
+ <CAADnVQLnFuOR+Xk1QXpLFGHx-8StPCye7j5UgKbBoLrmKtygQA@mail.gmail.com>
+ <202005290903.11E67AB0FD@keescook>
+ <202005291043.A63D910A8@keescook>
 MIME-Version: 1.0
-In-Reply-To: <20200531164938.GF19604@bombadil.infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-GB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202005291043.A63D910A8@keescook>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 5/31/20 19:49, Matthew Wilcox wrote:
-> On Sun, May 31, 2020 at 03:39:33PM +0300, Paul Gofman wrote:
->>> Paul (cc'ed) is the wine expert, but my understanding is that memory
->>> allocation and initial program load of the emulated binary will go
->>> through wine.  It does the allocation and mark the vma accordingly
->>> before returning the allocated range to the windows application.
->> Yes, exactly. Pretty much any memory allocation which Wine does needs
->> syscalls (if those are ever encountered later during executing code fr=
-om
->> those areas) to be trapped by Wine and passed to Wine's implementation=
+On Fri, May 29, 2020 at 12:27:03PM -0700, Kees Cook wrote:
+> On Fri, May 29, 2020 at 09:09:28AM -0700, Kees Cook wrote:
+> > On Fri, May 29, 2020 at 08:43:56AM -0700, Alexei Starovoitov wrote:
+> > > I don't think your hunch at where cpu is spending cycles is correct.
+> > > Could you please do two experiments:
+> > > 1. try trivial seccomp bpf prog that simply returns 'allow'
+> > > 2. replace bpf_prog_run_pin_on_cpu() in seccomp.c with C code
+> > >   that returns 'allow' and make sure it's noinline or in a different C file,
+> > >   so that compiler doesn't optimize the whole seccomp_run_filters() into a nop.
+> > > 
+> > > Then measure performance of both.
+> > > I bet you'll see exactly the same numbers.
+> > 
+> > Android has already done this, it appeared to not be the same. Calling
+> > into a SECCOMP_RET_ALLOW filter had a surprisingly high cost. I'll see
+> > if I can get you the numbers. I was frankly quite surprised -- I
+> > understood the bulk of the seccomp overhead to be in taking the TIF_WORK
+> > path, copying arguments, etc, but something else is going on there.
+> 
+> So while it's not the Android measurements, here's what I'm seeing on
+> x86_64 (this is hardly a perfect noiseless benchmark, but sampling error
+> appears to close to 1%):
+> 
+> 
+> net.core.bpf_jit_enable=0:
+> 
+> Benchmarking 16777216 samples...
+> 10.633756139 - 0.004359714 = 10629396425
+> getpid native: 633 ns
+> 23.008737499 - 10.633967641 = 12374769858
+> getpid RET_ALLOW 1 filter: 737 ns
+> 36.723141843 - 23.008975696 = 13714166147
+> getpid RET_ALLOW 2 filters: 817 ns
+> 47.751422021 - 36.723345630 = 11028076391
+> getpid BPF-less allow: 657 ns
+> Estimated total seccomp overhead for 1 filter: 104 ns
+> Estimated total seccomp overhead for 2 filters: 184 ns
+> Estimated seccomp per-filter overhead: 80 ns
+> Estimated seccomp entry overhead: 24 ns
+> Estimated BPF overhead per filter: 80 ns
+> 
+> 
+> net.core.bpf_jit_enable=1:
+> net.core.bpf_jit_harden=1:
+> 
+> Benchmarking 16777216 samples...
+> 31.939978606 - 21.275190689 = 10664787917
+> getpid native: 635 ns
+> 43.324592380 - 31.940794751 = 11383797629
+> getpid RET_ALLOW 1 filter: 678 ns
+> 55.001650599 - 43.326293248 = 11675357351
+> getpid RET_ALLOW 2 filters: 695 ns
+> 65.986452855 - 55.002249904 = 10984202951
+> getpid BPF-less allow: 654 ns
+> Estimated total seccomp overhead for 1 filter: 43 ns
+> Estimated total seccomp overhead for 2 filters: 60 ns
+> Estimated seccomp per-filter overhead: 17 ns
+> Estimated seccomp entry overhead: 26 ns
+> Estimated BPF overhead per filter: 24 ns
+> 
+> 
+> net.core.bpf_jit_enable=1:
+> net.core.bpf_jit_harden=0:
+> 
+> Benchmarking 16777216 samples...
+> 10.684681435 - 0.004198682 = 10680482753
+> getpid native: 636 ns
+> 22.050823167 - 10.685571417 = 11365251750
+> getpid RET_ALLOW 1 filter: 677 ns
+> 33.714134291 - 22.051100183 = 11663034108
+> getpid RET_ALLOW 2 filters: 695 ns
+> 44.793312551 - 33.714383001 = 11078929550
+> getpid BPF-less allow: 660 ns
+> Estimated total seccomp overhead for 1 filter: 41 ns
+> Estimated total seccomp overhead for 2 filters: 59 ns
+> Estimated seccomp per-filter overhead: 18 ns
+> Estimated seccomp entry overhead: 23 ns
+> Estimated BPF overhead per filter: 17 ns
+> 
+> 
+> The above is from my (very dangerous!) benchmarking patch[1].
 
->> of the corresponding Windows API function. Linux native libraries
->> loading and memory allocations performed by them go outside of Wine co=
-ntrol.
-> I don't like Gabriel's approach very much.  Could we do something like
-> issue a syscall before executing a Windows region and then issue anothe=
-r
-> syscall when exiting?  If so, we could switch the syscall entry point (=
-ie
-> change MSR_LSTAR).  I'm thinking something like a personality() syscall=
-=2E
-> But maybe that would be too high an overhead.
->
-IIRC Gabriel had such idea that we discussed. We can potentially track
-the boundary between the Windows and native code exectution. But issuing
-syscall every time we cross that boundary may have a prohibitive
-performance impact, that happens way too often. What we could do is to
-put the flag somewhere, but that flag has to be per thread. E. g., we
-could use Linux gs: based thread local storage, or fs: based address
-(that's what Windows using for thread local data and thus Wine maintains
-also). If Seccomp filters could access such a memory location (fetch a
-byte from there and put into the structure accessible by BPF_LD) we
-could use SECCOMP_MODE_FILTER, I think.
+Thank you for crafting a benchmark.
+The only thing that it's not doing a fair comparison.
+The problem with that patch [1] that is using:
 
+static noinline u32 __seccomp_benchmark(struct bpf_prog *prog,
+                                        const struct seccomp_data *sd)
+{
+        return SECCOMP_RET_ALLOW;
+}
 
+as a benchmarking function.
+The 'noinline' keyword tells the compiler to keep the body of the function, but
+the compiler is still doing full control and data flow analysis though this
+function and it is smart enough to optimize its usage in seccomp_run_filters()
+and in __seccomp_filter() because all functions are in a single .c file.
+Lots of code gets optimized away when 'f->benchmark' is on.
+
+To make it into fair comparison I've added the following patch
+on top of your [1].
+
+diff --git a/kernel/seccomp.c b/kernel/seccomp.c
+index 2fdbf5ad8372..86204422e096 100644
+--- a/kernel/seccomp.c
++++ b/kernel/seccomp.c
+@@ -244,7 +244,7 @@ static int seccomp_check_filter(struct sock_filter *filter, unsigned int flen)
+        return 0;
+ }
+
+-static noinline u32 __seccomp_benchmark(struct bpf_prog *prog,
++__weak noinline u32 __seccomp_benchmark(struct bpf_prog *prog,
+                                        const struct seccomp_data *sd)
+
+Please take a look at 'make kernel/seccomp.s' before and after to see the difference
+__weak keyword makes.
+And here is what seccomp_benchmark now reports:
+
+Benchmarking 33554432 samples...
+22.618269641 - 15.030812794 = 7587456847
+getpid native: 226 ns
+30.792042986 - 22.619048831 = 8172994155
+getpid RET_ALLOW 1 filter: 243 ns
+39.451435038 - 30.792836778 = 8658598260
+getpid RET_ALLOW 2 filters: 258 ns
+47.616011529 - 39.452190830 = 8163820699
+getpid BPF-less allow: 243 ns
+Estimated total seccomp overhead for 1 filter: 17 ns
+Estimated total seccomp overhead for 2 filters: 32 ns
+Estimated seccomp per-filter overhead: 15 ns
+Estimated seccomp entry overhead: 2 ns
+Estimated BPF overhead per filter: 0 ns
+
+Depending on the run BPF-less mode would be slower than with BPF ;)
+
+Benchmarking 33554432 samples...
+22.602737193 - 15.078827612 = 7523909581
+getpid native: 224 ns
+30.734009056 - 22.603540911 = 8130468145
+getpid RET_ALLOW 1 filter: 242 ns
+39.106701659 - 30.734762631 = 8371939028
+getpid RET_ALLOW 2 filters: 249 ns
+47.326509567 - 39.107552786 = 8218956781
+getpid BPF-less allow: 244 ns
+Estimated total seccomp overhead for 1 filter: 18 ns
+Estimated total seccomp overhead for 2 filters: 25 ns
+Estimated seccomp per-filter overhead: 7 ns
+Estimated seccomp entry overhead: 11 ns
+Estimated BPF overhead per filter: 18446744073709551614 ns
+
+Above numbers were obtained on non-debug kernel with retpoline off
+and net.core.bpf_jit_enable=1.
+When retpoline=y the f->benchmark mode will be slightly faster
+due to retpoline overhead.
+If retpoline is a concern the bpf dispatcher logic can be applied to seccomp.
+It eliminiated retpoline overhead in XDP/bpf fast path.
+
+> So, with the layered nature of seccomp filters there's a reasonable gain
+> to be seen for a O(1) bitmap lookup to skip running even a single filter,
+> even for the fastest BPF mode.
+
+This is not true.
+The O(1) bitmap implemented as kernel C code will have exactly the same speed
+as O(1) bitmap implemented as eBPF program.
+
+> Not that we need to optimize for the pathological case, but this would
+> be especially useful for cases like systemd, which appears to be
+> constructing seccomp filters very inefficiently maybe on a per-syscall[3]
+> basis? For example, systemd-resolved has 32 (!) seccomp filters
+> attached[2]:
+> 
+> # grep ^Seccomp_filters /proc/$(pidof systemd-resolved)/status
+> Seccomp_filters:        32
+> 
+> # grep SystemCall /lib/systemd/system/systemd-resolved.service
+> SystemCallArchitectures=native
+> SystemCallErrorNumber=EPERM
+> SystemCallFilter=@system-service
+> 
+> I'd like to better understand what they're doing, but haven't had time
+> to dig in. (The systemd devel mailing list requires subscription, so
+> I've directly CCed some systemd folks that have touched seccomp there
+> recently. Hi! The starts of this thread is here[4].)
+
+32 seccomp filters sounds like a lot.
+Would be great to find out what are they doing and whether
+they can be optimized into much shorter and faster eBPF program.
+
+> -Kees
+> 
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/commit/?h=seccomp/benchmark-bpf&id=20cc7d8f4238ea3bc1798f204bb865f4994cca27
+> [2] https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/commit/?h=for-next/seccomp&id=9d06f16f463cef5c445af9738efed2bfe4c64730
+> [3] https://www.freedesktop.org/software/systemd/man/systemd.exec.html#SystemCallFilter=
+> [4] https://lore.kernel.org/bpf/c22a6c3cefc2412cad00ae14c1371711@huawei.com/
+> 
+> -- 
+> Kees Cook
