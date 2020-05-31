@@ -1,154 +1,124 @@
-Return-Path: <SRS0=UHBo=7N=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=9Sj3=7O=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 122ACC433E0
-	for <linux-security-module@archiver.kernel.org>; Sun, 31 May 2020 18:01:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E000C433DF
+	for <linux-security-module@archiver.kernel.org>; Mon,  1 Jun 2020 00:24:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E2BAA207C4
-	for <linux-security-module@archiver.kernel.org>; Sun, 31 May 2020 18:01:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 25D11206A4
+	for <linux-security-module@archiver.kernel.org>; Mon,  1 Jun 2020 00:24:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="maQ8aI2X"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=deltatee.com header.i=@deltatee.com header.b="NKIPuOb+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726081AbgEaSBy (ORCPT
+        id S1728432AbgFAAYV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 31 May 2020 14:01:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39710 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726008AbgEaSBx (ORCPT
+        Sun, 31 May 2020 20:24:21 -0400
+Received: from ts18-13.vcr.istar.ca ([204.191.154.188]:52014 "EHLO
+        ale.deltatee.com" rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org
+        with ESMTP id S1726803AbgFAAYV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 31 May 2020 14:01:53 -0400
-Received: from mail-qk1-x743.google.com (mail-qk1-x743.google.com [IPv6:2607:f8b0:4864:20::743])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81D21C061A0E;
-        Sun, 31 May 2020 11:01:53 -0700 (PDT)
-Received: by mail-qk1-x743.google.com with SMTP id g28so6335443qkl.0;
-        Sun, 31 May 2020 11:01:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=leydVdt4TGLLVijp27gSVK5CDfMn9AxENzgQ1l1jI5Q=;
-        b=maQ8aI2XRyhRs7Vxwii2Uil8AMlfuhWjXFH4wq4U+FuTp7cl38ifFW4S4mM04tNHeh
-         fs3rnQjwRYkYorYedAxRSQUb2t5pQeIWWzLptmCUYX18ohgVeA8xzTS0rLfDtMn1yD74
-         Pr6HIpDB86MKImrHKbeRoyKObFtusmEMDsY1iwT+Bq5ikqAptHxt5GVX2K7bNk4hefnZ
-         4nuF1FkCw6RrB7w6F8o+6RMx/6pnHaTq4jUUphNcdSWUM/mm32F901RSnhEH2XMX6y6J
-         Pre1dcq7HC0SJ9x/UH/sSX3al2407f5izf196kBJal6ZQvbqeBNd3krkp6M6TAAxV3KC
-         QSqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-transfer-encoding:content-language;
-        bh=leydVdt4TGLLVijp27gSVK5CDfMn9AxENzgQ1l1jI5Q=;
-        b=XkV6jO6zHO9Yhi+BtdK+WirwsJRPNFV2Z9W+9ExnjhIy3Dtp8wBHyCyPbHN/v/W1TZ
-         ijchKVGq+YfBYqyAx5s8ceag6BqiXkGWh6gDz85bn4/lHy0skHoaTOI22Azd8j00Tiej
-         J8qU9QPICALZAKco4EbaaX7Bj1fnQTXXb8rXSLN9qGB7UZUWEpcOx3BtDqlUgIaPrw15
-         9oEXZ6JHgMyn9u1SRtrGH0EhnkKckExW3OhaVSDmcn+2sqS7QBEFUIiVL2tYQlo2l6vL
-         20OivfiK3KJ69bF+l/KYPp4bdKDp0zXRdNCnKhhyxSXw3RPf19Aayi2KYNx7mli4ciFU
-         haEg==
-X-Gm-Message-State: AOAM530qqIBa7onfp13lRypld4TO028MzJ0i4+iAkR3aXZLflSkfu5vi
-        HRi+oq8WjHsARYXP+8ZmFrs=
-X-Google-Smtp-Source: ABdhPJyAmqET43SYSjo+cEtBeehzxQd8yXhI7zaWl+WvIeK5hMcvjI1dHYp3RFM3Z3I6sUDc4DkO/g==
-X-Received: by 2002:a37:ef12:: with SMTP id j18mr15757439qkk.306.1590948112570;
-        Sun, 31 May 2020 11:01:52 -0700 (PDT)
-Received: from [192.168.1.62] (89-178-168-199.broadband.corbina.ru. [89.178.168.199])
-        by smtp.gmail.com with ESMTPSA id p17sm11957631qkg.78.2020.05.31.11.01.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 31 May 2020 11:01:52 -0700 (PDT)
-Subject: Re: [PATCH RFC] seccomp: Implement syscall isolation based on memory
- areas
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Gabriel Krisman Bertazi <krisman@collabora.com>,
-        Kees Cook <keescook@chromium.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, kernel@collabora.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Will Drewry <wad@chromium.org>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        linux-security-module@vger.kernel.org,
-        Zebediah Figura <zfigura@codeweavers.com>
-References: <20200530055953.817666-1-krisman@collabora.com>
- <202005300923.B245392C@keescook> <851rn0ejg9.fsf@collabora.com>
- <9a512096-7707-3fc6-34ba-22f969c0f964@gmail.com>
- <20200531164938.GF19604@bombadil.infradead.org>
- <c007e3e9-e915-16f3-de31-c811ad37c44c@gmail.com>
- <20200531173157.GG19604@bombadil.infradead.org>
-From:   Paul Gofman <gofmanp@gmail.com>
-Autocrypt: addr=gofmanp@gmail.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <9c1f9db8-5680-cd1a-37aa-5f494b034825@gmail.com>
-Date:   Sun, 31 May 2020 21:01:46 +0300
+        Sun, 31 May 2020 20:24:21 -0400
+X-Greylist: delayed 1458 seconds by postgrey-1.27 at vger.kernel.org; Sun, 31 May 2020 20:24:20 EDT
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=deltatee.com; s=20200525; h=Subject:Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Sender:
+        Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+        :Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=Z74uNfK0Ym5ZqaEdxADt4Ndt6oocQxYkHvKwmfAtpGM=; b=NKIPuOb+LvM8rpEjsEOiK041Cu
+        445U05kGiuR7JUzKp+H5+FIxHgNaRyp8p/1eKU9a4KJzE4ngE45HB2I5JuZBGQgFJ6uAa9DjTDJfK
+        fB6q8LSZTU9mtUBbkqn2ACUE/Hp6hhvLvg4mt0ignezSakcCUl9aRci/DR1ZpQ+3aAJ09evntX3L7
+        qSLhN3dI79mbPh0v+oXwhAgwHy4FHJppNH3xUfe8bzVtskDtgmiDRlqpQ3tHtcKlgwFSfUm602maO
+        CPctl8xBNxaL8k4yPXv1H+cuOkUT2EqnwHXznWdcrZU0k71tRSD3QzwkeiK6Sw6PAvbWDYEo7DPvK
+        oPXHB8OQ==;
+Received: from s0106602ad0811846.cg.shawcable.net ([68.147.191.165] helo=[192.168.0.12])
+        by ale.deltatee.com with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.92)
+        (envelope-from <logang@deltatee.com>)
+        id 1jfXrx-0002hO-0D; Sun, 31 May 2020 18:00:01 -0600
+To:     Christoph Hellwig <hch@lst.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>,
+        David Howells <dhowells@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        NetFilter <netfilter-devel@vger.kernel.org>
+References: <20200528054043.621510-1-hch@lst.de>
+ <20200528054043.621510-10-hch@lst.de>
+ <CAHk-=wgpnR9sBeie_z0xA3mYzG50Oiw1jZjyHt0eLX6p45ARvQ@mail.gmail.com>
+ <20200529123239.GA28608@lst.de>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <02497609-e0cf-1aca-eaab-030becf57152@deltatee.com>
+Date:   Sun, 31 May 2020 17:59:53 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.8.0
 MIME-Version: 1.0
-In-Reply-To: <20200531173157.GG19604@bombadil.infradead.org>
+In-Reply-To: <20200529123239.GA28608@lst.de>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-GB
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 68.147.191.165
+X-SA-Exim-Rcpt-To: netfilter-devel@vger.kernel.org, linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, dhowells@redhat.com, raven@themaw.net, viro@zeniv.linux.org.uk, torvalds@linux-foundation.org, hch@lst.de
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: Re: [PATCH 09/14] fs: don't change the address limit for
+ ->write_iter in __kernel_write
+X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 5/31/20 20:31, Matthew Wilcox wrote:
-> If it's the cost of the syscall that's the problem, there are ways
-> around that.  We'd still want a personality() call to indicate that
-> the syscall handler should look (somewhere) to determine the current
-> personality, but that could be issued at the start of execution rather
-> than when we switch between Windows & Linux code.
-
-Sure, we can call personality() at start and specify the location to
-look at, the only thing is that the location should be thread specific,
-that is, based on fs: or gs: or whatever else which would allow us to
-have different threads in different "personality" state. If anything
-needs to be set up at thread start we can do that also of course.
-
-If there will be any proof of concept solution I will be happy to make a
-proof of concept Wine patch using that and do some testing.
 
 
+On 2020-05-29 6:32 a.m., Christoph Hellwig wrote:
+> On Thu, May 28, 2020 at 11:43:13AM -0700, Linus Torvalds wrote:
+>> On Wed, May 27, 2020 at 10:41 PM Christoph Hellwig <hch@lst.de> wrote:
+>>>
+>>> -ssize_t __kernel_write(struct file *file, const void *buf, size_t count, loff_t *pos)
+>>> +ssize_t __kernel_write(struct file *file, const void *buf, size_t count,
+>>> +               loff_t *pos)
+>>
+>> Please don't do these kinds of pointless whitespace changes.
+>>
+>> If you have an actual 80x25 vt100 sitting in a corner, it's not really
+>> conducive to kernel development any more.
+> 
+> I have real 80x25 xterms, as that allows me to comfortably fit 4 of
+> them onto my latop screen.
+
+I second this. Doing work on a compact laptop is a legitimate use case
+and we can't all lug around big monitors with our laptops. I also find
+more terminals on a screen to be more productive.
+
+I'd also like to make the point that I never thought the width limit was
+all that related to the hardware. It's been widely accepted for ages
+that it's easier to read narrower blocks of text (try reading a book on
+a landscape tablet: it's very difficult and causes eye strain). This is
+why newspapers and magazines have always laid out their text in columns
+and professional websites limit the width of their content. They have
+the hardware to write much longer lines but chose not to for
+readability. (Sadly, the *one* news source that I respect that doesn't
+do this is LWN and I have to resort to reader view in Firefox to make it
+readable.)
+
+Furthermore, I find enforcing a line length limit on newer coders is one
+of the easiest ways to improve the readability of their code. Without
+it, I've seen developers generate lines of code that don't even fit in
+the full width of a standard monitor. Putting in a little extra effort
+to try to be clear in a shorter line (or adding more lines) usually pays
+off in spades for readability. Or, it at least gets them to start
+thinking about readability as an important concern. 90% of the time it
+is better to refactor code that doesn't fit comfortably within the line
+length limit than it is to violate it.
+
+I personally set my terminal size to 80 chars because I believe it helps
+the readability of the code I write. It has nothing to do with the width
+of my monitor or the amount of characters I could theoretically fit
+across my screen.
+
+Logan
