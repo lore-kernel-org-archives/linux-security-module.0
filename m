@@ -1,155 +1,158 @@
-Return-Path: <SRS0=9Sj3=7O=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=3Oq2=7P=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E789C433E0
-	for <linux-security-module@archiver.kernel.org>; Mon,  1 Jun 2020 20:29:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F68DC433E0
+	for <linux-security-module@archiver.kernel.org>; Tue,  2 Jun 2020 01:07:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3E1F52073B
-	for <linux-security-module@archiver.kernel.org>; Mon,  1 Jun 2020 20:29:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C95D206C3
+	for <linux-security-module@archiver.kernel.org>; Tue,  2 Jun 2020 01:07:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cayfLfkl"
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="g3P79kjv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727994AbgFAU3q (ORCPT
+        id S1725826AbgFBBHC (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 1 Jun 2020 16:29:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60166 "EHLO
+        Mon, 1 Jun 2020 21:07:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47730 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727875AbgFAU3q (ORCPT
+        with ESMTP id S1725793AbgFBBHB (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 1 Jun 2020 16:29:46 -0400
-Received: from mail-qt1-x842.google.com (mail-qt1-x842.google.com [IPv6:2607:f8b0:4864:20::842])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2EB7C061A0E;
-        Mon,  1 Jun 2020 13:29:45 -0700 (PDT)
-Received: by mail-qt1-x842.google.com with SMTP id c12so8788570qtq.11;
-        Mon, 01 Jun 2020 13:29:45 -0700 (PDT)
+        Mon, 1 Jun 2020 21:07:01 -0400
+Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49BF9C08C5C0
+        for <linux-security-module@vger.kernel.org>; Mon,  1 Jun 2020 18:07:00 -0700 (PDT)
+Received: by mail-ej1-x644.google.com with SMTP id l27so11094755ejc.1
+        for <linux-security-module@vger.kernel.org>; Mon, 01 Jun 2020 18:07:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=HAs9Kw635YW+HDXvo0zhakrzZhJRnpKHS/Rqz6u5QVM=;
-        b=cayfLfklNNt8EmT631CpwrTFKbLubWMnfHX9UAcGmVVpB72JZ5N7bSspIsqetgItMu
-         hyhsMUWDhHRi/LKEkkvhL3ie9JmTTqzMlrL6BG90PzpHtJVQ+JJnwRZ2yxcusbPhKvWq
-         oTDeYcoDcrQxGU5SwaOMdK7HnAQOaeI4WrzqaJYlSTHCjaoaPoOilMYjzDiAP5gNl2o0
-         bFMx02zEd8/P4nImlfX12mrOSG/0zWG+GXKschLlTLXoYkgyjDO+NlLN5+FjUAE3IO0c
-         3MGeLBcyeSuyeifbU82DPV+bAuLqgddgmU6jywwPnhakMlBhaFn6YIbJJIgd1tMWTTWT
-         +D3g==
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=bacYd6Xj63f6+mhdcMdTVJ2YDOuetS8awQOMSRyd60k=;
+        b=g3P79kjvPSikCAVrOvBjMTJ1MhKHE5VPpEN91wi3kMamR76EyRhCW9QvW8uo4vgVeY
+         4T/e+gLBxH1XD09jzNROz6FxUoHmrP7v9gVAhUpKD/OEEnkjrnz8yAKbp3vQGEGf8IOr
+         r86eaWMmSva9QxMhxNWI7HqZHNI9gy9hAspDJ3MWp8Tj1XQF3/Vdffbuw8+0MOkTBCN+
+         qw0F9UkTrdMj4I1Ao7kICX4j8WOagpY+oE0Y6vhkNXaAo9cahwHcCiwoYPrTxychDbB7
+         aX4VoZrX1I1exEHTXOqkJTuflg7HRJS3lvG7ZwRA6PAAWPkD1BD99DE45/LjxwR012CP
+         t/Ng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HAs9Kw635YW+HDXvo0zhakrzZhJRnpKHS/Rqz6u5QVM=;
-        b=MYUCl8TzN94TdCeM5BiQMzPpNpHSjdWGbjzlu3jS5tOpLtulLZoXFC8etNF9xP702j
-         knM4yec1F3v53Fc3/ENkLQewelrQHQDHWpwRy8xBF94eP6tJ+CcN0ZT0eYGib/4783aK
-         uBA3wvmKnIF6FHJCG9V3fqCCY3xSv8ZPPbIvbRrUWTvuAoP/pL/7WN+EfAHk/NC4wZNZ
-         kHp/EAPtiSmCvN8JffRKLksaoGaWqwJ9lXbRKSkXlHDZOSzc8NSvOobQ9FDhMubClSlj
-         stUmM4Bh4NvuGf0UMA7fqZBXpFSMvtW/IJObTqVpM1yxptTl/6oVYrJ/hOatKXLmqro5
-         CT2Q==
-X-Gm-Message-State: AOAM530h64EhQcbK4rfzZL4A17vVix4BY7dL41YYalYyavhfskhrQH7Q
-        /kiM7AzA5DEp7V+B2hwBE87wvulwIe08IjuNGKRaG8JF
-X-Google-Smtp-Source: ABdhPJyFqi2sy1XpNUtKnyJCkuPklMuovTOzVIZJEpTDi6XMDFRLM77wlqBxWlNBC9o8/kQn1VsjhpYUIoUmWKs47Fg=
-X-Received: by 2002:ac8:2dc3:: with SMTP id q3mr23123105qta.141.1591043384218;
- Mon, 01 Jun 2020 13:29:44 -0700 (PDT)
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=bacYd6Xj63f6+mhdcMdTVJ2YDOuetS8awQOMSRyd60k=;
+        b=cyxUf5IiVGuA40teH/Skmp3bvCCU00WRI5ZUtVdOu0/0MrVuNh1O37DkWPnoSCJs4Y
+         nhuSUL7ULA86JZx2CLgiUxD89wfMBdkJ1/AV7n8zUHUw9JDO1ORqWt91TQ74ZxicMc4b
+         m9/CV2HAUs7HnE2kpRRcNsh9Orw6lZ1ICnxCU7JL80SrvVEJp6hf+4XXq45fKL2dVIRZ
+         6gYIec4+45U5FvDcRIrv9x671BEjqwv7TN6aSCLnPybfQlfU8zhRP4ZWKYRyGfdR0gSJ
+         H7MqlKZFqMvk6nr+S3JjIeK5Zi+0O005JQXgJgWLlpvgMIZ5UglPcubLGyeG1S2M+lHq
+         KUyg==
+X-Gm-Message-State: AOAM530svFM+1AVenol514+qfw6rOynVsqKgO8rvx1QBXaX3QYZafzwz
+        MtkIaQkczQoIHL+KZeP9J85qoiwsSQVNI/sY4Qgy
+X-Google-Smtp-Source: ABdhPJyKsQV/yosAgyJ5ku5AJYZrdaUYTfXNwFDdpTJsLDr6Wwl2VzwIzIBZoKOV8M4cuLJdwpCobc4TVnk8A/FK5xk=
+X-Received: by 2002:a17:906:7395:: with SMTP id f21mr10789073ejl.178.1591060018671;
+ Mon, 01 Jun 2020 18:06:58 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200526163336.63653-1-kpsingh@chromium.org> <20200526163336.63653-5-kpsingh@chromium.org>
-In-Reply-To: <20200526163336.63653-5-kpsingh@chromium.org>
-From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date:   Mon, 1 Jun 2020 13:29:33 -0700
-Message-ID: <CAEf4BzY0=Hh3O6qeD=2sMWpQRpHpizxH+nEA0hD0khPf3VAbhA@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 4/4] bpf: Add selftests for local_storage
-To:     KP Singh <kpsingh@chromium.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, bpf <bpf@vger.kernel.org>,
-        linux-security-module@vger.kernel.org,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        James Morris <jmorris@namei.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Florent Revest <revest@chromium.org>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 1 Jun 2020 21:06:48 -0400
+Message-ID: <CAHC9VhTX8gkUui6AiTJMJgcohXa=TOqdO==rEDk=Mquz9sCNKA@mail.gmail.com>
+Subject: [GIT PULL] SELinux patches for v5.8
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, May 26, 2020 at 9:34 AM KP Singh <kpsingh@chromium.org> wrote:
->
-> From: KP Singh <kpsingh@google.com>
->
-> inode_local_storage:
->
-> * Hook to the file_open and inode_unlink LSM hooks.
-> * Create and unlink a temporary file.
-> * Store some information in the inode's bpf_local_storage during
->   file_open.
-> * Verify that this information exists when the file is unlinked.
->
-> sk_local_storage:
->
-> * Hook to the socket_post_create and socket_bind LSM hooks.
-> * Open and bind a socket and set the sk_storage in the
->   socket_post_create hook using the start_server helper.
-> * Verify if the information is set in the socket_bind hook.
->
-> Signed-off-by: KP Singh <kpsingh@google.com>
-> ---
->  .../bpf/prog_tests/test_local_storage.c       |  60 ++++++++
->  .../selftests/bpf/progs/local_storage.c       | 139 ++++++++++++++++++
->  2 files changed, 199 insertions(+)
->  create mode 100644 tools/testing/selftests/bpf/prog_tests/test_local_storage.c
->  create mode 100644 tools/testing/selftests/bpf/progs/local_storage.c
->
+Hi Linus,
 
-[...]
+Here are the SELinux patches for v5.8.  All the patches pass our test
+suite and as of about 15 minutes ago they apply cleanly to the top of
+your tree.  Please merge into v5.8.
 
-> +struct dummy_storage {
-> +       __u32 value;
-> +};
-> +
-> +struct {
-> +       __uint(type, BPF_MAP_TYPE_INODE_STORAGE);
-> +       __uint(map_flags, BPF_F_NO_PREALLOC);
-> +       __type(key, int);
-> +       __type(value, struct dummy_storage);
-> +} inode_storage_map SEC(".maps");
-> +
-> +struct {
-> +       __uint(type, BPF_MAP_TYPE_SK_STORAGE);
-> +       __uint(map_flags, BPF_F_NO_PREALLOC | BPF_F_CLONE);
-> +       __type(key, int);
-> +       __type(value, struct dummy_storage);
-> +} sk_storage_map SEC(".maps");
-> +
-> +/* Using vmlinux.h causes the generated BTF to be so big that the object
-> + * load fails at btf__load.
-> + */
+The highlights:
 
-That's first time I hear about such issue. Do you have an error log
-from verifier?
+- A number of improvements to various SELinux internal data structures
+to help improve performance.  We move the role transitions into a hash
+table.  In the content structure we shift from hashing the content
+string (aka SELinux label) to the structure itself, when it is valid.
+This last change not only offers a speedup, but it helps us simplify
+the code some as well.
 
-Clang is smart enough to trim down used types to only those that are
-actually necessary, so too big BTF shouldn't be a thing. But let's try
-to dig into this and fix whatever issue it is, before giving up :)
+- Add a new SELinux policy version which allows for a more space
+efficient way of storing the filename transitions in the binary
+policy.  Given the default Fedora SELinux policy with the unconfined
+module enabled, this change drops the policy size from ~7.6MB to
+~3.3MB.  The kernel policy load time dropped as well.
 
-> +struct sock {} __attribute__((preserve_access_index));
-> +struct sockaddr {} __attribute__((preserve_access_index));
-> +struct socket {
-> +       struct sock *sk;
-> +} __attribute__((preserve_access_index));
-> +
-> +struct inode {} __attribute__((preserve_access_index));
-> +struct dentry {
-> +       struct inode *d_inode;
-> +} __attribute__((preserve_access_index));
-> +struct file {
-> +       struct inode *f_inode;
-> +} __attribute__((preserve_access_index));
-> +
-> +
+- Some fixes to the error handling code in the policy parser to
+properly return error codes when things go wrong.
 
-[...]
+Thanks,
+-Paul
+
+--
+The following changes since commit 8f3d9f354286745c751374f5f1fcafee6b3f3136:
+
+ Linux 5.7-rc1 (2020-04-12 12:35:55 -0700)
+
+are available in the Git repository at:
+
+ git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+   tags/selinux-pr-20200601
+
+for you to fetch changes up to fe5a90b8c14914397a3bb0c214d142103c1ba3bf:
+
+ selinux: netlabel: Remove unused inline function (2020-05-12 20:16:33 -0400)
+
+----------------------------------------------------------------
+selinux/stable-5.8 PR 20200601
+
+----------------------------------------------------------------
+Ondrej Mosnacek (9):
+     selinux: drop unnecessary smp_load_acquire() call
+     selinux: store role transitions in a hash table
+     selinux: hash context structure directly
+     selinux: move context hashing under sidtab
+     selinux: implement new format of filename transitions
+     selinux: don't produce incorrect filename_trans_count
+     selinux: simplify range_write()
+     selinux: fix return value on error in policydb_read()
+     selinux: do not allocate hashtabs dynamically
+
+Wei Yongjun (1):
+     selinux: fix error return code in policydb_read()
+
+YueHaibing (1):
+     selinux: netlabel: Remove unused inline function
+
+Zou Wei (1):
+     selinux: fix warning Comparison to bool
+
+security/selinux/Makefile           |   2 +-
+security/selinux/include/netlabel.h |   6 -
+security/selinux/include/security.h |   3 +-
+security/selinux/ss/context.c       |  32 +++
+security/selinux/ss/context.h       |  11 +-
+security/selinux/ss/ebitmap.c       |  14 ++
+security/selinux/ss/ebitmap.h       |   1 +
+security/selinux/ss/hashtab.c       |  51 ++--
+security/selinux/ss/hashtab.h       |  13 +-
+security/selinux/ss/mls.c           |  16 +-
+security/selinux/ss/mls.h           |  11 +
+security/selinux/ss/policydb.c      | 451 +++++++++++++++++++++++---------
+security/selinux/ss/policydb.h      |  15 +-
+security/selinux/ss/services.c      | 153 +++++-------
+security/selinux/ss/services.h      |   3 -
+security/selinux/ss/sidtab.c        |  35 +--
+security/selinux/ss/sidtab.h        |   1 +
+security/selinux/ss/symtab.c        |   5 +-
+security/selinux/ss/symtab.h        |   2 +-
+19 files changed, 499 insertions(+), 326 deletions(-)
+create mode 100644 security/selinux/ss/context.c
+
+-- 
+paul moore
+www.paul-moore.com
