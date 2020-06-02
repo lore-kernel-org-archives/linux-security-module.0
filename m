@@ -2,126 +2,171 @@ Return-Path: <SRS0=3Oq2=7P=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D93A1C433E0
-	for <linux-security-module@archiver.kernel.org>; Tue,  2 Jun 2020 14:44:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01352C433E1
+	for <linux-security-module@archiver.kernel.org>; Tue,  2 Jun 2020 15:03:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B83402068D
-	for <linux-security-module@archiver.kernel.org>; Tue,  2 Jun 2020 14:44:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4B3D2074B
+	for <linux-security-module@archiver.kernel.org>; Tue,  2 Jun 2020 15:03:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="DXAxtN+N"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728202AbgFBOox (ORCPT
+        id S1726214AbgFBPDq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 2 Jun 2020 10:44:53 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48872 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726217AbgFBOow (ORCPT
+        Tue, 2 Jun 2020 11:03:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36256 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726139AbgFBPDq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 2 Jun 2020 10:44:52 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 052EWRur014054;
-        Tue, 2 Jun 2020 10:44:10 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 31dq2jbw81-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 02 Jun 2020 10:44:10 -0400
-Received: from m0098421.ppops.net (m0098421.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 052EWj6U015700;
-        Tue, 2 Jun 2020 10:44:09 -0400
-Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 31dq2jbw73-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 02 Jun 2020 10:44:09 -0400
-Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
-        by ppma04dal.us.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 052EehHc010574;
-        Tue, 2 Jun 2020 14:44:07 GMT
-Received: from b03cxnp07028.gho.boulder.ibm.com (b03cxnp07028.gho.boulder.ibm.com [9.17.130.15])
-        by ppma04dal.us.ibm.com with ESMTP id 31bf4a15bw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 02 Jun 2020 14:44:07 +0000
-Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
-        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 052Eh6LO48300354
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 2 Jun 2020 14:43:06 GMT
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 532DB7805E;
-        Tue,  2 Jun 2020 14:43:06 +0000 (GMT)
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 30AEC78064;
-        Tue,  2 Jun 2020 14:43:03 +0000 (GMT)
-Received: from [153.66.254.194] (unknown [9.85.147.245])
-        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Tue,  2 Jun 2020 14:43:02 +0000 (GMT)
-Message-ID: <1591108981.4253.17.camel@linux.ibm.com>
-Subject: Re: [PATCH v5 0/4] Introduce TEE based Trusted Keys support
-From:   James Bottomley <jejb@linux.ibm.com>
-Reply-To: jejb@linux.ibm.com
-To:     Sumit Garg <sumit.garg@linaro.org>,
-        jarkko.sakkinen@linux.intel.com, zohar@linux.ibm.com
-Cc:     dhowells@redhat.com, jens.wiklander@linaro.org, corbet@lwn.net,
-        jmorris@namei.org, serge@hallyn.com, casey@schaufler-ca.com,
-        janne.karhunen@gmail.com, daniel.thompson@linaro.org,
-        Markus.Wamser@mixed-mode.de, keyrings@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        op-tee@lists.trustedfirmware.org, tee-dev@lists.linaro.org
-Date:   Tue, 02 Jun 2020 07:43:01 -0700
-In-Reply-To: <1591107505-6030-1-git-send-email-sumit.garg@linaro.org>
-References: <1591107505-6030-1-git-send-email-sumit.garg@linaro.org>
+        Tue, 2 Jun 2020 11:03:46 -0400
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A977CC08C5C1
+        for <linux-security-module@vger.kernel.org>; Tue,  2 Jun 2020 08:03:44 -0700 (PDT)
+Received: by mail-ed1-x52f.google.com with SMTP id q13so10355402edi.3
+        for <linux-security-module@vger.kernel.org>; Tue, 02 Jun 2020 08:03:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=E5Bw7bHNhLIhnpxH+p7LoW1YkbfjJOsVhdrmM7ZNA7E=;
+        b=DXAxtN+NaXgfyPGWywvDbUQ3rDei4Ap6ncsfze+LHqZxUZwKdBtgzabdTc+jxvzhl0
+         cpLsJxGxCKhV2EVbIPHlf8O5KDUPjsz7lHaKv/mPxq32gRYzVwsTqrgE6ttZ3uNav0eX
+         Gj/qrnFaTA49yZxUnKOMpr050+Bc7n7OcES9F9sX+ftBkSlLalbmugrXJ9dP5aC19E/F
+         i1syq+UsvjkpjFGSZa5nukYmh+qyWlmPmQx0oRy0w/6bfi1dt4rJngTbzncke2YVlM7J
+         k2hWysFyAwLwdSadmV07Ni/a75xrjAoaJlWmSBKkAr3A0sbgwwJZKobaVfWmsGMBkxCC
+         wlvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=E5Bw7bHNhLIhnpxH+p7LoW1YkbfjJOsVhdrmM7ZNA7E=;
+        b=rF05EH3jPDBg9GGnc9IebZ5h8n2w1s9h5vCGNYNns8Gy+4tAPNoUc3quFjoZ4JdJip
+         NO2ZXQWxPkw76HkIgo69FyTd1yO7LYmc/W5yREv4s1+0ZtydgbjgB4Bww6PapbFSew+4
+         j4+NQRJ8OjUtQ4tVJYXo31LWXXwyohmzEEMo91fVQgfNlTJ08MFcHf+7Fk4Ph5jzSsT3
+         3IRgN/O5AVVpF7YYTJWJedwoQzPbn+TuYX3BX4JCjvQrrRy/0rjf5JqD58JStvWs2L8w
+         qag/IoaE56jxXe9AMFPfgdKIsPYjG6Aw1wVlhAv3mUB8eMWNPsYpHrwAJ8qtWr/dG3tX
+         k/Lw==
+X-Gm-Message-State: AOAM531f+2CSedZR9vRoq5CxFFC+jqarSnnNwtHIkDpumrB38rhqy4jT
+        yLpLwQxCnN14kkOEf2+MRRKcIKTZ6hqpI8LKR6Wp
+X-Google-Smtp-Source: ABdhPJyJC8AuZoNH33BFx72UO1lmCUEEtK3+lGG7fwKQLI++MdFbfg45jFICOElrtrwZmq1TRejrXrWr+GmEIabrNgA=
+X-Received: by 2002:aa7:cb8d:: with SMTP id r13mr26336805edt.12.1591110222280;
+ Tue, 02 Jun 2020 08:03:42 -0700 (PDT)
+MIME-Version: 1.0
+References: <c22a6c3cefc2412cad00ae14c1371711@huawei.com> <CAADnVQLnFuOR+Xk1QXpLFGHx-8StPCye7j5UgKbBoLrmKtygQA@mail.gmail.com>
+ <202005290903.11E67AB0FD@keescook> <202005291043.A63D910A8@keescook>
+ <20200601101137.GA121847@gardel-login> <CAHC9VhTK1306C2+ghMWHC0X6XVHiG+vBKPC5=7QLjxXwX4Eu9Q@mail.gmail.com>
+ <20200602125323.GB123838@gardel-login>
+In-Reply-To: <20200602125323.GB123838@gardel-login>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 2 Jun 2020 11:03:31 -0400
+Message-ID: <CAHC9VhShd2GLqei6MSREr_vzeVXNcObdVVgvhj1WP7_Ob2C3ag@mail.gmail.com>
+Subject: Re: new seccomp mode aims to improve performance
+To:     Lennart Poettering <lennart@poettering.net>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        "zhujianwei (C)" <zhujianwei7@huawei.com>,
+        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        Hehuazhen <hehuazhen@huawei.com>,
+        Christian Ehrhardt <christian.ehrhardt@canonical.com>,
+        =?UTF-8?Q?Zbigniew_J=C4=99drzejewski=2DSzmek?= <zbyszek@in.waw.pl>,
+        Tom Hromatka <tom.hromatka@oracle.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.687
- definitions=2020-06-02_13:2020-06-02,2020-06-02 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
- mlxlogscore=999 spamscore=0 clxscore=1011 impostorscore=0 suspectscore=0
- priorityscore=1501 adultscore=0 cotscore=-2147483648 lowpriorityscore=0
- phishscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2004280000 definitions=main-2006020104
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 2020-06-02 at 19:48 +0530, Sumit Garg wrote:
-> Add support for TEE based trusted keys where TEE provides the
-> functionality to seal and unseal trusted keys using hardware unique
-> key. Also, this is an alternative in case platform doesn't possess a
-> TPM device.
+On Tue, Jun 2, 2020 at 8:53 AM Lennart Poettering
+<lennart@poettering.net> wrote:
+> On Mo, 01.06.20 08:32, Paul Moore (paul@paul-moore.com) wrote:
+>
+> > In situations where the calling application creates multiple per-ABI
+> > filters, the seccomp_merge(3) function can be used to merge the
+> > filters into one.  There are some limitations (same byte ordering,
+> > filter attributes, etc.) but in general it should work without problem
+> > when merging x86_64, x32, and x86.
+>
+> Hmm, so we currently only use seccomp_rule_add_exact() to build an
+> individual filter and finally seccomp_load() to install it. Which
+> tells us exactly what works and what does not.
+>
+> If we now would use seccomp_rule_add_exact() to build the filters, but
+> then use seccomp_merge() to merge them all, and then only do a single
+> seccomp_load(), will this give us the same info? i.e. will
+> seccomp_merge() give us the same errors seccomp_load() currently gives
+> us when something cannot work?
 
-So here's a meta problem: in the case when the platform possesses both
-TEE and TPM  what should it do?  Things like this:
+Yes, it should.  The seccomp_merge() API was created for applications,
+like systemd, that create multiple per-ABI filters but still wanted to
+consolidate the multiple filters into one, either to add common rules
+or reduce the number of filters loaded into the kernel.
 
-> --- a/security/keys/trusted-keys/trusted_core.c
-> +++ b/security/keys/trusted-keys/trusted_core.c
-> @@ -25,6 +25,8 @@
->  
->  #if defined(CONFIG_TRUSTED_TPM)
->  static struct trusted_key_ops *trusted_key_ops =
-> &tpm_trusted_key_ops;
-> +#elif defined(CONFIG_TRUSTED_TEE)
-> +static struct trusted_key_ops *trusted_key_ops =
-> &tee_trusted_key_ops;
->  #else
+Since the motivation behind the seccomp_merge() API was to help make
+it easier to create complex filters for multiple ABIs, it is limited
+to merging filters that do not share any of the same ABIs.  For
+example, you could merge a filter that contains a x86 ABI with another
+filter that contains x86_64 and x32 ABIs but you can *not* merge two
+filters that both contain x86 ABIs.  This greatly simplifies the merge
+operation and makes it fairly quick.
 
-Say it's either/or at a Kconfig level: so if you select both TEE and
-TPM based trusted keys at compile time, we intall the TPM ops and
-ignore the TEE ops, is that right?  Surely this should be runtime
-selectable based on what the platform has ... perhaps it should even be
-selectable per key?
+If you try it and run into any problems let Tom (CC'd) or I know and
+we will try to help you guys out.
 
-Once it is runtime selectable, what should be selected in the both
-case?  Or should we allow the user to decide, if so, how?
+> > > If we wanted to optimize that in userspace, then libseccomp would have
+> > > to be improved quite substantially to let us know exactly what works
+> > > and what doesn't, and to have sane fallback both when building
+> > > whitelists and blacklists.
+> >
+> > It has been quite a while since we last talked about systemd's use of
+> > libseccomp, but the upcoming v2.5.0 release (no date set yet, but
+> > think weeks not months) finally takes a first step towards defining
+> > proper return values on error for the API, no more "negative values on
+> > error".  I'm sure there are other things, but I recall this as being
+> > one of the bigger systemd wants.
+>
+> Yes, we care about error codes a lot.
 
-when you pipe a trusted key, I think the subtype (TEE or TPM) should be
-part of the piped information, so it loads again seamlessly.  This
-would actually be fixed by something like the ASN.1 scheme I'm trying
-to upstream, at least for TPM keys, but do TEE keys have a recognized
-ASN.1 format?
+The lack of any real stability in error codes was my fault, we really
+should have done it sooner but I felt there were bigger issues to
+focus on at the time.  Regardless, starting with v2.5.0 we will have
+stable error codes that are documented in the manpages; the number of
+errors, and the associated documentation, may be relatively limited to
+start with, but it should improve over time as we get feedback.
 
-James
+> > As an aside, it is always going to be difficult to allow fine grained
+> > control when you have a single libseccomp filter that includes
+> > multiple ABIs; the different ABI oddities are just too great (see
+> > comments above).  If you need exacting control of the filter, or ABI
+> > specific handling, then the recommended way is to create those filters
+> > independently and merge them together before loading them into the
+> > kernel or applying any common rules.
+>
+> Hmm, so not sure I got this. But are you saying that when using
+> seccomp_merge() am I supposed to merge filters for different archs
+> into one megafilter, or are you saying the opposite: am I supposed not
+> to do that?
 
+Okay, let me try this again ...
+
+In the context of this discussion it looks like limiting the number of
+seccomp filters loaded into the kernel is desirable and one way to do
+that with libseccomp is to use the seccomp_merge() API to consolidate
+multiple per-ABI filters into one "megafilter" (I like that term)
+which can be loaded into the kernel.  Does that make more sense?
+
+> I.e. in an ideal world, should we come to a situation where per
+> service on x86-64 we will have exactly one filter installed, or should
+> we come to a situation where we'll have exactly three installed, once
+> for each ABI?
+
+Perhaps others will clarify, but from my reading of this thread there
+is a performance advantage to be gained by limiting the number of
+seccomp filters installed for a given process.
+
+--
+paul moore
+www.paul-moore.com
