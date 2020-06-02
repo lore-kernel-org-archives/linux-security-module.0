@@ -2,119 +2,160 @@ Return-Path: <SRS0=3Oq2=7P=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13943C433E0
-	for <linux-security-module@archiver.kernel.org>; Tue,  2 Jun 2020 02:42:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5380C433DF
+	for <linux-security-module@archiver.kernel.org>; Tue,  2 Jun 2020 03:24:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 00044206C3
-	for <linux-security-module@archiver.kernel.org>; Tue,  2 Jun 2020 02:42:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C832E2073B
+	for <linux-security-module@archiver.kernel.org>; Tue,  2 Jun 2020 03:24:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PnDsPzBn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726073AbgFBCmi (ORCPT
+        id S1725872AbgFBDYv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 1 Jun 2020 22:42:38 -0400
-Received: from szxga02-in.huawei.com ([45.249.212.188]:2095 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726007AbgFBCmi (ORCPT
+        Mon, 1 Jun 2020 23:24:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41020 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725841AbgFBDYv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 1 Jun 2020 22:42:38 -0400
-Received: from DGGEMM404-HUB.china.huawei.com (unknown [172.30.72.56])
-        by Forcepoint Email with ESMTP id 17708EF423BB9FEA2E9B;
-        Tue,  2 Jun 2020 10:42:36 +0800 (CST)
-Received: from dggema757-chm.china.huawei.com (10.1.198.199) by
- DGGEMM404-HUB.china.huawei.com (10.3.20.212) with Microsoft SMTP Server (TLS)
- id 14.3.487.0; Tue, 2 Jun 2020 10:42:35 +0800
-Received: from dggema758-chm.china.huawei.com (10.1.198.200) by
- dggema757-chm.china.huawei.com (10.1.198.199) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1913.5; Tue, 2 Jun 2020 10:42:35 +0800
-Received: from dggema758-chm.china.huawei.com ([10.9.48.193]) by
- dggema758-chm.china.huawei.com ([10.9.48.193]) with mapi id 15.01.1913.007;
- Tue, 2 Jun 2020 10:42:35 +0800
-From:   "zhujianwei (C)" <zhujianwei7@huawei.com>
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-CC:     Kees Cook <keescook@chromium.org>,
+        Mon, 1 Jun 2020 23:24:51 -0400
+Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A992C061A0E;
+        Mon,  1 Jun 2020 20:24:50 -0700 (PDT)
+Received: by mail-pl1-x642.google.com with SMTP id bh7so755448plb.11;
+        Mon, 01 Jun 2020 20:24:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=xtA89vSoLXrR3EqwNK+slVMqyW44HEs7M81ih+4XU2g=;
+        b=PnDsPzBnGYjvLPdvsHprobnzeI+cvN2ogP1SrZBhh1HDL01xNYE1cNxga+Dbmhj9Eu
+         l0jlzKqxbMeyR7v4mciOECS1BB7MQmmjocg1/PbAobhyXyfTe3VE/unAZiQAkM5mZd9h
+         SstoxEi/+Tt42L9PIzpOkRJUvPH54Um8aXO7HjEciFb4CNEQdBW72lgqrWIMYv0yq0cl
+         ervR6lGqKgI8P/ju34tIr/eM3TPOmgnLI0ARERlBgoyhmosnetKjVOyCGsjsW6wdGeK9
+         YSzW8bXUbTJZwe0LW77eBci5Pg/J8+UEXSOODBSjrX9ysQkRZ2Lvex4nsAmJhEbaP4e4
+         Vj4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=xtA89vSoLXrR3EqwNK+slVMqyW44HEs7M81ih+4XU2g=;
+        b=biqdxJK1bEMzRswxYGK1Mi+hG9P3pZdB/54kvMwxwbtALxQlZFqyZhPsfcfhQ4v2L5
+         rdeqBj1Jvpi584HtKmmXcjyoxtILSoLejl55WJz2s9UvUygZwL39jl4d+UZiI1u6g/L6
+         T6GTdfcJ76uJvAiFbBPqthkjq389vj9j6Qj6FIP8ju1jEwRZZcI7Sv4sZcoUvfmoCxU1
+         fIinYt7vL8cFo3mPlRAHCTw5+wYX4o5dTBhNuR4ndAlOplcg2cnIROI/KIC1ioR41If5
+         X08ynAZdBUSoxW07B0C5z9UcymAtmPfE36PSWaxuJUJUndaRXM/DaLsn5Lrziet6Jplf
+         lzRg==
+X-Gm-Message-State: AOAM532DmnjAuLp8iyIi7K6MPpMKXVlaJ6vjncTvE9/ZtzNVS5D69tyJ
+        NzZZLpkbVIVbRAPh8UQqQtA=
+X-Google-Smtp-Source: ABdhPJzwRIleqcYfI8lizUYUTrlCNzXwmY26tdj8PBzOLqs1OdEH4M86L2OX9ng7+DeCaFlHBn6Nhw==
+X-Received: by 2002:a17:90a:df82:: with SMTP id p2mr2931454pjv.217.1591068289634;
+        Mon, 01 Jun 2020 20:24:49 -0700 (PDT)
+Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:400::5:514a])
+        by smtp.gmail.com with ESMTPSA id y22sm747420pfc.132.2020.06.01.20.24.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Jun 2020 20:24:48 -0700 (PDT)
+Date:   Mon, 1 Jun 2020 20:24:46 -0700
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     "zhujianwei (C)" <zhujianwei7@huawei.com>
+Cc:     Kees Cook <keescook@chromium.org>,
         "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
         "linux-security-module@vger.kernel.org" 
         <linux-security-module@vger.kernel.org>,
         Hehuazhen <hehuazhen@huawei.com>,
         Lennart Poettering <lennart@poettering.net>,
         Christian Ehrhardt <christian.ehrhardt@canonical.com>,
-        =?utf-8?B?WmJpZ25pZXcgSsSZZHJ6ZWpld3NraS1Tem1law==?= 
-        <zbyszek@in.waw.pl>
-Subject: =?utf-8?B?562U5aSNOiBuZXcgc2VjY29tcCBtb2RlIGFpbXMgdG8gaW1wcm92ZSBwZXJm?=
- =?utf-8?Q?ormance?=
-Thread-Topic: new seccomp mode aims to improve performance
-Thread-Index: AdY1q17j91IY6CMiRsq40mFg/pmPz///wxIAgAAHIgCAADc1gP/7503AgAfEWYD//fXnAA==
-Date:   Tue, 2 Jun 2020 02:42:35 +0000
-Message-ID: <7dacac003a9949ea8163fca5125a2cae@huawei.com>
+        Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>
+Subject: Re: =?utf-8?B?562U5aSN?= =?utf-8?Q?=3A?= new seccomp mode aims to
+ improve performance
+Message-ID: <20200602032446.7sn2fmzsea2v2wbs@ast-mbp.dhcp.thefacebook.com>
 References: <c22a6c3cefc2412cad00ae14c1371711@huawei.com>
  <CAADnVQLnFuOR+Xk1QXpLFGHx-8StPCye7j5UgKbBoLrmKtygQA@mail.gmail.com>
- <202005290903.11E67AB0FD@keescook> <202005291043.A63D910A8@keescook>
+ <202005290903.11E67AB0FD@keescook>
+ <202005291043.A63D910A8@keescook>
  <ff10225b79a14fec9bc383e710d74b2e@huawei.com>
  <CAADnVQK2WEh980KMkXy9TNeDqKA-fDMxkojPYf=b5eJSgG=K0g@mail.gmail.com>
-In-Reply-To: <CAADnVQK2WEh980KMkXy9TNeDqKA-fDMxkojPYf=b5eJSgG=K0g@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.166.215.96]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+ <7dacac003a9949ea8163fca5125a2cae@huawei.com>
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7dacac003a9949ea8163fca5125a2cae@huawei.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Pg0KPiBUaGlzIGlzIHRoZSB0ZXN0IHJlc3VsdCBvbiBsaW51eCA1LjcuMC1yYzcgZm9yIGFhcmNo
-NjQuDQo+IEFuZCByZXRwb2xpbmUgZGlzYWJsZWQgZGVmYXVsdC4NCj4gI2NhdCAvc3lzL2Rldmlj
-ZXMvc3lzdGVtL2NwdS92dWxuZXJhYmlsaXRpZXMvc3BlY3RyZV92Mg0KPiBOb3QgYWZmZWN0ZWQN
-Cj4NCj4gYnBmX2ppdF9lbmFibGUgMQ0KPiBicGZfaml0X2hhcmRlbiAwDQo+DQo+IFdlIHJ1biB1
-bml4YmVuY2ggc3lzY2FsbCBiZW5jaG1hcmsgb24gdGhlIG9yaWdpbmFsIGtlcm5lbCBhbmQgdGhl
-IG5ldyBvbmUocmVwbGFjZSBicGZfcHJvZ19ydW5fcGluX29uX2NwdSgpIHdpdGggaW1tZWRpYXRl
-bHkgcmV0dXJuaW5nICdhbGxvdycgb25lKS4NCj4gVGhlIHVuaXhiZW5jaCBzeXNjYWxsIHRlc3Rj
-YXNlIHJ1bnMgNSBzeXN0ZW0gY2FsbHPvvIhjbG9zZS91bWFzay9kdXAvZ2V0cGlkL2dldHVpZCwg
-ZXh0cmEgMTUgc3lzY2FsbHMgbmVlZGVkIHRvIHJ1biBpdO+8iSBpbiBhIGxvb3AgZm9yIDEwIHNl
-Y29uZHMsIGNvdW50cyB0aGUgbnVtYmVyIGFuZCBmaW5hbGx5IG91dHB1dCBpdC4gV2UgYWxzbyBh
-ZGQgc29tZSBtb3JlIGZpbHRlcnMgKGVhY2ggd2l0aCB0aGUgc2FtZSBydWxlcykgdG8gZXZhbHVh
-dGUgdGhlIHNpdHVhdGlvbiBqdXN0IGxpa2Uga2VlcyBtZW50aW9uZWQoY2FzZSBsaWtlIHN5c3Rl
-bWQtcmVzb2x2ZSksIGFuZCB3ZSBmaW5kIGl0IGlzIHJpZ2h0OiBtb3JlIGZpbHRlcnMsIG1vcmUg
-b3ZlcmhlYWQuIFRoZSBmb2xsb3dpbmcgaXMgb3VyIHJlc3VsdCAoLi9zeXNjYWxsIDEwIG0pOg0K
-Pg0KPiBvcmlnaW5hbDoNCj4gICAgICAgICBzZWNjb21wX29mZjogICAgICAgICAgICAgICAgICAg
-IDEwNjg0OTM5DQo+ICAgICAgICAgc2VjY29tcF9vbl8xX2ZpbHRlcnM6ICAgODUxMzgwNSAgICAg
-ICAgIG92ZXJoZWFk77yaMTkuOCUNCj4gICAgICAgICBzZWNjb21wX29uXzRfZmlsdGVyczogICA3
-MTA1NTkyICAgICAgICAgb3ZlcmhlYWTvvJozMy4wJQ0KPiAgICAgICAgIHNlY2NvbXBfb25fMzJf
-ZmlsdGVyczogIDIzMDg2NzcgICAgICAgICBvdmVyaGVhZO+8mjc4LjMlDQo+DQo+IGFmdGVyIHJl
-cGxhY2luZyBicGZfcHJvZ19ydW5fcGluX29uX2NwdToNCj4gICAgICAgICBzZWNjb21wX29mZjog
-ICAgICAgICAgICAgICAgICAgIDEwNjg1MjQ0DQo+ICAgICAgICAgc2VjY29tcF9vbl8xX2ZpbHRl
-cnM6ICAgOTE0NjQ4MyAgICAgICAgIG92ZXJoZWFk77yaMTQuMSUNCj4gICAgICAgICBzZWNjb21w
-X29uXzRfZmlsdGVyczogICA4OTY5ODg2ICAgICAgICAgb3ZlcmhlYWTvvJoxNi4wJQ0KPiAgICAg
-ICAgIHNlY2NvbXBfb25fMzJfZmlsdGVyczogIDY0NTQzNzIgICAgICAgICBvdmVyaGVhZO+8mjM5
-LjYlDQo+DQo+IE4tZmlsdGVyIGJwZiBvdmVyaGVhZDoNCj4gICAgICAgICAxX2ZpbHRlcnM6ICAg
-ICAgICAgICAgICA1LjclDQo+ICAgICAgICAgNF9maWx0ZXJzOiAgICAgICAgICAgICAgMTcuMCUN
-Cj4gICAgICAgICAzMl9maWx0ZXJzOiAgICAgMzguNyUNCj4NCj4gLy8ga2VybmVsIGNvZGUgbW9k
-aWZpY2F0aW9uIHBsYWNlDQo+IHN0YXRpYyBub2lubGluZSB1MzIgYnBmX3Byb2dfcnVuX3Bpbl9v
-bl9jcHVfYWxsb3coY29uc3Qgc3RydWN0IA0KPiBicGZfcHJvZyAqcHJvZywgY29uc3Qgdm9pZCAq
-Y3R4KSB7DQo+ICAgICAgICAgcmV0dXJuIFNFQ0NPTVBfUkVUX0FMTE9XOw0KPiB9DQoNCj5UaGlz
-IGlzIGFwcGxlcyB0byBvcmFuZ2VzLg0KPkFzIGV4cGxhaW5lZCBlYXJsaWVyOg0KPmh0dHBzOi8v
-bG9yZS5rZXJuZWwub3JnL25ldGRldi8yMDIwMDUzMTE3MTkxNS53c3h2ZGplZXRtaHBzZHYyQGFz
-dC1tYnAuZGhjcC50aGVmYWNlYm9vay5jb20vVC8jdQ0KPlBsZWFzZSB1c2UgX193ZWFrIGluc3Rl
-YWQgb2Ygc3RhdGljIGFuZCByZWRvIHRoZSBudW1iZXJzLg0KDQoNCndlIGhhdmUgcmVwbGFjZWQg
-4oCYc3RhdGlj4oCZIHdpdGgg4oCYX193ZWFr4oCZLCB0ZXN0ZWQgd2l0aCB0aGUgc2FtZSB3YXks
-IGFuZCBnb3QgYWxtb3N0bHkgdGhlIHNhbWUgcmVzdWx0LCBpbiBvdXIgdGVzdCBlbnZpcm9ubWVu
-dChhYXJjaDY0KS4NCg0KLXN0YXRpYyBub2lubGluZSB1MzIgYnBmX3Byb2dfcnVuX3Bpbl9vbl9j
-cHVfYWxsb3coY29uc3Qgc3RydWN0IGJwZl9wcm9nICpwcm9nLCBjb25zdCB2b2lkICpjdHgpDQor
-X193ZWFrIG5vaW5saW5lIHUzMiBicGZfcHJvZ19ydW5fcGluX29uX2NwdV9hbGxvdyhjb25zdCBz
-dHJ1Y3QgYnBmX3Byb2cgKnByb2csIGNvbnN0IHZvaWQgKmN0eCkNCg0Kb3JpZ2luYWw6DQoJc2Vj
-Y29tcF9vZmY6CQkJMTA2ODQ5MzkNCglzZWNjb21wX29uXzFfZmlsdGVyczoJODUxMzgwNQkJb3Zl
-cmhlYWTvvJoxOS44JQ0KCXNlY2NvbXBfb25fNF9maWx0ZXJzOgk3MTA1NTkyCQlvdmVyaGVhZO+8
-mjMzLjAlDQoJc2VjY29tcF9vbl8zMl9maWx0ZXJzOgkyMzA4Njc3CQlvdmVyaGVhZO+8mjc4LjMl
-DQoJDQphZnRlciByZXBsYWNpbmcgYnBmX3Byb2dfcnVuX3Bpbl9vbl9jcHU6DQoJc2VjY29tcF9v
-ZmY6CQkJMTA2NjcxOTUNCglzZWNjb21wX29uXzFfZmlsdGVyczoJOTE0NzQ1NAkJb3ZlcmhlYWTv
-vJoxNC4yJQ0KCXNlY2NvbXBfb25fNF9maWx0ZXJzOgk4OTI3NjA1CQlvdmVyaGVhZO+8mjE2LjEl
-DQoJc2VjY29tcF9vbl8zMl9maWx0ZXJzOgk2MzU1NDc2CQlvdmVyaGVhZO+8mjQwLjYlDQoNCk4t
-ZmlsdGVyIGJwZiBvdmVyaGVhZDoNCgkxX2ZpbHRlcnM6CQk1LjYlDQoJNF9maWx0ZXJzOgkJMTYu
-OSUNCgkzMl9maWx0ZXJzOgkzNy43JQ0KDQoNCg0K
+On Tue, Jun 02, 2020 at 02:42:35AM +0000, zhujianwei (C) wrote:
+> >
+> > This is the test result on linux 5.7.0-rc7 for aarch64.
+> > And retpoline disabled default.
+> > #cat /sys/devices/system/cpu/vulnerabilities/spectre_v2
+> > Not affected
+> >
+> > bpf_jit_enable 1
+> > bpf_jit_harden 0
+> >
+> > We run unixbench syscall benchmark on the original kernel and the new one(replace bpf_prog_run_pin_on_cpu() with immediately returning 'allow' one).
+> > The unixbench syscall testcase runs 5 system calls（close/umask/dup/getpid/getuid, extra 15 syscalls needed to run it） in a loop for 10 seconds, counts the number and finally output it. We also add some more filters (each with the same rules) to evaluate the situation just like kees mentioned(case like systemd-resolve), and we find it is right: more filters, more overhead. The following is our result (./syscall 10 m):
+> >
+> > original:
+> >         seccomp_off:                    10684939
+> >         seccomp_on_1_filters:   8513805         overhead：19.8%
+> >         seccomp_on_4_filters:   7105592         overhead：33.0%
+> >         seccomp_on_32_filters:  2308677         overhead：78.3%
+> >
+> > after replacing bpf_prog_run_pin_on_cpu:
+> >         seccomp_off:                    10685244
+> >         seccomp_on_1_filters:   9146483         overhead：14.1%
+> >         seccomp_on_4_filters:   8969886         overhead：16.0%
+> >         seccomp_on_32_filters:  6454372         overhead：39.6%
+> >
+> > N-filter bpf overhead:
+> >         1_filters:              5.7%
+> >         4_filters:              17.0%
+> >         32_filters:     38.7%
+> >
+> > // kernel code modification place
+> > static noinline u32 bpf_prog_run_pin_on_cpu_allow(const struct 
+> > bpf_prog *prog, const void *ctx) {
+> >         return SECCOMP_RET_ALLOW;
+> > }
+> 
+> >This is apples to oranges.
+> >As explained earlier:
+> >https://lore.kernel.org/netdev/20200531171915.wsxvdjeetmhpsdv2@ast-mbp.dhcp.thefacebook.com/T/#u
+> >Please use __weak instead of static and redo the numbers.
+> 
+> 
+> we have replaced ‘static’ with ‘__weak’, tested with the same way, and got almostly the same result, in our test environment(aarch64).
+> 
+> -static noinline u32 bpf_prog_run_pin_on_cpu_allow(const struct bpf_prog *prog, const void *ctx)
+> +__weak noinline u32 bpf_prog_run_pin_on_cpu_allow(const struct bpf_prog *prog, const void *ctx)
+> 
+> original:
+> 	seccomp_off:			10684939
+> 	seccomp_on_1_filters:	8513805		overhead：19.8%
+> 	seccomp_on_4_filters:	7105592		overhead：33.0%
+> 	seccomp_on_32_filters:	2308677		overhead：78.3%
+> 	
+> after replacing bpf_prog_run_pin_on_cpu:
+> 	seccomp_off:			10667195
+> 	seccomp_on_1_filters:	9147454		overhead：14.2%
+> 	seccomp_on_4_filters:	8927605		overhead：16.1%
+> 	seccomp_on_32_filters:	6355476		overhead：40.6%
+
+are you saying that by replacing 'static' with '__weak' it got slower?!
+Something doesn't add up. Please check generated assembly.
+By having such 'static noinline bpf_prog_run_pin_on_cpu' you're telling
+compiler to remove most of seccomp_run_filters() code which now will
+return only two possible values. Which further means that large 'switch'
+statement in __seccomp_filter() is also optimized. populate_seccomp_data()
+is removed. Etc, etc. That explains 14% vs 19% difference.
+May be you have some debug on? Like cant_migrate() is not a nop?
+Or static_branch is not supported?
+The sure way is to check assembly.
