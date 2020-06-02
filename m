@@ -2,110 +2,136 @@ Return-Path: <SRS0=3Oq2=7P=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99CFEC433E0
-	for <linux-security-module@archiver.kernel.org>; Tue,  2 Jun 2020 12:53:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E866FC433E0
+	for <linux-security-module@archiver.kernel.org>; Tue,  2 Jun 2020 14:18:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 82CC920663
-	for <linux-security-module@archiver.kernel.org>; Tue,  2 Jun 2020 12:53:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BAC95207ED
+	for <linux-security-module@archiver.kernel.org>; Tue,  2 Jun 2020 14:18:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JvpZSL2l"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726217AbgFBMxZ (ORCPT
+        id S1727013AbgFBOS4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 2 Jun 2020 08:53:25 -0400
-Received: from gardel.0pointer.net ([85.214.157.71]:47216 "EHLO
-        gardel.0pointer.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725940AbgFBMxZ (ORCPT
+        Tue, 2 Jun 2020 10:18:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57508 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725958AbgFBOSz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 2 Jun 2020 08:53:25 -0400
-X-Greylist: delayed 96103 seconds by postgrey-1.27 at vger.kernel.org; Tue, 02 Jun 2020 08:53:25 EDT
-Received: from gardel-login.0pointer.net (gardel.0pointer.net [IPv6:2a01:238:43ed:c300:10c3:bcf3:3266:da74])
-        by gardel.0pointer.net (Postfix) with ESMTP id 357ACE8154A;
-        Tue,  2 Jun 2020 14:53:24 +0200 (CEST)
-Received: by gardel-login.0pointer.net (Postfix, from userid 1000)
-        id DBA17160AC6; Tue,  2 Jun 2020 14:53:23 +0200 (CEST)
-Date:   Tue, 2 Jun 2020 14:53:23 +0200
-From:   Lennart Poettering <lennart@poettering.net>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        "zhujianwei (C)" <zhujianwei7@huawei.com>,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        Hehuazhen <hehuazhen@huawei.com>,
-        Christian Ehrhardt <christian.ehrhardt@canonical.com>,
-        Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
-        Tom Hromatka <tom.hromatka@oracle.com>
-Subject: Re: new seccomp mode aims to improve performance
-Message-ID: <20200602125323.GB123838@gardel-login>
-References: <c22a6c3cefc2412cad00ae14c1371711@huawei.com>
- <CAADnVQLnFuOR+Xk1QXpLFGHx-8StPCye7j5UgKbBoLrmKtygQA@mail.gmail.com>
- <202005290903.11E67AB0FD@keescook>
- <202005291043.A63D910A8@keescook>
- <20200601101137.GA121847@gardel-login>
- <CAHC9VhTK1306C2+ghMWHC0X6XVHiG+vBKPC5=7QLjxXwX4Eu9Q@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhTK1306C2+ghMWHC0X6XVHiG+vBKPC5=7QLjxXwX4Eu9Q@mail.gmail.com>
+        Tue, 2 Jun 2020 10:18:55 -0400
+Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A90BAC08C5C0
+        for <linux-security-module@vger.kernel.org>; Tue,  2 Jun 2020 07:18:55 -0700 (PDT)
+Received: by mail-pj1-x1041.google.com with SMTP id m2so1518385pjv.2
+        for <linux-security-module@vger.kernel.org>; Tue, 02 Jun 2020 07:18:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=IFVZxk2HGJlMEd0AkzA5r6bJ1EWPxWtJbu5fiwrTlkk=;
+        b=JvpZSL2lWhR5tYa+0MyrURuF3XxT4Bg05zgghXWrj8m/9g+1Ox6Ir5KISwxK/MpNTP
+         ZffKHyQE1dUV1zirFPktPK6i7z16ntuaOjYZ9A8P1OZSkkD3qx2GtsID1JO/gtTpFcYM
+         2pZqkBlMO6NoKN/YPKlFeOSQKkZvWOuTuRHeHjs8Jy6fLWlzoHouK2HGOPVBUWTYFMGf
+         RFQFyMVfYpxNN2fzo5WWah0E6j6QvQ/I7aOA+6WhewtBo4ASxJyyhUcMvSa9IxyGzTFg
+         aO4E+qT2PdLHJZp7NDFT4uG75TDUwgUrMz4lixMisDIeKT9AAYW+6bvntiSYvqW+hODb
+         WkrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=IFVZxk2HGJlMEd0AkzA5r6bJ1EWPxWtJbu5fiwrTlkk=;
+        b=pDj7WuO1MATbOsPqujydIs6qDo7J6KQ7IKQ3KEdi3DX5DcOJ8xLnupXFs2Q2brB1Gr
+         orriwtpo+uToZXO1hedXOG5mSiPiojjtwDB4poFXDJh3YrJl0oDBHwz0z411kas9bBWv
+         BMmlmkGgpngvjlFq6uBzByJwE54s+QUudah/KCoySpk56pApXzh1kd7ZJjGksTyBBDtb
+         GIADf8qKR77mod/H5eNSguIsPBRywSSR/rGaHh+3HvgRtQsR/2r8A8QOvDiubDCbyu6n
+         EqTUoI9CNZ7YvnZ5XkKmTBF6UzR0rIOSNzRmL75F7czpTb3IFQBnwDu5BfOKD/cy2Y5f
+         /eUQ==
+X-Gm-Message-State: AOAM533h3Fd5nfxLx60Y6lRfv1ypofmSxsr3BEgipnNV/31nX9D7YvI1
+        RenYw92rhuZk3HxV5CyoAhp4Sw==
+X-Google-Smtp-Source: ABdhPJyEDi3JjDMMnzCMHmH2BT/npctwWmmUyygPOyrdqNRu+XCIL7pP9LG1SrYenp+nsP4IZAqzgw==
+X-Received: by 2002:a17:90b:4c91:: with SMTP id my17mr5390973pjb.81.1591107535207;
+        Tue, 02 Jun 2020 07:18:55 -0700 (PDT)
+Received: from localhost.localdomain ([117.252.66.248])
+        by smtp.gmail.com with ESMTPSA id 141sm2529670pfz.171.2020.06.02.07.18.45
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 02 Jun 2020 07:18:53 -0700 (PDT)
+From:   Sumit Garg <sumit.garg@linaro.org>
+To:     jarkko.sakkinen@linux.intel.com, zohar@linux.ibm.com,
+        jejb@linux.ibm.com
+Cc:     dhowells@redhat.com, jens.wiklander@linaro.org, corbet@lwn.net,
+        jmorris@namei.org, serge@hallyn.com, casey@schaufler-ca.com,
+        janne.karhunen@gmail.com, daniel.thompson@linaro.org,
+        Markus.Wamser@mixed-mode.de, keyrings@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        op-tee@lists.trustedfirmware.org, tee-dev@lists.linaro.org,
+        Sumit Garg <sumit.garg@linaro.org>
+Subject: [PATCH v5 0/4] Introduce TEE based Trusted Keys support
+Date:   Tue,  2 Jun 2020 19:48:21 +0530
+Message-Id: <1591107505-6030-1-git-send-email-sumit.garg@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mo, 01.06.20 08:32, Paul Moore (paul@paul-moore.com) wrote:
+Add support for TEE based trusted keys where TEE provides the functionality
+to seal and unseal trusted keys using hardware unique key. Also, this is
+an alternative in case platform doesn't possess a TPM device.
 
-> In situations where the calling application creates multiple per-ABI
-> filters, the seccomp_merge(3) function can be used to merge the
-> filters into one.  There are some limitations (same byte ordering,
-> filter attributes, etc.) but in general it should work without problem
-> when merging x86_64, x32, and x86.
+This patch-set has been tested with OP-TEE based early TA which is already
+merged in upstream [1].
 
-Hmm, so we currently only use seccomp_rule_add_exact() to build an
-individual filter and finally seccomp_load() to install it. Which
-tells us exactly what works and what does not.
+[1] https://github.com/OP-TEE/optee_os/commit/f86ab8e7e0de869dfa25ca05a37ee070d7e5b86b
 
-If we now would use seccomp_rule_add_exact() to build the filters, but
-then use seccomp_merge() to merge them all, and then only do a single
-seccomp_load(), will this give us the same info? i.e. will
-seccomp_merge() give us the same errors seccomp_load() currently gives
-us when something cannot work?
+Changes in v5:
+1. Drop dynamic detection of trust source and use compile time flags
+   instead.
+2. Rename trusted_common.c -> trusted_core.c.
+3. Rename callback: cleanup() -> exit().
+4. Drop "tk" acronym.
+5. Other misc. comments.
+6. Added review tags for patch #3 and #4.
 
-> > If we wanted to optimize that in userspace, then libseccomp would have
-> > to be improved quite substantially to let us know exactly what works
-> > and what doesn't, and to have sane fallback both when building
-> > whitelists and blacklists.
->
-> It has been quite a while since we last talked about systemd's use of
-> libseccomp, but the upcoming v2.5.0 release (no date set yet, but
-> think weeks not months) finally takes a first step towards defining
-> proper return values on error for the API, no more "negative values on
-> error".  I'm sure there are other things, but I recall this as being
-> one of the bigger systemd wants.
+Changes in v4:
+1. Pushed independent TEE features separately:
+  - Part of recent TEE PR: https://lkml.org/lkml/2020/5/4/1062
+2. Updated trusted-encrypted doc with TEE as a new trust source.
+3. Rebased onto latest tpmdd/master.
 
-Yes, we care about error codes a lot.
+Changes in v3:
+1. Update patch #2 to support registration of multiple kernel pages.
+2. Incoporate dependency patch #4 in this patch-set:
+   https://patchwork.kernel.org/patch/11091435/
 
-> As an aside, it is always going to be difficult to allow fine grained
-> control when you have a single libseccomp filter that includes
-> multiple ABIs; the different ABI oddities are just too great (see
-> comments above).  If you need exacting control of the filter, or ABI
-> specific handling, then the recommended way is to create those filters
-> independently and merge them together before loading them into the
-> kernel or applying any common rules.
+Changes in v2:
+1. Add reviewed-by tags for patch #1 and #2.
+2. Incorporate comments from Jens for patch #3.
+3. Switch to use generic trusted keys framework.
 
-Hmm, so not sure I got this. But are you saying that when using
-seccomp_merge() am I supposed to merge filters for different archs
-into one megafilter, or are you saying the opposite: am I supposed not
-to do that?
+Sumit Garg (4):
+  KEYS: trusted: Add generic trusted keys framework
+  KEYS: trusted: Introduce TEE based Trusted Keys
+  doc: trusted-encrypted: updates with TEE as a new trust source
+  MAINTAINERS: Add entry for TEE based Trusted Keys
 
-I.e. in an ideal world, should we come to a situation where per
-service on x86-64 we will have exactly one filter installed, or should
-we come to a situation where we'll have exactly three installed, once
-for each ABI?
+ Documentation/security/keys/trusted-encrypted.rst | 203 ++++++++++---
+ MAINTAINERS                                       |   8 +
+ include/keys/trusted-type.h                       |  48 ++++
+ include/keys/trusted_tee.h                        |  66 +++++
+ include/keys/trusted_tpm.h                        |  15 -
+ security/keys/Kconfig                             |  31 +-
+ security/keys/trusted-keys/Makefile               |   6 +-
+ security/keys/trusted-keys/trusted_core.c         | 321 +++++++++++++++++++++
+ security/keys/trusted-keys/trusted_tee.c          | 280 ++++++++++++++++++
+ security/keys/trusted-keys/trusted_tpm1.c         | 335 ++++------------------
+ 10 files changed, 981 insertions(+), 332 deletions(-)
+ create mode 100644 include/keys/trusted_tee.h
+ create mode 100644 security/keys/trusted-keys/trusted_core.c
+ create mode 100644 security/keys/trusted-keys/trusted_tee.c
 
-Lennart
+-- 
+2.7.4
 
---
-Lennart Poettering, Berlin
