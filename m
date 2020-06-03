@@ -2,105 +2,69 @@ Return-Path: <SRS0=cN3+=7Q=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E65BC433E0
-	for <linux-security-module@archiver.kernel.org>; Wed,  3 Jun 2020 00:40:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DA67C433DF
+	for <linux-security-module@archiver.kernel.org>; Wed,  3 Jun 2020 01:10:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 30843206E9
-	for <linux-security-module@archiver.kernel.org>; Wed,  3 Jun 2020 00:40:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B4CD20663
+	for <linux-security-module@archiver.kernel.org>; Wed,  3 Jun 2020 01:10:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1591144817;
-	bh=NlD2jPn6cNNUUUVK/+NlBV7fX7kuzjOImjXcrhUam6U=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=T6KE/s4MC5cvFm62lJbOEwMFV+KvGEp4eLRyD4PziHFTf/iroAz6Njmu4BJx3PxuP
-	 vbb614CTUlreC18zkHvrZSDx0hv+uj3CX+BpymygY68qZ1gwkojQAli+gWxsYdmxB2
-	 d3mOx7hxOfA0ugGzUYrsP4uZBc6XDKAlvUMltO+o=
+	s=default; t=1591146608;
+	bh=jWVJCRzIi5rxx76ZMWxJsqDwcIYmelZ8tRzaS/f4wOM=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
+	b=2aXrNQBYco8OHeOmRyHpNWJ9TZOJySd8NfVPufO51bYmt/IxIiMEBnN5b/PYzPPVE
+	 G3M1G/qSrblysZ621Id6G1w12Z9+narvK5ZeT1Fb/eA7Rrtytxwj9NvftgDXA2vxdK
+	 dn1OBYfBLWrQk3k9obqL/MRsUeCUtsJAyLuW3NtA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726842AbgFCAkQ (ORCPT
+        id S1728174AbgFCBKH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 2 Jun 2020 20:40:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40844 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726429AbgFCAkQ (ORCPT
+        Tue, 2 Jun 2020 21:10:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43882 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726112AbgFCBKH (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 2 Jun 2020 20:40:16 -0400
-Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17B45C08C5C1
-        for <linux-security-module@vger.kernel.org>; Tue,  2 Jun 2020 17:40:16 -0700 (PDT)
-Received: by mail-lf1-x141.google.com with SMTP id c12so182576lfc.10
-        for <linux-security-module@vger.kernel.org>; Tue, 02 Jun 2020 17:40:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9kGoCBA5DS7Gg4RTq4Y1cfvZFri+BwLVI8ih5oM9KhU=;
-        b=FhGbMjiAPRBLkoRndyuewftQbr/2riV1V6xUqNHXLmfjq6YYYV18bLVRze+Zx84ghl
-         D8ZtzBj8a2JIDjPYUE0PTf2ZQ1+G38IqMhyOu0NOsuLpvYUvHU9eERiOVjdyd0J/vfK5
-         DDc0mrXlp/lSaPnLyCJHdubQL3qRfzCvvrMKQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9kGoCBA5DS7Gg4RTq4Y1cfvZFri+BwLVI8ih5oM9KhU=;
-        b=Qwa+Z/xN5yax1KMSDYfOH6vJqknyJQ4RypLRicgjWBP/3Fzyn+xyL5U7WQ0mcMIfge
-         wVLNRtliCF7A5ueJvBhNq73pUOtUpy//yWw3BfImvJSbQSMQ1HDaYx4JCV+1i67zE6Qn
-         1at9LJrd1IOq8R96KwBQtuCQKRRuZZpv+Uj2BVnms0ZN6gxzdSdUxGPMZaNZh8YQg63c
-         bcIVFiqo+5p68rIlnfCdH/c6VJZ7VWZRNkNNKnj8ylqATPQAx4kS+vmupMc3k2bd/nkj
-         xV2DWveFqCW6MElqnt5m+P+0USwxmzlWA3xf0ibrP3HKgp7gtbZcJ30in3YIcmtHG00c
-         3u9A==
-X-Gm-Message-State: AOAM532ac+ARY6Y3D3B2TqCsJMxB9Zu+lPGrS3nzABpQeuobn9dlnZar
-        VAiyKi5S4bXJNYUWuZQSRLdgO8fclFQ=
-X-Google-Smtp-Source: ABdhPJwiDRvt2mTICY0krbUay4auh7VEQMliSzzutRNXkypryDwGOD/FphN9jGzRNyaFSXkipyAeJg==
-X-Received: by 2002:ac2:485a:: with SMTP id 26mr977699lfy.57.1591144814050;
-        Tue, 02 Jun 2020 17:40:14 -0700 (PDT)
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com. [209.85.208.176])
-        by smtp.gmail.com with ESMTPSA id z133sm160615lfa.41.2020.06.02.17.40.12
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Jun 2020 17:40:13 -0700 (PDT)
-Received: by mail-lj1-f176.google.com with SMTP id z18so481369lji.12
-        for <linux-security-module@vger.kernel.org>; Tue, 02 Jun 2020 17:40:12 -0700 (PDT)
-X-Received: by 2002:a05:651c:2c6:: with SMTP id f6mr713504ljo.371.1591144812598;
- Tue, 02 Jun 2020 17:40:12 -0700 (PDT)
-MIME-Version: 1.0
-References: <alpine.LRH.2.21.2006021212490.12446@namei.org>
-In-Reply-To: <alpine.LRH.2.21.2006021212490.12446@namei.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 2 Jun 2020 17:39:56 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wj5hZ8BPKMAK4OhXCrRNvZ=43gE8j=LGX_urGUgbdcqqg@mail.gmail.com>
-Message-ID: <CAHk-=wj5hZ8BPKMAK4OhXCrRNvZ=43gE8j=LGX_urGUgbdcqqg@mail.gmail.com>
-Subject: Re: [GIT PULL][Security] lockdown: Allow unprivileged users to see
- lockdown status
-To:     James Morris <jmorris@namei.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 2 Jun 2020 21:10:07 -0400
+Subject: Re: [GIT PULL] SELinux patches for v5.8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1591146606;
+        bh=jWVJCRzIi5rxx76ZMWxJsqDwcIYmelZ8tRzaS/f4wOM=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=SJKamLceubdGhXYjGf4/5ZdW03IM3xeV7DbdhwYopRJRScKCxXns7VKTBnyRc+v93
+         SMIHddqeVI6BDD3mItMZzENUjB4CS7fNyweXZZnXinrt7GSfm5tfPH4x6OSXJIE0Lm
+         QjDxWZe6Wh6RGmotfU7BpnI2V3lCzCQVIzzhMXcg=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <CAHC9VhTX8gkUui6AiTJMJgcohXa=TOqdO==rEDk=Mquz9sCNKA@mail.gmail.com>
+References: <CAHC9VhTX8gkUui6AiTJMJgcohXa=TOqdO==rEDk=Mquz9sCNKA@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CAHC9VhTX8gkUui6AiTJMJgcohXa=TOqdO==rEDk=Mquz9sCNKA@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+ tags/selinux-pr-20200601
+X-PR-Tracked-Commit-Id: fe5a90b8c14914397a3bb0c214d142103c1ba3bf
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: f41030a20b38552a2da3b3f6bc9e7a78637d6c23
+Message-Id: <159114660678.11472.15482345694870905600.pr-tracker-bot@kernel.org>
+Date:   Wed, 03 Jun 2020 01:10:06 +0000
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jun 1, 2020 at 7:15 PM James Morris <jmorris@namei.org> wrote:
->
-> Just one update for the security subsystem: allows unprivileged users to
-> see the status of the lockdown feature. From Jeremy Cline.
+The pull request you sent on Mon, 1 Jun 2020 21:06:48 -0400:
 
-Hmm.
+> git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git tags/selinux-pr-20200601
 
-That branch seems to have sprouted another commit just today.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/f41030a20b38552a2da3b3f6bc9e7a78637d6c23
 
-I ended up taking that too as trivial, but it shows how you seem to
-basically send me a pointer to a live branch. Please don't do that.
-When you make changes to that branch, I now get those changes that you
-may not have meant to send me (and that I get upset for being
-surprised by).
+Thank you!
 
-An easy solution to that is to send me a signed tag instead of a
-pointer to a branch. Then you can continue to update the branch, while
-the tag stays stable.
-
-Plus we've been encouraging signed tags for pull requests anyway.
-
-              Linus
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
