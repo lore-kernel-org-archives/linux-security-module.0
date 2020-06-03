@@ -2,178 +2,165 @@ Return-Path: <SRS0=cN3+=7Q=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C27EFC433DF
-	for <linux-security-module@archiver.kernel.org>; Wed,  3 Jun 2020 11:45:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3B8CC433DF
+	for <linux-security-module@archiver.kernel.org>; Wed,  3 Jun 2020 15:11:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9A92820674
-	for <linux-security-module@archiver.kernel.org>; Wed,  3 Jun 2020 11:45:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CcT9D9lZ"
+	by mail.kernel.org (Postfix) with ESMTP id 985F320738
+	for <linux-security-module@archiver.kernel.org>; Wed,  3 Jun 2020 15:11:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725975AbgFCLpe (ORCPT
+        id S1726066AbgFCPLx (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 3 Jun 2020 07:45:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59118 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725881AbgFCLpe (ORCPT
+        Wed, 3 Jun 2020 11:11:53 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2273 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725930AbgFCPLx (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 3 Jun 2020 07:45:34 -0400
-Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEE3DC08C5C1
-        for <linux-security-module@vger.kernel.org>; Wed,  3 Jun 2020 04:45:33 -0700 (PDT)
-Received: by mail-lf1-x144.google.com with SMTP id 202so1115171lfe.5
-        for <linux-security-module@vger.kernel.org>; Wed, 03 Jun 2020 04:45:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=R6lEVGZYGJxxHN7lE3eo9NqLzCsnQCicun988jWmqf0=;
-        b=CcT9D9lZNg/SMdu0oTdh0D/2xb8iHgHFyH7fmH90WYrNn/U+znPsNUWsM5AsKxoBUC
-         vVFKe4LUjup9xTgkizKTwyQ0mp3tl+y8Welh9N/GllG4VLXKlxXHjSr9F6k+N7aS+Mdu
-         brRhX1nAh2aZFrsppZeJGN+BzJyK3Lq86tRW/+cuA0RgpK9vhrG7icHwQdZTE/6WgEzE
-         i9QfGI97QzeIy4v9j5Ft+ogMFQd85zLlT19K8GDYCEQMP+XrX3bHBWhIxegbA2Ze1qk9
-         Tp4ZMNmBt1B0C5WbcpAKgxOqrlvbotQ7CtwkSesdW9/OtKZup/VpnJtb/cWiuTEdTFjl
-         3sow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=R6lEVGZYGJxxHN7lE3eo9NqLzCsnQCicun988jWmqf0=;
-        b=EwNPVn8nMEGyvWsjewJm8YCYfTCCdXKGSiBSvarltcJr7esPxT5yVQBYHVTMwyOV7n
-         KIqxHIfKqieDYPrspJoBTw8cg9BMrED88OQ/WrlJHMPCsZT8w+LNGTTSpN3GL/LCFaXD
-         YcnOkn9EZu7vpG9qO8uKXdbYuMf5K9qvRoJMcLeMkSm1u8afKZ28aaVzlkEjN0SqS91K
-         GZTqXrnzNBXkD5KhyxtBTLpl/zgAvQf/rmDsUlqWvsYCkfrALaIdGt7Zaa7gmchr+iiw
-         0aLibXchnF1jyqEMmvAeL8+QLJzVFMHI8dhrgOfrCfZRbbruuVfntWOUEd08drq6r0rd
-         X2jA==
-X-Gm-Message-State: AOAM532RecM96POZk8U/FlYmrTmry19iNxJIRujlT+abIxnj0ON7GsnZ
-        5XxOvHy9T29Yor4N2hSMa73HXYR5I+E63wVW8/tgeg==
-X-Google-Smtp-Source: ABdhPJxrRq5dz8jR0pX7TOEXl5+O6MeJ4s3D9zLb2o4VMf6+9QwUKNjv2xRDI0+UrWAaW8w3feNHDUNL6jPLIkqDsJg=
-X-Received: by 2002:ac2:44bb:: with SMTP id c27mr2301161lfm.59.1591184732251;
- Wed, 03 Jun 2020 04:45:32 -0700 (PDT)
+        Wed, 3 Jun 2020 11:11:53 -0400
+Received: from lhreml738-chm.china.huawei.com (unknown [172.18.7.107])
+        by Forcepoint Email with ESMTP id 02C85582F77A874555B4;
+        Wed,  3 Jun 2020 16:11:51 +0100 (IST)
+Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
+ lhreml738-chm.china.huawei.com (10.201.108.188) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1913.5; Wed, 3 Jun 2020 16:11:50 +0100
+Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.160)
+ by fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1913.5; Wed, 3 Jun 2020 17:11:49 +0200
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <zohar@linux.ibm.com>, <tiwai@suse.de>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        <stable@vger.kernel.org>
+Subject: [PATCH 2/2] ima: Call ima_calc_boot_aggregate() in ima_eventdigest_init()
+Date:   Wed, 3 Jun 2020 17:08:21 +0200
+Message-ID: <20200603150821.8607-2-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200603150821.8607-1-roberto.sassu@huawei.com>
+References: <20200603150821.8607-1-roberto.sassu@huawei.com>
 MIME-Version: 1.0
-References: <1591107505-6030-1-git-send-email-sumit.garg@linaro.org>
- <1591108981.4253.17.camel@linux.ibm.com> <CAFA6WYOoMdLJ2g3gocZBZWdu-7Nfw7LKHnzX8S8FKeC7cuNwYg@mail.gmail.com>
- <CAKrSGQSLKpb8T=H9zUoPP1B6EFrgMTMP3ZX1pEv99JtdPq7H0w@mail.gmail.com>
-In-Reply-To: <CAKrSGQSLKpb8T=H9zUoPP1B6EFrgMTMP3ZX1pEv99JtdPq7H0w@mail.gmail.com>
-From:   Sumit Garg <sumit.garg@linaro.org>
-Date:   Wed, 3 Jun 2020 17:15:20 +0530
-Message-ID: <CAFA6WYOFO8YptYp2JrY7nQL0MeM02VLCHvtnxUCEDd5-fb-z+Q@mail.gmail.com>
-Subject: Re: [PATCH v5 0/4] Introduce TEE based Trusted Keys support
-To:     Luke Hinds <lhinds@redhat.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     James Bottomley <jejb@linux.ibm.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        Jens Wiklander <jens.wiklander@linaro.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Janne Karhunen <janne.karhunen@gmail.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Markus Wamser <Markus.Wamser@mixed-mode.de>,
-        "open list:ASYMMETRIC KEYS" <keyrings@vger.kernel.org>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        op-tee@lists.trustedfirmware.org,
-        "tee-dev @ lists . linaro . org" <tee-dev@lists.linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.204.65.160]
+X-ClientProxiedBy: lhreml719-chm.china.huawei.com (10.201.108.70) To
+ fraeml714-chm.china.huawei.com (10.206.15.33)
+X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 3 Jun 2020 at 14:20, Luke Hinds <lhinds@redhat.com> wrote:
->
->
->
-> On Wed, Jun 3, 2020 at 9:08 AM Sumit Garg <sumit.garg@linaro.org> wrote:
->>
->> On Tue, 2 Jun 2020 at 20:14, James Bottomley <jejb@linux.ibm.com> wrote:
->> >
->> > On Tue, 2020-06-02 at 19:48 +0530, Sumit Garg wrote:
->> > > Add support for TEE based trusted keys where TEE provides the
->> > > functionality to seal and unseal trusted keys using hardware unique
->> > > key. Also, this is an alternative in case platform doesn't possess a
->> > > TPM device.
->> >
->> > So here's a meta problem: in the case when the platform possesses both
->> > TEE and TPM  what should it do?
->>
->> IMO, trust source (either a TPM or a TEE) should be unique and
->> carefully chosen as per platform security policy corresponding to a
->> particular threat model.
->>
->> And moreover TEEs have been mostly used in the embedded world where
->> having a hardware TPM is cumbersome given constraints regarding BoM
->> cost and hardware resources.
->>
->> >  Things like this:
->> >
->> > > --- a/security/keys/trusted-keys/trusted_core.c
->> > > +++ b/security/keys/trusted-keys/trusted_core.c
->> > > @@ -25,6 +25,8 @@
->> > >
->> > >  #if defined(CONFIG_TRUSTED_TPM)
->> > >  static struct trusted_key_ops *trusted_key_ops =
->> > > &tpm_trusted_key_ops;
->> > > +#elif defined(CONFIG_TRUSTED_TEE)
->> > > +static struct trusted_key_ops *trusted_key_ops =
->> > > &tee_trusted_key_ops;
->> > >  #else
->> >
->> > Say it's either/or at a Kconfig level: so if you select both TEE and
->> > TPM based trusted keys at compile time, we intall the TPM ops and
->> > ignore the TEE ops, is that right?  Surely this should be runtime
->> > selectable based on what the platform has ...
->>
->> This dynamic selection was already part of v4 patch-set but after
->> objection from Jarrko here [1], I switched to compile time mode
->> instead.
->>
->> [1] https://lkml.org/lkml/2020/6/2/139
->
->
-> Unless I have misunderstood, my concerns about compile time are that distributors will be cornered into releasing kernels with an opinionated selection of either TEE or TPM and any users needing the non default will need to compile their own kernel.
->
+If the template field 'd' is chosen and the digest to be added to the
+measurement entry was not calculated with SHA1 or MD5, it is
+recalculated with SHA1, by using the passed file descriptor. However, this
+cannot be done for boot_aggregate, because there is no file descriptor.
 
-I echo with your concerns.
+This patch adds a call to ima_calc_boot_aggregate() in
+ima_eventdigest_init(), so that the digest can be recalculated also for the
+boot_aggregate entry.
 
-Jarrko,
+Cc: stable@vger.kernel.org # 3.13.x
+Fixes: 3ce1217d6cd5d ("ima: define template fields library and new helpers")
+Reported-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+---
+ security/integrity/ima/ima.h              |  3 ++-
+ security/integrity/ima/ima_crypto.c       |  6 +++---
+ security/integrity/ima/ima_init.c         |  2 +-
+ security/integrity/ima/ima_template_lib.c | 18 ++++++++++++++++++
+ 4 files changed, 24 insertions(+), 5 deletions(-)
 
-If it's fine with you then I can switch back to dynamic approach again
-in the next version.
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index 02796473238b..df93ac258e01 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -57,6 +57,7 @@ extern int ima_hash_algo_idx __ro_after_init;
+ extern int ima_extra_slots __ro_after_init;
+ extern int ima_appraise;
+ extern struct tpm_chip *ima_tpm_chip;
++extern const char boot_aggregate_name[];
+ 
+ /* IMA event related data */
+ struct ima_event_data {
+@@ -144,7 +145,7 @@ int ima_calc_buffer_hash(const void *buf, loff_t len,
+ 			 struct ima_digest_data *hash);
+ int ima_calc_field_array_hash(struct ima_field_data *field_data,
+ 			      struct ima_template_entry *entry);
+-int __init ima_calc_boot_aggregate(struct ima_digest_data *hash);
++int ima_calc_boot_aggregate(struct ima_digest_data *hash);
+ void ima_add_violation(struct file *file, const unsigned char *filename,
+ 		       struct integrity_iint_cache *iint,
+ 		       const char *op, const char *cause);
+diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
+index f3a7f4eb1fc1..ba5cc3264240 100644
+--- a/security/integrity/ima/ima_crypto.c
++++ b/security/integrity/ima/ima_crypto.c
+@@ -806,8 +806,8 @@ static void __init ima_pcrread(u32 idx, struct tpm_digest *d)
+  * hash algorithm for reading the TPM PCRs as for calculating the boot
+  * aggregate digest as stored in the measurement list.
+  */
+-static int __init ima_calc_boot_aggregate_tfm(char *digest, u16 alg_id,
+-					      struct crypto_shash *tfm)
++static int ima_calc_boot_aggregate_tfm(char *digest, u16 alg_id,
++				       struct crypto_shash *tfm)
+ {
+ 	struct tpm_digest d = { .alg_id = alg_id, .digest = {0} };
+ 	int rc;
+@@ -835,7 +835,7 @@ static int __init ima_calc_boot_aggregate_tfm(char *digest, u16 alg_id,
+ 	return rc;
+ }
+ 
+-int __init ima_calc_boot_aggregate(struct ima_digest_data *hash)
++int ima_calc_boot_aggregate(struct ima_digest_data *hash)
+ {
+ 	struct crypto_shash *tfm;
+ 	u16 crypto_id, alg_id;
+diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
+index fc1e1002b48d..4902fe7bd570 100644
+--- a/security/integrity/ima/ima_init.c
++++ b/security/integrity/ima/ima_init.c
+@@ -19,7 +19,7 @@
+ #include "ima.h"
+ 
+ /* name for boot aggregate entry */
+-static const char boot_aggregate_name[] = "boot_aggregate";
++const char boot_aggregate_name[] = "boot_aggregate";
+ struct tpm_chip *ima_tpm_chip;
+ 
+ /* Add the boot aggregate to the IMA measurement list and extend
+diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
+index 9cd1e50f3ccc..635c6ac05050 100644
+--- a/security/integrity/ima/ima_template_lib.c
++++ b/security/integrity/ima/ima_template_lib.c
+@@ -286,6 +286,24 @@ int ima_eventdigest_init(struct ima_event_data *event_data,
+ 		goto out;
+ 	}
+ 
++	if ((const char *)event_data->filename == boot_aggregate_name) {
++		if (ima_tpm_chip) {
++			hash.hdr.algo = HASH_ALGO_SHA1;
++			result = ima_calc_boot_aggregate(&hash.hdr);
++
++			/* algo can change depending on available PCR banks */
++			if (!result && hash.hdr.algo != HASH_ALGO_SHA1)
++				result = -EINVAL;
++
++			if (result < 0)
++				memset(&hash, 0, sizeof(hash));
++		}
++
++		cur_digest = hash.hdr.digest;
++		cur_digestsize = hash_digest_size[HASH_ALGO_SHA1];
++		goto out;
++	}
++
+ 	if (!event_data->file)	/* missing info to re-calculate the digest */
+ 		return -EINVAL;
+ 
+-- 
+2.17.1
 
--Sumit
-
->>
->>
->> > perhaps it should even be
->> > selectable per key?
->> >
->> > Once it is runtime selectable, what should be selected in the both
->> > case?  Or should we allow the user to decide, if so, how?
->> >
->> > when you pipe a trusted key, I think the subtype (TEE or TPM) should be
->> > part of the piped information, so it loads again seamlessly.  This
->> > would actually be fixed by something like the ASN.1 scheme I'm trying
->> > to upstream, at least for TPM keys, but do TEE keys have a recognized
->> > ASN.1 format?
->> >
->>
->> I guess this is something which we can refine later if there are real
->> platforms that have a particular security requirement to support both
->> TPM and a TEE.
->>
->> -Sumit
->>
->> > James
->> >
->>
->
