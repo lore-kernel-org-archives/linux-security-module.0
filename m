@@ -4,122 +4,103 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FB6DC433E0
-	for <linux-security-module@archiver.kernel.org>; Wed,  3 Jun 2020 00:31:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E65BC433E0
+	for <linux-security-module@archiver.kernel.org>; Wed,  3 Jun 2020 00:40:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 643B820757
-	for <linux-security-module@archiver.kernel.org>; Wed,  3 Jun 2020 00:31:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30843206E9
+	for <linux-security-module@archiver.kernel.org>; Wed,  3 Jun 2020 00:40:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1591144313;
-	bh=ZFZ50+cfovPyZG+Z87lR5GTVuve0aKAAjV3/T3oj86k=;
+	s=default; t=1591144817;
+	bh=NlD2jPn6cNNUUUVK/+NlBV7fX7kuzjOImjXcrhUam6U=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=cSIRLUiIsI8nZBAoFn8Dl9NX9/NVXVWuyFBKqGjTdBSWOkRVwWCnfCJ1EADb2/dMW
-	 greSlaOOl8xbv66y5uQvJqE8B7jJ27D8FBSLUpC/2wPcBxuwodRAIn9lRZhdt7Qse6
-	 CHS0WPCMQBvIu01MU5Lyz0a2MIIWC4ILEeBvbUdA=
+	b=T6KE/s4MC5cvFm62lJbOEwMFV+KvGEp4eLRyD4PziHFTf/iroAz6Njmu4BJx3PxuP
+	 vbb614CTUlreC18zkHvrZSDx0hv+uj3CX+BpymygY68qZ1gwkojQAli+gWxsYdmxB2
+	 d3mOx7hxOfA0ugGzUYrsP4uZBc6XDKAlvUMltO+o=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726589AbgFCAbw (ORCPT
+        id S1726842AbgFCAkQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 2 Jun 2020 20:31:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39548 "EHLO
+        Tue, 2 Jun 2020 20:40:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40844 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726112AbgFCAbw (ORCPT
+        with ESMTP id S1726429AbgFCAkQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 2 Jun 2020 20:31:52 -0400
-Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7AB7C08C5C0
-        for <linux-security-module@vger.kernel.org>; Tue,  2 Jun 2020 17:31:51 -0700 (PDT)
-Received: by mail-lj1-x241.google.com with SMTP id a25so520929ljp.3
-        for <linux-security-module@vger.kernel.org>; Tue, 02 Jun 2020 17:31:51 -0700 (PDT)
+        Tue, 2 Jun 2020 20:40:16 -0400
+Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17B45C08C5C1
+        for <linux-security-module@vger.kernel.org>; Tue,  2 Jun 2020 17:40:16 -0700 (PDT)
+Received: by mail-lf1-x141.google.com with SMTP id c12so182576lfc.10
+        for <linux-security-module@vger.kernel.org>; Tue, 02 Jun 2020 17:40:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Y05Eb9eafJ0NXvQYL09qhaAipJ12OeTgF1kVh6EgfnQ=;
-        b=BIdCjuRkcZ6AtUKiMEcL/bPMx/D1bItwVGJFF1ZfEiSaScUoFvZ1ZZsl3PQqkbQ7I+
-         1pgdNd5VxSPlPrPUxZOkdE8JL51bKGr0g+MkbxHFdq1zz9DHgwUHcu6VSzZYXPad+csj
-         3uML97UaIPUm1p1BiOICKjeYpqfWTK6nFQlZM=
+        bh=9kGoCBA5DS7Gg4RTq4Y1cfvZFri+BwLVI8ih5oM9KhU=;
+        b=FhGbMjiAPRBLkoRndyuewftQbr/2riV1V6xUqNHXLmfjq6YYYV18bLVRze+Zx84ghl
+         D8ZtzBj8a2JIDjPYUE0PTf2ZQ1+G38IqMhyOu0NOsuLpvYUvHU9eERiOVjdyd0J/vfK5
+         DDc0mrXlp/lSaPnLyCJHdubQL3qRfzCvvrMKQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Y05Eb9eafJ0NXvQYL09qhaAipJ12OeTgF1kVh6EgfnQ=;
-        b=cv6WK+tGn8egPuDzaukuqDWmqJywngokOBbnQDyFlogY3d2NBjht5SEfCfMbGsj24w
-         C5KpRJfCmIRU3g7n0EpJjDAcksWN4hfJt92EiJGZclSgergztjKUBHAP/AliJZPLUiSk
-         4iunrS2pKvudtjQ1DxtZfZxkbSYVfSIfLlYMTshamMXzeTtn2MXrUfxa9+SL1D5n2RUX
-         vxCE2cOeLrWgeccyEM2FQyLVpmykushOIyerzzxXUhx5XLxN453LdzgimSEsZJOq5VMZ
-         sGW2/Elt4uQ3uyHDrViuJ0WEDXEMT0ic8sC9ilASQCBTZDWTSxVk03MRH9snI34SPs8q
-         6DCg==
-X-Gm-Message-State: AOAM532Olnd0KedbIebRUazWRhhPCk/nzMslulLDrvcsQ71fk15/J9e4
-        YrpVa5lblsBXW4MCNL0y3i9ia0/pnEQ=
-X-Google-Smtp-Source: ABdhPJwV+C5Ia9ttFG/TwARv1TQC6DJdwo3T90YCvSwiVRZc3g56YTHdBGDWiNIObMM45kJjSBFJMg==
-X-Received: by 2002:a2e:6c12:: with SMTP id h18mr815974ljc.62.1591144309956;
-        Tue, 02 Jun 2020 17:31:49 -0700 (PDT)
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com. [209.85.208.182])
-        by smtp.gmail.com with ESMTPSA id d16sm91860ljh.97.2020.06.02.17.31.48
+        bh=9kGoCBA5DS7Gg4RTq4Y1cfvZFri+BwLVI8ih5oM9KhU=;
+        b=Qwa+Z/xN5yax1KMSDYfOH6vJqknyJQ4RypLRicgjWBP/3Fzyn+xyL5U7WQ0mcMIfge
+         wVLNRtliCF7A5ueJvBhNq73pUOtUpy//yWw3BfImvJSbQSMQ1HDaYx4JCV+1i67zE6Qn
+         1at9LJrd1IOq8R96KwBQtuCQKRRuZZpv+Uj2BVnms0ZN6gxzdSdUxGPMZaNZh8YQg63c
+         bcIVFiqo+5p68rIlnfCdH/c6VJZ7VWZRNkNNKnj8ylqATPQAx4kS+vmupMc3k2bd/nkj
+         xV2DWveFqCW6MElqnt5m+P+0USwxmzlWA3xf0ibrP3HKgp7gtbZcJ30in3YIcmtHG00c
+         3u9A==
+X-Gm-Message-State: AOAM532ac+ARY6Y3D3B2TqCsJMxB9Zu+lPGrS3nzABpQeuobn9dlnZar
+        VAiyKi5S4bXJNYUWuZQSRLdgO8fclFQ=
+X-Google-Smtp-Source: ABdhPJwiDRvt2mTICY0krbUay4auh7VEQMliSzzutRNXkypryDwGOD/FphN9jGzRNyaFSXkipyAeJg==
+X-Received: by 2002:ac2:485a:: with SMTP id 26mr977699lfy.57.1591144814050;
+        Tue, 02 Jun 2020 17:40:14 -0700 (PDT)
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com. [209.85.208.176])
+        by smtp.gmail.com with ESMTPSA id z133sm160615lfa.41.2020.06.02.17.40.12
         for <linux-security-module@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Jun 2020 17:31:49 -0700 (PDT)
-Received: by mail-lj1-f182.google.com with SMTP id z18so463373lji.12
-        for <linux-security-module@vger.kernel.org>; Tue, 02 Jun 2020 17:31:48 -0700 (PDT)
-X-Received: by 2002:a05:651c:2c6:: with SMTP id f6mr702860ljo.371.1591144308329;
- Tue, 02 Jun 2020 17:31:48 -0700 (PDT)
+        Tue, 02 Jun 2020 17:40:13 -0700 (PDT)
+Received: by mail-lj1-f176.google.com with SMTP id z18so481369lji.12
+        for <linux-security-module@vger.kernel.org>; Tue, 02 Jun 2020 17:40:12 -0700 (PDT)
+X-Received: by 2002:a05:651c:2c6:: with SMTP id f6mr713504ljo.371.1591144812598;
+ Tue, 02 Jun 2020 17:40:12 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAHC9VhTX8gkUui6AiTJMJgcohXa=TOqdO==rEDk=Mquz9sCNKA@mail.gmail.com>
-In-Reply-To: <CAHC9VhTX8gkUui6AiTJMJgcohXa=TOqdO==rEDk=Mquz9sCNKA@mail.gmail.com>
+References: <alpine.LRH.2.21.2006021212490.12446@namei.org>
+In-Reply-To: <alpine.LRH.2.21.2006021212490.12446@namei.org>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 2 Jun 2020 17:31:32 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiAVfqtJbZ=Ti1oxSvunUvsQ_CsOL5oFJL3mwhqKTeoNw@mail.gmail.com>
-Message-ID: <CAHk-=wiAVfqtJbZ=Ti1oxSvunUvsQ_CsOL5oFJL3mwhqKTeoNw@mail.gmail.com>
-Subject: Re: [GIT PULL] SELinux patches for v5.8
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     selinux@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Tue, 2 Jun 2020 17:39:56 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wj5hZ8BPKMAK4OhXCrRNvZ=43gE8j=LGX_urGUgbdcqqg@mail.gmail.com>
+Message-ID: <CAHk-=wj5hZ8BPKMAK4OhXCrRNvZ=43gE8j=LGX_urGUgbdcqqg@mail.gmail.com>
+Subject: Re: [GIT PULL][Security] lockdown: Allow unprivileged users to see
+ lockdown status
+To:     James Morris <jmorris@namei.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jun 1, 2020 at 6:07 PM Paul Moore <paul@paul-moore.com> wrote:
+On Mon, Jun 1, 2020 at 7:15 PM James Morris <jmorris@namei.org> wrote:
 >
-> - A number of improvements to various SELinux internal data structures
-> to help improve performance.  We move the role transitions into a hash
-> table.  In the content structure we shift from hashing the content
-> string (aka SELinux label) to the structure itself, when it is valid.
-> This last change not only offers a speedup, but it helps us simplify
-> the code some as well.
+> Just one update for the security subsystem: allows unprivileged users to
+> see the status of the lockdown feature. From Jeremy Cline.
 
-Side note since you mention performance work: in the past when I've
-looked at SELinux performance (generally as part of pathname lookup
-etc VFS loads), the biggest cost by far was that all the SELinux data
-structures take a ton of cache misses.
+Hmm.
 
-Yes, some of the hashing shows up in the profiles, but _most_ of it
-was loading the data from inode->i_security etc.
+That branch seems to have sprouted another commit just today.
 
-And the reason seemed to be that every single inode ends up having a
-separately allocated "struct inode_security_struct" (aka "isec"). Even
-if the contents are often all exactly the same for a large set of
-inodes that thus _could_ conceptually share the data.
+I ended up taking that too as trivial, but it shows how you seem to
+basically send me a pointer to a live branch. Please don't do that.
+When you make changes to that branch, I now get those changes that you
+may not have meant to send me (and that I get upset for being
+surprised by).
 
-Now, it used to be - before being able to stack security layers -
-SElinux would control that pointer, and it could have done some kind
-of sharing scheme with copy-on-write behavior (the way we do 'struct
-cred' for processes), and it would have caused a much smaller cache
-footprint (and thus likely much fewer cache misses).
+An easy solution to that is to send me a signed tag instead of a
+pointer to a branch. Then you can continue to update the branch, while
+the tag stays stable.
 
-These days, that sharing of the i_security pointer across different
-security layers makes that sound really really painful.
+Plus we've been encouraging signed tags for pull requests anyway.
 
-But I do wonder if anybody in selinux land (or general security
-subsystem land) has been thinking of maybe at least having a "this
-inode has no special labeling" marker that could possibly avoid having
-all those extra allocations.
-
-Because it really does end up being visible in profiles how costly it
-is to look up any data behind inode->i_security.
-
-               Linus
+              Linus
