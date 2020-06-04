@@ -2,76 +2,88 @@ Return-Path: <SRS0=lUlZ=7R=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6B9FC433E2
-	for <linux-security-module@archiver.kernel.org>; Thu,  4 Jun 2020 03:56:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C39A7C433DF
+	for <linux-security-module@archiver.kernel.org>; Thu,  4 Jun 2020 11:20:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 908872074B
-	for <linux-security-module@archiver.kernel.org>; Thu,  4 Jun 2020 03:56:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B0D12053B
+	for <linux-security-module@archiver.kernel.org>; Thu,  4 Jun 2020 11:20:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726373AbgFDD4m (ORCPT
+        id S1726288AbgFDLUU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 3 Jun 2020 23:56:42 -0400
-Received: from namei.org ([65.99.196.166]:40880 "EHLO namei.org"
+        Thu, 4 Jun 2020 07:20:20 -0400
+Received: from mga07.intel.com ([134.134.136.100]:32304 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725936AbgFDD4m (ORCPT
+        id S1726151AbgFDLUU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 3 Jun 2020 23:56:42 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id 0543uU8b003176;
-        Thu, 4 Jun 2020 03:56:30 GMT
-Date:   Thu, 4 Jun 2020 13:56:30 +1000 (AEST)
-From:   James Morris <jmorris@namei.org>
-To:     Daniel Colascione <dancol@google.com>
-cc:     timmurray@google.com, selinux@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, viro@zeniv.linux.org.uk,
-        Paul Moore <paul@paul-moore.com>, nnk@google.com,
-        Stephen Smalley <sds@tycho.nsa.gov>, lokeshgidra@google.com,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v5 0/3] SELinux support for anonymous inodes and UFFD
-In-Reply-To: <20200401213903.182112-1-dancol@google.com>
-Message-ID: <alpine.LRH.2.21.2006041354381.1812@namei.org>
-References: <20200326200634.222009-1-dancol@google.com> <20200401213903.182112-1-dancol@google.com>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        Thu, 4 Jun 2020 07:20:20 -0400
+IronPort-SDR: t+sgTUGZTmQHux6hBWo/IwiFYtBDdljw1kRnhmUP2Xkx8QZvr/C91XqnaGzAAa9okraogtpRcp
+ 2fyVmkb0fUzQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2020 04:20:19 -0700
+IronPort-SDR: xwGMOFwSLoNMMZIEQHcZFveL7oqKpTVhA5pLXLU3fKJDOH8t6wI1RGR9qGOOQzw1bohg4J7TL2
+ VQQ5FHfNB9og==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,472,1583222400"; 
+   d="scan'208";a="304881765"
+Received: from lkp-server01.sh.intel.com (HELO 54ff842e15fb) ([10.239.97.150])
+  by orsmga008.jf.intel.com with ESMTP; 04 Jun 2020 04:20:18 -0700
+Received: from kbuild by 54ff842e15fb with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1jgnuz-00001K-Tg; Thu, 04 Jun 2020 11:20:17 +0000
+Date:   Thu, 4 Jun 2020 19:19:49 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     "Daniel, Colascione," <dancol@google.com>
+Cc:     kbuild-all@lists.01.org, linux-security-module@vger.kernel.org,
+        James Morris <jmorris@namei.org>
+Subject: [PATCH] fix err_cast.cocci warnings
+Message-ID: <20200604111949.GA29219@9fd72810d846>
+References: <202006041944.AJeCfZpC%lkp@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202006041944.AJeCfZpC%lkp@intel.com>
+X-Patchwork-Hint: ignore
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 1 Apr 2020, Daniel Colascione wrote:
+From: kernel test robot <lkp@intel.com>
 
-> Daniel Colascione (3):
->   Add a new LSM-supporting anonymous inode interface
->   Teach SELinux about anonymous inodes
->   Wire UFFD up to SELinux
-> 
->  fs/anon_inodes.c                    | 191 ++++++++++++++++++++++------
->  fs/userfaultfd.c                    |  30 ++++-
->  include/linux/anon_inodes.h         |  13 ++
->  include/linux/lsm_hooks.h           |  11 ++
->  include/linux/security.h            |   3 +
->  security/security.c                 |   9 ++
->  security/selinux/hooks.c            |  53 ++++++++
->  security/selinux/include/classmap.h |   2 +
->  8 files changed, 267 insertions(+), 45 deletions(-)
-
-Applied to
-git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git secure_uffd_v5.9
-and next-testing.
-
-This will provide test coverage in linux-next, as we aim to get this 
-upstream for v5.9.
-
-I had to make some minor fixups, please review.
+fs/anon_inodes.c:92:10-17: WARNING: ERR_CAST can be used with inode
 
 
--- 
-James Morris
-<jmorris@namei.org>
+ Use ERR_CAST inlined function instead of ERR_PTR(PTR_ERR(...))
 
+Generated by: scripts/coccinelle/api/err_cast.cocci
+
+Fixes: 2749d3f84a70 ("Add a new LSM-supporting anonymous inode interface")
+CC: Daniel Colascione <dancol@google.com>
+Signed-off-by: kernel test robot <lkp@intel.com>
+---
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git secure_uffd_v5.9
+head:   d08ac70b1e0dc71ac2315007bcc3efb283b2eae4
+commit: 2749d3f84a708110ed0359579be0eddd2c4036da [1/3] Add a new LSM-supporting anonymous inode interface
+
+ anon_inodes.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/fs/anon_inodes.c
++++ b/fs/anon_inodes.c
+@@ -89,7 +89,7 @@ struct file *_anon_inode_getfile(const c
+ 		inode =	anon_inode_make_secure_inode(
+ 			name, context_inode);
+ 		if (IS_ERR(inode))
+-			return ERR_PTR(PTR_ERR(inode));
++			return ERR_CAST(inode);
+ 	} else {
+ 		inode =	anon_inode_inode;
+ 		if (IS_ERR(inode))
