@@ -6,63 +6,68 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
 	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 691C8C433DF
-	for <linux-security-module@archiver.kernel.org>; Thu,  4 Jun 2020 17:35:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 244D9C433E0
+	for <linux-security-module@archiver.kernel.org>; Thu,  4 Jun 2020 17:35:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 23C7C208B8
-	for <linux-security-module@archiver.kernel.org>; Thu,  4 Jun 2020 17:35:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0735D20897
+	for <linux-security-module@archiver.kernel.org>; Thu,  4 Jun 2020 17:35:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1591292108;
-	bh=r7M5q0iHyfHGyBRKj6jAheCd58vLXxbeaRkdNijLQxw=;
+	s=default; t=1591292112;
+	bh=CBelD9E3n1Uw8g07+kLe/ZsPxXXQ8+K/HGUPGCDgvEg=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=Lk5JpMdXdB/IARIBcujaP24Vxr+WR68kfmcLzzBHdAkG6H96B96UzCLXFc++p9NT7
-	 YxSLqIDSHnifMCdnUh/EiemOhaQIH2ehD9ZlpZvT2u8+xYFQ/Fa0uTGBHhTnYoUJQ+
-	 DznuSxkEbe4pabFRs2s6Krojqq9uPpphHH2CJtT8=
+	b=OEbN46bNlAZlAd1nyzYgiMZIrtpSKK+ukUkji786imkW5dRDSgGG88vcbdhS7bA7o
+	 n/moUIVGujGmWdN0Yjv+WhuMDyUVPjfaMwxUDfwGtIwoXuxPwnzZ1Zd1bCn9HuuB5S
+	 KW2QH81gRY3zLBEzMF3YVWLT50D52bCcPhoVVxEs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730094AbgFDRfH (ORCPT
+        id S1730297AbgFDRfL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 4 Jun 2020 13:35:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46114 "EHLO mail.kernel.org"
+        Thu, 4 Jun 2020 13:35:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46238 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730083AbgFDRfH (ORCPT
+        id S1729998AbgFDRfJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 4 Jun 2020 13:35:07 -0400
-Subject: Re: [GIT PULL] keys: Changes for 5.8
+        Thu, 4 Jun 2020 13:35:09 -0400
+Subject: Re: [GIT PULL] Smack patches for v5.8
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1591292107;
-        bh=r7M5q0iHyfHGyBRKj6jAheCd58vLXxbeaRkdNijLQxw=;
+        s=default; t=1591292109;
+        bh=CBelD9E3n1Uw8g07+kLe/ZsPxXXQ8+K/HGUPGCDgvEg=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=iq5GnctdVbfiV74Ky9wwKSBkE0lGnZshu35uJ+t44i9t3k3vNvmPIrmDhrHJetTTt
-         brpyuloVMBJkCAjSMSdLww/z1SS2lHipxdd5rnRTHCCPMU4CqriDKP1VxzR/mlthjy
-         OfbV7+oXUhuEYnzw4NEm2S1s5V5395sfU+zQSNo0=
+        b=yMRVgMsl/xos9nOC2e1YjTzaeKsLuTgnOSbk2pFsTTsc4+hQ9BxK4ow9vailnSVC+
+         TTHcGG2y/wSrj6bijGj1EOJ2d2hDTabwIQVS0WKOnaJLaUCCeED47JQLSIgyzGyWET
+         lRA3/v6AZ0yl+Ozo26izmK8955SUE2zZaJifXh20=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <1509351.1591115280@warthog.procyon.org.uk>
-References: <1509351.1591115280@warthog.procyon.org.uk>
+In-Reply-To: <02d3f22f-340b-d51b-6dd5-c2011651a145@schaufler-ca.com>
+References: <02d3f22f-340b-d51b-6dd5-c2011651a145.ref@schaufler-ca.com>
+ <02d3f22f-340b-d51b-6dd5-c2011651a145@schaufler-ca.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <1509351.1591115280@warthog.procyon.org.uk>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git
- tags/keys-next-20200602
-X-PR-Tracked-Commit-Id: b6f61c31464940513ef4eccb3a030a405b4256d6
+X-PR-Tracked-Message-Id: <02d3f22f-340b-d51b-6dd5-c2011651a145@schaufler-ca.com>
+X-PR-Tracked-Remote: https://github.com/cschaufler/smack-next
+ tags/Smack-for-5.8
+X-PR-Tracked-Commit-Id: ef26650a201fbbb4ba90b63a82bf7950f2699a82
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: a484a497c98a0447aca2d70de19d11b1d66e6ef7
-Message-Id: <159129210706.22790.7029741775337917188.pr-tracker-bot@kernel.org>
-Date:   Thu, 04 Jun 2020 17:35:07 +0000
-To:     David Howells <dhowells@redhat.com>
-Cc:     torvalds@linux-foundation.org, dhowells@redhat.com,
-        jarkko.sakkinen@linux.intel.com, mathstuf@gmail.com,
-        gustavoars@kernel.org, Jason@zx2c4.com, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+X-PR-Merge-Commit-Id: acf25aa66371359f542d14e8d993b530fe25d7ac
+Message-Id: <159129210947.22790.2316140173855199853.pr-tracker-bot@kernel.org>
+Date:   Thu, 04 Jun 2020 17:35:09 +0000
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Maninder Singh <maninder1.s@samsung.com>,
+        YueHaibing <yuehaibing@huawei.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The pull request you sent on Tue, 02 Jun 2020 17:28:00 +0100:
+The pull request you sent on Tue, 2 Jun 2020 13:38:04 -0700:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags/keys-next-20200602
+> https://github.com/cschaufler/smack-next tags/Smack-for-5.8
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/a484a497c98a0447aca2d70de19d11b1d66e6ef7
+https://git.kernel.org/torvalds/c/acf25aa66371359f542d14e8d993b530fe25d7ac
 
 Thank you!
 
