@@ -2,65 +2,55 @@ Return-Path: <SRS0=NT9g=7S=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B051C433E2
-	for <linux-security-module@archiver.kernel.org>; Fri,  5 Jun 2020 23:31:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39A71C433E0
+	for <linux-security-module@archiver.kernel.org>; Fri,  5 Jun 2020 23:48:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 79C972064C
-	for <linux-security-module@archiver.kernel.org>; Fri,  5 Jun 2020 23:31:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="aRVd9mVa"
+	by mail.kernel.org (Postfix) with ESMTP id 238F82075B
+	for <linux-security-module@archiver.kernel.org>; Fri,  5 Jun 2020 23:48:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728423AbgFEXbU (ORCPT
+        id S1728504AbgFEXsl (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 5 Jun 2020 19:31:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51208 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728441AbgFEXbU (ORCPT
+        Fri, 5 Jun 2020 19:48:41 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:24612 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728353AbgFEXsl (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 5 Jun 2020 19:31:20 -0400
-Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 194F4C08C5C2
-        for <linux-security-module@vger.kernel.org>; Fri,  5 Jun 2020 16:31:20 -0700 (PDT)
-Received: by mail-pf1-x442.google.com with SMTP id b201so5682009pfb.0
-        for <linux-security-module@vger.kernel.org>; Fri, 05 Jun 2020 16:31:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=QT3TOfTZM7n8upLOBb9CoT35uLEYwP8QmqKQlYpotu8=;
-        b=aRVd9mVasyOpi3qj6L+9LPZYEZeqaeUcati7cYFOWdqTeHQHVCYu1Mg3TZAEJ+Cemq
-         dfXKAo+Q6UNAFsH/2ZXA/hLBkWgSa0nz4wSjsYb/wFS0rixfFi3JJfcl8n4oR6+Ps1Qy
-         U+/FztKv09P0+eWToCYdTvhCeWQASBbcJYwWw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=QT3TOfTZM7n8upLOBb9CoT35uLEYwP8QmqKQlYpotu8=;
-        b=S94w353U7HZzq6HRob0WltdyTlmQcAnlCeumYjKp4qlFkO9aas7Y0MOoVDTpH7dyJK
-         ZT5gOglFe+tLcuz+XdmNnxHZ/d7R6t5P10ngKF9a9UTgXku2sLQ8IAopAx5m/MPTpGVm
-         INIOYI+5HyVEUgYroJ53r+ykWhS4UhqWsUlbnmN5JSmR4m5LhlWRn59Bqy/u48C2PS0w
-         218mbIB0kk68aYXXrx14LmuCsCDAyc9tle5LuvbqUe2V7PcJZXgCmO1k6+WcQAwUh0Nx
-         h19fpmashMx0ys/gz+4Vgxpzj+zaKtSb83rQ0vGaOogFN5CF3sqHDYx6aa/rfSETIlut
-         huag==
-X-Gm-Message-State: AOAM531N/V31Lu9jfN1B1OZVrtU2hx3Vr9jmgr+jJbOjVJddx8q3u0bj
-        yeJ3baCc80MZ818aSjdUpb+xiNQrKuFk5/IixvE4rLrh6RM2TOCvssqr1JHF2OpYKBedJTamkeU
-        BCpHlKeae71ZwkuVI7YmAL3bUn+dLUZuZ+ticGtKAIvN7T89itTu66+R9Khkib9boG8qbCsZpdJ
-        dGrPire1Lfc2apEHYBJ6UG9ss=
-X-Google-Smtp-Source: ABdhPJyjNvTuZNiXBWA+wu5gD204795YG4uT5HA5nAd7pQQKXRGvD9NKYFP7JEix9AMrHm3M2js3SQ==
-X-Received: by 2002:a65:6715:: with SMTP id u21mr12073266pgf.365.1591399879036;
-        Fri, 05 Jun 2020 16:31:19 -0700 (PDT)
-Received: from [10.136.13.65] ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id 125sm588134pff.130.2020.06.05.16.31.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Jun 2020 16:31:17 -0700 (PDT)
+        Fri, 5 Jun 2020 19:48:41 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 055NVs6P100498;
+        Fri, 5 Jun 2020 19:48:23 -0400
+Received: from ppma04fra.de.ibm.com (6a.4a.5195.ip4.static.sl-reverse.com [149.81.74.106])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 31fjk6qc2m-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 05 Jun 2020 19:48:22 -0400
+Received: from pps.filterd (ppma04fra.de.ibm.com [127.0.0.1])
+        by ppma04fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 055Nk7os013978;
+        Fri, 5 Jun 2020 23:48:21 GMT
+Received: from b06avi18878370.portsmouth.uk.ibm.com (b06avi18878370.portsmouth.uk.ibm.com [9.149.26.194])
+        by ppma04fra.de.ibm.com with ESMTP id 31f2q415jx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 05 Jun 2020 23:48:21 +0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 055NmIYH55378380
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 5 Jun 2020 23:48:18 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C2E2111C04C;
+        Fri,  5 Jun 2020 23:48:18 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D582111C04A;
+        Fri,  5 Jun 2020 23:48:15 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.234.64])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri,  5 Jun 2020 23:48:15 +0000 (GMT)
+Message-ID: <1591400895.4615.45.camel@linux.ibm.com>
 Subject: Re: [PATCH v6 8/8] ima: add FIRMWARE_PARTIAL_READ support
-To:     Mimi Zohar <zohar@linux.ibm.com>,
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Scott Branden <scott.branden@broadcom.com>,
         Luis Chamberlain <mcgrof@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         David Brown <david.brown@linaro.org>,
@@ -81,76 +71,84 @@ Cc:     "Rafael J . Wysocki" <rafael@kernel.org>,
         Andy Gross <agross@kernel.org>,
         linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org
+Date:   Fri, 05 Jun 2020 19:48:15 -0400
+In-Reply-To: <824407ae-8ab8-0fe3-bd72-270fce960ac5@broadcom.com>
 References: <20200605225959.12424-1-scott.branden@broadcom.com>
- <20200605225959.12424-9-scott.branden@broadcom.com>
- <1591399166.4615.37.camel@linux.ibm.com>
-From:   Scott Branden <scott.branden@broadcom.com>
-Message-ID: <824407ae-8ab8-0fe3-bd72-270fce960ac5@broadcom.com>
-Date:   Fri, 5 Jun 2020 16:31:14 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
-MIME-Version: 1.0
-In-Reply-To: <1591399166.4615.37.camel@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+         <20200605225959.12424-9-scott.branden@broadcom.com>
+         <1591399166.4615.37.camel@linux.ibm.com>
+         <824407ae-8ab8-0fe3-bd72-270fce960ac5@broadcom.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.687
+ definitions=2020-06-05_07:2020-06-04,2020-06-05 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxscore=0
+ clxscore=1015 lowpriorityscore=0 suspectscore=0 bulkscore=0
+ priorityscore=1501 phishscore=0 malwarescore=0 spamscore=0
+ cotscore=-2147483648 mlxlogscore=999 impostorscore=0 classifier=spam
+ adjust=0 reason=mlx scancount=1 engine=8.12.0-2004280000
+ definitions=main-2006050170
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Mimi,
+On Fri, 2020-06-05 at 16:31 -0700, Scott Branden wrote:
+> Hi Mimi,
+> 
+> On 2020-06-05 4:19 p.m., Mimi Zohar wrote:
+> > Hi Scott,
+> >
+> > On Fri, 2020-06-05 at 15:59 -0700, Scott Branden wrote:
+> >> @@ -648,6 +667,9 @@ int ima_post_read_file(struct file *file, void *buf, loff_t size,
+> >>   	enum ima_hooks func;
+> >>   	u32 secid;
+> >>   
+> >> +	if (!file && read_id == READING_FIRMWARE_PARTIAL_READ)
+> >> +		return 0;
+> > The file should be measured on the pre security hook, not here on the
+> > post security hook.  Here, whether "file" is defined or not, is
+> > irrelevant.  The test should just check "read_id".
+> OK, will remove the !file from here.
 
-On 2020-06-05 4:19 p.m., Mimi Zohar wrote:
-> Hi Scott,
->
-> On Fri, 2020-06-05 at 15:59 -0700, Scott Branden wrote:
->> @@ -648,6 +667,9 @@ int ima_post_read_file(struct file *file, void *buf, loff_t size,
->>   	enum ima_hooks func;
->>   	u32 secid;
->>   
->> +	if (!file && read_id == READING_FIRMWARE_PARTIAL_READ)
->> +		return 0;
-> The file should be measured on the pre security hook, not here on the
-> post security hook.  Here, whether "file" is defined or not, is
-> irrelevant.  The test should just check "read_id".
-OK, will remove the !file from here.
->
-> Have you tested measuring the firmware by booting a system with
-> "ima_policy=tcb" specified on the boot command line and compared the
-> measurement entry in the IMA measurement list with the file hash (eg.
-> sha1sum, sha256sum)?
-Yes, I enabled IMA in my kernel and added ima_policy=tsb to the boot 
-command line,
+thanks!
 
-Here are the entries from 
-/sys/kernel/security/ima/ascii_runtime_measurements of the files I am 
-accessing.
-Please let me know if I am doing anything incorrectly.
+> >
+> > Have you tested measuring the firmware by booting a system with
+> > "ima_policy=tcb" specified on the boot command line and compared the
+> > measurement entry in the IMA measurement list with the file hash (eg.
+> > sha1sum, sha256sum)?
+> Yes, I enabled IMA in my kernel and added ima_policy=tsb to the boot 
+> command line,
+> 
+> Here are the entries from 
+> /sys/kernel/security/ima/ascii_runtime_measurements of the files I am 
+> accessing.
+> Please let me know if I am doing anything incorrectly.
+> 
+> 10 4612bce355b2dbc45ecd95e17001636be8832c7f ima-ng 
+> sha1:fddd9a28c2b15acf3b0fc9ec0cf187cb2153d7f2 
+> /lib/firmware/vk-boot1-bcm958401m2.ecdsa.bin
+> 10 4c0eb0fc30eb7ac3a30a27f05c1d2a8d28d6a9ec ima-ng 
+> sha1:b16d343dd63352d10309690c71b110762a9444c3 
+> /lib/firmware/vk-boot2-bcm958401m2_a72.ecdsn
+> 
+> The sha1 sum matches:
+> root@genericx86-64:/sys/kernel/security/ima# sha1sum 
+> /lib/firmware/vk-boot1-bcm958401m2.ecdsa.bin
+> fddd9a28c2b15acf3b0fc9ec0cf187cb2153d7f2 
+> /lib/firmware/vk-boot1-bcm958401m2.ecdsa.bin
+> 
+> root@genericx86-64:/sys/kernel/security/ima# sha1sum 
+> /lib/firmware/vk-boot2-bcm958401m2_a72.ecdsa.bin
+> b16d343dd63352d10309690c71b110762a9444c3 
+> /lib/firmware/vk-boot2-bcm958401m2_a72.ecdsa.bin
 
-10 4612bce355b2dbc45ecd95e17001636be8832c7f ima-ng 
-sha1:fddd9a28c2b15acf3b0fc9ec0cf187cb2153d7f2 
-/lib/firmware/vk-boot1-bcm958401m2.ecdsa.bin
-10 4c0eb0fc30eb7ac3a30a27f05c1d2a8d28d6a9ec ima-ng 
-sha1:b16d343dd63352d10309690c71b110762a9444c3 
-/lib/firmware/vk-boot2-bcm958401m2_a72.ecdsn
+Looks good!
 
-The sha1 sum matches:
-root@genericx86-64:/sys/kernel/security/ima# sha1sum 
-/lib/firmware/vk-boot1-bcm958401m2.ecdsa.bin
-fddd9a28c2b15acf3b0fc9ec0cf187cb2153d7f2 
-/lib/firmware/vk-boot1-bcm958401m2.ecdsa.bin
+(FYI, a larger hash algorithm can be specified in the Kconfig or
+"ima_hash=" on the boot command line.)
 
-root@genericx86-64:/sys/kernel/security/ima# sha1sum 
-/lib/firmware/vk-boot2-bcm958401m2_a72.ecdsa.bin
-b16d343dd63352d10309690c71b110762a9444c3 
-/lib/firmware/vk-boot2-bcm958401m2_a72.ecdsa.bin
-
-
->
-> Mimi
->
->> +
->>   	if (!file && read_id == READING_FIRMWARE) {
->>   		if ((ima_appraise & IMA_APPRAISE_FIRMWARE) &&
->>   		    (ima_appraise & IMA_APPRAISE_ENFORCE)) {
+Mimi
 
