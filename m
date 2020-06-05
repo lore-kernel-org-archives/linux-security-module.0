@@ -2,110 +2,230 @@ Return-Path: <SRS0=NT9g=7S=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72024C433E2
-	for <linux-security-module@archiver.kernel.org>; Fri,  5 Jun 2020 15:01:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7525C433E2
+	for <linux-security-module@archiver.kernel.org>; Fri,  5 Jun 2020 18:15:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 523412065C
-	for <linux-security-module@archiver.kernel.org>; Fri,  5 Jun 2020 15:01:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7002207D8
+	for <linux-security-module@archiver.kernel.org>; Fri,  5 Jun 2020 18:15:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=pobox.com header.i=@pobox.com header.b="Sxoay7F4";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b="Zz/eImY/"
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="cOcYA+tC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728090AbgFEPBI (ORCPT
+        id S1726077AbgFESP2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 5 Jun 2020 11:01:08 -0400
-Received: from pb-smtp20.pobox.com ([173.228.157.52]:55500 "EHLO
-        pb-smtp20.pobox.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726911AbgFEPBH (ORCPT
+        Fri, 5 Jun 2020 14:15:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58100 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726171AbgFESP2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 5 Jun 2020 11:01:07 -0400
-Received: from pb-smtp20.pobox.com (unknown [127.0.0.1])
-        by pb-smtp20.pobox.com (Postfix) with ESMTP id 6AE7ED27C6;
-        Fri,  5 Jun 2020 11:01:04 -0400 (EDT)
-        (envelope-from nico@fluxnic.net)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=pobox.com; h=date:from:to
-        :cc:subject:in-reply-to:message-id:references:mime-version
-        :content-type; s=sasl; bh=RQ5UuhFDdm6pYUURqgzo84j9G7A=; b=Sxoay7
-        F4gA4GZdu5Zg9uUlmAkW1Zt5FcDuXuyxgJg0J1/2YOTh+oGVFPS2XCXNhnKxruau
-        MDtfSlY0eXyRJHtGFbaGy1GRIGwT91daJ30IGzYPPomdVWXXQA2tHr5SlWDA734m
-        bZRjhWd3q6ijPU6K2wBSKxViPDDqydIEEmReM=
-Received: from pb-smtp20.sea.icgroup.com (unknown [127.0.0.1])
-        by pb-smtp20.pobox.com (Postfix) with ESMTP id 61111D27C5;
-        Fri,  5 Jun 2020 11:01:04 -0400 (EDT)
-        (envelope-from nico@fluxnic.net)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=fluxnic.net;
- h=date:from:to:cc:subject:in-reply-to:message-id:references:mime-version:content-type; s=2016-12.pbsmtp; bh=kGSNSFs79QpTCdEy/syIPtk8e7qpRSOVx3t4YYHSTPo=; b=Zz/eImY/hca3rOTLiCqOYWoaV6plgEo+kdFnlRPQFzRcUQoLXjJn0FtfTD7ckQtTqowgcbv/qHCqzK+ScMEpsSblxLiajcMT9GhFudy2osyOw0c/0yOkmdHSrAU5J6sKLf0oVK0xHwQO8Q2r0bmcLvvl02K0jlrhpKiphQGd6bE=
-Received: from yoda.home (unknown [24.203.50.76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by pb-smtp20.pobox.com (Postfix) with ESMTPSA id 263D0D27C0;
-        Fri,  5 Jun 2020 11:01:01 -0400 (EDT)
-        (envelope-from nico@fluxnic.net)
-Received: from xanadu.home (xanadu.home [192.168.2.2])
-        by yoda.home (Postfix) with ESMTPSA id 25E392DA01E9;
-        Fri,  5 Jun 2020 11:00:59 -0400 (EDT)
-Date:   Fri, 5 Jun 2020 11:00:59 -0400 (EDT)
-From:   Nicolas Pitre <nico@fluxnic.net>
-To:     =?ISO-8859-15?Q?Philippe_Mathieu-Daud=E9?= <f4bug@amsat.org>
-cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        David Laight <David.Laight@aculab.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        David Howells <dhowells@redhat.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Al Viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        NetFilter <netfilter-devel@vger.kernel.org>,
-        Joe Perches <joe@perches.com>
-Subject: Re: clean up kernel_{read,write} & friends v2
-In-Reply-To: <d67deb88-73a8-4c57-6b37-c62190422d65@amsat.org>
-Message-ID: <nycvar.YSQ.7.77.849.2006051039350.1353413@knanqh.ubzr>
-References: <CAHk-=wj3iGQqjpvc+gf6+C29Jo4COj6OQQFzdY0h5qvYKTdCow@mail.gmail.com> <20200528054043.621510-1-hch@lst.de> <22778.1590697055@warthog.procyon.org.uk> <f89f0f7f-83b4-72c6-7d08-cb6eaeccd443@schaufler-ca.com> <3aea7a1c10e94ea2964fa837ae7d8fe2@AcuMS.aculab.com>
- <CAHk-=wjR0H3+2ba0UUWwoYzYBH0GX9yTf5dj2MZyo0xvyzvJnA@mail.gmail.com> <d67deb88-73a8-4c57-6b37-c62190422d65@amsat.org>
+        Fri, 5 Jun 2020 14:15:28 -0400
+Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 862D9C08C5C3
+        for <linux-security-module@vger.kernel.org>; Fri,  5 Jun 2020 11:15:27 -0700 (PDT)
+Received: by mail-pg1-x541.google.com with SMTP id d10so5580941pgn.4
+        for <linux-security-module@vger.kernel.org>; Fri, 05 Jun 2020 11:15:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=esmpnZfFmK3cVOEF7B5Xrx0JRzL/dAN0UyhbSUY5XOU=;
+        b=cOcYA+tCbSiD62uF7VZPNASE+6dozCHWTwtyvAv86J4CHtUt/BKZxe9Hl8emWeJu32
+         NmToqo3tnfYNAFrtfZAe9DVKolOa1e6H2hwmafgv8/uG4iS4t+bJfKetLXM5cH7dUqwK
+         3Wi+k5Txc+6B/rmQRnq5aNqkpcI8toqLOgkyk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=esmpnZfFmK3cVOEF7B5Xrx0JRzL/dAN0UyhbSUY5XOU=;
+        b=DMpWMTulrt434jtkNAMgnDrqCciAKVBGPhnxZV76kmOOg6rfEra7HCBcQlM+pixYce
+         igLdS+nSmw5jpiHSR0tGj60HAqJqpNpCVhrCyPUALSvr0QWvLJlZgJNdypfVz7AwInc7
+         I5ivGD1yXZEFWmHdQyGaEeKLIpdLZ/hd0jxcuAlA8f4PDDf76X5gxhqtShSSwA86Fpp1
+         KtR0HhTScDa/OH4XbONw1Mq4UfnPKH+CatfU6sC6UkciMyEzT8c2sJen0LSVIcwtX4BJ
+         302LbsPNdEMkr7QdiIvgTaGCaqz3WJA51UaNM/enY6K3OTAowPgKuLmXWPk6+qLVSSRc
+         fWHw==
+X-Gm-Message-State: AOAM5327RQrMAUD3Or43wiu59oLFXR9r5DJl5BbbM7n58uraF57Yzrpe
+        boTQLl8acw5RZsdtDjukZQcMeQ==
+X-Google-Smtp-Source: ABdhPJx44Y+GjhW2vgNui0lp10q3hv9zSss9PMmRFy4YprMV+idGKYTS6mCLEIhZlMSH2tpAFlibiw==
+X-Received: by 2002:a63:9d0a:: with SMTP id i10mr10476176pgd.209.1591380926608;
+        Fri, 05 Jun 2020 11:15:26 -0700 (PDT)
+Received: from [10.136.13.65] ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id w24sm286555pfn.11.2020.06.05.11.15.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Jun 2020 11:15:25 -0700 (PDT)
+Subject: Re: [PATCH 0/3] fs: reduce export usage of kerne_read*() calls
+To:     Mimi Zohar <zohar@linux.ibm.com>, Kees Cook <keescook@chromium.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Luis Chamberlain <mcgrof@kernel.org>, viro@zeniv.linux.org.uk,
+        gregkh@linuxfoundation.org, rafael@kernel.org,
+        ebiederm@xmission.com, jeyu@kernel.org, jmorris@namei.org,
+        paul@paul-moore.com, stephen.smalley.work@gmail.com,
+        eparis@parisplace.org, nayna@linux.ibm.com,
+        dan.carpenter@oracle.com, skhan@linuxfoundation.org,
+        geert@linux-m68k.org, tglx@linutronix.de, bauerman@linux.ibm.com,
+        dhowells@redhat.com, linux-integrity@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, kexec@lists.infradead.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20200513152108.25669-1-mcgrof@kernel.org>
+ <20200513181736.GA24342@infradead.org>
+ <20200515212933.GD11244@42.do-not-panic.com>
+ <20200518062255.GB15641@infradead.org>
+ <1589805462.5111.107.camel@linux.ibm.com>
+ <7525ca03-def7-dfe2-80a9-25270cb0ae05@broadcom.com>
+ <202005221551.5CA1372@keescook>
+ <c48a80f5-a09c-6747-3db8-be23a260a0cb@broadcom.com>
+ <1590288736.5111.431.camel@linux.ibm.com>
+From:   Scott Branden <scott.branden@broadcom.com>
+Message-ID: <1c68c0c7-1b0a-dfec-0e50-1b65eedc3dc7@broadcom.com>
+Date:   Fri, 5 Jun 2020 11:15:21 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1427214125-1591369259=:1353413"
-X-Pobox-Relay-ID: 5EB18F9E-A73D-11EA-B614-B0405B776F7B-78420484!pb-smtp20.pobox.com
+In-Reply-To: <1590288736.5111.431.camel@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Hi Mimi,
 
---8323328-1427214125-1591369259=:1353413
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+On 2020-05-23 7:52 p.m., Mimi Zohar wrote:
+> On Fri, 2020-05-22 at 16:25 -0700, Scott Branden wrote:
+>> Hi Kees,
+>>
+>> On 2020-05-22 4:04 p.m., Kees Cook wrote:
+>>> On Fri, May 22, 2020 at 03:24:32PM -0700, Scott Branden wrote:
+>>>> On 2020-05-18 5:37 a.m., Mimi Zohar wrote:
+>>>>> On Sun, 2020-05-17 at 23:22 -0700, Christoph Hellwig wrote:
+>>>>>> On Fri, May 15, 2020 at 09:29:33PM +0000, Luis Chamberlain wrote:
+>>>>>>> On Wed, May 13, 2020 at 11:17:36AM -0700, Christoph Hellwig wrote:
+>>>>>>>> Can you also move kernel_read_* out of fs.h?  That header gets pulled
+>>>>>>>> in just about everywhere and doesn't really need function not related
+>>>>>>>> to the general fs interface.
+>>>>>>> Sure, where should I dump these?
+>>>>>> Maybe a new linux/kernel_read_file.h?  Bonus points for a small top
+>>>>>> of the file comment explaining the point of the interface, which I
+>>>>>> still don't get :)
+>>>>> Instead of rolling your own method of having the kernel read a file,
+>>>>> which requires call specific security hooks, this interface provides a
+>>>>> single generic set of pre and post security hooks.  The
+>>>>> kernel_read_file_id enumeration permits the security hook to
+>>>>> differentiate between callers.
+>>>>>
+>>>>> To comply with secure and trusted boot concepts, a file cannot be
+>>>>> accessible to the caller until after it has been measured and/or the
+>>>>> integrity (hash/signature) appraised.
+>>>>>
+>>>>> In some cases, the file was previously read twice, first to measure
+>>>>> and/or appraise the file and then read again into a buffer for
+>>>>> use.  This interface reads the file into a buffer once, calls the
+>>>>> generic post security hook, before providing the buffer to the caller.
+>>>>>     (Note using firmware pre-allocated memory might be an issue.)
+>>>>>
+>>>>> Partial reading firmware will result in needing to pre-read the entire
+>>>>> file, most likely on the security pre hook.
+>>>> The entire file may be very large and not fit into a buffer.
+>>>> Hence one of the reasons for a partial read of the file.
+>>>> For security purposes, you need to change your code to limit the amount
+>>>> of data it reads into a buffer at one time to not consume or run out of much
+>>>> memory.
+>>> Hm? That's not how whole-file hashing works. :)
+>>> These hooks need to finish their hashing and policy checking before they
+>>> can allow the rest of the code to move forward. (That's why it's a
+>>> security hook.) If kernel memory utilization is the primary concern,
+>>> then sure, things could be rearranged to do partial read and update the
+>>> hash incrementally, but the entire file still needs to be locked,
+>>> entirely hashed by hook, then read by the caller, then unlocked and
+>>> released.
+> Exactly.
+>
+>>> So, if you want to have partial file reads work, you'll need to
+>>> rearchitect the way this works to avoid regressing the security coverage
+>>> of these operations.
+>> I am not familiar with how the security handling code works at all.
+>> Is the same security check run on files opened from user space?
+>> A file could be huge.
+>>
+>> If it assumes there is there is enough memory available to read the
+>> entire file into kernel space then the improvement below can be left as
+>> a memory optimization to be done in an independent (or future) patch series.
+> There are two security hooks - security_kernel_read_file(),
+> security_kernel_post_read_file - in kernel_read_file().  The first
+> hook is called before the file is read into a buffer, while the second
+> hook is called afterwards.
+>
+> For partial reads, measuring the firmware and verifying the firmware's
+> signature will need to be done on the security_kernel_read_file()
+> hook.
+>
+>>> So, probably, the code will look something like:
+>>>
+>>>
+>>> file = kernel_open_file_for_reading(...)
+>>> 	file = open...
+>>> 	disallow_writes(file);
+>>> 	while (processed < size-of-file) {
+>>> 		buf = read(file, size...)
+>>> 		security_file_read_partial(buf)
+>>> 	}
+>>> 	ret = security_file_read_finished(file);
+>>> 	if (ret < 0) {
+>>> 		allow_writes(file);
+>>> 		return PTR_ERR(ret);
+>>> 	}
+>>> 	return file;
+>>>
+>>> while (processed < size-of-file) {
+>>> 	buf = read(file, size...)
+>>> 	firmware_send_partial(buf);
+>>> }
+>>>
+>>> kernel_close_file_for_reading(file)
+>>> 	allow_writes(file);
+> Right, the ima_file_mmap(), ima_bprm_check(), and ima_file_check()
+> hooks call process_measurement() to do this.  ima_post_read_file()
+> passes a buffer to process_measurement() instead.
+>
+> Scott, the change should be straight forward.  The additional patch
+> needs to:
+> - define a new kernel_read_file_id enumeration, like
+> FIRMWARE_PARTIAL_READ.
+> - Currently ima_read_file() has a comment about pre-allocated firmware
+> buffers.  Update ima_read_file() to call process_measurement() for the
+> new enumeration FIRMWARE_PARTIAL_READ and update ima_post_read_file()
+> to return immediately.
+Should this be what is in ima_read_file?
+{
+     enum ima_hooks func;
+     u32 secid;
 
-On Fri, 5 Jun 2020, Philippe Mathieu-Daud=C3=A9 wrote:
+     if (read_id != READING_FIRMWARE_PARTIAL_READ)
+         return 0;
 
-> Unfortunately refreshable braille displays have that "hardware
-> limitations". 80 cells displays are very expensive.
-> Visual impairments is rarely a "choice".
-> Relaxing the 80-char limit make it harder for blind developers
-> to contribute.
+     if (!file) { /* should never happen */
+         if (ima_appraise & IMA_APPRAISE_ENFORCE)
+             return -EACCES;
+         return 0;
+     }
 
-Well, not really.
+     security_task_getsecid(current, &secid);
+     return process_measurement(file, current_cred(), secid, NULL,
+                    0, MAY_READ, FILE_CHECK);
+}
+>
+> The built-in IMA measurement policy contains a rule to measure
+> firmware.  The policy can be specified on the boot command line by
+> specifying "ima_policy=tcb".  After reading the firmware, the firmware
+> measurement should be in <securityfs>/ima/ascii_runtime_measurements.
+>
+> thanks,
+>
+> Mimi
 
-It is true that 80-cells displays are awfully expensive. IMHO they are=20
-also unwieldy due to their size: they are hardly portable, and they=20
-require your hands to move twice as far which may sometimes impair=20
-reading efficiency. So I never liked them.
-
-My braille display has 40 cells only. So even with a 80-cells limit I=20
-always had to pan the display to see the whole line anyway.
-
-My text console is set to 160x128. The trick here is to have the number=20
-of columns be a multiple of the braille display's width to avoid dead=20
-areas when panning to the right.
-
-So if you ask me, I'm not against relaxing the 80 columns limit for=20
-code. What really matters to me is that I can stay clear of any GUI.
-
-
-Nicolas
---8323328-1427214125-1591369259=:1353413--
