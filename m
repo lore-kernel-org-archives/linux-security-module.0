@@ -2,139 +2,329 @@ Return-Path: <SRS0=NT9g=7S=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06CABC433DF
-	for <linux-security-module@archiver.kernel.org>; Fri,  5 Jun 2020 22:52:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DFA9C433E2
+	for <linux-security-module@archiver.kernel.org>; Fri,  5 Jun 2020 23:00:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C9FAD2065C
-	for <linux-security-module@archiver.kernel.org>; Fri,  5 Jun 2020 22:52:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 07D592074B
+	for <linux-security-module@archiver.kernel.org>; Fri,  5 Jun 2020 23:00:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kMtIFlv/"
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="N107Dl1R"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728275AbgFEWwI (ORCPT
+        id S1728426AbgFEXAQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 5 Jun 2020 18:52:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45032 "EHLO
+        Fri, 5 Jun 2020 19:00:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728252AbgFEWwI (ORCPT
+        with ESMTP id S1728395AbgFEXAO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 5 Jun 2020 18:52:08 -0400
-Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CAB54C08C5C2
-        for <linux-security-module@vger.kernel.org>; Fri,  5 Jun 2020 15:52:07 -0700 (PDT)
-Received: by mail-ed1-x543.google.com with SMTP id x93so8630558ede.9
-        for <linux-security-module@vger.kernel.org>; Fri, 05 Jun 2020 15:52:07 -0700 (PDT)
+        Fri, 5 Jun 2020 19:00:14 -0400
+Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E66C8C08C5C6
+        for <linux-security-module@vger.kernel.org>; Fri,  5 Jun 2020 16:00:13 -0700 (PDT)
+Received: by mail-pl1-x644.google.com with SMTP id x11so4267248plv.9
+        for <linux-security-module@vger.kernel.org>; Fri, 05 Jun 2020 16:00:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Ifucp6OHqM/ToXZ8ZM6gAg4Um7XcxYbCChtEUHehvdI=;
-        b=kMtIFlv/N8flzXbI9/Ou126Ea2CLhR66tABhPwYJR1NbO0qJgUnQmBhkN2+y/Phbpj
-         vjYLeDhrS+DKNvYf+/LhfgWlUFEP818EwfquWH4USPj4HVZ4+rw8/2rIm6xr/b4S8C0p
-         LehKYPuM5G9Bwy2cLgPP4JKYw35SZ0aonmzKY=
+        d=broadcom.com; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=YNH51z2pPdYRKwbT0lKGpbh9OQTXpy9Fw+Gpw3I+u0g=;
+        b=N107Dl1RD0A3r3XNDCFxKEOnLytpj5szJrmkWJyy0+1+HLK/Vd95oWyHhobXtawPrM
+         09iUhw6Zg8t6/4388rg46y69u2gn3QUQr2vWAjn2XLEwb3WL+uqHb8QXQjETSM1EGiFB
+         SH4dkymS5RiUeOjlB/mEd1QgGQCQlerHfPO58=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Ifucp6OHqM/ToXZ8ZM6gAg4Um7XcxYbCChtEUHehvdI=;
-        b=M9fheLcB0jwPWvmxDqhyFGjFrbjEqLjOpBNas/R0hawYbaaUn3TLA2rYPc3kVy72lo
-         U1EXd1rQq3ItdglNxzSfhNmmln69xOQK3rG/0jxp5dMFRd2p+7K8O+SCPO+d5XYLUDtj
-         xqfjYrz2t39yJPhiH3RLGd8aSSUxMmZl0JFH89kjXd64HE65Snl89AUAs9lQSrUU9Cpa
-         sMQ+C0eHbBZU+34F0cya2vW8ERbbJP1jmCMmtw9NdilgdEwmuAIeaiPqD2CGcw/2tKtp
-         JO8JU+8xiCWPMArGBYmatew9vxtmsuh5gNiCUmHiLP0MUDZdP7QgGNl7a2m9W4JCAvSn
-         OMJg==
-X-Gm-Message-State: AOAM5312s6+oTIEFy65znWzBV2ZRuRHoNFI9kK9qWfxBvtvqpK7t3IXD
-        mGydeP+gpQIbruAqHZ0RMtiqPjr0HXztBERR6CatDr9E
-X-Google-Smtp-Source: ABdhPJwcpwe5JacgVpNK0I+b/UmalP62QGJZsQuEngT4+t8e6SUDJjANTGTxzGv+749kgswTZfyZTQ3bMZ4svXUx6i4=
-X-Received: by 2002:a05:6402:b13:: with SMTP id bm19mr11732230edb.82.1591397526440;
- Fri, 05 Jun 2020 15:52:06 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200605193805.36531-1-mortonm@chromium.org> <202006051421.2168E5AA8@keescook>
-In-Reply-To: <202006051421.2168E5AA8@keescook>
-From:   Micah Morton <mortonm@chromium.org>
-Date:   Fri, 5 Jun 2020 15:51:56 -0700
-Message-ID: <CAJ-EccNorW2Y++hO3cC-iWWFAeGsfiGTS1jd2oUsVx1ZSySdiQ@mail.gmail.com>
-Subject: Re: [PATCH] security: Add LSM hooks to set*gid syscalls
-To:     Kees Cook <keescook@chromium.org>
-Cc:     linux-security-module <linux-security-module@vger.kernel.org>,
-        thomascedeno@google.com
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=YNH51z2pPdYRKwbT0lKGpbh9OQTXpy9Fw+Gpw3I+u0g=;
+        b=NBqRSfTAkHUqL+/H80fxkiyWjptnWQqExhYcE7B4BM6HLvkd+h9MKuUBuoZu39J1o3
+         5h/KiLYukyQLaWZYNxiNYuZPcToR8j+uXG++aUZ5THPjQT2HqMOrlLkCYH8kJoBrZs93
+         MfXwTItRMm4e/zW6JWm6a+ICgwhCIYlvgoW9Ds3EZBndfGm8kMWdNZ82Uc5/4UESOD4X
+         kWvUvHGwZE2tK2YrnpsamiOiKXMtBh0PtJE9plEcEWp3h4A6J7rOW3UH5R7DvWGOvD4U
+         2M+BvNw7CGTVoTcbgSvFTmVyv6xtNlsGVmE7870+7/rimHKZnWOQx1qMIWrYHZCk8Duc
+         mYFw==
+X-Gm-Message-State: AOAM5321U1JqzgOuq+nfMNBsSNZdehl1vKLoqKZdsNyTBecFft91tO+j
+        OaXFVnsbvh1MwebGGqof3pC1cg==
+X-Google-Smtp-Source: ABdhPJwBzexMDGEkU4DIDyOA+icqxKjPI8ibktJna8AbKmzNohV6dFv2TZUE4DM2zAkQLMqLD5PflA==
+X-Received: by 2002:a17:90a:4495:: with SMTP id t21mr5409327pjg.185.1591398013314;
+        Fri, 05 Jun 2020 16:00:13 -0700 (PDT)
+Received: from lbrmn-lnxub113.broadcom.net ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id b140sm568974pfb.119.2020.06.05.16.00.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Jun 2020 16:00:12 -0700 (PDT)
+From:   Scott Branden <scott.branden@broadcom.com>
+To:     Luis Chamberlain <mcgrof@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Brown <david.brown@linaro.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>, bjorn.andersson@linaro.org,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        Olof Johansson <olof@lixom.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
+        Takashi Iwai <tiwai@suse.de>, linux-kselftest@vger.kernel.org,
+        Andy Gross <agross@kernel.org>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Scott Branden <scott.branden@broadcom.com>
+Subject: [PATCH v6 1/8] fs: introduce kernel_pread_file* support
+Date:   Fri,  5 Jun 2020 15:59:52 -0700
+Message-Id: <20200605225959.12424-2-scott.branden@broadcom.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200605225959.12424-1-scott.branden@broadcom.com>
+References: <20200605225959.12424-1-scott.branden@broadcom.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jun 5, 2020 at 2:25 PM Kees Cook <keescook@chromium.org> wrote:
->
-> On Fri, Jun 05, 2020 at 12:38:05PM -0700, Micah Morton wrote:
-> > The SafeSetID LSM uses the security_task_fix_setuid hook to filter
-> > set*uid() syscalls according to its configured security policy. In
-> > preparation for adding analagous support in the LSM for set*gid()
-> > syscalls, we add the requisite hook here. Tested by putting print
-> > statements in the security_task_fix_setgid hook and seeing them get hit
-> > during kernel boot.
-> >
-> > From: Thomas Cedeno <thomascedeno@google.com>
->
-> ^^^ this line should be before the commit log body (many tools won't
-> find it here).
->
-> > Signed-off-by: Thomas Cedeno <thomascedeno@google.com>
-> > Reviewed-by: Micah Morton <mortonm@chromium.org>
-> > ---
-> > NOTE: I (Micah) will send this patch as a pull request to Linus through
-> > my SafeSetID tree if there are no objections.
-> >  include/linux/lsm_hook_defs.h |  2 ++
-> >  include/linux/lsm_hooks.h     |  9 +++++++++
-> >  include/linux/security.h      |  9 +++++++++
-> >  kernel/sys.c                  | 15 ++++++++++++++-
-> >  security/security.c           |  6 ++++++
-> >  5 files changed, 40 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-> > index fb3ce6cec997..d5401c09f2d3 100644
-> > --- a/include/linux/lsm_hook_defs.h
-> > +++ b/include/linux/lsm_hook_defs.h
-> > @@ -191,6 +191,8 @@ LSM_HOOK(int, 0, kernel_post_read_file, struct file *file, char *buf,
-> >        loff_t size, enum kernel_read_file_id id)
-> >  LSM_HOOK(int, 0, task_fix_setuid, struct cred *new, const struct cred *old,
-> >        int flags)
-> > +LSM_HOOK(int, 0, task_fix_setgid, struct cred *new, const struct cred * old,
-> > +      int flags)
-> >  LSM_HOOK(int, 0, task_setpgid, struct task_struct *p, pid_t pgid)
-> >  LSM_HOOK(int, 0, task_getpgid, struct task_struct *p)
-> >  LSM_HOOK(int, 0, task_getsid, struct task_struct *p)
-> > diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-> > index 3e62dab77699..8012b610fe53 100644
-> > --- a/include/linux/lsm_hooks.h
-> > +++ b/include/linux/lsm_hooks.h
-> > @@ -659,6 +659,15 @@
-> >   *   @old is the set of credentials that are being replaces
-> >   *   @flags contains one of the LSM_SETID_* values.
-> >   *   Return 0 on success.
-> > + * @task_fix_setgid:
-> > + *     Update the module's state after setting one or more of the group
-> > + *     identity attributes of the current process.  The @flags parameter
-> > + *     indicates which of the set*gid system calls invoked this hook.
-> > + *     @new is the set of credentials that will be installed.  Modifications
-> > + *     should be made to this rather than to @current->cred.
-> > + *     @old is the set of credentials that are being replaced.
-> > + *     @flags contains one of the LSM_SETID_* values.
-> > + *     Return 0 on success.
->
-> The indenting here appears to be using spaces instead of a tab.
->
-> Everything else looks okay. (There are a surprising number of gid
-> changing places...)
+Add kernel_pread_file* support to kernel to allow for partial read
+of files with an offset into the file.  Existing kernel_read_file
+functions call new kernel_pread_file functions with offset=0 and
+opt=KERNEL_PREAD_WHOLE.
 
-Ah thanks! I'll fix those 2 things before doing the pull request.
-Probably not worth doing a patch resend.
+Signed-off-by: Scott Branden <scott.branden@broadcom.com>
+---
+ fs/exec.c          | 95 ++++++++++++++++++++++++++++++++++++----------
+ include/linux/fs.h | 29 ++++++++++++++
+ 2 files changed, 103 insertions(+), 21 deletions(-)
 
-Will still give it some time to see if anyone else wants to comment.
+diff --git a/fs/exec.c b/fs/exec.c
+index de90a66587ab..e5c241c07b75 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -925,10 +925,15 @@ struct file *open_exec(const char *name)
+ }
+ EXPORT_SYMBOL(open_exec);
+ 
+-int kernel_read_file(struct file *file, void **buf, loff_t *size,
+-		     loff_t max_size, enum kernel_read_file_id id)
+-{
+-	loff_t i_size, pos;
++int kernel_pread_file(struct file *file, void **buf, loff_t *size,
++		      loff_t pos, loff_t max_size,
++		      enum kernel_pread_opt opt,
++		      enum kernel_read_file_id id)
++{
++	loff_t alloc_size;
++	loff_t buf_pos;
++	loff_t read_end;
++	loff_t i_size;
+ 	ssize_t bytes = 0;
+ 	int ret;
+ 
+@@ -948,21 +953,31 @@ int kernel_read_file(struct file *file, void **buf, loff_t *size,
+ 		ret = -EINVAL;
+ 		goto out;
+ 	}
+-	if (i_size > SIZE_MAX || (max_size > 0 && i_size > max_size)) {
++
++	/* Default read to end of file */
++	read_end = i_size;
++
++	/* Allow reading partial portion of file */
++	if ((opt == KERNEL_PREAD_PART) &&
++	    (i_size > (pos + max_size)))
++		read_end = pos + max_size;
++
++	alloc_size = read_end - pos;
++	if (i_size > SIZE_MAX || (max_size > 0 && alloc_size > max_size)) {
+ 		ret = -EFBIG;
+ 		goto out;
+ 	}
+ 
+ 	if (id != READING_FIRMWARE_PREALLOC_BUFFER)
+-		*buf = vmalloc(i_size);
++		*buf = vmalloc(alloc_size);
+ 	if (!*buf) {
+ 		ret = -ENOMEM;
+ 		goto out;
+ 	}
+ 
+-	pos = 0;
+-	while (pos < i_size) {
+-		bytes = kernel_read(file, *buf + pos, i_size - pos, &pos);
++	buf_pos = 0;
++	while (pos < read_end) {
++		bytes = kernel_read(file, *buf + buf_pos, read_end - pos, &pos);
+ 		if (bytes < 0) {
+ 			ret = bytes;
+ 			goto out_free;
+@@ -970,14 +985,16 @@ int kernel_read_file(struct file *file, void **buf, loff_t *size,
+ 
+ 		if (bytes == 0)
+ 			break;
++
++		buf_pos += bytes;
+ 	}
+ 
+-	if (pos != i_size) {
++	if (pos != read_end) {
+ 		ret = -EIO;
+ 		goto out_free;
+ 	}
+ 
+-	ret = security_kernel_post_read_file(file, *buf, i_size, id);
++	ret = security_kernel_post_read_file(file, *buf, alloc_size, id);
+ 	if (!ret)
+ 		*size = pos;
+ 
+@@ -993,10 +1010,20 @@ int kernel_read_file(struct file *file, void **buf, loff_t *size,
+ 	allow_write_access(file);
+ 	return ret;
+ }
++
++int kernel_read_file(struct file *file, void **buf, loff_t *size,
++		     loff_t max_size, enum kernel_read_file_id id)
++{
++	return kernel_pread_file(file, buf, size, 0, max_size,
++				 KERNEL_PREAD_WHOLE, id);
++}
+ EXPORT_SYMBOL_GPL(kernel_read_file);
+ 
+-int kernel_read_file_from_path(const char *path, void **buf, loff_t *size,
+-			       loff_t max_size, enum kernel_read_file_id id)
++int kernel_pread_file_from_path(const char *path, void **buf,
++				loff_t *size, loff_t pos,
++				loff_t max_size,
++				enum kernel_pread_opt opt,
++				enum kernel_read_file_id id)
+ {
+ 	struct file *file;
+ 	int ret;
+@@ -1008,15 +1035,24 @@ int kernel_read_file_from_path(const char *path, void **buf, loff_t *size,
+ 	if (IS_ERR(file))
+ 		return PTR_ERR(file);
+ 
+-	ret = kernel_read_file(file, buf, size, max_size, id);
++	ret = kernel_pread_file(file, buf, size, pos, max_size, opt, id);
+ 	fput(file);
+ 	return ret;
+ }
++
++int kernel_read_file_from_path(const char *path, void **buf, loff_t *size,
++			       loff_t max_size, enum kernel_read_file_id id)
++{
++	return kernel_pread_file_from_path(path, buf, size, 0, max_size,
++					   KERNEL_PREAD_WHOLE, id);
++}
+ EXPORT_SYMBOL_GPL(kernel_read_file_from_path);
+ 
+-int kernel_read_file_from_path_initns(const char *path, void **buf,
+-				      loff_t *size, loff_t max_size,
+-				      enum kernel_read_file_id id)
++extern int kernel_pread_file_from_path_initns(const char *path, void **buf,
++					      loff_t *size, loff_t pos,
++					      loff_t max_size,
++					      enum kernel_pread_opt opt,
++					      enum kernel_read_file_id id)
+ {
+ 	struct file *file;
+ 	struct path root;
+@@ -1034,14 +1070,24 @@ int kernel_read_file_from_path_initns(const char *path, void **buf,
+ 	if (IS_ERR(file))
+ 		return PTR_ERR(file);
+ 
+-	ret = kernel_read_file(file, buf, size, max_size, id);
++	ret = kernel_pread_file(file, buf, size, pos, max_size, opt, id);
+ 	fput(file);
+ 	return ret;
+ }
++
++int kernel_read_file_from_path_initns(const char *path, void **buf,
++				      loff_t *size, loff_t max_size,
++				      enum kernel_read_file_id id)
++{
++	return kernel_pread_file_from_path_initns(path, buf, size, 0, max_size,
++						  KERNEL_PREAD_WHOLE, id);
++}
+ EXPORT_SYMBOL_GPL(kernel_read_file_from_path_initns);
+ 
+-int kernel_read_file_from_fd(int fd, void **buf, loff_t *size, loff_t max_size,
+-			     enum kernel_read_file_id id)
++int kernel_pread_file_from_fd(int fd, void **buf, loff_t *size, loff_t pos,
++			      loff_t max_size,
++			      enum kernel_pread_opt opt,
++			      enum kernel_read_file_id id)
+ {
+ 	struct fd f = fdget(fd);
+ 	int ret = -EBADF;
+@@ -1049,11 +1095,18 @@ int kernel_read_file_from_fd(int fd, void **buf, loff_t *size, loff_t max_size,
+ 	if (!f.file)
+ 		goto out;
+ 
+-	ret = kernel_read_file(f.file, buf, size, max_size, id);
++	ret = kernel_pread_file(f.file, buf, size, pos, max_size, opt, id);
+ out:
+ 	fdput(f);
+ 	return ret;
+ }
++
++int kernel_read_file_from_fd(int fd, void **buf, loff_t *size, loff_t max_size,
++			     enum kernel_read_file_id id)
++{
++	return kernel_pread_file_from_fd(fd, buf, size, 0, max_size,
++					 KERNEL_PREAD_WHOLE, id);
++}
+ EXPORT_SYMBOL_GPL(kernel_read_file_from_fd);
+ 
+ #if defined(CONFIG_HAVE_AOUT) || defined(CONFIG_BINFMT_FLAT) || \
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index fce4b8867224..76d463e4a628 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3048,12 +3048,41 @@ static inline const char *kernel_read_file_id_str(enum kernel_read_file_id id)
+ 	return kernel_read_file_str[id];
+ }
+ 
++/**
++ * enum kernel_pread_opt - options to control pread file loading behaviour
++ *
++ * @KERNEL_PREAD_WHOLE: Only Allow reading of whole file.
++ * @KERNEL_PREAD_PART: Allow reading part of file.
++ */
++enum kernel_pread_opt {
++	KERNEL_PREAD_WHOLE = 0,
++	KERNEL_PREAD_PART = BIT(0),
++};
++
++int kernel_pread_file(struct file *file, void **buf, loff_t *size,
++		      loff_t pos, loff_t max_size,
++		      enum kernel_pread_opt opt,
++		      enum kernel_read_file_id id);
+ extern int kernel_read_file(struct file *, void **, loff_t *, loff_t,
+ 			    enum kernel_read_file_id);
++int kernel_pread_file_from_path(const char *path, void **buf,
++				loff_t *size, loff_t pos,
++				loff_t max_size,
++				enum kernel_pread_opt opt,
++				enum kernel_read_file_id id);
+ extern int kernel_read_file_from_path(const char *, void **, loff_t *, loff_t,
+ 				      enum kernel_read_file_id);
++int kernel_pread_file_from_path_initns(const char *path, void **buf,
++				       loff_t *size, loff_t pos,
++				       loff_t max_size,
++				       enum kernel_pread_opt opt,
++				       enum kernel_read_file_id id);
+ extern int kernel_read_file_from_path_initns(const char *, void **, loff_t *, loff_t,
+ 					     enum kernel_read_file_id);
++int kernel_pread_file_from_fd(int fd, void **buf, loff_t *size,
++			      loff_t pos, loff_t max_size,
++			      enum kernel_pread_opt opt,
++			      enum kernel_read_file_id id);
+ extern int kernel_read_file_from_fd(int, void **, loff_t *, loff_t,
+ 				    enum kernel_read_file_id);
+ extern ssize_t kernel_read(struct file *, void *, size_t, loff_t *);
+-- 
+2.17.1
 
->
-> --
-> Kees Cook
