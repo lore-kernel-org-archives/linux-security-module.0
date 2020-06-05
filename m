@@ -2,68 +2,63 @@ Return-Path: <SRS0=NT9g=7S=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FEF2C433DF
-	for <linux-security-module@archiver.kernel.org>; Fri,  5 Jun 2020 23:01:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 902ACC433DF
+	for <linux-security-module@archiver.kernel.org>; Fri,  5 Jun 2020 23:19:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DB92C206A2
-	for <linux-security-module@archiver.kernel.org>; Fri,  5 Jun 2020 23:01:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Py6p74Df"
+	by mail.kernel.org (Postfix) with ESMTP id 76D38207DF
+	for <linux-security-module@archiver.kernel.org>; Fri,  5 Jun 2020 23:19:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728283AbgFEXAL (ORCPT
+        id S1728486AbgFEXTw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 5 Jun 2020 19:00:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46302 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728316AbgFEXAK (ORCPT
+        Fri, 5 Jun 2020 19:19:52 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:23836 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728290AbgFEXTv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 5 Jun 2020 19:00:10 -0400
-Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A149CC08C5C5
-        for <linux-security-module@vger.kernel.org>; Fri,  5 Jun 2020 16:00:10 -0700 (PDT)
-Received: by mail-pg1-x543.google.com with SMTP id w20so5838955pga.6
-        for <linux-security-module@vger.kernel.org>; Fri, 05 Jun 2020 16:00:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=aFt/anDS7nzNEkZvhj5E9jn5B6aPNRUTEUXG6gw+rMw=;
-        b=Py6p74DfoglbZqlPUm+YTvpOKViQG5W31OSdRj5ooXbxZ7v9F5LHL7MtsfOWDDDU9c
-         1esc8ikGjD2AI5glOmFX+wit2+4KpFX+kgu15NT5UPlYNYjQAsZu1PjPC6igT5y2TO5y
-         B7EDpj9FWNU37TDEyMNM6XGZU8GVHZZgD7Qvk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=aFt/anDS7nzNEkZvhj5E9jn5B6aPNRUTEUXG6gw+rMw=;
-        b=Dk7vzVUN7P0VcfZo91+4yR5dhG/bX/dt8YMW5EM0nJ+dX4XBsirkDw+qWN/3Cv5YD/
-         aCKevx/1wQKtEJSs+Y0Ee3FEYy1+1QzSHobshcnxHQksA5VG+lqsL0siY2PSLnArfktr
-         jqmk3+GCWIA+7J4YXfoOUAx3/xcQzPCrIXhXmvsc/byshuKfhC4OCLsRF59DgJSq/I9G
-         ItPLeoEN/Exf9ndzl2nayXF0FQgCb0owxFBVEKfisUY95wi/WSAffHmlptJF7rlh0cud
-         HHFHAW/l3loqTA61Jsv76b6ZEejMTNLac4qDEVKU0P1vC++LlmtNlpYPBkWh5r7JiSZ6
-         oc9A==
-X-Gm-Message-State: AOAM5330w5AQUusPC8HE1wcG/FbnQba02WwuQhCg5DpOyo5PeAkkLMoi
-        8yjB7jqCNca9DaeXGf0NJgl9pw==
-X-Google-Smtp-Source: ABdhPJx5c+3Xg5qF+vGQ769wR5tgBUCXJFBzPtw7IvPiy2SjtCdYHnvg1mO9ySVZ+HFM95K2Zb1MqQ==
-X-Received: by 2002:a63:1c42:: with SMTP id c2mr10937728pgm.296.1591398009780;
-        Fri, 05 Jun 2020 16:00:09 -0700 (PDT)
-Received: from lbrmn-lnxub113.broadcom.net ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id b140sm568974pfb.119.2020.06.05.16.00.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Jun 2020 16:00:08 -0700 (PDT)
-From:   Scott Branden <scott.branden@broadcom.com>
-To:     Luis Chamberlain <mcgrof@kernel.org>,
+        Fri, 5 Jun 2020 19:19:51 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 055N3J5A157074;
+        Fri, 5 Jun 2020 19:19:35 -0400
+Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 31fgkmkmgs-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 05 Jun 2020 19:19:34 -0400
+Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
+        by ppma03ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 055NBBuw014932;
+        Fri, 5 Jun 2020 23:19:32 GMT
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
+        by ppma03ams.nl.ibm.com with ESMTP id 31bf4852fc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 05 Jun 2020 23:19:32 +0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 055NJUeN51970228
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 5 Jun 2020 23:19:30 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1E6E44C046;
+        Fri,  5 Jun 2020 23:19:30 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 52A8A4C050;
+        Fri,  5 Jun 2020 23:19:27 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.234.64])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri,  5 Jun 2020 23:19:27 +0000 (GMT)
+Message-ID: <1591399166.4615.37.camel@linux.ibm.com>
+Subject: Re: [PATCH v6 8/8] ima: add FIRMWARE_PARTIAL_READ support
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Scott Branden <scott.branden@broadcom.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         David Brown <david.brown@linaro.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Shuah Khan <shuah@kernel.org>, bjorn.andersson@linaro.org,
         Shuah Khan <skhan@linuxfoundation.org>,
         Arnd Bergmann <arnd@arndb.de>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
+Cc:     "Rafael J . Wysocki" <rafael@kernel.org>,
         linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         linux-fsdevel@vger.kernel.org,
         BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
@@ -75,97 +70,51 @@ Cc:     Mimi Zohar <zohar@linux.ibm.com>,
         Takashi Iwai <tiwai@suse.de>, linux-kselftest@vger.kernel.org,
         Andy Gross <agross@kernel.org>,
         linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Scott Branden <scott.branden@broadcom.com>
-Subject: [PATCH v6 0/8] firmware: add partial read support in request_firmware_into_buf
-Date:   Fri,  5 Jun 2020 15:59:51 -0700
-Message-Id: <20200605225959.12424-1-scott.branden@broadcom.com>
-X-Mailer: git-send-email 2.17.1
+        linux-security-module@vger.kernel.org
+Date:   Fri, 05 Jun 2020 19:19:26 -0400
+In-Reply-To: <20200605225959.12424-9-scott.branden@broadcom.com>
+References: <20200605225959.12424-1-scott.branden@broadcom.com>
+         <20200605225959.12424-9-scott.branden@broadcom.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.687
+ definitions=2020-06-05_07:2020-06-04,2020-06-05 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 clxscore=1011
+ mlxlogscore=999 priorityscore=1501 bulkscore=0 cotscore=-2147483648
+ malwarescore=0 spamscore=0 mlxscore=0 lowpriorityscore=0 suspectscore=0
+ adultscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2004280000 definitions=main-2006050170
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This patch series adds partial read support in request_firmware_into_buf.
-In order to accept the enhanced API it has been requested that kernel
-selftests and upstreamed driver utilize the API enhancement and so
-are included in this patch series.
+Hi Scott,
 
-Also in this patch series is the addition of a new Broadcom VK driver
-utilizing the new request_firmware_into_buf enhanced API.
+On Fri, 2020-06-05 at 15:59 -0700, Scott Branden wrote:
+> 
+> @@ -648,6 +667,9 @@ int ima_post_read_file(struct file *file, void *buf, loff_t size,
+>  	enum ima_hooks func;
+>  	u32 secid;
+>  
+> +	if (!file && read_id == READING_FIRMWARE_PARTIAL_READ)
+> +		return 0;
 
-Further comment followed to add IMA support of the partial reads
-originating from request_firmware_into_buf calls.
+The file should be measured on the pre security hook, not here on the
+post security hook.  Here, whether "file" is defined or not, is
+irrelevant.  The test should just check "read_id".
 
-Changes from v5:
- - add IMA FIRMWARE_PARTIAL_READ support
- - change kernel pread flags to enum
- - removed legacy support from driver
- - driver fixes
-Changes from v4:
- - handle reset issues if card crashes
- - allow driver to have min required msix
- - add card utilization information
-Changes from v3:
- - fix sparse warnings
- - fix printf format specifiers for size_t
- - fix 32-bit cross-compiling reports 32-bit shifts
- - use readl/writel,_relaxed to access pci ioremap memory,
-  removed memory barriers and volatile keyword with such change
- - driver optimizations for interrupt/poll functionalities
-Changes from v2:
- - remove unnecessary code and mutex locks in lib/test_firmware.c
- - remove VK_IOCTL_ACCESS_BAR support from driver and use pci sysfs instead
- - remove bitfields
- - remove Kconfig default m
- - adjust formatting and some naming based on feedback
- - fix error handling conditions
- - use appropriate return codes
- - use memcpy_toio instead of direct access to PCIE bar
+Have you tested measuring the firmware by booting a system with
+"ima_policy=tcb" specified on the boot command line and compared the
+measurement entry in the IMA measurement list with the file hash (eg.
+sha1sum, sha256sum)?
 
-Scott Branden (8):
-  fs: introduce kernel_pread_file* support
-  firmware: add offset to request_firmware_into_buf
-  test_firmware: add partial read support for request_firmware_into_buf
-  firmware: test partial file reads of request_firmware_into_buf
-  bcm-vk: add bcm_vk UAPI
-  misc: bcm-vk: add Broadcom VK driver
-  MAINTAINERS: bcm-vk: add maintainer for Broadcom VK Driver
-  ima: add FIRMWARE_PARTIAL_READ support
+Mimi
 
- MAINTAINERS                                   |    7 +
- drivers/base/firmware_loader/firmware.h       |    5 +
- drivers/base/firmware_loader/main.c           |   59 +-
- drivers/misc/Kconfig                          |    1 +
- drivers/misc/Makefile                         |    1 +
- drivers/misc/bcm-vk/Kconfig                   |   29 +
- drivers/misc/bcm-vk/Makefile                  |   11 +
- drivers/misc/bcm-vk/bcm_vk.h                  |  408 +++++
- drivers/misc/bcm-vk/bcm_vk_dev.c              | 1312 +++++++++++++++
- drivers/misc/bcm-vk/bcm_vk_msg.c              | 1438 +++++++++++++++++
- drivers/misc/bcm-vk/bcm_vk_msg.h              |  201 +++
- drivers/misc/bcm-vk/bcm_vk_sg.c               |  271 ++++
- drivers/misc/bcm-vk/bcm_vk_sg.h               |   60 +
- drivers/misc/bcm-vk/bcm_vk_tty.c              |  352 ++++
- drivers/soc/qcom/mdt_loader.c                 |    7 +-
- fs/exec.c                                     |  101 +-
- include/linux/firmware.h                      |    8 +-
- include/linux/fs.h                            |   30 +
- include/uapi/linux/misc/bcm_vk.h              |   99 ++
- lib/test_firmware.c                           |  144 +-
- security/integrity/ima/ima_main.c             |   24 +-
- .../selftests/firmware/fw_filesystem.sh       |   80 +
- 22 files changed, 4595 insertions(+), 53 deletions(-)
- create mode 100644 drivers/misc/bcm-vk/Kconfig
- create mode 100644 drivers/misc/bcm-vk/Makefile
- create mode 100644 drivers/misc/bcm-vk/bcm_vk.h
- create mode 100644 drivers/misc/bcm-vk/bcm_vk_dev.c
- create mode 100644 drivers/misc/bcm-vk/bcm_vk_msg.c
- create mode 100644 drivers/misc/bcm-vk/bcm_vk_msg.h
- create mode 100644 drivers/misc/bcm-vk/bcm_vk_sg.c
- create mode 100644 drivers/misc/bcm-vk/bcm_vk_sg.h
- create mode 100644 drivers/misc/bcm-vk/bcm_vk_tty.c
- create mode 100644 include/uapi/linux/misc/bcm_vk.h
-
--- 
-2.17.1
+> +
+>  	if (!file && read_id == READING_FIRMWARE) {
+>  		if ((ima_appraise & IMA_APPRAISE_FIRMWARE) &&
+>  		    (ima_appraise & IMA_APPRAISE_ENFORCE)) {
 
