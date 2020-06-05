@@ -2,89 +2,110 @@ Return-Path: <SRS0=NT9g=7S=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6982C433E0
-	for <linux-security-module@archiver.kernel.org>; Fri,  5 Jun 2020 06:54:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72024C433E2
+	for <linux-security-module@archiver.kernel.org>; Fri,  5 Jun 2020 15:01:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 903BB207ED
-	for <linux-security-module@archiver.kernel.org>; Fri,  5 Jun 2020 06:54:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 523412065C
+	for <linux-security-module@archiver.kernel.org>; Fri,  5 Jun 2020 15:01:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=pobox.com header.i=@pobox.com header.b="Sxoay7F4";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b="Zz/eImY/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726024AbgFEGyB (ORCPT
+        id S1728090AbgFEPBI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 5 Jun 2020 02:54:01 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2282 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725280AbgFEGyB (ORCPT
+        Fri, 5 Jun 2020 11:01:08 -0400
+Received: from pb-smtp20.pobox.com ([173.228.157.52]:55500 "EHLO
+        pb-smtp20.pobox.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726911AbgFEPBH (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 5 Jun 2020 02:54:01 -0400
-Received: from lhreml741-chm.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id F35C8D45AE4DD2AEB67E;
-        Fri,  5 Jun 2020 07:53:59 +0100 (IST)
-Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- lhreml741-chm.china.huawei.com (10.201.108.191) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1913.5; Fri, 5 Jun 2020 07:53:59 +0100
-Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.160)
- by fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1913.5; Fri, 5 Jun 2020 08:53:58 +0200
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     <zohar@linux.ibm.com>, <syzkaller-bugs@googlegroups.com>
-CC:     <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH] ima: Directly free *entry in ima_alloc_init_template() if digests is NULL
-Date:   Fri, 5 Jun 2020 08:50:28 +0200
-Message-ID: <20200605065028.12464-1-roberto.sassu@huawei.com>
-X-Mailer: git-send-email 2.17.1
+        Fri, 5 Jun 2020 11:01:07 -0400
+Received: from pb-smtp20.pobox.com (unknown [127.0.0.1])
+        by pb-smtp20.pobox.com (Postfix) with ESMTP id 6AE7ED27C6;
+        Fri,  5 Jun 2020 11:01:04 -0400 (EDT)
+        (envelope-from nico@fluxnic.net)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=pobox.com; h=date:from:to
+        :cc:subject:in-reply-to:message-id:references:mime-version
+        :content-type; s=sasl; bh=RQ5UuhFDdm6pYUURqgzo84j9G7A=; b=Sxoay7
+        F4gA4GZdu5Zg9uUlmAkW1Zt5FcDuXuyxgJg0J1/2YOTh+oGVFPS2XCXNhnKxruau
+        MDtfSlY0eXyRJHtGFbaGy1GRIGwT91daJ30IGzYPPomdVWXXQA2tHr5SlWDA734m
+        bZRjhWd3q6ijPU6K2wBSKxViPDDqydIEEmReM=
+Received: from pb-smtp20.sea.icgroup.com (unknown [127.0.0.1])
+        by pb-smtp20.pobox.com (Postfix) with ESMTP id 61111D27C5;
+        Fri,  5 Jun 2020 11:01:04 -0400 (EDT)
+        (envelope-from nico@fluxnic.net)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=fluxnic.net;
+ h=date:from:to:cc:subject:in-reply-to:message-id:references:mime-version:content-type; s=2016-12.pbsmtp; bh=kGSNSFs79QpTCdEy/syIPtk8e7qpRSOVx3t4YYHSTPo=; b=Zz/eImY/hca3rOTLiCqOYWoaV6plgEo+kdFnlRPQFzRcUQoLXjJn0FtfTD7ckQtTqowgcbv/qHCqzK+ScMEpsSblxLiajcMT9GhFudy2osyOw0c/0yOkmdHSrAU5J6sKLf0oVK0xHwQO8Q2r0bmcLvvl02K0jlrhpKiphQGd6bE=
+Received: from yoda.home (unknown [24.203.50.76])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by pb-smtp20.pobox.com (Postfix) with ESMTPSA id 263D0D27C0;
+        Fri,  5 Jun 2020 11:01:01 -0400 (EDT)
+        (envelope-from nico@fluxnic.net)
+Received: from xanadu.home (xanadu.home [192.168.2.2])
+        by yoda.home (Postfix) with ESMTPSA id 25E392DA01E9;
+        Fri,  5 Jun 2020 11:00:59 -0400 (EDT)
+Date:   Fri, 5 Jun 2020 11:00:59 -0400 (EDT)
+From:   Nicolas Pitre <nico@fluxnic.net>
+To:     =?ISO-8859-15?Q?Philippe_Mathieu-Daud=E9?= <f4bug@amsat.org>
+cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        David Laight <David.Laight@aculab.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        David Howells <dhowells@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Al Viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        NetFilter <netfilter-devel@vger.kernel.org>,
+        Joe Perches <joe@perches.com>
+Subject: Re: clean up kernel_{read,write} & friends v2
+In-Reply-To: <d67deb88-73a8-4c57-6b37-c62190422d65@amsat.org>
+Message-ID: <nycvar.YSQ.7.77.849.2006051039350.1353413@knanqh.ubzr>
+References: <CAHk-=wj3iGQqjpvc+gf6+C29Jo4COj6OQQFzdY0h5qvYKTdCow@mail.gmail.com> <20200528054043.621510-1-hch@lst.de> <22778.1590697055@warthog.procyon.org.uk> <f89f0f7f-83b4-72c6-7d08-cb6eaeccd443@schaufler-ca.com> <3aea7a1c10e94ea2964fa837ae7d8fe2@AcuMS.aculab.com>
+ <CAHk-=wjR0H3+2ba0UUWwoYzYBH0GX9yTf5dj2MZyo0xvyzvJnA@mail.gmail.com> <d67deb88-73a8-4c57-6b37-c62190422d65@amsat.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.204.65.160]
-X-ClientProxiedBy: lhreml719-chm.china.huawei.com (10.201.108.70) To
- fraeml714-chm.china.huawei.com (10.206.15.33)
-X-CFilter-Loop: Reflected
+Content-Type: multipart/mixed; boundary="8323328-1427214125-1591369259=:1353413"
+X-Pobox-Relay-ID: 5EB18F9E-A73D-11EA-B614-B0405B776F7B-78420484!pb-smtp20.pobox.com
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-To support multiple template digests, the static array entry->digest has
-been replaced with a dynamically allocated array in commit aa724fe18a8a
-("ima: Switch to dynamically allocated buffer for template digests"). The
-array is allocated in ima_alloc_init_template() and if the returned pointer
-is NULL, ima_free_template_entry() is called.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-However, (*entry)->template_desc is not yet initialized while it is used by
-ima_free_template_entry(). This patch fixes the issue by directly freeing
-*entry without calling ima_free_template_entry().
+--8323328-1427214125-1591369259=:1353413
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Fixes: aa724fe18a8a ("ima: Switch to dynamically allocated buffer for template digests")
-Reported-by: syzbot+223310b454ba6b75974e@syzkaller.appspotmail.com
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- security/integrity/ima/ima_api.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+On Fri, 5 Jun 2020, Philippe Mathieu-Daud=C3=A9 wrote:
 
-diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
-index 78e0b0a7723e..bf22de8b7ce0 100644
---- a/security/integrity/ima/ima_api.c
-+++ b/security/integrity/ima/ima_api.c
-@@ -55,8 +55,9 @@ int ima_alloc_init_template(struct ima_event_data *event_data,
- 	digests = kcalloc(NR_BANKS(ima_tpm_chip) + ima_extra_slots,
- 			  sizeof(*digests), GFP_NOFS);
- 	if (!digests) {
--		result = -ENOMEM;
--		goto out;
-+		kfree(*entry);
-+		*entry = NULL;
-+		return -ENOMEM;
- 	}
- 
- 	(*entry)->digests = digests;
--- 
-2.17.1
+> Unfortunately refreshable braille displays have that "hardware
+> limitations". 80 cells displays are very expensive.
+> Visual impairments is rarely a "choice".
+> Relaxing the 80-char limit make it harder for blind developers
+> to contribute.
 
+Well, not really.
+
+It is true that 80-cells displays are awfully expensive. IMHO they are=20
+also unwieldy due to their size: they are hardly portable, and they=20
+require your hands to move twice as far which may sometimes impair=20
+reading efficiency. So I never liked them.
+
+My braille display has 40 cells only. So even with a 80-cells limit I=20
+always had to pan the display to see the whole line anyway.
+
+My text console is set to 160x128. The trick here is to have the number=20
+of columns be a multiple of the braille display's width to avoid dead=20
+areas when panning to the right.
+
+So if you ask me, I'm not against relaxing the 80 columns limit for=20
+code. What really matters to me is that I can stay clear of any GUI.
+
+
+Nicolas
+--8323328-1427214125-1591369259=:1353413--
