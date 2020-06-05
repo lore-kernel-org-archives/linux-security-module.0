@@ -2,218 +2,304 @@ Return-Path: <SRS0=NT9g=7S=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4B34C433E0
-	for <linux-security-module@archiver.kernel.org>; Fri,  5 Jun 2020 19:38:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D78EC433DF
+	for <linux-security-module@archiver.kernel.org>; Fri,  5 Jun 2020 20:10:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B7BD02077D
-	for <linux-security-module@archiver.kernel.org>; Fri,  5 Jun 2020 19:38:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 230EF207D8
+	for <linux-security-module@archiver.kernel.org>; Fri,  5 Jun 2020 20:10:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LuduYH/u"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="BelaSpRp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727932AbgFETiL (ORCPT
+        id S1727917AbgFEUK6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 5 Jun 2020 15:38:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42688 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727087AbgFETiK (ORCPT
+        Fri, 5 Jun 2020 16:10:58 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:50298 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727888AbgFEUK6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 5 Jun 2020 15:38:10 -0400
-Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BF8CC08C5C2
-        for <linux-security-module@vger.kernel.org>; Fri,  5 Jun 2020 12:38:10 -0700 (PDT)
-Received: by mail-pl1-x644.google.com with SMTP id q16so4119569plr.2
-        for <linux-security-module@vger.kernel.org>; Fri, 05 Jun 2020 12:38:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=UBN9XkJ2jxlKA7wFZ1OzKmu6JrclnbLWZYYCPltam8Q=;
-        b=LuduYH/uexf10mQK9zSgwVBalrjOSlW9gkczQtkycP/RzdSy5vDxftA2xLIDPx8gmJ
-         jMNAo3NiFoKmZuav2ZrCp65ZUtuhUUBSmlCEo1F+Zrf+DtE01s0eqT3/rqVtCjhe4/dm
-         rWfSSje7Q9hOGs00yuV5D0ZUNz+ujTgwqHwMY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=UBN9XkJ2jxlKA7wFZ1OzKmu6JrclnbLWZYYCPltam8Q=;
-        b=BEcTDLKpW7xfgmmj5cBROeynkFEFzkEJy4VW4DFSTaCvFnl1hUvSAO+ovbGETP3eVo
-         OuZ07qDQsztMJXhEXzscfsMF3IqPhH8rd8WiIvXIy8RGgGi2L5JlcYk3PNYiKz7GYnNQ
-         GxFBtrXLaAEB6ewuU+WPrZwq0qZEeMdezEYWt/29I62XAJZVV6tjl5lham0NOOl4UoKR
-         8CBoesCLjW8K0hVvWXwqUieJ5gTx0LjkdE7rrGyN2O5Anf2bSK+wDsxxyqGaSONhLG4+
-         ucrmS8dtvlYvMaxMvQqwAKpY5zGEFWP5SiZ9xHykk4cOUymEFDRY2ZV/jZ+QubeZsbTf
-         d2rA==
-X-Gm-Message-State: AOAM530s5ovvky5vljsiIuzP8CeAxBirLhZMJmt/KeX41JjmYhEHa8eC
-        3d1ERLtjiElKir+b70z2GcbOje7s8BM=
-X-Google-Smtp-Source: ABdhPJwj2yP2KSqqkWDDt/j2JTUqwtyyxik6vnckn+zN/3JDFHz9J98FNSVx2GZW+pqNAAcCCRDiPQ==
-X-Received: by 2002:a17:902:558f:: with SMTP id g15mr11233204pli.174.1591385889358;
-        Fri, 05 Jun 2020 12:38:09 -0700 (PDT)
-Received: from localhost ([2620:15c:202:200:c921:befc:7379:cdab])
-        by smtp.gmail.com with ESMTPSA id ck11sm1235913pjb.51.2020.06.05.12.38.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Jun 2020 12:38:08 -0700 (PDT)
-From:   Micah Morton <mortonm@chromium.org>
-To:     linux-security-module@vger.kernel.org
-Cc:     keescook@chromium.org, thomascedeno@google.com,
-        Micah Morton <mortonm@chromium.org>
-Subject: [PATCH] security: Add LSM hooks to set*gid syscalls
-Date:   Fri,  5 Jun 2020 12:38:05 -0700
-Message-Id: <20200605193805.36531-1-mortonm@chromium.org>
-X-Mailer: git-send-email 2.27.0.278.ge193c7cf3a9-goog
+        Fri, 5 Jun 2020 16:10:58 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 055K8Uvm102204;
+        Fri, 5 Jun 2020 20:10:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : references : date : in-reply-to : message-id : mime-version :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=GI8Ptl135xW+Zk5tzFEp3ceNHywpyZ3l7g6uOU+l5es=;
+ b=BelaSpRpECrj5VOvxeqSW8wgJJ+tgTG8pyfmF3+K54tGlOu/IZhxch8iHoW1Gyxzi3Of
+ D5rncPOAgwsy8o2jeEBxGUqRWIKk4g04n+Y1QtMFifkYUpJFGaC2qL9sOBXQGnLGQpwF
+ mpQJ0XxYHvJaFbC6/E1va5LwXBcyVAKzIOE21gwA0+F6xMbFdE1xT9kuHE86CCAHj/W/
+ 97EXj12QPoAG+v7VyJOCuuONvO4TZBMbSigVp1tfZ8PY7aBU9eRklvTnbtObBjt2mKvm
+ tuW7kYVLl8+empWOeaKZsi2L76wUxpUh93fz9Z7lxyHLTWHFBCQp3gjFphOuzPAOJrHy Tg== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 31f9264hcs-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 05 Jun 2020 20:10:22 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 055K3T7t119678;
+        Fri, 5 Jun 2020 20:10:22 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3030.oracle.com with ESMTP id 31f92t7jk8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 05 Jun 2020 20:10:22 +0000
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 055KAFd5020835;
+        Fri, 5 Jun 2020 20:10:15 GMT
+Received: from starbug-mbp.localdomain (/79.97.215.145)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 05 Jun 2020 20:10:14 +0000
+Received: by starbug-mbp.localdomain (Postfix, from userid 501)
+        id A53EF59D8EE; Fri,  5 Jun 2020 21:10:04 +0100 (IST)
+From:   Darren Kenny <darren.kenny@oracle.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org, linux-security-module@vger.kernel.org,
+        Jethro Beekman <jethro@fortanix.com>,
+        Andy Lutomirski <luto@kernel.org>, akpm@linux-foundation.org,
+        andriy.shevchenko@linux.intel.com, asapek@google.com, bp@alien8.de,
+        cedric.xing@intel.com, chenalexchen@google.com,
+        conradparker@google.com, cyhanish@google.com,
+        dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, nhorman@redhat.com,
+        npmccallum@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
+        sean.j.christopherson@intel.com, tglx@linutronix.de,
+        yaozhangx@google.com
+Subject: Re: [PATCH v32 12/21] x86/sgx: Add provisioning
+References: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+        <20200601075218.65618-13-jarkko.sakkinen@linux.intel.com>
+Date:   Fri, 05 Jun 2020 21:09:49 +0100
+In-Reply-To: <20200601075218.65618-13-jarkko.sakkinen@linux.intel.com> (Jarkko
+        Sakkinen's message of "Mon, 1 Jun 2020 10:52:09 +0300")
+Message-ID: <m2img5tgtu.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.0.50 (darwin)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9643 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0 mlxscore=0
+ malwarescore=0 spamscore=0 suspectscore=0 mlxlogscore=999 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2004280000
+ definitions=main-2006050148
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9643 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 adultscore=0
+ suspectscore=0 cotscore=-2147483648 bulkscore=0 clxscore=1011
+ impostorscore=0 priorityscore=1501 malwarescore=0 mlxlogscore=999
+ spamscore=0 lowpriorityscore=0 mlxscore=0 classifier=spam adjust=0
+ reason=mlx scancount=1 engine=8.12.0-2004280000
+ definitions=main-2006050148
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The SafeSetID LSM uses the security_task_fix_setuid hook to filter
-set*uid() syscalls according to its configured security policy. In
-preparation for adding analagous support in the LSM for set*gid()
-syscalls, we add the requisite hook here. Tested by putting print
-statements in the security_task_fix_setgid hook and seeing them get hit
-during kernel boot.
 
-From: Thomas Cedeno <thomascedeno@google.com>
-Signed-off-by: Thomas Cedeno <thomascedeno@google.com>
-Reviewed-by: Micah Morton <mortonm@chromium.org>
----
-NOTE: I (Micah) will send this patch as a pull request to Linus through
-my SafeSetID tree if there are no objections.
- include/linux/lsm_hook_defs.h |  2 ++
- include/linux/lsm_hooks.h     |  9 +++++++++
- include/linux/security.h      |  9 +++++++++
- kernel/sys.c                  | 15 ++++++++++++++-
- security/security.c           |  6 ++++++
- 5 files changed, 40 insertions(+), 1 deletion(-)
+Hi Jarkko,
 
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index fb3ce6cec997..d5401c09f2d3 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -191,6 +191,8 @@ LSM_HOOK(int, 0, kernel_post_read_file, struct file *file, char *buf,
- 	 loff_t size, enum kernel_read_file_id id)
- LSM_HOOK(int, 0, task_fix_setuid, struct cred *new, const struct cred *old,
- 	 int flags)
-+LSM_HOOK(int, 0, task_fix_setgid, struct cred *new, const struct cred * old,
-+	 int flags)
- LSM_HOOK(int, 0, task_setpgid, struct task_struct *p, pid_t pgid)
- LSM_HOOK(int, 0, task_getpgid, struct task_struct *p)
- LSM_HOOK(int, 0, task_getsid, struct task_struct *p)
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 3e62dab77699..8012b610fe53 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -659,6 +659,15 @@
-  *	@old is the set of credentials that are being replaces
-  *	@flags contains one of the LSM_SETID_* values.
-  *	Return 0 on success.
-+ * @task_fix_setgid:
-+ *     Update the module's state after setting one or more of the group
-+ *     identity attributes of the current process.  The @flags parameter
-+ *     indicates which of the set*gid system calls invoked this hook.
-+ *     @new is the set of credentials that will be installed.  Modifications
-+ *     should be made to this rather than to @current->cred.
-+ *     @old is the set of credentials that are being replaced.
-+ *     @flags contains one of the LSM_SETID_* values.
-+ *     Return 0 on success.
-  * @task_setpgid:
-  *	Check permission before setting the process group identifier of the
-  *	process @p to @pgid.
-diff --git a/include/linux/security.h b/include/linux/security.h
-index b3f2cb21b4f2..2b08a2e49ba6 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -390,6 +390,8 @@ int security_kernel_post_read_file(struct file *file, char *buf, loff_t size,
- 				   enum kernel_read_file_id id);
- int security_task_fix_setuid(struct cred *new, const struct cred *old,
- 			     int flags);
-+int security_task_fix_setgid(struct cred *new, const struct cred *old,
-+			     int flags);
- int security_task_setpgid(struct task_struct *p, pid_t pgid);
- int security_task_getpgid(struct task_struct *p);
- int security_task_getsid(struct task_struct *p);
-@@ -1034,6 +1036,13 @@ static inline int security_task_fix_setuid(struct cred *new,
- 	return cap_task_fix_setuid(new, old, flags);
- }
- 
-+static inline int security_task_fix_setgid(struct cred *new,
-+					   const struct cred *old,
-+					   int flags)
-+{
-+	return 0;
-+}
-+
- static inline int security_task_setpgid(struct task_struct *p, pid_t pgid)
- {
- 	return 0;
-diff --git a/kernel/sys.c b/kernel/sys.c
-index 891667a49bb7..e65ec850bfae 100644
---- a/kernel/sys.c
-+++ b/kernel/sys.c
-@@ -393,6 +393,10 @@ long __sys_setregid(gid_t rgid, gid_t egid)
- 		new->sgid = new->egid;
- 	new->fsgid = new->egid;
- 
-+	retval = security_task_fix_setgid(new, old, LSM_SETID_RE);
-+	if (retval < 0)
-+		goto error;
-+
- 	return commit_creds(new);
- 
- error:
-@@ -435,6 +439,10 @@ long __sys_setgid(gid_t gid)
- 	else
- 		goto error;
- 
-+	retval = security_task_fix_setgid(new, old, LSM_SETID_ID);
-+	if (retval < 0)
-+		goto error;
-+
- 	return commit_creds(new);
- 
- error:
-@@ -756,6 +764,10 @@ long __sys_setresgid(gid_t rgid, gid_t egid, gid_t sgid)
- 		new->sgid = ksgid;
- 	new->fsgid = new->egid;
- 
-+	retval = security_task_fix_setgid(new, old, LSM_SETID_RES);
-+	if (retval < 0)
-+		goto error;
-+
- 	return commit_creds(new);
- 
- error:
-@@ -862,7 +874,8 @@ long __sys_setfsgid(gid_t gid)
- 	    ns_capable(old->user_ns, CAP_SETGID)) {
- 		if (!gid_eq(kgid, old->fsgid)) {
- 			new->fsgid = kgid;
--			goto change_okay;
-+			if (security_task_fix_setgid(new,old,LSM_SETID_FS) == 0)
-+				goto change_okay;
- 		}
- 	}
- 
-diff --git a/security/security.c b/security/security.c
-index 11c1a7da4fd1..639324c68dd0 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1690,6 +1690,12 @@ int security_task_fix_setuid(struct cred *new, const struct cred *old,
- 	return call_int_hook(task_fix_setuid, 0, new, old, flags);
- }
- 
-+int security_task_fix_setgid(struct cred *new, const struct cred *old,
-+				 int flags)
-+{
-+	return call_int_hook(task_fix_setgid, 0, new, old, flags);
-+}
-+
- int security_task_setpgid(struct task_struct *p, pid_t pgid)
- {
- 	return call_int_hook(task_setpgid, 0, p, pgid);
--- 
-2.27.0.278.ge193c7cf3a9-goog
+Just a couple of nits below...
 
+On Monday, 2020-06-01 at 10:52:09 +03, Jarkko Sakkinen wrote:
+> In order to provide a mechanism for devilering provisoning rights:
+
+TYPO: s/devilering/delivering/?
+
+>
+> 1. Add a new device file /dev/sgx/provision that works as a token for
+>    allowing an enclave to have the provisioning privileges.
+> 2. Add a new ioctl called SGX_IOC_ENCLAVE_SET_ATTRIBUTE that accepts th=
+e
+>    following data structure:
+>
+>    struct sgx_enclave_set_attribute {
+>            __u64 addr;
+>            __u64 attribute_fd;
+>    };
+>
+> A daemon could sit on top of /dev/sgx/provision and send a file
+> descriptor of this file to a process that needs to be able to provision
+> enclaves.
+>
+> The way this API is used is straight-forward. Lets assume that dev_fd i=
+s
+> a handle to /dev/sgx/enclave and prov_fd is a handle to
+> /dev/sgx/provision.  You would allow SGX_IOC_ENCLAVE_CREATE to
+> initialize an enclave with the PROVISIONKEY attribute by
+>
+> params.addr =3D <enclave address>;
+> params.token_fd =3D prov_fd;
+>
+> ioctl(dev_fd, SGX_IOC_ENCLAVE_SET_ATTRIBUTE, &params);
+>
+> Cc: linux-security-module@vger.kernel.org
+> Acked-by: Jethro Beekman <jethro@fortanix.com>
+> Suggested-by: Andy Lutomirski <luto@kernel.org>
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> ---
+>  arch/x86/include/uapi/asm/sgx.h  | 11 ++++++++
+>  arch/x86/kernel/cpu/sgx/driver.c | 14 ++++++++++
+>  arch/x86/kernel/cpu/sgx/driver.h |  2 ++
+>  arch/x86/kernel/cpu/sgx/ioctl.c  | 47 ++++++++++++++++++++++++++++++++
+>  4 files changed, 74 insertions(+)
+>
+> diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/as=
+m/sgx.h
+> index 5edb08ab8fd0..57d0d30c79b3 100644
+> --- a/arch/x86/include/uapi/asm/sgx.h
+> +++ b/arch/x86/include/uapi/asm/sgx.h
+> @@ -25,6 +25,8 @@ enum sgx_page_flags {
+>  	_IOWR(SGX_MAGIC, 0x01, struct sgx_enclave_add_pages)
+>  #define SGX_IOC_ENCLAVE_INIT \
+>  	_IOW(SGX_MAGIC, 0x02, struct sgx_enclave_init)
+> +#define SGX_IOC_ENCLAVE_SET_ATTRIBUTE \
+> +	_IOW(SGX_MAGIC, 0x03, struct sgx_enclave_set_attribute)
+> =20
+>  /**
+>   * struct sgx_enclave_create - parameter structure for the
+> @@ -63,4 +65,13 @@ struct sgx_enclave_init {
+>  	__u64 sigstruct;
+>  };
+> =20
+> +/**
+> + * struct sgx_enclave_set_attribute - parameter structure for the
+> + *				      %SGX_IOC_ENCLAVE_SET_ATTRIBUTE ioctl
+> + * @attribute_fd:	file handle of the attribute file in the securityfs
+> + */
+> +struct sgx_enclave_set_attribute {
+> +	__u64 attribute_fd;
+> +};
+> +
+>  #endif /* _UAPI_ASM_X86_SGX_H */
+> diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx=
+/driver.c
+> index b4aa7b9f8376..d90114cec1c3 100644
+> --- a/arch/x86/kernel/cpu/sgx/driver.c
+> +++ b/arch/x86/kernel/cpu/sgx/driver.c
+> @@ -150,6 +150,13 @@ static struct miscdevice sgx_dev_enclave =3D {
+>  	.fops =3D &sgx_encl_fops,
+>  };
+> =20
+> +static struct miscdevice sgx_dev_provision =3D {
+> +	.minor =3D MISC_DYNAMIC_MINOR,
+> +	.name =3D "provision",
+> +	.nodename =3D "sgx/provision",
+> +	.fops =3D &sgx_provision_fops,
+> +};
+> +
+>  int __init sgx_drv_init(void)
+>  {
+>  	unsigned int eax, ebx, ecx, edx;
+> @@ -190,5 +197,12 @@ int __init sgx_drv_init(void)
+>  		return ret;
+>  	}
+> =20
+> +	ret =3D misc_register(&sgx_dev_provision);
+> +	if (ret) {
+> +		pr_err("Creating /dev/sgx/provision failed with %d.\n", ret);
+> +		misc_deregister(&sgx_dev_enclave);
+> +		return ret;
+> +	}
+> +
+>  	return 0;
+>  }
+> diff --git a/arch/x86/kernel/cpu/sgx/driver.h b/arch/x86/kernel/cpu/sgx=
+/driver.h
+> index e4063923115b..72747d01c046 100644
+> --- a/arch/x86/kernel/cpu/sgx/driver.h
+> +++ b/arch/x86/kernel/cpu/sgx/driver.h
+> @@ -23,6 +23,8 @@ extern u64 sgx_attributes_reserved_mask;
+>  extern u64 sgx_xfrm_reserved_mask;
+>  extern u32 sgx_xsave_size_tbl[64];
+> =20
+> +extern const struct file_operations sgx_provision_fops;
+> +
+>  long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg=
+);
+> =20
+>  int sgx_drv_init(void);
+> diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/=
+ioctl.c
+> index 757cb9a4ae70..713bce437659 100644
+> --- a/arch/x86/kernel/cpu/sgx/ioctl.c
+> +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+> @@ -669,6 +669,50 @@ static long sgx_ioc_enclave_init(struct sgx_encl *=
+encl, void __user *arg)
+>  	return ret;
+>  }
+> =20
+> +/**
+> + * sgx_ioc_enclave_set_attribute - handler for %SGX_IOC_ENCLAVE_SET_AT=
+TRIBUTE
+> + * @filep:	open file to /dev/sgx
+> + * @arg:	userspace pointer to a struct sgx_enclave_set_attribute insta=
+nce
+> + *
+> + * Mark the enclave as being allowed to access a restricted attribute =
+bit.
+> + * The requested attribute is specified via the attribute_fd field in =
+the
+> + * provided struct sgx_enclave_set_attribute.  The attribute_fd must b=
+e a
+> + * handle to an SGX attribute file, e.g. =80/dev/sgx/provision".
+
+Maybe this should be simply a double-quote rather than the Unicode left
+quote?
+
+Thanks,
+
+Darren.
+
+> + *
+> + * Failure to explicitly request access to a restricted attribute will=
+ cause
+> + * sgx_ioc_enclave_init() to fail.  Currently, the only restricted att=
+ribute
+> + * is access to the PROVISION_KEY.
+> + *
+> + * Note, access to the EINITTOKEN_KEY is disallowed entirely.
+> + *
+> + * Return: 0 on success, -errno otherwise
+> + */
+> +static long sgx_ioc_enclave_set_attribute(struct sgx_encl *encl,
+> +					  void __user *arg)
+> +{
+> +	struct sgx_enclave_set_attribute params;
+> +	struct file *attribute_file;
+> +	int ret;
+> +
+> +	if (copy_from_user(&params, arg, sizeof(params)))
+> +		return -EFAULT;
+> +
+> +	attribute_file =3D fget(params.attribute_fd);
+> +	if (!attribute_file)
+> +		return -EINVAL;
+> +
+> +	if (attribute_file->f_op !=3D &sgx_provision_fops) {
+> +		ret =3D -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	encl->allowed_attributes |=3D SGX_ATTR_PROVISIONKEY;
+> +	ret =3D 0;
+> +
+> +out:
+> +	fput(attribute_file);
+> +	return ret;
+> +}
+> =20
+>  long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg=
+)
+>  {
+> @@ -694,6 +738,9 @@ long sgx_ioctl(struct file *filep, unsigned int cmd=
+, unsigned long arg)
+>  	case SGX_IOC_ENCLAVE_INIT:
+>  		ret =3D sgx_ioc_enclave_init(encl, (void __user *)arg);
+>  		break;
+> +	case SGX_IOC_ENCLAVE_SET_ATTRIBUTE:
+> +		ret =3D sgx_ioc_enclave_set_attribute(encl, (void __user *)arg);
+> +		break;
+>  	default:
+>  		ret =3D -ENOIOCTLCMD;
+>  		break;
