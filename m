@@ -2,139 +2,136 @@ Return-Path: <SRS0=zBV4=7T=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EE5CC433DF
-	for <linux-security-module@archiver.kernel.org>; Sat,  6 Jun 2020 15:52:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C8DBC433E0
+	for <linux-security-module@archiver.kernel.org>; Sat,  6 Jun 2020 20:23:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DD02D2073E
-	for <linux-security-module@archiver.kernel.org>; Sat,  6 Jun 2020 15:52:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 368A6207BC
+	for <linux-security-module@archiver.kernel.org>; Sat,  6 Jun 2020 20:23:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BIkLwIVP"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Ujw/CXcG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728656AbgFFPwa (ORCPT
+        id S1728466AbgFFUXs (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 6 Jun 2020 11:52:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33154 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727100AbgFFPw3 (ORCPT
+        Sat, 6 Jun 2020 16:23:48 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:48227 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728350AbgFFUXs (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 6 Jun 2020 11:52:29 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E378C03E96A;
-        Sat,  6 Jun 2020 08:52:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=9Knot+Lv+Z0XYiseAFBiA62c5+NhkBbKX/gLTI08qrs=; b=BIkLwIVPjTQ4Z6dLUSwN9BNF2d
-        jF6fhDw7QKtkUY0qVUNSVq9AuL8hjm+dtqFVaVANc6f6TM0lnrILTlyCzv0Zn5AN1XdlGt9cdBwHi
-        zD4X30KKbBKG0kzETQ6drLgJ3Xm5yfjabYFhl168BExjPSZP8wck4zfkTJ/uEj0mPlieD9rGrnMG6
-        oHS20QVWiOO4dubZEecydxU8HQa8CKlZjNY5CeOYhnFTWlNFS18HJHQ5PEw6bzRyrREoU/dHDX3lo
-        5nr4gMAxgOOu45lOty30n8+bLPrmT9YJXIxJAyFMEXFkjOBDaMyZrsiHZP9xz4cTJdqHnZJglVMc5
-        Y9vIXEPQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jhb7I-0001SV-JG; Sat, 06 Jun 2020 15:52:16 +0000
-Date:   Sat, 6 Jun 2020 08:52:16 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Scott Branden <scott.branden@broadcom.com>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        Wolfram Sang <wsa@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Brown <david.brown@linaro.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>, bjorn.andersson@linaro.org,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Olof Johansson <olof@lixom.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        Takashi Iwai <tiwai@suse.de>, linux-kselftest@vger.kernel.org,
-        Andy Gross <agross@kernel.org>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH v7 1/8] fs: introduce kernel_pread_file* support
-Message-ID: <20200606155216.GP19604@bombadil.infradead.org>
-References: <20200606050458.17281-1-scott.branden@broadcom.com>
- <20200606050458.17281-2-scott.branden@broadcom.com>
+        Sat, 6 Jun 2020 16:23:48 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 49fWDs6pRWz9sSJ;
+        Sun,  7 Jun 2020 06:23:41 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1591475024;
+        bh=/RVXKQNc7s6J+iFWqBZTikTiD7cWlh4s8IU4wXky4ks=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Ujw/CXcGXRg7uulVD2dSq3PpkU8cRyGAtG3eKdsL6KSyvPUbyaSxkvEIgKVP0/8Tf
+         BGKGKeE00SmCXeiSGCT38iR5Gaozf01/5Rr+/NT5irGCtCfeKT12r/1xuAyBo9i5at
+         xzye2cVN9vy8D/cfDdH80R72QcKN9DuJRIjbZDDFaYgbQHL8y7p/6Ysw8S305az0ut
+         vjDj+bNMtnIZnPyxG7P/emG1G7WdM/ophvkezDHMCwRRcwp++gsrANbYCZo7po2yZZ
+         SJ6nCaauhJNpV6nLEZj71g6h9EShmU6H4qNnF5ToMOtY01oBlKwnxRa/+xtIveaeCf
+         +VWZIlxswJaUQ==
+Date:   Sun, 7 Jun 2020 06:23:40 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Amol Grover <frextrite@gmail.com>
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        linux-kernel@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>,
+        "Paul E . McKenney" <paulmck@kernel.org>,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH RESEND] device_cgroup: Fix RCU list debugging warning
+Message-ID: <20200607062340.7be7e8d5@canb.auug.org.au>
+In-Reply-To: <20200406105950.GA2285@workstation-kernel-dev>
+References: <20200406105950.GA2285@workstation-kernel-dev>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200606050458.17281-2-scott.branden@broadcom.com>
+Content-Type: multipart/signed; boundary="Sig_/=4E5uuXbBLm=HNgyYa1bbKp";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jun 05, 2020 at 10:04:51PM -0700, Scott Branden wrote:
-> -int kernel_read_file(struct file *file, void **buf, loff_t *size,
-> -		     loff_t max_size, enum kernel_read_file_id id)
-> -{
-> -	loff_t i_size, pos;
-> +int kernel_pread_file(struct file *file, void **buf, loff_t *size,
-> +		      loff_t pos, loff_t max_size,
-> +		      enum kernel_pread_opt opt,
-> +		      enum kernel_read_file_id id)
-> +{
-> +	loff_t alloc_size;
-> +	loff_t buf_pos;
-> +	loff_t read_end;
-> +	loff_t i_size;
->  	ssize_t bytes = 0;
->  	int ret;
->  
+--Sig_/=4E5uuXbBLm=HNgyYa1bbKp
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Look, it's not your fault, but this is a great example of how we end
-up with atrocious interfaces.  Someone comes along and implements a
-simple DWIM interface that solves their problem.  Then somebody else
-adds a slight variant that solves their problem, and so on and so on,
-and we end up with this bonkers API where the arguments literally change
-meaning depending on other arguments.
+Hi all,
 
-> @@ -950,21 +955,31 @@ int kernel_read_file(struct file *file, void **buf, loff_t *size,
->  		ret = -EINVAL;
->  		goto out;
->  	}
-> -	if (i_size > SIZE_MAX || (max_size > 0 && i_size > max_size)) {
-> +
-> +	/* Default read to end of file */
-> +	read_end = i_size;
-> +
-> +	/* Allow reading partial portion of file */
-> +	if ((opt == KERNEL_PREAD_PART) &&
-> +	    (i_size > (pos + max_size)))
-> +		read_end = pos + max_size;
-> +
-> +	alloc_size = read_end - pos;
-> +	if (i_size > SIZE_MAX || (max_size > 0 && alloc_size > max_size)) {
->  		ret = -EFBIG;
->  		goto out;
+On Mon, 6 Apr 2020 16:29:50 +0530 Amol Grover <frextrite@gmail.com> wrote:
+>
+> exceptions may be traversed using list_for_each_entry_rcu()
+> outside of an RCU read side critical section BUT under the
+> protection of decgroup_mutex. Hence add the corresponding
+> lockdep expression to fix the following false-positive
+> warning:
+>=20
+> [    2.304417] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> [    2.304418] WARNING: suspicious RCU usage
+> [    2.304420] 5.5.4-stable #17 Tainted: G            E
+> [    2.304422] -----------------------------
+> [    2.304424] security/device_cgroup.c:355 RCU-list traversed in non-rea=
+der section!!
+>=20
+> Signed-off-by: Amol Grover <frextrite@gmail.com>
+> ---
+>  security/device_cgroup.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/security/device_cgroup.c b/security/device_cgroup.c
+> index 7d0f8f7431ff..b7da9e0970d9 100644
+> --- a/security/device_cgroup.c
+> +++ b/security/device_cgroup.c
+> @@ -352,7 +352,8 @@ static bool match_exception_partial(struct list_head =
+*exceptions, short type,
+>  {
+>  	struct dev_exception_item *ex;
+> =20
+> -	list_for_each_entry_rcu(ex, exceptions, list) {
+> +	list_for_each_entry_rcu(ex, exceptions, list,
+> +				lockdep_is_held(&devcgroup_mutex)) {
+>  		if ((type & DEVCG_DEV_BLOCK) && !(ex->type & DEVCG_DEV_BLOCK))
+>  			continue;
+>  		if ((type & DEVCG_DEV_CHAR) && !(ex->type & DEVCG_DEV_CHAR))
+> --=20
+> 2.24.1
+>=20
 
-... like that.
+I have been carrying the above patch in linux-next for some time now.
+I have been carrying it because it fixes problems for syzbot (see the
+third warning in
+https://lore.kernel.org/linux-next/CACT4Y+YnjK+kq0pfb5fe-q1bqe2T1jq_mvKHf--=
+Z80Z3wkyK1Q@mail.gmail.com/).
+Is there some reason it has not been applied to some tree?
 
-I think what we actually want is:
+--=20
+Cheers,
+Stephen Rothwell
 
-ssize_t vmap_file_range(struct file *, loff_t start, loff_t end, void **bufp);
-void vunmap_file_range(struct file *, void *buf);
+--Sig_/=4E5uuXbBLm=HNgyYa1bbKp
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-If end > i_size, limit the allocation to i_size.  Returns the number
-of bytes allocated, or a negative errno.  Writes the pointer allocated
-to *bufp.  Internally, it should use the page cache to read in the pages
-(taking appropriate reference counts).  Then it maps them using vmap()
-instead of copying them to a private vmalloc() array.
+-----BEGIN PGP SIGNATURE-----
 
-kernel_read_file() can be converted to use this API.  The users will
-need to be changed to call kernel_read_end(struct file *file, void *buf)
-instead of vfree() so it can call allow_write_access() for them.
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl7b+0wACgkQAVBC80lX
+0GzuJwf/WmJQJu3VennV8Qzz2T7XZJ1yVPI3ujaTP0dwRTnQsl+XlRyVOJlTXksK
+b6B8R+G28atgvCEa5Is7aZqUkcqj4VXuaHAWwVGA5WjlJ6BMTm1Bm3gDXBXexQKP
+kiTO0XbbGBK5mOqeS33+ZWOURxm5znDNRdjoHIa0h1OvH/bRxCOneUxi9EuKWf/Z
+2r1jpYHP4oGhwfBxJBDK8QH5tfTif8nI3yX/gSyrqlQIvNr9dvhTWx9F3jzczRvB
+lf/f1vwU5cKZz9Wt+8q1Xv1EJjDKZpdQ1wPeKZwFtx7uGpCXWGYCxLqJV6nPCQGq
+/W4O6dBrKbTNd4lu2zdIJeGCo25iBg==
+=dIss
+-----END PGP SIGNATURE-----
 
-vmap_file_range() has a lot of potential uses.  I'm surprised we don't
-have it already, to be honest.
+--Sig_/=4E5uuXbBLm=HNgyYa1bbKp--
