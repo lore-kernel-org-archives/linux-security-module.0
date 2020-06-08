@@ -7,53 +7,52 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 260A2C433E0
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Jun 2020 00:37:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D158C433DF
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Jun 2020 01:06:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ED92C206C3
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Jun 2020 00:37:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E062E2076C
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Jun 2020 01:06:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1591663026;
-	bh=iBUom3UexuJtoL9Ox33IMnAZayXMsAmGh1AfuUlcV8s=;
+	s=default; t=1591664766;
+	bh=xww3ha3RV/sRMp/8nxc5RDnUU7jjFcQdrVOpE9QJWXg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=tJVreddgRV9NhfL9PtqzATkwocDSzzh3eNht6k+Ji8MjZrz5PiWIp/xnPOjFufB3i
-	 A0WlHD+NNLCEfjSLki7WG7TSMeeh4w8FA/BpExDjNUvmdio2JTVySAflz5gSEC6DnT
-	 b7Tu3SyWJjgiU8it6KzJCAp/IMpiKdbjUQuKlqww=
+	b=FjmA75xENYWlJz9hsQnB7+XgQZHkOpqo3mf0mext7JVtIpta5jqz65Zy8iI3F6A4L
+	 iukNEcgKtMptDn2j3AJk/4KLPP+0EmQo6377rkkKojTViFX+XqetQcY2bT4TW6W8eK
+	 FeKQB3pwcbR2PPS9uFmiMvoDlrllSQInpuZ7YWGY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729844AbgFIAhA (ORCPT
+        id S1727825AbgFHXHN (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 8 Jun 2020 20:37:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33812 "EHLO mail.kernel.org"
+        Mon, 8 Jun 2020 19:07:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50864 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729633AbgFHXNw (ORCPT
+        id S1727809AbgFHXHI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 8 Jun 2020 19:13:52 -0400
+        Mon, 8 Jun 2020 19:07:08 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 934D6212CC;
-        Mon,  8 Jun 2020 23:13:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E230E20820;
+        Mon,  8 Jun 2020 23:07:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1591658032;
-        bh=iBUom3UexuJtoL9Ox33IMnAZayXMsAmGh1AfuUlcV8s=;
+        s=default; t=1591657627;
+        bh=xww3ha3RV/sRMp/8nxc5RDnUU7jjFcQdrVOpE9QJWXg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=d0eL5QqP8ei447D5afqv2l8GxkeH0hRjTbXsuTBo8hNRWhZOQ/0TMNh+8UEqOXG/j
-         HAbV9zm/3zV08DTc+C0eAKCu3kPi8SDoGSySu2aa5lZSXjIp2aTTfiI34Kv0jUZrLb
-         GHZNcoh36qrUTd6wS0qdbPS9Fd9fXyXxUv3OO6sg=
+        b=EvyKP7PP36r1tHKLVdgkpW/otyMeNLX0oplZZ6vPn4TqeM11xoB7AgVjJr2RuSKET
+         P7eanSnH6ZyD/cP2tVWJ2TzcdoKnV0H+ucJ5Atqxczoh+qMnKZ4WxQEZeCUpXgB22t
+         pHrvBQMPqyMemO7lGtD67gT0W1diaiS77g8Opft4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Roberto Sassu <roberto.sassu@huawei.com>,
-        Krzysztof Struczynski <krzysztof.struczynski@huawei.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
+Cc:     Jeremy Cline <jcline@redhat.com>,
+        "Frank Ch . Eigler" <fche@redhat.com>,
+        James Morris <jmorris@namei.org>,
         Sasha Levin <sashal@kernel.org>,
-        linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.6 083/606] evm: Check also if *tfm is an error pointer in init_desc()
-Date:   Mon,  8 Jun 2020 19:03:28 -0400
-Message-Id: <20200608231211.3363633-83-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.7 047/274] lockdown: Allow unprivileged users to see lockdown status
+Date:   Mon,  8 Jun 2020 19:02:20 -0400
+Message-Id: <20200608230607.3361041-47-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200608231211.3363633-1-sashal@kernel.org>
-References: <20200608231211.3363633-1-sashal@kernel.org>
+In-Reply-To: <20200608230607.3361041-1-sashal@kernel.org>
+References: <20200608230607.3361041-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -62,47 +61,38 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Roberto Sassu <roberto.sassu@huawei.com>
+From: Jeremy Cline <jcline@redhat.com>
 
-[ Upstream commit 53de3b080d5eae31d0de219617155dcc34e7d698 ]
+[ Upstream commit 60cf7c5ed5f7087c4de87a7676b8c82d96fd166c ]
 
-This patch avoids a kernel panic due to accessing an error pointer set by
-crypto_alloc_shash(). It occurs especially when there are many files that
-require an unsupported algorithm, as it would increase the likelihood of
-the following race condition:
+A number of userspace tools, such as systemtap, need a way to see the
+current lockdown state so they can gracefully deal with the kernel being
+locked down. The state is already exposed in
+/sys/kernel/security/lockdown, but is only readable by root. Adjust the
+permissions so unprivileged users can read the state.
 
-Task A: *tfm = crypto_alloc_shash() <= error pointer
-Task B: if (*tfm == NULL) <= *tfm is not NULL, use it
-Task B: rc = crypto_shash_init(desc) <= panic
-Task A: *tfm = NULL
-
-This patch uses the IS_ERR_OR_NULL macro to determine whether or not a new
-crypto context must be created.
-
-Cc: stable@vger.kernel.org
-Fixes: d46eb3699502b ("evm: crypto hash replaced by shash")
-Co-developed-by: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
-Signed-off-by: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+Fixes: 000d388ed3bb ("security: Add a static lockdown policy LSM")
+Cc: Frank Ch. Eigler <fche@redhat.com>
+Signed-off-by: Jeremy Cline <jcline@redhat.com>
+Signed-off-by: James Morris <jmorris@namei.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- security/integrity/evm/evm_crypto.c | 2 +-
+ security/lockdown/lockdown.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
-index d485f6fc908e..302adeb2d37b 100644
---- a/security/integrity/evm/evm_crypto.c
-+++ b/security/integrity/evm/evm_crypto.c
-@@ -93,7 +93,7 @@ static struct shash_desc *init_desc(char type, uint8_t hash_algo)
- 		algo = hash_algo_name[hash_algo];
- 	}
+diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
+index 5a952617a0eb..87cbdc64d272 100644
+--- a/security/lockdown/lockdown.c
++++ b/security/lockdown/lockdown.c
+@@ -150,7 +150,7 @@ static int __init lockdown_secfs_init(void)
+ {
+ 	struct dentry *dentry;
  
--	if (*tfm == NULL) {
-+	if (IS_ERR_OR_NULL(*tfm)) {
- 		mutex_lock(&mutex);
- 		if (*tfm)
- 			goto out;
+-	dentry = securityfs_create_file("lockdown", 0600, NULL, NULL,
++	dentry = securityfs_create_file("lockdown", 0644, NULL, NULL,
+ 					&lockdown_ops);
+ 	return PTR_ERR_OR_ZERO(dentry);
+ }
 -- 
 2.25.1
 
