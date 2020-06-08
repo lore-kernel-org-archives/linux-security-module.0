@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33E90C433DF
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Jun 2020 00:36:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24925C433E2
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Jun 2020 00:37:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 05DF620835
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Jun 2020 00:36:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 03276206C3
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Jun 2020 00:37:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1591663018;
-	bh=TjVIzJCh0CEfsQLND/3pcn51jPC8iMMpkKt8EVaLwEw=;
+	s=default; t=1591663021;
+	bh=PEqJ5eyUtSxJhYnhnCrIAr5eo6UL8Kd/34b2Bw2Fusg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wna9nOHMGyxhgM3UOIsMZCGNwRghA6GrjlrrO6lIX4RJOelxE7OWzCDhvPenD7H1g
-	 o3kAzK7Ehjontc3b5aR0d7qv9XyAgtABH9nCq8zsqYAgAhyKLbzCJbhs9cmoAmS6Gd
-	 RCirqZ3FHxxsuUqOAWnpjlQ2pGuj+GCB/TiEq+TI=
+	b=bq3t+v6g+J/nfMKyKBj7h80shm4K8LE4eheAvn5jUucE2nhskHSnDRo+udRCGcV0K
+	 uPjVCp3cHKq0X/1vVn8Ov0Gbydl15HvsmPkBU+MANs9s2ep25j2kQ2YMYT8L4Xeu8T
+	 idAEcTUrkCij1qb6KS/rCpCwlky9a9hsmFOmxWyo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728750AbgFHXN5 (ORCPT
+        id S1729629AbgFHXNw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 8 Jun 2020 19:13:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33862 "EHLO mail.kernel.org"
+        Mon, 8 Jun 2020 19:13:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33780 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728025AbgFHXNy (ORCPT
+        id S1729615AbgFHXNv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 8 Jun 2020 19:13:54 -0400
+        Mon, 8 Jun 2020 19:13:51 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D205F20897;
-        Mon,  8 Jun 2020 23:13:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5673821527;
+        Mon,  8 Jun 2020 23:13:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1591658033;
-        bh=TjVIzJCh0CEfsQLND/3pcn51jPC8iMMpkKt8EVaLwEw=;
+        s=default; t=1591658031;
+        bh=PEqJ5eyUtSxJhYnhnCrIAr5eo6UL8Kd/34b2Bw2Fusg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=g173U1sG/Klnqgg20gUX7d5aGQt7/lbKnm6Lk4cpGPxw1aAxTmA8f4rCFUIg53Eh/
-         VhjtG8XT3q+FabBd4S/HqE/xNUPweUppEb5J1TFwn8qb0PivxS7/PLUPxrJocWdlem
-         19xfl4a4JXtUCoV6dbS4adbTeKxgXh2JC7Veng/s=
+        b=TOPdiM5vRSJossSVMACGCX9VTNDMH+7/XUPzb539+Ba+IVj2bGzQnwtiC9cTU8xWS
+         gUC5AJ2Ho4smMKaw5XFoYcID9OzSups7AdBLKv+9nNbH/QHmLwB/xEyH1mS1RYE7Xm
+         Qg0s6Y5MU1kXS06qF0/4WrGRjJCxwkMQ21kBWPFc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Roberto Sassu <roberto.sassu@huawei.com>,
-        Krzysztof Struczynski <krzysztof.struczynski@huawei.com>,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>,
         Mimi Zohar <zohar@linux.ibm.com>,
         Sasha Levin <sashal@kernel.org>,
         linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.6 084/606] ima: Fix return value of ima_write_policy()
-Date:   Mon,  8 Jun 2020 19:03:29 -0400
-Message-Id: <20200608231211.3363633-84-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.6 082/606] ima: Set file->f_mode instead of file->f_flags in ima_calc_file_hash()
+Date:   Mon,  8 Jun 2020 19:03:27 -0400
+Message-Id: <20200608231211.3363633-82-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200608231211.3363633-1-sashal@kernel.org>
 References: <20200608231211.3363633-1-sashal@kernel.org>
@@ -64,39 +64,68 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: Roberto Sassu <roberto.sassu@huawei.com>
 
-[ Upstream commit 2e3a34e9f409ebe83d1af7cd2f49fca7af97dfac ]
+[ Upstream commit 0014cc04e8ec077dc482f00c87dfd949cfe2b98f ]
 
-This patch fixes the return value of ima_write_policy() when a new policy
-is directly passed to IMA and the current policy requires appraisal of the
-file containing the policy. Currently, if appraisal is not in ENFORCE mode,
-ima_write_policy() returns 0 and leads user space applications to an
-endless loop. Fix this issue by denying the operation regardless of the
-appraisal mode.
+Commit a408e4a86b36 ("ima: open a new file instance if no read
+permissions") tries to create a new file descriptor to calculate a file
+digest if the file has not been opened with O_RDONLY flag. However, if a
+new file descriptor cannot be obtained, it sets the FMODE_READ flag to
+file->f_flags instead of file->f_mode.
 
-Cc: stable@vger.kernel.org # 4.10.x
-Fixes: 19f8a84713edc ("ima: measure and appraise the IMA policy itself")
+This patch fixes this issue by replacing f_flags with f_mode as it was
+before that commit.
+
+Cc: stable@vger.kernel.org # 4.20.x
+Fixes: a408e4a86b36 ("ima: open a new file instance if no read permissions")
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-Reviewed-by: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
+Reviewed-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
 Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- security/integrity/ima/ima_fs.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ security/integrity/ima/ima_crypto.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
-index 2000e8df0301..68571c40d61f 100644
---- a/security/integrity/ima/ima_fs.c
-+++ b/security/integrity/ima/ima_fs.c
-@@ -340,8 +340,7 @@ static ssize_t ima_write_policy(struct file *file, const char __user *buf,
- 		integrity_audit_msg(AUDIT_INTEGRITY_STATUS, NULL, NULL,
- 				    "policy_update", "signed policy required",
- 				    1, 0);
--		if (ima_appraise & IMA_APPRAISE_ENFORCE)
--			result = -EACCES;
-+		result = -EACCES;
- 	} else {
- 		result = ima_parse_add_rule(data);
- 	}
+diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
+index 7967a6904851..e8fa23cd4a6c 100644
+--- a/security/integrity/ima/ima_crypto.c
++++ b/security/integrity/ima/ima_crypto.c
+@@ -413,7 +413,7 @@ int ima_calc_file_hash(struct file *file, struct ima_digest_data *hash)
+ 	loff_t i_size;
+ 	int rc;
+ 	struct file *f = file;
+-	bool new_file_instance = false, modified_flags = false;
++	bool new_file_instance = false, modified_mode = false;
+ 
+ 	/*
+ 	 * For consistency, fail file's opened with the O_DIRECT flag on
+@@ -433,13 +433,13 @@ int ima_calc_file_hash(struct file *file, struct ima_digest_data *hash)
+ 		f = dentry_open(&file->f_path, flags, file->f_cred);
+ 		if (IS_ERR(f)) {
+ 			/*
+-			 * Cannot open the file again, lets modify f_flags
++			 * Cannot open the file again, lets modify f_mode
+ 			 * of original and continue
+ 			 */
+ 			pr_info_ratelimited("Unable to reopen file for reading.\n");
+ 			f = file;
+-			f->f_flags |= FMODE_READ;
+-			modified_flags = true;
++			f->f_mode |= FMODE_READ;
++			modified_mode = true;
+ 		} else {
+ 			new_file_instance = true;
+ 		}
+@@ -457,8 +457,8 @@ int ima_calc_file_hash(struct file *file, struct ima_digest_data *hash)
+ out:
+ 	if (new_file_instance)
+ 		fput(f);
+-	else if (modified_flags)
+-		f->f_flags &= ~FMODE_READ;
++	else if (modified_mode)
++		f->f_mode &= ~FMODE_READ;
+ 	return rc;
+ }
+ 
 -- 
 2.25.1
 
