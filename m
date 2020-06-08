@@ -2,104 +2,117 @@ Return-Path: <SRS0=mjdh=7V=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CA6FC433E0
-	for <linux-security-module@archiver.kernel.org>; Mon,  8 Jun 2020 04:23:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 573D8C433DF
+	for <linux-security-module@archiver.kernel.org>; Mon,  8 Jun 2020 12:06:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DD8B520760
-	for <linux-security-module@archiver.kernel.org>; Mon,  8 Jun 2020 04:23:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3CEE5206C3
+	for <linux-security-module@archiver.kernel.org>; Mon,  8 Jun 2020 12:06:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726869AbgFHEXX (ORCPT
+        id S1729665AbgFHMGW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 8 Jun 2020 00:23:23 -0400
-Received: from mail.hallyn.com ([178.63.66.53]:35574 "EHLO mail.hallyn.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726436AbgFHEXX (ORCPT
+        Mon, 8 Jun 2020 08:06:22 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:8828 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729620AbgFHMGW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 8 Jun 2020 00:23:23 -0400
-X-Greylist: delayed 347 seconds by postgrey-1.27 at vger.kernel.org; Mon, 08 Jun 2020 00:23:22 EDT
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-        id 56612E4C; Sun,  7 Jun 2020 23:17:34 -0500 (CDT)
-Date:   Sun, 7 Jun 2020 23:17:34 -0500
-From:   "Serge E. Hallyn" <serge@hallyn.com>
-To:     "Paul E. McKenney" <paulmck@kernel.org>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Amol Grover <frextrite@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-kernel@vger.kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>,
+        Mon, 8 Jun 2020 08:06:22 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 058C4Q96145904;
+        Mon, 8 Jun 2020 08:05:21 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 31hmpwrj2f-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 08 Jun 2020 08:05:21 -0400
+Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 058C5DwW150022;
+        Mon, 8 Jun 2020 08:05:17 -0400
+Received: from ppma02fra.de.ibm.com (47.49.7a9f.ip4.static.sl-reverse.com [159.122.73.71])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 31hmpwrgxs-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 08 Jun 2020 08:05:16 -0400
+Received: from pps.filterd (ppma02fra.de.ibm.com [127.0.0.1])
+        by ppma02fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 058C162I023522;
+        Mon, 8 Jun 2020 12:02:31 GMT
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
+        by ppma02fra.de.ibm.com with ESMTP id 31g2s81kfd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 08 Jun 2020 12:02:31 +0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 058C2SIj47775812
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 8 Jun 2020 12:02:28 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C857EA405C;
+        Mon,  8 Jun 2020 12:02:28 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4C0B5A4068;
+        Mon,  8 Jun 2020 12:02:25 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.178.150])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon,  8 Jun 2020 12:02:25 +0000 (GMT)
+Message-ID: <1591617744.4638.42.camel@linux.ibm.com>
+Subject: Re: [v1 PATCH 1/2] Refactoring carrying over IMA measuremnet logs
+ over Kexec.
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Prakhar Srivastava <prsriva@linux.microsoft.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, devicetree@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org
-Subject: Re: [PATCH RESEND] device_cgroup: Fix RCU list debugging warning
-Message-ID: <20200608041734.GA10911@mail.hallyn.com>
-References: <20200406105950.GA2285@workstation-kernel-dev>
- <20200607062340.7be7e8d5@canb.auug.org.au>
- <20200607190840.GG4455@paulmck-ThinkPad-P72>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200607190840.GG4455@paulmck-ThinkPad-P72>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Cc:     catalin.marinas@arm.com, will@kernel.org, mpe@ellerman.id.au,
+        benh@kernel.crashing.org, paulus@samba.org, robh+dt@kernel.org,
+        frowand.list@gmail.com, dmitry.kasatkin@gmail.com,
+        jmorris@namei.org, serge@hallyn.com, pasha.tatashin@soleen.com,
+        allison@lohutok.net, kstewart@linuxfoundation.org,
+        takahiro.akashi@linaro.org, tglx@linutronix.de,
+        vincenzo.frascino@arm.com, mark.rutland@arm.com,
+        masahiroy@kernel.org, james.morse@arm.com, bhsharma@redhat.com,
+        mbrugger@suse.com, hsinyi@chromium.org, tao.li@vivo.com,
+        christophe.leroy@c-s.fr, gregkh@linuxfoundation.org,
+        nramas@linux.microsoft.com, tusharsu@linux.microsoft.com,
+        balajib@linux.microsoft.com
+Date:   Mon, 08 Jun 2020 08:02:24 -0400
+In-Reply-To: <20200607233323.22375-2-prsriva@linux.microsoft.com>
+References: <20200607233323.22375-1-prsriva@linux.microsoft.com>
+         <20200607233323.22375-2-prsriva@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.687
+ definitions=2020-06-08_11:2020-06-08,2020-06-08 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0
+ cotscore=-2147483648 spamscore=0 bulkscore=0 lowpriorityscore=0
+ impostorscore=0 suspectscore=0 malwarescore=0 adultscore=0 mlxlogscore=945
+ priorityscore=1501 phishscore=0 clxscore=1011 classifier=spam adjust=0
+ reason=mlx scancount=1 engine=8.12.0-2004280000
+ definitions=main-2006080093
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sun, Jun 07, 2020 at 12:08:40PM -0700, Paul E. McKenney wrote:
-> On Sun, Jun 07, 2020 at 06:23:40AM +1000, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > On Mon, 6 Apr 2020 16:29:50 +0530 Amol Grover <frextrite@gmail.com> wrote:
-> > >
-> > > exceptions may be traversed using list_for_each_entry_rcu()
-> > > outside of an RCU read side critical section BUT under the
-> > > protection of decgroup_mutex. Hence add the corresponding
-> > > lockdep expression to fix the following false-positive
-> > > warning:
-> > > 
-> > > [    2.304417] =============================
-> > > [    2.304418] WARNING: suspicious RCU usage
-> > > [    2.304420] 5.5.4-stable #17 Tainted: G            E
-> > > [    2.304422] -----------------------------
-> > > [    2.304424] security/device_cgroup.c:355 RCU-list traversed in non-reader section!!
-> > > 
-> > > Signed-off-by: Amol Grover <frextrite@gmail.com>
-> > > ---
-> > >  security/device_cgroup.c | 3 ++-
-> > >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/security/device_cgroup.c b/security/device_cgroup.c
-> > > index 7d0f8f7431ff..b7da9e0970d9 100644
-> > > --- a/security/device_cgroup.c
-> > > +++ b/security/device_cgroup.c
-> > > @@ -352,7 +352,8 @@ static bool match_exception_partial(struct list_head *exceptions, short type,
-> > >  {
-> > >  	struct dev_exception_item *ex;
-> > >  
-> > > -	list_for_each_entry_rcu(ex, exceptions, list) {
-> > > +	list_for_each_entry_rcu(ex, exceptions, list,
-> > > +				lockdep_is_held(&devcgroup_mutex)) {
-> > >  		if ((type & DEVCG_DEV_BLOCK) && !(ex->type & DEVCG_DEV_BLOCK))
-> > >  			continue;
-> > >  		if ((type & DEVCG_DEV_CHAR) && !(ex->type & DEVCG_DEV_CHAR))
-> > > -- 
-> > > 2.24.1
-> > > 
-> > 
-> > I have been carrying the above patch in linux-next for some time now.
-> > I have been carrying it because it fixes problems for syzbot (see the
-> > third warning in
-> > https://lore.kernel.org/linux-next/CACT4Y+YnjK+kq0pfb5fe-q1bqe2T1jq_mvKHf--Z80Z3wkyK1Q@mail.gmail.com/).
-> > Is there some reason it has not been applied to some tree?
-> 
-> The RCU changes on which this patch depends have long since made it to
-> mainline, so it can go up any tree.  I can take it if no one else will,
-> but it might be better going in via the security tree.
-> 
-> 							Thanx, Paul
+Hi Prakhar,
 
-James, do you mind pulling it in?
+On Sun, 2020-06-07 at 16:33 -0700, Prakhar Srivastava wrote:
+> This patch moves the non-architecture specific code out of powerpc and
+>  adds to security/ima. 
+> Update the arm64 and powerpc kexec file load paths to carry the IMA measurement
+> logs.
+
+From your patch description, this patch should be broken up.  Moving
+the non-architecture specific code out of powerpc should be one patch.
+ Additional support should be in another patch.  After each patch, the
+code should work properly.
+
+Before posting patches, please review them, making sure
+unnecessary/unwanted changes haven't crept in - commenting out code,
+moving code without removing the original code.
+
+thanks,
+
+Mimi
