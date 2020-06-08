@@ -2,203 +2,224 @@ Return-Path: <SRS0=mjdh=7V=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97CD7C433DF
-	for <linux-security-module@archiver.kernel.org>; Mon,  8 Jun 2020 21:56:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC159C433DF
+	for <linux-security-module@archiver.kernel.org>; Mon,  8 Jun 2020 22:29:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7CAC52076A
-	for <linux-security-module@archiver.kernel.org>; Mon,  8 Jun 2020 21:56:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 88C7E2076C
+	for <linux-security-module@archiver.kernel.org>; Mon,  8 Jun 2020 22:29:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="YsGDe0Js"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726725AbgFHV4T (ORCPT
+        id S1726765AbgFHW3p (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 8 Jun 2020 17:56:19 -0400
-Received: from mail-io1-f69.google.com ([209.85.166.69]:38795 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726734AbgFHV4R (ORCPT
+        Mon, 8 Jun 2020 18:29:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60132 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726782AbgFHW3k (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 8 Jun 2020 17:56:17 -0400
-Received: by mail-io1-f69.google.com with SMTP id l19so8696251iol.5
-        for <linux-security-module@vger.kernel.org>; Mon, 08 Jun 2020 14:56:15 -0700 (PDT)
+        Mon, 8 Jun 2020 18:29:40 -0400
+Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EA17C08C5C7
+        for <linux-security-module@vger.kernel.org>; Mon,  8 Jun 2020 15:29:39 -0700 (PDT)
+Received: by mail-pl1-x644.google.com with SMTP id bh7so7207297plb.11
+        for <linux-security-module@vger.kernel.org>; Mon, 08 Jun 2020 15:29:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=Ivfzr79vmJM2ezUGqOHZFSzxnQToj12hwiva2AjxDYk=;
+        b=YsGDe0JsHjrhCdZfhLSt+zXND+h5/vcEmVjSaGonV8inAFYY2m6YDRobjI4HRJ16kW
+         LxARXowlzaNoerKwRoTiT7xgryv5CVO4/qugFUasKxbLS7jXkvbjS9gkuSalDnBUvniq
+         ixYgSQ7tGlOF8FSM/PVKb4CbMYUkHpy8rntWk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=4+X3ij/RhUTjj3zuUzC0A3I3PVEn21icaXaQpb3cVcM=;
-        b=Lcq3PR7Tfm4YJwXjy3STQlra2RCqwLXhmMVoT8Tm51m9xqH6czWCR/39H0J/gfQqi6
-         VPG50/0RkulCNUKLWwV2qG0myCOlX64+4iX16NCgO1KgJBxki0T0GGdJENmaIpvDH8Tk
-         pehZZFWdUP+9wkV7EQfWONxHax19XH3uR+qh616wZPnf7xSH3N67NCWQjWTLXckxkhTT
-         uRkotk+9VFqUTAWf+ZGuvEEcoh5ZBGCfE/jWUN0P009scL0rzjlXOyLzVlr2T3VjYo3i
-         n9HD06bnN7aE+7v0eD+LRrx79/MY/Wv7Tgt2FhDWDZwH623EOt/ICwEDOxz15M7bb8GR
-         tR2Q==
-X-Gm-Message-State: AOAM532vClkmAQuJKfizRJ0GkRkPwBFxEfJ9okl0MEK1rMWgDjQDe42b
-        I2Cz1Ki9J/WodTyDEW2ztw9E5h8IFVkHHfmKU8jR9HQzcmgY
-X-Google-Smtp-Source: ABdhPJxD4W1SPvCytYKPN5LWWnCV/iFYYNo2JN4qamgKJJFL4q64n5rkWLGI3PmX9isbRfBRwNJfDFJCaOiiXbzuK7E0KB2dcuF/
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=Ivfzr79vmJM2ezUGqOHZFSzxnQToj12hwiva2AjxDYk=;
+        b=gmHePyzoKAcC9IZYdMvCZgu5C5XYHzT6mSzVspxcf85ERvVuTfNqRLav4g/uNlp5PT
+         R1A+1TGZ3h06HJ9obNaLV8mo9BwlkdBeKaoDtjya8sKnKOVy7FCcY+2B3trkxFiHx3nh
+         rxBUilx0AqzEiTFIIJBonpW+f0yH7ND+wKWEcTnp4nlSkeSOTZOTtlcFiaexJHyaENe2
+         4PWFzZxyVLv5mixI0bW7zGDirNjbJ4S18ORFJvQslt/1XhclBApAyMyQi81j62hWCc9F
+         Va/4xdGMEdGixK1EBwK7VFgSXEpHo8XIPr1Pyht9GZO4t73CjqpJrHVNFphDfM8Sjjce
+         s8mg==
+X-Gm-Message-State: AOAM533LOO8sXnGZIC8hiCLfxCmXbTO4v6jjbPe4+nL8W5enxDjecYGZ
+        WXdzwpowJtqYmczf6qduTNUDUg==
+X-Google-Smtp-Source: ABdhPJwKi2BxlrETO2znZc4aO5UDzp8kr5PBqQNwoJ+QnwSe4jXBo2gq9ETf+gqzDgFASjIn4X+7Ow==
+X-Received: by 2002:a17:902:7c8f:: with SMTP id y15mr739497pll.95.1591655378632;
+        Mon, 08 Jun 2020 15:29:38 -0700 (PDT)
+Received: from [10.136.13.65] ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id a14sm7807017pfc.133.2020.06.08.15.29.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Jun 2020 15:29:37 -0700 (PDT)
+Subject: Re: [PATCH v7 1/8] fs: introduce kernel_pread_file* support
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        Wolfram Sang <wsa@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Brown <david.brown@linaro.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>, bjorn.andersson@linaro.org,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        Olof Johansson <olof@lixom.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
+        Takashi Iwai <tiwai@suse.de>, linux-kselftest@vger.kernel.org,
+        Andy Gross <agross@kernel.org>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Christoph Hellwig <hch@infradead.org>
+References: <20200606050458.17281-1-scott.branden@broadcom.com>
+ <20200606050458.17281-2-scott.branden@broadcom.com>
+ <20200606155216.GP19604@bombadil.infradead.org>
+From:   Scott Branden <scott.branden@broadcom.com>
+Message-ID: <ea16c19e-bd60-82ec-4825-05e233667f9f@broadcom.com>
+Date:   Mon, 8 Jun 2020 15:29:22 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-X-Received: by 2002:a92:d9c1:: with SMTP id n1mr23113253ilq.148.1591653374784;
- Mon, 08 Jun 2020 14:56:14 -0700 (PDT)
-Date:   Mon, 08 Jun 2020 14:56:14 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000279c705a799ae31@google.com>
-Subject: KASAN: use-after-free Read in smk_write_relabel_self
-From:   syzbot <syzbot+e6416dabb497a650da40@syzkaller.appspotmail.com>
-To:     casey@schaufler-ca.com, jmorris@namei.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, serge@hallyn.com,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200606155216.GP19604@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello,
+Hi Matthew,
 
-syzbot found the following crash on:
+I am requesting the experts in the filesystem subsystem to come to a 
+consensus here.
+This is not my area of expertise at all but every time I have addressed 
+all of the
+outstanding concerns someone else comes along and raises another one.
 
-HEAD commit:    acf25aa6 Merge tag 'Smack-for-5.8' of git://github.com/csc..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11cd3ea6100000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3d66e6915128ae67
-dashboard link: https://syzkaller.appspot.com/bug?extid=e6416dabb497a650da40
-compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10654fd2100000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=107beea6100000
+Please see me comments below.
 
-Bisection is inconclusive: the bug happens on the oldest tested release.
+On 2020-06-06 8:52 a.m., Matthew Wilcox wrote:
+> On Fri, Jun 05, 2020 at 10:04:51PM -0700, Scott Branden wrote:
+>> -int kernel_read_file(struct file *file, void **buf, loff_t *size,
+>> -		     loff_t max_size, enum kernel_read_file_id id)
+>> -{
+>> -	loff_t i_size, pos;
+Please note that how checkpatch generated the diff here.  The code 
+modifications
+below are for a new function kernel_pread_file, they do not modify the 
+existing API
+kernel_read_file.  kernel_read_file requests the ENTIRE file is read.  
+So we need to be
+able to differentiate whether it is ok to read just a portion of the 
+file or not.
+>> +int kernel_pread_file(struct file *file, void **buf, loff_t *size,
+>> +		      loff_t pos, loff_t max_size,
+>> +		      enum kernel_pread_opt opt,
+>> +		      enum kernel_read_file_id id)
+So, to share common code a new kernel_pread_opt needed to be added in 
+order to specify whether
+it was ok to read a partial file or not, and provide an offset into the 
+file where to begin reading.
+The meaning of parameters doesn't change in the bonkers API. max_size 
+still means max size, etc.
+These options are needed so common code can be shared with 
+kernel_read_file api.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=129e16fe100000
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=119e16fe100000
-console output: https://syzkaller.appspot.com/x/log.txt?x=169e16fe100000
+The partial read option is then needed further in the depths of the 
+kernel read for IMA operation as IMA does
+things differently for optimization of whether it is OK to do a partial 
+read of the file or not.
+>> +{
+>> +	loff_t alloc_size;
+>> +	loff_t buf_pos;
+>> +	loff_t read_end;
+>> +	loff_t i_size;
+>>   	ssize_t bytes = 0;
+>>   	int ret;
+>>   
+> Look, it's not your fault, but this is a great example of how we end
+> up with atrocious interfaces.  Someone comes along and implements a
+> simple DWIM interface that solves their problem.  Then somebody else
+> adds a slight variant that solves their problem, and so on and so on,
+> and we end up with this bonkers API where the arguments literally change
+> meaning depending on other arguments.
+I don't see what arguments are changing meaning.  Please explain what is 
+changing meaning.
+The diff below is for kernel_pread_file, not kernel_read_file. Perhaps 
+that is where your confusion is.
+>
+>> @@ -950,21 +955,31 @@ int kernel_read_file(struct file *file, void **buf, loff_t *size,
+>>   		ret = -EINVAL;
+>>   		goto out;
+>>   	}
+>> -	if (i_size > SIZE_MAX || (max_size > 0 && i_size > max_size)) {
+>> +
+>> +	/* Default read to end of file */
+>> +	read_end = i_size;
+>> +
+>> +	/* Allow reading partial portion of file */
+>> +	if ((opt == KERNEL_PREAD_PART) &&
+>> +	    (i_size > (pos + max_size)))
+>> +		read_end = pos + max_size;
+>> +
+>> +	alloc_size = read_end - pos;
+>> +	if (i_size > SIZE_MAX || (max_size > 0 && alloc_size > max_size)) {
+>>   		ret = -EFBIG;
+>>   		goto out;
+> ... like that.
+like what?  We need to determine how much of the file to read based on 
+size of file, position in file, and max size we can read.
+>
+> I think what we actually want is:
+>
+> ssize_t vmap_file_range(struct file *, loff_t start, loff_t end, void **bufp);
+> void vunmap_file_range(struct file *, void *buf);
+>
+> If end > i_size, limit the allocation to i_size.  Returns the number
+> of bytes allocated, or a negative errno.  Writes the pointer allocated
+> to *bufp.  Internally, it should use the page cache to read in the pages
+> (taking appropriate reference counts).  Then it maps them using vmap()
+> instead of copying them to a private vmalloc() array.
+> kernel_read_file() can be converted to use this API.  The users will
+> need to be changed to call kernel_read_end(struct file *file, void *buf)
+> instead of vfree() so it can call allow_write_access() for them.
+>
+> vmap_file_range() has a lot of potential uses.  I'm surprised we don't
+> have it already, to be honest.
+Such a change sounds like it could be done in a later patch series.
+It's an incomplete solution.  It would work for some of the needed 
+operations but not others.
+For kernel_read_file, I don't see how in your new API it indicates if 
+the end of the file was reached or not.
+Also, please note that buffers may be preallocated  and shouldn't be 
+freed by the kernel in some cases and
+allocated and freed by the kernel in others.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+e6416dabb497a650da40@syzkaller.appspotmail.com
+Your proposed change doesn't exist and is not simple as it sounds or 
+meet all the needs of the existing kernel_read_file
+function, IMA, and new partial kernel_pread_file?
 
-==================================================================
-BUG: KASAN: use-after-free in smk_destroy_label_list security/smack/smackfs.c:1975 [inline]
-BUG: KASAN: use-after-free in smk_write_relabel_self+0x2f6/0x480 security/smack/smackfs.c:2748
-Read of size 8 at addr ffff88809184bec0 by task syz-executor032/6852
+Patch v7 does not break existing functions or rearchitect things in a 
+dramatic way.  They fit into existing code,
+will not break the existing codepaths (which some didn't even have a 
+test case until I added one), and can
+be improved upon as need with your vmap_file_range or others once those 
+have been developed, tested, and
+proven by someone.
 
-CPU: 0 PID: 6852 Comm: syz-executor032 Not tainted 5.7.0-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x1e9/0x30e lib/dump_stack.c:118
- print_address_description+0x66/0x5a0 mm/kasan/report.c:383
- __kasan_report mm/kasan/report.c:513 [inline]
- kasan_report+0x132/0x1d0 mm/kasan/report.c:530
- smk_destroy_label_list security/smack/smackfs.c:1975 [inline]
- smk_write_relabel_self+0x2f6/0x480 security/smack/smackfs.c:2748
- __vfs_write+0x9c/0x6e0 fs/read_write.c:495
- __kernel_write+0x120/0x350 fs/read_write.c:516
- write_pipe_buf+0xf9/0x150 fs/splice.c:799
- splice_from_pipe_feed fs/splice.c:502 [inline]
- __splice_from_pipe+0x351/0x8b0 fs/splice.c:626
- splice_from_pipe fs/splice.c:661 [inline]
- default_file_splice_write fs/splice.c:811 [inline]
- do_splice_from fs/splice.c:847 [inline]
- direct_splice_actor+0x1eb/0x2a0 fs/splice.c:1016
- splice_direct_to_actor+0x4a2/0xb60 fs/splice.c:971
- do_splice_direct+0x201/0x340 fs/splice.c:1059
- do_sendfile+0x809/0xfe0 fs/read_write.c:1521
- __do_sys_sendfile64 fs/read_write.c:1582 [inline]
- __se_sys_sendfile64 fs/read_write.c:1568 [inline]
- __x64_sys_sendfile64+0x164/0x1a0 fs/read_write.c:1568
- do_syscall_64+0xf3/0x1b0 arch/x86/entry/common.c:295
- entry_SYSCALL_64_after_hwframe+0x49/0xb3
-RIP: 0033:0x446a29
-Code: e8 bc b4 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 ab 08 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f662054fdb8 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
-RAX: ffffffffffffffda RBX: 00000000006dbc88 RCX: 0000000000446a29
-RDX: 0000000000000000 RSI: 0000000000000005 RDI: 0000000000000006
-RBP: 00000000006dbc80 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000100000064 R11: 0000000000000246 R12: 00000000006dbc8c
-R13: 00007fffa294e1ef R14: 00007f66205509c0 R15: 0000000000000001
-
-Allocated by task 6850:
- save_stack mm/kasan/common.c:48 [inline]
- set_track mm/kasan/common.c:56 [inline]
- __kasan_kmalloc+0x103/0x140 mm/kasan/common.c:494
- kmem_cache_alloc_trace+0x234/0x300 mm/slab.c:3551
- kmalloc include/linux/slab.h:555 [inline]
- kzalloc include/linux/slab.h:669 [inline]
- smk_parse_label_list+0xff/0x280 security/smack/smackfs.c:1955
- smk_write_relabel_self+0x190/0x480 security/smack/smackfs.c:2744
- __vfs_write+0x9c/0x6e0 fs/read_write.c:495
- __kernel_write+0x120/0x350 fs/read_write.c:516
- write_pipe_buf+0xf9/0x150 fs/splice.c:799
- splice_from_pipe_feed fs/splice.c:502 [inline]
- __splice_from_pipe+0x351/0x8b0 fs/splice.c:626
- splice_from_pipe fs/splice.c:661 [inline]
- default_file_splice_write fs/splice.c:811 [inline]
- do_splice_from fs/splice.c:847 [inline]
- direct_splice_actor+0x1eb/0x2a0 fs/splice.c:1016
- splice_direct_to_actor+0x4a2/0xb60 fs/splice.c:971
- do_splice_direct+0x201/0x340 fs/splice.c:1059
- do_sendfile+0x809/0xfe0 fs/read_write.c:1521
- __do_sys_sendfile64 fs/read_write.c:1582 [inline]
- __se_sys_sendfile64 fs/read_write.c:1568 [inline]
- __x64_sys_sendfile64+0x164/0x1a0 fs/read_write.c:1568
- do_syscall_64+0xf3/0x1b0 arch/x86/entry/common.c:295
- entry_SYSCALL_64_after_hwframe+0x49/0xb3
-
-Freed by task 6850:
- save_stack mm/kasan/common.c:48 [inline]
- set_track mm/kasan/common.c:56 [inline]
- kasan_set_free_info mm/kasan/common.c:316 [inline]
- __kasan_slab_free+0x114/0x170 mm/kasan/common.c:455
- __cache_free mm/slab.c:3426 [inline]
- kfree+0x10a/0x220 mm/slab.c:3757
- smk_destroy_label_list security/smack/smackfs.c:1976 [inline]
- smk_write_relabel_self+0x302/0x480 security/smack/smackfs.c:2748
- __vfs_write+0x9c/0x6e0 fs/read_write.c:495
- __kernel_write+0x120/0x350 fs/read_write.c:516
- write_pipe_buf+0xf9/0x150 fs/splice.c:799
- splice_from_pipe_feed fs/splice.c:502 [inline]
- __splice_from_pipe+0x351/0x8b0 fs/splice.c:626
- splice_from_pipe fs/splice.c:661 [inline]
- default_file_splice_write fs/splice.c:811 [inline]
- do_splice_from fs/splice.c:847 [inline]
- direct_splice_actor+0x1eb/0x2a0 fs/splice.c:1016
- splice_direct_to_actor+0x4a2/0xb60 fs/splice.c:971
- do_splice_direct+0x201/0x340 fs/splice.c:1059
- do_sendfile+0x809/0xfe0 fs/read_write.c:1521
- __do_sys_sendfile64 fs/read_write.c:1582 [inline]
- __se_sys_sendfile64 fs/read_write.c:1568 [inline]
- __x64_sys_sendfile64+0x164/0x1a0 fs/read_write.c:1568
- do_syscall_64+0xf3/0x1b0 arch/x86/entry/common.c:295
- entry_SYSCALL_64_after_hwframe+0x49/0xb3
-
-The buggy address belongs to the object at ffff88809184bec0
- which belongs to the cache kmalloc-32 of size 32
-The buggy address is located 0 bytes inside of
- 32-byte region [ffff88809184bec0, ffff88809184bee0)
-The buggy address belongs to the page:
-page:ffffea00024612c0 refcount:1 mapcount:0 mapping:0000000000000000 index:0xffff88809184bfc1
-flags: 0xfffe0000000200(slab)
-raw: 00fffe0000000200 ffffea00029a8788 ffffea0002a351c8 ffff8880aa4001c0
-raw: ffff88809184bfc1 ffff88809184b000 000000010000003f 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
- ffff88809184bd80: 00 00 00 fc fc fc fc fc fb fb fb fb fc fc fc fc
- ffff88809184be00: 00 fc fc fc fc fc fc fc fb fb fb fb fc fc fc fc
->ffff88809184be80: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
-                                           ^
- ffff88809184bf00: fb fb fb fb fc fc fc fc 00 00 00 fc fc fc fc fc
- ffff88809184bf80: fb fb fb fb fc fc fc fc fc fc fc fc fc fc fc fc
-==================================================================
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+I would like the experts here to decide on what needs to be done so we 
+can move forward
+and get kernel_pread_file support added soon.
+Thanks,
+Scott
