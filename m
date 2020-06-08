@@ -7,52 +7,51 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CD52C433E1
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Jun 2020 00:13:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ED2BC433E2
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Jun 2020 00:18:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 356F320775
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Jun 2020 00:13:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7721120801
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Jun 2020 00:18:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1591661601;
-	bh=4aSMtzqJJndbwSqCLBktDy6vMXgnT+YthzhW1XOHtAk=;
+	s=default; t=1591661902;
+	bh=Yn3ATB0DMOTHJ/cc/Ku3BysKcjUHDwZ0Jtkt8knF+ZA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=X6mcgS9UiQ2SE9ZhkCWlC5Tiid1IpIWXFxqecGM9GwimfvDX30bicyK+f+n2RkD1d
-	 L9NjZ24JIb/pXpq9U2AjhCLVmEVV0Q1CauMvI4FF5UFEBNWJJdNXtsp/bnqDGGyqWl
-	 UgKQBAg7fUWiS4WEeeNMJ5NWnCs0P+FZverLe57Q=
+	b=k+/5lRtYR4RVLGf1XyTTox/uDKPQQ2hFQtZDYRRj9oD4eFP3gD8MWjB7iyPf7ClYa
+	 62u1qFuC1vnCA+qojhj6Ijx1gaIuWkyv1PA8Bs20kv+wSM740eRQrq1ShdvHGcykGA
+	 st6aBj3axyywsXLbClZzVs8ayQfmfwNuydZBVfjA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730802AbgFHXTc (ORCPT
+        id S1730817AbgFIASO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 8 Jun 2020 19:19:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42346 "EHLO mail.kernel.org"
+        Mon, 8 Jun 2020 20:18:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40992 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730800AbgFHXTb (ORCPT
+        id S1730672AbgFHXSl (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 8 Jun 2020 19:19:31 -0400
+        Mon, 8 Jun 2020 19:18:41 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AB8D52088E;
-        Mon,  8 Jun 2020 23:19:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8E6FD2085B;
+        Mon,  8 Jun 2020 23:18:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1591658371;
-        bh=4aSMtzqJJndbwSqCLBktDy6vMXgnT+YthzhW1XOHtAk=;
+        s=default; t=1591658321;
+        bh=Yn3ATB0DMOTHJ/cc/Ku3BysKcjUHDwZ0Jtkt8knF+ZA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rDXOks5iCiKgsBsQQAQTmciFG73psRbr0nEEXftelW8QGpW8u1ycUscw/q2X5eUXs
-         RgZCmtSevobMK3qppy3fyM/ZIWM93m23IruNfAaHybcsXPsCflXNKr82KWt82tgQje
-         3Fa0N4/eJM1H0VQuJttDuvMP++KSsPPFuz4SPaE4=
+        b=AbuI8FThWZbs8AdoWSbhYfSZQ3x75Lr+f7zXe5eXFyTeoChwtddO6HrSpwN0JAkMe
+         /YcLOvv3lQWfgKj5Tna//KVpHd2ef9mOeFHtUsmMWn2ZJKnUb02z1oGjWKL57D/9o/
+         nMCi9dx0FFHP2S7CR2l8TaUxs0+GiY7p9lLYWPZI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jeremy Cline <jcline@redhat.com>,
-        "Frank Ch . Eigler" <fche@redhat.com>,
-        James Morris <jmorris@namei.org>,
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Andy Lutomirski <luto@kernel.org>,
         Sasha Levin <sashal@kernel.org>,
         linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 034/175] lockdown: Allow unprivileged users to see lockdown status
-Date:   Mon,  8 Jun 2020 19:16:27 -0400
-Message-Id: <20200608231848.3366970-34-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.6 321/606] exec: Always set cap_ambient in cap_bprm_set_creds
+Date:   Mon,  8 Jun 2020 19:07:26 -0400
+Message-Id: <20200608231211.3363633-321-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200608231848.3366970-1-sashal@kernel.org>
-References: <20200608231848.3366970-1-sashal@kernel.org>
+In-Reply-To: <20200608231211.3363633-1-sashal@kernel.org>
+References: <20200608231211.3363633-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -61,38 +60,50 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Jeremy Cline <jcline@redhat.com>
+From: "Eric W. Biederman" <ebiederm@xmission.com>
 
-[ Upstream commit 60cf7c5ed5f7087c4de87a7676b8c82d96fd166c ]
+[ Upstream commit a4ae32c71fe90794127b32d26d7ad795813b502e ]
 
-A number of userspace tools, such as systemtap, need a way to see the
-current lockdown state so they can gracefully deal with the kernel being
-locked down. The state is already exposed in
-/sys/kernel/security/lockdown, but is only readable by root. Adjust the
-permissions so unprivileged users can read the state.
+An invariant of cap_bprm_set_creds is that every field in the new cred
+structure that cap_bprm_set_creds might set, needs to be set every
+time to ensure the fields does not get a stale value.
 
-Fixes: 000d388ed3bb ("security: Add a static lockdown policy LSM")
-Cc: Frank Ch. Eigler <fche@redhat.com>
-Signed-off-by: Jeremy Cline <jcline@redhat.com>
-Signed-off-by: James Morris <jmorris@namei.org>
+The field cap_ambient is not set every time cap_bprm_set_creds is
+called, which means that if there is a suid or sgid script with an
+interpreter that has neither the suid nor the sgid bits set the
+interpreter should be able to accept ambient credentials.
+Unfortuantely because cap_ambient is not reset to it's original value
+the interpreter can not accept ambient credentials.
+
+Given that the ambient capability set is expected to be controlled by
+the caller, I don't think this is particularly serious.  But it is
+definitely worth fixing so the code works correctly.
+
+I have tested to verify my reading of the code is correct and the
+interpreter of a sgid can receive ambient capabilities with this
+change and cannot receive ambient capabilities without this change.
+
+Cc: stable@vger.kernel.org
+Cc: Andy Lutomirski <luto@kernel.org>
+Fixes: 58319057b784 ("capabilities: ambient capabilities")
+Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- security/lockdown/lockdown.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ security/commoncap.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
-index 40b790536def..ae594c0a127f 100644
---- a/security/lockdown/lockdown.c
-+++ b/security/lockdown/lockdown.c
-@@ -175,7 +175,7 @@ static int __init lockdown_secfs_init(void)
- {
- 	struct dentry *dentry;
+diff --git a/security/commoncap.c b/security/commoncap.c
+index f4ee0ae106b2..0ca31c8bc0b1 100644
+--- a/security/commoncap.c
++++ b/security/commoncap.c
+@@ -812,6 +812,7 @@ int cap_bprm_set_creds(struct linux_binprm *bprm)
+ 	int ret;
+ 	kuid_t root_uid;
  
--	dentry = securityfs_create_file("lockdown", 0600, NULL, NULL,
-+	dentry = securityfs_create_file("lockdown", 0644, NULL, NULL,
- 					&lockdown_ops);
- 	return PTR_ERR_OR_ZERO(dentry);
- }
++	new->cap_ambient = old->cap_ambient;
+ 	if (WARN_ON(!cap_ambient_invariant_ok(old)))
+ 		return -EPERM;
+ 
 -- 
 2.25.1
 
