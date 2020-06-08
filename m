@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24925C433E2
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Jun 2020 00:37:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 260A2C433E0
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Jun 2020 00:37:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 03276206C3
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Jun 2020 00:37:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED92C206C3
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Jun 2020 00:37:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1591663021;
-	bh=PEqJ5eyUtSxJhYnhnCrIAr5eo6UL8Kd/34b2Bw2Fusg=;
+	s=default; t=1591663026;
+	bh=iBUom3UexuJtoL9Ox33IMnAZayXMsAmGh1AfuUlcV8s=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=bq3t+v6g+J/nfMKyKBj7h80shm4K8LE4eheAvn5jUucE2nhskHSnDRo+udRCGcV0K
-	 uPjVCp3cHKq0X/1vVn8Ov0Gbydl15HvsmPkBU+MANs9s2ep25j2kQ2YMYT8L4Xeu8T
-	 idAEcTUrkCij1qb6KS/rCpCwlky9a9hsmFOmxWyo=
+	b=tJVreddgRV9NhfL9PtqzATkwocDSzzh3eNht6k+Ji8MjZrz5PiWIp/xnPOjFufB3i
+	 A0WlHD+NNLCEfjSLki7WG7TSMeeh4w8FA/BpExDjNUvmdio2JTVySAflz5gSEC6DnT
+	 b7Tu3SyWJjgiU8it6KzJCAp/IMpiKdbjUQuKlqww=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729629AbgFHXNw (ORCPT
+        id S1729844AbgFIAhA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 8 Jun 2020 19:13:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33780 "EHLO mail.kernel.org"
+        Mon, 8 Jun 2020 20:37:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33812 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729615AbgFHXNv (ORCPT
+        id S1729633AbgFHXNw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 8 Jun 2020 19:13:51 -0400
+        Mon, 8 Jun 2020 19:13:52 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5673821527;
-        Mon,  8 Jun 2020 23:13:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 934D6212CC;
+        Mon,  8 Jun 2020 23:13:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1591658031;
-        bh=PEqJ5eyUtSxJhYnhnCrIAr5eo6UL8Kd/34b2Bw2Fusg=;
+        s=default; t=1591658032;
+        bh=iBUom3UexuJtoL9Ox33IMnAZayXMsAmGh1AfuUlcV8s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TOPdiM5vRSJossSVMACGCX9VTNDMH+7/XUPzb539+Ba+IVj2bGzQnwtiC9cTU8xWS
-         gUC5AJ2Ho4smMKaw5XFoYcID9OzSups7AdBLKv+9nNbH/QHmLwB/xEyH1mS1RYE7Xm
-         Qg0s6Y5MU1kXS06qF0/4WrGRjJCxwkMQ21kBWPFc=
+        b=d0eL5QqP8ei447D5afqv2l8GxkeH0hRjTbXsuTBo8hNRWhZOQ/0TMNh+8UEqOXG/j
+         HAbV9zm/3zV08DTc+C0eAKCu3kPi8SDoGSySu2aa5lZSXjIp2aTTfiI34Kv0jUZrLb
+         GHZNcoh36qrUTd6wS0qdbPS9Fd9fXyXxUv3OO6sg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Roberto Sassu <roberto.sassu@huawei.com>,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>,
+        Krzysztof Struczynski <krzysztof.struczynski@huawei.com>,
         Mimi Zohar <zohar@linux.ibm.com>,
         Sasha Levin <sashal@kernel.org>,
         linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.6 082/606] ima: Set file->f_mode instead of file->f_flags in ima_calc_file_hash()
-Date:   Mon,  8 Jun 2020 19:03:27 -0400
-Message-Id: <20200608231211.3363633-82-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.6 083/606] evm: Check also if *tfm is an error pointer in init_desc()
+Date:   Mon,  8 Jun 2020 19:03:28 -0400
+Message-Id: <20200608231211.3363633-83-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200608231211.3363633-1-sashal@kernel.org>
 References: <20200608231211.3363633-1-sashal@kernel.org>
@@ -64,68 +64,45 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: Roberto Sassu <roberto.sassu@huawei.com>
 
-[ Upstream commit 0014cc04e8ec077dc482f00c87dfd949cfe2b98f ]
+[ Upstream commit 53de3b080d5eae31d0de219617155dcc34e7d698 ]
 
-Commit a408e4a86b36 ("ima: open a new file instance if no read
-permissions") tries to create a new file descriptor to calculate a file
-digest if the file has not been opened with O_RDONLY flag. However, if a
-new file descriptor cannot be obtained, it sets the FMODE_READ flag to
-file->f_flags instead of file->f_mode.
+This patch avoids a kernel panic due to accessing an error pointer set by
+crypto_alloc_shash(). It occurs especially when there are many files that
+require an unsupported algorithm, as it would increase the likelihood of
+the following race condition:
 
-This patch fixes this issue by replacing f_flags with f_mode as it was
-before that commit.
+Task A: *tfm = crypto_alloc_shash() <= error pointer
+Task B: if (*tfm == NULL) <= *tfm is not NULL, use it
+Task B: rc = crypto_shash_init(desc) <= panic
+Task A: *tfm = NULL
 
-Cc: stable@vger.kernel.org # 4.20.x
-Fixes: a408e4a86b36 ("ima: open a new file instance if no read permissions")
+This patch uses the IS_ERR_OR_NULL macro to determine whether or not a new
+crypto context must be created.
+
+Cc: stable@vger.kernel.org
+Fixes: d46eb3699502b ("evm: crypto hash replaced by shash")
+Co-developed-by: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
+Signed-off-by: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-Reviewed-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
 Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- security/integrity/ima/ima_crypto.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ security/integrity/evm/evm_crypto.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
-index 7967a6904851..e8fa23cd4a6c 100644
---- a/security/integrity/ima/ima_crypto.c
-+++ b/security/integrity/ima/ima_crypto.c
-@@ -413,7 +413,7 @@ int ima_calc_file_hash(struct file *file, struct ima_digest_data *hash)
- 	loff_t i_size;
- 	int rc;
- 	struct file *f = file;
--	bool new_file_instance = false, modified_flags = false;
-+	bool new_file_instance = false, modified_mode = false;
+diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
+index d485f6fc908e..302adeb2d37b 100644
+--- a/security/integrity/evm/evm_crypto.c
++++ b/security/integrity/evm/evm_crypto.c
+@@ -93,7 +93,7 @@ static struct shash_desc *init_desc(char type, uint8_t hash_algo)
+ 		algo = hash_algo_name[hash_algo];
+ 	}
  
- 	/*
- 	 * For consistency, fail file's opened with the O_DIRECT flag on
-@@ -433,13 +433,13 @@ int ima_calc_file_hash(struct file *file, struct ima_digest_data *hash)
- 		f = dentry_open(&file->f_path, flags, file->f_cred);
- 		if (IS_ERR(f)) {
- 			/*
--			 * Cannot open the file again, lets modify f_flags
-+			 * Cannot open the file again, lets modify f_mode
- 			 * of original and continue
- 			 */
- 			pr_info_ratelimited("Unable to reopen file for reading.\n");
- 			f = file;
--			f->f_flags |= FMODE_READ;
--			modified_flags = true;
-+			f->f_mode |= FMODE_READ;
-+			modified_mode = true;
- 		} else {
- 			new_file_instance = true;
- 		}
-@@ -457,8 +457,8 @@ int ima_calc_file_hash(struct file *file, struct ima_digest_data *hash)
- out:
- 	if (new_file_instance)
- 		fput(f);
--	else if (modified_flags)
--		f->f_flags &= ~FMODE_READ;
-+	else if (modified_mode)
-+		f->f_mode &= ~FMODE_READ;
- 	return rc;
- }
- 
+-	if (*tfm == NULL) {
++	if (IS_ERR_OR_NULL(*tfm)) {
+ 		mutex_lock(&mutex);
+ 		if (*tfm)
+ 			goto out;
 -- 
 2.25.1
 
