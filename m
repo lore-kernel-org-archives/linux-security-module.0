@@ -7,51 +7,50 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF421C433E1
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Jun 2020 00:36:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33E90C433DF
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Jun 2020 00:36:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CA25320825
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Jun 2020 00:36:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05DF620835
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Jun 2020 00:36:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1591662995;
-	bh=BJ0tO64MAidki1KuaMNtI00MVaxBlWf8j4Gm2u/+cZo=;
+	s=default; t=1591663018;
+	bh=TjVIzJCh0CEfsQLND/3pcn51jPC8iMMpkKt8EVaLwEw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ucJe8U8IK4U/qlYyFeiEt+9DASvQa++DB538RZ/xOtglSdask9LBXsa+3yr9KorKI
-	 ft169Hnv/Ljsgzppq1uENWyLjhLCn3vt1Sx9dN65yhv3vwM7e2OUc3txHTvlSUUwCb
-	 Abu+rWijy63XwEir2/720GNmk/CoEb3l6dyey3i8=
+	b=wna9nOHMGyxhgM3UOIsMZCGNwRghA6GrjlrrO6lIX4RJOelxE7OWzCDhvPenD7H1g
+	 o3kAzK7Ehjontc3b5aR0d7qv9XyAgtABH9nCq8zsqYAgAhyKLbzCJbhs9cmoAmS6Gd
+	 RCirqZ3FHxxsuUqOAWnpjlQ2pGuj+GCB/TiEq+TI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729721AbgFHXOI (ORCPT
+        id S1728750AbgFHXN5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 8 Jun 2020 19:14:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34180 "EHLO mail.kernel.org"
+        Mon, 8 Jun 2020 19:13:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33862 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729706AbgFHXOH (ORCPT
+        id S1728025AbgFHXNy (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 8 Jun 2020 19:14:07 -0400
+        Mon, 8 Jun 2020 19:13:54 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D6772212CC;
-        Mon,  8 Jun 2020 23:14:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D205F20897;
+        Mon,  8 Jun 2020 23:13:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1591658046;
-        bh=BJ0tO64MAidki1KuaMNtI00MVaxBlWf8j4Gm2u/+cZo=;
+        s=default; t=1591658033;
+        bh=TjVIzJCh0CEfsQLND/3pcn51jPC8iMMpkKt8EVaLwEw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Keqv0rS70tvJzYTwWANaKiPmi54Ypdya445tlYFcciOTLJH6xRaaWqYs5MqJPbWsC
-         gEBkMZVmczSQ4iPxRWiPghrXnZSJmHkqQieUTGRyXSnkGNWe6u+mvNaUNGfQJxEwdD
-         n4OHRa5oPP4RyvzmVfbrb0mYy9WFBfihFWdKz6Zs=
+        b=g173U1sG/Klnqgg20gUX7d5aGQt7/lbKnm6Lk4cpGPxw1aAxTmA8f4rCFUIg53Eh/
+         VhjtG8XT3q+FabBd4S/HqE/xNUPweUppEb5J1TFwn8qb0PivxS7/PLUPxrJocWdlem
+         19xfl4a4JXtUCoV6dbS4adbTeKxgXh2JC7Veng/s=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
+Cc:     Roberto Sassu <roberto.sassu@huawei.com>,
         Krzysztof Struczynski <krzysztof.struczynski@huawei.com>,
         Mimi Zohar <zohar@linux.ibm.com>,
         Sasha Levin <sashal@kernel.org>,
         linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.6 095/606] evm: Fix a small race in init_desc()
-Date:   Mon,  8 Jun 2020 19:03:40 -0400
-Message-Id: <20200608231211.3363633-95-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.6 084/606] ima: Fix return value of ima_write_policy()
+Date:   Mon,  8 Jun 2020 19:03:29 -0400
+Message-Id: <20200608231211.3363633-84-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200608231211.3363633-1-sashal@kernel.org>
 References: <20200608231211.3363633-1-sashal@kernel.org>
@@ -63,96 +62,41 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Roberto Sassu <roberto.sassu@huawei.com>
 
-[ Upstream commit 8433856947217ebb5697a8ff9c4c9cad4639a2cf ]
+[ Upstream commit 2e3a34e9f409ebe83d1af7cd2f49fca7af97dfac ]
 
-The IS_ERR_OR_NULL() function has two conditions and if we got really
-unlucky we could hit a race where "ptr" started as an error pointer and
-then was set to NULL.  Both conditions would be false even though the
-pointer at the end was NULL.
+This patch fixes the return value of ima_write_policy() when a new policy
+is directly passed to IMA and the current policy requires appraisal of the
+file containing the policy. Currently, if appraisal is not in ENFORCE mode,
+ima_write_policy() returns 0 and leads user space applications to an
+endless loop. Fix this issue by denying the operation regardless of the
+appraisal mode.
 
-This patch fixes the problem by ensuring that "*tfm" can only be NULL
-or valid.  I have introduced a "tmp_tfm" variable to make that work.  I
-also reversed a condition and pulled the code in one tab.
-
-Reported-by: Roberto Sassu <roberto.sassu@huawei.com>
-Fixes: 53de3b080d5e ("evm: Check also if *tfm is an error pointer in init_desc()")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Roberto Sassu <roberto.sassu@huawei.com>
-Acked-by: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
+Cc: stable@vger.kernel.org # 4.10.x
+Fixes: 19f8a84713edc ("ima: measure and appraise the IMA policy itself")
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+Reviewed-by: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
 Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- security/integrity/evm/evm_crypto.c | 44 ++++++++++++++---------------
- 1 file changed, 22 insertions(+), 22 deletions(-)
+ security/integrity/ima/ima_fs.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
-index 302adeb2d37b..cc826c2767a3 100644
---- a/security/integrity/evm/evm_crypto.c
-+++ b/security/integrity/evm/evm_crypto.c
-@@ -75,7 +75,7 @@ static struct shash_desc *init_desc(char type, uint8_t hash_algo)
- {
- 	long rc;
- 	const char *algo;
--	struct crypto_shash **tfm;
-+	struct crypto_shash **tfm, *tmp_tfm;
- 	struct shash_desc *desc;
- 
- 	if (type == EVM_XATTR_HMAC) {
-@@ -93,31 +93,31 @@ static struct shash_desc *init_desc(char type, uint8_t hash_algo)
- 		algo = hash_algo_name[hash_algo];
+diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
+index 2000e8df0301..68571c40d61f 100644
+--- a/security/integrity/ima/ima_fs.c
++++ b/security/integrity/ima/ima_fs.c
+@@ -340,8 +340,7 @@ static ssize_t ima_write_policy(struct file *file, const char __user *buf,
+ 		integrity_audit_msg(AUDIT_INTEGRITY_STATUS, NULL, NULL,
+ 				    "policy_update", "signed policy required",
+ 				    1, 0);
+-		if (ima_appraise & IMA_APPRAISE_ENFORCE)
+-			result = -EACCES;
++		result = -EACCES;
+ 	} else {
+ 		result = ima_parse_add_rule(data);
  	}
- 
--	if (IS_ERR_OR_NULL(*tfm)) {
--		mutex_lock(&mutex);
--		if (*tfm)
--			goto out;
--		*tfm = crypto_alloc_shash(algo, 0, CRYPTO_NOLOAD);
--		if (IS_ERR(*tfm)) {
--			rc = PTR_ERR(*tfm);
--			pr_err("Can not allocate %s (reason: %ld)\n", algo, rc);
--			*tfm = NULL;
-+	if (*tfm)
-+		goto alloc;
-+	mutex_lock(&mutex);
-+	if (*tfm)
-+		goto unlock;
-+
-+	tmp_tfm = crypto_alloc_shash(algo, 0, CRYPTO_NOLOAD);
-+	if (IS_ERR(tmp_tfm)) {
-+		pr_err("Can not allocate %s (reason: %ld)\n", algo,
-+		       PTR_ERR(tmp_tfm));
-+		mutex_unlock(&mutex);
-+		return ERR_CAST(tmp_tfm);
-+	}
-+	if (type == EVM_XATTR_HMAC) {
-+		rc = crypto_shash_setkey(tmp_tfm, evmkey, evmkey_len);
-+		if (rc) {
-+			crypto_free_shash(tmp_tfm);
- 			mutex_unlock(&mutex);
- 			return ERR_PTR(rc);
- 		}
--		if (type == EVM_XATTR_HMAC) {
--			rc = crypto_shash_setkey(*tfm, evmkey, evmkey_len);
--			if (rc) {
--				crypto_free_shash(*tfm);
--				*tfm = NULL;
--				mutex_unlock(&mutex);
--				return ERR_PTR(rc);
--			}
--		}
--out:
--		mutex_unlock(&mutex);
- 	}
--
-+	*tfm = tmp_tfm;
-+unlock:
-+	mutex_unlock(&mutex);
-+alloc:
- 	desc = kmalloc(sizeof(*desc) + crypto_shash_descsize(*tfm),
- 			GFP_KERNEL);
- 	if (!desc)
 -- 
 2.25.1
 
