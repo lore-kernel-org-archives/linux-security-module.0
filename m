@@ -2,90 +2,158 @@ Return-Path: <SRS0=DAbT=7W=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93EC2C433DF
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Jun 2020 14:34:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED30AC433E0
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Jun 2020 16:06:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 57BA520734
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Jun 2020 14:34:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B931A20760
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Jun 2020 16:06:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pFZbRjVu"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KuEo119d"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730525AbgFIOew (ORCPT
+        id S1731005AbgFIQGc (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 9 Jun 2020 10:34:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39448 "EHLO
+        Tue, 9 Jun 2020 12:06:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53624 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726803AbgFIOev (ORCPT
+        with ESMTP id S1728888AbgFIQGb (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 9 Jun 2020 10:34:51 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 240C7C05BD1E;
-        Tue,  9 Jun 2020 07:34:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=BS61t3scD5rhsvldmGOJtyXVG6rDl8HEmiFZUjqsT1Q=; b=pFZbRjVutesuWvEsLEcOIckCTU
-        B3HEtPGVpCN39H/vjxliXrmai3D//DgWvJMqaAaECUbY+uGMZ6/JoDe8HSpPKCIOxjdSsdO01gL4k
-        jOfpF4lX6pW0QRPLyuOg22AAoBgA/FbpiiAOEc6nvbB1s1puwqnevV0HVIEy8unMbIITqwStbo958
-        ORwKmICUrKdJ9Jpq/dlDO2GdCh36CSzheEAvMA4TxREBhMXFw8Dc31l+wFd++VFwgYc2Ytzeuu8FI
-        3Xhapr9ybl4wIdCXPbVFVt5XN4bcA0++9e/Y7RYBFDK6bTxa5Fju3SlXupYEV1qkJZRkRZmY0V66L
-        gazISSMA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jifKv-0008Vl-NS; Tue, 09 Jun 2020 14:34:45 +0000
-Date:   Tue, 9 Jun 2020 07:34:45 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Scott Branden <scott.branden@broadcom.com>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        Wolfram Sang <wsa@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Brown <david.brown@linaro.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>, bjorn.andersson@linaro.org,
-        Shuah Khan <skhan@linuxfoundation.org>,
+        Tue, 9 Jun 2020 12:06:31 -0400
+Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C1E2C05BD1E;
+        Tue,  9 Jun 2020 09:06:31 -0700 (PDT)
+Received: by mail-pj1-x1042.google.com with SMTP id q24so1610242pjd.1;
+        Tue, 09 Jun 2020 09:06:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=upznzRicK8bM+0r52vYWA7QwfS1xzU69CxHqlLRTRT8=;
+        b=KuEo119dEbSH3exz0jF0e8zqicmIaCh+YGX2E4EY+i1/6f/MjNk0NTfdXnmRdoB3fV
+         5rvusnAbcLW6fNepzSlZtL6hDgUjk7wts7aXKSE+jMl79phrlhlfaeHVld8hHQl9SDxg
+         ffmnvGdGFgVoyaTJW7LzcT5wq0UcIuw+h+5K5FVlVDuZzgIqpGPI3IgLImd2pnMi7Az8
+         WL/Pft2eN0DAgbl8nQLXxMYxFaUGmByGHOB3WNC313KOqrAbO1aHd8+nYlXjRejU73JX
+         MG5pzQadrtn9+SBYzQ+O9w+caRrnkct9jb/fFPvDTwQ53JPu/1RuGDbknFMrvt3kmGCe
+         io6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=upznzRicK8bM+0r52vYWA7QwfS1xzU69CxHqlLRTRT8=;
+        b=BCGSw0m6Hu0UVJbPLnFgVUKvT/xrLiMM+/jd9SHOGlyHCWMWMAFakdcAb8C93K7J70
+         RqtvvfvbHIBtLd7U7MhmXmeQDVWKT5Tsj+QRQ/JR3LFbEUblK7W/NXPKmsLq2Nt+mi3/
+         oViQsINvxuml5nH5YvI1cvRLuZR00mz/31MjgJhfyc9FFOPlUj5dILXaGRZpAriIHAoi
+         1KK0nubXHNCq26t9AKJZSLL6kqd1qZc3+hsvNmeC8xxt0a1zz+CN9K9tuh+pshHe4fWR
+         f7RDm9zOK2ZdAzO16ijfz1SVMuZHyaM8tjj89rbsz2Bb3on7IyCSmvrETYPwn+e9Jyjw
+         IHuQ==
+X-Gm-Message-State: AOAM532EWTXvFIAR/GyFYtQlV1NXfhILqXl2/KgwOr2uzrEC0BijcX3R
+        hO3NF29voiaxsjenv06SP6Q=
+X-Google-Smtp-Source: ABdhPJyGG/L+JbnZTjPqIo6VUQfhl2FG2eSEfmVoYEKAPqVGHsvE+qBcAJRzZy7GEB8sKMFZ1semqQ==
+X-Received: by 2002:a17:90a:e398:: with SMTP id b24mr5519607pjz.235.1591718790609;
+        Tue, 09 Jun 2020 09:06:30 -0700 (PDT)
+Received: from gmail.com ([2601:600:817f:a132:df3e:521d:99d5:710d])
+        by smtp.gmail.com with ESMTPSA id e26sm9221419pgl.27.2020.06.09.09.06.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jun 2020 09:06:29 -0700 (PDT)
+Date:   Tue, 9 Jun 2020 09:06:27 -0700
+From:   Andrei Vagin <avagin@gmail.com>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Adrian Reber <areber@redhat.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Pavel Emelyanov <ovzxemul@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
+        =?utf-8?B?TWljaGHFgiBDxYJhcGnFhHNraQ==?= <mclapinski@google.com>,
+        Kamil Yurtsever <kyurtsever@google.com>,
+        Dirk Petersen <dipeit@gmail.com>,
+        Christine Flood <chf@redhat.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Radostin Stoyanov <rstoyanov1@gmail.com>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        Serge Hallyn <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Sargun Dhillon <sargun@sargun.me>,
         Arnd Bergmann <arnd@arndb.de>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Olof Johansson <olof@lixom.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        Takashi Iwai <tiwai@suse.de>, linux-kselftest@vger.kernel.org,
-        Andy Gross <agross@kernel.org>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v7 2/8] firmware: add offset to request_firmware_into_buf
-Message-ID: <20200609143445.GD19604@bombadil.infradead.org>
-References: <20200606050458.17281-1-scott.branden@broadcom.com>
- <20200606050458.17281-3-scott.branden@broadcom.com>
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, selinux@vger.kernel.org,
+        Eric Paris <eparis@parisplace.org>,
+        Jann Horn <jannh@google.com>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] capabilities: Introduce CAP_CHECKPOINT_RESTORE
+Message-ID: <20200609160627.GA163855@gmail.com>
+References: <20200603162328.854164-1-areber@redhat.com>
+ <20200603162328.854164-2-areber@redhat.com>
+ <20200609034221.GA150921@gmail.com>
+ <20200609074422.burwzfgwgqqysrzh@wittgenstein>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=koi8-r
 Content-Disposition: inline
-In-Reply-To: <20200606050458.17281-3-scott.branden@broadcom.com>
+In-Reply-To: <20200609074422.burwzfgwgqqysrzh@wittgenstein>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jun 05, 2020 at 10:04:52PM -0700, Scott Branden wrote:
->  static struct fw_priv *__allocate_fw_priv(const char *fw_name,
->  					  struct firmware_cache *fwc,
-> -					  void *dbuf, size_t size)
-> +					  void *dbuf, size_t size,
-> +					  size_t offset,
-> +					  enum kernel_pread_opt opt)
->  {
+On Tue, Jun 09, 2020 at 09:44:22AM +0200, Christian Brauner wrote:
+> On Mon, Jun 08, 2020 at 08:42:21PM -0700, Andrei Vagin wrote:
+> > On Wed, Jun 03, 2020 at 06:23:26PM +0200, Adrian Reber wrote:
+> > > This patch introduces CAP_CHECKPOINT_RESTORE, a new capability facilitating
+> > > checkpoint/restore for non-root users.
+> > > 
+> > > Over the last years, The CRIU (Checkpoint/Restore In Userspace) team has been
+> > > asked numerous times if it is possible to checkpoint/restore a process as
+> > > non-root. The answer usually was: 'almost'.
+> > > 
+> > > The main blocker to restore a process as non-root was to control the PID of the
+> > > restored process. This feature available via the clone3 system call, or via
+> > > /proc/sys/kernel/ns_last_pid is unfortunately guarded by CAP_SYS_ADMIN.
+> > > 
+> > > In the past two years, requests for non-root checkpoint/restore have increased
+> > > due to the following use cases:
+> > > * Checkpoint/Restore in an HPC environment in combination with a resource
+> > >   manager distributing jobs where users are always running as non-root.
+> > >   There is a desire to provide a way to checkpoint and restore long running
+> > >   jobs.
+> > > * Container migration as non-root
+> > > * We have been in contact with JVM developers who are integrating
+> > >   CRIU into a Java VM to decrease the startup time. These checkpoint/restore
+> > >   applications are not meant to be running with CAP_SYS_ADMIN.
+> > > 
+> > ...
+> > > 
+> > > The introduced capability allows to:
+> > > * Control PIDs when the current user is CAP_CHECKPOINT_RESTORE capable
+> > >   for the corresponding PID namespace via ns_last_pid/clone3.
+> > > * Open files in /proc/pid/map_files when the current user is
+> > >   CAP_CHECKPOINT_RESTORE capable in the root namespace, useful for recovering
+> > >   files that are unreachable via the file system such as deleted files, or memfd
+> > >   files.
+> > 
+> > PTRACE_O_SUSPEND_SECCOMP is needed for C/R and it is protected by
+> > CAP_SYS_ADMIN too.
+> 
+> This is currently capable(CAP_SYS_ADMIN) (init_ns capable) why is it
+> safe to allow unprivileged users to suspend security policies? That
+> sounds like a bad idea.
 
-Your types are screwed up.  size_t is the size of something in memory.
-loff_t is an offset in a file.  This should be an loff_t.  One of the
-other patches has the opposite problem.
+Why do you think so bad about me;). I don't suggest to remove or
+downgrade this capability check. The patch allows all c/r related
+operations if the current has CAP_CHECKPOINT_RESTORE.
 
-(this is kind of a minor problem compared to all the complexity
-problems, but it's worth mentioning)
+So in this case the check:
+     if (!capable(CAP_SYS_ADMIN))
+             return -EPERM;
+
+will be converted in:
+     if (!capable(CAP_SYS_ADMIN) && !capable(CAP_CHECKPOINT_RESTORE))
+             return -EPERM;
+
+If we want to think about how to convert this capable to ns_capable, we
+need to do this in a separate series. And the logic may be that a
+process is able to suspend only filters that have been added from the
+current user-namespace or its descendants. But we need to think about
+this more carefully, maybe there are more pitfalls.
