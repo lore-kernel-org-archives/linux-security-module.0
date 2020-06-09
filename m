@@ -5,56 +5,56 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C200C433E0
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Jun 2020 22:57:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A09ADC433DF
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Jun 2020 22:58:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0F9EC20760
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Jun 2020 22:57:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 77E64206D5
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Jun 2020 22:58:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="VUp4QVO/"
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="ByJPGZ0f"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728943AbgFIW53 (ORCPT
+        id S1729101AbgFIW6f (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 9 Jun 2020 18:57:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60704 "EHLO
+        Tue, 9 Jun 2020 18:58:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60792 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728701AbgFIW5M (ORCPT
+        with ESMTP id S1729025AbgFIW5p (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 9 Jun 2020 18:57:12 -0400
-Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB32FC08C5C3
-        for <linux-security-module@vger.kernel.org>; Tue,  9 Jun 2020 15:57:11 -0700 (PDT)
-Received: by mail-pg1-x543.google.com with SMTP id 185so72779pgb.10
-        for <linux-security-module@vger.kernel.org>; Tue, 09 Jun 2020 15:57:11 -0700 (PDT)
+        Tue, 9 Jun 2020 18:57:45 -0400
+Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34D3DC08C5D1
+        for <linux-security-module@vger.kernel.org>; Tue,  9 Jun 2020 15:57:36 -0700 (PDT)
+Received: by mail-pf1-x441.google.com with SMTP id 10so214211pfx.8
+        for <linux-security-module@vger.kernel.org>; Tue, 09 Jun 2020 15:57:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=broadcom.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=GhKodXafnqLJk+aH5Hxa5zCb8c2nq9PYG1JmfapgHFE=;
-        b=VUp4QVO/DaLqlmRzPCPAy0xho6fXQ2qiMkMM8YEv5P8oWzFeK3ty32NlRSdulaz/dy
-         cGZr6YOfTjt6hYZVkNf5GzogEFzde52IxYgdHRl1gxC1JbKwHQWMYXgHG2CXHcrl4oAE
-         iYXauEg53tojwMQS0YMfVpEIZ3niNPGQiuXAM=
+        bh=cM+rCpZobNDrkDN9s+cJ/Q1XgGFeWXzm3UzYtFYpyy4=;
+        b=ByJPGZ0fwC+pHYx4+jr86EPnUJT03kDN80FFAKD7I5rX+wsF2f7csCPEgbu0Vv5JXD
+         ZyLWQTOAA/02+ZV08uuMrd6LxZHpZq8t+zpNoZQcJEL4vViRm5Z4Qrylf4XzyxMH9i+e
+         6RPwx+6tj/r3KDMiIgbqsv1cvcx5htVk6ttBo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=GhKodXafnqLJk+aH5Hxa5zCb8c2nq9PYG1JmfapgHFE=;
-        b=J9mRdX5JuOP3/bfKrSAiMDrCc8xPSiKC1V8h8b6Dy+4F/ncF20kWpeW6H44AzbgtgZ
-         ne1V2QyTGXMhRdersUJbzZBec40dGkUYI5YJw1uu6GrymTBbAGdpIEQF8Ml5jUr1qyty
-         kr1PRSszeA575GypS2ooiyZR8mnFUD3ctjbe7F9q3ZvaMXj1zwJ0nnG0I7eKdIy/6X26
-         YLsbirG3wV1Ie5jSn9EuQNtYKFzXsQoiU3n+KVdcqzBTB9lw4+LAPqZPumloQRSyhBGA
-         8ayoRGLl+347DAGrfdFwmM/L7pI1Qv68b2s58yc/MlVKaMh3gxQhxAY3jZV2SASo6Xe/
-         wVig==
-X-Gm-Message-State: AOAM533eRDLHOOqtBA3ePYqM3eKFw7IW/6BO1fAhkKGeKPNAVq+1MrzZ
-        Pzok02hhaOyl+tktAl/EiQtmng==
-X-Google-Smtp-Source: ABdhPJzunrBENd8Gt6Atjck/9sEOv5kmJocCR172m7pZyT7iDNxK1yUwX+CwbRU4PIabfOkGcTJ08A==
-X-Received: by 2002:a62:fc52:: with SMTP id e79mr91278pfh.5.1591743431293;
-        Tue, 09 Jun 2020 15:57:11 -0700 (PDT)
+        bh=cM+rCpZobNDrkDN9s+cJ/Q1XgGFeWXzm3UzYtFYpyy4=;
+        b=dyVTkujIJ37V2Kgl+pdOD6DRAXMhnWUkYWIN3M06177rADVUUNo1M9muM3NLnGvMXH
+         10NMV5v8t91rlhKC0CuwehK2yvQGl0OYq81PKgvDVcUVrxstGriPm5xauXuHBHNQlChk
+         dsONWwK9GY62quioDDwC0IFyxR3tHAAfttQrASrtRyq7I+p88gzytqsvKkvA6ITDlRZW
+         zoVMCeVY80h1OWrPSUeT/ojtz5kY8f9Lod6jHLpqT1WUTYPb0xqGpsi97VF0KyBjffqc
+         blAhXmKqxjhQ7bTHS5qhHMMnNhueXG+jDA1QKESuRfM7ueeLP/lOPWjims66I/8Z+zUh
+         Bqkg==
+X-Gm-Message-State: AOAM533DVoZYmftRDBq5CFK8gl6fWmKDPFrXOIiZZfqzbW4kLKDK+Hha
+        T9uWEBNAVuOHS0qKh3ErbCu7Qw==
+X-Google-Smtp-Source: ABdhPJzt2on8TT/VRipqTfFNR4O9ShRqcpSzbecmhCO8fd5EePg4uWMnzAa84LqTYB4Rh0Gh65kwjA==
+X-Received: by 2002:a63:145f:: with SMTP id 31mr212923pgu.383.1591743455670;
+        Tue, 09 Jun 2020 15:57:35 -0700 (PDT)
 Received: from lbrmn-lnxub113.broadcom.net ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id p8sm9104978pgs.29.2020.06.09.15.57.08
+        by smtp.gmail.com with ESMTPSA id p8sm9104978pgs.29.2020.06.09.15.57.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jun 2020 15:57:10 -0700 (PDT)
+        Tue, 09 Jun 2020 15:57:34 -0700 (PDT)
 From:   Scott Branden <scott.branden@broadcom.com>
 To:     Luis Chamberlain <mcgrof@kernel.org>,
         Wolfram Sang <wsa@kernel.org>,
@@ -79,9 +79,9 @@ Cc:     Mimi Zohar <zohar@linux.ibm.com>,
         linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         Scott Branden <scott.branden@broadcom.com>
-Subject: [PATCH v8 1/8] fs: introduce kernel_pread_file* support
-Date:   Tue,  9 Jun 2020 15:56:49 -0700
-Message-Id: <20200609225656.18663-2-scott.branden@broadcom.com>
+Subject: [PATCH v8 8/8] ima: add FIRMWARE_PARTIAL_READ support
+Date:   Tue,  9 Jun 2020 15:56:56 -0700
+Message-Id: <20200609225656.18663-9-scott.branden@broadcom.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200609225656.18663-1-scott.branden@broadcom.com>
 References: <20200609225656.18663-1-scott.branden@broadcom.com>
@@ -89,236 +89,67 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Add kernel_pread_file* support to kernel to allow for partial read
-of files with an offset into the file.
+Add FIRMWARE_PARTIAL_READ support for integrity
+measurement on partial reads of firmware files.
 
 Signed-off-by: Scott Branden <scott.branden@broadcom.com>
 ---
- fs/exec.c          | 93 ++++++++++++++++++++++++++++++++++------------
- include/linux/fs.h | 15 ++++++++
- 2 files changed, 85 insertions(+), 23 deletions(-)
+ security/integrity/ima/ima_main.c | 24 +++++++++++++++++++++++-
+ 1 file changed, 23 insertions(+), 1 deletion(-)
 
-diff --git a/fs/exec.c b/fs/exec.c
-index 7b7cbb180785..c557b4b31d0f 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -927,10 +927,14 @@ struct file *open_exec(const char *name)
- }
- EXPORT_SYMBOL(open_exec);
- 
--int kernel_read_file(struct file *file, void **buf, loff_t *size,
--		     loff_t max_size, enum kernel_read_file_id id)
--{
--	loff_t i_size, pos;
-+int kernel_pread_file(struct file *file, void **buf, loff_t *size,
-+		      loff_t max_size, loff_t pos,
-+		      enum kernel_read_file_id id)
-+{
-+	loff_t alloc_size;
-+	loff_t buf_pos;
-+	loff_t read_end;
-+	loff_t i_size;
- 	ssize_t bytes = 0;
- 	int ret;
- 
-@@ -950,21 +954,32 @@ int kernel_read_file(struct file *file, void **buf, loff_t *size,
- 		ret = -EINVAL;
- 		goto out;
- 	}
--	if (i_size > SIZE_MAX || (max_size > 0 && i_size > max_size)) {
-+
-+	/* Default read to end of file */
-+	read_end = i_size;
-+
-+	/* Allow reading partial portion of file */
-+	if ((id == READING_FIRMWARE_PARTIAL_READ) &&
-+	    (i_size > (pos + max_size)))
-+		read_end = pos + max_size;
-+
-+	alloc_size = read_end - pos;
-+	if (i_size > SIZE_MAX || (max_size > 0 && alloc_size > max_size)) {
- 		ret = -EFBIG;
- 		goto out;
- 	}
- 
--	if (id != READING_FIRMWARE_PREALLOC_BUFFER)
--		*buf = vmalloc(i_size);
-+	if ((id != READING_FIRMWARE_PARTIAL_READ) &&
-+	    (id != READING_FIRMWARE_PREALLOC_BUFFER))
-+		*buf = vmalloc(alloc_size);
- 	if (!*buf) {
- 		ret = -ENOMEM;
- 		goto out;
- 	}
- 
--	pos = 0;
--	while (pos < i_size) {
--		bytes = kernel_read(file, *buf + pos, i_size - pos, &pos);
-+	buf_pos = 0;
-+	while (pos < read_end) {
-+		bytes = kernel_read(file, *buf + buf_pos, read_end - pos, &pos);
- 		if (bytes < 0) {
- 			ret = bytes;
- 			goto out_free;
-@@ -972,20 +987,23 @@ int kernel_read_file(struct file *file, void **buf, loff_t *size,
- 
- 		if (bytes == 0)
- 			break;
-+
-+		buf_pos += bytes;
- 	}
- 
--	if (pos != i_size) {
-+	if (pos != read_end) {
- 		ret = -EIO;
- 		goto out_free;
- 	}
- 
--	ret = security_kernel_post_read_file(file, *buf, i_size, id);
-+	ret = security_kernel_post_read_file(file, *buf, alloc_size, id);
- 	if (!ret)
- 		*size = pos;
- 
- out_free:
- 	if (ret < 0) {
--		if (id != READING_FIRMWARE_PREALLOC_BUFFER) {
-+		if ((id != READING_FIRMWARE_PARTIAL_READ) &&
-+		    (id != READING_FIRMWARE_PREALLOC_BUFFER)) {
- 			vfree(*buf);
- 			*buf = NULL;
- 		}
-@@ -995,10 +1013,18 @@ int kernel_read_file(struct file *file, void **buf, loff_t *size,
- 	allow_write_access(file);
- 	return ret;
- }
-+
-+int kernel_read_file(struct file *file, void **buf, loff_t *size,
-+		     loff_t max_size, enum kernel_read_file_id id)
-+{
-+	return kernel_pread_file(file, buf, size, max_size, 0, id);
-+}
- EXPORT_SYMBOL_GPL(kernel_read_file);
- 
--int kernel_read_file_from_path(const char *path, void **buf, loff_t *size,
--			       loff_t max_size, enum kernel_read_file_id id)
-+int kernel_pread_file_from_path(const char *path, void **buf,
-+				loff_t *size,
-+				loff_t max_size, loff_t pos,
-+				enum kernel_read_file_id id)
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 800fb3bba418..fc5134807acf 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -609,6 +609,9 @@ void ima_post_path_mknod(struct dentry *dentry)
+  */
+ int ima_read_file(struct file *file, enum kernel_read_file_id read_id)
  {
- 	struct file *file;
- 	int ret;
-@@ -1010,15 +1036,22 @@ int kernel_read_file_from_path(const char *path, void **buf, loff_t *size,
- 	if (IS_ERR(file))
- 		return PTR_ERR(file);
- 
--	ret = kernel_read_file(file, buf, size, max_size, id);
-+	ret = kernel_pread_file(file, buf, size, max_size, pos, id);
- 	fput(file);
- 	return ret;
- }
++	enum ima_hooks func;
++	u32 secid;
 +
-+int kernel_read_file_from_path(const char *path, void **buf, loff_t *size,
-+			       loff_t max_size, enum kernel_read_file_id id)
-+{
-+	return kernel_pread_file_from_path(path, buf, size, max_size, 0, id);
-+}
- EXPORT_SYMBOL_GPL(kernel_read_file_from_path);
- 
--int kernel_read_file_from_path_initns(const char *path, void **buf,
--				      loff_t *size, loff_t max_size,
--				      enum kernel_read_file_id id)
-+int kernel_pread_file_from_path_initns(const char *path, void **buf,
-+				       loff_t *size,
-+				       loff_t max_size, loff_t pos,
-+				       enum kernel_read_file_id id)
- {
- 	struct file *file;
- 	struct path root;
-@@ -1036,14 +1069,22 @@ int kernel_read_file_from_path_initns(const char *path, void **buf,
- 	if (IS_ERR(file))
- 		return PTR_ERR(file);
- 
--	ret = kernel_read_file(file, buf, size, max_size, id);
-+	ret = kernel_pread_file(file, buf, size, max_size, pos, id);
- 	fput(file);
- 	return ret;
- }
+ 	/*
+ 	 * READING_FIRMWARE_PREALLOC_BUFFER
+ 	 *
+@@ -617,11 +620,27 @@ int ima_read_file(struct file *file, enum kernel_read_file_id read_id)
+ 	 * of IMA's signature verification any more than when using two
+ 	 * buffers?
+ 	 */
+-	return 0;
++	if (read_id != READING_FIRMWARE_PARTIAL_READ)
++		return 0;
 +
-+int kernel_read_file_from_path_initns(const char *path, void **buf,
-+				      loff_t *size, loff_t max_size,
-+				      enum kernel_read_file_id id)
-+{
-+	return kernel_pread_file_from_path_initns(path, buf, size, max_size, 0, id);
-+}
- EXPORT_SYMBOL_GPL(kernel_read_file_from_path_initns);
- 
--int kernel_read_file_from_fd(int fd, void **buf, loff_t *size, loff_t max_size,
--			     enum kernel_read_file_id id)
-+int kernel_pread_file_from_fd(int fd, void **buf, loff_t *size,
-+			      loff_t max_size, loff_t pos,
-+			      enum kernel_read_file_id id)
- {
- 	struct fd f = fdget(fd);
- 	int ret = -EBADF;
-@@ -1051,11 +1092,17 @@ int kernel_read_file_from_fd(int fd, void **buf, loff_t *size, loff_t max_size,
- 	if (!f.file)
- 		goto out;
- 
--	ret = kernel_read_file(f.file, buf, size, max_size, id);
-+	ret = kernel_pread_file(f.file, buf, size, max_size, pos, id);
- out:
- 	fdput(f);
- 	return ret;
- }
++	if (!file) {
++		if ((ima_appraise & IMA_APPRAISE_FIRMWARE) &&
++		    (ima_appraise & IMA_APPRAISE_ENFORCE)) {
++			pr_err("Prevent firmware loading_store.\n");
++			return -EACCES;	/* INTEGRITY_UNKNOWN */
++		}
++		return 0;
++	}
 +
-+int kernel_read_file_from_fd(int fd, void **buf, loff_t *size, loff_t max_size,
-+			     enum kernel_read_file_id id)
-+{
-+	return kernel_pread_file_from_fd(fd, buf, size, max_size, 0, id);
-+}
- EXPORT_SYMBOL_GPL(kernel_read_file_from_fd);
- 
- #if defined(CONFIG_HAVE_AOUT) || defined(CONFIG_BINFMT_FLAT) || \
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 951862b1211b..ab715559cf3c 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3012,6 +3012,7 @@ extern int do_pipe_flags(int *, int);
- #define __kernel_read_file_id(id) \
- 	id(UNKNOWN, unknown)		\
- 	id(FIRMWARE, firmware)		\
-+	id(FIRMWARE_PARTIAL_READ, firmware)	\
- 	id(FIRMWARE_PREALLOC_BUFFER, firmware)	\
- 	id(FIRMWARE_EFI_EMBEDDED, firmware)	\
- 	id(MODULE, kernel-module)		\
-@@ -3040,12 +3041,26 @@ static inline const char *kernel_read_file_id_str(enum kernel_read_file_id id)
- 	return kernel_read_file_str[id];
++	func = read_idmap[read_id] ?: FILE_CHECK;
++	security_task_getsecid(current, &secid);
++	return process_measurement(file, current_cred(), secid, NULL,
++				   0, MAY_READ, func);
  }
  
-+int kernel_pread_file(struct file *file, void **buf, loff_t *size,
-+		      loff_t pos, loff_t max_size,
-+		      enum kernel_read_file_id id);
- extern int kernel_read_file(struct file *, void **, loff_t *, loff_t,
- 			    enum kernel_read_file_id);
-+int kernel_pread_file_from_path(const char *path, void **buf,
-+				loff_t *size, loff_t pos,
-+				loff_t max_size,
-+				enum kernel_read_file_id id);
- extern int kernel_read_file_from_path(const char *, void **, loff_t *, loff_t,
- 				      enum kernel_read_file_id);
-+int kernel_pread_file_from_path_initns(const char *path, void **buf,
-+				       loff_t *size, loff_t pos,
-+				       loff_t max_size,
-+				       enum kernel_read_file_id id);
- extern int kernel_read_file_from_path_initns(const char *, void **, loff_t *, loff_t,
- 					     enum kernel_read_file_id);
-+int kernel_pread_file_from_fd(int fd, void **buf, loff_t *size,
-+			      loff_t pos, loff_t max_size,
-+			      enum kernel_read_file_id id);
- extern int kernel_read_file_from_fd(int, void **, loff_t *, loff_t,
- 				    enum kernel_read_file_id);
- extern ssize_t kernel_read(struct file *, void *, size_t, loff_t *);
+ const int read_idmap[READING_MAX_ID] = {
+ 	[READING_FIRMWARE] = FIRMWARE_CHECK,
++	[READING_FIRMWARE_PARTIAL_READ] = FIRMWARE_CHECK,
+ 	[READING_FIRMWARE_PREALLOC_BUFFER] = FIRMWARE_CHECK,
+ 	[READING_MODULE] = MODULE_CHECK,
+ 	[READING_KEXEC_IMAGE] = KEXEC_KERNEL_CHECK,
+@@ -648,6 +667,9 @@ int ima_post_read_file(struct file *file, void *buf, loff_t size,
+ 	enum ima_hooks func;
+ 	u32 secid;
+ 
++	if (read_id == READING_FIRMWARE_PARTIAL_READ)
++		return 0;
++
+ 	if (!file && read_id == READING_FIRMWARE) {
+ 		if ((ima_appraise & IMA_APPRAISE_FIRMWARE) &&
+ 		    (ima_appraise & IMA_APPRAISE_ENFORCE)) {
 -- 
 2.17.1
 
