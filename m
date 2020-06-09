@@ -2,108 +2,90 @@ Return-Path: <SRS0=DAbT=7W=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0937DC433DF
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Jun 2020 13:50:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93EC2C433DF
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Jun 2020 14:34:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CF96A20737
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Jun 2020 13:50:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 57BA520734
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Jun 2020 14:34:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pFZbRjVu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730089AbgFINtE (ORCPT
+        id S1730525AbgFIOew (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 9 Jun 2020 09:49:04 -0400
-Received: from out30-42.freemail.mail.aliyun.com ([115.124.30.42]:59272 "EHLO
-        out30-42.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729535AbgFINtE (ORCPT
+        Tue, 9 Jun 2020 10:34:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39448 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726803AbgFIOev (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 9 Jun 2020 09:49:04 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01358;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=20;SR=0;TI=SMTPD_---0U.6I2zz_1591710537;
-Received: from localhost(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0U.6I2zz_1591710537)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 09 Jun 2020 21:48:57 +0800
-From:   Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-To:     herbert@gondor.apana.org.au, davem@davemloft.net,
-        dhowells@redhat.com, mcoquelin.stm32@gmail.com,
-        alexandre.torgue@st.com, jmorris@namei.org, serge@hallyn.com,
-        nramas@linux.microsoft.com, tusharsu@linux.microsoft.com,
-        zohar@linux.ibm.com, gilad@benyossef.com, pvanleeuwen@rambus.com
-Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        keyrings@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-security-module@vger.kernel.org, zhang.jia@linux.alibaba.com,
-        tianjia.zhang@linux.alibaba.com
-Subject: [PATCH v3 1/8] crypto: sm3 - export crypto_sm3_final function
-Date:   Tue,  9 Jun 2020 21:48:48 +0800
-Message-Id: <20200609134855.21431-2-tianjia.zhang@linux.alibaba.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200609134855.21431-1-tianjia.zhang@linux.alibaba.com>
-References: <20200609134855.21431-1-tianjia.zhang@linux.alibaba.com>
+        Tue, 9 Jun 2020 10:34:51 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 240C7C05BD1E;
+        Tue,  9 Jun 2020 07:34:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=BS61t3scD5rhsvldmGOJtyXVG6rDl8HEmiFZUjqsT1Q=; b=pFZbRjVutesuWvEsLEcOIckCTU
+        B3HEtPGVpCN39H/vjxliXrmai3D//DgWvJMqaAaECUbY+uGMZ6/JoDe8HSpPKCIOxjdSsdO01gL4k
+        jOfpF4lX6pW0QRPLyuOg22AAoBgA/FbpiiAOEc6nvbB1s1puwqnevV0HVIEy8unMbIITqwStbo958
+        ORwKmICUrKdJ9Jpq/dlDO2GdCh36CSzheEAvMA4TxREBhMXFw8Dc31l+wFd++VFwgYc2Ytzeuu8FI
+        3Xhapr9ybl4wIdCXPbVFVt5XN4bcA0++9e/Y7RYBFDK6bTxa5Fju3SlXupYEV1qkJZRkRZmY0V66L
+        gazISSMA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jifKv-0008Vl-NS; Tue, 09 Jun 2020 14:34:45 +0000
+Date:   Tue, 9 Jun 2020 07:34:45 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Scott Branden <scott.branden@broadcom.com>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        Wolfram Sang <wsa@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Brown <david.brown@linaro.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>, bjorn.andersson@linaro.org,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        Olof Johansson <olof@lixom.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
+        Takashi Iwai <tiwai@suse.de>, linux-kselftest@vger.kernel.org,
+        Andy Gross <agross@kernel.org>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v7 2/8] firmware: add offset to request_firmware_into_buf
+Message-ID: <20200609143445.GD19604@bombadil.infradead.org>
+References: <20200606050458.17281-1-scott.branden@broadcom.com>
+ <20200606050458.17281-3-scott.branden@broadcom.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200606050458.17281-3-scott.branden@broadcom.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Both crypto_sm3_update and crypto_sm3_finup have been
-exported, exporting crypto_sm3_final, to avoid having to
-use crypto_sm3_finup(desc, NULL, 0, dgst) to calculate
-the hash in some cases.
+On Fri, Jun 05, 2020 at 10:04:52PM -0700, Scott Branden wrote:
+>  static struct fw_priv *__allocate_fw_priv(const char *fw_name,
+>  					  struct firmware_cache *fwc,
+> -					  void *dbuf, size_t size)
+> +					  void *dbuf, size_t size,
+> +					  size_t offset,
+> +					  enum kernel_pread_opt opt)
+>  {
 
-Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
----
- crypto/sm3_generic.c | 7 ++++---
- include/crypto/sm3.h | 2 ++
- 2 files changed, 6 insertions(+), 3 deletions(-)
+Your types are screwed up.  size_t is the size of something in memory.
+loff_t is an offset in a file.  This should be an loff_t.  One of the
+other patches has the opposite problem.
 
-diff --git a/crypto/sm3_generic.c b/crypto/sm3_generic.c
-index 3468975215ca..193c4584bd00 100644
---- a/crypto/sm3_generic.c
-+++ b/crypto/sm3_generic.c
-@@ -149,17 +149,18 @@ int crypto_sm3_update(struct shash_desc *desc, const u8 *data,
- }
- EXPORT_SYMBOL(crypto_sm3_update);
- 
--static int sm3_final(struct shash_desc *desc, u8 *out)
-+int crypto_sm3_final(struct shash_desc *desc, u8 *out)
- {
- 	sm3_base_do_finalize(desc, sm3_generic_block_fn);
- 	return sm3_base_finish(desc, out);
- }
-+EXPORT_SYMBOL(crypto_sm3_final);
- 
- int crypto_sm3_finup(struct shash_desc *desc, const u8 *data,
- 			unsigned int len, u8 *hash)
- {
- 	sm3_base_do_update(desc, data, len, sm3_generic_block_fn);
--	return sm3_final(desc, hash);
-+	return crypto_sm3_final(desc, hash);
- }
- EXPORT_SYMBOL(crypto_sm3_finup);
- 
-@@ -167,7 +168,7 @@ static struct shash_alg sm3_alg = {
- 	.digestsize	=	SM3_DIGEST_SIZE,
- 	.init		=	sm3_base_init,
- 	.update		=	crypto_sm3_update,
--	.final		=	sm3_final,
-+	.final		=	crypto_sm3_final,
- 	.finup		=	crypto_sm3_finup,
- 	.descsize	=	sizeof(struct sm3_state),
- 	.base		=	{
-diff --git a/include/crypto/sm3.h b/include/crypto/sm3.h
-index 1438942dc773..42ea21289ba9 100644
---- a/include/crypto/sm3.h
-+++ b/include/crypto/sm3.h
-@@ -35,6 +35,8 @@ struct shash_desc;
- extern int crypto_sm3_update(struct shash_desc *desc, const u8 *data,
- 			      unsigned int len);
- 
-+extern int crypto_sm3_final(struct shash_desc *desc, u8 *out);
-+
- extern int crypto_sm3_finup(struct shash_desc *desc, const u8 *data,
- 			     unsigned int len, u8 *hash);
- #endif
--- 
-2.17.1
-
+(this is kind of a minor problem compared to all the complexity
+problems, but it's worth mentioning)
