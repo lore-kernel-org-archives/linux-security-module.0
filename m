@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97D71C433DF
-	for <linux-security-module@archiver.kernel.org>; Wed, 10 Jun 2020 15:49:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D57FFC433E0
+	for <linux-security-module@archiver.kernel.org>; Wed, 10 Jun 2020 15:49:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 72189206C3
-	for <linux-security-module@archiver.kernel.org>; Wed, 10 Jun 2020 15:49:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF5A4206C3
+	for <linux-security-module@archiver.kernel.org>; Wed, 10 Jun 2020 15:49:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1591804168;
-	bh=fJXKd3vsVsiHq4HN5zcf+YrN0uorpWyT3caoSFBfyBs=;
+	s=default; t=1591804171;
+	bh=lqkmGRLsCrqJLSBkfcGA1y6l9/8phOppP14+RBqy6FM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=UenQtBg0XRrm6SRLk24skbIh/VEEFe0qkjKui+FRnlwtbJyTuKW9yFVsC5gvQVA2j
-	 rqffBFgBCihm718sxny5DQNZlQui+SQo3DwbMNGZIjql2IWlcdQ6We/urYPNfz6YbR
-	 6FWS+CDfuKalwnUX8aWkaRwasQxtj2xW3slv9CzY=
+	b=eBhHyddpFO/zGQoSONyiCoyFnERHmqWLONfvPMTFg9Y36pAf+2sgMv7LqcSKpcv+T
+	 SiIw9BNkZHf7hvbzmiAZ2C9dnJFQ4CmMyuD+6TvwsIawp1ePN6+ZwWG5M5IPab40vz
+	 dYkTsIQwbOAAVlt7nQohjOjP1TXQov4ped9VUUZo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728194AbgFJPt2 (ORCPT
+        id S1730337AbgFJPta (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 10 Jun 2020 11:49:28 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:46080 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728129AbgFJPt1 (ORCPT
+        Wed, 10 Jun 2020 11:49:30 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:33074 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728129AbgFJPt3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 10 Jun 2020 11:49:27 -0400
-Received: by mail-pl1-f195.google.com with SMTP id n2so1091036pld.13;
-        Wed, 10 Jun 2020 08:49:27 -0700 (PDT)
+        Wed, 10 Jun 2020 11:49:29 -0400
+Received: by mail-pg1-f193.google.com with SMTP id s10so1172047pgm.0;
+        Wed, 10 Jun 2020 08:49:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=VaG7u6/oJsTeb5TEDlgcUeH6UZPnr3RsvPE6NVTbAOU=;
-        b=LONDURJ+m34Rxt1zTQe26+zWI6iaGPKGUxgdfRPEybeVavviQUFyqeE3i56mvhOQCe
-         dsyIkhS2WvRfkbIhtpyDJ+pshgtxrMFb+annPnC30/wNc81XpPA1fSZHycni4/DOIbmX
-         2eKf3ETss9jPM0WMumqHK/5efJVLrlLC2/S1HMN7mQEpmHuuAjTaw6oF9JUdYPiURw9/
-         t/h87jaU9/ZkyhpIcejulLPiWtGqO8gedYFjQdndyUx110UCQo50XaiLS7KJeWAsGFMI
-         cQJ1y0F0arwIsTwRFX2INy+l3PZunoRN/5CVHAYwkGxAGnyosx7XNrHh3sn/IUn1bfrr
-         UlrQ==
-X-Gm-Message-State: AOAM530qnyKN5H2P0PmV+ujZTW25xpAXAmyVtX+dYKbVTNR0Xlrqdo30
-        e5doaI8Z9A25Tr0DcfMqJqg=
-X-Google-Smtp-Source: ABdhPJzZoTl6eBSN8rqRCZozE//xcl2A2KM4BNx2Ocdpgf10NDUQ83ejBj8RMkeBJS9LOY1t52eKiw==
-X-Received: by 2002:a17:90a:21a2:: with SMTP id q31mr3700686pjc.230.1591804166854;
-        Wed, 10 Jun 2020 08:49:26 -0700 (PDT)
+        bh=qSIwN4KZGofFPlUal7btJTGNfkPGbkCJjMaiuCB3kq4=;
+        b=idX9HP+xbdH5W0ymKxrXC5TgZruF6m/3aFicOX7DGbsOqw7iARid6WHbe7UFklwcN+
+         UTdizeWKK6JQ3BGDKSEoDT8efVyqudWIfDcNi6HYhppjzKka4OBhLSvyUSYj5/sgXg/Z
+         2X8VrNRK9AbhalAoYh/rs6LbVw2jNbWyNUldpkGjA1Zdpwpv25VQirAJ1E2yWtJWk+6o
+         2mlUnj8fcwp2wDwlLebwkGONyhxKkorTdy3YzbKt83cAw08TnZcvTKXhZNTKRFrld2D1
+         UmsIZQwEyBLtWp1nmdVrHDjIAoVEKRAi9uPi90aXUjBpsZF6fH5gOosehGgGCH/vEW4R
+         AZYQ==
+X-Gm-Message-State: AOAM530jWXWIfpGEOMbrSHH+NLw0fxVgiKvMIHCdWUzrMIi24keGlo7J
+        EvBMxk+nUl8vuxtKsq9lS1qppR0e/21v6w==
+X-Google-Smtp-Source: ABdhPJzQjKy64D7JAY2b9Df/J8XTTNXeIN4ec7JdMHHdnO0cu4EShFKvEj31fLfQzVASTIHoxJ1AIw==
+X-Received: by 2002:a62:4e91:: with SMTP id c139mr3418995pfb.18.1591804167551;
+        Wed, 10 Jun 2020 08:49:27 -0700 (PDT)
 Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id p31sm252812pgb.46.2020.06.10.08.49.25
+        by smtp.gmail.com with ESMTPSA id 12sm338947pfb.3.2020.06.10.08.49.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Wed, 10 Jun 2020 08:49:25 -0700 (PDT)
 Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 3872940B24; Wed, 10 Jun 2020 15:49:25 +0000 (UTC)
+        id 606C741C23; Wed, 10 Jun 2020 15:49:25 +0000 (UTC)
 From:   "Luis R. Rodriguez" <mcgrof@kernel.org>
 To:     gregkh@linuxfoundation.org, viro@zeniv.linux.org.uk,
         philipp.reisner@linbit.com, lars.ellenberg@linbit.com,
@@ -67,9 +67,9 @@ Cc:     slyfox@gentoo.org, ast@kernel.org, keescook@chromium.org,
         linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, Tiezhu Yang <yangtiezhu@loongson.cn>,
         Luis Chamberlain <mcgrof@kernel.org>
-Subject: [PATCH 1/5] selftests: kmod: Use variable NAME in kmod_test_0001()
-Date:   Wed, 10 Jun 2020 15:49:19 +0000
-Message-Id: <20200610154923.27510-2-mcgrof@kernel.org>
+Subject: [PATCH 3/5] test_kmod: Avoid potential double free in trigger_config_run_type()
+Date:   Wed, 10 Jun 2020 15:49:21 +0000
+Message-Id: <20200610154923.27510-4-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.23.0.rc1
 In-Reply-To: <20200610154923.27510-1-mcgrof@kernel.org>
 References: <20200610154923.27510-1-mcgrof@kernel.org>
@@ -81,37 +81,31 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: Tiezhu Yang <yangtiezhu@loongson.cn>
 
-Use the variable NAME instead of "\000" directly in kmod_test_0001().
+Reset the member "test_fs" of the test configuration after a call
+of the function "kfree_const" to a null pointer so that a double
+memory release will not be performed.
 
+Fixes: d9c6a72d6fa2 ("kmod: add test driver to stress test the module loader")
 Acked-by: Luis Chamberlain <mcgrof@kernel.org>
 Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
 Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 ---
- tools/testing/selftests/kmod/kmod.sh | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ lib/test_kmod.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/kmod/kmod.sh b/tools/testing/selftests/kmod/kmod.sh
-index 3702dbcc90a7..da60c3bd4f23 100755
---- a/tools/testing/selftests/kmod/kmod.sh
-+++ b/tools/testing/selftests/kmod/kmod.sh
-@@ -341,7 +341,7 @@ kmod_test_0001_driver()
- 
- 	kmod_defaults_driver
- 	config_num_threads 1
--	printf '\000' >"$DIR"/config_test_driver
-+	printf $NAME >"$DIR"/config_test_driver
- 	config_trigger ${FUNCNAME[0]}
- 	config_expect_result ${FUNCNAME[0]} MODULE_NOT_FOUND
- }
-@@ -352,7 +352,7 @@ kmod_test_0001_fs()
- 
- 	kmod_defaults_fs
- 	config_num_threads 1
--	printf '\000' >"$DIR"/config_test_fs
-+	printf $NAME >"$DIR"/config_test_fs
- 	config_trigger ${FUNCNAME[0]}
- 	config_expect_result ${FUNCNAME[0]} -EINVAL
- }
+diff --git a/lib/test_kmod.c b/lib/test_kmod.c
+index e651c37d56db..eab52770070d 100644
+--- a/lib/test_kmod.c
++++ b/lib/test_kmod.c
+@@ -745,7 +745,7 @@ static int trigger_config_run_type(struct kmod_test_device *test_dev,
+ 		break;
+ 	case TEST_KMOD_FS_TYPE:
+ 		kfree_const(config->test_fs);
+-		config->test_driver = NULL;
++		config->test_fs = NULL;
+ 		copied = config_copy_test_fs(config, test_str,
+ 					     strlen(test_str));
+ 		break;
 -- 
 2.26.2
 
