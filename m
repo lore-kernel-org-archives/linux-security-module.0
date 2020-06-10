@@ -2,157 +2,116 @@ Return-Path: <SRS0=uCN1=7X=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28356C433E0
-	for <linux-security-module@archiver.kernel.org>; Wed, 10 Jun 2020 06:57:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B601BC433DF
+	for <linux-security-module@archiver.kernel.org>; Wed, 10 Jun 2020 07:31:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 04ECC2081A
-	for <linux-security-module@archiver.kernel.org>; Wed, 10 Jun 2020 06:57:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ddLRfwzP"
+	by mail.kernel.org (Postfix) with ESMTP id 9CE94207ED
+	for <linux-security-module@archiver.kernel.org>; Wed, 10 Jun 2020 07:31:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726260AbgFJG55 (ORCPT
+        id S1726507AbgFJHbS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 10 Jun 2020 02:57:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50038 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726280AbgFJG5z (ORCPT
+        Wed, 10 Jun 2020 03:31:18 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:53947 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726081AbgFJHbS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 10 Jun 2020 02:57:55 -0400
-Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC0B7C03E96B
-        for <linux-security-module@vger.kernel.org>; Tue,  9 Jun 2020 23:57:54 -0700 (PDT)
-Received: by mail-wr1-x442.google.com with SMTP id p5so916384wrw.9
-        for <linux-security-module@vger.kernel.org>; Tue, 09 Jun 2020 23:57:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=pobv6r5LIc/Sd0wEhG16fzhnOAOk2VjDCWplMb577X4=;
-        b=ddLRfwzPXNoxfe3VO0mqTSrQK47USq90tvqnlgHEeEidcoKAA+uYgKh2UAY9xDTxMB
-         LijpchiQC0rtYmQ0SMFm+iGStHtIS+nSbQ0HvVPvRlJT7+S/KQeNO7OcX5e9nr9uKVxd
-         chTVHOEai816FH+lElh6dpyw841D4IGSW+gCDgy4GsgxPYsILPLgZj+b5Lc1gQZlA9B4
-         usAaEb9SfNQMCdez47Ix5zx3o3Me8qxnM5wRb5gu9LQZo4CQXgubgpVzSOo+ug6wcDGx
-         WODGLYbRLmJUld739JnmLdguTDP/DFPD4BRf9dE8mW3L3AITdUSjIggLLRWcktXFnU02
-         PKww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=pobv6r5LIc/Sd0wEhG16fzhnOAOk2VjDCWplMb577X4=;
-        b=UHdHuBq+IwGD5y08c8VmRBP9f61iLqFl/CI9il79+zqpwSv+ZG390FrhgoDis8Em5Q
-         4rzwiaAYzQxr1NaV7Zsnhhgn2UNauxSB8kSgvRonfIqXA4tjSkgEdciiQkht//ogFf+p
-         lvF5WyHPwUOK2hSF2x9NwWo6+D3sWH6+XZL9O5P6xkiSKDIx8p+XtkuvGeDGonrBxV62
-         7s/FY43sjnXzchv8fkBFbjwRjE940f1twTb8yQhgTvXJnDRQ/yO5nb6KK8Y+vSSTmi+O
-         meR+3UI5mpDw44xbEOvFP3j6oVADEA4VmeER3EFSNH7fPLKuepn0DAotw+5ZVGWrOAg8
-         9MGw==
-X-Gm-Message-State: AOAM5318YBFHcpQx5ltadA19cdkNSEwT3blvDDZd1Hfjy7fMdolwyIvz
-        rkofBOC+CeyBVwYGEO5GtLOS54iUGEsF7Q==
-X-Google-Smtp-Source: ABdhPJzFZsnYmDYUVArSRtbW8NTXUKOpxjDxsY89LnG/TbreI0HJx9efp9KmToVT2n0bZaq89FgnyA==
-X-Received: by 2002:adf:f84d:: with SMTP id d13mr1759982wrq.99.1591772273452;
-        Tue, 09 Jun 2020 23:57:53 -0700 (PDT)
-Received: from bienne.fritz.box ([2001:a61:253c:8201:b2fb:3ef8:ca:1604])
-        by smtp.gmail.com with ESMTPSA id g18sm5889977wme.17.2020.06.09.23.57.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jun 2020 23:57:53 -0700 (PDT)
-From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-To:     mtk.manpages@gmail.com, Andrew Morgan <morgan@kernel.org>
-Cc:     linux-security-module@vger.kernel.org
-Subject: [PATCH 4/4] cap_get_proc.3: change "current process" to "calling process"
-Date:   Wed, 10 Jun 2020 08:57:35 +0200
-Message-Id: <20200610065735.3975740-4-mtk.manpages@gmail.com>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20200610065735.3975740-1-mtk.manpages@gmail.com>
-References: <20200610065735.3975740-1-mtk.manpages@gmail.com>
+        Wed, 10 Jun 2020 03:31:18 -0400
+Received: from fsav303.sakura.ne.jp (fsav303.sakura.ne.jp [153.120.85.134])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 05A7URas010288;
+        Wed, 10 Jun 2020 16:30:28 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav303.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav303.sakura.ne.jp);
+ Wed, 10 Jun 2020 16:30:27 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav303.sakura.ne.jp)
+Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 05A7URpx010284
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Wed, 10 Jun 2020 16:30:27 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [RFC][PATCH] net/bpfilter: Remove this broken and apparently
+ unmantained
+To:     linux-security-module <linux-security-module@vger.kernel.org>
+Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>
+References: <20200607014935.vhd3scr4qmawq7no@ast-mbp>
+ <33cf7a57-0afa-9bb9-f831-61cca6c19eba@i-love.sakura.ne.jp>
+ <20200608162306.iu35p4xoa2kcp3bu@ast-mbp.dhcp.thefacebook.com>
+ <af00d341-6046-e187-f5c8-5f57b40f017c@i-love.sakura.ne.jp>
+ <20200609012826.dssh2lbfr6tlhwwa@ast-mbp.dhcp.thefacebook.com>
+ <ddabab93-4660-3a46-8b05-89385e292b75@i-love.sakura.ne.jp>
+ <20200609223214.43db3orsyjczb2dd@ast-mbp.dhcp.thefacebook.com>
+ <6a8b284f-461e-11b5-9985-6dc70012f774@i-love.sakura.ne.jp>
+ <20200610000546.4hh4n53vaxc4hypi@ast-mbp.dhcp.thefacebook.com>
+ <1be571d2-c517-d7a7-788e-3bcc07afa858@i-love.sakura.ne.jp>
+ <20200610033256.xkv5a7l6vtb2jiox@ast-mbp.dhcp.thefacebook.com>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <c9828709-c8e1-06a2-8643-e09e2e555b81@i-love.sakura.ne.jp>
+Date:   Wed, 10 Jun 2020 16:30:28 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200610033256.xkv5a7l6vtb2jiox@ast-mbp.dhcp.thefacebook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The term "current process" is kernel-developer speak that is often not
-understood by user-space programmers. Change to "calling process",
-which is clearer.
+Forwarding to LSM-ML. Security people, any comments?
 
-Signed-off-by: Michael Kerrisk (man-pages) <mtk.manpages@gmail.com>
----
- doc/cap_get_proc.3 | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
-
-diff --git a/doc/cap_get_proc.3 b/doc/cap_get_proc.3
-index 0238601..b0a61d1 100644
---- a/doc/cap_get_proc.3
-+++ b/doc/cap_get_proc.3
-@@ -89,7 +89,7 @@ file.
- with a
- .I  cap
- as an argument returns the current value of this bounding set
--capability flag in effect for the current process. This operation is
-+capability flag in effect for the calling process. This operation is
- unprivileged. Note, a macro function
- .BR "CAP_IS_SUPPORTED(cap_value_t " cap )
- is provided that evaluates to true (1) if the system supports the
-@@ -122,11 +122,11 @@ capability set must have a raised
- .BR CAP_SETPCAP .
- Further, to raise a specific ambient capability the
- .IR inheritable " and " permitted
--sets of the current process must contain the specified capability, and
-+sets of the calling process must contain the specified capability, and
- raised ambient bits will only be retained as long as this remains true.
- .PP
- .BR cap_reset_ambient ()
--resets all of the ambient capabilities for the current process to
-+resets all of the ambient capabilities for the calling process to
- their lowered value. To complete successfully, the prevailing
- .I effective
- capability set must have a raised
-@@ -139,12 +139,12 @@ changes to the inheritable set by the program code without explicitly
- fixing up the ambient set can also drop ambient bits.
- .PP
- .BR cap_get_secbits ()
--returns the securebits of the current process. These bits affect the
--way in which the current process implements things like setuid-root
-+returns the securebits of the calling process. These bits affect the
-+way in which the calling process implements things like setuid-root
- fixup and ambient capabilities.
- .PP
- .BR cap_set_secbits ()
--attempts to modify the securebits of the current process. Note
-+attempts to modify the securebits of the calling process. Note
- .B CAP_SETPCAP
- must be in the effective capability set for this to be effective. Some
- settings lock the sub-states of the securebits, so attempts to set values
-@@ -274,13 +274,13 @@ attempts to set the capabilities of some other process(es),
- If
- .I pid
- is positive it refers to a specific process;  if it is zero, it refers
--to the current process; \-1 refers to all processes other than the
--current process and process '1' (typically 
-+to the calling process; \-1 refers to all processes other than the
-+calling process and process '1' (typically 
- .BR init (8));
- other negative values refer to the
- .I \-pid
- process group.  In order to use this function, the kernel must support
--it and the current process must have
-+it and the calling process must have
- .B CAP_SETPCAP
- raised in its Effective capability set. The capabilities set in the
- target process(es) are those contained in
-@@ -288,7 +288,7 @@ target process(es) are those contained in
- Kernels that support filesystem capabilities redefine the semantics of
- .B CAP_SETPCAP
- and on such systems this function will always fail for any target not
--equal to the current process.
-+equal to the calling process.
- .BR capsetp ()
- returns zero for success, and \-1 on failure.
- 
--- 
-2.26.2
-
+On 2020/06/10 12:32, Alexei Starovoitov wrote:
+> On Wed, Jun 10, 2020 at 12:08:20PM +0900, Tetsuo Handa wrote:
+>> On 2020/06/10 9:05, Alexei Starovoitov wrote:
+>>> I think you're still missing that usermode_blob is completely fs-less.
+>>> It doesn't need any fs to work.
+>>
+>> fork_usermode_blob() allows usage like fork_usermode_blob("#!/bin/sh").
+>> A problem for LSMs is not "It doesn't need any fs to work." but "It can access any fs and
+>> it can issue arbitrary syscalls.".
+>>
+>> LSM modules switch their security context upon execve(), based on available information like
+>> "What is the !AT_SYMLINK_NOFOLLOW pathname for the requested program passed to execve()?",
+>> "What is the AT_SYMLINK_NOFOLLOW pathname for the requested program passed to execve()?",
+>> "What are argv[]/envp[] for the requested program passed to execve()?", "What is the inode's
+>> security context passed to execve()?" etc. And file-less execve() request (a.k.a.
+>> fork_usermode_blob()) makes pathname information (which pathname-based LSMs depend on)
+>> unavailable.
+>>
+>> Since fork_usermode_blob() can execute arbitrary code in userspace, fork_usermode_blob() can
+>> allow execution of e.g. statically linked HTTP server and statically linked DBMS server, without
+>> giving LSM modules a chance to understand the intent of individual file-less execve() request.
+>> If many different statically linked programs were executed via fork_usermode_blob(), how LSM
+>> modules can determine whether a syscall from a file-less process should be permitted/denied?
+> 
+> What you're saying is tomoyo doesn't trust kernel modules that are built-in
+> as part of vmlinux and doesn't trust vmlinux build.
+> I cannot really comprehend that since it means that tomoyo doesn't trust itself.
+> 
+>> By the way, TOMOYO LSM wants to know meaningful AT_SYMLINK_NOFOLLOW pathname and !AT_SYMLINK_NOFOLLOW
+>> pathname, and currently there is no API for allow obtaining both pathnames atomically. But that is a
+>> different problem, for what this mail thread is discussing would be whether we can avoid file-less
+>> execve() request (i.e. get rid of fork_usermode_blob()).
+> 
+> tomoyo does path name resolution as a string and using that for security?
+> I'm looking at tomoyo_realpath*() and tomoyo_pathcmp(). Ouch.
+> Path based security is anti pattern of security.
+> I didn't realize tomoyo so broken.
+> 
