@@ -2,56 +2,55 @@ Return-Path: <SRS0=uCN1=7X=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9898CC433DF
-	for <linux-security-module@archiver.kernel.org>; Wed, 10 Jun 2020 15:50:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2042FC433E1
+	for <linux-security-module@archiver.kernel.org>; Wed, 10 Jun 2020 15:50:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 76A32206C3
+	by mail.kernel.org (Postfix) with ESMTP id F10E5206F4
 	for <linux-security-module@archiver.kernel.org>; Wed, 10 Jun 2020 15:50:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1591804202;
-	bh=9m16IR+6N55Eqvqofrw6QBfEO4rIFvzaCGchbnRQNq8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=jx2OekVVP+rQfYgCt+L1OdvY77+sP3+99Udf5/99Nv0MfDFthtSQUfzGa4n8pobPG
-	 N+MdxKy85VVQhPayI8WQFU+rpDoCD/+66BUIsHU4+4zJHpFnhqTe82LwvfaqqWiOlD
-	 y82NgIP9hjTnxykl0g3AZelUd09KaTFghXBShVAE=
+	s=default; t=1591804203;
+	bh=Q9LLla2AHZm5fPM4otACCqwxWCS8AXst7Dotyay87T8=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=EDgBvFafeCJJhBGjTLhjZmkfMtqfzLFx/an+JLk3pAAjkCzx38ViQ9Fx/7sNaBQuI
+	 oXG+421Z+342I1uGgTCbc3zgWnd1UwIm1hMUxRF0Jl2YOYsmgHkRSfIRqDJZ62+oMD
+	 c77TevJJvjjgOMz4ewjQnnEkQvgyYA5EtuO1lEaY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730319AbgFJPtn (ORCPT
+        id S1730359AbgFJPtf (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 10 Jun 2020 11:49:43 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:40841 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730357AbgFJPtf (ORCPT
-        <rfc822;linux-security-module@vger.kernel.org>);
         Wed, 10 Jun 2020 11:49:35 -0400
-Received: by mail-pg1-f193.google.com with SMTP id e18so1158407pgn.7;
-        Wed, 10 Jun 2020 08:49:35 -0700 (PDT)
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:35550 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730345AbgFJPtb (ORCPT
+        <rfc822;linux-security-module@vger.kernel.org>);
+        Wed, 10 Jun 2020 11:49:31 -0400
+Received: by mail-pf1-f194.google.com with SMTP id h185so1278318pfg.2;
+        Wed, 10 Jun 2020 08:49:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Ht44Q655K+m4n+7cL9U0d/GUBshFxQzLVevKrr2oj0M=;
-        b=UeqiLKBwMMpyNhNwyNWB86Wi4G23QdyqZIvrfKNvXCnjX0MSKPxC0GkslMg6lAC3qU
-         fp8mdqtqt9AQjAopXVIjoMS5oV3iuz4ExE6TaMwMCNsJIj4bAcdxiRR2SwnDzcg2TjUq
-         vUw7niJXVFqD/tZJEB7tyzvOKUmP/YBUpisgVDOQDfvZAdtkyvC1OCkaWv6w0u0M7+Gc
-         Mnkan/ZlrweFcXRosYrGOqjGu7bb2Chs1oCFClRt5Z1obrT/ZZSz/T8aI2qlIZ2ugVjI
-         8XxlXgaWm+3TkEsJZz/GQMC/zs2YzKRbMInW6WMOjLMCjC2Ob10j0D0i6TzeTAb5Oggm
-         dvww==
-X-Gm-Message-State: AOAM533MKh2QjOo+0rCUCt2jr997ZQB1CEd6L3c1F9OM6kQPeT+KWaVr
-        QBQ9cbkSCL5kHVIIP65uNQM=
-X-Google-Smtp-Source: ABdhPJy5SAdyQfQNoaTz3plQH9NsEWiOAvKCXruBaMt6+7nC5TCy5/CdN/0cXMcdcKFyT5YHNMINbw==
-X-Received: by 2002:a62:7a89:: with SMTP id v131mr3246047pfc.38.1591804174942;
-        Wed, 10 Jun 2020 08:49:34 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=J9spO8sCjIOMs0wQgccVfIprXE/wzCnPTAA23dgMAdc=;
+        b=h98127/o82LX2PUy40wev+U3cj7HdHMYnU8Jv3cGah9MgwOFtgQigPyLhjMQxgfwjQ
+         HILdmy+dMuwrtcvtNidCN/lgmknQnGDL/NUdUALy8r++cKG6mJzKMkSdT7cM0l6Z1id0
+         QPdRlj9Yg2dS31GiVMPRfaHXY2FWVWVlCIUvoMy5FNBaKrWIh/8LYQuoKXpGDShNN00T
+         lEhLAYrIOUbTplmkKywLarwm/qP0cQt8qlii3VFS6G+b/nOCBrIJW6M++qm7twFAdMS2
+         lwIQOn6ijjVUt6TElXVE9AIu2OlUWSEPrChLGkZdlPkXweZ4ils+eqGHVkWy23Ip9mBi
+         4HtA==
+X-Gm-Message-State: AOAM5301rp10LPb2cpiCWEvjK2wL9S0WhXoqKSDp5jfLsTsfRaZ22AWD
+        tX8EVJVdgthfNsGLjpD3zmo=
+X-Google-Smtp-Source: ABdhPJyu1eX5pyEODFKXM1tUOb06KZbLUOW+sULR/svGLkAhoxImKT7+pXfTo+K5VKZEdMa5hV0cwg==
+X-Received: by 2002:a62:aa0a:: with SMTP id e10mr3428008pff.91.1591804170947;
+        Wed, 10 Jun 2020 08:49:30 -0700 (PDT)
 Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id m15sm247162pgv.45.2020.06.10.08.49.27
+        by smtp.gmail.com with ESMTPSA id c12sm242070pgm.73.2020.06.10.08.49.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jun 2020 08:49:33 -0700 (PDT)
+        Wed, 10 Jun 2020 08:49:26 -0700 (PDT)
 Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 94C9741DD1; Wed, 10 Jun 2020 15:49:25 +0000 (UTC)
+        id 2C139403AB; Wed, 10 Jun 2020 15:49:25 +0000 (UTC)
 From:   "Luis R. Rodriguez" <mcgrof@kernel.org>
 To:     gregkh@linuxfoundation.org, viro@zeniv.linux.org.uk,
         philipp.reisner@linbit.com, lars.ellenberg@linbit.com,
@@ -65,14 +64,11 @@ Cc:     slyfox@gentoo.org, ast@kernel.org, keescook@chromium.org,
         linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
         bridge@lists.linux-foundation.org, keyrings@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>,
-        Tiezhu Yang <yangtiezhu@loongson.cn>
-Subject: [PATCH 5/5] selftests: simplify kmod failure value
-Date:   Wed, 10 Jun 2020 15:49:23 +0000
-Message-Id: <20200610154923.27510-6-mcgrof@kernel.org>
+        linux-kernel@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>
+Subject: [PATCH 0/5] kmod/umh: a few fixes
+Date:   Wed, 10 Jun 2020 15:49:18 +0000
+Message-Id: <20200610154923.27510-1-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.23.0.rc1
-In-Reply-To: <20200610154923.27510-1-mcgrof@kernel.org>
-References: <20200610154923.27510-1-mcgrof@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
@@ -81,125 +77,38 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: Luis Chamberlain <mcgrof@kernel.org>
 
-The "odd" 256 value was just an issue with the umh never
-wrapping it around with WEXITSTATUS() for us. Now that it
-does that, we can use a sane value / name for the selftest,
-and this is no longer a oddity.
+Tiezhu Yang had sent out a patch set with a slew of kmod selftest
+fixes, and one patch which modified kmod to return 254 when a module
+was not found. This opened up pandora's box about why that was being
+used for and low and behold its because when UMH_WAIT_PROC is used
+we call a kernel_wait4() call but have never unwrapped the error code.
+The commit log for that fix details the rationale for the approach
+taken. I'd appreciate some review on that, in particular nfs folks
+as it seems a case was never really hit before.
 
-We add a way to detect this for older kernels, and support
-the old return value for kernel code where it was given.
+This goes boot tested, selftested with kmod, and 0-day gives its
+build blessings.
 
-This never affected userspace.
+Luis Chamberlain (2):
+  umh: fix processed error when UMH_WAIT_PROC is used
+  selftests: simplify kmod failure value
 
-Reported-by: Tiezhu Yang <yangtiezhu@loongson.cn>
-Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
----
- tools/testing/selftests/kmod/kmod.sh | 46 +++++++++++++++++++++++-----
- 1 file changed, 39 insertions(+), 7 deletions(-)
+Tiezhu Yang (3):
+  selftests: kmod: Use variable NAME in kmod_test_0001()
+  kmod: Remove redundant "be an" in the comment
+  test_kmod: Avoid potential double free in trigger_config_run_type()
 
-diff --git a/tools/testing/selftests/kmod/kmod.sh b/tools/testing/selftests/kmod/kmod.sh
-index da60c3bd4f23..df7b21d8561c 100755
---- a/tools/testing/selftests/kmod/kmod.sh
-+++ b/tools/testing/selftests/kmod/kmod.sh
-@@ -64,6 +64,8 @@ ALL_TESTS="$ALL_TESTS 0009:150:1"
- ALL_TESTS="$ALL_TESTS 0010:1:1"
- ALL_TESTS="$ALL_TESTS 0011:1:1"
- 
-+MODULE_NOT_FOUND="FAILURE"
-+
- # Kselftest framework requirement - SKIP code is 4.
- ksft_skip=4
- 
-@@ -155,14 +157,19 @@ test_finish()
- 	echo "Test completed"
- }
- 
-+# OLD_FAILURE is just because the old kernel umh never wrapped
-+# the error with WEXITSTATUS(). Now that it does it, we get the
-+# appropriate actual value from userspace observed in-kernel.
-+
-+# We keep the old mapping to ensure this script keeps working
-+# with older kernels.
- errno_name_to_val()
- {
- 	case "$1" in
--	# kmod calls modprobe and upon of a module not found
--	# modprobe returns just 1... However in the kernel we
--	# *sometimes* see 256...
--	MODULE_NOT_FOUND)
-+	OLD_FAILURE)
- 		echo 256;;
-+	FAILURE)
-+		echo 1;;
- 	SUCCESS)
- 		echo 0;;
- 	-EPERM)
-@@ -181,7 +188,9 @@ errno_name_to_val()
- errno_val_to_name()
- 	case "$1" in
- 	256)
--		echo MODULE_NOT_FOUND;;
-+		echo OLD_FAILURE;;
-+	1)
-+		echo FAILURE;;
- 	0)
- 		echo SUCCESS;;
- 	-1)
-@@ -335,6 +344,28 @@ kmod_defaults_fs()
- 	config_set_test_case_fs
- }
- 
-+check_umh()
-+{
-+	NAME=''
-+
-+	kmod_defaults_driver
-+	config_num_threads 1
-+	printf '\0' >"$DIR"/config_test_driver
-+	config_trigger ${FUNCNAME[0]}
-+	RC=$(config_get_test_result)
-+	if [[ "$RC" == "256" ]]; then
-+		MODULE_NOT_FOUND="OLD_FAILURE"
-+		echo "check_umh: you have and old umh which didn't wrap errors"
-+		echo "           with WEXITSTATUS(). This is OK!"
-+	elif [[ "$RC" != "1" ]]; then
-+		echo "check_umh: Unexpected return value with no modprobe argument: $RC"
-+		exit
-+	else
-+		echo "check_umh: You have a new umh which wraps erros with"
-+		echo "           WEXITSTATUS(). This is OK!"
-+	fi
-+}
-+
- kmod_test_0001_driver()
- {
- 	NAME='\000'
-@@ -343,7 +374,7 @@ kmod_test_0001_driver()
- 	config_num_threads 1
- 	printf $NAME >"$DIR"/config_test_driver
- 	config_trigger ${FUNCNAME[0]}
--	config_expect_result ${FUNCNAME[0]} MODULE_NOT_FOUND
-+	config_expect_result ${FUNCNAME[0]} $MODULE_NOT_FOUND
- }
- 
- kmod_test_0001_fs()
-@@ -371,7 +402,7 @@ kmod_test_0002_driver()
- 	config_set_driver $NAME
- 	config_num_threads 1
- 	config_trigger ${FUNCNAME[0]}
--	config_expect_result ${FUNCNAME[0]} MODULE_NOT_FOUND
-+	config_expect_result ${FUNCNAME[0]} $MODULE_NOT_FOUND
- }
- 
- kmod_test_0002_fs()
-@@ -648,6 +679,7 @@ load_req_mod
- MODPROBE=$(</proc/sys/kernel/modprobe)
- trap "test_finish" EXIT
- 
-+check_umh
- parse_args $@
- 
- exit 0
+ drivers/block/drbd/drbd_nl.c         | 20 +++++------
+ fs/nfsd/nfs4recover.c                |  2 +-
+ include/linux/sched/task.h           | 13 ++++++++
+ kernel/kmod.c                        |  5 ++-
+ kernel/umh.c                         |  4 +--
+ lib/test_kmod.c                      |  2 +-
+ net/bridge/br_stp_if.c               | 10 ++----
+ security/keys/request_key.c          |  2 +-
+ tools/testing/selftests/kmod/kmod.sh | 50 +++++++++++++++++++++++-----
+ 9 files changed, 71 insertions(+), 37 deletions(-)
+
 -- 
 2.26.2
 
