@@ -2,153 +2,136 @@ Return-Path: <SRS0=feNe=7Y=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E70FC433DF
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Jun 2020 15:59:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F278C433DF
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 Jun 2020 19:55:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 09225206A4
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Jun 2020 15:59:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1591891166;
-	bh=tlh1UmC1eo1sAQf/CMrtCtWvKecQM3a4IY3S6L819XM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=IQVkh/Auzgl0prSgo/wnEbhNvGhCzncE6ChYs99Az/O1GfrerqG3u0uRaSkI1VANC
-	 aK5j6pWLFlu/kV1HRjIbg+qK53BosMiFmOIvoAwM0rADd6R+QOxh19eXtOpOK+6dKR
-	 WLqkluXlo/YE62xiP3NBvSlp/rxJ4hAVBGw7x33Q=
+	by mail.kernel.org (Postfix) with ESMTP id DE3DB2073E
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 Jun 2020 19:55:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728622AbgFKP7Z (ORCPT
+        id S1725824AbgFKTzN (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 11 Jun 2020 11:59:25 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:32838 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728626AbgFKP7Z (ORCPT
+        Thu, 11 Jun 2020 15:55:13 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:16308 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725799AbgFKTzN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 11 Jun 2020 11:59:25 -0400
-Received: by mail-qt1-f193.google.com with SMTP id e16so4945649qtg.0
-        for <linux-security-module@vger.kernel.org>; Thu, 11 Jun 2020 08:59:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=iXHzycWNzw8xmZwBMjYM5hvV02agAwUDyISXSYhyXUw=;
-        b=D+IpvITdqKJeDutjnM4gCrDhGXDkCnzWecr2hX8p2ZptQV/ahgc27kJpoHKp5tmHZl
-         f6es/YgdwVkDoeG82uteBTohtEMMljI1gcBVDRaQosyc/EjKJR0AW73pUtG2KpcCqJCv
-         g7/Xs8jJz2LoIdX7koUM1z82GcOhH0FR+3o4buB6HJ+aeI38ls1aRvtBGpSNwrZ1+wDN
-         1T0qZnTcYk4YbDyIiCqSJlSBYK4XDNX+u9nKIbMtKwS4TAcxwI1CGFkBssQtPYTR9DEl
-         7zdOurFeKhZVUQTIstIa8yGtfL8cEaUsvU9O8vPjGce6TNCAIoatJNl0siSEkoKTj0C9
-         yxlw==
-X-Gm-Message-State: AOAM531Ltngv7nP6O9VfJ8dXsB3LZ8F1RG9md+FUAXk8rGd96UOsCazY
-        ys5Xgr9WDGpWRogK5LovF5V6XFrdiCmUrRqoxmV7HocW0EBjgA==
-X-Google-Smtp-Source: ABdhPJwrHypQKck3M7xbFeHQcl+ya9hAgGpRK2Yr47dkVtvBRF940utoEC1PNStJmHzjQBn54i+c4A4ivldLfGqlALo=
-X-Received: by 2002:ac8:1772:: with SMTP id u47mr8567893qtk.177.1591891163631;
- Thu, 11 Jun 2020 08:59:23 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200610065735.3975740-1-mtk.manpages@gmail.com> <20200610065735.3975740-4-mtk.manpages@gmail.com>
-In-Reply-To: <20200610065735.3975740-4-mtk.manpages@gmail.com>
-From:   "Andrew G. Morgan" <morgan@kernel.org>
-Date:   Thu, 11 Jun 2020 08:59:12 -0700
-Message-ID: <CALQRfL6802XRA2egkJuc0nR9ptn9EbGY8fn-T2_tjoM3i5TZsg@mail.gmail.com>
-Subject: Re: [PATCH 4/4] cap_get_proc.3: change "current process" to "calling process"
-To:     "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Cc:     LSM List <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 11 Jun 2020 15:55:13 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 05BJcst2100761;
+        Thu, 11 Jun 2020 15:55:03 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 31kgs4b27y-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 11 Jun 2020 15:55:02 -0400
+Received: from m0098404.ppops.net (m0098404.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 05BJgKBK112430;
+        Thu, 11 Jun 2020 15:55:02 -0400
+Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 31kgs4b274-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 11 Jun 2020 15:55:02 -0400
+Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
+        by ppma03dal.us.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 05BJpIQO025893;
+        Thu, 11 Jun 2020 19:55:01 GMT
+Received: from b01cxnp22036.gho.pok.ibm.com (b01cxnp22036.gho.pok.ibm.com [9.57.198.26])
+        by ppma03dal.us.ibm.com with ESMTP id 31hw1cat5a-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 11 Jun 2020 19:55:01 +0000
+Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 05BJt0u914812116
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 11 Jun 2020 19:55:00 GMT
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A3995112064;
+        Thu, 11 Jun 2020 19:55:00 +0000 (GMT)
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 086EF112062;
+        Thu, 11 Jun 2020 19:55:00 +0000 (GMT)
+Received: from DESKTOP-AV6EVPG.localdomain (unknown [9.65.209.180])
+        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu, 11 Jun 2020 19:54:59 +0000 (GMT)
+From:   Maurizio Drocco <maurizio.drocco@ibm.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     jejb@linux.ibm.com, Maurizio Drocco <maurizio.drocco@ibm.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] extend IMA boot_aggregate with kernel measurements
+Date:   Thu, 11 Jun 2020 15:54:22 -0400
+Message-Id: <20200611195422.2117-1-maurizio.drocco@ibm.com>
+X-Mailer: git-send-email 2.17.1
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.687
+ definitions=2020-06-11_20:2020-06-11,2020-06-11 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 spamscore=0
+ mlxscore=0 suspectscore=1 lowpriorityscore=0 cotscore=-2147483648
+ bulkscore=0 priorityscore=1501 malwarescore=0 adultscore=0 phishscore=0
+ clxscore=1011 impostorscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2004280000 definitions=main-2006110151
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Thanks. All applied:
+IMA is not considering TPM registers 8-9 when calculating the boot
+aggregate. When registers 8-9 are used to store measurements of the
+kernel and its command line (e.g., grub2 bootloader with tpm module
+enabled), IMA should include them in the boot aggregate.
 
-https://git.kernel.org/pub/scm/libs/libcap/libcap.git/commit/?id=589f1f1624528a5153e27f6c54ae49d7beaa183f
+Signed-off-by: Maurizio Drocco <maurizio.drocco@ibm.com>
+---
+ security/integrity/ima/ima.h        |  2 +-
+ security/integrity/ima/ima_crypto.c | 11 ++++++++++-
+ 2 files changed, 11 insertions(+), 2 deletions(-)
 
-Cheers
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index df93ac258e01..9d94080bdad8 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -30,7 +30,7 @@
+ 
+ enum ima_show_type { IMA_SHOW_BINARY, IMA_SHOW_BINARY_NO_FIELD_LEN,
+ 		     IMA_SHOW_BINARY_OLD_STRING_FMT, IMA_SHOW_ASCII };
+-enum tpm_pcrs { TPM_PCR0 = 0, TPM_PCR8 = 8 };
++enum tpm_pcrs { TPM_PCR0 = 0, TPM_PCR8 = 8, TPM_PCR10 = 10 };
+ 
+ /* digest size for IMA, fits SHA1 or MD5 */
+ #define IMA_DIGEST_SIZE		SHA1_DIGEST_SIZE
+diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
+index 220b14920c37..6f0137bdaf61 100644
+--- a/security/integrity/ima/ima_crypto.c
++++ b/security/integrity/ima/ima_crypto.c
+@@ -809,7 +809,7 @@ static void ima_pcrread(u32 idx, struct tpm_digest *d)
+ static int ima_calc_boot_aggregate_tfm(char *digest, u16 alg_id,
+ 				       struct crypto_shash *tfm)
+ {
+-	struct tpm_digest d = { .alg_id = alg_id, .digest = {0} };
++	struct tpm_digest d = { .alg_id = alg_id, .digest = {0} }, d0 = d;
+ 	int rc;
+ 	u32 i;
+ 	SHASH_DESC_ON_STACK(shash, tfm);
+@@ -830,6 +830,15 @@ static int ima_calc_boot_aggregate_tfm(char *digest, u16 alg_id,
+ 		rc = crypto_shash_update(shash, d.digest,
+ 					 crypto_shash_digestsize(tfm));
+ 	}
++	/* extend cumulative sha1 over tpm registers 8-9 */
++	for (i = TPM_PCR8; i < TPM_PCR10; i++) {
++		ima_pcrread(i, &d);
++		/* if not zero, accumulate with current aggregate */
++		if (memcmp(d.digest, d0.digest,
++					crypto_shash_digestsize(tfm) != 0))
++			rc = crypto_shash_update(shash, d.digest,
++					crypto_shash_digestsize(tfm));
++	}
+ 	if (!rc)
+ 		crypto_shash_final(shash, digest);
+ 	return rc;
+-- 
+2.17.1
 
-Andrew
-
-On Tue, Jun 9, 2020 at 11:57 PM Michael Kerrisk (man-pages)
-<mtk.manpages@gmail.com> wrote:
->
-> The term "current process" is kernel-developer speak that is often not
-> understood by user-space programmers. Change to "calling process",
-> which is clearer.
->
-> Signed-off-by: Michael Kerrisk (man-pages) <mtk.manpages@gmail.com>
-> ---
->  doc/cap_get_proc.3 | 20 ++++++++++----------
->  1 file changed, 10 insertions(+), 10 deletions(-)
->
-> diff --git a/doc/cap_get_proc.3 b/doc/cap_get_proc.3
-> index 0238601..b0a61d1 100644
-> --- a/doc/cap_get_proc.3
-> +++ b/doc/cap_get_proc.3
-> @@ -89,7 +89,7 @@ file.
->  with a
->  .I  cap
->  as an argument returns the current value of this bounding set
-> -capability flag in effect for the current process. This operation is
-> +capability flag in effect for the calling process. This operation is
->  unprivileged. Note, a macro function
->  .BR "CAP_IS_SUPPORTED(cap_value_t " cap )
->  is provided that evaluates to true (1) if the system supports the
-> @@ -122,11 +122,11 @@ capability set must have a raised
->  .BR CAP_SETPCAP .
->  Further, to raise a specific ambient capability the
->  .IR inheritable " and " permitted
-> -sets of the current process must contain the specified capability, and
-> +sets of the calling process must contain the specified capability, and
->  raised ambient bits will only be retained as long as this remains true.
->  .PP
->  .BR cap_reset_ambient ()
-> -resets all of the ambient capabilities for the current process to
-> +resets all of the ambient capabilities for the calling process to
->  their lowered value. To complete successfully, the prevailing
->  .I effective
->  capability set must have a raised
-> @@ -139,12 +139,12 @@ changes to the inheritable set by the program code without explicitly
->  fixing up the ambient set can also drop ambient bits.
->  .PP
->  .BR cap_get_secbits ()
-> -returns the securebits of the current process. These bits affect the
-> -way in which the current process implements things like setuid-root
-> +returns the securebits of the calling process. These bits affect the
-> +way in which the calling process implements things like setuid-root
->  fixup and ambient capabilities.
->  .PP
->  .BR cap_set_secbits ()
-> -attempts to modify the securebits of the current process. Note
-> +attempts to modify the securebits of the calling process. Note
->  .B CAP_SETPCAP
->  must be in the effective capability set for this to be effective. Some
->  settings lock the sub-states of the securebits, so attempts to set values
-> @@ -274,13 +274,13 @@ attempts to set the capabilities of some other process(es),
->  If
->  .I pid
->  is positive it refers to a specific process;  if it is zero, it refers
-> -to the current process; \-1 refers to all processes other than the
-> -current process and process '1' (typically
-> +to the calling process; \-1 refers to all processes other than the
-> +calling process and process '1' (typically
->  .BR init (8));
->  other negative values refer to the
->  .I \-pid
->  process group.  In order to use this function, the kernel must support
-> -it and the current process must have
-> +it and the calling process must have
->  .B CAP_SETPCAP
->  raised in its Effective capability set. The capabilities set in the
->  target process(es) are those contained in
-> @@ -288,7 +288,7 @@ target process(es) are those contained in
->  Kernels that support filesystem capabilities redefine the semantics of
->  .B CAP_SETPCAP
->  and on such systems this function will always fail for any target not
-> -equal to the current process.
-> +equal to the calling process.
->  .BR capsetp ()
->  returns zero for success, and \-1 on failure.
->
-> --
-> 2.26.2
->
