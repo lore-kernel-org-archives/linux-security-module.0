@@ -1,137 +1,277 @@
-Return-Path: <SRS0=feNe=7Y=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=CjC+=7Z=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F278C433DF
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Jun 2020 19:55:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B6B3C433DF
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Jun 2020 00:17:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DE3DB2073E
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Jun 2020 19:55:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 049C920823
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Jun 2020 00:17:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725824AbgFKTzN (ORCPT
+        id S1726305AbgFLARK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 11 Jun 2020 15:55:13 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:16308 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725799AbgFKTzN (ORCPT
+        Thu, 11 Jun 2020 20:17:10 -0400
+Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:53937 "EHLO
+        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726285AbgFLARK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 11 Jun 2020 15:55:13 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 05BJcst2100761;
-        Thu, 11 Jun 2020 15:55:03 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 31kgs4b27y-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 11 Jun 2020 15:55:02 -0400
-Received: from m0098404.ppops.net (m0098404.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 05BJgKBK112430;
-        Thu, 11 Jun 2020 15:55:02 -0400
-Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 31kgs4b274-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 11 Jun 2020 15:55:02 -0400
-Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
-        by ppma03dal.us.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 05BJpIQO025893;
-        Thu, 11 Jun 2020 19:55:01 GMT
-Received: from b01cxnp22036.gho.pok.ibm.com (b01cxnp22036.gho.pok.ibm.com [9.57.198.26])
-        by ppma03dal.us.ibm.com with ESMTP id 31hw1cat5a-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 11 Jun 2020 19:55:01 +0000
-Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 05BJt0u914812116
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 11 Jun 2020 19:55:00 GMT
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A3995112064;
-        Thu, 11 Jun 2020 19:55:00 +0000 (GMT)
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 086EF112062;
-        Thu, 11 Jun 2020 19:55:00 +0000 (GMT)
-Received: from DESKTOP-AV6EVPG.localdomain (unknown [9.65.209.180])
-        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu, 11 Jun 2020 19:54:59 +0000 (GMT)
-From:   Maurizio Drocco <maurizio.drocco@ibm.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     jejb@linux.ibm.com, Maurizio Drocco <maurizio.drocco@ibm.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] extend IMA boot_aggregate with kernel measurements
-Date:   Thu, 11 Jun 2020 15:54:22 -0400
-Message-Id: <20200611195422.2117-1-maurizio.drocco@ibm.com>
-X-Mailer: git-send-email 2.17.1
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.687
- definitions=2020-06-11_20:2020-06-11,2020-06-11 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 spamscore=0
- mlxscore=0 suspectscore=1 lowpriorityscore=0 cotscore=-2147483648
- bulkscore=0 priorityscore=1501 malwarescore=0 adultscore=0 phishscore=0
- clxscore=1011 impostorscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2004280000 definitions=main-2006110151
+        Thu, 11 Jun 2020 20:17:10 -0400
+Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
+ EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
+ 15.0.1156.6; Thu, 11 Jun 2020 17:17:05 -0700
+Received: from localhost (unknown [10.200.193.92])
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 7A01A40CBD;
+        Thu, 11 Jun 2020 17:17:09 -0700 (PDT)
+Date:   Thu, 11 Jun 2020 17:17:09 -0700
+From:   Matt Helsley <mhelsley@vmware.com>
+To:     Adrian Reber <areber@redhat.com>
+CC:     Christian Brauner <christian.brauner@ubuntu.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Pavel Emelyanov <ovzxemul@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
+        =?utf-8?B?TWljaGHFgiBDxYJhcGnFhHNraQ==?= <mclapinski@google.com>,
+        Kamil Yurtsever <kyurtsever@google.com>,
+        Dirk Petersen <dipeit@gmail.com>,
+        Christine Flood <chf@redhat.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Radostin Stoyanov <rstoyanov1@gmail.com>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        Serge Hallyn <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Sargun Dhillon <sargun@sargun.me>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Aaron Goidel <acgoide@tycho.nsa.gov>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <selinux@vger.kernel.org>,
+        Eric Paris <eparis@parisplace.org>,
+        Jann Horn <jannh@google.com>
+Subject: Re: [PATCH] capabilities: Introduce CAP_RESTORE
+Message-ID: <20200612001709.GA25598@rlwimi.vmware.com>
+Mail-Followup-To: Matt Helsley <mhelsley@vmware.com>,
+        Adrian Reber <areber@redhat.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Pavel Emelyanov <ovzxemul@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
+        =?utf-8?B?TWljaGHFgiBDxYJhcGnFhHNraQ==?= <mclapinski@google.com>,
+        Kamil Yurtsever <kyurtsever@google.com>,
+        Dirk Petersen <dipeit@gmail.com>, Christine Flood <chf@redhat.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Radostin Stoyanov <rstoyanov1@gmail.com>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        Serge Hallyn <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Sargun Dhillon <sargun@sargun.me>, Arnd Bergmann <arnd@arndb.de>,
+        Aaron Goidel <acgoide@tycho.nsa.gov>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+        selinux@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
+        Jann Horn <jannh@google.com>
+References: <20200522055350.806609-1-areber@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20200522055350.806609-1-areber@redhat.com>
+Received-SPF: None (EX13-EDG-OU-002.vmware.com: mhelsley@vmware.com does not
+ designate permitted sender hosts)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-IMA is not considering TPM registers 8-9 when calculating the boot
-aggregate. When registers 8-9 are used to store measurements of the
-kernel and its command line (e.g., grub2 bootloader with tpm module
-enabled), IMA should include them in the boot aggregate.
+On Fri, May 22, 2020 at 07:53:50AM +0200, Adrian Reber wrote:
+> This enables CRIU to checkpoint and restore a process as non-root.
+> 
+> Over the last years CRIU upstream has been asked a couple of time if it
+> is possible to checkpoint and restore a process as non-root. The answer
+> usually was: 'almost'.
+> 
+> The main blocker to restore a process was that selecting the PID of the
+> restored process, which is necessary for CRIU, is guarded by CAP_SYS_ADMIN.
+> 
+> In the last two years the questions about checkpoint/restore as non-root
+> have increased and especially in the last few months we have seen
+> multiple people inventing workarounds.
+> 
+> The use-cases so far and their workarounds:
+> 
+>  * Checkpoint/Restore in an HPC environment in combination with
+>    a resource manager distributing jobs. Users are always running
+>    as non root, but there was the desire to provide a way to
+>    checkpoint and restore long running jobs.
+>    Workaround: setuid wrapper to start CRIU as root as non-root
+>    https://github.com/FredHutch/slurm-examples/blob/master/checkpointer/lib/checkpointer/checkpointer-suid.c
+>  * Another use case to checkpoint/restore processes as non-root
+>    uses as workaround a non privileged process which cycles through
+>    PIDs by calling fork() as fast as possible with a rate of
+>    100,000 pids/s instead of writing to ns_last_pid
+>    https://github.com/twosigma/set_ns_last_pid
+>  * Fast Java startup using checkpoint/restore.
+>    We have been in contact with JVM developers who are integrating
+>    CRIU into a JVM to decrease the startup time.
+>    Workaround so far: patch out CAP_SYS_ADMIN checks in the kernel
+>  * Container migration as non root. There are people already
+>    using CRIU to migrate containers as non-root. The solution
+>    there is to run it in a user namespace. So if you are able
+>    to carefully setup your environment with the namespaces
+>    it is already possible to restore a container/process as non-root.
+>    Unfortunately it is not always possible to setup an environment
+>    in such a way and for easier access to non-root based container
+>    migration this patch is also required.
+> 
+> There are probably a few more things guarded by CAP_SYS_ADMIN required
+> to run checkpoint/restore as non-root, but by applying this patch I can
+> already checkpoint and restore processes as non-root. As there are
+> already multiple workarounds I would prefer to do it correctly in the
+> kernel to avoid that CRIU users are starting to invent more workarounds.
+> 
+> I have used the following tests to verify that this change works as
+> expected by setting the new capability CAP_RESTORE on the two resulting
+> test binaries:
+> 
+> $ cat ns_last_pid.c
+>  // http://efiop-notes.blogspot.com/2014/06/how-to-set-pid-using-nslastpid.html
+>  #include <stdio.h>
+>  #include <stdlib.h>
+>  #include <string.h>
+>  #include <sys/file.h>
+>  #include <sys/types.h>
+>  #include <unistd.h>
+> 
+> int main(int argc, char *argv[])
+> {
+> 	pid_t pid, new_pid;
+> 	char buf[32];
+> 	int fd;
+> 
+> 	if (argc != 2)
+> 		return 1;
+> 
+> 	printf("Opening ns_last_pid...\n");
+> 	fd = open("/proc/sys/kernel/ns_last_pid", O_RDWR | O_CREAT, 0644);
+> 	if (fd < 0) {
+> 		perror("Cannot open ns_last_pid");
+> 		return 1;
+> 	}
+> 
+> 	printf("Locking ns_last_pid...\n");
+> 	if (flock(fd, LOCK_EX)) {
+> 		close(fd);
+> 		printf("Cannot lock ns_last_pid\n");
+> 		return 1;
+> 	}
+> 
+> 	pid = atoi(argv[1]);
+> 	snprintf(buf, sizeof(buf), "%d", pid - 1);
+> 	printf("Writing pid-1 to ns_last_pid...\n");
+> 	if (write(fd, buf, strlen(buf)) != strlen(buf)) {
+> 		printf("Cannot write to buf\n");
+> 		return 1;
+> 	}
+> 
+> 	printf("Forking...\n");
+> 	new_pid = fork();
+> 	if (new_pid == 0) {
+> 		printf("I am the child!\n");
+> 		exit(0);
+> 	} else if (new_pid == pid)
+> 		printf("I am the parent. My child got the pid %d!\n", new_pid);
+> 	else
+> 		printf("pid (%d) does not match expected pid (%d)\n", new_pid, pid);
+> 
+> 	printf("Cleaning up...\n");
+> 	if (flock(fd, LOCK_UN))
+> 		printf("Cannot unlock\n");
+> 	close(fd);
+> 	return 0;
+> }
+> $ id -u; /home/libcap/ns_last_pid 300000
+> 1001
+> Opening ns_last_pid...
+> Locking ns_last_pid...
+> Writing pid-1 to ns_last_pid...
+> Forking...
+> I am the parent. My child got the pid 300000!
+> I am the child!
+> Cleaning up...
+> 
+> For the clone3() based approach:
+> $ cat clone3_set_tid.c
+>  #define _GNU_SOURCE
+>  #include <linux/sched.h>
+>  #include <stdint.h>
+>  #include <stdio.h>
+>  #include <stdlib.h>
+>  #include <string.h>
+>  #include <sys/types.h>
+>  #include <sys/stat.h>
+>  #include <sys/syscall.h>
+>  #include <unistd.h>
+> 
+>  #define ptr_to_u64(ptr) ((__u64)((uintptr_t)(ptr)))
+> 
+> int main(int argc, char *argv[])
+> {
+> 	struct clone_args c_args = { };
+> 	pid_t pid, new_pid;
+> 
+> 	if (argc != 2)
+> 		return 1;
+> 
+> 	pid = atoi(argv[1]);
+> 	c_args.set_tid = ptr_to_u64(&pid);
+> 	c_args.set_tid_size = 1;
+> 
+> 	printf("Forking...\n");
+> 	new_pid = syscall(__NR_clone3, &c_args, sizeof(c_args));
 
-Signed-off-by: Maurizio Drocco <maurizio.drocco@ibm.com>
----
- security/integrity/ima/ima.h        |  2 +-
- security/integrity/ima/ima_crypto.c | 11 ++++++++++-
- 2 files changed, 11 insertions(+), 2 deletions(-)
+(Note: I'm going to call the capability CAP_RESTORE but I think this
+applies regardless of whether the permissions stay with CAP_SYS_ADMIN..)
 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index df93ac258e01..9d94080bdad8 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -30,7 +30,7 @@
- 
- enum ima_show_type { IMA_SHOW_BINARY, IMA_SHOW_BINARY_NO_FIELD_LEN,
- 		     IMA_SHOW_BINARY_OLD_STRING_FMT, IMA_SHOW_ASCII };
--enum tpm_pcrs { TPM_PCR0 = 0, TPM_PCR8 = 8 };
-+enum tpm_pcrs { TPM_PCR0 = 0, TPM_PCR8 = 8, TPM_PCR10 = 10 };
- 
- /* digest size for IMA, fits SHA1 or MD5 */
- #define IMA_DIGEST_SIZE		SHA1_DIGEST_SIZE
-diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
-index 220b14920c37..6f0137bdaf61 100644
---- a/security/integrity/ima/ima_crypto.c
-+++ b/security/integrity/ima/ima_crypto.c
-@@ -809,7 +809,7 @@ static void ima_pcrread(u32 idx, struct tpm_digest *d)
- static int ima_calc_boot_aggregate_tfm(char *digest, u16 alg_id,
- 				       struct crypto_shash *tfm)
- {
--	struct tpm_digest d = { .alg_id = alg_id, .digest = {0} };
-+	struct tpm_digest d = { .alg_id = alg_id, .digest = {0} }, d0 = d;
- 	int rc;
- 	u32 i;
- 	SHASH_DESC_ON_STACK(shash, tfm);
-@@ -830,6 +830,15 @@ static int ima_calc_boot_aggregate_tfm(char *digest, u16 alg_id,
- 		rc = crypto_shash_update(shash, d.digest,
- 					 crypto_shash_digestsize(tfm));
- 	}
-+	/* extend cumulative sha1 over tpm registers 8-9 */
-+	for (i = TPM_PCR8; i < TPM_PCR10; i++) {
-+		ima_pcrread(i, &d);
-+		/* if not zero, accumulate with current aggregate */
-+		if (memcmp(d.digest, d0.digest,
-+					crypto_shash_digestsize(tfm) != 0))
-+			rc = crypto_shash_update(shash, d.digest,
-+					crypto_shash_digestsize(tfm));
-+	}
- 	if (!rc)
- 		crypto_shash_final(shash, digest);
- 	return rc;
--- 
-2.17.1
+I haven't fully reviewed the discussion of the security consequences but
+my sense is this would require retaining CAP_RESTORE down the entire tree
+of processes being restored so each parent could call clone3() with the
+correct pid value for its child(ren).
 
+Ideally you would drop CAP_RESTORE sooner -- preferrably only one
+process would need it. I think you could do that by changing what you pass
+down; instead of passing down a capability and a pid number, pass down a
+special "reservation" pidfd:
+
+1. Have CAP_RESTORE enable opening a pidfd with the desired pid as a
+   reservation for the pid (i.e. can't use it to signal, wait, ...
+   perhaps these return -EBUSY, -EAGAIN or something...).
+
+2. Only one process needs CAP_RESTORE -- it can drop CAP_RESTORE after
+   reserving all of the pids but before kicking off the clone3() calls
+   to recreate all of the tasks.
+
+3. Pass the pidfd down the tree of restoring processes. Note how the
+   set of specific pids to be created is limited at this point --
+   the software cannot be tricked into recreating processes other pids
+   using a capability, CAP_RESTORE, it doesn't have. You might even set a
+   flag on the pidfd which closes the pidfd in the sender when it's passed
+   over a socket so that only the appropriate processes retain the pidfd.
+
+4. The parent can then pass the *reserved* pidfd into clone3(). The
+   reserved pidfd seamlessly turns into a pidfd reference to the child if
+   clone3() succeeds. If it fails the eservation is still consumed -- a
+   given pidfd reserved for clone3() can only be passed to clone3() and
+   succeed once.
+
+Perhaps this scheme could concentrate the need for CAP_SYS_ADMIN
+to one process so maybe it would obviate the need for CAP_RESTORE.
+That said, perhaps there's something that prevents implementing such
+a pidfd or perhaps I have misunderstood what CRIU is doing and this
+pidfd idea isn't workable.
+
+Cheers,
+    -Matt Helsley
