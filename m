@@ -1,96 +1,135 @@
-Return-Path: <SRS0=CjC+=7Z=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=NNx2=72=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BC95C433DF
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Jun 2020 21:23:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0ED5C433DF
+	for <linux-security-module@archiver.kernel.org>; Sat, 13 Jun 2020 02:41:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 21938207F7
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Jun 2020 21:23:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1591997006;
-	bh=GWbucJlHAKAuWyG/jAfjMXZVJTNUvUMWRMBjIDkwRHc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=NoiB/CEyo9n3jInCB8wjcyvMZeCsK9vF+2zP7oymZBWdee/vMvyUbV0+yBAmdPBbu
-	 Qs4K8CA+eK8xnE/+7ycQULx+pPSyyBgAbRBKtkqKo/5kkKS/aDtSQqyU0Hv9XU9X05
-	 hF2ilRoqEFFQ/lbycCTViijK9nyf7gudaugab8q0=
+	by mail.kernel.org (Postfix) with ESMTP id AFA0020789
+	for <linux-security-module@archiver.kernel.org>; Sat, 13 Jun 2020 02:41:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="TsbozQNP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726304AbgFLVXZ (ORCPT
+        id S1726414AbgFMClh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 12 Jun 2020 17:23:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35032 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726290AbgFLVXZ (ORCPT
+        Fri, 12 Jun 2020 22:41:37 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:54106 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726397AbgFMClh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 12 Jun 2020 17:23:25 -0400
-Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0B9DC03E96F
-        for <linux-security-module@vger.kernel.org>; Fri, 12 Jun 2020 14:23:24 -0700 (PDT)
-Received: by mail-lf1-x141.google.com with SMTP id z206so6256087lfc.6
-        for <linux-security-module@vger.kernel.org>; Fri, 12 Jun 2020 14:23:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=DneVe3TvWGEFvY6ffxpfkbEvILOh996RTrpL4zTe4ME=;
-        b=CpTHsPKeHgGX6LiwbKToRuV9OL2n9dMtvwuGysyrQpMMf72lp5zL0WSu9rHSerWf2N
-         zG9LyevjHKt99IxDAnQTFaj//Gu06xM++Y4DnEEjALpphE1egQt/xUuLx69pcxqlqjGM
-         Ba0+PsCCetnKw1M1i5D11aI6ya1VSI3UeGMu0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=DneVe3TvWGEFvY6ffxpfkbEvILOh996RTrpL4zTe4ME=;
-        b=SyM16/Uet6VgOsSRo8qezYGOBjCELjCv6aNVDoDLhmrnsRES26F3J89lWz+Rw2nv9X
-         nmFIUmWJFcuO+GnBUl1TZXlXg+obIOKYybX3fZCIJ13i/DtClrN5ijKzvPgo/E/fh0lZ
-         AT5tULZdQGSkCrHmyj25BsdT4Aq7nc930q+564y5PDlP1PdB8m+Hd2GQ1xHkvhpS2kqa
-         apik3rtMIuggqNvVYGhe7uwVha8kqpN4B0eiIC2e3ECeD+YtbZZBWLKg3NZNnUE7nvL9
-         M3fZR5vB4N/uT/cu1x6K+/Ytx/9j7i5av1e1Bo3iGYsxCNDJnbeK0p4Tk+wgI/rfdKFO
-         amXw==
-X-Gm-Message-State: AOAM530Ac2CugDj5W8SqtP/fl/yuesG0R5PHk/HRKY98UlzmKyoCcoeB
-        fXDm8HUyjknCS9IyozGaINZ//IVCysE=
-X-Google-Smtp-Source: ABdhPJzBRQf6/kroJ/q/ESmjIwReysCBFxIOt9IAcU8HdK4vmPRk/5Yz6xKF+BkNDhWB5BQSTioc9g==
-X-Received: by 2002:a19:4ac5:: with SMTP id x188mr7812443lfa.180.1591997002665;
-        Fri, 12 Jun 2020 14:23:22 -0700 (PDT)
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com. [209.85.208.181])
-        by smtp.gmail.com with ESMTPSA id c5sm2026107ljj.37.2020.06.12.14.23.21
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Jun 2020 14:23:21 -0700 (PDT)
-Received: by mail-lj1-f181.google.com with SMTP id s1so12697842ljo.0
-        for <linux-security-module@vger.kernel.org>; Fri, 12 Jun 2020 14:23:21 -0700 (PDT)
-X-Received: by 2002:a2e:b5d7:: with SMTP id g23mr7212084ljn.70.1591997000694;
- Fri, 12 Jun 2020 14:23:20 -0700 (PDT)
+        Fri, 12 Jun 2020 22:41:37 -0400
+Received: from localhost.localdomain (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 783EF20B4781;
+        Fri, 12 Jun 2020 19:41:36 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 783EF20B4781
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1592016096;
+        bh=h/7e7zImKiPAs9gLjjN0MWOthBgeaRk9JTCgA2PStTY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=TsbozQNPeiFK7RNK/QjbJhy9+Sw4DCK3i1rNYqVyO9gH5Pnm/R+fiNzWpAZFesotY
+         X0SJaSzez0aBKNTXipAEHX7UbI90sNLdSNcyTATW0PbizY75B2OvQZ48hnS1rPSPxp
+         3BAUF/TZdi39bQ9iR/Tb0Oy+nVS0LMIjDcjD0nMo=
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+To:     zohar@linux.ibm.com, stephen.smalley@gmail.com,
+        casey@schaufler-ca.com
+Cc:     jmorris@namei.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 2/5] IMA: Define an IMA hook to measure LSM data
+Date:   Fri, 12 Jun 2020 19:41:27 -0700
+Message-Id: <20200613024130.3356-3-nramas@linux.microsoft.com>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20200613024130.3356-1-nramas@linux.microsoft.com>
+References: <20200613024130.3356-1-nramas@linux.microsoft.com>
 MIME-Version: 1.0
-References: <CAJ-EccOy4qDpbfrP5=KH40LSOx1F4-ciY2=hFv_c+goUHLJ6PQ@mail.gmail.com>
-In-Reply-To: <CAJ-EccOy4qDpbfrP5=KH40LSOx1F4-ciY2=hFv_c+goUHLJ6PQ@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 12 Jun 2020 14:23:04 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiLXXR1+o4VAuw5MM3V1D8h6C6te3y8VMvW8iAJw6noJg@mail.gmail.com>
-Message-ID: <CAHk-=wiLXXR1+o4VAuw5MM3V1D8h6C6te3y8VMvW8iAJw6noJg@mail.gmail.com>
-Subject: Re: [GIT PULL] SafeSetID LSM changes for v5.8
-To:     Micah Morton <mortonm@chromium.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Finally emptied my normal pull request queue and starting to look at
-things I wanted to look at more closely..
+LSM requires an IMA hook to be defined by the IMA subsystem to measure
+the data gathered from the security modules.
 
-On Tue, Jun 9, 2020 at 11:26 AM Micah Morton <mortonm@chromium.org> wrote:
->
-> This patch was sent to the security mailing list and there were no objections.
+Define a new IMA hook, namely ima_lsm_state(), that the LSM will call
+to measure the data gathered from the security modules.
 
-That patch as committed has both the wrong authorship, and the wrong
-sign-off chain.
+Sample IMA log entry for LSM measurement:
 
-Not pulling.
+10 47eed9... ima-buf sha256:402f6b... lsm-state:selinux 656e61626c65643d313b656e666f7263696e673d30
 
-                 Linus
+Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+---
+ include/linux/ima.h               |  4 ++++
+ security/integrity/ima/ima_main.c | 30 ++++++++++++++++++++++++++++++
+ 2 files changed, 34 insertions(+)
+
+diff --git a/include/linux/ima.h b/include/linux/ima.h
+index 9164e1534ec9..56681a648b3d 100644
+--- a/include/linux/ima.h
++++ b/include/linux/ima.h
+@@ -26,6 +26,7 @@ extern int ima_post_read_file(struct file *file, void *buf, loff_t size,
+ extern void ima_post_path_mknod(struct dentry *dentry);
+ extern int ima_file_hash(struct file *file, char *buf, size_t buf_size);
+ extern void ima_kexec_cmdline(const void *buf, int size);
++extern void ima_lsm_state(const char *lsm_name, const void *buf, int size);
+ 
+ #ifdef CONFIG_IMA_KEXEC
+ extern void ima_add_kexec_buffer(struct kimage *image);
+@@ -104,6 +105,9 @@ static inline int ima_file_hash(struct file *file, char *buf, size_t buf_size)
+ }
+ 
+ static inline void ima_kexec_cmdline(const void *buf, int size) {}
++
++static inline void ima_lsm_state(const char *lsm_name,
++				 const void *buf, int size) {}
+ #endif /* CONFIG_IMA */
+ 
+ #ifndef CONFIG_IMA_KEXEC
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index c1583d98c5e5..34be962054fb 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -827,6 +827,36 @@ void ima_kexec_cmdline(const void *buf, int size)
+ 					   KEXEC_CMDLINE, 0, NULL);
+ }
+ 
++/**
++ * ima_lsm_state - measure LSM specific state
++ * @lsm_name: Name of the LSM
++ * @buf: pointer to buffer containing LSM specific state
++ * @size: Number of bytes in buf
++ *
++ * Buffers can only be measured, not appraised.
++ */
++void ima_lsm_state(const char *lsm_name, const void *buf, int size)
++{
++	const char *eventname = "lsm-state:";
++	char *lsmstatestring;
++	int lsmstatelen;
++
++	if (!lsm_name || !buf || !size)
++		return;
++
++	lsmstatelen = strlen(eventname) + strlen(lsm_name) + 1;
++	lsmstatestring = kzalloc(lsmstatelen, GFP_KERNEL);
++	if (!lsmstatestring)
++		return;
++
++	strcpy(lsmstatestring, eventname);
++	strcat(lsmstatestring, lsm_name);
++
++	process_buffer_measurement(buf, size, lsmstatestring,
++				   LSM_STATE, 0, NULL);
++	kfree(lsmstatestring);
++}
++
+ static int __init init_ima(void)
+ {
+ 	int error;
+-- 
+2.27.0
+
