@@ -2,127 +2,110 @@ Return-Path: <SRS0=9iMC=74=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8C7DC433DF
-	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jun 2020 16:45:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97D9BC433E2
+	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jun 2020 16:46:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 714472078A
-	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jun 2020 16:45:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="aUYzJCzF"
+	by mail.kernel.org (Postfix) with ESMTP id 722532078A
+	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jun 2020 16:46:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1592239602;
+	bh=1KT+vWhBgSpztqjzGMDQ4D4S8JwxH2WCmGD+wQfbPAA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=BktWCTztYoNsFufSNwMJXu1OrWhKjpM7g12Isox3nWPAPIQQFSjGnM6NHN3wwAB6/
+	 SkIjYY8N9E4mqJIKCnU8AbhpgXV1wsQUHbpSbbMpzy2AUhDK0aGS6M5aAlVeAUxIpj
+	 ZWbJBKA8/VRZnBSkeATjTa+9aUub8VjYGWZjakCo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730912AbgFOQpu (ORCPT
+        id S1731064AbgFOQqe (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 15 Jun 2020 12:45:50 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:55090 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728585AbgFOQpt (ORCPT
+        Mon, 15 Jun 2020 12:46:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59312 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731011AbgFOQqd (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 15 Jun 2020 12:45:49 -0400
-Received: from [192.168.0.104] (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
-        by linux.microsoft.com (Postfix) with ESMTPSA id A5BB520B4780;
-        Mon, 15 Jun 2020 09:45:48 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A5BB520B4780
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1592239548;
-        bh=XWqIoID6oSJi5sFAyDXKdR658vGMUI/XhOZPL0DsKnA=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=aUYzJCzFeQs+E1ArnYzFlomMA/IssGZNCua/12Ubl8cVtJJPgf1aW8IEd6Hb54Zuv
-         6iWDu3Nyl7+Q6Nu4kCWvt/q8Yq6G05vX28voSp3QubdOutU2hmwJ6pOurhIk+bCe0D
-         ScAH/mqlpvnydpdE9sHA5BOsIkhYeyDjbuQ/DqpY=
-Subject: Re: [PATCH 4/5] LSM: Define SELinux function to measure security
- state
-To:     Stephen Smalley <stephen.smalley.work@gmail.com>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        Stephen Smalley <stephen.smalley@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        James Morris <jmorris@namei.org>,
-        linux-integrity@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <20200613024130.3356-1-nramas@linux.microsoft.com>
- <20200613024130.3356-5-nramas@linux.microsoft.com>
- <CAEjxPJ49UaZc9pc-+VN8Cx8rcdrjD6NMoLOO_zqENezobmfwVA@mail.gmail.com>
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Message-ID: <a9a20aa5-963e-5f49-9391-0673fdda378e@linux.microsoft.com>
-Date:   Mon, 15 Jun 2020 09:45:48 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        Mon, 15 Jun 2020 12:46:33 -0400
+Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C215CC08C5C2
+        for <linux-security-module@vger.kernel.org>; Mon, 15 Jun 2020 09:46:32 -0700 (PDT)
+Received: by mail-lj1-x244.google.com with SMTP id x18so19987221lji.1
+        for <linux-security-module@vger.kernel.org>; Mon, 15 Jun 2020 09:46:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BZvZBCuCQSkLPs9g5InfZ9ThZzzENQM2asJ2hMImD+8=;
+        b=ZWk3x5iEjnyTLq8IMemOkgARbFQCw/Q53/428riLywNB6u9f+bQvXVcEgFAYoeyppV
+         fCCBULVD7KWfArLFv0AgIvtaFvWI/tVW+Ez2gZY7mm3zfsO/bpanBZ32Aq/zacBlYhG6
+         8bUzNz2BvrW4v3rb3iq/l8f6ouqvyn24pdFzI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BZvZBCuCQSkLPs9g5InfZ9ThZzzENQM2asJ2hMImD+8=;
+        b=OIiqtu1wDlTKcXUVbTWHQ0305QgofPx+8kiIUSHn18zCgBOJrukJGv/cyVcEsu7EFr
+         fD/k+p8ZoHTeMtAw0I6LuWgwC+8YDBePbu180jL4rH7VoKfNtJl223NYsQ5SF651dyEU
+         pRQkPdUKUeOuE9zrMOaUPiRkhlIFJrPuv8vSyLzjz3w6cLDjljo9htX/GqPMg/rw5gdm
+         4JDcI4Fs/iGIe88LEsVfnU/Ok24Wzdf9jwWpA0h0lnsn4YXvRnui1g6nPChPIrcmVuly
+         6viezNtWPKlqvW1gfXnui4kSTJb9TGUq+uTqPyxs0xnkxu5M7ZQJchLiNOw5mXYtV9oj
+         FqRg==
+X-Gm-Message-State: AOAM530G3/VtrnBqXHmztRkjqZiNfzEDSTr8AT4WMzGJE5aBheUk5W6s
+        SSTWtAJ6hq/1xhRC+mJ/O9itxmfvAVE=
+X-Google-Smtp-Source: ABdhPJy9QMCicnHzgC+4YyGXsZZu+neRR3ticlDi9lVvCCzl19bWMwuFF5K4DXYKh6D+ufP0vaUIbg==
+X-Received: by 2002:a2e:2202:: with SMTP id i2mr13778304lji.199.1592239590391;
+        Mon, 15 Jun 2020 09:46:30 -0700 (PDT)
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
+        by smtp.gmail.com with ESMTPSA id n10sm556255lfb.82.2020.06.15.09.46.29
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 15 Jun 2020 09:46:29 -0700 (PDT)
+Received: by mail-lf1-f48.google.com with SMTP id d7so9946779lfi.12
+        for <linux-security-module@vger.kernel.org>; Mon, 15 Jun 2020 09:46:29 -0700 (PDT)
+X-Received: by 2002:ac2:4422:: with SMTP id w2mr5160341lfl.152.1592239588691;
+ Mon, 15 Jun 2020 09:46:28 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAEjxPJ49UaZc9pc-+VN8Cx8rcdrjD6NMoLOO_zqENezobmfwVA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200615121257.798894-1-hch@lst.de> <20200615121257.798894-11-hch@lst.de>
+In-Reply-To: <20200615121257.798894-11-hch@lst.de>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 15 Jun 2020 09:46:12 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiBJjjV4NuKr_z2Q3vWEXSoGtAmkH=jZ0SkBJ=wZh4=hw@mail.gmail.com>
+Message-ID: <CAHk-=wiBJjjV4NuKr_z2Q3vWEXSoGtAmkH=jZ0SkBJ=wZh4=hw@mail.gmail.com>
+Subject: Re: [PATCH 10/13] integrity/ima: switch to using __kernel_read
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>,
+        David Howells <dhowells@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        NetFilter <netfilter-devel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 6/15/20 4:57 AM, Stephen Smalley wrote:
+On Mon, Jun 15, 2020 at 5:13 AM Christoph Hellwig <hch@lst.de> wrote:
+>
+> __kernel_read has a bunch of additional sanity checks, and this moves
+> the set_fs out of non-core code.
 
-Hi Stephen,
+Wel, you also seem to be removing this part:
 
-Thanks for reviewing the patches.
+> -       if (!(file->f_mode & FMODE_READ))
+> -               return -EBADF;
 
->> +void security_state_change(char *lsm_name, void *state, int state_len)
->> +{
->> +       ima_lsm_state(lsm_name, state, state_len);
->> +}
->> +
-> 
-> What's the benefit of this trivial function instead of just calling
-> ima_lsm_state() directly?
+which you didn't add in the previous patch that implemented __kernel_read().
 
-One of the feedback Casey Schaufler had given earlier was that calling 
-an IMA function directly from SELinux (or, any of the Security Modules) 
-would be a layering violation.
+It worries me that you're making these kinds of transformations where
+the comments imply it's a no-op, but the actual code doesn't agree.
 
-LSM framework (security/security.c) already calls IMA functions now (for 
-example, ima_bprm_check() is called from security_bprm_check()). I 
-followed the same pattern for measuring LSM data as well.
+Especially when it's part of one large patch series and each commit
+looks trivial.
 
-Please let me know if I misunderstood Casey's comment.
+This kind of series needs more care. Maybe that test isn't necessary,
+but it isn't obvious, and I really don't like how you completely
+glossed over totally changing what the code did.
 
->> +static int selinux_security_state(char **lsm_name, void **state,
->> +                                 int *state_len)
->> +{
->> +       int rc = 0;
->> +       char *new_state;
->> +       static char *security_state_string = "enabled=%d;enforcing=%d";
->> +
->> +       *lsm_name = kstrdup("selinux", GFP_KERNEL);
->> +       if (!*lsm_name)
->> +               return -ENOMEM;
->> +
->> +       new_state = kzalloc(strlen(security_state_string) + 1, GFP_KERNEL);
->> +       if (!new_state) {
->> +               kfree(*lsm_name);
->> +               *lsm_name = NULL;
->> +               rc = -ENOMEM;
->> +               goto out;
->> +       }
->> +
->> +       *state_len = sprintf(new_state, security_state_string,
->> +                            !selinux_disabled(&selinux_state),
->> +                            enforcing_enabled(&selinux_state));
-> 
-> I think I mentioned this on a previous version of these patches, but I
-> would recommend including more than just the enabled and enforcing
-> states in your measurement.  Other low-hanging fruit would be the
-> other selinux_state booleans (checkreqprot, initialized,
-> policycap[0..__POLICYDB_CAPABILITY_MAX]).  Going a bit further one
-> could take a hash of the loaded policy by using security_read_policy()
-> and then computing a hash using whatever hash ima prefers over the
-> returned data,len pair.  You likely also need to think about how to
-> allow future extensibility of the state in a backward-compatible
-> manner, so that future additions do not immediately break systems
-> relying on older measurements.
-> 
-
-Sure - I will address this one in the next update.
-
-thanks,
-  -lakshmi
+               Linus
