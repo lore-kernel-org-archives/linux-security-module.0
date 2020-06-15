@@ -3,127 +3,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 340C1C433E1
-	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jun 2020 17:44:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5183C433DF
+	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jun 2020 18:03:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 147D1207DD
-	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jun 2020 17:44:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CBEB0207DD
+	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jun 2020 18:03:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729806AbgFORor (ORCPT
+        id S1729402AbgFOSDn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 15 Jun 2020 13:44:47 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53084 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728585AbgFORoq (ORCPT
+        Mon, 15 Jun 2020 14:03:43 -0400
+Received: from namei.org ([65.99.196.166]:38236 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728585AbgFOSDn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 15 Jun 2020 13:44:46 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 05FHfUGt010936;
-        Mon, 15 Jun 2020 13:44:39 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 31np7brx08-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 15 Jun 2020 13:44:39 -0400
-Received: from m0098413.ppops.net (m0098413.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 05FHfrn1013137;
-        Mon, 15 Jun 2020 13:44:39 -0400
-Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 31np7brwyk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 15 Jun 2020 13:44:39 -0400
-Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
-        by ppma03ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 05FHeKHU030081;
-        Mon, 15 Jun 2020 17:44:37 GMT
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
-        by ppma03ams.nl.ibm.com with ESMTP id 31mpe840c8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 15 Jun 2020 17:44:37 +0000
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 05FHiZMp59047984
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 15 Jun 2020 17:44:35 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id F20B742045;
-        Mon, 15 Jun 2020 17:44:34 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D126842042;
-        Mon, 15 Jun 2020 17:44:33 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.184.11])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 15 Jun 2020 17:44:33 +0000 (GMT)
-Message-ID: <1592243068.11061.155.camel@linux.ibm.com>
-Subject: Re: [PATCH 4/5] LSM: Define SELinux function to measure security
- state
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Mon, 15 Jun 2020 14:03:43 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id 05FI3XCm010205;
+        Mon, 15 Jun 2020 18:03:33 GMT
+Date:   Tue, 16 Jun 2020 04:03:33 +1000 (AEST)
+From:   James Morris <jmorris@namei.org>
+To:     Micah Morton <mortonm@chromium.org>
+cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
         John Johansen <john.johansen@canonical.com>
-Cc:     Stephen Smalley <stephen.smalley@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        linux-integrity@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Date:   Mon, 15 Jun 2020 13:44:28 -0400
-In-Reply-To: <2df1bc4f-675d-7868-de5b-1256346f982e@schaufler-ca.com>
-References: <20200613024130.3356-1-nramas@linux.microsoft.com>
-         <20200613024130.3356-5-nramas@linux.microsoft.com>
-         <CAEjxPJ49UaZc9pc-+VN8Cx8rcdrjD6NMoLOO_zqENezobmfwVA@mail.gmail.com>
-         <a9a20aa5-963e-5f49-9391-0673fdda378e@linux.microsoft.com>
-         <2df1bc4f-675d-7868-de5b-1256346f982e@schaufler-ca.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.687
- definitions=2020-06-15_07:2020-06-15,2020-06-15 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
- mlxlogscore=999 priorityscore=1501 impostorscore=0 clxscore=1015
- cotscore=-2147483648 mlxscore=0 lowpriorityscore=0 phishscore=0
- suspectscore=0 spamscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2004280000 definitions=main-2006150130
+Subject: Re: [GIT PULL] SafeSetID LSM changes for v5.8
+In-Reply-To: <CAJ-EccO+4s8Dd=wj75ckfp4ZLhppt7uCgg2chf4SvTOxzqbgPw@mail.gmail.com>
+Message-ID: <alpine.LRH.2.21.2006160403190.9951@namei.org>
+References: <CAJ-EccOy4qDpbfrP5=KH40LSOx1F4-ciY2=hFv_c+goUHLJ6PQ@mail.gmail.com> <CAHk-=wiLXXR1+o4VAuw5MM3V1D8h6C6te3y8VMvW8iAJw6noJg@mail.gmail.com> <CAJ-EccPGQ62yMK1Nmvie4qWzproSqb4POwAD4_0Nt62KLbGhqg@mail.gmail.com> <alpine.LRH.2.21.2006151517230.9003@namei.org>
+ <CAJ-EccO+4s8Dd=wj75ckfp4ZLhppt7uCgg2chf4SvTOxzqbgPw@mail.gmail.com>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-(Cc'ing John)
+On Mon, 15 Jun 2020, Micah Morton wrote:
 
-On Mon, 2020-06-15 at 10:33 -0700, Casey Schaufler wrote:
-> On 6/15/2020 9:45 AM, Lakshmi Ramasubramanian wrote:
-> > On 6/15/20 4:57 AM, Stephen Smalley wrote:
+> On Sun, Jun 14, 2020 at 10:21 PM James Morris <jmorris@namei.org> wrote:
 > >
-> > Hi Stephen,
+> > On Sun, 14 Jun 2020, Micah Morton wrote:
 > >
-> > Thanks for reviewing the patches.
+> > > This patch was sent to the security mailing list and there were no objections.
 > >
-> >>> +void security_state_change(char *lsm_name, void *state, int state_len)
-> >>> +{
-> >>> +       ima_lsm_state(lsm_name, state, state_len);
-> >>> +}
-> >>> +
-> >>
-> >> What's the benefit of this trivial function instead of just calling
-> >> ima_lsm_state() directly?
+> > Standard practice for new or modified LSM hooks is that they are reviewed
+> > and acked by maintainers of major LSMs (SELinux, AppArmor, and Smack, at
+> > least).
 > >
-> > One of the feedback Casey Schaufler had given earlier was that calling an IMA function directly from SELinux (or, any of the Security Modules) would be a layering violation.
+> > "No objections" should be considered "not reviewed".
+> >
+> > Can you add your tree to linux-next?
+> > https://www.kernel.org/doc/man-pages/linux-next.html
 > 
-> Hiding the ima_lsm_state() call doesn't address the layering.
-> The point is that SELinux code being called from IMA (or the
-> other way around) breaks the subsystem isolation. Unfortunately,
-> it isn't obvious to me how you would go about what you're doing
-> without integrating the subsystems.
+> Sure, I can do that. I should just send an email to Stephen Rothwell
+> asking him to include the -next branch from my tree?
 
-Casey, I'm not sure why you think there is a layering issue here.
- There were multiple iterations of IMA before it was upstreamed.  One
-iteration had separate integrity hooks(LIM).  Only when the IMA calls
-and the security hooks are co-located, are they combined, as requested
-by Linus.
+Yep, thanks.
 
-There was some AppArmour discussion about calling IMA directly, but I
-haven't heard about it in a while or seen the patch.
+> 
+> >
+> > --
+> > James Morris
+> > <jmorris@namei.org>
+> >
+> 
 
-Mimi
+-- 
+James Morris
+<jmorris@namei.org>
+
