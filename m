@@ -2,120 +2,97 @@ Return-Path: <SRS0=9iMC=74=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0635C433DF
-	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jun 2020 16:10:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28399C433E0
+	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jun 2020 16:22:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 948EF207DD
-	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jun 2020 16:10:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD1BE2078E
+	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jun 2020 16:22:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Zo5ehkbM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727785AbgFOQKe (ORCPT
+        id S1731040AbgFOQWc (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 15 Jun 2020 12:10:34 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40832 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728585AbgFOQKd (ORCPT
+        Mon, 15 Jun 2020 12:22:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55554 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728585AbgFOQWc (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 15 Jun 2020 12:10:33 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 05FG3jdq097237;
-        Mon, 15 Jun 2020 12:10:28 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 31mtxf3krh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 15 Jun 2020 12:10:28 -0400
-Received: from m0098414.ppops.net (m0098414.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 05FG45MO099034;
-        Mon, 15 Jun 2020 12:10:27 -0400
-Received: from ppma04fra.de.ibm.com (6a.4a.5195.ip4.static.sl-reverse.com [149.81.74.106])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 31mtxf3kpf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 15 Jun 2020 12:10:27 -0400
-Received: from pps.filterd (ppma04fra.de.ibm.com [127.0.0.1])
-        by ppma04fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 05FG14Ek001730;
-        Mon, 15 Jun 2020 16:10:24 GMT
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
-        by ppma04fra.de.ibm.com with ESMTP id 31mpe81jcr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 15 Jun 2020 16:10:24 +0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 05FGAMPT3080502
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 15 Jun 2020 16:10:22 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6687311C054;
-        Mon, 15 Jun 2020 16:10:22 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 54C5311C069;
-        Mon, 15 Jun 2020 16:10:21 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.184.11])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 15 Jun 2020 16:10:21 +0000 (GMT)
-Message-ID: <1592237420.11061.144.camel@linux.ibm.com>
-Subject: Re: [PATCH 5/5] LSM: Define workqueue for measuring security module
- state
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Stephen Smalley <stephen.smalley.work@gmail.com>
-Cc:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Stephen Smalley <stephen.smalley@gmail.com>,
+        Mon, 15 Jun 2020 12:22:32 -0400
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B478BC061A0E
+        for <linux-security-module@vger.kernel.org>; Mon, 15 Jun 2020 09:22:31 -0700 (PDT)
+Received: by mail-ej1-x634.google.com with SMTP id o15so18061451ejm.12
+        for <linux-security-module@vger.kernel.org>; Mon, 15 Jun 2020 09:22:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/vrNNxvqzd1+6WcN18UWNnrm3SzmXd8+xL+vm2U41hs=;
+        b=Zo5ehkbMWUQUNb9n3tIc5zV9ibuTmwKK3biPsJDwDAFXGbT+pEyjb5SZPDnyHTAj62
+         5OlXN3u5Q1MlWMVccYeP/p46e2nsmyVmGIyJUq85kS/I3ylT7lFNXt8QTXkbVt/tM72H
+         lfXAm2MWFyvoXvuiq5tn7ggY15XVP9TVWDYgk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/vrNNxvqzd1+6WcN18UWNnrm3SzmXd8+xL+vm2U41hs=;
+        b=oHJy4po7jSzwt1NJVevCqLiu4U+25uujrP3xcE9ZYQ0w9hQ9sqVNGxdW/+h0fqnWRp
+         0/XQgIQp5BAsGvvxmRqRkYC2RUmfpR+GgZ9rNJytjtvwVfgenuvYBGtRlyKzYqFtwA8e
+         WTlye8Zn2SRSUykXTudRti7BL1YXpRMdKRTkr3vXL/QWa78LwGw82iGLp7BqyQoa8pNY
+         vAEDF8rGbIwrGO5i88zY0OTsWFp6QHFaLz/XQVUuCtkKD2VGIWd1FwRNPZ/piFBDLSZ3
+         8RnPTPx9axMJA3K4UcDf2bijyeLgVTyAsHT+fToc29p8Zb20CmKonKhoUv7Oq9xd4Zin
+         LSlQ==
+X-Gm-Message-State: AOAM530FdXl/p0czZg5p0bCbOG9gjqgSZMoJMVx/KHexLXakH5owyPAS
+        cA5pB8eKXIwGdzAyUpr9iaFqKkSQIQtsOHK14oeP9g==
+X-Google-Smtp-Source: ABdhPJx+bT/qo9gxqE/zoNAe1/BkPFy8sVFIY15o/zABl1r/0Kd+6QCAu4UjRjIvp6LUm6j//qBO9qKM9BgOO+88yFw=
+X-Received: by 2002:a17:906:5595:: with SMTP id y21mr27317038ejp.61.1592238149992;
+ Mon, 15 Jun 2020 09:22:29 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAJ-EccOy4qDpbfrP5=KH40LSOx1F4-ciY2=hFv_c+goUHLJ6PQ@mail.gmail.com>
+ <CAHk-=wiLXXR1+o4VAuw5MM3V1D8h6C6te3y8VMvW8iAJw6noJg@mail.gmail.com>
+ <CAJ-EccPGQ62yMK1Nmvie4qWzproSqb4POwAD4_0Nt62KLbGhqg@mail.gmail.com> <alpine.LRH.2.21.2006151517230.9003@namei.org>
+In-Reply-To: <alpine.LRH.2.21.2006151517230.9003@namei.org>
+From:   Micah Morton <mortonm@chromium.org>
+Date:   Mon, 15 Jun 2020 09:22:19 -0700
+Message-ID: <CAJ-EccO+4s8Dd=wj75ckfp4ZLhppt7uCgg2chf4SvTOxzqbgPw@mail.gmail.com>
+Subject: Re: [GIT PULL] SafeSetID LSM changes for v5.8
+To:     James Morris <jmorris@namei.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
         Casey Schaufler <casey@schaufler-ca.com>,
-        James Morris <jmorris@namei.org>,
-        linux-integrity@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Date:   Mon, 15 Jun 2020 12:10:20 -0400
-In-Reply-To: <CAEjxPJ61dup9HDQny_TAb7we-vcN-sM17y4x0Pos3d7ERaab9g@mail.gmail.com>
-References: <20200613024130.3356-1-nramas@linux.microsoft.com>
-         <20200613024130.3356-6-nramas@linux.microsoft.com>
-         <CAEjxPJ7v5Lu-vzqg0ZVh8zJ9uZ=odN3jt_5+9d9x+RydsNWK0g@mail.gmail.com>
-         <1592233145.11061.129.camel@linux.ibm.com>
-         <CAEjxPJ61dup9HDQny_TAb7we-vcN-sM17y4x0Pos3d7ERaab9g@mail.gmail.com>
+        John Johansen <john.johansen@canonical.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.687
- definitions=2020-06-15_03:2020-06-15,2020-06-15 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 spamscore=0
- priorityscore=1501 impostorscore=0 malwarescore=0 suspectscore=0
- phishscore=0 lowpriorityscore=0 mlxscore=0 cotscore=-2147483648
- bulkscore=0 adultscore=0 mlxlogscore=999 classifier=spam adjust=0
- reason=mlx scancount=1 engine=8.12.0-2004280000
- definitions=main-2006150111
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 2020-06-15 at 11:47 -0400, Stephen Smalley wrote:
-> On Mon, Jun 15, 2020 at 10:59 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
-> >
-> > On Mon, 2020-06-15 at 09:33 -0400, Stephen Smalley wrote:
-> > > On Fri, Jun 12, 2020 at 10:42 PM Lakshmi Ramasubramanian
-> > > <nramas@linux.microsoft.com> wrote:
-> > > >
-> > > > The data maintained by the security modules could be tampered with by
-> > > > malware. The LSM needs to periodically query the state of
-> > > > the security modules and measure the data when the state is changed.
-> > > >
-> > > > Define a workqueue for handling this periodic query and measurement.
-> > >
-> > > Won't this make it difficult/impossible to predict the IMA PCR value?
-> > > Unless I missed it, you are going to end up measuring every N minutes
-> > > even if there was no change and therefore constantly be extending the
-> > > PCR.  That will break attestation or sealing against the IMA PCR.
-> >
-> > Even if it attempts to add the same measurement to the list multiple
-> > times, unless something changed, there should only be one measurement
-> > in the list.
-> 
-> Is the PCR only extended once?
+On Sun, Jun 14, 2020 at 10:21 PM James Morris <jmorris@namei.org> wrote:
+>
+> On Sun, 14 Jun 2020, Micah Morton wrote:
+>
+> > This patch was sent to the security mailing list and there were no objections.
+>
+> Standard practice for new or modified LSM hooks is that they are reviewed
+> and acked by maintainers of major LSMs (SELinux, AppArmor, and Smack, at
+> least).
+>
+> "No objections" should be considered "not reviewed".
+>
+> Can you add your tree to linux-next?
+> https://www.kernel.org/doc/man-pages/linux-next.html
 
-Yes, otherwise you wouldn't be able to verify a quote.
- ima_lookup_digest_entry() first verifies the hash isn't in the cache,
-before adding it to the measurement list and then extending the TPM.
+Sure, I can do that. I should just send an email to Stephen Rothwell
+asking him to include the -next branch from my tree?
 
-Mimi
+>
+> --
+> James Morris
+> <jmorris@namei.org>
+>
