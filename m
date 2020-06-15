@@ -2,95 +2,80 @@ Return-Path: <SRS0=9iMC=74=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A32F8C433DF
-	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jun 2020 12:15:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D88AFC433E2
+	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jun 2020 12:34:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7E0CD206B7
-	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jun 2020 12:15:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE7B32078A
+	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jun 2020 12:34:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T4AGUVXn"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EzjEXnsQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729807AbgFOMP0 (ORCPT
+        id S1729962AbgFOMe4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 15 Jun 2020 08:15:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45288 "EHLO
+        Mon, 15 Jun 2020 08:34:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48264 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729642AbgFOMPY (ORCPT
+        with ESMTP id S1729955AbgFOMez (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 15 Jun 2020 08:15:24 -0400
-Received: from mail-oi1-x243.google.com (mail-oi1-x243.google.com [IPv6:2607:f8b0:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82E0EC061A0E;
-        Mon, 15 Jun 2020 05:15:24 -0700 (PDT)
-Received: by mail-oi1-x243.google.com with SMTP id a137so15671678oii.3;
-        Mon, 15 Jun 2020 05:15:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OYfeN+lomf5loXuUSsePWE7mRHJpvA/I4T/5bpNYLAY=;
-        b=T4AGUVXndhnCDxHQKxLQEEIc7ZokeMONi82ra0kiJCuQXe9+11agB7ic0ynPmiAoSb
-         YidIatx5FjuebJ9yH5fabmkbLzPM+66rbekkPAMm+rocOnEtGC0tqhKCRbibxP78oO8O
-         nglHx6uNc6cPOTSvevCrGFEgn98bPyInJoHeLkTMagnFAno4QsEqJ/H06FEGAYr/d9IM
-         2guwwi62J8i82MhHKColWTGHiRz3R0EJgpE4xCg3U/x8m0DGrSl9Q9jbFzuju49YurpP
-         pG3X7Gdr5W+6C4bKny6xvD4XZIYR2T6lVZJcgdRrCxwHe1yMkwfOT9BMi+EQ5CJxNtHB
-         87pA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OYfeN+lomf5loXuUSsePWE7mRHJpvA/I4T/5bpNYLAY=;
-        b=EpJPYeHb9cRA4EvAVOsTIBst+Zreq+VSd2mAi1j05lkbs763B+ngqYpDo5hyQVfObJ
-         fA2Pz0b0nBzZlq38vWV//yNA09hJqgBUuByvafpN3VzIC3e+bCwQk4YBanEJECLlLf6D
-         01P91GpXbr8hTgp5brQ86a1fwRDUpYtmtFOT5Jz2sSMwI5JQdaIdgdzL6yl37wFo2yeo
-         np2zeQwXpOLP2ZB6kShM4UUlLtlVCR9U0ar6aDQGeXWhn8atS5wEtySfLhc70ebt0+dP
-         wq1qOMBgaMsuhLIvB+KqUSua/qpcTTY1f3AFhLac8uQDgwmQIarQc4Vetw6jh6DYLbLf
-         3Dag==
-X-Gm-Message-State: AOAM533SbwHbCLin1jLhT0Eld5FBVPilX3qsbh/Cg1/QRW9yyjub6fKo
-        XPuy5dV+pQHJ71BOtZhORNhA1E5j5/XJxnC0MqI=
-X-Google-Smtp-Source: ABdhPJztOxHdnvbh3si4JN5xzx3gZccaRMhjgkbZe5bLxwDBW5pTkhmE9ShDj0Bv2mq7su7RD+R2Vcb9E9HVjBArfU4=
-X-Received: by 2002:aca:ec97:: with SMTP id k145mr8317724oih.92.1592223323851;
- Mon, 15 Jun 2020 05:15:23 -0700 (PDT)
+        Mon, 15 Jun 2020 08:34:55 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60522C061A0E;
+        Mon, 15 Jun 2020 05:34:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
+        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description;
+        bh=7PZDg4jCzPxW5YIwZz6jai72YNhUOSrV8NAAvOuS8uI=; b=EzjEXnsQNJmyEoGtItnWE3dbp8
+        O/Bso1kmXi5hV9UUaupbb5CH//hiui1DrLy5TxJ73AcaBq1m9m35Him7FyIZ3oifaXa6XLWOTjn9N
+        SdW38NDwmhYxG4WK7RTmzZlY4He+nh8/awLJoDa0ceCvBZMij51jN0zYfVgz4GjVVmqAhxd8JQMV4
+        pXsLBKiA6fy/GoolVDrkTUXTGRnqD9g8QFTyvfPvpFJXiRFKluo8YPGtdo0tPxFryq1txM6JkvjGq
+        0k+am2VfuJyRMYzaBQyOY551WtFuYvucjplW9PXYFf6u3qN10DMGJ7BhfDLStqyTfMUBsZcEpXaFx
+        i+5Y4bvQ==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jkoJz-0003d6-Pq; Mon, 15 Jun 2020 12:34:39 +0000
+Date:   Mon, 15 Jun 2020 05:34:39 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ian Kent <raven@themaw.net>,
+        David Howells <dhowells@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        netfilter-devel@vger.kernel.org
+Subject: Re: [PATCH 05/13] fs: check FMODE_WRITE in __kernel_write
+Message-ID: <20200615123439.GT8681@bombadil.infradead.org>
+References: <20200615121257.798894-1-hch@lst.de>
+ <20200615121257.798894-6-hch@lst.de>
 MIME-Version: 1.0
-References: <20200613024130.3356-1-nramas@linux.microsoft.com>
- <20200613024130.3356-5-nramas@linux.microsoft.com> <CAEjxPJ49UaZc9pc-+VN8Cx8rcdrjD6NMoLOO_zqENezobmfwVA@mail.gmail.com>
-In-Reply-To: <CAEjxPJ49UaZc9pc-+VN8Cx8rcdrjD6NMoLOO_zqENezobmfwVA@mail.gmail.com>
-From:   Stephen Smalley <stephen.smalley.work@gmail.com>
-Date:   Mon, 15 Jun 2020 08:15:13 -0400
-Message-ID: <CAEjxPJ4MMjGGMy5b5pFfdZ=mUiBMv4M558Kwdu_VG8OOCU_aUA@mail.gmail.com>
-Subject: Re: [PATCH 4/5] LSM: Define SELinux function to measure security state
-To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        Stephen Smalley <stephen.smalley@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        James Morris <jmorris@namei.org>,
-        linux-integrity@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200615121257.798894-6-hch@lst.de>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jun 15, 2020 at 7:57 AM Stephen Smalley
-<stephen.smalley.work@gmail.com> wrote:
-> I think I mentioned this on a previous version of these patches, but I
-> would recommend including more than just the enabled and enforcing
-> states in your measurement.  Other low-hanging fruit would be the
-> other selinux_state booleans (checkreqprot, initialized,
-> policycap[0..__POLICYDB_CAPABILITY_MAX]).  Going a bit further one
-> could take a hash of the loaded policy by using security_read_policy()
+On Mon, Jun 15, 2020 at 02:12:49PM +0200, Christoph Hellwig wrote:
+> We still need to check if the fѕ is open write, even for the low-level
+> helper.
 
-On second thought, you probably a variant of security_read_policy()
-since it would be a kernel-internal allocation and thus shouldn't use
-vmalloc_user().
+Do we need the analogous check for FMODE_READ in the __kernel_read()
+patch?
 
-> and then computing a hash using whatever hash ima prefers over the
-> returned data,len pair.  You likely also need to think about how to
-> allow future extensibility of the state in a backward-compatible
-> manner, so that future additions do not immediately break systems
-> relying on older measurements.
+> @@ -505,6 +505,8 @@ ssize_t __kernel_write(struct file *file, const void *buf, size_t count, loff_t
+>  	const char __user *p;
+>  	ssize_t ret;
+>  
+> +	if (!(file->f_mode & FMODE_WRITE))
+> +		return -EBADF;
+>  	if (!(file->f_mode & FMODE_CAN_WRITE))
+>  		return -EINVAL;
+>  
+> -- 
+> 2.26.2
+> 
