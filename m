@@ -7,92 +7,137 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28399C433E0
-	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jun 2020 16:22:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAF00C433E0
+	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jun 2020 16:23:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DD1BE2078E
-	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jun 2020 16:22:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9CFD2078E
+	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jun 2020 16:23:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Zo5ehkbM"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="GWDefzid"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731040AbgFOQWc (ORCPT
+        id S1730476AbgFOQXC (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 15 Jun 2020 12:22:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55554 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728585AbgFOQWc (ORCPT
+        Mon, 15 Jun 2020 12:23:02 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:35558 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729949AbgFOQXB (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 15 Jun 2020 12:22:32 -0400
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B478BC061A0E
-        for <linux-security-module@vger.kernel.org>; Mon, 15 Jun 2020 09:22:31 -0700 (PDT)
-Received: by mail-ej1-x634.google.com with SMTP id o15so18061451ejm.12
-        for <linux-security-module@vger.kernel.org>; Mon, 15 Jun 2020 09:22:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/vrNNxvqzd1+6WcN18UWNnrm3SzmXd8+xL+vm2U41hs=;
-        b=Zo5ehkbMWUQUNb9n3tIc5zV9ibuTmwKK3biPsJDwDAFXGbT+pEyjb5SZPDnyHTAj62
-         5OlXN3u5Q1MlWMVccYeP/p46e2nsmyVmGIyJUq85kS/I3ylT7lFNXt8QTXkbVt/tM72H
-         lfXAm2MWFyvoXvuiq5tn7ggY15XVP9TVWDYgk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/vrNNxvqzd1+6WcN18UWNnrm3SzmXd8+xL+vm2U41hs=;
-        b=oHJy4po7jSzwt1NJVevCqLiu4U+25uujrP3xcE9ZYQ0w9hQ9sqVNGxdW/+h0fqnWRp
-         0/XQgIQp5BAsGvvxmRqRkYC2RUmfpR+GgZ9rNJytjtvwVfgenuvYBGtRlyKzYqFtwA8e
-         WTlye8Zn2SRSUykXTudRti7BL1YXpRMdKRTkr3vXL/QWa78LwGw82iGLp7BqyQoa8pNY
-         vAEDF8rGbIwrGO5i88zY0OTsWFp6QHFaLz/XQVUuCtkKD2VGIWd1FwRNPZ/piFBDLSZ3
-         8RnPTPx9axMJA3K4UcDf2bijyeLgVTyAsHT+fToc29p8Zb20CmKonKhoUv7Oq9xd4Zin
-         LSlQ==
-X-Gm-Message-State: AOAM530FdXl/p0czZg5p0bCbOG9gjqgSZMoJMVx/KHexLXakH5owyPAS
-        cA5pB8eKXIwGdzAyUpr9iaFqKkSQIQtsOHK14oeP9g==
-X-Google-Smtp-Source: ABdhPJx+bT/qo9gxqE/zoNAe1/BkPFy8sVFIY15o/zABl1r/0Kd+6QCAu4UjRjIvp6LUm6j//qBO9qKM9BgOO+88yFw=
-X-Received: by 2002:a17:906:5595:: with SMTP id y21mr27317038ejp.61.1592238149992;
- Mon, 15 Jun 2020 09:22:29 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAJ-EccOy4qDpbfrP5=KH40LSOx1F4-ciY2=hFv_c+goUHLJ6PQ@mail.gmail.com>
- <CAHk-=wiLXXR1+o4VAuw5MM3V1D8h6C6te3y8VMvW8iAJw6noJg@mail.gmail.com>
- <CAJ-EccPGQ62yMK1Nmvie4qWzproSqb4POwAD4_0Nt62KLbGhqg@mail.gmail.com> <alpine.LRH.2.21.2006151517230.9003@namei.org>
-In-Reply-To: <alpine.LRH.2.21.2006151517230.9003@namei.org>
-From:   Micah Morton <mortonm@chromium.org>
-Date:   Mon, 15 Jun 2020 09:22:19 -0700
-Message-ID: <CAJ-EccO+4s8Dd=wj75ckfp4ZLhppt7uCgg2chf4SvTOxzqbgPw@mail.gmail.com>
-Subject: Re: [GIT PULL] SafeSetID LSM changes for v5.8
-To:     James Morris <jmorris@namei.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        John Johansen <john.johansen@canonical.com>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 15 Jun 2020 12:23:01 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 05FGMdFX038242;
+        Mon, 15 Jun 2020 16:22:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : message-id :
+ content-type : mime-version : subject : date : in-reply-to : cc : to :
+ references; s=corp-2020-01-29;
+ bh=9LPSGGeBHXZlI3mrDl11xSAyahEZRFnjRlfXvOp90rc=;
+ b=GWDefzidqVC2brxh0WZ3BGv+lh9SaJibEB6XXXxy2sL7OaZ40fA/VnAXniUJaDb2gaM0
+ Xwj7QVdaun1tZYVMybjnzyekweavZr8nAXjscgFvk7s2NiIZvOMF/UB/iMqnDsgdwbeA
+ RuzTwdBqjHlq73celgtaC97LyUFdnTlecx10KisqhUI8UiHAo8yren4tbhN5bTJbyh17
+ Xke5C46mrV6hox4mDesf8ltppp5BYCARQRJKSmszeUOQuXp6+jckSvIngOFxptwDq8BT
+ Rfu9rSdNlqzlyJ5kATvbU4eNnlSskbxM5uX/JTmo6dR8exoG8byklEZDlteCk6YESe7J xA== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 31p6s21w3s-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 15 Jun 2020 16:22:39 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 05FGDJ4I149951;
+        Mon, 15 Jun 2020 16:22:39 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3020.oracle.com with ESMTP id 31p6db805w-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 15 Jun 2020 16:22:39 +0000
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 05FGMTbH013709;
+        Mon, 15 Jun 2020 16:22:30 GMT
+Received: from [10.175.200.36] (/10.175.200.36)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 15 Jun 2020 09:22:29 -0700
+From:   John Haxby <john.haxby@oracle.com>
+Message-Id: <206DB19C-0117-4F4B-AFF7-212E40CB8C75@oracle.com>
+Content-Type: multipart/signed;
+        boundary="Apple-Mail=_79F4D81D-D509-4941-8339-0DAC46A53B1C";
+        protocol="application/pgp-signature";
+        micalg=pgp-sha256
+Mime-Version: 1.0 (Mac OS X Mail 13.4 \(3608.80.23.2.2\))
+Subject: Re: [oss-security] lockdown bypass on mainline kernel for loading
+ unsigned modules
+Date:   Mon, 15 Jun 2020 17:22:27 +0100
+In-Reply-To: <CAHmME9rmAznrAmEQTOaLeMM82iMFTfCNfpxDGXw4CJjuVEF_gQ@mail.gmail.com>
+Cc:     linux-security-module@vger.kernel.org, linux-acpi@vger.kernel.org,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        kernel-hardening@lists.openwall.com,
+        Ubuntu Kernel Team <kernel-team@lists.ubuntu.com>
+To:     oss-security@lists.openwall.com,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>
+References: <CAHmME9rmAznrAmEQTOaLeMM82iMFTfCNfpxDGXw4CJjuVEF_gQ@mail.gmail.com>
+X-Mailer: Apple Mail (2.3608.80.23.2.2)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9653 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 adultscore=0 suspectscore=0
+ mlxlogscore=999 mlxscore=0 phishscore=0 bulkscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2004280000
+ definitions=main-2006150126
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9653 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 impostorscore=0
+ clxscore=1034 mlxscore=0 mlxlogscore=999 priorityscore=1501 phishscore=0
+ malwarescore=0 suspectscore=0 spamscore=0 cotscore=-2147483648 bulkscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2004280000 definitions=main-2006150127
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sun, Jun 14, 2020 at 10:21 PM James Morris <jmorris@namei.org> wrote:
->
-> On Sun, 14 Jun 2020, Micah Morton wrote:
->
-> > This patch was sent to the security mailing list and there were no objections.
->
-> Standard practice for new or modified LSM hooks is that they are reviewed
-> and acked by maintainers of major LSMs (SELinux, AppArmor, and Smack, at
-> least).
->
-> "No objections" should be considered "not reviewed".
->
-> Can you add your tree to linux-next?
-> https://www.kernel.org/doc/man-pages/linux-next.html
 
-Sure, I can do that. I should just send an email to Stephen Rothwell
-asking him to include the -next branch from my tree?
+--Apple-Mail=_79F4D81D-D509-4941-8339-0DAC46A53B1C
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=us-ascii
 
->
-> --
-> James Morris
-> <jmorris@namei.org>
->
+Hi Jason,
+
+
+> On 15 Jun 2020, at 11:26, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+>=20
+> Hi everyone,
+>=20
+> Yesterday, I found a lockdown bypass in Ubuntu 18.04's kernel using
+> ACPI table tricks via the efi ssdt variable [1]. Today I found another
+> one that's a bit easier to exploit and appears to be unpatched on
+> mainline, using acpi_configfs to inject an ACPI table. The tricks are
+> basically the same as the first one, but this one appears to be
+> unpatched, at least on my test machine. Explanation is in the header
+> of the PoC:
+>=20
+> =
+https://git.zx2c4.com/american-unsigned-language/tree/american-unsigned-la=
+nguage-2.sh
+>=20
+> I need to get some sleep, but if nobody posts a patch in the
+> meanwhile, I'll try to post a fix tomorrow.
+>=20
+> Jason
+>=20
+> [1] https://www.openwall.com/lists/oss-security/2020/06/14/1
+
+
+This looks CVE-worthy.   Are you going to ask for a CVE for it?
+
+jch
+
+--Apple-Mail=_79F4D81D-D509-4941-8339-0DAC46A53B1C
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+Comment: GPGTools - http://gpgtools.org
+
+iHUEAREIAB0WIQT+pxvb11CFWUkNSOVFC7t+lC+jyAUCXuegQwAKCRBFC7t+lC+j
+yItsAQCs9qh0q24Rr/pL5VTN/Nt6fJj38GzSCQNVyCcBs8X55gD+OdD6c88Q91b/
+tFCKvrk8joQsG5RiFiqNQpod8AORs+s=
+=x0MT
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_79F4D81D-D509-4941-8339-0DAC46A53B1C--
