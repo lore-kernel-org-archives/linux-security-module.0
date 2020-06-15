@@ -2,152 +2,86 @@ Return-Path: <SRS0=9iMC=74=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82E46C433DF
-	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jun 2020 11:57:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCFC8C433DF
+	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jun 2020 12:13:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5EDFC20707
-	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jun 2020 11:57:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0B9920679
+	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jun 2020 12:13:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KKFPDnAT"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="G819EK+Z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729782AbgFOL5x (ORCPT
+        id S1729820AbgFOMNM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 15 Jun 2020 07:57:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42584 "EHLO
+        Mon, 15 Jun 2020 08:13:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44930 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728510AbgFOL5w (ORCPT
+        with ESMTP id S1729644AbgFOMNL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 15 Jun 2020 07:57:52 -0400
-Received: from mail-ot1-x341.google.com (mail-ot1-x341.google.com [IPv6:2607:f8b0:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BAF1C061A0E;
-        Mon, 15 Jun 2020 04:57:52 -0700 (PDT)
-Received: by mail-ot1-x341.google.com with SMTP id m2so12847158otr.12;
-        Mon, 15 Jun 2020 04:57:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=R0P5cMrSEK9Tm95O2ZpUaePqKfNHRhXx34xpHo5o2b0=;
-        b=KKFPDnATCQdpxcvazDRCJ3tBuYdMbW0n+oIVf0fs9pLhg/wgMURu233HP+aFWAS1Ih
-         A1OalkKQ+Y1PAIySt0DwvE+F+zfgnD4gos6GJAc/UviDZ5paVOFA/rgLs6vA8u/2+J2V
-         kxKkqkiP/WbeaHlLiyBy478xI3B1pE7T1xcF3SrY9blbcToMfQ/SyrU8mk8Vw0DMntRU
-         FUbMcvrzcSjKGs7yCoRERxjRd3YXUcOl0fw+WTQ1y8wwVMg+B35eFu9ebYbjT8rnXl9T
-         YJvTL48DMeWUD50QkGb0mcKa9Zg2k0WFtH9jUhjSxd7dNJihH4EWyYsNzac4fP58wBgP
-         mshw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=R0P5cMrSEK9Tm95O2ZpUaePqKfNHRhXx34xpHo5o2b0=;
-        b=R4Df5u3Jma913mtN6DBX2Zr3XKHYGWHCv7K9CRfRDEx1saZO6XsVyPvyNp9G17HauA
-         ljql7UUreUNc9IjL/2imAxkwaUm4WFeWXr2B+x6wkxRfmvyvlnCz31qzNAZB43r6LFSG
-         ll22QWr4KdrkZUAaR5ze0/WyMMlAOnXBkuSe3rv4d0l0jEp14JsmqcaEXSwuLlquzzJ7
-         jg1UeNLepcBthF352Ea3HAJJ+TjUBniuFCu9Api+DxOp9HaBswho7wd4ljUe7m5t4naX
-         J046PL4B01Fo+jrVbuseupH5Lj/Miog8B093Z2K7nQYG3nrQIeAJEfsPIj5AOJzwhe5R
-         3rAg==
-X-Gm-Message-State: AOAM533jpgPRSFirJv+dmAE6uHVnN2TxvfxM7I2DDYdSp4HZCUEhOJPK
-        7RF1eUJI9ql1z7lVanqv8h+NUp0QeVcaQMODdoI=
-X-Google-Smtp-Source: ABdhPJxBjB4XUMkUcIuWL3AyOjaPgqG1u76xUXLhHBvL4oGeYWeh6wuuDxrN30yOveY+AWpOAJnqzjlcDW8oFHGXqp4=
-X-Received: by 2002:a05:6830:2003:: with SMTP id e3mr20045702otp.89.1592222271339;
- Mon, 15 Jun 2020 04:57:51 -0700 (PDT)
+        Mon, 15 Jun 2020 08:13:11 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60F69C061A0E;
+        Mon, 15 Jun 2020 05:13:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
+        :Reply-To:Content-Type:Content-ID:Content-Description;
+        bh=PIZcUHBXRzg4FA/EeFx1uXo9md1v0NkQLsX0zI2zg6M=; b=G819EK+ZF3l4JKvJpNoDQkzaoG
+        Lc/RMuX7kR6jflTIh7Afa84Wzq8HIOk+gxtGA3d0RxIRRhf8+RBsO2rynGtF9OMKdF2yS4xYVtAsk
+        QGtjYG1cWqpNs4OJN48ErkHOWIILDg/LEQ+9pVsNPT9BzD7hh8m2mJM+zNl/SROcdASBZFw148eRf
+        m6uRPy2cUiiKXsTjQ0NA1YARO0EQUaKUwMVBV5/J+H84bw/mf3fWWbf1bb1uUuSRBRlGlmkBraUmx
+        S4P7BtemzJPe7aMW7+JssuP2APl/y9PTcRtklu7VyYbPuDpZXG461PZX8iswebAJjl1/tUT6jhD+H
+        f5vN2xbA==;
+Received: from 195-192-102-148.dyn.cablelink.at ([195.192.102.148] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jknzA-0006zf-Hg; Mon, 15 Jun 2020 12:13:08 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Ian Kent <raven@themaw.net>,
+        David Howells <dhowells@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        netfilter-devel@vger.kernel.org
+Subject: [PATCH 03/13] bpfilter: switch to kernel_write
+Date:   Mon, 15 Jun 2020 14:12:47 +0200
+Message-Id: <20200615121257.798894-4-hch@lst.de>
+X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20200615121257.798894-1-hch@lst.de>
+References: <20200615121257.798894-1-hch@lst.de>
 MIME-Version: 1.0
-References: <20200613024130.3356-1-nramas@linux.microsoft.com> <20200613024130.3356-5-nramas@linux.microsoft.com>
-In-Reply-To: <20200613024130.3356-5-nramas@linux.microsoft.com>
-From:   Stephen Smalley <stephen.smalley.work@gmail.com>
-Date:   Mon, 15 Jun 2020 07:57:40 -0400
-Message-ID: <CAEjxPJ49UaZc9pc-+VN8Cx8rcdrjD6NMoLOO_zqENezobmfwVA@mail.gmail.com>
-Subject: Re: [PATCH 4/5] LSM: Define SELinux function to measure security state
-To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        Stephen Smalley <stephen.smalley@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        James Morris <jmorris@namei.org>,
-        linux-integrity@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jun 12, 2020 at 10:42 PM Lakshmi Ramasubramanian
-<nramas@linux.microsoft.com> wrote:
->
-> SELinux needs to implement the interface function, security_state(), for
-> the LSM to gather SELinux data for measuring. Define the security_state()
-> function in SELinux.
->
-> The security modules should be able to notify the LSM when there is
-> a change in the module's data. Define a function namely
-> security_state_change() in the LSM that the security modules
-> can call to provide the updated data for measurement.
->
-> Call security_state_change() function from SELinux to report data
-> when SELinux's state is updated.
->
-> Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-> ---
-> diff --git a/security/security.c b/security/security.c
-> index a6e2d1cd95af..e7175db5a093 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -238,6 +238,11 @@ static void __init initialize_lsm(struct lsm_info *lsm)
->         }
->  }
->
-> +void security_state_change(char *lsm_name, void *state, int state_len)
-> +{
-> +       ima_lsm_state(lsm_name, state, state_len);
-> +}
-> +
+While pipes don't really need sb_writers projection, __kernel_write is an
+interface better kept private, and the additional rw_verify_area does not
+hurt here.
 
-What's the benefit of this trivial function instead of just calling
-ima_lsm_state() directly?
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ net/bpfilter/bpfilter_kern.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index 7e954b555be6..bbc908a1fcd1 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -7225,6 +7225,47 @@ static __init int selinux_init(void)
->         return 0;
->  }
->
-> +static int selinux_security_state(char **lsm_name, void **state,
-> +                                 int *state_len)
-> +{
-> +       int rc = 0;
-> +       char *new_state;
-> +       static char *security_state_string = "enabled=%d;enforcing=%d";
-> +
-> +       *lsm_name = kstrdup("selinux", GFP_KERNEL);
-> +       if (!*lsm_name)
-> +               return -ENOMEM;
-> +
-> +       new_state = kzalloc(strlen(security_state_string) + 1, GFP_KERNEL);
-> +       if (!new_state) {
-> +               kfree(*lsm_name);
-> +               *lsm_name = NULL;
-> +               rc = -ENOMEM;
-> +               goto out;
-> +       }
-> +
-> +       *state_len = sprintf(new_state, security_state_string,
-> +                            !selinux_disabled(&selinux_state),
-> +                            enforcing_enabled(&selinux_state));
+diff --git a/net/bpfilter/bpfilter_kern.c b/net/bpfilter/bpfilter_kern.c
+index c0f0990f30b604..1905e01c3aa9a7 100644
+--- a/net/bpfilter/bpfilter_kern.c
++++ b/net/bpfilter/bpfilter_kern.c
+@@ -50,7 +50,7 @@ static int __bpfilter_process_sockopt(struct sock *sk, int optname,
+ 	req.len = optlen;
+ 	if (!bpfilter_ops.info.pid)
+ 		goto out;
+-	n = __kernel_write(bpfilter_ops.info.pipe_to_umh, &req, sizeof(req),
++	n = kernel_write(bpfilter_ops.info.pipe_to_umh, &req, sizeof(req),
+ 			   &pos);
+ 	if (n != sizeof(req)) {
+ 		pr_err("write fail %zd\n", n);
+-- 
+2.26.2
 
-I think I mentioned this on a previous version of these patches, but I
-would recommend including more than just the enabled and enforcing
-states in your measurement.  Other low-hanging fruit would be the
-other selinux_state booleans (checkreqprot, initialized,
-policycap[0..__POLICYDB_CAPABILITY_MAX]).  Going a bit further one
-could take a hash of the loaded policy by using security_read_policy()
-and then computing a hash using whatever hash ima prefers over the
-returned data,len pair.  You likely also need to think about how to
-allow future extensibility of the state in a backward-compatible
-manner, so that future additions do not immediately break systems
-relying on older measurements.
