@@ -2,102 +2,104 @@ Return-Path: <SRS0=9iMC=74=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1AA1C433E0
-	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jun 2020 16:57:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D95EC433E0
+	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jun 2020 17:03:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BC17C20663
-	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jun 2020 16:57:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1592240240;
-	bh=t+Gq9rDmIsS9imeSgEfOfwJ3RU8rVMc5vfiLN8LDl6g=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=xqcb+KEh5x1isT2KBptBB7dzaCGhfpQlmXiHFl7LyF1dbcQm9dhHme2wGrv1yCktu
-	 fVO4vs/oWGxOmYyyG08T+nPw6dJSwRJnXvXUU0fGCHR97hLnVxWE02QEJXp/fQRsi+
-	 M6OsC39ZXY1NXb2g1oOzWjfg8wMLcnqG1/Vesr+w=
+	by mail.kernel.org (Postfix) with ESMTP id DF13F207D4
+	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jun 2020 17:03:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZdDL5AnK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730995AbgFOQ5U (ORCPT
+        id S1731104AbgFORDV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 15 Jun 2020 12:57:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60972 "EHLO
+        Mon, 15 Jun 2020 13:03:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33676 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729836AbgFOQ5T (ORCPT
+        with ESMTP id S1729354AbgFORDV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 15 Jun 2020 12:57:19 -0400
-Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E0FFC05BD43
-        for <linux-security-module@vger.kernel.org>; Mon, 15 Jun 2020 09:57:19 -0700 (PDT)
-Received: by mail-lj1-x244.google.com with SMTP id i3so15523825ljg.3
-        for <linux-security-module@vger.kernel.org>; Mon, 15 Jun 2020 09:57:19 -0700 (PDT)
+        Mon, 15 Jun 2020 13:03:21 -0400
+Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B758CC061A0E
+        for <linux-security-module@vger.kernel.org>; Mon, 15 Jun 2020 10:03:19 -0700 (PDT)
+Received: by mail-lj1-x242.google.com with SMTP id x18so20051586lji.1
+        for <linux-security-module@vger.kernel.org>; Mon, 15 Jun 2020 10:03:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=eIkal8pUfONI4oNrGMEW7FJGnsyPgxFx6nFiYlCav8Q=;
-        b=BOdfnS1nQ1loTAy3XfZG4v2ypfE6UrK/J+Zd6u9ARxAU0HozZqAjdnCtxoLxulSvq0
-         7PoDNtEz3pdUYnk9jHe+VKu0KTcBji19fekNHUB4EqiWzTIqAhfzI/qVn548WkWINsOo
-         G2cfvtd1eBk/jMWvfGGb0/G2cdASiBLrgA7w0=
+        bh=h+e+6oiMfPcuzfOioIuAZY78N0uqSVxHMMheHIvnJFI=;
+        b=ZdDL5AnKuDKjT78TYGdiLM90FU4CSgVPQvBPwBxI4352g9rT5orcRSoCEyhOgCzmrb
+         4e5RDz3iPk4xgm/IQFSISxou4eEhtOFpaahQc3QKC4aym1agnSpfRVXS8vTqXb2Plmrd
+         JE+g5jt9NSl4Bg3MUUdIcJO1AZwUTx6w0nfikkonIXSuSDXlbWYxbECK8lmFLj4afdYC
+         HrXWm/+8PH0LuJZpduXLjdnuoL+cnyvy/wanzTOdUAr9jrz/ji7YRX+MTUSO0WBJYFXJ
+         eCTY/xUIKoC3WPvskinA4vXddp2oIjFSeL+i1Yt4RZNpAH1rkFIT1NsfcEEsKZQU8Oth
+         aD0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=eIkal8pUfONI4oNrGMEW7FJGnsyPgxFx6nFiYlCav8Q=;
-        b=T5qhIrDvNKn1c+g3PPqayPXhalg51Q4sak1HSlI21Bd7FI3ZCR1bCuadHAkFX2oCQm
-         av6+zc8uZKmFUUA1EaD9N9Td8+NgNflZFNtbvl5/NQlqaQtgupT+WkoLU9IIRM/Iyu98
-         +1uCePxShgJyWC5/r8dZGC5MNk24emRneYdsVvluGOKTktRql8YRTLAaPtdtk7w0wTGs
-         eA76CHHEgKvPUyBZvCk0Iax2RlAAcs5tnAnHfU+K8TB/T+LKpOpWbxnx37zBqJdRzqCI
-         wZA8csWkRehjYJWQqJLKl46lbjJgyaTevcaqwsjQSp7uqoiM9KaTB2hmyCZyTJPWr+7Y
-         Zm/Q==
-X-Gm-Message-State: AOAM533cmGuKXvetL6QkbNxDbnwaOrISBzl2904OUlmVVu4SOKyUYP2F
-        WOT7RK0UAfu6FPoyA5kIAN2bx1ftA3E=
-X-Google-Smtp-Source: ABdhPJw0Cq7ctPO2LRrwljLrDd2P3p9k4XvOF/+u79PrzAcPYI3S0YPcse96x+TuYodtZMbESml2LA==
-X-Received: by 2002:a2e:581a:: with SMTP id m26mr13753617ljb.0.1592240237207;
-        Mon, 15 Jun 2020 09:57:17 -0700 (PDT)
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com. [209.85.208.176])
-        by smtp.gmail.com with ESMTPSA id 11sm460786lfz.78.2020.06.15.09.57.16
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Jun 2020 09:57:16 -0700 (PDT)
-Received: by mail-lj1-f176.google.com with SMTP id i27so20021173ljb.12
-        for <linux-security-module@vger.kernel.org>; Mon, 15 Jun 2020 09:57:16 -0700 (PDT)
-X-Received: by 2002:a2e:b5d7:: with SMTP id g23mr12503482ljn.70.1592240235665;
- Mon, 15 Jun 2020 09:57:15 -0700 (PDT)
+        bh=h+e+6oiMfPcuzfOioIuAZY78N0uqSVxHMMheHIvnJFI=;
+        b=qJq/kkd8kAbg10qTXMTutoKeXvoEzgrRuI5fm3n4lXod+Uh2Vx7Vvh6t/AWbyGarub
+         klFgvhIZTIcYVP3kuq7RXQENrgKdttMs8jh0U0D7uP3YQi+lcwYr8zHSdk6PCX4unmeJ
+         M8IyHakg6Gt1MgATiIX4JeODTrkbTbFap+at4Rl7ovZrkDgsdmoyG0ls2COrYT1hFyyC
+         nIGiboxsR+TqCSROTdTpDLjCLuJ7v3MrECLRsdrGOCWNW5y5cvjpvqcwO4yKhnBIxjht
+         7R3jSbfK+13OGtFEefMzDwCE6sT1/WTxHQR4D+RlIlLjDoqWTN2uvPrHErPdAry7VHNc
+         yGgw==
+X-Gm-Message-State: AOAM530HLxBi4AXyNJKsgEoeKuVfVlvCfsYAGK8DmTynAxhEawwT1J6h
+        STl0ttRkG8OPwlyQdqb3MX0Q6yG1VCyC1nCsCUlxzA==
+X-Google-Smtp-Source: ABdhPJxKghjauWCQ06S7R7giwAOWLRv8YnNXKPN82l+nvWY9jbQW3XjbsykSVqW3lMHbTPuJcLGB8eKa4JCQbYJKd3Y=
+X-Received: by 2002:a05:651c:38b:: with SMTP id e11mr12109574ljp.415.1592240597617;
+ Mon, 15 Jun 2020 10:03:17 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200615121257.798894-1-hch@lst.de> <20200615121257.798894-11-hch@lst.de>
- <CAHk-=wiBJjjV4NuKr_z2Q3vWEXSoGtAmkH=jZ0SkBJ=wZh4=hw@mail.gmail.com>
-In-Reply-To: <CAHk-=wiBJjjV4NuKr_z2Q3vWEXSoGtAmkH=jZ0SkBJ=wZh4=hw@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 15 Jun 2020 09:56:59 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiVjH4C+PzyHfsR0+GzFUf_2XX5H_tQoHGqp+pMGuec7Q@mail.gmail.com>
-Message-ID: <CAHk-=wiVjH4C+PzyHfsR0+GzFUf_2XX5H_tQoHGqp+pMGuec7Q@mail.gmail.com>
-Subject: Re: [PATCH 10/13] integrity/ima: switch to using __kernel_read
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>,
-        David Howells <dhowells@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        NetFilter <netfilter-devel@vger.kernel.org>
+References: <CAHmME9rmAznrAmEQTOaLeMM82iMFTfCNfpxDGXw4CJjuVEF_gQ@mail.gmail.com>
+ <206DB19C-0117-4F4B-AFF7-212E40CB8C75@oracle.com>
+In-Reply-To: <206DB19C-0117-4F4B-AFF7-212E40CB8C75@oracle.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Mon, 15 Jun 2020 19:02:51 +0200
+Message-ID: <CAG48ez3fQbBLUBUkSaF-0b_DhL8M_1JU4DKkjTYXGB_6G1RgiA@mail.gmail.com>
+Subject: Re: [oss-security] lockdown bypass on mainline kernel for loading
+ unsigned modules
+To:     John Haxby <john.haxby@oracle.com>
+Cc:     oss-security@lists.openwall.com,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        linux-acpi@vger.kernel.org, Matthew Garrett <mjg59@srcf.ucam.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Ubuntu Kernel Team <kernel-team@lists.ubuntu.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jun 15, 2020 at 9:46 AM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+On Mon, Jun 15, 2020 at 6:24 PM John Haxby <john.haxby@oracle.com> wrote:
+> > On 15 Jun 2020, at 11:26, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+> > Yesterday, I found a lockdown bypass in Ubuntu 18.04's kernel using
+> > ACPI table tricks via the efi ssdt variable [1]. Today I found another
+> > one that's a bit easier to exploit and appears to be unpatched on
+> > mainline, using acpi_configfs to inject an ACPI table. The tricks are
+> > basically the same as the first one, but this one appears to be
+> > unpatched, at least on my test machine. Explanation is in the header
+> > of the PoC:
+> >
+> > https://git.zx2c4.com/american-unsigned-language/tree/american-unsigned-language-2.sh
+> >
+> > I need to get some sleep, but if nobody posts a patch in the
+> > meanwhile, I'll try to post a fix tomorrow.
+> >
+> > Jason
+> >
+> > [1] https://www.openwall.com/lists/oss-security/2020/06/14/1
 >
-> It worries me that you're making these kinds of transformations where
-> the comments imply it's a no-op, but the actual code doesn't agree.
+>
+> This looks CVE-worthy.   Are you going to ask for a CVE for it?
 
-Note that it's not that I think the FMODE_READ check is necessarily
-_needed_. It's more the discrepancy between the commit message and the
-code change that I don't like.
-
-The commit message implies that __kernel_read() has _more_ checks than
-the checks done by integrity_kernel_read(). But it looks like they
-aren't so much "more" as they are just "different".
-
-                Linus
+Does it really make sense to dole out CVEs for individual lockdown
+bypasses when various areas of the kernel (such as filesystems and
+BPF) don't see root->kernel privilege escalation issues as a problem?
+It's not like applying the fix for this one issue is going to make
+systems meaningfully safer.
