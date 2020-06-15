@@ -2,76 +2,152 @@ Return-Path: <SRS0=9iMC=74=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84A37C433DF
-	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jun 2020 10:26:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82E46C433DF
+	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jun 2020 11:57:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5917A20707
-	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jun 2020 10:26:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5EDFC20707
+	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jun 2020 11:57:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="kZswaULy"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KKFPDnAT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728773AbgFOK0y (ORCPT
+        id S1729782AbgFOL5x (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 15 Jun 2020 06:26:54 -0400
-Received: from mail.zx2c4.com ([192.95.5.64]:42585 "EHLO mail.zx2c4.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728368AbgFOK0x (ORCPT
+        Mon, 15 Jun 2020 07:57:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42584 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728510AbgFOL5w (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 15 Jun 2020 06:26:53 -0400
-Received: by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTP id c812bc21;
-        Mon, 15 Jun 2020 10:09:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
-        :from:date:message-id:subject:to:cc:content-type; s=mail; bh=lRN
-        65Oo0mc0F8r+DDWtw/MlluDk=; b=kZswaULynlWF7sUmn/S+Wf4vXyg4TwnY3od
-        O5GhovqKcyRqGHxIJOJ9yNFmfnGMaWiNoKv6xs8QbvIwLDczGT6+CNi5gIgdtoX+
-        qXfw+1VIROj31TKltcGorCqGsPNqevrneEZ/hFSwXlgoXpfdeJUKGqovJzsCTzzf
-        I4gpHOJyES9f1nNEs00hqCwRXkuH8NPSHJwx8L5/shr1v/Vwi4weme+9OBZki7rO
-        Mzu7YaruKWBmwypPdCcglUaOTNs5FBZaLLO9WSbnf7LAD7qU52LlGX71+/Cg7qAd
-        vzqWdsmXG5jAw1t/Hh+PUCOh8Sma1rc4vELqQNkHUmFssGEmfRA==
-Received: by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 14d73c66 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-        Mon, 15 Jun 2020 10:09:00 +0000 (UTC)
-Received: by mail-io1-f46.google.com with SMTP id p20so17165270iop.11;
-        Mon, 15 Jun 2020 03:26:49 -0700 (PDT)
-X-Gm-Message-State: AOAM530ni9Vpspm5CvRsac43zgg5KKZHzyUVMB7qdpjRX1ZEaE8jGu9I
-        /XbMAtVhz+XNkgwmzzmvtaS/n96/oREfe1mOY4k=
-X-Google-Smtp-Source: ABdhPJzSj8LwcKc9aY9w/6THuVZEOYoB+hlUyjHk6QP5O7EW9Yn2eEdLsBKYY2DjP/t7jJbqHTBjUDx25k5Bw9yRChs=
-X-Received: by 2002:a6b:5a07:: with SMTP id o7mr26860787iob.67.1592216808485;
- Mon, 15 Jun 2020 03:26:48 -0700 (PDT)
+        Mon, 15 Jun 2020 07:57:52 -0400
+Received: from mail-ot1-x341.google.com (mail-ot1-x341.google.com [IPv6:2607:f8b0:4864:20::341])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BAF1C061A0E;
+        Mon, 15 Jun 2020 04:57:52 -0700 (PDT)
+Received: by mail-ot1-x341.google.com with SMTP id m2so12847158otr.12;
+        Mon, 15 Jun 2020 04:57:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=R0P5cMrSEK9Tm95O2ZpUaePqKfNHRhXx34xpHo5o2b0=;
+        b=KKFPDnATCQdpxcvazDRCJ3tBuYdMbW0n+oIVf0fs9pLhg/wgMURu233HP+aFWAS1Ih
+         A1OalkKQ+Y1PAIySt0DwvE+F+zfgnD4gos6GJAc/UviDZ5paVOFA/rgLs6vA8u/2+J2V
+         kxKkqkiP/WbeaHlLiyBy478xI3B1pE7T1xcF3SrY9blbcToMfQ/SyrU8mk8Vw0DMntRU
+         FUbMcvrzcSjKGs7yCoRERxjRd3YXUcOl0fw+WTQ1y8wwVMg+B35eFu9ebYbjT8rnXl9T
+         YJvTL48DMeWUD50QkGb0mcKa9Zg2k0WFtH9jUhjSxd7dNJihH4EWyYsNzac4fP58wBgP
+         mshw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=R0P5cMrSEK9Tm95O2ZpUaePqKfNHRhXx34xpHo5o2b0=;
+        b=R4Df5u3Jma913mtN6DBX2Zr3XKHYGWHCv7K9CRfRDEx1saZO6XsVyPvyNp9G17HauA
+         ljql7UUreUNc9IjL/2imAxkwaUm4WFeWXr2B+x6wkxRfmvyvlnCz31qzNAZB43r6LFSG
+         ll22QWr4KdrkZUAaR5ze0/WyMMlAOnXBkuSe3rv4d0l0jEp14JsmqcaEXSwuLlquzzJ7
+         jg1UeNLepcBthF352Ea3HAJJ+TjUBniuFCu9Api+DxOp9HaBswho7wd4ljUe7m5t4naX
+         J046PL4B01Fo+jrVbuseupH5Lj/Miog8B093Z2K7nQYG3nrQIeAJEfsPIj5AOJzwhe5R
+         3rAg==
+X-Gm-Message-State: AOAM533jpgPRSFirJv+dmAE6uHVnN2TxvfxM7I2DDYdSp4HZCUEhOJPK
+        7RF1eUJI9ql1z7lVanqv8h+NUp0QeVcaQMODdoI=
+X-Google-Smtp-Source: ABdhPJxBjB4XUMkUcIuWL3AyOjaPgqG1u76xUXLhHBvL4oGeYWeh6wuuDxrN30yOveY+AWpOAJnqzjlcDW8oFHGXqp4=
+X-Received: by 2002:a05:6830:2003:: with SMTP id e3mr20045702otp.89.1592222271339;
+ Mon, 15 Jun 2020 04:57:51 -0700 (PDT)
 MIME-Version: 1.0
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date:   Mon, 15 Jun 2020 04:26:37 -0600
-X-Gmail-Original-Message-ID: <CAHmME9rmAznrAmEQTOaLeMM82iMFTfCNfpxDGXw4CJjuVEF_gQ@mail.gmail.com>
-Message-ID: <CAHmME9rmAznrAmEQTOaLeMM82iMFTfCNfpxDGXw4CJjuVEF_gQ@mail.gmail.com>
-Subject: lockdown bypass on mainline kernel for loading unsigned modules
-To:     oss-security <oss-security@lists.openwall.com>
-Cc:     linux-security-module@vger.kernel.org, linux-acpi@vger.kernel.org,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        kernel-hardening@lists.openwall.com,
-        Ubuntu Kernel Team <kernel-team@lists.ubuntu.com>
+References: <20200613024130.3356-1-nramas@linux.microsoft.com> <20200613024130.3356-5-nramas@linux.microsoft.com>
+In-Reply-To: <20200613024130.3356-5-nramas@linux.microsoft.com>
+From:   Stephen Smalley <stephen.smalley.work@gmail.com>
+Date:   Mon, 15 Jun 2020 07:57:40 -0400
+Message-ID: <CAEjxPJ49UaZc9pc-+VN8Cx8rcdrjD6NMoLOO_zqENezobmfwVA@mail.gmail.com>
+Subject: Re: [PATCH 4/5] LSM: Define SELinux function to measure security state
+To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        Stephen Smalley <stephen.smalley@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        James Morris <jmorris@namei.org>,
+        linux-integrity@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi everyone,
+On Fri, Jun 12, 2020 at 10:42 PM Lakshmi Ramasubramanian
+<nramas@linux.microsoft.com> wrote:
+>
+> SELinux needs to implement the interface function, security_state(), for
+> the LSM to gather SELinux data for measuring. Define the security_state()
+> function in SELinux.
+>
+> The security modules should be able to notify the LSM when there is
+> a change in the module's data. Define a function namely
+> security_state_change() in the LSM that the security modules
+> can call to provide the updated data for measurement.
+>
+> Call security_state_change() function from SELinux to report data
+> when SELinux's state is updated.
+>
+> Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+> ---
+> diff --git a/security/security.c b/security/security.c
+> index a6e2d1cd95af..e7175db5a093 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -238,6 +238,11 @@ static void __init initialize_lsm(struct lsm_info *lsm)
+>         }
+>  }
+>
+> +void security_state_change(char *lsm_name, void *state, int state_len)
+> +{
+> +       ima_lsm_state(lsm_name, state, state_len);
+> +}
+> +
 
-Yesterday, I found a lockdown bypass in Ubuntu 18.04's kernel using
-ACPI table tricks via the efi ssdt variable [1]. Today I found another
-one that's a bit easier to exploit and appears to be unpatched on
-mainline, using acpi_configfs to inject an ACPI table. The tricks are
-basically the same as the first one, but this one appears to be
-unpatched, at least on my test machine. Explanation is in the header
-of the PoC:
+What's the benefit of this trivial function instead of just calling
+ima_lsm_state() directly?
 
-https://git.zx2c4.com/american-unsigned-language/tree/american-unsigned-language-2.sh
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index 7e954b555be6..bbc908a1fcd1 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -7225,6 +7225,47 @@ static __init int selinux_init(void)
+>         return 0;
+>  }
+>
+> +static int selinux_security_state(char **lsm_name, void **state,
+> +                                 int *state_len)
+> +{
+> +       int rc = 0;
+> +       char *new_state;
+> +       static char *security_state_string = "enabled=%d;enforcing=%d";
+> +
+> +       *lsm_name = kstrdup("selinux", GFP_KERNEL);
+> +       if (!*lsm_name)
+> +               return -ENOMEM;
+> +
+> +       new_state = kzalloc(strlen(security_state_string) + 1, GFP_KERNEL);
+> +       if (!new_state) {
+> +               kfree(*lsm_name);
+> +               *lsm_name = NULL;
+> +               rc = -ENOMEM;
+> +               goto out;
+> +       }
+> +
+> +       *state_len = sprintf(new_state, security_state_string,
+> +                            !selinux_disabled(&selinux_state),
+> +                            enforcing_enabled(&selinux_state));
 
-I need to get some sleep, but if nobody posts a patch in the
-meanwhile, I'll try to post a fix tomorrow.
-
-Jason
-
-[1] https://www.openwall.com/lists/oss-security/2020/06/14/1
+I think I mentioned this on a previous version of these patches, but I
+would recommend including more than just the enabled and enforcing
+states in your measurement.  Other low-hanging fruit would be the
+other selinux_state booleans (checkreqprot, initialized,
+policycap[0..__POLICYDB_CAPABILITY_MAX]).  Going a bit further one
+could take a hash of the loaded policy by using security_read_policy()
+and then computing a hash using whatever hash ima prefers over the
+returned data,len pair.  You likely also need to think about how to
+allow future extensibility of the state in a backward-compatible
+manner, so that future additions do not immediately break systems
+relying on older measurements.
