@@ -2,159 +2,76 @@ Return-Path: <SRS0=9iMC=74=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9A0EC433DF
-	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jun 2020 08:45:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84A37C433DF
+	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jun 2020 10:26:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A8A5720578
-	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jun 2020 08:45:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5917A20707
+	for <linux-security-module@archiver.kernel.org>; Mon, 15 Jun 2020 10:26:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="mb5wlVjn"
+	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="kZswaULy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729038AbgFOIpL (ORCPT
+        id S1728773AbgFOK0y (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 15 Jun 2020 04:45:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41100 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728603AbgFOIpK (ORCPT
+        Mon, 15 Jun 2020 06:26:54 -0400
+Received: from mail.zx2c4.com ([192.95.5.64]:42585 "EHLO mail.zx2c4.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728368AbgFOK0x (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 15 Jun 2020 04:45:10 -0400
-Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9885C061A0E
-        for <linux-security-module@vger.kernel.org>; Mon, 15 Jun 2020 01:45:09 -0700 (PDT)
-Received: by mail-ed1-x543.google.com with SMTP id g1so10873798edv.6
-        for <linux-security-module@vger.kernel.org>; Mon, 15 Jun 2020 01:45:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OXy80G/QuWlMsF/9ZGjBxujaTTvUrmfWIzv9XF+RHas=;
-        b=mb5wlVjn0ratQKJ42h3GHcIVlDnVaMT+Y0sd3By4do/QOYmPV7Aq+Y2zatzsI7SOrn
-         uhkPX6n2/5cxQmCMLpHxsYCjwN+0ROujisKn33HA1NeF+zxYT/qIyuzyaqX7GXK3x8+e
-         OxQ+ScFLCE+B8bFFPL0VH/0VJEF8kb46qelzU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OXy80G/QuWlMsF/9ZGjBxujaTTvUrmfWIzv9XF+RHas=;
-        b=ON38ekA1eM+16IZr91xXgKsfzu0GqAMMUlJ/sqz/Ouk0POtax2cagjsGFBfQx3dcq8
-         f5nEeznJ8UsYQ1cUd09cgiE2DwcIl2SERzsxlL9RPfIEskDXmvSxv9CyC4Y7p/DUVDke
-         L9j+TBUGhBvUO3sZeRLib1c5C3k04LeN0+s0XPrYCICp6dG00UYOaiK2xoW/+eVPkj0E
-         H3WYgi9mkXTVjl6skYDeHnFcohr4PhnxR5NPIa+V2WSgZYE+1gwCVLKdBgGl0eFwsjFV
-         ehA06fFNprOiHwPZKXw18UhIbbA/GFAUzGax2wCDqc5APrxZLPc7hs1c5Q/S/sXaVVGv
-         HyBQ==
-X-Gm-Message-State: AOAM531clxIytMPpzH01noMBPs4CcsyOsXmqyZZrlDB/dar9X1+o/V6T
-        tCoYY4Hd52qK5+hTbsowJsaFRXFUyBXsbweXnNpTQQ==
-X-Google-Smtp-Source: ABdhPJyO4Zt3HWq71S+Z2BgNwO3mxs8JAJdgIAdXB02awF1aP6ubx5B2i1EercDpoimnNHKzSTYdhNfWuV8yG31tLAk=
-X-Received: by 2002:a50:d785:: with SMTP id w5mr22207839edi.212.1592210708330;
- Mon, 15 Jun 2020 01:45:08 -0700 (PDT)
+        Mon, 15 Jun 2020 06:26:53 -0400
+Received: by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTP id c812bc21;
+        Mon, 15 Jun 2020 10:09:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
+        :from:date:message-id:subject:to:cc:content-type; s=mail; bh=lRN
+        65Oo0mc0F8r+DDWtw/MlluDk=; b=kZswaULynlWF7sUmn/S+Wf4vXyg4TwnY3od
+        O5GhovqKcyRqGHxIJOJ9yNFmfnGMaWiNoKv6xs8QbvIwLDczGT6+CNi5gIgdtoX+
+        qXfw+1VIROj31TKltcGorCqGsPNqevrneEZ/hFSwXlgoXpfdeJUKGqovJzsCTzzf
+        I4gpHOJyES9f1nNEs00hqCwRXkuH8NPSHJwx8L5/shr1v/Vwi4weme+9OBZki7rO
+        Mzu7YaruKWBmwypPdCcglUaOTNs5FBZaLLO9WSbnf7LAD7qU52LlGX71+/Cg7qAd
+        vzqWdsmXG5jAw1t/Hh+PUCOh8Sma1rc4vELqQNkHUmFssGEmfRA==
+Received: by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 14d73c66 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+        Mon, 15 Jun 2020 10:09:00 +0000 (UTC)
+Received: by mail-io1-f46.google.com with SMTP id p20so17165270iop.11;
+        Mon, 15 Jun 2020 03:26:49 -0700 (PDT)
+X-Gm-Message-State: AOAM530ni9Vpspm5CvRsac43zgg5KKZHzyUVMB7qdpjRX1ZEaE8jGu9I
+        /XbMAtVhz+XNkgwmzzmvtaS/n96/oREfe1mOY4k=
+X-Google-Smtp-Source: ABdhPJzSj8LwcKc9aY9w/6THuVZEOYoB+hlUyjHk6QP5O7EW9Yn2eEdLsBKYY2DjP/t7jJbqHTBjUDx25k5Bw9yRChs=
+X-Received: by 2002:a6b:5a07:: with SMTP id o7mr26860787iob.67.1592216808485;
+ Mon, 15 Jun 2020 03:26:48 -0700 (PDT)
 MIME-Version: 1.0
-References: <158454378820.2863966.10496767254293183123.stgit@warthog.procyon.org.uk>
- <158454391302.2863966.1884682840541676280.stgit@warthog.procyon.org.uk>
- <CAJfpegspWA6oUtdcYvYF=3fij=Bnq03b8VMbU9RNMKc+zzjbag@mail.gmail.com> <0991792b6e2af0a5cc1a2c2257b535b5e6b032e4.camel@themaw.net>
-In-Reply-To: <0991792b6e2af0a5cc1a2c2257b535b5e6b032e4.camel@themaw.net>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Mon, 15 Jun 2020 10:44:57 +0200
-Message-ID: <CAJfpeguZuCTmCWf-mF3=iZQeaaUYRoCRU9wcyz_gCMD94-bFFQ@mail.gmail.com>
-Subject: Re: [PATCH 13/17] watch_queue: Implement mount topology and attribute
- change notifications [ver #5]
-To:     Ian Kent <raven@themaw.net>
-Cc:     David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
-        Christian Brauner <christian@brauner.io>, andres@anarazel.de,
-        Jeff Layton <jlayton@redhat.com>, dray@redhat.com,
-        Karel Zak <kzak@redhat.com>, keyrings@vger.kernel.org,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        LSM <linux-security-module@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date:   Mon, 15 Jun 2020 04:26:37 -0600
+X-Gmail-Original-Message-ID: <CAHmME9rmAznrAmEQTOaLeMM82iMFTfCNfpxDGXw4CJjuVEF_gQ@mail.gmail.com>
+Message-ID: <CAHmME9rmAznrAmEQTOaLeMM82iMFTfCNfpxDGXw4CJjuVEF_gQ@mail.gmail.com>
+Subject: lockdown bypass on mainline kernel for loading unsigned modules
+To:     oss-security <oss-security@lists.openwall.com>
+Cc:     linux-security-module@vger.kernel.org, linux-acpi@vger.kernel.org,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        kernel-hardening@lists.openwall.com,
+        Ubuntu Kernel Team <kernel-team@lists.ubuntu.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sun, Jun 14, 2020 at 5:07 AM Ian Kent <raven@themaw.net> wrote:
->
-> On Thu, 2020-04-02 at 17:19 +0200, Miklos Szeredi wrote:
-> >
-> > > Firstly, a watch queue needs to be created:
-> > >
-> > >         pipe2(fds, O_NOTIFICATION_PIPE);
-> > >         ioctl(fds[1], IOC_WATCH_QUEUE_SET_SIZE, 256);
-> > >
-> > > then a notification can be set up to report notifications via that
-> > > queue:
-> > >
-> > >         struct watch_notification_filter filter = {
-> > >                 .nr_filters = 1,
-> > >                 .filters = {
-> > >                         [0] = {
-> > >                                 .type = WATCH_TYPE_MOUNT_NOTIFY,
-> > >                                 .subtype_filter[0] = UINT_MAX,
-> > >                         },
-> > >                 },
-> > >         };
-> > >         ioctl(fds[1], IOC_WATCH_QUEUE_SET_FILTER, &filter);
-> > >         watch_mount(AT_FDCWD, "/", 0, fds[1], 0x02);
-> > >
-> > > In this case, it would let me monitor the mount topology subtree
-> > > rooted at
-> > > "/" for events.  Mount notifications propagate up the tree towards
-> > > the
-> > > root, so a watch will catch all of the events happening in the
-> > > subtree
-> > > rooted at the watch.
-> >
-> > Does it make sense to watch a single mount?  A set of mounts?   A
-> > subtree with an exclusion list (subtrees, types, ???)?
->
-> Yes, filtering, perhaps, I'm not sure a single mount is useful
-> as changes generally need to be monitored for a set of mounts.
->
-> Monitoring a subtree is obviously possible because the monitor
-> path doesn't need to be "/".
->
-> Or am I misunderstanding what your trying to get at.
->
-> The notion of filtering types and other things is interesting
-> but what I've seen that doesn't fit in the current implementation
-> so far probably isn't appropriate for kernel implementation.
->
-> There's a special case of acquiring a list of mounts where the
-> path is not a mount point itself but you need all mount below
-> that path prefix.
->
-> In this case you get all mounts, including the mounts of the mount
-> containing the path, so you still need to traverse the list to match
-> the prefix and that can easily mean the whole list of mounts in the
-> system.
->
-> Point is it leads to multiple traversals of a larger than needed list
-> of mounts, one to get the list of mounts to check, and one to filter
-> on the prefix.
->
-> I've seen this use case with fsinfo() and that's where it's needed
-> although it may be useful to carry it through to notifications as
-> well.
->
-> While this sounds like it isn't such a big deal it can sometimes
-> make a considerable difference to the number of mounts you need
-> to traverse when there are a large number of mounts in the system.
->
-> I didn't consider it appropriate for kernel implementation but
-> since you asked here it is. OTOH were checking for connectedness
-> in fsinfo() anyway so maybe this is something that could be done
-> without undue overhead.
+Hi everyone,
 
-Good point.  Filtering notifications for mounts outside of the
-specified path makes sense.
+Yesterday, I found a lockdown bypass in Ubuntu 18.04's kernel using
+ACPI table tricks via the efi ssdt variable [1]. Today I found another
+one that's a bit easier to exploit and appears to be unpatched on
+mainline, using acpi_configfs to inject an ACPI table. The tricks are
+basically the same as the first one, but this one appears to be
+unpatched, at least on my test machine. Explanation is in the header
+of the PoC:
 
-Thanks,
-Miklos
+https://git.zx2c4.com/american-unsigned-language/tree/american-unsigned-language-2.sh
+
+I need to get some sleep, but if nobody posts a patch in the
+meanwhile, I'll try to post a fix tomorrow.
+
+Jason
+
+[1] https://www.openwall.com/lists/oss-security/2020/06/14/1
