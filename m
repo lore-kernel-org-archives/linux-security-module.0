@@ -2,107 +2,117 @@ Return-Path: <SRS0=f9XP=75=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31968C433DF
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 09:36:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBE52C433DF
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 10:03:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0B7BC2074D
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 09:36:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C78BC2078E
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 10:03:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1592301797;
+	bh=X84sKt5PQLBc6tu+9pZlqv+58ESwXd+4uih/06fLewg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=iEryhfT3P78Z/6m1DKV5+TnfP2f0fOKGamEufuW/f7+in5ojPJWOdWkDC/RxpdPpO
+	 YJjPauSlkhBOzs8DmOduZzI/EDRiU5a4D7JsOFOQFvH9cgTa6Rxtm2MNhOd4yktsxu
+	 f9Ge4Rctz8SMeLiLKj80B+1iOWBZJoBPyMkdap48=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728193AbgFPJgG (ORCPT
+        id S1726261AbgFPKDQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 16 Jun 2020 05:36:06 -0400
-Received: from out30-43.freemail.mail.aliyun.com ([115.124.30.43]:44472 "EHLO
-        out30-43.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726261AbgFPJgF (ORCPT
+        Tue, 16 Jun 2020 06:03:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34836 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726052AbgFPKDQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 16 Jun 2020 05:36:05 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04407;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=19;SR=0;TI=SMTPD_---0U.m0p4p_1592300158;
-Received: from 30.27.116.240(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0U.m0p4p_1592300158)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 16 Jun 2020 17:35:59 +0800
-Subject: Re: [PATCH v3 0/8] crpyto: introduce OSCCA certificate and SM2
- asymmetric algorithm
-To:     herbert@gondor.apana.org.au, davem@davemloft.net,
-        dhowells@redhat.com, mcoquelin.stm32@gmail.com,
-        alexandre.torgue@st.com, jmorris@namei.org, serge@hallyn.com,
-        nramas@linux.microsoft.com, tusharsu@linux.microsoft.com,
-        zohar@linux.ibm.com, gilad@benyossef.com, pvanleeuwen@rambus.com,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        keyrings@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-security-module@vger.kernel.org, zhang.jia@linux.alibaba.com
-References: <20200609134855.21431-1-tianjia.zhang@linux.alibaba.com>
- <20200609205837.osganry2tyzwvanz@altlinux.org>
-From:   Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-Message-ID: <254bf52e-eeb8-b615-be2a-d5cba976b63a@linux.alibaba.com>
-Date:   Tue, 16 Jun 2020 17:35:58 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.1
+        Tue, 16 Jun 2020 06:03:16 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 121BA20767;
+        Tue, 16 Jun 2020 10:03:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1592301794;
+        bh=X84sKt5PQLBc6tu+9pZlqv+58ESwXd+4uih/06fLewg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=bcet8w7K5NFpfHYfjfkLwL1qs9ZtjQohV31jXzphpq9OJxrIfz+L3oKah5JqyJwBm
+         Ll3/YYZjEJNs6kCySvEebEtGdmH1rR97oUQ5Pdv7wwPAPNtyStJHZ/Dzye5j87MfmC
+         m5/TnAyj/7cZ4dTvD0O1tjANuBK8ZYpuZu2zEdJ4=
+Date:   Tue, 16 Jun 2020 12:03:09 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     glider@google.com
+Cc:     yamada.masahiro@socionext.com, keescook@chromium.org,
+        jmorris@namei.org, maze@google.com, ndesaulniers@google.com,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] [RFC] security: allow using Clang's zero
+ initialization for stack variables
+Message-ID: <20200616100309.GA2614426@kroah.com>
+References: <20200616083435.223038-1-glider@google.com>
 MIME-Version: 1.0
-In-Reply-To: <20200609205837.osganry2tyzwvanz@altlinux.org>
-Content-Type: text/plain; charset=koi8-r; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200616083435.223038-1-glider@google.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-
-On 2020/6/10 4:58, Vitaly Chikunov wrote:
-> Tianjia,
+On Tue, Jun 16, 2020 at 10:34:35AM +0200, glider@google.com wrote:
+> In addition to -ftrivial-auto-var-init=pattern (used by
+> CONFIG_INIT_STACK_ALL now) Clang also supports zero initialization for
+> locals enabled by -ftrivial-auto-var-init=zero.
+> The future of this flag is still being debated, see
+> https://bugs.llvm.org/show_bug.cgi?id=45497
+> Right now it is guarded by another flag,
+> -enable-trivial-auto-var-init-zero-knowing-it-will-be-removed-from-clang,
+> which means it may not be supported by future Clang releases.
+> Another possible resolution is that -ftrivial-auto-var-init=zero will
+> persist (as certain users have already started depending on it), but the
+> name of the guard flag will change.
 > 
-> On Tue, Jun 09, 2020 at 09:48:47PM +0800, Tianjia Zhang wrote:
->> Hello all,
->>
->> This new module implement the OSCCA certificate and SM2 public key
->> algorithm. It was published by State Encryption Management Bureau, China.
->> List of specifications for OSCCA certificate and SM2 elliptic curve
->> public key cryptography:
->>
->> * GM/T 0003.1-2012
->> * GM/T 0003.2-2012
->> * GM/T 0003.3-2012
->> * GM/T 0003.4-2012
->> * GM/T 0003.5-2012
->> * GM/T 0015-2012
->> * GM/T 0009-2012
->>
->> IETF: https://tools.ietf.org/html/draft-shen-sm2-ecdsa-02
->> oscca: http://www.oscca.gov.cn/sca/xxgk/2010-12/17/content_1002386.shtml
->> scctc: http://www.gmbz.org.cn/main/bzlb.html
->>
->> These patchs add the OID object identifier defined by OSCCA. The
->> x509 certificate supports sm2-with-sm3 type certificate parsing
->> and verification.
->>
->> The sm2 algorithm is based on libgcrypt's mpi implementation, and has
->> made some additions to the kernel's original mpi library, and added the
->> implementation of ec to better support elliptic curve-like algorithms.
->>
->> sm2 has good support in both openssl and gnupg projects, and sm3 and sm4
->> of the OSCCA algorithm family have also been implemented in the kernel.
->>
->> Among them, sm3 and sm4 have been well implemented in the kernel.
->> This group of patches has newly introduced sm2. In order to implement
->> sm2 more perfectly, I expanded the mpi library and introduced the
->> ec implementation of the mpi library as the basic algorithm. Compared
->> to the kernel's crypto/ecc.c, the implementation of mpi/ec.c is more
->> complete and elegant, sm2 is implemented based on these algorithms.
+> In the meantime, zero initialization has proven itself as a good
+> production mitigation measure against uninitialized locals. Unlike
+> pattern initialization, which has a higher chance of triggering existing
+> bugs, zero initialization provides safe defaults for strings, pointers,
+> indexes, and sizes. On the other hand, pattern initialization remains
+> safer for return values.
+> Performance-wise, the difference between pattern and zero initialization
+> is usually negligible, although the generated code for zero
+> initialization is more compact.
 > 
-> Does it use constant-time algorithms?
+> This patch renames CONFIG_INIT_STACK_ALL to
+> CONFIG_INIT_STACK_ALL_PATTERN and introduces another config option,
+> CONFIG_INIT_STACK_ALL_ZERO, that enables zero initialization for locals
+> if the corresponding flags are supported by Clang.
 > 
-> Thanks,
-> 
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Nick Desaulniers <ndesaulniers@google.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Signed-off-by: Alexander Potapenko <glider@google.com>
 
-Sorry for not responding in time.
-This algorithm is constant-time algorithms, and this logic is 
-implemented in ec_mul_point().
-Will you consider implementing ecrdsa based on the mpi ec algorithm in 
-the future?
+Nit, your From: line of your email does not match your signed-off-by:
+line :(
 
-Thanks and best,
-Tianjia
+In the future, you should fix that up so that maintainers don't have to
+do it for you...
+
+> +# Initialize all stack variables with a zero pattern.
+> +ifdef CONFIG_INIT_STACK_ALL_ZERO
+> +# Future support for zero initialization is still being debated, see
+> +# https://bugs.llvm.org/show_bug.cgi?id=45497. These flags are subject to being
+> +# renamed or dropped.
+> +KBUILD_CFLAGS	+= -ftrivial-auto-var-init=zero -enable-trivial-auto-var-init-zero-knowing-it-will-be-removed-from-clang
+> +endif
+
+Gotta love the name...
+
+Anyway, if this is enabled, and clang changes the flag or drops it, does
+the build suddenly break?
+
+And does gcc have something like this as well, or does that have to come
+in a compiler plugin?
+
+thanks,
+
+greg k-h
