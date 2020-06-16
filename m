@@ -2,110 +2,109 @@ Return-Path: <SRS0=f9XP=75=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38225C433E0
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 17:02:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85F08C433E0
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 17:29:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1388C20C09
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 17:02:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1592326921;
-	bh=x7sF8JlhivKiZx8ZWX3Ydrzfg2JpqrUkultDOGGYPI8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=jN0jQBdifAoLQD9L0t3VLJTy/ds+ynDuy/yK8BHfRcDQzMsl4wsJ+s+aVHzUIhQas
-	 PxUMRKZI7Cajgi3ZPLwVAyjK4z6E09SYbsLjbYixX7OAr9z4pD7zJeNZC+PWyDK0Ix
-	 oXdJC6Sar+xq46h6H3PRjdDRT0Z6s2e8onSU6USY=
+	by mail.kernel.org (Postfix) with ESMTP id 712C820707
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 17:29:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730700AbgFPRB6 (ORCPT
+        id S1730170AbgFPR3Z (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 16 Jun 2020 13:01:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54714 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729933AbgFPRB6 (ORCPT
+        Tue, 16 Jun 2020 13:29:25 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2316 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729272AbgFPR3Z (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 16 Jun 2020 13:01:58 -0400
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A27DF216C4
-        for <linux-security-module@vger.kernel.org>; Tue, 16 Jun 2020 17:01:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1592326917;
-        bh=x7sF8JlhivKiZx8ZWX3Ydrzfg2JpqrUkultDOGGYPI8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=G2A8LNLgeumSXYPUkyAkrNVJEPup590mNeKtVSHVhm9jF6slBIraiWh4pDwLT9duY
-         wDENoyVIp+hcZ7GTaMsousph3f+A35cAear0Tn+8WIGX1PoJQ4F3er0pU9ERigJhDz
-         31QvxEglQ/agYvDJnpEVdRRi9AHleqvoX9ffEpTA=
-Received: by mail-wr1-f52.google.com with SMTP id r7so21567210wro.1
-        for <linux-security-module@vger.kernel.org>; Tue, 16 Jun 2020 10:01:57 -0700 (PDT)
-X-Gm-Message-State: AOAM531AeD+xLAybeQXjmWSF+jqeX16r1xF7SoTXfRvKhUyByx2FPNOO
-        pM0CCVgOS2OOEz4da0f537Gj4rYN6mtCx4cdSxwnpw==
-X-Google-Smtp-Source: ABdhPJwrvBoMEGMkP0gYqhwknR6xR8IcaGNlyuVcjfKiRw+lPcX8g8lGzKUCzXmybftwQB7Yn6fFe8MGNmpFIBzxBWI=
-X-Received: by 2002:a5d:49c5:: with SMTP id t5mr4143840wrs.18.1592326916028;
- Tue, 16 Jun 2020 10:01:56 -0700 (PDT)
+        Tue, 16 Jun 2020 13:29:25 -0400
+Received: from lhreml743-chm.china.huawei.com (unknown [172.18.7.106])
+        by Forcepoint Email with ESMTP id A3232E4DF5FCCA6C7633;
+        Tue, 16 Jun 2020 18:29:22 +0100 (IST)
+Received: from fraeml701-chm.china.huawei.com (10.206.15.50) by
+ lhreml743-chm.china.huawei.com (10.201.108.193) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
+ 15.1.1913.5; Tue, 16 Jun 2020 18:29:22 +0100
+Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
+ fraeml701-chm.china.huawei.com (10.206.15.50) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1913.5; Tue, 16 Jun 2020 19:29:21 +0200
+Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
+ fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.1913.007;
+ Tue, 16 Jun 2020 19:29:21 +0200
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
+        Maurizio Drocco <maurizio.drocco@ibm.com>,
+        "zohar@linux.ibm.com" <zohar@linux.ibm.com>
+CC:     "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "serge@hallyn.com" <serge@hallyn.com>,
+        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
+Subject: RE: [PATCH] extend IMA boot_aggregate with kernel measurements
+Thread-Topic: [PATCH] extend IMA boot_aggregate with kernel measurements
+Thread-Index: AQHWQCo8nqt7HKCznkGnNWX+y9c+NajT/1SAgADtAgCAACbgMIAABL+AgAZlbjA=
+Date:   Tue, 16 Jun 2020 17:29:21 +0000
+Message-ID: <8c44ed75fb884cad9f33c86c2d4e8a27@huawei.com>
+References: <1591921795.11061.12.camel@linux.ibm.com>
+         <20200612143812.1609-1-maurizio.drocco@ibm.com>
+         <380af929b2d2440a9dc35ba0b374247d@huawei.com>
+ <1591982059.7235.29.camel@linux.ibm.com>
+In-Reply-To: <1591982059.7235.29.camel@linux.ibm.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.220.96.108]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <20200616074934.1600036-1-keescook@chromium.org>
-In-Reply-To: <20200616074934.1600036-1-keescook@chromium.org>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Tue, 16 Jun 2020 10:01:43 -0700
-X-Gmail-Original-Message-ID: <CALCETrVLA22khom-iSu5iTJGKfUykOnwyz8j7Tm9g6hWW_e0Aw@mail.gmail.com>
-Message-ID: <CALCETrVLA22khom-iSu5iTJGKfUykOnwyz8j7Tm9g6hWW_e0Aw@mail.gmail.com>
-Subject: Re: [RFC][PATCH 0/8] seccomp: Implement constant action bitmaps
-To:     Kees Cook <keescook@chromium.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Christian Brauner <christian@brauner.io>,
-        Sargun Dhillon <sargun@sargun.me>,
-        Tycho Andersen <tycho@tycho.ws>, Jann Horn <jannh@google.com>,
-        "zhujianwei (C)" <zhujianwei7@huawei.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Will Drewry <wad@chromium.org>, Shuah Khan <shuah@kernel.org>,
-        Matt Denton <mpdenton@google.com>,
-        Chris Palmer <palmer@google.com>,
-        Jeffrey Vander Stoep <jeffv@google.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Hehuazhen <hehuazhen@huawei.com>, X86 ML <x86@kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jun 16, 2020 at 12:49 AM Kees Cook <keescook@chromium.org> wrote:
->
-> Hi,
->
-
-> In order to build this mapping at filter attach time, each filter is
-> executed for every syscall (under each possible architecture), and
-> checked for any accesses of struct seccomp_data that are not the "arch"
-> nor "nr" (syscall) members. If only "arch" and "nr" are examined, then
-> there is a constant mapping for that syscall, and bitmaps can be updated
-> accordingly. If any accesses happen outside of those struct members,
-> seccomp must not bypass filter execution for that syscall, since program
-> state will be used to determine filter action result.
-
->
-> During syscall action probing, in order to determine whether other members
-> of struct seccomp_data are being accessed during a filter execution,
-> the struct is placed across a page boundary with the "arch" and "nr"
-> members in the first page, and everything else in the second page. The
-> "page accessed" flag is cleared in the second page's PTE, and the filter
-> is run. If the "page accessed" flag appears as set after running the
-> filter, we can determine that the filter looked beyond the "arch" and
-> "nr" members, and exclude that syscall from the constant action bitmaps.
-
-This is... evil.  I don't know how I feel about it.  It's also
-potentially quite slow.
-
-I don't suppose you could, instead, instrument the BPF code to get at
-this without TLB hackery?  Or maybe try to do some real symbolic
-execution of the BPF code?
-
---Andy
+PiBGcm9tOiBKYW1lcyBCb3R0b21sZXkgW21haWx0bzpqZWpiQGxpbnV4LmlibS5jb21dDQo+IFNl
+bnQ6IEZyaWRheSwgSnVuZSAxMiwgMjAyMCA3OjE0IFBNDQo+IE9uIEZyaSwgMjAyMC0wNi0xMiBh
+dCAxNToxMSArMDAwMCwgUm9iZXJ0byBTYXNzdSB3cm90ZToNCj4gPiB3aXRoIHJlY2VudCBwYXRj
+aGVzLCBib290X2FnZ3JlZ2F0ZSBjYW4gYmUgY2FsY3VsYXRlZCBmcm9tIG5vbi1TSEExDQo+ID4g
+UENSIGJhbmtzLiBJIHdvdWxkIHJlcGxhY2Ugd2l0aDoNCj4gPg0KPiA+IEV4dGVuZCBjdW11bGF0
+aXZlIGRpZ2VzdCBvdmVyIC4uLg0KPiA+DQo+ID4gR2l2ZW4gdGhhdCB3aXRoIHRoaXMgcGF0Y2gg
+Ym9vdF9hZ2dyZWdhdGUgaXMgY2FsY3VsYXRlZCBkaWZmZXJlbnRseSwNCj4gPiBzaG91bGRuJ3Qg
+d2UgY2FsbCBpdCBib290X2FnZ3JlZ2F0ZV92MiBhbmQgZW5hYmxlIGl0IHdpdGggYSBuZXcNCj4g
+PiBvcHRpb24/DQo+IA0KPiBTbyBoZXJlJ3MgdGhlIHByb2JsZW06IGlmIHlvdXIgY3VycmVudCBn
+cnViIGRvZXNuJ3QgZG8gYW55IFRQTQ0KPiBleHRlbnNpb25zIChhcyBtb3N0IGRvbid0KSwgdGhl
+biB0aGUgdHdvIGJvb3QgYWdncmVnYXRlcyBhcmUgdGhlIHNhbWUNCj4gYmVjYXVzZSBQQ1JzIDgg
+YW5kIDkgYXJlIHplcm8gYW5kIHRoZXJlJ3MgYSB0ZXN0IHRoYXQgZG9lc24ndCBhZGQgdGhlbQ0K
+PiB0byB0aGUgYWdncmVnYXRlIGlmIHRoZXkgYXJlIHplcm8uICBGb3IgdGhlc2UgcGVvcGxlIGl0
+cyBhIG5vcCBzbyB3ZQ0KPiBzaG91bGRuJ3QgZm9yY2UgdGhlbSB0byBjaG9vc2UgYSBkaWZmZXJl
+bnQgdmVyc2lvbiBvZiB0aGUgc2FtZSB0aGluZy4NCj4gDQo+IElmLCBob3dldmVyLCB5b3UncmUg
+b24gYSBkaXN0cmlidXRpb24gd2hlcmUgZ3J1YiBpcyBhdXRvbWF0aWNhbGx5DQo+IG1lYXN1cmlu
+ZyB0aGUga2VybmVsIGFuZCBjb21tYW5kIGxpbmUgaW50byBQQ1JzIDggYW5kIDkgKEkgdGhpbmsg
+RmVkb3JhDQo+IDMyIGRvZXMgdGhpcyksIHlvdXIgYm9vdCBhZ2dyZWdhdGUgd2lsbCBjaGFuZ2Uu
+ICBJdCBzdHJpa2VzIG1lIGluIHRoYXQNCj4gY2FzZSB3ZSBjYW4gY2FsbCB0aGlzIGEgYnVnIGZp
+eCwgc2luY2UgdGhlIGJvb3QgYWdncmVnYXRlIGlzbid0DQo+IHByb3Blcmx5IGJpbmRpbmcgdG8g
+dGhlIHByZXZpb3VzIG1lYXN1cmVtZW50cyB3aXRob3V0IFBDUnMgOCBhbmQgOS4gIEluDQo+IHRo
+aXMgY2FzZSwgZG8gd2Ugd2FudCB0byBhbGxvdyBwZW9wbGUgdG8gc2VsZWN0IGFuIG9wdGlvbiB3
+aGljaCBkb2Vzbid0DQo+IHByb3Blcmx5IGJpbmQgdGhlIElNQSBsb2cgdG8gdGhlIGJvb3QgbWVh
+c3VyZW1lbnRzPyAgVGhhdCBzb3VuZHMgbGlrZSBhDQo+IHNlY3VyaXR5IGhvbGUgdG8gbWUuDQo+
+IA0KPiBIb3dldmVyLCBzaW5jZSBpdCBjYXVzZXMgYSB1c2VyIHZpc2libGUgZGlmZmVyZW5jZSBp
+biB0aGUgZ3J1YiBhbHJlYWR5DQo+IG1lYXN1cmVzIGNhc2UsIGRvIHlvdSBoYXZlIGEgY3VycmVu
+dCB1c2UgY2FzZSB0aGF0IHdvdWxkIGJlIGFmZmVjdGVkPw0KPiBBcyBpbiBhcmUgbG90cyBvZiBw
+ZW9wbGUgYWxyZWFkeSBydW5uaW5nIGEgZGlzdHJvIHdpdGggdGhlIFRQTSBncnViDQo+IHVwZGF0
+ZXMgYW5kIHJlbHlpbmcgb24gdGhlIG9sZCBib290IGFnZ3JlZ2F0ZT8NCg0KSSBkb24ndCBrbm93
+IGhvdyBtYW55IHBlb3BsZSB3b3VsZCBiZSBhZmZlY3RlZC4gSG93ZXZlciwgaWYgYW4NCmF0dGVz
+dGF0aW9uIHRvb2wgcHJvY2Vzc2VzIGJvdGggbWVhc3VyZW1lbnQgbGlzdHMgZnJvbSB1bnBhdGNo
+ZWQga2VybmVscw0KYW5kIHBhdGNoZWQga2VybmVscywga2VlcGluZyB0aGUgc2FtZSBuYW1lIHdv
+dWxkIGJlIGEgcHJvYmxlbSBhcyBpdA0KY2Fubm90IGJlIGRldGVybWluZWQgZnJvbSB0aGUgbWVh
+c3VyZW1lbnQgbGlzdCBob3cgYm9vdF9hZ2dyZWdhdGUNCndhcyBjYWxjdWxhdGVkLg0KDQpBbnl3
+YXksIEkgYWdyZWUgdGhpcyBzaG91bGQgYmUgZml4ZWQuIEF0IGxlYXN0LCBJIHN1Z2dlc3QgdG8g
+YWRkIGEgRml4ZXMgdGFnLA0KdG8gZW5zdXJlIHRoYXQgdGhpcyBwYXRjaCBpcyBhcHBsaWVkIHRv
+IGFsbCBzdGFibGUga2VybmVscy4NCg0KUm9iZXJ0bw0KDQpIVUFXRUkgVEVDSE5PTE9HSUVTIER1
+ZXNzZWxkb3JmIEdtYkgsIEhSQiA1NjA2Mw0KTWFuYWdpbmcgRGlyZWN0b3I6IExpIFBlbmcsIExp
+IEppYW4sIFNoaSBZYW5saQ0K
