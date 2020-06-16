@@ -2,114 +2,111 @@ Return-Path: <SRS0=f9XP=75=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 572FEC433DF
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 19:47:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B25DEC433E0
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 19:55:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2B582208C3
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 19:47:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="auHBa5AE"
+	by mail.kernel.org (Postfix) with ESMTP id 9672D20810
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 19:55:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731156AbgFPTrH (ORCPT
+        id S1730630AbgFPTzN (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 16 Jun 2020 15:47:07 -0400
-Received: from mail.zx2c4.com ([192.95.5.64]:59205 "EHLO mail.zx2c4.com"
+        Tue, 16 Jun 2020 15:55:13 -0400
+Received: from mga02.intel.com ([134.134.136.20]:48548 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730609AbgFPTrE (ORCPT
+        id S1728144AbgFPTzM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 16 Jun 2020 15:47:04 -0400
-Received: by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTP id f0c01c92;
-        Tue, 16 Jun 2020 19:29:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
-        :references:in-reply-to:from:date:message-id:subject:to:cc
-        :content-type; s=mail; bh=7vGnD2Fc5hFa6zE6l8I/6fYFWTE=; b=auHBa5
-        AEe5pm5r80dgWM49RbxNg2b1wePIyReSMQ0Rz/3L8Yx5mFtqdklxmmgnU69XYlJN
-        hUBaHFgVJALywQiz6/SIkttoZgX1tGyz+Zg+VQcgVldFachBs52tuPslyyMFQ0LX
-        thiKjEu3HP7G7pjaS6Q85sWuiJrjwSZZouMci0xDSFLn39VuLeRw1x/kWL7uYtnC
-        q9lJ9u4WEJkyqJPlHNMFgYZ8GQhbEM4aqhZNPWgxeSvHzabhX4d1A2W++bIgoNgb
-        5POprpu6DVgEzddWZ80fiiLd2tnSpz4DTk3KcXvzj6IQwWQeVy1VhdN6Y6LpuXnz
-        67qrTsLtz03/PXLw==
-Received: by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id def91afe (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-        Tue, 16 Jun 2020 19:29:00 +0000 (UTC)
-Received: by mail-io1-f50.google.com with SMTP id s18so3192212ioe.2;
-        Tue, 16 Jun 2020 12:46:59 -0700 (PDT)
-X-Gm-Message-State: AOAM532ICgqzUljjLdMiLJDrmaM6G2P2VuQ5E+2Wa9rsZgiZCLicoMk2
-        6gPasqRds+Zf64jDUyn/ObteEMB32F2gp413H0M=
-X-Google-Smtp-Source: ABdhPJxC2pRunaModJX8LCWHauaz4Ko5hXWZ58PHme1+4UYNCmQGIC+iarFUNAqn+rNJyw3DywT6LsxlwSFMRJ3z3pU=
-X-Received: by 2002:a6b:6705:: with SMTP id b5mr4346341ioc.29.1592336817452;
- Tue, 16 Jun 2020 12:46:57 -0700 (PDT)
+        Tue, 16 Jun 2020 15:55:12 -0400
+IronPort-SDR: UgDqcUaBH6Z7j6RuDAbiTo7J5JXCtj8Tt3Flr6Zb1nQ0G/Qe43UBianefvjnxKMyye+ZugLHp3
+ E55JWHqvCjxA==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2020 12:55:11 -0700
+IronPort-SDR: L9wi8U+03tTN6+vKwsCFCPmfXUX6scD66uycNs5QT+D0rVy04+ilW32NFUDhSPvD3YJ07a0Cbt
+ Pu/Re4MQ226Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,519,1583222400"; 
+   d="scan'208";a="261519323"
+Received: from gosinald-mobl2.ger.corp.intel.com (HELO localhost) ([10.249.36.106])
+  by fmsmga007.fm.intel.com with ESMTP; 16 Jun 2020 12:55:02 -0700
+Date:   Tue, 16 Jun 2020 22:55:01 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Darren Kenny <darren.kenny@oracle.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org, linux-security-module@vger.kernel.org,
+        Jethro Beekman <jethro@fortanix.com>,
+        Andy Lutomirski <luto@kernel.org>, akpm@linux-foundation.org,
+        andriy.shevchenko@linux.intel.com, asapek@google.com, bp@alien8.de,
+        cedric.xing@intel.com, chenalexchen@google.com,
+        conradparker@google.com, cyhanish@google.com,
+        dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, nhorman@redhat.com,
+        npmccallum@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
+        sean.j.christopherson@intel.com, tglx@linutronix.de,
+        yaozhangx@google.com
+Subject: Re: [PATCH v32 12/21] x86/sgx: Add provisioning
+Message-ID: <20200616195450.GA10412@linux.intel.com>
+References: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+ <20200601075218.65618-13-jarkko.sakkinen@linux.intel.com>
+ <m2img5tgtu.fsf@oracle.com>
 MIME-Version: 1.0
-References: <20200616015718.7812-1-longman@redhat.com> <fe3b9a437be4aeab3bac68f04193cb6daaa5bee4.camel@perches.com>
-In-Reply-To: <fe3b9a437be4aeab3bac68f04193cb6daaa5bee4.camel@perches.com>
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date:   Tue, 16 Jun 2020 13:46:46 -0600
-X-Gmail-Original-Message-ID: <CAHmME9rCD1KJNguthAhZ+OAVZTpBwEvGRLRV0tvQjBaEYG1bHQ@mail.gmail.com>
-Message-ID: <CAHmME9rCD1KJNguthAhZ+OAVZTpBwEvGRLRV0tvQjBaEYG1bHQ@mail.gmail.com>
-Subject: Re: [PATCH v4 0/3] mm, treewide: Rename kzfree() to kfree_sensitive()
-To:     Joe Perches <joe@perches.com>
-Cc:     Waiman Long <longman@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Howells <dhowells@redhat.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        David Rientjes <rientjes@google.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        David Sterba <dsterba@suse.cz>, Linux-MM <linux-mm@kvack.org>,
-        keyrings@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        linux-pm@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-        linux-amlogic@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-        virtualization@lists.linux-foundation.org,
-        Netdev <netdev@vger.kernel.org>, linux-ppp@vger.kernel.org,
-        WireGuard mailing list <wireguard@lists.zx2c4.com>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        devel@driverdev.osuosl.org, linux-scsi@vger.kernel.org,
-        target-devel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-cifs@vger.kernel.org, linux-fscrypt@vger.kernel.org,
-        ecryptfs@vger.kernel.org, kasan-dev@googlegroups.com,
-        linux-bluetooth@vger.kernel.org, linux-wpan@vger.kernel.org,
-        linux-sctp@vger.kernel.org, linux-nfs@vger.kernel.org,
-        tipc-discussion@lists.sourceforge.net,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-integrity@vger.kernel.org,
-        David Miller <davem@davemloft.net>,
-        Steffen Klassert <steffen.klassert@secunet.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <m2img5tgtu.fsf@oracle.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jun 16, 2020 at 12:54 PM Joe Perches <joe@perches.com> wrote:
->
-> On Mon, 2020-06-15 at 21:57 -0400, Waiman Long wrote:
-> >  v4:
-> >   - Break out the memzero_explicit() change as suggested by Dan Carpenter
-> >     so that it can be backported to stable.
-> >   - Drop the "crypto: Remove unnecessary memzero_explicit()" patch for
-> >     now as there can be a bit more discussion on what is best. It will be
-> >     introduced as a separate patch later on after this one is merged.
->
-> To this larger audience and last week without reply:
-> https://lore.kernel.org/lkml/573b3fbd5927c643920e1364230c296b23e7584d.camel@perches.com/
->
-> Are there _any_ fastpath uses of kfree or vfree?
+On Fri, Jun 05, 2020 at 09:09:49PM +0100, Darren Kenny wrote:
+> TYPO: s/devilering/delivering/?
 
-The networking stack has various places where there will be a quick
-kmalloc followed by a kfree for an incoming or outgoing packet. One
-place that comes to mind would be esp_alloc_tmp, which does a quick
-allocation of some temporary kmalloc memory, processes some packet
-things inside of that, and then frees it, sometimes in the same
-function, and sometimes later in an async callback. I don't know how
-"fastpath" you consider this, but usually packet processing is
-something people want to do with minimal overhead, considering how
-fast NICs are these days.
+I decided to rewrite the whole thing:
+
+  x86/sgx: Allow a limited use of ATTRIBUTE.PROVISIONKEY for attestation
+
+  Provisioning Certification Enclave (PCE), the root of trust for other
+  enclaves, generates a signing key from a fused key called Provisioning
+  Certification Key. PCE can then use this key to certify an attestation key
+  of a QE, e.g. we get the chain of trust down to the hardware if the Intel
+  signed PCE is used.
+
+  To use the needed keys, ATTRIBUTE.PROVISIONKEY is required but should be
+  only allowed for those who actually need it so that only the trusted
+  parties can certify QE's.
+
+  Obviously the attestation service should know the public key of the used
+  PCE and that way detect illegit attestation, but whitelisting the legit
+  users still adds an additional layer of defence.
+
+  Add new device file called /dev/sgx/provision. The sole purpose of this
+  file is to provide file descriptors that act as privilege tokens to allow
+  to build enclaves with ATTRIBUTE.PROVISIONKEY set. A new ioctl called
+  SGX_IOC_ENCLAVE_SET_ATTRIBUTE is used to assign this token to an enclave.
+
+> > + * sgx_ioc_enclave_set_attribute - handler for %SGX_IOC_ENCLAVE_SET_ATTRIBUTE
+> > + * @filep:	open file to /dev/sgx
+> > + * @arg:	userspace pointer to a struct sgx_enclave_set_attribute instance
+> > + *
+> > + * Mark the enclave as being allowed to access a restricted attribute bit.
+> > + * The requested attribute is specified via the attribute_fd field in the
+> > + * provided struct sgx_enclave_set_attribute.  The attribute_fd must be a
+> > + * handle to an SGX attribute file, e.g. ?/dev/sgx/provision".
+> 
+> Maybe this should be simply a double-quote rather than the Unicode left
+> quote?
+
+Not sure how that got there but it is a mistake.
+
+> Thanks,
+> 
+> Darren.
+
+Thanks for the remarks.
+
+/Jarkko
