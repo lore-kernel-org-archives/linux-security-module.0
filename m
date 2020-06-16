@@ -6,174 +6,120 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 326B0C433DF
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 16:01:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 884FFC433E0
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 16:07:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 09DC421475
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 16:01:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C108208B3
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 16:07:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="aJ8p70Y5"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WrdyVPoT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732347AbgFPQBw (ORCPT
+        id S1732273AbgFPQHS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 16 Jun 2020 12:01:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48688 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733170AbgFPQBt (ORCPT
+        Tue, 16 Jun 2020 12:07:18 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:25180 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1732271AbgFPPrE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 16 Jun 2020 12:01:49 -0400
-Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8833AC061573
-        for <linux-security-module@vger.kernel.org>; Tue, 16 Jun 2020 09:01:49 -0700 (PDT)
-Received: by mail-pf1-x442.google.com with SMTP id x207so9714854pfc.5
-        for <linux-security-module@vger.kernel.org>; Tue, 16 Jun 2020 09:01:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=C2Y4BhWefKmP9iji9eylvkFo4/M9jmgkj2BXKFGkoJE=;
-        b=aJ8p70Y5LnowTS4d6Nvq5WyEu93YaLiozLfkw0uDW6dYUF3xQNCbIJvKarTK5Ed9iD
-         m7i0zsBqFI1pIpAyIluoSmBT0Risms7oI2Pp32JEbx7n0H5pqbwQtOkP1/KHECdDu/FT
-         ltBtg48/YKabACQ+Epr94E4U9IQIdRDp/x9Fs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=C2Y4BhWefKmP9iji9eylvkFo4/M9jmgkj2BXKFGkoJE=;
-        b=qFHDX2pHBhLy+r+mbi3QYtYdXrS/1hO+Y9thZ0xjXwUfFTWoC6aC40FnbiYsZAg3fu
-         LRCu/6BrFDvpcpBi7U89QKKPlxzhE2/YmTJCJpd3/3MMxUKu/l+hAR2B9/DIL6qJHFAF
-         Wljew4KaS1GXt2daRdylNtkuMGfd/Be893P+kMaYEFWx8tE8eh0YYWSnE/RxXQCQOV/S
-         Au4NZJFTqYp9+XUxi7Wi9e+lPnSV2gCL/CFQzGP4r0/IKWlh7rMgfUA1zKTOy33NxS+k
-         4wF30dm/+O0GO0dz8jgM+manTmbaCUlA48/tY8MsYby61VVe3ICtpkBQ1tv2derp/x54
-         qoRg==
-X-Gm-Message-State: AOAM530amCW3kePLyE/scxibH8KJgkPoSff6Ab9ETKGpeGMVz5Frp3d9
-        G4VJ72Pameot4QcUfSRScFoMhA==
-X-Google-Smtp-Source: ABdhPJxZYUpPJAibIwbYuU5zDTSd1Kb3np/+gOul4WD0kGGfyZGJ7hHLOe/iwa9+dycWyfSgo2noGQ==
-X-Received: by 2002:a63:5307:: with SMTP id h7mr2625624pgb.28.1592323309057;
-        Tue, 16 Jun 2020 09:01:49 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id iq19sm2942471pjb.48.2020.06.16.09.01.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jun 2020 09:01:48 -0700 (PDT)
-Date:   Tue, 16 Jun 2020 09:01:46 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Christian Brauner <christian@brauner.io>,
-        Sargun Dhillon <sargun@sargun.me>,
-        Tycho Andersen <tycho@tycho.ws>, Jann Horn <jannh@google.com>,
-        "zhujianwei (C)" <zhujianwei7@huawei.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
+        Tue, 16 Jun 2020 11:47:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1592322423;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=djkgmBs6vxKrnF2svfHTCwO6iJZv0MD8YpKSjFl2MGs=;
+        b=WrdyVPoTClN+2yZfrSiDUNggJTUXJQ9CL2nSWb6qNsQUgMKxAttIcwSgtOBsjn6KwsD/Mr
+        hYD32HVrthxQfFQe1Deqfgq0i4a7WcNBubT0A6+N2MGGZs1FcF86ixoDIToQ5atcyASzTI
+        JK8o/alnvqPFlCsEBrZ+Pl3UTttnXeI=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-218-nWeeH7oNN9eY6skcHYs3nQ-1; Tue, 16 Jun 2020 11:46:56 -0400
+X-MC-Unique: nWeeH7oNN9eY6skcHYs3nQ-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0B3678DEEE2;
+        Tue, 16 Jun 2020 15:46:51 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-114-66.rdu2.redhat.com [10.10.114.66])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3EC3B60C05;
+        Tue, 16 Jun 2020 15:46:41 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <56c2304c-73cc-8f48-d8d0-5dd6c39f33f3@redhat.com>
+References: <56c2304c-73cc-8f48-d8d0-5dd6c39f33f3@redhat.com> <20200616015718.7812-1-longman@redhat.com> <20200616015718.7812-2-longman@redhat.com> <20200616033035.GB902@sol.localdomain>
+To:     Waiman Long <longman@redhat.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, ebiggers@kernel.org,
+        David Howells <dhowells@redhat.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Joe Perches <joe@perches.com>,
         Matthew Wilcox <willy@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Will Drewry <wad@chromium.org>, Shuah Khan <shuah@kernel.org>,
-        Matt Denton <mpdenton@google.com>,
-        Chris Palmer <palmer@google.com>,
-        Jeffrey Vander Stoep <jeffv@google.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Hehuazhen <hehuazhen@huawei.com>, x86@kernel.org,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org
-Subject: Re: [PATCH 4/8] seccomp: Implement constant action bitmaps
-Message-ID: <202006160851.E8F9928AAB@keescook>
-References: <20200616074934.1600036-1-keescook@chromium.org>
- <20200616074934.1600036-5-keescook@chromium.org>
- <fc0c14cd-bcf0-c94c-6cba-d0ce1844e93c@intel.com>
+        David Rientjes <rientjes@google.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        David Sterba <dsterba@suse.cz>,
+        "Jason A . Donenfeld" <Jason@zx2c4.com>, linux-mm@kvack.org,
+        keyrings@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-amlogic@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-ppp@vger.kernel.org, wireguard@lists.zx2c4.com,
+        linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, ecryptfs@vger.kernel.org,
+        kasan-dev@googlegroups.com, linux-bluetooth@vger.kernel.org,
+        linux-wpan@vger.kernel.org, linux-sctp@vger.kernel.org,
+        linux-nfs@vger.kernel.org, tipc-discussion@lists.sourceforge.net,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v4 1/3] mm/slab: Use memzero_explicit() in kzfree()
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fc0c14cd-bcf0-c94c-6cba-d0ce1844e93c@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <879078.1592322400.1@warthog.procyon.org.uk>
+Date:   Tue, 16 Jun 2020 16:46:40 +0100
+Message-ID: <879079.1592322400@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jun 16, 2020 at 07:40:17AM -0700, Dave Hansen wrote:
-> On 6/16/20 12:49 AM, Kees Cook wrote:
-> > +	/* Mark the second page as untouched (i.e. "old") */
-> > +	preempt_disable();
-> > +	set_pte_at(&init_mm, vaddr, ptep, pte_mkold(*(READ_ONCE(ptep))));
-> > +	local_flush_tlb_kernel_range(vaddr, vaddr + PAGE_SIZE);
-> > +	preempt_enable();
-> 
-> If you can, I'd wrap that nugget up in a helper.  I'd also suggest being
-> very explicit in a comment about what it is trying to do: ensure no TLB
-> entries exist so that a future access will always set the Accessed bit.
+Waiman Long <longman@redhat.com> wrote:
 
-Yeah, good idea!
+> The kzfree() function is normally used to clear some sensitive
+> information, like encryption keys, in the buffer before freeing it back
+> to the pool. Memset()
 
-> 
-> > +	/* Make sure the PTE agrees that it is untouched. */
-> > +	if (WARN_ON_ONCE(sd_touched(ptep)))
-> > +		return;
-> > +	/* Read a portion of struct seccomp_data from the second page. */
-> > +	check = sd->instruction_pointer;
-> > +	/* First, verify the contents are zero from vzalloc(). */
-> > +	if (WARN_ON_ONCE(check))
-> > +		return;
-> > +	/* Now make sure the ACCESSED bit has been set after the read. */
-> > +	if (!sd_touched(ptep)) {
-> > +		/*
-> > +		 * If autodetection fails, fall back to standard beahavior by
-> > +		 * clearing the entire "allow" bitmap.
-> > +		 */
-> > +		pr_warn_once("seccomp: cannot build automatic syscall filters\n");
-> > +		bitmap_zero(bitmaps->allow, NR_syscalls);
-> > +		return;
-> > +	}
-> 
-> I can't find any big holes with this.  It's the kind of code that makes
-> me nervous, but mostly because it's pretty different that anything else
-> we have in the kernel.
-> 
-> It's also clear to me here that you probably have a slightly different
-> expectation of what the PTE accessed flag means versus the hardware
-> guys.  What you are looking for it to mean is roughly: "a retired
-> instruction touched this page".
-> 
-> The hardware guys would probably say it's closer to "a TLB entry was
-> established for this page."  Remember that TLB entries can be
-> established speculatively or from things like prefetchers.  While I
-> don't know of anything microarchitectural today which would trip this
-> mechanism, it's entirely possible that something in the future might.
-> Accessing close to the page boundary is the exact kind of place folks
-> might want to optimize.
+"memset()" is all lowercase.
 
-Yeah, and to that end, going the cBPF emulator route removes this kind
-of "weird" behavior.
+> is currently used for buffer clearing. However unlikely, there is still a
+> non-zero probability
 
-> 
-> *But*, at least it would err in the direction of being conservative.  It
-> would say "somebody touched the page!" more often than it should, but
-> never _less_ often than it should.
+I'd say "a possibility".
 
-Right -- I made sure to design the bitmaps and the direction of the
-checking to fail towards running the filter instead of bypassing it.
+> that
 
-> One thing about the implementation (which is roughly):
-> 
-> 	// Touch the data:
-> 	check = sd->instruction_pointer;
-> 	// Examine the PTE mapping that data:
-> 	if (!sd_touched(ptep)) {
-> 		// something
-> 	}
-> 
-> There aren't any barriers in there, which could lead to the sd_touched()
-> check being ordered before the data touch.  I think a rmb() will
-> suffice.  You could even do it inside sd_touched().
+and I'd move "in [the] future" here.
 
-Ah yeah, I had convinced myself that READ_ONCE() gained me that
-coverage, but I guess that's not actually true here.
+> the compiler may choose to optimize away the
+> memory clearing especially if LTO is being used in the future. To make sure
+> that this optimization will never happen
 
-> Was there a reason you chose to export a ranged TLB flush?  I probably
-> would have just used the single-page flush_tlb_one_kernel() for this
-> purpose if I were working in arch-specific code.
+"in these cases"
 
-No particular reason -- it just seemed easiest to make available given
-the interfaces. I could do the single-page version instead, if this way
-of doing things survives review. ;)
+> , memzero_explicit(), which is introduced in v3.18, is now used in
 
-Thanks for looking at it!
+"instead of"?
 
--- 
-Kees Cook
+> kzfree() to future-proof it.
+
+Davod
+
