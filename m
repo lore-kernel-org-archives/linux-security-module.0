@@ -2,207 +2,102 @@ Return-Path: <SRS0=f9XP=75=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFB74C433E0
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 21:13:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D67ABC433E0
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 21:15:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9AF1F208B8
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 21:13:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B18632085B
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 21:15:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="g6zCQtb1"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oHgSA/KC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726064AbgFPVNT (ORCPT
+        id S1726351AbgFPVPV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 16 Jun 2020 17:13:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40716 "EHLO
+        Tue, 16 Jun 2020 17:15:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41032 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726044AbgFPVNS (ORCPT
+        with ESMTP id S1725773AbgFPVPU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 16 Jun 2020 17:13:18 -0400
-Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44F4FC061755
-        for <linux-security-module@vger.kernel.org>; Tue, 16 Jun 2020 14:13:17 -0700 (PDT)
-Received: by mail-pj1-x1041.google.com with SMTP id k2so2016724pjs.2
-        for <linux-security-module@vger.kernel.org>; Tue, 16 Jun 2020 14:13:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=content-transfer-encoding:from:mime-version:subject:date:message-id
-         :references:cc:in-reply-to:to;
-        bh=eqEyb6JQUaVvUerJGlNUxsrnO2s/SjrzdS9NtiPOeYo=;
-        b=g6zCQtb1WWtXnfW4lrEfAQterYlqGC+qzWbEDOKWIv0NGjz9l6EEUTZT4gJDW3+dm/
-         jAky84uduB/j4JURdB4IZE7r4mqAIkdv49wcpUU4CiKisBZQqJrpYrx1NFFYznrl+9BI
-         aZQn4KnFjY341j/bwx6nWPjr01h0+bU/gSCyL7NrzL425xz3u5Z4j3HPi1f1I/fXEd6u
-         S96nkQ/d4HJ6cFF1dPP7aUkIC04jHD6rbpaZoCr6UafwOcfi/6KLjw65d+wSqtv/UEP1
-         nxtbnnX7dZPCS4htwAKfNvqmCaYCgjjYhsQLMEccQtT6DDw+wQb0qVBBFqHNlFNYsxYK
-         6Yuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:content-transfer-encoding:from:mime-version
-         :subject:date:message-id:references:cc:in-reply-to:to;
-        bh=eqEyb6JQUaVvUerJGlNUxsrnO2s/SjrzdS9NtiPOeYo=;
-        b=M6Ampodx5xtwXIT1A1cuOkKzRVEp18VqqN61QqP/I5ZgVcLT4fCBZZ099rO6CZYqYi
-         S+1aQ2qZxfmYLZuy175XIToGbSDapIKcl0bmgcCnAXd15L3pjQQMC7MPr+umrIgYB7bq
-         zECglmsn10BZ8CHP1oZw24kMRh1RnY0TVkNhntUasIKVl3kDvkaCTb5gIvV9WiPlIivQ
-         rklVibcXHrAMcQrs2tf5WggdnT7mzG5U5FLpEQ/HFNsRgIwFk8ZK1dzODatZsWIKtJGM
-         G+EpCnNr81OKnr9Y3ub1dd5lDwDGxveEUO4NnRb0xipJ5a1UYSMfP5yxGJ8RhAm9FYcL
-         j3NQ==
-X-Gm-Message-State: AOAM533vOMi5kQzM1tQ3i2oQtaNBBiUEcKXGj+cYwBKiZfOyLt3sS+Gi
-        AMysQEVCYsTW++oISZAgzqU8Rw==
-X-Google-Smtp-Source: ABdhPJy69Z2QgDcdZTYpebC8ze5IvfOADkMTD+75F8SeFWRv4Ch+M+gwBX/zyw6HkQzCVDsLgMTKjA==
-X-Received: by 2002:a17:90a:ee14:: with SMTP id e20mr4899331pjy.55.1592341996543;
-        Tue, 16 Jun 2020 14:13:16 -0700 (PDT)
-Received: from ?IPv6:2601:646:c200:1ef2:2854:eba6:e44d:d731? ([2601:646:c200:1ef2:2854:eba6:e44d:d731])
-        by smtp.gmail.com with ESMTPSA id 8sm3282064pja.0.2020.06.16.14.13.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Jun 2020 14:13:15 -0700 (PDT)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From:   Andy Lutomirski <luto@amacapital.net>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH 4/8] seccomp: Implement constant action bitmaps
-Date:   Tue, 16 Jun 2020 14:13:14 -0700
-Message-Id: <CE2F8139-4549-46CC-ABDB-3429361847A2@amacapital.net>
-References: <CAG48ez2HrPLhby31PUFb4f=iM60USA4NYRE6AjE8pPQ+ctm60g@mail.gmail.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Christian Brauner <christian@brauner.io>,
-        Sargun Dhillon <sargun@sargun.me>,
-        Tycho Andersen <tycho@tycho.ws>,
-        "zhujianwei (C)" <zhujianwei7@huawei.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Will Drewry <wad@chromium.org>, Shuah Khan <shuah@kernel.org>,
-        Matt Denton <mpdenton@google.com>,
-        Chris Palmer <palmer@google.com>,
-        Jeffrey Vander Stoep <jeffv@google.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Hehuazhen <hehuazhen@huawei.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-In-Reply-To: <CAG48ez2HrPLhby31PUFb4f=iM60USA4NYRE6AjE8pPQ+ctm60g@mail.gmail.com>
-To:     Jann Horn <jannh@google.com>
-X-Mailer: iPhone Mail (17F80)
+        Tue, 16 Jun 2020 17:15:20 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E158AC061573;
+        Tue, 16 Jun 2020 14:15:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=leEz1fiyyYNCvStCVFZ11qKUfHMh+AfUoU9zFTvCrqA=; b=oHgSA/KCDX899omYMHX4U2OLjJ
+        EwMhiIoHigLxQ+MmRFcXyHzBFlTQmZXr04WRoMkHZe+LheH9bL5uSbscQsM64m29mzWCbQbg2tT8+
+        7YVv6xeVy1vViCaTYlOd/6wXfcX6a1cFVTgtaelhNr5Sx0Bq8ty7srr8SsI2tSkKUXRYqisvkGrfi
+        sJiaQyRIt9mSxfwey610s9TuikWX8HXsiUmyGfH8ZS9oPdOb24GGhFyI8BfzM4UPPYgOLJ+VdR52j
+        Y86D/VTQJXkQsTbKRbFAYueGk1mSp6BZ3PR31zhRZoTaAupph04Ady7RM7jEh9GkVMlChc2sCJczP
+        HkwXD4Iw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jlIv1-00069R-Gz; Tue, 16 Jun 2020 21:14:55 +0000
+Date:   Tue, 16 Jun 2020 14:14:55 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Joe Perches <joe@perches.com>
+Cc:     Waiman Long <longman@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        David Rientjes <rientjes@google.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        David Sterba <dsterba@suse.cz>,
+        "Jason A . Donenfeld" <Jason@zx2c4.com>, linux-mm@kvack.org,
+        keyrings@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-amlogic@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-ppp@vger.kernel.org, wireguard@lists.zx2c4.com,
+        linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, ecryptfs@vger.kernel.org,
+        kasan-dev@googlegroups.com, linux-bluetooth@vger.kernel.org,
+        linux-wpan@vger.kernel.org, linux-sctp@vger.kernel.org,
+        linux-nfs@vger.kernel.org, tipc-discussion@lists.sourceforge.net,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org
+Subject: Re: [PATCH v4 0/3] mm, treewide: Rename kzfree() to kfree_sensitive()
+Message-ID: <20200616211455.GB8681@bombadil.infradead.org>
+References: <20200616015718.7812-1-longman@redhat.com>
+ <fe3b9a437be4aeab3bac68f04193cb6daaa5bee4.camel@perches.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fe3b9a437be4aeab3bac68f04193cb6daaa5bee4.camel@perches.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Tue, Jun 16, 2020 at 11:53:50AM -0700, Joe Perches wrote:
+> To this larger audience and last week without reply:
+> https://lore.kernel.org/lkml/573b3fbd5927c643920e1364230c296b23e7584d.camel@perches.com/
+> 
+> Are there _any_ fastpath uses of kfree or vfree?
 
+I worked on adding a 'free' a couple of years ago.  That was capable
+of freeing percpu, vmalloc, kmalloc and alloc_pages memory.  I ran into
+trouble when I tried to free kmem_cache_alloc memory -- it works for slab
+and slub, but not slob (because slob needs the size from the kmem_cache).
 
-> On Jun 16, 2020, at 11:36 AM, Jann Horn <jannh@google.com> wrote:
->=20
-> =EF=BB=BFOn Tue, Jun 16, 2020 at 5:49 PM Kees Cook <keescook@chromium.org>=
- wrote:
->>> On Tue, Jun 16, 2020 at 02:14:47PM +0200, Jann Horn wrote:
->>> Wouldn't it be simpler to use a function that can run a subset of
->>> seccomp cBPF and bails out on anything that indicates that a syscall's
->>> handling is complex or on instructions it doesn't understand? For
->>> syscalls that have a fixed policy, a typical seccomp filter doesn't
->>> even use any of the BPF_ALU ops, the scratch space, or the X register;
->>> it just uses something like the following set of operations, which is
->>> easy to emulate without much code:
->>>=20
->>> BPF_LD | BPF_W | BPF_ABS
->>> BPF_JMP | BPF_JEQ | BPF_K
->>> BPF_JMP | BPF_JGE | BPF_K
->>> BPF_JMP | BPF_JGT | BPF_K
->>> BPF_JMP | BPF_JA
->>> BPF_RET | BPF_K
->>=20
->> Initially, I started down this path. It needed a bit of plumbing into
->> BPF to better control the lifetime of the cBPF "saved original filter"
->> (normally used by CHECKPOINT_RESTORE uses)
->=20
-> I don't think you need that? When a filter is added, you can compute
-> the results of the added individual filter, and then merge the state.
->=20
->> and then I needed to keep
->> making exceptions (same list you have: ALU, X register, scratch, etc)
->> in the name of avoiding too much complexity in the emulator. I decided
->> I'd rather reuse the existing infrastructure to actually execute the
->> filter (no cBPF copy needed to be saved, no separate code, and full
->> instruction coverage).
->=20
-> If you really think that this bit of emulation is so bad, you could
-> also make a copy of the BPF filter in which you replace all load
-> instructions from syscall arguments with "return NON_CONSTANT_RESULT",
-> and then run that through the normal BPF infrastructure.
->=20
->>> Something like (completely untested):
-> [...]
->> I didn't actually finish going down the emulator path (I stopped right
->> around the time I verified that libseccomp does use BPF_ALU -- though
->> only BPF_AND), so I didn't actually evaluate the filter contents for othe=
-r
->> filter builders (i.e. Chrome).
->>=20
->> But, if BPF_ALU | BPF_AND were added to your code above, it would cover
->> everything libseccomp generates (which covers a lot of the seccomp
->> filters, e.g. systemd, docker). I just felt funny about an "incomplete"
->> emulator.
->>=20
->> Though now you've got me looking. It seems this is the core
->> of Chrome's BPF instruction generation:
->> https://github.com/chromium/chromium/blob/master/sandbox/linux/bpf_dsl/po=
-licy_compiler.cc
->> It also uses ALU|AND, but adds JMP|JSET.
->>=20
->> So... that's only 2 more instructions to cover what I think are likely
->> the two largest seccomp instruction generators.
->>=20
->>> That way, you won't need any of this complicated architecture-specific s=
-tuff.
->>=20
->> There are two arch-specific needs, and using a cBPF-subset emulator
->> just gets rid of the local TLB flush. The other part is distinguishing
->> the archs. Neither requirement is onerous (TLB flush usually just
->> needs little more than an extern, arch is already documented in the
->> per-arch syscall_get_arch()).
->=20
-> But it's also somewhat layer-breaking and reliant on very specific
-> assumptions. Normal kernel code doesn't mess around with page table
-> magic, outside of very specific low-level things. And your method
-> would break if the fixed-value members were not all packed together at
-> the start of the structure.
->=20
->=20
-> And from a hardening perspective: The more code we add that fiddles
-> around with PTEs directly, rather than going through higher-level
-> abstractions, the higher the chance that something gets horribly
-> screwed up. For example, this bit from your patch looks *really*
-> suspect:
->=20
-> +                       preempt_disable();
-> +                       set_pte_at(&init_mm, vaddr, ptep,
-> pte_mkold(*(READ_ONCE(ptep))));
-> +                       local_flush_tlb_kernel_range(vaddr, vaddr + PAGE_S=
-IZE);
-> +                       preempt_enable();
->=20
-> First off, that set_pte_at() is just a memory write; I don't see why
-> you put it inside a preempt_disable() region.
-> But more importantly, sticking a local TLB flush inside a
-> preempt_disable() region with nothing else in there looks really
-> shady. How is that supposed to work? If we migrate from CPU0 to CPU1
-> directly before this region, and then from CPU1 back to CPU0 directly
-> afterwards, the local TLB flush will have no effect.
+My motivation for this was to change kfree_rcu() to just free_rcu().
 
+> To eliminate these mispairings at a runtime cost of four
+> comparisons, should the kfree/vfree/kvfree/kfree_const
+> functions be consolidated into a single kfree?
 
-Indeed.
-
-With my x86/mm maintainer hat on, this is highly questionable. Either the re=
-al API should be used, or there should be a sane API. The former will have r=
-eally atrocious performance, and the latter would need some thought. Basical=
-ly, if you pin entire process to one CPU, you can clear the dirty bit, flush=
-, do some magic, and read it back. This is only valid if you have a short en=
-ough operation that running with preemption off is reasonable.  Otherwise yo=
-u need to arrange to flush when you schedule in, which could be done with a v=
-oluntary preemption style or with scheduler hooks.
-
-I=E2=80=99m not convinced this is worthwhile.=
+I would say to leave kfree() alone and just introduce free() as a new
+default.  There's some weird places in the kernel that have a 'free'
+symbol of their own, but those should be renamed anyway.
