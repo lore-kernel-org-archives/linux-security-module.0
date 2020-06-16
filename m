@@ -2,113 +2,137 @@ Return-Path: <SRS0=f9XP=75=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CB23C433E1
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 06:01:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98468C433E1
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 06:42:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1E12B20734
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 06:01:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VN3v2vWs"
+	by mail.kernel.org (Postfix) with ESMTP id 78D7620A8B
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 06:42:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1592289743;
+	bh=zT5NX8Dk5gX1bFBzTUf2najOzbbws8RfjHMggGGsEaE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=G7MRWocNykQ2s0bc8PETNgQumzKXXQJyYSlrPr8xSZsKKoVa8m1QVq8yEn597lF7Q
+	 6ZnGiWRDQeEUDKCFu1f8CVWh86/VSRD+t+onm9Qt9lEMPOISII2Yzk9b98/OdSl+re
+	 s752o/tomHzctb5uH6WdQLdYZ4lnPyIr5BGRtKX8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726398AbgFPGA7 (ORCPT
+        id S1726802AbgFPGmS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 16 Jun 2020 02:00:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40212 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725775AbgFPGA7 (ORCPT
+        Tue, 16 Jun 2020 02:42:18 -0400
+Received: from mail-ej1-f66.google.com ([209.85.218.66]:34150 "EHLO
+        mail-ej1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725775AbgFPGmQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 16 Jun 2020 02:00:59 -0400
-Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32AF7C05BD43
-        for <linux-security-module@vger.kernel.org>; Mon, 15 Jun 2020 23:00:58 -0700 (PDT)
-Received: by mail-pj1-x102f.google.com with SMTP id b7so804062pju.0
-        for <linux-security-module@vger.kernel.org>; Mon, 15 Jun 2020 23:00:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=oVJ+WWTiAQFJ5lo3kGIwxsaIQ55gsub3o6JFM7EGzzw=;
-        b=VN3v2vWsvdb+JAqJjrCWopnj8pCuaARbhbnhwznBBLuHtDdC9Dx3Fmv88T8oNE74oU
-         Lp0X/E8oIsOYu41zcGNdXlH54BpQ5q3inGmupc7e/hZSvcugXFm9ZXG9c2iO58JFUbte
-         4HdumfE/OGBEL8n5RemQTKC1hKcHHgWy4p/F4=
+        Tue, 16 Jun 2020 02:42:16 -0400
+Received: by mail-ej1-f66.google.com with SMTP id l27so20291324ejc.1;
+        Mon, 15 Jun 2020 23:42:11 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=oVJ+WWTiAQFJ5lo3kGIwxsaIQ55gsub3o6JFM7EGzzw=;
-        b=OznNJbCSokj/pnkiOYyexqDPyIuuctnYgv066T4TRjx/3HDt4QGHwj9GOqtimeFKw6
-         I898NWYJ3gPG4du0K+EfNoW29YlAzn8maQOd892AETI7lD34Gs7UVh14CohRubwxDmX1
-         HtpJ/hFQIKve9iwy6dejCb28VemJR+qDCeDcnAgWDyYoGwOiQN8epTpRlRnmaAl09Y/K
-         f1b1W0Aox+inIjWODDLSHHBjbwUYge8Q36l4lkj6jHvfgK/sAe0T08UqNLkTtbMcTh2p
-         QaBAhUz54w2jRrjAi9xhxHQZQrxpaVk+KcVOkxBmkCokzJuvB2pq+Ja84jcWuARE6es/
-         T6xw==
-X-Gm-Message-State: AOAM531JoVwgDkZeAZWa93fNbSdmMTU5j39Fhvsp+7pwDt8oUC923LO0
-        NO4f91mbJyDrTvTK7o2EHcauXA==
-X-Google-Smtp-Source: ABdhPJzSoJucjBbu09dpaOjpONHtNhGpMwgkpd5utGgPOZZi5d/rZHyXM7oIEj1E6nQyE4OJFSCYhg==
-X-Received: by 2002:a17:902:b690:: with SMTP id c16mr493854pls.273.1592287257786;
-        Mon, 15 Jun 2020 23:00:57 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id j8sm1207615pji.3.2020.06.15.23.00.56
+        bh=8yT+7Ta/B3BUGUR35Fz/0p22bghMwTUAxgTnwepounI=;
+        b=CrqjoVKTD3f3KdvDGIeuUsz+tApuK+psSd/zZznBL+PvDQ9kr/y3NysJrLCUvijZ0W
+         D1lMJFJjDjxCjK+3vtuSUx88E4FI/icqqmCPzoYqFy6r+CX7+frVJXkQBTdJvOi0k2H8
+         BQWo08oG78S63Nmuvi83IANQL4LNBYWwNm3J2aXU7+GGmL071iftqMsCEIxqPKRgxnoO
+         l2aRKff/cldTmTKB1sX4cPbWqW005Wxuza/3URs7J0zQObIlg8c0OKxW9NsQzskaJNhs
+         WYN8j8RMnmY+IrXoBKVYXvhwDHpIj4QOYGkzsnxSvMv3OoF06DPJymcAuYl6IFpm70uf
+         LBaQ==
+X-Gm-Message-State: AOAM531HP4eO0zbWwLMfP5GDnN825+ONW2qq1LmJWzlrQRrQ9tLmHjV1
+        pUaK0iSgeht2xDq1+zJMRIs=
+X-Google-Smtp-Source: ABdhPJwG7kr4DUIGgc4iCDEeodlEq5kx0AY8+Z/EURP92P+0Zf4E0UWpXqDGfffbUz9uBG+pBru51g==
+X-Received: by 2002:a17:906:ce2f:: with SMTP id sd15mr1306745ejb.445.1592289731375;
+        Mon, 15 Jun 2020 23:42:11 -0700 (PDT)
+Received: from localhost (ip-37-188-174-201.eurotel.cz. [37.188.174.201])
+        by smtp.gmail.com with ESMTPSA id j10sm9734428edf.97.2020.06.15.23.42.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Jun 2020 23:00:56 -0700 (PDT)
-Date:   Mon, 15 Jun 2020 23:00:55 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Lennart Poettering <lennart@poettering.net>
-Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        "zhujianwei (C)" <zhujianwei7@huawei.com>,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        Hehuazhen <hehuazhen@huawei.com>,
-        Christian Ehrhardt <christian.ehrhardt@canonical.com>,
-        Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>
-Subject: Re: new seccomp mode aims to improve performance
-Message-ID: <202006152255.514C33D1@keescook>
-References: <c22a6c3cefc2412cad00ae14c1371711@huawei.com>
- <CAADnVQLnFuOR+Xk1QXpLFGHx-8StPCye7j5UgKbBoLrmKtygQA@mail.gmail.com>
- <202005290903.11E67AB0FD@keescook>
- <202005291043.A63D910A8@keescook>
- <20200601101137.GA121847@gardel-login>
- <202006011116.3F7109A@keescook>
- <20200602124431.GA123838@gardel-login>
+        Mon, 15 Jun 2020 23:42:10 -0700 (PDT)
+Date:   Tue, 16 Jun 2020 08:42:08 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Waiman Long <longman@redhat.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Joe Perches <joe@perches.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        David Rientjes <rientjes@google.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        David Sterba <dsterba@suse.cz>,
+        "Jason A . Donenfeld" <Jason@zx2c4.com>, linux-mm@kvack.org,
+        keyrings@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-amlogic@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-ppp@vger.kernel.org, wireguard@lists.zx2c4.com,
+        linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, ecryptfs@vger.kernel.org,
+        kasan-dev@googlegroups.com, linux-bluetooth@vger.kernel.org,
+        linux-wpan@vger.kernel.org, linux-sctp@vger.kernel.org,
+        linux-nfs@vger.kernel.org, tipc-discussion@lists.sourceforge.net,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v4 1/3] mm/slab: Use memzero_explicit() in kzfree()
+Message-ID: <20200616064208.GA9499@dhcp22.suse.cz>
+References: <20200616015718.7812-1-longman@redhat.com>
+ <20200616015718.7812-2-longman@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200602124431.GA123838@gardel-login>
+In-Reply-To: <20200616015718.7812-2-longman@redhat.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jun 02, 2020 at 02:44:31PM +0200, Lennart Poettering wrote:
-> We have that actually, it's this line you pasted above:
+On Mon 15-06-20 21:57:16, Waiman Long wrote:
+> The kzfree() function is normally used to clear some sensitive
+> information, like encryption keys, in the buffer before freeing it back
+> to the pool. Memset() is currently used for the buffer clearing. However,
+> it is entirely possible that the compiler may choose to optimize away the
+> memory clearing especially if LTO is being used. To make sure that this
+> optimization will not happen, memzero_explicit(), which is introduced
+> in v3.18, is now used in kzfree() to do the clearing.
 > 
->         SystemCallArchitectures=native
+> Fixes: 3ef0e5ba4673 ("slab: introduce kzfree()")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Waiman Long <longman@redhat.com>
+
+Acked-by: Michal Hocko <mhocko@suse.com>
+
+Although I am not really sure this is a stable material. Is there any
+known instance where the memset was optimized out from kzfree?
+
+> ---
+>  mm/slab_common.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> It means: block all syscall ABIs but the native one for all processes
-> of this service.
-
-Gotcha. And I see this now as I'm working on the code to generating
-bitmaps automatically.  After systemd-resolved applies the 26th filter,
-the "compat" bitmap goes from effectively a duplicate of the native
-syscall map to blocking everything.
-
-after filter 25:
-...
-[    5.405296] seccomp: syscall bitmap: compat     0-4: SECCOMP_RET_ALLOW
-[    5.405297] seccomp: syscall bitmap: compat       5: filter
-...
-[    5.405326] seccomp: syscall bitmap: compat     380: filter
-[    5.405327] seccomp: syscall bitmap: compat 381-439: SECCOMP_RET_ALLOW
-
-after filter 26:
-...
-[    5.405498] seccomp: syscall bitmap: compat   0-439: SECCOMP_RET_KILL_THREAD
-
-So that seems to be working as expected. :)
+> diff --git a/mm/slab_common.c b/mm/slab_common.c
+> index 9e72ba224175..37d48a56431d 100644
+> --- a/mm/slab_common.c
+> +++ b/mm/slab_common.c
+> @@ -1726,7 +1726,7 @@ void kzfree(const void *p)
+>  	if (unlikely(ZERO_OR_NULL_PTR(mem)))
+>  		return;
+>  	ks = ksize(mem);
+> -	memset(mem, 0, ks);
+> +	memzero_explicit(mem, ks);
+>  	kfree(mem);
+>  }
+>  EXPORT_SYMBOL(kzfree);
+> -- 
+> 2.18.1
+> 
 
 -- 
-Kees Cook
+Michal Hocko
+SUSE Labs
