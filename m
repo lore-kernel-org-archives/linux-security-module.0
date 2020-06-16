@@ -2,99 +2,224 @@ Return-Path: <SRS0=f9XP=75=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=no autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0C89C433E0
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 12:05:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99A09C433DF
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 12:15:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AA6BA208FE
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 12:05:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 691D320644
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 12:15:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hrm2oqhE"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="s1Xvol0h"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728557AbgFPMFx (ORCPT
+        id S1728160AbgFPMPS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 16 Jun 2020 08:05:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40120 "EHLO
+        Tue, 16 Jun 2020 08:15:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41572 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726052AbgFPMFw (ORCPT
+        with ESMTP id S1726306AbgFPMPR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 16 Jun 2020 08:05:52 -0400
-Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DCD3C08C5C2
-        for <linux-security-module@vger.kernel.org>; Tue, 16 Jun 2020 05:05:50 -0700 (PDT)
-Received: by mail-wm1-x343.google.com with SMTP id l17so2639539wmj.0
-        for <linux-security-module@vger.kernel.org>; Tue, 16 Jun 2020 05:05:50 -0700 (PDT)
+        Tue, 16 Jun 2020 08:15:17 -0400
+Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FEE4C08C5C2
+        for <linux-security-module@vger.kernel.org>; Tue, 16 Jun 2020 05:15:16 -0700 (PDT)
+Received: by mail-lj1-x244.google.com with SMTP id i27so23203123ljb.12
+        for <linux-security-module@vger.kernel.org>; Tue, 16 Jun 2020 05:15:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Ov3hkENeaY3t0fiQ/hSwKv231EuvY8HIl/TMX2XAFJc=;
-        b=hrm2oqhERxJ2pIZj6mPbOXuPz8MWkHIyr7nPF9F5TTTvPpRjEB/bU1+umrwL5hDUKD
-         /oBgyEshM3XtO6Oe1gVllt/EculFu0fZtP6n8/A6LKp1qdQouffltTDJohD+zjqZv4co
-         Av2qqTFF9YNnrdbqneCtIxFPyv7x4lVBruPrsSJizUYjp4YB32kFys1dRRKwjG6c7pwZ
-         8H1qijwlPHF+JtWN4GvYgGKAMmOVDJ3DzhN2ro/V5ryq6Dk02oYV2QSNsBozH4UCcNYj
-         sMU8b1Wn3AxK25xzw3ZsLei9uxGi1goLKUGgOqGtMJ3+jkFjjaMUvmbbPYOaPvxkh68g
-         9z7A==
+         :cc;
+        bh=lId2VqgWnSj5hcyOUSdipcvBeLlaT4UQgOgtGOYEhak=;
+        b=s1Xvol0hq1EOoKeJihXOkMd72MbgzGDi/AYBydiHucg2rKev+h0cN2w6F1lmaJLfF7
+         2LVZS3A1TRtzSbwJjVUdPfbMu275KD7VR8+NJ6MIGv9XrItrc3KQq5z4P5w5LxzRRV0b
+         SKxXhp+NiJbbuoGqXlAp3egwbRyD9nt8nsY551sk3YR1vcXco5WbUHAYFZO6CmEaR8kc
+         J+pOUxODJERuU3o74KnAYANuo6GfzDdgCBtAq+Ot8dNTfFcW+DvGnR1F56ugfzAC1cB1
+         ZghfX5C3ihyc22918h8plqPmbDXYit3e+p07Im8MqqpB+6cD1mvze8eVe0LIMM7Zbd3d
+         MmKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Ov3hkENeaY3t0fiQ/hSwKv231EuvY8HIl/TMX2XAFJc=;
-        b=OnI4O68jGjKPdo2EjxOx+qrObVxf08Vf8iYI5HkQZXBUXuOZ5S52fIdAWOXDeQsR/x
-         EU4U74vSgSdySER/oMf3g22x3R1Pc9FDraeMuGd7gHYyGwO9Pgx4GJ1U7CHdnXac7Ph4
-         D5ikWlHeZJTNX29Wtz5U751IKuleIS15hGA75macY5632BpVUWGwzKTExm5WcMEZUKNk
-         gELUj27EA4lpgV8rMbhr6R1rsZ9OFhN5+Tg28C6nimLhC4YILe63+BZXGGHNmgmPYHjn
-         QXRUfbUC6LQmsg6mzvBaV5TYQkUiKYw1JeZJKBRcyy6EP3coL7bjPQfBhfWBJMmfuTD6
-         iInA==
-X-Gm-Message-State: AOAM532/zHeFS3bMz886fhgQDt5f+hetXr9jkivtsR8ifFbafkCvjcIh
-        pVgQCwuIlX33meQn/2KJLsbpskhn8YG2sKmZfHHUQIUv
-X-Google-Smtp-Source: ABdhPJxRsLNjXMbf2UUETZShWAdzuAq4Xj2Rtv9Uc4cmGf7rzWcsx8DY23jUyQJnacegr5ubzMEV0J4q2wXs1c5ig4Y=
-X-Received: by 2002:a7b:cb93:: with SMTP id m19mr3023341wmi.165.1592309148902;
- Tue, 16 Jun 2020 05:05:48 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=lId2VqgWnSj5hcyOUSdipcvBeLlaT4UQgOgtGOYEhak=;
+        b=Jto/QzmQeKQ62UseUwVFbmEedORCPL7xOcmo4ygLmMH1xV3xdwA+Cd3nr6AFVq5c1L
+         0EbnHEGYz0HHA1IplUHzwhjmRJ8vo5tA1/BlN/+qVvvWcFp+h/cCKkMBk/fi12tsijW5
+         ybfn1GDAKNGxqzqbkkrBBmSkRV4/t3ZYpOLDLasXrKB/LZwntjSSJIXrBl0J2gW1bgWn
+         Z+pqbu/voGNn6E21Ib790p8/U578oS04eBnu7VQGJE1umSWzJqqEK5B8fb/JzVywhxC4
+         qf99AE83QM0Hf2ay7G3Gh92dS9TUvMGki/VjxdHQLBQ2JptuGwkb67JLg4D6HHIIFgRy
+         nHpw==
+X-Gm-Message-State: AOAM533rz3NYGc+SbWEIzN83igyOVl52adIdYdqCvF8eCSwIYm9LYjt9
+        mICbGBFxXbvvDTWtgPLsSF+e/cR2jMqzOe2obIi30g==
+X-Google-Smtp-Source: ABdhPJxDrDxH93vuVXYIp6o+fe2nZXY74IHAWLTSSyziCuq+my4CnIzXCk2zf8Bfhk8nYT9ozFWEI14WQpKH3FLnqiE=
+X-Received: by 2002:a05:651c:c9:: with SMTP id 9mr1390777ljr.365.1592309714391;
+ Tue, 16 Jun 2020 05:15:14 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200616083435.223038-1-glider@google.com> <20200616100309.GA2614426@kroah.com>
- <CANP3RGckq6_kMLzS-Yp5ottH4fm9Z3BQo3dbY1fMiQKiRMPbPw@mail.gmail.com>
-In-Reply-To: <CANP3RGckq6_kMLzS-Yp5ottH4fm9Z3BQo3dbY1fMiQKiRMPbPw@mail.gmail.com>
-From:   Alexander Potapenko <glider@google.com>
-Date:   Tue, 16 Jun 2020 14:05:37 +0200
-Message-ID: <CAG_fn=XnPZzQXPJLMzSXZNbs8AzZWwPG67RhMAnr=cZO2Af_ZQ@mail.gmail.com>
-Subject: Re: [PATCH v2] [RFC] security: allow using Clang's zero
- initialization for stack variables
-To:     =?UTF-8?Q?Maciej_=C5=BBenczykowski?= <maze@google.com>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Kees Cook <keescook@chromium.org>,
-        James Morris <jmorris@namei.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
+References: <20200616074934.1600036-1-keescook@chromium.org> <20200616074934.1600036-5-keescook@chromium.org>
+In-Reply-To: <20200616074934.1600036-5-keescook@chromium.org>
+From:   Jann Horn <jannh@google.com>
+Date:   Tue, 16 Jun 2020 14:14:47 +0200
+Message-ID: <CAG48ez1p=dR_2ikKq=xVxkoGg0fYpTBpkhJSv1w-6BG=76PAvw@mail.gmail.com>
+Subject: Re: [PATCH 4/8] seccomp: Implement constant action bitmaps
+To:     Kees Cook <keescook@chromium.org>
+Cc:     kernel list <linux-kernel@vger.kernel.org>,
+        Christian Brauner <christian@brauner.io>,
+        Sargun Dhillon <sargun@sargun.me>,
+        Tycho Andersen <tycho@tycho.ws>,
+        "zhujianwei (C)" <zhujianwei7@huawei.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Will Drewry <wad@chromium.org>, Shuah Khan <shuah@kernel.org>,
+        Matt Denton <mpdenton@google.com>,
+        Chris Palmer <palmer@google.com>,
+        Jeffrey Vander Stoep <jeffv@google.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Hehuazhen <hehuazhen@huawei.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
         linux-security-module <linux-security-module@vger.kernel.org>,
-        Kernel hackers <linux-kernel@vger.kernel.org>
+        Linux API <linux-api@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jun 16, 2020 at 12:19 PM Maciej =C5=BBenczykowski <maze@google.com>=
- wrote:
+On Tue, Jun 16, 2020 at 9:49 AM Kees Cook <keescook@chromium.org> wrote:
+> One of the most common pain points with seccomp filters has been dealing
+> with the overhead of processing the filters, especially for "always allow"
+> or "always reject" cases. While BPF is extremely fast[1], it will always
+> have overhead associated with it. Additionally, due to seccomp's design,
+> filters are layered, which means processing time goes up as the number
+> of filters attached goes up.
 >
-> > Nit, your From: line of your email does not match your signed-off-by:
-> > line :(
+> In the past, efforts have been focused on making filter execution complete
+> in a shorter amount of time. For example, filters were rewritten from
+> using linear if/then/else syscall search to using balanced binary trees,
+> or moving tests for syscalls common to the process's workload to the
+> front of the filter. However, there are limits to this, especially when
+> some processes are dealing with tens of filters[2], or when some
+> architectures have a less efficient BPF engine[3].
+>
+> The most common use of seccomp, constructing syscall block/allow-lists,
+> where syscalls that are always allowed or always rejected (without regard
+> to any arguments), also tends to produce the most pathological runtime
+> problems, in that a large number of syscall checks in the filter need
+> to be performed to come to a determination.
+>
+> In order to optimize these cases from O(n) to O(1), seccomp can
+> use bitmaps to immediately determine the desired action. A critical
+> observation in the prior paragraph bears repeating: the common case for
+> syscall tests do not check arguments. For any given filter, there is a
+> constant mapping from the combination of architecture and syscall to the
+> seccomp action result. (For kernels/architectures without CONFIG_COMPAT,
+> there is a single architecture.). As such, it is possible to construct
+> a mapping of arch/syscall to action, which can be updated as new filters
+> are attached to a process.
+>
+> In order to build this mapping at filter attach time, each filter is
+> executed for every syscall (under each possible architecture), and
+> checked for any accesses of struct seccomp_data that are not the "arch"
+> nor "nr" (syscall) members. If only "arch" and "nr" are examined, then
+> there is a constant mapping for that syscall, and bitmaps can be updated
+> accordingly. If any accesses happen outside of those struct members,
+> seccomp must not bypass filter execution for that syscall, since program
+> state will be used to determine filter action result.
+>
+> During syscall action probing, in order to determine whether other members
+> of struct seccomp_data are being accessed during a filter execution,
+> the struct is placed across a page boundary with the "arch" and "nr"
+> members in the first page, and everything else in the second page. The
+> "page accessed" flag is cleared in the second page's PTE, and the filter
+> is run. If the "page accessed" flag appears as set after running the
+> filter, we can determine that the filter looked beyond the "arch" and
+> "nr" members, and exclude that syscall from the constant action bitmaps.
+>
+> For architectures to support this optimization, they must declare
+> their architectures for seccomp to see (via SECCOMP_ARCH and
+> SECCOMP_ARCH_COMPAT macros), and provide a way to perform efficient
+> CPU-local kernel TLB flushes (via local_flush_tlb_kernel_range()),
+> and then set HAVE_ARCH_SECCOMP_BITMAP in their Kconfig.
 
-That's hard to notice while being on the sending end, thanks for
-pointing that out!
-I'll look into this.
+Wouldn't it be simpler to use a function that can run a subset of
+seccomp cBPF and bails out on anything that indicates that a syscall's
+handling is complex or on instructions it doesn't understand? For
+syscalls that have a fixed policy, a typical seccomp filter doesn't
+even use any of the BPF_ALU ops, the scratch space, or the X register;
+it just uses something like the following set of operations, which is
+easy to emulate without much code:
 
-> This is *probably* a matter of configuring git:
-> git config --global user.name "Alexander Potapenko"
-> git config --global user.email "glider@google.com"
-> git config --global sendemail.from "Alexander Potapenko <glider@google.co=
-m>"
+BPF_LD | BPF_W | BPF_ABS
+BPF_JMP | BPF_JEQ | BPF_K
+BPF_JMP | BPF_JGE | BPF_K
+BPF_JMP | BPF_JGT | BPF_K
+BPF_JMP | BPF_JA
+BPF_RET | BPF_K
 
-I do have all these options set, although I don't have them quoted,
-not sure if it's necessary.
-Moreover, when I do `git send-email --dry-run` the From: line looks correct=
-.
+Something like (completely untested):
+
+/*
+ * Try to statically determine whether @filter will always return a fixed result
+ * when run for syscall @nr under architecture @arch.
+ * Returns true if the result could be determined; if so, the result will be
+ * stored in @action.
+ */
+static bool seccomp_check_syscall(struct sock_filter *filter, unsigned int arch,
+                                  unsigned int nr, unsigned int *action)
+{
+  int pc;
+  unsigned int reg_value = 0;
+
+  for (pc = 0; 1; pc++) {
+    struct sock_filter *insn = &filter[pc];
+    u16 code = insn->code;
+    u32 k = insn->k;
+
+    switch (code) {
+    case BPF_LD | BPF_W | BPF_ABS:
+      if (k == offsetof(struct seccomp_data, nr)) {
+        reg_value = nr;
+      } else if (k == offsetof(struct seccomp_data, arch)) {
+        reg_value = arch;
+      } else {
+        return false; /* can't optimize (non-constant value load) */
+      }
+      break;
+    case BPF_RET | BPF_K:
+      *action = insn->k;
+      return true; /* success: reached return with constant values only */
+    case BPF_JMP | BPF_JA:
+      pc += insn->k;
+      break;
+    case BPF_JMP | BPF_JEQ | BPF_K:
+    case BPF_JMP | BPF_JGE | BPF_K:
+    case BPF_JMP | BPF_JGT | BPF_K:
+    default:
+      if (BPF_CLASS(code) == BPF_JMP && BPF_SRC(code) == BPF_K) {
+        u16 op = BPF_OP(code);
+        bool op_res;
+
+        switch (op) {
+        case BPF_JEQ:
+          op_res = reg_value == k;
+          break;
+        case BPF_JGE:
+          op_res = reg_value >= k;
+          break;
+        case BPF_JGT:
+          op_res = reg_value > k;
+          break;
+        default:
+          return false; /* can't optimize (unknown insn) */
+        }
+
+        pc += op_res ? insn->jt : insn->jf;
+        break;
+      }
+      return false; /* can't optimize (unknown insn) */
+    }
+  }
+}
+
+That way, you won't need any of this complicated architecture-specific stuff.
