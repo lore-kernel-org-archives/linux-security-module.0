@@ -2,117 +2,103 @@ Return-Path: <SRS0=f9XP=75=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBE52C433DF
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 10:03:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EA77C433E0
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 10:19:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C78BC2078E
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 10:03:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1592301797;
-	bh=X84sKt5PQLBc6tu+9pZlqv+58ESwXd+4uih/06fLewg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=iEryhfT3P78Z/6m1DKV5+TnfP2f0fOKGamEufuW/f7+in5ojPJWOdWkDC/RxpdPpO
-	 YJjPauSlkhBOzs8DmOduZzI/EDRiU5a4D7JsOFOQFvH9cgTa6Rxtm2MNhOd4yktsxu
-	 f9Ge4Rctz8SMeLiLKj80B+1iOWBZJoBPyMkdap48=
+	by mail.kernel.org (Postfix) with ESMTP id 052C220707
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 10:19:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="M1rU4R3T"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726261AbgFPKDQ (ORCPT
+        id S1726606AbgFPKT2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 16 Jun 2020 06:03:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34836 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726052AbgFPKDQ (ORCPT
+        Tue, 16 Jun 2020 06:19:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51936 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725843AbgFPKT1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 16 Jun 2020 06:03:16 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 121BA20767;
-        Tue, 16 Jun 2020 10:03:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1592301794;
-        bh=X84sKt5PQLBc6tu+9pZlqv+58ESwXd+4uih/06fLewg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=bcet8w7K5NFpfHYfjfkLwL1qs9ZtjQohV31jXzphpq9OJxrIfz+L3oKah5JqyJwBm
-         Ll3/YYZjEJNs6kCySvEebEtGdmH1rR97oUQ5Pdv7wwPAPNtyStJHZ/Dzye5j87MfmC
-         m5/TnAyj/7cZ4dTvD0O1tjANuBK8ZYpuZu2zEdJ4=
-Date:   Tue, 16 Jun 2020 12:03:09 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     glider@google.com
-Cc:     yamada.masahiro@socionext.com, keescook@chromium.org,
-        jmorris@namei.org, maze@google.com, ndesaulniers@google.com,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+        Tue, 16 Jun 2020 06:19:27 -0400
+Received: from mail-il1-x141.google.com (mail-il1-x141.google.com [IPv6:2607:f8b0:4864:20::141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F68EC08C5C2
+        for <linux-security-module@vger.kernel.org>; Tue, 16 Jun 2020 03:19:27 -0700 (PDT)
+Received: by mail-il1-x141.google.com with SMTP id h3so18233351ilh.13
+        for <linux-security-module@vger.kernel.org>; Tue, 16 Jun 2020 03:19:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+kqbimwgEbOIJYJLWKEaCLp58PXChrceFH9NU0EWRhU=;
+        b=M1rU4R3TTMMpixDbLk8vBQdiLBBdkyl/aqI2TNZz5CijvpcUThXzf7nyPto9iuemPX
+         DSXchy0Wmvu+MsrVPfMrqvhs2B4wzYuS50D5Bn228HIHQ6J653ZiciJasPxA6BQVxY8q
+         +2S9WcAlCxrPm3bu2WnfIG4rs84SEx3R228KD9aR3gAohvJdn9QaySDUe36PzFp3dyAU
+         UTv9z5+efyF21/cXF+A8hrr+ONGO+DC9QuGJoNKq35h39I+sUT2M3wbIFy78L9oG+EpZ
+         7+KpSneFk/iJleviiW5zpPrsXEbidakr3uD6luITC1HyWTVbKArKedZ+jZYsPF+kWRLt
+         IszA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+kqbimwgEbOIJYJLWKEaCLp58PXChrceFH9NU0EWRhU=;
+        b=BVZMdBep+ZmF5Rw15iHobsTCBaRaOZR5skperUao25AKQ6pxr+6XWxLFeeKhwa4iNr
+         c44K5dAwEnqhJt8Ex6WUthj7yEbTKu0gLyOurpfZLGErJahKqOawMGN3g04Q26hOzzZ1
+         RuoV+WaPboqsp0YX4sFjDnQ4IQ2+gWrIID5YVYZ7srwTX0rx1JHcs/B5qLh9e088Tj02
+         VwMarmGBf7bJcJ0yu4RWVWsNNjHIezSkzmLbWo6070PQyGWjVeAOHd4dqU+yIYRXXrxo
+         fC2I3xXsd9QoObyR+NVJ+4gbipTMmXVK+qrPHoIVyEHM/Vpc/XRD3YocPOk5QnFc/w0w
+         3TPg==
+X-Gm-Message-State: AOAM533MSmfYmKJhf2D864dEI5zGVfm/AUC2m2DWrKznE9iRkUTnXC9K
+        RLIZPfaDt2ifESIYRz+7Q5Y0s6vXc2lXVInWwdVYwhHyp53R4g==
+X-Google-Smtp-Source: ABdhPJzrGDFJysUCJVNDR5nvOXo7oba4sfOSKBTxtSj3Ckx5zUmbQFAyRZXIJSwxtsNcLB0I7RWmlLHIfQrJfeQ67eg=
+X-Received: by 2002:a92:a112:: with SMTP id v18mr2185623ili.278.1592302766529;
+ Tue, 16 Jun 2020 03:19:26 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200616083435.223038-1-glider@google.com> <20200616100309.GA2614426@kroah.com>
+In-Reply-To: <20200616100309.GA2614426@kroah.com>
+From:   =?UTF-8?Q?Maciej_=C5=BBenczykowski?= <maze@google.com>
+Date:   Tue, 16 Jun 2020 03:19:15 -0700
+Message-ID: <CANP3RGckq6_kMLzS-Yp5ottH4fm9Z3BQo3dbY1fMiQKiRMPbPw@mail.gmail.com>
 Subject: Re: [PATCH v2] [RFC] security: allow using Clang's zero
  initialization for stack variables
-Message-ID: <20200616100309.GA2614426@kroah.com>
-References: <20200616083435.223038-1-glider@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200616083435.223038-1-glider@google.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Alexander Potapenko <glider@google.com>,
+        yamada.masahiro@socionext.com, Kees Cook <keescook@chromium.org>,
+        jmorris@namei.org, Nick Desaulniers <ndesaulniers@google.com>,
+        linux-security-module@vger.kernel.org,
+        Kernel hackers <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jun 16, 2020 at 10:34:35AM +0200, glider@google.com wrote:
-> In addition to -ftrivial-auto-var-init=pattern (used by
-> CONFIG_INIT_STACK_ALL now) Clang also supports zero initialization for
-> locals enabled by -ftrivial-auto-var-init=zero.
-> The future of this flag is still being debated, see
-> https://bugs.llvm.org/show_bug.cgi?id=45497
-> Right now it is guarded by another flag,
-> -enable-trivial-auto-var-init-zero-knowing-it-will-be-removed-from-clang,
-> which means it may not be supported by future Clang releases.
-> Another possible resolution is that -ftrivial-auto-var-init=zero will
-> persist (as certain users have already started depending on it), but the
-> name of the guard flag will change.
-> 
-> In the meantime, zero initialization has proven itself as a good
-> production mitigation measure against uninitialized locals. Unlike
-> pattern initialization, which has a higher chance of triggering existing
-> bugs, zero initialization provides safe defaults for strings, pointers,
-> indexes, and sizes. On the other hand, pattern initialization remains
-> safer for return values.
-> Performance-wise, the difference between pattern and zero initialization
-> is usually negligible, although the generated code for zero
-> initialization is more compact.
-> 
-> This patch renames CONFIG_INIT_STACK_ALL to
-> CONFIG_INIT_STACK_ALL_PATTERN and introduces another config option,
-> CONFIG_INIT_STACK_ALL_ZERO, that enables zero initialization for locals
-> if the corresponding flags are supported by Clang.
-> 
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Nick Desaulniers <ndesaulniers@google.com>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Signed-off-by: Alexander Potapenko <glider@google.com>
+> Nit, your From: line of your email does not match your signed-off-by:
+> line :(
 
-Nit, your From: line of your email does not match your signed-off-by:
-line :(
+This is *probably* a matter of configuring git:
+git config --global user.name "Alexander Potapenko"
+git config --global user.email "glider@google.com"
+git config --global sendemail.from "Alexander Potapenko <glider@google.com>"
 
-In the future, you should fix that up so that maintainers don't have to
-do it for you...
+> Gotta love the name...
 
-> +# Initialize all stack variables with a zero pattern.
-> +ifdef CONFIG_INIT_STACK_ALL_ZERO
-> +# Future support for zero initialization is still being debated, see
-> +# https://bugs.llvm.org/show_bug.cgi?id=45497. These flags are subject to being
-> +# renamed or dropped.
-> +KBUILD_CFLAGS	+= -ftrivial-auto-var-init=zero -enable-trivial-auto-var-init-zero-knowing-it-will-be-removed-from-clang
-> +endif
+I've just read through a long discussion thread on clang dev (got
+there from this cl's llvm link)...
+There's a lot of interesting info in there.  But ultimately it seems
+to point out tons of projects already use this or want to use it.
+And there's security and stability benefits for production builds,
+while pattern mode can be used for debug builds.
 
-Gotta love the name...
+> Anyway, if this is enabled, and clang changes the flag or drops it, does
+> the build suddenly break?
 
-Anyway, if this is enabled, and clang changes the flag or drops it, does
-the build suddenly break?
+(my understanding of the patch is that the option does compiler
+testing before it becomes available...
+in at least some of our build systems built around kbuild the option
+going away would then cause a build error due to its lack in the final
+.config)
 
-And does gcc have something like this as well, or does that have to come
-in a compiler plugin?
-
-thanks,
-
-greg k-h
+> And does gcc have something like this as well, or does that have to come
+> in a compiler plugin?
