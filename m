@@ -2,157 +2,179 @@ Return-Path: <SRS0=f9XP=75=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-13.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5302DC433E2
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 18:36:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0281C433DF
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 18:36:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 32312207C4
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 18:36:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BDE182098B
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 18:36:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VsbTXqwl"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Q4o9HNHE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729942AbgFPSgh (ORCPT
+        id S1729997AbgFPSg6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 16 Jun 2020 14:36:37 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:24736 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729843AbgFPSgd (ORCPT
+        Tue, 16 Jun 2020 14:36:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44536 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729860AbgFPSg5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 16 Jun 2020 14:36:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1592332591;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=7/6v2jfN6UIDhJeosnSs1R4UAP7mOiLuFVPEnJvGTnM=;
-        b=VsbTXqwl7xxf+MUWbnJM4vCOVIS/iCxA1SAjzyA8FsjzrodShKHnZfMLXBOQL/GHNJH8vC
-        OuxP6I6blTXluNjdUqYdGiIeMKVM7wFH4inGVQHpTaw8gw2uwB0FCvyIBJbPEBsvhu17TV
-        Bbxsdyz8zlcvC51jFF/xVTwdyLhzHT8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-73-AXrSOJCONRyyvrghDqFtvA-1; Tue, 16 Jun 2020 14:36:27 -0400
-X-MC-Unique: AXrSOJCONRyyvrghDqFtvA-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2578680332A;
-        Tue, 16 Jun 2020 18:36:22 +0000 (UTC)
-Received: from llong.remote.csb (ovpn-114-156.rdu2.redhat.com [10.10.114.156])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3B77519C71;
-        Tue, 16 Jun 2020 18:36:16 +0000 (UTC)
-Subject: Re: [PATCH v5 2/2] mm, treewide: Rename kzfree() to kfree_sensitive()
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     David Howells <dhowells@redhat.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Joe Perches <joe@perches.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        David Rientjes <rientjes@google.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        "Jason A . Donenfeld" <Jason@zx2c4.com>, linux-mm@kvack.org,
-        keyrings@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-amlogic@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-ppp@vger.kernel.org, wireguard@lists.zx2c4.com,
-        linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
-        linux-cifs@vger.kernel.org, linux-fscrypt@vger.kernel.org,
-        ecryptfs@vger.kernel.org, kasan-dev@googlegroups.com,
-        linux-bluetooth@vger.kernel.org, linux-wpan@vger.kernel.org,
-        linux-sctp@vger.kernel.org, linux-nfs@vger.kernel.org,
-        tipc-discussion@lists.sourceforge.net,
-        linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org
-References: <20200616154311.12314-1-longman@redhat.com>
- <20200616154311.12314-3-longman@redhat.com>
- <20200616110944.c13f221e5c3f54e775190afe@linux-foundation.org>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <65002c1e-5e31-1f4e-283c-186e06e55ef0@redhat.com>
-Date:   Tue, 16 Jun 2020 14:36:15 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Tue, 16 Jun 2020 14:36:57 -0400
+Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B529C061755
+        for <linux-security-module@vger.kernel.org>; Tue, 16 Jun 2020 11:36:57 -0700 (PDT)
+Received: by mail-lj1-x242.google.com with SMTP id e4so24815469ljn.4
+        for <linux-security-module@vger.kernel.org>; Tue, 16 Jun 2020 11:36:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=v2RjpTiuHZ3l0Pxqe/xAX5M0G+FBIdLaE2yGHwIgHUA=;
+        b=Q4o9HNHESg+RdwLs/JmMWK1P2LIdIm2ymfk6CbxiOVhznUpF+7/tWHhKrgkyUJd/Ja
+         feN6mXD/nxi3vEtBOzTRmsAwv/kcl4VI44tCrtdNzkbMwGmn4ydIolFBndVx+iOssnV0
+         K9NcnQccZ7ZZFfE653QizoY/d/iBAYktzJ5Xrgb/PeLd8+laxtA0uTFzTL0FVrj0tO4g
+         IDTndEZaprVDykmvISs2GPkTzFj9RFCAywYDl6NYBoLKD8xL2o0cd64hcsnbnA6mqtmu
+         6UlHSDXPw8Ph+YZGHkjNv51lIBS6tR4U2tCfbF3LIFWJgRZyrFwj6DdJ6JyZy9xdyNiO
+         zC3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=v2RjpTiuHZ3l0Pxqe/xAX5M0G+FBIdLaE2yGHwIgHUA=;
+        b=X+NOEliUDNdeede6Dt8ofCafx8jLuV9pL2QY7VSQ5SfIbdMMEw6hh2qdWIe05Wjp+h
+         r38Gidt3diFzcE/w7MbsxE3o3Zg4JSD4kRWKpC4naJ9o9E53Z1hRprxlVTrsed76Myki
+         +09sw6ZL21vgHQdpQ/18Ow7d433ASU+c3Z1ZXvTRqaykx3suFLW+CfyHj29PcfAvXGhX
+         iJ6b5Pg8eVIvsham00JDDn76GkTCe3jWbykAT6tUqgcF30IMH8tZUoLrrLuPmprvuXeZ
+         JEMCkDuDqQibfhCy8gydnfXIecUeP5vd9/RP2SqjoQs1p0rci87Gr06lmHy3/YfCl4EY
+         h2YA==
+X-Gm-Message-State: AOAM531racizQ3xfZfKJqq2lfHB7c/WfBKgk6rgBb3xHb5wxsAGwkUgp
+        YO6eQOYXn19H8yPlNpGTOLpmEGnH3osOC93L8RtRiA==
+X-Google-Smtp-Source: ABdhPJy9kYf/f3crna55zPYPd3C7eYBoB/tQeRDdctgjZb1m2Rw1zbcvpVRFYtvNWY77/Kg9xRTJT8gwPxg5C5mfUSU=
+X-Received: by 2002:a2e:970c:: with SMTP id r12mr2044805lji.145.1592332615437;
+ Tue, 16 Jun 2020 11:36:55 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200616110944.c13f221e5c3f54e775190afe@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+References: <20200616074934.1600036-1-keescook@chromium.org>
+ <20200616074934.1600036-5-keescook@chromium.org> <CAG48ez1p=dR_2ikKq=xVxkoGg0fYpTBpkhJSv1w-6BG=76PAvw@mail.gmail.com>
+ <202006160757.99FD9B785@keescook>
+In-Reply-To: <202006160757.99FD9B785@keescook>
+From:   Jann Horn <jannh@google.com>
+Date:   Tue, 16 Jun 2020 20:36:28 +0200
+Message-ID: <CAG48ez2HrPLhby31PUFb4f=iM60USA4NYRE6AjE8pPQ+ctm60g@mail.gmail.com>
+Subject: Re: [PATCH 4/8] seccomp: Implement constant action bitmaps
+To:     Kees Cook <keescook@chromium.org>
+Cc:     kernel list <linux-kernel@vger.kernel.org>,
+        Christian Brauner <christian@brauner.io>,
+        Sargun Dhillon <sargun@sargun.me>,
+        Tycho Andersen <tycho@tycho.ws>,
+        "zhujianwei (C)" <zhujianwei7@huawei.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Will Drewry <wad@chromium.org>, Shuah Khan <shuah@kernel.org>,
+        Matt Denton <mpdenton@google.com>,
+        Chris Palmer <palmer@google.com>,
+        Jeffrey Vander Stoep <jeffv@google.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Hehuazhen <hehuazhen@huawei.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 6/16/20 2:09 PM, Andrew Morton wrote:
-> On Tue, 16 Jun 2020 11:43:11 -0400 Waiman Long <longman@redhat.com> wrote:
+On Tue, Jun 16, 2020 at 5:49 PM Kees Cook <keescook@chromium.org> wrote:
+> On Tue, Jun 16, 2020 at 02:14:47PM +0200, Jann Horn wrote:
+> > Wouldn't it be simpler to use a function that can run a subset of
+> > seccomp cBPF and bails out on anything that indicates that a syscall's
+> > handling is complex or on instructions it doesn't understand? For
+> > syscalls that have a fixed policy, a typical seccomp filter doesn't
+> > even use any of the BPF_ALU ops, the scratch space, or the X register;
+> > it just uses something like the following set of operations, which is
+> > easy to emulate without much code:
+> >
+> > BPF_LD | BPF_W | BPF_ABS
+> > BPF_JMP | BPF_JEQ | BPF_K
+> > BPF_JMP | BPF_JGE | BPF_K
+> > BPF_JMP | BPF_JGT | BPF_K
+> > BPF_JMP | BPF_JA
+> > BPF_RET | BPF_K
 >
->> As said by Linus:
->>
->>    A symmetric naming is only helpful if it implies symmetries in use.
->>    Otherwise it's actively misleading.
->>
->>    In "kzalloc()", the z is meaningful and an important part of what the
->>    caller wants.
->>
->>    In "kzfree()", the z is actively detrimental, because maybe in the
->>    future we really _might_ want to use that "memfill(0xdeadbeef)" or
->>    something. The "zero" part of the interface isn't even _relevant_.
->>
->> The main reason that kzfree() exists is to clear sensitive information
->> that should not be leaked to other future users of the same memory
->> objects.
->>
->> Rename kzfree() to kfree_sensitive() to follow the example of the
->> recently added kvfree_sensitive() and make the intention of the API
->> more explicit. In addition, memzero_explicit() is used to clear the
->> memory to make sure that it won't get optimized away by the compiler.
->>
->> The renaming is done by using the command sequence:
->>
->>    git grep -w --name-only kzfree |\
->>    xargs sed -i 's/\bkzfree\b/kfree_sensitive/'
->>
->> followed by some editing of the kfree_sensitive() kerneldoc and adding
->> a kzfree backward compatibility macro in slab.h.
->>
->> ...
->>
->> --- a/include/linux/slab.h
->> +++ b/include/linux/slab.h
->> @@ -186,10 +186,12 @@ void memcg_deactivate_kmem_caches(struct mem_cgroup *, struct mem_cgroup *);
->>    */
->>   void * __must_check krealloc(const void *, size_t, gfp_t);
->>   void kfree(const void *);
->> -void kzfree(const void *);
->> +void kfree_sensitive(const void *);
->>   size_t __ksize(const void *);
->>   size_t ksize(const void *);
->>   
->> +#define kzfree(x)	kfree_sensitive(x)	/* For backward compatibility */
->> +
-> What was the thinking here?  Is this really necessary?
->
-> I suppose we could keep this around for a while to ease migration.  But
-> not for too long, please.
->
-It should be there just for 1 release cycle. I have broken out the btrfs 
-patch to the btrfs list and I didn't make the kzfree to kfree_sensitive 
-conversion there as that patch was in front in my patch list. So 
-depending on which one lands first, there can be a window where the 
-compilation may fail without this workaround. I am going to send out 
-another patch in the next release cycle to remove it.
+> Initially, I started down this path. It needed a bit of plumbing into
+> BPF to better control the lifetime of the cBPF "saved original filter"
+> (normally used by CHECKPOINT_RESTORE uses)
 
-Cheers,
-Longman
+I don't think you need that? When a filter is added, you can compute
+the results of the added individual filter, and then merge the state.
 
+> and then I needed to keep
+> making exceptions (same list you have: ALU, X register, scratch, etc)
+> in the name of avoiding too much complexity in the emulator. I decided
+> I'd rather reuse the existing infrastructure to actually execute the
+> filter (no cBPF copy needed to be saved, no separate code, and full
+> instruction coverage).
+
+If you really think that this bit of emulation is so bad, you could
+also make a copy of the BPF filter in which you replace all load
+instructions from syscall arguments with "return NON_CONSTANT_RESULT",
+and then run that through the normal BPF infrastructure.
+
+> > Something like (completely untested):
+[...]
+> I didn't actually finish going down the emulator path (I stopped right
+> around the time I verified that libseccomp does use BPF_ALU -- though
+> only BPF_AND), so I didn't actually evaluate the filter contents for other
+> filter builders (i.e. Chrome).
+>
+> But, if BPF_ALU | BPF_AND were added to your code above, it would cover
+> everything libseccomp generates (which covers a lot of the seccomp
+> filters, e.g. systemd, docker). I just felt funny about an "incomplete"
+> emulator.
+>
+> Though now you've got me looking. It seems this is the core
+> of Chrome's BPF instruction generation:
+> https://github.com/chromium/chromium/blob/master/sandbox/linux/bpf_dsl/policy_compiler.cc
+> It also uses ALU|AND, but adds JMP|JSET.
+>
+> So... that's only 2 more instructions to cover what I think are likely
+> the two largest seccomp instruction generators.
+>
+> > That way, you won't need any of this complicated architecture-specific stuff.
+>
+> There are two arch-specific needs, and using a cBPF-subset emulator
+> just gets rid of the local TLB flush. The other part is distinguishing
+> the archs. Neither requirement is onerous (TLB flush usually just
+> needs little more than an extern, arch is already documented in the
+> per-arch syscall_get_arch()).
+
+But it's also somewhat layer-breaking and reliant on very specific
+assumptions. Normal kernel code doesn't mess around with page table
+magic, outside of very specific low-level things. And your method
+would break if the fixed-value members were not all packed together at
+the start of the structure.
+
+
+And from a hardening perspective: The more code we add that fiddles
+around with PTEs directly, rather than going through higher-level
+abstractions, the higher the chance that something gets horribly
+screwed up. For example, this bit from your patch looks *really*
+suspect:
+
++                       preempt_disable();
++                       set_pte_at(&init_mm, vaddr, ptep,
+pte_mkold(*(READ_ONCE(ptep))));
++                       local_flush_tlb_kernel_range(vaddr, vaddr + PAGE_SIZE);
++                       preempt_enable();
+
+First off, that set_pte_at() is just a memory write; I don't see why
+you put it inside a preempt_disable() region.
+But more importantly, sticking a local TLB flush inside a
+preempt_disable() region with nothing else in there looks really
+shady. How is that supposed to work? If we migrate from CPU0 to CPU1
+directly before this region, and then from CPU1 back to CPU0 directly
+afterwards, the local TLB flush will have no effect.
