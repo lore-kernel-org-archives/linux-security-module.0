@@ -2,109 +2,198 @@ Return-Path: <SRS0=f9XP=75=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57A6FC433DF
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 18:37:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF33EC433E1
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 18:49:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 37D34207C4
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 18:37:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 884AA20B1F
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 18:49:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Dgp70rXH"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="d1hgB/Jf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730056AbgFPShx (ORCPT
+        id S1729941AbgFPStl (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 16 Jun 2020 14:37:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44674 "EHLO
+        Tue, 16 Jun 2020 14:49:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46588 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728067AbgFPShw (ORCPT
+        with ESMTP id S1727114AbgFPStj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 16 Jun 2020 14:37:52 -0400
-Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70D6FC061573
-        for <linux-security-module@vger.kernel.org>; Tue, 16 Jun 2020 11:37:51 -0700 (PDT)
-Received: by mail-pl1-x641.google.com with SMTP id k6so3810605pll.9
-        for <linux-security-module@vger.kernel.org>; Tue, 16 Jun 2020 11:37:51 -0700 (PDT)
+        Tue, 16 Jun 2020 14:49:39 -0400
+Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D141C061755
+        for <linux-security-module@vger.kernel.org>; Tue, 16 Jun 2020 11:49:39 -0700 (PDT)
+Received: by mail-pf1-x442.google.com with SMTP id b16so9908708pfi.13
+        for <linux-security-module@vger.kernel.org>; Tue, 16 Jun 2020 11:49:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=LbWK89MuCvj1Sl4N39K4jNgkLJl8ySKC6ZW5gbfqTIE=;
-        b=Dgp70rXHX7fnmUeMFYCfX+qP4dQ0ouFW9JvgEAXf8RQjWuosjN4K2kcoDDx3X6EGCd
-         gqfzfT1evQX/H5CFii9INhsHzWc/0QRxoWNvDEje7IgWDjZAqzWwG4SFM5nnDGXrCvGq
-         oYg/+EWEPEqiUnTNTUA8nUAAYg8FfdFtj7PQc=
+        bh=b8hRDF1XXrhu33JiDGyXvZcU8whbvzEGz0i9JpZbnTw=;
+        b=d1hgB/JfsbnTPAahOwwwk5u0Ves0Pd6Np/WEpvfWvNicPrEwEbwW6uhgYBPbHqFmUd
+         pqtLB52Wexz5oocb976Fc/Pe1WmQYH1IBjio5pDJErc1ZsgHAMAfaKk84Tw0uy9PAFsv
+         yHqRw5O7ESY5H28zG5bwR+MlYz9OKbGTkbgzw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=LbWK89MuCvj1Sl4N39K4jNgkLJl8ySKC6ZW5gbfqTIE=;
-        b=mfp4DsN21FUZD2crBl33xaMDaabqI/M3amb4YrILBdtptX2Y+XTJrV6/xVUXJyhuLR
-         iiMUn0qVZPHk9kuoOsAJcY70GN531gzwNetpEXco74MtTwSbsv6h/ZPUor2szvlGsI+X
-         FyCbpNh5DP9jojG77Q15PLICdiCc7JJGGAy/cyQSqpXNd1YZ4JVT6fRVzyDcahK8Ootc
-         AHvYOC3SvTX5vjWZzfl1n87/w3S/c4jDLDNONSiyZvhN+uYokTF6zVSR9AoU4mBUf5EK
-         o3FiuB9OnIj2CkrqnWMXDjeyQCRwTqXt22REeeQwhlk8xaZMrAqhLwtLGXYASpXpn0gZ
-         pN1Q==
-X-Gm-Message-State: AOAM531+I94eM9RT3AMt4jBTDHIh0zEIfGZnV9ajyW25BYf4ymwItwgG
-        xJdOjEmKVLFtQBTAeX1xb80Q1A==
-X-Google-Smtp-Source: ABdhPJzfKYAOTTy2Indkj4vuMYGO+9jnZ8oJ5woe6pxlS8gYmHIPPkUqYdSfRMXeUnQd3cx/XtTqWw==
-X-Received: by 2002:a17:902:b58f:: with SMTP id a15mr3308489pls.106.1592332671017;
-        Tue, 16 Jun 2020 11:37:51 -0700 (PDT)
+        bh=b8hRDF1XXrhu33JiDGyXvZcU8whbvzEGz0i9JpZbnTw=;
+        b=Yu57P1QgZ2M3xNmwYpduDa+cgiYcYCJcMdDPPCYDu3HL+gTRwb/q6e9MrLZe9YH0KZ
+         /oCI2i8cPP2uWyUSp/tVbW6UCza5YXjP4ybJ9zQAMsGs5b7mp1xtL4yZI0Ju3ZrYy2N7
+         wzGAVPtilKYN2L+7W1qwt4fTsS/zWOelDngjri4JbC9gih79lkHxDH6rFEig1JkcH/rx
+         0v/qdebcedymqf5Fp3Rp2zs5qgoVdODupX5xnZfWAVOa8JgULTUaLCAJI0kWJQ5PoDHC
+         +G6zLvYJ9u9Sw9ZiAKguf4pCBHJyiUUDH7jjv+zZoU6Lzu/w9ek7DO2pMNPMoUgSWLbO
+         +tRQ==
+X-Gm-Message-State: AOAM533CvV5gmpRSoP/bj15GGm5tCh7gGYCz7iSVH1l2+H9ie7wNDVPD
+        OR+tC5RKqookHcEa+IN3lLdp1A==
+X-Google-Smtp-Source: ABdhPJy3iOEuaZxX1Ecv1DqNdAuYKJbtRDJF37S2pVwLCY+nnumK7HqELR1zqiOaHjj813LM+Z+ubA==
+X-Received: by 2002:a62:4ec7:: with SMTP id c190mr3210241pfb.55.1592333378455;
+        Tue, 16 Jun 2020 11:49:38 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id a83sm17453213pfa.146.2020.06.16.11.37.49
+        by smtp.gmail.com with ESMTPSA id y7sm18313185pfq.43.2020.06.16.11.49.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jun 2020 11:37:50 -0700 (PDT)
-Date:   Tue, 16 Jun 2020 11:37:49 -0700
+        Tue, 16 Jun 2020 11:49:37 -0700 (PDT)
+Date:   Tue, 16 Jun 2020 11:49:36 -0700
 From:   Kees Cook <keescook@chromium.org>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
+To:     Jann Horn <jannh@google.com>
+Cc:     kernel list <linux-kernel@vger.kernel.org>,
         Christian Brauner <christian@brauner.io>,
         Sargun Dhillon <sargun@sargun.me>,
-        Tycho Andersen <tycho@tycho.ws>, Jann Horn <jannh@google.com>,
+        Tycho Andersen <tycho@tycho.ws>,
         "zhujianwei (C)" <zhujianwei7@huawei.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Matthew Wilcox <willy@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
         Will Drewry <wad@chromium.org>, Shuah Khan <shuah@kernel.org>,
         Matt Denton <mpdenton@google.com>,
         Chris Palmer <palmer@google.com>,
         Jeffrey Vander Stoep <jeffv@google.com>,
         Aleksa Sarai <cyphar@cyphar.com>,
-        Hehuazhen <hehuazhen@huawei.com>, X86 ML <x86@kernel.org>,
+        Hehuazhen <hehuazhen@huawei.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
         Linux Containers <containers@lists.linux-foundation.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
         Linux API <linux-api@vger.kernel.org>
-Subject: Re: [PATCH 6/8] x86: Provide API for local kernel TLB flushing
-Message-ID: <202006161136.524AA1C@keescook>
+Subject: Re: [PATCH 4/8] seccomp: Implement constant action bitmaps
+Message-ID: <202006161145.1E6B616CBE@keescook>
 References: <20200616074934.1600036-1-keescook@chromium.org>
- <20200616074934.1600036-7-keescook@chromium.org>
- <CALCETrVSnLAkWN_b7rNY1mbF16qXavbXYtv9fVZA-Q4ZVnTXhQ@mail.gmail.com>
+ <20200616074934.1600036-5-keescook@chromium.org>
+ <CAG48ez1p=dR_2ikKq=xVxkoGg0fYpTBpkhJSv1w-6BG=76PAvw@mail.gmail.com>
+ <202006160757.99FD9B785@keescook>
+ <CAG48ez2HrPLhby31PUFb4f=iM60USA4NYRE6AjE8pPQ+ctm60g@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALCETrVSnLAkWN_b7rNY1mbF16qXavbXYtv9fVZA-Q4ZVnTXhQ@mail.gmail.com>
+In-Reply-To: <CAG48ez2HrPLhby31PUFb4f=iM60USA4NYRE6AjE8pPQ+ctm60g@mail.gmail.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jun 16, 2020 at 09:59:29AM -0700, Andy Lutomirski wrote:
-> On Tue, Jun 16, 2020 at 12:49 AM Kees Cook <keescook@chromium.org> wrote:
+On Tue, Jun 16, 2020 at 08:36:28PM +0200, Jann Horn wrote:
+> On Tue, Jun 16, 2020 at 5:49 PM Kees Cook <keescook@chromium.org> wrote:
+> > On Tue, Jun 16, 2020 at 02:14:47PM +0200, Jann Horn wrote:
+> > > Wouldn't it be simpler to use a function that can run a subset of
+> > > seccomp cBPF and bails out on anything that indicates that a syscall's
+> > > handling is complex or on instructions it doesn't understand? For
+> > > syscalls that have a fixed policy, a typical seccomp filter doesn't
+> > > even use any of the BPF_ALU ops, the scratch space, or the X register;
+> > > it just uses something like the following set of operations, which is
+> > > easy to emulate without much code:
+> > >
+> > > BPF_LD | BPF_W | BPF_ABS
+> > > BPF_JMP | BPF_JEQ | BPF_K
+> > > BPF_JMP | BPF_JGE | BPF_K
+> > > BPF_JMP | BPF_JGT | BPF_K
+> > > BPF_JMP | BPF_JA
+> > > BPF_RET | BPF_K
 > >
-> > The seccomp constant action bitmap filter evaluation routine depends
-> > on being able to quickly clear the PTE "accessed" bit for a temporary
-> > allocation. Provide access to the existing CPU-local kernel memory TLB
-> > flushing routines.
+> > Initially, I started down this path. It needed a bit of plumbing into
+> > BPF to better control the lifetime of the cBPF "saved original filter"
+> > (normally used by CHECKPOINT_RESTORE uses)
 > 
-> Can you write a better justification?  Also, unless I'm just
+> I don't think you need that? When a filter is added, you can compute
+> the results of the added individual filter, and then merge the state.
 
-Er, dunno? That's the entire reason this series needs it.
+That's what I thought too, but unfortunately not (unless I missed
+something) -- the seccomp verifier is run as a callback from the BPF
+internals, so seccomp only see what the user sends (which is unverified)
+and the final eBPF filter. There isn't state I can attach during the
+callback, so I opted to just do the same thing as CHECKPOINT_RESTORE,
+but to then explicitly free the cBPF after bitmap generation.
 
-> incompetent this morning, I can't find anyone calling this in the
-> series.
+> > and then I needed to keep
+> > making exceptions (same list you have: ALU, X register, scratch, etc)
+> > in the name of avoiding too much complexity in the emulator. I decided
+> > I'd rather reuse the existing infrastructure to actually execute the
+> > filter (no cBPF copy needed to be saved, no separate code, and full
+> > instruction coverage).
+> 
+> If you really think that this bit of emulation is so bad, you could
+> also make a copy of the BPF filter in which you replace all load
+> instructions from syscall arguments with "return NON_CONSTANT_RESULT",
+> and then run that through the normal BPF infrastructure.
+> 
+> > > Something like (completely untested):
+> [...]
+> > I didn't actually finish going down the emulator path (I stopped right
+> > around the time I verified that libseccomp does use BPF_ALU -- though
+> > only BPF_AND), so I didn't actually evaluate the filter contents for other
+> > filter builders (i.e. Chrome).
+> >
+> > But, if BPF_ALU | BPF_AND were added to your code above, it would cover
+> > everything libseccomp generates (which covers a lot of the seccomp
+> > filters, e.g. systemd, docker). I just felt funny about an "incomplete"
+> > emulator.
+> >
+> > Though now you've got me looking. It seems this is the core
+> > of Chrome's BPF instruction generation:
+> > https://github.com/chromium/chromium/blob/master/sandbox/linux/bpf_dsl/policy_compiler.cc
+> > It also uses ALU|AND, but adds JMP|JSET.
+> >
+> > So... that's only 2 more instructions to cover what I think are likely
+> > the two largest seccomp instruction generators.
+> >
+> > > That way, you won't need any of this complicated architecture-specific stuff.
+> >
+> > There are two arch-specific needs, and using a cBPF-subset emulator
+> > just gets rid of the local TLB flush. The other part is distinguishing
+> > the archs. Neither requirement is onerous (TLB flush usually just
+> > needs little more than an extern, arch is already documented in the
+> > per-arch syscall_get_arch()).
+> 
+> But it's also somewhat layer-breaking and reliant on very specific
+> assumptions. Normal kernel code doesn't mess around with page table
+> magic, outside of very specific low-level things. And your method
+> would break if the fixed-value members were not all packed together at
+> the start of the structure.
 
-It's in patch 4, seccomp_update_bitmap():
-https://lore.kernel.org/lkml/20200616074934.1600036-5-keescook@chromium.org/
+Right -- that was lucky. I suspect the emulation route will win out
+here.
+
+> And from a hardening perspective: The more code we add that fiddles
+> around with PTEs directly, rather than going through higher-level
+> abstractions, the higher the chance that something gets horribly
+> screwed up. For example, this bit from your patch looks *really*
+> suspect:
+> 
+> +                       preempt_disable();
+> +                       set_pte_at(&init_mm, vaddr, ptep,
+> pte_mkold(*(READ_ONCE(ptep))));
+> +                       local_flush_tlb_kernel_range(vaddr, vaddr + PAGE_SIZE);
+> +                       preempt_enable();
+> 
+> First off, that set_pte_at() is just a memory write; I don't see why
+> you put it inside a preempt_disable() region.
+> But more importantly, sticking a local TLB flush inside a
+> preempt_disable() region with nothing else in there looks really
+> shady. How is that supposed to work? If we migrate from CPU0 to CPU1
+> directly before this region, and then from CPU1 back to CPU0 directly
+> afterwards, the local TLB flush will have no effect.
+
+Yeah, true, that's another good reason not to do this.
 
 -- 
 Kees Cook
