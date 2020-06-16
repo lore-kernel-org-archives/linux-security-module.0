@@ -2,213 +2,259 @@ Return-Path: <SRS0=f9XP=75=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 740CBC433DF
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 15:49:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CFD5C433DF
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 15:58:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5309A2071A
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 15:49:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC9B320882
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 15:58:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RMe1EOF/"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ME1Vbzrx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732467AbgFPPtA (ORCPT
+        id S1732690AbgFPP57 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 16 Jun 2020 11:49:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46654 "EHLO
+        Tue, 16 Jun 2020 11:57:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47534 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731341AbgFPPs7 (ORCPT
+        with ESMTP id S1732999AbgFPPyi (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 16 Jun 2020 11:48:59 -0400
-Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42242C061755
-        for <linux-security-module@vger.kernel.org>; Tue, 16 Jun 2020 08:48:59 -0700 (PDT)
-Received: by mail-pf1-x444.google.com with SMTP id 23so9678582pfw.10
-        for <linux-security-module@vger.kernel.org>; Tue, 16 Jun 2020 08:48:59 -0700 (PDT)
+        Tue, 16 Jun 2020 11:54:38 -0400
+Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 146DBC061755
+        for <linux-security-module@vger.kernel.org>; Tue, 16 Jun 2020 08:54:37 -0700 (PDT)
+Received: by mail-wr1-x441.google.com with SMTP id b6so2174048wrs.11
+        for <linux-security-module@vger.kernel.org>; Tue, 16 Jun 2020 08:54:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
+        h=from:date:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=aH/epTbtusDwdVV/kmnk+gLwl4nwhM0mg4o9WDdCqyA=;
-        b=RMe1EOF/QbamaW1pKPoBlac6ekdFsLU6mz3tWml5zqb7Z7Uujg9yC1sk7chzVhvyVA
-         sLDAvg0ARkYWCLwsNMrtTTAD8UMmfyaR/ZMzpg8PIYbdq5v157fkg2dRK2ZbWmeIjWFQ
-         S3gviQeWP5HFbvl3bpwsFl/6aB6LZ4cW2zpAI=
+        bh=aDlbEbbNRivF3ebZedTH8Z8/FH+h6CNXcJR+iNKCKPU=;
+        b=ME1VbzrxAlBBwHB1G/OhYY0V2n82GKbwpAk+OYZAtww0bAtsbbSlf4okMRpWh7j+Bg
+         H27gXbFGmFm00VD4/LOcE7zFeAfyMelJFT43q9zRNfHMw8VvLQtsL2qEKBhRYS0rkzf8
+         OObTbu0l1g0UXn03vOXV3J8AlULwUp5xOtwbM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=aH/epTbtusDwdVV/kmnk+gLwl4nwhM0mg4o9WDdCqyA=;
-        b=VJz0djt7Alxkw73FLSFAVTkFvQZQEYyPDyA7HayTwXdIDa74MF4NY/AB8rz7heEnaO
-         Y+Jhg+jxGKtVuE9sQBu1ZPkayr2/i9oCW+39RcEAELeZmKIDKK1o97/lYw+DX7HvVlW0
-         BoBmv+d9EzXXpn3NGUxlgmXHIC/QnWTzZJRrMI+Ypeb8+r7oq2TwPFBHM04uIzT3MtSb
-         rLZO6e6jECdU3D37vvtQUABFnyCqe+bU8eod3SJdNF2wo46FDJkjOdE98/B3DqRlIfx3
-         NMUPxUi5FrGOYJP1JB3fUHluSG/YjWMMpPixbe/fYnOyPP7BJkJzjnnKskYQWelnY86P
-         xC3g==
-X-Gm-Message-State: AOAM533vgL75u1x24ujeG752b/3ty7aWih7t9zWDxVfC+zPFVPws8t/z
-        00TJahoi8kL8KS2V6YVTW5yJe1Fqnz+0ZQ==
-X-Google-Smtp-Source: ABdhPJwiF2EGmCauQgmbrFK+BPdWWaiX4E7rH2Evt8OuhdmgMlvqfRGFBs5IfXJQ2kBCqUyaSrpS7w==
-X-Received: by 2002:a63:690:: with SMTP id 138mr1514366pgg.122.1592322538740;
-        Tue, 16 Jun 2020 08:48:58 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id w24sm17371351pfn.11.2020.06.16.08.48.57
+        bh=aDlbEbbNRivF3ebZedTH8Z8/FH+h6CNXcJR+iNKCKPU=;
+        b=iaHrQ2SJ6ML4ZF5BSoQlglczEwWd5vjOEzAP3tcaI1EeQuBInR8LCLvJx2Ucstqqq/
+         0XLdTqj3qmbbLwcz5ov6flb+rDPovEGoRzFJif9cFrOO//xPC2qE+kHgSMgif0Li+DGq
+         y/aX014k3oAFEtyw/kNE521QJgrupeMARx5ALaRPdXSyAcVHtTENRu/kdO0Cvma8f9nv
+         vyNOQr4eVku3FIFJ8ORkyBCPR8zo17MHCCfhjcgeN05Bx6qsbKAwEx5eWrSXoHUHj/WH
+         4Ifmc1l6pt87RwGeJNtCRfqh+6reH/YO89yx8gps8do9jtTGgxS/WIqElZELZZkSzMxv
+         sMgg==
+X-Gm-Message-State: AOAM5329/rdsk3yuDGYhxi8CJ8rmEjr7FtR1QwVL+xNphL0TBAS/I1R7
+        4mstb5RkcICO7msy9JgKPinkZQ==
+X-Google-Smtp-Source: ABdhPJw/xY99cSSYy1TOkNlqCb1a1X4k8XHZ1Cb/ZTrXyvdfJ05YS9wh9WeiDmqxcDUWD31BZdw5oA==
+X-Received: by 2002:a5d:6b8c:: with SMTP id n12mr3763512wrx.61.1592322875641;
+        Tue, 16 Jun 2020 08:54:35 -0700 (PDT)
+Received: from google.com ([81.6.44.51])
+        by smtp.gmail.com with ESMTPSA id v6sm31576887wrf.61.2020.06.16.08.54.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jun 2020 08:48:57 -0700 (PDT)
-Date:   Tue, 16 Jun 2020 08:48:56 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Jann Horn <jannh@google.com>
-Cc:     kernel list <linux-kernel@vger.kernel.org>,
-        Christian Brauner <christian@brauner.io>,
-        Sargun Dhillon <sargun@sargun.me>,
-        Tycho Andersen <tycho@tycho.ws>,
-        "zhujianwei (C)" <zhujianwei7@huawei.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Will Drewry <wad@chromium.org>, Shuah Khan <shuah@kernel.org>,
-        Matt Denton <mpdenton@google.com>,
-        Chris Palmer <palmer@google.com>,
-        Jeffrey Vander Stoep <jeffv@google.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Hehuazhen <hehuazhen@huawei.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: [PATCH 4/8] seccomp: Implement constant action bitmaps
-Message-ID: <202006160757.99FD9B785@keescook>
-References: <20200616074934.1600036-1-keescook@chromium.org>
- <20200616074934.1600036-5-keescook@chromium.org>
- <CAG48ez1p=dR_2ikKq=xVxkoGg0fYpTBpkhJSv1w-6BG=76PAvw@mail.gmail.com>
+        Tue, 16 Jun 2020 08:54:34 -0700 (PDT)
+From:   KP Singh <kpsingh@chromium.org>
+X-Google-Original-From: KP Singh <kpsingh>
+Date:   Tue, 16 Jun 2020 17:54:33 +0200
+To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc:     KP Singh <kpsingh@chromium.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, bpf <bpf@vger.kernel.org>,
+        linux-security-module@vger.kernel.org,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        James Morris <jmorris@namei.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Florent Revest <revest@chromium.org>
+Subject: Re: [PATCH bpf-next 4/4] bpf: Add selftests for local_storage
+Message-ID: <20200616155433.GA11971@google.com>
+References: <20200526163336.63653-1-kpsingh@chromium.org>
+ <20200526163336.63653-5-kpsingh@chromium.org>
+ <CAEf4BzY0=Hh3O6qeD=2sMWpQRpHpizxH+nEA0hD0khPf3VAbhA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAG48ez1p=dR_2ikKq=xVxkoGg0fYpTBpkhJSv1w-6BG=76PAvw@mail.gmail.com>
+In-Reply-To: <CAEf4BzY0=Hh3O6qeD=2sMWpQRpHpizxH+nEA0hD0khPf3VAbhA@mail.gmail.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jun 16, 2020 at 02:14:47PM +0200, Jann Horn wrote:
-> Wouldn't it be simpler to use a function that can run a subset of
-> seccomp cBPF and bails out on anything that indicates that a syscall's
-> handling is complex or on instructions it doesn't understand? For
-> syscalls that have a fixed policy, a typical seccomp filter doesn't
-> even use any of the BPF_ALU ops, the scratch space, or the X register;
-> it just uses something like the following set of operations, which is
-> easy to emulate without much code:
+On 01-Jun 13:29, Andrii Nakryiko wrote:
+> On Tue, May 26, 2020 at 9:34 AM KP Singh <kpsingh@chromium.org> wrote:
+> >
+> > From: KP Singh <kpsingh@google.com>
+> >
+> > inode_local_storage:
+> >
+> > * Hook to the file_open and inode_unlink LSM hooks.
+> > * Create and unlink a temporary file.
+> > * Store some information in the inode's bpf_local_storage during
+> >   file_open.
+> > * Verify that this information exists when the file is unlinked.
+> >
+> > sk_local_storage:
+> >
+> > * Hook to the socket_post_create and socket_bind LSM hooks.
+> > * Open and bind a socket and set the sk_storage in the
+> >   socket_post_create hook using the start_server helper.
+> > * Verify if the information is set in the socket_bind hook.
+> >
+> > Signed-off-by: KP Singh <kpsingh@google.com>
+> > ---
+> >  .../bpf/prog_tests/test_local_storage.c       |  60 ++++++++
+> >  .../selftests/bpf/progs/local_storage.c       | 139 ++++++++++++++++++
+> >  2 files changed, 199 insertions(+)
+> >  create mode 100644 tools/testing/selftests/bpf/prog_tests/test_local_storage.c
+> >  create mode 100644 tools/testing/selftests/bpf/progs/local_storage.c
+> >
 > 
-> BPF_LD | BPF_W | BPF_ABS
-> BPF_JMP | BPF_JEQ | BPF_K
-> BPF_JMP | BPF_JGE | BPF_K
-> BPF_JMP | BPF_JGT | BPF_K
-> BPF_JMP | BPF_JA
-> BPF_RET | BPF_K
+> [...]
+> 
+> > +struct dummy_storage {
+> > +       __u32 value;
+> > +};
+> > +
+> > +struct {
+> > +       __uint(type, BPF_MAP_TYPE_INODE_STORAGE);
+> > +       __uint(map_flags, BPF_F_NO_PREALLOC);
+> > +       __type(key, int);
+> > +       __type(value, struct dummy_storage);
+> > +} inode_storage_map SEC(".maps");
+> > +
+> > +struct {
+> > +       __uint(type, BPF_MAP_TYPE_SK_STORAGE);
+> > +       __uint(map_flags, BPF_F_NO_PREALLOC | BPF_F_CLONE);
+> > +       __type(key, int);
+> > +       __type(value, struct dummy_storage);
+> > +} sk_storage_map SEC(".maps");
+> > +
+> > +/* Using vmlinux.h causes the generated BTF to be so big that the object
+> > + * load fails at btf__load.
+> > + */
+> 
+> That's first time I hear about such issue. Do you have an error log
+> from verifier?
 
-Initially, I started down this path. It needed a bit of plumbing into
-BPF to better control the lifetime of the cBPF "saved original filter"
-(normally used by CHECKPOINT_RESTORE uses), and then I needed to keep
-making exceptions (same list you have: ALU, X register, scratch, etc)
-in the name of avoiding too much complexity in the emulator. I decided
-I'd rather reuse the existing infrastructure to actually execute the
-filter (no cBPF copy needed to be saved, no separate code, and full
-instruction coverage).
+Here's what I get when I do the following change.
+
+--- a/tools/testing/selftests/bpf/progs/local_storage.c
++++ b/tools/testing/selftests/bpf/progs/local_storage.c
+@@ -4,8 +4,8 @@
+  * Copyright 2020 Google LLC.
+  */
+ 
++#include "vmlinux.h"
+ #include <errno.h>
+-#include <linux/bpf.h>
+ #include <stdbool.h>
+ #include <bpf/bpf_helpers.h>
+ #include <bpf/bpf_tracing.h>
+@@ -37,24 +37,6 @@ struct {
+        __type(value, struct dummy_storage);
+ } sk_storage_map SEC(".maps");
+ 
+-/* Using vmlinux.h causes the generated BTF to be so big that the object
+- * load fails at btf__load.
+- */
+-struct sock {} __attribute__((preserve_access_index));
+-struct sockaddr {} __attribute__((preserve_access_index));
+-struct socket {
+-       struct sock *sk;
+-} __attribute__((preserve_access_index));
+-
+-struct inode {} __attribute__((preserve_access_index));
+-struct dentry {
+-       struct inode *d_inode;
+-} __attribute__((preserve_access_index));
+-struct file {
+-       struct inode *f_inode;
+-} __attribute__((preserve_access_index));
+
+./test_progs -t test_local_storage
+libbpf: Error loading BTF: Invalid argument(22)
+libbpf: magic: 0xeb9f
+version: 1
+flags: 0x0
+hdr_len: 24
+type_off: 0
+type_len: 4488
+str_off: 4488
+str_len: 3012
+btf_total_size: 7524
+
+[1] STRUCT (anon) size=32 vlen=4
+	type type_id=2 bits_offset=0
+	map_flags type_id=6 bits_offset=64
+	key type_id=8 bits_offset=128
+	value type_id=9 bits_offset=192
+[2] PTR (anon) type_id=4
+[3] INT int size=4 bits_offset=0 nr_bits=32 encoding=SIGNED
+[4] ARRAY (anon) type_id=3 index_type_id=5 nr_elems=28
+[5] INT __ARRAY_SIZE_TYPE__ size=4 bits_offset=0 nr_bits=32 encoding=(none)
+[6] PTR (anon) type_id=7
+[7] ARRAY (anon) type_id=3 index_type_id=5 nr_elems=1
+[8] PTR (anon) type_id=3
+[9] PTR (anon) type_id=10
+[10] STRUCT dummy_storage size=4 vlen=1
+	value type_id=11 bits_offset=0
+[11] TYPEDEF __u32 type_id=12
+
+  [... More BTF Dump ...]
+
+[91] TYPEDEF wait_queue_head_t type_id=175
+
+  [... More BTF Dump ...]
+
+[173] FWD super_block struct
+[174] FWD vfsmount struct
+[175] FWD wait_queue_head struct
+[106] STRUCT socket_wq size=128 vlen=4
+	wait type_id=91 bits_offset=0 Invalid member
+
+libbpf: Error loading .BTF into kernel: -22.
+libbpf: map 'inode_storage_map': failed to create: Invalid argument(-22)
+libbpf: failed to load object 'local_storage'
+libbpf: failed to load BPF skeleton 'local_storage': -22
+test_test_local_storage:FAIL:skel_load lsm skeleton failed
+#81 test_local_storage:FAIL
+
+The failiure is in:
+
+[106] STRUCT socket_wq size=128 vlen=4
+	wait type_id=91 bits_offset=0 Invalid member
 
 > 
-> Something like (completely untested):
+> Clang is smart enough to trim down used types to only those that are
+> actually necessary, so too big BTF shouldn't be a thing. But let's try
+> to dig into this and fix whatever issue it is, before giving up :)
 > 
-> /*
->  * Try to statically determine whether @filter will always return a fixed result
->  * when run for syscall @nr under architecture @arch.
->  * Returns true if the result could be determined; if so, the result will be
->  * stored in @action.
->  */
-> static bool seccomp_check_syscall(struct sock_filter *filter, unsigned int arch,
->                                   unsigned int nr, unsigned int *action)
-> {
->   int pc;
->   unsigned int reg_value = 0;
+
+I was wrong about the size being an issue. The verifier thinks the BTF
+is invalid and more specificially it thinks that the socket_wq's
+member with type_id=91, i.e. typedef wait_queue_head_t is invalid. Am
+I missing some toolchain patches?
+
+- KP
+
+
+> > +struct sock {} __attribute__((preserve_access_index));
+> > +struct sockaddr {} __attribute__((preserve_access_index));
+> > +struct socket {
+> > +       struct sock *sk;
+> > +} __attribute__((preserve_access_index));
+> > +
+> > +struct inode {} __attribute__((preserve_access_index));
+> > +struct dentry {
+> > +       struct inode *d_inode;
+> > +} __attribute__((preserve_access_index));
+> > +struct file {
+> > +       struct inode *f_inode;
+> > +} __attribute__((preserve_access_index));
+> > +
+> > +
 > 
->   for (pc = 0; 1; pc++) {
->     struct sock_filter *insn = &filter[pc];
->     u16 code = insn->code;
->     u32 k = insn->k;
-> 
->     switch (code) {
->     case BPF_LD | BPF_W | BPF_ABS:
->       if (k == offsetof(struct seccomp_data, nr)) {
->         reg_value = nr;
->       } else if (k == offsetof(struct seccomp_data, arch)) {
->         reg_value = arch;
->       } else {
->         return false; /* can't optimize (non-constant value load) */
->       }
->       break;
->     case BPF_RET | BPF_K:
->       *action = insn->k;
->       return true; /* success: reached return with constant values only */
->     case BPF_JMP | BPF_JA:
->       pc += insn->k;
->       break;
->     case BPF_JMP | BPF_JEQ | BPF_K:
->     case BPF_JMP | BPF_JGE | BPF_K:
->     case BPF_JMP | BPF_JGT | BPF_K:
->     default:
->       if (BPF_CLASS(code) == BPF_JMP && BPF_SRC(code) == BPF_K) {
->         u16 op = BPF_OP(code);
->         bool op_res;
-> 
->         switch (op) {
->         case BPF_JEQ:
->           op_res = reg_value == k;
->           break;
->         case BPF_JGE:
->           op_res = reg_value >= k;
->           break;
->         case BPF_JGT:
->           op_res = reg_value > k;
->           break;
->         default:
->           return false; /* can't optimize (unknown insn) */
->         }
-> 
->         pc += op_res ? insn->jt : insn->jf;
->         break;
->       }
->       return false; /* can't optimize (unknown insn) */
->     }
->   }
-> }
-
-I didn't actually finish going down the emulator path (I stopped right
-around the time I verified that libseccomp does use BPF_ALU -- though
-only BPF_AND), so I didn't actually evaluate the filter contents for other
-filter builders (i.e. Chrome).
-
-But, if BPF_ALU | BPF_AND were added to your code above, it would cover
-everything libseccomp generates (which covers a lot of the seccomp
-filters, e.g. systemd, docker). I just felt funny about an "incomplete"
-emulator.
-
-Though now you've got me looking. It seems this is the core
-of Chrome's BPF instruction generation:
-https://github.com/chromium/chromium/blob/master/sandbox/linux/bpf_dsl/policy_compiler.cc
-It also uses ALU|AND, but adds JMP|JSET.
-
-So... that's only 2 more instructions to cover what I think are likely
-the two largest seccomp instruction generators.
-
-> That way, you won't need any of this complicated architecture-specific stuff.
-
-There are two arch-specific needs, and using a cBPF-subset emulator
-just gets rid of the local TLB flush. The other part is distinguishing
-the archs. Neither requirement is onerous (TLB flush usually just
-needs little more than an extern, arch is already documented in the
-per-arch syscall_get_arch()). The awkward part I ran into for arm64
-was a header include loop for compat due to how unistd is handled for
-getting NR_syscalls for the bitmap sizing (which I'm sure is solvable,
-but I just wanted to get the x86 RFC posted first).
-
--- 
-Kees Cook
+> [...]
