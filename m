@@ -6,117 +6,112 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BEBDC433E0
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 16:18:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8112C433DF
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 16:36:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1BCB420882
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 16:18:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1282208B3
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 16:36:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XjCEbPGQ"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gnG7x985"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732376AbgFPQSO (ORCPT
+        id S1729073AbgFPQgH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 16 Jun 2020 12:18:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51254 "EHLO
+        Tue, 16 Jun 2020 12:36:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54056 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731646AbgFPQSK (ORCPT
+        with ESMTP id S1729051AbgFPQgG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 16 Jun 2020 12:18:10 -0400
-Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FA84C061573
-        for <linux-security-module@vger.kernel.org>; Tue, 16 Jun 2020 09:18:10 -0700 (PDT)
-Received: by mail-pf1-x442.google.com with SMTP id 10so9722589pfx.8
-        for <linux-security-module@vger.kernel.org>; Tue, 16 Jun 2020 09:18:10 -0700 (PDT)
+        Tue, 16 Jun 2020 12:36:06 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52A12C06174E
+        for <linux-security-module@vger.kernel.org>; Tue, 16 Jun 2020 09:36:06 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id k8so14770844edq.4
+        for <linux-security-module@vger.kernel.org>; Tue, 16 Jun 2020 09:36:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=VPiig07nxQc9lwVFwfYIH3T1ET4UEo+E1D0Wd8u+hBk=;
-        b=XjCEbPGQUfD9AjE8Hevx52b4HKLCh8oQsGbdC1PHF3Q3QbQn9Ygd51hLvkzVjxG3RX
-         UtN728e+HKmcQcP8keX/4Kwc+Ht/ZOiBd+tejEg6vDoXtD7HbPCgbRcKvY43gkmThxUy
-         bNcZxPwfyTV9TOAjM5Nf8FXt7R7jq7FXYA3UM=
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=o45SzGEhISkHwjx9Xk4Zota2ATe5VzgJHxzdX5yZlQU=;
+        b=gnG7x985R1tEYKBnLkUkqIitLuGBbe4oy0tyxAEpf5dAqa8wk5smI8Q0pG0OCsItX9
+         Dtq00XodNngQZXU3Dg+2Nt/+mxzu9Or+7h6TwNDXlMz2y2RVzRZZDD4xU5xoIzkyUpSR
+         dlZUH/WF8264k1pLGkLagvsL1f2bnzkP2I2Ko=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=VPiig07nxQc9lwVFwfYIH3T1ET4UEo+E1D0Wd8u+hBk=;
-        b=jRDrZ9VSIQYoaqlC5A7Z7mUgomOPPIFB+1G8Gd4NuGt0pFcT3sobpjLjSDFNAEvSU/
-         7VCFsEH/D+UDeBJZiAiihxLMaHVrno5HmTTvsVIi+qgbezSI8jZkGml/RlnIoP8YHIif
-         OENWqyG2JU9kUiwlOAKPKyuVC4ABdHdsmhC6SBVxUwjoCwKTcuLRlO83gJxKwcu4Davx
-         9UiempFhVTu0c18eVB8q/TF1tc/SrYxtp+ir20pGPWfcSKusdkOWSwJNgYU/M7U3WPNY
-         pc3Iny3YJvv1G/WfaLQ0WfsMZ1hIk7TGxOtjSXQ5/gNAkbRZ0GmjZcKpT/z8AiV9KFED
-         ifZw==
-X-Gm-Message-State: AOAM532zHiAXe/6o0ftgr7TY0wK00nsR/5K8lavTCosAapOsliXtOjUd
-        Bcbmh36wsxcmzKb63lA8kMvEtQ==
-X-Google-Smtp-Source: ABdhPJyXAmJNtObOlU+rzC52vUgZGrV4mSFDLUt84VwfrotzrnZ8vPKhz8hCE9vZvCTtbLg7XCtYDQ==
-X-Received: by 2002:a65:484c:: with SMTP id i12mr2637328pgs.267.1592324290000;
-        Tue, 16 Jun 2020 09:18:10 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id w6sm2996602pjy.15.2020.06.16.09.18.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jun 2020 09:18:08 -0700 (PDT)
-Date:   Tue, 16 Jun 2020 09:18:07 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Alexander Potapenko <glider@google.com>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        James Morris <jmorris@namei.org>,
-        Maciej =?utf-8?Q?=C5=BBenczykowski?= <maze@google.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] [RFC] security: allow using Clang's zero
- initialization for stack variables
-Message-ID: <202006160911.BD403B5@keescook>
-References: <20200616083435.223038-1-glider@google.com>
- <20200616100309.GA2614426@kroah.com>
- <CAG_fn=VYN6ynu2bnW96-p-QRi77NstHC6DXS+AN0r0bm5K2j7w@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=o45SzGEhISkHwjx9Xk4Zota2ATe5VzgJHxzdX5yZlQU=;
+        b=HZC2NelJFNnVyGYDzhgGyyPUIAIhblMgn6Y4MdymzbLM7Zc8AhDDvJCgX4BK6sxXaS
+         HfmWnDjLi9oT+sKNB7+klcuwKnu0SmfxWWNz9QKRnJcdI/FlI5banBL5MdkVTpO38ltI
+         DLQmFM9I4G5eTp1jdO08AmrMzIP4keMrYnDNmNPRrHhTn1jOoZ4g6XlpMsYvpdCImgmq
+         w5J93xgcpaf0gEsHZUizLKRMYbFnEk3t1Sakfw+/mVxiRlk7eApCxI5LIn67qGhoJ5Wk
+         ix2yk7BPQyPEvwgoXsE9d6aKTWFVlutNIgS2jwbHcS0XPoDuQQEnGYpyRT4Zbsb/sBQk
+         /jnw==
+X-Gm-Message-State: AOAM531fnveS6T05+dRo8PP3sUgbPTGALUVKeyd+zOG4bSEpYpamAew/
+        XDg7R2A0MH493IKfGN4zw27mcL3Z813zFbL+VbSA5RS3veY=
+X-Google-Smtp-Source: ABdhPJyc7aL3w4XRRIomOZ4mG3n4e8Sc1Y0FRNCDqH9HrUkbAg1OXuTS1fNZ/rLEGJcYfisj5f3DmVKI8970fJ0YBGk=
+X-Received: by 2002:a05:6402:b13:: with SMTP id bm19mr3460769edb.82.1592325364666;
+ Tue, 16 Jun 2020 09:36:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAG_fn=VYN6ynu2bnW96-p-QRi77NstHC6DXS+AN0r0bm5K2j7w@mail.gmail.com>
+References: <CAJ-EccOy4qDpbfrP5=KH40LSOx1F4-ciY2=hFv_c+goUHLJ6PQ@mail.gmail.com>
+ <CAHk-=wiLXXR1+o4VAuw5MM3V1D8h6C6te3y8VMvW8iAJw6noJg@mail.gmail.com>
+ <CAJ-EccPGQ62yMK1Nmvie4qWzproSqb4POwAD4_0Nt62KLbGhqg@mail.gmail.com>
+ <alpine.LRH.2.21.2006151517230.9003@namei.org> <CAJ-EccO+4s8Dd=wj75ckfp4ZLhppt7uCgg2chf4SvTOxzqbgPw@mail.gmail.com>
+ <alpine.LRH.2.21.2006160403190.9951@namei.org>
+In-Reply-To: <alpine.LRH.2.21.2006160403190.9951@namei.org>
+From:   Micah Morton <mortonm@chromium.org>
+Date:   Tue, 16 Jun 2020 09:35:54 -0700
+Message-ID: <CAJ-EccNrw6J0-Z2qAMpAT4YUZMmuAN8P33SjN6tGOjekYHggGw@mail.gmail.com>
+Subject: Re: [GIT PULL] SafeSetID LSM changes for v5.8
+To:     James Morris <jmorris@namei.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        John Johansen <john.johansen@canonical.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jun 16, 2020 at 02:15:52PM +0200, Alexander Potapenko wrote:
-> > > +KBUILD_CFLAGS        += -ftrivial-auto-var-init=zero -enable-trivial-auto-var-init-zero-knowing-it-will-be-removed-from-clang
-> > > +endif
+On Mon, Jun 15, 2020 at 11:03 AM James Morris <jmorris@namei.org> wrote:
+>
+> On Mon, 15 Jun 2020, Micah Morton wrote:
+>
+> > On Sun, Jun 14, 2020 at 10:21 PM James Morris <jmorris@namei.org> wrote:
+> > >
+> > > On Sun, 14 Jun 2020, Micah Morton wrote:
+> > >
+> > > > This patch was sent to the security mailing list and there were no objections.
+> > >
+> > > Standard practice for new or modified LSM hooks is that they are reviewed
+> > > and acked by maintainers of major LSMs (SELinux, AppArmor, and Smack, at
+> > > least).
+> > >
+> > > "No objections" should be considered "not reviewed".
+> > >
+> > > Can you add your tree to linux-next?
+> > > https://www.kernel.org/doc/man-pages/linux-next.html
 > >
-> > Gotta love the name...
-> 
-> This is basically the reason why we've been hesitating to add it to
-> the kernel from the very beginning.
-> 
-> > Anyway, if this is enabled, and clang changes the flag or drops it, does
-> > the build suddenly break?
-> 
-> My original intention (see v1 of this patch) was to make
-> zero-initialization a secondary option of INIT_STACK_ALL, so that
-> nothing changes for the existing users.
-> But I agree with Kees that these options should be made distinct, as
-> people may want to use them for different purposes (think debug vs.
-> release builds).
+> > Sure, I can do that. I should just send an email to Stephen Rothwell
+> > asking him to include the -next branch from my tree?
+>
+> Yep, thanks.
 
-Yeah, and if the flag changes again, we can adapt. But at this point,
-it's getting used downstream, so we need to land the config in the
-kernel.
+The commit is in -next as of next-20200615
 
-> We could make INIT_STACK_ALL_ZERO fall back to INIT_STACK_ALL_PATTERN
-> if the compiler flag goes away - does this make sense?
+Thanks
 
-I don't like this idea -- I'm very hesitant to make security options do
-something different than what they document. It means the end user can't
-reason about how their kernel is built when looking at their CONFIGs.
-
-> > And does gcc have something like this as well, or does that have to come
-> > in a compiler plugin?
-> 
-> Kees mentioned someone's plans to implement that in GCC, but I don't
-> think they have done it already.
-
-I've had some GCC folks reach about about these features, but I haven't
-seen any public discussion yet.
-
--- 
-Kees Cook
+>
+> >
+> > >
+> > > --
+> > > James Morris
+> > > <jmorris@namei.org>
+> > >
+> >
+>
+> --
+> James Morris
+> <jmorris@namei.org>
+>
