@@ -2,111 +2,142 @@ Return-Path: <SRS0=f9XP=75=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B25DEC433E0
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 19:55:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B620AC433E3
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 20:01:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9672D20810
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 19:55:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A8F1206F1
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 20:01:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gwuk/kzd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730630AbgFPTzN (ORCPT
+        id S1731446AbgFPUBm (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 16 Jun 2020 15:55:13 -0400
-Received: from mga02.intel.com ([134.134.136.20]:48548 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728144AbgFPTzM (ORCPT
+        Tue, 16 Jun 2020 16:01:42 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:54627 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1731142AbgFPUBl (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 16 Jun 2020 15:55:12 -0400
-IronPort-SDR: UgDqcUaBH6Z7j6RuDAbiTo7J5JXCtj8Tt3Flr6Zb1nQ0G/Qe43UBianefvjnxKMyye+ZugLHp3
- E55JWHqvCjxA==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2020 12:55:11 -0700
-IronPort-SDR: L9wi8U+03tTN6+vKwsCFCPmfXUX6scD66uycNs5QT+D0rVy04+ilW32NFUDhSPvD3YJ07a0Cbt
- Pu/Re4MQ226Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.73,519,1583222400"; 
-   d="scan'208";a="261519323"
-Received: from gosinald-mobl2.ger.corp.intel.com (HELO localhost) ([10.249.36.106])
-  by fmsmga007.fm.intel.com with ESMTP; 16 Jun 2020 12:55:02 -0700
-Date:   Tue, 16 Jun 2020 22:55:01 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Darren Kenny <darren.kenny@oracle.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org, linux-security-module@vger.kernel.org,
-        Jethro Beekman <jethro@fortanix.com>,
-        Andy Lutomirski <luto@kernel.org>, akpm@linux-foundation.org,
-        andriy.shevchenko@linux.intel.com, asapek@google.com, bp@alien8.de,
-        cedric.xing@intel.com, chenalexchen@google.com,
-        conradparker@google.com, cyhanish@google.com,
-        dave.hansen@intel.com, haitao.huang@intel.com,
-        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
-        kmoy@google.com, ludloff@google.com, nhorman@redhat.com,
-        npmccallum@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
-        sean.j.christopherson@intel.com, tglx@linutronix.de,
-        yaozhangx@google.com
-Subject: Re: [PATCH v32 12/21] x86/sgx: Add provisioning
-Message-ID: <20200616195450.GA10412@linux.intel.com>
-References: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
- <20200601075218.65618-13-jarkko.sakkinen@linux.intel.com>
- <m2img5tgtu.fsf@oracle.com>
+        Tue, 16 Jun 2020 16:01:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1592337700;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=IZuHuVBorvvnUwBUanoxn5EJfFFGTbG0F4JYxmnKd8I=;
+        b=gwuk/kzdb3Ik/Dhd6PCUCPRmNEObII+9CwrZ/qJl/8ZMzV9Julk2/PzPS1Kt5wSfmj85JW
+        GcpiGRFXoqunERmt75RXVaWyPWzbgwxA9xXkyR72DbZB1LRzKAyBx7Ars6UjCB0BBiDDAL
+        Uk6QmjDdivEAi3x3XULlpxOBCWEX8XA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-195-RsA5jiRVM622hegDVDAGvA-1; Tue, 16 Jun 2020 16:01:36 -0400
+X-MC-Unique: RsA5jiRVM622hegDVDAGvA-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id AD51C8035E9;
+        Tue, 16 Jun 2020 20:01:28 +0000 (UTC)
+Received: from llong.remote.csb (ovpn-114-156.rdu2.redhat.com [10.10.114.156])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4F41719D71;
+        Tue, 16 Jun 2020 20:01:20 +0000 (UTC)
+Subject: Re: [PATCH v4 0/3] mm, treewide: Rename kzfree() to kfree_sensitive()
+To:     Joe Perches <joe@perches.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        David Rientjes <rientjes@google.com>
+Cc:     Michal Hocko <mhocko@suse.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        David Sterba <dsterba@suse.cz>,
+        "Jason A . Donenfeld" <Jason@zx2c4.com>, linux-mm@kvack.org,
+        keyrings@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-amlogic@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-ppp@vger.kernel.org, wireguard@lists.zx2c4.com,
+        linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, ecryptfs@vger.kernel.org,
+        kasan-dev@googlegroups.com, linux-bluetooth@vger.kernel.org,
+        linux-wpan@vger.kernel.org, linux-sctp@vger.kernel.org,
+        linux-nfs@vger.kernel.org, tipc-discussion@lists.sourceforge.net,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org
+References: <20200616015718.7812-1-longman@redhat.com>
+ <fe3b9a437be4aeab3bac68f04193cb6daaa5bee4.camel@perches.com>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <7662bfe8-b279-f98c-3ae3-c3b889aea1f5@redhat.com>
+Date:   Tue, 16 Jun 2020 16:01:19 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <m2img5tgtu.fsf@oracle.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <fe3b9a437be4aeab3bac68f04193cb6daaa5bee4.camel@perches.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jun 05, 2020 at 09:09:49PM +0100, Darren Kenny wrote:
-> TYPO: s/devilering/delivering/?
+On 6/16/20 2:53 PM, Joe Perches wrote:
+> On Mon, 2020-06-15 at 21:57 -0400, Waiman Long wrote:
+>>   v4:
+>>    - Break out the memzero_explicit() change as suggested by Dan Carpenter
+>>      so that it can be backported to stable.
+>>    - Drop the "crypto: Remove unnecessary memzero_explicit()" patch for
+>>      now as there can be a bit more discussion on what is best. It will be
+>>      introduced as a separate patch later on after this one is merged.
+> To this larger audience and last week without reply:
+> https://lore.kernel.org/lkml/573b3fbd5927c643920e1364230c296b23e7584d.camel@perches.com/
+>
+> Are there _any_ fastpath uses of kfree or vfree?
+>
+> Many patches have been posted recently to fix mispairings
+> of specific types of alloc and free functions.
+>
+> To eliminate these mispairings at a runtime cost of four
+> comparisons, should the kfree/vfree/kvfree/kfree_const
+> functions be consolidated into a single kfree?
+>
+> Something like the below:
+>
+>     void kfree(const void *addr)
+>     {
+>     	if (is_kernel_rodata((unsigned long)addr))
+>     		return;
+>
+>     	if (is_vmalloc_addr(addr))
+>     		_vfree(addr);
+>     	else
+>     		_kfree(addr);
+>     }
+>
+>     #define kvfree		kfree
+>     #define vfree		kfree
+>     #define kfree_const	kfree
+>
+>
+How about adding CONFIG_DEBUG_VM code to check for invalid address 
+ranges in kfree() and vfree()? By doing this, we can catch unmatched 
+pairing in debug mode, but won't have the overhead when debug mode is off.
 
-I decided to rewrite the whole thing:
+Thought?
 
-  x86/sgx: Allow a limited use of ATTRIBUTE.PROVISIONKEY for attestation
+Cheers,
+Longman
 
-  Provisioning Certification Enclave (PCE), the root of trust for other
-  enclaves, generates a signing key from a fused key called Provisioning
-  Certification Key. PCE can then use this key to certify an attestation key
-  of a QE, e.g. we get the chain of trust down to the hardware if the Intel
-  signed PCE is used.
-
-  To use the needed keys, ATTRIBUTE.PROVISIONKEY is required but should be
-  only allowed for those who actually need it so that only the trusted
-  parties can certify QE's.
-
-  Obviously the attestation service should know the public key of the used
-  PCE and that way detect illegit attestation, but whitelisting the legit
-  users still adds an additional layer of defence.
-
-  Add new device file called /dev/sgx/provision. The sole purpose of this
-  file is to provide file descriptors that act as privilege tokens to allow
-  to build enclaves with ATTRIBUTE.PROVISIONKEY set. A new ioctl called
-  SGX_IOC_ENCLAVE_SET_ATTRIBUTE is used to assign this token to an enclave.
-
-> > + * sgx_ioc_enclave_set_attribute - handler for %SGX_IOC_ENCLAVE_SET_ATTRIBUTE
-> > + * @filep:	open file to /dev/sgx
-> > + * @arg:	userspace pointer to a struct sgx_enclave_set_attribute instance
-> > + *
-> > + * Mark the enclave as being allowed to access a restricted attribute bit.
-> > + * The requested attribute is specified via the attribute_fd field in the
-> > + * provided struct sgx_enclave_set_attribute.  The attribute_fd must be a
-> > + * handle to an SGX attribute file, e.g. ?/dev/sgx/provision".
-> 
-> Maybe this should be simply a double-quote rather than the Unicode left
-> quote?
-
-Not sure how that got there but it is a mistake.
-
-> Thanks,
-> 
-> Darren.
-
-Thanks for the remarks.
-
-/Jarkko
