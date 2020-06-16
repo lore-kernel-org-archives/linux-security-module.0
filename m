@@ -2,109 +2,136 @@ Return-Path: <SRS0=f9XP=75=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85F08C433E0
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 17:29:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BFACC433DF
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 18:09:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 712C820707
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 17:29:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E5132080D
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 18:09:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1592330996;
+	bh=EsakDvGUztRiSNfngaRB05ekQqGnOvB3NF6mY788udI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=pjIaupAumTwUqZXXKFGjOtEaCTykdlTBb5OrLXPNN6D/iPjt9uauYpuDb0oBPssEI
+	 niyA0GG4QFDwDB9h8kBLYMQlbGsypqGRB1Y6nS1Ar8/R4YtKcgRcCYNVJAU8qYI6sk
+	 xlgL80cK27n+vwWmOS+o6FuXH7+5mbicVJdtlFh4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730170AbgFPR3Z (ORCPT
+        id S1731658AbgFPSJs (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 16 Jun 2020 13:29:25 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2316 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729272AbgFPR3Z (ORCPT
+        Tue, 16 Jun 2020 14:09:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44416 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727083AbgFPSJq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 16 Jun 2020 13:29:25 -0400
-Received: from lhreml743-chm.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id A3232E4DF5FCCA6C7633;
-        Tue, 16 Jun 2020 18:29:22 +0100 (IST)
-Received: from fraeml701-chm.china.huawei.com (10.206.15.50) by
- lhreml743-chm.china.huawei.com (10.201.108.193) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
- 15.1.1913.5; Tue, 16 Jun 2020 18:29:22 +0100
-Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- fraeml701-chm.china.huawei.com (10.206.15.50) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1913.5; Tue, 16 Jun 2020 19:29:21 +0200
-Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
- fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.1913.007;
- Tue, 16 Jun 2020 19:29:21 +0200
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
-        Maurizio Drocco <maurizio.drocco@ibm.com>,
-        "zohar@linux.ibm.com" <zohar@linux.ibm.com>
-CC:     "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "serge@hallyn.com" <serge@hallyn.com>,
-        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
-Subject: RE: [PATCH] extend IMA boot_aggregate with kernel measurements
-Thread-Topic: [PATCH] extend IMA boot_aggregate with kernel measurements
-Thread-Index: AQHWQCo8nqt7HKCznkGnNWX+y9c+NajT/1SAgADtAgCAACbgMIAABL+AgAZlbjA=
-Date:   Tue, 16 Jun 2020 17:29:21 +0000
-Message-ID: <8c44ed75fb884cad9f33c86c2d4e8a27@huawei.com>
-References: <1591921795.11061.12.camel@linux.ibm.com>
-         <20200612143812.1609-1-maurizio.drocco@ibm.com>
-         <380af929b2d2440a9dc35ba0b374247d@huawei.com>
- <1591982059.7235.29.camel@linux.ibm.com>
-In-Reply-To: <1591982059.7235.29.camel@linux.ibm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.220.96.108]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+        Tue, 16 Jun 2020 14:09:46 -0400
+Received: from X1 (nat-ab2241.sltdut.senawave.net [162.218.216.4])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B1C752082F;
+        Tue, 16 Jun 2020 18:09:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1592330985;
+        bh=EsakDvGUztRiSNfngaRB05ekQqGnOvB3NF6mY788udI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=IhpS1taEKqV/HMmc2XrgBi59GfE8vYAI/pSBHLIEb5BHt2RggHWNsr0WFiFcGuzEE
+         26ygFhe/LhgEOm51069QA1LMXoAUoV3VgfH3hA2EmK0pi7/AYapihuVVI1Xsu8eHU8
+         MrJlU2uhSFUs9V1K5UBwvjYjOiJtcqNT5s8lHh0I=
+Date:   Tue, 16 Jun 2020 11:09:44 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Waiman Long <longman@redhat.com>
+Cc:     David Howells <dhowells@redhat.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Joe Perches <joe@perches.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        David Rientjes <rientjes@google.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        "Jason A . Donenfeld" <Jason@zx2c4.com>, linux-mm@kvack.org,
+        keyrings@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-amlogic@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-ppp@vger.kernel.org, wireguard@lists.zx2c4.com,
+        linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
+        linux-cifs@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+        ecryptfs@vger.kernel.org, kasan-dev@googlegroups.com,
+        linux-bluetooth@vger.kernel.org, linux-wpan@vger.kernel.org,
+        linux-sctp@vger.kernel.org, linux-nfs@vger.kernel.org,
+        tipc-discussion@lists.sourceforge.net,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org
+Subject: Re: [PATCH v5 2/2] mm, treewide: Rename kzfree() to
+ kfree_sensitive()
+Message-Id: <20200616110944.c13f221e5c3f54e775190afe@linux-foundation.org>
+In-Reply-To: <20200616154311.12314-3-longman@redhat.com>
+References: <20200616154311.12314-1-longman@redhat.com>
+        <20200616154311.12314-3-longman@redhat.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-PiBGcm9tOiBKYW1lcyBCb3R0b21sZXkgW21haWx0bzpqZWpiQGxpbnV4LmlibS5jb21dDQo+IFNl
-bnQ6IEZyaWRheSwgSnVuZSAxMiwgMjAyMCA3OjE0IFBNDQo+IE9uIEZyaSwgMjAyMC0wNi0xMiBh
-dCAxNToxMSArMDAwMCwgUm9iZXJ0byBTYXNzdSB3cm90ZToNCj4gPiB3aXRoIHJlY2VudCBwYXRj
-aGVzLCBib290X2FnZ3JlZ2F0ZSBjYW4gYmUgY2FsY3VsYXRlZCBmcm9tIG5vbi1TSEExDQo+ID4g
-UENSIGJhbmtzLiBJIHdvdWxkIHJlcGxhY2Ugd2l0aDoNCj4gPg0KPiA+IEV4dGVuZCBjdW11bGF0
-aXZlIGRpZ2VzdCBvdmVyIC4uLg0KPiA+DQo+ID4gR2l2ZW4gdGhhdCB3aXRoIHRoaXMgcGF0Y2gg
-Ym9vdF9hZ2dyZWdhdGUgaXMgY2FsY3VsYXRlZCBkaWZmZXJlbnRseSwNCj4gPiBzaG91bGRuJ3Qg
-d2UgY2FsbCBpdCBib290X2FnZ3JlZ2F0ZV92MiBhbmQgZW5hYmxlIGl0IHdpdGggYSBuZXcNCj4g
-PiBvcHRpb24/DQo+IA0KPiBTbyBoZXJlJ3MgdGhlIHByb2JsZW06IGlmIHlvdXIgY3VycmVudCBn
-cnViIGRvZXNuJ3QgZG8gYW55IFRQTQ0KPiBleHRlbnNpb25zIChhcyBtb3N0IGRvbid0KSwgdGhl
-biB0aGUgdHdvIGJvb3QgYWdncmVnYXRlcyBhcmUgdGhlIHNhbWUNCj4gYmVjYXVzZSBQQ1JzIDgg
-YW5kIDkgYXJlIHplcm8gYW5kIHRoZXJlJ3MgYSB0ZXN0IHRoYXQgZG9lc24ndCBhZGQgdGhlbQ0K
-PiB0byB0aGUgYWdncmVnYXRlIGlmIHRoZXkgYXJlIHplcm8uICBGb3IgdGhlc2UgcGVvcGxlIGl0
-cyBhIG5vcCBzbyB3ZQ0KPiBzaG91bGRuJ3QgZm9yY2UgdGhlbSB0byBjaG9vc2UgYSBkaWZmZXJl
-bnQgdmVyc2lvbiBvZiB0aGUgc2FtZSB0aGluZy4NCj4gDQo+IElmLCBob3dldmVyLCB5b3UncmUg
-b24gYSBkaXN0cmlidXRpb24gd2hlcmUgZ3J1YiBpcyBhdXRvbWF0aWNhbGx5DQo+IG1lYXN1cmlu
-ZyB0aGUga2VybmVsIGFuZCBjb21tYW5kIGxpbmUgaW50byBQQ1JzIDggYW5kIDkgKEkgdGhpbmsg
-RmVkb3JhDQo+IDMyIGRvZXMgdGhpcyksIHlvdXIgYm9vdCBhZ2dyZWdhdGUgd2lsbCBjaGFuZ2Uu
-ICBJdCBzdHJpa2VzIG1lIGluIHRoYXQNCj4gY2FzZSB3ZSBjYW4gY2FsbCB0aGlzIGEgYnVnIGZp
-eCwgc2luY2UgdGhlIGJvb3QgYWdncmVnYXRlIGlzbid0DQo+IHByb3Blcmx5IGJpbmRpbmcgdG8g
-dGhlIHByZXZpb3VzIG1lYXN1cmVtZW50cyB3aXRob3V0IFBDUnMgOCBhbmQgOS4gIEluDQo+IHRo
-aXMgY2FzZSwgZG8gd2Ugd2FudCB0byBhbGxvdyBwZW9wbGUgdG8gc2VsZWN0IGFuIG9wdGlvbiB3
-aGljaCBkb2Vzbid0DQo+IHByb3Blcmx5IGJpbmQgdGhlIElNQSBsb2cgdG8gdGhlIGJvb3QgbWVh
-c3VyZW1lbnRzPyAgVGhhdCBzb3VuZHMgbGlrZSBhDQo+IHNlY3VyaXR5IGhvbGUgdG8gbWUuDQo+
-IA0KPiBIb3dldmVyLCBzaW5jZSBpdCBjYXVzZXMgYSB1c2VyIHZpc2libGUgZGlmZmVyZW5jZSBp
-biB0aGUgZ3J1YiBhbHJlYWR5DQo+IG1lYXN1cmVzIGNhc2UsIGRvIHlvdSBoYXZlIGEgY3VycmVu
-dCB1c2UgY2FzZSB0aGF0IHdvdWxkIGJlIGFmZmVjdGVkPw0KPiBBcyBpbiBhcmUgbG90cyBvZiBw
-ZW9wbGUgYWxyZWFkeSBydW5uaW5nIGEgZGlzdHJvIHdpdGggdGhlIFRQTSBncnViDQo+IHVwZGF0
-ZXMgYW5kIHJlbHlpbmcgb24gdGhlIG9sZCBib290IGFnZ3JlZ2F0ZT8NCg0KSSBkb24ndCBrbm93
-IGhvdyBtYW55IHBlb3BsZSB3b3VsZCBiZSBhZmZlY3RlZC4gSG93ZXZlciwgaWYgYW4NCmF0dGVz
-dGF0aW9uIHRvb2wgcHJvY2Vzc2VzIGJvdGggbWVhc3VyZW1lbnQgbGlzdHMgZnJvbSB1bnBhdGNo
-ZWQga2VybmVscw0KYW5kIHBhdGNoZWQga2VybmVscywga2VlcGluZyB0aGUgc2FtZSBuYW1lIHdv
-dWxkIGJlIGEgcHJvYmxlbSBhcyBpdA0KY2Fubm90IGJlIGRldGVybWluZWQgZnJvbSB0aGUgbWVh
-c3VyZW1lbnQgbGlzdCBob3cgYm9vdF9hZ2dyZWdhdGUNCndhcyBjYWxjdWxhdGVkLg0KDQpBbnl3
-YXksIEkgYWdyZWUgdGhpcyBzaG91bGQgYmUgZml4ZWQuIEF0IGxlYXN0LCBJIHN1Z2dlc3QgdG8g
-YWRkIGEgRml4ZXMgdGFnLA0KdG8gZW5zdXJlIHRoYXQgdGhpcyBwYXRjaCBpcyBhcHBsaWVkIHRv
-IGFsbCBzdGFibGUga2VybmVscy4NCg0KUm9iZXJ0bw0KDQpIVUFXRUkgVEVDSE5PTE9HSUVTIER1
-ZXNzZWxkb3JmIEdtYkgsIEhSQiA1NjA2Mw0KTWFuYWdpbmcgRGlyZWN0b3I6IExpIFBlbmcsIExp
-IEppYW4sIFNoaSBZYW5saQ0K
+On Tue, 16 Jun 2020 11:43:11 -0400 Waiman Long <longman@redhat.com> wrote:
+
+> As said by Linus:
+> 
+>   A symmetric naming is only helpful if it implies symmetries in use.
+>   Otherwise it's actively misleading.
+> 
+>   In "kzalloc()", the z is meaningful and an important part of what the
+>   caller wants.
+> 
+>   In "kzfree()", the z is actively detrimental, because maybe in the
+>   future we really _might_ want to use that "memfill(0xdeadbeef)" or
+>   something. The "zero" part of the interface isn't even _relevant_.
+> 
+> The main reason that kzfree() exists is to clear sensitive information
+> that should not be leaked to other future users of the same memory
+> objects.
+> 
+> Rename kzfree() to kfree_sensitive() to follow the example of the
+> recently added kvfree_sensitive() and make the intention of the API
+> more explicit. In addition, memzero_explicit() is used to clear the
+> memory to make sure that it won't get optimized away by the compiler.
+> 
+> The renaming is done by using the command sequence:
+> 
+>   git grep -w --name-only kzfree |\
+>   xargs sed -i 's/\bkzfree\b/kfree_sensitive/'
+> 
+> followed by some editing of the kfree_sensitive() kerneldoc and adding
+> a kzfree backward compatibility macro in slab.h.
+> 
+> ...
+>
+> --- a/include/linux/slab.h
+> +++ b/include/linux/slab.h
+> @@ -186,10 +186,12 @@ void memcg_deactivate_kmem_caches(struct mem_cgroup *, struct mem_cgroup *);
+>   */
+>  void * __must_check krealloc(const void *, size_t, gfp_t);
+>  void kfree(const void *);
+> -void kzfree(const void *);
+> +void kfree_sensitive(const void *);
+>  size_t __ksize(const void *);
+>  size_t ksize(const void *);
+>  
+> +#define kzfree(x)	kfree_sensitive(x)	/* For backward compatibility */
+> +
+
+What was the thinking here?  Is this really necessary?
+
+I suppose we could keep this around for a while to ease migration.  But
+not for too long, please.
