@@ -2,259 +2,178 @@ Return-Path: <SRS0=f9XP=75=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CFD5C433DF
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 15:58:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 326B0C433DF
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 16:01:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DC9B320882
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 15:58:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09DC421475
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 16:01:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ME1Vbzrx"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="aJ8p70Y5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732690AbgFPP57 (ORCPT
+        id S1732347AbgFPQBw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 16 Jun 2020 11:57:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47534 "EHLO
+        Tue, 16 Jun 2020 12:01:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48688 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732999AbgFPPyi (ORCPT
+        with ESMTP id S1733170AbgFPQBt (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 16 Jun 2020 11:54:38 -0400
-Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 146DBC061755
-        for <linux-security-module@vger.kernel.org>; Tue, 16 Jun 2020 08:54:37 -0700 (PDT)
-Received: by mail-wr1-x441.google.com with SMTP id b6so2174048wrs.11
-        for <linux-security-module@vger.kernel.org>; Tue, 16 Jun 2020 08:54:37 -0700 (PDT)
+        Tue, 16 Jun 2020 12:01:49 -0400
+Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8833AC061573
+        for <linux-security-module@vger.kernel.org>; Tue, 16 Jun 2020 09:01:49 -0700 (PDT)
+Received: by mail-pf1-x442.google.com with SMTP id x207so9714854pfc.5
+        for <linux-security-module@vger.kernel.org>; Tue, 16 Jun 2020 09:01:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:date:to:cc:subject:message-id:references:mime-version
+        h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=aDlbEbbNRivF3ebZedTH8Z8/FH+h6CNXcJR+iNKCKPU=;
-        b=ME1VbzrxAlBBwHB1G/OhYY0V2n82GKbwpAk+OYZAtww0bAtsbbSlf4okMRpWh7j+Bg
-         H27gXbFGmFm00VD4/LOcE7zFeAfyMelJFT43q9zRNfHMw8VvLQtsL2qEKBhRYS0rkzf8
-         OObTbu0l1g0UXn03vOXV3J8AlULwUp5xOtwbM=
+        bh=C2Y4BhWefKmP9iji9eylvkFo4/M9jmgkj2BXKFGkoJE=;
+        b=aJ8p70Y5LnowTS4d6Nvq5WyEu93YaLiozLfkw0uDW6dYUF3xQNCbIJvKarTK5Ed9iD
+         m7i0zsBqFI1pIpAyIluoSmBT0Risms7oI2Pp32JEbx7n0H5pqbwQtOkP1/KHECdDu/FT
+         ltBtg48/YKabACQ+Epr94E4U9IQIdRDp/x9Fs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=aDlbEbbNRivF3ebZedTH8Z8/FH+h6CNXcJR+iNKCKPU=;
-        b=iaHrQ2SJ6ML4ZF5BSoQlglczEwWd5vjOEzAP3tcaI1EeQuBInR8LCLvJx2Ucstqqq/
-         0XLdTqj3qmbbLwcz5ov6flb+rDPovEGoRzFJif9cFrOO//xPC2qE+kHgSMgif0Li+DGq
-         y/aX014k3oAFEtyw/kNE521QJgrupeMARx5ALaRPdXSyAcVHtTENRu/kdO0Cvma8f9nv
-         vyNOQr4eVku3FIFJ8ORkyBCPR8zo17MHCCfhjcgeN05Bx6qsbKAwEx5eWrSXoHUHj/WH
-         4Ifmc1l6pt87RwGeJNtCRfqh+6reH/YO89yx8gps8do9jtTGgxS/WIqElZELZZkSzMxv
-         sMgg==
-X-Gm-Message-State: AOAM5329/rdsk3yuDGYhxi8CJ8rmEjr7FtR1QwVL+xNphL0TBAS/I1R7
-        4mstb5RkcICO7msy9JgKPinkZQ==
-X-Google-Smtp-Source: ABdhPJw/xY99cSSYy1TOkNlqCb1a1X4k8XHZ1Cb/ZTrXyvdfJ05YS9wh9WeiDmqxcDUWD31BZdw5oA==
-X-Received: by 2002:a5d:6b8c:: with SMTP id n12mr3763512wrx.61.1592322875641;
-        Tue, 16 Jun 2020 08:54:35 -0700 (PDT)
-Received: from google.com ([81.6.44.51])
-        by smtp.gmail.com with ESMTPSA id v6sm31576887wrf.61.2020.06.16.08.54.34
+        bh=C2Y4BhWefKmP9iji9eylvkFo4/M9jmgkj2BXKFGkoJE=;
+        b=qFHDX2pHBhLy+r+mbi3QYtYdXrS/1hO+Y9thZ0xjXwUfFTWoC6aC40FnbiYsZAg3fu
+         LRCu/6BrFDvpcpBi7U89QKKPlxzhE2/YmTJCJpd3/3MMxUKu/l+hAR2B9/DIL6qJHFAF
+         Wljew4KaS1GXt2daRdylNtkuMGfd/Be893P+kMaYEFWx8tE8eh0YYWSnE/RxXQCQOV/S
+         Au4NZJFTqYp9+XUxi7Wi9e+lPnSV2gCL/CFQzGP4r0/IKWlh7rMgfUA1zKTOy33NxS+k
+         4wF30dm/+O0GO0dz8jgM+manTmbaCUlA48/tY8MsYby61VVe3ICtpkBQ1tv2derp/x54
+         qoRg==
+X-Gm-Message-State: AOAM530amCW3kePLyE/scxibH8KJgkPoSff6Ab9ETKGpeGMVz5Frp3d9
+        G4VJ72Pameot4QcUfSRScFoMhA==
+X-Google-Smtp-Source: ABdhPJxZYUpPJAibIwbYuU5zDTSd1Kb3np/+gOul4WD0kGGfyZGJ7hHLOe/iwa9+dycWyfSgo2noGQ==
+X-Received: by 2002:a63:5307:: with SMTP id h7mr2625624pgb.28.1592323309057;
+        Tue, 16 Jun 2020 09:01:49 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id iq19sm2942471pjb.48.2020.06.16.09.01.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jun 2020 08:54:34 -0700 (PDT)
-From:   KP Singh <kpsingh@chromium.org>
-X-Google-Original-From: KP Singh <kpsingh>
-Date:   Tue, 16 Jun 2020 17:54:33 +0200
-To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc:     KP Singh <kpsingh@chromium.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, bpf <bpf@vger.kernel.org>,
-        linux-security-module@vger.kernel.org,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        James Morris <jmorris@namei.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Florent Revest <revest@chromium.org>
-Subject: Re: [PATCH bpf-next 4/4] bpf: Add selftests for local_storage
-Message-ID: <20200616155433.GA11971@google.com>
-References: <20200526163336.63653-1-kpsingh@chromium.org>
- <20200526163336.63653-5-kpsingh@chromium.org>
- <CAEf4BzY0=Hh3O6qeD=2sMWpQRpHpizxH+nEA0hD0khPf3VAbhA@mail.gmail.com>
+        Tue, 16 Jun 2020 09:01:48 -0700 (PDT)
+Date:   Tue, 16 Jun 2020 09:01:46 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Christian Brauner <christian@brauner.io>,
+        Sargun Dhillon <sargun@sargun.me>,
+        Tycho Andersen <tycho@tycho.ws>, Jann Horn <jannh@google.com>,
+        "zhujianwei (C)" <zhujianwei7@huawei.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Will Drewry <wad@chromium.org>, Shuah Khan <shuah@kernel.org>,
+        Matt Denton <mpdenton@google.com>,
+        Chris Palmer <palmer@google.com>,
+        Jeffrey Vander Stoep <jeffv@google.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Hehuazhen <hehuazhen@huawei.com>, x86@kernel.org,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org
+Subject: Re: [PATCH 4/8] seccomp: Implement constant action bitmaps
+Message-ID: <202006160851.E8F9928AAB@keescook>
+References: <20200616074934.1600036-1-keescook@chromium.org>
+ <20200616074934.1600036-5-keescook@chromium.org>
+ <fc0c14cd-bcf0-c94c-6cba-d0ce1844e93c@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAEf4BzY0=Hh3O6qeD=2sMWpQRpHpizxH+nEA0hD0khPf3VAbhA@mail.gmail.com>
+In-Reply-To: <fc0c14cd-bcf0-c94c-6cba-d0ce1844e93c@intel.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 01-Jun 13:29, Andrii Nakryiko wrote:
-> On Tue, May 26, 2020 at 9:34 AM KP Singh <kpsingh@chromium.org> wrote:
-> >
-> > From: KP Singh <kpsingh@google.com>
-> >
-> > inode_local_storage:
-> >
-> > * Hook to the file_open and inode_unlink LSM hooks.
-> > * Create and unlink a temporary file.
-> > * Store some information in the inode's bpf_local_storage during
-> >   file_open.
-> > * Verify that this information exists when the file is unlinked.
-> >
-> > sk_local_storage:
-> >
-> > * Hook to the socket_post_create and socket_bind LSM hooks.
-> > * Open and bind a socket and set the sk_storage in the
-> >   socket_post_create hook using the start_server helper.
-> > * Verify if the information is set in the socket_bind hook.
-> >
-> > Signed-off-by: KP Singh <kpsingh@google.com>
-> > ---
-> >  .../bpf/prog_tests/test_local_storage.c       |  60 ++++++++
-> >  .../selftests/bpf/progs/local_storage.c       | 139 ++++++++++++++++++
-> >  2 files changed, 199 insertions(+)
-> >  create mode 100644 tools/testing/selftests/bpf/prog_tests/test_local_storage.c
-> >  create mode 100644 tools/testing/selftests/bpf/progs/local_storage.c
-> >
+On Tue, Jun 16, 2020 at 07:40:17AM -0700, Dave Hansen wrote:
+> On 6/16/20 12:49 AM, Kees Cook wrote:
+> > +	/* Mark the second page as untouched (i.e. "old") */
+> > +	preempt_disable();
+> > +	set_pte_at(&init_mm, vaddr, ptep, pte_mkold(*(READ_ONCE(ptep))));
+> > +	local_flush_tlb_kernel_range(vaddr, vaddr + PAGE_SIZE);
+> > +	preempt_enable();
 > 
-> [...]
-> 
-> > +struct dummy_storage {
-> > +       __u32 value;
-> > +};
-> > +
-> > +struct {
-> > +       __uint(type, BPF_MAP_TYPE_INODE_STORAGE);
-> > +       __uint(map_flags, BPF_F_NO_PREALLOC);
-> > +       __type(key, int);
-> > +       __type(value, struct dummy_storage);
-> > +} inode_storage_map SEC(".maps");
-> > +
-> > +struct {
-> > +       __uint(type, BPF_MAP_TYPE_SK_STORAGE);
-> > +       __uint(map_flags, BPF_F_NO_PREALLOC | BPF_F_CLONE);
-> > +       __type(key, int);
-> > +       __type(value, struct dummy_storage);
-> > +} sk_storage_map SEC(".maps");
-> > +
-> > +/* Using vmlinux.h causes the generated BTF to be so big that the object
-> > + * load fails at btf__load.
-> > + */
-> 
-> That's first time I hear about such issue. Do you have an error log
-> from verifier?
+> If you can, I'd wrap that nugget up in a helper.  I'd also suggest being
+> very explicit in a comment about what it is trying to do: ensure no TLB
+> entries exist so that a future access will always set the Accessed bit.
 
-Here's what I get when I do the following change.
-
---- a/tools/testing/selftests/bpf/progs/local_storage.c
-+++ b/tools/testing/selftests/bpf/progs/local_storage.c
-@@ -4,8 +4,8 @@
-  * Copyright 2020 Google LLC.
-  */
- 
-+#include "vmlinux.h"
- #include <errno.h>
--#include <linux/bpf.h>
- #include <stdbool.h>
- #include <bpf/bpf_helpers.h>
- #include <bpf/bpf_tracing.h>
-@@ -37,24 +37,6 @@ struct {
-        __type(value, struct dummy_storage);
- } sk_storage_map SEC(".maps");
- 
--/* Using vmlinux.h causes the generated BTF to be so big that the object
-- * load fails at btf__load.
-- */
--struct sock {} __attribute__((preserve_access_index));
--struct sockaddr {} __attribute__((preserve_access_index));
--struct socket {
--       struct sock *sk;
--} __attribute__((preserve_access_index));
--
--struct inode {} __attribute__((preserve_access_index));
--struct dentry {
--       struct inode *d_inode;
--} __attribute__((preserve_access_index));
--struct file {
--       struct inode *f_inode;
--} __attribute__((preserve_access_index));
-
-./test_progs -t test_local_storage
-libbpf: Error loading BTF: Invalid argument(22)
-libbpf: magic: 0xeb9f
-version: 1
-flags: 0x0
-hdr_len: 24
-type_off: 0
-type_len: 4488
-str_off: 4488
-str_len: 3012
-btf_total_size: 7524
-
-[1] STRUCT (anon) size=32 vlen=4
-	type type_id=2 bits_offset=0
-	map_flags type_id=6 bits_offset=64
-	key type_id=8 bits_offset=128
-	value type_id=9 bits_offset=192
-[2] PTR (anon) type_id=4
-[3] INT int size=4 bits_offset=0 nr_bits=32 encoding=SIGNED
-[4] ARRAY (anon) type_id=3 index_type_id=5 nr_elems=28
-[5] INT __ARRAY_SIZE_TYPE__ size=4 bits_offset=0 nr_bits=32 encoding=(none)
-[6] PTR (anon) type_id=7
-[7] ARRAY (anon) type_id=3 index_type_id=5 nr_elems=1
-[8] PTR (anon) type_id=3
-[9] PTR (anon) type_id=10
-[10] STRUCT dummy_storage size=4 vlen=1
-	value type_id=11 bits_offset=0
-[11] TYPEDEF __u32 type_id=12
-
-  [... More BTF Dump ...]
-
-[91] TYPEDEF wait_queue_head_t type_id=175
-
-  [... More BTF Dump ...]
-
-[173] FWD super_block struct
-[174] FWD vfsmount struct
-[175] FWD wait_queue_head struct
-[106] STRUCT socket_wq size=128 vlen=4
-	wait type_id=91 bits_offset=0 Invalid member
-
-libbpf: Error loading .BTF into kernel: -22.
-libbpf: map 'inode_storage_map': failed to create: Invalid argument(-22)
-libbpf: failed to load object 'local_storage'
-libbpf: failed to load BPF skeleton 'local_storage': -22
-test_test_local_storage:FAIL:skel_load lsm skeleton failed
-#81 test_local_storage:FAIL
-
-The failiure is in:
-
-[106] STRUCT socket_wq size=128 vlen=4
-	wait type_id=91 bits_offset=0 Invalid member
+Yeah, good idea!
 
 > 
-> Clang is smart enough to trim down used types to only those that are
-> actually necessary, so too big BTF shouldn't be a thing. But let's try
-> to dig into this and fix whatever issue it is, before giving up :)
+> > +	/* Make sure the PTE agrees that it is untouched. */
+> > +	if (WARN_ON_ONCE(sd_touched(ptep)))
+> > +		return;
+> > +	/* Read a portion of struct seccomp_data from the second page. */
+> > +	check = sd->instruction_pointer;
+> > +	/* First, verify the contents are zero from vzalloc(). */
+> > +	if (WARN_ON_ONCE(check))
+> > +		return;
+> > +	/* Now make sure the ACCESSED bit has been set after the read. */
+> > +	if (!sd_touched(ptep)) {
+> > +		/*
+> > +		 * If autodetection fails, fall back to standard beahavior by
+> > +		 * clearing the entire "allow" bitmap.
+> > +		 */
+> > +		pr_warn_once("seccomp: cannot build automatic syscall filters\n");
+> > +		bitmap_zero(bitmaps->allow, NR_syscalls);
+> > +		return;
+> > +	}
 > 
-
-I was wrong about the size being an issue. The verifier thinks the BTF
-is invalid and more specificially it thinks that the socket_wq's
-member with type_id=91, i.e. typedef wait_queue_head_t is invalid. Am
-I missing some toolchain patches?
-
-- KP
-
-
-> > +struct sock {} __attribute__((preserve_access_index));
-> > +struct sockaddr {} __attribute__((preserve_access_index));
-> > +struct socket {
-> > +       struct sock *sk;
-> > +} __attribute__((preserve_access_index));
-> > +
-> > +struct inode {} __attribute__((preserve_access_index));
-> > +struct dentry {
-> > +       struct inode *d_inode;
-> > +} __attribute__((preserve_access_index));
-> > +struct file {
-> > +       struct inode *f_inode;
-> > +} __attribute__((preserve_access_index));
-> > +
-> > +
+> I can't find any big holes with this.  It's the kind of code that makes
+> me nervous, but mostly because it's pretty different that anything else
+> we have in the kernel.
 > 
-> [...]
+> It's also clear to me here that you probably have a slightly different
+> expectation of what the PTE accessed flag means versus the hardware
+> guys.  What you are looking for it to mean is roughly: "a retired
+> instruction touched this page".
+> 
+> The hardware guys would probably say it's closer to "a TLB entry was
+> established for this page."  Remember that TLB entries can be
+> established speculatively or from things like prefetchers.  While I
+> don't know of anything microarchitectural today which would trip this
+> mechanism, it's entirely possible that something in the future might.
+> Accessing close to the page boundary is the exact kind of place folks
+> might want to optimize.
+
+Yeah, and to that end, going the cBPF emulator route removes this kind
+of "weird" behavior.
+
+> 
+> *But*, at least it would err in the direction of being conservative.  It
+> would say "somebody touched the page!" more often than it should, but
+> never _less_ often than it should.
+
+Right -- I made sure to design the bitmaps and the direction of the
+checking to fail towards running the filter instead of bypassing it.
+
+> One thing about the implementation (which is roughly):
+> 
+> 	// Touch the data:
+> 	check = sd->instruction_pointer;
+> 	// Examine the PTE mapping that data:
+> 	if (!sd_touched(ptep)) {
+> 		// something
+> 	}
+> 
+> There aren't any barriers in there, which could lead to the sd_touched()
+> check being ordered before the data touch.  I think a rmb() will
+> suffice.  You could even do it inside sd_touched().
+
+Ah yeah, I had convinced myself that READ_ONCE() gained me that
+coverage, but I guess that's not actually true here.
+
+> Was there a reason you chose to export a ranged TLB flush?  I probably
+> would have just used the single-page flush_tlb_one_kernel() for this
+> purpose if I were working in arch-specific code.
+
+No particular reason -- it just seemed easiest to make available given
+the interfaces. I could do the single-page version instead, if this way
+of doing things survives review. ;)
+
+Thanks for looking at it!
+
+-- 
+Kees Cook
