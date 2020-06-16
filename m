@@ -2,525 +2,220 @@ Return-Path: <SRS0=f9XP=75=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DF11C433E0
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 07:50:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 279F4C433E0
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 08:34:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3D58420663
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 07:50:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EAEA120656
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 08:34:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="f9r7BI5F"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vBPAH5XY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726526AbgFPHuY (ORCPT
+        id S1726496AbgFPIel (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 16 Jun 2020 03:50:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57004 "EHLO
+        Tue, 16 Jun 2020 04:34:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35760 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726531AbgFPHts (ORCPT
+        with ESMTP id S1727004AbgFPIek (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 16 Jun 2020 03:49:48 -0400
-Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AC43C08C5C9
-        for <linux-security-module@vger.kernel.org>; Tue, 16 Jun 2020 00:49:47 -0700 (PDT)
-Received: by mail-pg1-x542.google.com with SMTP id d4so1812986pgk.4
-        for <linux-security-module@vger.kernel.org>; Tue, 16 Jun 2020 00:49:47 -0700 (PDT)
+        Tue, 16 Jun 2020 04:34:40 -0400
+Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94C82C05BD43
+        for <linux-security-module@vger.kernel.org>; Tue, 16 Jun 2020 01:34:39 -0700 (PDT)
+Received: by mail-yb1-xb49.google.com with SMTP id e20so24060766ybc.23
+        for <linux-security-module@vger.kernel.org>; Tue, 16 Jun 2020 01:34:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=hymiFj42whdy2D05bhHghrqvNPgonrcbk2GbFm3EsyI=;
-        b=f9r7BI5FO+bkXtD3hSIV/gO/wykpcs5Nzg5uxvgwjdkEuE1YiLJ6bjd62HL+z1G7wf
-         9mJpAuojdEY7w8SJooynYRV1iiolNxDFS/JPxuueIwKEPebi8V9NBBP+WhY1V1A2Whbc
-         r5Cq2o+4beGeb3ZnFnvnJTb4H0+uzqyzh9VZk=
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=f/PPs0Qkdb+BNDNosh43dX0cUVZrsnfYgReHGzPsZME=;
+        b=vBPAH5XYqmqw/nfOiQ2N/eNs2dfNqyYLNkJigMCwwwXy/LWQVSBVb8sNZ8214EfIRV
+         W1h6VtbG7KnXERJ5Sgj+J5ylSVXvKKNIXRq5cEZ3TPgJxYWBDADcCgCcXRaGLzfdjfz2
+         92bYgZJGsyXtdLVnbpzwsmPrWU0Rbxv3oP0jjseZfzwM+TTJVecwpdyvn+LtrllQJWIY
+         g4wNP39drrUvbrKGNb66HuobcNO3f0Yj03JV+ta38+tpSueXCLB4byqjel10T5luL2jc
+         dFD7Sap2u9Hj2sA7ACxphCFux2cU1zWN0ipZBFxCl73uRfKgmgRsN0sIyPBa6HQXlBBt
+         WOJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=hymiFj42whdy2D05bhHghrqvNPgonrcbk2GbFm3EsyI=;
-        b=pUB834TCefp6RxMaqQoj2pBYb9GtUUsxxHCgDb7NH6pxy1M8xoPvhKUbsYLxm9dALZ
-         i9Sk8KmKwM719Ey1OOeQysO+3I1ijhkrVdeP7fSioBipBXhNRWc3GjvxSO76twadiEp2
-         7UsB90flOle0sYc0F5kOqVuoosC1b2YwhdzLLCGcXN8s6HTYSsJMXB/ULYqPFMhOxUKD
-         dpkvUWkrrEK5xuFdw1un32sMgEdxon+/vkJFzs7DJT0xNjNIIu05d9LHtwisl44kR2Ft
-         2Fd1bgYWiLRmDc+9DGbvkaNdsWlayl9wN0edfwfnuRmsZkz41GqTL4sz2Jv+oushKe3t
-         MOAg==
-X-Gm-Message-State: AOAM531lpERMGBz8xoJ27RODBaP/Ba+/R52K3zHjwAW0yiu66rqEKSPy
-        aqDiqwf0+/7No3fOh3Bwlu30+w==
-X-Google-Smtp-Source: ABdhPJyJE2ecymVAnnpMx8JwXvxakKaTc+cHmhmj6xoqwH9R6Zju+NCUJsZ1oJjUnMfzMDAdkGqUiA==
-X-Received: by 2002:aa7:9289:: with SMTP id j9mr1077179pfa.124.1592293786493;
-        Tue, 16 Jun 2020 00:49:46 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id 140sm16357711pfz.154.2020.06.16.00.49.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jun 2020 00:49:42 -0700 (PDT)
-From:   Kees Cook <keescook@chromium.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Kees Cook <keescook@chromium.org>,
-        Christian Brauner <christian@brauner.io>,
-        Sargun Dhillon <sargun@sargun.me>,
-        Tycho Andersen <tycho@tycho.ws>, Jann Horn <jannh@google.com>,
-        "zhujianwei (C)" <zhujianwei7@huawei.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Will Drewry <wad@chromium.org>, Shuah Khan <shuah@kernel.org>,
-        Matt Denton <mpdenton@google.com>,
-        Chris Palmer <palmer@google.com>,
-        Jeffrey Vander Stoep <jeffv@google.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Hehuazhen <hehuazhen@huawei.com>, x86@kernel.org,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org
-Subject: [PATCH 4/8] seccomp: Implement constant action bitmaps
-Date:   Tue, 16 Jun 2020 00:49:30 -0700
-Message-Id: <20200616074934.1600036-5-keescook@chromium.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200616074934.1600036-1-keescook@chromium.org>
-References: <20200616074934.1600036-1-keescook@chromium.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=f/PPs0Qkdb+BNDNosh43dX0cUVZrsnfYgReHGzPsZME=;
+        b=UfcQ091rlbV6OB6nr2iqvPuag2T+Cmk8s1l1Tka5j0TxJI3MKr1dXvtPBA0NG4VWJZ
+         3aAJ5NbK3FitVVAz1gDcByqzaqpwrPj5Pr/e/4C+7iMCFS+AAKr6rqrqLiKA4Ev62K72
+         3DvvwIdjtD0VmXKF0ZgEH/2QoY1xYER+O2GZujzZ8+mf9mNanylGYFKdd0e7NmV6z3bv
+         Y8LKKPP0KVv9KxuclZWUeYIczLyhpto1H+cPuyIjfRwuWqHePmtqzjqkscWnLUP9CJpl
+         Z62U6Su53X9UvII/+6acGz0pqcx2viLjXix5ZWp7HmXIJO342oeVo6ZLgKwWUXr7WaSV
+         42tw==
+X-Gm-Message-State: AOAM533vGCkb07+sf+9vt8Pc4H6taAsQcmEhf26i8+C2Sft32je7libq
+        J26hFfbweiygEHeD541L9ulHbLyWQq4=
+X-Google-Smtp-Source: ABdhPJxZFc4yfRMtSwmjvZSiJAl5T7nMmVObUX/IyCtAeq0iAufq3ykXEn7SrCLy7nTiDtruY1aYBMt/1ek=
+X-Received: by 2002:a25:14d5:: with SMTP id 204mr2534608ybu.446.1592296478781;
+ Tue, 16 Jun 2020 01:34:38 -0700 (PDT)
+Date:   Tue, 16 Jun 2020 10:34:35 +0200
+Message-Id: <20200616083435.223038-1-glider@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.27.0.290.gba653c62da-goog
+Subject: [PATCH v2] [RFC] security: allow using Clang's zero initialization
+ for stack variables
+From:   glider@google.com
+To:     yamada.masahiro@socionext.com, keescook@chromium.org,
+        jmorris@namei.org
+Cc:     maze@google.com, ndesaulniers@google.com,
+        gregkh@linuxfoundation.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Alexander Potapenko <glider@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-One of the most common pain points with seccomp filters has been dealing
-with the overhead of processing the filters, especially for "always allow"
-or "always reject" cases. While BPF is extremely fast[1], it will always
-have overhead associated with it. Additionally, due to seccomp's design,
-filters are layered, which means processing time goes up as the number
-of filters attached goes up.
+In addition to -ftrivial-auto-var-init=pattern (used by
+CONFIG_INIT_STACK_ALL now) Clang also supports zero initialization for
+locals enabled by -ftrivial-auto-var-init=zero.
+The future of this flag is still being debated, see
+https://bugs.llvm.org/show_bug.cgi?id=45497
+Right now it is guarded by another flag,
+-enable-trivial-auto-var-init-zero-knowing-it-will-be-removed-from-clang,
+which means it may not be supported by future Clang releases.
+Another possible resolution is that -ftrivial-auto-var-init=zero will
+persist (as certain users have already started depending on it), but the
+name of the guard flag will change.
 
-In the past, efforts have been focused on making filter execution complete
-in a shorter amount of time. For example, filters were rewritten from
-using linear if/then/else syscall search to using balanced binary trees,
-or moving tests for syscalls common to the process's workload to the
-front of the filter. However, there are limits to this, especially when
-some processes are dealing with tens of filters[2], or when some
-architectures have a less efficient BPF engine[3].
+In the meantime, zero initialization has proven itself as a good
+production mitigation measure against uninitialized locals. Unlike
+pattern initialization, which has a higher chance of triggering existing
+bugs, zero initialization provides safe defaults for strings, pointers,
+indexes, and sizes. On the other hand, pattern initialization remains
+safer for return values.
+Performance-wise, the difference between pattern and zero initialization
+is usually negligible, although the generated code for zero
+initialization is more compact.
 
-The most common use of seccomp, constructing syscall block/allow-lists,
-where syscalls that are always allowed or always rejected (without regard
-to any arguments), also tends to produce the most pathological runtime
-problems, in that a large number of syscall checks in the filter need
-to be performed to come to a determination.
+This patch renames CONFIG_INIT_STACK_ALL to
+CONFIG_INIT_STACK_ALL_PATTERN and introduces another config option,
+CONFIG_INIT_STACK_ALL_ZERO, that enables zero initialization for locals
+if the corresponding flags are supported by Clang.
 
-In order to optimize these cases from O(n) to O(1), seccomp can
-use bitmaps to immediately determine the desired action. A critical
-observation in the prior paragraph bears repeating: the common case for
-syscall tests do not check arguments. For any given filter, there is a
-constant mapping from the combination of architecture and syscall to the
-seccomp action result. (For kernels/architectures without CONFIG_COMPAT,
-there is a single architecture.). As such, it is possible to construct
-a mapping of arch/syscall to action, which can be updated as new filters
-are attached to a process.
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Nick Desaulniers <ndesaulniers@google.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Alexander Potapenko <glider@google.com>
 
-In order to build this mapping at filter attach time, each filter is
-executed for every syscall (under each possible architecture), and
-checked for any accesses of struct seccomp_data that are not the "arch"
-nor "nr" (syscall) members. If only "arch" and "nr" are examined, then
-there is a constant mapping for that syscall, and bitmaps can be updated
-accordingly. If any accesses happen outside of those struct members,
-seccomp must not bypass filter execution for that syscall, since program
-state will be used to determine filter action result.
-
-During syscall action probing, in order to determine whether other members
-of struct seccomp_data are being accessed during a filter execution,
-the struct is placed across a page boundary with the "arch" and "nr"
-members in the first page, and everything else in the second page. The
-"page accessed" flag is cleared in the second page's PTE, and the filter
-is run. If the "page accessed" flag appears as set after running the
-filter, we can determine that the filter looked beyond the "arch" and
-"nr" members, and exclude that syscall from the constant action bitmaps.
-
-For architectures to support this optimization, they must declare
-their architectures for seccomp to see (via SECCOMP_ARCH and
-SECCOMP_ARCH_COMPAT macros), and provide a way to perform efficient
-CPU-local kernel TLB flushes (via local_flush_tlb_kernel_range()),
-and then set HAVE_ARCH_SECCOMP_BITMAP in their Kconfig.
-
-Areas needing more attention:
-
-On x86, this currently adds 168 bytes (or 336 bytes under CONFIG_COMPAT)
-to the size of task_struct. Allocating these on demand may be a better
-use of memory, but may not result in good cache locality.
-
-For architectures with "synthetic" architectures, like x86_x32,
-additional work is needed. It should be possible to define a simple
-mechanism based on the masking done in the x86 syscall entry path to
-create another set of bitmaps for seccomp to key off of. I am, however,
-considering just leaving HAVE_ARCH_SECCOMP_BITMAP depend on !X86_X32.
-
-[1] https://lore.kernel.org/bpf/20200531171915.wsxvdjeetmhpsdv2@ast-mbp.dhcp.thefacebook.com/
-[2] https://lore.kernel.org/bpf/20200601101137.GA121847@gardel-login/
-[3] https://lore.kernel.org/bpf/717a06e7f35740ccb4c70470ec70fb2f@huawei.com/
-
-Signed-off-by: Kees Cook <keescook@chromium.org>
+--
+v2:
+ - as suggested by Kees Cook, make CONFIG_INIT_STACK_ALL_PATTERN and
+   CONFIG_INIT_STACK_ALL_ZERO separate options.
 ---
- arch/Kconfig            |   7 ++
- include/linux/seccomp.h |  15 +++
- kernel/seccomp.c        | 227 +++++++++++++++++++++++++++++++++++++++-
- 3 files changed, 246 insertions(+), 3 deletions(-)
+ Makefile                   | 12 ++++++++++--
+ init/main.c                |  6 ++++--
+ security/Kconfig.hardening | 29 +++++++++++++++++++++++++----
+ 3 files changed, 39 insertions(+), 8 deletions(-)
 
-diff --git a/arch/Kconfig b/arch/Kconfig
-index 8cc35dc556c7..4e692b7a4435 100644
---- a/arch/Kconfig
-+++ b/arch/Kconfig
-@@ -465,6 +465,13 @@ config SECCOMP_FILTER
+diff --git a/Makefile b/Makefile
+index fd31992bf918..fa739995ee12 100644
+--- a/Makefile
++++ b/Makefile
+@@ -802,11 +802,19 @@ KBUILD_CFLAGS	+= -fomit-frame-pointer
+ endif
+ endif
  
- 	  See Documentation/userspace-api/seccomp_filter.rst for details.
+-# Initialize all stack variables with a pattern, if desired.
+-ifdef CONFIG_INIT_STACK_ALL
++# Initialize all stack variables with a 0xAA pattern.
++ifdef CONFIG_INIT_STACK_ALL_PATTERN
+ KBUILD_CFLAGS	+= -ftrivial-auto-var-init=pattern
+ endif
  
-+config HAVE_ARCH_SECCOMP_BITMAP
-+	bool
-+	help
-+	  An arch should select this symbol if it provides all of these things:
-+	  - SECCOMP_ARCH (and SECCOMP_ARCH_COMPAT if appropriate)
-+	  - local_flush_tlb_kernel_range()
++# Initialize all stack variables with a zero pattern.
++ifdef CONFIG_INIT_STACK_ALL_ZERO
++# Future support for zero initialization is still being debated, see
++# https://bugs.llvm.org/show_bug.cgi?id=45497. These flags are subject to being
++# renamed or dropped.
++KBUILD_CFLAGS	+= -ftrivial-auto-var-init=zero -enable-trivial-auto-var-init-zero-knowing-it-will-be-removed-from-clang
++endif
 +
- config HAVE_ARCH_STACKLEAK
- 	bool
+ DEBUG_CFLAGS	:= $(call cc-option, -fno-var-tracking-assignments)
+ 
+ ifdef CONFIG_DEBUG_INFO
+diff --git a/init/main.c b/init/main.c
+index 0ead83e86b5a..ee08cef4aa1a 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -779,8 +779,10 @@ static void __init report_meminit(void)
+ {
+ 	const char *stack;
+ 
+-	if (IS_ENABLED(CONFIG_INIT_STACK_ALL))
+-		stack = "all";
++	if (IS_ENABLED(CONFIG_INIT_STACK_ALL_PATTERN))
++		stack = "all (pattern)";
++	else if (IS_ENABLED(CONFIG_INIT_STACK_ALL_ZERO))
++		stack = "all (zero)";
+ 	else if (IS_ENABLED(CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL))
+ 		stack = "byref_all";
+ 	else if (IS_ENABLED(CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF))
+diff --git a/security/Kconfig.hardening b/security/Kconfig.hardening
+index af4c979b38ee..7b705611ccaa 100644
+--- a/security/Kconfig.hardening
++++ b/security/Kconfig.hardening
+@@ -19,13 +19,16 @@ config GCC_PLUGIN_STRUCTLEAK
+ 
+ menu "Memory initialization"
+ 
+-config CC_HAS_AUTO_VAR_INIT
++config CC_HAS_AUTO_VAR_INIT_PATTERN
+ 	def_bool $(cc-option,-ftrivial-auto-var-init=pattern)
+ 
++config CC_HAS_AUTO_VAR_INIT_ZERO
++	def_bool $(cc-option,-ftrivial-auto-var-init=zero -enable-trivial-auto-var-init-zero-knowing-it-will-be-removed-from-clang)
++
+ choice
+ 	prompt "Initialize kernel stack variables at function entry"
+ 	default GCC_PLUGIN_STRUCTLEAK_BYREF_ALL if COMPILE_TEST && GCC_PLUGINS
+-	default INIT_STACK_ALL if COMPILE_TEST && CC_HAS_AUTO_VAR_INIT
++	default INIT_STACK_ALL_PATTERN if COMPILE_TEST && CC_HAS_AUTO_VAR_INIT_PATTERN
+ 	default INIT_STACK_NONE
  	help
-diff --git a/include/linux/seccomp.h b/include/linux/seccomp.h
-index 6525ddec177a..31ee2d6f4ec0 100644
---- a/include/linux/seccomp.h
-+++ b/include/linux/seccomp.h
-@@ -16,6 +16,17 @@
- #include <linux/atomic.h>
- #include <asm/seccomp.h>
+ 	  This option enables initialization of stack variables at
+@@ -88,15 +91,33 @@ choice
+ 		  of uninitialized stack variable exploits and information
+ 		  exposures.
  
-+/* When no bits are set for a syscall, filters are run. */
-+struct seccomp_bitmaps {
-+#ifdef CONFIG_HAVE_ARCH_SECCOMP_BITMAP
-+	/* "allow" are initialized to set and only ever get cleared. */
-+	DECLARE_BITMAP(allow, NR_syscalls);
-+	/* These are initialized to clear and only ever get set. */
-+	DECLARE_BITMAP(kill_thread, NR_syscalls);
-+	DECLARE_BITMAP(kill_process, NR_syscalls);
-+#endif
-+};
+-	config INIT_STACK_ALL
++	config INIT_STACK_ALL_PATTERN
+ 		bool "0xAA-init everything on the stack (strongest)"
+-		depends on CC_HAS_AUTO_VAR_INIT
++		depends on CC_HAS_AUTO_VAR_INIT_PATTERN
+ 		help
+ 		  Initializes everything on the stack with a 0xAA
+ 		  pattern. This is intended to eliminate all classes
+ 		  of uninitialized stack variable exploits and information
+ 		  exposures, even variables that were warned to have been
+ 		  left uninitialized.
++		  Pattern initialization is known to provoke many existing bugs
++		  related to uninitialized locals, e.g. pointers receive
++		  non-NULL values, buffer sizes and indices are very big.
 +
- struct seccomp_filter;
- /**
-  * struct seccomp - the state of a seccomp'ed process
-@@ -35,6 +46,10 @@ struct seccomp {
- #endif
- 	atomic_t filter_count;
- 	struct seccomp_filter *filter;
-+	struct seccomp_bitmaps native;
-+#ifdef CONFIG_COMPAT
-+	struct seccomp_bitmaps compat;
-+#endif
- };
++	config INIT_STACK_ALL_ZERO
++		bool "zero-init everything on the stack (strongest and safest)"
++		depends on CC_HAS_AUTO_VAR_INIT_ZERO
++		help
++		  Initializes everything on the stack with a zero
++		  pattern. This is intended to eliminate all classes
++		  of uninitialized stack variable exploits and information
++		  exposures, even variables that were warned to have been
++		  left uninitialized.
++		  Zero initialization provides safe defaults for strings,
++		  pointers, indices and sizes, and is therefore more suitable as
++		  a security mitigation measure.
++		  The corresponding flag isn't officially supported by Clang and
++		  may sooner or later go away or get renamed.
  
- #ifdef CONFIG_HAVE_ARCH_SECCOMP_FILTER
-diff --git a/kernel/seccomp.c b/kernel/seccomp.c
-index 43edf53c2d84..2fbe7d2260f7 100644
---- a/kernel/seccomp.c
-+++ b/kernel/seccomp.c
-@@ -44,6 +44,11 @@
- #include <linux/anon_inodes.h>
- #include <linux/lockdep.h>
+ endchoice
  
-+#ifdef CONFIG_HAVE_ARCH_SECCOMP_BITMAP
-+#include <linux/pgtable.h>
-+#include <asm/tlbflush.h>
-+#endif
-+
- enum notify_state {
- 	SECCOMP_NOTIFY_INIT,
- 	SECCOMP_NOTIFY_SENT,
-@@ -476,6 +481,16 @@ static inline void seccomp_sync_threads(unsigned long flags)
- 		atomic_set(&thread->seccomp.filter_count,
- 			   atomic_read(&thread->seccomp.filter_count));
- 
-+		/* Copy syscall filter bitmaps. */
-+		memcpy(&thread->seccomp.native,
-+		       &caller->seccomp.native,
-+		       sizeof(caller->seccomp.native));
-+#ifdef CONFIG_COMPAT
-+		memcpy(&thread->seccomp.compat,
-+		       &caller->seccomp.compat,
-+		       sizeof(caller->seccomp.compat));
-+#endif
-+
- 		/*
- 		 * Don't let an unprivileged task work around
- 		 * the no_new_privs restriction by creating
-@@ -578,6 +593,144 @@ seccomp_prepare_user_filter(const char __user *user_filter)
- 	return filter;
- }
- 
-+static inline bool sd_touched(pte_t *ptep)
-+{
-+	return !!pte_young(*(READ_ONCE(ptep)));
-+}
-+
-+#ifdef CONFIG_HAVE_ARCH_SECCOMP_BITMAP
-+/*
-+ * We can build bitmaps only when an arch/nr combination reads nothing more
-+ * that sd->nr and sd->arch, since those have a constant mapping to the
-+ * syscall. To do this, we can run the filters for each syscall number, and
-+ * examine the page table entry that is aligned to everything past sd->arch,
-+ * checking for the ACCESSED flag.
-+ *
-+ * This approach could also be used to test for access to sd->arch too,
-+ * if we wanted to warn about compat-unsafe filters.
-+ */
-+static void seccomp_update_bitmap(struct seccomp_filter *filter,
-+				  void *pagepair, u32 arch,
-+				  struct seccomp_bitmaps *bitmaps)
-+{
-+	struct seccomp_data *sd;
-+	unsigned long vaddr;
-+	u32 nr, ret;
-+	pte_t *ptep;
-+	u64 check;
-+
-+	/* Initialize bitmaps for first filter. */
-+	if (!filter->prev)
-+		bitmap_fill(bitmaps->allow, NR_syscalls);
-+	/*
-+	 * Prepare to detect memory accesses: find the PTE for the second page
-+	 * in the page pair.
-+	 */
-+	vaddr = (unsigned long)(pagepair + PAGE_SIZE);
-+	ptep = virt_to_kpte(vaddr);
-+	/*
-+	 * Split struct seccomp_data across two pages, with everything after
-+	 * sd->arch (i.e. starting with sd->instruction_pointer), in the second
-+	 * page of the page pair.
-+	 */
-+	sd = pagepair + PAGE_SIZE - offsetof(struct seccomp_data, instruction_pointer);
-+
-+	/* Mark the second page as untouched (i.e. "old") */
-+	preempt_disable();
-+	set_pte_at(&init_mm, vaddr, ptep, pte_mkold(*(READ_ONCE(ptep))));
-+	local_flush_tlb_kernel_range(vaddr, vaddr + PAGE_SIZE);
-+	preempt_enable();
-+	/* Make sure the PTE agrees that it is untouched. */
-+	if (WARN_ON_ONCE(sd_touched(ptep)))
-+		return;
-+	/* Read a portion of struct seccomp_data from the second page. */
-+	check = sd->instruction_pointer;
-+	/* First, verify the contents are zero from vzalloc(). */
-+	if (WARN_ON_ONCE(check))
-+		return;
-+	/* Now make sure the ACCESSED bit has been set after the read. */
-+	if (!sd_touched(ptep)) {
-+		/*
-+		 * If autodetection fails, fall back to standard beahavior by
-+		 * clearing the entire "allow" bitmap.
-+		 */
-+		pr_warn_once("seccomp: cannot build automatic syscall filters\n");
-+		bitmap_zero(bitmaps->allow, NR_syscalls);
-+		return;
-+	}
-+
-+	/*
-+	 * For every syscall, if we don't already know we need to run
-+	 * the full filter, simulate the filter with our static values.
-+	 */
-+	for (nr = 0; nr < NR_syscalls; nr++) {
-+		/* Are we already at the maximal rejection state? */
-+		if (test_bit(nr, bitmaps->kill_process))
-+			continue;
-+
-+		sd->nr = nr;
-+		sd->arch = arch;
-+
-+		/* Do we need to reset the ACCESSED bit? */
-+		if (sd_touched(ptep)) {
-+			preempt_disable();
-+			set_pte_at(&init_mm, vaddr, ptep, pte_mkold(*(READ_ONCE(ptep))));
-+			local_flush_tlb_kernel_range(vaddr, vaddr + PAGE_SIZE);
-+			preempt_enable();
-+		}
-+
-+		/* Evaluate filter for this syscall. */
-+		ret = bpf_prog_run_pin_on_cpu(filter->prog, sd);
-+		/*
-+		 * If this run through the filter didn't access
-+		 * beyond "arch", we know the result is a constant
-+		 * mapping for arch/nr -> ret.
-+		 */
-+		if (!sd_touched(ptep)) {
-+			/* Constant evaluation. Mark appropriate bitmaps. */
-+			switch (ret) {
-+			case SECCOMP_RET_KILL_PROCESS:
-+				set_bit(nr, bitmaps->kill_process);
-+				break;
-+			case SECCOMP_RET_KILL_THREAD:
-+				set_bit(nr, bitmaps->kill_thread);
-+				break;
-+			default:
-+				break;
-+			case SECCOMP_RET_ALLOW:
-+				/*
-+				 * If we always map to allow, there are
-+				 * no changes needed to the bitmaps.
-+				 */
-+				continue;
-+			}
-+		}
-+
-+		/*
-+		 * Dynamic evaluation of syscall, or non-allow constant
-+		 * mapping to something other than SECCOMP_RET_ALLOW: we
-+		 * must not short-circuit-allow it anymore.
-+		 */
-+		clear_bit(nr, bitmaps->allow);
-+	}
-+}
-+
-+static void seccomp_update_bitmaps(struct seccomp_filter *filter,
-+				   void *pagepair)
-+{
-+	seccomp_update_bitmap(filter, pagepair, SECCOMP_ARCH,
-+			      &current->seccomp.native);
-+#ifdef CONFIG_COMPAT
-+	seccomp_update_bitmap(filter, pagepair, SECCOMP_ARCH_COMPAT,
-+			      &current->seccomp.compat);
-+#endif
-+}
-+#else
-+static void seccomp_update_bitmaps(struct seccomp_filter *filter,
-+				   void *pagepair)
-+{ }
-+#endif
-+
- /**
-  * seccomp_attach_filter: validate and attach filter
-  * @flags:  flags to change filter behavior
-@@ -591,7 +744,8 @@ seccomp_prepare_user_filter(const char __user *user_filter)
-  *   - in NEW_LISTENER mode: the fd of the new listener
-  */
- static long seccomp_attach_filter(unsigned int flags,
--				  struct seccomp_filter *filter)
-+				  struct seccomp_filter *filter,
-+				  void *pagepair)
- {
- 	unsigned long total_insns;
- 	struct seccomp_filter *walker;
-@@ -630,6 +784,9 @@ static long seccomp_attach_filter(unsigned int flags,
- 	current->seccomp.filter = filter;
- 	atomic_inc(&current->seccomp.filter_count);
- 
-+	/* Evaluate filter for new known-outcome syscalls */
-+	seccomp_update_bitmaps(filter, pagepair);
-+
- 	/* Now that the new filter is in place, synchronize to all threads. */
- 	if (flags & SECCOMP_FILTER_FLAG_TSYNC)
- 		seccomp_sync_threads(flags);
-@@ -857,6 +1014,56 @@ static int seccomp_do_user_notification(int this_syscall,
- 	return -1;
- }
- 
-+#ifdef CONFIG_HAVE_ARCH_SECCOMP_BITMAP
-+static inline bool __bypass_filter(struct seccomp_bitmaps *bitmaps,
-+				   u32 nr, u32 *filter_ret)
-+{
-+	if (nr < NR_syscalls) {
-+		if (test_bit(nr, current->seccomp.native.allow)) {
-+			*filter_ret = SECCOMP_RET_ALLOW;
-+			return true;
-+		}
-+		if (test_bit(nr, current->seccomp.native.kill_process)) {
-+			*filter_ret = SECCOMP_RET_KILL_PROCESS;
-+			return true;
-+		}
-+		if (test_bit(nr, current->seccomp.native.kill_thread)) {
-+			*filter_ret = SECCOMP_RET_KILL_THREAD;
-+			return true;
-+		}
-+	}
-+	return false;
-+}
-+
-+static inline u32 check_syscall(const struct seccomp_data *sd,
-+				struct seccomp_filter **match)
-+{
-+	u32 filter_ret = SECCOMP_RET_KILL_PROCESS;
-+
-+#ifdef CONFIG_COMPAT
-+	if (sd->arch == SECCOMP_ARCH) {
-+#endif
-+		if (__bypass_filter(&current->seccomp.native, sd->nr, &filter_ret))
-+			return filter_ret;
-+#ifdef CONFIG_COMPAT
-+	} else if (sd->arch == SECCOMP_ARCH_COMPAT) {
-+		if (__bypass_filter(&current->seccomp.compat, sd->nr, &filter_ret))
-+			return filter_ret;
-+	} else {
-+		WARN_ON_ONCE(1);
-+		return filter_ret;
-+	}
-+#endif
-+	return seccomp_run_filters(sd, match);
-+}
-+#else
-+static inline u32 check_syscall(const struct seccomp_data *sd,
-+				struct seccomp_filter **match)
-+{
-+	return seccomp_run_filters(sd, match);
-+}
-+#endif
-+
- static int __seccomp_filter(int this_syscall, const struct seccomp_data *sd,
- 			    const bool recheck_after_trace)
- {
-@@ -876,7 +1083,7 @@ static int __seccomp_filter(int this_syscall, const struct seccomp_data *sd,
- 		sd = &sd_local;
- 	}
- 
--	filter_ret = seccomp_run_filters(sd, &match);
-+	filter_ret = check_syscall(sd, &match);
- 	data = filter_ret & SECCOMP_RET_DATA;
- 	action = filter_ret & SECCOMP_RET_ACTION_FULL;
- 
-@@ -1346,6 +1553,7 @@ static long seccomp_set_mode_filter(unsigned int flags,
- 	long ret = -EINVAL;
- 	int listener = -1;
- 	struct file *listener_f = NULL;
-+	void *pagepair;
- 
- 	/* Validate flags. */
- 	if (flags & ~SECCOMP_FILTER_FLAG_MASK)
-@@ -1391,12 +1599,24 @@ static long seccomp_set_mode_filter(unsigned int flags,
- 	    mutex_lock_killable(&current->signal->cred_guard_mutex))
- 		goto out_put_fd;
- 
-+	/*
-+	 * This memory will be needed for bitmap testing, but we'll
-+	 * be holding a spinlock at that point. Do the allocation
-+	 * (and free) outside of the lock.
-+	 *
-+	 * Alternative: we could do the bitmap update before attach
-+	 * to avoid spending too much time under lock.
-+	 */
-+	pagepair = vzalloc(PAGE_SIZE * 2);
-+	if (!pagepair)
-+		goto out_put_fd;
-+
- 	spin_lock_irq(&current->sighand->siglock);
- 
- 	if (!seccomp_may_assign_mode(seccomp_mode))
- 		goto out;
- 
--	ret = seccomp_attach_filter(flags, prepared);
-+	ret = seccomp_attach_filter(flags, prepared, pagepair);
- 	if (ret)
- 		goto out;
- 	/* Do not free the successfully attached filter. */
-@@ -1405,6 +1625,7 @@ static long seccomp_set_mode_filter(unsigned int flags,
- 	seccomp_assign_mode(current, seccomp_mode, flags);
- out:
- 	spin_unlock_irq(&current->sighand->siglock);
-+	vfree(pagepair);
- 	if (flags & SECCOMP_FILTER_FLAG_TSYNC)
- 		mutex_unlock(&current->signal->cred_guard_mutex);
- out_put_fd:
 -- 
-2.25.1
+2.27.0.290.gba653c62da-goog
 
