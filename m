@@ -2,140 +2,136 @@ Return-Path: <SRS0=f9XP=75=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 300ECC433E0
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 18:11:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88286C433E0
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 18:35:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 158B02080D
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 18:11:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 617C9207C4
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 18:35:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="AIBG74jG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729948AbgFPSLa (ORCPT
+        id S1728014AbgFPSft (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 16 Jun 2020 14:11:30 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:10632 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727114AbgFPSLa (ORCPT
+        Tue, 16 Jun 2020 14:35:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44358 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726464AbgFPSfs (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 16 Jun 2020 14:11:30 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 05GI268R115534;
-        Tue, 16 Jun 2020 14:11:15 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 31pwcvvfe3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 16 Jun 2020 14:11:15 -0400
-Received: from m0098394.ppops.net (m0098394.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 05GI2kaO119330;
-        Tue, 16 Jun 2020 14:11:15 -0400
-Received: from ppma05fra.de.ibm.com (6c.4a.5195.ip4.static.sl-reverse.com [149.81.74.108])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 31pwcvvfdg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 16 Jun 2020 14:11:15 -0400
-Received: from pps.filterd (ppma05fra.de.ibm.com [127.0.0.1])
-        by ppma05fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 05GIB9rV030256;
-        Tue, 16 Jun 2020 18:11:13 GMT
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (d06relay11.portsmouth.uk.ibm.com [9.149.109.196])
-        by ppma05fra.de.ibm.com with ESMTP id 31mpe82b0j-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 16 Jun 2020 18:11:12 +0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 05GIBAsM61735064
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 16 Jun 2020 18:11:10 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8243042042;
-        Tue, 16 Jun 2020 18:11:10 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 64C494204D;
-        Tue, 16 Jun 2020 18:11:09 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.158.198])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 16 Jun 2020 18:11:09 +0000 (GMT)
-Message-ID: <1592331068.11061.218.camel@linux.ibm.com>
-Subject: Re: [PATCH] extend IMA boot_aggregate with kernel measurements
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>,
-        "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
-        Maurizio Drocco <maurizio.drocco@ibm.com>
-Cc:     "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "serge@hallyn.com" <serge@hallyn.com>,
-        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
-Date:   Tue, 16 Jun 2020 14:11:08 -0400
-In-Reply-To: <8c44ed75fb884cad9f33c86c2d4e8a27@huawei.com>
-References: <1591921795.11061.12.camel@linux.ibm.com>
-         <20200612143812.1609-1-maurizio.drocco@ibm.com>
-         <380af929b2d2440a9dc35ba0b374247d@huawei.com>
-         <1591982059.7235.29.camel@linux.ibm.com>
-         <8c44ed75fb884cad9f33c86c2d4e8a27@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.687
- definitions=2020-06-16_10:2020-06-16,2020-06-16 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 phishscore=0
- malwarescore=0 adultscore=0 mlxlogscore=999 bulkscore=0 clxscore=1015
- cotscore=-2147483648 impostorscore=0 lowpriorityscore=0 suspectscore=0
- spamscore=0 priorityscore=1501 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2004280000 definitions=main-2006160124
+        Tue, 16 Jun 2020 14:35:48 -0400
+Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9337DC061755
+        for <linux-security-module@vger.kernel.org>; Tue, 16 Jun 2020 11:35:48 -0700 (PDT)
+Received: by mail-pj1-x1044.google.com with SMTP id jz3so1821261pjb.0
+        for <linux-security-module@vger.kernel.org>; Tue, 16 Jun 2020 11:35:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=Gv5SyNbN+YalOOMpT+lUR6zrSKOxyXFsPO4eN2yYyhE=;
+        b=AIBG74jGGwjgO6WBXM4vpHq8cFCM4p4Psqbxkb87Jqwbz68+d4zZle3XICqvnmKg9t
+         6G7DW5BrZDAeXEvDllsiq4n65S1+BsdnQf1eWYTN7zFu4VjIZ8MlVpW5fEDEMrw8tSVT
+         uUCSHHX4FBSHO1H3yJ7TrYinRqzogRKaDRzI0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Gv5SyNbN+YalOOMpT+lUR6zrSKOxyXFsPO4eN2yYyhE=;
+        b=FYX1mtEzx53tjkL73JEgpU9tN8QqUhjSBZJBdZPW0JlVlZQJ64zHqMMBxt9YkBQwDW
+         S5dLD8IRC3lB5xAPuDU8r6+12ovofQN4N+0YKwTHVeHtuCa3tFwcmfYmU6pnsWmhMhZB
+         vTtHsnmCRaYf8DwcckKeiH1HpVEZ75jcQDxlL4jnjewRS+PtaXHhBOsfSdtwLJasLV/O
+         D+ZNJRyxiqRzDOgbmys9dqxGxUupCYrZSyTuz8IfpzmYgPznAy/6AFgyIbfyotuq8xLO
+         d+yf8xIRFBnNftbDhsRW+Eqi42BJD7nMKrTeZFyI0ZcJQDJaP2rnSPl5wUyabDNK+XGo
+         JKGQ==
+X-Gm-Message-State: AOAM5309wSneDLr1tXnI/R2fMVk/OGjNYuBmXBrfN+dPdUCPefirr/om
+        SQOGx5HOhLh1AsLtO1dk/34cLw==
+X-Google-Smtp-Source: ABdhPJyorPz/hN0z0htsbMGKXDwxSMUZOCNVD6vqJvCbF6cB9/KRHU4TiB0xlr8glLU8oty9rAKq5w==
+X-Received: by 2002:a17:902:201:: with SMTP id 1mr3268685plc.195.1592332548117;
+        Tue, 16 Jun 2020 11:35:48 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id d184sm7822774pfd.85.2020.06.16.11.35.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Jun 2020 11:35:47 -0700 (PDT)
+Date:   Tue, 16 Jun 2020 11:35:46 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Christian Brauner <christian@brauner.io>,
+        Sargun Dhillon <sargun@sargun.me>,
+        Tycho Andersen <tycho@tycho.ws>, Jann Horn <jannh@google.com>,
+        "zhujianwei (C)" <zhujianwei7@huawei.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Will Drewry <wad@chromium.org>, Shuah Khan <shuah@kernel.org>,
+        Matt Denton <mpdenton@google.com>,
+        Chris Palmer <palmer@google.com>,
+        Jeffrey Vander Stoep <jeffv@google.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Hehuazhen <hehuazhen@huawei.com>, X86 ML <x86@kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: [RFC][PATCH 0/8] seccomp: Implement constant action bitmaps
+Message-ID: <202006161131.5A21C01@keescook>
+References: <20200616074934.1600036-1-keescook@chromium.org>
+ <CALCETrVLA22khom-iSu5iTJGKfUykOnwyz8j7Tm9g6hWW_e0Aw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALCETrVLA22khom-iSu5iTJGKfUykOnwyz8j7Tm9g6hWW_e0Aw@mail.gmail.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 2020-06-16 at 17:29 +0000, Roberto Sassu wrote:
-> > From: James Bottomley [mailto:jejb@linux.ibm.com]
-> > Sent: Friday, June 12, 2020 7:14 PM
-> > On Fri, 2020-06-12 at 15:11 +0000, Roberto Sassu wrote:
-> > > with recent patches, boot_aggregate can be calculated from non-SHA1
-> > > PCR banks. I would replace with:
-> > >
-> > > Extend cumulative digest over ...
-> > >
-> > > Given that with this patch boot_aggregate is calculated differently,
-> > > shouldn't we call it boot_aggregate_v2 and enable it with a new
-> > > option?
-> > 
-> > So here's the problem: if your current grub doesn't do any TPM
-> > extensions (as most don't), then the two boot aggregates are the same
-> > because PCRs 8 and 9 are zero and there's a test that doesn't add them
-> > to the aggregate if they are zero.  For these people its a nop so we
-> > shouldn't force them to choose a different version of the same thing.
-> > 
-> > If, however, you're on a distribution where grub is automatically
-> > measuring the kernel and command line into PCRs 8 and 9 (I think Fedora
-> > 32 does this), your boot aggregate will change.  It strikes me in that
-> > case we can call this a bug fix, since the boot aggregate isn't
-> > properly binding to the previous measurements without PCRs 8 and 9.  In
-> > this case, do we want to allow people to select an option which doesn't
-> > properly bind the IMA log to the boot measurements?  That sounds like a
-> > security hole to me.
-> > 
-> > However, since it causes a user visible difference in the grub already
-> > measures case, do you have a current use case that would be affected?
-> > As in are lots of people already running a distro with the TPM grub
-> > updates and relying on the old boot aggregate?
+On Tue, Jun 16, 2020 at 10:01:43AM -0700, Andy Lutomirski wrote:
+> On Tue, Jun 16, 2020 at 12:49 AM Kees Cook <keescook@chromium.org> wrote:
+> >
+> > Hi,
+> >
 > 
-> I don't know how many people would be affected. However, if an
-> attestation tool processes both measurement lists from unpatched kernels
-> and patched kernels, keeping the same name would be a problem as it
-> cannot be determined from the measurement list how boot_aggregate
-> was calculated.
+> > In order to build this mapping at filter attach time, each filter is
+> > executed for every syscall (under each possible architecture), and
+> > checked for any accesses of struct seccomp_data that are not the "arch"
+> > nor "nr" (syscall) members. If only "arch" and "nr" are examined, then
+> > there is a constant mapping for that syscall, and bitmaps can be updated
+> > accordingly. If any accesses happen outside of those struct members,
+> > seccomp must not bypass filter execution for that syscall, since program
+> > state will be used to determine filter action result.
 > 
-> Anyway, I agree this should be fixed. At least, I suggest to add a Fixes tag,
-> to ensure that this patch is applied to all stable kernels.
+> >
+> > During syscall action probing, in order to determine whether other members
+> > of struct seccomp_data are being accessed during a filter execution,
+> > the struct is placed across a page boundary with the "arch" and "nr"
+> > members in the first page, and everything else in the second page. The
+> > "page accessed" flag is cleared in the second page's PTE, and the filter
+> > is run. If the "page accessed" flag appears as set after running the
+> > filter, we can determine that the filter looked beyond the "arch" and
+> > "nr" members, and exclude that syscall from the constant action bitmaps.
+> 
+> This is... evil.  I don't know how I feel about it.  It's also
 
-The boot aggregate on existing systems would be sha1.  Does it make
-sense to limit this change to larger digests?  Anyone backporting
-support for larger digests would also need to backport this change as
-well.
+Thank you! ;)
 
-Mimi
+> potentially quite slow.
+
+I got the impression that (worst-case: a "full" filter for every
+arch/syscall combo) ~900 _local_ TLB flushes per filter attach wouldn't be
+very slow at all. (And the code is optimized to avoid needless flushes.)
+
+> I don't suppose you could, instead, instrument the BPF code to get at
+> this without TLB hackery?  Or maybe try to do some real symbolic
+> execution of the BPF code?
+
+I think the "simple emulator" path[1] might get us a realistically large
+coverage. I'm going to try it out, and see what it looks like.
+
+-Kees
+
+[1] https://lore.kernel.org/lkml/202006160757.99FD9B785@keescook/
+
+-- 
+Kees Cook
