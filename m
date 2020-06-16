@@ -2,136 +2,157 @@ Return-Path: <SRS0=f9XP=75=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88286C433E0
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 18:35:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5302DC433E2
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 18:36:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 617C9207C4
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 18:35:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32312207C4
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Jun 2020 18:36:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="AIBG74jG"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VsbTXqwl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728014AbgFPSft (ORCPT
+        id S1729942AbgFPSgh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 16 Jun 2020 14:35:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44358 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726464AbgFPSfs (ORCPT
+        Tue, 16 Jun 2020 14:36:37 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:24736 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729843AbgFPSgd (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 16 Jun 2020 14:35:48 -0400
-Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9337DC061755
-        for <linux-security-module@vger.kernel.org>; Tue, 16 Jun 2020 11:35:48 -0700 (PDT)
-Received: by mail-pj1-x1044.google.com with SMTP id jz3so1821261pjb.0
-        for <linux-security-module@vger.kernel.org>; Tue, 16 Jun 2020 11:35:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=Gv5SyNbN+YalOOMpT+lUR6zrSKOxyXFsPO4eN2yYyhE=;
-        b=AIBG74jGGwjgO6WBXM4vpHq8cFCM4p4Psqbxkb87Jqwbz68+d4zZle3XICqvnmKg9t
-         6G7DW5BrZDAeXEvDllsiq4n65S1+BsdnQf1eWYTN7zFu4VjIZ8MlVpW5fEDEMrw8tSVT
-         uUCSHHX4FBSHO1H3yJ7TrYinRqzogRKaDRzI0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Gv5SyNbN+YalOOMpT+lUR6zrSKOxyXFsPO4eN2yYyhE=;
-        b=FYX1mtEzx53tjkL73JEgpU9tN8QqUhjSBZJBdZPW0JlVlZQJ64zHqMMBxt9YkBQwDW
-         S5dLD8IRC3lB5xAPuDU8r6+12ovofQN4N+0YKwTHVeHtuCa3tFwcmfYmU6pnsWmhMhZB
-         vTtHsnmCRaYf8DwcckKeiH1HpVEZ75jcQDxlL4jnjewRS+PtaXHhBOsfSdtwLJasLV/O
-         D+ZNJRyxiqRzDOgbmys9dqxGxUupCYrZSyTuz8IfpzmYgPznAy/6AFgyIbfyotuq8xLO
-         d+yf8xIRFBnNftbDhsRW+Eqi42BJD7nMKrTeZFyI0ZcJQDJaP2rnSPl5wUyabDNK+XGo
-         JKGQ==
-X-Gm-Message-State: AOAM5309wSneDLr1tXnI/R2fMVk/OGjNYuBmXBrfN+dPdUCPefirr/om
-        SQOGx5HOhLh1AsLtO1dk/34cLw==
-X-Google-Smtp-Source: ABdhPJyorPz/hN0z0htsbMGKXDwxSMUZOCNVD6vqJvCbF6cB9/KRHU4TiB0xlr8glLU8oty9rAKq5w==
-X-Received: by 2002:a17:902:201:: with SMTP id 1mr3268685plc.195.1592332548117;
-        Tue, 16 Jun 2020 11:35:48 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id d184sm7822774pfd.85.2020.06.16.11.35.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jun 2020 11:35:47 -0700 (PDT)
-Date:   Tue, 16 Jun 2020 11:35:46 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Christian Brauner <christian@brauner.io>,
-        Sargun Dhillon <sargun@sargun.me>,
-        Tycho Andersen <tycho@tycho.ws>, Jann Horn <jannh@google.com>,
-        "zhujianwei (C)" <zhujianwei7@huawei.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
+        Tue, 16 Jun 2020 14:36:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1592332591;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=7/6v2jfN6UIDhJeosnSs1R4UAP7mOiLuFVPEnJvGTnM=;
+        b=VsbTXqwl7xxf+MUWbnJM4vCOVIS/iCxA1SAjzyA8FsjzrodShKHnZfMLXBOQL/GHNJH8vC
+        OuxP6I6blTXluNjdUqYdGiIeMKVM7wFH4inGVQHpTaw8gw2uwB0FCvyIBJbPEBsvhu17TV
+        Bbxsdyz8zlcvC51jFF/xVTwdyLhzHT8=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-73-AXrSOJCONRyyvrghDqFtvA-1; Tue, 16 Jun 2020 14:36:27 -0400
+X-MC-Unique: AXrSOJCONRyyvrghDqFtvA-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2578680332A;
+        Tue, 16 Jun 2020 18:36:22 +0000 (UTC)
+Received: from llong.remote.csb (ovpn-114-156.rdu2.redhat.com [10.10.114.156])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3B77519C71;
+        Tue, 16 Jun 2020 18:36:16 +0000 (UTC)
+Subject: Re: [PATCH v5 2/2] mm, treewide: Rename kzfree() to kfree_sensitive()
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     David Howells <dhowells@redhat.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Joe Perches <joe@perches.com>,
         Matthew Wilcox <willy@infradead.org>,
-        Will Drewry <wad@chromium.org>, Shuah Khan <shuah@kernel.org>,
-        Matt Denton <mpdenton@google.com>,
-        Chris Palmer <palmer@google.com>,
-        Jeffrey Vander Stoep <jeffv@google.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Hehuazhen <hehuazhen@huawei.com>, X86 ML <x86@kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: [RFC][PATCH 0/8] seccomp: Implement constant action bitmaps
-Message-ID: <202006161131.5A21C01@keescook>
-References: <20200616074934.1600036-1-keescook@chromium.org>
- <CALCETrVLA22khom-iSu5iTJGKfUykOnwyz8j7Tm9g6hWW_e0Aw@mail.gmail.com>
+        David Rientjes <rientjes@google.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        "Jason A . Donenfeld" <Jason@zx2c4.com>, linux-mm@kvack.org,
+        keyrings@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-amlogic@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-ppp@vger.kernel.org, wireguard@lists.zx2c4.com,
+        linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
+        linux-cifs@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+        ecryptfs@vger.kernel.org, kasan-dev@googlegroups.com,
+        linux-bluetooth@vger.kernel.org, linux-wpan@vger.kernel.org,
+        linux-sctp@vger.kernel.org, linux-nfs@vger.kernel.org,
+        tipc-discussion@lists.sourceforge.net,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org
+References: <20200616154311.12314-1-longman@redhat.com>
+ <20200616154311.12314-3-longman@redhat.com>
+ <20200616110944.c13f221e5c3f54e775190afe@linux-foundation.org>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <65002c1e-5e31-1f4e-283c-186e06e55ef0@redhat.com>
+Date:   Tue, 16 Jun 2020 14:36:15 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALCETrVLA22khom-iSu5iTJGKfUykOnwyz8j7Tm9g6hWW_e0Aw@mail.gmail.com>
+In-Reply-To: <20200616110944.c13f221e5c3f54e775190afe@linux-foundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jun 16, 2020 at 10:01:43AM -0700, Andy Lutomirski wrote:
-> On Tue, Jun 16, 2020 at 12:49 AM Kees Cook <keescook@chromium.org> wrote:
-> >
-> > Hi,
-> >
-> 
-> > In order to build this mapping at filter attach time, each filter is
-> > executed for every syscall (under each possible architecture), and
-> > checked for any accesses of struct seccomp_data that are not the "arch"
-> > nor "nr" (syscall) members. If only "arch" and "nr" are examined, then
-> > there is a constant mapping for that syscall, and bitmaps can be updated
-> > accordingly. If any accesses happen outside of those struct members,
-> > seccomp must not bypass filter execution for that syscall, since program
-> > state will be used to determine filter action result.
-> 
-> >
-> > During syscall action probing, in order to determine whether other members
-> > of struct seccomp_data are being accessed during a filter execution,
-> > the struct is placed across a page boundary with the "arch" and "nr"
-> > members in the first page, and everything else in the second page. The
-> > "page accessed" flag is cleared in the second page's PTE, and the filter
-> > is run. If the "page accessed" flag appears as set after running the
-> > filter, we can determine that the filter looked beyond the "arch" and
-> > "nr" members, and exclude that syscall from the constant action bitmaps.
-> 
-> This is... evil.  I don't know how I feel about it.  It's also
+On 6/16/20 2:09 PM, Andrew Morton wrote:
+> On Tue, 16 Jun 2020 11:43:11 -0400 Waiman Long <longman@redhat.com> wrote:
+>
+>> As said by Linus:
+>>
+>>    A symmetric naming is only helpful if it implies symmetries in use.
+>>    Otherwise it's actively misleading.
+>>
+>>    In "kzalloc()", the z is meaningful and an important part of what the
+>>    caller wants.
+>>
+>>    In "kzfree()", the z is actively detrimental, because maybe in the
+>>    future we really _might_ want to use that "memfill(0xdeadbeef)" or
+>>    something. The "zero" part of the interface isn't even _relevant_.
+>>
+>> The main reason that kzfree() exists is to clear sensitive information
+>> that should not be leaked to other future users of the same memory
+>> objects.
+>>
+>> Rename kzfree() to kfree_sensitive() to follow the example of the
+>> recently added kvfree_sensitive() and make the intention of the API
+>> more explicit. In addition, memzero_explicit() is used to clear the
+>> memory to make sure that it won't get optimized away by the compiler.
+>>
+>> The renaming is done by using the command sequence:
+>>
+>>    git grep -w --name-only kzfree |\
+>>    xargs sed -i 's/\bkzfree\b/kfree_sensitive/'
+>>
+>> followed by some editing of the kfree_sensitive() kerneldoc and adding
+>> a kzfree backward compatibility macro in slab.h.
+>>
+>> ...
+>>
+>> --- a/include/linux/slab.h
+>> +++ b/include/linux/slab.h
+>> @@ -186,10 +186,12 @@ void memcg_deactivate_kmem_caches(struct mem_cgroup *, struct mem_cgroup *);
+>>    */
+>>   void * __must_check krealloc(const void *, size_t, gfp_t);
+>>   void kfree(const void *);
+>> -void kzfree(const void *);
+>> +void kfree_sensitive(const void *);
+>>   size_t __ksize(const void *);
+>>   size_t ksize(const void *);
+>>   
+>> +#define kzfree(x)	kfree_sensitive(x)	/* For backward compatibility */
+>> +
+> What was the thinking here?  Is this really necessary?
+>
+> I suppose we could keep this around for a while to ease migration.  But
+> not for too long, please.
+>
+It should be there just for 1 release cycle. I have broken out the btrfs 
+patch to the btrfs list and I didn't make the kzfree to kfree_sensitive 
+conversion there as that patch was in front in my patch list. So 
+depending on which one lands first, there can be a window where the 
+compilation may fail without this workaround. I am going to send out 
+another patch in the next release cycle to remove it.
 
-Thank you! ;)
+Cheers,
+Longman
 
-> potentially quite slow.
-
-I got the impression that (worst-case: a "full" filter for every
-arch/syscall combo) ~900 _local_ TLB flushes per filter attach wouldn't be
-very slow at all. (And the code is optimized to avoid needless flushes.)
-
-> I don't suppose you could, instead, instrument the BPF code to get at
-> this without TLB hackery?  Or maybe try to do some real symbolic
-> execution of the BPF code?
-
-I think the "simple emulator" path[1] might get us a realistically large
-coverage. I'm going to try it out, and see what it looks like.
-
--Kees
-
-[1] https://lore.kernel.org/lkml/202006160757.99FD9B785@keescook/
-
--- 
-Kees Cook
