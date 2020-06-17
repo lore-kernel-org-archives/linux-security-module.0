@@ -2,114 +2,103 @@ Return-Path: <SRS0=EaTW=76=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9F62C433DF
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Jun 2020 15:32:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69D87C433E3
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Jun 2020 15:36:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 856FB208B8
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Jun 2020 15:32:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sSpczcE6"
+	by mail.kernel.org (Postfix) with ESMTP id 3B0A120CC7
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Jun 2020 15:36:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1592408212;
+	bh=Ija7pWEEhwwlfG6l3Wt+WLYZWPuXJEBLmjFze1p/mOs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=aB2Kmw5hTQjVyRhJcch/HLd6Q9St2inf0JjU/V9Wo3yKlNqY1oBuIf4fTVN/zrVOT
+	 SfIMNZoLuEfP08r9eZwvxGg2zkZVLQMOKLn6elPrpgFA3WnBu3EjU0dniNPo4P16pS
+	 FEuzLR7C1nkwUsnyqVcxkKyZ/xUxdeIadQUNqPXc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726854AbgFQPc3 (ORCPT
+        id S1726861AbgFQPgr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 17 Jun 2020 11:32:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40726 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726833AbgFQPc2 (ORCPT
+        Wed, 17 Jun 2020 11:36:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35058 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726758AbgFQPgr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 17 Jun 2020 11:32:28 -0400
-Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8CAFC061755
-        for <linux-security-module@vger.kernel.org>; Wed, 17 Jun 2020 08:32:27 -0700 (PDT)
-Received: by mail-lj1-x241.google.com with SMTP id x18so3422300lji.1
-        for <linux-security-module@vger.kernel.org>; Wed, 17 Jun 2020 08:32:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=l32XRyEkePlebWnUae8i7rcm+cLkXuxHO0S9jd5PcS8=;
-        b=sSpczcE6lMjOla0Qq7Ojd8fn4tDSWBrhMmLDDt6LJ86Y9mjbQV+bTQXs9ttXlzP4j6
-         kbP2DWE/BTuY4ZH4z2UoHE/D5Jj6eentsfqgd+Z7BrEVUdToZJhvZGbLyWrjbNkkK+hU
-         CquzCzK5nJvm44QjUxLVvNdw6EDRR42+qHY4xHcMCKUv2aNHRlMxEMZ2vgU+oDZT2j7s
-         aHEu6RVQo91uJ/ZRi4J/bntJVWz8VDfVO9ZuRCll0hoHo0KvtsN0OG6rk19jkQYPFLOe
-         6TSwCIE1a9yX0Dp6wEJkiLCMlX/avsVKvOWBggMzfFxk9XYZKknnkyDOu++F6eSC8j1p
-         T2ZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=l32XRyEkePlebWnUae8i7rcm+cLkXuxHO0S9jd5PcS8=;
-        b=btlyHrGbdzRDRHcLc7svEHfIPwSNwvCmFWzLkuXD4MBv1BHA5DqTiHptTtO05e1PLc
-         mMioJJtTvPJZEZLDvPfCtLwKBff5byKi76cwyXBDmuC1B9Yc8IHGgm1QcUsQ3TKkInvk
-         zR5jcZgFTSsSNQYjMPt2vQ8/8pMBTclsI/riN9mxuU8XZz+jdqAdGrIBN4F5BOfWpQYy
-         rT+Osi85Ey3zve3shBprLP33Zf/3JwqDaX/CxtrRtvTab+J50HfLAkmnbhwlsvnrUTL8
-         mOf5s3FguDuWIhHNWsUCk4CIx51e9xe+GlMHA7igH6aa/L4YWg24/txDpXucLjv2+gIC
-         u2ng==
-X-Gm-Message-State: AOAM530RM/kGrI99nkIE2R+esibNB9Py775OoeBQF4s352prpbRErty9
-        IAHZyawv4MQkNj8KNBxBOlSqhe04YgnV2IbYYS0/ZA==
-X-Google-Smtp-Source: ABdhPJyauhbkn3VnOnpdJHtl3A9kM8iVF5IJzfX+GgrITFSBm3aQ4wPhFZD6DFnpmXCZvji7QIuycv8yUAKBuu+HrkY=
-X-Received: by 2002:a2e:541e:: with SMTP id i30mr3989852ljb.156.1592407945965;
- Wed, 17 Jun 2020 08:32:25 -0700 (PDT)
+        Wed, 17 Jun 2020 11:36:47 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7FAAC20890;
+        Wed, 17 Jun 2020 15:36:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1592408207;
+        bh=Ija7pWEEhwwlfG6l3Wt+WLYZWPuXJEBLmjFze1p/mOs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=WNnlKLwwT0RM/nS8LvP0duamjn8PGmfZ8D8Y3dFb1pg9qnV1/tZUXrw05Ts2gWas2
+         1YqSFmHq7FE61/q8ZQApKHBU6HXsAytxm2hiMMOsmXAyxriHINNQx2hwkrOZtv71ag
+         Bds0At2fVG8yqPXF91y7bSa07XnMQtjvBl6Jtssg=
+Date:   Wed, 17 Jun 2020 17:36:39 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Scott Branden <scott.branden@broadcom.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Jessica Yu <jeyu@kernel.org>,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        kexec@lists.infradead.org, linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org
+Subject: Re: [PATCH v2 1/1] fs: move kernel_read_file* to its own include file
+Message-ID: <20200617153639.GA2702068@kroah.com>
+References: <20200617151710.16613-1-scott.branden@broadcom.com>
 MIME-Version: 1.0
-References: <20200616074934.1600036-1-keescook@chromium.org>
- <20200616074934.1600036-4-keescook@chromium.org> <CAG48ez0-jSSaw85=ku35UM3vMe98Vz97B68LsUoNd8ftwpunkQ@mail.gmail.com>
- <CALCETrUTsPHt4P=bWB-8r7bbpvgXXu3VBf4TS9S=XYxqxVt=DA@mail.gmail.com>
-In-Reply-To: <CALCETrUTsPHt4P=bWB-8r7bbpvgXXu3VBf4TS9S=XYxqxVt=DA@mail.gmail.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Wed, 17 Jun 2020 17:31:59 +0200
-Message-ID: <CAG48ez23QKhv4CGPTgGAhCVM8KUCm-wWy2H6EV2Sc9nz0Hmckg@mail.gmail.com>
-Subject: Re: [PATCH 3/8] seccomp: Introduce SECCOMP_PIN_ARCHITECTURE
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Kees Cook <keescook@chromium.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Will Drewry <wad@chromium.org>,
-        Christian Brauner <christian@brauner.io>,
-        Sargun Dhillon <sargun@sargun.me>,
-        Tycho Andersen <tycho@tycho.ws>,
-        "zhujianwei (C)" <zhujianwei7@huawei.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Matt Denton <mpdenton@google.com>,
-        Chris Palmer <palmer@google.com>,
-        Jeffrey Vander Stoep <jeffv@google.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Hehuazhen <hehuazhen@huawei.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200617151710.16613-1-scott.branden@broadcom.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jun 17, 2020 at 5:30 PM Andy Lutomirski <luto@kernel.org> wrote:
->
-> On Wed, Jun 17, 2020 at 8:25 AM Jann Horn <jannh@google.com> wrote:
-> >
-> > On Tue, Jun 16, 2020 at 9:49 AM Kees Cook <keescook@chromium.org> wrote:
-> > > For systems that provide multiple syscall maps based on architectures
-> > > (e.g. AUDIT_ARCH_X86_64 and AUDIT_ARCH_I386 via CONFIG_COMPAT), allow
-> > > a fast way to pin the process to a specific syscall mapping, instead of
-> > > needing to generate all filters with an architecture check as the first
-> > > filter action.
-> >
-> > This seems reasonable; but can we maybe also add X86-specific handling
-> > for that X32 mess? AFAIK there are four ways to do syscalls with
-> > AUDIT_ARCH_X86_64:
->
-> You're out of date :)  I fixed the mess.
->
-> commit 6365b842aae4490ebfafadfc6bb27a6d3cc54757
-> Author: Andy Lutomirski <luto@kernel.org>
-> Date:   Wed Jul 3 13:34:04 2019 -0700
->
->     x86/syscalls: Split the x32 syscalls into their own table
+On Wed, Jun 17, 2020 at 08:17:10AM -0700, Scott Branden wrote:
+> Move kernel_read_file* out of linux/fs.h to its own linux/kernel_read_file.h
+> include file. That header gets pulled in just about everywhere
+> and doesn't really need functions not related to the general fs interface.
+> 
+> Suggested-by: Christoph Hellwig <hch@lst.de>
+> Signed-off-by: Scott Branden <scott.branden@broadcom.com>
+> ---
+>  drivers/base/firmware_loader/main.c |  1 +
+>  fs/exec.c                           |  1 +
+>  include/linux/fs.h                  | 39 ----------------------
+>  include/linux/ima.h                 |  1 +
+>  include/linux/kernel_read_file.h    | 52 +++++++++++++++++++++++++++++
+>  include/linux/security.h            |  1 +
+>  kernel/kexec_file.c                 |  1 +
+>  kernel/module.c                     |  1 +
+>  security/integrity/digsig.c         |  1 +
+>  security/integrity/ima/ima_fs.c     |  1 +
+>  security/integrity/ima/ima_main.c   |  1 +
+>  security/integrity/ima/ima_policy.c |  1 +
+>  security/loadpin/loadpin.c          |  1 +
+>  security/security.c                 |  1 +
+>  security/selinux/hooks.c            |  1 +
+>  15 files changed, 65 insertions(+), 39 deletions(-)
+>  create mode 100644 include/linux/kernel_read_file.h
 
-Oooooh, beautiful. Thank you very much for that.
+What changed from v1?  Always put that below the --- line.
+
+thanks,
+
+greg k-h
