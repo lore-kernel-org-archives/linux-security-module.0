@@ -2,126 +2,79 @@ Return-Path: <SRS0=EaTW=76=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BD06C433E0
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Jun 2020 12:56:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C05A9C433E0
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Jun 2020 15:06:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6CDBD21527
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Jun 2020 12:56:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1592398574;
-	bh=nYFO/oI254U78ynuhC4MshoQshU2kuGAPO7lVMtzojE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=La2yLhMLYu7YOJf9AHND3dhg3kSGwKOK0vLm1htojj8kqpxG6rx/H2gBSTzRU7Vt4
-	 NttuggImwhOTXlDW3MJs0WNu1ApYh/GHqm/82fJBaSHDudbpKDnlSFa8b+m0Xf2vbI
-	 CLsoGgTN0X/mXsOuVHt7iTT6oP++H4x9AnIPOuFw=
+	by mail.kernel.org (Postfix) with ESMTP id A098C206FA
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Jun 2020 15:06:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726583AbgFQM4E (ORCPT
+        id S1726511AbgFQPGG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 17 Jun 2020 08:56:04 -0400
-Received: from mail-ej1-f67.google.com ([209.85.218.67]:46289 "EHLO
-        mail-ej1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725941AbgFQM4B (ORCPT
+        Wed, 17 Jun 2020 11:06:06 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:53935 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726355AbgFQPGF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 17 Jun 2020 08:56:01 -0400
-Received: by mail-ej1-f67.google.com with SMTP id p20so2155867ejd.13;
-        Wed, 17 Jun 2020 05:55:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=fOVgSeVqTVqWvUfLoOdj4nt+48hh42lucWZp1VWswtg=;
-        b=dH49tmuZwIi2AW45bvCm3iTsdIn3uF71ykSn9PsnXeadpR8w4CiekLmYpZM958HwJD
-         ibgE+xf/ARAeXcjze6WrTSv5kWz7b8jTpIZP8lCgh3Ylunh3gjcMdzhvwrFj+vqHznwg
-         rXWDmWvWLvm2e4k8WV0pN2mW4Bnb86WB17lGi1mJqvxtygd7za3zqTFaYjfZJY22Zxhx
-         82tjvjiERWaV0Yt8ZqtypoDKflVAblaEOMwz6De3hPO1oN+J4thsHfe7IhMjPM4f9vzY
-         7KAKmVbgfZKj2sH/BeUJ6fCaZrsjP79n5Sfl/vPFusfBPpcILYmSLk3eh1Dy43dOJL87
-         2WTw==
-X-Gm-Message-State: AOAM530bhtu6+RkmEZpogtJgUxdROzQTUK2XsEI7R0YXnSFuAtjx2e2X
-        yl1V8OEEuJPvrEpbgOi6IDA=
-X-Google-Smtp-Source: ABdhPJz5smjYQcDGdXsq8Ug+fgHwHPeIMnfqM9kX0E57nHrzErZZpyVOrifVPC/iAZURBZCGoIl/9Q==
-X-Received: by 2002:a17:906:aad8:: with SMTP id kt24mr7265073ejb.527.1592398555771;
-        Wed, 17 Jun 2020 05:55:55 -0700 (PDT)
-Received: from localhost (ip-37-188-158-19.eurotel.cz. [37.188.158.19])
-        by smtp.gmail.com with ESMTPSA id mh14sm13501385ejb.116.2020.06.17.05.55.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Jun 2020 05:55:54 -0700 (PDT)
-Date:   Wed, 17 Jun 2020 14:55:53 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     dsterba@suse.cz, Joe Perches <joe@perches.com>,
-        Waiman Long <longman@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Howells <dhowells@redhat.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        David Rientjes <rientjes@google.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        "Jason A . Donenfeld" <Jason@zx2c4.com>, linux-mm@kvack.org,
-        keyrings@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-amlogic@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-ppp@vger.kernel.org, wireguard@lists.zx2c4.com,
-        linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, ecryptfs@vger.kernel.org,
-        kasan-dev@googlegroups.com, linux-bluetooth@vger.kernel.org,
-        linux-wpan@vger.kernel.org, linux-sctp@vger.kernel.org,
-        linux-nfs@vger.kernel.org, tipc-discussion@lists.sourceforge.net,
-        linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org
-Subject: Re: [PATCH v4 0/3] mm, treewide: Rename kzfree() to kfree_sensitive()
-Message-ID: <20200617125553.GO9499@dhcp22.suse.cz>
-References: <20200616015718.7812-1-longman@redhat.com>
- <fe3b9a437be4aeab3bac68f04193cb6daaa5bee4.camel@perches.com>
- <20200616230130.GJ27795@twin.jikos.cz>
- <20200617003711.GD8681@bombadil.infradead.org>
- <20200617071212.GJ9499@dhcp22.suse.cz>
- <20200617110820.GG8681@bombadil.infradead.org>
- <20200617113157.GM9499@dhcp22.suse.cz>
- <20200617122321.GJ8681@bombadil.infradead.org>
+        Wed, 17 Jun 2020 11:06:05 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-53-5uhEa_3bOfazzDN9lH_l0Q-1; Wed, 17 Jun 2020 15:59:40 +0100
+X-MC-Unique: 5uhEa_3bOfazzDN9lH_l0Q-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Wed, 17 Jun 2020 15:59:39 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Wed, 17 Jun 2020 15:59:39 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Linus Torvalds' <torvalds@linux-foundation.org>,
+        Christoph Hellwig <hch@lst.de>
+CC:     Al Viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>,
+        "David Howells" <dhowells@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        NetFilter <netfilter-devel@vger.kernel.org>
+Subject: RE: [PATCH 05/13] fs: check FMODE_WRITE in __kernel_write
+Thread-Topic: [PATCH 05/13] fs: check FMODE_WRITE in __kernel_write
+Thread-Index: AQHWQzOZSLTjK0HIqkOBmunfm0asUajc6RXQ
+Date:   Wed, 17 Jun 2020 14:59:39 +0000
+Message-ID: <a1dcd0f17c9c468980c2f62e8d2a4529@AcuMS.aculab.com>
+References: <20200615121257.798894-1-hch@lst.de>
+ <20200615121257.798894-6-hch@lst.de>
+ <CAHk-=whfMo7gvco8N5qEjh+jSqezv+bd+N-7txpNokD39t=dhQ@mail.gmail.com>
+In-Reply-To: <CAHk-=whfMo7gvco8N5qEjh+jSqezv+bd+N-7txpNokD39t=dhQ@mail.gmail.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200617122321.GJ8681@bombadil.infradead.org>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed 17-06-20 05:23:21, Matthew Wilcox wrote:
-> On Wed, Jun 17, 2020 at 01:31:57PM +0200, Michal Hocko wrote:
-> > On Wed 17-06-20 04:08:20, Matthew Wilcox wrote:
-> > > If you call vfree() under
-> > > a spinlock, you're in trouble.  in_atomic() only knows if we hold a
-> > > spinlock for CONFIG_PREEMPT, so it's not safe to check for in_atomic()
-> > > in __vfree().  So we need the warning in order that preempt people can
-> > > tell those without that there is a bug here.
-> > 
-> > ... Unless I am missing something in_interrupt depends on preempt_count() as
-> > well so neither of the two is reliable without PREEMPT_COUNT configured.
-> 
-> preempt_count() always tracks whether we're in interrupt context,
-> regardless of CONFIG_PREEMPT.  The difference is that CONFIG_PREEMPT
-> will track spinlock acquisitions as well.
+RnJvbTogTGludXMgVG9ydmFsZHMNCj4gU2VudDogMTUgSnVuZSAyMDIwIDE3OjQwDQo+IE9uIE1v
+biwgSnVuIDE1LCAyMDIwIGF0IDU6MTMgQU0gQ2hyaXN0b3BoIEhlbGx3aWcgPGhjaEBsc3QuZGU+
+IHdyb3RlOg0KPiA+DQo+ID4gV2Ugc3RpbGwgbmVlZCB0byBjaGVjayBpZiB0aGUgZtGVIGlzIG9w
+ZW4gd3JpdGUsIGV2ZW4gZm9yIHRoZSBsb3ctbGV2ZWwNCj4gPiBoZWxwZXIuDQo+IA0KPiBJcyB0
+aGVyZSBhY3R1YWxseSBhIHdheSB0byB0cmlnZ2VyIHNvbWV0aGluZyBsaWtlIHRoaXM/IEknbSB3
+b25kZXJpbmcNCj4gaWYgaXQncyB3b3J0aCBhIFdBUk5fT05fT05DRSgpPw0KPiANCj4gSXQgZG9l
+c24ndCBzb3VuZCBzZW5zaWJsZSB0byBoYXZlIHNvbWUga2VybmVsIGZ1bmN0aW9uYWxpdHkgdHJ5
+IHRvDQo+IHdyaXRlIHRvIGEgZmlsZSBpdCBkaWRuJ3Qgb3BlbiBmb3Igd3JpdGUsIGFuZCBzb3Vu
+ZHMgbGlrZSBhIGtlcm5lbCBidWcNCj4gaWYgdGhpcyBjYXNlIHdlcmUgdG8gZXZlciB0cmlnZ2Vy
+Li4NCg0KSXQncyBhIGNoZWFwIHRlc3QgYXQgdGhlIHRvcCBvZiBzb21lIGZhaXJseSBoZWF2eSBj
+b2RlLg0KRmFpbGluZyB0aGUgcmVxdWVzdCB3aWxsIHNvb24gaWRlbnRpZnkgdGhlIGJ1Zy4NCg0K
+CURhdmlkDQoNCi0NClJlZ2lzdGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwgQnJhbWxleSBSb2FkLCBN
+b3VudCBGYXJtLCBNaWx0b24gS2V5bmVzLCBNSzEgMVBULCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAx
+Mzk3Mzg2IChXYWxlcykNCg==
 
-Right you are! Thanks for the clarification. I find the situation
-around preempt_count quite confusing TBH. Looking at existing users
-of in_atomic() (e.g. a random one zd_usb_iowrite16v_async which check
-in_atomic and then does GFP_KERNEL allocation which would be obviously
-broken on !PREEMPT if the function can be called from an atomic
-context), I am wondering whether it would make sense to track atomic
-context also for !PREEMPT. This check is just terribly error prone.
-
--- 
-Michal Hocko
-SUSE Labs
