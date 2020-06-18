@@ -2,132 +2,152 @@ Return-Path: <SRS0=g/MA=77=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CE0BC433DF
-	for <linux-security-module@archiver.kernel.org>; Thu, 18 Jun 2020 18:16:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5047CC433E1
+	for <linux-security-module@archiver.kernel.org>; Thu, 18 Jun 2020 20:12:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6FC392083B
-	for <linux-security-module@archiver.kernel.org>; Thu, 18 Jun 2020 18:16:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dVOBRYhz"
+	by mail.kernel.org (Postfix) with ESMTP id 37A4A208D5
+	for <linux-security-module@archiver.kernel.org>; Thu, 18 Jun 2020 20:12:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727982AbgFRSQu (ORCPT
+        id S1730523AbgFRUMM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 18 Jun 2020 14:16:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33884 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727113AbgFRSQt (ORCPT
+        Thu, 18 Jun 2020 16:12:12 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36760 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728027AbgFRUML (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 18 Jun 2020 14:16:49 -0400
-Received: from mail-qv1-xf44.google.com (mail-qv1-xf44.google.com [IPv6:2607:f8b0:4864:20::f44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76E49C06174E;
-        Thu, 18 Jun 2020 11:16:49 -0700 (PDT)
-Received: by mail-qv1-xf44.google.com with SMTP id e2so3218314qvw.7;
-        Thu, 18 Jun 2020 11:16:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7Cqqi1amKLy2OTdpP21O0ph08WqGmQlHafsLB9AH7TU=;
-        b=dVOBRYhzBc/Av52mQvqLNdGX8J+6P5cUFLepiyoAcIEKUCLB8ti4cN1cML94pEJUCj
-         jFMvvi99tIz1kWYTWnOcP5nC5+hMu+llgFqraSvXkCgoN03ey6fe0xrxmjQ1IDi20u3J
-         VODmU8QQLlsepjPIS1j28bp09Sqr2l4afC5jjvPxMB8dqzSXjcw0MCkHrLcr/NTVncCk
-         jPHnLkofCgrNsphhIFnEuRQ/D8R4u2UqIZ443SJrfQXuAz8vJCeO7b/GGTRL62wXSY2F
-         op/7l/S8EC9b176/pp5q0R9aa14+nO8N7QmLT1kjhbOTKccFgDrAeYZNVHI3+jJSe9VU
-         8cPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7Cqqi1amKLy2OTdpP21O0ph08WqGmQlHafsLB9AH7TU=;
-        b=V1kMUFfIxggzwVatHeazieg5cOXgJdzEwsz6gzGVIOxjnPdI4S3LkS0fdwx86v36lb
-         RJntV5zE+VbQUM5PniFZ7kzCCZvRjEzWUHUMgaigf/2Qtj9DLKIzcOjUSZgg7l78FKRk
-         msd1n/7yXi40LAKcyBL+hN8GypJxIaCb0soKJyaqPCjabn8tBlVwVAcmPQX4evX9ql0l
-         aZkly/W16Ec2Srhl94fBr14i7oa5TR+Rq8nZebde7K2KK6vqB/EVlPuBKXCYk8UcK1NX
-         vWZLC0NA/NCadmFbzk0ipig9FpYtrzPBCVDk93Y6z1X0CdaJW4hPYZIH0tZoOEM9doPa
-         tqGg==
-X-Gm-Message-State: AOAM531qsjLDuBR47qdd0kbquDRwT0yz0e1P4X8YESxhhQsdtHePJRWi
-        bVdWjWePRpgq2esf+n1a9FvbT1EphrOHldmAne4=
-X-Google-Smtp-Source: ABdhPJwP/W6SdAsiTZuY2vxGEViLghk/udbPKQS3RiIPY8c1tcqtDG1UYbYhYTKe6LpINccnK4KYFVM6QEKJf3/bzqM=
-X-Received: by 2002:a0c:f388:: with SMTP id i8mr4991577qvk.224.1592504208678;
- Thu, 18 Jun 2020 11:16:48 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200617202941.3034-1-kpsingh@chromium.org> <20200617202941.3034-5-kpsingh@chromium.org>
-In-Reply-To: <20200617202941.3034-5-kpsingh@chromium.org>
-From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date:   Thu, 18 Jun 2020 11:16:37 -0700
-Message-ID: <CAEf4BzZdUWUSLzT1Y-o1Yvy3tTETkJEVU7RyZufZY_yEKzwOSg@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v2 4/4] bpf: Add selftests for local_storage
-To:     KP Singh <kpsingh@chromium.org>
-Cc:     bpf <bpf@vger.kernel.org>, linux-security-module@vger.kernel.org,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 18 Jun 2020 16:12:11 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 05IK3Rfs190980;
+        Thu, 18 Jun 2020 16:11:57 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 31repa0rby-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 18 Jun 2020 16:11:56 -0400
+Received: from m0098414.ppops.net (m0098414.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 05IKArYY020767;
+        Thu, 18 Jun 2020 16:11:56 -0400
+Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 31repa0rbp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 18 Jun 2020 16:11:56 -0400
+Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
+        by ppma03wdc.us.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 05IK9t3q005729;
+        Thu, 18 Jun 2020 20:11:55 GMT
+Received: from b01cxnp23032.gho.pok.ibm.com (b01cxnp23032.gho.pok.ibm.com [9.57.198.27])
+        by ppma03wdc.us.ibm.com with ESMTP id 31q8kkwv2e-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 18 Jun 2020 20:11:55 +0000
+Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 05IKBsJ412845462
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 18 Jun 2020 20:11:54 GMT
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7BC20AE06B;
+        Thu, 18 Jun 2020 20:11:54 +0000 (GMT)
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D8A50AE064;
+        Thu, 18 Jun 2020 20:11:53 +0000 (GMT)
+Received: from DESKTOP-AV6EVPG.localdomain (unknown [9.160.61.88])
+        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu, 18 Jun 2020 20:11:53 +0000 (GMT)
+From:   Maurizio Drocco <maurizio.drocco@ibm.com>
+To:     roberto.sassu@huawei.com
+Cc:     Silviu.Vlasceanu@huawei.com, dmitry.kasatkin@gmail.com,
+        jejb@linux.ibm.com, jmorris@namei.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, maurizio.drocco@ibm.com,
+        serge@hallyn.com, zohar@linux.ibm.com, mdrocco@linux.vnet.ibm.com
+Subject: [PATCH] extend IMA boot_aggregate with kernel measurements
+Date:   Thu, 18 Jun 2020 16:11:25 -0400
+Message-Id: <20200618201126.2081-1-maurizio.drocco@ibm.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <b744c1b79ba14a17a786f5de04c1f3c4@huawei.com>
+References: <b744c1b79ba14a17a786f5de04c1f3c4@huawei.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.687
+ definitions=2020-06-18_15:2020-06-18,2020-06-18 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=1
+ priorityscore=1501 spamscore=0 phishscore=0 adultscore=0 clxscore=1011
+ mlxscore=0 cotscore=-2147483648 mlxlogscore=999 malwarescore=0
+ lowpriorityscore=0 impostorscore=0 bulkscore=0 classifier=spam adjust=0
+ reason=mlx scancount=1 engine=8.12.0-2004280000
+ definitions=main-2006180152
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jun 17, 2020 at 1:31 PM KP Singh <kpsingh@chromium.org> wrote:
->
-> From: KP Singh <kpsingh@google.com>
->
-> inode_local_storage:
->
-> * Hook to the file_open and inode_unlink LSM hooks.
-> * Create and unlink a temporary file.
-> * Store some information in the inode's bpf_local_storage during
->   file_open.
-> * Verify that this information exists when the file is unlinked.
->
-> sk_local_storage:
->
-> * Hook to the socket_post_create and socket_bind LSM hooks.
-> * Open and bind a socket and set the sk_storage in the
->   socket_post_create hook using the start_server helper.
-> * Verify if the information is set in the socket_bind hook.
->
-> Signed-off-by: KP Singh <kpsingh@google.com>
-> ---
->  .../bpf/prog_tests/test_local_storage.c       |  60 ++++++++
->  .../selftests/bpf/progs/local_storage.c       | 137 ++++++++++++++++++
->  2 files changed, 197 insertions(+)
->  create mode 100644 tools/testing/selftests/bpf/prog_tests/test_local_storage.c
->  create mode 100644 tools/testing/selftests/bpf/progs/local_storage.c
->
+IMA is not considering TPM registers 8-9 when calculating the boot
+aggregate. When registers 8-9 are used to store measurements of the
+kernel and its command line (e.g., grub2 bootloader with tpm module
+enabled), IMA should include them in the boot aggregate.
 
-[...]
+Signed-off-by: Maurizio Drocco <maurizio.drocco@ibm.com>
+---
+ security/integrity/ima/ima.h        |  2 +-
+ security/integrity/ima/ima_crypto.c | 20 ++++++++++++++++++--
+ 2 files changed, 19 insertions(+), 3 deletions(-)
 
-> diff --git a/tools/testing/selftests/bpf/progs/local_storage.c b/tools/testing/selftests/bpf/progs/local_storage.c
-> new file mode 100644
-> index 000000000000..38954e6a1edc
-> --- /dev/null
-> +++ b/tools/testing/selftests/bpf/progs/local_storage.c
-> @@ -0,0 +1,137 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +/*
-> + * Copyright 2020 Google LLC.
-> + */
-> +
-> +#include <errno.h>
-> +#include <linux/bpf.h>
-> +#include <stdbool.h>
-> +#include <bpf/bpf_helpers.h>
-> +#include <bpf/bpf_tracing.h>
-> +
-> +char _license[] SEC("license") = "GPL";
-> +__u32 _version SEC("version") = 1;
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index df93ac258e01..9d94080bdad8 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -30,7 +30,7 @@
+ 
+ enum ima_show_type { IMA_SHOW_BINARY, IMA_SHOW_BINARY_NO_FIELD_LEN,
+ 		     IMA_SHOW_BINARY_OLD_STRING_FMT, IMA_SHOW_ASCII };
+-enum tpm_pcrs { TPM_PCR0 = 0, TPM_PCR8 = 8 };
++enum tpm_pcrs { TPM_PCR0 = 0, TPM_PCR8 = 8, TPM_PCR10 = 10 };
+ 
+ /* digest size for IMA, fits SHA1 or MD5 */
+ #define IMA_DIGEST_SIZE		SHA1_DIGEST_SIZE
+diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
+index 220b14920c37..299b23dad8d9 100644
+--- a/security/integrity/ima/ima_crypto.c
++++ b/security/integrity/ima/ima_crypto.c
+@@ -809,7 +809,7 @@ static void ima_pcrread(u32 idx, struct tpm_digest *d)
+ static int ima_calc_boot_aggregate_tfm(char *digest, u16 alg_id,
+ 				       struct crypto_shash *tfm)
+ {
+-	struct tpm_digest d = { .alg_id = alg_id, .digest = {0} };
++	struct tpm_digest d = { .alg_id = alg_id, .digest = {0} }, d0 = d;
+ 	int rc;
+ 	u32 i;
+ 	SHASH_DESC_ON_STACK(shash, tfm);
+@@ -823,13 +823,29 @@ static int ima_calc_boot_aggregate_tfm(char *digest, u16 alg_id,
+ 	if (rc != 0)
+ 		return rc;
+ 
+-	/* cumulative sha1 over tpm registers 0-7 */
++	/* cumulative digest over tpm registers 0-7 */
+ 	for (i = TPM_PCR0; i < TPM_PCR8; i++) {
+ 		ima_pcrread(i, &d);
+ 		/* now accumulate with current aggregate */
+ 		rc = crypto_shash_update(shash, d.digest,
+ 					 crypto_shash_digestsize(tfm));
+ 	}
++	/*
++	 * extend cumulative digest over tpm registers 8-9, which contain
++	 * measurement for the kernel command line (reg. 8) and image (reg. 9)
++	 * in a typical PCR allocation. Registers 8-9 are only included in
++	 * non-SHA1 boot_aggregate digests to avoid ambiguity.
++	 */
++	if (alg_id != TPM_ALG_SHA1) {
++		for (i = TPM_PCR8; i < TPM_PCR10; i++) {
++			ima_pcrread(i, &d);
++			/* if not zero, accumulate with current aggregate */
++			if (memcmp(d.digest, d0.digest,
++				crypto_shash_digestsize(tfm)) != 0)
++				rc = crypto_shash_update(shash, d.digest,
++						crypto_shash_digestsize(tfm));
++		}
++	}
+ 	if (!rc)
+ 		crypto_shash_final(shash, digest);
+ 	return rc;
+-- 
+2.17.1
 
-version is anachronism, please drop it.
-
-Otherwise, LGTM.
-
-Acked-by: Andrii Nakryiko <andriin@fb.com>
-
-[...]
