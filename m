@@ -2,38 +2,38 @@ Return-Path: <SRS0=g/MA=77=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-14.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB8E0C433E2
-	for <linux-security-module@archiver.kernel.org>; Thu, 18 Jun 2020 07:11:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3BB9C433E5
+	for <linux-security-module@archiver.kernel.org>; Thu, 18 Jun 2020 07:11:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BC07521548
-	for <linux-security-module@archiver.kernel.org>; Thu, 18 Jun 2020 07:11:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9DBA321655
+	for <linux-security-module@archiver.kernel.org>; Thu, 18 Jun 2020 07:11:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="pA12moG/"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="ixHKZ/xQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728072AbgFRHLS (ORCPT
+        id S1728040AbgFRHLM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 18 Jun 2020 03:11:18 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:60726 "EHLO
+        Thu, 18 Jun 2020 03:11:12 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:60676 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727979AbgFRHLN (ORCPT
+        with ESMTP id S1728034AbgFRHLL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 18 Jun 2020 03:11:13 -0400
+        Thu, 18 Jun 2020 03:11:11 -0400
 Received: from prsriva-linux.hsd1.wa.comcast.net (c-24-19-135-168.hsd1.wa.comcast.net [24.19.135.168])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 0B30120B4786;
-        Thu, 18 Jun 2020 00:11:11 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0B30120B4786
+        by linux.microsoft.com (Postfix) with ESMTPSA id 2CB7A20B4783;
+        Thu, 18 Jun 2020 00:11:10 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 2CB7A20B4783
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1592464271;
-        bh=FU/dh8XJhvc2HADs0zF7wiDVVprap0U1bWT1cyNAets=;
+        s=default; t=1592464270;
+        bh=A0GiQILHZ8uuNOX7+rBVoRsb1esS85HaWBTuDqTUAM4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pA12moG/pVT/6D2LjfiKGdFUV8aZDZxjmK2ZKUfs8hvEa3eYCS0hsi6ytCRyEu1cy
-         QiBbEeTFdcxHe+zxWVt10ayF2H5VUDbh/PVCGpZ6b+d/uSsxrAvVYrHhtB7x6yhGwy
-         fN6wovAr3OG9o8jeSugfrhhITTI7SvLGQyi2bBbs=
+        b=ixHKZ/xQIYNcJIA9BE4KrIbjwT0LdW+G2r+zYBqwNbWNH109H6oJwoZ55KK/1rHMF
+         zDbf30HMELw5TZ3FWiLSdBVIQVNopsycaccVcaHl3PXGOOTza1ZjU7noxo4fAsdRFh
+         sPyrgvlID5Gdj2Adjaje8Sum1mYYaHoWYTjZWerE=
 From:   Prakhar Srivastava <prsriva@linux.microsoft.com>
 To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linuxppc-dev@lists.ozlabs.org, devicetree@vger.kernel.org,
@@ -52,9 +52,9 @@ Cc:     catalin.marinas@arm.com, will@kernel.org, mpe@ellerman.id.au,
         gregkh@linuxfoundation.org, nramas@linux.microsoft.com,
         prsriva@linux.microsoft.com, tusharsu@linux.microsoft.com,
         balajib@linux.microsoft.com
-Subject: [V2 PATCH 3/3] Add support for arm64 to carry over IMA measurement logs
-Date:   Thu, 18 Jun 2020 00:10:45 -0700
-Message-Id: <20200618071045.471131-4-prsriva@linux.microsoft.com>
+Subject: [V2 PATCH 2/3] dt-bindings: chosen: Document ima-kexec-buffer 
+Date:   Thu, 18 Jun 2020 00:10:44 -0700
+Message-Id: <20200618071045.471131-3-prsriva@linux.microsoft.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200618071045.471131-1-prsriva@linux.microsoft.com>
 References: <20200618071045.471131-1-prsriva@linux.microsoft.com>
@@ -64,144 +64,50 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Add support for arm64 to carry over IMA measurement logs.
-Update arm64 code to call into functions made available in patch 1/3.
+Integrity measurement architecture(IMA) validates if files
+have been accidentally or maliciously altered, both remotely and
+locally, appraise a file's measurement against a "good" value stored
+as an extended attribute, and enforce local file integrity.
+
+IMA also measures singatures of kernel and initrd during kexec along with
+the command line used for kexec.
+These measurements are critical to verify the seccurity posture of the OS.
+
+Resering memory and adding the memory information to a device tree node
+acts as the mechanism to carry over IMA measurement logs.
+
+Update devicetree documentation to reflect the addition of new property
+under the chosen node. 
 
 ---
- arch/arm64/Kconfig                     |  1 +
- arch/arm64/include/asm/ima.h           | 17 ++++++++++
- arch/arm64/include/asm/kexec.h         |  3 ++
- arch/arm64/kernel/machine_kexec_file.c | 47 +++++++++++++++++++++-----
- 4 files changed, 60 insertions(+), 8 deletions(-)
- create mode 100644 arch/arm64/include/asm/ima.h
+ Documentation/devicetree/bindings/chosen.txt | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 5d513f461957..3d544e2e25e6 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -1070,6 +1070,7 @@ config KEXEC
- config KEXEC_FILE
- 	bool "kexec file based system call"
- 	select KEXEC_CORE
-+	select HAVE_IMA_KEXEC
- 	help
- 	  This is new version of kexec system call. This system call is
- 	  file based and takes file descriptors as system call argument
-diff --git a/arch/arm64/include/asm/ima.h b/arch/arm64/include/asm/ima.h
-new file mode 100644
-index 000000000000..70ac39b74607
---- /dev/null
-+++ b/arch/arm64/include/asm/ima.h
-@@ -0,0 +1,17 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _ASM_ARCH_IMA_H
-+#define _ASM_ARCH_IMA_H
-+
-+struct kimage;
-+
-+#ifdef CONFIG_IMA_KEXEC
-+int arch_ima_add_kexec_buffer(struct kimage *image, unsigned long load_addr,
-+			      size_t size);
-+#else
-+static inline int arch_ima_add_kexec_buffer(struct kimage *image,
-+			unsigned long load_addr, size_t size)
-+{
-+	return 0;
-+}
-+#endif /* CONFIG_IMA_KEXEC */
-+#endif /* _ASM_ARCH_IMA_H */
-diff --git a/arch/arm64/include/asm/kexec.h b/arch/arm64/include/asm/kexec.h
-index d24b527e8c00..7bd60c185ad3 100644
---- a/arch/arm64/include/asm/kexec.h
-+++ b/arch/arm64/include/asm/kexec.h
-@@ -100,6 +100,9 @@ struct kimage_arch {
- 	void *elf_headers;
- 	unsigned long elf_headers_mem;
- 	unsigned long elf_headers_sz;
-+
-+	phys_addr_t ima_buffer_addr;
-+	size_t ima_buffer_size;
+diff --git a/Documentation/devicetree/bindings/chosen.txt b/Documentation/devicetree/bindings/chosen.txt
+index 45e79172a646..a15f70c007ef 100644
+--- a/Documentation/devicetree/bindings/chosen.txt
++++ b/Documentation/devicetree/bindings/chosen.txt
+@@ -135,3 +135,20 @@ e.g.
+ 		linux,initrd-end = <0x82800000>;
+ 	};
  };
- 
- extern const struct kexec_file_ops kexec_image_ops;
-diff --git a/arch/arm64/kernel/machine_kexec_file.c b/arch/arm64/kernel/machine_kexec_file.c
-index b40c3b0def92..1e9007c926db 100644
---- a/arch/arm64/kernel/machine_kexec_file.c
-+++ b/arch/arm64/kernel/machine_kexec_file.c
-@@ -24,20 +24,37 @@
- #include <asm/byteorder.h>
- 
- /* relevant device tree properties */
--#define FDT_PROP_KEXEC_ELFHDR	"linux,elfcorehdr"
--#define FDT_PROP_MEM_RANGE	"linux,usable-memory-range"
--#define FDT_PROP_INITRD_START	"linux,initrd-start"
--#define FDT_PROP_INITRD_END	"linux,initrd-end"
--#define FDT_PROP_BOOTARGS	"bootargs"
--#define FDT_PROP_KASLR_SEED	"kaslr-seed"
--#define FDT_PROP_RNG_SEED	"rng-seed"
--#define RNG_SEED_SIZE		128
-+#define FDT_PROP_KEXEC_ELFHDR		"linux,elfcorehdr"
-+#define FDT_PROP_MEM_RANGE		"linux,usable-memory-range"
-+#define FDT_PROP_INITRD_START		"linux,initrd-start"
-+#define FDT_PROP_INITRD_END		"linux,initrd-end"
-+#define FDT_PROP_BOOTARGS		"bootargs"
-+#define FDT_PROP_KASLR_SEED		"kaslr-seed"
-+#define FDT_PROP_RNG_SEED		"rng-seed"
-+#define FDT_PROP_IMA_KEXEC_BUFFER	"linux,ima-kexec-buffer"
-+#define RNG_SEED_SIZE			128
- 
- const struct kexec_file_ops * const kexec_file_loaders[] = {
- 	&kexec_image_ops,
- 	NULL
- };
- 
-+/**
-+ * arch_ima_add_kexec_buffer - do arch-specific steps to add the IMA buffer
-+ *
-+ * Architectures should use this function to pass on the IMA buffer
-+ * information to the next kernel.
-+ *
-+ * Return: 0 on success, negative errno on error.
-+ */
-+int arch_ima_add_kexec_buffer(struct kimage *image, unsigned long load_addr,
-+			      size_t size)
-+{
-+	image->arch.ima_buffer_addr = load_addr;
-+	image->arch.ima_buffer_size = size;
-+	return 0;
-+}
 +
- int arch_kimage_file_post_load_cleanup(struct kimage *image)
- {
- 	vfree(image->arch.dtb);
-@@ -66,6 +83,9 @@ static int setup_dtb(struct kimage *image,
- 	if (ret && ret != -FDT_ERR_NOTFOUND)
- 		goto out;
- 	ret = fdt_delprop(dtb, off, FDT_PROP_MEM_RANGE);
-+	if (ret && ret != -FDT_ERR_NOTFOUND)
-+		goto out;
-+	ret = fdt_delprop(dtb, off, FDT_PROP_IMA_KEXEC_BUFFER);
- 	if (ret && ret != -FDT_ERR_NOTFOUND)
- 		goto out;
- 
-@@ -119,6 +139,17 @@ static int setup_dtb(struct kimage *image,
- 			goto out;
- 	}
- 
-+	if (image->arch.ima_buffer_size > 0) {
++linux,ima-kexec-buffer
++----------------------
 +
-+		ret = fdt_appendprop_addrrange(dtb, 0, off,
-+				FDT_PROP_IMA_KEXEC_BUFFER,
-+				image->arch.ima_buffer_addr,
-+				image->arch.ima_buffer_size);
-+		if (ret)
-+			return (ret == -FDT_ERR_NOSPACE ? -ENOMEM : -EINVAL);
++This property(currently used by powerpc, arm64) holds the memory range,
++the address and the size, of the IMA measurement logs that are being carried
++over to the kexec session.
 +
-+	}
++/ {
++	chosen {
++		linux,ima-kexec-buffer = <0x9 0x82000000 0x0 0x00008000>;
++	};
++};
 +
- 	/* add kaslr-seed */
- 	ret = fdt_delprop(dtb, off, FDT_PROP_KASLR_SEED);
- 	if (ret == -FDT_ERR_NOTFOUND)
++This porperty does not represent real hardware, but the memory allocated for
++carrying the IMA measurement logs. The address and the suze are expressed in
++#address-cells and #size-cells, respectively of the root node.
 -- 
 2.25.1
 
