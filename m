@@ -2,121 +2,107 @@ Return-Path: <SRS0=g/MA=77=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33B2AC433DF
-	for <linux-security-module@archiver.kernel.org>; Thu, 18 Jun 2020 07:11:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B8A7C433DF
+	for <linux-security-module@archiver.kernel.org>; Thu, 18 Jun 2020 07:20:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 13E1921548
-	for <linux-security-module@archiver.kernel.org>; Thu, 18 Jun 2020 07:11:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="aG83qxYX"
+	by mail.kernel.org (Postfix) with ESMTP id 222A120FC3
+	for <linux-security-module@archiver.kernel.org>; Thu, 18 Jun 2020 07:20:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728010AbgFRHLK (ORCPT
+        id S1728127AbgFRHUK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 18 Jun 2020 03:11:10 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:60552 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727979AbgFRHLK (ORCPT
+        Thu, 18 Jun 2020 03:20:10 -0400
+Received: from mga06.intel.com ([134.134.136.31]:36224 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725829AbgFRHUG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 18 Jun 2020 03:11:10 -0400
-Received: from prsriva-linux.hsd1.wa.comcast.net (c-24-19-135-168.hsd1.wa.comcast.net [24.19.135.168])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 8918F20B4781;
-        Thu, 18 Jun 2020 00:11:08 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 8918F20B4781
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1592464269;
-        bh=lDSc0jJUTA/sW6q8KjNuhbmPa1VR7NZJ8pXu5G8PT78=;
-        h=From:To:Cc:Subject:Date:From;
-        b=aG83qxYXRNhqUmLDNYpbm33MDP2wZSL6QKrD2jzlLiNColOuwrb8FqAsVDhwxeIUj
-         F6PyyYZeZsLvmO03Jk+E0IfjD1E+TJlD0wQIkfoT4XYzNzULxLkKcEFezwju6U+yNW
-         CQB9TkUkQuhmLmJNPl9ot4OJOFtVYYPbjejsJWrw=
-From:   Prakhar Srivastava <prsriva@linux.microsoft.com>
-To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, devicetree@vger.kernel.org,
+        Thu, 18 Jun 2020 03:20:06 -0400
+IronPort-SDR: ZjK2exdIS5jvympC7Du2/vo3K1pXAoZNO/zvVM0rNIGvh8rv+cUC17tpkeS6e6IYOnv6EneSZo
+ sBry6k98meiQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9655"; a="203963885"
+X-IronPort-AV: E=Sophos;i="5.73,525,1583222400"; 
+   d="scan'208";a="203963885"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2020 00:20:06 -0700
+IronPort-SDR: GOOndaOg0rTI1y/zoM9ik2FFZWaBYobsTN/aX7QIWNaExAcCBhA4jz5ODZs1oAtPHDTimnz/pR
+ ct72S+OAfvFg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,525,1583222400"; 
+   d="scan'208";a="263517625"
+Received: from jkalinox-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.49.234])
+  by fmsmga008.fm.intel.com with ESMTP; 18 Jun 2020 00:19:56 -0700
+Date:   Thu, 18 Jun 2020 10:19:55 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sumit Garg <sumit.garg@linaro.org>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Janne Karhunen <janne.karhunen@gmail.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Markus Wamser <Markus.Wamser@mixed-mode.de>,
+        "open list:ASYMMETRIC KEYS" <keyrings@vger.kernel.org>,
         linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Cc:     catalin.marinas@arm.com, will@kernel.org, mpe@ellerman.id.au,
-        benh@kernel.crashing.org, paulus@samba.org, robh+dt@kernel.org,
-        frowand.list@gmail.com, zohar@linux.ibm.com,
-        dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
-        pasha.tatashin@soleen.com, allison@lohutok.net,
-        kstewart@linuxfoundation.org, takahiro.akashi@linaro.org,
-        tglx@linutronix.de, vincenzo.frascino@arm.com,
-        mark.rutland@arm.com, masahiroy@kernel.org, james.morse@arm.com,
-        bhsharma@redhat.com, mbrugger@suse.com, hsinyi@chromium.org,
-        tao.li@vivo.com, christophe.leroy@c-s.fr,
-        gregkh@linuxfoundation.org, nramas@linux.microsoft.com,
-        prsriva@linux.microsoft.com, tusharsu@linux.microsoft.com,
-        balajib@linux.microsoft.com
-Subject: [V2 PATCH 0/3] Adding support for carrying IMA measurement logs
-Date:   Thu, 18 Jun 2020 00:10:42 -0700
-Message-Id: <20200618071045.471131-1-prsriva@linux.microsoft.com>
-X-Mailer: git-send-email 2.25.1
+        linux-security-module@vger.kernel.org,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        op-tee@lists.trustedfirmware.org,
+        "tee-dev @ lists . linaro . org" <tee-dev@lists.linaro.org>,
+        Luke Hinds <lhinds@redhat.com>
+Subject: Re: [PATCH v5 1/4] KEYS: trusted: Add generic trusted keys framework
+Message-ID: <20200618071955.GE6560@linux.intel.com>
+References: <1591107505-6030-1-git-send-email-sumit.garg@linaro.org>
+ <1591107505-6030-2-git-send-email-sumit.garg@linaro.org>
+ <20200615182457.GB5416@linux.intel.com>
+ <CAFA6WYNEnXm5FOGHGAg4XB-+GXD=C+YMh+6t976=pStU0WshAA@mail.gmail.com>
+ <20200617231429.GD62794@linux.intel.com>
+ <CAFA6WYOdtwnewqY0ASnMf7fyw3s_hQx0+oWJRhT3CpkkkxYpDA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAFA6WYOdtwnewqY0ASnMf7fyw3s_hQx0+oWJRhT3CpkkkxYpDA@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Integrgity Measurement Architecture(IMA) during kexec(kexec file load)
-verifies the kernel signature and measures the signature of the kernel.
+On Thu, Jun 18, 2020 at 12:12:41PM +0530, Sumit Garg wrote:
+> On Thu, 18 Jun 2020 at 04:44, Jarkko Sakkinen
+> <jarkko.sakkinen@linux.intel.com> wrote:
+> >
+> > On Tue, Jun 16, 2020 at 07:02:37PM +0530, Sumit Garg wrote:
+> > > + Luke
+> > >
+> > > Hi Jarkko,
+> > >
+> > > Prior to addressing your comments below which seems to show your
+> > > preference for compile time selection of trust source (TPM or TEE), I
+> > > would just like to hear the reasons for this preference especially if
+> > > it makes distro vendor's life difficult [1] to make opinionated
+> > > selection which could rather be achieved dynamically based on platform
+> > > capability.
+> > >
+> > > [1] https://lkml.org/lkml/2020/6/3/405
+> > >
+> > > -Sumit
+> >
+> > Hmm... I do get the distribution kernel point. OK, lets revert to
+> > dynamic then. Thanks for the remark.
+> >
+> > /Jarkko
+> 
+> Thanks, will revert to dynamic mode in v6.
 
-The signature in the measuremnt logs is used to verfiy the 
-authenticity of the kernel in the subsequent kexec'd session, however in
-the current implementation IMA measurement logs are not carried over thus
-remote attesation cannot verify the signature of the running kernel.
+Sorry about the extra trouble caused by me.
 
-Adding support to arm64 to carry over the IMA measurement logs over kexec.
-
-Add a new chosen node entry linux,ima-kexec-buffer to hold the address and
-the size of the memory reserved to carry the IMA measurement log.
-Refactor existing powerpc code to be used by amr64 as well.  
-
-Changelog:
-
-v2:
-  Break patches into separate patches.
-  - Powerpc related Refactoring
-  - Updating the docuemntation for chosen node
-  - Updating arm64 to support IMA buffer pass
-
-v1:
-  Refactoring carrying over IMA measuremnet logs over Kexec. This patch
-    moves the non-architecture specific code out of powerpc and adds to
-    security/ima.(Suggested by Thiago)
-  Add Documentation regarding the ima-kexec-buffer node in the chosen
-    node documentation
-
-v0:
-  Add a layer of abstraction to use the memory reserved by device tree
-    for ima buffer pass.
-  Add support for ima buffer pass using reserved memory for arm64 kexec.
-    Update the arch sepcific code path in kexec file load to store the
-    ima buffer in the reserved memory. The same reserved memory is read
-    on kexec or cold boot.
-
-Prakhar Srivastava (3):
-  Refactoring powerpc code for carrying over IMA measurement logs, to
-    move non architecture specific code to security/ima.
-  dt-bindings: chosen: Document ima-kexec-buffer carrying over IMA
-    measuremnt logs over kexec.
-  Add support for arm64 to carry over IMA measurement logs
-
- Documentation/devicetree/bindings/chosen.txt |  17 +++
- arch/arm64/Kconfig                           |   1 +
- arch/arm64/include/asm/ima.h                 |  17 +++
- arch/arm64/include/asm/kexec.h               |   3 +
- arch/arm64/kernel/machine_kexec_file.c       |  47 +++++--
- arch/powerpc/include/asm/ima.h               |  10 --
- arch/powerpc/kexec/ima.c                     | 126 ++-----------------
- security/integrity/ima/ima_kexec.c           | 116 +++++++++++++++++
- 8 files changed, 201 insertions(+), 136 deletions(-)
- create mode 100644 arch/arm64/include/asm/ima.h
-
--- 
-2.25.1
-
+/Jarkko
