@@ -7,47 +7,49 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4B78C433E0
-	for <linux-security-module@archiver.kernel.org>; Thu, 18 Jun 2020 02:03:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBE8DC433DF
+	for <linux-security-module@archiver.kernel.org>; Thu, 18 Jun 2020 02:03:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C5D8122224
-	for <linux-security-module@archiver.kernel.org>; Thu, 18 Jun 2020 02:03:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CCD1922211
+	for <linux-security-module@archiver.kernel.org>; Thu, 18 Jun 2020 02:03:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1592445806;
-	bh=XnF1S5AmSKUTJeDRf4UQ+DVb5G6cIO/h/gaRe45+9Kk=;
+	s=default; t=1592445830;
+	bh=rsZOFJN12ercVWh7yDV5YaXzLln21FdoIAQ1oXrJDoM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=uEzKq7fvpGBQelIFZ8Ra3mibtGxfbJLM4V04N/l7RsG+1mMgQ8L1tEXaZSL/LpEAL
-	 PCLTbDNsCdzknZixCMFVfYGy2DH3lbMhpK341E4ffHsml2jP6t3DqeGO2H25dW7XA8
-	 /cDaw0T1HDkbmGzChcKQHonGDM6yXcmFXlnmmzxU=
+	b=trsx9f6mcpJkkg2H2UF00eqcfYqc+Yw9a0KP4i2KTWUOSH9oLIrGvI6/HUNpetZAy
+	 +PtsGeYxhT05qSJZhK9jnrSWvaV3buWN7FN+TFfVSS4Scl//KD8vrnMqQ3yy8/IFz5
+	 THIQMtEUl17lRiGDDtdHVlGYFzhVtKWwXiXxpBdk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730982AbgFRBX2 (ORCPT
+        id S1731258AbgFRCDo (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 17 Jun 2020 21:23:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56990 "EHLO mail.kernel.org"
+        Wed, 17 Jun 2020 22:03:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56884 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730973AbgFRBX0 (ORCPT
+        id S1730961AbgFRBXV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 17 Jun 2020 21:23:26 -0400
+        Wed, 17 Jun 2020 21:23:21 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 790A1214DB;
-        Thu, 18 Jun 2020 01:23:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2053E21927;
+        Thu, 18 Jun 2020 01:23:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1592443406;
-        bh=XnF1S5AmSKUTJeDRf4UQ+DVb5G6cIO/h/gaRe45+9Kk=;
+        s=default; t=1592443400;
+        bh=rsZOFJN12ercVWh7yDV5YaXzLln21FdoIAQ1oXrJDoM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lZ6r2O0OHwPlPt/oztwuOioE7oH6jab+LVkA0LyxOg6WLpZG4qrMDvO9hwbRbSztw
-         v8b66FJqbC3OMz6OU15+MPGG/ME1TjFRyRIIjPvMHWBXDCUXTu0bG733OkT2MjPmDJ
-         memxv3ygDgvPQdVoJ9+cf1esx4AN8aEuQz9g1gRc=
+        b=vEaV9as3yIo6bD5cDcsmLeq1KZsCfabEP13mBsZzhxJZVkwdvH/A0oYAtiUgi8vgx
+         ThK2Ss27KjGAG39TS2AcFq48ci/ydF/EyuTma3RH7KEvgkczr6rI8nj398go83Rlz8
+         Y5yDz4hZbRBk8sIYpgkAmBcwyR4QBko0WVqx4TXQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     John Johansen <john.johansen@canonical.com>,
+Cc:     Mauricio Faria de Oliveira <mfo@canonical.com>,
+        Brian Moyles <bmoyles@netflix.com>,
+        John Johansen <john.johansen@canonical.com>,
         Sasha Levin <sashal@kernel.org>,
         linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 050/172] apparmor: fix nnp subset test for unconfined
-Date:   Wed, 17 Jun 2020 21:20:16 -0400
-Message-Id: <20200618012218.607130-50-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 046/172] apparmor: check/put label on apparmor_sk_clone_security()
+Date:   Wed, 17 Jun 2020 21:20:12 -0400
+Message-Id: <20200618012218.607130-46-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200618012218.607130-1-sashal@kernel.org>
 References: <20200618012218.607130-1-sashal@kernel.org>
@@ -59,123 +61,192 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: John Johansen <john.johansen@canonical.com>
+From: Mauricio Faria de Oliveira <mfo@canonical.com>
 
-[ Upstream commit 3ed4aaa94fc07db3cd0c91be95e3e1b9782a2710 ]
+[ Upstream commit 3b646abc5bc6c0df649daea4c2c976bd4d47e4c8 ]
 
-The subset test is not taking into account the unconfined exception
-which will cause profile transitions in the stacked confinement
-case to fail when no_new_privs is applied.
+Currently apparmor_sk_clone_security() does not check for existing
+label/peer in the 'new' struct sock; it just overwrites it, if any
+(with another reference to the label of the source sock.)
 
-This fixes a regression introduced in the fix for
-https://bugs.launchpad.net/bugs/1839037
+    static void apparmor_sk_clone_security(const struct sock *sk,
+                                           struct sock *newsk)
+    {
+            struct aa_sk_ctx *ctx = SK_CTX(sk);
+            struct aa_sk_ctx *new = SK_CTX(newsk);
 
-BugLink: https://bugs.launchpad.net/bugs/1844186
+            new->label = aa_get_label(ctx->label);
+            new->peer = aa_get_label(ctx->peer);
+    }
+
+This might leak label references, which might overflow under load.
+Thus, check for and put labels, to prevent such errors.
+
+Note this is similarly done on:
+
+    static int apparmor_socket_post_create(struct socket *sock, ...)
+    ...
+            if (sock->sk) {
+                    struct aa_sk_ctx *ctx = SK_CTX(sock->sk);
+
+                    aa_put_label(ctx->label);
+                    ctx->label = aa_get_label(label);
+            }
+    ...
+
+Context:
+-------
+
+The label reference count leak is observed if apparmor_sock_graft()
+is called previously: this sets the 'ctx->label' field by getting
+a reference to the current label (later overwritten, without put.)
+
+    static void apparmor_sock_graft(struct sock *sk, ...)
+    {
+            struct aa_sk_ctx *ctx = SK_CTX(sk);
+
+            if (!ctx->label)
+                    ctx->label = aa_get_current_label();
+    }
+
+And that is the case on crypto/af_alg.c:af_alg_accept():
+
+    int af_alg_accept(struct sock *sk, struct socket *newsock, ...)
+    ...
+            struct sock *sk2;
+            ...
+            sk2 = sk_alloc(...);
+            ...
+            security_sock_graft(sk2, newsock);
+            security_sk_clone(sk, sk2);
+    ...
+
+Apparently both calls are done on their own right, especially for
+other LSMs, being introduced in 2010/2014, before apparmor socket
+mediation in 2017 (see commits [1,2,3,4]).
+
+So, it looks OK there! Let's fix the reference leak in apparmor.
+
+Test-case:
+---------
+
+Exercise that code path enough to overflow label reference count.
+
+    $ cat aa-refcnt-af_alg.c
+    #include <stdio.h>
+    #include <string.h>
+    #include <unistd.h>
+    #include <sys/socket.h>
+    #include <linux/if_alg.h>
+
+    int main() {
+            int sockfd;
+            struct sockaddr_alg sa;
+
+            /* Setup the crypto API socket */
+            sockfd = socket(AF_ALG, SOCK_SEQPACKET, 0);
+            if (sockfd < 0) {
+                    perror("socket");
+                    return 1;
+            }
+
+            memset(&sa, 0, sizeof(sa));
+            sa.salg_family = AF_ALG;
+            strcpy((char *) sa.salg_type, "rng");
+            strcpy((char *) sa.salg_name, "stdrng");
+
+            if (bind(sockfd, (struct sockaddr *) &sa, sizeof(sa)) < 0) {
+                    perror("bind");
+                    return 1;
+            }
+
+            /* Accept a "connection" and close it; repeat. */
+            while (!close(accept(sockfd, NULL, 0)));
+
+            return 0;
+    }
+
+    $ gcc -o aa-refcnt-af_alg aa-refcnt-af_alg.c
+
+    $ ./aa-refcnt-af_alg
+    <a few hours later>
+
+    [ 9928.475953] refcount_t overflow at apparmor_sk_clone_security+0x37/0x70 in aa-refcnt-af_alg[1322], uid/euid: 1000/1000
+    ...
+    [ 9928.507443] RIP: 0010:apparmor_sk_clone_security+0x37/0x70
+    ...
+    [ 9928.514286]  security_sk_clone+0x33/0x50
+    [ 9928.514807]  af_alg_accept+0x81/0x1c0 [af_alg]
+    [ 9928.516091]  alg_accept+0x15/0x20 [af_alg]
+    [ 9928.516682]  SYSC_accept4+0xff/0x210
+    [ 9928.519609]  SyS_accept+0x10/0x20
+    [ 9928.520190]  do_syscall_64+0x73/0x130
+    [ 9928.520808]  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+
+Note that other messages may be seen, not just overflow, depending on
+the value being incremented by kref_get(); on another run:
+
+    [ 7273.182666] refcount_t: saturated; leaking memory.
+    ...
+    [ 7273.185789] refcount_t: underflow; use-after-free.
+
+Kprobes:
+-------
+
+Using kprobe events to monitor sk -> sk_security -> label -> count (kref):
+
+Original v5.7 (one reference leak every iteration)
+
+ ... (af_alg_accept+0x0/0x1c0) label=0xffff8a0f36c25eb0 label_refcnt=0x11fd2
+ ... (af_alg_release_parent+0x0/0xd0) label=0xffff8a0f36c25eb0 label_refcnt=0x11fd4
+ ... (af_alg_accept+0x0/0x1c0) label=0xffff8a0f36c25eb0 label_refcnt=0x11fd3
+ ... (af_alg_release_parent+0x0/0xd0) label=0xffff8a0f36c25eb0 label_refcnt=0x11fd5
+ ... (af_alg_accept+0x0/0x1c0) label=0xffff8a0f36c25eb0 label_refcnt=0x11fd4
+ ... (af_alg_release_parent+0x0/0xd0) label=0xffff8a0f36c25eb0 label_refcnt=0x11fd6
+
+Patched v5.7 (zero reference leak per iteration)
+
+ ... (af_alg_accept+0x0/0x1c0) label=0xffff9ff376c25eb0 label_refcnt=0x593
+ ... (af_alg_release_parent+0x0/0xd0) label=0xffff9ff376c25eb0 label_refcnt=0x594
+ ... (af_alg_accept+0x0/0x1c0) label=0xffff9ff376c25eb0 label_refcnt=0x593
+ ... (af_alg_release_parent+0x0/0xd0) label=0xffff9ff376c25eb0 label_refcnt=0x594
+ ... (af_alg_accept+0x0/0x1c0) label=0xffff9ff376c25eb0 label_refcnt=0x593
+ ... (af_alg_release_parent+0x0/0xd0) label=0xffff9ff376c25eb0 label_refcnt=0x594
+
+Commits:
+-------
+
+[1] commit 507cad355fc9 ("crypto: af_alg - Make sure sk_security is initialized on accept()ed sockets")
+[2] commit 4c63f83c2c2e ("crypto: af_alg - properly label AF_ALG socket")
+[3] commit 2acce6aa9f65 ("Networking") a.k.a ("crypto: af_alg - Avoid sock_graft call warning)
+[4] commit 56974a6fcfef ("apparmor: add base infastructure for socket mediation")
+
+Fixes: 56974a6fcfef ("apparmor: add base infastructure for socket mediation")
+Reported-by: Brian Moyles <bmoyles@netflix.com>
+Signed-off-by: Mauricio Faria de Oliveira <mfo@canonical.com>
 Signed-off-by: John Johansen <john.johansen@canonical.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- security/apparmor/domain.c        |  9 +++++----
- security/apparmor/include/label.h |  1 +
- security/apparmor/label.c         | 33 +++++++++++++++++++++++++++++++
- 3 files changed, 39 insertions(+), 4 deletions(-)
+ security/apparmor/lsm.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
-index b9d5b3459705..13b33490e079 100644
---- a/security/apparmor/domain.c
-+++ b/security/apparmor/domain.c
-@@ -939,7 +939,8 @@ int apparmor_bprm_set_creds(struct linux_binprm *bprm)
- 	 * aways results in a further reduction of permissions.
- 	 */
- 	if ((bprm->unsafe & LSM_UNSAFE_NO_NEW_PRIVS) &&
--	    !unconfined(label) && !aa_label_is_subset(new, ctx->nnp)) {
-+	    !unconfined(label) &&
-+	    !aa_label_is_unconfined_subset(new, ctx->nnp)) {
- 		error = -EPERM;
- 		info = "no new privs";
- 		goto audit;
-@@ -1217,7 +1218,7 @@ int aa_change_hat(const char *hats[], int count, u64 token, int flags)
- 		 * reduce restrictions.
- 		 */
- 		if (task_no_new_privs(current) && !unconfined(label) &&
--		    !aa_label_is_subset(new, ctx->nnp)) {
-+		    !aa_label_is_unconfined_subset(new, ctx->nnp)) {
- 			/* not an apparmor denial per se, so don't log it */
- 			AA_DEBUG("no_new_privs - change_hat denied");
- 			error = -EPERM;
-@@ -1238,7 +1239,7 @@ int aa_change_hat(const char *hats[], int count, u64 token, int flags)
- 		 * reduce restrictions.
- 		 */
- 		if (task_no_new_privs(current) && !unconfined(label) &&
--		    !aa_label_is_subset(previous, ctx->nnp)) {
-+		    !aa_label_is_unconfined_subset(previous, ctx->nnp)) {
- 			/* not an apparmor denial per se, so don't log it */
- 			AA_DEBUG("no_new_privs - change_hat denied");
- 			error = -EPERM;
-@@ -1433,7 +1434,7 @@ int aa_change_profile(const char *fqname, int flags)
- 		 * reduce restrictions.
- 		 */
- 		if (task_no_new_privs(current) && !unconfined(label) &&
--		    !aa_label_is_subset(new, ctx->nnp)) {
-+		    !aa_label_is_unconfined_subset(new, ctx->nnp)) {
- 			/* not an apparmor denial per se, so don't log it */
- 			AA_DEBUG("no_new_privs - change_hat denied");
- 			error = -EPERM;
-diff --git a/security/apparmor/include/label.h b/security/apparmor/include/label.h
-index 7ce5fe73ae7f..cecbd3f5429c 100644
---- a/security/apparmor/include/label.h
-+++ b/security/apparmor/include/label.h
-@@ -285,6 +285,7 @@ bool aa_label_init(struct aa_label *label, int size, gfp_t gfp);
- struct aa_label *aa_label_alloc(int size, struct aa_proxy *proxy, gfp_t gfp);
+diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+index 730de4638b4e..5e32fe434140 100644
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -797,7 +797,12 @@ static void apparmor_sk_clone_security(const struct sock *sk,
+ 	struct aa_sk_ctx *ctx = SK_CTX(sk);
+ 	struct aa_sk_ctx *new = SK_CTX(newsk);
  
- bool aa_label_is_subset(struct aa_label *set, struct aa_label *sub);
-+bool aa_label_is_unconfined_subset(struct aa_label *set, struct aa_label *sub);
- struct aa_profile *__aa_label_next_not_in_set(struct label_it *I,
- 					     struct aa_label *set,
- 					     struct aa_label *sub);
-diff --git a/security/apparmor/label.c b/security/apparmor/label.c
-index 6e7aa2ef8ee0..6727e6fb69df 100644
---- a/security/apparmor/label.c
-+++ b/security/apparmor/label.c
-@@ -554,6 +554,39 @@ bool aa_label_is_subset(struct aa_label *set, struct aa_label *sub)
- 	return __aa_label_next_not_in_set(&i, set, sub) == NULL;
++	if (new->label)
++		aa_put_label(new->label);
+ 	new->label = aa_get_label(ctx->label);
++
++	if (new->peer)
++		aa_put_label(new->peer);
+ 	new->peer = aa_get_label(ctx->peer);
  }
  
-+/**
-+ * aa_label_is_unconfined_subset - test if @sub is a subset of @set
-+ * @set: label to test against
-+ * @sub: label to test if is subset of @set
-+ *
-+ * This checks for subset but taking into account unconfined. IF
-+ * @sub contains an unconfined profile that does not have a matching
-+ * unconfined in @set then this will not cause the test to fail.
-+ * Conversely we don't care about an unconfined in @set that is not in
-+ * @sub
-+ *
-+ * Returns: true if @sub is special_subset of @set
-+ *     else false
-+ */
-+bool aa_label_is_unconfined_subset(struct aa_label *set, struct aa_label *sub)
-+{
-+	struct label_it i = { };
-+	struct aa_profile *p;
-+
-+	AA_BUG(!set);
-+	AA_BUG(!sub);
-+
-+	if (sub == set)
-+		return true;
-+
-+	do {
-+		p = __aa_label_next_not_in_set(&i, set, sub);
-+		if (p && !profile_unconfined(p))
-+			break;
-+	} while (p);
-+
-+	return p == NULL;
-+}
- 
- 
- /**
 -- 
 2.25.1
 
