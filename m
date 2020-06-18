@@ -2,117 +2,385 @@ Return-Path: <SRS0=g/MA=77=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 456D2C433E1
-	for <linux-security-module@archiver.kernel.org>; Thu, 18 Jun 2020 06:42:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D193C433E0
+	for <linux-security-module@archiver.kernel.org>; Thu, 18 Jun 2020 07:11:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 24EB32186A
-	for <linux-security-module@archiver.kernel.org>; Thu, 18 Jun 2020 06:42:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 270B921548
+	for <linux-security-module@archiver.kernel.org>; Thu, 18 Jun 2020 07:11:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LvLtQrHK"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="gjCxMa6L"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726940AbgFRGm5 (ORCPT
+        id S1728049AbgFRHLM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 18 Jun 2020 02:42:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39600 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727853AbgFRGm4 (ORCPT
+        Thu, 18 Jun 2020 03:11:12 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:60624 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726313AbgFRHLL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 18 Jun 2020 02:42:56 -0400
-Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBBF3C0613EE
-        for <linux-security-module@vger.kernel.org>; Wed, 17 Jun 2020 23:42:54 -0700 (PDT)
-Received: by mail-lf1-x144.google.com with SMTP id d21so712837lfb.6
-        for <linux-security-module@vger.kernel.org>; Wed, 17 Jun 2020 23:42:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=K6hCnmc25bPhM8Zds15z3T5k2ctR9P+E0kmH5eedao4=;
-        b=LvLtQrHK+FRlk5/sD/8n+NvY5OlKXKDXtDGMvGAWEV8LStu+H5SMcJeof/D1Bi311E
-         iG2SVk2aU8L6UtTvMM8QqgfobAoSZA/4MszA+QHc6H9+WyoduT5HIfL3NiYOClb4mgyQ
-         sWSi05++HNZSaCzaYuMbRzFE/0UM0074HyCLCvUzrlUKp9M2DFy94o8jLGFyaPfQRSRB
-         vUi6H6KpwDixktHDOVJdezLiS2MP8TfPZ1UtIASSqww607WvpGLOrH5fk+dmANcJlVEi
-         LblDqZh3z5oDKbVxry/Q7EUNdmW19cHib1w0FFgAFPAmFzAtBbVtvd2OsQMdNed0x+IO
-         CTaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=K6hCnmc25bPhM8Zds15z3T5k2ctR9P+E0kmH5eedao4=;
-        b=dTUdptZAcaXJhQ0KLP03ZXK0gGGBJnC5cZHCapuv2L8FgatSYKXO5xYV/aY751+vjF
-         J+WF3VaZgljREswM7hIsEZLBn43ESnfilbwmjsCEW0dm5KTZVRdsbhdqa404QdQM6SNj
-         uZZEnjF6sglGBxtyP//eGYmQvCXfS81Q41zMNv/3uEIQ5MGnNdc2ObRxseVjPEvpiK7U
-         acD/b3qtkKVqswSub9KFiVS57a7oXuqI9XR+ukI+vTiyv2SiJ2qvWyOCZR8X/eX58MgT
-         R/vawI4xn6+gXL7TjWMk5IQVLxa7GiOS3BNYftIwRZX+KpHi7r8eBad+M8B89Aiak/fP
-         +Zsw==
-X-Gm-Message-State: AOAM531XAGy5MDOnMNM3frz3ogTQprR3CkO6638PbkI4AZPzQGRzYS1Y
-        In9tq8Uh1bH+KJByrA7IaNV2tKpvHEftnXJzYypSAw==
-X-Google-Smtp-Source: ABdhPJx4QxcHzkbgPAk3c9tXd5/s0nYZNRG6j8i+HfERTJzJ+F0FGPMbAipjRTc9ukWM5DOXoFi2vtfz2V+2oSbLHwA=
-X-Received: by 2002:ac2:41d4:: with SMTP id d20mr1489555lfi.204.1592462573264;
- Wed, 17 Jun 2020 23:42:53 -0700 (PDT)
-MIME-Version: 1.0
-References: <1591107505-6030-1-git-send-email-sumit.garg@linaro.org>
- <1591107505-6030-2-git-send-email-sumit.garg@linaro.org> <20200615182457.GB5416@linux.intel.com>
- <CAFA6WYNEnXm5FOGHGAg4XB-+GXD=C+YMh+6t976=pStU0WshAA@mail.gmail.com> <20200617231429.GD62794@linux.intel.com>
-In-Reply-To: <20200617231429.GD62794@linux.intel.com>
-From:   Sumit Garg <sumit.garg@linaro.org>
-Date:   Thu, 18 Jun 2020 12:12:41 +0530
-Message-ID: <CAFA6WYOdtwnewqY0ASnMf7fyw3s_hQx0+oWJRhT3CpkkkxYpDA@mail.gmail.com>
-Subject: Re: [PATCH v5 1/4] KEYS: trusted: Add generic trusted keys framework
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        Jens Wiklander <jens.wiklander@linaro.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Janne Karhunen <janne.karhunen@gmail.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Markus Wamser <Markus.Wamser@mixed-mode.de>,
-        "open list:ASYMMETRIC KEYS" <keyrings@vger.kernel.org>,
+        Thu, 18 Jun 2020 03:11:11 -0400
+Received: from prsriva-linux.hsd1.wa.comcast.net (c-24-19-135-168.hsd1.wa.comcast.net [24.19.135.168])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 5B73D20B4782;
+        Thu, 18 Jun 2020 00:11:09 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5B73D20B4782
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1592464270;
+        bh=VEtEi09thKOujVJBcly14c5YrSGc13AMa3vUo7doCzE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=gjCxMa6L9IFw6L3Mhy4y5brnJENKt9S465EYfQkweezIAsC7zM3TJiUNhGiO2EQgS
+         8PeZNecZv1KJU1QsMVM8oEukAUdJpuCTHHoFAMWnyTJCC/S+zYbLIuhy5Z+UveZdkY
+         imLs7Vk2F1xOQ9j39aHLCsBytmoYckIl0o1Qgh+M=
+From:   Prakhar Srivastava <prsriva@linux.microsoft.com>
+To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, devicetree@vger.kernel.org,
         linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        op-tee@lists.trustedfirmware.org,
-        "tee-dev @ lists . linaro . org" <tee-dev@lists.linaro.org>,
-        Luke Hinds <lhinds@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+        linux-security-module@vger.kernel.org
+Cc:     catalin.marinas@arm.com, will@kernel.org, mpe@ellerman.id.au,
+        benh@kernel.crashing.org, paulus@samba.org, robh+dt@kernel.org,
+        frowand.list@gmail.com, zohar@linux.ibm.com,
+        dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
+        pasha.tatashin@soleen.com, allison@lohutok.net,
+        kstewart@linuxfoundation.org, takahiro.akashi@linaro.org,
+        tglx@linutronix.de, vincenzo.frascino@arm.com,
+        mark.rutland@arm.com, masahiroy@kernel.org, james.morse@arm.com,
+        bhsharma@redhat.com, mbrugger@suse.com, hsinyi@chromium.org,
+        tao.li@vivo.com, christophe.leroy@c-s.fr,
+        gregkh@linuxfoundation.org, nramas@linux.microsoft.com,
+        prsriva@linux.microsoft.com, tusharsu@linux.microsoft.com,
+        balajib@linux.microsoft.com
+Subject: [V2 PATCH 1/3] Refactoring powerpc code for carrying over IMA measurement logs, to move non architecture specific code to security/ima.
+Date:   Thu, 18 Jun 2020 00:10:43 -0700
+Message-Id: <20200618071045.471131-2-prsriva@linux.microsoft.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200618071045.471131-1-prsriva@linux.microsoft.com>
+References: <20200618071045.471131-1-prsriva@linux.microsoft.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 18 Jun 2020 at 04:44, Jarkko Sakkinen
-<jarkko.sakkinen@linux.intel.com> wrote:
->
-> On Tue, Jun 16, 2020 at 07:02:37PM +0530, Sumit Garg wrote:
-> > + Luke
-> >
-> > Hi Jarkko,
-> >
-> > Prior to addressing your comments below which seems to show your
-> > preference for compile time selection of trust source (TPM or TEE), I
-> > would just like to hear the reasons for this preference especially if
-> > it makes distro vendor's life difficult [1] to make opinionated
-> > selection which could rather be achieved dynamically based on platform
-> > capability.
-> >
-> > [1] https://lkml.org/lkml/2020/6/3/405
-> >
-> > -Sumit
->
-> Hmm... I do get the distribution kernel point. OK, lets revert to
-> dynamic then. Thanks for the remark.
->
-> /Jarkko
+Powerpc has support to carry over the IMA measurement logs. Refatoring the 
+non-architecture specific code out of arch/powerpc and into security/ima.
 
-Thanks, will revert to dynamic mode in v6.
+The code adds support for reserving and freeing up of memory for IMA measurement
+logs.
 
--Sumit
+---
+ arch/powerpc/include/asm/ima.h     |  10 ---
+ arch/powerpc/kexec/ima.c           | 126 ++---------------------------
+ security/integrity/ima/ima_kexec.c | 116 ++++++++++++++++++++++++++
+ 3 files changed, 124 insertions(+), 128 deletions(-)
+
+diff --git a/arch/powerpc/include/asm/ima.h b/arch/powerpc/include/asm/ima.h
+index ead488cf3981..c29ec86498f8 100644
+--- a/arch/powerpc/include/asm/ima.h
++++ b/arch/powerpc/include/asm/ima.h
+@@ -4,15 +4,6 @@
+ 
+ struct kimage;
+ 
+-int ima_get_kexec_buffer(void **addr, size_t *size);
+-int ima_free_kexec_buffer(void);
+-
+-#ifdef CONFIG_IMA
+-void remove_ima_buffer(void *fdt, int chosen_node);
+-#else
+-static inline void remove_ima_buffer(void *fdt, int chosen_node) {}
+-#endif
+-
+ #ifdef CONFIG_IMA_KEXEC
+ int arch_ima_add_kexec_buffer(struct kimage *image, unsigned long load_addr,
+ 			      size_t size);
+@@ -22,7 +13,6 @@ int setup_ima_buffer(const struct kimage *image, void *fdt, int chosen_node);
+ static inline int setup_ima_buffer(const struct kimage *image, void *fdt,
+ 				   int chosen_node)
+ {
+-	remove_ima_buffer(fdt, chosen_node);
+ 	return 0;
+ }
+ #endif /* CONFIG_IMA_KEXEC */
+diff --git a/arch/powerpc/kexec/ima.c b/arch/powerpc/kexec/ima.c
+index 720e50e490b6..6054ce91d2a6 100644
+--- a/arch/powerpc/kexec/ima.c
++++ b/arch/powerpc/kexec/ima.c
+@@ -12,121 +12,6 @@
+ #include <linux/memblock.h>
+ #include <linux/libfdt.h>
+ 
+-static int get_addr_size_cells(int *addr_cells, int *size_cells)
+-{
+-	struct device_node *root;
+-
+-	root = of_find_node_by_path("/");
+-	if (!root)
+-		return -EINVAL;
+-
+-	*addr_cells = of_n_addr_cells(root);
+-	*size_cells = of_n_size_cells(root);
+-
+-	of_node_put(root);
+-
+-	return 0;
+-}
+-
+-static int do_get_kexec_buffer(const void *prop, int len, unsigned long *addr,
+-			       size_t *size)
+-{
+-	int ret, addr_cells, size_cells;
+-
+-	ret = get_addr_size_cells(&addr_cells, &size_cells);
+-	if (ret)
+-		return ret;
+-
+-	if (len < 4 * (addr_cells + size_cells))
+-		return -ENOENT;
+-
+-	*addr = of_read_number(prop, addr_cells);
+-	*size = of_read_number(prop + 4 * addr_cells, size_cells);
+-
+-	return 0;
+-}
+-
+-/**
+- * ima_get_kexec_buffer - get IMA buffer from the previous kernel
+- * @addr:	On successful return, set to point to the buffer contents.
+- * @size:	On successful return, set to the buffer size.
+- *
+- * Return: 0 on success, negative errno on error.
+- */
+-int ima_get_kexec_buffer(void **addr, size_t *size)
+-{
+-	int ret, len;
+-	unsigned long tmp_addr;
+-	size_t tmp_size;
+-	const void *prop;
+-
+-	prop = of_get_property(of_chosen, "linux,ima-kexec-buffer", &len);
+-	if (!prop)
+-		return -ENOENT;
+-
+-	ret = do_get_kexec_buffer(prop, len, &tmp_addr, &tmp_size);
+-	if (ret)
+-		return ret;
+-
+-	*addr = __va(tmp_addr);
+-	*size = tmp_size;
+-
+-	return 0;
+-}
+-
+-/**
+- * ima_free_kexec_buffer - free memory used by the IMA buffer
+- */
+-int ima_free_kexec_buffer(void)
+-{
+-	int ret;
+-	unsigned long addr;
+-	size_t size;
+-	struct property *prop;
+-
+-	prop = of_find_property(of_chosen, "linux,ima-kexec-buffer", NULL);
+-	if (!prop)
+-		return -ENOENT;
+-
+-	ret = do_get_kexec_buffer(prop->value, prop->length, &addr, &size);
+-	if (ret)
+-		return ret;
+-
+-	ret = of_remove_property(of_chosen, prop);
+-	if (ret)
+-		return ret;
+-
+-	return memblock_free(addr, size);
+-
+-}
+-
+-/**
+- * remove_ima_buffer - remove the IMA buffer property and reservation from @fdt
+- *
+- * The IMA measurement buffer is of no use to a subsequent kernel, so we always
+- * remove it from the device tree.
+- */
+-void remove_ima_buffer(void *fdt, int chosen_node)
+-{
+-	int ret, len;
+-	unsigned long addr;
+-	size_t size;
+-	const void *prop;
+-
+-	prop = fdt_getprop(fdt, chosen_node, "linux,ima-kexec-buffer", &len);
+-	if (!prop)
+-		return;
+-
+-	ret = do_get_kexec_buffer(prop, len, &addr, &size);
+-	fdt_delprop(fdt, chosen_node, "linux,ima-kexec-buffer");
+-	if (ret)
+-		return;
+-
+-	ret = delete_fdt_mem_rsv(fdt, addr, size);
+-	if (!ret)
+-		pr_debug("Removed old IMA buffer reservation.\n");
+-}
+-
+ #ifdef CONFIG_IMA_KEXEC
+ /**
+  * arch_ima_add_kexec_buffer - do arch-specific steps to add the IMA buffer
+@@ -179,13 +64,18 @@ int setup_ima_buffer(const struct kimage *image, void *fdt, int chosen_node)
+ 	int ret, addr_cells, size_cells, entry_size;
+ 	u8 value[16];
+ 
+-	remove_ima_buffer(fdt, chosen_node);
+ 	if (!image->arch.ima_buffer_size)
+ 		return 0;
+ 
+-	ret = get_addr_size_cells(&addr_cells, &size_cells);
+-	if (ret)
++	ret = fdt_address_cells(fdt, chosen_node);
++	if (ret < 0)
++		return ret;
++	addr_cells = ret;
++
++	ret = fdt_size_cells(fdt, chosen_node);
++	if (ret < 0)
+ 		return ret;
++	size_cells = ret;
+ 
+ 	entry_size = 4 * (addr_cells + size_cells);
+ 
+diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
+index 121de3e04af2..e1e6d6154015 100644
+--- a/security/integrity/ima/ima_kexec.c
++++ b/security/integrity/ima/ima_kexec.c
+@@ -10,8 +10,124 @@
+ #include <linux/seq_file.h>
+ #include <linux/vmalloc.h>
+ #include <linux/kexec.h>
++#include <linux/of.h>
++#include <linux/memblock.h>
++#include <linux/libfdt.h>
+ #include "ima.h"
+ 
++static int get_addr_size_cells(int *addr_cells, int *size_cells)
++{
++	struct device_node *root;
++
++	root = of_find_node_by_path("/");
++	if (!root)
++		return -EINVAL;
++
++	*addr_cells = of_n_addr_cells(root);
++	*size_cells = of_n_size_cells(root);
++
++	of_node_put(root);
++
++	return 0;
++}
++
++static int do_get_kexec_buffer(const void *prop, int len, unsigned long *addr,
++			       size_t *size)
++{
++	int ret, addr_cells, size_cells;
++
++	ret = get_addr_size_cells(&addr_cells, &size_cells);
++	if (ret)
++		return ret;
++
++	if (len < 4 * (addr_cells + size_cells))
++		return -ENOENT;
++
++	*addr = of_read_number(prop, addr_cells);
++	*size = of_read_number(prop + 4 * addr_cells, size_cells);
++
++	return 0;
++}
++
++/**
++ * ima_get_kexec_buffer - get IMA buffer from the previous kernel
++ * @addr:	On successful return, set to point to the buffer contents.
++ * @size:	On successful return, set to the buffer size.
++ *
++ * Return: 0 on success, negative errno on error.
++ */
++int ima_get_kexec_buffer(void **addr, size_t *size)
++{
++	int ret, len;
++	unsigned long tmp_addr;
++	size_t tmp_size;
++	const void *prop;
++
++	prop = of_get_property(of_chosen, "linux,ima-kexec-buffer", &len);
++	if (!prop)
++		return -ENOENT;
++
++	ret = do_get_kexec_buffer(prop, len, &tmp_addr, &tmp_size);
++	if (ret)
++		return ret;
++
++	*addr = __va(tmp_addr);
++	*size = tmp_size;
++
++	return 0;
++}
++
++/**
++ * ima_free_kexec_buffer - free memory used by the IMA buffer
++ */
++int ima_free_kexec_buffer(void)
++{
++	int ret;
++	unsigned long addr;
++	size_t size;
++	struct property *prop;
++
++	prop = of_find_property(of_chosen, "linux,ima-kexec-buffer", NULL);
++	if (!prop)
++		return -ENOENT;
++
++	ret = do_get_kexec_buffer(prop->value, prop->length, &addr, &size);
++	if (ret)
++		return ret;
++
++	ret = of_remove_property(of_chosen, prop);
++	if (ret)
++		return ret;
++
++	return memblock_free(__pa(addr), size);
++
++}
++
++/**
++ * remove_ima_buffer - remove the IMA buffer property and reservation from @fdt
++ *
++ * The IMA measurement buffer is of no use to a subsequent kernel, so we always
++ * remove it from the device tree.
++ */
++void remove_ima_buffer(void *fdt, int chosen_node)
++{
++	int ret, len;
++	unsigned long addr;
++	size_t size;
++	const void *prop;
++
++	prop = fdt_getprop(fdt, chosen_node, "linux,ima-kexec-buffer", &len);
++	if (!prop)
++		return;
++
++	do_get_kexec_buffer(prop, len, &addr, &size);
++	ret = fdt_delprop(fdt, chosen_node, "linux,ima-kexec-buffer");
++	if (ret < 0)
++		return;
++
++	memblock_free(addr, size);
++}
++
+ #ifdef CONFIG_IMA_KEXEC
+ static int ima_dump_measurement_list(unsigned long *buffer_size, void **buffer,
+ 				     unsigned long segment_size)
+-- 
+2.25.1
+
