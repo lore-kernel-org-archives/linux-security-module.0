@@ -1,93 +1,97 @@
-Return-Path: <SRS0=EaTW=76=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=g/MA=77=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA101C433E1
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Jun 2020 23:14:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BC15C433E0
+	for <linux-security-module@archiver.kernel.org>; Thu, 18 Jun 2020 00:43:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 88F1F21534
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Jun 2020 23:14:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C9252184D
+	for <linux-security-module@archiver.kernel.org>; Thu, 18 Jun 2020 00:43:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1592441034;
+	bh=z8URL52jsUeVV4acHgb8mhAwfXotlh0gswF4QwIowhc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=SazUK/6BAPxKTtz+Hp/uhrL5ufZmNZrhVHMtmD+3Xh5c4/PE2HnYHGk+Qo2T+Ug22
+	 IZ8SfbRtj75XV5L7sJ6TfICEBKmEM2XY++D26+a2BqRBFwAklXaCwnW2/VYQ9JxDEh
+	 NRuTMJep0satA9wt+gqWjgAGtrrioBDOcIdAbz4M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726945AbgFQXOp (ORCPT
+        id S1726899AbgFRAnw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 17 Jun 2020 19:14:45 -0400
-Received: from mga05.intel.com ([192.55.52.43]:56051 "EHLO mga05.intel.com"
+        Wed, 17 Jun 2020 20:43:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56904 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726835AbgFQXOo (ORCPT
+        id S1726854AbgFRAnv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 17 Jun 2020 19:14:44 -0400
-IronPort-SDR: RpIp8TgRl7Wb5cpD03NNonoE2Nt1ttN9oR7NpwR7uGdiLcBnm8IuKt1Vm6AdY9vXnlguhWFgg/
- ii4O9NBBERPQ==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2020 16:14:43 -0700
-IronPort-SDR: xYhJJOFwfFkEbqi1RPAcBFZIgp3FcLNJR7J86i2/7dF1EoRXvTAKgcViEW3ziaXxCkLuN5WVMp
- CrsTU31DELRQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.73,523,1583222400"; 
-   d="scan'208";a="277434089"
-Received: from kleeve-mobl.ger.corp.intel.com (HELO localhost) ([10.252.50.166])
-  by orsmga006.jf.intel.com with ESMTP; 17 Jun 2020 16:14:30 -0700
-Date:   Thu, 18 Jun 2020 02:14:29 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Sumit Garg <sumit.garg@linaro.org>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        Jens Wiklander <jens.wiklander@linaro.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Janne Karhunen <janne.karhunen@gmail.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Markus Wamser <Markus.Wamser@mixed-mode.de>,
-        "open list:ASYMMETRIC KEYS" <keyrings@vger.kernel.org>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        op-tee@lists.trustedfirmware.org,
-        "tee-dev @ lists . linaro . org" <tee-dev@lists.linaro.org>,
-        Luke Hinds <lhinds@redhat.com>
-Subject: Re: [PATCH v5 1/4] KEYS: trusted: Add generic trusted keys framework
-Message-ID: <20200617231429.GD62794@linux.intel.com>
-References: <1591107505-6030-1-git-send-email-sumit.garg@linaro.org>
- <1591107505-6030-2-git-send-email-sumit.garg@linaro.org>
- <20200615182457.GB5416@linux.intel.com>
- <CAFA6WYNEnXm5FOGHGAg4XB-+GXD=C+YMh+6t976=pStU0WshAA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFA6WYNEnXm5FOGHGAg4XB-+GXD=C+YMh+6t976=pStU0WshAA@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+        Wed, 17 Jun 2020 20:43:51 -0400
+Received: from X1 (nat-ab2241.sltdut.senawave.net [162.218.216.4])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6B88521556;
+        Thu, 18 Jun 2020 00:43:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1592441031;
+        bh=z8URL52jsUeVV4acHgb8mhAwfXotlh0gswF4QwIowhc=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=lFr7x6WrpgmRN4lzyjuvDZG/zGaopYG62aB1wPAszZtJjQPV9FdWelscdkKZ1qRgQ
+         AvtBQETgA+y3uFWv09ZMZ8o39Xuvl5i+wHRZRgNpcmzkR8W9OqNit+yo8ORkU4fGBb
+         M3YbM5M6BVVRc9kul9eNloay4TPH74oCLloXGYj4=
+Date:   Wed, 17 Jun 2020 17:43:48 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc:     gregkh@linuxfoundation.org, viro@zeniv.linux.org.uk,
+        philipp.reisner@linbit.com, lars.ellenberg@linbit.com,
+        axboe@kernel.dk, bfields@fieldses.org, chuck.lever@oracle.com,
+        roopa@cumulusnetworks.com, nikolay@cumulusnetworks.com,
+        davem@davemloft.net, kuba@kernel.org, dhowells@redhat.com,
+        jarkko.sakkinen@linux.intel.com, jmorris@namei.org,
+        serge@hallyn.com, christian.brauner@ubuntu.com, slyfox@gentoo.org,
+        ast@kernel.org, keescook@chromium.org, josh@joshtriplett.org,
+        ravenexp@gmail.com, chainsaw@gentoo.org,
+        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        bridge@lists.linux-foundation.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/5] kmod/umh: a few fixes
+Message-Id: <20200617174348.70710c3ecb14005fb1b9ec39@linux-foundation.org>
+In-Reply-To: <20200610154923.27510-1-mcgrof@kernel.org>
+References: <20200610154923.27510-1-mcgrof@kernel.org>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jun 16, 2020 at 07:02:37PM +0530, Sumit Garg wrote:
-> + Luke
-> 
-> Hi Jarkko,
-> 
-> Prior to addressing your comments below which seems to show your
-> preference for compile time selection of trust source (TPM or TEE), I
-> would just like to hear the reasons for this preference especially if
-> it makes distro vendor's life difficult [1] to make opinionated
-> selection which could rather be achieved dynamically based on platform
-> capability.
-> 
-> [1] https://lkml.org/lkml/2020/6/3/405
-> 
-> -Sumit
+On Wed, 10 Jun 2020 15:49:18 +0000 "Luis R. Rodriguez" <mcgrof@kernel.org> wrote:
 
-Hmm... I do get the distribution kernel point. OK, lets revert to
-dynamic then. Thanks for the remark.
+> Tiezhu Yang had sent out a patch set with a slew of kmod selftest
+> fixes, and one patch which modified kmod to return 254 when a module
+> was not found. This opened up pandora's box about why that was being
+> used for and low and behold its because when UMH_WAIT_PROC is used
+> we call a kernel_wait4() call but have never unwrapped the error code.
+> The commit log for that fix details the rationale for the approach
+> taken. I'd appreciate some review on that, in particular nfs folks
+> as it seems a case was never really hit before.
+> 
+> This goes boot tested, selftested with kmod, and 0-day gives its
+> build blessings.
 
-/Jarkko
+Any thoughts on which kernel version(s) need some/all of these fixes?
+
+>  drivers/block/drbd/drbd_nl.c         | 20 +++++------
+>  fs/nfsd/nfs4recover.c                |  2 +-
+>  include/linux/sched/task.h           | 13 ++++++++
+>  kernel/kmod.c                        |  5 ++-
+>  kernel/umh.c                         |  4 +--
+>  lib/test_kmod.c                      |  2 +-
+>  net/bridge/br_stp_if.c               | 10 ++----
+>  security/keys/request_key.c          |  2 +-
+>  tools/testing/selftests/kmod/kmod.sh | 50 +++++++++++++++++++++++-----
+
+I'm not really sure who takes kmod changes - I'll grab these unless
+someone shouts at me.
+
