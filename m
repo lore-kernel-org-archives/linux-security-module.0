@@ -1,152 +1,371 @@
-Return-Path: <SRS0=nDQO=AA=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=/I/R=AB=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2360C433DF
-	for <linux-security-module@archiver.kernel.org>; Fri, 19 Jun 2020 21:07:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69BE9C433E1
+	for <linux-security-module@archiver.kernel.org>; Sat, 20 Jun 2020 00:20:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7AFC32083B
-	for <linux-security-module@archiver.kernel.org>; Fri, 19 Jun 2020 21:07:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1592600837;
-	bh=CdUO2dopUVWj5y1s/Q0+JdEtHKcAJuKab3KaOz0Q/a4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=pHbqisUU4G83QOOwm2TPrYZ29+pmizGadjunBEScjGzXcGYq8XSyz3kUfcvSJtXDc
-	 pZR1PPE/uNhQcabWWuUW0VdcB+g4e9vQhc62/co9xTycyKN7z3T+B7Ltz6PpgbQAH9
-	 jLDi1lygSENWnQlb6XlcI+Cjlbau1XCkA0cI5WBE=
+	by mail.kernel.org (Postfix) with ESMTP id 3E44020675
+	for <linux-security-module@archiver.kernel.org>; Sat, 20 Jun 2020 00:20:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391721AbgFSVHK (ORCPT
+        id S1730701AbgFTAUN (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 19 Jun 2020 17:07:10 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:32822 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391671AbgFSVHJ (ORCPT
+        Fri, 19 Jun 2020 20:20:13 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52280 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730500AbgFTAUN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 19 Jun 2020 17:07:09 -0400
-Received: by mail-pf1-f193.google.com with SMTP id b201so4976392pfb.0;
-        Fri, 19 Jun 2020 14:07:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=fgKI9tiUDPjaNu37VXrZWB4azE+juqRY/GXLgBajdA8=;
-        b=tuzJn7icnrIX4p63d6zmK2FvbEvHlmz5hTWSL6/1um8CqGPjh8aS2j5LS+Ncga+5hk
-         d9pXKBwReO4z6S0KpJbhzqaiH2UDAV0GnCiVXoO0K3pZDHl3ugyHD5m/kIRiNQs/Gtl3
-         1STa+Xp42uLI0JNRJ1vHPfB78WJjNgSS4bU9PzU8hWlqUkfdi4vESzJRNyrB2diMpNMi
-         7wdHide6LbQvGx6Jm5huWovHrs7L/STVbrgWL0NzfdyOgjN54dH9b9QwjC/fz/Oe/vQY
-         Z+3SQFh5qtikfrCC7UdWRVKpw/bzAkP2vhZ/rwIbKxcyUksf9zF10KVdZMP+lE8LM7Hx
-         2GDg==
-X-Gm-Message-State: AOAM532issOsu1zXIIW0srkdvrGW5a2iK5fz+XCBLh26l8ycga8MZe0/
-        d7YBAsg2RBqH7L3pOWlknrw=
-X-Google-Smtp-Source: ABdhPJyOaY2vu4Wv5GQOCd0H8uBFHKWtpSNfsj8V4ycknjrch6X+te7gHMq/EQGy7YV3W+a/Mn2mSA==
-X-Received: by 2002:a62:31c6:: with SMTP id x189mr10316191pfx.79.1592600828604;
-        Fri, 19 Jun 2020 14:07:08 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id i3sm5849845pjv.1.2020.06.19.14.07.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Jun 2020 14:07:06 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 10DDA4063E; Fri, 19 Jun 2020 21:07:06 +0000 (UTC)
-Date:   Fri, 19 Jun 2020 21:07:06 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        linux-nfs@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Jessica Yu <jeyu@kernel.org>
-Cc:     gregkh@linuxfoundation.org, viro@zeniv.linux.org.uk,
-        philipp.reisner@linbit.com, lars.ellenberg@linbit.com,
-        axboe@kernel.dk, roopa@cumulusnetworks.com,
-        nikolay@cumulusnetworks.com, davem@davemloft.net, kuba@kernel.org,
-        dhowells@redhat.com, jarkko.sakkinen@linux.intel.com,
-        jmorris@namei.org, serge@hallyn.com, christian.brauner@ubuntu.com,
-        slyfox@gentoo.org, ast@kernel.org, keescook@chromium.org,
-        josh@joshtriplett.org, ravenexp@gmail.com, chainsaw@gentoo.org,
-        linux-fsdevel@vger.kernel.org, bridge@lists.linux-foundation.org,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/5] kmod/umh: a few fixes
-Message-ID: <20200619210706.GJ13911@42.do-not-panic.com>
-References: <20200610154923.27510-1-mcgrof@kernel.org>
- <20200617174348.70710c3ecb14005fb1b9ec39@linux-foundation.org>
- <20200619204626.GK11244@42.do-not-panic.com>
+        Fri, 19 Jun 2020 20:20:13 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 05K01mlt030498;
+        Fri, 19 Jun 2020 20:19:17 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 31s7et0f4w-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 19 Jun 2020 20:19:17 -0400
+Received: from m0098419.ppops.net (m0098419.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 05K02P9F031972;
+        Fri, 19 Jun 2020 20:19:16 -0400
+Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 31s7et0f4f-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 19 Jun 2020 20:19:16 -0400
+Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
+        by ppma03wdc.us.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 05K05xH6024571;
+        Sat, 20 Jun 2020 00:19:15 GMT
+Received: from b03cxnp07028.gho.boulder.ibm.com (b03cxnp07028.gho.boulder.ibm.com [9.17.130.15])
+        by ppma03wdc.us.ibm.com with ESMTP id 31q8km6tqy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sat, 20 Jun 2020 00:19:15 +0000
+Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
+        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 05K0JEFi52363692
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 20 Jun 2020 00:19:14 GMT
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AB268C6055;
+        Sat, 20 Jun 2020 00:19:14 +0000 (GMT)
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2B47AC6057;
+        Sat, 20 Jun 2020 00:19:07 +0000 (GMT)
+Received: from morokweng.localdomain (unknown [9.163.93.234])
+        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTPS;
+        Sat, 20 Jun 2020 00:19:06 +0000 (GMT)
+References: <20200618071045.471131-1-prsriva@linux.microsoft.com> <20200618071045.471131-2-prsriva@linux.microsoft.com>
+User-agent: mu4e 1.2.0; emacs 26.3
+From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
+To:     Prakhar Srivastava <prsriva@linux.microsoft.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, devicetree@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, catalin.marinas@arm.com,
+        will@kernel.org, mpe@ellerman.id.au, benh@kernel.crashing.org,
+        paulus@samba.org, robh+dt@kernel.org, frowand.list@gmail.com,
+        zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, jmorris@namei.org,
+        serge@hallyn.com, pasha.tatashin@soleen.com, allison@lohutok.net,
+        kstewart@linuxfoundation.org, takahiro.akashi@linaro.org,
+        tglx@linutronix.de, vincenzo.frascino@arm.com,
+        mark.rutland@arm.com, masahiroy@kernel.org, james.morse@arm.com,
+        bhsharma@redhat.com, mbrugger@suse.com, hsinyi@chromium.org,
+        tao.li@vivo.com, christophe.leroy@c-s.fr,
+        gregkh@linuxfoundation.org, nramas@linux.microsoft.com,
+        tusharsu@linux.microsoft.com, balajib@linux.microsoft.com
+Subject: Re: [V2 PATCH 1/3] Refactoring powerpc code for carrying over IMA measurement logs, to move non architecture specific code to security/ima.
+In-reply-to: <20200618071045.471131-2-prsriva@linux.microsoft.com>
+Date:   Fri, 19 Jun 2020 21:19:03 -0300
+Message-ID: <87o8per3m0.fsf@morokweng.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200619204626.GK11244@42.do-not-panic.com>
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.687
+ definitions=2020-06-19_22:2020-06-19,2020-06-19 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
+ clxscore=1011 adultscore=0 priorityscore=1501 phishscore=0 mlxscore=0
+ suspectscore=2 mlxlogscore=999 cotscore=-2147483648 impostorscore=0
+ malwarescore=0 lowpriorityscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2004280000 definitions=main-2006190166
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Sorry it seems mutt ate my To:, so adding the folks I intended to
-address on the To: field now :)
 
-  Luis
+Prakhar Srivastava <prsriva@linux.microsoft.com> writes:
 
-On Fri, Jun 19, 2020 at 08:46:26PM +0000, Luis Chamberlain wrote:
-> On Wed, Jun 17, 2020 at 05:43:48PM -0700, Andrew Morton wrote:
-> > On Wed, 10 Jun 2020 15:49:18 +0000 "Luis R. Rodriguez" <mcgrof@kernel.org> wrote:
-> > 
-> > > Tiezhu Yang had sent out a patch set with a slew of kmod selftest
-> > > fixes, and one patch which modified kmod to return 254 when a module
-> > > was not found. This opened up pandora's box about why that was being
-> > > used for and low and behold its because when UMH_WAIT_PROC is used
-> > > we call a kernel_wait4() call but have never unwrapped the error code.
-> > > The commit log for that fix details the rationale for the approach
-> > > taken. I'd appreciate some review on that, in particular nfs folks
-> > > as it seems a case was never really hit before.
-> > > 
-> > > This goes boot tested, selftested with kmod, and 0-day gives its
-> > > build blessings.
-> > 
-> > Any thoughts on which kernel version(s) need some/all of these fixes?
-> 
-> Well, in so far as fixes, this is the real important part:
-> 
-> * request_module() used to fail with an error code of
->   256 when a module was not found. Now it properly
->   returns 1.
-> 
-> * fs/nfsd/nfs4recover.c: we never were disabling the
->   upcall as the error code of -ENOENT or -EACCES was
->   *never* properly checked for error code
-> 
-> Since the request_module() fix is only affecting userspace
-> for the kmod tests, through the kmod test driver, ie, we don't expose
-> this to userspace in any other place, I don't see that as critical.
-> Let me be clear, we have a test_kmod driver which exposes knobs
-> and one of the knobs lets userspace query the return value of a
-> request_module() call, and we use this test_kmod driver to stress
-> test kmod loader. Let us also recall that the fix is *iff* an error
-> *did* occur. I *cannot* think of a reason why this would be critical
-> to merge to older stable kernels for this reason for request_module()'s
-> sake.
-> 
-> Bruce, Chuck:
-> 
-> But... for NFS... I'd like the NFS folks to really look at that
-> and tell us is some folks really should care about that. I also
-> find it perplexing there was a comment in place there to *ensure*
-> the error was checked for, and so it seemed someone cared for that
-> condition.
-> 
-> > >  drivers/block/drbd/drbd_nl.c         | 20 +++++------
-> > >  fs/nfsd/nfs4recover.c                |  2 +-
-> > >  include/linux/sched/task.h           | 13 ++++++++
-> > >  kernel/kmod.c                        |  5 ++-
-> > >  kernel/umh.c                         |  4 +--
-> > >  lib/test_kmod.c                      |  2 +-
-> > >  net/bridge/br_stp_if.c               | 10 ++----
-> > >  security/keys/request_key.c          |  2 +-
-> > >  tools/testing/selftests/kmod/kmod.sh | 50 +++++++++++++++++++++++-----
-> > 
-> > I'm not really sure who takes kmod changes - I'll grab these unless
-> > someone shouts at me.
-> 
-> Greg usually takes it, but as usual, thanks for picking up the slack ;)
-> 
->   Luis
+> Powerpc has support to carry over the IMA measurement logs. Refatoring the
+> non-architecture specific code out of arch/powerpc and into security/ima.
+>
+> The code adds support for reserving and freeing up of memory for IMA measurement
+> logs.
+
+Last week, Mimi provided this feedback:
+
+"From your patch description, this patch should be broken up.  Moving
+the non-architecture specific code out of powerpc should be one patch.
+ Additional support should be in another patch.  After each patch, the
+code should work properly."
+
+That's not what you do here. You move the code, but you also make other
+changes at the same time. This has two problems:
+
+1. It makes the patch harder to review, because it's very easy to miss a
+   change.
+
+2. If in the future a git bisect later points to this patch, it's not
+   clear whether the problem is because of the code movement, or because
+   of the other changes.
+
+When you move code, ideally the patch should only make the changes
+necessary to make the code work at its new location. The patch which
+does code movement should not cause any change in behavior.
+
+Other changes should go in separate patches, either before or after the
+one moving the code.
+
+More comments below.
+
+>
+> ---
+>  arch/powerpc/include/asm/ima.h     |  10 ---
+>  arch/powerpc/kexec/ima.c           | 126 ++---------------------------
+>  security/integrity/ima/ima_kexec.c | 116 ++++++++++++++++++++++++++
+>  3 files changed, 124 insertions(+), 128 deletions(-)
+>
+> diff --git a/arch/powerpc/include/asm/ima.h b/arch/powerpc/include/asm/ima.h
+> index ead488cf3981..c29ec86498f8 100644
+> --- a/arch/powerpc/include/asm/ima.h
+> +++ b/arch/powerpc/include/asm/ima.h
+> @@ -4,15 +4,6 @@
+>
+>  struct kimage;
+>
+> -int ima_get_kexec_buffer(void **addr, size_t *size);
+> -int ima_free_kexec_buffer(void);
+> -
+> -#ifdef CONFIG_IMA
+> -void remove_ima_buffer(void *fdt, int chosen_node);
+> -#else
+> -static inline void remove_ima_buffer(void *fdt, int chosen_node) {}
+> -#endif
+> -
+>  #ifdef CONFIG_IMA_KEXEC
+>  int arch_ima_add_kexec_buffer(struct kimage *image, unsigned long load_addr,
+>  			      size_t size);
+> @@ -22,7 +13,6 @@ int setup_ima_buffer(const struct kimage *image, void *fdt, int chosen_node);
+>  static inline int setup_ima_buffer(const struct kimage *image, void *fdt,
+>  				   int chosen_node)
+>  {
+> -	remove_ima_buffer(fdt, chosen_node);
+>  	return 0;
+>  }
+
+This is wrong. Even if the currently running kernel doesn't have
+CONFIG_IMA_KEXEC, it should remove the IMA buffer property and memory
+reservation from the FDT that is being prepared for the next kernel.
+
+This is because the IMA kexec buffer is useless for the next kernel,
+regardless of whether the current kernel supports CONFIG_IMA_KEXEC or
+not. Keeping it around would be a waste of memory.
+
+> @@ -179,13 +64,18 @@ int setup_ima_buffer(const struct kimage *image, void *fdt, int chosen_node)
+>  	int ret, addr_cells, size_cells, entry_size;
+>  	u8 value[16];
+>
+> -	remove_ima_buffer(fdt, chosen_node);
+
+This is wrong, for the same reason stated above.
+
+>  	if (!image->arch.ima_buffer_size)
+>  		return 0;
+>
+> -	ret = get_addr_size_cells(&addr_cells, &size_cells);
+> -	if (ret)
+> +	ret = fdt_address_cells(fdt, chosen_node);
+> +	if (ret < 0)
+> +		return ret;
+> +	addr_cells = ret;
+> +
+> +	ret = fdt_size_cells(fdt, chosen_node);
+> +	if (ret < 0)
+>  		return ret;
+> +	size_cells = ret;
+>
+>  	entry_size = 4 * (addr_cells + size_cells);
+>
+
+I liked this change. Thanks! I agree it's better to use
+fdt_address_cells() and fdt_size_cells() here.
+
+But it should be in a separate patch. Either before or after the one
+moving the code.
+
+> diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
+> index 121de3e04af2..e1e6d6154015 100644
+> --- a/security/integrity/ima/ima_kexec.c
+> +++ b/security/integrity/ima/ima_kexec.c
+> @@ -10,8 +10,124 @@
+>  #include <linux/seq_file.h>
+>  #include <linux/vmalloc.h>
+>  #include <linux/kexec.h>
+> +#include <linux/of.h>
+> +#include <linux/memblock.h>
+> +#include <linux/libfdt.h>
+>  #include "ima.h"
+>
+> +static int get_addr_size_cells(int *addr_cells, int *size_cells)
+> +{
+> +	struct device_node *root;
+> +
+> +	root = of_find_node_by_path("/");
+> +	if (!root)
+> +		return -EINVAL;
+> +
+> +	*addr_cells = of_n_addr_cells(root);
+> +	*size_cells = of_n_size_cells(root);
+> +
+> +	of_node_put(root);
+> +
+> +	return 0;
+> +}
+> +
+> +static int do_get_kexec_buffer(const void *prop, int len, unsigned long *addr,
+> +			       size_t *size)
+> +{
+> +	int ret, addr_cells, size_cells;
+> +
+> +	ret = get_addr_size_cells(&addr_cells, &size_cells);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (len < 4 * (addr_cells + size_cells))
+> +		return -ENOENT;
+> +
+> +	*addr = of_read_number(prop, addr_cells);
+> +	*size = of_read_number(prop + 4 * addr_cells, size_cells);
+> +
+> +	return 0;
+> +}
+> +
+> +/**
+> + * ima_get_kexec_buffer - get IMA buffer from the previous kernel
+> + * @addr:	On successful return, set to point to the buffer contents.
+> + * @size:	On successful return, set to the buffer size.
+> + *
+> + * Return: 0 on success, negative errno on error.
+> + */
+> +int ima_get_kexec_buffer(void **addr, size_t *size)
+> +{
+> +	int ret, len;
+> +	unsigned long tmp_addr;
+> +	size_t tmp_size;
+> +	const void *prop;
+> +
+> +	prop = of_get_property(of_chosen, "linux,ima-kexec-buffer", &len);
+> +	if (!prop)
+> +		return -ENOENT;
+> +
+> +	ret = do_get_kexec_buffer(prop, len, &tmp_addr, &tmp_size);
+> +	if (ret)
+> +		return ret;
+> +
+> +	*addr = __va(tmp_addr);
+> +	*size = tmp_size;
+> +
+> +	return 0;
+> +}
+
+The functions above were moved without being changed. Good.
+
+> +/**
+> + * ima_free_kexec_buffer - free memory used by the IMA buffer
+> + */
+> +int ima_free_kexec_buffer(void)
+> +{
+> +	int ret;
+> +	unsigned long addr;
+> +	size_t size;
+> +	struct property *prop;
+> +
+> +	prop = of_find_property(of_chosen, "linux,ima-kexec-buffer", NULL);
+> +	if (!prop)
+> +		return -ENOENT;
+> +
+> +	ret = do_get_kexec_buffer(prop->value, prop->length, &addr, &size);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = of_remove_property(of_chosen, prop);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return memblock_free(__pa(addr), size);
+
+Here you added a __pa() call. Do you store a virtual address in
+linux,ima-kexec-buffer property? Doesn't it make more sense to store a
+physical address?
+
+Even if making this change is the correct thing to do, it should be a
+separate patch, unless it can't be avoided. And if that is the case,
+then it should be explained in the commit message.
+
+> +
+> +}
+> +
+> +/**
+> + * remove_ima_buffer - remove the IMA buffer property and reservation from @fdt
+> + *
+> + * The IMA measurement buffer is of no use to a subsequent kernel, so we always
+> + * remove it from the device tree.
+> + */
+> +void remove_ima_buffer(void *fdt, int chosen_node)
+> +{
+> +	int ret, len;
+> +	unsigned long addr;
+> +	size_t size;
+> +	const void *prop;
+> +
+> +	prop = fdt_getprop(fdt, chosen_node, "linux,ima-kexec-buffer", &len);
+> +	if (!prop)
+> +		return;
+> +
+> +	do_get_kexec_buffer(prop, len, &addr, &size);
+> +	ret = fdt_delprop(fdt, chosen_node, "linux,ima-kexec-buffer");
+> +	if (ret < 0)
+> +		return;
+> +
+> +	memblock_free(addr, size);
+> +}
+
+Here is another function that changed when moved. This one I know to be
+wrong. You're confusing the purposes of remove_ima_buffer() and
+ima_free_kexec_buffer().
+
+You did send me a question about them nearly three weeks ago which I
+only answered today, so I apologize. Also, their names could more
+clearly reflect their differences, so it's bad naming on my part.
+
+With IMA kexec buffers, there are two kernels (and thus their two
+respective, separate device trees) to be concerned about:
+
+1. the currently running kernel, which uses the live device tree
+(accessed with the of_* functions) and the memblock subsystem;
+
+2. the kernel which is being loaded by kexec, which will use the FDT
+blob being passed around as argument to these functions, and the memory
+reservations in the memory reservation table of the FDT blob.
+
+ima_free_kexec_buffer() is used by IMA in the currently running kernel.
+Therefore the device tree it is concerned about is the live one, and
+thus uses the of_* functions to access it. And uses memblock to change
+the memory reservation.
+
+remove_ima_buffer() on the other hand is used by the kexec code to
+prepare an FDT blob for the kernel that is being loaded. It should not
+make any changes to live device tree, nor to memblock allocations. It
+should only make changes to the FDT blob.
+
+--
+Thiago Jung Bauermann
+IBM Linux Technology Center
