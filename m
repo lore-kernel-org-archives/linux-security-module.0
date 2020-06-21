@@ -2,138 +2,69 @@ Return-Path: <SRS0=caJR=AC=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4941C433E0
-	for <linux-security-module@archiver.kernel.org>; Sun, 21 Jun 2020 22:21:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49700C433DF
+	for <linux-security-module@archiver.kernel.org>; Sun, 21 Jun 2020 22:45:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A1D5A24825
-	for <linux-security-module@archiver.kernel.org>; Sun, 21 Jun 2020 22:21:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="a89qNGlR"
+	by mail.kernel.org (Postfix) with ESMTP id 1F62720707
+	for <linux-security-module@archiver.kernel.org>; Sun, 21 Jun 2020 22:45:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1592779526;
+	bh=v9sThbH5EcvCkWHw/jIBC0C8a06oazJihP2nFqUEG3w=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
+	b=n1g2LJbLXTlA3ImXsKazkU5Ot53cJS3yLrGnCAxrJGyG3ABPTJDaGwEmyj/IFle0O
+	 nOnNMCPopvlCxtCU6d/YL3Fjf4kazjaMlEtlkTJFmbxr7gH/fh6rQbKIelIJctuFn/
+	 gjWZh/Fypj3E32lN6O1m5OUn6uqkrbOKi14a1QGw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726441AbgFUWVm (ORCPT
+        id S1726408AbgFUWpZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 21 Jun 2020 18:21:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49106 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726364AbgFUWVm (ORCPT
+        Sun, 21 Jun 2020 18:45:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54476 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726101AbgFUWpZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 21 Jun 2020 18:21:42 -0400
-Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37EFAC061794
-        for <linux-security-module@vger.kernel.org>; Sun, 21 Jun 2020 15:21:42 -0700 (PDT)
-Received: by mail-wm1-x343.google.com with SMTP id f18so1410143wml.3
-        for <linux-security-module@vger.kernel.org>; Sun, 21 Jun 2020 15:21:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=KcxfYlAyKzbITdSbFArzA2umqb7j1yl/HuXhhiSDWMM=;
-        b=a89qNGlRNmNNNIPKu7EIHagX5mdQzBSxnYrV/zChfLnMlFSPXSzMPmDWl39DcPMLrU
-         tGKk1mBkfW+78JxrtnG24tyNRhwQTUebFotv9ur4f+f04Nkcw4nhb3Qn/fl30t0MbJ8r
-         U5V1+mBMZBSElcmF5STvUO47mAX3euxFVJKTo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=KcxfYlAyKzbITdSbFArzA2umqb7j1yl/HuXhhiSDWMM=;
-        b=D4MwTP/9hrRSeawZ1BVpi3x7iETdgBOyWw1pXQl1G+Vq3SRNX3dMxc1luaZmnxtzvZ
-         ISHgMq1QW8Cgf5hl98mV/5DPA3h8lML1R55OdvWnj9l1lBu2GVV0OtihPGhtAL8DSFRw
-         XK9xMR3XZ6MEEFto+r4PvYux5fJvTseXEixIfvRorW2Fl1HF2KExPhawM/bXJLqNMRvG
-         63Cn1v6E3DGRV6+ta3YiVDF1vjhOjhnwGBf2Ze0yyPaXWDAOGlAQj6fjtXAT+lnTDNg3
-         CDeHlk+P6oxn/rCmFkau7UQpb6DPq0fgxgEavhUOtCaJpVtrsre/ZAjKSyBh/Zxliix0
-         2/yw==
-X-Gm-Message-State: AOAM532WoXkVdd4PzZClkAmnskiMj2oayg1zp4yZRN2Fic3qRWhCGu1l
-        nfWEktoaAbm5rjDM4EJo8iO2OQ==
-X-Google-Smtp-Source: ABdhPJyawXdwUDr2apHIXHwsbzgybV9TIbkv/UlOjUZZRmH3JVPJoMesK5eIu0YntqTgef+D0vJGFQ==
-X-Received: by 2002:a7b:cd07:: with SMTP id f7mr4047196wmj.115.1592778100686;
-        Sun, 21 Jun 2020 15:21:40 -0700 (PDT)
-Received: from kpsingh.zrh.corp.google.com ([81.6.44.51])
-        by smtp.gmail.com with ESMTPSA id f2sm13936251wmj.39.2020.06.21.15.21.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 21 Jun 2020 15:21:40 -0700 (PDT)
-From:   KP Singh <kpsingh@chromium.org>
-To:     bpf@vger.kernel.org, linux-security-module@vger.kernel.org
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jann Horn <jannh@google.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Kees Cook <keescook@chromium.org>,
-        James Morris <jmorris@namei.org>
-Subject: [PATCH] security: Fix hook iteration and default value for inode_copy_up_xattr
-Date:   Mon, 22 Jun 2020 00:21:35 +0200
-Message-Id: <20200621222135.9136-1-kpsingh@chromium.org>
-X-Mailer: git-send-email 2.27.0.111.gc72c7da667-goog
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Sun, 21 Jun 2020 18:45:25 -0400
+Subject: Re: [GIT PULL] SELinux fixes for v5.8 (#1)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1592779524;
+        bh=v9sThbH5EcvCkWHw/jIBC0C8a06oazJihP2nFqUEG3w=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=YhXcHL9tCfhs3fdUusZp6vT2xgjvAffeCIZH0M35D/8bPxubrXvynSXH7ev0JtpWk
+         wqJO8ZcXUGH4FvOLvwvOsRrpcZJjGOqzeZMVrIqOH3A9RnpI1WGWwXyiBAINMWkPGK
+         NswVirKOMhndSTZyl/WxqTr9vXe0AsrwS1V62TY0=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <CAHC9VhQbP754KV8RsaBgnxmuy8gWeL-YccRqQOc8R7DrvtZBvA@mail.gmail.com>
+References: <CAHC9VhQbP754KV8RsaBgnxmuy8gWeL-YccRqQOc8R7DrvtZBvA@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CAHC9VhQbP754KV8RsaBgnxmuy8gWeL-YccRqQOc8R7DrvtZBvA@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+ tags/selinux-pr-20200621
+X-PR-Tracked-Commit-Id: 8231b0b9c322c894594fb42eb0eb9f93544a6acc
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 817d914d17651c188f28a284261ff6091d80ad2c
+Message-Id: <159277952464.24881.15037005159620440574.pr-tracker-bot@kernel.org>
+Date:   Sun, 21 Jun 2020 22:45:24 +0000
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: KP Singh <kpsingh@google.com>
+The pull request you sent on Sun, 21 Jun 2020 16:54:16 -0400:
 
-inode_copy_up_xattr returns 0 to indicate the acceptance of the xattr
-and 1 to reject it. If the LSM does not know about the xattr, it's
-expected to return -EOPNOTSUPP, which is the correct default value for
-this hook. BPF LSM, currently, uses 0 as the default value and thereby
-falsely allows all overlay fs xattributes to be copied up.
+> git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git tags/selinux-pr-20200621
 
-The iteration logic is also updated from the "bail-on-fail"
-call_int_hook to continue on the non-decisive -EOPNOTSUPP and bail out
-on other values.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/817d914d17651c188f28a284261ff6091d80ad2c
 
-Fixes: 98e828a0650f ("security: Refactor declaration of LSM hooks")
-Signed-off-by: KP Singh <kpsingh@google.com>
----
- include/linux/lsm_hook_defs.h |  2 +-
- security/security.c           | 17 ++++++++++++++++-
- 2 files changed, 17 insertions(+), 2 deletions(-)
+Thank you!
 
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index 6791813cd439..f4b2e54162ae 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -150,7 +150,7 @@ LSM_HOOK(int, 0, inode_listsecurity, struct inode *inode, char *buffer,
- 	 size_t buffer_size)
- LSM_HOOK(void, LSM_RET_VOID, inode_getsecid, struct inode *inode, u32 *secid)
- LSM_HOOK(int, 0, inode_copy_up, struct dentry *src, struct cred **new)
--LSM_HOOK(int, 0, inode_copy_up_xattr, const char *name)
-+LSM_HOOK(int, -EOPNOTSUPP, inode_copy_up_xattr, const char *name)
- LSM_HOOK(int, 0, kernfs_init_security, struct kernfs_node *kn_dir,
- 	 struct kernfs_node *kn)
- LSM_HOOK(int, 0, file_permission, struct file *file, int mask)
-diff --git a/security/security.c b/security/security.c
-index 0ce3e73edd42..70a7ad357bc6 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1414,7 +1414,22 @@ EXPORT_SYMBOL(security_inode_copy_up);
- 
- int security_inode_copy_up_xattr(const char *name)
- {
--	return call_int_hook(inode_copy_up_xattr, -EOPNOTSUPP, name);
-+	struct security_hook_list *hp;
-+	int rc;
-+
-+	/*
-+	 * The implementation can return 0 (accept the xattr), 1 (discard the
-+	 * xattr), -EOPNOTSUPP if it does not know anything about the xattr or
-+	 * any other error code incase of an error.
-+	 */
-+	hlist_for_each_entry(hp,
-+		&security_hook_heads.inode_copy_up_xattr, list) {
-+		rc = hp->hook.inode_copy_up_xattr(name);
-+		if (rc != LSM_RET_DEFAULT(inode_copy_up_xattr))
-+			return rc;
-+	}
-+
-+	return LSM_RET_DEFAULT(inode_copy_up_xattr);
- }
- EXPORT_SYMBOL(security_inode_copy_up_xattr);
- 
 -- 
-2.27.0.111.gc72c7da667-goog
-
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
