@@ -2,147 +2,125 @@ Return-Path: <SRS0=WgAi=AD=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C2C7C433E0
-	for <linux-security-module@archiver.kernel.org>; Mon, 22 Jun 2020 18:34:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BB4DC433DF
+	for <linux-security-module@archiver.kernel.org>; Mon, 22 Jun 2020 20:14:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4A16C20767
-	for <linux-security-module@archiver.kernel.org>; Mon, 22 Jun 2020 18:34:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dLVhwzoI"
+	by mail.kernel.org (Postfix) with ESMTP id 12AF52075A
+	for <linux-security-module@archiver.kernel.org>; Mon, 22 Jun 2020 20:14:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730356AbgFVSeV (ORCPT
+        id S1728588AbgFVUOx (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 22 Jun 2020 14:34:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38730 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730364AbgFVSeU (ORCPT
+        Mon, 22 Jun 2020 16:14:53 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:18112 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728363AbgFVUOx (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 22 Jun 2020 14:34:20 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3799CC061797
-        for <linux-security-module@vger.kernel.org>; Mon, 22 Jun 2020 11:34:20 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id t74so10233911lff.2
-        for <linux-security-module@vger.kernel.org>; Mon, 22 Jun 2020 11:34:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=sBexF5ssPbh5LGo0nOeoAmYTVHXNPIpTHLnki7UR7GA=;
-        b=dLVhwzoIaHVDtXlEa1yvKtmI/A8BJFihnPmuFHEt+CIA+Blq4FXWfgRDj5VbpYeAvs
-         LExEGz+hg9FoBlNsk/KDwNo6DL+1H0Oln1cW6CTVsYdLj81cGymdJ+LHP340gPCojzAn
-         WzoZSRf0551K9N59cmTYzZBiMUrU1INtRsyrH5hUFAx4zevjJoB8bUY98vkN5e0Y1w3v
-         oweWmToFE3c0cUPu4Nc2eOF9DffAZo7jcaDQWC3Mhg7iqjVdCc3wUq8fp/bN4yC6PVjs
-         aVCjsY+vU5prFJAmP1JwVT+P5UBgdgG+Y6dIk4QkSei7A2y/3Jkdq8CMMhhEhD7DXrQL
-         Mh1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=sBexF5ssPbh5LGo0nOeoAmYTVHXNPIpTHLnki7UR7GA=;
-        b=rbanAXXa9EYiBLiAJNJPsZxdl7hF48+J2dDkxU6wvQ8t5kQ/b//Dx3K1eS40grzZ4s
-         xPeic2dgbEzV+vJDFr0+FTKK5iM+ARkW6A83mROcPUyT8JrlI3HO6seoB2UzIc2N29lX
-         5yiOOoalWOYhMZV21XQjKok56IKlnPiZyX/Q8jTKfQtwhc7xH5tjMgkrxxUN35D0Btpy
-         Mm7QfWWuxzEjDUlNVpEp/9Po36rFe11G5va+xXTmD38DmfxDYF/8a7cxZjN++HcXYbiL
-         0ZE6lKuR7H2eB14+/cxrFtdYCIVOmsXCkquQe97yX1zOrMeeJ9vj4w6hMl7E0Y64l0Mu
-         zn7A==
-X-Gm-Message-State: AOAM5309NHmQqQPmmATXNpvvY3Hm47NyFTe0HZmdhlKvi8UrsH1MIFl6
-        zMceySc8UhxRASffXBtnloAHX2Te9dHGcTRkuYsY/Q==
-X-Google-Smtp-Source: ABdhPJyPOJcIhXBV0KqXpX75z6mrdlBxWTdsbbkx8Ha1UrGxW5K2yYQvin6nrIjvzB6DkFmVg0qpX8oS1eea80qkSR0=
-X-Received: by 2002:ac2:4db2:: with SMTP id h18mr10513503lfe.167.1592850858186;
- Mon, 22 Jun 2020 11:34:18 -0700 (PDT)
-MIME-Version: 1.0
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Tue, 23 Jun 2020 00:04:06 +0530
-Message-ID: <CA+G9fYvHFs5Yx8TnT6VavtfjMN8QLPuXg6us-dXVJqUUt68adA@mail.gmail.com>
-Subject: LTP: crypto: af_alg02 regression on linux-next 20200621 tag
-To:     LTP List <ltp@lists.linux.it>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        lkft-triage@lists.linaro.org, linux-crypto@vger.kernel.org
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Jan Stancek <jstancek@redhat.com>, chrubis <chrubis@suse.cz>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        James Morris <jmorris@namei.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        David Howells <dhowells@redhat.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Biggers <ebiggers@google.com>
+        Mon, 22 Jun 2020 16:14:53 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 05MK276w105648;
+        Mon, 22 Jun 2020 16:14:40 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 31tysqpa8n-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 22 Jun 2020 16:14:40 -0400
+Received: from m0098404.ppops.net (m0098404.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 05MKDc4M150271;
+        Mon, 22 Jun 2020 16:14:39 -0400
+Received: from ppma03fra.de.ibm.com (6b.4a.5195.ip4.static.sl-reverse.com [149.81.74.107])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 31tysqpa7t-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 22 Jun 2020 16:14:39 -0400
+Received: from pps.filterd (ppma03fra.de.ibm.com [127.0.0.1])
+        by ppma03fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 05MKBLoJ026964;
+        Mon, 22 Jun 2020 20:14:37 GMT
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
+        by ppma03fra.de.ibm.com with ESMTP id 31sa381j4u-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 22 Jun 2020 20:14:36 +0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 05MKEYPK53411960
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 22 Jun 2020 20:14:34 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7CE21AE056;
+        Mon, 22 Jun 2020 20:14:34 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4B430AE04D;
+        Mon, 22 Jun 2020 20:14:32 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.202.125])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 22 Jun 2020 20:14:32 +0000 (GMT)
+Message-ID: <1592856871.4987.21.camel@linux.ibm.com>
+Subject: Re: [PATCH] ima_evm_utils: extended calc_bootaggr to PCRs 8 - 9
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Maurizio Drocco <maurizio.drocco@ibm.com>, roberto.sassu@huawei.com
+Cc:     Silviu.Vlasceanu@huawei.com, dmitry.kasatkin@gmail.com,
+        jejb@linux.ibm.com, jmorris@namei.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, serge@hallyn.com,
+        mdrocco@linux.vnet.ibm.com
+Date:   Mon, 22 Jun 2020 16:14:31 -0400
+In-Reply-To: <20200618201126.2081-2-maurizio.drocco@ibm.com>
+References: <b744c1b79ba14a17a786f5de04c1f3c4@huawei.com>
+         <20200618201126.2081-1-maurizio.drocco@ibm.com>
+         <20200618201126.2081-2-maurizio.drocco@ibm.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.687
+ definitions=2020-06-22_11:2020-06-22,2020-06-22 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 malwarescore=0
+ mlxscore=0 bulkscore=0 spamscore=0 clxscore=1015 priorityscore=1501
+ lowpriorityscore=0 impostorscore=0 phishscore=0 mlxlogscore=999
+ cotscore=-2147483648 suspectscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2004280000 definitions=main-2006220127
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-LTP crypto regressions noticed on linux next 20200621.
+On Thu, 2020-06-18 at 16:11 -0400, Maurizio Drocco wrote:
+> From: Maurizio <maurizio.drocco@ibm.com>
+> 
+> If PCRs 8 - 9 are set (i.e. not all-zeros), cal_bootaggr should include
+> them into the digest.
+> 
+> Signed-off-by: Maurizio Drocco <maurizio.drocco@ibm.com>
+> ---
+>  src/evmctl.c | 16 +++++++++++++++-
+>  1 file changed, 15 insertions(+), 1 deletion(-)
+> 
+> diff --git a/src/evmctl.c b/src/evmctl.c
+> index 1d065ce..554571e 100644
+> --- a/src/evmctl.c
+> +++ b/src/evmctl.c
+> @@ -1930,6 +1930,18 @@ static void calc_bootaggr(struct tpm_bank_info *bank)
+>  		}
+>  	}
+>  
+> +	if (strcmp(bank->algo_name, "sha1") != 0) {
+> +		for (i = 8; i < 10; i++) {
+> +			if (memcmp(bank->pcr[i], zero, bank->digest_size) != 0) {
+> +				err = EVP_DigestUpdate(pctx, bank->pcr[i], bank->digest_size);
+> +				if (!err) {
+> +					log_err("EVP_DigestUpdate() failed\n");
+> +					return;
+> +				}
+> +			}
+> +		}
+> +	}
 
-The common case for all tests is timeout after 15 minutes which
-means tests got hung and LTP timers killed those test runs after
-timeout.
-The root cause of the failure is under investigation.
+Roberto, now that we're only including the PCRs 8 & 9 in the non-sha1
+"boot_aggregate", they can always be included.
 
-  ltp-crypto-tests:
-    * af_alg02 - failed
-    * af_alg05 - failed
-  ltp-syscalls-tests:
-    * keyctl07 - failed
-    * request_key03 - failed
+Please reflect this change in the patch description and, here, in the
+code.
 
-Output log:
---------------
-af_alg02:
-af_alg02.c:52: BROK: Timed out while reading from request socket.
+thanks,
 
-Test code at line number 52 is
-
-pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
-SAFE_PTHREAD_CREATE(&thr, NULL, verify_encrypt, NULL);
-
-TST_CHECKPOINT_WAIT(0);
-
-while (pthread_kill(thr, 0) != ESRCH) {
-    if (tst_timeout_remaining() <= 10) {
-        pthread_cancel(thr);
-        tst_brk(TBROK,
-                   "Timed out while reading from request socket.");
-
-
-af_alg05:
-tst_test.c:1246: INFO: Timeout per run is 0h 15m 00s
-[  362.599868] kworker/dying (137) used greatest stack depth: 11600 bytes left
-Test timeouted, sending SIGKILL!
-tst_test.c:1286: INFO: If you are running on slow machine, try
-exporting LTP_TIMEOUT_MUL > 1
-tst_test.c:1287: BROK: Test killed! (timeout?)
-
-request_key03:
-tst_test.c:1246: INFO: Timeout per run is 0h 15m 00s
-request_key03.c:65: CONF: kernel doesn't support key type 'encrypted'
-request_key03.c:65: CONF: kernel doesn't support key type 'trusted'
-Test timeouted, sending SIGKILL!
-tst_test.c:1286: INFO: If you are running on slow machine, try
-exporting LTP_TIMEOUT_MUL > 1
-tst_test.c:1287: BROK: Test killed! (timeout?)
-
-keyctl07
-tst_test.c:1246: INFO: Timeout per run is 0h 15m 00s
-Test timeouted, sending SIGKILL!
-tst_test.c:1286: INFO: If you are running on slow machine, try
-exporting LTP_TIMEOUT_MUL > 1
-tst_test.c:1287: BROK: Test killed! (timeout?)
-
-metadata:
-  git branch: master
-  git repo: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-  git commit: 5a94f5bc041ea9e4d17c93b11ea6f6a2e5ad361b
-  git describe: next-20200621
-  kernel-config:
-https://builds.tuxbuild.com/PB-45Luvlx0yYJ8MZgpijA/kernel.config
-
-ref:
-https://lkft.validation.linaro.org/scheduler/job/1511938#L2211
-https://lkft.validation.linaro.org/scheduler/job/1511935#L9225
-
-- Naresh
+Mimi
