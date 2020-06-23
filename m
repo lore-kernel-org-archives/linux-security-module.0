@@ -2,110 +2,179 @@ Return-Path: <SRS0=CLHo=AE=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78BE5C433E0
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Jun 2020 12:07:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3986C433DF
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Jun 2020 14:03:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5E0D42072E
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Jun 2020 12:07:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B8CBB20723
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Jun 2020 14:03:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732508AbgFWMHn (ORCPT
+        id S1732760AbgFWODs (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 23 Jun 2020 08:07:43 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53122 "EHLO
-        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732333AbgFWMHm (ORCPT
+        Tue, 23 Jun 2020 10:03:48 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36534 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732727AbgFWODs (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 23 Jun 2020 08:07:42 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 05NC2K1K015116;
-        Tue, 23 Jun 2020 08:06:38 -0400
-Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 31uhcqr422-1
+        Tue, 23 Jun 2020 10:03:48 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 05NE21rl132386;
+        Tue, 23 Jun 2020 10:03:38 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 31ue3dtgsg-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 23 Jun 2020 08:06:38 -0400
-Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
-        by ppma03wdc.us.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 05NBuFk6001568;
-        Tue, 23 Jun 2020 12:06:38 GMT
-Received: from b01cxnp22036.gho.pok.ibm.com (b01cxnp22036.gho.pok.ibm.com [9.57.198.26])
-        by ppma03wdc.us.ibm.com with ESMTP id 31sa38eywe-1
+        Tue, 23 Jun 2020 10:03:38 -0400
+Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 05NE2Cws133248;
+        Tue, 23 Jun 2020 10:03:37 -0400
+Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 31ue3dtgqy-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 23 Jun 2020 12:06:38 +0000
-Received: from b01ledav002.gho.pok.ibm.com (b01ledav002.gho.pok.ibm.com [9.57.199.107])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 05NC6bSD16122874
+        Tue, 23 Jun 2020 10:03:37 -0400
+Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
+        by ppma04ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 05NE0qW5022671;
+        Tue, 23 Jun 2020 14:03:34 GMT
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
+        by ppma04ams.nl.ibm.com with ESMTP id 31uk4mg031-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 23 Jun 2020 14:03:34 +0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 05NE3WJe34865156
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 23 Jun 2020 12:06:37 GMT
-Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B403212405A;
-        Tue, 23 Jun 2020 12:06:37 +0000 (GMT)
-Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9AE72124054;
-        Tue, 23 Jun 2020 12:06:37 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-        by b01ledav002.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue, 23 Jun 2020 12:06:37 +0000 (GMT)
-From:   Stefan Berger <stefanb@linux.vnet.ibm.com>
-To:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jarkko.sakkinen@linux.intel.com, linux-acpi@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Cc:     Stefan Berger <stfeanb@linux.ibm.com>
-Subject: [PATCH v5 0/2] tpm2: Make TPM2 logs accessible for non-UEFI firmware
-Date:   Tue, 23 Jun 2020 08:06:34 -0400
-Message-Id: <20200623120636.1453470-1-stefanb@linux.vnet.ibm.com>
-X-Mailer: git-send-email 2.24.1
-MIME-Version: 1.0
+        Tue, 23 Jun 2020 14:03:32 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3525E42049;
+        Tue, 23 Jun 2020 14:03:32 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2D34242056;
+        Tue, 23 Jun 2020 14:03:11 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.212.185])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 23 Jun 2020 14:03:11 +0000 (GMT)
+Message-ID: <1592920990.5437.15.camel@linux.ibm.com>
+Subject: Re: [PATCH] ima: extend boot_aggregate with kernel measurements
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Maurizio Drocco <maurizio.drocco@ibm.com>
+Cc:     Silviu.Vlasceanu@huawei.com, dmitry.kasatkin@gmail.com,
+        jejb@linux.ibm.com, jmorris@namei.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, mdrocco@linux.vnet.ibm.com,
+        roberto.sassu@huawei.com, serge@hallyn.com
+Date:   Tue, 23 Jun 2020 10:03:10 -0400
+In-Reply-To: <20200622045019.1636-1-maurizio.drocco@ibm.com>
+References: <1592856871.4987.21.camel@linux.ibm.com>
+         <20200622045019.1636-1-maurizio.drocco@ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.687
  definitions=2020-06-23_06:2020-06-23,2020-06-23 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
- suspectscore=0 mlxlogscore=715 spamscore=0 bulkscore=0 lowpriorityscore=0
- cotscore=-2147483648 mlxscore=0 priorityscore=1501 malwarescore=0
- clxscore=1011 impostorscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2004280000 definitions=main-2006230088
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ mlxlogscore=999 impostorscore=0 cotscore=-2147483648 adultscore=0
+ mlxscore=0 bulkscore=0 lowpriorityscore=0 clxscore=1015 priorityscore=1501
+ phishscore=0 suspectscore=0 spamscore=0 classifier=spam adjust=0
+ reason=mlx scancount=1 engine=8.12.0-2004280000
+ definitions=main-2006230108
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Stefan Berger <stfeanb@linux.ibm.com>
+Hi Maurizio,
 
-This series of patches extends the existing TPM2 ACPI table with additional
-fields found in the TPM2 TCG ACPI specification (reference is in the patch)
-that allow access to the log's address and its size. We then modify the
-code that so far only enables access to a TPM 1.2's log for a TPM2 as well.
-This then enables access to the TPM2's log on non-UEFI system that for example
-run SeaBIOS.
+When re-posting patches, please include the version number (e.g.
+[PATCH v4] ima: ... ).
 
-   Stefan
+On Mon, 2020-06-22 at 00:50 -0400, Maurizio Drocco wrote:
+> IMA is not considering TPM registers 8-9 when calculating the boot
+> aggregate.
 
-v4->v5:
- - Added R-bs and A-bs.
+This line is unnecessary with the following change.
 
-v3->v4:
-  - Repost as one series
+> When registers 8-9 are used to store measurements of the
+> kernel and its command line (e.g., grub2 bootloader with tpm module
+> enabled), IMA should include them in the boot aggregate.
 
-v2->v3:
-  - Split the series into two separate patches
-  - Added comments to ACPI table fields
-  - Added check for null pointer to log area and zero log size
+The "When" clause makes this sound like PCRs 8 & 9 are not always
+included.  I would split this into two sentences.
 
-v1->v2:
-  - Repost of the series
+>  Registers
+> 8-9 are only included in non-SHA1 boot_aggregate digests to avoid
+> ambiguity.
+> 
+> Signed-off-by: Maurizio Drocco <maurizio.drocco@ibm.com>
+> ---
 
+Missing "Changelog:".
 
-Stefan Berger (2):
-  acpi: Extend TPM2 ACPI table with missing log fields
-  tpm: Add support for event log pointer found in TPM2 ACPI table
+Changelog:
+v2: 
+- Limit including PCRs 8 & 9 to non-sha1 hashes
+v1:
+- Include non zero PCRs 8 & 9 in the boot_aggregate
 
- drivers/char/tpm/eventlog/acpi.c | 56 ++++++++++++++++++++------------
- drivers/char/tpm/tpm_crb.c       | 13 ++++++--
- drivers/char/tpm/tpm_tis.c       |  4 ++-
- include/acpi/actbl3.h            |  5 +--
- 4 files changed, 51 insertions(+), 27 deletions(-)
+>  security/integrity/ima/ima.h        |  2 +-
+>  security/integrity/ima/ima_crypto.c | 15 ++++++++++++++-
+>  2 files changed, 15 insertions(+), 2 deletions(-)
+> 
+> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+> index df93ac258e01..9d94080bdad8 100644
+> --- a/security/integrity/ima/ima.h
+> +++ b/security/integrity/ima/ima.h
+> @@ -30,7 +30,7 @@
+>  
+>  enum ima_show_type { IMA_SHOW_BINARY, IMA_SHOW_BINARY_NO_FIELD_LEN,
+>  		     IMA_SHOW_BINARY_OLD_STRING_FMT, IMA_SHOW_ASCII };
+> -enum tpm_pcrs { TPM_PCR0 = 0, TPM_PCR8 = 8 };
+> +enum tpm_pcrs { TPM_PCR0 = 0, TPM_PCR8 = 8, TPM_PCR10 = 10 };
+>  
+>  /* digest size for IMA, fits SHA1 or MD5 */
+>  #define IMA_DIGEST_SIZE		SHA1_DIGEST_SIZE
+> diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
+> index 220b14920c37..d02917d85033 100644
+> --- a/security/integrity/ima/ima_crypto.c
+> +++ b/security/integrity/ima/ima_crypto.c
+> @@ -823,13 +823,26 @@ static int ima_calc_boot_aggregate_tfm(char *digest, u16 alg_id,
+>  	if (rc != 0)
+>  		return rc;
+>  
+> -	/* cumulative sha1 over tpm registers 0-7 */
+> +	/* cumulative digest over tpm registers 0-7 */
 
--- 
-2.26.2
+Please uppercase "tpm" here and below.
+
+>  	for (i = TPM_PCR0; i < TPM_PCR8; i++) {
+>  		ima_pcrread(i, &d);
+>  		/* now accumulate with current aggregate */
+>  		rc = crypto_shash_update(shash, d.digest,
+>  					 crypto_shash_digestsize(tfm));
+>  	}
+> +	/*
+> +	 * extend cumulative digest over tpm registers 8-9, which contain
+> +	 * measurement for the kernel command line (reg. 8) and image (reg. 9)
+> +	 * in a typical PCR allocation. Registers 8-9 are only included in
+> +	 * non-SHA1 boot_aggregate digests to avoid ambiguity.
+> +	 */
+
+Comments that are full sentences should start with an uppercase letter
+and end with a period (e.g. Extend).
+
+thanks,
+
+Mimi
+
+> +	if (alg_id != TPM_ALG_SHA1) {
+> +		for (i = TPM_PCR8; i < TPM_PCR10; i++) {
+> +			ima_pcrread(i, &d);
+> +			rc = crypto_shash_update(shash, d.digest,
+> +						crypto_shash_digestsize(tfm));
+> +		}
+> +	}
+>  	if (!rc)
+>  		crypto_shash_final(shash, digest);
+>  	return rc;
 
