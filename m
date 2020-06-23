@@ -2,151 +2,103 @@ Return-Path: <SRS0=CLHo=AE=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B965C433DF
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Jun 2020 15:57:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0CCAC433E0
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Jun 2020 17:02:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6287C2073E
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Jun 2020 15:57:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B220D20780
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Jun 2020 17:02:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1592931744;
+	bh=lyjF5JCMRLkYfJgb+nOoi8e9pbWAuyRNl9vIReX7pT4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=1B4kGz14gqgiwzZh12uOmB18Br5Y9PLoMdT++rrnDiNO5+JepaVedsMwuBroM/6vL
+	 DTFb21+G3wdwbvBVGedDP17Bgv9zuidvZIK3pFlBYguFXHhu3wVFy7mvnWB+n0QXwF
+	 TS1hVytHUxRMLGReuc60XFB0U5NVTvKZxd+4fY1c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732978AbgFWP5u (ORCPT
+        id S1732940AbgFWRCT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 23 Jun 2020 11:57:50 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52904 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731616AbgFWP5t (ORCPT
+        Tue, 23 Jun 2020 13:02:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37084 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728916AbgFWRCT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 23 Jun 2020 11:57:49 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 05NFX7DJ076972;
-        Tue, 23 Jun 2020 11:57:41 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 31uk60uwnr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 23 Jun 2020 11:57:41 -0400
-Received: from m0098399.ppops.net (m0098399.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 05NFXOUG078594;
-        Tue, 23 Jun 2020 11:57:40 -0400
-Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 31uk60uwnb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 23 Jun 2020 11:57:40 -0400
-Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
-        by ppma02dal.us.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 05NFdlNl004195;
-        Tue, 23 Jun 2020 15:57:39 GMT
-Received: from b03cxnp07028.gho.boulder.ibm.com (b03cxnp07028.gho.boulder.ibm.com [9.17.130.15])
-        by ppma02dal.us.ibm.com with ESMTP id 31uk480ve1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 23 Jun 2020 15:57:39 +0000
-Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
-        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 05NFvcUh52887958
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 23 Jun 2020 15:57:38 GMT
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0229978066;
-        Tue, 23 Jun 2020 15:57:38 +0000 (GMT)
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CB7187805C;
-        Tue, 23 Jun 2020 15:57:36 +0000 (GMT)
-Received: from DESKTOP-AV6EVPG.localdomain (unknown [9.160.30.158])
-        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Tue, 23 Jun 2020 15:57:36 +0000 (GMT)
-From:   Maurizio Drocco <maurizio.drocco@ibm.com>
-To:     zohar@linux.ibm.com
-Cc:     Silviu.Vlasceanu@huawei.com, dmitry.kasatkin@gmail.com,
-        jejb@linux.ibm.com, jmorris@namei.org,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, maurizio.drocco@ibm.com,
-        mdrocco@linux.vnet.ibm.com, roberto.sassu@huawei.com,
-        serge@hallyn.com
-Subject: [PATCH v4] ima: extend boot_aggregate with kernel measurements
-Date:   Tue, 23 Jun 2020 11:57:32 -0400
-Message-Id: <20200623155732.105-1-maurizio.drocco@ibm.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <1592920990.5437.15.camel@linux.ibm.com>
-References: <1592920990.5437.15.camel@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.687
- definitions=2020-06-23_07:2020-06-23,2020-06-23 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
- mlxscore=0 bulkscore=0 mlxlogscore=999 adultscore=0 lowpriorityscore=0
- priorityscore=1501 impostorscore=0 clxscore=1015 suspectscore=1
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006120000 definitions=main-2006230118
+        Tue, 23 Jun 2020 13:02:19 -0400
+Received: from gmail.com (unknown [104.132.1.76])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 64B1A206EB;
+        Tue, 23 Jun 2020 17:02:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1592931738;
+        bh=lyjF5JCMRLkYfJgb+nOoi8e9pbWAuyRNl9vIReX7pT4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=wnSPXYVfbyX9CmJZGaMbnvuqnseTjcR/2VLVOrOsSiykjRDpg7yS4p10BPbMNJ5H/
+         1vQQyG7aPCqvBU5TCqzOBk+czJvnU83rKvnp9S5VcUSmzMoyGe22Akxn77qHm7Oji0
+         nNFApQc1NRvwSoeFRqGXilnnJZ6QHjaOuqN3QhRA=
+Date:   Tue, 23 Jun 2020 10:02:17 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        LTP List <ltp@lists.linux.it>,
+        open list <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        lkft-triage@lists.linaro.org, linux-crypto@vger.kernel.org,
+        Jan Stancek <jstancek@redhat.com>, chrubis <chrubis@suse.cz>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        James Morris <jmorris@namei.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        David Howells <dhowells@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: Re: LTP: crypto: af_alg02 regression on linux-next 20200621 tag
+Message-ID: <20200623170217.GB150582@gmail.com>
+References: <CA+G9fYvHFs5Yx8TnT6VavtfjMN8QLPuXg6us-dXVJqUUt68adA@mail.gmail.com>
+ <20200622224920.GA4332@42.do-not-panic.com>
+ <CA+G9fYsXDZUspc5OyfqrGZn=k=2uRiGzWY_aPePK2C_kZ+dYGQ@mail.gmail.com>
+ <20200623064056.GA8121@gondor.apana.org.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200623064056.GA8121@gondor.apana.org.au>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Registers 8-9 are used to store measurements of the kernel and its
-command line (e.g., grub2 bootloader with tpm module enabled). IMA
-should include them in the boot aggregate. Registers 8-9 should be
-only included in non-SHA1 digests to avoid ambiguity.
+On Tue, Jun 23, 2020 at 04:40:56PM +1000, Herbert Xu wrote:
+> On Tue, Jun 23, 2020 at 11:53:43AM +0530, Naresh Kamboju wrote:
+> >
+> > Thanks for the investigation.
+> > After reverting, two test cases got PASS out of four reported failure cases.
+> >  ltp-crypto-tests:
+> >      * af_alg02 - still failing - Hung and time out
+> >      * af_alg05 - still failing - Hung and time out
+> >   ltp-syscalls-tests:
+> >      * keyctl07 - PASS
+> >      * request_key03 - PASS
+> > 
+> > Please suggest the way to debug / fix the af_alg02 and af_alg05 failures.
+> 
+> Did you clear the MSG_MORE flag in the final send(2) call before
+> you call recv(2)?
+> 
 
-Signed-off-by: Maurizio Drocco <maurizio.drocco@ibm.com>
----
-Changelog:
-v4:
-- Reworded comments: PCRs 8 & 9 are always included in non-sha1 digests
-v3:
-- Limit including PCRs 8 & 9 to non-sha1 hashes
-v2:
-- Minor comment improvements
-v1:
-- Include non zero PCRs 8 & 9 in the boot_aggregate
+The source code for the two failing AF_ALG tests is here:
 
- security/integrity/ima/ima.h        |  2 +-
- security/integrity/ima/ima_crypto.c | 15 ++++++++++++++-
- 2 files changed, 15 insertions(+), 2 deletions(-)
+https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/crypto/af_alg02.c
+https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/crypto/af_alg05.c
 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index df93ac258e01..9d94080bdad8 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -30,7 +30,7 @@
- 
- enum ima_show_type { IMA_SHOW_BINARY, IMA_SHOW_BINARY_NO_FIELD_LEN,
- 		     IMA_SHOW_BINARY_OLD_STRING_FMT, IMA_SHOW_ASCII };
--enum tpm_pcrs { TPM_PCR0 = 0, TPM_PCR8 = 8 };
-+enum tpm_pcrs { TPM_PCR0 = 0, TPM_PCR8 = 8, TPM_PCR10 = 10 };
- 
- /* digest size for IMA, fits SHA1 or MD5 */
- #define IMA_DIGEST_SIZE		SHA1_DIGEST_SIZE
-diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
-index 220b14920c37..011c3c76af86 100644
---- a/security/integrity/ima/ima_crypto.c
-+++ b/security/integrity/ima/ima_crypto.c
-@@ -823,13 +823,26 @@ static int ima_calc_boot_aggregate_tfm(char *digest, u16 alg_id,
- 	if (rc != 0)
- 		return rc;
- 
--	/* cumulative sha1 over tpm registers 0-7 */
-+	/* cumulative digest over TPM registers 0-7 */
- 	for (i = TPM_PCR0; i < TPM_PCR8; i++) {
- 		ima_pcrread(i, &d);
- 		/* now accumulate with current aggregate */
- 		rc = crypto_shash_update(shash, d.digest,
- 					 crypto_shash_digestsize(tfm));
- 	}
-+	/*
-+	 * Extend cumulative digest over TPM registers 8-9, which contain
-+	 * measurement for the kernel command line (reg. 8) and image (reg. 9)
-+	 * in a typical PCR allocation. Registers 8-9 are only included in
-+	 * non-SHA1 boot_aggregate digests to avoid ambiguity.
-+	 */
-+	if (alg_id != TPM_ALG_SHA1) {
-+		for (i = TPM_PCR8; i < TPM_PCR10; i++) {
-+			ima_pcrread(i, &d);
-+			rc = crypto_shash_update(shash, d.digest,
-+						crypto_shash_digestsize(tfm));
-+		}
-+	}
- 	if (!rc)
- 		crypto_shash_final(shash, digest);
- 	return rc;
--- 
-2.17.1
+They use read() and write(), not send() and recv().
 
+af_alg02 uses read() to read from a "salsa20" request socket without writing
+anything to it.  It is expected that this returns 0, i.e. that behaves like
+encrypting an empty message.
+
+af_alg05 uses write() to write 15 bytes to a "cbc(aes-generic)" request socket,
+then read() to read 15 bytes.  It is expected that this fails with EINVAL, since
+the length is not aligned to the AES block size (16 bytes).
+
+- Eric
