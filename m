@@ -2,135 +2,117 @@ Return-Path: <SRS0=CLHo=AE=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8E77C433E0
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Jun 2020 03:04:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 432CAC433E0
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Jun 2020 06:23:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7A1A520786
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Jun 2020 03:04:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1FDB320724
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Jun 2020 06:23:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="BF7DmQg0"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BIdVinkt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731923AbgFWDE3 (ORCPT
+        id S1730395AbgFWGX5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 22 Jun 2020 23:04:29 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:39466 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731820AbgFWDE2 (ORCPT
+        Tue, 23 Jun 2020 02:23:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35652 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730568AbgFWGX5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 22 Jun 2020 23:04:28 -0400
-Received: from sequoia (162-237-133-238.lightspeed.rcsntx.sbcglobal.net [162.237.133.238])
-        by linux.microsoft.com (Postfix) with ESMTPSA id E02BB20B7192;
-        Mon, 22 Jun 2020 20:04:26 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com E02BB20B7192
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1592881467;
-        bh=381Z41lC2pIuRAjDOd1plbxk7DixDyCGV2sdQrwp2K8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=BF7DmQg0pl1+RSkVQ+UHXPhVzA05min9ZtgSAp4sjf9eiEZbWpW37yBlfH4Gs28JW
-         0qObN7Q++fObJG1IT7S2kSL/nQAK+qLRq40yPxUbGqe7qmmxL7F9H+ILgRR4jYoKUY
-         ERX66DrDmXerBOnmTGdDXf4AQUuQjrQQAd71dIPc=
-Date:   Mon, 22 Jun 2020 22:04:10 -0500
-From:   Tyler Hicks <tyhicks@linux.microsoft.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Prakhar Srivastava <prsriva02@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Janne Karhunen <janne.karhunen@gmail.com>
-Subject: Re: [PATCH 01/12] ima: Have the LSM free its audit rule
-Message-ID: <20200623030410.GA6048@sequoia>
-References: <20200623003236.830149-1-tyhicks@linux.microsoft.com>
- <20200623003236.830149-2-tyhicks@linux.microsoft.com>
- <277dd210-c443-c067-e731-44ac53418fa5@schaufler-ca.com>
+        Tue, 23 Jun 2020 02:23:57 -0400
+Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AA0FC061795
+        for <linux-security-module@vger.kernel.org>; Mon, 22 Jun 2020 23:23:56 -0700 (PDT)
+Received: by mail-lj1-x22b.google.com with SMTP id h19so918334ljg.13
+        for <linux-security-module@vger.kernel.org>; Mon, 22 Jun 2020 23:23:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=dPmL4ji10DM23gXnHiUP2NWgp6rzRT93lGyytV/WtJM=;
+        b=BIdVinktvLNiMk2nDRyH/DIePkv0Y76ENlOPbiD73uhrPmAMWpcQr0GXrq31J7UWKy
+         nx8cSiBDNUNtKhgqbuWTj5/yrtE899FP1q+Kbv9b1V1z5MhHcAfoTPmKUBPRNv4O93xb
+         8ErCN2zCByMbG4NDklpkORi7nxFQvRFTmI7j6WCrrT6j3vugRvMD4MvqbAJez/VIbSj4
+         F0L1wnWSrbrCCkBdJrgEi6penn3FCPOtrKz5WHjQOZua3SlwQcChthsVjDiMoQ/6X8iE
+         H9FMLmhcj3Z+bPDhmvjDT6yMPl5j3w0NhSrNdNuLf8wDntXMPLPLJ4sFqphnVX3TlWyV
+         A/8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dPmL4ji10DM23gXnHiUP2NWgp6rzRT93lGyytV/WtJM=;
+        b=HzdYuoi2Mw9l5DDM4T9z/coKBGNqBwJlucl4aXQC9feu6xdlDpofNFQSJvdU9B43AC
+         siPYBxpAqf+HdYdVGHMYVIDYMOOENDJBPSNuVjBNZaTOiBJzmgn8G59ErLUyDFr3bwrj
+         4dPU7IlhiQWROVbOfhx2/YzsCFy7tf439gXOCguWmRKhXDE74HccSbfkxIvoOjNiQYAx
+         ZxrQ5m04hqMLwZ1o7jAdqo8rm6fEmsVgpdxEjwZUC58xnOPIpTpBs5TI+Kh78eLaZyrY
+         jU26PZ2FKPVId/d1UaUCEzl6jl+y0oQVhd4tGxSn31JPmJd6aXCT3pxast9hnK/oJ6rB
+         Crcg==
+X-Gm-Message-State: AOAM533ZsaVZ/JzyBD/Oiz7ro3Ao1PAdPMoKPTD9ohdfJN05kH/q9QIU
+        Zuh65KWUKATSyEhuMudlxqkAssXM+7jXzQs1ocGNvw==
+X-Google-Smtp-Source: ABdhPJwyfBDDErbrS4GjTK/D+t1eKZ96j9X/dUhypMGUwehTdQFYmoz856g75PfnLqD8QeqGESPEHLqWG864TNrkBCI=
+X-Received: by 2002:a2e:b88c:: with SMTP id r12mr10241919ljp.266.1592893434808;
+ Mon, 22 Jun 2020 23:23:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <277dd210-c443-c067-e731-44ac53418fa5@schaufler-ca.com>
+References: <CA+G9fYvHFs5Yx8TnT6VavtfjMN8QLPuXg6us-dXVJqUUt68adA@mail.gmail.com>
+ <20200622224920.GA4332@42.do-not-panic.com>
+In-Reply-To: <20200622224920.GA4332@42.do-not-panic.com>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Tue, 23 Jun 2020 11:53:43 +0530
+Message-ID: <CA+G9fYsXDZUspc5OyfqrGZn=k=2uRiGzWY_aPePK2C_kZ+dYGQ@mail.gmail.com>
+Subject: Re: LTP: crypto: af_alg02 regression on linux-next 20200621 tag
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     LTP List <ltp@lists.linux.it>,
+        open list <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        lkft-triage@lists.linaro.org, linux-crypto@vger.kernel.org,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Jan Stancek <jstancek@redhat.com>, chrubis <chrubis@suse.cz>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        James Morris <jmorris@namei.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        David Howells <dhowells@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Biggers <ebiggers@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2020-06-22 17:55:59, Casey Schaufler wrote:
-> On 6/22/2020 5:32 PM, Tyler Hicks wrote:
-> > Ask the LSM to free its audit rule rather than directly calling kfree().
-> > Both AppArmor and SELinux do additional work in their audit_rule_free()
-> > hooks. Fix memory leaks by allowing the LSMs to perform necessary work.
+On Tue, 23 Jun 2020 at 04:19, Luis Chamberlain <mcgrof@kernel.org> wrote:
+>
+> On Tue, Jun 23, 2020 at 12:04:06AM +0530, Naresh Kamboju wrote:
+> > LTP crypto regressions noticed on linux next 20200621.
 > >
-> > Fixes: b16942455193 ("ima: use the lsm policy update notifier")
-> > Signed-off-by: Tyler Hicks <tyhicks@linux.microsoft.com>
-> > Cc: Janne Karhunen <janne.karhunen@gmail.com>
-> > ---
-> >  security/integrity/ima/ima.h        | 6 ++++++
-> >  security/integrity/ima/ima_policy.c | 2 +-
-> >  2 files changed, 7 insertions(+), 1 deletion(-)
+> > The common case for all tests is timeout after 15 minutes which
+> > means tests got hung and LTP timers killed those test runs after
+> > timeout.
+> > The root cause of the failure is under investigation.
 > >
-> > diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-> > index df93ac258e01..de05d7f1d3ec 100644
-> > --- a/security/integrity/ima/ima.h
-> > +++ b/security/integrity/ima/ima.h
-> > @@ -404,6 +404,7 @@ static inline void ima_free_modsig(struct modsig *modsig)
-> >  #ifdef CONFIG_IMA_LSM_RULES
-> >  
-> >  #define security_filter_rule_init security_audit_rule_init
-> > +#define security_filter_rule_free security_audit_rule_free
-> >  #define security_filter_rule_match security_audit_rule_match
-> 
-> In context this seems perfectly reasonable. If, however, you're
-> working with the LSM infrastructure this set of #defines is maddening.
-> The existing ones have been driving my nuts for the past few years,
-> so I'd like to discourage adding another. Since the security_filter_rule
-> functions are IMA specific they shouldn't be prefixed security_. I know
-> that it seems to be code churn/bikesheading, but we please change these:
-> 
-> static inline int ima_filter_rule_init(.....)
-> {
-> 	return security_audit_rule_init(.....);
-> }
-> 
-> and so forth. I understand if you don't want to make the change.
-> I have plenty of other things driving me crazy just now, so this
-> doesn't seem likely to push me over the edge.
+> >   ltp-crypto-tests:
+> >     * af_alg02 - failed
+> >     * af_alg05 - failed
+> >   ltp-syscalls-tests:
+> >     * keyctl07 - failed
+> >     * request_key03 - failed
+<trim>
+>
+> Can you try reverting:
+>
+> d13ef8e10756873b0a8b7cc8f230a2d1026710ea
+>
+> The patch is titled "umh: fix processed error when UMH_WAIT_PROC is used"
 
-I'd be happy to take a stab at that as a follow-up or a 13/12 patch. I'd
-like to leave this one as-is for stable kernel reasons since it is
-straightforward and simple.
+Thanks for the investigation.
+After reverting, two test cases got PASS out of four reported failure cases.
+ ltp-crypto-tests:
+     * af_alg02 - still failing - Hung and time out
+     * af_alg05 - still failing - Hung and time out
+  ltp-syscalls-tests:
+     * keyctl07 - PASS
+     * request_key03 - PASS
 
-Tyler
+Please suggest the way to debug / fix the af_alg02 and af_alg05 failures.
 
-> 
-> >  
-> >  #else
-> > @@ -414,6 +415,11 @@ static inline int security_filter_rule_init(u32 field, u32 op, char *rulestr,
-> >  	return -EINVAL;
-> >  }
-> >  
-> > +static inline void security_filter_rule_free(void *lsmrule)
-> > +{
-> > +	return -EINVAL;
-> > +}
-> > +
-> >  static inline int security_filter_rule_match(u32 secid, u32 field, u32 op,
-> >  					     void *lsmrule)
-> >  {
-> > diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-> > index e493063a3c34..236a731492d1 100644
-> > --- a/security/integrity/ima/ima_policy.c
-> > +++ b/security/integrity/ima/ima_policy.c
-> > @@ -258,7 +258,7 @@ static void ima_lsm_free_rule(struct ima_rule_entry *entry)
-> >  	int i;
-> >  
-> >  	for (i = 0; i < MAX_LSM_RULES; i++) {
-> > -		kfree(entry->lsm[i].rule);
-> > +		security_filter_rule_free(entry->lsm[i].rule);
-> >  		kfree(entry->lsm[i].args_p);
-> >  	}
-> >  	kfree(entry);
+- Naresh
