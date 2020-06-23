@@ -4,36 +4,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-17.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57B95C433E0
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Jun 2020 00:34:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67709C433DF
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Jun 2020 00:34:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 308A4207DD
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Jun 2020 00:34:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47EE020720
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Jun 2020 00:34:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="o9YODZFl"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="bSxy2P2Y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732044AbgFWAec (ORCPT
+        id S1731927AbgFWAe1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 22 Jun 2020 20:34:32 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:47624 "EHLO
+        Mon, 22 Jun 2020 20:34:27 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:47558 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732037AbgFWAeb (ORCPT
+        with ESMTP id S1732017AbgFWAe0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 22 Jun 2020 20:34:31 -0400
+        Mon, 22 Jun 2020 20:34:26 -0400
 Received: from sequoia.work.tihix.com (162-237-133-238.lightspeed.rcsntx.sbcglobal.net [162.237.133.238])
-        by linux.microsoft.com (Postfix) with ESMTPSA id BAE2320B7192;
-        Mon, 22 Jun 2020 17:34:29 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com BAE2320B7192
+        by linux.microsoft.com (Postfix) with ESMTPSA id F378420B4780;
+        Mon, 22 Jun 2020 17:34:24 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com F378420B4780
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1592872470;
-        bh=e9PJlhPkykcZATy30Q0lKIBQ00emcOdSXNFq9ix8gpI=;
+        s=default; t=1592872465;
+        bh=4WeD0C27mVX0onraF5izAXrMPG9y5qT1kwgv9gWu4gA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=o9YODZFlNUvnkOndWCYdavPRFFTczxu8F8puiq5gUp0vxhjTP3n1abtAHEamYfuwX
-         oOWJlAHlvBpqOSISuiOJIalEWiayLy1l7YgbEzQZQHTHtpMP3Q8R2FSTT+/7b5aIpw
-         a9wrzJ1jmMGJizk7M9RM/IibE0hmU2SLp0GSg6Gw=
+        b=bSxy2P2YWMR35RPL5XjOzKnQdFN0xghqqr00ABvR6u2xQxytt5BDMXy1jt3vhUxjr
+         YbsdCtO/CeyQ+cR6K2n8wHLqLYyD3alGMF6tuSFET5QTzo0K/rjxWfBK404z54j5C7
+         wEQyuORzDE7/t24/56f64c/KVUCGopMjFRGpaMLw=
 From:   Tyler Hicks <tyhicks@linux.microsoft.com>
 To:     Mimi Zohar <zohar@linux.ibm.com>,
         Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
@@ -42,12 +42,10 @@ Cc:     James Morris <jmorris@namei.org>,
         Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
         Prakhar Srivastava <prsriva02@gmail.com>,
         linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Eric Biederman <ebiederm@xmission.com>,
-        kexec@lists.infradead.org
-Subject: [PATCH 12/12] ima: Support additional conditionals in the KEXEC_CMDLINE hook function
-Date:   Mon, 22 Jun 2020 19:32:36 -0500
-Message-Id: <20200623003236.830149-13-tyhicks@linux.microsoft.com>
+        linux-security-module@vger.kernel.org
+Subject: [PATCH 09/12] ima: Use correct type for the args_p member of ima_rule_entry.lsm elements
+Date:   Mon, 22 Jun 2020 19:32:33 -0500
+Message-Id: <20200623003236.830149-10-tyhicks@linux.microsoft.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200623003236.830149-1-tyhicks@linux.microsoft.com>
 References: <20200623003236.830149-1-tyhicks@linux.microsoft.com>
@@ -57,243 +55,80 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Take the properties of the kexec kernel's inode and the current task
-ownership into consideration when matching a KEXEC_CMDLINE operation to
-the rules in the IMA policy. This allows for some uniformity when
-writing IMA policy rules for KEXEC_KERNEL_CHECK, KEXEC_INITRAMFS_CHECK,
-and KEXEC_CMDLINE operations.
-
-Prior to this patch, it was not possible to write a set of rules like
-this:
-
- dont_measure func=KEXEC_KERNEL_CHECK obj_type=foo_t
- dont_measure func=KEXEC_INITRAMFS_CHECK obj_type=foo_t
- dont_measure func=KEXEC_CMDLINE obj_type=foo_t
- measure func=KEXEC_KERNEL_CHECK
- measure func=KEXEC_INITRAMFS_CHECK
- measure func=KEXEC_CMDLINE
-
-The inode information associated with the kernel being loaded by a
-kexec_kernel_load(2) syscall can now be included in the decision to
-measure or not
-
-Additonally, the uid, euid, and subj_* conditionals can also now be
-used in KEXEC_CMDLINE rules. There was no technical reason as to why
-those conditionals weren't being considered previously other than
-ima_match_rules() didn't have a valid inode to use so it immediately
-bailed out for KEXEC_CMDLINE operations rather than going through the
-full list of conditional comparisons.
+Make args_p be of the char pointer type rather than have it be a void
+pointer that gets casted to char pointer when it is used. It is a simple
+NUL-terminated string as returned by match_strdup().
 
 Signed-off-by: Tyler Hicks <tyhicks@linux.microsoft.com>
-Cc: Eric Biederman <ebiederm@xmission.com>
-Cc: kexec@lists.infradead.org
 ---
- include/linux/ima.h                          |  4 ++--
- kernel/kexec_file.c                          |  2 +-
- security/integrity/ima/ima.h                 |  3 ++-
- security/integrity/ima/ima_api.c             |  2 +-
- security/integrity/ima/ima_appraise.c        |  2 +-
- security/integrity/ima/ima_asymmetric_keys.c |  2 +-
- security/integrity/ima/ima_main.c            | 24 +++++++++++++++-----
- security/integrity/ima/ima_policy.c          | 17 +++++---------
- security/integrity/ima/ima_queue_keys.c      |  2 +-
- 9 files changed, 33 insertions(+), 25 deletions(-)
+ security/integrity/ima/ima_policy.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index 9164e1534ec9..d15100de6cdd 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -25,7 +25,7 @@ extern int ima_post_read_file(struct file *file, void *buf, loff_t size,
- 			      enum kernel_read_file_id id);
- extern void ima_post_path_mknod(struct dentry *dentry);
- extern int ima_file_hash(struct file *file, char *buf, size_t buf_size);
--extern void ima_kexec_cmdline(const void *buf, int size);
-+extern void ima_kexec_cmdline(int kernel_fd, const void *buf, int size);
- 
- #ifdef CONFIG_IMA_KEXEC
- extern void ima_add_kexec_buffer(struct kimage *image);
-@@ -103,7 +103,7 @@ static inline int ima_file_hash(struct file *file, char *buf, size_t buf_size)
- 	return -EOPNOTSUPP;
- }
- 
--static inline void ima_kexec_cmdline(const void *buf, int size) {}
-+static inline void ima_kexec_cmdline(int kernel_fd, const void *buf, int size) {}
- #endif /* CONFIG_IMA */
- 
- #ifndef CONFIG_IMA_KEXEC
-diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-index bb05fd52de85..07df431c1f21 100644
---- a/kernel/kexec_file.c
-+++ b/kernel/kexec_file.c
-@@ -287,7 +287,7 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
- 			goto out;
- 		}
- 
--		ima_kexec_cmdline(image->cmdline_buf,
-+		ima_kexec_cmdline(kernel_fd, image->cmdline_buf,
- 				  image->cmdline_buf_len - 1);
- 	}
- 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index de05d7f1d3ec..ed9307dd0e60 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -251,7 +251,8 @@ void ima_store_measurement(struct integrity_iint_cache *iint, struct file *file,
- 			   struct ima_template_desc *template_desc);
- void process_buffer_measurement(const void *buf, int size,
- 				const char *eventname, enum ima_hooks func,
--				int pcr, const char *keyring);
-+				int pcr, struct inode *inode,
-+				const char *keyring);
- void ima_audit_measurement(struct integrity_iint_cache *iint,
- 			   const unsigned char *filename);
- int ima_alloc_init_template(struct ima_event_data *event_data,
-diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
-index bf22de8b7ce0..4f39fb93f278 100644
---- a/security/integrity/ima/ima_api.c
-+++ b/security/integrity/ima/ima_api.c
-@@ -162,7 +162,7 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
- 
- /**
-  * ima_get_action - appraise & measure decision based on policy.
-- * @inode: pointer to inode to measure
-+ * @inode: pointer to the inode associated with the object being validated
-  * @cred: pointer to credentials structure to validate
-  * @secid: secid of the task being validated
-  * @mask: contains the permission mask (MAY_READ, MAY_WRITE, MAY_EXEC,
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index a9649b04b9f1..0c11aeefea24 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -330,7 +330,7 @@ int ima_check_blacklist(struct integrity_iint_cache *iint,
- 		if ((rc == -EPERM) && (iint->flags & IMA_MEASURE))
- 			process_buffer_measurement(digest, digestsize,
- 						   "blacklisted-hash", NONE,
--						   pcr, NULL);
-+						   pcr, NULL, NULL);
- 	}
- 
- 	return rc;
-diff --git a/security/integrity/ima/ima_asymmetric_keys.c b/security/integrity/ima/ima_asymmetric_keys.c
-index aaae80c4e376..585b64557094 100644
---- a/security/integrity/ima/ima_asymmetric_keys.c
-+++ b/security/integrity/ima/ima_asymmetric_keys.c
-@@ -60,5 +60,5 @@ void ima_post_key_create_or_update(struct key *keyring, struct key *key,
- 	 */
- 	process_buffer_measurement(payload, payload_len,
- 				   keyring->description, KEY_CHECK, 0,
--				   keyring->description);
-+				   NULL, keyring->description);
- }
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index c1583d98c5e5..82acd66bf653 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -731,13 +731,15 @@ int ima_load_data(enum kernel_load_data_id id)
-  * @eventname: event name to be used for the buffer entry.
-  * @func: IMA hook
-  * @pcr: pcr to extend the measurement
-+ * @inode: inode associated with the object being measured (NULL for KEY_CHECK)
-  * @keyring: keyring name to determine the action to be performed
-  *
-  * Based on policy, the buffer is measured into the ima log.
-  */
- void process_buffer_measurement(const void *buf, int size,
- 				const char *eventname, enum ima_hooks func,
--				int pcr, const char *keyring)
-+				int pcr, struct inode *inode,
-+				const char *keyring)
- {
- 	int ret = 0;
- 	struct ima_template_entry *entry = NULL;
-@@ -767,7 +769,7 @@ void process_buffer_measurement(const void *buf, int size,
- 	 */
- 	if (func) {
- 		security_task_getsecid(current, &secid);
--		action = ima_get_action(NULL, current_cred(), secid, 0, func,
-+		action = ima_get_action(inode, current_cred(), secid, 0, func,
- 					&pcr, &template, keyring);
- 		if (!(action & IMA_MEASURE))
- 			return;
-@@ -815,16 +817,26 @@ void process_buffer_measurement(const void *buf, int size,
- 
- /**
-  * ima_kexec_cmdline - measure kexec cmdline boot args
-+ * @kernel_fd: file descriptor of the kexec kernel being loaded
-  * @buf: pointer to buffer
-  * @size: size of buffer
-  *
-  * Buffers can only be measured, not appraised.
-  */
--void ima_kexec_cmdline(const void *buf, int size)
-+void ima_kexec_cmdline(int kernel_fd, const void *buf, int size)
- {
--	if (buf && size != 0)
--		process_buffer_measurement(buf, size, "kexec-cmdline",
--					   KEXEC_CMDLINE, 0, NULL);
-+	struct fd f;
-+
-+	if (!buf || !size)
-+		return;
-+
-+	f = fdget(kernel_fd);
-+	if (!f.file)
-+		return;
-+
-+	process_buffer_measurement(buf, size, "kexec-cmdline", KEXEC_CMDLINE, 0,
-+				   file_inode(f.file), NULL);
-+	fdput(f);
- }
- 
- static int __init init_ima(void)
 diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 0ca9902287bf..5a6aee530011 100644
+index e9c7d318fdd4..514baf24d6a5 100644
 --- a/security/integrity/ima/ima_policy.c
 +++ b/security/integrity/ima/ima_policy.c
-@@ -442,13 +442,9 @@ static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
- {
- 	int i;
- 
--	if ((func == KEXEC_CMDLINE) || (func == KEY_CHECK)) {
--		if ((rule->flags & IMA_FUNC) && (rule->func == func)) {
--			if (func == KEY_CHECK)
--				return ima_match_keyring(rule, keyring, cred);
--			return true;
--		}
--		return false;
-+	if (func == KEY_CHECK) {
-+		return (rule->flags & IMA_FUNC) && (rule->func == func) &&
-+		       ima_match_keyring(rule, keyring, cred);
+@@ -74,7 +74,7 @@ struct ima_rule_entry {
+ 	int pcr;
+ 	struct {
+ 		void *rule;	/* LSM file metadata specific */
+-		void *args_p;	/* audit value */
++		char *args_p;	/* audit value */
+ 		int type;	/* audit type */
+ 	} lsm[MAX_LSM_RULES];
+ 	char *fsname;
+@@ -315,7 +315,7 @@ static struct ima_rule_entry *ima_lsm_copy_rule(struct ima_rule_entry *entry)
+ 					  &nentry->lsm[i].rule);
+ 		if (!nentry->lsm[i].rule)
+ 			pr_warn("rule for LSM \'%s\' is undefined\n",
+-				(char *)entry->lsm[i].args_p);
++				entry->lsm[i].args_p);
  	}
- 	if ((rule->flags & IMA_FUNC) &&
- 	    (rule->func != func && func != POST_SETATTR))
-@@ -1003,10 +999,9 @@ static bool ima_validate_rule(struct ima_rule_entry *entry)
- 			if (entry->action & ~(MEASURE | DONT_MEASURE))
- 				return false;
  
--			if (entry->flags & ~(IMA_FUNC | IMA_PCR))
--				return false;
--
--			if (ima_rule_contains_lsm_cond(entry))
-+			if (entry->flags & ~(IMA_FUNC | IMA_FSMAGIC | IMA_UID |
-+					     IMA_FOWNER | IMA_FSUUID |
-+					     IMA_EUID | IMA_PCR | IMA_FSNAME))
- 				return false;
+ 	/* Disown all references that were shallow copied */
+@@ -917,7 +917,7 @@ static int ima_lsm_rule_init(struct ima_rule_entry *entry,
+ 					   &entry->lsm[lsm_rule].rule);
+ 	if (!entry->lsm[lsm_rule].rule) {
+ 		pr_warn("rule for LSM \'%s\' is undefined\n",
+-			(char *)entry->lsm[lsm_rule].args_p);
++			entry->lsm[lsm_rule].args_p);
  
- 			break;
-diff --git a/security/integrity/ima/ima_queue_keys.c b/security/integrity/ima/ima_queue_keys.c
-index cb3e3f501593..7c69d7397832 100644
---- a/security/integrity/ima/ima_queue_keys.c
-+++ b/security/integrity/ima/ima_queue_keys.c
-@@ -156,7 +156,7 @@ void ima_process_queued_keys(void)
- 			process_buffer_measurement(entry->payload,
- 						   entry->payload_len,
- 						   entry->keyring_name,
--						   KEY_CHECK, 0,
-+						   KEY_CHECK, 0, NULL,
- 						   entry->keyring_name);
- 		list_del(&entry->list);
- 		ima_free_key_entry(entry);
+ 		if (ima_rules == &ima_default_rules) {
+ 			kfree(entry->lsm[lsm_rule].args_p);
+@@ -1666,27 +1666,27 @@ int ima_policy_show(struct seq_file *m, void *v)
+ 			switch (i) {
+ 			case LSM_OBJ_USER:
+ 				seq_printf(m, pt(Opt_obj_user),
+-					   (char *)entry->lsm[i].args_p);
++					   entry->lsm[i].args_p);
+ 				break;
+ 			case LSM_OBJ_ROLE:
+ 				seq_printf(m, pt(Opt_obj_role),
+-					   (char *)entry->lsm[i].args_p);
++					   entry->lsm[i].args_p);
+ 				break;
+ 			case LSM_OBJ_TYPE:
+ 				seq_printf(m, pt(Opt_obj_type),
+-					   (char *)entry->lsm[i].args_p);
++					   entry->lsm[i].args_p);
+ 				break;
+ 			case LSM_SUBJ_USER:
+ 				seq_printf(m, pt(Opt_subj_user),
+-					   (char *)entry->lsm[i].args_p);
++					   entry->lsm[i].args_p);
+ 				break;
+ 			case LSM_SUBJ_ROLE:
+ 				seq_printf(m, pt(Opt_subj_role),
+-					   (char *)entry->lsm[i].args_p);
++					   entry->lsm[i].args_p);
+ 				break;
+ 			case LSM_SUBJ_TYPE:
+ 				seq_printf(m, pt(Opt_subj_type),
+-					   (char *)entry->lsm[i].args_p);
++					   entry->lsm[i].args_p);
+ 				break;
+ 			}
+ 			seq_puts(m, " ");
 -- 
 2.25.1
 
