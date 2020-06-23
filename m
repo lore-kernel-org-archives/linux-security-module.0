@@ -2,179 +2,118 @@ Return-Path: <SRS0=CLHo=AE=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3986C433DF
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Jun 2020 14:03:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B991C433DF
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Jun 2020 14:12:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B8CBB20723
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Jun 2020 14:03:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC53020724
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Jun 2020 14:12:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732760AbgFWODs (ORCPT
+        id S1732760AbgFWOMw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 23 Jun 2020 10:03:48 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36534 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732727AbgFWODs (ORCPT
+        Tue, 23 Jun 2020 10:12:52 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:62288 "EHLO
+        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732657AbgFWOMv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 23 Jun 2020 10:03:48 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 05NE21rl132386;
-        Tue, 23 Jun 2020 10:03:38 -0400
+        Tue, 23 Jun 2020 10:12:51 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 05NE54Z8119634;
+        Tue, 23 Jun 2020 10:12:05 -0400
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 31ue3dtgsg-1
+        by mx0a-001b2d01.pphosted.com with ESMTP id 31uhcqvar3-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 23 Jun 2020 10:03:38 -0400
-Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 05NE2Cws133248;
-        Tue, 23 Jun 2020 10:03:37 -0400
-Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 31ue3dtgqy-1
+        Tue, 23 Jun 2020 10:12:04 -0400
+Received: from m0098417.ppops.net (m0098417.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 05NE5a9c122692;
+        Tue, 23 Jun 2020 10:12:04 -0400
+Received: from ppma03fra.de.ibm.com (6b.4a.5195.ip4.static.sl-reverse.com [149.81.74.107])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 31uhcqvaps-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 23 Jun 2020 10:03:37 -0400
-Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
-        by ppma04ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 05NE0qW5022671;
-        Tue, 23 Jun 2020 14:03:34 GMT
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
-        by ppma04ams.nl.ibm.com with ESMTP id 31uk4mg031-1
+        Tue, 23 Jun 2020 10:12:04 -0400
+Received: from pps.filterd (ppma03fra.de.ibm.com [127.0.0.1])
+        by ppma03fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 05NEBNq1019088;
+        Tue, 23 Jun 2020 14:12:02 GMT
+Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
+        by ppma03fra.de.ibm.com with ESMTP id 31uk4wr05b-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 23 Jun 2020 14:03:34 +0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 05NE3WJe34865156
+        Tue, 23 Jun 2020 14:12:01 +0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 05NEAew058851746
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 23 Jun 2020 14:03:32 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3525E42049;
-        Tue, 23 Jun 2020 14:03:32 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2D34242056;
-        Tue, 23 Jun 2020 14:03:11 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.212.185])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 23 Jun 2020 14:03:11 +0000 (GMT)
-Message-ID: <1592920990.5437.15.camel@linux.ibm.com>
-Subject: Re: [PATCH] ima: extend boot_aggregate with kernel measurements
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Maurizio Drocco <maurizio.drocco@ibm.com>
-Cc:     Silviu.Vlasceanu@huawei.com, dmitry.kasatkin@gmail.com,
-        jejb@linux.ibm.com, jmorris@namei.org,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, mdrocco@linux.vnet.ibm.com,
-        roberto.sassu@huawei.com, serge@hallyn.com
-Date:   Tue, 23 Jun 2020 10:03:10 -0400
-In-Reply-To: <20200622045019.1636-1-maurizio.drocco@ibm.com>
-References: <1592856871.4987.21.camel@linux.ibm.com>
-         <20200622045019.1636-1-maurizio.drocco@ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
+        Tue, 23 Jun 2020 14:10:41 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9FF0E4C072;
+        Tue, 23 Jun 2020 14:11:58 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 818524C071;
+        Tue, 23 Jun 2020 14:11:58 +0000 (GMT)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Tue, 23 Jun 2020 14:11:58 +0000 (GMT)
+Received: by tuxmaker.boeblingen.de.ibm.com (Postfix, from userid 25651)
+        id 04F32E13EA; Tue, 23 Jun 2020 16:11:58 +0200 (CEST)
+From:   Christian Borntraeger <borntraeger@de.ibm.com>
+To:     mcgrof@kernel.org
+Cc:     ast@kernel.org, axboe@kernel.dk, bfields@fieldses.org,
+        bridge@lists.linux-foundation.org, chainsaw@gentoo.org,
+        christian.brauner@ubuntu.com, chuck.lever@oracle.com,
+        davem@davemloft.net, dhowells@redhat.com,
+        gregkh@linuxfoundation.org, jarkko.sakkinen@linux.intel.com,
+        jmorris@namei.org, josh@joshtriplett.org, keescook@chromium.org,
+        keyrings@vger.kernel.org, kuba@kernel.org,
+        lars.ellenberg@linbit.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-security-module@vger.kernel.org, nikolay@cumulusnetworks.com,
+        philipp.reisner@linbit.com, ravenexp@gmail.com,
+        roopa@cumulusnetworks.com, serge@hallyn.com, slyfox@gentoo.org,
+        viro@zeniv.linux.org.uk, yangtiezhu@loongson.cn,
+        netdev@vger.kernel.org, markward@linux.ibm.com,
+        linux-s390@vger.kernel.or
+Subject: linux-next: umh: fix processed error when UMH_WAIT_PROC is used seems to break linux bridge on s390x (bisected)
+Date:   Tue, 23 Jun 2020 16:11:57 +0200
+Message-Id: <20200623141157.5409-1-borntraeger@de.ibm.com>
+X-Mailer: git-send-email 2.25.4
+In-Reply-To: <20200610154923.27510-5-mcgrof@kernel.org>
+References: <20200610154923.27510-5-mcgrof@kernel.org>
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.687
  definitions=2020-06-23_06:2020-06-23,2020-06-23 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- mlxlogscore=999 impostorscore=0 cotscore=-2147483648 adultscore=0
- mlxscore=0 bulkscore=0 lowpriorityscore=0 clxscore=1015 priorityscore=1501
- phishscore=0 suspectscore=0 spamscore=0 classifier=spam adjust=0
- reason=mlx scancount=1 engine=8.12.0-2004280000
- definitions=main-2006230108
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
+ suspectscore=1 mlxlogscore=865 spamscore=0 bulkscore=0 lowpriorityscore=0
+ cotscore=-2147483648 mlxscore=0 priorityscore=1501 malwarescore=0
+ clxscore=1011 impostorscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2004280000 definitions=main-2006230108
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Maurizio,
+Jens Markwardt reported a regression in the linux-next runs.  with "umh: fix
+processed error when UMH_WAIT_PROC is used" (from linux-next) a linux bridge
+with an KVM guests no longer activates :
 
-When re-posting patches, please include the version number (e.g.
-[PATCH v4] ima: ... ).
+without patch
+# ip addr show dev virbr1
+6: virbr1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default qlen 1000
+    link/ether 52:54:00:1e:3f:c0 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.254.254/24 brd 192.168.254.255 scope global virbr1
+       valid_lft forever preferred_lft forever
 
-On Mon, 2020-06-22 at 00:50 -0400, Maurizio Drocco wrote:
-> IMA is not considering TPM registers 8-9 when calculating the boot
-> aggregate.
+with this patch the bridge stays DOWN with NO-CARRIER
 
-This line is unnecessary with the following change.
+# ip addr show dev virbr1
+6: virbr1: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc noqueue state DOWN group default qlen 1000
+    link/ether 52:54:00:1e:3f:c0 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.254.254/24 brd 192.168.254.255 scope global virbr1
+       valid_lft forever preferred_lft forever
 
-> When registers 8-9 are used to store measurements of the
-> kernel and its command line (e.g., grub2 bootloader with tpm module
-> enabled), IMA should include them in the boot aggregate.
+This was bisected in linux-next. Reverting from linux-next also fixes the issue.
 
-The "When" clause makes this sound like PCRs 8 & 9 are not always
-included.  I would split this into two sentences.
+Any idea?
 
->  Registers
-> 8-9 are only included in non-SHA1 boot_aggregate digests to avoid
-> ambiguity.
-> 
-> Signed-off-by: Maurizio Drocco <maurizio.drocco@ibm.com>
-> ---
-
-Missing "Changelog:".
-
-Changelog:
-v2: 
-- Limit including PCRs 8 & 9 to non-sha1 hashes
-v1:
-- Include non zero PCRs 8 & 9 in the boot_aggregate
-
->  security/integrity/ima/ima.h        |  2 +-
->  security/integrity/ima/ima_crypto.c | 15 ++++++++++++++-
->  2 files changed, 15 insertions(+), 2 deletions(-)
-> 
-> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-> index df93ac258e01..9d94080bdad8 100644
-> --- a/security/integrity/ima/ima.h
-> +++ b/security/integrity/ima/ima.h
-> @@ -30,7 +30,7 @@
->  
->  enum ima_show_type { IMA_SHOW_BINARY, IMA_SHOW_BINARY_NO_FIELD_LEN,
->  		     IMA_SHOW_BINARY_OLD_STRING_FMT, IMA_SHOW_ASCII };
-> -enum tpm_pcrs { TPM_PCR0 = 0, TPM_PCR8 = 8 };
-> +enum tpm_pcrs { TPM_PCR0 = 0, TPM_PCR8 = 8, TPM_PCR10 = 10 };
->  
->  /* digest size for IMA, fits SHA1 or MD5 */
->  #define IMA_DIGEST_SIZE		SHA1_DIGEST_SIZE
-> diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
-> index 220b14920c37..d02917d85033 100644
-> --- a/security/integrity/ima/ima_crypto.c
-> +++ b/security/integrity/ima/ima_crypto.c
-> @@ -823,13 +823,26 @@ static int ima_calc_boot_aggregate_tfm(char *digest, u16 alg_id,
->  	if (rc != 0)
->  		return rc;
->  
-> -	/* cumulative sha1 over tpm registers 0-7 */
-> +	/* cumulative digest over tpm registers 0-7 */
-
-Please uppercase "tpm" here and below.
-
->  	for (i = TPM_PCR0; i < TPM_PCR8; i++) {
->  		ima_pcrread(i, &d);
->  		/* now accumulate with current aggregate */
->  		rc = crypto_shash_update(shash, d.digest,
->  					 crypto_shash_digestsize(tfm));
->  	}
-> +	/*
-> +	 * extend cumulative digest over tpm registers 8-9, which contain
-> +	 * measurement for the kernel command line (reg. 8) and image (reg. 9)
-> +	 * in a typical PCR allocation. Registers 8-9 are only included in
-> +	 * non-SHA1 boot_aggregate digests to avoid ambiguity.
-> +	 */
-
-Comments that are full sentences should start with an uppercase letter
-and end with a period (e.g. Extend).
-
-thanks,
-
-Mimi
-
-> +	if (alg_id != TPM_ALG_SHA1) {
-> +		for (i = TPM_PCR8; i < TPM_PCR10; i++) {
-> +			ima_pcrread(i, &d);
-> +			rc = crypto_shash_update(shash, d.digest,
-> +						crypto_shash_digestsize(tfm));
-> +		}
-> +	}
->  	if (!rc)
->  		crypto_shash_final(shash, digest);
->  	return rc;
-
+Christian
