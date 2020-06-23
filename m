@@ -2,103 +2,127 @@ Return-Path: <SRS0=CLHo=AE=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0CCAC433E0
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Jun 2020 17:02:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CEF9C433E1
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Jun 2020 18:01:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B220D20780
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Jun 2020 17:02:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1592931744;
-	bh=lyjF5JCMRLkYfJgb+nOoi8e9pbWAuyRNl9vIReX7pT4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=1B4kGz14gqgiwzZh12uOmB18Br5Y9PLoMdT++rrnDiNO5+JepaVedsMwuBroM/6vL
-	 DTFb21+G3wdwbvBVGedDP17Bgv9zuidvZIK3pFlBYguFXHhu3wVFy7mvnWB+n0QXwF
-	 TS1hVytHUxRMLGReuc60XFB0U5NVTvKZxd+4fY1c=
+	by mail.kernel.org (Postfix) with ESMTP id 557CD20781
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Jun 2020 18:01:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732940AbgFWRCT (ORCPT
+        id S1733085AbgFWSBd (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 23 Jun 2020 13:02:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37084 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728916AbgFWRCT (ORCPT
+        Tue, 23 Jun 2020 14:01:33 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:63472 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732913AbgFWSBd (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 23 Jun 2020 13:02:19 -0400
-Received: from gmail.com (unknown [104.132.1.76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 64B1A206EB;
-        Tue, 23 Jun 2020 17:02:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1592931738;
-        bh=lyjF5JCMRLkYfJgb+nOoi8e9pbWAuyRNl9vIReX7pT4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=wnSPXYVfbyX9CmJZGaMbnvuqnseTjcR/2VLVOrOsSiykjRDpg7yS4p10BPbMNJ5H/
-         1vQQyG7aPCqvBU5TCqzOBk+czJvnU83rKvnp9S5VcUSmzMoyGe22Akxn77qHm7Oji0
-         nNFApQc1NRvwSoeFRqGXilnnJZ6QHjaOuqN3QhRA=
-Date:   Tue, 23 Jun 2020 10:02:17 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        LTP List <ltp@lists.linux.it>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        lkft-triage@lists.linaro.org, linux-crypto@vger.kernel.org,
-        Jan Stancek <jstancek@redhat.com>, chrubis <chrubis@suse.cz>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        James Morris <jmorris@namei.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        David Howells <dhowells@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: Re: LTP: crypto: af_alg02 regression on linux-next 20200621 tag
-Message-ID: <20200623170217.GB150582@gmail.com>
-References: <CA+G9fYvHFs5Yx8TnT6VavtfjMN8QLPuXg6us-dXVJqUUt68adA@mail.gmail.com>
- <20200622224920.GA4332@42.do-not-panic.com>
- <CA+G9fYsXDZUspc5OyfqrGZn=k=2uRiGzWY_aPePK2C_kZ+dYGQ@mail.gmail.com>
- <20200623064056.GA8121@gondor.apana.org.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200623064056.GA8121@gondor.apana.org.au>
+        Tue, 23 Jun 2020 14:01:33 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 05NHWsNg056507;
+        Tue, 23 Jun 2020 14:01:32 -0400
+Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 31ukmde089-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 23 Jun 2020 14:01:31 -0400
+Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
+        by ppma03wdc.us.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 05NHi8Nv012717;
+        Tue, 23 Jun 2020 18:01:30 GMT
+Received: from b03cxnp07029.gho.boulder.ibm.com (b03cxnp07029.gho.boulder.ibm.com [9.17.130.16])
+        by ppma03wdc.us.ibm.com with ESMTP id 31uk4fsdvh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 23 Jun 2020 18:01:30 +0000
+Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
+        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 05NI1U8C61473234
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 23 Jun 2020 18:01:30 GMT
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E730D13605E;
+        Tue, 23 Jun 2020 18:01:29 +0000 (GMT)
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8FCC913604F;
+        Tue, 23 Jun 2020 18:01:28 +0000 (GMT)
+Received: from DESKTOP-AV6EVPG.localdomain (unknown [9.160.30.158])
+        by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Tue, 23 Jun 2020 18:01:28 +0000 (GMT)
+From:   Maurizio Drocco <maurizio.drocco@ibm.com>
+To:     zohar@linux.ibm.com
+Cc:     Silviu.Vlasceanu@huawei.com, dmitry.kasatkin@gmail.com,
+        jejb@linux.ibm.com, jmorris@namei.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, maurizio.drocco@ibm.com,
+        mdrocco@linux.vnet.ibm.com, roberto.sassu@huawei.com,
+        serge@hallyn.com
+Subject: [PATCH v2] ima_evm_utils: extended calc_bootaggr to PCRs 8 - 9
+Date:   Tue, 23 Jun 2020 14:01:22 -0400
+Message-Id: <20200623180122.209-1-maurizio.drocco@ibm.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <1592856871.4987.21.camel@linux.ibm.com>
+References: <1592856871.4987.21.camel@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.687
+ definitions=2020-06-23_11:2020-06-23,2020-06-23 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 malwarescore=0
+ spamscore=0 mlxlogscore=897 clxscore=1015 priorityscore=1501
+ suspectscore=1 phishscore=0 mlxscore=0 bulkscore=0 lowpriorityscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2006120000 definitions=main-2006230123
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jun 23, 2020 at 04:40:56PM +1000, Herbert Xu wrote:
-> On Tue, Jun 23, 2020 at 11:53:43AM +0530, Naresh Kamboju wrote:
-> >
-> > Thanks for the investigation.
-> > After reverting, two test cases got PASS out of four reported failure cases.
-> >  ltp-crypto-tests:
-> >      * af_alg02 - still failing - Hung and time out
-> >      * af_alg05 - still failing - Hung and time out
-> >   ltp-syscalls-tests:
-> >      * keyctl07 - PASS
-> >      * request_key03 - PASS
-> > 
-> > Please suggest the way to debug / fix the af_alg02 and af_alg05 failures.
-> 
-> Did you clear the MSG_MORE flag in the final send(2) call before
-> you call recv(2)?
-> 
+From: Maurizio <maurizio.drocco@ibm.com>
 
-The source code for the two failing AF_ALG tests is here:
+If PCRs 8 - 9 are set (i.e. not all-zeros), cal_bootaggr should include
+them into the digest.
 
-https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/crypto/af_alg02.c
-https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/crypto/af_alg05.c
+Signed-off-by: Maurizio Drocco <maurizio.drocco@ibm.com>
+---
+Changelog:
+v2:
+- Always include PCRs 8 & 9 to non-sha1 hashes
+v1:
+- Include non-zero PCRs 8 & 9 to boot aggregates 
 
-They use read() and write(), not send() and recv().
+ src/evmctl.c | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
-af_alg02 uses read() to read from a "salsa20" request socket without writing
-anything to it.  It is expected that this returns 0, i.e. that behaves like
-encrypting an empty message.
+diff --git a/src/evmctl.c b/src/evmctl.c
+index 1d065ce..46b7092 100644
+--- a/src/evmctl.c
++++ b/src/evmctl.c
+@@ -1930,6 +1930,16 @@ static void calc_bootaggr(struct tpm_bank_info *bank)
+ 		}
+ 	}
+ 
++	if (strcmp(bank->algo_name, "sha1") != 0) {
++		for (i = 8; i < 10; i++) {
++			err = EVP_DigestUpdate(pctx, bank->pcr[i], bank->digest_size);
++			if (!err) {
++				log_err("EVP_DigestUpdate() failed\n");
++				return;
++			}
++		}
++	}
++
+ 	err = EVP_DigestFinal(pctx, bank->digest, &mdlen);
+ 	if (!err) {
+ 		log_err("EVP_DigestFinal() failed\n");
+@@ -1972,8 +1982,9 @@ static int append_bootaggr(char *bootaggr, struct tpm_bank_info *tpm_banks)
+ /*
+  * The IMA measurement list boot_aggregate is the link between the preboot
+  * event log and the IMA measurement list.  Read and calculate all the
+- * possible per TPM bank boot_aggregate digests based on the existing
+- * PCRs 0 - 7 to validate against the IMA boot_aggregate record.
++ * possible per TPM bank boot_aggregate digests based on the existing PCRs
++ * 0 - 9 to validate against the IMA boot_aggregate record. If the digest
++ * algorithm is SHA1, only PCRs 0 - 7 are considered to avoid ambiguity.
+  */
+ static int cmd_ima_bootaggr(struct command *cmd)
+ {
+-- 
+2.17.1
 
-af_alg05 uses write() to write 15 bytes to a "cbc(aes-generic)" request socket,
-then read() to read 15 bytes.  It is expected that this fails with EINVAL, since
-the length is not aligned to the AES block size (16 bytes).
-
-- Eric
