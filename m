@@ -2,177 +2,117 @@ Return-Path: <SRS0=CLHo=AE=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D748C433E0
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Jun 2020 18:53:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE2A9C433DF
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Jun 2020 23:04:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 407E8207F9
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Jun 2020 18:53:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7952020780
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Jun 2020 23:04:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="g/p9zyGx"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="L8dwrHDx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733247AbgFWSxO (ORCPT
+        id S2388039AbgFWXE2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 23 Jun 2020 14:53:14 -0400
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:38913 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1733170AbgFWSxN (ORCPT
+        Tue, 23 Jun 2020 19:04:28 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:60658 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388020AbgFWXE1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 23 Jun 2020 14:53:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1592938391;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=3nSi1zETIGlAkjRMSn7k5XllL026D0zQEnDLfZ6KCh4=;
-        b=g/p9zyGxnx60k/rspH5wzAEnQkh1/rEHILi+o3AWLO2NDC0f0DQvnMzXN4iYJ3k/Ehtt4P
-        7KaqLiaEPB77bFoTd5crKZ1KKdsHERf+YGn9L5qHm7JBb3c8+600snZulffPuoI1HFZQpZ
-        DbVJePHpjjNR5JAhG7DgkFLzGbEi9vA=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-493-nhT-KQwFMOaBe6CR_NjNkQ-1; Tue, 23 Jun 2020 14:53:04 -0400
-X-MC-Unique: nhT-KQwFMOaBe6CR_NjNkQ-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7C6528031CB;
-        Tue, 23 Jun 2020 18:53:02 +0000 (UTC)
-Received: from localhost (ovpn-116-11.gru2.redhat.com [10.97.116.11])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B559060CD3;
-        Tue, 23 Jun 2020 18:53:01 +0000 (UTC)
-Date:   Tue, 23 Jun 2020 15:53:00 -0300
-From:   Bruno Meneguele <bmeneg@redhat.com>
-To:     Maurizio Drocco <maurizio.drocco@ibm.com>
-Cc:     zohar@linux.ibm.com, Silviu.Vlasceanu@huawei.com,
-        dmitry.kasatkin@gmail.com, jejb@linux.ibm.com, jmorris@namei.org,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, mdrocco@linux.vnet.ibm.com,
-        roberto.sassu@huawei.com, serge@hallyn.com
-Subject: Re: [PATCH v4] ima: extend boot_aggregate with kernel measurements
-Message-ID: <20200623185300.GD4983@glitch>
-References: <1592920990.5437.15.camel@linux.ibm.com>
- <20200623155732.105-1-maurizio.drocco@ibm.com>
+        Tue, 23 Jun 2020 19:04:27 -0400
+Received: from sequoia (162-237-133-238.lightspeed.rcsntx.sbcglobal.net [162.237.133.238])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 2887C20B7192;
+        Tue, 23 Jun 2020 16:04:26 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 2887C20B7192
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1592953466;
+        bh=vzZAZrsVkwFhLFQvSrdEJZIr64CbwDvMPQLlWesUQc8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=L8dwrHDxQZ7xqGFZyuOfCYAgdkBdbnsFx24QnlxfM/vEoAAo/au6Yuk8UXxo3Wz+g
+         wbqxyBRbqs19GTUhUC0vaSTCBTmjqiyF8fYk0ol56lPKd7mxe65Z8OuD366qkNxIzw
+         CjRhspmaOgZXdZytBufsh8khs4bldncTpK6e6k74=
+Date:   Tue, 23 Jun 2020 18:04:24 -0500
+From:   Tyler Hicks <tyhicks@linux.microsoft.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Prakhar Srivastava <prsriva02@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Janne Karhunen <janne.karhunen@gmail.com>
+Subject: Re: [PATCH 01/12] ima: Have the LSM free its audit rule
+Message-ID: <20200623230424.GB6048@sequoia>
+References: <20200623003236.830149-1-tyhicks@linux.microsoft.com>
+ <20200623003236.830149-2-tyhicks@linux.microsoft.com>
 MIME-Version: 1.0
-In-Reply-To: <20200623155732.105-1-maurizio.drocco@ibm.com>
-X-PGP-Key: http://keys.gnupg.net/pks/lookup?op=get&search=0x3823031E4660608D
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="8w3uRX/HFJGApMzv"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20200623003236.830149-2-tyhicks@linux.microsoft.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
---8w3uRX/HFJGApMzv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Jun 23, 2020 at 11:57:32AM -0400, Maurizio Drocco wrote:
-> Registers 8-9 are used to store measurements of the kernel and its
-> command line (e.g., grub2 bootloader with tpm module enabled). IMA
-> should include them in the boot aggregate. Registers 8-9 should be
-> only included in non-SHA1 digests to avoid ambiguity.
->=20
-> Signed-off-by: Maurizio Drocco <maurizio.drocco@ibm.com>
+On 2020-06-22 19:32:25, Tyler Hicks wrote:
+> Ask the LSM to free its audit rule rather than directly calling kfree().
+> Both AppArmor and SELinux do additional work in their audit_rule_free()
+> hooks. Fix memory leaks by allowing the LSMs to perform necessary work.
+> 
+> Fixes: b16942455193 ("ima: use the lsm policy update notifier")
+> Signed-off-by: Tyler Hicks <tyhicks@linux.microsoft.com>
+> Cc: Janne Karhunen <janne.karhunen@gmail.com>
 > ---
-> Changelog:
-> v4:
-> - Reworded comments: PCRs 8 & 9 are always included in non-sha1 digests
-> v3:
-> - Limit including PCRs 8 & 9 to non-sha1 hashes
-> v2:
-> - Minor comment improvements
-> v1:
-> - Include non zero PCRs 8 & 9 in the boot_aggregate
->=20
->  security/integrity/ima/ima.h        |  2 +-
->  security/integrity/ima/ima_crypto.c | 15 ++++++++++++++-
->  2 files changed, 15 insertions(+), 2 deletions(-)
->=20
+>  security/integrity/ima/ima.h        | 6 ++++++
+>  security/integrity/ima/ima_policy.c | 2 +-
+>  2 files changed, 7 insertions(+), 1 deletion(-)
+> 
 > diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-> index df93ac258e01..9d94080bdad8 100644
+> index df93ac258e01..de05d7f1d3ec 100644
 > --- a/security/integrity/ima/ima.h
 > +++ b/security/integrity/ima/ima.h
-> @@ -30,7 +30,7 @@
-> =20
->  enum ima_show_type { IMA_SHOW_BINARY, IMA_SHOW_BINARY_NO_FIELD_LEN,
->  =09=09     IMA_SHOW_BINARY_OLD_STRING_FMT, IMA_SHOW_ASCII };
-> -enum tpm_pcrs { TPM_PCR0 =3D 0, TPM_PCR8 =3D 8 };
-> +enum tpm_pcrs { TPM_PCR0 =3D 0, TPM_PCR8 =3D 8, TPM_PCR10 =3D 10 };
-> =20
->  /* digest size for IMA, fits SHA1 or MD5 */
->  #define IMA_DIGEST_SIZE=09=09SHA1_DIGEST_SIZE
-> diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima=
-/ima_crypto.c
-> index 220b14920c37..011c3c76af86 100644
-> --- a/security/integrity/ima/ima_crypto.c
-> +++ b/security/integrity/ima/ima_crypto.c
-> @@ -823,13 +823,26 @@ static int ima_calc_boot_aggregate_tfm(char *digest=
-, u16 alg_id,
->  =09if (rc !=3D 0)
->  =09=09return rc;
-> =20
-> -=09/* cumulative sha1 over tpm registers 0-7 */
-> +=09/* cumulative digest over TPM registers 0-7 */
->  =09for (i =3D TPM_PCR0; i < TPM_PCR8; i++) {
->  =09=09ima_pcrread(i, &d);
->  =09=09/* now accumulate with current aggregate */
->  =09=09rc =3D crypto_shash_update(shash, d.digest,
->  =09=09=09=09=09 crypto_shash_digestsize(tfm));
->  =09}
-> +=09/*
-> +=09 * Extend cumulative digest over TPM registers 8-9, which contain
-> +=09 * measurement for the kernel command line (reg. 8) and image (reg. 9=
-)
-> +=09 * in a typical PCR allocation. Registers 8-9 are only included in
-> +=09 * non-SHA1 boot_aggregate digests to avoid ambiguity.
-> +=09 */
-> +=09if (alg_id !=3D TPM_ALG_SHA1) {
-> +=09=09for (i =3D TPM_PCR8; i < TPM_PCR10; i++) {
-> +=09=09=09ima_pcrread(i, &d);
-> +=09=09=09rc =3D crypto_shash_update(shash, d.digest,
-> +=09=09=09=09=09=09crypto_shash_digestsize(tfm));
-> +=09=09}
-> +=09}
->  =09if (!rc)
->  =09=09crypto_shash_final(shash, digest);
->  =09return rc;
-> --=20
-> 2.17.1
->=20
+> @@ -404,6 +404,7 @@ static inline void ima_free_modsig(struct modsig *modsig)
+>  #ifdef CONFIG_IMA_LSM_RULES
+>  
+>  #define security_filter_rule_init security_audit_rule_init
+> +#define security_filter_rule_free security_audit_rule_free
+>  #define security_filter_rule_match security_audit_rule_match
+>  
+>  #else
+> @@ -414,6 +415,11 @@ static inline int security_filter_rule_init(u32 field, u32 op, char *rulestr,
+>  	return -EINVAL;
+>  }
+>  
+> +static inline void security_filter_rule_free(void *lsmrule)
+> +{
+> +	return -EINVAL;
 
-Reviewed-by: Bruno Meneguele <bmeneg@redhat.com>
+Bah, I introduced a build warning here when CONFIG_IMA_LSM_RULES is
+disabled. This function should return nothing. I'll wait for additional
+feedback before spinning a v2.
 
-I've tested this patch with both TPM 1.2 and TPM 2.0 + ima-evm-utils
-support patch. Everything seems fine.
+Tyler
 
-Thanks.
-
---=20
-bmeneg=20
-PGP Key: http://bmeneg.com/pubkey.txt
-
---8w3uRX/HFJGApMzv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEdWo6nTbnZdbDmXutYdRkFR+RokMFAl7yT4wACgkQYdRkFR+R
-okN1EAgApl7aO6m1nHUaan+Iu9VccMELoK4mnHb3gCgwKZc16uXp1p+fxxwvIViJ
-honMESymPNb6656OK5VYAAA7x9EXQIdd6vZDSpcFVy+0RMxBPxlPR3JGciQSWsnu
-YqJcum3u2MPaRv0xmqrz7pCuHJ5fFVju5ouaS8oHrdpB9q3LsTgqL2L6mBd4qBoD
-9PG68MQOTEUoArQ+IIXTn4lBFGPHl4wM/my5lsO6zAZ7MPmqtoJQwwWbb3Qr/DUn
-IivKJlivRrnGkVFI4m6fcBYRshyVHmFii2RjVPUVrMdNpq3Je6CA8bdLxvQ6tw6m
-Kjs+LH+RbK6w2wJ3L7CW8ZgxPG+tmQ==
-=9sj9
------END PGP SIGNATURE-----
-
---8w3uRX/HFJGApMzv--
-
+> +}
+> +
+>  static inline int security_filter_rule_match(u32 secid, u32 field, u32 op,
+>  					     void *lsmrule)
+>  {
+> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+> index e493063a3c34..236a731492d1 100644
+> --- a/security/integrity/ima/ima_policy.c
+> +++ b/security/integrity/ima/ima_policy.c
+> @@ -258,7 +258,7 @@ static void ima_lsm_free_rule(struct ima_rule_entry *entry)
+>  	int i;
+>  
+>  	for (i = 0; i < MAX_LSM_RULES; i++) {
+> -		kfree(entry->lsm[i].rule);
+> +		security_filter_rule_free(entry->lsm[i].rule);
+>  		kfree(entry->lsm[i].args_p);
+>  	}
+>  	kfree(entry);
+> -- 
+> 2.25.1
