@@ -2,75 +2,140 @@ Return-Path: <SRS0=CLHo=AE=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAB3BC433E0
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Jun 2020 06:41:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0753C433DF
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Jun 2020 11:27:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 972EE20738
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Jun 2020 06:41:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 93FA220724
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Jun 2020 11:27:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731123AbgFWGlc (ORCPT
+        id S1732294AbgFWL1w (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 23 Jun 2020 02:41:32 -0400
-Received: from helcar.hmeau.com ([216.24.177.18]:45028 "EHLO fornost.hmeau.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730540AbgFWGlb (ORCPT
+        Tue, 23 Jun 2020 07:27:52 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34780 "EHLO
+        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732189AbgFWL1u (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 23 Jun 2020 02:41:31 -0400
-Received: from gwarestrin.arnor.me.apana.org.au ([192.168.0.7])
-        by fornost.hmeau.com with smtp (Exim 4.92 #5 (Debian))
-        id 1jncc4-0003im-6c; Tue, 23 Jun 2020 16:40:57 +1000
-Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Tue, 23 Jun 2020 16:40:56 +1000
-Date:   Tue, 23 Jun 2020 16:40:56 +1000
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        LTP List <ltp@lists.linux.it>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        lkft-triage@lists.linaro.org, linux-crypto@vger.kernel.org,
-        Jan Stancek <jstancek@redhat.com>, chrubis <chrubis@suse.cz>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        James Morris <jmorris@namei.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        David Howells <dhowells@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Biggers <ebiggers@google.com>
-Subject: Re: LTP: crypto: af_alg02 regression on linux-next 20200621 tag
-Message-ID: <20200623064056.GA8121@gondor.apana.org.au>
-References: <CA+G9fYvHFs5Yx8TnT6VavtfjMN8QLPuXg6us-dXVJqUUt68adA@mail.gmail.com>
- <20200622224920.GA4332@42.do-not-panic.com>
- <CA+G9fYsXDZUspc5OyfqrGZn=k=2uRiGzWY_aPePK2C_kZ+dYGQ@mail.gmail.com>
+        Tue, 23 Jun 2020 07:27:50 -0400
+Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 05NB6EWM032232;
+        Tue, 23 Jun 2020 07:27:45 -0400
+Received: from ppma05wdc.us.ibm.com (1b.90.2fa9.ip4.static.sl-reverse.com [169.47.144.27])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 31uds05fvx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 23 Jun 2020 07:27:45 -0400
+Received: from pps.filterd (ppma05wdc.us.ibm.com [127.0.0.1])
+        by ppma05wdc.us.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 05NBQ8ZX015213;
+        Tue, 23 Jun 2020 11:27:44 GMT
+Received: from b03cxnp08027.gho.boulder.ibm.com (b03cxnp08027.gho.boulder.ibm.com [9.17.130.19])
+        by ppma05wdc.us.ibm.com with ESMTP id 31sa38ptxf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 23 Jun 2020 11:27:44 +0000
+Received: from b03ledav003.gho.boulder.ibm.com (b03ledav003.gho.boulder.ibm.com [9.17.130.234])
+        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 05NBRgYO10617418
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 23 Jun 2020 11:27:42 GMT
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B43586A054;
+        Tue, 23 Jun 2020 11:27:43 +0000 (GMT)
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 002E16A047;
+        Tue, 23 Jun 2020 11:27:42 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by b03ledav003.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Tue, 23 Jun 2020 11:27:42 +0000 (GMT)
+Subject: Re: [PATCH v3] acpi: Extend TPM2 ACPI table with missing log fields
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linux-integrity@vger.kernel.org,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org
+References: <20200331214949.883781-1-stefanb@linux.vnet.ibm.com>
+ <20200401083729.GD17325@linux.intel.com>
+ <CAJZ5v0gQ04h1+zN4wHj1vkwPvqu3RPfsY60VJ+GOtgUrvWuxLQ@mail.gmail.com>
+ <20200402192145.GB10314@linux.intel.com>
+ <dfd2d622-90cb-9621-7b7d-5282f5ee7359@linux.ibm.com>
+ <20200623005647.GD28795@linux.intel.com>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+Message-ID: <8d032b3c-650b-b806-3d97-2921341b7f0e@linux.ibm.com>
+Date:   Tue, 23 Jun 2020 07:27:42 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+G9fYsXDZUspc5OyfqrGZn=k=2uRiGzWY_aPePK2C_kZ+dYGQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200623005647.GD28795@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.687
+ definitions=2020-06-23_06:2020-06-23,2020-06-23 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
+ malwarescore=0 adultscore=0 phishscore=0 suspectscore=0
+ cotscore=-2147483648 clxscore=1015 mlxscore=0 bulkscore=0 mlxlogscore=999
+ lowpriorityscore=0 priorityscore=1501 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2004280000 definitions=main-2006230084
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jun 23, 2020 at 11:53:43AM +0530, Naresh Kamboju wrote:
+On 6/22/20 8:56 PM, Jarkko Sakkinen wrote:
+> On Fri, Jun 19, 2020 at 11:14:20AM -0400, Stefan Berger wrote:
+>> On 4/2/20 3:21 PM, Jarkko Sakkinen wrote:
+>>> On Wed, Apr 01, 2020 at 11:05:36AM +0200, Rafael J. Wysocki wrote:
+>>>> On Wed, Apr 1, 2020 at 10:37 AM Jarkko Sakkinen
+>>>> <jarkko.sakkinen@linux.intel.com> wrote:
+>>>>> On Tue, Mar 31, 2020 at 05:49:49PM -0400, Stefan Berger wrote:
+>>>>>> From: Stefan Berger <stefanb@linux.ibm.com>
+>>>>>>
+>>>>>> Recent extensions of the TPM2 ACPI table added 3 more fields
+>>>>>> including 12 bytes of start method specific parameters and Log Area
+>>>>>> Minimum Length (u32) and Log Area Start Address (u64). So, we extend
+>>>>>> the existing structure with these fields to allow non-UEFI systems
+>>>>>> to access the TPM2's log.
+>>>>>>
+>>>>>> The specification that has the new fields is the following:
+>>>>>>     TCG ACPI Specification
+>>>>>>     Family "1.2" and "2.0"
+>>>>>>     Version 1.2, Revision 8
+>>>>>>
+>>>>>> Adapt all existing table size calculations to use
+>>>>>> offsetof(struct acpi_table_tpm2, start_method_specific)
+>>>>>> [where start_method_specific is a newly added field]
+>>>>>> rather than sizeof(struct acpi_table_tpm2) so that the addition
+>>>>>> of the new fields does not affect current systems that may not
+>>>>>> have them.
+>>>>>>
+>>>>>> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+>>>>>> Cc: linux-acpi@vger.kernel.org
+>>>>> I think I'm cool with this but needs an ack from ACPI maintainer.
+>>>>>
+>>>>> Rafael, given that this not an intrusive change in any possible means,
+>>>>> can I pick this patch and put it to my next pull request?
+>>>> Yes, please.
+>>>>
+>>>> Thanks!
+>>> Great, thanks Rafael.
+>>>
+>>> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+>>>
+>>> Do you mind if I add your ack to the commit?
+>>
+>> Any chance to get v4 applied?
+> You should split the actbl3.h change to a separate patch and add 'Cc:'
+> tag to Rafael to the commit message.
+
+I did this in one patch because it seems like a mistake to extend the 
+structure and not modify the size checks.
+
+   Stefan
+
 >
-> Thanks for the investigation.
-> After reverting, two test cases got PASS out of four reported failure cases.
->  ltp-crypto-tests:
->      * af_alg02 - still failing - Hung and time out
->      * af_alg05 - still failing - Hung and time out
->   ltp-syscalls-tests:
->      * keyctl07 - PASS
->      * request_key03 - PASS
-> 
-> Please suggest the way to debug / fix the af_alg02 and af_alg05 failures.
+> /Jarkko
 
-Did you clear the MSG_MORE flag in the final send(2) call before
-you call recv(2)?
 
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
