@@ -2,162 +2,111 @@ Return-Path: <SRS0=zPn8=AF=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA491C433DF
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Jun 2020 21:50:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F190C433E0
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Jun 2020 23:15:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C3525206FA
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Jun 2020 21:50:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UicxR0JI"
+	by mail.kernel.org (Postfix) with ESMTP id 5179D2076E
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Jun 2020 23:15:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405170AbgFXVuY (ORCPT
+        id S2388105AbgFXXPZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 24 Jun 2020 17:50:24 -0400
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:25105 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2405144AbgFXVuX (ORCPT
+        Wed, 24 Jun 2020 19:15:25 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:55849 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728035AbgFXXPZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 24 Jun 2020 17:50:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1593035420;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=EADfs1ylZAHsiM8IjKqv95Uwk2ZbTva/38FSCFX0Y4Y=;
-        b=UicxR0JIdlQTkMWG8YdMSEybAZHXne/nidKzFa7xww0UTUJa7n4AmCwA8YJlIw2fJUzvnU
-        oztdeahukkL4ozob+fIvI0IfLonqPUwKcfHldSSdtAVUdkkZmOLoV3QiVU4TGc+YEovf9e
-        /1A/78IU6YJ2uNqT515Emkgg5+FH3/k=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-144-JDiVSOwfPXK8klyO4PRXhg-1; Wed, 24 Jun 2020 17:50:15 -0400
-X-MC-Unique: JDiVSOwfPXK8klyO4PRXhg-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B651880400D;
-        Wed, 24 Jun 2020 21:50:13 +0000 (UTC)
-Received: from localhost (ovpn-116-62.gru2.redhat.com [10.97.116.62])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E954160F8A;
-        Wed, 24 Jun 2020 21:50:12 +0000 (UTC)
-Date:   Wed, 24 Jun 2020 18:50:11 -0300
-From:   Bruno Meneguele <bmeneg@redhat.com>
-To:     Maurizio Drocco <maurizio.drocco@ibm.com>
-Cc:     Silviu.Vlasceanu@huawei.com, dmitry.kasatkin@gmail.com,
-        jejb@linux.ibm.com, jmorris@namei.org,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, mdrocco@linux.vnet.ibm.com,
-        roberto.sassu@huawei.com, serge@hallyn.com, stefanb@linux.ibm.com,
-        zohar@linux.ibm.com
-Subject: Re: [PATCH v3] ima_evm_utils: extended calc_bootaggr to PCRs 8 - 9
-Message-ID: <20200624215011.GC2639@glitch>
-References: <20200624213345.GB2639@glitch>
- <20200624213558.4265-1-maurizio.drocco@ibm.com>
+        Wed, 24 Jun 2020 19:15:25 -0400
+Received: from fsav402.sakura.ne.jp (fsav402.sakura.ne.jp [133.242.250.101])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 05ONEOlM034642;
+        Thu, 25 Jun 2020 08:14:25 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav402.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav402.sakura.ne.jp);
+ Thu, 25 Jun 2020 08:14:24 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav402.sakura.ne.jp)
+Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 05ONEOBd034639
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Thu, 25 Jun 2020 08:14:24 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [RFC][PATCH] net/bpfilter: Remove this broken and apparently
+ unmantained
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <87d066vd4y.fsf@x220.int.ebiederm.org>
+ <20200611233134.5vofl53dj5wpwp5j@ast-mbp.dhcp.thefacebook.com>
+ <87bllngirv.fsf@x220.int.ebiederm.org>
+ <CAADnVQ+qNxFjTYBpYW9ZhStMh_oJBS5C_FsxSS=0Mzy=u54MSg@mail.gmail.com>
+ <CAADnVQLuGYX=LamARhrZcze1ej4ELj-y99fLzOCgz60XLPw_cQ@mail.gmail.com>
+ <87ftaxd7ky.fsf@x220.int.ebiederm.org>
+ <20200616015552.isi6j5x732okiky4@ast-mbp.dhcp.thefacebook.com>
+ <87h7v1pskt.fsf@x220.int.ebiederm.org>
+ <20200623183520.5e7fmlt3omwa2lof@ast-mbp.dhcp.thefacebook.com>
+ <87h7v1mx4z.fsf@x220.int.ebiederm.org>
+ <20200623194023.lzl34qt2wndhcehk@ast-mbp.dhcp.thefacebook.com>
+ <878sgck6g0.fsf@x220.int.ebiederm.org>
+ <CAADnVQL8WrfV74v1ChvCKE=pQ_zo+A5EtEBB3CbD=P5ote8_MA@mail.gmail.com>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <2f55102e-5d11-5569-8248-13618d517e93@i-love.sakura.ne.jp>
+Date:   Thu, 25 Jun 2020 08:14:20 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
 MIME-Version: 1.0
-In-Reply-To: <20200624213558.4265-1-maurizio.drocco@ibm.com>
-X-PGP-Key: http://keys.gnupg.net/pks/lookup?op=get&search=0x3823031E4660608D
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="hOcCNbCCxyk/YU74"
-Content-Disposition: inline
+In-Reply-To: <CAADnVQL8WrfV74v1ChvCKE=pQ_zo+A5EtEBB3CbD=P5ote8_MA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
---hOcCNbCCxyk/YU74
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 2020/06/24 23:26, Alexei Starovoitov wrote:
+> On Wed, Jun 24, 2020 at 5:17 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
+>>
+>> Alexei Starovoitov <alexei.starovoitov@gmail.com> writes:
+>>
+>>> On Tue, Jun 23, 2020 at 01:53:48PM -0500, Eric W. Biederman wrote:
+>>
+>>> There is no refcnt bug. It was a user error on tomoyo side.
+>>> fork_blob() works as expected.
+>>
+>> Nope.  I have independently confirmed it myself.
+> 
+> I guess you've tried Tetsuo's fork_blob("#!/bin/true") kernel module ?
+> yes. that fails. It never meant to be used for this.
+> With elf blob it works, but breaks if there are rejections
+> in things like security_bprm_creds_for_exec().
+> In my mind that path was 'must succeed or kernel module is toast'.
+> Like passing NULL into a function that doesn't check for it.
+> Working on a fix for that since Tetsuo cares.
+> 
 
-On Wed, Jun 24, 2020 at 05:35:58PM -0400, Maurizio Drocco wrote:
-> From: Maurizio <maurizio.drocco@ibm.com>
->=20
-> cal_bootaggr should include PCRs 8-9 in non-SHA1 digests.
->=20
-> Signed-off-by: Maurizio Drocco <maurizio.drocco@ibm.com>
-> ---
-> Changelog:
-> v3:
-> - Fixed patch description
-> v2:
-> - Always include PCRs 8 & 9 to non-sha1 hashes
-> v1:
-> - Include non-zero PCRs 8 & 9 to boot aggregates
->=20
->  src/evmctl.c | 15 +++++++++++++--
->  1 file changed, 13 insertions(+), 2 deletions(-)
->=20
-> diff --git a/src/evmctl.c b/src/evmctl.c
-> index 1d065ce..46b7092 100644
-> --- a/src/evmctl.c
-> +++ b/src/evmctl.c
-> @@ -1930,6 +1930,16 @@ static void calc_bootaggr(struct tpm_bank_info *ba=
-nk)
->  =09=09}
->  =09}
-> =20
-> +=09if (strcmp(bank->algo_name, "sha1") !=3D 0) {
-> +=09=09for (i =3D 8; i < 10; i++) {
-> +=09=09=09err =3D EVP_DigestUpdate(pctx, bank->pcr[i], bank->digest_size)=
-;
-> +=09=09=09if (!err) {
-> +=09=09=09=09log_err("EVP_DigestUpdate() failed\n");
-> +=09=09=09=09return;
-> +=09=09=09}
-> +=09=09}
-> +=09}
-> +
->  =09err =3D EVP_DigestFinal(pctx, bank->digest, &mdlen);
->  =09if (!err) {
->  =09=09log_err("EVP_DigestFinal() failed\n");
-> @@ -1972,8 +1982,9 @@ static int append_bootaggr(char *bootaggr, struct t=
-pm_bank_info *tpm_banks)
->  /*
->   * The IMA measurement list boot_aggregate is the link between the prebo=
-ot
->   * event log and the IMA measurement list.  Read and calculate all the
-> - * possible per TPM bank boot_aggregate digests based on the existing
-> - * PCRs 0 - 7 to validate against the IMA boot_aggregate record.
-> + * possible per TPM bank boot_aggregate digests based on the existing PC=
-Rs
-> + * 0 - 9 to validate against the IMA boot_aggregate record. If the diges=
-t
-> + * algorithm is SHA1, only PCRs 0 - 7 are considered to avoid ambiguity.
->   */
->  static int cmd_ima_bootaggr(struct command *cmd)
->  {
-> --=20
-> 2.17.1
->=20
+What is unhappy for pathname based LSMs is that fork_usermode_blob() creates
+a file with empty filename. I can imagine that somebody would start abusing
+fork_usermode_blob() as an interface for starting programs like modprobe, hotplug,
+udevd and sshd. When such situation happened, how fork_usermode_blob() provides
+information for identifying the intent of such execve() requests?
 
-Reviewed-by: Bruno Meneguele <bmeneg@redhat.com>
-
-Thanks.
-
---=20
-bmeneg=20
-PGP Key: http://bmeneg.com/pubkey.txt
-
---hOcCNbCCxyk/YU74
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEdWo6nTbnZdbDmXutYdRkFR+RokMFAl7zypMACgkQYdRkFR+R
-okOR8QgAqksSST2NxdrLiv6YuDGV9UrvTKoio+IEmlosYWxa/qXi2/oUvH3+zNG3
-lnCxXjTkC1MDsyx2OInElaiJpdMdtUp/9J+1UBv3+tuBA3a0GmGKZd1+6rQNxDMG
-1m8Saa0JjSD6H+iGuGydVSNkDr5g6IxIP3p6+ZiCEEh2qp4iwhiNS4OkUscdWcNF
-YEOyE+XEkuaV5oywwo0Oz2Zv3Pb/etl2AoS80mGfAQDQhBXHVVQb5f6tHde11vFw
-tnDpG8bDkzo2C7w6xiEmYcAuChJZp+/nxn4jSuitHz9XMZBYP79Rdage1mpSwxEA
-4/u11ZssxGWuQjrUZ2wRsw4li8ykrg==
-=ioxk
------END PGP SIGNATURE-----
-
---hOcCNbCCxyk/YU74--
-
+fork_usermode_blob() might also be an unhappy behavior for inode based LSMs (like
+SELinux and Smack) because it seems that fork_usermode_blob() can't have a chance
+to associate appropriate security labels based on the content of the byte array
+because files are created on-demand. Is fork_usermode_blob() friendly to inode
+based LSMs?
