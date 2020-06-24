@@ -2,138 +2,225 @@ Return-Path: <SRS0=zPn8=AF=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F02D1C433E0
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Jun 2020 17:54:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D44C5C433E1
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Jun 2020 17:59:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D30482077D
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Jun 2020 17:54:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EP2vP1xj"
+	by mail.kernel.org (Postfix) with ESMTP id B135E207DD
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Jun 2020 17:59:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405863AbgFXRyO (ORCPT
+        id S2405935AbgFXR7K (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 24 Jun 2020 13:54:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54248 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405750AbgFXRyN (ORCPT
+        Wed, 24 Jun 2020 13:59:10 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:10308 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2405788AbgFXR7J (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 24 Jun 2020 13:54:13 -0400
-Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92009C061573;
-        Wed, 24 Jun 2020 10:54:13 -0700 (PDT)
-Received: by mail-pj1-x1042.google.com with SMTP id u8so1446099pje.4;
-        Wed, 24 Jun 2020 10:54:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=qkIGmRvWdpvpHWZiXHmBkZ272P9SkiCAZcuaQC1DR14=;
-        b=EP2vP1xji6pfUVDlXaugEghw2F92U4Nkz06IgV2PEZGPI7N9buIZ5/e6VeSeDGwNs9
-         qvaOn2JuNtYGl/lO9wde2fwNqSF25+mLosYSQrpovtkD2OpgITU6sMjuzIb7TPuBMpl+
-         hYAUlPbUE+UCvJ21x8Ymg4oMl/ejjDGPihy6PXoC733JRbqAvXi3ASgShVzST2HJlkX/
-         bSes6nXdsi6s8sllYMUoxBmf42T32IqZCC7gGdtEN3H2JtRXCHrDe/PG9fov8W8Dlfyr
-         9guNeDjDA9qFv8zQzadgHr0pbyBkJ/PLW+7t57GRJNWFSptJzJDJcWnn+9aJQ8Hy4rFy
-         68VA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=qkIGmRvWdpvpHWZiXHmBkZ272P9SkiCAZcuaQC1DR14=;
-        b=UiL7mCDLWUya98H0TOEcF2J4xJkwMqyMRYMKapzRgg5KuZ61h41w5MzQDJCKLOo2eO
-         fJBM3jthYQEnAv+ziHIbAl8Tg3+4WB9NYAt4E2rvwhSONqmYvqhGtgCKActqA3X9SNx7
-         K3kZ15uFizoZg8D7Vdh5fTrL5E8rmgA8giG0YmJIZ5h019jGm4dpU7S41GgM8Me2+D9m
-         J3HPhbETGC2cQf7lrQjVoGG9bVEYxanXrwPoYzW2URiWH2cUqVVWpdnpkLbtVBm9C3ze
-         9hZGUw8bcaiymwCv17uvAuk/y6ZNe5iouLwhPDZ8Qcairq8Rcm2Iu2PQlItnx2eYV3dq
-         viWw==
-X-Gm-Message-State: AOAM5330I+5bY1p7PmXTta5pymI56OjiudWo2RbiVQjvyRlUqDdwTsat
-        h9Y6GgSPtAIKeZLMDVHhj9nw6DBR
-X-Google-Smtp-Source: ABdhPJxrBCQujbDJG/wG2RTZOr8JlWcKTxN8MVE5jK8kMoXC8OVOMg9sN8RbTWAjb7YmBTk+Al/tlA==
-X-Received: by 2002:a17:902:6b87:: with SMTP id p7mr26942728plk.275.1593021252980;
-        Wed, 24 Jun 2020 10:54:12 -0700 (PDT)
-Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:400::5:d17e])
-        by smtp.gmail.com with ESMTPSA id f207sm5491841pfa.107.2020.06.24.10.54.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jun 2020 10:54:12 -0700 (PDT)
-Date:   Wed, 24 Jun 2020 10:54:08 -0700
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>
-Subject: Re: [RFC][PATCH] net/bpfilter: Remove this broken and apparently
- unmantained
-Message-ID: <20200624175408.kwc562ofnfhmy674@ast-mbp.dhcp.thefacebook.com>
-References: <87h7v1pskt.fsf@x220.int.ebiederm.org>
- <20200623183520.5e7fmlt3omwa2lof@ast-mbp.dhcp.thefacebook.com>
- <87h7v1mx4z.fsf@x220.int.ebiederm.org>
- <20200623194023.lzl34qt2wndhcehk@ast-mbp.dhcp.thefacebook.com>
- <b4a805e7-e009-dfdf-d011-be636ce5c4f5@i-love.sakura.ne.jp>
- <20200624040054.x5xzkuhiw67cywzl@ast-mbp.dhcp.thefacebook.com>
- <5254444e-465e-6dee-287b-bef58526b724@i-love.sakura.ne.jp>
- <20200624063940.ctzhf4nnh3cjyxqi@ast-mbp.dhcp.thefacebook.com>
- <321b85b4-95f0-2f9b-756a-8405adc97230@i-love.sakura.ne.jp>
- <748ef005-7f64-ab9b-c767-c617ec995df4@schaufler-ca.com>
+        Wed, 24 Jun 2020 13:59:09 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 05OHYUYL037358;
+        Wed, 24 Jun 2020 13:58:45 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 31uwysahmx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 24 Jun 2020 13:58:45 -0400
+Received: from m0098410.ppops.net (m0098410.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 05OHZ2RA039769;
+        Wed, 24 Jun 2020 13:58:45 -0400
+Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 31uwysahk9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 24 Jun 2020 13:58:44 -0400
+Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
+        by ppma04ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 05OHibFb031155;
+        Wed, 24 Jun 2020 17:58:41 GMT
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
+        by ppma04ams.nl.ibm.com with ESMTP id 31uus70wu3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 24 Jun 2020 17:58:41 +0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 05OHwd2W27590710
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 24 Jun 2020 17:58:39 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 79AC4A4055;
+        Wed, 24 Jun 2020 17:58:39 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 11C24A4053;
+        Wed, 24 Jun 2020 17:58:38 +0000 (GMT)
+Received: from oc7455500831.ibm.com (unknown [9.145.22.164])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 24 Jun 2020 17:58:37 +0000 (GMT)
+From:   Christian Borntraeger <borntraeger@de.ibm.com>
+Subject: Re: linux-next: umh: fix processed error when UMH_WAIT_PROC is used
+ seems to break linux bridge on s390x (bisected)
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     Christoph Hellwig <hch@infradead.org>, ast@kernel.org,
+        axboe@kernel.dk, bfields@fieldses.org,
+        bridge@lists.linux-foundation.org, chainsaw@gentoo.org,
+        christian.brauner@ubuntu.com, chuck.lever@oracle.com,
+        davem@davemloft.net, dhowells@redhat.com,
+        gregkh@linuxfoundation.org, jarkko.sakkinen@linux.intel.com,
+        jmorris@namei.org, josh@joshtriplett.org, keescook@chromium.org,
+        keyrings@vger.kernel.org, kuba@kernel.org,
+        lars.ellenberg@linbit.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-security-module@vger.kernel.org, nikolay@cumulusnetworks.com,
+        philipp.reisner@linbit.com, ravenexp@gmail.com,
+        roopa@cumulusnetworks.com, serge@hallyn.com, slyfox@gentoo.org,
+        viro@zeniv.linux.org.uk, yangtiezhu@loongson.cn,
+        netdev@vger.kernel.org, markward@linux.ibm.com,
+        linux-s390 <linux-s390@vger.kernel.org>
+References: <20200610154923.27510-5-mcgrof@kernel.org>
+ <20200623141157.5409-1-borntraeger@de.ibm.com>
+ <b7d658b9-606a-feb1-61f9-b58e3420d711@de.ibm.com>
+ <3118dc0d-a3af-9337-c897-2380062a8644@de.ibm.com>
+ <20200624144311.GA5839@infradead.org>
+ <9e767819-9bbe-2181-521e-4d8ca28ca4f7@de.ibm.com>
+ <20200624160953.GH4332@42.do-not-panic.com>
+Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
+ 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
+ nS4h0HDFPrrp1C2EMVYIQrMokWvlFZbCpsdYbBI=
+Message-ID: <ea41e2a9-61f7-aec1-79e5-7b08b6dd5119@de.ibm.com>
+Date:   Wed, 24 Jun 2020 19:58:37 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <748ef005-7f64-ab9b-c767-c617ec995df4@schaufler-ca.com>
+In-Reply-To: <20200624160953.GH4332@42.do-not-panic.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.687
+ definitions=2020-06-24_11:2020-06-24,2020-06-24 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 spamscore=0
+ cotscore=-2147483648 mlxscore=0 phishscore=0 clxscore=1015
+ lowpriorityscore=0 adultscore=0 impostorscore=0 bulkscore=0
+ mlxlogscore=748 priorityscore=1501 malwarescore=0 classifier=spam adjust=0
+ reason=mlx scancount=1 engine=8.12.0-2004280000
+ definitions=main-2006240117
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jun 24, 2020 at 08:41:37AM -0700, Casey Schaufler wrote:
-> On 6/24/2020 12:05 AM, Tetsuo Handa wrote:
-> > Forwarding to LSM-ML again. Any comments?
-> 
-> Hey, BPF folks - you *really* need to do better about keeping the LSM
-> community in the loop when you're discussing LSM issues. 
-> 
-> >
-> > On 2020/06/24 15:39, Alexei Starovoitov wrote:
-> >> On Wed, Jun 24, 2020 at 01:58:33PM +0900, Tetsuo Handa wrote:
-> >>> On 2020/06/24 13:00, Alexei Starovoitov wrote:
-> >>>>> However, regarding usermode_blob, although the byte array (which contains code / data)
-> >>>>> might be initially loaded from the kernel space (which is protected), that byte array
-> >>>>> is no longer protected (e.g. SIGKILL, strace()) when executed because they are placed
-> >>>>> in the user address space. Thus, LSM modules (including pathname based security) want
-> >>>>> to control how that byte array can behave.
-> >>>> It's privileged memory regardless. root can poke into kernel or any process memory.
-> >>> LSM is there to restrict processes running as "root".
-> >> hmm. do you really mean that it's possible for an LSM to restrict CAP_SYS_ADMIN effectively?
-> 
-> I think that SELinux works hard to do just that. SELinux implements it's own
-> privilege model that is tangential to the capabilities model.
 
-of course. no argument here.
 
-> More directly, it is simple to create a security module to provide finer privilege
-> granularity than capabilities. I have one lurking in a source tree, and I would
-> be surprised if it's the only one waiting for the next round of LSM stacking.
-
-no one is arguing with that either.
-
+On 24.06.20 18:09, Luis Chamberlain wrote:
+> On Wed, Jun 24, 2020 at 05:54:46PM +0200, Christian Borntraeger wrote:
+>>
+>>
+>> On 24.06.20 16:43, Christoph Hellwig wrote:
+>>> On Wed, Jun 24, 2020 at 01:11:54PM +0200, Christian Borntraeger wrote:
+>>>> Does anyone have an idea why "umh: fix processed error when UMH_WAIT_PROC is used" breaks the
+>>>> linux-bridge on s390?
+>>>
+>>> Are we even sure this is s390 specific and doesn't happen on other
+>>> architectures with the same bridge setup?
+>>
+>> Fair point. AFAIK nobody has tested this yet on x86.
 > 
-> >> LSM can certainly provide extra level of foolproof-ness against accidental
-> >> mistakes, but it's not a security boundary.
+> Regardless, can you enable dynamic debug prints, to see if the kernel
+> reveals anything on the bridge code which may be relevant:
 > 
-> Gasp! Them's fight'n words. How do you justify such an outrageous claim?
+> echo "file net/bridge/* +p" > /sys/kernel/debug/dynamic_debug/control
+> 
+>   Luis
 
-.. for root user processes.
-What's outrageous about that?
-Did you capture the context or just replying to few sentences out of the context?
+When I start a guest the following happens with the patch:
+
+[   47.420237] virbr0: port 2(vnet0) entered blocking state
+[   47.420242] virbr0: port 2(vnet0) entered disabled state
+[   47.420315] device vnet0 entered promiscuous mode
+[   47.420365] virbr0: port 2(vnet0) event 16
+[   47.420366] virbr0: br_fill_info event 16 port vnet0 master virbr0
+[   47.420373] virbr0: toggle option: 12 state: 0 -> 0
+[   47.420536] virbr0: port 2(vnet0) entered blocking state
+[   47.420538] virbr0: port 2(vnet0) event 16
+[   47.420539] virbr0: br_fill_info event 16 port vnet0 master virbr0
+
+and the nothing happens.
+
+
+without the patch
+[   33.805410] virbr0: hello timer expired
+[   35.805413] virbr0: hello timer expired
+[   36.184349] virbr0: port 2(vnet0) entered blocking state
+[   36.184353] virbr0: port 2(vnet0) entered disabled state
+[   36.184427] device vnet0 entered promiscuous mode
+[   36.184479] virbr0: port 2(vnet0) event 16
+[   36.184480] virbr0: br_fill_info event 16 port vnet0 master virbr0
+[   36.184487] virbr0: toggle option: 12 state: 0 -> 0
+[   36.184636] virbr0: port 2(vnet0) entered blocking state
+[   36.184638] virbr0: port 2(vnet0) entered listening state
+[   36.184639] virbr0: port 2(vnet0) event 16
+[   36.184640] virbr0: br_fill_info event 16 port vnet0 master virbr0
+[   36.184645] virbr0: port 2(vnet0) event 16
+[   36.184646] virbr0: br_fill_info event 16 port vnet0 master virbr0
+[   37.805478] virbr0: hello timer expired
+[   38.205413] virbr0: port 2(vnet0) forward delay timer
+[   38.205414] virbr0: port 2(vnet0) entered learning state
+[   38.205427] virbr0: port 2(vnet0) event 16
+[   38.205430] virbr0: br_fill_info event 16 port vnet0 master virbr0
+[   38.765414] virbr0: port 2(vnet0) hold timer expired
+[   39.805415] virbr0: hello timer expired
+[   40.285410] virbr0: port 2(vnet0) forward delay timer
+[   40.285411] virbr0: port 2(vnet0) entered forwarding state
+[   40.285418] virbr0: topology change detected, propagating
+[   40.285420] virbr0: decreasing ageing time to 400
+[   40.285427] virbr0: port 2(vnet0) event 16
+[   40.285432] virbr0: br_fill_info event 16 port vnet0 master virbr0
+[   40.765408] virbr0: port 2(vnet0) hold timer expired
+[   41.805415] virbr0: hello timer expired
+[   42.765426] virbr0: port 2(vnet0) hold timer expired
+[   43.805425] virbr0: hello timer expired
+[   44.765426] virbr0: port 2(vnet0) hold timer expired
+[   45.805418] virbr0: hello timer expired
+
+and continuing....
+
+
+
+
