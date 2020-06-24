@@ -2,192 +2,153 @@ Return-Path: <SRS0=zPn8=AF=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 867FBC433DF
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Jun 2020 19:48:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7793AC433DF
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Jun 2020 21:18:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5D97F2082F
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Jun 2020 19:48:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="PD7enlTo"
+	by mail.kernel.org (Postfix) with ESMTP id 5F33C20768
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Jun 2020 21:18:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391327AbgFXTsv (ORCPT
+        id S2390183AbgFXVSD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 24 Jun 2020 15:48:51 -0400
-Received: from sonic313-15.consmr.mail.ne1.yahoo.com ([66.163.185.38]:42219
-        "EHLO sonic313-15.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2391257AbgFXTsv (ORCPT
+        Wed, 24 Jun 2020 17:18:03 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40420 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2389773AbgFXVSC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 24 Jun 2020 15:48:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1593028129; bh=7LhNJLz4g/G53x6mte5Ednv74jq/i1xGZKI6lb6VndM=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=PD7enlToaK05zSfXLx0TWcF+GuekhJ2MOetfAk+Lgkg25AJ5lE2/rhoLbwFv+ipxTyAgqzXMqx8FFHrrxKrL0y/FU6QfWtjSJrzN5lAI931loXcoQ6ZU5kKeEPBHKa+bhqNeT6L5EcSv/ez3lf9tRlKBvVEh75WTuOinNK3EcXyXYTsFUwv43Bk/RozQ4ea2Ota5gfx/jnVJC/sJca7EVh/hp77se9CkdZGAFh+2YqDbVzEoGoun9XmNaSkXhxPO8pI17tgcipRZmZrioGyr2w7XaJSZHb/PmJAUWMXbNcUt9s1sRg6iUkz1ybiGzhbxXWCTmu3XWkiKv/CIOlDUcw==
-X-YMail-OSG: 4dNH4BUVM1l.hgeQja.X_7x47MkG8C1khh7boptzvTd0QYMFZbZxotrz7Rd5d70
- sLOuzFVxZogjvza78gAHqZpToDPhGjk5V8.Gefl8T7e_t3CTHD5M.yRodGvZaKLp59Lk3HihY5TV
- tvr1MFvrBC4SMnwBdmxxx0pRpXdIZuj1tEu55r_0fQG7P3MSFFkOeKqb3Bf5.eXbLef6lWqW.gQo
- g4Up8zNVtCjdLu18kgTTcLjrY9tw7rXjPi9NjfGUeB5FuQYx2_0J2RVMYHLVXV3DH0AJkr824bji
- cKYep0MOosUOjDH2gK5f936H.bGuayUyPzj5oTXJI62.y6blBDha8GEiVLwmt4HZc2z3habBRAiV
- LEvxc0XT0DTJmLtW3N7g2RWqYhTZjtY5tzqifjhBvxli__MvEvV4j3kMx_ogOCxPnhiZZXLd1aFs
- pzx3kykV6miYPBmppKAGeacPg8fC_HdGrACOQwj2WQsTqROizeAmv0iaBGChPQSfw4OshapqyNqw
- uzuRK0hfMtjlvd0Wf.7CEJIyclIMGrZOUVUHdtgD7RayxL9HMXYp0lTikzDsVmbSfgOsfXxb5N1f
- l9qhnrRZJ.LA6U26dw3nQLue.EfFPnEhqRTx13fm8I7Gmj_8qjhQ5ZCqYLrsdS9DMoJY3iJHFXEB
- 6qf3eixny3_jvt4IZMQcytEYMmyI2HxCt5nkq7ccS70QlJFmrG_xEkuJgDJX6qTOxlmXqn43mtfH
- 6JEOXRBDSrF3RRBZQ1t6mTtu2T0sxz2K13_cFWMvHwLMa5P9_iWWtz6NKlS7YpMSPDYkf1hKPG5j
- ski0OfGekrEvfhktvtP.bd9WVPkNAdOG3wehfcrEB9wCVN4uAaeyt0wdm_aTlLzieJY2HPZwIdH.
- IHE0D5fb4IqdtomH1jUAoo0L6aAURV8fgBheLPkwhBtkVQ2f53PPDEGVT0PwHBq2o5MRGY6vevJS
- m1CKbL20UYud17JwmNFKKm6wsMRE0X_11tRRQ2XexHU6r6ikHy8W0Wtf8uZ.bkt4L9TmZbZel3VM
- dIthO9PKSvEHRhuFHlfWCt0c1SurI_tWgbZy7wa9kAnB7AYNa_SN2IQ_vO1uuovRulgMyqtn33S.
- 9xOzPSZ7UPmPNCdAxqjY0hpyYJYlrxZ0stIGdOwo2Ds99mDu1k151MRZCWU5utltmVs7CZdO1_Vy
- B3hY7lR2EvDPu8U4AuYC_QNXJ0GjjCtYfr.rUZnkLcWmNQ9GBjqSU79ylqACP9mEIhuF95pxCWZN
- Urvq7HAzKtk6DPXw9fXJvh_QUhCkBQ0kWWqKZitHamUsHAQ2ecQzBndacUcIzvr6IY_VE3Z0ibib
- dSUw7.2rr_QbpAS0sdRR.hhtM4gp4aFRVT59j5XFd693uvIu56c1Y3yIkESd.ruhHYvJWX_mgZO6
- fF8o05nQbdgnbJz4RS_KI8XgD9k0-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.ne1.yahoo.com with HTTP; Wed, 24 Jun 2020 19:48:49 +0000
-Received: by smtp425.mail.ne1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID da9a592d2a59cb9cfca3dabc33561ece;
-          Wed, 24 Jun 2020 19:48:47 +0000 (UTC)
-Subject: Re: [RFC][PATCH] net/bpfilter: Remove this broken and apparently
- unmantained
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>
-References: <87h7v1pskt.fsf@x220.int.ebiederm.org>
- <20200623183520.5e7fmlt3omwa2lof@ast-mbp.dhcp.thefacebook.com>
- <87h7v1mx4z.fsf@x220.int.ebiederm.org>
- <20200623194023.lzl34qt2wndhcehk@ast-mbp.dhcp.thefacebook.com>
- <b4a805e7-e009-dfdf-d011-be636ce5c4f5@i-love.sakura.ne.jp>
- <20200624040054.x5xzkuhiw67cywzl@ast-mbp.dhcp.thefacebook.com>
- <5254444e-465e-6dee-287b-bef58526b724@i-love.sakura.ne.jp>
- <20200624063940.ctzhf4nnh3cjyxqi@ast-mbp.dhcp.thefacebook.com>
- <321b85b4-95f0-2f9b-756a-8405adc97230@i-love.sakura.ne.jp>
- <748ef005-7f64-ab9b-c767-c617ec995df4@schaufler-ca.com>
- <20200624175408.kwc562ofnfhmy674@ast-mbp.dhcp.thefacebook.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Autocrypt: addr=casey@schaufler-ca.com; keydata=
- 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
- abzjfg==
-Message-ID: <8330277b-c399-c1d1-bf28-f253ba584c1a@schaufler-ca.com>
-Date:   Wed, 24 Jun 2020 12:48:42 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.9.0
+        Wed, 24 Jun 2020 17:18:02 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 05OL2eA1069618;
+        Wed, 24 Jun 2020 17:17:55 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 31uwymyggj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 24 Jun 2020 17:17:55 -0400
+Received: from m0098394.ppops.net (m0098394.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 05OLHsef143482;
+        Wed, 24 Jun 2020 17:17:54 -0400
+Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 31uwymygg0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 24 Jun 2020 17:17:54 -0400
+Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
+        by ppma04wdc.us.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 05OLG6IB020242;
+        Wed, 24 Jun 2020 21:17:53 GMT
+Received: from b01cxnp23032.gho.pok.ibm.com (b01cxnp23032.gho.pok.ibm.com [9.57.198.27])
+        by ppma04wdc.us.ibm.com with ESMTP id 31uury6ufj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 24 Jun 2020 21:17:53 +0000
+Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 05OLHqs544433764
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 24 Jun 2020 21:17:52 GMT
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AD99D112061;
+        Wed, 24 Jun 2020 21:17:52 +0000 (GMT)
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 95B4E112064;
+        Wed, 24 Jun 2020 21:17:52 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 24 Jun 2020 21:17:52 +0000 (GMT)
+Subject: Re: [PATCH v2] ima_evm_utils: extended calc_bootaggr to PCRs 8 - 9
+To:     Bruno Meneguele <bmeneg@redhat.com>,
+        Maurizio Drocco <maurizio.drocco@ibm.com>
+Cc:     zohar@linux.ibm.com, Silviu.Vlasceanu@huawei.com,
+        dmitry.kasatkin@gmail.com, jejb@linux.ibm.com, jmorris@namei.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, mdrocco@linux.vnet.ibm.com,
+        roberto.sassu@huawei.com, serge@hallyn.com
+References: <1592856871.4987.21.camel@linux.ibm.com>
+ <20200623180122.209-1-maurizio.drocco@ibm.com> <20200623181357.GC4983@glitch>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+Message-ID: <92a0d170-8157-476b-8083-ae567b11f364@linux.ibm.com>
+Date:   Wed, 24 Jun 2020 17:17:52 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <20200624175408.kwc562ofnfhmy674@ast-mbp.dhcp.thefacebook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200623181357.GC4983@glitch>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-X-Mailer: WebService/1.1.16138 hermes_yahoo Apache-HttpAsyncClient/4.1.4 (Java/11.0.7)
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.687
+ definitions=2020-06-24_16:2020-06-24,2020-06-24 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ cotscore=-2147483648 spamscore=0 malwarescore=0 adultscore=0
+ impostorscore=0 mlxlogscore=999 clxscore=1011 phishscore=0
+ lowpriorityscore=0 suspectscore=0 bulkscore=0 mlxscore=0 classifier=spam
+ adjust=0 reason=mlx scancount=1 engine=8.12.0-2004280000
+ definitions=main-2006240133
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 6/24/2020 10:54 AM, Alexei Starovoitov wrote:
-> On Wed, Jun 24, 2020 at 08:41:37AM -0700, Casey Schaufler wrote:
->> On 6/24/2020 12:05 AM, Tetsuo Handa wrote:
->>> Forwarding to LSM-ML again. Any comments?
->> Hey, BPF folks - you *really* need to do better about keeping the LSM
->> community in the loop when you're discussing LSM issues.=20
+On 6/23/20 2:13 PM, Bruno Meneguele wrote:
+> On Tue, Jun 23, 2020 at 02:01:22PM -0400, Maurizio Drocco wrote:
+>> From: Maurizio <maurizio.drocco@ibm.com>
 >>
->>> On 2020/06/24 15:39, Alexei Starovoitov wrote:
->>>> On Wed, Jun 24, 2020 at 01:58:33PM +0900, Tetsuo Handa wrote:
->>>>> On 2020/06/24 13:00, Alexei Starovoitov wrote:
->>>>>>> However, regarding usermode_blob, although the byte array (which =
-contains code / data)
->>>>>>> might be initially loaded from the kernel space (which is protect=
-ed), that byte array
->>>>>>> is no longer protected (e.g. SIGKILL, strace()) when executed bec=
-ause they are placed
->>>>>>> in the user address space. Thus, LSM modules (including pathname =
-based security) want
->>>>>>> to control how that byte array can behave.
->>>>>> It's privileged memory regardless. root can poke into kernel or an=
-y process memory.
->>>>> LSM is there to restrict processes running as "root".
->>>> hmm. do you really mean that it's possible for an LSM to restrict CA=
-P_SYS_ADMIN effectively?
->> I think that SELinux works hard to do just that. SELinux implements it=
-'s own
->> privilege model that is tangential to the capabilities model.
-> of course. no argument here.
->
->> More directly, it is simple to create a security module to provide fin=
-er privilege
->> granularity than capabilities. I have one lurking in a source tree, an=
-d I would
->> be surprised if it's the only one waiting for the next round of LSM st=
-acking.
-> no one is arguing with that either.
->
->>>> LSM can certainly provide extra level of foolproof-ness against acci=
-dental
->>>> mistakes, but it's not a security boundary.
->> Gasp! Them's fight'n words. How do you justify such an outrageous clai=
-m?
-> .. for root user processes.
-> What's outrageous about that?
-> Did you capture the context or just replying to few sentences out of th=
-e context?
+>> If PCRs 8 - 9 are set (i.e. not all-zeros), cal_bootaggr should include
+>> them into the digest.
 
-As I mentioned above, you need to include the LSM list in these discussio=
-ns.
-If you don't want "out of context" comments. I replied to what's presente=
-d.
-And regardless of the context, saying that an LSM can't provide a securit=
-y
-boundary for "root user processes" is just wrong. Obviously there's been =
-more
-to the conversation than is included here.
 
+Wouldn't you have to check for not all-zeros in your code?
+
+
+    Stefan
+
+
+>>
+>> Signed-off-by: Maurizio Drocco <maurizio.drocco@ibm.com>
+>> ---
+>> Changelog:
+>> v2:
+>> - Always include PCRs 8 & 9 to non-sha1 hashes
+>> v1:
+>> - Include non-zero PCRs 8 & 9 to boot aggregates
+>>
+>>   src/evmctl.c | 15 +++++++++++++--
+>>   1 file changed, 13 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/src/evmctl.c b/src/evmctl.c
+>> index 1d065ce..46b7092 100644
+>> --- a/src/evmctl.c
+>> +++ b/src/evmctl.c
+>> @@ -1930,6 +1930,16 @@ static void calc_bootaggr(struct tpm_bank_info *bank)
+>>   		}
+>>   	}
+>>   
+>> +	if (strcmp(bank->algo_name, "sha1") != 0) {
+>> +		for (i = 8; i < 10; i++) {
+>> +			err = EVP_DigestUpdate(pctx, bank->pcr[i], bank->digest_size);
+>> +			if (!err) {
+>> +				log_err("EVP_DigestUpdate() failed\n");
+>> +				return;
+>> +			}
+>> +		}
+>> +	}
+>> +
+>>   	err = EVP_DigestFinal(pctx, bank->digest, &mdlen);
+>>   	if (!err) {
+>>   		log_err("EVP_DigestFinal() failed\n");
+>> @@ -1972,8 +1982,9 @@ static int append_bootaggr(char *bootaggr, struct tpm_bank_info *tpm_banks)
+>>   /*
+>>    * The IMA measurement list boot_aggregate is the link between the preboot
+>>    * event log and the IMA measurement list.  Read and calculate all the
+>> - * possible per TPM bank boot_aggregate digests based on the existing
+>> - * PCRs 0 - 7 to validate against the IMA boot_aggregate record.
+>> + * possible per TPM bank boot_aggregate digests based on the existing PCRs
+>> + * 0 - 9 to validate against the IMA boot_aggregate record. If the digest
+>> + * algorithm is SHA1, only PCRs 0 - 7 are considered to avoid ambiguity.
+>>    */
+>>   static int cmd_ima_bootaggr(struct command *cmd)
+>>   {
+>> -- 
+>> 2.17.1
+>>
+> Reviewed-by: Bruno Meneguele <bmeneg@redhat.com>
+>
 
