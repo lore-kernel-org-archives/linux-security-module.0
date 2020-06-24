@@ -2,98 +2,138 @@ Return-Path: <SRS0=zPn8=AF=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53E7CC433E1
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Jun 2020 16:16:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F02D1C433E0
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Jun 2020 17:54:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2A586214D8
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Jun 2020 16:16:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D30482077D
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Jun 2020 17:54:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gY7cW0jy"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EP2vP1xj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404741AbgFXQOC (ORCPT
+        id S2405863AbgFXRyO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 24 Jun 2020 12:14:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38646 "EHLO
+        Wed, 24 Jun 2020 13:54:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54248 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404235AbgFXQOC (ORCPT
+        with ESMTP id S2405750AbgFXRyN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 24 Jun 2020 12:14:02 -0400
-Received: from casper.infradead.org (unknown [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55344C061573;
-        Wed, 24 Jun 2020 09:14:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:In-Reply-To:References;
-        bh=90OlxAKKJk4MpfGF1wAK+VcXxFJhMFQm3EERw9Z5SnM=; b=gY7cW0jyIntr1TMC49eyr8618s
-        pp7PTXnQGIfLOzJhZrUt7AKPtN7e5veG32FkbWOnsBdcKISt7caT3QrJqO3tXiLzLW8JrImMsZcpo
-        4Pv1tVxQ5hc0Dmk763ZRBduhuQC4nmmuM1MCjYAIisGws+cWSdZO4S4c8SpwJ2Aup5MKRG2xovdEf
-        lU+I6pL16Qw44QQ/sy10leiibrFdZRFXCwMyvqVymtLmW1WXuZC/dD8mz3KgIy+vowJ4+6qHsKEv1
-        tMLqzPy0Y8NscRvPZqg7+4Ng62bVC1ovT3Evc/wvkJoJexju596z3TJ2tEzxsFjGBrHi6MGracAqG
-        eS1my67g==;
-Received: from [2001:4bb8:180:a3:5c7c:8955:539d:955b] (helo=localhost)
-        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jo81p-0005xR-56; Wed, 24 Jun 2020 16:13:37 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Ian Kent <raven@themaw.net>,
-        David Howells <dhowells@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        netfilter-devel@vger.kernel.org
-Subject: clean up kernel_{read,write} & friends v5
-Date:   Wed, 24 Jun 2020 18:13:21 +0200
-Message-Id: <20200624161335.1810359-1-hch@lst.de>
-X-Mailer: git-send-email 2.26.2
+        Wed, 24 Jun 2020 13:54:13 -0400
+Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92009C061573;
+        Wed, 24 Jun 2020 10:54:13 -0700 (PDT)
+Received: by mail-pj1-x1042.google.com with SMTP id u8so1446099pje.4;
+        Wed, 24 Jun 2020 10:54:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=qkIGmRvWdpvpHWZiXHmBkZ272P9SkiCAZcuaQC1DR14=;
+        b=EP2vP1xji6pfUVDlXaugEghw2F92U4Nkz06IgV2PEZGPI7N9buIZ5/e6VeSeDGwNs9
+         qvaOn2JuNtYGl/lO9wde2fwNqSF25+mLosYSQrpovtkD2OpgITU6sMjuzIb7TPuBMpl+
+         hYAUlPbUE+UCvJ21x8Ymg4oMl/ejjDGPihy6PXoC733JRbqAvXi3ASgShVzST2HJlkX/
+         bSes6nXdsi6s8sllYMUoxBmf42T32IqZCC7gGdtEN3H2JtRXCHrDe/PG9fov8W8Dlfyr
+         9guNeDjDA9qFv8zQzadgHr0pbyBkJ/PLW+7t57GRJNWFSptJzJDJcWnn+9aJQ8Hy4rFy
+         68VA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=qkIGmRvWdpvpHWZiXHmBkZ272P9SkiCAZcuaQC1DR14=;
+        b=UiL7mCDLWUya98H0TOEcF2J4xJkwMqyMRYMKapzRgg5KuZ61h41w5MzQDJCKLOo2eO
+         fJBM3jthYQEnAv+ziHIbAl8Tg3+4WB9NYAt4E2rvwhSONqmYvqhGtgCKActqA3X9SNx7
+         K3kZ15uFizoZg8D7Vdh5fTrL5E8rmgA8giG0YmJIZ5h019jGm4dpU7S41GgM8Me2+D9m
+         J3HPhbETGC2cQf7lrQjVoGG9bVEYxanXrwPoYzW2URiWH2cUqVVWpdnpkLbtVBm9C3ze
+         9hZGUw8bcaiymwCv17uvAuk/y6ZNe5iouLwhPDZ8Qcairq8Rcm2Iu2PQlItnx2eYV3dq
+         viWw==
+X-Gm-Message-State: AOAM5330I+5bY1p7PmXTta5pymI56OjiudWo2RbiVQjvyRlUqDdwTsat
+        h9Y6GgSPtAIKeZLMDVHhj9nw6DBR
+X-Google-Smtp-Source: ABdhPJxrBCQujbDJG/wG2RTZOr8JlWcKTxN8MVE5jK8kMoXC8OVOMg9sN8RbTWAjb7YmBTk+Al/tlA==
+X-Received: by 2002:a17:902:6b87:: with SMTP id p7mr26942728plk.275.1593021252980;
+        Wed, 24 Jun 2020 10:54:12 -0700 (PDT)
+Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:400::5:d17e])
+        by smtp.gmail.com with ESMTPSA id f207sm5491841pfa.107.2020.06.24.10.54.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Jun 2020 10:54:12 -0700 (PDT)
+Date:   Wed, 24 Jun 2020 10:54:08 -0700
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>
+Subject: Re: [RFC][PATCH] net/bpfilter: Remove this broken and apparently
+ unmantained
+Message-ID: <20200624175408.kwc562ofnfhmy674@ast-mbp.dhcp.thefacebook.com>
+References: <87h7v1pskt.fsf@x220.int.ebiederm.org>
+ <20200623183520.5e7fmlt3omwa2lof@ast-mbp.dhcp.thefacebook.com>
+ <87h7v1mx4z.fsf@x220.int.ebiederm.org>
+ <20200623194023.lzl34qt2wndhcehk@ast-mbp.dhcp.thefacebook.com>
+ <b4a805e7-e009-dfdf-d011-be636ce5c4f5@i-love.sakura.ne.jp>
+ <20200624040054.x5xzkuhiw67cywzl@ast-mbp.dhcp.thefacebook.com>
+ <5254444e-465e-6dee-287b-bef58526b724@i-love.sakura.ne.jp>
+ <20200624063940.ctzhf4nnh3cjyxqi@ast-mbp.dhcp.thefacebook.com>
+ <321b85b4-95f0-2f9b-756a-8405adc97230@i-love.sakura.ne.jp>
+ <748ef005-7f64-ab9b-c767-c617ec995df4@schaufler-ca.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <748ef005-7f64-ab9b-c767-c617ec995df4@schaufler-ca.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Al,
+On Wed, Jun 24, 2020 at 08:41:37AM -0700, Casey Schaufler wrote:
+> On 6/24/2020 12:05 AM, Tetsuo Handa wrote:
+> > Forwarding to LSM-ML again. Any comments?
+> 
+> Hey, BPF folks - you *really* need to do better about keeping the LSM
+> community in the loop when you're discussing LSM issues. 
+> 
+> >
+> > On 2020/06/24 15:39, Alexei Starovoitov wrote:
+> >> On Wed, Jun 24, 2020 at 01:58:33PM +0900, Tetsuo Handa wrote:
+> >>> On 2020/06/24 13:00, Alexei Starovoitov wrote:
+> >>>>> However, regarding usermode_blob, although the byte array (which contains code / data)
+> >>>>> might be initially loaded from the kernel space (which is protected), that byte array
+> >>>>> is no longer protected (e.g. SIGKILL, strace()) when executed because they are placed
+> >>>>> in the user address space. Thus, LSM modules (including pathname based security) want
+> >>>>> to control how that byte array can behave.
+> >>>> It's privileged memory regardless. root can poke into kernel or any process memory.
+> >>> LSM is there to restrict processes running as "root".
+> >> hmm. do you really mean that it's possible for an LSM to restrict CAP_SYS_ADMIN effectively?
+> 
+> I think that SELinux works hard to do just that. SELinux implements it's own
+> privilege model that is tangential to the capabilities model.
 
-this series fixes a few issues and cleans up the helpers that read from
-or write to kernel space buffers, and ensures that we don't change the
-address limit if we are using the ->read_iter and ->write_iter methods
-that don't need the changed address limit.
+of course. no argument here.
 
-I did not add your suggested comments on the instances using
-uaccess_kernel as all of them already have comments.  If you have
-anything better in mind feel free to throw in additional comments.
+> More directly, it is simple to create a security module to provide finer privilege
+> granularity than capabilities. I have one lurking in a source tree, and I would
+> be surprised if it's the only one waiting for the next round of LSM stacking.
 
+no one is arguing with that either.
 
-Changes since v4:
- - warn on calling __kernel_write on files not open for write
- - add a FMODE_READ check and warning in __kernel_read
- - add a new patch to remove kernel_readv
- - stop preferring the iter variants if normal read/write is
-   present
+> 
+> >> LSM can certainly provide extra level of foolproof-ness against accidental
+> >> mistakes, but it's not a security boundary.
+> 
+> Gasp! Them's fight'n words. How do you justify such an outrageous claim?
 
-Changes since v3:
- - keep call_read_iter/call_write_iter for now
- - don't modify an existing long line
- - update a change log
-
-Changes since v2:
- - picked up a few ACKs
-
-Changes since v1:
- - __kernel_write must not take sb_writers
- - unexport __kernel_write
-
-Diffstat:
- fs/autofs/waitq.c            |    2 
- fs/cachefiles/rdwr.c         |    2 
- fs/read_write.c              |  171 ++++++++++++++++++++++++++-----------------
- fs/splice.c                  |   53 +++----------
- include/linux/fs.h           |    4 -
- net/bpfilter/bpfilter_kern.c |    2 
- security/integrity/iint.c    |   14 ---
- 7 files changed, 125 insertions(+), 123 deletions(-)
+.. for root user processes.
+What's outrageous about that?
+Did you capture the context or just replying to few sentences out of the context?
