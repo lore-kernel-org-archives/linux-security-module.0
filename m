@@ -2,78 +2,207 @@ Return-Path: <SRS0=zPn8=AF=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA45FC433DF
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Jun 2020 14:44:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9066EC433E0
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Jun 2020 15:41:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A18D220578
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Jun 2020 14:44:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 657D820706
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Jun 2020 15:41:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IOKw7hTc"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="mCr/+nVW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391087AbgFXOoN (ORCPT
+        id S2404329AbgFXPlm (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 24 Jun 2020 10:44:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52698 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389836AbgFXOoM (ORCPT
+        Wed, 24 Jun 2020 11:41:42 -0400
+Received: from sonic310-30.consmr.mail.ne1.yahoo.com ([66.163.186.211]:36681
+        "EHLO sonic310-30.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2404176AbgFXPlm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 24 Jun 2020 10:44:12 -0400
-Received: from casper.infradead.org (unknown [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2292C061573;
-        Wed, 24 Jun 2020 07:44:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=MmxB8m2YTQX4GpqX+DS37OeRO131e4ndrA9Pl7MwAgc=; b=IOKw7hTcqP1QeelKxku2fGErUp
-        y+gPHThYulPLcw9ZipHA3WEiY0WwtrldwMIjz3I7xFlS4UrXh0IrgE+Nr+g3IVn/C5NubV4TtA66n
-        mLCdiZe84XJ5gE3144uUmasV1evosCnueCmLRk8e5igFHS/jiN+zd4BOILHYYRSu5tnwTTHYczGNM
-        1jNp5/TmBH3r+Cd233b/d63zVr4Nez7dPM6LjZYPehQuohr79GeKnvEyrBvDcVSHQMeCupwKnSb4b
-        k2SF0UgTWsWjSf1WxnC6wYcLs8KKkTGGpdaa+3jajs+y6awdDlv2/jH3uD+C53erVvC46axMeuEel
-        iaiP6SWQ==;
-Received: from hch by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jo6cJ-0001Xw-5j; Wed, 24 Jun 2020 14:43:11 +0000
-Date:   Wed, 24 Jun 2020 15:43:11 +0100
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Christian Borntraeger <borntraeger@de.ibm.com>
-Cc:     mcgrof@kernel.org, ast@kernel.org, axboe@kernel.dk,
-        bfields@fieldses.org, bridge@lists.linux-foundation.org,
-        chainsaw@gentoo.org, christian.brauner@ubuntu.com,
-        chuck.lever@oracle.com, davem@davemloft.net, dhowells@redhat.com,
-        gregkh@linuxfoundation.org, jarkko.sakkinen@linux.intel.com,
-        jmorris@namei.org, josh@joshtriplett.org, keescook@chromium.org,
-        keyrings@vger.kernel.org, kuba@kernel.org,
-        lars.ellenberg@linbit.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-security-module@vger.kernel.org, nikolay@cumulusnetworks.com,
-        philipp.reisner@linbit.com, ravenexp@gmail.com,
-        roopa@cumulusnetworks.com, serge@hallyn.com, slyfox@gentoo.org,
-        viro@zeniv.linux.org.uk, yangtiezhu@loongson.cn,
-        netdev@vger.kernel.org, markward@linux.ibm.com,
-        linux-s390 <linux-s390@vger.kernel.org>
-Subject: Re: linux-next: umh: fix processed error when UMH_WAIT_PROC is used
- seems to break linux bridge on s390x (bisected)
-Message-ID: <20200624144311.GA5839@infradead.org>
-References: <20200610154923.27510-5-mcgrof@kernel.org>
- <20200623141157.5409-1-borntraeger@de.ibm.com>
- <b7d658b9-606a-feb1-61f9-b58e3420d711@de.ibm.com>
- <3118dc0d-a3af-9337-c897-2380062a8644@de.ibm.com>
+        Wed, 24 Jun 2020 11:41:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1593013300; bh=Dhys375vlyZYm8Ra4CA3t0cqtfMxqok7JpN+dbu2zhQ=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=mCr/+nVWuFV8upxA/hRon6D8FlUc1EILZG+cbv3qkSg5rTjXgg6WkirhUGxAwv3jKXa2a2yYeokjPfcMcbYpLfvvCZX31237cYQnt8wfGQoFs2bM5K1aVmrdst/k78I32y90UWkpJYFVvMbsAGXA7OLqWG6vz8jJZJOX76Ap8/u4JUSluEboSuMbGosHKWXz+swXTac5Q6pUEkkT6nGnDXAAjyhNfSWmISANFDP6MuLB3GZpSvViymlm+bBfc1WScsCE6l77rqqLDBfyqZVyec1glqEchYSrdmS5yp5Tgl2Z5JfKNUpHI5XvYbBWsLJpibN3rqCk6o16947HJVOK6g==
+X-YMail-OSG: 3.43OegVM1nvctIiVOWVEtfptGPuuw8gMmJge0iKY41Zh_yO8EMoafQ7KyORN_Z
+ rOx0rU2XIgJti6OZ.qTUAT8.TKvltAYwleaVQ2aPSIhnMWDY44OB7f3fR1eupqLFXNJHHaNCtNBD
+ c7qiZ6w8y0YFIpdGMvKj7sKJn6mFRD9_9rMlngvGozrZjb7xVnuKg0f._3qxio1.V0.mK7tvp71e
+ kB2s.6ALQyu1XlHZDTRjX5_azmFf8VnnEKuwnkOMmfSkwQOqLdYdrHAkqDPvI1aqbrHSxaaoVCgq
+ iICphgi9CyrLk34lT6lvgjz4q7dzxzJzr4igMutKbrr6EgMOR8PQDKGrdjRll0eXH9Z5L.aGwK7R
+ exqHPV478mg8BusqNmVJl8QmrC_qXXux3GNTEsFFFkVQCxoKEB9b2TWmPWAfTqXo7cVt6r0Mq85U
+ Ue6KJiwBw9Z6tUdSQIADUS8wlbCdfLXAjI1qMnmnnpvIcxA7qqvhHPIAQPx.oVXJ9qdrpcI3Rrnv
+ ERKtRdgLdP589ML3lvCiwjpXp6gaWIgPSAiG9WhxSamj9irPMU7zTErp_vq5yQ44LIuuITB06sql
+ Dmgt4HlyyRRilySv5ki0zHTVJ9mQwnUFL4rMZQW9_9baWGspqR7yQreBKF5DYvhcSzZeJObRP_EI
+ MFnINsG1avcU7jgEDN6czR64jbwuRgCdZ_7zYN869yBnyKTyYGUiJK4.onxNN3jBJCzFQN6Fw2jX
+ x3xWSc8LBBiAB2VK_llYlFyip4rvr0O2ihH_qCzsiUSj8trupAmjbl1ZDC00TQz8ee2V_yOFuMFX
+ GwyRC5thDQ91hEW3z1HSZaCqEbPHko3kQzvQsSwqaF6wXYI6zlUyZPZpc_0apTFjIByV9KkHCeiI
+ t.dRB0ZU4KPIJVjY9DXjjwUAJUlLSGlWjQtF3ZThb43z07iGR7HBH_o.mpaDNuaytUqHUHpemvFc
+ VTYGV2rDphZlQU7U5k5Ue.12QXsVFYLFx7jHCRFgQMJyl2IAdU8h5f5mlfwqyxIglUQvXk50PMs9
+ xmiEfQ.6rKFKYsbRSqW1tyQJFn7sEFbNeSAlGcdtP_qj.E0YNH3BWRlcMxlpS51Elc2gphIatkaH
+ CXEMqt8OA6tKmQIe3j_s3gY0K8y7EAXH2DhthI4iheW2bHsbK_Pg3OrH6H2Lf7MLfmGj1MQk78V2
+ DNxFuobeDADCcpSVzmGMt6mdsRzeQDIN27lab.APxzofNErXShk4mOSH.T3S9XYZDr6t.3IiCajA
+ 0tewg496QDESFcLnT1ZSV9jnsAvw9gGqtP9MmIQTPsX0cXo20FAqNuZU4rvJysYsNfP6tsGvffRr
+ dQc6AqnHTSeLfVSFQgGpddAxVhR.6jWRTlWxOdcGlOOZxsyHpBEVEWLgZ96IfoGpXizA4ucfHGyz
+ 0s8r4VPfMnrbt.Tlhyorp9dFY.fUOuSM-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.ne1.yahoo.com with HTTP; Wed, 24 Jun 2020 15:41:40 +0000
+Received: by smtp421.mail.ne1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 99d8225b956cba644f47d6b97428fa53;
+          Wed, 24 Jun 2020 15:41:39 +0000 (UTC)
+Subject: Re: [RFC][PATCH] net/bpfilter: Remove this broken and apparently
+ unmantained
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <CAADnVQLuGYX=LamARhrZcze1ej4ELj-y99fLzOCgz60XLPw_cQ@mail.gmail.com>
+ <87ftaxd7ky.fsf@x220.int.ebiederm.org>
+ <20200616015552.isi6j5x732okiky4@ast-mbp.dhcp.thefacebook.com>
+ <87h7v1pskt.fsf@x220.int.ebiederm.org>
+ <20200623183520.5e7fmlt3omwa2lof@ast-mbp.dhcp.thefacebook.com>
+ <87h7v1mx4z.fsf@x220.int.ebiederm.org>
+ <20200623194023.lzl34qt2wndhcehk@ast-mbp.dhcp.thefacebook.com>
+ <b4a805e7-e009-dfdf-d011-be636ce5c4f5@i-love.sakura.ne.jp>
+ <20200624040054.x5xzkuhiw67cywzl@ast-mbp.dhcp.thefacebook.com>
+ <5254444e-465e-6dee-287b-bef58526b724@i-love.sakura.ne.jp>
+ <20200624063940.ctzhf4nnh3cjyxqi@ast-mbp.dhcp.thefacebook.com>
+ <321b85b4-95f0-2f9b-756a-8405adc97230@i-love.sakura.ne.jp>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Autocrypt: addr=casey@schaufler-ca.com; keydata=
+ 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
+ abzjfg==
+Message-ID: <748ef005-7f64-ab9b-c767-c617ec995df4@schaufler-ca.com>
+Date:   Wed, 24 Jun 2020 08:41:37 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3118dc0d-a3af-9337-c897-2380062a8644@de.ibm.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <321b85b4-95f0-2f9b-756a-8405adc97230@i-love.sakura.ne.jp>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+X-Mailer: WebService/1.1.16138 hermes_yahoo Apache-HttpAsyncClient/4.1.4 (Java/11.0.7)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jun 24, 2020 at 01:11:54PM +0200, Christian Borntraeger wrote:
-> Does anyone have an idea why "umh: fix processed error when UMH_WAIT_PROC is used" breaks the
-> linux-bridge on s390?
+On 6/24/2020 12:05 AM, Tetsuo Handa wrote:
+> Forwarding to LSM-ML again. Any comments?
 
-Are we even sure this is s390 specific and doesn't happen on other
-architectures with the same bridge setup?
+Hey, BPF folks - you *really* need to do better about keeping the LSM
+community in the loop when you're discussing LSM issues.=20
+
+>
+> On 2020/06/24 15:39, Alexei Starovoitov wrote:
+>> On Wed, Jun 24, 2020 at 01:58:33PM +0900, Tetsuo Handa wrote:
+>>> On 2020/06/24 13:00, Alexei Starovoitov wrote:
+>>>>> However, regarding usermode_blob, although the byte array (which co=
+ntains code / data)
+>>>>> might be initially loaded from the kernel space (which is protected=
+), that byte array
+>>>>> is no longer protected (e.g. SIGKILL, strace()) when executed becau=
+se they are placed
+>>>>> in the user address space. Thus, LSM modules (including pathname ba=
+sed security) want
+>>>>> to control how that byte array can behave.
+>>>> It's privileged memory regardless. root can poke into kernel or any =
+process memory.
+>>> LSM is there to restrict processes running as "root".
+>> hmm. do you really mean that it's possible for an LSM to restrict CAP_=
+SYS_ADMIN effectively?
+
+I think that SELinux works hard to do just that. SELinux implements it's =
+own
+privilege model that is tangential to the capabilities model.
+
+More directly, it is simple to create a security module to provide finer =
+privilege
+granularity than capabilities. I have one lurking in a source tree, and I=
+ would
+be surprised if it's the only one waiting for the next round of LSM stack=
+ing.
+
+>> LSM can certainly provide extra level of foolproof-ness against accide=
+ntal
+>> mistakes, but it's not a security boundary.
+
+Gasp! Them's fight'n words. How do you justify such an outrageous claim?
+
+>>> Your "root can poke into kernel or any process memory." response is o=
+ut of step with the times.
+>>>
+>>> Initial byte array used for usermode blob might be protected because =
+of "part of .rodata or
+>>> .init.rodata of kernel module", but that byte array after started in =
+userspace is no longer
+>>> protected.=20
+>>>
+>>> I don't trust such byte array as "part of kernel module", and I'm ask=
+ing you how
+>>> such byte array does not interfere (or be interfered by) the rest of =
+the system.
+>> Could you please explain the attack vector that you see in such scenar=
+io?
+>> How elf binaries embedded in the kernel modules different from pid 1?
+>> If anything can peek into their memory the system is compromised.
+>> Say, there are no user blobs in kernel modules. How pid 1 memory is di=
+fferent
+>> from all the JITed images? How is it different for all memory regions =
+shared
+>> between kernel and user processes?
+>> I see an opportunity for an LSM to provide a protection against non-se=
+curity
+>> bugs when system is running trusted apps, but not when arbitrary code =
+can
+>> execute under root.
+>>
+
