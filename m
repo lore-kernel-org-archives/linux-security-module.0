@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C3C0C433DF
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Jun 2020 16:15:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A41CC433E1
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Jun 2020 16:15:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EF24320675
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Jun 2020 16:15:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69D5E20768
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Jun 2020 16:15:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WFlQK8lR"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="X2WXdDNr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404969AbgFXQPO (ORCPT
+        id S2404987AbgFXQP0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 24 Jun 2020 12:15:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38668 "EHLO
+        Wed, 24 Jun 2020 12:15:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38660 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404800AbgFXQOG (ORCPT
+        with ESMTP id S2404786AbgFXQOE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 24 Jun 2020 12:14:06 -0400
+        Wed, 24 Jun 2020 12:14:04 -0400
 Received: from casper.infradead.org (unknown [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9867C061573;
-        Wed, 24 Jun 2020 09:14:05 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3B69C061795;
+        Wed, 24 Jun 2020 09:14:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=Hlt6C7VzRXUPvzt04ubxLGUKBtxCCqCnw0SDgIXm7hw=; b=WFlQK8lROlq2wopy0YNuA4PurY
-        T0La8mdHkssAiMiFwrvbcko8YkFtDBrabnQEmr9F5Yk7RFKipkL7CrRypqv3tav+L1chAZbGheAxz
-        4fxFtgdkmemzU2qnSv3htDLZn56HxForOZfiOkDIrUCuEPwf2+tyREjf20+GZ5x3P+JLpGrterVlQ
-        CG/NQ/tCGzRDoF7SxTM2pcd9onk5riS1Dy7ma9WITzOt6as9RxPS+LWJk+ORBsn8qbKxN3kCu+cd3
-        sSfwwR5mTlp8wrKC8j7Drm49Isnr85P1IGLuIYqt5/Mp0HsWXk9D9F7bsaKJg7zvAhCqXKaiTncc8
-        yUoxs6IA==;
+        bh=Ruv3QkeH3yf1ddYt00bBWdUvSXa4YUB7wJ/k+J42Rps=; b=X2WXdDNrl5NtIMaD8okmbVqsBE
+        Fv6aiG5zmAjpVm/DMFeGS7tay3Cf5f9FVcSnt9us7oSjadjcmXAEyFmM+p0v3IzXQKNqPp+NwJzmz
+        CjQ8vjnLW3kyWxlPGIijQKtLX4dS/AWJ/ZfG+Qt0oc0osEyuSKPcySr8GK8SaxWB39+n5Dzb1X6RA
+        y35R1bHjb3oU4ymyp2ENPfJAtZqrc80i5SQ02RzMhIJfTzA2/MkuBAnK3/WX+F/G7Skaz9nSCHvcl
+        /+F7Ham9HemsZjqtXl43dJ8d5tbsciSq62GLSNVI2AGE+seDJbGSvkhmT0+CMUM7Y10UElf8czU20
+        xXuiiUpg==;
 Received: from [2001:4bb8:180:a3:5c7c:8955:539d:955b] (helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jo81w-0005yG-JE; Wed, 24 Jun 2020 16:13:44 +0000
+        id 1jo81v-0005xy-F5; Wed, 24 Jun 2020 16:13:43 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Al Viro <viro@zeniv.linux.org.uk>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
@@ -47,9 +47,9 @@ Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         netfilter-devel@vger.kernel.org
-Subject: [PATCH 06/14] fs: implement kernel_write using __kernel_write
-Date:   Wed, 24 Jun 2020 18:13:27 +0200
-Message-Id: <20200624161335.1810359-7-hch@lst.de>
+Subject: [PATCH 05/14] fs: check FMODE_WRITE in __kernel_write
+Date:   Wed, 24 Jun 2020 18:13:26 +0200
+Message-Id: <20200624161335.1810359-6-hch@lst.de>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200624161335.1810359-1-hch@lst.de>
 References: <20200624161335.1810359-1-hch@lst.de>
@@ -60,52 +60,28 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Consolidate the two in-kernel write helpers to make upcoming changes
-easier.  The only difference are the missing call to rw_verify_area
-in kernel_write, and an access_ok check that doesn't make sense for
-kernel buffers to start with.
+Add a WARN_ON_ONCE if the file isn't actually open for write.  This
+matches the check done in vfs_write, but actually warn warns as a
+kernel user calling write on a file not opened for writing is a pretty
+obvious programming error.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/read_write.c | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
+ fs/read_write.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/fs/read_write.c b/fs/read_write.c
-index 8f9fc05990ae8b..5110cd1e6e2771 100644
+index 2c601d853ff3d8..8f9fc05990ae8b 100644
 --- a/fs/read_write.c
 +++ b/fs/read_write.c
-@@ -499,6 +499,7 @@ static ssize_t __vfs_write(struct file *file, const char __user *p,
+@@ -505,6 +505,8 @@ ssize_t __kernel_write(struct file *file, const void *buf, size_t count, loff_t
+ 	const char __user *p;
+ 	ssize_t ret;
+ 
++	if (WARN_ON_ONCE(!(file->f_mode & FMODE_WRITE)))
++		return -EBADF;
+ 	if (!(file->f_mode & FMODE_CAN_WRITE))
  		return -EINVAL;
- }
- 
-+/* caller is responsible for file_start_write/file_end_write */
- ssize_t __kernel_write(struct file *file, const void *buf, size_t count, loff_t *pos)
- {
- 	mm_segment_t old_fs;
-@@ -528,16 +529,16 @@ ssize_t __kernel_write(struct file *file, const void *buf, size_t count, loff_t
- ssize_t kernel_write(struct file *file, const void *buf, size_t count,
- 			    loff_t *pos)
- {
--	mm_segment_t old_fs;
--	ssize_t res;
-+	ssize_t ret;
- 
--	old_fs = get_fs();
--	set_fs(KERNEL_DS);
--	/* The cast to a user pointer is valid due to the set_fs() */
--	res = vfs_write(file, (__force const char __user *)buf, count, pos);
--	set_fs(old_fs);
-+	ret = rw_verify_area(WRITE, file, pos, count);
-+	if (ret)
-+		return ret;
- 
--	return res;
-+	file_start_write(file);
-+	ret =  __kernel_write(file, buf, count, pos);
-+	file_end_write(file);
-+	return ret;
- }
- EXPORT_SYMBOL(kernel_write);
  
 -- 
 2.26.2
