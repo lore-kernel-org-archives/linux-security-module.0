@@ -2,113 +2,86 @@ Return-Path: <SRS0=zPn8=AF=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40162C433E0
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Jun 2020 16:13:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57D26C433E1
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Jun 2020 16:14:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1C99C20738
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Jun 2020 16:13:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1593015206;
-	bh=EzopEqnJeMgeCHm0zQysgkQTMd5n8/Hwr0qUh2+OHbY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=QRkrThAChccD6CBhUzV9qHCqHvaVSv9ZgRGg5RJGj3WSjEf15Q1iv0jUoKNjh/J6j
-	 Q185JNG7BR6lWJPTgX4xUTi0MEdzEkkcB2Y9DwcuHGlCIIxlo2ao9qmLloywMox5xK
-	 lCu0L/X0MZbPPYmdZVY3tS3NVo8hEe6+pkXoSfuk=
+	by mail.kernel.org (Postfix) with ESMTP id 2E8C320738
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Jun 2020 16:14:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="F6M/qB6g"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404746AbgFXQNZ (ORCPT
+        id S2404789AbgFXQOF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 24 Jun 2020 12:13:25 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:36854 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404235AbgFXQNW (ORCPT
+        Wed, 24 Jun 2020 12:14:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38648 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404678AbgFXQOC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 24 Jun 2020 12:13:22 -0400
-Received: by mail-pg1-f196.google.com with SMTP id p3so1644502pgh.3;
-        Wed, 24 Jun 2020 09:13:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=K5HA5pFN0d7RWrFcMOeZ4eZsZOCwgkaKOKIyoGUunJA=;
-        b=bdoNe4HE152P67bqB4iz1TVFpSLKd5OLRNA8ZPD4Nx764LgDhIOQkoCOwpgshVPUlC
-         xmAg1IjdbKAPc58tpiZ8kPqndDxtcQp+nCYHryf0E8MEDiKgH67xMVcz0VOB2dfV7Sm6
-         SSZylCQCalt5a0mIATsr/DE7qglta/VKXnlUTkoqBpLAaMN00mnqQvEluSEBNwbz+CJ3
-         1fOqyTjFmJ7xWRUx0ARAvF9C/YqItCR2X3K96qaqvoIBmg7cw8LJauxlCcvMMIC+vcXl
-         GueZuSNQT2PqCZ+Vnlfd+9GaY6WO0xQeVlIrUK+jiz34ZIOzPCztqXShzjbigNDuaHva
-         EhKg==
-X-Gm-Message-State: AOAM531BWTz6jecWjjEW9ugvC/+O+rhqZas0ZaHsC7I6Ld8MngXestOd
-        7YAHw2WExEfmE7ca6pnvb0M=
-X-Google-Smtp-Source: ABdhPJxE1ygpkPiPc7c+3/yQpwGQm5PBcnPHrRJMZIslGuNTvYjGLTfGT0VAXd0ojktX0RNgdf5uBw==
-X-Received: by 2002:a63:7f5a:: with SMTP id p26mr15162576pgn.117.1593015201848;
-        Wed, 24 Jun 2020 09:13:21 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id 23sm20626008pfy.199.2020.06.24.09.13.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jun 2020 09:13:20 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id B918940430; Wed, 24 Jun 2020 16:13:19 +0000 (UTC)
-Date:   Wed, 24 Jun 2020 16:13:19 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Christian Borntraeger <borntraeger@de.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Martin Doucha <mdoucha@suse.cz>, hch@infradead.org
-Cc:     ast@kernel.org, axboe@kernel.dk, bfields@fieldses.org,
-        bridge@lists.linux-foundation.org, chainsaw@gentoo.org,
-        christian.brauner@ubuntu.com, chuck.lever@oracle.com,
-        davem@davemloft.net, dhowells@redhat.com,
-        gregkh@linuxfoundation.org, jarkko.sakkinen@linux.intel.com,
-        jmorris@namei.org, josh@joshtriplett.org, keescook@chromium.org,
-        keyrings@vger.kernel.org, kuba@kernel.org,
-        lars.ellenberg@linbit.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-security-module@vger.kernel.org, nikolay@cumulusnetworks.com,
-        philipp.reisner@linbit.com, ravenexp@gmail.com,
-        roopa@cumulusnetworks.com, serge@hallyn.com, slyfox@gentoo.org,
-        viro@zeniv.linux.org.uk, yangtiezhu@loongson.cn,
-        netdev@vger.kernel.org, markward@linux.ibm.com,
-        linux-s390 <linux-s390@vger.kernel.org>
-Subject: Re: linux-next: umh: fix processed error when UMH_WAIT_PROC is used
- seems to break linux bridge on s390x (bisected)
-Message-ID: <20200624161319.GM13911@42.do-not-panic.com>
-References: <20200610154923.27510-5-mcgrof@kernel.org>
- <20200623141157.5409-1-borntraeger@de.ibm.com>
- <b7d658b9-606a-feb1-61f9-b58e3420d711@de.ibm.com>
- <3118dc0d-a3af-9337-c897-2380062a8644@de.ibm.com>
- <20200624120546.GC4332@42.do-not-panic.com>
- <20200624131725.GL13911@42.do-not-panic.com>
+        Wed, 24 Jun 2020 12:14:02 -0400
+Received: from casper.infradead.org (unknown [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2C08C0613ED;
+        Wed, 24 Jun 2020 09:14:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+        Content-Type:Content-ID:Content-Description;
+        bh=PIZcUHBXRzg4FA/EeFx1uXo9md1v0NkQLsX0zI2zg6M=; b=F6M/qB6g9/5tPao1/ANmNaFFIu
+        7eBKcM5NjloKBPTgvN+++s4++INLJU5YYEuo1b9XkD7NAu7Jt+K9JZx5EmiVKj8o5h3MictoI/P3z
+        8GQWVWmVhwk9SfZaVTg0Ly95IkfJHD1swQ1WuZq7DO5oYUlk7DbB9TKJGRyZ87zXAwnpeBVa3HPZq
+        t7UoReJHe1r3CGQiu1f8wvuy/eZTYu0bkjKPicdqz36qxLSUAt9whbJpBxnGe+fIt7m7HWxVTdtGh
+        m5NnfbVMRzS0EO96IoudEVBKkpb0+F5hRbBrYq52I1KgSOimKlzW6qGJ/gaCNnoAxJsMGEgoL+8yT
+        BQ5oaoog==;
+Received: from [2001:4bb8:180:a3:5c7c:8955:539d:955b] (helo=localhost)
+        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jo81t-0005xm-5R; Wed, 24 Jun 2020 16:13:41 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Ian Kent <raven@themaw.net>,
+        David Howells <dhowells@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        netfilter-devel@vger.kernel.org
+Subject: [PATCH 03/14] bpfilter: switch to kernel_write
+Date:   Wed, 24 Jun 2020 18:13:24 +0200
+Message-Id: <20200624161335.1810359-4-hch@lst.de>
+X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20200624161335.1810359-1-hch@lst.de>
+References: <20200624161335.1810359-1-hch@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200624131725.GL13911@42.do-not-panic.com>
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jun 24, 2020 at 01:17:25PM +0000, Luis Chamberlain wrote:
-> I found however an LTP bug indicating the need to test for
-> s390 wait macros [0] in light of a recent bug in glibc for s390.
-> I am asking for references to that issue given I cannot find
-> any mention of this on glibc yet.
-> 
-> [0] https://github.com/linux-test-project/ltp/issues/605
+While pipes don't really need sb_writers projection, __kernel_write is an
+interface better kept private, and the additional rw_verify_area does not
+hurt here.
 
-I looked into this and the bug associated was:
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ net/bpfilter/bpfilter_kern.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-https://sourceware.org/bugzilla/show_bug.cgi?id=19613
+diff --git a/net/bpfilter/bpfilter_kern.c b/net/bpfilter/bpfilter_kern.c
+index c0f0990f30b604..1905e01c3aa9a7 100644
+--- a/net/bpfilter/bpfilter_kern.c
++++ b/net/bpfilter/bpfilter_kern.c
+@@ -50,7 +50,7 @@ static int __bpfilter_process_sockopt(struct sock *sk, int optname,
+ 	req.len = optlen;
+ 	if (!bpfilter_ops.info.pid)
+ 		goto out;
+-	n = __kernel_write(bpfilter_ops.info.pipe_to_umh, &req, sizeof(req),
++	n = kernel_write(bpfilter_ops.info.pipe_to_umh, &req, sizeof(req),
+ 			   &pos);
+ 	if (n != sizeof(req)) {
+ 		pr_err("write fail %zd\n", n);
+-- 
+2.26.2
 
-The commit in question was upstream glibc commit
-b49ab5f4503f36dcbf43f821f817da66b2931fe6 ("Remove union wait [BZ
-#19613]"), and while I don't see anything s390 mentioned there,
-the issue there was due to the caller of the wait using a long
-instead of an int for the return value.
-
-In other words, that'd not the droid we are looking for.
-
-So the issue is something else.
-
-  Luis
