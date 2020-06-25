@@ -2,74 +2,98 @@ Return-Path: <SRS0=LaDg=AG=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B5D4C433E0
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Jun 2020 19:34:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9326C433E0
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Jun 2020 19:41:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 285AD20789
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Jun 2020 19:34:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9FEA420781
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Jun 2020 19:41:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406635AbgFYTej (ORCPT
+        id S2406116AbgFYTl4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 25 Jun 2020 15:34:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37794 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406068AbgFYTej (ORCPT
+        Thu, 25 Jun 2020 15:41:56 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40002 "EHLO
+        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2406069AbgFYTlz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 25 Jun 2020 15:34:39 -0400
-Received: from shards.monkeyblade.net (shards.monkeyblade.net [IPv6:2620:137:e000::1:9])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64532C08C5C1;
-        Thu, 25 Jun 2020 12:34:39 -0700 (PDT)
-Received: from localhost (unknown [IPv6:2601:601:9f00:477::3d5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id D468F139C482D;
-        Thu, 25 Jun 2020 12:34:37 -0700 (PDT)
-Date:   Thu, 25 Jun 2020 12:34:37 -0700 (PDT)
-Message-Id: <20200625.123437.2219826613137938086.davem@davemloft.net>
-To:     greg@kroah.com
-Cc:     penguin-kernel@i-love.sakura.ne.jp, alexei.starovoitov@gmail.com,
-        ebiederm@xmission.com, torvalds@linux-foundation.org,
-        keescook@chromium.org, akpm@linux-foundation.org, ast@kernel.org,
-        viro@zeniv.linux.org.uk, bpf@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, daniel@iogearbox.net,
-        kuba@kernel.org, yamada.masahiro@socionext.com, GLin@suse.com,
-        bmeneg@redhat.com, linux-security-module@vger.kernel.org,
-        casey@schaufler-ca.com
-Subject: Re: [RFC][PATCH] net/bpfilter: Remove this broken and apparently
- unmantained
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20200625120725.GA3493334@kroah.com>
-References: <20200625095725.GA3303921@kroah.com>
-        <778297d2-512a-8361-cf05-42d9379e6977@i-love.sakura.ne.jp>
-        <20200625120725.GA3493334@kroah.com>
-X-Mailer: Mew version 6.8 on Emacs 26.3
+        Thu, 25 Jun 2020 15:41:55 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 05PJUuEr101700;
+        Thu, 25 Jun 2020 15:41:51 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 31vvkxmgcx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 25 Jun 2020 15:41:51 -0400
+Received: from m0098421.ppops.net (m0098421.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 05PJUwjO101945;
+        Thu, 25 Jun 2020 15:41:50 -0400
+Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 31vvkxmgcd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 25 Jun 2020 15:41:50 -0400
+Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
+        by ppma03ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 05PJel7w002109;
+        Thu, 25 Jun 2020 19:41:48 GMT
+Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
+        by ppma03ams.nl.ibm.com with ESMTP id 31uus526bp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 25 Jun 2020 19:41:48 +0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 05PJeR4Z52822498
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 25 Jun 2020 19:40:27 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7837A11C04C;
+        Thu, 25 Jun 2020 19:41:46 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5BB5711C054;
+        Thu, 25 Jun 2020 19:41:44 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.142.225])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 25 Jun 2020 19:41:44 +0000 (GMT)
+Message-ID: <1593114103.27152.346.camel@linux.ibm.com>
+Subject: Re: [PATCH 01/12] ima: Have the LSM free its audit rule
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Tyler Hicks <tyhicks@linux.microsoft.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Prakhar Srivastava <prsriva02@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Janne Karhunen <janne.karhunen@gmail.com>
+Date:   Thu, 25 Jun 2020 15:41:43 -0400
+In-Reply-To: <20200623003236.830149-2-tyhicks@linux.microsoft.com>
+References: <20200623003236.830149-1-tyhicks@linux.microsoft.com>
+         <20200623003236.830149-2-tyhicks@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 25 Jun 2020 12:34:38 -0700 (PDT)
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.687
+ definitions=2020-06-25_15:2020-06-25,2020-06-25 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ clxscore=1015 bulkscore=0 malwarescore=0 adultscore=0 impostorscore=0
+ priorityscore=1501 mlxscore=0 phishscore=0 cotscore=-2147483648
+ spamscore=0 mlxlogscore=999 suspectscore=2 classifier=spam adjust=0
+ reason=mlx scancount=1 engine=8.12.0-2004280000
+ definitions=main-2006250113
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Greg KH <greg@kroah.com>
-Date: Thu, 25 Jun 2020 14:07:25 +0200
+On Mon, 2020-06-22 at 19:32 -0500, Tyler Hicks wrote:
+> Ask the LSM to free its audit rule rather than directly calling kfree().
+> Both AppArmor and SELinux do additional work in their audit_rule_free()
+> hooks. Fix memory leaks by allowing the LSMs to perform necessary work.
+> 
+> Fixes: b16942455193 ("ima: use the lsm policy update notifier")
+> Signed-off-by: Tyler Hicks <tyhicks@linux.microsoft.com>
+> Cc: Janne Karhunen <janne.karhunen@gmail.com>
 
-> I really don't understand the objection here, why is this any different
-> than any other random kernel driver for what it can do?
-
-It's kernel code executing in userspace.  If you don't trust the
-signed code you don't trust the signed code.
-
-Nothing is magic about a piece of code executing in userspace.
-
-I seriously think this dicussion is trying to create an issue
-that simply doesn't exist in reality.
-
-If some kernel module executed "/bin/sh" it's the same problem.
-There is no way to argue around this, so please stop doing so
-it's silly.
+Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
