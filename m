@@ -2,168 +2,202 @@ Return-Path: <SRS0=LaDg=AG=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B3AAC433E0
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Jun 2020 19:56:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B396C433E0
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Jun 2020 20:22:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 15E41206A5
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Jun 2020 19:56:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="HJZuTasc"
+	by mail.kernel.org (Postfix) with ESMTP id 08AE720709
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Jun 2020 20:22:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406701AbgFYT4v (ORCPT
+        id S2405968AbgFYUWJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 25 Jun 2020 15:56:51 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:34258 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406569AbgFYT4v (ORCPT
+        Thu, 25 Jun 2020 16:22:09 -0400
+Received: from mga07.intel.com ([134.134.136.100]:32248 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2405161AbgFYUWJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 25 Jun 2020 15:56:51 -0400
-Received: from sequoia (162-237-133-238.lightspeed.rcsntx.sbcglobal.net [162.237.133.238])
-        by linux.microsoft.com (Postfix) with ESMTPSA id C112520B7186;
-        Thu, 25 Jun 2020 12:56:49 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C112520B7186
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1593115010;
-        bh=sekTES5IzADnZwEMcNqxwil4AanF3Q2g56gRNKJ3GLw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=HJZuTascxtrKzgUyovajscFvQQPGu4BdWCtyQ5AqM/SVwqn2GvbPaVAj+fq/7NakZ
-         leRtf0ear/nVwUzL4sRJCdQBFDQpnLt6M+beXTBnw5h3PYagDZOnLq9ipfRfIJWn74
-         2eHaEK8jIuvQfhO/TXrDLRaWusqHl3LES4tFHDLQ=
-Date:   Thu, 25 Jun 2020 14:56:47 -0500
-From:   Tyler Hicks <tyhicks@linux.microsoft.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Prakhar Srivastava <prsriva02@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH 02/12] ima: Create a function to free a rule entry
-Message-ID: <20200625195647.GB4694@sequoia>
-References: <20200623003236.830149-1-tyhicks@linux.microsoft.com>
- <20200623003236.830149-3-tyhicks@linux.microsoft.com>
- <1593113613.27152.345.camel@linux.ibm.com>
+        Thu, 25 Jun 2020 16:22:09 -0400
+IronPort-SDR: UrKirvB5NzeMCIqqq6yJo5bPJQtZdyi8MSNMHO3wbvLUjOR8X0tAWeiqdFqldpstNj/E9dBJt8
+ AScOsr3gWP/w==
+X-IronPort-AV: E=McAfee;i="6000,8403,9663"; a="210159888"
+X-IronPort-AV: E=Sophos;i="5.75,280,1589266800"; 
+   d="scan'208";a="210159888"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2020 13:22:08 -0700
+IronPort-SDR: R45DjzFoWLvaRnggtE28YTOQaiLYLE/n5nNGen1bQUCnKlPC/2LM9YOVC0Gvt8E90cYh3/7Vkh
+ BU88SOje2Adw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.75,280,1589266800"; 
+   d="scan'208";a="276145202"
+Received: from drews-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.49.247])
+  by orsmga003.jf.intel.com with ESMTP; 25 Jun 2020 13:21:54 -0700
+Date:   Thu, 25 Jun 2020 23:21:48 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Jethro Beekman <jethro@fortanix.com>,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Chunyang Hui <sanqian.hcy@antfin.com>,
+        Jordan Hand <jorhand@linux.microsoft.com>,
+        Nathaniel McCallum <npmccallum@redhat.com>,
+        Seth Moore <sethmo@google.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, cedric.xing@intel.com, chenalexchen@google.com,
+        conradparker@google.com, cyhanish@google.com,
+        dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, luto@kernel.org,
+        nhorman@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
+        tglx@linutronix.de, yaozhangx@google.com
+Subject: Re: [PATCH v33 11/21] x86/sgx: Linux Enclave Driver
+Message-ID: <20200625202148.GB15394@linux.intel.com>
+References: <20200617220844.57423-1-jarkko.sakkinen@linux.intel.com>
+ <20200617220844.57423-12-jarkko.sakkinen@linux.intel.com>
+ <20200625172319.GJ20319@zn.tnic>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1593113613.27152.345.camel@linux.ibm.com>
+In-Reply-To: <20200625172319.GJ20319@zn.tnic>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2020-06-25 15:33:33, Mimi Zohar wrote:
-> On Mon, 2020-06-22 at 19:32 -0500, Tyler Hicks wrote:
-> > There are several possible pieces of allocated memory in a rule entry.
-> > Create a function that can free all allocated memory for a given rule
-> > entry.
+On Thu, Jun 25, 2020 at 07:23:19PM +0200, Borislav Petkov wrote:
+> On Thu, Jun 18, 2020 at 01:08:33AM +0300, Jarkko Sakkinen wrote:
+> > Intel Software Guard eXtensions (SGX) is a set of CPU instructions that
+> > can be used by applications to set aside private regions of code and
+> > data. The code outside the SGX hosted software entity is disallowed to
+> > access the memory inside the enclave enforced by the CPU. We call these
+> > entities as enclaves.
 > > 
-> > This patch introduces no functional changes but sets the groundwork for
-> > some memory leak fixes.
+> > This commit implements a driver that provides an ioctl API to construct
+> > and run enclaves. Enclaves are constructed from pages residing in
+> > reserved physical memory areas. The contents of these pages can only be
+> > accessed when they are mapped as part of an enclave, by a hardware
+> > thread running inside the enclave.
 > > 
-> > Signed-off-by: Tyler Hicks <tyhicks@linux.microsoft.com>
-> 
-> Having a function to release all memory associated with a policy rule
-> in general is a good idea.  However, in the case of the shallow copy,
-> we're not removing any IMA rules, just updating the LSM info.
-> 
-> There is an opportunity to transition from the builtin policy rules to
-> a custom IMA policy.  Afterwards IMA policy rules may only be
-> appended.
-> 
-> An IMA custom policy based on LSM info may be loaded prior to the LSM
-> policy.  These LSM based rules are inactive until the corresponding
-> LSM rule is loaded.  In some environments, LSM policies are loaded and
-> removed frequently.  The IMA rules themselves are not removed, just
-> the LSM info is updated to reflect the current LSM info.
-> 
+> > The starting state of an enclave consists of a fixed measured set of
+> > pages that are copied to the EPC during the construction process by
+> > using ENCLS leaf functions and Software Enclave Control Structure (SECS)
+> > that defines the enclave properties.
+> > 
+> > Enclave are constructed by using ENCLS leaf functions ECREATE, EADD and
+> > EINIT. ECREATE initializes SECS, EADD copies pages from system memory to
+> > the EPC and EINIT check a given signed measurement and moves the enclave
+> > into a state ready for execution.
+> > 
+> > An initialized enclave can only be accessed through special Thread Control
+> > Structure (TCS) pages by using ENCLU (ring-3 only) leaf EENTER.  This leaf
+> > function converts a thread into enclave mode and continues the execution in
+> > the offset defined by the TCS provided to EENTER. An enclave is exited
+> > through syscall, exception, interrupts or by explicitly calling another
+> > ENCLU leaf EEXIT.
+> > 
+> > The permissions, which enclave page is added will set the limit for maximum
+> > permissions that can be set for mmap() and mprotect(). This will
+> > effectively allow to build different security schemes between producers and
+> > consumers of enclaves. Later on we can increase granularity with LSM hooks
+> > for page addition (i.e. for producers) and mapping of the enclave (i.e. for
+> > consumers)
+> > 
+> > Cc: linux-security-module@vger.kernel.org
+> > Acked-by: Jethro Beekman <jethro@fortanix.com>
+> > Tested-by: Jethro Beekman <jethro@fortanix.com>
+> > Tested-by: Haitao Huang <haitao.huang@linux.intel.com>
+> > Tested-by: Chunyang Hui <sanqian.hcy@antfin.com>
+> > Tested-by: Jordan Hand <jorhand@linux.microsoft.com>
+> > Tested-by: Nathaniel McCallum <npmccallum@redhat.com>
+> > Tested-by: Seth Moore <sethmo@google.com>
+> > Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> > Co-developed-by: Suresh Siddha <suresh.b.siddha@intel.com>
+> > Signed-off-by: Suresh Siddha <suresh.b.siddha@intel.com>
+> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 > > ---
-> >  security/integrity/ima/ima_policy.c | 33 +++++++++++++++++++++++++++--
-> >  1 file changed, 31 insertions(+), 2 deletions(-)
+> >  .../userspace-api/ioctl/ioctl-number.rst      |   1 +
+> >  arch/x86/include/uapi/asm/sgx.h               |  66 ++
+> >  arch/x86/kernel/cpu/sgx/Makefile              |   3 +
+> >  arch/x86/kernel/cpu/sgx/driver.c              | 194 +++++
+> >  arch/x86/kernel/cpu/sgx/driver.h              |  30 +
+> >  arch/x86/kernel/cpu/sgx/encl.c                | 335 +++++++++
+> >  arch/x86/kernel/cpu/sgx/encl.h                |  87 +++
+> >  arch/x86/kernel/cpu/sgx/ioctl.c               | 706 ++++++++++++++++++
+> >  arch/x86/kernel/cpu/sgx/main.c                |  11 +
+> >  9 files changed, 1433 insertions(+)
+> >  create mode 100644 arch/x86/include/uapi/asm/sgx.h
+> >  create mode 100644 arch/x86/kernel/cpu/sgx/driver.c
+> >  create mode 100644 arch/x86/kernel/cpu/sgx/driver.h
+> >  create mode 100644 arch/x86/kernel/cpu/sgx/encl.c
+> >  create mode 100644 arch/x86/kernel/cpu/sgx/encl.h
+> >  create mode 100644 arch/x86/kernel/cpu/sgx/ioctl.c
 > > 
-> > diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-> > index 236a731492d1..1320333201c6 100644
-> > --- a/security/integrity/ima/ima_policy.c
-> > +++ b/security/integrity/ima/ima_policy.c
-> > @@ -261,6 +261,27 @@ static void ima_lsm_free_rule(struct ima_rule_entry *entry)
-> >  		security_filter_rule_free(entry->lsm[i].rule);
-> >  		kfree(entry->lsm[i].args_p);
-> >  	}
-> > +}
-> > +
-> > +static void ima_free_rule(struct ima_rule_entry *entry)
-> > +{
-> > +	if (!entry)
-> > +		return;
-> > +
-> > +	/*
-> > +	 * entry->template->fields may be allocated in ima_parse_rule() but that
-> > +	 * reference is owned by the corresponding ima_template_desc element in
-> > +	 * the defined_templates list and cannot be freed here
-> > +	 */
-> > +
-> > +	/*
-> > +	 * When freeing newly added ima_rule_entry members, consider if you
-> > +	 * need to disown any references after the shallow copy in
-> > +	 * ima_lsm_copy_rule()
-> > +	 */
-> > +	kfree(entry->fsname);
-> > +	kfree(entry->keyrings);
-> > +	ima_lsm_free_rule(entry);
-> >  	kfree(entry);
-> >  }
-> >  
-> > @@ -298,10 +319,18 @@ static struct ima_rule_entry *ima_lsm_copy_rule(struct ima_rule_entry *entry)
-> >  			pr_warn("rule for LSM \'%s\' is undefined\n",
-> >  				(char *)entry->lsm[i].args_p);
-> >  	}
-> > +
-> > +	/* Disown all references that were shallow copied */
-> > +	entry->fsname = NULL;
-> > +	entry->keyrings = NULL;
-> > +	entry->template = NULL;
-> >  	return nentry;
-> >  
-> >  out_err:
-> > -	ima_lsm_free_rule(nentry);
-> > +	nentry->fsname = NULL;
-> > +	nentry->keyrings = NULL;
-> > +	nentry->template = NULL;
-> > +	ima_free_rule(nentry);
+> > diff --git a/Documentation/userspace-api/ioctl/ioctl-number.rst b/Documentation/userspace-api/ioctl/ioctl-number.rst
+> > index 59472cd6a11d..35f713e3a267 100644
+> > --- a/Documentation/userspace-api/ioctl/ioctl-number.rst
+> > +++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
+> > @@ -323,6 +323,7 @@ Code  Seq#    Include File                                           Comments
+> >                                                                       <mailto:tlewis@mindspring.com>
+> >  0xA3  90-9F  linux/dtlk.h
+> >  0xA4  00-1F  uapi/linux/tee.h                                        Generic TEE subsystem
+> > +0xA4  00-1F  uapi/asm/sgx.h                                          Intel SGX subsystem (a legit conflict as TEE and SGX do not co-exist)
+> >  0xAA  00-3F  linux/uapi/linux/userfaultfd.h
+> >  0xAB  00-1F  linux/nbd.h
+> >  0xAC  00-1F  linux/raw.h
+> > diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
+> > new file mode 100644
+> > index 000000000000..5edb08ab8fd0
+> > --- /dev/null
+> > +++ b/arch/x86/include/uapi/asm/sgx.h
+> > @@ -0,0 +1,66 @@
+> > +/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) WITH Linux-syscall-note */
 > 
-> >  	return NULL;
-> >  }
-> >  
-> > @@ -315,7 +344,7 @@ static int ima_lsm_update_rule(struct ima_rule_entry *entry)
-> >  
-> >  	list_replace_rcu(&entry->list, &nentry->list);
-> >  	synchronize_rcu();
-> > -	ima_lsm_free_rule(entry);
-> > +	ima_free_rule(entry);
+> Checkpatch complains here:
 > 
-> This should only update the LSM info, nothing else.
-
-That's effectively what's happening since the fsname, keyrings, and
-template pointers are being set to NULL, before exiting
-ima_lsm_copy_rule(), in the ima_rule_entry that's going to be freed.
-
-This patch is only introducing the function which can free all memory
-associated with a rule and is starting to use it in place that a rule
-entry is freed.
-
-Would you rather me introduce ima_free_rule() for the upcoming memory
-leak fixes in the series but not make use of it in
-ima_lsm_update_rule()?
-
-Tyler
-
+> WARNING: 'SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) WITH Linux-syscall-note */' is not supported in LICENSES/...
+> #114: FILE: arch/x86/include/uapi/asm/sgx.h:1:
+> +/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) WITH Linux-syscall-note */
 > 
-> >  
-> >  	return 0;
-> >  }
+> Also, you had all patches until now split nice and logically doing one
+> thing only.
+> 
+> But this one is huge. Why?
+> 
+> Why can't you split out the facilities which the driver uses: encl.[ch]
+> into a patch, then ioctl.c into a separate one and then the driver into
+> a third one? Or do they all belong together inseparably?
+> 
+> I guess I'll find out eventually but it would've been nice if they were
+> split out...
+
+It's still kind a strongly connected set of functionalities, but I get
+your point.
+
+I'd consider splitting for a slighly different angle:
+
+1. Commit for the base driver.
+2. Commit for each ioctl, adding the necessary "framework" to get that
+   piece of functionality completed. The order would be:
+   A. Create
+   B. Add
+   C. Initialize
+
+Would be probably easier to review also this way because the commit kind
+of rationalizes why things exist.
+
+What do you think?
+
+/Jarkko
+ 
+ /Jarkko
+
+/Jarkko
