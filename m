@@ -2,102 +2,103 @@ Return-Path: <SRS0=LaDg=AG=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC29AC433E3
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Jun 2020 17:28:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E8AEC433E1
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Jun 2020 18:35:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C86DB20773
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Jun 2020 17:28:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="TG9W9c4f"
+	by mail.kernel.org (Postfix) with ESMTP id 51E8F207E8
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Jun 2020 18:35:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406795AbgFYR2F (ORCPT
+        id S2405052AbgFYSfK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 25 Jun 2020 13:28:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46434 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406789AbgFYR2F (ORCPT
+        Thu, 25 Jun 2020 14:35:10 -0400
+Received: from mga04.intel.com ([192.55.52.120]:46256 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390025AbgFYSfK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 25 Jun 2020 13:28:05 -0400
-Received: from mail-qk1-x741.google.com (mail-qk1-x741.google.com [IPv6:2607:f8b0:4864:20::741])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9DA1C08C5DB
-        for <linux-security-module@vger.kernel.org>; Thu, 25 Jun 2020 10:28:04 -0700 (PDT)
-Received: by mail-qk1-x741.google.com with SMTP id r22so6087017qke.13
-        for <linux-security-module@vger.kernel.org>; Thu, 25 Jun 2020 10:28:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=gmdzvrjKvy7zOpV1NRuITfFsyUSJo95kHGnNoBx7SWo=;
-        b=TG9W9c4fV8P6kucxRYY3WhM2fQlAiAfIIHNf+B91GL+OmpVqBJMnTwRomjo8dY9iXX
-         0oxVntm0rbHyQFyWnEM89Cp/zgkg5WR1n6V9kxDTSAIGh6lIjQ1jKao1bHnl65Q6/xqg
-         T7wvSq8GyUeJllsfC0yvy7re3wM3HR+Ry2XJqwse0iL5SQngYN6k709OssiNChYg9LYv
-         ZxERXwJiEJW+zNJB6g9HXkqQzV4X85ZMpva36rHTOcOOle3+v0ET8+tkf2xk0t7QXMIb
-         egFAEImp4Wfl7FVeAui2jZuWmFBhpeOTnutWojoevEj7dyOWn2YT29KHLHvEdvZJ0gVi
-         Tkvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=gmdzvrjKvy7zOpV1NRuITfFsyUSJo95kHGnNoBx7SWo=;
-        b=HmYA5qzP8fLppEFdzqup5ZJbcAcIUQfz2AUb0M7uEUE+yhVUj9sIID1FxzrHLoMJkX
-         1KALYbYZ2sTGpRHIcnOxRq0a++nT9eqzZZaERjkY4jC8/ImnXN7CKCOVBrXBSlivsbfm
-         DIArIcAG5sqoz76ja4hUCC7wWi4JttT8Qr5e15Qp00VqxfhQ9pHCVIDFGnx6zw77OZ/B
-         OA8UDIote1C5joZ4YHfI2mpKFMcjHqMqpu/2n1vpky1CU5Alh/RIBQgSxk3AXD87efxv
-         +hvD9e2j/KDzTNRwTK75DWRibQ634QOyoKOzDuLs0iK+RIMDdZkTiOZJ7ITMeUFeN+qS
-         fuTA==
-X-Gm-Message-State: AOAM532vPJXpxnS2HAkK3jUX1mkC9R07deVICBIa5dFGp2E9XzUmLU1J
-        DcIs+BepMxxW5FxmczqHTcBc8Q==
-X-Google-Smtp-Source: ABdhPJycbq62BggoDK0636NrdFXplcmFZ/swXm/+3aPR05wce0Y58DlZyNHuDGwiEpqljWYajCu0Vg==
-X-Received: by 2002:a37:46ca:: with SMTP id t193mr1551563qka.293.1593106083838;
-        Thu, 25 Jun 2020 10:28:03 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-156-34-48-30.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.48.30])
-        by smtp.gmail.com with ESMTPSA id l46sm1431464qtf.7.2020.06.25.10.28.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Jun 2020 10:28:03 -0700 (PDT)
-Received: from jgg by mlx with local (Exim 4.93)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1joVfO-00EGZI-KT; Thu, 25 Jun 2020 14:28:02 -0300
-Date:   Thu, 25 Jun 2020 14:28:02 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Stefan Berger <stefanb@linux.ibm.com>
-Cc:     Jerry Snitselaar <jsnitsel@redhat.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: Enabling interrupts in QEMU TPM TIS
-Message-ID: <20200625172802.GS6578@ziepe.ca>
-References: <1ca3a53d-2b83-7522-5ce1-83d9cc2f207d@linux.ibm.com>
+        Thu, 25 Jun 2020 14:35:10 -0400
+IronPort-SDR: 0fQ228rc3r+oWij782i+k//EP0WeBT593xXC90inrqZejb0hmLHVz2CGiU/3OEp+4WanzEf6gt
+ EoEV3T+gtG7w==
+X-IronPort-AV: E=McAfee;i="6000,8403,9663"; a="142530546"
+X-IronPort-AV: E=Sophos;i="5.75,280,1589266800"; 
+   d="scan'208";a="142530546"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2020 11:35:10 -0700
+IronPort-SDR: aL4PASQml7wgyj7szJXhpPrZsa4zbVfKDGQzun7rjRPc6UUnaOODbuZ/RKRusjXTdmgFJsRUHg
+ +NFjZpLp2YgQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.75,280,1589266800"; 
+   d="scan'208";a="265427085"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.152])
+  by fmsmga008.fm.intel.com with ESMTP; 25 Jun 2020 11:35:09 -0700
+Date:   Thu, 25 Jun 2020 11:34:48 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
+        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Jethro Beekman <jethro@fortanix.com>,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Chunyang Hui <sanqian.hcy@antfin.com>,
+        Jordan Hand <jorhand@linux.microsoft.com>,
+        Nathaniel McCallum <npmccallum@redhat.com>,
+        Seth Moore <sethmo@google.com>,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, cedric.xing@intel.com, chenalexchen@google.com,
+        conradparker@google.com, cyhanish@google.com,
+        dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, luto@kernel.org,
+        nhorman@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
+        tglx@linutronix.de, yaozhangx@google.com
+Subject: Re: [PATCH v33 11/21] x86/sgx: Linux Enclave Driver
+Message-ID: <20200625183448.GG3437@linux.intel.com>
+References: <20200617220844.57423-1-jarkko.sakkinen@linux.intel.com>
+ <20200617220844.57423-12-jarkko.sakkinen@linux.intel.com>
+ <20200625172319.GJ20319@zn.tnic>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1ca3a53d-2b83-7522-5ce1-83d9cc2f207d@linux.ibm.com>
+In-Reply-To: <20200625172319.GJ20319@zn.tnic>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jun 25, 2020 at 10:56:43AM -0400, Stefan Berger wrote:
-> Hello!
+On Thu, Jun 25, 2020 at 07:23:19PM +0200, Borislav Petkov wrote:
+> Also, you had all patches until now split nice and logically doing one
+> thing only.
 > 
->  I want to enable IRQs now in QEMU's TPM TIS device model and I need to work
-> with the following patch to Linux TIS. I am wondering whether the changes
-> there look reasonable to you? Windows works with the QEMU modifications
-> as-is, so maybe it's a bug in the TIS code (which I had not run into
-> before).
+> But this one is huge. Why?
 > 
+> Why can't you split out the facilities which the driver uses: encl.[ch]
+> into a patch, then ioctl.c into a separate one and then the driver into
+> a third one? Or do they all belong together inseparably?
 > 
-> The point of the loop I need to introduce in the interrupt handler is that
-> while the interrupt handler is running another interrupt may occur/be posted
-> that then does NOT cause the interrupt handler to be invoked again but
-> causes a stall, unless the loop is there.
+> I guess I'll find out eventually but it would've been nice if they were
+> split out...
 
-That seems like a qemu bug, TPM interrupts are supposed to be level
-interrupts, not edge.
+Hmm, I think the most reasonable way to break up this beast would be to
+incrementally introduce functionality.  E.g. four or so patches, one for
+each ioctl() of ENCLAVE_CREATE, ENCLAVE_ADD_PAGES, ENCLAVE_INIT and
+ENCLAVE_SET_ATTRIBUTE, in that order.
 
-Jason
+Splitting up by file probably wouldn't work very well.  The split is
+pretty arbitrary, e.g. encl.[ch] isn't simply a pure representation of an
+enclave, there is a lot of the driver details/dependencies in there, i.e.
+the functionality between encl/ioctl/driver is all pretty intertwined.
+
+But I think serially introducing each ioctl() would be fairly clean, and
+would help readers/reviewers better understand SGX as the patches would
+naturally document the process of building an enclave, e.g. CREATE the
+enclave, then ADD_PAGES, then INIT the enclave.  SET_ATTRIBUTE is a bit
+of an outlier in that it would be chronologically out of order with
+respect to building the enclave, but I think that's ok. 
+
+Jarkko, thoughts?
