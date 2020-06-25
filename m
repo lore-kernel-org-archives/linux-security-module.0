@@ -2,186 +2,186 @@ Return-Path: <SRS0=LaDg=AG=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0554C433E0
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Jun 2020 16:06:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46F56C433E0
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Jun 2020 17:23:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 90DB92082F
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Jun 2020 16:06:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1521020773
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Jun 2020 17:23:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="jlf5bQan"
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="oceytPbQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390723AbgFYQGa (ORCPT
+        id S2404463AbgFYRXW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 25 Jun 2020 12:06:30 -0400
-Received: from sonic308-15.consmr.mail.ne1.yahoo.com ([66.163.187.38]:32899
-        "EHLO sonic308-15.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2390683AbgFYQG3 (ORCPT
+        Thu, 25 Jun 2020 13:23:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45718 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404378AbgFYRXW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 25 Jun 2020 12:06:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1593101188; bh=oDchhMN01CpOJZtCAZO/OHRRs9p+tMsnEbh5aigF5ak=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=jlf5bQanE9vuE5d3mm+s5A1aN/b46Ui4U4R4PMKfKgiVqEry5XCl9lJiH+F85oJkyBPT5a3efSqqlY9ModTp7++n/e43gOAXLSxJDQWciryww/ymvA2Ljk9pc//d+64AC9yVZJfe0ITVXM09MDhno8mGKvOcWkaYwBtt1f3+5spHIBpnJNuHw5PjQiqePRr8iAG3NX6Q4aevJ7DEA8rXbQ7BHemX3u/twurVpi3woqNcqLR0e87RwUh5j6qqA6bic1cOR7RXOq00TBXAUKbEWdJiWZ9YL9xaE6S7zDsKUzVlMJ6g3PgQ5OfvMzVo/H0zUacpvA0TsVW2n5xjlPYUKQ==
-X-YMail-OSG: 2l4C6zkVM1ll0LGbyMHMFx4ewD933HkMWwtFBPwZ71aw3z769rm_T4k92nbDu1F
- XdMFbPigq0nOJIuxSd18mWOTUesPgcyDbzLlP3ZTDPB1kSi.gNa1tV0dh5wyOfBtSRHCcYkew9ZJ
- 1tPNuFNkxEJIPYSKOlcxhdAMenuj2xQ78HznOsTI9MWWarqEJ8CjRbGOKtu3XTpR_ZYAfTSWa7L8
- a.ze6niNFT8XSRWLOflNC49HhBv.QVWrH.vFkqdOjVZrRVcoz_EM1JWjVWBxR40SEJzyqRjycLZx
- ds0SUVO4tCcEtBWCFpm.YZh9Mqbaxj6j9ZHLWch_oYdCY2.hTOP4.WAXTVvTCEfBVDOg0hNO9vJB
- 535TI1O6oAKueaS59GPbRpZNSUxP5zbOp9n0c8.LJGSZlYAY1YjfrvYiiSVTxKT9CTtmxGify1ic
- zH6IihDWRs5m54HvhlDATprrCdXIndMk68SqzMgb0AHhaVytlC8UMjW8U7z2PGIjslWmPBQ8D21n
- e3YZ5EyrSmFiA.REUvdJ_HnQby_DD09yGgV1uGohjJp_Q.nhvIb30PSlddwnzRhFrBbEpFLRZX8C
- qDqQmWH1uLISvfILPPMVA1IlM58ypMkfMcKjPRsL4ml1ddPWYYCb9E78P0FskUwK7M0paci1QOn_
- 8dFTi3YEZkqjF2qNpXhpqiIKRyRPDZmldb0GCauecahR5k8j_0hHCuL5mtrdPUAqW21vfQOdjIh3
- ZTxscNNsXSaT_QoMAcqcMHiWqB6HgL42OjaoOzVcXtUMInflF0Lvhoys0nSFROlCL7MntmA2AgS.
- OAW_78QDE.xhLvEFg9iKFzl0BKHhKrxts2.GIrF1zlnJKnjtVJrLrnGJI8mdNoToH4gg4ojykn.F
- .yeEYZ5Ky_sZ8HC8l4NtQTjalhKK.nGmHs1dFeVcFls1dt6A08fWaRS5bgkHkAYZxf_57t1qsUG_
- CNP9QQMQzWtRzSTF3_0W9MMwkpKX2EVODHXz_dzURu5HMNdh1SDEwUyJIYwmNmhWXwFE6KmxRrlT
- CvTrQXBpSsZpp3TbH3aNAOAH6pPQmEPoV940KJeVDXgWtwpcC37_.RnnU3Vz_khYIbngankedH57
- PljAllYu9bthWkleFr1DzKvJOJ88wML2NpDJij.aaQxI3S8AhtFsXE6zVw5PD18T5hYNDn5Lrpln
- h_3DVAQgZp6yiaO8AfGW1A9jtKV_WIDm4_1jt7q7qH2_mt8g0ny5eYLSQuBZsVFJAxmpX4x.3eWR
- bOOMYnTV6eBGJlUrOlPQaDcEHf1msBgYeF3c0yIBm7tizBx4cKAS.grMZ1sEbzDkkxmoFn0umuAA
- TJFIEpMF5RSdOhkN58kj8nrU09HA.mmX_.du6e7OFsIdmbCDPB8zh1f33LMgH7Y.t7B2hOUBFJtU
- UhLemXmKNrJrarzduMDZght_7MzVpTA--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ne1.yahoo.com with HTTP; Thu, 25 Jun 2020 16:06:28 +0000
-Received: by smtp414.mail.ne1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID d87871b7ea49cedfea4258324224237e;
-          Thu, 25 Jun 2020 16:06:23 +0000 (UTC)
-Subject: Re: [RFC][PATCH] net/bpfilter: Remove this broken and apparently
- unmantained
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <87ftaxd7ky.fsf@x220.int.ebiederm.org>
- <20200616015552.isi6j5x732okiky4@ast-mbp.dhcp.thefacebook.com>
- <87h7v1pskt.fsf@x220.int.ebiederm.org>
- <20200623183520.5e7fmlt3omwa2lof@ast-mbp.dhcp.thefacebook.com>
- <87h7v1mx4z.fsf@x220.int.ebiederm.org>
- <20200623194023.lzl34qt2wndhcehk@ast-mbp.dhcp.thefacebook.com>
- <878sgck6g0.fsf@x220.int.ebiederm.org>
- <CAADnVQL8WrfV74v1ChvCKE=pQ_zo+A5EtEBB3CbD=P5ote8_MA@mail.gmail.com>
- <2f55102e-5d11-5569-8248-13618d517e93@i-love.sakura.ne.jp>
- <CAEjxPJ4e9rWWssp0CyM7GM7NP_QKkswHK7URwLZFqo5+wGecQw@mail.gmail.com>
- <20200625132551.GB3526980@kroah.com>
- <CAEjxPJ6MEb--R=zP_wCh-zgCochgcPhy7Fp7ENTYKB2NH9c6PA@mail.gmail.com>
- <a34cf18a-f251-f4f1-ed7c-fb5e100df91d@i-love.sakura.ne.jp>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Autocrypt: addr=casey@schaufler-ca.com; keydata=
- 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
- abzjfg==
-Message-ID: <a3162d70-ca6c-743a-a542-4112ae9c3da1@schaufler-ca.com>
-Date:   Thu, 25 Jun 2020 09:06:22 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.9.0
+        Thu, 25 Jun 2020 13:23:22 -0400
+Received: from mail.skyhub.de (mail.skyhub.de [IPv6:2a01:4f8:190:11c2::b:1457])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEB0DC08C5C1;
+        Thu, 25 Jun 2020 10:23:21 -0700 (PDT)
+Received: from zn.tnic (p200300ec2f0ed10035c3b797f40e07e6.dip0.t-ipconnect.de [IPv6:2003:ec:2f0e:d100:35c3:b797:f40e:7e6])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 505511EC0105;
+        Thu, 25 Jun 2020 19:23:20 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1593105800;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=RsPV80ovuBQyjV3JETbCO3+U21IlLqQzHxfyrPrXILg=;
+        b=oceytPbQR4/9ftJEGtyr+12eppSB7joaYfaVUsxYW4O8P3EbqcTyeXqusCXjRGRflpxYba
+        uCphPRqdPgSmUryxhr1A3bfIUv6NcVpsxyDcybOLYwnEoMxHzDWC74Q98UPGQAQmw+W4Z1
+        /NCQ1jPAHd9OWvBo64+sNYKGU2soWNk=
+Date:   Thu, 25 Jun 2020 19:23:19 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Jethro Beekman <jethro@fortanix.com>,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Chunyang Hui <sanqian.hcy@antfin.com>,
+        Jordan Hand <jorhand@linux.microsoft.com>,
+        Nathaniel McCallum <npmccallum@redhat.com>,
+        Seth Moore <sethmo@google.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, cedric.xing@intel.com, chenalexchen@google.com,
+        conradparker@google.com, cyhanish@google.com,
+        dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, luto@kernel.org,
+        nhorman@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
+        tglx@linutronix.de, yaozhangx@google.com
+Subject: Re: [PATCH v33 11/21] x86/sgx: Linux Enclave Driver
+Message-ID: <20200625172319.GJ20319@zn.tnic>
+References: <20200617220844.57423-1-jarkko.sakkinen@linux.intel.com>
+ <20200617220844.57423-12-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <a34cf18a-f251-f4f1-ed7c-fb5e100df91d@i-love.sakura.ne.jp>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
-X-Mailer: WebService/1.1.16138 hermes_yahoo Apache-HttpAsyncClient/4.1.4 (Java/11.0.7)
+Content-Disposition: inline
+In-Reply-To: <20200617220844.57423-12-jarkko.sakkinen@linux.intel.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 6/25/2020 8:21 AM, Tetsuo Handa wrote:
-> On 2020/06/25 23:26, Stephen Smalley wrote:
->> On Thu, Jun 25, 2020 at 9:25 AM Greg Kroah-Hartman
->> <gregkh@linuxfoundation.org> wrote:
->>> On Thu, Jun 25, 2020 at 08:56:10AM -0400, Stephen Smalley wrote:
->>>> No, because we cannot label the inode based on the program's purpose=
+On Thu, Jun 18, 2020 at 01:08:33AM +0300, Jarkko Sakkinen wrote:
+> Intel Software Guard eXtensions (SGX) is a set of CPU instructions that
+> can be used by applications to set aside private regions of code and
+> data. The code outside the SGX hosted software entity is disallowed to
+> access the memory inside the enclave enforced by the CPU. We call these
+> entities as enclaves.
+> 
+> This commit implements a driver that provides an ioctl API to construct
+> and run enclaves. Enclaves are constructed from pages residing in
+> reserved physical memory areas. The contents of these pages can only be
+> accessed when they are mapped as part of an enclave, by a hardware
+> thread running inside the enclave.
+> 
+> The starting state of an enclave consists of a fixed measured set of
+> pages that are copied to the EPC during the construction process by
+> using ENCLS leaf functions and Software Enclave Control Structure (SECS)
+> that defines the enclave properties.
+> 
+> Enclave are constructed by using ENCLS leaf functions ECREATE, EADD and
+> EINIT. ECREATE initializes SECS, EADD copies pages from system memory to
+> the EPC and EINIT check a given signed measurement and moves the enclave
+> into a state ready for execution.
+> 
+> An initialized enclave can only be accessed through special Thread Control
+> Structure (TCS) pages by using ENCLU (ring-3 only) leaf EENTER.  This leaf
+> function converts a thread into enclave mode and continues the execution in
+> the offset defined by the TCS provided to EENTER. An enclave is exited
+> through syscall, exception, interrupts or by explicitly calling another
+> ENCLU leaf EEXIT.
+> 
+> The permissions, which enclave page is added will set the limit for maximum
+> permissions that can be set for mmap() and mprotect(). This will
+> effectively allow to build different security schemes between producers and
+> consumers of enclaves. Later on we can increase granularity with LSM hooks
+> for page addition (i.e. for producers) and mapping of the enclave (i.e. for
+> consumers)
+> 
+> Cc: linux-security-module@vger.kernel.org
+> Acked-by: Jethro Beekman <jethro@fortanix.com>
+> Tested-by: Jethro Beekman <jethro@fortanix.com>
+> Tested-by: Haitao Huang <haitao.huang@linux.intel.com>
+> Tested-by: Chunyang Hui <sanqian.hcy@antfin.com>
+> Tested-by: Jordan Hand <jorhand@linux.microsoft.com>
+> Tested-by: Nathaniel McCallum <npmccallum@redhat.com>
+> Tested-by: Seth Moore <sethmo@google.com>
+> Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> Co-developed-by: Suresh Siddha <suresh.b.siddha@intel.com>
+> Signed-off-by: Suresh Siddha <suresh.b.siddha@intel.com>
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> ---
+>  .../userspace-api/ioctl/ioctl-number.rst      |   1 +
+>  arch/x86/include/uapi/asm/sgx.h               |  66 ++
+>  arch/x86/kernel/cpu/sgx/Makefile              |   3 +
+>  arch/x86/kernel/cpu/sgx/driver.c              | 194 +++++
+>  arch/x86/kernel/cpu/sgx/driver.h              |  30 +
+>  arch/x86/kernel/cpu/sgx/encl.c                | 335 +++++++++
+>  arch/x86/kernel/cpu/sgx/encl.h                |  87 +++
+>  arch/x86/kernel/cpu/sgx/ioctl.c               | 706 ++++++++++++++++++
+>  arch/x86/kernel/cpu/sgx/main.c                |  11 +
+>  9 files changed, 1433 insertions(+)
+>  create mode 100644 arch/x86/include/uapi/asm/sgx.h
+>  create mode 100644 arch/x86/kernel/cpu/sgx/driver.c
+>  create mode 100644 arch/x86/kernel/cpu/sgx/driver.h
+>  create mode 100644 arch/x86/kernel/cpu/sgx/encl.c
+>  create mode 100644 arch/x86/kernel/cpu/sgx/encl.h
+>  create mode 100644 arch/x86/kernel/cpu/sgx/ioctl.c
+> 
+> diff --git a/Documentation/userspace-api/ioctl/ioctl-number.rst b/Documentation/userspace-api/ioctl/ioctl-number.rst
+> index 59472cd6a11d..35f713e3a267 100644
+> --- a/Documentation/userspace-api/ioctl/ioctl-number.rst
+> +++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
+> @@ -323,6 +323,7 @@ Code  Seq#    Include File                                           Comments
+>                                                                       <mailto:tlewis@mindspring.com>
+>  0xA3  90-9F  linux/dtlk.h
+>  0xA4  00-1F  uapi/linux/tee.h                                        Generic TEE subsystem
+> +0xA4  00-1F  uapi/asm/sgx.h                                          Intel SGX subsystem (a legit conflict as TEE and SGX do not co-exist)
+>  0xAA  00-3F  linux/uapi/linux/userfaultfd.h
+>  0xAB  00-1F  linux/nbd.h
+>  0xAC  00-1F  linux/raw.h
+> diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
+> new file mode 100644
+> index 000000000000..5edb08ab8fd0
+> --- /dev/null
+> +++ b/arch/x86/include/uapi/asm/sgx.h
+> @@ -0,0 +1,66 @@
+> +/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) WITH Linux-syscall-note */
 
->>>> and therefore cannot configure an automatic transition to a suitable=
+Checkpatch complains here:
 
->>>> security context for the process, unlike call_usermodehelper().
->>> Why, what prevents this?  Can you not just do that based on the "blob=
+WARNING: 'SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) WITH Linux-syscall-note */' is not supported in LICENSES/...
+#114: FILE: arch/x86/include/uapi/asm/sgx.h:1:
++/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) WITH Linux-syscall-note */
 
->>> address" or signature of it or something like that?  Right now you al=
-l
->>> do this based on inode of a random file on a disk, what's the differe=
-nce
->>> between a random blob in memory?
->> Given some kind of key to identify the blob and look up a suitable
->> context in policy, I think it would work.  We just don't have that
->> with the current interface.  With /bin/kmod and the like, we have a
->> security xattr assigned to the file when it was created that we can
->> use as the basis for determining the process security context.
+Also, you had all patches until now split nice and logically doing one
+thing only.
 
-It should also be noted that Smack uses multiple xattrs. It is also
-possible for multiple current security modules to use xattrs, including
-capabilities. It's not sufficient to provide "the security xattr", there
-would have to be provision for general security xattrs.
+But this one is huge. Why?
 
-> My understanding is that fork_usermode_blob() is intended to be able to=
- run
-> without filesystems so that usermode blobs can start even before global=
- init
-> program (pid=3D1) starts.
->
-> But SELinux's policy is likely stored inside filesystems which would be=
+Why can't you split out the facilities which the driver uses: encl.[ch]
+into a patch, then ioctl.c into a separate one and then the driver into
+a third one? Or do they all belong together inseparably?
 
-> accessible only after global init program (pid=3D1) started.
->
-> Therefore, I wonder whether SELinux can look up a suitable context in p=
-olicy
-> even if "some kind of key to identify the blob" is provided.
+I guess I'll find out eventually but it would've been nice if they were
+split out...
 
-A security module has to have some sort of policy for whatever happens pr=
-ior
-to "policy load" as it is. That's not unique to this situation.
+-- 
+Regards/Gruss,
+    Boris.
 
-
+https://people.kernel.org/tglx/notes-about-netiquette
