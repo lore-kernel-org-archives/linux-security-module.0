@@ -2,182 +2,116 @@ Return-Path: <SRS0=LaDg=AG=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54093C433DF
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Jun 2020 14:56:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23AD7C433DF
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Jun 2020 15:22:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3789B20768
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Jun 2020 14:56:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 01A31206C0
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Jun 2020 15:22:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405660AbgFYO4s (ORCPT
+        id S2405577AbgFYPWO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 25 Jun 2020 10:56:48 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:2314 "EHLO
-        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2405638AbgFYO4s (ORCPT
+        Thu, 25 Jun 2020 11:22:14 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:58575 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404580AbgFYPWO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 25 Jun 2020 10:56:48 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 05PEWas2084447;
-        Thu, 25 Jun 2020 10:56:45 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 31uwyj4e81-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 25 Jun 2020 10:56:45 -0400
-Received: from m0098417.ppops.net (m0098417.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 05PEX0rx086617;
-        Thu, 25 Jun 2020 10:56:45 -0400
-Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 31uwyj4e7p-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 25 Jun 2020 10:56:45 -0400
-Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
-        by ppma04dal.us.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 05PEjcGY031517;
-        Thu, 25 Jun 2020 14:56:44 GMT
-Received: from b01cxnp23032.gho.pok.ibm.com (b01cxnp23032.gho.pok.ibm.com [9.57.198.27])
-        by ppma04dal.us.ibm.com with ESMTP id 31uurq81gh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 25 Jun 2020 14:56:44 +0000
-Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 05PEuhH848824676
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 25 Jun 2020 14:56:43 GMT
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id ABE8F112064;
-        Thu, 25 Jun 2020 14:56:43 +0000 (GMT)
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9CE32112061;
-        Thu, 25 Jun 2020 14:56:43 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu, 25 Jun 2020 14:56:43 +0000 (GMT)
-To:     Jerry Snitselaar <jsnitsel@redhat.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-From:   Stefan Berger <stefanb@linux.ibm.com>
-Subject: Enabling interrupts in QEMU TPM TIS
-Cc:     LSM List <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Message-ID: <1ca3a53d-2b83-7522-5ce1-83d9cc2f207d@linux.ibm.com>
-Date:   Thu, 25 Jun 2020 10:56:43 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Thu, 25 Jun 2020 11:22:14 -0400
+Received: from fsav110.sakura.ne.jp (fsav110.sakura.ne.jp [27.133.134.237])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 05PFLFxY007936;
+        Fri, 26 Jun 2020 00:21:15 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav110.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav110.sakura.ne.jp);
+ Fri, 26 Jun 2020 00:21:15 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav110.sakura.ne.jp)
+Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 05PFLFQo007932
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Fri, 26 Jun 2020 00:21:15 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [RFC][PATCH] net/bpfilter: Remove this broken and apparently
+ unmantained
+To:     Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <87ftaxd7ky.fsf@x220.int.ebiederm.org>
+ <20200616015552.isi6j5x732okiky4@ast-mbp.dhcp.thefacebook.com>
+ <87h7v1pskt.fsf@x220.int.ebiederm.org>
+ <20200623183520.5e7fmlt3omwa2lof@ast-mbp.dhcp.thefacebook.com>
+ <87h7v1mx4z.fsf@x220.int.ebiederm.org>
+ <20200623194023.lzl34qt2wndhcehk@ast-mbp.dhcp.thefacebook.com>
+ <878sgck6g0.fsf@x220.int.ebiederm.org>
+ <CAADnVQL8WrfV74v1ChvCKE=pQ_zo+A5EtEBB3CbD=P5ote8_MA@mail.gmail.com>
+ <2f55102e-5d11-5569-8248-13618d517e93@i-love.sakura.ne.jp>
+ <CAEjxPJ4e9rWWssp0CyM7GM7NP_QKkswHK7URwLZFqo5+wGecQw@mail.gmail.com>
+ <20200625132551.GB3526980@kroah.com>
+ <CAEjxPJ6MEb--R=zP_wCh-zgCochgcPhy7Fp7ENTYKB2NH9c6PA@mail.gmail.com>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <a34cf18a-f251-f4f1-ed7c-fb5e100df91d@i-love.sakura.ne.jp>
+Date:   Fri, 26 Jun 2020 00:21:15 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEjxPJ6MEb--R=zP_wCh-zgCochgcPhy7Fp7ENTYKB2NH9c6PA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.687
- definitions=2020-06-25_10:2020-06-25,2020-06-25 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 cotscore=-2147483648
- spamscore=0 phishscore=0 suspectscore=0 bulkscore=0 impostorscore=0
- mlxscore=0 mlxlogscore=872 lowpriorityscore=0 malwarescore=0 adultscore=0
- clxscore=1015 priorityscore=1501 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2004280000 definitions=main-2006250091
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello!
+On 2020/06/25 23:26, Stephen Smalley wrote:
+> On Thu, Jun 25, 2020 at 9:25 AM Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+>>
+>> On Thu, Jun 25, 2020 at 08:56:10AM -0400, Stephen Smalley wrote:
+>>> No, because we cannot label the inode based on the program's purpose
+>>> and therefore cannot configure an automatic transition to a suitable
+>>> security context for the process, unlike call_usermodehelper().
+>>
+>> Why, what prevents this?  Can you not just do that based on the "blob
+>> address" or signature of it or something like that?  Right now you all
+>> do this based on inode of a random file on a disk, what's the difference
+>> between a random blob in memory?
+> 
+> Given some kind of key to identify the blob and look up a suitable
+> context in policy, I think it would work.  We just don't have that
+> with the current interface.  With /bin/kmod and the like, we have a
+> security xattr assigned to the file when it was created that we can
+> use as the basis for determining the process security context.
 
-  I want to enable IRQs now in QEMU's TPM TIS device model and I need to 
-work with the following patch to Linux TIS. I am wondering whether the 
-changes there look reasonable to you? Windows works with the QEMU 
-modifications as-is, so maybe it's a bug in the TIS code (which I had 
-not run into before).
+My understanding is that fork_usermode_blob() is intended to be able to run
+without filesystems so that usermode blobs can start even before global init
+program (pid=1) starts.
 
+But SELinux's policy is likely stored inside filesystems which would be
+accessible only after global init program (pid=1) started.
 
-The point of the loop I need to introduce in the interrupt handler is 
-that while the interrupt handler is running another interrupt may 
-occur/be posted that then does NOT cause the interrupt handler to be 
-invoked again but causes a stall, unless the loop is there.
+Therefore, I wonder whether SELinux can look up a suitable context in policy
+even if "some kind of key to identify the blob" is provided.
+Also, since (at least some of) usermode blob processes started via
+fork_usermode_blob() will remain after SELinux loads policy from filesystems,
+I guess that we will need a method for moving already running usermode blob
+processes to appropriate security contexts.
 
-The 'o' in the dmesg log indicates the original IRQ for which the 
-handler was invoked. The interrupt values have the following meaning.
-
-0x2: STS valid
-
-0x4: locality changed
-
-0x80: command ready
-
-So the first 'looping entry' [in log below] indicates that a locality 
-change interrupt occurred while the interrupt handler was running due to 
-STS_valid + command ready. This sounds reasonable considering that we 
-are frequently acquiring and releasing the locality. The loop then deals 
-with the locality change interrupt and the interrupts then settle.
-
-[  210.365129] tpm_tis MSFT0101:00: 2.0 TPM (device-id 0x1, rev-id 1)
-[  210.367124] looping: 0x4  (o: 0x82)
-[  212.375045] looping: 0x80  (o: 0x2)
-[  212.389218] looping: 0x4  (o: 0x82)
-[  212.404161] looping: 0x80  (o: 0x2)
-[  212.526427] looping: 0x4  (o: 0x82)
-[  212.595488] looping: 0x4  (o: 0x82)
-[  212.614357] looping: 0x80  (o: 0x2)
-
-diff --git a/drivers/char/tpm/tpm_tis_core.c 
-b/drivers/char/tpm/tpm_tis_core.c
-index 65ab1b027949..f77544563fb1 100644
---- a/drivers/char/tpm/tpm_tis_core.c
-+++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -704,7 +704,7 @@ static irqreturn_t tis_int_handler(int dummy, void 
-*dev_id)
-  {
-      struct tpm_chip *chip = dev_id;
-      struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
--    u32 interrupt;
-+    u32 interrupt, o;
-      int i, rc;
-
-      rc = tpm_tis_read32(priv, TPM_INT_STATUS(priv->locality), &interrupt);
-@@ -715,6 +715,7 @@ static irqreturn_t tis_int_handler(int dummy, void 
-*dev_id)
-          return IRQ_NONE;
-
-      priv->irq_tested = true;
-+again:
-      if (interrupt & TPM_INTF_DATA_AVAIL_INT)
-          wake_up_interruptible(&priv->read_queue);
-      if (interrupt & TPM_INTF_LOCALITY_CHANGE_INT)
-@@ -731,7 +732,12 @@ static irqreturn_t tis_int_handler(int dummy, void 
-*dev_id)
-      if (rc < 0)
-          return IRQ_NONE;
-
-+    o = interrupt;
-      tpm_tis_read32(priv, TPM_INT_STATUS(priv->locality), &interrupt);
-+    if (interrupt != 0) {
-+        printk("looping: 0x%x  (o: 0x%x)\n", interrupt, o);
-+        goto again;
-+    }
-      return IRQ_HANDLED;
-  }
-
-@@ -1062,6 +1068,8 @@ int tpm_tis_core_init(struct device *dev, struct 
-tpm_tis_data *priv, int irq,
-              goto out_err;
-          }
-
-+        tpm_chip_start(chip);
-+        chip->flags |= TPM_CHIP_FLAG_IRQ;
-          if (irq) {
-              tpm_tis_probe_irq_single(chip, intmask, IRQF_SHARED,
-                           irq);
-@@ -1074,6 +1082,7 @@ int tpm_tis_core_init(struct device *dev, struct 
-tpm_tis_data *priv, int irq,
-          } else {
-              tpm_tis_probe_irq(chip, intmask);
-          }
-+        tpm_chip_stop(chip);
-      }
-
-      rc = tpm_chip_register(chip);
--- 
-2.26.2
-
-    Stefan
+Is my understanding/concerns correct?
 
