@@ -2,121 +2,135 @@ Return-Path: <SRS0=LaDg=AG=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC9A0C433E4
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Jun 2020 12:42:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9454BC433DF
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Jun 2020 12:56:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BE525206BE
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Jun 2020 12:42:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7421E20720
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Jun 2020 12:56:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qXFNVuI1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404734AbgFYMmc (ORCPT
+        id S2404686AbgFYM4W (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 25 Jun 2020 08:42:32 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:10258 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2404658AbgFYMm3 (ORCPT
+        Thu, 25 Jun 2020 08:56:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60452 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2403941AbgFYM4W (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 25 Jun 2020 08:42:29 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 05PCX64J099542;
-        Thu, 25 Jun 2020 08:42:28 -0400
-Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 31uwynn47u-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 25 Jun 2020 08:42:27 -0400
-Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
-        by ppma03wdc.us.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 05PCaGKk022979;
-        Thu, 25 Jun 2020 12:42:26 GMT
-Received: from b01cxnp22034.gho.pok.ibm.com (b01cxnp22034.gho.pok.ibm.com [9.57.198.24])
-        by ppma03wdc.us.ibm.com with ESMTP id 31uus1ky36-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 25 Jun 2020 12:42:26 +0000
-Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
-        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 05PCgPmt41943424
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 25 Jun 2020 12:42:26 GMT
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E02F7AE05F;
-        Thu, 25 Jun 2020 12:42:25 +0000 (GMT)
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D0E4EAE062;
-        Thu, 25 Jun 2020 12:42:25 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu, 25 Jun 2020 12:42:25 +0000 (GMT)
-From:   Stefan Berger <stefanb@linux.vnet.ibm.com>
-To:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jarkko.sakkinen@linux.intel.com, linux-acpi@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Cc:     Stefan Berger <stefanb@linux.ibm.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Jiandi An <anjiandi@codeaurora.org>
-Subject: [PATCH v6 1/2] acpi: Extend TPM2 ACPI table with missing log fields
-Date:   Thu, 25 Jun 2020 08:42:21 -0400
-Message-Id: <20200625124222.1954580-2-stefanb@linux.vnet.ibm.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200625124222.1954580-1-stefanb@linux.vnet.ibm.com>
-References: <20200625124222.1954580-1-stefanb@linux.vnet.ibm.com>
+        Thu, 25 Jun 2020 08:56:22 -0400
+Received: from mail-oi1-x242.google.com (mail-oi1-x242.google.com [IPv6:2607:f8b0:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53DC0C061573;
+        Thu, 25 Jun 2020 05:56:22 -0700 (PDT)
+Received: by mail-oi1-x242.google.com with SMTP id p82so4861860oif.1;
+        Thu, 25 Jun 2020 05:56:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BGKi64WQintPpZ0PiJ6dW4tMBiq9KIeg0n+W/5g1/1c=;
+        b=qXFNVuI1GGW2k3Ub8vf0pIfZerRDNDUPm4nHq11ub38zVd0nCBMQw5b/FyZJ1uqSsh
+         TH8gF8Es+pfp+S1FwVMF9S7sgNuNrOGAavQ41jEE/9bNtqQgdE8EUE40zexH4C7w8JI+
+         D/yF1gydpJHTeEfEOgF1at+ol9s8ZooATsbrmqsGq26ISSzTGloSCsI5xJdK8HLovNIq
+         58xBf42fE/2+v97ZZoqxPCvx0heSwtqrDoZBFGAOafrOKpA5UhzqB3hwdkhQgZpXTdyh
+         c5D5+bMcvqrclRuvLUq2PuxPsR7RHnTgCqJpFMW5MaGn/seqRDqNqDPi59jqHNAHcnHN
+         gVGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BGKi64WQintPpZ0PiJ6dW4tMBiq9KIeg0n+W/5g1/1c=;
+        b=HzHMTodCEmqsTQMgrWb96WFlCiv/D/FeUT8w1dFL64bt66qEo946ogOj++uRIZCydZ
+         owCXrHAl96PVk8bCvQiddDaLXDaIbI3EM5T2wSbB3MifvvE40bURJOvQOUKH0QXIUBSc
+         KtqN4ccII05F+Ml4mPk6tZHzFIriluvsArMC9T2rBDMlk8FPLS3595YoYOfOPJ8mLA8K
+         FgjpGQZlwYKGc73fFYhzrd5GQWBwUu8gtX2Uniuf/gHuPcLq8NtKKqHhzdIOadxQVfZQ
+         K2Jl8PtrwnlXLV1L/KNGCEZ9flAXpjy+ed/BRulWLNfkUFc2io29B6ibpl9VOVeETV+a
+         2VeA==
+X-Gm-Message-State: AOAM533bsq0xfkTvW/ZAOmnFH7r5fgtkXI3tk1dHkTthT/AUJu2rnPWx
+        Vwq4eS/eI16IpWWJNfeeo+LXoI1vzOm5HKhXnRY=
+X-Google-Smtp-Source: ABdhPJyoY1+FUwr2b7djALCSD/8Mjarm6gnmnjoZTM4ivo29bOovJFfTo6/3Hq7pq3SSrj7/mGNoKbm2E34rC02dJz0=
+X-Received: by 2002:aca:3283:: with SMTP id y125mr2042257oiy.140.1593089781523;
+ Thu, 25 Jun 2020 05:56:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.687
- definitions=2020-06-25_08:2020-06-25,2020-06-25 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- cotscore=-2147483648 spamscore=0 malwarescore=0 adultscore=0
- impostorscore=0 mlxlogscore=999 clxscore=1011 phishscore=0
- lowpriorityscore=0 suspectscore=0 bulkscore=0 mlxscore=0 classifier=spam
- adjust=0 reason=mlx scancount=1 engine=8.12.0-2004280000
- definitions=main-2006250080
+References: <87d066vd4y.fsf@x220.int.ebiederm.org> <20200611233134.5vofl53dj5wpwp5j@ast-mbp.dhcp.thefacebook.com>
+ <87bllngirv.fsf@x220.int.ebiederm.org> <CAADnVQ+qNxFjTYBpYW9ZhStMh_oJBS5C_FsxSS=0Mzy=u54MSg@mail.gmail.com>
+ <CAADnVQLuGYX=LamARhrZcze1ej4ELj-y99fLzOCgz60XLPw_cQ@mail.gmail.com>
+ <87ftaxd7ky.fsf@x220.int.ebiederm.org> <20200616015552.isi6j5x732okiky4@ast-mbp.dhcp.thefacebook.com>
+ <87h7v1pskt.fsf@x220.int.ebiederm.org> <20200623183520.5e7fmlt3omwa2lof@ast-mbp.dhcp.thefacebook.com>
+ <87h7v1mx4z.fsf@x220.int.ebiederm.org> <20200623194023.lzl34qt2wndhcehk@ast-mbp.dhcp.thefacebook.com>
+ <878sgck6g0.fsf@x220.int.ebiederm.org> <CAADnVQL8WrfV74v1ChvCKE=pQ_zo+A5EtEBB3CbD=P5ote8_MA@mail.gmail.com>
+ <2f55102e-5d11-5569-8248-13618d517e93@i-love.sakura.ne.jp>
+In-Reply-To: <2f55102e-5d11-5569-8248-13618d517e93@i-love.sakura.ne.jp>
+From:   Stephen Smalley <stephen.smalley.work@gmail.com>
+Date:   Thu, 25 Jun 2020 08:56:10 -0400
+Message-ID: <CAEjxPJ4e9rWWssp0CyM7GM7NP_QKkswHK7URwLZFqo5+wGecQw@mail.gmail.com>
+Subject: Re: [RFC][PATCH] net/bpfilter: Remove this broken and apparently unmantained
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Stefan Berger <stefanb@linux.ibm.com>
+On Wed, Jun 24, 2020 at 7:16 PM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+> What is unhappy for pathname based LSMs is that fork_usermode_blob() creates
+> a file with empty filename. I can imagine that somebody would start abusing
+> fork_usermode_blob() as an interface for starting programs like modprobe, hotplug,
+> udevd and sshd. When such situation happened, how fork_usermode_blob() provides
+> information for identifying the intent of such execve() requests?
+>
+> fork_usermode_blob() might also be an unhappy behavior for inode based LSMs (like
+> SELinux and Smack) because it seems that fork_usermode_blob() can't have a chance
+> to associate appropriate security labels based on the content of the byte array
+> because files are created on-demand. Is fork_usermode_blob() friendly to inode
+> based LSMs?
 
-Recent extensions of the TPM2 ACPI table added 3 more fields
-including 12 bytes of start method specific parameters and Log Area
-Minimum Length (u32) and Log Area Start Address (u64). So, we define
-a new structure acpi_tpm2_phy that holds these optional new fields.
-The new fields allow non-UEFI systems to access the TPM2's log.
+No, because we cannot label the inode based on the program's purpose
+and therefore cannot configure an automatic transition to a suitable
+security context for the process, unlike call_usermodehelper(). It is
+important to note that the goal of such transitions is not merely to
+restrict the program from doing bad things but also to protect the
+program from untrustworthy inputs, e.g. one can run kmod/modprobe in a
+domain that can only read from authorized kernel modules, prevent
+following untrusted symlinks, etc.  Further, at present, the
+implementation creates the inode via shmem_kernel_file_setup(), which
+is supposed to be for inodes private to the kernel not exposed to
+userspace (hence marked S_PRIVATE), which I believe in this case will
+end up leaving the inode unlabeled but still end up firing checks in
+the bprm hooks on the file inode, thereby potentially yielding denials
+in SELinux on the exec of unlabeled files.  Not exactly what we would
+want.  If users were to switch from using call_usermodehelper() to
+fork_usermode_blob() we would need them to label the inode in some
+manner to reflect the program purpose prior to exec.  I suppose they
+could pass in some string key and SELinux could look it up in policy
+to get a context to use or something.
 
-The specification that has the new fields is the following:
-  TCG ACPI Specification
-  Family "1.2" and "2.0"
-  Version 1.2, Revision 8
-
-https://trustedcomputinggroup.org/wp-content/uploads/TCG_ACPIGeneralSpecification_v1.20_r8.pdf
-
-Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-Cc: linux-acpi@vger.kernel.org
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Cc: Jiandi An <anjiandi@codeaurora.org>
----
- include/acpi/actbl3.h | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/include/acpi/actbl3.h b/include/acpi/actbl3.h
-index b0b163b9efc6..bdcac69fa6bd 100644
---- a/include/acpi/actbl3.h
-+++ b/include/acpi/actbl3.h
-@@ -415,6 +415,13 @@ struct acpi_table_tpm2 {
- 	/* Platform-specific data follows */
- };
- 
-+/* Optional trailer for revision 4 holding platform-specific data */
-+struct acpi_tpm2_phy {
-+	u8  start_method_specific[12];
-+	u32 log_area_minimum_length;
-+	u64 log_area_start_address;
-+};
-+
- /* Values for start_method above */
- 
- #define ACPI_TPM2_NOT_ALLOWED                       0
--- 
-2.26.2
-
+On a different note, will the usermode blob be measured by IMA prior
+to execution?  What ensures that the blob was actually embedded in the
+kernel image and wasn't just supplied as data through exploitation of
+a kernel vulnerability or malicious kernel module?  Yes, things are
+already bad at that point but it would be good to be able to detect
+launch of the malicious userspace payload regardless (kernel exploit
+can't undo the measurement extended into the TPM even if it tampers
+with the IMA measurement list in the kernel, nor fake a quote signed
+by the TPM).
