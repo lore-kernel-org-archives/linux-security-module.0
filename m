@@ -2,61 +2,61 @@ Return-Path: <SRS0=LaDg=AG=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2452CC433E1
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Jun 2020 20:46:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EADD6C433E0
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Jun 2020 21:05:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0B0052072E
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Jun 2020 20:46:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CDAA72075A
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Jun 2020 21:05:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404416AbgFYUqM (ORCPT
+        id S2405518AbgFYVFV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 25 Jun 2020 16:46:12 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:31132 "EHLO
+        Thu, 25 Jun 2020 17:05:21 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57164 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2404043AbgFYUqM (ORCPT
+        by vger.kernel.org with ESMTP id S2405432AbgFYVFU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 25 Jun 2020 16:46:12 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 05PKW7w8021271;
-        Thu, 25 Jun 2020 16:46:08 -0400
+        Thu, 25 Jun 2020 17:05:20 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 05PL2c5E032951;
+        Thu, 25 Jun 2020 17:05:16 -0400
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 31vts11wct-1
+        by mx0a-001b2d01.pphosted.com with ESMTP id 31vws8u8f9-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 25 Jun 2020 16:46:07 -0400
-Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 05PKWT0V022398;
-        Thu, 25 Jun 2020 16:46:07 -0400
-Received: from ppma02fra.de.ibm.com (47.49.7a9f.ip4.static.sl-reverse.com [159.122.73.71])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 31vts11wc1-1
+        Thu, 25 Jun 2020 17:05:16 -0400
+Received: from m0098410.ppops.net (m0098410.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 05PL3C39035001;
+        Thu, 25 Jun 2020 17:05:16 -0400
+Received: from ppma05fra.de.ibm.com (6c.4a.5195.ip4.static.sl-reverse.com [149.81.74.108])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 31vws8u8e6-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 25 Jun 2020 16:46:07 -0400
-Received: from pps.filterd (ppma02fra.de.ibm.com [127.0.0.1])
-        by ppma02fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 05PKe74e025831;
-        Thu, 25 Jun 2020 20:46:05 GMT
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
-        by ppma02fra.de.ibm.com with ESMTP id 31uusk12ee-1
+        Thu, 25 Jun 2020 17:05:16 -0400
+Received: from pps.filterd (ppma05fra.de.ibm.com [127.0.0.1])
+        by ppma05fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 05PKtoCu021859;
+        Thu, 25 Jun 2020 21:05:13 GMT
+Received: from b06avi18878370.portsmouth.uk.ibm.com (b06avi18878370.portsmouth.uk.ibm.com [9.149.26.194])
+        by ppma05fra.de.ibm.com with ESMTP id 31uusg12s0-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 25 Jun 2020 20:46:04 +0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 05PKk2j936110568
+        Thu, 25 Jun 2020 21:05:13 +0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 05PL5BO463111650
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 25 Jun 2020 20:46:02 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8E509A4060;
-        Thu, 25 Jun 2020 20:46:02 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5848DA405B;
-        Thu, 25 Jun 2020 20:46:01 +0000 (GMT)
+        Thu, 25 Jun 2020 21:05:11 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5915042042;
+        Thu, 25 Jun 2020 21:05:11 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 387CD42041;
+        Thu, 25 Jun 2020 21:05:10 +0000 (GMT)
 Received: from localhost.localdomain (unknown [9.85.142.225])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 25 Jun 2020 20:46:01 +0000 (GMT)
-Message-ID: <1593117960.27152.387.camel@linux.ibm.com>
-Subject: Re: [PATCH 10/12] ima: Move validation of the keyrings conditional
- into ima_validate_rule()
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 25 Jun 2020 21:05:10 +0000 (GMT)
+Message-ID: <1593119109.27152.393.camel@linux.ibm.com>
+Subject: Re: [PATCH 03/12] ima: Free the entire rule when deleting a list of
+ rules
 From:   Mimi Zohar <zohar@linux.ibm.com>
 To:     Tyler Hicks <tyhicks@linux.microsoft.com>,
         Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
@@ -66,48 +66,85 @@ Cc:     James Morris <jmorris@namei.org>,
         Prakhar Srivastava <prsriva02@gmail.com>,
         linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org
-Date:   Thu, 25 Jun 2020 16:46:00 -0400
-In-Reply-To: <20200625195017.GA4694@sequoia>
+Date:   Thu, 25 Jun 2020 17:05:09 -0400
+In-Reply-To: <20200623003236.830149-4-tyhicks@linux.microsoft.com>
 References: <20200623003236.830149-1-tyhicks@linux.microsoft.com>
-         <20200623003236.830149-11-tyhicks@linux.microsoft.com>
-         <20200625195017.GA4694@sequoia>
+         <20200623003236.830149-4-tyhicks@linux.microsoft.com>
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.687
  definitions=2020-06-25_16:2020-06-25,2020-06-25 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 cotscore=-2147483648
- adultscore=0 mlxscore=0 malwarescore=0 clxscore=1015 phishscore=0
- suspectscore=0 spamscore=0 impostorscore=0 priorityscore=1501
- mlxlogscore=999 lowpriorityscore=0 bulkscore=0 classifier=spam adjust=0
- reason=mlx scancount=1 engine=8.12.0-2004280000
- definitions=main-2006250116
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ malwarescore=0 phishscore=0 lowpriorityscore=0 bulkscore=0
+ priorityscore=1501 clxscore=1015 cotscore=-2147483648 spamscore=0
+ suspectscore=2 impostorscore=0 mlxscore=0 adultscore=0 classifier=spam
+ adjust=0 reason=mlx scancount=1 engine=8.12.0-2004280000
+ definitions=main-2006250124
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Mon, 2020-06-22 at 19:32 -0500, Tyler Hicks wrote:
+> Use ima_free_rule() to fix memory leaks of allocated ima_rule_entry
+> members, such as .fsname and .keyrings, when deleting a list of rules.
+> 
+> This fixes a memory leak seen when loading by a valid rule that contains
+> an additional piece of allocated memory, such as an fsname, followed by
+> an invalid rule that triggers a policy load failure:
+> 
+>  # echo -e "dont_measure fsname=securityfs\nbad syntax" > \
+>     /sys/kernel/security/ima/policy
+>  -bash: echo: write error: Invalid argument
+>  # echo scan > /sys/kernel/debug/kmemleak
+>  # cat /sys/kernel/debug/kmemleak
+>  unreferenced object 0xffff9bab67ca12c0 (size 16):
+>    comm "tee", pid 684, jiffies 4295212803 (age 252.344s)
+>    hex dump (first 16 bytes):
+>      73 65 63 75 72 69 74 79 66 73 00 6b 6b 6b 6b a5  securityfs.kkkk.
+>    backtrace:
+>      [<00000000adc80b1b>] kstrdup+0x2e/0x60
+>      [<00000000d504cb0d>] ima_parse_add_rule+0x7d4/0x1020
+>      [<00000000444825ac>] ima_write_policy+0xab/0x1d0
+>      [<000000002b7f0d6c>] vfs_write+0xde/0x1d0
+>      [<0000000096feedcf>] ksys_write+0x68/0xe0
+>      [<0000000052b544a2>] do_syscall_64+0x56/0xa0
+>      [<000000007ead1ba7>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> 
+> Fixes: f1b08bbcbdaf ("ima: define a new policy condition based on the filesystem name")
+> Fixes: 2b60c0ecedf8 ("IMA: Read keyrings= option from the IMA policy")
+> Signed-off-by: Tyler Hicks <tyhicks@linux.microsoft.com>
 
-> > diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-> > index 514baf24d6a5..ae2ec2a9cdb9 100644
-> > --- a/security/integrity/ima/ima_policy.c
-> > +++ b/security/integrity/ima/ima_policy.c
-> > @@ -999,6 +999,12 @@ static bool ima_validate_rule(struct ima_rule_entry *entry)
-> >  		case KEXEC_KERNEL_CHECK:
-> >  		case KEXEC_INITRAMFS_CHECK:
-> >  		case POLICY_CHECK:
-> > +			if (entry->flags & ~(IMA_FUNC | IMA_MASK | IMA_FSMAGIC |
-> > +					     IMA_UID | IMA_FOWNER | IMA_FSUUID |
-> > +					     IMA_INMASK | IMA_EUID | IMA_PCR |
-> > +					     IMA_FSNAME))
-> 
-> I accidentally left these out:
-> 
->  (IMA_DIGSIG_REQUIRED | IMA_PERMIT_DIRECTIO | IMA_MODSIG_ALLOWED | IMA_CHECK_BLACKLIST)
-> 
-> I'll add them in v2.
-
-Thanks, I noticed when skimming the patches the first time around.
+Thanks!  Thinking about it some more.  It makes more sense to define
+ima_free_rule() here in this patch.
 
 Mimi
+
+> ---
+>  security/integrity/ima/ima_policy.c | 6 +-----
+>  1 file changed, 1 insertion(+), 5 deletions(-)
+> 
+> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+> index 1320333201c6..94ca3b8abb69 100644
+> --- a/security/integrity/ima/ima_policy.c
+> +++ b/security/integrity/ima/ima_policy.c
+> @@ -1431,15 +1431,11 @@ ssize_t ima_parse_add_rule(char *rule)
+>  void ima_delete_rules(void)
+>  {
+>  	struct ima_rule_entry *entry, *tmp;
+> -	int i;
+>  
+>  	temp_ima_appraise = 0;
+>  	list_for_each_entry_safe(entry, tmp, &ima_temp_rules, list) {
+> -		for (i = 0; i < MAX_LSM_RULES; i++)
+> -			kfree(entry->lsm[i].args_p);
+> -
+>  		list_del(&entry->list);
+> -		kfree(entry);
+> +		ima_free_rule(entry);
+>  	}
+>  }
+>  
+
