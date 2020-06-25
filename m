@@ -4,59 +4,59 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A7CFC433E1
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Jun 2020 21:54:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BB97C433DF
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Jun 2020 22:45:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0332620789
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Jun 2020 21:54:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D61A206FA
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Jun 2020 22:45:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391270AbgFYVyK (ORCPT
+        id S2403893AbgFYWpp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 25 Jun 2020 17:54:10 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:63262 "EHLO
+        Thu, 25 Jun 2020 18:45:45 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:15276 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728381AbgFYVyK (ORCPT
+        by vger.kernel.org with ESMTP id S2403795AbgFYWpp (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 25 Jun 2020 17:54:10 -0400
+        Thu, 25 Jun 2020 18:45:45 -0400
 Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 05PLVbDG150977;
-        Thu, 25 Jun 2020 17:54:06 -0400
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 05PMXMks121815;
+        Thu, 25 Jun 2020 18:45:39 -0400
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 31vtt3kwmj-1
+        by mx0b-001b2d01.pphosted.com with ESMTP id 31vtt3n1dq-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 25 Jun 2020 17:54:05 -0400
+        Thu, 25 Jun 2020 18:45:39 -0400
 Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 05PLjgrA194423;
-        Thu, 25 Jun 2020 17:54:05 -0400
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 05PMXqYx123125;
+        Thu, 25 Jun 2020 18:45:39 -0400
 Received: from ppma05fra.de.ibm.com (6c.4a.5195.ip4.static.sl-reverse.com [149.81.74.108])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 31vtt3kwm2-1
+        by mx0b-001b2d01.pphosted.com with ESMTP id 31vtt3n1d6-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 25 Jun 2020 17:54:05 -0400
+        Thu, 25 Jun 2020 18:45:39 -0400
 Received: from pps.filterd (ppma05fra.de.ibm.com [127.0.0.1])
-        by ppma05fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 05PLjbBt029478;
-        Thu, 25 Jun 2020 21:54:03 GMT
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
-        by ppma05fra.de.ibm.com with ESMTP id 31uusg13c1-1
+        by ppma05fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 05PMdumo028439;
+        Thu, 25 Jun 2020 22:45:37 GMT
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
+        by ppma05fra.de.ibm.com with ESMTP id 31uusg13w3-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 25 Jun 2020 21:54:03 +0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 05PLs13n3342610
+        Thu, 25 Jun 2020 22:45:37 +0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 05PMjZvB3211694
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 25 Jun 2020 21:54:01 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 17ECEA405D;
-        Thu, 25 Jun 2020 21:54:01 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8C50EA4051;
-        Thu, 25 Jun 2020 21:53:59 +0000 (GMT)
+        Thu, 25 Jun 2020 22:45:35 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 19EF811C04A;
+        Thu, 25 Jun 2020 22:45:35 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B2B5611C076;
+        Thu, 25 Jun 2020 22:45:33 +0000 (GMT)
 Received: from localhost.localdomain (unknown [9.85.142.225])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 25 Jun 2020 21:53:59 +0000 (GMT)
-Message-ID: <1593122039.27152.412.camel@linux.ibm.com>
-Subject: Re: [PATCH 06/12] ima: Fail rule parsing when the KEXEC_CMDLINE
- hook is combined with an invalid cond
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 25 Jun 2020 22:45:33 +0000 (GMT)
+Message-ID: <1593125133.27152.417.camel@linux.ibm.com>
+Subject: Re: [PATCH 11/12] ima: Use the common function to detect LSM
+ conditionals in a rule
 From:   Mimi Zohar <zohar@linux.ibm.com>
 To:     Tyler Hicks <tyhicks@linux.microsoft.com>,
         Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
@@ -66,47 +66,33 @@ Cc:     James Morris <jmorris@namei.org>,
         Prakhar Srivastava <prsriva02@gmail.com>,
         linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org
-Date:   Thu, 25 Jun 2020 17:53:59 -0400
-In-Reply-To: <20200623003236.830149-7-tyhicks@linux.microsoft.com>
+Date:   Thu, 25 Jun 2020 18:45:33 -0400
+In-Reply-To: <20200623003236.830149-12-tyhicks@linux.microsoft.com>
 References: <20200623003236.830149-1-tyhicks@linux.microsoft.com>
-         <20200623003236.830149-7-tyhicks@linux.microsoft.com>
+         <20200623003236.830149-12-tyhicks@linux.microsoft.com>
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 X-TM-AS-GCONF: 00
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.687
- definitions=2020-06-25_16:2020-06-25,2020-06-25 signatures=0
+ definitions=2020-06-25_19:2020-06-25,2020-06-25 signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
- adultscore=0 phishscore=0 suspectscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 phishscore=0 suspectscore=0 mlxscore=0 mlxlogscore=761
  lowpriorityscore=0 impostorscore=0 spamscore=0 cotscore=-2147483648
  clxscore=1015 priorityscore=1501 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2004280000 definitions=main-2006250124
+ scancount=1 engine=8.12.0-2004280000 definitions=main-2006250129
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 On Mon, 2020-06-22 at 19:32 -0500, Tyler Hicks wrote:
-> The KEXEC_CMDLINE hook function only supports the pcr conditional. Make
-> this clear at policy load so that IMA policy authors don't assume that
-> other conditionals are supported.
+> Make broader use of ima_rule_contains_lsm_cond() to check if a given
+> rule contains an LSM conditional. This is a code cleanup and has no
+> user-facing change.
 > 
-> Since KEXEC_CMDLINE's inception, ima_match_rules() has always returned
-> true on any loaded KEXEC_CMDLINE rule without any consideration for
-> other conditionals present in the rule. Make it clear that pcr is the
-> only supported KEXEC_CMDLINE conditional by returning an error during
-> policy load.
-> 
-> An example of why this is a problem can be explained with the following
-> rule:
-> 
->  dont_measure func=KEXEC_CMDLINE obj_type=foo_t
-> 
-> An IMA policy author would have assumed that rule is valid because the
-> parser accepted it but the result was that measurements for all
-> KEXEC_CMDLINE operations would be disabled.
-> 
-> Fixes: b0935123a183 ("IMA: Define a new hook to measure the kexec boot command line arguments")
 > Signed-off-by: Tyler Hicks <tyhicks@linux.microsoft.com>
 
 Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+
+Mimi
