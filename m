@@ -2,118 +2,182 @@ Return-Path: <SRS0=LaDg=AG=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51E36C433E0
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Jun 2020 14:36:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54093C433DF
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Jun 2020 14:56:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 281CE20775
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Jun 2020 14:36:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qpEtAa+6"
+	by mail.kernel.org (Postfix) with ESMTP id 3789B20768
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Jun 2020 14:56:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405388AbgFYOgN (ORCPT
+        id S2405660AbgFYO4s (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 25 Jun 2020 10:36:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47974 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405340AbgFYOgM (ORCPT
+        Thu, 25 Jun 2020 10:56:48 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:2314 "EHLO
+        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2405638AbgFYO4s (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 25 Jun 2020 10:36:12 -0400
-Received: from mail-ot1-x343.google.com (mail-ot1-x343.google.com [IPv6:2607:f8b0:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13683C08C5C1;
-        Thu, 25 Jun 2020 07:36:12 -0700 (PDT)
-Received: by mail-ot1-x343.google.com with SMTP id d4so5463887otk.2;
-        Thu, 25 Jun 2020 07:36:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nc4o8s2QFMoo8VzOOVgiVSwm5a+lLq3YtSuw6jXUPz8=;
-        b=qpEtAa+6Zn6ADEGLEn5ovGYLyyf5vUf9zPHAngSmEVVwAjdkjB85xDnN1ZDxmoVans
-         OY2+7jfSDFDXpBtibVva9x8YfoLpXg+tUUsgAnLNbSXqErP0aJonccNPmJ3Ag/gIy4A8
-         qn4Q/I+0J2y0ka2sOdhFCLR23u5P5Qu9TWmhayXSw6+EkRyKOKvBRQ4UIILQtz0Uzp3S
-         9mYalirRS5fuIWw9vG9isjz44Jlp+ZR7hCJqfYdf4EkNtJFpmEJ3wEK8OGs8J/+5X3bV
-         NfB59BY0YFF9p+8HigxCUSDdXUknSGekV33UrG71G28oLH+HCW7u7vpSsC+aNvGM2x6t
-         3Q8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nc4o8s2QFMoo8VzOOVgiVSwm5a+lLq3YtSuw6jXUPz8=;
-        b=C9Vvrn+Fqa9AM0WyXkKNjJdzOLKAyFA9Q1nNXhOfUY2LqaPQWESDyrkYtVRC7qpmsf
-         JjU1G4/3xgkQiq74oXD19HjeORHLIla+WzEZG0IEieG1DmViP8R6rtikx2vDMdgZLj2k
-         +mcM+g8EAkwqHa08GhhsL+J6IT9cMA3q+YQysDgFFXQFCZ8SQ8/XBCo8D+UBTcr+qVRt
-         n3Q8JUCaZDUFv3vAOwLJgYZlE8l37vQehaksW/o0L28vnEnmZuDW1MHg3t7JwJp4U3dT
-         S2x6IfbxAAgEkUpUz6FRrW3o2cr9TEwcHbMqeinj7MNxtD87H0f5ji2n21brV0+66RTX
-         R4+w==
-X-Gm-Message-State: AOAM533pdCZnF2TZ8Lwy7srCQWpJnV5301sNQ5nxOQYcJMxfT7QpfSZU
-        bFYgV5CqHSrwD4bSdRnGX+CkDty4r5ZIrngD1GY=
-X-Google-Smtp-Source: ABdhPJy0EXOiuUChdhAbM4Pj4BJ3TwBkFjyZdVQvy0E+BUhRSKAJxkHo8bjtzlhFUSlPkOUwWYCNxOcE6ZyFyC8kYn0=
-X-Received: by 2002:a4a:9210:: with SMTP id f16mr12249508ooh.13.1593095771370;
- Thu, 25 Jun 2020 07:36:11 -0700 (PDT)
+        Thu, 25 Jun 2020 10:56:48 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 05PEWas2084447;
+        Thu, 25 Jun 2020 10:56:45 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 31uwyj4e81-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 25 Jun 2020 10:56:45 -0400
+Received: from m0098417.ppops.net (m0098417.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 05PEX0rx086617;
+        Thu, 25 Jun 2020 10:56:45 -0400
+Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 31uwyj4e7p-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 25 Jun 2020 10:56:45 -0400
+Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
+        by ppma04dal.us.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 05PEjcGY031517;
+        Thu, 25 Jun 2020 14:56:44 GMT
+Received: from b01cxnp23032.gho.pok.ibm.com (b01cxnp23032.gho.pok.ibm.com [9.57.198.27])
+        by ppma04dal.us.ibm.com with ESMTP id 31uurq81gh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 25 Jun 2020 14:56:44 +0000
+Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 05PEuhH848824676
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 25 Jun 2020 14:56:43 GMT
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id ABE8F112064;
+        Thu, 25 Jun 2020 14:56:43 +0000 (GMT)
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9CE32112061;
+        Thu, 25 Jun 2020 14:56:43 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu, 25 Jun 2020 14:56:43 +0000 (GMT)
+To:     Jerry Snitselaar <jsnitsel@redhat.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+Subject: Enabling interrupts in QEMU TPM TIS
+Cc:     LSM List <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Message-ID: <1ca3a53d-2b83-7522-5ce1-83d9cc2f207d@linux.ibm.com>
+Date:   Thu, 25 Jun 2020 10:56:43 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-References: <87ftaxd7ky.fsf@x220.int.ebiederm.org> <20200616015552.isi6j5x732okiky4@ast-mbp.dhcp.thefacebook.com>
- <87h7v1pskt.fsf@x220.int.ebiederm.org> <20200623183520.5e7fmlt3omwa2lof@ast-mbp.dhcp.thefacebook.com>
- <87h7v1mx4z.fsf@x220.int.ebiederm.org> <20200623194023.lzl34qt2wndhcehk@ast-mbp.dhcp.thefacebook.com>
- <878sgck6g0.fsf@x220.int.ebiederm.org> <CAADnVQL8WrfV74v1ChvCKE=pQ_zo+A5EtEBB3CbD=P5ote8_MA@mail.gmail.com>
- <2f55102e-5d11-5569-8248-13618d517e93@i-love.sakura.ne.jp>
- <CAEjxPJ4e9rWWssp0CyM7GM7NP_QKkswHK7URwLZFqo5+wGecQw@mail.gmail.com>
- <20200625132551.GB3526980@kroah.com> <CAEjxPJ6MEb--R=zP_wCh-zgCochgcPhy7Fp7ENTYKB2NH9c6PA@mail.gmail.com>
-In-Reply-To: <CAEjxPJ6MEb--R=zP_wCh-zgCochgcPhy7Fp7ENTYKB2NH9c6PA@mail.gmail.com>
-From:   Stephen Smalley <stephen.smalley.work@gmail.com>
-Date:   Thu, 25 Jun 2020 10:36:00 -0400
-Message-ID: <CAEjxPJ5CU18MLp4431j2w5QNy4bHj3BnivGquqwG2_p4JKDC2Q@mail.gmail.com>
-Subject: Re: [RFC][PATCH] net/bpfilter: Remove this broken and apparently unmantained
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.687
+ definitions=2020-06-25_10:2020-06-25,2020-06-25 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 cotscore=-2147483648
+ spamscore=0 phishscore=0 suspectscore=0 bulkscore=0 impostorscore=0
+ mlxscore=0 mlxlogscore=872 lowpriorityscore=0 malwarescore=0 adultscore=0
+ clxscore=1015 priorityscore=1501 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2004280000 definitions=main-2006250091
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jun 25, 2020 at 10:26 AM Stephen Smalley
-<stephen.smalley.work@gmail.com> wrote:
->
-> On Thu, Jun 25, 2020 at 9:25 AM Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Thu, Jun 25, 2020 at 08:56:10AM -0400, Stephen Smalley wrote:
-> > > No, because we cannot label the inode based on the program's purpose
-> > > and therefore cannot configure an automatic transition to a suitable
-> > > security context for the process, unlike call_usermodehelper().
-> >
-> > Why, what prevents this?  Can you not just do that based on the "blob
-> > address" or signature of it or something like that?  Right now you all
-> > do this based on inode of a random file on a disk, what's the difference
-> > between a random blob in memory?
->
-> Given some kind of key to identify the blob and look up a suitable
-> context in policy, I think it would work.  We just don't have that
-> with the current interface.  With /bin/kmod and the like, we have a
-> security xattr assigned to the file when it was created that we can
-> use as the basis for determining the process security context.
+Hello!
 
-Looks like info->cmdline could be used as that key if set; we would
-just need a LSM hook to permit setting up the inode's security state
-based on that key.  If that were passed to shmem_kernel_file_setup()
-as the name argument, then that might also help path-based LSMs
-although it seems potentially ambiguous.
+  I want to enable IRQs now in QEMU's TPM TIS device model and I need to 
+work with the following patch to Linux TIS. I am wondering whether the 
+changes there look reasonable to you? Windows works with the QEMU 
+modifications as-is, so maybe it's a bug in the TIS code (which I had 
+not run into before).
+
+
+The point of the loop I need to introduce in the interrupt handler is 
+that while the interrupt handler is running another interrupt may 
+occur/be posted that then does NOT cause the interrupt handler to be 
+invoked again but causes a stall, unless the loop is there.
+
+The 'o' in the dmesg log indicates the original IRQ for which the 
+handler was invoked. The interrupt values have the following meaning.
+
+0x2: STS valid
+
+0x4: locality changed
+
+0x80: command ready
+
+So the first 'looping entry' [in log below] indicates that a locality 
+change interrupt occurred while the interrupt handler was running due to 
+STS_valid + command ready. This sounds reasonable considering that we 
+are frequently acquiring and releasing the locality. The loop then deals 
+with the locality change interrupt and the interrupts then settle.
+
+[  210.365129] tpm_tis MSFT0101:00: 2.0 TPM (device-id 0x1, rev-id 1)
+[  210.367124] looping: 0x4  (o: 0x82)
+[  212.375045] looping: 0x80  (o: 0x2)
+[  212.389218] looping: 0x4  (o: 0x82)
+[  212.404161] looping: 0x80  (o: 0x2)
+[  212.526427] looping: 0x4  (o: 0x82)
+[  212.595488] looping: 0x4  (o: 0x82)
+[  212.614357] looping: 0x80  (o: 0x2)
+
+diff --git a/drivers/char/tpm/tpm_tis_core.c 
+b/drivers/char/tpm/tpm_tis_core.c
+index 65ab1b027949..f77544563fb1 100644
+--- a/drivers/char/tpm/tpm_tis_core.c
++++ b/drivers/char/tpm/tpm_tis_core.c
+@@ -704,7 +704,7 @@ static irqreturn_t tis_int_handler(int dummy, void 
+*dev_id)
+  {
+      struct tpm_chip *chip = dev_id;
+      struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
+-    u32 interrupt;
++    u32 interrupt, o;
+      int i, rc;
+
+      rc = tpm_tis_read32(priv, TPM_INT_STATUS(priv->locality), &interrupt);
+@@ -715,6 +715,7 @@ static irqreturn_t tis_int_handler(int dummy, void 
+*dev_id)
+          return IRQ_NONE;
+
+      priv->irq_tested = true;
++again:
+      if (interrupt & TPM_INTF_DATA_AVAIL_INT)
+          wake_up_interruptible(&priv->read_queue);
+      if (interrupt & TPM_INTF_LOCALITY_CHANGE_INT)
+@@ -731,7 +732,12 @@ static irqreturn_t tis_int_handler(int dummy, void 
+*dev_id)
+      if (rc < 0)
+          return IRQ_NONE;
+
++    o = interrupt;
+      tpm_tis_read32(priv, TPM_INT_STATUS(priv->locality), &interrupt);
++    if (interrupt != 0) {
++        printk("looping: 0x%x  (o: 0x%x)\n", interrupt, o);
++        goto again;
++    }
+      return IRQ_HANDLED;
+  }
+
+@@ -1062,6 +1068,8 @@ int tpm_tis_core_init(struct device *dev, struct 
+tpm_tis_data *priv, int irq,
+              goto out_err;
+          }
+
++        tpm_chip_start(chip);
++        chip->flags |= TPM_CHIP_FLAG_IRQ;
+          if (irq) {
+              tpm_tis_probe_irq_single(chip, intmask, IRQF_SHARED,
+                           irq);
+@@ -1074,6 +1082,7 @@ int tpm_tis_core_init(struct device *dev, struct 
+tpm_tis_data *priv, int irq,
+          } else {
+              tpm_tis_probe_irq(chip, intmask);
+          }
++        tpm_chip_stop(chip);
+      }
+
+      rc = tpm_chip_register(chip);
+-- 
+2.26.2
+
+    Stefan
+
