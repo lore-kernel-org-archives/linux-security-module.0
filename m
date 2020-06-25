@@ -2,93 +2,199 @@ Return-Path: <SRS0=LaDg=AG=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94F47C433E1
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Jun 2020 20:25:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5358C433E2
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Jun 2020 20:32:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6E3582072E
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Jun 2020 20:25:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="VolBwOuC"
+	by mail.kernel.org (Postfix) with ESMTP id 9C6A32072E
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Jun 2020 20:32:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391079AbgFYUZu (ORCPT
+        id S2405161AbgFYUcX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 25 Jun 2020 16:25:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45672 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391024AbgFYUZu (ORCPT
+        Thu, 25 Jun 2020 16:32:23 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:29146 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2389406AbgFYUcV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 25 Jun 2020 16:25:50 -0400
-Received: from mail.skyhub.de (mail.skyhub.de [IPv6:2a01:4f8:190:11c2::b:1457])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31508C08C5C1;
-        Thu, 25 Jun 2020 13:25:50 -0700 (PDT)
-Received: from zn.tnic (p200300ec2f0ed100d8d4e97d1105ac1f.dip0.t-ipconnect.de [IPv6:2003:ec:2f0e:d100:d8d4:e97d:1105:ac1f])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 44CF81EC0413;
-        Thu, 25 Jun 2020 22:25:48 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1593116748;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=gCaeTn3drBcDWodoRcvRlH4hGK69/F66ALN1HKkSAlE=;
-        b=VolBwOuCQS05yvAmYXAKtLOOy1abUglYWc3Jw2zRa7u50Pb4rP1hGKOqSiIizcyVrLsNvn
-        UWwqmk3U7F3Pzx42+Z2wfA509IVtIvPYkuDdtTDlcBBFjWH0MfdbRFKEKKI/iy8DV6CB1t
-        q6kpZSyfj+NfL/zYJA5wNpSByeh1hGQ=
-Date:   Thu, 25 Jun 2020 22:25:39 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Jethro Beekman <jethro@fortanix.com>,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Chunyang Hui <sanqian.hcy@antfin.com>,
-        Jordan Hand <jorhand@linux.microsoft.com>,
-        Nathaniel McCallum <npmccallum@redhat.com>,
-        Seth Moore <sethmo@google.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
-        asapek@google.com, cedric.xing@intel.com, chenalexchen@google.com,
-        conradparker@google.com, cyhanish@google.com,
-        dave.hansen@intel.com, haitao.huang@intel.com,
-        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
-        kmoy@google.com, ludloff@google.com, luto@kernel.org,
-        nhorman@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
-        tglx@linutronix.de, yaozhangx@google.com
-Subject: Re: [PATCH v33 11/21] x86/sgx: Linux Enclave Driver
-Message-ID: <20200625202520.GQ20319@zn.tnic>
-References: <20200617220844.57423-1-jarkko.sakkinen@linux.intel.com>
- <20200617220844.57423-12-jarkko.sakkinen@linux.intel.com>
- <20200625172319.GJ20319@zn.tnic>
- <20200625202148.GB15394@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200625202148.GB15394@linux.intel.com>
+        Thu, 25 Jun 2020 16:32:21 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 05PK2sGH007785;
+        Thu, 25 Jun 2020 16:32:10 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 31vx91947e-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 25 Jun 2020 16:32:10 -0400
+Received: from m0098394.ppops.net (m0098394.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 05PK4IjH011736;
+        Thu, 25 Jun 2020 16:32:10 -0400
+Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 31vx91946b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 25 Jun 2020 16:32:09 -0400
+Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
+        by ppma06ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 05PKPiEe002905;
+        Thu, 25 Jun 2020 20:32:07 GMT
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
+        by ppma06ams.nl.ibm.com with ESMTP id 31uusjj4hb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 25 Jun 2020 20:32:07 +0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 05PKW51j52691146
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 25 Jun 2020 20:32:05 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 316F311C04C;
+        Thu, 25 Jun 2020 20:32:05 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B9AB411C050;
+        Thu, 25 Jun 2020 20:32:03 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.142.225])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 25 Jun 2020 20:32:03 +0000 (GMT)
+Message-ID: <1593117123.27152.385.camel@linux.ibm.com>
+Subject: Re: [PATCH 02/12] ima: Create a function to free a rule entry
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Tyler Hicks <tyhicks@linux.microsoft.com>
+Cc:     Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Prakhar Srivastava <prsriva02@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Date:   Thu, 25 Jun 2020 16:32:03 -0400
+In-Reply-To: <20200625195647.GB4694@sequoia>
+References: <20200623003236.830149-1-tyhicks@linux.microsoft.com>
+         <20200623003236.830149-3-tyhicks@linux.microsoft.com>
+         <1593113613.27152.345.camel@linux.ibm.com> <20200625195647.GB4694@sequoia>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.687
+ definitions=2020-06-25_16:2020-06-25,2020-06-25 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=2
+ lowpriorityscore=0 mlxlogscore=999 clxscore=1015 impostorscore=0
+ phishscore=0 spamscore=0 adultscore=0 malwarescore=0 priorityscore=1501
+ bulkscore=0 cotscore=-2147483648 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2004280000 definitions=main-2006250116
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jun 25, 2020 at 11:21:48PM +0300, Jarkko Sakkinen wrote:
-> Would be probably easier to review also this way because the commit kind
-> of rationalizes why things exist.
+On Thu, 2020-06-25 at 14:56 -0500, Tyler Hicks wrote:
+> On 2020-06-25 15:33:33, Mimi Zohar wrote:
+> > On Mon, 2020-06-22 at 19:32 -0500, Tyler Hicks wrote:
+> > > There are several possible pieces of allocated memory in a rule entry.
+> > > Create a function that can free all allocated memory for a given rule
+> > > entry.
+> > > 
+> > > This patch introduces no functional changes but sets the groundwork for
+> > > some memory leak fixes.
+> > > 
+> > > Signed-off-by: Tyler Hicks <tyhicks@linux.microsoft.com>
+> > 
+> > Having a function to release all memory associated with a policy rule
+> > in general is a good idea.  However, in the case of the shallow copy,
+> > we're not removing any IMA rules, just updating the LSM info.
+> > 
+> > There is an opportunity to transition from the builtin policy rules to
+> > a custom IMA policy.  Afterwards IMA policy rules may only be
+> > appended.
+> > 
+> > An IMA custom policy based on LSM info may be loaded prior to the LSM
+> > policy.  These LSM based rules are inactive until the corresponding
+> > LSM rule is loaded.  In some environments, LSM policies are loaded and
+> > removed frequently.  The IMA rules themselves are not removed, just
+> > the LSM info is updated to reflect the current LSM info.
+> > 
+> > > ---
+> > >  security/integrity/ima/ima_policy.c | 33 +++++++++++++++++++++++++++--
+> > >  1 file changed, 31 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+> > > index 236a731492d1..1320333201c6 100644
+> > > --- a/security/integrity/ima/ima_policy.c
+> > > +++ b/security/integrity/ima/ima_policy.c
+> > > @@ -261,6 +261,27 @@ static void ima_lsm_free_rule(struct ima_rule_entry *entry)
+> > >  		security_filter_rule_free(entry->lsm[i].rule);
+> > >  		kfree(entry->lsm[i].args_p);
+> > >  	}
+> > > +}
+> > > +
+> > > +static void ima_free_rule(struct ima_rule_entry *entry)
+> > > +{
+> > > +	if (!entry)
+> > > +		return;
+> > > +
+> > > +	/*
+> > > +	 * entry->template->fields may be allocated in ima_parse_rule() but that
+> > > +	 * reference is owned by the corresponding ima_template_desc element in
+> > > +	 * the defined_templates list and cannot be freed here
+> > > +	 */
+> > > +
+> > > +	/*
+> > > +	 * When freeing newly added ima_rule_entry members, consider if you
+> > > +	 * need to disown any references after the shallow copy in
+> > > +	 * ima_lsm_copy_rule()
+> > > +	 */
+> > > +	kfree(entry->fsname);
+> > > +	kfree(entry->keyrings);
+> > > +	ima_lsm_free_rule(entry);
+> > >  	kfree(entry);
+> > >  }
+> > >  
+> > > @@ -298,10 +319,18 @@ static struct ima_rule_entry *ima_lsm_copy_rule(struct ima_rule_entry *entry)
+> > >  			pr_warn("rule for LSM \'%s\' is undefined\n",
+> > >  				(char *)entry->lsm[i].args_p);
+> > >  	}
+> > > +
+> > > +	/* Disown all references that were shallow copied */
+> > > +	entry->fsname = NULL;
+> > > +	entry->keyrings = NULL;
+> > > +	entry->template = NULL;
+> > >  	return nentry;
+> > >  
+> > >  out_err:
+> > > -	ima_lsm_free_rule(nentry);
+> > > +	nentry->fsname = NULL;
+> > > +	nentry->keyrings = NULL;
+> > > +	nentry->template = NULL;
+> > > +	ima_free_rule(nentry);
+> > 
+> > >  	return NULL;
+> > >  }
+> > >  
+> > > @@ -315,7 +344,7 @@ static int ima_lsm_update_rule(struct ima_rule_entry *entry)
+> > >  
+> > >  	list_replace_rcu(&entry->list, &nentry->list);
+> > >  	synchronize_rcu();
+> > > -	ima_lsm_free_rule(entry);
+> > > +	ima_free_rule(entry);
+> > 
+> > This should only update the LSM info, nothing else.
 > 
-> What do you think?
+> That's effectively what's happening since the fsname, keyrings, and
+> template pointers are being set to NULL, before exiting
+> ima_lsm_copy_rule(), in the ima_rule_entry that's going to be freed.
 
-Sounds like a plan but you can do this for the next version - no need to
-do it now. I'll try to review this way, per ioctl as I said in my mail
-to Sean.
+Ah, that clarified the reason for setting fsname, keyrings, ... to
+null before calling ima_free_rule.
 
-Thx.
+> 
+> This patch is only introducing the function which can free all memory
+> associated with a rule and is starting to use it in place that a rule
+> entry is freed.
+> 
+> Would you rather me introduce ima_free_rule() for the upcoming memory
+> leak fixes in the series but not make use of it in
+> ima_lsm_update_rule()?
 
--- 
-Regards/Gruss,
-    Boris.
+You could add a comment explaining the NULLs, but it might be clearer
+to keep the direct call to ima_lsm_free_rule().
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Mimi
