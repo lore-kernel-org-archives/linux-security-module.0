@@ -2,160 +2,197 @@ Return-Path: <SRS0=LaDg=AG=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6328EC433DF
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Jun 2020 02:54:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21581C433E1
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Jun 2020 06:39:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4BD0C20789
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Jun 2020 02:54:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B48620773
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Jun 2020 06:39:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389572AbgFYCyO (ORCPT
+        id S2389923AbgFYGj0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 24 Jun 2020 22:54:14 -0400
-Received: from mga12.intel.com ([192.55.52.136]:6872 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389357AbgFYCyO (ORCPT
+        Thu, 25 Jun 2020 02:39:26 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:54324 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727999AbgFYGjZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 24 Jun 2020 22:54:14 -0400
-IronPort-SDR: Of0YFrmnGS1aSqgskh2RbDeSdvhB5nXC7fbRo/4bRI7BEXBFRC3XSALcUFkWhvuuOw++7gptCp
- Aei3u5vIK4uw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9662"; a="124395282"
-X-IronPort-AV: E=Sophos;i="5.75,277,1589266800"; 
-   d="scan'208";a="124395282"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2020 19:54:13 -0700
-IronPort-SDR: Rb5biXPkkNbzdDEdfkqxz78d7vhNAIydGqFtQWeRt9iPmK2+ovWiz4OgnGER0Hl+dzipiBce6V
- 3K1J50dfjA3g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.75,277,1589266800"; 
-   d="scan'208";a="479491832"
-Received: from hluxenbu-mobl.ger.corp.intel.com (HELO localhost) ([10.252.36.218])
-  by fmsmga005.fm.intel.com with ESMTP; 24 Jun 2020 19:54:09 -0700
-Date:   Thu, 25 Jun 2020 05:54:08 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Stefan Berger <stefanb@linux.ibm.com>
-Cc:     Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Jiandi An <anjiandi@codeaurora.org>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-acpi@vger.kernel.org, linux-security-module@vger.kernel.org,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
-Subject: Re: [PATCH v5 1/2] acpi: Extend TPM2 ACPI table with missing log
- fields
-Message-ID: <20200625025408.GD270125@linux.intel.com>
-References: <20200623120636.1453470-1-stefanb@linux.vnet.ibm.com>
- <20200623120636.1453470-2-stefanb@linux.vnet.ibm.com>
- <20200625000021.GC21758@linux.intel.com>
- <9d94c704-5774-ceeb-e4f3-010f74ffe37b@linux.ibm.com>
- <20200625023431.GB270125@linux.intel.com>
- <20200625025251.GC270125@linux.intel.com>
+        Thu, 25 Jun 2020 02:39:25 -0400
+Received: from fsav105.sakura.ne.jp (fsav105.sakura.ne.jp [27.133.134.232])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 05P6cEwX080687;
+        Thu, 25 Jun 2020 15:38:14 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav105.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav105.sakura.ne.jp);
+ Thu, 25 Jun 2020 15:38:14 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav105.sakura.ne.jp)
+Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 05P6cEJh080683
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Thu, 25 Jun 2020 15:38:14 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [RFC][PATCH] net/bpfilter: Remove this broken and apparently
+ unmantained
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <CAADnVQLuGYX=LamARhrZcze1ej4ELj-y99fLzOCgz60XLPw_cQ@mail.gmail.com>
+ <87ftaxd7ky.fsf@x220.int.ebiederm.org>
+ <20200616015552.isi6j5x732okiky4@ast-mbp.dhcp.thefacebook.com>
+ <87h7v1pskt.fsf@x220.int.ebiederm.org>
+ <20200623183520.5e7fmlt3omwa2lof@ast-mbp.dhcp.thefacebook.com>
+ <87h7v1mx4z.fsf@x220.int.ebiederm.org>
+ <20200623194023.lzl34qt2wndhcehk@ast-mbp.dhcp.thefacebook.com>
+ <878sgck6g0.fsf@x220.int.ebiederm.org>
+ <CAADnVQL8WrfV74v1ChvCKE=pQ_zo+A5EtEBB3CbD=P5ote8_MA@mail.gmail.com>
+ <2f55102e-5d11-5569-8248-13618d517e93@i-love.sakura.ne.jp>
+ <20200625013518.chuqehybelk2k27x@ast-mbp.dhcp.thefacebook.com>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <b83831ba-c330-7eb8-e6d5-5087de68a9b8@i-love.sakura.ne.jp>
+Date:   Thu, 25 Jun 2020 15:38:14 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200625025251.GC270125@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20200625013518.chuqehybelk2k27x@ast-mbp.dhcp.thefacebook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jun 25, 2020 at 05:52:56AM +0300, Jarkko Sakkinen wrote:
-> On Thu, Jun 25, 2020 at 05:34:38AM +0300, Jarkko Sakkinen wrote:
-> > On Wed, Jun 24, 2020 at 08:38:25PM -0400, Stefan Berger wrote:
-> > > On 6/24/20 8:00 PM, Jarkko Sakkinen wrote:
-> > > > On Tue, Jun 23, 2020 at 08:06:35AM -0400, Stefan Berger wrote:
-> > > > > From: Stefan Berger <stefanb@linux.ibm.com>
-> > > > > 
-> > > > > Recent extensions of the TPM2 ACPI table added 3 more fields
-> > > > > including 12 bytes of start method specific parameters and Log Area
-> > > > > Minimum Length (u32) and Log Area Start Address (u64). So, we extend
-> > > > > the existing structure with these fields to allow non-UEFI systems
-> > > > > to access the TPM2's log.
-> > > > > 
-> > > > > The specification that has the new fields is the following:
-> > > > >    TCG ACPI Specification
-> > > > >    Family "1.2" and "2.0"
-> > > > >    Version 1.2, Revision 8
-> > > > > 
-> > > > > Adapt all existing table size calculations to use
-> > > > > offsetof(struct acpi_table_tpm2, start_method_specific)
-> > > > > [where start_method_specific is a newly added field]
-> > > > > rather than sizeof(struct acpi_table_tpm2) so that the addition
-> > > > > of the new fields does not affect current systems that may not
-> > > > > have them.
-> > > > > 
-> > > > I found at least one regression from this patch. Please remove my
-> > > > reviewed-by comment form the next version.
-> > > > 
-> > > > Should have:
-> > > > 
-> > > >    Link: https://trustedcomputinggroup.org/wp-content/uploads/TCG_ACPIGeneralSpecification_v1.20_r8.pdf
-> > > > 
-> > > > Please, add this.
-> > > > 
-> > > > > Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-> > > > > Cc: linux-acpi@vger.kernel.org
-> > > > > Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > > > > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > > > > ---
-> > > > >   drivers/char/tpm/tpm_crb.c | 13 ++++++++++---
-> > > > >   drivers/char/tpm/tpm_tis.c |  4 +++-
-> > > > >   include/acpi/actbl3.h      |  5 +++--
-> > > > >   3 files changed, 16 insertions(+), 6 deletions(-)
-> > > > > 
-> > > > > diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
-> > > > > index a9dcf31eadd2..0565aa5482f9 100644
-> > > > > --- a/drivers/char/tpm/tpm_crb.c
-> > > > > +++ b/drivers/char/tpm/tpm_crb.c
-> > > > > @@ -669,7 +669,9 @@ static int crb_acpi_add(struct acpi_device *device)
-> > > > >   	status = acpi_get_table(ACPI_SIG_TPM2, 1,
-> > > > >   				(struct acpi_table_header **) &buf);
-> > > > > -	if (ACPI_FAILURE(status) || buf->header.length < sizeof(*buf)) {
-> > > > > +	if (ACPI_FAILURE(status) || buf->header.length <
-> > > > > +			offsetof(struct acpi_table_tpm2,
-> > > > > +				 start_method_specific)) {
-> > > > >   		dev_err(dev, FW_BUG "failed to get TPM2 ACPI table\n");
-> > > > >   		return -EINVAL;
-> > > > >   	}
-> > > > > @@ -684,14 +686,19 @@ static int crb_acpi_add(struct acpi_device *device)
-> > > > >   		return -ENOMEM;
-> > > > >   	if (sm == ACPI_TPM2_COMMAND_BUFFER_WITH_ARM_SMC) {
-> > > > > -		if (buf->header.length < (sizeof(*buf) + sizeof(*crb_smc))) {
-> > > > > +		if (buf->header.length <
-> > > > > +			(offsetof(struct acpi_table_tpm2,
-> > > > > +				  start_method_specific) +
-> > > > Should be
-> > > > 
-> > > >    offsetof(struct acpti_table_tpm2, log_area_minimum_length)
-> > > 
-> > > 
-> > > The old code had sizeof(*buf) with buf being 'struct acpi_table_tpm2' and
-> > > that was equivalent to offsetof(struct acpi_table_tpm2,
-> > > start_method_specific) since 'start_method_specific' is the first new field
-> > > that we are adding right here. Also see 3rd paragraph in the patch
-> > > description. The replacement rule described there should apply to all
-> > > sizeof() calculations on 'struct acpi_table_tpm2.'
-> > 
-> > Aren't you ignoring sizeof(*crb_smc) then?
+On 2020/06/25 10:35, Alexei Starovoitov wrote:
+>> What is unhappy for pathname based LSMs is that fork_usermode_blob() creates
+>> a file with empty filename. I can imagine that somebody would start abusing
+>> fork_usermode_blob() as an interface for starting programs like modprobe, hotplug,
+>> udevd and sshd. When such situation happened, how fork_usermode_blob() provides
+>> information for identifying the intent of such execve() requests?
+>>
+>> fork_usermode_blob() might also be an unhappy behavior for inode based LSMs (like
+>> SELinux and Smack) because it seems that fork_usermode_blob() can't have a chance
+>> to associate appropriate security labels based on the content of the byte array
+>> because files are created on-demand. Is fork_usermode_blob() friendly to inode
+>> based LSMs?
 > 
-> Duh, it's there I see. Sorry, my mistake.
-> 
-> Please put the new fields in a separate struct:
-> 
-> struct acpi_tpm2_phy {
-> 	u8  start_method_specific[12];
-> 	u32 log_area_minimum_length;
-> 	u64 log_area_start_address;
-> };
-> 
-> This way we don't have to obfuscate all the calculations and zero out
-> the need for 1/2 in this patch set.
+> blob is started by a kernel module. Regardless of path existence that kernel module
+> could have disabled any LSM and any kernel security mechanism.
+> People who write out of tree kernel modules found ways to bypass EXPORT_SYMBOL
+> with and without _GPL. Modules can do anything. It's only the number of hoops
+> they need to jump through to get what they want.
 
-Also remark that, if you continue the current patch, that would need
-tested-by from ARM whereas a new struct does not because the ARM code
-is intact.
+So what? I know that. That's irrelevant to my questions.
 
-/Jarkko
+> Signed and in-tree kernel module is the only way to protect the integrity of the system.
+> That's why user blob is part of kernel module elf object and it's covered by the same
+> module signature verification logic.
+
+My questions are:
+
+(1) "Signed and in-tree kernel module" assertion is pointless.
+    In future, some of in-tree kernel modules might start using fork_usermode_blob()
+    instead of call_usermodehelper(), with instructions containing what your initial
+    use case does not use. There is no guarantee that such thing can't happen.
+    Assuming that there will be multiple blobs, we need a way to identify these blobs.
+    How does fork_usermode_blob() provide information for identification?
+
+(2) Running some blob in usermode means that permission checks by LSM modules will
+    be enforced. For example, socket's shutdown operation via shutdown() syscall from
+    usermode blob will involve security_socket_shutdown() check.
+    
+    ----------
+    int kernel_sock_shutdown(struct socket *sock, enum sock_shutdown_cmd how)
+    {
+            return sock->ops->shutdown(sock, how);
+    }
+    ----------
+    
+    ----------
+    int __sys_shutdown(int fd, int how)
+    {
+            int err, fput_needed;
+            struct socket *sock;
+    
+            sock = sockfd_lookup_light(fd, &err, &fput_needed);
+            if (sock != NULL) {
+                    err = security_socket_shutdown(sock, how);
+                    if (!err)
+                            err = sock->ops->shutdown(sock, how);
+                    fput_light(sock->file, fput_needed);
+            }
+            return err;
+    }
+    
+    SYSCALL_DEFINE2(shutdown, int, fd, int, how)
+    {
+            return __sys_shutdown(fd, how);
+    }
+    ----------
+    
+    I don't know what instructions your blob would contain. But even if the blobs
+    containing your initial use case use only setsockopt()/getsockopt() syscalls,
+    LSM modules have rights to inspect and reject these requests from usermode blobs
+    via security_socket_setsockopt()/security_socket_getsockopt() hooks. In order to
+    inspect these requests, LSM modules need information (so called "security context"),
+    and fork_usermode_blob() has to be able to somehow teach that information to LSM
+    modules. Pathname is one of information for pathname based LSM modules. Inode's
+    security label is one of information for inode based LSM modules.
+    
+    call_usermodehelper() can teach LSM modules via pre-existing file's pathname and
+    inode's security label at security_bprm_creds_for_exec()/security_bprm_check() etc.
+    But since fork_usermode_blob() accepts only "byte array" and "length of byte array"
+    arguments, I'm not sure whether LSM modules can obtain information needed for
+    inspection. How does fork_usermode_blob() tell that information?
+
+(3) Again, "root can poke into kernel or any process memory." assertion is pointless.
+    Answering to your questions
+
+      > hmm. do you really mean that it's possible for an LSM to restrict CAP_SYS_ADMIN effectively?
+      Not every LSM module restricts CAP_* flags. But LSM modules can implement finer grained
+      restrictions than plain CAP_* flags.
+
+      > How elf binaries embedded in the kernel modules different from pid 1?
+      No difference.
+
+      > If anything can peek into their memory the system is compromised.
+      Permission checks via LSM modules are there to prevent such behavior.
+
+      > Say, there are no user blobs in kernel modules. How pid 1 memory is different
+      > from all the JITed images? How is it different for all memory regions shared
+      > between kernel and user processes?
+      I don't know what "the JITed images" means. But I guess that the answer is
+      "No difference".
+
+    Then, I ask you back.
+
+    Although the byte array (which contains code / data) might be initially loaded from
+    the kernel space (which is protected), that byte array is no longer protected (e.g.
+    SIGKILL, ptrace()) when executed because they are placed in the user address space.
+
+    Why the usermode process started by fork_usermode_blob() cannot interfere (or be
+    interfered by) the rest of the system (including normal usermode processes) ?
+    And I guess that your answer is "the usermode process started by fork_usermode_blob()
+    _can_ (and be interfered by) the rest of the system, for they are nothing but
+    normal usermode processes."
+
+    Thus, LSM modules (including pathname based security) want to control how that byte
+    array can behave. And how does fork_usermode_blob() tell necessary information?
+
+Your answers up to now did not convince LSM modules to ignore what the usermode process
+started by fork_usermode_blob() can do. If you again don't answer my questions, I'll
+ack to https://lkml.kernel.org/r/875zc4c86z.fsf_-_@x220.int.ebiederm.org .
+
