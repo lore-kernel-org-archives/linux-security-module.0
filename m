@@ -2,238 +2,151 @@ Return-Path: <SRS0=ekpI=AH=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1277C433DF
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jun 2020 09:14:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 035ECC433DF
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jun 2020 11:40:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B9FB820675
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jun 2020 09:14:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="iuZIDL/4"
+	by mail.kernel.org (Postfix) with ESMTP id D345C2082E
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jun 2020 11:40:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1593171618;
+	bh=frb0VME4QFCfSJe7PmRiZZtHoOUNd27T+6DuYCDY1ho=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=ZbjnFER+S2fsB/Ss3O0dyvdycfMwUy/+Ebr4NaCRrgMYEEAOp7OPCgD1vb2I/nmfo
+	 M16sOFb/wP/aY9nyzzt/AvZs9sq+RLYLJjeBGkZZuY115j1QPyffqcFC8qOfRFrxdl
+	 Wp9JH3v/oemXO5rbfi9WIWj6vW9pzx21wTHN7JU4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726359AbgFZJO1 (ORCPT
+        id S1728718AbgFZLkM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 26 Jun 2020 05:14:27 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:44528 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725820AbgFZJO1 (ORCPT
+        Fri, 26 Jun 2020 07:40:12 -0400
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:36155 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725900AbgFZLkM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 26 Jun 2020 05:14:27 -0400
-Received: from zn.tnic (p200300ec2f0d14002d5f36c4e9373ada.dip0.t-ipconnect.de [IPv6:2003:ec:2f0d:1400:2d5f:36c4:e937:3ada])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 49A211EC037C;
-        Fri, 26 Jun 2020 11:14:25 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1593162865;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=QqkODfEAET3aFljfnSs28wqN/EdGoMwTbRGyQvGA1RQ=;
-        b=iuZIDL/4plAlI8etKmVUTIGhM94uPDMKqyfSxiGNmpiCgccGZBpqUxNdAe8yu/MGUpRT09
-        BDFyOKX+FkZKU5auGi0IWVe+t5lI4C9b2PG0o1c0ZZmYhOHf/h4jsFjzCQmx30qyU1JujY
-        wnbB7+jUHmBRyXTWy71ZLTqHVnC7MuI=
-Date:   Fri, 26 Jun 2020 11:14:19 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Jethro Beekman <jethro@fortanix.com>,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Chunyang Hui <sanqian.hcy@antfin.com>,
-        Jordan Hand <jorhand@linux.microsoft.com>,
-        Nathaniel McCallum <npmccallum@redhat.com>,
-        Seth Moore <sethmo@google.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
-        asapek@google.com, cedric.xing@intel.com, chenalexchen@google.com,
-        conradparker@google.com, cyhanish@google.com,
-        dave.hansen@intel.com, haitao.huang@intel.com,
-        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
-        kmoy@google.com, ludloff@google.com, luto@kernel.org,
-        nhorman@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
-        tglx@linutronix.de, yaozhangx@google.com
-Subject: Re: [PATCH v33 11/21] x86/sgx: Linux Enclave Driver
-Message-ID: <20200626091419.GB27151@zn.tnic>
-References: <20200617220844.57423-1-jarkko.sakkinen@linux.intel.com>
- <20200617220844.57423-12-jarkko.sakkinen@linux.intel.com>
+        Fri, 26 Jun 2020 07:40:12 -0400
+Received: by mail-pj1-f65.google.com with SMTP id h22so4842773pjf.1;
+        Fri, 26 Jun 2020 04:40:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=wnn5CPE1OQI5MbFdoVeNzug5Y/E4qNsr7nm00pkYjsg=;
+        b=VX/NDcK3cWNkOqEznH+rHxPMCVA2ZZ/Yvsv5Pm52vlgMQQ74cnifJ+D2ecxcODvC5v
+         Fkj0Ci8vYYONLziSJeMqSFs3iyyMmvPCpJ1EgAy903rYYZcU3UdyoOY9DYzxAqPeAQsD
+         EtGEK2MZLpqSWV8tbU76mZlCdMRoypUI2oXIk3zIbS+rNZVLk5oN+cm61AB6JpBywBa0
+         H3uTZOGfHH6UChsodjhDBVoO9Kpy9AXbPrk/skrhYCeoS2gPH/ueg5Ra4ru5ykZNcETW
+         RR4+qA4tDYjy1xf+Y6ancZ2HEmH/Jn+Z+Rn6fFtNH4qNA3sBtvtqt+96vlM5zSDn7Cgq
+         P+5w==
+X-Gm-Message-State: AOAM531ObMrp6gfRCJ5JWKX5yKbh/Y/o9UELnjHWNBw9Re530u4XL29W
+        4RdpomuWlplHgMJy4xzgkQo=
+X-Google-Smtp-Source: ABdhPJwGnA6i8X9De1IIY6uo4WMjc9fcRybYmtI1FEyCJ5SkbsL4wzndlVbt12ryEpm7GBivRrC8Cw==
+X-Received: by 2002:a17:90b:1292:: with SMTP id fw18mr2901992pjb.183.1593171610835;
+        Fri, 26 Jun 2020 04:40:10 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id g21sm25348911pfh.134.2020.06.26.04.40.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Jun 2020 04:40:09 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id 8D0D340B24; Fri, 26 Jun 2020 11:40:08 +0000 (UTC)
+Date:   Fri, 26 Jun 2020 11:40:08 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Christoph Hellwig <hch@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Christian Borntraeger <borntraeger@de.ibm.com>, ast@kernel.org,
+        axboe@kernel.dk, bfields@fieldses.org,
+        bridge@lists.linux-foundation.org, chainsaw@gentoo.org,
+        christian.brauner@ubuntu.com, chuck.lever@oracle.com,
+        davem@davemloft.net, dhowells@redhat.com,
+        gregkh@linuxfoundation.org, jarkko.sakkinen@linux.intel.com,
+        jmorris@namei.org, josh@joshtriplett.org, keescook@chromium.org,
+        keyrings@vger.kernel.org, kuba@kernel.org,
+        lars.ellenberg@linbit.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-security-module@vger.kernel.org, nikolay@cumulusnetworks.com,
+        philipp.reisner@linbit.com, ravenexp@gmail.com,
+        roopa@cumulusnetworks.com, serge@hallyn.com, slyfox@gentoo.org,
+        viro@zeniv.linux.org.uk, yangtiezhu@loongson.cn,
+        netdev@vger.kernel.org, markward@linux.ibm.com,
+        linux-s390 <linux-s390@vger.kernel.org>
+Subject: Re: linux-next: umh: fix processed error when UMH_WAIT_PROC is used
+ seems to break linux bridge on s390x (bisected)
+Message-ID: <20200626114008.GK4332@42.do-not-panic.com>
+References: <20200624144311.GA5839@infradead.org>
+ <9e767819-9bbe-2181-521e-4d8ca28ca4f7@de.ibm.com>
+ <20200624160953.GH4332@42.do-not-panic.com>
+ <ea41e2a9-61f7-aec1-79e5-7b08b6dd5119@de.ibm.com>
+ <4e27098e-ac8d-98f0-3a9a-ea25242e24ec@de.ibm.com>
+ <4d8fbcea-a892-3453-091f-d57c03f9aa90@de.ibm.com>
+ <1263e370-7cee-24d8-b98c-117bf7c90a83@de.ibm.com>
+ <20200626025410.GJ4332@42.do-not-panic.com>
+ <feb6a8c4-2b94-3f95-6637-679e089a71ca@de.ibm.com>
+ <20200626090001.GA30103@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200617220844.57423-12-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20200626090001.GA30103@infradead.org>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jun 18, 2020 at 01:08:33AM +0300, Jarkko Sakkinen wrote:
-> diff --git a/Documentation/userspace-api/ioctl/ioctl-number.rst b/Documentation/userspace-api/ioctl/ioctl-number.rst
-> index 59472cd6a11d..35f713e3a267 100644
-> --- a/Documentation/userspace-api/ioctl/ioctl-number.rst
-> +++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
-> @@ -323,6 +323,7 @@ Code  Seq#    Include File                                           Comments
->                                                                       <mailto:tlewis@mindspring.com>
->  0xA3  90-9F  linux/dtlk.h
->  0xA4  00-1F  uapi/linux/tee.h                                        Generic TEE subsystem
-> +0xA4  00-1F  uapi/asm/sgx.h                                          Intel SGX subsystem (a legit conflict as TEE and SGX do not co-exist)
+On Fri, Jun 26, 2020 at 10:00:01AM +0100, Christoph Hellwig wrote:
+> On Fri, Jun 26, 2020 at 07:22:34AM +0200, Christian Borntraeger wrote:
+> > 
+> > 
+> > On 26.06.20 04:54, Luis Chamberlain wrote:
+> > > On Wed, Jun 24, 2020 at 08:37:55PM +0200, Christian Borntraeger wrote:
+> > >>
+> > >>
+> > >> On 24.06.20 20:32, Christian Borntraeger wrote:
+> > >> [...]> 
+> > >>> So the translations look correct. But your change is actually a sematic change
+> > >>> if(ret) will only trigger if there is an error
+> > >>> if (KWIFEXITED(ret)) will always trigger when the process ends. So we will always overwrite -ECHILD
+> > >>> and we did not do it before. 
+> > >>>
+> > >>
+> > >> So the right fix is
+> > >>
+> > >> diff --git a/kernel/umh.c b/kernel/umh.c
+> > >> index f81e8698e36e..a3a3196e84d1 100644
+> > >> --- a/kernel/umh.c
+> > >> +++ b/kernel/umh.c
+> > >> @@ -154,7 +154,7 @@ static void call_usermodehelper_exec_sync(struct subprocess_info *sub_info)
+> > >>                  * the real error code is already in sub_info->retval or
+> > >>                  * sub_info->retval is 0 anyway, so don't mess with it then.
+> > >>                  */
+> > >> -               if (KWIFEXITED(ret))
+> > >> +               if (KWEXITSTATUS(ret))
+> > >>                         sub_info->retval = KWEXITSTATUS(ret);
+> > >>         }
+> > >>  
+> > >> I think.
+> > > 
+> > > Nope, the right form is to check for WIFEXITED() before using WEXITSTATUS().
+> > 
+> > But this IS a change over the previous code, no?
+> > I will test next week as I am travelling right now. 
+> 
+> I'm all for reverting back to the previous behavior.  If someone wants
+> a behavior change it should be a separate patch.  And out of pure self
+> interest I'd like to see that change after my addition of the
+> kernel_wait helper to replace the kernel_wait4 abuse :)
 
-Maybe add <mailto:linux-sgx@vger.kernel.org> ?
+Yeah sure, this will be *slightly* cleaner after that. Today we
+implicitly return -ECHLD as well under the assumption the kernel_wait4()
+call failed.
 
->  0xAA  00-3F  linux/uapi/linux/userfaultfd.h
->  0xAB  00-1F  linux/nbd.h
->  0xAC  00-1F  linux/raw.h
+Andrew, can you please revert these two for now:
 
-...
+selftests: simplify kmod failure value
+umh: fix processed error when UMH_WAIT_PROC is used
 
-> +static int sgx_encl_create(struct sgx_encl *encl, struct sgx_secs *secs)
-> +{
-> +	unsigned long encl_size = secs->size + PAGE_SIZE;
+Later, we'll add Christoph's simplier kernel wait, and make the change
+directly there to catpure the right error. That still won't fix this reported
+issue, but it will be cleaner and will go tested by Christian Borntraeger
+before.
 
-Wait, you just copied @secs from user memory in sgx_ioc_enclave_create()
-and now use ->size unverified? You're kidding, right?
-
-> +	struct sgx_epc_page *secs_epc;
-> +	unsigned long ssaframesize;
-> +	struct sgx_pageinfo pginfo;
-> +	struct sgx_secinfo secinfo;
-> +	struct file *backing;
-> +	long ret;
-> +
-> +	if (atomic_read(&encl->flags) & SGX_ENCL_CREATED)
-> +		return -EINVAL;
-> +
-> +	ssaframesize = sgx_calc_ssaframesize(secs->miscselect, secs->xfrm);
-
-So this is using more un-validated user input to do further calculations.
-What can possibly go wrong?
-
-I sure hope *I* am wrong and am missing something here.
-
-If not, please, for the next version, audit all your user input and
-validate it before using it. Srsly.
-
-> +	if (sgx_validate_secs(secs, ssaframesize)) {
-> +		pr_debug("invalid SECS\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	backing = shmem_file_setup("SGX backing", encl_size + (encl_size >> 5),
-> +				   VM_NORESERVE);
-> +	if (IS_ERR(backing))
-> +		return PTR_ERR(backing);
-> +
-> +	encl->backing = backing;
-> +
-> +	secs_epc = __sgx_alloc_epc_page();
-> +	if (IS_ERR(secs_epc)) {
-> +		ret = PTR_ERR(secs_epc);
-> +		goto err_out_backing;
-> +	}
-> +
-> +	encl->secs.epc_page = secs_epc;
-> +
-> +	pginfo.addr = 0;
-> +	pginfo.contents = (unsigned long)secs;
-> +	pginfo.metadata = (unsigned long)&secinfo;
-> +	pginfo.secs = 0;
-> +	memset(&secinfo, 0, sizeof(secinfo));
-> +
-> +	ret = __ecreate((void *)&pginfo, sgx_get_epc_addr(secs_epc));
-> +	if (ret) {
-> +		pr_debug("ECREATE returned %ld\n", ret);
-> +		goto err_out;
-> +	}
-> +
-> +	if (secs->attributes & SGX_ATTR_DEBUG)
-> +		atomic_or(SGX_ENCL_DEBUG, &encl->flags);
-> +
-> +	encl->secs.encl = encl;
-> +	encl->secs_attributes = secs->attributes;
-> +	encl->allowed_attributes |= SGX_ATTR_ALLOWED_MASK;
-> +	encl->base = secs->base;
-> +	encl->size = secs->size;
-> +	encl->ssaframesize = secs->ssa_frame_size;
-> +
-> +	/*
-> +	 * Set SGX_ENCL_CREATED only after the enclave is fully prepped.  This
-> +	 * allows setting and checking enclave creation without having to take
-> +	 * encl->lock.
-> +	 */
-> +	atomic_or(SGX_ENCL_CREATED, &encl->flags);
-> +
-> +	return 0;
-> +
-> +err_out:
-> +	sgx_free_epc_page(encl->secs.epc_page);
-> +	encl->secs.epc_page = NULL;
-> +
-> +err_out_backing:
-> +	fput(encl->backing);
-> +	encl->backing = NULL;
-> +
-> +	return ret;
-> +}
-> +
-> +/**
-> + * sgx_ioc_enclave_create - handler for %SGX_IOC_ENCLAVE_CREATE
-> + * @filep:	open file to /dev/sgx
-
-That's
-
-@encl: enclave pointer
-
-or so.
-
-> + * @arg:	userspace pointer to a struct sgx_enclave_create instance
-> + *
-> + * Allocate kernel data structures for a new enclave and execute ECREATE after
-> + * verifying the correctness of the provided SECS.
-> + *
-> + * Note, enforcement of restricted and disallowed attributes is deferred until
-> + * sgx_ioc_enclave_init(), only the architectural correctness of the SECS is
-> + * checked by sgx_ioc_enclave_create().
-
-Well, I don't see that checking. Where is it?
-
-> + *
-> + * Return:
-> + *   0 on success,
-> + *   -errno otherwise
-> + */
-> +static long sgx_ioc_enclave_create(struct sgx_encl *encl, void __user *arg)
-> +{
-> +	struct sgx_enclave_create ecreate;
-> +	struct page *secs_page;
-> +	struct sgx_secs *secs;
-> +	int ret;
-> +
-> +	if (copy_from_user(&ecreate, arg, sizeof(ecreate)))
-> +		return -EFAULT;
-> +
-> +	secs_page = alloc_page(GFP_KERNEL);
-> +	if (!secs_page)
-> +		return -ENOMEM;
-> +
-> +	secs = kmap(secs_page);
-> +	if (copy_from_user(secs, (void __user *)ecreate.src, sizeof(*secs))) {
-> +		ret = -EFAULT;
-> +		goto out;
-> +	}
-> +
-> +	ret = sgx_encl_create(encl, secs);
-> +
-> +out:
-> +	kunmap(secs_page);
-> +	__free_page(secs_page);
-> +	return ret;
-> +}
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+  Luis
