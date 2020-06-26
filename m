@@ -2,38 +2,38 @@ Return-Path: <SRS0=ekpI=AH=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-17.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB266C433E2
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jun 2020 22:40:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85FF9C433E4
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jun 2020 22:40:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B81C82089D
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jun 2020 22:40:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 563402089D
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jun 2020 22:40:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="f7hcNvHD"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="TMlmjXk0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726552AbgFZWjt (ORCPT
+        id S1726322AbgFZWjt (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
         Fri, 26 Jun 2020 18:39:49 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:37918 "EHLO
+Received: from linux.microsoft.com ([13.77.154.182]:37900 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726525AbgFZWjm (ORCPT
+        with ESMTP id S1726518AbgFZWjk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 26 Jun 2020 18:39:42 -0400
+        Fri, 26 Jun 2020 18:39:40 -0400
 Received: from sequoia.work.tihix.com (162-237-133-238.lightspeed.rcsntx.sbcglobal.net [162.237.133.238])
-        by linux.microsoft.com (Postfix) with ESMTPSA id D458C20B4907;
-        Fri, 26 Jun 2020 15:39:40 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com D458C20B4907
+        by linux.microsoft.com (Postfix) with ESMTPSA id B322D20B4905;
+        Fri, 26 Jun 2020 15:39:39 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B322D20B4905
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1593211181;
-        bh=pFH0+7shWtBIUXAmbHtVKgktKeESMvnpMqcT4wbOKOc=;
+        s=default; t=1593211180;
+        bh=NgaFLRWS7qo3ujL0AXOQBEum655blqojaYopmjuWreY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f7hcNvHDSHVz89ZYcTH8jm/9afQX8d2xQHOymnOCi8MW2q3iziXSWxRIqVU82cCgx
-         k00c3DtUTLZGu8CBpzcsJsPyUV3oAbOyUe1Irxj3eWlEvraFkb5pbK3V1U/BOtklnw
-         GJI5ljgnWFCuty17kaOGHNS0pdOxiYdYsQkyQuqo=
+        b=TMlmjXk0FSfUS3DRx2rbvTApQ97nymuEYd2w1SK7TgThP+V41RqmU4Z20wPIc8pkr
+         P/33ku1ExGN/cYx9Kc+qHlM4i5Z5o51b52HkECqtWNR1AL4dhZLJcAygDONh9dzScC
+         RcmcidHdO+Wn0rMw2xLyQSp8mno3Zgb1qBauGVyk=
 From:   Tyler Hicks <tyhicks@linux.microsoft.com>
 To:     Mimi Zohar <zohar@linux.ibm.com>,
         Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
@@ -43,9 +43,9 @@ Cc:     James Morris <jmorris@namei.org>,
         Prakhar Srivastava <prsriva02@gmail.com>,
         linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org
-Subject: [PATCH v2 08/11] ima: Use correct type for the args_p member of ima_rule_entry.lsm elements
-Date:   Fri, 26 Jun 2020 17:38:57 -0500
-Message-Id: <20200626223900.253615-9-tyhicks@linux.microsoft.com>
+Subject: [PATCH v2 07/11] ima: Shallow copy the args_p member of ima_rule_entry.lsm elements
+Date:   Fri, 26 Jun 2020 17:38:56 -0500
+Message-Id: <20200626223900.253615-8-tyhicks@linux.microsoft.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200626223900.253615-1-tyhicks@linux.microsoft.com>
 References: <20200626223900.253615-1-tyhicks@linux.microsoft.com>
@@ -55,84 +55,60 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Make args_p be of the char pointer type rather than have it be a void
-pointer that gets casted to char pointer when it is used. It is a simple
-NUL-terminated string as returned by match_strdup().
+The args_p member is a simple string that is allocated by
+ima_rule_init(). Shallow copy it like other non-LSM references in
+ima_rule_entry structs.
+
+There are no longer any necessary error path cleanups to do in
+ima_lsm_copy_rule().
 
 Signed-off-by: Tyler Hicks <tyhicks@linux.microsoft.com>
 ---
 
 * v2
-  - No change
+  - Adjusted context to account for ima_lsm_copy_rule() directly calling
+    ima_lsm_free_rule() and the lack of explicit reference ownership
+    transfers
+  - Added comment to ima_lsm_copy_rule() to document the args_p
+    reference ownership transfer
 
- security/integrity/ima/ima_policy.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ security/integrity/ima/ima_policy.c | 16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
 
 diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index ef69c54266c6..8cdca2399d59 100644
+index f9b1bdb897da..ef69c54266c6 100644
 --- a/security/integrity/ima/ima_policy.c
 +++ b/security/integrity/ima/ima_policy.c
-@@ -74,7 +74,7 @@ struct ima_rule_entry {
- 	int pcr;
- 	struct {
- 		void *rule;	/* LSM file metadata specific */
--		void *args_p;	/* audit value */
-+		char *args_p;	/* audit value */
- 		int type;	/* audit type */
- 	} lsm[MAX_LSM_RULES];
- 	char *fsname;
-@@ -314,7 +314,7 @@ static struct ima_rule_entry *ima_lsm_copy_rule(struct ima_rule_entry *entry)
- 					  &nentry->lsm[i].rule);
- 		if (!nentry->lsm[i].rule)
- 			pr_warn("rule for LSM \'%s\' is undefined\n",
--				(char *)entry->lsm[i].args_p);
-+				entry->lsm[i].args_p);
+@@ -300,10 +300,13 @@ static struct ima_rule_entry *ima_lsm_copy_rule(struct ima_rule_entry *entry)
+ 			continue;
+ 
+ 		nentry->lsm[i].type = entry->lsm[i].type;
+-		nentry->lsm[i].args_p = kstrdup(entry->lsm[i].args_p,
+-						GFP_KERNEL);
+-		if (!nentry->lsm[i].args_p)
+-			goto out_err;
++		nentry->lsm[i].args_p = entry->lsm[i].args_p;
++		/*
++		 * Remove the reference from entry so that the associated
++		 * memory will not be freed during a later call to
++		 * ima_lsm_free_rule(entry).
++		 */
++		entry->lsm[i].args_p = NULL;
+ 
+ 		security_filter_rule_init(nentry->lsm[i].type,
+ 					  Audit_equal,
+@@ -314,11 +317,6 @@ static struct ima_rule_entry *ima_lsm_copy_rule(struct ima_rule_entry *entry)
+ 				(char *)entry->lsm[i].args_p);
  	}
  	return nentry;
+-
+-out_err:
+-	ima_lsm_free_rule(nentry);
+-	kfree(nentry);
+-	return NULL;
  }
-@@ -918,7 +918,7 @@ static int ima_lsm_rule_init(struct ima_rule_entry *entry,
- 					   &entry->lsm[lsm_rule].rule);
- 	if (!entry->lsm[lsm_rule].rule) {
- 		pr_warn("rule for LSM \'%s\' is undefined\n",
--			(char *)entry->lsm[lsm_rule].args_p);
-+			entry->lsm[lsm_rule].args_p);
  
- 		if (ima_rules == &ima_default_rules) {
- 			kfree(entry->lsm[lsm_rule].args_p);
-@@ -1667,27 +1667,27 @@ int ima_policy_show(struct seq_file *m, void *v)
- 			switch (i) {
- 			case LSM_OBJ_USER:
- 				seq_printf(m, pt(Opt_obj_user),
--					   (char *)entry->lsm[i].args_p);
-+					   entry->lsm[i].args_p);
- 				break;
- 			case LSM_OBJ_ROLE:
- 				seq_printf(m, pt(Opt_obj_role),
--					   (char *)entry->lsm[i].args_p);
-+					   entry->lsm[i].args_p);
- 				break;
- 			case LSM_OBJ_TYPE:
- 				seq_printf(m, pt(Opt_obj_type),
--					   (char *)entry->lsm[i].args_p);
-+					   entry->lsm[i].args_p);
- 				break;
- 			case LSM_SUBJ_USER:
- 				seq_printf(m, pt(Opt_subj_user),
--					   (char *)entry->lsm[i].args_p);
-+					   entry->lsm[i].args_p);
- 				break;
- 			case LSM_SUBJ_ROLE:
- 				seq_printf(m, pt(Opt_subj_role),
--					   (char *)entry->lsm[i].args_p);
-+					   entry->lsm[i].args_p);
- 				break;
- 			case LSM_SUBJ_TYPE:
- 				seq_printf(m, pt(Opt_subj_type),
--					   (char *)entry->lsm[i].args_p);
-+					   entry->lsm[i].args_p);
- 				break;
- 			}
- 			seq_puts(m, " ");
+ static int ima_lsm_update_rule(struct ima_rule_entry *entry)
 -- 
 2.25.1
 
