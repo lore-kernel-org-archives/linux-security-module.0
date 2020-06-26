@@ -2,147 +2,185 @@ Return-Path: <SRS0=ekpI=AH=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.5 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83654C433E0
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jun 2020 06:21:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3956BC433E3
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jun 2020 06:30:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6B7D02082E
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jun 2020 06:21:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22B2D206A5
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jun 2020 06:30:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728342AbgFZGVd (ORCPT
+        id S1728418AbgFZGad (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 26 Jun 2020 02:21:33 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:62741 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726451AbgFZGVd (ORCPT
+        Fri, 26 Jun 2020 02:30:33 -0400
+Received: from helcar.hmeau.com ([216.24.177.18]:51990 "EHLO fornost.hmeau.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727876AbgFZGac (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 26 Jun 2020 02:21:33 -0400
-Received: from fsav402.sakura.ne.jp (fsav402.sakura.ne.jp [133.242.250.101])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 05Q6KZQp052060;
-        Fri, 26 Jun 2020 15:20:35 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav402.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav402.sakura.ne.jp);
- Fri, 26 Jun 2020 15:20:35 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav402.sakura.ne.jp)
-Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 05Q6KZjY052040
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Fri, 26 Jun 2020 15:20:35 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [RFC][PATCH] net/bpfilter: Remove this broken and apparently
- unmantained
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <greg@kroah.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <20200625095725.GA3303921@kroah.com>
- <778297d2-512a-8361-cf05-42d9379e6977@i-love.sakura.ne.jp>
- <20200625120725.GA3493334@kroah.com>
- <20200625.123437.2219826613137938086.davem@davemloft.net>
- <CAHk-=whuTwGHEPjvtbBvneHHXeqJC=q5S09mbPnqb=Q+MSPMag@mail.gmail.com>
- <20200626015121.qpxkdaqtsywe3zqx@ast-mbp.dhcp.thefacebook.com>
- <eb3bec08-9de4-c708-fb8e-b6a47145eb5e@i-love.sakura.ne.jp>
- <20200626054137.m44jpsvlapuyslzw@ast-mbp.dhcp.thefacebook.com>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <c9a9c2b5-68cc-c35d-72c2-34de79ebfb15@i-love.sakura.ne.jp>
-Date:   Fri, 26 Jun 2020 15:20:35 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:68.0) Gecko/20100101
- Thunderbird/68.9.0
+        Fri, 26 Jun 2020 02:30:32 -0400
+Received: from gwarestrin.arnor.me.apana.org.au ([192.168.0.7])
+        by fornost.hmeau.com with smtp (Exim 4.92 #5 (Debian))
+        id 1johrw-0004mR-T7; Fri, 26 Jun 2020 16:29:50 +1000
+Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Fri, 26 Jun 2020 16:29:48 +1000
+Date:   Fri, 26 Jun 2020 16:29:48 +1000
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        LTP List <ltp@lists.linux.it>,
+        open list <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        lkft-triage@lists.linaro.org, linux-crypto@vger.kernel.org,
+        Jan Stancek <jstancek@redhat.com>, chrubis <chrubis@suse.cz>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        James Morris <jmorris@namei.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        David Howells <dhowells@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sachin Sant <sachinp@linux.vnet.ibm.com>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH] crypto: af_alg - Fix regression on empty requests
+Message-ID: <20200626062948.GA25285@gondor.apana.org.au>
+References: <CA+G9fYvHFs5Yx8TnT6VavtfjMN8QLPuXg6us-dXVJqUUt68adA@mail.gmail.com>
+ <20200622224920.GA4332@42.do-not-panic.com>
+ <CA+G9fYsXDZUspc5OyfqrGZn=k=2uRiGzWY_aPePK2C_kZ+dYGQ@mail.gmail.com>
+ <20200623064056.GA8121@gondor.apana.org.au>
+ <20200623170217.GB150582@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20200626054137.m44jpsvlapuyslzw@ast-mbp.dhcp.thefacebook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200623170217.GB150582@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2020/06/26 14:41, Alexei Starovoitov wrote:
->> I was hoping that fork_usermode_blob() accepts only simple program
->> like the content of "hello64" generated by
+On Tue, Jun 23, 2020 at 10:02:17AM -0700, Eric Biggers wrote:
+>
+> The source code for the two failing AF_ALG tests is here:
 > 
-> pretty much. statically compiled elf that is self contained.
-
-But fork_usermode_blob() itself does not check that.
-
->> due to interference from the rest of the system, how can we say "we trust kernel
->> code executing in userspace" ?
+> https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/crypto/af_alg02.c
+> https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/crypto/af_alg05.c
 > 
-> I answered this already in the previous email.
-
-Previous post is mostly summary for David Miller who responded
-
-  It's kernel code executing in userspace.  If you don't trust the
-  signed code you don't trust the signed code.
-
-  Nothing is magic about a piece of code executing in userspace.
-
-without understanding my concerns.
-
-> Use security_ptrace_access_check() LSM hook to make sure that no other process
-> can tamper with blob's memory when it's running as user process.
-
-Yes, security_ptrace_access_check() hook is there. But see the reality explained later.
-
-> In the future it would be trivial to add a new ptrace flag to
-> make sure that blob's memory is not ptraceable from the start.
-
-I guess it is some PF_* flag (like PF_KTHREAD is used for avoiding some interference).
-
->> There is security_ptrace_access_check() LSM hook, but no zero-configuration
->> method is available.
+> They use read() and write(), not send() and recv().
 > 
-> huh?
-> tomoyo is not using that hook, but selinux and many other LSMs do.
-> please learn from others.
-
-What I am hoping is that we can restrict interference between usermode blob processes
-and other processes without using LSMs, for the reality is
-
-  (1) Linux kernel community does not allow legally accessing LSM infrastructure from
-      loadable kernel modules since Linux 2.6.24.
-  (2) Red Hat folks enable only SELinux in their kernels.
-  (3) Customers I'm working for cannot afford enabling SELinux in their environments.
-
-and therefore
-
-  (4) I have to maintain loadable kernel module version of LSM modules which illegally
-      access LSM infrastructure in order to implement single function LSM modules.
-
-Implementing security_ptrace_access_check() hook in TOMOYO is not a solution.
-
->>> security label can carry that execution context.
->>
->> If files get a chance to be associated with appropriate pathname and
->> security label.
+> af_alg02 uses read() to read from a "salsa20" request socket without writing
+> anything to it.  It is expected that this returns 0, i.e. that behaves like
+> encrypting an empty message.
 > 
-> I can easily add a fake pathname to the blob, but it won't help tomoyo.
-> That's what I was saying all along.
-> pathname based security provides false sense of security.
-> 
-> I'm pretty sure this old blog has been read by many folks who
-> are following this thread, but it's worth reminding again:
-> https://securityblog.org/2006/04/19/security-anti-pattern-path-based-access-control/
-> I cannot agree more with Joshua.
-> Here is a quote:
-> "The most obvious problem with this is that not all objects are files and thus do not have paths."
+> af_alg05 uses write() to write 15 bytes to a "cbc(aes-generic)" request socket,
+> then read() to read 15 bytes.  It is expected that this fails with EINVAL, since
+> the length is not aligned to the AES block size (16 bytes).
 
-Don't you know that TOMOYO can coexist with SELinux/Smack/AppArmor since Linux 5.1 ? ;-)
+This patch should fix the regression:
 
+---8<---
+Some user-space programs rely on crypto requests that have no
+control metadata.  This broke when a check was added to require
+the presence of control metadata with the ctx->init flag.
+
+This patch fixes the regression by removing the ctx->init flag.
+
+This means that we do not distinguish the case of no metadata
+as opposed to an empty request.  IOW it is always assumed that
+if you call recv(2) before sending metadata that you are working
+with an empty request.
+
+Reported-by: Sachin Sant <sachinp@linux.vnet.ibm.com>
+Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+Fixes: f3c802a1f300 ("crypto: algif_aead - Only wake up when...")
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+
+diff --git a/crypto/af_alg.c b/crypto/af_alg.c
+index 9fcb91ea10c4..2d391117c020 100644
+--- a/crypto/af_alg.c
++++ b/crypto/af_alg.c
+@@ -635,7 +635,6 @@ void af_alg_pull_tsgl(struct sock *sk, size_t used, struct scatterlist *dst,
+ 
+ 	if (!ctx->used)
+ 		ctx->merge = 0;
+-	ctx->init = ctx->more;
+ }
+ EXPORT_SYMBOL_GPL(af_alg_pull_tsgl);
+ 
+@@ -757,8 +756,7 @@ int af_alg_wait_for_data(struct sock *sk, unsigned flags, unsigned min)
+ 			break;
+ 		timeout = MAX_SCHEDULE_TIMEOUT;
+ 		if (sk_wait_event(sk, &timeout,
+-				  ctx->init && (!ctx->more ||
+-						(min && ctx->used >= min)),
++				  !ctx->more || (min && ctx->used >= min),
+ 				  &wait)) {
+ 			err = 0;
+ 			break;
+@@ -847,7 +845,7 @@ int af_alg_sendmsg(struct socket *sock, struct msghdr *msg, size_t size,
+ 	}
+ 
+ 	lock_sock(sk);
+-	if (ctx->init && (init || !ctx->more)) {
++	if (!ctx->more && ctx->used) {
+ 		err = -EINVAL;
+ 		goto unlock;
+ 	}
+@@ -858,7 +856,6 @@ int af_alg_sendmsg(struct socket *sock, struct msghdr *msg, size_t size,
+ 			memcpy(ctx->iv, con.iv->iv, ivsize);
+ 
+ 		ctx->aead_assoclen = con.aead_assoclen;
+-		ctx->init = true;
+ 	}
+ 
+ 	while (size) {
+diff --git a/crypto/algif_aead.c b/crypto/algif_aead.c
+index d48d2156e621..749fe42315be 100644
+--- a/crypto/algif_aead.c
++++ b/crypto/algif_aead.c
+@@ -106,7 +106,7 @@ static int _aead_recvmsg(struct socket *sock, struct msghdr *msg,
+ 	size_t usedpages = 0;		/* [in]  RX bufs to be used from user */
+ 	size_t processed = 0;		/* [in]  TX bufs to be consumed */
+ 
+-	if (!ctx->init || ctx->more) {
++	if (ctx->more) {
+ 		err = af_alg_wait_for_data(sk, flags, 0);
+ 		if (err)
+ 			return err;
+diff --git a/crypto/algif_skcipher.c b/crypto/algif_skcipher.c
+index a51ba22fef58..5b6fa5e8c00d 100644
+--- a/crypto/algif_skcipher.c
++++ b/crypto/algif_skcipher.c
+@@ -61,7 +61,7 @@ static int _skcipher_recvmsg(struct socket *sock, struct msghdr *msg,
+ 	int err = 0;
+ 	size_t len = 0;
+ 
+-	if (!ctx->init || (ctx->more && ctx->used < bs)) {
++	if (ctx->more && ctx->used < bs) {
+ 		err = af_alg_wait_for_data(sk, flags, bs);
+ 		if (err)
+ 			return err;
+diff --git a/include/crypto/if_alg.h b/include/crypto/if_alg.h
+index ee6412314f8f..08c087cc89d6 100644
+--- a/include/crypto/if_alg.h
++++ b/include/crypto/if_alg.h
+@@ -135,7 +135,6 @@ struct af_alg_async_req {
+  *			SG?
+  * @enc:		Cryptographic operation to be performed when
+  *			recvmsg is invoked.
+- * @init:		True if metadata has been sent.
+  * @len:		Length of memory allocated for this data structure.
+  */
+ struct af_alg_ctx {
+@@ -152,7 +151,6 @@ struct af_alg_ctx {
+ 	bool more;
+ 	bool merge;
+ 	bool enc;
+-	bool init;
+ 
+ 	unsigned int len;
+ };
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
