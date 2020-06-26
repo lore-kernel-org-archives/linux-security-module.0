@@ -2,158 +2,129 @@ Return-Path: <SRS0=ekpI=AH=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EBAFC433E0
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jun 2020 12:26:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07287C433E0
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jun 2020 12:56:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 642E2207E8
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jun 2020 12:26:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E007B2076E
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jun 2020 12:56:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728314AbgFZM0W (ORCPT
+        id S1726378AbgFZM4R (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 26 Jun 2020 08:26:22 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:18542 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728256AbgFZM0V (ORCPT
+        Fri, 26 Jun 2020 08:56:17 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:36234 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725283AbgFZM4Q (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 26 Jun 2020 08:26:21 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 05QC3TfG027744;
-        Fri, 26 Jun 2020 08:26:00 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 31vws9haaq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 26 Jun 2020 08:26:00 -0400
-Received: from m0098410.ppops.net (m0098410.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 05QC3iHT029094;
-        Fri, 26 Jun 2020 08:26:00 -0400
-Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 31vws9haa2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 26 Jun 2020 08:25:59 -0400
-Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
-        by ppma04wdc.us.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 05QCKN3I020912;
-        Fri, 26 Jun 2020 12:25:58 GMT
-Received: from b01cxnp22035.gho.pok.ibm.com (b01cxnp22035.gho.pok.ibm.com [9.57.198.25])
-        by ppma04wdc.us.ibm.com with ESMTP id 31uurykuac-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 26 Jun 2020 12:25:58 +0000
-Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 05QCPw0L51904800
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 26 Jun 2020 12:25:58 GMT
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4202C112061;
-        Fri, 26 Jun 2020 12:25:58 +0000 (GMT)
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C2B02112065;
-        Fri, 26 Jun 2020 12:25:57 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri, 26 Jun 2020 12:25:57 +0000 (GMT)
-Subject: Re: Enabling interrupts in QEMU TPM TIS
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Jerry Snitselaar <jsnitsel@redhat.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Fri, 26 Jun 2020 08:56:16 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jontq-0000Y8-5P; Fri, 26 Jun 2020 06:56:10 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jontp-0002op-Bv; Fri, 26 Jun 2020 06:56:09 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     David Miller <davem@davemloft.net>,
+        Greg Kroah-Hartman <greg@kroah.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
         LSM List <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <1ca3a53d-2b83-7522-5ce1-83d9cc2f207d@linux.ibm.com>
- <20200625172802.GS6578@ziepe.ca>
- <0a524093-e744-e266-6087-ddc17b5c598c@linux.ibm.com>
- <5b3267b7-57d5-badf-6664-9d47bc9909e7@linux.ibm.com>
- <20200625231934.GU6578@ziepe.ca>
-From:   Stefan Berger <stefanb@linux.ibm.com>
-Message-ID: <a2e38eea-a137-ffea-ecf1-98f1e3ba1036@linux.ibm.com>
-Date:   Fri, 26 Jun 2020 08:25:57 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <20200625095725.GA3303921@kroah.com>
+        <778297d2-512a-8361-cf05-42d9379e6977@i-love.sakura.ne.jp>
+        <20200625120725.GA3493334@kroah.com>
+        <20200625.123437.2219826613137938086.davem@davemloft.net>
+        <CAHk-=whuTwGHEPjvtbBvneHHXeqJC=q5S09mbPnqb=Q+MSPMag@mail.gmail.com>
+Date:   Fri, 26 Jun 2020 07:51:41 -0500
+In-Reply-To: <CAHk-=whuTwGHEPjvtbBvneHHXeqJC=q5S09mbPnqb=Q+MSPMag@mail.gmail.com>
+        (Linus Torvalds's message of "Thu, 25 Jun 2020 18:36:34 -0700")
+Message-ID: <87pn9mgfc2.fsf_-_@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20200625231934.GU6578@ziepe.ca>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.687
- definitions=2020-06-26_06:2020-06-26,2020-06-26 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=816
- malwarescore=0 phishscore=0 lowpriorityscore=0 bulkscore=0
- priorityscore=1501 clxscore=1015 cotscore=-2147483648 spamscore=0
- suspectscore=0 impostorscore=0 mlxscore=0 adultscore=0 classifier=spam
- adjust=0 reason=mlx scancount=1 engine=8.12.0-2004280000
- definitions=main-2006260085
+Content-Type: text/plain
+X-XM-SPF: eid=1jontp-0002op-Bv;;;mid=<87pn9mgfc2.fsf_-_@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/YmVUEFfGHseC0z6q87iOl1C/HibYocrA=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: [PATCH 00/14] Make the user mode driver code a better citizen
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 6/25/20 7:19 PM, Jason Gunthorpe wrote:
-> On Thu, Jun 25, 2020 at 06:48:09PM -0400, Stefan Berger wrote:
->> On 6/25/20 5:26 PM, Stefan Berger wrote:
->>> On 6/25/20 1:28 PM, Jason Gunthorpe wrote:
->>>> On Thu, Jun 25, 2020 at 10:56:43AM -0400, Stefan Berger wrote:
->>>>> Hello!
->>>>>
->>>>>    I want to enable IRQs now in QEMU's TPM TIS device model and I
->>>>> need to work
->>>>> with the following patch to Linux TIS. I am wondering whether
->>>>> the changes
->>>>> there look reasonable to you? Windows works with the QEMU modifications
->>>>> as-is, so maybe it's a bug in the TIS code (which I had not run into
->>>>> before).
->>>>>
->>>>>
->>>>> The point of the loop I need to introduce in the interrupt
->>>>> handler is that
->>>>> while the interrupt handler is running another interrupt may
->>>>> occur/be posted
->>>>> that then does NOT cause the interrupt handler to be invoked again but
->>>>> causes a stall, unless the loop is there.
->>>> That seems like a qemu bug, TPM interrupts are supposed to be level
->>>> interrupts, not edge.
->>>
->>> Following this document here the hardware may choose to support
->>> different types of interrutps:
->>>
->>> https://trustedcomputinggroup.org/wp-content/uploads/PC-Client-Specific-Platform-TPM-Profile-for-TPM-2p0-v1p04_r0p37_pub-1.pdf
->>>
->>>
->>> Table 23. Edge falling or rising, level low or level high.
->>>
->>> So with different steps in the driver causing different types of
->>> interrupts, we may get into such situations where we process some
->>> interrupt 'reasons' but then another one gets posted, I guess due to
->>> parallel processing.
->>
->> Another data point: I had the TIS driver working on IRQ 5 (festeoi) without
->> the introduction of this loop. There are additional bits being set while the
->> interrupt handler is running, but the handler deals with them in the next
->> invocation. On IRQ 13 (edge), it does need the loop since the next interrupt
->> handler invocation is not happening.
-> A loop like that is never the correct way to handle edge interrupts.
 
-Right, we can just miss the update of the interrupt flags and miss the 
-loop and then afterwards the new flag gets set and we'd stall.
+Asking for people to fix their bugs in this user mode driver code has
+been remarkably unproductive.  So here are my bug fixes.
 
+I have tested them by booting with the code compiled in and
+by killing "bpfilter_umh" and running iptables -vnL to restart
+the userspace driver.
 
->
-> I don't think the tpm driver was ever designed for edge, so most
-> likely the structure and order of the hard irq is not correct.
+I have split the changes into small enough pieces so they should be
+easily readable and testable.  
 
-Right. For edge support I think we would need to avoid causing another 
-interrupt (like locality change interrupt) before the interrupt handler 
-hasn't finished dealing with an existing interrupt. Considering that 
-Windows works on IRQ 13 (egde) and Linux driver cannot, I guess this is 
-a good reason not to move QEMU TIS to IRQ 13 and try to support 
-interrupts via ACPI table declaration.
+The changes lean into the preexisting interfaces in the kernel and
+remove special cases for user mode driver code in favor of solutions
+that don't need special cases.  This results in smaller code with
+fewer bugs.
 
+At a practical level this removes the maintenance burden of the
+user mode drivers from the user mode helper code and from exec as
+the special cases are removed.
 
-     Stefan
+Similarly the LSM interaction bugs are fixed by not having unnecessary
+special cases for user mode drivers.
 
+Please let me know if you see any bugs.  Once the code review is
+finished I plan to take this through my tree.
 
->
-> Jason
+Eric W. Biederman (14):
+      umh: Capture the pid in umh_pipe_setup
+      umh: Move setting PF_UMH into umh_pipe_setup
+      umh: Rename the user mode driver helpers for clarity
+      umh: Remove call_usermodehelper_setup_file.
+      umh: Separate the user mode driver and the user mode helper support
+      umd: For clarity rename umh_info umd_info
+      umd: Rename umd_info.cmdline umd_info.driver_name
+      umd: Transform fork_usermode_blob into fork_usermode_driver
+      umh: Stop calling do_execve_file
+      exec: Remove do_execve_file
+      bpfilter: Move bpfilter_umh back into init data
+      umd: Track user space drivers with struct pid
+      bpfilter: Take advantage of the facilities of struct pid
+      umd: Remove exit_umh
 
+ fs/exec.c                        |  38 ++------
+ include/linux/binfmts.h          |   1 -
+ include/linux/bpfilter.h         |   7 +-
+ include/linux/sched.h            |   9 --
+ include/linux/umd.h              |  18 ++++
+ include/linux/umh.h              |  15 ----
+ kernel/Makefile                  |   1 +
+ kernel/exit.c                    |   1 -
+ kernel/umd.c                     | 183 +++++++++++++++++++++++++++++++++++++++
+ kernel/umh.c                     | 171 +-----------------------------------
+ net/bpfilter/bpfilter_kern.c     |  38 ++++----
+ net/bpfilter/bpfilter_umh_blob.S |   2 +-
+ net/ipv4/bpfilter/sockopt.c      |  20 +++--
+ 13 files changed, 249 insertions(+), 255 deletions(-)
 
+Eric
