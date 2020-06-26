@@ -2,185 +2,222 @@ Return-Path: <SRS0=ekpI=AH=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A31CFC433DF
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jun 2020 02:54:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEE6FC433E0
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jun 2020 04:59:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7830D207D8
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jun 2020 02:54:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1593140062;
-	bh=mWL3kIl5yBo1zZlMyTyFfEH9Ya9dKsxrnwiBrBseFbs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=ilV2GpdH/z5Yrnm7OSogaY91m2ngRnMjMr3Q4ylLnBajAnLygL66KM3uy/P0lymXt
-	 RIi7YgW4EhenhAK3mphRMtROVG6Y4iC6jxOqOPSxdElIiinUqfQV6B2HpolYGlCNyh
-	 YCp0sw8HQMcK0kzzKnYacCiCfhNfVoQdxONufcJQ=
+	by mail.kernel.org (Postfix) with ESMTP id BE3C820768
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jun 2020 04:59:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728225AbgFZCyP (ORCPT
+        id S1726869AbgFZE7d (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 25 Jun 2020 22:54:15 -0400
-Received: from mail-pj1-f67.google.com ([209.85.216.67]:36077 "EHLO
-        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728169AbgFZCyO (ORCPT
+        Fri, 26 Jun 2020 00:59:33 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:62634 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725306AbgFZE7c (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 25 Jun 2020 22:54:14 -0400
-Received: by mail-pj1-f67.google.com with SMTP id h22so4335891pjf.1;
-        Thu, 25 Jun 2020 19:54:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=bd0tbnV2l+YFNxwEQU+UFTSpztM9BxdQCKFAYWQxEMA=;
-        b=dGc1/SWdtEW2TIj5R6wz1AFNxhpob5ySnkkpUBhFRfiY4kLUotgettOuNsPsW68niw
-         yPm6U5XCo/EZpk36WpF6W6lzxlqioLfsJiiJfNYG+grNOn4WIO3EbpeQBDQKqj64NRUp
-         IH6WjzVnvyBputkk7F+M/qmkOdIqeQxbppFSn3Moh+39kq5rIpkLua+YIGBeIRkujJF1
-         E0br92DuqrQMXRVMsWtw2f+35UY7VMuuelHDPXQJ98rgbix2BedUGmpNfe/xsmpOcVJ7
-         aNZzJESYjpo7f5D2SLxYOMrvlV1MDk+zvNpdo8Capt5QXn0qXaO6yhdbZ93S3AjqQKXs
-         IAFQ==
-X-Gm-Message-State: AOAM533XcWrbtfQkSeQL9WUOrp2oTY+0Pq9I/EZx8ljd5WL9caNVtKuP
-        vHWn+XjZFkA7If2t5obgZ6k=
-X-Google-Smtp-Source: ABdhPJxHaLH/4n3uZFgLSBrdqLXbfEfRi9bTdaJAv9rYuDwTXW57R9muWUsfk5iNFsxMlxVPGbK2vg==
-X-Received: by 2002:a17:902:162:: with SMTP id 89mr183989plb.211.1593140053280;
-        Thu, 25 Jun 2020 19:54:13 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id t9sm9409782pjs.16.2020.06.25.19.54.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Jun 2020 19:54:11 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id BC43340430; Fri, 26 Jun 2020 02:54:10 +0000 (UTC)
-Date:   Fri, 26 Jun 2020 02:54:10 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Christian Borntraeger <borntraeger@de.ibm.com>
-Cc:     Christoph Hellwig <hch@infradead.org>, ast@kernel.org,
-        axboe@kernel.dk, bfields@fieldses.org,
-        bridge@lists.linux-foundation.org, chainsaw@gentoo.org,
-        christian.brauner@ubuntu.com, chuck.lever@oracle.com,
-        davem@davemloft.net, dhowells@redhat.com,
-        gregkh@linuxfoundation.org, jarkko.sakkinen@linux.intel.com,
-        jmorris@namei.org, josh@joshtriplett.org, keescook@chromium.org,
-        keyrings@vger.kernel.org, kuba@kernel.org,
-        lars.ellenberg@linbit.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-security-module@vger.kernel.org, nikolay@cumulusnetworks.com,
-        philipp.reisner@linbit.com, ravenexp@gmail.com,
-        roopa@cumulusnetworks.com, serge@hallyn.com, slyfox@gentoo.org,
-        viro@zeniv.linux.org.uk, yangtiezhu@loongson.cn,
-        netdev@vger.kernel.org, markward@linux.ibm.com,
-        linux-s390 <linux-s390@vger.kernel.org>
-Subject: Re: linux-next: umh: fix processed error when UMH_WAIT_PROC is used
- seems to break linux bridge on s390x (bisected)
-Message-ID: <20200626025410.GJ4332@42.do-not-panic.com>
-References: <20200623141157.5409-1-borntraeger@de.ibm.com>
- <b7d658b9-606a-feb1-61f9-b58e3420d711@de.ibm.com>
- <3118dc0d-a3af-9337-c897-2380062a8644@de.ibm.com>
- <20200624144311.GA5839@infradead.org>
- <9e767819-9bbe-2181-521e-4d8ca28ca4f7@de.ibm.com>
- <20200624160953.GH4332@42.do-not-panic.com>
- <ea41e2a9-61f7-aec1-79e5-7b08b6dd5119@de.ibm.com>
- <4e27098e-ac8d-98f0-3a9a-ea25242e24ec@de.ibm.com>
- <4d8fbcea-a892-3453-091f-d57c03f9aa90@de.ibm.com>
- <1263e370-7cee-24d8-b98c-117bf7c90a83@de.ibm.com>
+        Fri, 26 Jun 2020 00:59:32 -0400
+Received: from fsav107.sakura.ne.jp (fsav107.sakura.ne.jp [27.133.134.234])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 05Q4waSg074045;
+        Fri, 26 Jun 2020 13:58:36 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav107.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav107.sakura.ne.jp);
+ Fri, 26 Jun 2020 13:58:36 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav107.sakura.ne.jp)
+Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 05Q4wZ1f074034
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Fri, 26 Jun 2020 13:58:35 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [RFC][PATCH] net/bpfilter: Remove this broken and apparently
+ unmantained
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     David Miller <davem@davemloft.net>,
+        Greg Kroah-Hartman <greg@kroah.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <20200625095725.GA3303921@kroah.com>
+ <778297d2-512a-8361-cf05-42d9379e6977@i-love.sakura.ne.jp>
+ <20200625120725.GA3493334@kroah.com>
+ <20200625.123437.2219826613137938086.davem@davemloft.net>
+ <CAHk-=whuTwGHEPjvtbBvneHHXeqJC=q5S09mbPnqb=Q+MSPMag@mail.gmail.com>
+ <20200626015121.qpxkdaqtsywe3zqx@ast-mbp.dhcp.thefacebook.com>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <eb3bec08-9de4-c708-fb8e-b6a47145eb5e@i-love.sakura.ne.jp>
+Date:   Fri, 26 Jun 2020 13:58:35 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1263e370-7cee-24d8-b98c-117bf7c90a83@de.ibm.com>
+In-Reply-To: <20200626015121.qpxkdaqtsywe3zqx@ast-mbp.dhcp.thefacebook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jun 24, 2020 at 08:37:55PM +0200, Christian Borntraeger wrote:
+On 2020/06/26 10:51, Alexei Starovoitov wrote:
+> On Thu, Jun 25, 2020 at 06:36:34PM -0700, Linus Torvalds wrote:
+>> On Thu, Jun 25, 2020 at 12:34 PM David Miller <davem@davemloft.net> wrote:
+>>>
+>>> It's kernel code executing in userspace.  If you don't trust the
+>>> signed code you don't trust the signed code.
+>>>
+>>> Nothing is magic about a piece of code executing in userspace.
+>>
+>> Well, there's one real issue: the most likely thing that code is going
+>> to do is execute llvm to generate more code.
+
+Wow! Are we going to allow execution of such complicated programs?
+
+I was hoping that fork_usermode_blob() accepts only simple program
+like the content of "hello64" generated by
+
+----------
+; nasm -f elf64 hello64.asm && ld -s -m elf_x86_64 -o hello64 hello64.o
+section .text
+global _start
+
+_start:
+  mov rax, 1        ; write(
+  mov rdi, 1        ;   1,
+  mov rsi, msg      ;   "Hello world\n",
+  mov rdx, 12       ;   12
+  syscall           ; );
+  mov rax, 231      ; _exit(
+  mov rdi, 0        ;   0
+  syscall           ; );
+
+section .rodata
+  msg: db "Hello world", 0x0a
+----------
+
+which can be contained by mechanisms like seccomp; there is no pathname
+resolution, no networking access etc.
+
+>>
+>> And that's I think the real security issue here: the context in which
+>> the code executes. It may be triggered in one namespace, but what
+>> namespaces and what rules should the thing actually then execute in.
+>>
+>> So no, trying to dismiss this as "there are no security issues" is
+>> bogus. There very much are security issues.
 > 
+> I think you're referring to:
 > 
-> On 24.06.20 20:32, Christian Borntraeger wrote:
-> [...]> 
-> > So the translations look correct. But your change is actually a sematic change
-> > if(ret) will only trigger if there is an error
-> > if (KWIFEXITED(ret)) will always trigger when the process ends. So we will always overwrite -ECHILD
-> > and we did not do it before. 
-> > 
+>>>   We might need to invent built-in "protected userspace" because existing
+>>>   "unprotected userspace" is not trustworthy enough to run kernel modules.
+>>>   That's not just inventing fork_usermode_blob().
 > 
-> So the right fix is
+> Another root process can modify the memory of usermode_blob process.
+
+I'm not familiar with ptrace(); I'm just using /usr/bin/strace and /usr/bin/ltrace .
+What I'm worrying is that some root process tampers with memory which initially
+contained "hello64" above in order to let that memory do something different behavior.
+
+For example, a usermode process started by fork_usermode_blob() which was initially
+containing
+
+----------
+while (read(0, &uid, sizeof(uid)) == sizeof(uid)) {
+    if (uid == 0)
+        write(1, "OK\n", 3);
+    else
+        write(1, "NG\n", 3);
+}
+----------
+
+can be somehow tampered like
+
+----------
+while (read(0, &uid, sizeof(uid)) == sizeof(uid)) {
+    if (uid != 0)
+        write(1, "OK\n", 3);
+    else
+        write(1, "NG\n", 3);
+}
+----------
+
+due to interference from the rest of the system, how can we say "we trust kernel
+code executing in userspace" ?
+
+My question is: how is the byte array (which was copied from kernel space) kept secure/intact
+under "root can poke into kernel or any process memory." environment? It is obvious that
+we can't say "we trust kernel code executing in userspace" without some mechanism.
+
+Currently fork_usermode_blob() is not providing security context for the byte array to be
+executed. We could modify fork_usermode_blob() to provide security context for LSMs, but
+I'll be more happy if we can implement that mechanism without counting on in-tree LSMs, for
+SELinux is too complicated to support.
+
+> I think that's Tetsuo's point about lack of LSM hooks is kernel_sock_shutdown().
+> Obviously, kernel_sock_shutdown() can be called by kernel only.
+
+I can't catch what you mean. The kernel code executing in userspace uses syscall
+interface (e.g. SYSCALL_DEFINE2(shutdown, int, fd, int, how) path), doesn't it?
+
+> I suspect he's imaging a hypothetical situation where kernel bits of kernel module
+> interact with userblob bits of kernel module.
+> Then another root process tampers with memory of userblob.
+
+Yes, how to protect the memory of userblob is a concern. The memory of userblob can
+interfere (or can be interfered by) the rest of the system is a problem.
+
+> Then userblob interaction with kernel module can do kernel_sock_shutdown()
+> on something that initial design of kernel+userblob module didn't intend.
+
+I can't catch what you mean.
+
+> I think this is trivially enforceable without creating new features.
+> Existing security_ptrace_access_check() LSM hook can prevent tampering with
+> memory of userblob.
+
+There is security_ptrace_access_check() LSM hook, but no zero-configuration
+method is available.
+
 > 
-> diff --git a/kernel/umh.c b/kernel/umh.c
-> index f81e8698e36e..a3a3196e84d1 100644
-> --- a/kernel/umh.c
-> +++ b/kernel/umh.c
-> @@ -154,7 +154,7 @@ static void call_usermodehelper_exec_sync(struct subprocess_info *sub_info)
->                  * the real error code is already in sub_info->retval or
->                  * sub_info->retval is 0 anyway, so don't mess with it then.
->                  */
-> -               if (KWIFEXITED(ret))
-> +               if (KWEXITSTATUS(ret))
->                         sub_info->retval = KWEXITSTATUS(ret);
->         }
->  
-> I think.
+> As far as userblob calling llvm and other things in sequence.
+> That is no different from systemd calling things.
 
-Nope, the right form is to check for WIFEXITED() before using WEXITSTATUS().
-I'm not able to reproduce this on x86 with a bridge. What type of bridge
-are you using on a guest, or did you mean using KVM so that the *host*
-can spawn kvm guests?
+Right.
 
-It would be good if you can try to add a bridge manually and see where
-things fail. Can you do something like this:
+> security label can carry that execution context.
 
-brctl addbr br0
-brctl addif br0 ens6 
-ip link set dev br0 up
+If files get a chance to be associated with appropriate pathname and
+security label.
 
-Note that most callers are for modprobe. I'd be curious to see which
-umh is failing which breaks bridge for you. Can you trut this so we can
-see which umh call is failing?
+> 
+>> My personally strongest argument for remoiving this kernel code is
+>> that it's been there for a couple of years now, and it has never
+>> actually done anything useful, and there's no actual sign that it ever
+>> will, or that there is a solid plan in place for it.
+> 
+> you probably missed the detailed plan:
+> https://lore.kernel.org/bpf/20200609235631.ukpm3xngbehfqthz@ast-mbp.dhcp.thefacebook.com/
+> 
+> The project #3 is the above is the one we're working on right now.
+> It should be ready to post in a week.
 
-diff --git a/kernel/umh.c b/kernel/umh.c
-index f81e8698e36e..5ad74bc301d8 100644
---- a/kernel/umh.c
-+++ b/kernel/umh.c
-@@ -2,6 +2,9 @@
- /*
-  * umh - the kernel usermode helper
-  */
-+
-+#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-+
- #include <linux/module.h>
- #include <linux/sched.h>
- #include <linux/sched/task.h>
-@@ -154,8 +157,12 @@ static void call_usermodehelper_exec_sync(struct subprocess_info *sub_info)
- 		 * the real error code is already in sub_info->retval or
- 		 * sub_info->retval is 0 anyway, so don't mess with it then.
- 		 */
--		if (KWIFEXITED(ret))
-+		printk("== ret: %02x\n", ret);
-+		printk("== KWIFEXITED(ret): %02x\n", KWIFEXITED(ret));
-+		if (KWIFEXITED(ret)) {
-+			printk("KWEXITSTATUS(ret): %d\n", KWEXITSTATUS(ret));
- 			sub_info->retval = KWEXITSTATUS(ret);
-+		}
- 	}
- 
- 	/* Restore default kernel sig handler */
-@@ -383,6 +390,7 @@ struct subprocess_info *call_usermodehelper_setup(const char *path, char **argv,
- 		void *data)
- {
- 	struct subprocess_info *sub_info;
-+	unsigned int i = 0;
- 	sub_info = kzalloc(sizeof(struct subprocess_info), gfp_mask);
- 	if (!sub_info)
- 		goto out;
-@@ -394,6 +402,11 @@ struct subprocess_info *call_usermodehelper_setup(const char *path, char **argv,
- #else
- 	sub_info->path = path;
- #endif
-+	pr_info("sub_info->path: %s\n", sub_info->path);
-+	while (argv[i])
-+		printk(KERN_INFO "%s ", argv[i++]);
-+	printk(KERN_INFO  "\n");
-+
- 	sub_info->argv = argv;
- 	sub_info->envp = envp;
- 
+I got a question on project #3. Given that "cat /sys/fs/bpf/my_ipv6_route"
+produces the same human output as "cat /proc/net/ipv6_route", how security
+checks which are done for "cat /proc/net/ipv6_route" can be enforced for
+"cat /sys/fs/bpf/my_ipv6_route" ? Unless same security checks (e.g. permission
+to read /proc/net/ipv6_route ) is enforced, such bpf usage sounds like a method
+for bypassing existing security mechanisms.
 
