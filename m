@@ -2,199 +2,115 @@ Return-Path: <SRS0=ekpI=AH=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C589BC433DF
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jun 2020 13:04:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA0E2C433E0
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jun 2020 13:15:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A94FF20775
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jun 2020 13:04:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E3722081A
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jun 2020 13:15:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="fKCcF70R"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727802AbgFZNE1 (ORCPT
+        id S1726796AbgFZNPI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 26 Jun 2020 09:04:27 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:41312 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725940AbgFZNE0 (ORCPT
+        Fri, 26 Jun 2020 09:15:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60090 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726481AbgFZNPH (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 26 Jun 2020 09:04:26 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1joo1p-0001xN-H9; Fri, 26 Jun 2020 07:04:25 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1joo1o-0002IL-Hn; Fri, 26 Jun 2020 07:04:25 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <greg@kroah.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
+        Fri, 26 Jun 2020 09:15:07 -0400
+Received: from mail-qv1-xf34.google.com (mail-qv1-xf34.google.com [IPv6:2607:f8b0:4864:20::f34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 506D1C08C5DC
+        for <linux-security-module@vger.kernel.org>; Fri, 26 Jun 2020 06:15:07 -0700 (PDT)
+Received: by mail-qv1-xf34.google.com with SMTP id t11so2392464qvk.1
+        for <linux-security-module@vger.kernel.org>; Fri, 26 Jun 2020 06:15:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=VhXrfn9rZyyElsl+ixbfQu3b3ECvLdJTiMGy5aiGuwM=;
+        b=fKCcF70RlxM+1whp8dP25qWYRUeKG5PcYnaE0I7RaAFjyuCfSAmFKxpaDT9yWGfTc5
+         4X9l9LDbU+5gqqeLY65zLfIMZkB3OG4+SvYM2Zt3NJPefJ2RFTvQMg7OF3K3XWMCQhNV
+         qber0Wjvf6x4Aud5J4LKq76f4tEFql1M8Axwb13GgnuFXVoK/BNHrVeHnfSIOy7osu32
+         seyberAJXZlzxHqaYiTjQaAglvwA+6qq8hJt0ZS09u3nA3MZJHhkUYgJtuJ6PfcCuPin
+         u7dLzmTx1TsoX+PbcO/5NYK7c07SZJeiIgsuGv8LMCK7Wpq5MmMzJ+7z30si8SipkIch
+         YxwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=VhXrfn9rZyyElsl+ixbfQu3b3ECvLdJTiMGy5aiGuwM=;
+        b=rbEIuGlSjkFfA/H61ztMr7i7w/rwjVGYJG1Id/Fk0pZS/KtNpKX2OjSTI2tJoIWGEX
+         mY6UVb8kicoqta7mD1Pvu/AiSgdfPlWEwPHK9ywisJpYCUyBwyIDXp9ZuTo/9hOYwahe
+         HeLaZaJ0qnFyZbdJEP9mGU4DzAVE4jPx14Kiwtvw/BTK9L29AxLBcJhPHNWi6JXk6TEI
+         EqDVUzfnkKU8vD/CQ+3I2Nb8JjU9V5D5v1Sg+cAFbYETl292uO0RYjO2VeDaqtIrIA9s
+         csvn2jE9sPLu0xd24RIrkru7JPihDjuODCnb8kFmruHmMfTlklQFkgKz2iJAudEJ7KWO
+         oB8w==
+X-Gm-Message-State: AOAM531qsgO2OdY15WTgFwy0rMajdmrGXMvNTXgABCc+27XAln1vPRzD
+        MUtTOUlUrfnIciHNOY5cU+4cPUUJFv6Wb+yP
+X-Google-Smtp-Source: ABdhPJxbRLN+jO7ctS8zXhG0GA1tOBmFddfktHHRgvosynJvPKT1ZHFNzvGilm7pfOY8khugHwvuEQ==
+X-Received: by 2002:a05:6214:942:: with SMTP id dn2mr3083310qvb.161.1593177306525;
+        Fri, 26 Jun 2020 06:15:06 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-156-34-48-30.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.48.30])
+        by smtp.gmail.com with ESMTPSA id 207sm8322790qki.134.2020.06.26.06.15.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Jun 2020 06:15:06 -0700 (PDT)
+Received: from jgg by mlx with local (Exim 4.93)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1jooC9-0007B9-92; Fri, 26 Jun 2020 10:15:05 -0300
+Date:   Fri, 26 Jun 2020 10:15:05 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Stefan Berger <stefanb@linux.ibm.com>
+Cc:     Jerry Snitselaar <jsnitsel@redhat.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         LSM List <linux-security-module@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <20200625095725.GA3303921@kroah.com>
-        <778297d2-512a-8361-cf05-42d9379e6977@i-love.sakura.ne.jp>
-        <20200625120725.GA3493334@kroah.com>
-        <20200625.123437.2219826613137938086.davem@davemloft.net>
-        <CAHk-=whuTwGHEPjvtbBvneHHXeqJC=q5S09mbPnqb=Q+MSPMag@mail.gmail.com>
-        <87pn9mgfc2.fsf_-_@x220.int.ebiederm.org>
-Date:   Fri, 26 Jun 2020 07:59:57 -0500
-In-Reply-To: <87pn9mgfc2.fsf_-_@x220.int.ebiederm.org> (Eric W. Biederman's
-        message of "Fri, 26 Jun 2020 07:51:41 -0500")
-Message-ID: <87bll6dlte.fsf_-_@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: Enabling interrupts in QEMU TPM TIS
+Message-ID: <20200626131505.GA25301@ziepe.ca>
+References: <1ca3a53d-2b83-7522-5ce1-83d9cc2f207d@linux.ibm.com>
+ <20200625172802.GS6578@ziepe.ca>
+ <0a524093-e744-e266-6087-ddc17b5c598c@linux.ibm.com>
+ <5b3267b7-57d5-badf-6664-9d47bc9909e7@linux.ibm.com>
+ <20200625231934.GU6578@ziepe.ca>
+ <a2e38eea-a137-ffea-ecf1-98f1e3ba1036@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1joo1o-0002IL-Hn;;;mid=<87bll6dlte.fsf_-_@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/ktlOV/iIh/MDWj4PBehdloeChZvIKhmU=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: [PATCH 14/14] umd: Remove exit_umh
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a2e38eea-a137-ffea-ecf1-98f1e3ba1036@linux.ibm.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Fri, Jun 26, 2020 at 08:25:57AM -0400, Stefan Berger wrote:
 
-The bffilter code no longer uses the umd_info.cleanup callback.  This
-callback is what exit_umh exists to call.  So remove exit_umh and all
-of it's associated booking.
+> > I don't think the tpm driver was ever designed for edge, so most
+> > likely the structure and order of the hard irq is not correct.
+> 
+> Right. For edge support I think we would need to avoid causing another
+> interrupt (like locality change interrupt) before the interrupt handler
+> hasn't finished dealing with an existing interrupt. Considering that Windows
+> works on IRQ 13 (egde) and Linux driver cannot, I guess this is a good
+> reason not to move QEMU TIS to IRQ 13 and try to support interrupts via ACPI
+> table declaration.
 
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
----
- include/linux/sched.h |  9 ---------
- include/linux/umd.h   |  2 --
- kernel/exit.c         |  2 --
- kernel/umd.c          | 28 ----------------------------
- 4 files changed, 41 deletions(-)
+Generaly clearing the IRQ needs to be done before testing for pending
+IRQs - ie as the first thing
 
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index b62e6aaf28f0..edb2020875ad 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -1511,7 +1511,6 @@ extern struct pid *cad_pid;
- #define PF_KTHREAD		0x00200000	/* I am a kernel thread */
- #define PF_RANDOMIZE		0x00400000	/* Randomize virtual address space */
- #define PF_SWAPWRITE		0x00800000	/* Allowed to write to swap */
--#define PF_UMH			0x02000000	/* I'm an Usermodehelper process */
- #define PF_NO_SETAFFINITY	0x04000000	/* Userland is not allowed to meddle with cpus_mask */
- #define PF_MCE_EARLY		0x08000000      /* Early kill for mce process policy */
- #define PF_MEMALLOC_NOCMA	0x10000000	/* All allocation request will have _GFP_MOVABLE cleared */
-@@ -2020,14 +2019,6 @@ static inline void rseq_execve(struct task_struct *t)
- 
- #endif
- 
--void __exit_umh(struct task_struct *tsk);
--
--static inline void exit_umh(struct task_struct *tsk)
--{
--	if (unlikely(tsk->flags & PF_UMH))
--		__exit_umh(tsk);
--}
--
- #ifdef CONFIG_DEBUG_RSEQ
- 
- void rseq_syscall(struct pt_regs *regs);
-diff --git a/include/linux/umd.h b/include/linux/umd.h
-index 1c4579d79bce..71d8f4a41ad7 100644
---- a/include/linux/umd.h
-+++ b/include/linux/umd.h
-@@ -8,8 +8,6 @@ struct umd_info {
- 	const char *driver_name;
- 	struct file *pipe_to_umh;
- 	struct file *pipe_from_umh;
--	struct list_head list;
--	void (*cleanup)(struct umd_info *info);
- 	struct path wd;
- 	struct pid *tgid;
- };
-diff --git a/kernel/exit.c b/kernel/exit.c
-index 671d5066b399..42f079eb71e5 100644
---- a/kernel/exit.c
-+++ b/kernel/exit.c
-@@ -804,8 +804,6 @@ void __noreturn do_exit(long code)
- 	exit_task_namespaces(tsk);
- 	exit_task_work(tsk);
- 	exit_thread(tsk);
--	if (group_dead)
--		exit_umh(tsk);
- 
- 	/*
- 	 * Flush inherited counters to the parent - before the parent
-diff --git a/kernel/umd.c b/kernel/umd.c
-index 0db9ce3f56c9..de2f542191e5 100644
---- a/kernel/umd.c
-+++ b/kernel/umd.c
-@@ -8,9 +8,6 @@
- #include <linux/fs_struct.h>
- #include <linux/umd.h>
- 
--static LIST_HEAD(umh_list);
--static DEFINE_MUTEX(umh_list_lock);
--
- static struct vfsmount *blob_to_mnt(const void *data, size_t len, const char *name)
- {
- 	struct file_system_type *type;
-@@ -129,7 +126,6 @@ static int umd_setup(struct subprocess_info *info, struct cred *new)
- 	umd_info->pipe_to_umh = to_umh[1];
- 	umd_info->pipe_from_umh = from_umh[0];
- 	umd_info->tgid = get_pid(task_tgid(current));
--	current->flags |= PF_UMH;
- 	return 0;
- }
- 
-@@ -177,11 +173,6 @@ int fork_usermode_driver(struct umd_info *info)
- 		goto out;
- 
- 	err = call_usermodehelper_exec(sub_info, UMH_WAIT_EXEC);
--	if (!err) {
--		mutex_lock(&umh_list_lock);
--		list_add(&info->list, &umh_list);
--		mutex_unlock(&umh_list_lock);
--	}
- out:
- 	if (argv)
- 		argv_free(argv);
-@@ -189,23 +180,4 @@ int fork_usermode_driver(struct umd_info *info)
- }
- EXPORT_SYMBOL_GPL(fork_usermode_driver);
- 
--void __exit_umh(struct task_struct *tsk)
--{
--	struct umd_info *info;
--	struct pid *tgid = task_tgid(tsk);
--
--	mutex_lock(&umh_list_lock);
--	list_for_each_entry(info, &umh_list, list) {
--		if (info->tgid == tgid) {
--			list_del(&info->list);
--			mutex_unlock(&umh_list_lock);
--			goto out;
--		}
--	}
--	mutex_unlock(&umh_list_lock);
--	return;
--out:
--	if (info->cleanup)
--		info->cleanup(info);
--}
- 
--- 
-2.25.0
+Move the write to status up higher:
 
+	rc = tpm_tis_read32(priv, TPM_INT_STATUS(priv->locality), &interrupt);
+	rc = tpm_tis_write32(priv, TPM_INT_STATUS(priv->locality), interrupt);
+	
+        [handle 'interrupt']
+
+Then if new events set a status bit they will generate an edge and
+re-enter here.
+
+I don't know why there is an extra read at the end of the handler
+either, seems sketchy.
+
+Jason
