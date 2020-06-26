@@ -4,32 +4,32 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F7E6C433E0
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jun 2020 13:03:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9237DC433E0
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jun 2020 13:03:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 79F6620775
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jun 2020 13:03:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7664720885
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jun 2020 13:03:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726959AbgFZNDC (ORCPT
+        id S1726978AbgFZND2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 26 Jun 2020 09:03:02 -0400
-Received: from out02.mta.xmission.com ([166.70.13.232]:56410 "EHLO
+        Fri, 26 Jun 2020 09:03:28 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:56666 "EHLO
         out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726013AbgFZNDC (ORCPT
+        with ESMTP id S1725940AbgFZND1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 26 Jun 2020 09:03:02 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
+        Fri, 26 Jun 2020 09:03:27 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
         by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.90_1)
         (envelope-from <ebiederm@xmission.com>)
-        id 1joo0T-0006LL-CQ; Fri, 26 Jun 2020 07:03:01 -0600
+        id 1joo0r-0006Pd-RJ; Fri, 26 Jun 2020 07:03:25 -0600
 Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.87)
         (envelope-from <ebiederm@xmission.com>)
-        id 1joo0S-00042H-JA; Fri, 26 Jun 2020 07:03:01 -0600
+        id 1joo0q-000248-TE; Fri, 26 Jun 2020 07:03:25 -0600
 From:   ebiederm@xmission.com (Eric W. Biederman)
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     David Miller <davem@davemloft.net>,
@@ -53,49 +53,196 @@ References: <20200625095725.GA3303921@kroah.com>
         <20200625.123437.2219826613137938086.davem@davemloft.net>
         <CAHk-=whuTwGHEPjvtbBvneHHXeqJC=q5S09mbPnqb=Q+MSPMag@mail.gmail.com>
         <87pn9mgfc2.fsf_-_@x220.int.ebiederm.org>
-Date:   Fri, 26 Jun 2020 07:58:33 -0500
+Date:   Fri, 26 Jun 2020 07:58:57 -0500
 In-Reply-To: <87pn9mgfc2.fsf_-_@x220.int.ebiederm.org> (Eric W. Biederman's
         message of "Fri, 26 Jun 2020 07:51:41 -0500")
-Message-ID: <87sgeidlvq.fsf_-_@x220.int.ebiederm.org>
+Message-ID: <87mu4qdlv2.fsf_-_@x220.int.ebiederm.org>
 User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
-X-XM-SPF: eid=1joo0S-00042H-JA;;;mid=<87sgeidlvq.fsf_-_@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX18Lo7F+z+5nwxxplDkS2CbTNnzQQdvxsaM=
+X-XM-SPF: eid=1joo0q-000248-TE;;;mid=<87mu4qdlv2.fsf_-_@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/GCqIScvuF9i/NO2vo8b6svFs4ZgjOSow=
 X-SA-Exim-Connect-IP: 68.227.160.95
 X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: [PATCH 11/14] bpfilter: Move bpfilter_umh back into init data
+Subject: [PATCH 12/14] umd: Track user space drivers with struct pid
 X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 
-To allow for restarts 61fbf5933d42 ("net: bpfilter: restart
-bpfilter_umh when error occurred") moved the blob holding the
-userspace binary out of the init sections.
+Use struct pid instead of user space pid values that are prone to wrap
+araound.
 
-Now that loading the blob into a filesystem is separate from executing
-the blob the blob no longer needs to live .rodata to allow for restarting.
-So move the blob back to .init.rodata.
+In addition track the entire thread group instead of just the first
+thread that is started by exec.  There are no multi-threaded user mode
+drivers today but there is nothing preclucing user drivers from being
+multi-threaded, so it is just a good idea to track the entire process.
+
+Take a reference count on the tgid's in question to make it possible
+to remove exit_umh in a future change.
+
+As a struct pid is available directly use kill_pid_info.
+
+The prior process signalling code was iffy in using a userspace pid
+known to be in the initial pid namespace and then looking up it's task
+in whatever the current pid namespace is.  It worked only because
+kernel threads always run in the initial pid namespace.
+
+As the tgid is now refcounted verify the tgid is NULL at the start of
+fork_usermode_driver to avoid the possibility of silent pid leaks.
 
 Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 ---
- net/bpfilter/bpfilter_umh_blob.S | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/umd.h          |  2 +-
+ kernel/exit.c                |  3 ++-
+ kernel/umd.c                 | 15 ++++++++++-----
+ net/bpfilter/bpfilter_kern.c | 13 +++++--------
+ net/ipv4/bpfilter/sockopt.c  |  3 ++-
+ 5 files changed, 20 insertions(+), 16 deletions(-)
 
-diff --git a/net/bpfilter/bpfilter_umh_blob.S b/net/bpfilter/bpfilter_umh_blob.S
-index 9ea6100dca87..40311d10d2f2 100644
---- a/net/bpfilter/bpfilter_umh_blob.S
-+++ b/net/bpfilter/bpfilter_umh_blob.S
-@@ -1,5 +1,5 @@
- /* SPDX-License-Identifier: GPL-2.0 */
--	.section .rodata, "a"
-+	.section .init.rodata, "a"
- 	.global bpfilter_umh_start
- bpfilter_umh_start:
- 	.incbin "net/bpfilter/bpfilter_umh"
+diff --git a/include/linux/umd.h b/include/linux/umd.h
+index d4a2e9e6f154..1c4579d79bce 100644
+--- a/include/linux/umd.h
++++ b/include/linux/umd.h
+@@ -11,7 +11,7 @@ struct umd_info {
+ 	struct list_head list;
+ 	void (*cleanup)(struct umd_info *info);
+ 	struct path wd;
+-	pid_t pid;
++	struct pid *tgid;
+ };
+ int umd_load_blob(struct umd_info *info, const void *data, size_t len);
+ int umd_unload_blob(struct umd_info *info);
+diff --git a/kernel/exit.c b/kernel/exit.c
+index 727150f28103..671d5066b399 100644
+--- a/kernel/exit.c
++++ b/kernel/exit.c
+@@ -804,7 +804,8 @@ void __noreturn do_exit(long code)
+ 	exit_task_namespaces(tsk);
+ 	exit_task_work(tsk);
+ 	exit_thread(tsk);
+-	exit_umh(tsk);
++	if (group_dead)
++		exit_umh(tsk);
+ 
+ 	/*
+ 	 * Flush inherited counters to the parent - before the parent
+diff --git a/kernel/umd.c b/kernel/umd.c
+index afb689d6bf35..0db9ce3f56c9 100644
+--- a/kernel/umd.c
++++ b/kernel/umd.c
+@@ -128,7 +128,7 @@ static int umd_setup(struct subprocess_info *info, struct cred *new)
+ 	set_fs_pwd(current->fs, &umd_info->wd);
+ 	umd_info->pipe_to_umh = to_umh[1];
+ 	umd_info->pipe_from_umh = from_umh[0];
+-	umd_info->pid = task_pid_nr(current);
++	umd_info->tgid = get_pid(task_tgid(current));
+ 	current->flags |= PF_UMH;
+ 	return 0;
+ }
+@@ -141,6 +141,8 @@ static void umd_cleanup(struct subprocess_info *info)
+ 	if (info->retval) {
+ 		fput(umd_info->pipe_to_umh);
+ 		fput(umd_info->pipe_from_umh);
++		put_pid(umd_info->tgid);
++		umd_info->tgid = NULL;
+ 	}
+ }
+ 
+@@ -150,9 +152,9 @@ static void umd_cleanup(struct subprocess_info *info)
+  *
+  * Returns either negative error or zero which indicates success in
+  * executing a usermode driver. In such case 'struct umd_info *info'
+- * is populated with two pipes and a pid of the process. The caller is
++ * is populated with two pipes and a tgid of the process. The caller is
+  * responsible for health check of the user process, killing it via
+- * pid, and closing the pipes when user process is no longer needed.
++ * tgid, and closing the pipes when user process is no longer needed.
+  */
+ int fork_usermode_driver(struct umd_info *info)
+ {
+@@ -160,6 +162,9 @@ int fork_usermode_driver(struct umd_info *info)
+ 	char **argv = NULL;
+ 	int err;
+ 
++	if (WARN_ON_ONCE(info->tgid))
++		return -EBUSY;
++
+ 	err = -ENOMEM;
+ 	argv = argv_split(GFP_KERNEL, info->driver_name, NULL);
+ 	if (!argv)
+@@ -187,11 +192,11 @@ EXPORT_SYMBOL_GPL(fork_usermode_driver);
+ void __exit_umh(struct task_struct *tsk)
+ {
+ 	struct umd_info *info;
+-	pid_t pid = tsk->pid;
++	struct pid *tgid = task_tgid(tsk);
+ 
+ 	mutex_lock(&umh_list_lock);
+ 	list_for_each_entry(info, &umh_list, list) {
+-		if (info->pid == pid) {
++		if (info->tgid == tgid) {
+ 			list_del(&info->list);
+ 			mutex_unlock(&umh_list_lock);
+ 			goto out;
+diff --git a/net/bpfilter/bpfilter_kern.c b/net/bpfilter/bpfilter_kern.c
+index 28883b00609d..b73dedeb6dbf 100644
+--- a/net/bpfilter/bpfilter_kern.c
++++ b/net/bpfilter/bpfilter_kern.c
+@@ -15,16 +15,13 @@ extern char bpfilter_umh_end;
+ 
+ static void shutdown_umh(void)
+ {
+-	struct task_struct *tsk;
++	struct umd_info *info = &bpfilter_ops.info;
++	struct pid *tgid = info->tgid;
+ 
+ 	if (bpfilter_ops.stop)
+ 		return;
+ 
+-	tsk = get_pid_task(find_vpid(bpfilter_ops.info.pid), PIDTYPE_PID);
+-	if (tsk) {
+-		send_sig(SIGKILL, tsk, 1);
+-		put_task_struct(tsk);
+-	}
++	kill_pid_info(SIGKILL, SEND_SIG_PRIV, tgid);
+ }
+ 
+ static void __stop_umh(void)
+@@ -48,7 +45,7 @@ static int __bpfilter_process_sockopt(struct sock *sk, int optname,
+ 	req.cmd = optname;
+ 	req.addr = (long __force __user)optval;
+ 	req.len = optlen;
+-	if (!bpfilter_ops.info.pid)
++	if (!bpfilter_ops.info.tgid)
+ 		goto out;
+ 	n = __kernel_write(bpfilter_ops.info.pipe_to_umh, &req, sizeof(req),
+ 			   &pos);
+@@ -81,7 +78,7 @@ static int start_umh(void)
+ 	if (err)
+ 		return err;
+ 	bpfilter_ops.stop = false;
+-	pr_info("Loaded bpfilter_umh pid %d\n", bpfilter_ops.info.pid);
++	pr_info("Loaded bpfilter_umh pid %d\n", pid_nr(bpfilter_ops.info.tgid));
+ 
+ 	/* health check that usermode process started correctly */
+ 	if (__bpfilter_process_sockopt(NULL, 0, NULL, 0, 0) != 0) {
+diff --git a/net/ipv4/bpfilter/sockopt.c b/net/ipv4/bpfilter/sockopt.c
+index 5050de28333d..56cbc43145f6 100644
+--- a/net/ipv4/bpfilter/sockopt.c
++++ b/net/ipv4/bpfilter/sockopt.c
+@@ -18,7 +18,8 @@ static void bpfilter_umh_cleanup(struct umd_info *info)
+ 	bpfilter_ops.stop = true;
+ 	fput(info->pipe_to_umh);
+ 	fput(info->pipe_from_umh);
+-	info->pid = 0;
++	put_pid(info->tgid);
++	info->tgid = NULL;
+ 	mutex_unlock(&bpfilter_ops.lock);
+ }
+ 
 -- 
 2.25.0
 
