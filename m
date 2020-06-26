@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9237DC433E0
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jun 2020 13:03:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13B3AC433DF
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jun 2020 13:04:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7664720885
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jun 2020 13:03:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E9BF620885
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jun 2020 13:04:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726978AbgFZND2 (ORCPT
+        id S1727017AbgFZNEB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 26 Jun 2020 09:03:28 -0400
-Received: from out02.mta.xmission.com ([166.70.13.232]:56666 "EHLO
+        Fri, 26 Jun 2020 09:04:01 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:57038 "EHLO
         out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725940AbgFZND1 (ORCPT
+        with ESMTP id S1725940AbgFZNEB (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 26 Jun 2020 09:03:27 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
+        Fri, 26 Jun 2020 09:04:01 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
         by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.90_1)
         (envelope-from <ebiederm@xmission.com>)
-        id 1joo0r-0006Pd-RJ; Fri, 26 Jun 2020 07:03:25 -0600
+        id 1joo1P-0006V9-NM; Fri, 26 Jun 2020 07:03:59 -0600
 Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.87)
         (envelope-from <ebiederm@xmission.com>)
-        id 1joo0q-000248-TE; Fri, 26 Jun 2020 07:03:25 -0600
+        id 1joo1I-0004C2-T9; Fri, 26 Jun 2020 07:03:59 -0600
 From:   ebiederm@xmission.com (Eric W. Biederman)
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     David Miller <davem@davemloft.net>,
@@ -53,196 +53,149 @@ References: <20200625095725.GA3303921@kroah.com>
         <20200625.123437.2219826613137938086.davem@davemloft.net>
         <CAHk-=whuTwGHEPjvtbBvneHHXeqJC=q5S09mbPnqb=Q+MSPMag@mail.gmail.com>
         <87pn9mgfc2.fsf_-_@x220.int.ebiederm.org>
-Date:   Fri, 26 Jun 2020 07:58:57 -0500
+Date:   Fri, 26 Jun 2020 07:59:26 -0500
 In-Reply-To: <87pn9mgfc2.fsf_-_@x220.int.ebiederm.org> (Eric W. Biederman's
         message of "Fri, 26 Jun 2020 07:51:41 -0500")
-Message-ID: <87mu4qdlv2.fsf_-_@x220.int.ebiederm.org>
+Message-ID: <87h7uydlu9.fsf_-_@x220.int.ebiederm.org>
 User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
-X-XM-SPF: eid=1joo0q-000248-TE;;;mid=<87mu4qdlv2.fsf_-_@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/GCqIScvuF9i/NO2vo8b6svFs4ZgjOSow=
+X-XM-SPF: eid=1joo1I-0004C2-T9;;;mid=<87h7uydlu9.fsf_-_@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19I8th5N1uVHflkbTv/aQF4J+cXFi6hY+o=
 X-SA-Exim-Connect-IP: 68.227.160.95
 X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: [PATCH 12/14] umd: Track user space drivers with struct pid
+Subject: [PATCH 13/14] bpfilter: Take advantage of the facilities of struct pid
 X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 
-Use struct pid instead of user space pid values that are prone to wrap
-araound.
-
-In addition track the entire thread group instead of just the first
-thread that is started by exec.  There are no multi-threaded user mode
-drivers today but there is nothing preclucing user drivers from being
-multi-threaded, so it is just a good idea to track the entire process.
-
-Take a reference count on the tgid's in question to make it possible
-to remove exit_umh in a future change.
-
-As a struct pid is available directly use kill_pid_info.
-
-The prior process signalling code was iffy in using a userspace pid
-known to be in the initial pid namespace and then looking up it's task
-in whatever the current pid namespace is.  It worked only because
-kernel threads always run in the initial pid namespace.
-
-As the tgid is now refcounted verify the tgid is NULL at the start of
-fork_usermode_driver to avoid the possibility of silent pid leaks.
+Instead of relying on the exit_umh cleanup callback use the fact a
+struct pid can be tested to see if a process still exists, and that
+struct pid has a wait queue that notifies when the process dies.
 
 Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 ---
- include/linux/umd.h          |  2 +-
- kernel/exit.c                |  3 ++-
- kernel/umd.c                 | 15 ++++++++++-----
- net/bpfilter/bpfilter_kern.c | 13 +++++--------
- net/ipv4/bpfilter/sockopt.c  |  3 ++-
- 5 files changed, 20 insertions(+), 16 deletions(-)
+ include/linux/bpfilter.h     |  3 ++-
+ net/bpfilter/bpfilter_kern.c | 15 +++++----------
+ net/ipv4/bpfilter/sockopt.c  | 15 ++++++++-------
+ 3 files changed, 15 insertions(+), 18 deletions(-)
 
-diff --git a/include/linux/umd.h b/include/linux/umd.h
-index d4a2e9e6f154..1c4579d79bce 100644
---- a/include/linux/umd.h
-+++ b/include/linux/umd.h
-@@ -11,7 +11,7 @@ struct umd_info {
- 	struct list_head list;
- 	void (*cleanup)(struct umd_info *info);
- 	struct path wd;
--	pid_t pid;
-+	struct pid *tgid;
- };
- int umd_load_blob(struct umd_info *info, const void *data, size_t len);
- int umd_unload_blob(struct umd_info *info);
-diff --git a/kernel/exit.c b/kernel/exit.c
-index 727150f28103..671d5066b399 100644
---- a/kernel/exit.c
-+++ b/kernel/exit.c
-@@ -804,7 +804,8 @@ void __noreturn do_exit(long code)
- 	exit_task_namespaces(tsk);
- 	exit_task_work(tsk);
- 	exit_thread(tsk);
--	exit_umh(tsk);
-+	if (group_dead)
-+		exit_umh(tsk);
- 
- 	/*
- 	 * Flush inherited counters to the parent - before the parent
-diff --git a/kernel/umd.c b/kernel/umd.c
-index afb689d6bf35..0db9ce3f56c9 100644
---- a/kernel/umd.c
-+++ b/kernel/umd.c
-@@ -128,7 +128,7 @@ static int umd_setup(struct subprocess_info *info, struct cred *new)
- 	set_fs_pwd(current->fs, &umd_info->wd);
- 	umd_info->pipe_to_umh = to_umh[1];
- 	umd_info->pipe_from_umh = from_umh[0];
--	umd_info->pid = task_pid_nr(current);
-+	umd_info->tgid = get_pid(task_tgid(current));
- 	current->flags |= PF_UMH;
- 	return 0;
- }
-@@ -141,6 +141,8 @@ static void umd_cleanup(struct subprocess_info *info)
- 	if (info->retval) {
- 		fput(umd_info->pipe_to_umh);
- 		fput(umd_info->pipe_from_umh);
-+		put_pid(umd_info->tgid);
-+		umd_info->tgid = NULL;
- 	}
- }
- 
-@@ -150,9 +152,9 @@ static void umd_cleanup(struct subprocess_info *info)
-  *
-  * Returns either negative error or zero which indicates success in
-  * executing a usermode driver. In such case 'struct umd_info *info'
-- * is populated with two pipes and a pid of the process. The caller is
-+ * is populated with two pipes and a tgid of the process. The caller is
-  * responsible for health check of the user process, killing it via
-- * pid, and closing the pipes when user process is no longer needed.
-+ * tgid, and closing the pipes when user process is no longer needed.
-  */
- int fork_usermode_driver(struct umd_info *info)
- {
-@@ -160,6 +162,9 @@ int fork_usermode_driver(struct umd_info *info)
- 	char **argv = NULL;
- 	int err;
- 
-+	if (WARN_ON_ONCE(info->tgid))
-+		return -EBUSY;
+diff --git a/include/linux/bpfilter.h b/include/linux/bpfilter.h
+index 4b43d2240172..8073ddce73b1 100644
+--- a/include/linux/bpfilter.h
++++ b/include/linux/bpfilter.h
+@@ -10,6 +10,8 @@ int bpfilter_ip_set_sockopt(struct sock *sk, int optname, char __user *optval,
+ 			    unsigned int optlen);
+ int bpfilter_ip_get_sockopt(struct sock *sk, int optname, char __user *optval,
+ 			    int __user *optlen);
++void bpfilter_umh_cleanup(struct umd_info *info);
 +
- 	err = -ENOMEM;
- 	argv = argv_split(GFP_KERNEL, info->driver_name, NULL);
- 	if (!argv)
-@@ -187,11 +192,11 @@ EXPORT_SYMBOL_GPL(fork_usermode_driver);
- void __exit_umh(struct task_struct *tsk)
- {
- 	struct umd_info *info;
--	pid_t pid = tsk->pid;
-+	struct pid *tgid = task_tgid(tsk);
- 
- 	mutex_lock(&umh_list_lock);
- 	list_for_each_entry(info, &umh_list, list) {
--		if (info->pid == pid) {
-+		if (info->tgid == tgid) {
- 			list_del(&info->list);
- 			mutex_unlock(&umh_list_lock);
- 			goto out;
+ struct bpfilter_umh_ops {
+ 	struct umd_info info;
+ 	/* since ip_getsockopt() can run in parallel, serialize access to umh */
+@@ -18,7 +20,6 @@ struct bpfilter_umh_ops {
+ 		       char __user *optval,
+ 		       unsigned int optlen, bool is_set);
+ 	int (*start)(void);
+-	bool stop;
+ };
+ extern struct bpfilter_umh_ops bpfilter_ops;
+ #endif
 diff --git a/net/bpfilter/bpfilter_kern.c b/net/bpfilter/bpfilter_kern.c
-index 28883b00609d..b73dedeb6dbf 100644
+index b73dedeb6dbf..91474884ddb7 100644
 --- a/net/bpfilter/bpfilter_kern.c
 +++ b/net/bpfilter/bpfilter_kern.c
-@@ -15,16 +15,13 @@ extern char bpfilter_umh_end;
+@@ -18,10 +18,11 @@ static void shutdown_umh(void)
+ 	struct umd_info *info = &bpfilter_ops.info;
+ 	struct pid *tgid = info->tgid;
  
- static void shutdown_umh(void)
- {
--	struct task_struct *tsk;
-+	struct umd_info *info = &bpfilter_ops.info;
-+	struct pid *tgid = info->tgid;
- 
- 	if (bpfilter_ops.stop)
- 		return;
- 
--	tsk = get_pid_task(find_vpid(bpfilter_ops.info.pid), PIDTYPE_PID);
--	if (tsk) {
--		send_sig(SIGKILL, tsk, 1);
--		put_task_struct(tsk);
--	}
-+	kill_pid_info(SIGKILL, SEND_SIG_PRIV, tgid);
+-	if (bpfilter_ops.stop)
+-		return;
+-
+-	kill_pid_info(SIGKILL, SEND_SIG_PRIV, tgid);
++	if (tgid) {
++		kill_pid_info(SIGKILL, SEND_SIG_PRIV, tgid);
++		wait_event(tgid->wait_pidfd, !pid_task(tgid, PIDTYPE_TGID));
++		bpfilter_umh_cleanup(info);
++	}
  }
  
  static void __stop_umh(void)
-@@ -48,7 +45,7 @@ static int __bpfilter_process_sockopt(struct sock *sk, int optname,
- 	req.cmd = optname;
- 	req.addr = (long __force __user)optval;
- 	req.len = optlen;
--	if (!bpfilter_ops.info.pid)
-+	if (!bpfilter_ops.info.tgid)
- 		goto out;
- 	n = __kernel_write(bpfilter_ops.info.pipe_to_umh, &req, sizeof(req),
- 			   &pos);
-@@ -81,7 +78,7 @@ static int start_umh(void)
+@@ -77,7 +78,6 @@ static int start_umh(void)
+ 	err = fork_usermode_driver(&bpfilter_ops.info);
  	if (err)
  		return err;
- 	bpfilter_ops.stop = false;
--	pr_info("Loaded bpfilter_umh pid %d\n", bpfilter_ops.info.pid);
-+	pr_info("Loaded bpfilter_umh pid %d\n", pid_nr(bpfilter_ops.info.tgid));
+-	bpfilter_ops.stop = false;
+ 	pr_info("Loaded bpfilter_umh pid %d\n", pid_nr(bpfilter_ops.info.tgid));
  
  	/* health check that usermode process started correctly */
- 	if (__bpfilter_process_sockopt(NULL, 0, NULL, 0, 0) != 0) {
+@@ -100,16 +100,11 @@ static int __init load_umh(void)
+ 		return err;
+ 
+ 	mutex_lock(&bpfilter_ops.lock);
+-	if (!bpfilter_ops.stop) {
+-		err = -EFAULT;
+-		goto out;
+-	}
+ 	err = start_umh();
+ 	if (!err && IS_ENABLED(CONFIG_INET)) {
+ 		bpfilter_ops.sockopt = &__bpfilter_process_sockopt;
+ 		bpfilter_ops.start = &start_umh;
+ 	}
+-out:
+ 	mutex_unlock(&bpfilter_ops.lock);
+ 	if (err)
+ 		umd_unload_blob(&bpfilter_ops.info);
 diff --git a/net/ipv4/bpfilter/sockopt.c b/net/ipv4/bpfilter/sockopt.c
-index 5050de28333d..56cbc43145f6 100644
+index 56cbc43145f6..9455eb9cec78 100644
 --- a/net/ipv4/bpfilter/sockopt.c
 +++ b/net/ipv4/bpfilter/sockopt.c
-@@ -18,7 +18,8 @@ static void bpfilter_umh_cleanup(struct umd_info *info)
- 	bpfilter_ops.stop = true;
+@@ -12,16 +12,14 @@
+ struct bpfilter_umh_ops bpfilter_ops;
+ EXPORT_SYMBOL_GPL(bpfilter_ops);
+ 
+-static void bpfilter_umh_cleanup(struct umd_info *info)
++void bpfilter_umh_cleanup(struct umd_info *info)
+ {
+-	mutex_lock(&bpfilter_ops.lock);
+-	bpfilter_ops.stop = true;
  	fput(info->pipe_to_umh);
  	fput(info->pipe_from_umh);
--	info->pid = 0;
-+	put_pid(info->tgid);
-+	info->tgid = NULL;
- 	mutex_unlock(&bpfilter_ops.lock);
+ 	put_pid(info->tgid);
+ 	info->tgid = NULL;
+-	mutex_unlock(&bpfilter_ops.lock);
  }
++EXPORT_SYMBOL_GPL(bpfilter_umh_cleanup);
  
+ static int bpfilter_mbox_request(struct sock *sk, int optname,
+ 				 char __user *optval,
+@@ -39,7 +37,11 @@ static int bpfilter_mbox_request(struct sock *sk, int optname,
+ 			goto out;
+ 		}
+ 	}
+-	if (bpfilter_ops.stop) {
++	if (bpfilter_ops.info.tgid &&
++	    !pid_has_task(bpfilter_ops.info.tgid, PIDTYPE_TGID))
++		bpfilter_umh_cleanup(&bpfilter_ops.info);
++
++	if (!bpfilter_ops.info.tgid) {
+ 		err = bpfilter_ops.start();
+ 		if (err)
+ 			goto out;
+@@ -70,9 +72,8 @@ int bpfilter_ip_get_sockopt(struct sock *sk, int optname, char __user *optval,
+ static int __init bpfilter_sockopt_init(void)
+ {
+ 	mutex_init(&bpfilter_ops.lock);
+-	bpfilter_ops.stop = true;
++	bpfilter_ops.info.tgid = NULL;
+ 	bpfilter_ops.info.driver_name = "bpfilter_umh";
+-	bpfilter_ops.info.cleanup = &bpfilter_umh_cleanup;
+ 
+ 	return 0;
+ }
 -- 
 2.25.0
 
