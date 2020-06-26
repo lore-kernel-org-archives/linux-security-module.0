@@ -2,185 +2,122 @@ Return-Path: <SRS0=ekpI=AH=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.5 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3956BC433E3
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jun 2020 06:30:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E99EC433E0
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jun 2020 06:39:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 22B2D206A5
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jun 2020 06:30:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E27EF2076E
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jun 2020 06:39:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KaIVObdI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728418AbgFZGad (ORCPT
+        id S1728442AbgFZGjK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 26 Jun 2020 02:30:33 -0400
-Received: from helcar.hmeau.com ([216.24.177.18]:51990 "EHLO fornost.hmeau.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727876AbgFZGac (ORCPT
+        Fri, 26 Jun 2020 02:39:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55394 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727960AbgFZGjJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 26 Jun 2020 02:30:32 -0400
-Received: from gwarestrin.arnor.me.apana.org.au ([192.168.0.7])
-        by fornost.hmeau.com with smtp (Exim 4.92 #5 (Debian))
-        id 1johrw-0004mR-T7; Fri, 26 Jun 2020 16:29:50 +1000
-Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Fri, 26 Jun 2020 16:29:48 +1000
-Date:   Fri, 26 Jun 2020 16:29:48 +1000
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        LTP List <ltp@lists.linux.it>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        lkft-triage@lists.linaro.org, linux-crypto@vger.kernel.org,
-        Jan Stancek <jstancek@redhat.com>, chrubis <chrubis@suse.cz>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        James Morris <jmorris@namei.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        David Howells <dhowells@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sachin Sant <sachinp@linux.vnet.ibm.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH] crypto: af_alg - Fix regression on empty requests
-Message-ID: <20200626062948.GA25285@gondor.apana.org.au>
-References: <CA+G9fYvHFs5Yx8TnT6VavtfjMN8QLPuXg6us-dXVJqUUt68adA@mail.gmail.com>
- <20200622224920.GA4332@42.do-not-panic.com>
- <CA+G9fYsXDZUspc5OyfqrGZn=k=2uRiGzWY_aPePK2C_kZ+dYGQ@mail.gmail.com>
- <20200623064056.GA8121@gondor.apana.org.au>
- <20200623170217.GB150582@gmail.com>
+        Fri, 26 Jun 2020 02:39:09 -0400
+Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDA92C08C5C1;
+        Thu, 25 Jun 2020 23:39:09 -0700 (PDT)
+Received: by mail-pf1-x442.google.com with SMTP id b5so4229113pfp.9;
+        Thu, 25 Jun 2020 23:39:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=UdtlRZYBAmqNtbxp3vxoceKnVQSi5KT5PeHxRiAdxF4=;
+        b=KaIVObdIVTftVUV4YuvDeA1+kJCxSZ9VcdtNHrraPGZvtTpMha8XqQStSu4it6II5M
+         wRsMe2+L8ExFyQytMstxSR5xoV4VHFQ/ePPPZyGRFXhvXuxh7ajO/oeoqeC22tRXbSd3
+         9lpAFaWq+Z6WxR9FWvJO2/Kxg1vNWYhq3EWqWzgAVXsAjdxru68TiDBtnqcDkkwHVMA+
+         Vg2wSMMbMIegHRn5vwO8LNGzbCP0BmyQhWFs8PyG/ySl6uN/V8T71wAlg8LXVQgwmw6g
+         kyN6A+SDbso7gTAxT3G0cW4M/87CVxlBIWl046j1SwFOgZ+nqYjg1XrKkSD8J2N2DX5x
+         tBYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=UdtlRZYBAmqNtbxp3vxoceKnVQSi5KT5PeHxRiAdxF4=;
+        b=cjfE/2XZh/gMHuNujHTinGTq4B0Opls+AqWYBWYE7wEnqxlLz9/c3UJ9AxGhzQLqxa
+         AnhlgK2d90g/XYWo3MZTEZAGwfljSozhVRlWp6pbnx18t3PJcvLZ1qdgRFnkevVHRIjd
+         4AIQCYW6j5g/QgOtIvHDcmx6KyqTNVyXdWmiPViLyNes3mH06fhYPFGr0UvO51MnRlXO
+         JIG+/MIjtb3HbwJFd3lq82eUhIOvFEkXhD799dp+SWuH8JR3IpScLLD1Rox+KP83oEhx
+         cPwMBzW87XdVIURdMOUYA6k53FWtzJAfkdu2SJxItzIdvlrYSGt3P5caZG2i3moXlL8i
+         JM5A==
+X-Gm-Message-State: AOAM5311B0OL2oN9M3nAmYWy9tEM1lfNP8vyDr519D1Q3bwHyJooPTKq
+        Uh/d4NbvVnEhacN4C9rHa8c=
+X-Google-Smtp-Source: ABdhPJzFOMeDT+zK4n/8TEjDpPVElQCAZ0+e1YOcub/ZhaYFE/ZkS0oeDZygipuBcMfnsBcTJegnrg==
+X-Received: by 2002:a63:4d53:: with SMTP id n19mr1502294pgl.60.1593153549424;
+        Thu, 25 Jun 2020 23:39:09 -0700 (PDT)
+Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:400::5:986f])
+        by smtp.gmail.com with ESMTPSA id ng12sm10919706pjb.15.2020.06.25.23.39.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Jun 2020 23:39:08 -0700 (PDT)
+Date:   Thu, 25 Jun 2020 23:39:05 -0700
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        David Miller <davem@davemloft.net>,
+        Greg Kroah-Hartman <greg@kroah.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Subject: Re: [RFC][PATCH] net/bpfilter: Remove this broken and apparently
+ unmantained
+Message-ID: <20200626063905.lvtjqp5iipdgvrer@ast-mbp.dhcp.thefacebook.com>
+References: <20200625095725.GA3303921@kroah.com>
+ <778297d2-512a-8361-cf05-42d9379e6977@i-love.sakura.ne.jp>
+ <20200625120725.GA3493334@kroah.com>
+ <20200625.123437.2219826613137938086.davem@davemloft.net>
+ <CAHk-=whuTwGHEPjvtbBvneHHXeqJC=q5S09mbPnqb=Q+MSPMag@mail.gmail.com>
+ <20200626015121.qpxkdaqtsywe3zqx@ast-mbp.dhcp.thefacebook.com>
+ <eb3bec08-9de4-c708-fb8e-b6a47145eb5e@i-love.sakura.ne.jp>
+ <20200626054137.m44jpsvlapuyslzw@ast-mbp.dhcp.thefacebook.com>
+ <c9a9c2b5-68cc-c35d-72c2-34de79ebfb15@i-love.sakura.ne.jp>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200623170217.GB150582@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <c9a9c2b5-68cc-c35d-72c2-34de79ebfb15@i-love.sakura.ne.jp>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jun 23, 2020 at 10:02:17AM -0700, Eric Biggers wrote:
->
-> The source code for the two failing AF_ALG tests is here:
+On Fri, Jun 26, 2020 at 03:20:35PM +0900, Tetsuo Handa wrote:
+> On 2020/06/26 14:41, Alexei Starovoitov wrote:
+> >> I was hoping that fork_usermode_blob() accepts only simple program
+> >> like the content of "hello64" generated by
+> > 
+> > pretty much. statically compiled elf that is self contained.
 > 
-> https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/crypto/af_alg02.c
-> https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/crypto/af_alg05.c
+> But fork_usermode_blob() itself does not check that.
+
+As I said few emails back it's trivial to add such check.
+
+> > In the future it would be trivial to add a new ptrace flag to
+> > make sure that blob's memory is not ptraceable from the start.
 > 
-> They use read() and write(), not send() and recv().
-> 
-> af_alg02 uses read() to read from a "salsa20" request socket without writing
-> anything to it.  It is expected that this returns 0, i.e. that behaves like
-> encrypting an empty message.
-> 
-> af_alg05 uses write() to write 15 bytes to a "cbc(aes-generic)" request socket,
-> then read() to read 15 bytes.  It is expected that this fails with EINVAL, since
-> the length is not aligned to the AES block size (16 bytes).
+> I guess it is some PF_* flag (like PF_KTHREAD is used for avoiding some interference).
 
-This patch should fix the regression:
+Kinda.
+I was thinking about PTRACE_MODE_xxx flag.
 
----8<---
-Some user-space programs rely on crypto requests that have no
-control metadata.  This broke when a check was added to require
-the presence of control metadata with the ctx->init flag.
+> What I am hoping is that we can restrict interference between usermode blob processes
+> and other processes without using LSMs,
 
-This patch fixes the regression by removing the ctx->init flag.
-
-This means that we do not distinguish the case of no metadata
-as opposed to an empty request.  IOW it is always assumed that
-if you call recv(2) before sending metadata that you are working
-with an empty request.
-
-Reported-by: Sachin Sant <sachinp@linux.vnet.ibm.com>
-Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
-Fixes: f3c802a1f300 ("crypto: algif_aead - Only wake up when...")
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-
-diff --git a/crypto/af_alg.c b/crypto/af_alg.c
-index 9fcb91ea10c4..2d391117c020 100644
---- a/crypto/af_alg.c
-+++ b/crypto/af_alg.c
-@@ -635,7 +635,6 @@ void af_alg_pull_tsgl(struct sock *sk, size_t used, struct scatterlist *dst,
- 
- 	if (!ctx->used)
- 		ctx->merge = 0;
--	ctx->init = ctx->more;
- }
- EXPORT_SYMBOL_GPL(af_alg_pull_tsgl);
- 
-@@ -757,8 +756,7 @@ int af_alg_wait_for_data(struct sock *sk, unsigned flags, unsigned min)
- 			break;
- 		timeout = MAX_SCHEDULE_TIMEOUT;
- 		if (sk_wait_event(sk, &timeout,
--				  ctx->init && (!ctx->more ||
--						(min && ctx->used >= min)),
-+				  !ctx->more || (min && ctx->used >= min),
- 				  &wait)) {
- 			err = 0;
- 			break;
-@@ -847,7 +845,7 @@ int af_alg_sendmsg(struct socket *sock, struct msghdr *msg, size_t size,
- 	}
- 
- 	lock_sock(sk);
--	if (ctx->init && (init || !ctx->more)) {
-+	if (!ctx->more && ctx->used) {
- 		err = -EINVAL;
- 		goto unlock;
- 	}
-@@ -858,7 +856,6 @@ int af_alg_sendmsg(struct socket *sock, struct msghdr *msg, size_t size,
- 			memcpy(ctx->iv, con.iv->iv, ivsize);
- 
- 		ctx->aead_assoclen = con.aead_assoclen;
--		ctx->init = true;
- 	}
- 
- 	while (size) {
-diff --git a/crypto/algif_aead.c b/crypto/algif_aead.c
-index d48d2156e621..749fe42315be 100644
---- a/crypto/algif_aead.c
-+++ b/crypto/algif_aead.c
-@@ -106,7 +106,7 @@ static int _aead_recvmsg(struct socket *sock, struct msghdr *msg,
- 	size_t usedpages = 0;		/* [in]  RX bufs to be used from user */
- 	size_t processed = 0;		/* [in]  TX bufs to be consumed */
- 
--	if (!ctx->init || ctx->more) {
-+	if (ctx->more) {
- 		err = af_alg_wait_for_data(sk, flags, 0);
- 		if (err)
- 			return err;
-diff --git a/crypto/algif_skcipher.c b/crypto/algif_skcipher.c
-index a51ba22fef58..5b6fa5e8c00d 100644
---- a/crypto/algif_skcipher.c
-+++ b/crypto/algif_skcipher.c
-@@ -61,7 +61,7 @@ static int _skcipher_recvmsg(struct socket *sock, struct msghdr *msg,
- 	int err = 0;
- 	size_t len = 0;
- 
--	if (!ctx->init || (ctx->more && ctx->used < bs)) {
-+	if (ctx->more && ctx->used < bs) {
- 		err = af_alg_wait_for_data(sk, flags, bs);
- 		if (err)
- 			return err;
-diff --git a/include/crypto/if_alg.h b/include/crypto/if_alg.h
-index ee6412314f8f..08c087cc89d6 100644
---- a/include/crypto/if_alg.h
-+++ b/include/crypto/if_alg.h
-@@ -135,7 +135,6 @@ struct af_alg_async_req {
-  *			SG?
-  * @enc:		Cryptographic operation to be performed when
-  *			recvmsg is invoked.
-- * @init:		True if metadata has been sent.
-  * @len:		Length of memory allocated for this data structure.
-  */
- struct af_alg_ctx {
-@@ -152,7 +151,6 @@ struct af_alg_ctx {
- 	bool more;
- 	bool merge;
- 	bool enc;
--	bool init;
- 
- 	unsigned int len;
- };
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+I don't see why not.
+Extra piece of mind that blob memory is untouchable by other root processes is nice to have.
