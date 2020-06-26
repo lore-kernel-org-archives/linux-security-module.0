@@ -2,129 +2,160 @@ Return-Path: <SRS0=ekpI=AH=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E4D7C433E1
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jun 2020 18:22:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B121C433DF
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jun 2020 22:39:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E06F920707
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jun 2020 18:22:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5AF74208C7
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jun 2020 22:39:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dTvRyJfQ"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="BFqp8IM5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725819AbgFZSWn (ORCPT
+        id S1725997AbgFZWjY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 26 Jun 2020 14:22:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51096 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725275AbgFZSWn (ORCPT
+        Fri, 26 Jun 2020 18:39:24 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:37734 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725909AbgFZWjY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 26 Jun 2020 14:22:43 -0400
-Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 566ACC03E979;
-        Fri, 26 Jun 2020 11:22:43 -0700 (PDT)
-Received: by mail-pl1-x643.google.com with SMTP id d10so4559324pls.5;
-        Fri, 26 Jun 2020 11:22:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=gPRKQHqm6sZx4nx7rIc/Ck2wASuw3VV19IQZEQ741Rk=;
-        b=dTvRyJfQ3Blfhxf3pDzLJQwwrEmprE8++A3HaLXLp5Q+DGxrsGf3W0PhKwPUCHr8Ry
-         pkaowC8SyUb1avgQo4c1xh1e+H2QWb5XKQxYoe9EzntrriWIgsG8lqurzmaFn3HKittV
-         o335AIa8IFUg+7UzR+3CcBXz9H9Fzj9ABI47CB+eujOCgIfNqehkk/2+QNDwZzsjdjyD
-         fwj/lp4D0hbQY5Qg/IUmp8bV6lzIyMM0qjN+UdleejA5nTpd/ezcIzBQMpTDNfbdwT1A
-         VlKf7ISr76mmdi2IKAKQ0JQQQYvJ2ClEvNQw2UNG2OUiAaGeAJRbvm8NPiay3VTbUFIz
-         Zr0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=gPRKQHqm6sZx4nx7rIc/Ck2wASuw3VV19IQZEQ741Rk=;
-        b=duIKc92dOOZaS2Ar+AsyhqnBqxvzfWLNm6EdfsUBkUwlPpLQ/elBkwzXdll2DitXxd
-         sgqXj01ZPkvWQlQ/OVaa+mdRo3w/f/xS+wzi/bQcDT0IIvcdCIO6z36ww3fekW5zciFv
-         mMcp+qaPQhBcXirQwB0VnGNUhCZsdyM/bOUxp4MWzipVe/xL1593qsYhZ5p/VgFum3Og
-         QFn6EEslxZnXktr9bErnRYG5cOwJu+dTGXyxrxP/sExJTelR8HL1wC8AeucRdBrBiE+u
-         lRge1A6AwpvzATKmh5dJNnAlmzyZt3iv9TK+Yq0GRQdCV2psGqUsQP3/anhbq0IiP0vq
-         eVOw==
-X-Gm-Message-State: AOAM532we8qW2FOAIIPpXVrphQzEvf1JLf4mIXoteKzJxpYKqHwoH8Hh
-        syvczP84EeBRFBqtVvM68DQ=
-X-Google-Smtp-Source: ABdhPJyuluSpkCCzQlqONsfwK+vF/2NvmP24zQveFjTNg93fMAPJ1DVKjH3L8mEHTOn7VSfkm2sxlQ==
-X-Received: by 2002:a17:90a:e983:: with SMTP id v3mr4750105pjy.71.1593195762787;
-        Fri, 26 Jun 2020 11:22:42 -0700 (PDT)
-Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:400::5:52bf])
-        by smtp.gmail.com with ESMTPSA id j36sm23889057pgj.39.2020.06.26.11.22.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Jun 2020 11:22:42 -0700 (PDT)
-Date:   Fri, 26 Jun 2020 11:22:39 -0700
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <greg@kroah.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Subject: Re: [PATCH 00/14] Make the user mode driver code a better citizen
-Message-ID: <20200626182239.in7lsupe257zlz5x@ast-mbp.dhcp.thefacebook.com>
-References: <20200625095725.GA3303921@kroah.com>
- <778297d2-512a-8361-cf05-42d9379e6977@i-love.sakura.ne.jp>
- <20200625120725.GA3493334@kroah.com>
- <20200625.123437.2219826613137938086.davem@davemloft.net>
- <CAHk-=whuTwGHEPjvtbBvneHHXeqJC=q5S09mbPnqb=Q+MSPMag@mail.gmail.com>
- <87pn9mgfc2.fsf_-_@x220.int.ebiederm.org>
- <20200626164055.5iasnou57yrtt6wz@ast-mbp.dhcp.thefacebook.com>
- <87sgeh926j.fsf@x220.int.ebiederm.org>
+        Fri, 26 Jun 2020 18:39:24 -0400
+Received: from sequoia.work.tihix.com (162-237-133-238.lightspeed.rcsntx.sbcglobal.net [162.237.133.238])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 32FA520B4901;
+        Fri, 26 Jun 2020 15:39:22 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 32FA520B4901
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1593211163;
+        bh=cGR1MKkg3ILjL6b23Jr/e+SdhIPDTCkXvnYZjuLNPKU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=BFqp8IM5dpkqwlVgttiS8n6I2LlTsZSN0pe+B9woQhjqMhjTsQhSjjEdIAr5gwYgu
+         KxCUS8K5FCuXIYphAu01v7rrXmh+Pn6CeuOBZPmSHyY8PRg3hWSAj4MuM4jpIArHuo
+         kW5EPbGPYVYmrn9rs/V/nGxb+V01gXYaZ4A5GK3w=
+From:   Tyler Hicks <tyhicks@linux.microsoft.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Prakhar Srivastava <prsriva02@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Janne Karhunen <janne.karhunen@gmail.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        kexec@lists.infradead.org, Casey Schaufler <casey@schaufler-ca.com>
+Subject: [PATCH v2 00/11] ima: Fix rule parsing bugs and extend KEXEC_CMDLINE rule support
+Date:   Fri, 26 Jun 2020 17:38:49 -0500
+Message-Id: <20200626223900.253615-1-tyhicks@linux.microsoft.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87sgeh926j.fsf@x220.int.ebiederm.org>
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jun 26, 2020 at 12:17:40PM -0500, Eric W. Biederman wrote:
-> 
-> > I'm swamped with other stuff today and will test the set Sunday/Monday
-> > with other patches that I'm working on.
-> > I'm not sure why you want to rename the interface. Seems
-> > pointless. But fine.
-> 
-> For maintainability I think the code very much benefits from a clear
-> separation between the user mode driver code from the user mode helper
-> code.
+This series ultimately extends the supported IMA rule conditionals for
+the KEXEC_CMDLINE hook function. As of today, there's an imbalance in
+IMA language conditional support for KEXEC_CMDLINE rules in comparison
+to KEXEC_KERNEL_CHECK and KEXEC_INITRAMFS_CHECK rules. The KEXEC_CMDLINE
+rules do not support *any* conditionals so you cannot have a sequence of
+rules like this:
 
-you mean different name gives that separation? makes sense.
+ dont_measure func=KEXEC_KERNEL_CHECK obj_type=foo_t
+ dont_measure func=KEXEC_INITRAMFS_CHECK obj_type=foo_t
+ dont_measure func=KEXEC_CMDLINE obj_type=foo_t
+ measure func=KEXEC_KERNEL_CHECK
+ measure func=KEXEC_INITRAMFS_CHECK
+ measure func=KEXEC_CMDLINE
 
-> > As far as routing trees. Do you mind I'll take it via bpf-next ?
-> > As I said countless times we're working on bpf_iter using fork_blob.
-> > If you take this set via your tree we would need to wait the whole kernel release.
-> > Which is 8+ weeks before we can use the interface (due to renaming and overall changes).
-> > I'd really like to avoid this huge delay.
-> > Unless you can land it into 5.8-rc2 or rc3.
-> 
-> I also want to build upon this code.
-> 
-> How about when the review is done I post a frozen branch based on
-> v5.8-rc1 that you can merge into the bpf-next tree, and I can merge into
-> my branch.  That way we both can build upon this code.  That is the way
-> conflicts like this are usually handled.
+Instead, KEXEC_CMDLINE rules can only be measured or not measured and
+there's no additional flexibility in today's implementation of the
+KEXEC_CMDLINE hook function.
 
-sure. that works too.
+With this series, the above sequence of rules becomes valid and any
+calls to kexec_file_load() with a kernel and initramfs inode type of
+foo_t will not be measured (that includes the kernel cmdline buffer)
+while all other objects given to a kexec_file_load() syscall will be
+measured. There's obviously not an inode directly associated with the
+kernel cmdline buffer but this patch series ties the inode based
+decision making for KEXEC_CMDLINE to the kernel's inode. I think this
+will be intuitive to policy authors.
 
-> Further I will leave any further enhancements to the user mode driver
-> infrastructure that people have suggested to you.
+While reading IMA code and preparing to make this change, I realized
+that the buffer based hook functions (KEXEC_CMDLINE and KEY_CHECK) are
+quite special in comparison to longer standing hook functions. These
+buffer based hook functions can only support measure actions and there
+are some restrictions on the conditionals that they support. However,
+the rule parser isn't enforcing any of those restrictions and IMA policy
+authors wouldn't have any immediate way of knowing that the policy that
+they wrote is invalid. For example, the sequence of rules above parses
+successfully in today's kernel but the
+"dont_measure func=KEXEC_CMDLINE ..." rule is incorrectly handled in
+ima_match_rules(). The dont_measure rule is *always* considered to be a
+match so, surprisingly, no KEXEC_CMDLINE measurements are made.
 
-ok
+While making the rule parser more strict, I realized that the parser
+does not correctly free all of the allocated memory associated with an
+ima_rule_entry when going down some error paths. Invalid policy loaded
+by the policy administrator could result in small memory leaks.
+
+I envision patches 1-6 going to stable. The series is ordered in a way
+that has all the fixes up front, followed by cleanups, followed by the
+feature patch. The breakdown of patches looks like so:
+
+ Memory leak fixes: 1-3
+ Parser strictness fixes: 4-6
+ Code cleanups made possible by the fixes: 7-10
+ Extend KEXEC_CMDLINE rule support: 11
+
+Perhaps the most logical ordering for code review is:
+
+ 1, 2, 3, 7, 8, 4, 5, 6, 9, 10, 11
+
+If you'd like me to re-order or split up the series, just let me know.
+Thanks for considering these patches!
+
+* Series-wide v2 changes
+  - Rebased onto next-integrity-testing
+  - Squashed patches 2 and 3 from v1
+    + Updated this cover letter to account for changes to patch index
+      changes
+    + See patch 2 for specific code changes
+
+Tyler
+
+Tyler Hicks (11):
+  ima: Have the LSM free its audit rule
+  ima: Free the entire rule when deleting a list of rules
+  ima: Free the entire rule if it fails to parse
+  ima: Fail rule parsing when buffer hook functions have an invalid
+    action
+  ima: Fail rule parsing when the KEXEC_CMDLINE hook is combined with an
+    invalid cond
+  ima: Fail rule parsing when the KEY_CHECK hook is combined with an
+    invalid cond
+  ima: Shallow copy the args_p member of ima_rule_entry.lsm elements
+  ima: Use correct type for the args_p member of ima_rule_entry.lsm
+    elements
+  ima: Move validation of the keyrings conditional into
+    ima_validate_rule()
+  ima: Use the common function to detect LSM conditionals in a rule
+  ima: Support additional conditionals in the KEXEC_CMDLINE hook
+    function
+
+ include/linux/ima.h                          |   4 +-
+ kernel/kexec_file.c                          |   2 +-
+ security/integrity/ima/ima.h                 |   7 +-
+ security/integrity/ima/ima_api.c             |   2 +-
+ security/integrity/ima/ima_appraise.c        |   2 +-
+ security/integrity/ima/ima_asymmetric_keys.c |   2 +-
+ security/integrity/ima/ima_main.c            |  23 ++-
+ security/integrity/ima/ima_policy.c          | 161 ++++++++++++++-----
+ security/integrity/ima/ima_queue_keys.c      |   2 +-
+ 9 files changed, 148 insertions(+), 57 deletions(-)
+
+-- 
+2.25.1
+
