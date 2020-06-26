@@ -1,138 +1,138 @@
-Return-Path: <SRS0=LaDg=AG=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=ekpI=AH=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54D0CC433E0
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Jun 2020 23:19:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CF20C433E0
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jun 2020 01:42:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2C6DB207D8
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Jun 2020 23:19:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="AOwchFPX"
+	by mail.kernel.org (Postfix) with ESMTP id 783DA2070A
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jun 2020 01:42:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1593135759;
+	bh=ZcjKlzC9pTr1KWbXb9k9N/aQuHEz3Utm8JPHFrnBfcg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=SZz7tVI4eXcb4IMvAn6K+hHS9C6iXszFnmOP9WEJZsLGVGECf6k029obOkdiIEdqz
+	 PFPPDwQrvTJa0e1QAQkINTA3OHJZ6lppy4DeEQuYCWvbvt4EvEz1tICi2JCZGchWKF
+	 4mSLaV9h8lYov4tpH8rnDsM72NpxShWdl9rFq/C8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407765AbgFYXTh (ORCPT
+        id S1727898AbgFZBmi (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 25 Jun 2020 19:19:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44374 "EHLO
+        Thu, 25 Jun 2020 21:42:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38046 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2407755AbgFYXTg (ORCPT
+        with ESMTP id S1727876AbgFZBmi (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 25 Jun 2020 19:19:36 -0400
-Received: from mail-io1-xd2b.google.com (mail-io1-xd2b.google.com [IPv6:2607:f8b0:4864:20::d2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D5B0C08C5DC
-        for <linux-security-module@vger.kernel.org>; Thu, 25 Jun 2020 16:19:36 -0700 (PDT)
-Received: by mail-io1-xd2b.google.com with SMTP id e64so2997483iof.12
-        for <linux-security-module@vger.kernel.org>; Thu, 25 Jun 2020 16:19:36 -0700 (PDT)
+        Thu, 25 Jun 2020 21:42:38 -0400
+Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30432C08C5C1
+        for <linux-security-module@vger.kernel.org>; Thu, 25 Jun 2020 18:42:38 -0700 (PDT)
+Received: by mail-ej1-x644.google.com with SMTP id mb16so7830002ejb.4
+        for <linux-security-module@vger.kernel.org>; Thu, 25 Jun 2020 18:42:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=gXl5/p0573ZJRbwiRmTK/Thk5dGxKEwaqQGqi7gfkCU=;
-        b=AOwchFPXuB/qlH4hAxwdiSdqbb9aYQFbZLFGcBEkoPeblxHTmtuRSHADfp3j9QvBi7
-         PeKPqGL35L9BwaDBE8fBu7iWey5Hb4wToVoUsCFWnwP8OZIgI7EcRrK5gsq7XpfI13kc
-         S+4ihWYlIEt5v4sFwMgGd79cXikvnytF8strBN2DGifolDdiVdGj1JKOl2pidZ3qRK9T
-         aMkq7xG2w7c6OkApGQdc52mzQ2oSL+WNqyPQSdSkM/gckwfkYnNZMIgX7cZDKwnVR4VV
-         yuFRFFVTamKNMnAkIaMhdEmOic8OGEMz36BFlsWSmAv79fCC2adrAzi3sKWf5jzjudyJ
-         VvQw==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=iBlssWGvZOAUnwbFE+tTOZwoNXNhC7FxvKiwWZijAmg=;
+        b=Qby8f0yox/HTyimDKy8WH3QjOnsg/2FljFlSp/oNDI3KhHpuZAxj1N6Z18mesHmIms
+         NOZMN7rYftj4wIT3wsgRxLsZf9lBCRiKDlD1XlyYLBOunfkrsxx012pA879ViQA3++T/
+         co+GFPa4HCJ+SssCzgmGMtkAllEXMS8wzS4JM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=gXl5/p0573ZJRbwiRmTK/Thk5dGxKEwaqQGqi7gfkCU=;
-        b=jALoAbz30bO/9RoA0aqaPh3h5LKkxT1lSv4TNWg1w5JhzEcS6rNGoO8dDZPvLBNsZv
-         m5cgUjZaLz4je2sjON+iPpXuR+v6tqOiptShH8+KldsWMqsB6bWpkPkg0g2+KVh/08nD
-         s8S7pbWY1uOBICFnoExmf+alWSnAOomo0t+wiZ3mO2VrIx6233d0dGQ5rYDiKuwhHLQh
-         DVTmeWxwKPzTFVWPIml/MHLw0BgEUdyhA08KKZ3ktv/RkDpoUpXI6fbvbvRHnihkIomx
-         OPAnTv4+3DKDNjAkZsXewPBhQyB2Hg5s8DP6YUZvIEQ7wEAMX8SjCwIunt+vFbMR6m1j
-         zwaw==
-X-Gm-Message-State: AOAM531DXQe7lO2foBQQ87TraGb2YzcJ5cjRJsbXzPlTJ88C9qO3Pf5K
-        3ExvER8agndeC7QRoHfsFR1CMQ==
-X-Google-Smtp-Source: ABdhPJzQDaH1oCH1pHv0A4+sqnoZhHGPK3PU4SwGFAnZ7cKvuI1IKycPTSvNpZOsmJlIPWwF6qQzZw==
-X-Received: by 2002:a5d:914d:: with SMTP id y13mr552819ioq.48.1593127175678;
-        Thu, 25 Jun 2020 16:19:35 -0700 (PDT)
-Received: from ziepe.ca ([206.223.160.26])
-        by smtp.gmail.com with ESMTPSA id c20sm14155116iot.33.2020.06.25.16.19.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Jun 2020 16:19:35 -0700 (PDT)
-Received: from jgg by mlx with local (Exim 4.93)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1job9a-00ENMt-33; Thu, 25 Jun 2020 20:19:34 -0300
-Date:   Thu, 25 Jun 2020 20:19:34 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Stefan Berger <stefanb@linux.ibm.com>
-Cc:     Jerry Snitselaar <jsnitsel@redhat.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: Enabling interrupts in QEMU TPM TIS
-Message-ID: <20200625231934.GU6578@ziepe.ca>
-References: <1ca3a53d-2b83-7522-5ce1-83d9cc2f207d@linux.ibm.com>
- <20200625172802.GS6578@ziepe.ca>
- <0a524093-e744-e266-6087-ddc17b5c598c@linux.ibm.com>
- <5b3267b7-57d5-badf-6664-9d47bc9909e7@linux.ibm.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=iBlssWGvZOAUnwbFE+tTOZwoNXNhC7FxvKiwWZijAmg=;
+        b=HGVRrZ0tgo6EumrtBoYubAf7HJeb8mx2oahh3EwFaGEDlP+DH8kCR1kynITvYbl7ia
+         3pbnqQVCS/8IMn2tkyMezr/AIVd0zTzp0zWMRCX58qruHv/y/MhwMm5KrEbspIXfybxr
+         2oYTLrFVGAQWYctDBQOCBeZsT85zgWAccpZPRDRo8A1KNkcDmKfC+S2G+OfuNJiwDG1k
+         22mAizAbH3VcxqqDwdY45UidkuVjmKQRMxW5gDVSNQD2B1PXbV3x1dgcJYugRRp1kNCR
+         PxP2v+gS4YPwsbAkyZgad5XhoxFcLXxVhrmkwAfo7mC7xxUBY/1Fz9AizTl9tn7IoFei
+         gAXw==
+X-Gm-Message-State: AOAM531DyUqCpjQLzy7EQQVhfi2nDPt/CzXa9+9nfv4DRCHXV6leK2cK
+        85Snhcpv940Gh/MbiccFxqRbvsnKRu8=
+X-Google-Smtp-Source: ABdhPJzT/XWHoKGhYRFkXBC1VWVPoL9HhInKUe06jxx0kEIfdjUwE4ZM98wXfLzVhAsKxKiM8gvX0A==
+X-Received: by 2002:a17:906:35cd:: with SMTP id p13mr554550ejb.172.1593135755484;
+        Thu, 25 Jun 2020 18:42:35 -0700 (PDT)
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com. [209.85.208.50])
+        by smtp.gmail.com with ESMTPSA id l16sm18118325ejx.19.2020.06.25.18.42.35
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 25 Jun 2020 18:42:35 -0700 (PDT)
+Received: by mail-ed1-f50.google.com with SMTP id dg28so5716873edb.3
+        for <linux-security-module@vger.kernel.org>; Thu, 25 Jun 2020 18:42:35 -0700 (PDT)
+X-Received: by 2002:a2e:b5d7:: with SMTP id g23mr215388ljn.70.1593135410467;
+ Thu, 25 Jun 2020 18:36:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5b3267b7-57d5-badf-6664-9d47bc9909e7@linux.ibm.com>
+References: <20200625095725.GA3303921@kroah.com> <778297d2-512a-8361-cf05-42d9379e6977@i-love.sakura.ne.jp>
+ <20200625120725.GA3493334@kroah.com> <20200625.123437.2219826613137938086.davem@davemloft.net>
+In-Reply-To: <20200625.123437.2219826613137938086.davem@davemloft.net>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 25 Jun 2020 18:36:34 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whuTwGHEPjvtbBvneHHXeqJC=q5S09mbPnqb=Q+MSPMag@mail.gmail.com>
+Message-ID: <CAHk-=whuTwGHEPjvtbBvneHHXeqJC=q5S09mbPnqb=Q+MSPMag@mail.gmail.com>
+Subject: Re: [RFC][PATCH] net/bpfilter: Remove this broken and apparently unmantained
+To:     David Miller <davem@davemloft.net>
+Cc:     Greg Kroah-Hartman <greg@kroah.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jun 25, 2020 at 06:48:09PM -0400, Stefan Berger wrote:
-> On 6/25/20 5:26 PM, Stefan Berger wrote:
-> > On 6/25/20 1:28 PM, Jason Gunthorpe wrote:
-> > > On Thu, Jun 25, 2020 at 10:56:43AM -0400, Stefan Berger wrote:
-> > > > Hello!
-> > > > 
-> > > >   I want to enable IRQs now in QEMU's TPM TIS device model and I
-> > > > need to work
-> > > > with the following patch to Linux TIS. I am wondering whether
-> > > > the changes
-> > > > there look reasonable to you? Windows works with the QEMU modifications
-> > > > as-is, so maybe it's a bug in the TIS code (which I had not run into
-> > > > before).
-> > > > 
-> > > > 
-> > > > The point of the loop I need to introduce in the interrupt
-> > > > handler is that
-> > > > while the interrupt handler is running another interrupt may
-> > > > occur/be posted
-> > > > that then does NOT cause the interrupt handler to be invoked again but
-> > > > causes a stall, unless the loop is there.
-> > > That seems like a qemu bug, TPM interrupts are supposed to be level
-> > > interrupts, not edge.
-> > 
-> > 
-> > Following this document here the hardware may choose to support
-> > different types of interrutps:
-> > 
-> > https://trustedcomputinggroup.org/wp-content/uploads/PC-Client-Specific-Platform-TPM-Profile-for-TPM-2p0-v1p04_r0p37_pub-1.pdf
-> > 
-> > 
-> > Table 23. Edge falling or rising, level low or level high.
-> > 
-> > So with different steps in the driver causing different types of
-> > interrupts, we may get into such situations where we process some
-> > interrupt 'reasons' but then another one gets posted, I guess due to
-> > parallel processing.
-> 
-> 
-> Another data point: I had the TIS driver working on IRQ 5 (festeoi) without
-> the introduction of this loop. There are additional bits being set while the
-> interrupt handler is running, but the handler deals with them in the next
-> invocation. On IRQ 13 (edge), it does need the loop since the next interrupt
-> handler invocation is not happening. 
+On Thu, Jun 25, 2020 at 12:34 PM David Miller <davem@davemloft.net> wrote:
+>
+> It's kernel code executing in userspace.  If you don't trust the
+> signed code you don't trust the signed code.
+>
+> Nothing is magic about a piece of code executing in userspace.
 
-A loop like that is never the correct way to handle edge interrupts.
+Well, there's one real issue: the most likely thing that code is going
+to do is execute llvm to generate more code.
 
-I don't think the tpm driver was ever designed for edge, so most
-likely the structure and order of the hard irq is not correct.
+And that's I think the real security issue here: the context in which
+the code executes. It may be triggered in one namespace, but what
+namespaces and what rules should the thing actually then execute in.
 
-Jason
+So no, trying to dismiss this as "there are no security issues" is
+bogus. There very much are security issues.
+
+It's just that the current code that is just a dummy wrapper around
+something that doesn't actually do anything doesn't happen to _show_
+those issues, because it does nothing.
+
+I've stayed away from this discussion because I wanted to see if it
+went anywhere, but it doesn't seem to.
+
+My personally strongest argument for remoiving this kernel code is
+that it's been there for a couple of years now, and it has never
+actually done anything useful, and there's no actual sign that it ever
+will, or that there is a solid plan in place for it.
+
+So to me, it really looks like it was an interesting idea, but one
+that hasn't proven itself, and most certainly not one that has shown
+itself to be the _right_ idea.
+
+We can dance around the "what about security modules", but that
+fundamental problem of "this code hasn't done anything useful for two
+years and we don't even know if it's the right thing to do or what the
+real security issues _will_ be" is I think the real issue here.
+
+Hmm?
+
+             Linus
