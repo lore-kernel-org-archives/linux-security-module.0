@@ -4,36 +4,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-17.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67881C433E0
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jun 2020 22:39:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BBF7C433E1
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jun 2020 22:39:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4442E20FC3
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jun 2020 22:39:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5038720B1F
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jun 2020 22:39:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="lSxdc4Ro"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="GAK98Rzg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726345AbgFZWjh (ORCPT
+        id S1725970AbgFZWjs (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 26 Jun 2020 18:39:37 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:37808 "EHLO
+        Fri, 26 Jun 2020 18:39:48 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:37972 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725909AbgFZWje (ORCPT
+        with ESMTP id S1726530AbgFZWjr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 26 Jun 2020 18:39:34 -0400
+        Fri, 26 Jun 2020 18:39:47 -0400
 Received: from sequoia.work.tihix.com (162-237-133-238.lightspeed.rcsntx.sbcglobal.net [162.237.133.238])
-        by linux.microsoft.com (Postfix) with ESMTPSA id C0F4A20B4905;
-        Fri, 26 Jun 2020 15:39:32 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C0F4A20B4905
+        by linux.microsoft.com (Postfix) with ESMTPSA id 8A46220B4901;
+        Fri, 26 Jun 2020 15:39:44 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 8A46220B4901
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1593211173;
-        bh=MNYV62VxHGPBvdC3jd7a3aa0rJsIPisLZWq2XIgStSk=;
+        s=default; t=1593211185;
+        bh=WG1KYGxBabmnas+RFIfamDI2zDei+OK4HHl8rZcS7h4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lSxdc4Ro05Xoqs25RSxd+xCJxSmaWQdWNTZ7r9KgBg9Hc886B4bZarIJq7tmBu9eU
-         Lz1NcXBHNX+lWHWbvP8xG/wB8cprMk7RHrjCFkt+soUies0J86wxNaeLZGnjutn6/n
-         xQKdJb/N+IW+shxO+A5fPFm+9D3Z+g67hQPyNDwQ=
+        b=GAK98Rzg5DPdMyh/1Z+jC5yie/1+3Vl3BHrABfDdHoMgPHmZntawK49gcBxGsF+S1
+         mRoc2Qp0AQGqi0skLOllegODkRgM3EJIN3QfVzgWYL1q1LAFhZxHTkoHx6x41KlwzH
+         JZusT10BIaZxBrd83W23/7jSR6UJ2rqc373ad980=
 From:   Tyler Hicks <tyhicks@linux.microsoft.com>
 To:     Mimi Zohar <zohar@linux.ibm.com>,
         Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
@@ -42,10 +42,12 @@ Cc:     James Morris <jmorris@namei.org>,
         Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
         Prakhar Srivastava <prsriva02@gmail.com>,
         linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH v2 02/11] ima: Free the entire rule when deleting a list of rules
-Date:   Fri, 26 Jun 2020 17:38:51 -0500
-Message-Id: <20200626223900.253615-3-tyhicks@linux.microsoft.com>
+        linux-security-module@vger.kernel.org,
+        Eric Biederman <ebiederm@xmission.com>,
+        kexec@lists.infradead.org
+Subject: [PATCH v2 11/11] ima: Support additional conditionals in the KEXEC_CMDLINE hook function
+Date:   Fri, 26 Jun 2020 17:39:00 -0500
+Message-Id: <20200626223900.253615-12-tyhicks@linux.microsoft.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200626223900.253615-1-tyhicks@linux.microsoft.com>
 References: <20200626223900.253615-1-tyhicks@linux.microsoft.com>
@@ -55,125 +57,249 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Create a function, ima_free_rule(), to free all memory associated with
-an ima_rule_entry. Use the new function to fix memory leaks of allocated
-ima_rule_entry members, such as .fsname and .keyrings, when deleting a
-list of rules.
+Take the properties of the kexec kernel's inode and the current task
+ownership into consideration when matching a KEXEC_CMDLINE operation to
+the rules in the IMA policy. This allows for some uniformity when
+writing IMA policy rules for KEXEC_KERNEL_CHECK, KEXEC_INITRAMFS_CHECK,
+and KEXEC_CMDLINE operations.
 
-Make the existing ima_lsm_free_rule() function specific to the LSM
-audit rule array of an ima_rule_entry and require that callers make an
-additional call to kfree to free the ima_rule_entry itself.
+Prior to this patch, it was not possible to write a set of rules like
+this:
 
-This fixes a memory leak seen when loading by a valid rule that contains
-an additional piece of allocated memory, such as an fsname, followed by
-an invalid rule that triggers a policy load failure:
+ dont_measure func=KEXEC_KERNEL_CHECK obj_type=foo_t
+ dont_measure func=KEXEC_INITRAMFS_CHECK obj_type=foo_t
+ dont_measure func=KEXEC_CMDLINE obj_type=foo_t
+ measure func=KEXEC_KERNEL_CHECK
+ measure func=KEXEC_INITRAMFS_CHECK
+ measure func=KEXEC_CMDLINE
 
- # echo -e "dont_measure fsname=securityfs\nbad syntax" > \
-    /sys/kernel/security/ima/policy
- -bash: echo: write error: Invalid argument
- # echo scan > /sys/kernel/debug/kmemleak
- # cat /sys/kernel/debug/kmemleak
- unreferenced object 0xffff9bab67ca12c0 (size 16):
-   comm "bash", pid 684, jiffies 4295212803 (age 252.344s)
-   hex dump (first 16 bytes):
-     73 65 63 75 72 69 74 79 66 73 00 6b 6b 6b 6b a5  securityfs.kkkk.
-   backtrace:
-     [<00000000adc80b1b>] kstrdup+0x2e/0x60
-     [<00000000d504cb0d>] ima_parse_add_rule+0x7d4/0x1020
-     [<00000000444825ac>] ima_write_policy+0xab/0x1d0
-     [<000000002b7f0d6c>] vfs_write+0xde/0x1d0
-     [<0000000096feedcf>] ksys_write+0x68/0xe0
-     [<0000000052b544a2>] do_syscall_64+0x56/0xa0
-     [<000000007ead1ba7>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+The inode information associated with the kernel being loaded by a
+kexec_kernel_load(2) syscall can now be included in the decision to
+measure or not
 
-Fixes: f1b08bbcbdaf ("ima: define a new policy condition based on the filesystem name")
-Fixes: 2b60c0ecedf8 ("IMA: Read keyrings= option from the IMA policy")
+Additonally, the uid, euid, and subj_* conditionals can also now be
+used in KEXEC_CMDLINE rules. There was no technical reason as to why
+those conditionals weren't being considered previously other than
+ima_match_rules() didn't have a valid inode to use so it immediately
+bailed out for KEXEC_CMDLINE operations rather than going through the
+full list of conditional comparisons.
+
 Signed-off-by: Tyler Hicks <tyhicks@linux.microsoft.com>
+Cc: Eric Biederman <ebiederm@xmission.com>
+Cc: kexec@lists.infradead.org
 ---
 
 * v2
-  - Collapsed patch #2 from v1 of this series, into this patch. This
-    patch now introduces ima_free_rule().
-  - Existing callers of ima_lsm_free_rule() are doing so to free rules
-    after a successful or failed ima_lsm_copy_rule() and those callers
-    continue to directly call ima_lsm_copy_rule() rather than doing
-    explicit reference ownership and calling ima_free_rule().
-  - The kfree(entry) of ima_lsm_free_rule() was removed from that
-    function to make it focused on freeing the LSM references. Direct
-    callers of ima_lsm_free_rule() must now call kfree(entry) after
-    ima_lsm_free_rule().
-  - A comment was added in ima_lsm_update_rule() to clarify why
-    ima_free_rule() isn't being used.
+  - Moved the inode parameter of process_buffer_measurement() to be the
+    first parameter so that it more closely matches process_masurement()
 
- security/integrity/ima/ima_policy.c | 29 ++++++++++++++++++++++++-----
- 1 file changed, 24 insertions(+), 5 deletions(-)
+ include/linux/ima.h                          |  4 ++--
+ kernel/kexec_file.c                          |  2 +-
+ security/integrity/ima/ima.h                 |  2 +-
+ security/integrity/ima/ima_api.c             |  2 +-
+ security/integrity/ima/ima_appraise.c        |  2 +-
+ security/integrity/ima/ima_asymmetric_keys.c |  2 +-
+ security/integrity/ima/ima_main.c            | 23 +++++++++++++++-----
+ security/integrity/ima/ima_policy.c          | 17 +++++----------
+ security/integrity/ima/ima_queue_keys.c      |  2 +-
+ 9 files changed, 31 insertions(+), 25 deletions(-)
 
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index d7c268c2b0ce..bf00b966e87f 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -261,6 +261,21 @@ static void ima_lsm_free_rule(struct ima_rule_entry *entry)
- 		security_filter_rule_free(entry->lsm[i].rule);
- 		kfree(entry->lsm[i].args_p);
+diff --git a/include/linux/ima.h b/include/linux/ima.h
+index 9164e1534ec9..d15100de6cdd 100644
+--- a/include/linux/ima.h
++++ b/include/linux/ima.h
+@@ -25,7 +25,7 @@ extern int ima_post_read_file(struct file *file, void *buf, loff_t size,
+ 			      enum kernel_read_file_id id);
+ extern void ima_post_path_mknod(struct dentry *dentry);
+ extern int ima_file_hash(struct file *file, char *buf, size_t buf_size);
+-extern void ima_kexec_cmdline(const void *buf, int size);
++extern void ima_kexec_cmdline(int kernel_fd, const void *buf, int size);
+ 
+ #ifdef CONFIG_IMA_KEXEC
+ extern void ima_add_kexec_buffer(struct kimage *image);
+@@ -103,7 +103,7 @@ static inline int ima_file_hash(struct file *file, char *buf, size_t buf_size)
+ 	return -EOPNOTSUPP;
+ }
+ 
+-static inline void ima_kexec_cmdline(const void *buf, int size) {}
++static inline void ima_kexec_cmdline(int kernel_fd, const void *buf, int size) {}
+ #endif /* CONFIG_IMA */
+ 
+ #ifndef CONFIG_IMA_KEXEC
+diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+index bb05fd52de85..07df431c1f21 100644
+--- a/kernel/kexec_file.c
++++ b/kernel/kexec_file.c
+@@ -287,7 +287,7 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
+ 			goto out;
+ 		}
+ 
+-		ima_kexec_cmdline(image->cmdline_buf,
++		ima_kexec_cmdline(kernel_fd, image->cmdline_buf,
+ 				  image->cmdline_buf_len - 1);
  	}
-+}
+ 
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index 59ec28f5c117..ff2bf57ff0c7 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -265,7 +265,7 @@ void ima_store_measurement(struct integrity_iint_cache *iint, struct file *file,
+ 			   struct evm_ima_xattr_data *xattr_value,
+ 			   int xattr_len, const struct modsig *modsig, int pcr,
+ 			   struct ima_template_desc *template_desc);
+-void process_buffer_measurement(const void *buf, int size,
++void process_buffer_measurement(struct inode *inode, const void *buf, int size,
+ 				const char *eventname, enum ima_hooks func,
+ 				int pcr, const char *keyring);
+ void ima_audit_measurement(struct integrity_iint_cache *iint,
+diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
+index bf22de8b7ce0..4f39fb93f278 100644
+--- a/security/integrity/ima/ima_api.c
++++ b/security/integrity/ima/ima_api.c
+@@ -162,7 +162,7 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
+ 
+ /**
+  * ima_get_action - appraise & measure decision based on policy.
+- * @inode: pointer to inode to measure
++ * @inode: pointer to the inode associated with the object being validated
+  * @cred: pointer to credentials structure to validate
+  * @secid: secid of the task being validated
+  * @mask: contains the permission mask (MAY_READ, MAY_WRITE, MAY_EXEC,
+diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+index a9649b04b9f1..6c52bf7ea7f0 100644
+--- a/security/integrity/ima/ima_appraise.c
++++ b/security/integrity/ima/ima_appraise.c
+@@ -328,7 +328,7 @@ int ima_check_blacklist(struct integrity_iint_cache *iint,
+ 
+ 		rc = is_binary_blacklisted(digest, digestsize);
+ 		if ((rc == -EPERM) && (iint->flags & IMA_MEASURE))
+-			process_buffer_measurement(digest, digestsize,
++			process_buffer_measurement(NULL, digest, digestsize,
+ 						   "blacklisted-hash", NONE,
+ 						   pcr, NULL);
+ 	}
+diff --git a/security/integrity/ima/ima_asymmetric_keys.c b/security/integrity/ima/ima_asymmetric_keys.c
+index aaae80c4e376..1c68c500c26f 100644
+--- a/security/integrity/ima/ima_asymmetric_keys.c
++++ b/security/integrity/ima/ima_asymmetric_keys.c
+@@ -58,7 +58,7 @@ void ima_post_key_create_or_update(struct key *keyring, struct key *key,
+ 	 * if the IMA policy is configured to measure a key linked
+ 	 * to the given keyring.
+ 	 */
+-	process_buffer_measurement(payload, payload_len,
++	process_buffer_measurement(NULL, payload, payload_len,
+ 				   keyring->description, KEY_CHECK, 0,
+ 				   keyring->description);
+ }
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 8351b2fd48e0..8a91711ca79b 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -726,6 +726,7 @@ int ima_load_data(enum kernel_load_data_id id)
+ 
+ /*
+  * process_buffer_measurement - Measure the buffer to ima log.
++ * @inode: inode associated with the object being measured (NULL for KEY_CHECK)
+  * @buf: pointer to the buffer that needs to be added to the log.
+  * @size: size of buffer(in bytes).
+  * @eventname: event name to be used for the buffer entry.
+@@ -735,7 +736,7 @@ int ima_load_data(enum kernel_load_data_id id)
+  *
+  * Based on policy, the buffer is measured into the ima log.
+  */
+-void process_buffer_measurement(const void *buf, int size,
++void process_buffer_measurement(struct inode *inode, const void *buf, int size,
+ 				const char *eventname, enum ima_hooks func,
+ 				int pcr, const char *keyring)
+ {
+@@ -768,7 +769,7 @@ void process_buffer_measurement(const void *buf, int size,
+ 	 */
+ 	if (func) {
+ 		security_task_getsecid(current, &secid);
+-		action = ima_get_action(NULL, current_cred(), secid, 0, func,
++		action = ima_get_action(inode, current_cred(), secid, 0, func,
+ 					&pcr, &template, keyring);
+ 		if (!(action & IMA_MEASURE))
+ 			return;
+@@ -823,16 +824,26 @@ void process_buffer_measurement(const void *buf, int size,
+ 
+ /**
+  * ima_kexec_cmdline - measure kexec cmdline boot args
++ * @kernel_fd: file descriptor of the kexec kernel being loaded
+  * @buf: pointer to buffer
+  * @size: size of buffer
+  *
+  * Buffers can only be measured, not appraised.
+  */
+-void ima_kexec_cmdline(const void *buf, int size)
++void ima_kexec_cmdline(int kernel_fd, const void *buf, int size)
+ {
+-	if (buf && size != 0)
+-		process_buffer_measurement(buf, size, "kexec-cmdline",
+-					   KEXEC_CMDLINE, 0, NULL);
++	struct fd f;
 +
-+static void ima_free_rule(struct ima_rule_entry *entry)
-+{
-+	if (!entry)
++	if (!buf || !size)
 +		return;
 +
-+	/*
-+	 * entry->template->fields may be allocated in ima_parse_rule() but that
-+	 * reference is owned by the corresponding ima_template_desc element in
-+	 * the defined_templates list and cannot be freed here
-+	 */
-+	kfree(entry->fsname);
-+	kfree(entry->keyrings);
-+	ima_lsm_free_rule(entry);
- 	kfree(entry);
++	f = fdget(kernel_fd);
++	if (!f.file)
++		return;
++
++	process_buffer_measurement(file_inode(f.file), buf, size,
++				   "kexec-cmdline", KEXEC_CMDLINE, 0, NULL);
++	fdput(f);
  }
  
-@@ -302,6 +317,7 @@ static struct ima_rule_entry *ima_lsm_copy_rule(struct ima_rule_entry *entry)
- 
- out_err:
- 	ima_lsm_free_rule(nentry);
-+	kfree(nentry);
- 	return NULL;
- }
- 
-@@ -315,7 +331,14 @@ static int ima_lsm_update_rule(struct ima_rule_entry *entry)
- 
- 	list_replace_rcu(&entry->list, &nentry->list);
- 	synchronize_rcu();
-+	/*
-+	 * ima_lsm_copy_rule() shallow copied all references, except for the
-+	 * LSM references, from entry to nentry so we only want to free the LSM
-+	 * references and the entry itself. All other memory refrences will now
-+	 * be owned by nentry.
-+	 */
- 	ima_lsm_free_rule(entry);
-+	kfree(entry);
- 
- 	return 0;
- }
-@@ -1402,15 +1425,11 @@ ssize_t ima_parse_add_rule(char *rule)
- void ima_delete_rules(void)
+ static int __init init_ima(void)
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index 5eb14b567a31..294323b36d06 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -443,13 +443,9 @@ static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
  {
- 	struct ima_rule_entry *entry, *tmp;
--	int i;
+ 	int i;
  
- 	temp_ima_appraise = 0;
- 	list_for_each_entry_safe(entry, tmp, &ima_temp_rules, list) {
--		for (i = 0; i < MAX_LSM_RULES; i++)
--			kfree(entry->lsm[i].args_p);
--
- 		list_del(&entry->list);
--		kfree(entry);
-+		ima_free_rule(entry);
+-	if ((func == KEXEC_CMDLINE) || (func == KEY_CHECK)) {
+-		if ((rule->flags & IMA_FUNC) && (rule->func == func)) {
+-			if (func == KEY_CHECK)
+-				return ima_match_keyring(rule, keyring, cred);
+-			return true;
+-		}
+-		return false;
++	if (func == KEY_CHECK) {
++		return (rule->flags & IMA_FUNC) && (rule->func == func) &&
++		       ima_match_keyring(rule, keyring, cred);
  	}
- }
+ 	if ((rule->flags & IMA_FUNC) &&
+ 	    (rule->func != func && func != POST_SETATTR))
+@@ -1007,10 +1003,9 @@ static bool ima_validate_rule(struct ima_rule_entry *entry)
+ 			if (entry->action & ~(MEASURE | DONT_MEASURE))
+ 				return false;
  
+-			if (entry->flags & ~(IMA_FUNC | IMA_PCR))
+-				return false;
+-
+-			if (ima_rule_contains_lsm_cond(entry))
++			if (entry->flags & ~(IMA_FUNC | IMA_FSMAGIC | IMA_UID |
++					     IMA_FOWNER | IMA_FSUUID |
++					     IMA_EUID | IMA_PCR | IMA_FSNAME))
+ 				return false;
+ 
+ 			break;
+diff --git a/security/integrity/ima/ima_queue_keys.c b/security/integrity/ima/ima_queue_keys.c
+index 56ce24a18b66..69a8626a35c0 100644
+--- a/security/integrity/ima/ima_queue_keys.c
++++ b/security/integrity/ima/ima_queue_keys.c
+@@ -158,7 +158,7 @@ void ima_process_queued_keys(void)
+ 
+ 	list_for_each_entry_safe(entry, tmp, &ima_keys, list) {
+ 		if (!timer_expired)
+-			process_buffer_measurement(entry->payload,
++			process_buffer_measurement(NULL, entry->payload,
+ 						   entry->payload_len,
+ 						   entry->keyring_name,
+ 						   KEY_CHECK, 0,
 -- 
 2.25.1
 
