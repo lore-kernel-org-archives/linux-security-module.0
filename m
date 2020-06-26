@@ -2,36 +2,66 @@ Return-Path: <SRS0=ekpI=AH=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8078C433E0
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jun 2020 17:22:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E4D7C433E1
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jun 2020 18:22:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C58A220707
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jun 2020 17:22:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E06F920707
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jun 2020 18:22:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dTvRyJfQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726884AbgFZRWO (ORCPT
+        id S1725819AbgFZSWn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 26 Jun 2020 13:22:14 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:38286 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726139AbgFZRWO (ORCPT
+        Fri, 26 Jun 2020 14:22:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51096 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725275AbgFZSWn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 26 Jun 2020 13:22:14 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jos3F-00056A-ME; Fri, 26 Jun 2020 11:22:09 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jos3E-00066Y-OC; Fri, 26 Jun 2020 11:22:09 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+        Fri, 26 Jun 2020 14:22:43 -0400
+Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 566ACC03E979;
+        Fri, 26 Jun 2020 11:22:43 -0700 (PDT)
+Received: by mail-pl1-x643.google.com with SMTP id d10so4559324pls.5;
+        Fri, 26 Jun 2020 11:22:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=gPRKQHqm6sZx4nx7rIc/Ck2wASuw3VV19IQZEQ741Rk=;
+        b=dTvRyJfQ3Blfhxf3pDzLJQwwrEmprE8++A3HaLXLp5Q+DGxrsGf3W0PhKwPUCHr8Ry
+         pkaowC8SyUb1avgQo4c1xh1e+H2QWb5XKQxYoe9EzntrriWIgsG8lqurzmaFn3HKittV
+         o335AIa8IFUg+7UzR+3CcBXz9H9Fzj9ABI47CB+eujOCgIfNqehkk/2+QNDwZzsjdjyD
+         fwj/lp4D0hbQY5Qg/IUmp8bV6lzIyMM0qjN+UdleejA5nTpd/ezcIzBQMpTDNfbdwT1A
+         VlKf7ISr76mmdi2IKAKQ0JQQQYvJ2ClEvNQw2UNG2OUiAaGeAJRbvm8NPiay3VTbUFIz
+         Zr0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=gPRKQHqm6sZx4nx7rIc/Ck2wASuw3VV19IQZEQ741Rk=;
+        b=duIKc92dOOZaS2Ar+AsyhqnBqxvzfWLNm6EdfsUBkUwlPpLQ/elBkwzXdll2DitXxd
+         sgqXj01ZPkvWQlQ/OVaa+mdRo3w/f/xS+wzi/bQcDT0IIvcdCIO6z36ww3fekW5zciFv
+         mMcp+qaPQhBcXirQwB0VnGNUhCZsdyM/bOUxp4MWzipVe/xL1593qsYhZ5p/VgFum3Og
+         QFn6EEslxZnXktr9bErnRYG5cOwJu+dTGXyxrxP/sExJTelR8HL1wC8AeucRdBrBiE+u
+         lRge1A6AwpvzATKmh5dJNnAlmzyZt3iv9TK+Yq0GRQdCV2psGqUsQP3/anhbq0IiP0vq
+         eVOw==
+X-Gm-Message-State: AOAM532we8qW2FOAIIPpXVrphQzEvf1JLf4mIXoteKzJxpYKqHwoH8Hh
+        syvczP84EeBRFBqtVvM68DQ=
+X-Google-Smtp-Source: ABdhPJyuluSpkCCzQlqONsfwK+vF/2NvmP24zQveFjTNg93fMAPJ1DVKjH3L8mEHTOn7VSfkm2sxlQ==
+X-Received: by 2002:a17:90a:e983:: with SMTP id v3mr4750105pjy.71.1593195762787;
+        Fri, 26 Jun 2020 11:22:42 -0700 (PDT)
+Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:400::5:52bf])
+        by smtp.gmail.com with ESMTPSA id j36sm23889057pgj.39.2020.06.26.11.22.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Jun 2020 11:22:42 -0700 (PDT)
+Date:   Fri, 26 Jun 2020 11:22:39 -0700
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         David Miller <davem@davemloft.net>,
         Greg Kroah-Hartman <greg@kroah.com>,
@@ -47,114 +77,54 @@ Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
         LSM List <linux-security-module@vger.kernel.org>,
         Casey Schaufler <casey@schaufler-ca.com>
-References: <20200625095725.GA3303921@kroah.com>
-        <778297d2-512a-8361-cf05-42d9379e6977@i-love.sakura.ne.jp>
-        <20200625120725.GA3493334@kroah.com>
-        <20200625.123437.2219826613137938086.davem@davemloft.net>
-        <CAHk-=whuTwGHEPjvtbBvneHHXeqJC=q5S09mbPnqb=Q+MSPMag@mail.gmail.com>
-        <87pn9mgfc2.fsf_-_@x220.int.ebiederm.org>
-        <20200626164055.5iasnou57yrtt6wz@ast-mbp.dhcp.thefacebook.com>
-Date:   Fri, 26 Jun 2020 12:17:40 -0500
-In-Reply-To: <20200626164055.5iasnou57yrtt6wz@ast-mbp.dhcp.thefacebook.com>
-        (Alexei Starovoitov's message of "Fri, 26 Jun 2020 09:40:55 -0700")
-Message-ID: <87sgeh926j.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1jos3E-00066Y-OC;;;mid=<87sgeh926j.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX19iYzMwx7bCBaPQ2l8NqBFdNQa296MM+Fw=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
 Subject: Re: [PATCH 00/14] Make the user mode driver code a better citizen
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Message-ID: <20200626182239.in7lsupe257zlz5x@ast-mbp.dhcp.thefacebook.com>
+References: <20200625095725.GA3303921@kroah.com>
+ <778297d2-512a-8361-cf05-42d9379e6977@i-love.sakura.ne.jp>
+ <20200625120725.GA3493334@kroah.com>
+ <20200625.123437.2219826613137938086.davem@davemloft.net>
+ <CAHk-=whuTwGHEPjvtbBvneHHXeqJC=q5S09mbPnqb=Q+MSPMag@mail.gmail.com>
+ <87pn9mgfc2.fsf_-_@x220.int.ebiederm.org>
+ <20200626164055.5iasnou57yrtt6wz@ast-mbp.dhcp.thefacebook.com>
+ <87sgeh926j.fsf@x220.int.ebiederm.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87sgeh926j.fsf@x220.int.ebiederm.org>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Alexei Starovoitov <alexei.starovoitov@gmail.com> writes:
+On Fri, Jun 26, 2020 at 12:17:40PM -0500, Eric W. Biederman wrote:
+> 
+> > I'm swamped with other stuff today and will test the set Sunday/Monday
+> > with other patches that I'm working on.
+> > I'm not sure why you want to rename the interface. Seems
+> > pointless. But fine.
+> 
+> For maintainability I think the code very much benefits from a clear
+> separation between the user mode driver code from the user mode helper
+> code.
 
-> On Fri, Jun 26, 2020 at 07:51:41AM -0500, Eric W. Biederman wrote:
->> 
->> Asking for people to fix their bugs in this user mode driver code has
->> been remarkably unproductive.  So here are my bug fixes.
->> 
->> I have tested them by booting with the code compiled in and
->> by killing "bpfilter_umh" and running iptables -vnL to restart
->> the userspace driver.
->> 
->> I have split the changes into small enough pieces so they should be
->> easily readable and testable.  
->> 
->> The changes lean into the preexisting interfaces in the kernel and
->> remove special cases for user mode driver code in favor of solutions
->> that don't need special cases.  This results in smaller code with
->> fewer bugs.
->> 
->> At a practical level this removes the maintenance burden of the
->> user mode drivers from the user mode helper code and from exec as
->> the special cases are removed.
->> 
->> Similarly the LSM interaction bugs are fixed by not having unnecessary
->> special cases for user mode drivers.
->> 
->> Please let me know if you see any bugs.  Once the code review is
->> finished I plan to take this through my tree.
->
-> I did a quick look and I like the cleanup. Thanks!
+you mean different name gives that separation? makes sense.
 
-Good then we have a path forward.
+> > As far as routing trees. Do you mind I'll take it via bpf-next ?
+> > As I said countless times we're working on bpf_iter using fork_blob.
+> > If you take this set via your tree we would need to wait the whole kernel release.
+> > Which is 8+ weeks before we can use the interface (due to renaming and overall changes).
+> > I'd really like to avoid this huge delay.
+> > Unless you can land it into 5.8-rc2 or rc3.
+> 
+> I also want to build upon this code.
+> 
+> How about when the review is done I post a frozen branch based on
+> v5.8-rc1 that you can merge into the bpf-next tree, and I can merge into
+> my branch.  That way we both can build upon this code.  That is the way
+> conflicts like this are usually handled.
 
-> The end result looks good.
-> The only problem that you keep breaking the build between patches,
-> so series will not be bisectable.
+sure. that works too.
 
-Keep breaking?  There is an issue with patch 5/14 where the build breaks
-when bpfilter is not enabled.  Do you see any others? I know I tested
-each patch individually.  But I was only testing with CONFIG_BPFILTER
-enabled so I missed one.
+> Further I will leave any further enhancements to the user mode driver
+> infrastructure that people have suggested to you.
 
-So there should not be things that break
-but things slip through occassionally.
-
-I will resend this shortly with the fix and any others that I can find.
-
-> blob_to_mnt is a great idea. Much better than embedding fs you advocated earlier.
-
-I was lazy and not overdesigning but I still suspect the blob will
-benefit from becoming a cpio in the future.
-
-> I'm swamped with other stuff today and will test the set Sunday/Monday
-> with other patches that I'm working on.
-> I'm not sure why you want to rename the interface. Seems
-> pointless. But fine.
-
-For maintainability I think the code very much benefits from a clear
-separation between the user mode driver code from the user mode helper
-code.
-
-> As far as routing trees. Do you mind I'll take it via bpf-next ?
-> As I said countless times we're working on bpf_iter using fork_blob.
-> If you take this set via your tree we would need to wait the whole kernel release.
-> Which is 8+ weeks before we can use the interface (due to renaming and overall changes).
-> I'd really like to avoid this huge delay.
-> Unless you can land it into 5.8-rc2 or rc3.
-
-I also want to build upon this code.
-
-How about when the review is done I post a frozen branch based on
-v5.8-rc1 that you can merge into the bpf-next tree, and I can merge into
-my branch.  That way we both can build upon this code.  That is the way
-conflicts like this are usually handled.
-
-Further I will leave any further enhancements to the user mode driver
-infrastructure that people have suggested to you.
-
-I will probably replace do_execve with a kernel_execve that doesn't need
-set_fs() to copy the command line argument.  I haven't seen Christoph
-Hellwig address that yet, and it looks pretty straight foward at this
-point.
-
-
-Eric
-
+ok
