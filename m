@@ -2,152 +2,93 @@ Return-Path: <SRS0=ekpI=AH=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37284C433E0
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jun 2020 01:51:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32756C433E0
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jun 2020 02:35:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 13E88207D8
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jun 2020 01:51:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gA9FamS1"
+	by mail.kernel.org (Postfix) with ESMTP id 1019E20679
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jun 2020 02:35:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726079AbgFZBv1 (ORCPT
+        id S1728113AbgFZCfO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 25 Jun 2020 21:51:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39398 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726070AbgFZBv0 (ORCPT
+        Thu, 25 Jun 2020 22:35:14 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34078 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728103AbgFZCfN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 25 Jun 2020 21:51:26 -0400
-Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBB3CC08C5C1;
-        Thu, 25 Jun 2020 18:51:26 -0700 (PDT)
-Received: by mail-pf1-x444.google.com with SMTP id x207so3957397pfc.5;
-        Thu, 25 Jun 2020 18:51:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=ZbdfP/ttYFnO0t8hjvqaCmIEc8PNIiqMUHAFOV+45dk=;
-        b=gA9FamS1A5iqARDpi3pFwy7JlDXzxZMhl77gPFD7MXsWqJUqF3ArsskCpXvutjq7bR
-         3qpFfnA/6PN+kOIXBR26TAAEpHsbWvXQwpr9BT1mWqLlW1PnU71kGwb0bnd2ZvZ2AeGu
-         kGyuxfQZ6/9aG1PSyhI4RVqxkMQVNTd8W1qr8ida47xOjALMRXb7SNS2aBD8yzfdiItU
-         HliODUARjv9Bo4z7HnzC/ewpelDMl03DEGeEp1FXKmNWwI2Mymky8rJuDwHBpNniLhz6
-         mhJoZv2MT/6ZN7nJwt2vLsULgXE8QmYkG1eBXt21w6Be8TW+kKv3S2trdY4ehB/mBvbk
-         1Jvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=ZbdfP/ttYFnO0t8hjvqaCmIEc8PNIiqMUHAFOV+45dk=;
-        b=E+mvlgojQGIeEXu05SrsPChWGfhlleowoFhTv+lndFe32nZkE1Ftdd96IOLaUJgidf
-         lJROkVtBKZs5k7WWkMzcbbzj3Py0Ic81Z3Rzm7P8Mg/lRP0GwjiTwyl230tNUuJ/o8ho
-         lmHA2fxythfFJ8YOF9iq0IG/rEvZ+UCjTwSanlfSV8rtNiIy421NjFr2bJuem7h8eytx
-         MmwFgru5v8/eRec8/fjseACyF8WA+ChZXSIvjO5fw+M5ntgYsuAGuFnq40V1ZUSsXAqX
-         Z45Zv4jZtwlYXNWXWtpfBR5yrO6sztNgOF0aT7ctGzqwKqOrBCIBvx6k4jBDnqvDCNvS
-         1v9g==
-X-Gm-Message-State: AOAM530uFyXnblw25nHN7jPB3rn2zMMb3/4X5ljT+XvteZbECaucrQnY
-        qTyrbUMvNNpsY6S1UmOqQfg=
-X-Google-Smtp-Source: ABdhPJxV8+3Eu4YtbA0pf/GUPg6foxeb1Il5eiU3aMFgAC5tRV8IqQRe7bKKwW1H0573iRCM/FfIqA==
-X-Received: by 2002:a62:8f8f:: with SMTP id n137mr551708pfd.270.1593136286195;
-        Thu, 25 Jun 2020 18:51:26 -0700 (PDT)
-Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:400::5:1ff2])
-        by smtp.gmail.com with ESMTPSA id u200sm8638868pfc.43.2020.06.25.18.51.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Jun 2020 18:51:24 -0700 (PDT)
-Date:   Thu, 25 Jun 2020 18:51:22 -0700
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <greg@kroah.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Subject: Re: [RFC][PATCH] net/bpfilter: Remove this broken and apparently
- unmantained
-Message-ID: <20200626015121.qpxkdaqtsywe3zqx@ast-mbp.dhcp.thefacebook.com>
-References: <20200625095725.GA3303921@kroah.com>
- <778297d2-512a-8361-cf05-42d9379e6977@i-love.sakura.ne.jp>
- <20200625120725.GA3493334@kroah.com>
- <20200625.123437.2219826613137938086.davem@davemloft.net>
- <CAHk-=whuTwGHEPjvtbBvneHHXeqJC=q5S09mbPnqb=Q+MSPMag@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=whuTwGHEPjvtbBvneHHXeqJC=q5S09mbPnqb=Q+MSPMag@mail.gmail.com>
+        Thu, 25 Jun 2020 22:35:13 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 05Q2WOwb195635;
+        Thu, 25 Jun 2020 22:35:04 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 31w3a3ffv1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 25 Jun 2020 22:35:03 -0400
+Received: from m0098419.ppops.net (m0098419.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 05Q2WPOu195853;
+        Thu, 25 Jun 2020 22:35:03 -0400
+Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 31w3a3ffu7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 25 Jun 2020 22:35:03 -0400
+Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
+        by ppma06ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 05Q2VXjf028512;
+        Fri, 26 Jun 2020 02:35:01 GMT
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
+        by ppma06ams.nl.ibm.com with ESMTP id 31uusjjcxk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 26 Jun 2020 02:35:01 +0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 05Q2YxFa11927836
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 26 Jun 2020 02:34:59 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 587145204E;
+        Fri, 26 Jun 2020 02:34:59 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.142.225])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 30F385204F;
+        Fri, 26 Jun 2020 02:34:58 +0000 (GMT)
+Message-ID: <1593138897.27152.449.camel@linux.ibm.com>
+Subject: Re: [PATCH] ima: AppArmor satisfies the audit rule requirements
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Tyler Hicks <tyhicks@linux.microsoft.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Matthew Garrett <mjg59@google.com>,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Date:   Thu, 25 Jun 2020 22:34:57 -0400
+In-Reply-To: <20200623233823.904882-1-tyhicks@linux.microsoft.com>
+References: <20200623233823.904882-1-tyhicks@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.687
+ definitions=2020-06-25_20:2020-06-25,2020-06-25 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 clxscore=1015
+ adultscore=0 mlxscore=0 lowpriorityscore=0 suspectscore=0
+ priorityscore=1501 spamscore=0 impostorscore=0 malwarescore=0 phishscore=0
+ cotscore=-2147483648 bulkscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2004280000 definitions=main-2006260012
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jun 25, 2020 at 06:36:34PM -0700, Linus Torvalds wrote:
-> On Thu, Jun 25, 2020 at 12:34 PM David Miller <davem@davemloft.net> wrote:
-> >
-> > It's kernel code executing in userspace.  If you don't trust the
-> > signed code you don't trust the signed code.
-> >
-> > Nothing is magic about a piece of code executing in userspace.
+On Tue, 2020-06-23 at 18:38 -0500, Tyler Hicks wrote:
+> AppArmor meets all the requirements for IMA in terms of audit rules
+> since commit e79c26d04043 ("apparmor: Add support for audit rule
+> filtering"). Update IMA's Kconfig section for CONFIG_IMA_LSM_RULES to
+> reflect this.
 > 
-> Well, there's one real issue: the most likely thing that code is going
-> to do is execute llvm to generate more code.
-> 
-> And that's I think the real security issue here: the context in which
-> the code executes. It may be triggered in one namespace, but what
-> namespaces and what rules should the thing actually then execute in.
-> 
-> So no, trying to dismiss this as "there are no security issues" is
-> bogus. There very much are security issues.
+> Fixes: e79c26d04043 ("apparmor: Add support for audit rule filtering")
+> Signed-off-by: Tyler Hicks <tyhicks@linux.microsoft.com>
 
-I think you're referring to:
+Thanks
 
->>   We might need to invent built-in "protected userspace" because existing
->>   "unprotected userspace" is not trustworthy enough to run kernel modules.
->>   That's not just inventing fork_usermode_blob().
-
-Another root process can modify the memory of usermode_blob process.
-I think that's Tetsuo's point about lack of LSM hooks is kernel_sock_shutdown().
-Obviously, kernel_sock_shutdown() can be called by kernel only.
-I suspect he's imaging a hypothetical situation where kernel bits of kernel module
-interact with userblob bits of kernel module.
-Then another root process tampers with memory of userblob.
-Then userblob interaction with kernel module can do kernel_sock_shutdown()
-on something that initial design of kernel+userblob module didn't intend.
-I think this is trivially enforceable without creating new features.
-Existing security_ptrace_access_check() LSM hook can prevent tampering with
-memory of userblob.
-
-As far as userblob calling llvm and other things in sequence.
-That is no different from systemd calling things.
-security label can carry that execution context.
-
-> My personally strongest argument for remoiving this kernel code is
-> that it's been there for a couple of years now, and it has never
-> actually done anything useful, and there's no actual sign that it ever
-> will, or that there is a solid plan in place for it.
-
-you probably missed the detailed plan:
-https://lore.kernel.org/bpf/20200609235631.ukpm3xngbehfqthz@ast-mbp.dhcp.thefacebook.com/
-
-The project #3 is the above is the one we're working on right now.
-It should be ready to post in a week.
-
-> We can dance around the "what about security modules", but that
-> fundamental problem of "this code hasn't done anything useful for two
-> years and we don't even know if it's the right thing to do or what the
-> real security issues _will_ be" is I think the real issue here.
-
-Please see above link. bpfilter didn't go anywhere, but fork_usermode_blob()
-has plenty of use cases that will materialize soon.
+Mimi
