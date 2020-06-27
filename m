@@ -1,120 +1,126 @@
-Return-Path: <SRS0=ekpI=AH=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=eT2w=AI=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCDEDC433E0
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jun 2020 22:40:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15F7CC433E0
+	for <linux-security-module@archiver.kernel.org>; Sat, 27 Jun 2020 01:27:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A74D72067D
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Jun 2020 22:40:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="UIiQu+gs"
+	by mail.kernel.org (Postfix) with ESMTP id EE66B20720
+	for <linux-security-module@archiver.kernel.org>; Sat, 27 Jun 2020 01:27:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726413AbgFZWjh (ORCPT
+        id S1726482AbgF0B1o (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 26 Jun 2020 18:39:37 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:37820 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726381AbgFZWjf (ORCPT
+        Fri, 26 Jun 2020 21:27:44 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:53379 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726101AbgF0B1o (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 26 Jun 2020 18:39:35 -0400
-Received: from sequoia.work.tihix.com (162-237-133-238.lightspeed.rcsntx.sbcglobal.net [162.237.133.238])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 8A51820B4901;
-        Fri, 26 Jun 2020 15:39:34 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 8A51820B4901
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1593211175;
-        bh=wb2RijhIAB6vGdBMZgiQYqvgUSu/Ak6GRz9I3YnxR8I=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UIiQu+gsLcJEteLDZJ/8tuACF4ht6M7nWC9s484gDmnJvgaGL0wOxRisJPrZEuJcQ
-         jQN5MJxnVvIbazBzwF1dHG/uvK9RLFApoB2G886oB88hbRg0r+t1pxANkPZD86KmQK
-         lVaoJMyPTcqDLeXB7HDW6I8XzUwGR9GuHhJAEwKk=
-From:   Tyler Hicks <tyhicks@linux.microsoft.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Prakhar Srivastava <prsriva02@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH v2 03/11] ima: Free the entire rule if it fails to parse
-Date:   Fri, 26 Jun 2020 17:38:52 -0500
-Message-Id: <20200626223900.253615-4-tyhicks@linux.microsoft.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200626223900.253615-1-tyhicks@linux.microsoft.com>
-References: <20200626223900.253615-1-tyhicks@linux.microsoft.com>
+        Fri, 26 Jun 2020 21:27:44 -0400
+Received: from fsav403.sakura.ne.jp (fsav403.sakura.ne.jp [133.242.250.102])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 05R1QYhN024426;
+        Sat, 27 Jun 2020 10:26:35 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav403.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav403.sakura.ne.jp);
+ Sat, 27 Jun 2020 10:26:34 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav403.sakura.ne.jp)
+Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 05R1QYj1024423
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Sat, 27 Jun 2020 10:26:34 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH 05/14] umh: Separate the user mode driver and the user
+ mode helper support
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        David Miller <davem@davemloft.net>,
+        Greg Kroah-Hartman <greg@kroah.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <20200625095725.GA3303921@kroah.com>
+ <778297d2-512a-8361-cf05-42d9379e6977@i-love.sakura.ne.jp>
+ <20200625120725.GA3493334@kroah.com>
+ <20200625.123437.2219826613137938086.davem@davemloft.net>
+ <CAHk-=whuTwGHEPjvtbBvneHHXeqJC=q5S09mbPnqb=Q+MSPMag@mail.gmail.com>
+ <87pn9mgfc2.fsf_-_@x220.int.ebiederm.org>
+ <87tuyyf0ln.fsf_-_@x220.int.ebiederm.org>
+ <5ce4d340-096a-f468-6719-4c34a951511e@i-love.sakura.ne.jp>
+ <87d05lbwt4.fsf@x220.int.ebiederm.org>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <32604829-35f7-5263-aff1-27808500c1d1@i-love.sakura.ne.jp>
+Date:   Sat, 27 Jun 2020 10:26:33 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <87d05lbwt4.fsf@x220.int.ebiederm.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Use ima_free_rule() to fix memory leaks of allocated ima_rule_entry
-members, such as .fsname and .keyrings, when an error is encountered
-during rule parsing.
+On 2020/06/27 1:45, Eric W. Biederman wrote:
+>> After this cleanup, I expect adding some protections/isolation which kernel threads
+>> have (e.g. excluded from ptrace(), excluded from OOM victim selection, excluded from
+>> SysRq-i, won't be terminated by SIGKILL from usermode processes, won't be stopped by
+>> SIGSTOP from usermode processes, what else?). Doing it means giving up Alexei's
+>>
+>>   It's nice to be able to compile that blob with -g and be able to 'gdb -p' into it.
+>>   That works and very convenient when it comes to debugging. Compare that to debugging
+>>   a kernel module!
+>>
+>> but I think doing it is essential for keeping usermode blob processes as secure/robust
+>> as kernel threads.
+> 
+> Do you have an application for a user mode driver?
 
-Set the args_p pointer to NULL after freeing it in the error path of
-ima_lsm_rule_init() so that it isn't freed twice.
+No, I'm not a user of this interface.
 
-This fixes a memory leak seen when loading an rule that contains an
-additional piece of allocated memory, such as an fsname, followed by an
-invalid conditional:
+> 
+> I think concerns like that are best addressed in the context of a
+> specific driver/usecase.  Just to make certain we are solving the right
+> problems.
+> 
+> My sense is that an advantage of user mode drivers can safely be buggier
+> than kernel drivers and the freedom to kill them when the drivers go
+> wrong (knowing the drivers will restart) is important.
 
- # echo "measure fsname=tmpfs bad=cond" > /sys/kernel/security/ima/policy
- -bash: echo: write error: Invalid argument
- # echo scan > /sys/kernel/debug/kmemleak
- # cat /sys/kernel/debug/kmemleak
- unreferenced object 0xffff98e7e4ece6c0 (size 8):
-   comm "bash", pid 672, jiffies 4294791843 (age 21.855s)
-   hex dump (first 8 bytes):
-     74 6d 70 66 73 00 6b a5                          tmpfs.k.
-   backtrace:
-     [<00000000abab7413>] kstrdup+0x2e/0x60
-     [<00000000f11ede32>] ima_parse_add_rule+0x7d4/0x1020
-     [<00000000f883dd7a>] ima_write_policy+0xab/0x1d0
-     [<00000000b17cf753>] vfs_write+0xde/0x1d0
-     [<00000000b8ddfdea>] ksys_write+0x68/0xe0
-     [<00000000b8e21e87>] do_syscall_64+0x56/0xa0
-     [<0000000089ea7b98>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+Right. Segmentation fault in user mode drivers does not cause a kernel oops
+is an advantage of user mode drivers. But the freedom to disturb/kill user mode
+drivers due to interference like ptrace()/signals from user mode processes,
+SIGKILL from OOM-killer/SysRq-i etc. is a big disadvantage of user mode drivers.
+I expect that user mode drivers should be killable only when the manager
+interface detected that user mode drivers need to be stopped (or restarted).
 
-Fixes: f1b08bbcbdaf ("ima: define a new policy condition based on the filesystem name")
-Fixes: 2b60c0ecedf8 ("IMA: Read keyrings= option from the IMA policy")
-Signed-off-by: Tyler Hicks <tyhicks@linux.microsoft.com>
----
+One of advantages kernel mode drivers have is that their memory is not swapped
+out/in. I don't know whether mlockall(MCL_FUTURE) should be automatically applied
+to user mode drivers.
 
-* v2
-  - No change
+> 
+> Does this series by using the normal path through exec solve your
+> concerns with LSMs being able to identify these processes (both
+> individually and as class)?.
 
- security/integrity/ima/ima_policy.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+I guess "yes" for pathname based LSMs. Though, TOMOYO wants to obtain both
+AT_SYMLINK_NOFOLLOW "struct path" and !AT_SYMLINK_NOFOLLOW "struct path"
+at do_open_execat() from do_execveat_common().
 
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index bf00b966e87f..e458cd47c099 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -913,6 +913,7 @@ static int ima_lsm_rule_init(struct ima_rule_entry *entry,
- 
- 		if (ima_rules == &ima_default_rules) {
- 			kfree(entry->lsm[lsm_rule].args_p);
-+			entry->lsm[lsm_rule].args_p = NULL;
- 			result = -EINVAL;
- 		} else
- 			result = 0;
-@@ -1404,7 +1405,7 @@ ssize_t ima_parse_add_rule(char *rule)
- 
- 	result = ima_parse_rule(p, entry);
- 	if (result) {
--		kfree(entry);
-+		ima_free_rule(entry);
- 		integrity_audit_msg(AUDIT_INTEGRITY_STATUS, NULL,
- 				    NULL, op, "invalid-policy", result,
- 				    audit_info);
--- 
-2.25.1
+I guess "no" for inode based LSMs, for they want a chance to associate
+security labels at blob_to_mnt().
 
