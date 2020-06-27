@@ -2,36 +2,40 @@ Return-Path: <SRS0=eT2w=AI=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9CB9C433DF
-	for <linux-security-module@archiver.kernel.org>; Sat, 27 Jun 2020 13:04:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A374C433DF
+	for <linux-security-module@archiver.kernel.org>; Sat, 27 Jun 2020 13:58:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 84FA62137B
-	for <linux-security-module@archiver.kernel.org>; Sat, 27 Jun 2020 13:04:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E9EB2168B
+	for <linux-security-module@archiver.kernel.org>; Sat, 27 Jun 2020 13:58:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726402AbgF0NEC (ORCPT
+        id S1726685AbgF0N6L (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 27 Jun 2020 09:04:02 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:57696 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726177AbgF0NEB (ORCPT
+        Sat, 27 Jun 2020 09:58:11 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:56481 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725850AbgF0N6L (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 27 Jun 2020 09:04:01 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jpAUs-0005jA-Kz; Sat, 27 Jun 2020 07:03:54 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jpAUr-0008TJ-Nz; Sat, 27 Jun 2020 07:03:54 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+        Sat, 27 Jun 2020 09:58:11 -0400
+Received: from fsav402.sakura.ne.jp (fsav402.sakura.ne.jp [133.242.250.101])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 05RDvCLq005289;
+        Sat, 27 Jun 2020 22:57:12 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav402.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav402.sakura.ne.jp);
+ Sat, 27 Jun 2020 22:57:12 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav402.sakura.ne.jp)
+Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 05RDvBus005282
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Sat, 27 Jun 2020 22:57:12 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH 00/14] Make the user mode driver code a better citizen
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         David Miller <davem@davemloft.net>,
         Greg Kroah-Hartman <greg@kroah.com>,
@@ -48,60 +52,135 @@ Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         LSM List <linux-security-module@vger.kernel.org>,
         Casey Schaufler <casey@schaufler-ca.com>
 References: <20200625095725.GA3303921@kroah.com>
-        <778297d2-512a-8361-cf05-42d9379e6977@i-love.sakura.ne.jp>
-        <20200625120725.GA3493334@kroah.com>
-        <20200625.123437.2219826613137938086.davem@davemloft.net>
-        <CAHk-=whuTwGHEPjvtbBvneHHXeqJC=q5S09mbPnqb=Q+MSPMag@mail.gmail.com>
-        <87pn9mgfc2.fsf_-_@x220.int.ebiederm.org>
-        <40720db5-92f0-4b5b-3d8a-beb78464a57f@i-love.sakura.ne.jp>
-Date:   Sat, 27 Jun 2020 07:59:25 -0500
-In-Reply-To: <40720db5-92f0-4b5b-3d8a-beb78464a57f@i-love.sakura.ne.jp>
-        (Tetsuo Handa's message of "Sat, 27 Jun 2020 20:38:33 +0900")
-Message-ID: <87366g8y1e.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+ <778297d2-512a-8361-cf05-42d9379e6977@i-love.sakura.ne.jp>
+ <20200625120725.GA3493334@kroah.com>
+ <20200625.123437.2219826613137938086.davem@davemloft.net>
+ <CAHk-=whuTwGHEPjvtbBvneHHXeqJC=q5S09mbPnqb=Q+MSPMag@mail.gmail.com>
+ <87pn9mgfc2.fsf_-_@x220.int.ebiederm.org>
+ <40720db5-92f0-4b5b-3d8a-beb78464a57f@i-love.sakura.ne.jp>
+ <87366g8y1e.fsf@x220.int.ebiederm.org>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <aa737d87-cf38-55d6-32f1-2d989a5412ea@i-love.sakura.ne.jp>
+Date:   Sat, 27 Jun 2020 22:57:10 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1jpAUr-0008TJ-Nz;;;mid=<87366g8y1e.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/YkAZr0C5jEfgsil9qPDA/pLV/aYtliaA=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [PATCH 00/14] Make the user mode driver code a better citizen
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+In-Reply-To: <87366g8y1e.fsf@x220.int.ebiederm.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp> writes:
+On 2020/06/27 21:59, Eric W. Biederman wrote:
+> Can you try replacing the __fput_sync with:
+> 	fput(file);
+>         flush_delayed_fput();
+>         task_work_run();
 
-> On 2020/06/26 21:51, Eric W. Biederman wrote:
->> Please let me know if you see any bugs.  Once the code review is
->> finished I plan to take this through my tree.
->
+With below change, TOMOYO can obtain pathname like "tmpfs:/my\040test\040driver".
 
-[sniped example code]
-> causes
->
->    BUG_ON(!(task->flags & PF_KTHREAD));
->
-> in __fput_sync(). Do we want to forbid umd_load_blob() from process context (e.g.
-> upon module initialization time) ?
+Please avoid WARN_ON() if printk() is sufficient (for friendliness to panic_on_warn=1 environments).
+For argv[], I guess that fork_usermode_driver() should receive argv[] as argument rather than
+trying to split info->driver_name, for somebody might want to pass meaningful argv[] (and
+TOMOYO wants to use meaningful argv[] as a hint for identifying the intent).
 
-Interesting.  I had not realized that fput_sync would not work from
-module context.
+diff --git a/kernel/umd.c b/kernel/umd.c
+index de2f542191e5..ae6e85283f13 100644
+--- a/kernel/umd.c
++++ b/kernel/umd.c
+@@ -7,6 +7,7 @@
+ #include <linux/mount.h>
+ #include <linux/fs_struct.h>
+ #include <linux/umd.h>
++#include <linux/task_work.h>
+ 
+ static struct vfsmount *blob_to_mnt(const void *data, size_t len, const char *name)
+ {
+@@ -25,7 +26,7 @@ static struct vfsmount *blob_to_mnt(const void *data, size_t len, const char *na
+ 	if (IS_ERR(mnt))
+ 		return mnt;
+ 
+-	file = file_open_root(mnt->mnt_root, mnt, name, O_CREAT | O_WRONLY, 0700);
++	file = file_open_root(mnt->mnt_root, mnt, name, O_CREAT | O_WRONLY | O_EXCL, 0700);
+ 	if (IS_ERR(file)) {
+ 		mntput(mnt);
+ 		return ERR_CAST(file);
+@@ -41,23 +42,33 @@ static struct vfsmount *blob_to_mnt(const void *data, size_t len, const char *na
+ 		return ERR_PTR(err);
+ 	}
+ 
+-	__fput_sync(file);
++	if (current->flags & PF_KTHREAD) {
++		__fput_sync(file);
++	} else {
++		fput(file);
++		flush_delayed_fput();
++		task_work_run();
++	}
+ 	return mnt;
+ }
+ 
+ /**
+  * umd_load_blob - Remember a blob of bytes for fork_usermode_driver
+- * @info: information about usermode driver
+- * @data: a blob of bytes that can be executed as a file
+- * @len:  The lentgh of the blob
++ * @info: information about usermode driver (shouldn't be NULL)
++ * @data: a blob of bytes that can be executed as a file (shouldn't be NULL)
++ * @len:  The lentgh of the blob (shouldn't be 0)
+  *
+  */
+ int umd_load_blob(struct umd_info *info, const void *data, size_t len)
+ {
+ 	struct vfsmount *mnt;
+ 
+-	if (WARN_ON_ONCE(info->wd.dentry || info->wd.mnt))
++	if (!info || !info->driver_name || !data || !len)
++		return -EINVAL;
++	if (info->wd.dentry || info->wd.mnt) {
++		pr_info("%s already loaded.\n", info->driver_name);
+ 		return -EBUSY;
++	}
+ 
+ 	mnt = blob_to_mnt(data, len, info->driver_name);
+ 	if (IS_ERR(mnt))
+@@ -71,14 +82,14 @@ EXPORT_SYMBOL_GPL(umd_load_blob);
+ 
+ /**
+  * umd_unload_blob - Disassociate @info from a previously loaded blob
+- * @info: information about usermode driver
++ * @info: information about usermode driver (shouldn't be NULL)
+  *
+  */
+ int umd_unload_blob(struct umd_info *info)
+ {
+-	if (WARN_ON_ONCE(!info->wd.mnt ||
+-			 !info->wd.dentry ||
+-			 info->wd.mnt->mnt_root != info->wd.dentry))
++	if (!info || !info->driver_name || !info->wd.dentry || !info->wd.mnt)
++		return -EINVAL;
++	if (WARN_ON_ONCE(info->wd.mnt->mnt_root != info->wd.dentry))
+ 		return -EINVAL;
+ 
+ 	kern_unmount(info->wd.mnt);
+@@ -158,8 +169,14 @@ int fork_usermode_driver(struct umd_info *info)
+ 	char **argv = NULL;
+ 	int err;
+ 
+-	if (WARN_ON_ONCE(info->tgid))
++	if (!info || !info->driver_name || !info->wd.dentry || !info->wd.mnt)
++		return -EINVAL;
++	if (WARN_ON_ONCE(info->wd.mnt->mnt_root != info->wd.dentry))
++		return -EINVAL;
++	if (info->tgid) {
++		pr_info("%s already running.\n", info->driver_name);
+ 		return -EBUSY;
++	}
+ 
+ 	err = -ENOMEM;
+ 	argv = argv_split(GFP_KERNEL, info->driver_name, NULL);
 
-Forcing the fput to finish is absolutely necessary.  Otherwise the file
-will still be open for write and deny_write_access in execve will fail.
-
-Can you try replacing the __fput_sync with:
-	fput(file);
-        flush_delayed_fput();
-        task_work_run();
 
 
-Given that there is a big requirement for the code to run before init
-I don't necessarily think it is a problem __fput_sync is a problem.
-But it also seems silly to forbid modules if we can easily fix
-the code.
-
-Eric
