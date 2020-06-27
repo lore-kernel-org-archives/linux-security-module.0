@@ -2,185 +2,184 @@ Return-Path: <SRS0=eT2w=AI=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A374C433DF
-	for <linux-security-module@archiver.kernel.org>; Sat, 27 Jun 2020 13:58:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B52B1C433E1
+	for <linux-security-module@archiver.kernel.org>; Sat, 27 Jun 2020 17:43:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7E9EB2168B
-	for <linux-security-module@archiver.kernel.org>; Sat, 27 Jun 2020 13:58:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 996C4206D7
+	for <linux-security-module@archiver.kernel.org>; Sat, 27 Jun 2020 17:43:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="gG/5jUPI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726685AbgF0N6L (ORCPT
+        id S1726618AbgF0Rnp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 27 Jun 2020 09:58:11 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:56481 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725850AbgF0N6L (ORCPT
+        Sat, 27 Jun 2020 13:43:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39424 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725900AbgF0Rnp (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 27 Jun 2020 09:58:11 -0400
-Received: from fsav402.sakura.ne.jp (fsav402.sakura.ne.jp [133.242.250.101])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 05RDvCLq005289;
-        Sat, 27 Jun 2020 22:57:12 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav402.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav402.sakura.ne.jp);
- Sat, 27 Jun 2020 22:57:12 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav402.sakura.ne.jp)
-Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 05RDvBus005282
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Sat, 27 Jun 2020 22:57:12 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH 00/14] Make the user mode driver code a better citizen
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <greg@kroah.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <20200625095725.GA3303921@kroah.com>
- <778297d2-512a-8361-cf05-42d9379e6977@i-love.sakura.ne.jp>
- <20200625120725.GA3493334@kroah.com>
- <20200625.123437.2219826613137938086.davem@davemloft.net>
- <CAHk-=whuTwGHEPjvtbBvneHHXeqJC=q5S09mbPnqb=Q+MSPMag@mail.gmail.com>
- <87pn9mgfc2.fsf_-_@x220.int.ebiederm.org>
- <40720db5-92f0-4b5b-3d8a-beb78464a57f@i-love.sakura.ne.jp>
- <87366g8y1e.fsf@x220.int.ebiederm.org>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <aa737d87-cf38-55d6-32f1-2d989a5412ea@i-love.sakura.ne.jp>
-Date:   Sat, 27 Jun 2020 22:57:10 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:68.0) Gecko/20100101
- Thunderbird/68.9.0
+        Sat, 27 Jun 2020 13:43:45 -0400
+Received: from mail.skyhub.de (mail.skyhub.de [IPv6:2a01:4f8:190:11c2::b:1457])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5AE4C061794;
+        Sat, 27 Jun 2020 10:43:44 -0700 (PDT)
+Received: from zn.tnic (p200300ec2f26ff00329c23fffea6a903.dip0.t-ipconnect.de [IPv6:2003:ec:2f26:ff00:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id ECAE11EC0212;
+        Sat, 27 Jun 2020 19:43:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1593279822;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=1A1dVBrbGPPkY/HQ3nWi6nbRp+BjUmn3DkY6Tj41HdA=;
+        b=gG/5jUPIpYuAaOggN0AoYuUN0RH5V6m3GQcIaP4pjuzJTN4kF++dHDk+Hzi2ECFcMxU8hY
+        lXu72EPKKpZmQAQDe0ePb3lwibrlerxn5jeX9ln15n2p3BMP8ABeLO8Z4sXA8GFqKchGma
+        6EEtwJzoTXOPFLH957DiON3ns6TTklE=
+Date:   Sat, 27 Jun 2020 19:43:35 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Jethro Beekman <jethro@fortanix.com>,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Chunyang Hui <sanqian.hcy@antfin.com>,
+        Jordan Hand <jorhand@linux.microsoft.com>,
+        Nathaniel McCallum <npmccallum@redhat.com>,
+        Seth Moore <sethmo@google.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, cedric.xing@intel.com, chenalexchen@google.com,
+        conradparker@google.com, cyhanish@google.com,
+        dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, luto@kernel.org,
+        nhorman@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
+        tglx@linutronix.de, yaozhangx@google.com
+Subject: Re: [PATCH v33 11/21] x86/sgx: Linux Enclave Driver
+Message-ID: <20200627174335.GC15585@zn.tnic>
+References: <20200617220844.57423-1-jarkko.sakkinen@linux.intel.com>
+ <20200617220844.57423-12-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <87366g8y1e.fsf@x220.int.ebiederm.org>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <20200617220844.57423-12-jarkko.sakkinen@linux.intel.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2020/06/27 21:59, Eric W. Biederman wrote:
-> Can you try replacing the __fput_sync with:
-> 	fput(file);
->         flush_delayed_fput();
->         task_work_run();
+On Thu, Jun 18, 2020 at 01:08:33AM +0300, Jarkko Sakkinen wrote:
+> +static int sgx_encl_init(struct sgx_encl *encl, struct sgx_sigstruct *sigstruct,
+> +			 void *token)
+> +{
+> +	u64 mrsigner[4];
+> +	int ret;
+> +	int i;
+> +	int j;
+> +
+> +	/* Check that the required attributes have been authorized. */
+> +	if (encl->secs_attributes & ~encl->allowed_attributes)
+> +		return -EACCES;
+> +
+> +	ret = sgx_get_key_hash(sigstruct->modulus, mrsigner);
+> +	if (ret)
+> +		return ret;
+> +
+> +	mutex_lock(&encl->lock);
+> +
+> +	if (atomic_read(&encl->flags) & SGX_ENCL_INITIALIZED) {
+> +		ret = -EFAULT;
+> +		goto err_out;
+> +	}
 
-With below change, TOMOYO can obtain pathname like "tmpfs:/my\040test\040driver".
+That test should be the first thing this function or its caller does.
 
-Please avoid WARN_ON() if printk() is sufficient (for friendliness to panic_on_warn=1 environments).
-For argv[], I guess that fork_usermode_driver() should receive argv[] as argument rather than
-trying to split info->driver_name, for somebody might want to pass meaningful argv[] (and
-TOMOYO wants to use meaningful argv[] as a hint for identifying the intent).
+> +	for (i = 0; i < SGX_EINIT_SLEEP_COUNT; i++) {
+> +		for (j = 0; j < SGX_EINIT_SPIN_COUNT; j++) {
 
-diff --git a/kernel/umd.c b/kernel/umd.c
-index de2f542191e5..ae6e85283f13 100644
---- a/kernel/umd.c
-+++ b/kernel/umd.c
-@@ -7,6 +7,7 @@
- #include <linux/mount.h>
- #include <linux/fs_struct.h>
- #include <linux/umd.h>
-+#include <linux/task_work.h>
- 
- static struct vfsmount *blob_to_mnt(const void *data, size_t len, const char *name)
- {
-@@ -25,7 +26,7 @@ static struct vfsmount *blob_to_mnt(const void *data, size_t len, const char *na
- 	if (IS_ERR(mnt))
- 		return mnt;
- 
--	file = file_open_root(mnt->mnt_root, mnt, name, O_CREAT | O_WRONLY, 0700);
-+	file = file_open_root(mnt->mnt_root, mnt, name, O_CREAT | O_WRONLY | O_EXCL, 0700);
- 	if (IS_ERR(file)) {
- 		mntput(mnt);
- 		return ERR_CAST(file);
-@@ -41,23 +42,33 @@ static struct vfsmount *blob_to_mnt(const void *data, size_t len, const char *na
- 		return ERR_PTR(err);
- 	}
- 
--	__fput_sync(file);
-+	if (current->flags & PF_KTHREAD) {
-+		__fput_sync(file);
-+	} else {
-+		fput(file);
-+		flush_delayed_fput();
-+		task_work_run();
-+	}
- 	return mnt;
- }
- 
- /**
-  * umd_load_blob - Remember a blob of bytes for fork_usermode_driver
-- * @info: information about usermode driver
-- * @data: a blob of bytes that can be executed as a file
-- * @len:  The lentgh of the blob
-+ * @info: information about usermode driver (shouldn't be NULL)
-+ * @data: a blob of bytes that can be executed as a file (shouldn't be NULL)
-+ * @len:  The lentgh of the blob (shouldn't be 0)
-  *
-  */
- int umd_load_blob(struct umd_info *info, const void *data, size_t len)
- {
- 	struct vfsmount *mnt;
- 
--	if (WARN_ON_ONCE(info->wd.dentry || info->wd.mnt))
-+	if (!info || !info->driver_name || !data || !len)
-+		return -EINVAL;
-+	if (info->wd.dentry || info->wd.mnt) {
-+		pr_info("%s already loaded.\n", info->driver_name);
- 		return -EBUSY;
-+	}
- 
- 	mnt = blob_to_mnt(data, len, info->driver_name);
- 	if (IS_ERR(mnt))
-@@ -71,14 +82,14 @@ EXPORT_SYMBOL_GPL(umd_load_blob);
- 
- /**
-  * umd_unload_blob - Disassociate @info from a previously loaded blob
-- * @info: information about usermode driver
-+ * @info: information about usermode driver (shouldn't be NULL)
-  *
-  */
- int umd_unload_blob(struct umd_info *info)
- {
--	if (WARN_ON_ONCE(!info->wd.mnt ||
--			 !info->wd.dentry ||
--			 info->wd.mnt->mnt_root != info->wd.dentry))
-+	if (!info || !info->driver_name || !info->wd.dentry || !info->wd.mnt)
-+		return -EINVAL;
-+	if (WARN_ON_ONCE(info->wd.mnt->mnt_root != info->wd.dentry))
- 		return -EINVAL;
- 
- 	kern_unmount(info->wd.mnt);
-@@ -158,8 +169,14 @@ int fork_usermode_driver(struct umd_info *info)
- 	char **argv = NULL;
- 	int err;
- 
--	if (WARN_ON_ONCE(info->tgid))
-+	if (!info || !info->driver_name || !info->wd.dentry || !info->wd.mnt)
-+		return -EINVAL;
-+	if (WARN_ON_ONCE(info->wd.mnt->mnt_root != info->wd.dentry))
-+		return -EINVAL;
-+	if (info->tgid) {
-+		pr_info("%s already running.\n", info->driver_name);
- 		return -EBUSY;
-+	}
- 
- 	err = -ENOMEM;
- 	argv = argv_split(GFP_KERNEL, info->driver_name, NULL);
+Ew, what's that double-loop for?
 
+It tries to init an enclave a bunch of times. Why does it need to init
+more than once?
 
+> +			ret = sgx_einit(sigstruct, token, encl->secs.epc_page,
+> +					mrsigner);
+> +			if (ret == SGX_UNMASKED_EVENT)
+> +				continue;
+> +			else
+> +				break;
+> +		}
+> +
+> +		if (ret != SGX_UNMASKED_EVENT)
+> +			break;
+> +
+> +		msleep_interruptible(SGX_EINIT_SLEEP_TIME);
+> +
+> +		if (signal_pending(current)) {
+> +			ret = -ERESTARTSYS;
+> +			goto err_out;
+> +		}
+> +	}
+> +
+> +	if (ret & ENCLS_FAULT_FLAG) {
+> +		if (encls_failed(ret))
+> +			ENCLS_WARN(ret, "EINIT");
+> +
+> +		sgx_encl_destroy(encl);
+> +		ret = -EFAULT;
+> +	} else if (ret) {
+> +		pr_debug("EINIT returned %d\n", ret);
+> +		ret = -EPERM;
+> +	} else {
+> +		atomic_or(SGX_ENCL_INITIALIZED, &encl->flags);
+> +	}
+> +
+> +err_out:
+> +	mutex_unlock(&encl->lock);
+> +	return ret;
+> +}
+> +
+> +/**
+> + * sgx_ioc_enclave_init - handler for %SGX_IOC_ENCLAVE_INIT
+> + *
+> + * @filep:	open file to /dev/sgx
 
+@encl:       pointer to an enclave instance (via ioctl() file pointer)
+
+> + * @arg:	userspace pointer to a struct sgx_enclave_init instance
+> + *
+> + * Flush any outstanding enqueued EADD operations and perform EINIT.  The
+> + * Launch Enclave Public Key Hash MSRs are rewritten as necessary to match
+> + * the enclave's MRSIGNER, which is caculated from the provided sigstruct.
+> + *
+> + * Return:
+> + *   0 on success,
+> + *   SGX error code on EINIT failure,
+> + *   -errno otherwise
+> + */
+> +static long sgx_ioc_enclave_init(struct sgx_encl *encl, void __user *arg)
+> +{
+> +	struct sgx_sigstruct *sigstruct;
+> +	struct sgx_enclave_init einit;
+> +	struct page *initp_page;
+> +	void *token;
+> +	int ret;
+> +
+> +	if (!(atomic_read(&encl->flags) & SGX_ENCL_CREATED))
+
+Might just as well check the other flags: doing EINIT on an already
+initialized enclave - SGX_ENCL_INITIALIZED - is perhaps a nono or
+similarly on a SGX_ENCL_DEAD enclave.
+
+And you could do similar sanity checks in the other ioctl functions.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
