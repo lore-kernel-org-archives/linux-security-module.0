@@ -2,71 +2,121 @@ Return-Path: <SRS0=lc+5=AK=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.5 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1824DC433DF
-	for <linux-security-module@archiver.kernel.org>; Mon, 29 Jun 2020 21:00:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBE7FC433E0
+	for <linux-security-module@archiver.kernel.org>; Mon, 29 Jun 2020 21:30:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F03D320720
-	for <linux-security-module@archiver.kernel.org>; Mon, 29 Jun 2020 21:00:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A02772073E
+	for <linux-security-module@archiver.kernel.org>; Mon, 29 Jun 2020 21:30:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731234AbgF2VAG (ORCPT
+        id S1732229AbgF2VaW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 29 Jun 2020 17:00:06 -0400
-Received: from namei.org ([65.99.196.166]:42618 "EHLO namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731225AbgF2VAF (ORCPT
+        Mon, 29 Jun 2020 17:30:22 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51804 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728873AbgF2VaW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 29 Jun 2020 17:00:05 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id 05TL03nS010843;
-        Mon, 29 Jun 2020 21:00:03 GMT
-Date:   Tue, 30 Jun 2020 07:00:03 +1000 (AEST)
-From:   James Morris <jmorris@namei.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-cc:     linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Security subsystem fixes for v5.8
-Message-ID: <alpine.LRH.2.21.2006300659080.10756@namei.org>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Mon, 29 Jun 2020 17:30:22 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 05TL3oWa041064;
+        Mon, 29 Jun 2020 17:30:10 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 31ydk9e64q-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 29 Jun 2020 17:30:10 -0400
+Received: from m0098399.ppops.net (m0098399.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 05TLTiJq191397;
+        Mon, 29 Jun 2020 17:30:10 -0400
+Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 31ydk9e63h-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 29 Jun 2020 17:30:09 -0400
+Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
+        by ppma04ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 05TLJIH4021282;
+        Mon, 29 Jun 2020 21:30:07 GMT
+Received: from b06avi18878370.portsmouth.uk.ibm.com (b06avi18878370.portsmouth.uk.ibm.com [9.149.26.194])
+        by ppma04ams.nl.ibm.com with ESMTP id 31wwr8atb6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 29 Jun 2020 21:30:07 +0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 05TLU51O55640508
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 29 Jun 2020 21:30:05 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3A950A405D;
+        Mon, 29 Jun 2020 21:30:05 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0B4A3A4040;
+        Mon, 29 Jun 2020 21:30:04 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.137.220])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 29 Jun 2020 21:30:03 +0000 (GMT)
+Message-ID: <1593466203.5085.62.camel@linux.ibm.com>
+Subject: Re: [PATCH] ima: Rename internal audit rule functions
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Tyler Hicks <tyhicks@linux.microsoft.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        linux-audit@redhat.com
+Date:   Mon, 29 Jun 2020 17:30:03 -0400
+In-Reply-To: <20200629153037.337349-1-tyhicks@linux.microsoft.com>
+References: <20200629153037.337349-1-tyhicks@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-06-29_21:2020-06-29,2020-06-29 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxscore=0
+ suspectscore=2 adultscore=0 mlxlogscore=999 lowpriorityscore=0
+ clxscore=1015 bulkscore=0 malwarescore=0 cotscore=-2147483648
+ impostorscore=0 spamscore=0 priorityscore=1501 classifier=spam adjust=0
+ reason=mlx scancount=1 engine=8.12.0-2004280000
+ definitions=main-2006290130
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Please pull (now using signed tags).
+[Cc'ing the audit mailing list]
 
-The following changes since commit 48778464bb7d346b47157d21ffde2af6b2d39110:
+On Mon, 2020-06-29 at 10:30 -0500, Tyler Hicks wrote:
+> 
+> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+> index ff2bf57ff0c7..5d62ee8319f4 100644
+> --- a/security/integrity/ima/ima.h
+> +++ b/security/integrity/ima/ima.h
+> @@ -419,24 +419,24 @@ static inline void ima_free_modsig(struct modsig *modsig)
+>  /* LSM based policy rules require audit */
+>  #ifdef CONFIG_IMA_LSM_RULES
+>  
+> -#define security_filter_rule_init security_audit_rule_init
+> -#define security_filter_rule_free security_audit_rule_free
+> -#define security_filter_rule_match security_audit_rule_match
+> +#define ima_audit_rule_init security_audit_rule_init
+> +#define ima_audit_rule_free security_audit_rule_free
+> +#define ima_audit_rule_match security_audit_rule_match
 
-  Linux 5.8-rc2 (2020-06-21 15:45:29 -0700)
+Instead of defining an entirely new method of identifying files, IMA
+piggybacks on top of the existing audit rule syntax.  IMA policy rules
+"filter" based on this information.
 
-are available in the Git repository at:
+IMA already audits security/integrity related events.  Using the word
+"audit" here will make things even more confusing than they currently
+are.  Renaming these functions as ima_audit_rule_XXX provides no
+benefit.  At that point, IMA might as well call the
+security_audit_rule prefixed function names directly.  As a quick fix,
+rename them as "ima_filter_rule".
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git tags/fixes-v5.8-rc3-a
+The correct solution would probably be to rename these prefixed
+"security_audit_rule" functions as "security_filter_rule", so that
+both the audit subsystem and IMA could use them.
 
-for you to fetch changes up to 23e390cdbe6f85827a43d38f9288dcd3066fa376:
-
-  security: Fix hook iteration and default value for inode_copy_up_xattr (2020-06-23 16:39:23 -0700)
-
-----------------------------------------------------------------
-Two simple fixes for v5.8:
-
-1) Fix hook iteration and default value for inode_copy_up_xattr
-	from KP Singh <kpsingh@google.com>
-
-2) Fix the key_permission LSM hook function type
-	from Sami Tolvanen <samitolvanen@google.com>
-
-----------------------------------------------------------------
-KP Singh (1):
-      security: Fix hook iteration and default value for inode_copy_up_xattr
-
-Sami Tolvanen (1):
-      security: fix the key_permission LSM hook function type
-
- include/linux/lsm_hook_defs.h |  4 ++--
- security/security.c           | 17 ++++++++++++++++-
- 2 files changed, 18 insertions(+), 3 deletions(-)
+Mimi
