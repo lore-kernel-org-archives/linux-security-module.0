@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4558EC433E1
-	for <linux-security-module@archiver.kernel.org>; Mon, 29 Jun 2020 20:06:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0CEFC433DF
+	for <linux-security-module@archiver.kernel.org>; Mon, 29 Jun 2020 20:07:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 328BD2083B
-	for <linux-security-module@archiver.kernel.org>; Mon, 29 Jun 2020 20:06:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7CDB207D0
+	for <linux-security-module@archiver.kernel.org>; Mon, 29 Jun 2020 20:07:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388800AbgF2UGf (ORCPT
+        id S2388614AbgF2UHC (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 29 Jun 2020 16:06:35 -0400
-Received: from out02.mta.xmission.com ([166.70.13.232]:35920 "EHLO
+        Mon, 29 Jun 2020 16:07:02 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:36126 "EHLO
         out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388859AbgF2UGc (ORCPT
+        with ESMTP id S1732757AbgF2UHB (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 29 Jun 2020 16:06:32 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
+        Mon, 29 Jun 2020 16:07:01 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
         by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.90_1)
         (envelope-from <ebiederm@xmission.com>)
-        id 1jq02t-0003N6-VO; Mon, 29 Jun 2020 14:06:28 -0600
+        id 1jq03P-0003QP-La; Mon, 29 Jun 2020 14:06:59 -0600
 Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.87)
         (envelope-from <ebiederm@xmission.com>)
-        id 1jq02s-0000GO-Gg; Mon, 29 Jun 2020 14:06:27 -0600
+        id 1jq03O-00044y-HS; Mon, 29 Jun 2020 14:06:59 -0600
 From:   ebiederm@xmission.com (Eric W. Biederman)
 To:     <linux-kernel@vger.kernel.org>
 Cc:     David Miller <davem@davemloft.net>,
@@ -57,151 +57,116 @@ References: <20200625095725.GA3303921@kroah.com>
         <87pn9mgfc2.fsf_-_@x220.int.ebiederm.org>
         <87y2oac50p.fsf@x220.int.ebiederm.org>
         <87bll17ili.fsf_-_@x220.int.ebiederm.org>
-Date:   Mon, 29 Jun 2020 15:01:55 -0500
+Date:   Mon, 29 Jun 2020 15:02:27 -0500
 In-Reply-To: <87bll17ili.fsf_-_@x220.int.ebiederm.org> (Eric W. Biederman's
         message of "Mon, 29 Jun 2020 14:55:05 -0500")
-Message-ID: <878sg563po.fsf_-_@x220.int.ebiederm.org>
+Message-ID: <87366d63os.fsf_-_@x220.int.ebiederm.org>
 User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
-X-XM-SPF: eid=1jq02s-0000GO-Gg;;;mid=<878sg563po.fsf_-_@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/xzYzSGIoZRKG59bBBeB+kZ2XZYfxfOB4=
+X-XM-SPF: eid=1jq03O-00044y-HS;;;mid=<87366d63os.fsf_-_@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19gwZGq9LfYG7qMeJVaSLTCNUd+z0ghDAE=
 X-SA-Exim-Connect-IP: 68.227.160.95
 X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: [PATCH v2 06/15] umd: For clarity rename umh_info umd_info
+Subject: [PATCH v2 07/15] umd: Rename umd_info.cmdline umd_info.driver_name
 X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 
-This structure is only used for user mode drivers so change
-the prefix from umh to umd to make that clear.
+The only thing supplied in the cmdline today is the driver name so
+rename the field to clarify the code.
 
-Link: https://lkml.kernel.org/r/87o8p6f0kw.fsf_-_@x220.int.ebiederm.org
+As this value is always supplied stop trying to handle the case of
+a NULL cmdline.
+
+Additionally since we now have a name we can count on use the
+driver_name any place where the code is looking for a name
+of the binary.
+
+Link: https://lkml.kernel.org/r/87imfef0k3.fsf_-_@x220.int.ebiederm.org
 Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 ---
- include/linux/bpfilter.h    |  2 +-
- include/linux/umd.h         |  6 +++---
- kernel/umd.c                | 20 ++++++++++----------
+ include/linux/umd.h         |  2 +-
+ kernel/umd.c                | 11 ++++-------
  net/ipv4/bpfilter/sockopt.c |  2 +-
- 4 files changed, 15 insertions(+), 15 deletions(-)
+ 3 files changed, 6 insertions(+), 9 deletions(-)
 
-diff --git a/include/linux/bpfilter.h b/include/linux/bpfilter.h
-index b42e44e29033..4b43d2240172 100644
---- a/include/linux/bpfilter.h
-+++ b/include/linux/bpfilter.h
-@@ -11,7 +11,7 @@ int bpfilter_ip_set_sockopt(struct sock *sk, int optname, char __user *optval,
- int bpfilter_ip_get_sockopt(struct sock *sk, int optname, char __user *optval,
- 			    int __user *optlen);
- struct bpfilter_umh_ops {
--	struct umh_info info;
-+	struct umd_info info;
- 	/* since ip_getsockopt() can run in parallel, serialize access to umh */
- 	struct mutex lock;
- 	int (*sockopt)(struct sock *sk, int optname,
 diff --git a/include/linux/umd.h b/include/linux/umd.h
-index ef40bee590c1..58a9c603c78d 100644
+index 58a9c603c78d..d827fb038d00 100644
 --- a/include/linux/umd.h
 +++ b/include/linux/umd.h
-@@ -17,14 +17,14 @@ static inline void exit_umh(struct task_struct *tsk)
- }
+@@ -18,7 +18,7 @@ static inline void exit_umh(struct task_struct *tsk)
  #endif
  
--struct umh_info {
-+struct umd_info {
- 	const char *cmdline;
+ struct umd_info {
+-	const char *cmdline;
++	const char *driver_name;
  	struct file *pipe_to_umh;
  	struct file *pipe_from_umh;
  	struct list_head list;
--	void (*cleanup)(struct umh_info *info);
-+	void (*cleanup)(struct umd_info *info);
- 	pid_t pid;
- };
--int fork_usermode_blob(void *data, size_t len, struct umh_info *info);
-+int fork_usermode_blob(void *data, size_t len, struct umd_info *info);
- 
- #endif /* __LINUX_UMD_H__ */
 diff --git a/kernel/umd.c b/kernel/umd.c
-index 99af9d594eca..f7dacb19c705 100644
+index f7dacb19c705..7fe08a8eb231 100644
 --- a/kernel/umd.c
 +++ b/kernel/umd.c
-@@ -11,7 +11,7 @@ static DEFINE_MUTEX(umh_list_lock);
- 
- static int umd_setup(struct subprocess_info *info, struct cred *new)
- {
--	struct umh_info *umh_info = info->data;
-+	struct umd_info *umd_info = info->data;
- 	struct file *from_umh[2];
- 	struct file *to_umh[2];
- 	int err;
-@@ -43,21 +43,21 @@ static int umd_setup(struct subprocess_info *info, struct cred *new)
- 		return err;
- 	}
- 
--	umh_info->pipe_to_umh = to_umh[1];
--	umh_info->pipe_from_umh = from_umh[0];
--	umh_info->pid = task_pid_nr(current);
-+	umd_info->pipe_to_umh = to_umh[1];
-+	umd_info->pipe_from_umh = from_umh[0];
-+	umd_info->pid = task_pid_nr(current);
- 	current->flags |= PF_UMH;
- 	return 0;
- }
- 
- static void umd_cleanup(struct subprocess_info *info)
- {
--	struct umh_info *umh_info = info->data;
-+	struct umd_info *umd_info = info->data;
- 
- 	/* cleanup if umh_setup() was successful but exec failed */
- 	if (info->retval) {
--		fput(umh_info->pipe_to_umh);
--		fput(umh_info->pipe_from_umh);
-+		fput(umd_info->pipe_to_umh);
-+		fput(umd_info->pipe_from_umh);
- 	}
- }
- 
-@@ -72,12 +72,12 @@ static void umd_cleanup(struct subprocess_info *info)
+@@ -67,9 +67,6 @@ static void umd_cleanup(struct subprocess_info *info)
+  * @len: length of the blob
+  * @info: information about usermode process (shouldn't be NULL)
   *
+- * If info->cmdline is set it will be used as command line for the
+- * user process, else "usermodehelper" is used.
+- *
   * Returns either negative error or zero which indicates success
   * in executing a blob of bytes as a usermode process. In such
-- * case 'struct umh_info *info' is populated with two pipes
-+ * case 'struct umd_info *info' is populated with two pipes
-  * and a pid of the process. The caller is responsible for health
-  * check of the user process, killing it via pid, and closing the
-  * pipes when user process is no longer needed.
+  * case 'struct umd_info *info' is populated with two pipes
+@@ -79,7 +76,6 @@ static void umd_cleanup(struct subprocess_info *info)
   */
--int fork_usermode_blob(void *data, size_t len, struct umh_info *info)
-+int fork_usermode_blob(void *data, size_t len, struct umd_info *info)
+ int fork_usermode_blob(void *data, size_t len, struct umd_info *info)
  {
- 	const char *cmdline = (info->cmdline) ? info->cmdline : "usermodehelper";
+-	const char *cmdline = (info->cmdline) ? info->cmdline : "usermodehelper";
  	struct subprocess_info *sub_info;
-@@ -126,7 +126,7 @@ EXPORT_SYMBOL_GPL(fork_usermode_blob);
+ 	char **argv = NULL;
+ 	struct file *file;
+@@ -87,7 +83,7 @@ int fork_usermode_blob(void *data, size_t len, struct umd_info *info)
+ 	loff_t pos = 0;
+ 	int err;
  
- void __exit_umh(struct task_struct *tsk)
- {
--	struct umh_info *info;
-+	struct umd_info *info;
- 	pid_t pid = tsk->pid;
+-	file = shmem_kernel_file_setup("", len, 0);
++	file = shmem_kernel_file_setup(info->driver_name, len, 0);
+ 	if (IS_ERR(file))
+ 		return PTR_ERR(file);
  
- 	mutex_lock(&umh_list_lock);
+@@ -100,11 +96,12 @@ int fork_usermode_blob(void *data, size_t len, struct umd_info *info)
+ 	}
+ 
+ 	err = -ENOMEM;
+-	argv = argv_split(GFP_KERNEL, cmdline, NULL);
++	argv = argv_split(GFP_KERNEL, info->driver_name, NULL);
+ 	if (!argv)
+ 		goto out;
+ 
+-	sub_info = call_usermodehelper_setup("none", argv, NULL, GFP_KERNEL,
++	sub_info = call_usermodehelper_setup(info->driver_name, argv, NULL,
++					     GFP_KERNEL,
+ 					     umd_setup, umd_cleanup, info);
+ 	if (!sub_info)
+ 		goto out;
 diff --git a/net/ipv4/bpfilter/sockopt.c b/net/ipv4/bpfilter/sockopt.c
-index 0480918bfc7c..c0dbcc86fcdb 100644
+index c0dbcc86fcdb..5050de28333d 100644
 --- a/net/ipv4/bpfilter/sockopt.c
 +++ b/net/ipv4/bpfilter/sockopt.c
-@@ -12,7 +12,7 @@
- struct bpfilter_umh_ops bpfilter_ops;
- EXPORT_SYMBOL_GPL(bpfilter_ops);
- 
--static void bpfilter_umh_cleanup(struct umh_info *info)
-+static void bpfilter_umh_cleanup(struct umd_info *info)
+@@ -70,7 +70,7 @@ static int __init bpfilter_sockopt_init(void)
  {
- 	mutex_lock(&bpfilter_ops.lock);
+ 	mutex_init(&bpfilter_ops.lock);
  	bpfilter_ops.stop = true;
+-	bpfilter_ops.info.cmdline = "bpfilter_umh";
++	bpfilter_ops.info.driver_name = "bpfilter_umh";
+ 	bpfilter_ops.info.cleanup = &bpfilter_umh_cleanup;
+ 
+ 	return 0;
 -- 
 2.25.0
 
