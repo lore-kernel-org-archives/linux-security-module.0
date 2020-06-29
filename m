@@ -2,210 +2,131 @@ Return-Path: <SRS0=lc+5=AK=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E768C433E1
-	for <linux-security-module@archiver.kernel.org>; Mon, 29 Jun 2020 18:59:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20324C433E8
+	for <linux-security-module@archiver.kernel.org>; Mon, 29 Jun 2020 19:04:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 59377204EC
-	for <linux-security-module@archiver.kernel.org>; Mon, 29 Jun 2020 18:59:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F300C2053B
+	for <linux-security-module@archiver.kernel.org>; Mon, 29 Jun 2020 19:04:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="eVgVYnsc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729891AbgF2S7O (ORCPT
+        id S1730647AbgF2TEz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 29 Jun 2020 14:59:14 -0400
-Received: from mga09.intel.com ([134.134.136.24]:65096 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730167AbgF2S6y (ORCPT
+        Mon, 29 Jun 2020 15:04:55 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:48704 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730681AbgF2TEy (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 29 Jun 2020 14:58:54 -0400
-IronPort-SDR: RWeeJ/8RlA8iam6h8rbkXQySlJPKg8Z8etXIA2PTHkj4OQbn5OXZrrwy1WPNeaYMZIpLnY12r3
- SoN2lGVZg+wg==
-X-IronPort-AV: E=McAfee;i="6000,8403,9666"; a="147540174"
-X-IronPort-AV: E=Sophos;i="5.75,295,1589266800"; 
-   d="scan'208";a="147540174"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jun 2020 08:27:19 -0700
-IronPort-SDR: rGBMpfACiG1z4qkmaDQmtluftmaItl/SFgyVE8IlcTxjEYsTQkMzUpPHkLlLoyg+bUyRjEZRro
- RXKZLVmhfq9w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.75,295,1589266800"; 
-   d="scan'208";a="318245592"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.152])
-  by orsmga007.jf.intel.com with ESMTP; 29 Jun 2020 08:27:19 -0700
-Date:   Mon, 29 Jun 2020 08:27:19 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
-        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Jethro Beekman <jethro@fortanix.com>,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Chunyang Hui <sanqian.hcy@antfin.com>,
-        Jordan Hand <jorhand@linux.microsoft.com>,
-        Nathaniel McCallum <npmccallum@redhat.com>,
-        Seth Moore <sethmo@google.com>,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
-        asapek@google.com, cedric.xing@intel.com, chenalexchen@google.com,
-        conradparker@google.com, cyhanish@google.com,
-        dave.hansen@intel.com, haitao.huang@intel.com,
-        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
-        kmoy@google.com, ludloff@google.com, luto@kernel.org,
-        nhorman@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
-        tglx@linutronix.de, yaozhangx@google.com
-Subject: Re: [PATCH v33 11/21] x86/sgx: Linux Enclave Driver
-Message-ID: <20200629152718.GA12312@linux.intel.com>
-References: <20200617220844.57423-1-jarkko.sakkinen@linux.intel.com>
- <20200617220844.57423-12-jarkko.sakkinen@linux.intel.com>
- <20200627174335.GC15585@zn.tnic>
+        Mon, 29 Jun 2020 15:04:54 -0400
+Received: from sequoia (162-237-133-238.lightspeed.rcsntx.sbcglobal.net [162.237.133.238])
+        by linux.microsoft.com (Postfix) with ESMTPSA id AEAE920B4901;
+        Mon, 29 Jun 2020 07:16:16 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com AEAE920B4901
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1593440177;
+        bh=v+wyGBDonImB9MBWCw9EMxRuWEDmYg128Fe9bnY0g6c=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=eVgVYnscENhuNhNQTyhZbFymcwHwtaCB1JVO/5//WlJM4Nv5RhfXHxEmzNS8HBHRk
+         p5XfObD9Ymg9erl91qvwxM3XsQMB/o/hLnkyCgNzIHXK+B6Dg2Bykqevr0UVq7cUGd
+         ArzJcUXJf0dxujES9z46s7zXvQxC856nBBvZzEaE=
+Date:   Mon, 29 Jun 2020 09:16:14 -0500
+From:   Tyler Hicks <tyhicks@linux.microsoft.com>
+To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Prakhar Srivastava <prsriva02@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v2 09/11] ima: Move validation of the keyrings
+ conditional into ima_validate_rule()
+Message-ID: <20200629141614.GD4694@sequoia>
+References: <20200626223900.253615-1-tyhicks@linux.microsoft.com>
+ <20200626223900.253615-10-tyhicks@linux.microsoft.com>
+ <0e7012e7-e1df-466d-9d51-a691f779570a@linux.microsoft.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200627174335.GC15585@zn.tnic>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <0e7012e7-e1df-466d-9d51-a691f779570a@linux.microsoft.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, Jun 27, 2020 at 07:43:35PM +0200, Borislav Petkov wrote:
-> On Thu, Jun 18, 2020 at 01:08:33AM +0300, Jarkko Sakkinen wrote:
-> > +static int sgx_encl_init(struct sgx_encl *encl, struct sgx_sigstruct *sigstruct,
-> > +			 void *token)
-> > +{
-> > +	u64 mrsigner[4];
-> > +	int ret;
-> > +	int i;
-> > +	int j;
-> > +
-> > +	/* Check that the required attributes have been authorized. */
-> > +	if (encl->secs_attributes & ~encl->allowed_attributes)
-> > +		return -EACCES;
-> > +
-> > +	ret = sgx_get_key_hash(sigstruct->modulus, mrsigner);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	mutex_lock(&encl->lock);
-> > +
-> > +	if (atomic_read(&encl->flags) & SGX_ENCL_INITIALIZED) {
-> > +		ret = -EFAULT;
-> > +		goto err_out;
-> > +	}
+On 2020-06-27 16:49:46, Lakshmi Ramasubramanian wrote:
+> On 6/26/20 3:38 PM, Tyler Hicks wrote:
 > 
-> That test should be the first thing this function or its caller does.
-
-Hmm, I was going to say that SGX_ENCL_INITIALIZED can't be checked until
-encl->lock is held, but that's not true for this path as mutual exclusion
-is provided by the SGX_ENCL_IOCTL flag.  So yeah, this can be checked at
-the same time as SGX_ENCL_CREATED in sgx_ioc_enclave_init().
-
-> > +	for (i = 0; i < SGX_EINIT_SLEEP_COUNT; i++) {
-> > +		for (j = 0; j < SGX_EINIT_SPIN_COUNT; j++) {
+> > Use ima_validate_rule() to ensure that the combination of a hook
+> > function and the keyrings conditional is valid and that the keyrings
+> > conditional is not specified without an explicit KEY_CHECK func
+> > conditional. This is a code cleanup and has no user-facing change.
 > 
-> Ew, what's that double-loop for?
+> In addition to checking for func=KEY_CHECK and the keyrings conditional, the
+> patch also validates the flags for other IMA hooks (such as
+> KEXEC_KERNEL_CHECK, POLICY_CHECK, etc.) Would be good to mention that in the
+> patch description.
+
+It actually doesn't do any additional validation of other IMA hooks at
+this time. That check on entry->flags is an allowlist of every possible
+conditional flag except IMA_KEYRINGS. The ima_parse_rule() function is
+already validating all of these conditional flags.
+
+Tyler
+
 > 
-> It tries to init an enclave a bunch of times. Why does it need to init
-> more than once?
-
-ENCLS[EINIT] is interruptible because it has such a high latency, e.g. 50k+
-cycles on success.  If an IRQ/NMI/SMI becomes pending, EINIT may fail with
-SGX_UNMASKED_EVENT so that the event can be serviced.
-
-The idea behind the double loop is to try EINIT in a tight loop, then back
-off and sleep for a while before retrying that tight inner loop.
-
-> > +			ret = sgx_einit(sigstruct, token, encl->secs.epc_page,
-> > +					mrsigner);
-> > +			if (ret == SGX_UNMASKED_EVENT)
-> > +				continue;
-> > +			else
-> > +				break;
-> > +		}
-> > +
-> > +		if (ret != SGX_UNMASKED_EVENT)
-> > +			break;
-> > +
-> > +		msleep_interruptible(SGX_EINIT_SLEEP_TIME);
-> > +
-> > +		if (signal_pending(current)) {
-> > +			ret = -ERESTARTSYS;
-> > +			goto err_out;
-> > +		}
-> > +	}
-> > +
-> > +	if (ret & ENCLS_FAULT_FLAG) {
-> > +		if (encls_failed(ret))
-> > +			ENCLS_WARN(ret, "EINIT");
-> > +
-> > +		sgx_encl_destroy(encl);
-> > +		ret = -EFAULT;
-> > +	} else if (ret) {
-> > +		pr_debug("EINIT returned %d\n", ret);
-> > +		ret = -EPERM;
-> > +	} else {
-> > +		atomic_or(SGX_ENCL_INITIALIZED, &encl->flags);
-> > +	}
-> > +
-> > +err_out:
-> > +	mutex_unlock(&encl->lock);
-> > +	return ret;
-> > +}
-> > +
-> > +/**
-> > + * sgx_ioc_enclave_init - handler for %SGX_IOC_ENCLAVE_INIT
-> > + *
-> > + * @filep:	open file to /dev/sgx
+>  -lakshmi
 > 
-> @encl:       pointer to an enclave instance (via ioctl() file pointer)
-> 
-> > + * @arg:	userspace pointer to a struct sgx_enclave_init instance
-> > + *
-> > + * Flush any outstanding enqueued EADD operations and perform EINIT.  The
-> > + * Launch Enclave Public Key Hash MSRs are rewritten as necessary to match
-> > + * the enclave's MRSIGNER, which is caculated from the provided sigstruct.
-> > + *
-> > + * Return:
-> > + *   0 on success,
-> > + *   SGX error code on EINIT failure,
-> > + *   -errno otherwise
-> > + */
-> > +static long sgx_ioc_enclave_init(struct sgx_encl *encl, void __user *arg)
-> > +{
-> > +	struct sgx_sigstruct *sigstruct;
-> > +	struct sgx_enclave_init einit;
-> > +	struct page *initp_page;
-> > +	void *token;
-> > +	int ret;
+> > 
+> > Signed-off-by: Tyler Hicks <tyhicks@linux.microsoft.com>
+> > ---
+> > 
+> > * v2
+> >    - Allowed IMA_DIGSIG_REQUIRED, IMA_PERMIT_DIRECTIO,
+> >      IMA_MODSIG_ALLOWED, and IMA_CHECK_BLACKLIST conditionals to be
+> >      present in the rule entry flags for non-buffer hook functions.
+> > 
+> >   security/integrity/ima/ima_policy.c | 13 +++++++++++--
+> >   1 file changed, 11 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+> > index 8cdca2399d59..43d49ad958fb 100644
+> > --- a/security/integrity/ima/ima_policy.c
+> > +++ b/security/integrity/ima/ima_policy.c
+> > @@ -1000,6 +1000,15 @@ static bool ima_validate_rule(struct ima_rule_entry *entry)
+> >   		case KEXEC_KERNEL_CHECK:
+> >   		case KEXEC_INITRAMFS_CHECK:
+> >   		case POLICY_CHECK:
+> > +			if (entry->flags & ~(IMA_FUNC | IMA_MASK | IMA_FSMAGIC |
+> > +					     IMA_UID | IMA_FOWNER | IMA_FSUUID |
+> > +					     IMA_INMASK | IMA_EUID | IMA_PCR |
+> > +					     IMA_FSNAME | IMA_DIGSIG_REQUIRED |
+> > +					     IMA_PERMIT_DIRECTIO |
+> > +					     IMA_MODSIG_ALLOWED |
+> > +					     IMA_CHECK_BLACKLIST))
+> > +				return false;
 > > +
-> > +	if (!(atomic_read(&encl->flags) & SGX_ENCL_CREATED))
-> 
-> Might just as well check the other flags: doing EINIT on an already
-> initialized enclave - SGX_ENCL_INITIALIZED - is perhaps a nono or
-> similarly on a SGX_ENCL_DEAD enclave.
-> 
-> And you could do similar sanity checks in the other ioctl functions.
-
-Ya, as above, SGX_ENCL_INITIALIZED can be checked here.
-
-SGX_ENCL_DEAD is actually already checked in in the top level sgx_ioctl(),
-i.e. the check in sgx_encl_add_page() can technically be flat out dropped.
-
-I say "technically" because I'm a bit torn over SGX_ENCL_DEAD; encl->lock
-must be held to SGX_ENCL_DEAD (the page fault and reclaim flows rely on
-this), but as it stands today only ioctl() paths (guarded by SGX_ENCL_IOCTL)
-and sgx_release() (makes the ioctls() unreachable) set SGX_ENCL_DEAD.
-
-So it's safe to check SGX_ENCL_DEAD from ioctl() context without holding
-encl->lock, at least in the current code base, but it feels weird/sketchy.
-
-In the end I don't think I have a strong opinion.  Removing the technically
-unnecessary DEAD check in sgx_encl_add_page() is the simplest change, so it
-may make sense to do that and nothing more for initial upstreaming.  Long
-term, I fully expect we'll add paths that set SGX_ENCL_DEAD outside of
-ioctl() context, e.g. to handle EPC OOM, but it wouldn't be a bad thing to
-have a standalone commit in a future series to add DEAD checks (under
-encl->lock) in the ADD and INIT flows.
+> >   			break;
+> >   		case KEXEC_CMDLINE:
+> >   			if (entry->action & ~(MEASURE | DONT_MEASURE))
+> > @@ -1027,7 +1036,8 @@ static bool ima_validate_rule(struct ima_rule_entry *entry)
+> >   		default:
+> >   			return false;
+> >   		}
+> > -	}
+> > +	} else if (entry->flags & IMA_KEYRINGS)
+> > +		return false;
+> >   	return true;
+> >   }
+> > @@ -1209,7 +1219,6 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+> >   			keyrings_len = strlen(args[0].from) + 1;
+> >   			if ((entry->keyrings) ||
+> > -			    (entry->func != KEY_CHECK) ||
+> >   			    (keyrings_len < 2)) {
+> >   				result = -EINVAL;
+> >   				break;
+> > 
