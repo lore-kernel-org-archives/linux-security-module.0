@@ -2,40 +2,70 @@ Return-Path: <SRS0=UBGi=AL=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08FD2C433E1
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Jun 2020 14:32:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EDB6C433E1
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Jun 2020 16:48:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E2D2B20672
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Jun 2020 14:32:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49646206B6
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Jun 2020 16:48:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fnYHdhus"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727819AbgF3Oc4 (ORCPT
+        id S1731616AbgF3QsV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 30 Jun 2020 10:32:56 -0400
-Received: from out02.mta.xmission.com ([166.70.13.232]:51270 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727023AbgF3Ocz (ORCPT
+        Tue, 30 Jun 2020 12:48:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46840 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728022AbgF3QsV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 30 Jun 2020 10:32:55 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jqHJY-0007A8-4g; Tue, 30 Jun 2020 08:32:48 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jqHJT-00058A-3Q; Tue, 30 Jun 2020 08:32:47 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>,
+        Tue, 30 Jun 2020 12:48:21 -0400
+Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 423E9C061755;
+        Tue, 30 Jun 2020 09:48:21 -0700 (PDT)
+Received: by mail-pj1-x1042.google.com with SMTP id cm21so389175pjb.3;
+        Tue, 30 Jun 2020 09:48:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=ApQe2g3WBSV3ReezXR0608DYl9YKnvXARWYAavQ7YIw=;
+        b=fnYHdhusXGwrssNFq9f7RdWQ7QF/8tG0XFxkWiCDzkUEij+ySolbzb52U2TcCqsRMS
+         MU8BldCON9vnyFmVZtrMFkJXh2WjUkbe2BFIFS5sTF2Q4IbvJDYdW43aYhkOkKp2oDY3
+         BrXNsHyO82piiK6ByZCai2vgKaQosQmLAtAhnsY+4Yw3Q1fMmitdndRuV/+zxoJWnmFH
+         BdckYlweDVfZjAhrLEG3LN+lY4R7C45pvY2qjymmYLB8Guoy5gJt4HO5XmzH/0jSgblx
+         yKFQI0H+ntsmNKDwFT1+ByfhAHPnIa7ToO8uy9YcqRfebFlCVv7wOagiEMhZDUGqdShp
+         buBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=ApQe2g3WBSV3ReezXR0608DYl9YKnvXARWYAavQ7YIw=;
+        b=SZLGNOmYPng8G7IgACy3q5E1+1RD4gQv/59DEeEJ3jlG/E8TKT9KEGzgIhqqT+P2ZE
+         APUh3C3cMZqDQXkXLH5XrFWTg2V6S3jIYCLN+ibvAHPa9OX3LWq9y/hVqhSuBprwcvz5
+         Xdnv/bT7SO4dZnBYEOXSFzcCyAkcpCWlE6sJy0Tx/ZhBWIhd3KW6GHxpaRbqbkxpZNwo
+         bcyo/P655GyOOLfTGv2ed5cP+IMTP08CrKLOJoV7UVmCWYfRff0+9kg2W8hN5A2GfJp/
+         V5VYMUV7p9epM2BAVLXf6D3OMzuJIgX4/mVzJDqw67rYvyXpzlNXUhuJWzzudaYNt0rJ
+         QeDQ==
+X-Gm-Message-State: AOAM533YDqO+93oi6cX83P5wnqm+NvylTjwlOmkePpDwdikUB03QYAUe
+        A9SIh/l8/UDgqDWHzkrGuAw=
+X-Google-Smtp-Source: ABdhPJw3cNeLKFTl77Sqa/wvydV1EIpLZeqAcp1qGN0ppQh+lhox9R/cbzDHrG521ewcHmFnMGepDg==
+X-Received: by 2002:a17:902:9b97:: with SMTP id y23mr17272992plp.54.1593535700812;
+        Tue, 30 Jun 2020 09:48:20 -0700 (PDT)
+Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:400::5:e083])
+        by smtp.gmail.com with ESMTPSA id m14sm2755481pjv.12.2020.06.30.09.48.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Jun 2020 09:48:19 -0700 (PDT)
+Date:   Tue, 30 Jun 2020 09:48:17 -0700
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        David Miller <davem@davemloft.net>,
         Greg Kroah-Hartman <greg@kroah.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
         Kees Cook <keescook@chromium.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Alexei Starovoitov <ast@kernel.org>,
@@ -46,132 +76,45 @@ Cc:     linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
         LSM List <linux-security-module@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-References: <778297d2-512a-8361-cf05-42d9379e6977@i-love.sakura.ne.jp>
-        <20200625120725.GA3493334@kroah.com>
-        <20200625.123437.2219826613137938086.davem@davemloft.net>
-        <CAHk-=whuTwGHEPjvtbBvneHHXeqJC=q5S09mbPnqb=Q+MSPMag@mail.gmail.com>
-        <87pn9mgfc2.fsf_-_@x220.int.ebiederm.org>
-        <87y2oac50p.fsf@x220.int.ebiederm.org>
-        <87bll17ili.fsf_-_@x220.int.ebiederm.org>
-        <87lfk54p0m.fsf_-_@x220.int.ebiederm.org>
-        <20200630054313.GB27221@infradead.org>
-        <87a70k21k0.fsf@x220.int.ebiederm.org>
-        <20200630133802.GA30093@infradead.org>
-Date:   Tue, 30 Jun 2020 09:28:10 -0500
-In-Reply-To: <20200630133802.GA30093@infradead.org> (Christoph Hellwig's
-        message of "Tue, 30 Jun 2020 14:38:02 +0100")
-Message-ID: <878sg4y6f9.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Casey Schaufler <casey@schaufler-ca.com>
+Subject: Re: [PATCH 00/14] Make the user mode driver code a better citizen
+Message-ID: <20200630164817.txa2jewfvk4stajy@ast-mbp.dhcp.thefacebook.com>
+References: <20200625.123437.2219826613137938086.davem@davemloft.net>
+ <CAHk-=whuTwGHEPjvtbBvneHHXeqJC=q5S09mbPnqb=Q+MSPMag@mail.gmail.com>
+ <87pn9mgfc2.fsf_-_@x220.int.ebiederm.org>
+ <40720db5-92f0-4b5b-3d8a-beb78464a57f@i-love.sakura.ne.jp>
+ <87366g8y1e.fsf@x220.int.ebiederm.org>
+ <aa737d87-cf38-55d6-32f1-2d989a5412ea@i-love.sakura.ne.jp>
+ <20200628194440.puzh7nhdnk6i4rqj@ast-mbp.dhcp.thefacebook.com>
+ <c99d0cfc-8526-0daf-90b5-33e560efdede@i-love.sakura.ne.jp>
+ <874kqt39qo.fsf@x220.int.ebiederm.org>
+ <6a9dd8be-333a-fd21-d125-ec20fb7c81df@i-love.sakura.ne.jp>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1jqHJT-00058A-3Q;;;mid=<878sg4y6f9.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX18VudBavxc3u9jszpnmk5yoXjTN6p/HnXg=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [PATCH v2 10/15] exec: Remove do_execve_file
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6a9dd8be-333a-fd21-d125-ec20fb7c81df@i-love.sakura.ne.jp>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Christoph Hellwig <hch@infradead.org> writes:
+On Tue, Jun 30, 2020 at 03:28:49PM +0900, Tetsuo Handa wrote:
+> On 2020/06/30 5:19, Eric W. Biederman wrote:
+> > Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp> writes:
+> > 
+> >> On 2020/06/29 4:44, Alexei Starovoitov wrote:
+> >>> But all the defensive programming kinda goes against general kernel style.
+> >>> I wouldn't do it. Especially pr_info() ?!
+> >>> Though I don't feel strongly about it.
+> >>
+> >> Honestly speaking, caller should check for errors and print appropriate
+> >> messages. info->wd.mnt->mnt_root != info->wd.dentry indicates that something
+> >> went wrong (maybe memory corruption). But other conditions are not fatal.
+> >> That is, I consider even pr_info() here should be unnecessary.
+> > 
+> > They were all should never happen cases.  Which is why my patches do:
+> > if (WARN_ON_ONCE(...))
+> 
+> No. Fuzz testing (which uses panic_on_warn=1) will trivially hit them.
 
-> On Tue, Jun 30, 2020 at 07:14:23AM -0500, Eric W. Biederman wrote:
->> Christoph Hellwig <hch@infradead.org> writes:
->> 
->> > FYI, this clashes badly with my exec rework.  I'd suggest you
->> > drop everything touching exec here for now, and I can then
->> > add the final file based exec removal to the end of my series.
->> 
->> I have looked and I haven't even seen any exec work.  Where can it be
->> found?
->> 
->> I have working and cleaning up exec for what 3 cycles now.  There is
->> still quite a ways to go before it becomes possible to fix some of the
->> deep problems in exec.  Removing all of these broken exec special cases
->> is quite frankly the entire point of this patchset.
->> 
->> Sight unseen I suggest you send me your exec work and I can merge it
->> into my branch if we are going to conflict badly.
->
-> https://lore.kernel.org/linux-fsdevel/20200627072704.2447163-1-hch@lst.de/T/#t
-
-
-Looking at your final patch I do not like the construct.
-
-static int __do_execveat(int fd, struct filename *filename,
- 		const char __user *const __user *argv,
- 		const char __user *const __user *envp,
-		const char *const *kernel_argv,
-		const char *const *kernel_envp,
- 		int flags, struct file *file);
-
-
-It results in a function that is full of:
-	if (kernel_argv) {
-        	// For kernel_exeveat 
-		...
-	} else {
-        	// For ordinary exeveat
-        	
-        }
-
-Which while understandable.  I do not think results in good long term
-maintainble code.
-
-The current file paramter that I am getting rid of in my patchset is
-a stark example of that.  Because of all of the if's no one realized
-that the code had it's file reference counting wrong (amoung other
-bugs).
-
-I think this is important to address as exec has already passed
-the point where people can fix all of the bugs in exec because
-the code is so hairy.
-
-I think to be maintainable and clear the code exec code is going to
-need to look something like:
-
-static int bprm_execveat(int fd, struct filename *filename,
-			struct bprm *bprm, int flags);
-
-int kernel_execve(const char *filename,
-		  const char *const *argv, const char *const *envp, int flags)
-{
-	bprm = kzalloc(sizeof(*pbrm), GFP_KERNEL);
-        bprm->argc = count_kernel_strings(argv);
-        bprm->envc = count_kernel_strings(envp);
-        prepare_arg_pages(bprm);
-        copy_strings_kernel(bprm->envc, envp, bprm);
-        copy_strings_kernel(bprm->argc, argc, bprm);
-	ret = bprm_execveat(AT_FDCWD, filename, bprm);
-        free_bprm(bprm);
-        return ret;
-}
-
-int do_exeveat(int fd, const char *filename,
-		const char __user *const __user *argv,
-                const char __user *const __user *envp, int flags)
-{
-	bprm = kzalloc(sizeof(*pbrm), GFP_KERNEL);
-        bprm->argc = count_strings(argv);
-        bprm->envc = count_strings(envp);
-        prepare_arg_pages(bprm);
-        copy_strings(bprm->envc, envp, bprm);
-        copy_strings(bprm->argc, argc, bprm);
-	ret = bprm_execveat(fd, filename, bprm);
-        free_bprm(bprm);
-        return ret;
-}
-
-More work is required obviously to make the code above really work but
-when the dust clears a structure like that doesn't have funny edge cases
-that can hide bugs and make it tricky to change the code.
-
-Eric
-
-
-
+I don't believe that's true.
+Please show fuzzing stack trace to prove your point.
