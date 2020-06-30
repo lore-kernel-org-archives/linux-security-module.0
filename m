@@ -2,192 +2,310 @@ Return-Path: <SRS0=UBGi=AL=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 609DBC433E1
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Jun 2020 17:57:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A712C433E1
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Jun 2020 19:35:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3D31420768
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Jun 2020 17:57:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1593539832;
-	bh=tSxtEtNSyqUIJFDquRO3WGxFW1/yqb89mYtBEV/yqdA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=CBUbsbhni5Da+cSHJQ0gVohvGgpUUieApHkzapABoHW0mCFDJIOKhOW9esbUZthLI
-	 sFWRxBA8qOFENyrV4kyrJbNVZqZNWMyyh7lrMm/KUcMVCjxZbeoQmxvib0NL2qmpWY
-	 eNYPeibMrmegTv70RQDlw5Sx3UmtR09Mu5H2hROQ=
+	by mail.kernel.org (Postfix) with ESMTP id 13C102067D
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Jun 2020 19:35:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="SgizJEDY";
+	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="Qs80NpcU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390510AbgF3R5J (ORCPT
+        id S1728170AbgF3TfG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 30 Jun 2020 13:57:09 -0400
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:51244 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725872AbgF3R5I (ORCPT
+        Tue, 30 Jun 2020 15:35:06 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:61858 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727883AbgF3TfF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 30 Jun 2020 13:57:08 -0400
-Received: by mail-pj1-f65.google.com with SMTP id l6so6700263pjq.1;
-        Tue, 30 Jun 2020 10:57:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=IxDMdmHFz25rQeZrQw7NFOS8gOPg1n8YJ7nCrO0iZow=;
-        b=ZEtUAicIZGWU1FmyjUHcQCzCryxfBOMljIaX4ll2uWalbkSolzS0ztAwmsQDM6Iof7
-         0zNTjUrFpcX/4UZLI0ErB0aVvsGGbP/oc5qQIye/HGMby5SpN4z2QyWG3un5Q6t3oecg
-         l4VhoGxQJiPs15WTmiltavGA8+DOpgatw8cszTfUN+LbIovR3SiZQkhLX0gik90Yvi0p
-         Ghn98X+LkaR2xUc66VcoeQeJHv/f8x6ty+MWRsV++4rVLJ8JQ//db1nLeLGynptIMZcD
-         chyikJBR5vkVOzGL8CVilxwHJ8QTjGly4iQQcaia9Vf55uiC6ryggJFb5tOf8CG6MPTy
-         ZnLw==
-X-Gm-Message-State: AOAM531QtJ3D4LIIKPUuhfPGbsODewxTQ40Fmqfw9vQ2hAe50Gp5gYf6
-        V55WnoFIeuCD+2zsMcg54U8=
-X-Google-Smtp-Source: ABdhPJyO4r2+2U3N9gJ5+4QVVzssPbq2nonngepycpeUVR0nzxS79dBaptYeC8a26mlqfwKjmxeziQ==
-X-Received: by 2002:a17:90a:668f:: with SMTP id m15mr23597845pjj.32.1593539826969;
-        Tue, 30 Jun 2020 10:57:06 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id j16sm3304413pfr.100.2020.06.30.10.57.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jun 2020 10:57:05 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 720B9403DC; Tue, 30 Jun 2020 17:57:04 +0000 (UTC)
-Date:   Tue, 30 Jun 2020 17:57:04 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Christian Borntraeger <borntraeger@de.ibm.com>
-Cc:     Christoph Hellwig <hch@infradead.org>, ast@kernel.org,
-        axboe@kernel.dk, bfields@fieldses.org,
-        bridge@lists.linux-foundation.org, chainsaw@gentoo.org,
-        christian.brauner@ubuntu.com, chuck.lever@oracle.com,
-        davem@davemloft.net, dhowells@redhat.com,
-        gregkh@linuxfoundation.org, jarkko.sakkinen@linux.intel.com,
-        jmorris@namei.org, josh@joshtriplett.org, keescook@chromium.org,
-        keyrings@vger.kernel.org, kuba@kernel.org,
-        lars.ellenberg@linbit.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-security-module@vger.kernel.org, nikolay@cumulusnetworks.com,
-        philipp.reisner@linbit.com, ravenexp@gmail.com,
-        roopa@cumulusnetworks.com, serge@hallyn.com, slyfox@gentoo.org,
-        viro@zeniv.linux.org.uk, yangtiezhu@loongson.cn,
-        netdev@vger.kernel.org, markward@linux.ibm.com,
-        linux-s390 <linux-s390@vger.kernel.org>
-Subject: Re: linux-next: umh: fix processed error when UMH_WAIT_PROC is used
- seems to break linux bridge on s390x (bisected)
-Message-ID: <20200630175704.GO13911@42.do-not-panic.com>
-References: <b7d658b9-606a-feb1-61f9-b58e3420d711@de.ibm.com>
- <3118dc0d-a3af-9337-c897-2380062a8644@de.ibm.com>
- <20200624144311.GA5839@infradead.org>
- <9e767819-9bbe-2181-521e-4d8ca28ca4f7@de.ibm.com>
- <20200624160953.GH4332@42.do-not-panic.com>
- <ea41e2a9-61f7-aec1-79e5-7b08b6dd5119@de.ibm.com>
- <4e27098e-ac8d-98f0-3a9a-ea25242e24ec@de.ibm.com>
- <4d8fbcea-a892-3453-091f-d57c03f9aa90@de.ibm.com>
- <1263e370-7cee-24d8-b98c-117bf7c90a83@de.ibm.com>
- <20200626025410.GJ4332@42.do-not-panic.com>
-MIME-Version: 1.0
+        Tue, 30 Jun 2020 15:35:05 -0400
+Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 05UJUT4F028402;
+        Tue, 30 Jun 2020 12:34:46 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=date : from : to : cc :
+ subject : message-id : references : content-type : in-reply-to :
+ mime-version; s=facebook; bh=KamV2sw+Um0SxNVy6baSzu8Y6jBGcJw33Qc9IZW6LZE=;
+ b=SgizJEDYR/gTKj2lDEcQOQjJenTirtpVl5EMeG7qjYbNWIMFvk4aAqQPEtSQid0ua2oh
+ kj0k/7pGtnms0n+UlQxoDSb4zW/o2AJf/Cnr/32XIjShW8TMwP1SpLXmkVSu4CCd1Bma
+ NvRZOhlOHjKUUAsdgxIh/rfgDJ/Ema/A9bw= 
+Received: from mail.thefacebook.com ([163.114.132.120])
+        by mx0a-00082601.pphosted.com with ESMTP id 320bcdr2uy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Tue, 30 Jun 2020 12:34:46 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (100.104.98.9) by
+ o365-in.thefacebook.com (100.104.94.198) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1979.3; Tue, 30 Jun 2020 12:34:45 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=EpbfJjJpIxq8W0fMP6Lo+tZNOFHdYyxqo7C1Q3eqSlZP2nlZ5hBX/PfYVngUnFxR6xOa+C10BK6DnUh+/vKW1QU5t4VyiRQyxV3amy3XHUbEdAd0hJPOI5QNGS47L6ibv8jGUr36aWBAPbvN5RCTOO/4LaIQz1zFmbNhe3SPMN+AhC5HP23R44alo4emO2nL/jQdDQQSxgnB2ZWImqiZdAWX1buPCu3eJwM0mKz4ljqcnPv5FuJo65q2jUE1O7BJLKGJaZHeJqhgyO2OnR9sfsSaYGbuoWx0Y6tCX2FdLcmXtOjkn4zyrr5b53EWCR27lyVmFuVgHTdnBsvYvBABVg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KamV2sw+Um0SxNVy6baSzu8Y6jBGcJw33Qc9IZW6LZE=;
+ b=PZr1zT5JY8dCg8n2U7hY5bzX7Wou4LNxzF4eUzgf0XNxRabvoyY/kYUDYghgRbCa0QCkmtwXpO+En+GxsaL/xDLNF/rl7OnwnpmiBx30aLsCwNEBXciM/RWfyAleQge9NuMsyW58a7tKgdl7i5sAPY8Jyc52JpqX+TaWG2IuS6wj0rXgErqH0+FMex+zm/cWxUnkd4zy0FLSmbh23CHhr/xumwfpPJGbumWLcY+qlH2uVl9JIAyAdUybjwlNgrOqUj3VItUcl2bxtir3fE1XoEyaUHk5d89dyErzdZorltRW6zzwWPAucqyb0YEO8uGzKYKbzg2rgCwRtKX2XQe4+g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
+ header.d=fb.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector2-fb-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KamV2sw+Um0SxNVy6baSzu8Y6jBGcJw33Qc9IZW6LZE=;
+ b=Qs80NpcUOMfbtP4vXxlEiz8rIJF0N4iVMFr6vecf9d2xjBebzi7IcD2clXX6Zbuy9+JzcYO8c8eDRykPdOsFLRPfM/5gdbaoprppk656krsnZ1q1WZ0qIxHc8K0zPsV1V1Xp/mhLmo5p6p5hnhiWR5MhuxU4j4qHC7OfVzRaRwA=
+Authentication-Results: chromium.org; dkim=none (message not signed)
+ header.d=none;chromium.org; dmarc=none action=none header.from=fb.com;
+Received: from CH2PR15MB3573.namprd15.prod.outlook.com (2603:10b6:610:e::28)
+ by CH2PR15MB3589.namprd15.prod.outlook.com (2603:10b6:610:4::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3131.21; Tue, 30 Jun
+ 2020 19:34:44 +0000
+Received: from CH2PR15MB3573.namprd15.prod.outlook.com
+ ([fe80::b0ab:989:1165:107]) by CH2PR15MB3573.namprd15.prod.outlook.com
+ ([fe80::b0ab:989:1165:107%5]) with mapi id 15.20.3131.028; Tue, 30 Jun 2020
+ 19:34:44 +0000
+Date:   Tue, 30 Jun 2020 12:34:41 -0700
+From:   Martin KaFai Lau <kafai@fb.com>
+To:     KP Singh <kpsingh@chromium.org>
+CC:     <bpf@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>
+Subject: Re: [PATCH bpf-next v2 1/4] bpf: Generalize bpf_sk_storage
+Message-ID: <20200630193441.kdwnkestulg5erii@kafai-mbp.dhcp.thefacebook.com>
+References: <20200617202941.3034-1-kpsingh@chromium.org>
+ <20200617202941.3034-2-kpsingh@chromium.org>
+ <20200619064332.fycpxuegmmkbfe54@kafai-mbp.dhcp.thefacebook.com>
+ <20200629160100.GA171259@google.com>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200626025410.GJ4332@42.do-not-panic.com>
+In-Reply-To: <20200629160100.GA171259@google.com>
+User-Agent: NeoMutt/20180716
+X-ClientProxiedBy: BYAPR06CA0038.namprd06.prod.outlook.com
+ (2603:10b6:a03:14b::15) To CH2PR15MB3573.namprd15.prod.outlook.com
+ (2603:10b6:610:e::28)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from kafai-mbp.dhcp.thefacebook.com (2620:10d:c090:400::5:31b2) by BYAPR06CA0038.namprd06.prod.outlook.com (2603:10b6:a03:14b::15) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3153.20 via Frontend Transport; Tue, 30 Jun 2020 19:34:43 +0000
+X-Originating-IP: [2620:10d:c090:400::5:31b2]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 8f81a8da-716b-4ac0-acf1-08d81d2ca3f7
+X-MS-TrafficTypeDiagnostic: CH2PR15MB3589:
+X-Microsoft-Antispam-PRVS: <CH2PR15MB358998DFBE0DE4B5B0FE2AF7D56F0@CH2PR15MB3589.namprd15.prod.outlook.com>
+X-FB-Source: Internal
+X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
+X-Forefront-PRVS: 0450A714CB
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: rvxpdxgMxziE6gP2tfVlGi/fH93+dxjLtUqM6bReJcBXYOY80DwSSIzQMh6dHgLFRPipZgKJ7VsAWNGZAi3m2OYi7HwqrA2AJNIUzAUw66mAafJ93TSPK27mbP8S3D4sl6hPmqOQPT1kr7tzo2ykjImb8H0UWwZzU5q9qNaaTxLQVcwdBH4LwdzdEwndFvnpYL+nGnGFDrrAyQZxJFL3SnSYYpCTfJQlN2MXfZ6AKmUyskx5EJJJ0iFp83mmv6rob7vGEowNOMiyhaNMHTt9aNi/lWazqbjf5FZwbq8lcgAwRin9wXnIUk69jeYoFi9k/P5w231MegzR1fCoud4xcw==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR15MB3573.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(366004)(136003)(376002)(39860400002)(396003)(346002)(16526019)(1076003)(478600001)(55016002)(9686003)(86362001)(186003)(8936002)(8676002)(6506007)(7696005)(2906002)(52116002)(4326008)(66946007)(66556008)(54906003)(6916009)(5660300002)(66476007)(83380400001)(316002);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData: JjUJRbjcuBLc0Y2EsZyoCWLOF/oIxvfaNZbqQYkfS5MJKmZHZ4jir/R8uF0ptsi+NDO0SeFbio9OPjQHmTGQUitrnDSqZr9BpLEuBM0PKr2ju3rja7ODWsL/awtXIT8mUsKKc8dv3/sblZH6zn9hJtISE3N6P/vc5GIepPy0TkB8hmBkHHRBi+wCjOo/EuMHN9kdp3lCOv/iV++doqP0MbuCD9XNBhO4l6nk1d4pS/yHExv/1ZF6HDWCB2k6A1hxRYZJC0Ni53vucAA5mA0c7J9igqJO5dKisanIujrZVa4uzHQpYgb5Dj+we0Uuh5dDKdSP2RBIbTWN0LOlZJu5fTtX/SrfgN5Sz94yUakD0kmddO7YsvSIU10vA//KxzrMN1zZsx9/SeqKz3jdiMJmF6hJYvC4HGsKr+hXPDVWFKCht1PPl4akBmFhEL7d6+syi23KKlC+esyWczvRE5+GA5mioZHgEjPDS9j/CXU+QgdsTLsh04DnxQm0t3oEkhXnj4HwaumhkiW+4gPYwzro3g==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8f81a8da-716b-4ac0-acf1-08d81d2ca3f7
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR15MB3573.namprd15.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jun 2020 19:34:44.2887
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: tXYXcRrrvTojfX0bKh80f+eLux+5+yFt8kczna+6rpMJwwU8hBvpVsg81XlL5/kc
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR15MB3589
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-06-30_06:2020-06-30,2020-06-30 signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 mlxscore=0
+ lowpriorityscore=0 malwarescore=0 bulkscore=0 mlxlogscore=999
+ impostorscore=0 adultscore=0 cotscore=-2147483648 spamscore=0
+ suspectscore=0 phishscore=0 clxscore=1015 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2004280000
+ definitions=main-2006300132
+X-FB-Internal: deliver
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jun 26, 2020 at 02:54:10AM +0000, Luis Chamberlain wrote:
-> On Wed, Jun 24, 2020 at 08:37:55PM +0200, Christian Borntraeger wrote:
-> > 
-> > 
-> > On 24.06.20 20:32, Christian Borntraeger wrote:
-> > [...]> 
-> > > So the translations look correct. But your change is actually a sematic change
-> > > if(ret) will only trigger if there is an error
-> > > if (KWIFEXITED(ret)) will always trigger when the process ends. So we will always overwrite -ECHILD
-> > > and we did not do it before. 
+On Mon, Jun 29, 2020 at 06:01:00PM +0200, KP Singh wrote:
+> Thanks for your feedback! Apologies it took some time for me
+> to incorporate this into another revision.
+> 
+> On 18-Jun 23:43, Martin KaFai Lau wrote:
+> > On Wed, Jun 17, 2020 at 10:29:38PM +0200, KP Singh wrote:
+> > > From: KP Singh <kpsingh@google.com>
 > > > 
+> > > Refactor the functionality in bpf_sk_storage.c so that concept of
+> > > storage linked to kernel objects can be extended to other objects like
+> > > inode, task_struct etc.
+> > > 
+> > > bpf_sk_storage is updated to be bpf_local_storage with a union that
+> > > contains a pointer to the owner object. The type of the
+> > > bpf_local_storage can be determined using the newly added
+> > > bpf_local_storage_type enum.
+> > > 
+> > > Each new local storage will still be a separate map and provide its own
+> > > set of helpers. This allows for future object specific extensions and
+> > > still share a lot of the underlying implementation.
+> > Thanks for taking up this effort to refactor sk_local_storage.
 > > 
-> > So the right fix is
+> > I took a quick look.  I have some comments and would like to explore
+> > some thoughts.
 > > 
-> > diff --git a/kernel/umh.c b/kernel/umh.c
-> > index f81e8698e36e..a3a3196e84d1 100644
-> > --- a/kernel/umh.c
-> > +++ b/kernel/umh.c
-> > @@ -154,7 +154,7 @@ static void call_usermodehelper_exec_sync(struct subprocess_info *sub_info)
-> >                  * the real error code is already in sub_info->retval or
-> >                  * sub_info->retval is 0 anyway, so don't mess with it then.
-> >                  */
-> > -               if (KWIFEXITED(ret))
-> > +               if (KWEXITSTATUS(ret))
-> >                         sub_info->retval = KWEXITSTATUS(ret);
-> >         }
-> >  
-> > I think.
+> > > --- a/net/core/bpf_sk_storage.c
+> > > +++ b/kernel/bpf/bpf_local_storage.c
+> > > @@ -1,19 +1,22 @@
+> > >  // SPDX-License-Identifier: GPL-2.0
+> > >  /* Copyright (c) 2019 Facebook  */
+> > > +#include "linux/bpf.h"
+> > > +#include "asm-generic/bug.h"
+> > > +#include "linux/err.h"
+> > "<" ">"
+> > 
+> > >  #include <linux/rculist.h>
+> > >  #include <linux/list.h>
+> > >  #include <linux/hash.h>
+> > >  #include <linux/types.h>
+> > >  #include <linux/spinlock.h>
+> > >  #include <linux/bpf.h>
+> > > -#include <net/bpf_sk_storage.h>
+> > > +#include <linux/bpf_local_storage.h>
+> > >  #include <net/sock.h>
+> > >  #include <uapi/linux/sock_diag.h>
+> > >  #include <uapi/linux/btf.h>
+> > >  
+> > >  static atomic_t cache_idx;
+> > inode local storage and sk local storage probably need a separate
+> > cache_idx.  An improvement on picking cache_idx has just been
+> > landed also.
 > 
-> Nope, the right form is to check for WIFEXITED() before using WEXITSTATUS().
-> I'm not able to reproduce this on x86 with a bridge. What type of bridge
-> are you using on a guest, or did you mean using KVM so that the *host*
-> can spawn kvm guests?
+> I see, thanks! I rebased and I now see that cache_idx is now a:
 > 
-> It would be good if you can try to add a bridge manually and see where
-> things fail. Can you do something like this:
+>   static u64 cache_idx_usage_counts[BPF_STORAGE_CACHE_SIZE];
 > 
-> brctl addbr br0
-> brctl addif br0 ens6 
-> ip link set dev br0 up
-> 
-> Note that most callers are for modprobe. I'd be curious to see which
-> umh is failing which breaks bridge for you. Can you trut this so we can
-> see which umh call is failing?
+> which tracks the free cache slots rather than using a single atomic
+> cache_idx. I guess all types of local storage can share this now
+> right?
+I believe they have to be separated.  A sk-storage will not be cached/stored
+in inode.  Caching a sk-storage at idx=0 of a sk should not stop
+an inode-storage to be cached at the same idx of a inode.
 
-Christian, any luck getting to test the code below to see what this
-reveals?
+> 
+> > 
+> > [ ... ]
+> > 
+> > > +struct bpf_local_storage {
+> > > +	struct bpf_local_storage_data __rcu *cache[BPF_STORAGE_CACHE_SIZE];
+> > >  	return NULL;
+> 
+> [...]
+> 
+> > >  }
+> > >  
+> > > -/* sk_storage->lock must be held and selem->sk_storage == sk_storage.
+> > > +static void __unlink_local_storage(struct bpf_local_storage *local_storage,
+> > > +				   bool uncharge_omem)
+> > Nit. indent is off.  There are a few more cases like this.
+> 
+> Thanks, will fix this. (note to self: don't trust the editor's
+> clang-format blindly).
+> 
+> > 
+> > > +{
+> > > +	struct sock *sk;
+> > > +
+> > > +	switch (local_storage->stype) {
+> > Does it need a new bpf_local_storage_type?  Is map_type as good?
+> > 
+> > Instead of adding any new member (e.g. stype) to
+> > "struct bpf_local_storage",  can the smap pointer be directly used
+> > here instead?
+> > 
+> > For example in __unlink_local_storage() here, it should
+> > have a hold to the selem which then has a hold to smap.
+> 
+> Good point, Updated to using the map->map_type.
+> 
+> > 
+> > > +	case BPF_LOCAL_STORAGE_SK:
+> > > +		sk = local_storage->sk;
+> > > +		if (uncharge_omem)
+> > > +			atomic_sub(sizeof(struct bpf_local_storage),
+> > > +				   &sk->sk_omem_alloc);
+> > > +
+> > > +		/* After this RCU_INIT, sk may be freed and cannot be used */
+> > > +		RCU_INIT_POINTER(sk->sk_bpf_storage, NULL);
+> > > +		local_storage->sk = NULL;
+> > > +		break;
+> > > +	}
+> > Another thought on the stype switch cases.
+> > 
+> > Instead of having multiple switches on stype in bpf_local_storage.c which may
+> > not be scalable soon if we are planning to support a few more kernel objects,
+> > have you considered putting them into its own "ops".  May be a few new
+> > ops can be added to bpf_map_ops to do local storage unlink/update/alloc...etc.
+> 
+> Good idea, I was able to refactor this with the following ops:
+> 
+>         /* Functions called by bpf_local_storage maps */
+> 	void (*map_local_storage_unlink)(struct bpf_local_storage *local_storage,
+>                                          bool uncharge_omem);
+> 	struct bpf_local_storage_elem *(*map_selem_alloc)(
+> 		struct bpf_local_storage_map *smap, void *owner, void *value,
+> 		bool charge_omem);
+> 	struct bpf_local_storage_data *(*map_local_storage_update)(
+> 		void  *owner, struct bpf_map *map, void *value, u64 flags);
+> 	int (*map_local_storage_alloc)(void *owner,
+> 				       struct bpf_local_storage_map *smap,
+> 				       struct bpf_local_storage_elem *elem);
+> 
+> Let me know if you have any particular thoughts/suggestions about
+> this.
+Make sense to me.
 
-  Luis
+It seems the fast-path's lookup can all be done within __local_storage_lookup().
+No indirect call is needed, so should be good.
 
 > 
-> diff --git a/kernel/umh.c b/kernel/umh.c
-> index f81e8698e36e..5ad74bc301d8 100644
-> --- a/kernel/umh.c
-> +++ b/kernel/umh.c
-> @@ -2,6 +2,9 @@
->  /*
->   * umh - the kernel usermode helper
->   */
-> +
-> +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-> +
->  #include <linux/module.h>
->  #include <linux/sched.h>
->  #include <linux/sched/task.h>
-> @@ -154,8 +157,12 @@ static void call_usermodehelper_exec_sync(struct subprocess_info *sub_info)
->  		 * the real error code is already in sub_info->retval or
->  		 * sub_info->retval is 0 anyway, so don't mess with it then.
->  		 */
-> -		if (KWIFEXITED(ret))
-> +		printk("== ret: %02x\n", ret);
-> +		printk("== KWIFEXITED(ret): %02x\n", KWIFEXITED(ret));
-> +		if (KWIFEXITED(ret)) {
-> +			printk("KWEXITSTATUS(ret): %d\n", KWEXITSTATUS(ret));
->  			sub_info->retval = KWEXITSTATUS(ret);
-> +		}
->  	}
->  
->  	/* Restore default kernel sig handler */
-> @@ -383,6 +390,7 @@ struct subprocess_info *call_usermodehelper_setup(const char *path, char **argv,
->  		void *data)
->  {
->  	struct subprocess_info *sub_info;
-> +	unsigned int i = 0;
->  	sub_info = kzalloc(sizeof(struct subprocess_info), gfp_mask);
->  	if (!sub_info)
->  		goto out;
-> @@ -394,6 +402,11 @@ struct subprocess_info *call_usermodehelper_setup(const char *path, char **argv,
->  #else
->  	sub_info->path = path;
->  #endif
-> +	pr_info("sub_info->path: %s\n", sub_info->path);
-> +	while (argv[i])
-> +		printk(KERN_INFO "%s ", argv[i++]);
-> +	printk(KERN_INFO  "\n");
-> +
->  	sub_info->argv = argv;
->  	sub_info->envp = envp;
->  
+> > 
+> > > +}
+> > > +
+> > > +/* local_storage->lock must be held and selem->local_storage == local_storage.
+> > >   * The caller must ensure selem->smap is still valid to be
+> > >   * dereferenced for its smap->elem_size and smap->cache_idx.
+> > > + *
+> > > + * uncharge_omem is only relevant when:
 > 
+> [...]
+> 
+> > > +	/* bpf_local_storage_map is currently limited to CAP_SYS_ADMIN as
+> > >  	 * the map_alloc_check() side also does.
+> > >  	 */
+> > >  	if (!bpf_capable())
+> > > @@ -1025,10 +1127,10 @@ bpf_sk_storage_diag_alloc(const struct nlattr *nla_stgs)
+> > >  }
+> > >  EXPORT_SYMBOL_GPL(bpf_sk_storage_diag_alloc);
+> > Would it be cleaner to leave bpf_sk specific function, map_ops, and func_proto
+> > in net/core/bpf_sk_storage.c?
+> 
+> Sure, I can also keep the sk_clone code their as well for now.
+Just came to my mind.  For easier review purpose, may be
+first do the refactoring/renaming within bpf_sk_storage.c first and
+then create another patch to move the common parts to a new
+file bpf_local_storage.c.
+
+Not sure if it will be indeed easier to read the diff in practice.
+I probably should be able to follow it either way.
+
+> 
+> > 
+> > There is a test in map_tests/sk_storage_map.c, in case you may not notice.
+> 
+> I will try to make it generic as a part of this series. If it takes
+> too much time, I will send a separate patch for testing
+> inode_storage_map and till then we have some assurance with
+> test_local_storage in test_progs.
+Sure. no problem.  It is mostly for you to test sk_storage to ensure things ;)
+Also give some ideas on what racing conditions have
+been considered in the sk_storage test and may be the inode storage
+test want to stress similar code path.
