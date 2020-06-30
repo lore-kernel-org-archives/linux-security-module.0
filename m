@@ -2,99 +2,111 @@ Return-Path: <SRS0=UBGi=AL=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74538C433DF
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Jun 2020 13:38:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 087BAC433E0
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Jun 2020 14:20:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4CC44206C0
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Jun 2020 13:38:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OfGszqe3"
+	by mail.kernel.org (Postfix) with ESMTP id E4BB52072D
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Jun 2020 14:20:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728849AbgF3NiO (ORCPT
+        id S1732522AbgF3OU3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 30 Jun 2020 09:38:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45642 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726033AbgF3NiO (ORCPT
+        Tue, 30 Jun 2020 10:20:29 -0400
+Received: from mga02.intel.com ([134.134.136.20]:5925 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728909AbgF3OU3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 30 Jun 2020 09:38:14 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 079BAC061755;
-        Tue, 30 Jun 2020 06:38:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=peNiu7obudJ+iIiHoebhj0Cx80UUqQKMz/3V6VsewcA=; b=OfGszqe3liARav2iSE515YirEx
-        Rnqq9NA3fuI8sdsGAgobESsESiY51vgA7FJAtE7nA/mdf2yKvas0Wre3fDlcxa0AiDIRWiDQZ4/Le
-        PPcntnez3mv8Otw7TG8VEuAHY7nKnbCiH13UrvVGGrnNYNdQIZxhscd/odT1lWDwV1aHMYRIoZ7wp
-        EXVQA+L0Ai1FffXuWtoGkeISpyfPunrQcV1gy/602zLdFjQxzHGHK95DEs0Y+ZJ2foV0oRE8K2eki
-        YL7fHzkJ9ZnyfXddig2AIiS5XQ2K0fp+mv6+0l4DFT+PGnICeJjFMwPARJldzwSa9tLr+wZNX7PQw
-        142+hsbw==;
-Received: from hch by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jqGSY-0007s1-CQ; Tue, 30 Jun 2020 13:38:02 +0000
-Date:   Tue, 30 Jun 2020 14:38:02 +0100
-From:   Christoph Hellwig <hch@infradead.org>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <greg@kroah.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH v2 10/15] exec: Remove do_execve_file
-Message-ID: <20200630133802.GA30093@infradead.org>
-References: <778297d2-512a-8361-cf05-42d9379e6977@i-love.sakura.ne.jp>
- <20200625120725.GA3493334@kroah.com>
- <20200625.123437.2219826613137938086.davem@davemloft.net>
- <CAHk-=whuTwGHEPjvtbBvneHHXeqJC=q5S09mbPnqb=Q+MSPMag@mail.gmail.com>
- <87pn9mgfc2.fsf_-_@x220.int.ebiederm.org>
- <87y2oac50p.fsf@x220.int.ebiederm.org>
- <87bll17ili.fsf_-_@x220.int.ebiederm.org>
- <87lfk54p0m.fsf_-_@x220.int.ebiederm.org>
- <20200630054313.GB27221@infradead.org>
- <87a70k21k0.fsf@x220.int.ebiederm.org>
+        Tue, 30 Jun 2020 10:20:29 -0400
+IronPort-SDR: 5TZ9PARI6vG+GWgZTySC0Et54C4D45a6kehKp9tCz7Zx8Fep6lYXffXG7LuCz2/SM+YyYJo7bM
+ 1mtKTbl5UREw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9666"; a="134539839"
+X-IronPort-AV: E=Sophos;i="5.75,297,1589266800"; 
+   d="scan'208";a="134539839"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2020 07:20:28 -0700
+IronPort-SDR: efg8NFLHdEGkXUz1Q7b/UefrYDvt7xyvu1AY0n6E6z0KV5aKd6d/pEDVM7jcCMBajo0ma20fla
+ norTNhzCl/1A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.75,297,1589266800"; 
+   d="scan'208";a="277440490"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.152])
+  by orsmga003.jf.intel.com with ESMTP; 30 Jun 2020 07:20:28 -0700
+Date:   Tue, 30 Jun 2020 07:20:28 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
+        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Jethro Beekman <jethro@fortanix.com>,
+        Andy Lutomirski <luto@kernel.org>, akpm@linux-foundation.org,
+        andriy.shevchenko@linux.intel.com, asapek@google.com,
+        cedric.xing@intel.com, chenalexchen@google.com,
+        conradparker@google.com, cyhanish@google.com,
+        dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, nhorman@redhat.com,
+        npmccallum@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
+        tglx@linutronix.de, yaozhangx@google.com
+Subject: Re: [PATCH v33 12/21] x86/sgx: Allow a limited use of
+ ATTRIBUTE.PROVISIONKEY for attestation
+Message-ID: <20200630142027.GA7733@linux.intel.com>
+References: <20200617220844.57423-1-jarkko.sakkinen@linux.intel.com>
+ <20200617220844.57423-13-jarkko.sakkinen@linux.intel.com>
+ <20200629160242.GB32176@zn.tnic>
+ <20200629220400.GI12312@linux.intel.com>
+ <20200630084956.GB1093@zn.tnic>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87a70k21k0.fsf@x220.int.ebiederm.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20200630084956.GB1093@zn.tnic>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jun 30, 2020 at 07:14:23AM -0500, Eric W. Biederman wrote:
-> Christoph Hellwig <hch@infradead.org> writes:
+On Tue, Jun 30, 2020 at 10:49:56AM +0200, Borislav Petkov wrote:
+> On Mon, Jun 29, 2020 at 03:04:00PM -0700, Sean Christopherson wrote:
+> > /dev/sgx/provision is root-only by default, the expectation is that the admin
+> > will configure the system to grant only specific enclaves access to the
+> > PROVISION_KEY.
 > 
-> > FYI, this clashes badly with my exec rework.  I'd suggest you
-> > drop everything touching exec here for now, and I can then
-> > add the final file based exec removal to the end of my series.
-> 
-> I have looked and I haven't even seen any exec work.  Where can it be
-> found?
-> 
-> I have working and cleaning up exec for what 3 cycles now.  There is
-> still quite a ways to go before it becomes possible to fix some of the
-> deep problems in exec.  Removing all of these broken exec special cases
-> is quite frankly the entire point of this patchset.
-> 
-> Sight unseen I suggest you send me your exec work and I can merge it
-> into my branch if we are going to conflict badly.
+> Uuh, I don't like "the expectation is" - the reality happens to turn
+> differently, more often than not.
 
-https://lore.kernel.org/linux-fsdevel/20200627072704.2447163-1-hch@lst.de/T/#t
+Would it help if I worded it as "only root should ever be able to run an
+enclave with access to PROVISION_KEY"?  We obviously can't control what
+admins actually do, hence my wording of it as the expected behavior.
+
+> > In this series, access is fairly binary, i.e. there's no additional kernel
+> > infrastructure to help userspace make per-enclave decisions.  There have been
+> > more than a few proposals on how to extend the kernel to help provide better
+> > granularity, e.g. LSM hooks, but it was generally agreed to punt that stuff
+> > to post-upstreaming to keep things "simple" once we went far enough down
+> > various paths to ensure we weren't painting ourselves into a corner.
+> 
+> So this all sounds to me like we should not upstream /dev/sgx/provision
+> now but delay it until the infrastructure for that has been made more
+> concrete. We can always add it then. Changing it after the fact -
+> if we have to and for whatever reason - would be a lot harder for a
+> user-visible interface which someone has started using already.
+
+The userspace and attestation infrastructure is very concrete, i.e. the
+need for userspace to be able to access PROVISION_KEY is there, as is the
+desire to be able to restrict access to PROVISION_KEY, e.g. I believe Andy
+Lutomirski originally requested the ability to restrict access.
+
+The additional infrastructure for per-enclave decisions is somewhat
+orthogonal to the PROVISION_KEY, e.g. they won't necessarily be employed
+by everyone running enclaves, and environments that do have per-enclave
+policies would still likely want the extra layer of restriction for
+PROVISION_KEY.  I only brought the additional policy crud to call out that
+we've done enough path-finding on additional restrictions to have strong
+confidence that adding /dev/sgx/provision won't prevent us from adding more
+fine grained control in the future.
+
+> So I'd leave  that out from the initial patchset.
