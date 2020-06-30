@@ -2,98 +2,163 @@ Return-Path: <SRS0=UBGi=AL=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_2 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EDEFC433DF
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Jun 2020 23:00:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 339F0C433E0
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Jun 2020 23:07:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E833F20780
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Jun 2020 22:59:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 07F1720780
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Jun 2020 23:07:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726085AbgF3W77 (ORCPT
+        id S1726154AbgF3XHr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 30 Jun 2020 18:59:59 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:51934 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725791AbgF3W77 (ORCPT
+        Tue, 30 Jun 2020 19:07:47 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:13602 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725791AbgF3XHr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 30 Jun 2020 18:59:59 -0400
-Received: from fsav402.sakura.ne.jp (fsav402.sakura.ne.jp [133.242.250.101])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 05UMx2ox072030;
-        Wed, 1 Jul 2020 07:59:02 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav402.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav402.sakura.ne.jp);
- Wed, 01 Jul 2020 07:59:02 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav402.sakura.ne.jp)
-Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 05UMx1ds071983
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Wed, 1 Jul 2020 07:59:02 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH 00/14] Make the user mode driver code a better citizen
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <greg@kroah.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <20200625.123437.2219826613137938086.davem@davemloft.net>
- <CAHk-=whuTwGHEPjvtbBvneHHXeqJC=q5S09mbPnqb=Q+MSPMag@mail.gmail.com>
- <87pn9mgfc2.fsf_-_@x220.int.ebiederm.org>
- <40720db5-92f0-4b5b-3d8a-beb78464a57f@i-love.sakura.ne.jp>
- <87366g8y1e.fsf@x220.int.ebiederm.org>
- <aa737d87-cf38-55d6-32f1-2d989a5412ea@i-love.sakura.ne.jp>
- <20200628194440.puzh7nhdnk6i4rqj@ast-mbp.dhcp.thefacebook.com>
- <c99d0cfc-8526-0daf-90b5-33e560efdede@i-love.sakura.ne.jp>
- <874kqt39qo.fsf@x220.int.ebiederm.org>
- <6a9dd8be-333a-fd21-d125-ec20fb7c81df@i-love.sakura.ne.jp>
- <20200630164817.txa2jewfvk4stajy@ast-mbp.dhcp.thefacebook.com>
- <c7d4df91-d78e-5134-2161-192426fc51cd@i-love.sakura.ne.jp>
- <CAADnVQKrRpjQpc9-xMizCPr1E12_jXrvH-kaKwxBmvQ03n_uiw@mail.gmail.com>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <12eba0ed-c345-b564-9b99-883615dd89f3@i-love.sakura.ne.jp>
-Date:   Wed, 1 Jul 2020 07:58:59 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:68.0) Gecko/20100101
- Thunderbird/68.9.0
-MIME-Version: 1.0
-In-Reply-To: <CAADnVQKrRpjQpc9-xMizCPr1E12_jXrvH-kaKwxBmvQ03n_uiw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Tue, 30 Jun 2020 19:07:47 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 05UN3KfM018224;
+        Tue, 30 Jun 2020 19:07:36 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3204s1bj33-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 30 Jun 2020 19:07:36 -0400
+Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 05UN7ZPj033337;
+        Tue, 30 Jun 2020 19:07:35 -0400
+Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3204s1bj26-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 30 Jun 2020 19:07:35 -0400
+Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
+        by ppma03ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 05UN5YoD022861;
+        Tue, 30 Jun 2020 23:07:33 GMT
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
+        by ppma03ams.nl.ibm.com with ESMTP id 31wwr8c7ka-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 30 Jun 2020 23:07:33 +0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 05UN7UGr42139754
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 30 Jun 2020 23:07:31 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DF3334203F;
+        Tue, 30 Jun 2020 23:07:30 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D19BD4204C;
+        Tue, 30 Jun 2020 23:07:29 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.162.223])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 30 Jun 2020 23:07:29 +0000 (GMT)
+Message-ID: <1593558449.5057.12.camel@linux.ibm.com>
+Subject: Re: [PATCH v2 09/11] ima: Move validation of the keyrings
+ conditional into ima_validate_rule()
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Tyler Hicks <tyhicks@linux.microsoft.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Prakhar Srivastava <prsriva02@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Date:   Tue, 30 Jun 2020 19:07:29 -0400
+In-Reply-To: <20200626223900.253615-10-tyhicks@linux.microsoft.com>
+References: <20200626223900.253615-1-tyhicks@linux.microsoft.com>
+         <20200626223900.253615-10-tyhicks@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-06-30_06:2020-06-30,2020-06-30 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ malwarescore=0 spamscore=0 mlxscore=0 cotscore=-2147483648 suspectscore=0
+ priorityscore=1501 bulkscore=0 impostorscore=0 phishscore=0
+ mlxlogscore=999 adultscore=0 clxscore=1015 classifier=spam adjust=0
+ reason=mlx scancount=1 engine=8.12.0-2004280000
+ definitions=main-2006300159
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2020/07/01 6:57, Alexei Starovoitov wrote:
->>>>> They were all should never happen cases.  Which is why my patches do:
->>>>> if (WARN_ON_ONCE(...))
->>>>
->>>> No. Fuzz testing (which uses panic_on_warn=1) will trivially hit them.
->>>
->>> I don't believe that's true.
->>> Please show fuzzing stack trace to prove your point.
->>>
->>
->> Please find links containing "WARNING" from https://syzkaller.appspot.com/upstream . ;-)
+On Fri, 2020-06-26 at 17:38 -0500, Tyler Hicks wrote:
+> Use ima_validate_rule() to ensure that the combination of a hook
+> function and the keyrings conditional is valid and that the keyrings
+> conditional is not specified without an explicit KEY_CHECK func
+> conditional. This is a code cleanup and has no user-facing change.
 > 
-> Is it a joke? Do you understand how syzbot works?
-> If so, please explain how it can invoke umd_* interface.
+> Signed-off-by: Tyler Hicks <tyhicks@linux.microsoft.com>
+> ---
 > 
+> * v2
+>   - Allowed IMA_DIGSIG_REQUIRED, IMA_PERMIT_DIRECTIO,
+>     IMA_MODSIG_ALLOWED, and IMA_CHECK_BLACKLIST conditionals to be
+>     present in the rule entry flags for non-buffer hook functions.
+> 
+>  security/integrity/ima/ima_policy.c | 13 +++++++++++--
+>  1 file changed, 11 insertions(+), 2 deletions(-)
+> 
+> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+> index 8cdca2399d59..43d49ad958fb 100644
+> --- a/security/integrity/ima/ima_policy.c
+> +++ b/security/integrity/ima/ima_policy.c
+> @@ -1000,6 +1000,15 @@ static bool ima_validate_rule(struct ima_rule_entry *entry)
+>  		case KEXEC_KERNEL_CHECK:
+>  		case KEXEC_INITRAMFS_CHECK:
+>  		case POLICY_CHECK:
+> +			if (entry->flags & ~(IMA_FUNC | IMA_MASK | IMA_FSMAGIC |
+> +					     IMA_UID | IMA_FOWNER | IMA_FSUUID |
+> +					     IMA_INMASK | IMA_EUID | IMA_PCR |
+> +					     IMA_FSNAME | IMA_DIGSIG_REQUIRED |
+> +					     IMA_PERMIT_DIRECTIO |
+> +					     IMA_MODSIG_ALLOWED |
+> +					     IMA_CHECK_BLACKLIST))
 
-Currently syzkaller can't invoke umd_* interface because this interface is used by only
-bpfilter_umh module. But I can imagine that someone starts using this interface in a way
-syzkaller can somehow invoke. Thus, how can it be a joke? I don't understand your question.
+Other than KEYRINGS, this patch should continue to behave the same.
+ However, this list gives the impressions that all of these flags are
+permitted on all of the above flags, which isn't true.
+
+For example, both IMA_MODSIG_ALLOWED & IMA_CHECK_BLACKLIST are limited
+to appended signatures, meaning KERNEL_CHECK and KEXEC_KERNEL_CHECK.
+ Both should only be allowed on APPRAISE action rules.
+
+IMA_PCR should be limited to MEASURE action rules.
+
+IMA_DIGSIG_REQUIRED should be limited to APPRAISE action rules.
+
+> +				return false;
+> +
+>  			break;
+>  		case KEXEC_CMDLINE:
+>  			if (entry->action & ~(MEASURE | DONT_MEASURE))
+> @@ -1027,7 +1036,8 @@ static bool ima_validate_rule(struct ima_rule_entry *entry)
+>  		default:
+>  			return false;
+>  		}
+> -	}
+> +	} else if (entry->flags & IMA_KEYRINGS)
+> +		return false;
+
+IMA_MODSIG_ALLOWED and IMA_CHECK_BLACKLIST need to be added here as
+well.
+
+Mimi
+
+>  
+>  	return true;
+>  }
+> @@ -1209,7 +1219,6 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+>  			keyrings_len = strlen(args[0].from) + 1;
+>  
+>  			if ((entry->keyrings) ||
+> -			    (entry->func != KEY_CHECK) ||
+>  			    (keyrings_len < 2)) {
+>  				result = -EINVAL;
+>  				break;
+
