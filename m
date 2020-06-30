@@ -2,377 +2,98 @@ Return-Path: <SRS0=UBGi=AL=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A8C0C433DF
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Jun 2020 22:00:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EDEFC433DF
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Jun 2020 23:00:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0224B206B6
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Jun 2020 22:00:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fRCgUmkr"
+	by mail.kernel.org (Postfix) with ESMTP id E833F20780
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Jun 2020 22:59:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726203AbgF3WAX (ORCPT
+        id S1726085AbgF3W77 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 30 Jun 2020 18:00:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38766 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726191AbgF3WAW (ORCPT
+        Tue, 30 Jun 2020 18:59:59 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:51934 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725791AbgF3W77 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 30 Jun 2020 18:00:22 -0400
-Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5122BC061755
-        for <linux-security-module@vger.kernel.org>; Tue, 30 Jun 2020 15:00:22 -0700 (PDT)
-Received: by mail-wm1-x343.google.com with SMTP id f139so21040889wmf.5
-        for <linux-security-module@vger.kernel.org>; Tue, 30 Jun 2020 15:00:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=ZT4eHqjgLgFbZKFz6Fnx3WNj/UXI1/Z0pVKwqarFcV0=;
-        b=fRCgUmkrKGY4NUiCGeHxlRFYvoP4oHLkuEi7UxCJZKH0m8LNPSbuqYnA03qm1bSiZn
-         SL2VayIjaHDu3FaHilsdLJywPiHnBiDltqzcjwrKJAZLZ0T4W+OHidGzQE06e6lY11mh
-         aCt6OhAdjklhbaPCn/6iM3OBvnXRSEvUzP7k0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=ZT4eHqjgLgFbZKFz6Fnx3WNj/UXI1/Z0pVKwqarFcV0=;
-        b=C9xDlvG32I2wOm84i3S3ZYsIURUcHYI1ipjnXmwRBe0VbtDWoYOFwYK+WIoaA8ULYD
-         hzSGQMi9bCEzN0mf+WKV7IavFNQwYdikZlObCfmaT4dXCURuTCz1yrtL9S8AcFotCv9L
-         JGd6sJ8eMPEHznhfvZ8Zg+YUYoryrxHNt1IHJOlLcNRSY+HlRCDbW0R7uqMH1DIwbnc6
-         3hd6QKSEal36oTmWS+FEqkdZG/R/AatPUxfzQAMe3Qk37BxJGzVN/kuIj7XYL55OvV5V
-         Ggg/RvjyDr4cK9OZ2JVAzmitrVM61oJPoZ17CKXighWuel6nF4gwxe3eFdiyLXdtGNMu
-         oZDg==
-X-Gm-Message-State: AOAM532PkTMavmuSkB8p7ZM+qRcakQPq9wCHMHD7/k6NtFuk2olYYhop
-        /v4o0ONwNr+nADa38VwL73o2yw==
-X-Google-Smtp-Source: ABdhPJwTu6HslTgQfYGxFAVfgvr2yi/bUFHZj8+mi7ueGqmJrYDHJJIbygTqEK6BqVzFXH4VFc3RXA==
-X-Received: by 2002:a1c:44d7:: with SMTP id r206mr16032764wma.7.1593554420819;
-        Tue, 30 Jun 2020 15:00:20 -0700 (PDT)
-Received: from google.com (49.222.77.34.bc.googleusercontent.com. [34.77.222.49])
-        by smtp.gmail.com with ESMTPSA id 65sm5285566wma.48.2020.06.30.15.00.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jun 2020 15:00:20 -0700 (PDT)
-Date:   Tue, 30 Jun 2020 22:00:18 +0000
-From:   KP Singh <kpsingh@chromium.org>
-To:     Martin KaFai Lau <kafai@fb.com>
-Cc:     bpf <bpf@vger.kernel.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
+        Tue, 30 Jun 2020 18:59:59 -0400
+Received: from fsav402.sakura.ne.jp (fsav402.sakura.ne.jp [133.242.250.101])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 05UMx2ox072030;
+        Wed, 1 Jul 2020 07:59:02 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav402.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav402.sakura.ne.jp);
+ Wed, 01 Jul 2020 07:59:02 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav402.sakura.ne.jp)
+Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 05UMx1ds071983
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Wed, 1 Jul 2020 07:59:02 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH 00/14] Make the user mode driver code a better citizen
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        David Miller <davem@davemloft.net>,
+        Greg Kroah-Hartman <greg@kroah.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Daniel Borkmann <daniel@iogearbox.net>,
-        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>
-Subject: Re: [PATCH bpf-next v2 1/4] bpf: Generalize bpf_sk_storage
-Message-ID: <CACYkzJ6Vr3TtKQnTrJyB0L47goAMTC0uHoLpsNF8Vo2QySWECw@mail.gmail.com>
-References: <20200617202941.3034-1-kpsingh@chromium.org>
- <20200617202941.3034-2-kpsingh@chromium.org>
- <20200619064332.fycpxuegmmkbfe54@kafai-mbp.dhcp.thefacebook.com>
- <20200629160100.GA171259@google.com>
- <20200630193441.kdwnkestulg5erii@kafai-mbp.dhcp.thefacebook.com>
+        Jakub Kicinski <kuba@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <20200625.123437.2219826613137938086.davem@davemloft.net>
+ <CAHk-=whuTwGHEPjvtbBvneHHXeqJC=q5S09mbPnqb=Q+MSPMag@mail.gmail.com>
+ <87pn9mgfc2.fsf_-_@x220.int.ebiederm.org>
+ <40720db5-92f0-4b5b-3d8a-beb78464a57f@i-love.sakura.ne.jp>
+ <87366g8y1e.fsf@x220.int.ebiederm.org>
+ <aa737d87-cf38-55d6-32f1-2d989a5412ea@i-love.sakura.ne.jp>
+ <20200628194440.puzh7nhdnk6i4rqj@ast-mbp.dhcp.thefacebook.com>
+ <c99d0cfc-8526-0daf-90b5-33e560efdede@i-love.sakura.ne.jp>
+ <874kqt39qo.fsf@x220.int.ebiederm.org>
+ <6a9dd8be-333a-fd21-d125-ec20fb7c81df@i-love.sakura.ne.jp>
+ <20200630164817.txa2jewfvk4stajy@ast-mbp.dhcp.thefacebook.com>
+ <c7d4df91-d78e-5134-2161-192426fc51cd@i-love.sakura.ne.jp>
+ <CAADnVQKrRpjQpc9-xMizCPr1E12_jXrvH-kaKwxBmvQ03n_uiw@mail.gmail.com>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <12eba0ed-c345-b564-9b99-883615dd89f3@i-love.sakura.ne.jp>
+Date:   Wed, 1 Jul 2020 07:58:59 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200630193441.kdwnkestulg5erii@kafai-mbp.dhcp.thefacebook.com>
+In-Reply-To: <CAADnVQKrRpjQpc9-xMizCPr1E12_jXrvH-kaKwxBmvQ03n_uiw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On 2020/07/01 6:57, Alexei Starovoitov wrote:
+>>>>> They were all should never happen cases.  Which is why my patches do:
+>>>>> if (WARN_ON_ONCE(...))
+>>>>
+>>>> No. Fuzz testing (which uses panic_on_warn=1) will trivially hit them.
+>>>
+>>> I don't believe that's true.
+>>> Please show fuzzing stack trace to prove your point.
+>>>
+>>
+>> Please find links containing "WARNING" from https://syzkaller.appspot.com/upstream . ;-)
+> 
+> Is it a joke? Do you understand how syzbot works?
+> If so, please explain how it can invoke umd_* interface.
+> 
 
-
-On Tue, Jun 30, 2020 at 9:35 PM Martin KaFai Lau <kafai@fb.com> wrote:
->
-> On Mon, Jun 29, 2020 at 06:01:00PM +0200, KP Singh wrote:
-> > > >
-
-[...]
-
-> > > >  static atomic_t cache_idx;
-> > > inode local storage and sk local storage probably need a separate
-> > > cache_idx.  An improvement on picking cache_idx has just been
-> > > landed also.
-> >
-> > I see, thanks! I rebased and I now see that cache_idx is now a:
-> >
-> >   static u64 cache_idx_usage_counts[BPF_STORAGE_CACHE_SIZE];
-> >
-> > which tracks the free cache slots rather than using a single atomic
-> > cache_idx. I guess all types of local storage can share this now
-> > right?
-> I believe they have to be separated.  A sk-storage will not be cached/stored
-> in inode.  Caching a sk-storage at idx=0 of a sk should not stop
-> an inode-storage to be cached at the same idx of a inode.
-
-Ah yes, I see.
-
-I came up with some macros to solve this. Let me know what you think:
-(this is on top of the refactoring I did, so some function names may seem new,
-but it should, hopefully, convey the general idea).
-
-diff --git a/include/linux/bpf_local_storage.h b/include/linux/bpf_local_storage.h
-index 3067774cc640..1dc2e6d72091 100644
---- a/include/linux/bpf_local_storage.h
-+++ b/include/linux/bpf_local_storage.h
-@@ -79,6 +79,26 @@ struct bpf_local_storage_elem {
- #define SDATA(_SELEM) (&(_SELEM)->sdata)
- #define BPF_STORAGE_CACHE_SIZE	16
- 
-+u16 bpf_ls_cache_idx_get(spinlock_t *cache_idx_lock,
-+			   u64 *cache_idx_usage_count);
-+
-+void bpf_ls_cache_idx_free(spinlock_t *cache_idx_lock,
-+			   u64 *cache_idx_usage_counts, u16 idx);
-+
-+#define DEFINE_BPF_STORAGE_CACHE(type)					\
-+static DEFINE_SPINLOCK(cache_idx_lock_##type);				\
-+static u64 cache_idx_usage_counts_##type[BPF_STORAGE_CACHE_SIZE];	\
-+static u16 cache_idx_get_##type(void)					\
-+{									\
-+	return bpf_ls_cache_idx_get(&cache_idx_lock_##type,		\
-+				    cache_idx_usage_counts_##type);	\
-+}									\
-+static void cache_idx_free_##type(u16 idx)				\
-+{									\
-+	return bpf_ls_cache_idx_free(&cache_idx_lock_##type,		\
-+				     cache_idx_usage_counts_##type,	\
-+				     idx);				\
-+}
- 
- /* U16_MAX is much more than enough for sk local storage
-  * considering a tcp_sock is ~2k.
-@@ -105,13 +125,14 @@ struct bpf_local_storage {
- 
- /* Helper functions for bpf_local_storage */
- int bpf_local_storage_map_alloc_check(union bpf_attr *attr);
--struct bpf_map *bpf_local_storage_map_alloc(union bpf_attr *attr);
-+struct bpf_local_storage_map *
-+bpf_local_storage_map_alloc(union bpf_attr *attr);
- 
- struct bpf_local_storage_data *
- bpf_local_storage_lookup(struct bpf_local_storage *local_storage,
- 	struct bpf_local_storage_map *smap, bool cacheit_lockit);
- 
--void bpf_local_storage_map_free(struct bpf_map *map);
-+void bpf_local_storage_map_free(struct bpf_local_storage_map *smap);
- 
- int bpf_local_storage_map_check_btf(const struct bpf_map *map,
- 	const struct btf *btf, const struct btf_type *key_type,
-diff --git a/kernel/bpf/bpf_local_storage.c b/kernel/bpf/bpf_local_storage.c
-index fb589a5715f5..2bc04f8d1e35 100644
---- a/kernel/bpf/bpf_local_storage.c
-+++ b/kernel/bpf/bpf_local_storage.c
-@@ -17,9 +17,6 @@
- 	container_of((_SDATA), struct bpf_local_storage_elem, sdata)
- #define SDATA(_SELEM) (&(_SELEM)->sdata)
- 
--static DEFINE_SPINLOCK(cache_idx_lock);
--static u64 cache_idx_usage_counts[BPF_STORAGE_CACHE_SIZE];
--
- static struct bucket *select_bucket(struct bpf_local_storage_map *smap,
- 				    struct bpf_local_storage_elem *selem)
- {
-@@ -460,12 +457,13 @@ static struct bpf_local_storage_data *inode_storage_update(
- 					map_flags);
- }
- 
--static u16 cache_idx_get(void)
-+u16 bpf_ls_cache_idx_get(spinlock_t *cache_idx_lock,
-+			 u64 *cache_idx_usage_counts)
- {
- 	u64 min_usage = U64_MAX;
- 	u16 i, res = 0;
- 
--	spin_lock(&cache_idx_lock);
-+	spin_lock(cache_idx_lock);
- 
- 	for (i = 0; i < BPF_STORAGE_CACHE_SIZE; i++) {
- 		if (cache_idx_usage_counts[i] < min_usage) {
-@@ -479,16 +477,17 @@ static u16 cache_idx_get(void)
- 	}
- 	cache_idx_usage_counts[res]++;
- 
--	spin_unlock(&cache_idx_lock);
-+	spin_unlock(cache_idx_lock);
- 
- 	return res;
- }
- 
--static void cache_idx_free(u16 idx)
-+void bpf_ls_cache_idx_free(spinlock_t *cache_idx_lock,
-+			   u64 *cache_idx_usage_counts, u16 idx)
- {
--	spin_lock(&cache_idx_lock);
-+	spin_lock(cache_idx_lock);
- 	cache_idx_usage_counts[idx]--;
--	spin_unlock(&cache_idx_lock);
-+	spin_unlock(cache_idx_lock);
- }
- 
- static int inode_storage_delete(struct inode *inode, struct bpf_map *map)
-@@ -552,17 +551,12 @@ void bpf_inode_storage_free(struct inode *inode)
- 		kfree_rcu(local_storage, rcu);
- }
- 
--void bpf_local_storage_map_free(struct bpf_map *map)
-+void bpf_local_storage_map_free(struct bpf_local_storage_map *smap)
- {
- 	struct bpf_local_storage_elem *selem;
--	struct bpf_local_storage_map *smap;
- 	struct bucket *b;
- 	unsigned int i;
- 
--	smap = (struct bpf_local_storage_map *)map;
--
--	cache_idx_free(smap->cache_idx);
--
- 	/* Note that this map might be concurrently cloned from
- 	 * bpf_sk_storage_clone. Wait for any existing bpf_sk_storage_clone
- 	 * RCU read section to finish before proceeding. New RCU
-@@ -607,7 +601,7 @@ void bpf_local_storage_map_free(struct bpf_map *map)
- 	synchronize_rcu();
- 
- 	kvfree(smap->buckets);
--	kfree(map);
-+	kfree(smap);
- }
- 
- int bpf_local_storage_map_alloc_check(union bpf_attr *attr)
-@@ -629,8 +623,7 @@ int bpf_local_storage_map_alloc_check(union bpf_attr *attr)
- 	return 0;
- }
- 
--
--struct bpf_map *bpf_local_storage_map_alloc(union bpf_attr *attr)
-+struct bpf_local_storage_map *bpf_local_storage_map_alloc(union bpf_attr *attr)
- {
- 	struct bpf_local_storage_map *smap;
- 	unsigned int i;
-@@ -670,9 +663,8 @@ struct bpf_map *bpf_local_storage_map_alloc(union bpf_attr *attr)
- 
- 	smap->elem_size =
- 		sizeof(struct bpf_local_storage_elem) + attr->value_size;
--	smap->cache_idx = cache_idx_get();
- 
--	return &smap->map;
-+	return smap;
- }
- 
- int bpf_local_storage_map_check_btf(const struct bpf_map *map,
-@@ -768,11 +760,34 @@ static int notsupp_get_next_key(struct bpf_map *map, void *key,
- 	return -ENOTSUPP;
- }
- 
-+DEFINE_BPF_STORAGE_CACHE(inode);
-+
-+struct bpf_map *inode_storage_map_alloc(union bpf_attr *attr)
-+{
-+	struct bpf_local_storage_map *smap;
-+
-+	smap = bpf_local_storage_map_alloc(attr);
-+	if (IS_ERR(smap))
-+		return ERR_CAST(smap);
-+
-+	smap->cache_idx = cache_idx_get_inode();
-+	return &smap->map;
-+}
-+
-+void inode_storage_map_free(struct bpf_map *map)
-+{
-+	struct bpf_local_storage_map *smap;
-+
-+	smap = (struct bpf_local_storage_map *)map;
-+	cache_idx_free_inode(smap->cache_idx);
-+	bpf_local_storage_map_free(smap);
-+}
-+
- static int inode_storage_map_btf_id;
- const struct bpf_map_ops inode_storage_map_ops = {
- 	.map_alloc_check = bpf_local_storage_map_alloc_check,
--	.map_alloc = bpf_local_storage_map_alloc,
--	.map_free = bpf_local_storage_map_free,
-+	.map_alloc = inode_storage_map_alloc,
-+	.map_free = inode_storage_map_free,
- 	.map_get_next_key = notsupp_get_next_key,
- 	.map_lookup_elem = bpf_inode_storage_lookup_elem,
- 	.map_update_elem = bpf_inode_storage_update_elem,
-diff --git a/net/core/bpf_sk_storage.c b/net/core/bpf_sk_storage.c
-index 0ec44e819bfe..add0340e9ad3 100644
---- a/net/core/bpf_sk_storage.c
-+++ b/net/core/bpf_sk_storage.c
-@@ -396,11 +396,34 @@ static int notsupp_get_next_key(struct bpf_map *map, void *key,
- 	return -ENOTSUPP;
- }
- 
-+DEFINE_BPF_STORAGE_CACHE(sk);
-+
-+struct bpf_map *sk_storage_map_alloc(union bpf_attr *attr)
-+{
-+	struct bpf_local_storage_map *smap;
-+
-+	smap = bpf_local_storage_map_alloc(attr);
-+	if (IS_ERR(smap))
-+		return ERR_CAST(smap);
-+
-+	smap->cache_idx = cache_idx_get_sk();
-+	return &smap->map;
-+}
-+
-+void sk_storage_map_free(struct bpf_map *map)
-+{
-+	struct bpf_local_storage_map *smap;
-+
-+	smap = (struct bpf_local_storage_map *)map;
-+	cache_idx_free_sk(smap->cache_idx);
-+	bpf_local_storage_map_free(smap);
-+}
-+
- static int sk_storage_map_btf_id;
- const struct bpf_map_ops sk_storage_map_ops = {
- 	.map_alloc_check = bpf_local_storage_map_alloc_check,
--	.map_alloc = bpf_local_storage_map_alloc,
--	.map_free = bpf_local_storage_map_free,
-+	.map_alloc = sk_storage_map_alloc,
-+	.map_free = sk_storage_map_free,
- 	.map_get_next_key = notsupp_get_next_key,
- 	.map_lookup_elem = bpf_sk_storage_lookup_elem,
- 	.map_update_elem = bpf_sk_storage_update_elem,
-
->
-
-[...]
-
-> >
-> > Sure, I can also keep the sk_clone code their as well for now.
-> Just came to my mind.  For easier review purpose, may be
-> first do the refactoring/renaming within bpf_sk_storage.c first and
-> then create another patch to move the common parts to a new
-> file bpf_local_storage.c.
->
-> Not sure if it will be indeed easier to read the diff in practice.
-> I probably should be able to follow it either way.
-
-Since I already refactored it. I will send the next version with the refactoring
-and split done as a part of the Generalize bpf_sk_storage patch.
-If it becomes too hard to review, please let me know and I can split it. :)
-
-
->
-> >
-> > >
-> > > There is a test in map_tests/sk_storage_map.c, in case you may not notice.
-> >
-> > I will try to make it generic as a part of this series. If it takes
-> > too much time, I will send a separate patch for testing
-> > inode_storage_map and till then we have some assurance with
-> > test_local_storage in test_progs.
-> Sure. no problem.  It is mostly for you to test sk_storage to ensure things ;)
-> Also give some ideas on what racing conditions have
-> been considered in the sk_storage test and may be the inode storage
-> test want to stress similar code path.
-
-Thanks! I ran test_maps and it passes. I will send a separate patch
-that generalizes the sk_storage_map.c.
-
-- KP
+Currently syzkaller can't invoke umd_* interface because this interface is used by only
+bpfilter_umh module. But I can imagine that someone starts using this interface in a way
+syzkaller can somehow invoke. Thus, how can it be a joke? I don't understand your question.
