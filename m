@@ -2,120 +2,112 @@ Return-Path: <SRS0=UBGi=AL=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ED90C433DF
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Jun 2020 08:48:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80BD0C433E1
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Jun 2020 08:50:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DD423206BE
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Jun 2020 08:48:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5BA9C20768
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Jun 2020 08:50:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jwhzWOYT"
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="bShX4bZP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731735AbgF3Isb (ORCPT
+        id S1731744AbgF3IuA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 30 Jun 2020 04:48:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57438 "EHLO
+        Tue, 30 Jun 2020 04:50:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57700 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731637AbgF3IsZ (ORCPT
+        with ESMTP id S1731697AbgF3It6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 30 Jun 2020 04:48:25 -0400
-Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F11A4C03E97E
-        for <linux-security-module@vger.kernel.org>; Tue, 30 Jun 2020 01:48:24 -0700 (PDT)
-Received: by mail-lj1-x243.google.com with SMTP id t25so16929322lji.12
-        for <linux-security-module@vger.kernel.org>; Tue, 30 Jun 2020 01:48:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6fsC+acqOWGmffLGOO9jUUTQnpmWJlfaJA/k6/maTXQ=;
-        b=jwhzWOYTDIWkGYCjUjnh/hwQSfIQFakAv6CQUjqEt4lGOfycy+SXqpkauASE8Uv9mR
-         HQv/CFC25aFyJGL1zaWOskY9nxqomD8anB5SgT41JK2+NAhLoVv/V7kapQtj1LprizUz
-         9NWgdrg5DV/8QYEDqTeEoQBll6ZNiEtOUu9LIYIqDwuaV90Hauso9TljSKrWlRjz1xmS
-         5k/P3sBGk/fhl23Y3JhxJup+qF6wPjQBiJmZFPfu+b47V4hlKIbXN9MJiKdk/p4O6ugh
-         FfkzZelWVMWID7VeVmDc58BAsTKDDi1fjv0yA5t2BtW/F2wHXOgM/ab7n3m4BpJJL7ol
-         t/LA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6fsC+acqOWGmffLGOO9jUUTQnpmWJlfaJA/k6/maTXQ=;
-        b=g2NT18ORHOLqOmgljcPDG54+WpFcQ8M+g+51GJsAyEk6UkOoO4QuPr5YF9jH/qOIRE
-         iR1pPx8FY72kelXoBdAZgE5IJa+ts3njFjPWm+IMcME3L2aG1iXxXXIgo3tIUw5B+xVu
-         XyuuseFhO4FbcKvqFmlrGap34C95x5LOnNLmiZs6r+lgopg8vuZYjltpg67SHd6ZYYsY
-         HcbPy/zQHD6/8GedN4uM/aLiZchLZa1SG1DR23dVEr9o3lQdpBXq/69na2tcSkJcjUkI
-         oPhvD4qc+TsMQiGvROkTWJlzkQoOknM95YqfnoULQKBFIP7HK34aueVHhRSQ1wzu6vUZ
-         D1Eg==
-X-Gm-Message-State: AOAM531kxf1S1lSS/1lWLx8FEq9o3oaal/sG8TNaOyRgfXKxZsBecNVO
-        8DR94PWKh0o9t498g97RWUpLf7ueXJB/SSj0m8aMvA==
-X-Google-Smtp-Source: ABdhPJwX4BRg7XNjPqa+bGRmf7a5TT5LE3ptad/uzUQ2PEfbNV+nz2O7wy3pdPl3lEJ0PbZmgV66tY8SYz/nHrGnDlw=
-X-Received: by 2002:a2e:9ed0:: with SMTP id h16mr10660397ljk.366.1593506903171;
- Tue, 30 Jun 2020 01:48:23 -0700 (PDT)
+        Tue, 30 Jun 2020 04:49:58 -0400
+Received: from mail.skyhub.de (mail.skyhub.de [IPv6:2a01:4f8:190:11c2::b:1457])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63C2FC061755;
+        Tue, 30 Jun 2020 01:49:58 -0700 (PDT)
+Received: from zn.tnic (p200300ec2f0eff00c5d3fc2efff9f4b6.dip0.t-ipconnect.de [IPv6:2003:ec:2f0e:ff00:c5d3:fc2e:fff9:f4b6])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E29EB1EC031B;
+        Tue, 30 Jun 2020 10:49:56 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1593506997;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=oRm5RCCRuDGEyj0/k3JMpu55Vd9Mg+DkgrloRPSHKKU=;
+        b=bShX4bZPlos7EtZLnpbbtTAkxmhr3YrU3PnjxMTqUOxbp3itPr5gLZYhn1dfEppciaUVRt
+        ++TME2mCXjoMni8syGG0MYTWKTIi1L8eHYWdkU7cpQ/9LRvaTJc4v7OBhZS2gDG4wqq39o
+        dzz0/sVJPqnNkz8mZS6fMEKso7xmF2A=
+Date:   Tue, 30 Jun 2020 10:49:56 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
+        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Jethro Beekman <jethro@fortanix.com>,
+        Andy Lutomirski <luto@kernel.org>, akpm@linux-foundation.org,
+        andriy.shevchenko@linux.intel.com, asapek@google.com,
+        cedric.xing@intel.com, chenalexchen@google.com,
+        conradparker@google.com, cyhanish@google.com,
+        dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, nhorman@redhat.com,
+        npmccallum@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
+        tglx@linutronix.de, yaozhangx@google.com
+Subject: Re: [PATCH v33 12/21] x86/sgx: Allow a limited use of
+ ATTRIBUTE.PROVISIONKEY for attestation
+Message-ID: <20200630084956.GB1093@zn.tnic>
+References: <20200617220844.57423-1-jarkko.sakkinen@linux.intel.com>
+ <20200617220844.57423-13-jarkko.sakkinen@linux.intel.com>
+ <20200629160242.GB32176@zn.tnic>
+ <20200629220400.GI12312@linux.intel.com>
 MIME-Version: 1.0
-References: <CA+G9fYvHFs5Yx8TnT6VavtfjMN8QLPuXg6us-dXVJqUUt68adA@mail.gmail.com>
- <20200622224920.GA4332@42.do-not-panic.com> <CA+G9fYsXDZUspc5OyfqrGZn=k=2uRiGzWY_aPePK2C_kZ+dYGQ@mail.gmail.com>
- <20200623064056.GA8121@gondor.apana.org.au> <20200623170217.GB150582@gmail.com>
- <20200626062948.GA25285@gondor.apana.org.au>
-In-Reply-To: <20200626062948.GA25285@gondor.apana.org.au>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Tue, 30 Jun 2020 14:18:11 +0530
-Message-ID: <CA+G9fYutuU55iL_6Qrk3oG3iq-37PaxvtA4KnEQHuLH9YpH-QA@mail.gmail.com>
-Subject: Re: [PATCH] crypto: af_alg - Fix regression on empty requests
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Eric Biggers <ebiggers@kernel.org>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        LTP List <ltp@lists.linux.it>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        lkft-triage@lists.linaro.org,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        Jan Stancek <jstancek@redhat.com>, chrubis <chrubis@suse.cz>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        James Morris <jmorris@namei.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        David Howells <dhowells@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sachin Sant <sachinp@linux.vnet.ibm.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux- stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200629220400.GI12312@linux.intel.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 26 Jun 2020 at 12:00, Herbert Xu <herbert@gondor.apana.org.au> wrote:
->
-> On Tue, Jun 23, 2020 at 10:02:17AM -0700, Eric Biggers wrote:
-> >
-> > The source code for the two failing AF_ALG tests is here:
-> >
-> > https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/crypto/af_alg02.c
-> > https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/crypto/af_alg05.c
-> >
-> > They use read() and write(), not send() and recv().
-> >
-> > af_alg02 uses read() to read from a "salsa20" request socket without writing
-> > anything to it.  It is expected that this returns 0, i.e. that behaves like
-> > encrypting an empty message.
+On Mon, Jun 29, 2020 at 03:04:00PM -0700, Sean Christopherson wrote:
+> > I don't see this acronym resolved anywhere in the whole patchset.
+> 
+> Quoting Enclave.
 
-Since we are on this subject,
-LTP af_alg02  test case fails on stable 4.9 and stable 4.4
-This is not a regression because the test case has been failing from
-the beginning.
+Yah, pls add it somewhere.
 
-Is this test case expected to fail on stable 4.9 and 4.4 ?
-or any chance to fix this on these older branches ?
+> /dev/sgx/provision is root-only by default, the expectation is that the admin
+> will configure the system to grant only specific enclaves access to the
+> PROVISION_KEY.
 
-Test output:
-af_alg02.c:52: BROK: Timed out while reading from request socket.
+Uuh, I don't like "the expectation is" - the reality happens to turn
+differently, more often than not.
 
-ref:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/build/v4.9.228-191-g082e807235d7/testrun/2884917/suite/ltp-crypto-tests/test/af_alg02/history/
-https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/build/v4.9.228-191-g082e807235d7/testrun/2884606/suite/ltp-crypto-tests/test/af_alg02/log
+> In this series, access is fairly binary, i.e. there's no additional kernel
+> infrastructure to help userspace make per-enclave decisions.  There have been
+> more than a few proposals on how to extend the kernel to help provide better
+> granularity, e.g. LSM hooks, but it was generally agreed to punt that stuff
+> to post-upstreaming to keep things "simple" once we went far enough down
+> various paths to ensure we weren't painting ourselves into a corner.
 
-- Naresh
+So this all sounds to me like we should not upstream /dev/sgx/provision
+now but delay it until the infrastructure for that has been made more
+concrete. We can always add it then. Changing it after the fact -
+if we have to and for whatever reason - would be a lot harder for a
+user-visible interface which someone has started using already.
+
+So I'd leave  that out from the initial patchset.
+
+> If you want super gory details, Intel's whitepaper on attestation in cloud
+> environments is a good starting point[*], but I don't recommended doing much
+> more than skimming unless you really like attestation stuff or are
+> masochistic, which IMO amount to the same thing :-)
+
+No thanks. :)
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
