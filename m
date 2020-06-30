@@ -2,48 +2,43 @@ Return-Path: <SRS0=UBGi=AL=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08017C433E0
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Jun 2020 05:43:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CA4BC433DF
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Jun 2020 06:18:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C3CCE20702
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Jun 2020 05:43:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="A1pw3V+O"
+	by mail.kernel.org (Postfix) with ESMTP id 538F6206B6
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Jun 2020 06:18:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726994AbgF3FnV (ORCPT
+        id S1729975AbgF3GSG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 30 Jun 2020 01:43:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57118 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725994AbgF3FnU (ORCPT
+        Tue, 30 Jun 2020 02:18:06 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:61336 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725845AbgF3GSF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 30 Jun 2020 01:43:20 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97CDAC061755;
-        Mon, 29 Jun 2020 22:43:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=qszr3MAAxpGDAjOTug71QT6Sd6sc2nlH1A7hGQd+K/w=; b=A1pw3V+OadqGvu2MXZTkGzZFi6
-        lEyofW9BKz5JF2RO6lrC5mAiQnSv544rTutI0U/r07hWAnH0+UW1Jqplo1prrmeGxrv12e7DTuFkR
-        0R6zKc8wo8cd+Z72u1ZW5mKhCm22afdNHgL7qEzKx9kCzxzMQYnUHdkUa+Je/ueK0mfXnByJVyJuA
-        USJKKW70cvPbrd1bhwjUzgUGgwOGhQF1bvxOqA20jR0tOOKh+3rh6tmaidX+xdkEUdWQ3VKOZaZLu
-        dF7l/Rw2oALrKxOXNjM28FXR9JO844UMQinzNyTKhoVLW//A4czpi0a3d2N4IzinkC5KRWLyyes8n
-        9wj1NLbQ==;
-Received: from hch by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jq933-0007LP-Js; Tue, 30 Jun 2020 05:43:13 +0000
-Date:   Tue, 30 Jun 2020 06:43:13 +0100
-From:   Christoph Hellwig <hch@infradead.org>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
+        Tue, 30 Jun 2020 02:18:05 -0400
+Received: from fsav405.sakura.ne.jp (fsav405.sakura.ne.jp [133.242.250.104])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 05U6H3xt072997;
+        Tue, 30 Jun 2020 15:17:03 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav405.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav405.sakura.ne.jp);
+ Tue, 30 Jun 2020 15:17:03 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav405.sakura.ne.jp)
+Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 05U6H2bZ072931
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Tue, 30 Jun 2020 15:17:02 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH v2 00/15] Make the user mode driver code a better citizen
+To:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>
 Cc:     linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>,
         Greg Kroah-Hartman <greg@kroah.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
         Kees Cook <keescook@chromium.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Alexei Starovoitov <ast@kernel.org>,
@@ -57,8 +52,6 @@ Cc:     linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>,
         Casey Schaufler <casey@schaufler-ca.com>,
         Luis Chamberlain <mcgrof@kernel.org>,
         Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH v2 10/15] exec: Remove do_execve_file
-Message-ID: <20200630054313.GB27221@infradead.org>
 References: <20200625095725.GA3303921@kroah.com>
  <778297d2-512a-8361-cf05-42d9379e6977@i-love.sakura.ne.jp>
  <20200625120725.GA3493334@kroah.com>
@@ -67,16 +60,165 @@ References: <20200625095725.GA3303921@kroah.com>
  <87pn9mgfc2.fsf_-_@x220.int.ebiederm.org>
  <87y2oac50p.fsf@x220.int.ebiederm.org>
  <87bll17ili.fsf_-_@x220.int.ebiederm.org>
- <87lfk54p0m.fsf_-_@x220.int.ebiederm.org>
+ <20200629221231.jjc2czk3ul2roxkw@ast-mbp.dhcp.thefacebook.com>
+ <87y2o51hkk.fsf@x220.int.ebiederm.org>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <8137153b-6163-b52c-a1f8-f3949dc321bd@i-love.sakura.ne.jp>
+Date:   Tue, 30 Jun 2020 15:16:57 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87lfk54p0m.fsf_-_@x220.int.ebiederm.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <87y2o51hkk.fsf@x220.int.ebiederm.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-FYI, this clashes badly with my exec rework.  I'd suggest you
-drop everything touching exec here for now, and I can then
-add the final file based exec removal to the end of my series.
+On 2020/06/30 10:13, Eric W. Biederman wrote:
+> Alexei Starovoitov <alexei.starovoitov@gmail.com> writes:
+> 
+>> On Mon, Jun 29, 2020 at 02:55:05PM -0500, Eric W. Biederman wrote:
+>>>
+>>> I have tested thes changes by booting with the code compiled in and
+>>> by killing "bpfilter_umh" and running iptables -vnL to restart
+>>> the userspace driver.
+>>>
+>>> I have compiled tested each change with and without CONFIG_BPFILTER
+>>> enabled.
+>>
+>> With
+>> CONFIG_BPFILTER=y
+>> CONFIG_BPFILTER_UMH=m
+>> it doesn't build:
+>>
+>> ERROR: modpost: "kill_pid_info" [net/bpfilter/bpfilter.ko] undefined!
+>>
+>> I've added:
+>> +EXPORT_SYMBOL(kill_pid_info);
+>> to continue testing...
+
+kill_pid() is already exported.
+
+>>
+>> And then did:
+>> while true; do iptables -L;rmmod bpfilter; done
+>>  
+>> Unfortunately sometimes 'rmmod bpfilter' hangs in wait_event().
+>>
+>> I suspect patch 13 is somehow responsible:
+>> +	if (tgid) {
+>> +		kill_pid_info(SIGKILL, SEND_SIG_PRIV, tgid);
+>> +		wait_event(tgid->wait_pidfd, !pid_task(tgid, PIDTYPE_TGID));
+>> +		bpfilter_umh_cleanup(info);
+>> +	}
+>>
+>> I cannot figure out why it hangs. Some sort of race ?
+>> Since adding short delay between kill and wait makes it work.
+
+Because there is a race window that detach_pid() from __unhash_process() from
+__exit_signal() from release_task() from exit_notify() from do_exit() is called
+some time after wake_up_all(&pid->wait_pidfd) from do_notify_pidfd() from
+do_notify_parent() from exit_notify() from do_exit() was called (in other words,
+we can't use pid->wait_pidfd when pid_task() is used at wait_event()) ?
+
+Below are changes I suggest.
+
+diff --git a/kernel/umd.c b/kernel/umd.c
+index ff79fb16d738..f688813b8830 100644
+--- a/kernel/umd.c
++++ b/kernel/umd.c
+@@ -26,7 +26,7 @@ static struct vfsmount *blob_to_mnt(const void *data, size_t len, const char *na
+ 	if (IS_ERR(mnt))
+ 		return mnt;
+ 
+-	file = file_open_root(mnt->mnt_root, mnt, name, O_CREAT | O_WRONLY, 0700);
++	file = file_open_root(mnt->mnt_root, mnt, name, O_CREAT | O_WRONLY | O_EXCL, 0700);
+ 	if (IS_ERR(file)) {
+ 		mntput(mnt);
+ 		return ERR_CAST(file);
+@@ -52,16 +52,18 @@ static struct vfsmount *blob_to_mnt(const void *data, size_t len, const char *na
+ 
+ /**
+  * umd_load_blob - Remember a blob of bytes for fork_usermode_driver
+- * @info: information about usermode driver
+- * @data: a blob of bytes that can be executed as a file
+- * @len:  The lentgh of the blob
++ * @info: information about usermode driver (shouldn't be NULL)
++ * @data: a blob of bytes that can be executed as a file (shouldn't be NULL)
++ * @len:  The lentgh of the blob (shouldn't be 0)
+  *
+  */
+ int umd_load_blob(struct umd_info *info, const void *data, size_t len)
+ {
+ 	struct vfsmount *mnt;
+ 
+-	if (WARN_ON_ONCE(info->wd.dentry || info->wd.mnt))
++	if (!info || !info->driver_name || !data || !len)
++		return -EINVAL;
++	if (info->wd.dentry || info->wd.mnt)
+ 		return -EBUSY;
+ 
+ 	mnt = blob_to_mnt(data, len, info->driver_name);
+@@ -76,15 +78,14 @@ EXPORT_SYMBOL_GPL(umd_load_blob);
+ 
+ /**
+  * umd_unload_blob - Disassociate @info from a previously loaded blob
+- * @info: information about usermode driver
++ * @info: information about usermode driver (shouldn't be NULL)
+  *
+  */
+ int umd_unload_blob(struct umd_info *info)
+ {
+-	if (WARN_ON_ONCE(!info->wd.mnt ||
+-			 !info->wd.dentry ||
+-			 info->wd.mnt->mnt_root != info->wd.dentry))
++	if (!info || !info->driver_name || !info->wd.dentry || !info->wd.mnt)
+ 		return -EINVAL;
++	BUG_ON(info->wd.mnt->mnt_root != info->wd.dentry);
+ 
+ 	kern_unmount(info->wd.mnt);
+ 	info->wd.mnt = NULL;
+@@ -138,7 +139,7 @@ static void umd_cleanup(struct subprocess_info *info)
+ {
+ 	struct umd_info *umd_info = info->data;
+ 
+-	/* cleanup if umh_setup() was successful but exec failed */
++	/* cleanup if umd_setup() was successful but exec failed */
+ 	if (info->retval) {
+ 		fput(umd_info->pipe_to_umh);
+ 		fput(umd_info->pipe_from_umh);
+@@ -163,7 +164,10 @@ int fork_usermode_driver(struct umd_info *info)
+ 	const char *argv[] = { info->driver_name, NULL };
+ 	int err;
+ 
+-	if (WARN_ON_ONCE(info->tgid))
++	if (!info || !info->driver_name || !info->wd.dentry || !info->wd.mnt)
++		return -EINVAL;
++	BUG_ON(info->wd.mnt->mnt_root != info->wd.dentry);
++	if (info->tgid)
+ 		return -EBUSY;
+ 
+ 	err = -ENOMEM;
+diff --git a/net/bpfilter/bpfilter_kern.c b/net/bpfilter/bpfilter_kern.c
+index 91474884ddb7..9dd70aacb81a 100644
+--- a/net/bpfilter/bpfilter_kern.c
++++ b/net/bpfilter/bpfilter_kern.c
+@@ -19,8 +19,13 @@ static void shutdown_umh(void)
+ 	struct pid *tgid = info->tgid;
+ 
+ 	if (tgid) {
+-		kill_pid_info(SIGKILL, SEND_SIG_PRIV, tgid);
+-		wait_event(tgid->wait_pidfd, !pid_task(tgid, PIDTYPE_TGID));
++		kill_pid(tgid, SIGKILL, 1);
++		while (({ bool done;
++			  rcu_read_lock();
++			  done = !pid_task(tgid, PIDTYPE_TGID);
++			  rcu_read_unlock();
++			  done; }))
++			schedule_timeout_uninterruptible(1);
+ 		bpfilter_umh_cleanup(info);
+ 	}
+ }
+
