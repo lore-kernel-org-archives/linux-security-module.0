@@ -2,107 +2,120 @@ Return-Path: <SRS0=UBGi=AL=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2477C433E0
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Jun 2020 06:29:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ED90C433DF
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Jun 2020 08:48:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8C44920759
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Jun 2020 06:29:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD423206BE
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Jun 2020 08:48:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jwhzWOYT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730097AbgF3G3m (ORCPT
+        id S1731735AbgF3Isb (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 30 Jun 2020 02:29:42 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:58740 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730089AbgF3G3l (ORCPT
+        Tue, 30 Jun 2020 04:48:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57438 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731637AbgF3IsZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 30 Jun 2020 02:29:41 -0400
-Received: from fsav404.sakura.ne.jp (fsav404.sakura.ne.jp [133.242.250.103])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 05U6SrH8086585;
-        Tue, 30 Jun 2020 15:28:53 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav404.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav404.sakura.ne.jp);
- Tue, 30 Jun 2020 15:28:53 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav404.sakura.ne.jp)
-Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 05U6Sr7Q086582
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Tue, 30 Jun 2020 15:28:53 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH 00/14] Make the user mode driver code a better citizen
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <greg@kroah.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <20200625095725.GA3303921@kroah.com>
- <778297d2-512a-8361-cf05-42d9379e6977@i-love.sakura.ne.jp>
- <20200625120725.GA3493334@kroah.com>
- <20200625.123437.2219826613137938086.davem@davemloft.net>
- <CAHk-=whuTwGHEPjvtbBvneHHXeqJC=q5S09mbPnqb=Q+MSPMag@mail.gmail.com>
- <87pn9mgfc2.fsf_-_@x220.int.ebiederm.org>
- <40720db5-92f0-4b5b-3d8a-beb78464a57f@i-love.sakura.ne.jp>
- <87366g8y1e.fsf@x220.int.ebiederm.org>
- <aa737d87-cf38-55d6-32f1-2d989a5412ea@i-love.sakura.ne.jp>
- <20200628194440.puzh7nhdnk6i4rqj@ast-mbp.dhcp.thefacebook.com>
- <c99d0cfc-8526-0daf-90b5-33e560efdede@i-love.sakura.ne.jp>
- <874kqt39qo.fsf@x220.int.ebiederm.org>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <6a9dd8be-333a-fd21-d125-ec20fb7c81df@i-love.sakura.ne.jp>
-Date:   Tue, 30 Jun 2020 15:28:49 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:68.0) Gecko/20100101
- Thunderbird/68.9.0
+        Tue, 30 Jun 2020 04:48:25 -0400
+Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F11A4C03E97E
+        for <linux-security-module@vger.kernel.org>; Tue, 30 Jun 2020 01:48:24 -0700 (PDT)
+Received: by mail-lj1-x243.google.com with SMTP id t25so16929322lji.12
+        for <linux-security-module@vger.kernel.org>; Tue, 30 Jun 2020 01:48:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6fsC+acqOWGmffLGOO9jUUTQnpmWJlfaJA/k6/maTXQ=;
+        b=jwhzWOYTDIWkGYCjUjnh/hwQSfIQFakAv6CQUjqEt4lGOfycy+SXqpkauASE8Uv9mR
+         HQv/CFC25aFyJGL1zaWOskY9nxqomD8anB5SgT41JK2+NAhLoVv/V7kapQtj1LprizUz
+         9NWgdrg5DV/8QYEDqTeEoQBll6ZNiEtOUu9LIYIqDwuaV90Hauso9TljSKrWlRjz1xmS
+         5k/P3sBGk/fhl23Y3JhxJup+qF6wPjQBiJmZFPfu+b47V4hlKIbXN9MJiKdk/p4O6ugh
+         FfkzZelWVMWID7VeVmDc58BAsTKDDi1fjv0yA5t2BtW/F2wHXOgM/ab7n3m4BpJJL7ol
+         t/LA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6fsC+acqOWGmffLGOO9jUUTQnpmWJlfaJA/k6/maTXQ=;
+        b=g2NT18ORHOLqOmgljcPDG54+WpFcQ8M+g+51GJsAyEk6UkOoO4QuPr5YF9jH/qOIRE
+         iR1pPx8FY72kelXoBdAZgE5IJa+ts3njFjPWm+IMcME3L2aG1iXxXXIgo3tIUw5B+xVu
+         XyuuseFhO4FbcKvqFmlrGap34C95x5LOnNLmiZs6r+lgopg8vuZYjltpg67SHd6ZYYsY
+         HcbPy/zQHD6/8GedN4uM/aLiZchLZa1SG1DR23dVEr9o3lQdpBXq/69na2tcSkJcjUkI
+         oPhvD4qc+TsMQiGvROkTWJlzkQoOknM95YqfnoULQKBFIP7HK34aueVHhRSQ1wzu6vUZ
+         D1Eg==
+X-Gm-Message-State: AOAM531kxf1S1lSS/1lWLx8FEq9o3oaal/sG8TNaOyRgfXKxZsBecNVO
+        8DR94PWKh0o9t498g97RWUpLf7ueXJB/SSj0m8aMvA==
+X-Google-Smtp-Source: ABdhPJwX4BRg7XNjPqa+bGRmf7a5TT5LE3ptad/uzUQ2PEfbNV+nz2O7wy3pdPl3lEJ0PbZmgV66tY8SYz/nHrGnDlw=
+X-Received: by 2002:a2e:9ed0:: with SMTP id h16mr10660397ljk.366.1593506903171;
+ Tue, 30 Jun 2020 01:48:23 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <874kqt39qo.fsf@x220.int.ebiederm.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <CA+G9fYvHFs5Yx8TnT6VavtfjMN8QLPuXg6us-dXVJqUUt68adA@mail.gmail.com>
+ <20200622224920.GA4332@42.do-not-panic.com> <CA+G9fYsXDZUspc5OyfqrGZn=k=2uRiGzWY_aPePK2C_kZ+dYGQ@mail.gmail.com>
+ <20200623064056.GA8121@gondor.apana.org.au> <20200623170217.GB150582@gmail.com>
+ <20200626062948.GA25285@gondor.apana.org.au>
+In-Reply-To: <20200626062948.GA25285@gondor.apana.org.au>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Tue, 30 Jun 2020 14:18:11 +0530
+Message-ID: <CA+G9fYutuU55iL_6Qrk3oG3iq-37PaxvtA4KnEQHuLH9YpH-QA@mail.gmail.com>
+Subject: Re: [PATCH] crypto: af_alg - Fix regression on empty requests
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Eric Biggers <ebiggers@kernel.org>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        LTP List <ltp@lists.linux.it>,
+        open list <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        lkft-triage@lists.linaro.org,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        Jan Stancek <jstancek@redhat.com>, chrubis <chrubis@suse.cz>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        James Morris <jmorris@namei.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        David Howells <dhowells@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sachin Sant <sachinp@linux.vnet.ibm.com>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux- stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2020/06/30 5:19, Eric W. Biederman wrote:
-> Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp> writes:
-> 
->> On 2020/06/29 4:44, Alexei Starovoitov wrote:
->>> But all the defensive programming kinda goes against general kernel style.
->>> I wouldn't do it. Especially pr_info() ?!
->>> Though I don't feel strongly about it.
->>
->> Honestly speaking, caller should check for errors and print appropriate
->> messages. info->wd.mnt->mnt_root != info->wd.dentry indicates that something
->> went wrong (maybe memory corruption). But other conditions are not fatal.
->> That is, I consider even pr_info() here should be unnecessary.
-> 
-> They were all should never happen cases.  Which is why my patches do:
-> if (WARN_ON_ONCE(...))
+On Fri, 26 Jun 2020 at 12:00, Herbert Xu <herbert@gondor.apana.org.au> wrote:
+>
+> On Tue, Jun 23, 2020 at 10:02:17AM -0700, Eric Biggers wrote:
+> >
+> > The source code for the two failing AF_ALG tests is here:
+> >
+> > https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/crypto/af_alg02.c
+> > https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/crypto/af_alg05.c
+> >
+> > They use read() and write(), not send() and recv().
+> >
+> > af_alg02 uses read() to read from a "salsa20" request socket without writing
+> > anything to it.  It is expected that this returns 0, i.e. that behaves like
+> > encrypting an empty message.
 
-No. Fuzz testing (which uses panic_on_warn=1) will trivially hit them.
-This bug was unfortunately not found by syzkaller because this path is
-not easily reachable via syscall interface.
+Since we are on this subject,
+LTP af_alg02  test case fails on stable 4.9 and stable 4.4
+This is not a regression because the test case has been failing from
+the beginning.
 
-> 
-> That let's the caller know the messed up very clearly while still
-> providing a change to continue.
-> 
-> If they were clearly corruption no ones kernel should ever continue
-> BUG_ON would be appropriate.
+Is this test case expected to fail on stable 4.9 and 4.4 ?
+or any chance to fix this on these older branches ?
 
-Please use BUG_ON() (to only corruption case) like I suggested in my updated diff.
+Test output:
+af_alg02.c:52: BROK: Timed out while reading from request socket.
 
+ref:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/build/v4.9.228-191-g082e807235d7/testrun/2884917/suite/ltp-crypto-tests/test/af_alg02/history/
+https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/build/v4.9.228-191-g082e807235d7/testrun/2884606/suite/ltp-crypto-tests/test/af_alg02/log
+
+- Naresh
