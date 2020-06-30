@@ -2,146 +2,94 @@ Return-Path: <SRS0=UBGi=AL=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30822C433DF
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Jun 2020 11:50:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAA1FC433DF
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Jun 2020 12:02:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0FC4820774
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Jun 2020 11:50:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="EwcjwlqN"
+	by mail.kernel.org (Postfix) with ESMTP id 9AC6420702
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Jun 2020 12:02:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728419AbgF3Lup (ORCPT
+        id S1730284AbgF3MC4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 30 Jun 2020 07:50:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57308 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729580AbgF3Luo (ORCPT
+        Tue, 30 Jun 2020 08:02:56 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:26790 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729647AbgF3MC4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 30 Jun 2020 07:50:44 -0400
-Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B1BDC061755
-        for <linux-security-module@vger.kernel.org>; Tue, 30 Jun 2020 04:50:44 -0700 (PDT)
-Received: by mail-wm1-x343.google.com with SMTP id o8so18514292wmh.4
-        for <linux-security-module@vger.kernel.org>; Tue, 30 Jun 2020 04:50:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=GWV+iQuRtCpfYYNtAK9+bSfnvyQdFNs1dv+1er5dsU8=;
-        b=EwcjwlqNUbnEZ6IaVQ/ouTVjAi+5W0gXxwIwgJx5L2q5OidBLRmG3492wCWCmiVYiE
-         IvHiU0kX/UxnCdXYxe4fRfAbp/JroR7rbdhyeu3GnuTSrLA3c7k1jft/XAiU03BUbZE0
-         XXgcqG/Qhna6vb/sUq0KoiYVJf6DOkKbhRzHo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=GWV+iQuRtCpfYYNtAK9+bSfnvyQdFNs1dv+1er5dsU8=;
-        b=ZOiJNPy9othp/IEZXN6t8vVxQz/AlbNTXppdXFdtZkx90/BF7vtN6/eA0lU9E7WGuE
-         NWg5YtB3zsilbsAE2UMxjl2VUTzx4Ij9VrsIN7aQhjLcgq0pJCqdJnIlXyzr5cXBd3p4
-         xjnx3OLDghUUsSMcqyzrXU3o4CQBcynF1XOwtq/Lo10YJjA7JbP4CJQ4/BXogc7MztHm
-         ntvwjJn8YXfR8+8QI73n9siUHoK3UECvMybwHan/Upnd3hmFazgEOzI66waMddnXsu6S
-         pSF4reODLgHexDeB0N/pirvYbkTEBptp0mVVnQoAbf211a13CYKviyQBygZBw6ToqUk2
-         jWsw==
-X-Gm-Message-State: AOAM530qk03yjrg+56GOPHuIR4zoZX+myMz3nQmGAUhsYu2NBB8S04Ws
-        QmHemOOXbV/TaM2/KoZo53uhDA==
-X-Google-Smtp-Source: ABdhPJxVsZfzjzet5KchM2IaO/5rCJy/Ok+q7SabeQRomMWOldOTToa7odVxlDAtJPgSuqKpO2M1Mw==
-X-Received: by 2002:a05:600c:2154:: with SMTP id v20mr22983992wml.185.1593517843162;
-        Tue, 30 Jun 2020 04:50:43 -0700 (PDT)
-Received: from google.com ([81.6.44.51])
-        by smtp.gmail.com with ESMTPSA id k11sm3730872wrd.23.2020.06.30.04.50.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jun 2020 04:50:42 -0700 (PDT)
-From:   KP Singh <kpsingh@chromium.org>
-X-Google-Original-From: KP Singh <kpsingh>
-Date:   Tue, 30 Jun 2020 13:50:41 +0200
-To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc:     KP Singh <kpsingh@chromium.org>, bpf <bpf@vger.kernel.org>,
-        linux-security-module@vger.kernel.org,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>
-Subject: Re: [PATCH bpf-next v2 4/4] bpf: Add selftests for local_storage
-Message-ID: <20200630115041.GB421824@google.com>
-References: <20200617202941.3034-1-kpsingh@chromium.org>
- <20200617202941.3034-5-kpsingh@chromium.org>
- <CAEf4BzZdUWUSLzT1Y-o1Yvy3tTETkJEVU7RyZufZY_yEKzwOSg@mail.gmail.com>
+        Tue, 30 Jun 2020 08:02:56 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 05UBZI7U013606;
+        Tue, 30 Jun 2020 08:02:23 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 31ycja0bqe-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 30 Jun 2020 08:02:21 -0400
+Received: from m0098414.ppops.net (m0098414.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 05UC2A7p076098;
+        Tue, 30 Jun 2020 08:02:10 -0400
+Received: from ppma06fra.de.ibm.com (48.49.7a9f.ip4.static.sl-reverse.com [159.122.73.72])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 31ycja0akv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 30 Jun 2020 08:02:10 -0400
+Received: from pps.filterd (ppma06fra.de.ibm.com [127.0.0.1])
+        by ppma06fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 05UBkeGw017788;
+        Tue, 30 Jun 2020 11:58:32 GMT
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
+        by ppma06fra.de.ibm.com with ESMTP id 31wwcgspgc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 30 Jun 2020 11:58:32 +0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 05UBwU8d4522250
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 30 Jun 2020 11:58:30 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0E7E6A405C;
+        Tue, 30 Jun 2020 11:58:30 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7BF95A4060;
+        Tue, 30 Jun 2020 11:58:28 +0000 (GMT)
+Received: from linux.ibm.com (unknown [9.148.202.137])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Tue, 30 Jun 2020 11:58:28 +0000 (GMT)
+Date:   Tue, 30 Jun 2020 14:58:26 +0300
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     hackapple <2538082724huangjinhai@gmail.com>
+Cc:     James.Bottomley@hansenpartnership.com,
+        alexandre.chartre@oracle.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, hpa@zytor.com, jwadams@google.com,
+        keescook@chromium.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-security-module@vger.kernel.org,
+        luto@kernel.org, mingo@redhat.com, peterz@infradead.org,
+        pjt@google.com, tglx@linutronix.de, x86@kernel.org
+Subject: Re: [RFC PATCH 1/7] x86/cpufeatures: add X86_FEATURE_SCI
+Message-ID: <20200630115826.GB1951986@linux.ibm.com>
+References: <94E40D06-B481-45B7-A929-CC324F5B856B@qq.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAEf4BzZdUWUSLzT1Y-o1Yvy3tTETkJEVU7RyZufZY_yEKzwOSg@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <94E40D06-B481-45B7-A929-CC324F5B856B@qq.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-06-30_04:2020-06-30,2020-06-30 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ impostorscore=0 mlxlogscore=766 lowpriorityscore=0 spamscore=0
+ priorityscore=1501 phishscore=0 suspectscore=1 adultscore=0
+ cotscore=-2147483648 bulkscore=0 clxscore=1011 mlxscore=0 classifier=spam
+ adjust=0 reason=mlx scancount=1 engine=8.12.0-2004280000
+ definitions=main-2006300086
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 18-Jun 11:16, Andrii Nakryiko wrote:
-> On Wed, Jun 17, 2020 at 1:31 PM KP Singh <kpsingh@chromium.org> wrote:
-> >
-> > From: KP Singh <kpsingh@google.com>
-> >
-> > inode_local_storage:
-> >
-> > * Hook to the file_open and inode_unlink LSM hooks.
-> > * Create and unlink a temporary file.
-> > * Store some information in the inode's bpf_local_storage during
-> >   file_open.
-> > * Verify that this information exists when the file is unlinked.
-> >
-> > sk_local_storage:
-> >
-> > * Hook to the socket_post_create and socket_bind LSM hooks.
-> > * Open and bind a socket and set the sk_storage in the
-> >   socket_post_create hook using the start_server helper.
-> > * Verify if the information is set in the socket_bind hook.
-> >
-> > Signed-off-by: KP Singh <kpsingh@google.com>
-> > ---
-> >  .../bpf/prog_tests/test_local_storage.c       |  60 ++++++++
-> >  .../selftests/bpf/progs/local_storage.c       | 137 ++++++++++++++++++
-> >  2 files changed, 197 insertions(+)
-> >  create mode 100644 tools/testing/selftests/bpf/prog_tests/test_local_storage.c
-> >  create mode 100644 tools/testing/selftests/bpf/progs/local_storage.c
-> >
-> 
-> [...]
-> 
-> > diff --git a/tools/testing/selftests/bpf/progs/local_storage.c b/tools/testing/selftests/bpf/progs/local_storage.c
-> > new file mode 100644
-> > index 000000000000..38954e6a1edc
-> > --- /dev/null
-> > +++ b/tools/testing/selftests/bpf/progs/local_storage.c
-> > @@ -0,0 +1,137 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +
-> > +/*
-> > + * Copyright 2020 Google LLC.
-> > + */
-> > +
-> > +#include <errno.h>
-> > +#include <linux/bpf.h>
-> > +#include <stdbool.h>
-> > +#include <bpf/bpf_helpers.h>
-> > +#include <bpf/bpf_tracing.h>
-> > +
-> > +char _license[] SEC("license") = "GPL";
-> > +__u32 _version SEC("version") = 1;
-> 
-> version is anachronism, please drop it.
+On Tue, Jun 30, 2020 at 08:08:59AM +0800, hackapple wrote:
+> What’s the version of kernel?
 
-Removed.
+It was around 5.2 time frame, I think.
 
-> 
-> Otherwise, LGTM.
-
-Thanks
-
-- KP
-
-> 
-> Acked-by: Andrii Nakryiko <andriin@fb.com>
-> 
-> [...]
+-- 
+Sincerely yours,
+Mike.
