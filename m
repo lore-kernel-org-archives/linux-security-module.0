@@ -2,335 +2,257 @@ Return-Path: <SRS0=4lEG=AM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3612AC433E0
-	for <linux-security-module@archiver.kernel.org>; Wed,  1 Jul 2020 08:05:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9275AC433E2
+	for <linux-security-module@archiver.kernel.org>; Wed,  1 Jul 2020 08:27:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E80FC2078B
-	for <linux-security-module@archiver.kernel.org>; Wed,  1 Jul 2020 08:05:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NW28tl32"
+	by mail.kernel.org (Postfix) with ESMTP id 797B520775
+	for <linux-security-module@archiver.kernel.org>; Wed,  1 Jul 2020 08:27:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728650AbgGAIEx (ORCPT
+        id S1728573AbgGAI1l (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 1 Jul 2020 04:04:53 -0400
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:53384 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728559AbgGAIEi (ORCPT
+        Wed, 1 Jul 2020 04:27:41 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:51161 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728450AbgGAI1k (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 1 Jul 2020 04:04:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1593590675;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=kCynkoFy3XzG6kNN02gtrhqcsZ1FKd7XfZ+X5cMlfpk=;
-        b=NW28tl32Mt2lluifhm6PPpHvdvERpgfZIW39Fb9KXQQ/GBESZRPE9zpqAPFoWQVFd9MFYP
-        wJ8MmxVhmoyldhxKRVXBbIIZg7gn38VQa7hLQXoWTbWCh+AE9VzEOhr2mnyrYCT7R1zX1p
-        ShJDiFu2mOzP6o9LnJ4cQbvgRv7EALc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-277-2H4RS7wNPJ2dbCKECCFJ1g-1; Wed, 01 Jul 2020 04:04:27 -0400
-X-MC-Unique: 2H4RS7wNPJ2dbCKECCFJ1g-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0411E87950B;
-        Wed,  1 Jul 2020 08:04:26 +0000 (UTC)
-Received: from dhcp-128-65.nay.redhat.com (ovpn-12-207.pek2.redhat.com [10.72.12.207])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 33215BEA5;
-        Wed,  1 Jul 2020 08:04:19 +0000 (UTC)
-Date:   Wed, 1 Jul 2020 16:04:16 +0800
-From:   Dave Young <dyoung@redhat.com>
-To:     Tyler Hicks <tyhicks@linux.microsoft.com>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Prakhar Srivastava <prsriva02@gmail.com>,
-        kexec@lists.infradead.org, James Morris <jmorris@namei.org>,
-        linux-kernel@vger.kernel.org,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Wed, 1 Jul 2020 04:27:40 -0400
+Received: from ip5f5af08c.dynamic.kabel-deutschland.de ([95.90.240.140] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1jqY5F-0001ea-FF; Wed, 01 Jul 2020 08:27:09 +0000
+Date:   Wed, 1 Jul 2020 10:27:08 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Adrian Reber <areber@redhat.com>
+Cc:     Eric Biederman <ebiederm@xmission.com>,
+        Pavel Emelyanov <ovzxemul@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
+        =?utf-8?B?TWljaGHFgiBDxYJhcGnFhHNraQ==?= <mclapinski@google.com>,
+        Kamil Yurtsever <kyurtsever@google.com>,
+        Dirk Petersen <dipeit@gmail.com>,
+        Christine Flood <chf@redhat.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Radostin Stoyanov <rstoyanov1@gmail.com>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        Serge Hallyn <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Sargun Dhillon <sargun@sargun.me>,
+        Arnd Bergmann <arnd@arndb.de>,
         linux-security-module@vger.kernel.org,
-        Eric Biederman <ebiederm@xmission.com>,
-        linux-integrity@vger.kernel.org,
-        "Serge E . Hallyn" <serge@hallyn.com>
-Subject: Re: [PATCH v2 11/11] ima: Support additional conditionals in the
- KEXEC_CMDLINE hook function
-Message-ID: <20200701080416.GC3878@dhcp-128-65.nay.redhat.com>
-References: <20200626223900.253615-1-tyhicks@linux.microsoft.com>
- <20200626223900.253615-12-tyhicks@linux.microsoft.com>
+        linux-kernel@vger.kernel.org, selinux@vger.kernel.org,
+        Eric Paris <eparis@parisplace.org>,
+        Jann Horn <jannh@google.com>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v4 1/3] capabilities: Introduce CAP_CHECKPOINT_RESTORE
+Message-ID: <20200701082708.pgfskg7hrsnfi36k@wittgenstein>
+References: <20200701064906.323185-1-areber@redhat.com>
+ <20200701064906.323185-2-areber@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200626223900.253615-12-tyhicks@linux.microsoft.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+In-Reply-To: <20200701064906.323185-2-areber@redhat.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi,
-On 06/26/20 at 05:39pm, Tyler Hicks wrote:
-> Take the properties of the kexec kernel's inode and the current task
-> ownership into consideration when matching a KEXEC_CMDLINE operation to
-> the rules in the IMA policy. This allows for some uniformity when
-> writing IMA policy rules for KEXEC_KERNEL_CHECK, KEXEC_INITRAMFS_CHECK,
-> and KEXEC_CMDLINE operations.
+On Wed, Jul 01, 2020 at 08:49:04AM +0200, Adrian Reber wrote:
+> This patch introduces CAP_CHECKPOINT_RESTORE, a new capability facilitating
+> checkpoint/restore for non-root users.
 > 
-> Prior to this patch, it was not possible to write a set of rules like
-> this:
+> Over the last years, The CRIU (Checkpoint/Restore In Userspace) team has been
+> asked numerous times if it is possible to checkpoint/restore a process as
+> non-root. The answer usually was: 'almost'.
 > 
->  dont_measure func=KEXEC_KERNEL_CHECK obj_type=foo_t
->  dont_measure func=KEXEC_INITRAMFS_CHECK obj_type=foo_t
->  dont_measure func=KEXEC_CMDLINE obj_type=foo_t
->  measure func=KEXEC_KERNEL_CHECK
->  measure func=KEXEC_INITRAMFS_CHECK
->  measure func=KEXEC_CMDLINE
+> The main blocker to restore a process as non-root was to control the PID of the
+> restored process. This feature available via the clone3 system call, or via
+> /proc/sys/kernel/ns_last_pid is unfortunately guarded by CAP_SYS_ADMIN.
 > 
-> The inode information associated with the kernel being loaded by a
-> kexec_kernel_load(2) syscall can now be included in the decision to
-> measure or not
+> In the past two years, requests for non-root checkpoint/restore have increased
+> due to the following use cases:
+> * Checkpoint/Restore in an HPC environment in combination with a resource
+>   manager distributing jobs where users are always running as non-root.
+>   There is a desire to provide a way to checkpoint and restore long running
+>   jobs.
+> * Container migration as non-root
+> * We have been in contact with JVM developers who are integrating
+>   CRIU into a Java VM to decrease the startup time. These checkpoint/restore
+>   applications are not meant to be running with CAP_SYS_ADMIN.
 > 
-> Additonally, the uid, euid, and subj_* conditionals can also now be
-> used in KEXEC_CMDLINE rules. There was no technical reason as to why
-> those conditionals weren't being considered previously other than
-> ima_match_rules() didn't have a valid inode to use so it immediately
-> bailed out for KEXEC_CMDLINE operations rather than going through the
-> full list of conditional comparisons.
+> We have seen the following workarounds:
+> * Use a setuid wrapper around CRIU:
+>   See https://github.com/FredHutch/slurm-examples/blob/master/checkpointer/lib/checkpointer/checkpointer-suid.c
+> * Use a setuid helper that writes to ns_last_pid.
+>   Unfortunately, this helper delegation technique is impossible to use with
+>   clone3, and is thus prone to races.
+>   See https://github.com/twosigma/set_ns_last_pid
+> * Cycle through PIDs with fork() until the desired PID is reached:
+>   This has been demonstrated to work with cycling rates of 100,000 PIDs/s
+>   See https://github.com/twosigma/set_ns_last_pid
+> * Patch out the CAP_SYS_ADMIN check from the kernel
+> * Run the desired application in a new user and PID namespace to provide
+>   a local CAP_SYS_ADMIN for controlling PIDs. This technique has limited use in
+>   typical container environments (e.g., Kubernetes) as /proc is
+>   typically protected with read-only layers (e.g., /proc/sys) for hardening
+>   purposes. Read-only layers prevent additional /proc mounts (due to proc's
+>   SB_I_USERNS_VISIBLE property), making the use of new PID namespaces limited as
+>   certain applications need access to /proc matching their PID namespace.
 > 
-> Signed-off-by: Tyler Hicks <tyhicks@linux.microsoft.com>
-> Cc: Eric Biederman <ebiederm@xmission.com>
-> Cc: kexec@lists.infradead.org
+> The introduced capability allows to:
+> * Control PIDs when the current user is CAP_CHECKPOINT_RESTORE capable
+>   for the corresponding PID namespace via ns_last_pid/clone3.
+> * Open files in /proc/pid/map_files when the current user is
+>   CAP_CHECKPOINT_RESTORE capable in the root namespace, useful for recovering
+>   files that are unreachable via the file system such as deleted files, or memfd
+>   files.
+> 
+> See corresponding selftest for an example with clone3().
+> 
+> Signed-off-by: Adrian Reber <areber@redhat.com>
+> Signed-off-by: Nicolas Viennot <Nicolas.Viennot@twosigma.com>
 > ---
+
+I think that now looks reasonable. A few comments.
+
+Before we proceed, please split the addition of
+checkpoint_restore_ns_capable() out into a separate patch.
+In fact, I think the cleanest way of doing this would be:
+- 0/n capability: add CAP_CHECKPOINT_RESTORE
+- 1/n pid: use checkpoint_restore_ns_capable() for set_tid
+- 2/n pid_namespace: use checkpoint_restore_ns_capable() for ns_last_pid
+- 3/n: proc: require checkpoint_restore_ns_capable() in init userns for map_files
+
+(commit subjects up to you of course) and a nice commit message for each
+time we relax a permissions on something so we have a clear separate
+track record for each change in case we need to revert something. Then
+the rest of the patches in this series. Testing patches probably last.
+
+>  fs/proc/base.c                      | 8 ++++----
+>  include/linux/capability.h          | 6 ++++++
+>  include/uapi/linux/capability.h     | 9 ++++++++-
+>  kernel/pid.c                        | 2 +-
+>  kernel/pid_namespace.c              | 2 +-
+>  security/selinux/include/classmap.h | 5 +++--
+>  6 files changed, 23 insertions(+), 9 deletions(-)
 > 
-> * v2
->   - Moved the inode parameter of process_buffer_measurement() to be the
->     first parameter so that it more closely matches process_masurement()
-> 
->  include/linux/ima.h                          |  4 ++--
->  kernel/kexec_file.c                          |  2 +-
->  security/integrity/ima/ima.h                 |  2 +-
->  security/integrity/ima/ima_api.c             |  2 +-
->  security/integrity/ima/ima_appraise.c        |  2 +-
->  security/integrity/ima/ima_asymmetric_keys.c |  2 +-
->  security/integrity/ima/ima_main.c            | 23 +++++++++++++++-----
->  security/integrity/ima/ima_policy.c          | 17 +++++----------
->  security/integrity/ima/ima_queue_keys.c      |  2 +-
->  9 files changed, 31 insertions(+), 25 deletions(-)
-> 
-> diff --git a/include/linux/ima.h b/include/linux/ima.h
-> index 9164e1534ec9..d15100de6cdd 100644
-> --- a/include/linux/ima.h
-> +++ b/include/linux/ima.h
-> @@ -25,7 +25,7 @@ extern int ima_post_read_file(struct file *file, void *buf, loff_t size,
->  			      enum kernel_read_file_id id);
->  extern void ima_post_path_mknod(struct dentry *dentry);
->  extern int ima_file_hash(struct file *file, char *buf, size_t buf_size);
-> -extern void ima_kexec_cmdline(const void *buf, int size);
-> +extern void ima_kexec_cmdline(int kernel_fd, const void *buf, int size);
->  
->  #ifdef CONFIG_IMA_KEXEC
->  extern void ima_add_kexec_buffer(struct kimage *image);
-> @@ -103,7 +103,7 @@ static inline int ima_file_hash(struct file *file, char *buf, size_t buf_size)
->  	return -EOPNOTSUPP;
->  }
->  
-> -static inline void ima_kexec_cmdline(const void *buf, int size) {}
-> +static inline void ima_kexec_cmdline(int kernel_fd, const void *buf, int size) {}
->  #endif /* CONFIG_IMA */
->  
->  #ifndef CONFIG_IMA_KEXEC
-> diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-> index bb05fd52de85..07df431c1f21 100644
-> --- a/kernel/kexec_file.c
-> +++ b/kernel/kexec_file.c
-> @@ -287,7 +287,7 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
->  			goto out;
->  		}
->  
-> -		ima_kexec_cmdline(image->cmdline_buf,
-> +		ima_kexec_cmdline(kernel_fd, image->cmdline_buf,
->  				  image->cmdline_buf_len - 1);
->  	}
->  
-> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-> index 59ec28f5c117..ff2bf57ff0c7 100644
-> --- a/security/integrity/ima/ima.h
-> +++ b/security/integrity/ima/ima.h
-> @@ -265,7 +265,7 @@ void ima_store_measurement(struct integrity_iint_cache *iint, struct file *file,
->  			   struct evm_ima_xattr_data *xattr_value,
->  			   int xattr_len, const struct modsig *modsig, int pcr,
->  			   struct ima_template_desc *template_desc);
-> -void process_buffer_measurement(const void *buf, int size,
-> +void process_buffer_measurement(struct inode *inode, const void *buf, int size,
->  				const char *eventname, enum ima_hooks func,
->  				int pcr, const char *keyring);
->  void ima_audit_measurement(struct integrity_iint_cache *iint,
-> diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
-> index bf22de8b7ce0..4f39fb93f278 100644
-> --- a/security/integrity/ima/ima_api.c
-> +++ b/security/integrity/ima/ima_api.c
-> @@ -162,7 +162,7 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
->  
->  /**
->   * ima_get_action - appraise & measure decision based on policy.
-> - * @inode: pointer to inode to measure
-> + * @inode: pointer to the inode associated with the object being validated
->   * @cred: pointer to credentials structure to validate
->   * @secid: secid of the task being validated
->   * @mask: contains the permission mask (MAY_READ, MAY_WRITE, MAY_EXEC,
-> diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-> index a9649b04b9f1..6c52bf7ea7f0 100644
-> --- a/security/integrity/ima/ima_appraise.c
-> +++ b/security/integrity/ima/ima_appraise.c
-> @@ -328,7 +328,7 @@ int ima_check_blacklist(struct integrity_iint_cache *iint,
->  
->  		rc = is_binary_blacklisted(digest, digestsize);
->  		if ((rc == -EPERM) && (iint->flags & IMA_MEASURE))
-> -			process_buffer_measurement(digest, digestsize,
-> +			process_buffer_measurement(NULL, digest, digestsize,
->  						   "blacklisted-hash", NONE,
->  						   pcr, NULL);
->  	}
-> diff --git a/security/integrity/ima/ima_asymmetric_keys.c b/security/integrity/ima/ima_asymmetric_keys.c
-> index aaae80c4e376..1c68c500c26f 100644
-> --- a/security/integrity/ima/ima_asymmetric_keys.c
-> +++ b/security/integrity/ima/ima_asymmetric_keys.c
-> @@ -58,7 +58,7 @@ void ima_post_key_create_or_update(struct key *keyring, struct key *key,
->  	 * if the IMA policy is configured to measure a key linked
->  	 * to the given keyring.
->  	 */
-> -	process_buffer_measurement(payload, payload_len,
-> +	process_buffer_measurement(NULL, payload, payload_len,
->  				   keyring->description, KEY_CHECK, 0,
->  				   keyring->description);
->  }
-> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-> index 8351b2fd48e0..8a91711ca79b 100644
-> --- a/security/integrity/ima/ima_main.c
-> +++ b/security/integrity/ima/ima_main.c
-> @@ -726,6 +726,7 @@ int ima_load_data(enum kernel_load_data_id id)
+> diff --git a/fs/proc/base.c b/fs/proc/base.c
+> index d86c0afc8a85..ad806069c778 100644
+> --- a/fs/proc/base.c
+> +++ b/fs/proc/base.c
+> @@ -2189,16 +2189,16 @@ struct map_files_info {
+>  };
 >  
 >  /*
->   * process_buffer_measurement - Measure the buffer to ima log.
-> + * @inode: inode associated with the object being measured (NULL for KEY_CHECK)
->   * @buf: pointer to the buffer that needs to be added to the log.
->   * @size: size of buffer(in bytes).
->   * @eventname: event name to be used for the buffer entry.
-> @@ -735,7 +736,7 @@ int ima_load_data(enum kernel_load_data_id id)
->   *
->   * Based on policy, the buffer is measured into the ima log.
+> - * Only allow CAP_SYS_ADMIN to follow the links, due to concerns about how the
+> - * symlinks may be used to bypass permissions on ancestor directories in the
+> - * path to the file in question.
+> + * Only allow CAP_SYS_ADMIN and CAP_CHECKPOINT_RESTORE to follow the links, due
+> + * to concerns about how the symlinks may be used to bypass permissions on
+> + * ancestor directories in the path to the file in question.
 >   */
-> -void process_buffer_measurement(const void *buf, int size,
-> +void process_buffer_measurement(struct inode *inode, const void *buf, int size,
->  				const char *eventname, enum ima_hooks func,
->  				int pcr, const char *keyring)
+>  static const char *
+>  proc_map_files_get_link(struct dentry *dentry,
+>  			struct inode *inode,
+>  		        struct delayed_call *done)
 >  {
-> @@ -768,7 +769,7 @@ void process_buffer_measurement(const void *buf, int size,
->  	 */
->  	if (func) {
->  		security_task_getsecid(current, &secid);
-> -		action = ima_get_action(NULL, current_cred(), secid, 0, func,
-> +		action = ima_get_action(inode, current_cred(), secid, 0, func,
->  					&pcr, &template, keyring);
->  		if (!(action & IMA_MEASURE))
->  			return;
-> @@ -823,16 +824,26 @@ void process_buffer_measurement(const void *buf, int size,
+> -	if (!capable(CAP_SYS_ADMIN))
+> +	if (!capable(CAP_SYS_ADMIN) && !capable(CAP_CHECKPOINT_RESTORE))
+>  		return ERR_PTR(-EPERM);
+
+I think it's clearer if you just use:
+checkpoint_restore_ns_capable(&init_user_ns)
+
+> +static inline bool checkpoint_restore_ns_capable(struct user_namespace *ns)
+
 >  
->  /**
->   * ima_kexec_cmdline - measure kexec cmdline boot args
-> + * @kernel_fd: file descriptor of the kexec kernel being loaded
->   * @buf: pointer to buffer
->   * @size: size of buffer
->   *
->   * Buffers can only be measured, not appraised.
->   */
-> -void ima_kexec_cmdline(const void *buf, int size)
-> +void ima_kexec_cmdline(int kernel_fd, const void *buf, int size)
->  {
-> -	if (buf && size != 0)
-> -		process_buffer_measurement(buf, size, "kexec-cmdline",
-> -					   KEXEC_CMDLINE, 0, NULL);
-> +	struct fd f;
-> +
-> +	if (!buf || !size)
-> +		return;
-> +
-> +	f = fdget(kernel_fd);
-> +	if (!f.file)
-> +		return;
-> +
-> +	process_buffer_measurement(file_inode(f.file), buf, size,
-> +				   "kexec-cmdline", KEXEC_CMDLINE, 0, NULL);
-> +	fdput(f);
+>  	return proc_pid_get_link(dentry, inode, done);
+> diff --git a/include/linux/capability.h b/include/linux/capability.h
+> index b4345b38a6be..1e7fe311cabe 100644
+> --- a/include/linux/capability.h
+> +++ b/include/linux/capability.h
+> @@ -261,6 +261,12 @@ static inline bool bpf_capable(void)
+>  	return capable(CAP_BPF) || capable(CAP_SYS_ADMIN);
 >  }
 >  
->  static int __init init_ima(void)
-> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-> index 5eb14b567a31..294323b36d06 100644
-> --- a/security/integrity/ima/ima_policy.c
-> +++ b/security/integrity/ima/ima_policy.c
-> @@ -443,13 +443,9 @@ static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
->  {
->  	int i;
+> +static inline bool checkpoint_restore_ns_capable(struct user_namespace *ns)
+> +{
+> +	return ns_capable(ns, CAP_CHECKPOINT_RESTORE) ||
+> +		ns_capable(ns, CAP_SYS_ADMIN);
+> +}
+> +
+>  /* audit system wants to get cap info from files as well */
+>  extern int get_vfs_caps_from_disk(const struct dentry *dentry, struct cpu_vfs_cap_data *cpu_caps);
 >  
-> -	if ((func == KEXEC_CMDLINE) || (func == KEY_CHECK)) {
-> -		if ((rule->flags & IMA_FUNC) && (rule->func == func)) {
-> -			if (func == KEY_CHECK)
-> -				return ima_match_keyring(rule, keyring, cred);
-> -			return true;
-> -		}
-> -		return false;
-> +	if (func == KEY_CHECK) {
-> +		return (rule->flags & IMA_FUNC) && (rule->func == func) &&
-> +		       ima_match_keyring(rule, keyring, cred);
->  	}
->  	if ((rule->flags & IMA_FUNC) &&
->  	    (rule->func != func && func != POST_SETATTR))
-> @@ -1007,10 +1003,9 @@ static bool ima_validate_rule(struct ima_rule_entry *entry)
->  			if (entry->action & ~(MEASURE | DONT_MEASURE))
->  				return false;
+> diff --git a/include/uapi/linux/capability.h b/include/uapi/linux/capability.h
+> index 48ff0757ae5e..395dd0df8d08 100644
+> --- a/include/uapi/linux/capability.h
+> +++ b/include/uapi/linux/capability.h
+> @@ -408,7 +408,14 @@ struct vfs_ns_cap_data {
+>   */
+>  #define CAP_BPF			39
 >  
-> -			if (entry->flags & ~(IMA_FUNC | IMA_PCR))
-> -				return false;
-> -
-> -			if (ima_rule_contains_lsm_cond(entry))
-> +			if (entry->flags & ~(IMA_FUNC | IMA_FSMAGIC | IMA_UID |
-> +					     IMA_FOWNER | IMA_FSUUID |
-> +					     IMA_EUID | IMA_PCR | IMA_FSNAME))
->  				return false;
+> -#define CAP_LAST_CAP         CAP_BPF
+> +
+> +/* Allow checkpoint/restore related operations */
+> +/* Allow PID selection during clone3() */
+> +/* Allow writing to ns_last_pid */
+> +
+> +#define CAP_CHECKPOINT_RESTORE	40
+> +
+> +#define CAP_LAST_CAP         CAP_CHECKPOINT_RESTORE
 >  
->  			break;
-> diff --git a/security/integrity/ima/ima_queue_keys.c b/security/integrity/ima/ima_queue_keys.c
-> index 56ce24a18b66..69a8626a35c0 100644
-> --- a/security/integrity/ima/ima_queue_keys.c
-> +++ b/security/integrity/ima/ima_queue_keys.c
-> @@ -158,7 +158,7 @@ void ima_process_queued_keys(void)
+>  #define cap_valid(x) ((x) >= 0 && (x) <= CAP_LAST_CAP)
 >  
->  	list_for_each_entry_safe(entry, tmp, &ima_keys, list) {
->  		if (!timer_expired)
-> -			process_buffer_measurement(entry->payload,
-> +			process_buffer_measurement(NULL, entry->payload,
->  						   entry->payload_len,
->  						   entry->keyring_name,
->  						   KEY_CHECK, 0,
+> diff --git a/kernel/pid.c b/kernel/pid.c
+> index 5799ae54b89e..2d0a97b7ed7a 100644
+> --- a/kernel/pid.c
+> +++ b/kernel/pid.c
+> @@ -198,7 +198,7 @@ struct pid *alloc_pid(struct pid_namespace *ns, pid_t *set_tid,
+>  			if (tid != 1 && !tmp->child_reaper)
+>  				goto out_free;
+>  			retval = -EPERM;
+> -			if (!ns_capable(tmp->user_ns, CAP_SYS_ADMIN))
+> +			if (!checkpoint_restore_ns_capable(tmp->user_ns))
+>  				goto out_free;
+>  			set_tid_size--;
+>  		}
+> diff --git a/kernel/pid_namespace.c b/kernel/pid_namespace.c
+> index 0e5ac162c3a8..ac135bd600eb 100644
+> --- a/kernel/pid_namespace.c
+> +++ b/kernel/pid_namespace.c
+> @@ -269,7 +269,7 @@ static int pid_ns_ctl_handler(struct ctl_table *table, int write,
+>  	struct ctl_table tmp = *table;
+>  	int ret, next;
+>  
+> -	if (write && !ns_capable(pid_ns->user_ns, CAP_SYS_ADMIN))
+> +	if (write && !checkpoint_restore_ns_capable(pid_ns->user_ns))
+>  		return -EPERM;
+>  
+>  	/*
+> diff --git a/security/selinux/include/classmap.h b/security/selinux/include/classmap.h
+> index 98e1513b608a..40cebde62856 100644
+> --- a/security/selinux/include/classmap.h
+> +++ b/security/selinux/include/classmap.h
+> @@ -27,9 +27,10 @@
+>  	    "audit_control", "setfcap"
+>  
+>  #define COMMON_CAP2_PERMS  "mac_override", "mac_admin", "syslog", \
+> -		"wake_alarm", "block_suspend", "audit_read", "perfmon", "bpf"
+> +		"wake_alarm", "block_suspend", "audit_read", "perfmon", "bpf", \
+> +		"checkpoint_restore"
+>  
+> -#if CAP_LAST_CAP > CAP_BPF
+> +#if CAP_LAST_CAP > CAP_CHECKPOINT_RESTORE
+>  #error New capability defined, please update COMMON_CAP2_PERMS.
+>  #endif
+>  
 > -- 
-> 2.25.1
+> 2.26.2
 > 
-> 
-> _______________________________________________
-> kexec mailing list
-> kexec@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/kexec
-> 
-
-Although I still do not understand the deep knowledge of IMA, I
-still wonder to know what is the effect to the behavior changes end user
-visible.   Does it work with a kernel built-in commandline? eg no
-cmdlien passed at all.
-
-Thanks
-Dave
-
