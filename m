@@ -2,83 +2,96 @@ Return-Path: <SRS0=4lEG=AM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_STARTS_WITH_NUMS,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC9D8C433DF
-	for <linux-security-module@archiver.kernel.org>; Wed,  1 Jul 2020 14:05:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB212C433DF
+	for <linux-security-module@archiver.kernel.org>; Wed,  1 Jul 2020 14:11:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 955FF2068F
-	for <linux-security-module@archiver.kernel.org>; Wed,  1 Jul 2020 14:05:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="r44CNLXi"
+	by mail.kernel.org (Postfix) with ESMTP id D85822077D
+	for <linux-security-module@archiver.kernel.org>; Wed,  1 Jul 2020 14:11:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729503AbgGAOFn (ORCPT
+        id S1731310AbgGAOLu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 1 Jul 2020 10:05:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47562 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731256AbgGAOFm (ORCPT
+        Wed, 1 Jul 2020 10:11:50 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:60283 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731153AbgGAOLu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 1 Jul 2020 10:05:42 -0400
-Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB454C08C5C1;
-        Wed,  1 Jul 2020 07:05:41 -0700 (PDT)
-Received: by mail-pg1-x542.google.com with SMTP id g67so10875351pgc.8;
-        Wed, 01 Jul 2020 07:05:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:content-transfer-encoding:mime-version:subject:message-id:date
-         :cc:to;
-        bh=RMM9Z9iqlVaLrecC9159bXlUvQlK4CIqEqnJXgl0LBg=;
-        b=r44CNLXio1SwO4uwtZlpHQc2QtN6pgOZX6XtUOA9/HJkTS3x0cxuSP5gz25EObyuMA
-         PK5H4y993DtZwklYxD/IwS+Z6NoDf4aQYsx/lDFY89RtA9hYH32GnXQsTbYbXVSBMzR1
-         V5ZAT6yiF71y/kgwE21NnxppxPWFgxOZKS4BINbUjd6LKIWXhnun3l3XNXaWT9jPygVs
-         rPbfJ9JStAOkVqZlPKkH+COiKW8gRDz4pOsW1kDWJeQ+4cCe+ImzcbEJ0MRn2XFUtU7S
-         135AWJt+FWwSv3VoFulqIOJDIXLASMWe3E5dcoS0vAtZuLOjTleymKTL7DfjR8Aqve7P
-         JrPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:content-transfer-encoding:mime-version
-         :subject:message-id:date:cc:to;
-        bh=RMM9Z9iqlVaLrecC9159bXlUvQlK4CIqEqnJXgl0LBg=;
-        b=Wypv4KCCTX/2xFHxksoKtpQH4HMV9MRBvqBdy8gJ5/vW7m7WhbcYpNiDhIDe+bSbyG
-         GL2i80tyuMnhGUpppJlnVR2h2lGkupQfnjgEUXFx6FtlSS+8BCvhN9Q0xDDlLBw7WwzJ
-         HBzueh9lUDEb3FDQup7EDWZxieAUCmOc13cdh9apwXi7wzYPCkO5SIbtzQXGLAQj8Sjw
-         rv2CmQ+17dDhyaNN/xPt46nLgneCbN5UrveMfnqQn9g4dpgpmbmu6YppjaAAczRXVCtc
-         6Kas9fKE4Sl925fe2PS3citqg5ozZtEBIPg7y8aqFauyJccoyGqkdvG0GOqAwPw/8an4
-         uL2g==
-X-Gm-Message-State: AOAM532qswJ91y0yn8YjT3BVK6d2EdMKf9gWXfeg4NLtlS3okhZvX+WJ
-        5llX94SUmjzIDZvA1gjucmQ=
-X-Google-Smtp-Source: ABdhPJwvByK5Jzee0/xKvEMoktkPMd7F7n2aH2FmmD/W+GDfavHt+/RsByl41xaRkdIUQ0a288TwSw==
-X-Received: by 2002:a63:7a56:: with SMTP id j22mr19281888pgn.194.1593612341558;
-        Wed, 01 Jul 2020 07:05:41 -0700 (PDT)
-Received: from [127.0.0.1] ([103.86.69.165])
-        by smtp.gmail.com with ESMTPSA id y200sm6036543pfb.33.2020.07.01.07.05.36
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 01 Jul 2020 07:05:41 -0700 (PDT)
-From:   =?utf-8?B?6buE6YeR5rW3?= <2538082724huangjinhai@gmail.com>
-Content-Type: text/plain;
-        charset=us-ascii
+        Wed, 1 Jul 2020 10:11:50 -0400
+Received: from fsav305.sakura.ne.jp (fsav305.sakura.ne.jp [153.120.85.136])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 061E90OX093153;
+        Wed, 1 Jul 2020 23:09:00 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav305.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav305.sakura.ne.jp);
+ Wed, 01 Jul 2020 23:09:00 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav305.sakura.ne.jp)
+Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 061E8xWB093138
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Wed, 1 Jul 2020 23:08:59 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: linux-next: umh: fix processed error when UMH_WAIT_PROC is used
+ seems to break linux bridge on s390x (bisected)
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     Christian Borntraeger <borntraeger@de.ibm.com>,
+        Christoph Hellwig <hch@infradead.org>, ast@kernel.org,
+        axboe@kernel.dk, bfields@fieldses.org,
+        bridge@lists.linux-foundation.org, chainsaw@gentoo.org,
+        christian.brauner@ubuntu.com, chuck.lever@oracle.com,
+        davem@davemloft.net, dhowells@redhat.com,
+        gregkh@linuxfoundation.org, jarkko.sakkinen@linux.intel.com,
+        jmorris@namei.org, josh@joshtriplett.org, keescook@chromium.org,
+        keyrings@vger.kernel.org, kuba@kernel.org,
+        lars.ellenberg@linbit.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-security-module@vger.kernel.org, nikolay@cumulusnetworks.com,
+        philipp.reisner@linbit.com, ravenexp@gmail.com,
+        roopa@cumulusnetworks.com, serge@hallyn.com, slyfox@gentoo.org,
+        viro@zeniv.linux.org.uk, yangtiezhu@loongson.cn,
+        netdev@vger.kernel.org, markward@linux.ibm.com,
+        linux-s390 <linux-s390@vger.kernel.org>
+References: <9e767819-9bbe-2181-521e-4d8ca28ca4f7@de.ibm.com>
+ <20200624160953.GH4332@42.do-not-panic.com>
+ <ea41e2a9-61f7-aec1-79e5-7b08b6dd5119@de.ibm.com>
+ <4e27098e-ac8d-98f0-3a9a-ea25242e24ec@de.ibm.com>
+ <4d8fbcea-a892-3453-091f-d57c03f9aa90@de.ibm.com>
+ <1263e370-7cee-24d8-b98c-117bf7c90a83@de.ibm.com>
+ <20200626025410.GJ4332@42.do-not-panic.com>
+ <20200630175704.GO13911@42.do-not-panic.com>
+ <b24d8dae-1872-ba2c-acd4-ed46c0781317@de.ibm.com>
+ <a6792135-3285-0861-014e-3db85ea251dc@i-love.sakura.ne.jp>
+ <20200701135324.GS4332@42.do-not-panic.com>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <8d714a23-bac4-7631-e5fc-f97c20a46083@i-love.sakura.ne.jp>
+Date:   Wed, 1 Jul 2020 23:08:57 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
+MIME-Version: 1.0
+In-Reply-To: <20200701135324.GS4332@42.do-not-panic.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Mime-Version: 1.0 (Mac OS X Mail 13.4 \(3608.80.23.2.2\))
-Subject: Re: [RFC PATCH 0/7] x86: introduce system calls addess space
- isolation
-Message-Id: <65C2C351-F43A-4C32-90E0-8CE412169084@gmail.com>
-Date:   Wed, 1 Jul 2020 22:05:34 +0800
-Cc:     James.Bottomley@hansenpartnership.com,
-        alexandre.chartre@oracle.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, hpa@zytor.com, jwadams@google.com,
-        keescook@chromium.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-security-module@vger.kernel.org,
-        luto@kernel.org, mingo@redhat.com, peterz@infradead.org,
-        pjt@google.com, tglx@linutronix.de, x86@kernel.org
-To:     rppt@linux.ibm.com
-X-Mailer: Apple Mail (2.3608.80.23.2.2)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-How about performance when running with ASI?
+On 2020/07/01 22:53, Luis Chamberlain wrote:
+>> Well, it is not br_stp_call_user() but br_stp_start() which is expecting
+>> to set sub_info->retval for both KWIFEXITED() case and KWIFSIGNALED() case.
+>> That is, sub_info->retval needs to carry raw value (i.e. without "umh: fix
+>> processed error when UMH_WAIT_PROC is used" will be the correct behavior).
+> 
+> br_stp_start() doesn't check for the raw value, it just checks for err
+> or !err. So the patch, "umh: fix processed error when UMH_WAIT_PROC is
+> used" propagates the correct error now.
+
+No. If "/sbin/bridge-stp virbr0 start" terminated due to e.g. SIGSEGV
+(for example, by inserting "kill -SEGV $$" into right after "#!/bin/sh" line),
+br_stp_start() needs to select BR_KERNEL_STP path. We can't assume that
+/sbin/bridge-stp is always terminated by exit() syscall (and hence we can't
+ignore KWIFSIGNALED() case in call_usermodehelper_exec_sync()).
+
