@@ -2,82 +2,134 @@ Return-Path: <SRS0=4lEG=AM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39ACBC433E2
-	for <linux-security-module@archiver.kernel.org>; Wed,  1 Jul 2020 16:55:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94694C433E0
+	for <linux-security-module@archiver.kernel.org>; Wed,  1 Jul 2020 17:17:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0B7F820771
-	for <linux-security-module@archiver.kernel.org>; Wed,  1 Jul 2020 16:55:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1593622533;
-	bh=GvtsGp11yx4CyQuZ9RgW9RmPb9CbIpEadx+tC5GAmYc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=a8oUjGYQHBH2t6Quu03w3vTQppjZrndeua3+tGrLfZDp33fPWZ4HGvLClSmQ6QerR
-	 v6rWN8oS6AVXvjr/cHrRnq2HCmZ0RssEyiFGcT5gZp14CVs7zxIgvfmK3MbAQ+VaS9
-	 4Ti8/ffNeqeeCLQaJbOIqEsGKG+B3tBxcdYAyjSA=
+	by mail.kernel.org (Postfix) with ESMTP id 7948B20747
+	for <linux-security-module@archiver.kernel.org>; Wed,  1 Jul 2020 17:17:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732551AbgGAQz2 (ORCPT
+        id S1731531AbgGARRQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 1 Jul 2020 12:55:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58200 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730955AbgGAQz1 (ORCPT
+        Wed, 1 Jul 2020 13:17:16 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:43496 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731122AbgGARRP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 1 Jul 2020 12:55:27 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C23D72071A;
-        Wed,  1 Jul 2020 16:55:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1593622527;
-        bh=GvtsGp11yx4CyQuZ9RgW9RmPb9CbIpEadx+tC5GAmYc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Wef9XUjzZgqElVeeA6mWBmPRS8DJOiCuCsDfm+qOciiluO0lS0zIQcl7Ga69d16hG
-         kMLS+YRdNuRemWr0BPaYksQuagE3DzG/PhEy+VeVyIAsCbzA6H/+IcdoLlR+PbvDFC
-         jIowDjMEDK75H9txsXow2QCgtEQTvKB5z2gMVQbo=
-Date:   Wed, 1 Jul 2020 18:55:13 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Scott Branden <scott.branden@broadcom.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Jessica Yu <jeyu@kernel.org>,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Wed, 1 Jul 2020 13:17:15 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jqgMA-0003Fl-5f; Wed, 01 Jul 2020 11:17:10 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jqgM9-0004As-5q; Wed, 01 Jul 2020 11:17:10 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>,
+        Greg Kroah-Hartman <greg@kroah.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
         Kees Cook <keescook@chromium.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        kexec@lists.infradead.org, linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, selinux@vger.kernel.org
-Subject: Re: [PATCH v3 1/1] fs: move kernel_read_file* to its own include file
-Message-ID: <20200701165513.GA3176669@kroah.com>
-References: <20200617161218.18487-1-scott.branden@broadcom.com>
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <20200625095725.GA3303921@kroah.com>
+        <778297d2-512a-8361-cf05-42d9379e6977@i-love.sakura.ne.jp>
+        <20200625120725.GA3493334@kroah.com>
+        <20200625.123437.2219826613137938086.davem@davemloft.net>
+        <CAHk-=whuTwGHEPjvtbBvneHHXeqJC=q5S09mbPnqb=Q+MSPMag@mail.gmail.com>
+        <87pn9mgfc2.fsf_-_@x220.int.ebiederm.org>
+        <87y2oac50p.fsf@x220.int.ebiederm.org>
+        <87bll17ili.fsf_-_@x220.int.ebiederm.org>
+        <20200629221231.jjc2czk3ul2roxkw@ast-mbp.dhcp.thefacebook.com>
+        <87eepwzqhd.fsf@x220.int.ebiederm.org>
+        <20200630165256.i7wdfjxmqu73fewc@ast-mbp.dhcp.thefacebook.com>
+Date:   Wed, 01 Jul 2020 12:12:35 -0500
+In-Reply-To: <20200630165256.i7wdfjxmqu73fewc@ast-mbp.dhcp.thefacebook.com>
+        (Alexei Starovoitov's message of "Tue, 30 Jun 2020 09:52:56 -0700")
+Message-ID: <87lfk3w458.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200617161218.18487-1-scott.branden@broadcom.com>
+Content-Type: text/plain
+X-XM-SPF: eid=1jqgM9-0004As-5q;;;mid=<87lfk3w458.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/OTl4+7uj9gmckES4vam8J/yGBVetut8Y=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH v2 00/15] Make the user mode driver code a better citizen
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jun 17, 2020 at 09:12:18AM -0700, Scott Branden wrote:
-> Move kernel_read_file* out of linux/fs.h to its own linux/kernel_read_file.h
-> include file. That header gets pulled in just about everywhere
-> and doesn't really need functions not related to the general fs interface.
-> 
-> Suggested-by: Christoph Hellwig <hch@lst.de>
-> Signed-off-by: Scott Branden <scott.branden@broadcom.com>
+Alexei Starovoitov <alexei.starovoitov@gmail.com> writes:
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> On Tue, Jun 30, 2020 at 07:29:34AM -0500, Eric W. Biederman wrote:
+>> 
+>> diff --git a/net/bpfilter/bpfilter_kern.c b/net/bpfilter/bpfilter_kern.c
+>> index 91474884ddb7..3e1874030daa 100644
+>> --- a/net/bpfilter/bpfilter_kern.c
+>> +++ b/net/bpfilter/bpfilter_kern.c
+>> @@ -19,8 +19,8 @@ static void shutdown_umh(void)
+>>         struct pid *tgid = info->tgid;
+>>  
+>>         if (tgid) {
+>> -               kill_pid_info(SIGKILL, SEND_SIG_PRIV, tgid);
+>> -               wait_event(tgid->wait_pidfd, !pid_task(tgid, PIDTYPE_TGID));
+>> +               kill_pid(tgid, SIGKILL, 1);
+>> +               wait_event(tgid->wait_pidfd, !pid_has_task(tgid, PIDTYPE_TGID));
+>>                 bpfilter_umh_cleanup(info);
+>>         }
+>>  }
+>> 
+>> > And then did:
+>> > while true; do iptables -L;rmmod bpfilter; done
+>> >  
+>> > Unfortunately sometimes 'rmmod bpfilter' hangs in wait_event().
+>> 
+>> Hmm.  The wake up happens just of tgid->wait_pidfd happens just before
+>> release_task is called so there is a race.  As it is possible to wake
+>> up and then go back to sleep before pid_has_task becomes false.
+>> 
+>> So I think I need a friendly helper that does:
+>> 
+>> bool task_has_exited(struct pid *tgid)
+>> {
+>> 	bool exited = false;
+>> 
+>> 	rcu_read_lock();
+>>         tsk = pid_task(tgid, PIDTYPE_TGID);
+>>         exited = !!tsk;
+>>         if (tsk) {
+>>         	exited = !!tsk->exit_state;
+>> out:
+>> 	rcu_unlock();
+>> 	return exited;
+>> }
+>
+> All makes sense to me.
+> If I understood the race condition such helper should indeed solve it.
+> Are you going to add such patch to your series?
+> I'll proceed with my work on top of your series and will ignore this
+> race for now, but I think it should be fixed before we land this set
+> into multiple trees.
+
+Yes. I am just finishing it up now.
+
+Eric
+
