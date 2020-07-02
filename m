@@ -2,89 +2,304 @@ Return-Path: <SRS0=SqoC=AN=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D9D8C433E1
-	for <linux-security-module@archiver.kernel.org>; Thu,  2 Jul 2020 20:44:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70F21C433DF
+	for <linux-security-module@archiver.kernel.org>; Thu,  2 Jul 2020 20:53:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 321FA20780
-	for <linux-security-module@archiver.kernel.org>; Thu,  2 Jul 2020 20:44:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4718420672
+	for <linux-security-module@archiver.kernel.org>; Thu,  2 Jul 2020 20:53:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726121AbgGBUoR (ORCPT
+        id S1726035AbgGBUxI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 2 Jul 2020 16:44:17 -0400
-Received: from mga05.intel.com ([192.55.52.43]:41083 "EHLO mga05.intel.com"
+        Thu, 2 Jul 2020 16:53:08 -0400
+Received: from mail.hallyn.com ([178.63.66.53]:57554 "EHLO mail.hallyn.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725915AbgGBUoR (ORCPT
+        id S1725937AbgGBUxI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 2 Jul 2020 16:44:17 -0400
-IronPort-SDR: akNsFXPEHAEni4tceiX6tnOP08wJrORER/DDrezP+lzdT/dijNLd6JvjcLcxAifNmcIhEcVQHe
- rzijlNcaZ1nw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9670"; a="231888268"
-X-IronPort-AV: E=Sophos;i="5.75,305,1589266800"; 
-   d="scan'208";a="231888268"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2020 13:44:16 -0700
-IronPort-SDR: Jv5lhpoXtZAaNPvlPtQaF51tu7Xxn0jnqTFQOYWUg1V7tKXfsBh9FpES+u0UHaCnlddZyYTGf1
- sVjC2aJys0mg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.75,305,1589266800"; 
-   d="scan'208";a="278228138"
-Received: from frichard-mobl.ger.corp.intel.com (HELO localhost) ([10.249.44.59])
-  by orsmga003.jf.intel.com with ESMTP; 02 Jul 2020 13:44:12 -0700
-Date:   Thu, 2 Jul 2020 23:44:11 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Stefan Berger <stefanb@linux.vnet.ibm.com>
-Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-acpi@vger.kernel.org, linux-security-module@vger.kernel.org,
-        Stefan Berger <stefanb@linux.ibm.com>
-Subject: Re: [PATCH v8 2/2] tpm: Add support for event log pointer found in
- TPM2 ACPI table
-Message-ID: <20200702204411.GB31291@linux.intel.com>
-References: <20200626153948.2059251-1-stefanb@linux.vnet.ibm.com>
- <20200626153948.2059251-3-stefanb@linux.vnet.ibm.com>
+        Thu, 2 Jul 2020 16:53:08 -0400
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+        id A3E47A2E; Thu,  2 Jul 2020 15:53:05 -0500 (CDT)
+Date:   Thu, 2 Jul 2020 15:53:05 -0500
+From:   "Serge E. Hallyn" <serge@hallyn.com>
+To:     Adrian Reber <areber@redhat.com>
+Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Pavel Emelyanov <ovzxemul@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
+        =?utf-8?B?TWljaGHFgiBDxYJhcGnFhHNraQ==?= <mclapinski@google.com>,
+        Kamil Yurtsever <kyurtsever@google.com>,
+        Dirk Petersen <dipeit@gmail.com>,
+        Christine Flood <chf@redhat.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Radostin Stoyanov <rstoyanov1@gmail.com>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        Serge Hallyn <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Sargun Dhillon <sargun@sargun.me>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, selinux@vger.kernel.org,
+        Eric Paris <eparis@parisplace.org>,
+        Jann Horn <jannh@google.com>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v4 2/3] selftests: add clone3() CAP_CHECKPOINT_RESTORE
+ test
+Message-ID: <20200702205305.GA3283@mail.hallyn.com>
+References: <20200701064906.323185-1-areber@redhat.com>
+ <20200701064906.323185-3-areber@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200626153948.2059251-3-stefanb@linux.vnet.ibm.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20200701064906.323185-3-areber@redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jun 26, 2020 at 11:39:48AM -0400, Stefan Berger wrote:
-> From: Stefan Berger <stefanb@linux.ibm.com>
-> 
-> In case a TPM2 is attached, search for a TPM2 ACPI table when trying
-> to get the event log from ACPI. If one is found, use it to get the
-> start and length of the log area. This allows non-UEFI systems, such
-> as SeaBIOS, to pass an event log when using a TPM2.
-> 
-> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+On Wed, Jul 01, 2020 at 08:49:05AM +0200, Adrian Reber wrote:
+> This adds a test that changes its UID, uses capabilities to
+> get CAP_CHECKPOINT_RESTORE and uses clone3() with set_tid to
+> create a process with a given PID as non-root.
+
+Seems worth also verifying that it fails if you have no capabilities.
+I don't see that in the existing clone3/ test dir.
+
+
+> Signed-off-by: Adrian Reber <areber@redhat.com>
 > ---
->  drivers/char/tpm/eventlog/acpi.c | 63 +++++++++++++++++++++-----------
->  1 file changed, 42 insertions(+), 21 deletions(-)
+>  tools/testing/selftests/clone3/Makefile       |   4 +-
+>  .../clone3/clone3_cap_checkpoint_restore.c    | 203 ++++++++++++++++++
+>  2 files changed, 206 insertions(+), 1 deletion(-)
+>  create mode 100644 tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
 > 
-> diff --git a/drivers/char/tpm/eventlog/acpi.c b/drivers/char/tpm/eventlog/acpi.c
-> index 63ada5e53f13..51312c460335 100644
-> --- a/drivers/char/tpm/eventlog/acpi.c
-> +++ b/drivers/char/tpm/eventlog/acpi.c
-> @@ -49,9 +49,9 @@ int tpm_read_log_acpi(struct tpm_chip *chip)
->  	void __iomem *virt;
->  	u64 len, start;
->  	struct tpm_bios_log *log;
-> -
-> -	if (chip->flags & TPM_CHIP_FLAG_TPM2)
-> -		return -ENODEV;
-> +	struct acpi_table_tpm2 *tbl;
-> +	struct acpi_tpm2_phy *t2phy;
-
-This is a rather cryptic variable name. Should be either 'phy' or
-'tpm2_phy' (I don't care that much which one). Did not spot this
-earlier.
-
-/Jarkko
+> diff --git a/tools/testing/selftests/clone3/Makefile b/tools/testing/selftests/clone3/Makefile
+> index cf976c732906..ef7564cb7abe 100644
+> --- a/tools/testing/selftests/clone3/Makefile
+> +++ b/tools/testing/selftests/clone3/Makefile
+> @@ -1,6 +1,8 @@
+>  # SPDX-License-Identifier: GPL-2.0
+>  CFLAGS += -g -I../../../../usr/include/
+> +LDLIBS += -lcap
+>  
+> -TEST_GEN_PROGS := clone3 clone3_clear_sighand clone3_set_tid
+> +TEST_GEN_PROGS := clone3 clone3_clear_sighand clone3_set_tid \
+> +	clone3_cap_checkpoint_restore
+>  
+>  include ../lib.mk
+> diff --git a/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c b/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
+> new file mode 100644
+> index 000000000000..2cc3d57b91f2
+> --- /dev/null
+> +++ b/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
+> @@ -0,0 +1,203 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +/*
+> + * Based on Christian Brauner's clone3() example.
+> + * These tests are assuming to be running in the host's
+> + * PID namespace.
+> + */
+> +
+> +/* capabilities related code based on selftests/bpf/test_verifier.c */
+> +
+> +#define _GNU_SOURCE
+> +#include <errno.h>
+> +#include <linux/types.h>
+> +#include <linux/sched.h>
+> +#include <stdio.h>
+> +#include <stdlib.h>
+> +#include <stdbool.h>
+> +#include <sys/capability.h>
+> +#include <sys/prctl.h>
+> +#include <sys/syscall.h>
+> +#include <sys/types.h>
+> +#include <sys/un.h>
+> +#include <sys/wait.h>
+> +#include <unistd.h>
+> +#include <sched.h>
+> +
+> +#include "../kselftest.h"
+> +#include "clone3_selftests.h"
+> +
+> +#ifndef MAX_PID_NS_LEVEL
+> +#define MAX_PID_NS_LEVEL 32
+> +#endif
+> +
+> +static void child_exit(int ret)
+> +{
+> +	fflush(stdout);
+> +	fflush(stderr);
+> +	_exit(ret);
+> +}
+> +
+> +static int call_clone3_set_tid(pid_t * set_tid, size_t set_tid_size)
+> +{
+> +	int status;
+> +	pid_t pid = -1;
+> +
+> +	struct clone_args args = {
+> +		.exit_signal = SIGCHLD,
+> +		.set_tid = ptr_to_u64(set_tid),
+> +		.set_tid_size = set_tid_size,
+> +	};
+> +
+> +	pid = sys_clone3(&args, sizeof(struct clone_args));
+> +	if (pid < 0) {
+> +		ksft_print_msg("%s - Failed to create new process\n",
+> +			       strerror(errno));
+> +		return -errno;
+> +	}
+> +
+> +	if (pid == 0) {
+> +		int ret;
+> +		char tmp = 0;
+> +
+> +		ksft_print_msg
+> +		    ("I am the child, my PID is %d (expected %d)\n",
+> +		     getpid(), set_tid[0]);
+> +
+> +		if (set_tid[0] != getpid())
+> +			child_exit(EXIT_FAILURE);
+> +		child_exit(EXIT_SUCCESS);
+> +	}
+> +
+> +	ksft_print_msg("I am the parent (%d). My child's pid is %d\n",
+> +		       getpid(), pid);
+> +
+> +	if (waitpid(pid, &status, 0) < 0) {
+> +		ksft_print_msg("Child returned %s\n", strerror(errno));
+> +		return -errno;
+> +	}
+> +
+> +	if (!WIFEXITED(status))
+> +		return -1;
+> +
+> +	return WEXITSTATUS(status);
+> +}
+> +
+> +static int test_clone3_set_tid(pid_t * set_tid,
+> +			       size_t set_tid_size, int expected)
+> +{
+> +	int ret;
+> +
+> +	ksft_print_msg("[%d] Trying clone3() with CLONE_SET_TID to %d\n",
+> +		       getpid(), set_tid[0]);
+> +	ret = call_clone3_set_tid(set_tid, set_tid_size);
+> +
+> +	ksft_print_msg
+> +	    ("[%d] clone3() with CLONE_SET_TID %d says :%d - expected %d\n",
+> +	     getpid(), set_tid[0], ret, expected);
+> +	if (ret != expected) {
+> +		ksft_test_result_fail
+> +		    ("[%d] Result (%d) is different than expected (%d)\n",
+> +		     getpid(), ret, expected);
+> +		return -1;
+> +	}
+> +	ksft_test_result_pass
+> +	    ("[%d] Result (%d) matches expectation (%d)\n", getpid(), ret,
+> +	     expected);
+> +
+> +	return 0;
+> +}
+> +
+> +struct libcap {
+> +	struct __user_cap_header_struct hdr;
+> +	struct __user_cap_data_struct data[2];
+> +};
+> +
+> +static int set_capability()
+> +{
+> +	cap_value_t cap_values[] = { CAP_SETUID, CAP_SETGID };
+> +	struct libcap *cap;
+> +	int ret = -1;
+> +	cap_t caps;
+> +
+> +	caps = cap_get_proc();
+> +	if (!caps) {
+> +		perror("cap_get_proc");
+> +		return -1;
+> +	}
+> +
+> +	/* Drop all capabilities */
+> +	if (cap_clear(caps)) {
+> +		perror("cap_clear");
+> +		goto out;
+> +	}
+> +
+> +	cap_set_flag(caps, CAP_EFFECTIVE, 2, cap_values, CAP_SET);
+> +	cap_set_flag(caps, CAP_PERMITTED, 2, cap_values, CAP_SET);
+> +
+> +	cap = (struct libcap *) caps;
+> +
+> +	/* 40 -> CAP_CHECKPOINT_RESTORE */
+> +	cap->data[1].effective |= 1 << (40 - 32);
+> +	cap->data[1].permitted |= 1 << (40 - 32);
+> +
+> +	if (cap_set_proc(caps)) {
+> +		perror("cap_set_proc");
+> +		goto out;
+> +	}
+> +	ret = 0;
+> +out:
+> +	if (cap_free(caps))
+> +		perror("cap_free");
+> +	return ret;
+> +}
+> +
+> +int main(int argc, char *argv[])
+> +{
+> +	pid_t pid;
+> +	int status;
+> +	int ret = 0;
+> +	pid_t set_tid[1];
+> +	uid_t uid = getuid();
+> +
+> +	ksft_print_header();
+> +	test_clone3_supported();
+> +	ksft_set_plan(2);
+> +
+> +	if (uid != 0) {
+> +		ksft_cnt.ksft_xskip = ksft_plan;
+> +		ksft_print_msg("Skipping all tests as non-root\n");
+> +		return ksft_exit_pass();
+> +	}
+> +
+> +	memset(&set_tid, 0, sizeof(set_tid));
+> +
+> +	/* Find the current active PID */
+> +	pid = fork();
+> +	if (pid == 0) {
+> +		ksft_print_msg("Child has PID %d\n", getpid());
+> +		child_exit(EXIT_SUCCESS);
+> +	}
+> +	if (waitpid(pid, &status, 0) < 0)
+> +		ksft_exit_fail_msg("Waiting for child %d failed", pid);
+> +
+> +	/* After the child has finished, its PID should be free. */
+> +	set_tid[0] = pid;
+> +
+> +	if (set_capability())
+> +		ksft_test_result_fail
+> +		    ("Could not set CAP_CHECKPOINT_RESTORE\n");
+> +	prctl(PR_SET_KEEPCAPS, 1, 0, 0, 0);
+> +	/* This would fail without CAP_CHECKPOINT_RESTORE */
+> +	setgid(1000);
+> +	setuid(1000);
+> +	set_tid[0] = pid;
+> +	ret |= test_clone3_set_tid(set_tid, 1, -EPERM);
+> +	if (set_capability())
+> +		ksft_test_result_fail
+> +		    ("Could not set CAP_CHECKPOINT_RESTORE\n");
+> +	/* This should work as we have CAP_CHECKPOINT_RESTORE as non-root */
+> +	ret |= test_clone3_set_tid(set_tid, 1, 0);
+> +
+> +	return !ret ? ksft_exit_pass() : ksft_exit_fail();
+> +}
+> -- 
+> 2.26.2
