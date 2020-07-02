@@ -2,132 +2,152 @@ Return-Path: <SRS0=SqoC=AN=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FE8AC433E0
-	for <linux-security-module@archiver.kernel.org>; Thu,  2 Jul 2020 22:00:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2ABCC433E0
+	for <linux-security-module@archiver.kernel.org>; Thu,  2 Jul 2020 22:17:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 16E062088E
-	for <linux-security-module@archiver.kernel.org>; Thu,  2 Jul 2020 22:00:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C23F5206BE
+	for <linux-security-module@archiver.kernel.org>; Thu,  2 Jul 2020 22:17:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="y2q6/ZIm"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="PFMZdTTF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726396AbgGBWAZ (ORCPT
+        id S1726287AbgGBWRA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 2 Jul 2020 18:00:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60676 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726110AbgGBWAX (ORCPT
+        Thu, 2 Jul 2020 18:17:00 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:33104 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726121AbgGBWQ7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 2 Jul 2020 18:00:23 -0400
-Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8131C08C5DF
-        for <linux-security-module@vger.kernel.org>; Thu,  2 Jul 2020 15:00:22 -0700 (PDT)
-Received: by mail-ej1-x643.google.com with SMTP id ga4so31544837ejb.11
-        for <linux-security-module@vger.kernel.org>; Thu, 02 Jul 2020 15:00:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hQjS9Ie2JLW+5joMKLIKCU6b/2UCakl57GgRGFSlTtk=;
-        b=y2q6/ZImKC9EyqaN+Cp25cLz1ciVm4U7qtXibl4rJLq7yDQxPIwOaQiDW4uPnhkAI8
-         VRW0HSRxSAmlfFw/Jce/k0WugBY6dAl4O6HQ/sc/VLK6/v4c05dZ28qBMUNFtXbku8Ch
-         AULevi22Fz6RKjCBjNEoLvV62nXHhiI0ALpbVAFFC6eC3/8cU19LT7W6/+o8hdExkIVp
-         SpzhSXPTolBo/5B/rPenjUqcOQ+Q44Ekpah8XqISOcoMHY3/BTSU/R5r9kYGnOKn1iQ4
-         3Eelioz4+/tk104uJvI7uaxboR8nMC2mTgZeV8NgshGTgOJtB/3rVeJ8cjXz8tU5nKfO
-         mLBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hQjS9Ie2JLW+5joMKLIKCU6b/2UCakl57GgRGFSlTtk=;
-        b=XM4NDNAzpF3+yGGHE171sF1iumRQVcGoHcb/pE22l/nfsoozUQTIpzQPqYEjMuJKrY
-         qADYFOoyvtVblgUSsIL/TE9mv0w+e/wi1GcdXeljPiVRiNA6ai+B3sXJwtOKBAf4jX7M
-         7KgIcaOjGL+YxiEHlj9yDjfbuVmc4d+YngPx4ofOijd2jfgD7EGg5tzOgtGvHB5Ql76q
-         SZaMQSIyMq81fcWlLh+Xj7jTK3p54KWUSyUBwHJ7Tlnfu5JDw/99IXHa6oDbrvSMwwIe
-         F6EZbB5DCwSszNpbHSeh4Epx6ElRJYtqcelM+qmPNET39Bf+xzvF3jyY+q6YF9FXIhi5
-         DLfw==
-X-Gm-Message-State: AOAM5322TZ1+jtlmj6wcUB/B2dRQGp4LxElKFElzBQNAAIgXmujIzv+H
-        7bqnYAUlapNrY5wOMVrLwcEXyGDGQfOdBrlrprWq
-X-Google-Smtp-Source: ABdhPJymg7hoMn4NQo9VkFS8SsNN1VIXxrtL9dctJ/u8BOTmybW6CezLxVIBxEEQqtZorAPFuFOU58gSTBkhV1lUPSk=
-X-Received: by 2002:a17:906:456:: with SMTP id e22mr23944788eja.178.1593727221274;
- Thu, 02 Jul 2020 15:00:21 -0700 (PDT)
+        Thu, 2 Jul 2020 18:16:59 -0400
+Received: from sequoia (162-237-133-238.lightspeed.rcsntx.sbcglobal.net [162.237.133.238])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 3454E20B717A;
+        Thu,  2 Jul 2020 15:16:58 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3454E20B717A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1593728218;
+        bh=oF/uy0h2kLORBOaWz4SneoVrme6PATdmsVREbyRum0g=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=PFMZdTTFgv5iNVM4ImGmNBoS/pvR9L0heXpZKAZMOxhPhktoVwM67LJRd8IGKuMp+
+         hsVbe/ezG63jAQaTHYIibsgW44l4YWhhShkGXgLfJnP5lJ695+dZFexJkvSWwrLoXu
+         EKLjodVxz2+a49rtE8yf+rCbSjRVinzD7f3Lub6c=
+Date:   Thu, 2 Jul 2020 17:16:56 -0500
+From:   Tyler Hicks <tyhicks@linux.microsoft.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Prakhar Srivastava <prsriva02@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v2 09/11] ima: Move validation of the keyrings
+ conditional into ima_validate_rule()
+Message-ID: <20200702221656.GH4694@sequoia>
+References: <20200626223900.253615-1-tyhicks@linux.microsoft.com>
+ <20200626223900.253615-10-tyhicks@linux.microsoft.com>
+ <1593558449.5057.12.camel@linux.ibm.com>
 MIME-Version: 1.0
-References: <20200701064906.323185-1-areber@redhat.com> <20200701064906.323185-4-areber@redhat.com>
- <20200702211647.GB3283@mail.hallyn.com>
-In-Reply-To: <20200702211647.GB3283@mail.hallyn.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 2 Jul 2020 18:00:10 -0400
-Message-ID: <CAHC9VhQZ=cwiOay6OMMdM1UHm69wDaga9HBkyTbx8-1OU=aBvA@mail.gmail.com>
-Subject: Re: [PATCH v4 3/3] prctl: Allow ptrace capable processes to change /proc/self/exe
-To:     "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     Adrian Reber <areber@redhat.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Pavel Emelyanov <ovzxemul@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Andrei Vagin <avagin@gmail.com>,
-        Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
-        =?UTF-8?B?TWljaGHFgiBDxYJhcGnFhHNraQ==?= <mclapinski@google.com>,
-        Kamil Yurtsever <kyurtsever@google.com>,
-        Dirk Petersen <dipeit@gmail.com>,
-        Christine Flood <chf@redhat.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Radostin Stoyanov <rstoyanov1@gmail.com>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Sargun Dhillon <sargun@sargun.me>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, selinux@vger.kernel.org,
-        Eric Paris <eparis@parisplace.org>,
-        Jann Horn <jannh@google.com>, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1593558449.5057.12.camel@linux.ibm.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jul 2, 2020 at 5:16 PM Serge E. Hallyn <serge@hallyn.com> wrote:
-> On Wed, Jul 01, 2020 at 08:49:06AM +0200, Adrian Reber wrote:
-> > From: Nicolas Viennot <Nicolas.Viennot@twosigma.com>
-> >
-> > Previously, the current process could only change the /proc/self/exe
-> > link with local CAP_SYS_ADMIN.
-> > This commit relaxes this restriction by permitting such change with
-> > CAP_CHECKPOINT_RESTORE, and the ability to use ptrace.
-> >
-> > With access to ptrace facilities, a process can do the following: fork a
-> > child, execve() the target executable, and have the child use ptrace()
-> > to replace the memory content of the current process. This technique
-> > makes it possible to masquerade an arbitrary program as any executable,
-> > even setuid ones.
-> >
-> > Signed-off-by: Nicolas Viennot <Nicolas.Viennot@twosigma.com>
-> > Signed-off-by: Adrian Reber <areber@redhat.com>
->
-> This is scary.  But I believe it is safe.
->
-> Reviewed-by: Serge Hallyn <serge@hallyn.com>
->
-> I am a bit curious about the implications of the selinux patch.
-> IIUC you are using the permission of the tracing process to
-> execute the file without transition, so this is a way to work
-> around the policy which might prevent the tracee from doing so.
-> Given that SELinux wants to be MAC, I'm not *quite* sure that's
-> considered kosher.  You also are skipping the PROCESS__PTRACE
-> to SECCLASS_PROCESS check which selinux_bprm_set_creds does later
-> on.  Again I'm just not quite sure what's considered normal there
-> these days.
->
-> Paul, do you have input there?
+On 2020-06-30 19:07:29, Mimi Zohar wrote:
+> On Fri, 2020-06-26 at 17:38 -0500, Tyler Hicks wrote:
+> > Use ima_validate_rule() to ensure that the combination of a hook
+> > function and the keyrings conditional is valid and that the keyrings
+> > conditional is not specified without an explicit KEY_CHECK func
+> > conditional. This is a code cleanup and has no user-facing change.
+> > 
+> > Signed-off-by: Tyler Hicks <tyhicks@linux.microsoft.com>
+> > ---
+> > 
+> > * v2
+> >   - Allowed IMA_DIGSIG_REQUIRED, IMA_PERMIT_DIRECTIO,
+> >     IMA_MODSIG_ALLOWED, and IMA_CHECK_BLACKLIST conditionals to be
+> >     present in the rule entry flags for non-buffer hook functions.
+> > 
+> >  security/integrity/ima/ima_policy.c | 13 +++++++++++--
+> >  1 file changed, 11 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+> > index 8cdca2399d59..43d49ad958fb 100644
+> > --- a/security/integrity/ima/ima_policy.c
+> > +++ b/security/integrity/ima/ima_policy.c
+> > @@ -1000,6 +1000,15 @@ static bool ima_validate_rule(struct ima_rule_entry *entry)
+> >  		case KEXEC_KERNEL_CHECK:
+> >  		case KEXEC_INITRAMFS_CHECK:
+> >  		case POLICY_CHECK:
+> > +			if (entry->flags & ~(IMA_FUNC | IMA_MASK | IMA_FSMAGIC |
+> > +					     IMA_UID | IMA_FOWNER | IMA_FSUUID |
+> > +					     IMA_INMASK | IMA_EUID | IMA_PCR |
+> > +					     IMA_FSNAME | IMA_DIGSIG_REQUIRED |
+> > +					     IMA_PERMIT_DIRECTIO |
+> > +					     IMA_MODSIG_ALLOWED |
+> > +					     IMA_CHECK_BLACKLIST))
+> 
+> Other than KEYRINGS, this patch should continue to behave the same.
+>  However, this list gives the impressions that all of these flags are
+> permitted on all of the above flags, which isn't true.
+> 
+> For example, both IMA_MODSIG_ALLOWED & IMA_CHECK_BLACKLIST are limited
+> to appended signatures, meaning KERNEL_CHECK and KEXEC_KERNEL_CHECK.
 
-I agree, the SELinux hook looks wrong.  Building on what Christian
-said, this looks more like a ptrace operation than an exec operation.
+Just to clarify, are both IMA_MODSIG_ALLOWED and IMA_CHECK_BLACKLIST
+limited to KEXEC_KERNEL_CHECK, KEXEC_INITRAMFS_CHECK, and MODULE_CHECK?
+That's what ima_hook_supports_modsig() suggests.
 
--- 
-paul moore
-www.paul-moore.com
+>  Both should only be allowed on APPRAISE action rules.
+
+For completeness, it looks like DONT_APPRAISE should not be allowed.
+
+> IMA_PCR should be limited to MEASURE action rules.
+
+It looks like DONT_MEASURE should not be allowed.
+
+> IMA_DIGSIG_REQUIRED should be limited to APPRAISE action rules.
+
+It looks like DONT_APPRAISE should not be allowed.
+
+> 
+> > +				return false;
+> > +
+> >  			break;
+> >  		case KEXEC_CMDLINE:
+> >  			if (entry->action & ~(MEASURE | DONT_MEASURE))
+> > @@ -1027,7 +1036,8 @@ static bool ima_validate_rule(struct ima_rule_entry *entry)
+> >  		default:
+> >  			return false;
+> >  		}
+> > -	}
+> > +	} else if (entry->flags & IMA_KEYRINGS)
+> > +		return false;
+> 
+> IMA_MODSIG_ALLOWED and IMA_CHECK_BLACKLIST need to be added here as
+> well.
+
+That makes sense.
+
+Tyler
+
+> 
+> Mimi
+> 
+> >  
+> >  	return true;
+> >  }
+> > @@ -1209,7 +1219,6 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+> >  			keyrings_len = strlen(args[0].from) + 1;
+> >  
+> >  			if ((entry->keyrings) ||
+> > -			    (entry->func != KEY_CHECK) ||
+> >  			    (keyrings_len < 2)) {
+> >  				result = -EINVAL;
+> >  				break;
