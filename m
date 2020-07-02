@@ -2,152 +2,85 @@ Return-Path: <SRS0=SqoC=AN=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2ABCC433E0
-	for <linux-security-module@archiver.kernel.org>; Thu,  2 Jul 2020 22:17:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3299C433E0
+	for <linux-security-module@archiver.kernel.org>; Thu,  2 Jul 2020 23:52:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C23F5206BE
-	for <linux-security-module@archiver.kernel.org>; Thu,  2 Jul 2020 22:17:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="PFMZdTTF"
+	by mail.kernel.org (Postfix) with ESMTP id BE1C32088E
+	for <linux-security-module@archiver.kernel.org>; Thu,  2 Jul 2020 23:52:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726287AbgGBWRA (ORCPT
+        id S1726015AbgGBXws (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 2 Jul 2020 18:17:00 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:33104 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726121AbgGBWQ7 (ORCPT
+        Thu, 2 Jul 2020 19:52:48 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:50211 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725915AbgGBXws (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 2 Jul 2020 18:16:59 -0400
-Received: from sequoia (162-237-133-238.lightspeed.rcsntx.sbcglobal.net [162.237.133.238])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 3454E20B717A;
-        Thu,  2 Jul 2020 15:16:58 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3454E20B717A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1593728218;
-        bh=oF/uy0h2kLORBOaWz4SneoVrme6PATdmsVREbyRum0g=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PFMZdTTFgv5iNVM4ImGmNBoS/pvR9L0heXpZKAZMOxhPhktoVwM67LJRd8IGKuMp+
-         hsVbe/ezG63jAQaTHYIibsgW44l4YWhhShkGXgLfJnP5lJ695+dZFexJkvSWwrLoXu
-         EKLjodVxz2+a49rtE8yf+rCbSjRVinzD7f3Lub6c=
-Date:   Thu, 2 Jul 2020 17:16:56 -0500
-From:   Tyler Hicks <tyhicks@linux.microsoft.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Prakhar Srivastava <prsriva02@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v2 09/11] ima: Move validation of the keyrings
- conditional into ima_validate_rule()
-Message-ID: <20200702221656.GH4694@sequoia>
-References: <20200626223900.253615-1-tyhicks@linux.microsoft.com>
- <20200626223900.253615-10-tyhicks@linux.microsoft.com>
- <1593558449.5057.12.camel@linux.ibm.com>
+        Thu, 2 Jul 2020 19:52:48 -0400
+Received: from fsav402.sakura.ne.jp (fsav402.sakura.ne.jp [133.242.250.101])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 062NpYvX013592;
+        Fri, 3 Jul 2020 08:51:34 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav402.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav402.sakura.ne.jp);
+ Fri, 03 Jul 2020 08:51:33 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav402.sakura.ne.jp)
+Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 062NpXER013497
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Fri, 3 Jul 2020 08:51:33 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH v3 00/16] Make the user mode driver code a better citizen
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>,
+        Greg Kroah-Hartman <greg@kroah.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>
+References: <20200625095725.GA3303921@kroah.com>
+ <778297d2-512a-8361-cf05-42d9379e6977@i-love.sakura.ne.jp>
+ <20200625120725.GA3493334@kroah.com>
+ <20200625.123437.2219826613137938086.davem@davemloft.net>
+ <CAHk-=whuTwGHEPjvtbBvneHHXeqJC=q5S09mbPnqb=Q+MSPMag@mail.gmail.com>
+ <87pn9mgfc2.fsf_-_@x220.int.ebiederm.org>
+ <87y2oac50p.fsf@x220.int.ebiederm.org>
+ <87bll17ili.fsf_-_@x220.int.ebiederm.org>
+ <87y2o1swee.fsf_-_@x220.int.ebiederm.org>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <7f6f0c1a-360a-c37f-de4e-854f0b97f3d3@i-love.sakura.ne.jp>
+Date:   Fri, 3 Jul 2020 08:51:32 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1593558449.5057.12.camel@linux.ibm.com>
+In-Reply-To: <87y2o1swee.fsf_-_@x220.int.ebiederm.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2020-06-30 19:07:29, Mimi Zohar wrote:
-> On Fri, 2020-06-26 at 17:38 -0500, Tyler Hicks wrote:
-> > Use ima_validate_rule() to ensure that the combination of a hook
-> > function and the keyrings conditional is valid and that the keyrings
-> > conditional is not specified without an explicit KEY_CHECK func
-> > conditional. This is a code cleanup and has no user-facing change.
-> > 
-> > Signed-off-by: Tyler Hicks <tyhicks@linux.microsoft.com>
-> > ---
-> > 
-> > * v2
-> >   - Allowed IMA_DIGSIG_REQUIRED, IMA_PERMIT_DIRECTIO,
-> >     IMA_MODSIG_ALLOWED, and IMA_CHECK_BLACKLIST conditionals to be
-> >     present in the rule entry flags for non-buffer hook functions.
-> > 
-> >  security/integrity/ima/ima_policy.c | 13 +++++++++++--
-> >  1 file changed, 11 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-> > index 8cdca2399d59..43d49ad958fb 100644
-> > --- a/security/integrity/ima/ima_policy.c
-> > +++ b/security/integrity/ima/ima_policy.c
-> > @@ -1000,6 +1000,15 @@ static bool ima_validate_rule(struct ima_rule_entry *entry)
-> >  		case KEXEC_KERNEL_CHECK:
-> >  		case KEXEC_INITRAMFS_CHECK:
-> >  		case POLICY_CHECK:
-> > +			if (entry->flags & ~(IMA_FUNC | IMA_MASK | IMA_FSMAGIC |
-> > +					     IMA_UID | IMA_FOWNER | IMA_FSUUID |
-> > +					     IMA_INMASK | IMA_EUID | IMA_PCR |
-> > +					     IMA_FSNAME | IMA_DIGSIG_REQUIRED |
-> > +					     IMA_PERMIT_DIRECTIO |
-> > +					     IMA_MODSIG_ALLOWED |
-> > +					     IMA_CHECK_BLACKLIST))
+On 2020/07/03 1:40, Eric W. Biederman wrote:
 > 
-> Other than KEYRINGS, this patch should continue to behave the same.
->  However, this list gives the impressions that all of these flags are
-> permitted on all of the above flags, which isn't true.
-> 
-> For example, both IMA_MODSIG_ALLOWED & IMA_CHECK_BLACKLIST are limited
-> to appended signatures, meaning KERNEL_CHECK and KEXEC_KERNEL_CHECK.
+> This is the third round of my changeset to split the user mode driver
+> code from the user mode helper code, and to make the code use common
+> facilities to get things done instead of recreating them just
+> for the user mode driver code.
 
-Just to clarify, are both IMA_MODSIG_ALLOWED and IMA_CHECK_BLACKLIST
-limited to KEXEC_KERNEL_CHECK, KEXEC_INITRAMFS_CHECK, and MODULE_CHECK?
-That's what ima_hook_supports_modsig() suggests.
-
->  Both should only be allowed on APPRAISE action rules.
-
-For completeness, it looks like DONT_APPRAISE should not be allowed.
-
-> IMA_PCR should be limited to MEASURE action rules.
-
-It looks like DONT_MEASURE should not be allowed.
-
-> IMA_DIGSIG_REQUIRED should be limited to APPRAISE action rules.
-
-It looks like DONT_APPRAISE should not be allowed.
-
-> 
-> > +				return false;
-> > +
-> >  			break;
-> >  		case KEXEC_CMDLINE:
-> >  			if (entry->action & ~(MEASURE | DONT_MEASURE))
-> > @@ -1027,7 +1036,8 @@ static bool ima_validate_rule(struct ima_rule_entry *entry)
-> >  		default:
-> >  			return false;
-> >  		}
-> > -	}
-> > +	} else if (entry->flags & IMA_KEYRINGS)
-> > +		return false;
-> 
-> IMA_MODSIG_ALLOWED and IMA_CHECK_BLACKLIST need to be added here as
-> well.
-
-That makes sense.
-
-Tyler
-
-> 
-> Mimi
-> 
-> >  
-> >  	return true;
-> >  }
-> > @@ -1209,7 +1219,6 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
-> >  			keyrings_len = strlen(args[0].from) + 1;
-> >  
-> >  			if ((entry->keyrings) ||
-> > -			    (entry->func != KEY_CHECK) ||
-> >  			    (keyrings_len < 2)) {
-> >  				result = -EINVAL;
-> >  				break;
+I won't test this version, for you are ignoring my comments.
