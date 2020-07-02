@@ -2,102 +2,184 @@ Return-Path: <SRS0=SqoC=AN=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DE39C433E1
-	for <linux-security-module@archiver.kernel.org>; Thu,  2 Jul 2020 16:49:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8F0CC433DF
+	for <linux-security-module@archiver.kernel.org>; Thu,  2 Jul 2020 19:47:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 66619208D5
-	for <linux-security-module@archiver.kernel.org>; Thu,  2 Jul 2020 16:49:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 95BA720760
+	for <linux-security-module@archiver.kernel.org>; Thu,  2 Jul 2020 19:47:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1593719221;
+	bh=rek7PPSizCYQXurccaBZVrpqrxa71GEldavwNVdGKss=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=dudzFkbajrKp44rmuVy232hOLbtma3bOCO+2cx2TqRx9fVrPIlfG/8T/iGt8X6Mco
+	 CbX8n0hsw9kVA3DJtgvNeiJyV2lmY7Lb0Mn2ZrufInQWMLbnFTGv1rEILaNA063E23
+	 6omhSq09OvxT2ekKge4sbpDjfAQ22MBCArJo/O98=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727119AbgGBQsi (ORCPT
+        id S1726122AbgGBTrB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 2 Jul 2020 12:48:38 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:49778 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726945AbgGBQsh (ORCPT
+        Thu, 2 Jul 2020 15:47:01 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:40886 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725994AbgGBTrA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 2 Jul 2020 12:48:37 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jr2O5-0005rW-4l; Thu, 02 Jul 2020 10:48:37 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.int.ebiederm.org)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jr2Nd-0007up-Dl; Thu, 02 Jul 2020 10:48:10 -0600
-From:   "Eric W. Biederman" <ebiederm@xmission.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <greg@kroah.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date:   Thu,  2 Jul 2020 11:41:35 -0500
-Message-Id: <20200702164140.4468-11-ebiederm@xmission.com>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <87y2o1swee.fsf_-_@x220.int.ebiederm.org>
-References: <87y2o1swee.fsf_-_@x220.int.ebiederm.org>
+        Thu, 2 Jul 2020 15:47:00 -0400
+Received: by mail-pl1-f195.google.com with SMTP id x11so11697603plo.7;
+        Thu, 02 Jul 2020 12:46:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=OHFXCZoREfl1GMwKik+5lcCUbnGDc+wlkQ8rGpzOHJY=;
+        b=FkPhG6A9U0NVwzmsAT98qHKnNfxcOIO4csmQAuQS+Huj3cN7OUZojfDthIOyqkg+cn
+         tQ8sBz63yiKWxLdjBGol4JEk4K0ZRkCdmiZ2MI79q7UGAb0tP2EmpFKIjA4oTmsTXw7H
+         AAsfYv8dMIkOtjkF/JwzP1d+q3YxNtULohv7BJNvIpYSVSNkNA+XR/Qew2olbDMA44kT
+         eym0Y6ysfnXPbqQO+Qel1NeD3LFrBA4WKNMzuOX+TJnDJmpZJCOkRzqGJVVbKZ9P8I8W
+         L1kl3JsKcrs6mosc7N4ImANeT+hfsloxy+o3CNFDohZIzM3rIUq+UbqReWBL0AjTuNoz
+         yBHA==
+X-Gm-Message-State: AOAM532MQcCPbJ5AwLGsnvWxX7yPB5OzlnQj9L41VQSkrKF73G5VJReq
+        xLS6tEb7x0b9kdpx3fy1F0I=
+X-Google-Smtp-Source: ABdhPJzZRZZnyTT/LL8zshMzqSe4q6iWh/bqF3eI60b4K/yHnYqIox4lLP9gZCWSkU96CYlxNiNA6Q==
+X-Received: by 2002:a17:90a:b38b:: with SMTP id e11mr15548657pjr.120.1593719219005;
+        Thu, 02 Jul 2020 12:46:59 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id n18sm10014912pfd.99.2020.07.02.12.46.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Jul 2020 12:46:57 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id 695BF403DC; Thu,  2 Jul 2020 19:46:56 +0000 (UTC)
+Date:   Thu, 2 Jul 2020 19:46:56 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        David Howells <dhowells@redhat.com>
+Cc:     Christian Borntraeger <borntraeger@de.ibm.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>, ast@kernel.org,
+        axboe@kernel.dk, bfields@fieldses.org,
+        bridge@lists.linux-foundation.org, chainsaw@gentoo.org,
+        christian.brauner@ubuntu.com, chuck.lever@oracle.com,
+        davem@davemloft.net, gregkh@linuxfoundation.org,
+        jarkko.sakkinen@linux.intel.com, jmorris@namei.org,
+        josh@joshtriplett.org, keescook@chromium.org,
+        keyrings@vger.kernel.org, kuba@kernel.org,
+        lars.ellenberg@linbit.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-security-module@vger.kernel.org, nikolay@cumulusnetworks.com,
+        philipp.reisner@linbit.com, ravenexp@gmail.com,
+        roopa@cumulusnetworks.com, serge@hallyn.com, slyfox@gentoo.org,
+        viro@zeniv.linux.org.uk, yangtiezhu@loongson.cn,
+        netdev@vger.kernel.org, markward@linux.ibm.com,
+        linux-s390 <linux-s390@vger.kernel.org>
+Subject: Re: linux-next: umh: fix processed error when UMH_WAIT_PROC is used
+ seems to break linux bridge on s390x (bisected)
+Message-ID: <20200702194656.GV4332@42.do-not-panic.com>
+References: <4d8fbcea-a892-3453-091f-d57c03f9aa90@de.ibm.com>
+ <1263e370-7cee-24d8-b98c-117bf7c90a83@de.ibm.com>
+ <20200626025410.GJ4332@42.do-not-panic.com>
+ <20200630175704.GO13911@42.do-not-panic.com>
+ <b24d8dae-1872-ba2c-acd4-ed46c0781317@de.ibm.com>
+ <a6792135-3285-0861-014e-3db85ea251dc@i-love.sakura.ne.jp>
+ <20200701135324.GS4332@42.do-not-panic.com>
+ <8d714a23-bac4-7631-e5fc-f97c20a46083@i-love.sakura.ne.jp>
+ <20200701153859.GT4332@42.do-not-panic.com>
+ <e3f3e501-2cb7-b683-4b85-2002b7603244@i-love.sakura.ne.jp>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-XM-SPF: eid=1jr2Nd-0007up-Dl;;;mid=<20200702164140.4468-11-ebiederm@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/urfY8Gq8cXM1e2/7n9MS8yOqCZ4+UG7g=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: [PATCH v3 11/16] bpfilter: Move bpfilter_umh back into init data
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e3f3e501-2cb7-b683-4b85-2002b7603244@i-love.sakura.ne.jp>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-To allow for restarts 61fbf5933d42 ("net: bpfilter: restart
-bpfilter_umh when error occurred") moved the blob holding the
-userspace binary out of the init sections.
+On Thu, Jul 02, 2020 at 01:26:53PM +0900, Tetsuo Handa wrote:
+> On 2020/07/02 0:38, Luis Chamberlain wrote:
+> > @@ -156,6 +156,18 @@ static void call_usermodehelper_exec_sync(struct subprocess_info *sub_info)
+> >  		 */
+> >  		if (KWIFEXITED(ret))
+> >  			sub_info->retval = KWEXITSTATUS(ret);
+> > +		/*
+> > +		 * Do we really want to be passing the signal, or do we pass
+> > +		 * a single error code for all cases?
+> > +		 */
+> > +		else if (KWIFSIGNALED(ret))
+> > +			sub_info->retval = KWTERMSIG(ret);
+> 
+> No, this is bad. Caller of usermode helper is unable to distinguish exit(9)
+> and e.g. SIGKILL'ed by the OOM-killer.
 
-Now that loading the blob into a filesystem is separate from executing
-the blob the blob no longer needs to live .rodata to allow for restarting.
-So move the blob back to .init.rodata.
+Right, the question is: do we care?
 
-v1: https://lkml.kernel.org/r/87sgeidlvq.fsf_-_@x220.int.ebiederm.org
-v2: https://lkml.kernel.org/r/87ftad4ozc.fsf_-_@x220.int.ebiederm.org
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
----
- net/bpfilter/bpfilter_umh_blob.S | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Please pass raw exit status value.
+> 
+> I feel that caller of usermode helper should not use exit status value.
+> For example, call_sbin_request_key() is checking
+> 
+>   test_bit(KEY_FLAG_USER_CONSTRUCT, &key->flags) || key_validate(key) < 0
+> 
+> condition (if usermode helper was invoked) in order to "ignore any errors from
+> userspace if the key was instantiated".
 
-diff --git a/net/bpfilter/bpfilter_umh_blob.S b/net/bpfilter/bpfilter_umh_blob.S
-index 9ea6100dca87..40311d10d2f2 100644
---- a/net/bpfilter/bpfilter_umh_blob.S
-+++ b/net/bpfilter/bpfilter_umh_blob.S
-@@ -1,5 +1,5 @@
- /* SPDX-License-Identifier: GPL-2.0 */
--	.section .rodata, "a"
-+	.section .init.rodata, "a"
- 	.global bpfilter_umh_start
- bpfilter_umh_start:
- 	.incbin "net/bpfilter/bpfilter_umh"
--- 
-2.25.0
+For those not familiar with this code path, or if you cannot decipher
+the above, the code path in question was:
 
+static int call_sbin_request_key(struct key *authkey, void *aux)                
+{
+	...
+	/* do it */                                                             
+	ret = call_usermodehelper_keys(request_key, argv, envp, keyring,        
+				       UMH_WAIT_PROC);
+	kdebug("usermode -> 0x%x", ret);
+	if (ret >= 0) {
+		/* ret is the exit/wait code */
+		if (test_bit(KEY_FLAG_USER_CONSTRUCT, &key->flags) ||
+		    key_validate(key) < 0)
+		    ret = -ENOKEY;
+		/* ignore any errors from userspace if the key was      
+		 * instantiated */  
+		 ret = 0;
+	}
+	...
+}
+
+And the umh patch "umh: fix processed error when UMH_WAIT_PROC is used"
+changed this to:
+
+-       if (ret >= 0) {
++       if (ret != 0) {
+
+Prior to the patch negative return values from userspace were still
+being captured, and likewise signals, but the error value was not
+raw, not the actual value. After the patch, since we check for ret != 0
+we still upkeep the sanity check for any error, correct the error value,
+but as you noted signals were ignored as I made the wrong assumption
+we would ignore them. The umh sub_info->retval is set after my original
+patch only if KWIFSIGNALED(ret)), and ignored signals, and so that
+would be now capitured with the additional KWIFSIGNALED(ret)) check.
+
+The question still stands:
+
+Do we want to open code all these checks or simply wrap them up in
+the umh. If we do the later, as you note exit(9) and a SIGKILL will
+be the same to the inspector in the kernel. But do we care?
+
+Do we really want umh callers differntiatin between signals and exit values?
+
+The alternative to making a compromise is using generic wrappers for
+things which make sense and letting the callers use those.
+
+  Luis
+
+> > +		/* Same here */
+> > +		else if (KWIFSTOPPED((ret)))
+> > +			sub_info->retval = KWSTOPSIG(ret);
+> > +		/* And are we really sure we want this? */
+> > +		else if (KWIFCONTINUED((ret)))
+> > +			sub_info->retval = 0;
+> >  	}
+> >  
+> >  	/* Restore default kernel sig handler */
+> > 
+> 
