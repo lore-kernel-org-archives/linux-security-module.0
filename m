@@ -2,130 +2,121 @@ Return-Path: <SRS0=SqoC=AN=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69436C433DF
-	for <linux-security-module@archiver.kernel.org>; Thu,  2 Jul 2020 03:33:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB09DC433E0
+	for <linux-security-module@archiver.kernel.org>; Thu,  2 Jul 2020 03:59:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4EF54207F5
-	for <linux-security-module@archiver.kernel.org>; Thu,  2 Jul 2020 03:33:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A33A2207CD
+	for <linux-security-module@archiver.kernel.org>; Thu,  2 Jul 2020 03:59:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726118AbgGBDdj (ORCPT
+        id S1726237AbgGBD7D (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 1 Jul 2020 23:33:39 -0400
-Received: from helcar.hmeau.com ([216.24.177.18]:37150 "EHLO fornost.hmeau.com"
+        Wed, 1 Jul 2020 23:59:03 -0400
+Received: from mga12.intel.com ([192.55.52.136]:26776 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725857AbgGBDdi (ORCPT
+        id S1726187AbgGBD7C (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 1 Jul 2020 23:33:38 -0400
-Received: from gwarestrin.arnor.me.apana.org.au ([192.168.0.7])
-        by fornost.hmeau.com with smtp (Exim 4.92 #5 (Debian))
-        id 1jqpxV-0008AS-FA; Thu, 02 Jul 2020 13:32:22 +1000
-Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Thu, 02 Jul 2020 13:32:21 +1000
-Date:   Thu, 2 Jul 2020 13:32:21 +1000
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc:     Eric Biggers <ebiggers@kernel.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        LTP List <ltp@lists.linux.it>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        lkft-triage@lists.linaro.org,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        Jan Stancek <jstancek@redhat.com>, chrubis <chrubis@suse.cz>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        James Morris <jmorris@namei.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        David Howells <dhowells@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sachin Sant <sachinp@linux.vnet.ibm.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux- stable <stable@vger.kernel.org>
-Subject: [v2 PATCH] crypto: af_alg - Fix regression on empty requests
-Message-ID: <20200702033221.GA19367@gondor.apana.org.au>
-References: <CA+G9fYvHFs5Yx8TnT6VavtfjMN8QLPuXg6us-dXVJqUUt68adA@mail.gmail.com>
- <20200622224920.GA4332@42.do-not-panic.com>
- <CA+G9fYsXDZUspc5OyfqrGZn=k=2uRiGzWY_aPePK2C_kZ+dYGQ@mail.gmail.com>
- <20200623064056.GA8121@gondor.apana.org.au>
- <20200623170217.GB150582@gmail.com>
- <20200626062948.GA25285@gondor.apana.org.au>
- <CA+G9fYutuU55iL_6Qrk3oG3iq-37PaxvtA4KnEQHuLH9YpH-QA@mail.gmail.com>
+        Wed, 1 Jul 2020 23:59:02 -0400
+IronPort-SDR: UeVKnAbzP9rV1gTs3a2u29CPmtIRCgtjMO1UdQtvlnfFX2evOWMfjqInDK8XFLHNaxyulKhd2e
+ h0JTHWwqe8TQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9669"; a="126403730"
+X-IronPort-AV: E=Sophos;i="5.75,302,1589266800"; 
+   d="scan'208";a="126403730"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2020 20:59:02 -0700
+IronPort-SDR: BVhIUUZ1L/xEqOBO26oXtglVzitgz3GWW+7g3i67tenBlNkARotauZWDCTJyDmhbtBaIFmo1cO
+ c9Cf4XlxNByQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.75,302,1589266800"; 
+   d="scan'208";a="281818263"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.152])
+  by orsmga006.jf.intel.com with ESMTP; 01 Jul 2020 20:59:02 -0700
+Date:   Wed, 1 Jul 2020 20:59:02 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Jethro Beekman <jethro@fortanix.com>,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Chunyang Hui <sanqian.hcy@antfin.com>,
+        Jordan Hand <jorhand@linux.microsoft.com>,
+        Nathaniel McCallum <npmccallum@redhat.com>,
+        Seth Moore <sethmo@google.com>,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
+        chenalexchen@google.com, conradparker@google.com,
+        cyhanish@google.com, dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, luto@kernel.org,
+        nhorman@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
+        tglx@linutronix.de, yaozhangx@google.com
+Subject: Re: [PATCH v33 11/21] x86/sgx: Linux Enclave Driver
+Message-ID: <20200702035902.GC1819@linux.intel.com>
+References: <20200617220844.57423-1-jarkko.sakkinen@linux.intel.com>
+ <20200617220844.57423-12-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CA+G9fYutuU55iL_6Qrk3oG3iq-37PaxvtA4KnEQHuLH9YpH-QA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200617220844.57423-12-jarkko.sakkinen@linux.intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jun 30, 2020 at 02:18:11PM +0530, Naresh Kamboju wrote:
-> 
-> Since we are on this subject,
-> LTP af_alg02  test case fails on stable 4.9 and stable 4.4
-> This is not a regression because the test case has been failing from
-> the beginning.
-> 
-> Is this test case expected to fail on stable 4.9 and 4.4 ?
-> or any chance to fix this on these older branches ?
-> 
-> Test output:
-> af_alg02.c:52: BROK: Timed out while reading from request socket.
-> 
-> ref:
-> https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/build/v4.9.228-191-g082e807235d7/testrun/2884917/suite/ltp-crypto-tests/test/af_alg02/history/
-> https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/build/v4.9.228-191-g082e807235d7/testrun/2884606/suite/ltp-crypto-tests/test/af_alg02/log
+On Thu, Jun 18, 2020 at 01:08:33AM +0300, Jarkko Sakkinen wrote:
+> +static int sgx_validate_secs(const struct sgx_secs *secs,
+> +			     unsigned long ssaframesize)
+> +{
+> +	if (secs->size < (2 * PAGE_SIZE) || !is_power_of_2(secs->size))
+> +		return -EINVAL;
+> +
+> +	if (secs->base & (secs->size - 1))
+> +		return -EINVAL;
+> +
+> +	if (secs->miscselect & sgx_misc_reserved_mask ||
+> +	    secs->attributes & sgx_attributes_reserved_mask ||
+> +	    secs->xfrm & sgx_xfrm_reserved_mask)
+> +		return -EINVAL;
+> +
+> +	if (secs->attributes & SGX_ATTR_MODE64BIT) {
+> +		if (secs->size > sgx_encl_size_max_64)
+> +			return -EINVAL;
+> +	} else if (secs->size > sgx_encl_size_max_32)
+> +		return -EINVAL;
 
-Actually this test really is broken.  Even though empty requests
-are legal, they should never be done with no write(2) at all.
-Because this fundamentally breaks the use of a blocking read(2)
-to wait for more data.
+These should be >=, not >, the SDM uses one of those fancy ≥ ligatures.
 
-Granted this has been broken since 2017 but I'm not going to
-reintroduce this just because of a broken test case.
+Internal versions use more obvious pseudocode, e.g.:
 
-So please either remove af_alg02 or fix it by adding a control
-message through sendmsg(2).
+    if ((DS:TMP_SECS.ATTRIBUTES.MODE64BIT = 1) AND
+        (DS:TMP_SECS.SIZE AND (~((1 << CPUID.18.0:EDX[15:8]) – 1)))
+    {
+        #GP(0);
+    }
 
-Thanks,
-
----8<---
-Some user-space programs rely on crypto requests that have no
-control metadata.  This broke when a check was added to require
-the presence of control metadata with the ctx->init flag.
-
-This patch fixes the regression by setting ctx->init as long as
-one sendmsg(2) has been made, with or without a control message.
-
-Reported-by: Sachin Sant <sachinp@linux.vnet.ibm.com>
-Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
-Fixes: f3c802a1f300 ("crypto: algif_aead - Only wake up when...")
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-
-diff --git a/crypto/af_alg.c b/crypto/af_alg.c
-index 9fcb91ea10c41..5882ed46f1adb 100644
---- a/crypto/af_alg.c
-+++ b/crypto/af_alg.c
-@@ -851,6 +851,7 @@ int af_alg_sendmsg(struct socket *sock, struct msghdr *msg, size_t size,
- 		err = -EINVAL;
- 		goto unlock;
- 	}
-+	ctx->init = true;
- 
- 	if (init) {
- 		ctx->enc = enc;
-@@ -858,7 +859,6 @@ int af_alg_sendmsg(struct socket *sock, struct msghdr *msg, size_t size,
- 			memcpy(ctx->iv, con.iv->iv, ivsize);
- 
- 		ctx->aead_assoclen = con.aead_assoclen;
--		ctx->init = true;
- 	}
- 
- 	while (size) {
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+> +
+> +	if (!(secs->xfrm & XFEATURE_MASK_FP) ||
+> +	    !(secs->xfrm & XFEATURE_MASK_SSE) ||
+> +	    (((secs->xfrm >> XFEATURE_BNDREGS) & 1) !=
+> +	     ((secs->xfrm >> XFEATURE_BNDCSR) & 1)))
+> +		return -EINVAL;
+> +
+> +	if (!secs->ssa_frame_size || ssaframesize > secs->ssa_frame_size)
+> +		return -EINVAL;
+> +
+> +	if (memchr_inv(secs->reserved1, 0, sizeof(secs->reserved1)) ||
+> +	    memchr_inv(secs->reserved2, 0, sizeof(secs->reserved2)) ||
+> +	    memchr_inv(secs->reserved3, 0, sizeof(secs->reserved3)) ||
+> +	    memchr_inv(secs->reserved4, 0, sizeof(secs->reserved4)))
+> +		return -EINVAL;
+> +
+> +	return 0;
+> +}
