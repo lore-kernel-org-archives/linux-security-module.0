@@ -2,117 +2,161 @@ Return-Path: <SRS0=/Sjk=AO=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47D11C433E0
-	for <linux-security-module@archiver.kernel.org>; Fri,  3 Jul 2020 13:36:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DFF4C433DF
+	for <linux-security-module@archiver.kernel.org>; Fri,  3 Jul 2020 14:15:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 23CA4206A1
-	for <linux-security-module@archiver.kernel.org>; Fri,  3 Jul 2020 13:36:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1593783362;
-	bh=tYw1QVFf3l8wAmr8ShOa9rlUyconKQv6eBiz06jvs2Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=aSWSgSWzw93MzKyX4YgsQnRUTBUsHexEADeXsrkn2u1JFmFysthvUENoYBhnwLug5
-	 6i0Flvllix6Of809FwneDtiSeC/l1GEPoCPpKOLUlplCu8BoAJSJuHoe0ZYhrw2CcS
-	 NTvwqbG+WoPDNl2N4e4Nbys5aqyx4Erv0Kat5W2I=
+	by mail.kernel.org (Postfix) with ESMTP id EEF8020899
+	for <linux-security-module@archiver.kernel.org>; Fri,  3 Jul 2020 14:15:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726022AbgGCNgB (ORCPT
+        id S1726546AbgGCOPu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 3 Jul 2020 09:36:01 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:43894 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726035AbgGCNgB (ORCPT
+        Fri, 3 Jul 2020 10:15:50 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41344 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726035AbgGCOPu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 3 Jul 2020 09:36:01 -0400
-Received: by mail-pf1-f195.google.com with SMTP id j12so13997842pfn.10;
-        Fri, 03 Jul 2020 06:36:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=T5rcVRIkgD/btpU3eP+kPgBcl/ql3dV8wsHC9ym85fc=;
-        b=dpoBSKt9u7PzGcULVVkb3BVVTC2SRONI/mFO7qKPCcsTKF4bMSB5wwEDanojpsXGUm
-         kwK2J5sW/qcLuKkg7HXJxYyiPTFgMIxbMBQ+qwzZzAGZiC64jo6gJKE9hkQjrT2ecJ8S
-         5RRKQHCIYvdyFK6p8pLC2sC1H6ozGDeuAu3brBCsqouH3ULIFK/O+oX+/om3n+zQjJdT
-         i4BI8TyxD1kr2/OzeliwlkLweUtmbWBKe/mTeTKXuzLWANMOcwJ90W02jjPdIV88+vZ1
-         rvusjmydEGS3A9de9HSIXr5ID45xehpaqNyh7fFMxO40qh2iTESR9gJnLQA82lYLFVNn
-         Gdzw==
-X-Gm-Message-State: AOAM533w9VkVaasqHDJDD2CoI2ePDu2dMzKUglzB3MmTWtQmnrjBmNQW
-        BA3i4NaqP2LGNvo4+SkpaYk=
-X-Google-Smtp-Source: ABdhPJzpEuquvHuz9dy6BTpylDSjUJQBr0XwgRqlpSIxXVt6avNzJ3DHhTKXkfB0Cil4QhB/QzoeTw==
-X-Received: by 2002:a65:640c:: with SMTP id a12mr28887324pgv.88.1593783360171;
-        Fri, 03 Jul 2020 06:36:00 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id m16sm12805082pfd.101.2020.07.03.06.35.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Jul 2020 06:35:58 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 1885F40945; Fri,  3 Jul 2020 13:35:58 +0000 (UTC)
-Date:   Fri, 3 Jul 2020 13:35:58 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Eric Biggers <ebiggers@kernel.org>,
-        LTP List <ltp@lists.linux.it>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        lkft-triage@lists.linaro.org,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        Jan Stancek <jstancek@redhat.com>, chrubis <chrubis@suse.cz>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
+        Fri, 3 Jul 2020 10:15:50 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 063E2DsI145405;
+        Fri, 3 Jul 2020 10:15:39 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 322144rw0n-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 03 Jul 2020 10:15:39 -0400
+Received: from m0098393.ppops.net (m0098393.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 063E2FJd145553;
+        Fri, 3 Jul 2020 10:15:39 -0400
+Received: from ppma06fra.de.ibm.com (48.49.7a9f.ip4.static.sl-reverse.com [159.122.73.72])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 322144rvyd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 03 Jul 2020 10:15:39 -0400
+Received: from pps.filterd (ppma06fra.de.ibm.com [127.0.0.1])
+        by ppma06fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 063E6ksY001304;
+        Fri, 3 Jul 2020 14:15:36 GMT
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
+        by ppma06fra.de.ibm.com with ESMTP id 31wwcguf0b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 03 Jul 2020 14:15:36 +0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 063EFYpJ52232204
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 3 Jul 2020 14:15:34 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0303B11C04C;
+        Fri,  3 Jul 2020 14:15:34 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EBA3511C050;
+        Fri,  3 Jul 2020 14:15:32 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.174.143])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri,  3 Jul 2020 14:15:32 +0000 (GMT)
+Message-ID: <1593785732.23056.16.camel@linux.ibm.com>
+Subject: Re: [PATCH v2 09/11] ima: Move validation of the keyrings
+ conditional into ima_validate_rule()
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Tyler Hicks <tyhicks@linux.microsoft.com>
+Cc:     Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
         James Morris <jmorris@namei.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        David Howells <dhowells@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sachin Sant <sachinp@linux.vnet.ibm.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux- stable <stable@vger.kernel.org>
-Subject: Re: [v2 PATCH] crypto: af_alg - Fix regression on empty requests
-Message-ID: <20200703133558.GX4332@42.do-not-panic.com>
-References: <CA+G9fYvHFs5Yx8TnT6VavtfjMN8QLPuXg6us-dXVJqUUt68adA@mail.gmail.com>
- <20200622224920.GA4332@42.do-not-panic.com>
- <CA+G9fYsXDZUspc5OyfqrGZn=k=2uRiGzWY_aPePK2C_kZ+dYGQ@mail.gmail.com>
- <20200623064056.GA8121@gondor.apana.org.au>
- <20200623170217.GB150582@gmail.com>
- <20200626062948.GA25285@gondor.apana.org.au>
- <CA+G9fYutuU55iL_6Qrk3oG3iq-37PaxvtA4KnEQHuLH9YpH-QA@mail.gmail.com>
- <20200702033221.GA19367@gondor.apana.org.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200702033221.GA19367@gondor.apana.org.au>
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Prakhar Srivastava <prsriva02@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Date:   Fri, 03 Jul 2020 10:15:32 -0400
+In-Reply-To: <20200702221656.GH4694@sequoia>
+References: <20200626223900.253615-1-tyhicks@linux.microsoft.com>
+         <20200626223900.253615-10-tyhicks@linux.microsoft.com>
+         <1593558449.5057.12.camel@linux.ibm.com> <20200702221656.GH4694@sequoia>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-07-03_09:2020-07-02,2020-07-03 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ lowpriorityscore=0 malwarescore=0 mlxscore=0 spamscore=0 impostorscore=0
+ mlxlogscore=999 priorityscore=1501 bulkscore=0 cotscore=-2147483648
+ suspectscore=0 adultscore=0 phishscore=0 classifier=spam adjust=0
+ reason=mlx scancount=1 engine=8.12.0-2004280000
+ definitions=main-2007030095
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jul 02, 2020 at 01:32:21PM +1000, Herbert Xu wrote:
-> On Tue, Jun 30, 2020 at 02:18:11PM +0530, Naresh Kamboju wrote:
+On Thu, 2020-07-02 at 17:16 -0500, Tyler Hicks wrote:
+> On 2020-06-30 19:07:29, Mimi Zohar wrote:
+> > On Fri, 2020-06-26 at 17:38 -0500, Tyler Hicks wrote:
+> > > Use ima_validate_rule() to ensure that the combination of a hook
+> > > function and the keyrings conditional is valid and that the keyrings
+> > > conditional is not specified without an explicit KEY_CHECK func
+> > > conditional. This is a code cleanup and has no user-facing change.
+> > > 
+> > > Signed-off-by: Tyler Hicks <tyhicks@linux.microsoft.com>
+> > > ---
+> > > 
+> > > * v2
+> > >   - Allowed IMA_DIGSIG_REQUIRED, IMA_PERMIT_DIRECTIO,
+> > >     IMA_MODSIG_ALLOWED, and IMA_CHECK_BLACKLIST conditionals to be
+> > >     present in the rule entry flags for non-buffer hook functions.
+> > > 
+> > >  security/integrity/ima/ima_policy.c | 13 +++++++++++--
+> > >  1 file changed, 11 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+> > > index 8cdca2399d59..43d49ad958fb 100644
+> > > --- a/security/integrity/ima/ima_policy.c
+> > > +++ b/security/integrity/ima/ima_policy.c
+> > > @@ -1000,6 +1000,15 @@ static bool ima_validate_rule(struct ima_rule_entry *entry)
+> > >  		case KEXEC_KERNEL_CHECK:
+> > >  		case KEXEC_INITRAMFS_CHECK:
+> > >  		case POLICY_CHECK:
+> > > +			if (entry->flags & ~(IMA_FUNC | IMA_MASK | IMA_FSMAGIC |
+> > > +					     IMA_UID | IMA_FOWNER | IMA_FSUUID |
+> > > +					     IMA_INMASK | IMA_EUID | IMA_PCR |
+> > > +					     IMA_FSNAME | IMA_DIGSIG_REQUIRED |
+> > > +					     IMA_PERMIT_DIRECTIO |
+> > > +					     IMA_MODSIG_ALLOWED |
+> > > +					     IMA_CHECK_BLACKLIST))
 > > 
-> > Since we are on this subject,
-> > LTP af_alg02  test case fails on stable 4.9 and stable 4.4
-> > This is not a regression because the test case has been failing from
-> > the beginning.
+> > Other than KEYRINGS, this patch should continue to behave the same.
+> >  However, this list gives the impressions that all of these flags are
+> > permitted on all of the above flags, which isn't true.
 > > 
-> > Is this test case expected to fail on stable 4.9 and 4.4 ?
-> > or any chance to fix this on these older branches ?
-> > 
-> > Test output:
-> > af_alg02.c:52: BROK: Timed out while reading from request socket.
-> > 
-> > ref:
-> > https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/build/v4.9.228-191-g082e807235d7/testrun/2884917/suite/ltp-crypto-tests/test/af_alg02/history/
-> > https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/build/v4.9.228-191-g082e807235d7/testrun/2884606/suite/ltp-crypto-tests/test/af_alg02/log
+> > For example, both IMA_MODSIG_ALLOWED & IMA_CHECK_BLACKLIST are limited
+> > to appended signatures, meaning KERNEL_CHECK and KEXEC_KERNEL_CHECK.
 > 
-> Actually this test really is broken.
+> Just to clarify, are both IMA_MODSIG_ALLOWED and IMA_CHECK_BLACKLIST
+> limited to KEXEC_KERNEL_CHECK, KEXEC_INITRAMFS_CHECK, and MODULE_CHECK?
+> That's what ima_hook_supports_modsig() suggests.
 
-FWIW the patch "umh: fix processed error when UMH_WAIT_PROC is used" was
-dropped from linux-next for now as it was missing checking for signals.
-I'll be open coding iall checks for each UMH_WAIT_PROC callers next. Its
-not clear if this was the issue with this test case, but figured I'd let
-you know.
+Theoretically that is true, but I have no idea how you would append a
+signature to the kexec boot command line.  The only users of appended
+signatures are currently kernel modules and the kexec'ed kernel image.
 
-  Luis
+> 
+> >  Both should only be allowed on APPRAISE action rules.
+> 
+> For completeness, it looks like DONT_APPRAISE should not be allowed.
+
+Good point.  
+
+> 
+> > IMA_PCR should be limited to MEASURE action rules.
+> 
+> It looks like DONT_MEASURE should not be allowed.
+
+The TPM PCR isn't a file attribute.
+
+> 
+> > IMA_DIGSIG_REQUIRED should be limited to APPRAISE action rules.
+> 
+> It looks like DONT_APPRAISE should not be allowed.
+
+Right, in all of these cases the DONT_XXXX isn't applicable.
+
+Mimi
