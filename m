@@ -2,340 +2,184 @@ Return-Path: <SRS0=/Sjk=AO=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEC8BC433E0
-	for <linux-security-module@archiver.kernel.org>; Fri,  3 Jul 2020 21:50:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38269C433DF
+	for <linux-security-module@archiver.kernel.org>; Fri,  3 Jul 2020 22:30:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AB2202070B
-	for <linux-security-module@archiver.kernel.org>; Fri,  3 Jul 2020 21:50:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="W3lDVhCm"
+	by mail.kernel.org (Postfix) with ESMTP id 185AF21D92
+	for <linux-security-module@archiver.kernel.org>; Fri,  3 Jul 2020 22:30:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726505AbgGCVuY (ORCPT
+        id S1726379AbgGCWag (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 3 Jul 2020 17:50:24 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:41314 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726488AbgGCVuY (ORCPT
+        Fri, 3 Jul 2020 18:30:36 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:45110 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726188AbgGCWaf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 3 Jul 2020 17:50:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1593813021;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc; bh=DUi74OB8N2o7OBuNPMs0wTmKIBu+BXd/XsvBH53rfuw=;
-        b=W3lDVhCm6gKtSi4fuNCHh2SftlaBORLmKo3QGlcH58uQUrZNlIdiLttrepkDN+t2LI1YsN
-        WzFxbOho7JUrLX0ZcmOXEBnAHeb8M6wsVO5I3teEVX3d+hNOr+KF55PoY7fV+kUXcTri+C
-        XDrhE/nmiZ8LntM7O/YsWrnjI6E7ImQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-467-MyHrQeHMOTKtYliyT96Quw-1; Fri, 03 Jul 2020 17:50:18 -0400
-X-MC-Unique: MyHrQeHMOTKtYliyT96Quw-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3AFDF18A0760;
-        Fri,  3 Jul 2020 21:50:17 +0000 (UTC)
-Received: from madcap2.tricolour.ca (unknown [10.10.110.3])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 809E57BD4E;
-        Fri,  3 Jul 2020 21:50:09 +0000 (UTC)
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>
-Cc:     Paul Moore <paul@paul-moore.com>, eparis@parisplace.org,
-        john.johansen@canonical.com, Richard Guy Briggs <rgb@redhat.com>
-Subject: [PATCH ghak84 v3] audit: purge audit_log_string from the intra-kernel audit API
-Date:   Fri,  3 Jul 2020 17:49:42 -0400
-Message-Id: <20597345545df186f0a287c974c9dc88b5c940a0.1593808662.git.rgb@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+        Fri, 3 Jul 2020 18:30:35 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jrUCR-000708-Gl; Fri, 03 Jul 2020 16:30:27 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jrUCQ-0005eV-HO; Fri, 03 Jul 2020 16:30:27 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>,
+        Greg Kroah-Hartman <greg@kroah.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>, bpf <bpf@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <20200625095725.GA3303921@kroah.com>
+        <778297d2-512a-8361-cf05-42d9379e6977@i-love.sakura.ne.jp>
+        <20200625120725.GA3493334@kroah.com>
+        <20200625.123437.2219826613137938086.davem@davemloft.net>
+        <CAHk-=whuTwGHEPjvtbBvneHHXeqJC=q5S09mbPnqb=Q+MSPMag@mail.gmail.com>
+        <87pn9mgfc2.fsf_-_@x220.int.ebiederm.org>
+        <87y2oac50p.fsf@x220.int.ebiederm.org>
+        <87bll17ili.fsf_-_@x220.int.ebiederm.org>
+        <20200629221231.jjc2czk3ul2roxkw@ast-mbp.dhcp.thefacebook.com>
+        <87eepwzqhd.fsf@x220.int.ebiederm.org>
+        <1f4d8b7e-bcff-f950-7dac-76e3c4a65661@i-love.sakura.ne.jp>
+        <87pn9euks9.fsf@x220.int.ebiederm.org>
+        <757f37f8-5641-91d2-be80-a96ebc74cacb@i-love.sakura.ne.jp>
+        <87h7upucqi.fsf@x220.int.ebiederm.org>
+        <d0266a24-dfab-83d0-e178-aa67c9f5ebc0@i-love.sakura.ne.jp>
+Date:   Fri, 03 Jul 2020 17:25:49 -0500
+In-Reply-To: <d0266a24-dfab-83d0-e178-aa67c9f5ebc0@i-love.sakura.ne.jp>
+        (Tetsuo Handa's message of "Fri, 3 Jul 2020 22:19:17 +0900")
+Message-ID: <87lfk0nslu.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-XM-SPF: eid=1jrUCQ-0005eV-HO;;;mid=<87lfk0nslu.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19gJkekNuulipNZ4g9GUrgrQKnIVKDpx4I=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH v2 00/15] Make the user mode driver code a better citizen
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-audit_log_string() was inteded to be an internal audit function and
-since there are only two internal uses, remove them.  Purge all external
-uses of it by restructuring code to use an existing audit_log_format()
-or using audit_log_format().
+Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp> writes:
 
-Please see the upstream issue
-https://github.com/linux-audit/audit-kernel/issues/84
+> On 2020/07/02 22:08, Eric W. Biederman wrote:
+>>> By the way, commit 4a9d4b024a3102fc ("switch fput to task_work_add") says
+>>> that use of flush_delayed_fput() has to be careful. Al, is it safe to call
+>>> flush_delayed_fput() from blob_to_mnt() from umd_load_blob() (which might be
+>>> called from both kernel thread and from process context (e.g. init_module()
+>>> syscall by /sbin/insmod )) ?
+>> 
+>> And __fput_sync needs to be even more careful.
+>> umd_load_blob is called in these changes without any locks held.
+>
+> But where is the guarantee that a thread which called flush_delayed_fput() waits for
+> the completion of processing _all_ "struct file" linked into delayed_fput_list ?
+> If some other thread or delayed_fput_work (scheduled by fput_many()) called
+> flush_delayed_fput() between blob_to_mnt()'s fput(file) and flush_delayed_fput()
+> sequence? blob_to_mnt()'s flush_delayed_fput() can miss the "struct file" which
+> needs to be processed before execve(), can't it?
 
-Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
----
-Passes audit-testsuite.
+As a module the guarantee is we call task_work_run.
+Built into the kernel the guarantee as best I can trace it is that
+kthreadd hasn't started, and as such nothing that is scheduled has run
+yet.
 
-Changelog:
-v3
-- fix two warning: non-void function does not return a value in all control paths
-	Reported-by: kernel test robot <lkp@intel.com>
+> Also, I don't know how convoluted the dependency of all "struct file" linked into
+> delayed_fput_list might be, for there can be "struct file" which will not be a
+> simple close of tmpfs file created by blob_to_mnt()'s file_open_root() request.
+>
+> On the other hand, although __fput_sync() cannot be called from !PF_KTHREAD threads,
+> there is a guarantee that __fput_sync() waits for the completion of "struct file"
+> which needs to be flushed before execve(), isn't there?
 
-v2
-- restructure to piggyback on existing audit_log_format() calls, checking quoting needs for each.
+There is really not a good helper or helpers, and this code suggests we
+have something better.  Right now I have used the existing helpers to
+the best of my ability.  If you or someone else wants to write a better
+version of flushing so that exec can happen be my guest.
 
-v1 Vlad Dronov
-- https://github.com/nefigtut/audit-kernel/commit/dbbcba46335a002f44b05874153a85b9cc18aebf
+As far as I can tell what I have is good enough.
 
- include/linux/audit.h     |  5 -----
- kernel/audit.c            |  4 ++--
- security/apparmor/audit.c | 10 ++++------
- security/apparmor/file.c  | 25 +++++++------------------
- security/apparmor/ipc.c   | 46 +++++++++++++++++++++++-----------------------
- security/apparmor/net.c   | 14 ++++++++------
- security/lsm_audit.c      |  4 ++--
- 7 files changed, 46 insertions(+), 62 deletions(-)
+>> We fundamentally AKA in any correct version of this code need to flush
+>> the file descriptor before we call exec or exec can not open it a
+>> read-only denying all writes from any other opens.
+>> 
+>> The use case of flush_delayed_fput is exactly the same as that used
+>> when loading the initramfs.
+>
+> When loading the initramfs, the number of threads is quite few (which
+> means that the possibility of hitting the race window and convoluted
+> dependency is small).
 
-diff --git a/include/linux/audit.h b/include/linux/audit.h
-index 604ede630580..5ad7cd65d76f 100644
---- a/include/linux/audit.h
-+++ b/include/linux/audit.h
-@@ -695,9 +695,4 @@ static inline bool audit_loginuid_set(struct task_struct *tsk)
- 	return uid_valid(audit_get_loginuid(tsk));
- }
- 
--static inline void audit_log_string(struct audit_buffer *ab, const char *buf)
--{
--	audit_log_n_string(ab, buf, strlen(buf));
--}
--
- #endif
-diff --git a/kernel/audit.c b/kernel/audit.c
-index 8c201f414226..a2f3e34aa724 100644
---- a/kernel/audit.c
-+++ b/kernel/audit.c
-@@ -2080,13 +2080,13 @@ void audit_log_d_path(struct audit_buffer *ab, const char *prefix,
- 	/* We will allow 11 spaces for ' (deleted)' to be appended */
- 	pathname = kmalloc(PATH_MAX+11, ab->gfp_mask);
- 	if (!pathname) {
--		audit_log_string(ab, "<no_memory>");
-+		audit_log_format(ab, "\"<no_memory>\"");
- 		return;
- 	}
- 	p = d_path(path, pathname, PATH_MAX+11);
- 	if (IS_ERR(p)) { /* Should never happen since we send PATH_MAX */
- 		/* FIXME: can we save some information here? */
--		audit_log_string(ab, "<too_long>");
-+		audit_log_format(ab, "\"<too_long>\"");
- 	} else
- 		audit_log_untrustedstring(ab, p);
- 	kfree(pathname);
-diff --git a/security/apparmor/audit.c b/security/apparmor/audit.c
-index 597732503815..335b5b8d300b 100644
---- a/security/apparmor/audit.c
-+++ b/security/apparmor/audit.c
-@@ -57,18 +57,16 @@ static void audit_pre(struct audit_buffer *ab, void *ca)
- 	struct common_audit_data *sa = ca;
- 
- 	if (aa_g_audit_header) {
--		audit_log_format(ab, "apparmor=");
--		audit_log_string(ab, aa_audit_type[aad(sa)->type]);
-+		audit_log_format(ab, "apparmor=%s",
-+				 aa_audit_type[aad(sa)->type]);
- 	}
- 
- 	if (aad(sa)->op) {
--		audit_log_format(ab, " operation=");
--		audit_log_string(ab, aad(sa)->op);
-+		audit_log_format(ab, " operation=%s", aad(sa)->op);
- 	}
- 
- 	if (aad(sa)->info) {
--		audit_log_format(ab, " info=");
--		audit_log_string(ab, aad(sa)->info);
-+		audit_log_format(ab, " info=\"%s\"", aad(sa)->info);
- 		if (aad(sa)->error)
- 			audit_log_format(ab, " error=%d", aad(sa)->error);
- 	}
-diff --git a/security/apparmor/file.c b/security/apparmor/file.c
-index 9a2d14b7c9f8..70f27124d051 100644
---- a/security/apparmor/file.c
-+++ b/security/apparmor/file.c
-@@ -35,20 +35,6 @@ static u32 map_mask_to_chr_mask(u32 mask)
- }
- 
- /**
-- * audit_file_mask - convert mask to permission string
-- * @buffer: buffer to write string to (NOT NULL)
-- * @mask: permission mask to convert
-- */
--static void audit_file_mask(struct audit_buffer *ab, u32 mask)
--{
--	char str[10];
--
--	aa_perm_mask_to_str(str, sizeof(str), aa_file_perm_chrs,
--			    map_mask_to_chr_mask(mask));
--	audit_log_string(ab, str);
--}
--
--/**
-  * file_audit_cb - call back for file specific audit fields
-  * @ab: audit_buffer  (NOT NULL)
-  * @va: audit struct to audit values of  (NOT NULL)
-@@ -57,14 +43,17 @@ static void file_audit_cb(struct audit_buffer *ab, void *va)
- {
- 	struct common_audit_data *sa = va;
- 	kuid_t fsuid = current_fsuid();
-+	char str[10];
- 
- 	if (aad(sa)->request & AA_AUDIT_FILE_MASK) {
--		audit_log_format(ab, " requested_mask=");
--		audit_file_mask(ab, aad(sa)->request);
-+		aa_perm_mask_to_str(str, sizeof(str), aa_file_perm_chrs,
-+				    map_mask_to_chr_mask(aad(sa)->request));
-+		audit_log_format(ab, " requested_mask=%s", str);
- 	}
- 	if (aad(sa)->denied & AA_AUDIT_FILE_MASK) {
--		audit_log_format(ab, " denied_mask=");
--		audit_file_mask(ab, aad(sa)->denied);
-+		aa_perm_mask_to_str(str, sizeof(str), aa_file_perm_chrs,
-+				    map_mask_to_chr_mask(aad(sa)->denied));
-+		audit_log_format(ab, " denied_mask=%s", str);
- 	}
- 	if (aad(sa)->request & AA_AUDIT_FILE_MASK) {
- 		audit_log_format(ab, " fsuid=%d",
-diff --git a/security/apparmor/ipc.c b/security/apparmor/ipc.c
-index 4ecedffbdd33..fe431731883f 100644
---- a/security/apparmor/ipc.c
-+++ b/security/apparmor/ipc.c
-@@ -20,25 +20,23 @@
- 
- /**
-  * audit_ptrace_mask - convert mask to permission string
-- * @buffer: buffer to write string to (NOT NULL)
-  * @mask: permission mask to convert
-+ *
-+ * Returns: pointer to static string
-  */
--static void audit_ptrace_mask(struct audit_buffer *ab, u32 mask)
-+static const char *audit_ptrace_mask(u32 mask)
- {
- 	switch (mask) {
- 	case MAY_READ:
--		audit_log_string(ab, "read");
--		break;
-+		return "read";
- 	case MAY_WRITE:
--		audit_log_string(ab, "trace");
--		break;
-+		return "trace";
- 	case AA_MAY_BE_READ:
--		audit_log_string(ab, "readby");
--		break;
-+		return "readby";
- 	case AA_MAY_BE_TRACED:
--		audit_log_string(ab, "tracedby");
--		break;
-+		return "tracedby";
- 	}
-+	return "";
- }
- 
- /* call back to audit ptrace fields */
-@@ -47,12 +45,12 @@ static void audit_ptrace_cb(struct audit_buffer *ab, void *va)
- 	struct common_audit_data *sa = va;
- 
- 	if (aad(sa)->request & AA_PTRACE_PERM_MASK) {
--		audit_log_format(ab, " requested_mask=");
--		audit_ptrace_mask(ab, aad(sa)->request);
-+		audit_log_format(ab, " requested_mask=%s",
-+				 audit_ptrace_mask(aad(sa)->request));
- 
- 		if (aad(sa)->denied & AA_PTRACE_PERM_MASK) {
--			audit_log_format(ab, " denied_mask=");
--			audit_ptrace_mask(ab, aad(sa)->denied);
-+			audit_log_format(ab, " denied_mask=%s",
-+					 audit_ptrace_mask(aad(sa)->denied));
- 		}
- 	}
- 	audit_log_format(ab, " peer=");
-@@ -142,16 +140,18 @@ static inline int map_signal_num(int sig)
- }
- 
- /**
-- * audit_file_mask - convert mask to permission string
-- * @buffer: buffer to write string to (NOT NULL)
-+ * audit_signal_mask - convert mask to permission string
-  * @mask: permission mask to convert
-+ *
-+ * Returns: pointer to static string
-  */
--static void audit_signal_mask(struct audit_buffer *ab, u32 mask)
-+static const char *audit_signal_mask(u32 mask)
- {
- 	if (mask & MAY_READ)
--		audit_log_string(ab, "receive");
-+		return "receive";
- 	if (mask & MAY_WRITE)
--		audit_log_string(ab, "send");
-+		return "send";
-+	return "";
- }
- 
- /**
-@@ -164,11 +164,11 @@ static void audit_signal_cb(struct audit_buffer *ab, void *va)
- 	struct common_audit_data *sa = va;
- 
- 	if (aad(sa)->request & AA_SIGNAL_PERM_MASK) {
--		audit_log_format(ab, " requested_mask=");
--		audit_signal_mask(ab, aad(sa)->request);
-+		audit_log_format(ab, " requested_mask=%s",
-+				 audit_signal_mask(aad(sa)->request));
- 		if (aad(sa)->denied & AA_SIGNAL_PERM_MASK) {
--			audit_log_format(ab, " denied_mask=");
--			audit_signal_mask(ab, aad(sa)->denied);
-+			audit_log_format(ab, " denied_mask=%s",
-+					 audit_signal_mask(aad(sa)->denied));
- 		}
- 	}
- 	if (aad(sa)->signal == SIGUNKNOWN)
-diff --git a/security/apparmor/net.c b/security/apparmor/net.c
-index d8afc39f663a..fa0e85568450 100644
---- a/security/apparmor/net.c
-+++ b/security/apparmor/net.c
-@@ -72,16 +72,18 @@ void audit_net_cb(struct audit_buffer *ab, void *va)
- {
- 	struct common_audit_data *sa = va;
- 
--	audit_log_format(ab, " family=");
- 	if (address_family_names[sa->u.net->family])
--		audit_log_string(ab, address_family_names[sa->u.net->family]);
-+		audit_log_format(ab, " family=\"%s\"",
-+				 address_family_names[sa->u.net->family]);
- 	else
--		audit_log_format(ab, "\"unknown(%d)\"", sa->u.net->family);
--	audit_log_format(ab, " sock_type=");
-+		audit_log_format(ab, " family=\"unknown(%d)\"",
-+				 sa->u.net->family);
- 	if (sock_type_names[aad(sa)->net.type])
--		audit_log_string(ab, sock_type_names[aad(sa)->net.type]);
-+		audit_log_format(ab, " sock_type=\"%s\"",
-+				 sock_type_names[aad(sa)->net.type]);
- 	else
--		audit_log_format(ab, "\"unknown(%d)\"", aad(sa)->net.type);
-+		audit_log_format(ab, " sock_type=\"unknown(%d)\"",
-+				 aad(sa)->net.type);
- 	audit_log_format(ab, " protocol=%d", aad(sa)->net.protocol);
- 
- 	if (aad(sa)->request & NET_PERMS_MASK) {
-diff --git a/security/lsm_audit.c b/security/lsm_audit.c
-index 2d2bf49016f4..221370794d14 100644
---- a/security/lsm_audit.c
-+++ b/security/lsm_audit.c
-@@ -427,8 +427,8 @@ static void dump_common_audit_data(struct audit_buffer *ab,
- 				 a->u.ibendport->port);
- 		break;
- 	case LSM_AUDIT_DATA_LOCKDOWN:
--		audit_log_format(ab, " lockdown_reason=");
--		audit_log_string(ab, lockdown_reasons[a->u.reason]);
-+		audit_log_format(ab, " lockdown_reason=\"%s\"",
-+				 lockdown_reasons[a->u.reason]);
- 		break;
- 	} /* switch (a->type) */
- }
--- 
-1.8.3.1
+But the reality is the code run very early, before the initramfs is
+initialized in practice.
 
+> But like EXPORT_SYMBOL_GPL(umd_load_blob) indicates, blob_to_mnt()'s
+> flush_delayed_fput() might be called after many number of threads already
+> started running.
+
+At which point the code probably won't be runnig from a kernel thread
+but instead will be running in a thread where task_work_run is relevant.
+
+At worst it is a very small race, where someone else in another thread
+starts flushing the file.  Which means the file could still be
+completely close before exec.   Even that is not necessarily fatal,
+as the usermode driver code has a respawn capability.
+
+Code that is used enough that it hits that race sounds like a very
+good problem to have from the perspective of the usermode driver code.
+
+> Do we really need to mount upon umd_load_blob() and unmount upon umd_unload_blob() ?
+> LSM modules might prefer only one instance of filesystem for umd
+> blobs.
+
+It is simple. People are free to change it, but a single filesystem
+seems like a very good place to start with this functionality.
+
+> For pathname based LSMs, since that filesystem is not visible from mount tree, only
+> info->driver_name can be used for distinction. Therefore, one instance of filesystem
+> with files created with file_open_root(O_CREAT | O_WRONLY | O_EXCL)
+> might be preferable.
+
+I took a quick look and the creation and removal of files with the
+in-kernel helpers is not particularly easy.  Certainly it is more work
+and thus a higher likelyhood of bugs than what I have done.
+
+A directory per driver does sound tempting.  Just more work that I am
+willing to do.
+
+> For inode based LSMs, reusing one instance of filesystem created upon early boot might
+> be convenient for labeling.
+>
+> Also, we might want a dedicated filesystem (say, "umdfs") instead of regular tmpfs in
+> order to implement protections without labeling files. Then, we might also be able to
+> implement minimal protections without LSMs.
+
+All valid points.  Nothing sets this design in stone.
+Nothing says this is the endpoint of the evolution of this code.
+
+The entire point of this patchset for me is that I remove the
+unnecessary special cases from exec and do_exit, so I don't have to deal
+with the usermode driver code anymore.
+
+Eric
