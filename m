@@ -2,173 +2,169 @@ Return-Path: <SRS0=/Sjk=AO=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CC4AC433E0
-	for <linux-security-module@archiver.kernel.org>; Fri,  3 Jul 2020 11:40:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D346BC433E1
+	for <linux-security-module@archiver.kernel.org>; Fri,  3 Jul 2020 13:20:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1F2B02084C
-	for <linux-security-module@archiver.kernel.org>; Fri,  3 Jul 2020 11:40:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B27FE20760
+	for <linux-security-module@archiver.kernel.org>; Fri,  3 Jul 2020 13:20:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726035AbgGCLk2 (ORCPT
+        id S1726272AbgGCNU0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 3 Jul 2020 07:40:28 -0400
-Received: from mail-il1-f200.google.com ([209.85.166.200]:54826 "EHLO
-        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726289AbgGCLkZ (ORCPT
+        Fri, 3 Jul 2020 09:20:26 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:64056 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726022AbgGCNUZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 3 Jul 2020 07:40:25 -0400
-Received: by mail-il1-f200.google.com with SMTP id d18so21759275ill.21
-        for <linux-security-module@vger.kernel.org>; Fri, 03 Jul 2020 04:40:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=C+xZpCu+1aqH0Q22E41rew5k7JF4gXiZv3aVoYwcaB0=;
-        b=WBi1Lm1OzuWflrRFWu3HmQaOxARSoCETJFlmo0esOdgswjxKh7lf3ZGsD+hWKHLqhE
-         l/vxu5E1s9PJSj+n/aaw3SsBhY4S1uWg9wOcukV45JjxGw+bYg1uM4dt6Ggu9lt05oBm
-         +44aSOGpejTvaXhEGFESZtTw0PWlwJ0Qwjl0Ndq0BNoaJdhyQwj3rxYsG6oD91TcpaNh
-         DWBfpqrHm55fdBahmYWWcHqGiwNTv/XtL5vdu3CxuzH8jEK9OGWBtJfutnFANgbJi0Rz
-         QbFAbkbCCDCu5zxi919dVUzVCi9VDm+AOx7RnkLDEtqgvOOMLDHDqEbTJdvB4yzXjdbH
-         36hQ==
-X-Gm-Message-State: AOAM533WbTxVKHJjk4QF+FDB5DpxMKxm2nv0l1pdwinH0fCrYwnYlCKq
-        eT94uphIHdz7uh1KWSMfnDU6VDXzuGW5pzXZq6oT2fQj8d8l
-X-Google-Smtp-Source: ABdhPJzan7DItbKw7hDeRJWpKWe6g+PyhxicS26IVff1Jc+DFsjUDurp+UsrXWLz9ZOKEfU0b02Cro5YZwrU47RQ0z2cMYGLs1mJ
+        Fri, 3 Jul 2020 09:20:25 -0400
+Received: from fsav402.sakura.ne.jp (fsav402.sakura.ne.jp [133.242.250.101])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 063DJNb2024792;
+        Fri, 3 Jul 2020 22:19:23 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav402.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav402.sakura.ne.jp);
+ Fri, 03 Jul 2020 22:19:23 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav402.sakura.ne.jp)
+Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 063DJMxC024786
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Fri, 3 Jul 2020 22:19:23 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH v2 00/15] Make the user mode driver code a better citizen
+To:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>,
+        Greg Kroah-Hartman <greg@kroah.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>, bpf <bpf@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <20200625095725.GA3303921@kroah.com>
+ <778297d2-512a-8361-cf05-42d9379e6977@i-love.sakura.ne.jp>
+ <20200625120725.GA3493334@kroah.com>
+ <20200625.123437.2219826613137938086.davem@davemloft.net>
+ <CAHk-=whuTwGHEPjvtbBvneHHXeqJC=q5S09mbPnqb=Q+MSPMag@mail.gmail.com>
+ <87pn9mgfc2.fsf_-_@x220.int.ebiederm.org>
+ <87y2oac50p.fsf@x220.int.ebiederm.org>
+ <87bll17ili.fsf_-_@x220.int.ebiederm.org>
+ <20200629221231.jjc2czk3ul2roxkw@ast-mbp.dhcp.thefacebook.com>
+ <87eepwzqhd.fsf@x220.int.ebiederm.org>
+ <1f4d8b7e-bcff-f950-7dac-76e3c4a65661@i-love.sakura.ne.jp>
+ <87pn9euks9.fsf@x220.int.ebiederm.org>
+ <757f37f8-5641-91d2-be80-a96ebc74cacb@i-love.sakura.ne.jp>
+ <87h7upucqi.fsf@x220.int.ebiederm.org>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <d0266a24-dfab-83d0-e178-aa67c9f5ebc0@i-love.sakura.ne.jp>
+Date:   Fri, 3 Jul 2020 22:19:17 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-X-Received: by 2002:a6b:c910:: with SMTP id z16mr11785836iof.120.1593776424237;
- Fri, 03 Jul 2020 04:40:24 -0700 (PDT)
-Date:   Fri, 03 Jul 2020 04:40:24 -0700
-In-Reply-To: <000000000000961dea05a95c9558@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000009e40fa05a987fde8@google.com>
-Subject: Re: INFO: task hung in request_key_tag
-From:   syzbot <syzbot+46c77dc7e98c732de754@syzkaller.appspotmail.com>
-To:     akpm@linux-foundation.org, dhowells@redhat.com,
-        ebiederm@xmission.com, hch@infradead.org,
-        herbert@gondor.apana.org.au, jarkko.sakkinen@linux.intel.com,
-        jmorris@namei.org, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, mcgrof@kernel.org,
-        naresh.kamboju@linaro.org, penguin-kernel@i-love.sakura.ne.jp,
-        serge@hallyn.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <87h7upucqi.fsf@x220.int.ebiederm.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-syzbot has found a reproducer for the following crash on:
+On 2020/07/02 22:08, Eric W. Biederman wrote:
+>> By the way, commit 4a9d4b024a3102fc ("switch fput to task_work_add") says
+>> that use of flush_delayed_fput() has to be careful. Al, is it safe to call
+>> flush_delayed_fput() from blob_to_mnt() from umd_load_blob() (which might be
+>> called from both kernel thread and from process context (e.g. init_module()
+>> syscall by /sbin/insmod )) ?
+> 
+> And __fput_sync needs to be even more careful.
+> umd_load_blob is called in these changes without any locks held.
 
-HEAD commit:    aab20039 Add linux-next specific files for 20200701
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=14000a5b100000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=739f6fbf326049f4
-dashboard link: https://syzkaller.appspot.com/bug?extid=46c77dc7e98c732de754
-compiler:       gcc (GCC) 10.1.0-syz 20200507
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=127e085b100000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=107ffaa7100000
+But where is the guarantee that a thread which called flush_delayed_fput() waits for
+the completion of processing _all_ "struct file" linked into delayed_fput_list ?
+If some other thread or delayed_fput_work (scheduled by fput_many()) called
+flush_delayed_fput() between blob_to_mnt()'s fput(file) and flush_delayed_fput()
+sequence? blob_to_mnt()'s flush_delayed_fput() can miss the "struct file" which
+needs to be processed before execve(), can't it?
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+46c77dc7e98c732de754@syzkaller.appspotmail.com
+Also, I don't know how convoluted the dependency of all "struct file" linked into
+delayed_fput_list might be, for there can be "struct file" which will not be a
+simple close of tmpfs file created by blob_to_mnt()'s file_open_root() request.
 
-INFO: task syz-executor067:6800 blocked for more than 143 seconds.
-      Not tainted 5.8.0-rc3-next-20200701-syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-syz-executor067 D27632  6800   6794 0x00004000
-Call Trace:
- context_switch kernel/sched/core.c:3445 [inline]
- __schedule+0x8b4/0x1e80 kernel/sched/core.c:4169
- schedule+0xd0/0x2a0 kernel/sched/core.c:4244
- bit_wait+0x12/0xa0 kernel/sched/wait_bit.c:199
- __wait_on_bit+0x60/0x190 kernel/sched/wait_bit.c:49
- out_of_line_wait_on_bit+0xd5/0x110 kernel/sched/wait_bit.c:64
- wait_on_bit include/linux/wait_bit.h:76 [inline]
- wait_for_key_construction+0x10b/0x140 security/keys/request_key.c:664
- request_key_tag+0x7a/0xb0 security/keys/request_key.c:705
- dns_query+0x257/0x6c3 net/dns_resolver/dns_query.c:128
- ceph_dns_resolve_name net/ceph/messenger.c:1887 [inline]
- ceph_parse_server_name net/ceph/messenger.c:1922 [inline]
- ceph_parse_ips+0x77f/0x8c0 net/ceph/messenger.c:1949
- ceph_parse_mon_ips+0x59/0xc0 net/ceph/ceph_common.c:411
- ceph_parse_source fs/ceph/super.c:271 [inline]
- ceph_parse_mount_param+0x1239/0x17e0 fs/ceph/super.c:322
- vfs_parse_fs_param fs/fs_context.c:117 [inline]
- vfs_parse_fs_param+0x203/0x550 fs/fs_context.c:98
- vfs_parse_fs_string+0xe6/0x150 fs/fs_context.c:161
- do_new_mount fs/namespace.c:2905 [inline]
- do_mount+0x1222/0x1df0 fs/namespace.c:3237
- __do_sys_mount fs/namespace.c:3447 [inline]
- __se_sys_mount fs/namespace.c:3424 [inline]
- __x64_sys_mount+0x18f/0x230 fs/namespace.c:3424
- do_syscall_64+0x60/0xe0 arch/x86/entry/common.c:359
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x4401b9
-Code: Bad RIP value.
-RSP: 002b:00007fff4cd307c8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 0030656c69662f2e RCX: 00000000004401b9
-RDX: 0000000020000040 RSI: 0000000020000080 RDI: 00000000200002c0
-RBP: 00000000006ca018 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000401a40
-R13: 0000000000401ad0 R14: 0000000000000000 R15: 0000000000000000
+On the other hand, although __fput_sync() cannot be called from !PF_KTHREAD threads,
+there is a guarantee that __fput_sync() waits for the completion of "struct file"
+which needs to be flushed before execve(), isn't there?
 
-Showing all locks held in the system:
-1 lock held by khungtaskd/1146:
- #0: ffffffff89bc3000 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x53/0x260 kernel/locking/lockdep.c:5779
-1 lock held by in:imklog/6692:
- #0: ffff88809a086af0 (&f->f_pos_lock){+.+.}-{3:3}, at: __fdget_pos+0xe9/0x100 fs/file.c:928
+> 
+> We fundamentally AKA in any correct version of this code need to flush
+> the file descriptor before we call exec or exec can not open it a
+> read-only denying all writes from any other opens.
+> 
+> The use case of flush_delayed_fput is exactly the same as that used
+> when loading the initramfs.
 
-=============================================
+When loading the initramfs, the number of threads is quite few (which
+means that the possibility of hitting the race window and convoluted
+dependency is small).
 
-NMI backtrace for cpu 0
-CPU: 0 PID: 1146 Comm: khungtaskd Not tainted 5.8.0-rc3-next-20200701-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x18f/0x20d lib/dump_stack.c:118
- nmi_cpu_backtrace.cold+0x70/0xb1 lib/nmi_backtrace.c:101
- nmi_trigger_cpumask_backtrace+0x1b3/0x223 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:147 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:253 [inline]
- watchdog+0xd89/0xf30 kernel/hung_task.c:339
- kthread+0x3b5/0x4a0 kernel/kthread.c:292
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
-Sending NMI from CPU 0 to CPUs 1:
-NMI backtrace for cpu 1
-CPU: 1 PID: 3852 Comm: systemd-journal Not tainted 5.8.0-rc3-next-20200701-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:pmd_none arch/x86/include/asm/pgtable.h:825 [inline]
-RIP: 0010:pmd_none_or_trans_huge_or_clear_bad include/linux/pgtable.h:1198 [inline]
-RIP: 0010:pmd_trans_unstable include/linux/pgtable.h:1223 [inline]
-RIP: 0010:pmd_devmap_trans_unstable mm/memory.c:3496 [inline]
-RIP: 0010:pmd_devmap_trans_unstable mm/memory.c:3494 [inline]
-RIP: 0010:handle_pte_fault mm/memory.c:4198 [inline]
-RIP: 0010:__handle_mm_fault mm/memory.c:4360 [inline]
-RIP: 0010:handle_mm_fault+0x1da0/0x43f0 mm/memory.c:4397
-Code: ff e9 9d f3 ff ff e8 0f 93 cf ff 48 89 ea 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 80 3c 02 00 0f 85 b9 20 00 00 4c 8b 65 00 <4c> 89 e3 31 ff 48 83 e3 9f 48 89 de e8 7f 8f cf ff 48 85 db 0f 84
-RSP: 0000:ffffc900015d7d70 EFLAGS: 00000246
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff81a44fec
-RDX: 1ffff11012ad8f4a RSI: ffffffff81a45861 RDI: 0000000000000007
-RBP: ffff8880956c7a50 R08: 0000000000000000 R09: ffffffff8aaeb0e7
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000091cd0067
-R13: 0000000000000000 R14: 0000000000000040 R15: 0000000000000001
-FS:  00007fdaac0718c0(0000) GS:ffff8880ae700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fdaa9411000 CR3: 0000000094cdd000 CR4: 00000000001506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- do_user_addr_fault+0x5a2/0xd00 arch/x86/mm/fault.c:1295
- handle_page_fault arch/x86/mm/fault.c:1365 [inline]
- exc_page_fault+0xab/0x170 arch/x86/mm/fault.c:1418
- asm_exc_page_fault+0x1e/0x30 arch/x86/include/asm/idtentry.h:565
-RIP: 0033:0x7fdaab37b124
-Code: Bad RIP value.
-RSP: 002b:00007ffcfb2ef578 EFLAGS: 00010202
-RAX: 00007fdaa9410fe0 RBX: 0000000000000090 RCX: 000000000021ffa0
-RDX: 0000000000000090 RSI: 00007ffcfb2ef620 RDI: 00007fdaa9410fe0
-RBP: 0000000000000000 R08: 0000000000220070 R09: 00007ffcfb2f26b0
-R10: 000000000001b706 R11: 00007fdaa9410fa0 R12: 00005652b21dbe80
-R13: 715c95999b8098ed R14: 00007ffcfb2ef810 R15: 00007ffcfb2ef620
+But like EXPORT_SYMBOL_GPL(umd_load_blob) indicates, blob_to_mnt()'s
+flush_delayed_fput() might be called after many number of threads already
+started running.
+
+
+
+On 2020/07/03 1:02, Eric W. Biederman wrote:
+>>>> On 2020/06/30 21:29, Eric W. Biederman wrote:
+>>>>> Hmm.  The wake up happens just of tgid->wait_pidfd happens just before
+>>>>> release_task is called so there is a race.  As it is possible to wake
+>>>>> up and then go back to sleep before pid_has_task becomes false.
+>>>>
+>>>> What is the reason we want to wait until pid_has_task() becomes false?
+>>>>
+>>>> - wait_event(tgid->wait_pidfd, !pid_has_task(tgid, PIDTYPE_TGID));
+>>>> + while (!wait_event_timeout(tgid->wait_pidfd, !pid_has_task(tgid, PIDTYPE_TGID), 1));
+>>>
+>>> So that it is safe to call bpfilter_umh_cleanup.  The previous code
+>>> performed the wait by having a callback in do_exit.
+>>
+>> But bpfilter_umh_cleanup() does only
+>>
+>> 	fput(info->pipe_to_umh);
+>> 	fput(info->pipe_from_umh);
+>> 	put_pid(info->tgid);
+>> 	info->tgid = NULL;
+>>
+>> which is (I think) already safe regardless of the usermode process because
+>> bpfilter_umh_cleanup() merely closes one side of two pipes used between
+>> two processes and forgets about the usermode process.
+> 
+> It is not safe.
+> 
+> Baring bugs there is only one use of shtudown_umh that matters.  The one
+> in fini_umh.  The use of the file by the mm must be finished before
+> umd_unload_blob.  AKA unmount.  Which completely frees the filesystem.
+
+Do we really need to mount upon umd_load_blob() and unmount upon umd_unload_blob() ?
+LSM modules might prefer only one instance of filesystem for umd blobs.
+
+For pathname based LSMs, since that filesystem is not visible from mount tree, only
+info->driver_name can be used for distinction. Therefore, one instance of filesystem
+with files created with file_open_root(O_CREAT | O_WRONLY | O_EXCL) might be preferable.
+
+For inode based LSMs, reusing one instance of filesystem created upon early boot might
+be convenient for labeling.
+
+Also, we might want a dedicated filesystem (say, "umdfs") instead of regular tmpfs in
+order to implement protections without labeling files. Then, we might also be able to
+implement minimal protections without LSMs.
 
