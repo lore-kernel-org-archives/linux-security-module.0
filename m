@@ -2,346 +2,173 @@ Return-Path: <SRS0=/Sjk=AO=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83D1BC433DF
-	for <linux-security-module@archiver.kernel.org>; Fri,  3 Jul 2020 11:18:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CC4AC433E0
+	for <linux-security-module@archiver.kernel.org>; Fri,  3 Jul 2020 11:40:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 550E7206B6
-	for <linux-security-module@archiver.kernel.org>; Fri,  3 Jul 2020 11:18:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ab0WEkHn"
+	by mail.kernel.org (Postfix) with ESMTP id 1F2B02084C
+	for <linux-security-module@archiver.kernel.org>; Fri,  3 Jul 2020 11:40:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726152AbgGCLSa (ORCPT
+        id S1726035AbgGCLk2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 3 Jul 2020 07:18:30 -0400
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:39117 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726022AbgGCLS3 (ORCPT
+        Fri, 3 Jul 2020 07:40:28 -0400
+Received: from mail-il1-f200.google.com ([209.85.166.200]:54826 "EHLO
+        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726289AbgGCLkZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 3 Jul 2020 07:18:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1593775106;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=JqYfQuGbGWXSiYUxY7Si+Ff9cwhN/NvXUKQYh648coc=;
-        b=ab0WEkHntCTucvJOqumvPU+rHPhYJBj9VpTBddgSVNJkYZMfgzZHuvUJRITw+7zqV0Q0al
-        5MD7VkI+5NmNm37qzCUWaHA3ejJv/TbZf7TLuqWEiw6jtzejAv5TRrXJ6Gfywd9/TRGY5s
-        LcAFiTS+XPURzuFw610sKgmYcF3xowY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-54-N-4x5QI2O0SP-lJwmMwBPQ-1; Fri, 03 Jul 2020 07:18:23 -0400
-X-MC-Unique: N-4x5QI2O0SP-lJwmMwBPQ-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6417A18FE868;
-        Fri,  3 Jul 2020 11:18:20 +0000 (UTC)
-Received: from dcbz.redhat.com (ovpn-113-12.ams2.redhat.com [10.36.113.12])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 211DB73FC7;
-        Fri,  3 Jul 2020 11:18:09 +0000 (UTC)
-Date:   Fri, 3 Jul 2020 13:18:07 +0200
-From:   Adrian Reber <areber@redhat.com>
-To:     "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Pavel Emelyanov <ovzxemul@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Andrei Vagin <avagin@gmail.com>,
-        Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
-        =?utf-8?B?TWljaGHFgiBDxYJhcGnFhHNraQ==?= <mclapinski@google.com>,
-        Kamil Yurtsever <kyurtsever@google.com>,
-        Dirk Petersen <dipeit@gmail.com>,
-        Christine Flood <chf@redhat.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Radostin Stoyanov <rstoyanov1@gmail.com>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Sargun Dhillon <sargun@sargun.me>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, selinux@vger.kernel.org,
-        Eric Paris <eparis@parisplace.org>,
-        Jann Horn <jannh@google.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v4 2/3] selftests: add clone3() CAP_CHECKPOINT_RESTORE
- test
-Message-ID: <20200703111807.GC243637@dcbz.redhat.com>
-References: <20200701064906.323185-1-areber@redhat.com>
- <20200701064906.323185-3-areber@redhat.com>
- <20200702205305.GA3283@mail.hallyn.com>
+        Fri, 3 Jul 2020 07:40:25 -0400
+Received: by mail-il1-f200.google.com with SMTP id d18so21759275ill.21
+        for <linux-security-module@vger.kernel.org>; Fri, 03 Jul 2020 04:40:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=C+xZpCu+1aqH0Q22E41rew5k7JF4gXiZv3aVoYwcaB0=;
+        b=WBi1Lm1OzuWflrRFWu3HmQaOxARSoCETJFlmo0esOdgswjxKh7lf3ZGsD+hWKHLqhE
+         l/vxu5E1s9PJSj+n/aaw3SsBhY4S1uWg9wOcukV45JjxGw+bYg1uM4dt6Ggu9lt05oBm
+         +44aSOGpejTvaXhEGFESZtTw0PWlwJ0Qwjl0Ndq0BNoaJdhyQwj3rxYsG6oD91TcpaNh
+         DWBfpqrHm55fdBahmYWWcHqGiwNTv/XtL5vdu3CxuzH8jEK9OGWBtJfutnFANgbJi0Rz
+         QbFAbkbCCDCu5zxi919dVUzVCi9VDm+AOx7RnkLDEtqgvOOMLDHDqEbTJdvB4yzXjdbH
+         36hQ==
+X-Gm-Message-State: AOAM533WbTxVKHJjk4QF+FDB5DpxMKxm2nv0l1pdwinH0fCrYwnYlCKq
+        eT94uphIHdz7uh1KWSMfnDU6VDXzuGW5pzXZq6oT2fQj8d8l
+X-Google-Smtp-Source: ABdhPJzan7DItbKw7hDeRJWpKWe6g+PyhxicS26IVff1Jc+DFsjUDurp+UsrXWLz9ZOKEfU0b02Cro5YZwrU47RQ0z2cMYGLs1mJ
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200702205305.GA3283@mail.hallyn.com>
-X-Operating-System: Linux (5.6.19-300.fc32.x86_64)
-X-Load-Average: 1.83 1.37 1.14
-X-Unexpected: The Spanish Inquisition
-X-GnuPG-Key: gpg --recv-keys D3C4906A
-X-Url:  <http://lisas.de/~adrian/>
-Organization: Red Hat
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Received: by 2002:a6b:c910:: with SMTP id z16mr11785836iof.120.1593776424237;
+ Fri, 03 Jul 2020 04:40:24 -0700 (PDT)
+Date:   Fri, 03 Jul 2020 04:40:24 -0700
+In-Reply-To: <000000000000961dea05a95c9558@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000009e40fa05a987fde8@google.com>
+Subject: Re: INFO: task hung in request_key_tag
+From:   syzbot <syzbot+46c77dc7e98c732de754@syzkaller.appspotmail.com>
+To:     akpm@linux-foundation.org, dhowells@redhat.com,
+        ebiederm@xmission.com, hch@infradead.org,
+        herbert@gondor.apana.org.au, jarkko.sakkinen@linux.intel.com,
+        jmorris@namei.org, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, mcgrof@kernel.org,
+        naresh.kamboju@linaro.org, penguin-kernel@i-love.sakura.ne.jp,
+        serge@hallyn.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jul 02, 2020 at 03:53:05PM -0500, Serge E. Hallyn wrote:
-> On Wed, Jul 01, 2020 at 08:49:05AM +0200, Adrian Reber wrote:
-> > This adds a test that changes its UID, uses capabilities to
-> > get CAP_CHECKPOINT_RESTORE and uses clone3() with set_tid to
-> > create a process with a given PID as non-root.
-> 
-> Seems worth also verifying that it fails if you have no capabilities.
-> I don't see that in the existing clone3/ test dir.
+syzbot has found a reproducer for the following crash on:
 
-Bit confused about what you mean. This test does:
+HEAD commit:    aab20039 Add linux-next specific files for 20200701
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=14000a5b100000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=739f6fbf326049f4
+dashboard link: https://syzkaller.appspot.com/bug?extid=46c77dc7e98c732de754
+compiler:       gcc (GCC) 10.1.0-syz 20200507
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=127e085b100000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=107ffaa7100000
 
- * switch UID to 1000
- * run clone3() with set_tid set and expect EPERM
- * set CAP_CHECKPOINT_RESTORE capability
- * run clone3() with set_tid set and expect success
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+46c77dc7e98c732de754@syzkaller.appspotmail.com
 
-So it already does what I think you are asking for. Did I misunderstand
-your comment?
+INFO: task syz-executor067:6800 blocked for more than 143 seconds.
+      Not tainted 5.8.0-rc3-next-20200701-syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+syz-executor067 D27632  6800   6794 0x00004000
+Call Trace:
+ context_switch kernel/sched/core.c:3445 [inline]
+ __schedule+0x8b4/0x1e80 kernel/sched/core.c:4169
+ schedule+0xd0/0x2a0 kernel/sched/core.c:4244
+ bit_wait+0x12/0xa0 kernel/sched/wait_bit.c:199
+ __wait_on_bit+0x60/0x190 kernel/sched/wait_bit.c:49
+ out_of_line_wait_on_bit+0xd5/0x110 kernel/sched/wait_bit.c:64
+ wait_on_bit include/linux/wait_bit.h:76 [inline]
+ wait_for_key_construction+0x10b/0x140 security/keys/request_key.c:664
+ request_key_tag+0x7a/0xb0 security/keys/request_key.c:705
+ dns_query+0x257/0x6c3 net/dns_resolver/dns_query.c:128
+ ceph_dns_resolve_name net/ceph/messenger.c:1887 [inline]
+ ceph_parse_server_name net/ceph/messenger.c:1922 [inline]
+ ceph_parse_ips+0x77f/0x8c0 net/ceph/messenger.c:1949
+ ceph_parse_mon_ips+0x59/0xc0 net/ceph/ceph_common.c:411
+ ceph_parse_source fs/ceph/super.c:271 [inline]
+ ceph_parse_mount_param+0x1239/0x17e0 fs/ceph/super.c:322
+ vfs_parse_fs_param fs/fs_context.c:117 [inline]
+ vfs_parse_fs_param+0x203/0x550 fs/fs_context.c:98
+ vfs_parse_fs_string+0xe6/0x150 fs/fs_context.c:161
+ do_new_mount fs/namespace.c:2905 [inline]
+ do_mount+0x1222/0x1df0 fs/namespace.c:3237
+ __do_sys_mount fs/namespace.c:3447 [inline]
+ __se_sys_mount fs/namespace.c:3424 [inline]
+ __x64_sys_mount+0x18f/0x230 fs/namespace.c:3424
+ do_syscall_64+0x60/0xe0 arch/x86/entry/common.c:359
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x4401b9
+Code: Bad RIP value.
+RSP: 002b:00007fff4cd307c8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 0030656c69662f2e RCX: 00000000004401b9
+RDX: 0000000020000040 RSI: 0000000020000080 RDI: 00000000200002c0
+RBP: 00000000006ca018 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000401a40
+R13: 0000000000401ad0 R14: 0000000000000000 R15: 0000000000000000
 
-		Adrian
+Showing all locks held in the system:
+1 lock held by khungtaskd/1146:
+ #0: ffffffff89bc3000 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x53/0x260 kernel/locking/lockdep.c:5779
+1 lock held by in:imklog/6692:
+ #0: ffff88809a086af0 (&f->f_pos_lock){+.+.}-{3:3}, at: __fdget_pos+0xe9/0x100 fs/file.c:928
 
-> > Signed-off-by: Adrian Reber <areber@redhat.com>
-> > ---
-> >  tools/testing/selftests/clone3/Makefile       |   4 +-
-> >  .../clone3/clone3_cap_checkpoint_restore.c    | 203 ++++++++++++++++++
-> >  2 files changed, 206 insertions(+), 1 deletion(-)
-> >  create mode 100644 tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
-> > 
-> > diff --git a/tools/testing/selftests/clone3/Makefile b/tools/testing/selftests/clone3/Makefile
-> > index cf976c732906..ef7564cb7abe 100644
-> > --- a/tools/testing/selftests/clone3/Makefile
-> > +++ b/tools/testing/selftests/clone3/Makefile
-> > @@ -1,6 +1,8 @@
-> >  # SPDX-License-Identifier: GPL-2.0
-> >  CFLAGS += -g -I../../../../usr/include/
-> > +LDLIBS += -lcap
-> >  
-> > -TEST_GEN_PROGS := clone3 clone3_clear_sighand clone3_set_tid
-> > +TEST_GEN_PROGS := clone3 clone3_clear_sighand clone3_set_tid \
-> > +	clone3_cap_checkpoint_restore
-> >  
-> >  include ../lib.mk
-> > diff --git a/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c b/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
-> > new file mode 100644
-> > index 000000000000..2cc3d57b91f2
-> > --- /dev/null
-> > +++ b/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
-> > @@ -0,0 +1,203 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +
-> > +/*
-> > + * Based on Christian Brauner's clone3() example.
-> > + * These tests are assuming to be running in the host's
-> > + * PID namespace.
-> > + */
-> > +
-> > +/* capabilities related code based on selftests/bpf/test_verifier.c */
-> > +
-> > +#define _GNU_SOURCE
-> > +#include <errno.h>
-> > +#include <linux/types.h>
-> > +#include <linux/sched.h>
-> > +#include <stdio.h>
-> > +#include <stdlib.h>
-> > +#include <stdbool.h>
-> > +#include <sys/capability.h>
-> > +#include <sys/prctl.h>
-> > +#include <sys/syscall.h>
-> > +#include <sys/types.h>
-> > +#include <sys/un.h>
-> > +#include <sys/wait.h>
-> > +#include <unistd.h>
-> > +#include <sched.h>
-> > +
-> > +#include "../kselftest.h"
-> > +#include "clone3_selftests.h"
-> > +
-> > +#ifndef MAX_PID_NS_LEVEL
-> > +#define MAX_PID_NS_LEVEL 32
-> > +#endif
-> > +
-> > +static void child_exit(int ret)
-> > +{
-> > +	fflush(stdout);
-> > +	fflush(stderr);
-> > +	_exit(ret);
-> > +}
-> > +
-> > +static int call_clone3_set_tid(pid_t * set_tid, size_t set_tid_size)
-> > +{
-> > +	int status;
-> > +	pid_t pid = -1;
-> > +
-> > +	struct clone_args args = {
-> > +		.exit_signal = SIGCHLD,
-> > +		.set_tid = ptr_to_u64(set_tid),
-> > +		.set_tid_size = set_tid_size,
-> > +	};
-> > +
-> > +	pid = sys_clone3(&args, sizeof(struct clone_args));
-> > +	if (pid < 0) {
-> > +		ksft_print_msg("%s - Failed to create new process\n",
-> > +			       strerror(errno));
-> > +		return -errno;
-> > +	}
-> > +
-> > +	if (pid == 0) {
-> > +		int ret;
-> > +		char tmp = 0;
-> > +
-> > +		ksft_print_msg
-> > +		    ("I am the child, my PID is %d (expected %d)\n",
-> > +		     getpid(), set_tid[0]);
-> > +
-> > +		if (set_tid[0] != getpid())
-> > +			child_exit(EXIT_FAILURE);
-> > +		child_exit(EXIT_SUCCESS);
-> > +	}
-> > +
-> > +	ksft_print_msg("I am the parent (%d). My child's pid is %d\n",
-> > +		       getpid(), pid);
-> > +
-> > +	if (waitpid(pid, &status, 0) < 0) {
-> > +		ksft_print_msg("Child returned %s\n", strerror(errno));
-> > +		return -errno;
-> > +	}
-> > +
-> > +	if (!WIFEXITED(status))
-> > +		return -1;
-> > +
-> > +	return WEXITSTATUS(status);
-> > +}
-> > +
-> > +static int test_clone3_set_tid(pid_t * set_tid,
-> > +			       size_t set_tid_size, int expected)
-> > +{
-> > +	int ret;
-> > +
-> > +	ksft_print_msg("[%d] Trying clone3() with CLONE_SET_TID to %d\n",
-> > +		       getpid(), set_tid[0]);
-> > +	ret = call_clone3_set_tid(set_tid, set_tid_size);
-> > +
-> > +	ksft_print_msg
-> > +	    ("[%d] clone3() with CLONE_SET_TID %d says :%d - expected %d\n",
-> > +	     getpid(), set_tid[0], ret, expected);
-> > +	if (ret != expected) {
-> > +		ksft_test_result_fail
-> > +		    ("[%d] Result (%d) is different than expected (%d)\n",
-> > +		     getpid(), ret, expected);
-> > +		return -1;
-> > +	}
-> > +	ksft_test_result_pass
-> > +	    ("[%d] Result (%d) matches expectation (%d)\n", getpid(), ret,
-> > +	     expected);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +struct libcap {
-> > +	struct __user_cap_header_struct hdr;
-> > +	struct __user_cap_data_struct data[2];
-> > +};
-> > +
-> > +static int set_capability()
-> > +{
-> > +	cap_value_t cap_values[] = { CAP_SETUID, CAP_SETGID };
-> > +	struct libcap *cap;
-> > +	int ret = -1;
-> > +	cap_t caps;
-> > +
-> > +	caps = cap_get_proc();
-> > +	if (!caps) {
-> > +		perror("cap_get_proc");
-> > +		return -1;
-> > +	}
-> > +
-> > +	/* Drop all capabilities */
-> > +	if (cap_clear(caps)) {
-> > +		perror("cap_clear");
-> > +		goto out;
-> > +	}
-> > +
-> > +	cap_set_flag(caps, CAP_EFFECTIVE, 2, cap_values, CAP_SET);
-> > +	cap_set_flag(caps, CAP_PERMITTED, 2, cap_values, CAP_SET);
-> > +
-> > +	cap = (struct libcap *) caps;
-> > +
-> > +	/* 40 -> CAP_CHECKPOINT_RESTORE */
-> > +	cap->data[1].effective |= 1 << (40 - 32);
-> > +	cap->data[1].permitted |= 1 << (40 - 32);
-> > +
-> > +	if (cap_set_proc(caps)) {
-> > +		perror("cap_set_proc");
-> > +		goto out;
-> > +	}
-> > +	ret = 0;
-> > +out:
-> > +	if (cap_free(caps))
-> > +		perror("cap_free");
-> > +	return ret;
-> > +}
-> > +
-> > +int main(int argc, char *argv[])
-> > +{
-> > +	pid_t pid;
-> > +	int status;
-> > +	int ret = 0;
-> > +	pid_t set_tid[1];
-> > +	uid_t uid = getuid();
-> > +
-> > +	ksft_print_header();
-> > +	test_clone3_supported();
-> > +	ksft_set_plan(2);
-> > +
-> > +	if (uid != 0) {
-> > +		ksft_cnt.ksft_xskip = ksft_plan;
-> > +		ksft_print_msg("Skipping all tests as non-root\n");
-> > +		return ksft_exit_pass();
-> > +	}
-> > +
-> > +	memset(&set_tid, 0, sizeof(set_tid));
-> > +
-> > +	/* Find the current active PID */
-> > +	pid = fork();
-> > +	if (pid == 0) {
-> > +		ksft_print_msg("Child has PID %d\n", getpid());
-> > +		child_exit(EXIT_SUCCESS);
-> > +	}
-> > +	if (waitpid(pid, &status, 0) < 0)
-> > +		ksft_exit_fail_msg("Waiting for child %d failed", pid);
-> > +
-> > +	/* After the child has finished, its PID should be free. */
-> > +	set_tid[0] = pid;
-> > +
-> > +	if (set_capability())
-> > +		ksft_test_result_fail
-> > +		    ("Could not set CAP_CHECKPOINT_RESTORE\n");
-> > +	prctl(PR_SET_KEEPCAPS, 1, 0, 0, 0);
-> > +	/* This would fail without CAP_CHECKPOINT_RESTORE */
-> > +	setgid(1000);
-> > +	setuid(1000);
-> > +	set_tid[0] = pid;
-> > +	ret |= test_clone3_set_tid(set_tid, 1, -EPERM);
-> > +	if (set_capability())
-> > +		ksft_test_result_fail
-> > +		    ("Could not set CAP_CHECKPOINT_RESTORE\n");
-> > +	/* This should work as we have CAP_CHECKPOINT_RESTORE as non-root */
-> > +	ret |= test_clone3_set_tid(set_tid, 1, 0);
-> > +
-> > +	return !ret ? ksft_exit_pass() : ksft_exit_fail();
-> > +}
-> > -- 
-> > 2.26.2
-> 
+=============================================
+
+NMI backtrace for cpu 0
+CPU: 0 PID: 1146 Comm: khungtaskd Not tainted 5.8.0-rc3-next-20200701-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x18f/0x20d lib/dump_stack.c:118
+ nmi_cpu_backtrace.cold+0x70/0xb1 lib/nmi_backtrace.c:101
+ nmi_trigger_cpumask_backtrace+0x1b3/0x223 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:147 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:253 [inline]
+ watchdog+0xd89/0xf30 kernel/hung_task.c:339
+ kthread+0x3b5/0x4a0 kernel/kthread.c:292
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
+Sending NMI from CPU 0 to CPUs 1:
+NMI backtrace for cpu 1
+CPU: 1 PID: 3852 Comm: systemd-journal Not tainted 5.8.0-rc3-next-20200701-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:pmd_none arch/x86/include/asm/pgtable.h:825 [inline]
+RIP: 0010:pmd_none_or_trans_huge_or_clear_bad include/linux/pgtable.h:1198 [inline]
+RIP: 0010:pmd_trans_unstable include/linux/pgtable.h:1223 [inline]
+RIP: 0010:pmd_devmap_trans_unstable mm/memory.c:3496 [inline]
+RIP: 0010:pmd_devmap_trans_unstable mm/memory.c:3494 [inline]
+RIP: 0010:handle_pte_fault mm/memory.c:4198 [inline]
+RIP: 0010:__handle_mm_fault mm/memory.c:4360 [inline]
+RIP: 0010:handle_mm_fault+0x1da0/0x43f0 mm/memory.c:4397
+Code: ff e9 9d f3 ff ff e8 0f 93 cf ff 48 89 ea 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 80 3c 02 00 0f 85 b9 20 00 00 4c 8b 65 00 <4c> 89 e3 31 ff 48 83 e3 9f 48 89 de e8 7f 8f cf ff 48 85 db 0f 84
+RSP: 0000:ffffc900015d7d70 EFLAGS: 00000246
+RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff81a44fec
+RDX: 1ffff11012ad8f4a RSI: ffffffff81a45861 RDI: 0000000000000007
+RBP: ffff8880956c7a50 R08: 0000000000000000 R09: ffffffff8aaeb0e7
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000091cd0067
+R13: 0000000000000000 R14: 0000000000000040 R15: 0000000000000001
+FS:  00007fdaac0718c0(0000) GS:ffff8880ae700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fdaa9411000 CR3: 0000000094cdd000 CR4: 00000000001506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ do_user_addr_fault+0x5a2/0xd00 arch/x86/mm/fault.c:1295
+ handle_page_fault arch/x86/mm/fault.c:1365 [inline]
+ exc_page_fault+0xab/0x170 arch/x86/mm/fault.c:1418
+ asm_exc_page_fault+0x1e/0x30 arch/x86/include/asm/idtentry.h:565
+RIP: 0033:0x7fdaab37b124
+Code: Bad RIP value.
+RSP: 002b:00007ffcfb2ef578 EFLAGS: 00010202
+RAX: 00007fdaa9410fe0 RBX: 0000000000000090 RCX: 000000000021ffa0
+RDX: 0000000000000090 RSI: 00007ffcfb2ef620 RDI: 00007fdaa9410fe0
+RBP: 0000000000000000 R08: 0000000000220070 R09: 00007ffcfb2f26b0
+R10: 000000000001b706 R11: 00007fdaa9410fa0 R12: 00005652b21dbe80
+R13: 715c95999b8098ed R14: 00007ffcfb2ef810 R15: 00007ffcfb2ef620
 
