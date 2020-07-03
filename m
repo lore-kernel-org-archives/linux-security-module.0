@@ -2,333 +2,325 @@ Return-Path: <SRS0=/Sjk=AO=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 612E5C433E0
-	for <linux-security-module@archiver.kernel.org>; Fri,  3 Jul 2020 17:02:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D6D8C433E1
+	for <linux-security-module@archiver.kernel.org>; Fri,  3 Jul 2020 18:12:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 23FD62088E
-	for <linux-security-module@archiver.kernel.org>; Fri,  3 Jul 2020 17:02:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZOOW5NAr"
+	by mail.kernel.org (Postfix) with ESMTP id 495A02084C
+	for <linux-security-module@archiver.kernel.org>; Fri,  3 Jul 2020 18:12:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726147AbgGCRCS (ORCPT
+        id S1726148AbgGCSML (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 3 Jul 2020 13:02:18 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:38186 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726148AbgGCRCR (ORCPT
+        Fri, 3 Jul 2020 14:12:11 -0400
+Received: from mail.hallyn.com ([178.63.66.53]:45006 "EHLO mail.hallyn.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726147AbgGCSML (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 3 Jul 2020 13:02:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1593795735;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc; bh=TxK+vWw3a62FPtfGM3WWnImuJcfnAPcGLKjAB1aH4XE=;
-        b=ZOOW5NArfMFD0FLLLgYDuA+9xi7WRy1YbIRnsNpC02V1C/x6Y8erXxiIdQ/i797Wp6EYRs
-        hZERbOe3ijBG7tnURwVyuYUP5jPIrVzslVR+VXb3ckR2pQ3bEe1IGSsv6F2Q4eIItYAhJ4
-        E8+m5vhxePGzmx+TwdgcPiPs96mhOwQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-91-T3cTgGwvMq-Kn2hTltZKYw-1; Fri, 03 Jul 2020 13:02:09 -0400
-X-MC-Unique: T3cTgGwvMq-Kn2hTltZKYw-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C6A09107ACCA;
-        Fri,  3 Jul 2020 17:02:07 +0000 (UTC)
-Received: from madcap2.tricolour.ca (unknown [10.10.110.3])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 785585BACF;
-        Fri,  3 Jul 2020 17:01:59 +0000 (UTC)
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>
-Cc:     Paul Moore <paul@paul-moore.com>, eparis@parisplace.org,
-        john.johansen@canonical.com, Richard Guy Briggs <rgb@redhat.com>
-Subject: [PATCH ghak84 v2] audit: purge audit_log_string from the intra-kernel audit API
-Date:   Fri,  3 Jul 2020 13:01:32 -0400
-Message-Id: <a8263fc3668077e0d6b5151bcb31274755bdd838.1593789083.git.rgb@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+        Fri, 3 Jul 2020 14:12:11 -0400
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+        id 0C5296FC; Fri,  3 Jul 2020 13:12:09 -0500 (CDT)
+Date:   Fri, 3 Jul 2020 13:12:09 -0500
+From:   "Serge E. Hallyn" <serge@hallyn.com>
+To:     Adrian Reber <areber@redhat.com>
+Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Pavel Emelyanov <ovzxemul@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
+        =?utf-8?B?TWljaGHFgiBDxYJhcGnFhHNraQ==?= <mclapinski@google.com>,
+        Kamil Yurtsever <kyurtsever@google.com>,
+        Dirk Petersen <dipeit@gmail.com>,
+        Christine Flood <chf@redhat.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Radostin Stoyanov <rstoyanov1@gmail.com>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Sargun Dhillon <sargun@sargun.me>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, selinux@vger.kernel.org,
+        Eric Paris <eparis@parisplace.org>,
+        Jann Horn <jannh@google.com>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v4 2/3] selftests: add clone3() CAP_CHECKPOINT_RESTORE
+ test
+Message-ID: <20200703181208.GA16241@mail.hallyn.com>
+References: <20200701064906.323185-1-areber@redhat.com>
+ <20200701064906.323185-3-areber@redhat.com>
+ <20200702205305.GA3283@mail.hallyn.com>
+ <20200703111807.GC243637@dcbz.redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200703111807.GC243637@dcbz.redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-audit_log_string() was inteded to be an internal audit function and
-since there are only two internal uses, remove them.  Purge all external
-uses of it by restructuring code to use an existing audit_log_format()
-or using audit_log_format().
+On Fri, Jul 03, 2020 at 01:18:07PM +0200, Adrian Reber wrote:
+> On Thu, Jul 02, 2020 at 03:53:05PM -0500, Serge E. Hallyn wrote:
+> > On Wed, Jul 01, 2020 at 08:49:05AM +0200, Adrian Reber wrote:
+> > > This adds a test that changes its UID, uses capabilities to
+> > > get CAP_CHECKPOINT_RESTORE and uses clone3() with set_tid to
+> > > create a process with a given PID as non-root.
+> > 
+> > Seems worth also verifying that it fails if you have no capabilities.
+> > I don't see that in the existing clone3/ test dir.
+> 
+> Bit confused about what you mean. This test does:
+> 
+>  * switch UID to 1000
+>  * run clone3() with set_tid set and expect EPERM
+>  * set CAP_CHECKPOINT_RESTORE capability
+>  * run clone3() with set_tid set and expect success
+> 
+> So it already does what I think you are asking for. Did I misunderstand
+> your comment?
 
-Please see the upstream issue
-https://github.com/linux-audit/audit-kernel/issues/84
+Ah, no, I missed that line doing the call with -EPERM.  Thanks!
 
-Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
----
-Passes audit-testsuite.
+Acked-by: Serge Hallyn <serge@hallyn.com>
 
-Changelog:
-v2
-- restructure to piggyback on existing audit_log_format() calls, checking quoting needs for each.
 
-v1 Vlad Dronov
-- https://github.com/nefigtut/audit-kernel/commit/dbbcba46335a002f44b05874153a85b9cc18aebf
-
- include/linux/audit.h     |  5 -----
- kernel/audit.c            |  4 ++--
- security/apparmor/audit.c | 10 ++++------
- security/apparmor/file.c  | 25 +++++++------------------
- security/apparmor/ipc.c   | 44 +++++++++++++++++++++-----------------------
- security/apparmor/net.c   | 14 ++++++++------
- security/lsm_audit.c      |  4 ++--
- 7 files changed, 44 insertions(+), 62 deletions(-)
-
-diff --git a/include/linux/audit.h b/include/linux/audit.h
-index 604ede630580..5ad7cd65d76f 100644
---- a/include/linux/audit.h
-+++ b/include/linux/audit.h
-@@ -695,9 +695,4 @@ static inline bool audit_loginuid_set(struct task_struct *tsk)
- 	return uid_valid(audit_get_loginuid(tsk));
- }
- 
--static inline void audit_log_string(struct audit_buffer *ab, const char *buf)
--{
--	audit_log_n_string(ab, buf, strlen(buf));
--}
--
- #endif
-diff --git a/kernel/audit.c b/kernel/audit.c
-index 8c201f414226..a2f3e34aa724 100644
---- a/kernel/audit.c
-+++ b/kernel/audit.c
-@@ -2080,13 +2080,13 @@ void audit_log_d_path(struct audit_buffer *ab, const char *prefix,
- 	/* We will allow 11 spaces for ' (deleted)' to be appended */
- 	pathname = kmalloc(PATH_MAX+11, ab->gfp_mask);
- 	if (!pathname) {
--		audit_log_string(ab, "<no_memory>");
-+		audit_log_format(ab, "\"<no_memory>\"");
- 		return;
- 	}
- 	p = d_path(path, pathname, PATH_MAX+11);
- 	if (IS_ERR(p)) { /* Should never happen since we send PATH_MAX */
- 		/* FIXME: can we save some information here? */
--		audit_log_string(ab, "<too_long>");
-+		audit_log_format(ab, "\"<too_long>\"");
- 	} else
- 		audit_log_untrustedstring(ab, p);
- 	kfree(pathname);
-diff --git a/security/apparmor/audit.c b/security/apparmor/audit.c
-index 597732503815..335b5b8d300b 100644
---- a/security/apparmor/audit.c
-+++ b/security/apparmor/audit.c
-@@ -57,18 +57,16 @@ static void audit_pre(struct audit_buffer *ab, void *ca)
- 	struct common_audit_data *sa = ca;
- 
- 	if (aa_g_audit_header) {
--		audit_log_format(ab, "apparmor=");
--		audit_log_string(ab, aa_audit_type[aad(sa)->type]);
-+		audit_log_format(ab, "apparmor=%s",
-+				 aa_audit_type[aad(sa)->type]);
- 	}
- 
- 	if (aad(sa)->op) {
--		audit_log_format(ab, " operation=");
--		audit_log_string(ab, aad(sa)->op);
-+		audit_log_format(ab, " operation=%s", aad(sa)->op);
- 	}
- 
- 	if (aad(sa)->info) {
--		audit_log_format(ab, " info=");
--		audit_log_string(ab, aad(sa)->info);
-+		audit_log_format(ab, " info=\"%s\"", aad(sa)->info);
- 		if (aad(sa)->error)
- 			audit_log_format(ab, " error=%d", aad(sa)->error);
- 	}
-diff --git a/security/apparmor/file.c b/security/apparmor/file.c
-index 9a2d14b7c9f8..70f27124d051 100644
---- a/security/apparmor/file.c
-+++ b/security/apparmor/file.c
-@@ -35,20 +35,6 @@ static u32 map_mask_to_chr_mask(u32 mask)
- }
- 
- /**
-- * audit_file_mask - convert mask to permission string
-- * @buffer: buffer to write string to (NOT NULL)
-- * @mask: permission mask to convert
-- */
--static void audit_file_mask(struct audit_buffer *ab, u32 mask)
--{
--	char str[10];
--
--	aa_perm_mask_to_str(str, sizeof(str), aa_file_perm_chrs,
--			    map_mask_to_chr_mask(mask));
--	audit_log_string(ab, str);
--}
--
--/**
-  * file_audit_cb - call back for file specific audit fields
-  * @ab: audit_buffer  (NOT NULL)
-  * @va: audit struct to audit values of  (NOT NULL)
-@@ -57,14 +43,17 @@ static void file_audit_cb(struct audit_buffer *ab, void *va)
- {
- 	struct common_audit_data *sa = va;
- 	kuid_t fsuid = current_fsuid();
-+	char str[10];
- 
- 	if (aad(sa)->request & AA_AUDIT_FILE_MASK) {
--		audit_log_format(ab, " requested_mask=");
--		audit_file_mask(ab, aad(sa)->request);
-+		aa_perm_mask_to_str(str, sizeof(str), aa_file_perm_chrs,
-+				    map_mask_to_chr_mask(aad(sa)->request));
-+		audit_log_format(ab, " requested_mask=%s", str);
- 	}
- 	if (aad(sa)->denied & AA_AUDIT_FILE_MASK) {
--		audit_log_format(ab, " denied_mask=");
--		audit_file_mask(ab, aad(sa)->denied);
-+		aa_perm_mask_to_str(str, sizeof(str), aa_file_perm_chrs,
-+				    map_mask_to_chr_mask(aad(sa)->denied));
-+		audit_log_format(ab, " denied_mask=%s", str);
- 	}
- 	if (aad(sa)->request & AA_AUDIT_FILE_MASK) {
- 		audit_log_format(ab, " fsuid=%d",
-diff --git a/security/apparmor/ipc.c b/security/apparmor/ipc.c
-index 4ecedffbdd33..18ca807e7872 100644
---- a/security/apparmor/ipc.c
-+++ b/security/apparmor/ipc.c
-@@ -20,24 +20,21 @@
- 
- /**
-  * audit_ptrace_mask - convert mask to permission string
-- * @buffer: buffer to write string to (NOT NULL)
-  * @mask: permission mask to convert
-+ *
-+ * Returns: pointer to static string
-  */
--static void audit_ptrace_mask(struct audit_buffer *ab, u32 mask)
-+static const char *audit_ptrace_mask(u32 mask)
- {
- 	switch (mask) {
- 	case MAY_READ:
--		audit_log_string(ab, "read");
--		break;
-+		return "read";
- 	case MAY_WRITE:
--		audit_log_string(ab, "trace");
--		break;
-+		return "trace";
- 	case AA_MAY_BE_READ:
--		audit_log_string(ab, "readby");
--		break;
-+		return "readby";
- 	case AA_MAY_BE_TRACED:
--		audit_log_string(ab, "tracedby");
--		break;
-+		return "tracedby";
- 	}
- }
- 
-@@ -47,12 +44,12 @@ static void audit_ptrace_cb(struct audit_buffer *ab, void *va)
- 	struct common_audit_data *sa = va;
- 
- 	if (aad(sa)->request & AA_PTRACE_PERM_MASK) {
--		audit_log_format(ab, " requested_mask=");
--		audit_ptrace_mask(ab, aad(sa)->request);
-+		audit_log_format(ab, " requested_mask=%s",
-+				 audit_ptrace_mask(aad(sa)->request));
- 
- 		if (aad(sa)->denied & AA_PTRACE_PERM_MASK) {
--			audit_log_format(ab, " denied_mask=");
--			audit_ptrace_mask(ab, aad(sa)->denied);
-+			audit_log_format(ab, " denied_mask=%s",
-+					 audit_ptrace_mask(aad(sa)->denied));
- 		}
- 	}
- 	audit_log_format(ab, " peer=");
-@@ -142,16 +139,17 @@ static inline int map_signal_num(int sig)
- }
- 
- /**
-- * audit_file_mask - convert mask to permission string
-- * @buffer: buffer to write string to (NOT NULL)
-+ * audit_signal_mask - convert mask to permission string
-  * @mask: permission mask to convert
-+ *
-+ * Returns: pointer to static string
-  */
--static void audit_signal_mask(struct audit_buffer *ab, u32 mask)
-+static const char *audit_signal_mask(u32 mask)
- {
- 	if (mask & MAY_READ)
--		audit_log_string(ab, "receive");
-+		return "receive";
- 	if (mask & MAY_WRITE)
--		audit_log_string(ab, "send");
-+		return "send";
- }
- 
- /**
-@@ -164,11 +162,11 @@ static void audit_signal_cb(struct audit_buffer *ab, void *va)
- 	struct common_audit_data *sa = va;
- 
- 	if (aad(sa)->request & AA_SIGNAL_PERM_MASK) {
--		audit_log_format(ab, " requested_mask=");
--		audit_signal_mask(ab, aad(sa)->request);
-+		audit_log_format(ab, " requested_mask=%s",
-+				 audit_signal_mask(aad(sa)->request));
- 		if (aad(sa)->denied & AA_SIGNAL_PERM_MASK) {
--			audit_log_format(ab, " denied_mask=");
--			audit_signal_mask(ab, aad(sa)->denied);
-+			audit_log_format(ab, " denied_mask=%s",
-+					 audit_signal_mask(aad(sa)->denied));
- 		}
- 	}
- 	if (aad(sa)->signal == SIGUNKNOWN)
-diff --git a/security/apparmor/net.c b/security/apparmor/net.c
-index d8afc39f663a..fa0e85568450 100644
---- a/security/apparmor/net.c
-+++ b/security/apparmor/net.c
-@@ -72,16 +72,18 @@ void audit_net_cb(struct audit_buffer *ab, void *va)
- {
- 	struct common_audit_data *sa = va;
- 
--	audit_log_format(ab, " family=");
- 	if (address_family_names[sa->u.net->family])
--		audit_log_string(ab, address_family_names[sa->u.net->family]);
-+		audit_log_format(ab, " family=\"%s\"",
-+				 address_family_names[sa->u.net->family]);
- 	else
--		audit_log_format(ab, "\"unknown(%d)\"", sa->u.net->family);
--	audit_log_format(ab, " sock_type=");
-+		audit_log_format(ab, " family=\"unknown(%d)\"",
-+				 sa->u.net->family);
- 	if (sock_type_names[aad(sa)->net.type])
--		audit_log_string(ab, sock_type_names[aad(sa)->net.type]);
-+		audit_log_format(ab, " sock_type=\"%s\"",
-+				 sock_type_names[aad(sa)->net.type]);
- 	else
--		audit_log_format(ab, "\"unknown(%d)\"", aad(sa)->net.type);
-+		audit_log_format(ab, " sock_type=\"unknown(%d)\"",
-+				 aad(sa)->net.type);
- 	audit_log_format(ab, " protocol=%d", aad(sa)->net.protocol);
- 
- 	if (aad(sa)->request & NET_PERMS_MASK) {
-diff --git a/security/lsm_audit.c b/security/lsm_audit.c
-index 2d2bf49016f4..221370794d14 100644
---- a/security/lsm_audit.c
-+++ b/security/lsm_audit.c
-@@ -427,8 +427,8 @@ static void dump_common_audit_data(struct audit_buffer *ab,
- 				 a->u.ibendport->port);
- 		break;
- 	case LSM_AUDIT_DATA_LOCKDOWN:
--		audit_log_format(ab, " lockdown_reason=");
--		audit_log_string(ab, lockdown_reasons[a->u.reason]);
-+		audit_log_format(ab, " lockdown_reason=\"%s\"",
-+				 lockdown_reasons[a->u.reason]);
- 		break;
- 	} /* switch (a->type) */
- }
--- 
-1.8.3.1
-
+> 		Adrian
+> 
+> > > Signed-off-by: Adrian Reber <areber@redhat.com>
+> > > ---
+> > >  tools/testing/selftests/clone3/Makefile       |   4 +-
+> > >  .../clone3/clone3_cap_checkpoint_restore.c    | 203 ++++++++++++++++++
+> > >  2 files changed, 206 insertions(+), 1 deletion(-)
+> > >  create mode 100644 tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
+> > > 
+> > > diff --git a/tools/testing/selftests/clone3/Makefile b/tools/testing/selftests/clone3/Makefile
+> > > index cf976c732906..ef7564cb7abe 100644
+> > > --- a/tools/testing/selftests/clone3/Makefile
+> > > +++ b/tools/testing/selftests/clone3/Makefile
+> > > @@ -1,6 +1,8 @@
+> > >  # SPDX-License-Identifier: GPL-2.0
+> > >  CFLAGS += -g -I../../../../usr/include/
+> > > +LDLIBS += -lcap
+> > >  
+> > > -TEST_GEN_PROGS := clone3 clone3_clear_sighand clone3_set_tid
+> > > +TEST_GEN_PROGS := clone3 clone3_clear_sighand clone3_set_tid \
+> > > +	clone3_cap_checkpoint_restore
+> > >  
+> > >  include ../lib.mk
+> > > diff --git a/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c b/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
+> > > new file mode 100644
+> > > index 000000000000..2cc3d57b91f2
+> > > --- /dev/null
+> > > +++ b/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
+> > > @@ -0,0 +1,203 @@
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > > +
+> > > +/*
+> > > + * Based on Christian Brauner's clone3() example.
+> > > + * These tests are assuming to be running in the host's
+> > > + * PID namespace.
+> > > + */
+> > > +
+> > > +/* capabilities related code based on selftests/bpf/test_verifier.c */
+> > > +
+> > > +#define _GNU_SOURCE
+> > > +#include <errno.h>
+> > > +#include <linux/types.h>
+> > > +#include <linux/sched.h>
+> > > +#include <stdio.h>
+> > > +#include <stdlib.h>
+> > > +#include <stdbool.h>
+> > > +#include <sys/capability.h>
+> > > +#include <sys/prctl.h>
+> > > +#include <sys/syscall.h>
+> > > +#include <sys/types.h>
+> > > +#include <sys/un.h>
+> > > +#include <sys/wait.h>
+> > > +#include <unistd.h>
+> > > +#include <sched.h>
+> > > +
+> > > +#include "../kselftest.h"
+> > > +#include "clone3_selftests.h"
+> > > +
+> > > +#ifndef MAX_PID_NS_LEVEL
+> > > +#define MAX_PID_NS_LEVEL 32
+> > > +#endif
+> > > +
+> > > +static void child_exit(int ret)
+> > > +{
+> > > +	fflush(stdout);
+> > > +	fflush(stderr);
+> > > +	_exit(ret);
+> > > +}
+> > > +
+> > > +static int call_clone3_set_tid(pid_t * set_tid, size_t set_tid_size)
+> > > +{
+> > > +	int status;
+> > > +	pid_t pid = -1;
+> > > +
+> > > +	struct clone_args args = {
+> > > +		.exit_signal = SIGCHLD,
+> > > +		.set_tid = ptr_to_u64(set_tid),
+> > > +		.set_tid_size = set_tid_size,
+> > > +	};
+> > > +
+> > > +	pid = sys_clone3(&args, sizeof(struct clone_args));
+> > > +	if (pid < 0) {
+> > > +		ksft_print_msg("%s - Failed to create new process\n",
+> > > +			       strerror(errno));
+> > > +		return -errno;
+> > > +	}
+> > > +
+> > > +	if (pid == 0) {
+> > > +		int ret;
+> > > +		char tmp = 0;
+> > > +
+> > > +		ksft_print_msg
+> > > +		    ("I am the child, my PID is %d (expected %d)\n",
+> > > +		     getpid(), set_tid[0]);
+> > > +
+> > > +		if (set_tid[0] != getpid())
+> > > +			child_exit(EXIT_FAILURE);
+> > > +		child_exit(EXIT_SUCCESS);
+> > > +	}
+> > > +
+> > > +	ksft_print_msg("I am the parent (%d). My child's pid is %d\n",
+> > > +		       getpid(), pid);
+> > > +
+> > > +	if (waitpid(pid, &status, 0) < 0) {
+> > > +		ksft_print_msg("Child returned %s\n", strerror(errno));
+> > > +		return -errno;
+> > > +	}
+> > > +
+> > > +	if (!WIFEXITED(status))
+> > > +		return -1;
+> > > +
+> > > +	return WEXITSTATUS(status);
+> > > +}
+> > > +
+> > > +static int test_clone3_set_tid(pid_t * set_tid,
+> > > +			       size_t set_tid_size, int expected)
+> > > +{
+> > > +	int ret;
+> > > +
+> > > +	ksft_print_msg("[%d] Trying clone3() with CLONE_SET_TID to %d\n",
+> > > +		       getpid(), set_tid[0]);
+> > > +	ret = call_clone3_set_tid(set_tid, set_tid_size);
+> > > +
+> > > +	ksft_print_msg
+> > > +	    ("[%d] clone3() with CLONE_SET_TID %d says :%d - expected %d\n",
+> > > +	     getpid(), set_tid[0], ret, expected);
+> > > +	if (ret != expected) {
+> > > +		ksft_test_result_fail
+> > > +		    ("[%d] Result (%d) is different than expected (%d)\n",
+> > > +		     getpid(), ret, expected);
+> > > +		return -1;
+> > > +	}
+> > > +	ksft_test_result_pass
+> > > +	    ("[%d] Result (%d) matches expectation (%d)\n", getpid(), ret,
+> > > +	     expected);
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +struct libcap {
+> > > +	struct __user_cap_header_struct hdr;
+> > > +	struct __user_cap_data_struct data[2];
+> > > +};
+> > > +
+> > > +static int set_capability()
+> > > +{
+> > > +	cap_value_t cap_values[] = { CAP_SETUID, CAP_SETGID };
+> > > +	struct libcap *cap;
+> > > +	int ret = -1;
+> > > +	cap_t caps;
+> > > +
+> > > +	caps = cap_get_proc();
+> > > +	if (!caps) {
+> > > +		perror("cap_get_proc");
+> > > +		return -1;
+> > > +	}
+> > > +
+> > > +	/* Drop all capabilities */
+> > > +	if (cap_clear(caps)) {
+> > > +		perror("cap_clear");
+> > > +		goto out;
+> > > +	}
+> > > +
+> > > +	cap_set_flag(caps, CAP_EFFECTIVE, 2, cap_values, CAP_SET);
+> > > +	cap_set_flag(caps, CAP_PERMITTED, 2, cap_values, CAP_SET);
+> > > +
+> > > +	cap = (struct libcap *) caps;
+> > > +
+> > > +	/* 40 -> CAP_CHECKPOINT_RESTORE */
+> > > +	cap->data[1].effective |= 1 << (40 - 32);
+> > > +	cap->data[1].permitted |= 1 << (40 - 32);
+> > > +
+> > > +	if (cap_set_proc(caps)) {
+> > > +		perror("cap_set_proc");
+> > > +		goto out;
+> > > +	}
+> > > +	ret = 0;
+> > > +out:
+> > > +	if (cap_free(caps))
+> > > +		perror("cap_free");
+> > > +	return ret;
+> > > +}
+> > > +
+> > > +int main(int argc, char *argv[])
+> > > +{
+> > > +	pid_t pid;
+> > > +	int status;
+> > > +	int ret = 0;
+> > > +	pid_t set_tid[1];
+> > > +	uid_t uid = getuid();
+> > > +
+> > > +	ksft_print_header();
+> > > +	test_clone3_supported();
+> > > +	ksft_set_plan(2);
+> > > +
+> > > +	if (uid != 0) {
+> > > +		ksft_cnt.ksft_xskip = ksft_plan;
+> > > +		ksft_print_msg("Skipping all tests as non-root\n");
+> > > +		return ksft_exit_pass();
+> > > +	}
+> > > +
+> > > +	memset(&set_tid, 0, sizeof(set_tid));
+> > > +
+> > > +	/* Find the current active PID */
+> > > +	pid = fork();
+> > > +	if (pid == 0) {
+> > > +		ksft_print_msg("Child has PID %d\n", getpid());
+> > > +		child_exit(EXIT_SUCCESS);
+> > > +	}
+> > > +	if (waitpid(pid, &status, 0) < 0)
+> > > +		ksft_exit_fail_msg("Waiting for child %d failed", pid);
+> > > +
+> > > +	/* After the child has finished, its PID should be free. */
+> > > +	set_tid[0] = pid;
+> > > +
+> > > +	if (set_capability())
+> > > +		ksft_test_result_fail
+> > > +		    ("Could not set CAP_CHECKPOINT_RESTORE\n");
+> > > +	prctl(PR_SET_KEEPCAPS, 1, 0, 0, 0);
+> > > +	/* This would fail without CAP_CHECKPOINT_RESTORE */
+> > > +	setgid(1000);
+> > > +	setuid(1000);
+> > > +	set_tid[0] = pid;
+> > > +	ret |= test_clone3_set_tid(set_tid, 1, -EPERM);
+> > > +	if (set_capability())
+> > > +		ksft_test_result_fail
+> > > +		    ("Could not set CAP_CHECKPOINT_RESTORE\n");
+> > > +	/* This should work as we have CAP_CHECKPOINT_RESTORE as non-root */
+> > > +	ret |= test_clone3_set_tid(set_tid, 1, 0);
+> > > +
+> > > +	return !ret ? ksft_exit_pass() : ksft_exit_fail();
+> > > +}
+> > > -- 
+> > > 2.26.2
+> > 
