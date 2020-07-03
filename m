@@ -2,161 +2,210 @@ Return-Path: <SRS0=/Sjk=AO=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DFF4C433DF
-	for <linux-security-module@archiver.kernel.org>; Fri,  3 Jul 2020 14:15:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 082A9C433E0
+	for <linux-security-module@archiver.kernel.org>; Fri,  3 Jul 2020 16:56:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EEF8020899
-	for <linux-security-module@archiver.kernel.org>; Fri,  3 Jul 2020 14:15:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0B17208C7
+	for <linux-security-module@archiver.kernel.org>; Fri,  3 Jul 2020 16:56:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WGRsolbX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726546AbgGCOPu (ORCPT
+        id S1726568AbgGCQ4y (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 3 Jul 2020 10:15:50 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41344 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726035AbgGCOPu (ORCPT
+        Fri, 3 Jul 2020 12:56:54 -0400
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:59648 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726147AbgGCQ4y (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 3 Jul 2020 10:15:50 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 063E2DsI145405;
-        Fri, 3 Jul 2020 10:15:39 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 322144rw0n-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 03 Jul 2020 10:15:39 -0400
-Received: from m0098393.ppops.net (m0098393.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 063E2FJd145553;
-        Fri, 3 Jul 2020 10:15:39 -0400
-Received: from ppma06fra.de.ibm.com (48.49.7a9f.ip4.static.sl-reverse.com [159.122.73.72])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 322144rvyd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 03 Jul 2020 10:15:39 -0400
-Received: from pps.filterd (ppma06fra.de.ibm.com [127.0.0.1])
-        by ppma06fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 063E6ksY001304;
-        Fri, 3 Jul 2020 14:15:36 GMT
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
-        by ppma06fra.de.ibm.com with ESMTP id 31wwcguf0b-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 03 Jul 2020 14:15:36 +0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 063EFYpJ52232204
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 3 Jul 2020 14:15:34 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0303B11C04C;
-        Fri,  3 Jul 2020 14:15:34 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EBA3511C050;
-        Fri,  3 Jul 2020 14:15:32 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.174.143])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri,  3 Jul 2020 14:15:32 +0000 (GMT)
-Message-ID: <1593785732.23056.16.camel@linux.ibm.com>
-Subject: Re: [PATCH v2 09/11] ima: Move validation of the keyrings
- conditional into ima_validate_rule()
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Tyler Hicks <tyhicks@linux.microsoft.com>
-Cc:     Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Prakhar Srivastava <prsriva02@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Date:   Fri, 03 Jul 2020 10:15:32 -0400
-In-Reply-To: <20200702221656.GH4694@sequoia>
-References: <20200626223900.253615-1-tyhicks@linux.microsoft.com>
-         <20200626223900.253615-10-tyhicks@linux.microsoft.com>
-         <1593558449.5057.12.camel@linux.ibm.com> <20200702221656.GH4694@sequoia>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-07-03_09:2020-07-02,2020-07-03 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- lowpriorityscore=0 malwarescore=0 mlxscore=0 spamscore=0 impostorscore=0
- mlxlogscore=999 priorityscore=1501 bulkscore=0 cotscore=-2147483648
- suspectscore=0 adultscore=0 phishscore=0 classifier=spam adjust=0
- reason=mlx scancount=1 engine=8.12.0-2004280000
- definitions=main-2007030095
+        Fri, 3 Jul 2020 12:56:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1593795412;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc; bh=A17YU0TJdMJJbx+XyJzyM20ucRgGb0iLLQw+LKi/Iwk=;
+        b=WGRsolbXnK60u85Ixg/WdzcfJGT2+u04gQ+O0w8cxCHpGp9pGisIE8KfkGi215Vhlu4Y9w
+        yxuo93cflo/bPznYYhDpZxh0hqnSUbLI+Nv4tZwyXaT+atxvQGn+DedObmbhLy9Y1cV6Xy
+        NIolLY9l04wAa6HkInsOT5SOE55NEd4=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-156-_RIuiWmDMA-qU_6Iq1eapA-1; Fri, 03 Jul 2020 12:56:48 -0400
+X-MC-Unique: _RIuiWmDMA-qU_6Iq1eapA-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5AAF656B9B;
+        Fri,  3 Jul 2020 16:56:47 +0000 (UTC)
+Received: from madcap2.tricolour.ca (unknown [10.10.110.3])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2C05310013D9;
+        Fri,  3 Jul 2020 16:56:44 +0000 (UTC)
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>
+Cc:     Paul Moore <paul@paul-moore.com>, eparis@parisplace.org,
+        john.johansen@canonical.com, Richard Guy Briggs <rgb@redhat.com>
+Subject: [PATCH ghak96 v3] audit: issue CWD record to accompany LSM_AUDIT_DATA_* records
+Date:   Fri,  3 Jul 2020 12:56:19 -0400
+Message-Id: <878ac79163e31142963f1cd4f743599c35b6754a.1593691408.git.rgb@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 2020-07-02 at 17:16 -0500, Tyler Hicks wrote:
-> On 2020-06-30 19:07:29, Mimi Zohar wrote:
-> > On Fri, 2020-06-26 at 17:38 -0500, Tyler Hicks wrote:
-> > > Use ima_validate_rule() to ensure that the combination of a hook
-> > > function and the keyrings conditional is valid and that the keyrings
-> > > conditional is not specified without an explicit KEY_CHECK func
-> > > conditional. This is a code cleanup and has no user-facing change.
-> > > 
-> > > Signed-off-by: Tyler Hicks <tyhicks@linux.microsoft.com>
-> > > ---
-> > > 
-> > > * v2
-> > >   - Allowed IMA_DIGSIG_REQUIRED, IMA_PERMIT_DIRECTIO,
-> > >     IMA_MODSIG_ALLOWED, and IMA_CHECK_BLACKLIST conditionals to be
-> > >     present in the rule entry flags for non-buffer hook functions.
-> > > 
-> > >  security/integrity/ima/ima_policy.c | 13 +++++++++++--
-> > >  1 file changed, 11 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-> > > index 8cdca2399d59..43d49ad958fb 100644
-> > > --- a/security/integrity/ima/ima_policy.c
-> > > +++ b/security/integrity/ima/ima_policy.c
-> > > @@ -1000,6 +1000,15 @@ static bool ima_validate_rule(struct ima_rule_entry *entry)
-> > >  		case KEXEC_KERNEL_CHECK:
-> > >  		case KEXEC_INITRAMFS_CHECK:
-> > >  		case POLICY_CHECK:
-> > > +			if (entry->flags & ~(IMA_FUNC | IMA_MASK | IMA_FSMAGIC |
-> > > +					     IMA_UID | IMA_FOWNER | IMA_FSUUID |
-> > > +					     IMA_INMASK | IMA_EUID | IMA_PCR |
-> > > +					     IMA_FSNAME | IMA_DIGSIG_REQUIRED |
-> > > +					     IMA_PERMIT_DIRECTIO |
-> > > +					     IMA_MODSIG_ALLOWED |
-> > > +					     IMA_CHECK_BLACKLIST))
-> > 
-> > Other than KEYRINGS, this patch should continue to behave the same.
-> >  However, this list gives the impressions that all of these flags are
-> > permitted on all of the above flags, which isn't true.
-> > 
-> > For example, both IMA_MODSIG_ALLOWED & IMA_CHECK_BLACKLIST are limited
-> > to appended signatures, meaning KERNEL_CHECK and KEXEC_KERNEL_CHECK.
-> 
-> Just to clarify, are both IMA_MODSIG_ALLOWED and IMA_CHECK_BLACKLIST
-> limited to KEXEC_KERNEL_CHECK, KEXEC_INITRAMFS_CHECK, and MODULE_CHECK?
-> That's what ima_hook_supports_modsig() suggests.
+The LSM_AUDIT_DATA_* records for PATH, FILE, IOCTL_OP, DENTRY and INODE
+are incomplete without the task context of the AUDIT Current Working
+Directory record.  Add it.
 
-Theoretically that is true, but I have no idea how you would append a
-signature to the kexec boot command line.  The only users of appended
-signatures are currently kernel modules and the kexec'ed kernel image.
+This record addition can't use audit_dummy_context to determine whether
+or not to store the record information since the LSM_AUDIT_DATA_*
+records are initiated by various LSMs independent of any audit rules.
+context->in_syscall is used to determine if it was called in user
+context like audit_getname.
 
-> 
-> >  Both should only be allowed on APPRAISE action rules.
-> 
-> For completeness, it looks like DONT_APPRAISE should not be allowed.
+Please see the upstream issue
+https://github.com/linux-audit/audit-kernel/issues/96
 
-Good point.  
+Adapted from Vladis Dronov's v2 patch.
 
-> 
-> > IMA_PCR should be limited to MEASURE action rules.
-> 
-> It looks like DONT_MEASURE should not be allowed.
+Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+---
+Passes audit-testsuite.
 
-The TPM PCR isn't a file attribute.
+Changelog:
+v3
+- adapt and refactor__audit_getname, don't key on dummy
 
-> 
-> > IMA_DIGSIG_REQUIRED should be limited to APPRAISE action rules.
-> 
-> It looks like DONT_APPRAISE should not be allowed.
+v2
+2020-04-02 vdronov https://www.redhat.com/archives/linux-audit/2020-April/msg00004.html
+- convert to standalone CWD record
 
-Right, in all of these cases the DONT_XXXX isn't applicable.
+v1:
+2020-03-24 vdronov https://github.com/nefigtut/audit-kernel/commit/df0b55b7ab84e1c9faa588b08e547e604bf25c87
+- add cwd= field to LSM record
 
-Mimi
+ include/linux/audit.h |  9 ++++++++-
+ kernel/auditsc.c      | 17 +++++++++++++++--
+ security/lsm_audit.c  |  5 +++++
+ 3 files changed, 28 insertions(+), 3 deletions(-)
+
+diff --git a/include/linux/audit.h b/include/linux/audit.h
+index 03c4035a532b..bb850d588e1c 100644
+--- a/include/linux/audit.h
++++ b/include/linux/audit.h
+@@ -292,7 +292,7 @@ extern void __audit_syscall_entry(int major, unsigned long a0, unsigned long a1,
+ extern void __audit_syscall_exit(int ret_success, long ret_value);
+ extern struct filename *__audit_reusename(const __user char *uptr);
+ extern void __audit_getname(struct filename *name);
+-
++extern void __audit_getcwd(void);
+ extern void __audit_inode(struct filename *name, const struct dentry *dentry,
+ 				unsigned int flags);
+ extern void __audit_file(const struct file *);
+@@ -351,6 +351,11 @@ static inline void audit_getname(struct filename *name)
+ 	if (unlikely(!audit_dummy_context()))
+ 		__audit_getname(name);
+ }
++static inline void audit_getcwd(void)
++{
++	if (unlikely(audit_context()))
++		__audit_getcwd();
++}
+ static inline void audit_inode(struct filename *name,
+ 				const struct dentry *dentry,
+ 				unsigned int aflags) {
+@@ -579,6 +584,8 @@ static inline struct filename *audit_reusename(const __user char *name)
+ }
+ static inline void audit_getname(struct filename *name)
+ { }
++static inline void audit_getcwd(void)
++{ }
+ static inline void audit_inode(struct filename *name,
+ 				const struct dentry *dentry,
+ 				unsigned int aflags)
+diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+index 3a9100e95fda..934ab5b8c1c5 100644
+--- a/kernel/auditsc.c
++++ b/kernel/auditsc.c
+@@ -1891,6 +1891,20 @@ struct filename *
+ 	return NULL;
+ }
+ 
++inline void _audit_getcwd(struct audit_context *context)
++{
++	if (!context->pwd.dentry)
++		get_fs_pwd(current->fs, &context->pwd);
++}
++
++void __audit_getcwd(void)
++{
++	struct audit_context *context = audit_context();
++
++	if (context->in_syscall)
++		_audit_getcwd(context);
++}
++
+ /**
+  * __audit_getname - add a name to the list
+  * @name: name to add
+@@ -1915,8 +1929,7 @@ void __audit_getname(struct filename *name)
+ 	name->aname = n;
+ 	name->refcnt++;
+ 
+-	if (!context->pwd.dentry)
+-		get_fs_pwd(current->fs, &context->pwd);
++	_audit_getcwd(context);
+ }
+ 
+ static inline int audit_copy_fcaps(struct audit_names *name,
+diff --git a/security/lsm_audit.c b/security/lsm_audit.c
+index 2d2bf49016f4..7c555621c2bd 100644
+--- a/security/lsm_audit.c
++++ b/security/lsm_audit.c
+@@ -241,6 +241,7 @@ static void dump_common_audit_data(struct audit_buffer *ab,
+ 			audit_log_untrustedstring(ab, inode->i_sb->s_id);
+ 			audit_log_format(ab, " ino=%lu", inode->i_ino);
+ 		}
++		audit_getcwd();
+ 		break;
+ 	}
+ 	case LSM_AUDIT_DATA_FILE: {
+@@ -254,6 +255,7 @@ static void dump_common_audit_data(struct audit_buffer *ab,
+ 			audit_log_untrustedstring(ab, inode->i_sb->s_id);
+ 			audit_log_format(ab, " ino=%lu", inode->i_ino);
+ 		}
++		audit_getcwd();
+ 		break;
+ 	}
+ 	case LSM_AUDIT_DATA_IOCTL_OP: {
+@@ -269,6 +271,7 @@ static void dump_common_audit_data(struct audit_buffer *ab,
+ 		}
+ 
+ 		audit_log_format(ab, " ioctlcmd=0x%hx", a->u.op->cmd);
++		audit_getcwd();
+ 		break;
+ 	}
+ 	case LSM_AUDIT_DATA_DENTRY: {
+@@ -283,6 +286,7 @@ static void dump_common_audit_data(struct audit_buffer *ab,
+ 			audit_log_untrustedstring(ab, inode->i_sb->s_id);
+ 			audit_log_format(ab, " ino=%lu", inode->i_ino);
+ 		}
++		audit_getcwd();
+ 		break;
+ 	}
+ 	case LSM_AUDIT_DATA_INODE: {
+@@ -300,6 +304,7 @@ static void dump_common_audit_data(struct audit_buffer *ab,
+ 		audit_log_format(ab, " dev=");
+ 		audit_log_untrustedstring(ab, inode->i_sb->s_id);
+ 		audit_log_format(ab, " ino=%lu", inode->i_ino);
++		audit_getcwd();
+ 		break;
+ 	}
+ 	case LSM_AUDIT_DATA_TASK: {
+-- 
+1.8.3.1
+
