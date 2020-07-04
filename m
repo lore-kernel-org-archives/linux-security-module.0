@@ -1,93 +1,106 @@
-Return-Path: <SRS0=/Sjk=AO=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=7qL0=AP=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DE75C433DF
-	for <linux-security-module@archiver.kernel.org>; Fri,  3 Jul 2020 23:04:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9D2CC433DF
+	for <linux-security-module@archiver.kernel.org>; Sat,  4 Jul 2020 00:03:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6693F20747
-	for <linux-security-module@archiver.kernel.org>; Fri,  3 Jul 2020 23:04:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7AA2A20723
+	for <linux-security-module@archiver.kernel.org>; Sat,  4 Jul 2020 00:03:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OBGUXT9y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726455AbgGCXEe (ORCPT
+        id S1726631AbgGDADV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 3 Jul 2020 19:04:34 -0400
-Received: from mga04.intel.com ([192.55.52.120]:10153 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726379AbgGCXEe (ORCPT
+        Fri, 3 Jul 2020 20:03:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46828 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726573AbgGDADU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 3 Jul 2020 19:04:34 -0400
-IronPort-SDR: YdTAHe3hcPFWhDYNT3f4TFRh0XJlc8ko16y62KOfDNh9e4/LVqCYoGMAQ6bN5kLxj/B4FYMsyb
- X8r6fs+AOgZg==
-X-IronPort-AV: E=McAfee;i="6000,8403,9671"; a="144722418"
-X-IronPort-AV: E=Sophos;i="5.75,309,1589266800"; 
-   d="scan'208";a="144722418"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2020 16:04:33 -0700
-IronPort-SDR: JyuK2FYE/yBdERc+4D1NOJZ7N0JJg+gCfVSVJ/LJ4h0rRpghX+gjWdxYshCfKx1IW4im/D3h4V
- /WOU9Vp5CXkQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.75,309,1589266800"; 
-   d="scan'208";a="456023767"
-Received: from ntohan-mobl.ger.corp.intel.com (HELO localhost) ([10.252.53.15])
-  by orsmga005.jf.intel.com with ESMTP; 03 Jul 2020 16:04:17 -0700
-Date:   Sat, 4 Jul 2020 02:04:13 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        x86@kernel.org, linux-sgx@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Jethro Beekman <jethro@fortanix.com>,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Chunyang Hui <sanqian.hcy@antfin.com>,
-        Jordan Hand <jorhand@linux.microsoft.com>,
-        Nathaniel McCallum <npmccallum@redhat.com>,
-        Seth Moore <sethmo@google.com>,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
-        asapek@google.com, cedric.xing@intel.com, chenalexchen@google.com,
-        conradparker@google.com, cyhanish@google.com,
-        dave.hansen@intel.com, haitao.huang@intel.com,
-        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
-        kmoy@google.com, ludloff@google.com, luto@kernel.org,
-        nhorman@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
-        tglx@linutronix.de, yaozhangx@google.com
-Subject: Re: [PATCH v33 11/21] x86/sgx: Linux Enclave Driver
-Message-ID: <20200703230413.GA104749@linux.intel.com>
-References: <20200617220844.57423-1-jarkko.sakkinen@linux.intel.com>
- <20200617220844.57423-12-jarkko.sakkinen@linux.intel.com>
- <20200626091419.GB27151@zn.tnic>
- <20200626141627.GA6583@linux.intel.com>
- <20200626142019.GD27151@zn.tnic>
+        Fri, 3 Jul 2020 20:03:20 -0400
+Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DAF9C061794;
+        Fri,  3 Jul 2020 17:03:20 -0700 (PDT)
+Received: by mail-pg1-x541.google.com with SMTP id f3so15747046pgr.2;
+        Fri, 03 Jul 2020 17:03:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=XfsnRGq5c7ISQMP6l12lIG9CT/MaV1ytAKPLovkdW6g=;
+        b=OBGUXT9yA+G7A+0ACpDkuvOBizruNZlUi6m2uBHw58O/fWISX/mOkrCVRWmKfBetTs
+         1rHrohBUhudhmqPZXYAko4J1WPW1lcU3mqOMiDO9x4a7G2W6l2jy9MacOGdbXd6ssffb
+         3rzhjJDJSvl0Wl+FL0AWzIdok6xQQId192oFJ4OfYkvuNRjXdlxL0uomU062UWmVYLVv
+         XyMCY8Ip7HDlP0yXehDFcxcyblxXYTZXf/AcFXL7UclLaK7hkdoRLu6aIpOvnhcaxFiN
+         hhmGGppwMCNYUgt+bEfOmaZrQzLUc0wvL7hQBgOlsl8VVTZTd2AYWxlCt9aLUzUYyf6O
+         /mCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=XfsnRGq5c7ISQMP6l12lIG9CT/MaV1ytAKPLovkdW6g=;
+        b=Q633J5urr1g398Au4nGXo22v5Au/8Cu6GPKB15IJdDZ+LEHsxQXL0ydMXJNX0WXhak
+         Aed2/Rko/W84OsJ8VZx+HAC6wAfcRTVCSWaU2sFGG7dLHn4b+Zag+n+qLbmJ26kIBZfK
+         W1RRLtTMLTn2NA5KBUuC6MJnPYcUYlaHylvAeLTQ5g7Z/+YbA3BaoG0vkpCi5aHGvkTP
+         Ad26OmCsXqWtckALMnuCHEQjZKgKTVJY21yQFJ1FksRvOpqb8p6W8/uhLZyZH055wdxx
+         XXI/f4uZBhCL1uGITw78stNp14ePoVwSVQBAMqfEPYdlZhSukph5HNUG0pcTHsvRM8h7
+         g1AA==
+X-Gm-Message-State: AOAM532yn0jCZxx/+n6fcisS1sMtie7cNa0kWUCES/tKJ3E+/gvdqm7C
+        araBLRuWlwWJtJca7za3ktU=
+X-Google-Smtp-Source: ABdhPJwHHJ3EdBT7aaN5Xo7682dRxRj8iLuo7RgIeJaLML1bJV+ESClFMpDgDn8cRiVupJ5LSZ4N9w==
+X-Received: by 2002:a62:190a:: with SMTP id 10mr2980224pfz.29.1593821000161;
+        Fri, 03 Jul 2020 17:03:20 -0700 (PDT)
+Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:400::5:d8c2])
+        by smtp.gmail.com with ESMTPSA id b24sm12799253pgn.8.2020.07.03.17.03.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 Jul 2020 17:03:19 -0700 (PDT)
+Date:   Fri, 3 Jul 2020 17:03:16 -0700
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>,
+        Greg Kroah-Hartman <greg@kroah.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Subject: Re: [PATCH v3 13/16] exit: Factor thread_group_exited out of
+ pidfd_poll
+Message-ID: <20200704000316.z5opxpi4iozjjtfj@ast-mbp.dhcp.thefacebook.com>
+References: <87y2o1swee.fsf_-_@x220.int.ebiederm.org>
+ <20200702164140.4468-13-ebiederm@xmission.com>
+ <20200703203021.paebx25miovmaxqt@ast-mbp.dhcp.thefacebook.com>
+ <873668s2j8.fsf@x220.int.ebiederm.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200626142019.GD27151@zn.tnic>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <873668s2j8.fsf@x220.int.ebiederm.org>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jun 26, 2020 at 04:20:19PM +0200, Borislav Petkov wrote:
-> On Fri, Jun 26, 2020 at 07:16:27AM -0700, Sean Christopherson wrote:
-> > That being said, I agree that it would be safer to move sgx_calc_ssaframesize()
-> > inside sgx_validate_secs() and only compute encl_size after the secs is
-> > validated.
+On Fri, Jul 03, 2020 at 04:37:47PM -0500, Eric W. Biederman wrote:
 > 
+> > The rest all looks good to me. Tested with and without bpf_preload patches.
+> > Feel free to create a frozen branch with this set.
+> 
+> Can I have your Tested-by and Acked-by?
 
-Changed as
-
-if (!secs->ssa_frame_size)
-	return -EINVAL;
-
-if (sgx_calc_ssa_frame_size(secs->miscselect, secs->xfrm) >
-    secs->ssa_frame_size)
-	return -EINVAL;
-
-/Jarkko
+For the set:
+Acked-by: Alexei Starovoitov <ast@kernel.org>
+Tested-by: Alexei Starovoitov <ast@kernel.org>
