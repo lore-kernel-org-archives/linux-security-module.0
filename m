@@ -1,179 +1,219 @@
-Return-Path: <SRS0=7qL0=AP=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=BkBe=AQ=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7D95C433DF
-	for <linux-security-module@archiver.kernel.org>; Sat,  4 Jul 2020 16:00:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EC8BC433E0
+	for <linux-security-module@archiver.kernel.org>; Sun,  5 Jul 2020 21:45:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BBF9020723
-	for <linux-security-module@archiver.kernel.org>; Sat,  4 Jul 2020 16:00:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 61B1520724
+	for <linux-security-module@archiver.kernel.org>; Sun,  5 Jul 2020 21:45:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726669AbgGDQAx (ORCPT
+        id S1728528AbgGEVp2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 4 Jul 2020 12:00:53 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:57226 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726638AbgGDQAw (ORCPT
+        Sun, 5 Jul 2020 17:45:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43094 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728047AbgGEVp1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 4 Jul 2020 12:00:52 -0400
-Received: from ip5f5af08c.dynamic.kabel-deutschland.de ([95.90.240.140] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1jrkav-00008Q-2S; Sat, 04 Jul 2020 16:00:49 +0000
-Date:   Sat, 4 Jul 2020 18:00:48 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <greg@kroah.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH v3 13/16] exit: Factor thread_group_exited out of
- pidfd_poll
-Message-ID: <20200704160048.l2yvs3w5k4vclpdv@wittgenstein>
-References: <87y2o1swee.fsf_-_@x220.int.ebiederm.org>
- <20200702164140.4468-13-ebiederm@xmission.com>
+        Sun, 5 Jul 2020 17:45:27 -0400
+Received: from smtp.al2klimov.de (smtp.al2klimov.de [IPv6:2a01:4f8:c0c:1465::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AB2FC061794;
+        Sun,  5 Jul 2020 14:45:27 -0700 (PDT)
+Received: from authenticated-user (PRIMARY_HOSTNAME [PUBLIC_IP])
+        by smtp.al2klimov.de (Postfix) with ESMTPA id E4833BC127;
+        Sun,  5 Jul 2020 21:45:23 +0000 (UTC)
+From:   "Alexander A. Klimov" <grandmaster@al2klimov.de>
+To:     jmorris@namei.org, serge@hallyn.com, john.johansen@canonical.com,
+        zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
+        dhowells@redhat.com, jarkko.sakkinen@linux.intel.com,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        keyrings@vger.kernel.org
+Cc:     "Alexander A. Klimov" <grandmaster@al2klimov.de>
+Subject: [PATCH] Replace HTTP links with HTTPS ones: security
+Date:   Sun,  5 Jul 2020 23:45:12 +0200
+Message-Id: <20200705214512.28498-1-grandmaster@al2klimov.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200702164140.4468-13-ebiederm@xmission.com>
+Content-Transfer-Encoding: 8bit
+X-Spamd-Bar: ++++++
+Authentication-Results: smtp.al2klimov.de;
+        auth=pass smtp.auth=aklimov@al2klimov.de smtp.mailfrom=grandmaster@al2klimov.de
+X-Spam: Yes
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jul 02, 2020 at 11:41:37AM -0500, Eric W. Biederman wrote:
-> Create an independent helper thread_group_exited report return true
+Rationale:
+Reduces attack surface on kernel devs opening the links for MITM
+as HTTPS traffic is much harder to manipulate.
 
-s/report return/which reports/
+Deterministic algorithm:
+For each file:
+  If not .svg:
+    For each line:
+      If doesn't contain `\bxmlns\b`:
+        For each link, `\bhttp://[^# \t\r\n]*(?:\w|/)`:
+          If both the HTTP and HTTPS versions
+          return 200 OK and serve the same content:
+            Replace HTTP with HTTPS.
 
-> when all threads have passed exit_notify in do_exit.  AKA all of the
-> threads are at least zombies and might be dead or completely gone.
-> 
-> Create this helper by taking the logic out of pidfd_poll where
-> it is already tested, and adding a missing READ_ONCE on
-> the read of task->exit_state.
+Signed-off-by: Alexander A. Klimov <grandmaster@al2klimov.de>
+---
+ Continuing my work started at 93431e0607e5.
 
-I would prefer to have this comment dropped as this read_once() is not
-missing as you can see from the comments elsewhere in this thread.
+ If there are any URLs to be removed completely or at least not HTTPSified:
+ Just clearly say so and I'll *undo my change*.
+ See also https://lkml.org/lkml/2020/6/27/64
 
-> 
-> I will be changing the user mode driver code to use this same logic
-> to know when a user mode driver needs to be restarted.
-> 
-> Place the new helper thread_group_exited in kernel/exit.c and
-> EXPORT it so it can be used by modules.
-> 
-> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
-> ---
+ If there are any valid, but yet not changed URLs:
+ See https://lkml.org/lkml/2020/6/26/837
 
-Minus the typos above and below, this looks good and passes the pidfd
-and process test-suite.
-Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
+ security/Kconfig                                 | 2 +-
+ security/apparmor/Kconfig                        | 2 +-
+ security/integrity/ima/Kconfig                   | 2 +-
+ security/integrity/ima/ima_template.c            | 2 +-
+ security/integrity/ima/ima_template_lib.c        | 2 +-
+ security/integrity/ima/ima_template_lib.h        | 2 +-
+ security/keys/encrypted-keys/ecryptfs_format.c   | 2 +-
+ security/keys/encrypted-keys/ecryptfs_format.h   | 2 +-
+ security/keys/encrypted-keys/encrypted.c         | 2 +-
+ security/keys/encrypted-keys/masterkey_trusted.c | 2 +-
+ 10 files changed, 10 insertions(+), 10 deletions(-)
 
-Thanks!
-Christian
+diff --git a/security/Kconfig b/security/Kconfig
+index cd3cc7da3a55..7561f6f99f1d 100644
+--- a/security/Kconfig
++++ b/security/Kconfig
+@@ -118,7 +118,7 @@ config INTEL_TXT
+ 	  it was configured with, especially since they may be responsible for
+ 	  providing such assurances to VMs and services running on it.
+ 
+-	  See <http://www.intel.com/technology/security/> for more information
++	  See <https://www.intel.com/technology/security/> for more information
+ 	  about Intel(R) TXT.
+ 	  See <http://tboot.sourceforge.net> for more information about tboot.
+ 	  See Documentation/x86/intel_txt.rst for a description of how to enable
+diff --git a/security/apparmor/Kconfig b/security/apparmor/Kconfig
+index 03fae1bd48a6..348ed6cfa08a 100644
+--- a/security/apparmor/Kconfig
++++ b/security/apparmor/Kconfig
+@@ -77,7 +77,7 @@ config SECURITY_APPARMOR_KUNIT_TEST
+ 	  This builds the AppArmor KUnit tests.
+ 
+ 	  KUnit tests run during boot and output the results to the debug log
+-	  in TAP format (http://testanything.org/). Only useful for kernel devs
++	  in TAP format (https://testanything.org/). Only useful for kernel devs
+ 	  running KUnit test harness and are not for inclusion into a
+ 	  production build.
+ 
+diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
+index edde88dbe576..6a5e4a77601b 100644
+--- a/security/integrity/ima/Kconfig
++++ b/security/integrity/ima/Kconfig
+@@ -26,7 +26,7 @@ config IMA
+ 	  an aggregate integrity value over this list inside the
+ 	  TPM hardware, so that the TPM can prove to a third party
+ 	  whether or not critical system files have been modified.
+-	  Read <http://www.usenix.org/events/sec04/tech/sailer.html>
++	  Read <https://www.usenix.org/events/sec04/tech/sailer.html>
+ 	  to learn more about IMA.
+ 	  If unsure, say N.
+ 
+diff --git a/security/integrity/ima/ima_template.c b/security/integrity/ima/ima_template.c
+index 5a2def40a733..1e89e2d3851f 100644
+--- a/security/integrity/ima/ima_template.c
++++ b/security/integrity/ima/ima_template.c
+@@ -1,7 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0-only
+ /*
+  * Copyright (C) 2013 Politecnico di Torino, Italy
+- *                    TORSEC group -- http://security.polito.it
++ *                    TORSEC group -- https://security.polito.it
+  *
+  * Author: Roberto Sassu <roberto.sassu@polito.it>
+  *
+diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
+index 635c6ac05050..41a5f435b793 100644
+--- a/security/integrity/ima/ima_template_lib.c
++++ b/security/integrity/ima/ima_template_lib.c
+@@ -1,7 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0-only
+ /*
+  * Copyright (C) 2013 Politecnico di Torino, Italy
+- *                    TORSEC group -- http://security.polito.it
++ *                    TORSEC group -- https://security.polito.it
+  *
+  * Author: Roberto Sassu <roberto.sassu@polito.it>
+  *
+diff --git a/security/integrity/ima/ima_template_lib.h b/security/integrity/ima/ima_template_lib.h
+index 9a88c79a7a61..6b3b880637a0 100644
+--- a/security/integrity/ima/ima_template_lib.h
++++ b/security/integrity/ima/ima_template_lib.h
+@@ -1,7 +1,7 @@
+ /* SPDX-License-Identifier: GPL-2.0-only */
+ /*
+  * Copyright (C) 2013 Politecnico di Torino, Italy
+- *                    TORSEC group -- http://security.polito.it
++ *                    TORSEC group -- https://security.polito.it
+  *
+  * Author: Roberto Sassu <roberto.sassu@polito.it>
+  *
+diff --git a/security/keys/encrypted-keys/ecryptfs_format.c b/security/keys/encrypted-keys/ecryptfs_format.c
+index a7339d4de811..8fdd76105ce3 100644
+--- a/security/keys/encrypted-keys/ecryptfs_format.c
++++ b/security/keys/encrypted-keys/ecryptfs_format.c
+@@ -4,7 +4,7 @@
+  *
+  * Copyright (C) 2006 International Business Machines Corp.
+  * Copyright (C) 2010 Politecnico di Torino, Italy
+- *                    TORSEC group -- http://security.polito.it
++ *                    TORSEC group -- https://security.polito.it
+  *
+  * Authors:
+  * Michael A. Halcrow <mahalcro@us.ibm.com>
+diff --git a/security/keys/encrypted-keys/ecryptfs_format.h b/security/keys/encrypted-keys/ecryptfs_format.h
+index 939621d870e4..ed8466578616 100644
+--- a/security/keys/encrypted-keys/ecryptfs_format.h
++++ b/security/keys/encrypted-keys/ecryptfs_format.h
+@@ -4,7 +4,7 @@
+  *
+  * Copyright (C) 2006 International Business Machines Corp.
+  * Copyright (C) 2010 Politecnico di Torino, Italy
+- *                    TORSEC group -- http://security.polito.it
++ *                    TORSEC group -- https://security.polito.it
+  *
+  * Authors:
+  * Michael A. Halcrow <mahalcro@us.ibm.com>
+diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/encrypted-keys/encrypted.c
+index 14cf81d1a30b..20075b1308aa 100644
+--- a/security/keys/encrypted-keys/encrypted.c
++++ b/security/keys/encrypted-keys/encrypted.c
+@@ -2,7 +2,7 @@
+ /*
+  * Copyright (C) 2010 IBM Corporation
+  * Copyright (C) 2010 Politecnico di Torino, Italy
+- *                    TORSEC group -- http://security.polito.it
++ *                    TORSEC group -- https://security.polito.it
+  *
+  * Authors:
+  * Mimi Zohar <zohar@us.ibm.com>
+diff --git a/security/keys/encrypted-keys/masterkey_trusted.c b/security/keys/encrypted-keys/masterkey_trusted.c
+index c68528aa49c6..e6d22ce77e98 100644
+--- a/security/keys/encrypted-keys/masterkey_trusted.c
++++ b/security/keys/encrypted-keys/masterkey_trusted.c
+@@ -2,7 +2,7 @@
+ /*
+  * Copyright (C) 2010 IBM Corporation
+  * Copyright (C) 2010 Politecnico di Torino, Italy
+- *                    TORSEC group -- http://security.polito.it
++ *                    TORSEC group -- https://security.polito.it
+  *
+  * Authors:
+  * Mimi Zohar <zohar@us.ibm.com>
+-- 
+2.27.0
 
->  include/linux/sched/signal.h |  2 ++
->  kernel/exit.c                | 24 ++++++++++++++++++++++++
->  kernel/fork.c                |  6 +-----
->  3 files changed, 27 insertions(+), 5 deletions(-)
-> 
-> diff --git a/include/linux/sched/signal.h b/include/linux/sched/signal.h
-> index 0ee5e696c5d8..1bad18a1d8ba 100644
-> --- a/include/linux/sched/signal.h
-> +++ b/include/linux/sched/signal.h
-> @@ -674,6 +674,8 @@ static inline int thread_group_empty(struct task_struct *p)
->  #define delay_group_leader(p) \
->  		(thread_group_leader(p) && !thread_group_empty(p))
->  
-> +extern bool thread_group_exited(struct pid *pid);
-> +
->  extern struct sighand_struct *__lock_task_sighand(struct task_struct *task,
->  							unsigned long *flags);
->  
-> diff --git a/kernel/exit.c b/kernel/exit.c
-> index d3294b611df1..a7f112feb0f6 100644
-> --- a/kernel/exit.c
-> +++ b/kernel/exit.c
-> @@ -1713,6 +1713,30 @@ COMPAT_SYSCALL_DEFINE5(waitid,
->  }
->  #endif
->  
-> +/**
-> + * thread_group_exited - check that a thread group has exited
-> + * @pid: tgid of thread group to be checked.
-> + *
-> + * Test if thread group is has exited (all threads are zombies, dead
-
-s/is has exited/has exited/
-
-> + * or completely gone).
-> + *
-> + * Return: true if the thread group has exited. false otherwise.
-> + */
-> +bool thread_group_exited(struct pid *pid)
-> +{
-> +	struct task_struct *task;
-> +	bool exited;
-> +
-> +	rcu_read_lock();
-> +	task = pid_task(pid, PIDTYPE_PID);
-> +	exited = !task ||
-> +		(READ_ONCE(task->exit_state) && thread_group_empty(task));
-> +	rcu_read_unlock();
-> +
-> +	return exited;
-> +}
-> +EXPORT_SYMBOL(thread_group_exited);
-> +
->  __weak void abort(void)
->  {
->  	BUG();
-> diff --git a/kernel/fork.c b/kernel/fork.c
-> index 142b23645d82..bf215af7a904 100644
-> --- a/kernel/fork.c
-> +++ b/kernel/fork.c
-> @@ -1787,22 +1787,18 @@ static void pidfd_show_fdinfo(struct seq_file *m, struct file *f)
->   */
->  static __poll_t pidfd_poll(struct file *file, struct poll_table_struct *pts)
->  {
-> -	struct task_struct *task;
->  	struct pid *pid = file->private_data;
->  	__poll_t poll_flags = 0;
->  
->  	poll_wait(file, &pid->wait_pidfd, pts);
->  
-> -	rcu_read_lock();
-> -	task = pid_task(pid, PIDTYPE_PID);
->  	/*
->  	 * Inform pollers only when the whole thread group exits.
->  	 * If the thread group leader exits before all other threads in the
->  	 * group, then poll(2) should block, similar to the wait(2) family.
->  	 */
-> -	if (!task || (task->exit_state && thread_group_empty(task)))
-> +	if (thread_group_exited(pid))
->  		poll_flags = EPOLLIN | EPOLLRDNORM;
-> -	rcu_read_unlock();
->  
->  	return poll_flags;
->  }
-> -- 
-> 2.25.0
-> 
