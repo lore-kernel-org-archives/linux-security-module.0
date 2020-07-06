@@ -2,186 +2,113 @@ Return-Path: <SRS0=KC/c=AR=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CE83C433DF
-	for <linux-security-module@archiver.kernel.org>; Mon,  6 Jul 2020 16:57:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC3D9C433E0
+	for <linux-security-module@archiver.kernel.org>; Mon,  6 Jul 2020 17:13:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3588920702
-	for <linux-security-module@archiver.kernel.org>; Mon,  6 Jul 2020 16:57:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JNOnGohp"
+	by mail.kernel.org (Postfix) with ESMTP id C49A0206B6
+	for <linux-security-module@archiver.kernel.org>; Mon,  6 Jul 2020 17:13:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729599AbgGFQ5P (ORCPT
+        id S1729623AbgGFRNh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 6 Jul 2020 12:57:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50678 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729386AbgGFQ5O (ORCPT
+        Mon, 6 Jul 2020 13:13:37 -0400
+Received: from mxo1.nje.dmz.twosigma.com ([208.77.214.160]:45967 "EHLO
+        mxo1.nje.dmz.twosigma.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729478AbgGFRNh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 6 Jul 2020 12:57:14 -0400
-Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77CA7C061755;
-        Mon,  6 Jul 2020 09:57:14 -0700 (PDT)
-Received: by mail-wm1-x343.google.com with SMTP id l2so41382083wmf.0;
-        Mon, 06 Jul 2020 09:57:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:mime-version
-         :content-disposition;
-        bh=R/YjKM4rOkF0piUgbg1Z0k3ov8aHdcptlyDHTu9pr18=;
-        b=JNOnGohp5rk/Iys3k3bb2ZsZnXn6s/eIdIduV7h3TwG+vH+MomPUI2HAc2MrRfGM+2
-         hQRLCDZj2xZIoh+BggLnKky0pu43rZO3qVp7BbQovs61n/EMPRGEr6KbnrmjJ+Nni7Ha
-         EEUKEN1UBQzDSoVM23S5b2TV9Ed3ZZorMbhB2B3YS41luFIhtkyPj8TvW4Lq/bxhwNic
-         tO1NsjbskbfU3LePP2U3iGxtor9XdI8WYnL00dUti3Ed0VSoqvq1RPgloVzKnHqNOowp
-         3EtgyGgV1gS3qxPfg1C7mi5QH2o6M5L+AJP+lRV9DdfHUu1WALLQiEswc3M6SaCUtp+M
-         CV6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:mime-version:content-disposition;
-        bh=R/YjKM4rOkF0piUgbg1Z0k3ov8aHdcptlyDHTu9pr18=;
-        b=oYF/kGCTJEpampG+0IWnkO54Ey4eLkWXtEUhtM5DNX5z5wrGN0ONJtAUsAsLfJEM3I
-         vM86/c1UuuyP8Tx0TMeH77rA6E3NdmWlGJHE8EML8b03IkuPue6OzYWYZSewocp0R2Ty
-         wgcGn69heRytlX9aBopvfW6D6qVO2kkEYu+TFmptjDcMG+DyNnMHzo6UHJJ2zpQ76ZVM
-         aBB9Cwh+WxxD/KY5MvcAgfM0TMaC3vbcGKXUuUCkr5vystusPxGTrNd5Ug5j9eCnCABz
-         mOtC9r2edvl2BK1LmmSQ/epp9Vb/hpPCAMih/XadfRiHphWY7u6XSWCfMkzMEETUW5Nl
-         /9xA==
-X-Gm-Message-State: AOAM533qNz1FBV/eMPXG3EXaUaB7/h20dKo31uAp6WP17ZK2C6zbm9QM
-        oyNo05FoCI8/wtup+qm8WBicUsZVTvRdVA==
-X-Google-Smtp-Source: ABdhPJwCAOnRf+CcFCx6YEfpYFYNa2AuSlPzTN/p/Y4w/uqIVp5wIHDENeMU9hop8O2zcT/S7VHPww==
-X-Received: by 2002:a7b:c0c9:: with SMTP id s9mr112960wmh.166.1594054632753;
-        Mon, 06 Jul 2020 09:57:12 -0700 (PDT)
-Received: from localhost ([95.236.72.230])
-        by smtp.gmail.com with ESMTPSA id v6sm12360079wrr.85.2020.07.06.09.57.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Jul 2020 09:57:11 -0700 (PDT)
-Date:   Mon, 6 Jul 2020 18:57:10 +0200
-From:   Lorenzo Fontana <fontanalorenz@gmail.com>
-To:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Cc:     Jonathan Corbet <corbet@lwn.net>, James Morris <jmorris@namei.org>,
+        Mon, 6 Jul 2020 13:13:37 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mxo1.nje.dmz.twosigma.com (Postfix) with ESMTP id 4B0sbh0618z7t8v;
+        Mon,  6 Jul 2020 17:13:36 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at twosigma.com
+Received: from mxo1.nje.dmz.twosigma.com ([127.0.0.1])
+        by localhost (mxo1.nje.dmz.twosigma.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id qZ-uHme1hea8; Mon,  6 Jul 2020 17:13:35 +0000 (UTC)
+Received: from exmbdft8.ad.twosigma.com (exmbdft8.ad.twosigma.com [172.22.2.84])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mxo1.nje.dmz.twosigma.com (Postfix) with ESMTPS id 4B0sbg6bfhz3wZ6;
+        Mon,  6 Jul 2020 17:13:35 +0000 (UTC)
+Received: from EXMBDFT11.ad.twosigma.com (172.23.162.14) by
+ exmbdft8.ad.twosigma.com (172.22.2.84) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Mon, 6 Jul 2020 17:13:35 +0000
+Received: from EXMBDFT11.ad.twosigma.com ([fe80::8d66:2326:5416:86a9]) by
+ EXMBDFT11.ad.twosigma.com ([fe80::8d66:2326:5416:86a9%19]) with mapi id
+ 15.00.1497.000; Mon, 6 Jul 2020 17:13:35 +0000
+From:   Nicolas Viennot <Nicolas.Viennot@twosigma.com>
+To:     Paul Moore <paul@paul-moore.com>,
         "Serge E. Hallyn" <serge@hallyn.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@chromium.org>
-Subject: [PATCH] bpf: lsm: Disable or enable BPF LSM at boot time
-Message-ID: <20200706165710.GA208695@gallifrey>
-Mail-Followup-To: Lorenzo Fontana <fontanalorenz@gmail.com>,
-        linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Jonathan Corbet <corbet@lwn.net>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>,
-        Yonghong Song <yhs@fb.com>, Andrii Nakryiko <andriin@fb.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@chromium.org>
+        Christian Brauner <christian.brauner@ubuntu.com>
+CC:     Adrian Reber <areber@redhat.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Pavel Emelyanov <ovzxemul@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        "Dmitry Safonov" <0x7f454c46@gmail.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        =?utf-8?B?TWljaGHFgiBDxYJhcGnFhHNraQ==?= <mclapinski@google.com>,
+        "Kamil Yurtsever" <kyurtsever@google.com>,
+        Dirk Petersen <dipeit@gmail.com>,
+        Christine Flood <chf@redhat.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Radostin Stoyanov <rstoyanov1@gmail.com>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Sargun Dhillon <sargun@sargun.me>,
+        "Arnd Bergmann" <arnd@arndb.de>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        Eric Paris <eparis@parisplace.org>,
+        Jann Horn <jannh@google.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: RE: [PATCH v4 3/3] prctl: Allow ptrace capable processes to change
+ /proc/self/exe
+Thread-Topic: [PATCH v4 3/3] prctl: Allow ptrace capable processes to change
+ /proc/self/exe
+Thread-Index: AQHWT3Pec4M4ip1q2kWWALZu7qCiaaj0zUiAgAAMHwCABfYCYA==
+Date:   Mon, 6 Jul 2020 17:13:35 +0000
+Message-ID: <a2b4deacfc7541e3adea2f36a6f44262@EXMBDFT11.ad.twosigma.com>
+References: <20200701064906.323185-1-areber@redhat.com>
+ <20200701064906.323185-4-areber@redhat.com>
+ <20200702211647.GB3283@mail.hallyn.com>
+ <CAHC9VhQZ=cwiOay6OMMdM1UHm69wDaga9HBkyTbx8-1OU=aBvA@mail.gmail.com>
+In-Reply-To: <CAHC9VhQZ=cwiOay6OMMdM1UHm69wDaga9HBkyTbx8-1OU=aBvA@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [172.20.189.128]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This option adds a kernel parameter 'bpf_lsm',
-which allows the BPF LSM to be disabled at boot.
-The purpose of this option is to allow a single kernel
-image to be distributed with the BPF LSM built in,
-but not necessarily enabled.
-
-Signed-off-by: Lorenzo Fontana <fontanalorenz@gmail.com>
----
- Documentation/admin-guide/kernel-parameters.txt |  8 ++++++++
- init/Kconfig                                    | 12 ++++++++++++
- security/bpf/hooks.c                            | 16 ++++++++++++++++
- 3 files changed, 36 insertions(+)
-
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index fb95fad81c79..c0d5955279d7 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -4575,6 +4575,14 @@
- 			1 -- enable.
- 			Default value is set via kernel config option.
- 
-+	bpf_lsm=	[BPF_LSM] Disable or enable LSM Instrumentation
-+			with BPF at boot time.
-+			Format: { "0" | "1" }
-+			See init/Kconfig help text.
-+			0 -- disable.
-+			1 -- enable.
-+			Default value is 1.
-+
- 	serialnumber	[BUGS=X86-32]
- 
- 	shapers=	[NET]
-diff --git a/init/Kconfig b/init/Kconfig
-index a46aa8f3174d..410547e4342e 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -1659,6 +1659,18 @@ config BPF_LSM
- 
- 	  If you are unsure how to answer this question, answer N.
- 
-+config BPF_LSM_BOOTPARAM
-+	bool "LSM Instrumentation with BPF boot parameter"
-+	depends on BPF_LSM
-+	help
-+	  This option adds a kernel parameter 'bpf_lsm', which allows LSM
-+	  instrumentation with BPF to be disabled at boot.
-+	  If this option is selected, the BPF LSM
-+	  functionality can be disabled with bpf_lsm=0 on the kernel
-+	  command line.  The purpose of this option is to allow a single
-+	  kernel image to be distributed with the BPF LSM built in, but not
-+	  necessarily enabled.
-+
- config BPF_SYSCALL
- 	bool "Enable bpf() system call"
- 	select BPF
-diff --git a/security/bpf/hooks.c b/security/bpf/hooks.c
-index 32d32d485451..6a4b4f63976c 100644
---- a/security/bpf/hooks.c
-+++ b/security/bpf/hooks.c
-@@ -3,9 +3,24 @@
- /*
-  * Copyright (C) 2020 Google LLC.
-  */
-+
-+#include <linux/init.h>
- #include <linux/lsm_hooks.h>
- #include <linux/bpf_lsm.h>
- 
-+int bpf_lsm_enabled_boot __initdata = 1;
-+#ifdef CONFIG_BPF_LSM_BOOTPARAM
-+static int __init bpf_lsm_enabled_setup(char *str)
-+{
-+	unsigned long enabled;
-+
-+	if (!kstrtoul(str, 0, &enabled))
-+		bpf_lsm_enabled_boot = enabled ? 1 : 0;
-+	return 1;
-+}
-+__setup("bpf_lsm=", bpf_lsm_enabled_setup);
-+#endif
-+
- static struct security_hook_list bpf_lsm_hooks[] __lsm_ro_after_init = {
- 	#define LSM_HOOK(RET, DEFAULT, NAME, ...) \
- 	LSM_HOOK_INIT(NAME, bpf_lsm_##NAME),
-@@ -23,4 +38,5 @@ static int __init bpf_lsm_init(void)
- DEFINE_LSM(bpf) = {
- 	.name = "bpf",
- 	.init = bpf_lsm_init,
-+	.enabled = &bpf_lsm_enabled_boot,
- };
--- 
-2.27.0
-
+PiA+IFRoaXMgaXMgc2NhcnkuICBCdXQgSSBiZWxpZXZlIGl0IGlzIHNhZmUuDQo+ID4NCj4gPiBS
+ZXZpZXdlZC1ieTogU2VyZ2UgSGFsbHluIDxzZXJnZUBoYWxseW4uY29tPg0KPiA+DQo+ID4gSSBh
+bSBhIGJpdCBjdXJpb3VzIGFib3V0IHRoZSBpbXBsaWNhdGlvbnMgb2YgdGhlIHNlbGludXggcGF0
+Y2guDQo+ID4gSUlVQyB5b3UgYXJlIHVzaW5nIHRoZSBwZXJtaXNzaW9uIG9mIHRoZSB0cmFjaW5n
+IHByb2Nlc3MgdG8gZXhlY3V0ZQ0KPiA+IHRoZSBmaWxlIHdpdGhvdXQgdHJhbnNpdGlvbiwgc28g
+dGhpcyBpcyBhIHdheSB0byB3b3JrIGFyb3VuZCB0aGUNCj4gPiBwb2xpY3kgd2hpY2ggbWlnaHQg
+cHJldmVudCB0aGUgdHJhY2VlIGZyb20gZG9pbmcgc28uDQo+ID4gR2l2ZW4gdGhhdCBTRUxpbnV4
+IHdhbnRzIHRvIGJlIE1BQywgSSdtIG5vdCAqcXVpdGUqIHN1cmUgdGhhdCdzDQo+ID4gY29uc2lk
+ZXJlZCBrb3NoZXIuICBZb3UgYWxzbyBhcmUgc2tpcHBpbmcgdGhlIFBST0NFU1NfX1BUUkFDRSB0
+bw0KPiA+IFNFQ0NMQVNTX1BST0NFU1MgY2hlY2sgd2hpY2ggc2VsaW51eF9icHJtX3NldF9jcmVk
+cyBkb2VzIGxhdGVyIG9uLg0KPiA+IEFnYWluIEknbSBqdXN0IG5vdCBxdWl0ZSBzdXJlIHdoYXQn
+cyBjb25zaWRlcmVkIG5vcm1hbCB0aGVyZSB0aGVzZQ0KPiA+IGRheXMuDQo+ID4NCj4gPiBQYXVs
+LCBkbyB5b3UgaGF2ZSBpbnB1dCB0aGVyZT8NCj4NCj4gSSBhZ3JlZSwgdGhlIFNFTGludXggaG9v
+ayBsb29rcyB3cm9uZy4gIEJ1aWxkaW5nIG9uIHdoYXQgQ2hyaXN0aWFuIHNhaWQsIHRoaXMgbG9v
+a3MgbW9yZSBsaWtlIGEgcHRyYWNlIG9wZXJhdGlvbiB0aGFuIGFuIGV4ZWMgb3BlcmF0aW9uLg0K
+DQpTZXJnZSwgUGF1bCwgQ2hyaXN0aWFuLA0KDQpJIG1hZGUgYSBQb0MgdG8gZGVtb25zdHJhdGUg
+dGhlIGNoYW5nZSBvZiAvcHJvYy9zZWxmL2V4ZSB3aXRob3V0IENBUF9TWVNfQURNSU4gdXNpbmcg
+b25seSBwdHJhY2UgYW5kIGV4ZWN2ZS4NCllvdSBtYXkgZmluZCBpdCBoZXJlOiBodHRwczovL2dp
+dGh1Yi5jb20vbnZpZW5ub3QvcnVuX2FzX2V4ZQ0KDQpXaGF0IGRvIHlvdSByZWNvbW1lbmQgdG8g
+cmVsYXggdGhlIHNlY3VyaXR5IGNoZWNrcyBpbiB0aGUga2VybmVsIHdoZW4gaXQgY29tZXMgdG8g
+Y2hhbmdpbmcgdGhlIGV4ZSBsaW5rPw0KDQogICAgTmljbw0K
