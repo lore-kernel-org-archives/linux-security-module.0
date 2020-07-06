@@ -2,145 +2,186 @@ Return-Path: <SRS0=KC/c=AR=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74935C433E0
-	for <linux-security-module@archiver.kernel.org>; Mon,  6 Jul 2020 13:18:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CE83C433DF
+	for <linux-security-module@archiver.kernel.org>; Mon,  6 Jul 2020 16:57:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 53B802070C
-	for <linux-security-module@archiver.kernel.org>; Mon,  6 Jul 2020 13:18:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3588920702
+	for <linux-security-module@archiver.kernel.org>; Mon,  6 Jul 2020 16:57:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="UUT7vs3O"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JNOnGohp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729177AbgGFNSs (ORCPT
+        id S1729599AbgGFQ5P (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 6 Jul 2020 09:18:48 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:37354 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729072AbgGFNSs (ORCPT
+        Mon, 6 Jul 2020 12:57:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50678 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729386AbgGFQ5O (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 6 Jul 2020 09:18:48 -0400
-Received: from sequoia (162-237-133-238.lightspeed.rcsntx.sbcglobal.net [162.237.133.238])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 6913520B717A;
-        Mon,  6 Jul 2020 06:18:47 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 6913520B717A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1594041528;
-        bh=f6pqwPgURJsUukw0OzBzkWGxCYgCy9yL+9G336sxsg0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UUT7vs3OB1AfZN8zireRKfp/s6vIG1eklB2XXox3Un1iQ/71CST+p4YPnh/noPO4s
-         qqjf581qVhqHRsmxe/fwt2L4cVrlo16dwpSWSHGaFXHs5qAcpaszsntJYJRQjVL1/w
-         6dTp9HX986whh3++TYJQTJFAi5oE0c+jZIUsiCu4=
-Date:   Mon, 6 Jul 2020 08:18:45 -0500
-From:   Tyler Hicks <tyhicks@linux.microsoft.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Prakhar Srivastava <prsriva02@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        Mon, 6 Jul 2020 12:57:14 -0400
+Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77CA7C061755;
+        Mon,  6 Jul 2020 09:57:14 -0700 (PDT)
+Received: by mail-wm1-x343.google.com with SMTP id l2so41382083wmf.0;
+        Mon, 06 Jul 2020 09:57:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:mime-version
+         :content-disposition;
+        bh=R/YjKM4rOkF0piUgbg1Z0k3ov8aHdcptlyDHTu9pr18=;
+        b=JNOnGohp5rk/Iys3k3bb2ZsZnXn6s/eIdIduV7h3TwG+vH+MomPUI2HAc2MrRfGM+2
+         hQRLCDZj2xZIoh+BggLnKky0pu43rZO3qVp7BbQovs61n/EMPRGEr6KbnrmjJ+Nni7Ha
+         EEUKEN1UBQzDSoVM23S5b2TV9Ed3ZZorMbhB2B3YS41luFIhtkyPj8TvW4Lq/bxhwNic
+         tO1NsjbskbfU3LePP2U3iGxtor9XdI8WYnL00dUti3Ed0VSoqvq1RPgloVzKnHqNOowp
+         3EtgyGgV1gS3qxPfg1C7mi5QH2o6M5L+AJP+lRV9DdfHUu1WALLQiEswc3M6SaCUtp+M
+         CV6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:mime-version:content-disposition;
+        bh=R/YjKM4rOkF0piUgbg1Z0k3ov8aHdcptlyDHTu9pr18=;
+        b=oYF/kGCTJEpampG+0IWnkO54Ey4eLkWXtEUhtM5DNX5z5wrGN0ONJtAUsAsLfJEM3I
+         vM86/c1UuuyP8Tx0TMeH77rA6E3NdmWlGJHE8EML8b03IkuPue6OzYWYZSewocp0R2Ty
+         wgcGn69heRytlX9aBopvfW6D6qVO2kkEYu+TFmptjDcMG+DyNnMHzo6UHJJ2zpQ76ZVM
+         aBB9Cwh+WxxD/KY5MvcAgfM0TMaC3vbcGKXUuUCkr5vystusPxGTrNd5Ug5j9eCnCABz
+         mOtC9r2edvl2BK1LmmSQ/epp9Vb/hpPCAMih/XadfRiHphWY7u6XSWCfMkzMEETUW5Nl
+         /9xA==
+X-Gm-Message-State: AOAM533qNz1FBV/eMPXG3EXaUaB7/h20dKo31uAp6WP17ZK2C6zbm9QM
+        oyNo05FoCI8/wtup+qm8WBicUsZVTvRdVA==
+X-Google-Smtp-Source: ABdhPJwCAOnRf+CcFCx6YEfpYFYNa2AuSlPzTN/p/Y4w/uqIVp5wIHDENeMU9hop8O2zcT/S7VHPww==
+X-Received: by 2002:a7b:c0c9:: with SMTP id s9mr112960wmh.166.1594054632753;
+        Mon, 06 Jul 2020 09:57:12 -0700 (PDT)
+Received: from localhost ([95.236.72.230])
+        by smtp.gmail.com with ESMTPSA id v6sm12360079wrr.85.2020.07.06.09.57.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Jul 2020 09:57:11 -0700 (PDT)
+Date:   Mon, 6 Jul 2020 18:57:10 +0200
+From:   Lorenzo Fontana <fontanalorenz@gmail.com>
+To:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
         linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v2 09/11] ima: Move validation of the keyrings
- conditional into ima_validate_rule()
-Message-ID: <20200706131845.GI4694@sequoia>
-References: <20200626223900.253615-1-tyhicks@linux.microsoft.com>
- <20200626223900.253615-10-tyhicks@linux.microsoft.com>
- <1593558449.5057.12.camel@linux.ibm.com>
- <20200702221656.GH4694@sequoia>
- <1593785732.23056.16.camel@linux.ibm.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>, James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@chromium.org>
+Subject: [PATCH] bpf: lsm: Disable or enable BPF LSM at boot time
+Message-ID: <20200706165710.GA208695@gallifrey>
+Mail-Followup-To: Lorenzo Fontana <fontanalorenz@gmail.com>,
+        linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Jonathan Corbet <corbet@lwn.net>, James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>,
+        Yonghong Song <yhs@fb.com>, Andrii Nakryiko <andriin@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1593785732.23056.16.camel@linux.ibm.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2020-07-03 10:15:32, Mimi Zohar wrote:
-> On Thu, 2020-07-02 at 17:16 -0500, Tyler Hicks wrote:
-> > On 2020-06-30 19:07:29, Mimi Zohar wrote:
-> > > On Fri, 2020-06-26 at 17:38 -0500, Tyler Hicks wrote:
-> > > > Use ima_validate_rule() to ensure that the combination of a hook
-> > > > function and the keyrings conditional is valid and that the keyrings
-> > > > conditional is not specified without an explicit KEY_CHECK func
-> > > > conditional. This is a code cleanup and has no user-facing change.
-> > > > 
-> > > > Signed-off-by: Tyler Hicks <tyhicks@linux.microsoft.com>
-> > > > ---
-> > > > 
-> > > > * v2
-> > > >   - Allowed IMA_DIGSIG_REQUIRED, IMA_PERMIT_DIRECTIO,
-> > > >     IMA_MODSIG_ALLOWED, and IMA_CHECK_BLACKLIST conditionals to be
-> > > >     present in the rule entry flags for non-buffer hook functions.
-> > > > 
-> > > >  security/integrity/ima/ima_policy.c | 13 +++++++++++--
-> > > >  1 file changed, 11 insertions(+), 2 deletions(-)
-> > > > 
-> > > > diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-> > > > index 8cdca2399d59..43d49ad958fb 100644
-> > > > --- a/security/integrity/ima/ima_policy.c
-> > > > +++ b/security/integrity/ima/ima_policy.c
-> > > > @@ -1000,6 +1000,15 @@ static bool ima_validate_rule(struct ima_rule_entry *entry)
-> > > >  		case KEXEC_KERNEL_CHECK:
-> > > >  		case KEXEC_INITRAMFS_CHECK:
-> > > >  		case POLICY_CHECK:
-> > > > +			if (entry->flags & ~(IMA_FUNC | IMA_MASK | IMA_FSMAGIC |
-> > > > +					     IMA_UID | IMA_FOWNER | IMA_FSUUID |
-> > > > +					     IMA_INMASK | IMA_EUID | IMA_PCR |
-> > > > +					     IMA_FSNAME | IMA_DIGSIG_REQUIRED |
-> > > > +					     IMA_PERMIT_DIRECTIO |
-> > > > +					     IMA_MODSIG_ALLOWED |
-> > > > +					     IMA_CHECK_BLACKLIST))
-> > > 
-> > > Other than KEYRINGS, this patch should continue to behave the same.
-> > >  However, this list gives the impressions that all of these flags are
-> > > permitted on all of the above flags, which isn't true.
-> > > 
-> > > For example, both IMA_MODSIG_ALLOWED & IMA_CHECK_BLACKLIST are limited
-> > > to appended signatures, meaning KERNEL_CHECK and KEXEC_KERNEL_CHECK.
-> > 
-> > Just to clarify, are both IMA_MODSIG_ALLOWED and IMA_CHECK_BLACKLIST
-> > limited to KEXEC_KERNEL_CHECK, KEXEC_INITRAMFS_CHECK, and MODULE_CHECK?
-> > That's what ima_hook_supports_modsig() suggests.
-> 
-> Theoretically that is true, but I have no idea how you would append a
-> signature to the kexec boot command line.  The only users of appended
-> signatures are currently kernel modules and the kexec'ed kernel image.
+This option adds a kernel parameter 'bpf_lsm',
+which allows the BPF LSM to be disabled at boot.
+The purpose of this option is to allow a single kernel
+image to be distributed with the BPF LSM built in,
+but not necessarily enabled.
 
-The discrepancy was with KEXEC_INITRAMFS_CHECK, not KEXEC_CMDLINE. I now
-see that there's no support for initramfs signature verification in the
-kexec code so I'll assume that ima_hook_supports_modsig() is wrong and
-limit IMA_MODSIG_ALLOWED and IMA_CHECK_BLACKLIST to the
-KEXEC_KERNEL_CHECK and MODULE_CHECK actions, as you originally
-suggested.
+Signed-off-by: Lorenzo Fontana <fontanalorenz@gmail.com>
+---
+ Documentation/admin-guide/kernel-parameters.txt |  8 ++++++++
+ init/Kconfig                                    | 12 ++++++++++++
+ security/bpf/hooks.c                            | 16 ++++++++++++++++
+ 3 files changed, 36 insertions(+)
 
-Tyler
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index fb95fad81c79..c0d5955279d7 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -4575,6 +4575,14 @@
+ 			1 -- enable.
+ 			Default value is set via kernel config option.
+ 
++	bpf_lsm=	[BPF_LSM] Disable or enable LSM Instrumentation
++			with BPF at boot time.
++			Format: { "0" | "1" }
++			See init/Kconfig help text.
++			0 -- disable.
++			1 -- enable.
++			Default value is 1.
++
+ 	serialnumber	[BUGS=X86-32]
+ 
+ 	shapers=	[NET]
+diff --git a/init/Kconfig b/init/Kconfig
+index a46aa8f3174d..410547e4342e 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -1659,6 +1659,18 @@ config BPF_LSM
+ 
+ 	  If you are unsure how to answer this question, answer N.
+ 
++config BPF_LSM_BOOTPARAM
++	bool "LSM Instrumentation with BPF boot parameter"
++	depends on BPF_LSM
++	help
++	  This option adds a kernel parameter 'bpf_lsm', which allows LSM
++	  instrumentation with BPF to be disabled at boot.
++	  If this option is selected, the BPF LSM
++	  functionality can be disabled with bpf_lsm=0 on the kernel
++	  command line.  The purpose of this option is to allow a single
++	  kernel image to be distributed with the BPF LSM built in, but not
++	  necessarily enabled.
++
+ config BPF_SYSCALL
+ 	bool "Enable bpf() system call"
+ 	select BPF
+diff --git a/security/bpf/hooks.c b/security/bpf/hooks.c
+index 32d32d485451..6a4b4f63976c 100644
+--- a/security/bpf/hooks.c
++++ b/security/bpf/hooks.c
+@@ -3,9 +3,24 @@
+ /*
+  * Copyright (C) 2020 Google LLC.
+  */
++
++#include <linux/init.h>
+ #include <linux/lsm_hooks.h>
+ #include <linux/bpf_lsm.h>
+ 
++int bpf_lsm_enabled_boot __initdata = 1;
++#ifdef CONFIG_BPF_LSM_BOOTPARAM
++static int __init bpf_lsm_enabled_setup(char *str)
++{
++	unsigned long enabled;
++
++	if (!kstrtoul(str, 0, &enabled))
++		bpf_lsm_enabled_boot = enabled ? 1 : 0;
++	return 1;
++}
++__setup("bpf_lsm=", bpf_lsm_enabled_setup);
++#endif
++
+ static struct security_hook_list bpf_lsm_hooks[] __lsm_ro_after_init = {
+ 	#define LSM_HOOK(RET, DEFAULT, NAME, ...) \
+ 	LSM_HOOK_INIT(NAME, bpf_lsm_##NAME),
+@@ -23,4 +38,5 @@ static int __init bpf_lsm_init(void)
+ DEFINE_LSM(bpf) = {
+ 	.name = "bpf",
+ 	.init = bpf_lsm_init,
++	.enabled = &bpf_lsm_enabled_boot,
+ };
+-- 
+2.27.0
 
-> 
-> > 
-> > >  Both should only be allowed on APPRAISE action rules.
-> > 
-> > For completeness, it looks like DONT_APPRAISE should not be allowed.
-> 
-> Good point.  
-> 
-> > 
-> > > IMA_PCR should be limited to MEASURE action rules.
-> > 
-> > It looks like DONT_MEASURE should not be allowed.
-> 
-> The TPM PCR isn't a file attribute.
-> 
-> > 
-> > > IMA_DIGSIG_REQUIRED should be limited to APPRAISE action rules.
-> > 
-> > It looks like DONT_APPRAISE should not be allowed.
-> 
-> Right, in all of these cases the DONT_XXXX isn't applicable.
-> 
-> Mimi
