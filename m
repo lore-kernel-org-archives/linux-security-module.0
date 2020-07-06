@@ -2,129 +2,177 @@ Return-Path: <SRS0=KC/c=AR=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B413DC433E3
-	for <linux-security-module@archiver.kernel.org>; Mon,  6 Jul 2020 17:45:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67248C433DF
+	for <linux-security-module@archiver.kernel.org>; Mon,  6 Jul 2020 18:20:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9D9572053B
-	for <linux-security-module@archiver.kernel.org>; Mon,  6 Jul 2020 17:45:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C647206E9
+	for <linux-security-module@archiver.kernel.org>; Mon,  6 Jul 2020 18:20:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729694AbgGFRpJ (ORCPT
+        id S1729751AbgGFSUA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 6 Jul 2020 13:45:09 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:36578 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729550AbgGFRpI (ORCPT
+        Mon, 6 Jul 2020 14:20:00 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:62126 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729703AbgGFST7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 6 Jul 2020 13:45:08 -0400
-Received: from ip5f5af08c.dynamic.kabel-deutschland.de ([95.90.240.140] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1jsVAU-0007so-Be; Mon, 06 Jul 2020 17:44:38 +0000
-Date:   Mon, 6 Jul 2020 19:44:37 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Nicolas Viennot <Nicolas.Viennot@twosigma.com>
-Cc:     Paul Moore <paul@paul-moore.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Adrian Reber <areber@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Pavel Emelyanov <ovzxemul@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Andrei Vagin <avagin@gmail.com>,
-        =?utf-8?B?TWljaGHFgiBDxYJhcGnFhHNraQ==?= <mclapinski@google.com>,
-        Kamil Yurtsever <kyurtsever@google.com>,
-        Dirk Petersen <dipeit@gmail.com>,
-        Christine Flood <chf@redhat.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Radostin Stoyanov <rstoyanov1@gmail.com>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Sargun Dhillon <sargun@sargun.me>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        Eric Paris <eparis@parisplace.org>,
-        Jann Horn <jannh@google.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH v4 3/3] prctl: Allow ptrace capable processes to change
- /proc/self/exe
-Message-ID: <20200706174437.zpshxlul7rl3vmmq@wittgenstein>
-References: <20200701064906.323185-1-areber@redhat.com>
- <20200701064906.323185-4-areber@redhat.com>
- <20200702211647.GB3283@mail.hallyn.com>
- <CAHC9VhQZ=cwiOay6OMMdM1UHm69wDaga9HBkyTbx8-1OU=aBvA@mail.gmail.com>
- <a2b4deacfc7541e3adea2f36a6f44262@EXMBDFT11.ad.twosigma.com>
+        Mon, 6 Jul 2020 14:19:59 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 066I24f4003185;
+        Mon, 6 Jul 2020 14:19:56 -0400
+Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3248udrkqy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 06 Jul 2020 14:19:56 -0400
+Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
+        by ppma04dal.us.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 066IEBZC013337;
+        Mon, 6 Jul 2020 18:19:56 GMT
+Received: from b01cxnp22036.gho.pok.ibm.com (b01cxnp22036.gho.pok.ibm.com [9.57.198.26])
+        by ppma04dal.us.ibm.com with ESMTP id 322hd8nvfn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 06 Jul 2020 18:19:56 +0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 066IJtsg36503916
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 6 Jul 2020 18:19:55 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5FA36B2066;
+        Mon,  6 Jul 2020 18:19:55 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4744EB2067;
+        Mon,  6 Jul 2020 18:19:55 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Mon,  6 Jul 2020 18:19:55 +0000 (GMT)
+From:   Stefan Berger <stefanb@linux.vnet.ibm.com>
+To:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jarkko.sakkinen@linux.intel.com, linux-acpi@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Cc:     Stefan Berger <stefanb@linux.ibm.com>
+Subject: [PATCH v9 2/2] tpm: Add support for event log pointer found in TPM2 ACPI table
+Date:   Mon,  6 Jul 2020 14:19:53 -0400
+Message-Id: <20200706181953.3592084-3-stefanb@linux.vnet.ibm.com>
+X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20200706181953.3592084-1-stefanb@linux.vnet.ibm.com>
+References: <20200706181953.3592084-1-stefanb@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <a2b4deacfc7541e3adea2f36a6f44262@EXMBDFT11.ad.twosigma.com>
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-07-06_15:2020-07-06,2020-07-06 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
+ adultscore=0 spamscore=0 lowpriorityscore=0 priorityscore=1501
+ malwarescore=0 clxscore=1015 cotscore=-2147483648 mlxscore=0
+ impostorscore=0 mlxlogscore=999 bulkscore=0 classifier=spam adjust=0
+ reason=mlx scancount=1 engine=8.12.0-2004280000
+ definitions=main-2007060123
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jul 06, 2020 at 05:13:35PM +0000, Nicolas Viennot wrote:
-> > > This is scary.  But I believe it is safe.
-> > >
-> > > Reviewed-by: Serge Hallyn <serge@hallyn.com>
-> > >
-> > > I am a bit curious about the implications of the selinux patch.
-> > > IIUC you are using the permission of the tracing process to execute
-> > > the file without transition, so this is a way to work around the
-> > > policy which might prevent the tracee from doing so.
-> > > Given that SELinux wants to be MAC, I'm not *quite* sure that's
-> > > considered kosher.  You also are skipping the PROCESS__PTRACE to
-> > > SECCLASS_PROCESS check which selinux_bprm_set_creds does later on.
-> > > Again I'm just not quite sure what's considered normal there these
-> > > days.
-> > >
-> > > Paul, do you have input there?
-> >
-> > I agree, the SELinux hook looks wrong.  Building on what Christian said, this looks more like a ptrace operation than an exec operation.
-> 
-> Serge, Paul, Christian,
-> 
-> I made a PoC to demonstrate the change of /proc/self/exe without CAP_SYS_ADMIN using only ptrace and execve.
-> You may find it here: https://github.com/nviennot/run_as_exe
-> 
-> What do you recommend to relax the security checks in the kernel when it comes to changing the exe link?
+From: Stefan Berger <stefanb@linux.ibm.com>
 
-Looks fun! Yeah, so that this is possible is known afaict. But you're
-not really circumventing the kernel check but are mucking with the EFL
-by changing the auxv, right?
+In case a TPM2 is attached, search for a TPM2 ACPI table when trying
+to get the event log from ACPI. If one is found, use it to get the
+start and length of the log area. This allows non-UEFI systems, such
+as SeaBIOS, to pass an event log when using a TPM2.
 
-Originally, you needed to be userns root, i.e. only uid 0 could
-change the /proc/self/exe link (cf. [1]). This was changed to
-ns_capable(CAP_SYS_ADMIN) in [2].
+Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+---
+ drivers/char/tpm/eventlog/acpi.c | 63 +++++++++++++++++++++-----------
+ 1 file changed, 42 insertions(+), 21 deletions(-)
 
-The original reasoning in [1] is interesting as it basically already
-points to your poc:
+diff --git a/drivers/char/tpm/eventlog/acpi.c b/drivers/char/tpm/eventlog/acpi.c
+index 63ada5e53f13..3633ed70f48f 100644
+--- a/drivers/char/tpm/eventlog/acpi.c
++++ b/drivers/char/tpm/eventlog/acpi.c
+@@ -49,9 +49,9 @@ int tpm_read_log_acpi(struct tpm_chip *chip)
+ 	void __iomem *virt;
+ 	u64 len, start;
+ 	struct tpm_bios_log *log;
+-
+-	if (chip->flags & TPM_CHIP_FLAG_TPM2)
+-		return -ENODEV;
++	struct acpi_table_tpm2 *tbl;
++	struct acpi_tpm2_phy *tpm2_phy;
++	int format;
+ 
+ 	log = &chip->log;
+ 
+@@ -61,23 +61,44 @@ int tpm_read_log_acpi(struct tpm_chip *chip)
+ 	if (!chip->acpi_dev_handle)
+ 		return -ENODEV;
+ 
+-	/* Find TCPA entry in RSDT (ACPI_LOGICAL_ADDRESSING) */
+-	status = acpi_get_table(ACPI_SIG_TCPA, 1,
+-				(struct acpi_table_header **)&buff);
+-
+-	if (ACPI_FAILURE(status))
+-		return -ENODEV;
+-
+-	switch(buff->platform_class) {
+-	case BIOS_SERVER:
+-		len = buff->server.log_max_len;
+-		start = buff->server.log_start_addr;
+-		break;
+-	case BIOS_CLIENT:
+-	default:
+-		len = buff->client.log_max_len;
+-		start = buff->client.log_start_addr;
+-		break;
++	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
++		status = acpi_get_table("TPM2", 1,
++					(struct acpi_table_header **)&tbl);
++		if (ACPI_FAILURE(status))
++			return -ENODEV;
++
++		if (tbl->header.length <
++				sizeof(*tbl) + sizeof(struct acpi_tpm2_phy))
++			return -ENODEV;
++
++		tpm2_phy = (void *)tbl + sizeof(*tbl);
++		len = tpm2_phy->log_area_minimum_length;
++
++		start = tpm2_phy->log_area_start_address;
++		if (!start || !len)
++			return -ENODEV;
++
++		format = EFI_TCG2_EVENT_LOG_FORMAT_TCG_2;
++	} else {
++		/* Find TCPA entry in RSDT (ACPI_LOGICAL_ADDRESSING) */
++		status = acpi_get_table(ACPI_SIG_TCPA, 1,
++					(struct acpi_table_header **)&buff);
++		if (ACPI_FAILURE(status))
++			return -ENODEV;
++
++		switch (buff->platform_class) {
++		case BIOS_SERVER:
++			len = buff->server.log_max_len;
++			start = buff->server.log_start_addr;
++			break;
++		case BIOS_CLIENT:
++		default:
++			len = buff->client.log_max_len;
++			start = buff->client.log_start_addr;
++			break;
++		}
++
++		format = EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2;
+ 	}
+ 	if (!len) {
+ 		dev_warn(&chip->dev, "%s: TCPA log area empty\n", __func__);
+@@ -98,7 +119,7 @@ int tpm_read_log_acpi(struct tpm_chip *chip)
+ 	memcpy_fromio(log->bios_event_log, virt, len);
+ 
+ 	acpi_os_unmap_iomem(virt, len);
+-	return EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2;
++	return format;
+ 
+ err:
+ 	kfree(log->bios_event_log);
+-- 
+2.26.2
 
-"Still note that updating exe-file link now doesn't require sys-resource
- capability anymore, after all there is no much profit in preventing
- setup own file link (there are a number of ways to execute own code --
- ptrace, ld-preload, so that the only reliable way to find which exactly
- code is executed is to inspect running program memory).  Still we
- require the caller to be at least user-namespace root user."
-
-There were arguments being made that /proc/<pid>/exe needs to be sm that
-userspace can have a decent amount of trust in but I believe that that's
-not a great argument.
-
-But let me dig a little into the original discussion and see what the
-thread-model was.
-At this point I'm starting to believe that it was people being cautios
-but better be sure.
-
-[1]: f606b77f1a9e ("prctl: PR_SET_MM -- introduce PR_SET_MM_MAP operation")
-[2]: 4d28df6152aa ("prctl: Allow local CAP_SYS_ADMIN changing exe_file")
-[3]: https://lore.kernel.org/patchwork/patch/697304/
-
-Christian
