@@ -2,113 +2,233 @@ Return-Path: <SRS0=KC/c=AR=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC3D9C433E0
-	for <linux-security-module@archiver.kernel.org>; Mon,  6 Jul 2020 17:13:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F3A4C433E0
+	for <linux-security-module@archiver.kernel.org>; Mon,  6 Jul 2020 17:39:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C49A0206B6
-	for <linux-security-module@archiver.kernel.org>; Mon,  6 Jul 2020 17:13:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3555E20656
+	for <linux-security-module@archiver.kernel.org>; Mon,  6 Jul 2020 17:39:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729623AbgGFRNh (ORCPT
+        id S1729746AbgGFRjJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 6 Jul 2020 13:13:37 -0400
-Received: from mxo1.nje.dmz.twosigma.com ([208.77.214.160]:45967 "EHLO
-        mxo1.nje.dmz.twosigma.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729478AbgGFRNh (ORCPT
+        Mon, 6 Jul 2020 13:39:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57126 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729636AbgGFRjI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 6 Jul 2020 13:13:37 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mxo1.nje.dmz.twosigma.com (Postfix) with ESMTP id 4B0sbh0618z7t8v;
-        Mon,  6 Jul 2020 17:13:36 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at twosigma.com
-Received: from mxo1.nje.dmz.twosigma.com ([127.0.0.1])
-        by localhost (mxo1.nje.dmz.twosigma.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id qZ-uHme1hea8; Mon,  6 Jul 2020 17:13:35 +0000 (UTC)
-Received: from exmbdft8.ad.twosigma.com (exmbdft8.ad.twosigma.com [172.22.2.84])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mxo1.nje.dmz.twosigma.com (Postfix) with ESMTPS id 4B0sbg6bfhz3wZ6;
-        Mon,  6 Jul 2020 17:13:35 +0000 (UTC)
-Received: from EXMBDFT11.ad.twosigma.com (172.23.162.14) by
- exmbdft8.ad.twosigma.com (172.22.2.84) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Mon, 6 Jul 2020 17:13:35 +0000
-Received: from EXMBDFT11.ad.twosigma.com ([fe80::8d66:2326:5416:86a9]) by
- EXMBDFT11.ad.twosigma.com ([fe80::8d66:2326:5416:86a9%19]) with mapi id
- 15.00.1497.000; Mon, 6 Jul 2020 17:13:35 +0000
-From:   Nicolas Viennot <Nicolas.Viennot@twosigma.com>
-To:     Paul Moore <paul@paul-moore.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>
-CC:     Adrian Reber <areber@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Pavel Emelyanov <ovzxemul@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "Dmitry Safonov" <0x7f454c46@gmail.com>,
-        Andrei Vagin <avagin@gmail.com>,
-        =?utf-8?B?TWljaGHFgiBDxYJhcGnFhHNraQ==?= <mclapinski@google.com>,
-        "Kamil Yurtsever" <kyurtsever@google.com>,
-        Dirk Petersen <dipeit@gmail.com>,
-        Christine Flood <chf@redhat.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Radostin Stoyanov <rstoyanov1@gmail.com>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Sargun Dhillon <sargun@sargun.me>,
-        "Arnd Bergmann" <arnd@arndb.de>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        Eric Paris <eparis@parisplace.org>,
-        Jann Horn <jannh@google.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: RE: [PATCH v4 3/3] prctl: Allow ptrace capable processes to change
- /proc/self/exe
-Thread-Topic: [PATCH v4 3/3] prctl: Allow ptrace capable processes to change
- /proc/self/exe
-Thread-Index: AQHWT3Pec4M4ip1q2kWWALZu7qCiaaj0zUiAgAAMHwCABfYCYA==
-Date:   Mon, 6 Jul 2020 17:13:35 +0000
-Message-ID: <a2b4deacfc7541e3adea2f36a6f44262@EXMBDFT11.ad.twosigma.com>
-References: <20200701064906.323185-1-areber@redhat.com>
- <20200701064906.323185-4-areber@redhat.com>
- <20200702211647.GB3283@mail.hallyn.com>
- <CAHC9VhQZ=cwiOay6OMMdM1UHm69wDaga9HBkyTbx8-1OU=aBvA@mail.gmail.com>
-In-Reply-To: <CAHC9VhQZ=cwiOay6OMMdM1UHm69wDaga9HBkyTbx8-1OU=aBvA@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [172.20.189.128]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Mon, 6 Jul 2020 13:39:08 -0400
+Received: from smtp.al2klimov.de (smtp.al2klimov.de [IPv6:2a01:4f8:c0c:1465::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CBA5C061755
+        for <linux-security-module@vger.kernel.org>; Mon,  6 Jul 2020 10:39:08 -0700 (PDT)
+Received: from authenticated-user (PRIMARY_HOSTNAME [PUBLIC_IP])
+        by smtp.al2klimov.de (Postfix) with ESMTPA id 73664BC126;
+        Mon,  6 Jul 2020 17:38:58 +0000 (UTC)
+From:   "Alexander A. Klimov" <grandmaster@al2klimov.de>
+To:     davem@davemloft.net, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
+        kuba@kernel.org, paul@paul-moore.com, pablo@netfilter.org,
+        kadlec@netfilter.org, fw@strlen.de, edumazet@google.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org
+Cc:     "Alexander A. Klimov" <grandmaster@al2klimov.de>
+Subject: [PATCH] Replace HTTP links with HTTPS ones: IPv*
+Date:   Mon,  6 Jul 2020 19:38:50 +0200
+Message-Id: <20200706173850.19304-1-grandmaster@al2klimov.de>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Spamd-Bar: +++++
+Authentication-Results: smtp.al2klimov.de;
+        auth=pass smtp.auth=aklimov@al2klimov.de smtp.mailfrom=grandmaster@al2klimov.de
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-PiA+IFRoaXMgaXMgc2NhcnkuICBCdXQgSSBiZWxpZXZlIGl0IGlzIHNhZmUuDQo+ID4NCj4gPiBS
-ZXZpZXdlZC1ieTogU2VyZ2UgSGFsbHluIDxzZXJnZUBoYWxseW4uY29tPg0KPiA+DQo+ID4gSSBh
-bSBhIGJpdCBjdXJpb3VzIGFib3V0IHRoZSBpbXBsaWNhdGlvbnMgb2YgdGhlIHNlbGludXggcGF0
-Y2guDQo+ID4gSUlVQyB5b3UgYXJlIHVzaW5nIHRoZSBwZXJtaXNzaW9uIG9mIHRoZSB0cmFjaW5n
-IHByb2Nlc3MgdG8gZXhlY3V0ZQ0KPiA+IHRoZSBmaWxlIHdpdGhvdXQgdHJhbnNpdGlvbiwgc28g
-dGhpcyBpcyBhIHdheSB0byB3b3JrIGFyb3VuZCB0aGUNCj4gPiBwb2xpY3kgd2hpY2ggbWlnaHQg
-cHJldmVudCB0aGUgdHJhY2VlIGZyb20gZG9pbmcgc28uDQo+ID4gR2l2ZW4gdGhhdCBTRUxpbnV4
-IHdhbnRzIHRvIGJlIE1BQywgSSdtIG5vdCAqcXVpdGUqIHN1cmUgdGhhdCdzDQo+ID4gY29uc2lk
-ZXJlZCBrb3NoZXIuICBZb3UgYWxzbyBhcmUgc2tpcHBpbmcgdGhlIFBST0NFU1NfX1BUUkFDRSB0
-bw0KPiA+IFNFQ0NMQVNTX1BST0NFU1MgY2hlY2sgd2hpY2ggc2VsaW51eF9icHJtX3NldF9jcmVk
-cyBkb2VzIGxhdGVyIG9uLg0KPiA+IEFnYWluIEknbSBqdXN0IG5vdCBxdWl0ZSBzdXJlIHdoYXQn
-cyBjb25zaWRlcmVkIG5vcm1hbCB0aGVyZSB0aGVzZQ0KPiA+IGRheXMuDQo+ID4NCj4gPiBQYXVs
-LCBkbyB5b3UgaGF2ZSBpbnB1dCB0aGVyZT8NCj4NCj4gSSBhZ3JlZSwgdGhlIFNFTGludXggaG9v
-ayBsb29rcyB3cm9uZy4gIEJ1aWxkaW5nIG9uIHdoYXQgQ2hyaXN0aWFuIHNhaWQsIHRoaXMgbG9v
-a3MgbW9yZSBsaWtlIGEgcHRyYWNlIG9wZXJhdGlvbiB0aGFuIGFuIGV4ZWMgb3BlcmF0aW9uLg0K
-DQpTZXJnZSwgUGF1bCwgQ2hyaXN0aWFuLA0KDQpJIG1hZGUgYSBQb0MgdG8gZGVtb25zdHJhdGUg
-dGhlIGNoYW5nZSBvZiAvcHJvYy9zZWxmL2V4ZSB3aXRob3V0IENBUF9TWVNfQURNSU4gdXNpbmcg
-b25seSBwdHJhY2UgYW5kIGV4ZWN2ZS4NCllvdSBtYXkgZmluZCBpdCBoZXJlOiBodHRwczovL2dp
-dGh1Yi5jb20vbnZpZW5ub3QvcnVuX2FzX2V4ZQ0KDQpXaGF0IGRvIHlvdSByZWNvbW1lbmQgdG8g
-cmVsYXggdGhlIHNlY3VyaXR5IGNoZWNrcyBpbiB0aGUga2VybmVsIHdoZW4gaXQgY29tZXMgdG8g
-Y2hhbmdpbmcgdGhlIGV4ZSBsaW5rPw0KDQogICAgTmljbw0K
+Rationale:
+Reduces attack surface on kernel devs opening the links for MITM
+as HTTPS traffic is much harder to manipulate.
+
+Deterministic algorithm:
+For each file:
+  If not .svg:
+    For each line:
+      If doesn't contain `\bxmlns\b`:
+        For each link, `\bhttp://[^# \t\r\n]*(?:\w|/)`:
+          If both the HTTP and HTTPS versions
+          return 200 OK and serve the same content:
+            Replace HTTP with HTTPS.
+
+Signed-off-by: Alexander A. Klimov <grandmaster@al2klimov.de>
+---
+ Continuing my work started at 93431e0607e5.
+
+ If there are any URLs to be removed completely or at least not HTTPSified:
+ Just clearly say so and I'll *undo my change*.
+ See also https://lkml.org/lkml/2020/6/27/64
+
+ If there are any valid, but yet not changed URLs:
+ See https://lkml.org/lkml/2020/6/26/837
+
+ net/ipv4/Kconfig                   | 8 ++++----
+ net/ipv4/cipso_ipv4.c              | 4 ++--
+ net/ipv4/fib_trie.c                | 2 +-
+ net/ipv4/netfilter/ipt_CLUSTERIP.c | 2 +-
+ net/ipv4/tcp_highspeed.c           | 2 +-
+ net/ipv4/tcp_htcp.c                | 2 +-
+ net/ipv4/tcp_input.c               | 2 +-
+ net/ipv4/tcp_veno.c                | 2 +-
+ net/ipv6/Kconfig                   | 2 +-
+ 9 files changed, 13 insertions(+), 13 deletions(-)
+
+diff --git a/net/ipv4/Kconfig b/net/ipv4/Kconfig
+index e64e59b536d3..60db5a6487cc 100644
+--- a/net/ipv4/Kconfig
++++ b/net/ipv4/Kconfig
+@@ -10,7 +10,7 @@ config IP_MULTICAST
+ 	  intend to participate in the MBONE, a high bandwidth network on top
+ 	  of the Internet which carries audio and video broadcasts. More
+ 	  information about the MBONE is on the WWW at
+-	  <http://www.savetz.com/mbone/>. For most people, it's safe to say N.
++	  <https://www.savetz.com/mbone/>. For most people, it's safe to say N.
+ 
+ config IP_ADVANCED_ROUTER
+ 	bool "IP: advanced router"
+@@ -73,7 +73,7 @@ config IP_MULTIPLE_TABLES
+ 
+ 	  If you need more information, see the Linux Advanced
+ 	  Routing and Traffic Control documentation at
+-	  <http://lartc.org/howto/lartc.rpdb.html>
++	  <https://lartc.org/howto/lartc.rpdb.html>
+ 
+ 	  If unsure, say N.
+ 
+@@ -280,7 +280,7 @@ config SYN_COOKIES
+ 	  continue to connect, even when your machine is under attack. There
+ 	  is no need for the legitimate users to change their TCP/IP software;
+ 	  SYN cookies work transparently to them. For technical information
+-	  about SYN cookies, check out <http://cr.yp.to/syncookies.html>.
++	  about SYN cookies, check out <https://cr.yp.to/syncookies.html>.
+ 
+ 	  If you are SYN flooded, the source address reported by the kernel is
+ 	  likely to have been forged by the attacker; it is only reported as
+@@ -525,7 +525,7 @@ config TCP_CONG_HSTCP
+ 	  A modification to TCP's congestion control mechanism for use
+ 	  with large congestion windows. A table indicates how much to
+ 	  increase the congestion window by when an ACK is received.
+-	  For more detail see http://www.icir.org/floyd/hstcp.html
++	  For more detail see https://www.icir.org/floyd/hstcp.html
+ 
+ config TCP_CONG_HYBLA
+ 	tristate "TCP-Hybla congestion control algorithm"
+diff --git a/net/ipv4/cipso_ipv4.c b/net/ipv4/cipso_ipv4.c
+index a23094b050f8..0f1b9065c0a6 100644
+--- a/net/ipv4/cipso_ipv4.c
++++ b/net/ipv4/cipso_ipv4.c
+@@ -10,9 +10,9 @@
+  *
+  * The CIPSO draft specification can be found in the kernel's Documentation
+  * directory as well as the following URL:
+- *   http://tools.ietf.org/id/draft-ietf-cipso-ipsecurity-01.txt
++ *   https://tools.ietf.org/id/draft-ietf-cipso-ipsecurity-01.txt
+  * The FIPS-188 specification can be found at the following URL:
+- *   http://www.itl.nist.gov/fipspubs/fip188.htm
++ *   https://www.itl.nist.gov/fipspubs/fip188.htm
+  *
+  * Author: Paul Moore <paul.moore@hp.com>
+  */
+diff --git a/net/ipv4/fib_trie.c b/net/ipv4/fib_trie.c
+index 248f1c1959a6..dcb0802a47d5 100644
+--- a/net/ipv4/fib_trie.c
++++ b/net/ipv4/fib_trie.c
+@@ -13,7 +13,7 @@
+  *
+  * An experimental study of compression methods for dynamic tries
+  * Stefan Nilsson and Matti Tikkanen. Algorithmica, 33(1):19-33, 2002.
+- * http://www.csc.kth.se/~snilsson/software/dyntrie2/
++ * https://www.csc.kth.se/~snilsson/software/dyntrie2/
+  *
+  * IP-address lookup using LC-tries. Stefan Nilsson and Gunnar Karlsson
+  * IEEE Journal on Selected Areas in Communications, 17(6):1083-1092, June 1999
+diff --git a/net/ipv4/netfilter/ipt_CLUSTERIP.c b/net/ipv4/netfilter/ipt_CLUSTERIP.c
+index f8755a4ae9d4..a8b980ad11d4 100644
+--- a/net/ipv4/netfilter/ipt_CLUSTERIP.c
++++ b/net/ipv4/netfilter/ipt_CLUSTERIP.c
+@@ -3,7 +3,7 @@
+  * (C) 2003-2004 by Harald Welte <laforge@netfilter.org>
+  * based on ideas of Fabio Olive Leite <olive@unixforge.org>
+  *
+- * Development of this code funded by SuSE Linux AG, http://www.suse.com/
++ * Development of this code funded by SuSE Linux AG, https://www.suse.com/
+  */
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+ #include <linux/module.h>
+diff --git a/net/ipv4/tcp_highspeed.c b/net/ipv4/tcp_highspeed.c
+index bfdfbb972c57..349069d6cd0a 100644
+--- a/net/ipv4/tcp_highspeed.c
++++ b/net/ipv4/tcp_highspeed.c
+@@ -2,7 +2,7 @@
+ /*
+  * Sally Floyd's High Speed TCP (RFC 3649) congestion control
+  *
+- * See http://www.icir.org/floyd/hstcp.html
++ * See https://www.icir.org/floyd/hstcp.html
+  *
+  * John Heffner <jheffner@psc.edu>
+  */
+diff --git a/net/ipv4/tcp_htcp.c b/net/ipv4/tcp_htcp.c
+index 88e1f011afe0..55adcfcf96fe 100644
+--- a/net/ipv4/tcp_htcp.c
++++ b/net/ipv4/tcp_htcp.c
+@@ -4,7 +4,7 @@
+  * R.N.Shorten, D.J.Leith:
+  *   "H-TCP: TCP for high-speed and long-distance networks"
+  *   Proc. PFLDnet, Argonne, 2004.
+- * http://www.hamilton.ie/net/htcp3.pdf
++ * https://www.hamilton.ie/net/htcp3.pdf
+  */
+ 
+ #include <linux/mm.h>
+diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
+index f3a0eb139b76..1355888b9354 100644
+--- a/net/ipv4/tcp_input.c
++++ b/net/ipv4/tcp_input.c
+@@ -518,7 +518,7 @@ EXPORT_SYMBOL(tcp_initialize_rcv_mss);
+  *
+  * The algorithm for RTT estimation w/o timestamps is based on
+  * Dynamic Right-Sizing (DRS) by Wu Feng and Mike Fisk of LANL.
+- * <http://public.lanl.gov/radiant/pubs.html#DRS>
++ * <https://public.lanl.gov/radiant/pubs.html#DRS>
+  *
+  * More detail on this code can be found at
+  * <http://staff.psc.edu/jheffner/>,
+diff --git a/net/ipv4/tcp_veno.c b/net/ipv4/tcp_veno.c
+index 50a9a6e2c4cd..cd50a61c9976 100644
+--- a/net/ipv4/tcp_veno.c
++++ b/net/ipv4/tcp_veno.c
+@@ -7,7 +7,7 @@
+  *    "TCP Veno: TCP Enhancement for Transmission over Wireless Access Networks."
+  *    IEEE Journal on Selected Areas in Communication,
+  *    Feb. 2003.
+- * 	See http://www.ie.cuhk.edu.hk/fileadmin/staff_upload/soung/Journal/J3.pdf
++ * 	See https://www.ie.cuhk.edu.hk/fileadmin/staff_upload/soung/Journal/J3.pdf
+  */
+ 
+ #include <linux/mm.h>
+diff --git a/net/ipv6/Kconfig b/net/ipv6/Kconfig
+index f4f19e89af5e..76bff79d6fed 100644
+--- a/net/ipv6/Kconfig
++++ b/net/ipv6/Kconfig
+@@ -14,7 +14,7 @@ menuconfig IPV6
+ 	  <https://en.wikipedia.org/wiki/IPv6>.
+ 	  For specific information about IPv6 under Linux, see
+ 	  Documentation/networking/ipv6.rst and read the HOWTO at
+-	  <http://www.tldp.org/HOWTO/Linux+IPv6-HOWTO/>
++	  <https://www.tldp.org/HOWTO/Linux+IPv6-HOWTO/>
+ 
+ 	  To compile this protocol support as a module, choose M here: the
+ 	  module will be called ipv6.
+-- 
+2.27.0
+
