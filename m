@@ -2,119 +2,104 @@ Return-Path: <SRS0=KC/c=AR=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CC5EC433E3
-	for <linux-security-module@archiver.kernel.org>; Mon,  6 Jul 2020 23:24:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B248C433DF
+	for <linux-security-module@archiver.kernel.org>; Mon,  6 Jul 2020 23:55:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4A9662073E
-	for <linux-security-module@archiver.kernel.org>; Mon,  6 Jul 2020 23:24:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="IVIJRTho"
+	by mail.kernel.org (Postfix) with ESMTP id 433FF2078B
+	for <linux-security-module@archiver.kernel.org>; Mon,  6 Jul 2020 23:55:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728114AbgGFXYb (ORCPT
+        id S1726900AbgGFXz3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 6 Jul 2020 19:24:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54032 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728117AbgGFXYb (ORCPT
+        Mon, 6 Jul 2020 19:55:29 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:10104 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726729AbgGFXz3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 6 Jul 2020 19:24:31 -0400
-Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28917C08C5E2
-        for <linux-security-module@vger.kernel.org>; Mon,  6 Jul 2020 16:24:27 -0700 (PDT)
-Received: by mail-ej1-x641.google.com with SMTP id w6so44649858ejq.6
-        for <linux-security-module@vger.kernel.org>; Mon, 06 Jul 2020 16:24:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=BrHH5kRclULDOdDmCKSphD9MpdFvNVhZ0LXrhxcdSB0=;
-        b=IVIJRThow6tn/N97r3n4/BKaVZn+4H66M0gR5/D6e+EgiJ1PO9sGNPiyiFSy8BAjS2
-         y4dZn/j6lrxrQE9+I7JGTdLZiHyNHJ7NDmuiQz+MZL/2NCp92CVE/NNJqaCgs6cI+Ru6
-         W3uRJXG3yBCv1PvOFcO+ffi9urcK5rLH1lVhI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=BrHH5kRclULDOdDmCKSphD9MpdFvNVhZ0LXrhxcdSB0=;
-        b=TzTMOh8/FnrT/vdgiBXi1DoS7vobpiVblZF3ztERuwLRHxG37GQPe/caEsvfgIApyj
-         Wpn75JJvad7HJUmwBL4XL+J4jhrSusK8GaPE4xWyen9grUHmcwH9aiW+2xF5UPtvMXyI
-         WeDqx9DSZkfmOYnl7ZRC28vfpmwd/cFhpcEpf6wgEjojVuVlm+r3G/oLFxGfv8Db2FHU
-         SG3JNwCVHbb4dMe+xXFLjHd3R86BVWaeypCgbCZWOkBmrtr3kT89y19PW8W13Sxq33Zj
-         fpqkQ3NqRsTtJdiP7wb6OCwrY+5UHqmnmlaBYUJCB15/p9cJSTH9RmrKvxlH1PRnF6JB
-         aspA==
-X-Gm-Message-State: AOAM530c6f0+4COUg90kxY9mDZDT0iffVQxh0CtFvQ4QKPBYQYsBTGGA
-        DxoCIt3lHInafrCk190sGpYCqg==
-X-Google-Smtp-Source: ABdhPJzWcz+Mj6jHkPd2AzL08/6QjZY1NbAg2dSQ7/J8yJURAGa/99taBr0TBd0+ycIhCdnu4jxSyA==
-X-Received: by 2002:a17:906:9716:: with SMTP id k22mr26338159ejx.200.1594077865774;
-        Mon, 06 Jul 2020 16:24:25 -0700 (PDT)
-Received: from lbrmn-lnxub113.broadcom.net ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id i2sm4002567ejp.114.2020.07.06.16.24.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Jul 2020 16:24:25 -0700 (PDT)
-From:   Scott Branden <scott.branden@broadcom.com>
-To:     Luis Chamberlain <mcgrof@kernel.org>,
-        Wolfram Sang <wsa@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Brown <david.brown@linaro.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>, bjorn.andersson@linaro.org,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Olof Johansson <olof@lixom.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        Takashi Iwai <tiwai@suse.de>, linux-kselftest@vger.kernel.org,
-        Andy Gross <agross@kernel.org>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Scott Branden <scott.branden@broadcom.com>
-Subject: [PATCH v10 8/9] MAINTAINERS: bcm-vk: add maintainer for Broadcom VK Driver
-Date:   Mon,  6 Jul 2020 16:23:08 -0700
-Message-Id: <20200706232309.12010-9-scott.branden@broadcom.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200706232309.12010-1-scott.branden@broadcom.com>
-References: <20200706232309.12010-1-scott.branden@broadcom.com>
+        Mon, 6 Jul 2020 19:55:29 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 066NWgxB047932;
+        Mon, 6 Jul 2020 19:55:28 -0400
+Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3249rbxdfn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 06 Jul 2020 19:55:28 -0400
+Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
+        by ppma01wdc.us.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 066NsRnQ002711;
+        Mon, 6 Jul 2020 23:55:27 GMT
+Received: from b01cxnp22035.gho.pok.ibm.com (b01cxnp22035.gho.pok.ibm.com [9.57.198.25])
+        by ppma01wdc.us.ibm.com with ESMTP id 322hd8bdmx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 06 Jul 2020 23:55:27 +0000
+Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 066NtQCU38011226
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 6 Jul 2020 23:55:26 GMT
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CACC2AC05E;
+        Mon,  6 Jul 2020 23:55:26 +0000 (GMT)
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9505CAC05F;
+        Mon,  6 Jul 2020 23:55:26 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
+        Mon,  6 Jul 2020 23:55:26 +0000 (GMT)
+Subject: Re: [PATCH v9 2/2] tpm: Add support for event log pointer found in
+ TPM2 ACPI table
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>
+Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-acpi@vger.kernel.org, linux-security-module@vger.kernel.org
+References: <20200706181953.3592084-1-stefanb@linux.vnet.ibm.com>
+ <20200706181953.3592084-3-stefanb@linux.vnet.ibm.com>
+ <20200706230914.GC20770@linux.intel.com>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+Message-ID: <78ec872f-89b3-6464-6ede-bd0a46fe5c4c@linux.ibm.com>
+Date:   Mon, 6 Jul 2020 19:55:26 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
+MIME-Version: 1.0
+In-Reply-To: <20200706230914.GC20770@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-07-06_20:2020-07-06,2020-07-06 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
+ priorityscore=1501 spamscore=0 impostorscore=0 lowpriorityscore=0
+ cotscore=-2147483648 clxscore=1015 phishscore=0 suspectscore=0
+ adultscore=0 mlxlogscore=999 mlxscore=0 malwarescore=0 classifier=spam
+ adjust=0 reason=mlx scancount=1 engine=8.12.0-2004280000
+ definitions=main-2007060163
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Add maintainer entry for new Broadcom VK Driver
+On 7/6/20 7:09 PM, Jarkko Sakkinen wrote:
+> On Mon, Jul 06, 2020 at 02:19:53PM -0400, Stefan Berger wrote:
+>> From: Stefan Berger <stefanb@linux.ibm.com>
+>>
+>> In case a TPM2 is attached, search for a TPM2 ACPI table when trying
+>> to get the event log from ACPI. If one is found, use it to get the
+>> start and length of the log area. This allows non-UEFI systems, such
+>> as SeaBIOS, to pass an event log when using a TPM2.
+>>
+>> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+> Do you think that QEMU with TPM 1.2 emulator turned on would be a viable
+> way to test this?
 
-Signed-off-by: Scott Branden <scott.branden@broadcom.com>
----
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index fb5fa302d05b..996e06f78f27 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -3662,6 +3662,13 @@ L:	netdev@vger.kernel.org
- S:	Supported
- F:	drivers/net/ethernet/broadcom/tg3.*
- 
-+BROADCOM VK DRIVER
-+M:	Scott Branden <scott.branden@broadcom.com>
-+L:	bcm-kernel-feedback-list@broadcom.com
-+S:	Supported
-+F:	drivers/misc/bcm-vk/
-+F:	include/uapi/linux/misc/bcm_vk.h
-+
- BROCADE BFA FC SCSI DRIVER
- M:	Anil Gurumurthy <anil.gurumurthy@qlogic.com>
- M:	Sudarsana Kalluru <sudarsana.kalluru@qlogic.com>
--- 
-2.17.1
+Yes.
+
+
+>
+> I'm anyway more worried about breaking existing TPM 1.2 functionality
+> and that requires only QEMU without extras.
+>
+> /Jarkko
+
 
