@@ -2,125 +2,129 @@ Return-Path: <SRS0=axxp=AS=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12F9FC433E1
-	for <linux-security-module@archiver.kernel.org>; Tue,  7 Jul 2020 20:12:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DDD8C433DF
+	for <linux-security-module@archiver.kernel.org>; Tue,  7 Jul 2020 20:27:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E5E1E206C3
-	for <linux-security-module@archiver.kernel.org>; Tue,  7 Jul 2020 20:12:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 35A20206C3
+	for <linux-security-module@archiver.kernel.org>; Tue,  7 Jul 2020 20:27:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="yoQ6HpvM"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nigYhsaC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728297AbgGGUMQ (ORCPT
+        id S1728328AbgGGU1n (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 7 Jul 2020 16:12:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49410 "EHLO
+        Tue, 7 Jul 2020 16:27:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51882 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726763AbgGGUMQ (ORCPT
+        with ESMTP id S1727908AbgGGU1n (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 7 Jul 2020 16:12:16 -0400
-Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A38D3C061755;
-        Tue,  7 Jul 2020 13:12:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description;
-        bh=B/o5Uj7bv1uKmlSBwdGS6cD2I4R/nsJYtW8ks3eYCiY=; b=yoQ6HpvMh/27T/sXK71yFTTfje
-        wz1bO443OdeoeMKq6jb+govoxFts4nlmoEYVMaUMslznkdIIVdHi4593t91yqrOxUYEiJU0QgYJop
-        HqXF3TwlrPyLRSzUITc+u6bPEDTSJLmRyIcHci7+5iPz+lH5G/rAxSfh/KEwsyO/LIpP67tsYzMsR
-        5/eNbab17s5Yi3XneR2K88y+YYj3l9JAmgUSGZatk/lEmJpwujMJoecbtyfSmt9GeLIBW0MPq89QB
-        4Hvx5tEcJ7jvnTmtr7DjjuryhIZS/8xGA9wV0M2WORXS8s4w7B9cifC/ERNsr8MJuujfNiYuTlJSL
-        KBfyLNdw==;
-Received: from [2601:1c0:6280:3f0:897c:6038:c71d:ecac]
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jstwl-0008MJ-Kd; Tue, 07 Jul 2020 20:12:07 +0000
-Subject: Re: [PATCH v19 07/12] landlock: Support filesystem access-control
-To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        linux-kernel@vger.kernel.org
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Arnd Bergmann <arnd@arndb.de>,
+        Tue, 7 Jul 2020 16:27:43 -0400
+Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1203AC061755;
+        Tue,  7 Jul 2020 13:27:43 -0700 (PDT)
+Received: by mail-lj1-x241.google.com with SMTP id f5so35681547ljj.10;
+        Tue, 07 Jul 2020 13:27:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ajo6nks6IKTytoxbn3OTUiBmVEajkhzk4OYSPYzD8G4=;
+        b=nigYhsaCsH+6/MQPusrEuF130iuP2myvwjNmaGkAn7WMAi4mbofaGVTVCrgRO8y/DV
+         n/hjaQYF6vJZGfP0pF8TASETS5NGgug63OhYHee2C9hxwllCv833Q9FsOkTBxSPcQDtv
+         Bn3xVFYGHI7xMfewZ1n04VKnB1/Kqh1QvRC5jN8XXpYkIl0rpJN/iJ+UCVrtmDiSEnON
+         NoRssyHd+0czjJYiY06z4Uhi8iwhoReaC5FGEeeyGtr87qaHvGrxLL6mk0UHQ4CsKhMC
+         MXcou7PZSPvmZ/YNCSOmOiEcqc7pV2C14J9HxFVZjQ1FXqUUsIeJJmoAJeoJRAiGrTvt
+         /o5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ajo6nks6IKTytoxbn3OTUiBmVEajkhzk4OYSPYzD8G4=;
+        b=hOZP1gtWiS9iC3M/tmsyTizDTUVI+s3N3XG5UIYdfNN+LmQ2jqFJFbTxdjdIcOLMcw
+         Jo2kkjCoKykd47+nkGbxwXvxypSC1guCzmwxrioJNfe6AVrE5DoximygBGyZONL58Omu
+         zNoEQvQXl4EP0L+7RMkcKnP6EYXBMsL0GVlJSUwmKQjZgBAQ0qfbaDqtB/jmiPp8WOyN
+         M3o1tW+uAjwRy4Yy1pQALGtMe5vdD9ZlIY9emrbHw+vE77by3DtXTG9iMHbQ+Wm0wnQa
+         vV6cW1Ju4kz5VOCFumNzSCZguMGJ8jfcK8y5BGxCLP6yif0QhHbrohtdf7vmigLwsdoM
+         XEyQ==
+X-Gm-Message-State: AOAM533ePMlc/EktYwYq+9uSWU1Pug5XkNeXGqAjMbVCzK5yCdlB7WKn
+        8vrpvLvErJf/BiqY+A28+kY=
+X-Google-Smtp-Source: ABdhPJxmtn0X8Oh6d5HKD4O6MlHHfmZzj5T0uXLqzd8LW5AYSwYLEqFlh54/LW8Ch5FVhBOaq6PiLA==
+X-Received: by 2002:a2e:9417:: with SMTP id i23mr31866307ljh.237.1594153661452;
+        Tue, 07 Jul 2020 13:27:41 -0700 (PDT)
+Received: from grain.localdomain ([5.18.102.224])
+        by smtp.gmail.com with ESMTPSA id m25sm376950ljj.128.2020.07.07.13.27.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Jul 2020 13:27:40 -0700 (PDT)
+Received: by grain.localdomain (Postfix, from userid 1000)
+        id 6E7651A007B; Tue,  7 Jul 2020 23:27:39 +0300 (MSK)
+Date:   Tue, 7 Jul 2020 23:27:39 +0300
+From:   Cyrill Gorcunov <gorcunov@gmail.com>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
+        Jann Horn <jannh@google.com>, Paul Moore <paul@paul-moore.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Adrian Reber <areber@redhat.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Pavel Emelyanov <ovzxemul@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        =?utf-8?B?TWljaGHFgiBDxYJhcGnFhHNraQ==?= <mclapinski@google.com>,
+        Kamil Yurtsever <kyurtsever@google.com>,
+        Dirk Petersen <dipeit@gmail.com>,
+        Christine Flood <chf@redhat.com>,
         Casey Schaufler <casey@schaufler-ca.com>,
-        James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
-        Jeff Dike <jdike@addtoit.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>,
-        Richard Weinberger <richard@nod.at>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-security-module@vger.kernel.org, x86@kernel.org
-References: <20200707180955.53024-1-mic@digikod.net>
- <20200707180955.53024-8-mic@digikod.net>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <6a80b712-a7b9-7b47-083a-08b7769016f8@infradead.org>
-Date:   Tue, 7 Jul 2020 13:11:58 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.9.0
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Radostin Stoyanov <rstoyanov1@gmail.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Sargun Dhillon <sargun@sargun.me>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        Eric Paris <eparis@parisplace.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH v4 3/3] prctl: Allow ptrace capable processes to change
+ /proc/self/exe
+Message-ID: <20200707202739.GB1999@grain>
+References: <20200701064906.323185-1-areber@redhat.com>
+ <20200701064906.323185-4-areber@redhat.com>
+ <20200702211647.GB3283@mail.hallyn.com>
+ <CAHC9VhQZ=cwiOay6OMMdM1UHm69wDaga9HBkyTbx8-1OU=aBvA@mail.gmail.com>
+ <a2b4deacfc7541e3adea2f36a6f44262@EXMBDFT11.ad.twosigma.com>
+ <20200706174437.zpshxlul7rl3vmmq@wittgenstein>
+ <20200707154504.aknxmw6qavpjkr24@wittgenstein>
 MIME-Version: 1.0
-In-Reply-To: <20200707180955.53024-8-mic@digikod.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200707154504.aknxmw6qavpjkr24@wittgenstein>
+User-Agent: Mutt/1.14.5 (2020-06-23)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi--
-
-On 7/7/20 11:09 AM, Mickaël Salaün wrote:
-> ---
->  arch/Kconfig                  |   7 +
->  arch/um/Kconfig               |   1 +
->  include/uapi/linux/landlock.h |  78 +++++
->  security/landlock/Kconfig     |   2 +-
->  security/landlock/Makefile    |   2 +-
->  security/landlock/fs.c        | 609 ++++++++++++++++++++++++++++++++++
->  security/landlock/fs.h        |  60 ++++
->  security/landlock/setup.c     |   7 +
->  security/landlock/setup.h     |   2 +
->  9 files changed, 766 insertions(+), 2 deletions(-)
->  create mode 100644 include/uapi/linux/landlock.h
->  create mode 100644 security/landlock/fs.c
->  create mode 100644 security/landlock/fs.h
+On Tue, Jul 07, 2020 at 05:45:04PM +0200, Christian Brauner wrote:
+...
 > 
-> diff --git a/arch/Kconfig b/arch/Kconfig
-> index 8cc35dc556c7..483b7476ac69 100644
-> --- a/arch/Kconfig
-> +++ b/arch/Kconfig
-> @@ -845,6 +845,13 @@ config COMPAT_32BIT_TIME
->  config ARCH_NO_PREEMPT
->  	bool
->  
-> +config ARCH_EPHEMERAL_STATES
-> +	def_bool n
-> +	help
-> +	  An arch should select this symbol if it do not keep an internal kernel
+> Ok, so the original patch proposal was presented in [4] in 2014. The
+> final version of that patch added the PR_SET_MM_MAP we know today. The
+> initial version presented in [4] did not require _any_ privilege.
+> 
 
-	                                       it does not
+True. I still think that relyng on /proc/<pid>/exe being immutable (or
+guarded by caps) in a sake of security is a bit misleading, this link
+only a hint without any guarantees of what code is being executed once
+we pass cs:rip to userspace right after exec is completed. Nowadays I rather
+think we might need to call audit_log() here or something similar to point
+that exe link is changed (by criu or someone else) and simply notify
+node's administrator, that's all. But as you pointed tomoyo may be
+affected if we simply drops all caps from here. Thus I agree that
+the new cap won't make situation worse.
 
-> +	  state for kernel objects such as inodes, but instead rely on something
-
-	                                               instead relies on
-
-> +	  else (e.g. the host kernel for an UML kernel).
-> +
->  config ARCH_SUPPORTS_RT
->  	bool
->  
-
-thanks.
--- 
-~Randy
-
+Still I'm not in touch with kernel code for a couple of years already
+and might be missing something obvious here.
