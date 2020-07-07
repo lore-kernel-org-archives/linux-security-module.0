@@ -2,93 +2,218 @@ Return-Path: <SRS0=axxp=AS=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC52CC433DF
-	for <linux-security-module@archiver.kernel.org>; Tue,  7 Jul 2020 04:46:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05C9BC433E0
+	for <linux-security-module@archiver.kernel.org>; Tue,  7 Jul 2020 08:19:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 81C1F20722
-	for <linux-security-module@archiver.kernel.org>; Tue,  7 Jul 2020 04:46:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6EC8206C3
+	for <linux-security-module@archiver.kernel.org>; Tue,  7 Jul 2020 08:19:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZeE/vfgK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726889AbgGGEq2 (ORCPT
+        id S1728197AbgGGITi (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 7 Jul 2020 00:46:28 -0400
-Received: from mga18.intel.com ([134.134.136.126]:25277 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726805AbgGGEq1 (ORCPT
+        Tue, 7 Jul 2020 04:19:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51490 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728172AbgGGITe (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 7 Jul 2020 00:46:27 -0400
-IronPort-SDR: S92ZUWu7XgTteUrdwK5CKYaOhuadAtgJnah22YuhyvTcZSSjSSlEi2HVJI9jVqJy6Y5A7i3UbR
- ZXInuMfroRoQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9674"; a="135003756"
-X-IronPort-AV: E=Sophos;i="5.75,321,1589266800"; 
-   d="scan'208";a="135003756"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jul 2020 21:46:26 -0700
-IronPort-SDR: w1b9Him4wF924ynVOVfX3FzeCVWWZZd2W8yiIgjwYBmic5wh/uZEBbDVcQfs9t3XfDpcfurZCp
- U0yapIVw6r2w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.75,321,1589266800"; 
-   d="scan'208";a="456970927"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.152])
-  by orsmga005.jf.intel.com with ESMTP; 06 Jul 2020 21:46:26 -0700
-Date:   Mon, 6 Jul 2020 21:46:26 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
-        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-mm@kvack.org,
+        Tue, 7 Jul 2020 04:19:34 -0400
+Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D6DDC08C5E3
+        for <linux-security-module@vger.kernel.org>; Tue,  7 Jul 2020 01:19:34 -0700 (PDT)
+Received: by mail-pf1-x441.google.com with SMTP id j20so2439943pfe.5
+        for <linux-security-module@vger.kernel.org>; Tue, 07 Jul 2020 01:19:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=oXmMUA+Slmu9lbYRAJIZHSMzlajqISgWM80EG35cNbg=;
+        b=ZeE/vfgK+v1GqxYTXUNDmF5e4/g8r2Ag6iu8mzSJEkdVGm9dB1k7swD0RAVU24nTiG
+         7SBN7HaMbE+vWnkOfjl94jR8dvSapP0o8KaY7KKDOMRjyZ8iu+UduP+5EBnrStRPh/KV
+         8JQXl7MBiiW+TlBbhV6wxfykp90S//DeLS5UM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=oXmMUA+Slmu9lbYRAJIZHSMzlajqISgWM80EG35cNbg=;
+        b=LBIU0LdPuopJJTg43PBJiEa7FEBJrRZbh6Do29iuJDSVDtFpB6WqBXRP0R6zoNNq9i
+         Wsrvtp74v0s7NBtHIXDCh+emK5eIylfQ7V2aWVW4/3TmQtqXBnsTffZjQrAkTjYFPvq1
+         1pKR5GwrjBhYujiWLIh9OD3X1q8tnNQiNCft0HOT8UQ8K4T08Tj1v2GG+WPIeEx+zYQI
+         n/wl2DgQDHlgVYHv+ywOJ6fqmRxJN7cs5JeML4YWOHwQ8UEbIL4aYzjjuBOeRDw9TeTZ
+         YHuRJpwHLiSh4UMtaOM94PURgnFFhriQL5+iwFY3jpZbrO6wo3Zq/e6mFhwD1ZUA8YvH
+         71ug==
+X-Gm-Message-State: AOAM532d6waPwgOb92dtlJrDZvV23MHWA4WUtJLfgfPwe/NRnsS0LKr0
+        jIZGWc/gZ4vQOsxOzG9BnMa+UA==
+X-Google-Smtp-Source: ABdhPJzNhYHBYnkkxr0IEIYYTJP1XkKnUvqNP/Ht2HIYfP3jBUvPvi3Me6tsEjyrqJal9c9F0sY0kg==
+X-Received: by 2002:aa7:93c3:: with SMTP id y3mr37629502pff.206.1594109973630;
+        Tue, 07 Jul 2020 01:19:33 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id b18sm1806653pju.10.2020.07.07.01.19.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Jul 2020 01:19:30 -0700 (PDT)
+From:   Kees Cook <keescook@chromium.org>
+To:     James Morris <jmorris@namei.org>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Scott Branden <scott.branden@broadcom.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jessica Yu <jeyu@kernel.org>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Matthew Garrett <matthewgarrett@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        KP Singh <kpsingh@google.com>, Dave Olsthoorn <dave@bewaar.me>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Peter Jones <pjones@redhat.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Chunyang Hui <sanqian.hcy@antfin.com>,
-        Jordan Hand <jorhand@linux.microsoft.com>,
-        Nathaniel McCallum <npmccallum@redhat.com>,
-        Seth Moore <sethmo@google.com>,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        andriy.shevchenko@linux.intel.com, asapek@google.com, bp@alien8.de,
-        cedric.xing@intel.com, chenalexchen@google.com,
-        conradparker@google.com, cyhanish@google.com,
-        dave.hansen@intel.com, haitao.huang@intel.com,
-        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
-        kmoy@google.com, ludloff@google.com, luto@kernel.org,
-        nhorman@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
-        tglx@linutronix.de, yaozhangx@google.com
-Subject: Re: [PATCH v34 11/24] x86/sgx: Add SGX enclave driver
-Message-ID: <20200707044626.GE5208@linux.intel.com>
-References: <20200707030204.126021-1-jarkko.sakkinen@linux.intel.com>
- <20200707030204.126021-12-jarkko.sakkinen@linux.intel.com>
- <20200707033617.GF25523@casper.infradead.org>
- <20200707041151.GE143804@linux.intel.com>
- <20200707042904.GD5208@linux.intel.com>
- <20200707043904.GJ25523@casper.infradead.org>
+        Stephen Boyd <stephen.boyd@linaro.org>,
+        Paul Moore <paul@paul-moore.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH 2/4] fs: Remove FIRMWARE_PREALLOC_BUFFER from kernel_read_file() enums
+Date:   Tue,  7 Jul 2020 01:19:24 -0700
+Message-Id: <20200707081926.3688096-3-keescook@chromium.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200707081926.3688096-1-keescook@chromium.org>
+References: <20200707081926.3688096-1-keescook@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200707043904.GJ25523@casper.infradead.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jul 07, 2020 at 05:39:04AM +0100, Matthew Wilcox wrote:
-> although I think you have a simpler task.
-> 
-> 	XA_STATE(xas, ..., start_index);
-> 
-> 	for (;;) {
-> 		struct page *page = xas_next(&xas);
-> 
-> 		if (!page || (~page->vm_max_prot_bits & vm_prot_bits))
-> 			return -EACCES;
-> 	}
-> 
-> 	return 0;
-> 
-> should do the trick, I think.
+FIRMWARE_PREALLOC_BUFFER is a "how", not a "what", and confuses the LSMs
+that are interested in filtering between types of things. The "how"
+should be an internal detail made uninteresting to the LSMs.
 
-Ah, neato.  Thanks!
+Fixes: a098ecd2fa7d ("firmware: support loading into a pre-allocated buffer")
+Fixes: fd90bc559bfb ("ima: based on policy verify firmware signatures (pre-allocated buffer)")
+Fixes: 4f0496d8ffa3 ("ima: based on policy warn about loading firmware (pre-allocated buffer)")
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ drivers/base/firmware_loader/main.c | 5 ++---
+ fs/exec.c                           | 7 ++++---
+ include/linux/fs.h                  | 2 +-
+ security/integrity/ima/ima_main.c   | 6 ++----
+ 4 files changed, 9 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
+index ca871b13524e..c2f57cedcd6f 100644
+--- a/drivers/base/firmware_loader/main.c
++++ b/drivers/base/firmware_loader/main.c
+@@ -465,14 +465,12 @@ fw_get_filesystem_firmware(struct device *device, struct fw_priv *fw_priv,
+ 	int i, len;
+ 	int rc = -ENOENT;
+ 	char *path;
+-	enum kernel_read_file_id id = READING_FIRMWARE;
+ 	size_t msize = INT_MAX;
+ 	void *buffer = NULL;
+ 
+ 	/* Already populated data member means we're loading into a buffer */
+ 	if (!decompress && fw_priv->data) {
+ 		buffer = fw_priv->data;
+-		id = READING_FIRMWARE_PREALLOC_BUFFER;
+ 		msize = fw_priv->allocated_size;
+ 	}
+ 
+@@ -496,7 +494,8 @@ fw_get_filesystem_firmware(struct device *device, struct fw_priv *fw_priv,
+ 
+ 		/* load firmware files from the mount namespace of init */
+ 		rc = kernel_read_file_from_path_initns(path, &buffer,
+-						       &size, msize, id);
++						       &size, msize,
++						       READING_FIRMWARE);
+ 		if (rc) {
+ 			if (rc != -ENOENT)
+ 				dev_warn(device, "loading %s failed with error %d\n",
+diff --git a/fs/exec.c b/fs/exec.c
+index e6e8a9a70327..2bf549757ce7 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -927,6 +927,7 @@ int kernel_read_file(struct file *file, void **buf, loff_t *size,
+ {
+ 	loff_t i_size, pos;
+ 	ssize_t bytes = 0;
++	void *allocated = NULL;
+ 	int ret;
+ 
+ 	if (!S_ISREG(file_inode(file)->i_mode) || max_size < 0)
+@@ -950,8 +951,8 @@ int kernel_read_file(struct file *file, void **buf, loff_t *size,
+ 		goto out;
+ 	}
+ 
+-	if (id != READING_FIRMWARE_PREALLOC_BUFFER)
+-		*buf = vmalloc(i_size);
++	if (!*buf)
++		*buf = allocated = vmalloc(i_size);
+ 	if (!*buf) {
+ 		ret = -ENOMEM;
+ 		goto out;
+@@ -980,7 +981,7 @@ int kernel_read_file(struct file *file, void **buf, loff_t *size,
+ 
+ out_free:
+ 	if (ret < 0) {
+-		if (id != READING_FIRMWARE_PREALLOC_BUFFER) {
++		if (allocated) {
+ 			vfree(*buf);
+ 			*buf = NULL;
+ 		}
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 3f881a892ea7..95fc775ed937 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2993,10 +2993,10 @@ static inline void i_readcount_inc(struct inode *inode)
+ #endif
+ extern int do_pipe_flags(int *, int);
+ 
++/* This is a list of *what* is being read, not *how*. */
+ #define __kernel_read_file_id(id) \
+ 	id(UNKNOWN, unknown)		\
+ 	id(FIRMWARE, firmware)		\
+-	id(FIRMWARE_PREALLOC_BUFFER, firmware)	\
+ 	id(FIRMWARE_EFI_EMBEDDED, firmware)	\
+ 	id(MODULE, kernel-module)		\
+ 	id(KEXEC_IMAGE, kexec-image)		\
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index c1583d98c5e5..f80ee4ce4669 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -611,19 +611,17 @@ void ima_post_path_mknod(struct dentry *dentry)
+ int ima_read_file(struct file *file, enum kernel_read_file_id read_id)
+ {
+ 	/*
+-	 * READING_FIRMWARE_PREALLOC_BUFFER
+-	 *
+ 	 * Do devices using pre-allocated memory run the risk of the
+ 	 * firmware being accessible to the device prior to the completion
+ 	 * of IMA's signature verification any more than when using two
+-	 * buffers?
++	 * buffers? It may be desirable to include the buffer address
++	 * in this API and walk all the dma_map_single() mappings to check.
+ 	 */
+ 	return 0;
+ }
+ 
+ const int read_idmap[READING_MAX_ID] = {
+ 	[READING_FIRMWARE] = FIRMWARE_CHECK,
+-	[READING_FIRMWARE_PREALLOC_BUFFER] = FIRMWARE_CHECK,
+ 	[READING_MODULE] = MODULE_CHECK,
+ 	[READING_KEXEC_IMAGE] = KEXEC_KERNEL_CHECK,
+ 	[READING_KEXEC_INITRAMFS] = KEXEC_INITRAMFS_CHECK,
+-- 
+2.25.1
+
