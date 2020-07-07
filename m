@@ -2,185 +2,236 @@ Return-Path: <SRS0=axxp=AS=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC52FC433E0
-	for <linux-security-module@archiver.kernel.org>; Tue,  7 Jul 2020 15:45:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7A19C433DF
+	for <linux-security-module@archiver.kernel.org>; Tue,  7 Jul 2020 16:42:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B2DDC20663
-	for <linux-security-module@archiver.kernel.org>; Tue,  7 Jul 2020 15:45:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99D762075B
+	for <linux-security-module@archiver.kernel.org>; Tue,  7 Jul 2020 16:42:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="AJ2740PO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728388AbgGGPpa (ORCPT
+        id S1728182AbgGGQmU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 7 Jul 2020 11:45:30 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:45991 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726911AbgGGPp3 (ORCPT
+        Tue, 7 Jul 2020 12:42:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44944 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727975AbgGGQmU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 7 Jul 2020 11:45:29 -0400
-Received: from ip5f5af08c.dynamic.kabel-deutschland.de ([95.90.240.140] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1jspmM-0001C3-Mv; Tue, 07 Jul 2020 15:45:06 +0000
-Date:   Tue, 7 Jul 2020 17:45:04 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
-        Jann Horn <jannh@google.com>
-Cc:     Paul Moore <paul@paul-moore.com>,
+        Tue, 7 Jul 2020 12:42:20 -0400
+Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C81CC08C5E2
+        for <linux-security-module@vger.kernel.org>; Tue,  7 Jul 2020 09:42:20 -0700 (PDT)
+Received: by mail-pf1-x443.google.com with SMTP id 1so961700pfn.9
+        for <linux-security-module@vger.kernel.org>; Tue, 07 Jul 2020 09:42:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=0qMTVTx2oMUOrXFIFdM7C2a26kIggeuoWNl9Jj6kWSc=;
+        b=AJ2740POBQN+J8L+rLdzMt/HO2CL8AgWMqKjZQ2eFTnScvgiY+fjNZQlBfn+t7gQgg
+         lIZmcE0W3wxKbTYW3Ii5MIdLfHANVUgV1WE+boVYskStkOIHbkKsJIT7ngaN7veE/i6e
+         dyyulVok8SWD6RfLNEbJuks1coNC0w5XaKC0g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=0qMTVTx2oMUOrXFIFdM7C2a26kIggeuoWNl9Jj6kWSc=;
+        b=YZdeA7UnLM+mCUYnUE5MyDqTahoK5A906nMRoGKISnWcC97H4SMQB7+lg5QM7eYkUW
+         GEN006qYFvfVBC/WHg5pnbh9BYUzMQ9dJ3+ng8Hr4Tpx9cz7mdrYKhYy3ZUJhaV43EC9
+         /CB2TiqhrW++TxDDh5A3fdYDhGelsq1lVIHFjy6QH8sLQ5ks4CmzSEE1fPyg5OgbwqBh
+         jDKxxYdDVs/cuLbMNTtG7at81oFBZylyeGuWZe5F6JkQAUQF9aWggGM5oP5GuDxpWoFe
+         C03YGwsrFXTMaaUMwN9rQ3PKmLMMBkYSzT48EZ8Tb6UctHD9LDmwJhhh056/z8XvtOsJ
+         bZzw==
+X-Gm-Message-State: AOAM5308AdJfEah4SKeV8zdyOGoD+SuLD8Jz5wir911O1spzF2QiAuYU
+        VnE8U7CfQ+OwupNKVFXnToEH4w==
+X-Google-Smtp-Source: ABdhPJwATTzEq1uBXUjxEsiTBgA4nu7xuVsLQq8eRH6/xZSkc/o2juX6PrF3O0dVY7WZ17vqBH8jMA==
+X-Received: by 2002:a63:310f:: with SMTP id x15mr46316882pgx.221.1594140139368;
+        Tue, 07 Jul 2020 09:42:19 -0700 (PDT)
+Received: from [10.136.13.65] ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id v15sm1523113pgo.15.2020.07.07.09.42.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 Jul 2020 09:42:18 -0700 (PDT)
+Subject: Re: [PATCH 2/4] fs: Remove FIRMWARE_PREALLOC_BUFFER from
+ kernel_read_file() enums
+To:     Kees Cook <keescook@chromium.org>, James Morris <jmorris@namei.org>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jessica Yu <jeyu@kernel.org>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
         "Serge E. Hallyn" <serge@hallyn.com>,
-        Adrian Reber <areber@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Pavel Emelyanov <ovzxemul@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Andrei Vagin <avagin@gmail.com>,
-        =?utf-8?B?TWljaGHFgiBDxYJhcGnFhHNraQ==?= <mclapinski@google.com>,
-        Kamil Yurtsever <kyurtsever@google.com>,
-        Dirk Petersen <dipeit@gmail.com>,
-        Christine Flood <chf@redhat.com>,
         Casey Schaufler <casey@schaufler-ca.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Radostin Stoyanov <rstoyanov1@gmail.com>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Sargun Dhillon <sargun@sargun.me>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        Eric Paris <eparis@parisplace.org>,
-        Jann Horn <jannh@google.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH v4 3/3] prctl: Allow ptrace capable processes to change
- /proc/self/exe
-Message-ID: <20200707154504.aknxmw6qavpjkr24@wittgenstein>
-References: <20200701064906.323185-1-areber@redhat.com>
- <20200701064906.323185-4-areber@redhat.com>
- <20200702211647.GB3283@mail.hallyn.com>
- <CAHC9VhQZ=cwiOay6OMMdM1UHm69wDaga9HBkyTbx8-1OU=aBvA@mail.gmail.com>
- <a2b4deacfc7541e3adea2f36a6f44262@EXMBDFT11.ad.twosigma.com>
- <20200706174437.zpshxlul7rl3vmmq@wittgenstein>
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Matthew Garrett <matthewgarrett@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        KP Singh <kpsingh@google.com>, Dave Olsthoorn <dave@bewaar.me>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Peter Jones <pjones@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Boyd <stephen.boyd@linaro.org>,
+        Paul Moore <paul@paul-moore.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>
+References: <20200707081926.3688096-1-keescook@chromium.org>
+ <20200707081926.3688096-3-keescook@chromium.org>
+From:   Scott Branden <scott.branden@broadcom.com>
+Message-ID: <0a5e2c2e-507c-9114-5328-5943f63d707e@broadcom.com>
+Date:   Tue, 7 Jul 2020 09:42:02 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200706174437.zpshxlul7rl3vmmq@wittgenstein>
+In-Reply-To: <20200707081926.3688096-3-keescook@chromium.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jul 06, 2020 at 07:44:38PM +0200, Christian Brauner wrote:
-> On Mon, Jul 06, 2020 at 05:13:35PM +0000, Nicolas Viennot wrote:
-> > > > This is scary.  But I believe it is safe.
-> > > >
-> > > > Reviewed-by: Serge Hallyn <serge@hallyn.com>
-> > > >
-> > > > I am a bit curious about the implications of the selinux patch.
-> > > > IIUC you are using the permission of the tracing process to execute
-> > > > the file without transition, so this is a way to work around the
-> > > > policy which might prevent the tracee from doing so.
-> > > > Given that SELinux wants to be MAC, I'm not *quite* sure that's
-> > > > considered kosher.  You also are skipping the PROCESS__PTRACE to
-> > > > SECCLASS_PROCESS check which selinux_bprm_set_creds does later on.
-> > > > Again I'm just not quite sure what's considered normal there these
-> > > > days.
-> > > >
-> > > > Paul, do you have input there?
-> > >
-> > > I agree, the SELinux hook looks wrong.  Building on what Christian said, this looks more like a ptrace operation than an exec operation.
-> > 
-> > Serge, Paul, Christian,
-> > 
-> > I made a PoC to demonstrate the change of /proc/self/exe without CAP_SYS_ADMIN using only ptrace and execve.
-> > You may find it here: https://github.com/nviennot/run_as_exe
-> > 
-> > What do you recommend to relax the security checks in the kernel when it comes to changing the exe link?
-> 
-> Looks fun! Yeah, so that this is possible is known afaict. But you're
-> not really circumventing the kernel check but are mucking with the EFL
-> by changing the auxv, right?
-> 
-> Originally, you needed to be userns root, i.e. only uid 0 could
-> change the /proc/self/exe link (cf. [1]). This was changed to
-> ns_capable(CAP_SYS_ADMIN) in [2].
-> 
-> The original reasoning in [1] is interesting as it basically already
-> points to your poc:
-> 
-> "Still note that updating exe-file link now doesn't require sys-resource
->  capability anymore, after all there is no much profit in preventing
->  setup own file link (there are a number of ways to execute own code --
->  ptrace, ld-preload, so that the only reliable way to find which exactly
->  code is executed is to inspect running program memory).  Still we
->  require the caller to be at least user-namespace root user."
-> 
-> There were arguments being made that /proc/<pid>/exe needs to be sm that
-> userspace can have a decent amount of trust in but I believe that that's
-> not a great argument.
-> 
-> But let me dig a little into the original discussion and see what the
-> thread-model was.
-> At this point I'm starting to believe that it was people being cautios
-> but better be sure.
 
-Ok, so the original patch proposal was presented in [4] in 2014. The
-final version of that patch added the PR_SET_MM_MAP we know today. The
-initial version presented in [4] did not require _any_ privilege.
 
-So the reasoning for only placing the /proc/<pid>/exe link under
-ns_capable(CAP_SYS_ADMIN) is very thin. to quote from [5]:
+On 2020-07-07 1:19 a.m., Kees Cook wrote:
+> FIRMWARE_PREALLOC_BUFFER is a "how", not a "what", and confuses the LSMs
+> that are interested in filtering between types of things. The "how"
+> should be an internal detail made uninteresting to the LSMs.
+>
+> Fixes: a098ecd2fa7d ("firmware: support loading into a pre-allocated buffer")
+> Fixes: fd90bc559bfb ("ima: based on policy verify firmware signatures (pre-allocated buffer)")
+> Fixes: 4f0496d8ffa3 ("ima: based on policy warn about loading firmware (pre-allocated buffer)")
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+>   drivers/base/firmware_loader/main.c | 5 ++---
+>   fs/exec.c                           | 7 ++++---
+>   include/linux/fs.h                  | 2 +-
+>   security/integrity/ima/ima_main.c   | 6 ++----
+>   4 files changed, 9 insertions(+), 11 deletions(-)
+>
+> diff --git a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
+> index ca871b13524e..c2f57cedcd6f 100644
+> --- a/drivers/base/firmware_loader/main.c
+> +++ b/drivers/base/firmware_loader/main.c
+> @@ -465,14 +465,12 @@ fw_get_filesystem_firmware(struct device *device, struct fw_priv *fw_priv,
+>   	int i, len;
+>   	int rc = -ENOENT;
+>   	char *path;
+> -	enum kernel_read_file_id id = READING_FIRMWARE;
+>   	size_t msize = INT_MAX;
+>   	void *buffer = NULL;
+>   
+>   	/* Already populated data member means we're loading into a buffer */
+>   	if (!decompress && fw_priv->data) {
+>   		buffer = fw_priv->data;
+> -		id = READING_FIRMWARE_PREALLOC_BUFFER;
+>   		msize = fw_priv->allocated_size;
+>   	}
+>   
+> @@ -496,7 +494,8 @@ fw_get_filesystem_firmware(struct device *device, struct fw_priv *fw_priv,
+>   
+>   		/* load firmware files from the mount namespace of init */
+>   		rc = kernel_read_file_from_path_initns(path, &buffer,
+> -						       &size, msize, id);
+> +						       &size, msize,
+> +						       READING_FIRMWARE);
+>   		if (rc) {
+>   			if (rc != -ENOENT)
+>   				dev_warn(device, "loading %s failed with error %d\n",
+> diff --git a/fs/exec.c b/fs/exec.c
+> index e6e8a9a70327..2bf549757ce7 100644
+> --- a/fs/exec.c
+> +++ b/fs/exec.c
+> @@ -927,6 +927,7 @@ int kernel_read_file(struct file *file, void **buf, loff_t *size,
+>   {
+>   	loff_t i_size, pos;
+>   	ssize_t bytes = 0;
+> +	void *allocated = NULL;
+>   	int ret;
+>   
+>   	if (!S_ISREG(file_inode(file)->i_mode) || max_size < 0)
+> @@ -950,8 +951,8 @@ int kernel_read_file(struct file *file, void **buf, loff_t *size,
+>   		goto out;
+>   	}
+>   
+> -	if (id != READING_FIRMWARE_PREALLOC_BUFFER)
+> -		*buf = vmalloc(i_size);
+> +	if (!*buf)
+> +		*buf = allocated = vmalloc(i_size);
+>   	if (!*buf) {
+>   		ret = -ENOMEM;
+>   		goto out;
+> @@ -980,7 +981,7 @@ int kernel_read_file(struct file *file, void **buf, loff_t *size,
+>   
+>   out_free:
+>   	if (ret < 0) {
+> -		if (id != READING_FIRMWARE_PREALLOC_BUFFER) {
+> +		if (allocated) {
+>   			vfree(*buf);
+>   			*buf = NULL;
+>   		}
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 3f881a892ea7..95fc775ed937 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -2993,10 +2993,10 @@ static inline void i_readcount_inc(struct inode *inode)
+>   #endif
+>   extern int do_pipe_flags(int *, int);
+>   
+> +/* This is a list of *what* is being read, not *how*. */
+>   #define __kernel_read_file_id(id) \
+>   	id(UNKNOWN, unknown)		\
+>   	id(FIRMWARE, firmware)		\
+With this change, I'm trying to figure out how the partial firmware read 
+is going to work on top of this reachitecture.
+Is it going to be ok to add READING_PARTIAL_FIRMWARE here as that is a 
+"what"?
+> -	id(FIRMWARE_PREALLOC_BUFFER, firmware)	\
+My patch series gets rejected any time I make a change to the 
+kernel_read_file* region in linux/fs.h.
+The requirement is for this api to move to another header file outside 
+of linux/fs.h
+It seems the same should apply to your change.
+Could you please add the following patch to the start of you patch 
+series to move the kernel_read_file* to its own include file?
+https://patchwork.kernel.org/patch/11647063/
+>   	id(FIRMWARE_EFI_EMBEDDED, firmware)	\
+>   	id(MODULE, kernel-module)		\
+>   	id(KEXEC_IMAGE, kexec-image)		\
+> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+> index c1583d98c5e5..f80ee4ce4669 100644
+> --- a/security/integrity/ima/ima_main.c
+> +++ b/security/integrity/ima/ima_main.c
+> @@ -611,19 +611,17 @@ void ima_post_path_mknod(struct dentry *dentry)
+>   int ima_read_file(struct file *file, enum kernel_read_file_id read_id)
+>   {
+>   	/*
+> -	 * READING_FIRMWARE_PREALLOC_BUFFER
+> -	 *
+>   	 * Do devices using pre-allocated memory run the risk of the
+>   	 * firmware being accessible to the device prior to the completion
+>   	 * of IMA's signature verification any more than when using two
+> -	 * buffers?
+> +	 * buffers? It may be desirable to include the buffer address
+> +	 * in this API and walk all the dma_map_single() mappings to check.
+>   	 */
+>   	return 0;
+>   }
+>   
+>   const int read_idmap[READING_MAX_ID] = {
+>   	[READING_FIRMWARE] = FIRMWARE_CHECK,
+> -	[READING_FIRMWARE_PREALLOC_BUFFER] = FIRMWARE_CHECK,
+>   	[READING_MODULE] = MODULE_CHECK,
+>   	[READING_KEXEC_IMAGE] = KEXEC_KERNEL_CHECK,
+>   	[READING_KEXEC_INITRAMFS] = KEXEC_INITRAMFS_CHECK,
 
-"Controlling exe_fd without privileges may turn out to be dangerous. At
- least things like tomoyo examine it for making policy decisions (see
- tomoyo_manager())."
-
-So yes, tomoyo_get_exe() is what this was retained for apparently:
-
-const char *tomoyo_get_exe(void)
-{
-	struct file *exe_file;
-	const char *cp;
-	struct mm_struct *mm = current->mm;
-
-	if (!mm)
-		return NULL;
-	exe_file = get_mm_exe_file(mm);
-	if (!exe_file)
-		return NULL;
-
-	cp = tomoyo_realpath_from_path(&exe_file->f_path);
-	fput(exe_file);
-	return cp;
-}
-
-The exe path is literally used in tomoyo_manager() to verify that you
-are allowed to change policy. That seems like a bad idea to me but then
-again, I don't know enough about Tomoyo. In any case, I think that means
-we can't remove CAP_SYS_ADMIN because that would make things worse than
-they are right now for Tomoyo but I also don't see why placing this
-under ns_capable(CAP_SYS_ADMIN) || ns_capable(CAP_CHECKPOINT_RESTORE)
-would make this any worse.
-
-And Cyrill (and later in that thread Andrei) already mentioned it in [6]:
-"@exe_fd is just a hint and as I mentioned if we have ptrace/preload
- rights there damn a lot of ways to inject own code into any program so
- that a user won't even notice ;)"
-
-Another place where the exe file is relevant is for the coredump with
-the -E option. But it only uses the path when generating the coredump
-pattern and if that's a security issue than your poc shows that this can
-already be achieved today.
-
-Christian
-
-> 
-> [1]: f606b77f1a9e ("prctl: PR_SET_MM -- introduce PR_SET_MM_MAP operation")
-> [2]: 4d28df6152aa ("prctl: Allow local CAP_SYS_ADMIN changing exe_file")
-> [3]: https://lore.kernel.org/patchwork/patch/697304/
-
-[4]: https://lore.kernel.org/lkml/20140703151102.842945837@openvz.org/ 
-[5]: https://lore.kernel.org/lkml/CAGXu5jL3exT4j+8rjMv1O54uJWQ5UHL69Z-24b61rhXROqZamQ@mail.gmail.com/
-[6]: https://lore.kernel.org/lkml/20140722203614.GF838@moon/
