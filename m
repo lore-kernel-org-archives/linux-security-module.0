@@ -2,154 +2,117 @@ Return-Path: <SRS0=axxp=AS=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF29FC433DF
-	for <linux-security-module@archiver.kernel.org>; Tue,  7 Jul 2020 03:19:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD159C433DF
+	for <linux-security-module@archiver.kernel.org>; Tue,  7 Jul 2020 03:30:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A95C62070C
-	for <linux-security-module@archiver.kernel.org>; Tue,  7 Jul 2020 03:19:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B76F2206E6
+	for <linux-security-module@archiver.kernel.org>; Tue,  7 Jul 2020 03:30:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727044AbgGGDTE (ORCPT
+        id S1727962AbgGGDaA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 6 Jul 2020 23:19:04 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42088 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726540AbgGGDTD (ORCPT
+        Mon, 6 Jul 2020 23:30:00 -0400
+Received: from mga02.intel.com ([134.134.136.20]:12458 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726869AbgGGDaA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 6 Jul 2020 23:19:03 -0400
-Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 06734d4W100927;
-        Mon, 6 Jul 2020 23:18:52 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 324f7dj9j2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 06 Jul 2020 23:18:52 -0400
-Received: from m0187473.ppops.net (m0187473.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 06734lgh101458;
-        Mon, 6 Jul 2020 23:18:52 -0400
-Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 324f7dj9hf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 06 Jul 2020 23:18:52 -0400
-Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
-        by ppma03ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 0673G8uZ023109;
-        Tue, 7 Jul 2020 03:18:49 GMT
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
-        by ppma03ams.nl.ibm.com with ESMTP id 322hd7tx1b-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 07 Jul 2020 03:18:49 +0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0673Il293735930
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 7 Jul 2020 03:18:47 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9351911C052;
-        Tue,  7 Jul 2020 03:18:47 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 810DD11C04A;
-        Tue,  7 Jul 2020 03:18:46 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.174.194])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue,  7 Jul 2020 03:18:46 +0000 (GMT)
-Message-ID: <1594091925.23056.36.camel@linux.ibm.com>
-Subject: Re: [PATCH v2 09/11] ima: Move validation of the keyrings
- conditional into ima_validate_rule()
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Tyler Hicks <tyhicks@linux.microsoft.com>
-Cc:     Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Prakhar Srivastava <prsriva02@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Date:   Mon, 06 Jul 2020 23:18:45 -0400
-In-Reply-To: <20200706131845.GI4694@sequoia>
-References: <20200626223900.253615-1-tyhicks@linux.microsoft.com>
-         <20200626223900.253615-10-tyhicks@linux.microsoft.com>
-         <1593558449.5057.12.camel@linux.ibm.com> <20200702221656.GH4694@sequoia>
-         <1593785732.23056.16.camel@linux.ibm.com> <20200706131845.GI4694@sequoia>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-07-07_01:2020-07-06,2020-07-06 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- suspectscore=0 impostorscore=0 bulkscore=0 spamscore=0 clxscore=1015
- cotscore=-2147483648 mlxscore=0 malwarescore=0 phishscore=0
- lowpriorityscore=0 mlxlogscore=999 adultscore=0 classifier=spam adjust=0
- reason=mlx scancount=1 engine=8.12.0-2004280000
- definitions=main-2007070023
+        Mon, 6 Jul 2020 23:30:00 -0400
+IronPort-SDR: pMqdgPgXTB3FFT84nUfLrVVCcf760B8H70rKT+jYSuRfXOAGavfUXCs1Huj5f65xqzNZ0Z5ya1
+ dvNMsWv6bg7g==
+X-IronPort-AV: E=McAfee;i="6000,8403,9674"; a="135778745"
+X-IronPort-AV: E=Sophos;i="5.75,321,1589266800"; 
+   d="scan'208";a="135778745"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jul 2020 20:30:00 -0700
+IronPort-SDR: CUOZC+1ZeC8kxSLZJJTm5Aq8u6JZcooZlcWac/BfdJ4TSR/cRTXWeIP5QNKvuGqvyKjvppuG1D
+ uvu2GvmcaJJA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.75,321,1589266800"; 
+   d="scan'208";a="283250294"
+Received: from apiccion-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.45.178])
+  by orsmga006.jf.intel.com with ESMTP; 06 Jul 2020 20:29:46 -0700
+Date:   Tue, 7 Jul 2020 06:29:45 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Borislav Petkov <bp@alien8.de>, x86@kernel.org,
+        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Jethro Beekman <jethro@fortanix.com>,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Chunyang Hui <sanqian.hcy@antfin.com>,
+        Jordan Hand <jorhand@linux.microsoft.com>,
+        Nathaniel McCallum <npmccallum@redhat.com>,
+        Seth Moore <sethmo@google.com>,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, cedric.xing@intel.com, chenalexchen@google.com,
+        conradparker@google.com, cyhanish@google.com,
+        dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, luto@kernel.org,
+        nhorman@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
+        tglx@linutronix.de, yaozhangx@google.com
+Subject: Re: [PATCH v33 11/21] x86/sgx: Linux Enclave Driver
+Message-ID: <20200707032945.GA127977@linux.intel.com>
+References: <20200617220844.57423-1-jarkko.sakkinen@linux.intel.com>
+ <20200617220844.57423-12-jarkko.sakkinen@linux.intel.com>
+ <20200627174335.GC15585@zn.tnic>
+ <20200629152718.GA12312@linux.intel.com>
+ <20200704014349.GB129411@linux.intel.com>
+ <20200707013847.GA5208@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200707013847.GA5208@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 2020-07-06 at 08:18 -0500, Tyler Hicks wrote:
-> On 2020-07-03 10:15:32, Mimi Zohar wrote:
-> > On Thu, 2020-07-02 at 17:16 -0500, Tyler Hicks wrote:
-> > > On 2020-06-30 19:07:29, Mimi Zohar wrote:
-> > > > On Fri, 2020-06-26 at 17:38 -0500, Tyler Hicks wrote:
-> > > > > Use ima_validate_rule() to ensure that the combination of a hook
-> > > > > function and the keyrings conditional is valid and that the keyrings
-> > > > > conditional is not specified without an explicit KEY_CHECK func
-> > > > > conditional. This is a code cleanup and has no user-facing change.
-> > > > > 
-> > > > > Signed-off-by: Tyler Hicks <tyhicks@linux.microsoft.com>
-> > > > > ---
-> > > > > 
-> > > > > * v2
-> > > > >   - Allowed IMA_DIGSIG_REQUIRED, IMA_PERMIT_DIRECTIO,
-> > > > >     IMA_MODSIG_ALLOWED, and IMA_CHECK_BLACKLIST conditionals to be
-> > > > >     present in the rule entry flags for non-buffer hook functions.
-> > > > > 
-> > > > >  security/integrity/ima/ima_policy.c | 13 +++++++++++--
-> > > > >  1 file changed, 11 insertions(+), 2 deletions(-)
-> > > > > 
-> > > > > diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-> > > > > index 8cdca2399d59..43d49ad958fb 100644
-> > > > > --- a/security/integrity/ima/ima_policy.c
-> > > > > +++ b/security/integrity/ima/ima_policy.c
-> > > > > @@ -1000,6 +1000,15 @@ static bool ima_validate_rule(struct ima_rule_entry *entry)
-> > > > >  		case KEXEC_KERNEL_CHECK:
-> > > > >  		case KEXEC_INITRAMFS_CHECK:
-> > > > >  		case POLICY_CHECK:
-> > > > > +			if (entry->flags & ~(IMA_FUNC | IMA_MASK | IMA_FSMAGIC |
-> > > > > +					     IMA_UID | IMA_FOWNER | IMA_FSUUID |
-> > > > > +					     IMA_INMASK | IMA_EUID | IMA_PCR |
-> > > > > +					     IMA_FSNAME | IMA_DIGSIG_REQUIRED |
-> > > > > +					     IMA_PERMIT_DIRECTIO |
-> > > > > +					     IMA_MODSIG_ALLOWED |
-> > > > > +					     IMA_CHECK_BLACKLIST))
-> > > > 
-> > > > Other than KEYRINGS, this patch should continue to behave the same.
-> > > >  However, this list gives the impressions that all of these flags are
-> > > > permitted on all of the above flags, which isn't true.
-> > > > 
-> > > > For example, both IMA_MODSIG_ALLOWED & IMA_CHECK_BLACKLIST are limited
-> > > > to appended signatures, meaning KERNEL_CHECK and KEXEC_KERNEL_CHECK.
+On Mon, Jul 06, 2020 at 06:38:47PM -0700, Sean Christopherson wrote:
+> On Sat, Jul 04, 2020 at 04:43:49AM +0300, Jarkko Sakkinen wrote:
+> > On Mon, Jun 29, 2020 at 08:27:19AM -0700, Sean Christopherson wrote:
+> > > On Sat, Jun 27, 2020 at 07:43:35PM +0200, Borislav Petkov wrote:
+> > > > And you could do similar sanity checks in the other ioctl functions.
 > > > 
-> > > Just to clarify, are both IMA_MODSIG_ALLOWED and IMA_CHECK_BLACKLIST
-> > > limited to KEXEC_KERNEL_CHECK, KEXEC_INITRAMFS_CHECK, and MODULE_CHECK?
-> > > That's what ima_hook_supports_modsig() suggests.
+> > > Ya, as above, SGX_ENCL_INITIALIZED can be checked here.
+> > > 
+> > > SGX_ENCL_DEAD is actually already checked in in the top level sgx_ioctl(),
+> > > i.e. the check in sgx_encl_add_page() can technically be flat out dropped.
+> > > 
+> > > I say "technically" because I'm a bit torn over SGX_ENCL_DEAD; encl->lock
+> > > must be held to SGX_ENCL_DEAD (the page fault and reclaim flows rely on
+> > > this), but as it stands today only ioctl() paths (guarded by SGX_ENCL_IOCTL)
+> > > and sgx_release() (makes the ioctls() unreachable) set SGX_ENCL_DEAD.
+> > > 
+> > > So it's safe to check SGX_ENCL_DEAD from ioctl() context without holding
+> > > encl->lock, at least in the current code base, but it feels weird/sketchy.
+> > > 
+> > > In the end I don't think I have a strong opinion.  Removing the technically
+> > > unnecessary DEAD check in sgx_encl_add_page() is the simplest change, so it
+> > > may make sense to do that and nothing more for initial upstreaming.  Long
+> > > term, I fully expect we'll add paths that set SGX_ENCL_DEAD outside of
+> > > ioctl() context, e.g. to handle EPC OOM, but it wouldn't be a bad thing to
+> > > have a standalone commit in a future series to add DEAD checks (under
+> > > encl->lock) in the ADD and INIT flows.
 > > 
-> > Theoretically that is true, but I have no idea how you would append a
-> > signature to the kexec boot command line.  The only users of appended
-> > signatures are currently kernel modules and the kexec'ed kernel image.
+> > AFAIK nonne of th ioctl's should not need SGX_ENCL_DEAD check.
 > 
-> The discrepancy was with KEXEC_INITRAMFS_CHECK, not KEXEC_CMDLINE. I now
-> see that there's no support for initramfs signature verification in the
-> kexec code so I'll assume that ima_hook_supports_modsig() is wrong and
-> limit IMA_MODSIG_ALLOWED and IMA_CHECK_BLACKLIST to the
-> KEXEC_KERNEL_CHECK and MODULE_CHECK actions, as you originally
-> suggested.
+> I can't tell if the double negative was intended, but I took a peek at your
+> current master and see that you removed the SGX_ENCL_DEAD check in
+> sgx_ioctl().  That check needs to stay, e.g. if EEXTEND fails we absolutely
+> need to prevent any further operations on the enclave.
+> 
+> The above was calling out that additional checks on SGX_ENCL_DEAD after
+> acquiring encl->lock are not necessary because SGX_ENCL_DEAD can only be
+> set when the ioctls() are no longer reachable or from within an ioctl(),
+> which provides exclusivity via SGX_ENCL_IOCTL.
 
-My mistake.  Yes, both the kexec kernel image and the initramfs read
-the respective file into memory and can be signed either with an
-imasig or modsig.  Refer to kernel_read_file_from_fd().
+Got it.
 
-Mimi
+/Jarkko
