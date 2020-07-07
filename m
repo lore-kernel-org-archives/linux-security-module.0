@@ -2,116 +2,160 @@ Return-Path: <SRS0=axxp=AS=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF2E2C433E1
-	for <linux-security-module@archiver.kernel.org>; Tue,  7 Jul 2020 04:09:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 144C8C433E0
+	for <linux-security-module@archiver.kernel.org>; Tue,  7 Jul 2020 04:12:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CA4E320684
-	for <linux-security-module@archiver.kernel.org>; Tue,  7 Jul 2020 04:09:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F3A6220684
+	for <linux-security-module@archiver.kernel.org>; Tue,  7 Jul 2020 04:12:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727107AbgGGEJP (ORCPT
+        id S1726434AbgGGEMG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 7 Jul 2020 00:09:15 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:17568 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725766AbgGGEJO (ORCPT
+        Tue, 7 Jul 2020 00:12:06 -0400
+Received: from mga18.intel.com ([134.134.136.126]:22633 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725766AbgGGEMG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 7 Jul 2020 00:09:14 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 06741rt4112843;
-        Tue, 7 Jul 2020 00:09:13 -0400
-Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 32486cdutp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 07 Jul 2020 00:09:13 -0400
-Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
-        by ppma02dal.us.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 0673xPjL028027;
-        Tue, 7 Jul 2020 04:09:12 GMT
-Received: from b01cxnp22035.gho.pok.ibm.com (b01cxnp22035.gho.pok.ibm.com [9.57.198.25])
-        by ppma02dal.us.ibm.com with ESMTP id 322hd922tf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 07 Jul 2020 04:09:12 +0000
-Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 06749Bs045678944
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 7 Jul 2020 04:09:11 GMT
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A57BDAC062;
-        Tue,  7 Jul 2020 04:09:11 +0000 (GMT)
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 93B8FAC05F;
-        Tue,  7 Jul 2020 04:09:11 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue,  7 Jul 2020 04:09:11 +0000 (GMT)
-Subject: Re: [PATCH v9 2/2] tpm: Add support for event log pointer found in
- TPM2 ACPI table
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-acpi@vger.kernel.org, linux-security-module@vger.kernel.org
-References: <20200706181953.3592084-1-stefanb@linux.vnet.ibm.com>
- <20200706181953.3592084-3-stefanb@linux.vnet.ibm.com>
- <20200706230914.GC20770@linux.intel.com>
- <78ec872f-89b3-6464-6ede-bd0a46fe5c4c@linux.ibm.com>
- <20200707022416.GC112019@linux.intel.com>
- <f3e0fb50-8617-da40-1456-158531a070cb@linux.ibm.com>
- <20200707040325.GB143804@linux.intel.com>
-From:   Stefan Berger <stefanb@linux.ibm.com>
-Message-ID: <85c27199-df55-eecc-855c-dedcea64f89e@linux.ibm.com>
-Date:   Tue, 7 Jul 2020 00:09:11 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Tue, 7 Jul 2020 00:12:06 -0400
+IronPort-SDR: 0W/5Vy1dfoxvbNGDIHUC8W6lLn2fgTx3XoVW6MAVLnQ6FsJE/doVeitgQfIzhHimfdtYHpXLvu
+ aLk53coCoOFA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9674"; a="135001683"
+X-IronPort-AV: E=Sophos;i="5.75,321,1589266800"; 
+   d="scan'208";a="135001683"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jul 2020 21:12:05 -0700
+IronPort-SDR: YHarQfFVnkfUOum/EoAPHkcF95ItQQCHMuQQp34Q+s/pMrOJeo8DrUZ9F4+e8CxeNfxTKxYD6k
+ MMs02+aqpxGA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.75,321,1589266800"; 
+   d="scan'208";a="268078883"
+Received: from apiccion-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.45.178])
+  by fmsmga008.fm.intel.com with ESMTP; 06 Jul 2020 21:11:52 -0700
+Date:   Tue, 7 Jul 2020 07:11:51 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Chunyang Hui <sanqian.hcy@antfin.com>,
+        Jordan Hand <jorhand@linux.microsoft.com>,
+        Nathaniel McCallum <npmccallum@redhat.com>,
+        Seth Moore <sethmo@google.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        andriy.shevchenko@linux.intel.com, asapek@google.com, bp@alien8.de,
+        cedric.xing@intel.com, chenalexchen@google.com,
+        conradparker@google.com, cyhanish@google.com,
+        dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, luto@kernel.org,
+        nhorman@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
+        tglx@linutronix.de, yaozhangx@google.com
+Subject: Re: [PATCH v34 11/24] x86/sgx: Add SGX enclave driver
+Message-ID: <20200707041151.GE143804@linux.intel.com>
+References: <20200707030204.126021-1-jarkko.sakkinen@linux.intel.com>
+ <20200707030204.126021-12-jarkko.sakkinen@linux.intel.com>
+ <20200707033617.GF25523@casper.infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <20200707040325.GB143804@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-07-07_01:2020-07-06,2020-07-06 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
- impostorscore=0 mlxscore=0 clxscore=1015 adultscore=0 priorityscore=1501
- mlxlogscore=999 lowpriorityscore=0 suspectscore=0 bulkscore=0 phishscore=0
- cotscore=-2147483648 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2004280000 definitions=main-2007070025
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200707033617.GF25523@casper.infradead.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 7/7/20 12:03 AM, Jarkko Sakkinen wrote:
-> On Mon, Jul 06, 2020 at 11:08:12PM -0400, Stefan Berger wrote:
->> On 7/6/20 10:24 PM, Jarkko Sakkinen wrote:
->>> On Mon, Jul 06, 2020 at 07:55:26PM -0400, Stefan Berger wrote:
->>>> On 7/6/20 7:09 PM, Jarkko Sakkinen wrote:
->>>>> On Mon, Jul 06, 2020 at 02:19:53PM -0400, Stefan Berger wrote:
->>>>>> From: Stefan Berger <stefanb@linux.ibm.com>
->>>>>>
->>>>>> In case a TPM2 is attached, search for a TPM2 ACPI table when trying
->>>>>> to get the event log from ACPI. If one is found, use it to get the
->>>>>> start and length of the log area. This allows non-UEFI systems, such
->>>>>> as SeaBIOS, to pass an event log when using a TPM2.
->>>>>>
->>>>>> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
->>>>> Do you think that QEMU with TPM 1.2 emulator turned on would be a viable
->>>>> way to test this?
->>>> Yes.
->>> Is the emulator bundled with QEMU or does it have to be installed
->>> separately?
->> It has to be installed separately. On Fedora 31 it would just be a `sudo dnf
->> -y install swtpm-tools` and you should be good to go with libvirt /
->> virt-manager.
-> Is there some packaging for Debian/Ubuntu available?
+On Tue, Jul 07, 2020 at 04:36:17AM +0100, Matthew Wilcox wrote:
+> On Tue, Jul 07, 2020 at 06:01:51AM +0300, Jarkko Sakkinen wrote:
+> > Intel Software Guard eXtensions (SGX) is a set of CPU instructions that
+> > can be used by applications to set aside private regions of code and
+> > data. The code outside the SGX hosted software entity is disallowed to
+> 
+> s/disallowed to/prevented from/
+> 
+> > access the memory inside the enclave enforced by the CPU. We call these
+> 
+> s/enforced//
+> 
+> > entities enclaves.
+> > 
+> > Add a driver that provides an ioctl API to construct and run enclaves.
+> > Enclaves are constructed from pages residing in reserved physical memory
+> > areas. The contents of these pages can only be accessed when they are
+> > mapped as part of an enclave, by a hardware thread running inside the
+> > enclave.
+> > 
+> > The starting state of an enclave consists of a fixed measured set of
+> > pages that are copied to the EPC during the construction process by
+> > using ENCLS leaf functions and Software Enclave Control Structure (SECS)
+> > that defines the enclave properties.
+> > 
+> > Enclaves are constructed by using ENCLS leaf functions ECREATE, EADD and
+> > EINIT. ECREATE initializes SECS, EADD copies pages from system memory to
+> > the EPC and EINIT checks a given signed measurement and moves the enclave
+> > into a state ready for execution.
+> 
+> What's a leaf function?  Is it like a CPU instruction?
 
+Yeah, the opcode is ENCLS for ring-0 (enclave management and
+construction) and ENCLU for ring-3 (entrance to the enclave etc).
+The leaf function number goes to EAX.
 
-So far may not be available yet. I had *experimented* with a PPA once: 
-https://launchpad.net/~stefanberger/+archive/ubuntu/swtpm-focal
+> 
+> > The mmap() permissions are capped by the contained enclave page
+> > permissions. The mapped areas must also be opaque, i.e. each page address
+> > must contain a page. This logic is implemented in sgx_encl_may_map().
+> 
+> do you mean "populated" instead of "opaque"?
 
+Yes, that would be a better word to use. I'll change this.
 
+> 
+> > +	atomic_set(&encl->flags, 0);
+> > +	kref_init(&encl->refcount);
+> > +	INIT_RADIX_TREE(&encl->page_tree, GFP_KERNEL);
+> 
+> Why are you using a radix tree instead of an xarray?
 
-> /Jarkko
+Because xarray did not exist in 2017 and nobody has pointed out to use
+it. Now I know it exists (yet do not know what it is).
 
+> 
+> > +int sgx_encl_may_map(struct sgx_encl *encl, unsigned long start,
+> > +		     unsigned long end, unsigned long vm_prot_bits)
+> > +{
+> > +	unsigned long idx, idx_start, idx_end;
+> > +	struct sgx_encl_page *page;
+> > +
+> > +	/*
+> > +	 * Disallow RIE tasks as their VMA permissions might conflict with the
+> > +	 * enclave page permissions.
+> > +	 */
+> > +	if (!!(current->personality & READ_IMPLIES_EXEC))
+> > +		return -EACCES;
+> > +
+> > +	idx_start = PFN_DOWN(start);
+> > +	idx_end = PFN_DOWN(end - 1);
+> > +
+> > +	for (idx = idx_start; idx <= idx_end; ++idx) {
+> > +		mutex_lock(&encl->lock);
+> > +		page = radix_tree_lookup(&encl->page_tree, idx);
+> > +		mutex_unlock(&encl->lock);
+> > +
+> > +		if (!page || (~page->vm_max_prot_bits & vm_prot_bits))
+> > +			return -EACCES;
+> 
+> You should really use an iterator here instead of repeated lookups.
+> xas_for_each() will probably be what you want.
 
+Thank you for your remarks. I'll look into using xarray for this.
+
+/Jarkko
