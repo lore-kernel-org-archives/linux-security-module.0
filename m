@@ -2,70 +2,69 @@ Return-Path: <SRS0=/FKR=AT=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57515C433DF
-	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jul 2020 03:10:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEA5DC433DF
+	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jul 2020 03:14:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3718020774
-	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jul 2020 03:10:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A8C5820720
+	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jul 2020 03:14:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hlwBMhGs"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jPcn8u79"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728683AbgGHDKi (ORCPT
+        id S1728885AbgGHDOw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 7 Jul 2020 23:10:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57476 "EHLO
+        Tue, 7 Jul 2020 23:14:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58122 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728623AbgGHDKi (ORCPT
+        with ESMTP id S1728851AbgGHDOw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 7 Jul 2020 23:10:38 -0400
-Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC8E8C08C5E2
-        for <linux-security-module@vger.kernel.org>; Tue,  7 Jul 2020 20:10:37 -0700 (PDT)
-Received: by mail-pf1-x444.google.com with SMTP id q17so19307185pfu.8
-        for <linux-security-module@vger.kernel.org>; Tue, 07 Jul 2020 20:10:37 -0700 (PDT)
+        Tue, 7 Jul 2020 23:14:52 -0400
+Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5B43C08C5E2
+        for <linux-security-module@vger.kernel.org>; Tue,  7 Jul 2020 20:14:50 -0700 (PDT)
+Received: by mail-pf1-x442.google.com with SMTP id t11so14463254pfq.11
+        for <linux-security-module@vger.kernel.org>; Tue, 07 Jul 2020 20:14:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=edyXrUUXlucnGHdJkzAqctBsLVZmrijKH7zA9JnE9Qs=;
-        b=hlwBMhGsm2KgPGyCtgedo+zMtJVTl9SEIwqwMo7UolN4lX2fwyUQ7Vbv1FEj92NcM3
-         NGNdx6NXMsjTYmNytJtOZ3gWi7rmCWK8D0Jexm3+W/nDCAPphHj3nPmq/F9roB3r9uBb
-         7FRRPNjqv1E2famw0cCafEHyl0POEhMcEsmn8=
+         :content-disposition:in-reply-to;
+        bh=oAwKqHK24P/HMH2S8nsQQ/C5A8edfnTk57osWeiH3rQ=;
+        b=jPcn8u79M2ubqWOVgArEpIpOZmykPitfCUoGWRa6+qdIOI97B2U6jelnkbvjXAuChZ
+         Z+MmJ0LdTQYzcxBmMKHTCKwjfciCn6vEWhb6CmddE9e2sdVlginnSJcI4hynjLkczzbl
+         LS+umlChhWR4lhCrtRCR4GWrBQVV9t7/5Gyow=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=edyXrUUXlucnGHdJkzAqctBsLVZmrijKH7zA9JnE9Qs=;
-        b=YAwLAJGmBAX5eQEZJjUCjiVIQlVKVokp3IuBzJCP3vs+rHxUkDq/ZUhyGprl1Ut5AX
-         UgjT4sdepV2A4ybfEvKv9oKJIRITnm4CRYuYynJbJc+KV6y59KT0Le4v5RhtD8brhqxS
-         wlQqEdpiBQaH9BGvvGZmhrq1/ka3zfsQnq4GKS/52c92YL8R1b9Lrr6T2Xqw2xkRjzGE
-         osKNouq0KvyodJTXeUCqadfQ1ThdaWPYxqhvSNTYXhUqqN0uiJ+qWdaPAlR6xIFa3219
-         qyGd5yhx1iIuVYXigMeoA1xqj1LoWvPFjLhM9lIwrkjMsZ9bzIJd31SDP5UHRHS8BqBi
-         dkzQ==
-X-Gm-Message-State: AOAM531efw54LlBaweHtz8dXTaMOq7PSgBE5iDticTqKrXmdWqXi4tfD
-        8f/hO/J1wKY9MusWlg6yIrHyRw==
-X-Google-Smtp-Source: ABdhPJz2SITuOpLsf2fKbfCPMhLdYgaGbKpZy5ZObf2Y0s34KANDBCI0SwEXpDtq9tudsC3KYnRTXw==
-X-Received: by 2002:a63:6cd:: with SMTP id 196mr47424478pgg.169.1594177837244;
-        Tue, 07 Jul 2020 20:10:37 -0700 (PDT)
+         :mime-version:content-disposition:in-reply-to;
+        bh=oAwKqHK24P/HMH2S8nsQQ/C5A8edfnTk57osWeiH3rQ=;
+        b=hFQ7t1xCdSXpM0n1+eAFJdo70sxCva23fG2zOO+JOcz7CLUwirzD9w8OjxNoYzS/Wx
+         Y3oB6ypnm/GIrRBYL7TSumLdZokczGjtTIlYaPYowscSemWIbBEwxcXZQmnaBDq824S2
+         3ziFfZGKkXZzB3ctJsqgOOsShhkm/VR4O4IoKIDJMLL/Ma92RAb1WLEzvQ0mJXFSfmDv
+         Bc658gKZ2uP4pO2T1UXCYlh/gKCAoMyvjKyPuAL2Ln5x7K1GuWwxfRIesjcA2RC0L5ec
+         uIH71FjAnEnC52jCviZA85h8Nt6ZGWBxxpc2V1+eXZaqLCS72sesaYfux+vS+fwMeiEa
+         JctA==
+X-Gm-Message-State: AOAM531yV9G5R8fqGUQQVDLJXze70Ra/bgCNvjVURjdMKNiBTzuyt8b8
+        fazHsn35epl+7layHN0a7SjNow==
+X-Google-Smtp-Source: ABdhPJxhvCX833Au2SUtzVOGW9yxrRzRu1ollAu0zOyXR108vtcu6tLLUi/3fOYAAPRVVk6z2XGUHw==
+X-Received: by 2002:a65:6554:: with SMTP id a20mr41872771pgw.301.1594178090263;
+        Tue, 07 Jul 2020 20:14:50 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id r17sm23362049pfg.62.2020.07.07.20.10.36
+        by smtp.gmail.com with ESMTPSA id y7sm3665683pjp.47.2020.07.07.20.14.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Jul 2020 20:10:36 -0700 (PDT)
-Date:   Tue, 7 Jul 2020 20:10:35 -0700
+        Tue, 07 Jul 2020 20:14:49 -0700 (PDT)
+Date:   Tue, 7 Jul 2020 20:14:48 -0700
 From:   Kees Cook <keescook@chromium.org>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     James Morris <jmorris@namei.org>, Jessica Yu <jeyu@kernel.org>,
+To:     Scott Branden <scott.branden@broadcom.com>
+Cc:     James Morris <jmorris@namei.org>,
         Luis Chamberlain <mcgrof@kernel.org>,
-        Scott Branden <scott.branden@broadcom.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         "Rafael J. Wysocki" <rafael@kernel.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jessica Yu <jeyu@kernel.org>,
         Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
         "Serge E. Hallyn" <serge@hallyn.com>,
         Casey Schaufler <casey@schaufler-ca.com>,
@@ -83,86 +82,30 @@ Cc:     James Morris <jmorris@namei.org>, Jessica Yu <jeyu@kernel.org>,
         Stephen Boyd <stephen.boyd@linaro.org>,
         Paul Moore <paul@paul-moore.com>, linux-kernel@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH 4/4] module: Add hook for security_kernel_post_read_file()
-Message-ID: <202007071951.605F38D43@keescook>
+        linux-security-module@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH 2/4] fs: Remove FIRMWARE_PREALLOC_BUFFER from
+ kernel_read_file() enums
+Message-ID: <202007072011.91509B7C@keescook>
 References: <20200707081926.3688096-1-keescook@chromium.org>
- <20200707081926.3688096-5-keescook@chromium.org>
- <1594169240.23056.143.camel@linux.ibm.com>
+ <20200707081926.3688096-3-keescook@chromium.org>
+ <0a5e2c2e-507c-9114-5328-5943f63d707e@broadcom.com>
+ <202007071447.D96AA42ECE@keescook>
+ <c2e4f5ae-0a2f-454e-6847-c413ca719abf@broadcom.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1594169240.23056.143.camel@linux.ibm.com>
+In-Reply-To: <c2e4f5ae-0a2f-454e-6847-c413ca719abf@broadcom.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jul 07, 2020 at 08:47:20PM -0400, Mimi Zohar wrote:
-> On Tue, 2020-07-07 at 01:19 -0700, Kees Cook wrote:
-> > Calls to security_kernel_load_data() should be paired with a call to
-> > security_kernel_post_read_file() with a NULL file argument. Add the
-> > missing call so the module contents are visible to the LSMs interested
-> > in measuring the module content. (This also paves the way for moving
-> > module signature checking out of the module core and into an LSM.)
-> > 
-> > Cc: Jessica Yu <jeyu@kernel.org>
-> > Fixes: c77b8cdf745d ("module: replace the existing LSM hook in init_module")
-> > Signed-off-by: Kees Cook <keescook@chromium.org>
-> > ---
-> >  kernel/module.c | 7 ++++++-
-> >  1 file changed, 6 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/kernel/module.c b/kernel/module.c
-> > index 0c6573b98c36..af9679f8e5c6 100644
-> > --- a/kernel/module.c
-> > +++ b/kernel/module.c
-> > @@ -2980,7 +2980,12 @@ static int copy_module_from_user(const void __user *umod, unsigned long len,
-> >  		return -EFAULT;
-> >  	}
-> >  
-> > -	return 0;
-> > +	err = security_kernel_post_read_file(NULL, (char *)info->hdr,
-> > +					     info->len, READING_MODULE);
-> 
-> There was a lot of push back on calling security_kernel_read_file()
-> with a NULL file descriptor here.[1]  The result was defining a new
-> security hook - security_kernel_load_data - and enumeration -
-> LOADING_MODULE.  I would prefer calling the same pre and post security
-> hook.
-> 
-> Mimi
-> 
-> [1] http://kernsec.org/pipermail/linux-security-module-archive/2018-May/007110.html
+On Tue, Jul 07, 2020 at 08:06:23PM -0700, Scott Branden wrote:
+> Some people want the header files included in each c file they are used.
+> Others want header files not included if they are included in another header
+> file.
 
-Ah yes, thanks for the pointer to the discussion.
-
-I think we have four cases then, for differing LSM hooks:
-
-- no "file", no contents
-	e.g. init_module() before copying user buffer
-	security_kernel_load_data()
-- only a "file" available, no contents
-	e.g. kernel_read_file() before actually reading anything
-	security_kernel_read_file()
-- "file" and contents
-	e.g. kernel_read_file() after reading
-	security_kernel_post_read_file()
-- no "file" available, just the contents
-	e.g. firmware platform fallback from EFI space (no "file")
-	unimplemented!
-
-If an LSM wants to be able to examine the contents of firmware, modules,
-kexec, etc, it needs either a "file" or the full contents.
-
-The "file" methods all pass through the kernel_read_file()-family. The
-others happen via blobs coming from userspace or (more recently) the EFI
-universe.
-
-So, if a NULL file is unreasonable, we need, perhaps,
-security_kernel_post_load_data()
-
-?
+Ah, yes. That's fine then, leave them in the .c files.
 
 -- 
 Kees Cook
