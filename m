@@ -2,141 +2,177 @@ Return-Path: <SRS0=/FKR=AT=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6B90C433DF
-	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jul 2020 13:32:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C65A8C433E0
+	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jul 2020 13:48:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B621C2078D
-	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jul 2020 13:32:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1594215178;
-	bh=qNSFZBgBPSN6z9JLu6mOVFeNQ4nZWtGCv5IVzJHjSFI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=wx7LtLBuIMr2kFy+v/WKfmW5TPfDQJ1uqagvRYG7p2HPA9QFNfwhGOu16RuYYNXsv
-	 kXoRUrR/xrKJZ5JkmVJM5W/A8Gre0srJySxkhDiqxESOflxVpIQZnHnRFes+e7iVbP
-	 dLbwBg3UiwiWZv9pnQgj8F8yy5CMg5mBGzUmmZB0=
+	by mail.kernel.org (Postfix) with ESMTP id B123120786
+	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jul 2020 13:48:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729590AbgGHNcx (ORCPT
+        id S1729699AbgGHNsX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 8 Jul 2020 09:32:53 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:33707 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729323AbgGHNcx (ORCPT
+        Wed, 8 Jul 2020 09:48:23 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:23948 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729288AbgGHNsW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 8 Jul 2020 09:32:53 -0400
-Received: by mail-pf1-f194.google.com with SMTP id m9so9717909pfh.0;
-        Wed, 08 Jul 2020 06:32:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=G3W3NkSnYhvVkNWYcmyRPWMbSJt95CSFGEsN8GxSyEw=;
-        b=mVanR3Whkf4arRJg+Thx4buqfyznr1htPmIEtMovYg8JU2x4Y0fUITkChQIPudh8fs
-         IaFhf8DzAIITNTmXFtWk70Da3vB6SYOCXMOUwZ3XrGf04jz8aqKmtHQxZ9vXgXV/HV3A
-         Y8FIcCnZLjSJM2XZQHLYxOaElpwgJHyDPqbSbthyXWUjBlnKVdTwY0KdIuyh0eh7YsjJ
-         uXrHbeIS6GlGmGjEOH6m8O6RXXLIFsb0+EcyT+OWuftQv+J369LEHLIyzuHX1SY3Xanw
-         3h5k17dvLZilYwqfMN5Qvxqh6dzRc9I59PRmRNkuzAlkRUutb9ZeQBXoshmUkxAXtDer
-         ew2g==
-X-Gm-Message-State: AOAM533d3i/ukNuyU4lsK1I//23MxoKIm+kvoMK9TRA1+JoEvoleeajw
-        yb+OTEw3xRrL1HqERj9ZlNE=
-X-Google-Smtp-Source: ABdhPJwZ7feFM1ZYPTAtPzjUOIBUzFcSp+eVIFKh44MG9j3GZhMy3GAUeMk4BS0+DEkeaPGPchsaFA==
-X-Received: by 2002:a62:7505:: with SMTP id q5mr50170680pfc.262.1594215171970;
-        Wed, 08 Jul 2020 06:32:51 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id n25sm12846pff.51.2020.07.08.06.32.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Jul 2020 06:32:51 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 801FF401AE; Wed,  8 Jul 2020 13:32:50 +0000 (UTC)
-Date:   Wed, 8 Jul 2020 13:32:50 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <greg@kroah.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
+        Wed, 8 Jul 2020 09:48:22 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 068DXE6K143958;
+        Wed, 8 Jul 2020 09:47:57 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 325brdf91s-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 08 Jul 2020 09:47:56 -0400
+Received: from m0098414.ppops.net (m0098414.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 068DcUxh156791;
+        Wed, 8 Jul 2020 09:47:55 -0400
+Received: from ppma04fra.de.ibm.com (6a.4a.5195.ip4.static.sl-reverse.com [149.81.74.106])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 325brdf90a-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 08 Jul 2020 09:47:55 -0400
+Received: from pps.filterd (ppma04fra.de.ibm.com [127.0.0.1])
+        by ppma04fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 068DaDE2022178;
+        Wed, 8 Jul 2020 13:47:52 GMT
+Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
+        by ppma04fra.de.ibm.com with ESMTP id 3251dw0cts-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 08 Jul 2020 13:47:52 +0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 068DkSUQ60096810
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 8 Jul 2020 13:46:28 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3C87D42042;
+        Wed,  8 Jul 2020 13:47:50 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B175842041;
+        Wed,  8 Jul 2020 13:47:46 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.202.84])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed,  8 Jul 2020 13:47:46 +0000 (GMT)
+Message-ID: <1594216064.23056.208.camel@linux.ibm.com>
+Subject: Re: [PATCH 4/4] module: Add hook for
+ security_kernel_post_read_file()
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     James Morris <jmorris@namei.org>, Jessica Yu <jeyu@kernel.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Scott Branden <scott.branden@broadcom.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
         Casey Schaufler <casey@schaufler-ca.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v3 10/16] exec: Remove do_execve_file
-Message-ID: <20200708133250.GH4332@42.do-not-panic.com>
-References: <87y2o1swee.fsf_-_@x220.int.ebiederm.org>
- <20200702164140.4468-10-ebiederm@xmission.com>
- <20200708063525.GC4332@42.do-not-panic.com>
- <20200708124148.GP13911@42.do-not-panic.com>
- <87y2nugnnq.fsf@x220.int.ebiederm.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87y2nugnnq.fsf@x220.int.ebiederm.org>
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Matthew Garrett <matthewgarrett@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        KP Singh <kpsingh@google.com>, Dave Olsthoorn <dave@bewaar.me>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Peter Jones <pjones@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Boyd <stephen.boyd@linaro.org>,
+        Paul Moore <paul@paul-moore.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Date:   Wed, 08 Jul 2020 09:47:44 -0400
+In-Reply-To: <202007071951.605F38D43@keescook>
+References: <20200707081926.3688096-1-keescook@chromium.org>
+         <20200707081926.3688096-5-keescook@chromium.org>
+         <1594169240.23056.143.camel@linux.ibm.com>
+         <202007071951.605F38D43@keescook>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-07-08_11:2020-07-08,2020-07-08 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
+ phishscore=0 clxscore=1015 adultscore=0 cotscore=-2147483648
+ suspectscore=0 lowpriorityscore=0 bulkscore=0 mlxlogscore=999
+ impostorscore=0 mlxscore=0 priorityscore=1501 classifier=spam adjust=0
+ reason=mlx scancount=1 engine=8.12.0-2004280000
+ definitions=main-2007080095
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jul 08, 2020 at 08:08:09AM -0500, Eric W. Biederman wrote:
-> Luis Chamberlain <mcgrof@kernel.org> writes:
+On Tue, 2020-07-07 at 20:10 -0700, Kees Cook wrote:
+> On Tue, Jul 07, 2020 at 08:47:20PM -0400, Mimi Zohar wrote:
+> > On Tue, 2020-07-07 at 01:19 -0700, Kees Cook wrote:
+> > > Calls to security_kernel_load_data() should be paired with a call to
+> > > security_kernel_post_read_file() with a NULL file argument. Add the
+> > > missing call so the module contents are visible to the LSMs interested
+> > > in measuring the module content. (This also paves the way for moving
+> > > module signature checking out of the module core and into an LSM.)
+> > > 
+> > > Cc: Jessica Yu <jeyu@kernel.org>
+> > > Fixes: c77b8cdf745d ("module: replace the existing LSM hook in init_module")
+> > > Signed-off-by: Kees Cook <keescook@chromium.org>
+> > > ---
+> > >  kernel/module.c | 7 ++++++-
+> > >  1 file changed, 6 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/kernel/module.c b/kernel/module.c
+> > > index 0c6573b98c36..af9679f8e5c6 100644
+> > > --- a/kernel/module.c
+> > > +++ b/kernel/module.c
+> > > @@ -2980,7 +2980,12 @@ static int copy_module_from_user(const void __user *umod, unsigned long len,
+> > >  		return -EFAULT;
+> > >  	}
+> > >  
+> > > -	return 0;
+> > > +	err = security_kernel_post_read_file(NULL, (char *)info->hdr,
+> > > +					     info->len, READING_MODULE);
+> > 
+> > There was a lot of push back on calling security_kernel_read_file()
+> > with a NULL file descriptor here.[1]  The result was defining a new
+> > security hook - security_kernel_load_data - and enumeration -
+> > LOADING_MODULE.  I would prefer calling the same pre and post security
+> > hook.
+> > 
+> > Mimi
+> > 
+> > [1] http://kernsec.org/pipermail/linux-security-module-archive/2018-May/007110.html
 > 
-> > On Wed, Jul 08, 2020 at 06:35:25AM +0000, Luis Chamberlain wrote:
-> >> On Thu, Jul 02, 2020 at 11:41:34AM -0500, Eric W. Biederman wrote:
-> >> > Now that the last callser has been removed remove this code from exec.
-> >> > 
-> >> > For anyone thinking of resurrecing do_execve_file please note that
-> >> > the code was buggy in several fundamental ways.
-> >> > 
-> >> > - It did not ensure the file it was passed was read-only and that
-> >> >   deny_write_access had been called on it.  Which subtlely breaks
-> >> >   invaniants in exec.
-> >> > 
-> >> > - The caller of do_execve_file was expected to hold and put a
-> >> >   reference to the file, but an extra reference for use by exec was
-> >> >   not taken so that when exec put it's reference to the file an
-> >> >   underflow occured on the file reference count.
-> >> 
-> >> Maybe its my growing love with testing, but I'm going to have to partly
-> >> blame here that we added a new API without any respective testing.
-> >> Granted, I recall this this patch set could have used more wider review
-> >> and a bit more patience... but just mentioning this so we try to avoid
-> >> new api-without-testing with more reason in the future.
-> >> 
-> >> But more importantly, *how* could we have caught this? Or how can we
-> >> catch this sort of stuff better in the future?
-> >
-> > Of all the issues you pointed out with do_execve_file(), since upon
-> > review the assumption *by design* was that LSMs/etc would pick up issues
-> > with the file *prior* to processing, I think that this file reference
-> > count issue comes to my attention as the more serious issue which I
-> > wish we could address *first* before this crusade.
-> >
-> > So I have to ask, has anyone *really tried* to give a crack at fixing
-> > this refcount issue in a smaller way first? Alexei?
-> >
-> > I'm not opposed to the removal of do_execve_file(), however if there
-> > is a reproducible crash / issue with the existing user, this sledge
-> > hammer seems a bit overkill for older kernels.
+> Ah yes, thanks for the pointer to the discussion.
 > 
-> It does not matter for older kernels because there is exactly one user.
-> That one user is just a place holder keeping the code alive until a real
-> user comes along.
+> I think we have four cases then, for differing LSM hooks:
 > 
-> For older kernels the solution is to just mark the bpfilter code broken
-> in Kconfig and refuse to compile it.  That is the trivial backportable
-> fix if anyone wants one.
+> - no "file", no contents
+> 	e.g. init_module() before copying user buffer
+> 	security_kernel_load_data()
+> - only a "file" available, no contents
+> 	e.g. kernel_read_file() before actually reading anything
+> 	security_kernel_read_file()
+> - "file" and contents
+> 	e.g. kernel_read_file() after reading
+> 	security_kernel_post_read_file()
+> - no "file" available, just the contents
+> 	e.g. firmware platform fallback from EFI space (no "file")
+> 	unimplemented!
+> 
+> If an LSM wants to be able to examine the contents of firmware, modules,
+> kexec, etc, it needs either a "file" or the full contents.
+> 
+> The "file" methods all pass through the kernel_read_file()-family. The
+> others happen via blobs coming from userspace or (more recently) the EFI
+> universe.
+> 
+> So, if a NULL file is unreasonable, we need, perhaps,
+> security_kernel_post_load_data()
+> 
+> ?
 
-This seals the deal for me, thanks! Carry on, but hey, please add
-yourself to MAINTAINERS too :)
- 
-  Luis
+Agreed.
+
+Mimi
