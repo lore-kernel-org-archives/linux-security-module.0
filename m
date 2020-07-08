@@ -2,93 +2,109 @@ Return-Path: <SRS0=/FKR=AT=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0614FC433DF
-	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jul 2020 08:23:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C66FBC433DF
+	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jul 2020 08:28:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E33172078D
-	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jul 2020 08:23:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A17D520DD4
+	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jul 2020 08:28:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727869AbgGHIXg (ORCPT
+        id S1728115AbgGHI20 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 8 Jul 2020 04:23:36 -0400
-Received: from smtp-190f.mail.infomaniak.ch ([185.125.25.15]:54711 "EHLO
-        smtp-190f.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726806AbgGHIXg (ORCPT
+        Wed, 8 Jul 2020 04:28:26 -0400
+Received: from out30-43.freemail.mail.aliyun.com ([115.124.30.43]:38110 "EHLO
+        out30-43.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728112AbgGHI2Z (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 8 Jul 2020 04:23:36 -0400
-Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4B1sl84TSxzlhWDS;
-        Wed,  8 Jul 2020 10:23:32 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
-        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4B1sl50LZfzlh8TT;
-        Wed,  8 Jul 2020 10:23:28 +0200 (CEST)
-Subject: Re: [PATCH v19 09/12] arch: Wire up landlock() syscall
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
-        Jeff Dike <jdike@addtoit.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>,
-        Richard Weinberger <richard@nod.at>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>
-References: <20200707180955.53024-1-mic@digikod.net>
- <20200707180955.53024-10-mic@digikod.net>
- <CAK8P3a0docCqHkEn9C7=e0GC_ieN1dsYgKQ9PbUmSZYxh9MRnw@mail.gmail.com>
- <8d2dab03-289e-2872-db66-ce80ce5c189f@digikod.net>
- <CAK8P3a3Mf_+-MY5kdeY7sqwUgCUi=PksWz1pGDy+o0ZfgF93Zw@mail.gmail.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Message-ID: <956a05c8-529b-bf97-99ac-8958cceb35f3@digikod.net>
-Date:   Wed, 8 Jul 2020 10:23:28 +0200
-User-Agent: 
-MIME-Version: 1.0
-In-Reply-To: <CAK8P3a3Mf_+-MY5kdeY7sqwUgCUi=PksWz1pGDy+o0ZfgF93Zw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
-X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
-X-Antivirus-Code: 0x100000
+        Wed, 8 Jul 2020 04:28:25 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01422;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=21;SR=0;TI=SMTPD_---0U26.E2X_1594196899;
+Received: from localhost(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0U26.E2X_1594196899)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 08 Jul 2020 16:28:19 +0800
+From:   Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+To:     herbert@gondor.apana.org.au, davem@davemloft.net,
+        dhowells@redhat.com, mcoquelin.stm32@gmail.com,
+        alexandre.torgue@st.com, jmorris@namei.org, serge@hallyn.com,
+        nramas@linux.microsoft.com, tusharsu@linux.microsoft.com,
+        zohar@linux.ibm.com, gilad@benyossef.com, pvanleeuwen@rambus.com
+Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, zhang.jia@linux.alibaba.com,
+        tianjia.zhang@linux.alibaba.com
+Subject: [PATCH v4 1/8] crypto: sm3 - export crypto_sm3_final function
+Date:   Wed,  8 Jul 2020 16:28:11 +0800
+Message-Id: <20200708082818.5511-2-tianjia.zhang@linux.alibaba.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200708082818.5511-1-tianjia.zhang@linux.alibaba.com>
+References: <20200708082818.5511-1-tianjia.zhang@linux.alibaba.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Both crypto_sm3_update and crypto_sm3_finup have been
+exported, exporting crypto_sm3_final, to avoid having to
+use crypto_sm3_finup(desc, NULL, 0, dgst) to calculate
+the hash in some cases.
 
-On 08/07/2020 09:47, Arnd Bergmann wrote:
-> On Wed, Jul 8, 2020 at 9:31 AM Mickaël Salaün <mic@digikod.net> wrote:
->> On 08/07/2020 09:22, Arnd Bergmann wrote:
->>> On Tue, Jul 7, 2020 at 8:10 PM Mickaël Salaün <mic@digikod.net> wrote:
->>>
->>>> index f4a01305d9a6..a63a411a74d5 100644
->>>> --- a/include/uapi/asm-generic/unistd.h
->>>> +++ b/include/uapi/asm-generic/unistd.h
->>
->> OK, I'll rebase the next series on linux-next.
-> 
-> Just change the number to the next free one, without actually rebasing.
-> It's always a bit messy to have multiple syscalls added, but I think that
-> causes the least confusion.
+Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+---
+ crypto/sm3_generic.c | 7 ++++---
+ include/crypto/sm3.h | 2 ++
+ 2 files changed, 6 insertions(+), 3 deletions(-)
 
-OK, but this will lead to two merge conflicts: patch 8 (asmlinkage) and
-patch 9 (tbl files).
+diff --git a/crypto/sm3_generic.c b/crypto/sm3_generic.c
+index 3468975215ca..193c4584bd00 100644
+--- a/crypto/sm3_generic.c
++++ b/crypto/sm3_generic.c
+@@ -149,17 +149,18 @@ int crypto_sm3_update(struct shash_desc *desc, const u8 *data,
+ }
+ EXPORT_SYMBOL(crypto_sm3_update);
+ 
+-static int sm3_final(struct shash_desc *desc, u8 *out)
++int crypto_sm3_final(struct shash_desc *desc, u8 *out)
+ {
+ 	sm3_base_do_finalize(desc, sm3_generic_block_fn);
+ 	return sm3_base_finish(desc, out);
+ }
++EXPORT_SYMBOL(crypto_sm3_final);
+ 
+ int crypto_sm3_finup(struct shash_desc *desc, const u8 *data,
+ 			unsigned int len, u8 *hash)
+ {
+ 	sm3_base_do_update(desc, data, len, sm3_generic_block_fn);
+-	return sm3_final(desc, hash);
++	return crypto_sm3_final(desc, hash);
+ }
+ EXPORT_SYMBOL(crypto_sm3_finup);
+ 
+@@ -167,7 +168,7 @@ static struct shash_alg sm3_alg = {
+ 	.digestsize	=	SM3_DIGEST_SIZE,
+ 	.init		=	sm3_base_init,
+ 	.update		=	crypto_sm3_update,
+-	.final		=	sm3_final,
++	.final		=	crypto_sm3_final,
+ 	.finup		=	crypto_sm3_finup,
+ 	.descsize	=	sizeof(struct sm3_state),
+ 	.base		=	{
+diff --git a/include/crypto/sm3.h b/include/crypto/sm3.h
+index 1438942dc773..42ea21289ba9 100644
+--- a/include/crypto/sm3.h
++++ b/include/crypto/sm3.h
+@@ -35,6 +35,8 @@ struct shash_desc;
+ extern int crypto_sm3_update(struct shash_desc *desc, const u8 *data,
+ 			      unsigned int len);
+ 
++extern int crypto_sm3_final(struct shash_desc *desc, u8 *out);
++
+ extern int crypto_sm3_finup(struct shash_desc *desc, const u8 *data,
+ 			     unsigned int len, u8 *hash);
+ #endif
+-- 
+2.17.1
 
-Do you want me to update the tools/perf/arch/*.tbl too?
