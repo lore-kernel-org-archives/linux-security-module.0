@@ -2,226 +2,135 @@ Return-Path: <SRS0=/FKR=AT=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C68DFC433E1
-	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jul 2020 17:50:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74785C433E0
+	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jul 2020 20:18:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B1F40206E9
-	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jul 2020 17:50:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F6A42078C
+	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jul 2020 20:18:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1594239485;
+	bh=K5Lg+VMXda9w1UJGY2IYhWtxKTo+Uepce6z7xUkDdpo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=Lqqyz4t5o0y+Ikl3Sdtq6wormn+iFpMnHqfpR2xpKKrLFXrAo/fTH3xihG4JXnqgB
+	 9Obfuyx1YBeWcoEN7fy6UhlHuvLd09QbYiEGTvFL6xtHJ7utg6z8e9YyWRPo8r55U5
+	 AcY/a7vFsCCGq3wn0lWskkN8yTAua2yqOtci8yX8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726482AbgGHRuR (ORCPT
+        id S1726044AbgGHUSE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 8 Jul 2020 13:50:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53120 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726116AbgGHRuQ (ORCPT
+        Wed, 8 Jul 2020 16:18:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35392 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725964AbgGHUSE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 8 Jul 2020 13:50:16 -0400
-Received: from smtp-42af.mail.infomaniak.ch (smtp-42af.mail.infomaniak.ch [IPv6:2001:1600:3:17::42af])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EC59C08C5C1
-        for <linux-security-module@vger.kernel.org>; Wed,  8 Jul 2020 10:50:16 -0700 (PDT)
-Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4B26Jy6zZ9zlhZKc;
-        Wed,  8 Jul 2020 19:50:10 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
-        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4B26Js1rjFzlh8TH;
-        Wed,  8 Jul 2020 19:50:05 +0200 (CEST)
-Subject: Re: [PATCH v19 08/12] landlock: Add syscall implementation
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Wed, 8 Jul 2020 16:18:04 -0400
+Received: from sol.hsd1.ca.comcast.net (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4B8C820672;
+        Wed,  8 Jul 2020 20:18:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1594239483;
+        bh=K5Lg+VMXda9w1UJGY2IYhWtxKTo+Uepce6z7xUkDdpo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=vqi2sw4jvjVXqJNUckduzP/bJGnZLr0IpJ8RS18LE8x4iSXUc6sPS/bF9Chpy4svu
+         2wpfLl28X3KkiZOxjrragrPUpUnTRSVbf0zqBlYmFCr9tFtMyBSODjD9DUkwbW0sIq
+         /mfMIbEfZBj2f5fvzvKHGuqxptv+gp/Ne7VWX0oA=
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     linux-security-module@vger.kernel.org,
         Casey Schaufler <casey@schaufler-ca.com>,
-        James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
-        Jeff Dike <jdike@addtoit.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>,
-        Richard Weinberger <richard@nod.at>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>
-References: <20200707180955.53024-1-mic@digikod.net>
- <20200707180955.53024-9-mic@digikod.net>
- <CAK8P3a0FkoxFtcQJ2jSqyLbDCOp3R8-1JoY8CWAgbSZ9hH9wdQ@mail.gmail.com>
- <7f407b67-d470-25fd-1287-f4f55f18e74a@digikod.net>
- <CAK8P3a1ehWZErD2a0iBqn37s-LTAtW0AbV_gt32iX3cQkXbpOQ@mail.gmail.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Message-ID: <ec79f6ad-1c11-d69f-724b-622baa28f19f@digikod.net>
-Date:   Wed, 8 Jul 2020 19:50:03 +0200
-User-Agent: 
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>
+Cc:     syzkaller-bugs@googlegroups.com, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org,
+        syzbot+e6416dabb497a650da40@syzkaller.appspotmail.com
+Subject: [PATCH] Smack: fix use-after-free in smk_write_relabel_self()
+Date:   Wed,  8 Jul 2020 13:15:20 -0700
+Message-Id: <20200708201520.140376-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <0000000000000279c705a799ae31@google.com>
+References: <0000000000000279c705a799ae31@google.com>
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a1ehWZErD2a0iBqn37s-LTAtW0AbV_gt32iX3cQkXbpOQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
-X-Antivirus-Code: 0x100000
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+From: Eric Biggers <ebiggers@google.com>
 
-On 08/07/2020 15:49, Arnd Bergmann wrote:
-> On Wed, Jul 8, 2020 at 3:04 PM Mickaël Salaün <mic@digikod.net> wrote:
->> On 08/07/2020 10:57, Arnd Bergmann wrote:
->>> On Tue, Jul 7, 2020 at 8:10 PM Mickaël Salaün <mic@digikod.net> wrote:
->>>
->>> It looks like all you need here today is a single argument bit, plus
->>> possibly some room for extensibility. I would suggest removing all
->>> the extra bits and using a syscall like
->>>
->>> SYSCALL_DEFINE1(landlock_create_ruleset, u32, flags);
->>>
->>> I don't really see how this needs any variable-length arguments,
->>> it really doesn't do much.
->>
->> We need the attr_ptr/attr_size pattern because the number of ruleset
->> properties will increase (e.g. network access mask).
-> 
-> But how many bits do you think you will *actually* need in total that
-> this needs to be a two-dimensional set of flags? At the moment you
-> only have a single bit that you interpret.
+smk_write_relabel_self() frees memory from the task's credentials with
+no locking, which can easily cause a use-after-free because multiple
+tasks can share the same credentials structure.
 
-I think there is a misunderstanding. For this syscall I wasn't talking
-about the "options" field but about the "handled_access_fs" field which
-has 14 bits dedicated to control access to the file system:
-https://landlock.io/linux-doc/landlock-v19/security/landlock/user.html#filesystem-flags
-The idea is to add other handled_access_* fields for other kernel object
-types (e.g. network, process, etc.).
+Fix this by using prepare_creds() and commit_creds() to correctly modify
+the task's credentials.
 
-The "options" field is fine as a raw __u32 syscall argument.
+Reproducer for "BUG: KASAN: use-after-free in smk_write_relabel_self":
 
-> 
->>> To be on the safe side, you might split up the flags into either the
->>> upper/lower 16 bits or two u32 arguments, to allow both compatible
->>> (ignored by older kernels if flag is set) and incompatible (return error
->>> when an unknown flag is set) bits.
->>
->> This may be a good idea in general, but in the case of Landlock, because
->> this kind of (discretionary) sandboxing should be a best-effort security
->> feature, we should avoid incompatible behavior. In practice, every
->> unknown bit returns an error because userland can probe for available
->> bits thanks to the get_features command. This kind of (in)compatibility
->> can then be handled by userland.
-> 
-> If there are not going to be incompatible extensions, then just ignore
-> all unknown bits and never return an error but get rid of the user
-> space probing that just complicates the interface.
+	#include <fcntl.h>
+	#include <pthread.h>
+	#include <unistd.h>
 
-There was multiple discussions about ABI compatibility, especially
-inspired by open(2) vs. openat2(2), and ignoring flags seems to be a bad
-idea. In the "sandboxer" example, we first probe the supported features
-and then mask unknown bits (i.e. access rights) at run time in userland.
-This strategy is quite straightforward, backward compatible and
-future-proof.
+	static void *thrproc(void *arg)
+	{
+		int fd = open("/sys/fs/smackfs/relabel-self", O_WRONLY);
+		for (;;) write(fd, "foo", 3);
+	}
 
-What does the linux-api folks think about this?
+	int main()
+	{
+		pthread_t t;
+		pthread_create(&t, NULL, thrproc, NULL);
+		thrproc(NULL);
+	}
 
-> 
-> In general, it's hard to rely on user space to first ask the kernel
-> what it can do, the way this normally works is that user space
-> asks the kernel for something and it either does it or not, but gives
-> an indication of whether it worked.
+Reported-by: syzbot+e6416dabb497a650da40@syzkaller.appspotmail.com
+Fixes: 38416e53936e ("Smack: limited capability for changing process label")
+Cc: <stable@vger.kernel.org> # v4.4+
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ security/smack/smackfs.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-Right, but this is a special case (i.e. best-effort security, not a
-required feature to run an application properly). As previously
-discussed, this kind of security feature should be used as much as
-possible by userland, but it may run on a system without Landlock. To
-encourage a wide use of this kind of security sandboxing by userland
-developers we should avoid the case when all the sandboxing is disabled
-because not all sandboxing features are supported by the running kernel.
+diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
+index c21b656b3263..840a192e9337 100644
+--- a/security/smack/smackfs.c
++++ b/security/smack/smackfs.c
+@@ -2720,7 +2720,6 @@ static int smk_open_relabel_self(struct inode *inode, struct file *file)
+ static ssize_t smk_write_relabel_self(struct file *file, const char __user *buf,
+ 				size_t count, loff_t *ppos)
+ {
+-	struct task_smack *tsp = smack_cred(current_cred());
+ 	char *data;
+ 	int rc;
+ 	LIST_HEAD(list_tmp);
+@@ -2745,11 +2744,21 @@ static ssize_t smk_write_relabel_self(struct file *file, const char __user *buf,
+ 	kfree(data);
+ 
+ 	if (!rc || (rc == -EINVAL && list_empty(&list_tmp))) {
++		struct cred *new;
++		struct task_smack *tsp;
++
++		new = prepare_creds();
++		if (!new) {
++			rc = -ENOMEM;
++			goto out;
++		}
++		tsp = smack_cred(new);
+ 		smk_destroy_label_list(&tsp->smk_relabel);
+ 		list_splice(&list_tmp, &tsp->smk_relabel);
++		commit_creds(new);
+ 		return count;
+ 	}
+-
++out:
+ 	smk_destroy_label_list(&list_tmp);
+ 	return rc;
+ }
+-- 
+2.27.0
 
-> 
->> I suggest this syscall signature:
->> SYSCALL_DEFINE3(landlock_create_ruleset, __u32, options, const struct
->> landlock_attr_ruleset __user *, ruleset_ptr, size_t, ruleset_size);
-> 
-> The other problem here is that indirect variable-size structured arguments
-> are a pain to instrument with things like strace or seccomp, so you
-> should first try to use a fixed argument list, and fall back to a fixed
-> structure if that fails.
-
-I agree that it is not perfect with the current tools but this kind of
-extensible structs are becoming common and well defined (e.g. openat2).
-Moreover there is some work going on for seccomp to support "extensible
-argument" syscalls: https://lwn.net/Articles/822256/
-
-> 
->>>> +static int syscall_add_rule_path_beneath(const void __user *const attr_ptr,
->>>> +               const size_t attr_size)
->>>> +{
->>>> +       struct landlock_attr_path_beneath attr_path_beneath;
->>>> +       struct path path;
->>>> +       struct landlock_ruleset *ruleset;
->>>> +       int err;
->>>
->>> Similarly, it looks like this wants to be
->>>
->>> SYSCALL_DEFINE3(landlock_add_rule_path_beneath, int, ruleset, int,
->>> path, __u32, flags)
->>>
->>> I don't see any need to extend this in a way that wouldn't already
->>> be served better by adding another system call. You might argue
->>> that 'flags' and 'allowed_access' could be separate, with the latter
->>> being an indirect in/out argument here, like
->>>
->>> SYSCALL_DEFINE4(landlock_add_rule_path_beneath, int, ruleset, int, path,
->>>                            __u64 *, allowed_acces, __u32, flags)
->>
->> To avoid adding a new syscall for each new rule type (e.g. path_beneath,
->> path_range, net_ipv4_range, etc.), I think it would be better to keep
->> the attr_ptr/attr_size pattern and to explicitely set a dedicated option
->> flag to specify the attr type.
->>
->> This would look like this:
->> SYSCALL_DEFINE4(landlock_add_rule, __u32, options, int, ruleset, const
->> void __user *, rule_ptr, size_t, rule_size);
->>
->> The rule_ptr could then point to multiple types like struct
->> landlock_attr_path_beneath (without the current ruleset_fd field).
-> 
-> This again introduces variable-sized structured data. How many different
-> kinds of rule types do you think there will be (most likely, and maybe an
-> upper bound)?
-
-I don't know how many rule types will come, but right now I think it may
-be less than 10.
-
-> 
-> Could (some of) these be generalized to use the same data structure?
-
-I don't think so, file path and network addresses are an example of very
-different types.
-
-> 
->>>> +static int syscall_enforce_ruleset(const void __user *const attr_ptr,
->>>> +               const size_t attr_size)
->>>
->>> Here it seems like you just need to pass the file descriptor, or maybe
->>>
->>> SYSCALL_DEFINE2(landlock_enforce, int, ruleset, __u32 flags);
->>>
->>> if you need flags for extensibility.
->>
->> Right, but for consistency I prefer to change the arguments like this:
->> SYSCALL_DEFINE2(landlock_enforce, __u32 options, int, ruleset);
-> 
-> Most system calls pass the object they work on as the first argument,
-> in this case this would be the ruleset file descriptor.
-
-OK, makes sense, I'll try to follow this as much as possible then.
