@@ -2,127 +2,254 @@ Return-Path: <SRS0=/FKR=AT=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C47A9C433E0
-	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jul 2020 20:25:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70ECAC433DF
+	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jul 2020 22:42:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A519420708
-	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jul 2020 20:25:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1594239910;
-	bh=D7k3xvbEWY4or+QblHb+6CiLuYXwy2HOGXpMEAVtPcQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=cBAI+PECGhnTa83jVuHvheymOAWIXPIgj8XbYkmG0Dg7Vvtl8Ui3x5eBrFV2jRP60
-	 byKSHEFY+R5PShFnvzMh2rBsJcWF8AZV0QjjKzaMfn56r9blBeUQE8MWQOeDe51ye6
-	 hxfWtJPCUBg+VZxl2k3My619fv5Oa3nugzTZotEo=
+	by mail.kernel.org (Postfix) with ESMTP id 46CA8206F6
+	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jul 2020 22:42:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="iZ0b07cQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725915AbgGHUZK (ORCPT
+        id S1726044AbgGHWmY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 8 Jul 2020 16:25:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37062 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725848AbgGHUZJ (ORCPT
+        Wed, 8 Jul 2020 18:42:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41798 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725972AbgGHWlz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 8 Jul 2020 16:25:09 -0400
-Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 24DD3206DF;
-        Wed,  8 Jul 2020 20:25:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1594239909;
-        bh=D7k3xvbEWY4or+QblHb+6CiLuYXwy2HOGXpMEAVtPcQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=gmSbuJXrs6tj7XwmAZC5jPwyChbKk72Zpot4gH4a/O0GulkFwT505sKPfaTeV5Ds4
-         ZafoKJFk9+4hL3TYxcoC6T2O7T7kSTQT2u4WHOkiNJ0aXlBvWzajzFhnK9s9r8RwH3
-         oAXrxeG6aoCIbSAWd61N96W04rPc8MFJE+wI/sds=
-Date:   Wed, 8 Jul 2020 13:25:07 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     syzbot <syzbot+89731ccb6fec15ce1c22@syzkaller.appspotmail.com>,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: kernel panic: smack: Failed to initialize cipso DOI.
-Message-ID: <20200708202507.GA35321@sol.localdomain>
-References: <000000000000db448f05a212beea@google.com>
+        Wed, 8 Jul 2020 18:41:55 -0400
+Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1DBF6C061A0B
+        for <linux-security-module@vger.kernel.org>; Wed,  8 Jul 2020 15:41:55 -0700 (PDT)
+Received: by mail-ej1-x642.google.com with SMTP id f12so151959eja.9
+        for <linux-security-module@vger.kernel.org>; Wed, 08 Jul 2020 15:41:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1dCp/uT5qftUij25bqg/K0arVCo7oHs8eumzECRkOqM=;
+        b=iZ0b07cQfnjpYludbfK6Zlod0gKDYprYg8508JQn4IqqTGx6qYGgY9TxgXLqo7IdKX
+         2/kcoWYjbmByoPMRj8RcwLG956tYBTZetHqbCOaA7zhp+JKRxThTIBjDvfhKPQZL5Qr/
+         NR+R6Ey6BAil34FRs8+Iv0CIIfNFQin3dfXA3LGttRpsvpCjiUDndB1Gamhj+nmQxYT4
+         73+l3RfDNtfYb6TP855QHw4g/Sb3FXVG20klsZ7xash+mquWU+2MivsfVaZa+w8hO2wb
+         Eu2iQJGObNzFkZdrwCJNfjKIFTFE8z0lSQVwL+yHXHRqqTZwpcIcN3wLR2JDf8ViJ3sC
+         ckJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1dCp/uT5qftUij25bqg/K0arVCo7oHs8eumzECRkOqM=;
+        b=PtCNO2Y7co+kZc3P2v83hb88efp9opnDBPCeTOdpcRQKG7ZGn4NfhvRgf9lfn9l4vN
+         lKXHNySSrQalVRKJJbptA/V7XTirpld8S7YVmmKWSxeTKXL9Y19GCc4goIxRgtmirsnm
+         ZyO8Yehzz8bfof3aL+sNlBJNKcwVgrlJtFbm+U8fEQKriGf2Xr2/Sdtu+/pvhDk/QDjp
+         IKqpwWpLMrTgXglWNbGSgoJpf2DtoBbBU/q7d7ZS13iHohgssU/LLBnVHPWEsC66K7He
+         IHJTU++pKH0or/BAL3k2pD7STfp2TZI9w6gorSZGm933doefIV+8U1IqXfPyXeYF/HRl
+         ZEiA==
+X-Gm-Message-State: AOAM530f+mNh2G9e3ik81qUQQUC64tRepqRHPKu+lD9T5Ue8tuGT+apW
+        Vr11I/pj6WGNA1NdQGzXL1yQNmlG6YlBM3zebk9p
+X-Google-Smtp-Source: ABdhPJz7UoWSz8oqn7+rcBW1/6K3OW/v22bvTrX9IyWmI8VPcvzPYpAxWXitmv+qa8mOZSASHenNOW40xNobLmj+7yM=
+X-Received: by 2002:a17:906:7d86:: with SMTP id v6mr52345580ejo.542.1594248113746;
+ Wed, 08 Jul 2020 15:41:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <000000000000db448f05a212beea@google.com>
+References: <20597345545df186f0a287c974c9dc88b5c940a0.1593808662.git.rgb@redhat.com>
+In-Reply-To: <20597345545df186f0a287c974c9dc88b5c940a0.1593808662.git.rgb@redhat.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 8 Jul 2020 18:41:42 -0400
+Message-ID: <CAHC9VhQT2O9GnVBhXvzpP+yNNoCqy-XTfMC7OHqz3xvFVaGvdw@mail.gmail.com>
+Subject: Re: [PATCH ghak84 v3] audit: purge audit_log_string from the
+ intra-kernel audit API
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        Eric Paris <eparis@parisplace.org>, john.johansen@canonical.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Casey,
+On Fri, Jul 3, 2020 at 5:50 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+>
+> audit_log_string() was inteded to be an internal audit function and
+> since there are only two internal uses, remove them.  Purge all external
+> uses of it by restructuring code to use an existing audit_log_format()
+> or using audit_log_format().
+>
+> Please see the upstream issue
+> https://github.com/linux-audit/audit-kernel/issues/84
+>
+> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> ---
+> Passes audit-testsuite.
+>
+> Changelog:
+> v3
+> - fix two warning: non-void function does not return a value in all control paths
+>         Reported-by: kernel test robot <lkp@intel.com>
+>
+> v2
+> - restructure to piggyback on existing audit_log_format() calls, checking quoting needs for each.
+>
+> v1 Vlad Dronov
+> - https://github.com/nefigtut/audit-kernel/commit/dbbcba46335a002f44b05874153a85b9cc18aebf
+>
+>  include/linux/audit.h     |  5 -----
+>  kernel/audit.c            |  4 ++--
+>  security/apparmor/audit.c | 10 ++++------
+>  security/apparmor/file.c  | 25 +++++++------------------
+>  security/apparmor/ipc.c   | 46 +++++++++++++++++++++++-----------------------
+>  security/apparmor/net.c   | 14 ++++++++------
+>  security/lsm_audit.c      |  4 ++--
+>  7 files changed, 46 insertions(+), 62 deletions(-)
 
-On Mon, Mar 30, 2020 at 06:51:18AM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following crash on:
-> 
-> HEAD commit:    1b649e0b Merge git://git.kernel.org/pub/scm/linux/kernel/g..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=14957099e00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=4ac76c43beddbd9
-> dashboard link: https://syzkaller.appspot.com/bug?extid=89731ccb6fec15ce1c22
-> compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1202c375e00000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1390bb03e00000
-> 
-> The bug was bisected to:
-> 
-> commit a9d2d53a788a9c5bc8a7d1b4ea7857b68e221357
-> Author: Ken Cox <jkc@redhat.com>
-> Date:   Tue Nov 15 19:00:37 2016 +0000
-> 
->     ixgbe: test for trust in macvlan adjustments for VF
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13cb06f3e00000
-> final crash:    https://syzkaller.appspot.com/x/report.txt?x=102b06f3e00000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=17cb06f3e00000
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+89731ccb6fec15ce1c22@syzkaller.appspotmail.com
-> Fixes: a9d2d53a788a ("ixgbe: test for trust in macvlan adjustments for VF")
-> 
-> RSP: 002b:00007ffebd499a38 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-> RAX: ffffffffffffffda RBX: 00007ffebd499a40 RCX: 00000000004404e9
-> RDX: 0000000000000014 RSI: 0000000020000040 RDI: 0000000000000003
-> RBP: 0000000000000004 R08: 0000000000000001 R09: 00007ffebd490031
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000401dd0
-> R13: 0000000000401e60 R14: 0000000000000000 R15: 0000000000000000
-> Kernel panic - not syncing: smack:  Failed to initialize cipso DOI.
-> CPU: 1 PID: 7197 Comm: syz-executor480 Not tainted 5.6.0-rc7-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x1e9/0x30e lib/dump_stack.c:118
->  panic+0x264/0x7a0 kernel/panic.c:221
->  smk_cipso_doi+0x4d8/0x4e0 security/smack/smackfs.c:698
->  smk_write_doi+0x123/0x190 security/smack/smackfs.c:1595
->  __vfs_write+0xa7/0x710 fs/read_write.c:494
->  vfs_write+0x271/0x570 fs/read_write.c:558
->  ksys_write+0x115/0x220 fs/read_write.c:611
->  do_syscall_64+0xf3/0x1b0 arch/x86/entry/common.c:294
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x4404e9
-> Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 5b 14 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-> RSP: 002b:00007ffebd499a38 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-> RAX: ffffffffffffffda RBX: 00007ffebd499a40 RCX: 00000000004404e9
-> RDX: 0000000000000014 RSI: 0000000020000040 RDI: 0000000000000003
-> RBP: 0000000000000004 R08: 0000000000000001 R09: 00007ffebd490031
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000401dd0
-> R13: 0000000000401e60 R14: 0000000000000000 R15: 0000000000000000
-> Kernel Offset: disabled
-> Rebooting in 86400 seconds..
-> 
+...
 
-This means that writing to /smack/doi will panic the kernel if kmalloc fails.
+> diff --git a/security/apparmor/audit.c b/security/apparmor/audit.c
+> index 597732503815..335b5b8d300b 100644
+> --- a/security/apparmor/audit.c
+> +++ b/security/apparmor/audit.c
+> @@ -57,18 +57,16 @@ static void audit_pre(struct audit_buffer *ab, void *ca)
+>         struct common_audit_data *sa = ca;
+>
+>         if (aa_g_audit_header) {
+> -               audit_log_format(ab, "apparmor=");
+> -               audit_log_string(ab, aa_audit_type[aad(sa)->type]);
+> +               audit_log_format(ab, "apparmor=%s",
+> +                                aa_audit_type[aad(sa)->type]);
+>         }
+>
+>         if (aad(sa)->op) {
+> -               audit_log_format(ab, " operation=");
+> -               audit_log_string(ab, aad(sa)->op);
+> +               audit_log_format(ab, " operation=%s", aad(sa)->op);
+>         }
 
-Why doesn't it handle errors?  Is this really an unrecoverable situation?
+In the case below you've added the quotes around the string, but they
+appear to be missing in the two cases above.
 
-- Eric
+>         if (aad(sa)->info) {
+> -               audit_log_format(ab, " info=");
+> -               audit_log_string(ab, aad(sa)->info);
+> +               audit_log_format(ab, " info=\"%s\"", aad(sa)->info);
+>                 if (aad(sa)->error)
+>                         audit_log_format(ab, " error=%d", aad(sa)->error);
+>         }
+> diff --git a/security/apparmor/file.c b/security/apparmor/file.c
+> index 9a2d14b7c9f8..70f27124d051 100644
+> --- a/security/apparmor/file.c
+> +++ b/security/apparmor/file.c
+> @@ -35,20 +35,6 @@ static u32 map_mask_to_chr_mask(u32 mask)
+>  }
+>
+>  /**
+> - * audit_file_mask - convert mask to permission string
+> - * @buffer: buffer to write string to (NOT NULL)
+> - * @mask: permission mask to convert
+> - */
+> -static void audit_file_mask(struct audit_buffer *ab, u32 mask)
+> -{
+> -       char str[10];
+> -
+> -       aa_perm_mask_to_str(str, sizeof(str), aa_file_perm_chrs,
+> -                           map_mask_to_chr_mask(mask));
+> -       audit_log_string(ab, str);
+> -}
+> -
+> -/**
+>   * file_audit_cb - call back for file specific audit fields
+>   * @ab: audit_buffer  (NOT NULL)
+>   * @va: audit struct to audit values of  (NOT NULL)
+> @@ -57,14 +43,17 @@ static void file_audit_cb(struct audit_buffer *ab, void *va)
+>  {
+>         struct common_audit_data *sa = va;
+>         kuid_t fsuid = current_fsuid();
+> +       char str[10];
+>
+>         if (aad(sa)->request & AA_AUDIT_FILE_MASK) {
+> -               audit_log_format(ab, " requested_mask=");
+> -               audit_file_mask(ab, aad(sa)->request);
+> +               aa_perm_mask_to_str(str, sizeof(str), aa_file_perm_chrs,
+> +                                   map_mask_to_chr_mask(aad(sa)->request));
+> +               audit_log_format(ab, " requested_mask=%s", str);
+>         }
+>         if (aad(sa)->denied & AA_AUDIT_FILE_MASK) {
+> -               audit_log_format(ab, " denied_mask=");
+> -               audit_file_mask(ab, aad(sa)->denied);
+> +               aa_perm_mask_to_str(str, sizeof(str), aa_file_perm_chrs,
+> +                                   map_mask_to_chr_mask(aad(sa)->denied));
+> +               audit_log_format(ab, " denied_mask=%s", str);
+>         }
+
+More missing quotes.
+
+>         if (aad(sa)->request & AA_AUDIT_FILE_MASK) {
+>                 audit_log_format(ab, " fsuid=%d",
+> diff --git a/security/apparmor/ipc.c b/security/apparmor/ipc.c
+> index 4ecedffbdd33..fe431731883f 100644
+> --- a/security/apparmor/ipc.c
+> +++ b/security/apparmor/ipc.c
+> @@ -20,25 +20,23 @@
+>
+>  /**
+>   * audit_ptrace_mask - convert mask to permission string
+> - * @buffer: buffer to write string to (NOT NULL)
+>   * @mask: permission mask to convert
+> + *
+> + * Returns: pointer to static string
+>   */
+> -static void audit_ptrace_mask(struct audit_buffer *ab, u32 mask)
+> +static const char *audit_ptrace_mask(u32 mask)
+>  {
+>         switch (mask) {
+>         case MAY_READ:
+> -               audit_log_string(ab, "read");
+> -               break;
+> +               return "read";
+>         case MAY_WRITE:
+> -               audit_log_string(ab, "trace");
+> -               break;
+> +               return "trace";
+>         case AA_MAY_BE_READ:
+> -               audit_log_string(ab, "readby");
+> -               break;
+> +               return "readby";
+>         case AA_MAY_BE_TRACED:
+> -               audit_log_string(ab, "tracedby");
+> -               break;
+> +               return "tracedby";
+>         }
+> +       return "";
+>  }
+>
+>  /* call back to audit ptrace fields */
+> @@ -47,12 +45,12 @@ static void audit_ptrace_cb(struct audit_buffer *ab, void *va)
+>         struct common_audit_data *sa = va;
+>
+>         if (aad(sa)->request & AA_PTRACE_PERM_MASK) {
+> -               audit_log_format(ab, " requested_mask=");
+> -               audit_ptrace_mask(ab, aad(sa)->request);
+> +               audit_log_format(ab, " requested_mask=%s",
+> +                                audit_ptrace_mask(aad(sa)->request));
+>
+>                 if (aad(sa)->denied & AA_PTRACE_PERM_MASK) {
+> -                       audit_log_format(ab, " denied_mask=");
+> -                       audit_ptrace_mask(ab, aad(sa)->denied);
+> +                       audit_log_format(ab, " denied_mask=%s",
+> +                                        audit_ptrace_mask(aad(sa)->denied));
+>                 }
+
+Quotes.  There are none.
+
+... and it looks like there are more missing too, but I kinda stopped
+seriously reading the patch here, please take a closer look at the
+patch, make the necessary changes, and resubmit.
+
+-- 
+paul moore
+www.paul-moore.com
