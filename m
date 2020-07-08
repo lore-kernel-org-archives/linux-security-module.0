@@ -2,118 +2,168 @@ Return-Path: <SRS0=/FKR=AT=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53DC5C433E2
-	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jul 2020 08:59:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65956C433E0
+	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jul 2020 11:02:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3D0D92222B
-	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jul 2020 08:59:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42CD620739
+	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jul 2020 11:02:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZZ9C/f2i"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728479AbgGHI7K convert rfc822-to-8bit (ORCPT
+        id S1728662AbgGHLCF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 8 Jul 2020 04:59:10 -0400
-Received: from mout.kundenserver.de ([212.227.126.130]:44433 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728349AbgGHI7J (ORCPT
+        Wed, 8 Jul 2020 07:02:05 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:26696 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728633AbgGHLB7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 8 Jul 2020 04:59:09 -0400
-Received: from mail-qk1-f173.google.com ([209.85.222.173]) by
- mrelayeu.kundenserver.de (mreue009 [212.227.15.129]) with ESMTPSA (Nemesis)
- id 1M1HmE-1jvpjt0Vpq-002q2u; Wed, 08 Jul 2020 10:59:07 +0200
-Received: by mail-qk1-f173.google.com with SMTP id 145so38292577qke.9;
-        Wed, 08 Jul 2020 01:59:06 -0700 (PDT)
-X-Gm-Message-State: AOAM5305UJ0SnXMSPNglsrHEvGM+hNgSwSEmNRF/8pbwwYLd0gnTHozI
-        Ceev+fOU1N607fAA9nf8GxOV5jGLjDy6uwvEJ94=
-X-Google-Smtp-Source: ABdhPJzLaMHmQ+d0DaK1+93L/dR3MzlE080J2I9IddvGS9yPpAL+dL55hLQlLBZanWkIYCvrPgtE5STzlyI22smNJzI=
-X-Received: by 2002:a05:620a:1654:: with SMTP id c20mr49067426qko.138.1594198745401;
- Wed, 08 Jul 2020 01:59:05 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200707180955.53024-1-mic@digikod.net> <20200707180955.53024-10-mic@digikod.net>
- <CAK8P3a0docCqHkEn9C7=e0GC_ieN1dsYgKQ9PbUmSZYxh9MRnw@mail.gmail.com>
- <8d2dab03-289e-2872-db66-ce80ce5c189f@digikod.net> <CAK8P3a3Mf_+-MY5kdeY7sqwUgCUi=PksWz1pGDy+o0ZfgF93Zw@mail.gmail.com>
- <956a05c8-529b-bf97-99ac-8958cceb35f3@digikod.net>
-In-Reply-To: <956a05c8-529b-bf97-99ac-8958cceb35f3@digikod.net>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 8 Jul 2020 10:58:49 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a0RKEb0jcisgaXVd6wJU6GaEsDAJp+jDFyJBdMPDE__ZQ@mail.gmail.com>
-Message-ID: <CAK8P3a0RKEb0jcisgaXVd6wJU6GaEsDAJp+jDFyJBdMPDE__ZQ@mail.gmail.com>
-Subject: Re: [PATCH v19 09/12] arch: Wire up landlock() syscall
-To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Wed, 8 Jul 2020 07:01:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1594206117;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=R5NESMLlssU1+fU+MzHpdMP4ATVfk6Mh7mmKV6aiRHE=;
+        b=ZZ9C/f2i2Fk62BYSwegaJTHQMsqj+SscleRbHgsup1BJCc09TwDH64R4PWyB2l5y4hmG1U
+        hbb7kScH12OrTyIGIqMNm7Jt1Gd1lrzvasxrGJcFoU+rNNcpQtsuFqHfU+h9JwDuALw3DO
+        XXBA4wvXKkkUUF9WFJWjDjy9qxIY2lQ=
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
+ [209.85.208.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-131-_ZDPvxgqO7GnTQArYlfV_g-1; Wed, 08 Jul 2020 07:01:54 -0400
+X-MC-Unique: _ZDPvxgqO7GnTQArYlfV_g-1
+Received: by mail-ed1-f71.google.com with SMTP id m12so57397012edv.3
+        for <linux-security-module@vger.kernel.org>; Wed, 08 Jul 2020 04:01:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=R5NESMLlssU1+fU+MzHpdMP4ATVfk6Mh7mmKV6aiRHE=;
+        b=PHC94jj2wB3chIX0S9H7lOPf7M2ck270K5aLAQGH4Xqa3iobKuOQWeDR2fszh8mvIr
+         hRR2hRKevAHmyNk40KJgGNK1aI/otEMIt9ZzKpFTaVA5xEhx6od4t2ba+DWcjFQ9JhoX
+         nMkAXUeFO57A+JJEfhEYkPqJ+SUtMiW2rbOozwL454K9xGLOOrSwiOg3M6fKGV3vXhVC
+         Qald+BEms//PhKkwjz3kKA0C9xpma3V8hsEtQK6hndwJBsQcaw1xBpk0JsEdFBHarz32
+         20C3AxONJMr1Z+E1NO5HrU5lJHH7obnz1k/KjwH04tdEf0ZIUuhQbnjbTyEAMMH+YAwq
+         KzNw==
+X-Gm-Message-State: AOAM532In43kkxNZraeXtE6Onx8Q+fjVzH9eZF+7XhuTS/975NmxM/iH
+        OlBCqOgbed9AqVkpjsqWxQQwg+JKRFvgB+8I5l/uGQYWjrsGBQQA39nI9hmkua22MtbI5XZQU3h
+        e3N2ZluDqvlv0NasAajsDrXuaJjreocB7dFBQ
+X-Received: by 2002:aa7:d297:: with SMTP id w23mr63681848edq.49.1594206112970;
+        Wed, 08 Jul 2020 04:01:52 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJyu3h7uw896uTUPxnA3LkPYXdQN/SwlS39PF0fY2ZywJDOPl8R3ZF8j4DbvajdrArtX/ozobQ==
+X-Received: by 2002:aa7:d297:: with SMTP id w23mr63681803edq.49.1594206112726;
+        Wed, 08 Jul 2020 04:01:52 -0700 (PDT)
+Received: from x1.localdomain (2001-1c00-0c0c-fe00-d2ea-f29d-118b-24dc.cable.dynamic.v6.ziggo.nl. [2001:1c00:c0c:fe00:d2ea:f29d:118b:24dc])
+        by smtp.gmail.com with ESMTPSA id p4sm1776088eja.9.2020.07.08.04.01.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 Jul 2020 04:01:52 -0700 (PDT)
+Subject: Re: [PATCH 0/4] Fix misused kernel_read_file() enums
+To:     Kees Cook <keescook@chromium.org>, James Morris <jmorris@namei.org>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Scott Branden <scott.branden@broadcom.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jessica Yu <jeyu@kernel.org>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
         Casey Schaufler <casey@schaufler-ca.com>,
-        James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
-        Jeff Dike <jdike@addtoit.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mickael.salaun@ssi.gouv.fr>,
-        Richard Weinberger <richard@nod.at>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-X-Provags-ID: V03:K1:xHTn1Z/zs2Cvp/Jis9ADqr2IAejWKErX2VZvYMpCYqk7nN38OGS
- hqnUoA/8tqXaX22IX+Xjh6COX7jWOlGeCZG9zOawyraaVVA3sM+bWf//mEECKw0TJHaa536
- emgPPoxis8hhtPlNxxeEeb1Goft2ZN7njCTaKLYp2KvXOYImAKvNR+oCJUtXuclxk+xiw5p
- 0PxGi/RwzrhVLDK+mdbmA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:GzkeslkO6gE=:kM5RpU6Q+0lHtyoGKEprs5
- sxAllv15rCucfKqU8mXI3zK1iYT9XCeSUlYwH9752GoVt7J0Zpz2Tg9VUAWLPDBOmYzwxeSTt
- Ifpioku+VVsk68jI7OD/eruKHQJcoW05Ey0jJFcttHyPUKRYHpSENXAF6RWxNTLuI4otqWbFY
- o6ubgL8EswGQfaIffXK1kV+JFxBKVd9NZPKoRWoVP8/fXe1KDtnoAdPsQebFwSWc1beN0wRf+
- Dg4DTijMBcy39pGVgdIb8mEusN9xP5Np5798PsP81bIuo0Jr/kLNfmExmU+vSVHQ1eaEpcBJK
- tRfCW5poVhYoONA50kzGlVvj2jghd1iFnWGKZeEvAyjV5pvfqlko37YnFHyc0kcW1goqt239z
- +xMaV3fxspXepCuxwuRysmfiZOs9RNw0dmGevVIW3fajMueAleKwAWAVLwbcDpHm+U5VtVFYU
- yqm3UMSJo6dpDcmudK6+W0axGOhQENhzasfnm9PwzlvsOw7fb3GkUJrp14cfCtOKTUl0RtW1J
- qqNaXcLzjVmBnN5vga/vpSL+zsI7o/gql/jFJMT9RGjEY2YS9dyeLMusbWY1rObpazlsQ3VNL
- WUu5yhqltGZZ818FNnJ90c3cFL3BrmmXHYcRnm+Mevg3S9Gp5IDwz1X0zMqoeA5W0cmWT2nwK
- pf2aGV8896rYBtjF/vNwroH3jxUKTT4xifWoBQbtr3MAqyb68uMmZnY0GH1Zn4rzfaNM8dnCL
- OVeK0Va6WupDozvzLvgKGDKe3gtW5E/pRngw1Pt89CzMq7tlQv26J9Km/IvqFiV/jQuwr8waY
- alHPx5jZsdXbdB5cbe8s0TkEtfpiEH435jS3YZ07RhRGXCCXAebID1JmASw5Z55B65K27gMae
- WyxSPqR9f3Dh1LGFMUXPAojxqv/xoGiIVpm8e3oN5/shl/9skrcCVzh+q0hm6VSMYViCg0Vjy
- DipXxUOLBS6ViaTQI6wtCgIG0FLBFpkFPWhwJezEscPn0InnY25Hj
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Matthew Garrett <matthewgarrett@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        KP Singh <kpsingh@google.com>, Dave Olsthoorn <dave@bewaar.me>,
+        Peter Jones <pjones@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Boyd <stephen.boyd@linaro.org>,
+        Paul Moore <paul@paul-moore.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+References: <20200707081926.3688096-1-keescook@chromium.org>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <3c01073b-c422-dd97-0677-c16fe1158907@redhat.com>
+Date:   Wed, 8 Jul 2020 13:01:51 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
+MIME-Version: 1.0
+In-Reply-To: <20200707081926.3688096-1-keescook@chromium.org>
+Content-Language: en-US
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=hdegoede@redhat.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jul 8, 2020 at 10:23 AM Mickaël Salaün <mic@digikod.net> wrote:
-> On 08/07/2020 09:47, Arnd Bergmann wrote:
-> > On Wed, Jul 8, 2020 at 9:31 AM Mickaël Salaün <mic@digikod.net> wrote:
-> >> On 08/07/2020 09:22, Arnd Bergmann wrote:
-> >>> On Tue, Jul 7, 2020 at 8:10 PM Mickaël Salaün <mic@digikod.net> wrote:
-> >>>
-> >>>> index f4a01305d9a6..a63a411a74d5 100644
-> >>>> --- a/include/uapi/asm-generic/unistd.h
-> >>>> +++ b/include/uapi/asm-generic/unistd.h
-> >>
-> >> OK, I'll rebase the next series on linux-next.
-> >
-> > Just change the number to the next free one, without actually rebasing.
-> > It's always a bit messy to have multiple syscalls added, but I think that
-> > causes the least confusion.
->
-> OK, but this will lead to two merge conflicts: patch 8 (asmlinkage) and
-> patch 9 (tbl files).
+Hi,
 
-Yes, there isn't really much one can do about that.
+On 7/7/20 10:19 AM, Kees Cook wrote:
+> Hi,
+> 
+> In looking for closely at the additions that got made to the
+> kernel_read_file() enums, I noticed that FIRMWARE_PREALLOC_BUFFER
+> and FIRMWARE_EFI_EMBEDDED were added, but they are not appropriate
+> *kinds* of files for the LSM to reason about. They are a "how" and
+> "where", respectively. Remove these improper aliases and refactor the
+> code to adapt to the changes.
+> 
+> Additionally adds in missing calls to security_kernel_post_read_file()
+> in the platform firmware fallback path (to match the sysfs firmware
+> fallback path) and in module loading. I considered entirely removing
+> security_kernel_post_read_file() hook since it is technically unused,
+> but IMA probably wants to be able to measure EFI-stored firmware images,
+> so I wired it up and matched it for modules, in case anyone wants to
+> move the module signature checks out of the module core and into an LSM
+> to avoid the current layering violations.
+> 
+> This touches several trees, and I suspect it would be best to go through
+> James's LSM tree.
+> 
+> Thanks!
 
-> Do you want me to update the tools/perf/arch/*.tbl too?
 
-No, I would leave them unchanged.
+I've done some quick tests on this series to make sure that
+the efi embedded-firmware support did not regress.
+That still works fine, so this series is;
 
-     Arnd
+Tested-by: Hans de Goede <hdegoede@redhat.com>
+
+Regards,
+
+Hans
+
+
+
+
+> 
+> -Kees
+> 
+> Kees Cook (4):
+>    firmware_loader: EFI firmware loader must handle pre-allocated buffer
+>    fs: Remove FIRMWARE_PREALLOC_BUFFER from kernel_read_file() enums
+>    fs: Remove FIRMWARE_EFI_EMBEDDED from kernel_read_file() enums
+>    module: Add hook for security_kernel_post_read_file()
+> 
+>   drivers/base/firmware_loader/fallback_platform.c | 12 ++++++++++--
+>   drivers/base/firmware_loader/main.c              |  5 ++---
+>   fs/exec.c                                        |  7 ++++---
+>   include/linux/fs.h                               |  3 +--
+>   include/linux/lsm_hooks.h                        |  6 +++++-
+>   kernel/module.c                                  |  7 ++++++-
+>   security/integrity/ima/ima_main.c                |  6 ++----
+>   7 files changed, 30 insertions(+), 16 deletions(-)
+> 
+
