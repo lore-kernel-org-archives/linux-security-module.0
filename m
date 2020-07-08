@@ -2,149 +2,91 @@ Return-Path: <SRS0=/FKR=AT=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49127C433E1
-	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jul 2020 00:47:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87C4EC433E0
+	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jul 2020 02:54:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2FA4D2073E
-	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jul 2020 00:47:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 59A2820708
+	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jul 2020 02:54:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728400AbgGHAru (ORCPT
+        id S1728001AbgGHCyO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 7 Jul 2020 20:47:50 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:17972 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728184AbgGHArt (ORCPT
+        Tue, 7 Jul 2020 22:54:14 -0400
+Received: from mga17.intel.com ([192.55.52.151]:26914 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727090AbgGHCyO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 7 Jul 2020 20:47:49 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0680VUbw086164;
-        Tue, 7 Jul 2020 20:47:29 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3252xwscfn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 07 Jul 2020 20:47:28 -0400
-Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 0680fQqY113018;
-        Tue, 7 Jul 2020 20:47:28 -0400
-Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3252xwscf2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 07 Jul 2020 20:47:28 -0400
-Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
-        by ppma04ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 0680UP1Q012228;
-        Wed, 8 Jul 2020 00:47:26 GMT
-Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
-        by ppma04ams.nl.ibm.com with ESMTP id 322hd7uy4k-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 08 Jul 2020 00:47:26 +0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0680k2dq61211110
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 8 Jul 2020 00:46:02 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EAD32A4040;
-        Wed,  8 Jul 2020 00:47:23 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CD9E5A4051;
-        Wed,  8 Jul 2020 00:47:20 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.200.130])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed,  8 Jul 2020 00:47:20 +0000 (GMT)
-Message-ID: <1594169240.23056.143.camel@linux.ibm.com>
-Subject: Re: [PATCH 4/4] module: Add hook for
- security_kernel_post_read_file()
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Kees Cook <keescook@chromium.org>, James Morris <jmorris@namei.org>
-Cc:     Jessica Yu <jeyu@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>,
-        Scott Branden <scott.branden@broadcom.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Matthew Garrett <matthewgarrett@google.com>,
-        David Howells <dhowells@redhat.com>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        KP Singh <kpsingh@google.com>, Dave Olsthoorn <dave@bewaar.me>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Peter Jones <pjones@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Boyd <stephen.boyd@linaro.org>,
-        Paul Moore <paul@paul-moore.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Date:   Tue, 07 Jul 2020 20:47:20 -0400
-In-Reply-To: <20200707081926.3688096-5-keescook@chromium.org>
-References: <20200707081926.3688096-1-keescook@chromium.org>
-         <20200707081926.3688096-5-keescook@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-07-07_14:2020-07-07,2020-07-07 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
- impostorscore=0 phishscore=0 cotscore=-2147483648 priorityscore=1501
- bulkscore=0 clxscore=1015 mlxlogscore=999 adultscore=0 lowpriorityscore=0
- suspectscore=2 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2004280000 definitions=main-2007070158
+        Tue, 7 Jul 2020 22:54:14 -0400
+IronPort-SDR: XmDjGg8HIbBEtqh1XtGAMIi/RtSzgA4O43RPdLR9k3G+cVuQDmXD81B8MZ8f1LrMIKHyTtP9J/
+ tP2Ur16Zsu4w==
+X-IronPort-AV: E=McAfee;i="6000,8403,9675"; a="127810476"
+X-IronPort-AV: E=Sophos;i="5.75,326,1589266800"; 
+   d="scan'208";a="127810476"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2020 19:54:13 -0700
+IronPort-SDR: EBZvnd03NPS+TuhppMhOZNF6878Wnw1XPq3zJLTvztc+6oIjBNCD+CkeshtoVSXuD+7V7Q56z5
+ UgKhwF/EwbNw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.75,326,1589266800"; 
+   d="scan'208";a="322825400"
+Received: from lkp-server01.sh.intel.com (HELO f2047cb89c8e) ([10.239.97.150])
+  by FMSMGA003.fm.intel.com with ESMTP; 07 Jul 2020 19:54:12 -0700
+Received: from kbuild by f2047cb89c8e with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1jt0Dr-0000VB-R6; Wed, 08 Jul 2020 02:54:11 +0000
+Date:   Wed, 8 Jul 2020 10:53:13 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Daniel Colascione <dancol@google.com>
+Cc:     kbuild-all@lists.01.org, linux-security-module@vger.kernel.org,
+        James Morris <jmorris@namei.org>
+Subject: [PATCH] fix err_cast.cocci warnings
+Message-ID: <20200708025313.GA9647@57f8f660a35b>
+References: <202007081008.YPssDcFv%lkp@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202007081008.YPssDcFv%lkp@intel.com>
+X-Patchwork-Hint: ignore
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 2020-07-07 at 01:19 -0700, Kees Cook wrote:
-> Calls to security_kernel_load_data() should be paired with a call to
-> security_kernel_post_read_file() with a NULL file argument. Add the
-> missing call so the module contents are visible to the LSMs interested
-> in measuring the module content. (This also paves the way for moving
-> module signature checking out of the module core and into an LSM.)
-> 
-> Cc: Jessica Yu <jeyu@kernel.org>
-> Fixes: c77b8cdf745d ("module: replace the existing LSM hook in init_module")
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> ---
->  kernel/module.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/kernel/module.c b/kernel/module.c
-> index 0c6573b98c36..af9679f8e5c6 100644
-> --- a/kernel/module.c
-> +++ b/kernel/module.c
-> @@ -2980,7 +2980,12 @@ static int copy_module_from_user(const void __user *umod, unsigned long len,
->  		return -EFAULT;
->  	}
->  
-> -	return 0;
-> +	err = security_kernel_post_read_file(NULL, (char *)info->hdr,
-> +					     info->len, READING_MODULE);
+From: kernel test robot <lkp@intel.com>
 
-There was a lot of push back on calling security_kernel_read_file()
-with a NULL file descriptor here.[1]  The result was defining a new
-security hook - security_kernel_load_data - and enumeration -
-LOADING_MODULE.  I would prefer calling the same pre and post security
-hook.
+fs/anon_inodes.c:92:10-17: WARNING: ERR_CAST can be used with inode
 
-Mimi
 
-[1] http://kernsec.org/pipermail/linux-security-module-archive/2018-Ma
-y/007110.html
+ Use ERR_CAST inlined function instead of ERR_PTR(PTR_ERR(...))
 
-> +	if (err)
-> +		vfree(info->hdr);
-> +
-> +	return err;
->  }
->  
->  static void free_copy(struct load_info *info)
+Generated by: scripts/coccinelle/api/err_cast.cocci
 
+Fixes: 2749d3f84a70 ("Add a new LSM-supporting anonymous inode interface")
+CC: Daniel Colascione <dancol@google.com>
+Signed-off-by: kernel test robot <lkp@intel.com>
+---
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git secure_uffd_v5.9
+head:   d08ac70b1e0dc71ac2315007bcc3efb283b2eae4
+commit: 2749d3f84a708110ed0359579be0eddd2c4036da [1/3] Add a new LSM-supporting anonymous inode interface
+
+ anon_inodes.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/fs/anon_inodes.c
++++ b/fs/anon_inodes.c
+@@ -89,7 +89,7 @@ struct file *_anon_inode_getfile(const c
+ 		inode =	anon_inode_make_secure_inode(
+ 			name, context_inode);
+ 		if (IS_ERR(inode))
+-			return ERR_PTR(PTR_ERR(inode));
++			return ERR_CAST(inode);
+ 	} else {
+ 		inode =	anon_inode_inode;
+ 		if (IS_ERR(inode))
