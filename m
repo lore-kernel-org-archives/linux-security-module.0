@@ -2,130 +2,108 @@ Return-Path: <SRS0=/FKR=AT=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 466AEC433E4
-	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jul 2020 15:44:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1F52C433DF
+	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jul 2020 16:13:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 244BB206DF
-	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jul 2020 15:44:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1594223073;
-	bh=ma9ZvKZoF5WtM7bB9wnNI5b3TrDkNcZs7yoCrAsR6v8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=kMQDm5cZDUx4YGCQDO9/vrytZbdmGeuam7Wv675KKiEanf4uLBjgpeUyPUYGzvcpA
-	 OiSmawbKpc5OM1dWn3oJnxNBZ4ddtS8MbK57wjwueqB/Bywk3C03GZRUnottatzXzi
-	 yYZb5YBI7qHPVq8p+JV/AP8bVTMQpNQyGzPJyg0w=
+	by mail.kernel.org (Postfix) with ESMTP id B94B92078D
+	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jul 2020 16:13:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730349AbgGHPoc (ORCPT
+        id S1730243AbgGHQNW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 8 Jul 2020 11:44:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47720 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730366AbgGHPlW (ORCPT
+        Wed, 8 Jul 2020 12:13:22 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43820 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728148AbgGHQNV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 8 Jul 2020 11:41:22 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AEF03207C4;
-        Wed,  8 Jul 2020 15:41:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1594222881;
-        bh=ma9ZvKZoF5WtM7bB9wnNI5b3TrDkNcZs7yoCrAsR6v8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Lc7kTyVUhaabkaPq0cp3rdRFkukxeEiq5qTfWRlwgPg2v7XZeltCtzNA94MgIpjjj
-         0tVX2x6tj14cO4chyViHQkWT1ZgIlnOE5dEnH3ICeLwy65SZoBT7EwEhN7siK2PsXd
-         aYZy5LnT3KyhdjmQ7rOyMBGiShdWTli0gqdoPSRo=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+        Wed, 8 Jul 2020 12:13:21 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 068G1smT029292;
+        Wed, 8 Jul 2020 12:13:19 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 325h8kggm4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 08 Jul 2020 12:13:19 -0400
+Received: from m0098416.ppops.net (m0098416.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 068G2P7X032157;
+        Wed, 8 Jul 2020 12:13:18 -0400
+Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 325h8kggka-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 08 Jul 2020 12:13:18 -0400
+Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
+        by ppma04ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 068GAtpv010405;
+        Wed, 8 Jul 2020 16:13:17 GMT
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
+        by ppma04ams.nl.ibm.com with ESMTP id 322hd7vrdn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 08 Jul 2020 16:13:17 +0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 068GDEqx196934
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 8 Jul 2020 16:13:15 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CC23DAE05A;
+        Wed,  8 Jul 2020 16:13:14 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E1589AE058;
+        Wed,  8 Jul 2020 16:13:13 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.202.84])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed,  8 Jul 2020 16:13:13 +0000 (GMT)
+Message-ID: <1594224793.23056.251.camel@linux.ibm.com>
+Subject: Re: [PATCH AUTOSEL 5.7 03/30] ima: extend boot_aggregate with
+ kernel measurements
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
 Cc:     Maurizio Drocco <maurizio.drocco@ibm.com>,
         Bruno Meneguele <bmeneg@redhat.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Sasha Levin <sashal@kernel.org>,
         linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.7 03/30] ima: extend boot_aggregate with kernel measurements
-Date:   Wed,  8 Jul 2020 11:40:49 -0400
-Message-Id: <20200708154116.3199728-3-sashal@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200708154116.3199728-1-sashal@kernel.org>
+Date:   Wed, 08 Jul 2020 12:13:13 -0400
+In-Reply-To: <20200708154116.3199728-3-sashal@kernel.org>
 References: <20200708154116.3199728-1-sashal@kernel.org>
-MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
+         <20200708154116.3199728-3-sashal@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-07-08_13:2020-07-08,2020-07-08 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1031
+ cotscore=-2147483648 bulkscore=0 adultscore=0 lowpriorityscore=0
+ impostorscore=0 phishscore=0 mlxlogscore=999 spamscore=0 mlxscore=0
+ malwarescore=0 priorityscore=1501 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2004280000 definitions=main-2007080106
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Maurizio Drocco <maurizio.drocco@ibm.com>
+Hi Sasha,
 
-[ Upstream commit 20c59ce010f84300f6c655d32db2610d3433f85c ]
+On Wed, 2020-07-08 at 11:40 -0400, Sasha Levin wrote:
+> From: Maurizio Drocco <maurizio.drocco@ibm.com>
+> 
+> [ Upstream commit 20c59ce010f84300f6c655d32db2610d3433f85c ]
+> 
+> Registers 8-9 are used to store measurements of the kernel and its
+> command line (e.g., grub2 bootloader with tpm module enabled). IMA
+> should include them in the boot aggregate. Registers 8-9 should be
+> only included in non-SHA1 digests to avoid ambiguity.
 
-Registers 8-9 are used to store measurements of the kernel and its
-command line (e.g., grub2 bootloader with tpm module enabled). IMA
-should include them in the boot aggregate. Registers 8-9 should be
-only included in non-SHA1 digests to avoid ambiguity.
+Prior to Linux 5.8, the SHA1 template data hashes were padded before
+being extended into the TPM.  Support for calculating and extending
+the per TPM bank template data digests is only being upstreamed in
+Linux 5.8.
 
-Signed-off-by: Maurizio Drocco <maurizio.drocco@ibm.com>
-Reviewed-by: Bruno Meneguele <bmeneg@redhat.com>
-Tested-by: Bruno Meneguele <bmeneg@redhat.com>  (TPM 1.2, TPM 2.0)
-Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- security/integrity/ima/ima.h        |  2 +-
- security/integrity/ima/ima_crypto.c | 15 ++++++++++++++-
- 2 files changed, 15 insertions(+), 2 deletions(-)
+How will attestation servers know whether to include PCRs 8 & 9 in the
+the boot_aggregate calculation?  Now, there is a direct relationship
+between the template data SHA1 padded digest not including PCRs 8 & 9,
+and the new per TPM bank template data digest including them.
 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 495e28bd488e6..844a55225ede0 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -30,7 +30,7 @@
- 
- enum ima_show_type { IMA_SHOW_BINARY, IMA_SHOW_BINARY_NO_FIELD_LEN,
- 		     IMA_SHOW_BINARY_OLD_STRING_FMT, IMA_SHOW_ASCII };
--enum tpm_pcrs { TPM_PCR0 = 0, TPM_PCR8 = 8 };
-+enum tpm_pcrs { TPM_PCR0 = 0, TPM_PCR8 = 8, TPM_PCR10 = 10 };
- 
- /* digest size for IMA, fits SHA1 or MD5 */
- #define IMA_DIGEST_SIZE		SHA1_DIGEST_SIZE
-diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
-index fb27174806ba4..e0738d1d143d7 100644
---- a/security/integrity/ima/ima_crypto.c
-+++ b/security/integrity/ima/ima_crypto.c
-@@ -682,13 +682,26 @@ static int ima_calc_boot_aggregate_tfm(char *digest, u16 alg_id,
- 	if (rc != 0)
- 		return rc;
- 
--	/* cumulative sha1 over tpm registers 0-7 */
-+	/* cumulative digest over TPM registers 0-7 */
- 	for (i = TPM_PCR0; i < TPM_PCR8; i++) {
- 		ima_pcrread(i, &d);
- 		/* now accumulate with current aggregate */
- 		rc = crypto_shash_update(shash, d.digest,
- 					 crypto_shash_digestsize(tfm));
- 	}
-+	/*
-+	 * Extend cumulative digest over TPM registers 8-9, which contain
-+	 * measurement for the kernel command line (reg. 8) and image (reg. 9)
-+	 * in a typical PCR allocation. Registers 8-9 are only included in
-+	 * non-SHA1 boot_aggregate digests to avoid ambiguity.
-+	 */
-+	if (alg_id != TPM_ALG_SHA1) {
-+		for (i = TPM_PCR8; i < TPM_PCR10; i++) {
-+			ima_pcrread(i, &d);
-+			rc = crypto_shash_update(shash, d.digest,
-+						crypto_shash_digestsize(tfm));
-+		}
-+	}
- 	if (!rc)
- 		crypto_shash_final(shash, digest);
- 	return rc;
--- 
-2.25.1
-
+Mimi
