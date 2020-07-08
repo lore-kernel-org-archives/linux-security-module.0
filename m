@@ -2,132 +2,130 @@ Return-Path: <SRS0=/FKR=AT=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E94CC433E1
-	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jul 2020 04:49:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3E66C433DF
+	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jul 2020 04:52:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E17AC2078A
-	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jul 2020 04:49:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 92D7B20853
+	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jul 2020 04:52:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="WUXj1hng"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728673AbgGHEtI (ORCPT
+        id S1725829AbgGHEwJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 8 Jul 2020 00:49:08 -0400
-Received: from out02.mta.xmission.com ([166.70.13.232]:54028 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725446AbgGHEtI (ORCPT
+        Wed, 8 Jul 2020 00:52:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44864 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729554AbgGHEvu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 8 Jul 2020 00:49:08 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jt211-0001kS-7J; Tue, 07 Jul 2020 22:49:03 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jt210-0006xn-Av; Tue, 07 Jul 2020 22:49:03 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <greg@kroah.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>, bpf <bpf@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
+        Wed, 8 Jul 2020 00:51:50 -0400
+Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A378C08C5EE
+        for <linux-security-module@vger.kernel.org>; Tue,  7 Jul 2020 21:51:50 -0700 (PDT)
+Received: by mail-wm1-x342.google.com with SMTP id g75so1491850wme.5
+        for <linux-security-module@vger.kernel.org>; Tue, 07 Jul 2020 21:51:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=YM0IzGADgX2tl1Mp5AFtyEMSY+GtGZFBS0TzG37PEVo=;
+        b=WUXj1hnghzt3S3Xl8PkHIhKgc4y1+imaFlRTqYId1bXkQETCFWvksi9OaC5IchDWnN
+         /G3tZ3QPpXYdo0LQXnUBTJmqJT9KSLHL1W0ppqEv0GzEoRLMsgv7oAFu9hXuZV3qNwUU
+         EmbTjiaI3Wsm/bQlCldA6nvGa0OVis92xbh6I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=YM0IzGADgX2tl1Mp5AFtyEMSY+GtGZFBS0TzG37PEVo=;
+        b=bq90Ex27zGp1EHVbRC+LgjnjtC3cCbWCgveCkzt7LeCNaUeOZ+q7jrfq+No0tKSc4u
+         qMbvnNMONcL8wUWyeenmdchYxgnmPdXxfgE9KTqL6aYGlQKU1sY59LCisUdgs0NNvUqu
+         gQzMJPL77ElJVa7r0VT6qWZrlQR/9wRsTL/b7kZmVPv6ctUQChul+/6OTr9/v+wJ/Zvc
+         RFrlyQKxq6TJsvZErm+gLHyBjxM55VHROr/C03suSp3sCdgy0Tlsp0n1hyuhZSQhk3oe
+         3/vQgNefSuM+PX6xJZsywpnf29FXAesGrlG6SOd0qMzg0eXf+DO4NlxoliVMesDtN8wd
+         trIg==
+X-Gm-Message-State: AOAM530Wq9lQmobtRJh1iyiPNC47m7BnB0hrMDZFa5WVBnC5ru3/nK02
+        P+QROxl9KK4DRLTxFc0xwGnbJNdGrTQ0/A6kJGD2PFZpFup3/sjP1V0ggdXaAe2tgnqCDuIvHdi
+        yJavh8Orsjl1JGVWMg5HLl8ivBfJS+qkTNNUNlwX1qmG5J9Y94ZCktNxRw5D8sJVXRVtXeaJ1ZM
+        qHy7eDmdwENQB8E3SSSWmV
+X-Google-Smtp-Source: ABdhPJxCmxanR1p+Zv9NtrwZXxJyNGR3oD42FStMXE5QtLw0GpBvXi6oEnvGhedpl11EqTWK1HD1Eg==
+X-Received: by 2002:a1c:ba0b:: with SMTP id k11mr7135332wmf.140.1594183908367;
+        Tue, 07 Jul 2020 21:51:48 -0700 (PDT)
+Received: from [10.136.13.65] ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id y7sm3843597wrt.11.2020.07.07.21.51.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 Jul 2020 21:51:47 -0700 (PDT)
+Subject: Re: [PATCH v10 0/9] firmware: add request_partial_firmware_into_buf
+To:     Florian Fainelli <f.fainelli@gmail.com>,
         Luis Chamberlain <mcgrof@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-References: <20200625095725.GA3303921@kroah.com>
-        <778297d2-512a-8361-cf05-42d9379e6977@i-love.sakura.ne.jp>
-        <20200625120725.GA3493334@kroah.com>
-        <20200625.123437.2219826613137938086.davem@davemloft.net>
-        <CAHk-=whuTwGHEPjvtbBvneHHXeqJC=q5S09mbPnqb=Q+MSPMag@mail.gmail.com>
-        <87pn9mgfc2.fsf_-_@x220.int.ebiederm.org>
-        <87y2oac50p.fsf@x220.int.ebiederm.org>
-        <87bll17ili.fsf_-_@x220.int.ebiederm.org>
-        <20200629221231.jjc2czk3ul2roxkw@ast-mbp.dhcp.thefacebook.com>
-        <87eepwzqhd.fsf@x220.int.ebiederm.org>
-        <1f4d8b7e-bcff-f950-7dac-76e3c4a65661@i-love.sakura.ne.jp>
-        <87pn9euks9.fsf@x220.int.ebiederm.org>
-        <757f37f8-5641-91d2-be80-a96ebc74cacb@i-love.sakura.ne.jp>
-        <87h7upucqi.fsf@x220.int.ebiederm.org>
-        <d0266a24-dfab-83d0-e178-aa67c9f5ebc0@i-love.sakura.ne.jp>
-        <87lfk0nslu.fsf@x220.int.ebiederm.org>
-        <ec6a6e18-d7aa-3072-c8dc-b925398b8409@i-love.sakura.ne.jp>
-Date:   Tue, 07 Jul 2020 23:46:18 -0500
-In-Reply-To: <ec6a6e18-d7aa-3072-c8dc-b925398b8409@i-love.sakura.ne.jp>
-        (Tetsuo Handa's message of "Sat, 4 Jul 2020 15:57:38 +0900")
-Message-ID: <87o8oqipgl.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Wolfram Sang <wsa@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Brown <david.brown@linaro.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>, bjorn.andersson@linaro.org,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        Olof Johansson <olof@lixom.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
+        Takashi Iwai <tiwai@suse.de>, linux-kselftest@vger.kernel.org,
+        Andy Gross <agross@kernel.org>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+References: <20200706232309.12010-1-scott.branden@broadcom.com>
+ <c8bbabe6-0b25-a816-f95d-8af63010eaf2@gmail.com>
+From:   Scott Branden <scott.branden@broadcom.com>
+Message-ID: <6c6126cc-6572-b341-7808-5e573d0cfad8@broadcom.com>
+Date:   Tue, 7 Jul 2020 21:51:39 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1jt210-0006xn-Av;;;mid=<87o8oqipgl.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+sfYvpeMP1lDLTQFoc9fa68JTKvPiHbwU=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [PATCH v2 00/15] Make the user mode driver code a better citizen
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+In-Reply-To: <c8bbabe6-0b25-a816-f95d-8af63010eaf2@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Hi Florian,
 
-Just to make certain I understand what is going on I instrumented a
-kernel with some print statements.
-
-a) The workqueues and timers start before populate_rootfs.
-
-b) populate_rootfs does indeed happen long before the bpfilter
-   module is intialized.
-
-c) What prevents populate_rootfs and the umd_load_blob from
-   having problems when they call flush_delayed_put is the
-   fact that fput_many does:
-   "schedule_delayed_work(&delayed_fput_work,1)".
-
-   That 1 requests a delay of at least 1 jiffy.  A jiffy is between
-   1ms and 10ms depending on how Linux is configured.
-
-   In my test configuration running a kernel in kvm printing to a serial
-   console I measured 0.8ms between the fput in blob_to_mnt and
-   flush_delayed_fput which immediately follows it.
-
-   So unless the fput becomes incredibly slow there is nothing to worry
-   about in blob_to_mnt.
-
-d) As the same mechanism is used by populate_rootfs.  A but in the
-   mechanism applies to both.
-
-e) No one appears to have reported a problem executing files out of
-   initramfs these last several years since the flush_delayed_fput was
-   introduced.
- 
-f) The code works for me.  There is real reason to believe the code will
-   work for everyone else, as the exact same logic is used by initramfs.
-   So it should be perfectly fine for the patchset and the
-   usermode_driver code to go ahead as written.
-
-h) If there is something to be fixed it is flush_delayed_fput as that is
-   much more important than anything in the usermode driver code.
-
-Eric
-
-p.s.) When I talked of restarts of the usermode driver code ealier I was
-   referring to the code that restarts the usermode driver if it is
-   killed, the next time the kernel tries to talk to it.
-
-   That could mask an -ETXTBUSY except if it happens on the first exec
-   the net/bfilter/bpfilter_kern.c:load_umh() will return an error.
+On 2020-07-07 9:38 p.m., Florian Fainelli wrote:
+>
+> On 7/6/2020 4:23 PM, Scott Branden wrote:
+>> This patch series adds partial read support via a new call
+>> request_partial_firmware_into_buf.
+>> Such support is needed when the whole file is not needed and/or
+>> only a smaller portion of the file will fit into allocated memory
+>> at any one time.
+>> In order to accept the enhanced API it has been requested that kernel
+>> selftests and upstreamed driver utilize the API enhancement and so
+>> are included in this patch series.
+>>
+>> Also in this patch series is the addition of a new Broadcom VK driver
+>> utilizing the new request_firmware_into_buf enhanced API.
+>>
+>> Further comment followed to add IMA support of the partial reads
+>> originating from request_firmware_into_buf calls.  And another request
+>> to move existing kernel_read_file* functions to its own include file.
+> Do you have any way to separate the VK drivers submission from the
+> request_partial_firmware_into_buf() work that you are doing? It looks
+> like it is going to require quite a few iterations of this patch set for
+> the firmware/fs/IMA part to be ironed out, so if you could get your
+> driver separated out, it might help you achieve partial success here.
+Originally I did not submit the driver.
+But Greg K-H rejected the pread support unless there was an actual user 
+in the kernel.
+Hence the need to submit this all in the patch series.
 
