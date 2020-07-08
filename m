@@ -2,28 +2,29 @@ Return-Path: <SRS0=/FKR=AT=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24856C433DF
-	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jul 2020 08:28:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C133DC433E4
+	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jul 2020 08:28:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0D75B20C09
-	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jul 2020 08:28:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4F1621527
+	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jul 2020 08:28:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728130AbgGHI21 (ORCPT
+        id S1728190AbgGHI2i (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 8 Jul 2020 04:28:27 -0400
-Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:36088 "EHLO
-        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727818AbgGHI20 (ORCPT
+        Wed, 8 Jul 2020 04:28:38 -0400
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:43128 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728142AbgGHI2c (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 8 Jul 2020 04:28:26 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07484;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=21;SR=0;TI=SMTPD_---0U25h8qW_1594196898;
-Received: from localhost(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0U25h8qW_1594196898)
+        Wed, 8 Jul 2020 04:28:32 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R791e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04397;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=21;SR=0;TI=SMTPD_---0U26GEW2_1594196904;
+Received: from localhost(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0U26GEW2_1594196904)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 08 Jul 2020 16:28:18 +0800
+          Wed, 08 Jul 2020 16:28:24 +0800
 From:   Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
 To:     herbert@gondor.apana.org.au, davem@davemloft.net,
         dhowells@redhat.com, mcoquelin.stm32@gmail.com,
@@ -36,119 +37,187 @@ Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         linux-integrity@vger.kernel.org, zhang.jia@linux.alibaba.com,
         tianjia.zhang@linux.alibaba.com
-Subject: [PATCH v4 0/8] crpyto: introduce OSCCA certificate and SM2 asymmetric algorithm 
-Date:   Wed,  8 Jul 2020 16:28:10 +0800
-Message-Id: <20200708082818.5511-1-tianjia.zhang@linux.alibaba.com>
+Subject: [PATCH v4 7/8] X.509: support OSCCA sm2-with-sm3 certificate verification
+Date:   Wed,  8 Jul 2020 16:28:17 +0800
+Message-Id: <20200708082818.5511-8-tianjia.zhang@linux.alibaba.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200708082818.5511-1-tianjia.zhang@linux.alibaba.com>
+References: <20200708082818.5511-1-tianjia.zhang@linux.alibaba.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello all,
+The digital certificate format based on SM2 crypto algorithm as
+specified in GM/T 0015-2012. It was published by State Encryption
+Management Bureau, China.
 
-This new module implement the OSCCA certificate and SM2 public key
-algorithm. It was published by State Encryption Management Bureau, China.
-List of specifications for OSCCA certificate and SM2 elliptic curve
-public key cryptography:
+The method of generating Other User Information is defined as
+ZA=H256(ENTLA || IDA || a || b || xG || yG || xA || yA), it also
+specified in https://tools.ietf.org/html/draft-shen-sm2-ecdsa-02.
 
-* GM/T 0003.1-2012
-* GM/T 0003.2-2012
-* GM/T 0003.3-2012
-* GM/T 0003.4-2012
-* GM/T 0003.5-2012
-* GM/T 0015-2012
-* GM/T 0009-2012 
+The x509 certificate supports sm2-with-sm3 type certificate
+verification.  Because certificate verification requires ZA
+in addition to tbs data, ZA also depends on elliptic curve
+parameters and public key data, so you need to access tbs in sig
+and calculate ZA. Finally calculate the digest of the
+signature and complete the verification work. The calculation
+process of ZA is declared in specifications GM/T 0009-2012
+and GM/T 0003.2-2012.
 
-IETF: https://tools.ietf.org/html/draft-shen-sm2-ecdsa-02
-oscca: http://www.oscca.gov.cn/sca/xxgk/2010-12/17/content_1002386.shtml
-scctc: http://www.gmbz.org.cn/main/bzlb.html
-
-These patchs add the OID object identifier defined by OSCCA. The
-x509 certificate supports sm2-with-sm3 type certificate parsing
-and verification.
-
-The sm2 algorithm is based on libgcrypt's mpi implementation, and has
-made some additions to the kernel's original mpi library, and added the
-implementation of ec to better support elliptic curve-like algorithms.
-
-sm2 has good support in both openssl and gnupg projects, and sm3 and sm4
-of the OSCCA algorithm family have also been implemented in the kernel.
-
-Among them, sm3 and sm4 have been well implemented in the kernel.
-This group of patches has newly introduced sm2. In order to implement
-sm2 more perfectly, I expanded the mpi library and introduced the
-ec implementation of the mpi library as the basic algorithm. Compared
-to the kernel's crypto/ecc.c, the implementation of mpi/ec.c is more
-complete and elegant, sm2 is implemented based on these algorithms.
-
+Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
 ---
-v4 changes:
-  1. Pass data directly when calculating sm2 certificate digest
-  2. rebase on mainline.
-
-v3 changes:
-  1. integrity asymmetric digsig support sm2-with-sm3 algorithm.
-  2. remove unused sm2_set_priv_key().
-  3. rebase on mainline.
-
-v2 changes:
-  1. simplify the sm2 algorithm and only retain the verify function.
-  2. extract the sm2 certificate code into a separate file.
-
-Tianjia Zhang (8):
-  crypto: sm3 - export crypto_sm3_final function
-  lib/mpi: Extend the MPI library
-  lib/mpi: Introduce ec implementation to MPI library
-  crypto: sm2 - introduce OSCCA SM2 asymmetric cipher algorithm
-  crypto: testmgr - support test with different ciphertext per
-    encryption
-  X.509: support OSCCA certificate parse
-  X.509: support OSCCA sm2-with-sm3 certificate verification
-  integrity: Asymmetric digsig supports SM2-with-SM3 algorithm
-
- crypto/Kconfig                            |   17 +
- crypto/Makefile                           |    8 +
- crypto/asymmetric_keys/Makefile           |    1 +
- crypto/asymmetric_keys/public_key.c       |    6 +
- crypto/asymmetric_keys/public_key_sm2.c   |   57 +
- crypto/asymmetric_keys/x509_cert_parser.c |   14 +-
- crypto/asymmetric_keys/x509_public_key.c  |    3 +
- crypto/sm2.c                              |  473 +++++++
- crypto/sm2signature.asn1                  |    4 +
- crypto/sm3_generic.c                      |    7 +-
- crypto/testmgr.c                          |    7 +-
- include/crypto/public_key.h               |   15 +
- include/crypto/sm2.h                      |   25 +
- include/crypto/sm3.h                      |    2 +
- include/linux/mpi.h                       |  193 +++
- include/linux/oid_registry.h              |    6 +
- lib/mpi/Makefile                          |    6 +
- lib/mpi/ec.c                              | 1538 +++++++++++++++++++++
- lib/mpi/mpi-add.c                         |  207 +++
- lib/mpi/mpi-bit.c                         |  251 ++++
- lib/mpi/mpi-cmp.c                         |   46 +-
- lib/mpi/mpi-div.c                         |  259 ++++
- lib/mpi/mpi-internal.h                    |   53 +
- lib/mpi/mpi-inv.c                         |  143 ++
- lib/mpi/mpi-mod.c                         |  155 +++
- lib/mpi/mpi-mul.c                         |  166 +++
- lib/mpi/mpicoder.c                        |  336 +++++
- lib/mpi/mpih-div.c                        |  294 ++++
- lib/mpi/mpih-mul.c                        |   25 +
- lib/mpi/mpiutil.c                         |  204 +++
- security/integrity/digsig_asymmetric.c    |   14 +-
- 31 files changed, 4517 insertions(+), 18 deletions(-)
+ crypto/asymmetric_keys/Makefile          |  1 +
+ crypto/asymmetric_keys/public_key.c      |  6 +++
+ crypto/asymmetric_keys/public_key_sm2.c  | 57 ++++++++++++++++++++++++
+ crypto/asymmetric_keys/x509_public_key.c |  3 ++
+ include/crypto/public_key.h              | 15 +++++++
+ 5 files changed, 82 insertions(+)
  create mode 100644 crypto/asymmetric_keys/public_key_sm2.c
- create mode 100644 crypto/sm2.c
- create mode 100644 crypto/sm2signature.asn1
- create mode 100644 include/crypto/sm2.h
- create mode 100644 lib/mpi/ec.c
- create mode 100644 lib/mpi/mpi-add.c
- create mode 100644 lib/mpi/mpi-div.c
- create mode 100644 lib/mpi/mpi-inv.c
- create mode 100644 lib/mpi/mpi-mod.c
- create mode 100644 lib/mpi/mpi-mul.c
 
+diff --git a/crypto/asymmetric_keys/Makefile b/crypto/asymmetric_keys/Makefile
+index 28b91adba2ae..d499367dd253 100644
+--- a/crypto/asymmetric_keys/Makefile
++++ b/crypto/asymmetric_keys/Makefile
+@@ -11,6 +11,7 @@ asymmetric_keys-y := \
+ 	signature.o
+ 
+ obj-$(CONFIG_ASYMMETRIC_PUBLIC_KEY_SUBTYPE) += public_key.o
++obj-$(CONFIG_CRYPTO_SM2) += public_key_sm2.o
+ obj-$(CONFIG_ASYMMETRIC_TPM_KEY_SUBTYPE) += asym_tpm.o
+ 
+ #
+diff --git a/crypto/asymmetric_keys/public_key.c b/crypto/asymmetric_keys/public_key.c
+index d7f43d4ea925..6b7a6286d5fd 100644
+--- a/crypto/asymmetric_keys/public_key.c
++++ b/crypto/asymmetric_keys/public_key.c
+@@ -298,6 +298,12 @@ int public_key_verify_signature(const struct public_key *pkey,
+ 	if (ret)
+ 		goto error_free_key;
+ 
++	if (strcmp(sig->pkey_algo, "sm2") == 0 && sig->data_size) {
++		ret = cert_sig_digest_update(sig, tfm);
++		if (ret)
++			goto error_free_key;
++	}
++
+ 	sg_init_table(src_sg, 2);
+ 	sg_set_buf(&src_sg[0], sig->s, sig->s_size);
+ 	sg_set_buf(&src_sg[1], sig->digest, sig->digest_size);
+diff --git a/crypto/asymmetric_keys/public_key_sm2.c b/crypto/asymmetric_keys/public_key_sm2.c
+new file mode 100644
+index 000000000000..b3df5c615b72
+--- /dev/null
++++ b/crypto/asymmetric_keys/public_key_sm2.c
+@@ -0,0 +1,57 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++/*
++ * asymmetric public-key algorithm for SM2-with-SM3 certificate
++ * as specified by OSCCA GM/T 0003.1-2012 -- 0003.5-2012 SM2 and
++ * described at https://tools.ietf.org/html/draft-shen-sm2-ecdsa-02
++ *
++ * Copyright (c) 2020, Alibaba Group.
++ * Authors: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
++ */
++
++#include <crypto/sm3_base.h>
++#include <crypto/sm2.h>
++#include "x509_parser.h"
++
++int cert_sig_digest_update(const struct public_key_signature *sig,
++				struct crypto_akcipher *tfm_pkey)
++{
++	struct crypto_shash *tfm;
++	struct shash_desc *desc;
++	size_t desc_size;
++	unsigned char dgst[SM3_DIGEST_SIZE];
++	int ret;
++
++	BUG_ON(!sig->data);
++
++	ret = sm2_compute_z_digest(tfm_pkey, SM2_DEFAULT_USERID,
++					SM2_DEFAULT_USERID_LEN, dgst);
++	if (ret)
++		return ret;
++
++	tfm = crypto_alloc_shash(sig->hash_algo, 0, 0);
++	if (IS_ERR(tfm))
++		return PTR_ERR(tfm);
++
++	desc_size = crypto_shash_descsize(tfm) + sizeof(*desc);
++	desc = kzalloc(desc_size, GFP_KERNEL);
++	if (!desc)
++		goto error_free_tfm;
++
++	desc->tfm = tfm;
++
++	ret = crypto_shash_init(desc);
++	if (ret < 0)
++		goto error_free_desc;
++
++	ret = crypto_shash_update(desc, dgst, SM3_DIGEST_SIZE);
++	if (ret < 0)
++		goto error_free_desc;
++
++	ret = crypto_shash_finup(desc, sig->data, sig->data_size, sig->digest);
++
++error_free_desc:
++	kfree(desc);
++error_free_tfm:
++	crypto_free_shash(tfm);
++	return ret;
++}
+diff --git a/crypto/asymmetric_keys/x509_public_key.c b/crypto/asymmetric_keys/x509_public_key.c
+index d964cc82b69c..ae450eb8be14 100644
+--- a/crypto/asymmetric_keys/x509_public_key.c
++++ b/crypto/asymmetric_keys/x509_public_key.c
+@@ -30,6 +30,9 @@ int x509_get_sig_params(struct x509_certificate *cert)
+ 
+ 	pr_devel("==>%s()\n", __func__);
+ 
++	sig->data = cert->tbs;
++	sig->data_size = cert->tbs_size;
++
+ 	if (!cert->pub->pkey_algo)
+ 		cert->unsupported_key = true;
+ 
+diff --git a/include/crypto/public_key.h b/include/crypto/public_key.h
+index 0588ef3bc6ff..861348dccd68 100644
+--- a/include/crypto/public_key.h
++++ b/include/crypto/public_key.h
+@@ -12,6 +12,7 @@
+ 
+ #include <linux/keyctl.h>
+ #include <linux/oid_registry.h>
++#include <crypto/akcipher.h>
+ 
+ /*
+  * Cryptographic data for the public-key subtype of the asymmetric key type.
+@@ -44,6 +45,8 @@ struct public_key_signature {
+ 	const char *pkey_algo;
+ 	const char *hash_algo;
+ 	const char *encoding;
++	const void *data;
++	unsigned int data_size;
+ };
+ 
+ extern void public_key_signature_free(struct public_key_signature *sig);
+@@ -81,4 +84,16 @@ extern int verify_signature(const struct key *,
+ int public_key_verify_signature(const struct public_key *pkey,
+ 				const struct public_key_signature *sig);
+ 
++#ifdef CONFIG_CRYPTO_SM2
++int cert_sig_digest_update(const struct public_key_signature *sig,
++				struct crypto_akcipher *tfm_pkey);
++#else
++static inline
++int cert_sig_digest_update(const struct public_key_signature *sig,
++				struct crypto_akcipher *tfm_pkey)
++{
++	return -ENOTSUPP;
++}
++#endif
++
+ #endif /* _LINUX_PUBLIC_KEY_H */
 -- 
 2.17.1
 
