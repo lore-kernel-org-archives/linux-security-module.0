@@ -2,195 +2,132 @@ Return-Path: <SRS0=/FKR=AT=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EC5FC433DF
-	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jul 2020 13:50:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40893C433E1
+	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jul 2020 14:08:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EF2B42067D
-	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jul 2020 13:50:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2968120720
+	for <linux-security-module@archiver.kernel.org>; Wed,  8 Jul 2020 14:08:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729741AbgGHNuT convert rfc822-to-8bit (ORCPT
+        id S1729248AbgGHOH7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 8 Jul 2020 09:50:19 -0400
-Received: from mout.kundenserver.de ([212.227.126.133]:46273 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729392AbgGHNuR (ORCPT
+        Wed, 8 Jul 2020 10:07:59 -0400
+Received: from mga02.intel.com ([134.134.136.20]:29263 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728148AbgGHOH7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 8 Jul 2020 09:50:17 -0400
-Received: from mail-qt1-f181.google.com ([209.85.160.181]) by
- mrelayeu.kundenserver.de (mreue009 [212.227.15.129]) with ESMTPSA (Nemesis)
- id 1MJm8H-1kCc5m2mEr-00K5vV; Wed, 08 Jul 2020 15:50:15 +0200
-Received: by mail-qt1-f181.google.com with SMTP id g13so34469581qtv.8;
-        Wed, 08 Jul 2020 06:50:14 -0700 (PDT)
-X-Gm-Message-State: AOAM532DtPDX0V0xlxgv5JdhWqePX0BHlyAKzf1pBVKlqTk15Xe/UREa
-        MWN2w1eQs9BJ7mLGKm77odAN5QFSEddKqu5Bm9k=
-X-Google-Smtp-Source: ABdhPJzGbqSLDVa+22V+OxqUS2NDeQMLg4lKFCfmasSmlQFshduHvuFJ4EYxw9p5RNP/z2hlcFkstPMlyhdckAfJkBA=
-X-Received: by 2002:ac8:7587:: with SMTP id s7mr60215048qtq.304.1594216213827;
- Wed, 08 Jul 2020 06:50:13 -0700 (PDT)
+        Wed, 8 Jul 2020 10:07:59 -0400
+IronPort-SDR: vmTDpWZTKkevxrFqlxBi71OawkZWrQcoY5aa5uOdxWccq+6D4Aln8z6653tDb3O7L6R5tNplUh
+ wGfeIyUoSg7Q==
+X-IronPort-AV: E=McAfee;i="6000,8403,9675"; a="136027091"
+X-IronPort-AV: E=Sophos;i="5.75,327,1589266800"; 
+   d="scan'208";a="136027091"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2020 07:07:58 -0700
+IronPort-SDR: /qeY/VuRKlFc+ez7PhFZz0m79tIeqkwYka6UISwhCTNiQf7Gl2A6cfELVsSKoz0gWSZGV6g9YT
+ eOPFAZnugEmA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.75,327,1589266800"; 
+   d="scan'208";a="283807420"
+Received: from jschirra-mobl.ger.corp.intel.com (HELO localhost) ([10.249.47.201])
+  by orsmga006.jf.intel.com with ESMTP; 08 Jul 2020 07:07:55 -0700
+Date:   Wed, 8 Jul 2020 17:07:53 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Stefan Berger <stefanb@linux.ibm.com>
+Cc:     Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-acpi@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v9 2/2] tpm: Add support for event log pointer found in
+ TPM2 ACPI table
+Message-ID: <20200708140753.GC538949@linux.intel.com>
+References: <20200706181953.3592084-1-stefanb@linux.vnet.ibm.com>
+ <20200706181953.3592084-3-stefanb@linux.vnet.ibm.com>
+ <20200706230914.GC20770@linux.intel.com>
+ <78ec872f-89b3-6464-6ede-bd0a46fe5c4c@linux.ibm.com>
+ <20200707022416.GC112019@linux.intel.com>
+ <f3e0fb50-8617-da40-1456-158531a070cb@linux.ibm.com>
+ <20200707040325.GB143804@linux.intel.com>
+ <85c27199-df55-eecc-855c-dedcea64f89e@linux.ibm.com>
 MIME-Version: 1.0
-References: <20200707180955.53024-1-mic@digikod.net> <20200707180955.53024-9-mic@digikod.net>
- <CAK8P3a0FkoxFtcQJ2jSqyLbDCOp3R8-1JoY8CWAgbSZ9hH9wdQ@mail.gmail.com> <7f407b67-d470-25fd-1287-f4f55f18e74a@digikod.net>
-In-Reply-To: <7f407b67-d470-25fd-1287-f4f55f18e74a@digikod.net>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 8 Jul 2020 15:49:57 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a1ehWZErD2a0iBqn37s-LTAtW0AbV_gt32iX3cQkXbpOQ@mail.gmail.com>
-Message-ID: <CAK8P3a1ehWZErD2a0iBqn37s-LTAtW0AbV_gt32iX3cQkXbpOQ@mail.gmail.com>
-Subject: Re: [PATCH v19 08/12] landlock: Add syscall implementation
-To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
-        Jeff Dike <jdike@addtoit.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mickael.salaun@ssi.gouv.fr>,
-        Richard Weinberger <richard@nod.at>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-X-Provags-ID: V03:K1:1EbzIoFyJM0srBmwqFU/S9OU4GrMN1MwPgI0Rt8D93c7MKFw8Vh
- XAL2Mqzq8tROm189yfmIAAkwGBnqfvIAFmIXjoKW2kH0dmD3+NzqCb/ckj+Eb8wYodD69GC
- UX3OO53NSdcm3ZmOC3ng/iiAQ+yoZ/tyGlG+Z6/45CQLkPDw6XjkwbRG4riXwmEhLWXzbtt
- 2tt6J/Rja18C7l932QkIQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:311prxkKa2c=:8xNBGuQmWDWcOOo2Np72ie
- iYO+qSJE0vLVPmqxDNEMH9dFwohmv/IWW8w1MF/hFbXPm1ZTuuL29xTPOLVO6ST1lamB63dgq
- /oyNrqfINWsYPsPTUGV/cvjcL12wbjSThqPq9j+6ybZ88xJ1hlCpG7zC70MMohYsMtvC0/SIT
- oN/1H71C4qmAu+L/SPY0peHovz8LZW5l1kOqlj1pRiT3cfNsIJqq3BWkcO2QxdQ7OTH4Rh3Md
- VYuOpujXqrqZROak/a+LvR6pfMrcfuLsChK42uYeO1GiIurqVJvwgub4REhXeM8VAXXlGriz2
- /IKPoq0hCetvMBo9tfZhs1pPp8E8zeToSTprSeimjAIrwySD5w0IQV74rrNzUMjNwL8N0OLBB
- pxTE7H0D6humbFN/t1om7dhvl54XNOdczbQ2OI7AV17J+xr73yD+VhIOrh46P86qN1V6LrR8b
- cgHzkU34XHWBn4XR7rMsvVoMLms6zcwrBlotosrs96bDtXU5hlS9XAGa1MiCKRpcMYtiuj2Wh
- z4IKSiXqa9dHsG4iQZ/Yhp5NyhKUJn5a87Bo3f3dYdbbe5/V5cYF1e3ARDNC0AiyIhLlGnhbE
- yh1kwxRPO4yWgeUu521IES/q3W0ZpDZvKmN3UAh1oWRZ1pjFo70KH8D5eNZ/4VNKJgMwGp9ac
- CintiunzKm45WMH+75nhq6ioxqoJXHnpppg4Y/eb0l9fpI0FfR+Z5Uy8MzM/cWttkZQysowIZ
- cYc5NdXuFeYXIy0/WwdZUz9PnrwF7QKFju3jnwHtxIZgMxQVqJ4FofJWQL3xAeq+4mbVdWgkB
- dYS6VeYAszYLC7uILbm9BGBMDWCvpBOEeN1WHWtUYBgKxmLQxeR5qze8YqtqKJ6L3gqefSQ0e
- 4Wm4oU3nd4D4LBcrPOHL3KMefI1JkXMLK9viTZKq1DQ0HLRF3zW/Y9YfikYvC7A/ZxIQ7pgj3
- dYx+DEA3oBMSb8iF+hUk1EDGJh/6S2o8/Wl+HRYz7j778DOnf9pqm
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <85c27199-df55-eecc-855c-dedcea64f89e@linux.ibm.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jul 8, 2020 at 3:04 PM Mickaël Salaün <mic@digikod.net> wrote:
-> On 08/07/2020 10:57, Arnd Bergmann wrote:
-> > On Tue, Jul 7, 2020 at 8:10 PM Mickaël Salaün <mic@digikod.net> wrote:
-> >
-> > It looks like all you need here today is a single argument bit, plus
-> > possibly some room for extensibility. I would suggest removing all
-> > the extra bits and using a syscall like
-> >
-> > SYSCALL_DEFINE1(landlock_create_ruleset, u32, flags);
-> >
-> > I don't really see how this needs any variable-length arguments,
-> > it really doesn't do much.
->
-> We need the attr_ptr/attr_size pattern because the number of ruleset
-> properties will increase (e.g. network access mask).
+On Tue, Jul 07, 2020 at 12:09:11AM -0400, Stefan Berger wrote:
+> On 7/7/20 12:03 AM, Jarkko Sakkinen wrote:
+> > On Mon, Jul 06, 2020 at 11:08:12PM -0400, Stefan Berger wrote:
+> > > On 7/6/20 10:24 PM, Jarkko Sakkinen wrote:
+> > > > On Mon, Jul 06, 2020 at 07:55:26PM -0400, Stefan Berger wrote:
+> > > > > On 7/6/20 7:09 PM, Jarkko Sakkinen wrote:
+> > > > > > On Mon, Jul 06, 2020 at 02:19:53PM -0400, Stefan Berger wrote:
+> > > > > > > From: Stefan Berger <stefanb@linux.ibm.com>
+> > > > > > > 
+> > > > > > > In case a TPM2 is attached, search for a TPM2 ACPI table when trying
+> > > > > > > to get the event log from ACPI. If one is found, use it to get the
+> > > > > > > start and length of the log area. This allows non-UEFI systems, such
+> > > > > > > as SeaBIOS, to pass an event log when using a TPM2.
+> > > > > > > 
+> > > > > > > Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+> > > > > > Do you think that QEMU with TPM 1.2 emulator turned on would be a viable
+> > > > > > way to test this?
+> > > > > Yes.
+> > > > Is the emulator bundled with QEMU or does it have to be installed
+> > > > separately?
+> > > It has to be installed separately. On Fedora 31 it would just be a `sudo dnf
+> > > -y install swtpm-tools` and you should be good to go with libvirt /
+> > > virt-manager.
+> > Is there some packaging for Debian/Ubuntu available?
+> 
+> 
+> So far may not be available yet. I had *experimented* with a PPA once:
+> https://launchpad.net/~stefanberger/+archive/ubuntu/swtpm-focal
 
-But how many bits do you think you will *actually* need in total that
-this needs to be a two-dimensional set of flags? At the moment you
-only have a single bit that you interpret.
+There is a snap available:
 
-> > To be on the safe side, you might split up the flags into either the
-> > upper/lower 16 bits or two u32 arguments, to allow both compatible
-> > (ignored by older kernels if flag is set) and incompatible (return error
-> > when an unknown flag is set) bits.
->
-> This may be a good idea in general, but in the case of Landlock, because
-> this kind of (discretionary) sandboxing should be a best-effort security
-> feature, we should avoid incompatible behavior. In practice, every
-> unknown bit returns an error because userland can probe for available
-> bits thanks to the get_features command. This kind of (in)compatibility
-> can then be handled by userland.
+name:      swtpm-mvo
+summary:   Libtpms-based TPM emulator
+publisher: Michael Vogt (mvo)
+store-url: https://snapcraft.io/swtpm-mvo
+license:   unset
+description: |
+  Libtpms-based TPM emulator with socket, character device, and Linux
+  CUSE interface.
+commands:
+  - swtpm-mvo.swtpm
+services:
+  swtpm-mvo.swtpm-sock: simple, enabled, active
+snap-id:      HNl1TwHRBk3OtXQ8OriRB93FDZ6vman7
+tracking:     latest/edge
+refresh-date: today at 02:05 EEST
+channels:
+  latest/stable:    –                         
+  latest/candidate: –                         
+  latest/beta:      0.1.0 2019-07-26 (11) 3MB -
+  latest/edge:      0.1.0 2020-07-08 (75) 3MB -
+installed:          0.1.0            (74) 3MB -
 
-If there are not going to be incompatible extensions, then just ignore
-all unknown bits and never return an error but get rid of the user
-space probing that just complicates the interface.
+This is the version information:
 
-In general, it's hard to rely on user space to first ask the kernel
-what it can do, the way this normally works is that user space
-asks the kernel for something and it either does it or not, but gives
-an indication of whether it worked.
+❯ swtpm-mvo.swtpm --version
+TPM emulator version 0.4.0, Copyright (c) 2014 IBM Corp.
 
-> I suggest this syscall signature:
-> SYSCALL_DEFINE3(landlock_create_ruleset, __u32, options, const struct
-> landlock_attr_ruleset __user *, ruleset_ptr, size_t, ruleset_size);
+However, if I try to run the first example from [*], I get:
 
-The other problem here is that indirect variable-size structured arguments
-are a pain to instrument with things like strace or seccomp, so you
-should first try to use a fixed argument list, and fall back to a fixed
-structure if that fails.
+❯ swtpm-mvo.swtpm socket --tpmstate dir=/tmp/mytpm1 \
+  --ctrl type=unixio,path=/tmp/mytpm1/swtpm-sock \
+  --log level=20
+swtpm: Could not open UnixIO socket: No such file or directory
 
-> >> +static int syscall_add_rule_path_beneath(const void __user *const attr_ptr,
-> >> +               const size_t attr_size)
-> >> +{
-> >> +       struct landlock_attr_path_beneath attr_path_beneath;
-> >> +       struct path path;
-> >> +       struct landlock_ruleset *ruleset;
-> >> +       int err;
-> >
-> > Similarly, it looks like this wants to be
-> >
-> > SYSCALL_DEFINE3(landlock_add_rule_path_beneath, int, ruleset, int,
-> > path, __u32, flags)
-> >
-> > I don't see any need to extend this in a way that wouldn't already
-> > be served better by adding another system call. You might argue
-> > that 'flags' and 'allowed_access' could be separate, with the latter
-> > being an indirect in/out argument here, like
-> >
-> > SYSCALL_DEFINE4(landlock_add_rule_path_beneath, int, ruleset, int, path,
-> >                            __u64 *, allowed_acces, __u32, flags)
->
-> To avoid adding a new syscall for each new rule type (e.g. path_beneath,
-> path_range, net_ipv4_range, etc.), I think it would be better to keep
-> the attr_ptr/attr_size pattern and to explicitely set a dedicated option
-> flag to specify the attr type.
->
-> This would look like this:
-> SYSCALL_DEFINE4(landlock_add_rule, __u32, options, int, ruleset, const
-> void __user *, rule_ptr, size_t, rule_size);
->
-> The rule_ptr could then point to multiple types like struct
-> landlock_attr_path_beneath (without the current ruleset_fd field).
+[*] https://www.qemu.org/docs/master/specs/tpm.html
 
-This again introduces variable-sized structured data. How many different
-kinds of rule types do you think there will be (most likely, and maybe an
-upper bound)?
-
-Could (some of) these be generalized to use the same data structure?
-
-> >> +static int syscall_enforce_ruleset(const void __user *const attr_ptr,
-> >> +               const size_t attr_size)
-> >
-> > Here it seems like you just need to pass the file descriptor, or maybe
-> >
-> > SYSCALL_DEFINE2(landlock_enforce, int, ruleset, __u32 flags);
-> >
-> > if you need flags for extensibility.
->
-> Right, but for consistency I prefer to change the arguments like this:
-> SYSCALL_DEFINE2(landlock_enforce, __u32 options, int, ruleset);
-
-Most system calls pass the object they work on as the first argument,
-in this case this would be the ruleset file descriptor.
-
-     Arnd
+/Jarkko
