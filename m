@@ -2,206 +2,258 @@ Return-Path: <SRS0=TKeG=AU=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1731C433E1
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 Jul 2020 16:28:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EA48C433E0
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 Jul 2020 17:26:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 80A48207DD
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 Jul 2020 16:28:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E2B7C207D0
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 Jul 2020 17:26:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726910AbgGIQ2w (ORCPT
+        id S1728459AbgGIR0o convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 9 Jul 2020 12:28:52 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:42153 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726408AbgGIQ2w (ORCPT
+        Thu, 9 Jul 2020 13:26:44 -0400
+Received: from mout.kundenserver.de ([212.227.17.10]:55053 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726765AbgGIR0l (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 9 Jul 2020 12:28:52 -0400
-Received: from static-50-53-54-182.bvtn.or.frontiernet.net ([50.53.54.182] helo=[192.168.192.153])
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <john.johansen@canonical.com>)
-        id 1jtZPh-0004eO-A2; Thu, 09 Jul 2020 16:28:45 +0000
-Subject: Re: [PATCH v18 05/23] net: Prepare UDS for security module stacking
-To:     Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Casey Schaufler <casey.schaufler@intel.com>,
-        James Morris <jmorris@namei.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        SElinux list <selinux@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>, netdev@vger.kernel.org
-References: <20200709001234.9719-1-casey@schaufler-ca.com>
- <20200709001234.9719-6-casey@schaufler-ca.com>
- <CAEjxPJ4EefLKKvMo=8ZWeA4gVioH=WQ=52rnMuW5TnyExmJsRg@mail.gmail.com>
-From:   John Johansen <john.johansen@canonical.com>
-Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
- LS0tLS1CRUdJTiBQR1AgUFVCTElDIEtFWSBCTE9DSy0tLS0tCgptUUlOQkU1bXJQb0JFQURB
- azE5UHNnVmdCS2tJbW1SMmlzUFE2bzdLSmhUVEtqSmR3VmJrV1NuTm4rbzZVcDVrCm5LUDFm
- NDlFQlFsY2VXZzF5cC9Od2JSOGFkK2VTRU8vdW1hL0srUHFXdkJwdEtDOVNXRDk3Rkc0dUI0
- L2Nhb20KTEVVOTdzTFFNdG52R1dkeHJ4VlJHTTRhbnpXWU1neno1VFptSWlWVFo0M091NVZw
- YVMxVnoxWlN4UDNoL3hLTgpaci9UY1c1V1FhaTh1M1BXVm5ia2poU1pQSHYxQmdoTjY5cXhF
- UG9tckpCbTFnbXR4M1ppVm1GWGx1d1RtVGdKCk9rcEZvbDduYkowaWxuWUhyQTdTWDNDdFIx
- dXBlVXBNYS9XSWFuVk85NldkVGpISElhNDNmYmhtUXViZTR0eFMKM0ZjUUxPSlZxUXN4NmxF
- OUI3cUFwcG05aFExMHFQV3dkZlB5LyswVzZBV3ROdTVBU2lHVkNJbld6bDJIQnFZZAovWmxs
- OTN6VXErTklvQ244c0RBTTlpSCt3dGFHRGNKeXdJR0luK2VkS050SzcyQU1nQ2hUZy9qMVpv
- V0g2WmVXClBqdVVmdWJWelp0bzFGTW9HSi9TRjRNbWRRRzFpUU50ZjRzRlpiRWdYdXk5Y0dp
- MmJvbUYwenZ5QkpTQU5weGwKS05CRFlLek42S3owOUhVQWtqbEZNTmdvbUwvY2pxZ0FCdEF4
- NTlMK2RWSVpmYUYyODFwSWNVWnp3dmg1K0pvRwplT1c1dUJTTWJFN0wzOG5zem9veWtJSjVY
- ckFjaGtKeE5mejdrK0ZuUWVLRWtOekVkMkxXYzNRRjRCUVpZUlQ2ClBISGdhM1JneWtXNSsx
- d1RNcUpJTGRtdGFQYlhyRjNGdm5WMExSUGN2NHhLeDdCM2ZHbTd5Z2Rvb3dBUkFRQUIKdEIx
- S2IyaHVJRXB2YUdGdWMyVnVJRHhxYjJodVFHcHFiWGd1Ym1WMFBva0NPZ1FUQVFvQUpBSWJB
- d1VMQ1FnSApBd1VWQ2drSUN3VVdBZ01CQUFJZUFRSVhnQVVDVG8wWVZ3SVpBUUFLQ1JBRkx6
- WndHTlhEMkx4SkQvOVRKWkNwCndsbmNUZ1llcmFFTWVEZmtXdjhjMUlzTTFqMEFtRTRWdEwr
- ZkU3ODBaVlA5Z2tqZ2tkWVN4dDdlY0VUUFRLTWEKWlNpc3JsMVJ3cVUwb29nWGRYUVNweHJH
- SDAxaWN1LzJuMGpjWVNxWUtnZ1B4eTc4QkdzMkxacTRYUGZKVFptSApaR25YR3EvZURyL21T
- bmowYWF2QkptTVo2amJpUHo2eUh0QllQWjlmZG84YnRjendQNDFZZVdvSXUyNi84SUk2CmYw
- WG0zVkM1b0FhOHY3UmQrUldaYThUTXdsaHpIRXh4ZWwzanRJN0l6ek9zbm1FOS84RG0wQVJE
- NWlUTENYd1IKMWN3SS9KOUJGL1MxWHY4UE4xaHVUM0l0Q05kYXRncDh6cW9Ka2dQVmptdnlM
- NjRRM2ZFa1liZkhPV3NhYmE5LwprQVZ0Qk56OVJURmg3SUhEZkVDVmFUb3VqQmQ3QnRQcXIr
- cUlqV0ZhZEpEM0k1ZUxDVkp2VnJyb2xyQ0FUbEZ0Ck4zWWtRczZKbjFBaUlWSVUzYkhSOEdq
- ZXZnejVMbDZTQ0dIZ1Jya3lScG5TWWFVL3VMZ24zN042QVl4aS9RQUwKK2J5M0N5RUZManpX
- QUV2eVE4YnEzSXVjbjdKRWJoUy9KLy9kVXFMb2VVZjh0c0dpMDB6bXJJVFpZZUZZQVJoUQpN
- dHNmaXpJclZEdHoxaVBmL1pNcDVnUkJuaXlqcFhuMTMxY20zTTNndjZIclFzQUdubjhBSnJ1
- OEdEaTVYSllJCmNvLzEreC9xRWlOMm5DbGFBT3BiaHpOMmVVdlBEWTVXMHEzYkEvWnAybWZH
- NTJ2YlJJK3RRMEJyMUhkL3ZzbnQKVUhPOTAzbU1aZXAyTnpOM0JaNXFFdlB2RzRyVzVacTJE
- cHliV2JRclNtOW9iaUJLYjJoaGJuTmxiaUE4YW05bwpiaTVxYjJoaGJuTmxia0JqWVc1dmJt
- bGpZV3d1WTI5dFBva0NOd1FUQVFvQUlRVUNUbzBYV2dJYkF3VUxDUWdICkF3VVZDZ2tJQ3dV
- V0FnTUJBQUllQVFJWGdBQUtDUkFGTHpad0dOWEQySXRNRC85anliYzg3ZE00dUFIazZ5Tk0K
- TjBZL0JGbW10VFdWc09CaHFPbm9iNGkzOEJyRE8yQzFoUUNQQ1FlNExMczEvNHB0ZW92UXQ4
- QjJGeXJQVmp3Zwo3alpUSE5LNzRyNmxDQ1Z4eDN5dTFCN1U5UG80VlRrY3NsVmIxL3FtV3V4
- OFhXY040eXZrVHFsTCtHeHB5Sm45CjlaWmZmWEpjNk9oNlRtT2ZiS0d2TXV1djVhclNJQTNK
- SEZMZjlhTHZadEExaXNKVXI3cFM5YXBnOXVUVUdVcDcKd2ZWMFdUNlQzZUczbXRVVTJ1cDVK
- VjQ4NTBMMDVqSFM2dVdpZS9ZK3lmSk9iaXlyeE4vNlpxVzVHb25oTEJxLwptc3pjVjV2QlQz
- QkRWZTNSdkY2WGRNOU9oUG4xK1k4MXg1NCt2UTExM044aUx3RjdHR2ExNFp5SVZBTlpEMEkw
- CkhqUnZhMmsvUnFJUlR6S3l1UEg1cGtsY0tIVlBFRk1tT3pNVCtGT294Tmp2Uys3K3dHMktN
- RFlFbUhQcjFQSkIKWlNaZUh6SzE5dGZhbFBNcHBGeGkrc3lZTGFnTjBtQjdKSFF3WTdjclV1
- T0RoeWNxNjBZVnoxdGFFeWd1M1l2MgoyL0kxRUNHSHZLSEc2d2M5MG80M0MvZWxIRUNYbkVo
- N3RLcGxEY3BJQytPQ21NeEtIaFI0NitYY1p2Z3c0RGdiCjdjYTgzZVFSM0NHODlMdlFwVzJM
- TEtFRUJEajdoWmhrTGJra1BSWm0zdzhKWTQ0YXc4VnRneFdkblNFTUNMeEwKSU9OaDZ1Wjcv
- L0RZVnRjSWFNSllrZWJhWnRHZENwMElnVVpiMjQvVmR2WkNZYk82MkhrLzNWbzFuWHdIVUVz
- Mwo2RC92MWJUMFJaRmk2OUxnc0NjT2N4NGdZTGtDRFFST1pxejZBUkFBb3F3NmtrQmhXeU0x
- ZnZnYW1BVmplWjZuCktFZm5SV2JrQzk0TDFFc0pMdXAzV2IyWDBBQk5PSFNrYlNENHBBdUMy
- dEtGL0VHQnQ1Q1A3UWRWS1JHY1F6QWQKNmIyYzFJZHk5Ukx3Nnc0Z2krbm4vZDFQbTFra1lo
- a1NpNXpXYUlnMG01UlFVaytFbDh6a2Y1dGNFLzFOMFo1TwpLMkpoandGdTViWDBhMGw0Y0ZH
- V1ZRRWNpVk1ES1J0eE1qRXRrM1N4RmFsbTZaZFEycHAyODIyY2xucTR6WjltCld1MWQyd2F4
- aXorYjVJYTR3ZURZYTduNDFVUmNCRVViSkFnbmljSmtKdENUd3lJeElXMktuVnlPcmp2a1F6
- SUIKdmFQMEZkUDJ2dlpvUE1kbENJek9sSWtQTGd4RTBJV3VlVFhlQkpoTnMwMXBiOGJMcW1U
- SU1sdTRMdkJFTEEvdgplaWFqajVzOHk1NDJIL2FIc2ZCZjRNUVVoSHhPL0JaVjdoMDZLU1Vm
- SWFZN09nQWdLdUdOQjNVaWFJVVM1K2E5CmduRU9RTER4S1J5L2E3UTF2OVMrTnZ4KzdqOGlI
- M2prUUpoeFQ2WkJoWkdSeDBna0gzVCtGMG5ORG01TmFKVXMKYXN3Z0pycUZaa1VHZDJNcm0x
- cW5Ld1hpQXQ4U0ljRU5kcTMzUjBLS0tSQzgwWGd3ajhKbjMwdlhMU0crTk8xRwpIMFVNY0F4
- TXd5L3B2azZMVTVKR2paUjczSjVVTFZoSDRNTGJEZ2dEM21QYWlHOCtmb3RUckpVUHFxaGc5
- aHlVCkVQcFlHN3NxdDc0WG43OStDRVpjakxIenlsNnZBRkUyVzBreGxMdFF0VVpVSE8zNmFm
- RnY4cUdwTzNacVB2akIKVXVhdFhGNnR2VVFDd2YzSDZYTUFFUUVBQVlrQ0h3UVlBUW9BQ1FV
- Q1RtYXMrZ0liREFBS0NSQUZMelp3R05YRAoyRC9YRC8wZGRNLzRhaTFiK1RsMWp6bkthalgz
- a0crTWVFWWVJNGY0MHZjbzNyT0xyblJHRk9jYnl5ZlZGNjlNCktlcGllNE93b0kxamNUVTBB
- RGVjbmJXbkROSHByMFNjenhCTXJvM2Juckxoc212anVuVFlJdnNzQlp0QjRhVkoKanVMSUxQ
- VWxuaEZxYTdmYlZxMFpRamJpVi9ydDJqQkVOZG05cGJKWjZHam5wWUljQWJQQ0NhL2ZmTDQv
- U1FSUwpZSFhvaEdpaVM0eTVqQlRtSzVsdGZld0xPdzAyZmtleEgrSUpGcnJHQlhEU2c2bjJT
- Z3hubisrTkYzNGZYY205CnBpYXczbUtzSUNtKzBoZE5oNGFmR1o2SVdWOFBHMnRlb29WRHA0
- ZFlpaCsreFgvWFM4ekJDYzFPOXc0bnpsUDIKZ0t6bHFTV2JoaVdwaWZSSkJGYTRXdEFlSlRk
- WFlkMzdqL0JJNFJXV2hueXc3YUFQTkdqMzN5dEdITlVmNlJvMgovanRqNHRGMXkvUUZYcWpK
- Ry93R2pwZHRSZmJ0VWpxTEhJc3ZmUE5OSnEvOTU4cDc0bmRBQ2lkbFdTSHpqK09wCjI2S3Bi
- Rm5td05PMHBzaVVzbmh2SEZ3UE8vdkFibDNSc1I1KzBSbytodnMyY0VtUXV2OXIvYkRsQ2Zw
- enAydDMKY0srcmh4VXFpc094OERaZnoxQm5rYW9DUkZidnZ2ays3TC9mb21QbnRHUGtxSmNp
- WUU4VEdIa1p3MWhPa3UrNApPb00yR0I1bkVEbGorMlRGL2pMUStFaXBYOVBrUEpZdnhmUmxD
- NmRLOFBLS2ZYOUtkZm1BSWNnSGZuVjFqU24rCjh5SDJkakJQdEtpcVcwSjY5YUlzeXg3aVYv
- MDNwYVBDakpoN1hxOXZBenlkTjVVL1VBPT0KPTZQL2IKLS0tLS1FTkQgUEdQIFBVQkxJQyBL
- RVkgQkxPQ0stLS0tLQo=
-Organization: Canonical
-Message-ID: <8a5a243f-e991-ad55-0503-654cc2587133@canonical.com>
-Date:   Thu, 9 Jul 2020 09:28:42 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        Thu, 9 Jul 2020 13:26:41 -0400
+Received: from mail-qk1-f173.google.com ([209.85.222.173]) by
+ mrelayeu.kundenserver.de (mreue106 [212.227.15.145]) with ESMTPSA (Nemesis)
+ id 1Mqagw-1kg8Ym2LE8-00mZEm; Thu, 09 Jul 2020 19:26:36 +0200
+Received: by mail-qk1-f173.google.com with SMTP id j80so2591176qke.0;
+        Thu, 09 Jul 2020 10:26:35 -0700 (PDT)
+X-Gm-Message-State: AOAM531+RKtRkkuSgXgTqUGILhhWbsxIdzAT1aBSgOG939KHumFUyfDJ
+        eWFXpmRL+71z92CX6oRBXDPp8T60OLHgnFZAaJw=
+X-Google-Smtp-Source: ABdhPJxrBo0AwUBiMw2v4TVCTLmtL0EMGqThmAS9J2fIdN9aQHe1QjAu6oSNR/5pXdXtSVlu3fBviu/RfylxDKEg8NM=
+X-Received: by 2002:a37:b484:: with SMTP id d126mr64230494qkf.394.1594315594655;
+ Thu, 09 Jul 2020 10:26:34 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAEjxPJ4EefLKKvMo=8ZWeA4gVioH=WQ=52rnMuW5TnyExmJsRg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200707180955.53024-1-mic@digikod.net> <20200707180955.53024-9-mic@digikod.net>
+ <CAK8P3a0FkoxFtcQJ2jSqyLbDCOp3R8-1JoY8CWAgbSZ9hH9wdQ@mail.gmail.com>
+ <7f407b67-d470-25fd-1287-f4f55f18e74a@digikod.net> <CAK8P3a1ehWZErD2a0iBqn37s-LTAtW0AbV_gt32iX3cQkXbpOQ@mail.gmail.com>
+ <ec79f6ad-1c11-d69f-724b-622baa28f19f@digikod.net>
+In-Reply-To: <ec79f6ad-1c11-d69f-724b-622baa28f19f@digikod.net>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 9 Jul 2020 19:26:18 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a34X1qfDhn8u3nR+aQA_g+V2i35L0oTnvhNAs83YJPB_w@mail.gmail.com>
+Message-ID: <CAK8P3a34X1qfDhn8u3nR+aQA_g+V2i35L0oTnvhNAs83YJPB_w@mail.gmail.com>
+Subject: Re: [PATCH v19 08/12] landlock: Add syscall implementation
+To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
+        Jeff Dike <jdike@addtoit.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mickael.salaun@ssi.gouv.fr>,
+        Richard Weinberger <richard@nod.at>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+X-Provags-ID: V03:K1:iRcBYKYD93f4v9LIOGfIm9I4Jp5dCKpb7azDIbgiJg8MrXcXS0A
+ 3PCcVOfAYcRI9RqKDmiQkMbYZ0QWQ6tXDL9rxGCxG5WlrFaRDOHKRYbFbSi+6Jy2pHO6Mi7
+ ZmGLAnY8GSKliBqfkmuFGhPZwK8eksVzan4/FCfakwNgDc9B+RW3Cqwl+rIdyoYOhp9Tspf
+ qWrlkU+dQjTqliSx9OkkQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:WxxayRk9FsM=:QmAt6LpR2PYdjIOJRYCOna
+ YmuweTPad0jSOk4xLYarpEbL3+Lz2qI4ov91Vv6HgZn1TjYdFhYMbBLWSIRD9z0ONmEC/Dj40
+ eTrg0Gh21wO6R/XIqO6ZORm24FmXJNf/0mwvIpb5CE9zvnauBR/D1rtzBZ7Jctu4l22Y17yfD
+ vhiqbsyyQWYIo58aSys4A/i2qzeG96QlY0wS8fTB0a3WovdWwRiSI5dbK34Sm6vCkSLXZDgrV
+ rv4F/p2xCSWNBPMooK0TpdZCwOIxQiE4vg4vBIZwHHe4sjbHXCKaWByl+qX8f3u/khlSgTRxb
+ egFgqzbTu5sVx/C3HjWYcWmI0yKZl0x3x0phWjW3+w2vYhVw0YRts/56DoDCBCjVqkZt/q9kv
+ wCn4FBYj4IrA7noE2G3Th3IW9EaaiE93o6gA2k3ud8dXOaK4ulv6eQ1EsDJOb3wZrRSKxvBgN
+ XVMUjYRNtIPeSJrTltDIX3jNoyNF8hv20nhsc0Kc9fzro69Ojbh/2/4/OzaiLnEBLimKCn0b/
+ iKXxWrAkeLRlFowhCQhwdeIEmJRFb2zu/cAIcAAkZWksMs4jbd3rSArDHQHuPsILWYqxRg13K
+ iFFzBzdUY1ZqcykQLM6enKSuZuw+OUKeT3iKkBbgfO8Gd2tsWcLRC5fgO35ZAR9KznOJ1k6kf
+ WrGbsvvHsZW1Iet+CftRVJc2jDgHzxnf6xvowb6HBGkoPx/h0hXaQq+1mmiGBC/7cRYyPZCXs
+ cQhdR1tIqqrj/pUIZddn67Bt/x7hWKVN30aRN7AZ1q7/kjurvCOT3di1tTbzE6KWKS9rQ4eYK
+ JQc29xsgJ0H4SvDaEN2pjcpk1H+DyP2e2GWPGHU7OuCWiHggc/0tWLT7nQFpPRjba96tGBGoz
+ kRLqm6K6weffT+IhAusDJDQzbjHB9bbZjmEy+WqFrTkgAXX6gKumolSL3IBRFE1kkeS+78xU8
+ zlD5T7QyG89ju9iSiVyQ6rOlaPvfbUoggHMzw/SdtQsFpZvphgm3E
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 7/9/20 9:11 AM, Stephen Smalley wrote:
-> On Wed, Jul 8, 2020 at 8:23 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->>
->> Change the data used in UDS SO_PEERSEC processing from a
->> secid to a more general struct lsmblob. Update the
->> security_socket_getpeersec_dgram() interface to use the
->> lsmblob. There is a small amount of scaffolding code
->> that will come out when the security_secid_to_secctx()
->> code is brought in line with the lsmblob.
->>
->> The secid field of the unix_skb_parms structure has been
->> replaced with a pointer to an lsmblob structure, and the
->> lsmblob is allocated as needed. This is similar to how the
->> list of passed files is managed. While an lsmblob structure
->> will fit in the available space today, there is no guarantee
->> that the addition of other data to the unix_skb_parms or
->> support for additional security modules wouldn't exceed what
->> is available.
->>
->> Reviewed-by: Kees Cook <keescook@chromium.org>
->> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
->> Cc: netdev@vger.kernel.org
->> ---
-> 
->> diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
->> index 3385a7a0b231..d246aefcf4da 100644
->> --- a/net/unix/af_unix.c
->> +++ b/net/unix/af_unix.c
->> @@ -138,17 +138,23 @@ static struct hlist_head *unix_sockets_unbound(void *addr)
->>  #ifdef CONFIG_SECURITY_NETWORK
->>  static void unix_get_secdata(struct scm_cookie *scm, struct sk_buff *skb)
->>  {
->> -       UNIXCB(skb).secid = scm->secid;
->> +       UNIXCB(skb).lsmdata = kmemdup(&scm->lsmblob, sizeof(scm->lsmblob),
->> +                                     GFP_KERNEL);
->>  }
->>
->>  static inline void unix_set_secdata(struct scm_cookie *scm, struct sk_buff *skb)
->>  {
->> -       scm->secid = UNIXCB(skb).secid;
->> +       if (likely(UNIXCB(skb).lsmdata))
->> +               scm->lsmblob = *(UNIXCB(skb).lsmdata);
->> +       else
->> +               lsmblob_init(&scm->lsmblob, 0);
->>  }
->>
->>  static inline bool unix_secdata_eq(struct scm_cookie *scm, struct sk_buff *skb)
->>  {
->> -       return (scm->secid == UNIXCB(skb).secid);
->> +       if (likely(UNIXCB(skb).lsmdata))
->> +               return lsmblob_equal(&scm->lsmblob, UNIXCB(skb).lsmdata);
->> +       return false;
->>  }
-> 
-> I don't think that this provides sensible behavior to userspace.  On a
-> transient memory allocation failure, instead of returning an error to
-> the sender and letting them handle it, this will just proceed with
-> sending the message without its associated security information, and
-> potentially split messages on arbitrary boundaries because it cannot
-> tell whether the sender had the same security information.  I think
-> you instead need to change unix_get_secdata() to return an error on
-> allocation failure and propagate that up to the sender.  Not a fan of
-> this change in general both due to extra overhead on this code path
-> and potential for breakage on allocation failures.  I know it was
-> motivated by paul's observation that we won't be able to fit many more
-> secids into the cb but not sure we have to go there prematurely,
-> especially absent its usage by upstream AA (no unix_stream_connect
-> hook implementation upstream).  Also not sure how the whole bpf local
+On Wed, Jul 8, 2020 at 7:50 PM Mickaël Salaün <mic@digikod.net> wrote:
+> On 08/07/2020 15:49, Arnd Bergmann wrote:
+> > On Wed, Jul 8, 2020 at 3:04 PM Mickaël Salaün <mic@digikod.net> wrote:
+> >> On 08/07/2020 10:57, Arnd Bergmann wrote:
+> >>> On Tue, Jul 7, 2020 at 8:10 PM Mickaël Salaün <mic@digikod.net> wrote:
+> >>>
+> >>> It looks like all you need here today is a single argument bit, plus
+> >>> possibly some room for extensibility. I would suggest removing all
+> >>> the extra bits and using a syscall like
+> >>>
+> >>> SYSCALL_DEFINE1(landlock_create_ruleset, u32, flags);
+> >>>
+> >>> I don't really see how this needs any variable-length arguments,
+> >>> it really doesn't do much.
+> >>
+> >> We need the attr_ptr/attr_size pattern because the number of ruleset
+> >> properties will increase (e.g. network access mask).
+> >
+> > But how many bits do you think you will *actually* need in total that
+> > this needs to be a two-dimensional set of flags? At the moment you
+> > only have a single bit that you interpret.
+>
+> I think there is a misunderstanding. For this syscall I wasn't talking
+> about the "options" field but about the "handled_access_fs" field which
+> has 14 bits dedicated to control access to the file system:
+> https://landlock.io/linux-doc/landlock-v19/security/landlock/user.html#filesystem-flags
 
-I'm not sure how premature it is, I am running late for 5.9 but would
-like to land apparmor unix mediation in 5.10
+Ok, got it. I didn't read far enough there.
 
-> storage approach to supporting security modules (or at least bpf lsm)
-> might reduce need for expanding these structures?
-> 
+> The idea is to add other handled_access_* fields for other kernel object
+> types (e.g. network, process, etc.).
+>
+> The "options" field is fine as a raw __u32 syscall argument.
 
+I'd still like to avoid having it variable-length and structured though.
+How about having a __u32 "options" flag, plus an indirect argument
+with 32 fixed-length (all 32 bit or all 64 bit) flag words, each of which
+corresponds to one of the option bits?
+
+It's still fairly complex that way, but not as much as the version
+you have right now that can be extended in multiple dimensions.
+
+This could possibly also help avoid the need for the get_features
+syscall: If user space just passes the bitmap of all the access flags
+it wants to use in a fixed-size structure, the kernel can update the
+bits to mask out the ones it does not understand and write back
+that bitmap as the result of create_ruleset().
+
+> >>> To be on the safe side, you might split up the flags into either the
+> >>> upper/lower 16 bits or two u32 arguments, to allow both compatible
+> >>> (ignored by older kernels if flag is set) and incompatible (return error
+> >>> when an unknown flag is set) bits.
+> >>
+> >> This may be a good idea in general, but in the case of Landlock, because
+> >> this kind of (discretionary) sandboxing should be a best-effort security
+> >> feature, we should avoid incompatible behavior. In practice, every
+> >> unknown bit returns an error because userland can probe for available
+> >> bits thanks to the get_features command. This kind of (in)compatibility
+> >> can then be handled by userland.
+> >
+> > If there are not going to be incompatible extensions, then just ignore
+> > all unknown bits and never return an error but get rid of the user
+> > space probing that just complicates the interface.
+>
+> There was multiple discussions about ABI compatibility, especially
+> inspired by open(2) vs. openat2(2), and ignoring flags seems to be a bad
+> idea. In the "sandboxer" example, we first probe the supported features
+> and then mask unknown bits (i.e. access rights) at run time in userland.
+> This strategy is quite straightforward, backward compatible and
+> future-proof.
+
+For behavior changing flags, I agree they should be seen as
+incompatible flags (i.e. return an error if an unknown bit is set).
+
+However, for the flags you pass in in an allowlist, treating them
+as compatible (i.e. ignore any unknown flags, allowing everything
+you are not forbidding already) seems completely reasonable
+to me. Do you foresee user space doing anything other than masking
+out the bits that the kernel doesn't know about? If not, then doing
+it in the  kernel should always be simpler.
+
+> >> I suggest this syscall signature:
+> >> SYSCALL_DEFINE3(landlock_create_ruleset, __u32, options, const struct
+> >> landlock_attr_ruleset __user *, ruleset_ptr, size_t, ruleset_size);
+> >
+> > The other problem here is that indirect variable-size structured arguments
+> > are a pain to instrument with things like strace or seccomp, so you
+> > should first try to use a fixed argument list, and fall back to a fixed
+> > structure if that fails.
+>
+> I agree that it is not perfect with the current tools but this kind of
+> extensible structs are becoming common and well defined (e.g. openat2).
+> Moreover there is some work going on for seccomp to support "extensible
+> argument" syscalls: https://lwn.net/Articles/822256/
+
+openat2() is already more complex than we'd ideally want, I think we
+should try hard to make new syscalls simpler than that, following the
+rule that any interface should be as simple as possible, but no simpler.
+
+> >>>> +static int syscall_add_rule_path_beneath(const void __user *const attr_ptr,
+> >>>> +               const size_t attr_size)
+> >>>> +{
+> >>>> +       struct landlock_attr_path_beneath attr_path_beneath;
+> >>>> +       struct path path;
+> >>>> +       struct landlock_ruleset *ruleset;
+> >>>> +       int err;
+> >>>
+> >>> Similarly, it looks like this wants to be
+> >>>
+> >>> SYSCALL_DEFINE3(landlock_add_rule_path_beneath, int, ruleset, int,
+> >>> path, __u32, flags)
+> >>>
+> >>> I don't see any need to extend this in a way that wouldn't already
+> >>> be served better by adding another system call. You might argue
+> >>> that 'flags' and 'allowed_access' could be separate, with the latter
+> >>> being an indirect in/out argument here, like
+> >>>
+> >>> SYSCALL_DEFINE4(landlock_add_rule_path_beneath, int, ruleset, int, path,
+> >>>                            __u64 *, allowed_acces, __u32, flags)
+> >>
+> >> To avoid adding a new syscall for each new rule type (e.g. path_beneath,
+> >> path_range, net_ipv4_range, etc.), I think it would be better to keep
+> >> the attr_ptr/attr_size pattern and to explicitely set a dedicated option
+> >> flag to specify the attr type.
+> >>
+> >> This would look like this:
+> >> SYSCALL_DEFINE4(landlock_add_rule, __u32, options, int, ruleset, const
+> >> void __user *, rule_ptr, size_t, rule_size);
+> >>
+> >> The rule_ptr could then point to multiple types like struct
+> >> landlock_attr_path_beneath (without the current ruleset_fd field).
+> >
+> > This again introduces variable-sized structured data. How many different
+> > kinds of rule types do you think there will be (most likely, and maybe an
+> > upper bound)?
+>
+> I don't know how many rule types will come, but right now I think it may
+> be less than 10.
+
+Ok,
+
+> > Could (some of) these be generalized to use the same data structure?
+>
+> I don't think so, file path and network addresses are an example of very
+> different types.
+
+Clearly the target object is something different, but maybe there is
+enough commonality to still make them fit into a more regular form.
+
+For the file system case, you have an identify for an object
+(the file descriptor) and the  '__u64 allowed_access'. I would
+expect that the 'allowed_access' concept is generic enough that
+you can make it a direct argument (32 bit register arg, or pointer
+to a __u64). Do you expect others to need something besides
+an object identifier and a permission bitmask? Maybe it could
+be something like
+
+ SYSCALL_DEFINE4(landlock_add_rule, int, ruleset, __u32, options,
+                       const void __user *, object, const __u64 __user
+*, allowed_access,
+                       __u32, flags);
+
+with a fixed-length 'object' identifier type (file descriptor,
+sockaddr_storage, ...) for each option.
+
+    Arnd
