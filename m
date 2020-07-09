@@ -5,35 +5,35 @@ X-Spam-Level:
 X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62267C433E6
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 Jul 2020 06:20:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D7CBC433E2
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 Jul 2020 06:20:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 435F420708
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 Jul 2020 06:20:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FC9320672
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 Jul 2020 06:20:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="KJKtKRLU"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="W8eLV97P"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726664AbgGIGUP (ORCPT
+        id S1726765AbgGIGUa (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 9 Jul 2020 02:20:15 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:38110 "EHLO
+        Thu, 9 Jul 2020 02:20:30 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:38148 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726624AbgGIGUN (ORCPT
+        with ESMTP id S1726670AbgGIGUQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 9 Jul 2020 02:20:13 -0400
+        Thu, 9 Jul 2020 02:20:16 -0400
 Received: from sequoia.work.tihix.com (162-237-133-238.lightspeed.rcsntx.sbcglobal.net [162.237.133.238])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 6076D20B4908;
-        Wed,  8 Jul 2020 23:20:12 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 6076D20B4908
+        by linux.microsoft.com (Postfix) with ESMTPSA id 3B7EE20B4908;
+        Wed,  8 Jul 2020 23:20:15 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3B7EE20B4908
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1594275613;
-        bh=b/gDO+rf9EfxqDQma9/U3xASpX0quKJnLQDBOzf+I4c=;
+        s=default; t=1594275615;
+        bh=BMSHcV0geP8nXHQf+FFpMe4jNDRwHDKhciy8Y9r1M+A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KJKtKRLUoa5UEYM0CWjDMPyGH0lii/OV71RzS5iuN2qnZhRPXaExoAD/Gfw/Yc4hb
-         ScuFZ46zLV61LaA/TtWMBdCXHfKDDy9SB2BhQV9ody45FZbuFU+qJ1IQfrLPuZXwRT
-         K90uNkcAvqV9QUJsDKTUpWOMkF9gq82xm9+LxGo8=
+        b=W8eLV97P7p0IM4hLJkbuHBItHUgBy+0JExAUlJYkp5ITVj9/c00A9U7e1CUhptlGe
+         66bplnYDOKmdhx6SXsZLTj8eE2CNEU8q5ucpVitY+vtHoaIQEJUGzK1pmrT2jCV8Pv
+         8FS1LSPf9KtgFE83S9DUi6KyViJdu4lgj2YT96cI=
 From:   Tyler Hicks <tyhicks@linux.microsoft.com>
 To:     Mimi Zohar <zohar@linux.ibm.com>,
         Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
@@ -43,9 +43,9 @@ Cc:     James Morris <jmorris@namei.org>,
         Prakhar Srivastava <prsriva02@gmail.com>,
         linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org
-Subject: [PATCH v3 09/12] ima: Use correct type for the args_p member of ima_rule_entry.lsm elements
-Date:   Thu,  9 Jul 2020 01:19:08 -0500
-Message-Id: <20200709061911.954326-10-tyhicks@linux.microsoft.com>
+Subject: [PATCH v3 11/12] ima: Use the common function to detect LSM conditionals in a rule
+Date:   Thu,  9 Jul 2020 01:19:10 -0500
+Message-Id: <20200709061911.954326-12-tyhicks@linux.microsoft.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200709061911.954326-1-tyhicks@linux.microsoft.com>
 References: <20200709061911.954326-1-tyhicks@linux.microsoft.com>
@@ -55,11 +55,12 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Make args_p be of the char pointer type rather than have it be a void
-pointer that gets casted to char pointer when it is used. It is a simple
-NUL-terminated string as returned by match_strdup().
+Make broader use of ima_rule_contains_lsm_cond() to check if a given
+rule contains an LSM conditional. This is a code cleanup and has no
+user-facing change.
 
 Signed-off-by: Tyler Hicks <tyhicks@linux.microsoft.com>
+Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 ---
 
 * v3
@@ -67,74 +68,33 @@ Signed-off-by: Tyler Hicks <tyhicks@linux.microsoft.com>
 * v2
   - No change
 
- security/integrity/ima/ima_policy.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ security/integrity/ima/ima_policy.c | 11 ++---------
+ 1 file changed, 2 insertions(+), 9 deletions(-)
 
 diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index b02e1ffd10c9..13a178c70b44 100644
+index c4d0a0c1f896..81ee8fd1d83a 100644
 --- a/security/integrity/ima/ima_policy.c
 +++ b/security/integrity/ima/ima_policy.c
-@@ -74,7 +74,7 @@ struct ima_rule_entry {
- 	int pcr;
- 	struct {
- 		void *rule;	/* LSM file metadata specific */
--		void *args_p;	/* audit value */
-+		char *args_p;	/* audit value */
- 		int type;	/* audit type */
- 	} lsm[MAX_LSM_RULES];
- 	char *fsname;
-@@ -314,7 +314,7 @@ static struct ima_rule_entry *ima_lsm_copy_rule(struct ima_rule_entry *entry)
- 					  &nentry->lsm[i].rule);
- 		if (!nentry->lsm[i].rule)
- 			pr_warn("rule for LSM \'%s\' is undefined\n",
--				(char *)entry->lsm[i].args_p);
-+				entry->lsm[i].args_p);
- 	}
- 	return nentry;
- }
-@@ -918,7 +918,7 @@ static int ima_lsm_rule_init(struct ima_rule_entry *entry,
- 					   &entry->lsm[lsm_rule].rule);
- 	if (!entry->lsm[lsm_rule].rule) {
- 		pr_warn("rule for LSM \'%s\' is undefined\n",
--			(char *)entry->lsm[lsm_rule].args_p);
-+			entry->lsm[lsm_rule].args_p);
+@@ -360,17 +360,10 @@ static bool ima_rule_contains_lsm_cond(struct ima_rule_entry *entry)
+ static void ima_lsm_update_rules(void)
+ {
+ 	struct ima_rule_entry *entry, *e;
+-	int i, result, needs_update;
++	int result;
  
- 		if (ima_rules == &ima_default_rules) {
- 			kfree(entry->lsm[lsm_rule].args_p);
-@@ -1682,27 +1682,27 @@ int ima_policy_show(struct seq_file *m, void *v)
- 			switch (i) {
- 			case LSM_OBJ_USER:
- 				seq_printf(m, pt(Opt_obj_user),
--					   (char *)entry->lsm[i].args_p);
-+					   entry->lsm[i].args_p);
- 				break;
- 			case LSM_OBJ_ROLE:
- 				seq_printf(m, pt(Opt_obj_role),
--					   (char *)entry->lsm[i].args_p);
-+					   entry->lsm[i].args_p);
- 				break;
- 			case LSM_OBJ_TYPE:
- 				seq_printf(m, pt(Opt_obj_type),
--					   (char *)entry->lsm[i].args_p);
-+					   entry->lsm[i].args_p);
- 				break;
- 			case LSM_SUBJ_USER:
- 				seq_printf(m, pt(Opt_subj_user),
--					   (char *)entry->lsm[i].args_p);
-+					   entry->lsm[i].args_p);
- 				break;
- 			case LSM_SUBJ_ROLE:
- 				seq_printf(m, pt(Opt_subj_role),
--					   (char *)entry->lsm[i].args_p);
-+					   entry->lsm[i].args_p);
- 				break;
- 			case LSM_SUBJ_TYPE:
- 				seq_printf(m, pt(Opt_subj_type),
--					   (char *)entry->lsm[i].args_p);
-+					   entry->lsm[i].args_p);
- 				break;
- 			}
- 			seq_puts(m, " ");
+ 	list_for_each_entry_safe(entry, e, &ima_policy_rules, list) {
+-		needs_update = 0;
+-		for (i = 0; i < MAX_LSM_RULES; i++) {
+-			if (entry->lsm[i].args_p) {
+-				needs_update = 1;
+-				break;
+-			}
+-		}
+-		if (!needs_update)
++		if (!ima_rule_contains_lsm_cond(entry))
+ 			continue;
+ 
+ 		result = ima_lsm_update_rule(entry);
 -- 
 2.25.1
 
