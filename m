@@ -2,244 +2,182 @@ Return-Path: <SRS0=TKeG=AU=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FAF1C433E0
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 Jul 2020 01:30:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FB56C433E0
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 Jul 2020 02:00:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7A06520739
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 Jul 2020 01:30:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A38A20760
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 Jul 2020 02:00:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QFefWuRe"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="CwsXjCv5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726260AbgGIBav (ORCPT
+        id S1726118AbgGICAt (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 8 Jul 2020 21:30:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39636 "EHLO
+        Wed, 8 Jul 2020 22:00:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44198 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726222AbgGIBau (ORCPT
+        with ESMTP id S1726072AbgGICAs (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 8 Jul 2020 21:30:50 -0400
-Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D51AC08C5CE
-        for <linux-security-module@vger.kernel.org>; Wed,  8 Jul 2020 18:30:50 -0700 (PDT)
-Received: by mail-lj1-x243.google.com with SMTP id e8so497547ljb.0
-        for <linux-security-module@vger.kernel.org>; Wed, 08 Jul 2020 18:30:50 -0700 (PDT)
+        Wed, 8 Jul 2020 22:00:48 -0400
+Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41BE8C061A0B
+        for <linux-security-module@vger.kernel.org>; Wed,  8 Jul 2020 19:00:48 -0700 (PDT)
+Received: by mail-pf1-x443.google.com with SMTP id x72so309954pfc.6
+        for <linux-security-module@vger.kernel.org>; Wed, 08 Jul 2020 19:00:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=QPNtScbUbSRtloFQsQJiTlDDQ8S8R6akF2kOh4+CkmE=;
-        b=QFefWuReDB6ARXYxjV3aJULDqLueCAYxDEuvLKmcmD0M9Z38VCD2AZR6NgqOko90Bn
-         qZSN2Ps6VpOLK+1zRUOx9NbBh9sSblnQp7mITAtH6qi9NSGiRbM6v+niJ0LZyPHUCYDw
-         kTBaELhyttAwZ4CTFfo8P5B51A8UYlc+d8lnQnIFT5ns9IG/BK9ytR5GyLmztutj4CIT
-         Z7q4UwHTG5j5xlMObjZvmybnvDF3d/nvgBYAYHEK9KI4VKTK3WpGhAg5c/7+ALUhZ1FX
-         Yj6zUKf85x9p5HQot5FiMnSK9SyC1wp/q1FGrbHKnNioEEykyUvnDqCMIZNTQKWzYhnQ
-         PeWw==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=rmO2BXbiMq3J9h0ibI9lJkabwxTiAwSLD0udRPDmL+Q=;
+        b=CwsXjCv5bK+ffSpsr3j3Lg1cU+PHJAYaRaHrydOoGtxVQKEDbRUgW3w/Vu406xayEY
+         tjzf1ZQhr1CHrqpMLYXSensYQa803V7cP0wj3nodypiUNNikG8BHKi3aB5WpbeP2IrOs
+         KrSBcKNZAXTmfYXOPoIPnd6urScrHUwuVpzus=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=QPNtScbUbSRtloFQsQJiTlDDQ8S8R6akF2kOh4+CkmE=;
-        b=FWL2777FQryMD8Acy5XBlSK9qMsI/Q0/DM2YLq8VFhkvRNPRkuzAmYt1ADA0jTt1EE
-         dp3m4kO9MFmrrxHCi1jCyj9qvHfyN2wxKJrUZYA+TwUeSMpvKXhtTthnar1vsn4eaSsv
-         UaXnGmKzFHPPlqtGcyJT3aUonD4DNC/k9SgnZMlJmrFbmixTR07QL2sY5DwTQC/HqYlt
-         +WIvVRC3/vFKTHQbB3QAaXViXhpmXDYQb5xt+rsnkNShCsNUIAWjoyB6DFjx42HDbVPY
-         oFicJBlbJiDc5dzplCZY/BrJoJtC1G15gpq7qqB9jWTMZCzfeEbtvVcR7wAyrjVaTC4p
-         co/w==
-X-Gm-Message-State: AOAM532PcBxLGibiTdwaROQx4l4fx0qTCdXqsb1TOggM89JzEZputBjK
-        md/GqMBN7PVM5EU4ou59uczyqyxvdkooGO/kyE9HKw==
-X-Google-Smtp-Source: ABdhPJw5iEpHZ7bFZQ5RpaIleEL++5aG0ddfsKQt+UFadBtBJKZajidd/I5GT4jN3gkA0zuWJcxXJON2a5i+go8mvpI=
-X-Received: by 2002:a05:651c:111:: with SMTP id a17mr13339981ljb.265.1594258248264;
- Wed, 08 Jul 2020 18:30:48 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200709001234.9719-1-casey@schaufler-ca.com> <20200709001234.9719-23-casey@schaufler-ca.com>
-In-Reply-To: <20200709001234.9719-23-casey@schaufler-ca.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Thu, 9 Jul 2020 03:30:21 +0200
-Message-ID: <CAG48ez36_+0k4ubaHRq=9gVDQspUh6yXkAeMRV=cEy-oyOr-sg@mail.gmail.com>
-Subject: Re: [PATCH v18 22/23] LSM: Add /proc attr entry for full LSM context
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Casey Schaufler <casey.schaufler@intel.com>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=rmO2BXbiMq3J9h0ibI9lJkabwxTiAwSLD0udRPDmL+Q=;
+        b=kgKXsHM0eDp1evqCOaF2AdcRpxoFZI4tJaJJub7onJUiQ+ydxk2YlYBkSQF6sX0h0E
+         4yXKtNxTMv8WDS0t3wEKfMwcBkBgiNkKc7xCoJtLU0sRtE1IUb6MBqE9Hxl7tKg1pNxx
+         W5UZ+rpk/w2Nt49qrdM8fDUe2VJriBZemxBLlIlNc5pMsEYvYiyZ6RZth0rh9i7uEEGo
+         +oDAX0vj5jP9EzatEDl1FWCBZp7t/N6MJ11doDT64cbk4zOvPvKa9QkqwHiX+ULcXuZ1
+         lcpFgF3oL1BLKtVk3eYTOmklGS6R+GzrWAkBWIbCuVDAuGEOXfCP+iqnXAzxz71ZHZsu
+         1FCQ==
+X-Gm-Message-State: AOAM531NJT7v3g7D9Xrq0sH06c9Iwaj5UaILpizsQMEv3R1pfEp9M6nX
+        MlOCPooE7/zBFr1bom9JEPCpGw==
+X-Google-Smtp-Source: ABdhPJyI00rLJubx80Dv+/G4eRgVwFRzwZLXhBDdORHUusN/3bFGhY+NEgoWJMW6UQwA9EuKbuvIKQ==
+X-Received: by 2002:a62:192:: with SMTP id 140mr48349974pfb.53.1594260047674;
+        Wed, 08 Jul 2020 19:00:47 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id b21sm867641pfp.172.2020.07.08.19.00.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Jul 2020 19:00:46 -0700 (PDT)
+Date:   Wed, 8 Jul 2020 19:00:45 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     Hans de Goede <hdegoede@redhat.com>,
         James Morris <jmorris@namei.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        SElinux list <selinux@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        John Johansen <john.johansen@canonical.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Linux API <linux-api@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Scott Branden <scott.branden@broadcom.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jessica Yu <jeyu@kernel.org>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Matthew Garrett <matthewgarrett@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        KP Singh <kpsingh@google.com>, Dave Olsthoorn <dave@bewaar.me>,
+        Peter Jones <pjones@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Boyd <stephen.boyd@linaro.org>,
+        Paul Moore <paul@paul-moore.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH 0/4] Fix misused kernel_read_file() enums
+Message-ID: <202007081859.A305745@keescook>
+References: <20200707081926.3688096-1-keescook@chromium.org>
+ <3c01073b-c422-dd97-0677-c16fe1158907@redhat.com>
+ <f5e65f73-2c94-3614-2479-69b2bfda9775@redhat.com>
+ <20200708115517.GF4332@42.do-not-panic.com>
+ <8766279d-0ebe-1f64-c590-4a71a733609b@redhat.com>
+ <20200708133004.GG4332@42.do-not-panic.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200708133004.GG4332@42.do-not-panic.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jul 9, 2020 at 2:42 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> Add an entry /proc/.../attr/context which displays the full
-> process security "context" in compound format:
->         lsm1\0value\0lsm2\0value\0...
-> This entry is not writable.
->
-> Reviewed-by: Kees Cook <keescook@chromium.org>
-> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> Cc: linux-api@vger.kernel.org
-[...]
-> diff --git a/security/security.c b/security/security.c
-[...]
-> +/**
-> + * append_ctx - append a lsm/context pair to a compound context
-> + * @ctx: the existing compound context
-> + * @ctxlen: size of the old context, including terminating nul byte
-> + * @lsm: new lsm name, nul terminated
-> + * @new: new context, possibly nul terminated
-> + * @newlen: maximum size of @new
-> + *
-> + * replace @ctx with a new compound context, appending @newlsm and @new
-> + * to @ctx. On exit the new data replaces the old, which is freed.
-> + * @ctxlen is set to the new size, which includes a trailing nul byte.
-> + *
-> + * Returns 0 on success, -ENOMEM if no memory is available.
-> + */
-> +static int append_ctx(char **ctx, int *ctxlen, const char *lsm, char *new,
-> +                     int newlen)
-> +{
-> +       char *final;
-> +       int llen;
+On Wed, Jul 08, 2020 at 01:30:04PM +0000, Luis Chamberlain wrote:
+> On Wed, Jul 08, 2020 at 01:58:47PM +0200, Hans de Goede wrote:
+> > Hi,
+> > 
+> > On 7/8/20 1:55 PM, Luis Chamberlain wrote:
+> > > On Wed, Jul 08, 2020 at 01:37:41PM +0200, Hans de Goede wrote:
+> > > > Hi,
+> > > > 
+> > > > On 7/8/20 1:01 PM, Hans de Goede wrote:
+> > > > > Hi,
+> > > > > 
+> > > > > On 7/7/20 10:19 AM, Kees Cook wrote:
+> > > > > > Hi,
+> > > > > > 
+> > > > > > In looking for closely at the additions that got made to the
+> > > > > > kernel_read_file() enums, I noticed that FIRMWARE_PREALLOC_BUFFER
+> > > > > > and FIRMWARE_EFI_EMBEDDED were added, but they are not appropriate
+> > > > > > *kinds* of files for the LSM to reason about. They are a "how" and
+> > > > > > "where", respectively. Remove these improper aliases and refactor the
+> > > > > > code to adapt to the changes.
+> > > > > > 
+> > > > > > Additionally adds in missing calls to security_kernel_post_read_file()
+> > > > > > in the platform firmware fallback path (to match the sysfs firmware
+> > > > > > fallback path) and in module loading. I considered entirely removing
+> > > > > > security_kernel_post_read_file() hook since it is technically unused,
+> > > > > > but IMA probably wants to be able to measure EFI-stored firmware images,
+> > > > > > so I wired it up and matched it for modules, in case anyone wants to
+> > > > > > move the module signature checks out of the module core and into an LSM
+> > > > > > to avoid the current layering violations.
+> > > > > > 
+> > > > > > This touches several trees, and I suspect it would be best to go through
+> > > > > > James's LSM tree.
+> > > > > > 
+> > > > > > Thanks!
+> > > > > 
+> > > > > 
+> > > > > I've done some quick tests on this series to make sure that
+> > > > > the efi embedded-firmware support did not regress.
+> > > > > That still works fine, so this series is;
+> > > > > 
+> > > > > Tested-by: Hans de Goede <hdegoede@redhat.com>
+> > > > 
+> > > > I made a mistake during testing I was not actually running the
+> > > > kernel with the patches added.
+> > > > 
+> > > > After fixing that I did find a problem, patch 4/4:
+> > > > "module: Add hook for security_kernel_post_read_file()"
+> > > > 
+> > > > Breaks module-loading for me. This is with the 4 patches
+> > > > on top of 5.8.0-rc4, so this might just be because I'm
+> > > > not using the right base.
+> > > > 
+> > > > With patch 4/4 reverted things work fine for me.
+> > > > 
+> > > > So, please only add my Tested-by to patches 1-3.
+> > > 
+> > > BTW is there any testing covered by the selftests for the firmware
+> > > laoder which would have caputured this? If not can you extend
+> > > it with something to capture this case you ran into?
+> > 
+> > This was not a firmware-loading issue. For me in my tests,
+> > which were limited to 1 device, patch 4/4, which only touches
+> > the module-loading code, stopped module loading from working.
+> > 
+> > Since my test device has / on an eMMC and the kernel config
+> > I'm using has mmc-block as a module, things just hung in the
+> > initrd since no modules could be loaded, so I did not debug
+> > this any further. Dropping  patch 4/4 from my local tree
+> > solved this.
+> 
+> Thanks Hans!
+> 
+> Kees, would test_kmod.c and the respective selftest would have picked
+> this issue up?
 
-Please use size_t to represent object sizes, instead of implicitly
-truncating them and assuming that that doesn't wrap. Using "int" here
-not only makes it harder to statically reason about this code, it
-actually can also make the generated code worse:
+I need to check -- I got a (possibly related) 0day report on it too.
 
+Since I have to clean it up further based on Mimi's comments, and adapt
+it a bit for Scott's series, I'll need to get a v2 spun for sure. :)
 
-$ cat numtrunc.c
-#include <stddef.h>
-
-size_t my_strlen(char *p);
-void *my_alloc(size_t len);
-
-void *blah_trunc(char *p) {
-  int len = my_strlen(p) + 1;
-  return my_alloc(len);
-}
-
-void *blah_notrunc(char *p) {
-  size_t len = my_strlen(p) + 1;
-  return my_alloc(len);
-}
-$ gcc -O2 -c -o numtrunc.o numtrunc.c
-$ objdump -d numtrunc.o
-[...]
-0000000000000000 <blah_trunc>:
-   0: 48 83 ec 08          sub    $0x8,%rsp
-   4: e8 00 00 00 00        callq  9 <blah_trunc+0x9>
-   9: 48 83 c4 08          add    $0x8,%rsp
-   d: 8d 78 01              lea    0x1(%rax),%edi
-  10: 48 63 ff              movslq %edi,%rdi    <<<<<<<<unnecessary instruction
-  13: e9 00 00 00 00        jmpq   18 <blah_trunc+0x18>
-[...]
-0000000000000020 <blah_notrunc>:
-  20: 48 83 ec 08          sub    $0x8,%rsp
-  24: e8 00 00 00 00        callq  29 <blah_notrunc+0x9>
-  29: 48 83 c4 08          add    $0x8,%rsp
-  2d: 48 8d 78 01          lea    0x1(%rax),%rdi
-  31: e9 00 00 00 00        jmpq   36 <blah_notrunc+0x16>
-$
-
-This is because GCC documents
-(https://gcc.gnu.org/onlinedocs/gcc/Integers-implementation.html) that
-for integer conversions where the value does not fit into the signed
-target type, "the value is reduced modulo 2^N to be within range of
-the type"; so the compiler has to assume that you are actually
-intentionally trying to truncate the more significant bits from the
-length, and therefore may have to insert extra code to ensure that
-this truncation happens.
-
-
-> +       llen = strlen(lsm) + 1;
-> +       newlen = strnlen(new, newlen) + 1;
-
-This strnlen() call seems dodgy. If an LSM can return a string that
-already contains null bytes, shouldn't that be considered a bug, given
-that it can't be displayed properly? Would it be more appropriate to
-have a WARN_ON(memchr(new, '\0', newlen)) check here and bail out if
-that happens?
-
-> +       final = kzalloc(*ctxlen + llen + newlen, GFP_KERNEL);
-> +       if (final == NULL)
-> +               return -ENOMEM;
-> +       if (*ctxlen)
-> +               memcpy(final, *ctx, *ctxlen);
-> +       memcpy(final + *ctxlen, lsm, llen);
-> +       memcpy(final + *ctxlen + llen, new, newlen);
-> +       kfree(*ctx);
-> +       *ctx = final;
-> +       *ctxlen = *ctxlen + llen + newlen;
-> +       return 0;
-> +}
-> +
->  /*
->   * The default value of the LSM hook is defined in linux/lsm_hook_defs.h and
->   * can be accessed with:
-> @@ -2109,6 +2145,10 @@ int security_getprocattr(struct task_struct *p, const char *lsm, char *name,
->                                 char **value)
->  {
->         struct security_hook_list *hp;
-> +       char *final = NULL;
-> +       char *cp;
-> +       int rc = 0;
-> +       int finallen = 0;
->         int display = lsm_task_display(current);
->         int slot = 0;
->
-[...]
->                 return -ENOMEM;
->         }
->
-> +       if (!strcmp(name, "context")) {
-> +               hlist_for_each_entry(hp, &security_hook_heads.getprocattr,
-> +                                    list) {
-> +                       rc = hp->hook.getprocattr(p, "context", &cp);
-> +                       if (rc == -EINVAL)
-> +                               continue;
-> +                       if (rc < 0) {
-> +                               kfree(final);
-> +                               return rc;
-> +                       }
-
-This means that if SELinux refuses to give the caller PROCESS__GETATTR
-access to the target process, the entire "context" file will refuse to
-show anything, even if e.g. an AppArmor label would be visible through
-the LSM-specific attribute directory, right? That seems awkward. Can
-you maybe omit context elements for which the access check failed
-instead, or embed an extra flag byte to signal for each element
-whether the lookup failed, or something along those lines?
-
-If this is an intentional design limitation, it should probably be
-documented in the commit message or so.
-
-> +                       rc = append_ctx(&final, &finallen, hp->lsmid->lsm,
-> +                                       cp, rc);
-> +                       if (rc < 0) {
-> +                               kfree(final);
-> +                               return rc;
-> +                       }
-
-Isn't there a memory leak here? `cp` points to memory that was
-allocated by hp->hook.getprocattr(), and you're not freeing it after
-append_ctx(). (And append_ctx() also doesn't free it.)
-
-> +               }
-> +               if (final == NULL)
-> +                       return -EINVAL;
-> +               *value = final;
-> +               return finallen;
-> +       }
-> +
->         hlist_for_each_entry(hp, &security_hook_heads.getprocattr, list) {
->                 if (lsm != NULL && strcmp(lsm, hp->lsmid->lsm))
->                         continue;
+-- 
+Kees Cook
