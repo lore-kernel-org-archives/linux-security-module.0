@@ -2,60 +2,60 @@ Return-Path: <SRS0=TKeG=AU=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B41DC433E0
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 Jul 2020 10:12:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F37CDC433E0
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 Jul 2020 10:12:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3998520772
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 Jul 2020 10:12:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF3162076A
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 Jul 2020 10:12:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="coFPDVVu"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JyexxN6d"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726645AbgGIKMo (ORCPT
+        id S1726801AbgGIKMu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 9 Jul 2020 06:12:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35058 "EHLO
+        Thu, 9 Jul 2020 06:12:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35070 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726140AbgGIKMo (ORCPT
+        with ESMTP id S1726752AbgGIKMq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 9 Jul 2020 06:12:44 -0400
+        Thu, 9 Jul 2020 06:12:46 -0400
 Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 003DAC061A0B
-        for <linux-security-module@vger.kernel.org>; Thu,  9 Jul 2020 03:12:43 -0700 (PDT)
-Received: by mail-wr1-x444.google.com with SMTP id a6so1732012wrm.4
-        for <linux-security-module@vger.kernel.org>; Thu, 09 Jul 2020 03:12:43 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F90AC08C5DC
+        for <linux-security-module@vger.kernel.org>; Thu,  9 Jul 2020 03:12:46 -0700 (PDT)
+Received: by mail-wr1-x444.google.com with SMTP id s10so1694781wrw.12
+        for <linux-security-module@vger.kernel.org>; Thu, 09 Jul 2020 03:12:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=F6g7fDptGIzcY72zTri5KBvJJQVzV3/1jzTXQNV3HuM=;
-        b=coFPDVVuvafd81nThgtSu0cQL7bq1mh93sEFCf+KGqyoIo5FBqkxkIUod13S1KaPLu
-         uXLU67/XWgjX/Knt7+yNrZdrx90+sADqntqOb2FgqXvmg+UFOcdAkEHE7pZEaVwfCD6n
-         TpydZ84o6TTExBrj92STaQRWNhRTmdKhfvhEs=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=n6htwB+szlCXWOkrB7yFcHsh0l6bO9G/ddiTH8uA+7s=;
+        b=JyexxN6dYl95+LnJpQd+zNDke9P7uWQ0oMyz8w10AzQhZRDTkgKZG6EcOFrApeBZ2Q
+         EAWkQ5GB4x1hAka0xKAS55OTLo9YLONzjTboqU1gl6X+T9+loLpsPxqBIoQRHd215r+t
+         6XJRG3RpBN++Ms3i++veHoOr1kym5naJgsOE8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=F6g7fDptGIzcY72zTri5KBvJJQVzV3/1jzTXQNV3HuM=;
-        b=LDuWDrtw+KIyWTSxDUICN/5TVJ670lN4jmaIvTQipbjKjmwkYklrRfGumb1zcf1sIw
-         4zHFZnvbiwT73lbeByvCAh0EIrD20Ei4sH5gte4mUvQmsgMcJO96MK39/xA7WU1Tjvhr
-         Z/cad3hBV3UmXjzD+n7I5iqVPCTSszkDbD3+nOBolQHsP5rPUBaR/aXUrhQLftmDkyqi
-         YT/I6Xpzl6uKcHeQmq1iYZJo6pRODGkX0IRRfRQgECx5UcBZCGQF52k4uMbkOAV/7TOn
-         lVowsdRas2uncBa7G7SpymkoXvIPm11qlMb4FLCE076leq0G3BthIj3S0jETmrw18IXg
-         +XuA==
-X-Gm-Message-State: AOAM532iYSHGiWGiXEoVWWQVGLG+jCefGR3bq9pzMePTLFatEozKGI4t
-        4KsPlWRfgcSsCp3QPHyvvhKlIA==
-X-Google-Smtp-Source: ABdhPJztxd9ybzuPdUmBiF9b0n0gq1IqMMvtclokdmjAg/DXj6rkBJNamKoGI+PesauLp51wDgEtRg==
-X-Received: by 2002:adf:e546:: with SMTP id z6mr58343987wrm.99.1594289562595;
-        Thu, 09 Jul 2020 03:12:42 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=n6htwB+szlCXWOkrB7yFcHsh0l6bO9G/ddiTH8uA+7s=;
+        b=DMQfgkpOay7O3YD7ovijMDN+FK1eWUwdS0dwzOQV1THWwERjblbNVnIGajUwoj35Jr
+         CYe8f6BKKnkB+2QM76bDfRfxwZrq4Gb3eojmygiSGTQdIr7+YLmHyD0SpL6OPGaH5YWv
+         ScysfZqypogFV1hbYMni81p7nD0gKnMJsFO9fBINAr7CJgatNb1hOd/3xjs4t02VzNFD
+         VEMWSqtjDm7Oj5DBSzYeewHWKR8/4hgvKM9NNePu3MqysYODNUHI49wnCT7McMyX6D6z
+         vtX6YDEMM718rJVkRYVfABxPnUHYOsUkx30Tn8i1n8X0ZrN8ofRSNuKhghMyVVQXlmNU
+         BCyg==
+X-Gm-Message-State: AOAM532JRfTLLV0LswSQ0GheGE8qQAGG9TqDKYb2nA6VvIu39nzUe59+
+        kGU2FoaX1H8QOIqGr90kUDblYg==
+X-Google-Smtp-Source: ABdhPJzH8f/CGLViD6K0EHthbYWx4PNFK5zbiWsK82S87OiQSKTJckGzvtXr8IJcukYVqna3oP6pEA==
+X-Received: by 2002:a5d:6907:: with SMTP id t7mr62442015wru.329.1594289564615;
+        Thu, 09 Jul 2020 03:12:44 -0700 (PDT)
 Received: from kpsingh.zrh.corp.google.com ([81.6.44.51])
-        by smtp.gmail.com with ESMTPSA id g3sm5538287wrb.59.2020.07.09.03.12.41
+        by smtp.gmail.com with ESMTPSA id g3sm5538287wrb.59.2020.07.09.03.12.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Jul 2020 03:12:42 -0700 (PDT)
+        Thu, 09 Jul 2020 03:12:44 -0700 (PDT)
 From:   KP Singh <kpsingh@chromium.org>
 To:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
         linux-security-module@vger.kernel.org
@@ -64,10 +64,12 @@ Cc:     Alexei Starovoitov <ast@kernel.org>,
         Martin KaFai Lau <kafai@fb.com>,
         Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
         Florent Revest <revest@chromium.org>
-Subject: [PATCH bpf-next v4 0/4] Generalizing bpf_local_storage
-Date:   Thu,  9 Jul 2020 12:12:35 +0200
-Message-Id: <20200709101239.3829793-1-kpsingh@chromium.org>
+Subject: [PATCH bpf-next v4 2/4] bpf: Implement bpf_local_storage for inodes
+Date:   Thu,  9 Jul 2020 12:12:37 +0200
+Message-Id: <20200709101239.3829793-3-kpsingh@chromium.org>
 X-Mailer: git-send-email 2.27.0.389.gc38d7665816-goog
+In-Reply-To: <20200709101239.3829793-1-kpsingh@chromium.org>
+References: <20200709101239.3829793-1-kpsingh@chromium.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
@@ -76,94 +78,754 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: KP Singh <kpsingh@google.com>
 
-# v3 -> v4
+Similar to bpf_local_storage for sockets, add local storage for inodes.
+The life-cycle of storage is managed with the life-cycle of the inode.
+i.e. the storage is destroyed along with the owning inode.
 
-- Fixed a missing include to bpf_sk_storage.h in bpf_sk_storage.c
-- Fixed some functions that were not marked as static which led to
-  W=1 compilation warnings.
+The BPF LSM allocates an __rcu pointer to the bpf_local_storage in the
+security blob which are now stackable and can co-exist with other LSMs.
 
-# v2 -> v3
-
-* Restructured the code as per Martin's suggestions:
-  - Common functionality in bpf_local_storage.c
-  - bpf_sk_storage functionality remains in net/bpf_sk_storage.
-  - bpf_inode_storage is kept separate as it is enabled only with
-    CONFIG_BPF_LSM.
-* A separate cache for inode and sk storage with macros to define it.
-* Use the ops style approach as suggested by Martin instead of the
-  enum + switch style.
-* Added the inode map to bpftool bash completion and docs.
-* Rebase and indentation fixes.
-
-# v1 -> v2
-
-* Use the security blob pointer instead of dedicated member in
-  struct inode.
-* Better code re-use as suggested by Alexei.
-* Dropped the inode count arithmetic as pointed out by Alexei.
-* Minor bug fixes and rebase.
-
-bpf_sk_storage can already be used by some BPF program types to annotate
-socket objects. These annotations are managed with the life-cycle of the
-object (i.e. freed when the object is freed) which makes BPF programs
-much simpler and less prone to errors and leaks.
-
-This patch series:
-
-* Generalizes the bpf_sk_storage infrastructure to allow easy
-  implementation of local storage for other objects
-* Implements local storage for inodes
-* Makes both bpf_{sk, inode}_storage available to LSM programs.
-
-Local storage is safe to use in LSM programs as the attachment sites are
-limited and the owning object won't be freed, however, this is not the
-case for tracing. Usage in tracing is expected to follow a white-list
-based approach similar to the d_path helper
-(https://lore.kernel.org/bpf/20200506132946.2164578-1-jolsa@kernel.org).
-
-Access to local storage would allow LSM programs to implement stateful
-detections like detecting the unlink of a running executable from the
-examples shared as a part of the KRSI series
-https://lore.kernel.org/bpf/20200329004356.27286-1-kpsingh@chromium.org/
-and
-https://github.com/sinkap/linux-krsi/blob/patch/v1/examples/samples/bpf/lsm_detect_exec_unlink.c
-
-
-KP Singh (4):
-  bpf: Generalize bpf_sk_storage
-  bpf: Implement bpf_local_storage for inodes
-  bpf: Allow local storage to be used from LSM programs
-  bpf: Add selftests for local_storage
-
- include/linux/bpf.h                           |  14 +
- include/linux/bpf_local_storage.h             | 190 ++++
- include/linux/bpf_lsm.h                       |  21 +
+Signed-off-by: KP Singh <kpsingh@google.com>
+---
+ include/linux/bpf_local_storage.h             |  15 +
+ include/linux/bpf_lsm.h                       |  21 ++
  include/linux/bpf_types.h                     |   3 +
- include/net/bpf_sk_storage.h                  |   2 +
- include/net/sock.h                            |   4 +-
- include/uapi/linux/bpf.h                      |  54 +-
- kernel/bpf/Makefile                           |   2 +
- kernel/bpf/bpf_inode_storage.c                | 333 +++++++
- kernel/bpf/bpf_local_storage.c                | 517 +++++++++++
- kernel/bpf/bpf_lsm.c                          |  21 +-
+ include/uapi/linux/bpf.h                      |  38 ++
+ kernel/bpf/Makefile                           |   1 +
+ kernel/bpf/bpf_inode_storage.c                | 333 ++++++++++++++++++
  kernel/bpf/syscall.c                          |   3 +-
  kernel/bpf/verifier.c                         |  10 +
- net/core/bpf_sk_storage.c                     | 825 ++++--------------
  security/bpf/hooks.c                          |   7 +
  .../bpf/bpftool/Documentation/bpftool-map.rst |   2 +-
  tools/bpf/bpftool/bash-completion/bpftool     |   3 +-
  tools/bpf/bpftool/map.c                       |   3 +-
- tools/include/uapi/linux/bpf.h                |  54 +-
+ tools/include/uapi/linux/bpf.h                |  38 ++
  tools/lib/bpf/libbpf_probes.c                 |   5 +-
- .../bpf/prog_tests/test_local_storage.c       |  60 ++
- .../selftests/bpf/progs/local_storage.c       | 136 +++
- 22 files changed, 1599 insertions(+), 670 deletions(-)
- create mode 100644 include/linux/bpf_local_storage.h
+ 14 files changed, 476 insertions(+), 6 deletions(-)
  create mode 100644 kernel/bpf/bpf_inode_storage.c
- create mode 100644 kernel/bpf/bpf_local_storage.c
- create mode 100644 tools/testing/selftests/bpf/prog_tests/test_local_storage.c
- create mode 100644 tools/testing/selftests/bpf/progs/local_storage.c
 
+diff --git a/include/linux/bpf_local_storage.h b/include/linux/bpf_local_storage.h
+index 605b81f2f806..63cc7b93ae80 100644
+--- a/include/linux/bpf_local_storage.h
++++ b/include/linux/bpf_local_storage.h
+@@ -113,6 +113,8 @@ static void cache_idx_free_##type(u16 idx)				\
+ 	       sizeof(struct bpf_local_storage_elem)),			\
+ 	      (U16_MAX - sizeof(struct bpf_local_storage_elem)))
+ 
++struct inode;
++
+ struct bpf_local_storage {
+ 	struct bpf_local_storage_data __rcu *cache[BPF_STORAGE_CACHE_SIZE];
+ 	struct hlist_head list;		/* List of bpf_local_storage_elem */
+@@ -121,6 +123,9 @@ struct bpf_local_storage {
+ 	 */
+ 	union {
+ 		struct sock *sk;
++#ifdef CONFIG_BPF_LSM
++		struct inode *inode;
++#endif
+ 	};
+ 	struct rcu_head rcu;
+ 	raw_spinlock_t lock;	/* Protect adding/removing from the "list" */
+@@ -172,4 +177,14 @@ struct bpf_local_storage_data *
+ bpf_local_storage_update(void *owner, struct bpf_map *map,
+ 			 struct bpf_local_storage *local_storage, void *value,
+ 			 u64 map_flags);
++
++#ifdef CONFIG_BPF_LSM
++extern const struct bpf_func_proto bpf_inode_storage_get_proto;
++extern const struct bpf_func_proto bpf_inode_storage_delete_proto;
++void bpf_inode_storage_free(struct inode *inode);
++#else
++static inline void bpf_inode_storage_free(struct inode *inode)
++{
++}
++#endif
+ #endif /* _BPF_LOCAL_STORAGE_H */
+diff --git a/include/linux/bpf_lsm.h b/include/linux/bpf_lsm.h
+index af74712af585..d0683ada1e49 100644
+--- a/include/linux/bpf_lsm.h
++++ b/include/linux/bpf_lsm.h
+@@ -17,9 +17,24 @@
+ #include <linux/lsm_hook_defs.h>
+ #undef LSM_HOOK
+ 
++struct bpf_storage_blob {
++	struct bpf_local_storage __rcu *storage;
++};
++
++extern struct lsm_blob_sizes bpf_lsm_blob_sizes;
++
+ int bpf_lsm_verify_prog(struct bpf_verifier_log *vlog,
+ 			const struct bpf_prog *prog);
+ 
++static inline struct bpf_storage_blob *bpf_inode(
++	const struct inode *inode)
++{
++	if (unlikely(!inode->i_security))
++		return NULL;
++
++	return inode->i_security + bpf_lsm_blob_sizes.lbs_inode;
++}
++
+ #else /* !CONFIG_BPF_LSM */
+ 
+ static inline int bpf_lsm_verify_prog(struct bpf_verifier_log *vlog,
+@@ -28,6 +43,12 @@ static inline int bpf_lsm_verify_prog(struct bpf_verifier_log *vlog,
+ 	return -EOPNOTSUPP;
+ }
+ 
++static inline struct bpf_storage_blob *bpf_inode(
++	const struct inode *inode)
++{
++	return NULL;
++}
++
+ #endif /* CONFIG_BPF_LSM */
+ 
+ #endif /* _LINUX_BPF_LSM_H */
+diff --git a/include/linux/bpf_types.h b/include/linux/bpf_types.h
+index a18ae82a298a..2950576de4ae 100644
+--- a/include/linux/bpf_types.h
++++ b/include/linux/bpf_types.h
+@@ -105,6 +105,9 @@ BPF_MAP_TYPE(BPF_MAP_TYPE_SK_STORAGE, sk_storage_map_ops)
+ BPF_MAP_TYPE(BPF_MAP_TYPE_SOCKMAP, sock_map_ops)
+ BPF_MAP_TYPE(BPF_MAP_TYPE_SOCKHASH, sock_hash_ops)
+ #endif
++#ifdef CONFIG_BPF_LSM
++BPF_MAP_TYPE(BPF_MAP_TYPE_INODE_STORAGE, inode_storage_map_ops)
++#endif
+ BPF_MAP_TYPE(BPF_MAP_TYPE_CPUMAP, cpu_map_ops)
+ #if defined(CONFIG_XDP_SOCKETS)
+ BPF_MAP_TYPE(BPF_MAP_TYPE_XSKMAP, xsk_map_ops)
+diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
+index 1f3e831c4813..42fc442f4586 100644
+--- a/include/uapi/linux/bpf.h
++++ b/include/uapi/linux/bpf.h
+@@ -148,6 +148,7 @@ enum bpf_map_type {
+ 	BPF_MAP_TYPE_DEVMAP_HASH,
+ 	BPF_MAP_TYPE_STRUCT_OPS,
+ 	BPF_MAP_TYPE_RINGBUF,
++	BPF_MAP_TYPE_INODE_STORAGE,
+ };
+ 
+ /* Note that tracing related programs such as
+@@ -3319,6 +3320,41 @@ union bpf_attr {
+  *		A non-negative value equal to or less than *size* on success,
+  *		or a negative error in case of failure.
+  *
++ * void *bpf_inode_storage_get(struct bpf_map *map, void *inode, void *value, u64 flags)
++ *	Description
++ *		Get a bpf_local_storage from an *inode*.
++ *
++ *		Logically, it could be thought of as getting the value from
++ *		a *map* with *inode* as the **key**.  From this
++ *		perspective,  the usage is not much different from
++ *		**bpf_map_lookup_elem**\ (*map*, **&**\ *inode*) except this
++ *		helper enforces the key must be an inode and the map must also
++ *		be a **BPF_MAP_TYPE_INODE_STORAGE**.
++ *
++ *		Underneath, the value is stored locally at *inode* instead of
++ *		the *map*.  The *map* is used as the bpf-local-storage
++ *		"type". The bpf-local-storage "type" (i.e. the *map*) is
++ *		searched against all bpf_local_storage residing at *inode*.
++ *
++ *		An optional *flags* (**BPF_LOCAL_STORAGE_GET_F_CREATE**) can be
++ *		used such that a new bpf_local_storage will be
++ *		created if one does not exist.  *value* can be used
++ *		together with **BPF_LOCAL_STORAGE_GET_F_CREATE** to specify
++ *		the initial value of a bpf_local_storage.  If *value* is
++ *		**NULL**, the new bpf_local_storage will be zero initialized.
++ *	Return
++ *		A bpf_local_storage pointer is returned on success.
++ *
++ *		**NULL** if not found or there was an error in adding
++ *		a new bpf_local_storage.
++ *
++ * int bpf_inode_storage_delete(struct bpf_map *map, void *inode)
++ *	Description
++ *		Delete a bpf_local_storage from an *inode*.
++ *	Return
++ *		0 on success.
++ *
++ *		**-ENOENT** if the bpf_local_storage cannot be found.
+  */
+ #define __BPF_FUNC_MAPPER(FN)		\
+ 	FN(unspec),			\
+@@ -3463,6 +3499,8 @@ union bpf_attr {
+ 	FN(skc_to_tcp_request_sock),	\
+ 	FN(skc_to_udp6_sock),		\
+ 	FN(get_task_stack),		\
++	FN(inode_storage_get),		\
++	FN(inode_storage_delete),	\
+ 	/* */
+ 
+ /* integer value in 'imm' field of BPF_CALL instruction selects which helper
+diff --git a/kernel/bpf/Makefile b/kernel/bpf/Makefile
+index 0acb8f8a6042..0ea9fd15977c 100644
+--- a/kernel/bpf/Makefile
++++ b/kernel/bpf/Makefile
+@@ -5,6 +5,7 @@ CFLAGS_core.o += $(call cc-disable-warning, override-init)
+ obj-$(CONFIG_BPF_SYSCALL) += syscall.o verifier.o inode.o helpers.o tnum.o bpf_iter.o map_iter.o task_iter.o
+ obj-$(CONFIG_BPF_SYSCALL) += hashtab.o arraymap.o percpu_freelist.o bpf_lru_list.o lpm_trie.o map_in_map.o
+ obj-$(CONFIG_BPF_SYSCALL) += local_storage.o queue_stack_maps.o ringbuf.o
++obj-${CONFIG_BPF_LSM}	  += bpf_inode_storage.o
+ obj-$(CONFIG_BPF_SYSCALL) += disasm.o
+ obj-$(CONFIG_BPF_JIT) += trampoline.o
+ obj-$(CONFIG_BPF_SYSCALL) += btf.o
+diff --git a/kernel/bpf/bpf_inode_storage.c b/kernel/bpf/bpf_inode_storage.c
+new file mode 100644
+index 000000000000..d63db7a24168
+--- /dev/null
++++ b/kernel/bpf/bpf_inode_storage.c
+@@ -0,0 +1,333 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2019 Facebook
++ * Copyright 2020 Google LLC.
++ */
++
++#include <linux/rculist.h>
++#include <linux/list.h>
++#include <linux/hash.h>
++#include <linux/types.h>
++#include <linux/spinlock.h>
++#include <linux/bpf.h>
++#include <linux/bpf_local_storage.h>
++#include <net/sock.h>
++#include <uapi/linux/sock_diag.h>
++#include <uapi/linux/btf.h>
++#include <linux/bpf_lsm.h>
++
++static struct bpf_local_storage_elem *
++inode_selem_alloc(struct bpf_local_storage_map *smap, void *owner,
++		  void *value, bool charge_omem)
++{
++	return bpf_selem_alloc(smap, value);
++}
++
++static void unlink_inode_storage(struct bpf_local_storage *local_storage,
++				 bool uncharge_omem)
++{
++	struct bpf_storage_blob *bsb;
++	struct inode *inode;
++
++	inode = local_storage->inode;
++	bsb = bpf_inode(inode);
++	if (!bsb)
++		return;
++	RCU_INIT_POINTER(bsb->storage, NULL);
++	local_storage->inode = NULL;
++}
++
++static struct bpf_local_storage_data *inode_storage_lookup(struct inode *inode,
++							   struct bpf_map *map,
++							   bool cacheit_lockit)
++{
++	struct bpf_local_storage *inode_storage;
++	struct bpf_local_storage_map *smap;
++	struct bpf_storage_blob *bsb;
++
++	bsb = bpf_inode(inode);
++	if (!bsb)
++		return ERR_PTR(-ENOENT);
++
++	inode_storage = rcu_dereference(bsb->storage);
++	if (!inode_storage)
++		return NULL;
++
++	smap = (struct bpf_local_storage_map *)map;
++	return bpf_local_storage_lookup(inode_storage, smap, cacheit_lockit);
++}
++
++static int inode_storage_alloc(void *owner, struct bpf_local_storage_map *smap,
++			       struct bpf_local_storage_elem *first_selem)
++{
++	struct bpf_local_storage *curr;
++	struct bpf_storage_blob *bsb;
++	struct inode *inode = owner;
++	int err;
++
++	bsb = bpf_inode(inode);
++	if (!bsb)
++		return -EINVAL;
++
++	curr = bpf_local_storage_alloc(smap);
++	if (!curr)
++		return -ENOMEM;
++
++	curr->inode = inode;
++
++	bpf_selem_link(curr, first_selem);
++	bpf_selem_link_map(smap, first_selem);
++
++	err = bpf_local_storage_publish(first_selem,
++		(struct bpf_local_storage **)&bsb->storage, curr);
++	if (err) {
++		kfree(curr);
++		return err;
++	}
++
++	return 0;
++}
++
++static struct bpf_local_storage_data *inode_storage_update(void *owner,
++							   struct bpf_map *map,
++							   void *value,
++							   u64 map_flags)
++{
++	struct bpf_local_storage_data *old_sdata = NULL;
++	struct bpf_local_storage_elem *selem;
++	struct bpf_local_storage *local_storage;
++	struct bpf_local_storage_map *smap;
++	struct bpf_storage_blob *bsb;
++	struct inode *inode;
++	int err;
++
++	err = bpf_local_storage_check_update_flags(map, map_flags);
++	if (err)
++		return ERR_PTR(err);
++
++	inode = owner;
++	bsb = bpf_inode(inode);
++	local_storage = rcu_dereference(bsb->storage);
++	smap = (struct bpf_local_storage_map *)map;
++
++	if (!local_storage || hlist_empty(&local_storage->list)) {
++		/* Very first elem */
++		selem = map->ops->map_selem_alloc(smap, owner, value, !old_sdata);
++		if (!selem)
++			return ERR_PTR(-ENOMEM);
++
++		err = map->ops->map_local_storage_alloc(owner, smap, selem);
++		if (err) {
++			kfree(selem);
++			return ERR_PTR(err);
++		}
++
++		return SDATA(selem);
++	}
++
++	return bpf_local_storage_update(owner, map, local_storage, value,
++					map_flags);
++}
++
++
++void bpf_inode_storage_free(struct inode *inode)
++{
++	struct bpf_local_storage_elem *selem;
++	struct bpf_local_storage *local_storage;
++	bool free_inode_storage = false;
++	struct bpf_storage_blob *bsb;
++	struct hlist_node *n;
++
++	bsb = bpf_inode(inode);
++	if (!bsb)
++		return;
++
++	rcu_read_lock();
++
++	local_storage = rcu_dereference(bsb->storage);
++	if (!local_storage) {
++		rcu_read_unlock();
++		return;
++	}
++
++	/* Netiher the bpf_prog nor the bpf-map's syscall
++	 * could be modifying the local_storage->list now.
++	 * Thus, no elem can be added-to or deleted-from the
++	 * local_storage->list by the bpf_prog or by the bpf-map's syscall.
++	 *
++	 * It is racing with bpf_local_storage_map_free() alone
++	 * when unlinking elem from the local_storage->list and
++	 * the map's bucket->list.
++	 */
++	raw_spin_lock_bh(&local_storage->lock);
++	hlist_for_each_entry_safe(selem, n, &local_storage->list, snode) {
++		/* Always unlink from map before unlinking from
++		 * local_storage.
++		 */
++		bpf_selem_unlink_map(selem);
++		free_inode_storage =
++			bpf_selem_unlink(local_storage, selem, false);
++	}
++	raw_spin_unlock_bh(&local_storage->lock);
++	rcu_read_unlock();
++
++	/* free_inoode_storage should always be true as long as
++	 * local_storage->list was non-empty.
++	 */
++	if (free_inode_storage)
++		kfree_rcu(local_storage, rcu);
++}
++
++
++static void *bpf_inode_storage_lookup_elem(struct bpf_map *map, void *key)
++{
++	struct bpf_local_storage_data *sdata;
++	struct inode *inode;
++	int err = -EINVAL;
++
++	if (key) {
++		inode = *(struct inode **)(key);
++		sdata = inode_storage_lookup(inode, map, true);
++		return sdata ? sdata->data : NULL;
++	}
++
++	return ERR_PTR(err);
++}
++
++static int bpf_inode_storage_update_elem(struct bpf_map *map, void *key,
++					 void *value, u64 map_flags)
++{
++	struct bpf_local_storage_data *sdata;
++	struct inode *inode;
++	int err = -EINVAL;
++
++	if (key) {
++		inode = *(struct inode **)(key);
++		sdata = map->ops->map_local_storage_update(inode, map, value,
++							   map_flags);
++		return PTR_ERR_OR_ZERO(sdata);
++	}
++	return err;
++}
++
++static int inode_storage_delete(struct inode *inode, struct bpf_map *map)
++{
++	struct bpf_local_storage_data *sdata;
++
++	sdata = inode_storage_lookup(inode, map, false);
++	if (!sdata)
++		return -ENOENT;
++
++	bpf_selem_unlink_map_elem(SELEM(sdata));
++
++	return 0;
++}
++
++static int bpf_inode_storage_delete_elem(struct bpf_map *map, void *key)
++{
++	struct inode *inode;
++	int err = -EINVAL;
++
++	if (key) {
++		inode = *(struct inode **)(key);
++		err = inode_storage_delete(inode, map);
++	}
++
++	return err;
++}
++
++BPF_CALL_4(bpf_inode_storage_get, struct bpf_map *, map, struct inode *, inode,
++	   void *, value, u64, flags)
++{
++	struct bpf_local_storage_data *sdata;
++
++	if (flags & ~(BPF_LOCAL_STORAGE_GET_F_CREATE))
++		return (unsigned long)NULL;
++
++	sdata = inode_storage_lookup(inode, map, true);
++	if (sdata)
++		return (unsigned long)sdata->data;
++
++	if (flags & BPF_LOCAL_STORAGE_GET_F_CREATE) {
++		sdata = inode_storage_update(inode, map, value, BPF_NOEXIST);
++		return IS_ERR(sdata) ?
++			(unsigned long)NULL : (unsigned long)sdata->data;
++	}
++
++	return (unsigned long)NULL;
++}
++
++BPF_CALL_2(bpf_inode_storage_delete,
++	   struct bpf_map *, map, struct inode *, inode)
++{
++	return inode_storage_delete(inode, map);
++}
++
++static int notsupp_get_next_key(struct bpf_map *map, void *key,
++				void *next_key)
++{
++	return -ENOTSUPP;
++}
++
++DEFINE_BPF_STORAGE_CACHE(inode);
++
++static struct bpf_map *inode_storage_map_alloc(union bpf_attr *attr)
++{
++	struct bpf_local_storage_map *smap;
++
++	smap = bpf_local_storage_map_alloc(attr);
++	if (IS_ERR(smap))
++		return ERR_CAST(smap);
++
++	smap->cache_idx = cache_idx_get_inode();
++	return &smap->map;
++}
++
++static void inode_storage_map_free(struct bpf_map *map)
++{
++	struct bpf_local_storage_map *smap;
++
++	smap = (struct bpf_local_storage_map *)map;
++	cache_idx_free_inode(smap->cache_idx);
++	bpf_local_storage_map_free(smap);
++}
++
++static int inode_storage_map_btf_id;
++const struct bpf_map_ops inode_storage_map_ops = {
++	.map_alloc_check = bpf_local_storage_map_alloc_check,
++	.map_alloc = inode_storage_map_alloc,
++	.map_free = inode_storage_map_free,
++	.map_get_next_key = notsupp_get_next_key,
++	.map_lookup_elem = bpf_inode_storage_lookup_elem,
++	.map_update_elem = bpf_inode_storage_update_elem,
++	.map_delete_elem = bpf_inode_storage_delete_elem,
++	.map_check_btf = bpf_local_storage_map_check_btf,
++	.map_btf_name = "bpf_local_storage_map",
++	.map_btf_id = &inode_storage_map_btf_id,
++	.map_local_storage_alloc = inode_storage_alloc,
++	.map_selem_alloc = inode_selem_alloc,
++	.map_local_storage_update = inode_storage_update,
++	.map_local_storage_unlink = unlink_inode_storage,
++};
++
++static int bpf_inode_storage_get_btf_ids[4];
++const struct bpf_func_proto bpf_inode_storage_get_proto = {
++	.func		= bpf_inode_storage_get,
++	.gpl_only	= false,
++	.ret_type	= RET_PTR_TO_MAP_VALUE_OR_NULL,
++	.arg1_type	= ARG_CONST_MAP_PTR,
++	.arg2_type	= ARG_PTR_TO_BTF_ID,
++	.arg3_type	= ARG_PTR_TO_MAP_VALUE_OR_NULL,
++	.arg4_type	= ARG_ANYTHING,
++	.btf_id		= bpf_inode_storage_get_btf_ids,
++};
++
++static int bpf_inode_storage_delete_btf_ids[2];
++const struct bpf_func_proto bpf_inode_storage_delete_proto = {
++	.func		= bpf_inode_storage_delete,
++	.gpl_only	= false,
++	.ret_type	= RET_INTEGER,
++	.arg1_type	= ARG_CONST_MAP_PTR,
++	.arg2_type	= ARG_PTR_TO_BTF_ID,
++	.btf_id		= bpf_inode_storage_delete_btf_ids,
++};
+diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+index 156f51ffada2..3fc7586408f7 100644
+--- a/kernel/bpf/syscall.c
++++ b/kernel/bpf/syscall.c
+@@ -768,7 +768,8 @@ static int map_check_btf(struct bpf_map *map, const struct btf *btf,
+ 		if (map->map_type != BPF_MAP_TYPE_HASH &&
+ 		    map->map_type != BPF_MAP_TYPE_ARRAY &&
+ 		    map->map_type != BPF_MAP_TYPE_CGROUP_STORAGE &&
+-		    map->map_type != BPF_MAP_TYPE_SK_STORAGE)
++		    map->map_type != BPF_MAP_TYPE_SK_STORAGE &&
++		    map->map_type != BPF_MAP_TYPE_INODE_STORAGE)
+ 			return -ENOTSUPP;
+ 		if (map->spin_lock_off + sizeof(struct bpf_spin_lock) >
+ 		    map->value_size) {
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index b608185e1ffd..9080a62b583a 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -4164,6 +4164,11 @@ static int check_map_func_compatibility(struct bpf_verifier_env *env,
+ 		    func_id != BPF_FUNC_sk_storage_delete)
+ 			goto error;
+ 		break;
++	case BPF_MAP_TYPE_INODE_STORAGE:
++		if (func_id != BPF_FUNC_inode_storage_get &&
++		    func_id != BPF_FUNC_inode_storage_delete)
++			goto error;
++		break;
+ 	default:
+ 		break;
+ 	}
+@@ -4237,6 +4242,11 @@ static int check_map_func_compatibility(struct bpf_verifier_env *env,
+ 		if (map->map_type != BPF_MAP_TYPE_SK_STORAGE)
+ 			goto error;
+ 		break;
++	case BPF_FUNC_inode_storage_get:
++	case BPF_FUNC_inode_storage_delete:
++		if (map->map_type != BPF_MAP_TYPE_INODE_STORAGE)
++			goto error;
++		break;
+ 	default:
+ 		break;
+ 	}
+diff --git a/security/bpf/hooks.c b/security/bpf/hooks.c
+index 32d32d485451..35f9b19259e5 100644
+--- a/security/bpf/hooks.c
++++ b/security/bpf/hooks.c
+@@ -3,6 +3,7 @@
+ /*
+  * Copyright (C) 2020 Google LLC.
+  */
++#include <linux/bpf_local_storage.h>
+ #include <linux/lsm_hooks.h>
+ #include <linux/bpf_lsm.h>
+ 
+@@ -11,6 +12,7 @@ static struct security_hook_list bpf_lsm_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(NAME, bpf_lsm_##NAME),
+ 	#include <linux/lsm_hook_defs.h>
+ 	#undef LSM_HOOK
++	LSM_HOOK_INIT(inode_free_security, bpf_inode_storage_free),
+ };
+ 
+ static int __init bpf_lsm_init(void)
+@@ -20,7 +22,12 @@ static int __init bpf_lsm_init(void)
+ 	return 0;
+ }
+ 
++struct lsm_blob_sizes bpf_lsm_blob_sizes __lsm_ro_after_init = {
++	.lbs_inode = sizeof(struct bpf_storage_blob),
++};
++
+ DEFINE_LSM(bpf) = {
+ 	.name = "bpf",
+ 	.init = bpf_lsm_init,
++	.blobs = &bpf_lsm_blob_sizes
+ };
+diff --git a/tools/bpf/bpftool/Documentation/bpftool-map.rst b/tools/bpf/bpftool/Documentation/bpftool-map.rst
+index 41e2a74252d0..083db6c2fc67 100644
+--- a/tools/bpf/bpftool/Documentation/bpftool-map.rst
++++ b/tools/bpf/bpftool/Documentation/bpftool-map.rst
+@@ -49,7 +49,7 @@ MAP COMMANDS
+ |		| **lru_percpu_hash** | **lpm_trie** | **array_of_maps** | **hash_of_maps**
+ |		| **devmap** | **devmap_hash** | **sockmap** | **cpumap** | **xskmap** | **sockhash**
+ |		| **cgroup_storage** | **reuseport_sockarray** | **percpu_cgroup_storage**
+-|		| **queue** | **stack** | **sk_storage** | **struct_ops** | **ringbuf** }
++|		| **queue** | **stack** | **sk_storage** | **struct_ops** | **ringbuf** | **inode_storage** }
+ 
+ DESCRIPTION
+ ===========
+diff --git a/tools/bpf/bpftool/bash-completion/bpftool b/tools/bpf/bpftool/bash-completion/bpftool
+index 25b25aca1112..34cadc081a78 100644
+--- a/tools/bpf/bpftool/bash-completion/bpftool
++++ b/tools/bpf/bpftool/bash-completion/bpftool
+@@ -688,7 +688,8 @@ _bpftool()
+                                 lru_percpu_hash lpm_trie array_of_maps \
+                                 hash_of_maps devmap devmap_hash sockmap cpumap \
+                                 xskmap sockhash cgroup_storage reuseport_sockarray \
+-                                percpu_cgroup_storage queue stack' -- \
++                                percpu_cgroup_storage queue stack sk_storage \
++                                struct_ops inode_storage' -- \
+                                                    "$cur" ) )
+                             return 0
+                             ;;
+diff --git a/tools/bpf/bpftool/map.c b/tools/bpf/bpftool/map.c
+index 3a27d31a1856..bc0071228f88 100644
+--- a/tools/bpf/bpftool/map.c
++++ b/tools/bpf/bpftool/map.c
+@@ -50,6 +50,7 @@ const char * const map_type_name[] = {
+ 	[BPF_MAP_TYPE_SK_STORAGE]		= "sk_storage",
+ 	[BPF_MAP_TYPE_STRUCT_OPS]		= "struct_ops",
+ 	[BPF_MAP_TYPE_RINGBUF]			= "ringbuf",
++	[BPF_MAP_TYPE_INODE_STORAGE]		= "inode_storage",
+ };
+ 
+ const size_t map_type_name_size = ARRAY_SIZE(map_type_name);
+@@ -1442,7 +1443,7 @@ static int do_help(int argc, char **argv)
+ 		"                 lru_percpu_hash | lpm_trie | array_of_maps | hash_of_maps |\n"
+ 		"                 devmap | devmap_hash | sockmap | cpumap | xskmap | sockhash |\n"
+ 		"                 cgroup_storage | reuseport_sockarray | percpu_cgroup_storage |\n"
+-		"                 queue | stack | sk_storage | struct_ops | ringbuf }\n"
++		"                 queue | stack | sk_storage | struct_ops | ringbuf | inode_storage }\n"
+ 		"       " HELP_SPEC_OPTIONS "\n"
+ 		"",
+ 		bin_name, argv[-2]);
+diff --git a/tools/include/uapi/linux/bpf.h b/tools/include/uapi/linux/bpf.h
+index 1f3e831c4813..42fc442f4586 100644
+--- a/tools/include/uapi/linux/bpf.h
++++ b/tools/include/uapi/linux/bpf.h
+@@ -148,6 +148,7 @@ enum bpf_map_type {
+ 	BPF_MAP_TYPE_DEVMAP_HASH,
+ 	BPF_MAP_TYPE_STRUCT_OPS,
+ 	BPF_MAP_TYPE_RINGBUF,
++	BPF_MAP_TYPE_INODE_STORAGE,
+ };
+ 
+ /* Note that tracing related programs such as
+@@ -3319,6 +3320,41 @@ union bpf_attr {
+  *		A non-negative value equal to or less than *size* on success,
+  *		or a negative error in case of failure.
+  *
++ * void *bpf_inode_storage_get(struct bpf_map *map, void *inode, void *value, u64 flags)
++ *	Description
++ *		Get a bpf_local_storage from an *inode*.
++ *
++ *		Logically, it could be thought of as getting the value from
++ *		a *map* with *inode* as the **key**.  From this
++ *		perspective,  the usage is not much different from
++ *		**bpf_map_lookup_elem**\ (*map*, **&**\ *inode*) except this
++ *		helper enforces the key must be an inode and the map must also
++ *		be a **BPF_MAP_TYPE_INODE_STORAGE**.
++ *
++ *		Underneath, the value is stored locally at *inode* instead of
++ *		the *map*.  The *map* is used as the bpf-local-storage
++ *		"type". The bpf-local-storage "type" (i.e. the *map*) is
++ *		searched against all bpf_local_storage residing at *inode*.
++ *
++ *		An optional *flags* (**BPF_LOCAL_STORAGE_GET_F_CREATE**) can be
++ *		used such that a new bpf_local_storage will be
++ *		created if one does not exist.  *value* can be used
++ *		together with **BPF_LOCAL_STORAGE_GET_F_CREATE** to specify
++ *		the initial value of a bpf_local_storage.  If *value* is
++ *		**NULL**, the new bpf_local_storage will be zero initialized.
++ *	Return
++ *		A bpf_local_storage pointer is returned on success.
++ *
++ *		**NULL** if not found or there was an error in adding
++ *		a new bpf_local_storage.
++ *
++ * int bpf_inode_storage_delete(struct bpf_map *map, void *inode)
++ *	Description
++ *		Delete a bpf_local_storage from an *inode*.
++ *	Return
++ *		0 on success.
++ *
++ *		**-ENOENT** if the bpf_local_storage cannot be found.
+  */
+ #define __BPF_FUNC_MAPPER(FN)		\
+ 	FN(unspec),			\
+@@ -3463,6 +3499,8 @@ union bpf_attr {
+ 	FN(skc_to_tcp_request_sock),	\
+ 	FN(skc_to_udp6_sock),		\
+ 	FN(get_task_stack),		\
++	FN(inode_storage_get),		\
++	FN(inode_storage_delete),	\
+ 	/* */
+ 
+ /* integer value in 'imm' field of BPF_CALL instruction selects which helper
+diff --git a/tools/lib/bpf/libbpf_probes.c b/tools/lib/bpf/libbpf_probes.c
+index 10cd8d1891f5..b859558ce290 100644
+--- a/tools/lib/bpf/libbpf_probes.c
++++ b/tools/lib/bpf/libbpf_probes.c
+@@ -170,7 +170,7 @@ int libbpf__load_raw_btf(const char *raw_types, size_t types_len,
+ 	return btf_fd;
+ }
+ 
+-static int load_sk_storage_btf(void)
++static int load_local_storage_btf(void)
+ {
+ 	const char strs[] = "\0bpf_spin_lock\0val\0cnt\0l";
+ 	/* struct bpf_spin_lock {
+@@ -229,12 +229,13 @@ bool bpf_probe_map_type(enum bpf_map_type map_type, __u32 ifindex)
+ 		key_size	= 0;
+ 		break;
+ 	case BPF_MAP_TYPE_SK_STORAGE:
++	case BPF_MAP_TYPE_INODE_STORAGE:
+ 		btf_key_type_id = 1;
+ 		btf_value_type_id = 3;
+ 		value_size = 8;
+ 		max_entries = 0;
+ 		map_flags = BPF_F_NO_PREALLOC;
+-		btf_fd = load_sk_storage_btf();
++		btf_fd = load_local_storage_btf();
+ 		if (btf_fd < 0)
+ 			return false;
+ 		break;
 -- 
 2.27.0.389.gc38d7665816-goog
 
