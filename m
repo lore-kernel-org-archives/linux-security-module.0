@@ -2,121 +2,89 @@ Return-Path: <SRS0=TKeG=AU=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0EFCC433E2
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 Jul 2020 06:20:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B723C433DF
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 Jul 2020 08:40:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B1AB120672
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 Jul 2020 06:20:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="CI3VBB9l"
+	by mail.kernel.org (Postfix) with ESMTP id 0C27A206A1
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 Jul 2020 08:40:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726357AbgGIGUF (ORCPT
+        id S1726763AbgGIIk2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 9 Jul 2020 02:20:05 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:37982 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725787AbgGIGUC (ORCPT
+        Thu, 9 Jul 2020 04:40:28 -0400
+Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:36098 "EHLO
+        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726734AbgGIIk1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 9 Jul 2020 02:20:02 -0400
-Received: from sequoia.work.tihix.com (162-237-133-238.lightspeed.rcsntx.sbcglobal.net [162.237.133.238])
-        by linux.microsoft.com (Postfix) with ESMTPSA id AEE8E20B4908;
-        Wed,  8 Jul 2020 23:20:00 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com AEE8E20B4908
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1594275601;
-        bh=mFsiCcE03UNZBsGBJ7WJA9xJRygPO23LFXkCIABirYs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CI3VBB9llqU6KKQKyOH1s75SThDSfhmh/I+xrwByx4CB2dE2tzxku+HvARmu0bx6f
-         1MGXnjGk76xC/vWslwW19xAM4XUlTYn5n06pd1ed/CcmsfLXsFd9hMc2/mZ/wm6vxO
-         4kY46RZuSJRtBydQqhK+q8Ie4xtQlUPjJUrV6hqo=
-From:   Tyler Hicks <tyhicks@linux.microsoft.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Prakhar Srivastava <prsriva02@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH v3 03/12] ima: Free the entire rule if it fails to parse
-Date:   Thu,  9 Jul 2020 01:19:02 -0500
-Message-Id: <20200709061911.954326-4-tyhicks@linux.microsoft.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200709061911.954326-1-tyhicks@linux.microsoft.com>
-References: <20200709061911.954326-1-tyhicks@linux.microsoft.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Thu, 9 Jul 2020 04:40:27 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=22;SR=0;TI=SMTPD_---0U2BK-9F_1594284020;
+Received: from localhost(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0U2BK-9F_1594284020)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 09 Jul 2020 16:40:21 +0800
+From:   Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+To:     herbert@gondor.apana.org.au, davem@davemloft.net,
+        dhowells@redhat.com, mcoquelin.stm32@gmail.com,
+        alexandre.torgue@st.com, jmorris@namei.org, serge@hallyn.com,
+        nramas@linux.microsoft.com, tusharsu@linux.microsoft.com,
+        zohar@linux.ibm.com, vt@altlinux.org, gilad@benyossef.com,
+        pvanleeuwen@rambus.com, zhang.jia@linux.alibaba.com
+Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, tianjia.zhang@linux.alibaba.com
+Subject: [PATCH v5 5/8] crypto: testmgr - support test with different ciphertext per encryption
+Date:   Thu,  9 Jul 2020 16:40:12 +0800
+Message-Id: <20200709084015.21886-6-tianjia.zhang@linux.alibaba.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200709084015.21886-1-tianjia.zhang@linux.alibaba.com>
+References: <20200709084015.21886-1-tianjia.zhang@linux.alibaba.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Use ima_free_rule() to fix memory leaks of allocated ima_rule_entry
-members, such as .fsname and .keyrings, when an error is encountered
-during rule parsing.
+Some asymmetric algorithms will get different ciphertext after
+each encryption, such as SM2, and let testmgr support the testing
+of such algorithms.
 
-Set the args_p pointer to NULL after freeing it in the error path of
-ima_lsm_rule_init() so that it isn't freed twice.
+In struct akcipher_testvec, set c and c_size to be empty, skip
+the comparison of the ciphertext, and compare the decrypted
+plaintext with m to achieve the test purpose.
 
-This fixes a memory leak seen when loading an rule that contains an
-additional piece of allocated memory, such as an fsname, followed by an
-invalid conditional:
-
- # echo "measure fsname=tmpfs bad=cond" > /sys/kernel/security/ima/policy
- -bash: echo: write error: Invalid argument
- # echo scan > /sys/kernel/debug/kmemleak
- # cat /sys/kernel/debug/kmemleak
- unreferenced object 0xffff98e7e4ece6c0 (size 8):
-   comm "bash", pid 672, jiffies 4294791843 (age 21.855s)
-   hex dump (first 8 bytes):
-     74 6d 70 66 73 00 6b a5                          tmpfs.k.
-   backtrace:
-     [<00000000abab7413>] kstrdup+0x2e/0x60
-     [<00000000f11ede32>] ima_parse_add_rule+0x7d4/0x1020
-     [<00000000f883dd7a>] ima_write_policy+0xab/0x1d0
-     [<00000000b17cf753>] vfs_write+0xde/0x1d0
-     [<00000000b8ddfdea>] ksys_write+0x68/0xe0
-     [<00000000b8e21e87>] do_syscall_64+0x56/0xa0
-     [<0000000089ea7b98>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-Fixes: f1b08bbcbdaf ("ima: define a new policy condition based on the filesystem name")
-Fixes: 2b60c0ecedf8 ("IMA: Read keyrings= option from the IMA policy")
-Signed-off-by: Tyler Hicks <tyhicks@linux.microsoft.com>
+Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
 ---
+ crypto/testmgr.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-* v3
-  - No change
-* v2
-  - No change
-
- security/integrity/ima/ima_policy.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index bf00b966e87f..e458cd47c099 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -913,6 +913,7 @@ static int ima_lsm_rule_init(struct ima_rule_entry *entry,
+diff --git a/crypto/testmgr.c b/crypto/testmgr.c
+index 6863f911fcee..0dc94461c437 100644
+--- a/crypto/testmgr.c
++++ b/crypto/testmgr.c
+@@ -4025,7 +4025,7 @@ static int test_akcipher_one(struct crypto_akcipher *tfm,
+ 		pr_err("alg: akcipher: %s test failed. err %d\n", op, err);
+ 		goto free_all;
+ 	}
+-	if (!vecs->siggen_sigver_test) {
++	if (!vecs->siggen_sigver_test && c) {
+ 		if (req->dst_len != c_size) {
+ 			pr_err("alg: akcipher: %s test failed. Invalid output len\n",
+ 			       op);
+@@ -4056,6 +4056,11 @@ static int test_akcipher_one(struct crypto_akcipher *tfm,
+ 		goto free_all;
+ 	}
  
- 		if (ima_rules == &ima_default_rules) {
- 			kfree(entry->lsm[lsm_rule].args_p);
-+			entry->lsm[lsm_rule].args_p = NULL;
- 			result = -EINVAL;
- 		} else
- 			result = 0;
-@@ -1404,7 +1405,7 @@ ssize_t ima_parse_add_rule(char *rule)
- 
- 	result = ima_parse_rule(p, entry);
- 	if (result) {
--		kfree(entry);
-+		ima_free_rule(entry);
- 		integrity_audit_msg(AUDIT_INTEGRITY_STATUS, NULL,
- 				    NULL, op, "invalid-policy", result,
- 				    audit_info);
++	if (!vecs->siggen_sigver_test && !c) {
++		c = outbuf_enc;
++		c_size = req->dst_len;
++	}
++
+ 	op = vecs->siggen_sigver_test ? "sign" : "decrypt";
+ 	if (WARN_ON(c_size > PAGE_SIZE))
+ 		goto free_all;
 -- 
-2.25.1
+2.17.1
 
