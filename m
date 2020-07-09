@@ -2,38 +2,38 @@ Return-Path: <SRS0=TKeG=AU=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79BFEC433DF
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 Jul 2020 06:20:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E54AC433E5
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 Jul 2020 06:20:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 52BFD20672
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 Jul 2020 06:20:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D8DA20708
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 Jul 2020 06:20:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="FdzmtY1H"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="njDV7IVW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726648AbgGIGUW (ORCPT
+        id S1726693AbgGIGUS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 9 Jul 2020 02:20:22 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:38194 "EHLO
+        Thu, 9 Jul 2020 02:20:18 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:38134 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726718AbgGIGUV (ORCPT
+        with ESMTP id S1726648AbgGIGUQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 9 Jul 2020 02:20:21 -0400
+        Thu, 9 Jul 2020 02:20:16 -0400
 Received: from sequoia.work.tihix.com (162-237-133-238.lightspeed.rcsntx.sbcglobal.net [162.237.133.238])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 9F57F20B4908;
-        Wed,  8 Jul 2020 23:20:18 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 9F57F20B4908
+        by linux.microsoft.com (Postfix) with ESMTPSA id C792520B4909;
+        Wed,  8 Jul 2020 23:20:13 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C792520B4909
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1594275619;
-        bh=ZL2qZIw0Z4i7R3PK9I66uvfj7VMID6WB19pysrt0HSc=;
+        s=default; t=1594275614;
+        bh=rN9s22YZtVw6MnRwRHBu0f8F/NRhD2zbr74Gq7VM/zA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FdzmtY1HERJziztiET8Zy2zK/ScfDyv52tZkBlJJl0ZYnkiBYyMY1RybOxSR4axTk
-         zBR5Rm4cXSnlqIIGFrJM2JNW2j6WSsTOhmU8tOrs4Go731qKekdMi7WuyPLY2Fuq+g
-         8e5LlOHxpe8J1NgcYHBg5TysmtJ6J9FNKXu8GKLo=
+        b=njDV7IVWMrem4WjDgsC7a5Bj4upgmla+ZcHWV3CDpcdAfFGgEU5IrXD2XUiFgNTOR
+         W4zSXxKxWU3bjpL7xXslltRm6zVSEVT1pPOxscu22Bh/ymvO7DygcFhNmhvCw0usVQ
+         S1JHWW150rgb2V5/sFbiJnMf/nV2/tXclfqWde3o=
 From:   Tyler Hicks <tyhicks@linux.microsoft.com>
 To:     Mimi Zohar <zohar@linux.ibm.com>,
         Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
@@ -42,12 +42,10 @@ Cc:     James Morris <jmorris@namei.org>,
         Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
         Prakhar Srivastava <prsriva02@gmail.com>,
         linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Eric Biederman <ebiederm@xmission.com>,
-        kexec@lists.infradead.org
-Subject: [PATCH v3 12/12] ima: Support additional conditionals in the KEXEC_CMDLINE hook function
-Date:   Thu,  9 Jul 2020 01:19:11 -0500
-Message-Id: <20200709061911.954326-13-tyhicks@linux.microsoft.com>
+        linux-security-module@vger.kernel.org
+Subject: [PATCH v3 10/12] ima: Move comprehensive rule validation checks out of the token parser
+Date:   Thu,  9 Jul 2020 01:19:09 -0500
+Message-Id: <20200709061911.954326-11-tyhicks@linux.microsoft.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200709061911.954326-1-tyhicks@linux.microsoft.com>
 References: <20200709061911.954326-1-tyhicks@linux.microsoft.com>
@@ -57,253 +55,220 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Take the properties of the kexec kernel's inode and the current task
-ownership into consideration when matching a KEXEC_CMDLINE operation to
-the rules in the IMA policy. This allows for some uniformity when
-writing IMA policy rules for KEXEC_KERNEL_CHECK, KEXEC_INITRAMFS_CHECK,
-and KEXEC_CMDLINE operations.
+Use ima_validate_rule(), at the end of the token parsing stage, to
+verify combinations of actions, hooks, and flags. This is useful to
+increase readability by consolidating such checks into a single function
+and also because rule conditionals can be specified in arbitrary order
+making it difficult to do comprehensive rule validation until the entire
+rule has been parsed.
 
-Prior to this patch, it was not possible to write a set of rules like
-this:
+This allows for the check that ties together the "keyrings" conditional
+with the KEY_CHECK function hook to be moved into the final rule
+validation.
 
- dont_measure func=KEXEC_KERNEL_CHECK obj_type=foo_t
- dont_measure func=KEXEC_INITRAMFS_CHECK obj_type=foo_t
- dont_measure func=KEXEC_CMDLINE obj_type=foo_t
- measure func=KEXEC_KERNEL_CHECK
- measure func=KEXEC_INITRAMFS_CHECK
- measure func=KEXEC_CMDLINE
+The modsig check no longer needs to compiled conditionally because the
+token parser will ensure that modsig support is enabled before accepting
+"imasig|modsig" appraise type values. The final rule validation will
+ensure that appraise_type and appraise_flag options are only present in
+appraise rules.
 
-The inode information associated with the kernel being loaded by a
-kexec_kernel_load(2) syscall can now be included in the decision to
-measure or not
-
-Additonally, the uid, euid, and subj_* conditionals can also now be
-used in KEXEC_CMDLINE rules. There was no technical reason as to why
-those conditionals weren't being considered previously other than
-ima_match_rules() didn't have a valid inode to use so it immediately
-bailed out for KEXEC_CMDLINE operations rather than going through the
-full list of conditional comparisons.
+Finally, this allows for the check that ties together the "pcr"
+conditional with the measure action to be moved into the final rule
+validation.
 
 Signed-off-by: Tyler Hicks <tyhicks@linux.microsoft.com>
-Cc: Eric Biederman <ebiederm@xmission.com>
-Cc: kexec@lists.infradead.org
-Reviewed-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
 ---
 
 * v3
-  - Added Lakshmi's Reviewed-by
+  - Significant broadening of the patch's scope along with renaming and
+    re-describing the patch. ima_validate_rule() is now the consolidated
+    location for checking combinations of
+    actions/functions/conditionals and the existing checks are now
+    removed from the token parsing code.
+    + Ensure that the IMA_FUNC flag is only set when a function hook is
+      specified, and vice versa, which allows us to use the NONE case in
+      the switch statement to enforce that "keyrings=",
+      "appraise_type=imasig|modsig", and "appraise_flag=blacklist"
+      cannot be specified on a rule without an appropriate hook function
   - Adjust for the indentation change introduced in patch #4
+  - Adjust for new fixes introduced in patch #7
 * v2
-  - Moved the inode parameter of process_buffer_measurement() to be the
-    first parameter so that it more closely matches process_masurement()
+  - Allowed IMA_DIGSIG_REQUIRED, IMA_PERMIT_DIRECTIO,
+    IMA_MODSIG_ALLOWED, and IMA_CHECK_BLACKLIST conditionals to be
+    present in the rule entry flags for non-buffer hook functions.
 
- include/linux/ima.h                          |  4 ++--
- kernel/kexec_file.c                          |  2 +-
- security/integrity/ima/ima.h                 |  2 +-
- security/integrity/ima/ima_api.c             |  2 +-
- security/integrity/ima/ima_appraise.c        |  2 +-
- security/integrity/ima/ima_asymmetric_keys.c |  2 +-
- security/integrity/ima/ima_main.c            | 23 +++++++++++++++-----
- security/integrity/ima/ima_policy.c          | 17 +++++----------
- security/integrity/ima/ima_queue_keys.c      |  2 +-
- 9 files changed, 31 insertions(+), 25 deletions(-)
+ security/integrity/ima/ima.h        |  6 ---
+ security/integrity/ima/ima_modsig.c | 20 ----------
+ security/integrity/ima/ima_policy.c | 57 +++++++++++++++++++----------
+ 3 files changed, 37 insertions(+), 46 deletions(-)
 
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index 9164e1534ec9..d15100de6cdd 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -25,7 +25,7 @@ extern int ima_post_read_file(struct file *file, void *buf, loff_t size,
- 			      enum kernel_read_file_id id);
- extern void ima_post_path_mknod(struct dentry *dentry);
- extern int ima_file_hash(struct file *file, char *buf, size_t buf_size);
--extern void ima_kexec_cmdline(const void *buf, int size);
-+extern void ima_kexec_cmdline(int kernel_fd, const void *buf, int size);
- 
- #ifdef CONFIG_IMA_KEXEC
- extern void ima_add_kexec_buffer(struct kimage *image);
-@@ -103,7 +103,7 @@ static inline int ima_file_hash(struct file *file, char *buf, size_t buf_size)
- 	return -EOPNOTSUPP;
- }
- 
--static inline void ima_kexec_cmdline(const void *buf, int size) {}
-+static inline void ima_kexec_cmdline(int kernel_fd, const void *buf, int size) {}
- #endif /* CONFIG_IMA */
- 
- #ifndef CONFIG_IMA_KEXEC
-diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-index bb05fd52de85..07df431c1f21 100644
---- a/kernel/kexec_file.c
-+++ b/kernel/kexec_file.c
-@@ -287,7 +287,7 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
- 			goto out;
- 		}
- 
--		ima_kexec_cmdline(image->cmdline_buf,
-+		ima_kexec_cmdline(kernel_fd, image->cmdline_buf,
- 				  image->cmdline_buf_len - 1);
- 	}
- 
 diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index ea7e77536f3c..576ae2c6d418 100644
+index 59ec28f5c117..ea7e77536f3c 100644
 --- a/security/integrity/ima/ima.h
 +++ b/security/integrity/ima/ima.h
-@@ -265,7 +265,7 @@ void ima_store_measurement(struct integrity_iint_cache *iint, struct file *file,
- 			   struct evm_ima_xattr_data *xattr_value,
- 			   int xattr_len, const struct modsig *modsig, int pcr,
- 			   struct ima_template_desc *template_desc);
--void process_buffer_measurement(const void *buf, int size,
-+void process_buffer_measurement(struct inode *inode, const void *buf, int size,
- 				const char *eventname, enum ima_hooks func,
- 				int pcr, const char *keyring);
- void ima_audit_measurement(struct integrity_iint_cache *iint,
-diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
-index bf22de8b7ce0..4f39fb93f278 100644
---- a/security/integrity/ima/ima_api.c
-+++ b/security/integrity/ima/ima_api.c
-@@ -162,7 +162,7 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
+@@ -372,7 +372,6 @@ static inline int ima_read_xattr(struct dentry *dentry,
+ #endif /* CONFIG_IMA_APPRAISE */
  
- /**
-  * ima_get_action - appraise & measure decision based on policy.
-- * @inode: pointer to inode to measure
-+ * @inode: pointer to the inode associated with the object being validated
-  * @cred: pointer to credentials structure to validate
-  * @secid: secid of the task being validated
-  * @mask: contains the permission mask (MAY_READ, MAY_WRITE, MAY_EXEC,
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index a9649b04b9f1..6c52bf7ea7f0 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -328,7 +328,7 @@ int ima_check_blacklist(struct integrity_iint_cache *iint,
+ #ifdef CONFIG_IMA_APPRAISE_MODSIG
+-bool ima_hook_supports_modsig(enum ima_hooks func);
+ int ima_read_modsig(enum ima_hooks func, const void *buf, loff_t buf_len,
+ 		    struct modsig **modsig);
+ void ima_collect_modsig(struct modsig *modsig, const void *buf, loff_t size);
+@@ -382,11 +381,6 @@ int ima_get_raw_modsig(const struct modsig *modsig, const void **data,
+ 		       u32 *data_len);
+ void ima_free_modsig(struct modsig *modsig);
+ #else
+-static inline bool ima_hook_supports_modsig(enum ima_hooks func)
+-{
+-	return false;
+-}
+-
+ static inline int ima_read_modsig(enum ima_hooks func, const void *buf,
+ 				  loff_t buf_len, struct modsig **modsig)
+ {
+diff --git a/security/integrity/ima/ima_modsig.c b/security/integrity/ima/ima_modsig.c
+index d106885cc495..fb25723c65bc 100644
+--- a/security/integrity/ima/ima_modsig.c
++++ b/security/integrity/ima/ima_modsig.c
+@@ -32,26 +32,6 @@ struct modsig {
+ 	u8 raw_pkcs7[];
+ };
  
- 		rc = is_binary_blacklisted(digest, digestsize);
- 		if ((rc == -EPERM) && (iint->flags & IMA_MEASURE))
--			process_buffer_measurement(digest, digestsize,
-+			process_buffer_measurement(NULL, digest, digestsize,
- 						   "blacklisted-hash", NONE,
- 						   pcr, NULL);
- 	}
-diff --git a/security/integrity/ima/ima_asymmetric_keys.c b/security/integrity/ima/ima_asymmetric_keys.c
-index aaae80c4e376..1c68c500c26f 100644
---- a/security/integrity/ima/ima_asymmetric_keys.c
-+++ b/security/integrity/ima/ima_asymmetric_keys.c
-@@ -58,7 +58,7 @@ void ima_post_key_create_or_update(struct key *keyring, struct key *key,
- 	 * if the IMA policy is configured to measure a key linked
- 	 * to the given keyring.
- 	 */
--	process_buffer_measurement(payload, payload_len,
-+	process_buffer_measurement(NULL, payload, payload_len,
- 				   keyring->description, KEY_CHECK, 0,
- 				   keyring->description);
- }
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 8351b2fd48e0..8a91711ca79b 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -726,6 +726,7 @@ int ima_load_data(enum kernel_load_data_id id)
- 
+-/**
+- * ima_hook_supports_modsig - can the policy allow modsig for this hook?
+- *
+- * modsig is only supported by hooks using ima_post_read_file(), because only
+- * they preload the contents of the file in a buffer. FILE_CHECK does that in
+- * some cases, but not when reached from vfs_open(). POLICY_CHECK can support
+- * it, but it's not useful in practice because it's a text file so deny.
+- */
+-bool ima_hook_supports_modsig(enum ima_hooks func)
+-{
+-	switch (func) {
+-	case KEXEC_KERNEL_CHECK:
+-	case KEXEC_INITRAMFS_CHECK:
+-	case MODULE_CHECK:
+-		return true;
+-	default:
+-		return false;
+-	}
+-}
+-
  /*
-  * process_buffer_measurement - Measure the buffer to ima log.
-+ * @inode: inode associated with the object being measured (NULL for KEY_CHECK)
-  * @buf: pointer to the buffer that needs to be added to the log.
-  * @size: size of buffer(in bytes).
-  * @eventname: event name to be used for the buffer entry.
-@@ -735,7 +736,7 @@ int ima_load_data(enum kernel_load_data_id id)
+  * ima_read_modsig - Read modsig from buf.
   *
-  * Based on policy, the buffer is measured into the ima log.
-  */
--void process_buffer_measurement(const void *buf, int size,
-+void process_buffer_measurement(struct inode *inode, const void *buf, int size,
- 				const char *eventname, enum ima_hooks func,
- 				int pcr, const char *keyring)
- {
-@@ -768,7 +769,7 @@ void process_buffer_measurement(const void *buf, int size,
- 	 */
- 	if (func) {
- 		security_task_getsecid(current, &secid);
--		action = ima_get_action(NULL, current_cred(), secid, 0, func,
-+		action = ima_get_action(inode, current_cred(), secid, 0, func,
- 					&pcr, &template, keyring);
- 		if (!(action & IMA_MEASURE))
- 			return;
-@@ -823,16 +824,26 @@ void process_buffer_measurement(const void *buf, int size,
- 
- /**
-  * ima_kexec_cmdline - measure kexec cmdline boot args
-+ * @kernel_fd: file descriptor of the kexec kernel being loaded
-  * @buf: pointer to buffer
-  * @size: size of buffer
-  *
-  * Buffers can only be measured, not appraised.
-  */
--void ima_kexec_cmdline(const void *buf, int size)
-+void ima_kexec_cmdline(int kernel_fd, const void *buf, int size)
- {
--	if (buf && size != 0)
--		process_buffer_measurement(buf, size, "kexec-cmdline",
--					   KEXEC_CMDLINE, 0, NULL);
-+	struct fd f;
-+
-+	if (!buf || !size)
-+		return;
-+
-+	f = fdget(kernel_fd);
-+	if (!f.file)
-+		return;
-+
-+	process_buffer_measurement(file_inode(f.file), buf, size,
-+				   "kexec-cmdline", KEXEC_CMDLINE, 0, NULL);
-+	fdput(f);
- }
- 
- static int __init init_ima(void)
 diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 81ee8fd1d83a..2e87154c9296 100644
+index 13a178c70b44..c4d0a0c1f896 100644
 --- a/security/integrity/ima/ima_policy.c
 +++ b/security/integrity/ima/ima_policy.c
-@@ -443,13 +443,9 @@ static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
+@@ -984,10 +984,27 @@ static void check_template_modsig(const struct ima_template_desc *template)
+ 
+ static bool ima_validate_rule(struct ima_rule_entry *entry)
  {
- 	int i;
+-	/* Ensure that the action is set */
++	/* Ensure that the action is set and is compatible with the flags */
+ 	if (entry->action == UNKNOWN)
+ 		return false;
  
--	if ((func == KEXEC_CMDLINE) || (func == KEY_CHECK)) {
--		if ((rule->flags & IMA_FUNC) && (rule->func == func)) {
--			if (func == KEY_CHECK)
--				return ima_match_keyring(rule, keyring, cred);
--			return true;
--		}
--		return false;
-+	if (func == KEY_CHECK) {
-+		return (rule->flags & IMA_FUNC) && (rule->func == func) &&
-+		       ima_match_keyring(rule, keyring, cred);
- 	}
- 	if ((rule->flags & IMA_FUNC) &&
- 	    (rule->func != func && func != POST_SETATTR))
-@@ -1035,10 +1031,9 @@ static bool ima_validate_rule(struct ima_rule_entry *entry)
- 		if (entry->action & ~(MEASURE | DONT_MEASURE))
- 			return false;
- 
--		if (entry->flags & ~(IMA_FUNC | IMA_PCR))
--			return false;
--
--		if (ima_rule_contains_lsm_cond(entry))
-+		if (entry->flags & ~(IMA_FUNC | IMA_FSMAGIC | IMA_UID |
-+				     IMA_FOWNER | IMA_FSUUID | IMA_EUID |
-+				     IMA_PCR | IMA_FSNAME))
- 			return false;
- 
++	if (entry->action != MEASURE && entry->flags & IMA_PCR)
++		return false;
++
++	if (entry->action != APPRAISE &&
++	    entry->flags & (IMA_DIGSIG_REQUIRED | IMA_MODSIG_ALLOWED | IMA_CHECK_BLACKLIST))
++		return false;
++
++	/*
++	 * The IMA_FUNC bit must be set if and only if there's a valid hook
++	 * function specified, and vice versa. Enforcing this property allows
++	 * for the NONE case below to validate a rule without an explicit hook
++	 * function.
++	 */
++	if (((entry->flags & IMA_FUNC) && entry->func == NONE) ||
++	    (!(entry->flags & IMA_FUNC) && entry->func != NONE))
++		return false;
++
+ 	/*
+ 	 * Ensure that the hook function is compatible with the other
+ 	 * components of the rule
+@@ -999,12 +1016,27 @@ static bool ima_validate_rule(struct ima_rule_entry *entry)
+ 	case BPRM_CHECK:
+ 	case CREDS_CHECK:
+ 	case POST_SETATTR:
+-	case MODULE_CHECK:
+ 	case FIRMWARE_CHECK:
++	case POLICY_CHECK:
++		if (entry->flags & ~(IMA_FUNC | IMA_MASK | IMA_FSMAGIC |
++				     IMA_UID | IMA_FOWNER | IMA_FSUUID |
++				     IMA_INMASK | IMA_EUID | IMA_PCR |
++				     IMA_FSNAME | IMA_DIGSIG_REQUIRED |
++				     IMA_PERMIT_DIRECTIO))
++			return false;
++
++		break;
++	case MODULE_CHECK:
+ 	case KEXEC_KERNEL_CHECK:
+ 	case KEXEC_INITRAMFS_CHECK:
+-	case POLICY_CHECK:
+-		/* Validation of these hook functions is in ima_parse_rule() */
++		if (entry->flags & ~(IMA_FUNC | IMA_MASK | IMA_FSMAGIC |
++				     IMA_UID | IMA_FOWNER | IMA_FSUUID |
++				     IMA_INMASK | IMA_EUID | IMA_PCR |
++				     IMA_FSNAME | IMA_DIGSIG_REQUIRED |
++				     IMA_PERMIT_DIRECTIO | IMA_MODSIG_ALLOWED |
++				     IMA_CHECK_BLACKLIST))
++			return false;
++
  		break;
-diff --git a/security/integrity/ima/ima_queue_keys.c b/security/integrity/ima/ima_queue_keys.c
-index 56ce24a18b66..69a8626a35c0 100644
---- a/security/integrity/ima/ima_queue_keys.c
-+++ b/security/integrity/ima/ima_queue_keys.c
-@@ -158,7 +158,7 @@ void ima_process_queued_keys(void)
+ 	case KEXEC_CMDLINE:
+ 		if (entry->action & ~(MEASURE | DONT_MEASURE))
+@@ -1218,7 +1250,6 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+ 			keyrings_len = strlen(args[0].from) + 1;
  
- 	list_for_each_entry_safe(entry, tmp, &ima_keys, list) {
- 		if (!timer_expired)
--			process_buffer_measurement(entry->payload,
-+			process_buffer_measurement(NULL, entry->payload,
- 						   entry->payload_len,
- 						   entry->keyring_name,
- 						   KEY_CHECK, 0,
+ 			if ((entry->keyrings) ||
+-			    (entry->func != KEY_CHECK) ||
+ 			    (keyrings_len < 2)) {
+ 				result = -EINVAL;
+ 				break;
+@@ -1358,15 +1389,10 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+ 						   AUDIT_SUBJ_TYPE);
+ 			break;
+ 		case Opt_appraise_type:
+-			if (entry->action != APPRAISE) {
+-				result = -EINVAL;
+-				break;
+-			}
+-
+ 			ima_log_string(ab, "appraise_type", args[0].from);
+ 			if ((strcmp(args[0].from, "imasig")) == 0)
+ 				entry->flags |= IMA_DIGSIG_REQUIRED;
+-			else if (ima_hook_supports_modsig(entry->func) &&
++			else if (IS_ENABLED(CONFIG_IMA_APPRAISE_MODSIG) &&
+ 				 strcmp(args[0].from, "imasig|modsig") == 0)
+ 				entry->flags |= IMA_DIGSIG_REQUIRED |
+ 						IMA_MODSIG_ALLOWED;
+@@ -1374,11 +1400,6 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+ 				result = -EINVAL;
+ 			break;
+ 		case Opt_appraise_flag:
+-			if (entry->action != APPRAISE) {
+-				result = -EINVAL;
+-				break;
+-			}
+-
+ 			ima_log_string(ab, "appraise_flag", args[0].from);
+ 			if (IS_ENABLED(CONFIG_IMA_APPRAISE_MODSIG) &&
+ 			    strstr(args[0].from, "blacklist"))
+@@ -1388,10 +1409,6 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+ 			entry->flags |= IMA_PERMIT_DIRECTIO;
+ 			break;
+ 		case Opt_pcr:
+-			if (entry->action != MEASURE) {
+-				result = -EINVAL;
+-				break;
+-			}
+ 			ima_log_string(ab, "pcr", args[0].from);
+ 
+ 			result = kstrtoint(args[0].from, 10, &entry->pcr);
 -- 
 2.25.1
 
