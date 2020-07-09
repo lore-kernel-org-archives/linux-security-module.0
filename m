@@ -5,35 +5,35 @@ X-Spam-Level:
 X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32CB4C433E0
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 Jul 2020 06:20:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AC4AC433DF
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 Jul 2020 06:20:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 03D2820708
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 Jul 2020 06:20:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E495020672
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 Jul 2020 06:20:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="g7f7y5H5"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="MRNA0U4/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726774AbgGIGUg (ORCPT
+        id S1726497AbgGIGUK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 9 Jul 2020 02:20:36 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:38096 "EHLO
+        Thu, 9 Jul 2020 02:20:10 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:38036 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726581AbgGIGUM (ORCPT
+        with ESMTP id S1725787AbgGIGUG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 9 Jul 2020 02:20:12 -0400
+        Thu, 9 Jul 2020 02:20:06 -0400
 Received: from sequoia.work.tihix.com (162-237-133-238.lightspeed.rcsntx.sbcglobal.net [162.237.133.238])
-        by linux.microsoft.com (Postfix) with ESMTPSA id ED52220B4909;
-        Wed,  8 Jul 2020 23:20:10 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com ED52220B4909
+        by linux.microsoft.com (Postfix) with ESMTPSA id DDD7520B4908;
+        Wed,  8 Jul 2020 23:20:04 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com DDD7520B4908
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1594275611;
-        bh=kdGo+g0Ug/+ndalVCdzuX/XIssnW7sZa5n/LdXUX1OM=;
+        s=default; t=1594275605;
+        bh=Sl81iM0J/lPABj/akhRyUQ0Bb6NMuzvB6SqKp+9RjQc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=g7f7y5H5XpYSW/JqRJeaI3n/zw1XVmSYLKBZA3ZBwjh3RAvvCTvC6hDloRL5oNLGT
-         1ZTeusQjwRyMyX8hLF/RbnyRh9kx0ArCJoWQVWs8CB3V3xt6qevpWkxEMjlG2rTIiD
-         MerMF1DJfyii9F7c6vAGHXSWuZtO3sf2EjsznJx8=
+        b=MRNA0U4/MUFYoNQh/1FfyKqfdTvCKZBn+66ULd8wq11Blxi25lvGPAtJDBWuwEPjl
+         tR1H8crl0m6VtMbijXGucsB/D6oEU6YQHadiiz3WwkgCz/kvLuScyEzEcrJJpGY5L8
+         Stag4eucxD6oH3cAHDitYgbsEUFxjUKeolU5KVp4=
 From:   Tyler Hicks <tyhicks@linux.microsoft.com>
 To:     Mimi Zohar <zohar@linux.ibm.com>,
         Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
@@ -43,9 +43,9 @@ Cc:     James Morris <jmorris@namei.org>,
         Prakhar Srivastava <prsriva02@gmail.com>,
         linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org
-Subject: [PATCH v3 08/12] ima: Shallow copy the args_p member of ima_rule_entry.lsm elements
-Date:   Thu,  9 Jul 2020 01:19:07 -0500
-Message-Id: <20200709061911.954326-9-tyhicks@linux.microsoft.com>
+Subject: [PATCH v3 06/12] ima: Fail rule parsing when the KEY_CHECK hook is combined with an invalid cond
+Date:   Thu,  9 Jul 2020 01:19:05 -0500
+Message-Id: <20200709061911.954326-7-tyhicks@linux.microsoft.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200709061911.954326-1-tyhicks@linux.microsoft.com>
 References: <20200709061911.954326-1-tyhicks@linux.microsoft.com>
@@ -55,62 +55,42 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The args_p member is a simple string that is allocated by
-ima_rule_init(). Shallow copy it like other non-LSM references in
-ima_rule_entry structs.
+The KEY_CHECK function only supports the uid, pcr, and keyrings
+conditionals. Make this clear at policy load so that IMA policy authors
+don't assume that other conditionals are supported.
 
-There are no longer any necessary error path cleanups to do in
-ima_lsm_copy_rule().
-
+Fixes: 5808611cccb2 ("IMA: Add KEY_CHECK func to measure keys")
 Signed-off-by: Tyler Hicks <tyhicks@linux.microsoft.com>
+Reviewed-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
 ---
 
 * v3
-  - No change
+  - Added Lakshmi's Reviewed-by
+  - Adjust for the indentation change introduced in patch #4
 * v2
-  - Adjusted context to account for ima_lsm_copy_rule() directly calling
-    ima_lsm_free_rule() and the lack of explicit reference ownership
-    transfers
-  - Added comment to ima_lsm_copy_rule() to document the args_p
-    reference ownership transfer
+  - No change
 
- security/integrity/ima/ima_policy.c | 16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
+ security/integrity/ima/ima_policy.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
 diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 9842e2e0bc6d..b02e1ffd10c9 100644
+index 1c64bd6f1728..81da02071d41 100644
 --- a/security/integrity/ima/ima_policy.c
 +++ b/security/integrity/ima/ima_policy.c
-@@ -300,10 +300,13 @@ static struct ima_rule_entry *ima_lsm_copy_rule(struct ima_rule_entry *entry)
- 			continue;
+@@ -1023,6 +1023,13 @@ static bool ima_validate_rule(struct ima_rule_entry *entry)
+ 		if (entry->action & ~(MEASURE | DONT_MEASURE))
+ 			return false;
  
- 		nentry->lsm[i].type = entry->lsm[i].type;
--		nentry->lsm[i].args_p = kstrdup(entry->lsm[i].args_p,
--						GFP_KERNEL);
--		if (!nentry->lsm[i].args_p)
--			goto out_err;
-+		nentry->lsm[i].args_p = entry->lsm[i].args_p;
-+		/*
-+		 * Remove the reference from entry so that the associated
-+		 * memory will not be freed during a later call to
-+		 * ima_lsm_free_rule(entry).
-+		 */
-+		entry->lsm[i].args_p = NULL;
- 
- 		security_filter_rule_init(nentry->lsm[i].type,
- 					  Audit_equal,
-@@ -314,11 +317,6 @@ static struct ima_rule_entry *ima_lsm_copy_rule(struct ima_rule_entry *entry)
- 				(char *)entry->lsm[i].args_p);
- 	}
- 	return nentry;
--
--out_err:
--	ima_lsm_free_rule(nentry);
--	kfree(nentry);
--	return NULL;
- }
- 
- static int ima_lsm_update_rule(struct ima_rule_entry *entry)
++		if (entry->flags & ~(IMA_FUNC | IMA_UID | IMA_PCR |
++				     IMA_KEYRINGS))
++			return false;
++
++		if (ima_rule_contains_lsm_cond(entry))
++			return false;
++
+ 		break;
+ 	default:
+ 		return false;
 -- 
 2.25.1
 
