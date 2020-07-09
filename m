@@ -2,160 +2,338 @@ Return-Path: <SRS0=TKeG=AU=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4C1DC433DF
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 Jul 2020 19:54:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 015FCC433DF
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 Jul 2020 22:08:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9227020720
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 Jul 2020 19:54:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WUO7OAm/"
+	by mail.kernel.org (Postfix) with ESMTP id CBF59206A1
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 Jul 2020 22:08:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726323AbgGITyp (ORCPT
+        id S1726275AbgGIWIF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 9 Jul 2020 15:54:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40878 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726324AbgGITyb (ORCPT
+        Thu, 9 Jul 2020 18:08:05 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:52398 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726269AbgGIWIE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 9 Jul 2020 15:54:31 -0400
-Received: from mail-ot1-x342.google.com (mail-ot1-x342.google.com [IPv6:2607:f8b0:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1F45C08C5DC;
-        Thu,  9 Jul 2020 12:54:30 -0700 (PDT)
-Received: by mail-ot1-x342.google.com with SMTP id 72so2562746otc.3;
-        Thu, 09 Jul 2020 12:54:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hVmQvgceNuE9gUqdw2DsWEuHafaDdw4hAjlnC4YG72Y=;
-        b=WUO7OAm/JvOW4KqGTnvLba/3moYHZm+U0elK80Kg/jIZ2sy6WupncyOA8VWFoJqDfv
-         fNLS57kO0agV+2pxUCakNB8gRibz+JJKKh96mlEjgjd2MrqqHzMwDI/E6uUYMNp8mKfQ
-         Hdk+r02QnRnZ4jPba7mhvgW7jOBMIAGMODpvZ96jbyapUd03KaoeUsh0X3c/TT6yjaev
-         7ldr6anw0uuZ6QsX5aiiingcdRT9Ua96whnpamWVqzeUVft3LiJ9QCKWqBW/rmbqqI8D
-         WW363pHnF24DgmufyI2wX/Hpn+zaVL22RHaOU0LQg72qFZXGHgA3BV/JbZ1EO2vQ3baT
-         Et/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hVmQvgceNuE9gUqdw2DsWEuHafaDdw4hAjlnC4YG72Y=;
-        b=tfWr0u8e5VHbdE8mdxsPbEuU9z6cYpW+NHXO+6RXSw6ymeyYPAqdtW/KLZdeG7GNVC
-         41mawUUstNfFXokCkAwj0rTnlp6pWDMEY9ziZ5vhATQ9KDANwm3q+KnclTaaTE21pTmH
-         VVk3/IE4rSARGWSne8HhD5XMpXXU2e/VTxVdE+3g30czJwNLUHo+T4JIV6dlBuj7sHb0
-         GePcaPQ5QWN15+YsLH3KBoydZE+bU48cbDOBmegweHcHS4/TsEMYStOyNzuWqRm26XPD
-         Bjxbt2Kt1lckRGH8qqomhcbZz8UYtGgrqMSUGfF4vYav9dmr/F1mkfMAN1um6ho4PXju
-         nbLg==
-X-Gm-Message-State: AOAM533MkNrhTIApxNWmlQ/e2Fdo4AFVbu8JJad0a/Tad1GhCSrSZZm5
-        vRu85AuZ3UFYiClbcjUbsz9sP6IXRXj8OXf3PpI=
-X-Google-Smtp-Source: ABdhPJxLRHXxRYPjMXMuu7fmQF2k7SyAJfy80oyydcFchNTduoj/UXX0VNfiX9z74zqibft67E/O9oKBned2Vg51NM4=
-X-Received: by 2002:a05:6830:1db5:: with SMTP id z21mr41453019oti.162.1594324470006;
- Thu, 09 Jul 2020 12:54:30 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200709001234.9719-1-casey@schaufler-ca.com> <20200709001234.9719-6-casey@schaufler-ca.com>
- <CAEjxPJ4EefLKKvMo=8ZWeA4gVioH=WQ=52rnMuW5TnyExmJsRg@mail.gmail.com> <8a5a243f-e991-ad55-0503-654cc2587133@canonical.com>
-In-Reply-To: <8a5a243f-e991-ad55-0503-654cc2587133@canonical.com>
-From:   Stephen Smalley <stephen.smalley.work@gmail.com>
-Date:   Thu, 9 Jul 2020 15:54:19 -0400
-Message-ID: <CAEjxPJ69FyBKO8YrDW9Pc8Urc0q2-8db6EgEO3fYnK9MLx+Y5Q@mail.gmail.com>
-Subject: Re: [PATCH v18 05/23] net: Prepare UDS for security module stacking
-To:     John Johansen <john.johansen@canonical.com>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        James Morris <jmorris@namei.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        SElinux list <selinux@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
+        Thu, 9 Jul 2020 18:08:04 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jtehw-0007ZY-UM; Thu, 09 Jul 2020 16:07:56 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jtehv-0002HP-De; Thu, 09 Jul 2020 16:07:56 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     <linux-kernel@vger.kernel.org>
+Cc:     David Miller <davem@davemloft.net>,
+        Greg Kroah-Hartman <greg@kroah.com>,
         Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>, netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>
+References: <20200625095725.GA3303921@kroah.com>
+        <778297d2-512a-8361-cf05-42d9379e6977@i-love.sakura.ne.jp>
+        <20200625120725.GA3493334@kroah.com>
+        <20200625.123437.2219826613137938086.davem@davemloft.net>
+        <CAHk-=whuTwGHEPjvtbBvneHHXeqJC=q5S09mbPnqb=Q+MSPMag@mail.gmail.com>
+        <87pn9mgfc2.fsf_-_@x220.int.ebiederm.org>
+        <87y2oac50p.fsf@x220.int.ebiederm.org>
+        <87bll17ili.fsf_-_@x220.int.ebiederm.org>
+        <87y2o1swee.fsf_-_@x220.int.ebiederm.org>
+Date:   Thu, 09 Jul 2020 17:05:09 -0500
+In-Reply-To: <87y2o1swee.fsf_-_@x220.int.ebiederm.org> (Eric W. Biederman's
+        message of "Thu, 02 Jul 2020 11:40:25 -0500")
+Message-ID: <87r1tke44q.fsf_-_@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-XM-SPF: eid=1jtehv-0002HP-De;;;mid=<87r1tke44q.fsf_-_@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1+oAknS1uYVmiHDpfxQrqKVts0tnK/N1nA=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: [merged][PATCH v3 00/16] Make the user mode driver code a better citizen
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jul 9, 2020 at 12:28 PM John Johansen
-<john.johansen@canonical.com> wrote:
->
-> On 7/9/20 9:11 AM, Stephen Smalley wrote:
-> > On Wed, Jul 8, 2020 at 8:23 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> >>
-> >> Change the data used in UDS SO_PEERSEC processing from a
-> >> secid to a more general struct lsmblob. Update the
-> >> security_socket_getpeersec_dgram() interface to use the
-> >> lsmblob. There is a small amount of scaffolding code
-> >> that will come out when the security_secid_to_secctx()
-> >> code is brought in line with the lsmblob.
-> >>
-> >> The secid field of the unix_skb_parms structure has been
-> >> replaced with a pointer to an lsmblob structure, and the
-> >> lsmblob is allocated as needed. This is similar to how the
-> >> list of passed files is managed. While an lsmblob structure
-> >> will fit in the available space today, there is no guarantee
-> >> that the addition of other data to the unix_skb_parms or
-> >> support for additional security modules wouldn't exceed what
-> >> is available.
-> >>
-> >> Reviewed-by: Kees Cook <keescook@chromium.org>
-> >> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> >> Cc: netdev@vger.kernel.org
-> >> ---
-> >
-> >> diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
-> >> index 3385a7a0b231..d246aefcf4da 100644
-> >> --- a/net/unix/af_unix.c
-> >> +++ b/net/unix/af_unix.c
-> >> @@ -138,17 +138,23 @@ static struct hlist_head *unix_sockets_unbound(void *addr)
-> >>  #ifdef CONFIG_SECURITY_NETWORK
-> >>  static void unix_get_secdata(struct scm_cookie *scm, struct sk_buff *skb)
-> >>  {
-> >> -       UNIXCB(skb).secid = scm->secid;
-> >> +       UNIXCB(skb).lsmdata = kmemdup(&scm->lsmblob, sizeof(scm->lsmblob),
-> >> +                                     GFP_KERNEL);
-> >>  }
-> >>
-> >>  static inline void unix_set_secdata(struct scm_cookie *scm, struct sk_buff *skb)
-> >>  {
-> >> -       scm->secid = UNIXCB(skb).secid;
-> >> +       if (likely(UNIXCB(skb).lsmdata))
-> >> +               scm->lsmblob = *(UNIXCB(skb).lsmdata);
-> >> +       else
-> >> +               lsmblob_init(&scm->lsmblob, 0);
-> >>  }
-> >>
-> >>  static inline bool unix_secdata_eq(struct scm_cookie *scm, struct sk_buff *skb)
-> >>  {
-> >> -       return (scm->secid == UNIXCB(skb).secid);
-> >> +       if (likely(UNIXCB(skb).lsmdata))
-> >> +               return lsmblob_equal(&scm->lsmblob, UNIXCB(skb).lsmdata);
-> >> +       return false;
-> >>  }
-> >
-> > I don't think that this provides sensible behavior to userspace.  On a
-> > transient memory allocation failure, instead of returning an error to
-> > the sender and letting them handle it, this will just proceed with
-> > sending the message without its associated security information, and
-> > potentially split messages on arbitrary boundaries because it cannot
-> > tell whether the sender had the same security information.  I think
-> > you instead need to change unix_get_secdata() to return an error on
-> > allocation failure and propagate that up to the sender.  Not a fan of
-> > this change in general both due to extra overhead on this code path
-> > and potential for breakage on allocation failures.  I know it was
-> > motivated by paul's observation that we won't be able to fit many more
-> > secids into the cb but not sure we have to go there prematurely,
-> > especially absent its usage by upstream AA (no unix_stream_connect
-> > hook implementation upstream).  Also not sure how the whole bpf local
->
-> I'm not sure how premature it is, I am running late for 5.9 but would
-> like to land apparmor unix mediation in 5.10
 
-Sorry I think I mischaracterized the condition under which this
-support needs to be stacked. It seems to only be needed if using
-SO_PASSSEC and SCM_SECURITY (i.e. datagram labeling), not just for
-unix mediation or SO_PEERSEC IIUC.  So not sure if that applies even
-for downstream.
+I have merged all of this into my exec-next tree.
+
+The code is also available on the frozen branch:
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace.git usermode-driver-cleanup
+
+The range-diff from the last posted version is below.
+
+I was asked "Is there a simpler version of this code that could
+be used for backports?".  The honest answer is not really.
+
+Fundamentally do_execve_file as it existed prior to this set of changes
+breaks a lot of invariants in exec.  The choices are either track down
+all of the invariants it violates and fix it, or reorganize the code so
+that do_execve_file is unnecessary.  Reorganizing the code was the path
+I found simplest and most reliable.  I don't think anyone has tracked
+down all of the constraints the code violated.
+
+There is an issue clearly pointed out by Tetsuo Handa that in theory if
+there is too long of a delay between closing the file after writing it
+and flush_delayed_fput might not synchronize the file synchronously.  I
+can not trigger it, and this is the same code path the initramfs relies
+upon.  So I think calling flush_delayed_fput is good enough for this set
+of changes.
+
+If and when a generally accepted way to remove the theoreticaly race
+it will be trivial to fix flush_delayed_fput or replace it and none
+of the other logic changes.
+
+Declaring this set of changes done now, allows the work that depends
+upon this change to proceed.
+
+
+Eric
+
+--- 
+
+1:  8fee10be3e7e !  1:  5fec25f2cb95 umh: Capture the pid in umh_pipe_setup
+    @@ Commit message
+     
+         v1: https://lkml.kernel.org/r/87h7uygf9i.fsf_-_@x220.int.ebiederm.org
+         v2: https://lkml.kernel.org/r/875zb97iix.fsf_-_@x220.int.ebiederm.org
+    +    Link: https://lkml.kernel.org/r/20200702164140.4468-1-ebiederm@xmission.com
+         Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    +    Acked-by: Alexei Starovoitov <ast@kernel.org>
+    +    Tested-by: Alexei Starovoitov <ast@kernel.org>
+         Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+     
+      ## include/linux/umh.h ##
+ 2:  2d97bc5269dd !  2:  b044fa2ae50d umh: Move setting PF_UMH into umh_pipe_setup
+    @@ Commit message
+     
+         v1: https://lkml.kernel.org/r/87bll6gf8t.fsf_-_@x220.int.ebiederm.org
+         v2: https://lkml.kernel.org/r/87zh8l63xs.fsf_-_@x220.int.ebiederm.org
+    +    Link: https://lkml.kernel.org/r/20200702164140.4468-2-ebiederm@xmission.com
+         Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    +    Acked-by: Alexei Starovoitov <ast@kernel.org>
+    +    Tested-by: Alexei Starovoitov <ast@kernel.org>
+         Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+     
+      ## kernel/umh.c ##
+ 3:  974e2b827aca !  3:  3a171042aeab umh: Rename the user mode driver helpers for clarity
+    @@ Commit message
+     
+         v1: https://lkml.kernel.org/r/875zbegf82.fsf_-_@x220.int.ebiederm.org
+         v2: https://lkml.kernel.org/r/87tuyt63x3.fsf_-_@x220.int.ebiederm.org
+    +    Link: https://lkml.kernel.org/r/20200702164140.4468-3-ebiederm@xmission.com
+         Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    +    Acked-by: Alexei Starovoitov <ast@kernel.org>
+    +    Tested-by: Alexei Starovoitov <ast@kernel.org>
+         Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+     
+      ## kernel/umh.c ##
+ 4:  6c8f72f8eb49 !  4:  21d598280675 umh: Remove call_usermodehelper_setup_file.
+    @@ Commit message
+     
+         v1: https://lkml.kernel.org/r/87zh8qf0mp.fsf_-_@x220.int.ebiederm.org
+         v2: https://lkml.kernel.org/r/87o8p163u1.fsf_-_@x220.int.ebiederm.org
+    +    Link: https://lkml.kernel.org/r/20200702164140.4468-4-ebiederm@xmission.com
+         Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    +    Acked-by: Alexei Starovoitov <ast@kernel.org>
+    +    Tested-by: Alexei Starovoitov <ast@kernel.org>
+         Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+     
+      ## include/linux/umh.h ##
+ 5:  cbf6c2b5a04a !  5:  884c5e683b67 umh: Separate the user mode driver and the user mode helper support
+    @@ Commit message
+     
+         v1: https://lkml.kernel.org/r/87tuyyf0ln.fsf_-_@x220.int.ebiederm.org
+         v2: https://lkml.kernel.org/r/87imf963s6.fsf_-_@x220.int.ebiederm.org
+    +    Link: https://lkml.kernel.org/r/20200702164140.4468-5-ebiederm@xmission.com
+         Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    +    Acked-by: Alexei Starovoitov <ast@kernel.org>
+    +    Tested-by: Alexei Starovoitov <ast@kernel.org>
+         Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+     
+      ## include/linux/bpfilter.h ##
+ 6:  b68617fd4ee3 !  6:  74be2d3b80af umd: For clarity rename umh_info umd_info
+    @@ Commit message
+     
+         v1: https://lkml.kernel.org/r/87o8p6f0kw.fsf_-_@x220.int.ebiederm.org
+         v2: https://lkml.kernel.org/r/878sg563po.fsf_-_@x220.int.ebiederm.org
+    +    Link: https://lkml.kernel.org/r/20200702164140.4468-6-ebiederm@xmission.com
+         Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    +    Acked-by: Alexei Starovoitov <ast@kernel.org>
+    +    Tested-by: Alexei Starovoitov <ast@kernel.org>
+         Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+     
+      ## include/linux/bpfilter.h ##
+ 7:  6881acff5f6a !  7:  1199c6c3da51 umd: Rename umd_info.cmdline umd_info.driver_name
+    @@ Commit message
+     
+         v1: https://lkml.kernel.org/r/87imfef0k3.fsf_-_@x220.int.ebiederm.org
+         v2: https://lkml.kernel.org/r/87366d63os.fsf_-_@x220.int.ebiederm.org
+    +    Link: https://lkml.kernel.org/r/20200702164140.4468-7-ebiederm@xmission.com
+         Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    +    Acked-by: Alexei Starovoitov <ast@kernel.org>
+    +    Tested-by: Alexei Starovoitov <ast@kernel.org>
+         Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+     
+      ## include/linux/usermode_driver.h ##
+ 8:  cd210622ff6f !  8:  e2dc9bf3f527 umd: Transform fork_usermode_blob into fork_usermode_driver
+    @@ Commit message
+         [1] https://lore.kernel.org/linux-fsdevel/2a8775b4-1dd5-9d5c-aa42-9872445e0942@i-love.sakura.ne.jp/
+         v1: https://lkml.kernel.org/r/87d05mf0j9.fsf_-_@x220.int.ebiederm.org
+         v2: https://lkml.kernel.org/r/87wo3p4p35.fsf_-_@x220.int.ebiederm.org
+    +    Link: https://lkml.kernel.org/r/20200702164140.4468-8-ebiederm@xmission.com
+         Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    +    Acked-by: Alexei Starovoitov <ast@kernel.org>
+    +    Tested-by: Alexei Starovoitov <ast@kernel.org>
+         Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+     
+      ## include/linux/usermode_driver.h ##
+ 9:  74d65aaf2cab !  9:  55e6074e3fa6 umh: Stop calling do_execve_file
+    @@ Commit message
+     
+         v1: https://lkml.kernel.org/r/877dvuf0i7.fsf_-_@x220.int.ebiederm.org
+         v2: https://lkml.kernel.org/r/87r1tx4p2a.fsf_-_@x220.int.ebiederm.org
+    +    Link: https://lkml.kernel.org/r/20200702164140.4468-9-ebiederm@xmission.com
+         Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    +    Acked-by: Alexei Starovoitov <ast@kernel.org>
+    +    Tested-by: Alexei Starovoitov <ast@kernel.org>
+         Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+     
+      ## include/linux/umh.h ##
+10:  58a9854274a1 ! 10:  25cf336de51b exec: Remove do_execve_file
+    @@ Commit message
+         [1] https://lore.kernel.org/linux-fsdevel/2a8775b4-1dd5-9d5c-aa42-9872445e0942@i-love.sakura.ne.jp/
+         v1: https://lkml.kernel.org/r/871rm2f0hi.fsf_-_@x220.int.ebiederm.org
+         v2: https://lkml.kernel.org/r/87lfk54p0m.fsf_-_@x220.int.ebiederm.org
+    +    Link: https://lkml.kernel.org/r/20200702164140.4468-10-ebiederm@xmission.com
+         Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    +    Acked-by: Alexei Starovoitov <ast@kernel.org>
+    +    Tested-by: Alexei Starovoitov <ast@kernel.org>
+         Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+     
+      ## fs/exec.c ##
+11:  c45ae16a18c9 ! 11:  0fe3c63148ef bpfilter: Move bpfilter_umh back into init data
+    @@ Commit message
+     
+         v1: https://lkml.kernel.org/r/87sgeidlvq.fsf_-_@x220.int.ebiederm.org
+         v2: https://lkml.kernel.org/r/87ftad4ozc.fsf_-_@x220.int.ebiederm.org
+    +    Link: https://lkml.kernel.org/r/20200702164140.4468-11-ebiederm@xmission.com
+         Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    +    Acked-by: Alexei Starovoitov <ast@kernel.org>
+    +    Tested-by: Alexei Starovoitov <ast@kernel.org>
+         Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+     
+      ## net/bpfilter/bpfilter_umh_blob.S ##
+12:  43b41b9d52a0 ! 12:  1c340ead18ee umd: Track user space drivers with struct pid
+    @@ Commit message
+     
+         v1: https://lkml.kernel.org/r/87mu4qdlv2.fsf_-_@x220.int.ebiederm.org
+         v2: https://lkml.kernel.org/r/a70l4oy8.fsf_-_@x220.int.ebiederm.org
+    +    Link: https://lkml.kernel.org/r/20200702164140.4468-12-ebiederm@xmission.com
+         Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    +    Acked-by: Alexei Starovoitov <ast@kernel.org>
+    +    Tested-by: Alexei Starovoitov <ast@kernel.org>
+         Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+     
+      ## include/linux/usermode_driver.h ##
+13:  653476c24a30 ! 13:  38fd525a4c61 exit: Factor thread_group_exited out of pidfd_poll
+    @@ Metadata
+      ## Commit message ##
+         exit: Factor thread_group_exited out of pidfd_poll
+     
+    -    Create an independent helper thread_group_exited report return true
+    +    Create an independent helper thread_group_exited which returns true
+         when all threads have passed exit_notify in do_exit.  AKA all of the
+         threads are at least zombies and might be dead or completely gone.
+     
+    -    Create this helper by taking the logic out of pidfd_poll where
+    -    it is already tested, and adding a missing READ_ONCE on
+    -    the read of task->exit_state.
+    +    Create this helper by taking the logic out of pidfd_poll where it is
+    +    already tested, and adding a READ_ONCE on the read of
+    +    task->exit_state.
+     
+         I will be changing the user mode driver code to use this same logic
+         to know when a user mode driver needs to be restarted.
+    @@ Commit message
+         Place the new helper thread_group_exited in kernel/exit.c and
+         EXPORT it so it can be used by modules.
+     
+    +    Link: https://lkml.kernel.org/r/20200702164140.4468-13-ebiederm@xmission.com
+    +    Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
+    +    Acked-by: Alexei Starovoitov <ast@kernel.org>
+    +    Tested-by: Alexei Starovoitov <ast@kernel.org>
+         Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+     
+      ## include/linux/sched/signal.h ##
+    @@ kernel/exit.c: COMPAT_SYSCALL_DEFINE5(waitid,
+     + * thread_group_exited - check that a thread group has exited
+     + * @pid: tgid of thread group to be checked.
+     + *
+    -+ * Test if thread group is has exited (all threads are zombies, dead
+    -+ * or completely gone).
+    ++ * Test if the thread group represented by tgid has exited (all
+    ++ * threads are zombies, dead or completely gone).
+     + *
+     + * Return: true if the thread group has exited. false otherwise.
+     + */
+14:  7ad037d12723 ! 14:  e80eb1dc868b bpfilter: Take advantage of the facilities of struct pid
+    @@ Commit message
+     
+         v1: https://lkml.kernel.org/r/87h7uydlu9.fsf_-_@x220.int.ebiederm.org
+         v2: https://lkml.kernel.org/r/874kqt4owu.fsf_-_@x220.int.ebiederm.org
+    +    Link: https://lkml.kernel.org/r/20200702164140.4468-14-ebiederm@xmission.com
+         Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    +    Acked-by: Alexei Starovoitov <ast@kernel.org>
+    +    Tested-by: Alexei Starovoitov <ast@kernel.org>
+         Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+     
+      ## include/linux/bpfilter.h ##
+15:  e50cf5e57a62 ! 15:  8c2f52663973 umd: Remove exit_umh
+    @@ Commit message
+     
+         v1: https://lkml.kernel.org/r/87bll6dlte.fsf_-_@x220.int.ebiederm.org
+         v2: https://lkml.kernel.org/r/87y2o53abg.fsf_-_@x220.int.ebiederm.org
+    +    Link: https://lkml.kernel.org/r/20200702164140.4468-15-ebiederm@xmission.com
+         Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    +    Acked-by: Alexei Starovoitov <ast@kernel.org>
+    +    Tested-by: Alexei Starovoitov <ast@kernel.org>
+         Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+     
+      ## include/linux/sched.h ##
+16:  32e057d8aa4a ! 16:  33c326014fe6 umd: Stop using split_argv
+    @@ Commit message
+         call_usermodehelper_setup.
+     
+         v1: https://lkml.kernel.org/r/87sged3a9n.fsf_-_@x220.int.ebiederm.org
+    +    Link: https://lkml.kernel.org/r/20200702164140.4468-16-ebiederm@xmission.com
+    +    Acked-by: Alexei Starovoitov <ast@kernel.org>
+    +    Tested-by: Alexei Starovoitov <ast@kernel.org>
+         Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+     
+      ## kernel/usermode_driver.c ##
+
+
