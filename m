@@ -1,339 +1,719 @@
-Return-Path: <SRS0=TKeG=AU=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=LBP9=AV=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 015FCC433DF
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 Jul 2020 22:08:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEF13C433DF
+	for <linux-security-module@archiver.kernel.org>; Fri, 10 Jul 2020 06:59:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CBF59206A1
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 Jul 2020 22:08:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D34E2078B
+	for <linux-security-module@archiver.kernel.org>; Fri, 10 Jul 2020 06:59:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="icdzPbi5";
+	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="PLLHP0Sk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726275AbgGIWIF (ORCPT
+        id S1726756AbgGJG7t (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 9 Jul 2020 18:08:05 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:52398 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726269AbgGIWIE (ORCPT
+        Fri, 10 Jul 2020 02:59:49 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:64576 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725851AbgGJG7t (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 9 Jul 2020 18:08:04 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jtehw-0007ZY-UM; Thu, 09 Jul 2020 16:07:56 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jtehv-0002HP-De; Thu, 09 Jul 2020 16:07:56 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     <linux-kernel@vger.kernel.org>
-Cc:     David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <greg@kroah.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
+        Fri, 10 Jul 2020 02:59:49 -0400
+Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 06A6xQi1015574;
+        Thu, 9 Jul 2020 23:59:29 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=date : from : to : cc :
+ subject : message-id : references : content-type : in-reply-to :
+ mime-version; s=facebook; bh=J5jg16NjEbSARFlGNj8wo3QNScAICPQgKgFYq2afaGc=;
+ b=icdzPbi5pKqr0+86uEf9UZJW7VKmpDXC+dPDo5lX85hBs6pi51WChyX/soueyzCuilIg
+ YBEuJTiabYubZZThN9xmVPsL1gkIh/vV5pGZ/kJMdOKhZU9zFbiEkyu17YQs3cdurRjd
+ YFMya0RabY28k8teB7Soyo/15wc3y6kF73k= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com with ESMTP id 325k1s0nyw-6
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Thu, 09 Jul 2020 23:59:29 -0700
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (100.104.31.183)
+ by o365-in.thefacebook.com (100.104.36.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1979.3; Thu, 9 Jul 2020 23:59:20 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ig+dNaVJPvaffoFJKmhSex9L8zBGts9tomGp5N1s4n3F87vDouGM8qbyMc/1HOZ1lXZPkg3zJO4S94xJTYtKcSul46eT3O2fscfysH/uLMEJCchy6A/o+VVYL2lxWL40bCqfyUQjpr6h+sTsDET4EHJQVgNYnrvjYI+KUZXCndqomhUsAIAO45/7+iHl/M9un6rihgj2qqItPgrMmQW3eRT6ROdW/4XLQGQyFW/7il9UqWYK7eD29Rbf53G6JzkXL2+6T2FnDchNOgKOiHS877FfkEmpAmwxUHc4CwH0GILTT4VdBoTQb47gnPC6ugCj8hiGXMzh3f7zHny0krABYw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=J5jg16NjEbSARFlGNj8wo3QNScAICPQgKgFYq2afaGc=;
+ b=IQEHhMsjq9b2q7VzVEMuNvu286aMau+YFsAyT1tJ45Kxv7vymg8hSbfvbxG9qupaO+mDSmOTeO5XXd6lDSYUKbi5GLVxGyPts/NrJY+0mZLO9meSC6RHtRzwF4+EZ0+vFWQJJnnD9wWML7BTewwHV8IkmYBHy1sjtfi2dazJUN97y76fS7AHeMbiGzE8mMgkpG2kNRtQfbQJ1pSYL016LY90gt3eocAFeffSH9HPa3JkSIbucKi+t+KOP7P93B9sCbJ33SJEUGidbzVBDoGpEATXz7SopYYl1azbtjiigcdY1dqbpzS+IgOtKC0IJ97dHDNzpqu31cA3Z26VieHpiw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
+ header.d=fb.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector2-fb-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=J5jg16NjEbSARFlGNj8wo3QNScAICPQgKgFYq2afaGc=;
+ b=PLLHP0SkLBuYBQdbqZWqJaCBm3O5bwN+uOAS+68muW1HKws2pXUYOJG0tHN2vvwObrzv4YTYWvz23OVM7BTG3wm4ovWTtGOcgl0LJ8dLs7naVABEx8MomtGYGABm1TtmMxsucg+BT3Ly1HPDB+mace1EA1CoT+XFn3sYB1gVIC0=
+Authentication-Results: chromium.org; dkim=none (message not signed)
+ header.d=none;chromium.org; dmarc=none action=none header.from=fb.com;
+Received: from BY5PR15MB3571.namprd15.prod.outlook.com (2603:10b6:a03:1f6::32)
+ by BYAPR15MB3000.namprd15.prod.outlook.com (2603:10b6:a03:b1::31) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3174.21; Fri, 10 Jul
+ 2020 06:59:19 +0000
+Received: from BY5PR15MB3571.namprd15.prod.outlook.com
+ ([fe80::d489:8f7f:614e:1b99]) by BY5PR15MB3571.namprd15.prod.outlook.com
+ ([fe80::d489:8f7f:614e:1b99%7]) with mapi id 15.20.3174.023; Fri, 10 Jul 2020
+ 06:59:19 +0000
+Date:   Thu, 9 Jul 2020 23:59:17 -0700
+From:   Martin KaFai Lau <kafai@fb.com>
+To:     KP Singh <kpsingh@chromium.org>
+CC:     <linux-kernel@vger.kernel.org>, <bpf@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
         Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Daniel Borkmann <daniel@iogearbox.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>
-References: <20200625095725.GA3303921@kroah.com>
-        <778297d2-512a-8361-cf05-42d9379e6977@i-love.sakura.ne.jp>
-        <20200625120725.GA3493334@kroah.com>
-        <20200625.123437.2219826613137938086.davem@davemloft.net>
-        <CAHk-=whuTwGHEPjvtbBvneHHXeqJC=q5S09mbPnqb=Q+MSPMag@mail.gmail.com>
-        <87pn9mgfc2.fsf_-_@x220.int.ebiederm.org>
-        <87y2oac50p.fsf@x220.int.ebiederm.org>
-        <87bll17ili.fsf_-_@x220.int.ebiederm.org>
-        <87y2o1swee.fsf_-_@x220.int.ebiederm.org>
-Date:   Thu, 09 Jul 2020 17:05:09 -0500
-In-Reply-To: <87y2o1swee.fsf_-_@x220.int.ebiederm.org> (Eric W. Biederman's
-        message of "Thu, 02 Jul 2020 11:40:25 -0500")
-Message-ID: <87r1tke44q.fsf_-_@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
+        Florent Revest <revest@chromium.org>
+Subject: Re: [PATCH bpf-next v4 1/4] bpf: Generalize bpf_sk_storage
+Message-ID: <20200710065917.4333wchwofpl7m2s@kafai-mbp>
+References: <20200709101239.3829793-1-kpsingh@chromium.org>
+ <20200709101239.3829793-2-kpsingh@chromium.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200709101239.3829793-2-kpsingh@chromium.org>
+User-Agent: NeoMutt/20180716
+X-ClientProxiedBy: BYAPR11CA0075.namprd11.prod.outlook.com
+ (2603:10b6:a03:f4::16) To BY5PR15MB3571.namprd15.prod.outlook.com
+ (2603:10b6:a03:1f6::32)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1jtehv-0002HP-De;;;mid=<87r1tke44q.fsf_-_@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+oAknS1uYVmiHDpfxQrqKVts0tnK/N1nA=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: [merged][PATCH v3 00/16] Make the user mode driver code a better citizen
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from kafai-mbp (2620:10d:c090:400::5:31b2) by BYAPR11CA0075.namprd11.prod.outlook.com (2603:10b6:a03:f4::16) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3174.21 via Frontend Transport; Fri, 10 Jul 2020 06:59:18 +0000
+X-Originating-IP: [2620:10d:c090:400::5:31b2]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 8698a75b-7965-420b-64a5-08d8249ec406
+X-MS-TrafficTypeDiagnostic: BYAPR15MB3000:
+X-Microsoft-Antispam-PRVS: <BYAPR15MB300012F4B8B549A5EACD6B0CD5650@BYAPR15MB3000.namprd15.prod.outlook.com>
+X-FB-Source: Internal
+X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: fK2X7dfVlV3d5wjZluuV4aBqUEEdMpXiTe3asBTrYx2ArRYKQuFw7f8qhQGc18hoNPILZNqgkkTWCLeFvbkMPSTzLFyVYXNntWmNTmn8GnpvWlYpayrP0KMhG2n+oWKadlxSFfGdc2gnoNN4yaTspJcVof1hsoJY85zRd38EkevJQG5gG7lya/LJwi48XNO40orRj+tbWzVsMlyoFNlu+e5RUw2rj2vf7+9dkqGC1xHjebm6kjEyL3Od01nk+0bfrgyjqveeJTWzZJbDXHgcJOd5NjJXv+KStM/ZKvJg9nQfJ2IracqDdxSn5SJz19wkwRxd8jF3uehOUayEeL5PzA==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR15MB3571.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(39860400002)(346002)(366004)(376002)(136003)(396003)(6916009)(8936002)(186003)(9686003)(316002)(16526019)(2906002)(55016002)(6496006)(66476007)(478600001)(52116002)(86362001)(66556008)(4326008)(66946007)(33716001)(83380400001)(5660300002)(30864003)(1076003)(54906003)(8676002);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData: UO2M+5v+jzdgj6lo0fpv6FK/QVuAFyt+HGgH0I9ZkblIK80bXUFML0P5D+ZOC4T60uXZ7WtbyaBgR/CiqEuw0LWlA0k1QE7Ow7j1HKqK1F0bVptrnZHJ4rOTcdeme4Zug+WxIu0/WI+LA9H/GpI8Unpq6GFpLcu1J9lJqX6AJ/9KJ/r0Liz3rbS8nkY2lhQoEjmOEQPFTCCY924wEWtyrImHCFOjFwp+yTDQ3jwTV88B5p7J76BRv/qTlTCLTsOLnNXjVU75cn+dp+e/ZLhg8NMooVwtvYWQ3RkNkwbEUN6zeFhlHOUe2/RCqU9t1n0r5x7/w4e97X0hFd42u3NJO5pOZotH4AWm0xbirNMdZSuZQN2LCdyw3AEz9NXBA4Yn4+nEc/Mkg7wjoW0WoVNAK+FUQGAi9sXSuYdxd9nfD+FJyYH4eZ6oepjfMBsHjQjYwvBWCKeKhzOvBVsVN7YW9xHUYELgir2fx0yYUiOvMpEUxA5kV62oMTneVgbBSAVrU9q4bS42bUk/C/0Qdt/Itw==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8698a75b-7965-420b-64a5-08d8249ec406
+X-MS-Exchange-CrossTenant-AuthSource: BY5PR15MB3571.namprd15.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jul 2020 06:59:18.8659
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: tku1ZRMox3UsHtFKFvMfq5bq3CNPtTpxQGh7R/a8hGYXuYM1nl/Jztl3iaoRPqbG
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB3000
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-07-10_02:2020-07-10,2020-07-10 signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 mlxscore=0 clxscore=1011
+ malwarescore=0 mlxlogscore=999 priorityscore=1501 suspectscore=2
+ impostorscore=0 phishscore=0 bulkscore=0 spamscore=0 adultscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2006250000 definitions=main-2007100047
+X-FB-Internal: deliver
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Thu, Jul 09, 2020 at 12:12:36PM +0200, KP Singh wrote:
+> From: KP Singh <kpsingh@google.com>
+> 
+> Refactor the functionality in bpf_sk_storage.c so that concept of
+> storage linked to kernel objects can be extended to other objects like
+> inode, task_struct etc.
+> 
+> bpf_sk_storage is updated to be bpf_local_storage with a union that
+> contains a pointer to the owner object.
 
-I have merged all of this into my exec-next tree.
+> The type of the
+> bpf_local_storage can be determined using the newly added
+> bpf_local_storage_type enum.
+This is out dated.
 
-The code is also available on the frozen branch:
+> 
+> Each new local storage will still be a separate map and provide its own
+> set of helpers. This allows for future object specific extensions and
+> still share a lot of the underlying implementation.
+Thanks for v4.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace.git usermode-driver-cleanup
+I do find it quite hard to follow by directly moving to
+bpf_local_storage.c without doing all the renaming locally
+at bpf_sk_storage.c first.  I will try my best to follow.
 
-The range-diff from the last posted version is below.
+There are some unnecessary name/convention change and function
+folding that do not help on this side either.  Please keep them
+unchanged for now and they can use another patch in the future if needed.
+It will be easier to have a mostly one to one naming change
+and please mention them in the commit message.
 
-I was asked "Is there a simpler version of this code that could
-be used for backports?".  The honest answer is not really.
+[ ... ]
 
-Fundamentally do_execve_file as it existed prior to this set of changes
-breaks a lot of invariants in exec.  The choices are either track down
-all of the invariants it violates and fix it, or reorganize the code so
-that do_execve_file is unnecessary.  Reorganizing the code was the path
-I found simplest and most reliable.  I don't think anyone has tracked
-down all of the constraints the code violated.
+> diff --git a/include/linux/bpf_local_storage.h b/include/linux/bpf_local_storage.h
+> new file mode 100644
+> index 000000000000..605b81f2f806
+> --- /dev/null
+> +++ b/include/linux/bpf_local_storage.h
+> @@ -0,0 +1,175 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (c) 2019 Facebook
+> + * Copyright 2020 Google LLC.
+> + */
+> +
+> +#ifndef _BPF_LOCAL_STORAGE_H
+> +#define _BPF_LOCAL_STORAGE_H
+> +
+> +#include <linux/bpf.h>
+> +#include <linux/rculist.h>
+> +#include <linux/list.h>
+> +#include <linux/hash.h>
+> +#include <linux/types.h>
+> +#include <uapi/linux/btf.h>
+> +
+> +#define LOCAL_STORAGE_CREATE_FLAG_MASK					\
+> +	(BPF_F_NO_PREALLOC | BPF_F_CLONE)
+> +
+> +struct bucket {
+Since it is in a .h, it can use a more specific name.
+May be bpf_local_storage_map_bucket.
 
-There is an issue clearly pointed out by Tetsuo Handa that in theory if
-there is too long of a delay between closing the file after writing it
-and flush_delayed_fput might not synchronize the file synchronously.  I
-can not trigger it, and this is the same code path the initramfs relies
-upon.  So I think calling flush_delayed_fput is good enough for this set
-of changes.
+> +	struct hlist_head list;
+> +	raw_spinlock_t lock;
+> +};
+> +
 
-If and when a generally accepted way to remove the theoreticaly race
-it will be trivial to fix flush_delayed_fput or replace it and none
-of the other logic changes.
+[ ... ]
 
-Declaring this set of changes done now, allows the work that depends
-upon this change to proceed.
+> +struct bpf_local_storage {
+> +	struct bpf_local_storage_data __rcu *cache[BPF_STORAGE_CACHE_SIZE];
+> +	struct hlist_head list;		/* List of bpf_local_storage_elem */
+> +	/* The object that owns the the above "list" of
+> +	 * bpf_local_storage_elem
+> +	 */
+> +	union {
+> +		struct sock *sk;
+Instead of having a specific pointer type and then union them here,
+would one "void *owner;" work as good?
 
+> +	};
+> +	struct rcu_head rcu;
+> +	raw_spinlock_t lock;	/* Protect adding/removing from the "list" */
+> +};
+> +
+> +/* Helper functions for bpf_local_storage */
 
-Eric
+[ ... ]
 
---- 
+> diff --git a/kernel/bpf/bpf_local_storage.c b/kernel/bpf/bpf_local_storage.c
+> new file mode 100644
+> index 000000000000..c818eb6f8261
+> --- /dev/null
+> +++ b/kernel/bpf/bpf_local_storage.c
+> @@ -0,0 +1,517 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2019 Facebook
+> + * Copyright 2020 Google LLC.
+> + */
+> +
+> +#include <linux/rculist.h>
+> +#include <linux/list.h>
+> +#include <linux/hash.h>
+> +#include <linux/types.h>
+> +#include <linux/spinlock.h>
+> +#include <linux/bpf.h>
+> +#include <linux/bpf_local_storage.h>
+> +#include <net/sock.h>
+> +#include <uapi/linux/sock_diag.h>
+> +#include <uapi/linux/btf.h>
+> +
+> +#define SELEM(_SDATA)                                                          \
+> +	container_of((_SDATA), struct bpf_local_storage_elem, sdata)
+> +#define SDATA(_SELEM) (&(_SELEM)->sdata)
+> +
+> +static struct bucket *select_bucket(struct bpf_local_storage_map *smap,
+> +				    struct bpf_local_storage_elem *selem)
+> +{
+> +	return &smap->buckets[hash_ptr(selem, smap->bucket_log)];
+> +}
+> +
+> +static bool selem_linked_to_node(const struct bpf_local_storage_elem *selem)
+The suffix was selem_linked_to"_sk" and it is changed to "_node" here.
+However, the latter bpf_selem_unlink has removed the _sk suffix instead.
 
-1:  8fee10be3e7e !  1:  5fec25f2cb95 umh: Capture the pid in umh_pipe_setup
-    @@ Commit message
-     
-         v1: https://lkml.kernel.org/r/87h7uygf9i.fsf_-_@x220.int.ebiederm.org
-         v2: https://lkml.kernel.org/r/875zb97iix.fsf_-_@x220.int.ebiederm.org
-    +    Link: https://lkml.kernel.org/r/20200702164140.4468-1-ebiederm@xmission.com
-         Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    +    Acked-by: Alexei Starovoitov <ast@kernel.org>
-    +    Tested-by: Alexei Starovoitov <ast@kernel.org>
-         Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
-     
-      ## include/linux/umh.h ##
- 2:  2d97bc5269dd !  2:  b044fa2ae50d umh: Move setting PF_UMH into umh_pipe_setup
-    @@ Commit message
-     
-         v1: https://lkml.kernel.org/r/87bll6gf8t.fsf_-_@x220.int.ebiederm.org
-         v2: https://lkml.kernel.org/r/87zh8l63xs.fsf_-_@x220.int.ebiederm.org
-    +    Link: https://lkml.kernel.org/r/20200702164140.4468-2-ebiederm@xmission.com
-         Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    +    Acked-by: Alexei Starovoitov <ast@kernel.org>
-    +    Tested-by: Alexei Starovoitov <ast@kernel.org>
-         Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
-     
-      ## kernel/umh.c ##
- 3:  974e2b827aca !  3:  3a171042aeab umh: Rename the user mode driver helpers for clarity
-    @@ Commit message
-     
-         v1: https://lkml.kernel.org/r/875zbegf82.fsf_-_@x220.int.ebiederm.org
-         v2: https://lkml.kernel.org/r/87tuyt63x3.fsf_-_@x220.int.ebiederm.org
-    +    Link: https://lkml.kernel.org/r/20200702164140.4468-3-ebiederm@xmission.com
-         Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    +    Acked-by: Alexei Starovoitov <ast@kernel.org>
-    +    Tested-by: Alexei Starovoitov <ast@kernel.org>
-         Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
-     
-      ## kernel/umh.c ##
- 4:  6c8f72f8eb49 !  4:  21d598280675 umh: Remove call_usermodehelper_setup_file.
-    @@ Commit message
-     
-         v1: https://lkml.kernel.org/r/87zh8qf0mp.fsf_-_@x220.int.ebiederm.org
-         v2: https://lkml.kernel.org/r/87o8p163u1.fsf_-_@x220.int.ebiederm.org
-    +    Link: https://lkml.kernel.org/r/20200702164140.4468-4-ebiederm@xmission.com
-         Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    +    Acked-by: Alexei Starovoitov <ast@kernel.org>
-    +    Tested-by: Alexei Starovoitov <ast@kernel.org>
-         Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
-     
-      ## include/linux/umh.h ##
- 5:  cbf6c2b5a04a !  5:  884c5e683b67 umh: Separate the user mode driver and the user mode helper support
-    @@ Commit message
-     
-         v1: https://lkml.kernel.org/r/87tuyyf0ln.fsf_-_@x220.int.ebiederm.org
-         v2: https://lkml.kernel.org/r/87imf963s6.fsf_-_@x220.int.ebiederm.org
-    +    Link: https://lkml.kernel.org/r/20200702164140.4468-5-ebiederm@xmission.com
-         Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    +    Acked-by: Alexei Starovoitov <ast@kernel.org>
-    +    Tested-by: Alexei Starovoitov <ast@kernel.org>
-         Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
-     
-      ## include/linux/bpfilter.h ##
- 6:  b68617fd4ee3 !  6:  74be2d3b80af umd: For clarity rename umh_info umd_info
-    @@ Commit message
-     
-         v1: https://lkml.kernel.org/r/87o8p6f0kw.fsf_-_@x220.int.ebiederm.org
-         v2: https://lkml.kernel.org/r/878sg563po.fsf_-_@x220.int.ebiederm.org
-    +    Link: https://lkml.kernel.org/r/20200702164140.4468-6-ebiederm@xmission.com
-         Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    +    Acked-by: Alexei Starovoitov <ast@kernel.org>
-    +    Tested-by: Alexei Starovoitov <ast@kernel.org>
-         Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
-     
-      ## include/linux/bpfilter.h ##
- 7:  6881acff5f6a !  7:  1199c6c3da51 umd: Rename umd_info.cmdline umd_info.driver_name
-    @@ Commit message
-     
-         v1: https://lkml.kernel.org/r/87imfef0k3.fsf_-_@x220.int.ebiederm.org
-         v2: https://lkml.kernel.org/r/87366d63os.fsf_-_@x220.int.ebiederm.org
-    +    Link: https://lkml.kernel.org/r/20200702164140.4468-7-ebiederm@xmission.com
-         Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    +    Acked-by: Alexei Starovoitov <ast@kernel.org>
-    +    Tested-by: Alexei Starovoitov <ast@kernel.org>
-         Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
-     
-      ## include/linux/usermode_driver.h ##
- 8:  cd210622ff6f !  8:  e2dc9bf3f527 umd: Transform fork_usermode_blob into fork_usermode_driver
-    @@ Commit message
-         [1] https://lore.kernel.org/linux-fsdevel/2a8775b4-1dd5-9d5c-aa42-9872445e0942@i-love.sakura.ne.jp/
-         v1: https://lkml.kernel.org/r/87d05mf0j9.fsf_-_@x220.int.ebiederm.org
-         v2: https://lkml.kernel.org/r/87wo3p4p35.fsf_-_@x220.int.ebiederm.org
-    +    Link: https://lkml.kernel.org/r/20200702164140.4468-8-ebiederm@xmission.com
-         Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    +    Acked-by: Alexei Starovoitov <ast@kernel.org>
-    +    Tested-by: Alexei Starovoitov <ast@kernel.org>
-         Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
-     
-      ## include/linux/usermode_driver.h ##
- 9:  74d65aaf2cab !  9:  55e6074e3fa6 umh: Stop calling do_execve_file
-    @@ Commit message
-     
-         v1: https://lkml.kernel.org/r/877dvuf0i7.fsf_-_@x220.int.ebiederm.org
-         v2: https://lkml.kernel.org/r/87r1tx4p2a.fsf_-_@x220.int.ebiederm.org
-    +    Link: https://lkml.kernel.org/r/20200702164140.4468-9-ebiederm@xmission.com
-         Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    +    Acked-by: Alexei Starovoitov <ast@kernel.org>
-    +    Tested-by: Alexei Starovoitov <ast@kernel.org>
-         Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
-     
-      ## include/linux/umh.h ##
-10:  58a9854274a1 ! 10:  25cf336de51b exec: Remove do_execve_file
-    @@ Commit message
-         [1] https://lore.kernel.org/linux-fsdevel/2a8775b4-1dd5-9d5c-aa42-9872445e0942@i-love.sakura.ne.jp/
-         v1: https://lkml.kernel.org/r/871rm2f0hi.fsf_-_@x220.int.ebiederm.org
-         v2: https://lkml.kernel.org/r/87lfk54p0m.fsf_-_@x220.int.ebiederm.org
-    +    Link: https://lkml.kernel.org/r/20200702164140.4468-10-ebiederm@xmission.com
-         Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    +    Acked-by: Alexei Starovoitov <ast@kernel.org>
-    +    Tested-by: Alexei Starovoitov <ast@kernel.org>
-         Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
-     
-      ## fs/exec.c ##
-11:  c45ae16a18c9 ! 11:  0fe3c63148ef bpfilter: Move bpfilter_umh back into init data
-    @@ Commit message
-     
-         v1: https://lkml.kernel.org/r/87sgeidlvq.fsf_-_@x220.int.ebiederm.org
-         v2: https://lkml.kernel.org/r/87ftad4ozc.fsf_-_@x220.int.ebiederm.org
-    +    Link: https://lkml.kernel.org/r/20200702164140.4468-11-ebiederm@xmission.com
-         Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    +    Acked-by: Alexei Starovoitov <ast@kernel.org>
-    +    Tested-by: Alexei Starovoitov <ast@kernel.org>
-         Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
-     
-      ## net/bpfilter/bpfilter_umh_blob.S ##
-12:  43b41b9d52a0 ! 12:  1c340ead18ee umd: Track user space drivers with struct pid
-    @@ Commit message
-     
-         v1: https://lkml.kernel.org/r/87mu4qdlv2.fsf_-_@x220.int.ebiederm.org
-         v2: https://lkml.kernel.org/r/a70l4oy8.fsf_-_@x220.int.ebiederm.org
-    +    Link: https://lkml.kernel.org/r/20200702164140.4468-12-ebiederm@xmission.com
-         Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    +    Acked-by: Alexei Starovoitov <ast@kernel.org>
-    +    Tested-by: Alexei Starovoitov <ast@kernel.org>
-         Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
-     
-      ## include/linux/usermode_driver.h ##
-13:  653476c24a30 ! 13:  38fd525a4c61 exit: Factor thread_group_exited out of pidfd_poll
-    @@ Metadata
-      ## Commit message ##
-         exit: Factor thread_group_exited out of pidfd_poll
-     
-    -    Create an independent helper thread_group_exited report return true
-    +    Create an independent helper thread_group_exited which returns true
-         when all threads have passed exit_notify in do_exit.  AKA all of the
-         threads are at least zombies and might be dead or completely gone.
-     
-    -    Create this helper by taking the logic out of pidfd_poll where
-    -    it is already tested, and adding a missing READ_ONCE on
-    -    the read of task->exit_state.
-    +    Create this helper by taking the logic out of pidfd_poll where it is
-    +    already tested, and adding a READ_ONCE on the read of
-    +    task->exit_state.
-     
-         I will be changing the user mode driver code to use this same logic
-         to know when a user mode driver needs to be restarted.
-    @@ Commit message
-         Place the new helper thread_group_exited in kernel/exit.c and
-         EXPORT it so it can be used by modules.
-     
-    +    Link: https://lkml.kernel.org/r/20200702164140.4468-13-ebiederm@xmission.com
-    +    Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
-    +    Acked-by: Alexei Starovoitov <ast@kernel.org>
-    +    Tested-by: Alexei Starovoitov <ast@kernel.org>
-         Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
-     
-      ## include/linux/sched/signal.h ##
-    @@ kernel/exit.c: COMPAT_SYSCALL_DEFINE5(waitid,
-     + * thread_group_exited - check that a thread group has exited
-     + * @pid: tgid of thread group to be checked.
-     + *
-    -+ * Test if thread group is has exited (all threads are zombies, dead
-    -+ * or completely gone).
-    ++ * Test if the thread group represented by tgid has exited (all
-    ++ * threads are zombies, dead or completely gone).
-     + *
-     + * Return: true if the thread group has exited. false otherwise.
-     + */
-14:  7ad037d12723 ! 14:  e80eb1dc868b bpfilter: Take advantage of the facilities of struct pid
-    @@ Commit message
-     
-         v1: https://lkml.kernel.org/r/87h7uydlu9.fsf_-_@x220.int.ebiederm.org
-         v2: https://lkml.kernel.org/r/874kqt4owu.fsf_-_@x220.int.ebiederm.org
-    +    Link: https://lkml.kernel.org/r/20200702164140.4468-14-ebiederm@xmission.com
-         Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    +    Acked-by: Alexei Starovoitov <ast@kernel.org>
-    +    Tested-by: Alexei Starovoitov <ast@kernel.org>
-         Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
-     
-      ## include/linux/bpfilter.h ##
-15:  e50cf5e57a62 ! 15:  8c2f52663973 umd: Remove exit_umh
-    @@ Commit message
-     
-         v1: https://lkml.kernel.org/r/87bll6dlte.fsf_-_@x220.int.ebiederm.org
-         v2: https://lkml.kernel.org/r/87y2o53abg.fsf_-_@x220.int.ebiederm.org
-    +    Link: https://lkml.kernel.org/r/20200702164140.4468-15-ebiederm@xmission.com
-         Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    +    Acked-by: Alexei Starovoitov <ast@kernel.org>
-    +    Tested-by: Alexei Starovoitov <ast@kernel.org>
-         Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
-     
-      ## include/linux/sched.h ##
-16:  32e057d8aa4a ! 16:  33c326014fe6 umd: Stop using split_argv
-    @@ Commit message
-         call_usermodehelper_setup.
-     
-         v1: https://lkml.kernel.org/r/87sged3a9n.fsf_-_@x220.int.ebiederm.org
-    +    Link: https://lkml.kernel.org/r/20200702164140.4468-16-ebiederm@xmission.com
-    +    Acked-by: Alexei Starovoitov <ast@kernel.org>
-    +    Tested-by: Alexei Starovoitov <ast@kernel.org>
-         Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
-     
-      ## kernel/usermode_driver.c ##
+Instead of _to_node, it is linked to storage.  How about
+selem_linked_to_storage()?
 
+> +{
+> +	return !hlist_unhashed(&selem->snode);
+> +}
+> +
+> +static bool selem_linked_to_map(const struct bpf_local_storage_elem *selem)
+> +{
+> +	return !hlist_unhashed(&selem->map_node);
+> +}
+> +
+> +struct bpf_local_storage_elem *
+> +bpf_selem_alloc(struct bpf_local_storage_map *smap, void *value)
+> +{
+> +	struct bpf_local_storage_elem *selem;
+> +
+> +	selem = kzalloc(smap->elem_size, GFP_ATOMIC | __GFP_NOWARN);
+> +	if (selem) {
+> +		if (value)
+> +			memcpy(SDATA(selem)->data, value, smap->map.value_size);
+> +		return selem;
+> +	}
+> +
+> +	return NULL;
+> +}
+> +
+> +/* local_storage->lock must be held and selem->local_storage == local_storage.
+> + * The caller must ensure selem->smap is still valid to be
+> + * dereferenced for its smap->elem_size and smap->cache_idx.
+> + *
+> + * uncharge_omem is only relevant for BPF_MAP_TYPE_SK_STORAGE.
+> + */
+> +bool bpf_selem_unlink(struct bpf_local_storage *local_storage,
+> +		      struct bpf_local_storage_elem *selem, bool uncharge_omem)
+It is originated from __selem_unlink_sk() which does not take the
+local_storage->lock.
 
+How about keeping the _sk suffix here somehow to distinguish it from
+unlink_map?
+was __selem_unlink_sk => bpf_selem_unlink_storage()?
+
+> +{
+> +	struct bpf_local_storage_map *smap;
+> +	bool free_local_storage;
+> +
+> +	smap = rcu_dereference(SDATA(selem)->smap);
+> +	free_local_storage = hlist_is_singular_node(&selem->snode,
+> +						    &local_storage->list);
+> +
+> +	/* local_storage is not freed now.  local_storage->lock is
+> +	 * still held and raw_spin_unlock_bh(&local_storage->lock)
+> +	 * will be done by the caller.
+> +	 * Although the unlock will be done under
+> +	 * rcu_read_lock(),  it is more intutivie to
+> +	 * read if kfree_rcu(local_storage, rcu) is done
+> +	 * after the raw_spin_unlock_bh(&local_storage->lock).
+> +	 *
+> +	 * Hence, a "bool free_local_storage" is returned
+> +	 * to the caller which then calls the kfree_rcu()
+> +	 * after unlock.
+> +	 */
+> +	if (free_local_storage)
+> +		smap->map.ops->map_local_storage_unlink(local_storage,
+> +							uncharge_omem);
+> +
+> +	hlist_del_init_rcu(&selem->snode);
+> +	if (rcu_access_pointer(local_storage->cache[smap->cache_idx]) ==
+> +	    SDATA(selem))
+> +		RCU_INIT_POINTER(local_storage->cache[smap->cache_idx], NULL);
+> +
+> +	kfree_rcu(selem, rcu);
+> +
+> +	return free_local_storage;
+> +}
+> +
+> +void bpf_selem_link(struct bpf_local_storage *local_storage,
+> +		    struct bpf_local_storage_elem *selem)
+was __selem_link_sk() => bpf_selem_link_storage()
+
+> +{
+> +	RCU_INIT_POINTER(selem->local_storage, local_storage);
+> +	hlist_add_head(&selem->snode, &local_storage->list);
+> +}
+> +
+> +void bpf_selem_unlink_map(struct bpf_local_storage_elem *selem)
+> +{
+> +	struct bpf_local_storage_map *smap;
+> +	struct bucket *b;
+> +
+> +	if (unlikely(!selem_linked_to_map(selem)))
+> +		/* selem has already be unlinked from smap */
+> +		return;
+> +
+> +	smap = rcu_dereference(SDATA(selem)->smap);
+> +	b = select_bucket(smap, selem);
+> +	raw_spin_lock_bh(&b->lock);
+> +	if (likely(selem_linked_to_map(selem)))
+> +		hlist_del_init_rcu(&selem->map_node);
+> +	raw_spin_unlock_bh(&b->lock);
+> +}
+> +
+> +void bpf_selem_link_map(struct bpf_local_storage_map *smap,
+> +			struct bpf_local_storage_elem *selem)
+> +{
+> +	struct bucket *b = select_bucket(smap, selem);
+> +
+> +	raw_spin_lock_bh(&b->lock);
+> +	RCU_INIT_POINTER(SDATA(selem)->smap, smap);
+> +	hlist_add_head_rcu(&selem->map_node, &b->list);
+> +	raw_spin_unlock_bh(&b->lock);
+> +}
+> +
+> +void bpf_selem_unlink_map_elem(struct bpf_local_storage_elem *selem)
+How about keep the original no-suffix to mean unlink from both map and storage.
+was selem_unlink() => bpf_selem_unlink()
+
+> +{
+> +	struct bpf_local_storage *local_storage;
+> +	bool free_local_storage = false;
+> +
+> +	/* Always unlink from map before unlinking from local_storage
+> +	 * because selem will be freed after successfully unlinked from
+> +	 * the local_storage.
+> +	 */
+> +	bpf_selem_unlink_map(selem);
+> +
+> +	if (unlikely(!selem_linked_to_node(selem)))
+> +		/* selem has already been unlinked from its owner */
+> +		return;
+> +
+> +	local_storage = rcu_dereference(selem->local_storage);
+> +	raw_spin_lock_bh(&local_storage->lock);
+> +	if (likely(selem_linked_to_node(selem)))
+> +		free_local_storage =
+> +			bpf_selem_unlink(local_storage, selem, true);
+> +	raw_spin_unlock_bh(&local_storage->lock);
+> +
+> +	if (free_local_storage)
+> +		kfree_rcu(local_storage, rcu);
+Part of these is folding the selem_unlink_sk() into here.
+Please don't do it for now.
+Keep them in __bpf_selem_unlink_storage().  Hence, we only
+need to remember the original "__" meaning is flipped
+from unlock to lock.
+
+> +}
+> +
+
+[ ... ]
+
+> diff --git a/net/core/bpf_sk_storage.c b/net/core/bpf_sk_storage.c
+> index 6f921c4ddc2c..a2b00a09d843 100644
+> --- a/net/core/bpf_sk_storage.c
+> +++ b/net/core/bpf_sk_storage.c
+
+[ ... ]
+
+> +static void unlink_sk_storage(struct bpf_local_storage *local_storage,
+>  			      bool uncharge_omem)
+>  {
+> -	struct bpf_sk_storage_map *smap;
+> -	bool free_sk_storage;
+> -	struct sock *sk;
+> -
+> -	smap = rcu_dereference(SDATA(selem)->smap);
+> -	sk = sk_storage->sk;
+> +	struct sock *sk = local_storage->sk;
+>  
+> -	/* All uncharging on sk->sk_omem_alloc must be done first.
+> -	 * sk may be freed once the last selem is unlinked from sk_storage.
+> -	 */
+>  	if (uncharge_omem)
+> -		atomic_sub(smap->elem_size, &sk->sk_omem_alloc);
+Where is smap->elem_size uncharged?
+
+> -
+> -	free_sk_storage = hlist_is_singular_node(&selem->snode,
+> -						 &sk_storage->list);
+> -	if (free_sk_storage) {
+> -		atomic_sub(sizeof(struct bpf_sk_storage), &sk->sk_omem_alloc);
+> -		sk_storage->sk = NULL;
+> -		/* After this RCU_INIT, sk may be freed and cannot be used */
+> -		RCU_INIT_POINTER(sk->sk_bpf_storage, NULL);
+> -
+> -		/* sk_storage is not freed now.  sk_storage->lock is
+> -		 * still held and raw_spin_unlock_bh(&sk_storage->lock)
+> -		 * will be done by the caller.
+> -		 *
+> -		 * Although the unlock will be done under
+> -		 * rcu_read_lock(),  it is more intutivie to
+> -		 * read if kfree_rcu(sk_storage, rcu) is done
+> -		 * after the raw_spin_unlock_bh(&sk_storage->lock).
+> -		 *
+> -		 * Hence, a "bool free_sk_storage" is returned
+> -		 * to the caller which then calls the kfree_rcu()
+> -		 * after unlock.
+> -		 */
+> -	}
+> -	hlist_del_init_rcu(&selem->snode);
+> -	if (rcu_access_pointer(sk_storage->cache[smap->cache_idx]) ==
+> -	    SDATA(selem))
+> -		RCU_INIT_POINTER(sk_storage->cache[smap->cache_idx], NULL);
+> -
+> -	kfree_rcu(selem, rcu);
+> -
+> -	return free_sk_storage;
+> -}
+
+[ ... ]
+
+> +static struct bpf_local_storage_data *
+> +sk_storage_update(void *owner, struct bpf_map *map, void *value, u64 map_flags)
+>  {
+> -	struct bpf_sk_storage_data *old_sdata = NULL;
+> -	struct bpf_sk_storage_elem *selem;
+> -	struct bpf_sk_storage *sk_storage;
+> -	struct bpf_sk_storage_map *smap;
+> +	struct bpf_local_storage_data *old_sdata = NULL;
+> +	struct bpf_local_storage_elem *selem;
+> +	struct bpf_local_storage *local_storage;
+> +	struct bpf_local_storage_map *smap;
+> +	struct sock *sk;
+>  	int err;
+>  
+> -	/* BPF_EXIST and BPF_NOEXIST cannot be both set */
+> -	if (unlikely((map_flags & ~BPF_F_LOCK) > BPF_EXIST) ||
+> -	    /* BPF_F_LOCK can only be used in a value with spin_lock */
+> -	    unlikely((map_flags & BPF_F_LOCK) && !map_value_has_spin_lock(map)))
+> -		return ERR_PTR(-EINVAL);
+> +	err = bpf_local_storage_check_update_flags(map, map_flags);
+> +	if (err)
+> +		return ERR_PTR(err);
+>  
+> -	smap = (struct bpf_sk_storage_map *)map;
+> -	sk_storage = rcu_dereference(sk->sk_bpf_storage);
+> -	if (!sk_storage || hlist_empty(&sk_storage->list)) {
+> -		/* Very first elem for this sk */
+> -		err = check_flags(NULL, map_flags);
+> -		if (err)
+> -			return ERR_PTR(err);
+> +	sk = owner;
+> +	local_storage = rcu_dereference(sk->sk_bpf_storage);
+> +	smap = (struct bpf_local_storage_map *)map;
+>  
+> -		selem = selem_alloc(smap, sk, value, true);
+> +	if (!local_storage || hlist_empty(&local_storage->list)) {
+> +		/* Very first elem */
+> +		selem = map->ops->map_selem_alloc(smap, owner, value, !old_sdata);
+hmmm... If this map_selem_alloc is directly called here in sk_storage instead
+of the common local_storage, does it have to be in map_ops?
+
+>  		if (!selem)
+>  			return ERR_PTR(-ENOMEM);
+>  
+> -		err = sk_storage_alloc(sk, smap, selem);
+> +		err = map->ops->map_local_storage_alloc(owner, smap, selem);
+>  		if (err) {
+>  			kfree(selem);
+>  			atomic_sub(smap->elem_size, &sk->sk_omem_alloc);
+
+[ ... ]
+
+> -static void bpf_sk_storage_map_free(struct bpf_map *map)
+> +static void *bpf_sk_storage_lookup_elem(struct bpf_map *map, void *key)
+Hmmm... this change here... keep scrolling down and down .... :)
+
+>  {
+> -	struct bpf_sk_storage_elem *selem;
+> -	struct bpf_sk_storage_map *smap;
+> -	struct bucket *b;
+> -	unsigned int i;
+> -
+> -	smap = (struct bpf_sk_storage_map *)map;
+> -
+> -	cache_idx_free(smap->cache_idx);
+> -
+> -	/* Note that this map might be concurrently cloned from
+> -	 * bpf_sk_storage_clone. Wait for any existing bpf_sk_storage_clone
+> -	 * RCU read section to finish before proceeding. New RCU
+> -	 * read sections should be prevented via bpf_map_inc_not_zero.
+> -	 */
+> -	synchronize_rcu();
+> -
+> -	/* bpf prog and the userspace can no longer access this map
+> -	 * now.  No new selem (of this map) can be added
+> -	 * to the sk->sk_bpf_storage or to the map bucket's list.
+> -	 *
+> -	 * The elem of this map can be cleaned up here
+> -	 * or
+> -	 * by bpf_sk_storage_free() during __sk_destruct().
+> -	 */
+> -	for (i = 0; i < (1U << smap->bucket_log); i++) {
+> -		b = &smap->buckets[i];
+> -
+> -		rcu_read_lock();
+> -		/* No one is adding to b->list now */
+> -		while ((selem = hlist_entry_safe(rcu_dereference_raw(hlist_first_rcu(&b->list)),
+> -						 struct bpf_sk_storage_elem,
+> -						 map_node))) {
+> -			selem_unlink(selem);
+> -			cond_resched_rcu();
+> -		}
+> -		rcu_read_unlock();
+> -	}
+> -
+> -	/* bpf_sk_storage_free() may still need to access the map.
+> -	 * e.g. bpf_sk_storage_free() has unlinked selem from the map
+> -	 * which then made the above while((selem = ...)) loop
+> -	 * exited immediately.
+> -	 *
+> -	 * However, the bpf_sk_storage_free() still needs to access
+> -	 * the smap->elem_size to do the uncharging in
+> -	 * __selem_unlink_sk().
+> -	 *
+> -	 * Hence, wait another rcu grace period for the
+> -	 * bpf_sk_storage_free() to finish.
+> -	 */
+> -	synchronize_rcu();
+> -
+> -	kvfree(smap->buckets);
+> -	kfree(map);
+> -}
+> -
+> -/* U16_MAX is much more than enough for sk local storage
+> - * considering a tcp_sock is ~2k.
+> - */
+> -#define MAX_VALUE_SIZE							\
+> -	min_t(u32,							\
+> -	      (KMALLOC_MAX_SIZE - MAX_BPF_STACK - sizeof(struct bpf_sk_storage_elem)), \
+> -	      (U16_MAX - sizeof(struct bpf_sk_storage_elem)))
+> -
+> -static int bpf_sk_storage_map_alloc_check(union bpf_attr *attr)
+> -{
+> -	if (attr->map_flags & ~SK_STORAGE_CREATE_FLAG_MASK ||
+> -	    !(attr->map_flags & BPF_F_NO_PREALLOC) ||
+> -	    attr->max_entries ||
+> -	    attr->key_size != sizeof(int) || !attr->value_size ||
+> -	    /* Enforce BTF for userspace sk dumping */
+> -	    !attr->btf_key_type_id || !attr->btf_value_type_id)
+> -		return -EINVAL;
+> -
+> -	if (!bpf_capable())
+> -		return -EPERM;
+> -
+> -	if (attr->value_size > MAX_VALUE_SIZE)
+> -		return -E2BIG;
+> -
+> -	return 0;
+> -}
+> -
+> -static struct bpf_map *bpf_sk_storage_map_alloc(union bpf_attr *attr)
+> -{
+> -	struct bpf_sk_storage_map *smap;
+> -	unsigned int i;
+> -	u32 nbuckets;
+> -	u64 cost;
+> -	int ret;
+> -
+> -	smap = kzalloc(sizeof(*smap), GFP_USER | __GFP_NOWARN);
+> -	if (!smap)
+> -		return ERR_PTR(-ENOMEM);
+> -	bpf_map_init_from_attr(&smap->map, attr);
+> -
+> -	nbuckets = roundup_pow_of_two(num_possible_cpus());
+> -	/* Use at least 2 buckets, select_bucket() is undefined behavior with 1 bucket */
+> -	nbuckets = max_t(u32, 2, nbuckets);
+> -	smap->bucket_log = ilog2(nbuckets);
+> -	cost = sizeof(*smap->buckets) * nbuckets + sizeof(*smap);
+> -
+> -	ret = bpf_map_charge_init(&smap->map.memory, cost);
+> -	if (ret < 0) {
+> -		kfree(smap);
+> -		return ERR_PTR(ret);
+> -	}
+> -
+> -	smap->buckets = kvcalloc(sizeof(*smap->buckets), nbuckets,
+> -				 GFP_USER | __GFP_NOWARN);
+> -	if (!smap->buckets) {
+> -		bpf_map_charge_finish(&smap->map.memory);
+> -		kfree(smap);
+> -		return ERR_PTR(-ENOMEM);
+> -	}
+> -
+> -	for (i = 0; i < nbuckets; i++) {
+> -		INIT_HLIST_HEAD(&smap->buckets[i].list);
+> -		raw_spin_lock_init(&smap->buckets[i].lock);
+> -	}
+> -
+> -	smap->elem_size = sizeof(struct bpf_sk_storage_elem) + attr->value_size;
+> -	smap->cache_idx = cache_idx_get();
+> -
+> -	return &smap->map;
+> -}
+> -
+> -static int notsupp_get_next_key(struct bpf_map *map, void *key,
+> -				void *next_key)
+> -{
+> -	return -ENOTSUPP;
+> -}
+> -
+> -static int bpf_sk_storage_map_check_btf(const struct bpf_map *map,
+> -					const struct btf *btf,
+> -					const struct btf_type *key_type,
+> -					const struct btf_type *value_type)
+> -{
+> -	u32 int_data;
+> -
+> -	if (BTF_INFO_KIND(key_type->info) != BTF_KIND_INT)
+> -		return -EINVAL;
+> -
+> -	int_data = *(u32 *)(key_type + 1);
+> -	if (BTF_INT_BITS(int_data) != 32 || BTF_INT_OFFSET(int_data))
+> -		return -EINVAL;
+> -
+> -	return 0;
+> -}
+> -
+> -static void *bpf_fd_sk_storage_lookup_elem(struct bpf_map *map, void *key)
+.... finally got it :p
+
+> -{
+> -	struct bpf_sk_storage_data *sdata;
+> +	struct bpf_local_storage_data *sdata;
+>  	struct socket *sock;
+> -	int fd, err;
+> +	int fd, err = -EINVAL;
+This is a bug fix or to suppress compiler warning?
+
+>  
+>  	fd = *(int *)key;
+>  	sock = sockfd_lookup(fd, &err);
+> @@ -752,17 +223,18 @@ static void *bpf_fd_sk_storage_lookup_elem(struct bpf_map *map, void *key)
+>  	return ERR_PTR(err);
+>  }
+>  
+
+[ ... ]
+
+>  static int sk_storage_map_btf_id;
+>  const struct bpf_map_ops sk_storage_map_ops = {
+> -	.map_alloc_check = bpf_sk_storage_map_alloc_check,
+> -	.map_alloc = bpf_sk_storage_map_alloc,
+> -	.map_free = bpf_sk_storage_map_free,
+> +	.map_alloc_check = bpf_local_storage_map_alloc_check,
+> +	.map_alloc = sk_storage_map_alloc,
+> +	.map_free = sk_storage_map_free,
+>  	.map_get_next_key = notsupp_get_next_key,
+> -	.map_lookup_elem = bpf_fd_sk_storage_lookup_elem,
+> -	.map_update_elem = bpf_fd_sk_storage_update_elem,
+> -	.map_delete_elem = bpf_fd_sk_storage_delete_elem,
+Why this "_fd_" name change?
+
+> -	.map_check_btf = bpf_sk_storage_map_check_btf,
+> -	.map_btf_name = "bpf_sk_storage_map",
+> +	.map_lookup_elem = bpf_sk_storage_lookup_elem,
+> +	.map_update_elem = bpf_sk_storage_update_elem,
+> +	.map_delete_elem = bpf_sk_storage_delete_elem,
+> +	.map_check_btf = bpf_local_storage_map_check_btf,
+> +	.map_btf_name = "bpf_local_storage_map",
+>  	.map_btf_id = &sk_storage_map_btf_id,
+> +	.map_local_storage_alloc = sk_storage_alloc,
+> +	.map_selem_alloc = sk_selem_alloc,
+> +	.map_local_storage_update = sk_storage_update,
+> +	.map_local_storage_unlink = unlink_sk_storage,
+>  };
