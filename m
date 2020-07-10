@@ -2,260 +2,104 @@ Return-Path: <SRS0=LBP9=AV=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01E59C433EA
-	for <linux-security-module@archiver.kernel.org>; Fri, 10 Jul 2020 17:09:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B64D7C433E1
+	for <linux-security-module@archiver.kernel.org>; Fri, 10 Jul 2020 19:42:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D5D542078D
-	for <linux-security-module@archiver.kernel.org>; Fri, 10 Jul 2020 17:09:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1594400959;
-	bh=OpaE6wanvPY6oZYoZQ+5OUnMUqe0KlNUtH+bJtmG/Gc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=eMQvwX/nxnWVJUQ/eNzthJq8d8irMG6AEg7OZggK/iWAFIMM+jChPWjXaXiSccc2G
-	 9AKDP+s+KImpiw8pvxMSjUNzyaM4EUoc925dCpkgrWvX3PY7av78P7DUxwdX6xpxKx
-	 iMFOq0bEyXIXPMXM0uynCEQ0uj5AoFf1B2pxHfAA=
+	by mail.kernel.org (Postfix) with ESMTP id 87C7A2078D
+	for <linux-security-module@archiver.kernel.org>; Fri, 10 Jul 2020 19:42:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="hl4DsaIP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728049AbgGJRJP (ORCPT
+        id S1728154AbgGJTmp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 10 Jul 2020 13:09:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42050 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726496AbgGJRJP (ORCPT
+        Fri, 10 Jul 2020 15:42:45 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:33250 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726908AbgGJTmo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 10 Jul 2020 13:09:15 -0400
-Received: from quaco.ghostprotocols.net (unknown [179.97.37.151])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BB51920657;
-        Fri, 10 Jul 2020 17:09:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1594400954;
-        bh=OpaE6wanvPY6oZYoZQ+5OUnMUqe0KlNUtH+bJtmG/Gc=;
+        Fri, 10 Jul 2020 15:42:44 -0400
+Received: from sequoia (162-237-133-238.lightspeed.rcsntx.sbcglobal.net [162.237.133.238])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 1865420B4908;
+        Fri, 10 Jul 2020 12:42:43 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 1865420B4908
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1594410163;
+        bh=63GnlMtecE6BiaHswYBO/QVyHrUs379BtYxjHINyyr4=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=KCfbDr1TEthee8alZ4uKm4NLesJMTPj5oLRDmr/1v3LAWfZKzyv/u5BBEV22aVgAm
-         61lHNT9AC/KhBT2L1whQiaNkLtfJS50U/F0wGXlbwRrno8pcuenKgFluD9eoR2Wy2O
-         1BU0mv7DrerCe/r9aHYhBntMne3BKtz1SQEuQ4f4=
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id E0F00405FF; Fri, 10 Jul 2020 14:09:11 -0300 (-03)
-Date:   Fri, 10 Jul 2020 14:09:11 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
+        b=hl4DsaIPiEnT2meObPBtEGfyVG3+A2UyEmhEdOgxEOxR8y7D5X7FGEPAvkxBgLyZz
+         7qBhQYzUg7Klj+adqGgd3QKhDZf6uv8YMPQo1TybV9I6G+kQIjbYz3+PBoRvIB/im1
+         ii0PS+mr6b7AV/FBFpk2qzo/Jbdn14bjgRmderUw=
+Date:   Fri, 10 Jul 2020 14:42:34 -0500
+From:   Tyler Hicks <tyhicks@linux.microsoft.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
         James Morris <jmorris@namei.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Serge Hallyn <serge@hallyn.com>, Jiri Olsa <jolsa@redhat.com>,
-        Song Liu <songliubraving@fb.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>,
-        Igor Lubashev <ilubashe@akamai.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        linux-man@vger.kernel.org
-Subject: Re: [PATCH v8 00/12] Introduce CAP_PERFMON to secure system
- performance monitoring and observability
-Message-ID: <20200710170911.GD7487@kernel.org>
-References: <f96f8f8a-e65c-3f36-dc85-fc3f5191e8c5@linux.intel.com>
- <76718dc6-5483-5e2e-85b8-64e70306ee1f@linux.ibm.com>
- <7776fa40-6c65-2aa6-1322-eb3a01201000@linux.intel.com>
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        linux-audit@redhat.com
+Subject: Re: [PATCH] ima: Rename internal audit rule functions
+Message-ID: <20200710194234.GA7254@sequoia>
+References: <20200629153037.337349-1-tyhicks@linux.microsoft.com>
+ <1593466203.5085.62.camel@linux.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <7776fa40-6c65-2aa6-1322-eb3a01201000@linux.intel.com>
-X-Url:  http://acmel.wordpress.com
+In-Reply-To: <1593466203.5085.62.camel@linux.ibm.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Em Fri, Jul 10, 2020 at 05:30:50PM +0300, Alexey Budankov escreveu:
-> On 10.07.2020 16:31, Ravi Bangoria wrote:
-> >> Currently access to perf_events, i915_perf and other performance
-> >> monitoring and observability subsystems of the kernel is open only for
-> >> a privileged process [1] with CAP_SYS_ADMIN capability enabled in the
-> >> process effective set [2].
-
-> >> This patch set introduces CAP_PERFMON capability designed to secure
-> >> system performance monitoring and observability operations so that
-> >> CAP_PERFMON would assist CAP_SYS_ADMIN capability in its governing role
-> >> for performance monitoring and observability subsystems of the kernel.
- 
-> > I'm seeing an issue with CAP_PERFMON when I try to record data for a
-> > specific target. I don't know whether this is sort of a regression or
-> > an expected behavior.
- 
-> Thanks for reporting and root causing this case. The behavior looks like
-> kind of expected since currently CAP_PERFMON takes over the related part
-> of CAP_SYS_ADMIN credentials only. Actually Perf security docs [1] say
-> that access control is also subject to CAP_SYS_PTRACE credentials.
-
-I think that stating that in the error message would be helpful, after
-all, who reads docs? 8-)
-
-I.e., this:
-
-$ ./perf stat ls
-  Error:
-  Access to performance monitoring and observability operations is limited.
-$
-
-Could become:
-
-$ ./perf stat ls
-  Error:
-  Access to performance monitoring and observability operations is limited.
-  Right now only CAP_PERFMON is granted, you may need CAP_SYS_PTRACE.
-$
-
-- Arnaldo
- 
-> CAP_PERFMON could be used to extend and substitute ptrace_may_access()
-> check in perf_events subsystem to simplify user experience at least in
-> this specific case.
+On 2020-06-29 17:30:03, Mimi Zohar wrote:
+> [Cc'ing the audit mailing list]
 > 
-> Alexei
+> On Mon, 2020-06-29 at 10:30 -0500, Tyler Hicks wrote:
+> > 
+> > diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+> > index ff2bf57ff0c7..5d62ee8319f4 100644
+> > --- a/security/integrity/ima/ima.h
+> > +++ b/security/integrity/ima/ima.h
+> > @@ -419,24 +419,24 @@ static inline void ima_free_modsig(struct modsig *modsig)
+> >  /* LSM based policy rules require audit */
+> >  #ifdef CONFIG_IMA_LSM_RULES
+> >  
+> > -#define security_filter_rule_init security_audit_rule_init
+> > -#define security_filter_rule_free security_audit_rule_free
+> > -#define security_filter_rule_match security_audit_rule_match
+> > +#define ima_audit_rule_init security_audit_rule_init
+> > +#define ima_audit_rule_free security_audit_rule_free
+> > +#define ima_audit_rule_match security_audit_rule_match
 > 
-> [1] https://www.kernel.org/doc/html/latest/admin-guide/perf-security.html
+> Instead of defining an entirely new method of identifying files, IMA
+> piggybacks on top of the existing audit rule syntax.  IMA policy rules
+> "filter" based on this information.
 > 
-> > 
-> > Without setting CAP_PERFMON:
-> > 
-> >   $ getcap ./perf
-> >   $ ./perf stat -a ls
-> >     Error:
-> >     Access to performance monitoring and observability operations is limited.
-> >   $ ./perf stat ls
-> >     Performance counter stats for 'ls':
-> >                     2.06 msec task-clock:u              #    0.418 CPUs utilized
-> >                     0      context-switches:u        #    0.000 K/sec
-> >                     0      cpu-migrations:u          #    0.000 K/sec
-> > 
-> > With CAP_PERFMON:
-> > 
-> >   $ getcap ./perf
-> >     ./perf = cap_perfmon+ep
-> >   $ ./perf stat -a ls
-> >     Performance counter stats for 'system wide':
-> >                   142.42 msec cpu-clock                 #   25.062 CPUs utilized
-> >                   182      context-switches          #    0.001 M/sec
-> >                    48      cpu-migrations            #    0.337 K/sec
-> >   $ ./perf stat ls
-> >     Error:
-> >     Access to performance monitoring and observability operations is limited.
-> > 
-> > Am I missing something silly?
-> > 
-> > Analysis:
-> > ---------
-> > A bit more analysis lead me to below kernel code fs/exec.c:
-> > 
-> >   begin_new_exec()
-> >   {
-> >         ...
-> >         if (bprm->interp_flags & BINPRM_FLAGS_ENFORCE_NONDUMP ||
-> >             !(uid_eq(current_euid(), current_uid()) &&
-> >               gid_eq(current_egid(), current_gid())))
-> >                 set_dumpable(current->mm, suid_dumpable);
-> >         else
-> >                 set_dumpable(current->mm, SUID_DUMP_USER);
-> > 
-> >         ...
-> >         commit_creds(bprm->cred);
-> >   }
-> > 
-> > When I execute './perf stat ls', it's going into else condition and thus sets
-> > dumpable flag as SUID_DUMP_USER. Then in commit_creds():
-> > 
-> >   int commit_creds(struct cred *new)
-> >   {
-> >         ...
-> >         /* dumpability changes */
-> >         if (...
-> >             !cred_cap_issubset(old, new)) {
-> >                 if (task->mm)
-> >                         set_dumpable(task->mm, suid_dumpable);
-> >   }
-> > 
-> > !cred_cap_issubset(old, new) fails for perf without any capability and thus
-> > it doesn't execute set_dumpable(). Whereas that condition passes for perf
-> > with CAP_PERFMON and thus it overwrites old value (SUID_DUMP_USER) with
-> > suid_dumpable in mm_flags. On an Ubuntu, suid_dumpable default value is
-> > SUID_DUMP_ROOT. On Fedora, it's SUID_DUMP_DISABLE. (/proc/sys/fs/suid_dumpable).
-> > 
-> > Now while opening an event:
-> > 
-> >   perf_event_open()
-> >     ptrace_may_access()
-> >       __ptrace_may_access() {
-> >                 ...
-> >                 if (mm &&
-> >                     ((get_dumpable(mm) != SUID_DUMP_USER) &&
-> >                      !ptrace_has_cap(cred, mm->user_ns, mode)))
-> >                     return -EPERM;
-> >       }
-> > 
-> > This if condition passes for perf with CAP_PERFMON and thus it returns -EPERM.
-> > But it fails for perf without CAP_PERFMON and thus it goes ahead and returns
-> > success. So opening an event fails when perf has CAP_PREFMON and tries to open
-> > process specific event as normal user.
-> > 
-> > Workarounds:
-> > ------------
-> > Based on above analysis, I found couple of workarounds (examples are on
-> > Ubuntu 18.04.4 powerpc):
-> > 
-> > Workaround1:
-> > Setting SUID_DUMP_USER as default (in /proc/sys/fs/suid_dumpable) solves the
-> > issue.
-> > 
-> >   # echo 1 > /proc/sys/fs/suid_dumpable
-> >   $ getcap ./perf
-> >     ./perf = cap_perfmon+ep
-> >   $ ./perf stat ls
-> >     Performance counter stats for 'ls':
-> >                     1.47 msec task-clock                #    0.806 CPUs utilized
-> >                     0      context-switches          #    0.000 K/sec
-> >                     0      cpu-migrations            #    0.000 K/sec
-> > 
-> > Workaround2:
-> > Using CAP_SYS_PTRACE along with CAP_PERFMON solves the issue.
-> > 
-> >   $ cat /proc/sys/fs/suid_dumpable
-> >     2
-> >   # setcap "cap_perfmon,cap_sys_ptrace=ep" ./perf
-> >   $ ./perf stat ls
-> >     Performance counter stats for 'ls':
-> >                     1.41 msec task-clock                #    0.826 CPUs utilized
-> >                     0      context-switches          #    0.000 K/sec
-> >                     0      cpu-migrations            #    0.000 K/sec
-> > 
-> > Workaround3:
-> > Adding CAP_PERFMON to parent of perf (/bin/bash) also solves the issue.
-> > 
-> >   $ cat /proc/sys/fs/suid_dumpable
-> >     2
-> >   # setcap "cap_perfmon=ep" /bin/bash
-> >   # setcap "cap_perfmon=ep" ./perf
-> >   $ bash
-> >   $ ./perf stat ls
-> >     Performance counter stats for 'ls':
-> >                     1.47 msec task-clock                #    0.806 CPUs utilized
-> >                     0      context-switches          #    0.000 K/sec
-> >                     0      cpu-migrations            #    0.000 K/sec
-> > 
-> > - Ravi
+> IMA already audits security/integrity related events.  Using the word
+> "audit" here will make things even more confusing than they currently
+> are.  Renaming these functions as ima_audit_rule_XXX provides no
+> benefit.  At that point, IMA might as well call the
+> security_audit_rule prefixed function names directly.  As a quick fix,
+> rename them as "ima_filter_rule".
+> 
+> The correct solution would probably be to rename these prefixed
+> "security_audit_rule" functions as "security_filter_rule", so that
+> both the audit subsystem and IMA could use them.
 
--- 
+There doesn't seem to be any interest, from the audit side, in re-using
+these. I don't quite understand why they would want to use them since
+they're just simple wrappers around the security_audit_rule_*()
+functions.
 
-- Arnaldo
+I'll go the "quick fix" route of renaming them as ima_filter_rule_*().
+
+Tyler
+
+> 
+> Mimi
