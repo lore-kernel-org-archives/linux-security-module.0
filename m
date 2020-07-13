@@ -2,171 +2,272 @@ Return-Path: <SRS0=XQ6M=AY=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EED3C433E2
-	for <linux-security-module@archiver.kernel.org>; Mon, 13 Jul 2020 02:18:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B958AC433E8
+	for <linux-security-module@archiver.kernel.org>; Mon, 13 Jul 2020 09:48:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 60EF5206D9
-	for <linux-security-module@archiver.kernel.org>; Mon, 13 Jul 2020 02:18:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E2F12076D
+	for <linux-security-module@archiver.kernel.org>; Mon, 13 Jul 2020 09:48:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728177AbgGMCSD (ORCPT
+        id S1729027AbgGMJsq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 12 Jul 2020 22:18:03 -0400
-Received: from out30-54.freemail.mail.aliyun.com ([115.124.30.54]:57214 "EHLO
-        out30-54.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726261AbgGMCSD (ORCPT
+        Mon, 13 Jul 2020 05:48:46 -0400
+Received: from mga05.intel.com ([192.55.52.43]:4743 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726571AbgGMJsq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 12 Jul 2020 22:18:03 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07488;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=22;SR=0;TI=SMTPD_---0U2Uh7i._1594606675;
-Received: from 30.25.206.74(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0U2Uh7i._1594606675)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 13 Jul 2020 10:17:56 +0800
-Subject: Re: [PATCH v5 2/8] lib/mpi: Extend the MPI library
-To:     Marcelo Henrique Cerri <marcelo.cerri@canonical.com>
-Cc:     herbert@gondor.apana.org.au, davem@davemloft.net,
-        dhowells@redhat.com, mcoquelin.stm32@gmail.com,
-        alexandre.torgue@st.com, jmorris@namei.org, serge@hallyn.com,
-        nramas@linux.microsoft.com, tusharsu@linux.microsoft.com,
-        zohar@linux.ibm.com, vt@altlinux.org, gilad@benyossef.com,
-        pvanleeuwen@rambus.com, zhang.jia@linux.alibaba.com,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        keyrings@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org
-References: <20200709084015.21886-1-tianjia.zhang@linux.alibaba.com>
- <20200709084015.21886-3-tianjia.zhang@linux.alibaba.com>
- <20200710131203.wyj33bq2hgkz6pv4@valinor>
-From:   Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-Message-ID: <82c805c6-5614-2889-6e2d-840a2eb8373b@linux.alibaba.com>
-Date:   Mon, 13 Jul 2020 10:17:55 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:68.0) Gecko/20100101
+        Mon, 13 Jul 2020 05:48:46 -0400
+IronPort-SDR: E2+0JxC4esRGlKyhw+7mMBIrHOaV3huPf4KeZRhw4ykNvks9Uv+1gQpaJkVfHe1v7Pvw0WSB6j
+ p4IbwOt1C8bQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9680"; a="233441956"
+X-IronPort-AV: E=Sophos;i="5.75,347,1589266800"; 
+   d="scan'208";a="233441956"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jul 2020 02:48:38 -0700
+IronPort-SDR: L14eLNOG7+vwt/gUze0GN5sjUdM/MU8jqTcbQ9b3v71MLCPCZqZytwKXRulOQNxowZGOBGFJUx
+ qnqpy+9+rocg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.75,347,1589266800"; 
+   d="scan'208";a="268327366"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga007.fm.intel.com with ESMTP; 13 Jul 2020 02:48:38 -0700
+Received: from [10.249.229.49] (abudanko-mobl.ccr.corp.intel.com [10.249.229.49])
+        by linux.intel.com (Postfix) with ESMTP id 9AA74580806;
+        Mon, 13 Jul 2020 02:48:27 -0700 (PDT)
+Subject: Re: [PATCH v8 00/12] Introduce CAP_PERFMON to secure system
+ performance monitoring and observability
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Serge Hallyn <serge@hallyn.com>, Jiri Olsa <jolsa@redhat.com>,
+        Song Liu <songliubraving@fb.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Stephane Eranian <eranian@google.com>,
+        Igor Lubashev <ilubashe@akamai.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        linux-man@vger.kernel.org
+References: <f96f8f8a-e65c-3f36-dc85-fc3f5191e8c5@linux.intel.com>
+ <76718dc6-5483-5e2e-85b8-64e70306ee1f@linux.ibm.com>
+ <7776fa40-6c65-2aa6-1322-eb3a01201000@linux.intel.com>
+ <20200710170911.GD7487@kernel.org>
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <0d2e2306-22b2-a730-dc3f-edb3538b6561@linux.intel.com>
+Date:   Mon, 13 Jul 2020 12:48:25 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20200710131203.wyj33bq2hgkz6pv4@valinor>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20200710170911.GD7487@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 
-
-On 2020/7/10 21:12, Marcelo Henrique Cerri wrote:
-> Hi, Tianjia.
+On 10.07.2020 20:09, Arnaldo Carvalho de Melo wrote:
+> Em Fri, Jul 10, 2020 at 05:30:50PM +0300, Alexey Budankov escreveu:
+>> On 10.07.2020 16:31, Ravi Bangoria wrote:
+>>>> Currently access to perf_events, i915_perf and other performance
+>>>> monitoring and observability subsystems of the kernel is open only for
+>>>> a privileged process [1] with CAP_SYS_ADMIN capability enabled in the
+>>>> process effective set [2].
 > 
-> On Thu, Jul 09, 2020 at 04:40:09PM +0800, Tianjia Zhang wrote:
->> Expand the mpi library based on libgcrypt, and the ECC algorithm of
->> mpi based on libgcrypt requires these functions.
->> Some other algorithms will be developed based on mpi ecc, such as SM2.
+>>>> This patch set introduces CAP_PERFMON capability designed to secure
+>>>> system performance monitoring and observability operations so that
+>>>> CAP_PERFMON would assist CAP_SYS_ADMIN capability in its governing role
+>>>> for performance monitoring and observability subsystems of the kernel.
+>  
+>>> I'm seeing an issue with CAP_PERFMON when I try to record data for a
+>>> specific target. I don't know whether this is sort of a regression or
+>>> an expected behavior.
+>  
+>> Thanks for reporting and root causing this case. The behavior looks like
+>> kind of expected since currently CAP_PERFMON takes over the related part
+>> of CAP_SYS_ADMIN credentials only. Actually Perf security docs [1] say
+>> that access control is also subject to CAP_SYS_PTRACE credentials.
+> 
+> I think that stating that in the error message would be helpful, after
+> all, who reads docs? 8-)
+
+At least those who write it :D ...
+
+> 
+> I.e., this:
+> 
+> $ ./perf stat ls
+>   Error:
+>   Access to performance monitoring and observability operations is limited.
+> $
+> 
+> Could become:
+> 
+> $ ./perf stat ls
+>   Error:
+>   Access to performance monitoring and observability operations is limited.
+>   Right now only CAP_PERFMON is granted, you may need CAP_SYS_PTRACE.
+> $
+
+It would better provide reference to perf security docs in the tool output.
+Looks like extending ptrace_may_access() check for perf_events with CAP_PERFMON
+makes monitoring simpler and even more secure to use since Perf tool need
+not to start/stop/single-step and read/write registers and memory and so on
+like a debugger or strace-like tool. What do you think?
+
+Alexei
+
+> 
+> - Arnaldo
+>  
+>> CAP_PERFMON could be used to extend and substitute ptrace_may_access()
+>> check in perf_events subsystem to simplify user experience at least in
+>> this specific case.
 >>
->> Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
->> ---
->>   include/linux/mpi.h    |  88 +++++++++++
->>   lib/mpi/Makefile       |   5 +
->>   lib/mpi/mpi-add.c      | 207 +++++++++++++++++++++++++
->>   lib/mpi/mpi-bit.c      | 251 ++++++++++++++++++++++++++++++
->>   lib/mpi/mpi-cmp.c      |  46 ++++--
->>   lib/mpi/mpi-div.c      | 238 +++++++++++++++++++++++++++++
->>   lib/mpi/mpi-internal.h |  53 +++++++
->>   lib/mpi/mpi-inv.c      | 143 ++++++++++++++++++
->>   lib/mpi/mpi-mod.c      | 155 +++++++++++++++++++
->>   lib/mpi/mpi-mul.c      |  94 ++++++++++++
->>   lib/mpi/mpicoder.c     | 336 +++++++++++++++++++++++++++++++++++++++++
->>   lib/mpi/mpih-div.c     | 294 ++++++++++++++++++++++++++++++++++++
->>   lib/mpi/mpih-mul.c     |  25 +++
->>   lib/mpi/mpiutil.c      | 204 +++++++++++++++++++++++++
->>   14 files changed, 2129 insertions(+), 10 deletions(-)
->>   create mode 100644 lib/mpi/mpi-add.c
->>   create mode 100644 lib/mpi/mpi-div.c
->>   create mode 100644 lib/mpi/mpi-inv.c
->>   create mode 100644 lib/mpi/mpi-mod.c
->>   create mode 100644 lib/mpi/mpi-mul.c
+>> Alexei
 >>
->> diff --git a/lib/mpi/mpi-add.c b/lib/mpi/mpi-add.c
->> new file mode 100644
->> index 000000000000..9afad7832737
->> --- /dev/null
->> +++ b/lib/mpi/mpi-add.c
->> @@ -0,0 +1,207 @@
->> +/* mpi-add.c  -  MPI functions
->> + * Copyright (C) 1994, 1996, 1998, 2001, 2002,
->> + *               2003 Free Software Foundation, Inc.
->> + *
->> + * This file is part of Libgcrypt.
->> + *
->> + * Note: This code is heavily based on the GNU MP Library.
->> + *	 Actually it's the same code with only minor changes in the
->> + *	 way the data is stored; this is to support the abstraction
->> + *	 of an optional secure memory allocation which may be used
->> + *	 to avoid revealing of sensitive data due to paging etc.
->> + */
->> +
->> +#include "mpi-internal.h"
->> +
->> +/****************
->> + * Add the unsigned integer V to the mpi-integer U and store the
->> + * result in W. U and V may be the same.
->> + */
->> +void mpi_add_ui(MPI w, MPI u, unsigned long v)
->> +{
->> +	mpi_ptr_t wp, up;
->> +	mpi_size_t usize, wsize;
->> +	int usign, wsign;
->> +
->> +	usize = u->nlimbs;
->> +	usign = u->sign;
->> +	wsign = 0;
->> +
->> +	/* If not space for W (and possible carry), increase space.  */
->> +	wsize = usize + 1;
->> +	if (w->alloced < wsize)
->> +		mpi_resize(w, wsize);
+>> [1] https://www.kernel.org/doc/html/latest/admin-guide/perf-security.html
+>>
+>>>
+>>> Without setting CAP_PERFMON:
+>>>
+>>>   $ getcap ./perf
+>>>   $ ./perf stat -a ls
+>>>     Error:
+>>>     Access to performance monitoring and observability operations is limited.
+>>>   $ ./perf stat ls
+>>>     Performance counter stats for 'ls':
+>>>                     2.06 msec task-clock:u              #    0.418 CPUs utilized
+>>>                     0      context-switches:u        #    0.000 K/sec
+>>>                     0      cpu-migrations:u          #    0.000 K/sec
+>>>
+>>> With CAP_PERFMON:
+>>>
+>>>   $ getcap ./perf
+>>>     ./perf = cap_perfmon+ep
+>>>   $ ./perf stat -a ls
+>>>     Performance counter stats for 'system wide':
+>>>                   142.42 msec cpu-clock                 #   25.062 CPUs utilized
+>>>                   182      context-switches          #    0.001 M/sec
+>>>                    48      cpu-migrations            #    0.337 K/sec
+>>>   $ ./perf stat ls
+>>>     Error:
+>>>     Access to performance monitoring and observability operations is limited.
+>>>
+>>> Am I missing something silly?
+>>>
+>>> Analysis:
+>>> ---------
+>>> A bit more analysis lead me to below kernel code fs/exec.c:
+>>>
+>>>   begin_new_exec()
+>>>   {
+>>>         ...
+>>>         if (bprm->interp_flags & BINPRM_FLAGS_ENFORCE_NONDUMP ||
+>>>             !(uid_eq(current_euid(), current_uid()) &&
+>>>               gid_eq(current_egid(), current_gid())))
+>>>                 set_dumpable(current->mm, suid_dumpable);
+>>>         else
+>>>                 set_dumpable(current->mm, SUID_DUMP_USER);
+>>>
+>>>         ...
+>>>         commit_creds(bprm->cred);
+>>>   }
+>>>
+>>> When I execute './perf stat ls', it's going into else condition and thus sets
+>>> dumpable flag as SUID_DUMP_USER. Then in commit_creds():
+>>>
+>>>   int commit_creds(struct cred *new)
+>>>   {
+>>>         ...
+>>>         /* dumpability changes */
+>>>         if (...
+>>>             !cred_cap_issubset(old, new)) {
+>>>                 if (task->mm)
+>>>                         set_dumpable(task->mm, suid_dumpable);
+>>>   }
+>>>
+>>> !cred_cap_issubset(old, new) fails for perf without any capability and thus
+>>> it doesn't execute set_dumpable(). Whereas that condition passes for perf
+>>> with CAP_PERFMON and thus it overwrites old value (SUID_DUMP_USER) with
+>>> suid_dumpable in mm_flags. On an Ubuntu, suid_dumpable default value is
+>>> SUID_DUMP_ROOT. On Fedora, it's SUID_DUMP_DISABLE. (/proc/sys/fs/suid_dumpable).
+>>>
+>>> Now while opening an event:
+>>>
+>>>   perf_event_open()
+>>>     ptrace_may_access()
+>>>       __ptrace_may_access() {
+>>>                 ...
+>>>                 if (mm &&
+>>>                     ((get_dumpable(mm) != SUID_DUMP_USER) &&
+>>>                      !ptrace_has_cap(cred, mm->user_ns, mode)))
+>>>                     return -EPERM;
+>>>       }
+>>>
+>>> This if condition passes for perf with CAP_PERFMON and thus it returns -EPERM.
+>>> But it fails for perf without CAP_PERFMON and thus it goes ahead and returns
+>>> success. So opening an event fails when perf has CAP_PREFMON and tries to open
+>>> process specific event as normal user.
+>>>
+>>> Workarounds:
+>>> ------------
+>>> Based on above analysis, I found couple of workarounds (examples are on
+>>> Ubuntu 18.04.4 powerpc):
+>>>
+>>> Workaround1:
+>>> Setting SUID_DUMP_USER as default (in /proc/sys/fs/suid_dumpable) solves the
+>>> issue.
+>>>
+>>>   # echo 1 > /proc/sys/fs/suid_dumpable
+>>>   $ getcap ./perf
+>>>     ./perf = cap_perfmon+ep
+>>>   $ ./perf stat ls
+>>>     Performance counter stats for 'ls':
+>>>                     1.47 msec task-clock                #    0.806 CPUs utilized
+>>>                     0      context-switches          #    0.000 K/sec
+>>>                     0      cpu-migrations            #    0.000 K/sec
+>>>
+>>> Workaround2:
+>>> Using CAP_SYS_PTRACE along with CAP_PERFMON solves the issue.
+>>>
+>>>   $ cat /proc/sys/fs/suid_dumpable
+>>>     2
+>>>   # setcap "cap_perfmon,cap_sys_ptrace=ep" ./perf
+>>>   $ ./perf stat ls
+>>>     Performance counter stats for 'ls':
+>>>                     1.41 msec task-clock                #    0.826 CPUs utilized
+>>>                     0      context-switches          #    0.000 K/sec
+>>>                     0      cpu-migrations            #    0.000 K/sec
+>>>
+>>> Workaround3:
+>>> Adding CAP_PERFMON to parent of perf (/bin/bash) also solves the issue.
+>>>
+>>>   $ cat /proc/sys/fs/suid_dumpable
+>>>     2
+>>>   # setcap "cap_perfmon=ep" /bin/bash
+>>>   # setcap "cap_perfmon=ep" ./perf
+>>>   $ bash
+>>>   $ ./perf stat ls
+>>>     Performance counter stats for 'ls':
+>>>                     1.47 msec task-clock                #    0.806 CPUs utilized
+>>>                     0      context-switches          #    0.000 K/sec
+>>>                     0      cpu-migrations            #    0.000 K/sec
+>>>
+>>> - Ravi
 > 
-> You are ignoring the mpi_resize() return. I believe these new functions
-> need to return an int to indicate errors as mpi_powm() does.
-> 
-
-Yes, of course.  Thanks for pointing it out.
-
-Thanks,
-Tianjia
-
-> 
->> +
->> +	/* These must be after realloc (U may be the same as W).  */
->> +	up = u->d;
->> +	wp = w->d;
->> +
->> +	if (!usize) {  /* simple */
->> +		wp[0] = v;
->> +		wsize = v ? 1:0;
->> +	} else if (!usign) {  /* mpi is not negative */
->> +		mpi_limb_t cy;
->> +		cy = mpihelp_add_1(wp, up, usize, v);
->> +		wp[usize] = cy;
->> +		wsize = usize + cy;
->> +	} else {
->> +		/* The signs are different.  Need exact comparison to determine
->> +		 * which operand to subtract from which.
->> +		 */
->> +		if (usize == 1 && up[0] < v) {
->> +			wp[0] = v - up[0];
->> +			wsize = 1;
->> +		} else {
->> +			mpihelp_sub_1(wp, up, usize, v);
->> +			/* Size can decrease with at most one limb. */
->> +			wsize = usize - (wp[usize-1] == 0);
->> +			wsign = 1;
->> +		}
->> +	}
->> +
->> +	w->nlimbs = wsize;
->> +	w->sign   = wsign;
->> +}
->> +
-
