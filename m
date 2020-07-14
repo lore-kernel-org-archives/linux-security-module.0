@@ -2,106 +2,128 @@ Return-Path: <SRS0=s2H2=AZ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F7DAC433E4
-	for <linux-security-module@archiver.kernel.org>; Tue, 14 Jul 2020 12:09:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41E52C433DF
+	for <linux-security-module@archiver.kernel.org>; Tue, 14 Jul 2020 13:30:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 871CE2220D
-	for <linux-security-module@archiver.kernel.org>; Tue, 14 Jul 2020 12:09:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2965C224B1
+	for <linux-security-module@archiver.kernel.org>; Tue, 14 Jul 2020 13:30:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728066AbgGNMJH (ORCPT
+        id S1727864AbgGNNaq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 14 Jul 2020 08:09:07 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47828 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726748AbgGNMJH (ORCPT
+        Tue, 14 Jul 2020 09:30:46 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:48150 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725997AbgGNNaq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 14 Jul 2020 08:09:07 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 06EC30Te095417;
-        Tue, 14 Jul 2020 08:09:05 -0400
-Received: from ppma05wdc.us.ibm.com (1b.90.2fa9.ip4.static.sl-reverse.com [169.47.144.27])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 327tna8dxx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 14 Jul 2020 08:09:04 -0400
-Received: from pps.filterd (ppma05wdc.us.ibm.com [127.0.0.1])
-        by ppma05wdc.us.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 06EC11QX017939;
-        Tue, 14 Jul 2020 12:09:04 GMT
-Received: from b01cxnp23033.gho.pok.ibm.com (b01cxnp23033.gho.pok.ibm.com [9.57.198.28])
-        by ppma05wdc.us.ibm.com with ESMTP id 327528r30g-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 14 Jul 2020 12:09:04 +0000
-Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 06EC93ZS48300510
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 14 Jul 2020 12:09:03 GMT
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D985AAC059;
-        Tue, 14 Jul 2020 12:09:03 +0000 (GMT)
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B0DB9AC05B;
-        Tue, 14 Jul 2020 12:09:03 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue, 14 Jul 2020 12:09:03 +0000 (GMT)
-Subject: Re: [PATCH v9 2/2] tpm: Add support for event log pointer found in
- TPM2 ACPI table
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-acpi@vger.kernel.org, linux-security-module@vger.kernel.org
-References: <20200706181953.3592084-1-stefanb@linux.vnet.ibm.com>
- <20200706181953.3592084-3-stefanb@linux.vnet.ibm.com>
- <20200706230914.GC20770@linux.intel.com>
- <78ec872f-89b3-6464-6ede-bd0a46fe5c4c@linux.ibm.com>
- <20200707022416.GC112019@linux.intel.com>
- <f3e0fb50-8617-da40-1456-158531a070cb@linux.ibm.com>
- <20200707040325.GB143804@linux.intel.com>
- <85c27199-df55-eecc-855c-dedcea64f89e@linux.ibm.com>
- <20200708140753.GC538949@linux.intel.com>
- <e42cb59d-6a3d-12be-bb51-88aa8c5dba23@linux.ibm.com>
- <20200714112030.GA1448526@linux.intel.com>
-From:   Stefan Berger <stefanb@linux.ibm.com>
-Message-ID: <69907c30-62c2-b4bd-e84f-11612bba9c95@linux.ibm.com>
-Date:   Tue, 14 Jul 2020 08:09:03 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Tue, 14 Jul 2020 09:30:46 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jvL0y-0007EU-Qt; Tue, 14 Jul 2020 07:30:32 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jvL0x-00052X-OR; Tue, 14 Jul 2020 07:30:32 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     <linux-kernel@vger.kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        <linux-fsdevel@vger.kernel.org>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        linux-security-module@vger.kernel.org,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        James Morris <jmorris@namei.org>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Christoph Hellwig <hch@infradead.org>
+Date:   Tue, 14 Jul 2020 08:27:41 -0500
+Message-ID: <871rle8bw2.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20200714112030.GA1448526@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-07-14_03:2020-07-14,2020-07-14 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- priorityscore=1501 adultscore=0 bulkscore=0 spamscore=0 phishscore=0
- impostorscore=0 suspectscore=0 lowpriorityscore=0 clxscore=1015 mlxscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2007140085
+Content-Type: text/plain
+X-XM-SPF: eid=1jvL0x-00052X-OR;;;mid=<871rle8bw2.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19u6ArwG0PZV91H10uhj/KRxP3p9h+PTS0=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: [PATCH 0/7] Implementing kernel_execve
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 7/14/20 7:20 AM, Jarkko Sakkinen wrote:
-> On Wed, Jul 08, 2020 at 10:17:17AM -0400, Stefan Berger wrote:
->>> ❯ swtpm-mvo.swtpm socket --tpmstate dir=/tmp/mytpm1 \
->>>     --ctrl type=unixio,path=/tmp/mytpm1/swtpm-sock \
->>>     --log level=20
->>> swtpm: Could not open UnixIO socket: No such file or directory
->>
->> Did you create the directory '/tmp/mytpm1' ?
-> Yes. It's the socket file that it is complain because it does
-> not exist beforehand.
 
+This set of changes implements kernel_execve to remove the need for
+kernel threads to pass in pointers to in-kernel data structures
+to functions that take __user pointers.   Which is part of the
+greater removal of set_fs work.
 
-The socket file is created by the swtpm program.
+This set of changes makes do_execve static and so I have updated the
+comments.  This affects the comments in the x86 entry point code
+and the comments in tomoyo.  I believe I have updated them correctly.
+If not please let me know.
 
+I have moved the calls of copy_strings before the call of
+security_bprm_creds_for_exec.  Which might be of interest to the
+security folks.  I can't see that it matters but I have copied the
+security folks just to be certain.
 
->
-> /Jarkko
+By moving the initialization of the new stack that copy_strings does
+earlier it becomes possible to copy all of the parameters to exec before
+anything else is done which makes it possible to have one function
+kernel_execve that uncondtionally handles copying parameters from kernel
+space, and another function do_execveat_common which handles copying
+parameters from userspace.
 
+This work was inspired by Christoph Hellwig's similar patchset, which my
+earlier work to remove the file parameter to do_execveat_common
+conflicted with.
+https://lore.kernel.org/linux-fsdevel/20200627072704.2447163-1-hch@lst.de/
 
+I figured that after causing all of that trouble for the set_fs work
+the least I could do is implement the change myself.
+
+The big practical change from Christoph's work is that he did not
+separate out the copying of parameters from the rest of the work of
+exec, which did not help the maintainability of the code.
+
+Please let me know if you see something wrong.
+
+This set of changes is against my exec-next branch:
+https://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace.git exec-next
+
+Eric W. Biederman (7):
+      exec: Remove unnecessary spaces from binfmts.h
+      exec: Factor out alloc_bprm
+      exec: Move initialization of bprm->filename into alloc_bprm
+      exec: Move bprm_mm_init into alloc_bprm
+      exec: Factor bprm_execve out of do_execve_common
+      exec: Factor bprm_stack_limits out of prepare_arg_pages
+      exec: Implement kernel_execve
+
+ arch/x86/entry/entry_32.S      |   2 +-
+ arch/x86/entry/entry_64.S      |   2 +-
+ arch/x86/kernel/unwind_frame.c |   2 +-
+ fs/exec.c                      | 301 ++++++++++++++++++++++++++++-------------
+ include/linux/binfmts.h        |  20 ++-
+ init/main.c                    |   4 +-
+ kernel/umh.c                   |   6 +-
+ security/tomoyo/common.h       |   2 +-
+ security/tomoyo/domain.c       |   4 +-
+ security/tomoyo/tomoyo.c       |   4 +-
+ 10 files changed, 224 insertions(+), 123 deletions(-)
+
+Eric
