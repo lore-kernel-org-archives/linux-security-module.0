@@ -2,165 +2,125 @@ Return-Path: <SRS0=s2H2=AZ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 371BDC433E4
-	for <linux-security-module@archiver.kernel.org>; Tue, 14 Jul 2020 17:44:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31D29C433EA
+	for <linux-security-module@archiver.kernel.org>; Tue, 14 Jul 2020 18:16:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1622C22518
-	for <linux-security-module@archiver.kernel.org>; Tue, 14 Jul 2020 17:44:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SdLC+hRj"
+	by mail.kernel.org (Postfix) with ESMTP id 1BFB62242B
+	for <linux-security-module@archiver.kernel.org>; Tue, 14 Jul 2020 18:16:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729060AbgGNRoN (ORCPT
+        id S1729060AbgGNSQx (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 14 Jul 2020 13:44:13 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:55900 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725951AbgGNRoN (ORCPT
+        Tue, 14 Jul 2020 14:16:53 -0400
+Received: from smtp-42a9.mail.infomaniak.ch ([84.16.66.169]:42419 "EHLO
+        smtp-42a9.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725951AbgGNSQw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 14 Jul 2020 13:44:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1594748651;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=fRu/5iacxmutQ7kMDS7dLLg3NGipwsCDb2mhidsZLDQ=;
-        b=SdLC+hRjGbawbjMWTFzuTQ/PqMmZ0MyUKz0BM3SA7Ly50U7OP/acWB5LquJhv/HwR/aVYi
-        Ch+ldf8ziGWJdcDoEXDw1H84Q6rFEXjQcoxyhQO34LXZdpztKHsJq21RLKZkpUOB/PRWiu
-        qleJFYHRzRW1mCaREC317+4B1PT/N9k=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-164--oAd_irlPMmMGcwJY665gQ-1; Tue, 14 Jul 2020 13:44:05 -0400
-X-MC-Unique: -oAd_irlPMmMGcwJY665gQ-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 741CF100CCC4;
-        Tue, 14 Jul 2020 17:44:04 +0000 (UTC)
-Received: from madcap2.tricolour.ca (unknown [10.10.110.3])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B9E786FEDF;
-        Tue, 14 Jul 2020 17:43:56 +0000 (UTC)
-Date:   Tue, 14 Jul 2020 13:43:53 -0400
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        Eric Paris <eparis@parisplace.org>, john.johansen@canonical.com
-Subject: Re: [PATCH ghak84 v4] audit: purge audit_log_string from the
- intra-kernel audit API
-Message-ID: <20200714174353.ds7lj3iisy67t2zu@madcap2.tricolour.ca>
-References: <6effbbd4574407d6af21162e57d9102d5f8b02ed.1594664015.git.rgb@redhat.com>
- <CAHC9VhSyq7yKQqwvHL5syU9+TFki6-__WfCrvqewbnU3xpND4Q@mail.gmail.com>
+        Tue, 14 Jul 2020 14:16:52 -0400
+Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4B5pcy2Pf9zlhXmH;
+        Tue, 14 Jul 2020 20:16:50 +0200 (CEST)
+Received: from localhost (unknown [94.23.54.103])
+        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4B5pcv3S84zlh8T3;
+        Tue, 14 Jul 2020 20:16:47 +0200 (CEST)
+From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To:     linux-kernel@vger.kernel.org
+Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Eric Chiang <ericchiang@google.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mickael.salaun@ssi.gouv.fr>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        =?UTF-8?q?Philippe=20Tr=C3=A9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH v6 1/7] exec: Change uselib(2) IS_SREG() failure to EACCES
+Date:   Tue, 14 Jul 2020 20:16:32 +0200
+Message-Id: <20200714181638.45751-2-mic@digikod.net>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20200714181638.45751-1-mic@digikod.net>
+References: <20200714181638.45751-1-mic@digikod.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhSyq7yKQqwvHL5syU9+TFki6-__WfCrvqewbnU3xpND4Q@mail.gmail.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
+X-Antivirus-Code: 0x100000
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2020-07-14 12:21, Paul Moore wrote:
-> On Mon, Jul 13, 2020 at 3:52 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> >
-> > audit_log_string() was inteded to be an internal audit function and
-> > since there are only two internal uses, remove them.  Purge all external
-> > uses of it by restructuring code to use an existing audit_log_format()
-> > or using audit_log_format().
-> >
-> > Please see the upstream issue
-> > https://github.com/linux-audit/audit-kernel/issues/84
-> >
-> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > ---
-> > Passes audit-testsuite.
-> >
-> > Changelog:
-> > v4
-> > - use double quotes in all replaced audit_log_string() calls
-> >
-> > v3
-> > - fix two warning: non-void function does not return a value in all control paths
-> >         Reported-by: kernel test robot <lkp@intel.com>
-> >
-> > v2
-> > - restructure to piggyback on existing audit_log_format() calls, checking quoting needs for each.
-> >
-> > v1 Vlad Dronov
-> > - https://github.com/nefigtut/audit-kernel/commit/dbbcba46335a002f44b05874153a85b9cc18aebf
-> >
-> >  include/linux/audit.h     |  5 -----
-> >  kernel/audit.c            |  4 ++--
-> >  security/apparmor/audit.c | 10 ++++------
-> >  security/apparmor/file.c  | 25 +++++++------------------
-> >  security/apparmor/ipc.c   | 46 +++++++++++++++++++++++-----------------------
-> >  security/apparmor/net.c   | 14 ++++++++------
-> >  security/lsm_audit.c      |  4 ++--
-> >  7 files changed, 46 insertions(+), 62 deletions(-)
-> 
-> Thanks for restoring the quotes, just one question below ...
-> 
-> > diff --git a/security/apparmor/ipc.c b/security/apparmor/ipc.c
-> > index 4ecedffbdd33..fe36d112aad9 100644
-> > --- a/security/apparmor/ipc.c
-> > +++ b/security/apparmor/ipc.c
-> > @@ -20,25 +20,23 @@
-> >
-> >  /**
-> >   * audit_ptrace_mask - convert mask to permission string
-> > - * @buffer: buffer to write string to (NOT NULL)
-> >   * @mask: permission mask to convert
-> > + *
-> > + * Returns: pointer to static string
-> >   */
-> > -static void audit_ptrace_mask(struct audit_buffer *ab, u32 mask)
-> > +static const char *audit_ptrace_mask(u32 mask)
-> >  {
-> >         switch (mask) {
-> >         case MAY_READ:
-> > -               audit_log_string(ab, "read");
-> > -               break;
-> > +               return "read";
-> >         case MAY_WRITE:
-> > -               audit_log_string(ab, "trace");
-> > -               break;
-> > +               return "trace";
-> >         case AA_MAY_BE_READ:
-> > -               audit_log_string(ab, "readby");
-> > -               break;
-> > +               return "readby";
-> >         case AA_MAY_BE_TRACED:
-> > -               audit_log_string(ab, "tracedby");
-> > -               break;
-> > +               return "tracedby";
-> >         }
-> > +       return "";
-> 
-> Are we okay with this returning an empty string ("") in this case?
-> Should it be a question mark ("?")?
-> 
-> My guess is that userspace parsing should be okay since it still has
-> quotes, I'm just not sure if we wanted to use a question mark as we do
-> in other cases where the field value is empty/unknown.
+From: Kees Cook <keescook@chromium.org>
 
-Previously, it would have been an empty value, not even double quotes.
-"?" might be an improvement.
+Change uselib(2)' S_ISREG() error return to EACCES instead of EINVAL so
+the behavior matches execve(2), and the seemingly documented value.
+The "not a regular file" failure mode of execve(2) is explicitly
+documented[1], but it is not mentioned in uselib(2)[2] which does,
+however, say that open(2) and mmap(2) errors may apply. The documentation
+for open(2) does not include a "not a regular file" error[3], but mmap(2)
+does[4], and it is EACCES.
 
-> paul moore
+[1] http://man7.org/linux/man-pages/man2/execve.2.html#ERRORS
+[2] http://man7.org/linux/man-pages/man2/uselib.2.html#ERRORS
+[3] http://man7.org/linux/man-pages/man2/open.2.html#ERRORS
+[4] http://man7.org/linux/man-pages/man2/mmap.2.html#ERRORS
 
-- RGB
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
+Acked-by: Mickaël Salaün <mic@digikod.net>
+Link: https://lore.kernel.org/r/20200605160013.3954297-2-keescook@chromium.org
+---
+ fs/exec.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+diff --git a/fs/exec.c b/fs/exec.c
+index e6e8a9a70327..d7c937044d10 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -141,11 +141,10 @@ SYSCALL_DEFINE1(uselib, const char __user *, library)
+ 	if (IS_ERR(file))
+ 		goto out;
+ 
+-	error = -EINVAL;
++	error = -EACCES;
+ 	if (!S_ISREG(file_inode(file)->i_mode))
+ 		goto exit;
+ 
+-	error = -EACCES;
+ 	if (path_noexec(&file->f_path))
+ 		goto exit;
+ 
+-- 
+2.27.0
 
