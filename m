@@ -7,56 +7,56 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A006CC433E2
-	for <linux-security-module@archiver.kernel.org>; Tue, 14 Jul 2020 21:38:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14429C433E8
+	for <linux-security-module@archiver.kernel.org>; Tue, 14 Jul 2020 21:38:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7AE3920656
-	for <linux-security-module@archiver.kernel.org>; Tue, 14 Jul 2020 21:38:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E2E5F20656
+	for <linux-security-module@archiver.kernel.org>; Tue, 14 Jul 2020 21:38:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="a/bS0RLh"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XR5InLU/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728099AbgGNViP (ORCPT
+        id S1726929AbgGNViY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 14 Jul 2020 17:38:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36928 "EHLO
+        Tue, 14 Jul 2020 17:38:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36956 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726710AbgGNViO (ORCPT
+        with ESMTP id S1727820AbgGNViY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 14 Jul 2020 17:38:14 -0400
-Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7816FC08C5C1
-        for <linux-security-module@vger.kernel.org>; Tue, 14 Jul 2020 14:38:14 -0700 (PDT)
-Received: by mail-pf1-x441.google.com with SMTP id 207so8188859pfu.3
-        for <linux-security-module@vger.kernel.org>; Tue, 14 Jul 2020 14:38:14 -0700 (PDT)
+        Tue, 14 Jul 2020 17:38:24 -0400
+Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A118C061755
+        for <linux-security-module@vger.kernel.org>; Tue, 14 Jul 2020 14:38:24 -0700 (PDT)
+Received: by mail-pf1-x444.google.com with SMTP id s26so8186531pfm.4
+        for <linux-security-module@vger.kernel.org>; Tue, 14 Jul 2020 14:38:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=kBZyCcCmpqlqMqsIRaCWhuIM19zS4zfakl+jOrhjE68=;
-        b=a/bS0RLhvJ42yObBQpWU7RQa+G5uNb2e0zU2vIxVYbKgCuhuVCePOZGoJtjvmwd7iN
-         xmKjxlDlfNIw1CAvsEm1szrJz74LLht0/WrPFkETS5x0dnr7wky6Use55EWzyo1YbgMf
-         wB0RHcDtBRksPGUwkP02h4mG8W2IaiPO+VB6c=
+        bh=rhUtjNTW91qlPLBzYGxtd6FEYeoJpzq4EC2Nr6kXNew=;
+        b=XR5InLU/ZuYgwGb0JtnB3ih96loG0AE59nbhZISKaA1qecqUWLJaYCd13NQJ3Or6sC
+         +3LfdAmhLom67MejtQ6qgLpS0M6Dmkf1Wsb8or6ZSMX/ni3TgDMdp8V4HIp9Y6BLUVn0
+         iB1MILb/MoIgDVtacC26ydy565jdZ3reUFdJ0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=kBZyCcCmpqlqMqsIRaCWhuIM19zS4zfakl+jOrhjE68=;
-        b=VYfI51EuDBW4HR6iLi9WSs17L5Fc1snb5dnKUP7M0yQdoFFj0LRsBIhtkylR064aPp
-         KkJWu8izXtNPpnqtju0NcKwXjSYrJCQFdtLVR4lA86kuJeIa+bZ8ClrfJYKypU/1aZxt
-         6RYoPTrUS3BM5JZrZjva9Pk4t8iyy3K6HyHS/To32jFx57I9/lzvyAnoJapntcmI659I
-         VnFqXSF/3HA3mkqkeYHbvjIkvEKO7G7RyJK0Dyv63G1kzyq1wxcA6N4F/nFdbNaKTcxe
-         edYqrPbru7nHJa2NN0BqHFYyriPrNXtpt+orXWK5oRs7MJ3l2pZunVlmjdGYeAS+Aw/v
-         4EzQ==
-X-Gm-Message-State: AOAM533w218x0d2E+wdcBSkdjZU6pdOQNJfoR2p+CjBuerlkWs/Xb3M5
-        EhI8qHZ34wjEcqk5k4EceaoIYA==
-X-Google-Smtp-Source: ABdhPJwFFznkEcbi8FULWjz22UCjJ7P9pQh+fwuMJMUGDuP9MkVzkem4ifewJtwGQEQdhFq/4ppcLQ==
-X-Received: by 2002:aa7:818e:: with SMTP id g14mr6043210pfi.27.1594762694075;
-        Tue, 14 Jul 2020 14:38:14 -0700 (PDT)
+        bh=rhUtjNTW91qlPLBzYGxtd6FEYeoJpzq4EC2Nr6kXNew=;
+        b=F04FTWXXVRnsrr597yDH3pM8EYLipw4GpBNDv9IsQi7MeWkrJLqd5OGcKEp0JOozMr
+         /n8fjvZ7cW5Xf1XNIpGbXvOctp0GnA4xathGeY14sPV2KpR91jeogWLT1tGMysi4+wzf
+         6b7nsjt5BydhzrcwDOKgxhaT5OvVEOUJUrrBY75Z+s3D8DEC4GOvneH8lJDCiPydCGG5
+         BmVCId4rslG+3e5IFV9yvk8+L5obnicsiJxSOo0leL/Rd8ZRsh7QCJLokXnoW6+QXxjD
+         j63Jqt1gl0GGGAMfqyuUT0+Kxcwrrvzcz0MW0DYrAfOgi7R5Sm5Wi9LfEq+jhq5lMNTg
+         lB8Q==
+X-Gm-Message-State: AOAM533b3w1Y4tf3vUVcRqDv9e2e1uU4mJtstegIH7j+BeRrGlP1+Tbt
+        4lp5vfHt+670VJxOrBThJZ8Kzw==
+X-Google-Smtp-Source: ABdhPJz6b6t7d1xxynzW3FbpvoGzvZ0dDIPSG7G6/UnTLzQBeOIoJTyLQKUygq9QebBJSIO7rhfuVQ==
+X-Received: by 2002:a65:43c9:: with SMTP id n9mr4803979pgp.452.1594762703715;
+        Tue, 14 Jul 2020 14:38:23 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id i128sm123203pfe.74.2020.07.14.14.38.13
+        by smtp.gmail.com with ESMTPSA id g12sm109930pfb.190.2020.07.14.14.38.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Jul 2020 14:38:13 -0700 (PDT)
-Date:   Tue, 14 Jul 2020 14:38:12 -0700
+        Tue, 14 Jul 2020 14:38:22 -0700 (PDT)
+Date:   Tue, 14 Jul 2020 14:38:22 -0700
 From:   Kees Cook <keescook@chromium.org>
 To:     "Eric W. Biederman" <ebiederm@xmission.com>
 Cc:     linux-kernel@vger.kernel.org,
@@ -76,26 +76,37 @@ Cc:     linux-kernel@vger.kernel.org,
         Casey Schaufler <casey@schaufler-ca.com>,
         John Johansen <john.johansen@canonical.com>,
         Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH 1/7] exec: Remove unnecessary spaces from binfmts.h
-Message-ID: <202007141438.68F0CEDCE6@keescook>
+Subject: Re: [PATCH 2/7] exec: Factor out alloc_bprm
+Message-ID: <202007141438.C4E2A2A9@keescook>
 References: <871rle8bw2.fsf@x220.int.ebiederm.org>
- <87v9iq6x9x.fsf@x220.int.ebiederm.org>
+ <87pn8y6x9a.fsf@x220.int.ebiederm.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87v9iq6x9x.fsf@x220.int.ebiederm.org>
+In-Reply-To: <87pn8y6x9a.fsf@x220.int.ebiederm.org>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jul 14, 2020 at 08:28:42AM -0500, Eric W. Biederman wrote:
+On Tue, Jul 14, 2020 at 08:29:05AM -0500, Eric W. Biederman wrote:
 > 
-> The general convention in the linux kernel is to define a pointer
-> member as "type *name".  The declaration of struct linux_binprm has
-> several pointer defined as "type * name".  Update them to the
-> form of "type *name" for consistency.
+> Currently it is necessary for the usermode helper code and the code
+> that launches init to use set_fs so that pages coming from the kernel
+> look like they are coming from userspace.
 > 
-> Suggested-by: Kees Cook <keescook@chromium.org>
+> To allow that usage of set_fs to be removed cleanly the argument
+> copying from userspace needs to happen earlier.  Move the allocation
+> of the bprm into it's own function (alloc_bprm) and move the call of
+> alloc_bprm before unshare_files so that bprm can ultimately be
+> allocated, the arguments can be placed on the new stack, and then the
+> bprm can be passed into the core of exec.
+> 
+> Neither the allocation of struct binprm nor the unsharing depend upon each
+> other so swapping the order in which they are called is trivially safe.
+> 
+> To keep things consistent the order of cleanup at the end of
+> do_execve_common swapped to match the order of initialization.
+> 
 > Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 
 Reviewed-by: Kees Cook <keescook@chromium.org>
