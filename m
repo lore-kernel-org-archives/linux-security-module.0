@@ -2,141 +2,116 @@ Return-Path: <SRS0=s2H2=AZ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C0C1C433E0
-	for <linux-security-module@archiver.kernel.org>; Tue, 14 Jul 2020 18:40:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4501C433EB
+	for <linux-security-module@archiver.kernel.org>; Tue, 14 Jul 2020 19:42:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 775A2229C5
-	for <linux-security-module@archiver.kernel.org>; Tue, 14 Jul 2020 18:40:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4FD022BED
+	for <linux-security-module@archiver.kernel.org>; Tue, 14 Jul 2020 19:42:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="W1Yl3XUG"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="giu+sL5n"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729155AbgGNSk5 (ORCPT
+        id S1730302AbgGNTmV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 14 Jul 2020 14:40:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37484 "EHLO
+        Tue, 14 Jul 2020 15:42:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47124 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726817AbgGNSk4 (ORCPT
+        with ESMTP id S1729427AbgGNTmU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 14 Jul 2020 14:40:56 -0400
-Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AA6BC061755;
-        Tue, 14 Jul 2020 11:40:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description;
-        bh=SimmloHZQtBhOnb9Pbgsw72I1O5VIdL523t/ncOnsgk=; b=W1Yl3XUG9MzYNah9l9+4fRf5F9
-        h49otnq+/660uWOaP2mI+uT0FEtijYl0Z857koqs/q/DNBdtGnEnRubTJQU9UgUwlXeirrE5ICls4
-        DWrWjQzBhwo4RR3cM1LZCT32KQQ+TSv84fz0enXVKcFX7mD/5DI07ID3Gi1BeY4O8NSMW5T9hgsUh
-        KWey6VEaUzKEgOu0f6LrbD4+qQ/Mw0Wgyca6+KZCj9zJxv+Cy/YyUK8bfcv4QUcN1NScLN0PUpkBq
-        t94ot1QTNg7Vknoh/C0CW2OlronpItPtycZ0sCKu8ruViFpHqOiyjMlOgsT2spFr1GtAw56/Llwu/
-        tS4ScVZQ==;
-Received: from [2601:1c0:6280:3f0::19c2]
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jvPrD-00061s-ES; Tue, 14 Jul 2020 18:40:47 +0000
-Subject: Re: [PATCH v6 5/7] fs,doc: Enable to enforce noexec mounts or file
- exec through O_MAYEXEC
-To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        linux-kernel@vger.kernel.org
-Cc:     Aleksa Sarai <cyphar@cyphar.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Christian Heimes <christian@python.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Eric Chiang <ericchiang@google.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Tue, 14 Jul 2020 15:42:20 -0400
+Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4585C061755;
+        Tue, 14 Jul 2020 12:42:20 -0700 (PDT)
+Received: by mail-pg1-x544.google.com with SMTP id o13so8056344pgf.0;
+        Tue, 14 Jul 2020 12:42:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=+ZhRanqEZ6xrzrFJNj1TcXKoTTLAuy/jV3gWLNq6hZ4=;
+        b=giu+sL5nBFSemahOaz6MWi28NSoEh5gBWf7W/REahIs3P6gyU45zkCg2aKS23Dn0S0
+         M/gnZ9RUATYkOYeuop9a3noUH4U0ds3U4otsNJ3HVeUWMSUBQ7IDgRWFohRw/8wrjVne
+         /FdX1Ekj/KQ4rJjpw1GwMn2lSMiwaZL63W0lUaeaAzpL/U7drbicEP46mKpmZZEN4yfi
+         vq3nQnGox9EZjQ3R2vpbG+OjVSMFpNwSvFu6oSjZCZ54dJcJMeMQ8ucWLY+KPQ7UHG25
+         QyNK4NgQT6oUSL/7yWEFfasxf5/E5Dii8tH73DLtBasnMYN0HnD90rSMFe4A8zWEpl1z
+         +v/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=+ZhRanqEZ6xrzrFJNj1TcXKoTTLAuy/jV3gWLNq6hZ4=;
+        b=EhRU0Ax1MA68QUWzp0TtspNjurMN2WYEcgfTY73L5U60QBAyKTVY7KLL4/Tl/ReEhB
+         wUtKY/OxtzOljKMhypikF4l3zpNfA4NoIEyHBqLxvrji1H9p9QOjpLiH2s/knx6Emnd2
+         lObxVTA/jNZZnNf1sRUtY7r4z6ARnouJqnl/eEGg3EUrS7hMFPzHM5wwKOqnbPUKUsWV
+         ssp9bAvj6UXdsKJ2B0KbgsSsiZRLPw0JRuFEQfy1jKCWqnRD1+jPyK60DPeMerJ6pGRZ
+         OfptGinbrciwJx9+GW/wctkgSIf7E4WeSlxsCHbz3156d32aXi5JRHcNvMflai6I7Cb0
+         WOgw==
+X-Gm-Message-State: AOAM533XtrJ0iK+azwqC8EQP9P8D8VSeUGEsmgM9b+yftBlooD2heZv5
+        40vR0iuVZs4h43oRKEmNjfb3+kAQi7I=
+X-Google-Smtp-Source: ABdhPJwCZW0EI5rCFgMKvm2MFTrsjjZtvXTrUu9XHGbNrwtGiJZJ/jM8nhz7CjNBJzySZOjUfWeRrw==
+X-Received: by 2002:a62:4e06:: with SMTP id c6mr5741389pfb.296.1594755740258;
+        Tue, 14 Jul 2020 12:42:20 -0700 (PDT)
+Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:400::5:96f0])
+        by smtp.gmail.com with ESMTPSA id f2sm5394pfb.184.2020.07.14.12.42.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Jul 2020 12:42:19 -0700 (PDT)
+Date:   Tue, 14 Jul 2020 12:42:16 -0700
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>,
+        Greg Kroah-Hartman <greg@kroah.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
         Kees Cook <keescook@chromium.org>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-References: <20200714181638.45751-1-mic@digikod.net>
- <20200714181638.45751-6-mic@digikod.net>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <038639b1-92da-13c1-b3e5-8f13639a815e@infradead.org>
-Date:   Tue, 14 Jul 2020 11:40:34 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.9.0
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Subject: Re: [merged][PATCH v3 00/16] Make the user mode driver code a better
+ citizen
+Message-ID: <20200714194216.sq2e3z44htts57qf@ast-mbp.dhcp.thefacebook.com>
+References: <20200625095725.GA3303921@kroah.com>
+ <778297d2-512a-8361-cf05-42d9379e6977@i-love.sakura.ne.jp>
+ <20200625120725.GA3493334@kroah.com>
+ <20200625.123437.2219826613137938086.davem@davemloft.net>
+ <CAHk-=whuTwGHEPjvtbBvneHHXeqJC=q5S09mbPnqb=Q+MSPMag@mail.gmail.com>
+ <87pn9mgfc2.fsf_-_@x220.int.ebiederm.org>
+ <87y2oac50p.fsf@x220.int.ebiederm.org>
+ <87bll17ili.fsf_-_@x220.int.ebiederm.org>
+ <87y2o1swee.fsf_-_@x220.int.ebiederm.org>
+ <87r1tke44q.fsf_-_@x220.int.ebiederm.org>
 MIME-Version: 1.0
-In-Reply-To: <20200714181638.45751-6-mic@digikod.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87r1tke44q.fsf_-_@x220.int.ebiederm.org>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi,
-
-On 7/14/20 11:16 AM, Mickaël Salaün wrote:
-
-> ---
->  Documentation/admin-guide/sysctl/fs.rst | 45 +++++++++++++++++++++++++
->  fs/namei.c                              | 29 +++++++++++++---
->  include/linux/fs.h                      |  1 +
->  kernel/sysctl.c                         | 12 +++++--
->  4 files changed, 80 insertions(+), 7 deletions(-)
+On Thu, Jul 09, 2020 at 05:05:09PM -0500, Eric W. Biederman wrote:
 > 
-> diff --git a/Documentation/admin-guide/sysctl/fs.rst b/Documentation/admin-guide/sysctl/fs.rst
-> index 2a45119e3331..02ec384b8bbf 100644
-> --- a/Documentation/admin-guide/sysctl/fs.rst
-> +++ b/Documentation/admin-guide/sysctl/fs.rst
+> I have merged all of this into my exec-next tree.
+> 
+> The code is also available on the frozen branch:
+> 
+>    git://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace.git usermode-driver-cleanup
+> 
+> Declaring this set of changes done now, allows the work that depends
+> upon this change to proceed.
 
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-
-with one tiny nit:
-
-> @@ -165,6 +166,50 @@ system needs to prune the inode list instead of allocating
-> +The ability to restrict code execution must be thought as a system-wide policy,
-> +which first starts by restricting mount points with the ``noexec`` option.
-> +This option is also automatically applied to special filesystems such as /proc
-> +.  This prevents files on such mount points to be directly executed by the
-
-Can you move that period from the beginning of the line to the end of the
-previous line?
-
-> +kernel or mapped as executable memory (e.g. libraries).  With script
-> +interpreters using the ``O_MAYEXEC`` flag, the executable permission can then
-> +be checked before reading commands from files. This makes it possible to
-> +enforce the ``noexec`` at the interpreter level, and thus propagates this
-> +security policy to scripts.  To be fully effective, these interpreters also
-> +need to handle the other ways to execute code: command line parameters (e.g.,
-> +option ``-e`` for Perl), module loading (e.g., option ``-m`` for Python),
-> +stdin, file sourcing, environment variables, configuration files, etc.
-> +According to the threat model, it may be acceptable to allow some script
-> +interpreters (e.g. Bash) to interpret commands from stdin, may it be a TTY or a
-> +pipe, because it may not be enough to (directly) perform syscalls.
-
-thanks.
--- 
-~Randy
-
+Now I've pulled it into bpf-next as well.
+In the mean time there were changes to kernel_write that broke bpfilter.ko
+I fixed it up as well.
+Thanks.
