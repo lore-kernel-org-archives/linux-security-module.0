@@ -1,158 +1,114 @@
-Return-Path: <SRS0=XQ6M=AY=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=s2H2=AZ=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6005CC433E7
-	for <linux-security-module@archiver.kernel.org>; Mon, 13 Jul 2020 20:32:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F07FFC433E8
+	for <linux-security-module@archiver.kernel.org>; Tue, 14 Jul 2020 11:00:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3E44E2077D
-	for <linux-security-module@archiver.kernel.org>; Mon, 13 Jul 2020 20:32:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C819822206
+	for <linux-security-module@archiver.kernel.org>; Tue, 14 Jul 2020 11:00:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="cHdBGMUw"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="uWSIo5yt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726767AbgGMUcx (ORCPT
+        id S1727043AbgGNLAA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 13 Jul 2020 16:32:53 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:36770 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726150AbgGMUcw (ORCPT
+        Tue, 14 Jul 2020 07:00:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49656 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726534AbgGNK77 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 13 Jul 2020 16:32:52 -0400
-Received: from [10.0.0.249] (c-24-19-135-168.hsd1.wa.comcast.net [24.19.135.168])
-        by linux.microsoft.com (Postfix) with ESMTPSA id CAADF20B4909;
-        Mon, 13 Jul 2020 13:32:50 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com CAADF20B4909
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1594672371;
-        bh=VeWN4l0WTivLpVxHyd7AaFSTibjlEMzXV0jVP3Zo+E4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=cHdBGMUwa6d7vQELISebugbZOJJPgfylgs+Ow4juQxNZlH84Uew4znIMhI1ctPIqj
-         H3I0N3rghH+OPS5b0/jhoIQBL8VUHOjGPpO6T+NSQaCMWJ5VU3jNPyjiJGtaOjHTVC
-         7dGIyN+NRs9Dp/ZrXQdYTJ5ocXPgoEQ4OChP6Zbc=
-Subject: Re: [V2 PATCH 2/3] dt-bindings: chosen: Document ima-kexec-buffer
-To:     Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, devicetree@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, catalin.marinas@arm.com,
-        will@kernel.org, mpe@ellerman.id.au, benh@kernel.crashing.org,
-        paulus@samba.org, robh+dt@kernel.org, frowand.list@gmail.com,
-        zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, jmorris@namei.org,
-        serge@hallyn.com, pasha.tatashin@soleen.com, allison@lohutok.net,
-        kstewart@linuxfoundation.org, takahiro.akashi@linaro.org,
-        tglx@linutronix.de, vincenzo.frascino@arm.com,
-        mark.rutland@arm.com, masahiroy@kernel.org, james.morse@arm.com,
-        bhsharma@redhat.com, mbrugger@suse.com, hsinyi@chromium.org,
-        tao.li@vivo.com, christophe.leroy@c-s.fr,
-        gregkh@linuxfoundation.org, nramas@linux.microsoft.com,
-        tusharsu@linux.microsoft.com, balajib@linux.microsoft.com
-References: <20200618071045.471131-1-prsriva@linux.microsoft.com>
- <20200618071045.471131-3-prsriva@linux.microsoft.com>
- <87mu4yr2k2.fsf@morokweng.localdomain>
-From:   Prakhar Srivastava <prsriva@linux.microsoft.com>
-Message-ID: <80813a16-be43-3fc4-4812-33c60095a423@linux.microsoft.com>
-Date:   Mon, 13 Jul 2020 13:32:50 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Tue, 14 Jul 2020 06:59:59 -0400
+Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F5F9C061755;
+        Tue, 14 Jul 2020 03:59:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=KCn+kBkY41F8RAgWcwTEUNO45YXItqYO+Iu35+qvwg0=; b=uWSIo5ytqOEjoxKysyDcE0PzIr
+        3zYDDQNcSq1GT1+ymnYDW8VImOa65X2m7iJ18QceLqoGgZAFN3pz2Iqm2g666/7X6BiV2p0MD9Uha
+        1A2hvnp78AssVI56e53PbylkRhVW7b3cBci4X/oqvn3uOVFkFlRAbjoOkIiBhsPCY6As3BQtlTv/h
+        TPZl/ufHiOsWClJXnK/3uQVbm8NSyW738l10nTqejGk44g1x3I+UA1CoTSCUTrTBj54ZO4C4raeN8
+        VT8vvrZ70FUDuRNNEGUSWYPEjKskqgjUwM07JBLoF9qjIjHCpZI2IpvoziP5sRcOAFB/JJ8l9xk4J
+        rXv6V17Q==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jvIev-00015n-SH; Tue, 14 Jul 2020 10:59:38 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 31B1D300130;
+        Tue, 14 Jul 2020 12:59:34 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 162DD28B91060; Tue, 14 Jul 2020 12:59:34 +0200 (CEST)
+Date:   Tue, 14 Jul 2020 12:59:34 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Serge Hallyn <serge@hallyn.com>, Jiri Olsa <jolsa@redhat.com>,
+        Song Liu <songliubraving@fb.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Stephane Eranian <eranian@google.com>,
+        Igor Lubashev <ilubashe@akamai.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        linux-man@vger.kernel.org
+Subject: Re: [PATCH v8 00/12] Introduce CAP_PERFMON to secure system
+ performance monitoring and observability
+Message-ID: <20200714105934.GU10769@hirez.programming.kicks-ass.net>
+References: <f96f8f8a-e65c-3f36-dc85-fc3f5191e8c5@linux.intel.com>
+ <76718dc6-5483-5e2e-85b8-64e70306ee1f@linux.ibm.com>
+ <7776fa40-6c65-2aa6-1322-eb3a01201000@linux.intel.com>
+ <20200710170911.GD7487@kernel.org>
+ <0d2e2306-22b2-a730-dc3f-edb3538b6561@linux.intel.com>
+ <20200713121746.GA7029@kernel.org>
+ <0fadcf78-8b0e-ed03-a554-cc172b7d249c@linux.intel.com>
+ <20200713185152.GA18094@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <87mu4yr2k2.fsf@morokweng.localdomain>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200713185152.GA18094@kernel.org>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Mon, Jul 13, 2020 at 03:51:52PM -0300, Arnaldo Carvalho de Melo wrote:
 
+> > > diff --git a/kernel/events/core.c b/kernel/events/core.c
+> > > index 856d98c36f56..a2397f724c10 100644
+> > > --- a/kernel/events/core.c
+> > > +++ b/kernel/events/core.c
+> > > @@ -11595,7 +11595,7 @@ SYSCALL_DEFINE5(perf_event_open,
+> > >  		 * perf_event_exit_task() that could imply).
+> > >  		 */
+> > >  		err = -EACCES;
+> > > -		if (!ptrace_may_access(task, PTRACE_MODE_READ_REALCREDS))
+> > > +		if (!perfmon_capable() && !ptrace_may_access(task, PTRACE_MODE_READ_REALCREDS))
+> > >  			goto err_cred;
+> > >  	}
+> > > 
+> > >> makes monitoring simpler and even more secure to use since Perf tool need
+> > >> not to start/stop/single-step and read/write registers and memory and so on
+> > >> like a debugger or strace-like tool. What do you think?
+> > > 
+> > > I tend to agree, Peter?
 
-On 6/19/20 5:41 PM, Thiago Jung Bauermann wrote:
-> 
-> Prakhar Srivastava <prsriva@linux.microsoft.com> writes:
-> 
->> Integrity measurement architecture(IMA) validates if files
->> have been accidentally or maliciously altered, both remotely and
->> locally, appraise a file's measurement against a "good" value stored
->> as an extended attribute, and enforce local file integrity.
->>
->> IMA also measures singatures of kernel and initrd during kexec along with
->> the command line used for kexec.
->> These measurements are critical to verify the seccurity posture of the OS.
->>
->> Resering memory and adding the memory information to a device tree node
->> acts as the mechanism to carry over IMA measurement logs.
->>
->> Update devicetree documentation to reflect the addition of new property
->> under the chosen node.
-> 
-> Thank you for writing this documentation patch. It's something I should
-> have done when I added the powerpc IMA kexec support.
-> 
-> You addressed Rob Herring's comments regarding the commit message, but
-> not the ones regarding the patch contents.
-> 
-> When posting a new version of the patches, make sure to address all
-> comments made so far. Addressing a comment doesn't necessarily mean
-> implementing the requested change. If you don't then you should at least
-> explain why you chose a different path.
-> 
-> I mention it because this has occurred before with this patch series,
-> and it's hard to make forward progress if review comments get ignored.
-> 
->> ---
->>   Documentation/devicetree/bindings/chosen.txt | 17 +++++++++++++++++
->>   1 file changed, 17 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/chosen.txt b/Documentation/devicetree/bindings/chosen.txt
->> index 45e79172a646..a15f70c007ef 100644
->> --- a/Documentation/devicetree/bindings/chosen.txt
->> +++ b/Documentation/devicetree/bindings/chosen.txt
->> @@ -135,3 +135,20 @@ e.g.
->>   		linux,initrd-end = <0x82800000>;
->>   	};
->>   };
->> +
->> +linux,ima-kexec-buffer
->> +----------------------
->> +
->> +This property(currently used by powerpc, arm64) holds the memory range,
-> 
-> space before the parenthesis.
-> 
->> +the address and the size, of the IMA measurement logs that are being carried
-> 
-> Maybe it's because English isn't my first language, but IMHO it's
-> clearer if "the address and the size" is between parentheses rather than
-> commas.
-> 
->> +over to the kexec session.
-> 
-> I don't think there's a "kexec session", but I'm not sure what a good
-> term would be. "linux,booted-from-kexec" uses "new kernel" so perhaps
-> that's a good option to use instead of "kexec session".
-> 
->> +
->> +/ {
->> +	chosen {
->> +		linux,ima-kexec-buffer = <0x9 0x82000000 0x0 0x00008000>;
->> +	};
->> +};
->> +
->> +This porperty does not represent real hardware, but the memory allocated for
->> +carrying the IMA measurement logs. The address and the suze are expressed in
->> +#address-cells and #size-cells, respectively of the root node.
-> 
-> 
-I will update the descriptions and ack the comments/changes in the 
-patches as well.
+So this basically says that if CAP_PERFMON, we don't care about the
+ptrace() permissions? Just like how CAP_SYS_PTRACE would always allow
+the ptrace checks?
 
-Thankyou,
-Prakhar Srivastava
-> --
-> Thiago Jung Bauermann
-> IBM Linux Technology Center
-> 
+I suppose that makes sense.
