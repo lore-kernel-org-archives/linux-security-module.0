@@ -2,113 +2,79 @@ Return-Path: <SRS0=s2H2=AZ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F07FFC433E8
-	for <linux-security-module@archiver.kernel.org>; Tue, 14 Jul 2020 11:00:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 000A4C433FB
+	for <linux-security-module@archiver.kernel.org>; Tue, 14 Jul 2020 11:20:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C819822206
-	for <linux-security-module@archiver.kernel.org>; Tue, 14 Jul 2020 11:00:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="uWSIo5yt"
+	by mail.kernel.org (Postfix) with ESMTP id D52FC22203
+	for <linux-security-module@archiver.kernel.org>; Tue, 14 Jul 2020 11:20:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727043AbgGNLAA (ORCPT
+        id S1728076AbgGNLUn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 14 Jul 2020 07:00:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49656 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726534AbgGNK77 (ORCPT
+        Tue, 14 Jul 2020 07:20:43 -0400
+Received: from mga04.intel.com ([192.55.52.120]:10830 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726823AbgGNLUg (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 14 Jul 2020 06:59:59 -0400
-Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F5F9C061755;
-        Tue, 14 Jul 2020 03:59:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=KCn+kBkY41F8RAgWcwTEUNO45YXItqYO+Iu35+qvwg0=; b=uWSIo5ytqOEjoxKysyDcE0PzIr
-        3zYDDQNcSq1GT1+ymnYDW8VImOa65X2m7iJ18QceLqoGgZAFN3pz2Iqm2g666/7X6BiV2p0MD9Uha
-        1A2hvnp78AssVI56e53PbylkRhVW7b3cBci4X/oqvn3uOVFkFlRAbjoOkIiBhsPCY6As3BQtlTv/h
-        TPZl/ufHiOsWClJXnK/3uQVbm8NSyW738l10nTqejGk44g1x3I+UA1CoTSCUTrTBj54ZO4C4raeN8
-        VT8vvrZ70FUDuRNNEGUSWYPEjKskqgjUwM07JBLoF9qjIjHCpZI2IpvoziP5sRcOAFB/JJ8l9xk4J
-        rXv6V17Q==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jvIev-00015n-SH; Tue, 14 Jul 2020 10:59:38 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 31B1D300130;
-        Tue, 14 Jul 2020 12:59:34 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 162DD28B91060; Tue, 14 Jul 2020 12:59:34 +0200 (CEST)
-Date:   Tue, 14 Jul 2020 12:59:34 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Serge Hallyn <serge@hallyn.com>, Jiri Olsa <jolsa@redhat.com>,
-        Song Liu <songliubraving@fb.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>,
-        Igor Lubashev <ilubashe@akamai.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        linux-man@vger.kernel.org
-Subject: Re: [PATCH v8 00/12] Introduce CAP_PERFMON to secure system
- performance monitoring and observability
-Message-ID: <20200714105934.GU10769@hirez.programming.kicks-ass.net>
-References: <f96f8f8a-e65c-3f36-dc85-fc3f5191e8c5@linux.intel.com>
- <76718dc6-5483-5e2e-85b8-64e70306ee1f@linux.ibm.com>
- <7776fa40-6c65-2aa6-1322-eb3a01201000@linux.intel.com>
- <20200710170911.GD7487@kernel.org>
- <0d2e2306-22b2-a730-dc3f-edb3538b6561@linux.intel.com>
- <20200713121746.GA7029@kernel.org>
- <0fadcf78-8b0e-ed03-a554-cc172b7d249c@linux.intel.com>
- <20200713185152.GA18094@kernel.org>
+        Tue, 14 Jul 2020 07:20:36 -0400
+IronPort-SDR: lSxUzVJBfFnX+XKu5B9yefceayGdeAP5xO1ELQHL1H/h/3ZjyK8AToDX0vl621t1Y6w6RevuUp
+ PW4lzE9ptVwQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9681"; a="146349943"
+X-IronPort-AV: E=Sophos;i="5.75,350,1589266800"; 
+   d="scan'208";a="146349943"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2020 04:20:34 -0700
+IronPort-SDR: B5BSpZgOdkfuAEIuDBr1rtuqVEsHQIemWCTJzzjDQUC8llN9zkJYda/njPIPKbKVCga2E4SBko
+ QYsSxABJp2kg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.75,350,1589266800"; 
+   d="scan'208";a="299508857"
+Received: from rmarti11-mobl.ger.corp.intel.com (HELO localhost) ([10.252.54.57])
+  by orsmga002.jf.intel.com with ESMTP; 14 Jul 2020 04:20:32 -0700
+Date:   Tue, 14 Jul 2020 14:20:30 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Stefan Berger <stefanb@linux.ibm.com>
+Cc:     Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-acpi@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v9 2/2] tpm: Add support for event log pointer found in
+ TPM2 ACPI table
+Message-ID: <20200714112030.GA1448526@linux.intel.com>
+References: <20200706181953.3592084-1-stefanb@linux.vnet.ibm.com>
+ <20200706181953.3592084-3-stefanb@linux.vnet.ibm.com>
+ <20200706230914.GC20770@linux.intel.com>
+ <78ec872f-89b3-6464-6ede-bd0a46fe5c4c@linux.ibm.com>
+ <20200707022416.GC112019@linux.intel.com>
+ <f3e0fb50-8617-da40-1456-158531a070cb@linux.ibm.com>
+ <20200707040325.GB143804@linux.intel.com>
+ <85c27199-df55-eecc-855c-dedcea64f89e@linux.ibm.com>
+ <20200708140753.GC538949@linux.intel.com>
+ <e42cb59d-6a3d-12be-bb51-88aa8c5dba23@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200713185152.GA18094@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e42cb59d-6a3d-12be-bb51-88aa8c5dba23@linux.ibm.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jul 13, 2020 at 03:51:52PM -0300, Arnaldo Carvalho de Melo wrote:
+On Wed, Jul 08, 2020 at 10:17:17AM -0400, Stefan Berger wrote:
+> > ❯ swtpm-mvo.swtpm socket --tpmstate dir=/tmp/mytpm1 \
+> >    --ctrl type=unixio,path=/tmp/mytpm1/swtpm-sock \
+> >    --log level=20
+> > swtpm: Could not open UnixIO socket: No such file or directory
+> 
+> 
+> Did you create the directory '/tmp/mytpm1' ?
 
-> > > diff --git a/kernel/events/core.c b/kernel/events/core.c
-> > > index 856d98c36f56..a2397f724c10 100644
-> > > --- a/kernel/events/core.c
-> > > +++ b/kernel/events/core.c
-> > > @@ -11595,7 +11595,7 @@ SYSCALL_DEFINE5(perf_event_open,
-> > >  		 * perf_event_exit_task() that could imply).
-> > >  		 */
-> > >  		err = -EACCES;
-> > > -		if (!ptrace_may_access(task, PTRACE_MODE_READ_REALCREDS))
-> > > +		if (!perfmon_capable() && !ptrace_may_access(task, PTRACE_MODE_READ_REALCREDS))
-> > >  			goto err_cred;
-> > >  	}
-> > > 
-> > >> makes monitoring simpler and even more secure to use since Perf tool need
-> > >> not to start/stop/single-step and read/write registers and memory and so on
-> > >> like a debugger or strace-like tool. What do you think?
-> > > 
-> > > I tend to agree, Peter?
+Yes. It's the socket file that it is complain because it does
+not exist beforehand.
 
-So this basically says that if CAP_PERFMON, we don't care about the
-ptrace() permissions? Just like how CAP_SYS_PTRACE would always allow
-the ptrace checks?
-
-I suppose that makes sense.
+/Jarkko
