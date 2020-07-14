@@ -7,56 +7,56 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A14CC433E0
-	for <linux-security-module@archiver.kernel.org>; Tue, 14 Jul 2020 21:38:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A006CC433E2
+	for <linux-security-module@archiver.kernel.org>; Tue, 14 Jul 2020 21:38:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 469322064C
-	for <linux-security-module@archiver.kernel.org>; Tue, 14 Jul 2020 21:38:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7AE3920656
+	for <linux-security-module@archiver.kernel.org>; Tue, 14 Jul 2020 21:38:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NAZytOoW"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="a/bS0RLh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728053AbgGNViF (ORCPT
+        id S1728099AbgGNViP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 14 Jul 2020 17:38:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36902 "EHLO
+        Tue, 14 Jul 2020 17:38:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726986AbgGNViF (ORCPT
+        with ESMTP id S1726710AbgGNViO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 14 Jul 2020 17:38:05 -0400
-Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32BD6C08C5C1
-        for <linux-security-module@vger.kernel.org>; Tue, 14 Jul 2020 14:38:05 -0700 (PDT)
-Received: by mail-pj1-x1041.google.com with SMTP id gc9so22459pjb.2
-        for <linux-security-module@vger.kernel.org>; Tue, 14 Jul 2020 14:38:05 -0700 (PDT)
+        Tue, 14 Jul 2020 17:38:14 -0400
+Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7816FC08C5C1
+        for <linux-security-module@vger.kernel.org>; Tue, 14 Jul 2020 14:38:14 -0700 (PDT)
+Received: by mail-pf1-x441.google.com with SMTP id 207so8188859pfu.3
+        for <linux-security-module@vger.kernel.org>; Tue, 14 Jul 2020 14:38:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=7s2UJ6qLwDdlKEbAp3tWyPT6USXGH2ifsrFreEv7ly0=;
-        b=NAZytOoWm9VM1GiubiKSe5di3Ui40jvz1ad82fuA7hPshCWsD0sAPqWNxkIB+tXufO
-         8PDJesbqttfMwvM2r7RKiFJ9S+8rHPWoa6LAzcb3J++j0xsfn0w9xNRN8vff0eI2UJqT
-         LqupB3U64BjXWhiq32HiGxHkrYkMi3pWzOPqo=
+        bh=kBZyCcCmpqlqMqsIRaCWhuIM19zS4zfakl+jOrhjE68=;
+        b=a/bS0RLhvJ42yObBQpWU7RQa+G5uNb2e0zU2vIxVYbKgCuhuVCePOZGoJtjvmwd7iN
+         xmKjxlDlfNIw1CAvsEm1szrJz74LLht0/WrPFkETS5x0dnr7wky6Use55EWzyo1YbgMf
+         wB0RHcDtBRksPGUwkP02h4mG8W2IaiPO+VB6c=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=7s2UJ6qLwDdlKEbAp3tWyPT6USXGH2ifsrFreEv7ly0=;
-        b=aG4t0t88d2l56owOLcij8kkU4P8dtLHwgRwEsgUH8JhlEMfEhA94pJJjRww2xbdZiI
-         3yn1Hs5htrX7s2y1iGByD23Alz04zNy0nbCg1hF3ZNLAHaTWZdxs2JhwGs/jMK3BaLC6
-         UmUFiR1eHLdC4Y6Wwj2ve3Xl0FU+NLKNfDnkvAWPqD0msL6IPUV06x+359vE5LaCBDrl
-         00nf57hgF3jX+3ZKRj2CxuYckuN1HCsCJsBGnSNOfXHkuShvV4vzAHL4y8FHSqJ78oh8
-         +dgFXYRxhq4rvtKKZpJ6qVYzOFMhCwPutaOQcoswJL8U/EKDFrbJ/f+nJeWJvZtFBnWM
-         CVqQ==
-X-Gm-Message-State: AOAM531VC0L2VRFgLwjYIxVL5g3f5PDW3UcxIEG1K8fNEyieotub4DWN
-        lMQhRA1scY6BcOwW1zwd0o3arw==
-X-Google-Smtp-Source: ABdhPJwm5N5VxmpvPXn/mRlZiisE39r8Uxn0Rr9gGkAApwpLxa53XG+7io8auKb4gwouc1z/xyDDeQ==
-X-Received: by 2002:a17:902:7241:: with SMTP id c1mr5704992pll.79.1594762684784;
-        Tue, 14 Jul 2020 14:38:04 -0700 (PDT)
+        bh=kBZyCcCmpqlqMqsIRaCWhuIM19zS4zfakl+jOrhjE68=;
+        b=VYfI51EuDBW4HR6iLi9WSs17L5Fc1snb5dnKUP7M0yQdoFFj0LRsBIhtkylR064aPp
+         KkJWu8izXtNPpnqtju0NcKwXjSYrJCQFdtLVR4lA86kuJeIa+bZ8ClrfJYKypU/1aZxt
+         6RYoPTrUS3BM5JZrZjva9Pk4t8iyy3K6HyHS/To32jFx57I9/lzvyAnoJapntcmI659I
+         VnFqXSF/3HA3mkqkeYHbvjIkvEKO7G7RyJK0Dyv63G1kzyq1wxcA6N4F/nFdbNaKTcxe
+         edYqrPbru7nHJa2NN0BqHFYyriPrNXtpt+orXWK5oRs7MJ3l2pZunVlmjdGYeAS+Aw/v
+         4EzQ==
+X-Gm-Message-State: AOAM533w218x0d2E+wdcBSkdjZU6pdOQNJfoR2p+CjBuerlkWs/Xb3M5
+        EhI8qHZ34wjEcqk5k4EceaoIYA==
+X-Google-Smtp-Source: ABdhPJwFFznkEcbi8FULWjz22UCjJ7P9pQh+fwuMJMUGDuP9MkVzkem4ifewJtwGQEQdhFq/4ppcLQ==
+X-Received: by 2002:aa7:818e:: with SMTP id g14mr6043210pfi.27.1594762694075;
+        Tue, 14 Jul 2020 14:38:14 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id h15sm112092pfo.192.2020.07.14.14.38.03
+        by smtp.gmail.com with ESMTPSA id i128sm123203pfe.74.2020.07.14.14.38.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Jul 2020 14:38:04 -0700 (PDT)
-Date:   Tue, 14 Jul 2020 14:38:03 -0700
+        Tue, 14 Jul 2020 14:38:13 -0700 (PDT)
+Date:   Tue, 14 Jul 2020 14:38:12 -0700
 From:   Kees Cook <keescook@chromium.org>
 To:     "Eric W. Biederman" <ebiederm@xmission.com>
 Cc:     linux-kernel@vger.kernel.org,
@@ -76,44 +76,26 @@ Cc:     linux-kernel@vger.kernel.org,
         Casey Schaufler <casey@schaufler-ca.com>,
         John Johansen <john.johansen@canonical.com>,
         Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH 5/7] exec: Factor bprm_execve out of do_execve_common
-Message-ID: <202007141438.9E5B93B@keescook>
+Subject: Re: [PATCH 1/7] exec: Remove unnecessary spaces from binfmts.h
+Message-ID: <202007141438.68F0CEDCE6@keescook>
 References: <871rle8bw2.fsf@x220.int.ebiederm.org>
- <878sfm6x6x.fsf@x220.int.ebiederm.org>
+ <87v9iq6x9x.fsf@x220.int.ebiederm.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <878sfm6x6x.fsf@x220.int.ebiederm.org>
+In-Reply-To: <87v9iq6x9x.fsf@x220.int.ebiederm.org>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jul 14, 2020 at 08:30:30AM -0500, Eric W. Biederman wrote:
+On Tue, Jul 14, 2020 at 08:28:42AM -0500, Eric W. Biederman wrote:
 > 
-> Currently it is necessary for the usermode helper code and the code
-> that launches init to use set_fs so that pages coming from the kernel
-> look like they are coming from userspace.
+> The general convention in the linux kernel is to define a pointer
+> member as "type *name".  The declaration of struct linux_binprm has
+> several pointer defined as "type * name".  Update them to the
+> form of "type *name" for consistency.
 > 
-> To allow that usage of set_fs to be removed cleanly the argument
-> copying from userspace needs to happen earlier.  Factor bprm_execve
-> out of do_execve_common to separate out the copying of arguments
-> to the newe stack, and the rest of exec.
-> 
-> In separating bprm_execve from do_execve_common the copying
-> of the arguments onto the new stack happens earlier.
-> 
-> As the copying of the arguments does not depend any security hooks,
-> files, the file table, current->in_execve, current->fs->in_exec,
-> bprm->unsafe, or creds this is safe.
-> 
-> Likewise the security hook security_creds_for_exec does not depend upon
-> preventing the argument copying from happening.
-> 
-> In addition to making it possible to implement kernel_execve that
-> performs the copying differently, this separation of bprm_execve from
-> do_execve_common makes for a nice separation of responsibilities making
-> the exec code easier to navigate.
-> 
+> Suggested-by: Kees Cook <keescook@chromium.org>
 > Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 
 Reviewed-by: Kees Cook <keescook@chromium.org>
