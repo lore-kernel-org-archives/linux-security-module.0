@@ -7,30 +7,30 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F3B7C433ED
-	for <linux-security-module@archiver.kernel.org>; Tue, 14 Jul 2020 13:33:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93886C433FB
+	for <linux-security-module@archiver.kernel.org>; Tue, 14 Jul 2020 13:33:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 024EF22280
-	for <linux-security-module@archiver.kernel.org>; Tue, 14 Jul 2020 13:33:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 74D1922280
+	for <linux-security-module@archiver.kernel.org>; Tue, 14 Jul 2020 13:33:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726458AbgGNNdX (ORCPT
+        id S1726870AbgGNNdz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 14 Jul 2020 09:33:23 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:37604 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725883AbgGNNdX (ORCPT
+        Tue, 14 Jul 2020 09:33:55 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:52472 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728049AbgGNNdz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 14 Jul 2020 09:33:23 -0400
+        Tue, 14 Jul 2020 09:33:55 -0400
 Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.90_1)
         (envelope-from <ebiederm@xmission.com>)
-        id 1jvL3h-0006vp-3b; Tue, 14 Jul 2020 07:33:21 -0600
+        id 1jvL4D-0002gA-MW; Tue, 14 Jul 2020 07:33:53 -0600
 Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
         by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.87)
         (envelope-from <ebiederm@xmission.com>)
-        id 1jvL3f-0005XQ-Pc; Tue, 14 Jul 2020 07:33:20 -0600
+        id 1jvL4C-0005bi-PE; Tue, 14 Jul 2020 07:33:53 -0600
 From:   ebiederm@xmission.com (Eric W. Biederman)
 To:     <linux-kernel@vger.kernel.org>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
@@ -51,18 +51,18 @@ Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         John Johansen <john.johansen@canonical.com>,
         Christoph Hellwig <hch@infradead.org>
 References: <871rle8bw2.fsf@x220.int.ebiederm.org>
-Date:   Tue, 14 Jul 2020 08:30:30 -0500
+Date:   Tue, 14 Jul 2020 08:31:03 -0500
 In-Reply-To: <871rle8bw2.fsf@x220.int.ebiederm.org> (Eric W. Biederman's
         message of "Tue, 14 Jul 2020 08:27:41 -0500")
-Message-ID: <878sfm6x6x.fsf@x220.int.ebiederm.org>
+Message-ID: <87365u6x60.fsf@x220.int.ebiederm.org>
 User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
-X-XM-SPF: eid=1jvL3f-0005XQ-Pc;;;mid=<878sfm6x6x.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+OY/NvhT3MYjHsTJQkDJtTncWPgQJQ95w=
+X-XM-SPF: eid=1jvL4C-0005bi-PE;;;mid=<87365u6x60.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1+tYbnh3Q62SSMVnifjKF7zDyhQnXaMvYo=
 X-SA-Exim-Connect-IP: 68.227.160.95
 X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: [PATCH 5/7] exec: Factor bprm_execve out of do_execve_common
+Subject: [PATCH 6/7] exec: Factor bprm_stack_limits out of prepare_arg_pages
 X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
 X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: owner-linux-security-module@vger.kernel.org
@@ -70,186 +70,63 @@ Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 
-Currently it is necessary for the usermode helper code and the code
-that launches init to use set_fs so that pages coming from the kernel
-look like they are coming from userspace.
+In preparation for implementiong kernel_execve (which will take kernel
+pointers not userspace pointers) factor out bprm_stack_limits out of
+prepare_arg_pages.  This separates the counting which depends upon the
+getting data from userspace from the calculations of the stack limits
+which is usable in kernel_execve.
 
-To allow that usage of set_fs to be removed cleanly the argument
-copying from userspace needs to happen earlier.  Factor bprm_execve
-out of do_execve_common to separate out the copying of arguments
-to the newe stack, and the rest of exec.
-
-In separating bprm_execve from do_execve_common the copying
-of the arguments onto the new stack happens earlier.
-
-As the copying of the arguments does not depend any security hooks,
-files, the file table, current->in_execve, current->fs->in_exec,
-bprm->unsafe, or creds this is safe.
-
-Likewise the security hook security_creds_for_exec does not depend upon
-preventing the argument copying from happening.
-
-In addition to making it possible to implement kernel_execve that
-performs the copying differently, this separation of bprm_execve from
-do_execve_common makes for a nice separation of responsibilities making
-the exec code easier to navigate.
+The remove prepare_args_pages and compute bprm->argc and bprm->envc
+directly in do_execveat_common, before bprm_stack_limits is called.
 
 Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 ---
- fs/exec.c | 108 +++++++++++++++++++++++++++++-------------------------
- 1 file changed, 58 insertions(+), 50 deletions(-)
+ fs/exec.c | 23 ++++++++++++-----------
+ 1 file changed, 12 insertions(+), 11 deletions(-)
 
 diff --git a/fs/exec.c b/fs/exec.c
-index afb168bf5e23..50508892fa71 100644
+index 50508892fa71..f8135dc149b3 100644
 --- a/fs/exec.c
 +++ b/fs/exec.c
-@@ -1856,44 +1856,16 @@ static int exec_binprm(struct linux_binprm *bprm)
- /*
-  * sys_execve() executes a new program.
-  */
--static int do_execveat_common(int fd, struct filename *filename,
--			      struct user_arg_ptr argv,
--			      struct user_arg_ptr envp,
--			      int flags)
-+static int bprm_execve(struct linux_binprm *bprm,
-+		       int fd, struct filename *filename, int flags)
+@@ -448,19 +448,10 @@ static int count(struct user_arg_ptr argv, int max)
+ 	return i;
+ }
+ 
+-static int prepare_arg_pages(struct linux_binprm *bprm,
+-			struct user_arg_ptr argv, struct user_arg_ptr envp)
++static int bprm_stack_limits(struct linux_binprm *bprm)
  {
--	struct linux_binprm *bprm;
- 	struct file *file;
- 	struct files_struct *displaced;
- 	int retval;
+ 	unsigned long limit, ptr_size;
  
--	if (IS_ERR(filename))
--		return PTR_ERR(filename);
+-	bprm->argc = count(argv, MAX_ARG_STRINGS);
+-	if (bprm->argc < 0)
+-		return bprm->argc;
 -
--	/*
--	 * We move the actual failure in case of RLIMIT_NPROC excess from
--	 * set*uid() to execve() because too many poorly written programs
--	 * don't check setuid() return code.  Here we additionally recheck
--	 * whether NPROC limit is still exceeded.
--	 */
--	if ((current->flags & PF_NPROC_EXCEEDED) &&
--	    atomic_read(&current_user()->processes) > rlimit(RLIMIT_NPROC)) {
--		retval = -EAGAIN;
--		goto out_ret;
--	}
+-	bprm->envc = count(envp, MAX_ARG_STRINGS);
+-	if (bprm->envc < 0)
+-		return bprm->envc;
 -
--	/* We're below the limit (still or again), so we don't want to make
--	 * further execve() calls fail. */
--	current->flags &= ~PF_NPROC_EXCEEDED;
--
--	bprm = alloc_bprm(fd, filename);
--	if (IS_ERR(bprm)) {
--		retval = PTR_ERR(bprm);
--		goto out_ret;
--	}
--
- 	retval = unshare_files(&displaced);
- 	if (retval)
--		goto out_free;
-+		return retval;
- 
- 	retval = prepare_bprm_creds(bprm);
- 	if (retval)
-@@ -1919,28 +1891,11 @@ static int do_execveat_common(int fd, struct filename *filename,
- 	    close_on_exec(fd, rcu_dereference_raw(current->files->fdt)))
- 		bprm->interp_flags |= BINPRM_FLAGS_PATH_INACCESSIBLE;
+ 	/*
+ 	 * Limit to 1/4 of the max stack size or 3/4 of _STK_LIM
+ 	 * (whichever is smaller) for the argv+env strings.
+@@ -1964,7 +1955,17 @@ static int do_execveat_common(int fd, struct filename *filename,
+ 		goto out_ret;
+ 	}
  
 -	retval = prepare_arg_pages(bprm, argv, envp);
--	if (retval < 0)
--		goto out;
--
- 	/* Set the unchanging part of bprm->cred */
- 	retval = security_bprm_creds_for_exec(bprm);
- 	if (retval)
- 		goto out;
- 
--	retval = copy_string_kernel(bprm->filename, bprm);
--	if (retval < 0)
--		goto out;
--
--	bprm->exec = bprm->p;
--	retval = copy_strings(bprm->envc, envp, bprm);
--	if (retval < 0)
--		goto out;
--
--	retval = copy_strings(bprm->argc, argv, bprm);
--	if (retval < 0)
--		goto out;
--
- 	retval = exec_binprm(bprm);
++	retval = count(argv, MAX_ARG_STRINGS);
++	if (retval < 0)
++		goto out_free;
++	bprm->argc = retval;
++
++	retval = count(envp, MAX_ARG_STRINGS);
++	if (retval < 0)
++		goto out_free;
++	bprm->envc = retval;
++
++	retval = bprm_stack_limits(bprm);
  	if (retval < 0)
- 		goto out;
-@@ -1951,8 +1906,6 @@ static int do_execveat_common(int fd, struct filename *filename,
- 	rseq_execve(current);
- 	acct_update_integrals(current);
- 	task_numa_free(current, false);
--	free_bprm(bprm);
--	putname(filename);
- 	if (displaced)
- 		put_files_struct(displaced);
- 	return retval;
-@@ -1974,6 +1927,61 @@ static int do_execveat_common(int fd, struct filename *filename,
- out_files:
- 	if (displaced)
- 		reset_files_struct(displaced);
-+
-+	return retval;
-+}
-+
-+static int do_execveat_common(int fd, struct filename *filename,
-+			      struct user_arg_ptr argv,
-+			      struct user_arg_ptr envp,
-+			      int flags)
-+{
-+	struct linux_binprm *bprm;
-+	int retval;
-+
-+	if (IS_ERR(filename))
-+		return PTR_ERR(filename);
-+
-+	/*
-+	 * We move the actual failure in case of RLIMIT_NPROC excess from
-+	 * set*uid() to execve() because too many poorly written programs
-+	 * don't check setuid() return code.  Here we additionally recheck
-+	 * whether NPROC limit is still exceeded.
-+	 */
-+	if ((current->flags & PF_NPROC_EXCEEDED) &&
-+	    atomic_read(&current_user()->processes) > rlimit(RLIMIT_NPROC)) {
-+		retval = -EAGAIN;
-+		goto out_ret;
-+	}
-+
-+	/* We're below the limit (still or again), so we don't want to make
-+	 * further execve() calls fail. */
-+	current->flags &= ~PF_NPROC_EXCEEDED;
-+
-+	bprm = alloc_bprm(fd, filename);
-+	if (IS_ERR(bprm)) {
-+		retval = PTR_ERR(bprm);
-+		goto out_ret;
-+	}
-+
-+	retval = prepare_arg_pages(bprm, argv, envp);
-+	if (retval < 0)
-+		goto out_free;
-+
-+	retval = copy_string_kernel(bprm->filename, bprm);
-+	if (retval < 0)
-+		goto out_free;
-+	bprm->exec = bprm->p;
-+
-+	retval = copy_strings(bprm->envc, envp, bprm);
-+	if (retval < 0)
-+		goto out_free;
-+
-+	retval = copy_strings(bprm->argc, argv, bprm);
-+	if (retval < 0)
-+		goto out_free;
-+
-+	retval = bprm_execve(bprm, fd, filename, flags);
- out_free:
- 	free_bprm(bprm);
+ 		goto out_free;
  
 -- 
 2.25.0
