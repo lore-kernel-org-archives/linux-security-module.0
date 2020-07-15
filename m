@@ -2,62 +2,62 @@ Return-Path: <SRS0=JoCX=A2=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78A12C433DF
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jul 2020 20:06:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68525C433E0
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jul 2020 20:37:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4CA952065F
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jul 2020 20:06:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3BFAC2065F
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jul 2020 20:37:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PCMIvsfX"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="l9A5pBS/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726954AbgGOUGa (ORCPT
+        id S1726929AbgGOUhV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 15 Jul 2020 16:06:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47102 "EHLO
+        Wed, 15 Jul 2020 16:37:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51830 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726650AbgGOUG2 (ORCPT
+        with ESMTP id S1725917AbgGOUhS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 15 Jul 2020 16:06:28 -0400
-Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3ACD5C061755
-        for <linux-security-module@vger.kernel.org>; Wed, 15 Jul 2020 13:06:28 -0700 (PDT)
-Received: by mail-pl1-x643.google.com with SMTP id b9so2837306plx.6
-        for <linux-security-module@vger.kernel.org>; Wed, 15 Jul 2020 13:06:28 -0700 (PDT)
+        Wed, 15 Jul 2020 16:37:18 -0400
+Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AC54C061755
+        for <linux-security-module@vger.kernel.org>; Wed, 15 Jul 2020 13:37:18 -0700 (PDT)
+Received: by mail-pf1-x444.google.com with SMTP id t11so2589178pfq.11
+        for <linux-security-module@vger.kernel.org>; Wed, 15 Jul 2020 13:37:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=YL19XoL2DCkvrhiZbpXv6h7Rc/+Lwr1rsydviLs8pFc=;
-        b=PCMIvsfXHhRDJz8Khz3VUsUkSsqo3SsGXmW6qozBpfFw4kwRb7k2005MBV/m480XJo
-         UJjjM2/i31FD6kd3JPB8hOvDWYGhWQ2O79+33d3StMVVlrSmwT3Jn2OjikQ0pG18Ox6N
-         0dOa8dwyh4myV41v2K0+FJWi/pMjoCl6QAT6I=
+        bh=Zaaf8OFN0Mkv/43hLUAJDeNUstQbcnrUeWnNFq9ntQY=;
+        b=l9A5pBS/4KP4RTCNxMaKKaV+072X9gd7LEGM/3JWklkcz/Drht5gd7TJiFK4GxBxVr
+         jZCmb1notoEqLmxKu0+ocLrw9VKEKpjvh8Va1zKB5Pza0ifi8AupC34OGZedIFseHjn/
+         1r7EhDpsHB1nsJQkfGVNJefFs23IWUf/8byNs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to;
-        bh=YL19XoL2DCkvrhiZbpXv6h7Rc/+Lwr1rsydviLs8pFc=;
-        b=UghJh2WuPGTIhZjxm+TL8zMggByYTvDpKA9I1Gv52vncBw1LSMdCZ+fGIXJU89wQyZ
-         fp367gYAbAm+s33T/ldQY23VEDybpFmEYJxQXfDuKn15FTGVw5mtongm+jtb/CTitBiK
-         9wYTC1taryJPY9fc2ACEVrtNEZrAK7hDoTjW4+CESJRhHhBZ1pLyPCYHHjSuy5erqmSs
-         idmJMV3U5I1vSpoer9NUJ+ZbNwtWhdrM4XQpZ6E1GKoCclX0rSMePDe8Om4CbMSrP3vo
-         V9rjCAKF102PQm6oFk4bjBwMZ8ZeHQzWWZUB3jkrgYQ5gdYgtH4nThYl5C1nshnOPbeZ
-         nfjQ==
-X-Gm-Message-State: AOAM532Rrya0IL8wRSLDrFYFf8Jx+cXxKnW2AexHxKZDyM7XzHaItmBz
-        2oPW+DswxwhCEb+pd28M3UO+tw==
-X-Google-Smtp-Source: ABdhPJxqPw/byppqYk72FBQJ1XrQVSH3bnxbDXc7/lfw9v75K7lcTOddZ1PpPFhX50QhSgkPHCK9SQ==
-X-Received: by 2002:a17:90a:bc98:: with SMTP id x24mr1196990pjr.63.1594843587647;
-        Wed, 15 Jul 2020 13:06:27 -0700 (PDT)
+        bh=Zaaf8OFN0Mkv/43hLUAJDeNUstQbcnrUeWnNFq9ntQY=;
+        b=VUg0mR4Af7fUCuIzB+IKkvXuqKQcETHytVzSb7mmBSc2wUukSj0914g5nE0zov1Lc3
+         LLwriBbSp4HyskIX2icks/iN4OyC+o/6cHHqzbrjUE9/U7Bj0fmC+HTBVTsOmCXJnR2Y
+         oijfwzPpGwWhcuXMU4g8buTEMYLvjEBuBu8xPWm6nBRQRRU//orUoBtJiH6/1nNBg0+i
+         NyCZgUJ0MHM88NKrr9r5xxtqA2C6xZyk33+UEtTlgUKgEakacug2oruuX+1LcL7ZOh3U
+         /s+MposSZ/dsCcXSA1BKbOhnmB3xQ6u5NbJXW5n3j649Rv8QLPv1FCPF5q9TXKMtuYFB
+         PZrQ==
+X-Gm-Message-State: AOAM530Y01LAhQCFqMWOfA/nRyJu+bILOFbmQSJAljbyYRjdO+FKCTO+
+        fhDiA14Fs76u0YdbAaUpx1G1Ww==
+X-Google-Smtp-Source: ABdhPJzwZ1pGNMV72yuIGcVlwa7f4Vu3SViQldrIVyIwMBZnJrwaLmWw/w85VJ0XhTGIWtU4XLlfyA==
+X-Received: by 2002:a63:7c4d:: with SMTP id l13mr1353283pgn.12.1594845437856;
+        Wed, 15 Jul 2020 13:37:17 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id e20sm2721660pfl.212.2020.07.15.13.06.26
+        by smtp.gmail.com with ESMTPSA id h15sm2871918pfo.192.2020.07.15.13.37.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Jul 2020 13:06:26 -0700 (PDT)
-Date:   Wed, 15 Jul 2020 13:06:25 -0700
+        Wed, 15 Jul 2020 13:37:16 -0700 (PDT)
+Date:   Wed, 15 Jul 2020 13:37:15 -0700
 From:   Kees Cook <keescook@chromium.org>
 To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
 Cc:     linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
@@ -95,153 +95,156 @@ Cc:     linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
         linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v6 4/7] fs: Introduce O_MAYEXEC flag for openat2(2)
-Message-ID: <202007151304.9F48071@keescook>
+Subject: Re: [PATCH v6 5/7] fs,doc: Enable to enforce noexec mounts or file
+ exec through O_MAYEXEC
+Message-ID: <202007151312.C28D112013@keescook>
 References: <20200714181638.45751-1-mic@digikod.net>
- <20200714181638.45751-5-mic@digikod.net>
+ <20200714181638.45751-6-mic@digikod.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200714181638.45751-5-mic@digikod.net>
+In-Reply-To: <20200714181638.45751-6-mic@digikod.net>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jul 14, 2020 at 08:16:35PM +0200, Mickaël Salaün wrote:
-> When the O_MAYEXEC flag is passed, openat2(2) may be subject to
-> additional restrictions depending on a security policy managed by the
-> kernel through a sysctl or implemented by an LSM thanks to the
-> inode_permission hook.  This new flag is ignored by open(2) and
-> openat(2) because of their unspecified flags handling.
-> 
-> The underlying idea is to be able to restrict scripts interpretation
-> according to a policy defined by the system administrator.  For this to
-> be possible, script interpreters must use the O_MAYEXEC flag
-> appropriately.  To be fully effective, these interpreters also need to
-> handle the other ways to execute code: command line parameters (e.g.,
-> option -e for Perl), module loading (e.g., option -m for Python), stdin,
-> file sourcing, environment variables, configuration files, etc.
-> According to the threat model, it may be acceptable to allow some script
-> interpreters (e.g. Bash) to interpret commands from stdin, may it be a
-> TTY or a pipe, because it may not be enough to (directly) perform
-> syscalls.  Further documentation can be found in a following patch.
-> 
-> Even without enforced security policy, userland interpreters can set it
-> to enforce the system policy at their level, knowing that it will not
-> break anything on running systems which do not care about this feature.
-> However, on systems which want this feature enforced, there will be
-> knowledgeable people (i.e. sysadmins who enforced O_MAYEXEC
-> deliberately) to manage it.  A simple security policy implementation,
-> configured through a dedicated sysctl, is available in a following
-> patch.
-> 
-> O_MAYEXEC should not be confused with the O_EXEC flag which is intended
-> for execute-only, which obviously doesn't work for scripts.  However, a
-> similar behavior could be implemented in userland with O_PATH:
-> https://lore.kernel.org/lkml/1e2f6913-42f2-3578-28ed-567f6a4bdda1@digikod.net/
-> 
-> The implementation of O_MAYEXEC almost duplicates what execve(2) and
-> uselib(2) are already doing: setting MAY_OPENEXEC in acc_mode (which can
-> then be checked as MAY_EXEC, if enforced), and propagating FMODE_EXEC to
-> _fmode via __FMODE_EXEC flag (which can then trigger a
-> fanotify/FAN_OPEN_EXEC event).
-> 
-> This is an updated subset of the patch initially written by Vincent
-> Strubel for CLIP OS 4:
-> https://github.com/clipos-archive/src_platform_clip-patches/blob/f5cb330d6b684752e403b4e41b39f7004d88e561/1901_open_mayexec.patch
-> This patch has been used for more than 12 years with customized script
-> interpreters.  Some examples (with the original name O_MAYEXEC) can be
-> found here:
-> https://github.com/clipos-archive/clipos4_portage-overlay/search?q=O_MAYEXEC
-> 
-> Co-developed-by: Vincent Strubel <vincent.strubel@ssi.gouv.fr>
-> Signed-off-by: Vincent Strubel <vincent.strubel@ssi.gouv.fr>
-> Co-developed-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
-> Signed-off-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
-> Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> Reviewed-by: Deven Bowers <deven.desai@linux.microsoft.com>
-> Reviewed-by: Kees Cook <keescook@chromium.org>
-> Cc: Aleksa Sarai <cyphar@cyphar.com>
-> Cc: Al Viro <viro@zeniv.linux.org.uk>
-> ---
-> 
-> Changes since v5:
-> * Update commit message.
-> 
-> Changes since v3:
-> * Switch back to O_MAYEXEC, but only handle it with openat2(2) which
->   checks unknown flags (suggested by Aleksa Sarai). Cf.
->   https://lore.kernel.org/lkml/20200430015429.wuob7m5ofdewubui@yavin.dot.cyphar.com/
-> 
-> Changes since v2:
-> * Replace O_MAYEXEC with RESOLVE_MAYEXEC from openat2(2).  This change
->   enables to not break existing application using bogus O_* flags that
->   may be ignored by current kernels by using a new dedicated flag, only
->   usable through openat2(2) (suggested by Jeff Layton).  Using this flag
->   will results in an error if the running kernel does not support it.
->   User space needs to manage this case, as with other RESOLVE_* flags.
->   The best effort approach to security (for most common distros) will
->   simply consists of ignoring such an error and retry without
->   RESOLVE_MAYEXEC.  However, a fully controlled system may which to
->   error out if such an inconsistency is detected.
-> 
-> Changes since v1:
-> * Set __FMODE_EXEC when using O_MAYEXEC to make this information
->   available through the new fanotify/FAN_OPEN_EXEC event (suggested by
->   Jan Kara and Matthew Bobrowski):
->   https://lore.kernel.org/lkml/20181213094658.GA996@lithium.mbobrowski.org/
-> ---
->  fs/fcntl.c                       | 2 +-
->  fs/open.c                        | 8 ++++++++
->  include/linux/fcntl.h            | 2 +-
->  include/linux/fs.h               | 2 ++
->  include/uapi/asm-generic/fcntl.h | 7 +++++++
->  5 files changed, 19 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/fcntl.c b/fs/fcntl.c
-> index 2e4c0fa2074b..0357ad667563 100644
-> --- a/fs/fcntl.c
-> +++ b/fs/fcntl.c
-> @@ -1033,7 +1033,7 @@ static int __init fcntl_init(void)
->  	 * Exceptions: O_NONBLOCK is a two bit define on parisc; O_NDELAY
->  	 * is defined as O_NONBLOCK on some platforms and not on others.
->  	 */
-> -	BUILD_BUG_ON(21 - 1 /* for O_RDONLY being 0 */ !=
-> +	BUILD_BUG_ON(22 - 1 /* for O_RDONLY being 0 */ !=
->  		HWEIGHT32(
->  			(VALID_OPEN_FLAGS & ~(O_NONBLOCK | O_NDELAY)) |
->  			__FMODE_EXEC | __FMODE_NONOTIFY));
-> diff --git a/fs/open.c b/fs/open.c
-> index 623b7506a6db..38e434bdbbb6 100644
-> --- a/fs/open.c
-> +++ b/fs/open.c
-> @@ -987,6 +987,8 @@ inline struct open_how build_open_how(int flags, umode_t mode)
->  		.mode = mode & S_IALLUGO,
->  	};
->  
-> +	/* O_MAYEXEC is ignored by syscalls relying on build_open_how(). */
-> +	how.flags &= ~O_MAYEXEC;
->  	/* O_PATH beats everything else. */
->  	if (how.flags & O_PATH)
->  		how.flags &= O_PATH_FLAGS;
-> @@ -1054,6 +1056,12 @@ inline int build_open_flags(const struct open_how *how, struct open_flags *op)
->  	if (flags & __O_SYNC)
->  		flags |= O_DSYNC;
->  
-> +	/* Checks execution permissions on open. */
-> +	if (flags & O_MAYEXEC) {
-> +		acc_mode |= MAY_OPENEXEC;
-> +		flags |= __FMODE_EXEC;
-> +	}
+On Tue, Jul 14, 2020 at 08:16:36PM +0200, Mickaël Salaün wrote:
+> @@ -2849,7 +2855,7 @@ static int may_open(const struct path *path, int acc_mode, int flag)
+>  	case S_IFLNK:
+>  		return -ELOOP;
+>  	case S_IFDIR:
+> -		if (acc_mode & (MAY_WRITE | MAY_EXEC))
+> +		if (acc_mode & (MAY_WRITE | MAY_EXEC | MAY_OPENEXEC))
+>  			return -EISDIR;
+>  		break;
 
-Adding __FMODE_EXEC here will immediately change the behaviors of NFS
-and fsnotify. If that's going to happen, I think it needs to be under
-the control of the later patches doing the behavioral controls.
-(specifically, NFS looks like it completely changes its access control
-test when this is set and ignores the read/write checks entirely, which
-is not what's wanted).
+(I need to figure out where "open for reading" rejects S_IFDIR, since
+it's clearly not here...)
 
+>  	case S_IFBLK:
+> @@ -2859,13 +2865,26 @@ static int may_open(const struct path *path, int acc_mode, int flag)
+>  		fallthrough;
+>  	case S_IFIFO:
+>  	case S_IFSOCK:
+> -		if (acc_mode & MAY_EXEC)
+> +		if (acc_mode & (MAY_EXEC | MAY_OPENEXEC))
+>  			return -EACCES;
+>  		flag &= ~O_TRUNC;
+>  		break;
+
+This will immediately break a system that runs code with MAY_OPENEXEC
+set but reads from a block, char, fifo, or socket, even in the case of
+a sysadmin leaving the "file" sysctl disabled.
+
+>  	case S_IFREG:
+> -		if ((acc_mode & MAY_EXEC) && path_noexec(path))
+> -			return -EACCES;
+> +		if (path_noexec(path)) {
+> +			if (acc_mode & MAY_EXEC)
+> +				return -EACCES;
+> +			if ((acc_mode & MAY_OPENEXEC) &&
+> +					(sysctl_open_mayexec_enforce & OPEN_MAYEXEC_ENFORCE_MOUNT))
+> +				return -EACCES;
+> +		}
+> +		if ((acc_mode & MAY_OPENEXEC) &&
+> +				(sysctl_open_mayexec_enforce & OPEN_MAYEXEC_ENFORCE_FILE))
+> +			/*
+> +			 * Because acc_mode may change here, the next and only
+> +			 * use of acc_mode should then be by the following call
+> +			 * to inode_permission().
+> +			 */
+> +			acc_mode |= MAY_EXEC;
+>  		break;
+>  	}
+
+Likely very minor, but I'd like to avoid the path_noexec() call in the
+fast-path (it dereferences a couple pointers where as doing bit tests on
+acc_mode is fast).
+
+Given that and the above observations, I think that may_open() likely
+needs to start with:
+
+	if (acc_mode & MAY_OPENEXEC) {
+		/* Reject all file types when mount enforcement set. */
+		if ((sysctl_open_mayexec_enforce & OPEN_MAYEXEC_ENFORCE_MOUNT) &&
+		    path_noexec(path))
+			return -EACCES;
+		/* Treat the same as MAY_EXEC. */
+		if (sysctl_open_mayexec_enforce & OPEN_MAYEXEC_ENFORCE_FILE))
+			acc_mode |= MAY_EXEC;
+	}
+
+(Though I'm not 100% sure that path_noexec() is safe to be called for
+all file types: i.e. path->mnt and path->-mnt->mnt_sb *always* non-NULL?)
+
+This change would also imply that OPEN_MAYEXEC_ENFORCE_FILE *includes*
+OPEN_MAYEXEC_ENFORCE_MOUNT (i.e. the sysctl should not be a bitfield),
+since path_noexec() would get checked for S_ISREG. I can't come up with
+a rationale where one would want OPEN_MAYEXEC_ENFORCE_FILE but _not_
+OPEN_MAYEXEC_ENFORCE_MOUNT?
+
+(I can absolutely see wanting only OPEN_MAYEXEC_ENFORCE_MOUNT, or
+suddenly one has to go mark every loaded thing with the exec bit and
+most distros haven't done this to, for example, shared libraries. But
+setting the exec bit and then NOT wanting to enforce the mount check
+seems... not sensible?)
+
+Outside of this change, yes, I like this now -- it's much cleaner
+because we have all the checks in the same place where they belong. :)
+
+> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+> index db1ce7af2563..5008a2566e79 100644
+> --- a/kernel/sysctl.c
+> +++ b/kernel/sysctl.c
+> @@ -113,6 +113,7 @@ static int sixty = 60;
+>  
+>  static int __maybe_unused neg_one = -1;
+>  static int __maybe_unused two = 2;
+> +static int __maybe_unused three = 3;
+>  static int __maybe_unused four = 4;
+>  static unsigned long zero_ul;
+>  static unsigned long one_ul = 1;
+
+Oh, are these still here? I thought they got removed (or at least made
+const). Where did that series go? Hmpf, see sysctl_vals, but yes, for
+now, this is fine.
+
+> @@ -888,7 +889,6 @@ static int proc_taint(struct ctl_table *table, int write,
+>  	return err;
+>  }
+>  
+> -#ifdef CONFIG_PRINTK
+>  static int proc_dointvec_minmax_sysadmin(struct ctl_table *table, int write,
+>  				void *buffer, size_t *lenp, loff_t *ppos)
+>  {
+> @@ -897,7 +897,6 @@ static int proc_dointvec_minmax_sysadmin(struct ctl_table *table, int write,
+>  
+>  	return proc_dointvec_minmax(table, write, buffer, lenp, ppos);
+>  }
+> -#endif
+>  
+>  /**
+>   * struct do_proc_dointvec_minmax_conv_param - proc_dointvec_minmax() range checking structure
+> @@ -3264,6 +3263,15 @@ static struct ctl_table fs_table[] = {
+>  		.extra1		= SYSCTL_ZERO,
+>  		.extra2		= &two,
+>  	},
+> +	{
+> +		.procname       = "open_mayexec_enforce",
+> +		.data           = &sysctl_open_mayexec_enforce,
+> +		.maxlen         = sizeof(int),
+> +		.mode           = 0600,
+> +		.proc_handler	= proc_dointvec_minmax_sysadmin,
+> +		.extra1		= SYSCTL_ZERO,
+> +		.extra2		= &three,
+> +	},
+>  #if defined(CONFIG_BINFMT_MISC) || defined(CONFIG_BINFMT_MISC_MODULE)
+>  	{
+>  		.procname	= "binfmt_misc",
+> -- 
+> 2.27.0
+> 
 
 -- 
 Kees Cook
