@@ -2,171 +2,145 @@ Return-Path: <SRS0=JoCX=A2=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-20.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F336C4345E
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jul 2020 15:49:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71FF3C433E1
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jul 2020 16:46:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 599C22065E
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jul 2020 15:49:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="V8Z90u3n"
+	by mail.kernel.org (Postfix) with ESMTP id 564FE2065D
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jul 2020 16:46:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727952AbgGOPtm (ORCPT
+        id S1726768AbgGOQqu convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 15 Jul 2020 11:49:42 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:45900 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725832AbgGOPs7 (ORCPT
+        Wed, 15 Jul 2020 12:46:50 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:48612 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726758AbgGOQqt (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 15 Jul 2020 11:48:59 -0400
-Received: from localhost.localdomain (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
-        by linux.microsoft.com (Postfix) with ESMTPSA id D03CB20B4909;
-        Wed, 15 Jul 2020 08:48:58 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com D03CB20B4909
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1594828139;
-        bh=JPlRumbOfvyOco8L8nkT1d2Rp+0/lx8FfGi5jva830E=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=V8Z90u3n3Edtg4DNq9sdR21/qS4DM3+DhjPKfEzdx22E2qNsyPmUqqBOCk6pwmgVO
-         naeoyfb93tlv0K16kntLc5r2JWk1OAGmpzaiZXNA9QQBz8DpsFKGa1RyNWiLyPMn5u
-         76U29TvGvk09P3mvIUXPQjup/USv/mMc5QIMVYPY=
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-To:     zohar@linux.ibm.com, stephen.smalley.work@gmail.com,
-        casey@schaufler-ca.com
-Cc:     jmorris@namei.org, linux-integrity@vger.kernel.org,
-        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v1 1/5] IMA: Add LSM_STATE func to measure LSM data
-Date:   Wed, 15 Jul 2020 08:48:49 -0700
-Message-Id: <20200715154853.23374-2-nramas@linux.microsoft.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20200715154853.23374-1-nramas@linux.microsoft.com>
-References: <20200715154853.23374-1-nramas@linux.microsoft.com>
+        Wed, 15 Jul 2020 12:46:49 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-52-I5MfYmGMN8WVVlleqrOfeQ-1; Wed, 15 Jul 2020 17:46:45 +0100
+X-MC-Unique: I5MfYmGMN8WVVlleqrOfeQ-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Wed, 15 Jul 2020 17:46:44 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Wed, 15 Jul 2020 17:46:44 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Kees Cook' <keescook@chromium.org>
+CC:     'Christoph Hellwig' <hch@infradead.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        James Morris <jmorris@namei.org>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        "John Johansen" <john.johansen@canonical.com>
+Subject: RE: [PATCH 7/7] exec: Implement kernel_execve
+Thread-Topic: [PATCH 7/7] exec: Implement kernel_execve
+Thread-Index: AQHWWnMrd4ih7YlzG0aqMJfp5omyT6kIuIaQ///1mACAACJpAA==
+Date:   Wed, 15 Jul 2020 16:46:44 +0000
+Message-ID: <dc8371b7e05d4aa49eefcfd402b3fa1e@AcuMS.aculab.com>
+References: <871rle8bw2.fsf@x220.int.ebiederm.org>
+ <87wo365ikj.fsf@x220.int.ebiederm.org> <202007141446.A72A4437C@keescook>
+ <20200715064248.GH32470@infradead.org>
+ <d6d204c4427b49f6b24ac24bf1082fa4@AcuMS.aculab.com>
+ <202007150801.27B6690@keescook>
+In-Reply-To: <202007150801.27B6690@keescook>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Critical data structures of security modules need to be measured to
-enable an attestation service to verify if the policies and
-configuration have been setup correctly and that they haven't been
-tampered with at runtime. A new IMA policy is required for handling
-this measurement.
+From: Kees Cook <keescook@chromium.org>
+> Sent: 15 July 2020 16:09
+> 
+> On Wed, Jul 15, 2020 at 02:55:50PM +0000, David Laight wrote:
+> > From: Christoph Hellwig
+> > > Sent: 15 July 2020 07:43
+> > > Subject: Re: [PATCH 7/7] exec: Implement kernel_execve
+> > >
+> > > On Tue, Jul 14, 2020 at 02:49:23PM -0700, Kees Cook wrote:
+> > > > On Tue, Jul 14, 2020 at 08:31:40AM -0500, Eric W. Biederman wrote:
+> > > > > +static int count_strings_kernel(const char *const *argv)
+> > > > > +{
+> > > > > +	int i;
+> > > > > +
+> > > > > +	if (!argv)
+> > > > > +		return 0;
+> > > > > +
+> > > > > +	for (i = 0; argv[i]; ++i) {
+> > > > > +		if (i >= MAX_ARG_STRINGS)
+> > > > > +			return -E2BIG;
+> > > > > +		if (fatal_signal_pending(current))
+> > > > > +			return -ERESTARTNOHAND;
+> > > > > +		cond_resched();
+> > > > > +	}
+> > > > > +	return i;
+> > > > > +}
+> > > >
+> > > > I notice count() is only ever called with MAX_ARG_STRINGS. Perhaps
+> > > > refactor that too? (And maybe rename it to count_strings_user()?)
+> >
+> > Thinks....
+> > If you setup env[] and argv[] on the new user stack early in exec processing
+> > then you may not need any limits at all - except the size of the user stack.
+> > Even the get_user() loop will hit an invalid address before the counter
+> > wraps (provided it is unsigned long).
+> 
+> *grumpy noises* Yes, but not in practice (if I'm understanding what you
+> mean). The expectations of a number of execution environments can be
+> really odd-ball. I've tried to collect the notes from over the years in
+> prepare_arg_pages()'s comments, and it mostly boils down to "there has
+> to be enough room for the exec to start" otherwise the exec ends up in a
+> hard-to-debug failure state (i.e. past the "point of no return", where you
+> get no useful information about the cause of the SEGV). So the point has
+> been to move as many of the setup checks as early as possible and report
+> about them if they fail. The argv processing is already very early, but
+> it needs to do the limit checks otherwise it'll just break after the exec
+> is underway and the process will just SEGV. (And ... some environments
+> will attempt to dynamically check the size of the argv space by growing
+> until it sees E2BIG, so we can't just remove it and let those hit SEGV.)
 
-Define a new IMA policy func namely LSM_STATE to measure data provided
-by security modules. Update ima_match_rules() to check for LSM_STATE
-and ima_parse_rule() to handle LSM_STATE.
+Yes - I bet the code is horrid.
+I guess the real problem is that you'd need access to the old process's
+user addresses and the new process's stack area at the same time.
+Unless there is a suitable hole in the old process's address map
+any attempted trick will fall foul of cache aliasing on some
+architectures - like anything else that does page-loaning.
 
-Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
----
- Documentation/ABI/testing/ima_policy |  6 +++++-
- security/integrity/ima/ima.h         |  1 +
- security/integrity/ima/ima_api.c     |  2 +-
- security/integrity/ima/ima_policy.c  | 29 +++++++++++++++++++++++-----
- 4 files changed, 31 insertions(+), 7 deletions(-)
+I'm sure there are hair-brained schemes that might work.
 
-diff --git a/Documentation/ABI/testing/ima_policy b/Documentation/ABI/testing/ima_policy
-index cd572912c593..355bc3eade33 100644
---- a/Documentation/ABI/testing/ima_policy
-+++ b/Documentation/ABI/testing/ima_policy
-@@ -29,7 +29,7 @@ Description:
- 		base: 	func:= [BPRM_CHECK][MMAP_CHECK][CREDS_CHECK][FILE_CHECK][MODULE_CHECK]
- 				[FIRMWARE_CHECK]
- 				[KEXEC_KERNEL_CHECK] [KEXEC_INITRAMFS_CHECK]
--				[KEXEC_CMDLINE] [KEY_CHECK]
-+				[KEXEC_CMDLINE] [KEY_CHECK] [LSM_STATE]
- 			mask:= [[^]MAY_READ] [[^]MAY_WRITE] [[^]MAY_APPEND]
- 			       [[^]MAY_EXEC]
- 			fsmagic:= hex value
-@@ -125,3 +125,7 @@ Description:
- 		keys added to .builtin_trusted_keys or .ima keyring:
- 
- 			measure func=KEY_CHECK keyrings=.builtin_trusted_keys|.ima
-+
-+		Example of measure rule using LSM_STATE to measure LSM data:
-+
-+			measure func=LSM_STATE
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 4515975cc540..880fda11a61b 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -200,6 +200,7 @@ static inline unsigned int ima_hash_key(u8 *digest)
- 	hook(POLICY_CHECK, policy)			\
- 	hook(KEXEC_CMDLINE, kexec_cmdline)		\
- 	hook(KEY_CHECK, key)				\
-+	hook(LSM_STATE, lsm_state)			\
- 	hook(MAX_CHECK, none)
- 
- #define __ima_hook_enumify(ENUM, str)	ENUM,
-diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
-index bf22de8b7ce0..0cebd2404dcf 100644
---- a/security/integrity/ima/ima_api.c
-+++ b/security/integrity/ima/ima_api.c
-@@ -176,7 +176,7 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
-  *		subj=, obj=, type=, func=, mask=, fsmagic=
-  *	subj,obj, and type: are LSM specific.
-  *	func: FILE_CHECK | BPRM_CHECK | CREDS_CHECK | MMAP_CHECK | MODULE_CHECK
-- *	| KEXEC_CMDLINE | KEY_CHECK
-+ *	| KEXEC_CMDLINE | KEY_CHECK | LSM_STATE
-  *	mask: contains the permission mask
-  *	fsmagic: hex value
-  *
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 66aa3e17a888..fc8457d9242b 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -417,15 +417,31 @@ static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
- 			    const char *keyring)
- {
- 	int i;
-+	int funcmatch = 0;
- 
--	if ((func == KEXEC_CMDLINE) || (func == KEY_CHECK)) {
-+	switch (func) {
-+	case KEXEC_CMDLINE:
-+	case KEY_CHECK:
-+	case LSM_STATE:
- 		if ((rule->flags & IMA_FUNC) && (rule->func == func)) {
- 			if (func == KEY_CHECK)
--				return ima_match_keyring(rule, keyring, cred);
--			return true;
--		}
--		return false;
-+				funcmatch = ima_match_keyring(rule, keyring,
-+							      cred) ? 1 : -1;
-+			else
-+				funcmatch = 1;
-+		} else
-+			funcmatch = -1;
-+
-+		break;
-+
-+	default:
-+		funcmatch = 0;
-+		break;
- 	}
-+
-+	if (funcmatch)
-+		return (funcmatch == 1) ? true : false;
-+
- 	if ((rule->flags & IMA_FUNC) &&
- 	    (rule->func != func && func != POST_SETATTR))
- 		return false;
-@@ -1068,6 +1084,9 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
- 				entry->func = KEXEC_CMDLINE;
- 			else if (strcmp(args[0].from, "KEY_CHECK") == 0)
- 				entry->func = KEY_CHECK;
-+			else if (strcmp(args[0].from, "LSM_STATE") == 0)
-+				entry->func = LSM_STATE;
-+
- 			else
- 				result = -EINVAL;
- 			if (!result)
--- 
-2.27.0
+	David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 
