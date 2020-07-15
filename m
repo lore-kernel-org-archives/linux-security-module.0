@@ -2,88 +2,322 @@ Return-Path: <SRS0=JoCX=A2=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7764AC433DF
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jul 2020 06:42:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25C14C433E5
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jul 2020 08:57:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4448420663
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jul 2020 06:42:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0315620657
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jul 2020 08:57:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="n6VpENxN"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VwL56rzq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728390AbgGOGmX (ORCPT
+        id S1729780AbgGOI5s (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 15 Jul 2020 02:42:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35664 "EHLO
+        Wed, 15 Jul 2020 04:57:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56696 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728083AbgGOGmX (ORCPT
+        with ESMTP id S1727930AbgGOI5s (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 15 Jul 2020 02:42:23 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6767CC061755;
-        Tue, 14 Jul 2020 23:42:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=Kz6Ak33oyFzyD23XorNXlpEv5q052OBbABEdxzvwO+Q=; b=n6VpENxN5faEQqQNSiErYDeQ6c
-        l4eMYJXTm1vJ2IuMWv1S5IetbsVQCSJ66TCyW0ZhhDVaegB+CkMF48SSW20QCRMTy8tWZk4jZKfbp
-        KIDXEjO/QsZAMXoGak1csvjhqTWc6ZF0rJ4iVCqjRi8TKDPjhRE67+6cmLIZ9ucAtsMPXLvJ3EioJ
-        hcmQYotgCoH5DmaPIB+mnAQ4Ul2AuBqbhGwTKOBCQKl08f70g5ePEYZ+0u3uAWBVFmLd/W/1y9Q2D
-        83mYzpgK0jzhMQQlCEQ77wzb/bxyDqq5p0+pBsRVupAOOMhq4vOdPivK8VparG8FYz4xRQACzEzcB
-        lzN8jZTQ==;
-Received: from hch by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jvb7U-00019G-Pb; Wed, 15 Jul 2020 06:42:20 +0000
-Date:   Wed, 15 Jul 2020 07:42:20 +0100
-From:   Christoph Hellwig <hch@infradead.org>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        linux-security-module@vger.kernel.org,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        James Morris <jmorris@namei.org>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH 7/7] exec: Implement kernel_execve
-Message-ID: <20200715064220.GG32470@infradead.org>
-References: <871rle8bw2.fsf@x220.int.ebiederm.org>
- <87wo365ikj.fsf@x220.int.ebiederm.org>
+        Wed, 15 Jul 2020 04:57:48 -0400
+Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA3D4C061755
+        for <linux-security-module@vger.kernel.org>; Wed, 15 Jul 2020 01:57:47 -0700 (PDT)
+Received: by mail-wm1-x341.google.com with SMTP id f139so4766761wmf.5
+        for <linux-security-module@vger.kernel.org>; Wed, 15 Jul 2020 01:57:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=g4IiETtIm73dTeV+zNcJeVswphoArE8p5m7LV2qOzP0=;
+        b=VwL56rzqLCfipwEfbn4bZDsh3LdGgB7V4Ei23cIWWAe/544bfoX1CM6ZkxHHQAbvZy
+         r2wa1XiaBjlrrd3sj3msy5kGI/1y2UhhdeibAu2pJikFOz7a6376g2a0Q9vgeqqtwHSj
+         mfDvqKMf8YdjDjux5FeFxYfHeZ1epT7TS20tw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=g4IiETtIm73dTeV+zNcJeVswphoArE8p5m7LV2qOzP0=;
+        b=d9BQ7OjBzVG3H2LMVLkZhoeTZnaP2/77LgizxUZxr3W85vQrUa6qkBF/mS707W9v1X
+         jZrbraQ8dhjJUSyAP2S2oA8VT+s8LceiuWd8d6ZlSJNThGY5Y2O1Gz+JmfQHS4GFz9O3
+         7nhC3AUDuhhJGrI8Yxj5hhSXW4v5HuKmWlBOAN8eYn/EXABbswn/AKyCCy1oFIcltEtF
+         +K9ZThvwlfSRZ7pfZDWo6CYYZiMXDvQt69xciHf9PORgW1pCmslLc22TeymTYemz0cdK
+         d/RcVLJlsyaK24089x0RSHKi3qpKa8WyKrNjMUfftTIwJla4ioKAIvVrvAPLnkhfbZC4
+         bymg==
+X-Gm-Message-State: AOAM532wP+vWtZ01W/b+WJeihi+sPGoZm2wwaMooIEFjD+KflaLmgO/o
+        qHb+rTshYVES2or7oVWAndc0uWNsQUvPB2tKmEHWb/H0
+X-Google-Smtp-Source: ABdhPJyFutkBb9pd5Ntq3OBM44EWmhWOcL6F8vUceUKIrPpwVRtnTunOc9c6AqmJz1+hvmi+kwbB11hYY7U7I2orynA=
+X-Received: by 2002:a7b:c84d:: with SMTP id c13mr7584704wml.170.1594803466398;
+ Wed, 15 Jul 2020 01:57:46 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87wo365ikj.fsf@x220.int.ebiederm.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+References: <20200709101239.3829793-1-kpsingh@chromium.org>
+ <20200709101239.3829793-2-kpsingh@chromium.org> <20200710065917.4333wchwofpl7m2s@kafai-mbp>
+ <CACYkzJ7szyY8vY=Rv_gr7RbMty=pxyZpPPzTpaREAa5_k0tAfg@mail.gmail.com>
+ <20200715064339.gxtb4qwl77macuxt@kafai-mbp> <CACYkzJ7GmSPt8WV5nSNB2irH+Dn9QywSabZyLvqEcae2-jTuHQ@mail.gmail.com>
+In-Reply-To: <CACYkzJ7GmSPt8WV5nSNB2irH+Dn9QywSabZyLvqEcae2-jTuHQ@mail.gmail.com>
+From:   KP Singh <kpsingh@chromium.org>
+Date:   Wed, 15 Jul 2020 10:57:35 +0200
+Message-ID: <CACYkzJ5m4e0P5cU34jnOsN9ide=tWj7NdqtQ3Wfaa6xxCWvsYg@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v4 1/4] bpf: Generalize bpf_sk_storage
+To:     Martin KaFai Lau <kafai@fb.com>
+Cc:     bpf <bpf@vger.kernel.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-> +static int count_strings_kernel(const char *const *argv)
-> +{
-> +	int i;
-> +
-> +	if (!argv)
-> +		return 0;
-> +
-> +	for (i = 0; argv[i]; ++i) {
-> +		if (i >= MAX_ARG_STRINGS)
-> +			return -E2BIG;
-> +		if (fatal_signal_pending(current))
-> +			return -ERESTARTNOHAND;
-> +		cond_resched();
+[+lists]
 
-I don't think we need a fatal_signal_pending and cond_resched() is
-needed in each step given that we don't actually do anything.
+I inadvertently missed them in my previous reply.
+
+On Wed, Jul 15, 2020 at 10:22 AM KP Singh <kpsingh@chromium.org> wrote:
+>
+> On Wed, Jul 15, 2020 at 8:43 AM Martin KaFai Lau <kafai@fb.com> wrote:
+> >
+> > On Tue, Jul 14, 2020 at 11:42:56PM +0200, KP Singh wrote:
+> > >
+> > >
+> > > On Fri, Jul 10, 2020 at 8:59 AM Martin KaFai Lau <kafai@fb.com> wrote:
+> > > >
+> > > > On Thu, Jul 09, 2020 at 12:12:36PM +0200, KP Singh wrote:
+> > > > > From: KP Singh <kpsingh@google.com>
+> > > > >
+> > > > > Refactor the functionality in bpf_sk_storage.c so that concept of
+> > > > > storage linked to kernel objects can be extended to other objects like
+> > > > > inode, task_struct etc.
+> > > > >
+> > > > > bpf_sk_storage is updated to be bpf_local_storage with a union that
+> > > > > contains a pointer to the owner object.
+> > > >
+> > > > > The type of the
+> > > > > bpf_local_storage can be determined using the newly added
+> > > > > bpf_local_storage_type enum.
+> > > > This is out dated.
+> > > >
+> > > > >
+> > > > > Each new local storage will still be a separate map and provide its own
+> > > > > set of helpers. This allows for future object specific extensions and
+> > > > > still share a lot of the underlying implementation.
+> > > > Thanks for v4.
+> > > >
+> > > > I do find it quite hard to follow by directly moving to
+> > > > bpf_local_storage.c without doing all the renaming locally
+> > > > at bpf_sk_storage.c first.  I will try my best to follow.
+> > > >
+> > >
+> > > Thanks for painfully going through it. Will make it easier next time :)
+> > >
+> > > > There are some unnecessary name/convention change and function
+> > > > folding that do not help on this side either.  Please keep them
+> > > > unchanged for now and they can use another patch in the future if needed.
+> > > > It will be easier to have a mostly one to one naming change
+> > > > and please mention them in the commit message.
+> > >
+> > > So I am going to split the first change as:
+> > >
+> > > - A mechcanical change that does the following renames:
+> > >
+> > > Flags/consts:
+> > >
+> > >   SK_STORAGE_CREATE_FLAG_MASK -> BPF_LOCAL_STORAGE_CREATE_FLAG_MASK
+> > >   BPF_SK_STORAGE_CACHE_SIZE -> BPF_LOCAL_STORAGE_CACHE_SIZE
+> > >   MAX_VALUE_SIZE -> BPF_LOCAL_STORAGE_MAX_VALUE_SIZE
+> > >
+> > > Structs:
+> > >
+> > >   bucket -> bpf_local_storage_map_bucket
+> > >   bpf_sk_storage_map -> bpf_local_storage_map
+> > >   bpf_sk_storage_data -> bpf_local_storage_data
+> > >   bpf_sk_storage_elem -> bpf_local_storage_elem
+> > >   bpf_sk_storage -> bpf_local_storage
+> > >   selem_linked_to_sk -> selem_linked_to_storage
+> > >   selem_alloc -> bpf_selem_alloc
+> > >
+> > >   and in bpf_local_storage change the name of the sk -> owner
+> > >   (the type change happens in a subsequent patch).
+> > >
+> > > Functions:
+> > >
+> > >   __selem_unlink_sk -> bpf_selem_unlink_storage
+> > >   __selem_link_sk -> bpf_selem_link_storage
+> > >   selem_unlink_sk -> __bpf_selem_unlink_storage
+> > >   sk_storage_update -> bpf_local_storage_update
+> > >   __sk_storage_lookup -> bpf_local_storage_lookup
+> > >   bpf_sk_storage_map_free -> bpf_local_storage_map_free
+> > >   bpf_sk_storage_map_alloc -> bpf_local_storage_map_alloc
+> > >   bpf_sk_storage_map_alloc_check -> bpf_local_storage_map_alloc_check
+> > >   bpf_sk_storage_map_check_btf -> bpf_local_storage_map_check_btf
+> > >
+> > > - Split the caching generalization into its separate patch.
+> > > - Do the rest of the changes within bpf_sk_storage.c without any
+> > >   splitting to make the review easier.
+> > > - Another mechanical no-change split into
+> > >   bpf_local_storage.
+> > >
+> > > Hope this would make the review easier for you. Let me know if you
+> > > have any concerns with the naming / split of patches.
+> > That will be much better. Thanks!
+> >
+> > > > [ ... ]
+> > > >
+> > > > > +static struct bpf_local_storage_data *
+> > > > > +sk_storage_update(void *owner, struct bpf_map *map, void *value, u64 map_flags)
+> > > > >  {
+> > > > > -     struct bpf_sk_storage_data *old_sdata = NULL;
+> > > > > -     struct bpf_sk_storage_elem *selem;
+> > > > > -     struct bpf_sk_storage *sk_storage;
+> > > > > -     struct bpf_sk_storage_map *smap;
+> > > > > +     struct bpf_local_storage_data *old_sdata = NULL;
+> > > > > +     struct bpf_local_storage_elem *selem;
+> > > > > +     struct bpf_local_storage *local_storage;
+> > > > > +     struct bpf_local_storage_map *smap;
+> > > > > +     struct sock *sk;
+> > > > >       int err;
+> > > > >
+> > > > > -     /* BPF_EXIST and BPF_NOEXIST cannot be both set */
+> > > > > -     if (unlikely((map_flags & ~BPF_F_LOCK) > BPF_EXIST) ||
+> > > > > -         /* BPF_F_LOCK can only be used in a value with spin_lock */
+> > > > > -         unlikely((map_flags & BPF_F_LOCK) && !map_value_has_spin_lock(map)))
+> > > > > -             return ERR_PTR(-EINVAL);
+> > > > > +     err = bpf_local_storage_check_update_flags(map, map_flags);
+> > > > > +     if (err)
+> > > > > +             return ERR_PTR(err);
+> > > > >
+> > > > > -     smap = (struct bpf_sk_storage_map *)map;
+> > > > > -     sk_storage = rcu_dereference(sk->sk_bpf_storage);
+> > > > > -     if (!sk_storage || hlist_empty(&sk_storage->list)) {
+> > > > > -             /* Very first elem for this sk */
+> > > > > -             err = check_flags(NULL, map_flags);
+> > > > > -             if (err)
+> > > > > -                     return ERR_PTR(err);
+> > > > > +     sk = owner;
+> > > > > +     local_storage = rcu_dereference(sk->sk_bpf_storage);
+> > > > > +     smap = (struct bpf_local_storage_map *)map;
+> > > > >
+> > > > > -             selem = selem_alloc(smap, sk, value, true);
+> > > > > +     if (!local_storage || hlist_empty(&local_storage->list)) {
+> > > > > +             /* Very first elem */
+> > > > > +             selem = map->ops->map_selem_alloc(smap, owner, value, !old_sdata);
+> > >
+> > > > hmmm... If this map_selem_alloc is directly called here in sk_storage instead
+> > > > of the common local_storage, does it have to be in map_ops?
+> > >
+> > > map_selem_alloc is also called from bpf_local_storage_update as well.
+> > > However, map_local_storage_alloc is only called from here
+> > > and we probably don't need that, so I removed it.
+> > Ah. right, I meant map_local_storage_alloc.
+> > Sorry for the confusion.
+> >
+> > >
+> > > >
+> > > > >               if (!selem)
+> > > > >                       return ERR_PTR(-ENOMEM);
+> > > > >
+> > > > > -             err = sk_storage_alloc(sk, smap, selem);
+> > > > > +             err = map->ops->map_local_storage_alloc(owner, smap, selem);
+> > > > >               if (err) {
+> > > > >                       kfree(selem);
+> > > > >                       atomic_sub(smap->elem_size, &sk->sk_omem_alloc);
+> > > >
+> > > > [ ... ]
+> > > >
+> > > > > -static void bpf_sk_storage_map_free(struct bpf_map *map)
+> > > > > +static void *bpf_sk_storage_lookup_elem(struct bpf_map *map, void *key)
+> > > > Hmmm... this change here... keep scrolling down and down .... :)
+> > > >
+> > > > >  {
+> > > > > -     struct bpf_sk_storage_elem *selem;
+> > > > > -     struct bpf_sk_storage_map *smap;
+> > > > > -     struct bucket *b;
+> > > > > -     unsigned int i;
+> > >
+> > > [...]
+> > >
+> > > > > -
+> > > > > -     smap = (struct bpf_sk_storage_map *)map;
+> > > > > -}
+> > > > > -
+> > > > > -static void *bpf_fd_sk_storage_lookup_elem(struct bpf_map *map, void *key)
+> > > > .... finally got it :p
+> > > >
+> > > > > -{
+> > > > > -     struct bpf_sk_storage_data *sdata;
+> > > > > +     struct bpf_local_storage_data *sdata;
+> > > > >       struct socket *sock;
+> > > > > -     int fd, err;
+> > > > > +     int fd, err = -EINVAL;
+> > > > This is a bug fix or to suppress compiler warning?
+> > >
+> > > I did not see any compiler warning. This came up in an internal
+> > > discussion to protect against the (albeit hypothetical) case where the
+> > > sockfd_lookup does not set err.
+> > I don't see an issue in sockfd_lookup().
+> > There are other cases in the kernel depending on sockfd_lookup() to set
+> > the err properly.  I don't see it is enough to only workaround it in
+> > this lookup function but not everywhere else.
+> > If sockfd_lookup() had a bug, fix it there instead of asking
+> > everybody to work around it.
+>
+> I agree. I dropped this change.
+>
+> >
+> > >
+> > > >
+> > > > >
+> > > > >       fd = *(int *)key;
+> > > > >       sock = sockfd_lookup(fd, &err);
+> > > > > @@ -752,17 +223,18 @@ static void *bpf_fd_sk_storage_lookup_elem(struct bpf_map *map, void *key)
+> > > > >       return ERR_PTR(err);
+> > > > >  }
+> > > > >
+> > > >
+> > > > [ ... ]
+> > > >
+> > > > >  static int sk_storage_map_btf_id;
+> > > > >  const struct bpf_map_ops sk_storage_map_ops = {
+> > > > > -     .map_alloc_check = bpf_sk_storage_map_alloc_check,
+> > > > > -     .map_alloc = bpf_sk_storage_map_alloc,
+> > > > > -     .map_free = bpf_sk_storage_map_free,
+> > > > > +     .map_alloc_check = bpf_local_storage_map_alloc_check,
+> > > > > +     .map_alloc = sk_storage_map_alloc,
+> > > > > +     .map_free = sk_storage_map_free,
+> > > > >       .map_get_next_key = notsupp_get_next_key,
+> > > > > -     .map_lookup_elem = bpf_fd_sk_storage_lookup_elem,
+> > > > > -     .map_update_elem = bpf_fd_sk_storage_update_elem,
+> > > > > -     .map_delete_elem = bpf_fd_sk_storage_delete_elem,
+> > > > Why this "_fd_" name change?
+> > >
+> > > Shouldn't really be needed as a part of this series. So I will drop
+> > > it. Do you want the corresponding inode functions to also have fd
+> > > in the name?
+> > I don't have strong opinion on the name here or in bpf_inode_storage.
+>
+> Me neither. :)
+>
+> > I think the idea in this patch is to have consistent naming with
+> > bpf_inode_storage.
+>
+> I think the fd makes sense here (in sk_storage) because the key is an fd,
+> it would not make sense for an inode storage though.
+>
+> >
+> > For a short and small patch, I don't mind to squash this naming change
+> > into a single patch.  However, this refactoring effort is not a small change.
+> >
+> > My only point is, if unncessary renaming/function-folding
+> > is really desired in bpf_sk_storage,  please do it in a separate patch.
+> > Unnecessary changes will make this refactoring effort less clean and harder
+> > for the future reviewer to look back what has been done and why.
+> >
+>
+> I agree. I think I had ended up renaming them to understand the code better
+> and forgot to revert these changes, as you might have seen tracking / reviewing
+> them in a giant patch was hard.
+>
+> > Thanks,
+> > Martin
