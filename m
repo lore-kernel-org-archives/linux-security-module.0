@@ -2,145 +2,233 @@ Return-Path: <SRS0=JoCX=A2=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-17.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02172C433E3
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jul 2020 18:34:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 361D4C433E4
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jul 2020 19:17:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DB1DB20672
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jul 2020 18:34:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19BB52076C
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jul 2020 19:17:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="ENfLP4xn"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="AtQ4ANyq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726820AbgGOSeJ (ORCPT
+        id S1726821AbgGOTRE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 15 Jul 2020 14:34:09 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:38982 "EHLO
+        Wed, 15 Jul 2020 15:17:04 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:44234 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726034AbgGOSeJ (ORCPT
+        with ESMTP id S1726742AbgGOTQq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 15 Jul 2020 14:34:09 -0400
-Received: from [192.168.0.104] (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 0456D20B4908;
-        Wed, 15 Jul 2020 11:34:07 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0456D20B4908
+        Wed, 15 Jul 2020 15:16:46 -0400
+Received: from sequoia (162-237-133-238.lightspeed.rcsntx.sbcglobal.net [162.237.133.238])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 57B7F20B4908;
+        Wed, 15 Jul 2020 12:16:19 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 57B7F20B4908
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1594838048;
-        bh=h/hY55Q0qtm8L3rDWYxgRPeKHyFR7vIM/95MK08uoXY=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=ENfLP4xnfL87tgV8bYKfz92gup/o0XmaYAr+T2UGIZhJW860xPQ5YxZUznSchJTxn
-         GHmpXHtBTgrY48padhK2h6/aqsJrBj6X9abd+M9RE+9iyXjHt5b43Q/u3EbyiYhWvZ
-         aOX3AM4xbrCHDMgVdUB3IWeUaHkvalD8r3+0cpGg=
-Subject: Re: [PATCH v1 4/5] LSM: Define SELinux function to measure security
- state
-To:     Stephen Smalley <stephen.smalley.work@gmail.com>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        James Morris <jmorris@namei.org>,
+        s=default; t=1594840580;
+        bh=UWGs7/duiBxGsOajSPhznATeEZNTIvIT7z0CfurjKPs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=AtQ4ANyqaj6Uj0YRg8qc9b5pYtQCaff87NoEQAxW5c0zBREGYQuchjVgHQdDCj8oM
+         /GvJb8FSUQuvO/e1TwLqtK8//i2IhlFHexBR2+P58o2riBIsAF4Gvi6F/j2S118bl7
+         +6zBiYPodt/qIGlByb78XSsNS1/Ui3BltYWOBlnY=
+Date:   Wed, 15 Jul 2020 14:16:17 -0500
+From:   Tyler Hicks <tyhicks@linux.microsoft.com>
+To:     deven.desai@linux.microsoft.com
+Cc:     agk@redhat.com, axboe@kernel.dk, snitzer@redhat.com,
+        jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com,
         linux-integrity@vger.kernel.org,
-        SElinux list <selinux@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <20200715154853.23374-1-nramas@linux.microsoft.com>
- <20200715154853.23374-5-nramas@linux.microsoft.com>
- <CAEjxPJ6UsK9QqFTpMKjgSin2Q6D-5NCNDS0enuRNuixVP9H2wQ@mail.gmail.com>
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Message-ID: <fec80278-1306-787d-a8ed-615a3709ae77@linux.microsoft.com>
-Date:   Wed, 15 Jul 2020 11:34:07 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        linux-security-module@vger.kernel.org, dm-devel@redhat.com,
+        linux-block@vger.kernel.org, jannh@google.com,
+        pasha.tatashin@soleen.com, sashal@kernel.org,
+        jaskarankhurana@linux.microsoft.com, nramas@linux.microsoft.com,
+        mdsakib@linux.microsoft.com, linux-kernel@vger.kernel.org,
+        corbet@lwn.net
+Subject: Re: [RFC PATCH v3 03/12] security: add ipe lsm policy parser and
+ policy loading
+Message-ID: <20200715191617.GD3673@sequoia>
+References: <20200415162550.2324-1-deven.desai@linux.microsoft.com>
+ <20200415162550.2324-4-deven.desai@linux.microsoft.com>
 MIME-Version: 1.0
-In-Reply-To: <CAEjxPJ6UsK9QqFTpMKjgSin2Q6D-5NCNDS0enuRNuixVP9H2wQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200415162550.2324-4-deven.desai@linux.microsoft.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 7/15/20 11:04 AM, Stephen Smalley wrote:
-
->> +static inline bool selinux_checkreqprot(void)
->> +{
->> +       struct selinux_state *state = &selinux_state;
->> +
->> +       return state->checkreqprot;
->> +}
+On 2020-04-15 09:25:41, deven.desai@linux.microsoft.com wrote:
+> From: Deven Bowers <deven.desai@linux.microsoft.com>
 > 
-> Probably should use READ_ONCE().
-Will do.
-
+> Adds the policy parser and the policy loading to IPE, along with the
+> related sysfs, securityfs entries, and audit events.
 > 
->> diff --git a/security/selinux/measure.c b/security/selinux/measure.c
->> new file mode 100644
->> index 000000000000..b909e8e61542
->> --- /dev/null
->> +++ b/security/selinux/measure.c
->> @@ -0,0 +1,122 @@
->> +int selinux_security_state(void)
-> 
-> Let's call this selinux_measure_state() or similar.  Needs a verb. And
-> pass it a struct selinux_state * pointer argument to be measured, even
-> though initially it will always be passed &selinux_state.  The
-> encapsulation of selinux state within selinux_state was to support
-> multiple selinux namespaces in the future, each with their own state.
-Will do.
+> Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
+> ---
 
->> +       static char *security_state_string =
->> +                       "enabled=%d;enforcing=%d;checkreqprot=%d;"        \
->> +                       "netpeer=%d;openperm=%d;extsockclass=%d;"         \
->> +                       "alwaysnetwork=%d;cgroupseclabel=%d;"             \
->> +                       "nnpnosuidtransition=%d;genfsseclabelsymlink=%d;";
-> 
-> Rather than hardcoding policy capability names here, I would recommend
-> using the selinux_policycap_names[] array for the names and the
-> selinux_state.policycap[] array for the values.  Also recommend
-> passing in a struct selinux_state * here to allow for future case
-> where there are multiple selinux states, one per selinux namespace.
-Will do.
+...
 
-> 
->> diff --git a/security/selinux/ss/services.c b/security/selinux/ss/services.c
->> index ef0afd878bfc..0c289d13ef6a 100644
->> --- a/security/selinux/ss/services.c
->> +++ b/security/selinux/ss/services.c
->> @@ -3724,10 +3724,11 @@ int security_netlbl_sid_to_secattr(struct selinux_state *state,
->>    * security_read_policy - read the policy.
->>    * @data: binary policy data
->>    * @len: length of data in bytes
->> - *
->> + * @alloc_kernel_memory: flag to indicate memory allocation
->>    */
->> -int security_read_policy(struct selinux_state *state,
->> -                        void **data, size_t *len)
->> +int security_read_selinux_policy(struct selinux_state *state,
->> +                                void **data, size_t *len,
->> +                                bool alloc_kernel_memory)
-> 
-> Instead of passing in a boolean to control how the memory is
-> allocated, split this into a helper function that takes an
-> already-allocated buffer and two
-> different front-end wrappers, one for kernel-internal use and one for
-> userspace use.
-Will do.
+> diff --git a/security/ipe/ipe-sysfs.c b/security/ipe/ipe-sysfs.c
+> index 1c65185c531d..a250da29c3b5 100644
+> --- a/security/ipe/ipe-sysfs.c
+> +++ b/security/ipe/ipe-sysfs.c
+> @@ -5,6 +5,7 @@
+>  
+>  #include "ipe.h"
+>  #include "ipe-audit.h"
+> +#include "ipe-secfs.h"
+>  
+>  #include <linux/sysctl.h>
+>  #include <linux/fs.h>
+> @@ -45,6 +46,79 @@ static int ipe_switch_mode(struct ctl_table *table, int write,
+>  
+>  #endif /* CONFIG_SECURITY_IPE_PERMISSIVE_SWITCH */
+>  
+> +#ifdef CONFIG_SECURITYFS
+> +
+> +/**
+> + * ipe_switch_active_policy: Handler to switch the policy IPE is enforcing.
+> + * @table: Sysctl table entry from the variable, sysctl_table.
+> + * @write: Integer indicating whether this is a write or a read.
+> + * @buffer: Data passed to sysctl. This is the policy id to activate,
+> + *	    for this function.
+> + * @lenp: Pointer to the size of @buffer.
+> + * @ppos: Offset into @buffer.
+> + *
+> + * This wraps proc_dointvec_minmax, and if there's a change, emits an
+> + * audit event.
+> + *
+> + * Return:
+> + * 0 - OK
+> + * -ENOMEM - Out of memory
+> + * -ENOENT - Policy identified by @id does not exist
+> + * Other - See proc_dostring and retrieve_backed_dentry
+> + */
+> +static int ipe_switch_active_policy(struct ctl_table *table, int write,
+> +				    void __user *buffer, size_t *lenp,
+> +				    loff_t *ppos)
+> +{
+> +	int rc = 0;
+> +	char *id = NULL;
+> +	size_t size = 0;
+> +
+> +	if (write) {
 
-> 
->> @@ -3738,7 +3739,10 @@ int security_read_policy(struct selinux_state *state,
->>
->>          *len = security_policydb_len(state);
->>
->> -       *data = vmalloc_user(*len);
->> +       if (alloc_kernel_memory)
->> +               *data = kzalloc(*len, GFP_KERNEL);
-> 
-> You need vmalloc() since policy image size may exceed kmalloc max (or
-> at least that used to be the case).
-Will do.
+I see that the policy files in securityfs, such as new_policy, are
+checking for CAP_MAC_ADMIN but there's no check here for CAP_MAC_ADMIN
+when switching the active policy. I think we should enforce that cap
+here, too.
 
-thanks,
-  -lakshmi
+Thinking about it some more, I find it a little odd that we're spreading
+the files necessary to update a policy across both procfs (sysctl) and
+securityfs. It looks like procfs will have different semantics than
+securityfs after looking at proc_sys_permission(). I suggest moving
+strict_parse and active_policy under securityfs for a unified experience
+and common location when updating policy.
 
+Tyler
 
+> +		id = kzalloc((*lenp) + 1, GFP_KERNEL);
+> +		if (!id)
+> +			return -ENOMEM;
+> +
+> +		table->data = id;
+> +		table->maxlen = (*lenp) + 1;
+> +
+> +		rc = proc_dostring(table, write, buffer, lenp, ppos);
+> +		if (rc != 0)
+> +			goto out;
+> +
+> +		rc = ipe_set_active_policy(id, strlen(id));
+> +	} else {
+> +		if (!rcu_access_pointer(ipe_active_policy)) {
+> +			table->data = "";
+> +			table->maxlen = 1;
+> +			return proc_dostring(table, write, buffer, lenp, ppos);
+> +		}
+> +
+> +		rcu_read_lock();
+> +		size = strlen(rcu_dereference(ipe_active_policy)->policy_name);
+> +		rcu_read_unlock();
+> +
+> +		id = kzalloc(size + 1, GFP_KERNEL);
+> +		if (!id)
+> +			return -ENOMEM;
+> +
+> +		rcu_read_lock();
+> +		strncpy(id, rcu_dereference(ipe_active_policy)->policy_name,
+> +			size);
+> +		rcu_read_unlock();
+> +
+> +		table->data = id;
+> +		table->maxlen = size;
+> +
+> +		rc = proc_dostring(table, write, buffer, lenp, ppos);
+> +	}
+> +out:
+> +	kfree(id);
+> +	return rc;
+> +}
+> +
+> +#endif /* CONFIG_SECURITYFS */
+> +
+>  static struct ctl_table_header *sysctl_header;
+>  
+>  static const struct ctl_path sysctl_path[] = {
+> @@ -75,6 +149,24 @@ static struct ctl_table sysctl_table[] = {
+>  		.extra1 = SYSCTL_ZERO,
+>  		.extra2 = SYSCTL_ONE,
+>  	},
+> +#ifdef CONFIG_SECURITYFS
+> +	{
+> +		.procname = "strict_parse",
+> +		.data = &ipe_strict_parse,
+> +		.maxlen = sizeof(int),
+> +		.mode = 0644,
+> +		.proc_handler = proc_dointvec_minmax,
+> +		.extra1 = SYSCTL_ZERO,
+> +		.extra2 = SYSCTL_ONE,
+> +	},
+> +	{
+> +		.procname = "active_policy",
+> +		.data = NULL,
+> +		.maxlen = 0,
+> +		.mode = 0644,
+> +		.proc_handler = ipe_switch_active_policy,
+> +	},
+> +#endif /* CONFIG_SECURITYFS */
+>  	{}
+>  };
+>  
+> diff --git a/security/ipe/ipe.c b/security/ipe/ipe.c
+> index b6553e370f98..07f855ffb79a 100644
+> --- a/security/ipe/ipe.c
+> +++ b/security/ipe/ipe.c
+> @@ -6,6 +6,7 @@
+>  #include "ipe.h"
+>  #include "ipe-policy.h"
+>  #include "ipe-hooks.h"
+> +#include "ipe-secfs.h"
+>  #include "ipe-sysfs.h"
+>  
+>  #include <linux/module.h>
+> @@ -60,3 +61,4 @@ DEFINE_LSM(ipe) = {
+>  
+>  int ipe_enforce = 1;
+>  int ipe_success_audit;
+> +int ipe_strict_parse;
+> diff --git a/security/ipe/ipe.h b/security/ipe/ipe.h
+> index 6a47f55b05d9..bf6cf7744b0e 100644
+> --- a/security/ipe/ipe.h
+> +++ b/security/ipe/ipe.h
+> @@ -16,5 +16,6 @@
+>  
+>  extern int ipe_enforce;
+>  extern int ipe_success_audit;
+> +extern int ipe_strict_parse;
+>  
+>  #endif /* IPE_H */
+> -- 
+> 2.26.0
