@@ -2,233 +2,246 @@ Return-Path: <SRS0=JoCX=A2=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 361D4C433E4
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jul 2020 19:17:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78A12C433DF
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jul 2020 20:06:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 19BB52076C
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jul 2020 19:17:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4CA952065F
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jul 2020 20:06:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="AtQ4ANyq"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PCMIvsfX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726821AbgGOTRE (ORCPT
+        id S1726954AbgGOUGa (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 15 Jul 2020 15:17:04 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:44234 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726742AbgGOTQq (ORCPT
+        Wed, 15 Jul 2020 16:06:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47102 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726650AbgGOUG2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 15 Jul 2020 15:16:46 -0400
-Received: from sequoia (162-237-133-238.lightspeed.rcsntx.sbcglobal.net [162.237.133.238])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 57B7F20B4908;
-        Wed, 15 Jul 2020 12:16:19 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 57B7F20B4908
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1594840580;
-        bh=UWGs7/duiBxGsOajSPhznATeEZNTIvIT7z0CfurjKPs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=AtQ4ANyqaj6Uj0YRg8qc9b5pYtQCaff87NoEQAxW5c0zBREGYQuchjVgHQdDCj8oM
-         /GvJb8FSUQuvO/e1TwLqtK8//i2IhlFHexBR2+P58o2riBIsAF4Gvi6F/j2S118bl7
-         +6zBiYPodt/qIGlByb78XSsNS1/Ui3BltYWOBlnY=
-Date:   Wed, 15 Jul 2020 14:16:17 -0500
-From:   Tyler Hicks <tyhicks@linux.microsoft.com>
-To:     deven.desai@linux.microsoft.com
-Cc:     agk@redhat.com, axboe@kernel.dk, snitzer@redhat.com,
-        jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com,
+        Wed, 15 Jul 2020 16:06:28 -0400
+Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3ACD5C061755
+        for <linux-security-module@vger.kernel.org>; Wed, 15 Jul 2020 13:06:28 -0700 (PDT)
+Received: by mail-pl1-x643.google.com with SMTP id b9so2837306plx.6
+        for <linux-security-module@vger.kernel.org>; Wed, 15 Jul 2020 13:06:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=YL19XoL2DCkvrhiZbpXv6h7Rc/+Lwr1rsydviLs8pFc=;
+        b=PCMIvsfXHhRDJz8Khz3VUsUkSsqo3SsGXmW6qozBpfFw4kwRb7k2005MBV/m480XJo
+         UJjjM2/i31FD6kd3JPB8hOvDWYGhWQ2O79+33d3StMVVlrSmwT3Jn2OjikQ0pG18Ox6N
+         0dOa8dwyh4myV41v2K0+FJWi/pMjoCl6QAT6I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=YL19XoL2DCkvrhiZbpXv6h7Rc/+Lwr1rsydviLs8pFc=;
+        b=UghJh2WuPGTIhZjxm+TL8zMggByYTvDpKA9I1Gv52vncBw1LSMdCZ+fGIXJU89wQyZ
+         fp367gYAbAm+s33T/ldQY23VEDybpFmEYJxQXfDuKn15FTGVw5mtongm+jtb/CTitBiK
+         9wYTC1taryJPY9fc2ACEVrtNEZrAK7hDoTjW4+CESJRhHhBZ1pLyPCYHHjSuy5erqmSs
+         idmJMV3U5I1vSpoer9NUJ+ZbNwtWhdrM4XQpZ6E1GKoCclX0rSMePDe8Om4CbMSrP3vo
+         V9rjCAKF102PQm6oFk4bjBwMZ8ZeHQzWWZUB3jkrgYQ5gdYgtH4nThYl5C1nshnOPbeZ
+         nfjQ==
+X-Gm-Message-State: AOAM532Rrya0IL8wRSLDrFYFf8Jx+cXxKnW2AexHxKZDyM7XzHaItmBz
+        2oPW+DswxwhCEb+pd28M3UO+tw==
+X-Google-Smtp-Source: ABdhPJxqPw/byppqYk72FBQJ1XrQVSH3bnxbDXc7/lfw9v75K7lcTOddZ1PpPFhX50QhSgkPHCK9SQ==
+X-Received: by 2002:a17:90a:bc98:: with SMTP id x24mr1196990pjr.63.1594843587647;
+        Wed, 15 Jul 2020 13:06:27 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id e20sm2721660pfl.212.2020.07.15.13.06.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Jul 2020 13:06:26 -0700 (PDT)
+Date:   Wed, 15 Jul 2020 13:06:25 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc:     linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Eric Chiang <ericchiang@google.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Philippe =?iso-8859-1?Q?Tr=E9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
         linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, dm-devel@redhat.com,
-        linux-block@vger.kernel.org, jannh@google.com,
-        pasha.tatashin@soleen.com, sashal@kernel.org,
-        jaskarankhurana@linux.microsoft.com, nramas@linux.microsoft.com,
-        mdsakib@linux.microsoft.com, linux-kernel@vger.kernel.org,
-        corbet@lwn.net
-Subject: Re: [RFC PATCH v3 03/12] security: add ipe lsm policy parser and
- policy loading
-Message-ID: <20200715191617.GD3673@sequoia>
-References: <20200415162550.2324-1-deven.desai@linux.microsoft.com>
- <20200415162550.2324-4-deven.desai@linux.microsoft.com>
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v6 4/7] fs: Introduce O_MAYEXEC flag for openat2(2)
+Message-ID: <202007151304.9F48071@keescook>
+References: <20200714181638.45751-1-mic@digikod.net>
+ <20200714181638.45751-5-mic@digikod.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20200415162550.2324-4-deven.desai@linux.microsoft.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200714181638.45751-5-mic@digikod.net>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2020-04-15 09:25:41, deven.desai@linux.microsoft.com wrote:
-> From: Deven Bowers <deven.desai@linux.microsoft.com>
+On Tue, Jul 14, 2020 at 08:16:35PM +0200, Mickaël Salaün wrote:
+> When the O_MAYEXEC flag is passed, openat2(2) may be subject to
+> additional restrictions depending on a security policy managed by the
+> kernel through a sysctl or implemented by an LSM thanks to the
+> inode_permission hook.  This new flag is ignored by open(2) and
+> openat(2) because of their unspecified flags handling.
 > 
-> Adds the policy parser and the policy loading to IPE, along with the
-> related sysfs, securityfs entries, and audit events.
+> The underlying idea is to be able to restrict scripts interpretation
+> according to a policy defined by the system administrator.  For this to
+> be possible, script interpreters must use the O_MAYEXEC flag
+> appropriately.  To be fully effective, these interpreters also need to
+> handle the other ways to execute code: command line parameters (e.g.,
+> option -e for Perl), module loading (e.g., option -m for Python), stdin,
+> file sourcing, environment variables, configuration files, etc.
+> According to the threat model, it may be acceptable to allow some script
+> interpreters (e.g. Bash) to interpret commands from stdin, may it be a
+> TTY or a pipe, because it may not be enough to (directly) perform
+> syscalls.  Further documentation can be found in a following patch.
 > 
-> Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
+> Even without enforced security policy, userland interpreters can set it
+> to enforce the system policy at their level, knowing that it will not
+> break anything on running systems which do not care about this feature.
+> However, on systems which want this feature enforced, there will be
+> knowledgeable people (i.e. sysadmins who enforced O_MAYEXEC
+> deliberately) to manage it.  A simple security policy implementation,
+> configured through a dedicated sysctl, is available in a following
+> patch.
+> 
+> O_MAYEXEC should not be confused with the O_EXEC flag which is intended
+> for execute-only, which obviously doesn't work for scripts.  However, a
+> similar behavior could be implemented in userland with O_PATH:
+> https://lore.kernel.org/lkml/1e2f6913-42f2-3578-28ed-567f6a4bdda1@digikod.net/
+> 
+> The implementation of O_MAYEXEC almost duplicates what execve(2) and
+> uselib(2) are already doing: setting MAY_OPENEXEC in acc_mode (which can
+> then be checked as MAY_EXEC, if enforced), and propagating FMODE_EXEC to
+> _fmode via __FMODE_EXEC flag (which can then trigger a
+> fanotify/FAN_OPEN_EXEC event).
+> 
+> This is an updated subset of the patch initially written by Vincent
+> Strubel for CLIP OS 4:
+> https://github.com/clipos-archive/src_platform_clip-patches/blob/f5cb330d6b684752e403b4e41b39f7004d88e561/1901_open_mayexec.patch
+> This patch has been used for more than 12 years with customized script
+> interpreters.  Some examples (with the original name O_MAYEXEC) can be
+> found here:
+> https://github.com/clipos-archive/clipos4_portage-overlay/search?q=O_MAYEXEC
+> 
+> Co-developed-by: Vincent Strubel <vincent.strubel@ssi.gouv.fr>
+> Signed-off-by: Vincent Strubel <vincent.strubel@ssi.gouv.fr>
+> Co-developed-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
+> Signed-off-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
+> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> Reviewed-by: Deven Bowers <deven.desai@linux.microsoft.com>
+> Reviewed-by: Kees Cook <keescook@chromium.org>
+> Cc: Aleksa Sarai <cyphar@cyphar.com>
+> Cc: Al Viro <viro@zeniv.linux.org.uk>
 > ---
-
-...
-
-> diff --git a/security/ipe/ipe-sysfs.c b/security/ipe/ipe-sysfs.c
-> index 1c65185c531d..a250da29c3b5 100644
-> --- a/security/ipe/ipe-sysfs.c
-> +++ b/security/ipe/ipe-sysfs.c
-> @@ -5,6 +5,7 @@
+> 
+> Changes since v5:
+> * Update commit message.
+> 
+> Changes since v3:
+> * Switch back to O_MAYEXEC, but only handle it with openat2(2) which
+>   checks unknown flags (suggested by Aleksa Sarai). Cf.
+>   https://lore.kernel.org/lkml/20200430015429.wuob7m5ofdewubui@yavin.dot.cyphar.com/
+> 
+> Changes since v2:
+> * Replace O_MAYEXEC with RESOLVE_MAYEXEC from openat2(2).  This change
+>   enables to not break existing application using bogus O_* flags that
+>   may be ignored by current kernels by using a new dedicated flag, only
+>   usable through openat2(2) (suggested by Jeff Layton).  Using this flag
+>   will results in an error if the running kernel does not support it.
+>   User space needs to manage this case, as with other RESOLVE_* flags.
+>   The best effort approach to security (for most common distros) will
+>   simply consists of ignoring such an error and retry without
+>   RESOLVE_MAYEXEC.  However, a fully controlled system may which to
+>   error out if such an inconsistency is detected.
+> 
+> Changes since v1:
+> * Set __FMODE_EXEC when using O_MAYEXEC to make this information
+>   available through the new fanotify/FAN_OPEN_EXEC event (suggested by
+>   Jan Kara and Matthew Bobrowski):
+>   https://lore.kernel.org/lkml/20181213094658.GA996@lithium.mbobrowski.org/
+> ---
+>  fs/fcntl.c                       | 2 +-
+>  fs/open.c                        | 8 ++++++++
+>  include/linux/fcntl.h            | 2 +-
+>  include/linux/fs.h               | 2 ++
+>  include/uapi/asm-generic/fcntl.h | 7 +++++++
+>  5 files changed, 19 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/fcntl.c b/fs/fcntl.c
+> index 2e4c0fa2074b..0357ad667563 100644
+> --- a/fs/fcntl.c
+> +++ b/fs/fcntl.c
+> @@ -1033,7 +1033,7 @@ static int __init fcntl_init(void)
+>  	 * Exceptions: O_NONBLOCK is a two bit define on parisc; O_NDELAY
+>  	 * is defined as O_NONBLOCK on some platforms and not on others.
+>  	 */
+> -	BUILD_BUG_ON(21 - 1 /* for O_RDONLY being 0 */ !=
+> +	BUILD_BUG_ON(22 - 1 /* for O_RDONLY being 0 */ !=
+>  		HWEIGHT32(
+>  			(VALID_OPEN_FLAGS & ~(O_NONBLOCK | O_NDELAY)) |
+>  			__FMODE_EXEC | __FMODE_NONOTIFY));
+> diff --git a/fs/open.c b/fs/open.c
+> index 623b7506a6db..38e434bdbbb6 100644
+> --- a/fs/open.c
+> +++ b/fs/open.c
+> @@ -987,6 +987,8 @@ inline struct open_how build_open_how(int flags, umode_t mode)
+>  		.mode = mode & S_IALLUGO,
+>  	};
 >  
->  #include "ipe.h"
->  #include "ipe-audit.h"
-> +#include "ipe-secfs.h"
+> +	/* O_MAYEXEC is ignored by syscalls relying on build_open_how(). */
+> +	how.flags &= ~O_MAYEXEC;
+>  	/* O_PATH beats everything else. */
+>  	if (how.flags & O_PATH)
+>  		how.flags &= O_PATH_FLAGS;
+> @@ -1054,6 +1056,12 @@ inline int build_open_flags(const struct open_how *how, struct open_flags *op)
+>  	if (flags & __O_SYNC)
+>  		flags |= O_DSYNC;
 >  
->  #include <linux/sysctl.h>
->  #include <linux/fs.h>
-> @@ -45,6 +46,79 @@ static int ipe_switch_mode(struct ctl_table *table, int write,
->  
->  #endif /* CONFIG_SECURITY_IPE_PERMISSIVE_SWITCH */
->  
-> +#ifdef CONFIG_SECURITYFS
-> +
-> +/**
-> + * ipe_switch_active_policy: Handler to switch the policy IPE is enforcing.
-> + * @table: Sysctl table entry from the variable, sysctl_table.
-> + * @write: Integer indicating whether this is a write or a read.
-> + * @buffer: Data passed to sysctl. This is the policy id to activate,
-> + *	    for this function.
-> + * @lenp: Pointer to the size of @buffer.
-> + * @ppos: Offset into @buffer.
-> + *
-> + * This wraps proc_dointvec_minmax, and if there's a change, emits an
-> + * audit event.
-> + *
-> + * Return:
-> + * 0 - OK
-> + * -ENOMEM - Out of memory
-> + * -ENOENT - Policy identified by @id does not exist
-> + * Other - See proc_dostring and retrieve_backed_dentry
-> + */
-> +static int ipe_switch_active_policy(struct ctl_table *table, int write,
-> +				    void __user *buffer, size_t *lenp,
-> +				    loff_t *ppos)
-> +{
-> +	int rc = 0;
-> +	char *id = NULL;
-> +	size_t size = 0;
-> +
-> +	if (write) {
-
-I see that the policy files in securityfs, such as new_policy, are
-checking for CAP_MAC_ADMIN but there's no check here for CAP_MAC_ADMIN
-when switching the active policy. I think we should enforce that cap
-here, too.
-
-Thinking about it some more, I find it a little odd that we're spreading
-the files necessary to update a policy across both procfs (sysctl) and
-securityfs. It looks like procfs will have different semantics than
-securityfs after looking at proc_sys_permission(). I suggest moving
-strict_parse and active_policy under securityfs for a unified experience
-and common location when updating policy.
-
-Tyler
-
-> +		id = kzalloc((*lenp) + 1, GFP_KERNEL);
-> +		if (!id)
-> +			return -ENOMEM;
-> +
-> +		table->data = id;
-> +		table->maxlen = (*lenp) + 1;
-> +
-> +		rc = proc_dostring(table, write, buffer, lenp, ppos);
-> +		if (rc != 0)
-> +			goto out;
-> +
-> +		rc = ipe_set_active_policy(id, strlen(id));
-> +	} else {
-> +		if (!rcu_access_pointer(ipe_active_policy)) {
-> +			table->data = "";
-> +			table->maxlen = 1;
-> +			return proc_dostring(table, write, buffer, lenp, ppos);
-> +		}
-> +
-> +		rcu_read_lock();
-> +		size = strlen(rcu_dereference(ipe_active_policy)->policy_name);
-> +		rcu_read_unlock();
-> +
-> +		id = kzalloc(size + 1, GFP_KERNEL);
-> +		if (!id)
-> +			return -ENOMEM;
-> +
-> +		rcu_read_lock();
-> +		strncpy(id, rcu_dereference(ipe_active_policy)->policy_name,
-> +			size);
-> +		rcu_read_unlock();
-> +
-> +		table->data = id;
-> +		table->maxlen = size;
-> +
-> +		rc = proc_dostring(table, write, buffer, lenp, ppos);
+> +	/* Checks execution permissions on open. */
+> +	if (flags & O_MAYEXEC) {
+> +		acc_mode |= MAY_OPENEXEC;
+> +		flags |= __FMODE_EXEC;
 > +	}
-> +out:
-> +	kfree(id);
-> +	return rc;
-> +}
-> +
-> +#endif /* CONFIG_SECURITYFS */
-> +
->  static struct ctl_table_header *sysctl_header;
->  
->  static const struct ctl_path sysctl_path[] = {
-> @@ -75,6 +149,24 @@ static struct ctl_table sysctl_table[] = {
->  		.extra1 = SYSCTL_ZERO,
->  		.extra2 = SYSCTL_ONE,
->  	},
-> +#ifdef CONFIG_SECURITYFS
-> +	{
-> +		.procname = "strict_parse",
-> +		.data = &ipe_strict_parse,
-> +		.maxlen = sizeof(int),
-> +		.mode = 0644,
-> +		.proc_handler = proc_dointvec_minmax,
-> +		.extra1 = SYSCTL_ZERO,
-> +		.extra2 = SYSCTL_ONE,
-> +	},
-> +	{
-> +		.procname = "active_policy",
-> +		.data = NULL,
-> +		.maxlen = 0,
-> +		.mode = 0644,
-> +		.proc_handler = ipe_switch_active_policy,
-> +	},
-> +#endif /* CONFIG_SECURITYFS */
->  	{}
->  };
->  
-> diff --git a/security/ipe/ipe.c b/security/ipe/ipe.c
-> index b6553e370f98..07f855ffb79a 100644
-> --- a/security/ipe/ipe.c
-> +++ b/security/ipe/ipe.c
-> @@ -6,6 +6,7 @@
->  #include "ipe.h"
->  #include "ipe-policy.h"
->  #include "ipe-hooks.h"
-> +#include "ipe-secfs.h"
->  #include "ipe-sysfs.h"
->  
->  #include <linux/module.h>
-> @@ -60,3 +61,4 @@ DEFINE_LSM(ipe) = {
->  
->  int ipe_enforce = 1;
->  int ipe_success_audit;
-> +int ipe_strict_parse;
-> diff --git a/security/ipe/ipe.h b/security/ipe/ipe.h
-> index 6a47f55b05d9..bf6cf7744b0e 100644
-> --- a/security/ipe/ipe.h
-> +++ b/security/ipe/ipe.h
-> @@ -16,5 +16,6 @@
->  
->  extern int ipe_enforce;
->  extern int ipe_success_audit;
-> +extern int ipe_strict_parse;
->  
->  #endif /* IPE_H */
-> -- 
-> 2.26.0
+
+Adding __FMODE_EXEC here will immediately change the behaviors of NFS
+and fsnotify. If that's going to happen, I think it needs to be under
+the control of the later patches doing the behavioral controls.
+(specifically, NFS looks like it completely changes its access control
+test when this is set and ignores the read/write checks entirely, which
+is not what's wanted).
+
+
+-- 
+Kees Cook
