@@ -2,145 +2,204 @@ Return-Path: <SRS0=JoCX=A2=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71FF3C433E1
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jul 2020 16:46:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0784EC433E4
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jul 2020 17:44:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 564FE2065D
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jul 2020 16:46:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9DB020663
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jul 2020 17:44:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A1R8OVVC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726768AbgGOQqu convert rfc822-to-8bit (ORCPT
+        id S1726160AbgGORo3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 15 Jul 2020 12:46:50 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:48612 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726758AbgGOQqt (ORCPT
+        Wed, 15 Jul 2020 13:44:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53470 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725900AbgGORo3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 15 Jul 2020 12:46:49 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-52-I5MfYmGMN8WVVlleqrOfeQ-1; Wed, 15 Jul 2020 17:46:45 +0100
-X-MC-Unique: I5MfYmGMN8WVVlleqrOfeQ-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Wed, 15 Jul 2020 17:46:44 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Wed, 15 Jul 2020 17:46:44 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Kees Cook' <keescook@chromium.org>
-CC:     'Christoph Hellwig' <hch@infradead.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        James Morris <jmorris@namei.org>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        "John Johansen" <john.johansen@canonical.com>
-Subject: RE: [PATCH 7/7] exec: Implement kernel_execve
-Thread-Topic: [PATCH 7/7] exec: Implement kernel_execve
-Thread-Index: AQHWWnMrd4ih7YlzG0aqMJfp5omyT6kIuIaQ///1mACAACJpAA==
-Date:   Wed, 15 Jul 2020 16:46:44 +0000
-Message-ID: <dc8371b7e05d4aa49eefcfd402b3fa1e@AcuMS.aculab.com>
-References: <871rle8bw2.fsf@x220.int.ebiederm.org>
- <87wo365ikj.fsf@x220.int.ebiederm.org> <202007141446.A72A4437C@keescook>
- <20200715064248.GH32470@infradead.org>
- <d6d204c4427b49f6b24ac24bf1082fa4@AcuMS.aculab.com>
- <202007150801.27B6690@keescook>
-In-Reply-To: <202007150801.27B6690@keescook>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Wed, 15 Jul 2020 13:44:29 -0400
+Received: from mail-oo1-xc44.google.com (mail-oo1-xc44.google.com [IPv6:2607:f8b0:4864:20::c44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1887DC061755;
+        Wed, 15 Jul 2020 10:44:29 -0700 (PDT)
+Received: by mail-oo1-xc44.google.com with SMTP id x2so632602oog.5;
+        Wed, 15 Jul 2020 10:44:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=GFlWCMXT1McclKUDiU9FJWNsfLXEuQwJM+Zc8tDAILE=;
+        b=A1R8OVVC9vVfiBTU8FBD4g/7FAbDqOTl5RcE40gueHg0iu1oi6Z+QI63vMrc60ccEg
+         g4fbcm9RdmVBHISRj5nrInNkpM0neIAUHOhCxUobMwfLt/WnJRzj1fZCx2heNrdLQdXf
+         lO3VJTS4O9MH5MRIKrlVs7XTGVHSOrdsiKl22C56iYC74V5wSb2fts2Y27u8p8awc9YH
+         eGGxWmBCh8aKNm8ND87Ix1zGKAjdr8wwhe9YeKPPF64GZS5aiFisu5XF8ik2zFTF6J4b
+         4KWSzGSToha8gQ9Hr3qzr8F1fZrTuXl4D3uvEromBp/ibpUrt5jSzfSuWoStb76eHmpe
+         Wc7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=GFlWCMXT1McclKUDiU9FJWNsfLXEuQwJM+Zc8tDAILE=;
+        b=OxKMMe0DYgdqGYlcQ6soJ5pa+XHEfBL21gY7wUgr/BdG/w3N7PSpcvMCdy5Ty/YoHg
+         cwkq+2bUB3WQiPdp2n/MENWKkZsGpS9w2RcvQwdBE+4Sb+nA412+gaxUCA0OTtrnoKaD
+         aoAOI0lPNkM4PQZSMPHHrzkrjwc7xCC3OAwLbuWEuKtlMnLjCV9F61+2L4QdOSolK8Fq
+         /xiB2O1+lOGeeZYv1lLrhcL0rwbZkCLiFJDUy1/XpvCJIEiokploNF9ScYGUtutudXos
+         +f0U1orRJLBQJNzABHJNQ+JWKvKBDYF6lWZfWB9ngeARJljRxEQQmaZRbIJ+CRWF5m/y
+         k2gw==
+X-Gm-Message-State: AOAM532bGYmiyph+A82GYVa8flkbiQMkg3ypgYpawUimY+NeIrujE04W
+        vOPn2WH1YDJBuIJ2HPtoK/0sNm3eSb+ecTy3XnM=
+X-Google-Smtp-Source: ABdhPJwLe3zpc1iO8/plW7H06lE30/eXcr+XQ0aXN5z8ePAZR0S2zFdXre5n68MuXktaZx4+4nkPOXL84ctbz5uMfUY=
+X-Received: by 2002:a4a:b006:: with SMTP id f6mr304583oon.13.1594835068421;
+ Wed, 15 Jul 2020 10:44:28 -0700 (PDT)
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+References: <20200715154853.23374-1-nramas@linux.microsoft.com> <20200715154853.23374-5-nramas@linux.microsoft.com>
+In-Reply-To: <20200715154853.23374-5-nramas@linux.microsoft.com>
+From:   Stephen Smalley <stephen.smalley.work@gmail.com>
+Date:   Wed, 15 Jul 2020 14:04:52 -0400
+Message-ID: <CAEjxPJ6UsK9QqFTpMKjgSin2Q6D-5NCNDS0enuRNuixVP9H2wQ@mail.gmail.com>
+Subject: Re: [PATCH v1 4/5] LSM: Define SELinux function to measure security state
+To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        James Morris <jmorris@namei.org>,
+        linux-integrity@vger.kernel.org,
+        SElinux list <selinux@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Kees Cook <keescook@chromium.org>
-> Sent: 15 July 2020 16:09
-> 
-> On Wed, Jul 15, 2020 at 02:55:50PM +0000, David Laight wrote:
-> > From: Christoph Hellwig
-> > > Sent: 15 July 2020 07:43
-> > > Subject: Re: [PATCH 7/7] exec: Implement kernel_execve
-> > >
-> > > On Tue, Jul 14, 2020 at 02:49:23PM -0700, Kees Cook wrote:
-> > > > On Tue, Jul 14, 2020 at 08:31:40AM -0500, Eric W. Biederman wrote:
-> > > > > +static int count_strings_kernel(const char *const *argv)
-> > > > > +{
-> > > > > +	int i;
-> > > > > +
-> > > > > +	if (!argv)
-> > > > > +		return 0;
-> > > > > +
-> > > > > +	for (i = 0; argv[i]; ++i) {
-> > > > > +		if (i >= MAX_ARG_STRINGS)
-> > > > > +			return -E2BIG;
-> > > > > +		if (fatal_signal_pending(current))
-> > > > > +			return -ERESTARTNOHAND;
-> > > > > +		cond_resched();
-> > > > > +	}
-> > > > > +	return i;
-> > > > > +}
-> > > >
-> > > > I notice count() is only ever called with MAX_ARG_STRINGS. Perhaps
-> > > > refactor that too? (And maybe rename it to count_strings_user()?)
-> >
-> > Thinks....
-> > If you setup env[] and argv[] on the new user stack early in exec processing
-> > then you may not need any limits at all - except the size of the user stack.
-> > Even the get_user() loop will hit an invalid address before the counter
-> > wraps (provided it is unsigned long).
-> 
-> *grumpy noises* Yes, but not in practice (if I'm understanding what you
-> mean). The expectations of a number of execution environments can be
-> really odd-ball. I've tried to collect the notes from over the years in
-> prepare_arg_pages()'s comments, and it mostly boils down to "there has
-> to be enough room for the exec to start" otherwise the exec ends up in a
-> hard-to-debug failure state (i.e. past the "point of no return", where you
-> get no useful information about the cause of the SEGV). So the point has
-> been to move as many of the setup checks as early as possible and report
-> about them if they fail. The argv processing is already very early, but
-> it needs to do the limit checks otherwise it'll just break after the exec
-> is underway and the process will just SEGV. (And ... some environments
-> will attempt to dynamically check the size of the argv space by growing
-> until it sees E2BIG, so we can't just remove it and let those hit SEGV.)
+On Wed, Jul 15, 2020 at 11:48 AM Lakshmi Ramasubramanian
+<nramas@linux.microsoft.com> wrote:
+>
+> SELinux configuration and policy are some of the critical data for this
+> security module that needs to be measured. To enable this measurement
+> SELinux needs to implement the interface function, security_state(), that
+> the LSM can call.
+>
+> Define the security_state() function in SELinux to measure SELinux
+> configuration and policy. Call this function to measure SELinux data
+> when there is a change in the security module's state.
+>
+> Sample measurement of SELinux state and hash of the policy:
+>
+> 10 e32e...5ac3 ima-buf sha256:86e8...4594 selinux-state 656e61626c65643d3=
+13b656e666f7263696e673d303b636865636b72657170726f743d313b6e6574706565723d31=
+3b6f70656e7065726d3d313b657874736f636b636c6173733d313b616c776179736e6574776=
+f726b3d303b6367726f75707365636c6162656c3d313b6e6e706e6f737569647472616e7369=
+74696f6e3d313b67656e66737365636c6162656c73796d6c696e6b3d303b
+> 10 f4a7...9408 ima-buf sha256:4941...68fc selinux-policy-hash 8d1d...1834
+>
+> The data for selinux-state in the above measurement is:
+> enabled=3D1;enforcing=3D0;checkreqprot=3D1;netpeer=3D1;openperm=3D1;extso=
+ckclass=3D1;alwaysnetwork=3D0;cgroupseclabel=3D1;nnpnosuidtransition=3D1;ge=
+nfsseclabelsymlink=3D0;
+>
+> The data for selinux-policy-hash in the above measurement is
+> the SHA256 hash of the SELinux policy.
+>
+> Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+> Suggested-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+> ---
 
-Yes - I bet the code is horrid.
-I guess the real problem is that you'd need access to the old process's
-user addresses and the new process's stack area at the same time.
-Unless there is a suitable hole in the old process's address map
-any attempted trick will fall foul of cache aliasing on some
-architectures - like anything else that does page-loaning.
+> diff --git a/security/selinux/include/security.h b/security/selinux/inclu=
+de/security.h
+> index b0e02cfe3ce1..691c7e35f82a 100644
+> --- a/security/selinux/include/security.h
+> +++ b/security/selinux/include/security.h
+> @@ -222,16 +222,35 @@ static inline bool selinux_policycap_genfs_seclabel=
+_symlinks(void)
+>         return state->policycap[POLICYDB_CAPABILITY_GENFS_SECLABEL_SYMLIN=
+KS];
+>  }
+>
+> +static inline bool selinux_checkreqprot(void)
+> +{
+> +       struct selinux_state *state =3D &selinux_state;
+> +
+> +       return state->checkreqprot;
+> +}
 
-I'm sure there are hair-brained schemes that might work.
+Probably should use READ_ONCE().
 
-	David
+> diff --git a/security/selinux/measure.c b/security/selinux/measure.c
+> new file mode 100644
+> index 000000000000..b909e8e61542
+> --- /dev/null
+> +++ b/security/selinux/measure.c
+> @@ -0,0 +1,122 @@
+> +int selinux_security_state(void)
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+Let's call this selinux_measure_state() or similar.  Needs a verb. And
+pass it a struct selinux_state * pointer argument to be measured, even
+though initially it will always be passed &selinux_state.  The
+encapsulation of selinux state within selinux_state was to support
+multiple selinux namespaces in the future, each with their own state.
 
+> +{
+> +       int rc =3D 0;
+> +       int count;
+> +       size_t buflen;
+> +       int policy_hash_len;
+> +       char *state =3D NULL;
+> +       void *policy =3D NULL;
+> +       void *policy_hash =3D NULL;
+> +       static char *security_state_string =3D
+> +                       "enabled=3D%d;enforcing=3D%d;checkreqprot=3D%d;" =
+       \
+> +                       "netpeer=3D%d;openperm=3D%d;extsockclass=3D%d;"  =
+       \
+> +                       "alwaysnetwork=3D%d;cgroupseclabel=3D%d;"        =
+     \
+> +                       "nnpnosuidtransition=3D%d;genfsseclabelsymlink=3D=
+%d;";
+
+Rather than hardcoding policy capability names here, I would recommend
+using the selinux_policycap_names[] array for the names and the
+selinux_state.policycap[] array for the values.  Also recommend
+passing in a struct selinux_state * here to allow for future case
+where there are multiple selinux states, one per selinux namespace.
+
+> diff --git a/security/selinux/ss/services.c b/security/selinux/ss/service=
+s.c
+> index ef0afd878bfc..0c289d13ef6a 100644
+> --- a/security/selinux/ss/services.c
+> +++ b/security/selinux/ss/services.c
+> @@ -3724,10 +3724,11 @@ int security_netlbl_sid_to_secattr(struct selinux=
+_state *state,
+>   * security_read_policy - read the policy.
+>   * @data: binary policy data
+>   * @len: length of data in bytes
+> - *
+> + * @alloc_kernel_memory: flag to indicate memory allocation
+>   */
+> -int security_read_policy(struct selinux_state *state,
+> -                        void **data, size_t *len)
+> +int security_read_selinux_policy(struct selinux_state *state,
+> +                                void **data, size_t *len,
+> +                                bool alloc_kernel_memory)
+
+Instead of passing in a boolean to control how the memory is
+allocated, split this into a helper function that takes an
+already-allocated buffer and two
+different front-end wrappers, one for kernel-internal use and one for
+userspace use.
+
+> @@ -3738,7 +3739,10 @@ int security_read_policy(struct selinux_state *sta=
+te,
+>
+>         *len =3D security_policydb_len(state);
+>
+> -       *data =3D vmalloc_user(*len);
+> +       if (alloc_kernel_memory)
+> +               *data =3D kzalloc(*len, GFP_KERNEL);
+
+You need vmalloc() since policy image size may exceed kmalloc max (or
+at least that used to be the case).
