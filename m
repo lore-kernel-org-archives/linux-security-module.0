@@ -2,87 +2,85 @@ Return-Path: <SRS0=JoCX=A2=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 498ECC433DF
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jul 2020 02:28:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED3AAC433DF
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jul 2020 06:28:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 23FAC20663
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jul 2020 02:28:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B881A20663
+	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jul 2020 06:28:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="pd8yJsIz"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Tz7UqrAU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726617AbgGOC20 (ORCPT
+        id S1726988AbgGOG2k (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 14 Jul 2020 22:28:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53134 "EHLO
+        Wed, 15 Jul 2020 02:28:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33536 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726356AbgGOC2Z (ORCPT
+        with ESMTP id S1725823AbgGOG2k (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 14 Jul 2020 22:28:25 -0400
-Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 535FBC061794
-        for <linux-security-module@vger.kernel.org>; Tue, 14 Jul 2020 19:28:25 -0700 (PDT)
-Received: by mail-ed1-x541.google.com with SMTP id dg28so459572edb.3
-        for <linux-security-module@vger.kernel.org>; Tue, 14 Jul 2020 19:28:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NzQjEy96mwvK5RqK1HselxgI2oA5I911Qdx2GNiQhg0=;
-        b=pd8yJsIzUV+lmtpXyBfCDr7n3+H80zSFriHlcIPUQEshJKvvGy7eE8F14z2Me5kfma
-         VchPpX69Esx3VqPLBaPtWBzKR87WMmuAAWVk6Zxbb59t8akiJqxXSK2gY6bFjn29yKdB
-         u5gQKb2NXD0jidguQUC5MRpGj0zHsrpcgQuBsGynE5bZ8s9cVj6Q8jAbJceW4ZopqgQo
-         IvkF1Gx536gA5Y4BkC0O7XTgAUc4PVIK4icnKvo1lQlDCDz3x4NjAf2shtmOTNMFbH8c
-         +IGUMuuj3R2wNaCqM1RuDMeE1vo+SB1yNukyNP1BaeyfimEuy9EkvDvAtPydf4lgXJ5S
-         7CCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NzQjEy96mwvK5RqK1HselxgI2oA5I911Qdx2GNiQhg0=;
-        b=CqO4PU9gjAymY+xXuWnAH331usU1ee4N4Qo/amJfR6nd+8jlvc44kQzTyxZXDjqHGg
-         5rbLtIB+M2BYgsrRoto2cmVqXXQApT0oDhGG+YiwjPzLcyNdEOEVnsGLJOCWfRBzgT7t
-         q+coQdjHg2pb8KLLPb3aCJbmFlZAApvHy9yxuGpP0IFh5ywGA1Z7s49rH5dHv3r7ASxu
-         4CMO8CxVD6Zd15O/Bd2dmtsJMD6axGCQQcb6sJB2Eb5b1ldi019Yw4ZH+UAbemK/XO83
-         UoPJgrSQTqkb7duBmD2eGCPQS/Z0YXNuNstRMkHLdgyMqaDTq/WOTXU7nSjIZO6ddCqf
-         Gx3A==
-X-Gm-Message-State: AOAM533j6tSSExjC4YhA9kKqmZAditkiZrBw3kGweMHDCV1wxQyXKTG+
-        +XsGMmb7Zls5f/VI9s+RH8xEhuP0I2reqn4teUCG
-X-Google-Smtp-Source: ABdhPJwC+iS+MYu3jbSKussTXFfhjkiopLyiCmfWTihVgPblMmDRROS4S+1ydwyZ0bTIgA2yjuH02BgGUJUMI4Q0zDU=
-X-Received: by 2002:a05:6402:742:: with SMTP id p2mr7142885edy.135.1594780103839;
- Tue, 14 Jul 2020 19:28:23 -0700 (PDT)
+        Wed, 15 Jul 2020 02:28:40 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF494C061755;
+        Tue, 14 Jul 2020 23:28:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=pvO4ic3x1AyoT4qNI92vdeMOnJXAMHSBZQ7RBY+0sE0=; b=Tz7UqrAUHQyZfyJrdxR+5kr7A2
+        75r73ERji5D37LsDIzj2PSfbzlkjdwQ0bfWt+87Z//LUyWH83Ao0/E2pwRD9m+OgP0HQVH88DhoEz
+        XTIgAJZF/7g0p46Q775/HTeQXeg+3OP+9mbkXXMet6mLmNUHTJKyo0JOIBVAKZ+pBIgDtbnHWhrmV
+        I3gKqOBZNdXfBuQ1yWEX24+q9qrVli66jaSYYPh4XwQjfqOcrii39Rzs0eyHM6UF3RQJEN522CoCY
+        UT0uMWTaqR9Lr3xLTbyTi3KhW6bXX89jIFtWxCqTZSk8msKl7xgIgrtr+MpA0t5hdVPHLe1pKRMKU
+        hFfKcJOQ==;
+Received: from hch by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jvau4-0000YM-3A; Wed, 15 Jul 2020 06:28:28 +0000
+Date:   Wed, 15 Jul 2020 07:28:27 +0100
+From:   Christoph Hellwig <hch@infradead.org>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        linux-security-module@vger.kernel.org,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        James Morris <jmorris@namei.org>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH 1/7] exec: Remove unnecessary spaces from binfmts.h
+Message-ID: <20200715062827.GA32470@infradead.org>
+References: <871rle8bw2.fsf@x220.int.ebiederm.org>
+ <87v9iq6x9x.fsf@x220.int.ebiederm.org>
 MIME-Version: 1.0
-References: <20200715021846.34096-1-yuehaibing@huawei.com>
-In-Reply-To: <20200715021846.34096-1-yuehaibing@huawei.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 14 Jul 2020 22:28:12 -0400
-Message-ID: <CAHC9VhTPhtx-t7_WucUyKg=y1g_0OiFFs1RdvfuixOUoytWmvA@mail.gmail.com>
-Subject: Re: [PATCH net-next] cipso: Remove unused inline functions
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     davem@davemloft.net, kuba@kernel.org, netdev@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87v9iq6x9x.fsf@x220.int.ebiederm.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jul 14, 2020 at 10:21 PM YueHaibing <yuehaibing@huawei.com> wrote:
->
-> They are not used any more since commit b1edeb102397 ("netlabel: Replace
-> protocol/NetLabel linking with refrerence counts")
->
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  include/net/cipso_ipv4.h | 12 ------------
->  1 file changed, 12 deletions(-)
+On Tue, Jul 14, 2020 at 08:28:42AM -0500, Eric W. Biederman wrote:
+> 
+> The general convention in the linux kernel is to define a pointer
+> member as "type *name".  The declaration of struct linux_binprm has
+> several pointer defined as "type * name".  Update them to the
+> form of "type *name" for consistency.
+> 
+> Suggested-by: Kees Cook <keescook@chromium.org>
+> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 
-Looks good to me, thanks for the patch.
+Looks good,
 
-Acked-by: Paul Moore <paul@paul-moore.com>
-
--- 
-paul moore
-www.paul-moore.com
+Reviewed-by: Christoph Hellwig <hch@lst.de>
