@@ -8,64 +8,64 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 296E5C433E5
-	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jul 2020 10:19:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97A78C433EB
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jul 2020 10:19:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EF56120775
-	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jul 2020 10:19:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 689C82074B
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jul 2020 10:19:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iO9eReih"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pBuz8bBx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726812AbgGPKTA (ORCPT
+        id S1726894AbgGPKTE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 16 Jul 2020 06:19:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37014 "EHLO
+        Thu, 16 Jul 2020 06:19:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37026 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726075AbgGPKS7 (ORCPT
+        with ESMTP id S1726075AbgGPKTE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 16 Jul 2020 06:18:59 -0400
-Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A24FC061755
-        for <linux-security-module@vger.kernel.org>; Thu, 16 Jul 2020 03:18:59 -0700 (PDT)
-Received: by mail-wr1-x442.google.com with SMTP id z13so6479744wrw.5
-        for <linux-security-module@vger.kernel.org>; Thu, 16 Jul 2020 03:18:59 -0700 (PDT)
+        Thu, 16 Jul 2020 06:19:04 -0400
+Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1F67C061755
+        for <linux-security-module@vger.kernel.org>; Thu, 16 Jul 2020 03:19:03 -0700 (PDT)
+Received: by mail-wr1-x443.google.com with SMTP id b6so6430898wrs.11
+        for <linux-security-module@vger.kernel.org>; Thu, 16 Jul 2020 03:19:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=CQc5oYthyIHgrA0b+wGSIPuxi+870IhMLwsMYznbmq8=;
-        b=iO9eReihmr0Vz8A6cWVI3bxL6d0Uc7G6BuA0+hJvm+gKXgWeHecVpjDkq9n+SE5RjU
-         /28b8ub5d7TRZIc/QHZVpy+NBxs23EVP7DRIpnTHA1mG38J/nTqCjh1Xk0l4vJpoTEh9
-         YJzhqaytJpMdYTbhdNY7Lnpqefn7IxzG7jOmqj8DR48f/i6KxHD6cEHWCpHnYEcXTKnA
-         nLDJrlY+LQHmz4JYze5/OY/jyVzvzha0dV4rfetUJBY4MU4ITbuNpMJb2jiclYfw+bjh
-         MJPaCA8GEFlOhq66YAtJnUcqpW4xPfsWWwNX6seO1Nce3PLcmfYd0iC8jiquY2oXnUb8
-         qCag==
+        bh=Q2LrDzr98NUf9gsquNLZVCZZ6MwxCoD1rH1sNrjWwhs=;
+        b=pBuz8bBx7MtHGpOUuyRejd32SfcXYvHv4p9SjOq1ayo2zYlU7qt6DF1pHOnjHTewMw
+         onN9oIPiU3DywYKETjiSm5TfLe+eGq9XMEJJAH++uC/xT1bGKmxE1R2x5fzqBjidXpL9
+         696qjfSUA5IEktl0AGxuqb+bgzUaFdmTc0Nar8HtUm2XFVFu3r64rVkTWtihn+gCHIlt
+         VcVQI7zVcWtrMRQsa4U+3IzwpUcXyyyP2+w6iyqAqLBlIqCUhCcgqcgMbXNS7A83hScK
+         mP7h5h2wDHR/fU61BVL3zHLi+DmXcdnpLIbE+x2pA6wn3j8k746O69ENsLaBxSa8mBNL
+         GNHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=CQc5oYthyIHgrA0b+wGSIPuxi+870IhMLwsMYznbmq8=;
-        b=Db8Pqd7KeIO6BRdcXpBFri52TAHqHc2XQH9Ko952S049OcHW1nOPjKuxEhN6AaxFay
-         Kkf4eU2gND+QUtMJjkaKfMIOn0pDg3pHjwnQpoNlFUdsY+2tTfSWqtnupqku0WtEkKJK
-         KpKYNOdOOtpm9Q7DjPcSfEduHE3ucnM488f1Y/ceeyrEcwbCaY1H2b6RbN/aLn0zDoiQ
-         7e/yQg6xi8a1CYKpaYj0st+dLh7J8DUsb9F/9RLZxPf9ZY8/wADQRjKlXIjwhZwoopLT
-         zQqxsfE4tmg0i3Q3Qn2c+s3M67IqDTCTuKgKFhvOKFG12sGyP28AXTUHzQH5xmFyUf1X
-         UuGQ==
-X-Gm-Message-State: AOAM5307PK9x+BBHiBRNAS6yK7l9eaxg8hUaQYs9usGRtziup7cZ9q74
-        Nf74f3ah2btmkueaw6WTjNzqpR9f
-X-Google-Smtp-Source: ABdhPJzGHDKwFRtA+//gDaNgPPqZT4FL7Jra49snIMTYTZP9vobti3jf5nPBBZTHJQihHlab9a6D8w==
-X-Received: by 2002:a5d:5647:: with SMTP id j7mr4254917wrw.242.1594894738240;
-        Thu, 16 Jul 2020 03:18:58 -0700 (PDT)
+        bh=Q2LrDzr98NUf9gsquNLZVCZZ6MwxCoD1rH1sNrjWwhs=;
+        b=cszVOlsLYlA9ix8KxAR+PKYyR9tm85cYcOnPvAJqOTwu3LOnD8c30FQwUXhmtxCOhA
+         KtOqs94MWcblb9WME89HjMx5+oplfwahechweMAcsDJDOuZ66on47VES4DJqDmYCoRQH
+         iMWoyu71hckQbmJwDIuiUFWqiIUKnQhcH9jGFepJrxzk6WkzEwjLpMDQHxKVeKPQ/0VP
+         61Q4B8q98jPyg8LGJ+pv1kcdR5VPD3H9tyQnIQd6j7++XLC7R+eSN5UNTUSZOyZsIlab
+         5zWahIZ2wMYk1PvNr8ZTxkyZWQOID/Xd38G2KSsYamoY7CJAYti75fBnsLrCdycdUsXF
+         Q1LA==
+X-Gm-Message-State: AOAM532KXIKZ5pCrhSUfzkotlO9yY0KQMolOBDEX3TkKNQoNZ2j5rdXJ
+        bNBGH22LcXVWBidHI5I9+tk=
+X-Google-Smtp-Source: ABdhPJxTEGV5mgT5xJmiKVTVhJ9yv1CnBZNyF8gTlP7svkAt6rWBfS+JL1iUouA51U4Nka99SgHW+Q==
+X-Received: by 2002:a5d:458a:: with SMTP id p10mr4332817wrq.184.1594894742713;
+        Thu, 16 Jul 2020 03:19:02 -0700 (PDT)
 Received: from bienne.fritz.box ([2001:a61:3adb:8201:9649:88f:51f8:6a21])
-        by smtp.gmail.com with ESMTPSA id b23sm8598210wmd.37.2020.07.16.03.18.57
+        by smtp.gmail.com with ESMTPSA id w16sm9963329wrg.95.2020.07.16.03.19.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jul 2020 03:18:57 -0700 (PDT)
+        Thu, 16 Jul 2020 03:19:02 -0700 (PDT)
 From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
 To:     mtk.manpages@gmail.com, "Andrew G . Morgan" <morgan@kernel.org>
 Cc:     linux-security-module@vger.kernel.org
-Subject: [PATCH 07/16] Manual pages: cap_get_proc.3: s/UNCERTAIN/CAP_MODE_UNCERTAIN/
-Date:   Thu, 16 Jul 2020 12:18:18 +0200
-Message-Id: <20200716101827.162793-7-mtk.manpages@gmail.com>
+Subject: [PATCH 08/16] Manual pages: cap_get_proc.3: formatting fix
+Date:   Thu, 16 Jul 2020 12:18:19 +0200
+Message-Id: <20200716101827.162793-8-mtk.manpages@gmail.com>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200716101827.162793-1-mtk.manpages@gmail.com>
 References: <20200716101827.162793-1-mtk.manpages@gmail.com>
@@ -75,26 +75,25 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Use the proper name of the constant in DESCRIPTION.
-
 Signed-off-by: Michael Kerrisk (man-pages) <mtk.manpages@gmail.com>
 ---
- doc/cap_get_proc.3 | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ doc/cap_get_proc.3 | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/doc/cap_get_proc.3 b/doc/cap_get_proc.3
-index b0a61d1..ded1491 100644
+index ded1491..f90c4f5 100644
 --- a/doc/cap_get_proc.3
 +++ b/doc/cap_get_proc.3
-@@ -168,7 +168,7 @@ returns
- which
- .BR cap_get_name ()
- declares as
--.IR "UNCERTAIN" .
-+.BR CAP_MODE_UNCERTAIN .
- Supported modes are:
- .BR CAP_MODE_NOPRIV ", " CAP_MODE_PURE1E_INIT " and " CAP_MODE_PURE1E .
- .PP
+@@ -261,7 +261,8 @@ The library also supports the deprecated functions:
+ .BR capgetp ()
+ attempts to obtain the capabilities of some other process; storing the
+ capabilities in a pre-allocated
+-.IR cap_d . See
++.IR cap_d .
++See
+ .BR cap_init ()
+ for information on allocating an empty capability set. This function,
+ .BR capgetp (),
 -- 
 2.26.2
 
