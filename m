@@ -2,339 +2,157 @@ Return-Path: <SRS0=RuUe=A3=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-10.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4B5FC433F7
-	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jul 2020 20:35:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2265DC43457
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jul 2020 20:35:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AB37E207FB
-	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jul 2020 20:35:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDE0120787
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jul 2020 20:35:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gTHrU6Mf"
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="TcYH/jHU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726071AbgGPUf0 (ORCPT
+        id S1726845AbgGPUfi (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 16 Jul 2020 16:35:26 -0400
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:30185 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725926AbgGPUfZ (ORCPT
+        Thu, 16 Jul 2020 16:35:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47882 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726710AbgGPUf3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 16 Jul 2020 16:35:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1594931723;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=MA2zTmLbYOvlJ63Y/TrUWnikoLb+7ScXgVhmHlwKe8M=;
-        b=gTHrU6MfuyDGCrmHCvmHCQFSlzhZ9EtwVOggVtWEWZD0wOWpUw1bdt8KldmMSqBv1E4Mdn
-        JGqGasOsNZffDL+4ITVuyFUWL4I9OBXwrYpJomBCDotzCLCfSFhzLc1GS9V+DFrll9zMhG
-        BP/1meS1qdf13cBRdoxRamIOqZbdtj0=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-182-NGli0yJJN46cvpRhHGDfRA-1; Thu, 16 Jul 2020 16:35:21 -0400
-X-MC-Unique: NGli0yJJN46cvpRhHGDfRA-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A95F7100526A;
-        Thu, 16 Jul 2020 20:35:19 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-112-113.rdu2.redhat.com [10.10.112.113])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 74B7E5C1C3;
-        Thu, 16 Jul 2020 20:35:15 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-Subject: [RFC PATCH 3/5] keys: Provide KEYCTL_GRANT_PERMISSION
-From:   David Howells <dhowells@redhat.com>
-To:     Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Cc:     dhowells@redhat.com,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Eric Biederman <ebiederm@xmission.com>, jlayton@redhat.com,
-        christian@brauner.io, selinux@vger.kernel.org,
-        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
-        linux-cifs@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, containers@lists.linux-foundation.org
-Date:   Thu, 16 Jul 2020 21:35:14 +0100
-Message-ID: <159493171464.3249370.14298001109518163029.stgit@warthog.procyon.org.uk>
-In-Reply-To: <159493167778.3249370.8145886688150701997.stgit@warthog.procyon.org.uk>
-References: <159493167778.3249370.8145886688150701997.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/0.22
+        Thu, 16 Jul 2020 16:35:29 -0400
+Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EADE9C08C5DB
+        for <linux-security-module@vger.kernel.org>; Thu, 16 Jul 2020 13:35:28 -0700 (PDT)
+Received: by mail-wm1-x343.google.com with SMTP id o8so11552649wmh.4
+        for <linux-security-module@vger.kernel.org>; Thu, 16 Jul 2020 13:35:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=9KKssZ/dTd5jFWuQk++quPFGpJEaxp++vXeRWFCVTYg=;
+        b=TcYH/jHU1RmQBPJCKXiG0zbJbk6t8T+p4WR/fKwsA07BAUPP4VqbUfrlpPWqF+0UiM
+         aslyup07dAKKGj1vxS9qXutKQzsMcEXQbXq4CTy9RwVdw9DdCJS0Ahbtc/p7cV6ngjeI
+         rh6Q8XL8U+5dtOZTRfteBdf+eio7fNkRoMQr8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=9KKssZ/dTd5jFWuQk++quPFGpJEaxp++vXeRWFCVTYg=;
+        b=WjpQLu/AflsJkYo7EDS047Nk3vvUg7QLPo8zGzZgTWkBrPgPB0VLWJD2jHoQnALD46
+         X/bzMmHUKpdjCCL69X6G/0OZtPaS4JQcVTy36RDY8j6sT5ZN53C2tAWWNfCK2pk2RHKg
+         FQBdbplkO5kWJ/6t+kHMtdDZG4iyIBx2NZVWA0CIU0FvC3Uc86S33YUsnus/+2f9CMp9
+         4TOxKm23uEJD+e6IFOy9vl7CtVa6LHrhOEmfmeoH1mpZXPf2qv9kBYMhA5LXVCCVjH2z
+         jCFVIgviNDraU+DMRs2b0/k43A5TUIW1HZQbw8ZZE6/zGy5yz4rNRXRhlNV+xRRdv1Go
+         nDbw==
+X-Gm-Message-State: AOAM533GreE08V8umidEnUPbhxnxWyrbd7phJl07UkY2HNugbwJJmZrP
+        kz56AxCTcwZE8yTwb9EVK1ff5qrfaEztgsAURfgtAn3iQcapEUB5Gid7yY0GgcIm5PbvyzH+PPg
+        vNCxNHbBPBnvjbCgwAFFwEcVH57IxftSrJqECdHcw9X7nkWi5gsDfGvSD1vUxVnuJ5N786VWL9Z
+        JQEi3mQGnnIHNXnrRieHwO
+X-Google-Smtp-Source: ABdhPJwP6NWxHHZE4jgbCtjpWDSnq8sR96EVizFQf4hhI6jzl9kIJSa2hoPAe1ShiSsc4DVR7x6Big==
+X-Received: by 2002:a05:600c:2182:: with SMTP id e2mr5761554wme.186.1594931727116;
+        Thu, 16 Jul 2020 13:35:27 -0700 (PDT)
+Received: from [10.136.13.65] ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id 14sm10031229wmk.19.2020.07.16.13.35.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 Jul 2020 13:35:26 -0700 (PDT)
+Subject: Re: [PATCH 2/4] fs: Remove FIRMWARE_PREALLOC_BUFFER from
+ kernel_read_file() enums
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        James Morris <jmorris@namei.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jessica Yu <jeyu@kernel.org>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Matthew Garrett <matthewgarrett@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        KP Singh <kpsingh@google.com>, Dave Olsthoorn <dave@bewaar.me>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Peter Jones <pjones@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Boyd <stephen.boyd@linaro.org>,
+        Paul Moore <paul@paul-moore.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+References: <20200707081926.3688096-1-keescook@chromium.org>
+ <20200707081926.3688096-3-keescook@chromium.org>
+ <3fdb3c53-7471-14d8-ce6a-251d8b660b8a@broadcom.com>
+ <20200710220411.GR12769@casper.infradead.org>
+ <128120ca-7465-e041-7481-4c5d53f639dd@broadcom.com>
+ <202007101543.912633AA73@keescook>
+From:   Scott Branden <scott.branden@broadcom.com>
+Message-ID: <9ba08503-e515-6761-63de-a3b611720b1b@broadcom.com>
+Date:   Thu, 16 Jul 2020 13:35:17 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+In-Reply-To: <202007101543.912633AA73@keescook>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Provide a keyctl() operation to grant/remove permissions.  The grant
-operation, wrapped by libkeyutils, looks like:
+Hi Kees
 
-	int ret = keyctl_grant_permission(key_serial_t key,
-					  enum key_ace_subject_type type,
-					  unsigned int subject,
-					  unsigned int perm);
+On 2020-07-10 3:44 p.m., Kees Cook wrote:
+> On Fri, Jul 10, 2020 at 03:10:25PM -0700, Scott Branden wrote:
+>>
+>> On 2020-07-10 3:04 p.m., Matthew Wilcox wrote:
+>>> On Fri, Jul 10, 2020 at 02:00:32PM -0700, Scott Branden wrote:
+>>>>> @@ -950,8 +951,8 @@ int kernel_read_file(struct file *file, void **buf, loff_t *size,
+>>>>>     		goto out;
+>>>>>     	}
+>>>>> -	if (id != READING_FIRMWARE_PREALLOC_BUFFER)
+>>>>> -		*buf = vmalloc(i_size);
+>>>>> +	if (!*buf)
+>>>> The assumption that *buf is always NULL when id !=
+>>>> READING_FIRMWARE_PREALLOC_BUFFER doesn't appear to be correct.
+>>>> I get unhandled page faults due to this change on boot.
+>>> Did it give you a stack backtrace?
+>> Yes, but there's no requirement that *buf need to be NULL when calling this
+>> function.
+>> To fix my particular crash I added the following locally:
+>>
+>> --- a/kernel/module.c
+>> +++ b/kernel/module.c
+>> @@ -3989,7 +3989,7 @@ SYSCALL_DEFINE3(finit_module, int, fd, const char
+>> __user *, uargs, int, flags)
+>>   {
+>>       struct load_info info = { };
+>>       loff_t size;
+>> -    void *hdr;
+>> +    void *hdr = NULL;
+>>       int err;
+>>
+>>       err = may_init_module();
+> Thanks for the diagnosis and fix! I haven't had time to cycle back
+> around to this series yet. Hopefully soon. :)
+>
+In order to assist in your patchset I have combined it with my patch 
+series here:
+https://github.com/sbranden/linux/tree/kernel_read_file_for_kees
 
-Where key is the key to be modified, type and subject represent the subject
-to which permission is to be granted (or removed) and perm is the set of
-permissions to be granted.  0 is returned on success.  SETSEC permission is
-required for this.
+Please let me know if this matches your expectations for my patches or 
+if there is something else I need to change.
 
-The subject type currently must be KEY_ACE_SUBJ_STANDARD for the moment
-(other subject types will come along later).
+Thanks,
+Scott
 
-For subject type KEY_ACE_SUBJ_STANDARD, the following subject values are
-available:
-
-	KEY_ACE_POSSESSOR	The possessor of the key
-	KEY_ACE_OWNER		The owner of the key
-	KEY_ACE_GROUP		The key's group
-	KEY_ACE_EVERYONE	Everyone
-
-perm lists the permissions to be granted:
-
-	KEY_ACE_VIEW		Can view the key metadata
-	KEY_ACE_READ		Can read the key content
-	KEY_ACE_WRITE		Can update/modify the key content
-	KEY_ACE_SEARCH		Can find the key by searching/requesting
-	KEY_ACE_LINK		Can make a link to the key
-	KEY_ACE_SETSEC		Can set security
-	KEY_ACE_INVAL		Can invalidate
-	KEY_ACE_REVOKE		Can revoke
-	KEY_ACE_JOIN		Can join this keyring
-	KEY_ACE_CLEAR		Can clear this keyring
-
-If an ACE already exists for the subject, then the permissions mask will be
-overwritten; if perm is 0, it will be deleted.
-
-Currently, the internal ACL is limited to a maximum of 16 entries.
-
-For example:
-
-	int ret = keyctl_grant_permission(key,
-					  KEY_ACE_SUBJ_STANDARD,
-					  KEY_ACE_OWNER,
-					  KEY_ACE_VIEW | KEY_ACE_READ);
-
-Signed-off-by: David Howells <dhowells@redhat.com>
----
-
- include/uapi/linux/keyctl.h |    2 +
- security/keys/compat.c      |    2 +
- security/keys/internal.h    |    5 ++
- security/keys/keyctl.c      |    8 +++
- security/keys/permission.c  |  120 +++++++++++++++++++++++++++++++++++++++++++
- 5 files changed, 136 insertions(+), 1 deletion(-)
-
-diff --git a/include/uapi/linux/keyctl.h b/include/uapi/linux/keyctl.h
-index 998d4e50bd41..a5938f2c3e66 100644
---- a/include/uapi/linux/keyctl.h
-+++ b/include/uapi/linux/keyctl.h
-@@ -133,6 +133,7 @@ enum key_ace_standard_subject {
- #define KEYCTL_MOVE			30	/* Move keys between keyrings */
- #define KEYCTL_CAPABILITIES		31	/* Find capabilities of keyrings subsystem */
- #define KEYCTL_WATCH_KEY		32	/* Watch a key or ring of keys for changes */
-+#define KEYCTL_GRANT_PERMISSION		33	/* Grant a permit to a key */
- 
- /* keyctl structures */
- struct keyctl_dh_params {
-@@ -196,5 +197,6 @@ struct keyctl_pkey_params {
- #define KEYCTL_CAPS1_NS_KEY_TAG		0x02 /* Key indexing can include a namespace tag */
- #define KEYCTL_CAPS1_NOTIFICATIONS	0x04 /* Keys generate watchable notifications */
- #define KEYCTL_CAPS1_ACL		0x08 /* Keys have ACLs rather than a p-u-g-o bitmask */
-+#define KEYCTL_CAPS1_GRANT_PERMISSION	0x10 /* KEYCTL_GRANT_PERMISSION is supported */
- 
- #endif /*  _LINUX_KEYCTL_H */
-diff --git a/security/keys/compat.c b/security/keys/compat.c
-index 6ee9d8f6a4a5..2b675f9a6162 100644
---- a/security/keys/compat.c
-+++ b/security/keys/compat.c
-@@ -152,6 +152,8 @@ COMPAT_SYSCALL_DEFINE5(keyctl, u32, option,
- 
- 	case KEYCTL_MOVE:
- 		return keyctl_keyring_move(arg2, arg3, arg4, arg5);
-+	case KEYCTL_GRANT_PERMISSION:
-+		return keyctl_grant_permission(arg2, arg3, arg4, arg5);
- 
- 	case KEYCTL_CAPABILITIES:
- 		return keyctl_capabilities(compat_ptr(arg2), arg3);
-diff --git a/security/keys/internal.h b/security/keys/internal.h
-index 3b2114d00d5c..af2c9531c435 100644
---- a/security/keys/internal.h
-+++ b/security/keys/internal.h
-@@ -377,6 +377,11 @@ static inline long keyctl_watch_key(key_serial_t key_id, int watch_fd, int watch
- }
- #endif
- 
-+extern long keyctl_grant_permission(key_serial_t keyid,
-+				    enum key_ace_subject_type type,
-+				    unsigned int subject,
-+				    unsigned int perm);
-+
- /*
-  * Debugging key validation
-  */
-diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
-index 8689d4331285..fae2df676e30 100644
---- a/security/keys/keyctl.c
-+++ b/security/keys/keyctl.c
-@@ -39,7 +39,8 @@ static const unsigned char keyrings_capabilities[2] = {
- 	[1] = (KEYCTL_CAPS1_NS_KEYRING_NAME |
- 	       KEYCTL_CAPS1_NS_KEY_TAG |
- 	       (IS_ENABLED(CONFIG_KEY_NOTIFICATIONS)	? KEYCTL_CAPS1_NOTIFICATIONS : 0) |
--	       KEYCTL_CAPS1_ACL
-+	       KEYCTL_CAPS1_ACL |
-+	       KEYCTL_CAPS1_GRANT_PERMISSION
- 	       ),
- };
- 
-@@ -1920,6 +1921,11 @@ SYSCALL_DEFINE5(keyctl, int, option, unsigned long, arg2, unsigned long, arg3,
- 					   (key_serial_t)arg3,
- 					   (key_serial_t)arg4,
- 					   (unsigned int)arg5);
-+	case KEYCTL_GRANT_PERMISSION:
-+		return keyctl_grant_permission((key_serial_t)arg2,
-+					       (enum key_ace_subject_type)arg3,
-+					       (unsigned int)arg4,
-+					       (unsigned int)arg5);
- 
- 	case KEYCTL_CAPABILITIES:
- 		return keyctl_capabilities((unsigned char __user *)arg2, (size_t)arg3);
-diff --git a/security/keys/permission.c b/security/keys/permission.c
-index 37bad810bc16..0bb7f6b695f4 100644
---- a/security/keys/permission.c
-+++ b/security/keys/permission.c
-@@ -380,3 +380,123 @@ long key_set_acl(struct key *key, struct key_acl *acl)
- 	key_put_acl(acl);
- 	return 0;
- }
-+
-+/*
-+ * Allocate a new ACL with an extra ACE slot.
-+ */
-+static struct key_acl *key_alloc_acl(const struct key_acl *old_acl, int nr, int skip)
-+{
-+	struct key_acl *acl;
-+	int nr_ace, i, j = 0;
-+
-+	nr_ace = old_acl->nr_ace + nr;
-+	if (nr_ace > 16)
-+		return ERR_PTR(-EINVAL);
-+
-+	acl = kzalloc(struct_size(acl, aces, nr_ace), GFP_KERNEL);
-+	if (!acl)
-+		return ERR_PTR(-ENOMEM);
-+
-+	refcount_set(&acl->usage, 1);
-+	acl->nr_ace = nr_ace;
-+	for (i = 0; i < old_acl->nr_ace; i++) {
-+		if (i == skip)
-+			continue;
-+		acl->aces[j] = old_acl->aces[i];
-+		j++;
-+	}
-+	return acl;
-+}
-+
-+/*
-+ * Generate the revised ACL.
-+ */
-+static long key_change_acl(struct key *key, struct key_ace *new_ace)
-+{
-+	struct key_acl *acl, *old;
-+	int i;
-+
-+	old = rcu_dereference_protected(key->acl, lockdep_is_held(&key->sem));
-+
-+	for (i = 0; i < old->nr_ace; i++)
-+		if (old->aces[i].type == new_ace->type &&
-+		    old->aces[i].subject_id == new_ace->subject_id)
-+			goto found_match;
-+
-+	if (new_ace->perm == 0)
-+		return 0; /* No permissions to remove.  Add deny record? */
-+
-+	acl = key_alloc_acl(old, 1, -1);
-+	if (IS_ERR(acl))
-+		return PTR_ERR(acl);
-+	acl->aces[i] = *new_ace;
-+	goto change;
-+
-+found_match:
-+	if (new_ace->perm == 0)
-+		goto delete_ace;
-+	if (new_ace->perm == old->aces[i].perm)
-+		return 0;
-+	acl = key_alloc_acl(old, 0, -1);
-+	if (IS_ERR(acl))
-+		return PTR_ERR(acl);
-+	acl->aces[i].perm = new_ace->perm;
-+	goto change;
-+
-+delete_ace:
-+	acl = key_alloc_acl(old, -1, i);
-+	if (IS_ERR(acl))
-+		return PTR_ERR(acl);
-+	goto change;
-+
-+change:
-+	return key_set_acl(key, acl);
-+}
-+
-+/*
-+ * Add, alter or remove (if perm == 0) an ACE in a key's ACL.
-+ */
-+long keyctl_grant_permission(key_serial_t keyid,
-+			     enum key_ace_subject_type type,
-+			     unsigned int subject,
-+			     unsigned int perm)
-+{
-+	struct key_ace new_ace;
-+	struct key *key;
-+	key_ref_t key_ref;
-+	long ret;
-+
-+	new_ace.type = type;
-+	new_ace.perm = perm;
-+
-+	switch (type) {
-+	case KEY_ACE_SUBJ_STANDARD:
-+		if (subject >= nr__key_ace_standard_subject)
-+			return -ENOENT;
-+		new_ace.subject_id = subject;
-+		break;
-+
-+	default:
-+		return -ENOENT;
-+	}
-+
-+	key_ref = lookup_user_key(keyid, KEY_LOOKUP_PARTIAL, KEY_NEED_CHANGE_ACL);
-+	if (IS_ERR(key_ref)) {
-+		ret = PTR_ERR(key_ref);
-+		goto error;
-+	}
-+
-+	key = key_ref_to_ptr(key_ref);
-+
-+	down_write(&key->sem);
-+
-+	/* If we're not the sysadmin, we can only change a key that we own */
-+	ret = -EACCES;
-+	if (capable(CAP_SYS_ADMIN) || uid_eq(key->uid, current_fsuid()))
-+		ret = key_change_acl(key, &new_ace);
-+
-+	up_write(&key->sem);
-+	key_put(key);
-+error:
-+	return ret;
-+}
 
 
