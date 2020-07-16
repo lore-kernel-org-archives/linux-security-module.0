@@ -2,101 +2,246 @@ Return-Path: <SRS0=RuUe=A3=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1A6BC433E0
-	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jul 2020 10:19:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5640C433DF
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jul 2020 13:57:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9005220775
-	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jul 2020 10:19:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pBsHBa53"
+	by mail.kernel.org (Postfix) with ESMTP id 849C620787
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jul 2020 13:57:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727078AbgGPKTl (ORCPT
+        id S1728918AbgGPN5G (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 16 Jul 2020 06:19:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37138 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726973AbgGPKTk (ORCPT
+        Thu, 16 Jul 2020 09:57:06 -0400
+Received: from mga02.intel.com ([134.134.136.20]:3858 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728891AbgGPN5F (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 16 Jul 2020 06:19:40 -0400
-Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A2DEC061755
-        for <linux-security-module@vger.kernel.org>; Thu, 16 Jul 2020 03:19:40 -0700 (PDT)
-Received: by mail-wr1-x444.google.com with SMTP id f2so6460407wrp.7
-        for <linux-security-module@vger.kernel.org>; Thu, 16 Jul 2020 03:19:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=FKwwx9SCPSgGKTUvHlHZPqNVtziKFzsn6pWTO18XHYo=;
-        b=pBsHBa532OY6Xt5ROhZcFRge7ztceKG4qg/VZnJ8AqgbO3zB+JLVKQ0Fr5eH+8Ztxg
-         SpTvD/X2vjXATuSdJim9AF4Q1ckIPH0WrhfqGo7oHCKd9h7XmMbxZfXl7O9PoQT2b4+V
-         VLPjhWNwjPeveZRBkWH3wux4NRB2vrXMJwDxlECp4RgDemrupE87+syLk86Dh9X9Wlfp
-         qWAyvHSYjeJ+wNZApCEca+EhLS9U1gYlf/eX9pYLvCZRTS/zJ7C0zj4c2oP1JxEK/CH1
-         uB5XYBk0Pi2yFWASGg3h86xEpUMm1W1+32OpiOMOwe4bDQ/fehSca6pDBye0/c2DPKyz
-         0Hig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=FKwwx9SCPSgGKTUvHlHZPqNVtziKFzsn6pWTO18XHYo=;
-        b=IQm/KGCXYiFmPVzSxDUJCTDNoPtpR4TS4IssTYJw8AJqK0nkklcHqjhkB2W5cdUigT
-         Bwp95X4RJouXdTjW0fVYQkj9Z3A2V+ptZhqUGFgTMPd+kZbbGzwwIRXvOzdtqsv200Ha
-         sWl2SmeGjnu/GVF9KBj0CsF9TEksHwWNQX2nPwWsO13v2ducxIu7oyUwN+5Q/yLFb/sM
-         EjvRplnrVMMyYyxHCqw+04Z7J97KBW01VMMjzUHnkS1dHNiFUj63LAfBiqNACK/NMEF3
-         QZK8ytumyNDpyoZ5YTecpZ8fLI8IWS7SK5pOJk5zS71CUSPDwFnXwKlSwBqJI+FguaZU
-         4ZsA==
-X-Gm-Message-State: AOAM531+zlGQWvCJ+bcAoRrPSw719erKns4qELe3kTbF2CyEZWDbNsIf
-        iLhKWDwonBwjKC+mLdFSvbk=
-X-Google-Smtp-Source: ABdhPJx5FP3+ODoDoxqnf8GAED34DdikQLeNgEfpQtwRYna+qkz1+F45fGYbpNtxuSO48zMtl4aBnA==
-X-Received: by 2002:adf:e944:: with SMTP id m4mr4521670wrn.252.1594894778899;
-        Thu, 16 Jul 2020 03:19:38 -0700 (PDT)
-Received: from bienne.fritz.box ([2001:a61:3adb:8201:9649:88f:51f8:6a21])
-        by smtp.gmail.com with ESMTPSA id k20sm7587194wmi.27.2020.07.16.03.19.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jul 2020 03:19:38 -0700 (PDT)
-From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-To:     mtk.manpages@gmail.com, "Andrew G . Morgan" <morgan@kernel.org>
-Cc:     linux-security-module@vger.kernel.org
-Subject: [PATCH 16/16] capsh.c: Spelling fixes in usage() message
-Date:   Thu, 16 Jul 2020 12:18:27 +0200
-Message-Id: <20200716101827.162793-16-mtk.manpages@gmail.com>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20200716101827.162793-1-mtk.manpages@gmail.com>
-References: <20200716101827.162793-1-mtk.manpages@gmail.com>
+        Thu, 16 Jul 2020 09:57:05 -0400
+IronPort-SDR: 6NtJxy/n+/BdehSMYT3TK9HQswMIGp9Q0yoPvTzPP4fuMWGGFp/XI+EuygFHPH2UM+h6FF76CB
+ lt748erWzPwQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9683"; a="137503259"
+X-IronPort-AV: E=Sophos;i="5.75,359,1589266800"; 
+   d="scan'208";a="137503259"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2020 06:57:04 -0700
+IronPort-SDR: M8sjhSfa7qr+6J6F0oEtSGIoAa9oF3cU8Ydfy95gMWjc37PHRJTd02tJKPfM2o1iNMOvK/4jab
+ cSSA8nAUgsrw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.75,359,1589266800"; 
+   d="scan'208";a="325150613"
+Received: from lettner-mobl.ger.corp.intel.com (HELO localhost) ([10.252.32.212])
+  by FMSMGA003.fm.intel.com with ESMTP; 16 Jul 2020 06:56:52 -0700
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     x86@kernel.org, linux-sgx@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-security-module@vger.kernel.org,
+        Jethro Beekman <jethro@fortanix.com>,
+        Andy Lutomirski <luto@kernel.org>, akpm@linux-foundation.org,
+        andriy.shevchenko@linux.intel.com, asapek@google.com, bp@alien8.de,
+        cedric.xing@intel.com, chenalexchen@google.com,
+        conradparker@google.com, cyhanish@google.com,
+        dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, nhorman@redhat.com,
+        npmccallum@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
+        sean.j.christopherson@intel.com, tglx@linutronix.de,
+        yaozhangx@google.com
+Subject: [PATCH v36 15/24] x86/sgx: Allow a limited use of ATTRIBUTE.PROVISIONKEY for attestation
+Date:   Thu, 16 Jul 2020 16:52:54 +0300
+Message-Id: <20200716135303.276442-16-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
+References: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Signed-off-by: Michael Kerrisk (man-pages) <mtk.manpages@gmail.com>
----
- progs/capsh.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Provisioning Certification Enclave (PCE), the root of trust for other
+enclaves, generates a signing key from a fused key called Provisioning
+Certification Key. PCE can then use this key to certify an attestation key
+of a Quoting Enclave (QE), e.g. we get the chain of trust down to the
+hardware if the Intel signed PCE is used.
 
-diff --git a/progs/capsh.c b/progs/capsh.c
-index 94bf57d..7bed98e 100644
---- a/progs/capsh.c
-+++ b/progs/capsh.c
-@@ -879,10 +879,10 @@ int main(int argc, char *argv[], char *envp[])
- 		   "  --delamb=xxx   remove xxx,... capabilities from ambient\n"
- 		   "  --noamb        reset (drop) all ambient capabilities\n"
- 		   "  --caps=xxx     set caps as per cap_from_text()\n"
--		   "  --inh=xxx      set xxx,.. inheritiable set\n"
-+		   "  --inh=xxx      set xxx,.. inheritable set\n"
- 		   "  --secbits=<n>  write a new value for securebits\n"
- 		   "  --iab=...      use cap_iab_from_text() to set iab\n"
--		   "  --keep=<n>     set keep-capabability bit to <n>\n"
-+		   "  --keep=<n>     set keep-capability bit to <n>\n"
- 		   "  --uid=<n>      set uid to <n> (hint: id <username>)\n"
- 		   "  --cap-uid=<n>  libcap cap_setuid() to change uid\n"
- 		   "  --is-uid=<n>   exit 1 if uid != <n>\n"
+To use the needed keys, ATTRIBUTE.PROVISIONKEY is required but should be
+only allowed for those who actually need it so that only the trusted
+parties can certify QE's.
+
+Obviously the attestation service should know the public key of the used
+PCE and that way detect illegit attestation, but whitelisting the legit
+users still adds an additional layer of defence.
+
+Add new device file called /dev/sgx/provision. The sole purpose of this
+file is to provide file descriptors that act as privilege tokens to allow
+to build enclaves with ATTRIBUTE.PROVISIONKEY set. A new ioctl called
+SGX_IOC_ENCLAVE_SET_ATTRIBUTE is used to assign this token to an enclave.
+
+Cc: linux-security-module@vger.kernel.org
+Acked-by: Jethro Beekman <jethro@fortanix.com>
+Suggested-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+ arch/x86/include/uapi/asm/sgx.h  | 11 ++++++++
+ arch/x86/kernel/cpu/sgx/driver.c | 18 ++++++++++++
+ arch/x86/kernel/cpu/sgx/driver.h |  2 ++
+ arch/x86/kernel/cpu/sgx/ioctl.c  | 47 ++++++++++++++++++++++++++++++++
+ 4 files changed, 78 insertions(+)
+
+diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
+index 5edb08ab8fd0..57d0d30c79b3 100644
+--- a/arch/x86/include/uapi/asm/sgx.h
++++ b/arch/x86/include/uapi/asm/sgx.h
+@@ -25,6 +25,8 @@ enum sgx_page_flags {
+ 	_IOWR(SGX_MAGIC, 0x01, struct sgx_enclave_add_pages)
+ #define SGX_IOC_ENCLAVE_INIT \
+ 	_IOW(SGX_MAGIC, 0x02, struct sgx_enclave_init)
++#define SGX_IOC_ENCLAVE_SET_ATTRIBUTE \
++	_IOW(SGX_MAGIC, 0x03, struct sgx_enclave_set_attribute)
+ 
+ /**
+  * struct sgx_enclave_create - parameter structure for the
+@@ -63,4 +65,13 @@ struct sgx_enclave_init {
+ 	__u64 sigstruct;
+ };
+ 
++/**
++ * struct sgx_enclave_set_attribute - parameter structure for the
++ *				      %SGX_IOC_ENCLAVE_SET_ATTRIBUTE ioctl
++ * @attribute_fd:	file handle of the attribute file in the securityfs
++ */
++struct sgx_enclave_set_attribute {
++	__u64 attribute_fd;
++};
++
+ #endif /* _UAPI_ASM_X86_SGX_H */
+diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/driver.c
+index 5559bc18de41..b9af330a16fa 100644
+--- a/arch/x86/kernel/cpu/sgx/driver.c
++++ b/arch/x86/kernel/cpu/sgx/driver.c
+@@ -138,6 +138,10 @@ static const struct file_operations sgx_encl_fops = {
+ 	.get_unmapped_area	= sgx_get_unmapped_area,
+ };
+ 
++const struct file_operations sgx_provision_fops = {
++	.owner			= THIS_MODULE,
++};
++
+ static struct miscdevice sgx_dev_enclave = {
+ 	.minor = MISC_DYNAMIC_MINOR,
+ 	.name = "enclave",
+@@ -145,6 +149,13 @@ static struct miscdevice sgx_dev_enclave = {
+ 	.fops = &sgx_encl_fops,
+ };
+ 
++static struct miscdevice sgx_dev_provision = {
++	.minor = MISC_DYNAMIC_MINOR,
++	.name = "provision",
++	.nodename = "sgx/provision",
++	.fops = &sgx_provision_fops,
++};
++
+ int __init sgx_drv_init(void)
+ {
+ 	unsigned int eax, ebx, ecx, edx;
+@@ -185,5 +196,12 @@ int __init sgx_drv_init(void)
+ 		return ret;
+ 	}
+ 
++	ret = misc_register(&sgx_dev_provision);
++	if (ret) {
++		pr_err("Creating /dev/sgx/provision failed with %d.\n", ret);
++		misc_deregister(&sgx_dev_enclave);
++		return ret;
++	}
++
+ 	return 0;
+ }
+diff --git a/arch/x86/kernel/cpu/sgx/driver.h b/arch/x86/kernel/cpu/sgx/driver.h
+index e4063923115b..72747d01c046 100644
+--- a/arch/x86/kernel/cpu/sgx/driver.h
++++ b/arch/x86/kernel/cpu/sgx/driver.h
+@@ -23,6 +23,8 @@ extern u64 sgx_attributes_reserved_mask;
+ extern u64 sgx_xfrm_reserved_mask;
+ extern u32 sgx_xsave_size_tbl[64];
+ 
++extern const struct file_operations sgx_provision_fops;
++
+ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg);
+ 
+ int sgx_drv_init(void);
+diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+index 3444de955191..95b0a1e62ea7 100644
+--- a/arch/x86/kernel/cpu/sgx/ioctl.c
++++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+@@ -669,6 +669,50 @@ static long sgx_ioc_enclave_init(struct sgx_encl *encl, void __user *arg)
+ 	return ret;
+ }
+ 
++/**
++ * sgx_ioc_enclave_set_attribute - handler for %SGX_IOC_ENCLAVE_SET_ATTRIBUTE
++ * @filep:	open file to /dev/sgx
++ * @arg:	userspace pointer to a struct sgx_enclave_set_attribute instance
++ *
++ * Mark the enclave as being allowed to access a restricted attribute bit.
++ * The requested attribute is specified via the attribute_fd field in the
++ * provided struct sgx_enclave_set_attribute.  The attribute_fd must be a
++ * handle to an SGX attribute file, e.g. "/dev/sgx/provision".
++ *
++ * Failure to explicitly request access to a restricted attribute will cause
++ * sgx_ioc_enclave_init() to fail.  Currently, the only restricted attribute
++ * is access to the PROVISION_KEY.
++ *
++ * Note, access to the EINITTOKEN_KEY is disallowed entirely.
++ *
++ * Return: 0 on success, -errno otherwise
++ */
++static long sgx_ioc_enclave_set_attribute(struct sgx_encl *encl,
++					  void __user *arg)
++{
++	struct sgx_enclave_set_attribute params;
++	struct file *attribute_file;
++	int ret;
++
++	if (copy_from_user(&params, arg, sizeof(params)))
++		return -EFAULT;
++
++	attribute_file = fget(params.attribute_fd);
++	if (!attribute_file)
++		return -EINVAL;
++
++	if (attribute_file->f_op != &sgx_provision_fops) {
++		ret = -EINVAL;
++		goto out;
++	}
++
++	encl->allowed_attributes |= SGX_ATTR_PROVISIONKEY;
++	ret = 0;
++
++out:
++	fput(attribute_file);
++	return ret;
++}
+ 
+ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
+ {
+@@ -694,6 +738,9 @@ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
+ 	case SGX_IOC_ENCLAVE_INIT:
+ 		ret = sgx_ioc_enclave_init(encl, (void __user *)arg);
+ 		break;
++	case SGX_IOC_ENCLAVE_SET_ATTRIBUTE:
++		ret = sgx_ioc_enclave_set_attribute(encl, (void __user *)arg);
++		break;
+ 	default:
+ 		ret = -ENOIOCTLCMD;
+ 		break;
 -- 
-2.26.2
+2.25.1
 
