@@ -8,109 +8,113 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72D79C433DF
-	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jul 2020 10:18:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 426BEC433E0
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jul 2020 10:18:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4B9192074B
-	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jul 2020 10:18:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C8BB20775
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jul 2020 10:18:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WZqgH0CS"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CnULQ+Jx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726202AbgGPKSd (ORCPT
+        id S1726239AbgGPKSh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 16 Jul 2020 06:18:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36932 "EHLO
+        Thu, 16 Jul 2020 06:18:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36944 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726190AbgGPKSc (ORCPT
+        with ESMTP id S1726190AbgGPKSg (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 16 Jul 2020 06:18:32 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CCC1C061755
-        for <linux-security-module@vger.kernel.org>; Thu, 16 Jul 2020 03:18:32 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id q15so9788086wmj.2
-        for <linux-security-module@vger.kernel.org>; Thu, 16 Jul 2020 03:18:32 -0700 (PDT)
+        Thu, 16 Jul 2020 06:18:36 -0400
+Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A211C061755
+        for <linux-security-module@vger.kernel.org>; Thu, 16 Jul 2020 03:18:36 -0700 (PDT)
+Received: by mail-wr1-x441.google.com with SMTP id z13so6478677wrw.5
+        for <linux-security-module@vger.kernel.org>; Thu, 16 Jul 2020 03:18:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=6AOzZ14SVUOE16zA82Tvkg9B3ZamwJzL6LbuYN6274w=;
-        b=WZqgH0CSof1WY3MvFmOjIbq3CI/rc+xs9HCYf05cDVBVnoR4SVZH7QfnbscYLyHLs1
-         zMYLSPhM7/JuvXGKFpjYXlQ/SNHZx/WQDf2S68W5hs6cI9+um0UnHNPPJBeAVZDhpmlq
-         KiQyzZ0iObZOIdJDV8PJ4emu7j87M9jIZkAtrRmRg3xrl9JeMUpS58NNpV1mCSUppIDk
-         4bFCZ8lNcqf4TKyRmU1IUdtIkupzkS9+XL8dx4b/fKhK7EjHabhlUQgjATSopKLmDh5+
-         JipA5PHR2lnEov4nHl4nVwAoTi9/dkD9Re8DbduUWnlEbBh6sQp/ZJ5Jvt+luaH9dxsA
-         NlOA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=NDt2xal84TATsstOSphmaodG2nGyovL6j06R7GLtHSQ=;
+        b=CnULQ+JxnvrBvP3CVEPqy+kflvLtkvTcHvw62fEqw+JJZapNqIX7/WLn2seql+rAvA
+         Iycsnv4mqumdBCDxPGe7ttG6p4V7Dxt9hEKM9SMek+nPofwPtU1LaFSUa7SrRIu84W+V
+         c+jhvhVFhJbSCM5WMiabsJCPauOPYOWtIwifZZnutbIpVj0SZpygjwbFVmm6UnXrCkr8
+         qATyNQfZ4aaVxpB7jJvzzE4l5C3u7dJI34k7BaeGfrWOw4qHieAI4ifhoEnMu4M8i91U
+         KV7PGkYOERwKbDzuvHW2jqPDXxTvc+WsXCO47+6ue4PB2c3YnF8Jmvw17BEaZ6584JZJ
+         j+Lw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=6AOzZ14SVUOE16zA82Tvkg9B3ZamwJzL6LbuYN6274w=;
-        b=Dh+d79NwoWcAD/11guKdUKxYGN6MamAB/XqU6dgeObezzcrVJKzuji49uop4XuTvw2
-         gO1+BcAk45Ur47aPHGQL9HfgVtgkauRs5PUfhx1Pzy497qsNu3+6DwCRi9U1qqUTfa5z
-         amZbgFrx8phziUOOWvJXAfY8dhDtTznrbQ4G4CcaDuF6q/wTgK103Jcf18K32FEGzwVD
-         FBpZlzmdGg/e/OoppQtZA0HY24hNkaCOZ90RqZeQZVr6v+OeqpK8bt6kr9BKjD4idRz/
-         sW7S0V4O9/UVvr30bwHOqQuZrjWcxOkxO1DsLDSUgdnndNrAHJhz2WDUzs8QeHPY3I7u
-         SI3Q==
-X-Gm-Message-State: AOAM533cgmTOCKWF1Hww+ImBwOzzZEAa5MhY+WSG+Err+DSHygsRM7VA
-        8plBhNppBe3EgEBma+1npxM=
-X-Google-Smtp-Source: ABdhPJyGO6azkkiFYiS0BDRJ3dOdpAJUq+o/ObZeIDMp6dGK2wzSClDLgXFlwQhq8/1A+D3n5DSVeg==
-X-Received: by 2002:a1c:408b:: with SMTP id n133mr3722218wma.88.1594894710708;
-        Thu, 16 Jul 2020 03:18:30 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=NDt2xal84TATsstOSphmaodG2nGyovL6j06R7GLtHSQ=;
+        b=lTglh9jz9CJ6yWTQTEd+WQ4NQeSj06/gnoabIKZoMdp0dAvWdGtp5ajrTp7ChzK2v+
+         LupLKaHqONoqOVbopg3hh3pJGCA/dpZ4UG6J10CV7Ukmy17gU7ksS1nfpD/IQIg1gJ22
+         xK+q2ZEJIGlzwaTNZU/kCBkPzUmj3CwQfF6b7dSdVzUFKLyu1KA4qseUHeUiqYXcEkal
+         m7WKBZ4g9/ACTEcgyMTrksodTqgmK3onD3wTs74Fq/ukVOwPLZXGN/Dl2C9KX3/RZBw7
+         HsWgoe5MyPjKTUEEaubYT3PW4syG2kCtHY4xFDrSzW4d3oz2PzTd+aRI1ZJoNDztwEQI
+         0JXA==
+X-Gm-Message-State: AOAM5306DxQNGFNTUVRlrXw/nE9sh4J/xvFZko2ApJSA2FsCQFbxG4Ai
+        MjpX+Pwvzo+ti7ppKl24+mw=
+X-Google-Smtp-Source: ABdhPJzSaQaS21LlMBeMl3T7Hr2RMN7lGH5fZ16XRMd/vMzCv1fyRQ4F9dB262v1kwLi4RSPyNSL0Q==
+X-Received: by 2002:a5d:444e:: with SMTP id x14mr4126071wrr.279.1594894715292;
+        Thu, 16 Jul 2020 03:18:35 -0700 (PDT)
 Received: from bienne.fritz.box ([2001:a61:3adb:8201:9649:88f:51f8:6a21])
-        by smtp.gmail.com with ESMTPSA id 33sm8935059wri.16.2020.07.16.03.18.29
+        by smtp.gmail.com with ESMTPSA id k126sm8562152wme.17.2020.07.16.03.18.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jul 2020 03:18:30 -0700 (PDT)
+        Thu, 16 Jul 2020 03:18:34 -0700 (PDT)
 From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
 To:     mtk.manpages@gmail.com, "Andrew G . Morgan" <morgan@kernel.org>
 Cc:     linux-security-module@vger.kernel.org
-Subject: [PATCH 01/16] Manual pages: getcap.8, getpcaps.8, setcap.8: SEE ALSO: add capabilities(7)
-Date:   Thu, 16 Jul 2020 12:18:12 +0200
-Message-Id: <20200716101827.162793-1-mtk.manpages@gmail.com>
+Subject: [PATCH 02/16] Manual pages: cap_get_file.3, getcap.8, setcap.8: SEE ALSO: add user_namespaces(7)
+Date:   Thu, 16 Jul 2020 12:18:13 +0200
+Message-Id: <20200716101827.162793-2-mtk.manpages@gmail.com>
 X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20200716101827.162793-1-mtk.manpages@gmail.com>
+References: <20200716101827.162793-1-mtk.manpages@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Since namespaces are mentioned in this page, it's wise also to have
+a reference to the relevant page that explains the concept.
+
 Signed-off-by: Michael Kerrisk (man-pages) <mtk.manpages@gmail.com>
 ---
- doc/getcap.8   | 1 +
- doc/getpcaps.8 | 1 +
- doc/setcap.8   | 1 +
- 3 files changed, 3 insertions(+)
+ doc/cap_get_file.3 | 3 ++-
+ doc/getcap.8       | 1 +
+ doc/setcap.8       | 1 +
+ 3 files changed, 4 insertions(+), 1 deletion(-)
 
+diff --git a/doc/cap_get_file.3 b/doc/cap_get_file.3
+index a99ab40..9c115a6 100644
+--- a/doc/cap_get_file.3
++++ b/doc/cap_get_file.3
+@@ -136,4 +136,5 @@ Permitted or Inheritable flag enabled.
+ .BR cap_from_text (3),
+ .BR cap_get_proc (3),
+ .BR cap_init (3),
+-.BR capabilities (7)
++.BR capabilities (7),
++.BR user_namespaces (7)
 diff --git a/doc/getcap.8 b/doc/getcap.8
-index 05ee9bb..0547ff9 100644
+index 0547ff9..497699c 100644
 --- a/doc/getcap.8
 +++ b/doc/getcap.8
-@@ -31,4 +31,5 @@ https://bugzilla.kernel.org/buglist.cgi?component=libcap&list_id=1047723&product
- .SH "SEE ALSO"
+@@ -32,4 +32,5 @@ https://bugzilla.kernel.org/buglist.cgi?component=libcap&list_id=1047723&product
  .BR cap_get_file (3),
  .BR cap_to_text (3),
-+.BR capabilities (7),
+ .BR capabilities (7),
++.BR user_namespaces (7),
  .BR setcap (8)
-diff --git a/doc/getpcaps.8 b/doc/getpcaps.8
-index b070a3c..53d342e 100644
---- a/doc/getpcaps.8
-+++ b/doc/getpcaps.8
-@@ -34,6 +34,7 @@ Displays output in a somewhat ugly legacy format.
- Displays usage in a legacy-like format but not quite so ugly in modern
- default terminal fonts.
- .SH SEE ALSO
-+.BR capabilities (7),
- .BR capsh "(8), " setcap "(8) and " getcap (8).
- .br
- .SH AUTHOR
 diff --git a/doc/setcap.8 b/doc/setcap.8
-index 445ed03..da95afb 100644
+index da95afb..99e3c36 100644
 --- a/doc/setcap.8
 +++ b/doc/setcap.8
-@@ -58,4 +58,5 @@ https://bugzilla.kernel.org/buglist.cgi?component=libcap&list_id=1047723&product
- .SH "SEE ALSO"
+@@ -59,4 +59,5 @@ https://bugzilla.kernel.org/buglist.cgi?component=libcap&list_id=1047723&product
  .BR cap_from_text (3),
  .BR cap_get_file (3),
-+.BR capabilities (7),
+ .BR capabilities (7),
++.BR user_namespaces (7),
  .BR getcap (8)
 -- 
 2.26.2
