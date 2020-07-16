@@ -2,138 +2,112 @@ Return-Path: <SRS0=RuUe=A3=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03495C433DF
-	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jul 2020 00:27:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94161C433E2
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jul 2020 08:52:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CC5242075B
-	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jul 2020 00:27:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1594859252;
-	bh=vT3xLEFkOcP2t0RQKK47xJd9RemOzqIloLTiufJQd4Y=;
-	h=Date:From:To:To:To:To:Cc:Cc:Subject:In-Reply-To:References:
-	 List-ID:From;
-	b=A2Mj+bg2f1N7uiqEzCLXv2xHTkYYmvzCLAvSdb5jJpyfCVnS0PLllQTVwWn+xZpiT
-	 LPRSCOP18mNKJ8FDri1HSeBe7ZvlSSY4bFEHous507r2HGh87Z/ojGCsh2/R3alwgi
-	 TFAaOYmAEL1HtfgO+AYPZa6bvNSXVGry+B+TC9Xw=
+	by mail.kernel.org (Postfix) with ESMTP id 6CD5D2074B
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jul 2020 08:52:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727068AbgGPA1b (ORCPT
+        id S1727771AbgGPIwC (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 15 Jul 2020 20:27:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54318 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726770AbgGPA1b (ORCPT
+        Thu, 16 Jul 2020 04:52:02 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:49435 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725867AbgGPIwC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 15 Jul 2020 20:27:31 -0400
-Received: from localhost (unknown [137.135.114.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 26E14206F5;
-        Thu, 16 Jul 2020 00:27:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1594859250;
-        bh=vT3xLEFkOcP2t0RQKK47xJd9RemOzqIloLTiufJQd4Y=;
-        h=Date:From:To:To:To:To:Cc:Cc:Subject:In-Reply-To:References:From;
-        b=kAoQdChEIX4MqzOUSzrMPY4WnlT19MA6/fV6gGgwCcffezv6pcP5+Eh1Fmluju7IU
-         6Viv4UyzyeaBHBqCSMkX2HklOH+aDW5BIJTmbEcEw62t52hozBdPlt5+xp6OviJ0Nq
-         n+iBKI40FLQNzbItGY5e/dZwz2sUORRI881jj5R0=
-Date:   Thu, 16 Jul 2020 00:27:29 +0000
-From:   Sasha Levin <sashal@kernel.org>
-To:     Sasha Levin <sashal@kernel.org>
-To:     Eric Biggers <ebiggers@kernel.org>
-To:     Eric Biggers <ebiggers@google.com>
-To:     linux-security-module@vger.kernel.org
-Cc:     syzkaller-bugs@googlegroups.com, linux-kernel@vger.kernel.org
-Cc:     stable@vger.kernel.org
-Subject: Re: [PATCH] Smack: fix use-after-free in smk_write_relabel_self()
-In-Reply-To: <20200708201520.140376-1-ebiggers@kernel.org>
-References: <20200708201520.140376-1-ebiggers@kernel.org>
-Message-Id: <20200716002730.26E14206F5@mail.kernel.org>
+        Thu, 16 Jul 2020 04:52:02 -0400
+Received: from ip5f5af08c.dynamic.kabel-deutschland.de ([95.90.240.140] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1jvzcE-0002BZ-15; Thu, 16 Jul 2020 08:51:42 +0000
+Date:   Thu, 16 Jul 2020 10:51:41 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Adrian Reber <areber@redhat.com>
+Cc:     Eric Biederman <ebiederm@xmission.com>,
+        Pavel Emelyanov <ovzxemul@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
+        =?utf-8?B?TWljaGHFgiBDxYJhcGnFhHNraQ==?= <mclapinski@google.com>,
+        Kamil Yurtsever <kyurtsever@google.com>,
+        Dirk Petersen <dipeit@gmail.com>,
+        Christine Flood <chf@redhat.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Radostin Stoyanov <rstoyanov1@gmail.com>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        Serge Hallyn <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Sargun Dhillon <sargun@sargun.me>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, selinux@vger.kernel.org,
+        Eric Paris <eparis@parisplace.org>,
+        Jann Horn <jannh@google.com>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v5 4/6] proc: allow access in init userns for map_files
+ with CAP_CHECKPOINT_RESTORE
+Message-ID: <20200716085141.nr4wyeh62ahjwupd@wittgenstein>
+References: <20200715144954.1387760-1-areber@redhat.com>
+ <20200715144954.1387760-5-areber@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200715144954.1387760-5-areber@redhat.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi
+On Wed, Jul 15, 2020 at 04:49:52PM +0200, Adrian Reber wrote:
+> Opening files in /proc/pid/map_files when the current user is
+> CAP_CHECKPOINT_RESTORE capable in the root namespace is useful for
+> checkpointing and restoring to recover files that are unreachable via
+> the file system such as deleted files, or memfd files.
+> 
+> Signed-off-by: Adrian Reber <areber@redhat.com>
+> Signed-off-by: Nicolas Viennot <Nicolas.Viennot@twosigma.com>
+> ---
+>  fs/proc/base.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/proc/base.c b/fs/proc/base.c
+> index 65893686d1f1..cada783f229e 100644
+> --- a/fs/proc/base.c
+> +++ b/fs/proc/base.c
+> @@ -2194,16 +2194,16 @@ struct map_files_info {
+>  };
+>  
+>  /*
+> - * Only allow CAP_SYS_ADMIN to follow the links, due to concerns about how the
+> - * symlinks may be used to bypass permissions on ancestor directories in the
+> - * path to the file in question.
+> + * Only allow CAP_SYS_ADMIN and CAP_CHECKPOINT_RESTORE to follow the links, due
+> + * to concerns about how the symlinks may be used to bypass permissions on
+> + * ancestor directories in the path to the file in question.
+>   */
+>  static const char *
+>  proc_map_files_get_link(struct dentry *dentry,
+>  			struct inode *inode,
+>  		        struct delayed_call *done)
+>  {
+> -	if (!capable(CAP_SYS_ADMIN))
+> +	if (!capable(CAP_SYS_ADMIN) || !capable(CAP_CHECKPOINT_RESTORE))
 
-[This is an automated email]
+So right now, when I'd do
 
-This commit has been processed because it contains a "Fixes:" tag
-fixing commit: 38416e53936e ("Smack: limited capability for changing process label").
+git grep checkpoint_restore_ns_capable
 
-The bot has tested the following trees: v5.7.8, v5.4.51, v4.19.132, v4.14.188, v4.9.230, v4.4.230.
+I'd not hit that codepath which isn't great. So I'd suggest to use:
 
-v5.7.8: Build OK!
-v5.4.51: Build OK!
-v4.19.132: Failed to apply! Possible dependencies:
-    b17103a8b8ae9 ("Smack: Abstract use of cred security blob")
+if (!checkpoint_restore_ns_capable(&init_user_ns))
 
-v4.14.188: Failed to apply! Possible dependencies:
-    03450e271a160 ("fs: add ksys_fchmod() and do_fchmodat() helpers and ksys_chmod() wrapper; remove in-kernel calls to syscall")
-    312db1aa1dc7b ("fs: add ksys_mount() helper; remove in-kernel calls to sys_mount()")
-    3a18ef5c1b393 ("fs: add ksys_umount() helper; remove in-kernel call to sys_umount()")
-    447016e968196 ("fs: add ksys_chdir() helper; remove in-kernel calls to sys_chdir()")
-    819671ff849b0 ("syscalls: define and explain goal to not call syscalls in the kernel")
-    9481769208b5e ("->file_open(): lose cred argument")
-    a16fe33ab5572 ("fs: add ksys_chroot() helper; remove-in kernel calls to sys_chroot()")
-    ae2bb293a3e8a ("get rid of cred argument of vfs_open() and do_dentry_open()")
-    af04fadcaa932 ("Revert "fs: fold open_check_o_direct into do_dentry_open"")
-    b17103a8b8ae9 ("Smack: Abstract use of cred security blob")
-    c7248321a3d42 ("fs: add ksys_dup{,3}() helper; remove in-kernel calls to sys_dup{,3}()")
-    d19dfe58b7ecb ("Smack: Privilege check on key operations")
-    dcb569cf6ac99 ("Smack: ptrace capability use fixes")
-    e3f20ae21079e ("security_file_open(): lose cred argument")
-    e7a3e8b2edf54 ("fs: add ksys_write() helper; remove in-kernel calls to sys_write()")
+at the end of the day, capable(<cap>) just calls
+ns_capable(&init_user_ns, <cap>) anyway.
 
-v4.9.230: Failed to apply! Possible dependencies:
-    078c73c63fb28 ("apparmor: add profile and ns params to aa_may_manage_policy()")
-    121d4a91e3c12 ("apparmor: rename sid to secid")
-    12557dcba21b0 ("apparmor: move lib definitions into separate lib include")
-    2bd8dbbf22fe9 ("apparmor: add ns being viewed as a param to policy_view_capable()")
-    5ac8c355ae001 ("apparmor: allow introspecting the loaded policy pre internal transform")
-    637f688dc3dc3 ("apparmor: switch from profiles to using labels on contexts")
-    73688d1ed0b8f ("apparmor: refactor prepare_ns() and make usable from different views")
-    9481769208b5e ("->file_open(): lose cred argument")
-    98849dff90e27 ("apparmor: rename namespace to ns to improve code line lengths")
-    9a2d40c12d00e ("apparmor: add strn version of aa_find_ns")
-    a6f233003b1af ("apparmor: allow specifying the profile doing the management")
-    b17103a8b8ae9 ("Smack: Abstract use of cred security blob")
-    cff281f6861e7 ("apparmor: split apparmor policy namespaces code into its own file")
-    d19dfe58b7ecb ("Smack: Privilege check on key operations")
-    dcb569cf6ac99 ("Smack: ptrace capability use fixes")
-    f28e783ff668c ("Smack: Use cap_capable in privilege check")
-    fd2a80438d736 ("apparmor: add ns being viewed as a param to policy_admin_capable()")
-    fe6bb31f590c9 ("apparmor: split out shared policy_XXX fns to lib")
-
-v4.4.230: Failed to apply! Possible dependencies:
-    078c73c63fb28 ("apparmor: add profile and ns params to aa_may_manage_policy()")
-    121d4a91e3c12 ("apparmor: rename sid to secid")
-    12557dcba21b0 ("apparmor: move lib definitions into separate lib include")
-    2bd8dbbf22fe9 ("apparmor: add ns being viewed as a param to policy_view_capable()")
-    5ac8c355ae001 ("apparmor: allow introspecting the loaded policy pre internal transform")
-    637f688dc3dc3 ("apparmor: switch from profiles to using labels on contexts")
-    73688d1ed0b8f ("apparmor: refactor prepare_ns() and make usable from different views")
-    79be093500791 ("Smack: File receive for sockets")
-    9481769208b5e ("->file_open(): lose cred argument")
-    98849dff90e27 ("apparmor: rename namespace to ns to improve code line lengths")
-    9a2d40c12d00e ("apparmor: add strn version of aa_find_ns")
-    a6f233003b1af ("apparmor: allow specifying the profile doing the management")
-    b17103a8b8ae9 ("Smack: Abstract use of cred security blob")
-    c60b906673eeb ("Smack: Signal delivery as an append operation")
-    cff281f6861e7 ("apparmor: split apparmor policy namespaces code into its own file")
-    d19dfe58b7ecb ("Smack: Privilege check on key operations")
-    dcb569cf6ac99 ("Smack: ptrace capability use fixes")
-    f28e783ff668c ("Smack: Use cap_capable in privilege check")
-    fd2a80438d736 ("apparmor: add ns being viewed as a param to policy_admin_capable()")
-    fe6bb31f590c9 ("apparmor: split out shared policy_XXX fns to lib")
-
-
-NOTE: The patch will not be queued to stable trees until it is upstream.
-
-How should we proceed with this patch?
-
--- 
-Thanks
-Sasha
+Thanks!
+Christian
