@@ -1,188 +1,139 @@
-Return-Path: <SRS0=JoCX=A2=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=RuUe=A3=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2088FC433E1
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jul 2020 22:59:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03495C433DF
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jul 2020 00:27:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EDA4E20656
-	for <linux-security-module@archiver.kernel.org>; Wed, 15 Jul 2020 22:59:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UyVYVGZ3"
+	by mail.kernel.org (Postfix) with ESMTP id CC5242075B
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jul 2020 00:27:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1594859252;
+	bh=vT3xLEFkOcP2t0RQKK47xJd9RemOzqIloLTiufJQd4Y=;
+	h=Date:From:To:To:To:To:Cc:Cc:Subject:In-Reply-To:References:
+	 List-ID:From;
+	b=A2Mj+bg2f1N7uiqEzCLXv2xHTkYYmvzCLAvSdb5jJpyfCVnS0PLllQTVwWn+xZpiT
+	 LPRSCOP18mNKJ8FDri1HSeBe7ZvlSSY4bFEHous507r2HGh87Z/ojGCsh2/R3alwgi
+	 TFAaOYmAEL1HtfgO+AYPZa6bvNSXVGry+B+TC9Xw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726908AbgGOW7P (ORCPT
+        id S1727068AbgGPA1b (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 15 Jul 2020 18:59:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45438 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726776AbgGOW7P (ORCPT
+        Wed, 15 Jul 2020 20:27:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54318 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726770AbgGPA1b (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 15 Jul 2020 18:59:15 -0400
-Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC6CBC08C5CE
-        for <linux-security-module@vger.kernel.org>; Wed, 15 Jul 2020 15:59:14 -0700 (PDT)
-Received: by mail-ej1-x644.google.com with SMTP id p20so4126477ejd.13
-        for <linux-security-module@vger.kernel.org>; Wed, 15 Jul 2020 15:59:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=fZ1rBakSReO9Dn+EzmBi7QlVUTw5S5sAIhY6NkDcqpg=;
-        b=UyVYVGZ3tCLbe+5CH0LQ890sq2xoQmOnnE5A7hlJaGCoxZtFB624re+THIl7BI+lvO
-         eyyMilV41zbb2R7HS+QQp0qUghMOIUFFpGhvCz6uhonYxEZ2Lupsz+v2JGuO2SUposUC
-         wjZ0s+y5RtIISKMhBqUi/DW+mBLIJ4qpPEQ28=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=fZ1rBakSReO9Dn+EzmBi7QlVUTw5S5sAIhY6NkDcqpg=;
-        b=ROXfN+RIlW11ykI4NhSZzNfZfEjqnEryg9/GDc5gKvnukMXzyIq/B1l1w8mE4gdI0b
-         ZsD1sH8uHAa9OWxRnrg6LGx1iSyaz0egfZD6fHr4VILDemB3UicRyQlHQuT4miWKuCje
-         xUIk2adRzaN0LMSMvhSl85WMM5O56O5GJo4u485u7+2EOXdKKxikqYOWPuivETe1LdPN
-         86KxWyR7+zf+9oQCyekfqNM8XD6kcIlzk8zlkFZyW/0rCpmYzvacIA34tRgPVThEni2f
-         mrz8vWLw8me6iA/YocNgDik+7+H7topjaLsiYV5luvcq9LSLbnUaaCYog58ZR/chc210
-         MQDA==
-X-Gm-Message-State: AOAM532iVfmDRw4G9kGLhIcj46L/xKVPKN38QvCiOY7IQrQSN2yEvr1E
-        gR11tejo/mrTDl/kfaVK7DUOvg==
-X-Google-Smtp-Source: ABdhPJwtiT8rbD9B7KAQceCDxM9R1q9fPYU/TGYjl/rb8FPg4sH1QIcjoK1TO2tKm/WTJsefqNGf6A==
-X-Received: by 2002:a17:907:2149:: with SMTP id rk9mr1079014ejb.553.1594853953417;
-        Wed, 15 Jul 2020 15:59:13 -0700 (PDT)
-Received: from google.com ([81.6.44.51])
-        by smtp.gmail.com with ESMTPSA id hb8sm3307531ejb.8.2020.07.15.15.59.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Jul 2020 15:59:12 -0700 (PDT)
-From:   KP Singh <kpsingh@chromium.org>
-X-Google-Original-From: KP Singh <kpsingh>
-Date:   Thu, 16 Jul 2020 00:59:11 +0200
-To:     Martin KaFai Lau <kafai@fb.com>
-Cc:     KP Singh <kpsingh@chromium.org>, linux-kernel@vger.kernel.org,
-        bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
-        Florent Revest <revest@chromium.org>
-Subject: Re: [PATCH bpf-next v4 2/4] bpf: Implement bpf_local_storage for
- inodes
-Message-ID: <20200715225911.GA1194150@google.com>
-References: <20200709101239.3829793-1-kpsingh@chromium.org>
- <20200709101239.3829793-3-kpsingh@chromium.org>
- <20200715215751.6llgungzff66iwxh@kafai-mbp>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200715215751.6llgungzff66iwxh@kafai-mbp>
+        Wed, 15 Jul 2020 20:27:31 -0400
+Received: from localhost (unknown [137.135.114.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 26E14206F5;
+        Thu, 16 Jul 2020 00:27:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1594859250;
+        bh=vT3xLEFkOcP2t0RQKK47xJd9RemOzqIloLTiufJQd4Y=;
+        h=Date:From:To:To:To:To:Cc:Cc:Subject:In-Reply-To:References:From;
+        b=kAoQdChEIX4MqzOUSzrMPY4WnlT19MA6/fV6gGgwCcffezv6pcP5+Eh1Fmluju7IU
+         6Viv4UyzyeaBHBqCSMkX2HklOH+aDW5BIJTmbEcEw62t52hozBdPlt5+xp6OviJ0Nq
+         n+iBKI40FLQNzbItGY5e/dZwz2sUORRI881jj5R0=
+Date:   Thu, 16 Jul 2020 00:27:29 +0000
+From:   Sasha Levin <sashal@kernel.org>
+To:     Sasha Levin <sashal@kernel.org>
+To:     Eric Biggers <ebiggers@kernel.org>
+To:     Eric Biggers <ebiggers@google.com>
+To:     linux-security-module@vger.kernel.org
+Cc:     syzkaller-bugs@googlegroups.com, linux-kernel@vger.kernel.org
+Cc:     stable@vger.kernel.org
+Subject: Re: [PATCH] Smack: fix use-after-free in smk_write_relabel_self()
+In-Reply-To: <20200708201520.140376-1-ebiggers@kernel.org>
+References: <20200708201520.140376-1-ebiggers@kernel.org>
+Message-Id: <20200716002730.26E14206F5@mail.kernel.org>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 15-Jul 14:57, Martin KaFai Lau wrote:
-> On Thu, Jul 09, 2020 at 12:12:37PM +0200, KP Singh wrote:
-> > From: KP Singh <kpsingh@google.com>
-> > 
-> > Similar to bpf_local_storage for sockets, add local storage for inodes.
-> > The life-cycle of storage is managed with the life-cycle of the inode.
-> > i.e. the storage is destroyed along with the owning inode.
-> > 
-> > The BPF LSM allocates an __rcu pointer to the bpf_local_storage in the
-> > security blob which are now stackable and can co-exist with other LSMs.
-> > 
-> > Signed-off-by: KP Singh <kpsingh@google.com>
-> 
-> [ ... ]
-> 
-> 
-> > +static void *bpf_inode_storage_lookup_elem(struct bpf_map *map, void *key)
-> > +{
-> > +	struct bpf_local_storage_data *sdata;
-> > +	struct inode *inode;
-> > +	int err = -EINVAL;
-> > +
-> > +	if (key) {
-> > +		inode = *(struct inode **)(key);
-> The bpf_inode_storage_lookup_elem() here and the (update|delete)_elem() below
-> are called from the userspace syscall.  How the userspace may provide this key?
+Hi
 
-I realized this when I replied about the _fd_ name in the sk helpers.
-I am going to mark them as unsupported for now for inodes.
+[This is an automated email]
 
-We could, probably and separately, use a combination of the device
-and inode number as a key from userspace.
+This commit has been processed because it contains a "Fixes:" tag
+fixing commit: 38416e53936e ("Smack: limited capability for changing process label").
 
-- KP
+The bot has tested the following trees: v5.7.8, v5.4.51, v4.19.132, v4.14.188, v4.9.230, v4.4.230.
 
-> 
-> > +		sdata = inode_storage_lookup(inode, map, true);
-> > +		return sdata ? sdata->data : NULL;
-> > +	}
-> > +
-> > +	return ERR_PTR(err);
-> > +}
-> > +
-> > +static int bpf_inode_storage_update_elem(struct bpf_map *map, void *key,
-> > +					 void *value, u64 map_flags)
-> > +{
-> > +	struct bpf_local_storage_data *sdata;
-> > +	struct inode *inode;
-> > +	int err = -EINVAL;
-> > +
-> > +	if (key) {
-> > +		inode = *(struct inode **)(key);
-> > +		sdata = map->ops->map_local_storage_update(inode, map, value,
-> > +							   map_flags);
-> > +		return PTR_ERR_OR_ZERO(sdata);
-> > +	}
-> > +	return err;
-> > +}
-> > +
-> > +static int inode_storage_delete(struct inode *inode, struct bpf_map *map)
-> > +{
-> > +	struct bpf_local_storage_data *sdata;
-> > +
-> > +	sdata = inode_storage_lookup(inode, map, false);
-> > +	if (!sdata)
-> > +		return -ENOENT;
-> > +
-> > +	bpf_selem_unlink_map_elem(SELEM(sdata));
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int bpf_inode_storage_delete_elem(struct bpf_map *map, void *key)
-> > +{
-> > +	struct inode *inode;
-> > +	int err = -EINVAL;
-> > +
-> > +	if (key) {
-> > +		inode = *(struct inode **)(key);
-> > +		err = inode_storage_delete(inode, map);
-> > +	}
-> > +
-> > +	return err;
-> > +}
-> > +
-> 
-> [ ... ]
-> 
-> > +static int inode_storage_map_btf_id;
-> > +const struct bpf_map_ops inode_storage_map_ops = {
-> > +	.map_alloc_check = bpf_local_storage_map_alloc_check,
-> > +	.map_alloc = inode_storage_map_alloc,
-> > +	.map_free = inode_storage_map_free,
-> > +	.map_get_next_key = notsupp_get_next_key,
-> > +	.map_lookup_elem = bpf_inode_storage_lookup_elem,
-> > +	.map_update_elem = bpf_inode_storage_update_elem,
-> > +	.map_delete_elem = bpf_inode_storage_delete_elem,
-> > +	.map_check_btf = bpf_local_storage_map_check_btf,
-> > +	.map_btf_name = "bpf_local_storage_map",
-> > +	.map_btf_id = &inode_storage_map_btf_id,
-> > +	.map_local_storage_alloc = inode_storage_alloc,
-> > +	.map_selem_alloc = inode_selem_alloc,
-> > +	.map_local_storage_update = inode_storage_update,
-> > +	.map_local_storage_unlink = unlink_inode_storage,
-> > +};
-> > +
+v5.7.8: Build OK!
+v5.4.51: Build OK!
+v4.19.132: Failed to apply! Possible dependencies:
+    b17103a8b8ae9 ("Smack: Abstract use of cred security blob")
+
+v4.14.188: Failed to apply! Possible dependencies:
+    03450e271a160 ("fs: add ksys_fchmod() and do_fchmodat() helpers and ksys_chmod() wrapper; remove in-kernel calls to syscall")
+    312db1aa1dc7b ("fs: add ksys_mount() helper; remove in-kernel calls to sys_mount()")
+    3a18ef5c1b393 ("fs: add ksys_umount() helper; remove in-kernel call to sys_umount()")
+    447016e968196 ("fs: add ksys_chdir() helper; remove in-kernel calls to sys_chdir()")
+    819671ff849b0 ("syscalls: define and explain goal to not call syscalls in the kernel")
+    9481769208b5e ("->file_open(): lose cred argument")
+    a16fe33ab5572 ("fs: add ksys_chroot() helper; remove-in kernel calls to sys_chroot()")
+    ae2bb293a3e8a ("get rid of cred argument of vfs_open() and do_dentry_open()")
+    af04fadcaa932 ("Revert "fs: fold open_check_o_direct into do_dentry_open"")
+    b17103a8b8ae9 ("Smack: Abstract use of cred security blob")
+    c7248321a3d42 ("fs: add ksys_dup{,3}() helper; remove in-kernel calls to sys_dup{,3}()")
+    d19dfe58b7ecb ("Smack: Privilege check on key operations")
+    dcb569cf6ac99 ("Smack: ptrace capability use fixes")
+    e3f20ae21079e ("security_file_open(): lose cred argument")
+    e7a3e8b2edf54 ("fs: add ksys_write() helper; remove in-kernel calls to sys_write()")
+
+v4.9.230: Failed to apply! Possible dependencies:
+    078c73c63fb28 ("apparmor: add profile and ns params to aa_may_manage_policy()")
+    121d4a91e3c12 ("apparmor: rename sid to secid")
+    12557dcba21b0 ("apparmor: move lib definitions into separate lib include")
+    2bd8dbbf22fe9 ("apparmor: add ns being viewed as a param to policy_view_capable()")
+    5ac8c355ae001 ("apparmor: allow introspecting the loaded policy pre internal transform")
+    637f688dc3dc3 ("apparmor: switch from profiles to using labels on contexts")
+    73688d1ed0b8f ("apparmor: refactor prepare_ns() and make usable from different views")
+    9481769208b5e ("->file_open(): lose cred argument")
+    98849dff90e27 ("apparmor: rename namespace to ns to improve code line lengths")
+    9a2d40c12d00e ("apparmor: add strn version of aa_find_ns")
+    a6f233003b1af ("apparmor: allow specifying the profile doing the management")
+    b17103a8b8ae9 ("Smack: Abstract use of cred security blob")
+    cff281f6861e7 ("apparmor: split apparmor policy namespaces code into its own file")
+    d19dfe58b7ecb ("Smack: Privilege check on key operations")
+    dcb569cf6ac99 ("Smack: ptrace capability use fixes")
+    f28e783ff668c ("Smack: Use cap_capable in privilege check")
+    fd2a80438d736 ("apparmor: add ns being viewed as a param to policy_admin_capable()")
+    fe6bb31f590c9 ("apparmor: split out shared policy_XXX fns to lib")
+
+v4.4.230: Failed to apply! Possible dependencies:
+    078c73c63fb28 ("apparmor: add profile and ns params to aa_may_manage_policy()")
+    121d4a91e3c12 ("apparmor: rename sid to secid")
+    12557dcba21b0 ("apparmor: move lib definitions into separate lib include")
+    2bd8dbbf22fe9 ("apparmor: add ns being viewed as a param to policy_view_capable()")
+    5ac8c355ae001 ("apparmor: allow introspecting the loaded policy pre internal transform")
+    637f688dc3dc3 ("apparmor: switch from profiles to using labels on contexts")
+    73688d1ed0b8f ("apparmor: refactor prepare_ns() and make usable from different views")
+    79be093500791 ("Smack: File receive for sockets")
+    9481769208b5e ("->file_open(): lose cred argument")
+    98849dff90e27 ("apparmor: rename namespace to ns to improve code line lengths")
+    9a2d40c12d00e ("apparmor: add strn version of aa_find_ns")
+    a6f233003b1af ("apparmor: allow specifying the profile doing the management")
+    b17103a8b8ae9 ("Smack: Abstract use of cred security blob")
+    c60b906673eeb ("Smack: Signal delivery as an append operation")
+    cff281f6861e7 ("apparmor: split apparmor policy namespaces code into its own file")
+    d19dfe58b7ecb ("Smack: Privilege check on key operations")
+    dcb569cf6ac99 ("Smack: ptrace capability use fixes")
+    f28e783ff668c ("Smack: Use cap_capable in privilege check")
+    fd2a80438d736 ("apparmor: add ns being viewed as a param to policy_admin_capable()")
+    fe6bb31f590c9 ("apparmor: split out shared policy_XXX fns to lib")
+
+
+NOTE: The patch will not be queued to stable trees until it is upstream.
+
+How should we proceed with this patch?
+
+-- 
+Thanks
+Sasha
