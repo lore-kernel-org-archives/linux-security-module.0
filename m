@@ -2,98 +2,124 @@ Return-Path: <SRS0=RuUe=A3=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56014C433E1
-	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jul 2020 15:08:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF935C433E2
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jul 2020 15:23:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 27986207E8
-	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jul 2020 15:08:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1594912117;
-	bh=vg3EWAw37JSjeztzVepsyn68ZT9+JLeiWwoy5aYdFKU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=jbyEBp7SqaPnacyaWx/M5anzcrEwJYgOd/t687irHNy/XKMcm9trmoNMRfxuuL50k
-	 RQPpwXpwbd68r3SJrWuxMkTOc6RRWZ2nAzR9uSt+UnNb2qG/PHp+D1ROpmWi1GkdQ4
-	 db4ahG13inydlCCRNzOnx9QRga/1++QwYiL0TNAI=
+	by mail.kernel.org (Postfix) with ESMTP id B35C3206F5
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jul 2020 15:23:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728182AbgGPPIg (ORCPT
+        id S1728150AbgGPPXI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 16 Jul 2020 11:08:36 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:45781 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726963AbgGPPIg (ORCPT
+        Thu, 16 Jul 2020 11:23:08 -0400
+Received: from smtp-bc0e.mail.infomaniak.ch ([45.157.188.14]:46557 "EHLO
+        smtp-bc0e.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729038AbgGPPXH (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 16 Jul 2020 11:08:36 -0400
-Received: by mail-qt1-f195.google.com with SMTP id u12so5077050qth.12
-        for <linux-security-module@vger.kernel.org>; Thu, 16 Jul 2020 08:08:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FBJgfCD5/AmWoWjEm1lKJpXBMaTQmTNpQaZofnyM7L0=;
-        b=jpDfOxO9OPhJtC/15sFqd0CItPicYWr4762C+AAXzISbzUhSgXFY3M8X2Sg/BeiKZI
-         h8ise866StxYyQOtjKtseqyDFORWtx7ikJeUUKAZo/BTfQeoDNEtQ/ZkU90JHb/zz0lJ
-         k7Kwj4cXsGoBukoSaN03AljTZUryfdV8RZzaIb0xdJW4n8URtHr0BD2osKoopx+qdfrF
-         YTTesA8E3+qC+AqrTawFte03UGG/W8Fz8jrlyU9uUPxRvarxh0xGi7dxEkcRjg41ZMKY
-         xRKw1VAw4Ss+nf+Fcjy85T4f1u5vZBWY3c5W6X4hHh7RFOyDscBIglHnzEtHoLeRqjYC
-         ThxQ==
-X-Gm-Message-State: AOAM5319s3K+euwaohZ4k+RPL2D0YhD/oemhuy9j9Q9mh49T+HVQXmPJ
-        9pSGgN80jJ7m940w+RFzM9NQzCs4KKvrzN5ixcJFojc4z9w=
-X-Google-Smtp-Source: ABdhPJxIgAbB51DLBaq8cw4jXl978vldnSrr+gWhlQATsmUvnBoXdG2sH7reEveA9N0Js97c/HYf6kiJ0j/QpPmg6Us=
-X-Received: by 2002:ac8:3797:: with SMTP id d23mr5672877qtc.25.1594912114836;
- Thu, 16 Jul 2020 08:08:34 -0700 (PDT)
+        Thu, 16 Jul 2020 11:23:07 -0400
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4B6yfy65zfzlhfRc;
+        Thu, 16 Jul 2020 17:22:34 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
+        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4B6yfq65Djzlh8TX;
+        Thu, 16 Jul 2020 17:22:27 +0200 (CEST)
+Subject: Re: [PATCH v6 7/7] ima: add policy support for the new file open
+ MAY_OPENEXEC flag
+To:     Randy Dunlap <rdunlap@infradead.org>,
+        Kees Cook <keescook@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Eric Chiang <ericchiang@google.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+References: <20200714181638.45751-1-mic@digikod.net>
+ <20200714181638.45751-8-mic@digikod.net> <202007151339.283D7CD@keescook>
+ <8df69733-0088-3e3c-9c3d-2610414cea2b@digikod.net>
+ <61c05cb0-a956-3cc7-5dab-e11ebf0e95bf@infradead.org>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Message-ID: <639b1727-2d61-5c29-623f-87eaf5a66a03@digikod.net>
+Date:   Thu, 16 Jul 2020 17:22:26 +0200
+User-Agent: 
 MIME-Version: 1.0
-References: <20200716101827.162793-1-mtk.manpages@gmail.com> <20200716101827.162793-16-mtk.manpages@gmail.com>
-In-Reply-To: <20200716101827.162793-16-mtk.manpages@gmail.com>
-From:   "Andrew G. Morgan" <morgan@kernel.org>
-Date:   Thu, 16 Jul 2020 08:08:20 -0700
-Message-ID: <CALQRfL6dAEgiUiEckUN9x_g0J+sywz+Q_zBfPqPFTBsf2zRt=A@mail.gmail.com>
-Subject: Re: [PATCH 16/16] capsh.c: Spelling fixes in usage() message
-To:     "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Cc:     LSM List <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <61c05cb0-a956-3cc7-5dab-e11ebf0e95bf@infradead.org>
+Content-Type: text/plain; charset=iso-8859-15
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
+X-Antivirus-Code: 0x100000
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Thanks! Applied all of them except 07_16. Instead, I've hopefully
-clarified the intent of the text with some quotes.
 
-Cheers
+On 16/07/2020 16:59, Randy Dunlap wrote:
+> On 7/16/20 7:40 AM, Mickaël Salaün wrote:
+>>
+>> On 15/07/2020 22:40, Kees Cook wrote:
+>>> On Tue, Jul 14, 2020 at 08:16:38PM +0200, Mickaël Salaün wrote:
+>>>> From: Mimi Zohar <zohar@linux.ibm.com>
+>>>>
+>>>> The kernel has no way of differentiating between a file containing data
+>>>> or code being opened by an interpreter.  The proposed O_MAYEXEC
+>>>> openat2(2) flag bridges this gap by defining and enabling the
+>>>> MAY_OPENEXEC flag.
+>>>>
+>>>> This patch adds IMA policy support for the new MAY_OPENEXEC flag.
+>>>>
+>>>> Example:
+>>>> measure func=FILE_CHECK mask=^MAY_OPENEXEC
+>>>> appraise func=FILE_CHECK appraise_type=imasig mask=^MAY_OPENEXEC
+>>>>
+>>>> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+>>>> Reviewed-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+>>>> Acked-by: Mickaël Salaün <mic@digikod.net>
+>>>
+>>> (Process nit: if you're sending this on behalf of another author, then
+>>> this should be Signed-off-by rather than Acked-by.)
+>>
+>> I'm not a co-author of this patch.
+>>
+> 
+> from Documentation/process/submitting-patches.rst:
+> 
+> The Signed-off-by: tag indicates that the signer was involved in the
+> development of the patch, or that he/she was in the patch's delivery path.
+>                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 
 
-Andrew
-
-https://git.kernel.org/pub/scm/libs/libcap/libcap.git/commit/?id=34e4e00b983a2c0fc5f13b403871a8fb5860bb89
-
-On Thu, Jul 16, 2020 at 3:19 AM Michael Kerrisk (man-pages)
-<mtk.manpages@gmail.com> wrote:
->
-> Signed-off-by: Michael Kerrisk (man-pages) <mtk.manpages@gmail.com>
-> ---
->  progs/capsh.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/progs/capsh.c b/progs/capsh.c
-> index 94bf57d..7bed98e 100644
-> --- a/progs/capsh.c
-> +++ b/progs/capsh.c
-> @@ -879,10 +879,10 @@ int main(int argc, char *argv[], char *envp[])
->                    "  --delamb=xxx   remove xxx,... capabilities from ambient\n"
->                    "  --noamb        reset (drop) all ambient capabilities\n"
->                    "  --caps=xxx     set caps as per cap_from_text()\n"
-> -                  "  --inh=xxx      set xxx,.. inheritiable set\n"
-> +                  "  --inh=xxx      set xxx,.. inheritable set\n"
->                    "  --secbits=<n>  write a new value for securebits\n"
->                    "  --iab=...      use cap_iab_from_text() to set iab\n"
-> -                  "  --keep=<n>     set keep-capabability bit to <n>\n"
-> +                  "  --keep=<n>     set keep-capability bit to <n>\n"
->                    "  --uid=<n>      set uid to <n> (hint: id <username>)\n"
->                    "  --cap-uid=<n>  libcap cap_setuid() to change uid\n"
->                    "  --is-uid=<n>   exit 1 if uid != <n>\n"
-> --
-> 2.26.2
->
+OK, I though such tag had to go along with the From/Author, the
+Committer or a Co-developed-by tag, but there is also this specific
+case. I'll fix that in the next series.
