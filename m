@@ -2,86 +2,118 @@ Return-Path: <SRS0=RuUe=A3=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59567C433DF
-	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jul 2020 17:27:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16001C433E5
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jul 2020 17:44:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4055D2070E
-	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jul 2020 17:27:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E67E12076A
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jul 2020 17:44:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Sizm3BjA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728721AbgGPR07 (ORCPT
+        id S1729418AbgGPRoE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 16 Jul 2020 13:26:59 -0400
-Received: from mga01.intel.com ([192.55.52.88]:47165 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726986AbgGPR06 (ORCPT
+        Thu, 16 Jul 2020 13:44:04 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:54454 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727844AbgGPRoD (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 16 Jul 2020 13:26:58 -0400
-IronPort-SDR: TT9U2tITExq6glngydUbOW098uKgTrSTt0B0NM5Vk6WsJN0uTeXckBiWpoqUhlKWirDTjvAcPU
- hAR78bensUoA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9684"; a="167581557"
-X-IronPort-AV: E=Sophos;i="5.75,360,1589266800"; 
-   d="scan'208";a="167581557"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2020 10:26:57 -0700
-IronPort-SDR: 1EgqbbYetW10P22ZL8G4vZYdleHkGnBPhVmHwNUM+4T1k6hUCCSY7nFVgpC1lQcbaMJhbq0ici
- HLXDoxrUEcMQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.75,360,1589266800"; 
-   d="scan'208";a="326589129"
-Received: from unknown (HELO localhost) ([10.249.34.156])
-  by orsmga007.jf.intel.com with ESMTP; 16 Jul 2020 10:26:54 -0700
-Date:   Thu, 16 Jul 2020 20:26:52 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Stefan Berger <stefanb@linux.ibm.com>
-Cc:     Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-acpi@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v9 2/2] tpm: Add support for event log pointer found in
- TPM2 ACPI table
-Message-ID: <20200716172652.GA14135@linux.intel.com>
-References: <20200706230914.GC20770@linux.intel.com>
- <78ec872f-89b3-6464-6ede-bd0a46fe5c4c@linux.ibm.com>
- <20200707022416.GC112019@linux.intel.com>
- <f3e0fb50-8617-da40-1456-158531a070cb@linux.ibm.com>
- <20200707040325.GB143804@linux.intel.com>
- <85c27199-df55-eecc-855c-dedcea64f89e@linux.ibm.com>
- <20200708140753.GC538949@linux.intel.com>
- <e42cb59d-6a3d-12be-bb51-88aa8c5dba23@linux.ibm.com>
- <20200714112030.GA1448526@linux.intel.com>
- <69907c30-62c2-b4bd-e84f-11612bba9c95@linux.ibm.com>
+        Thu, 16 Jul 2020 13:44:03 -0400
+Received: from localhost.localdomain (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
+        by linux.microsoft.com (Postfix) with ESMTPSA id AB67F20B4909;
+        Thu, 16 Jul 2020 10:44:02 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com AB67F20B4909
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1594921442;
+        bh=MdDEgRa6UippolxJcPeM/hQSOUKo4WoMK9t77dGEGj4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Sizm3BjAMdT+PRCjC/4fBmtejMVd9kz3DIU9iy2Q4czaTO87PTmEixfWJ9pEmrdht
+         yqFEEOJb6ZH3+z7G+dVldRusRL+U5fXKxiMoqbrPjyTHVG91aV96s59BavSqRZxUmx
+         MhnjQz01m6B4uHKYOpLg1WqoWO+ODELcOKmUNmXQ=
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+To:     zohar@linux.ibm.com, stephen.smalley.work@gmail.com,
+        casey@schaufler-ca.com
+Cc:     jmorris@namei.org, linux-integrity@vger.kernel.org,
+        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/5] LSM: Measure security module state
+Date:   Thu, 16 Jul 2020 10:43:46 -0700
+Message-Id: <20200716174351.20128-1-nramas@linux.microsoft.com>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <69907c30-62c2-b4bd-e84f-11612bba9c95@linux.ibm.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jul 14, 2020 at 08:09:03AM -0400, Stefan Berger wrote:
-> On 7/14/20 7:20 AM, Jarkko Sakkinen wrote:
-> > On Wed, Jul 08, 2020 at 10:17:17AM -0400, Stefan Berger wrote:
-> > > > ❯ swtpm-mvo.swtpm socket --tpmstate dir=/tmp/mytpm1 \
-> > > >     --ctrl type=unixio,path=/tmp/mytpm1/swtpm-sock \
-> > > >     --log level=20
-> > > > swtpm: Could not open UnixIO socket: No such file or directory
-> > > 
-> > > Did you create the directory '/tmp/mytpm1' ?
-> > Yes. It's the socket file that it is complain because it does
-> > not exist beforehand.
-> 
-> 
-> The socket file is created by the swtpm program.
+Critical data structures of security modules are currently not measured.
+Therefore an attestation service, for instance, would not be able to
+attest whether the security modules are always operating with the policies
+and configuration that the system administrator had setup. The policies
+and configuration for the security modules could be tampered with by
+malware by exploiting Kernel vulnerabilities or modified through some
+inadvertent actions on the system. Measuring such critical data would
+enable an attestation service to better assess the state of the system.
 
-I got this tested with real hardware, i.e. tested that TPM 1.2 works.
+IMA subsystem measures system files, command line arguments passed to
+kexec, boot aggregate, keys, etc. It can be used to measure critical
+data structures of security modules as well.
 
-Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+This change aims to address measuring critical data structures
+of security modules when they are initialized, when they are updated
+at runtime, and also periodically to detect any tampering.
 
-/Jarkko
+This change set is based off of Linux Kernel version 5.8-rc5.
+
+The following patch needs to be applied first before applying
+the patches in this patch set:
+
+    https://patchwork.kernel.org/patch/11612989/
+
+Change log:
+
+  v2:
+      => Pass selinux_state struct as parameter to the function
+         that measures SELinux data.
+      => Use strings from selinux_policycap_names array for SELinux
+         state measurement.
+      => Refactored security_read_policy() to alloc kernel or user
+         virtual memory and then read the SELinux policy.
+
+  v1:
+      => Per Stephen Smalley's suggestion added selinux_state booleans
+         and hash of SELinux policy in the measured data for SELinux.
+      => Call IMA hook from the security module directly instead of
+         redirecting through the LSM.
+
+Lakshmi Ramasubramanian (5):
+  IMA: Add LSM_STATE func to measure LSM data
+  IMA: Define an IMA hook to measure LSM data
+  LSM: Add security_measure_data in lsm_info struct
+  LSM: Define SELinux function to measure security state
+  LSM: Define workqueue for measuring security module state
+
+ Documentation/ABI/testing/ima_policy |   6 +-
+ include/linux/ima.h                  |   4 +
+ include/linux/lsm_hooks.h            |   3 +
+ security/integrity/ima/ima.h         |   1 +
+ security/integrity/ima/ima_api.c     |   2 +-
+ security/integrity/ima/ima_main.c    |  17 +++
+ security/integrity/ima/ima_policy.c  |  29 ++++-
+ security/security.c                  |  74 ++++++++++++-
+ security/selinux/Makefile            |   2 +
+ security/selinux/hooks.c             |   4 +
+ security/selinux/include/security.h  |  26 +++++
+ security/selinux/measure.c           | 158 +++++++++++++++++++++++++++
+ security/selinux/selinuxfs.c         |   1 +
+ security/selinux/ss/services.c       |  66 +++++++++--
+ 14 files changed, 376 insertions(+), 17 deletions(-)
+ create mode 100644 security/selinux/measure.c
+
+-- 
+2.27.0
+
