@@ -8,64 +8,64 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97A78C433EB
-	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jul 2020 10:19:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBB9FC433E0
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jul 2020 10:19:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 689C82074B
-	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jul 2020 10:19:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C31D52074B
+	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jul 2020 10:19:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pBuz8bBx"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TdQD+F5d"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726894AbgGPKTE (ORCPT
+        id S1726898AbgGPKTJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 16 Jul 2020 06:19:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37026 "EHLO
+        Thu, 16 Jul 2020 06:19:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37040 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726075AbgGPKTE (ORCPT
+        with ESMTP id S1726075AbgGPKTI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 16 Jul 2020 06:19:04 -0400
-Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1F67C061755
-        for <linux-security-module@vger.kernel.org>; Thu, 16 Jul 2020 03:19:03 -0700 (PDT)
-Received: by mail-wr1-x443.google.com with SMTP id b6so6430898wrs.11
-        for <linux-security-module@vger.kernel.org>; Thu, 16 Jul 2020 03:19:03 -0700 (PDT)
+        Thu, 16 Jul 2020 06:19:08 -0400
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9613DC061755
+        for <linux-security-module@vger.kernel.org>; Thu, 16 Jul 2020 03:19:08 -0700 (PDT)
+Received: by mail-wr1-x433.google.com with SMTP id z13so6480303wrw.5
+        for <linux-security-module@vger.kernel.org>; Thu, 16 Jul 2020 03:19:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Q2LrDzr98NUf9gsquNLZVCZZ6MwxCoD1rH1sNrjWwhs=;
-        b=pBuz8bBx7MtHGpOUuyRejd32SfcXYvHv4p9SjOq1ayo2zYlU7qt6DF1pHOnjHTewMw
-         onN9oIPiU3DywYKETjiSm5TfLe+eGq9XMEJJAH++uC/xT1bGKmxE1R2x5fzqBjidXpL9
-         696qjfSUA5IEktl0AGxuqb+bgzUaFdmTc0Nar8HtUm2XFVFu3r64rVkTWtihn+gCHIlt
-         VcVQI7zVcWtrMRQsa4U+3IzwpUcXyyyP2+w6iyqAqLBlIqCUhCcgqcgMbXNS7A83hScK
-         mP7h5h2wDHR/fU61BVL3zHLi+DmXcdnpLIbE+x2pA6wn3j8k746O69ENsLaBxSa8mBNL
-         GNHQ==
+        bh=3XnL7iqGjxKA17qRzoDq/KQ6FTyi5sd0zk5glsQAWco=;
+        b=TdQD+F5dHTF1qo9dlUeGThMW665msNyKquNB7yzjZo2YoH8jnc/+84/hOwwp29d/us
+         3ELcdrW5fHpQxnAl62bac8QbYdnyJar8hBh9g88w5tOuMpXvIxslaK+srdyp3NWTFW+U
+         xtI6XoW3qwDGr+LPkZiMBzCURrdxdyT6UxXZPwtK0HFw2o6nV/Sob6VG0IfE5lksLt2f
+         MFC0VjOMz+7qO3ofixoidolPvP4hY5DxBfkdNw+2aG3Gyi4dACc4+gSzqijlSkSVNj44
+         JKVQmHbGj6mUkC+O1KLxgKBWNIsODcniXj4wgyPRw/Ok4Yt4k7YaqwxT3pM42fZpn8ft
+         9ygQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Q2LrDzr98NUf9gsquNLZVCZZ6MwxCoD1rH1sNrjWwhs=;
-        b=cszVOlsLYlA9ix8KxAR+PKYyR9tm85cYcOnPvAJqOTwu3LOnD8c30FQwUXhmtxCOhA
-         KtOqs94MWcblb9WME89HjMx5+oplfwahechweMAcsDJDOuZ66on47VES4DJqDmYCoRQH
-         iMWoyu71hckQbmJwDIuiUFWqiIUKnQhcH9jGFepJrxzk6WkzEwjLpMDQHxKVeKPQ/0VP
-         61Q4B8q98jPyg8LGJ+pv1kcdR5VPD3H9tyQnIQd6j7++XLC7R+eSN5UNTUSZOyZsIlab
-         5zWahIZ2wMYk1PvNr8ZTxkyZWQOID/Xd38G2KSsYamoY7CJAYti75fBnsLrCdycdUsXF
-         Q1LA==
-X-Gm-Message-State: AOAM532KXIKZ5pCrhSUfzkotlO9yY0KQMolOBDEX3TkKNQoNZ2j5rdXJ
-        bNBGH22LcXVWBidHI5I9+tk=
-X-Google-Smtp-Source: ABdhPJxTEGV5mgT5xJmiKVTVhJ9yv1CnBZNyF8gTlP7svkAt6rWBfS+JL1iUouA51U4Nka99SgHW+Q==
-X-Received: by 2002:a5d:458a:: with SMTP id p10mr4332817wrq.184.1594894742713;
-        Thu, 16 Jul 2020 03:19:02 -0700 (PDT)
+        bh=3XnL7iqGjxKA17qRzoDq/KQ6FTyi5sd0zk5glsQAWco=;
+        b=BgjeJ7iDF1nb3b0CWbljB4hZsANNL533tl7hpOpDU4iIfu6eQblH/mhkH7nOuGk5W/
+         fC25wqZ/VgDGf4Y5iK9DrvQUKM3oEWKthqrPikByN2ESLvdxwOGh/PB0Px0Sq0iAisqT
+         ZHxmjjggk67ERV1YJIqeAUzbTWxGuhAyuCZhQqyoj+AkO8kSerDXCgbT3uGNcUmsOM+X
+         awqUpfEQkUrV3Nd8riyVYA8zkqEaAof//lohnM+V9JgDikGAqeKghExcSk8GBT0/5Qks
+         EUH2ac3NAF4Nhpvq6U7moKXyzukhZyofW7qpc02IeVdAGLqHd/IgZH8OoEiEjnju3ez5
+         fbHw==
+X-Gm-Message-State: AOAM5315OkMKVOM3T9iqwCe5IxFouRkVHvL8LaDScS0kMBXkcjt2XbWB
+        dMWhnb4q1LAEGHi3skHhGOU=
+X-Google-Smtp-Source: ABdhPJxaK3VKQAM0vy+YaW3u7UUd+6z7zAT++aIRHrbYEzB6xeW9FqMfrA/Q70q4honmY9GO92eg2g==
+X-Received: by 2002:a5d:4710:: with SMTP id y16mr4471323wrq.189.1594894747269;
+        Thu, 16 Jul 2020 03:19:07 -0700 (PDT)
 Received: from bienne.fritz.box ([2001:a61:3adb:8201:9649:88f:51f8:6a21])
-        by smtp.gmail.com with ESMTPSA id w16sm9963329wrg.95.2020.07.16.03.19.01
+        by smtp.gmail.com with ESMTPSA id f12sm8200777wrj.48.2020.07.16.03.19.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jul 2020 03:19:02 -0700 (PDT)
+        Thu, 16 Jul 2020 03:19:06 -0700 (PDT)
 From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
 To:     mtk.manpages@gmail.com, "Andrew G . Morgan" <morgan@kernel.org>
 Cc:     linux-security-module@vger.kernel.org
-Subject: [PATCH 08/16] Manual pages: cap_get_proc.3: formatting fix
-Date:   Thu, 16 Jul 2020 12:18:19 +0200
-Message-Id: <20200716101827.162793-8-mtk.manpages@gmail.com>
+Subject: [PATCH 09/16] Manual pages: capsh.1: spelling fixes
+Date:   Thu, 16 Jul 2020 12:18:20 +0200
+Message-Id: <20200716101827.162793-9-mtk.manpages@gmail.com>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200716101827.162793-1-mtk.manpages@gmail.com>
 References: <20200716101827.162793-1-mtk.manpages@gmail.com>
@@ -77,23 +77,31 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 Signed-off-by: Michael Kerrisk (man-pages) <mtk.manpages@gmail.com>
 ---
- doc/cap_get_proc.3 | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ doc/capsh.1 | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/doc/cap_get_proc.3 b/doc/cap_get_proc.3
-index ded1491..f90c4f5 100644
---- a/doc/cap_get_proc.3
-+++ b/doc/cap_get_proc.3
-@@ -261,7 +261,8 @@ The library also supports the deprecated functions:
- .BR capgetp ()
- attempts to obtain the capabilities of some other process; storing the
- capabilities in a pre-allocated
--.IR cap_d . See
-+.IR cap_d .
-+See
- .BR cap_init ()
- for information on allocating an empty capability set. This function,
- .BR capgetp (),
+diff --git a/doc/capsh.1 b/doc/capsh.1
+index cd30dc3..24e80b7 100644
+--- a/doc/capsh.1
++++ b/doc/capsh.1
+@@ -103,7 +103,7 @@ effective set.
+ use the
+ .BR cap_setuid (3)
+ function to set the uid of the current process. This performs all
+-prepations for setting the uid without dropping capabilities in the
++preparations for setting the uid without dropping capabilities in the
+ process. Following this command the prevailing effective capabilities
+ will be lowered.
+ .TP
+@@ -242,7 +242,7 @@ vector has capability
+ raised.
+ .TP
+ .BI \-\-addamb= xxx
+-Adds the specificed ambient capability to the running process.
++Adds the specified ambient capability to the running process.
+ .TP
+ .BI \-\-delamb= xxx
+ Removes the specified ambient capability from the running process.
 -- 
 2.26.2
 
