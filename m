@@ -1,102 +1,131 @@
-Return-Path: <SRS0=RuUe=A3=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=cbB2=A4=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL
-	autolearn=no autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9DB5C433E3
-	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jul 2020 22:03:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92162C433E2
+	for <linux-security-module@archiver.kernel.org>; Fri, 17 Jul 2020 04:34:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C2BA5207DD
-	for <linux-security-module@archiver.kernel.org>; Thu, 16 Jul 2020 22:03:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E8B12070A
+	for <linux-security-module@archiver.kernel.org>; Fri, 17 Jul 2020 04:34:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="alO1yY32"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="sP+Iz/bY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726293AbgGPWDe (ORCPT
+        id S1726442AbgGQEe0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 16 Jul 2020 18:03:34 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:37492 "EHLO
+        Fri, 17 Jul 2020 00:34:26 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:59642 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726002AbgGPWDe (ORCPT
+        with ESMTP id S1725300AbgGQEeZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 16 Jul 2020 18:03:34 -0400
-Received: from [192.168.0.104] (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 41FA820B4909;
-        Thu, 16 Jul 2020 15:03:33 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 41FA820B4909
+        Fri, 17 Jul 2020 00:34:25 -0400
+Received: from sequoia (162-237-133-238.lightspeed.rcsntx.sbcglobal.net [162.237.133.238])
+        by linux.microsoft.com (Postfix) with ESMTPSA id D03D320B4909;
+        Thu, 16 Jul 2020 21:34:23 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com D03D320B4909
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1594937013;
-        bh=BO4avn92Gom5gc+t7EdSdrx5xcXiDN2axravan300r8=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=alO1yY324W0XtvJF3jJ20uUtbfZIxvf5wdeVrVykT/x6h7DAdLUYXLhQmKKM1FSLm
-         QrQ8rV0+7PDptRV66+ZZQExLfZNMxwrenrawEk4eIjI5uVEm2JZhZ7t/gi9fzXKtBb
-         4QLIkDA5LTA6svI/oegPWWMZ2q4ojUcWUeUrjHFg=
-Subject: Re: [PATCH v2 4/5] LSM: Define SELinux function to measure security
- state
-To:     Stephen Smalley <stephen.smalley.work@gmail.com>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
+        s=default; t=1594960464;
+        bh=Vbn9Ff2ot+XxjEUmgeVaZLB/JNIZwEipBIWmuEA1DTI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=sP+Iz/bYoLxwhCHUS6F7OshqABDmuyHBDVOkmmXr7mo/Pp3QjjAcS2QreT2YiJozZ
+         jb/ltXDUi9ubT2wJZ5A2HrlHsC80JN0P/5FpmtJKm8pqF0VBbMLNv45/fEwfKBybf9
+         QD/mWVp8nYB1QOO7aFcxtooi7F5NXZVPkbaeeiX0=
+Date:   Thu, 16 Jul 2020 23:34:21 -0500
+From:   Tyler Hicks <tyhicks@linux.microsoft.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
         James Morris <jmorris@namei.org>,
-        linux-integrity@vger.kernel.org,
-        SElinux list <selinux@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <20200716174351.20128-1-nramas@linux.microsoft.com>
- <20200716174351.20128-5-nramas@linux.microsoft.com>
- <CAEjxPJ43eXK0xgrE=gDxZVg2SDTz4bkd7N4otjk-cvxf3fKL-g@mail.gmail.com>
- <9478ddca-8298-5170-836d-8cbc7a070df2@linux.microsoft.com>
- <CAEjxPJ5p_T+C1NDz3iF7fvQzQAURpAcipvQfQXLZTfLP4Wiqbg@mail.gmail.com>
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Message-ID: <37d3d380-f4e2-1bdc-88c8-7bb8ffbee612@linux.microsoft.com>
-Date:   Thu, 16 Jul 2020 15:03:32 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Prakhar Srivastava <prsriva02@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Janne Karhunen <janne.karhunen@gmail.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        kexec@lists.infradead.org,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Nayna Jain <nayna@linux.ibm.com>
+Subject: Re: [PATCH v3 00/12] ima: Fix rule parsing bugs and extend
+ KEXEC_CMDLINE rule support
+Message-ID: <20200717043421.GF3673@sequoia>
+References: <20200709061911.954326-1-tyhicks@linux.microsoft.com>
+ <1594960293.27397.2.camel@linux.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <CAEjxPJ5p_T+C1NDz3iF7fvQzQAURpAcipvQfQXLZTfLP4Wiqbg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1594960293.27397.2.camel@linux.ibm.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 7/16/20 12:45 PM, Stephen Smalley wrote:
-> On Thu, Jul 16, 2020 at 3:13 PM Lakshmi Ramasubramanian
-> <nramas@linux.microsoft.com> wrote:
->>
->> On 7/16/20 11:54 AM, Stephen Smalley wrote:
->>> Not sure about this error handling approach (silent, proceeding as if
->>> the length was zero and then later failing with ENOMEM on every
->>> attempt?). I'd be more inclined to panic/BUG here but I know Linus
->>> doesn't like that.
->> I am not sure if failing (kernel panic/BUG) to "measure" LSM data under
->> memory pressure conditions is the right thing. But I am open to treating
->> this error as a fatal error. Please let me know.
+On 2020-07-17 00:31:33, Mimi Zohar wrote:
+> On Thu, 2020-07-09 at 01:18 -0500, Tyler Hicks wrote:
+> > This series ultimately extends the supported IMA rule conditionals for
+> > the KEXEC_CMDLINE hook function. As of today, there's an imbalance in
+> > IMA language conditional support for KEXEC_CMDLINE rules in comparison
+> > to KEXEC_KERNEL_CHECK and KEXEC_INITRAMFS_CHECK rules. The KEXEC_CMDLINE
+> > rules do not support *any* conditionals so you cannot have a sequence of
+> > rules like this:
+> > 
+> >  dont_measure func=KEXEC_KERNEL_CHECK obj_type=foo_t
+> >  dont_measure func=KEXEC_INITRAMFS_CHECK obj_type=foo_t
+> >  dont_measure func=KEXEC_CMDLINE obj_type=foo_t
+> >  measure func=KEXEC_KERNEL_CHECK
+> >  measure func=KEXEC_INITRAMFS_CHECK
+> >  measure func=KEXEC_CMDLINE
+> > 
+> > Instead, KEXEC_CMDLINE rules can only be measured or not measured and
+> > there's no additional flexibility in today's implementation of the
+> > KEXEC_CMDLINE hook function.
+> > 
+> > With this series, the above sequence of rules becomes valid and any
+> > calls to kexec_file_load() with a kernel and initramfs inode type of
+> > foo_t will not be measured (that includes the kernel cmdline buffer)
+> > while all other objects given to a kexec_file_load() syscall will be
+> > measured. There's obviously not an inode directly associated with the
+> > kernel cmdline buffer but this patch series ties the inode based
+> > decision making for KEXEC_CMDLINE to the kernel's inode. I think this
+> > will be intuitive to policy authors.
+> > 
+> > While reading IMA code and preparing to make this change, I realized
+> > that the buffer based hook functions (KEXEC_CMDLINE and KEY_CHECK) are
+> > quite special in comparison to longer standing hook functions. These
+> > buffer based hook functions can only support measure actions and there
+> > are some restrictions on the conditionals that they support. However,
+> > the rule parser isn't enforcing any of those restrictions and IMA policy
+> > authors wouldn't have any immediate way of knowing that the policy that
+> > they wrote is invalid. For example, the sequence of rules above parses
+> > successfully in today's kernel but the
+> > "dont_measure func=KEXEC_CMDLINE ..." rule is incorrectly handled in
+> > ima_match_rules(). The dont_measure rule is *always* considered to be a
+> > match so, surprisingly, no KEXEC_CMDLINE measurements are made.
+> > 
+> > While making the rule parser more strict, I realized that the parser
+> > does not correctly free all of the allocated memory associated with an
+> > ima_rule_entry when going down some error paths. Invalid policy loaded
+> > by the policy administrator could result in small memory leaks.
+> > 
+> > I envision patches 1-7 going to stable. The series is ordered in a way
+> > that has all the fixes up front, followed by cleanups, followed by the
+> > feature patch. The breakdown of patches looks like so:
+> > 
+> >  Memory leak fixes: 1-3
+> >  Parser strictness fixes: 4-7
+> >  Code cleanups made possible by the fixes: 8-11
+> >  Extend KEXEC_CMDLINE rule support: 12
 > 
-> Let's at least log an error message since it otherwise silently
-> disables all measuring of security state.
-Agree - will log error messages as appropriate.
+> Thanks, Tyler.  This is a really nice patch set.  The patches are now
+> in the "next-integrity-testing" branch.
 
-> Also not sure why we bother returning errors from
-> selinux_measure_data() since nothing appears to check or use the
-> result.
-Maybe SELinux can log audit messages on failures, but I guess it may be 
-better to do that closer to where the error occurs.
+Thank you for all the helpful review comments. You know where to find me
+if any bugs pop up during testing. :)
 
-Will change selinux_measure_data() to void function.
+Tyler
 
-> Don't know if integrity/IMA has any equivalent to the audit
-> subsystem's concept of audit_failure settings to control whether
-> errors that prevent auditing (measuring) are handled silently, with a
-> log message, or via a panic.  If not, I guess that can be explored
-> separately.
 > 
-
-Yes - integrity subsystem logs audit messages for errors\failures.
-
-  -lakshmi
-
-
+> Mimi
