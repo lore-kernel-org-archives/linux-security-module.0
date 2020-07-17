@@ -2,135 +2,150 @@ Return-Path: <SRS0=cbB2=A4=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-22.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DD51C43618
-	for <linux-security-module@archiver.kernel.org>; Fri, 17 Jul 2020 17:44:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E51E6C433E1
+	for <linux-security-module@archiver.kernel.org>; Fri, 17 Jul 2020 18:11:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 70973207EA
-	for <linux-security-module@archiver.kernel.org>; Fri, 17 Jul 2020 17:44:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD7E520717
+	for <linux-security-module@archiver.kernel.org>; Fri, 17 Jul 2020 18:11:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Vmebw9xz"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="mUU+5r9v"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727946AbgGQRoj (ORCPT
+        id S1726344AbgGQSLh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 17 Jul 2020 13:44:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45892 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727932AbgGQRnP (ORCPT
+        Fri, 17 Jul 2020 14:11:37 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:60054 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726205AbgGQSLg (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 17 Jul 2020 13:43:15 -0400
-Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68479C0619DA
-        for <linux-security-module@vger.kernel.org>; Fri, 17 Jul 2020 10:43:15 -0700 (PDT)
-Received: by mail-pj1-x1043.google.com with SMTP id b92so6752789pjc.4
-        for <linux-security-module@vger.kernel.org>; Fri, 17 Jul 2020 10:43:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=wrxYLXP2oheEEaGsKNp0stRrknyVueRaJu8i8kSptew=;
-        b=Vmebw9xzyFrFLgnwLQyPbu9sUxIvT3iz/LZhlggPZzdK8yi/sNJp1ISZhzAODP/aQq
-         DA1aJsmMOF5WM3+KxOc/jJOdCUMwDEegiUHYTk5QHuuuSDkU5ULxP6uWFu0Zgzte/hrz
-         inlXJ3TzZ7dygl/RRmbqjrIF3idceAZR9MaU4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=wrxYLXP2oheEEaGsKNp0stRrknyVueRaJu8i8kSptew=;
-        b=WqQt1DmWpYlEZO4Dwh9RtwSq9dwW3rvnYBPrQW+fEsn5iPVQb5ywIAv+MHCZyNwHK1
-         l46GUsqdhh617QCaJOd8m84XSwRw0KZ51mqEwHm/qt7BF5wFrdKjemavWutinkwjQvzW
-         UDPKKHuWfoYrbhiM9eiINvorMlfOLopKQP2UTjwbkahps7y2JIVZ3eZ72NrNeZ5p4NSo
-         Pu5t9hYQW897aZfFa75DVH/IMlA8mamYgw5L9gYYF8sgyQgTE5SzL23Ie3cT7LXoTDCk
-         6wutdd2bwQUOVKdiyk+vCq57/5j4PhiFHH8KzF17CoqW94gzRxA3hd3K3HOHNqNluIMc
-         DHaQ==
-X-Gm-Message-State: AOAM533bHD6qmnTvZxVrrMpZcFuz6JfJXbnbOwlTgrhbRPpPKvs20CX2
-        yVZOTstfDJsp8lmjO+9oYmwThA==
-X-Google-Smtp-Source: ABdhPJwUg0XMxYDUbRjKGsYc4z6GZTjsdq+bfOADQJjU8WjIWVN4iFhFlTSQL5o2BTwLAVb1iIGijw==
-X-Received: by 2002:a17:90a:9f4a:: with SMTP id q10mr11275946pjv.139.1595007795012;
-        Fri, 17 Jul 2020 10:43:15 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id d9sm8187840pfd.133.2020.07.17.10.43.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Jul 2020 10:43:13 -0700 (PDT)
-From:   Kees Cook <keescook@chromium.org>
-To:     Scott Branden <scott.branden@broadcom.com>
-Cc:     Kees Cook <keescook@chromium.org>, stable@vger.kernel.org,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Matthew Wilcox <willy@infradead.org>,
+        Fri, 17 Jul 2020 14:11:36 -0400
+Received: from sequoia (162-237-133-238.lightspeed.rcsntx.sbcglobal.net [162.237.133.238])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 1B3F420B4909;
+        Fri, 17 Jul 2020 11:11:35 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 1B3F420B4909
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1595009495;
+        bh=2Pzs4CmdDfnklLSKLq/qkdid1cilbcCSYYl7lLHXGe8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=mUU+5r9vVToweMQMPxEGv6yqTVSMaTYsYxEx7SRIAnhU+jY0WVAMStyXuuXe5TEWH
+         gBXzbDKupNrVFU9HYirgAi2f+BA6YjG0a17Wfn2UzlHC/ZD6EBWE2FSgWUAqlEoqB/
+         OC5H9KsJwGW8pNp7776zHDJDSZZt4gMWkd0wAckE=
+Date:   Fri, 17 Jul 2020 13:11:33 -0500
+From:   Tyler Hicks <tyhicks@linux.microsoft.com>
+To:     Nayna <nayna@linux.vnet.ibm.com>, Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
         James Morris <jmorris@namei.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jessica Yu <jeyu@kernel.org>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Matthew Garrett <matthewgarrett@google.com>,
-        David Howells <dhowells@redhat.com>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        KP Singh <kpsingh@google.com>, Dave Olsthoorn <dave@bewaar.me>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Peter Jones <pjones@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Boyd <stephen.boyd@linaro.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Prakhar Srivastava <prsriva02@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, kexec@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 01/13] firmware_loader: EFI firmware loader must handle pre-allocated buffer
-Date:   Fri, 17 Jul 2020 10:42:56 -0700
-Message-Id: <20200717174309.1164575-2-keescook@chromium.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200717174309.1164575-1-keescook@chromium.org>
-References: <20200717174309.1164575-1-keescook@chromium.org>
+        Nayna Jain <nayna@linux.ibm.com>
+Subject: Re: [PATCH v3 07/12] ima: Fail rule parsing when
+ appraise_flag=blacklist is unsupportable
+Message-ID: <20200717181133.GM3673@sequoia>
+References: <20200709061911.954326-1-tyhicks@linux.microsoft.com>
+ <20200709061911.954326-8-tyhicks@linux.microsoft.com>
+ <76d2b27b-3b59-1852-046a-b1718c62b167@linux.vnet.ibm.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <76d2b27b-3b59-1852-046a-b1718c62b167@linux.vnet.ibm.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The EFI platform firmware fallback would clobber any pre-allocated
-buffers. Instead, correctly refuse to reallocate when too small (as
-already done in the sysfs fallback), or perform allocation normally
-when needed.
+On 2020-07-17 13:40:22, Nayna wrote:
+> 
+> On 7/9/20 2:19 AM, Tyler Hicks wrote:
+> > The "appraise_flag" option is only appropriate for appraise actions
+> > and its "blacklist" value is only appropriate when
+> > CONFIG_IMA_APPRAISE_MODSIG is enabled and "appraise_flag=blacklist" is
+> > only appropriate when "appraise_type=imasig|modsig" is also present.
+> > Make this clear at policy load so that IMA policy authors don't assume
+> > that other uses of "appraise_flag=blacklist" are supported.
+> > 
+> > Fixes: 273df864cf74 ("ima: Check against blacklisted hashes for files with modsig")
+> > Signed-off-by: Tyler Hicks <tyhicks@linux.microsoft.com>
+> > Cc: Nayna Jain <nayna@linux.ibm.com>
+> > ---
+> > 
+> > * v3
+> >    - New patch
+> > 
+> >   security/integrity/ima/ima_policy.c | 13 ++++++++++++-
+> >   1 file changed, 12 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+> > index 81da02071d41..9842e2e0bc6d 100644
+> > --- a/security/integrity/ima/ima_policy.c
+> > +++ b/security/integrity/ima/ima_policy.c
+> > @@ -1035,6 +1035,11 @@ static bool ima_validate_rule(struct ima_rule_entry *entry)
+> >   		return false;
+> >   	}
+> > +	/* Ensure that combinations of flags are compatible with each other */
+> > +	if (entry->flags & IMA_CHECK_BLACKLIST &&
+> > +	    !(entry->flags & IMA_MODSIG_ALLOWED))
+> > +		return false;
+> > +
+> >   	return true;
+> >   }
+> > @@ -1371,8 +1376,14 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+> >   				result = -EINVAL;
+> >   			break;
+> >   		case Opt_appraise_flag:
+> > +			if (entry->action != APPRAISE) {
+> > +				result = -EINVAL;
+> > +				break;
+> > +			}
+> > +
+> >   			ima_log_string(ab, "appraise_flag", args[0].from);
+> > -			if (strstr(args[0].from, "blacklist"))
+> > +			if (IS_ENABLED(CONFIG_IMA_APPRAISE_MODSIG) &&
+> > +			    strstr(args[0].from, "blacklist"))
+> >   				entry->flags |= IMA_CHECK_BLACKLIST;
+> 
+> If IMA_APPRAISE_MODSIG is disabled, it will allow the following rule to
+> load, which is not as expected.
+> 
+> "appraise func=xxx_CHECK appraise_flag=blacklist appraise_type=imasig"
+> 
+> Missing is the "else" condition to immediately reject the policy rule.
 
-Fixes: e4c2c0ff00ec ("firmware: Add new platform fallback mechanism and firm ware_request_platform()")
-Cc: stable@vger.kernel.org
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
-To aid in backporting, this change is made before moving
-kernel_read_file() to separate header/source files.
----
- drivers/base/firmware_loader/fallback_platform.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Thanks for the review. You're right. This change is needed:
 
-diff --git a/drivers/base/firmware_loader/fallback_platform.c b/drivers/base/firmware_loader/fallback_platform.c
-index cdd2c9a9f38a..685edb7dd05a 100644
---- a/drivers/base/firmware_loader/fallback_platform.c
-+++ b/drivers/base/firmware_loader/fallback_platform.c
-@@ -25,7 +25,10 @@ int firmware_fallback_platform(struct fw_priv *fw_priv, u32 opt_flags)
- 	if (rc)
- 		return rc; /* rc == -ENOENT when the fw was not found */
- 
--	fw_priv->data = vmalloc(size);
-+	if (fw_priv->data && size > fw_priv->allocated_size)
-+		return -ENOMEM;
-+	if (!fw_priv->data)
-+		fw_priv->data = vmalloc(size);
- 	if (!fw_priv->data)
- 		return -ENOMEM;
- 
--- 
-2.25.1
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index 9842e2e0bc6d..cf3ddb38dfa8 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -1385,6 +1385,8 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+ 			if (IS_ENABLED(CONFIG_IMA_APPRAISE_MODSIG) &&
+ 			    strstr(args[0].from, "blacklist"))
+ 				entry->flags |= IMA_CHECK_BLACKLIST;
++			else
++				result = -EINVAL;
+ 			break;
+ 		case Opt_permit_directio:
+ 			entry->flags |= IMA_PERMIT_DIRECTIO;
 
+
+Making this change does not conflict with any later patches in the
+series.
+
+Mimi, I've rebased and force pushed to my fixup branch with this change,
+for your comparison:
+
+ https://git.kernel.org/pub/scm/linux/kernel/git/tyhicks/linux.git/log/?h=next-integrity-testing-fixup
+
+Tyler
+
+> 
+> Thanks & Regards,
+> 
+>      - Nayna
+> 
