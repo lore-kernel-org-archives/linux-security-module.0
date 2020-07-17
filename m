@@ -7,33 +7,33 @@ X-Spam-Status: No, score=-20.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
 	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DBBAC433F1
-	for <linux-security-module@archiver.kernel.org>; Fri, 17 Jul 2020 23:10:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54AD1C433FE
+	for <linux-security-module@archiver.kernel.org>; Fri, 17 Jul 2020 23:10:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1B3182076A
-	for <linux-security-module@archiver.kernel.org>; Fri, 17 Jul 2020 23:10:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 322462080D
+	for <linux-security-module@archiver.kernel.org>; Fri, 17 Jul 2020 23:10:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="dwM3+GpF"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="jk1kEuNp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728091AbgGQXJv (ORCPT
+        id S1728259AbgGQXKK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 17 Jul 2020 19:09:51 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:51152 "EHLO
+        Fri, 17 Jul 2020 19:10:10 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:51196 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727847AbgGQXJu (ORCPT
+        with ESMTP id S1727961AbgGQXJv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 17 Jul 2020 19:09:50 -0400
+        Fri, 17 Jul 2020 19:09:51 -0400
 Received: from dede-linux-virt.corp.microsoft.com (unknown [131.107.160.54])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 9961420B490F;
-        Fri, 17 Jul 2020 16:09:47 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 9961420B490F
+        by linux.microsoft.com (Postfix) with ESMTPSA id 6A1F020B4914;
+        Fri, 17 Jul 2020 16:09:48 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 6A1F020B4914
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1595027387;
-        bh=5M9Tk3jFE7eNtH1Lw5152Vks91zPr4QJQhY/Fiiq8eM=;
+        s=default; t=1595027388;
+        bh=ki5v5IVKQ9qaXSFm3LIelKxTKMgw5xBD/kuDMr2GTfw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dwM3+GpFaZOPL9KTY6ciOWgkFvu3bJX2H4RYmd54fyB2el8/LTC8J8iWRbzZ9ey26
-         a0l98FbqzT5VJVRyqoA0t1iZl4H5KhkqITRUxpxB60+51TUqWJA6xHP/wopo2U/91V
-         pYM1RVx2iW3el58bZMh8m5CkBPrlwGbRfo1vu2mM=
+        b=jk1kEuNpBfy6pq5++TVtdtrUb6ogXiqlkc27Jre/YzTX0XATd5/2zHBD2o3NvklCk
+         7tDTKbjy0N8bdc5Hxc45c7KpUEWeo1+JnJ6DXxs0Z+NTyOISy8B/zse3qkbCGBId5e
+         8o1NyUePCFFx6OO1tXSNfdkLtK4bsfBviOCg3Vfg=
 From:   Deven Bowers <deven.desai@linux.microsoft.com>
 To:     agk@redhat.com, axboe@kernel.dk, snitzer@redhat.com,
         jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com,
@@ -47,9 +47,9 @@ Cc:     tyhicks@linux.microsoft.com, linux-kernel@vger.kernel.org,
         corbet@lwn.net, sashal@kernel.org,
         jaskarankhurana@linux.microsoft.com, mdsakib@microsoft.com,
         nramas@linux.microsoft.com, pasha.tatshin@soleen.com
-Subject: [RFC PATCH v4 05/12] fs: add security blob and hooks for block_device
-Date:   Fri, 17 Jul 2020 16:09:34 -0700
-Message-Id: <20200717230941.1190744-6-deven.desai@linux.microsoft.com>
+Subject: [RFC PATCH v4 08/12] ipe: add property for signed dmverity volumes
+Date:   Fri, 17 Jul 2020 16:09:37 -0700
+Message-Id: <20200717230941.1190744-9-deven.desai@linux.microsoft.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20200717230941.1190744-1-deven.desai@linux.microsoft.com>
 References: <20200717230941.1190744-1-deven.desai@linux.microsoft.com>
@@ -59,244 +59,473 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Add a security blob and associated allocation, deallocation and set hooks
-for a block_device structure.
+Allow IPE to leverage the stacked security blob infrastructure,
+and enlighten IPE to the block_device security blob.
+
+This allows IPE to have a property to express rules around a device-mapper
+verity volume whose root-hash has been signed, and the signature has been
+verified against the system keyring. This is property is also added in
+this patch.
 
 Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
 ---
- fs/block_dev.c                |  8 +++++
- include/linux/fs.h            |  1 +
- include/linux/lsm_hook_defs.h |  5 +++
- include/linux/lsm_hooks.h     | 11 +++++++
- include/linux/security.h      | 22 +++++++++++++
- security/security.c           | 61 +++++++++++++++++++++++++++++++++++
- 6 files changed, 108 insertions(+)
+ security/ipe/Kconfig                         |  2 +-
+ security/ipe/Makefile                        |  1 +
+ security/ipe/ipe-blobs.c                     | 82 ++++++++++++++++++++
+ security/ipe/ipe-blobs.h                     | 18 +++++
+ security/ipe/ipe-engine.c                    |  4 +
+ security/ipe/ipe-engine.h                    |  9 +++
+ security/ipe/ipe-hooks.c                     |  1 +
+ security/ipe/ipe-hooks.h                     |  7 ++
+ security/ipe/ipe.c                           | 18 +++++
+ security/ipe/ipe.h                           |  2 +
+ security/ipe/properties/Kconfig              | 10 +++
+ security/ipe/properties/Makefile             |  1 +
+ security/ipe/properties/dmverity-signature.c | 82 ++++++++++++++++++++
+ security/ipe/properties/prop-entry.h         |  9 +++
+ security/ipe/utility.h                       | 10 +++
+ 15 files changed, 255 insertions(+), 1 deletion(-)
+ create mode 100644 security/ipe/ipe-blobs.c
+ create mode 100644 security/ipe/ipe-blobs.h
+ create mode 100644 security/ipe/properties/dmverity-signature.c
 
-diff --git a/fs/block_dev.c b/fs/block_dev.c
-index 0ae656e022fd..8602dd62c3e2 100644
---- a/fs/block_dev.c
-+++ b/fs/block_dev.c
-@@ -34,6 +34,7 @@
- #include <linux/falloc.h>
- #include <linux/uaccess.h>
- #include <linux/suspend.h>
-+#include <linux/security.h>
- #include "internal.h"
+diff --git a/security/ipe/Kconfig b/security/ipe/Kconfig
+index f47b7ef94133..9b5e8fc77a96 100644
+--- a/security/ipe/Kconfig
++++ b/security/ipe/Kconfig
+@@ -5,7 +5,7 @@
  
- struct bdev_inode {
-@@ -768,11 +769,18 @@ static struct inode *bdev_alloc_inode(struct super_block *sb)
- 	struct bdev_inode *ei = kmem_cache_alloc(bdev_cachep, GFP_KERNEL);
- 	if (!ei)
- 		return NULL;
+ menuconfig SECURITY_IPE
+ 	bool "Integrity Policy Enforcement (IPE)"
+-	depends on SECURITY && AUDIT
++	depends on SECURITY && AUDIT && BLOCK
+ 	select SYSTEM_DATA_VERIFICATION
+ 	select SECURITYFS
+ 	select CRYPTO_SHA1
+diff --git a/security/ipe/Makefile b/security/ipe/Makefile
+index 7e98982c5035..98a2245b6956 100644
+--- a/security/ipe/Makefile
++++ b/security/ipe/Makefile
+@@ -24,6 +24,7 @@ obj-$(CONFIG_SECURITY_IPE) += \
+ 	ipe-property.o \
+ 	ipe-hooks.o \
+ 	ipe-secfs.o \
++	ipe-blobs.o \
+ 
+ clean-files := ipe-bp.c
+ 
+diff --git a/security/ipe/ipe-blobs.c b/security/ipe/ipe-blobs.c
+new file mode 100644
+index 000000000000..03e916d13ac1
+--- /dev/null
++++ b/security/ipe/ipe-blobs.c
+@@ -0,0 +1,82 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) Microsoft Corporation. All rights reserved.
++ */
 +
-+	if (unlikely(security_bdev_alloc(&ei->bdev))) {
-+		kmem_cache_free(bdev_cachep, ei);
-+		return NULL;
++#include "ipe.h"
++#include "ipe-engine.h"
++#include "ipe-blobs.h"
++
++#include <linux/types.h>
++#include <linux/fs.h>
++#include <linux/device-mapper.h>
++
++/**
++ * ipe_bdev_alloc_security: Performs the initialization of IPE's security blob.
++ * @bdev: The block device to source the security blob from.
++ *
++ * The allocation is performed earlier by the LSM infrastructure,
++ * (on behalf of all LSMs) in lsm_alloc_bdev. At the moment, IPE uses
++ * this time to zero out the region of memory reserved for IPE.
++ *
++ * Return:
++ * 0 - OK
++ */
++int ipe_bdev_alloc_security(struct block_device *bdev)
++{
++	struct ipe_bdev_blob *bdev_sec = ipe_bdev(bdev);
++
++	memset(bdev_sec, 0x0, sizeof(*bdev_sec));
++
++	return 0;
++}
++
++/**
++ * ipe_bdev_free_security: Frees all fields of IPE's block dev security blob.
++ * @bdev: The block device to source the security blob from.
++ *
++ * The deallocation of the blob itself is performed later by the LSM
++ * infrastructure, (on behalf of all LSMs) in lsm_free_bdev.
++ *
++ * Pointers allocated by the bdev_setsecurity hook and alloc_security
++ * hook need to be deallocated here.
++ */
++void ipe_bdev_free_security(struct block_device *bdev)
++{
++	struct ipe_bdev_blob *bdev_sec = ipe_bdev(bdev);
++
++	kfree(bdev_sec->dmverity_rh_sig);
++
++	memset(bdev_sec, 0x0, sizeof(*bdev_sec));
++}
++
++/**
++ * ipe_bdev_setsecurity: Sets the a certain field of a block device security
++ *			 blob, based on @key.
++ * @bdev: The block device to source the security blob from.
++ * @key: The key representing the information to be stored.
++ * @value: The value to be stored.
++ * @len: The length of @value.
++ *
++ * As block-devices are a generic implementation across specific stacks,
++ * this allows information to be stored from various stacks.
++ *
++ * Return:
++ * 0 - OK
++ * !0 - Error
++ */
++int ipe_bdev_setsecurity(struct block_device *bdev, const char *key,
++			 const void *value, size_t len)
++{
++	struct ipe_bdev_blob *bdev_sec = ipe_bdev(bdev);
++
++	if (!strcmp(key, DM_VERITY_SIGNATURE_SEC_NAME)) {
++		bdev_sec->dmverity_rh_sig = kmemdup(value, len, GFP_KERNEL);
++		if (!bdev_sec->dmverity_rh_sig)
++			return -ENOMEM;
++
++		bdev_sec->dmv_rh_sig_len = len;
 +	}
 +
- 	return &ei->vfs_inode;
- }
- 
- static void bdev_free_inode(struct inode *inode)
- {
-+	security_bdev_free(&BDEV_I(inode)->bdev);
- 	kmem_cache_free(bdev_cachep, BDEV_I(inode));
- }
- 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index f5abba86107d..42d7e3ce7712 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -509,6 +509,7 @@ struct block_device {
- 	int			bd_fsfreeze_count;
- 	/* Mutex for freeze */
- 	struct mutex		bd_fsfreeze_mutex;
-+	void			*security;
- } __randomize_layout;
- 
- /* XArray tags, for tagging dirty and writeback pages in the pagecache. */
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index af998f93d256..f3c0da0db4e8 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -391,3 +391,8 @@ LSM_HOOK(void, LSM_RET_VOID, perf_event_free, struct perf_event *event)
- LSM_HOOK(int, 0, perf_event_read, struct perf_event *event)
- LSM_HOOK(int, 0, perf_event_write, struct perf_event *event)
- #endif /* CONFIG_PERF_EVENTS */
++	return 0;
++}
+diff --git a/security/ipe/ipe-blobs.h b/security/ipe/ipe-blobs.h
+new file mode 100644
+index 000000000000..7561f4cef558
+--- /dev/null
++++ b/security/ipe/ipe-blobs.h
+@@ -0,0 +1,18 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (C) Microsoft Corporation. All rights reserved.
++ */
++#include <linux/types.h>
++#include <linux/fs.h>
 +
-+LSM_HOOK(int, 0, bdev_alloc_security, struct block_device *bdev)
-+LSM_HOOK(void, LSM_RET_VOID, bdev_free_security, struct block_device *bdev)
-+LSM_HOOK(int, 0, bdev_setsecurity, struct block_device *bdev, const char *name,
-+	 const void *value, size_t size)
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 95b7c1d32062..8a728b7dd32d 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -1507,6 +1507,16 @@
-  *
-  *     @what: kernel feature being accessed
-  *
-+ * @bdev_alloc_security:
-+ *	Initialize the security field inside a block_device structure.
-+ *
-+ * @bdev_free_security:
-+ *	Cleanup the security information stored inside a block_device structure.
-+ *
-+ * @bdev_setsecurity:
-+ *	Set the security property associated with @name for @bdev with
-+ *	value @value. @size indicates the size of the @value in bytes.
-+ *
-  * Security hooks for perf events
-  *
-  * @perf_event_open:
-@@ -1553,6 +1563,7 @@ struct lsm_blob_sizes {
- 	int	lbs_ipc;
- 	int	lbs_msg_msg;
- 	int	lbs_task;
-+	int	lbs_bdev;
++#include "ipe.h"
++
++#ifndef IPE_BLOB_H
++#define IPE_BLOB_H
++
++static inline struct ipe_bdev_blob *ipe_bdev(struct block_device *bdev)
++{
++	return bdev->security + ipe_blobs.lbs_bdev;
++}
++
++#endif /* IPE_BLOB_H */
+diff --git a/security/ipe/ipe-engine.c b/security/ipe/ipe-engine.c
+index 2eab680587ce..5785e51e8630 100644
+--- a/security/ipe/ipe-engine.c
++++ b/security/ipe/ipe-engine.c
+@@ -10,6 +10,7 @@
+ #include "ipe-engine.h"
+ #include "ipe-audit.h"
+ #include "ipe-pin.h"
++#include "ipe-blobs.h"
+ #include "utility.h"
+ 
+ #include <linux/types.h>
+@@ -116,6 +117,9 @@ static struct ipe_engine_ctx *build_ctx(const struct file *file,
+ 	local->op = op;
+ 	local->hook = hook;
+ 
++	if (has_bdev(file))
++		local->sec_bdev = ipe_bdev(bdev(file));
++
+ 	return local;
+ }
+ 
+diff --git a/security/ipe/ipe-engine.h b/security/ipe/ipe-engine.h
+index d9a95674e70d..038c39a8973e 100644
+--- a/security/ipe/ipe-engine.h
++++ b/security/ipe/ipe-engine.h
+@@ -3,20 +3,29 @@
+  * Copyright (C) Microsoft Corporation. All rights reserved.
+  */
+ 
++#include "ipe.h"
+ #include "ipe-hooks.h"
+ 
+ #include <linux/types.h>
+ #include <linux/rbtree.h>
+ #include <linux/fs.h>
+ 
++#include <crypto/pkcs7.h>
++
+ #ifndef IPE_ENGINE_H
+ #define IPE_ENGINE_H
+ 
++struct ipe_bdev_blob {
++	u8	*dmverity_rh_sig;
++	size_t	dmv_rh_sig_len;
++};
++
+ struct ipe_engine_ctx {
+ 	enum ipe_op op;
+ 	enum ipe_hook hook;
+ 	const struct file *file;
+ 	const char *audit_pathname;
++	const struct ipe_bdev_blob *sec_bdev;
  };
  
- /*
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 0a0a03b36a3b..8f83fdc6c65d 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -451,6 +451,11 @@ int security_inode_notifysecctx(struct inode *inode, void *ctx, u32 ctxlen);
- int security_inode_setsecctx(struct dentry *dentry, void *ctx, u32 ctxlen);
- int security_inode_getsecctx(struct inode *inode, void **ctx, u32 *ctxlen);
- int security_locked_down(enum lockdown_reason what);
-+int security_bdev_alloc(struct block_device *bdev);
-+void security_bdev_free(struct block_device *bdev);
-+int security_bdev_setsecurity(struct block_device *bdev,
-+			      const char *name, const void *value,
-+			      size_t size);
- #else /* CONFIG_SECURITY */
+ struct ipe_prop_cache {
+diff --git a/security/ipe/ipe-hooks.c b/security/ipe/ipe-hooks.c
+index 45efe022be04..18ab2dcd74d1 100644
+--- a/security/ipe/ipe-hooks.c
++++ b/security/ipe/ipe-hooks.c
+@@ -15,6 +15,7 @@
+ #include <linux/mman.h>
+ #include <linux/mm.h>
+ #include <linux/security.h>
++#include <linux/device-mapper.h>
  
- static inline int call_blocking_lsm_notifier(enum lsm_event event, void *data)
-@@ -1291,6 +1296,23 @@ static inline int security_locked_down(enum lockdown_reason what)
- {
- 	return 0;
- }
-+
-+static inline int security_bdev_alloc(struct block_device *bdev)
-+{
-+	return 0;
-+}
-+
-+static inline void security_bdev_free(struct block_device *bdev)
-+{
-+}
-+
-+static inline int security_bdev_setsecurity(struct block_device *bdev,
-+					    const char *name,
-+					    const void *value, size_t size)
-+{
-+	return 0;
-+}
-+
- #endif	/* CONFIG_SECURITY */
- 
- #if defined(CONFIG_SECURITY) && defined(CONFIG_WATCH_QUEUE)
-diff --git a/security/security.c b/security/security.c
-index 70a7ad357bc6..8e61b7e6adfc 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -28,6 +28,7 @@
- #include <linux/string.h>
- #include <linux/msg.h>
- #include <net/flow.h>
-+#include <linux/fs.h>
- 
- #define MAX_LSM_EVM_XATTR	2
- 
-@@ -202,6 +203,7 @@ static void __init lsm_set_blob_sizes(struct lsm_blob_sizes *needed)
- 	lsm_set_blob_size(&needed->lbs_ipc, &blob_sizes.lbs_ipc);
- 	lsm_set_blob_size(&needed->lbs_msg_msg, &blob_sizes.lbs_msg_msg);
- 	lsm_set_blob_size(&needed->lbs_task, &blob_sizes.lbs_task);
-+	lsm_set_blob_size(&needed->lbs_bdev, &blob_sizes.lbs_bdev);
- }
- 
- /* Prepare LSM for initialization. */
-@@ -337,6 +339,7 @@ static void __init ordered_lsm_init(void)
- 	init_debug("ipc blob size      = %d\n", blob_sizes.lbs_ipc);
- 	init_debug("msg_msg blob size  = %d\n", blob_sizes.lbs_msg_msg);
- 	init_debug("task blob size     = %d\n", blob_sizes.lbs_task);
-+	init_debug("bdev blob size     = %d\n", blob_sizes.lbs_bdev);
- 
- 	/*
- 	 * Create any kmem_caches needed for blobs
-@@ -654,6 +657,28 @@ static int lsm_msg_msg_alloc(struct msg_msg *mp)
- 	return 0;
- }
- 
-+/**
-+ * lsm_bdev_alloc - allocate a composite block_device blob
-+ * @bdev: the block_device that needs a blob
-+ *
-+ * Allocate the block_device blob for all the modules
-+ *
-+ * Returns 0, or -ENOMEM if memory can't be allocated.
-+ */
-+static int lsm_bdev_alloc(struct block_device *bdev)
-+{
-+	if (blob_sizes.lbs_bdev == 0) {
-+		bdev->security = NULL;
-+		return 0;
-+	}
-+
-+	bdev->security = kzalloc(blob_sizes.lbs_bdev, GFP_KERNEL);
-+	if (!bdev->security)
-+		return -ENOMEM;
-+
-+	return 0;
-+}
-+
  /**
-  * lsm_early_task - during initialization allocate a composite task blob
-  * @task: the task that needs a blob
-@@ -2516,6 +2541,42 @@ int security_locked_down(enum lockdown_reason what)
- }
- EXPORT_SYMBOL(security_locked_down);
+  * ipe_on_exec: LSM hook called on the exec family of system calls.
+diff --git a/security/ipe/ipe-hooks.h b/security/ipe/ipe-hooks.h
+index 5e46726f2562..b2417831cfc1 100644
+--- a/security/ipe/ipe-hooks.h
++++ b/security/ipe/ipe-hooks.h
+@@ -60,4 +60,11 @@ int ipe_on_kernel_load_data(enum kernel_load_data_id id);
  
-+int security_bdev_alloc(struct block_device *bdev)
-+{
-+	int rc = 0;
+ void ipe_sb_free_security(struct super_block *mnt_sb);
+ 
++int ipe_bdev_alloc_security(struct block_device *bdev);
 +
-+	rc = lsm_bdev_alloc(bdev);
-+	if (unlikely(rc))
++void ipe_bdev_free_security(struct block_device *bdev);
++
++int ipe_bdev_setsecurity(struct block_device *bdev, const char *key,
++			 const void *value, size_t len);
++
+ #endif /* IPE_HOOK_H */
+diff --git a/security/ipe/ipe.c b/security/ipe/ipe.c
+index 4a2623962f8c..b7d112fce62f 100644
+--- a/security/ipe/ipe.c
++++ b/security/ipe/ipe.c
+@@ -24,6 +24,9 @@ static struct security_hook_list ipe_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(kernel_load_data, ipe_on_kernel_load_data),
+ 	LSM_HOOK_INIT(file_mprotect, ipe_on_mprotect),
+ 	LSM_HOOK_INIT(sb_free_security, ipe_sb_free_security),
++	LSM_HOOK_INIT(bdev_alloc_security, ipe_bdev_alloc_security),
++	LSM_HOOK_INIT(bdev_free_security, ipe_bdev_free_security),
++	LSM_HOOK_INIT(bdev_setsecurity, ipe_bdev_setsecurity),
+ };
+ 
+ /**
+@@ -41,6 +44,10 @@ static int __init ipe_load_properties(void)
+ 	if (rc != 0)
+ 		return rc;
+ 
++	rc = ipe_init_dm_verity_signature();
++	if (rc != 0)
 +		return rc;
 +
-+	rc = call_int_hook(bdev_alloc_security, 0, bdev);
-+	if (unlikely(rc))
-+		security_bdev_free(bdev);
+ 	return rc;
+ }
+ 
+@@ -73,9 +80,20 @@ static int __init ipe_init(void)
+ 	return rc;
+ }
+ 
++struct lsm_blob_sizes ipe_blobs = {
++	.lbs_cred = 0,
++	.lbs_file = 0,
++	.lbs_inode = 0,
++	.lbs_ipc = 0,
++	.lbs_msg_msg = 0,
++	.lbs_task = 0,
++	.lbs_bdev = sizeof(struct ipe_bdev_blob),
++};
++
+ DEFINE_LSM(ipe) = {
+ 	.name = "ipe",
+ 	.init = ipe_init,
++	.blobs = &ipe_blobs,
+ };
+ 
+ bool ipe_enforce = true;
+diff --git a/security/ipe/ipe.h b/security/ipe/ipe.h
+index af72bb574f73..a59cae2deec6 100644
+--- a/security/ipe/ipe.h
++++ b/security/ipe/ipe.h
+@@ -10,11 +10,13 @@
+ 
+ #include <linux/types.h>
+ #include <linux/fs.h>
++#include <linux/lsm_hooks.h>
+ 
+ #define IPE_MODE_ENFORCE	"enforce"
+ #define IPE_MODE_PERMISSIVE	"permissive"
+ 
+ extern bool ipe_enforce;
+ extern bool ipe_success_audit;
++extern struct lsm_blob_sizes ipe_blobs;
+ 
+ #endif /* IPE_H */
+diff --git a/security/ipe/properties/Kconfig b/security/ipe/properties/Kconfig
+index 75c6c6ff6cd8..4046f7e5eaef 100644
+--- a/security/ipe/properties/Kconfig
++++ b/security/ipe/properties/Kconfig
+@@ -13,3 +13,13 @@ config IPE_BOOT_PROP
+ 	  superblock.
+ 
+ 	  if unsure, answer N.
++
++config IPE_DM_VERITY_SIGNATURE
++	bool "Enable property for signature verified dm-verity volumes"
++	depends on DM_VERITY_VERIFY_ROOTHASH_SIG
++	help
++	  This option enables IPE's integration with Device-Mapper Verity's
++	  signed root-hashes. This enables the usage of the property,
++	  "dmverity_signature" in IPE's policy.
++
++	  if unsure, answer Y.
+diff --git a/security/ipe/properties/Makefile b/security/ipe/properties/Makefile
+index e3e7fe17cf58..6b67cbe36e31 100644
+--- a/security/ipe/properties/Makefile
++++ b/security/ipe/properties/Makefile
+@@ -9,3 +9,4 @@
+ obj-$(CONFIG_SECURITY_IPE) += properties.o
+ 
+ properties-$(CONFIG_IPE_BOOT_PROP) += boot-verified.o
++properties-$(CONFIG_IPE_DM_VERITY_SIGNATURE) += dmverity-signature.o
+diff --git a/security/ipe/properties/dmverity-signature.c b/security/ipe/properties/dmverity-signature.c
+new file mode 100644
+index 000000000000..819222f226b7
+--- /dev/null
++++ b/security/ipe/properties/dmverity-signature.c
+@@ -0,0 +1,82 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) Microsoft Corporation. All rights reserved.
++ */
++
++#include "../ipe.h"
++#include "../ipe-pin.h"
++#include "../ipe-property.h"
++#include "../utility.h"
++
++#include <linux/types.h>
++#include <linux/slab.h>
++#include <linux/fs.h>
++#include <linux/audit.h>
++#include <linux/mount.h>
++
++#define PROPERTY_NAME "dmverity_signature"
++
++static void audit(struct audit_buffer *ab, bool value)
++{
++	audit_log_format(ab, "%s", (value) ? "TRUE" : "FALSE");
++}
++
++static inline void audit_rule_value(struct audit_buffer *ab,
++				    const void *value)
++{
++	audit(ab, (bool)value);
++}
++
++static inline void audit_ctx(struct audit_buffer *ab,
++			     const struct ipe_engine_ctx *ctx)
++{
++	bool b = has_bdev(ctx->file) && ctx->sec_bdev->dmverity_rh_sig;
++
++	audit(ab, b);
++}
++
++static bool evaluate(const struct ipe_engine_ctx *ctx,
++		     const void *value)
++{
++	bool expect = (bool)value;
++
++	if (!has_bdev(ctx->file))
++		return false;
++
++	return ((bool)ctx->sec_bdev->dmverity_rh_sig) == expect;
++}
++
++static int parse(const char *val_str, void **value)
++{
++	if (strcmp("TRUE", val_str) == 0)
++		*value = (void *)true;
++	else if (strcmp("FALSE", val_str) == 0)
++		*value = (void *)false;
++	else
++		return -EBADMSG;
 +
 +	return 0;
 +}
-+EXPORT_SYMBOL(security_bdev_alloc);
 +
-+void security_bdev_free(struct block_device *bdev)
++static inline int duplicate(const void *src, void **dest)
 +{
-+	if (!bdev->security)
-+		return;
++	*dest = (void *)(bool)src;
 +
-+	call_void_hook(bdev_free_security, bdev);
-+
-+	kfree(bdev->security);
-+	bdev->security = NULL;
++	return 0;
 +}
-+EXPORT_SYMBOL(security_bdev_free);
 +
-+int security_bdev_setsecurity(struct block_device *bdev,
-+			      const char *name, const void *value,
-+			      size_t size)
++static const struct ipe_property dmv_signature = {
++	.property_name = PROPERTY_NAME,
++	.version = 1,
++	.eval = evaluate,
++	.parse = parse,
++	.rule_audit = audit_rule_value,
++	.ctx_audit = audit_ctx,
++	.dup = duplicate,
++	.free_val = NULL,
++};
++
++int ipe_init_dm_verity_signature(void)
 +{
-+	return call_int_hook(bdev_setsecurity, 0, bdev, name, value, size);
++	return ipe_register_property(&dmv_signature);
 +}
-+EXPORT_SYMBOL(security_bdev_setsecurity);
+diff --git a/security/ipe/properties/prop-entry.h b/security/ipe/properties/prop-entry.h
+index f598dd9608b9..85366366ff0d 100644
+--- a/security/ipe/properties/prop-entry.h
++++ b/security/ipe/properties/prop-entry.h
+@@ -17,4 +17,13 @@ static inline int __init ipe_init_bootv(void)
+ int __init ipe_init_bootv(void);
+ #endif /* CONFIG_IPE_BOOT_PROP */
+ 
++#ifndef CONFIG_IPE_DM_VERITY_SIGNATURE
++static inline int __init ipe_init_dm_verity_signature(void)
++{
++	return 0;
++}
++#else
++int __init ipe_init_dm_verity_signature(void);
++#endif /* CONFIG_IPE_DM_VERITY_SIGNATURE */
 +
- #ifdef CONFIG_PERF_EVENTS
- int security_perf_event_open(struct perf_event_attr *attr, int type)
- {
+ #endif /* IPE_PROP_ENTRY_H */
+diff --git a/security/ipe/utility.h b/security/ipe/utility.h
+index a13089bb0d8f..7580f17274a3 100644
+--- a/security/ipe/utility.h
++++ b/security/ipe/utility.h
+@@ -19,4 +19,14 @@ static inline bool has_sb(const struct file *file)
+ 	return has_mount(file) && file->f_path.mnt->mnt_sb;
+ }
+ 
++static inline bool has_bdev(const struct file *file)
++{
++	return has_sb(file) && file->f_path.mnt->mnt_sb->s_bdev;
++}
++
++static inline struct block_device *bdev(const struct file *file)
++{
++	return file->f_path.mnt->mnt_sb->s_bdev;
++}
++
+ #endif /* IPE_UTILITY_H */
 -- 
 2.27.0
 
