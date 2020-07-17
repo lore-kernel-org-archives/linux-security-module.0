@@ -2,106 +2,155 @@ Return-Path: <SRS0=cbB2=A4=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E3A3C433DF
-	for <linux-security-module@archiver.kernel.org>; Fri, 17 Jul 2020 11:45:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1AB8C433E1
+	for <linux-security-module@archiver.kernel.org>; Fri, 17 Jul 2020 15:35:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 63E1D20684
-	for <linux-security-module@archiver.kernel.org>; Fri, 17 Jul 2020 11:45:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CDEC220704
+	for <linux-security-module@archiver.kernel.org>; Fri, 17 Jul 2020 15:35:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="La4PoFUS"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="thN/THn4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726446AbgGQLph (ORCPT
+        id S1726205AbgGQPfQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 17 Jul 2020 07:45:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46970 "EHLO
+        Fri, 17 Jul 2020 11:35:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54272 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726079AbgGQLph (ORCPT
+        with ESMTP id S1726198AbgGQPfP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 17 Jul 2020 07:45:37 -0400
-Received: from mail-qv1-xf41.google.com (mail-qv1-xf41.google.com [IPv6:2607:f8b0:4864:20::f41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44939C061755;
-        Fri, 17 Jul 2020 04:45:37 -0700 (PDT)
-Received: by mail-qv1-xf41.google.com with SMTP id ed14so4095569qvb.2;
-        Fri, 17 Jul 2020 04:45:37 -0700 (PDT)
+        Fri, 17 Jul 2020 11:35:15 -0400
+Received: from mail-il1-x141.google.com (mail-il1-x141.google.com [IPv6:2607:f8b0:4864:20::141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CF43C0619D2;
+        Fri, 17 Jul 2020 08:35:15 -0700 (PDT)
+Received: by mail-il1-x141.google.com with SMTP id e18so7691391ilr.7;
+        Fri, 17 Jul 2020 08:35:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:reply-to:mime-version
-         :content-disposition;
-        bh=RGmCnCujTCPHPAqseUf5nHct0c3cR5+Pl0sn8j65GRA=;
-        b=La4PoFUSodowSJLHupAbyoCryYe4IscT0uVjcLdnBdcKu34q4TNYPqzS0Nr/jQc+EM
-         F2XyfYyxL8FQhKctiFagZGB9yxdA12JMq8JEvISZeKuMS1vZ5/Oau3CFZLgR8K43xiUU
-         E86yO3eN5U8q9hW+83UrqolEyLOq60sn5RWpuN0fRb6KFwI9m265IqtAwKVQfl4cygy3
-         0jKEYBIANHgXGZAdahfISR5yQA6FuB5q/EXPJLjCM6LtRPdNK0IPKb1/gbZHs22PgaEY
-         wX7lul5113brAi0ptNWB69Sc4TE4p22uWbGzG5GisCJcFbMfc7QZcO5iTG1ztdjRVt0Y
-         Uktg==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jWFR5o+rLcHr6gQ9i4ZRMRc2XwQllNXVeyLEXvcDyqU=;
+        b=thN/THn4iUNzs7Zw+EhsCXiABO9WgEv1JIQa2OlXRKhXBasNjdSR+etGHN0QPWhtj3
+         NmNM+K5g3pqD6vzmdFUsryVGDBFX1CRqmZ27lCJLTwh+jptu5E3hYnQR7Ifh2MnHHgYe
+         MLKlAP8gsJYvj0bhoruVQ2nM/N48lQmpaWKHYJE7QB1uB9Wp6taMWOPEGYji7zf/73+F
+         WyWUBb3K9w9KV1S6JoUPxFcSlvIetYP8UwxXcyciNowCt9dqamlhYRP2plYJi8AjLn7m
+         3GCKBnA/nu3LmHozF41mEJ+laXapFqHNm8OS+2k5AxhCXW4p528BAuBps7wCs7Y1ymOG
+         NfgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
-         :mime-version:content-disposition;
-        bh=RGmCnCujTCPHPAqseUf5nHct0c3cR5+Pl0sn8j65GRA=;
-        b=qGMcyCf5HiazK1TIB0hEeejdA3gHvOawaLPnyms2I80MHbS8qx+o82rYiqdlXZqGh9
-         uQ5m45QAM8osavfd8fGRENDtx5tn/ZC+BQnWASw5CozGSRLCv3P1BKgxernNSPlQG9t9
-         yNmzTbUayGQqaOXmynwmmr5iiTyctbQMfboKgsKnnHRvV+lHE+s82oxgRpWQRVtzPLac
-         3HFO243rZmJKbIS/t+Xwtf4YQuHe4MvutB4I+Z51/IOetbxdqF2n8fs5zAzNBL7cKrf8
-         yOZ7ZRyScGsqvrb3/NPEtql26mXxDLaTdTfuF+3rHq1g5AJ/xFfK8dMVcQNiN6SA6235
-         QlEg==
-X-Gm-Message-State: AOAM531570kqhHP5igGwvvl+K2wnd1utHryrtT/hwfmxrojj0j/iwn7n
-        kCwVuEussoQoreJ4MQ/jPMSPFLuE0k3W
-X-Google-Smtp-Source: ABdhPJzKXuvJZlL9/a9hkaENPQ8WnD+XhRB2h7wtRwtCk65prLKd7UbjOiRuatykH0KlTfyqjIJ2+Q==
-X-Received: by 2002:a0c:a992:: with SMTP id a18mr8145355qvb.211.1594986336193;
-        Fri, 17 Jul 2020 04:45:36 -0700 (PDT)
-Received: from PWN (c-76-119-149-155.hsd1.ma.comcast.net. [76.119.149.155])
-        by smtp.gmail.com with ESMTPSA id s8sm10967968qtc.17.2020.07.17.04.45.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Jul 2020 04:45:35 -0700 (PDT)
-Date:   Fri, 17 Jul 2020 07:45:32 -0400
-From:   Peilin Ye <yepeilin.cs@gmail.com>
-To:     Daniel Colascione <dancol@google.com>
-Cc:     timmurray@google.com, selinux@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, viro@zeniv.linux.org.uk, paul@paul-moore.com,
-        nnk@google.com, sds@tycho.nsa.gov, lokeshgidra@google.com,
-        jmorris@namei.org
-Subject: Reporting a use-after-free read bug in userfaultfd_release()
-Message-ID: <20200717114532.GA688728@PWN>
-Reply-To: 20200401213903.182112-4-dancol@google.com
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jWFR5o+rLcHr6gQ9i4ZRMRc2XwQllNXVeyLEXvcDyqU=;
+        b=ZYk69al5zENQNe4EblfBguqH4Px7BijmFnAz5W+z3IEowINuHesDxUBOojiSSPq+Bt
+         JYg89QEpuSNXf6pWJ8NP4t9Jhe9FOxZGD3G6U9vVmnBgU74lHItGRUPaWUPqRgWr1WSD
+         Nm7cposUhnIYpgWM3J4nsQLGncf19cm9YMoC3/HEUpZ/v/xjuX4SDXKsPPE9JVshnvoN
+         shdC6t4Rzd/tLLPN8GBHSRoPWx7XxvyvqayK8J6Xy+iwaMpghhSzrfi7o5VVreJM9UX7
+         MfULURQ5srvnDReNf4e+1gUYRAt3yxg63XP/B4+btUc8uEYZkGFMP8jR1QpW96NT89NI
+         wWdw==
+X-Gm-Message-State: AOAM532QT28hSep7AxZqP23cg5lYJcaloyo44dFrHkDGjRnxn02AKrnk
+        9qZm/PiFRn9vI6WIPaNFPixQi9ijkhgxWXlHhFg=
+X-Google-Smtp-Source: ABdhPJxHE7aaEDjc30un5GGc1JQ0IJZaN/KWa3ptEgEKy/F2F3Su9D/D3HY6ZCO1lM/KMTGhQ2KEcYqpdIm1NWqjCfM=
+X-Received: by 2002:a92:d84d:: with SMTP id h13mr10902476ilq.102.1595000114409;
+ Fri, 17 Jul 2020 08:35:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20200709061911.954326-1-tyhicks@linux.microsoft.com> <20200709061911.954326-9-tyhicks@linux.microsoft.com>
+In-Reply-To: <20200709061911.954326-9-tyhicks@linux.microsoft.com>
+From:   Konsta Karsisto <konsta.karsisto@gmail.com>
+Date:   Fri, 17 Jul 2020 18:35:03 +0300
+Message-ID: <CAAEqDhD-wCGY7ykjSsNgCri4ykWPi9cP3j1zoQPWddB4r92Kqw@mail.gmail.com>
+Subject: Re: [PATCH v3 08/12] ima: Shallow copy the args_p member of
+ ima_rule_entry.lsm elements
+To:     Tyler Hicks <tyhicks@linux.microsoft.com>,
+        linux-integrity@vger.kernel.org
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Prakhar Srivastava <prsriva02@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi all,
+Hi,
 
-Syzbot reported the following use-after-free bug in
-userfaultfd_release():
+Found one glitch with this change, see below:
 
-	https://syzkaller.appspot.com/bug?id=4b9e5aea757b678d9939c364e50212354a3480a6
+On Thu, Jul 9, 2020 at 9:22 AM Tyler Hicks <tyhicks@linux.microsoft.com> wrote:
+>
+> The args_p member is a simple string that is allocated by
+> ima_rule_init(). Shallow copy it like other non-LSM references in
+> ima_rule_entry structs.
+>
+> There are no longer any necessary error path cleanups to do in
+> ima_lsm_copy_rule().
+>
+> Signed-off-by: Tyler Hicks <tyhicks@linux.microsoft.com>
+> ---
+>
+> * v3
+>   - No change
+> * v2
+>   - Adjusted context to account for ima_lsm_copy_rule() directly calling
+>     ima_lsm_free_rule() and the lack of explicit reference ownership
+>     transfers
+>   - Added comment to ima_lsm_copy_rule() to document the args_p
+>     reference ownership transfer
+>
+>  security/integrity/ima/ima_policy.c | 16 +++++++---------
+>  1 file changed, 7 insertions(+), 9 deletions(-)
+>
+> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+> index 9842e2e0bc6d..b02e1ffd10c9 100644
+> --- a/security/integrity/ima/ima_policy.c
+> +++ b/security/integrity/ima/ima_policy.c
+> @@ -300,10 +300,13 @@ static struct ima_rule_entry *ima_lsm_copy_rule(struct ima_rule_entry *entry)
+>                         continue;
+>
+>                 nentry->lsm[i].type = entry->lsm[i].type;
+> -               nentry->lsm[i].args_p = kstrdup(entry->lsm[i].args_p,
+> -                                               GFP_KERNEL);
+> -               if (!nentry->lsm[i].args_p)
+> -                       goto out_err;
+> +               nentry->lsm[i].args_p = entry->lsm[i].args_p;
+> +               /*
+> +                * Remove the reference from entry so that the associated
+> +                * memory will not be freed during a later call to
+> +                * ima_lsm_free_rule(entry).
+> +                */
+> +               entry->lsm[i].args_p = NULL;
 
-It seems to be caused by this patch. I took a look at the stack trace.
-In the patch:
+This assignment necessitates a change in the code below...
 
-	fd = get_unused_fd_flags(O_RDONLY | O_CLOEXEC);
-	if (fd < 0) {
-		fput(file);
-		goto out;
-	}
+>                 security_filter_rule_init(nentry->lsm[i].type,
+>                                           Audit_equal,
+> @@ -314,11 +317,6 @@ static struct ima_rule_entry *ima_lsm_copy_rule(struct ima_rule_entry *entry)
+>                                 (char *)entry->lsm[i].args_p);
 
-If get_unused_fd_flags() fails, `ctx` is freed. Later however, before
-returning back to userland, userfaultfd_release() is called and tries to
-use `ctx` again, causing a use-after-free bug.
+... you should refer to nentry->lsm[i].args_p here!
 
-The syzbot reproducer does a setrlimit() then a userfaultfd(). The
-former sets a hard limit on number of open files to zero, which causes
-get_unused_fd_flags() to fail.
+Other than that,
 
-Thank you,
+Reviewed-by: Konsta Karsisto <konsta.karsisto@gmail.com>
 
-Peilin Ye
+
+Konsta
+
+>         }
+>         return nentry;
+> -
+> -out_err:
+> -       ima_lsm_free_rule(nentry);
+> -       kfree(nentry);
+> -       return NULL;
+>  }
+>
+>  static int ima_lsm_update_rule(struct ima_rule_entry *entry)
+> --
+> 2.25.1
+>
