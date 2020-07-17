@@ -2,133 +2,83 @@ Return-Path: <SRS0=cbB2=A4=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED5AEC433E1
-	for <linux-security-module@archiver.kernel.org>; Fri, 17 Jul 2020 19:19:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 294F5C433E1
+	for <linux-security-module@archiver.kernel.org>; Fri, 17 Jul 2020 19:24:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CE6EA2064C
-	for <linux-security-module@archiver.kernel.org>; Fri, 17 Jul 2020 19:19:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC4E120739
+	for <linux-security-module@archiver.kernel.org>; Fri, 17 Jul 2020 19:24:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="f3Zr5ZsI"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="FAI7jW8F"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728400AbgGQTTF (ORCPT
+        id S1728182AbgGQTYv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 17 Jul 2020 15:19:05 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:44786 "EHLO
+        Fri, 17 Jul 2020 15:24:51 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:45484 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727999AbgGQTTD (ORCPT
+        with ESMTP id S1727999AbgGQTYv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 17 Jul 2020 15:19:03 -0400
+        Fri, 17 Jul 2020 15:24:51 -0400
 Received: from sequoia (162-237-133-238.lightspeed.rcsntx.sbcglobal.net [162.237.133.238])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 23F0320B4909;
-        Fri, 17 Jul 2020 12:19:02 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 23F0320B4909
+        by linux.microsoft.com (Postfix) with ESMTPSA id BAD8220B4909;
+        Fri, 17 Jul 2020 12:24:49 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com BAD8220B4909
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1595013543;
-        bh=936Ej6PwFgQOfbt701DNQeezvUrKmHxPwTEHqq6hXKU=;
+        s=default; t=1595013890;
+        bh=ivjTtf6Ir0rqIr7x6YfCCMUhM1xuE0XyXrXJpxur7rU=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=f3Zr5ZsIOFvcx46qNgCltlwYHhR1HuHpLu7UBhvo7kY++ksbg3hh1nnnporsU+NLW
-         6ZaKBg0zGqm6Z6qYYUvNaKNFOKdve4DjJAdILc5lICYPNZ5BFLjafTv7O9Viqdfmyu
-         fmjlG458XsKqhcWkEZXTvjA1TlIxzc4ebD8SroSg=
-Date:   Fri, 17 Jul 2020 14:18:58 -0500
+        b=FAI7jW8F3YgEhMYTHqpP+4G6Cumfh3qHHczB0F/kTToXYJ8WbOp272vrjIBUMeqQQ
+         dfhbsNzplo0z71UPAkvHoO/GlCvTpMyw7ysT91MzeGukBhYou4t2R90AuHNI9974v0
+         GM2TG8zi568RF1zxV9VXRzh+m97ZsYkr/CyjZm7s=
+Date:   Fri, 17 Jul 2020 14:24:47 -0500
 From:   Tyler Hicks <tyhicks@linux.microsoft.com>
-To:     Nayna <nayna@linux.vnet.ibm.com>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+To:     Nayna <nayna@linux.vnet.ibm.com>
 Cc:     Mimi Zohar <zohar@linux.ibm.com>,
         Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
         James Morris <jmorris@namei.org>,
         "Serge E . Hallyn" <serge@hallyn.com>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
         Prakhar Srivastava <prsriva02@gmail.com>,
         linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v3 06/12] ima: Fail rule parsing when the KEY_CHECK hook
- is combined with an invalid cond
-Message-ID: <20200717191858.GN3673@sequoia>
+        linux-security-module@vger.kernel.org,
+        Janne Karhunen <janne.karhunen@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Subject: Re: [PATCH v3 01/12] ima: Have the LSM free its audit rule
+Message-ID: <20200717192447.GO3673@sequoia>
 References: <20200709061911.954326-1-tyhicks@linux.microsoft.com>
- <20200709061911.954326-7-tyhicks@linux.microsoft.com>
- <336cc947-1f70-0286-6506-6df3d1d23a1d@linux.vnet.ibm.com>
+ <20200709061911.954326-2-tyhicks@linux.microsoft.com>
+ <5ee27a51-7ff9-5763-c85f-e99e62458657@linux.vnet.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <336cc947-1f70-0286-6506-6df3d1d23a1d@linux.vnet.ibm.com>
+In-Reply-To: <5ee27a51-7ff9-5763-c85f-e99e62458657@linux.vnet.ibm.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2020-07-17 14:56:46, Nayna wrote:
+On 2020-07-17 15:20:22, Nayna wrote:
 > 
 > On 7/9/20 2:19 AM, Tyler Hicks wrote:
-> > The KEY_CHECK function only supports the uid, pcr, and keyrings
-> > conditionals. Make this clear at policy load so that IMA policy authors
-> > don't assume that other conditionals are supported.
-> > 
-> > Fixes: 5808611cccb2 ("IMA: Add KEY_CHECK func to measure keys")
-> > Signed-off-by: Tyler Hicks <tyhicks@linux.microsoft.com>
-> > Reviewed-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-> > ---
-> > 
-> > * v3
-> >    - Added Lakshmi's Reviewed-by
-> >    - Adjust for the indentation change introduced in patch #4
-> > * v2
-> >    - No change
-> > 
-> >   security/integrity/ima/ima_policy.c | 7 +++++++
-> >   1 file changed, 7 insertions(+)
-> > 
-> > diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-> > index 1c64bd6f1728..81da02071d41 100644
-> > --- a/security/integrity/ima/ima_policy.c
-> > +++ b/security/integrity/ima/ima_policy.c
-> > @@ -1023,6 +1023,13 @@ static bool ima_validate_rule(struct ima_rule_entry *entry)
-> >   		if (entry->action & ~(MEASURE | DONT_MEASURE))
-> >   			return false;
-> > 
-> > +		if (entry->flags & ~(IMA_FUNC | IMA_UID | IMA_PCR |
-> > +				     IMA_KEYRINGS))
-> > +			return false;
-> > +
-> > +		if (ima_rule_contains_lsm_cond(entry))
-> > +			return false;
-> > +
-> >   		break;
-> >   	default:
-> >   		return false;
+> > Ask the LSM to free its audit rule rather than directly calling kfree().
 > 
-> Should there be a check for IMA_MEASURE_ASYMMETRIC_KEYS in Opt_keyrings in
-> ima_parse_rule() to return immediately if not enabled ?
+> Is it to be called audit rule or filter rule ?  Likewise in subject line.
 
-I didn't notice that "keyrings=" could be disabled at build time. I
-think you're right that something like what I have below would be a good idea.
+The security hooks call this "audit rule" but Mimi explained the
+reasoning for IMA referring to this as an "audit filter" here:
 
-@Lakshmi, do you agree?
+ https://lore.kernel.org/lkml/1593466203.5085.62.camel@linux.ibm.com/
 
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 81da02071d41..bd687560f88e 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -1212,6 +1212,11 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
- 		case Opt_keyrings:
- 			ima_log_string(ab, "keyrings", args[0].from);
- 
-+			if (!IS_ENABLED(CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS)) {
-+				result = -EINVAL;
-+				break;
-+			}
-+
- 			keyrings_len = strlen(args[0].from) + 1;
- 
- 			if ((entry->keyrings) ||
+I would be fine with her renaming/rewording this patch, accordingly, in
+next-integrity-testing.
 
 Tyler
 
 > 
 > Thanks & Regards,
 > 
->      - Nayna
-> 
+>     - Nayna
