@@ -2,121 +2,106 @@ Return-Path: <SRS0=cbB2=A4=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D14E3C433E2
-	for <linux-security-module@archiver.kernel.org>; Fri, 17 Jul 2020 06:01:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E3A3C433DF
+	for <linux-security-module@archiver.kernel.org>; Fri, 17 Jul 2020 11:45:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AF5D92070A
-	for <linux-security-module@archiver.kernel.org>; Fri, 17 Jul 2020 06:01:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63E1D20684
+	for <linux-security-module@archiver.kernel.org>; Fri, 17 Jul 2020 11:45:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RElEQ6K7"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="La4PoFUS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725864AbgGQGB4 (ORCPT
+        id S1726446AbgGQLph (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 17 Jul 2020 02:01:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50514 "EHLO
+        Fri, 17 Jul 2020 07:45:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46970 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725807AbgGQGBz (ORCPT
+        with ESMTP id S1726079AbgGQLph (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 17 Jul 2020 02:01:55 -0400
-Received: from mail-oi1-x242.google.com (mail-oi1-x242.google.com [IPv6:2607:f8b0:4864:20::242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB88BC061755
-        for <linux-security-module@vger.kernel.org>; Thu, 16 Jul 2020 23:01:55 -0700 (PDT)
-Received: by mail-oi1-x242.google.com with SMTP id e4so7149333oib.1
-        for <linux-security-module@vger.kernel.org>; Thu, 16 Jul 2020 23:01:55 -0700 (PDT)
+        Fri, 17 Jul 2020 07:45:37 -0400
+Received: from mail-qv1-xf41.google.com (mail-qv1-xf41.google.com [IPv6:2607:f8b0:4864:20::f41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44939C061755;
+        Fri, 17 Jul 2020 04:45:37 -0700 (PDT)
+Received: by mail-qv1-xf41.google.com with SMTP id ed14so4095569qvb.2;
+        Fri, 17 Jul 2020 04:45:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
-         :subject:to:cc;
-        bh=uZsIItU1torl/Pirwom9ohJ1akFs0quDCi4aWlkuG28=;
-        b=RElEQ6K7uo0nNaNQqeKkGH627EVU/FknDBB0WOZIIwSQsfjHml8XRls92+i1Ut4qSz
-         /Tr4G3Ny/0ZD4gUKBg6A+teEm+wjs2oPRqlMbB1qA49L+bVUERsSFuTx7/gbUf33O2B+
-         u3QxdBqE4eXM8sCo8mv1MsX+U88VHNwjKXB/9IyLI6wenwhzjVIgDzJNDENwS35YTGvA
-         0wxBipnJSPEVjBw+b7a3migCFcnIuVphDD7Gp1WVTv6w4W+KubN+N55fqaAfk8JhW4Bk
-         NIUF4kcSWphPtKt5AwE7ch8VK5p6cvTkCaFd4cGj1CkylseZ4SBih0b69aVHQ/+cUaOq
-         LkTA==
+        h=date:from:to:cc:subject:message-id:reply-to:mime-version
+         :content-disposition;
+        bh=RGmCnCujTCPHPAqseUf5nHct0c3cR5+Pl0sn8j65GRA=;
+        b=La4PoFUSodowSJLHupAbyoCryYe4IscT0uVjcLdnBdcKu34q4TNYPqzS0Nr/jQc+EM
+         F2XyfYyxL8FQhKctiFagZGB9yxdA12JMq8JEvISZeKuMS1vZ5/Oau3CFZLgR8K43xiUU
+         E86yO3eN5U8q9hW+83UrqolEyLOq60sn5RWpuN0fRb6KFwI9m265IqtAwKVQfl4cygy3
+         0jKEYBIANHgXGZAdahfISR5yQA6FuB5q/EXPJLjCM6LtRPdNK0IPKb1/gbZHs22PgaEY
+         wX7lul5113brAi0ptNWB69Sc4TE4p22uWbGzG5GisCJcFbMfc7QZcO5iTG1ztdjRVt0Y
+         Uktg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc;
-        bh=uZsIItU1torl/Pirwom9ohJ1akFs0quDCi4aWlkuG28=;
-        b=Dip2PYSj8ph0W5EhFLkEz2CDFLKgt/qWlONRkNL5L5yVrjPTnWL0Pia9MuM5QiboT5
-         BKqAphsooHEhfAPLuf6MTtHW1B2OMoEkItHgUwYzxilXzSv5Q/8FVTWCdgQj4Omeezqe
-         7P5ciVE2lxUz+n6QyS13JNPY7nknMTE6sL+DNYLahCzkAp1OIZb37z+xy8KEG4V5ywAC
-         5SwjQPep5J5nQ62O70zSzVsFeJXkJkas1tjo3iN95BRDHkzbvFabM+zXrC+0nNTMm5QQ
-         R0fQwy8m9RnKjRrvZEmlkU1BpRuYd8dcaVlRVbpBIGb3LAvYMqUYt/Gg7Z50jm0+O8q7
-         NtBA==
-X-Gm-Message-State: AOAM5321KjaT1axkmDAiBOnWXwBP2rI/6FVhBNO3o2f7PzC+uxN1GPTA
-        DQpFuEnomsU8mfOlHW06UxMv9bzOpKGBLiyr6spQOQ==
-X-Google-Smtp-Source: ABdhPJzXNxfOsHNPtGWn9mB1FDKp6mGji91VxAHN446TGr1qoX7Cw0vLoQcldrqtwJh7XjDD5tZXE1vOKWZlL1yrAFE=
-X-Received: by 2002:a54:4798:: with SMTP id o24mr6273523oic.148.1594965714875;
- Thu, 16 Jul 2020 23:01:54 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
+         :mime-version:content-disposition;
+        bh=RGmCnCujTCPHPAqseUf5nHct0c3cR5+Pl0sn8j65GRA=;
+        b=qGMcyCf5HiazK1TIB0hEeejdA3gHvOawaLPnyms2I80MHbS8qx+o82rYiqdlXZqGh9
+         uQ5m45QAM8osavfd8fGRENDtx5tn/ZC+BQnWASw5CozGSRLCv3P1BKgxernNSPlQG9t9
+         yNmzTbUayGQqaOXmynwmmr5iiTyctbQMfboKgsKnnHRvV+lHE+s82oxgRpWQRVtzPLac
+         3HFO243rZmJKbIS/t+Xwtf4YQuHe4MvutB4I+Z51/IOetbxdqF2n8fs5zAzNBL7cKrf8
+         yOZ7ZRyScGsqvrb3/NPEtql26mXxDLaTdTfuF+3rHq1g5AJ/xFfK8dMVcQNiN6SA6235
+         QlEg==
+X-Gm-Message-State: AOAM531570kqhHP5igGwvvl+K2wnd1utHryrtT/hwfmxrojj0j/iwn7n
+        kCwVuEussoQoreJ4MQ/jPMSPFLuE0k3W
+X-Google-Smtp-Source: ABdhPJzKXuvJZlL9/a9hkaENPQ8WnD+XhRB2h7wtRwtCk65prLKd7UbjOiRuatykH0KlTfyqjIJ2+Q==
+X-Received: by 2002:a0c:a992:: with SMTP id a18mr8145355qvb.211.1594986336193;
+        Fri, 17 Jul 2020 04:45:36 -0700 (PDT)
+Received: from PWN (c-76-119-149-155.hsd1.ma.comcast.net. [76.119.149.155])
+        by smtp.gmail.com with ESMTPSA id s8sm10967968qtc.17.2020.07.17.04.45.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Jul 2020 04:45:35 -0700 (PDT)
+Date:   Fri, 17 Jul 2020 07:45:32 -0400
+From:   Peilin Ye <yepeilin.cs@gmail.com>
+To:     Daniel Colascione <dancol@google.com>
+Cc:     timmurray@google.com, selinux@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, viro@zeniv.linux.org.uk, paul@paul-moore.com,
+        nnk@google.com, sds@tycho.nsa.gov, lokeshgidra@google.com,
+        jmorris@namei.org
+Subject: Reporting a use-after-free read bug in userfaultfd_release()
+Message-ID: <20200717114532.GA688728@PWN>
+Reply-To: 20200401213903.182112-4-dancol@google.com
 MIME-Version: 1.0
-References: <20200716101827.162793-1-mtk.manpages@gmail.com>
- <20200716101827.162793-16-mtk.manpages@gmail.com> <CALQRfL6dAEgiUiEckUN9x_g0J+sywz+Q_zBfPqPFTBsf2zRt=A@mail.gmail.com>
-In-Reply-To: <CALQRfL6dAEgiUiEckUN9x_g0J+sywz+Q_zBfPqPFTBsf2zRt=A@mail.gmail.com>
-Reply-To: mtk.manpages@gmail.com
-From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Date:   Fri, 17 Jul 2020 08:00:00 +0200
-Message-ID: <CAKgNAkjRZ_u6hPggRgZr4NeQK42mSFbWrH2m4gZyumtfvTRLDQ@mail.gmail.com>
-Subject: Re: [PATCH 16/16] capsh.c: Spelling fixes in usage() message
-To:     "Andrew G. Morgan" <morgan@kernel.org>
-Cc:     LSM List <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 16 Jul 2020 at 17:08, Andrew G. Morgan <morgan@kernel.org> wrote:
->
-> Thanks! Applied all of them except 07_16. Instead, I've hopefully
-> clarified the intent of the text with some quotes.
+Hi all,
 
-Okay. Thanks, Andrew.
+Syzbot reported the following use-after-free bug in
+userfaultfd_release():
 
-Cheers,
+	https://syzkaller.appspot.com/bug?id=4b9e5aea757b678d9939c364e50212354a3480a6
 
-Michael
+It seems to be caused by this patch. I took a look at the stack trace.
+In the patch:
 
-> https://git.kernel.org/pub/scm/libs/libcap/libcap.git/commit/?id=34e4e00b983a2c0fc5f13b403871a8fb5860bb89
->
-> On Thu, Jul 16, 2020 at 3:19 AM Michael Kerrisk (man-pages)
-> <mtk.manpages@gmail.com> wrote:
-> >
-> > Signed-off-by: Michael Kerrisk (man-pages) <mtk.manpages@gmail.com>
-> > ---
-> >  progs/capsh.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/progs/capsh.c b/progs/capsh.c
-> > index 94bf57d..7bed98e 100644
-> > --- a/progs/capsh.c
-> > +++ b/progs/capsh.c
-> > @@ -879,10 +879,10 @@ int main(int argc, char *argv[], char *envp[])
-> >                    "  --delamb=xxx   remove xxx,... capabilities from ambient\n"
-> >                    "  --noamb        reset (drop) all ambient capabilities\n"
-> >                    "  --caps=xxx     set caps as per cap_from_text()\n"
-> > -                  "  --inh=xxx      set xxx,.. inheritiable set\n"
-> > +                  "  --inh=xxx      set xxx,.. inheritable set\n"
-> >                    "  --secbits=<n>  write a new value for securebits\n"
-> >                    "  --iab=...      use cap_iab_from_text() to set iab\n"
-> > -                  "  --keep=<n>     set keep-capabability bit to <n>\n"
-> > +                  "  --keep=<n>     set keep-capability bit to <n>\n"
-> >                    "  --uid=<n>      set uid to <n> (hint: id <username>)\n"
-> >                    "  --cap-uid=<n>  libcap cap_setuid() to change uid\n"
-> >                    "  --is-uid=<n>   exit 1 if uid != <n>\n"
-> > --
-> > 2.26.2
-> >
+	fd = get_unused_fd_flags(O_RDONLY | O_CLOEXEC);
+	if (fd < 0) {
+		fput(file);
+		goto out;
+	}
 
+If get_unused_fd_flags() fails, `ctx` is freed. Later however, before
+returning back to userland, userfaultfd_release() is called and tries to
+use `ctx` again, causing a use-after-free bug.
 
+The syzbot reproducer does a setrlimit() then a userfaultfd(). The
+former sets a hard limit on number of open files to zero, which causes
+get_unused_fd_flags() to fail.
 
--- 
-Michael Kerrisk
-Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
-Linux/UNIX System Programming Training: http://man7.org/training/
+Thank you,
+
+Peilin Ye
