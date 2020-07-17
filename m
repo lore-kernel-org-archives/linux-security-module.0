@@ -2,150 +2,138 @@ Return-Path: <SRS0=cbB2=A4=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-22.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.5 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E51E6C433E1
-	for <linux-security-module@archiver.kernel.org>; Fri, 17 Jul 2020 18:11:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E9D8C433E7
+	for <linux-security-module@archiver.kernel.org>; Fri, 17 Jul 2020 18:57:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BD7E520717
-	for <linux-security-module@archiver.kernel.org>; Fri, 17 Jul 2020 18:11:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="mUU+5r9v"
+	by mail.kernel.org (Postfix) with ESMTP id 7CBA120704
+	for <linux-security-module@archiver.kernel.org>; Fri, 17 Jul 2020 18:57:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726344AbgGQSLh (ORCPT
+        id S1728329AbgGQS5A (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 17 Jul 2020 14:11:37 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:60054 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726205AbgGQSLg (ORCPT
+        Fri, 17 Jul 2020 14:57:00 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57062 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727821AbgGQS47 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 17 Jul 2020 14:11:36 -0400
-Received: from sequoia (162-237-133-238.lightspeed.rcsntx.sbcglobal.net [162.237.133.238])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 1B3F420B4909;
-        Fri, 17 Jul 2020 11:11:35 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 1B3F420B4909
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1595009495;
-        bh=2Pzs4CmdDfnklLSKLq/qkdid1cilbcCSYYl7lLHXGe8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=mUU+5r9vVToweMQMPxEGv6yqTVSMaTYsYxEx7SRIAnhU+jY0WVAMStyXuuXe5TEWH
-         gBXzbDKupNrVFU9HYirgAi2f+BA6YjG0a17Wfn2UzlHC/ZD6EBWE2FSgWUAqlEoqB/
-         OC5H9KsJwGW8pNp7776zHDJDSZZt4gMWkd0wAckE=
-Date:   Fri, 17 Jul 2020 13:11:33 -0500
-From:   Tyler Hicks <tyhicks@linux.microsoft.com>
-To:     Nayna <nayna@linux.vnet.ibm.com>, Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Fri, 17 Jul 2020 14:56:59 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 06HIWhQw033275;
+        Fri, 17 Jul 2020 14:56:50 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 32be11xkgx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 17 Jul 2020 14:56:50 -0400
+Received: from m0098394.ppops.net (m0098394.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 06HIneYf130321;
+        Fri, 17 Jul 2020 14:56:49 -0400
+Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 32be11xkgd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 17 Jul 2020 14:56:49 -0400
+Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
+        by ppma04wdc.us.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 06HIdMA6016127;
+        Fri, 17 Jul 2020 18:56:48 GMT
+Received: from b01cxnp23033.gho.pok.ibm.com (b01cxnp23033.gho.pok.ibm.com [9.57.198.28])
+        by ppma04wdc.us.ibm.com with ESMTP id 327529k46e-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 17 Jul 2020 18:56:48 +0000
+Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 06HIulD116318894
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 17 Jul 2020 18:56:47 GMT
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A45AF28064;
+        Fri, 17 Jul 2020 18:56:47 +0000 (GMT)
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C2D7128058;
+        Fri, 17 Jul 2020 18:56:46 +0000 (GMT)
+Received: from swastik.ibm.com (unknown [9.160.101.126])
+        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri, 17 Jul 2020 18:56:46 +0000 (GMT)
+Subject: Re: [PATCH v3 06/12] ima: Fail rule parsing when the KEY_CHECK hook
+ is combined with an invalid cond
+To:     Tyler Hicks <tyhicks@linux.microsoft.com>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
         James Morris <jmorris@namei.org>,
         "Serge E . Hallyn" <serge@hallyn.com>,
         Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
         Prakhar Srivastava <prsriva02@gmail.com>,
         linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Nayna Jain <nayna@linux.ibm.com>
-Subject: Re: [PATCH v3 07/12] ima: Fail rule parsing when
- appraise_flag=blacklist is unsupportable
-Message-ID: <20200717181133.GM3673@sequoia>
+        linux-security-module@vger.kernel.org
 References: <20200709061911.954326-1-tyhicks@linux.microsoft.com>
- <20200709061911.954326-8-tyhicks@linux.microsoft.com>
- <76d2b27b-3b59-1852-046a-b1718c62b167@linux.vnet.ibm.com>
+ <20200709061911.954326-7-tyhicks@linux.microsoft.com>
+From:   Nayna <nayna@linux.vnet.ibm.com>
+Message-ID: <336cc947-1f70-0286-6506-6df3d1d23a1d@linux.vnet.ibm.com>
+Date:   Fri, 17 Jul 2020 14:56:46 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+In-Reply-To: <20200709061911.954326-7-tyhicks@linux.microsoft.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <76d2b27b-3b59-1852-046a-b1718c62b167@linux.vnet.ibm.com>
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-07-17_09:2020-07-17,2020-07-17 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
+ phishscore=0 clxscore=1015 mlxlogscore=999 impostorscore=0
+ priorityscore=1501 lowpriorityscore=0 spamscore=0 suspectscore=0
+ adultscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2006250000 definitions=main-2007170129
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2020-07-17 13:40:22, Nayna wrote:
-> 
-> On 7/9/20 2:19 AM, Tyler Hicks wrote:
-> > The "appraise_flag" option is only appropriate for appraise actions
-> > and its "blacklist" value is only appropriate when
-> > CONFIG_IMA_APPRAISE_MODSIG is enabled and "appraise_flag=blacklist" is
-> > only appropriate when "appraise_type=imasig|modsig" is also present.
-> > Make this clear at policy load so that IMA policy authors don't assume
-> > that other uses of "appraise_flag=blacklist" are supported.
-> > 
-> > Fixes: 273df864cf74 ("ima: Check against blacklisted hashes for files with modsig")
-> > Signed-off-by: Tyler Hicks <tyhicks@linux.microsoft.com>
-> > Cc: Nayna Jain <nayna@linux.ibm.com>
-> > ---
-> > 
-> > * v3
-> >    - New patch
-> > 
-> >   security/integrity/ima/ima_policy.c | 13 ++++++++++++-
-> >   1 file changed, 12 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-> > index 81da02071d41..9842e2e0bc6d 100644
-> > --- a/security/integrity/ima/ima_policy.c
-> > +++ b/security/integrity/ima/ima_policy.c
-> > @@ -1035,6 +1035,11 @@ static bool ima_validate_rule(struct ima_rule_entry *entry)
-> >   		return false;
-> >   	}
-> > +	/* Ensure that combinations of flags are compatible with each other */
-> > +	if (entry->flags & IMA_CHECK_BLACKLIST &&
-> > +	    !(entry->flags & IMA_MODSIG_ALLOWED))
-> > +		return false;
-> > +
-> >   	return true;
-> >   }
-> > @@ -1371,8 +1376,14 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
-> >   				result = -EINVAL;
-> >   			break;
-> >   		case Opt_appraise_flag:
-> > +			if (entry->action != APPRAISE) {
-> > +				result = -EINVAL;
-> > +				break;
-> > +			}
-> > +
-> >   			ima_log_string(ab, "appraise_flag", args[0].from);
-> > -			if (strstr(args[0].from, "blacklist"))
-> > +			if (IS_ENABLED(CONFIG_IMA_APPRAISE_MODSIG) &&
-> > +			    strstr(args[0].from, "blacklist"))
-> >   				entry->flags |= IMA_CHECK_BLACKLIST;
-> 
-> If IMA_APPRAISE_MODSIG is disabled, it will allow the following rule to
-> load, which is not as expected.
-> 
-> "appraise func=xxx_CHECK appraise_flag=blacklist appraise_type=imasig"
-> 
-> Missing is the "else" condition to immediately reject the policy rule.
 
-Thanks for the review. You're right. This change is needed:
+On 7/9/20 2:19 AM, Tyler Hicks wrote:
+> The KEY_CHECK function only supports the uid, pcr, and keyrings
+> conditionals. Make this clear at policy load so that IMA policy authors
+> don't assume that other conditionals are supported.
+>
+> Fixes: 5808611cccb2 ("IMA: Add KEY_CHECK func to measure keys")
+> Signed-off-by: Tyler Hicks <tyhicks@linux.microsoft.com>
+> Reviewed-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+> ---
+>
+> * v3
+>    - Added Lakshmi's Reviewed-by
+>    - Adjust for the indentation change introduced in patch #4
+> * v2
+>    - No change
+>
+>   security/integrity/ima/ima_policy.c | 7 +++++++
+>   1 file changed, 7 insertions(+)
+>
+> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+> index 1c64bd6f1728..81da02071d41 100644
+> --- a/security/integrity/ima/ima_policy.c
+> +++ b/security/integrity/ima/ima_policy.c
+> @@ -1023,6 +1023,13 @@ static bool ima_validate_rule(struct ima_rule_entry *entry)
+>   		if (entry->action & ~(MEASURE | DONT_MEASURE))
+>   			return false;
+>
+> +		if (entry->flags & ~(IMA_FUNC | IMA_UID | IMA_PCR |
+> +				     IMA_KEYRINGS))
+> +			return false;
+> +
+> +		if (ima_rule_contains_lsm_cond(entry))
+> +			return false;
+> +
+>   		break;
+>   	default:
+>   		return false;
 
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 9842e2e0bc6d..cf3ddb38dfa8 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -1385,6 +1385,8 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
- 			if (IS_ENABLED(CONFIG_IMA_APPRAISE_MODSIG) &&
- 			    strstr(args[0].from, "blacklist"))
- 				entry->flags |= IMA_CHECK_BLACKLIST;
-+			else
-+				result = -EINVAL;
- 			break;
- 		case Opt_permit_directio:
- 			entry->flags |= IMA_PERMIT_DIRECTIO;
+Should there be a check for IMA_MEASURE_ASYMMETRIC_KEYS in Opt_keyrings 
+in ima_parse_rule() to return immediately if not enabled ?
+
+Thanks & Regards,
+
+ Â Â Â Â  - Nayna
 
 
-Making this change does not conflict with any later patches in the
-series.
-
-Mimi, I've rebased and force pushed to my fixup branch with this change,
-for your comparison:
-
- https://git.kernel.org/pub/scm/linux/kernel/git/tyhicks/linux.git/log/?h=next-integrity-testing-fixup
-
-Tyler
-
-> 
-> Thanks & Regards,
-> 
->      - Nayna
-> 
