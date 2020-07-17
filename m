@@ -2,41 +2,60 @@ Return-Path: <SRS0=cbB2=A4=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 294F5C433E1
-	for <linux-security-module@archiver.kernel.org>; Fri, 17 Jul 2020 19:24:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE1D1C433DF
+	for <linux-security-module@archiver.kernel.org>; Fri, 17 Jul 2020 19:20:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EC4E120739
-	for <linux-security-module@archiver.kernel.org>; Fri, 17 Jul 2020 19:24:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="FAI7jW8F"
+	by mail.kernel.org (Postfix) with ESMTP id D5DBF2064C
+	for <linux-security-module@archiver.kernel.org>; Fri, 17 Jul 2020 19:20:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728182AbgGQTYv (ORCPT
+        id S1728556AbgGQTUc (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 17 Jul 2020 15:24:51 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:45484 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727999AbgGQTYv (ORCPT
+        Fri, 17 Jul 2020 15:20:32 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:19192 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728548AbgGQTUc (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 17 Jul 2020 15:24:51 -0400
-Received: from sequoia (162-237-133-238.lightspeed.rcsntx.sbcglobal.net [162.237.133.238])
-        by linux.microsoft.com (Postfix) with ESMTPSA id BAD8220B4909;
-        Fri, 17 Jul 2020 12:24:49 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com BAD8220B4909
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1595013890;
-        bh=ivjTtf6Ir0rqIr7x6YfCCMUhM1xuE0XyXrXJpxur7rU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FAI7jW8F3YgEhMYTHqpP+4G6Cumfh3qHHczB0F/kTToXYJ8WbOp272vrjIBUMeqQQ
-         dfhbsNzplo0z71UPAkvHoO/GlCvTpMyw7ysT91MzeGukBhYou4t2R90AuHNI9974v0
-         GM2TG8zi568RF1zxV9VXRzh+m97ZsYkr/CyjZm7s=
-Date:   Fri, 17 Jul 2020 14:24:47 -0500
-From:   Tyler Hicks <tyhicks@linux.microsoft.com>
-To:     Nayna <nayna@linux.vnet.ibm.com>
+        Fri, 17 Jul 2020 15:20:32 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 06HJF9eb090441;
+        Fri, 17 Jul 2020 15:20:27 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 32axd2rcg9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 17 Jul 2020 15:20:26 -0400
+Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 06HJGXlM094894;
+        Fri, 17 Jul 2020 15:20:26 -0400
+Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 32axd2rcfn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 17 Jul 2020 15:20:26 -0400
+Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
+        by ppma01wdc.us.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 06HJ9Ooj009328;
+        Fri, 17 Jul 2020 19:20:25 GMT
+Received: from b01cxnp22034.gho.pok.ibm.com (b01cxnp22034.gho.pok.ibm.com [9.57.198.24])
+        by ppma01wdc.us.ibm.com with ESMTP id 327529b8uk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 17 Jul 2020 19:20:25 +0000
+Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 06HJKOsT26280322
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 17 Jul 2020 19:20:24 GMT
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7CB482806E;
+        Fri, 17 Jul 2020 19:20:24 +0000 (GMT)
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 770572805E;
+        Fri, 17 Jul 2020 19:20:23 +0000 (GMT)
+Received: from swastik.ibm.com (unknown [9.160.101.126])
+        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri, 17 Jul 2020 19:20:23 +0000 (GMT)
+Subject: Re: [PATCH v3 01/12] ima: Have the LSM free its audit rule
+To:     Tyler Hicks <tyhicks@linux.microsoft.com>
 Cc:     Mimi Zohar <zohar@linux.ibm.com>,
         Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
         James Morris <jmorris@namei.org>,
@@ -47,38 +66,37 @@ Cc:     Mimi Zohar <zohar@linux.ibm.com>,
         linux-security-module@vger.kernel.org,
         Janne Karhunen <janne.karhunen@gmail.com>,
         Casey Schaufler <casey@schaufler-ca.com>
-Subject: Re: [PATCH v3 01/12] ima: Have the LSM free its audit rule
-Message-ID: <20200717192447.GO3673@sequoia>
 References: <20200709061911.954326-1-tyhicks@linux.microsoft.com>
  <20200709061911.954326-2-tyhicks@linux.microsoft.com>
- <5ee27a51-7ff9-5763-c85f-e99e62458657@linux.vnet.ibm.com>
+From:   Nayna <nayna@linux.vnet.ibm.com>
+Message-ID: <5ee27a51-7ff9-5763-c85f-e99e62458657@linux.vnet.ibm.com>
+Date:   Fri, 17 Jul 2020 15:20:22 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+In-Reply-To: <20200709061911.954326-2-tyhicks@linux.microsoft.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <5ee27a51-7ff9-5763-c85f-e99e62458657@linux.vnet.ibm.com>
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-07-17_09:2020-07-17,2020-07-17 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ adultscore=0 clxscore=1011 mlxscore=0 malwarescore=0 impostorscore=0
+ suspectscore=2 priorityscore=1501 bulkscore=0 phishscore=0 spamscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2006250000 definitions=main-2007170129
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2020-07-17 15:20:22, Nayna wrote:
-> 
-> On 7/9/20 2:19 AM, Tyler Hicks wrote:
-> > Ask the LSM to free its audit rule rather than directly calling kfree().
-> 
-> Is it to be called audit rule or filter rule ?  Likewise in subject line.
 
-The security hooks call this "audit rule" but Mimi explained the
-reasoning for IMA referring to this as an "audit filter" here:
+On 7/9/20 2:19 AM, Tyler Hicks wrote:
+> Ask the LSM to free its audit rule rather than directly calling kfree().
 
- https://lore.kernel.org/lkml/1593466203.5085.62.camel@linux.ibm.com/
+Is it to be called audit rule or filter rule ?Â  Likewise in subject line.
 
-I would be fine with her renaming/rewording this patch, accordingly, in
-next-integrity-testing.
+Thanks & Regards,
 
-Tyler
+ Â Â Â  - Nayna
 
-> 
-> Thanks & Regards,
-> 
->     - Nayna
