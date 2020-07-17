@@ -2,150 +2,121 @@ Return-Path: <SRS0=cbB2=A4=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8D18C433DF
-	for <linux-security-module@archiver.kernel.org>; Fri, 17 Jul 2020 04:31:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D14E3C433E2
+	for <linux-security-module@archiver.kernel.org>; Fri, 17 Jul 2020 06:01:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 947542070A
-	for <linux-security-module@archiver.kernel.org>; Fri, 17 Jul 2020 04:31:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF5D92070A
+	for <linux-security-module@archiver.kernel.org>; Fri, 17 Jul 2020 06:01:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RElEQ6K7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726335AbgGQEbv (ORCPT
+        id S1725864AbgGQGB4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 17 Jul 2020 00:31:51 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:11628 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725300AbgGQEbv (ORCPT
+        Fri, 17 Jul 2020 02:01:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50514 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725807AbgGQGBz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 17 Jul 2020 00:31:51 -0400
-Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 06H42ODm166954;
-        Fri, 17 Jul 2020 00:31:44 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 32792xvu7e-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 17 Jul 2020 00:31:44 -0400
-Received: from m0187473.ppops.net (m0187473.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 06H436Yn168882;
-        Fri, 17 Jul 2020 00:31:44 -0400
-Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 32792xvu5c-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 17 Jul 2020 00:31:44 -0400
-Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
-        by ppma04ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 06H4U3D9020944;
-        Fri, 17 Jul 2020 04:31:37 GMT
-Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
-        by ppma04ams.nl.ibm.com with ESMTP id 329nmyjgaq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 17 Jul 2020 04:31:37 +0000
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 06H4UCbl64160158
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 17 Jul 2020 04:30:12 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9365E4203F;
-        Fri, 17 Jul 2020 04:31:35 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0E81342041;
-        Fri, 17 Jul 2020 04:31:34 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.163.162])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 17 Jul 2020 04:31:33 +0000 (GMT)
-Message-ID: <1594960293.27397.2.camel@linux.ibm.com>
-Subject: Re: [PATCH v3 00/12] ima: Fix rule parsing bugs and extend
- KEXEC_CMDLINE rule support
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Tyler Hicks <tyhicks@linux.microsoft.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Prakhar Srivastava <prsriva02@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Janne Karhunen <janne.karhunen@gmail.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        kexec@lists.infradead.org,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Nayna Jain <nayna@linux.ibm.com>
-Date:   Fri, 17 Jul 2020 00:31:33 -0400
-In-Reply-To: <20200709061911.954326-1-tyhicks@linux.microsoft.com>
-References: <20200709061911.954326-1-tyhicks@linux.microsoft.com>
+        Fri, 17 Jul 2020 02:01:55 -0400
+Received: from mail-oi1-x242.google.com (mail-oi1-x242.google.com [IPv6:2607:f8b0:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB88BC061755
+        for <linux-security-module@vger.kernel.org>; Thu, 16 Jul 2020 23:01:55 -0700 (PDT)
+Received: by mail-oi1-x242.google.com with SMTP id e4so7149333oib.1
+        for <linux-security-module@vger.kernel.org>; Thu, 16 Jul 2020 23:01:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc;
+        bh=uZsIItU1torl/Pirwom9ohJ1akFs0quDCi4aWlkuG28=;
+        b=RElEQ6K7uo0nNaNQqeKkGH627EVU/FknDBB0WOZIIwSQsfjHml8XRls92+i1Ut4qSz
+         /Tr4G3Ny/0ZD4gUKBg6A+teEm+wjs2oPRqlMbB1qA49L+bVUERsSFuTx7/gbUf33O2B+
+         u3QxdBqE4eXM8sCo8mv1MsX+U88VHNwjKXB/9IyLI6wenwhzjVIgDzJNDENwS35YTGvA
+         0wxBipnJSPEVjBw+b7a3migCFcnIuVphDD7Gp1WVTv6w4W+KubN+N55fqaAfk8JhW4Bk
+         NIUF4kcSWphPtKt5AwE7ch8VK5p6cvTkCaFd4cGj1CkylseZ4SBih0b69aVHQ/+cUaOq
+         LkTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc;
+        bh=uZsIItU1torl/Pirwom9ohJ1akFs0quDCi4aWlkuG28=;
+        b=Dip2PYSj8ph0W5EhFLkEz2CDFLKgt/qWlONRkNL5L5yVrjPTnWL0Pia9MuM5QiboT5
+         BKqAphsooHEhfAPLuf6MTtHW1B2OMoEkItHgUwYzxilXzSv5Q/8FVTWCdgQj4Omeezqe
+         7P5ciVE2lxUz+n6QyS13JNPY7nknMTE6sL+DNYLahCzkAp1OIZb37z+xy8KEG4V5ywAC
+         5SwjQPep5J5nQ62O70zSzVsFeJXkJkas1tjo3iN95BRDHkzbvFabM+zXrC+0nNTMm5QQ
+         R0fQwy8m9RnKjRrvZEmlkU1BpRuYd8dcaVlRVbpBIGb3LAvYMqUYt/Gg7Z50jm0+O8q7
+         NtBA==
+X-Gm-Message-State: AOAM5321KjaT1axkmDAiBOnWXwBP2rI/6FVhBNO3o2f7PzC+uxN1GPTA
+        DQpFuEnomsU8mfOlHW06UxMv9bzOpKGBLiyr6spQOQ==
+X-Google-Smtp-Source: ABdhPJzXNxfOsHNPtGWn9mB1FDKp6mGji91VxAHN446TGr1qoX7Cw0vLoQcldrqtwJh7XjDD5tZXE1vOKWZlL1yrAFE=
+X-Received: by 2002:a54:4798:: with SMTP id o24mr6273523oic.148.1594965714875;
+ Thu, 16 Jul 2020 23:01:54 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200716101827.162793-1-mtk.manpages@gmail.com>
+ <20200716101827.162793-16-mtk.manpages@gmail.com> <CALQRfL6dAEgiUiEckUN9x_g0J+sywz+Q_zBfPqPFTBsf2zRt=A@mail.gmail.com>
+In-Reply-To: <CALQRfL6dAEgiUiEckUN9x_g0J+sywz+Q_zBfPqPFTBsf2zRt=A@mail.gmail.com>
+Reply-To: mtk.manpages@gmail.com
+From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Date:   Fri, 17 Jul 2020 08:00:00 +0200
+Message-ID: <CAKgNAkjRZ_u6hPggRgZr4NeQK42mSFbWrH2m4gZyumtfvTRLDQ@mail.gmail.com>
+Subject: Re: [PATCH 16/16] capsh.c: Spelling fixes in usage() message
+To:     "Andrew G. Morgan" <morgan@kernel.org>
+Cc:     LSM List <linux-security-module@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-07-16_11:2020-07-16,2020-07-16 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_spam_definite policy=outbound score=100 suspectscore=0
- mlxlogscore=-1000 priorityscore=1501 lowpriorityscore=0 clxscore=1015
- adultscore=0 impostorscore=0 spamscore=100 malwarescore=0 bulkscore=0
- mlxscore=100 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2007170025
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 2020-07-09 at 01:18 -0500, Tyler Hicks wrote:
-> This series ultimately extends the supported IMA rule conditionals for
-> the KEXEC_CMDLINE hook function. As of today, there's an imbalance in
-> IMA language conditional support for KEXEC_CMDLINE rules in comparison
-> to KEXEC_KERNEL_CHECK and KEXEC_INITRAMFS_CHECK rules. The KEXEC_CMDLINE
-> rules do not support *any* conditionals so you cannot have a sequence of
-> rules like this:
-> 
->  dont_measure func=KEXEC_KERNEL_CHECK obj_type=foo_t
->  dont_measure func=KEXEC_INITRAMFS_CHECK obj_type=foo_t
->  dont_measure func=KEXEC_CMDLINE obj_type=foo_t
->  measure func=KEXEC_KERNEL_CHECK
->  measure func=KEXEC_INITRAMFS_CHECK
->  measure func=KEXEC_CMDLINE
-> 
-> Instead, KEXEC_CMDLINE rules can only be measured or not measured and
-> there's no additional flexibility in today's implementation of the
-> KEXEC_CMDLINE hook function.
-> 
-> With this series, the above sequence of rules becomes valid and any
-> calls to kexec_file_load() with a kernel and initramfs inode type of
-> foo_t will not be measured (that includes the kernel cmdline buffer)
-> while all other objects given to a kexec_file_load() syscall will be
-> measured. There's obviously not an inode directly associated with the
-> kernel cmdline buffer but this patch series ties the inode based
-> decision making for KEXEC_CMDLINE to the kernel's inode. I think this
-> will be intuitive to policy authors.
-> 
-> While reading IMA code and preparing to make this change, I realized
-> that the buffer based hook functions (KEXEC_CMDLINE and KEY_CHECK) are
-> quite special in comparison to longer standing hook functions. These
-> buffer based hook functions can only support measure actions and there
-> are some restrictions on the conditionals that they support. However,
-> the rule parser isn't enforcing any of those restrictions and IMA policy
-> authors wouldn't have any immediate way of knowing that the policy that
-> they wrote is invalid. For example, the sequence of rules above parses
-> successfully in today's kernel but the
-> "dont_measure func=KEXEC_CMDLINE ..." rule is incorrectly handled in
-> ima_match_rules(). The dont_measure rule is *always* considered to be a
-> match so, surprisingly, no KEXEC_CMDLINE measurements are made.
-> 
-> While making the rule parser more strict, I realized that the parser
-> does not correctly free all of the allocated memory associated with an
-> ima_rule_entry when going down some error paths. Invalid policy loaded
-> by the policy administrator could result in small memory leaks.
-> 
-> I envision patches 1-7 going to stable. The series is ordered in a way
-> that has all the fixes up front, followed by cleanups, followed by the
-> feature patch. The breakdown of patches looks like so:
-> 
->  Memory leak fixes: 1-3
->  Parser strictness fixes: 4-7
->  Code cleanups made possible by the fixes: 8-11
->  Extend KEXEC_CMDLINE rule support: 12
+On Thu, 16 Jul 2020 at 17:08, Andrew G. Morgan <morgan@kernel.org> wrote:
+>
+> Thanks! Applied all of them except 07_16. Instead, I've hopefully
+> clarified the intent of the text with some quotes.
 
-Thanks, Tyler.  This is a really nice patch set.  The patches are now
-in the "next-integrity-testing" branch.
+Okay. Thanks, Andrew.
 
-Mimi
+Cheers,
+
+Michael
+
+> https://git.kernel.org/pub/scm/libs/libcap/libcap.git/commit/?id=34e4e00b983a2c0fc5f13b403871a8fb5860bb89
+>
+> On Thu, Jul 16, 2020 at 3:19 AM Michael Kerrisk (man-pages)
+> <mtk.manpages@gmail.com> wrote:
+> >
+> > Signed-off-by: Michael Kerrisk (man-pages) <mtk.manpages@gmail.com>
+> > ---
+> >  progs/capsh.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/progs/capsh.c b/progs/capsh.c
+> > index 94bf57d..7bed98e 100644
+> > --- a/progs/capsh.c
+> > +++ b/progs/capsh.c
+> > @@ -879,10 +879,10 @@ int main(int argc, char *argv[], char *envp[])
+> >                    "  --delamb=xxx   remove xxx,... capabilities from ambient\n"
+> >                    "  --noamb        reset (drop) all ambient capabilities\n"
+> >                    "  --caps=xxx     set caps as per cap_from_text()\n"
+> > -                  "  --inh=xxx      set xxx,.. inheritiable set\n"
+> > +                  "  --inh=xxx      set xxx,.. inheritable set\n"
+> >                    "  --secbits=<n>  write a new value for securebits\n"
+> >                    "  --iab=...      use cap_iab_from_text() to set iab\n"
+> > -                  "  --keep=<n>     set keep-capabability bit to <n>\n"
+> > +                  "  --keep=<n>     set keep-capability bit to <n>\n"
+> >                    "  --uid=<n>      set uid to <n> (hint: id <username>)\n"
+> >                    "  --cap-uid=<n>  libcap cap_setuid() to change uid\n"
+> >                    "  --is-uid=<n>   exit 1 if uid != <n>\n"
+> > --
+> > 2.26.2
+> >
+
+
+
+-- 
+Michael Kerrisk
+Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
+Linux/UNIX System Programming Training: http://man7.org/training/
