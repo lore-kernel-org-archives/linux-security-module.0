@@ -1,49 +1,67 @@
-Return-Path: <SRS0=A2NQ=A5=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=NLgd=A6=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E850C433E2
-	for <linux-security-module@archiver.kernel.org>; Sat, 18 Jul 2020 17:48:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77878C433E3
+	for <linux-security-module@archiver.kernel.org>; Sun, 19 Jul 2020 10:05:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3ADCE2076A
-	for <linux-security-module@archiver.kernel.org>; Sat, 18 Jul 2020 17:48:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 550E020717
+	for <linux-security-module@archiver.kernel.org>; Sun, 19 Jul 2020 10:05:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JXBeYFSD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726690AbgGRRsN (ORCPT
+        id S1726012AbgGSKFh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 18 Jul 2020 13:48:13 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:41694 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726155AbgGRRsM (ORCPT
+        Sun, 19 Jul 2020 06:05:37 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:58194 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726038AbgGSKFf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 18 Jul 2020 13:48:12 -0400
-Received: from ip5f5af08c.dynamic.kabel-deutschland.de ([95.90.240.140] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1jwqw0-0003uS-Rf; Sat, 18 Jul 2020 17:47:40 +0000
-Date:   Sat, 18 Jul 2020 19:47:39 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     "Serge E. Hallyn" <serge@hallyn.com>,
-        Adrian Reber <areber@redhat.com>,
-        Nicolas Viennot <Nicolas.Viennot@twosigma.com>
-Cc:     Adrian Reber <areber@redhat.com>,
+        Sun, 19 Jul 2020 06:05:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1595153133;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=BU4zHRLNeLmtJp1vQ0m3cQQlG87+5cFcTzYcoDBrgTc=;
+        b=JXBeYFSDkgJD/VF77gm/vn58nil5qpe6Dl6YxzgT4izEwcSZoDxTJfgE1WHk8TEk8HI7Mc
+        S4Jy/PuHs/czi8jokbPTnEUB9OeIIJlwrjz+NJIIekynvp+6AiDfXbdbQvi406au489NbT
+        mGl9NaCbRFlwBL2zaKKyohV53EJQtIg=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-349-tTZzcga0No-9970HV4U0bA-1; Sun, 19 Jul 2020 06:05:31 -0400
+X-MC-Unique: tTZzcga0No-9970HV4U0bA-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3053F107ACCA;
+        Sun, 19 Jul 2020 10:05:28 +0000 (UTC)
+Received: from dcbz.redhat.com (ovpn-112-10.ams2.redhat.com [10.36.112.10])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C36AC710A8;
+        Sun, 19 Jul 2020 10:05:16 +0000 (UTC)
+From:   Adrian Reber <areber@redhat.com>
+To:     Christian Brauner <christian.brauner@ubuntu.com>,
         Eric Biederman <ebiederm@xmission.com>,
         Pavel Emelyanov <ovzxemul@gmail.com>,
         Oleg Nesterov <oleg@redhat.com>,
         Dmitry Safonov <0x7f454c46@gmail.com>,
         Andrei Vagin <avagin@gmail.com>,
-        =?utf-8?B?TWljaGHFgiBDxYJhcGnFhHNraQ==?= <mclapinski@google.com>,
-        Kamil Yurtsever <kyurtsever@google.com>,
+        Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
+        =?UTF-8?q?Micha=C5=82=20C=C5=82api=C5=84ski?= 
+        <mclapinski@google.com>, Kamil Yurtsever <kyurtsever@google.com>,
         Dirk Petersen <dipeit@gmail.com>,
         Christine Flood <chf@redhat.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Mike Rapoport <rppt@linux.ibm.com>,
         Radostin Stoyanov <rstoyanov1@gmail.com>,
+        Adrian Reber <areber@redhat.com>,
         Cyrill Gorcunov <gorcunov@openvz.org>,
+        Serge Hallyn <serge@hallyn.com>,
         Stephen Smalley <stephen.smalley.work@gmail.com>,
         Sargun Dhillon <sargun@sargun.me>,
         Arnd Bergmann <arnd@arndb.de>,
@@ -51,48 +69,53 @@ Cc:     Adrian Reber <areber@redhat.com>,
         linux-kernel@vger.kernel.org, selinux@vger.kernel.org,
         Eric Paris <eparis@parisplace.org>,
         Jann Horn <jannh@google.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v5 0/6] capabilities: Introduce CAP_CHECKPOINT_RESTORE
-Message-ID: <20200718174739.bg73idrihaj4p2qf@wittgenstein>
-References: <20200715144954.1387760-1-areber@redhat.com>
- <20200718032416.GC11982@mail.hallyn.com>
+Subject: [PATCH v6 0/7] capabilities: Introduce CAP_CHECKPOINT_RESTORE
+Date:   Sun, 19 Jul 2020 12:04:10 +0200
+Message-Id: <20200719100418.2112740-1-areber@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200718032416.GC11982@mail.hallyn.com>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jul 17, 2020 at 10:24:16PM -0500, Serge Hallyn wrote:
-> On Wed, Jul 15, 2020 at 04:49:48PM +0200, Adrian Reber wrote:
-> > This is v5 of the 'Introduce CAP_CHECKPOINT_RESTORE' patchset. The
-> > changes to v4 are:
-> > 
-> >  * split into more patches to have the introduction of
-> >    CAP_CHECKPOINT_RESTORE and the actual usage in different
-> >    patches
-> >  * reduce the /proc/self/exe patch to only be about
-> >    CAP_CHECKPOINT_RESTORE
-> > 
-> > Adrian Reber (5):
-> >   capabilities: Introduce CAP_CHECKPOINT_RESTORE
-> >   pid: use checkpoint_restore_ns_capable() for set_tid
-> >   pid_namespace: use checkpoint_restore_ns_capable() for ns_last_pid
-> >   proc: allow access in init userns for map_files with CAP_CHECKPOINT_RESTORE
-> >   selftests: add clone3() CAP_CHECKPOINT_RESTORE test
-> > 
-> > Nicolas Viennot (1):
-> >   prctl: Allow checkpoint/restore capable processes to change exe link
-> 
-> (This is probably bad form, but)  All
-> 
-> Reviewed-by: Serge Hallyn <serge@hallyn.com>
-> 
-> Assuming you changes patches 4 and 6 per Christian's suggestions,
-> I'd like to re-review those then.
+This is v6 of the 'Introduce CAP_CHECKPOINT_RESTORE' patchset. The
+changes to v5 are:
 
-Thanks, once Adrian has reposted the changes and you agree with them as
-well, I'll pick them up though I might end up pushing this into the next
-merge window...
+ * split patch dealing with /proc/self/exe into two patches:
+   * first patch to enable changing it with CAP_CHECKPOINT_RESTORE
+     and detailed history in the commit message
+   * second patch changes -EINVAL to -EPERM
+ * use kselftest_harness.h infrastructure for test
+ * replace if (!capable(CAP_SYS_ADMIN) || !capable(CAP_CHECKPOINT_RESTORE))
+   with if (!checkpoint_restore_ns_capable(&init_user_ns))
 
-Christian
+Adrian Reber (5):
+  capabilities: Introduce CAP_CHECKPOINT_RESTORE
+  pid: use checkpoint_restore_ns_capable() for set_tid
+  pid_namespace: use checkpoint_restore_ns_capable() for ns_last_pid
+  proc: allow access in init userns for map_files with
+    CAP_CHECKPOINT_RESTORE
+  selftests: add clone3() CAP_CHECKPOINT_RESTORE test
+
+Nicolas Viennot (2):
+  prctl: Allow local CAP_CHECKPOINT_RESTORE to change /proc/self/exe
+  prctl: exe link permission error changed from -EINVAL to -EPERM
+
+ fs/proc/base.c                                |   8 +-
+ include/linux/capability.h                    |   6 +
+ include/uapi/linux/capability.h               |   9 +-
+ kernel/pid.c                                  |   2 +-
+ kernel/pid_namespace.c                        |   2 +-
+ kernel/sys.c                                  |  13 +-
+ security/selinux/include/classmap.h           |   5 +-
+ tools/testing/selftests/clone3/.gitignore     |   1 +
+ tools/testing/selftests/clone3/Makefile       |   4 +-
+ .../clone3/clone3_cap_checkpoint_restore.c    | 177 ++++++++++++++++++
+ 10 files changed, 212 insertions(+), 15 deletions(-)
+ create mode 100644 tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
+
+base-commit: d31958b30ea3b7b6e522d6bf449427748ad45822
+-- 
+2.26.2
+
