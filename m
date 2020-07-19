@@ -2,304 +2,115 @@ Return-Path: <SRS0=NLgd=A6=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 940E4C433E6
-	for <linux-security-module@archiver.kernel.org>; Sun, 19 Jul 2020 10:06:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8BC8C433E1
+	for <linux-security-module@archiver.kernel.org>; Sun, 19 Jul 2020 11:02:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6951720717
-	for <linux-security-module@archiver.kernel.org>; Sun, 19 Jul 2020 10:06:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BzDQs1X4"
+	by mail.kernel.org (Postfix) with ESMTP id 8B433207DF
+	for <linux-security-module@archiver.kernel.org>; Sun, 19 Jul 2020 11:02:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726808AbgGSKGf (ORCPT
+        id S1726021AbgGSLCr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 19 Jul 2020 06:06:35 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:39137 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726548AbgGSKGe (ORCPT
+        Sun, 19 Jul 2020 07:02:47 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:24682 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725988AbgGSLCr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 19 Jul 2020 06:06:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1595153193;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=WP9z4LnJcQJMjqspN5qTbKjXNGUOZkPcb7KePnNQ76I=;
-        b=BzDQs1X4Nhd09VPRJJPprGlVRu9gwkThBWkcW/cfgGRrfkiu40THavelejWiWFS/VSR8YQ
-        yrOlhmC0aAeepnhRSGvDKb38tR2htdT87kXrh80j6gHNsmEX1NDAod97i6ZZM9G57BI5rF
-        6K9STMFtDe0q0eCETTBRjm/tIgf7/9c=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-511-AdEU5DDINk-Z234r_pLezQ-1; Sun, 19 Jul 2020 06:06:31 -0400
-X-MC-Unique: AdEU5DDINk-Z234r_pLezQ-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 58EED10059A4;
-        Sun, 19 Jul 2020 10:06:28 +0000 (UTC)
-Received: from dcbz.redhat.com (ovpn-112-10.ams2.redhat.com [10.36.112.10])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7281473044;
-        Sun, 19 Jul 2020 10:06:18 +0000 (UTC)
-From:   Adrian Reber <areber@redhat.com>
-To:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Pavel Emelyanov <ovzxemul@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Andrei Vagin <avagin@gmail.com>,
-        Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
-        =?UTF-8?q?Micha=C5=82=20C=C5=82api=C5=84ski?= 
-        <mclapinski@google.com>, Kamil Yurtsever <kyurtsever@google.com>,
-        Dirk Petersen <dipeit@gmail.com>,
-        Christine Flood <chf@redhat.com>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Mike Rapoport <rppt@linux.ibm.com>,
-        Radostin Stoyanov <rstoyanov1@gmail.com>,
-        Adrian Reber <areber@redhat.com>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        Serge Hallyn <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Sargun Dhillon <sargun@sargun.me>,
-        Arnd Bergmann <arnd@arndb.de>,
+        Sun, 19 Jul 2020 07:02:47 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 06JB2W16014314;
+        Sun, 19 Jul 2020 07:02:34 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 32bw7y757y-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 19 Jul 2020 07:02:34 -0400
+Received: from m0098399.ppops.net (m0098399.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 06JB2YWp014459;
+        Sun, 19 Jul 2020 07:02:34 -0400
+Received: from ppma05fra.de.ibm.com (6c.4a.5195.ip4.static.sl-reverse.com [149.81.74.108])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 32bw7y752t-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 19 Jul 2020 07:02:34 -0400
+Received: from pps.filterd (ppma05fra.de.ibm.com [127.0.0.1])
+        by ppma05fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 06JB0ZJ2021800;
+        Sun, 19 Jul 2020 11:02:11 GMT
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
+        by ppma05fra.de.ibm.com with ESMTP id 32brq80mhu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 19 Jul 2020 11:02:10 +0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 06JB28MX29557122
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sun, 19 Jul 2020 11:02:08 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 789F6A4051;
+        Sun, 19 Jul 2020 11:02:08 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 22C19A405D;
+        Sun, 19 Jul 2020 11:02:07 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.150.54])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Sun, 19 Jul 2020 11:02:07 +0000 (GMT)
+Message-ID: <1595156526.27397.67.camel@linux.ibm.com>
+Subject: Re: [PATCH v3 01/12] ima: Have the LSM free its audit rule
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Tyler Hicks <tyhicks@linux.microsoft.com>,
+        Nayna <nayna@linux.vnet.ibm.com>
+Cc:     Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Prakhar Srivastava <prsriva02@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, selinux@vger.kernel.org,
-        Eric Paris <eparis@parisplace.org>,
-        Jann Horn <jannh@google.com>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH v6 7/7] selftests: add clone3() CAP_CHECKPOINT_RESTORE test
-Date:   Sun, 19 Jul 2020 12:04:17 +0200
-Message-Id: <20200719100418.2112740-8-areber@redhat.com>
-In-Reply-To: <20200719100418.2112740-1-areber@redhat.com>
-References: <20200719100418.2112740-1-areber@redhat.com>
-MIME-Version: 1.0
+        Janne Karhunen <janne.karhunen@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Date:   Sun, 19 Jul 2020 07:02:06 -0400
+In-Reply-To: <20200717192447.GO3673@sequoia>
+References: <20200709061911.954326-1-tyhicks@linux.microsoft.com>
+         <20200709061911.954326-2-tyhicks@linux.microsoft.com>
+         <5ee27a51-7ff9-5763-c85f-e99e62458657@linux.vnet.ibm.com>
+         <20200717192447.GO3673@sequoia>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-07-19_01:2020-07-17,2020-07-19 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
+ spamscore=0 bulkscore=0 impostorscore=0 clxscore=1015 suspectscore=0
+ lowpriorityscore=0 priorityscore=1501 mlxlogscore=999 phishscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2006250000 definitions=main-2007190080
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This adds a test that changes its UID, uses capabilities to
-get CAP_CHECKPOINT_RESTORE and uses clone3() with set_tid to
-create a process with a given PID as non-root.
+On Fri, 2020-07-17 at 14:24 -0500, Tyler Hicks wrote:
+> On 2020-07-17 15:20:22, Nayna wrote:
+> > 
+> > On 7/9/20 2:19 AM, Tyler Hicks wrote:
+> > > Ask the LSM to free its audit rule rather than directly calling kfree().
+> > 
+> > Is it to be called audit rule or filter rule ?  Likewise in subject line.
+> gt
+> The security hooks call this "audit rule" but Mimi explained the
+> reasoning for IMA referring to this as an "audit filter" here:
+> 
+>  https://lore.kernel.org/lkml/1593466203.5085.62.camel@linux.ibm.com/
+> 
+> I would be fine with her renaming/rewording this patch, accordingly, in
+> next-integrity-testing.
 
-Signed-off-by: Adrian Reber <areber@redhat.com>
----
- tools/testing/selftests/clone3/.gitignore     |   1 +
- tools/testing/selftests/clone3/Makefile       |   4 +-
- .../clone3/clone3_cap_checkpoint_restore.c    | 177 ++++++++++++++++++
- 3 files changed, 181 insertions(+), 1 deletion(-)
- create mode 100644 tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
+Both here and "ima: AppArmor satisfies the audit rule requirements",
+the subject is AppArmor/LSM, which do refer to the rules as "audit"
+rules.  In the "ima: Rename internal audit rule functions" case, the
+rule rename is internal to IMA.  Here it makes sense to replace
+"audit" with "filter".  Tyler, I've gone ahead and made the change.
 
-diff --git a/tools/testing/selftests/clone3/.gitignore b/tools/testing/selftests/clone3/.gitignore
-index a81085742d40..83c0f6246055 100644
---- a/tools/testing/selftests/clone3/.gitignore
-+++ b/tools/testing/selftests/clone3/.gitignore
-@@ -2,3 +2,4 @@
- clone3
- clone3_clear_sighand
- clone3_set_tid
-+clone3_cap_checkpoint_restore
-diff --git a/tools/testing/selftests/clone3/Makefile b/tools/testing/selftests/clone3/Makefile
-index cf976c732906..ef7564cb7abe 100644
---- a/tools/testing/selftests/clone3/Makefile
-+++ b/tools/testing/selftests/clone3/Makefile
-@@ -1,6 +1,8 @@
- # SPDX-License-Identifier: GPL-2.0
- CFLAGS += -g -I../../../../usr/include/
-+LDLIBS += -lcap
- 
--TEST_GEN_PROGS := clone3 clone3_clear_sighand clone3_set_tid
-+TEST_GEN_PROGS := clone3 clone3_clear_sighand clone3_set_tid \
-+	clone3_cap_checkpoint_restore
- 
- include ../lib.mk
-diff --git a/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c b/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
-new file mode 100644
-index 000000000000..c0d83511cd28
---- /dev/null
-+++ b/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
-@@ -0,0 +1,177 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/*
-+ * Based on Christian Brauner's clone3() example.
-+ * These tests are assuming to be running in the host's
-+ * PID namespace.
-+ */
-+
-+/* capabilities related code based on selftests/bpf/test_verifier.c */
-+
-+#define _GNU_SOURCE
-+#include <errno.h>
-+#include <linux/types.h>
-+#include <linux/sched.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <stdbool.h>
-+#include <sys/capability.h>
-+#include <sys/prctl.h>
-+#include <sys/syscall.h>
-+#include <sys/types.h>
-+#include <sys/un.h>
-+#include <sys/wait.h>
-+#include <unistd.h>
-+#include <sched.h>
-+
-+#include "../kselftest_harness.h"
-+#include "clone3_selftests.h"
-+
-+#ifndef MAX_PID_NS_LEVEL
-+#define MAX_PID_NS_LEVEL 32
-+#endif
-+
-+static void child_exit(int ret)
-+{
-+	fflush(stdout);
-+	fflush(stderr);
-+	_exit(ret);
-+}
-+
-+static int call_clone3_set_tid(pid_t *set_tid, size_t set_tid_size)
-+{
-+	int status;
-+	pid_t pid = -1;
-+
-+	struct clone_args args = {
-+		.exit_signal = SIGCHLD,
-+		.set_tid = ptr_to_u64(set_tid),
-+		.set_tid_size = set_tid_size,
-+	};
-+
-+	pid = sys_clone3(&args, sizeof(struct clone_args));
-+	if (pid < 0) {
-+		ksft_print_msg("%s - Failed to create new process\n", strerror(errno));
-+		return -errno;
-+	}
-+
-+	if (pid == 0) {
-+		int ret;
-+		char tmp = 0;
-+
-+		ksft_print_msg
-+		    ("I am the child, my PID is %d (expected %d)\n", getpid(), set_tid[0]);
-+
-+		if (set_tid[0] != getpid())
-+			child_exit(EXIT_FAILURE);
-+		child_exit(EXIT_SUCCESS);
-+	}
-+
-+	ksft_print_msg("I am the parent (%d). My child's pid is %d\n", getpid(), pid);
-+
-+	if (waitpid(pid, &status, 0) < 0) {
-+		ksft_print_msg("Child returned %s\n", strerror(errno));
-+		return -errno;
-+	}
-+
-+	if (!WIFEXITED(status))
-+		return -1;
-+
-+	return WEXITSTATUS(status);
-+}
-+
-+static int test_clone3_set_tid(pid_t *set_tid, size_t set_tid_size)
-+{
-+	int ret;
-+
-+	ksft_print_msg("[%d] Trying clone3() with CLONE_SET_TID to %d\n", getpid(), set_tid[0]);
-+	ret = call_clone3_set_tid(set_tid, set_tid_size);
-+	ksft_print_msg("[%d] clone3() with CLONE_SET_TID %d says:%d\n", getpid(), set_tid[0], ret);
-+	return ret;
-+}
-+
-+struct libcap {
-+	struct __user_cap_header_struct hdr;
-+	struct __user_cap_data_struct data[2];
-+};
-+
-+static int set_capability(void)
-+{
-+	cap_value_t cap_values[] = { CAP_SETUID, CAP_SETGID };
-+	struct libcap *cap;
-+	int ret = -1;
-+	cap_t caps;
-+
-+	caps = cap_get_proc();
-+	if (!caps) {
-+		perror("cap_get_proc");
-+		return -1;
-+	}
-+
-+	/* Drop all capabilities */
-+	if (cap_clear(caps)) {
-+		perror("cap_clear");
-+		goto out;
-+	}
-+
-+	cap_set_flag(caps, CAP_EFFECTIVE, 2, cap_values, CAP_SET);
-+	cap_set_flag(caps, CAP_PERMITTED, 2, cap_values, CAP_SET);
-+
-+	cap = (struct libcap *) caps;
-+
-+	/* 40 -> CAP_CHECKPOINT_RESTORE */
-+	cap->data[1].effective |= 1 << (40 - 32);
-+	cap->data[1].permitted |= 1 << (40 - 32);
-+
-+	if (cap_set_proc(caps)) {
-+		perror("cap_set_proc");
-+		goto out;
-+	}
-+	ret = 0;
-+out:
-+	if (cap_free(caps))
-+		perror("cap_free");
-+	return ret;
-+}
-+
-+TEST(clone3_cap_checkpoint_restore)
-+{
-+	pid_t pid;
-+	int status;
-+	int ret = 0;
-+	pid_t set_tid[1];
-+
-+	test_clone3_supported();
-+
-+	EXPECT_EQ(getuid(), 0)
-+		SKIP(return, "Skipping all tests as non-root\n");
-+
-+	memset(&set_tid, 0, sizeof(set_tid));
-+
-+	/* Find the current active PID */
-+	pid = fork();
-+	if (pid == 0) {
-+		TH_LOG("Child has PID %d", getpid());
-+		child_exit(EXIT_SUCCESS);
-+	}
-+	ASSERT_GT(waitpid(pid, &status, 0), 0)
-+		TH_LOG("Waiting for child %d failed", pid);
-+
-+	/* After the child has finished, its PID should be free. */
-+	set_tid[0] = pid;
-+
-+	ASSERT_EQ(set_capability(), 0)
-+		TH_LOG("Could not set CAP_CHECKPOINT_RESTORE");
-+	prctl(PR_SET_KEEPCAPS, 1, 0, 0, 0);
-+	setgid(1000);
-+	setuid(1000);
-+	set_tid[0] = pid;
-+	/* This would fail without CAP_CHECKPOINT_RESTORE */
-+	ASSERT_EQ(test_clone3_set_tid(set_tid, 1), -EPERM);
-+	ASSERT_EQ(set_capability(), 0)
-+		TH_LOG("Could not set CAP_CHECKPOINT_RESTORE");
-+	/* This should work as we have CAP_CHECKPOINT_RESTORE as non-root */
-+	ASSERT_EQ(test_clone3_set_tid(set_tid, 1), 0);
-+}
-+
-+TEST_HARNESS_MAIN
--- 
-2.26.2
+Mimi
 
