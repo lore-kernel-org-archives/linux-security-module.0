@@ -8,64 +8,64 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ED48C433E2
-	for <linux-security-module@archiver.kernel.org>; Mon, 20 Jul 2020 09:14:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81C7DC433EA
+	for <linux-security-module@archiver.kernel.org>; Mon, 20 Jul 2020 09:14:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7C44E21775
-	for <linux-security-module@archiver.kernel.org>; Mon, 20 Jul 2020 09:14:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6009D21775
+	for <linux-security-module@archiver.kernel.org>; Mon, 20 Jul 2020 09:14:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mJO3d82H"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gQOdvQc0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728093AbgGTJOl (ORCPT
+        id S1728112AbgGTJOq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 20 Jul 2020 05:14:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35788 "EHLO
+        Mon, 20 Jul 2020 05:14:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728069AbgGTJOk (ORCPT
+        with ESMTP id S1728069AbgGTJOq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 20 Jul 2020 05:14:40 -0400
+        Mon, 20 Jul 2020 05:14:46 -0400
 Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BE58C061794
-        for <linux-security-module@vger.kernel.org>; Mon, 20 Jul 2020 02:14:40 -0700 (PDT)
-Received: by mail-wm1-x344.google.com with SMTP id w3so24379751wmi.4
-        for <linux-security-module@vger.kernel.org>; Mon, 20 Jul 2020 02:14:40 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E00AC061794
+        for <linux-security-module@vger.kernel.org>; Mon, 20 Jul 2020 02:14:45 -0700 (PDT)
+Received: by mail-wm1-x344.google.com with SMTP id c80so21524207wme.0
+        for <linux-security-module@vger.kernel.org>; Mon, 20 Jul 2020 02:14:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=nd5MRrfc4FbCz2nNbnQ3jrH4N68Vrj6ya5355SWWcsg=;
-        b=mJO3d82HOX7escqUNf/bjOZNOI/7cbzcr4kKKXurp/8Rqy8cD0Rths4LRAvcsnQxTl
-         7wR5DGZ1Cu8FeU49YCwYl+YyDlGWJY3hxxCEYRkQqjue/34vuI3r4Qd4Zk5zhUv3kWyh
-         ijSpDwmhir+UaFjgs3bjPavfr0o1Fb40ohsgv/G9xCGksivbt4V1+wIY1xuLjxTVuGWV
-         qeZUtzpdTemhHu+TRIshZlq1PORXslbzmgpOQrCKGn/3tv1K7UgnPHeGGtEC/4vpzPrL
-         un8V/1GtSmBHTOWUY4MljHu5qUbZC1fMmSoQSGTB1weUQ8sPdnQn8Yb1KQIdZwkC/8Jz
-         E5VQ==
+        bh=fiStrsNp0Nn8CO2onfVP2auDZ4lB9LnkFmz5jiXy/SM=;
+        b=gQOdvQc0/Cssvayo3Ym3kvrz9uXGhBbrG9Qb0iJv4zyywxgFqXg0CJS4CJad+PzOV8
+         Dx7Njm35IBUbeHglAtUJqN6slwdlolh8dg4Q15NyiKIJzELWYMAHOp0hKaanekVdcjH4
+         vGCFrQm0JXxlKez1gzPw58P8XynkxTuXAarwj145QdXuPEnYc1o03h3xUM3pu4SKyaV0
+         WJhuhkga5lXQVwZtD6FgvZ2nAtgu+YZyJ8t10uZSp1MepPTPiKzZKbSTWAyXZ2sw4EVr
+         jpBr1MRic7Q92fa3MuMzFQXfyH6mT01gyEXvP7wjaJOlZI602zqjbCO0lasJfqVwCYE3
+         LXmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=nd5MRrfc4FbCz2nNbnQ3jrH4N68Vrj6ya5355SWWcsg=;
-        b=gqYmPhGoaw/j0rbcS0nx0SUGcdLRJT4YRor3DMEBtVtfqfDUggizwZOUE3aJxHXsaI
-         ZrlhrPhZ7BDv9DmHw4ipvSxRPhHCQBabIrwyya6DgPSOTv+HOLK7nLN8AJHjHsFeRgdB
-         E3tWOiX6rbYOs6dazIb0YrNrXS14Ni3UklEU7Z4XrGrETmomfbPMyxvKMSh5PLdVEhSM
-         iT1zjbCgI3xfdP/UveRu3IIaNHDO4HbF60iiqhDyO/d6NBd8yWNbjO8zPP2aUpz7ZPUJ
-         hI3eZHZL4A4HSW8s6GeX8BeBI4DHXR3U+ODlya5yShv4GxvCrZVoIWSAGBnPd27DWkMS
-         3etQ==
-X-Gm-Message-State: AOAM531T+rBa9Amdh0kl5b6qwNM9c3ezEPP3CJXN7tzSDaefUWq1mwQG
-        pG4MrukNbcrYqZUH5kN3UinFj/RV
-X-Google-Smtp-Source: ABdhPJyLgxUtySV7KdCjEcZYwQ9nnzS0H95/AUhCeTdsbBAi1YN2lzrOlGh56xV6rjgzjwVJVzxG+w==
-X-Received: by 2002:a1c:f616:: with SMTP id w22mr19845011wmc.44.1595236479251;
-        Mon, 20 Jul 2020 02:14:39 -0700 (PDT)
+        bh=fiStrsNp0Nn8CO2onfVP2auDZ4lB9LnkFmz5jiXy/SM=;
+        b=B7QdJI0nqW3Ll89fRV5RPDHIcozwnnrok2zfkxaqZRBO4JwBHai0TgQXf7oe/ZtjyT
+         0SzWvDWWoHmhpbajqgupNpBkwexVPYBcPgOkNI/Z6LHRi/N7HcuQWD7hKqJxkaD4ca32
+         403OR6g5jkfZtELJRbgNBB8boCWtFPWoUUgWy74pp65UL8zUH6tbglbcWF+C+g8hvpse
+         e40gF5PdccY2E0AU3q/W0yE2uuApmb4KcAcCBTDPcNPlf7TVm3N6c8pNugs35fZrG5aB
+         x/cllDerA9hqkbYcaI3ApLaoXlSB3hhzT3Qd3HZWrOjTSXBhVysnOwnq3pWZML05eota
+         3PNA==
+X-Gm-Message-State: AOAM5328MoqiGZMI+oRTd9ig2hEOT/dbAx+gFQPqXP7r79BAzkmpmjI8
+        hVmAy4JNUkhV2iHPM/TAX10=
+X-Google-Smtp-Source: ABdhPJx9G1vCJbWN6Frd58VfvUTQxw+5ImAKfmh4vWcnb8LQ1T4ArKg7vivUGSh9bDTEW4+Y1CSsbw==
+X-Received: by 2002:a05:600c:21cb:: with SMTP id x11mr19595289wmj.141.1595236484297;
+        Mon, 20 Jul 2020 02:14:44 -0700 (PDT)
 Received: from bienne.fritz.box ([2001:a61:3adb:8201:9649:88f:51f8:6a21])
-        by smtp.gmail.com with ESMTPSA id c24sm6036215wrb.11.2020.07.20.02.14.38
+        by smtp.gmail.com with ESMTPSA id w16sm34375905wrg.95.2020.07.20.02.14.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Jul 2020 02:14:38 -0700 (PDT)
+        Mon, 20 Jul 2020 02:14:43 -0700 (PDT)
 From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
 To:     mtk.manpages@gmail.com, Andrew Morgan <morgan@kernel.org>
 Cc:     linux-security-module@vger.kernel.org
-Subject: [PATCH 12/15] Manual pages: cap_get_file.3: NOTES: note the effect of the Ambient set
-Date:   Mon, 20 Jul 2020 11:13:25 +0200
-Message-Id: <20200720091328.290336-13-mtk.manpages@gmail.com>
+Subject: [PATCH 13/15] Manual pages: cap_get_proc.3: Update description of capsetp()
+Date:   Mon, 20 Jul 2020 11:13:26 +0200
+Message-Id: <20200720091328.290336-14-mtk.manpages@gmail.com>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200720091328.290336-1-mtk.manpages@gmail.com>
 References: <20200720091328.290336-1-mtk.manpages@gmail.com>
@@ -75,41 +75,103 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The addition of Ambient capabilities in Linux 4.3 rendered the text on
-the effect of the Effective bit during execve(2) out-of-date. Fix that.
-Also add a couple of paragraph breaks to improve readability.
+The details currently provided for capsetp() were current before 2008,
+but ceased to be accurate with the 2008 addition of VFS file
+capabilities in 2008. Update the text accordingly.
+
+At the same time, add a subheading, a few paragraph breaks, and a few
+other wording tweaks to make the description of capgetp() and capsetp()
+more readable.
 
 Signed-off-by: Michael Kerrisk (man-pages) <mtk.manpages@gmail.com>
 ---
- doc/cap_get_file.3 | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ doc/cap_get_proc.3 | 40 +++++++++++++++++++++++++++-------------
+ 1 file changed, 27 insertions(+), 13 deletions(-)
 
-diff --git a/doc/cap_get_file.3 b/doc/cap_get_file.3
-index ceacbaf..dc7b571 100644
---- a/doc/cap_get_file.3
-+++ b/doc/cap_get_file.3
-@@ -103,13 +103,18 @@ or
- These functions are specified by withdrawn POSIX.1e draft specification.
- .SH NOTES
- Support for file capabilities is provided on Linux since version 2.6.24.
+diff --git a/doc/cap_get_proc.3 b/doc/cap_get_proc.3
+index fce8f59..40475fd 100644
+--- a/doc/cap_get_proc.3
++++ b/doc/cap_get_proc.3
+@@ -251,7 +251,7 @@ or,
+ When linked this way, due to linker magic, libcap uses
+ .BR psx_syscall "(3) and " psx_syscall6 (3)
+ to perform state setting system calls.
+-.PP
++.SS capgetp() and capsetp()
+ The library also supports the deprecated functions:
+ .PP
+ .BI "int capgetp(pid_t " pid ", cap_t " cap_d );
+@@ -264,14 +264,20 @@ capabilities in a pre-allocated
+ .IR cap_d .
+ See
+ .BR cap_init ()
+-for information on allocating an empty capability set. This function,
+-.BR capgetp (),
+-is deprecated, you should use
++for information on allocating an empty capability set. This function
++is deprecated; you should use
+ .BR cap_get_pid ().
+ .PP
+ .BR capsetp ()
+-attempts to set the capabilities of some other process(es),
+-.IR pid . 
++attempts to set the capabilities of the calling porcess or of
++some other process(es),
++.IR pid .
++Note that setting capabilities of another process is only possible on older
++kernels that do not provide VFS support for setting file capabilities.
++See
++.BR capset (2)
++for information on which kernels provide such support.
++.PP
+ If
+ .I pid
+ is positive it refers to a specific process;  if it is zero, it refers
+@@ -280,29 +286,37 @@ calling process and process '1' (typically
+ .BR init (8));
+ other negative values refer to the
+ .I \-pid
+-process group.  In order to use this function, the kernel must support
++process group.
++.PP
++In order to use this function, the kernel must support
+ it and the calling process must have
+ .B CAP_SETPCAP
+ raised in its Effective capability set. The capabilities set in the
+ target process(es) are those contained in
+ .IR cap_d .
++.PP
+ Kernels that support filesystem capabilities redefine the semantics of
+ .B CAP_SETPCAP
+-and on such systems this function will always fail for any target not
++and on such systems,
++.BR capsetp ()
++will always fail for any target not
+ equal to the calling process.
+ .BR capsetp ()
+ returns zero for success, and \-1 on failure.
 -
+-Where supported by the kernel, the function
 +.PP
- On Linux, the file Effective set is a single bit.
- If it is enabled, then all Permitted capabilities are enabled
- in the Effective set of the calling process when the file is executed;
--otherwise, no capabilities are enabled in the process's Effective set
-+otherwise, the process's Ambient capabilities
-+(or, before the Linux 4.3 addition of Ambient capabilities, no capabilities)
-+are enabled in the process's Effective set
- following an
--.BR execve (2).
-+.BR execve (2)
-+(see
-+.BR capabilities (7)).
-+.PP
- Because the file Effective set is a single bit,
- if any capability is enabled in the Effective set of the
- .I cap_t
++On kernels where it is (was) supported,
+ .BR capsetp ()
+ should be used with care.  It existed, primarily, to overcome an early
+ lack of support for capabilities in the filesystems supported by
+-Linux.  Note that, by default, the only processes that have
++Linux.  Note that on older kernels where
++.BR capsetp ()
++could be used to set the capabilities of another process,
++the only processes that had
+ .B CAP_SETPCAP
+-available to them are processes started as a kernel thread.
++available to them by default were processes started as kernel threads.
+ (Typically this includes
+ .BR init (8),
+-kflushd and kswapd.) You will need to recompile the kernel to modify
++kflushd and kswapd.) A kernel recompilation was needed to modify
+ this default.
+ .SH EXAMPLE
+ The code segment below raises the
 -- 
 2.26.2
 
