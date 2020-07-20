@@ -2,123 +2,210 @@ Return-Path: <SRS0=MEX0=A7=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66FDEC2BB56
-	for <linux-security-module@archiver.kernel.org>; Mon, 20 Jul 2020 21:43:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28B7CC433E2
+	for <linux-security-module@archiver.kernel.org>; Mon, 20 Jul 2020 22:44:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4F42B207FC
-	for <linux-security-module@archiver.kernel.org>; Mon, 20 Jul 2020 21:43:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 01064208E4
+	for <linux-security-module@archiver.kernel.org>; Mon, 20 Jul 2020 22:44:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LhvbkMtt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728086AbgGTVm4 (ORCPT
+        id S1726531AbgGTWoR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 20 Jul 2020 17:42:56 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35328 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728236AbgGTVip (ORCPT
+        Mon, 20 Jul 2020 18:44:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47792 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726021AbgGTWoP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 20 Jul 2020 17:38:45 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 06KKWocY152958;
-        Mon, 20 Jul 2020 17:38:25 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 32d5x49up3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 20 Jul 2020 17:38:25 -0400
-Received: from m0098399.ppops.net (m0098399.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 06KKl885030148;
-        Mon, 20 Jul 2020 17:38:25 -0400
-Received: from ppma04fra.de.ibm.com (6a.4a.5195.ip4.static.sl-reverse.com [149.81.74.106])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 32d5x49una-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 20 Jul 2020 17:38:24 -0400
-Received: from pps.filterd (ppma04fra.de.ibm.com [127.0.0.1])
-        by ppma04fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 06KLZBL4020699;
-        Mon, 20 Jul 2020 21:38:22 GMT
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
-        by ppma04fra.de.ibm.com with ESMTP id 32dbmn06yb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 20 Jul 2020 21:38:22 +0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 06KLcKd744040416
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 20 Jul 2020 21:38:20 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3D90BA4054;
-        Mon, 20 Jul 2020 21:38:20 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 856E2A4060;
-        Mon, 20 Jul 2020 21:38:18 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.145.253])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 20 Jul 2020 21:38:18 +0000 (GMT)
-Message-ID: <1595281097.5055.79.camel@linux.ibm.com>
-Subject: Re: [PATCH v3 00/12] ima: Fix rule parsing bugs and extend
- KEXEC_CMDLINE rule support
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Tyler Hicks <tyhicks@linux.microsoft.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Sasha Levin <sashal@kernel.org>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Prakhar Srivastava <prsriva02@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Janne Karhunen <janne.karhunen@gmail.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        kexec@lists.infradead.org,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Nayna Jain <nayna@linux.ibm.com>
-Date:   Mon, 20 Jul 2020 17:38:17 -0400
-In-Reply-To: <20200709061911.954326-1-tyhicks@linux.microsoft.com>
-References: <20200709061911.954326-1-tyhicks@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-07-20_09:2020-07-20,2020-07-20 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
- mlxscore=0 suspectscore=2 malwarescore=0 mlxlogscore=999
- priorityscore=1501 phishscore=0 impostorscore=0 adultscore=0 bulkscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2007200136
+        Mon, 20 Jul 2020 18:44:15 -0400
+Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84F6CC061794
+        for <linux-security-module@vger.kernel.org>; Mon, 20 Jul 2020 15:44:15 -0700 (PDT)
+Received: by mail-ed1-x543.google.com with SMTP id by13so13912247edb.11
+        for <linux-security-module@vger.kernel.org>; Mon, 20 Jul 2020 15:44:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=vYYj1xkqdAsQ1FACIja4W5B8GUjTG6OnchmcXRlXDAM=;
+        b=LhvbkMttHCYSIkbtKIEJKfKLYcHeua/U3mDmokc6dBBiJsdTOS9eQQVY9fXHQEpNSg
+         bsBZjEcH/UvUgiyXF/bGXcjZfuUC/BGaS5rd6vGmLmfV0UaHgRLXjT0EXKUmsIqGPCBy
+         Sb8dlD85mrzgrlGYZs+ZHYMQF4zJNXtsCPBXw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=vYYj1xkqdAsQ1FACIja4W5B8GUjTG6OnchmcXRlXDAM=;
+        b=lowrK9L5SWmcPR6B56oq7O0CvAM1YQdho/3+735r/Up65ENszkADLxn9M8gebjJQYI
+         Syq46aaCAT6yyvl+SmDwefeCWZrQk626T3PhtrQ6773abMBvYtw6EPulzx0IbXIuYBTX
+         XsIqEG9nPEsnZQvyaU+z8dyWptfop4gIjl7kWoXahCK1ZQqcRmKOgdFegGcILy8lvu5O
+         xuTtTelfZZyOZeMqocCh3yghxIhLlxpUVL66e8kumzBctKo+gK1nDbp97ncv8veyScPU
+         PmoRoETBjHLPdF+O20v3Q6tBW+E9Rxs3Vm3E8IceWA9+yqLXyLQQi0bwNeoZsvbf8vm4
+         whXg==
+X-Gm-Message-State: AOAM532zt+M2XhNO45dfoC6moe5JV9PL2tsKtK1Tzy5PgwkilD90vW1A
+        kSVyAFaMkKjh/QjSmctM3DQYDA==
+X-Google-Smtp-Source: ABdhPJwOkJhYIctISfI3yYileJE3UyfLzhW9ibOBRJkJLPhkuKeNd9eypzHHnF3uimZ4IxjR5U9Q/Q==
+X-Received: by 2002:a05:6402:3d0:: with SMTP id t16mr22865489edw.287.1595285053947;
+        Mon, 20 Jul 2020 15:44:13 -0700 (PDT)
+Received: from google.com ([81.6.44.51])
+        by smtp.gmail.com with ESMTPSA id cc9sm16719027edb.14.2020.07.20.15.44.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Jul 2020 15:44:13 -0700 (PDT)
+From:   KP Singh <kpsingh@chromium.org>
+X-Google-Original-From: KP Singh <kpsingh>
+Date:   Tue, 21 Jul 2020 00:44:11 +0200
+To:     KP Singh <kpsingh@chromium.org>
+Cc:     Martin KaFai Lau <kafai@fb.com>, linux-kernel@vger.kernel.org,
+        bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
+        Florent Revest <revest@chromium.org>
+Subject: Re: [PATCH bpf-next v4 2/4] bpf: Implement bpf_local_storage for
+ inodes
+Message-ID: <20200720224411.GA1873800@google.com>
+References: <20200709101239.3829793-1-kpsingh@chromium.org>
+ <20200709101239.3829793-3-kpsingh@chromium.org>
+ <20200715215751.6llgungzff66iwxh@kafai-mbp>
+ <20200715225911.GA1194150@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200715225911.GA1194150@google.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-[Cc'ing Sasha]
-
-On Thu, 2020-07-09 at 01:18 -0500, Tyler Hicks wrote:
-
-> I envision patches 1-7 going to stable. The series is ordered in a way
-> that has all the fixes up front, followed by cleanups, followed by the
-> feature patch. The breakdown of patches looks like so:
+On 16-Jul 00:59, KP Singh wrote:
+> On 15-Jul 14:57, Martin KaFai Lau wrote:
+> > On Thu, Jul 09, 2020 at 12:12:37PM +0200, KP Singh wrote:
+> > > From: KP Singh <kpsingh@google.com>
+> > > 
+> > > Similar to bpf_local_storage for sockets, add local storage for inodes.
+> > > The life-cycle of storage is managed with the life-cycle of the inode.
+> > > i.e. the storage is destroyed along with the owning inode.
+> > > 
+> > > The BPF LSM allocates an __rcu pointer to the bpf_local_storage in the
+> > > security blob which are now stackable and can co-exist with other LSMs.
+> > > 
+> > > Signed-off-by: KP Singh <kpsingh@google.com>
+> > 
+> > [ ... ]
+> > 
+> > 
+> > > +static void *bpf_inode_storage_lookup_elem(struct bpf_map *map, void *key)
+> > > +{
+> > > +	struct bpf_local_storage_data *sdata;
+> > > +	struct inode *inode;
+> > > +	int err = -EINVAL;
+> > > +
+> > > +	if (key) {
+> > > +		inode = *(struct inode **)(key);
+> > The bpf_inode_storage_lookup_elem() here and the (update|delete)_elem() below
+> > are called from the userspace syscall.  How the userspace may provide this key?
 > 
->  Memory leak fixes: 1-3
->  Parser strictness fixes: 4-7
->  Code cleanups made possible by the fixes: 8-11
->  Extend KEXEC_CMDLINE rule support: 12
+> I realized this when I replied about the _fd_ name in the sk helpers.
+> I am going to mark them as unsupported for now for inodes.
+> 
+> We could, probably and separately, use a combination of the device
+> and inode number as a key from userspace.
 
-I agree they should be backported, but they don't apply cleanly before
-linux-5.6.  The changes aren't that major.  Some patch hunks apply
-cleanly, but won't compile, while others patch hunks need to be
-dropped based on when the feature was upstreamed.  For these reasons,
-I'm not Cc'ing stable.
+I actually implemented these as:
 
-Feature upstreamed:
-- LSM policy update: linux 5.3
-- key command line: linux 5.3
-- blacklist: linux 5.5
-- keyrings: linux 5.6
+static int bpf_fd_inode_storage_delete_elem(struct bpf_map *map, void *key)
+{
+	struct file *f;
+	int fd;
 
-For Linux 5.3:
-- Dependency on backporting commit 483ec26eed42 ("ima: ima/lsm policy
-rule loading logic bug fixes") to apply " ima: Free the entire rule if
-it fails to parse".
+	fd = *(int *)key;
+	f = fcheck(fd);
+	if (!f)
+		return -EINVAL;
 
-Mimi
+	return inode_storage_delete(f->f_inode, map);
+}
+
+This keeps it similar to sk_storage and the userspace can just pass an
+fd.
+
+- KP
+
+> 
+> - KP
+> 
+> > 
+> > > +		sdata = inode_storage_lookup(inode, map, true);
+> > > +		return sdata ? sdata->data : NULL;
+> > > +	}
+> > > +
+> > > +	return ERR_PTR(err);
+> > > +}
+> > > +
+> > > +static int bpf_inode_storage_update_elem(struct bpf_map *map, void *key,
+> > > +					 void *value, u64 map_flags)
+> > > +{
+> > > +	struct bpf_local_storage_data *sdata;
+> > > +	struct inode *inode;
+> > > +	int err = -EINVAL;
+> > > +
+> > > +	if (key) {
+> > > +		inode = *(struct inode **)(key);
+> > > +		sdata = map->ops->map_local_storage_update(inode, map, value,
+> > > +							   map_flags);
+> > > +		return PTR_ERR_OR_ZERO(sdata);
+> > > +	}
+> > > +	return err;
+> > > +}
+> > > +
+> > > +static int inode_storage_delete(struct inode *inode, struct bpf_map *map)
+> > > +{
+> > > +	struct bpf_local_storage_data *sdata;
+> > > +
+> > > +	sdata = inode_storage_lookup(inode, map, false);
+> > > +	if (!sdata)
+> > > +		return -ENOENT;
+> > > +
+> > > +	bpf_selem_unlink_map_elem(SELEM(sdata));
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +static int bpf_inode_storage_delete_elem(struct bpf_map *map, void *key)
+> > > +{
+> > > +	struct inode *inode;
+> > > +	int err = -EINVAL;
+> > > +
+> > > +	if (key) {
+> > > +		inode = *(struct inode **)(key);
+> > > +		err = inode_storage_delete(inode, map);
+> > > +	}
+> > > +
+> > > +	return err;
+> > > +}
+> > > +
+> > 
+> > [ ... ]
+> > 
+> > > +static int inode_storage_map_btf_id;
+> > > +const struct bpf_map_ops inode_storage_map_ops = {
+> > > +	.map_alloc_check = bpf_local_storage_map_alloc_check,
+> > > +	.map_alloc = inode_storage_map_alloc,
+> > > +	.map_free = inode_storage_map_free,
+> > > +	.map_get_next_key = notsupp_get_next_key,
+> > > +	.map_lookup_elem = bpf_inode_storage_lookup_elem,
+> > > +	.map_update_elem = bpf_inode_storage_update_elem,
+> > > +	.map_delete_elem = bpf_inode_storage_delete_elem,
+> > > +	.map_check_btf = bpf_local_storage_map_check_btf,
+> > > +	.map_btf_name = "bpf_local_storage_map",
+> > > +	.map_btf_id = &inode_storage_map_btf_id,
+> > > +	.map_local_storage_alloc = inode_storage_alloc,
+> > > +	.map_selem_alloc = inode_selem_alloc,
+> > > +	.map_local_storage_update = inode_storage_update,
+> > > +	.map_local_storage_unlink = unlink_inode_storage,
+> > > +};
+> > > +
