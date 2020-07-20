@@ -2,147 +2,123 @@ Return-Path: <SRS0=MEX0=A7=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EDE7C433DF
-	for <linux-security-module@archiver.kernel.org>; Mon, 20 Jul 2020 20:22:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66FDEC2BB56
+	for <linux-security-module@archiver.kernel.org>; Mon, 20 Jul 2020 21:43:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1976E207DF
-	for <linux-security-module@archiver.kernel.org>; Mon, 20 Jul 2020 20:22:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GJSSqheo"
+	by mail.kernel.org (Postfix) with ESMTP id 4F42B207FC
+	for <linux-security-module@archiver.kernel.org>; Mon, 20 Jul 2020 21:43:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728973AbgGTUWH (ORCPT
+        id S1728086AbgGTVm4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 20 Jul 2020 16:22:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54272 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727123AbgGTUWH (ORCPT
+        Mon, 20 Jul 2020 17:42:56 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35328 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728236AbgGTVip (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 20 Jul 2020 16:22:07 -0400
-Received: from mail-ot1-x344.google.com (mail-ot1-x344.google.com [IPv6:2607:f8b0:4864:20::344])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34AA2C061794
-        for <linux-security-module@vger.kernel.org>; Mon, 20 Jul 2020 13:22:07 -0700 (PDT)
-Received: by mail-ot1-x344.google.com with SMTP id 18so13266540otv.6
-        for <linux-security-module@vger.kernel.org>; Mon, 20 Jul 2020 13:22:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
-         :subject:to:cc;
-        bh=yb0qHG3VxM7d5dCD4HDo8Pbr7p+GfWYTsYZmd9MNsB4=;
-        b=GJSSqheozR65hfYOQGdBO3OAMn2AQghb7ftn+IPuaNsNPb9U2OukkemLS3P7RG41fp
-         mFEcyPzNmAuGhmlnQtP0S4kB4RZz1hr7aAVy1Q04fwHBTGv8Wosfb0XA6c8e9cc2bCgN
-         +JZZoI8wdygHzDOOIEdubez4WQvTaxrewm3nkvUWeNQ2WqTykxJkZjNXn15eIguSA/AE
-         iXbU8jHye/Hn/eD9lZAz3qynr0Am7FYAaXSq744wGr2KSYclRutbvD8gmvmtH9Q/QMm6
-         pgnIYkZ6rlsAe15UBQsxwJ3n3is87UznzKndqqsgfA0NtZfFlohDn2YqoHM5ZoWq0gM0
-         7zlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc;
-        bh=yb0qHG3VxM7d5dCD4HDo8Pbr7p+GfWYTsYZmd9MNsB4=;
-        b=AMvZwzNN6HFGM4x/A7zlAB2qsRDYcNKu8dbpSLYP+qVp0O1a4qx3BLoLR8oBPmR3pq
-         8gRQQnsIj2i8Gg1ijbBH42mXY66CgdM98grSBwQ9cevxyMgtoSpi+jP9l+CZipGGRTYV
-         L/rTs7TFVJXSsJJHg6a1XRvspPdZgQjOsktRbOjf2rCikodGbuZ28pPS3ZxvhniQ4mq4
-         ZyJHhBP0hsB+g9JpM8xSKR8BZe2hp2qRZF6A4TqYnz8tQBrkd51IZVMhOn4imRKX7W7L
-         N7FKetccponvHfZ2pFxwSyng10yrkvGIiYGDGVsSrNhtDy89VW5OQphR9XkVu441YI1D
-         Txdg==
-X-Gm-Message-State: AOAM531MkzSfSelRsHBmz8r+i2QEt7MP5KUn1z+EzKtU1k7v2oa1k2al
-        5/l3r0zegYqxN0nBaN3t+SKrEz39tydllEHvg92v2Al5
-X-Google-Smtp-Source: ABdhPJw4lPWNTZOxz790n+I+n/P3Lf/s2Dcy8ei5hHSu8iA5VQpkMYM+FMCCtobUOH7pon3OmaRcXZRwSi+tzAlIFiA=
-X-Received: by 2002:a9d:4c0e:: with SMTP id l14mr22436662otf.308.1595276526497;
- Mon, 20 Jul 2020 13:22:06 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200720091328.290336-1-mtk.manpages@gmail.com>
- <20200720091328.290336-13-mtk.manpages@gmail.com> <CALQRfL5-aL3h6M+CYqkVHSpPKQ-i3s+RWD8060AicrGPP3vSfw@mail.gmail.com>
-In-Reply-To: <CALQRfL5-aL3h6M+CYqkVHSpPKQ-i3s+RWD8060AicrGPP3vSfw@mail.gmail.com>
-Reply-To: mtk.manpages@gmail.com
-From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Date:   Mon, 20 Jul 2020 22:21:55 +0200
-Message-ID: <CAKgNAkh=oa2Rv-sfsY3mNsvUdTi5sO0hvY9PSQTGCraJ=3+3eA@mail.gmail.com>
-Subject: Re: [PATCH 12/15] Manual pages: cap_get_file.3: NOTES: note the
- effect of the Ambient set
-To:     "Andrew G. Morgan" <morgan@kernel.org>
-Cc:     LSM List <linux-security-module@vger.kernel.org>
+        Mon, 20 Jul 2020 17:38:45 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 06KKWocY152958;
+        Mon, 20 Jul 2020 17:38:25 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 32d5x49up3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 20 Jul 2020 17:38:25 -0400
+Received: from m0098399.ppops.net (m0098399.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 06KKl885030148;
+        Mon, 20 Jul 2020 17:38:25 -0400
+Received: from ppma04fra.de.ibm.com (6a.4a.5195.ip4.static.sl-reverse.com [149.81.74.106])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 32d5x49una-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 20 Jul 2020 17:38:24 -0400
+Received: from pps.filterd (ppma04fra.de.ibm.com [127.0.0.1])
+        by ppma04fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 06KLZBL4020699;
+        Mon, 20 Jul 2020 21:38:22 GMT
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
+        by ppma04fra.de.ibm.com with ESMTP id 32dbmn06yb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 20 Jul 2020 21:38:22 +0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 06KLcKd744040416
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 20 Jul 2020 21:38:20 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3D90BA4054;
+        Mon, 20 Jul 2020 21:38:20 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 856E2A4060;
+        Mon, 20 Jul 2020 21:38:18 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.145.253])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 20 Jul 2020 21:38:18 +0000 (GMT)
+Message-ID: <1595281097.5055.79.camel@linux.ibm.com>
+Subject: Re: [PATCH v3 00/12] ima: Fix rule parsing bugs and extend
+ KEXEC_CMDLINE rule support
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Tyler Hicks <tyhicks@linux.microsoft.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Sasha Levin <sashal@kernel.org>
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Prakhar Srivastava <prsriva02@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Janne Karhunen <janne.karhunen@gmail.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        kexec@lists.infradead.org,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Nayna Jain <nayna@linux.ibm.com>
+Date:   Mon, 20 Jul 2020 17:38:17 -0400
+In-Reply-To: <20200709061911.954326-1-tyhicks@linux.microsoft.com>
+References: <20200709061911.954326-1-tyhicks@linux.microsoft.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-07-20_09:2020-07-20,2020-07-20 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
+ mlxscore=0 suspectscore=2 malwarescore=0 mlxlogscore=999
+ priorityscore=1501 phishscore=0 impostorscore=0 adultscore=0 bulkscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2006250000 definitions=main-2007200136
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Andrew,
+[Cc'ing Sasha]
 
-On Mon, 20 Jul 2020 at 17:36, Andrew G. Morgan <morgan@kernel.org> wrote:
->
-> I've applied all but this one. This one seems to imply that if the
-> effective bit is lowered, but the permitted bits are raised, the
-> ambient will have some sort of effect. This isn't how it works. Any
-> file caps (even an empty set) suppresses any effect of the ambient
-> vector.
+On Thu, 2020-07-09 at 01:18 -0500, Tyler Hicks wrote:
 
-Thanks for catching that. I was trying to capture this piece of the
-execve() transformation rules:
+> I envision patches 1-7 going to stable. The series is ordered in a way
+> that has all the fixes up front, followed by cleanups, followed by the
+> feature patch. The breakdown of patches looks like so:
+> 
+>  Memory leak fixes: 1-3
+>  Parser strictness fixes: 4-7
+>  Code cleanups made possible by the fixes: 8-11
+>  Extend KEXEC_CMDLINE rule support: 12
 
-P'(effective)   = F(effective) ? P'(permitted) : P'(ambient)
+I agree they should be backported, but they don't apply cleanly before
+linux-5.6.  The changes aren't that major.  Some patch hunks apply
+cleanly, but won't compile, while others patch hunks need to be
+dropped based on when the feature was upstreamed.  For these reasons,
+I'm not Cc'ing stable.
 
-But of course, I failed to capture the detail that it is the process's
-*new* ambient set (which, as you note, is cleared if the file has any
-attached capabilities) that is assigned to the effective set. Perhaps
-the text is best left as is. If I have some better idea, I'll come
-back to you.
+Feature upstreamed:
+- LSM policy update: linux 5.3
+- key command line: linux 5.3
+- blacklist: linux 5.5
+- keyrings: linux 5.6
 
-Thanks,
+For Linux 5.3:
+- Dependency on backporting commit 483ec26eed42 ("ima: ima/lsm policy
+rule loading logic bug fixes") to apply " ima: Free the entire rule if
+it fails to parse".
 
-Michael
-
-> On Mon, Jul 20, 2020 at 2:14 AM Michael Kerrisk (man-pages)
-> <mtk.manpages@gmail.com> wrote:
-> >
-> > The addition of Ambient capabilities in Linux 4.3 rendered the text on
-> > the effect of the Effective bit during execve(2) out-of-date. Fix that.
-> > Also add a couple of paragraph breaks to improve readability.
-> >
-> > Signed-off-by: Michael Kerrisk (man-pages) <mtk.manpages@gmail.com>
-> > ---
-> >  doc/cap_get_file.3 | 11 ++++++++---
-> >  1 file changed, 8 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/doc/cap_get_file.3 b/doc/cap_get_file.3
-> > index ceacbaf..dc7b571 100644
-> > --- a/doc/cap_get_file.3
-> > +++ b/doc/cap_get_file.3
-> > @@ -103,13 +103,18 @@ or
-> >  These functions are specified by withdrawn POSIX.1e draft specification.
-> >  .SH NOTES
-> >  Support for file capabilities is provided on Linux since version 2.6.24.
-> > -
-> > +.PP
-> >  On Linux, the file Effective set is a single bit.
-> >  If it is enabled, then all Permitted capabilities are enabled
-> >  in the Effective set of the calling process when the file is executed;
-> > -otherwise, no capabilities are enabled in the process's Effective set
-> > +otherwise, the process's Ambient capabilities
-> > +(or, before the Linux 4.3 addition of Ambient capabilities, no capabilities)
-> > +are enabled in the process's Effective set
-> >  following an
-> > -.BR execve (2).
-> > +.BR execve (2)
-> > +(see
-> > +.BR capabilities (7)).
-> > +.PP
-> >  Because the file Effective set is a single bit,
-> >  if any capability is enabled in the Effective set of the
-> >  .I cap_t
-> > --
-> > 2.26.2
-> >
-
-
-
--- 
-Michael Kerrisk
-Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
-Linux/UNIX System Programming Training: http://man7.org/training/
+Mimi
