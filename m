@@ -8,64 +8,64 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC2A2C433E7
-	for <linux-security-module@archiver.kernel.org>; Mon, 20 Jul 2020 09:14:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F05D2C433EC
+	for <linux-security-module@archiver.kernel.org>; Mon, 20 Jul 2020 09:14:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 92DAA2080D
-	for <linux-security-module@archiver.kernel.org>; Mon, 20 Jul 2020 09:14:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C520B22482
+	for <linux-security-module@archiver.kernel.org>; Mon, 20 Jul 2020 09:14:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LZku9RrT"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rvb8GzIH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726520AbgGTJOO (ORCPT
+        id S1728010AbgGTJOT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 20 Jul 2020 05:14:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35700 "EHLO
+        Mon, 20 Jul 2020 05:14:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35718 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726492AbgGTJON (ORCPT
+        with ESMTP id S1726492AbgGTJOS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 20 Jul 2020 05:14:13 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1BD6C061794
-        for <linux-security-module@vger.kernel.org>; Mon, 20 Jul 2020 02:14:13 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id c80so21522435wme.0
-        for <linux-security-module@vger.kernel.org>; Mon, 20 Jul 2020 02:14:13 -0700 (PDT)
+        Mon, 20 Jul 2020 05:14:18 -0400
+Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25DE1C061794
+        for <linux-security-module@vger.kernel.org>; Mon, 20 Jul 2020 02:14:18 -0700 (PDT)
+Received: by mail-wr1-x442.google.com with SMTP id o11so17046412wrv.9
+        for <linux-security-module@vger.kernel.org>; Mon, 20 Jul 2020 02:14:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=mBMMpk2qHCVqK9+G1JkJ/e3L+uEemx5nyjpX9rZHTOg=;
-        b=LZku9RrTsIxxYXfkhsdY8wPu7O7BIS3Q+dBYK4z7QwhkjqzDHvUCrhvmSbMO77rgRt
-         3D28Zs2n39YB+Qh/TaCsNLdgv5Jezn2PjbQjlX678wjOMl6oYHDtTmupeJ4fjxFhaJHH
-         05fvzEK24yksg/IxDU3guE3nY0P9/7ONAo/3n5CUVqQTdQAxs0khSY0ur6ZneZP2uNWM
-         Zs8e5xh1SpuFqol6soAg33IJyD7xt8bEnSvzf1UW7CFpYZ3HGZ/xzqKaBSlsM4rPXCiy
-         qFCUh3NHDdpRjCg75aVMPOdQfwzjYZuS2tse0USjbE+FNTNc9OJnjfrNOnB7eppJaLud
-         dzNw==
+        bh=sx7WzXi8t9iKijcQLqMcZUMKtCWBmlWEZDj1w8g4xrg=;
+        b=rvb8GzIHCr8917x7PZuhUXdPgL/1eJkAWe57JBJOJ7m1Ej6j2VXY6WGo2RdJziwCj5
+         4QkcncjW6uYhcN+v94GqP01FsPpOBOieYX4yPEG2T7PniOwJjqujsbEXHNkC2cbn1Gjc
+         OfQWJQ7Pj/ldRSHigZfqOCi1ZPhLsYg1r7qM/ksleA0Gz86yzRNm4QHrZVzxbkr51Bu6
+         XSRbUMsqKw/i/rXENwJdJKgpfsZtoa/lkxLFHU4s78FSqvVqsAJ5YkiibZ+GMePE6kXQ
+         ARVPoxkxt5fs9EkJ32oEG1DUuSdkSffKNd3LvtVFwqWNRXTzuXXSCOU2P7aAcr1PnIK5
+         EW0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=mBMMpk2qHCVqK9+G1JkJ/e3L+uEemx5nyjpX9rZHTOg=;
-        b=j6kZKoHsV2Z5RfQyEXUU/N49NCpOfEi8HNKkJOti0HoAnBepKgI4e4zjX5Mf4d5sTR
-         yCQM2WymzzJ5Xayy2Jn099RIjPyiwXMRpxrq/zUGcwAjKYjP46h1sUlMhh/2JS2JjR4x
-         BM+Td0lQojmWUBvukS0pb5BEhHG6z6WTDE+NzsSDgzXN3H3seZ/tvOPVxDvfpIt0Ts9Y
-         JCG+kZSqWWVoPhPGLl81lZw5vJ91H3lL4EUPD19ST+AGVxHuPSFIoSyo4V585P5j6r1B
-         60bcujyfgfbpd/XjUuQAmcoM1UkzWnjAXLCcD7p8U3tMTTqw9mbVFADcYwacj0YdDlLA
-         uuwQ==
-X-Gm-Message-State: AOAM532otP6vabJNJeU568QDhR1ZYJTtIVNTRRFhyxdp49U0tDjGUtIm
-        Z9FQrUD7LJZ9XJQx7V4U2GQ=
-X-Google-Smtp-Source: ABdhPJz5d2qhGDyPah9v3gxRWYQPCU5sHxqqNiYrVDrNQ0AdKj238IkHQpla040CzSltq9AkrDyOTQ==
-X-Received: by 2002:a7b:c936:: with SMTP id h22mr19801099wml.114.1595236452458;
-        Mon, 20 Jul 2020 02:14:12 -0700 (PDT)
+        bh=sx7WzXi8t9iKijcQLqMcZUMKtCWBmlWEZDj1w8g4xrg=;
+        b=mYtoCMpMgjM/vs6erbIFurjYxffR+woVOtVvCKDsh58dlvQ0A2DkPdKbgfsd7Hq58A
+         YfUANQN6DrUzau/Q8AH2V+U9snn5pwTu8uogBNvpYFd0BeEI4V8IOlINFc4Di8J1zcw5
+         RQ2sWbid2xOLU/654Rzqhd3moq8qUF3uEU/S+HwZbyoy/2WGRdmWwDXxRL1GNlp26oIJ
+         zHA38IpWDIrnr0up0S6FeSyy8FYcfmVReFsEzqnKPs9x4AJgnzZKtVx6LneeBenmRC3A
+         HtLVhIR9K7GClZSnLyTxmYikuA9sR0v/hH9mG06gzvCsGQKRfUk95hgPSAObchAiv/lh
+         WGRg==
+X-Gm-Message-State: AOAM5305FWJPiYoxhc3ChKWyUiFzZtXtZEPn5D4X4DQ2l45lsHUxOw1B
+        c0bFLLwZj1RbEGp2D5TFzeQ=
+X-Google-Smtp-Source: ABdhPJxjnTh03KRx7IJaU7jg4zjIg5d2BHLhX9K4VAwYj5xItqfDGwla2k7wSNANdbLdaWysQrBlKQ==
+X-Received: by 2002:a5d:61c8:: with SMTP id q8mr11329182wrv.160.1595236456888;
+        Mon, 20 Jul 2020 02:14:16 -0700 (PDT)
 Received: from bienne.fritz.box ([2001:a61:3adb:8201:9649:88f:51f8:6a21])
-        by smtp.gmail.com with ESMTPSA id d13sm31489032wrq.89.2020.07.20.02.14.11
+        by smtp.gmail.com with ESMTPSA id y189sm34488914wmd.27.2020.07.20.02.14.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Jul 2020 02:14:12 -0700 (PDT)
+        Mon, 20 Jul 2020 02:14:16 -0700 (PDT)
 From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
 To:     mtk.manpages@gmail.com, Andrew Morgan <morgan@kernel.org>
 Cc:     linux-security-module@vger.kernel.org
-Subject: [PATCH 06/15] Manual pages: getcap.8: Add missing word
-Date:   Mon, 20 Jul 2020 11:13:19 +0200
-Message-Id: <20200720091328.290336-7-mtk.manpages@gmail.com>
+Subject: [PATCH 07/15] Manual pages: getcap.8: Fix a clumsily worded sentence
+Date:   Mon, 20 Jul 2020 11:13:20 +0200
+Message-Id: <20200720091328.290336-8-mtk.manpages@gmail.com>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200720091328.290336-1-mtk.manpages@gmail.com>
 References: <20200720091328.290336-1-mtk.manpages@gmail.com>
@@ -81,18 +81,18 @@ Signed-off-by: Michael Kerrisk (man-pages) <mtk.manpages@gmail.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/doc/getcap.8 b/doc/getcap.8
-index d867203..367d010 100644
+index 367d010..2ad8092 100644
 --- a/doc/getcap.8
 +++ b/doc/getcap.8
-@@ -6,7 +6,7 @@ getcap \- examine file capabilities
- \fBgetcap\fP [\-v] [\-n] [\-r] [\-h] \fIfilename\fP [ ... ]
- .SH DESCRIPTION
- .B getcap
--displays the name and capabilities of each specified
-+displays the name and capabilities of each specified file.
- .SH OPTIONS
+@@ -20,7 +20,7 @@ a file's capabilities.
+ enables recursive search.
  .TP 4
- .B \-h
+ .B \-v
+-enables to display all searched entries, even if it has no file-capabilities.
++display all searched entries, even if the have no file-capabilities.
+ .TP 4
+ .IR filename
+ One file per line.
 -- 
 2.26.2
 
