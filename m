@@ -2,79 +2,145 @@ Return-Path: <SRS0=MEX0=A7=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1,
-	USER_IN_DEF_DKIM_WL autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95697C433E3
-	for <linux-security-module@archiver.kernel.org>; Mon, 20 Jul 2020 02:05:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C2F9C433DF
+	for <linux-security-module@archiver.kernel.org>; Mon, 20 Jul 2020 08:34:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7407020B1F
-	for <linux-security-module@archiver.kernel.org>; Mon, 20 Jul 2020 02:05:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="K+4absWZ"
+	by mail.kernel.org (Postfix) with ESMTP id 67EFF22B4E
+	for <linux-security-module@archiver.kernel.org>; Mon, 20 Jul 2020 08:34:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726845AbgGTCE6 (ORCPT
+        id S1728068AbgGTIeh convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 19 Jul 2020 22:04:58 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:55234 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726626AbgGTCE6 (ORCPT
+        Mon, 20 Jul 2020 04:34:37 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:35223 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728067AbgGTIeh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 19 Jul 2020 22:04:58 -0400
-Received: from [192.168.0.104] (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 50DB320B4909;
-        Sun, 19 Jul 2020 19:04:57 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 50DB320B4909
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1595210697;
-        bh=zRG1ESiLAHDyNiv0B4tmWGwGfmW3Odsif5Z4IcufgBY=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=K+4absWZa2gX4t8pSglBLKmy/9E9YldShr3PWP/443G4ykMhPoClGFe6LPQLlAz1Z
-         7wtteeoDMdm3MhE7YxZUJYW7Vpbnhg56YIBwY3+Url2otVTqvZ8qZUC5zIGh91QDZU
-         zNFBIl6ZDaZDBnk4jkUi8AycwnLUjaJgGD3xypcE=
-Subject: Re: [PATCH v3 4/5] LSM: Define SELinux function to measure security
- state
-To:     kernel test robot <lkp@intel.com>, zohar@linux.ibm.com,
-        stephen.smalley.work@gmail.com, casey@schaufler-ca.com
-Cc:     kbuild-all@lists.01.org, jmorris@namei.org,
-        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200717222819.26198-5-nramas@linux.microsoft.com>
- <202007181027.UwJXCNXk%lkp@intel.com>
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Message-ID: <61a4c849-5cb7-0a58-2bb9-61f55a98657a@linux.microsoft.com>
-Date:   Sun, 19 Jul 2020 19:04:56 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <202007181027.UwJXCNXk%lkp@intel.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+        Mon, 20 Jul 2020 04:34:37 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-110-UvCh1H6SNg2kNCAjyiamHg-1; Mon, 20 Jul 2020 09:34:33 +0100
+X-MC-Unique: UvCh1H6SNg2kNCAjyiamHg-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Mon, 20 Jul 2020 09:34:32 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Mon, 20 Jul 2020 09:34:32 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Kees Cook' <keescook@chromium.org>,
+        Scott Branden <scott.branden@broadcom.com>
+CC:     Mimi Zohar <zohar@linux.ibm.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        James Morris <jmorris@namei.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jessica Yu <jeyu@kernel.org>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Matthew Garrett <matthewgarrett@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        KP Singh <kpsingh@google.com>, Dave Olsthoorn <dave@bewaar.me>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Peter Jones <pjones@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Boyd <stephen.boyd@linaro.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 07/13] fs/kernel_read_file: Switch buffer size arg to
+ size_t
+Thread-Topic: [PATCH 07/13] fs/kernel_read_file: Switch buffer size arg to
+ size_t
+Thread-Index: AQHWXGHtmci88hmJCUOWA6z9jUdXWKkQJ6ZQ
+Date:   Mon, 20 Jul 2020 08:34:32 +0000
+Message-ID: <5db582d3ec08401eb4731ce3acd51561@AcuMS.aculab.com>
+References: <20200717174309.1164575-1-keescook@chromium.org>
+ <20200717174309.1164575-8-keescook@chromium.org>
+In-Reply-To: <20200717174309.1164575-8-keescook@chromium.org>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
+MIME-Version: 1.0
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 7/17/20 8:14 PM, kernel test robot wrote:
-> Hi Lakshmi,
+From: Kees Cook
+> Sent: 17 July 2020 18:43
+> In preparation for further refactoring of kernel_read_file*(), rename
+> the "max_size" argument to the more accurate "buf_size", and correct
+> its type to size_t. Add kerndoc to explain the specifics of how the
+> arguments will be used. Note that with buf_size now size_t, it can no
+> longer be negative (and was never called with a negative value). Adjust
+> callers to use it as a "maximum size" when *buf is NULL.
 > 
-> Thank you for the patch! Yet something to improve:
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+>  fs/kernel_read_file.c            | 34 +++++++++++++++++++++++---------
+>  include/linux/kernel_read_file.h |  8 ++++----
+>  security/integrity/digsig.c      |  2 +-
+>  security/integrity/ima/ima_fs.c  |  2 +-
+>  4 files changed, 31 insertions(+), 15 deletions(-)
 > 
-> [auto build test ERROR on integrity/next-integrity]
-> [cannot apply to pcmoore-selinux/next security/next-testing linus/master v5.8-rc5 next-20200717]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch]
+> diff --git a/fs/kernel_read_file.c b/fs/kernel_read_file.c
+> index dc28a8def597..e21a76001fff 100644
+> --- a/fs/kernel_read_file.c
+> +++ b/fs/kernel_read_file.c
+> @@ -5,15 +5,31 @@
+>  #include <linux/security.h>
+>  #include <linux/vmalloc.h>
+> 
+> +/**
+> + * kernel_read_file() - read file contents into a kernel buffer
+> + *
+> + * @file	file to read from
+> + * @buf		pointer to a "void *" buffer for reading into (if
+> + *		*@buf is NULL, a buffer will be allocated, and
+> + *		@buf_size will be ignored)
+> + * @buf_size	size of buf, if already allocated. If @buf not
+> + *		allocated, this is the largest size to allocate.
+> + * @id		the kernel_read_file_id identifying the type of
+> + *		file contents being read (for LSMs to examine)
+> + *
+> + * Returns number of bytes read (no single read will be bigger
+> + * than INT_MAX), or negative on error.
+> + *
+> + */
 
-Thank you for catching this.
+That seems to be self-inconsistent.
+If '*buf' is NULL is both says that buf_size is ignored and
+is treated as a limit.
+To make life easier, zero should probably be treated as no-limit.
 
-I did not see these failures with the compiler and make options I'd used.
+	David
 
-Am able to reproduce the errors with the instructions you'd provided.
-Will post the updated patches shortly.
-
-thanks,
-  -lakshmi
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 
