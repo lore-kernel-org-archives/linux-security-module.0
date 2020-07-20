@@ -2,113 +2,104 @@ Return-Path: <SRS0=MEX0=A7=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B87DC433DF
-	for <linux-security-module@archiver.kernel.org>; Mon, 20 Jul 2020 15:36:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF976C433E8
+	for <linux-security-module@archiver.kernel.org>; Mon, 20 Jul 2020 16:42:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2C53320717
-	for <linux-security-module@archiver.kernel.org>; Mon, 20 Jul 2020 15:36:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595259385;
-	bh=lSp5RWyUG6+zcys4EZm6NYr3/AQ+TtqoRShmpgMFLDs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=BSs03ib6gKSBqByaOOnUrgi5pJ4SPCN0Sb+ni7ying6RKd5C4EQrBy++SjLPPc2Ur
-	 I8vfRTnVy8gAJ2AIcBHTQ5Amnlc82XPtjDjg171iCa4ZrBxgiEJIEjUl/cCQI6Lq+S
-	 ZL8mpOwZHQEFUP6V7BunXrWynwCf1lVoYfD1oTe4=
+	by mail.kernel.org (Postfix) with ESMTP id A439222BF3
+	for <linux-security-module@archiver.kernel.org>; Mon, 20 Jul 2020 16:42:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="UX8lUvTr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726426AbgGTPgY (ORCPT
+        id S1729861AbgGTQmH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 20 Jul 2020 11:36:24 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:44281 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726520AbgGTPgX (ORCPT
+        Mon, 20 Jul 2020 12:42:07 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:58374 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729276AbgGTQmG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 20 Jul 2020 11:36:23 -0400
-Received: by mail-qt1-f193.google.com with SMTP id j10so13341069qtq.11
-        for <linux-security-module@vger.kernel.org>; Mon, 20 Jul 2020 08:36:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=iFoh97oae0Rb5vUdSdKUGZfnYVAcArS7V5JbhPMh2wE=;
-        b=O6nKVBUmQqXzRt7+GpvHxCiUUwgUrnaz0Pwbo86uzQMh4Hr6OmEG22OjM4euw1Mysx
-         +z6+jkh73xiMDZT7yE59bdgRRSg5nO6tg4q1acw/GasxZ+2sBb0ydvPpZq19yN7d9Psv
-         Y5PybKPlFE0pJT2//wXxATjb1NKTwwlmIQe8bvH9iwZrSl7pRDhRBxmR/PVFJuZaB9LI
-         MhFQPrwulvB7AIqN7oJr1QcqxW0W3u00VHh2wGs/E8fAWqGk/mbLOqAdsNuGfqHAuOri
-         lkfoxCRcK9xTBtkdTXW7viVlUkzS9zwXRIzokmvfAr42CsxS82AJlgS2zcSJFbEBaIfd
-         bdaQ==
-X-Gm-Message-State: AOAM5304WitvbcEvGb+w+FhkMyYgysXIMMSfLeWFoR1T5grOFBekC3gv
-        gHc/L+/WHXkCeA2LyJ8jKGMlhvhoqlyZvaVl12bNHg==
-X-Google-Smtp-Source: ABdhPJwC++Gvn0aYYwS9C91dR/Tp2tJPv0oqOZJ9lXe3RtEgUOjvnIxUxPgGjYR4ezkRPzcWmrtAbJFUM4YqzuRXWR4=
-X-Received: by 2002:ac8:1a26:: with SMTP id v35mr1367514qtj.177.1595259382589;
- Mon, 20 Jul 2020 08:36:22 -0700 (PDT)
+        Mon, 20 Jul 2020 12:42:06 -0400
+Received: from [10.137.106.139] (unknown [131.107.174.11])
+        by linux.microsoft.com (Postfix) with ESMTPSA id D40D020B4909;
+        Mon, 20 Jul 2020 09:42:05 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com D40D020B4909
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1595263326;
+        bh=3WXhX2ALsHf2q0CNQWhMDb6+Us/DWEgno/p0XetGReU=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=UX8lUvTr2G8xrIi4guewPBf2sMpGgCSWG+ypVjSkYree00iVyz+K6+TNPYj5kqBpt
+         OJ1PUugFka19lCF1U2bCAf3ni5ddtj5CGjxeZgGafnEwJSMh8WQa7ExyR5hCc+fazj
+         HdAQOXuV9j5EmSiKfIRiaJdWdiInyuMxRVW+6Yqg=
+Subject: Re: [RFC PATCH v4 05/12] fs: add security blob and hooks for
+ block_device
+To:     Casey Schaufler <casey@schaufler-ca.com>, agk@redhat.com,
+        axboe@kernel.dk, snitzer@redhat.com, jmorris@namei.org,
+        serge@hallyn.com, zohar@linux.ibm.com, viro@zeniv.linux.org.uk,
+        paul@paul-moore.com, eparis@redhat.com, jannh@google.com,
+        dm-devel@redhat.com, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-audit@redhat.com
+Cc:     tyhicks@linux.microsoft.com, linux-kernel@vger.kernel.org,
+        corbet@lwn.net, sashal@kernel.org,
+        jaskarankhurana@linux.microsoft.com, mdsakib@microsoft.com,
+        nramas@linux.microsoft.com
+References: <20200717230941.1190744-1-deven.desai@linux.microsoft.com>
+ <20200717230941.1190744-6-deven.desai@linux.microsoft.com>
+ <1843d707-c62e-fa13-c663-c123ea1205a0@schaufler-ca.com>
+From:   Deven Bowers <deven.desai@linux.microsoft.com>
+Message-ID: <e82dbf6b-e90d-205b-62d1-b7cd8b5df844@linux.microsoft.com>
+Date:   Mon, 20 Jul 2020 09:42:05 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-References: <20200720091328.290336-1-mtk.manpages@gmail.com> <20200720091328.290336-13-mtk.manpages@gmail.com>
-In-Reply-To: <20200720091328.290336-13-mtk.manpages@gmail.com>
-From:   "Andrew G. Morgan" <morgan@kernel.org>
-Date:   Mon, 20 Jul 2020 08:36:10 -0700
-Message-ID: <CALQRfL5-aL3h6M+CYqkVHSpPKQ-i3s+RWD8060AicrGPP3vSfw@mail.gmail.com>
-Subject: Re: [PATCH 12/15] Manual pages: cap_get_file.3: NOTES: note the
- effect of the Ambient set
-To:     "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Cc:     LSM List <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1843d707-c62e-fa13-c663-c123ea1205a0@schaufler-ca.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-I've applied all but this one. This one seems to imply that if the
-effective bit is lowered, but the permitted bits are raised, the
-ambient will have some sort of effect. This isn't how it works. Any
-file caps (even an empty set) suppresses any effect of the ambient
-vector.
 
-Cheers
 
-Andrew
+On 7/17/2020 5:14 PM, Casey Schaufler wrote:
 
-On Mon, Jul 20, 2020 at 2:14 AM Michael Kerrisk (man-pages)
-<mtk.manpages@gmail.com> wrote:
->
-> The addition of Ambient capabilities in Linux 4.3 rendered the text on
-> the effect of the Effective bit during execve(2) out-of-date. Fix that.
-> Also add a couple of paragraph breaks to improve readability.
->
-> Signed-off-by: Michael Kerrisk (man-pages) <mtk.manpages@gmail.com>
-> ---
->  doc/cap_get_file.3 | 11 ++++++++---
->  1 file changed, 8 insertions(+), 3 deletions(-)
->
-> diff --git a/doc/cap_get_file.3 b/doc/cap_get_file.3
-> index ceacbaf..dc7b571 100644
-> --- a/doc/cap_get_file.3
-> +++ b/doc/cap_get_file.3
-> @@ -103,13 +103,18 @@ or
->  These functions are specified by withdrawn POSIX.1e draft specification.
->  .SH NOTES
->  Support for file capabilities is provided on Linux since version 2.6.24.
-> -
-> +.PP
->  On Linux, the file Effective set is a single bit.
->  If it is enabled, then all Permitted capabilities are enabled
->  in the Effective set of the calling process when the file is executed;
-> -otherwise, no capabilities are enabled in the process's Effective set
-> +otherwise, the process's Ambient capabilities
-> +(or, before the Linux 4.3 addition of Ambient capabilities, no capabilities)
-> +are enabled in the process's Effective set
->  following an
-> -.BR execve (2).
-> +.BR execve (2)
-> +(see
-> +.BR capabilities (7)).
-> +.PP
->  Because the file Effective set is a single bit,
->  if any capability is enabled in the Effective set of the
->  .I cap_t
-> --
-> 2.26.2
->
+[...snip]
+
+>> +EXPORT_SYMBOL(security_bdev_free);
+>> +
+>> +int security_bdev_setsecurity(struct block_device *bdev,
+>> +			      const char *name, const void *value,
+>> +			      size_t size)
+>> +{
+>> +	return call_int_hook(bdev_setsecurity, 0, bdev, name, value, size);
+>> +}
+> 
+> What is your expectation regarding multiple security modules using the
+> same @name? What do you expect a security module to do if it does not
+> support a particular @name? You may have a case where SELinux supports
+> a @name that AppArmor (or KSRI) doesn't. -ENOSYS may be you friend here.
+> 
+
+I expect that some security modules may want to use the same @name / use
+the data contained with @name. I cannot speak to the future cases of
+other LSMs, but I expect if they want the raw @value, they'll copy it
+into their security blob, or interpret @value to a field defined by
+their security blob.
+
+Originally, I expected a security module that does not implement a
+particular @name no-op with return 0, not -ENOSYS, but I recognize that
+error codes are valuable, and it's a trivial change - I'll switch the 
+security hook to call the hooks while allowing -ENOSYS or 0 in the next 
+iteration.
+
+>> +EXPORT_SYMBOL(security_bdev_setsecurity);
+>> +
+>>   #ifdef CONFIG_PERF_EVENTS
+>>   int security_perf_event_open(struct perf_event_attr *attr, int type)
+>>   {
