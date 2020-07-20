@@ -2,156 +2,141 @@ Return-Path: <SRS0=MEX0=A7=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6786FC433EB
-	for <linux-security-module@archiver.kernel.org>; Mon, 20 Jul 2020 17:49:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 584C8C433E2
+	for <linux-security-module@archiver.kernel.org>; Mon, 20 Jul 2020 18:12:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4F41920709
-	for <linux-security-module@archiver.kernel.org>; Mon, 20 Jul 2020 17:49:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37B6222B51
+	for <linux-security-module@archiver.kernel.org>; Mon, 20 Jul 2020 18:12:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N49dDLbt"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jV/hkphv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729878AbgGTRtz (ORCPT
+        id S1731902AbgGTSMB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 20 Jul 2020 13:49:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59058 "EHLO
+        Mon, 20 Jul 2020 14:12:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34220 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726437AbgGTRty (ORCPT
+        with ESMTP id S1728448AbgGTSMB (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 20 Jul 2020 13:49:54 -0400
-Received: from mail-oi1-x244.google.com (mail-oi1-x244.google.com [IPv6:2607:f8b0:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB883C061794;
-        Mon, 20 Jul 2020 10:49:54 -0700 (PDT)
-Received: by mail-oi1-x244.google.com with SMTP id t4so15027610oij.9;
-        Mon, 20 Jul 2020 10:49:54 -0700 (PDT)
+        Mon, 20 Jul 2020 14:12:01 -0400
+Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0007CC061794
+        for <linux-security-module@vger.kernel.org>; Mon, 20 Jul 2020 11:12:00 -0700 (PDT)
+Received: by mail-pf1-x441.google.com with SMTP id s26so9421728pfm.4
+        for <linux-security-module@vger.kernel.org>; Mon, 20 Jul 2020 11:12:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=E/WF9LmUo71c0bgV0jc9EPEVEVSzt8bdBdlMxd+6u9o=;
-        b=N49dDLbtcc8GbCc/rK6VzmC408aRyQNWvV2bsAzf2369GrbLTIqe/8AIHtgH8i6iaW
-         h/LY7IMO/tCttISFJNT44Z/7d4MHx61mUdhl7VwwPWWqMa7MU4SX9WD9axAZXlQyrzoC
-         kN4uyoHIBMFMYgKDZWHQFOJZ5bQvHz38NdxFbHVTQlijvrcuRDRDpXxVewmi8WAAd8cX
-         A5VIQvWKJvdLBpNbj2tA13i1Dq+V0c71YItqmQR+p3kOTaJbFHiqfuJ+RzS4PiX7/7NZ
-         WdNXkAuLJ9mudeJFNhLM5OsCtgF1Sjtk58ZvJJlZLVt9S8IjPNtMd7P0ghmaYvKCIW6K
-         E8pQ==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=RuJih62bXRWoRB6apXCaAk21wCZ6FWz4m8qssefCGJA=;
+        b=jV/hkphvlfQyM3D6lQIR0w0L0LLNBGi7jskS/9Y6a3+dVS26YECjtteYfr/Mralof1
+         6ljx5wGfJisqbUYVW1VwINju8OKtVNMvBc/NKXMi4eIrEplCkOmHudqLOVvue3K1PwAV
+         h4GQGZqkMq5RL6PyRAeIfVF8csF7hM6Gc81Rk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=E/WF9LmUo71c0bgV0jc9EPEVEVSzt8bdBdlMxd+6u9o=;
-        b=COKKPd7ki6sFuMgWhtMAt5skMZoXs2N0z4k8cXCVZsvozpX2jHHJ5ctanYp+dXzAco
-         loNEuzpjZLGfe9/kn4NtLArzZq6k1yymTefgF/eXuwISlmObRNyqQzNvp5pRnPqgdDYB
-         zTMG4DrE3M/F6pSCXdm3eZHEHvMRURzH5jVyGKyS+rEXCa1iCfKeqlpjowexysAeTiPS
-         IOKXwo7qPU25sV/bPXJtHsu+aDDh6nVdA3/Sw1lEKdFCzO4IHofDIWwmRLv6YeVEJw6Q
-         Nctk5ONNlDjbicOWFV2Yg8VuDTDyRrPrgHQ0ncZBkfStIXJt2qcBb1xUYqyc9WKhcatr
-         YHrg==
-X-Gm-Message-State: AOAM5320/3+d1YFo05t2kp/eCMSY5YdGlGJiDvWrpE4HUeSS4sqG/+FE
-        PBEq++8rz1o4EnMOz6OTzbQt2GwTYJSq+Z43Y81MVA==
-X-Google-Smtp-Source: ABdhPJw1Ddg81VAJhNmhtE0Qulu8T/IcFBqzefZSxTWJ1RiLL7hGzoUJLJYUNL3KckdDR7CVcAzOxVuv71RyuDv3w+0=
-X-Received: by 2002:aca:2807:: with SMTP id 7mr374627oix.140.1595267394146;
- Mon, 20 Jul 2020 10:49:54 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=RuJih62bXRWoRB6apXCaAk21wCZ6FWz4m8qssefCGJA=;
+        b=hlLcK6wl7gBtY/N/RiXAcWM0YqG/9LNawFZp51bFCFRtMnkEm8ViBVSljiSPFfGsO0
+         YJ+UR2U3jCIfruP1xamF1x4ito9y3ALzZ+Er5suXuq1cGJcIRuNp08vjxLPLLBeJopIv
+         PSPfR5SrKGdNTj+13BbmyQLKv4hIB50x52pZQomIQgnQ3cXiu0XF1Wxv4jcO8z1mPPYM
+         uw37Pru9IinX9rJ9HoRvzHzJuB9gx34pbdEEtCBKpv/3PdsfJi959iVXEEva7bHUseK8
+         yDIkTI1sevul1lg9y2tB72p4uRTlY+cW9EzskR4Ln702D+8E6pZv2bA0wRZJvYqdSSG/
+         HN7w==
+X-Gm-Message-State: AOAM531pm2F0KRp4Z4zSck6leVxfVHwXz/sOCnTsz5fPaM8N4P+Uzuao
+        mvkj6yT3pZPoJgrbHLcPngFFm8pTKIE=
+X-Google-Smtp-Source: ABdhPJyTNooUtowhQbPUdsmtVV8+5cX2XZ/EYKpKDBikn19x7yDtsCXpfydLc5EqdtPhfBN0XlYuFw==
+X-Received: by 2002:a63:6ca:: with SMTP id 193mr19974684pgg.269.1595268719987;
+        Mon, 20 Jul 2020 11:11:59 -0700 (PDT)
+Received: from localhost ([2620:15c:202:200:42b0:34ff:fe3d:589e])
+        by smtp.gmail.com with ESMTPSA id u26sm16194287pgo.71.2020.07.20.11.11.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Jul 2020 11:11:59 -0700 (PDT)
+From:   Micah Morton <mortonm@chromium.org>
+To:     linux-security-module@vger.kernel.org
+Cc:     keescook@chromium.org, casey@schaufler-ca.com, paul@paul-moore.com,
+        stephen.smalley.work@gmail.com, serge@hallyn.com,
+        jmorris@namei.org, Thomas Cedeno <thomascedeno@google.com>,
+        Micah Morton <mortonm@chromium.org>
+Subject: [PATCH 1/2] LSM: Signal to SafeSetID when in set*gid syscall
+Date:   Mon, 20 Jul 2020 11:11:56 -0700
+Message-Id: <20200720181156.1461461-1-mortonm@chromium.org>
+X-Mailer: git-send-email 2.28.0.rc0.105.gf9edc3c819-goog
 MIME-Version: 1.0
-References: <20200717222819.26198-1-nramas@linux.microsoft.com>
- <20200717222819.26198-5-nramas@linux.microsoft.com> <CAEjxPJ7xQtZToF4d2w_o8SXFKG9kPZaWTWTFqyC-7GwBWnQa0A@mail.gmail.com>
- <c0fbfcf3-ec36-872a-c389-b3fea214848c@linux.microsoft.com>
- <CAEjxPJ7VH18bEo6+U1GWrx=tHVGr=6XtF5_ygcfQYgdtZ74J+g@mail.gmail.com>
- <bea0cb52-2e13-fb14-b66c-b57287c23c3f@linux.microsoft.com> <CAEjxPJ6Rt7u3shLbxoPRHgr-D=CD9d_eXRB07A9qN7RmJwZAwA@mail.gmail.com>
-In-Reply-To: <CAEjxPJ6Rt7u3shLbxoPRHgr-D=CD9d_eXRB07A9qN7RmJwZAwA@mail.gmail.com>
-From:   Stephen Smalley <stephen.smalley.work@gmail.com>
-Date:   Mon, 20 Jul 2020 13:49:43 -0400
-Message-ID: <CAEjxPJ6-jHha+CeqSdQ2O0bpyQe_9buj2ENZz6FNj6S87XSSfg@mail.gmail.com>
-Subject: Re: [PATCH v3 4/5] LSM: Define SELinux function to measure security state
-To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        James Morris <jmorris@namei.org>,
-        linux-integrity@vger.kernel.org,
-        SElinux list <selinux@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jul 20, 2020 at 1:40 PM Stephen Smalley
-<stephen.smalley.work@gmail.com> wrote:
->
-> On Mon, Jul 20, 2020 at 1:34 PM Lakshmi Ramasubramanian
-> <nramas@linux.microsoft.com> wrote:
-> >
-> > On 7/20/20 10:06 AM, Stephen Smalley wrote:
-> >
-> > >> The above will ensure the following sequence will be measured:
-> > >>    #1 State A - Measured
-> > >>    #2 Change from State A to State B - Measured
-> > >>    #3 Change from State B back to State A - Since the measured data is
-> > >> same as in #1, the change will be measured only if the event name is
-> > >> different between #1 and #3
-> > >
-> > > Perhaps the timestamp / sequence number should be part of the hashed
-> > > data instead of the event name?
-> >
-> > If the timestamp/seqno is part of the hashed data, on every call to
-> > measure IMA will add a new entry in the IMA log. This would fill up the
-> > IMA log - even when there is no change in the measured data.
-> >
-> > To avoid that I keep the last measurement in SELinux and measure only
-> > when there is a change with the timestamp in the event name.
-> >
-> > > I can see the appraiser wanting to know two things:
-> > > 1) The current state of the system (e.g. is it enforcing, is the
-> > > currently loaded policy the expected one?).
-> > > 2) Has the system ever been in an unexpected state (e.g. was it
-> > > temporarily switched to permissive or had an unexpected policy
-> > > loaded?)
-> >
-> > Yes - you are right.
-> > The appraiser will have to look at the entire IMA log (and the
-> > corresponding TPM PCR data) to know the above.
-> >
-> > Time t0 => State of the system measured
-> > Time tn => State changed and the new state measured
-> > Time tm => State changed again and the new state measured.
-> >
-> > Say, the measurement at "Time tn" was an illegal change, the appraiser
-> > would know.
-> >
-> > >
-> > > I applied the patch series on top of the next-integrity branch, added
-> > > measure func=LSM_STATE to ima-policy, and booted that kernel.  I get
-> > > the following entries in ascii_runtime_measurements, but seemingly
-> > > missing the final field:
-> > >
-> > > 10 8a09c48af4f8a817f59b495bd82971e096e2e367 ima-ng
-> > > sha256:21c3d7b09b62b4d0b3ed15ba990f816b94808f90b76787bfae755c4b3a44cd24
-> > > selinux-state
-> > > 10 e610908931d70990a2855ddb33c16af2d82ce56a ima-ng
-> > > sha256:c8898652afd5527ef4eaf8d85f5fee1d91fcccee34bc97f6e55b96746bedb318
-> > > selinux-policy-hash
-> > >
-> > > Thus, I cannot verify. What am I missing?
-> > >
-> >
-> > Looks like the template used is ima-ng which doesn't include the
-> > measured buffer. Please set template to "ima-buf" in the policy.
-> >
-> > For example,
-> > measure func=LSM_STATE template=ima-buf
->
-> It seems like one shouldn't need to manually specify it if it is the
-> only template that yields a useful result for the LSM_STATE function?
+From: Thomas Cedeno <thomascedeno@google.com>
 
-Actually, if we used ima-ng template for selinux-policy-hash, then
-instead of needing to hash the policy
-first and passing the hash to IMA, we could just pass the policy as
-the buffer and IMA would take care of the hashing, right?
-And we only need to use ima-buf for the selinux-state if we want the
-measurement list to include the string value that
-was hashed; if we just want to compare against a known-good, it would
-suffice to use ima-ng for it as well, right?
+For SafeSetID to properly gate set*gid() calls, it needs to know whether
+ns_capable() is being called from within a sys_set*gid() function or is
+being called from elsewhere in the kernel. This allows SafeSetID to deny
+CAP_SETGID to restricted groups when they are attempting to use the
+capability for code paths other than updating GIDs (e.g. setting up
+userns GID mappings). This is the identical approach to what is
+currently done for CAP_SETUID.
+
+Signed-off-by: Thomas Cedeno <thomascedeno@google.com>
+Signed-off-by: Micah Morton <mortonm@chromium.org>
+---
+ kernel/sys.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/kernel/sys.c b/kernel/sys.c
+index 00a96746e28a..55e0c86772ab 100644
+--- a/kernel/sys.c
++++ b/kernel/sys.c
+@@ -373,7 +373,7 @@ long __sys_setregid(gid_t rgid, gid_t egid)
+ 	if (rgid != (gid_t) -1) {
+ 		if (gid_eq(old->gid, krgid) ||
+ 		    gid_eq(old->egid, krgid) ||
+-		    ns_capable(old->user_ns, CAP_SETGID))
++		    ns_capable_setid(old->user_ns, CAP_SETGID))
+ 			new->gid = krgid;
+ 		else
+ 			goto error;
+@@ -382,7 +382,7 @@ long __sys_setregid(gid_t rgid, gid_t egid)
+ 		if (gid_eq(old->gid, kegid) ||
+ 		    gid_eq(old->egid, kegid) ||
+ 		    gid_eq(old->sgid, kegid) ||
+-		    ns_capable(old->user_ns, CAP_SETGID))
++		    ns_capable_setid(old->user_ns, CAP_SETGID))
+ 			new->egid = kegid;
+ 		else
+ 			goto error;
+@@ -432,7 +432,7 @@ long __sys_setgid(gid_t gid)
+ 	old = current_cred();
+ 
+ 	retval = -EPERM;
+-	if (ns_capable(old->user_ns, CAP_SETGID))
++	if (ns_capable_setid(old->user_ns, CAP_SETGID))
+ 		new->gid = new->egid = new->sgid = new->fsgid = kgid;
+ 	else if (gid_eq(kgid, old->gid) || gid_eq(kgid, old->sgid))
+ 		new->egid = new->fsgid = kgid;
+@@ -744,7 +744,7 @@ long __sys_setresgid(gid_t rgid, gid_t egid, gid_t sgid)
+ 	old = current_cred();
+ 
+ 	retval = -EPERM;
+-	if (!ns_capable(old->user_ns, CAP_SETGID)) {
++	if (!ns_capable_setid(old->user_ns, CAP_SETGID)) {
+ 		if (rgid != (gid_t) -1        && !gid_eq(krgid, old->gid) &&
+ 		    !gid_eq(krgid, old->egid) && !gid_eq(krgid, old->sgid))
+ 			goto error;
+@@ -871,7 +871,7 @@ long __sys_setfsgid(gid_t gid)
+ 
+ 	if (gid_eq(kgid, old->gid)  || gid_eq(kgid, old->egid)  ||
+ 	    gid_eq(kgid, old->sgid) || gid_eq(kgid, old->fsgid) ||
+-	    ns_capable(old->user_ns, CAP_SETGID)) {
++	    ns_capable_setid(old->user_ns, CAP_SETGID)) {
+ 		if (!gid_eq(kgid, old->fsgid)) {
+ 			new->fsgid = kgid;
+ 			if (security_task_fix_setgid(new,old,LSM_SETID_FS) == 0)
+-- 
+2.28.0.rc0.105.gf9edc3c819-goog
