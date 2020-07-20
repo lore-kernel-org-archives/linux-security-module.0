@@ -8,64 +8,64 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81C7DC433EA
-	for <linux-security-module@archiver.kernel.org>; Mon, 20 Jul 2020 09:14:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B393CC43458
+	for <linux-security-module@archiver.kernel.org>; Mon, 20 Jul 2020 09:14:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6009D21775
-	for <linux-security-module@archiver.kernel.org>; Mon, 20 Jul 2020 09:14:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9210D2080D
+	for <linux-security-module@archiver.kernel.org>; Mon, 20 Jul 2020 09:14:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gQOdvQc0"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="czx3JB5z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728112AbgGTJOq (ORCPT
+        id S1728151AbgGTJOv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 20 Jul 2020 05:14:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35802 "EHLO
+        Mon, 20 Jul 2020 05:14:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35820 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728069AbgGTJOq (ORCPT
+        with ESMTP id S1728135AbgGTJOu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 20 Jul 2020 05:14:46 -0400
-Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E00AC061794
-        for <linux-security-module@vger.kernel.org>; Mon, 20 Jul 2020 02:14:45 -0700 (PDT)
-Received: by mail-wm1-x344.google.com with SMTP id c80so21524207wme.0
-        for <linux-security-module@vger.kernel.org>; Mon, 20 Jul 2020 02:14:45 -0700 (PDT)
+        Mon, 20 Jul 2020 05:14:50 -0400
+Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29D8CC0619D2
+        for <linux-security-module@vger.kernel.org>; Mon, 20 Jul 2020 02:14:50 -0700 (PDT)
+Received: by mail-wm1-x341.google.com with SMTP id o2so24451793wmh.2
+        for <linux-security-module@vger.kernel.org>; Mon, 20 Jul 2020 02:14:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=fiStrsNp0Nn8CO2onfVP2auDZ4lB9LnkFmz5jiXy/SM=;
-        b=gQOdvQc0/Cssvayo3Ym3kvrz9uXGhBbrG9Qb0iJv4zyywxgFqXg0CJS4CJad+PzOV8
-         Dx7Njm35IBUbeHglAtUJqN6slwdlolh8dg4Q15NyiKIJzELWYMAHOp0hKaanekVdcjH4
-         vGCFrQm0JXxlKez1gzPw58P8XynkxTuXAarwj145QdXuPEnYc1o03h3xUM3pu4SKyaV0
-         WJhuhkga5lXQVwZtD6FgvZ2nAtgu+YZyJ8t10uZSp1MepPTPiKzZKbSTWAyXZ2sw4EVr
-         jpBr1MRic7Q92fa3MuMzFQXfyH6mT01gyEXvP7wjaJOlZI602zqjbCO0lasJfqVwCYE3
-         LXmQ==
+        bh=mh4/AXI1HeH1sQ86GcpnBemZk/ksViCceFobWSa5iOA=;
+        b=czx3JB5zTSSRSBHnIA9XqEy+FwlkPZAvrcKPxy1awM0C40gzSA2FygYRL12w1eOBzE
+         /14hePdai7LBHVcfUHG2BnbtcVOka5dr2jMm0BHM5mapyMocUiEZWHiOFbWQX0QXXkKZ
+         MXF4YDGmKVSBfh40obccXbIunf8awM0VIdl392H8Ov22eh5heGrAH4WkSR65GSpQZVo0
+         akC0EvBstLake5kSHwdtZfrK7ZL602aB0+jwxGC3IRO79QF4QNVIH5WmQBso6ZWJgZLl
+         eSejUEOSnN7lWTa5Fyov3kiyyl8UF3lIGybSlZqrQZ6iuQBPjGGb24/CxZklKJJNFeIs
+         nXFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=fiStrsNp0Nn8CO2onfVP2auDZ4lB9LnkFmz5jiXy/SM=;
-        b=B7QdJI0nqW3Ll89fRV5RPDHIcozwnnrok2zfkxaqZRBO4JwBHai0TgQXf7oe/ZtjyT
-         0SzWvDWWoHmhpbajqgupNpBkwexVPYBcPgOkNI/Z6LHRi/N7HcuQWD7hKqJxkaD4ca32
-         403OR6g5jkfZtELJRbgNBB8boCWtFPWoUUgWy74pp65UL8zUH6tbglbcWF+C+g8hvpse
-         e40gF5PdccY2E0AU3q/W0yE2uuApmb4KcAcCBTDPcNPlf7TVm3N6c8pNugs35fZrG5aB
-         x/cllDerA9hqkbYcaI3ApLaoXlSB3hhzT3Qd3HZWrOjTSXBhVysnOwnq3pWZML05eota
-         3PNA==
-X-Gm-Message-State: AOAM5328MoqiGZMI+oRTd9ig2hEOT/dbAx+gFQPqXP7r79BAzkmpmjI8
-        hVmAy4JNUkhV2iHPM/TAX10=
-X-Google-Smtp-Source: ABdhPJx9G1vCJbWN6Frd58VfvUTQxw+5ImAKfmh4vWcnb8LQ1T4ArKg7vivUGSh9bDTEW4+Y1CSsbw==
-X-Received: by 2002:a05:600c:21cb:: with SMTP id x11mr19595289wmj.141.1595236484297;
-        Mon, 20 Jul 2020 02:14:44 -0700 (PDT)
+        bh=mh4/AXI1HeH1sQ86GcpnBemZk/ksViCceFobWSa5iOA=;
+        b=Z+3Pepc1r6JxlWhx2PFGJWxGoFBwHY+lJ5e39AYSYkTAi6sq5AKVTXyhFiiO9wDL44
+         89OMa8jI8X8Dta64FzTJMyeQU37LR20z2OtS/leWlaNKvqhjwa+E5W5IumzzAvZIREKl
+         FN4CDR8cvjwbn/n8It9RIc49Z+y1sE5HQ/4lDGFAenyfVqerwjRlDOOkaxHH/CqEWV8K
+         pA4+mlGJELxX0D1SY2aqklPzckqI/MaVV77puBCfCWoeK7ReEr3kwZrOGlY95vyDYZIZ
+         olg0pCRdWQvJgFOPEQnktF5muqRtRCWbycjUFaiwlE2scP4I6ZJz4EblXfUItq8JU4rN
+         Er2g==
+X-Gm-Message-State: AOAM531uG94nu42kFBe1+Ae4SYnlf9c7X/fPf62ZJhB6O6rkHd0Kscco
+        afROR8m8Ioy1iXMDHR5G5sA=
+X-Google-Smtp-Source: ABdhPJxMMf/I3JSvSHzPQFIBitUm/njjswgY/LnqcHRXEH8eI04DwqTeqUP9woQ9Z55tXVoPSHFOXA==
+X-Received: by 2002:a1c:14e:: with SMTP id 75mr21963069wmb.151.1595236488912;
+        Mon, 20 Jul 2020 02:14:48 -0700 (PDT)
 Received: from bienne.fritz.box ([2001:a61:3adb:8201:9649:88f:51f8:6a21])
-        by smtp.gmail.com with ESMTPSA id w16sm34375905wrg.95.2020.07.20.02.14.43
+        by smtp.gmail.com with ESMTPSA id w7sm29870391wmc.32.2020.07.20.02.14.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Jul 2020 02:14:43 -0700 (PDT)
+        Mon, 20 Jul 2020 02:14:48 -0700 (PDT)
 From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
 To:     mtk.manpages@gmail.com, Andrew Morgan <morgan@kernel.org>
 Cc:     linux-security-module@vger.kernel.org
-Subject: [PATCH 13/15] Manual pages: cap_get_proc.3: Update description of capsetp()
-Date:   Mon, 20 Jul 2020 11:13:26 +0200
-Message-Id: <20200720091328.290336-14-mtk.manpages@gmail.com>
+Subject: [PATCH 14/15] Manual pages: cap_get_proc.3, capsh.1: Use "UID" and "GID" consistently
+Date:   Mon, 20 Jul 2020 11:13:27 +0200
+Message-Id: <20200720091328.290336-15-mtk.manpages@gmail.com>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200720091328.290336-1-mtk.manpages@gmail.com>
 References: <20200720091328.290336-1-mtk.manpages@gmail.com>
@@ -75,103 +75,93 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The details currently provided for capsetp() were current before 2008,
-but ceased to be accurate with the 2008 addition of VFS file
-capabilities in 2008. Update the text accordingly.
-
-At the same time, add a subheading, a few paragraph breaks, and a few
-other wording tweaks to make the description of capgetp() and capsetp()
-more readable.
+Replace terms such as "uid" and "use-id" with the more conventional
+abbreviation UID.  Similarly for GID.
 
 Signed-off-by: Michael Kerrisk (man-pages) <mtk.manpages@gmail.com>
 ---
- doc/cap_get_proc.3 | 40 +++++++++++++++++++++++++++-------------
- 1 file changed, 27 insertions(+), 13 deletions(-)
+ doc/cap_get_proc.3 |  2 +-
+ doc/capsh.1        | 18 ++++++++++--------
+ 2 files changed, 11 insertions(+), 9 deletions(-)
 
 diff --git a/doc/cap_get_proc.3 b/doc/cap_get_proc.3
-index fce8f59..40475fd 100644
+index 40475fd..74e5e8c 100644
 --- a/doc/cap_get_proc.3
 +++ b/doc/cap_get_proc.3
-@@ -251,7 +251,7 @@ or,
- When linked this way, due to linker magic, libcap uses
- .BR psx_syscall "(3) and " psx_syscall6 (3)
- to perform state setting system calls.
--.PP
-+.SS capgetp() and capsetp()
- The library also supports the deprecated functions:
- .PP
- .BI "int capgetp(pid_t " pid ", cap_t " cap_d );
-@@ -264,14 +264,20 @@ capabilities in a pre-allocated
- .IR cap_d .
- See
- .BR cap_init ()
--for information on allocating an empty capability set. This function,
--.BR capgetp (),
--is deprecated, you should use
-+for information on allocating an empty capability set. This function
-+is deprecated; you should use
- .BR cap_get_pid ().
- .PP
- .BR capsetp ()
--attempts to set the capabilities of some other process(es),
--.IR pid . 
-+attempts to set the capabilities of the calling porcess or of
-+some other process(es),
-+.IR pid .
-+Note that setting capabilities of another process is only possible on older
-+kernels that do not provide VFS support for setting file capabilities.
-+See
-+.BR capset (2)
-+for information on which kernels provide such support.
-+.PP
- If
- .I pid
- is positive it refers to a specific process;  if it is zero, it refers
-@@ -280,29 +286,37 @@ calling process and process '1' (typically
- .BR init (8));
- other negative values refer to the
- .I \-pid
--process group.  In order to use this function, the kernel must support
-+process group.
-+.PP
-+In order to use this function, the kernel must support
- it and the calling process must have
- .B CAP_SETPCAP
- raised in its Effective capability set. The capabilities set in the
- target process(es) are those contained in
- .IR cap_d .
-+.PP
- Kernels that support filesystem capabilities redefine the semantics of
- .B CAP_SETPCAP
--and on such systems this function will always fail for any target not
-+and on such systems,
-+.BR capsetp ()
-+will always fail for any target not
- equal to the calling process.
- .BR capsetp ()
- returns zero for success, and \-1 on failure.
--
--Where supported by the kernel, the function
-+.PP
-+On kernels where it is (was) supported,
- .BR capsetp ()
- should be used with care.  It existed, primarily, to overcome an early
- lack of support for capabilities in the filesystems supported by
--Linux.  Note that, by default, the only processes that have
-+Linux.  Note that on older kernels where
-+.BR capsetp ()
-+could be used to set the capabilities of another process,
-+the only processes that had
- .B CAP_SETPCAP
--available to them are processes started as a kernel thread.
-+available to them by default were processes started as kernel threads.
- (Typically this includes
- .BR init (8),
--kflushd and kswapd.) You will need to recompile the kernel to modify
-+kflushd and kswapd.) A kernel recompilation was needed to modify
- this default.
- .SH EXAMPLE
- The code segment below raises the
+@@ -349,7 +349,7 @@ effective capabilities for the caller:
+ 
+ .fi
+ Alternatively, to completely drop privilege in a program launched
+-setuid-root but wanting to run as a specific user-id etc. in such a
++setuid-root but wanting to run as a specific user ID etc. in such a
+ way that neither it, nor any of its children can acquire privilege
+ again:
+ .nf
+diff --git a/doc/capsh.1 b/doc/capsh.1
+index f19a3ea..d124889 100644
+--- a/doc/capsh.1
++++ b/doc/capsh.1
+@@ -67,7 +67,7 @@ in its effective set.
+ .TP
+ .BI \-\-user= username
+ Assume the identity of the named user. That is, look up the user's
+-.IR uid " and " gid
++UID and GID
+ with
+ .BR getpwuid (3)
+ and their group memberships with
+@@ -97,7 +97,7 @@ or exit with a status 1.
+ .TP
+ .BI \-\-uid= id
+ Force all
+-.B uid
++UID
+ values to equal
+ .I id
+ using the
+@@ -108,18 +108,19 @@ effective set.
+ .BR \-\-cap\-uid= <uid>
+ use the
+ .BR cap_setuid (3)
+-function to set the uid of the current process. This performs all
+-preparations for setting the uid without dropping capabilities in the
++function to set the UID of the current process. This performs all
++preparations for setting the UID without dropping capabilities in the
+ process. Following this command the prevailing effective capabilities
+ will be lowered.
+ .TP
+ .BI \-\-is\-uid= <id>
+ Exit with status 1 unless the current
+-.IR uid " equals " <id> .
++UID equals
++.IR <id> .
+ .TP
+ .BI \-\-gid= <id>
+ Force all
+-.B gid
++GID
+ values to equal
+ .I id
+ using the
+@@ -128,7 +129,8 @@ system call.
+ .TP
+ .BI \-\-is\-gid= <id>
+ Exit with status 1 unless the current
+-.IR gid " equals " <id> .
++GIQ equals
++.IR <id> .
+ .TP
+ .BI \-\-groups= <gid-list>
+ Set the supplementary groups to the numerical list provided. The
+@@ -142,7 +144,7 @@ for a more convenient way of doing this.
+ In a non-pure capability mode, the kernel provides liberal privilege
+ to the super-user. However, it is normally the case that when the
+ super-user changes
+-.I uid
++UID
+ to some lesser user, then capabilities are dropped. For these
+ situations, the kernel can permit the process to retain its
+ capabilities after a
 -- 
 2.26.2
 
