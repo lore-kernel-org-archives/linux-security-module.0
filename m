@@ -3,78 +3,135 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69171C433E8
-	for <linux-security-module@archiver.kernel.org>; Wed, 22 Jul 2020 08:01:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C3B7C433E3
+	for <linux-security-module@archiver.kernel.org>; Wed, 22 Jul 2020 11:30:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 44EB020792
-	for <linux-security-module@archiver.kernel.org>; Wed, 22 Jul 2020 08:01:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UkoaCib/"
+	by mail.kernel.org (Postfix) with ESMTP id E9EE720658
+	for <linux-security-module@archiver.kernel.org>; Wed, 22 Jul 2020 11:30:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1595417420;
+	bh=zDKW70gtRYBxNcRCZwDBVRBmBO9V/xhxwmi6E5qgeqE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=QwF2KvT6kXXgD6DiABtTA0wF8j8M8Mj4lZD5JClCedqkEmcNoK9uhOckPTkwJSX8q
+	 kZ6JsWB3ZOzqU6qfLO8a7Xv490mP0I/D4kBo5fwu9ikuV7GR1U3kt7bSIcABV+2xLW
+	 qAqFXqMAvtRpck2403TGw4HXvRWkWQYWL3x7bu7Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728753AbgGVIBy (ORCPT
+        id S1726390AbgGVLaO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 22 Jul 2020 04:01:54 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:40861 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726254AbgGVIBv (ORCPT
+        Wed, 22 Jul 2020 07:30:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41152 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726146AbgGVLaN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 22 Jul 2020 04:01:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1595404910;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=TGEw2+6KmINbQLaS9w07eFXaV68g44jQqk0LfmznoNQ=;
-        b=UkoaCib/wKcMoGst/aG7uuMYYJjUFov684mO3o5XUcLN3SoQjgwGZK/SCIx5OWz9+98nKc
-        8g0ZibHqmqU+TBQtDL8YqiAwnM7A8uUrVk5E25uj26yrjgR0A2oLk2PjlcNxGwyiZtsd3t
-        Q29n5dXHOu2Jg5Hr6qrfFx4nhnRz390=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-493-EnNvkaRrNiOu9I10vWdqEw-1; Wed, 22 Jul 2020 04:01:49 -0400
-X-MC-Unique: EnNvkaRrNiOu9I10vWdqEw-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Wed, 22 Jul 2020 07:30:13 -0400
+Received: from quaco.ghostprotocols.net (unknown [177.17.3.185])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2EBA48018A1;
-        Wed, 22 Jul 2020 08:01:47 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-112-32.rdu2.redhat.com [10.10.112.32])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4B6B674F6E;
-        Wed, 22 Jul 2020 08:01:45 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20200721141516.20335-1-trix@redhat.com>
-References: <20200721141516.20335-1-trix@redhat.com>
-To:     trix@redhat.com
-Cc:     dhowells@redhat.com, jarkko.sakkinen@linux.intel.com,
-        jmorris@namei.org, serge@hallyn.com, denkenz@gmail.com,
-        marcel@holtmann.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] KEYS: remove redundant memsets
+        by mail.kernel.org (Postfix) with ESMTPSA id C477920771;
+        Wed, 22 Jul 2020 11:30:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1595417413;
+        bh=zDKW70gtRYBxNcRCZwDBVRBmBO9V/xhxwmi6E5qgeqE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=htoisg+wZdskpQ/VrgTFuIOfe53U2SVfcUrgbJ0WUpoTdx7adkZV3fZuTgsIX6yNS
+         XX+nyH+atCe+njcnvvGEHBzF+V5JRL740v6n6OR34r/Zqk23V2R5EolNHDFe4Ar8Zh
+         uRfa4vGIjhKbvsTiW//KPMTRhzn2BI6+Hbt3ZhbI=
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 16F77404B1; Wed, 22 Jul 2020 08:30:08 -0300 (-03)
+Date:   Wed, 22 Jul 2020 08:30:07 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Serge Hallyn <serge@hallyn.com>, Jiri Olsa <jolsa@redhat.com>,
+        Song Liu <songliubraving@fb.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Stephane Eranian <eranian@google.com>,
+        Igor Lubashev <ilubashe@akamai.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        linux-man@vger.kernel.org
+Subject: Re: [PATCH v8 00/12] Introduce CAP_PERFMON to secure system
+ performance monitoring and observability
+Message-ID: <20200722113007.GI77866@kernel.org>
+References: <f96f8f8a-e65c-3f36-dc85-fc3f5191e8c5@linux.intel.com>
+ <76718dc6-5483-5e2e-85b8-64e70306ee1f@linux.ibm.com>
+ <7776fa40-6c65-2aa6-1322-eb3a01201000@linux.intel.com>
+ <20200710170911.GD7487@kernel.org>
+ <0d2e2306-22b2-a730-dc3f-edb3538b6561@linux.intel.com>
+ <20200713121746.GA7029@kernel.org>
+ <0fadcf78-8b0e-ed03-a554-cc172b7d249c@linux.intel.com>
+ <20200713185152.GA18094@kernel.org>
+ <8d6030a4-ff2c-230c-c36e-d0a8c68832ac@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <695449.1595404904.1@warthog.procyon.org.uk>
-Date:   Wed, 22 Jul 2020 09:01:44 +0100
-Message-ID: <695450.1595404904@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8d6030a4-ff2c-230c-c36e-d0a8c68832ac@linux.intel.com>
+X-Url:  http://acmel.wordpress.com
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-trix@redhat.com wrote:
+Em Tue, Jul 21, 2020 at 04:06:34PM +0300, Alexey Budankov escreveu:
+> 
+> On 13.07.2020 21:51, Arnaldo Carvalho de Melo wrote:
+> > Em Mon, Jul 13, 2020 at 03:37:51PM +0300, Alexey Budankov escreveu:
+> >>
+> >> On 13.07.2020 15:17, Arnaldo Carvalho de Melo wrote:
+> >>> Em Mon, Jul 13, 2020 at 12:48:25PM +0300, Alexey Budankov escreveu:
+> >> If it had that patch below then message change would not be required.
 
-> -	if (copy_from_user(&uparams, _params, sizeof(uparams)) != 0)
-> -		return -EFAULT;
-> -
->  	ret = keyctl_pkey_params_get(uparams.key_id, _info, params);
+> > Sure, but the tool should continue to work and provide useful messages
+> > when running on kernels without that change. Pointing to the document is
+> > valid and should be done, that is an agreed point. But the tool can do
+> > some checks, narrow down the possible causes for the error message and
+> > provide something that in most cases will make the user make progress.
 
-Erm...  uparams is used on the very next statement after the copy_from_user().
+> >> However this two sentences in the end of whole message would still add up:
+> >> "Please read the 'Perf events and tool security' document:
+> >>  https://www.kernel.org/doc/html/latest/admin-guide/perf-security.html"
 
-David
+> > We're in violent agreement here. :-)
+ 
+> Here is the message draft mentioning a) CAP_SYS_PTRACE, for kernels prior
+> v5.8, and b) Perf security document link. The plan is to send a patch extending
+> perf_events with CAP_PERFMON check [1] for ptrace_may_access() and extending
+> the tool with this message.
+ 
+> "Access to performance monitoring and observability operations is limited.
+>  Enforced MAC policy settings (SELinux) can limit access to performance
+>  monitoring and observability operations. Inspect system audit records for
+>  more perf_event access control information and adjusting the policy.
+>  Consider adjusting /proc/sys/kernel/perf_event_paranoid setting to open
+>  access to performance monitoring and observability operations for processes
+>  without CAP_PERFMON, CAP_SYS_PTRACE or CAP_SYS_ADMIN Linux capability.
+>  More information can be found at 'Perf events and tool security' document:
+>  https://www.kernel.org/doc/html/latest/admin-guide/perf-security.html
+>  perf_event_paranoid setting is -1:
+>      -1: Allow use of (almost) all events by all users
+>            Ignore mlock limit after perf_event_mlock_kb without CAP_IPC_LOCK
+>  >= 0: Disallow raw and ftrace function tracepoint access
+>  >= 1: Disallow CPU event access
+>  >= 2: Disallow kernel profiling
+>  To make the adjusted perf_event_paranoid setting permanent preserve it
+>  in /etc/sysctl.conf (e.g. kernel.perf_event_paranoid = <setting>)"
 
+Looks ok! Lots of knobs to control access as one needs.
+
+- Arnaldo
+ 
+> Alexei
+> 
+> [1] https://lore.kernel.org/lkml/20200713121746.GA7029@kernel.org/
