@@ -2,118 +2,127 @@ Return-Path: <SRS0=gxm9=BB=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB99AC433DF
-	for <linux-security-module@archiver.kernel.org>; Wed, 22 Jul 2020 13:46:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9775C433E4
+	for <linux-security-module@archiver.kernel.org>; Wed, 22 Jul 2020 16:16:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CA2822064C
-	for <linux-security-module@archiver.kernel.org>; Wed, 22 Jul 2020 13:46:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Jwad8hvz"
+	by mail.kernel.org (Postfix) with ESMTP id 9103D20771
+	for <linux-security-module@archiver.kernel.org>; Wed, 22 Jul 2020 16:16:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732647AbgGVNqV (ORCPT
+        id S1729604AbgGVQQx (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 22 Jul 2020 09:46:21 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:38347 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1732623AbgGVNqT (ORCPT
+        Wed, 22 Jul 2020 12:16:53 -0400
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:52263 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727044AbgGVQQw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 22 Jul 2020 09:46:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1595425579;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:content-type:content-type;
-        bh=LoVB2XkV/JmhdiMIi0eaHtAvVvJ9iBBJWs8+jEnq95c=;
-        b=Jwad8hvz2dwAhYZ7Trw1PVL0f1NPPQjm9QIwDJ8xmkqN4zRrcp91rNQhVfhEV/R/xYAmWf
-        yDCaX2+lf0KGWvxL8IA03/8QQK7O8Hzj0mrygrHJOYjAoEU0569a56mhf5a1vEVP82El4z
-        L47fqEehOTyMGxuFtEfuefv9nr3LIvk=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-29-rFA13xxPPj-1x358w8HHpA-1; Wed, 22 Jul 2020 09:46:16 -0400
-X-MC-Unique: rFA13xxPPj-1x358w8HHpA-1
-Received: by mail-qk1-f198.google.com with SMTP id s127so1443321qkf.8
-        for <linux-security-module@vger.kernel.org>; Wed, 22 Jul 2020 06:46:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=LoVB2XkV/JmhdiMIi0eaHtAvVvJ9iBBJWs8+jEnq95c=;
-        b=kz2zaKUpdy/oc4E3BlmcXe/a7iwY80jXAF9o5ENuj/CbJcCuRC17mev2cfaCbrMQhH
-         OiXouYATPVc7NnvwevKf1JNXNOVbr/X2JEUM2zpSditA4zd5we+GLgKeP1VEW3hT9tfR
-         iV3W7yVIJJiyG57FASgkHx3m7poAY4X9hdvvh+f/luUmEZV5cSfaa86tgDM+7RnvXkwz
-         Bl2+I6C3ILuCWSOzY5cXHWtsOzIyW+y17IX3K/2LkrAcR1OQuqkOdNTYQbNVlH+KRoSq
-         hkZde73Oup9NSMfWsqcDyKM/GnCCi+UilqGW94v2YlHf2WkTVf3Bh5Xy8X00vOU/FXbX
-         sX1Q==
-X-Gm-Message-State: AOAM5324aIzrs7/BHIX3GSzads05VCWbe+Hj7S10aFcyyAMQ5HkFRfAK
-        SAtuHO9nW/gCrfMuCGidFIGapp9m8SsnXmVrua4nEAh/R61WfF0SLrg8gi4zM0HLreEmb+YIIH6
-        jfG5QWyw9OTtcrt+FYC5VDEYuCOzm+QiqyITm
-X-Received: by 2002:ac8:32b8:: with SMTP id z53mr33969616qta.273.1595425576162;
-        Wed, 22 Jul 2020 06:46:16 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyfMEnBBaM6DsbbxBJ4uPRNyr603IgCTG7siQlW6XbNWY2+gJiK+tOAp3D+vg0UJYKefzEXRQ==
-X-Received: by 2002:ac8:32b8:: with SMTP id z53mr33969597qta.273.1595425575967;
-        Wed, 22 Jul 2020 06:46:15 -0700 (PDT)
-Received: from trix.remote.csb (075-142-250-213.res.spectrum.com. [75.142.250.213])
-        by smtp.gmail.com with ESMTPSA id w28sm4803247qkw.92.2020.07.22.06.46.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Jul 2020 06:46:15 -0700 (PDT)
-From:   trix@redhat.com
-To:     dhowells@redhat.com, jarkko.sakkinen@linux.intel.com,
-        jmorris@namei.org, serge@hallyn.com, denkenz@gmail.com,
-        marcel@holtmann.org
-Cc:     keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Tom Rix <trix@redhat.com>
-Subject: [PATCH v2] KEYS: remove redundant memset
-Date:   Wed, 22 Jul 2020 06:46:10 -0700
-Message-Id: <20200722134610.31947-1-trix@redhat.com>
-X-Mailer: git-send-email 2.18.1
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=trix@redhat.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset=US-ASCII
+        Wed, 22 Jul 2020 12:16:52 -0400
+X-Originating-IP: 90.63.246.187
+Received: from gandi.net (laubervilliers-658-1-215-187.w90-63.abo.wanadoo.fr [90.63.246.187])
+        (Authenticated sender: thibaut.sautereau@clip-os.org)
+        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id BF6C5E0002;
+        Wed, 22 Jul 2020 16:16:39 +0000 (UTC)
+Date:   Wed, 22 Jul 2020 18:16:39 +0200
+From:   Thibaut Sautereau <thibaut.sautereau@clip-os.org>
+To:     Kees Cook <keescook@chromium.org>,
+        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+Cc:     linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Eric Chiang <ericchiang@google.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mickael.salaun@ssi.gouv.fr>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Philippe =?utf-8?Q?Tr=C3=A9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v6 5/7] fs,doc: Enable to enforce noexec mounts or file
+ exec through O_MAYEXEC
+Message-ID: <20200722161639.GA24129@gandi.net>
+References: <20200714181638.45751-1-mic@digikod.net>
+ <20200714181638.45751-6-mic@digikod.net>
+ <202007151312.C28D112013@keescook>
+ <35ea0914-7360-43ab-e381-9614d18cceba@digikod.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <35ea0914-7360-43ab-e381-9614d18cceba@digikod.net>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Tom Rix <trix@redhat.com>
+On Thu, Jul 16, 2020 at 04:39:14PM +0200, Mickaël Salaün wrote:
+> 
+> On 15/07/2020 22:37, Kees Cook wrote:
+> > On Tue, Jul 14, 2020 at 08:16:36PM +0200, Mickaël Salaün wrote:
+> >> @@ -2849,7 +2855,7 @@ static int may_open(const struct path *path, int acc_mode, int flag)
+> >>  	case S_IFLNK:
+> >>  		return -ELOOP;
+> >>  	case S_IFDIR:
+> >> -		if (acc_mode & (MAY_WRITE | MAY_EXEC))
+> >> +		if (acc_mode & (MAY_WRITE | MAY_EXEC | MAY_OPENEXEC))
+> >>  			return -EISDIR;
+> >>  		break;
+> > 
+> > (I need to figure out where "open for reading" rejects S_IFDIR, since
+> > it's clearly not here...)
 
-Reviewing use of memset in keyctrl_pkey.c
+Doesn't it come from generic_read_dir() in fs/libfs.c?
 
-keyctl_pkey_params_get prologue code to set params up
+> > 
+> >>  	case S_IFBLK:
+> >> @@ -2859,13 +2865,26 @@ static int may_open(const struct path *path, int acc_mode, int flag)
+> >>  		fallthrough;
+> >>  	case S_IFIFO:
+> >>  	case S_IFSOCK:
+> >> -		if (acc_mode & MAY_EXEC)
+> >> +		if (acc_mode & (MAY_EXEC | MAY_OPENEXEC))
+> >>  			return -EACCES;
+> >>  		flag &= ~O_TRUNC;
+> >>  		break;
+> > 
+> > This will immediately break a system that runs code with MAY_OPENEXEC
+> > set but reads from a block, char, fifo, or socket, even in the case of
+> > a sysadmin leaving the "file" sysctl disabled.
+> 
+> As documented, O_MAYEXEC is for regular files. The only legitimate use
+> case seems to be with pipes, which should probably be allowed when
+> enforcement is disabled.
 
-	memset(params, 0, sizeof(*params));
-	params->encoding = "raw";
+By the way Kees, while we fix that for the next series, do you think it
+would be relevant, at least for the sake of clarity, to add a
+WARN_ON_ONCE(acc_mode & MAY_OPENEXEC) for the S_IFSOCK case, since a
+socket cannot be open anyway?
 
-keyctl_pkey_query has the same prologue
-and calls keyctl_pkey_params_get.
-
-So remove the prologue.
-
-Fixes: 00d60fd3b932 ("KEYS: Provide keyctls to drive the new key type ops for asymmetric keys [ver #2]")
-
-Signed-off-by: Tom Rix <trix@redhat.com>
----
-v1: remove change to keyctl_pkey_params_get_2
-
- security/keys/keyctl_pkey.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/security/keys/keyctl_pkey.c b/security/keys/keyctl_pkey.c
-index 931d8dfb4a7f..5de0d599a274 100644
---- a/security/keys/keyctl_pkey.c
-+++ b/security/keys/keyctl_pkey.c
-@@ -166,8 +166,6 @@ long keyctl_pkey_query(key_serial_t id,
- 	struct kernel_pkey_query res;
- 	long ret;
- 
--	memset(&params, 0, sizeof(params));
--
- 	ret = keyctl_pkey_params_get(id, _info, &params);
- 	if (ret < 0)
- 		goto error;
 -- 
-2.18.1
-
+Thibaut Sautereau
+CLIP OS developer
