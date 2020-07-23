@@ -2,100 +2,89 @@ Return-Path: <SRS0=LdBn=BC=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 940AFC433E1
-	for <linux-security-module@archiver.kernel.org>; Thu, 23 Jul 2020 02:40:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AE43C433E3
+	for <linux-security-module@archiver.kernel.org>; Thu, 23 Jul 2020 05:18:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 74F9D20825
-	for <linux-security-module@archiver.kernel.org>; Thu, 23 Jul 2020 02:40:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A6C8207F5
+	for <linux-security-module@archiver.kernel.org>; Thu, 23 Jul 2020 05:18:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OTk0yzh3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733270AbgGWCkB (ORCPT
+        id S1726419AbgGWFS4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 22 Jul 2020 22:40:01 -0400
-Received: from mga05.intel.com ([192.55.52.43]:50097 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730837AbgGWCkB (ORCPT
+        Thu, 23 Jul 2020 01:18:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48596 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725843AbgGWFSz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 22 Jul 2020 22:40:01 -0400
-IronPort-SDR: Fszeu6/UJJqPZtklAQCYq2uF4CH5pvsyt4zBRsFo22vW+mTu+hvApetUh1EPkuoiU0Tl0qjnhf
- +MYcKjR0lsaw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9690"; a="235325252"
-X-IronPort-AV: E=Sophos;i="5.75,385,1589266800"; 
-   d="scan'208";a="235325252"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2020 19:40:01 -0700
-IronPort-SDR: v7v2cW3YGBSNRm4IH61Nw2j81BfF4tn9vG2sDk9InOKJE689Puu7Ck4QnV1pPg5MtQ24gVHIFc
- LXr0CbCTfWBw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.75,385,1589266800"; 
-   d="scan'208";a="462682361"
-Received: from schwings-mobl.ger.corp.intel.com (HELO localhost) ([10.252.33.132])
-  by orsmga005.jf.intel.com with ESMTP; 22 Jul 2020 19:39:56 -0700
-Date:   Thu, 23 Jul 2020 05:39:54 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Joe Perches <joe@perches.com>
-Cc:     Tom Rix <trix@redhat.com>, dhowells@redhat.com, jmorris@namei.org,
-        serge@hallyn.com, denkenz@gmail.com, marcel@holtmann.org,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] KEYS: remove redundant memset
-Message-ID: <20200723023954.GJ45081@linux.intel.com>
-References: <20200722134610.31947-1-trix@redhat.com>
- <2bdd6b8ec731d180023d593b679afc66def19b4f.camel@perches.com>
- <e36c364e-22f4-c520-04da-ca1196fec049@redhat.com>
- <b60f9b3e07b86d0f8631f6990f61b5172c43841f.camel@perches.com>
+        Thu, 23 Jul 2020 01:18:55 -0400
+Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42F72C0619E1
+        for <linux-security-module@vger.kernel.org>; Wed, 22 Jul 2020 22:18:55 -0700 (PDT)
+Received: by mail-lf1-x144.google.com with SMTP id y18so2572951lfh.11
+        for <linux-security-module@vger.kernel.org>; Wed, 22 Jul 2020 22:18:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:cc;
+        bh=8YDwrten24ogOJDmaXeZKAXksHr1/n5UE74JWklLE1o=;
+        b=OTk0yzh3FE+7NblgnSQ/xKhrT6ZyLvv7r1TuVYXU8DRAHgrRUrJlH15ReR6iz+K/Fv
+         F7OqqukglcxSd2S/ppfvNHh7K5v5j6s8X7jhYZ7s1/Z9xteDNoDetQ8Ya+Zam8O0f5Mj
+         KyzUyc2wZWpv3ojnOuPU3hFcHglLazR3Ksmx2LTqLch7UsRKLLs7gfg8XxKRAubuMchT
+         kmBTGQiW8wDZXMaqdQkI3yGB1c7CPVQbuTgdd30LdGwjnPcXmyJ4a2qtO2tu3zL+7uRH
+         sJeN47g+YXzSIPNCSnaKdqrjWgq5/o04oNETJfILPFf1ssCZYr0zaj2FA3f5EKqrEnfj
+         F1jw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:cc;
+        bh=8YDwrten24ogOJDmaXeZKAXksHr1/n5UE74JWklLE1o=;
+        b=COL/+lxjVyN/k71spgKncDIC8b2Eait17P3aq+FDKpCytDpVS+s7UpnmVgjMAQrQmC
+         iQDQClCr+wA/Zh7gWt8MILrItTnc86LzALOqP5QYZFDFS/XNEAEjl9TsX5wJ3WLGXWrv
+         qlR457D5W+MS8REKb5D9779P7/1k0GhU3ZnasnXLy7J2V5GW2Sfp9z7T3EORt8HBkZpm
+         Yc//23UsN0jGiwLManH/VMrPfXUshm6goDnPjaZtJRsMsFPjyd6wCPMxSkwud5jINOSi
+         yuHT3WXYmUAkCiFYKX7D8c3PVKaUdd0EiUAU3gSt220q+BBgiroSYE6yoYvwxsJ4xtXy
+         NWdw==
+X-Gm-Message-State: AOAM53095sBdkXaZLhk5ia8ms7Z9yGIpQ0wmg/b1D8Ynbhlmhzaqi8fE
+        Q5y4v5QVRc5tKcUYkUp9+IqkH3evrK/JYsLRMas=
+X-Received: by 2002:a19:cc3:: with SMTP id 186mt838092lfm.134.1595481533644;
+ Wed, 22 Jul 2020 22:18:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b60f9b3e07b86d0f8631f6990f61b5172c43841f.camel@perches.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20200722171409.102949-6-kpsingh@chromium.org> <202007230807.y1gfvekv%lkp@intel.com>
+In-Reply-To: <202007230807.y1gfvekv%lkp@intel.com>
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date:   Wed, 22 Jul 2020 22:18:42 -0700
+Message-ID: <CAADnVQK=m18hgfuRZvykQiJPk_c+z=FR6Dpg0aRVvtJn6-Ckrw@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v5 5/7] bpf: Implement bpf_local_storage for inodes
+Cc:     KP Singh <kpsingh@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
+        Florent Revest <revest@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+To:     unlisted-recipients:; (no To-header on input)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jul 22, 2020 at 01:20:00PM -0700, Joe Perches wrote:
-> On Wed, 2020-07-22 at 13:10 -0700, Tom Rix wrote:
-> > On 7/22/20 1:02 PM, Joe Perches wrote:
-> > > On Wed, 2020-07-22 at 06:46 -0700, trix@redhat.com wrote:
-> > > > From: Tom Rix <trix@redhat.com>
-> > > > 
-> > > > Reviewing use of memset in keyctrl_pkey.c
-> > > > 
-> > > > keyctl_pkey_params_get prologue code to set params up
-> > > > 
-> > > > 	memset(params, 0, sizeof(*params));
-> > > > 	params->encoding = "raw";
-> > > > 
-> > > > keyctl_pkey_query has the same prologue
-> > > > and calls keyctl_pkey_params_get.
-> > > > 
-> > > > So remove the prologue.
-> > > > 
-> > > > Fixes: 00d60fd3b932 ("KEYS: Provide keyctls to drive the new key type ops for asymmetric keys [ver #2]")
-> > > At best, this is a micro optimization.
-> > Yes
-> > > How is this appropriate for a Fixes: line?
-> > Removing unneeded code is not a fix?
-> 
-> IMO: there's no "bug" here.
-> 
-> It's not a logic defect causing some unintended outcome.
-> It doesn't need backporting to stable branches.
-> 
-> Documentation/process/submitting-patches.rst-If your patch fixes a bug in a specific commit, e.g. you found an issue using
-> Documentation/process/submitting-patches.rst:``git bisect``, please use the 'Fixes:' tag with the first 12 characters of
-> Documentation/process/submitting-patches.rst-the SHA-1 ID, and the one line summary.
+On Wed, Jul 22, 2020 at 5:22 PM kernel test robot <lkp@intel.com> wrote:
+>
 
-I agree.
+> All warnings (new ones prefixed by >>):
+>
+>    kernel/bpf/bpf_inode_storage.c: In function 'unlink_inode_storage':
+> >> kernel/bpf/bpf_inode_storage.c:34:32: warning: variable 'smap' set but not used [-Wunused-but-set-variable]
 
-At worst it can cause unnecessary merge conflicts when backporting
-bug fixes.
+KP,
 
-No measurable gain merging it.
-
-/Jarkko
+feel free to resubmit as soon as you fix the build.
+People typically ignore the patches when buildbot complains,
+since they know that maintainers are not going to apply a set with
+known build issue.
