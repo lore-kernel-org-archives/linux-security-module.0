@@ -2,31 +2,31 @@ Return-Path: <SRS0=LdBn=BC=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC429C433FB
-	for <linux-security-module@archiver.kernel.org>; Thu, 23 Jul 2020 17:12:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8626FC433F4
+	for <linux-security-module@archiver.kernel.org>; Thu, 23 Jul 2020 17:13:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 88BE222B40
-	for <linux-security-module@archiver.kernel.org>; Thu, 23 Jul 2020 17:12:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D6CD22B40
+	for <linux-security-module@archiver.kernel.org>; Thu, 23 Jul 2020 17:13:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730231AbgGWRMo (ORCPT
+        id S1730187AbgGWRM5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 23 Jul 2020 13:12:44 -0400
-Received: from smtp-8fa8.mail.infomaniak.ch ([83.166.143.168]:47343 "EHLO
-        smtp-8fa8.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730186AbgGWRMo (ORCPT
+        Thu, 23 Jul 2020 13:12:57 -0400
+Received: from smtp-8fab.mail.infomaniak.ch ([83.166.143.171]:38241 "EHLO
+        smtp-8fab.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730234AbgGWRMr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 23 Jul 2020 13:12:44 -0400
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4BCJmm4bqdzlhD3W;
-        Thu, 23 Jul 2020 19:12:40 +0200 (CEST)
+        Thu, 23 Jul 2020 13:12:47 -0400
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4BCJms3QbTzlhN1y;
+        Thu, 23 Jul 2020 19:12:45 +0200 (CEST)
 Received: from localhost (unknown [94.23.54.103])
-        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4BCJmm0vJtzlh8TF;
-        Thu, 23 Jul 2020 19:12:40 +0200 (CEST)
+        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4BCJmr6v6jzlh8T5;
+        Thu, 23 Jul 2020 19:12:44 +0200 (CEST)
 From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To:     linux-kernel@vger.kernel.org
 Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
@@ -64,11 +64,10 @@ Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
         kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
         linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
-Subject: [PATCH v7 4/7] fs: Introduce O_MAYEXEC flag for openat2(2)
-Date:   Thu, 23 Jul 2020 19:12:24 +0200
-Message-Id: <20200723171227.446711-5-mic@digikod.net>
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH v7 7/7] ima: add policy support for the new file open MAY_OPENEXEC flag
+Date:   Thu, 23 Jul 2020 19:12:27 +0200
+Message-Id: <20200723171227.446711-8-mic@digikod.net>
 X-Mailer: git-send-email 2.28.0.rc1
 In-Reply-To: <20200723171227.446711-1-mic@digikod.net>
 References: <20200723171227.446711-1-mic@digikod.net>
@@ -81,206 +80,116 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-When the O_MAYEXEC flag is passed, openat2(2) may be subject to
-additional restrictions depending on a security policy managed by the
-kernel through a sysctl or implemented by an LSM thanks to the
-inode_permission hook.  This new flag is ignored by open(2) and
-openat(2) because of their unspecified flags handling.  When used with
-openat2(2), the default behavior is only to forbid to open a directory.
+From: Mimi Zohar <zohar@linux.ibm.com>
 
-The underlying idea is to be able to restrict scripts interpretation
-according to a policy defined by the system administrator.  For this to
-be possible, script interpreters must use the O_MAYEXEC flag
-appropriately.  To be fully effective, these interpreters also need to
-handle the other ways to execute code: command line parameters (e.g.,
-option -e for Perl), module loading (e.g., option -m for Python), stdin,
-file sourcing, environment variables, configuration files, etc.
-According to the threat model, it may be acceptable to allow some script
-interpreters (e.g. Bash) to interpret commands from stdin, may it be a
-TTY or a pipe, because it may not be enough to (directly) perform
-syscalls.  Further documentation can be found in a following patch.
+The kernel has no way of differentiating between a file containing data
+or code being opened by an interpreter.  The proposed O_MAYEXEC
+openat2(2) flag bridges this gap by defining and enabling the
+MAY_OPENEXEC flag.
 
-Even without enforced security policy, userland interpreters can set it
-to enforce the system policy at their level, knowing that it will not
-break anything on running systems which do not care about this feature.
-However, on systems which want this feature enforced, there will be
-knowledgeable people (i.e. sysadmins who enforced O_MAYEXEC
-deliberately) to manage it.  A simple security policy implementation,
-configured through a dedicated sysctl, is available in a following
-patch.
+This patch adds IMA policy support for the new MAY_OPENEXEC flag.
 
-O_MAYEXEC should not be confused with the O_EXEC flag which is intended
-for execute-only, which obviously doesn't work for scripts.  However, a
-similar behavior could be implemented in userland with O_PATH:
-https://lore.kernel.org/lkml/1e2f6913-42f2-3578-28ed-567f6a4bdda1@digikod.net/
+Example:
+measure func=FILE_CHECK mask=^MAY_OPENEXEC
+appraise func=FILE_CHECK appraise_type=imasig mask=^MAY_OPENEXEC
 
-The implementation of O_MAYEXEC almost duplicates what execve(2) and
-uselib(2) are already doing: setting MAY_OPENEXEC in acc_mode (which can
-then be checked as MAY_EXEC, if enforced).
-
-This is an updated subset of the patch initially written by Vincent
-Strubel for CLIP OS 4:
-https://github.com/clipos-archive/src_platform_clip-patches/blob/f5cb330d6b684752e403b4e41b39f7004d88e561/1901_open_mayexec.patch
-This patch has been used for more than 12 years with customized script
-interpreters.  Some examples (with the original O_MAYEXEC) can be found
-here:
-https://github.com/clipos-archive/clipos4_portage-overlay/search?q=O_MAYEXEC
-
-Co-developed-by: Vincent Strubel <vincent.strubel@ssi.gouv.fr>
-Signed-off-by: Vincent Strubel <vincent.strubel@ssi.gouv.fr>
-Co-developed-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
-Signed-off-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
 Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Cc: Aleksa Sarai <cyphar@cyphar.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Deven Bowers <deven.desai@linux.microsoft.com>
-Cc: Kees Cook <keescook@chromium.org>
+Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+Reviewed-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Link: https://lore.kernel.org/r/1588167523-7866-3-git-send-email-zohar@linux.ibm.com
 ---
+ Documentation/ABI/testing/ima_policy |  2 +-
+ security/integrity/ima/ima_main.c    |  3 ++-
+ security/integrity/ima/ima_policy.c  | 15 +++++++++++----
+ 3 files changed, 14 insertions(+), 6 deletions(-)
 
-Changes since v6:
-* Do not set __FMODE_EXEC for now because of inconsistent behavior:
-  https://lore.kernel.org/lkml/202007160822.CCDB5478@keescook/
-* Returns EISDIR when opening a directory with O_MAYEXEC.
-* Removed Deven Bowers and Kees Cook Reviewed-by tags because of the
-  current update.
-
-Changes since v5:
-* Update commit message.
-
-Changes since v3:
-* Switch back to O_MAYEXEC, but only handle it with openat2(2) which
-  checks unknown flags (suggested by Aleksa Sarai). Cf.
-  https://lore.kernel.org/lkml/20200430015429.wuob7m5ofdewubui@yavin.dot.cyphar.com/
-
-Changes since v2:
-* Replace O_MAYEXEC with RESOLVE_MAYEXEC from openat2(2).  This change
-  enables to not break existing application using bogus O_* flags that
-  may be ignored by current kernels by using a new dedicated flag, only
-  usable through openat2(2) (suggested by Jeff Layton).  Using this flag
-  will results in an error if the running kernel does not support it.
-  User space needs to manage this case, as with other RESOLVE_* flags.
-  The best effort approach to security (for most common distros) will
-  simply consists of ignoring such an error and retry without
-  RESOLVE_MAYEXEC.  However, a fully controlled system may which to
-  error out if such an inconsistency is detected.
-
-Changes since v1:
-* Set __FMODE_EXEC when using O_MAYEXEC to make this information
-  available through the new fanotify/FAN_OPEN_EXEC event (suggested by
-  Jan Kara and Matthew Bobrowski):
-  https://lore.kernel.org/lkml/20181213094658.GA996@lithium.mbobrowski.org/
----
- fs/fcntl.c                       | 2 +-
- fs/namei.c                       | 4 ++--
- fs/open.c                        | 6 ++++++
- include/linux/fcntl.h            | 2 +-
- include/linux/fs.h               | 2 ++
- include/uapi/asm-generic/fcntl.h | 7 +++++++
- 6 files changed, 19 insertions(+), 4 deletions(-)
-
-diff --git a/fs/fcntl.c b/fs/fcntl.c
-index 2e4c0fa2074b..0357ad667563 100644
---- a/fs/fcntl.c
-+++ b/fs/fcntl.c
-@@ -1033,7 +1033,7 @@ static int __init fcntl_init(void)
- 	 * Exceptions: O_NONBLOCK is a two bit define on parisc; O_NDELAY
- 	 * is defined as O_NONBLOCK on some platforms and not on others.
- 	 */
--	BUILD_BUG_ON(21 - 1 /* for O_RDONLY being 0 */ !=
-+	BUILD_BUG_ON(22 - 1 /* for O_RDONLY being 0 */ !=
- 		HWEIGHT32(
- 			(VALID_OPEN_FLAGS & ~(O_NONBLOCK | O_NDELAY)) |
- 			__FMODE_EXEC | __FMODE_NONOTIFY));
-diff --git a/fs/namei.c b/fs/namei.c
-index ddc9b25540fe..3f074ec77390 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -428,7 +428,7 @@ static int sb_permission(struct super_block *sb, struct inode *inode, int mask)
- /**
-  * inode_permission - Check for access rights to a given inode
-  * @inode: Inode to check permission on
-- * @mask: Right to check for (%MAY_READ, %MAY_WRITE, %MAY_EXEC)
-+ * @mask: Right to check for (%MAY_READ, %MAY_WRITE, %MAY_EXEC, %MAY_OPENEXEC)
+diff --git a/Documentation/ABI/testing/ima_policy b/Documentation/ABI/testing/ima_policy
+index cd572912c593..caca46125fe0 100644
+--- a/Documentation/ABI/testing/ima_policy
++++ b/Documentation/ABI/testing/ima_policy
+@@ -31,7 +31,7 @@ Description:
+ 				[KEXEC_KERNEL_CHECK] [KEXEC_INITRAMFS_CHECK]
+ 				[KEXEC_CMDLINE] [KEY_CHECK]
+ 			mask:= [[^]MAY_READ] [[^]MAY_WRITE] [[^]MAY_APPEND]
+-			       [[^]MAY_EXEC]
++			       [[^]MAY_EXEC] [[^]MAY_OPENEXEC]
+ 			fsmagic:= hex value
+ 			fsuuid:= file system UUID (e.g 8bcbe394-4f13-4144-be8e-5aa9ea2ce2f6)
+ 			uid:= decimal value
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index c1583d98c5e5..59fd1658a203 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -490,7 +490,8 @@ int ima_file_check(struct file *file, int mask)
+ 
+ 	security_task_getsecid(current, &secid);
+ 	return process_measurement(file, current_cred(), secid, NULL, 0,
+-				   mask & (MAY_READ | MAY_WRITE | MAY_EXEC |
++				   mask & (MAY_READ | MAY_WRITE |
++					   MAY_EXEC | MAY_OPENEXEC |
+ 					   MAY_APPEND), FILE_CHECK);
+ }
+ EXPORT_SYMBOL_GPL(ima_file_check);
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index e493063a3c34..6487f0b2afdd 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -406,7 +406,8 @@ static bool ima_match_keyring(struct ima_rule_entry *rule,
+  * @cred: a pointer to a credentials structure for user validation
+  * @secid: the secid of the task to be validated
+  * @func: LIM hook identifier
+- * @mask: requested action (MAY_READ | MAY_WRITE | MAY_APPEND | MAY_EXEC)
++ * @mask: requested action (MAY_READ | MAY_WRITE | MAY_APPEND | MAY_EXEC |
++ *			    MAY_OPENEXEC)
+  * @keyring: keyring name to check in policy for KEY_CHECK func
   *
-  * Check for read/write/execute permissions on an inode.  We use fs[ug]id for
-  * this, letting us set arbitrary permissions for filesystem access without
-@@ -2849,7 +2849,7 @@ static int may_open(const struct path *path, int acc_mode, int flag)
- 	case S_IFLNK:
- 		return -ELOOP;
- 	case S_IFDIR:
--		if (acc_mode & (MAY_WRITE | MAY_EXEC))
-+		if (acc_mode & (MAY_WRITE | MAY_EXEC | MAY_OPENEXEC))
- 			return -EISDIR;
- 		break;
- 	case S_IFBLK:
-diff --git a/fs/open.c b/fs/open.c
-index 623b7506a6db..21c2c1020574 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -987,6 +987,8 @@ inline struct open_how build_open_how(int flags, umode_t mode)
- 		.mode = mode & S_IALLUGO,
- 	};
+  * Returns true on rule match, false on failure.
+@@ -527,7 +528,8 @@ static int get_subaction(struct ima_rule_entry *rule, enum ima_hooks func)
+  *        being made
+  * @secid: LSM secid of the task to be validated
+  * @func: IMA hook identifier
+- * @mask: requested action (MAY_READ | MAY_WRITE | MAY_APPEND | MAY_EXEC)
++ * @mask: requested action (MAY_READ | MAY_WRITE | MAY_APPEND | MAY_EXEC |
++ *			    MAY_OPENEXEC)
+  * @pcr: set the pcr to extend
+  * @template_desc: the template that should be used for this rule
+  * @keyring: the keyring name, if given, to be used to check in the policy.
+@@ -1091,6 +1093,8 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+ 				entry->mask = MAY_READ;
+ 			else if (strcmp(from, "MAY_APPEND") == 0)
+ 				entry->mask = MAY_APPEND;
++			else if (strcmp(from, "MAY_OPENEXEC") == 0)
++				entry->mask = MAY_OPENEXEC;
+ 			else
+ 				result = -EINVAL;
+ 			if (!result)
+@@ -1422,14 +1426,15 @@ const char *const func_tokens[] = {
  
-+	/* O_MAYEXEC is ignored by syscalls relying on build_open_how(). */
-+	how.flags &= ~O_MAYEXEC;
- 	/* O_PATH beats everything else. */
- 	if (how.flags & O_PATH)
- 		how.flags &= O_PATH_FLAGS;
-@@ -1054,6 +1056,10 @@ inline int build_open_flags(const struct open_how *how, struct open_flags *op)
- 	if (flags & __O_SYNC)
- 		flags |= O_DSYNC;
+ #ifdef	CONFIG_IMA_READ_POLICY
+ enum {
+-	mask_exec = 0, mask_write, mask_read, mask_append
++	mask_exec = 0, mask_write, mask_read, mask_append, mask_openexec
+ };
  
-+	/* Checks execution permissions on open. */
-+	if (flags & O_MAYEXEC)
-+		acc_mode |= MAY_OPENEXEC;
-+
- 	op->open_flag = flags;
+ static const char *const mask_tokens[] = {
+ 	"^MAY_EXEC",
+ 	"^MAY_WRITE",
+ 	"^MAY_READ",
+-	"^MAY_APPEND"
++	"^MAY_APPEND",
++	"^MAY_OPENEXEC"
+ };
  
- 	/* O_TRUNC implies we need access checks for write permissions */
-diff --git a/include/linux/fcntl.h b/include/linux/fcntl.h
-index 7bcdcf4f6ab2..e188a360fa5f 100644
---- a/include/linux/fcntl.h
-+++ b/include/linux/fcntl.h
-@@ -10,7 +10,7 @@
- 	(O_RDONLY | O_WRONLY | O_RDWR | O_CREAT | O_EXCL | O_NOCTTY | O_TRUNC | \
- 	 O_APPEND | O_NDELAY | O_NONBLOCK | O_NDELAY | __O_SYNC | O_DSYNC | \
- 	 FASYNC	| O_DIRECT | O_LARGEFILE | O_DIRECTORY | O_NOFOLLOW | \
--	 O_NOATIME | O_CLOEXEC | O_PATH | __O_TMPFILE)
-+	 O_NOATIME | O_CLOEXEC | O_PATH | __O_TMPFILE | O_MAYEXEC)
+ void *ima_policy_start(struct seq_file *m, loff_t *pos)
+@@ -1518,6 +1523,8 @@ int ima_policy_show(struct seq_file *m, void *v)
+ 			seq_printf(m, pt(Opt_mask), mt(mask_read) + offset);
+ 		if (entry->mask & MAY_APPEND)
+ 			seq_printf(m, pt(Opt_mask), mt(mask_append) + offset);
++		if (entry->mask & MAY_OPENEXEC)
++			seq_printf(m, pt(Opt_mask), mt(mask_openexec) + offset);
+ 		seq_puts(m, " ");
+ 	}
  
- /* List of all valid flags for the how->upgrade_mask argument: */
- #define VALID_UPGRADE_FLAGS \
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index f5abba86107d..56f835c9a87a 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -101,6 +101,8 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
- #define MAY_CHDIR		0x00000040
- /* called from RCU mode, don't block */
- #define MAY_NOT_BLOCK		0x00000080
-+/* the inode is opened with O_MAYEXEC */
-+#define MAY_OPENEXEC		0x00000100
- 
- /*
-  * flags in file.f_mode.  Note that FMODE_READ and FMODE_WRITE must correspond
-diff --git a/include/uapi/asm-generic/fcntl.h b/include/uapi/asm-generic/fcntl.h
-index 9dc0bf0c5a6e..bca90620119f 100644
---- a/include/uapi/asm-generic/fcntl.h
-+++ b/include/uapi/asm-generic/fcntl.h
-@@ -97,6 +97,13 @@
- #define O_NDELAY	O_NONBLOCK
- #endif
- 
-+/*
-+ * Code execution from file is intended, checks such permission.  A simple
-+ * policy can be enforced system-wide as explained in
-+ * Documentation/admin-guide/sysctl/fs.rst .
-+ */
-+#define O_MAYEXEC	040000000
-+
- #define F_DUPFD		0	/* dup */
- #define F_GETFD		1	/* get close_on_exec */
- #define F_SETFD		2	/* set/clear close_on_exec */
 -- 
 2.27.0
 
