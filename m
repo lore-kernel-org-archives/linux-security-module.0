@@ -7,43 +7,43 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B031C433E1
-	for <linux-security-module@archiver.kernel.org>; Thu, 23 Jul 2020 07:31:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D847C433EA
+	for <linux-security-module@archiver.kernel.org>; Thu, 23 Jul 2020 07:42:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E812422CB3
-	for <linux-security-module@archiver.kernel.org>; Thu, 23 Jul 2020 07:31:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0FD420888
+	for <linux-security-module@archiver.kernel.org>; Thu, 23 Jul 2020 07:42:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NLzsT4Rp"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NmUBvmIx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726945AbgGWHbc (ORCPT
+        id S1726108AbgGWHmc (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 23 Jul 2020 03:31:32 -0400
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:23287 "EHLO
+        Thu, 23 Jul 2020 03:42:32 -0400
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:51871 "EHLO
         us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726304AbgGWHbc (ORCPT
+        by vger.kernel.org with ESMTP id S1725911AbgGWHmc (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 23 Jul 2020 03:31:32 -0400
+        Thu, 23 Jul 2020 03:42:32 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1595489491;
+        s=mimecast20190719; t=1595490151;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=jQHRUT5gixVlpLT/vMX5zI5kpeZwUfmxkJZjL4H/0xo=;
-        b=NLzsT4RpemUKm/njc+zyByUbA4ewaS4iT71+0lcKZQ7Gv7kz9Sctid/a7c7WboTTiehrQz
-        BLnh3rlpJimy/0EYZ3ZpWVB4Tigx68e/tmWaw3Hujsl7z/v3j/7Bh0BGZ6czx2fLBZsPDr
-        mgdIsDiVvO8ILme18ZlG3+NKzQXqD80=
+        bh=//Yfojb2+5l/9c7yxk/wQkjqrs7GK4h6tRXxyXSn7Co=;
+        b=NmUBvmIxhG2ZCxRSng4AoMDTHuCxhNHt7WOFfk3jr0VkmDmZrfb7xPGVGoVtjp8+515/YX
+        bxPcYvGo1nmrktAyY9gAP4CYzUG/Ow2M9kIvGVENb1ZsdjHjsemOIrEugD6Jj1HQe3LwUg
+        rjeERG2SXw1QMsY2VdiCnK8QPGGPx3w=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-425-IvtNbOVbOpabky9s9I6Xow-1; Thu, 23 Jul 2020 03:31:27 -0400
-X-MC-Unique: IvtNbOVbOpabky9s9I6Xow-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+ us-mta-233-6kTqSsMROdmuFJgLBoZ4mA-1; Thu, 23 Jul 2020 03:42:29 -0400
+X-MC-Unique: 6kTqSsMROdmuFJgLBoZ4mA-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 91A3657;
-        Thu, 23 Jul 2020 07:31:25 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id BFB96100CCC0;
+        Thu, 23 Jul 2020 07:42:27 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-112-32.rdu2.redhat.com [10.10.112.32])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 1A4BC61176;
-        Thu, 23 Jul 2020 07:31:23 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 614E610013C0;
+        Thu, 23 Jul 2020 07:42:26 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
@@ -58,33 +58,28 @@ Cc:     dhowells@redhat.com, torvalds@linux-foundation.org,
 Subject: Re: [PATCH] keys: asymmetric: fix error return code in software_key_query()
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1267852.1595489483.1@warthog.procyon.org.uk>
-Date:   Thu, 23 Jul 2020 08:31:23 +0100
-Message-ID: <1267853.1595489483@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Content-ID: <1269136.1595490145.1@warthog.procyon.org.uk>
+Date:   Thu, 23 Jul 2020 08:42:25 +0100
+Message-ID: <1269137.1595490145@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com> wrote:
 
-> >  	if (IS_ERR(tfm))
-> >  		return PTR_ERR(tfm);
-> >  
-> > +	ret = -ENOMEM;
+> Why f1774cb8956a lacked any possible testing? It extends ABI anyway.
 > 
-> This is extremely confusing to read way to handle 'ret'.
-> 
-> Would be way more cleaner to be just simple and stupid:
-> 
-> 	if (!key) {
-> 		ret = -ENOMEM;
-> 		goto error_free_tfm;
-> 	}
+> I think it is a kind of change that would require more screening before
+> getting applied.
 
-I agree, but we have some people who will (or who used to) moan at you for
-doing in four lines what you could've done in three.  I don't know if this is
-still the standard.
+Yeah.  It went in via a round-about route.  I left off development of it when
+the tpm stuff I wrote broke because the tpm2 stuff went in upstream.  I then
+handed the patches off to Denis who did the tpm support, but I never got my
+stuff finished enough to work out how to do the testsuite (since it would
+involve using a tpm).  However, since I did the PKCS#8 testing module as well,
+I guess I don't need that to at least test the API.  I'll look at using that
+to add some tests.  Any suggestions as to how to do testing via the tpm?
 
 David
 
