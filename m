@@ -8,53 +8,53 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88662C433F7
-	for <linux-security-module@archiver.kernel.org>; Fri, 24 Jul 2020 21:43:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D150FC4345A
+	for <linux-security-module@archiver.kernel.org>; Fri, 24 Jul 2020 21:43:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 577CB20759
-	for <linux-security-module@archiver.kernel.org>; Fri, 24 Jul 2020 21:43:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4AA320771
+	for <linux-security-module@archiver.kernel.org>; Fri, 24 Jul 2020 21:43:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WF07yjKX"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SRYVzYpX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726625AbgGXVn0 (ORCPT
+        id S1726807AbgGXVnj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 24 Jul 2020 17:43:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58834 "EHLO
+        Fri, 24 Jul 2020 17:43:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58828 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726824AbgGXVnU (ORCPT
+        with ESMTP id S1726768AbgGXVnT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 24 Jul 2020 17:43:20 -0400
-Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E90AC03CA41
-        for <linux-security-module@vger.kernel.org>; Fri, 24 Jul 2020 14:43:20 -0700 (PDT)
-Received: by mail-pg1-x544.google.com with SMTP id o13so6173064pgf.0
-        for <linux-security-module@vger.kernel.org>; Fri, 24 Jul 2020 14:43:20 -0700 (PDT)
+        Fri, 24 Jul 2020 17:43:19 -0400
+Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89F77C0619E7
+        for <linux-security-module@vger.kernel.org>; Fri, 24 Jul 2020 14:43:19 -0700 (PDT)
+Received: by mail-pl1-x642.google.com with SMTP id f7so414744pln.13
+        for <linux-security-module@vger.kernel.org>; Fri, 24 Jul 2020 14:43:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=xJo0nq/BwSGQyuu34Uu71pqCjmwIBDsltoAlvySz0DI=;
-        b=WF07yjKX5utbSDQ8syHyojARSjazCxSOao3aCWCeAHYHmbHDe0SdIUzBhZr/J7SaUL
-         FDdBvzEwSJ6Ht+m5+HgRYfKKX1Uah+k+8kCxuoZzCixukqCROuLhsEW4XwGQRD9E0z7f
-         pRwWnUP5zS1bogct7qR+dfGuTKkuBP94tqx5o=
+        bh=g+eO8gyq78bTSKe9RJZArkUNSYlS+MJLU0Ecz64l8iE=;
+        b=SRYVzYpXB+6mxT4o2nHA6Mia/nRxpS6YJEmzM5+7eiFVTvfeI7nR3qRIaLDccIdBa5
+         kYgSVKiBiV200w6Ps1uQL4c5D04qUPx/cQ3agqD5Wd2mjP4yAuPagvfxQKY4wRclW9Iu
+         MDDFtogO8Tf9bVuXEfejl5IYg1Dxm/mBLfXpM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=xJo0nq/BwSGQyuu34Uu71pqCjmwIBDsltoAlvySz0DI=;
-        b=Y6kxHjSyOtkfK7H6AkoLkSAaaMexVXj2fgzCaJsjvH+g7sFSVfzge3RKTjIpqQS2Xc
-         IB42N7rIjw6qgDFd4kf6IsuGyK0fXgkLYOuzRzPVCxv1ychMdDxjgcjMWe5K8baSjTug
-         gCzPQHgOMsADgVX9L3PaYs9nt+/LBG7zx6seJXBgCy/340sU8kxtTL92wVIBCRzi8N2U
-         pVUntBtkdiSA+hR5uQBHdtJGH5EkrIjEuLv8kV0/UK5nnVft7HW1u9UdiwgT1UIAZq9u
-         0NRpnpDMcrLXURQX5kd6x/IRRw9IIHu3MoYasfzt9G8rWMu17fAxGkdJOFwp5vRqowTU
-         huZA==
-X-Gm-Message-State: AOAM533ctid5LBBRpumoBrPJt4LnH6tjdqDtr92C2hrlPaqaz5OmJVIe
-        CjY6VMHk+Z7yFLMEipU/8oiqdA==
-X-Google-Smtp-Source: ABdhPJzTkTAjdLfYdBfGZbxKblfOfrNHl+LQkdB1MNQDqkCwaf17Zw+bn8RQ46naJoLAGnapVnhleA==
-X-Received: by 2002:a05:6a00:224c:: with SMTP id i12mr11032282pfu.18.1595626999914;
-        Fri, 24 Jul 2020 14:43:19 -0700 (PDT)
+        bh=g+eO8gyq78bTSKe9RJZArkUNSYlS+MJLU0Ecz64l8iE=;
+        b=iT/kWcPwSa0w0dV7hK7MxVlivY0WtNioa7XXb+hlSk47vPZbCw3BP9RqTyIWbDxHrH
+         +TX6ePh9jvM/nLm1CoaeVyEa2SLWbkfvPbcPRP4K8TxoIZwy0+WdasfkPo5PnsK/IDQM
+         A2FKPC2jnXB4RgRgE6DIBqw05wX+6MHOMgT0M3jCxp3d8OkYxadbP6GAaj6lOaJWge7o
+         khPyzhES5vFPSiTXn33YEHGVCAtqOfTAgfmRSPoYiqMdMOhrnVrEo/5mRsfdZOefp4jn
+         /hcAs2LEX+RRPY3AuwBGoS/2O84JQa9C+ZgoxSeH2bJkdPKL6i3udkYc7RfCqZjXMHaZ
+         AYlA==
+X-Gm-Message-State: AOAM533kIdWq4IhTCdZgz4wT24p4lZeg2qTCcVNhCScy7aLR5O824/GU
+        Fs5+Jp/baFctAc1q/THqgMbpXQ==
+X-Google-Smtp-Source: ABdhPJy3s7iqI2GmixgE5IMhaqSDJsSRXmMWdCQNDvTaNzGEWUO1y/NMlXRi64aK1B1SH8ucoHv1hA==
+X-Received: by 2002:a17:90b:1045:: with SMTP id gq5mr7371768pjb.30.1595626998936;
+        Fri, 24 Jul 2020 14:43:18 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id 17sm7488793pfv.16.2020.07.24.14.43.17
+        by smtp.gmail.com with ESMTPSA id 17sm7488794pfv.16.2020.07.24.14.43.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Fri, 24 Jul 2020 14:43:17 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
@@ -68,9 +68,9 @@ Cc:     Kees Cook <keescook@chromium.org>,
         linux-security-module@vger.kernel.org,
         linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
         linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 18/19] firmware: Add request_partial_firmware_into_buf()
-Date:   Fri, 24 Jul 2020 14:36:39 -0700
-Message-Id: <20200724213640.389191-19-keescook@chromium.org>
+Subject: [PATCH v3 16/19] fs/kernel_file_read: Add "offset" arg for partial reads
+Date:   Fri, 24 Jul 2020 14:36:37 -0700
+Message-Id: <20200724213640.389191-17-keescook@chromium.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200724213640.389191-1-keescook@chromium.org>
 References: <20200724213640.389191-1-keescook@chromium.org>
@@ -80,343 +80,308 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Scott Branden <scott.branden@broadcom.com>
+To perform partial reads, callers of kernel_read_file*() must have a
+non-NULL file_size argument and a preallocated buffer. The new "offset"
+argument can then be used to seek to specific locations in the file to
+fill the buffer to, at most, "buf_size" per call.
 
-Add request_partial_firmware_into_buf() to allow for portions of a
-firmware file to be read into a buffer. This is needed when large firmware
-must be loaded in portions from a file on memory constrained systems.
+Where possible, the LSM hooks can report whether a full file has been
+read or not so that the contents can be reasoned about.
 
-Signed-off-by: Scott Branden <scott.branden@broadcom.com>
-Co-developed-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- drivers/base/firmware_loader/firmware.h |   4 +
- drivers/base/firmware_loader/main.c     | 109 +++++++++++++++++++-----
- include/linux/firmware.h                |  12 +++
- 3 files changed, 105 insertions(+), 20 deletions(-)
+ drivers/base/firmware_loader/main.c |  2 +-
+ fs/kernel_read_file.c               | 78 ++++++++++++++++++++---------
+ include/linux/kernel_read_file.h    |  8 +--
+ kernel/kexec_file.c                 |  4 +-
+ kernel/module.c                     |  2 +-
+ security/integrity/digsig.c         |  2 +-
+ security/integrity/ima/ima_fs.c     |  3 +-
+ 7 files changed, 65 insertions(+), 34 deletions(-)
 
-diff --git a/drivers/base/firmware_loader/firmware.h b/drivers/base/firmware_loader/firmware.h
-index 7ad5fe52bc72..3f6eda46b3a2 100644
---- a/drivers/base/firmware_loader/firmware.h
-+++ b/drivers/base/firmware_loader/firmware.h
-@@ -32,6 +32,8 @@
-  * @FW_OPT_FALLBACK_PLATFORM: Enable fallback to device fw copy embedded in
-  *	the platform's main firmware. If both this fallback and the sysfs
-  *      fallback are enabled, then this fallback will be tried first.
-+ * @FW_OPT_PARTIAL: Allow partial read of firmware instead of needing to read
-+ *	entire file.
-  */
- enum fw_opt {
- 	FW_OPT_UEVENT			= BIT(0),
-@@ -41,6 +43,7 @@ enum fw_opt {
- 	FW_OPT_NOCACHE			= BIT(4),
- 	FW_OPT_NOFALLBACK_SYSFS		= BIT(5),
- 	FW_OPT_FALLBACK_PLATFORM	= BIT(6),
-+	FW_OPT_PARTIAL			= BIT(7),
- };
- 
- enum fw_status {
-@@ -68,6 +71,7 @@ struct fw_priv {
- 	void *data;
- 	size_t size;
- 	size_t allocated_size;
-+	size_t offset;
- 	u32 opt_flags;
- #ifdef CONFIG_FW_LOADER_PAGED_BUF
- 	bool is_paged_buf;
 diff --git a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
-index 814a18cc51bd..7aa22bdc2f60 100644
+index bd199404935f..d95249b5284e 100644
 --- a/drivers/base/firmware_loader/main.c
 +++ b/drivers/base/firmware_loader/main.c
-@@ -170,10 +170,19 @@ static struct fw_priv *__allocate_fw_priv(const char *fw_name,
- 					  struct firmware_cache *fwc,
- 					  void *dbuf,
- 					  size_t size,
-+					  size_t offset,
- 					  u32 opt_flags)
- {
- 	struct fw_priv *fw_priv;
- 
-+	/* For a partial read, the buffer must be preallocated. */
-+	if ((opt_flags & FW_OPT_PARTIAL) && !dbuf)
-+		return NULL;
-+
-+	/* Only partial reads are allowed to use an offset. */
-+	if (offset != 0 && !(opt_flags & FW_OPT_PARTIAL))
-+		return NULL;
-+
- 	fw_priv = kzalloc(sizeof(*fw_priv), GFP_ATOMIC);
- 	if (!fw_priv)
- 		return NULL;
-@@ -188,6 +197,7 @@ static struct fw_priv *__allocate_fw_priv(const char *fw_name,
- 	fw_priv->fwc = fwc;
- 	fw_priv->data = dbuf;
- 	fw_priv->allocated_size = size;
-+	fw_priv->offset = offset;
- 	fw_priv->opt_flags = opt_flags;
- 	fw_state_init(fw_priv);
- #ifdef CONFIG_FW_LOADER_USER_HELPER
-@@ -216,12 +226,17 @@ static int alloc_lookup_fw_priv(const char *fw_name,
- 				struct fw_priv **fw_priv,
- 				void *dbuf,
- 				size_t size,
-+				size_t offset,
- 				u32 opt_flags)
- {
- 	struct fw_priv *tmp;
- 
- 	spin_lock(&fwc->lock);
--	if (!(opt_flags & FW_OPT_NOCACHE)) {
-+	/*
-+	 * Do not merge requests that are marked to be non-cached or
-+	 * are performing partial reads.
-+	 */
-+	if (!(opt_flags & (FW_OPT_NOCACHE | FW_OPT_PARTIAL))) {
- 		tmp = __lookup_fw_priv(fw_name);
- 		if (tmp) {
- 			kref_get(&tmp->ref);
-@@ -232,7 +247,7 @@ static int alloc_lookup_fw_priv(const char *fw_name,
- 		}
- 	}
- 
--	tmp = __allocate_fw_priv(fw_name, fwc, dbuf, size, opt_flags);
-+	tmp = __allocate_fw_priv(fw_name, fwc, dbuf, size, offset, opt_flags);
- 	if (tmp) {
- 		INIT_LIST_HEAD(&tmp->list);
- 		if (!(opt_flags & FW_OPT_NOCACHE))
-@@ -439,6 +454,12 @@ static int fw_decompress_xz(struct device *dev, struct fw_priv *fw_priv,
- 	else
- 		return fw_decompress_xz_pages(dev, fw_priv, in_size, in_buffer);
- }
-+#else
-+static inline int fw_decompress_xz(struct device *dev, struct fw_priv *fw_priv,
-+				   size_t in_size, const void *in_buffer)
-+{
-+	return -ENOENT;
-+}
- #endif /* CONFIG_FW_LOADER_COMPRESS */
- 
- /* direct firmware loading support */
-@@ -485,6 +506,9 @@ fw_get_filesystem_firmware(struct device *device, struct fw_priv *fw_priv,
- 		return -ENOMEM;
- 
- 	for (i = 0; i < ARRAY_SIZE(fw_path); i++) {
-+		size_t file_size = 0;
-+		size_t *file_size_ptr = NULL;
-+
- 		/* skip the unset customized path */
- 		if (!fw_path[i][0])
- 			continue;
-@@ -498,9 +522,18 @@ fw_get_filesystem_firmware(struct device *device, struct fw_priv *fw_priv,
- 
+@@ -494,7 +494,7 @@ fw_get_filesystem_firmware(struct device *device, struct fw_priv *fw_priv,
  		fw_priv->size = 0;
  
-+		/*
-+		 * The total file size is only examined when doing a partial
-+		 * read; the "full read" case needs to fail if the whole
-+		 * firmware was not completely loaded.
-+		 */
-+		if ((fw_priv->opt_flags & FW_OPT_PARTIAL) && buffer)
-+			file_size_ptr = &file_size;
-+
  		/* load firmware files from the mount namespace of init */
--		rc = kernel_read_file_from_path_initns(path, 0, &buffer, msize,
--						       NULL,
-+		rc = kernel_read_file_from_path_initns(path, fw_priv->offset,
-+						       &buffer, msize,
-+						       file_size_ptr,
+-		rc = kernel_read_file_from_path_initns(path, &buffer, msize,
++		rc = kernel_read_file_from_path_initns(path, 0, &buffer, msize,
+ 						       NULL,
  						       READING_FIRMWARE);
  		if (rc < 0) {
- 			if (rc != -ENOENT)
-@@ -691,7 +724,7 @@ int assign_fw(struct firmware *fw, struct device *device)
- static int
- _request_firmware_prepare(struct firmware **firmware_p, const char *name,
- 			  struct device *device, void *dbuf, size_t size,
--			  u32 opt_flags)
-+			  size_t offset, u32 opt_flags)
+diff --git a/fs/kernel_read_file.c b/fs/kernel_read_file.c
+index d73bc3fa710a..90d255fbdd9b 100644
+--- a/fs/kernel_read_file.c
++++ b/fs/kernel_read_file.c
+@@ -9,6 +9,7 @@
+  * kernel_read_file() - read file contents into a kernel buffer
+  *
+  * @file	file to read from
++ * @offset	where to start reading from (see below).
+  * @buf		pointer to a "void *" buffer for reading into (if
+  *		*@buf is NULL, a buffer will be allocated, and
+  *		@buf_size will be ignored)
+@@ -19,19 +20,31 @@
+  * @id		the kernel_read_file_id identifying the type of
+  *		file contents being read (for LSMs to examine)
+  *
++ * @offset must be 0 unless both @buf and @file_size are non-NULL
++ * (i.e. the caller must be expecting to read partial file contents
++ * via an already-allocated @buf, in at most @buf_size chunks, and
++ * will be able to determine when the entire file was read by
++ * checking @file_size). This isn't a recommended way to read a
++ * file, though, since it is possible that the contents might
++ * change between calls to kernel_read_file().
++ *
+  * Returns number of bytes read (no single read will be bigger
+  * than INT_MAX), or negative on error.
+  *
+  */
+-int kernel_read_file(struct file *file, void **buf,
++int kernel_read_file(struct file *file, loff_t offset, void **buf,
+ 		     size_t buf_size, size_t *file_size,
+ 		     enum kernel_read_file_id id)
  {
- 	struct firmware *firmware;
- 	struct fw_priv *fw_priv;
-@@ -710,7 +743,7 @@ _request_firmware_prepare(struct firmware **firmware_p, const char *name,
- 	}
- 
- 	ret = alloc_lookup_fw_priv(name, &fw_cache, &fw_priv, dbuf, size,
--				  opt_flags);
-+				   offset, opt_flags);
- 
- 	/*
- 	 * bind with 'priv' now to avoid warning in failure path
-@@ -757,9 +790,10 @@ static void fw_abort_batch_reqs(struct firmware *fw)
- static int
- _request_firmware(const struct firmware **firmware_p, const char *name,
- 		  struct device *device, void *buf, size_t size,
--		  u32 opt_flags)
-+		  size_t offset, u32 opt_flags)
- {
- 	struct firmware *fw = NULL;
-+	bool nondirect = false;
+ 	loff_t i_size, pos;
+-	ssize_t bytes = 0;
++	size_t copied;
+ 	void *allocated = NULL;
++	bool whole_file;
  	int ret;
  
- 	if (!firmware_p)
-@@ -771,18 +805,20 @@ _request_firmware(const struct firmware **firmware_p, const char *name,
++	if (offset != 0 && (!*buf || !file_size))
++		return -EINVAL;
++
+ 	if (!S_ISREG(file_inode(file)->i_mode))
+ 		return -EINVAL;
+ 
+@@ -39,19 +52,27 @@ int kernel_read_file(struct file *file, void **buf,
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = security_kernel_read_file(file, id, true);
+-	if (ret)
+-		goto out;
+-
+ 	i_size = i_size_read(file_inode(file));
+ 	if (i_size <= 0) {
+ 		ret = -EINVAL;
+ 		goto out;
+ 	}
+-	if (i_size > INT_MAX || i_size > buf_size) {
++	/* The file is too big for sane activities. */
++	if (i_size > INT_MAX) {
++		ret = -EFBIG;
++		goto out;
++	}
++	/* The entire file cannot be read in one buffer. */
++	if (!file_size && offset == 0 && i_size > buf_size) {
+ 		ret = -EFBIG;
+ 		goto out;
+ 	}
++
++	whole_file = (offset == 0 && i_size <= buf_size);
++	ret = security_kernel_read_file(file, id, whole_file);
++	if (ret)
++		goto out;
++
+ 	if (file_size)
+ 		*file_size = i_size;
+ 
+@@ -62,9 +83,14 @@ int kernel_read_file(struct file *file, void **buf,
+ 		goto out;
  	}
  
- 	ret = _request_firmware_prepare(&fw, name, device, buf, size,
--					opt_flags);
-+					offset, opt_flags);
- 	if (ret <= 0) /* error or already assigned */
+-	pos = 0;
+-	while (pos < i_size) {
+-		bytes = kernel_read(file, *buf + pos, i_size - pos, &pos);
++	pos = offset;
++	copied = 0;
++	while (copied < buf_size) {
++		ssize_t bytes;
++		size_t wanted = min_t(size_t, buf_size - copied,
++					      i_size - pos);
++
++		bytes = kernel_read(file, *buf + copied, wanted, &pos);
+ 		if (bytes < 0) {
+ 			ret = bytes;
+ 			goto out_free;
+@@ -72,14 +98,17 @@ int kernel_read_file(struct file *file, void **buf,
+ 
+ 		if (bytes == 0)
+ 			break;
++		copied += bytes;
+ 	}
+ 
+-	if (pos != i_size) {
+-		ret = -EIO;
+-		goto out_free;
+-	}
++	if (whole_file) {
++		if (pos != i_size) {
++			ret = -EIO;
++			goto out_free;
++		}
+ 
+-	ret = security_kernel_post_read_file(file, *buf, i_size, id);
++		ret = security_kernel_post_read_file(file, *buf, i_size, id);
++	}
+ 
+ out_free:
+ 	if (ret < 0) {
+@@ -91,11 +120,11 @@ int kernel_read_file(struct file *file, void **buf,
+ 
+ out:
+ 	allow_write_access(file);
+-	return ret == 0 ? pos : ret;
++	return ret == 0 ? copied : ret;
+ }
+ EXPORT_SYMBOL_GPL(kernel_read_file);
+ 
+-int kernel_read_file_from_path(const char *path, void **buf,
++int kernel_read_file_from_path(const char *path, loff_t offset, void **buf,
+ 			       size_t buf_size, size_t *file_size,
+ 			       enum kernel_read_file_id id)
+ {
+@@ -109,14 +138,15 @@ int kernel_read_file_from_path(const char *path, void **buf,
+ 	if (IS_ERR(file))
+ 		return PTR_ERR(file);
+ 
+-	ret = kernel_read_file(file, buf, buf_size, file_size, id);
++	ret = kernel_read_file(file, offset, buf, buf_size, file_size, id);
+ 	fput(file);
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(kernel_read_file_from_path);
+ 
+-int kernel_read_file_from_path_initns(const char *path, void **buf,
+-				      size_t buf_size, size_t *file_size,
++int kernel_read_file_from_path_initns(const char *path, loff_t offset,
++				      void **buf, size_t buf_size,
++				      size_t *file_size,
+ 				      enum kernel_read_file_id id)
+ {
+ 	struct file *file;
+@@ -135,14 +165,14 @@ int kernel_read_file_from_path_initns(const char *path, void **buf,
+ 	if (IS_ERR(file))
+ 		return PTR_ERR(file);
+ 
+-	ret = kernel_read_file(file, buf, buf_size, file_size, id);
++	ret = kernel_read_file(file, offset, buf, buf_size, file_size, id);
+ 	fput(file);
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(kernel_read_file_from_path_initns);
+ 
+-int kernel_read_file_from_fd(int fd, void **buf, size_t buf_size,
+-			     size_t *file_size,
++int kernel_read_file_from_fd(int fd, loff_t offset, void **buf,
++			     size_t buf_size, size_t *file_size,
+ 			     enum kernel_read_file_id id)
+ {
+ 	struct fd f = fdget(fd);
+@@ -151,7 +181,7 @@ int kernel_read_file_from_fd(int fd, void **buf, size_t buf_size,
+ 	if (!f.file)
  		goto out;
  
- 	ret = fw_get_filesystem_firmware(device, fw->priv, "", NULL);
--#ifdef CONFIG_FW_LOADER_COMPRESS
--	if (ret == -ENOENT)
-+
-+	/* Only full reads can support decompression, platform, and sysfs. */
-+	if (!(opt_flags & FW_OPT_PARTIAL))
-+		nondirect = true;
-+
-+	if (ret == -ENOENT && nondirect)
- 		ret = fw_get_filesystem_firmware(device, fw->priv, ".xz",
- 						 fw_decompress_xz);
--#endif
--
--	if (ret == -ENOENT)
-+	if (ret == -ENOENT && nondirect)
- 		ret = firmware_fallback_platform(fw->priv);
- 
- 	if (ret) {
-@@ -790,7 +826,9 @@ _request_firmware(const struct firmware **firmware_p, const char *name,
- 			dev_warn(device,
- 				 "Direct firmware load for %s failed with error %d\n",
- 				 name, ret);
--		ret = firmware_fallback_sysfs(fw, name, device, opt_flags, ret);
-+		if (nondirect)
-+			ret = firmware_fallback_sysfs(fw, name, device,
-+						      opt_flags, ret);
- 	} else
- 		ret = assign_fw(fw, device);
- 
-@@ -833,7 +871,7 @@ request_firmware(const struct firmware **firmware_p, const char *name,
- 
- 	/* Need to pin this module until return */
- 	__module_get(THIS_MODULE);
--	ret = _request_firmware(firmware_p, name, device, NULL, 0,
-+	ret = _request_firmware(firmware_p, name, device, NULL, 0, 0,
- 				FW_OPT_UEVENT);
- 	module_put(THIS_MODULE);
+-	ret = kernel_read_file(f.file, buf, buf_size, file_size, id);
++	ret = kernel_read_file(f.file, offset, buf, buf_size, file_size, id);
+ out:
+ 	fdput(f);
  	return ret;
-@@ -860,7 +898,7 @@ int firmware_request_nowarn(const struct firmware **firmware, const char *name,
+diff --git a/include/linux/kernel_read_file.h b/include/linux/kernel_read_file.h
+index 023293eaf948..575ffa1031d3 100644
+--- a/include/linux/kernel_read_file.h
++++ b/include/linux/kernel_read_file.h
+@@ -35,19 +35,19 @@ static inline const char *kernel_read_file_id_str(enum kernel_read_file_id id)
+ 	return kernel_read_file_str[id];
+ }
  
- 	/* Need to pin this module until return */
- 	__module_get(THIS_MODULE);
--	ret = _request_firmware(firmware, name, device, NULL, 0,
-+	ret = _request_firmware(firmware, name, device, NULL, 0, 0,
- 				FW_OPT_UEVENT | FW_OPT_NO_WARN);
- 	module_put(THIS_MODULE);
- 	return ret;
-@@ -884,7 +922,7 @@ int request_firmware_direct(const struct firmware **firmware_p,
+-int kernel_read_file(struct file *file,
++int kernel_read_file(struct file *file, loff_t offset,
+ 		     void **buf, size_t buf_size,
+ 		     size_t *file_size,
+ 		     enum kernel_read_file_id id);
+-int kernel_read_file_from_path(const char *path,
++int kernel_read_file_from_path(const char *path, loff_t offset,
+ 			       void **buf, size_t buf_size,
+ 			       size_t *file_size,
+ 			       enum kernel_read_file_id id);
+-int kernel_read_file_from_path_initns(const char *path,
++int kernel_read_file_from_path_initns(const char *path, loff_t offset,
+ 				      void **buf, size_t buf_size,
+ 				      size_t *file_size,
+ 				      enum kernel_read_file_id id);
+-int kernel_read_file_from_fd(int fd,
++int kernel_read_file_from_fd(int fd, loff_t offset,
+ 			     void **buf, size_t buf_size,
+ 			     size_t *file_size,
+ 			     enum kernel_read_file_id id);
+diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+index 878ca684a3a1..45726bc8f6ce 100644
+--- a/kernel/kexec_file.c
++++ b/kernel/kexec_file.c
+@@ -221,7 +221,7 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
  	int ret;
+ 	void *ldata;
  
- 	__module_get(THIS_MODULE);
--	ret = _request_firmware(firmware_p, name, device, NULL, 0,
-+	ret = _request_firmware(firmware_p, name, device, NULL, 0, 0,
- 				FW_OPT_UEVENT | FW_OPT_NO_WARN |
- 				FW_OPT_NOFALLBACK_SYSFS);
- 	module_put(THIS_MODULE);
-@@ -909,7 +947,7 @@ int firmware_request_platform(const struct firmware **firmware,
- 
- 	/* Need to pin this module until return */
- 	__module_get(THIS_MODULE);
--	ret = _request_firmware(firmware, name, device, NULL, 0,
-+	ret = _request_firmware(firmware, name, device, NULL, 0, 0,
- 				FW_OPT_UEVENT | FW_OPT_FALLBACK_PLATFORM);
- 	module_put(THIS_MODULE);
- 	return ret;
-@@ -965,13 +1003,44 @@ request_firmware_into_buf(const struct firmware **firmware_p, const char *name,
- 		return -EOPNOTSUPP;
- 
- 	__module_get(THIS_MODULE);
--	ret = _request_firmware(firmware_p, name, device, buf, size,
-+	ret = _request_firmware(firmware_p, name, device, buf, size, 0,
- 				FW_OPT_UEVENT | FW_OPT_NOCACHE);
- 	module_put(THIS_MODULE);
- 	return ret;
- }
- EXPORT_SYMBOL(request_firmware_into_buf);
- 
-+/**
-+ * request_partial_firmware_into_buf() - load partial firmware into a previously allocated buffer
-+ * @firmware_p: pointer to firmware image
-+ * @name: name of firmware file
-+ * @device: device for which firmware is being loaded and DMA region allocated
-+ * @buf: address of buffer to load firmware into
-+ * @size: size of buffer
-+ * @offset: offset into file to read
-+ *
-+ * This function works pretty much like request_firmware_into_buf except
-+ * it allows a partial read of the file.
-+ */
-+int
-+request_partial_firmware_into_buf(const struct firmware **firmware_p,
-+				  const char *name, struct device *device,
-+				  void *buf, size_t size, size_t offset)
-+{
-+	int ret;
-+
-+	if (fw_cache_is_setup(device, name))
-+		return -EOPNOTSUPP;
-+
-+	__module_get(THIS_MODULE);
-+	ret = _request_firmware(firmware_p, name, device, buf, size, offset,
-+				FW_OPT_UEVENT | FW_OPT_NOCACHE |
-+				FW_OPT_PARTIAL);
-+	module_put(THIS_MODULE);
-+	return ret;
-+}
-+EXPORT_SYMBOL(request_partial_firmware_into_buf);
-+
- /**
-  * release_firmware() - release the resource associated with a firmware image
-  * @fw: firmware resource to release
-@@ -1004,7 +1073,7 @@ static void request_firmware_work_func(struct work_struct *work)
- 
- 	fw_work = container_of(work, struct firmware_work, work);
- 
--	_request_firmware(&fw, fw_work->name, fw_work->device, NULL, 0,
-+	_request_firmware(&fw, fw_work->name, fw_work->device, NULL, 0, 0,
- 			  fw_work->opt_flags);
- 	fw_work->cont(fw, fw_work->context);
- 	put_device(fw_work->device); /* taken in request_firmware_nowait() */
-diff --git a/include/linux/firmware.h b/include/linux/firmware.h
-index cb3e2c06ed8a..c15acadc6cf4 100644
---- a/include/linux/firmware.h
-+++ b/include/linux/firmware.h
-@@ -53,6 +53,9 @@ int request_firmware_direct(const struct firmware **fw, const char *name,
- 			    struct device *device);
- int request_firmware_into_buf(const struct firmware **firmware_p,
- 	const char *name, struct device *device, void *buf, size_t size);
-+int request_partial_firmware_into_buf(const struct firmware **firmware_p,
-+				      const char *name, struct device *device,
-+				      void *buf, size_t size, size_t offset);
- 
- void release_firmware(const struct firmware *fw);
- #else
-@@ -102,6 +105,15 @@ static inline int request_firmware_into_buf(const struct firmware **firmware_p,
- 	return -EINVAL;
- }
- 
-+static inline int request_partial_firmware_into_buf
-+					(const struct firmware **firmware_p,
-+					 const char *name,
-+					 struct device *device,
-+					 void *buf, size_t size, size_t offset)
-+{
-+	return -EINVAL;
-+}
-+
+-	ret = kernel_read_file_from_fd(kernel_fd, &image->kernel_buf,
++	ret = kernel_read_file_from_fd(kernel_fd, 0, &image->kernel_buf,
+ 				       INT_MAX, NULL, READING_KEXEC_IMAGE);
+ 	if (ret < 0)
+ 		return ret;
+@@ -241,7 +241,7 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
  #endif
+ 	/* It is possible that there no initramfs is being loaded */
+ 	if (!(flags & KEXEC_FILE_NO_INITRAMFS)) {
+-		ret = kernel_read_file_from_fd(initrd_fd, &image->initrd_buf,
++		ret = kernel_read_file_from_fd(initrd_fd, 0, &image->initrd_buf,
+ 					       INT_MAX, NULL,
+ 					       READING_KEXEC_INITRAMFS);
+ 		if (ret < 0)
+diff --git a/kernel/module.c b/kernel/module.c
+index 90a4788dff9d..d353d1f67681 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -4007,7 +4007,7 @@ SYSCALL_DEFINE3(finit_module, int, fd, const char __user *, uargs, int, flags)
+ 		      |MODULE_INIT_IGNORE_VERMAGIC))
+ 		return -EINVAL;
  
- int firmware_request_cache(struct device *device, const char *name);
+-	err = kernel_read_file_from_fd(fd, &hdr, INT_MAX, NULL,
++	err = kernel_read_file_from_fd(fd, 0, &hdr, INT_MAX, NULL,
+ 				       READING_MODULE);
+ 	if (err < 0)
+ 		return err;
+diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
+index 8a523dfd7fd7..0f518dcfde05 100644
+--- a/security/integrity/digsig.c
++++ b/security/integrity/digsig.c
+@@ -175,7 +175,7 @@ int __init integrity_load_x509(const unsigned int id, const char *path)
+ 	int rc;
+ 	key_perm_t perm;
+ 
+-	rc = kernel_read_file_from_path(path, &data, INT_MAX, NULL,
++	rc = kernel_read_file_from_path(path, 0, &data, INT_MAX, NULL,
+ 					READING_X509_CERTIFICATE);
+ 	if (rc < 0) {
+ 		pr_err("Unable to open file: %s (%d)", path, rc);
+diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
+index 5fc56ccb6678..ea8ff8a07b36 100644
+--- a/security/integrity/ima/ima_fs.c
++++ b/security/integrity/ima/ima_fs.c
+@@ -284,7 +284,8 @@ static ssize_t ima_read_policy(char *path)
+ 	datap = path;
+ 	strsep(&datap, "\n");
+ 
+-	rc = kernel_read_file_from_path(path, &data, INT_MAX, NULL, READING_POLICY);
++	rc = kernel_read_file_from_path(path, 0, &data, INT_MAX, NULL,
++					READING_POLICY);
+ 	if (rc < 0) {
+ 		pr_err("Unable to open file: %s (%d)", path, rc);
+ 		return rc;
 -- 
 2.25.1
 
