@@ -5,56 +5,55 @@ X-Spam-Level:
 X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BF68C43466
-	for <linux-security-module@archiver.kernel.org>; Fri, 24 Jul 2020 21:38:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7A53C2D0AB
+	for <linux-security-module@archiver.kernel.org>; Fri, 24 Jul 2020 21:38:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 160E4206EB
-	for <linux-security-module@archiver.kernel.org>; Fri, 24 Jul 2020 21:38:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB4FF206EB
+	for <linux-security-module@archiver.kernel.org>; Fri, 24 Jul 2020 21:38:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YiScMk/X"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fKCBbMIZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726963AbgGXVif (ORCPT
+        id S1726747AbgGXVih (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 24 Jul 2020 17:38:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57766 "EHLO
+        Fri, 24 Jul 2020 17:38:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57756 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726861AbgGXVgr (ORCPT
+        with ESMTP id S1726730AbgGXVgq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 24 Jul 2020 17:36:47 -0400
-Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 512FDC0619E4
-        for <linux-security-module@vger.kernel.org>; Fri, 24 Jul 2020 14:36:47 -0700 (PDT)
-Received: by mail-pl1-x641.google.com with SMTP id 72so5305006ple.0
-        for <linux-security-module@vger.kernel.org>; Fri, 24 Jul 2020 14:36:47 -0700 (PDT)
+        Fri, 24 Jul 2020 17:36:46 -0400
+Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E488C0619D3
+        for <linux-security-module@vger.kernel.org>; Fri, 24 Jul 2020 14:36:46 -0700 (PDT)
+Received: by mail-pl1-x644.google.com with SMTP id 72so5304984ple.0
+        for <linux-security-module@vger.kernel.org>; Fri, 24 Jul 2020 14:36:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=JyyC+ze79w5yy/5GZgduMt6jr2+u0ZDeBjstvpXzNxo=;
-        b=YiScMk/XWtUXVqYh5p1sBcHBoq+HKiwfKwQokdA4qc2uFvlvr8ibk4w/rEjwOvKZVY
-         Ef7qg3WQ69UMP03as9mRkf095U8s4WtfJWI565xJLRkXVYze/57p62D37j5EtVpML7qy
-         T0EL2Si3ru8lyGWzqcWFBA8owK3JVx8pMLKUY=
+        bh=YLy0ZgqcjQnksBvi3DviLt6cbR749pq+3Sg+gKabpfk=;
+        b=fKCBbMIZ3wdYF10uVKEMHpjA/Pyc5cd2gK6PF4DES9Hf/TmROG98SwIzq1cz3ecKbE
+         4V95zYjMGsp3xFoSuaYl9TLiiKDAAoOMUx0gTdDeVtwLSn8fJo9z9X12CyOAVZQ+m6xX
+         /jodBAjN9zbIl5vwaKZj5rSbmxaQztk2wdscQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=JyyC+ze79w5yy/5GZgduMt6jr2+u0ZDeBjstvpXzNxo=;
-        b=IOXbXAbw84AJAbnId91eD8zY0V1i8YzoPYNogzwgwnu1q5Epeuw3nkYpZmz18w1+XK
-         NQD5HylH1p7OugAwR/1MoMBsT8ex7EGCXXdMAFrTJDoNANbvwIESHX9NcEH3DO36Og6r
-         W/LCzaqLsCsVa3BdxycFYgProgdKwDzJhxYKscZZbgrl/auqJSGj+XchV5uz9CnXVpnK
-         XqcU0AoZUtyffiZu9xZpQKqZtUCUlEBjSH/XNb5wdb9TaKz/QDcRLXIUdyakq/v3bsbc
-         2y0zxgo9dtxOb9BhFMo9jb1a63QconssxzVLiVsb75NIOiNeqk9hXnizbvBnMuQ0rY9V
-         uz9g==
-X-Gm-Message-State: AOAM532o7Ku377MutZ9HzQLXEORTnKoIUzt6OW9ZjnhfWcYbgrYwm4Zq
-        33lt86hsck6wucO5Uo45GASL8g==
-X-Google-Smtp-Source: ABdhPJyxsu62BcSNwCFWCj25rWr4izXVmF12tIRkYF1HLqnOMvTdzTKIxsfpP8hZUY20o+rsIAcniA==
-X-Received: by 2002:a17:90b:1b11:: with SMTP id nu17mr7081861pjb.182.1595626606832;
-        Fri, 24 Jul 2020 14:36:46 -0700 (PDT)
+        bh=YLy0ZgqcjQnksBvi3DviLt6cbR749pq+3Sg+gKabpfk=;
+        b=RGEqiLpcP5EZOJABrHGk7h3+PtBQ4ox+BNbxznGfJPDpFqCU+zwO15N+JMOPuUZfOB
+         lLhzS4umBl3rFmtcEkVNPmj3Yoy1Je3fyDxdcTMgLUIH/RhELzUugt4dG1SIC9cvgLZJ
+         vg9788fPUzG9LZB+Ypu0TcTGMITWCjoLhffhJu3+AaZa3WJH+bSey1AP2Cz8Z738cOI4
+         YTiGh+LCGiMiYf96fZyyXF1dNX9eZHHIW34l0O8jkttE0MRd14h5XpBBcF83DpxoXIBX
+         hzmgYBYC1myOLAVfbAIvjjA2eDNkj4wXTbsU6Mgku3mw5z2sIWpFrinC2qh9eIrZlLbd
+         Pv5Q==
+X-Gm-Message-State: AOAM53343aLWDy4dJX8WGne8H5y2b/xr1NpK/QJ/0LfyfmwnhCb5piVA
+        QxzsFizidTSROBk9W3KG/ihPaw==
+X-Google-Smtp-Source: ABdhPJzEgcuNxLo7+nIkeLiK3TbI31y3cje0lQLd0ywUWaYIzS1iN/WrgbXv7zFopX1hiOOQmatiMw==
+X-Received: by 2002:a17:902:446:: with SMTP id 64mr9977003ple.157.1595626605892;
+        Fri, 24 Jul 2020 14:36:45 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id s14sm7180427pjl.14.2020.07.24.14.36.43
+        by smtp.gmail.com with ESMTPSA id o17sm6398650pjq.6.2020.07.24.14.36.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Fri, 24 Jul 2020 14:36:43 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
@@ -68,9 +67,9 @@ Cc:     Kees Cook <keescook@chromium.org>, stable@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
         linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 01/19] test_firmware: Test platform fw loading on non-EFI systems
-Date:   Fri, 24 Jul 2020 14:36:22 -0700
-Message-Id: <20200724213640.389191-2-keescook@chromium.org>
+Subject: [PATCH v3 04/19] fs/kernel_read_file: Remove FIRMWARE_PREALLOC_BUFFER enum
+Date:   Fri, 24 Jul 2020 14:36:25 -0700
+Message-Id: <20200724213640.389191-5-keescook@chromium.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200724213640.389191-1-keescook@chromium.org>
 References: <20200724213640.389191-1-keescook@chromium.org>
@@ -80,157 +79,171 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On non-EFI systems, it wasn't possible to test the platform firmware
-loader because it will have never set "checked_fw" during __init.
-Instead, allow the test code to override this check. Additionally split
-the declarations into a private header file so it there is greater
-enforcement of the symbol visibility.
+FIRMWARE_PREALLOC_BUFFER is a "how", not a "what", and confuses the LSMs
+that are interested in filtering between types of things. The "how"
+should be an internal detail made uninteresting to the LSMs.
 
-Fixes: 548193cba2a7 ("test_firmware: add support for firmware_request_platform")
+Fixes: a098ecd2fa7d ("firmware: support loading into a pre-allocated buffer")
+Fixes: fd90bc559bfb ("ima: based on policy verify firmware signatures (pre-allocated buffer)")
+Fixes: 4f0496d8ffa3 ("ima: based on policy warn about loading firmware (pre-allocated buffer)")
 Cc: stable@vger.kernel.org
 Acked-by: Scott Branden <scott.branden@broadcom.com>
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- drivers/firmware/efi/embedded-firmware.c | 21 ++++++++++++++++-----
- drivers/firmware/efi/embedded-firmware.h | 19 +++++++++++++++++++
- include/linux/efi_embedded_fw.h          | 13 -------------
- lib/test_firmware.c                      |  5 +++++
- 4 files changed, 40 insertions(+), 18 deletions(-)
- create mode 100644 drivers/firmware/efi/embedded-firmware.h
+To aid in backporting, this change is made before moving
+kernel_read_file() to separate header/source files.
+---
+ drivers/base/firmware_loader/main.c | 5 ++---
+ fs/exec.c                           | 7 ++++---
+ include/linux/fs.h                  | 2 +-
+ kernel/module.c                     | 2 +-
+ security/integrity/digsig.c         | 2 +-
+ security/integrity/ima/ima_fs.c     | 2 +-
+ security/integrity/ima/ima_main.c   | 6 ++----
+ 7 files changed, 12 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/firmware/efi/embedded-firmware.c b/drivers/firmware/efi/embedded-firmware.c
-index a1b199de9006..0fb03cd0a5a2 100644
---- a/drivers/firmware/efi/embedded-firmware.c
-+++ b/drivers/firmware/efi/embedded-firmware.c
-@@ -14,11 +14,22 @@
- #include <linux/vmalloc.h>
- #include <crypto/sha.h>
+diff --git a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
+index ca871b13524e..c2f57cedcd6f 100644
+--- a/drivers/base/firmware_loader/main.c
++++ b/drivers/base/firmware_loader/main.c
+@@ -465,14 +465,12 @@ fw_get_filesystem_firmware(struct device *device, struct fw_priv *fw_priv,
+ 	int i, len;
+ 	int rc = -ENOENT;
+ 	char *path;
+-	enum kernel_read_file_id id = READING_FIRMWARE;
+ 	size_t msize = INT_MAX;
+ 	void *buffer = NULL;
  
-+#include "embedded-firmware.h"
-+
-+#ifdef CONFIG_TEST_FIRMWARE
-+# define EFI_EMBEDDED_FW_VISIBILITY
-+#else
-+# define EFI_EMBEDDED_FW_VISIBILITY static
-+#endif
-+
-+EFI_EMBEDDED_FW_VISIBILITY LIST_HEAD(efi_embedded_fw_list);
-+EFI_EMBEDDED_FW_VISIBILITY bool efi_embedded_fw_checked;
-+
- /* Exported for use by lib/test_firmware.c only */
--LIST_HEAD(efi_embedded_fw_list);
-+#ifdef CONFIG_TEST_FIRMWARE
- EXPORT_SYMBOL_GPL(efi_embedded_fw_list);
--
--static bool checked_for_fw;
-+EXPORT_SYMBOL_GPL(efi_embedded_fw_checked);
-+#endif
- 
- static const struct dmi_system_id * const embedded_fw_table[] = {
- #ifdef CONFIG_TOUCHSCREEN_DMI
-@@ -119,14 +130,14 @@ void __init efi_check_for_embedded_firmwares(void)
- 		}
+ 	/* Already populated data member means we're loading into a buffer */
+ 	if (!decompress && fw_priv->data) {
+ 		buffer = fw_priv->data;
+-		id = READING_FIRMWARE_PREALLOC_BUFFER;
+ 		msize = fw_priv->allocated_size;
  	}
  
--	checked_for_fw = true;
-+	efi_embedded_fw_checked = true;
+@@ -496,7 +494,8 @@ fw_get_filesystem_firmware(struct device *device, struct fw_priv *fw_priv,
+ 
+ 		/* load firmware files from the mount namespace of init */
+ 		rc = kernel_read_file_from_path_initns(path, &buffer,
+-						       &size, msize, id);
++						       &size, msize,
++						       READING_FIRMWARE);
+ 		if (rc) {
+ 			if (rc != -ENOENT)
+ 				dev_warn(device, "loading %s failed with error %d\n",
+diff --git a/fs/exec.c b/fs/exec.c
+index e6e8a9a70327..2bf549757ce7 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -927,6 +927,7 @@ int kernel_read_file(struct file *file, void **buf, loff_t *size,
+ {
+ 	loff_t i_size, pos;
+ 	ssize_t bytes = 0;
++	void *allocated = NULL;
+ 	int ret;
+ 
+ 	if (!S_ISREG(file_inode(file)->i_mode) || max_size < 0)
+@@ -950,8 +951,8 @@ int kernel_read_file(struct file *file, void **buf, loff_t *size,
+ 		goto out;
+ 	}
+ 
+-	if (id != READING_FIRMWARE_PREALLOC_BUFFER)
+-		*buf = vmalloc(i_size);
++	if (!*buf)
++		*buf = allocated = vmalloc(i_size);
+ 	if (!*buf) {
+ 		ret = -ENOMEM;
+ 		goto out;
+@@ -980,7 +981,7 @@ int kernel_read_file(struct file *file, void **buf, loff_t *size,
+ 
+ out_free:
+ 	if (ret < 0) {
+-		if (id != READING_FIRMWARE_PREALLOC_BUFFER) {
++		if (allocated) {
+ 			vfree(*buf);
+ 			*buf = NULL;
+ 		}
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 3f881a892ea7..95fc775ed937 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2993,10 +2993,10 @@ static inline void i_readcount_inc(struct inode *inode)
+ #endif
+ extern int do_pipe_flags(int *, int);
+ 
++/* This is a list of *what* is being read, not *how*. */
+ #define __kernel_read_file_id(id) \
+ 	id(UNKNOWN, unknown)		\
+ 	id(FIRMWARE, firmware)		\
+-	id(FIRMWARE_PREALLOC_BUFFER, firmware)	\
+ 	id(FIRMWARE_EFI_EMBEDDED, firmware)	\
+ 	id(MODULE, kernel-module)		\
+ 	id(KEXEC_IMAGE, kexec-image)		\
+diff --git a/kernel/module.c b/kernel/module.c
+index 0c6573b98c36..26105148f4d2 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -3988,7 +3988,7 @@ SYSCALL_DEFINE3(finit_module, int, fd, const char __user *, uargs, int, flags)
+ {
+ 	struct load_info info = { };
+ 	loff_t size;
+-	void *hdr;
++	void *hdr = NULL;
+ 	int err;
+ 
+ 	err = may_init_module();
+diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
+index e9cbadade74b..ac02b7632353 100644
+--- a/security/integrity/digsig.c
++++ b/security/integrity/digsig.c
+@@ -169,7 +169,7 @@ int __init integrity_add_key(const unsigned int id, const void *data,
+ 
+ int __init integrity_load_x509(const unsigned int id, const char *path)
+ {
+-	void *data;
++	void *data = NULL;
+ 	loff_t size;
+ 	int rc;
+ 	key_perm_t perm;
+diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
+index e3fcad871861..15a44c5022f7 100644
+--- a/security/integrity/ima/ima_fs.c
++++ b/security/integrity/ima/ima_fs.c
+@@ -272,7 +272,7 @@ static const struct file_operations ima_ascii_measurements_ops = {
+ 
+ static ssize_t ima_read_policy(char *path)
+ {
+-	void *data;
++	void *data = NULL;
+ 	char *datap;
+ 	loff_t size;
+ 	int rc, pathlen = strlen(path);
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index c1583d98c5e5..f80ee4ce4669 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -611,19 +611,17 @@ void ima_post_path_mknod(struct dentry *dentry)
+ int ima_read_file(struct file *file, enum kernel_read_file_id read_id)
+ {
+ 	/*
+-	 * READING_FIRMWARE_PREALLOC_BUFFER
+-	 *
+ 	 * Do devices using pre-allocated memory run the risk of the
+ 	 * firmware being accessible to the device prior to the completion
+ 	 * of IMA's signature verification any more than when using two
+-	 * buffers?
++	 * buffers? It may be desirable to include the buffer address
++	 * in this API and walk all the dma_map_single() mappings to check.
+ 	 */
+ 	return 0;
  }
  
- int efi_get_embedded_fw(const char *name, const u8 **data, size_t *size)
- {
- 	struct efi_embedded_fw *iter, *fw = NULL;
- 
--	if (!checked_for_fw) {
-+	if (!efi_embedded_fw_checked) {
- 		pr_warn("Warning %s called while we did not check for embedded fw\n",
- 			__func__);
- 		return -ENOENT;
-diff --git a/drivers/firmware/efi/embedded-firmware.h b/drivers/firmware/efi/embedded-firmware.h
-new file mode 100644
-index 000000000000..34113316d068
---- /dev/null
-+++ b/drivers/firmware/efi/embedded-firmware.h
-@@ -0,0 +1,19 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _EFI_EMBEDDED_FW_INTERNAL_H_
-+#define _EFI_EMBEDDED_FW_INTERNAL_H_
-+
-+/*
-+ * This struct and efi_embedded_fw_list are private to the efi-embedded fw
-+ * implementation they only in separate header for use by lib/test_firmware.c.
-+ */
-+struct efi_embedded_fw {
-+	struct list_head list;
-+	const char *name;
-+	const u8 *data;
-+	size_t length;
-+};
-+
-+extern struct list_head efi_embedded_fw_list;
-+extern bool efi_embedded_fw_checked;
-+
-+#endif /* _EFI_EMBEDDED_FW_INTERNAL_H_ */
-diff --git a/include/linux/efi_embedded_fw.h b/include/linux/efi_embedded_fw.h
-index 57eac5241303..4ad5db9f5312 100644
---- a/include/linux/efi_embedded_fw.h
-+++ b/include/linux/efi_embedded_fw.h
-@@ -7,19 +7,6 @@
- 
- #define EFI_EMBEDDED_FW_PREFIX_LEN		8
- 
--/*
-- * This struct and efi_embedded_fw_list are private to the efi-embedded fw
-- * implementation they are in this header for use by lib/test_firmware.c only!
-- */
--struct efi_embedded_fw {
--	struct list_head list;
--	const char *name;
--	const u8 *data;
--	size_t length;
--};
--
--extern struct list_head efi_embedded_fw_list;
--
- /**
-  * struct efi_embedded_fw_desc - This struct is used by the EFI embedded-fw
-  *                               code to search for embedded firmwares.
-diff --git a/lib/test_firmware.c b/lib/test_firmware.c
-index 9fee2b93a8d1..62af792e151c 100644
---- a/lib/test_firmware.c
-+++ b/lib/test_firmware.c
-@@ -489,6 +489,7 @@ static ssize_t trigger_request_store(struct device *dev,
- static DEVICE_ATTR_WO(trigger_request);
- 
- #ifdef CONFIG_EFI_EMBEDDED_FIRMWARE
-+#include "../drivers/firmware/efi/embedded-firmware.h"
- static ssize_t trigger_request_platform_store(struct device *dev,
- 					      struct device_attribute *attr,
- 					      const char *buf, size_t count)
-@@ -501,6 +502,7 @@ static ssize_t trigger_request_platform_store(struct device *dev,
- 	};
- 	struct efi_embedded_fw efi_embedded_fw;
- 	const struct firmware *firmware = NULL;
-+	bool saved_efi_embedded_fw_checked;
- 	char *name;
- 	int rc;
- 
-@@ -513,6 +515,8 @@ static ssize_t trigger_request_platform_store(struct device *dev,
- 	efi_embedded_fw.data = (void *)test_data;
- 	efi_embedded_fw.length = sizeof(test_data);
- 	list_add(&efi_embedded_fw.list, &efi_embedded_fw_list);
-+	saved_efi_embedded_fw_checked = efi_embedded_fw_checked;
-+	efi_embedded_fw_checked = true;
- 
- 	pr_info("loading '%s'\n", name);
- 	rc = firmware_request_platform(&firmware, name, dev);
-@@ -530,6 +534,7 @@ static ssize_t trigger_request_platform_store(struct device *dev,
- 	rc = count;
- 
- out:
-+	efi_embedded_fw_checked = saved_efi_embedded_fw_checked;
- 	release_firmware(firmware);
- 	list_del(&efi_embedded_fw.list);
- 	kfree(name);
+ const int read_idmap[READING_MAX_ID] = {
+ 	[READING_FIRMWARE] = FIRMWARE_CHECK,
+-	[READING_FIRMWARE_PREALLOC_BUFFER] = FIRMWARE_CHECK,
+ 	[READING_MODULE] = MODULE_CHECK,
+ 	[READING_KEXEC_IMAGE] = KEXEC_KERNEL_CHECK,
+ 	[READING_KEXEC_INITRAMFS] = KEXEC_INITRAMFS_CHECK,
 -- 
 2.25.1
 
