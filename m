@@ -1,166 +1,269 @@
-Return-Path: <SRS0=LdBn=BC=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=RoHj=BD=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AC3AC433FB
-	for <linux-security-module@archiver.kernel.org>; Thu, 23 Jul 2020 17:13:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 257BCC433E8
+	for <linux-security-module@archiver.kernel.org>; Fri, 24 Jul 2020 01:08:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 34AC722BF3
-	for <linux-security-module@archiver.kernel.org>; Thu, 23 Jul 2020 17:13:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0B2D20714
+	for <linux-security-module@archiver.kernel.org>; Fri, 24 Jul 2020 01:08:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="LC7733Ti"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730220AbgGWRNX (ORCPT
+        id S1726010AbgGXBIU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 23 Jul 2020 13:13:23 -0400
-Received: from smtp-8fa8.mail.infomaniak.ch ([83.166.143.168]:44775 "EHLO
-        smtp-8fa8.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730191AbgGWRMl (ORCPT
+        Thu, 23 Jul 2020 21:08:20 -0400
+Received: from sonic315-27.consmr.mail.ne1.yahoo.com ([66.163.190.153]:39788
+        "EHLO sonic315-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726500AbgGXBIT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 23 Jul 2020 13:12:41 -0400
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4BCJml0M4MzlhPrN;
-        Thu, 23 Jul 2020 19:12:39 +0200 (CEST)
-Received: from localhost (unknown [94.23.54.103])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4BCJmk3F22zlh8T4;
-        Thu, 23 Jul 2020 19:12:38 +0200 (CEST)
-From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To:     linux-kernel@vger.kernel.org
-Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Christian Heimes <christian@python.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Eric Chiang <ericchiang@google.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Thu, 23 Jul 2020 21:08:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1595552897; bh=BGhBnVZ36lfgPQJOoPMAOW/Fd8fTrp3EpyJrBAb9q60=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=LC7733TiBAPB9Qy64+BmIDWmaWHmdirYSNr0RYUKVJbyeSAKs0Acim1Jjn7BdTXva1GQTs1edaalspXRTWkw0UP0zbUM/nTSzhTzptff5NHT8s7iWpW0elvQRhx6sdcF+Zf09HyByPPmcYph/04pi7lKhES+PIx14XZ+iWWQWVnzvfCp3287bCbpbpAA8/hig62kOkccZzJvkzzl61oLc+lRC3dy23dJ68lbA9Imnc6/omx4WzDfNnmEzc0AJ7ZQ+6b9dSTnzUxlKtz2v6enKLEfXT7w+w+2hTSqsyHs1K9ZHzDS4XOsQ5Q8oclq1xeVy8rV9IMx/Iem3/a1R5HB+Q==
+X-YMail-OSG: HsC6jAEVM1kNM5nyMormSWr8__RJYfS81LnmL8QtT78WmABm_bUwlLrBOL5pt33
+ Mu7qD3QBGQadP6jcveLCPmDuGpWikzgBrORf7HMhu_ot.fNZy9UgOCqUCWKO2FXHrSe8XWsHQjPg
+ Ther4eMWoEEmtTRzh7pi9O.VIg3o31LOTFxC5QPb9KEndL6I296jx5GEah8jCoEJfdls3h4ICgek
+ SMu3_DUyhDVisvqvglecbB7xbtZYwgEwbmkfiCViHfn7Wbu48JY63gmyQKqnFBnwnCAmZ_C7shgV
+ 9Iq_vA1Lpa9QQ3NHBHgYU8QuUTiHS6YzhtDWFGiuYDojTl0TtP5.gm6ofK.bidjmiJkiTvIcYtGS
+ HOKP8cGLfvzs.kvHU4xPGkAxGeyEsHh37PfykhFHQQAP5izyJe_x97ciXmv2Q_aDkldZvkOsJqp1
+ GjrujN8qZaRm5vVlEAFuE9SvhwjWPJvnHZsBWomPv4eFUMbRloIsTk6cdfrhCPfEEYSVUQ9kN4Fh
+ prxbX1tjAiFyh3euN0TpWSiGH6KhhtVWxOu2vQQSPa2LbpV8NmMNRSroJ__USkjbH2SUpamjW5Ma
+ prS5jlRTZ1W1oAyTey90DeTxgxKt7rxA.9aSDr0YlefvvHxsKtNqF4w8eIA_p6S22xGxW5C_I9cI
+ 4wfhZcT72kuN1xOORTeIQeLhjlQVIc8DPncnx51YJtmJ9Lg_mQfkWHkSR.J2zbMaD46x2MLUmlBw
+ gsg18z1DeK6gAuOjGe1blxJ_kezucNd5_GKVxeWtNfyD8kLwyqaq_QR5JPVlv4IqfLJ4RQo2tDys
+ o6ukhmX_tI7aXVJpdNB1Xq_nls3pLPArHdOTX6ef_pAeRl_S4XbOph8iuUeyBq_f6dOZSISiKZfc
+ AbFuhcZMTSZ4f3T3k3sfXf94OSsVQ3peIW9OC4yaj6wqynpdpfA7B9PpNKzADekEI0D0zCG.Ij60
+ dStZ43B_3xKphGHJnfs_dFNVxZkZRMmhgczWOz_f8ZhkQKRXbqI9Fv8fLbU2tQKCr.1z5ztw7bbs
+ miOztMkuUU4YPOGvxl2JgqqrSg9EDfQAaK9Rpc363I3.GS4Vc2KjpAjPCg.qSQIigmLoksPI59Qa
+ 6LxpSOQi6JY9WHwW0C2DArqRf8.Tl3wjZCUAorgeXPR3u5KjpB_J7yi55_if1kTIbyc91U9eFyUT
+ WsTvrn45tOfcbd2v90jySboLLbfGhawq6HvWtTI9_k7saUs071K7kUqt5gh.ISakf2UzNSviirAq
+ gjCLL90S356FvX17MtASeYALD4fjW0Th9R1fXf.b4jrQVXKPoKT8okDk6YdVbqNumdAWFIYA5QYZ
+ zbYgwh8P_PHzePYfEx9vdJ6CgFHQm1i8i5SQUFIdDToHuupUwq2yXu6vC83Kcrsw.g8z7reY664r
+ bWkHV4X8Vg4f6mQOA
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.ne1.yahoo.com with HTTP; Fri, 24 Jul 2020 01:08:17 +0000
+Received: by smtp430.mail.gq1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID f8dad607261856b6c438236bb129fb35;
+          Fri, 24 Jul 2020 01:08:14 +0000 (UTC)
+Subject: Re: [PATCH v18 22/23] LSM: Add /proc attr entry for full LSM context
+To:     Jann Horn <jannh@google.com>
+Cc:     Casey Schaufler <casey.schaufler@intel.com>,
+        James Morris <jmorris@namei.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        SElinux list <selinux@vger.kernel.org>,
         Kees Cook <keescook@chromium.org>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        =?UTF-8?q?Philippe=20Tr=C3=A9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Thibaut Sautereau <thibaut.sautereau@clip-os.org>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH v7 3/7] exec: Move path_noexec() check earlier
-Date:   Thu, 23 Jul 2020 19:12:23 +0200
-Message-Id: <20200723171227.446711-4-mic@digikod.net>
-X-Mailer: git-send-email 2.28.0.rc1
-In-Reply-To: <20200723171227.446711-1-mic@digikod.net>
-References: <20200723171227.446711-1-mic@digikod.net>
+        John Johansen <john.johansen@canonical.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Linux API <linux-api@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <20200709001234.9719-1-casey@schaufler-ca.com>
+ <20200709001234.9719-23-casey@schaufler-ca.com>
+ <CAG48ez36_+0k4ubaHRq=9gVDQspUh6yXkAeMRV=cEy-oyOr-sg@mail.gmail.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <f1d8966f-1b96-49da-9bf9-b409835b8968@schaufler-ca.com>
+Date:   Thu, 23 Jul 2020 18:08:14 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
-X-Antivirus-Code: 0x100000
+In-Reply-To: <CAG48ez36_+0k4ubaHRq=9gVDQspUh6yXkAeMRV=cEy-oyOr-sg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Mailer: WebService/1.1.16271 hermes_yahoo Apache-HttpAsyncClient/4.1.4 (Java/11.0.7)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Kees Cook <keescook@chromium.org>
+On 7/8/2020 6:30 PM, Jann Horn wrote:
+> On Thu, Jul 9, 2020 at 2:42 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> Add an entry /proc/.../attr/context which displays the full
+>> process security "context" in compound format:
+>>         lsm1\0value\0lsm2\0value\0...
+>> This entry is not writable.
+>>
+>> Reviewed-by: Kees Cook <keescook@chromium.org>
+>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+>> Cc: linux-api@vger.kernel.org
+> [...]
+>> diff --git a/security/security.c b/security/security.c
+> [...]
+>> +/**
+>> + * append_ctx - append a lsm/context pair to a compound context
+>> + * @ctx: the existing compound context
+>> + * @ctxlen: size of the old context, including terminating nul byte
+>> + * @lsm: new lsm name, nul terminated
+>> + * @new: new context, possibly nul terminated
+>> + * @newlen: maximum size of @new
+>> + *
+>> + * replace @ctx with a new compound context, appending @newlsm and @new
+>> + * to @ctx. On exit the new data replaces the old, which is freed.
+>> + * @ctxlen is set to the new size, which includes a trailing nul byte.
+>> + *
+>> + * Returns 0 on success, -ENOMEM if no memory is available.
+>> + */
+>> +static int append_ctx(char **ctx, int *ctxlen, const char *lsm, char *new,
+>> +                     int newlen)
+>> +{
+>> +       char *final;
+>> +       int llen;
+> Please use size_t to represent object sizes
 
-The path_noexec() check, like the regular file check, was happening too
-late, letting LSMs see impossible execve()s. Check it earlier as well
-in may_open() and collect the redundant fs/exec.c path_noexec() test
-under the same robustness comment as the S_ISREG() check.
+OK.
 
-My notes on the call path, and related arguments, checks, etc:
+> , instead of implicitly
+> truncating them and assuming that that doesn't wrap. Using "int" here
+> not only makes it harder to statically reason about this code, it
+> actually can also make the generated code worse:
+>
+>
+> $ cat numtrunc.c
+> #include <stddef.h>
+>
+> size_t my_strlen(char *p);
+> void *my_alloc(size_t len);
+>
+> void *blah_trunc(char *p) {
+>   int len = my_strlen(p) + 1;
+>   return my_alloc(len);
+> }
+>
+> void *blah_notrunc(char *p) {
+>   size_t len = my_strlen(p) + 1;
+>   return my_alloc(len);
+> }
+> $ gcc -O2 -c -o numtrunc.o numtrunc.c
+> $ objdump -d numtrunc.o
+> [...]
+> 0000000000000000 <blah_trunc>:
+>    0: 48 83 ec 08          sub    $0x8,%rsp
+>    4: e8 00 00 00 00        callq  9 <blah_trunc+0x9>
+>    9: 48 83 c4 08          add    $0x8,%rsp
+>    d: 8d 78 01              lea    0x1(%rax),%edi
+>   10: 48 63 ff              movslq %edi,%rdi    <<<<<<<<unnecessary instruction
+>   13: e9 00 00 00 00        jmpq   18 <blah_trunc+0x18>
+> [...]
+> 0000000000000020 <blah_notrunc>:
+>   20: 48 83 ec 08          sub    $0x8,%rsp
+>   24: e8 00 00 00 00        callq  29 <blah_notrunc+0x9>
+>   29: 48 83 c4 08          add    $0x8,%rsp
+>   2d: 48 8d 78 01          lea    0x1(%rax),%rdi
+>   31: e9 00 00 00 00        jmpq   36 <blah_notrunc+0x16>
+> $
+>
+> This is because GCC documents
+> (https://gcc.gnu.org/onlinedocs/gcc/Integers-implementation.html) that
+> for integer conversions where the value does not fit into the signed
+> target type, "the value is reduced modulo 2^N to be within range of
+> the type"; so the compiler has to assume that you are actually
+> intentionally trying to truncate the more significant bits from the
+> length, and therefore may have to insert extra code to ensure that
+> this truncation happens.
+>
+>
+>> +       llen = strlen(lsm) + 1;
+>> +       newlen = strnlen(new, newlen) + 1;
+> This strnlen() call seems dodgy. If an LSM can return a string that
+> already contains null bytes, shouldn't that be considered a bug, given
+> that it can't be displayed properly? Would it be more appropriate to
+> have a WARN_ON(memchr(new, '\0', newlen)) check here and bail out if
+> that happens?
 
-do_open_execat()
-    struct open_flags open_exec_flags = {
-        .open_flag = O_LARGEFILE | O_RDONLY | __FMODE_EXEC,
-        .acc_mode = MAY_EXEC,
-        ...
-    do_filp_open(dfd, filename, open_flags)
-        path_openat(nameidata, open_flags, flags)
-            file = alloc_empty_file(open_flags, current_cred());
-            do_open(nameidata, file, open_flags)
-                may_open(path, acc_mode, open_flag)
-                    /* new location of MAY_EXEC vs path_noexec() test */
-                    inode_permission(inode, MAY_OPEN | acc_mode)
-                        security_inode_permission(inode, acc_mode)
-                vfs_open(path, file)
-                    do_dentry_open(file, path->dentry->d_inode, open)
-                        security_file_open(f)
-                        open()
-    /* old location of path_noexec() test */
+Whether or not a security module should include a trailing nul has
+been a matter of some discussion. Alas, the discussion has not reached
+conscensus. The strnlen() is here to allow modules their own convention. 
 
-Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Signed-off-by: Kees Cook <keescook@chromium.org>
-Link: https://lore.kernel.org/r/20200605160013.3954297-4-keescook@chromium.org
----
- fs/exec.c  | 12 ++++--------
- fs/namei.c |  4 ++++
- 2 files changed, 8 insertions(+), 8 deletions(-)
+>
+>> +       final = kzalloc(*ctxlen + llen + newlen, GFP_KERNEL);
+>> +       if (final == NULL)
+>> +               return -ENOMEM;
+>> +       if (*ctxlen)
+>> +               memcpy(final, *ctx, *ctxlen);
+>> +       memcpy(final + *ctxlen, lsm, llen);
+>> +       memcpy(final + *ctxlen + llen, new, newlen);
+>> +       kfree(*ctx);
+>> +       *ctx = final;
+>> +       *ctxlen = *ctxlen + llen + newlen;
+>> +       return 0;
+>> +}
+>> +
+>>  /*
+>>   * The default value of the LSM hook is defined in linux/lsm_hook_defs.h and
+>>   * can be accessed with:
+>> @@ -2109,6 +2145,10 @@ int security_getprocattr(struct task_struct *p, const char *lsm, char *name,
+>>                                 char **value)
+>>  {
+>>         struct security_hook_list *hp;
+>> +       char *final = NULL;
+>> +       char *cp;
+>> +       int rc = 0;
+>> +       int finallen = 0;
+>>         int display = lsm_task_display(current);
+>>         int slot = 0;
+>>
+> [...]
+>>                 return -ENOMEM;
+>>         }
+>>
+>> +       if (!strcmp(name, "context")) {
+>> +               hlist_for_each_entry(hp, &security_hook_heads.getprocattr,
+>> +                                    list) {
+>> +                       rc = hp->hook.getprocattr(p, "context", &cp);
+>> +                       if (rc == -EINVAL)
+>> +                               continue;
+>> +                       if (rc < 0) {
+>> +                               kfree(final);
+>> +                               return rc;
+>> +                       }
+> This means that if SELinux refuses to give the caller PROCESS__GETATTR
+> access to the target process, the entire "context" file will refuse to
+> show anything, even if e.g. an AppArmor label would be visible through
+> the LSM-specific attribute directory, right?
 
-diff --git a/fs/exec.c b/fs/exec.c
-index bdc6a6eb5dce..4eea20c27b01 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -147,10 +147,8 @@ SYSCALL_DEFINE1(uselib, const char __user *, library)
- 	 * and check again at the very end too.
- 	 */
- 	error = -EACCES;
--	if (WARN_ON_ONCE(!S_ISREG(file_inode(file)->i_mode)))
--		goto exit;
--
--	if (path_noexec(&file->f_path))
-+	if (WARN_ON_ONCE(!S_ISREG(file_inode(file)->i_mode) ||
-+			 path_noexec(&file->f_path)))
- 		goto exit;
- 
- 	fsnotify_open(file);
-@@ -897,10 +895,8 @@ static struct file *do_open_execat(int fd, struct filename *name, int flags)
- 	 * and check again at the very end too.
- 	 */
- 	err = -EACCES;
--	if (WARN_ON_ONCE(!S_ISREG(file_inode(file)->i_mode)))
--		goto exit;
--
--	if (path_noexec(&file->f_path))
-+	if (WARN_ON_ONCE(!S_ISREG(file_inode(file)->i_mode) ||
-+			 path_noexec(&file->f_path)))
- 		goto exit;
- 
- 	err = deny_write_access(file);
-diff --git a/fs/namei.c b/fs/namei.c
-index a559ad943970..ddc9b25540fe 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -2863,6 +2863,10 @@ static int may_open(const struct path *path, int acc_mode, int flag)
- 			return -EACCES;
- 		flag &= ~O_TRUNC;
- 		break;
-+	case S_IFREG:
-+		if ((acc_mode & MAY_EXEC) && path_noexec(path))
-+			return -EACCES;
-+		break;
- 	}
- 
- 	error = inode_permission(inode, MAY_OPEN | acc_mode);
--- 
-2.27.0
+That is correct.
 
+>  That seems awkward.
+
+Sure is.
+
+>  Can
+> you maybe omit context elements for which the access check failed
+> instead, or embed an extra flag byte to signal for each element
+> whether the lookup failed, or something along those lines?
+
+The SELinux team seems convinced that if their check fails, the
+whole thing must fail. 
+
+> If this is an intentional design limitation, it should probably be
+> documented in the commit message or so.
+
+Point.
+
+>
+>> +                       rc = append_ctx(&final, &finallen, hp->lsmid->lsm,
+>> +                                       cp, rc);
+>> +                       if (rc < 0) {
+>> +                               kfree(final);
+>> +                               return rc;
+>> +                       }
+> Isn't there a memory leak here?
+
+Why yes, there is.
+
+>  `cp` points to memory that was
+> allocated by hp->hook.getprocattr(), and you're not freeing it after
+> append_ctx(). (And append_ctx() also doesn't free it.)
+>
+>> +               }
+>> +               if (final == NULL)
+>> +                       return -EINVAL;
+>> +               *value = final;
+>> +               return finallen;
+>> +       }
+>> +
+>>         hlist_for_each_entry(hp, &security_hook_heads.getprocattr, list) {
+>>                 if (lsm != NULL && strcmp(lsm, hp->lsmid->lsm))
+>>                         continue;
