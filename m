@@ -7,52 +7,78 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86E8FC433E4
-	for <linux-security-module@archiver.kernel.org>; Fri, 24 Jul 2020 19:59:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07BAAC433E5
+	for <linux-security-module@archiver.kernel.org>; Fri, 24 Jul 2020 20:26:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5CC6C206F0
-	for <linux-security-module@archiver.kernel.org>; Fri, 24 Jul 2020 19:59:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SW92s/n0"
+	by mail.kernel.org (Postfix) with ESMTP id D716B2070B
+	for <linux-security-module@archiver.kernel.org>; Fri, 24 Jul 2020 20:26:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1595622371;
+	bh=MGH5EUfFft7693c26Z+gHhy71zVD137Eni3+iyD7VXM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=JVlKIZ08SfkxSBrrpJhBiKXN5k5aGlPOpIgOubP6FFBwvzrYzhQUU0PCV/7s0M7ng
+	 /dyb4/c3r7p6AO0AFUY2ZEBuuTopf8BgFVq7xPzZ/XvLtlwAffUsqE8MDC1nuzPLP0
+	 YP1B6St2IV02g5Jn1rlGxiPMoEu77Sr7EQTjDEFE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726676AbgGXT74 (ORCPT
+        id S1726731AbgGXU0L (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 24 Jul 2020 15:59:56 -0400
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:27637 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726652AbgGXT7z (ORCPT
+        Fri, 24 Jul 2020 16:26:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46746 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726455AbgGXU0L (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 24 Jul 2020 15:59:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1595620794;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=5Y8DAU+5pPrSS4jiBjfZlFxrk4Ru03nSwBoI5HcfmaE=;
-        b=SW92s/n04ZFXZGKc7YHSxEMQT/21vjCt5/CF+3nNHWEWGCWpSlvHuXmbnKliRpsIf8sN4O
-        z2hHA0vkzmaeeJdLCCQWr81cbAwHSzKIFAJwx2ACnvPUSmqSHAs3rWv3DnLcUeuVln2mTv
-        iHUfc24hcZLpRcHpnvvtFvll5jJ5TeY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-192-vs8mvubXOWuU2pZDAJAw5A-1; Fri, 24 Jul 2020 15:59:51 -0400
-X-MC-Unique: vs8mvubXOWuU2pZDAJAw5A-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D9D88800688;
-        Fri, 24 Jul 2020 19:59:48 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-112-32.rdu2.redhat.com [10.10.112.32])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 37E9F76210;
-        Fri, 24 Jul 2020 19:59:46 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAHk-=wjnQArU_BewVKQgYHy2mQD6LNKC5kkKXOm7GpNkJCapQg@mail.gmail.com>
-References: <CAHk-=wjnQArU_BewVKQgYHy2mQD6LNKC5kkKXOm7GpNkJCapQg@mail.gmail.com> <159559628247.2141315.2107013106060144287.stgit@warthog.procyon.org.uk> <159559630912.2141315.16186899692832741137.stgit@warthog.procyon.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     dhowells@redhat.com, Al Viro <viro@zeniv.linux.org.uk>,
+        Fri, 24 Jul 2020 16:26:11 -0400
+Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8ECEFC0619D3
+        for <linux-security-module@vger.kernel.org>; Fri, 24 Jul 2020 13:26:10 -0700 (PDT)
+Received: by mail-lj1-x243.google.com with SMTP id h22so11235135lji.9
+        for <linux-security-module@vger.kernel.org>; Fri, 24 Jul 2020 13:26:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xkXygjf+m2gKsI4Lztqfnb3auT7BfwLJDotOPSg45zA=;
+        b=KtKcrijfok2OM2Bs9fSARpIOCqZAORRhOEAWEspyefuuQiv0/hudjwYFxvdZYP8RIE
+         x/etcayReiFZfOvZz4a+h99awZFUCnk+gEVf5LIz5qer03CSy6o0FgWPmB4n2oXPdXJB
+         lJgwEQlLR1A9JtB7EMnPQ4yBFe/eY6IWqSZng=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xkXygjf+m2gKsI4Lztqfnb3auT7BfwLJDotOPSg45zA=;
+        b=gFRagZuyvr0IgogVnfA1rU5XxvdTvHCEb3m135z+EUjfTAcZWwdmnBZX0JMInCxtBF
+         a+bumShisLrcXT+kkscDLfkfhaaN+4kFeFcv9I+lgSA35quR+fJZdVribqqBj/IBVhDL
+         8P0c5w8mcxgoG3LC5CaVhPX2ouToNIHzwFL6im24X+7hJ5yIdYbcm3OlMl9JU8sPgw3e
+         Nww9ApKcIKowuOpsDk88yN8gTRVmErBUF2B/lg2S5lvk/0kULqT4uch9Ijow+8R1jKG6
+         8ei5mmowufy9VVH1cEs+/s6wzreAKL7cLSQGjYHvdwWDHvNHb9qiammnQN+DvhIrW6A3
+         YwIg==
+X-Gm-Message-State: AOAM533RGHSKhGBdIeu+mTEbbDilBCi/az57QERlyu2f/iwYLrLROP+I
+        iceQQ5wv0RzWJDfJ2cxWYYlwH0q0OuI=
+X-Google-Smtp-Source: ABdhPJzanKcbyAkU8L2j0CXQORG9Qvp89OUpmFz5YHph7h5CutED1gbVlKHM5Oo6kab/raAHr7PkrQ==
+X-Received: by 2002:a2e:161a:: with SMTP id w26mr5249429ljd.369.1595622368169;
+        Fri, 24 Jul 2020 13:26:08 -0700 (PDT)
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
+        by smtp.gmail.com with ESMTPSA id w5sm474038lji.49.2020.07.24.13.26.06
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 24 Jul 2020 13:26:07 -0700 (PDT)
+Received: by mail-lj1-f174.google.com with SMTP id q4so11264522lji.2
+        for <linux-security-module@vger.kernel.org>; Fri, 24 Jul 2020 13:26:06 -0700 (PDT)
+X-Received: by 2002:a2e:9b42:: with SMTP id o2mr4879223ljj.102.1595622366366;
+ Fri, 24 Jul 2020 13:26:06 -0700 (PDT)
+MIME-Version: 1.0
+References: <159559628247.2141315.2107013106060144287.stgit@warthog.procyon.org.uk>
+ <159559630912.2141315.16186899692832741137.stgit@warthog.procyon.org.uk>
+ <CAHk-=wjnQArU_BewVKQgYHy2mQD6LNKC5kkKXOm7GpNkJCapQg@mail.gmail.com> <2189056.1595620785@warthog.procyon.org.uk>
+In-Reply-To: <2189056.1595620785@warthog.procyon.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 24 Jul 2020 13:25:50 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgWNpzCuHyyFwhR2fq49yxB9tKiH2t2y-O-8V6Gh0TFdw@mail.gmail.com>
+Message-ID: <CAHk-=wgWNpzCuHyyFwhR2fq49yxB9tKiH2t2y-O-8V6Gh0TFdw@mail.gmail.com>
+Subject: Re: [PATCH 3/4] watch_queue: Implement mount topology and attribute
+ change notifications
+To:     David Howells <dhowells@redhat.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
         Casey Schaufler <casey@schaufler-ca.com>,
         Stephen Smalley <sds@tycho.nsa.gov>,
         Nicolas Dichtel <nicolas.dichtel@6wind.com>,
@@ -64,29 +90,22 @@ Cc:     dhowells@redhat.com, Al Viro <viro@zeniv.linux.org.uk>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         LSM List <linux-security-module@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/4] watch_queue: Implement mount topology and attribute change notifications
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2189055.1595620785.1@warthog.procyon.org.uk>
-Date:   Fri, 24 Jul 2020 20:59:45 +0100
-Message-ID: <2189056.1595620785@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+On Fri, Jul 24, 2020 at 12:59 PM David Howells <dhowells@redhat.com> wrote:
+>
+> That's a good point.  Any suggestions on how to do it?  An additional RLIMIT?
+>
+> Or should I do it like I did with keyrings and separately manage a quota for
+> each user?
 
-> So now you can basically allocate as much kernel memory as you want as
-> a regular user, as long as you have a mounted directory you can walk
-> (ie everybody).
-> 
-> Is there any limiting of watches anywhere? I don't see it.
+I'd count them per user, and maybe start out saying "you can have as
+many watches as you can have files" and just re-use RLIMIT_NOFILE as
+the limit for them.
 
-That's a good point.  Any suggestions on how to do it?  An additional RLIMIT?
+And if that causes problems, let's re-visit. How does that sound?
 
-Or should I do it like I did with keyrings and separately manage a quota for
-each user?
-
-David
-
+                Linus
