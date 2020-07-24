@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EBEBC433EA
-	for <linux-security-module@archiver.kernel.org>; Fri, 24 Jul 2020 19:03:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B0FFC433E0
+	for <linux-security-module@archiver.kernel.org>; Fri, 24 Jul 2020 19:03:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2A961206D8
-	for <linux-security-module@archiver.kernel.org>; Fri, 24 Jul 2020 19:03:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C216206D8
+	for <linux-security-module@archiver.kernel.org>; Fri, 24 Jul 2020 19:03:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="HWLOLY2m"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="U21XHuTN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726562AbgGXTDX (ORCPT
+        id S1726652AbgGXTDy (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 24 Jul 2020 15:03:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33704 "EHLO
+        Fri, 24 Jul 2020 15:03:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33828 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726658AbgGXTDX (ORCPT
+        with ESMTP id S1726512AbgGXTDx (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 24 Jul 2020 15:03:23 -0400
-Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F2F9C0619E5
-        for <linux-security-module@vger.kernel.org>; Fri, 24 Jul 2020 12:03:23 -0700 (PDT)
-Received: by mail-pl1-x641.google.com with SMTP id 72so5021976ple.0
-        for <linux-security-module@vger.kernel.org>; Fri, 24 Jul 2020 12:03:23 -0700 (PDT)
+        Fri, 24 Jul 2020 15:03:53 -0400
+Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A83AC0619E6
+        for <linux-security-module@vger.kernel.org>; Fri, 24 Jul 2020 12:03:53 -0700 (PDT)
+Received: by mail-pf1-x441.google.com with SMTP id w126so5554831pfw.8
+        for <linux-security-module@vger.kernel.org>; Fri, 24 Jul 2020 12:03:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=f0lKwdFa2tE754eWyXOOIFz3gWD2EzuwPTrCttQ++tE=;
-        b=HWLOLY2m7CMUOQYAp0GqUyHeBr+slwYCrPxK4fmOYzQKeY1Sqn9NsstNWgyO0gYfZz
-         TUCLaYuoK1a5vP1C228zV0xEZgcjSBAnqzIr+6yAndPlXzf8D3bRRlqtGTaJ8eamUTu0
-         m/nF3ewNlRWYDQ/wxxQHLPQatyOp/cmIjNB+w=
+        bh=sdXgEvqGYHlymvqSceJ6jkKcKZE63vnTThrEFoJfoJI=;
+        b=U21XHuTNZcd9Xi31/xCf87Rkodq7UIatsvvV/UwKN/JzlFCu0PB6GXerCOvF6wBSK+
+         SC2WOUDhPlu1q875fotSfx1rUNIyJCPwLsBy0JiUGot5W6Q50r/BPrfciAdVtp7Uwlle
+         rtPo4Tole4s/1hOtfMBeGT54AFN8aogMq5g4g=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to;
-        bh=f0lKwdFa2tE754eWyXOOIFz3gWD2EzuwPTrCttQ++tE=;
-        b=PGvd74MmZ9yow9U+h2+JfL8VCiMKdwBenk6wPKZDad7FqoICz7NQ7jQe8QtDzgAuQO
-         Qql1hF8k7gVB2UDo7nMuPj8BrU9oW6UIRm+ROU8WqvmzYpPdVzfJQdv1xskBhw22Srdu
-         YSt6MssEzgJtGz/dl9RDrKAle44WP8hRhr1XIoqVEaN0yhlacfvIR6Sl4oYauyVLc+n7
-         ARJknSAwqacoOYfgnP44xkuI/49pWAf6o6T4XhNUznXq9p5AzbHYMhJMhzNHwCGMZmwx
-         U0q/306B/54m5es5Hal9bc3wCsEaAETTFw/exgSQosaUJ03NV2XSgF2dCiI4h9xzTcxf
-         QGVw==
-X-Gm-Message-State: AOAM53008gWbhkuOA4h6DgOLG7oGtKEBpXYtB5Pjh3HULNbJGT6i37qS
-        WSA+sOiAsUXJ3iasFj4kgpkxVQ==
-X-Google-Smtp-Source: ABdhPJyQSqTNd3BVzP4VWxiWnp6p6oQzAmDBIOJnaoSdP+OBPVoNfaPuvwcTsPgk9o7oKdilefLQ/Q==
-X-Received: by 2002:a17:902:c252:: with SMTP id 18mr9772518plg.39.1595617402829;
-        Fri, 24 Jul 2020 12:03:22 -0700 (PDT)
+        bh=sdXgEvqGYHlymvqSceJ6jkKcKZE63vnTThrEFoJfoJI=;
+        b=kkagOpFIcuszjENNHlvM4msKWP2JwaQR+VA9Uan4FOBjq6ZQgZ2LKkCBfQT0gBIPiL
+         RLkast3IqyJEjJIAmhI0A4thy20iPJxWX68RsCLr5jFJ0gMiP7XThyoAifEIx+OmS4Ii
+         V1V8WznnqDF6oKNIntAOwMINRGDt/+rQviihKKwqKOU6nBKru4TWyTDYCoXjH3l4CQ6t
+         YYV7HvElxUjh3Ulwp5TyfDtS8y0BUQXI0v4+vS1EdFnvSSic7DPMKAA1GeyUdRRZSjeV
+         inPtaIjONRcx+IjQwI29U6lLwZNvBohHn7/piIFDlnNkZ3qQ9TzVbcREZ4TOJOib1uyX
+         gCXg==
+X-Gm-Message-State: AOAM5317AcgH4GUK22NiJeGv4XvTJr1BvDnkse2/I7OGC42NXNT6SekQ
+        ml6EaBTN2Lr7Sh5JsQb3mrjYUw==
+X-Google-Smtp-Source: ABdhPJxz4vuqoUWyBigx8RahhArmNJ84Nut7BOOCsUQANkvjswnwvqIw0Juf0zWwzmKl2+qs8JH6nQ==
+X-Received: by 2002:a63:140f:: with SMTP id u15mr9259752pgl.94.1595617432993;
+        Fri, 24 Jul 2020 12:03:52 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id z11sm7283037pfj.104.2020.07.24.12.03.21
+        by smtp.gmail.com with ESMTPSA id 66sm7436424pfa.92.2020.07.24.12.03.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Jul 2020 12:03:22 -0700 (PDT)
-Date:   Fri, 24 Jul 2020 12:03:21 -0700
+        Fri, 24 Jul 2020 12:03:52 -0700 (PDT)
+Date:   Fri, 24 Jul 2020 12:03:51 -0700
 From:   Kees Cook <keescook@chromium.org>
 To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
 Cc:     linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
@@ -94,59 +94,29 @@ Cc:     linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
         linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         linux-fsdevel@vger.kernel.org,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH v7 5/7] fs,doc: Enable to enforce noexec mounts or file
- exec through O_MAYEXEC
-Message-ID: <202007241203.0C596BB36@keescook>
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
+Subject: Re: [PATCH v7 6/7] selftest/openat2: Add tests for O_MAYEXEC
+ enforcing
+Message-ID: <202007241203.E4A515733@keescook>
 References: <20200723171227.446711-1-mic@digikod.net>
- <20200723171227.446711-6-mic@digikod.net>
+ <20200723171227.446711-7-mic@digikod.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200723171227.446711-6-mic@digikod.net>
+In-Reply-To: <20200723171227.446711-7-mic@digikod.net>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jul 23, 2020 at 07:12:25PM +0200, Mickaël Salaün wrote:
-> Allow for the enforcement of the O_MAYEXEC openat2(2) flag.  Thanks to
-> the noexec option from the underlying VFS mount, or to the file execute
-> permission, userspace can enforce these execution policies.  This may
-> allow script interpreters to check execution permission before reading
-> commands from a file, or dynamic linkers to allow shared object loading.
-> 
-> Add a new sysctl fs.open_mayexec_enforce to enable system administrators
-> to enforce two complementary security policies according to the
-> installed system: enforce the noexec mount option, and enforce
-> executable file permission.  Indeed, because of compatibility with
-> installed systems, only system administrators are able to check that
-> this new enforcement is in line with the system mount points and file
-> permissions.  A following patch adds documentation.
-> 
-> Being able to restrict execution also enables to protect the kernel by
-> restricting arbitrary syscalls that an attacker could perform with a
-> crafted binary or certain script languages.  It also improves multilevel
-> isolation by reducing the ability of an attacker to use side channels
-> with specific code.  These restrictions can natively be enforced for ELF
-> binaries (with the noexec mount option) but require this kernel
-> extension to properly handle scripts (e.g., Python, Perl).  To get a
-> consistent execution policy, additional memory restrictions should also
-> be enforced (e.g. thanks to SELinux).
-> 
-> Because the O_MAYEXEC flag is a meant to enforce a system-wide security
-> policy (but not application-centric policies), it does not make sense
-> for userland to check the sysctl value.  Indeed, this new flag only
-> enables to extend the system ability to enforce a policy thanks to (some
-> trusted) userland collaboration.  Moreover, additional security policies
-> could be managed by LSMs.  This is a best-effort approach from the
-> application developer point of view:
-> https://lore.kernel.org/lkml/1477d3d7-4b36-afad-7077-a38f42322238@digikod.net/
+On Thu, Jul 23, 2020 at 07:12:26PM +0200, Mickaël Salaün wrote:
+> Test propagation of noexec mount points or file executability through
+> files open with or without O_MAYEXEC, thanks to the
+> fs.open_mayexec_enforce sysctl.
 > 
 > Signed-off-by: Mickaël Salaün <mic@digikod.net>
 
-Acked-by: Kees Cook <keescook@chromium.org>
+Reviewed-by: Kees Cook <keescook@chromium.org>
 
 -- 
 Kees Cook
