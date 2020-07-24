@@ -2,88 +2,326 @@ Return-Path: <SRS0=RoHj=BD=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D1BAC433E5
-	for <linux-security-module@archiver.kernel.org>; Fri, 24 Jul 2020 20:45:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC3D7C4345B
+	for <linux-security-module@archiver.kernel.org>; Fri, 24 Jul 2020 20:46:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 536A72070E
-	for <linux-security-module@archiver.kernel.org>; Fri, 24 Jul 2020 20:45:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B35692070B
+	for <linux-security-module@archiver.kernel.org>; Fri, 24 Jul 2020 20:46:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RXxX6n+Z"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="qNjim3EO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726764AbgGXUpb (ORCPT
+        id S1727048AbgGXUqF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 24 Jul 2020 16:45:31 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:36671 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726704AbgGXUpb (ORCPT
+        Fri, 24 Jul 2020 16:46:05 -0400
+Received: from sonic311-22.consmr.mail.bf2.yahoo.com ([74.6.131.196]:34911
+        "EHLO sonic311-22.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726977AbgGXUqC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 24 Jul 2020 16:45:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1595623530;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=kwT/4oEvxYJQDv2IZFEDIJXwGO9sAIOeOt3vIk0tEEY=;
-        b=RXxX6n+ZtMjXwQD7wwVpD/ymVuelWirP/TJmx2G2FF0wEGI359fd8/YvfSY/n4dusUGWE1
-        pPwSbHwytIHHXI0XHgHmuBomfybBP0ylbYdjwCXVOx9EnEeX7c48ydfdQqNbUz+l2H9/PC
-        o6dKr9Mvy0doFiId5TVWFRjp9VZPUPA=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-142-ETpAItGKNG2mbe9j92zNNQ-1; Fri, 24 Jul 2020 16:45:24 -0400
-X-MC-Unique: ETpAItGKNG2mbe9j92zNNQ-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9EA14100A8E7;
-        Fri, 24 Jul 2020 20:45:22 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-112-32.rdu2.redhat.com [10.10.112.32])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 134F7726A9;
-        Fri, 24 Jul 2020 20:45:19 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAHk-=wgWNpzCuHyyFwhR2fq49yxB9tKiH2t2y-O-8V6Gh0TFdw@mail.gmail.com>
-References: <CAHk-=wgWNpzCuHyyFwhR2fq49yxB9tKiH2t2y-O-8V6Gh0TFdw@mail.gmail.com> <159559628247.2141315.2107013106060144287.stgit@warthog.procyon.org.uk> <159559630912.2141315.16186899692832741137.stgit@warthog.procyon.org.uk> <CAHk-=wjnQArU_BewVKQgYHy2mQD6LNKC5kkKXOm7GpNkJCapQg@mail.gmail.com> <2189056.1595620785@warthog.procyon.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     dhowells@redhat.com, Al Viro <viro@zeniv.linux.org.uk>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
-        Ian Kent <raven@themaw.net>,
-        Christian Brauner <christian@brauner.io>,
-        Jeff Layton <jlayton@redhat.com>, Karel Zak <kzak@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/4] watch_queue: Implement mount topology and attribute change notifications
+        Fri, 24 Jul 2020 16:46:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1595623559; bh=b7wuN8afpWNgMv8kzGzPK3VJGEaAT6lmwVX6V51b30s=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=qNjim3EOaIyIfvQxNtQ99BQYYa2NKH9gS3iS4p5TCje19sI/fY44wVO+AFN2Ztnuk6s/1Umkaua6bE6TXY2Qc47x6ezKbC7fGBBbMSk32dxw0golqk+LIThnTxwzxzb+w5E7/L9pRnmE1XVnWjLIswXRK0ICdoehHNml6wop4IcrR3vB7cCZZEC1Aioq8adIuP/tyQ5gIEU7BDZ2wjmbXCbh5KEAjDKPgXWa+Dg8AxPCOauXeUE5AVPm7+Pg5u5d0vQ18Qt4DWjVfDb6lE+UgCEPJr74EFYNi2CgEoUYjAux6/lr7Bjtt8RyR+rewlRyl0uDVg++JY2njibv7TI2sg==
+X-YMail-OSG: 5a6jXtIVM1n2.ErlHez_NHwoGr10NjqnTD3fF5tqv2nqAqGfHsaKqt_egRsBQ.j
+ M7UB1lpcAch9boOR.83bRBzxTMMj7LdwbGFjhUwea7hclvinfDdHDLoqX8iwCrBddsmw.adyr6WJ
+ ZweAnMeSmrWsqxh2CR4So4xEvmL0Y49HzOXAHen7YmkKvglnmX6_VTgr1JbjtcQTzEuTiO5deZUu
+ jHMmiAyaunpUM0IFTmEkkKUfp.QfOdjm5uWE.AZ4e_mcSXMSIgF8Bm0wNnQqDRxRjdt1dBv2Cs5E
+ Kerf19zO2qGhE7O3qghOHr0jhwREKWne7x1mUaYjlbxHJTEcuZHqqm1NuF4_wsBUY9fV6Evr.2jc
+ 50WljIc3SpsCrRYrlNzqsfnqKHrye3E.AUdjBDc.7ETvqfq8oUPHtQvKi0HO0xSr_JgiDFfsQ0.0
+ CopXfZWcd.gZ3sjvteiPNv.UTXpaP_wdWWWZcQKiySxKLxSO9dxgLOeJvf0GWDRDYY00SH9pMVsT
+ hTpyL_h0bDLhOR4nTYM5LhapeOlUYEb09k_mZovrsjvDsUBR.ZLOxrzV1V9mrQJc9ajkOcYAs8tn
+ dAtZHXfgwgvPxDkqdGE9KxEHa7xm0shoI1hYeHpfW4ff4yQJiuNHChszteoyGJU7QHpTjCPUOZtn
+ 53d1ninvCzAkVl3BLHpGrKowNiMsEvgoH3mhdx1Ll7iXvRT96CCJjk4egQaZy.ht3ZokCgCYcUxJ
+ rKS.HcUv8kzpsUlom7tfTUXlDecQuRob8sFpIabkUsNs6SAT1A_b6LkGSYapqVTsA2KQ4Psr9EYC
+ 7QWvQsd6osMmYV__8pBMtCfNfiwxYQsdvJYpd6YUxzqrtqrQEgKbVzwZW0bJ9e6GhvxrXRHDUj5V
+ LfoQ.sUcobpqDayzeo1DrQV5yFKsQoGN56E2cRlbCNCGYRsbfNY90uJ3PW573wMYdC.XLxL1f5ot
+ l2AFaM.mB3BL0fQSw2C1p2NR97FS2xF.cZfp3a48WPxOC8MzIn2n.zXQD9WxjeJ69th6OaubyxgQ
+ GBs8kCbmziOrWFg0MICJjNWC3TfJCwmPBqzeYd39ynWWRhaLjwFckVujRnjgXY_YlrOQmGamT69f
+ 3SmlPZpVJEH78j1C8glg5SdSnSbJFvpmlyP9z0R2oKa5Fppn8qieL7KmKPHpouD041hxMDCzfU.F
+ Kr_9ekjVuc2Y1dTeJn2E__bh9NcGSESWECOhy78zjnKEpDYdtT3dKBFs_1F_41cefmrqEE0OFXfS
+ yxwW1uTiDMsOsji2.Q3Ct8PMlV67CNy4dWOw8HPJf9DVYCOBMkE3.y7VQ9zirCBcDSs_qM6o10FP
+ YpcerRH3qvngZRV7c1_3wPITh3dzXGF1sinltKVRRWyHFQ1DeZsaeoLek0PoAQQC2Wa6IKlPHz8e
+ N5X_Bm_1QJ25WQK8pwg40mCKNC8MKBDXwtQ--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.bf2.yahoo.com with HTTP; Fri, 24 Jul 2020 20:45:59 +0000
+Received: by smtp429.mail.ne1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID cac514323d65cabcf7715e3da7c14d39;
+          Fri, 24 Jul 2020 20:45:55 +0000 (UTC)
+From:   Casey Schaufler <casey@schaufler-ca.com>
+To:     casey.schaufler@intel.com, jmorris@namei.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Cc:     casey@schaufler-ca.com, linux-audit@redhat.com,
+        keescook@chromium.org, john.johansen@canonical.com,
+        penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com,
+        sds@tycho.nsa.gov, linux-integrity@vger.kernel.org
+Subject: [PATCH v19 12/23] IMA: Change internal interfaces to use lsmblobs
+Date:   Fri, 24 Jul 2020 13:32:15 -0700
+Message-Id: <20200724203226.16374-13-casey@schaufler-ca.com>
+X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20200724203226.16374-1-casey@schaufler-ca.com>
+References: <20200724203226.16374-1-casey@schaufler-ca.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2195927.1595623519.1@warthog.procyon.org.uk>
-Date:   Fri, 24 Jul 2020 21:45:19 +0100
-Message-ID: <2195928.1595623519@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+The IMA interfaces ima_get_action() and ima_match_policy()
+call LSM functions that use lsmblobs. Change the IMA functions
+to pass the lsmblob to be compatible with the LSM functions.
 
-> I'd count them per user, and maybe start out saying "you can have as
-> many watches as you can have files" and just re-use RLIMIT_NOFILE as
-> the limit for them.
-> 
-> And if that causes problems, let's re-visit. How does that sound?
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Reviewed-by: John Johansen <john.johansen@canonical.com>
+Acked-by: Stephen Smalley <sds@tycho.nsa.gov>
+Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+cc: linux-integrity@vger.kernel.org
+---
+ security/integrity/ima/ima.h          | 11 +++++----
+ security/integrity/ima/ima_api.c      | 10 ++++----
+ security/integrity/ima/ima_appraise.c |  6 ++---
+ security/integrity/ima/ima_main.c     | 35 +++++++++++----------------
+ security/integrity/ima/ima_policy.c   | 14 +++++------
+ 5 files changed, 34 insertions(+), 42 deletions(-)
 
-I can try that for now.
-
-David
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index d72af93f8d6f..0c4787c71162 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -236,9 +236,9 @@ static inline void ima_process_queued_keys(void) {}
+ #endif /* CONFIG_IMA_QUEUE_EARLY_BOOT_KEYS */
+ 
+ /* LIM API function definitions */
+-int ima_get_action(struct inode *inode, const struct cred *cred, u32 secid,
+-		   int mask, enum ima_hooks func, int *pcr,
+-		   struct ima_template_desc **template_desc,
++int ima_get_action(struct inode *inode, const struct cred *cred,
++		   struct lsmblob *blob, int mask, enum ima_hooks func,
++		   int *pcr, struct ima_template_desc **template_desc,
+ 		   const char *keyring);
+ int ima_must_measure(struct inode *inode, int mask, enum ima_hooks func);
+ int ima_collect_measurement(struct integrity_iint_cache *iint,
+@@ -264,8 +264,9 @@ void ima_free_template_entry(struct ima_template_entry *entry);
+ const char *ima_d_path(const struct path *path, char **pathbuf, char *filename);
+ 
+ /* IMA policy related functions */
+-int ima_match_policy(struct inode *inode, const struct cred *cred, u32 secid,
+-		     enum ima_hooks func, int mask, int flags, int *pcr,
++int ima_match_policy(struct inode *inode, const struct cred *cred,
++		     struct lsmblob *blob, enum ima_hooks func, int mask,
++		     int flags, int *pcr,
+ 		     struct ima_template_desc **template_desc,
+ 		     const char *keyring);
+ void ima_init_policy(void);
+diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
+index bf22de8b7ce0..ea78825e0033 100644
+--- a/security/integrity/ima/ima_api.c
++++ b/security/integrity/ima/ima_api.c
+@@ -164,7 +164,7 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
+  * ima_get_action - appraise & measure decision based on policy.
+  * @inode: pointer to inode to measure
+  * @cred: pointer to credentials structure to validate
+- * @secid: secid of the task being validated
++ * @blob: LSM data of the task being validated
+  * @mask: contains the permission mask (MAY_READ, MAY_WRITE, MAY_EXEC,
+  *        MAY_APPEND)
+  * @func: caller identifier
+@@ -183,16 +183,16 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
+  * Returns IMA_MEASURE, IMA_APPRAISE mask.
+  *
+  */
+-int ima_get_action(struct inode *inode, const struct cred *cred, u32 secid,
+-		   int mask, enum ima_hooks func, int *pcr,
+-		   struct ima_template_desc **template_desc,
++int ima_get_action(struct inode *inode, const struct cred *cred,
++		   struct lsmblob *blob, int mask, enum ima_hooks func,
++		   int *pcr, struct ima_template_desc **template_desc,
+ 		   const char *keyring)
+ {
+ 	int flags = IMA_MEASURE | IMA_AUDIT | IMA_APPRAISE | IMA_HASH;
+ 
+ 	flags &= ima_policy_flag;
+ 
+-	return ima_match_policy(inode, cred, secid, func, mask, flags, pcr,
++	return ima_match_policy(inode, cred, blob, func, mask, flags, pcr,
+ 				template_desc, keyring);
+ }
+ 
+diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+index 3dfb573c7171..bf66e3e6f398 100644
+--- a/security/integrity/ima/ima_appraise.c
++++ b/security/integrity/ima/ima_appraise.c
+@@ -54,10 +54,8 @@ int ima_must_appraise(struct inode *inode, int mask, enum ima_hooks func)
+ 		return 0;
+ 
+ 	security_task_getsecid(current, &blob);
+-	/* scaffolding the .secid[0] */
+-	return ima_match_policy(inode, current_cred(), blob.secid[0], func,
+-				mask, IMA_APPRAISE | IMA_HASH, NULL, NULL,
+-				NULL);
++	return ima_match_policy(inode, current_cred(), &blob, func, mask,
++				IMA_APPRAISE | IMA_HASH, NULL, NULL, NULL);
+ }
+ 
+ static int ima_fix_xattr(struct dentry *dentry,
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index e70d8626208c..5093f9b4db8b 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -188,8 +188,8 @@ void ima_file_free(struct file *file)
+ }
+ 
+ static int process_measurement(struct file *file, const struct cred *cred,
+-			       u32 secid, char *buf, loff_t size, int mask,
+-			       enum ima_hooks func)
++			       struct lsmblob *blob, char *buf, loff_t size,
++			       int mask, enum ima_hooks func)
+ {
+ 	struct inode *inode = file_inode(file);
+ 	struct integrity_iint_cache *iint = NULL;
+@@ -212,7 +212,7 @@ static int process_measurement(struct file *file, const struct cred *cred,
+ 	 * bitmask based on the appraise/audit/measurement policy.
+ 	 * Included is the appraise submask.
+ 	 */
+-	action = ima_get_action(inode, cred, secid, mask, func, &pcr,
++	action = ima_get_action(inode, cred, blob, mask, func, &pcr,
+ 				&template_desc, NULL);
+ 	violation_check = ((func == FILE_CHECK || func == MMAP_CHECK) &&
+ 			   (ima_policy_flag & IMA_MEASURE));
+@@ -386,8 +386,7 @@ int ima_file_mmap(struct file *file, unsigned long prot)
+ 
+ 	if (file && (prot & PROT_EXEC)) {
+ 		security_task_getsecid(current, &blob);
+-		/* scaffolding - until process_measurement changes */
+-		return process_measurement(file, current_cred(), blob.secid[0],
++		return process_measurement(file, current_cred(), &blob,
+ 					   NULL, 0, MAY_EXEC, MMAP_CHECK);
+ 	}
+ 
+@@ -426,8 +425,7 @@ int ima_file_mprotect(struct vm_area_struct *vma, unsigned long prot)
+ 
+ 	security_task_getsecid(current, &blob);
+ 	inode = file_inode(vma->vm_file);
+-	/* scaffolding */
+-	action = ima_get_action(NULL, current_cred(), blob.secid[0], 0,
++	action = ima_get_action(NULL, current_cred(), &blob, 0,
+ 				MMAP_CHECK, &pcr, &template, 0);
+ 
+ 	/* Is the mmap'ed file in policy? */
+@@ -466,16 +464,14 @@ int ima_bprm_check(struct linux_binprm *bprm)
+ 	struct lsmblob blob;
+ 
+ 	security_task_getsecid(current, &blob);
+-	/* scaffolding until process_measurement changes */
+-	ret = process_measurement(bprm->file, current_cred(), blob.secid[0],
+-				  NULL, 0, MAY_EXEC, BPRM_CHECK);
++	ret = process_measurement(bprm->file, current_cred(), &blob, NULL, 0,
++				  MAY_EXEC, BPRM_CHECK);
+ 	if (ret)
+ 		return ret;
+ 
+ 	security_cred_getsecid(bprm->cred, &blob);
+-	/* scaffolding until process_measurement changes */
+-	return process_measurement(bprm->file, bprm->cred, blob.secid[0],
+-				   NULL, 0, MAY_EXEC, CREDS_CHECK);
++	return process_measurement(bprm->file, bprm->cred, &blob, NULL, 0,
++				   MAY_EXEC, CREDS_CHECK);
+ }
+ 
+ /**
+@@ -493,8 +489,7 @@ int ima_file_check(struct file *file, int mask)
+ 	struct lsmblob blob;
+ 
+ 	security_task_getsecid(current, &blob);
+-	/* scaffolding until process_measurement changes */
+-	return process_measurement(file, current_cred(), blob.secid[0], NULL, 0,
++	return process_measurement(file, current_cred(), &blob, NULL, 0,
+ 				   mask & (MAY_READ | MAY_WRITE | MAY_EXEC |
+ 					   MAY_APPEND), FILE_CHECK);
+ }
+@@ -675,9 +670,8 @@ int ima_post_read_file(struct file *file, void *buf, loff_t size,
+ 
+ 	func = read_idmap[read_id] ?: FILE_CHECK;
+ 	security_task_getsecid(current, &blob);
+-	/* scaffolding until process_measurement changes */
+-	return process_measurement(file, current_cred(), blob.secid[0], buf,
+-				   size, MAY_READ, func);
++	return process_measurement(file, current_cred(), &blob, buf, size,
++				   MAY_READ, func);
+ }
+ 
+ /**
+@@ -773,9 +767,8 @@ void process_buffer_measurement(const void *buf, int size,
+ 	 */
+ 	if (func) {
+ 		security_task_getsecid(current, &blob);
+-		/* scaffolding */
+-		action = ima_get_action(NULL, current_cred(), blob.secid[0], 0,
+-					func, &pcr, &template, keyring);
++		action = ima_get_action(NULL, current_cred(), &blob, 0, func,
++					&pcr, &template, keyring);
+ 		if (!(action & IMA_MEASURE))
+ 			return;
+ 	}
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index 8f9c66a0a612..6a8f347001fd 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -422,7 +422,7 @@ static bool ima_match_keyring(struct ima_rule_entry *rule,
+  * @rule: a pointer to a rule
+  * @inode: a pointer to an inode
+  * @cred: a pointer to a credentials structure for user validation
+- * @secid: the secid of the task to be validated
++ * @blob: the lsm data of the task to be validated
+  * @func: LIM hook identifier
+  * @mask: requested action (MAY_READ | MAY_WRITE | MAY_APPEND | MAY_EXEC)
+  * @keyring: keyring name to check in policy for KEY_CHECK func
+@@ -430,7 +430,7 @@ static bool ima_match_keyring(struct ima_rule_entry *rule,
+  * Returns true on rule match, false on failure.
+  */
+ static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
+-			    const struct cred *cred, u32 secid,
++			    const struct cred *cred, struct lsmblob *blob,
+ 			    enum ima_hooks func, int mask,
+ 			    const char *keyring)
+ {
+@@ -500,7 +500,6 @@ static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
+ 		case LSM_SUBJ_USER:
+ 		case LSM_SUBJ_ROLE:
+ 		case LSM_SUBJ_TYPE:
+-			lsmblob_init(&lsmdata, secid);
+ 			rc = security_filter_rule_match(&lsmdata,
+ 							rule->lsm[i].type,
+ 							Audit_equal,
+@@ -544,7 +543,7 @@ static int get_subaction(struct ima_rule_entry *rule, enum ima_hooks func)
+  * @inode: pointer to an inode for which the policy decision is being made
+  * @cred: pointer to a credentials structure for which the policy decision is
+  *        being made
+- * @secid: LSM secid of the task to be validated
++ * @blob: LSM data of the task to be validated
+  * @func: IMA hook identifier
+  * @mask: requested action (MAY_READ | MAY_WRITE | MAY_APPEND | MAY_EXEC)
+  * @pcr: set the pcr to extend
+@@ -559,8 +558,9 @@ static int get_subaction(struct ima_rule_entry *rule, enum ima_hooks func)
+  * list when walking it.  Reads are many orders of magnitude more numerous
+  * than writes so ima_match_policy() is classical RCU candidate.
+  */
+-int ima_match_policy(struct inode *inode, const struct cred *cred, u32 secid,
+-		     enum ima_hooks func, int mask, int flags, int *pcr,
++int ima_match_policy(struct inode *inode, const struct cred *cred,
++		     struct lsmblob *blob, enum ima_hooks func, int mask,
++		     int flags, int *pcr,
+ 		     struct ima_template_desc **template_desc,
+ 		     const char *keyring)
+ {
+@@ -576,7 +576,7 @@ int ima_match_policy(struct inode *inode, const struct cred *cred, u32 secid,
+ 		if (!(entry->action & actmask))
+ 			continue;
+ 
+-		if (!ima_match_rules(entry, inode, cred, secid, func, mask,
++		if (!ima_match_rules(entry, inode, cred, blob, func, mask,
+ 				     keyring))
+ 			continue;
+ 
+-- 
+2.24.1
 
