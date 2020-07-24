@@ -2,152 +2,162 @@ Return-Path: <SRS0=RoHj=BD=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-12.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A300C433E3
-	for <linux-security-module@archiver.kernel.org>; Fri, 24 Jul 2020 15:44:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB2B3C433E1
+	for <linux-security-module@archiver.kernel.org>; Fri, 24 Jul 2020 19:03:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0499B206D8
-	for <linux-security-module@archiver.kernel.org>; Fri, 24 Jul 2020 15:44:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA918206F6
+	for <linux-security-module@archiver.kernel.org>; Fri, 24 Jul 2020 19:03:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="EMQ5KBE6"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="epxr0OVX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726503AbgGXPoy (ORCPT
+        id S1726666AbgGXTDE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 24 Jul 2020 11:44:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58698 "EHLO
+        Fri, 24 Jul 2020 15:03:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33628 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726485AbgGXPoy (ORCPT
+        with ESMTP id S1726381AbgGXTDD (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 24 Jul 2020 11:44:54 -0400
-Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAF8FC0619E4
-        for <linux-security-module@vger.kernel.org>; Fri, 24 Jul 2020 08:44:53 -0700 (PDT)
-Received: by mail-wr1-x443.google.com with SMTP id a15so8719642wrh.10
-        for <linux-security-module@vger.kernel.org>; Fri, 24 Jul 2020 08:44:53 -0700 (PDT)
+        Fri, 24 Jul 2020 15:03:03 -0400
+Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F7B2C0619D3
+        for <linux-security-module@vger.kernel.org>; Fri, 24 Jul 2020 12:03:03 -0700 (PDT)
+Received: by mail-pg1-x543.google.com with SMTP id o13so5856939pgf.0
+        for <linux-security-module@vger.kernel.org>; Fri, 24 Jul 2020 12:03:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=RUZyK2oU0Kd8idZ8Q9ejhsbuyqiNW01xj/ZfwiLfu3Y=;
-        b=EMQ5KBE6Jkx1Hq9yV6Usrjv1X6tWqxTG5U4bGAqMz5nnH1eJV7PnEDH1UUbsjhyWtQ
-         Ebi+meVf5qoPU4QZk7oL6cGBtNEaoRQ1hiwseEtqXClbDNh0xXkZ8/WBuBYBrEuUuNYa
-         tjAAAyqwBFcxnkr/RXqFfirta526U71ZFXceU=
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=LYsHHvmbnOnKOT161wgYJ0QUn66UfJfCSOHkGeru+cM=;
+        b=epxr0OVXttEVlXmK9gG8sngCnRWPyA1Tl8s5eFiDuptGA3XfZ7D42jzmy8C+dHex+z
+         O4t0er5aVcVIeElSNW4xKoTusneqHOYH3qTX0imlgipraUmww8ZAz/FAdRhZ2XYidyPD
+         DxcDODdQ821AGi0c+CClL91b4u9fYF+8edV0o=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=RUZyK2oU0Kd8idZ8Q9ejhsbuyqiNW01xj/ZfwiLfu3Y=;
-        b=peDJBp3U9xnj6Hlq64GoLIRJEwP35B9nKtLY5jWO3gHff+/kyf3kw2qwcIAl837nZl
-         oucp3jbSeNEyLehn2NvMhVPFXIEEpemQVzwSa2BKQpkzhfbsvfIn+jP7GdfRvfhvVbfB
-         qOBeVPTJB+cjY37G4JmukXj+6uUw39PaMKaRaCDN0QQ/U06JyZ9WS9mRVo8IrqBbmnXJ
-         I5yXN2VD6aVzIekBif6fM63JT+eSGCnL0aIRiG2g3pmzoV0lZyRl5XFpnWiMkfNEmk1o
-         ZZCqbcwztuzdmXk1o3DNM2mSbJxhhFbr7pITC0vgHZmmqqCVw+PMgQQ/r+KeVzgeYb8H
-         ouwQ==
-X-Gm-Message-State: AOAM5324Jr3GbZ9T2lkunYt9+p2bk+wzwT3OcPuDYWjOebqQfjIC/Iqf
-        /V3aAJ4z2Sc3gqYQgyxBwjfvvA==
-X-Google-Smtp-Source: ABdhPJyubYtzFJZJ4vI6f7H318py/PzhqfA5Udew1hMnX9MephVhzKdADMZaKj+rNVL+WACQP/X9hA==
-X-Received: by 2002:a5d:4109:: with SMTP id l9mr9312784wrp.398.1595605492515;
-        Fri, 24 Jul 2020 08:44:52 -0700 (PDT)
-Received: from kpsingh-macbookpro2.roam.corp.google.com ([81.6.44.51])
-        by smtp.gmail.com with ESMTPSA id c25sm7782316wml.18.2020.07.24.08.44.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 Jul 2020 08:44:52 -0700 (PDT)
-Subject: Re: [PATCH bpf-next v6 1/7] bpf: Renames to prepare for generalizing
- sk_storage.
-To:     Martin KaFai Lau <kafai@fb.com>
-Cc:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=LYsHHvmbnOnKOT161wgYJ0QUn66UfJfCSOHkGeru+cM=;
+        b=sUfiDdYk7zap7R9oBWnrlVNJA1jIlG7hG7WmD6VbsXS0HhAle+SDn8/cx8ANRAuP2Z
+         3hIe8tCufh696uTKcDj6FubzphaX1pARyop/NfiV7nMuRqtkPAlQ40W8QJBsG54Xof7/
+         p16y6TQdsXYwmOg2+IBkKU/uH5sb+ai/1+nwzzzgJlM/W5iAcsQCmfCFvPURriKGbdMi
+         vEXF8Swgg5N1+v/UZqIhR51uW0Bl76HBn5xD9Ly5DmL8lG9DTwfzLXVUfeqY0y+z7eU/
+         5kr+c8yjSOHe2ibbjngWVXWU+jo5uWsDn+E/dLYiVRQFiBVBHs3l26AgCCIGPhdt41m4
+         qKHQ==
+X-Gm-Message-State: AOAM530Z3+QJEFMwTukPOygsZsOJwIPwXcAh7NLYBcSF+bEZi0Ye/EmJ
+        UU2AtXunDk5UF3LVr/sVBERuGg==
+X-Google-Smtp-Source: ABdhPJxe287CjvKc1vXBSsqo1vqhqr3H+/qMCmeOy+LCVrrgE2glpryiF3Hn9YFdOosrNz2I96GIrw==
+X-Received: by 2002:a62:2bd0:: with SMTP id r199mr9978051pfr.160.1595617383058;
+        Fri, 24 Jul 2020 12:03:03 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id s89sm6440672pjj.28.2020.07.24.12.03.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Jul 2020 12:03:02 -0700 (PDT)
+Date:   Fri, 24 Jul 2020 12:03:01 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc:     linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
         Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christian Heimes <christian@python.org>,
         Daniel Borkmann <daniel@iogearbox.net>,
-        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
-        Florent Revest <revest@chromium.org>
-References: <20200723115032.460770-1-kpsingh@chromium.org>
- <20200723115032.460770-2-kpsingh@chromium.org>
- <20200724053135.itp5qrqaplbyzxxw@kafai-mbp>
-From:   KP Singh <kpsingh@chromium.org>
-Message-ID: <9e421c6e-14a2-f0a7-1260-0debfbbf9308@chromium.org>
-Date:   Fri, 24 Jul 2020 17:44:51 +0200
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
- Gecko/20100101 Thunderbird/68.10.0
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Eric Chiang <ericchiang@google.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Philippe =?iso-8859-1?Q?Tr=E9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Thibaut Sautereau <thibaut.sautereau@clip-os.org>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
+Subject: Re: [PATCH v7 4/7] fs: Introduce O_MAYEXEC flag for openat2(2)
+Message-ID: <202007241202.8D07E1F276@keescook>
+References: <20200723171227.446711-1-mic@digikod.net>
+ <20200723171227.446711-5-mic@digikod.net>
 MIME-Version: 1.0
-In-Reply-To: <20200724053135.itp5qrqaplbyzxxw@kafai-mbp>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200723171227.446711-5-mic@digikod.net>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-
-On 24.07.20 07:31, Martin KaFai Lau wrote:
-> On Thu, Jul 23, 2020 at 01:50:26PM +0200, KP Singh wrote:
->> From: KP Singh <kpsingh@google.com>
->>
->> A purely mechanical change to split the renaming from the actual
->> generalization.
->>
->> Flags/consts:
->>
->>   SK_STORAGE_CREATE_FLAG_MASK	BPF_LOCAL_STORAGE_CREATE_FLAG_MASK
->>   BPF_SK_STORAGE_CACHE_SIZE	BPF_LOCAL_STORAGE_CACHE_SIZE
->>   MAX_VALUE_SIZE		BPF_LOCAL_STORAGE_MAX_VALUE_SIZE
->>
->> Structs:
->>
->>   bucket			bpf_local_storage_map_bucket
->>   bpf_sk_storage_map		bpf_local_storage_map
->>   bpf_sk_storage_data		bpf_local_storage_data
->>   bpf_sk_storage_elem		bpf_local_storage_elem
->>   bpf_sk_storage		bpf_local_storage
->>   selem_linked_to_sk		selem_linked_to_storage
->>   selem_alloc			bpf_selem_alloc
->>
->> The "sk" member in bpf_local_storage is also updated to "owner"
->> in preparation for changing the type to void * in a subsequent patch.
->>
->> Functions:
->>
->>   __selem_unlink_sk			bpf_selem_unlink_storage
->>   __selem_link_sk			bpf_selem_link_storage
->>   selem_unlink_sk			__bpf_selem_unlink_storage
->>   sk_storage_update			bpf_local_storage_update
->>   __sk_storage_lookup			bpf_local_storage_lookup
->>   bpf_sk_storage_map_free		bpf_local_storage_map_free
->>   bpf_sk_storage_map_alloc		bpf_local_storage_map_alloc
->>   bpf_sk_storage_map_alloc_check	bpf_local_storage_map_alloc_check
->>   bpf_sk_storage_map_check_btf		bpf_local_storage_map_check_btf
-> Thanks for separating this mechanical name change in a separate patch.
-> It is much easier to follow.  This patch looks good.
+On Thu, Jul 23, 2020 at 07:12:24PM +0200, Mickaël Salaün wrote:
+> When the O_MAYEXEC flag is passed, openat2(2) may be subject to
+> additional restrictions depending on a security policy managed by the
+> kernel through a sysctl or implemented by an LSM thanks to the
+> inode_permission hook.  This new flag is ignored by open(2) and
+> openat(2) because of their unspecified flags handling.  When used with
+> openat2(2), the default behavior is only to forbid to open a directory.
 > 
-> A minor thought is, when I look at unlink_map() and unlink_storage(),
-> it keeps me looking back for the lock situation.  I think
-> the main reason is the bpf_selem_unlink_map() is locked but
-> bpf_selem_unlink_storage() is unlocked now.  May be:
+> The underlying idea is to be able to restrict scripts interpretation
+> according to a policy defined by the system administrator.  For this to
+> be possible, script interpreters must use the O_MAYEXEC flag
+> appropriately.  To be fully effective, these interpreters also need to
+> handle the other ways to execute code: command line parameters (e.g.,
+> option -e for Perl), module loading (e.g., option -m for Python), stdin,
+> file sourcing, environment variables, configuration files, etc.
+> According to the threat model, it may be acceptable to allow some script
+> interpreters (e.g. Bash) to interpret commands from stdin, may it be a
+> TTY or a pipe, because it may not be enough to (directly) perform
+> syscalls.  Further documentation can be found in a following patch.
 > 
-> bpf_selem_unlink_map()		=> bpf_selem_unlink_map_locked()
-> bpf_selem_link_map()		=> bpf_selem_link_map_locked()
-> __bpf_selem_unlink_storage() 	=> bpf_selem_unlink_storage_locked()
-> bpf_link_storage() means unlocked
-> bpf_unlink_storage() means unlocked.
+> Even without enforced security policy, userland interpreters can set it
+> to enforce the system policy at their level, knowing that it will not
+> break anything on running systems which do not care about this feature.
+> However, on systems which want this feature enforced, there will be
+> knowledgeable people (i.e. sysadmins who enforced O_MAYEXEC
+> deliberately) to manage it.  A simple security policy implementation,
+> configured through a dedicated sysctl, is available in a following
+> patch.
 > 
-> I think it could be one follow-up patch later instead of interrupting
-> multiple patches in this set for this minor thing.  For now, lets
-> continue with this and remember default is nolock for storage.
+> O_MAYEXEC should not be confused with the O_EXEC flag which is intended
+> for execute-only, which obviously doesn't work for scripts.  However, a
+> similar behavior could be implemented in userland with O_PATH:
+> https://lore.kernel.org/lkml/1e2f6913-42f2-3578-28ed-567f6a4bdda1@digikod.net/
 > 
-
-Makes sense. I can update these in a separate patch if there are no
-major changes needed in this one.
-
-> I will continue tomorrow.
-
-Awesome! Thanks :)
-
-- KP
-
+> The implementation of O_MAYEXEC almost duplicates what execve(2) and
+> uselib(2) are already doing: setting MAY_OPENEXEC in acc_mode (which can
+> then be checked as MAY_EXEC, if enforced).
 > 
+> This is an updated subset of the patch initially written by Vincent
+> Strubel for CLIP OS 4:
+> https://github.com/clipos-archive/src_platform_clip-patches/blob/f5cb330d6b684752e403b4e41b39f7004d88e561/1901_open_mayexec.patch
+> This patch has been used for more than 12 years with customized script
+> interpreters.  Some examples (with the original O_MAYEXEC) can be found
+> here:
+> https://github.com/clipos-archive/clipos4_portage-overlay/search?q=O_MAYEXEC
+> 
+> Co-developed-by: Vincent Strubel <vincent.strubel@ssi.gouv.fr>
+> Signed-off-by: Vincent Strubel <vincent.strubel@ssi.gouv.fr>
+
+Acked-by: Kees Cook <keescook@chromium.org>
+
+-- 
+Kees Cook
