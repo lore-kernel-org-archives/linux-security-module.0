@@ -2,471 +2,382 @@ Return-Path: <SRS0=RoHj=BD=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C9CBC433E4
-	for <linux-security-module@archiver.kernel.org>; Fri, 24 Jul 2020 13:35:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AECACC433F4
+	for <linux-security-module@archiver.kernel.org>; Fri, 24 Jul 2020 13:35:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EF57920674
-	for <linux-security-module@archiver.kernel.org>; Fri, 24 Jul 2020 13:34:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 896EA2064C
+	for <linux-security-module@archiver.kernel.org>; Fri, 24 Jul 2020 13:35:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TjEP2Cj3"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gxgCEdxd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726842AbgGXNe7 (ORCPT
+        id S1726768AbgGXNf0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 24 Jul 2020 09:34:59 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:50336 "EHLO
+        Fri, 24 Jul 2020 09:35:26 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:48809 "EHLO
         us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726488AbgGXNe6 (ORCPT
+        with ESMTP id S1726990AbgGXNfY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 24 Jul 2020 09:34:58 -0400
+        Fri, 24 Jul 2020 09:35:24 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1595597695;
+        s=mimecast20190719; t=1595597721;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=a4vHYe3spI83+cKkolbaEeLXnlWnDNMO141eOit08Ts=;
-        b=TjEP2Cj38UtCxuuqzMYlk3ekAU2qWE1wvhLSnDmp960c47120bvHAjTLqEH6eCgpeCV7uP
-        PciRAsYZjP0mt47QFyOd7U6fk61xyvGCzauYixa8+78osxpYuHVJlKM46g8My4htCfiV9H
-        DX1cYr+UFF2bNLMV2ltdU+XUZMuWs+E=
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=1DQiqfSzhKm/VJj/60a3tFHolg0Z1RwCdPQ7UUsoWJM=;
+        b=gxgCEdxd6+OeKnf7rLjGk3NNdIEyl2IEZyJ1eNGNzU/iyqHY96Dn1i88WNfm+1VhPpxeO7
+        5hImernpUL/ujuyStuU2nXe05oCtKj78mV6gtHP0NXA6I+Pr+Baf8+DmWbFNEeZdTzvtdL
+        TrLj3b3hPB2EXUFV6D0BM0EBmI0C8UE=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-355-6SiDWXm8NVmPz_uvgi3Qug-1; Fri, 24 Jul 2020 09:34:51 -0400
-X-MC-Unique: 6SiDWXm8NVmPz_uvgi3Qug-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+ us-mta-35-zgaynTBOMoSPUPy7IIbP6w-1; Fri, 24 Jul 2020 09:35:19 -0400
+X-MC-Unique: zgaynTBOMoSPUPy7IIbP6w-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id DD1D41083E82;
-        Fri, 24 Jul 2020 13:34:48 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A8B47800460;
+        Fri, 24 Jul 2020 13:35:17 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-112-32.rdu2.redhat.com [10.10.112.32])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 83278712C4;
-        Fri, 24 Jul 2020 13:34:41 +0000 (UTC)
-Subject: [PATCH 00/17] VFS: Filesystem information [ver #20]
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 39EED10013C4;
+        Fri, 24 Jul 2020 13:35:15 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH 03/17] fsinfo: Provide a bitmap of the features a filesystem
+ supports [ver #20]
 From:   David Howells <dhowells@redhat.com>
 To:     torvalds@linux-foundation.org, viro@zeniv.linux.org.uk
-Cc:     Theodore Ts'o <tytso@mit.edu>, Eric Biggers <ebiggers@kernel.org>,
-        linux-api@vger.kernel.org,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Jeff Layton <jlayton@redhat.com>,
-        Carlos Maiolino <cmaiolino@redhat.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-ext4@vger.kernel.org, dhowells@redhat.com, raven@themaw.net,
-        mszeredi@redhat.com, christian@brauner.io, jannh@google.com,
-        darrick.wong@oracle.com, kzak@redhat.com, jlayton@redhat.com,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+Cc:     dhowells@redhat.com, raven@themaw.net, mszeredi@redhat.com,
+        christian@brauner.io, jannh@google.com, darrick.wong@oracle.com,
+        kzak@redhat.com, jlayton@redhat.com, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Fri, 24 Jul 2020 14:34:40 +0100
-Message-ID: <159559768062.2144584.13583793543173131929.stgit@warthog.procyon.org.uk>
+Date:   Fri, 24 Jul 2020 14:35:14 +0100
+Message-ID: <159559771444.2144584.11412063266711815104.stgit@warthog.procyon.org.uk>
+In-Reply-To: <159559768062.2144584.13583793543173131929.stgit@warthog.procyon.org.uk>
+References: <159559768062.2144584.13583793543173131929.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.23
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Provide a bitmap of features that a filesystem may provide for the path
+being queried.  Features include such things as:
 
-Here's a set of patches that adds a system call, fsinfo(), that allows
-information about the VFS, mount topology, superblock and files to be
-retrieved.
+ (1) The general class of filesystem, such as kernel-interface,
+     block-based, flash-based, network-based.
 
-The patchset is based on top of the notifications patchset and allows event
-counters implemented in the latter to be retrieved to allow overruns to be
-efficiently managed.
+ (2) Supported inode features, such as which timestamps are supported,
+     whether simple numeric user, group or project IDs are supported and
+     whether user identification is actually more complex behind the
+     scenes.
 
+ (3) Supported volume features, such as it having a UUID, a name or a
+     filesystem ID.
 
-=======
-THE WHY
-=======
+ (4) Supported filesystem features, such as what types of file are
+     supported, whether sparse files, extended attributes and quotas are
+     supported.
 
-Why do we want this?
+ (5) Supported interface features, such as whether locking and leases are
+     supported, what open flags are honoured and how i_version is managed.
 
-Using /proc/mounts (or similar) has problems:
+For some filesystems, this may be an immutable set and can just be memcpy'd
+into the reply buffer.
 
- (1) Reading from it holds a global lock (namespace_sem) that prevents
-     mounting and unmounting.  Lots of data is encoded and mangled into
-     text whilst the lock is held, including superblock option strings and
-     mount point paths.  This causes performance problems when there are a
-     lot of mount objects in a system.
-
- (2) Even though namespace_sem is held during a read, reading the whole
-     file isn't necessarily atomic with respect to mount-type operations.
-     If a read isn't satisfied in one go, then it may return to userspace
-     briefly and then continue reading some way into the file.  But changes
-     can occur in the interval that may then go unseen.
-
- (3) Determining what has changed means parsing and comparing consecutive
-     outputs of /proc/mounts.
-
- (4) Querying a specific mount or superblock means searching through
-     /proc/mounts and searching by path or mount ID - but we might have an
-     fd we want to query.
-
- (5) Whilst you can poll() it for events, it only tells you that something
-     changed in the namespace, not what or whether you can even see the
-     change.
-
-To fix the notification issues, the preceding notifications patchset added
-mount watch notifications whereby you can watch for notifications in a
-specific mount subtree.  The notification messages include the ID(s) of the
-affected mounts.
-
-To support notifications, however, we need to be able to handle overruns in
-the notification queue.  I added a number of event counters to struct
-super_block and struct mount to allow you to pin down the changes, but
-there needs to be a way to retrieve them.  Exposing them through /proc
-would require adding yet another /proc/mounts-type file.  We could add
-per-mount directories full of attributes in sysfs, but that has issues also
-(see below).
-
-Adding an extensible system call interface for retrieving filesystem
-information also allows other things to be exposed:
-
- (1) Jeff Layton's error handling changes need a way to allow error event
-     information to be retrieved.
-
- (2) Bits in masks returned by things like statx() and FS_IOC_GETFLAGS are
-     actually 3-state { Set, Unset, Not supported }.  It could be useful to
-     provide a way to expose information like this[*].
-
- (3) Limits of the numerical metadata values in a filesystem[*].
-
- (4) Filesystem capability information[*].  Filesystems don't all have the
-     same capabilities, and even different instances may have different
-     capabilities, particularly with network filesystems where the set of
-     may be server-dependent.  Capabilities might even vary at file
-     granularity - though possibly such information should be conveyed
-     through statx() instead.
-
- (5) ID mapping/shifting tables in use for a superblock.
-
- (6) Filesystem-specific information.  I need something for AFS so that I
-     can do pioctl()-emulation, thereby allowing me to implement certain of
-     the AFS command line utilities that query state of a particular file.
-     This could also have application for other filesystems, such as NFS,
-     CIFS and ext4.
-
- [*] In a lot of cases these are probably invariant and can be memcpy'd
-     from static data.
-
-There's a further consideration: I want to make it possible to have
-fsconfig(fd, FSCONFIG_CMD_CREATE) be intercepted by a container manager
-such that the manager can supervise a mount attempted inside the container.
-The manager would be given an fd pointing to the fs_context struct and
-would then need some way to query it (fsinfo()) and modify it (fsconfig()).
-This could also be used to arbitrate user-requested mounts when containers
-are not in play.
-
-
-================
-DESIGN DECISIONS
-================
-
- (1) Information is partitioned into sets of attributes.
-
- (2) Attribute IDs are integers as they're fast to compare.
-
- (3) Attribute values are typed (struct, list of structs, string, opaque
-     blob).  They type is fixed for a particular attribute.
-
- (4) For structure types, the length is also a version.  New fields can be
-     tacked onto the end.
-
- (5) When copying a versioned struct to userspace, the core handles a
-     version mismatch by truncating or zero-padding the data as necessary.
-     This is transparent to the filesystem.
-
- (6) The core handles all the buffering and buffer resizing.
-
- (7) The filesystem never gets any access to the userspace parameter buffer
-     or result buffer.
-
- (8) "Meta" attributes can describe other attributes.
-
-
-========
-OVERVIEW
-========
-
-fsinfo() is a system call that allows information about the filesystem at a
-particular path point to be queried as a set of attributes.
-
-Attribute values are of four basic types:
-
- (1) Structure with version-dependent length (the length is the version).
-
- (2) Variable-length string.
-
- (3) List of structures (all the same length).
-
- (4) Opaque blob.
-
-Attributes can have multiple values either as a sequence of values or a
-sequence-of-sequences of values and all the values of a particular
-attribute must be of the same type.  Values can be up to INT_MAX size,
-subject to memory availability.
-
-Note that the values of an attribute *are* allowed to vary between dentries
-within a single superblock, depending on the specific dentry that you're
-looking at, but the values still have to be of the type for that attribute.
-
-I've tried to make the interface as light as possible, so integer attribute
-IDs rather than string and the core does all the buffer allocation and
-expansion and all the extensibility support work rather than leaving that
-to the filesystems.  This also means that userspace pointers are not
-exposed to the filesystem.
-
-
-fsinfo() allows a variety of information to be retrieved about a filesystem
-and the mount topology:
-
- (1) General superblock attributes:
-
-     - Filesystem identifiers (UUID, volume label, device numbers, ...)
-     - The limits on a filesystem's capabilities
-     - Information on supported statx fields and attributes and IOC flags.
-     - A variety single-bit flags indicating supported capabilities.
-     - Timestamp resolution and range.
-     - The amount of space/free space in a filesystem (as statfs()).
-     - Superblock notification counter.
-
- (2) Filesystem-specific superblock attributes:
-
-     - Superblock-level timestamps.
-     - Cell name, workgroup or other netfs grouping concept.
-     - Server names and addresses.
-
- (3) VFS information:
-
-     - Mount topology information.
-     - Mount attributes.
-     - Mount notification counter.
-     - Mount point path.
-
- (4) Information about what the fsinfo() syscall itself supports, including
-     the type and struct size of attributes.
-
-The system is extensible:
-
- (1) New attributes can be added.  There is no requirement that a
-     filesystem implement every attribute.  A helper function is provided
-     to scan a list of attributes and a filesystem can have multiple such
-     lists.
-
- (2) Version length-dependent structure attributes can be made larger and
-     have additional information tacked on the end, provided it keeps the
-     layout of the existing fields.  If an older process asks for a shorter
-     structure, it will only be given the bits it asks for.  If a newer
-     process asks for a longer structure on an older kernel, the extra
-     space will be set to 0.  In all cases, the size of the data actually
-     available is returned.
-
-     In essence, the size of a structure is that structure's version: a
-     smaller size is an earlier version and a later version includes
-     everything that the earlier version did.
-
- (3) New single-bit capability flags can be added.  This is a structure-typed
-     attribute and, as such, (2) applies.  Any bits you wanted but the kernel
-     doesn't support are automatically set to 0.
-
-fsinfo() may be called like the following, for example:
-
-	struct fsinfo_params params = {
-		.at_flags	= AT_SYMLINK_NOFOLLOW,
-		.flags		= FSINFO_FLAGS_QUERY_PATH,
-		.request	= FSINFO_ATTR_AFS_SERVER_ADDRESSES,
-		.Nth		= 2,
-	};
-	struct fsinfo_server_address address;
-	len = fsinfo(AT_FDCWD, "/afs/grand.central.org/doc",
-		     &params, sizeof(params),
-		     &address, sizeof(address));
-
-The above example would query an AFS filesystem to retrieve the address
-list for the 3rd server, and:
-
-	struct fsinfo_params params = {
-		.at_flags	= AT_SYMLINK_NOFOLLOW,
-		.flags		= FSINFO_FLAGS_QUERY_PATH,
-		.request	= FSINFO_ATTR_NFS_SERVER_NAME;
-	};
-	char server_name[256];
-	len = fsinfo(AT_FDCWD, "/home/dhowells/",
-		     &params, sizeof(params),
-		     &server_name, sizeof(server_name));
-
-would retrieve the name of the NFS server as a string.
-
-In future, I want to make fsinfo() capable of querying a context created by
-fsopen() or fspick(), e.g.:
-
-	fd = fsopen("ext4", 0);
-	struct fsinfo_params params = {
-		.flags		= FSINFO_FLAGS_QUERY_FSCONTEXT,
-		.request	= FSINFO_ATTR_CONFIGURATION;
-	};
-	char buffer[65536];
-	fsinfo(fd, NULL, &params, sizeof(params), &buffer, sizeof(buffer));
-
-even if that context doesn't currently have a superblock attached.
-
-The patches can be found here also:
-
-	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git
-
-on branch:
-
-	fsinfo-core
-
-
-===================
-SIGNIFICANT CHANGES
-===================
-
- ver #20:
-
- (*) Changed MOUNT_PROPAGATION_SLAVE to MOUNT_PROPAGATION_DEPENDENT and
-     renamed the fields in the fsinfo_mount_topology struct.  The
-     MOUNT_PROPAGATION_* settings have been turned into an enum and will
-     also be passed to mount_setattr().
-
- (*) Adjusted the Ext4 patch from feedback and removed the example status
-     from it.
-
- (*) Dropped the NFS patch.
-
- (*) I've dropped the superblock notifications for now.
-
- ver #19:
-
- (*) Split FSINFO_ATTR_MOUNT_TOPOLOGY from FSINFO_ATTR_MOUNT_INFO.  The
-     latter requires no locking as it looks no further than the mount
-     object it's dealing with.  The topology attribute, however, has to
-     take the namespace lock.  That said, the info attribute includes a
-     counter that indicates how many times a mount object's position in the
-     topology has changed.
-
- (*) A bit of patch rearrangement to put the mount topology-exposing
-     attributes into one patch.
-
- (*) Pass both AT_* and RESOLVE_* flags to fsinfo() as suggested by Linus,
-     rather than adding missing RESOLVE_* flags.
-
- ver #18:
-
- (*) Moved the mount and superblock notification patches into a different
-     branch.
-
- (*) Made superblock configuration (->show_opts), bindmount path
-     (->show_path) and filesystem statistics (->show_stats) available as
-     the CONFIGURATION, MOUNT_PATH and FS_STATISTICS attributes.
-
- (*) Made mountpoint device name available, filtered through the superblock
-     (->show_devname), as the SOURCE attribute.
-
- (*) Made the mountpoint available as a full path as well as a relative
-     one.
-
- (*) Added more event counters to MOUNT_INFO, including a subtree
-     notification counter, to make it easier to clean up after a
-     notification overrun.
-
- (*) Made the event counter value returned by MOUNT_CHILDREN the sum of the
-     five event counters.
-
- (*) Added a mount uniquifier and added that to the MOUNT_CHILDREN entries
-     also so that mount ID reuse can be detected.
-
- (*) Merged the SB_NOTIFICATION attribute into the MOUNT_INFO attribute to
-     avoid duplicate information.
-
- (*) Switched to using the RESOLVE_* flags rather than AT_* flags for
-     pathwalk control.  Added more RESOLVE_* flags.
-
- (*) Used a lock instead of RCU to enumerate children for the
-     MOUNT_CHILDREN attribute for safety.  This is probably worth
-     revisiting at a later date, however.
-
-David
+Signed-off-by: David Howells <dhowells@redhat.com>
 ---
-David Howells (14):
-      fsinfo: Introduce a non-repeating system-unique superblock ID
-      fsinfo: Add fsinfo() syscall to query filesystem information
-      fsinfo: Provide a bitmap of the features a filesystem supports
-      fsinfo: Allow retrieval of superblock devname, options and stats
-      fsinfo: Allow fsinfo() to look up a mount object by ID
-      fsinfo: Add a uniquifier ID to struct mount
-      fsinfo: Allow mount information to be queried
-      fsinfo: Allow mount topology and propagation info to be retrieved
-      fsinfo: Provide notification overrun handling support
-      fsinfo: sample: Mount listing program
-      fsinfo: Add API documentation
-      fsinfo: Add support for AFS
-      fsinfo: Add support to ext4
-      fsinfo: Add an attribute that lists all the visible mounts in a namespace
 
-Jeff Layton (3):
-      errseq: add a new errseq_scrape function
-      vfs: allow fsinfo to fetch the current state of s_wb_err
-      samples: add error state information to test-fsinfo.c
+ fs/fsinfo.c                 |   34 +++++++++++++++++++++
+ include/linux/fsinfo.h      |   38 +++++++++++++++++++++++
+ include/uapi/linux/fsinfo.h |   68 ++++++++++++++++++++++++++++++++++++++++++
+ samples/vfs/test-fsinfo.c   |   70 +++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 210 insertions(+)
 
-
- Documentation/filesystems/fsinfo.rst        | 574 +++++++++++++
- arch/alpha/kernel/syscalls/syscall.tbl      |   1 +
- arch/arm/tools/syscall.tbl                  |   1 +
- arch/arm64/include/asm/unistd32.h           |   2 +
- arch/ia64/kernel/syscalls/syscall.tbl       |   1 +
- arch/m68k/kernel/syscalls/syscall.tbl       |   1 +
- arch/microblaze/kernel/syscalls/syscall.tbl |   1 +
- arch/mips/kernel/syscalls/syscall_n32.tbl   |   1 +
- arch/mips/kernel/syscalls/syscall_n64.tbl   |   1 +
- arch/mips/kernel/syscalls/syscall_o32.tbl   |   1 +
- arch/parisc/kernel/syscalls/syscall.tbl     |   1 +
- arch/powerpc/kernel/syscalls/syscall.tbl    |   1 +
- arch/s390/kernel/syscalls/syscall.tbl       |   1 +
- arch/sh/kernel/syscalls/syscall.tbl         |   1 +
- arch/sparc/kernel/syscalls/syscall.tbl      |   1 +
- arch/x86/entry/syscalls/syscall_32.tbl      |   1 +
- arch/x86/entry/syscalls/syscall_64.tbl      |   1 +
- arch/xtensa/kernel/syscalls/syscall.tbl     |   1 +
- fs/Kconfig                                  |   7 +
- fs/Makefile                                 |   1 +
- fs/afs/internal.h                           |   1 +
- fs/afs/super.c                              | 216 ++++-
- fs/d_path.c                                 |   2 +-
- fs/ext4/Makefile                            |   1 +
- fs/ext4/ext4.h                              |   6 +
- fs/ext4/fsinfo.c                            |  97 +++
- fs/ext4/super.c                             |   3 +
- fs/fsinfo.c                                 | 748 +++++++++++++++++
- fs/internal.h                               |  15 +
- fs/mount.h                                  |   3 +
- fs/mount_notify.c                           |   2 +
- fs/namespace.c                              | 427 +++++++++-
- include/linux/errseq.h                      |   1 +
- include/linux/fs.h                          |   4 +
- include/linux/fsinfo.h                      | 112 +++
- include/linux/syscalls.h                    |   4 +
- include/uapi/asm-generic/unistd.h           |   4 +-
- include/uapi/linux/fsinfo.h                 | 345 ++++++++
- include/uapi/linux/mount.h                  |  13 +-
- kernel/sys_ni.c                             |   1 +
- lib/errseq.c                                |  33 +-
- samples/vfs/Makefile                        |   6 +-
- samples/vfs/test-fsinfo.c                   | 881 ++++++++++++++++++++
- samples/vfs/test-mntinfo.c                  | 277 ++++++
- 44 files changed, 3791 insertions(+), 11 deletions(-)
- create mode 100644 Documentation/filesystems/fsinfo.rst
- create mode 100644 fs/ext4/fsinfo.c
- create mode 100644 fs/fsinfo.c
- create mode 100644 include/linux/fsinfo.h
- create mode 100644 include/uapi/linux/fsinfo.h
- create mode 100644 samples/vfs/test-fsinfo.c
- create mode 100644 samples/vfs/test-mntinfo.c
+diff --git a/fs/fsinfo.c b/fs/fsinfo.c
+index 7d9c73e9cbde..79c222d465d8 100644
+--- a/fs/fsinfo.c
++++ b/fs/fsinfo.c
+@@ -131,6 +131,39 @@ int fsinfo_generic_supports(struct path *path, struct fsinfo_context *ctx)
+ }
+ EXPORT_SYMBOL(fsinfo_generic_supports);
+ 
++int fsinfo_generic_features(struct path *path, struct fsinfo_context *ctx)
++{
++	struct fsinfo_features *p = ctx->buffer;
++	struct super_block *sb = path->dentry->d_sb;
++
++	fsinfo_init_features(p);
++	if (sb->s_mtd)
++		fsinfo_set_feature(p, FSINFO_FEAT_IS_FLASH_FS);
++	else if (sb->s_bdev)
++		fsinfo_set_feature(p, FSINFO_FEAT_IS_BLOCK_FS);
++
++	if (sb->s_quota_types & QTYPE_MASK_USR)
++		fsinfo_set_feature(p, FSINFO_FEAT_USER_QUOTAS);
++	if (sb->s_quota_types & QTYPE_MASK_GRP)
++		fsinfo_set_feature(p, FSINFO_FEAT_GROUP_QUOTAS);
++	if (sb->s_quota_types & QTYPE_MASK_PRJ)
++		fsinfo_set_feature(p, FSINFO_FEAT_PROJECT_QUOTAS);
++	if (sb->s_d_op && sb->s_d_op->d_automount)
++		fsinfo_set_feature(p, FSINFO_FEAT_AUTOMOUNTS);
++	if (sb->s_id[0])
++		fsinfo_set_feature(p, FSINFO_FEAT_VOLUME_ID);
++	if (sb->s_flags & SB_MANDLOCK)
++		fsinfo_set_feature(p, FSINFO_FEAT_MAND_LOCKS);
++	if (sb->s_flags & SB_POSIXACL)
++		fsinfo_set_feature(p, FSINFO_FEAT_HAS_ACL);
++
++	fsinfo_set_feature(p, FSINFO_FEAT_HAS_ATIME);
++	fsinfo_set_feature(p, FSINFO_FEAT_HAS_CTIME);
++	fsinfo_set_feature(p, FSINFO_FEAT_HAS_MTIME);
++	return sizeof(*p);
++}
++EXPORT_SYMBOL(fsinfo_generic_features);
++
+ static const struct fsinfo_timestamp_info fsinfo_default_timestamp_info = {
+ 	.atime = {
+ 		.minimum	= S64_MIN,
+@@ -206,6 +239,7 @@ static const struct fsinfo_attribute fsinfo_common_attributes[] = {
+ 	FSINFO_VSTRUCT	(FSINFO_ATTR_TIMESTAMP_INFO,	fsinfo_generic_timestamp_info),
+ 	FSINFO_STRING	(FSINFO_ATTR_VOLUME_ID,		fsinfo_generic_volume_id),
+ 	FSINFO_VSTRUCT	(FSINFO_ATTR_VOLUME_UUID,	fsinfo_generic_volume_uuid),
++	FSINFO_VSTRUCT	(FSINFO_ATTR_FEATURES,		fsinfo_generic_features),
+ 
+ 	FSINFO_LIST	(FSINFO_ATTR_FSINFO_ATTRIBUTES,	(void *)123UL),
+ 	FSINFO_VSTRUCT_N(FSINFO_ATTR_FSINFO_ATTRIBUTE_INFO, (void *)123UL),
+diff --git a/include/linux/fsinfo.h b/include/linux/fsinfo.h
+index a811d69b02ff..517edd5a2791 100644
+--- a/include/linux/fsinfo.h
++++ b/include/linux/fsinfo.h
+@@ -68,6 +68,44 @@ extern int fsinfo_generic_supports(struct path *, struct fsinfo_context *);
+ extern int fsinfo_generic_limits(struct path *, struct fsinfo_context *);
+ extern int fsinfo_get_attribute(struct path *, struct fsinfo_context *,
+ 				const struct fsinfo_attribute *);
++extern int fsinfo_generic_features(struct path *, struct fsinfo_context *);
++
++static inline void fsinfo_init_features(struct fsinfo_features *p)
++{
++	p->nr_features = FSINFO_FEAT__NR;
++}
++
++static inline void fsinfo_set_feature(struct fsinfo_features *p,
++				      enum fsinfo_feature feature)
++{
++	p->features[feature / 8] |= 1 << (feature % 8);
++}
++
++static inline void fsinfo_clear_feature(struct fsinfo_features *p,
++					enum fsinfo_feature feature)
++{
++	p->features[feature / 8] &= ~(1 << (feature % 8));
++}
++
++/**
++ * fsinfo_set_unix_features - Set standard UNIX features.
++ * @f: The features mask to alter
++ */
++static inline void fsinfo_set_unix_features(struct fsinfo_features *p)
++{
++	fsinfo_set_feature(p, FSINFO_FEAT_UIDS);
++	fsinfo_set_feature(p, FSINFO_FEAT_GIDS);
++	fsinfo_set_feature(p, FSINFO_FEAT_DIRECTORIES);
++	fsinfo_set_feature(p, FSINFO_FEAT_SYMLINKS);
++	fsinfo_set_feature(p, FSINFO_FEAT_HARD_LINKS);
++	fsinfo_set_feature(p, FSINFO_FEAT_DEVICE_FILES);
++	fsinfo_set_feature(p, FSINFO_FEAT_UNIX_SPECIALS);
++	fsinfo_set_feature(p, FSINFO_FEAT_SPARSE);
++	fsinfo_set_feature(p, FSINFO_FEAT_HAS_ATIME);
++	fsinfo_set_feature(p, FSINFO_FEAT_HAS_CTIME);
++	fsinfo_set_feature(p, FSINFO_FEAT_HAS_MTIME);
++	fsinfo_set_feature(p, FSINFO_FEAT_HAS_INODE_NUMBERS);
++}
+ 
+ #endif /* CONFIG_FSINFO */
+ 
+diff --git a/include/uapi/linux/fsinfo.h b/include/uapi/linux/fsinfo.h
+index 65892239ba86..b8b2c836267b 100644
+--- a/include/uapi/linux/fsinfo.h
++++ b/include/uapi/linux/fsinfo.h
+@@ -23,6 +23,7 @@
+ #define FSINFO_ATTR_VOLUME_ID		0x05	/* Volume ID (string) */
+ #define FSINFO_ATTR_VOLUME_UUID		0x06	/* Volume UUID (LE uuid) */
+ #define FSINFO_ATTR_VOLUME_NAME		0x07	/* Volume name (string) */
++#define FSINFO_ATTR_FEATURES		0x08	/* Filesystem features (bits) */
+ 
+ #define FSINFO_ATTR_FSINFO_ATTRIBUTE_INFO 0x100	/* Information about attr N (for path) */
+ #define FSINFO_ATTR_FSINFO_ATTRIBUTES	0x101	/* List of supported attrs (for path) */
+@@ -157,6 +158,73 @@ struct fsinfo_supports {
+ 
+ #define FSINFO_ATTR_SUPPORTS__STRUCT struct fsinfo_supports
+ 
++/*
++ * Information struct for fsinfo(FSINFO_ATTR_FEATURES).
++ *
++ * Bitmask indicating filesystem features where renderable as single bits.
++ */
++enum fsinfo_feature {
++	FSINFO_FEAT_IS_KERNEL_FS	= 0,	/* fs is kernel-special filesystem */
++	FSINFO_FEAT_IS_BLOCK_FS		= 1,	/* fs is block-based filesystem */
++	FSINFO_FEAT_IS_FLASH_FS		= 2,	/* fs is flash filesystem */
++	FSINFO_FEAT_IS_NETWORK_FS	= 3,	/* fs is network filesystem */
++	FSINFO_FEAT_IS_AUTOMOUNTER_FS	= 4,	/* fs is automounter special filesystem */
++	FSINFO_FEAT_IS_MEMORY_FS	= 5,	/* fs is memory-based filesystem */
++	FSINFO_FEAT_AUTOMOUNTS		= 6,	/* fs supports automounts */
++	FSINFO_FEAT_ADV_LOCKS		= 7,	/* fs supports advisory file locking */
++	FSINFO_FEAT_MAND_LOCKS		= 8,	/* fs supports mandatory file locking */
++	FSINFO_FEAT_LEASES		= 9,	/* fs supports file leases */
++	FSINFO_FEAT_UIDS		= 10,	/* fs supports numeric uids */
++	FSINFO_FEAT_GIDS		= 11,	/* fs supports numeric gids */
++	FSINFO_FEAT_PROJIDS		= 12,	/* fs supports numeric project ids */
++	FSINFO_FEAT_STRING_USER_IDS	= 13,	/* fs supports string user identifiers */
++	FSINFO_FEAT_GUID_USER_IDS	= 14,	/* fs supports GUID user identifiers */
++	FSINFO_FEAT_WINDOWS_ATTRS	= 15,	/* fs has windows attributes */
++	FSINFO_FEAT_USER_QUOTAS		= 16,	/* fs has per-user quotas */
++	FSINFO_FEAT_GROUP_QUOTAS	= 17,	/* fs has per-group quotas */
++	FSINFO_FEAT_PROJECT_QUOTAS	= 18,	/* fs has per-project quotas */
++	FSINFO_FEAT_XATTRS		= 19,	/* fs has xattrs */
++	FSINFO_FEAT_JOURNAL		= 20,	/* fs has a journal */
++	FSINFO_FEAT_DATA_IS_JOURNALLED	= 21,	/* fs is using data journalling */
++	FSINFO_FEAT_O_SYNC		= 22,	/* fs supports O_SYNC */
++	FSINFO_FEAT_O_DIRECT		= 23,	/* fs supports O_DIRECT */
++	FSINFO_FEAT_VOLUME_ID		= 24,	/* fs has a volume ID */
++	FSINFO_FEAT_VOLUME_UUID		= 25,	/* fs has a volume UUID */
++	FSINFO_FEAT_VOLUME_NAME		= 26,	/* fs has a volume name */
++	FSINFO_FEAT_VOLUME_FSID		= 27,	/* fs has a volume FSID */
++	FSINFO_FEAT_IVER_ALL_CHANGE	= 28,	/* i_version represents data + meta changes */
++	FSINFO_FEAT_IVER_DATA_CHANGE	= 29,	/* i_version represents data changes only */
++	FSINFO_FEAT_IVER_MONO_INCR	= 30,	/* i_version incremented monotonically */
++	FSINFO_FEAT_DIRECTORIES		= 31,	/* fs supports (sub)directories */
++	FSINFO_FEAT_SYMLINKS		= 32,	/* fs supports symlinks */
++	FSINFO_FEAT_HARD_LINKS		= 33,	/* fs supports hard links */
++	FSINFO_FEAT_HARD_LINKS_1DIR	= 34,	/* fs supports hard links in same dir only */
++	FSINFO_FEAT_DEVICE_FILES	= 35,	/* fs supports bdev, cdev */
++	FSINFO_FEAT_UNIX_SPECIALS	= 36,	/* fs supports pipe, fifo, socket */
++	FSINFO_FEAT_RESOURCE_FORKS	= 37,	/* fs supports resource forks/streams */
++	FSINFO_FEAT_NAME_CASE_INDEP	= 38,	/* Filename case independence is mandatory */
++	FSINFO_FEAT_NAME_CASE_FOLD	= 39,	/* Filename case is folded on medium */
++	FSINFO_FEAT_NAME_NON_UTF8	= 40,	/* fs has non-utf8 names */
++	FSINFO_FEAT_NAME_HAS_CODEPAGE	= 41,	/* fs has a filename codepage */
++	FSINFO_FEAT_SPARSE		= 42,	/* fs supports sparse files */
++	FSINFO_FEAT_NOT_PERSISTENT	= 43,	/* fs is not persistent */
++	FSINFO_FEAT_NO_UNIX_MODE	= 44,	/* fs does not support unix mode bits */
++	FSINFO_FEAT_HAS_ATIME		= 45,	/* fs supports access time */
++	FSINFO_FEAT_HAS_BTIME		= 46,	/* fs supports birth/creation time */
++	FSINFO_FEAT_HAS_CTIME		= 47,	/* fs supports change time */
++	FSINFO_FEAT_HAS_MTIME		= 48,	/* fs supports modification time */
++	FSINFO_FEAT_HAS_ACL		= 49,	/* fs supports ACLs of some sort */
++	FSINFO_FEAT_HAS_INODE_NUMBERS	= 50,	/* fs has inode numbers */
++	FSINFO_FEAT__NR
++};
++
++struct fsinfo_features {
++	__u32	nr_features;	/* Number of supported features (FSINFO_FEAT__NR) */
++	__u8	features[(FSINFO_FEAT__NR + 7) / 8];
++};
++
++#define FSINFO_ATTR_FEATURES__STRUCT struct fsinfo_features
++
+ struct fsinfo_timestamp_one {
+ 	__s64	minimum;	/* Minimum timestamp value in seconds */
+ 	__s64	maximum;	/* Maximum timestamp value in seconds */
+diff --git a/samples/vfs/test-fsinfo.c b/samples/vfs/test-fsinfo.c
+index 934b25399ffe..c5932109f683 100644
+--- a/samples/vfs/test-fsinfo.c
++++ b/samples/vfs/test-fsinfo.c
+@@ -190,6 +190,75 @@ static void dump_fsinfo_generic_supports(void *reply, unsigned int size)
+ 	printf("\twin_fattrs   : %x\n", f->win_file_attrs);
+ }
+ 
++#define FSINFO_FEATURE_NAME(C) [FSINFO_FEAT_##C] = #C
++static const char *fsinfo_feature_names[FSINFO_FEAT__NR] = {
++	FSINFO_FEATURE_NAME(IS_KERNEL_FS),
++	FSINFO_FEATURE_NAME(IS_BLOCK_FS),
++	FSINFO_FEATURE_NAME(IS_FLASH_FS),
++	FSINFO_FEATURE_NAME(IS_NETWORK_FS),
++	FSINFO_FEATURE_NAME(IS_AUTOMOUNTER_FS),
++	FSINFO_FEATURE_NAME(IS_MEMORY_FS),
++	FSINFO_FEATURE_NAME(AUTOMOUNTS),
++	FSINFO_FEATURE_NAME(ADV_LOCKS),
++	FSINFO_FEATURE_NAME(MAND_LOCKS),
++	FSINFO_FEATURE_NAME(LEASES),
++	FSINFO_FEATURE_NAME(UIDS),
++	FSINFO_FEATURE_NAME(GIDS),
++	FSINFO_FEATURE_NAME(PROJIDS),
++	FSINFO_FEATURE_NAME(STRING_USER_IDS),
++	FSINFO_FEATURE_NAME(GUID_USER_IDS),
++	FSINFO_FEATURE_NAME(WINDOWS_ATTRS),
++	FSINFO_FEATURE_NAME(USER_QUOTAS),
++	FSINFO_FEATURE_NAME(GROUP_QUOTAS),
++	FSINFO_FEATURE_NAME(PROJECT_QUOTAS),
++	FSINFO_FEATURE_NAME(XATTRS),
++	FSINFO_FEATURE_NAME(JOURNAL),
++	FSINFO_FEATURE_NAME(DATA_IS_JOURNALLED),
++	FSINFO_FEATURE_NAME(O_SYNC),
++	FSINFO_FEATURE_NAME(O_DIRECT),
++	FSINFO_FEATURE_NAME(VOLUME_ID),
++	FSINFO_FEATURE_NAME(VOLUME_UUID),
++	FSINFO_FEATURE_NAME(VOLUME_NAME),
++	FSINFO_FEATURE_NAME(VOLUME_FSID),
++	FSINFO_FEATURE_NAME(IVER_ALL_CHANGE),
++	FSINFO_FEATURE_NAME(IVER_DATA_CHANGE),
++	FSINFO_FEATURE_NAME(IVER_MONO_INCR),
++	FSINFO_FEATURE_NAME(DIRECTORIES),
++	FSINFO_FEATURE_NAME(SYMLINKS),
++	FSINFO_FEATURE_NAME(HARD_LINKS),
++	FSINFO_FEATURE_NAME(HARD_LINKS_1DIR),
++	FSINFO_FEATURE_NAME(DEVICE_FILES),
++	FSINFO_FEATURE_NAME(UNIX_SPECIALS),
++	FSINFO_FEATURE_NAME(RESOURCE_FORKS),
++	FSINFO_FEATURE_NAME(NAME_CASE_INDEP),
++	FSINFO_FEATURE_NAME(NAME_CASE_FOLD),
++	FSINFO_FEATURE_NAME(NAME_NON_UTF8),
++	FSINFO_FEATURE_NAME(NAME_HAS_CODEPAGE),
++	FSINFO_FEATURE_NAME(SPARSE),
++	FSINFO_FEATURE_NAME(NOT_PERSISTENT),
++	FSINFO_FEATURE_NAME(NO_UNIX_MODE),
++	FSINFO_FEATURE_NAME(HAS_ATIME),
++	FSINFO_FEATURE_NAME(HAS_BTIME),
++	FSINFO_FEATURE_NAME(HAS_CTIME),
++	FSINFO_FEATURE_NAME(HAS_MTIME),
++	FSINFO_FEATURE_NAME(HAS_ACL),
++	FSINFO_FEATURE_NAME(HAS_INODE_NUMBERS),
++};
++
++static void dump_fsinfo_generic_features(void *reply, unsigned int size)
++{
++	struct fsinfo_features *f = reply;
++	int i;
++
++	printf("\n\t");
++	for (i = 0; i < sizeof(f->features); i++)
++		printf("%02x", f->features[i]);
++	printf(" (nr=%u)\n", f->nr_features);
++	for (i = 0; i < FSINFO_FEAT__NR; i++)
++		if (f->features[i / 8] & (1 << (i % 8)))
++			printf("\t- %s\n", fsinfo_feature_names[i]);
++}
++
+ static void print_time(struct fsinfo_timestamp_one *t, char stamp)
+ {
+ 	printf("\t%ctime       : gran=%uE%d range=%llx-%llx\n",
+@@ -290,6 +359,7 @@ static const struct fsinfo_attribute fsinfo_attributes[] = {
+ 	FSINFO_VSTRUCT	(FSINFO_ATTR_IDS,		fsinfo_generic_ids),
+ 	FSINFO_VSTRUCT	(FSINFO_ATTR_LIMITS,		fsinfo_generic_limits),
+ 	FSINFO_VSTRUCT	(FSINFO_ATTR_SUPPORTS,		fsinfo_generic_supports),
++	FSINFO_VSTRUCT	(FSINFO_ATTR_FEATURES,		fsinfo_generic_features),
+ 	FSINFO_VSTRUCT	(FSINFO_ATTR_TIMESTAMP_INFO,	fsinfo_generic_timestamp_info),
+ 	FSINFO_STRING	(FSINFO_ATTR_VOLUME_ID,		string),
+ 	FSINFO_VSTRUCT	(FSINFO_ATTR_VOLUME_UUID,	fsinfo_generic_volume_uuid),
 
 
