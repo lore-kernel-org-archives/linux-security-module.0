@@ -2,126 +2,90 @@ Return-Path: <SRS0=RoHj=BD=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13E2DC433DF
-	for <linux-security-module@archiver.kernel.org>; Fri, 24 Jul 2020 10:44:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB872C433EA
+	for <linux-security-module@archiver.kernel.org>; Fri, 24 Jul 2020 11:20:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E5CAE2074A
-	for <linux-security-module@archiver.kernel.org>; Fri, 24 Jul 2020 10:44:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b="SkiyG8rG";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="DDKQ+Kvl"
+	by mail.kernel.org (Postfix) with ESMTP id A1EB32065F
+	for <linux-security-module@archiver.kernel.org>; Fri, 24 Jul 2020 11:20:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726591AbgGXKoP (ORCPT
+        id S1726804AbgGXLU1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 24 Jul 2020 06:44:15 -0400
-Received: from wnew1-smtp.messagingengine.com ([64.147.123.26]:50817 "EHLO
-        wnew1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726301AbgGXKoO (ORCPT
+        Fri, 24 Jul 2020 07:20:27 -0400
+Received: from relay9-d.mail.gandi.net ([217.70.183.199]:35217 "EHLO
+        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726483AbgGXLU0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 24 Jul 2020 06:44:14 -0400
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailnew.west.internal (Postfix) with ESMTP id ADCC1734;
-        Fri, 24 Jul 2020 06:44:12 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Fri, 24 Jul 2020 06:44:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
-        message-id:subject:from:to:cc:date:in-reply-to:references
-        :content-type:mime-version:content-transfer-encoding; s=fm3; bh=
-        IMuqW1eWzjwrdDQGfj1YeCfnnLSlRPZHrKpHRGXycSw=; b=SkiyG8rGyUhOHAi+
-        Xm//2tMphHh+kJKydj+txJBwL4Xx4H/yQ2qcqHgrMGdmCF8OKvcuuFIh37S1fkpb
-        OI5LAzXDcejvcHWBz+/jE/GAQPcidrNhLCSHaAneN0sH2ef4f7T/ofyW9z1bUyRs
-        jUPU5TjEE3dzAr/xK027OCDsADyuyqPoAUi0iCfy0xCv2jhe3mjyyNBQNxpQYqxY
-        Sdu3Z5+1fME1nqb6Eqmzmuxf29yLE35xkZoybiLjX6Ib6fCdmz8Ybf3NMdvOsGOX
-        1g5AHa4jiGKu/4cbvyEQ++XCX6XBQhuYc+rVsaPF16SGs69SWbi7jCEF5GlSS3Id
-        srb5gw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; bh=IMuqW1eWzjwrdDQGfj1YeCfnnLSlRPZHrKpHRGXyc
-        Sw=; b=DDKQ+KvlQlo1JLHV147fAh+wsfencJqlBsZt5ED5qpR2KU7E+GHrantXi
-        5q8oHCait0ejOx7vEW6ZxKW0DqL3qU75nAhFZRcA2A99pcYF7ZwssD6KmDXIdryP
-        MgCp/946byGHEtBLH2BURuzRJRmWvHnbC1/uGOv3s2ZtgPx1G2PJ7JU7EvKIRf31
-        zxHh7b23ST9YUE+LfaY2c6GHp+/E1+bxDUO7zldoMYpKoCY/7qpYF3Gpol1y9JBa
-        R6FsEo2TRLR6XfJva4DI84F+41QsCCwhcJLb+9/qIkwS7qoq4XRWvPNLoQ/eczS+
-        k0RKkN/QwevkU7fc/yYNlmLCq8lhA==
-X-ME-Sender: <xms:e7saX7v0R24W6tUJl9QwLRkPhmxJnuTRVw78y3JEF2kuPgbcFDLBNA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduiedrheefgdefvdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefkuffhvfffjghftggfggfgsehtjeertddtreejnecuhfhrohhmpefkrghnucfm
-    vghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnhepfe
-    efteetvdeguddvveefveeftedtffduudehueeihfeuvefgveehffeludeggfejnecukfhp
-    peduudekrddvtdekrdefjedrudejheenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpehrrghvvghnsehthhgvmhgrfidrnhgvth
-X-ME-Proxy: <xmx:e7saX8dR3ahPXrIh2ZUwzLIpYYi6Iww7dkdVSmkkRE3xsOzOMdrd0A>
-    <xmx:e7saX-zziKrlrzNbaMPdaXHXmXrAmesr7bz-kh1BEqhuuiMBh8V6_g>
-    <xmx:e7saX6NP6XGzlKHCPqrt1U8geJy_d65Yscm_M2ljftYzd6-JhcLGAA>
-    <xmx:fLsaX-Ue6A6fyJ4dG0lCmiVmCGISLUFHB12aIsjKL7-VALdMazX7uL5bO1w>
-Received: from mickey.themaw.net (unknown [118.208.37.175])
-        by mail.messagingengine.com (Postfix) with ESMTPA id A8F2E3280065;
-        Fri, 24 Jul 2020 06:44:05 -0400 (EDT)
-Message-ID: <865566fb800a014868a9a7e36a00a14430efb11e.camel@themaw.net>
-Subject: Re: [PATCH 13/17] watch_queue: Implement mount topology and
- attribute change notifications [ver #5]
-From:   Ian Kent <raven@themaw.net>
-To:     David Howells <dhowells@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Fri, 24 Jul 2020 07:20:26 -0400
+X-Originating-IP: 90.63.246.187
+Received: from gandi.net (laubervilliers-658-1-215-187.w90-63.abo.wanadoo.fr [90.63.246.187])
+        (Authenticated sender: thibaut.sautereau@clip-os.org)
+        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id D40D7FF80A;
+        Fri, 24 Jul 2020 11:20:14 +0000 (UTC)
+Date:   Fri, 24 Jul 2020 13:20:14 +0200
+From:   Thibaut Sautereau <thibaut.sautereau@clip-os.org>
+To:     =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+Cc:     linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>, nicolas.dichtel@6wind.com,
-        Christian Brauner <christian@brauner.io>, andres@anarazel.de,
-        Jeff Layton <jlayton@redhat.com>, dray@redhat.com,
-        Karel Zak <kzak@redhat.com>, keyrings@vger.kernel.org,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        LSM <linux-security-module@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Date:   Fri, 24 Jul 2020 18:44:01 +0800
-In-Reply-To: <2003787.1595585999@warthog.procyon.org.uk>
-References: <1293241.1595501326@warthog.procyon.org.uk>
-         <CAJfpegspWA6oUtdcYvYF=3fij=Bnq03b8VMbU9RNMKc+zzjbag@mail.gmail.com>
-         <158454378820.2863966.10496767254293183123.stgit@warthog.procyon.org.uk>
-         <158454391302.2863966.1884682840541676280.stgit@warthog.procyon.org.uk>
-         <2003787.1595585999@warthog.procyon.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Eric Chiang <ericchiang@google.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Philippe =?utf-8?Q?Tr=C3=A9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v7 0/7] Add support for O_MAYEXEC
+Message-ID: <20200724112014.GB38720@gandi.net>
+References: <20200723171227.446711-1-mic@digikod.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200723171227.446711-1-mic@digikod.net>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 2020-07-24 at 11:19 +0100, David Howells wrote:
-> David Howells <dhowells@redhat.com> wrote:
-> 
-> > > What guarantees that mount_id is going to remain a 32bit entity?
-> > 
-> > You think it likely we'd have >4 billion concurrent mounts on a
-> > system?  That
-> > would require >1.2TiB of RAM just for the struct mount allocations.
-> > 
-> > But I can expand it to __u64.
-> 
-> That said, sys_name_to_handle_at() assumes it's a 32-bit signed
-> integer, so
-> we're currently limited to ~2 billion concurrent mounts:-/
+On Thu, Jul 23, 2020 at 07:12:20PM +0200, Mickaël Salaün wrote:
 
-I was wondering about id re-use.
+> This patch series can be applied on top of v5.8-rc5 .
 
-Assuming that ids that are returned to the idr db are re-used
-what would the chance that a recently used id would end up
-being used?
+v5.8-rc6, actually.
 
-Would that chance increase as ids are consumed and freed over
-time?
+> Previous version:
+> https://lore.kernel.org/lkml/20200505153156.925111-1-mic@digikod.net/
 
-Yeah, it's one of those questions ... ;)
+This is v5.
+v6 is at https://lore.kernel.org/lkml/20200714181638.45751-1-mic@digikod.net/
 
-Ian
-
+-- 
+Thibaut Sautereau
+CLIP OS developer
