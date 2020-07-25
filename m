@@ -2,153 +2,192 @@ Return-Path: <SRS0=xYcQ=BE=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-10.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54DD9C433E1
-	for <linux-security-module@archiver.kernel.org>; Sat, 25 Jul 2020 03:25:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3FEEC433E8
+	for <linux-security-module@archiver.kernel.org>; Sat, 25 Jul 2020 05:14:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3B972206C1
-	for <linux-security-module@archiver.kernel.org>; Sat, 25 Jul 2020 03:25:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A76B1207FC
+	for <linux-security-module@archiver.kernel.org>; Sat, 25 Jul 2020 05:14:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Uz3IlXv+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726592AbgGYDZW (ORCPT
+        id S1726742AbgGYFOf (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 24 Jul 2020 23:25:22 -0400
-Received: from mga04.intel.com ([192.55.52.120]:10202 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726572AbgGYDZW (ORCPT
+        Sat, 25 Jul 2020 01:14:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43806 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726467AbgGYFOf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 24 Jul 2020 23:25:22 -0400
-IronPort-SDR: o9RvZeBGp7YEphIY6umZ+RWxEQzbk+q1PBhyJFp4EgJ+gNZ1reYjjrGVopff1x0qF8xKs9CIpg
- XRXMGqAUr7ow==
-X-IronPort-AV: E=McAfee;i="6000,8403,9692"; a="148297666"
-X-IronPort-AV: E=Sophos;i="5.75,392,1589266800"; 
-   d="scan'208";a="148297666"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2020 20:25:21 -0700
-IronPort-SDR: eOIC+S4SulEMj5oJcjW9Qdy4I/m4tVpBq2wf0qTX16TbvS5WituY8v9vhrcYi+Sw5+PB1sWWu/
- Ta50tujzkKYw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.75,392,1589266800"; 
-   d="scan'208";a="289178631"
-Received: from jcrametz-mobl.ger.corp.intel.com (HELO localhost) ([10.252.58.73])
-  by orsmga006.jf.intel.com with ESMTP; 24 Jul 2020 20:25:18 -0700
-Date:   Sat, 25 Jul 2020 06:25:16 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     David Howells <dhowells@redhat.com>
-Cc:     torvalds@linux-foundation.org, keyrings@vger.kernel.org,
+        Sat, 25 Jul 2020 01:14:35 -0400
+Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38008C0619E6
+        for <linux-security-module@vger.kernel.org>; Fri, 24 Jul 2020 22:14:35 -0700 (PDT)
+Received: by mail-pj1-x1041.google.com with SMTP id t15so6603326pjq.5
+        for <linux-security-module@vger.kernel.org>; Fri, 24 Jul 2020 22:14:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=zgyWqznSRtZ8AuY3tULsDjN5RpahufiDT3f0fggLh5s=;
+        b=Uz3IlXv+sKUEtS5eC2DkIZtfS1Xha2bB4TKPa3hP+w1M1cIds1A7Bc9dmlvPRbvChZ
+         wRrWcllSzjbfwURKIlVM3R6geZktvtQVkAUVECySvW+9t8BX+7Y+Mwnbg2+kr26wyHyc
+         0WBa5P7q9VQ2U9GlcuKszMphubHxHCT/n6acs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=zgyWqznSRtZ8AuY3tULsDjN5RpahufiDT3f0fggLh5s=;
+        b=CThjaGMB6y0G2YCclmpE4lieZGXY2nYbNEetJs8LAebA9b9TXWhUEXO0BH+iaVa88N
+         ExuGdFsrkOVlYnafxdbfyXQDQax9khc9B1BIMHFJjePNdfs2HuLvKJiqjOecZNocddbb
+         SfrKQL5OnYwc7pK7shIlcywSAzO+5YQtc+LmiDccahvtlVFAg/XKxNCJdDABLXZqRBho
+         p6u89LDkCrY/tmct9xsR+WlHZHyOXiGWBPuNpWDRrXAdl9Ya6LoKgoqqBaWCS4MDHt0l
+         8wpNFe5kyyYYJ1jyDmj3mfIYw2whSR6AmSP7rzMNc/GANTEJDHTMl/Vba3LLityPyKH0
+         eUtQ==
+X-Gm-Message-State: AOAM533av6SDW64M7cO/ERJ5D2Ybx2yfPu6PzBliCj+nyASgaveaFAvF
+        sXGLzx0cFxb4IZ+FjAZy7xp4yA==
+X-Google-Smtp-Source: ABdhPJz6ILO9KJmQAo9dsBlTgCVjwv22IuoZPDOnnhlk6scO1A0oZWI5P9disMNuzZklnQGqIVBuug==
+X-Received: by 2002:a17:90a:fe08:: with SMTP id ck8mr8549438pjb.90.1595654074430;
+        Fri, 24 Jul 2020 22:14:34 -0700 (PDT)
+Received: from [10.136.13.65] ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id 193sm7829508pfz.85.2020.07.24.22.14.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 24 Jul 2020 22:14:33 -0700 (PDT)
+Subject: Re: [PATCH v3 00/19] Introduce partial kernel_read_file() support
+To:     Kees Cook <keescook@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Jessica Yu <jeyu@kernel.org>, SeongJae Park <sjpark@amazon.de>,
+        KP Singh <kpsingh@chromium.org>, linux-efi@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] watch_queue: Limit the number of watches a user can hold
-Message-ID: <20200725032516.GA78242@linux.intel.com>
-References: <159562904644.2287160.13294507067766261970.stgit@warthog.procyon.org.uk>
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200724213640.389191-1-keescook@chromium.org>
+From:   Scott Branden <scott.branden@broadcom.com>
+Message-ID: <09bd8cc0-8073-c26a-fb7c-010a62f88c74@broadcom.com>
+Date:   Fri, 24 Jul 2020 22:14:23 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <159562904644.2287160.13294507067766261970.stgit@warthog.procyon.org.uk>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20200724213640.389191-1-keescook@chromium.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jul 24, 2020 at 11:17:26PM +0100, David Howells wrote:
-> Impose a limit on the number of watches that a user can hold so that they
-> can't use this mechanism to fill up all the available memory.
-> 
-> This is done by putting a counter in user_struct that's incremented when a
-> watch is allocated and decreased when it is released.  If the number
-> exceeds the RLIMIT_NOFILE limit, the watch is rejected with EAGAIN.
-> 
-> This can be tested by the following means:
-> 
->  (1) Create a watch queue and attach it to fd 5 in the program given - in
->      this case, bash:
-> 
-> 	keyctl watch_session /tmp/nlog /tmp/gclog 5 bash
-> 
->  (2) In the shell, set the maximum number of files to, say, 99:
-> 
-> 	ulimit -n 99
-> 
->  (3) Add 200 keyrings:
-> 
-> 	for ((i=0; i<200; i++)); do keyctl newring a$i @s || break; done
-> 
->  (4) Try to watch all of the keyrings:
-> 
-> 	for ((i=0; i<200; i++)); do echo $i; keyctl watch_add 5 %:a$i || break; done
-> 
->      This should fail when the number of watches belonging to the user hits
->      99.
-> 
->  (5) Remove all the keyrings and all of those watches should go away:
-> 
-> 	for ((i=0; i<200; i++)); do keyctl unlink %:a$i; done
-> 
->  (6) Kill off the watch queue by exiting the shell spawned by
->      watch_session.
-> 
-> Fixes: c73be61cede5 ("pipe: Add general notification queue support")
-> Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> ---
-> 
->  include/linux/sched/user.h |    3 +++
->  kernel/watch_queue.c       |    8 ++++++++
->  2 files changed, 11 insertions(+)
-> 
-> diff --git a/include/linux/sched/user.h b/include/linux/sched/user.h
-> index 917d88edb7b9..a8ec3b6093fc 100644
-> --- a/include/linux/sched/user.h
-> +++ b/include/linux/sched/user.h
-> @@ -36,6 +36,9 @@ struct user_struct {
->      defined(CONFIG_NET) || defined(CONFIG_IO_URING)
->  	atomic_long_t locked_vm;
->  #endif
-> +#ifdef CONFIG_WATCH_QUEUE
-> +	atomic_t nr_watches;	/* The number of watches this user currently has */
-> +#endif
->  
->  	/* Miscellaneous per-user rate limit */
->  	struct ratelimit_state ratelimit;
-> diff --git a/kernel/watch_queue.c b/kernel/watch_queue.c
-> index f74020f6bd9d..0ef8f65bd2d7 100644
-> --- a/kernel/watch_queue.c
-> +++ b/kernel/watch_queue.c
-> @@ -393,6 +393,7 @@ static void free_watch(struct rcu_head *rcu)
->  	struct watch *watch = container_of(rcu, struct watch, rcu);
->  
->  	put_watch_queue(rcu_access_pointer(watch->queue));
-> +	atomic_dec(&watch->cred->user->nr_watches);
->  	put_cred(watch->cred);
->  }
->  
-> @@ -452,6 +453,13 @@ int add_watch_to_object(struct watch *watch, struct watch_list *wlist)
->  	watch->cred = get_current_cred();
->  	rcu_assign_pointer(watch->watch_list, wlist);
->  
-> +	if (atomic_inc_return(&watch->cred->user->nr_watches) >
-> +	    task_rlimit(current, RLIMIT_NOFILE)) {
-> +		atomic_dec(&watch->cred->user->nr_watches);
-> +		put_cred(watch->cred);
-> +		return -EAGAIN;
-> +	}
-> +
->  	spin_lock_bh(&wqueue->lock);
->  	kref_get(&wqueue->usage);
->  	kref_get(&watch->usage);
-> 
-> 
+On 2020-07-24 2:36 p.m., Kees Cook wrote:
+> v3:
+> - add reviews/acks
+> - add "IMA: Add support for file reads without contents" patch
+> - trim CC list, in case that's why vger ignored v2
+> v2: [missing from lkml archives! (CC list too long?) repeating changes here]
+> - fix issues in firmware test suite
+> - add firmware partial read patches
+> - various bug fixes/cleanups
+> v1: https://lore.kernel.org/lkml/20200717174309.1164575-1-keescook@chromium.org/
+>
+> Hi,
+>
+> Here's my tree for adding partial read support in kernel_read_file(),
+> which fixes a number of issues along the way. It's got Scott's firmware
+> and IMA patches ported and everything tests cleanly for me (even with
+> CONFIG_IMA_APPRAISE=y).
+>
+> I think the intention is for this to go via Greg's tree since Scott's
+> driver code will depend on it?
+v3 of this patch series looks good and passes all of my tests.
+Remaining patches
+Acked-by: Scott Branden <scott.branden@broadcom.com>
 
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+I have added latest bcm-vk driver code to Kees' patch series and added 
+it here:
+https://github.com/sbranden/linux/tree/kernel_read_file_for_kees_v3
 
-David, BTW, would it be possible to push keyrings to lore.kernel.org?
+If everyone finds Kees' patch series acceptable then the 3 patches 
+adding the bcm-vk driver
+need to be added to the series.  I can send the 3 patches out separately 
+and then
+the two patch series can be combined in Greg or someone's tree if that 
+works?
+Or if an in-kernel user beyond kernel selftest is needed for 
+request_partial_firmware_into_buf
+in Kees' patch series then another PATCH v4 needs to be sent out 
+including the bcm-vk driver.
+>
+> Thanks,
+>
+> -Kees
+>
+>
+> Kees Cook (15):
 
-I don't have an archive for keyrings, which means that I cannot push
-this forward.
+Thanks for help Kees, it's works now.
+>    test_firmware: Test platform fw loading on non-EFI systems
+>    selftest/firmware: Add selftest timeout in settings
+>    firmware_loader: EFI firmware loader must handle pre-allocated buffer
+>    fs/kernel_read_file: Remove FIRMWARE_PREALLOC_BUFFER enum
+>    fs/kernel_read_file: Remove FIRMWARE_EFI_EMBEDDED enum
+>    fs/kernel_read_file: Split into separate source file
+>    fs/kernel_read_file: Remove redundant size argument
+>    fs/kernel_read_file: Switch buffer size arg to size_t
+>    fs/kernel_read_file: Add file_size output argument
+>    LSM: Introduce kernel_post_load_data() hook
+>    firmware_loader: Use security_post_load_data()
+>    module: Call security_kernel_post_load_data()
+>    LSM: Add "contents" flag to kernel_read_file hook
+>    fs/kernel_file_read: Add "offset" arg for partial reads
+>    firmware: Store opt_flags in fw_priv
+>
+> Scott Branden (4):
+>    fs/kernel_read_file: Split into separate include file
+>    IMA: Add support for file reads without contents
+>    firmware: Add request_partial_firmware_into_buf()
+>    test_firmware: Test partial read support
+>
+>   drivers/base/firmware_loader/fallback.c       |  19 +-
+>   drivers/base/firmware_loader/fallback.h       |   5 +-
+>   .../base/firmware_loader/fallback_platform.c  |  16 +-
+>   drivers/base/firmware_loader/firmware.h       |   7 +-
+>   drivers/base/firmware_loader/main.c           | 143 ++++++++++---
+>   drivers/firmware/efi/embedded-firmware.c      |  21 +-
+>   drivers/firmware/efi/embedded-firmware.h      |  19 ++
+>   fs/Makefile                                   |   3 +-
+>   fs/exec.c                                     | 132 +-----------
+>   fs/kernel_read_file.c                         | 189 ++++++++++++++++++
+>   include/linux/efi_embedded_fw.h               |  13 --
+>   include/linux/firmware.h                      |  12 ++
+>   include/linux/fs.h                            |  39 ----
+>   include/linux/ima.h                           |  19 +-
+>   include/linux/kernel_read_file.h              |  55 +++++
+>   include/linux/lsm_hook_defs.h                 |   6 +-
+>   include/linux/lsm_hooks.h                     |  12 ++
+>   include/linux/security.h                      |  19 +-
+>   kernel/kexec.c                                |   2 +-
+>   kernel/kexec_file.c                           |  19 +-
+>   kernel/module.c                               |  24 ++-
+>   lib/test_firmware.c                           | 159 +++++++++++++--
+>   security/integrity/digsig.c                   |   8 +-
+>   security/integrity/ima/ima_fs.c               |  10 +-
+>   security/integrity/ima/ima_main.c             |  70 +++++--
+>   security/integrity/ima/ima_policy.c           |   1 +
+>   security/loadpin/loadpin.c                    |  17 +-
+>   security/security.c                           |  26 ++-
+>   security/selinux/hooks.c                      |   8 +-
+>   .../selftests/firmware/fw_filesystem.sh       |  91 +++++++++
+>   tools/testing/selftests/firmware/settings     |   8 +
+>   tools/testing/selftests/kselftest/runner.sh   |   6 +-
+>   32 files changed, 860 insertions(+), 318 deletions(-)
+>   create mode 100644 drivers/firmware/efi/embedded-firmware.h
+>   create mode 100644 fs/kernel_read_file.c
+>   create mode 100644 include/linux/kernel_read_file.h
+>   create mode 100644 tools/testing/selftests/firmware/settings
+>
 
-/Jarkko
