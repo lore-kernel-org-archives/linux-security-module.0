@@ -2,752 +2,124 @@ Return-Path: <SRS0=m40R=BG=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1824BC433E3
-	for <linux-security-module@archiver.kernel.org>; Mon, 27 Jul 2020 15:20:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5211EC433E5
+	for <linux-security-module@archiver.kernel.org>; Mon, 27 Jul 2020 16:12:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D0BFC2053B
-	for <linux-security-module@archiver.kernel.org>; Mon, 27 Jul 2020 15:20:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E13F2073E
+	for <linux-security-module@archiver.kernel.org>; Mon, 27 Jul 2020 16:12:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dINyPm80"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R8WWPDDf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728426AbgG0PUm (ORCPT
+        id S1730297AbgG0QMY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 27 Jul 2020 11:20:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46430 "EHLO
+        Mon, 27 Jul 2020 12:12:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54532 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728297AbgG0PUl (ORCPT
+        with ESMTP id S1727975AbgG0QMY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 27 Jul 2020 11:20:41 -0400
-Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9857C061794
-        for <linux-security-module@vger.kernel.org>; Mon, 27 Jul 2020 08:20:41 -0700 (PDT)
-Received: by mail-pl1-x643.google.com with SMTP id o1so8180392plk.1
-        for <linux-security-module@vger.kernel.org>; Mon, 27 Jul 2020 08:20:41 -0700 (PDT)
+        Mon, 27 Jul 2020 12:12:24 -0400
+Received: from mail-oi1-x242.google.com (mail-oi1-x242.google.com [IPv6:2607:f8b0:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05E5FC061794;
+        Mon, 27 Jul 2020 09:12:24 -0700 (PDT)
+Received: by mail-oi1-x242.google.com with SMTP id k22so14814143oib.0;
+        Mon, 27 Jul 2020 09:12:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=trUUiRYm3wqO1DNHMBwpwVCET0guGrVE4vENoE/98Hs=;
-        b=dINyPm8005BSTuFwSAbwaXGXT6WGLdjHNBNljJCaf5ClnCf2u0+o8Spu7ytIkzKRMK
-         VA5ZH3W6RXTLUhQ4+xPJuZC30tqd3FTvYC2XTe/xS7GE7E+0/CXFX1f/USD7J0TJ299t
-         yA2sEJEiuow4SL9/1I2RGAXmvT4VjjVHURw3I=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=piFsRY7JOm24njFZpgZZGCe0rwON4Csurmi1k3Fom/s=;
+        b=R8WWPDDf5X7l/Ty4nDs3DP5h7tdNgpwJpBxPH1TKawwvOBua6NA4iyd9xCoCNAJCiJ
+         lVfc3AnvMvCZIZjRbY9QYrCLswa9WdJHK+gGBe6Gt18ocHZxw0/YjfUalbE4nO3irDU5
+         sBQMwx8gPM0qMSTLZDfz01zFshUSwT9/zbudDToQn3h99Jb4VlZiSCKf0BjgjL3OKlW0
+         TmJ0KkUKus3flMsf+CJJ3o8eUwqu9PpUgdZFD5yTriIW8t1sgqEHOfuoJmx10f/2mv+D
+         DadruT/8ILwj5ToSxVn7V8QHTwU3KbwIJaNF835hK6tFqqGJFJmi0+xvUev3xWfflgNN
+         j+wg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=trUUiRYm3wqO1DNHMBwpwVCET0guGrVE4vENoE/98Hs=;
-        b=TAOxn9xEGMPOSZzxwzxFa4esUsI0FEwsUHyGGnxXEVGlPzFegJL9/7aK6gdV0QHydU
-         4QDM3PV12qCw1ZCpzqkOGO7yBjJthoPbLTt+MuRhaheIlzdtbj5jDf06UVVMA4EyM2ri
-         t2JuH7H5MlVeAQ+0pKNzzny2VEPIMDUm4EpXdgg2Dx3B6MBM+YSmmkxIe0mgQ1X/LI7B
-         MOTxgB2kl/J0CvBIf09IEeu4WcCOWmFD9Ck2B1HknaPgnqTfqiIGtrV3lcJveVb1oGOV
-         8gZZAQOIjx8gBUslabPHGeaPjaAqGKQZCGq2pa0dkKCBXUJ66Tc2ZgoQmn28nT/eRBKA
-         S3Cw==
-X-Gm-Message-State: AOAM53050gn7Hwa8E5obnf1uzW5a8RcyWdL1FykpWN6SFSFXMfZ7QNRO
-        UNnksJSYGybNHysCVbvLXGIWYWaoMbA=
-X-Google-Smtp-Source: ABdhPJybUwLHpoQ6r2S7bXXEexegyOGuS1OyRL09LxQvgyKbUJNdb2Iv9XWV21rH4Wuz8Mxfcgq66Q==
-X-Received: by 2002:a17:90a:fe0c:: with SMTP id ck12mr7322933pjb.102.1595863240814;
-        Mon, 27 Jul 2020 08:20:40 -0700 (PDT)
-Received: from localhost ([2620:15c:202:200:42b0:34ff:fe3d:589e])
-        by smtp.gmail.com with ESMTPSA id w123sm15192968pfd.2.2020.07.27.08.20.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Jul 2020 08:20:40 -0700 (PDT)
-From:   Micah Morton <mortonm@chromium.org>
-To:     linux-security-module@vger.kernel.org
-Cc:     keescook@chromium.org, casey@schaufler-ca.com, paul@paul-moore.com,
-        stephen.smalley.work@gmail.com, serge@hallyn.com,
-        jmorris@namei.org, Thomas Cedeno <thomascedeno@google.com>,
-        Micah Morton <mortonm@chromium.org>
-Subject: [PATCH v2 2/2] LSM: SafeSetID: Add GID security policy handling
-Date:   Mon, 27 Jul 2020 08:20:36 -0700
-Message-Id: <20200727152036.153212-1-mortonm@chromium.org>
-X-Mailer: git-send-email 2.28.0.rc0.142.g3c755180ce-goog
-In-Reply-To: <20200721170533.GA6653@mail.hallyn.com>
-References: <20200721170533.GA6653@mail.hallyn.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=piFsRY7JOm24njFZpgZZGCe0rwON4Csurmi1k3Fom/s=;
+        b=rT3SEYkXcCtjlXKaiqpRx701nuEdelSzeBxPi+DCCyzcRK2dlcnrRz9SM/2TmYIcbB
+         DzE2HvcLnnBOriQsaVb/6xzgyOdxfJQg5dcQhzcB3q3HRj6ROlgsA1g/qBMEefWSSocI
+         ZAN345OGco3OQQ6DEy3+T7S/COepS76Lqe2tt4wVlmkHudqSAWuGuExcwtjZWN5yPlO+
+         pUgLWUIp8OTsGLJfe8Oc/iBirB82c60MbBHKuWjZyq7+2A1EtEaqIxAuSN0GQRoUm6Zr
+         UfMJjK0fwGj/etKanUCbCtak5C1lNoKPYvg6sKpu3m/F7NJEIWU1gXxVxZ5FC4nNBE+E
+         d+MQ==
+X-Gm-Message-State: AOAM531w/GiNYYIgMk2MEBGPtneNQIhFFS4Yd0c7Vwt9a9xXt9aspYR7
+        Pbdb9v70Kla78f9pbIA350x29vFFxV+hY4Gw9Vs=
+X-Google-Smtp-Source: ABdhPJxzbXrmkz19yELtpn/YxAJN5p300896o7TLZsr1hdQEGgmj6ERW5cTYe5V1vbtSJwkncp45dtNUGsy/Vz4qvyg=
+X-Received: by 2002:aca:c4cc:: with SMTP id u195mr56473oif.160.1595866343429;
+ Mon, 27 Jul 2020 09:12:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200724203226.16374-1-casey@schaufler-ca.com> <20200724203226.16374-3-casey@schaufler-ca.com>
+In-Reply-To: <20200724203226.16374-3-casey@schaufler-ca.com>
+From:   Stephen Smalley <stephen.smalley.work@gmail.com>
+Date:   Mon, 27 Jul 2020 12:12:12 -0400
+Message-ID: <CAEjxPJ453W-8PmB4WPq2vZHfvvG6yWFmoqnuHtHvz5Y5MYaj1g@mail.gmail.com>
+Subject: Re: [PATCH v19 02/23] LSM: Create and manage the lsmblob data structure.
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Casey Schaufler <casey.schaufler@intel.com>,
+        James Morris <jmorris@namei.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        SElinux list <selinux@vger.kernel.org>,
+        John Johansen <john.johansen@canonical.com>,
+        linux-audit@redhat.com, Stephen Smalley <sds@tycho.nsa.gov>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Thomas Cedeno <thomascedeno@google.com>
+On Fri, Jul 24, 2020 at 4:35 PM Casey Schaufler <casey@schaufler-ca.com> wr=
+ote:
+>
+> When more than one security module is exporting data to
+> audit and networking sub-systems a single 32 bit integer
+> is no longer sufficient to represent the data. Add a
+> structure to be used instead.
+>
+> The lsmblob structure is currently an array of
+> u32 "secids". There is an entry for each of the
+> security modules built into the system that would
+> use secids if active. The system assigns the module
+> a "slot" when it registers hooks. If modules are
+> compiled in but not registered there will be unused
+> slots.
+>
+> A new lsm_id structure, which contains the name
+> of the LSM and its slot number, is created. There
+> is an instance for each LSM, which assigns the name
+> and passes it to the infrastructure to set the slot.
+>
+> The audit rules data is expanded to use an array of
+> security module data rather than a single instance.
+> Because IMA uses the audit rule functions it is
+> affected as well.
+>
+> Acked-by: Stephen Smalley <sds@tycho.nsa.gov>
+> Acked-by: Paul Moore <paul@paul-moore.com>
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 
-The SafeSetID LSM has functionality for restricting setuid() calls based
-on its configured security policies. This patch adds the analogous
-functionality for setgid() calls. This is mostly a copy-and-paste change
-with some code deduplication, plus slight modifications/name changes to
-the policy-rule-related structs (now contain GID rules in addition to
-the UID ones) and some type generalization since SafeSetID now needs to
-deal with kgid_t and kuid_t types.
+With CONFIG_BPF_LSM=3Dy:
 
-Signed-off-by: Thomas Cedeno <thomascedeno@google.com>
-Signed-off-by: Micah Morton <mortonm@chromium.org>
-Reviewed-by: Serge Hallyn <serge@hallyn.com>
----
-NOTE: this v2 patch features very minor tweaks to combine two if/else
-statements into one and eliminate a redundant sanity check.
- security/safesetid/lsm.c        | 178 ++++++++++++++++++++++--------
- security/safesetid/lsm.h        |  38 +++++--
- security/safesetid/securityfs.c | 190 +++++++++++++++++++++++---------
- 3 files changed, 300 insertions(+), 106 deletions(-)
-
-diff --git a/security/safesetid/lsm.c b/security/safesetid/lsm.c
-index 7760019ad35d..787a98e82f1e 100644
---- a/security/safesetid/lsm.c
-+++ b/security/safesetid/lsm.c
-@@ -24,20 +24,36 @@
- /* Flag indicating whether initialization completed */
- int safesetid_initialized;
- 
--struct setuid_ruleset __rcu *safesetid_setuid_rules;
-+struct setid_ruleset __rcu *safesetid_setuid_rules;
-+struct setid_ruleset __rcu *safesetid_setgid_rules;
-+
- 
- /* Compute a decision for a transition from @src to @dst under @policy. */
--enum sid_policy_type _setuid_policy_lookup(struct setuid_ruleset *policy,
--		kuid_t src, kuid_t dst)
-+enum sid_policy_type _setid_policy_lookup(struct setid_ruleset *policy,
-+		kid_t src, kid_t dst)
- {
--	struct setuid_rule *rule;
-+	struct setid_rule *rule;
- 	enum sid_policy_type result = SIDPOL_DEFAULT;
- 
--	hash_for_each_possible(policy->rules, rule, next, __kuid_val(src)) {
--		if (!uid_eq(rule->src_uid, src))
--			continue;
--		if (uid_eq(rule->dst_uid, dst))
--			return SIDPOL_ALLOWED;
-+	if (policy->type == UID) {
-+		hash_for_each_possible(policy->rules, rule, next, __kuid_val(src.uid)) {
-+			if (!uid_eq(rule->src_id.uid, src.uid))
-+				continue;
-+			if (uid_eq(rule->dst_id.uid, dst.uid))
-+				return SIDPOL_ALLOWED;
-+			result = SIDPOL_CONSTRAINED;
-+		}
-+	} else if (policy->type == GID) {
-+		hash_for_each_possible(policy->rules, rule, next, __kgid_val(src.gid)) {
-+			if (!gid_eq(rule->src_id.gid, src.gid))
-+				continue;
-+			if (gid_eq(rule->dst_id.gid, dst.gid)){
-+				return SIDPOL_ALLOWED;
-+			}
-+			result = SIDPOL_CONSTRAINED;
-+		}
-+	} else {
-+		/* Should not reach here, report the ID as contrainsted */
- 		result = SIDPOL_CONSTRAINED;
- 	}
- 	return result;
-@@ -47,15 +63,26 @@ enum sid_policy_type _setuid_policy_lookup(struct setuid_ruleset *policy,
-  * Compute a decision for a transition from @src to @dst under the active
-  * policy.
-  */
--static enum sid_policy_type setuid_policy_lookup(kuid_t src, kuid_t dst)
-+static enum sid_policy_type setid_policy_lookup(kid_t src, kid_t dst, enum setid_type new_type)
- {
- 	enum sid_policy_type result = SIDPOL_DEFAULT;
--	struct setuid_ruleset *pol;
-+	struct setid_ruleset *pol;
- 
- 	rcu_read_lock();
--	pol = rcu_dereference(safesetid_setuid_rules);
--	if (pol)
--		result = _setuid_policy_lookup(pol, src, dst);
-+	if (new_type == UID)
-+		pol = rcu_dereference(safesetid_setuid_rules);
-+	else if (new_type == GID)
-+		pol = rcu_dereference(safesetid_setgid_rules);
-+	else { /* Should not reach here */
-+		result = SIDPOL_CONSTRAINED;
-+		rcu_read_unlock();
-+		return result;
-+	}
-+
-+	if (pol) {
-+		pol->type = new_type;
-+		result = _setid_policy_lookup(pol, src, dst);
-+	}
- 	rcu_read_unlock();
- 	return result;
- }
-@@ -65,8 +92,8 @@ static int safesetid_security_capable(const struct cred *cred,
- 				      int cap,
- 				      unsigned int opts)
- {
--	/* We're only interested in CAP_SETUID. */
--	if (cap != CAP_SETUID)
-+	/* We're only interested in CAP_SETUID and CAP_SETGID. */
-+	if (cap != CAP_SETUID && cap != CAP_SETGID)
- 		return 0;
- 
- 	/*
-@@ -77,45 +104,83 @@ static int safesetid_security_capable(const struct cred *cred,
- 	if ((opts & CAP_OPT_INSETID) != 0)
- 		return 0;
- 
--	/*
--	 * If no policy applies to this task, allow the use of CAP_SETUID for
--	 * other purposes.
--	 */
--	if (setuid_policy_lookup(cred->uid, INVALID_UID) == SIDPOL_DEFAULT)
-+	switch (cap) {
-+	case CAP_SETUID:
-+		/*
-+		* If no policy applies to this task, allow the use of CAP_SETUID for
-+		* other purposes.
-+		*/
-+		if (setid_policy_lookup((kid_t)cred->uid, INVALID_ID, UID) == SIDPOL_DEFAULT)
-+			return 0;
-+		/*
-+		 * Reject use of CAP_SETUID for functionality other than calling
-+		 * set*uid() (e.g. setting up userns uid mappings).
-+		 */
-+		pr_warn("Operation requires CAP_SETUID, which is not available to UID %u for operations besides approved set*uid transitions\n",
-+			__kuid_val(cred->uid));
-+		return -EPERM;
-+		break;
-+	case CAP_SETGID:
-+		/*
-+		* If no policy applies to this task, allow the use of CAP_SETGID for
-+		* other purposes.
-+		*/
-+		if (setid_policy_lookup((kid_t)cred->gid, INVALID_ID, GID) == SIDPOL_DEFAULT)
-+			return 0;
-+		/*
-+		 * Reject use of CAP_SETUID for functionality other than calling
-+		 * set*gid() (e.g. setting up userns gid mappings).
-+		 */
-+		pr_warn("Operation requires CAP_SETGID, which is not available to GID %u for operations besides approved set*gid transitions\n",
-+			__kuid_val(cred->uid));
-+		return -EPERM;
-+		break;
-+	default:
-+		/* Error, the only capabilities were checking for is CAP_SETUID/GID */
- 		return 0;
--
--	/*
--	 * Reject use of CAP_SETUID for functionality other than calling
--	 * set*uid() (e.g. setting up userns uid mappings).
--	 */
--	pr_warn("Operation requires CAP_SETUID, which is not available to UID %u for operations besides approved set*uid transitions\n",
--		__kuid_val(cred->uid));
--	return -EPERM;
-+		break;
-+	}
-+	return 0;
- }
- 
- /*
-  * Check whether a caller with old credentials @old is allowed to switch to
-- * credentials that contain @new_uid.
-+ * credentials that contain @new_id.
-  */
--static bool uid_permitted_for_cred(const struct cred *old, kuid_t new_uid)
-+static bool id_permitted_for_cred(const struct cred *old, kid_t new_id, enum setid_type new_type)
- {
- 	bool permitted;
- 
--	/* If our old creds already had this UID in it, it's fine. */
--	if (uid_eq(new_uid, old->uid) || uid_eq(new_uid, old->euid) ||
--	    uid_eq(new_uid, old->suid))
--		return true;
-+	/* If our old creds already had this ID in it, it's fine. */
-+	if (new_type == UID) {
-+		if (uid_eq(new_id.uid, old->uid) || uid_eq(new_id.uid, old->euid) ||
-+			uid_eq(new_id.uid, old->suid))
-+			return true;
-+	} else if (new_type == GID){
-+		if (gid_eq(new_id.gid, old->gid) || gid_eq(new_id.gid, old->egid) ||
-+			gid_eq(new_id.gid, old->sgid))
-+			return true;
-+	} else /* Error, new_type is an invalid type */
-+		return false;
- 
- 	/*
- 	 * Transitions to new UIDs require a check against the policy of the old
- 	 * RUID.
- 	 */
- 	permitted =
--	    setuid_policy_lookup(old->uid, new_uid) != SIDPOL_CONSTRAINED;
-+	    setid_policy_lookup((kid_t)old->uid, new_id, new_type) != SIDPOL_CONSTRAINED;
-+
- 	if (!permitted) {
--		pr_warn("UID transition ((%d,%d,%d) -> %d) blocked\n",
--			__kuid_val(old->uid), __kuid_val(old->euid),
--			__kuid_val(old->suid), __kuid_val(new_uid));
-+		if (new_type == UID) {
-+			pr_warn("UID transition ((%d,%d,%d) -> %d) blocked\n",
-+				__kuid_val(old->uid), __kuid_val(old->euid),
-+				__kuid_val(old->suid), __kuid_val(new_id.uid));
-+		} else if (new_type == GID) {
-+			pr_warn("GID transition ((%d,%d,%d) -> %d) blocked\n",
-+				__kgid_val(old->gid), __kgid_val(old->egid),
-+				__kgid_val(old->sgid), __kgid_val(new_id.gid));
-+		} else /* Error, new_type is an invalid type */
-+			return false;
- 	}
- 	return permitted;
- }
-@@ -131,13 +196,37 @@ static int safesetid_task_fix_setuid(struct cred *new,
- {
- 
- 	/* Do nothing if there are no setuid restrictions for our old RUID. */
--	if (setuid_policy_lookup(old->uid, INVALID_UID) == SIDPOL_DEFAULT)
-+	if (setid_policy_lookup((kid_t)old->uid, INVALID_ID, UID) == SIDPOL_DEFAULT)
-+		return 0;
-+
-+	if (id_permitted_for_cred(old, (kid_t)new->uid, UID) &&
-+	    id_permitted_for_cred(old, (kid_t)new->euid, UID) &&
-+	    id_permitted_for_cred(old, (kid_t)new->suid, UID) &&
-+	    id_permitted_for_cred(old, (kid_t)new->fsuid, UID))
-+		return 0;
-+
-+	/*
-+	 * Kill this process to avoid potential security vulnerabilities
-+	 * that could arise from a missing whitelist entry preventing a
-+	 * privileged process from dropping to a lesser-privileged one.
-+	 */
-+	force_sig(SIGKILL);
-+	return -EACCES;
-+}
-+
-+static int safesetid_task_fix_setgid(struct cred *new,
-+				     const struct cred *old,
-+				     int flags)
-+{
-+
-+	/* Do nothing if there are no setgid restrictions for our old RGID. */
-+	if (setid_policy_lookup((kid_t)old->gid, INVALID_ID, GID) == SIDPOL_DEFAULT)
- 		return 0;
- 
--	if (uid_permitted_for_cred(old, new->uid) &&
--	    uid_permitted_for_cred(old, new->euid) &&
--	    uid_permitted_for_cred(old, new->suid) &&
--	    uid_permitted_for_cred(old, new->fsuid))
-+	if (id_permitted_for_cred(old, (kid_t)new->gid, GID) &&
-+	    id_permitted_for_cred(old, (kid_t)new->egid, GID) &&
-+	    id_permitted_for_cred(old, (kid_t)new->sgid, GID) &&
-+	    id_permitted_for_cred(old, (kid_t)new->fsgid, GID))
- 		return 0;
- 
- 	/*
-@@ -151,6 +240,7 @@ static int safesetid_task_fix_setuid(struct cred *new,
- 
- static struct security_hook_list safesetid_security_hooks[] = {
- 	LSM_HOOK_INIT(task_fix_setuid, safesetid_task_fix_setuid),
-+	LSM_HOOK_INIT(task_fix_setgid, safesetid_task_fix_setgid),
- 	LSM_HOOK_INIT(capable, safesetid_security_capable)
- };
- 
-diff --git a/security/safesetid/lsm.h b/security/safesetid/lsm.h
-index db6d16e6bbc3..bde8c43a3767 100644
---- a/security/safesetid/lsm.h
-+++ b/security/safesetid/lsm.h
-@@ -27,27 +27,47 @@ enum sid_policy_type {
- 	SIDPOL_ALLOWED /* target ID explicitly allowed */
- };
- 
-+typedef union {
-+	kuid_t uid;
-+	kgid_t gid;
-+} kid_t;
-+
-+enum setid_type {
-+	UID,
-+	GID
-+};
-+
- /*
-- * Hash table entry to store safesetid policy signifying that 'src_uid'
-- * can setuid to 'dst_uid'.
-+ * Hash table entry to store safesetid policy signifying that 'src_id'
-+ * can set*id to 'dst_id'.
-  */
--struct setuid_rule {
-+struct setid_rule {
- 	struct hlist_node next;
--	kuid_t src_uid;
--	kuid_t dst_uid;
-+	kid_t src_id;
-+	kid_t dst_id;
-+
-+	/* Flag to signal if rule is for UID's or GID's */
-+	enum setid_type type;
- };
- 
- #define SETID_HASH_BITS 8 /* 256 buckets in hash table */
- 
--struct setuid_ruleset {
-+/* Extension of INVALID_UID/INVALID_GID for kid_t type */
-+#define INVALID_ID (kid_t){.uid = INVALID_UID}
-+
-+struct setid_ruleset {
- 	DECLARE_HASHTABLE(rules, SETID_HASH_BITS);
- 	char *policy_str;
- 	struct rcu_head rcu;
-+
-+	//Flag to signal if ruleset is for UID's or GID's
-+	enum setid_type type;
- };
- 
--enum sid_policy_type _setuid_policy_lookup(struct setuid_ruleset *policy,
--		kuid_t src, kuid_t dst);
-+enum sid_policy_type _setid_policy_lookup(struct setid_ruleset *policy,
-+		kid_t src, kid_t dst);
- 
--extern struct setuid_ruleset __rcu *safesetid_setuid_rules;
-+extern struct setid_ruleset __rcu *safesetid_setuid_rules;
-+extern struct setid_ruleset __rcu *safesetid_setgid_rules;
- 
- #endif /* _SAFESETID_H */
-diff --git a/security/safesetid/securityfs.c b/security/safesetid/securityfs.c
-index f8bc574cea9c..d8e6f2cc42c5 100644
---- a/security/safesetid/securityfs.c
-+++ b/security/safesetid/securityfs.c
-@@ -19,22 +19,23 @@
- 
- #include "lsm.h"
- 
--static DEFINE_MUTEX(policy_update_lock);
-+static DEFINE_MUTEX(uid_policy_update_lock);
-+static DEFINE_MUTEX(gid_policy_update_lock);
- 
- /*
-- * In the case the input buffer contains one or more invalid UIDs, the kuid_t
-+ * In the case the input buffer contains one or more invalid IDs, the kid_t
-  * variables pointed to by @parent and @child will get updated but this
-  * function will return an error.
-  * Contents of @buf may be modified.
-  */
- static int parse_policy_line(struct file *file, char *buf,
--	struct setuid_rule *rule)
-+	struct setid_rule *rule)
- {
- 	char *child_str;
- 	int ret;
- 	u32 parsed_parent, parsed_child;
- 
--	/* Format of |buf| string should be <UID>:<UID>. */
-+	/* Format of |buf| string should be <UID>:<UID> or <GID>:<GID> */
- 	child_str = strchr(buf, ':');
- 	if (child_str == NULL)
- 		return -EINVAL;
-@@ -49,20 +50,29 @@ static int parse_policy_line(struct file *file, char *buf,
- 	if (ret)
- 		return ret;
- 
--	rule->src_uid = make_kuid(file->f_cred->user_ns, parsed_parent);
--	rule->dst_uid = make_kuid(file->f_cred->user_ns, parsed_child);
--	if (!uid_valid(rule->src_uid) || !uid_valid(rule->dst_uid))
-+	if (rule->type == UID){
-+		rule->src_id.uid = make_kuid(file->f_cred->user_ns, parsed_parent);
-+		rule->dst_id.uid = make_kuid(file->f_cred->user_ns, parsed_child);
-+		if (!uid_valid(rule->src_id.uid) || !uid_valid(rule->dst_id.uid))
-+			return -EINVAL;
-+	} else if (rule->type == GID){
-+		rule->src_id.gid = make_kgid(file->f_cred->user_ns, parsed_parent);
-+		rule->dst_id.gid = make_kgid(file->f_cred->user_ns, parsed_child);
-+		if (!gid_valid(rule->src_id.gid) || !gid_valid(rule->dst_id.gid))
-+			return -EINVAL;
-+	} else {
-+		/* Error, rule->type is an invalid type */
- 		return -EINVAL;
--
-+	}
- 	return 0;
- }
- 
- static void __release_ruleset(struct rcu_head *rcu)
- {
--	struct setuid_ruleset *pol =
--		container_of(rcu, struct setuid_ruleset, rcu);
-+	struct setid_ruleset *pol =
-+		container_of(rcu, struct setid_ruleset, rcu);
- 	int bucket;
--	struct setuid_rule *rule;
-+	struct setid_rule *rule;
- 	struct hlist_node *tmp;
- 
- 	hash_for_each_safe(pol->rules, bucket, tmp, rule, next)
-@@ -71,36 +81,55 @@ static void __release_ruleset(struct rcu_head *rcu)
- 	kfree(pol);
- }
- 
--static void release_ruleset(struct setuid_ruleset *pol)
--{
-+static void release_ruleset(struct setid_ruleset *pol){
- 	call_rcu(&pol->rcu, __release_ruleset);
- }
- 
--static void insert_rule(struct setuid_ruleset *pol, struct setuid_rule *rule)
-+static void insert_rule(struct setid_ruleset *pol, struct setid_rule *rule)
- {
--	hash_add(pol->rules, &rule->next, __kuid_val(rule->src_uid));
-+	if (pol->type == UID)
-+		hash_add(pol->rules, &rule->next, __kuid_val(rule->src_id.uid));
-+	else if (pol->type == GID)
-+		hash_add(pol->rules, &rule->next, __kgid_val(rule->src_id.gid));
-+	else /* Error, pol->type is neither UID or GID */
-+		return;
- }
- 
--static int verify_ruleset(struct setuid_ruleset *pol)
-+static int verify_ruleset(struct setid_ruleset *pol)
- {
- 	int bucket;
--	struct setuid_rule *rule, *nrule;
-+	struct setid_rule *rule, *nrule;
- 	int res = 0;
- 
- 	hash_for_each(pol->rules, bucket, rule, next) {
--		if (_setuid_policy_lookup(pol, rule->dst_uid, INVALID_UID) ==
--		    SIDPOL_DEFAULT) {
--			pr_warn("insecure policy detected: uid %d is constrained but transitively unconstrained through uid %d\n",
--				__kuid_val(rule->src_uid),
--				__kuid_val(rule->dst_uid));
-+		if (_setid_policy_lookup(pol, rule->dst_id, INVALID_ID) == SIDPOL_DEFAULT) {
-+			if (pol->type == UID) {
-+				pr_warn("insecure policy detected: uid %d is constrained but transitively unconstrained through uid %d\n",
-+					__kuid_val(rule->src_id.uid),
-+					__kuid_val(rule->dst_id.uid));
-+			} else if (pol->type == GID) {
-+				pr_warn("insecure policy detected: gid %d is constrained but transitively unconstrained through gid %d\n",
-+					__kgid_val(rule->src_id.gid),
-+					__kgid_val(rule->dst_id.gid));
-+			} else { /* pol->type is an invalid type */
-+				res = -EINVAL;
-+				return res;
-+			}
- 			res = -EINVAL;
- 
- 			/* fix it up */
--			nrule = kmalloc(sizeof(struct setuid_rule), GFP_KERNEL);
-+			nrule = kmalloc(sizeof(struct setid_rule), GFP_KERNEL);
- 			if (!nrule)
- 				return -ENOMEM;
--			nrule->src_uid = rule->dst_uid;
--			nrule->dst_uid = rule->dst_uid;
-+			if (pol->type == UID){
-+				nrule->src_id.uid = rule->dst_id.uid;
-+				nrule->dst_id.uid = rule->dst_id.uid;
-+				nrule->type = UID;
-+			} else { /* pol->type must be GID if we've made it to here */
-+				nrule->src_id.gid = rule->dst_id.gid;
-+				nrule->dst_id.gid = rule->dst_id.gid;
-+				nrule->type = GID;
-+			}
- 			insert_rule(pol, nrule);
- 		}
- 	}
-@@ -108,16 +137,17 @@ static int verify_ruleset(struct setuid_ruleset *pol)
- }
- 
- static ssize_t handle_policy_update(struct file *file,
--				    const char __user *ubuf, size_t len)
-+				    const char __user *ubuf, size_t len, enum setid_type policy_type)
- {
--	struct setuid_ruleset *pol;
-+	struct setid_ruleset *pol;
- 	char *buf, *p, *end;
- 	int err;
- 
--	pol = kmalloc(sizeof(struct setuid_ruleset), GFP_KERNEL);
-+	pol = kmalloc(sizeof(struct setid_ruleset), GFP_KERNEL);
- 	if (!pol)
- 		return -ENOMEM;
- 	pol->policy_str = NULL;
-+	pol->type = policy_type;
- 	hash_init(pol->rules);
- 
- 	p = buf = memdup_user_nul(ubuf, len);
-@@ -133,7 +163,7 @@ static ssize_t handle_policy_update(struct file *file,
- 
- 	/* policy lines, including the last one, end with \n */
- 	while (*p != '\0') {
--		struct setuid_rule *rule;
-+		struct setid_rule *rule;
- 
- 		end = strchr(p, '\n');
- 		if (end == NULL) {
-@@ -142,18 +172,18 @@ static ssize_t handle_policy_update(struct file *file,
- 		}
- 		*end = '\0';
- 
--		rule = kmalloc(sizeof(struct setuid_rule), GFP_KERNEL);
-+		rule = kmalloc(sizeof(struct setid_rule), GFP_KERNEL);
- 		if (!rule) {
- 			err = -ENOMEM;
- 			goto out_free_buf;
- 		}
- 
-+		rule->type = policy_type;
- 		err = parse_policy_line(file, p, rule);
- 		if (err)
- 			goto out_free_rule;
- 
--		if (_setuid_policy_lookup(pol, rule->src_uid, rule->dst_uid) ==
--		    SIDPOL_ALLOWED) {
-+		if (_setid_policy_lookup(pol, rule->src_id, rule->dst_id) == SIDPOL_ALLOWED) {
- 			pr_warn("bad policy: duplicate entry\n");
- 			err = -EEXIST;
- 			goto out_free_rule;
-@@ -178,21 +208,31 @@ static ssize_t handle_policy_update(struct file *file,
- 	 * What we really want here is an xchg() wrapper for RCU, but since that
- 	 * doesn't currently exist, just use a spinlock for now.
- 	 */
--	mutex_lock(&policy_update_lock);
--	pol = rcu_replace_pointer(safesetid_setuid_rules, pol,
--				  lockdep_is_held(&policy_update_lock));
--	mutex_unlock(&policy_update_lock);
-+	if (policy_type == UID) {
-+		mutex_lock(&uid_policy_update_lock);
-+		pol = rcu_replace_pointer(safesetid_setuid_rules, pol,
-+					  lockdep_is_held(&uid_policy_update_lock));
-+		mutex_unlock(&uid_policy_update_lock);
-+	} else if (policy_type == GID) {
-+		mutex_lock(&gid_policy_update_lock);
-+		pol = rcu_replace_pointer(safesetid_setgid_rules, pol,
-+					  lockdep_is_held(&gid_policy_update_lock));
-+		mutex_unlock(&gid_policy_update_lock);
-+	} else {
-+		/* Error, policy type is neither UID or GID */
-+		pr_warn("error: bad policy type");
-+	}
- 	err = len;
- 
- out_free_buf:
- 	kfree(buf);
- out_free_pol:
- 	if (pol)
--                release_ruleset(pol);
-+		release_ruleset(pol);
- 	return err;
- }
- 
--static ssize_t safesetid_file_write(struct file *file,
-+static ssize_t safesetid_uid_file_write(struct file *file,
- 				    const char __user *buf,
- 				    size_t len,
- 				    loff_t *ppos)
-@@ -203,38 +243,74 @@ static ssize_t safesetid_file_write(struct file *file,
- 	if (*ppos != 0)
- 		return -EINVAL;
- 
--	return handle_policy_update(file, buf, len);
-+	return handle_policy_update(file, buf, len, UID);
-+}
-+
-+static ssize_t safesetid_gid_file_write(struct file *file,
-+				    const char __user *buf,
-+				    size_t len,
-+				    loff_t *ppos)
-+{
-+	if (!file_ns_capable(file, &init_user_ns, CAP_MAC_ADMIN))
-+		return -EPERM;
-+
-+	if (*ppos != 0)
-+		return -EINVAL;
-+
-+	return handle_policy_update(file, buf, len, GID);
- }
- 
- static ssize_t safesetid_file_read(struct file *file, char __user *buf,
--				   size_t len, loff_t *ppos)
-+				   size_t len, loff_t *ppos, struct mutex *policy_update_lock, struct setid_ruleset* ruleset)
- {
- 	ssize_t res = 0;
--	struct setuid_ruleset *pol;
-+	struct setid_ruleset *pol;
- 	const char *kbuf;
- 
--	mutex_lock(&policy_update_lock);
--	pol = rcu_dereference_protected(safesetid_setuid_rules,
--					lockdep_is_held(&policy_update_lock));
-+	mutex_lock(policy_update_lock);
-+	pol = rcu_dereference_protected(ruleset, lockdep_is_held(&policy_update_lock));
- 	if (pol) {
- 		kbuf = pol->policy_str;
- 		res = simple_read_from_buffer(buf, len, ppos,
- 					      kbuf, strlen(kbuf));
- 	}
--	mutex_unlock(&policy_update_lock);
-+	mutex_unlock(policy_update_lock);
-+
- 	return res;
- }
- 
--static const struct file_operations safesetid_file_fops = {
--	.read = safesetid_file_read,
--	.write = safesetid_file_write,
-+static ssize_t safesetid_uid_file_read(struct file *file, char __user *buf,
-+				   size_t len, loff_t *ppos)
-+{
-+	return safesetid_file_read(file, buf, len, ppos,
-+				   &uid_policy_update_lock, safesetid_setuid_rules);
-+}
-+
-+static ssize_t safesetid_gid_file_read(struct file *file, char __user *buf,
-+				   size_t len, loff_t *ppos)
-+{
-+	return safesetid_file_read(file, buf, len, ppos,
-+				   &gid_policy_update_lock, safesetid_setgid_rules);
-+}
-+
-+
-+
-+static const struct file_operations safesetid_uid_file_fops = {
-+	.read = safesetid_uid_file_read,
-+	.write = safesetid_uid_file_write,
-+};
-+
-+static const struct file_operations safesetid_gid_file_fops = {
-+	.read = safesetid_gid_file_read,
-+	.write = safesetid_gid_file_write,
- };
- 
- static int __init safesetid_init_securityfs(void)
- {
- 	int ret;
- 	struct dentry *policy_dir;
--	struct dentry *policy_file;
-+	struct dentry *uid_policy_file;
-+	struct dentry *gid_policy_file;
- 
- 	if (!safesetid_initialized)
- 		return 0;
-@@ -245,13 +321,21 @@ static int __init safesetid_init_securityfs(void)
- 		goto error;
- 	}
- 
--	policy_file = securityfs_create_file("whitelist_policy", 0600,
--			policy_dir, NULL, &safesetid_file_fops);
--	if (IS_ERR(policy_file)) {
--		ret = PTR_ERR(policy_file);
-+	uid_policy_file = securityfs_create_file("uid_whitelist_policy", 0600,
-+			policy_dir, NULL, &safesetid_uid_file_fops);
-+	if (IS_ERR(uid_policy_file)) {
-+		ret = PTR_ERR(uid_policy_file);
- 		goto error;
- 	}
- 
-+	gid_policy_file = securityfs_create_file("gid_whitelist_policy", 0600,
-+			policy_dir, NULL, &safesetid_gid_file_fops);
-+	if (IS_ERR(gid_policy_file)) {
-+		ret = PTR_ERR(gid_policy_file);
-+		goto error;
-+	}
-+
-+
- 	return 0;
- 
- error:
--- 
-2.28.0.rc0.142.g3c755180ce-goog
-
+security/bpf/hooks.c: In function =E2=80=98bpf_lsm_init=E2=80=99:
+security/bpf/hooks.c:18:63: error: passing argument 3 of
+=E2=80=98security_add_hooks=E2=80=99 from incompatible pointer type
+[-Werror=3Dincompatible-pointer-types]
+   18 |  security_add_hooks(bpf_lsm_hooks, ARRAY_SIZE(bpf_lsm_hooks), "bpf"=
+);
+      |                                                               ^~~~~
+      |                                                               |
+      |                                                               char =
+*
+In file included from security/bpf/hooks.c:6:
+./include/linux/lsm_hooks.h:1592:26: note: expected =E2=80=98struct lsm_id =
+*=E2=80=99
+but argument is of type =E2=80=98char *=E2=80=99
+ 1592 |           struct lsm_id *lsmid);
+      |           ~~~~~~~~~~~~~~~^~~~~
