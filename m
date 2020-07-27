@@ -1,86 +1,94 @@
-Return-Path: <SRS0=xYcQ=BE=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=m40R=BG=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5972C433E3
-	for <linux-security-module@archiver.kernel.org>; Sat, 25 Jul 2020 17:20:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7179BC433E0
+	for <linux-security-module@archiver.kernel.org>; Mon, 27 Jul 2020 04:21:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BA6C12076C
-	for <linux-security-module@archiver.kernel.org>; Sat, 25 Jul 2020 17:20:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595697655;
-	bh=tsXknhVBYEmB2CJYeY9vU2qcrD5B43pPBPyaIHl7sCk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=vsTPkgb8VjudCu2LMSAUoLLhudBfwLSk1ZJAZQzGtcoNvdVKUl0ctq8O5L35VRjqa
-	 X+UNUPcmnPtKa8Av3d+eloOxK3qJgaRlvkKltiVHX74pkkKy5w/8UnvEkWWmqy8Ott
-	 t/9WSRwz+sI/1w+JB6JUPtxS+mQpzIrK42YKve6c=
+	by mail.kernel.org (Postfix) with ESMTP id 53B9720775
+	for <linux-security-module@archiver.kernel.org>; Mon, 27 Jul 2020 04:21:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726995AbgGYRUz (ORCPT
+        id S1726116AbgG0EVW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 25 Jul 2020 13:20:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59712 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726926AbgGYRUy (ORCPT
+        Mon, 27 Jul 2020 00:21:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56818 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725787AbgG0EVW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 25 Jul 2020 13:20:54 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 62DC9206D8;
-        Sat, 25 Jul 2020 17:20:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595697654;
-        bh=tsXknhVBYEmB2CJYeY9vU2qcrD5B43pPBPyaIHl7sCk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=gRrUSykOt9EXcm6iUGecAcMKn8B+gQ2uDu91Esx9bYDK9fpRh7BzoCy5yk/EPvryl
-         PRKAUvqpxHPFfIfqOxCxoTdJ9FNBo7En15jyn746/g/l7ujY6HfgeXyylfYvO7FYU5
-         QHidFPL6+CVaAR5ojKH7ET3hoPO4f16GRUZsz4Hg=
-Date:   Sat, 25 Jul 2020 19:20:50 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     stable@vger.kernel.org, Scott Branden <scott.branden@broadcom.com>,
+        Mon, 27 Jul 2020 00:21:22 -0400
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50244C0619D2;
+        Sun, 26 Jul 2020 21:21:22 -0700 (PDT)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jzudO-003Pp0-V8; Mon, 27 Jul 2020 04:21:07 +0000
+Date:   Mon, 27 Jul 2020 05:21:06 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc:     linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Eric Chiang <ericchiang@google.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
         Mimi Zohar <zohar@linux.ibm.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Jessica Yu <jeyu@kernel.org>, SeongJae Park <sjpark@amazon.de>,
-        KP Singh <kpsingh@chromium.org>, linux-efi@vger.kernel.org,
+        Philippe =?iso-8859-1?Q?Tr=E9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Thibaut Sautereau <thibaut.sautereau@clip-os.org>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 03/19] firmware_loader: EFI firmware loader must
- handle pre-allocated buffer
-Message-ID: <20200725172050.GA405510@kroah.com>
-References: <20200724213640.389191-1-keescook@chromium.org>
- <20200724213640.389191-4-keescook@chromium.org>
- <20200725100700.GB1073708@kroah.com>
- <202007250849.2B58CD3B@keescook>
+        linux-fsdevel@vger.kernel.org,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
+Subject: Re: [PATCH v7 4/7] fs: Introduce O_MAYEXEC flag for openat2(2)
+Message-ID: <20200727042106.GB794331@ZenIV.linux.org.uk>
+References: <20200723171227.446711-1-mic@digikod.net>
+ <20200723171227.446711-5-mic@digikod.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <202007250849.2B58CD3B@keescook>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200723171227.446711-5-mic@digikod.net>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, Jul 25, 2020 at 08:50:33AM -0700, Kees Cook wrote:
-> On Sat, Jul 25, 2020 at 12:07:00PM +0200, Greg Kroah-Hartman wrote:
-> > On Fri, Jul 24, 2020 at 02:36:24PM -0700, Kees Cook wrote:
-> > > The EFI platform firmware fallback would clobber any pre-allocated
-> > > buffers. Instead, correctly refuse to reallocate when too small (as
-> > > already done in the sysfs fallback), or perform allocation normally
-> > > when needed.
-> > > 
-> > > Fixes: e4c2c0ff00ec ("firmware: Add new platform fallback mechanism and firm ware_request_platform()")
-> > 
-> > "firmware_request_platform()" :)
-> 
-> Weird... I'm not sure where that mangling happened. Perhaps a bad
-> cut/paste at 80 columns? Hmpf; thanks for catching. I've updated it on
-> my end (I assume you fixed this manually, though?)
+On Thu, Jul 23, 2020 at 07:12:24PM +0200, Mickaël Salaün wrote:
+> When the O_MAYEXEC flag is passed, openat2(2) may be subject to
+> additional restrictions depending on a security policy managed by the
+> kernel through a sysctl or implemented by an LSM thanks to the
+> inode_permission hook.  This new flag is ignored by open(2) and
+> openat(2) because of their unspecified flags handling.  When used with
+> openat2(2), the default behavior is only to forbid to open a directory.
 
-Yes, I fixed it up already, no worries.
+Correct me if I'm wrong, but it looks like you are introducing a magical
+flag that would mean "let the Linux S&M take an extra special whip
+for this open()".
 
-greg k-h
+Why is it done during open?  If the caller is passing it deliberately,
+why not have an explicit request to apply given torture device to an
+already opened file?  Why not sys_masochism(int fd, char *hurt_flavour),
+for that matter?
