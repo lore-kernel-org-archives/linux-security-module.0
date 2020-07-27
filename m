@@ -2,81 +2,102 @@ Return-Path: <SRS0=m40R=BG=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=unavailable
+X-Spam-Status: No, score=-14.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AD27C433E5
-	for <linux-security-module@archiver.kernel.org>; Mon, 27 Jul 2020 13:35:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D529EC433F7
+	for <linux-security-module@archiver.kernel.org>; Mon, 27 Jul 2020 14:09:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1A6F92173E
-	for <linux-security-module@archiver.kernel.org>; Mon, 27 Jul 2020 13:35:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595856904;
-	bh=lsb8DwuA8VH82LyNkysVJs9u8cUS6ID7TdHH9rnuG9E=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:List-ID:From;
-	b=chmtRg5c6J73Vo6WydUglypgwfh9n//til8XutzdQ7pZlOx4/lY8AB5IKYy5Y6CXz
-	 60+ipzj3vncxjlg2fkjgOLIzPPiP/GUIoU4dnpoi4vUYUqaFqntphI0zb+WY+IXGbF
-	 oBSk3XGK9chFAPbHhTTEyVfFIoZ3Sc1ML6bLcolY=
+	by mail.kernel.org (Postfix) with ESMTP id 9C17021744
+	for <linux-security-module@archiver.kernel.org>; Mon, 27 Jul 2020 14:09:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Lg4IwShA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728865AbgG0NfD (ORCPT
+        id S1729597AbgG0OJO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 27 Jul 2020 09:35:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37970 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726298AbgG0NfD (ORCPT
+        Mon, 27 Jul 2020 10:09:14 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:53186 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729576AbgG0OJN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 27 Jul 2020 09:35:03 -0400
-Received: from localhost.localdomain (pool-96-246-152-186.nycmny.fios.verizon.net [96.246.152.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2C2A62083B;
-        Mon, 27 Jul 2020 13:35:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595856902;
-        bh=lsb8DwuA8VH82LyNkysVJs9u8cUS6ID7TdHH9rnuG9E=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=UcMWrZGHef3xmGLz2KuVpjsTc4DIyfyoqvrtijkOjBGNC5pfY8sc+CNGTT4ppkVzm
-         MuHrVj5LSOyuoI/u/aR8bJpLPmTQFiNAi1Zjjjq1/mHJJ0n6l9NoUF1sondP0D6+nF
-         76pshYuPvhHtjLWejlPFBh082rkCH/MoxpsRrNl8=
-Message-ID: <1595856900.4841.88.camel@kernel.org>
-Subject: Re: [PATCH v3 04/19] fs/kernel_read_file: Remove
- FIRMWARE_PREALLOC_BUFFER enum
-From:   Mimi Zohar <zohar@kernel.org>
-To:     Kees Cook <keescook@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     stable@vger.kernel.org, Scott Branden <scott.branden@broadcom.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Jessica Yu <jeyu@kernel.org>, SeongJae Park <sjpark@amazon.de>,
-        KP Singh <kpsingh@chromium.org>, linux-efi@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 27 Jul 2020 09:35:00 -0400
-In-Reply-To: <20200724213640.389191-5-keescook@chromium.org>
-References: <20200724213640.389191-1-keescook@chromium.org>
-         <20200724213640.389191-5-keescook@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Mon, 27 Jul 2020 10:09:13 -0400
+Received: from sequoia.work.tihix.com (162-237-133-238.lightspeed.rcsntx.sbcglobal.net [162.237.133.238])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 7CA6520B4908;
+        Mon, 27 Jul 2020 07:09:12 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7CA6520B4908
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1595858953;
+        bh=RI9OjMpT7wMC5gT81EsD8X2qDIaOFyrvt8WWKKu6l9g=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Lg4IwShAgGT6iQ+2TqIuqm/DwHEFPecAPRo2UL+8av/4jOYMji9G6XcVdjrkcxdz3
+         Iu4ThfYyoxzhOsm2qxVQ/cU+L3quvtWwBIK9lhZqTD8MqApjNqtVOFe9/PluQHniAt
+         3dIncUce+myctKw6bhLWuEqVvc1CZUzlVRrL8tio=
+From:   Tyler Hicks <tyhicks@linux.microsoft.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Tushar Sugandhi <tusharsu@linux.microsoft.com>,
+        Nayna Jain <nayna@linux.ibm.com>, linux-kernel@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH 0/2] ima: Fix keyrings race condition and other key related bugs
+Date:   Mon, 27 Jul 2020 09:08:29 -0500
+Message-Id: <20200727140831.64251-1-tyhicks@linux.microsoft.com>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 2020-07-24 at 14:36 -0700, Kees Cook wrote:
-> FIRMWARE_PREALLOC_BUFFER is a "how", not a "what", and confuses the LSMs
-> that are interested in filtering between types of things. The "how"
-> should be an internal detail made uninteresting to the LSMs.
-> 
-> Fixes: a098ecd2fa7d ("firmware: support loading into a pre-allocated buffer")
-> Fixes: fd90bc559bfb ("ima: based on policy verify firmware signatures (pre-allocated buffer)")
-> Fixes: 4f0496d8ffa3 ("ima: based on policy warn about loading firmware (pre-allocated buffer)")
-> Cc: stable@vger.kernel.org
-> Acked-by: Scott Branden <scott.branden@broadcom.com>
-> Signed-off-by: Kees Cook <keescook@chromium.org>
+Nayna pointed out that the "keyrings=" option in an IMA policy rule
+should only be accepted when CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS is
+enabled:
 
-Thank you for updating the pre-allocated buffer comment.
+ https://lore.kernel.org/linux-integrity/336cc947-1f70-0286-6506-6df3d1d23a1d@linux.vnet.ibm.com/
 
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+While fixing this, the compiler warned me about the potential for the
+ima_keyrings pointer to be NULL despite it being used, without a check
+for NULL, as the destination address for the strcpy() in
+ima_match_keyring().
+
+It also became apparent that there was not adequate locking around the
+use of the pre-allocated buffer that ima_keyrings points to. The kernel
+keyring has a lock (.sem member of struct key) that ensures only one key
+can be added to a given keyring at a time but there's no protection
+against adding multiple keys to different keyrings at the same time.
+
+The first patch in this series fixes both ima_keyrings related issues by
+parsing the list of keyrings in a KEY_CHECK rule at policy load time
+rather than deferring the parsing to policy check time. Once that fix is
+in place, the second patch can enforce that
+CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS must be enabled in order to use
+"func=KEY_CHECK" or "keyrings=" options in IMA policy.
+
+The new "keyrings=" value handling is done in a generic manner that can
+be reused by other options in the future. This seems to make sense as
+"appraise_type=" has similar style (though it doesn't need to be fully
+parsed at this time) and using "|" as an alternation delimiter is
+becoming the norm in IMA policy.
+
+This series is based on commit 311aa6aafea4 ("ima: move
+APPRAISE_BOOTPARAM dependency on ARCH_POLICY to runtime") in
+next-integrity.
+
+Tyler
+
+Tyler Hicks (2):
+  ima: Pre-parse the list of keyrings in a KEY_CHECK rule
+  ima: Fail rule parsing when asymmetric key measurement isn't
+    supportable
+
+ security/integrity/ima/ima_policy.c | 142 +++++++++++++++++++---------
+ 1 file changed, 96 insertions(+), 46 deletions(-)
+
+-- 
+2.25.1
+
