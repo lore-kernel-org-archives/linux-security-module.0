@@ -2,132 +2,111 @@ Return-Path: <SRS0=m40R=BG=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A885C433E4
-	for <linux-security-module@archiver.kernel.org>; Mon, 27 Jul 2020 05:27:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FF59C433E5
+	for <linux-security-module@archiver.kernel.org>; Mon, 27 Jul 2020 10:49:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 474A720759
-	for <linux-security-module@archiver.kernel.org>; Mon, 27 Jul 2020 05:27:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KuCDzLEh"
+	by mail.kernel.org (Postfix) with ESMTP id 4F1C4206E7
+	for <linux-security-module@archiver.kernel.org>; Mon, 27 Jul 2020 10:49:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1595846958;
+	bh=zNfqzDInDnSp+fKCzpx3F6lQ3q4TBw0M7Av0QoXkGpo=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:List-ID:From;
+	b=qLsN4GX7WS7NNtujBe1aAA8N8cBTXfc+/xk9C7hUiodCf8EezfxoIJcDFEEqFBFcK
+	 R7I5Gc70p4Ti5mSMgOA/OEW6XHyCAA3vVBSj/YdLt3LT3gIZP17QBZ/AqHLppcdH02
+	 u+TC/zlzAILfX88S5ohAdYZWClng3LwnadLaxv1s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726064AbgG0F1X (ORCPT
+        id S1727961AbgG0KtO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 27 Jul 2020 01:27:23 -0400
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:23102 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726006AbgG0F1U (ORCPT
+        Mon, 27 Jul 2020 06:49:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60368 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726298AbgG0KtO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 27 Jul 2020 01:27:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1595827638;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=AKE5Hc2PxuPIW6hu7a7doCEJmqwBxswHHKiFGDtBWQs=;
-        b=KuCDzLEhWv1b+/Uu095gPIeZDehqdGr2jzIpoGZCQwF4MiOHYngWuEW5g/8Ee3xoEwmJaf
-        woNtM/l6o7pmFAlu7cTlgANUJwODJkmWOqdsay7hDUCMNrNKMHLTifIiQDDS2366Pnkvag
-        LaXv6zCU3+Wv97hZWvCsyUmvW46VK1E=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-247-WX2tJBGCNPCBLW1UaUOyYg-1; Mon, 27 Jul 2020 01:27:14 -0400
-X-MC-Unique: WX2tJBGCNPCBLW1UaUOyYg-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Mon, 27 Jul 2020 06:49:14 -0400
+Received: from localhost.localdomain (pool-96-246-152-186.nycmny.fios.verizon.net [96.246.152.186])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id BD4C259;
-        Mon, 27 Jul 2020 05:27:09 +0000 (UTC)
-Received: from oldenburg2.str.redhat.com (ovpn-112-104.ams2.redhat.com [10.36.112.104])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id ECB8410013D0;
-        Mon, 27 Jul 2020 05:27:01 +0000 (UTC)
-From:   Florian Weimer <fweimer@redhat.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
-        linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Christian Heimes <christian@python.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Eric Chiang <ericchiang@google.com>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Philippe =?utf-8?Q?Tr=C3=A9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Thibaut Sautereau <thibaut.sautereau@clip-os.org>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
+        by mail.kernel.org (Postfix) with ESMTPSA id 7ED78206E7;
+        Mon, 27 Jul 2020 10:49:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1595846953;
+        bh=zNfqzDInDnSp+fKCzpx3F6lQ3q4TBw0M7Av0QoXkGpo=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=lhClkxotlesTUV1UDov1RrY64xr/ppyKNwCO0sGj548usN3ExBpqNf1v73lO6qY2x
+         gXrALj4a7FB2QB75LMyX17RGfKrjHGwIko0vBdXAOFq7H637gLacrQYgI1EPBcNl4F
+         WQ3zl8FW26O60MLGh4f1gZbN6TKyE1zhYxL/dUMo=
+Message-ID: <1595846951.4841.61.camel@kernel.org>
+Subject: Re: [PATCH v3 11/19] LSM: Introduce kernel_post_load_data() hook
+From:   Mimi Zohar <zohar@kernel.org>
+To:     Kees Cook <keescook@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Scott Branden <scott.branden@broadcom.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Jessica Yu <jeyu@kernel.org>, SeongJae Park <sjpark@amazon.de>,
+        KP Singh <kpsingh@chromium.org>, linux-efi@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
-Subject: Re: [PATCH v7 4/7] fs: Introduce O_MAYEXEC flag for openat2(2)
-References: <20200723171227.446711-1-mic@digikod.net>
-        <20200723171227.446711-5-mic@digikod.net>
-        <20200727042106.GB794331@ZenIV.linux.org.uk>
-Date:   Mon, 27 Jul 2020 07:27:00 +0200
-In-Reply-To: <20200727042106.GB794331@ZenIV.linux.org.uk> (Al Viro's message
-        of "Mon, 27 Jul 2020 05:21:06 +0100")
-Message-ID: <87y2n55xzv.fsf@oldenburg2.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.3 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Mon, 27 Jul 2020 06:49:11 -0400
+In-Reply-To: <20200724213640.389191-12-keescook@chromium.org>
+References: <20200724213640.389191-1-keescook@chromium.org>
+         <20200724213640.389191-12-keescook@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-* Al Viro:
+On Fri, 2020-07-24 at 14:36 -0700, Kees Cook wrote:
+> There are a few places in the kernel where LSMs would like to have
+> visibility into the contents of a kernel buffer that has been loaded or
+> read. While security_kernel_post_read_file() (which includes the
+> buffer) exists as a pairing for security_kernel_read_file(), no such
+> hook exists to pair with security_kernel_load_data().
+> 
+> Earlier proposals for just using security_kernel_post_read_file() with a
+> NULL file argument were rejected (i.e. "file" should always be valid for
+> the security_..._file hooks, but it appears at least one case was
+> left in the kernel during earlier refactoring. (This will be fixed in
+> a subsequent patch.)
+> 
+> Since not all cases of security_kernel_load_data() can have a single
+> contiguous buffer made available to the LSM hook (e.g. kexec image
+> segments are separately loaded), there needs to be a way for the LSM to
+> reason about its expectations of the hook coverage. In order to handle
+> this, add a "contents" argument to the "kernel_load_data" hook that
+> indicates if the newly added "kernel_post_load_data" hook will be called
+> with the full contents once loaded. That way, LSMs requiring full contents
+> can choose to unilaterally reject "kernel_load_data" with contents=false
+> (which is effectively the existing hook coverage), but when contents=true
+> they can allow it and later evaluate the "kernel_post_load_data" hook
+> once the buffer is loaded.
+> 
+> With this change, LSMs can gain coverage over non-file-backed data loads
+> (e.g. init_module(2) and firmware userspace helper), which will happen
+> in subsequent patches.
+> 
+> Additionally prepare IMA to start processing these cases.
+> 
+> Signed-off-by: Kees Cook <keescook@chromium.org>
 
-> On Thu, Jul 23, 2020 at 07:12:24PM +0200, Micka=C3=83=C2=ABl Sala=C3=83=
-=C2=BCn wrote:
->> When the O_MAYEXEC flag is passed, openat2(2) may be subject to
->> additional restrictions depending on a security policy managed by the
->> kernel through a sysctl or implemented by an LSM thanks to the
->> inode_permission hook.  This new flag is ignored by open(2) and
->> openat(2) because of their unspecified flags handling.  When used with
->> openat2(2), the default behavior is only to forbid to open a directory.
->
-> Correct me if I'm wrong, but it looks like you are introducing a magical
-> flag that would mean "let the Linux S&M take an extra special whip
-> for this open()".
->
-> Why is it done during open?  If the caller is passing it deliberately,
-> why not have an explicit request to apply given torture device to an
-> already opened file?  Why not sys_masochism(int fd, char *hurt_flavour),
-> for that matter?
+At least from an IMA perspective, the original
+security_kernel_load_data() hook was defined in order to prevent
+certain syscalls - init_module, kexec_load - and loading firmware via
+sysfs.  The resulting error messages were generic.
+  
+Unlike security_kernel_load_data(), security_kernel_post_load_data()
+is meant to be used, but without a file desciptor specific
+information, like the filename associated with the buffer, is missing.
+ Having the filename isn't actually necessary for verifying the
+appended signature, but it is needed for auditing signature
+verification failures and including in the IMA measurement list.
 
-While I do not think this is appropriate language for a workplace, Al
-has a point: If the auditing event can be generated on an already-open
-descriptor, it would also cover scenarios like this one:
-
-  perl < /path/to/script
-
-Where the process that opens the file does not (and cannot) know that it
-will be used for execution purposes.
-
-Thanks,
-Florian
-
+Mimi
