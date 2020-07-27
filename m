@@ -2,100 +2,82 @@ Return-Path: <SRS0=m40R=BG=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-20.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E867EC43446
-	for <linux-security-module@archiver.kernel.org>; Mon, 27 Jul 2020 14:40:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D254C43446
+	for <linux-security-module@archiver.kernel.org>; Mon, 27 Jul 2020 14:42:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BE7052083B
-	for <linux-security-module@archiver.kernel.org>; Mon, 27 Jul 2020 14:40:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="lz5Tn0sm"
+	by mail.kernel.org (Postfix) with ESMTP id 40C3F20714
+	for <linux-security-module@archiver.kernel.org>; Mon, 27 Jul 2020 14:42:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1595860928;
+	bh=0XkNZGMfPjvvPJ4vDl6luNql4PL5ypWVUV/Rm+mizsE=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:List-ID:From;
+	b=t81Z/EWq9ia48qH+IC5sfqIPXD0SBwebTp3iLF1vGY6Yl4HpvCNobPnsN+fAYc+MK
+	 kMXBoSgMQROoggR4YUROonkEXDMzho6e5IFPNx6aHlFgEXNVITGShCrMnCVCycazU3
+	 1gxLsGg/IXcmCwqNtJKSLebAeNioI6vDJdJtcFcY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733022AbgG0OkC (ORCPT
+        id S1733109AbgG0OmC (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 27 Jul 2020 10:40:02 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:53218 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728947AbgG0OJU (ORCPT
+        Mon, 27 Jul 2020 10:42:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40810 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729320AbgG0Olw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 27 Jul 2020 10:09:20 -0400
-Received: from sequoia.work.tihix.com (162-237-133-238.lightspeed.rcsntx.sbcglobal.net [162.237.133.238])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 1D0C420B490C;
-        Mon, 27 Jul 2020 07:09:19 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 1D0C420B490C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1595858959;
-        bh=TojaKA1D2bkgSvEtbI6kYJOINajUXiJCFMf+z5sO/JQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lz5Tn0sm1IzQZ1ivUGl55HsNtgLm9JrFalLP6KB8PaOGy/cMdp//VBy2HXc3Kvj8e
-         513MuEEb5DlQ32PSGav+mjEkH0LFKHp7NdtnSxjQ9/s+EIlXcGDy8kLQc9eJiAMn/t
-         Hyu2V1PUciKf3kn07uOQVVZsHW09V9z4pxJ8H+uo=
-From:   Tyler Hicks <tyhicks@linux.microsoft.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Tushar Sugandhi <tusharsu@linux.microsoft.com>,
-        Nayna Jain <nayna@linux.ibm.com>, linux-kernel@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH 2/2] ima: Fail rule parsing when asymmetric key measurement isn't supportable
-Date:   Mon, 27 Jul 2020 09:08:31 -0500
-Message-Id: <20200727140831.64251-3-tyhicks@linux.microsoft.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200727140831.64251-1-tyhicks@linux.microsoft.com>
-References: <20200727140831.64251-1-tyhicks@linux.microsoft.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Mon, 27 Jul 2020 10:41:52 -0400
+Received: from localhost.localdomain (pool-96-246-152-186.nycmny.fios.verizon.net [96.246.152.186])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2FB70208E4;
+        Mon, 27 Jul 2020 14:41:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1595860912;
+        bh=0XkNZGMfPjvvPJ4vDl6luNql4PL5ypWVUV/Rm+mizsE=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=jpg/EmyQDv9FT7kOivKMX8wFhGU4sFTB2CH3Fh4EZTjsJsvFBn7m7pngU0GoPyW+3
+         39SrDAlP4E+C6K+8ut68HKiV0e/CnGbZncwAxpQzwd+vVR2JJIvbvJk/g27MBtu9Ku
+         qK+mrjkQ3I6tKw3z/+lX1qAQaaqCDbWrPRjvxXS0=
+Message-ID: <1595860910.4841.118.camel@kernel.org>
+Subject: Re: [PATCH v3 06/19] fs/kernel_read_file: Split into separate
+ include file
+From:   Mimi Zohar <zohar@kernel.org>
+To:     Kees Cook <keescook@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Scott Branden <scott.branden@broadcom.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Jessica Yu <jeyu@kernel.org>, SeongJae Park <sjpark@amazon.de>,
+        KP Singh <kpsingh@chromium.org>, linux-efi@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Mon, 27 Jul 2020 10:41:50 -0400
+In-Reply-To: <20200724213640.389191-7-keescook@chromium.org>
+References: <20200724213640.389191-1-keescook@chromium.org>
+         <20200724213640.389191-7-keescook@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Measuring keys is currently only supported for asymmetric keys. In the
-future, this might change.
+On Fri, 2020-07-24 at 14:36 -0700, Kees Cook wrote:
+> From: Scott Branden <scott.branden@broadcom.com>
+> 
+> Move kernel_read_file* out of linux/fs.h to its own linux/kernel_read_file.h
+> include file. That header gets pulled in just about everywhere
+> and doesn't really need functions not related to the general fs interface.
+> 
+> Suggested-by: Christoph Hellwig <hch@lst.de>
+> Signed-off-by: Scott Branden <scott.branden@broadcom.com>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Link: https://lore.kernel.org/r/20200706232309.12010-2-scott.branden@broadcom.com
+> Signed-off-by: Kees Cook <keescook@chromium.org>
 
-For now, the "func=KEY_CHECK" and "keyrings=" options are only
-appropriate when CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS is enabled. Make
-this clear at policy load so that IMA policy authors don't assume that
-these policy language constructs are supported.
-
-Fixes: 2b60c0ecedf8 ("IMA: Read keyrings= option from the IMA policy")
-Fixes: 5808611cccb2 ("IMA: Add KEY_CHECK func to measure keys")
-Suggested-by: Nayna Jain <nayna@linux.ibm.com>
-Signed-off-by: Tyler Hicks <tyhicks@linux.microsoft.com>
----
- security/integrity/ima/ima_policy.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index c328cfa0fc49..05f012fd3dca 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -1233,7 +1233,8 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
- 				entry->func = POLICY_CHECK;
- 			else if (strcmp(args[0].from, "KEXEC_CMDLINE") == 0)
- 				entry->func = KEXEC_CMDLINE;
--			else if (strcmp(args[0].from, "KEY_CHECK") == 0)
-+			else if (IS_ENABLED(CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS) &&
-+				 strcmp(args[0].from, "KEY_CHECK") == 0)
- 				entry->func = KEY_CHECK;
- 			else
- 				result = -EINVAL;
-@@ -1290,7 +1291,8 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
- 		case Opt_keyrings:
- 			ima_log_string(ab, "keyrings", args[0].from);
- 
--			if (entry->keyrings) {
-+			if (!IS_ENABLED(CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS) ||
-+			    entry->keyrings) {
- 				result = -EINVAL;
- 				break;
- 			}
--- 
-2.25.1
-
+Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
