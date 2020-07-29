@@ -2,114 +2,110 @@ Return-Path: <SRS0=7AUc=BI=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1457BC433E0
-	for <linux-security-module@archiver.kernel.org>; Wed, 29 Jul 2020 13:29:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C4DEC433E1
+	for <linux-security-module@archiver.kernel.org>; Wed, 29 Jul 2020 14:33:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E954920809
-	for <linux-security-module@archiver.kernel.org>; Wed, 29 Jul 2020 13:29:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26C09207E8
+	for <linux-security-module@archiver.kernel.org>; Wed, 29 Jul 2020 14:33:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aRWtLfuQ"
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="WnK6zVse"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726876AbgG2N3k (ORCPT
+        id S1726650AbgG2OdR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 29 Jul 2020 09:29:40 -0400
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:52625 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726336AbgG2N3j (ORCPT
+        Wed, 29 Jul 2020 10:33:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60186 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726391AbgG2OdQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 29 Jul 2020 09:29:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1596029378;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=pHdy6Zb9Xi6Br1uklysJIGNGzShuC9IUN8gmmUSKfJ8=;
-        b=aRWtLfuQT+4jdgoCsYV/8Kohq6UzLvVlKez2chiloW2tblAG/Uy0mBhIe2G+HlU+GcjQLU
-        aLl1rhnwhQDuIxfbAid2URxFc6mkOAYtEIQZt41QiBfFG2vcAEEZa6XqjSyDAcyRINkOb2
-        CJM7c7PBLWnkxot6U5aGSeB2RzQLc8Y=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-185-oUnvNmSeOLyVa6xnjYceCQ-1; Wed, 29 Jul 2020 09:29:36 -0400
-X-MC-Unique: oUnvNmSeOLyVa6xnjYceCQ-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id EE5481902EA0;
-        Wed, 29 Jul 2020 13:29:34 +0000 (UTC)
-Received: from oldenburg2.str.redhat.com (ovpn-113-29.ams2.redhat.com [10.36.113.29])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B422869327;
-        Wed, 29 Jul 2020 13:29:32 +0000 (UTC)
-From:   Florian Weimer <fweimer@redhat.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     madvenka@linux.microsoft.com,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>, X86 ML <x86@kernel.org>
-Subject: Re: [PATCH v1 0/4] [RFC] Implement Trampoline File Descriptor
-References: <20200728131050.24443-1-madvenka@linux.microsoft.com>
-        <CALCETrVy5OMuUx04-wWk9FJbSxkrT2vMfN_kANinudrDwC4Cig@mail.gmail.com>
-Date:   Wed, 29 Jul 2020 15:29:31 +0200
-In-Reply-To: <CALCETrVy5OMuUx04-wWk9FJbSxkrT2vMfN_kANinudrDwC4Cig@mail.gmail.com>
-        (Andy Lutomirski's message of "Tue, 28 Jul 2020 10:31:59 -0700")
-Message-ID: <87pn8eo3es.fsf@oldenburg2.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.3 (gnu/linux)
+        Wed, 29 Jul 2020 10:33:16 -0400
+Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31AE3C061794
+        for <linux-security-module@vger.kernel.org>; Wed, 29 Jul 2020 07:33:16 -0700 (PDT)
+Received: by mail-ej1-x644.google.com with SMTP id y10so24620458eje.1
+        for <linux-security-module@vger.kernel.org>; Wed, 29 Jul 2020 07:33:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=kMlKqVpMYZrkq++S2RWxZ8THr8EJ0z+y5ejuGh6soGk=;
+        b=WnK6zVseynpYShz7AuRIaVykQvUyr0PeVQ+YEYnugHbrxaPTg77BOqUSx+H2KBXM90
+         zw/paDsb8vkp0/OZUl2xs+7ygdSQRg4NI2g9Jwz4Fk10Twtc8cpCHx+S8Ap/7hExNtA6
+         Hu9L2x/lVBxvSXEjHdf6Pr0V7+zzd39waCyQTvSz6DPcpPdKsJP6tA48AihdTV2SmUeO
+         HNJwe6HGBi6mFDaC0EZ7qT8yiGYcxvJBRgzvZ8XoUf7A4RZqwAaIkwBzssEXW6BQal5q
+         /FMsF+6sAVsfK+X6uBrpfnNJlYdQSume74AVeI1gtosVjPYW1BUwpAaRsSJnStmGab3/
+         5Yow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kMlKqVpMYZrkq++S2RWxZ8THr8EJ0z+y5ejuGh6soGk=;
+        b=niiWAEKF+6cslAM4CLMez50Zvo5iDMkhdPWHIH4rUdQYk1GAAO61NC5ajsFIIMrA9R
+         KUsk7BWhl+okMD1Ss0BtRfVj5i/b1OeBD4Mbmi64ccqdihz8nVVwqYQWxoftL/QhGne0
+         Oy2DS6itehyg1RvMWxDD4mkVrLDWxWh8cxO5e6KtgJSIG+b8J2RP1lEWrPRs1AYbME3o
+         6FovYyDoaWHvVg6eZkzb2k1+rCfPU5AqZ6wtqwFXOS/W8rrjTqJxvVA0LKj2yzRqVpU2
+         p9mXASMSrpCHCIhZZ7Jhuo6pyKWihYXdXv7Z/8Sh4Ry2ywHgReZ50+9Mo6KFWdmQLe2g
+         SKvg==
+X-Gm-Message-State: AOAM530qo64qVEhbQRIfjMlR8HTTQxwMHVHzwDxHL9JwGvDD/kgF3q2m
+        +ZWYS6ezM6PuDWvKQXJ9NQxq1nHyh/EbLqn4gIgvc7qPtA==
+X-Google-Smtp-Source: ABdhPJxu3J7ZoN3kZhJpKA1IX3J82l3Bi86eK/HpPbP3LYDzrwmhud5SD+ftjnc27nh35GLdzF1yxpuRBb6pIis3cPs=
+X-Received: by 2002:a17:906:43c9:: with SMTP id j9mr14520051ejn.542.1596033194870;
+ Wed, 29 Jul 2020 07:33:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+References: <e3e9c9da9115fd233c5a7895dbb4a698a365b1b0.1595884394.git.rgb@redhat.com>
+ <CAHC9VhSx23JiN6GprskxdEcs9uftJOp03Svh7YJbQLOV91AMiQ@mail.gmail.com>
+ <20200728162722.djvy3qyclj57wsfn@madcap2.tricolour.ca> <CAHC9VhSDoi8QS3c6Wmx6agmmphja60cS3+aTKVx76xvdkxJ0DQ@mail.gmail.com>
+ <20200729020106.x5tfijvnxdmujtbj@madcap2.tricolour.ca>
+In-Reply-To: <20200729020106.x5tfijvnxdmujtbj@madcap2.tricolour.ca>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 29 Jul 2020 10:33:03 -0400
+Message-ID: <CAHC9VhSf6eSjTvUA4FfUP+qBv_GDufBPfs=t3+BPPdFcTCD_4w@mail.gmail.com>
+Subject: Re: [PATCH V3fix ghak120] audit: initialize context values in case of
+ mandatory events
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     Eric Paris <eparis@parisplace.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-* Andy Lutomirski:
-
-> This is quite clever, but now I=E2=80=99m wondering just how much kernel =
-help
-> is really needed. In your series, the trampoline is an non-executable
-> page.  I can think of at least two alternative approaches, and I'd
-> like to know the pros and cons.
+On Tue, Jul 28, 2020 at 10:01 PM Richard Guy Briggs <rgb@redhat.com> wrote:
 >
-> 1. Entirely userspace: a return trampoline would be something like:
+> On 2020-07-28 14:47, Paul Moore wrote:
+> > On Tue, Jul 28, 2020 at 12:27 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > I know you like only really minimal fixes this late, but this seemed
+> > > pretty minimal to me...
+> >
+> > Minimal is a one (two?) line NULL check in audit_log_name(), this
+> > patch is not that.
 >
-> 1:
-> pushq %rax
-> pushq %rbc
-> pushq %rcx
-> ...
-> pushq %r15
-> movq %rsp, %rdi # pointer to saved regs
-> leaq 1b(%rip), %rsi # pointer to the trampoline itself
-> callq trampoline_handler # see below
->
-> You would fill a page with a bunch of these, possibly compacted to get
-> more per page, and then you would remap as many copies as needed.
+> I didn't try and test that since I'm not sure that would have worked
+> because there appeared to be a low non-NULL value in it.  brauer1's trace had
+> 0x60 and mine had 0xd0.  Or am I missing something obvious?
 
-libffi does something like this for iOS, I believe.
+Well, you mentioned the obvious already: both 0x60 and 0xd0 are not
+NULL.  We already have a NULL check for context->pwd elsewhere so
+there is precedence for this solving a similar problem, although
+without going through the git log I'm not sure what problem that
+solved, or if it was precautionary.
 
-The only thing you really need is a PC-relative indirect call, with the
-target address loaded from a different page.  The trampoline handler can
-do all the rest because it can identify the trampoline from the stack.
-Having a closure parameter loaded into a register will speed things up,
-of course.
+I agree the low value looks suspicious, it almost looks like an offset
+to me, ideally it would be good to understand how/why that value is
+"off'.  It could be that the audit_context is not being properly
+initialized, reset, or something unrelated is clobbering the value;
+all things that would be nice to know.
 
-I still hope to transition libffi to this model for most Linux targets.
-It really simplifies things because you don't have to deal with cache
-flushes (on both the data and code aliases for SELinux support).
+> The patch provided the information rather than ignoring the problem ...
 
-But the key observation is that efficient trampolines do not need
-run-time code generation at all because their code is so regular.
+I disagree.
 
-Thanks,
-Florian
-
+--
+paul moore
+www.paul-moore.com
