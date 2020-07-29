@@ -1,168 +1,188 @@
-Return-Path: <SRS0=UUiA=BH=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=7AUc=BI=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BD6BC433E5
-	for <linux-security-module@archiver.kernel.org>; Tue, 28 Jul 2020 23:55:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37995C433DF
+	for <linux-security-module@archiver.kernel.org>; Wed, 29 Jul 2020 00:30:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0C2E22074F
-	for <linux-security-module@archiver.kernel.org>; Tue, 28 Jul 2020 23:55:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="cik4rnPw"
+	by mail.kernel.org (Postfix) with ESMTP id 1B4AD2078E
+	for <linux-security-module@archiver.kernel.org>; Wed, 29 Jul 2020 00:30:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730223AbgG1XzG (ORCPT
+        id S1730760AbgG2AaW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 28 Jul 2020 19:55:06 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:36164 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730005AbgG1XzG (ORCPT
+        Tue, 28 Jul 2020 20:30:22 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:44211 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730536AbgG2AaW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 28 Jul 2020 19:55:06 -0400
-Received: from [10.137.106.139] (unknown [131.107.174.11])
-        by linux.microsoft.com (Postfix) with ESMTPSA id E32EF20B4908;
-        Tue, 28 Jul 2020 16:55:04 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com E32EF20B4908
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1595980505;
-        bh=AGZy2KfQ1YALTZXiqjCNdqcL15U8KOhpnfQZjMgxtis=;
-        h=From:Subject:To:Cc:References:Date:In-Reply-To:From;
-        b=cik4rnPwoJUGzO/fE1jBNTbrMqe8eOzeSbw9UVuj1EjxT17Pbnm0tgjcMSsn28BcV
-         Me5/fEI/FcxWDNtLLOT35g97lt8COAiIHjTaHwIgxXUtaZFXy/uh4R59INRHHQkImO
-         +PBuaI//CfiP0i9PnTsZXSJGFCFq47QMKJ/VkNnI=
-From:   Deven Bowers <deven.desai@linux.microsoft.com>
-Subject: Re: [RFC PATCH v5 06/11] dm-verity: move signature check after tree
- validation
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     agk@redhat.com, axboe@kernel.dk, snitzer@redhat.com,
-        jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com,
-        viro@zeniv.linux.org.uk, paul@paul-moore.com, eparis@redhat.com,
-        jannh@google.com, dm-devel@redhat.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-audit@redhat.com, tyhicks@linux.microsoft.com,
-        linux-kernel@vger.kernel.org, corbet@lwn.net, sashal@kernel.org,
-        jaskarankhurana@linux.microsoft.com, mdsakib@microsoft.com,
-        nramas@linux.microsoft.com, pasha.tatashin@soleen.com
-References: <20200728213614.586312-1-deven.desai@linux.microsoft.com>
- <20200728213614.586312-7-deven.desai@linux.microsoft.com>
- <20200728215041.GF4053562@gmail.com>
-Message-ID: <a5534f1c-8979-0cfd-3989-2567f4a29dbc@linux.microsoft.com>
-Date:   Tue, 28 Jul 2020 16:55:04 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+        Tue, 28 Jul 2020 20:30:22 -0400
+Received: from static-50-53-54-182.bvtn.or.frontiernet.net ([50.53.54.182] helo=[192.168.192.153])
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <john.johansen@canonical.com>)
+        id 1k0Zz5-0003r6-Mk; Wed, 29 Jul 2020 00:30:15 +0000
+Subject: Re: [PATCH v19 06/23] LSM: Use lsmblob in security_secctx_to_secid
+To:     Casey Schaufler <casey@schaufler-ca.com>,
+        casey.schaufler@intel.com, jmorris@namei.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Cc:     linux-audit@redhat.com, keescook@chromium.org,
+        penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com,
+        sds@tycho.nsa.gov, netdev@vger.kernel.org
+References: <20200724203226.16374-1-casey@schaufler-ca.com>
+ <20200724203226.16374-7-casey@schaufler-ca.com>
+ <bebdacdf-2ecb-8e07-1b0e-6e6bfb5960d0@canonical.com>
+ <8dd6f4e0-07f0-333e-0663-0bc0889cccf2@schaufler-ca.com>
+From:   John Johansen <john.johansen@canonical.com>
+Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
+ LS0tLS1CRUdJTiBQR1AgUFVCTElDIEtFWSBCTE9DSy0tLS0tCgptUUlOQkU1bXJQb0JFQURB
+ azE5UHNnVmdCS2tJbW1SMmlzUFE2bzdLSmhUVEtqSmR3VmJrV1NuTm4rbzZVcDVrCm5LUDFm
+ NDlFQlFsY2VXZzF5cC9Od2JSOGFkK2VTRU8vdW1hL0srUHFXdkJwdEtDOVNXRDk3Rkc0dUI0
+ L2Nhb20KTEVVOTdzTFFNdG52R1dkeHJ4VlJHTTRhbnpXWU1neno1VFptSWlWVFo0M091NVZw
+ YVMxVnoxWlN4UDNoL3hLTgpaci9UY1c1V1FhaTh1M1BXVm5ia2poU1pQSHYxQmdoTjY5cXhF
+ UG9tckpCbTFnbXR4M1ppVm1GWGx1d1RtVGdKCk9rcEZvbDduYkowaWxuWUhyQTdTWDNDdFIx
+ dXBlVXBNYS9XSWFuVk85NldkVGpISElhNDNmYmhtUXViZTR0eFMKM0ZjUUxPSlZxUXN4NmxF
+ OUI3cUFwcG05aFExMHFQV3dkZlB5LyswVzZBV3ROdTVBU2lHVkNJbld6bDJIQnFZZAovWmxs
+ OTN6VXErTklvQ244c0RBTTlpSCt3dGFHRGNKeXdJR0luK2VkS050SzcyQU1nQ2hUZy9qMVpv
+ V0g2WmVXClBqdVVmdWJWelp0bzFGTW9HSi9TRjRNbWRRRzFpUU50ZjRzRlpiRWdYdXk5Y0dp
+ MmJvbUYwenZ5QkpTQU5weGwKS05CRFlLek42S3owOUhVQWtqbEZNTmdvbUwvY2pxZ0FCdEF4
+ NTlMK2RWSVpmYUYyODFwSWNVWnp3dmg1K0pvRwplT1c1dUJTTWJFN0wzOG5zem9veWtJSjVY
+ ckFjaGtKeE5mejdrK0ZuUWVLRWtOekVkMkxXYzNRRjRCUVpZUlQ2ClBISGdhM1JneWtXNSsx
+ d1RNcUpJTGRtdGFQYlhyRjNGdm5WMExSUGN2NHhLeDdCM2ZHbTd5Z2Rvb3dBUkFRQUIKdEIx
+ S2IyaHVJRXB2YUdGdWMyVnVJRHhxYjJodVFHcHFiWGd1Ym1WMFBva0NPZ1FUQVFvQUpBSWJB
+ d1VMQ1FnSApBd1VWQ2drSUN3VVdBZ01CQUFJZUFRSVhnQVVDVG8wWVZ3SVpBUUFLQ1JBRkx6
+ WndHTlhEMkx4SkQvOVRKWkNwCndsbmNUZ1llcmFFTWVEZmtXdjhjMUlzTTFqMEFtRTRWdEwr
+ ZkU3ODBaVlA5Z2tqZ2tkWVN4dDdlY0VUUFRLTWEKWlNpc3JsMVJ3cVUwb29nWGRYUVNweHJH
+ SDAxaWN1LzJuMGpjWVNxWUtnZ1B4eTc4QkdzMkxacTRYUGZKVFptSApaR25YR3EvZURyL21T
+ bmowYWF2QkptTVo2amJpUHo2eUh0QllQWjlmZG84YnRjendQNDFZZVdvSXUyNi84SUk2CmYw
+ WG0zVkM1b0FhOHY3UmQrUldaYThUTXdsaHpIRXh4ZWwzanRJN0l6ek9zbm1FOS84RG0wQVJE
+ NWlUTENYd1IKMWN3SS9KOUJGL1MxWHY4UE4xaHVUM0l0Q05kYXRncDh6cW9Ka2dQVmptdnlM
+ NjRRM2ZFa1liZkhPV3NhYmE5LwprQVZ0Qk56OVJURmg3SUhEZkVDVmFUb3VqQmQ3QnRQcXIr
+ cUlqV0ZhZEpEM0k1ZUxDVkp2VnJyb2xyQ0FUbEZ0Ck4zWWtRczZKbjFBaUlWSVUzYkhSOEdq
+ ZXZnejVMbDZTQ0dIZ1Jya3lScG5TWWFVL3VMZ24zN042QVl4aS9RQUwKK2J5M0N5RUZManpX
+ QUV2eVE4YnEzSXVjbjdKRWJoUy9KLy9kVXFMb2VVZjh0c0dpMDB6bXJJVFpZZUZZQVJoUQpN
+ dHNmaXpJclZEdHoxaVBmL1pNcDVnUkJuaXlqcFhuMTMxY20zTTNndjZIclFzQUdubjhBSnJ1
+ OEdEaTVYSllJCmNvLzEreC9xRWlOMm5DbGFBT3BiaHpOMmVVdlBEWTVXMHEzYkEvWnAybWZH
+ NTJ2YlJJK3RRMEJyMUhkL3ZzbnQKVUhPOTAzbU1aZXAyTnpOM0JaNXFFdlB2RzRyVzVacTJE
+ cHliV2JRclNtOW9iaUJLYjJoaGJuTmxiaUE4YW05bwpiaTVxYjJoaGJuTmxia0JqWVc1dmJt
+ bGpZV3d1WTI5dFBva0NOd1FUQVFvQUlRVUNUbzBYV2dJYkF3VUxDUWdICkF3VVZDZ2tJQ3dV
+ V0FnTUJBQUllQVFJWGdBQUtDUkFGTHpad0dOWEQySXRNRC85anliYzg3ZE00dUFIazZ5Tk0K
+ TjBZL0JGbW10VFdWc09CaHFPbm9iNGkzOEJyRE8yQzFoUUNQQ1FlNExMczEvNHB0ZW92UXQ4
+ QjJGeXJQVmp3Zwo3alpUSE5LNzRyNmxDQ1Z4eDN5dTFCN1U5UG80VlRrY3NsVmIxL3FtV3V4
+ OFhXY040eXZrVHFsTCtHeHB5Sm45CjlaWmZmWEpjNk9oNlRtT2ZiS0d2TXV1djVhclNJQTNK
+ SEZMZjlhTHZadEExaXNKVXI3cFM5YXBnOXVUVUdVcDcKd2ZWMFdUNlQzZUczbXRVVTJ1cDVK
+ VjQ4NTBMMDVqSFM2dVdpZS9ZK3lmSk9iaXlyeE4vNlpxVzVHb25oTEJxLwptc3pjVjV2QlQz
+ QkRWZTNSdkY2WGRNOU9oUG4xK1k4MXg1NCt2UTExM044aUx3RjdHR2ExNFp5SVZBTlpEMEkw
+ CkhqUnZhMmsvUnFJUlR6S3l1UEg1cGtsY0tIVlBFRk1tT3pNVCtGT294Tmp2Uys3K3dHMktN
+ RFlFbUhQcjFQSkIKWlNaZUh6SzE5dGZhbFBNcHBGeGkrc3lZTGFnTjBtQjdKSFF3WTdjclV1
+ T0RoeWNxNjBZVnoxdGFFeWd1M1l2MgoyL0kxRUNHSHZLSEc2d2M5MG80M0MvZWxIRUNYbkVo
+ N3RLcGxEY3BJQytPQ21NeEtIaFI0NitYY1p2Z3c0RGdiCjdjYTgzZVFSM0NHODlMdlFwVzJM
+ TEtFRUJEajdoWmhrTGJra1BSWm0zdzhKWTQ0YXc4VnRneFdkblNFTUNMeEwKSU9OaDZ1Wjcv
+ L0RZVnRjSWFNSllrZWJhWnRHZENwMElnVVpiMjQvVmR2WkNZYk82MkhrLzNWbzFuWHdIVUVz
+ Mwo2RC92MWJUMFJaRmk2OUxnc0NjT2N4NGdZTGtDRFFST1pxejZBUkFBb3F3NmtrQmhXeU0x
+ ZnZnYW1BVmplWjZuCktFZm5SV2JrQzk0TDFFc0pMdXAzV2IyWDBBQk5PSFNrYlNENHBBdUMy
+ dEtGL0VHQnQ1Q1A3UWRWS1JHY1F6QWQKNmIyYzFJZHk5Ukx3Nnc0Z2krbm4vZDFQbTFra1lo
+ a1NpNXpXYUlnMG01UlFVaytFbDh6a2Y1dGNFLzFOMFo1TwpLMkpoandGdTViWDBhMGw0Y0ZH
+ V1ZRRWNpVk1ES1J0eE1qRXRrM1N4RmFsbTZaZFEycHAyODIyY2xucTR6WjltCld1MWQyd2F4
+ aXorYjVJYTR3ZURZYTduNDFVUmNCRVViSkFnbmljSmtKdENUd3lJeElXMktuVnlPcmp2a1F6
+ SUIKdmFQMEZkUDJ2dlpvUE1kbENJek9sSWtQTGd4RTBJV3VlVFhlQkpoTnMwMXBiOGJMcW1U
+ SU1sdTRMdkJFTEEvdgplaWFqajVzOHk1NDJIL2FIc2ZCZjRNUVVoSHhPL0JaVjdoMDZLU1Vm
+ SWFZN09nQWdLdUdOQjNVaWFJVVM1K2E5CmduRU9RTER4S1J5L2E3UTF2OVMrTnZ4KzdqOGlI
+ M2prUUpoeFQ2WkJoWkdSeDBna0gzVCtGMG5ORG01TmFKVXMKYXN3Z0pycUZaa1VHZDJNcm0x
+ cW5Ld1hpQXQ4U0ljRU5kcTMzUjBLS0tSQzgwWGd3ajhKbjMwdlhMU0crTk8xRwpIMFVNY0F4
+ TXd5L3B2azZMVTVKR2paUjczSjVVTFZoSDRNTGJEZ2dEM21QYWlHOCtmb3RUckpVUHFxaGc5
+ aHlVCkVQcFlHN3NxdDc0WG43OStDRVpjakxIenlsNnZBRkUyVzBreGxMdFF0VVpVSE8zNmFm
+ RnY4cUdwTzNacVB2akIKVXVhdFhGNnR2VVFDd2YzSDZYTUFFUUVBQVlrQ0h3UVlBUW9BQ1FV
+ Q1RtYXMrZ0liREFBS0NSQUZMelp3R05YRAoyRC9YRC8wZGRNLzRhaTFiK1RsMWp6bkthalgz
+ a0crTWVFWWVJNGY0MHZjbzNyT0xyblJHRk9jYnl5ZlZGNjlNCktlcGllNE93b0kxamNUVTBB
+ RGVjbmJXbkROSHByMFNjenhCTXJvM2Juckxoc212anVuVFlJdnNzQlp0QjRhVkoKanVMSUxQ
+ VWxuaEZxYTdmYlZxMFpRamJpVi9ydDJqQkVOZG05cGJKWjZHam5wWUljQWJQQ0NhL2ZmTDQv
+ U1FSUwpZSFhvaEdpaVM0eTVqQlRtSzVsdGZld0xPdzAyZmtleEgrSUpGcnJHQlhEU2c2bjJT
+ Z3hubisrTkYzNGZYY205CnBpYXczbUtzSUNtKzBoZE5oNGFmR1o2SVdWOFBHMnRlb29WRHA0
+ ZFlpaCsreFgvWFM4ekJDYzFPOXc0bnpsUDIKZ0t6bHFTV2JoaVdwaWZSSkJGYTRXdEFlSlRk
+ WFlkMzdqL0JJNFJXV2hueXc3YUFQTkdqMzN5dEdITlVmNlJvMgovanRqNHRGMXkvUUZYcWpK
+ Ry93R2pwZHRSZmJ0VWpxTEhJc3ZmUE5OSnEvOTU4cDc0bmRBQ2lkbFdTSHpqK09wCjI2S3Bi
+ Rm5td05PMHBzaVVzbmh2SEZ3UE8vdkFibDNSc1I1KzBSbytodnMyY0VtUXV2OXIvYkRsQ2Zw
+ enAydDMKY0srcmh4VXFpc094OERaZnoxQm5rYW9DUkZidnZ2ays3TC9mb21QbnRHUGtxSmNp
+ WUU4VEdIa1p3MWhPa3UrNApPb00yR0I1bkVEbGorMlRGL2pMUStFaXBYOVBrUEpZdnhmUmxD
+ NmRLOFBLS2ZYOUtkZm1BSWNnSGZuVjFqU24rCjh5SDJkakJQdEtpcVcwSjY5YUlzeXg3aVYv
+ MDNwYVBDakpoN1hxOXZBenlkTjVVL1VBPT0KPTZQL2IKLS0tLS1FTkQgUEdQIFBVQkxJQyBL
+ RVkgQkxPQ0stLS0tLQo=
+Organization: Canonical
+Message-ID: <8b991f1e-ad01-879e-aa36-30e830f0e52c@canonical.com>
+Date:   Tue, 28 Jul 2020 17:30:12 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20200728215041.GF4053562@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <8dd6f4e0-07f0-333e-0663-0bc0889cccf2@schaufler-ca.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-
-On 7/28/2020 2:50 PM, Eric Biggers wrote:
-> On Tue, Jul 28, 2020 at 02:36:06PM -0700, Deven Bowers wrote:
->> The CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG introduced by Jaskaran was
->> intended to be used to allow an LSM to enforce verifications for all
->> dm-verity volumes.
+On 7/28/20 4:41 PM, Casey Schaufler wrote:
+> On 7/28/2020 4:11 AM, John Johansen wrote:
+>> On 7/24/20 1:32 PM, Casey Schaufler wrote:
+>>> Change security_secctx_to_secid() to fill in a lsmblob instead
+>>> of a u32 secid. Multiple LSMs may be able to interpret the
+>>> string, and this allows for setting whichever secid is
+>>> appropriate. Change security_secmark_relabel_packet() to use a
+>>> lsmblob instead of a u32 secid. In some other cases there is
+>>> scaffolding where interfaces have yet to be converted.
+>>>
+>>> Reviewed-by: Kees Cook <keescook@chromium.org>
+>>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+>>> Cc: netdev@vger.kernel.org
+>> one comment below, but its a nice to have so
 >>
->> However, with it's current implementation, this signature verification
->> occurs after the merkel-tree is validated, as a result the signature can
->> pass initial verification by passing a matching root-hash and signature.
->> This results in an unreadable block_device, but that has passed signature
->> validation (and subsequently, would be marked as verified).
+>> Reviewed-by: John Johansen <john.johansen@canonical.com>
 >>
->> This change moves the signature verification to after the merkel-tree has
->> finished validation.
 >>
->> Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
->> ---
->>   drivers/md/dm-verity-target.c     |  44 ++++------
->>   drivers/md/dm-verity-verify-sig.c | 140 ++++++++++++++++++++++--------
->>   drivers/md/dm-verity-verify-sig.h |  24 +++--
->>   drivers/md/dm-verity.h            |   2 +-
->>   4 files changed, 134 insertions(+), 76 deletions(-)
->>
->> diff --git a/drivers/md/dm-verity-target.c b/drivers/md/dm-verity-target.c
->> index eec9f252e935..fabc173aa7b3 100644
->> --- a/drivers/md/dm-verity-target.c
->> +++ b/drivers/md/dm-verity-target.c
->> @@ -471,9 +471,9 @@ static int verity_verify_io(struct dm_verity_io *io)
->>   	struct bvec_iter start;
->>   	unsigned b;
->>   	struct crypto_wait wait;
->> +	int r;
->>   
->>   	for (b = 0; b < io->n_blocks; b++) {
->> -		int r;
->>   		sector_t cur_block = io->block + b;
->>   		struct ahash_request *req = verity_io_hash_req(v, io);
->>   
->> @@ -530,6 +530,16 @@ static int verity_verify_io(struct dm_verity_io *io)
->>   			return -EIO;
->>   	}
->>   
->> +	/*
->> +	 * At this point, the merkel tree has finished validating.
->> +	 * if signature was specified, validate the signature here.
->> +	 */
->> +	r = verity_verify_root_hash(v);
->> +	if (r < 0) {
->> +		DMERR_LIMIT("signature mismatch");
->> +		return r;
->> +	}
->> +
->>   	return 0;
->>   }
+>>> ---
+>>>  include/linux/security.h          | 30 +++++++++++++++++++++++----
+>>>  include/net/scm.h                 |  7 +++++--
+>>>  kernel/cred.c                     |  4 +---
+>>>  net/ipv4/ip_sockglue.c            |  6 ++++--
+>>>  net/netfilter/nft_meta.c          | 18 +++++++++-------
+>>>  net/netfilter/xt_SECMARK.c        |  9 ++++++--
+>>>  net/netlabel/netlabel_unlabeled.c | 23 +++++++++++++--------
+>>>  security/security.c               | 34 ++++++++++++++++++++++++++-----
+>>>  8 files changed, 98 insertions(+), 33 deletions(-)
+>>>
+>>> diff --git a/include/linux/security.h b/include/linux/security.h
+>>> index d81e8886d799..98176faaaba5 100644
+>>> --- a/include/linux/security.h
+>>> +++ b/include/linux/security.h
+>>> @@ -189,6 +189,27 @@ static inline bool lsmblob_equal(struct lsmblob *bloba, struct lsmblob *blobb)
+>>>  	return !memcmp(bloba, blobb, sizeof(*bloba));
+>>>  }
+>>>  
+>>> +/**
+>>> + * lsmblob_value - find the first non-zero value in an lsmblob structure.
+>>> + * @blob: Pointer to the data
+>>> + *
+>>> + * This needs to be used with extreme caution, as the cases where
+>>> + * it is appropriate are rare.
+>>> + *
+>>> + * Return the first secid value set in the lsmblob.
+>>> + * There should only be one.
+>> It would be really nice if we could have an LSM debug config, that would
+>> do things like checking there is indeed only one value when this fn
+>> is called.
 > 
-> This doesn't make any sense.
-> 
-> This just moves the signature verification to some random I/O.
-> 
-> The whole point of dm-verity is that data is verified on demand.  You can't know
-> whether any particular data or hash block is consistent with the root hash or
-> not until it is read and verified.
-> 
-> When the first I/O completes it might have just checked one block of a billion.
-> 
-> Not to mention that you didn't consider locking at all.
-> 
-> - Eric
+> I can't see a CONFIG_LSM_DEBUG for this alone, but if you have
+> other places you'd like to see it I'm open to it.
 > 
 
-I appear to have dangerously misunderstood how dm-verity works under the
-covers. What I thought was happening here was that *this* would be where
-the first I/O that completes validation and has been verified - the root
-hash signature could then be checked against the root hash, and then
-no-op for remaining blocks, provided the signature validates.
+yeah there are a few other places, this really isn't a requirement
+just a thought while I was going through these again.
 
-The reason why I was proposing moving the signature check, is that I was 
-afraid of the block_device being created in dm-verity with a root-hash 
-that belongs to a different device + a signature that verifies that
-root-hash, would get past verity_ctr, as despite the root hash not
-matching the hash tree, the signature and the root hash will be 
-verified. At this point, a block_device structure would be resident in
-the kernel with the security attributes I propose in the next patch in 
-the series. This device would never be read successfully, but the
-structure with the attribute would exist.
-
-This felt odd because there would be a structure in the kernel with an
-attribute that says it passed a security check, but the block_device is
-effectively invalid.
-
-I realize now that that's a pretty ridiculous situation because the 
-theoretical attack with access to manipulate the kernel memory in such a 
-way to make it viable could just override whatever is needed to make the 
-exploit work, and isn't unique to dm-verity.
-
-I'm going to drop this patch in the next iteration of this series.
-
+I will have to spend some time chasing them down. Maybe even
+cobble together a patch
 
