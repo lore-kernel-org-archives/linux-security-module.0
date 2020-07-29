@@ -3,95 +3,126 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7396C433E1
-	for <linux-security-module@archiver.kernel.org>; Wed, 29 Jul 2020 02:07:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23B1FC433DF
+	for <linux-security-module@archiver.kernel.org>; Wed, 29 Jul 2020 05:17:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B21272076E
-	for <linux-security-module@archiver.kernel.org>; Wed, 29 Jul 2020 02:07:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="itmWCuWS"
+	by mail.kernel.org (Postfix) with ESMTP id F24D22250E
+	for <linux-security-module@archiver.kernel.org>; Wed, 29 Jul 2020 05:17:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1595999821;
+	bh=qItqwNi4q4ELXpJAVlv3H8dC/ihmulIDrwoa1DDcrFY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=SVaKgX3bG15tRdy2fij/6gKGDL52qD0SIEgweIRRmnFiuMvJI10z9dP1Lzg2Uy+lu
+	 MiSKB0+sjTcF3bqCyV2/WyozajtFUcea8adaZFouw3ZsUpvNbFJg798o18HlNS6VrH
+	 /GIhw9rwS/0/7/n9bLyVObedSPvzvvspflGvXJHs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730966AbgG2CHa (ORCPT
+        id S1726900AbgG2FRA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 28 Jul 2020 22:07:30 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:21115 "EHLO
-        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728401AbgG2CH3 (ORCPT
+        Wed, 29 Jul 2020 01:17:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47518 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726824AbgG2FQ7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 28 Jul 2020 22:07:29 -0400
-X-Greylist: delayed 303 seconds by postgrey-1.27 at vger.kernel.org; Tue, 28 Jul 2020 22:07:28 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1595988448;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=DeolwL/8SdMeyvaIjqFbfDjnFfnpKQhKODlzhWE0ad4=;
-        b=itmWCuWSQuV2UJTy+TsvTtMOAvzH/PTDdHquf7yQO01BrrOAtb6L9QyDRs9O139JWIkHdT
-        oc1JCNKu1/MS2GcC4tGJo4ItQbC5SbrJkxdKDRqRqRuVZKFPubtxPHBdohNQL/CL2aut51
-        hXTDG/QQN35Ra3+D7zn6h0IAUlm0Hz8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-315-5cxjp49uMeyN4-6Az-5SbA-1; Tue, 28 Jul 2020 22:01:17 -0400
-X-MC-Unique: 5cxjp49uMeyN4-6Az-5SbA-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Wed, 29 Jul 2020 01:16:59 -0400
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 78F8D1DE2;
-        Wed, 29 Jul 2020 02:01:16 +0000 (UTC)
-Received: from madcap2.tricolour.ca (unknown [10.10.110.3])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 986A38A169;
-        Wed, 29 Jul 2020 02:01:09 +0000 (UTC)
-Date:   Tue, 28 Jul 2020 22:01:06 -0400
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Eric Paris <eparis@parisplace.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V3fix ghak120] audit: initialize context values in case
- of mandatory events
-Message-ID: <20200729020106.x5tfijvnxdmujtbj@madcap2.tricolour.ca>
-References: <e3e9c9da9115fd233c5a7895dbb4a698a365b1b0.1595884394.git.rgb@redhat.com>
- <CAHC9VhSx23JiN6GprskxdEcs9uftJOp03Svh7YJbQLOV91AMiQ@mail.gmail.com>
- <20200728162722.djvy3qyclj57wsfn@madcap2.tricolour.ca>
- <CAHC9VhSDoi8QS3c6Wmx6agmmphja60cS3+aTKVx76xvdkxJ0DQ@mail.gmail.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id CFA3F20663
+        for <linux-security-module@vger.kernel.org>; Wed, 29 Jul 2020 05:16:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1595999819;
+        bh=qItqwNi4q4ELXpJAVlv3H8dC/ihmulIDrwoa1DDcrFY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=k2/ypYf8chH29waA/oS7FzUjhmqJvZsAK5yreLc+JnHHzlqaz9vnEqabE+qyemEMh
+         V59mmT0x99Zz7xAAr4mzDnLpnXyxu10GUK80PkfmZzTfRw0ApQRzkJVmfxPNtOL+Nt
+         orHtR8IzwwnOF1rKVTvLOZzzbUFBmX6T//Qhyjrc=
+Received: by mail-wm1-f52.google.com with SMTP id 184so1647255wmb.0
+        for <linux-security-module@vger.kernel.org>; Tue, 28 Jul 2020 22:16:58 -0700 (PDT)
+X-Gm-Message-State: AOAM5316jluTkNY75CTpLb3FcFeIdnAVlh/ZuntlkjDLoesqZqMHz1JI
+        mK8Sy640OOS+KC8KwI1oe7yn6qV25FmrNqgn1gpr0A==
+X-Google-Smtp-Source: ABdhPJyc8ExWo5/AVhgh7lVVbcBRbBl+yZD/a1oDf2lJ2rOxAoDZo7htpcvpKEGk9rvSh0Xh0NAF4mmPRBSSCBjw09E=
+X-Received: by 2002:a1c:7511:: with SMTP id o17mr7308351wmc.49.1595999817430;
+ Tue, 28 Jul 2020 22:16:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhSDoi8QS3c6Wmx6agmmphja60cS3+aTKVx76xvdkxJ0DQ@mail.gmail.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+References: <20200728131050.24443-1-madvenka@linux.microsoft.com>
+ <c23de6ec47614f489943e1a89a21dfa3@AcuMS.aculab.com> <f5cfd11b-04fe-9db7-9d67-7ee898636edb@linux.microsoft.com>
+ <CALCETrUta5-0TLJ9-jfdehpTAp2Efmukk2npYadFzz9ozOrG2w@mail.gmail.com> <81d744c0-923e-35ad-6063-8b186f6a153c@linux.microsoft.com>
+In-Reply-To: <81d744c0-923e-35ad-6063-8b186f6a153c@linux.microsoft.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Tue, 28 Jul 2020 22:16:45 -0700
+X-Gmail-Original-Message-ID: <CALCETrUWd4Gogz5EQNbbx7Babct4hGerz7sWiAuu2-Q1KB64yA@mail.gmail.com>
+Message-ID: <CALCETrUWd4Gogz5EQNbbx7Babct4hGerz7sWiAuu2-Q1KB64yA@mail.gmail.com>
+Subject: Re: [PATCH v1 0/4] [RFC] Implement Trampoline File Descriptor
+To:     "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        David Laight <David.Laight@aculab.com>,
+        "kernel-hardening@lists.openwall.com" 
+        <kernel-hardening@lists.openwall.com>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "oleg@redhat.com" <oleg@redhat.com>,
+        "x86@kernel.org" <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2020-07-28 14:47, Paul Moore wrote:
-> On Tue, Jul 28, 2020 at 12:27 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > I know you like only really minimal fixes this late, but this seemed
-> > pretty minimal to me...
-> 
-> Minimal is a one (two?) line NULL check in audit_log_name(), this
-> patch is not that.
+On Tue, Jul 28, 2020 at 10:40 AM Madhavan T. Venkataraman
+<madvenka@linux.microsoft.com> wrote:
+>
+>
+>
+> On 7/28/20 12:16 PM, Andy Lutomirski wrote:
+>
+> On Tue, Jul 28, 2020 at 9:32 AM Madhavan T. Venkataraman
+> <madvenka@linux.microsoft.com> wrote:
+>
+> Thanks. See inline..
+>
+> On 7/28/20 10:13 AM, David Laight wrote:
+>
+> From:  madvenka@linux.microsoft.com
+>
+> Sent: 28 July 2020 14:11
+>
+> ...
+>
+> The kernel creates the trampoline mapping without any permissions. When
+> the trampoline is executed by user code, a page fault happens and the
+> kernel gets control. The kernel recognizes that this is a trampoline
+> invocation. It sets up the user registers based on the specified
+> register context, and/or pushes values on the user stack based on the
+> specified stack context, and sets the user PC to the requested target
+> PC. When the kernel returns, execution continues at the target PC.
+> So, the kernel does the work of the trampoline on behalf of the
+> application.
+>
+> Isn't the performance of this going to be horrid?
+>
+> It takes about the same amount of time as getpid(). So, it is
+> one quick trip into the kernel. I expect that applications will
+> typically not care about this extra overhead as long as
+> they are able to run.
+>
+> What did you test this on?  A page fault on any modern x86_64 system
+> is much, much, much, much slower than a syscall.
+>
+>
+> I tested it in on a KVM guest running Ubuntu. So, when you say
+> that a page fault is much slower, do you mean a regular page
+> fault that is handled through the VM layer? Here is the relevant code
+> in do_user_addr_fault():
 
-I didn't try and test that since I'm not sure that would have worked
-because there appeared to be a low non-NULL value in it.  brauer1's trace had
-0x60 and mine had 0xd0.  Or am I missing something obvious?
-
-The patch provided the information rather than ignoring the problem
-(which maybe should have been caught by WARN_ONCE?).
-
-> paul moore
-
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
-
+I mean that x86 CPUs have reasonably SYSCALL and SYSRET instructions
+(the former is used for 64-bit system calls on Linux and the latter is
+mostly used to return from system calls), but hardware page fault
+delivery and IRET (used to return from page faults) are very slow.
