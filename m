@@ -2,76 +2,89 @@ Return-Path: <SRS0=eGAW=BJ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1,
+	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA2C5C433DF
-	for <linux-security-module@archiver.kernel.org>; Thu, 30 Jul 2020 17:19:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C4ECC433E4
+	for <linux-security-module@archiver.kernel.org>; Thu, 30 Jul 2020 18:02:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9C151208A9
-	for <linux-security-module@archiver.kernel.org>; Thu, 30 Jul 2020 17:19:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 33D3D20809
+	for <linux-security-module@archiver.kernel.org>; Thu, 30 Jul 2020 18:02:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BP/PmW5I"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="ZjcMZbIw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730137AbgG3RTp (ORCPT
+        id S1726275AbgG3SCx (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 30 Jul 2020 13:19:45 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:50238 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728452AbgG3RTo (ORCPT
+        Thu, 30 Jul 2020 14:02:53 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:35040 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730363AbgG3SCw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 30 Jul 2020 13:19:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1596129584;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=yfgpEad35QlSnKs/MBOCUF8OTtEP6rCnc2IsO7uLItY=;
-        b=BP/PmW5IBbqmSDXKdurLixCwEVQwRpFepDatyRAt9fiybDF//4Ok3Z8zAPNoox79P0PzYU
-        X4zWcX0rW5nJwSFodxiMDmAtVCWA+CCo63zx3qgvXo784P2tJcxk8RO8y04qahAxfU4GiM
-        CRBybHIeTqYGniyUP0OKaXUQNXyWGhs=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-315-XdgRvRDMN0yJ3P4Ns-mDBQ-1; Thu, 30 Jul 2020 13:19:39 -0400
-X-MC-Unique: XdgRvRDMN0yJ3P4Ns-mDBQ-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 71CCD79EC2;
-        Thu, 30 Jul 2020 17:19:38 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-112-32.rdu2.redhat.com [10.10.112.32])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 038325FC31;
-        Thu, 30 Jul 2020 17:19:36 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <439876.1596106009@warthog.procyon.org.uk>
-References: <439876.1596106009@warthog.procyon.org.uk> <159562904644.2287160.13294507067766261970.stgit@warthog.procyon.org.uk>
-To:     torvalds@linux-foundation.org
-Cc:     dhowells@redhat.com, jarkko.sakkinen@linux.intel.com,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] watch_queue: Limit the number of watches a user can hold
+        Thu, 30 Jul 2020 14:02:52 -0400
+Received: from [192.168.0.104] (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 508FA20B4908;
+        Thu, 30 Jul 2020 11:02:51 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 508FA20B4908
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1596132171;
+        bh=Lq00ap7Yu8hoUdPCLVlYdZakWLvY3wTeBBusKqVGKL4=;
+        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
+        b=ZjcMZbIwR/fP3byLrxge5Ao5e6GNyOxy0eX1JNinRJb1DKlygk8vEypRNhuOT3BA8
+         QBSKgVbqSbcijtYHbivDb7NzWH29EtNUIPqz4nmIPjJgvbngaWRjLUKQCQD6CokjSB
+         FA2pANqUEaaDk+qglmoS3yYd6EEKu0thLoDca/n8=
+Subject: Re: [PATCH v5 4/4] IMA: Handle early boot data measurement
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+To:     zohar@linux.ibm.com, stephen.smalley.work@gmail.com,
+        casey@schaufler-ca.com
+Cc:     tyhicks@linux.microsoft.com, sashal@kernel.org, jmorris@namei.org,
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200730034724.3298-1-nramas@linux.microsoft.com>
+ <20200730034724.3298-5-nramas@linux.microsoft.com>
+Message-ID: <ea3bba66-9b21-b842-990b-2bf1e4ac2179@linux.microsoft.com>
+Date:   Thu, 30 Jul 2020 11:02:50 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <521561.1596129576.1@warthog.procyon.org.uk>
-Date:   Thu, 30 Jul 2020 18:19:36 +0100
-Message-ID: <521562.1596129576@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+In-Reply-To: <20200730034724.3298-5-nramas@linux.microsoft.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-David Howells <dhowells@redhat.com> wrote:
+On 7/29/20 8:47 PM, Lakshmi Ramasubramanian wrote:
 
-> Could you consider taking this patch as a bugfix since the problem exists
-> already in upstream code?
+Hi Tyler,
 
-Alternatively, I can include it in a set with the mount notifications.
+> diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
+> index 080c53545ff0..86cba844f73c 100644
+> --- a/security/integrity/ima/Kconfig
+> +++ b/security/integrity/ima/Kconfig
+> @@ -322,10 +322,9 @@ config IMA_MEASURE_ASYMMETRIC_KEYS
+>   	depends on ASYMMETRIC_PUBLIC_KEY_SUBTYPE=y
+>   	default y
+>   
+> -config IMA_QUEUE_EARLY_BOOT_KEYS
+> +config IMA_QUEUE_EARLY_BOOT_DATA
+>   	bool
+> -	depends on IMA_MEASURE_ASYMMETRIC_KEYS
+> -	depends on SYSTEM_TRUSTED_KEYRING
+> +	depends on SECURITY || (IMA_MEASURE_ASYMMETRIC_KEYS && SYSTEM_TRUSTED_KEYRING)
+>   	default y
+>   
+Similar to the change you'd suggested for validating LSM_STATE and 
+LSM_POLICY func, I think IMA_QUEUE_EARLY_BOOT_DATA config should be 
+enabled for SECURITY_SELINUX.
 
-David
+depends on SECURITY_SELINUX ||
+            (IMA_MEASURE_ASYMMETRIC_KEYS && SYSTEM_TRUSTED_KEYRING)
 
+And, when more security modules are added update this CONFIG as appropriate.
+
+Does that sound okay?
+
+  -lakshmi
