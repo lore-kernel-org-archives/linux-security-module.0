@@ -2,74 +2,100 @@ Return-Path: <SRS0=eGAW=BJ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3882C433E1
-	for <linux-security-module@archiver.kernel.org>; Thu, 30 Jul 2020 10:47:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6921C433DF
+	for <linux-security-module@archiver.kernel.org>; Thu, 30 Jul 2020 13:09:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8DEDB2074B
-	for <linux-security-module@archiver.kernel.org>; Thu, 30 Jul 2020 10:47:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DRdgvGl2"
+	by mail.kernel.org (Postfix) with ESMTP id A0B172082E
+	for <linux-security-module@archiver.kernel.org>; Thu, 30 Jul 2020 13:09:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728932AbgG3KrC (ORCPT
+        id S1729027AbgG3NJa (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 30 Jul 2020 06:47:02 -0400
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:41516 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726287AbgG3KrB (ORCPT
+        Thu, 30 Jul 2020 09:09:30 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([185.58.86.151]:55139 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728981AbgG3NJ3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 30 Jul 2020 06:47:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1596106021;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=ZpJBVrfk7CBP+2x9tuVRq2yFi/n5laYEQwJk4+y6mA8=;
-        b=DRdgvGl2z43G2AV92dacJEYACUyn4fCbPQIEjfPyjttzq27Wo9CtzzQ1SbB39JDN2kCDDU
-        FH//Kfhun5T5O2kaDX3bXzpQtjOF3WfYSoZ9eNHj2LutaqYnYoi05unXg69yxHhvVzTeYv
-        cnLUNoJ7S+cYtQ/P5pj92wrHM75sVzo=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-351-6b_sYAohM_epvOGm9Ig2HA-1; Thu, 30 Jul 2020 06:46:57 -0400
-X-MC-Unique: 6b_sYAohM_epvOGm9Ig2HA-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B140B18C63D3;
-        Thu, 30 Jul 2020 10:46:51 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-112-32.rdu2.redhat.com [10.10.112.32])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 654B619D7B;
-        Thu, 30 Jul 2020 10:46:50 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <159562904644.2287160.13294507067766261970.stgit@warthog.procyon.org.uk>
-References: <159562904644.2287160.13294507067766261970.stgit@warthog.procyon.org.uk>
-To:     torvalds@linux-foundation.org
-Cc:     dhowells@redhat.com, jarkko.sakkinen@linux.intel.com,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] watch_queue: Limit the number of watches a user can hold
+        Thu, 30 Jul 2020 09:09:29 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-237-OWiDeMRKNgyfXRUgU29ZSg-1; Thu, 30 Jul 2020 14:09:25 +0100
+X-MC-Unique: OWiDeMRKNgyfXRUgU29ZSg-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Thu, 30 Jul 2020 14:09:24 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Thu, 30 Jul 2020 14:09:24 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Andy Lutomirski' <luto@kernel.org>,
+        "madvenka@linux.microsoft.com" <madvenka@linux.microsoft.com>
+CC:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "LSM List" <linux-security-module@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>, X86 ML <x86@kernel.org>
+Subject: RE: [PATCH v1 0/4] [RFC] Implement Trampoline File Descriptor
+Thread-Topic: [PATCH v1 0/4] [RFC] Implement Trampoline File Descriptor
+Thread-Index: AQHWZQT/T+e4gDrzGEmP/30MMvDTCqkgFteg
+Date:   Thu, 30 Jul 2020 13:09:24 +0000
+Message-ID: <b9879beef3e740c0aeb1af73485069a8@AcuMS.aculab.com>
+References: <20200728131050.24443-1-madvenka@linux.microsoft.com>
+ <CALCETrVy5OMuUx04-wWk9FJbSxkrT2vMfN_kANinudrDwC4Cig@mail.gmail.com>
+In-Reply-To: <CALCETrVy5OMuUx04-wWk9FJbSxkrT2vMfN_kANinudrDwC4Cig@mail.gmail.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <439875.1596106009.1@warthog.procyon.org.uk>
-Date:   Thu, 30 Jul 2020 11:46:49 +0100
-Message-ID: <439876.1596106009@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Linus,
-
-Could you consider taking this patch as a bugfix since the problem exists
-already in upstream code?
-
-David
+PiBUaGlzIGlzIHF1aXRlIGNsZXZlciwgYnV0IG5vdyBJ4oCZbSB3b25kZXJpbmcganVzdCBob3cg
+bXVjaCBrZXJuZWwgaGVscA0KPiBpcyByZWFsbHkgbmVlZGVkLiBJbiB5b3VyIHNlcmllcywgdGhl
+IHRyYW1wb2xpbmUgaXMgYW4gbm9uLWV4ZWN1dGFibGUNCj4gcGFnZS4gIEkgY2FuIHRoaW5rIG9m
+IGF0IGxlYXN0IHR3byBhbHRlcm5hdGl2ZSBhcHByb2FjaGVzLCBhbmQgSSdkDQo+IGxpa2UgdG8g
+a25vdyB0aGUgcHJvcyBhbmQgY29ucy4NCj4gDQo+IDEuIEVudGlyZWx5IHVzZXJzcGFjZTogYSBy
+ZXR1cm4gdHJhbXBvbGluZSB3b3VsZCBiZSBzb21ldGhpbmcgbGlrZToNCj4gDQo+IDE6DQo+IHB1
+c2hxICVyYXgNCj4gcHVzaHEgJXJiYw0KPiBwdXNocSAlcmN4DQo+IC4uLg0KPiBwdXNocSAlcjE1
+DQo+IG1vdnEgJXJzcCwgJXJkaSAjIHBvaW50ZXIgdG8gc2F2ZWQgcmVncw0KPiBsZWFxIDFiKCVy
+aXApLCAlcnNpICMgcG9pbnRlciB0byB0aGUgdHJhbXBvbGluZSBpdHNlbGYNCj4gY2FsbHEgdHJh
+bXBvbGluZV9oYW5kbGVyICMgc2VlIGJlbG93DQoNCkZvciBuZXN0ZWQgY2FsbHMgKHdoZXJlIHRo
+ZSB0cmFtcG9saW5lIG5lZWRzIHRvIHBhc3MgdGhlDQpvcmlnaW5hbCBzdGFjayBmcmFtZSB0byB0
+aGUgbmVzdGVkIGZ1bmN0aW9uKSBJIHRoaW5rIHlvdQ0KanVzdCBuZWVkIGEgcGFnZSBmdWxsIG9m
+Og0KCW1vdgkkMCwgc2NyYXRjaF9yZWc7IGptcCB0cmFtcG9saW5lX2hhbmRsZXINCgltb3YJJDEs
+IHNjcmF0Y2hfcmVnOyBqbXAgdHJhbXBvbGluZV9oYW5kbGVyDQpZb3UgbmVlZCBhbiB1bnVzZWQg
+cmVnaXN0ZXIsIG9uIHg4Ni02NCBJIHRoaW5rIGJvdGgNCnIxMCBhbmQgcjExIGFyZSBhdmFpbGFi
+bGUuDQpPbiBpMzg2IEkgdGhpbmsgZWF4IGNhbiBiZSB1c2VkLg0KSXQgbWlnaHQgZXZlbiBiZSB0
+aGF0IHRoZSBmaXJzdCBhcmd1bWVudCByZWdpc3RlciBpcw0KYXZhaWxhYmxlIC0gaWYgdGhhdCBp
+cyB1c2VkIHRvIHBhc3MgaW4gdGhlIHN0YWNrIGZyYW1lLg0KDQpUaGUgdHJhbXBvbGluZV9oYW5k
+bGVyIHRoZW4gdXNlcyB0aGUgcGFzc2VkIGluIHZhbHVlDQp0byBpbmRleCBhbiBhcnJheSBvZiBz
+dGFjayBmcmFtZSBhbmQgZnVuY3Rpb24gcG9pbnRlcnMNCmFuZCBqdW1wcyB0byB0aGUgcmVhbCBm
+dW5jdGlvbi4NCllvdSBuZWVkIHRvIGhvbGQgZXZlcnl0aGluZyBpbiBfX3RocmVhZCBkYXRhLg0K
+QW5kIG1heWJlIGJlIGFibGUgdG8gYWxsb2NhdGUgYW4gZXh0cmEgcGFnZSBmb3IgZGVlcGx5DQpu
+ZXN0ZWQgY29kZSBwYXRocyAoZWcgcmVjdXJzaXZlIG5lc3RlZCBmdW5jdGlvbnMpLg0KDQpZb3Ug
+bWlnaHQgdGhlbiBuZWVkIGEgZHJpdmVyIHRvIGNyZWF0ZSB5b3UgYSBzdWl0YWJsZQ0KZXhlY3V0
+YWJsZSBwYWdlLiBTb21laG93IHlvdSBuZWVkIHRvIHBhc3MgaW4gdGhlIGFkZHJlc3MNCm9mIHRo
+ZSB0cmFtcG9saW5lX2hhbmRsZXIgYW5kIHRoZSBudW1iZXIgZm9yIHRoZSBmaXJzdCBmYXVsdC4N
+Ckl0IG5lZWQgdG8gcGFzcyBiYWNrIHRoZSAnc3RyaWRlJyBvZiB0aGUgYXJyYXkgYW5kIG51bWJl
+cg0Kb2YgZWxlbWVudHMgY3JlYXRlZC4NCg0KQnV0IGlmIHlvdSBjYW4gdGFrZSB0aGUgY29zdCBv
+ZiB0aGUgcGFnZSBmYXVsdCwgdGhlbg0KeW91IGNhbiBpbnRlcnByZXQgdGhlIGV4aXN0aW5nIHRy
+YW1wb2xpbmUgaW4gdXNlcnNwYWNlDQp3aXRoaW4gdGhlIHNpZ25hbCBoYW5kbGVyLg0KVGhpcyBp
+cyB0d28ga2VybmVsIGVudHJ5L2V4aXRzLg0KDQpBcmJpdHJhcnkgSklUIGlzIGEgZGlmZmVyZW50
+IHByb2JsZW0gZW50aXJlbHkuDQoNCglEYXZpZA0KDQotDQpSZWdpc3RlcmVkIEFkZHJlc3MgTGFr
+ZXNpZGUsIEJyYW1sZXkgUm9hZCwgTW91bnQgRmFybSwgTWlsdG9uIEtleW5lcywgTUsxIDFQVCwg
+VUsNClJlZ2lzdHJhdGlvbiBObzogMTM5NzM4NiAoV2FsZXMpDQo=
 
