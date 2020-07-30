@@ -2,142 +2,75 @@ Return-Path: <SRS0=eGAW=BJ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ACB1C433E4
-	for <linux-security-module@archiver.kernel.org>; Thu, 30 Jul 2020 03:47:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A7A7C433E3
+	for <linux-security-module@archiver.kernel.org>; Thu, 30 Jul 2020 09:06:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 54FFC206E6
-	for <linux-security-module@archiver.kernel.org>; Thu, 30 Jul 2020 03:47:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="FAVzIPLA"
+	by mail.kernel.org (Postfix) with ESMTP id DF75C2083B
+	for <linux-security-module@archiver.kernel.org>; Thu, 30 Jul 2020 09:06:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1596099988;
+	bh=ieC3UQSH9xTQQlFP1mBTpQK8Jaet0JuMdqnPvTiLzSc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=cP3TZTeA7JHu3FOzc1PTtNj8KijnNfqEJYgBdgJum93jkxNGObyWtdA6WFZBqp6pj
+	 SmdlFkAoTGeZR6N+zZNOjacZGBX9V99eXg6jiAl+vh8WQW2OeiiMlk7VwUdASoyEKj
+	 Lf8hq9aLa50gvQbkcCoF47GccC7nuUSysqu9yuKY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728514AbgG3Dra (ORCPT
+        id S1728902AbgG3JGY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 29 Jul 2020 23:47:30 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:53410 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726194AbgG3Dra (ORCPT
+        Thu, 30 Jul 2020 05:06:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42144 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728528AbgG3JGX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 29 Jul 2020 23:47:30 -0400
-Received: from localhost.localdomain (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
-        by linux.microsoft.com (Postfix) with ESMTPSA id E449C20B4908;
-        Wed, 29 Jul 2020 20:47:28 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com E449C20B4908
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1596080849;
-        bh=RhrOpojCuE9/gOVGVXBy1xV6cRPsmVE/M6gBMtqivsY=;
-        h=From:To:Cc:Subject:Date:From;
-        b=FAVzIPLAjtYZ1w+m2eBdb5C41QQUbyl8NSdxyjhujjmWAa8hgyGvKxKLPJtkdx2Tu
-         +oLFHYzmh2yZWd/TEIIDcfhou0lrEBV5AB+q0yjTJJ3pbflPFT25cRT9IGouwu3HCr
-         vbOLxxQwgfqWm1nu20c86G1ZXK4hJ5CuIecMDDHY=
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-To:     zohar@linux.ibm.com, stephen.smalley.work@gmail.com,
-        casey@schaufler-ca.com
-Cc:     tyhicks@linux.microsoft.com, sashal@kernel.org, jmorris@namei.org,
-        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 0/4] LSM: Measure security module data
-Date:   Wed, 29 Jul 2020 20:47:20 -0700
-Message-Id: <20200730034724.3298-1-nramas@linux.microsoft.com>
-X-Mailer: git-send-email 2.27.0
+        Thu, 30 Jul 2020 05:06:23 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CFDC92072A;
+        Thu, 30 Jul 2020 09:06:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1596099983;
+        bh=ieC3UQSH9xTQQlFP1mBTpQK8Jaet0JuMdqnPvTiLzSc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Z/OlMNCjgJjVCDEAUFFVbS7j9qnE79NsrCIar3YE+oLzkykZo4SyLPjtjBmvhhkcD
+         T9PkgtjWLgbnsiDPD6gD6YwuUd+7hajjK66mABoLrTUlc/yFV744DxvWyv+/e12Zv2
+         o7cXTtiuU4bHGqJbB2DKVrNBS9iI30MBTfDZpeMY=
+Date:   Thu, 30 Jul 2020 11:06:12 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     madvenka@linux.microsoft.com
+Cc:     kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, oleg@redhat.com,
+        x86@kernel.org
+Subject: Re: [PATCH v1 2/4] [RFC] x86/trampfd: Provide support for the
+ trampoline file descriptor
+Message-ID: <20200730090612.GA900546@kroah.com>
+References: <aefc85852ea518982e74b233e11e16d2e707bc32>
+ <20200728131050.24443-1-madvenka@linux.microsoft.com>
+ <20200728131050.24443-3-madvenka@linux.microsoft.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200728131050.24443-3-madvenka@linux.microsoft.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Critical data structures of security modules are currently not measured.
-Therefore an attestation service, for instance, would not be able to
-attest whether the security modules are always operating with the policies
-and configuration that the system administrator had setup. The policies
-and configuration for the security modules could be tampered with by
-malware by exploiting kernel vulnerabilities or modified through some
-inadvertent actions on the system. Measuring such critical data would
-enable an attestation service to better assess the state of the system.
+On Tue, Jul 28, 2020 at 08:10:48AM -0500, madvenka@linux.microsoft.com wrote:
+> +EXPORT_SYMBOL_GPL(trampfd_valid_regs);
 
-IMA subsystem measures system files, command line arguments passed to
-kexec, boot aggregate, keys, etc. It can be used to measure critical
-data structures of security modules as well.
+Why are all of these exported?  I don't see a module user in this
+series, or did I miss it somehow?
 
-This change aims to address measuring critical data structures
-of security modules when they are initialized and when they are
-updated at runtime.
+EXPORT_SYMBOL* is only needed for symbols to be used by modules, not by
+code that is built into the kernel.
 
-This series is based on commit 3db0d0c276a7 ("integrity: remove
-redundant initialization of variable ret") in next-integrity
+thanks,
 
-Change log:
-
-  v5:
-      => Append timestamp to "event name" string in the call to
-         the IMA hooks so that LSM data is always measured by IMA.
-      => Removed workqueue patch that was handling periodic checking
-         of the LSM data. This change will be introduced as a separate
-         patch set while keeping this patch set focussed on measuring
-         the LSM data on initialization and on updates at runtime.
-      => Handle early boot measurement of LSM data.
-
-  v4:
-      => Added LSM_POLICY func and IMA hook to measure LSM policy.
-      => Pass SELinux policy data, instead of the hash of the policy,
-         to the IMA hook to measure.
-      => Include "initialized" flag in SELinux measurement.
-         Also, measure SELinux state even when initialization is not yet
-         completed. But measure SELinux policy only after initialization.
-
-  v3:
-      => Loop through policy_capabilities to build the state data
-         to measure instead of hardcoding to current set of
-         policy capabilities.
-      => Added error log messages for failure conditions.
-
-  v2:
-      => Pass selinux_state struct as parameter to the function
-         that measures SELinux data.
-      => Use strings from selinux_policycap_names array for SELinux
-         state measurement.
-      => Refactored security_read_policy() to alloc kernel or user
-         virtual memory and then read the SELinux policy.
-
-  v1:
-      => Per Stephen Smalley's suggestion added selinux_state booleans
-         and hash of SELinux policy in the measured data for SELinux.
-      => Call IMA hook from the security module directly instead of
-         redirecting through the LSM.
-
-Lakshmi Ramasubramanian (4):
-  IMA: Add func to measure LSM state and policy
-  IMA: Define IMA hooks to measure LSM state and policy
-  LSM: Define SELinux function to measure state and policy
-  IMA: Handle early boot data measurement
-
- Documentation/ABI/testing/ima_policy         |   9 +
- include/linux/ima.h                          |  14 ++
- security/integrity/ima/Kconfig               |   5 +-
- security/integrity/ima/Makefile              |   2 +-
- security/integrity/ima/ima.h                 |  45 +++--
- security/integrity/ima/ima_api.c             |   2 +-
- security/integrity/ima/ima_asymmetric_keys.c |   6 +-
- security/integrity/ima/ima_init.c            |   2 +-
- security/integrity/ima/ima_main.c            |  64 ++++++-
- security/integrity/ima/ima_policy.c          |  33 +++-
- security/integrity/ima/ima_queue_data.c      | 175 +++++++++++++++++++
- security/integrity/ima/ima_queue_keys.c      | 174 ------------------
- security/selinux/Makefile                    |   2 +
- security/selinux/hooks.c                     |   1 +
- security/selinux/include/security.h          |  15 ++
- security/selinux/measure.c                   | 150 ++++++++++++++++
- security/selinux/selinuxfs.c                 |   3 +
- security/selinux/ss/services.c               |  71 +++++++-
- 18 files changed, 551 insertions(+), 222 deletions(-)
- create mode 100644 security/integrity/ima/ima_queue_data.c
- delete mode 100644 security/integrity/ima/ima_queue_keys.c
- create mode 100644 security/selinux/measure.c
-
--- 
-2.27.0
-
+greg k-h
