@@ -2,100 +2,198 @@ Return-Path: <SRS0=eGAW=BJ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6921C433DF
-	for <linux-security-module@archiver.kernel.org>; Thu, 30 Jul 2020 13:09:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B85CC433E0
+	for <linux-security-module@archiver.kernel.org>; Thu, 30 Jul 2020 14:07:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A0B172082E
-	for <linux-security-module@archiver.kernel.org>; Thu, 30 Jul 2020 13:09:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A2C8208A9
+	for <linux-security-module@archiver.kernel.org>; Thu, 30 Jul 2020 14:07:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="G7RjaGf3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729027AbgG3NJa (ORCPT
+        id S1729306AbgG3OH0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 30 Jul 2020 09:09:30 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([185.58.86.151]:55139 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728981AbgG3NJ3 (ORCPT
+        Thu, 30 Jul 2020 10:07:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51836 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729278AbgG3OHZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 30 Jul 2020 09:09:29 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-237-OWiDeMRKNgyfXRUgU29ZSg-1; Thu, 30 Jul 2020 14:09:25 +0100
-X-MC-Unique: OWiDeMRKNgyfXRUgU29ZSg-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Thu, 30 Jul 2020 14:09:24 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Thu, 30 Jul 2020 14:09:24 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Andy Lutomirski' <luto@kernel.org>,
-        "madvenka@linux.microsoft.com" <madvenka@linux.microsoft.com>
-CC:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "LSM List" <linux-security-module@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>, X86 ML <x86@kernel.org>
-Subject: RE: [PATCH v1 0/4] [RFC] Implement Trampoline File Descriptor
-Thread-Topic: [PATCH v1 0/4] [RFC] Implement Trampoline File Descriptor
-Thread-Index: AQHWZQT/T+e4gDrzGEmP/30MMvDTCqkgFteg
-Date:   Thu, 30 Jul 2020 13:09:24 +0000
-Message-ID: <b9879beef3e740c0aeb1af73485069a8@AcuMS.aculab.com>
-References: <20200728131050.24443-1-madvenka@linux.microsoft.com>
- <CALCETrVy5OMuUx04-wWk9FJbSxkrT2vMfN_kANinudrDwC4Cig@mail.gmail.com>
-In-Reply-To: <CALCETrVy5OMuUx04-wWk9FJbSxkrT2vMfN_kANinudrDwC4Cig@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Thu, 30 Jul 2020 10:07:25 -0400
+Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1362C061575
+        for <linux-security-module@vger.kernel.org>; Thu, 30 Jul 2020 07:07:24 -0700 (PDT)
+Received: by mail-wm1-x343.google.com with SMTP id p14so5853451wmg.1
+        for <linux-security-module@vger.kernel.org>; Thu, 30 Jul 2020 07:07:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=0IG2zqVou670EWuwadK3PaDAiaWJXT9eJnNO0hKRQcg=;
+        b=G7RjaGf3J5CCo8vM8HMRtajN/iiNGY2U1F1f2BZlJxc10UVkbr2bLHA3vG+tTGStzn
+         p463ti/KHK7xTLnztqX8o95TxWeOzy+ohCBdR3YijMDerbdhwHEG70GrTGS4btlGhG+b
+         dsBY3LCXNRWe/3FPV0UX9620GxqXokpiCjWek=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=0IG2zqVou670EWuwadK3PaDAiaWJXT9eJnNO0hKRQcg=;
+        b=aX+SWg1tJ4XGKapNb1ClaEJ+QrfbPK8lwxTNkv5wyCO9FU1OR0thc/gjJjS26CEQMt
+         751Mf3dLANuqQnrUktiEi8vri7ih+4uiHXrG3zYd+liWf+ixPPUX0qqkuKwcycuT3wVM
+         dbUDcEIFpu2JmHdY/z/xnOKMd4qrPO2Xf6rru1sy4sJ22zcs7IaYY/Z2EGzvTqNhtinE
+         3uYx0EDQDBE5VboOHLK+qyEo0MliDnX108Rt0aUGzdnPWAk55+4SO4mYK3kYrt4LXiw6
+         SSnc5pv2r8aUsgjwwD5IE+IhE5/zRt/4ygakrQ8P4Sg66jVr5Y1Ixb85O4xhZU0QyNFN
+         x9BA==
+X-Gm-Message-State: AOAM5334YUoyTPlOjFrrKKFPl6WsIdmS4qIXukWmXusTDY+iR3oAos0R
+        UIOgjlwwZea3BVG/7lqMQFMpBw==
+X-Google-Smtp-Source: ABdhPJwXfklCgZpLWouF+DqIAqMNvZb4ArNbbyzJKlUdu1nEuKDDnGRl3jsnJfVW77Uw2d5LottwXg==
+X-Received: by 2002:a1c:1f85:: with SMTP id f127mr14439545wmf.154.1596118042428;
+        Thu, 30 Jul 2020 07:07:22 -0700 (PDT)
+Received: from kpsingh.zrh.corp.google.com ([81.6.44.51])
+        by smtp.gmail.com with ESMTPSA id a10sm19088599wmd.3.2020.07.30.07.07.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Jul 2020 07:07:21 -0700 (PDT)
+From:   KP Singh <kpsingh@chromium.org>
+To:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
+        Florent Revest <revest@chromium.org>
+Subject: [PATCH bpf-next v7 0/7] Generalizing bpf_local_storage
+Date:   Thu, 30 Jul 2020 16:07:09 +0200
+Message-Id: <20200730140716.404558-1-kpsingh@chromium.org>
+X-Mailer: git-send-email 2.28.0.rc0.142.g3c755180ce-goog
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-PiBUaGlzIGlzIHF1aXRlIGNsZXZlciwgYnV0IG5vdyBJ4oCZbSB3b25kZXJpbmcganVzdCBob3cg
-bXVjaCBrZXJuZWwgaGVscA0KPiBpcyByZWFsbHkgbmVlZGVkLiBJbiB5b3VyIHNlcmllcywgdGhl
-IHRyYW1wb2xpbmUgaXMgYW4gbm9uLWV4ZWN1dGFibGUNCj4gcGFnZS4gIEkgY2FuIHRoaW5rIG9m
-IGF0IGxlYXN0IHR3byBhbHRlcm5hdGl2ZSBhcHByb2FjaGVzLCBhbmQgSSdkDQo+IGxpa2UgdG8g
-a25vdyB0aGUgcHJvcyBhbmQgY29ucy4NCj4gDQo+IDEuIEVudGlyZWx5IHVzZXJzcGFjZTogYSBy
-ZXR1cm4gdHJhbXBvbGluZSB3b3VsZCBiZSBzb21ldGhpbmcgbGlrZToNCj4gDQo+IDE6DQo+IHB1
-c2hxICVyYXgNCj4gcHVzaHEgJXJiYw0KPiBwdXNocSAlcmN4DQo+IC4uLg0KPiBwdXNocSAlcjE1
-DQo+IG1vdnEgJXJzcCwgJXJkaSAjIHBvaW50ZXIgdG8gc2F2ZWQgcmVncw0KPiBsZWFxIDFiKCVy
-aXApLCAlcnNpICMgcG9pbnRlciB0byB0aGUgdHJhbXBvbGluZSBpdHNlbGYNCj4gY2FsbHEgdHJh
-bXBvbGluZV9oYW5kbGVyICMgc2VlIGJlbG93DQoNCkZvciBuZXN0ZWQgY2FsbHMgKHdoZXJlIHRo
-ZSB0cmFtcG9saW5lIG5lZWRzIHRvIHBhc3MgdGhlDQpvcmlnaW5hbCBzdGFjayBmcmFtZSB0byB0
-aGUgbmVzdGVkIGZ1bmN0aW9uKSBJIHRoaW5rIHlvdQ0KanVzdCBuZWVkIGEgcGFnZSBmdWxsIG9m
-Og0KCW1vdgkkMCwgc2NyYXRjaF9yZWc7IGptcCB0cmFtcG9saW5lX2hhbmRsZXINCgltb3YJJDEs
-IHNjcmF0Y2hfcmVnOyBqbXAgdHJhbXBvbGluZV9oYW5kbGVyDQpZb3UgbmVlZCBhbiB1bnVzZWQg
-cmVnaXN0ZXIsIG9uIHg4Ni02NCBJIHRoaW5rIGJvdGgNCnIxMCBhbmQgcjExIGFyZSBhdmFpbGFi
-bGUuDQpPbiBpMzg2IEkgdGhpbmsgZWF4IGNhbiBiZSB1c2VkLg0KSXQgbWlnaHQgZXZlbiBiZSB0
-aGF0IHRoZSBmaXJzdCBhcmd1bWVudCByZWdpc3RlciBpcw0KYXZhaWxhYmxlIC0gaWYgdGhhdCBp
-cyB1c2VkIHRvIHBhc3MgaW4gdGhlIHN0YWNrIGZyYW1lLg0KDQpUaGUgdHJhbXBvbGluZV9oYW5k
-bGVyIHRoZW4gdXNlcyB0aGUgcGFzc2VkIGluIHZhbHVlDQp0byBpbmRleCBhbiBhcnJheSBvZiBz
-dGFjayBmcmFtZSBhbmQgZnVuY3Rpb24gcG9pbnRlcnMNCmFuZCBqdW1wcyB0byB0aGUgcmVhbCBm
-dW5jdGlvbi4NCllvdSBuZWVkIHRvIGhvbGQgZXZlcnl0aGluZyBpbiBfX3RocmVhZCBkYXRhLg0K
-QW5kIG1heWJlIGJlIGFibGUgdG8gYWxsb2NhdGUgYW4gZXh0cmEgcGFnZSBmb3IgZGVlcGx5DQpu
-ZXN0ZWQgY29kZSBwYXRocyAoZWcgcmVjdXJzaXZlIG5lc3RlZCBmdW5jdGlvbnMpLg0KDQpZb3Ug
-bWlnaHQgdGhlbiBuZWVkIGEgZHJpdmVyIHRvIGNyZWF0ZSB5b3UgYSBzdWl0YWJsZQ0KZXhlY3V0
-YWJsZSBwYWdlLiBTb21laG93IHlvdSBuZWVkIHRvIHBhc3MgaW4gdGhlIGFkZHJlc3MNCm9mIHRo
-ZSB0cmFtcG9saW5lX2hhbmRsZXIgYW5kIHRoZSBudW1iZXIgZm9yIHRoZSBmaXJzdCBmYXVsdC4N
-Ckl0IG5lZWQgdG8gcGFzcyBiYWNrIHRoZSAnc3RyaWRlJyBvZiB0aGUgYXJyYXkgYW5kIG51bWJl
-cg0Kb2YgZWxlbWVudHMgY3JlYXRlZC4NCg0KQnV0IGlmIHlvdSBjYW4gdGFrZSB0aGUgY29zdCBv
-ZiB0aGUgcGFnZSBmYXVsdCwgdGhlbg0KeW91IGNhbiBpbnRlcnByZXQgdGhlIGV4aXN0aW5nIHRy
-YW1wb2xpbmUgaW4gdXNlcnNwYWNlDQp3aXRoaW4gdGhlIHNpZ25hbCBoYW5kbGVyLg0KVGhpcyBp
-cyB0d28ga2VybmVsIGVudHJ5L2V4aXRzLg0KDQpBcmJpdHJhcnkgSklUIGlzIGEgZGlmZmVyZW50
-IHByb2JsZW0gZW50aXJlbHkuDQoNCglEYXZpZA0KDQotDQpSZWdpc3RlcmVkIEFkZHJlc3MgTGFr
-ZXNpZGUsIEJyYW1sZXkgUm9hZCwgTW91bnQgRmFybSwgTWlsdG9uIEtleW5lcywgTUsxIDFQVCwg
-VUsNClJlZ2lzdHJhdGlvbiBObzogMTM5NzM4NiAoV2FsZXMpDQo=
+From: KP Singh <kpsingh@google.com>
+
+
+# v6 -> v7
+
+- Updated the series to use Martin's POC patch:
+
+  https://lore.kernel.org/bpf/20200725013047.4006241-1-kafai@fb.com/
+
+  I added a Co-developed-by: tag, but would need Martin's Signoff
+  (was not sure of the procedure here).
+
+- Rebase.
+
+# v5 -> v6
+
+- Fixed a build warning.
+- Rebase.
+
+# v4 -> v5
+
+- Split non-functional changes into separate commits.
+- Updated the cache macros to be simpler.
+- Fixed some bugs noticed by Martin.
+- Updated the userspace map functions to use an fd for lookups, updates
+  and deletes.
+- Rebase.
+
+# v3 -> v4
+
+- Fixed a missing include to bpf_sk_storage.h in bpf_sk_storage.c
+- Fixed some functions that were not marked as static which led to
+  W=1 compilation warnings.
+
+# v2 -> v3
+
+* Restructured the code as per Martin's suggestions:
+  - Common functionality in bpf_local_storage.c
+  - bpf_sk_storage functionality remains in net/bpf_sk_storage.
+  - bpf_inode_storage is kept separate as it is enabled only with
+    CONFIG_BPF_LSM.
+* A separate cache for inode and sk storage with macros to define it.
+* Use the ops style approach as suggested by Martin instead of the
+  enum + switch style.
+* Added the inode map to bpftool bash completion and docs.
+* Rebase and indentation fixes.
+
+# v1 -> v2
+
+* Use the security blob pointer instead of dedicated member in
+  struct inode.
+* Better code re-use as suggested by Alexei.
+* Dropped the inode count arithmetic as pointed out by Alexei.
+* Minor bug fixes and rebase.
+
+bpf_sk_storage can already be used by some BPF program types to annotate
+socket objects. These annotations are managed with the life-cycle of the
+object (i.e. freed when the object is freed) which makes BPF programs
+much simpler and less prone to errors and leaks.
+
+This patch series:
+
+* Generalizes the bpf_sk_storage infrastructure to allow easy
+  implementation of local storage for other objects
+* Implements local storage for inodes
+* Makes both bpf_{sk, inode}_storage available to LSM programs.
+
+Local storage is safe to use in LSM programs as the attachment sites are
+limited and the owning object won't be freed, however, this is not the
+case for tracing. Usage in tracing is expected to follow a white-list
+based approach similar to the d_path helper
+(https://lore.kernel.org/bpf/20200506132946.2164578-1-jolsa@kernel.org).
+
+Access to local storage would allow LSM programs to implement stateful
+detections like detecting the unlink of a running executable from the
+examples shared as a part of the KRSI series
+https://lore.kernel.org/bpf/20200329004356.27286-1-kpsingh@chromium.org/
+and
+https://github.com/sinkap/linux-krsi/blob/patch/v1/examples/samples/bpf/lsm_detect_exec_unlink.c
+
+
+KP Singh (7):
+  A purely mechanical change to split the renaming from the actual
+    generalization.
+  bpf: Generalize caching for sk_storage.
+  bpf: Generalize bpf_sk_storage
+  bpf: Split bpf_local_storage to bpf_sk_storage
+  bpf: Implement bpf_local_storage for inodes
+  bpf: Allow local storage to be used from LSM programs
+  bpf: Add selftests for local_storage
+
+ include/linux/bpf.h                           |   9 +
+ include/linux/bpf_local_storage.h             | 173 ++++
+ include/linux/bpf_lsm.h                       |  21 +
+ include/linux/bpf_types.h                     |   3 +
+ include/net/bpf_sk_storage.h                  |  13 +
+ include/net/sock.h                            |   4 +-
+ include/uapi/linux/bpf.h                      |  54 +-
+ kernel/bpf/Makefile                           |   2 +
+ kernel/bpf/bpf_inode_storage.c                | 254 ++++++
+ kernel/bpf/bpf_local_storage.c                | 600 +++++++++++++
+ kernel/bpf/bpf_lsm.c                          |  21 +-
+ kernel/bpf/syscall.c                          |   3 +-
+ kernel/bpf/verifier.c                         |  10 +
+ net/core/bpf_sk_storage.c                     | 827 +++---------------
+ security/bpf/hooks.c                          |   7 +
+ .../bpf/bpftool/Documentation/bpftool-map.rst |   2 +-
+ tools/bpf/bpftool/bash-completion/bpftool     |   3 +-
+ tools/bpf/bpftool/map.c                       |   3 +-
+ tools/include/uapi/linux/bpf.h                |  54 +-
+ tools/lib/bpf/libbpf_probes.c                 |   5 +-
+ .../bpf/prog_tests/test_local_storage.c       |  60 ++
+ .../selftests/bpf/progs/local_storage.c       | 136 +++
+ 22 files changed, 1553 insertions(+), 711 deletions(-)
+ create mode 100644 include/linux/bpf_local_storage.h
+ create mode 100644 kernel/bpf/bpf_inode_storage.c
+ create mode 100644 kernel/bpf/bpf_local_storage.c
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/test_local_storage.c
+ create mode 100644 tools/testing/selftests/bpf/progs/local_storage.c
+
+-- 
+2.28.0.rc0.142.g3c755180ce-goog
 
