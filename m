@@ -1,171 +1,289 @@
-Return-Path: <SRS0=eGAW=BJ=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=u9BV=BK=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A14F0C433E0
-	for <linux-security-module@archiver.kernel.org>; Thu, 30 Jul 2020 22:22:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CEF9C433DF
+	for <linux-security-module@archiver.kernel.org>; Fri, 31 Jul 2020 01:08:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7F4BF20829
-	for <linux-security-module@archiver.kernel.org>; Thu, 30 Jul 2020 22:22:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2AA92208A9
+	for <linux-security-module@archiver.kernel.org>; Fri, 31 Jul 2020 01:08:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="Sk9IBEgb"
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="HGczmnrB";
+	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="Ss7L9bS9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730054AbgG3WWv (ORCPT
+        id S1731006AbgGaBIu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 30 Jul 2020 18:22:51 -0400
-Received: from sonic314-27.consmr.mail.ne1.yahoo.com ([66.163.189.153]:43727
-        "EHLO sonic314-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730357AbgG3WWv (ORCPT
+        Thu, 30 Jul 2020 21:08:50 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:39934 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730987AbgGaBIu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 30 Jul 2020 18:22:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1596147770; bh=XsxifkEC4lyiw/WAfGDN9038dNzvIQV9yNWoDJKrNls=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=Sk9IBEgbKiV4S7dBdkHy/XR4YGPklmG4mw+2yNdUNKGkVD7RAFX40cLDJKbVe+RxtmtRnRGaoe51B54ToD+U1WW4wXlefMbyYXmjT3ll6g2Gcz/BRqs3hpbnUGDFjNzkAFc2g2IjUdzjdKJwjM678PUnzqUITbWWPpvC3Zy/DSvIYiTNAjdQ5a59my7NCIZ7FmUa414RiO6fgOzJ0TahzjSgbd2JPn/TzZCZg8kram8diRjJeR5/Wysz6uM2l8eDP5QkP02Dw9mZ8lzqDOnJbQt1JKIXkFpB5n9nFGcnWvLfn5fxY0UEvOnpdSZNhMrxH4+Pr+Baffg/hTGBoOWaSA==
-X-YMail-OSG: 4plBhRQVM1lbyp3LLNF6A3_ESt0vectOzYucNmDPZebaUAzBMvhNSv7_IW1WB6C
- G5dmlbtwbt9Fh_J5boBwqfoaWEJJB2GHTzLbqPhjdAGrGdowczc7Ux5LBZy7XT6OOm62IuDkjqAH
- BNtXrR6HvN0ma0YomuABmuT7NfsV3nCN5WyGk44kuLxug_0SjdUAMkaqome.NsiWQrxAEcA4R.9q
- Zz2H4b1vTYuDvF_fpfTySEH7P6wViCSy8val1fLIemlQd7hhX9kkgFzUR84zPMNR.fvH1njz_iqJ
- Ms.Dn6UHh6Fx5vFPZ7rqcVUMOzvi.cj7ylDfGcTqez12WtAH5PSrSISjbRp8PJzy_XSIjlr86V0R
- ns.NwWuz3ptoCg49EQI5t2u1EfQ7eZNfVbltVrv.Rl11aDbr.9_r8QS_zkAQAhBtPvlCgrNCklWz
- MKGQTgUOYxts2B1fqYFKosTYxoj0OGGgw0c7.IUSNhrF7vTQrDknnHY.biv0chZd0rDP6Oql9s0i
- TVGI_DOnlyG3XYTLAjF7Dc1JBdpZ3FIEDlunT0usJOswMINn.UETxWq3_M3rn3r2mvyWUjZSMUU4
- 2vouECHut0v7u5YXus_1R3CNgH3fWhasVDsDwIxCsrka33_z3HLL4GPOAcq.DwKrYgszlawYceql
- VIxAMYfROc9XpFyzXL9Le_M_gRXJE9GLGP08aSPrQEroFvTfhFFaBNbaeKBxAkaKTRErRKw3rvGs
- zjp_ShNHt20IgXDv5umyaoUSlbJeXEogMl4Et1aZ5wbz3pMHgcGy6rPCewfDlfY6oPtgGsuctrnd
- JxERN6KBoNI8ft9CxWLRwc8oVHycrOummrgWpx2iq.e2Vswkf8Kq1MKCADp6w.0qygQnOqVBdlr1
- Ym9t.4klJJg5NzfrWO4Wj8b05LM3A46DF6K5aF7MX05EIdDWaAyQSMXXk.qWZpllHyPULQRwh68e
- VZtLya368Ew9rQh34ZhP8QPMAk4sP75UkpflNir1CqQ_2GYCKeFvChqgVTxLDCEzOifirVQrH3GT
- dIuySrrwPJYcA1WZvyyxdQrh2cXaPy84g9K0NYUBbflW6_7I2JeT3bDf3N_AL2mocReX6prBPks.
- MJlf91FsxTbnhKH_4.lsPUIop00X8hwhF1dEKu8Xiax6DfAt.VGfEwoY9krIIVG4vioKCeETTzRu
- N9KFgTB3x1yzJNDVUndGcIoGayi6P3fpG4bzbVcausiWjIltyaKwcpDkpm0srYO2PQvRqi9ZLefE
- AxZHDWVuB_zRC.5o_RqoT2DH0MSLCPxY54N5yY5QwZ.8PZKWJkCHe6xIGO4Dub3_yQ9sAsSyxFc3
- 9ONS3yrl2lJQPkGNaA6.j7uLLqOg.W.Sqr6serqLtDgOKzlnZnkwLK3wsycjOAQ--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.ne1.yahoo.com with HTTP; Thu, 30 Jul 2020 22:22:50 +0000
-Received: by smtp410.mail.ne1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 4ac6482c02314194467082833f946851;
-          Thu, 30 Jul 2020 22:22:48 +0000 (UTC)
-Subject: Re: [PATCH v19 22/23] LSM: Add /proc attr entry for full LSM context
-To:     John Johansen <john.johansen@canonical.com>,
-        casey.schaufler@intel.com, jmorris@namei.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Cc:     linux-audit@redhat.com, keescook@chromium.org,
-        penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com,
-        sds@tycho.nsa.gov, linux-api@vger.kernel.org,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <20200724203226.16374-1-casey@schaufler-ca.com>
- <20200724203226.16374-23-casey@schaufler-ca.com>
- <e885d90d-c873-5ab4-235d-6171f49f4ee4@canonical.com>
- <705fb82d-ad7a-2874-59ed-ba6bc7ae3722@schaufler-ca.com>
- <97330b2d-5447-cfef-b6d0-444249e671b7@canonical.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <18fcf6b1-3ef6-bb8b-d2b2-e0fd45bdb68c@schaufler-ca.com>
-Date:   Thu, 30 Jul 2020 15:22:47 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Thu, 30 Jul 2020 21:08:50 -0400
+Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 06V15oeX009850;
+        Thu, 30 Jul 2020 18:08:33 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=date : from : to : cc :
+ subject : message-id : references : content-type : in-reply-to :
+ mime-version; s=facebook; bh=zbmMTHUb7VCsqbfZsbWlNepNwmQ83FAySCCrm+KaP9w=;
+ b=HGczmnrBkuscBO2v5//mBlX0zgHnIm5aRQMDdYYs4idk45zQ5Y9RINihVpblfEZock05
+ dhfqdbPVanWEFvwwDzr7LWUFpVMebabwkbQ/lSyGNN8JfYEY/njFrngs9EfAfsSWAkvg
+ mnFTM2u3th9ixobtZA8HXKhauOxEXCPoNmg= 
+Received: from mail.thefacebook.com ([163.114.132.120])
+        by mx0a-00082601.pphosted.com with ESMTP id 32kcbuyvcy-11
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Thu, 30 Jul 2020 18:08:32 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (100.104.98.9) by
+ o365-in.thefacebook.com (100.104.94.199) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1979.3; Thu, 30 Jul 2020 18:08:29 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=KbyyO2o9pxMpo54YhQYh/z+hsutFw83SDNc5Cxb06iAoW/3xPlhSmTxZhYF6o5Z4nvDtRvQQmTU6PSlPBhAcxTW2GWXeqRQmpbqdMjXvO/pLBnCGkNqrahiwyARzAhMNh8G2sXIWTzbLHhU3fmMGm5jbdu/Pfr6miErOZcEVTuO3EzKGUJq9mExCQ0SKX1VMWzqcv5Ai7PNHwJopxF+3d5SWHlMJd+CMnDFvQfCyPGEAZP6GWpgL+7mmVS5mVh3RcKkixY7OxEnDMPvjUh2dhDO4wlwccK6x8cNdA5kUGx0pSEfFZdm+Zm/Ff3//jWew4xkR/c5Oe/XCbOFf/pRLFg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zbmMTHUb7VCsqbfZsbWlNepNwmQ83FAySCCrm+KaP9w=;
+ b=KxJipJu6FnKOG2RIZCMv8e9lWcYtEVL+L2Z2nmmK1fdBviS5Rxz7Dl3D5PD9XIjnsJJC6f591H1bXOEG2ig1ghUTpLFT7P7NK1q22cYmByTjjHSUOEnU5whJPpaFtDygolObsVPz2U1UTqlDVvpV8Zim1A80pTSLI7cPk3XXIgSiz088dHCohcYrsRiIcCk9C3/Xj1iqYdT6gxJHvl9tM33/yML2Spp2BWmWcVTWCZl/JtWlqHFkxLMybuwZb/BTPrvRoRsxvhSNaBxE/qT8mJImSCwOjS3XWchp97vgsEyKMnmrHAKmhpMwbI1rY1spNzM5PSgIbybpaAApSXhRKA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
+ header.d=fb.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector2-fb-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zbmMTHUb7VCsqbfZsbWlNepNwmQ83FAySCCrm+KaP9w=;
+ b=Ss7L9bS9v1bFwiJZezKLr8niVlOuJ9FCJ0C+ii2zqIqLtMF1cPpu7SWHtN5ZBWWHnyvOtICQPl5YtbUX4SHmN69/K1gJY/0wKuqhHa1+9ZNMVubIQQQxj41HTuJgQRk0ppx4UVHq7N6iR26DHr0v5kUVXZPpCPB5G73i7c1n6nc=
+Authentication-Results: chromium.org; dkim=none (message not signed)
+ header.d=none;chromium.org; dmarc=none action=none header.from=fb.com;
+Received: from BY5PR15MB3571.namprd15.prod.outlook.com (2603:10b6:a03:1f6::32)
+ by BYAPR15MB2950.namprd15.prod.outlook.com (2603:10b6:a03:f6::30) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3216.24; Fri, 31 Jul
+ 2020 01:08:28 +0000
+Received: from BY5PR15MB3571.namprd15.prod.outlook.com
+ ([fe80::d489:8f7f:614e:1b99]) by BY5PR15MB3571.namprd15.prod.outlook.com
+ ([fe80::d489:8f7f:614e:1b99%7]) with mapi id 15.20.3239.017; Fri, 31 Jul 2020
+ 01:08:28 +0000
+Date:   Thu, 30 Jul 2020 18:08:22 -0700
+From:   Martin KaFai Lau <kafai@fb.com>
+To:     KP Singh <kpsingh@chromium.org>
+CC:     <linux-kernel@vger.kernel.org>, <bpf@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
+        Florent Revest <revest@chromium.org>
+Subject: Re: [PATCH bpf-next v7 5/7] bpf: Implement bpf_local_storage for
+ inodes
+Message-ID: <20200731010822.fctk5lawnr3p7blf@kafai-mbp.dhcp.thefacebook.com>
+References: <20200730140716.404558-1-kpsingh@chromium.org>
+ <20200730140716.404558-6-kpsingh@chromium.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200730140716.404558-6-kpsingh@chromium.org>
+X-ClientProxiedBy: BYAPR11CA0104.namprd11.prod.outlook.com
+ (2603:10b6:a03:f4::45) To BY5PR15MB3571.namprd15.prod.outlook.com
+ (2603:10b6:a03:1f6::32)
 MIME-Version: 1.0
-In-Reply-To: <97330b2d-5447-cfef-b6d0-444249e671b7@canonical.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Mailer: WebService/1.1.16271 hermes_yahoo Apache-HttpAsyncClient/4.1.4 (Java/11.0.7)
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from kafai-mbp.dhcp.thefacebook.com (2620:10d:c090:400::5:f049) by BYAPR11CA0104.namprd11.prod.outlook.com (2603:10b6:a03:f4::45) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3239.17 via Frontend Transport; Fri, 31 Jul 2020 01:08:27 +0000
+X-Originating-IP: [2620:10d:c090:400::5:f049]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 8a7120be-27ed-4486-fc99-08d834ee3b59
+X-MS-TrafficTypeDiagnostic: BYAPR15MB2950:
+X-Microsoft-Antispam-PRVS: <BYAPR15MB29508ECF28B16318220FFF00D54E0@BYAPR15MB2950.namprd15.prod.outlook.com>
+X-FB-Source: Internal
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: U1RvTPOLXwxqOBJjfKfWnV+sM0ah2k8dtXkyIWp6gAk/bLO8WeHAnuAeCwUK9TthRL9rgi80NCWRANmWWxMGevjLnflkCPg62Wv6Kps/7X8YyBmwQes+5vPoDoIBLheW0MC5SvXA1hZvGVOTICPfSfaLc7t7KVoQhLOFKx4ANVS0eAooDpCP0TymLiBbBdysHsM4fHcbpX1bnJD4aTL00ZB8pbp3O3GoFFXjLabO9PBUDe5jZnLVD7nJh5mm8aBCxaDRJzbfCZQ/Tz2PNpihkiNKkGWbv0qWuH3q1VWXhP/FKvlu5OJgvJEbkPxbYIMNLfipyof2Bb8JBYMnpUrKSA==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR15MB3571.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(346002)(366004)(376002)(39860400002)(136003)(396003)(4326008)(478600001)(186003)(83380400001)(6506007)(7696005)(52116002)(66476007)(8676002)(16526019)(86362001)(6916009)(66556008)(66946007)(6666004)(55016002)(54906003)(2906002)(1076003)(9686003)(5660300002)(8936002)(316002);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData: Xt7VfWOzCpzakFaXyJ11DRZ742bTzDIC0L6OlH3+YWKCYYiBL5MGB1PLaPOijt7Wj+y6SWVSPGwW8yP1Y4RK3zYA7aFhe8F9xABywy3tNf7HBZkR/xDIYL05OZxegpb5E3BKu8I5pvV/S6fOpVnmhl4DLcqOuc++zk7CEEcQJSkpoRauRk+yhxeuFTFJUzBPEMf0fSm6+ARlWwr/whHqaewoRdACuakCe0HK4I0BzhdhSwODuu8VKzsW0sbzicRPPPX3uCHfkdktBFbOHXwuJ0dzi9mlTWwTJxPGvyn/fNj9vxm6fJSESOGAV90RrW3Gz8IjHgl2bGnXYM+N7gO9gkMmNZscEkFgezQaewW3GMdxLzpR1iK4jgBTYk22CBFSg5BLVI/XZ6qk5EDX4WXxBMun7u4Ntu2xyfZepD+V4Pg6sUEtSAZCYq7mhZTyqcpmGjgZNal2LPMds0Ny2NZdEOlAeYFvzlGinh1pNq3I0+C4H8C2gLgqM5+nA+GaNRgT+j7k1m9jEOm5r+zllfoFvQ==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8a7120be-27ed-4486-fc99-08d834ee3b59
+X-MS-Exchange-CrossTenant-AuthSource: BY5PR15MB3571.namprd15.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jul 2020 01:08:27.8697
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: vIoX0kasqaF+s6L0SAHSLuAB9zCLY0W/+nUqmB2K7W4VYcID85bIjTD1QqHxCPlU
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB2950
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-07-30_19:2020-07-30,2020-07-30 signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 mlxlogscore=877
+ bulkscore=0 clxscore=1015 suspectscore=5 phishscore=0 malwarescore=0
+ priorityscore=1501 adultscore=0 spamscore=0 impostorscore=0 mlxscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2006250000 definitions=main-2007310005
+X-FB-Internal: deliver
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 7/30/2020 1:57 PM, John Johansen wrote:
-> On 7/30/20 1:44 PM, Casey Schaufler wrote:
->> On 7/30/2020 3:03 AM, John Johansen wrote:
->>> On 7/24/20 1:32 PM, Casey Schaufler wrote:
->>>> Add an entry /proc/.../attr/context which displays the full
->>>> process security "context" in compound format:
->>>>         lsm1\0value\0lsm2\0value\0...
->>>> This entry is not writable.
->>>>
->>>> A security module may decide that its policy does not allow
->>>> this information to be displayed. In this case none of the
->>>> information will be displayed.
->>>>
->>>> Reviewed-by: Kees Cook <keescook@chromium.org>
->>>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
->>>> Cc: linux-api@vger.kernel.org
->>>> ---
->>>>  Documentation/security/lsm.rst       | 28 +++++++++++
->>>>  fs/proc/base.c                       |  1 +
->>>>  include/linux/lsm_hooks.h            |  6 +++
->>>>  security/apparmor/include/procattr.h |  2 +-
->>>>  security/apparmor/lsm.c              |  8 +++-
->>>>  security/apparmor/procattr.c         | 22 +++++----
->>>>  security/security.c                  | 70 ++++++++++++++++++++++++++++
->>>>  security/selinux/hooks.c             |  2 +-
->>>>  security/smack/smack_lsm.c           |  2 +-
->>>>  9 files changed, 126 insertions(+), 15 deletions(-)
->> <snip>
->>
->>>>  
->>>>  /**
->>>> diff --git a/security/security.c b/security/security.c
->>>> index d35e578fa45b..bce6be720401 100644
->>>> --- a/security/security.c
->>>> +++ b/security/security.c
->>>> @@ -754,6 +754,48 @@ static void __init lsm_early_task(struct task_struct *task)
->>>>  		panic("%s: Early task alloc failed.\n", __func__);
->>>>  }
->>>>  
->>>> +/**
->>>> + * append_ctx - append a lsm/context pair to a compound context
->>>> + * @ctx: the existing compound context
->>>> + * @ctxlen: size of the old context, including terminating nul byte
->>>> + * @lsm: new lsm name, nul terminated
->>>> + * @new: new context, possibly nul terminated
->>>> + * @newlen: maximum size of @new
->>>> + *
->>>> + * replace @ctx with a new compound context, appending @newlsm and @new
->>>> + * to @ctx. On exit the new data replaces the old, which is freed.
->>>> + * @ctxlen is set to the new size, which includes a trailing nul byte.
->>>> + *
->>>> + * Returns 0 on success, -ENOMEM if no memory is available.
->>>> + */
->>>> +static int append_ctx(char **ctx, int *ctxlen, const char *lsm, char *new,
->>>> +		      int newlen)
->>>> +{
->>>> +	char *final;
->>>> +	size_t llen;
->>>> +
->>>> +	llen = strlen(lsm) + 1;
->>>> +	/*
->>>> +	 * A security module may or may not provide a trailing nul on
->>>> +	 * when returning a security context. There is no definition
->>>> +	 * of which it should be, and there are modules that do it
->>>> +	 * each way.
->>>> +	 */
->>>> +	newlen = strnlen(new, newlen) + 1;
->>>> +
->>>> +	final = kzalloc(*ctxlen + llen + newlen, GFP_KERNEL);
->>>> +	if (final == NULL)
->>>> +		return -ENOMEM;
->>>> +	if (*ctxlen)
->>>> +		memcpy(final, *ctx, *ctxlen);
->>>> +	memcpy(final + *ctxlen, lsm, llen);
->>>> +	memcpy(final + *ctxlen + llen, new, newlen);
->>> if @new doesn't have a newline appended at its end this will read 1 byte
->>> passed the end of the @new buffer. Nor will the result have a trailing
->>> \0 as expected unless we get lucky.
->> @new will never have a newline at the end. The trailing nul comes
->> from the allocation being done with kzalloc(). This function has to
->> be considered in the context of its caller.
->>
-> ugh, sorry not trailing newline, I meant trailing \0. The problem isn't
-> the kzalloc, the target has the space. It is the source @new. It is
-> dangerous to assume that the @new buffer has a null byte after its
-> declared length. Which is potentially what we are doing if @new
-> doesn't have an embedded null byte. In that case strlen(new, newlen)
-> will then return newlen and we add 1 to it.
->
-> which means in the memcpy we are copying an extra byte beyond what
-> was declared to exist in @new.
+On Thu, Jul 30, 2020 at 04:07:14PM +0200, KP Singh wrote:
+> From: KP Singh <kpsingh@google.com>
+> 
+> Similar to bpf_local_storage for sockets, add local storage for inodes.
+> The life-cycle of storage is managed with the life-cycle of the inode.
+> i.e. the storage is destroyed along with the owning inode.
+> 
+> The BPF LSM allocates an __rcu pointer to the bpf_local_storage in the
+> security blob which are now stackable and can co-exist with other LSMs.
+> 
 
-You're right. Good point. Fix coming.
-??
+[ ... ]
 
+> +static int bpf_fd_inode_storage_update_elem(struct bpf_map *map, void *key,
+> +					 void *value, u64 map_flags)
+> +{
+> +	struct bpf_local_storage_data *sdata;
+> +	struct file *f;
+> +	int fd;
+> +
+> +	fd = *(int *)key;
+> +	f = fcheck(fd);
+> +	if (!f)
+> +		return -EINVAL;
+> +
+> +	sdata = bpf_local_storage_update(f->f_inode, map, value, map_flags);
+n00b question.  inode will not be going away here (like another
+task calls close(fd))?  and there is no chance that bpf_local_storage_update()
+will be adding new storage after bpf_inode_storage_free() was called?
+
+A few comments will be useful here.
+
+> +	return PTR_ERR_OR_ZERO(sdata);
+> +}
+> +
+> +static int inode_storage_delete(struct inode *inode, struct bpf_map *map)
+> +{
+> +	struct bpf_local_storage_data *sdata;
+> +
+> +	sdata = inode_storage_lookup(inode, map, false);
+> +	if (!sdata)
+> +		return -ENOENT;
+> +
+> +	bpf_selem_unlink(SELEM(sdata));
+> +
+> +	return 0;
+> +}
+> +
+> +static int bpf_fd_inode_storage_delete_elem(struct bpf_map *map, void *key)
+> +{
+> +	struct file *f;
+> +	int fd;
+> +
+> +	fd = *(int *)key;
+> +	f = fcheck(fd);
+> +	if (!f)
+> +		return -EINVAL;
+> +
+> +	return inode_storage_delete(f->f_inode, map);
+> +}
+> +
+> +BPF_CALL_4(bpf_inode_storage_get, struct bpf_map *, map, struct inode *, inode,
+> +	   void *, value, u64, flags)
+> +{
+> +	struct bpf_local_storage_data *sdata;
+> +
+> +	if (flags & ~(BPF_LOCAL_STORAGE_GET_F_CREATE))
+> +		return (unsigned long)NULL;
+> +
+> +	sdata = inode_storage_lookup(inode, map, true);
+> +	if (sdata)
+> +		return (unsigned long)sdata->data;
+> +
+> +	if (flags & BPF_LOCAL_STORAGE_GET_F_CREATE) {
+> +		sdata = bpf_local_storage_update(inode, map, value,
+> +						 BPF_NOEXIST);
+The same question here
+
+> +		return IS_ERR(sdata) ? (unsigned long)NULL :
+> +					     (unsigned long)sdata->data;
+> +	}
+> +
+> +	return (unsigned long)NULL;
+> +}
+> +
+> +BPF_CALL_2(bpf_inode_storage_delete,
+> +	   struct bpf_map *, map, struct inode *, inode)
+> +{
+> +	return inode_storage_delete(inode, map);
+> +}
+> +
+> +static int notsupp_get_next_key(struct bpf_map *map, void *key,
+> +				void *next_key)
+> +{
+> +	return -ENOTSUPP;
+> +}
+> +
+> +static struct bpf_map *inode_storage_map_alloc(union bpf_attr *attr)
+> +{
+> +	struct bpf_local_storage_map *smap;
+> +
+> +	smap = bpf_local_storage_map_alloc(attr);
+> +	if (IS_ERR(smap))
+> +		return ERR_CAST(smap);
+> +
+> +	smap->cache_idx = bpf_local_storage_cache_idx_get(&inode_cache);
+> +	return &smap->map;
+> +}
+> +
+> +static void inode_storage_map_free(struct bpf_map *map)
+> +{
+> +	struct bpf_local_storage_map *smap;
+> +
+> +	smap = (struct bpf_local_storage_map *)map;
+> +	bpf_local_storage_cache_idx_free(&inode_cache, smap->cache_idx);
+> +	bpf_local_storage_map_free(smap);
+> +}
+> +
+> +static int sk_storage_map_btf_id;
+> +const struct bpf_map_ops inode_storage_map_ops = {
+> +	.map_alloc_check = bpf_local_storage_map_alloc_check,
+> +	.map_alloc = inode_storage_map_alloc,
+> +	.map_free = inode_storage_map_free,
+> +	.map_get_next_key = notsupp_get_next_key,
+> +	.map_lookup_elem = bpf_fd_inode_storage_lookup_elem,
+> +	.map_update_elem = bpf_fd_inode_storage_update_elem,
+> +	.map_delete_elem = bpf_fd_inode_storage_delete_elem,
+> +	.map_check_btf = bpf_local_storage_map_check_btf,
+> +	.map_btf_name = "bpf_local_storage_map",
+> +	.map_btf_id = &sk_storage_map_btf_id,
+> +	.map_owner_storage_ptr = inode_storage_ptr,
+> +};
+> +
+> +BTF_ID_LIST(bpf_inode_storage_get_btf_ids)
+> +BTF_ID(struct, inode)
+The ARG_PTR_TO_BTF_ID is the second arg instead of the first
+arg in bpf_inode_storage_get_proto.
+Does it just happen to work here without needing BTF_ID_UNUSED?
+
+> +
+> +const struct bpf_func_proto bpf_inode_storage_get_proto = {
+> +	.func		= bpf_inode_storage_get,
+> +	.gpl_only	= false,
+> +	.ret_type	= RET_PTR_TO_MAP_VALUE_OR_NULL,
+> +	.arg1_type	= ARG_CONST_MAP_PTR,
+> +	.arg2_type	= ARG_PTR_TO_BTF_ID,
+> +	.arg3_type	= ARG_PTR_TO_MAP_VALUE_OR_NULL,
+> +	.arg4_type	= ARG_ANYTHING,
+> +	.btf_id		= bpf_inode_storage_get_btf_ids,
+> +};
+> +
+> +BTF_ID_LIST(bpf_inode_storage_delete_btf_ids)
+> +BTF_ID(struct, inode)
+> +
+> +const struct bpf_func_proto bpf_inode_storage_delete_proto = {
+> +	.func		= bpf_inode_storage_delete,
+> +	.gpl_only	= false,
+> +	.ret_type	= RET_INTEGER,
+> +	.arg1_type	= ARG_CONST_MAP_PTR,
+> +	.arg2_type	= ARG_PTR_TO_BTF_ID,
+> +	.btf_id		= bpf_inode_storage_delete_btf_ids,
+> +};
