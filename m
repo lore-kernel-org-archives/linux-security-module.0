@@ -5,160 +5,160 @@ X-Spam-Level:
 X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EACBFC433E3
-	for <linux-security-module@archiver.kernel.org>; Mon,  3 Aug 2020 13:06:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52F6CC433DF
+	for <linux-security-module@archiver.kernel.org>; Mon,  3 Aug 2020 13:06:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C891E20678
-	for <linux-security-module@archiver.kernel.org>; Mon,  3 Aug 2020 13:06:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2FF6920678
+	for <linux-security-module@archiver.kernel.org>; Mon,  3 Aug 2020 13:06:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RjyZ3Ao8"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dtLs8wc7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727783AbgHCNGk (ORCPT
+        id S1727885AbgHCNGy (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 3 Aug 2020 09:06:40 -0400
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:20726 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727081AbgHCNGj (ORCPT
+        Mon, 3 Aug 2020 09:06:54 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:35051 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726778AbgHCNGx (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 3 Aug 2020 09:06:39 -0400
+        Mon, 3 Aug 2020 09:06:53 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1596459998;
+        s=mimecast20190719; t=1596460012;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=j/v002Gxe6nBxuXIo8xXJ4Ruh4kteZD7I/mhEJxj0MM=;
-        b=RjyZ3Ao8Syde3weKNYgQsl25WnyUN9COSbZLFr9/hCio/dzvHf0tp8azb/W8GvXXytjip1
-        rpPQG4zNGiOQozsD81U7mYUT0aKnNGYtb+y8DsS5e5JLCGY5zOBAqrMyyUc6gnqH5zCvzR
-        ZwLeka/K9/KUvIUenL4Ce65d7HuKr0U=
+        bh=rnmF7PFcUQLOvfsrRmGZL1mkv1G/Vz60+pFjt89D08Q=;
+        b=dtLs8wc7zC8c8aXq14TJV8JMc6BcGcQlnh4VZsdXFAxavOfYf4AjIqfzitpddxfxPZKJXM
+        8vwliwq+Qeg2tLE0h4z7q0e0QVBGJ8bMgAeSakm9or0ZUZGX1X28J44fV6rqBgjyPfxyWJ
+        LaO8na6B2sxjc6zf+CX7TLY5NDfEeb0=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-421-NWK5erupNA6dLy11xyeTNg-1; Mon, 03 Aug 2020 09:06:34 -0400
-X-MC-Unique: NWK5erupNA6dLy11xyeTNg-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+ us-mta-443-DJMHCUvMPvubiTk4YXaZ6g-1; Mon, 03 Aug 2020 09:06:51 -0400
+X-MC-Unique: DJMHCUvMPvubiTk4YXaZ6g-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 29543106B20A;
-        Mon,  3 Aug 2020 13:06:32 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 60FF5800685;
+        Mon,  3 Aug 2020 13:06:49 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-112-32.rdu2.redhat.com [10.10.112.32])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 214D78A19E;
-        Mon,  3 Aug 2020 13:06:27 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B1BA21A8EC;
+        Mon,  3 Aug 2020 13:06:46 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 1/5] watch_queue: Limit the number of watches a user can hold
- [ver #2]
+Subject: [PATCH 3/5] watch_queue: Add security hooks to rule on setting mount
+ watches [ver #2]
 From:   David Howells <dhowells@redhat.com>
 To:     viro@zeniv.linux.org.uk
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        dhowells@redhat.com, torvalds@linux-foundation.org,
-        casey@schaufler-ca.com, sds@tycho.nsa.gov,
-        nicolas.dichtel@6wind.com, raven@themaw.net, christian@brauner.io,
-        jlayton@redhat.com, kzak@redhat.com, mszeredi@redhat.com,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+Cc:     James Morris <jamorris@linux.microsoft.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        linux-security-module@vger.kernel.org, dhowells@redhat.com,
+        torvalds@linux-foundation.org, casey@schaufler-ca.com,
+        sds@tycho.nsa.gov, nicolas.dichtel@6wind.com, raven@themaw.net,
+        christian@brauner.io, jlayton@redhat.com, kzak@redhat.com,
+        mszeredi@redhat.com, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 03 Aug 2020 14:06:27 +0100
-Message-ID: <159645998732.1779777.6694081988484186124.stgit@warthog.procyon.org.uk>
+Date:   Mon, 03 Aug 2020 14:06:45 +0100
+Message-ID: <159646000592.1779777.17854239538736953711.stgit@warthog.procyon.org.uk>
 In-Reply-To: <159645997768.1779777.8286723139418624756.stgit@warthog.procyon.org.uk>
 References: <159645997768.1779777.8286723139418624756.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.23
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Impose a limit on the number of watches that a user can hold so that they
-can't use this mechanism to fill up all the available memory.
+Add a security hook that will allow an LSM to rule on whether or not a
+watch may be set on a mount.
 
-This is done by putting a counter in user_struct that's incremented when a
-watch is allocated and decreased when it is released.  If the number
-exceeds the RLIMIT_NOFILE limit, the watch is rejected with EAGAIN.
-
-This can be tested by the following means:
-
- (1) Create a watch queue and attach it to fd 5 in the program given - in
-     this case, bash:
-
-	keyctl watch_session /tmp/nlog /tmp/gclog 5 bash
-
- (2) In the shell, set the maximum number of files to, say, 99:
-
-	ulimit -n 99
-
- (3) Add 200 keyrings:
-
-	for ((i=0; i<200; i++)); do keyctl newring a$i @s || break; done
-
- (4) Try to watch all of the keyrings:
-
-	for ((i=0; i<200; i++)); do echo $i; keyctl watch_add 5 %:a$i || break; done
-
-     This should fail when the number of watches belonging to the user hits
-     99.
-
- (5) Remove all the keyrings and all of those watches should go away:
-
-	for ((i=0; i<200; i++)); do keyctl unlink %:a$i; done
-
- (6) Kill off the watch queue by exiting the shell spawned by
-     watch_session.
-
-Fixes: c73be61cede5 ("pipe: Add general notification queue support")
-Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: David Howells <dhowells@redhat.com>
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+cc: James Morris <jamorris@linux.microsoft.com>
+cc: Casey Schaufler <casey@schaufler-ca.com>
+cc: Stephen Smalley <sds@tycho.nsa.gov>
+cc: linux-security-module@vger.kernel.org
 ---
 
- include/linux/sched/user.h |    3 +++
- kernel/watch_queue.c       |    8 ++++++++
- 2 files changed, 11 insertions(+)
+ include/linux/lsm_hook_defs.h |    3 +++
+ include/linux/lsm_hooks.h     |    6 ++++++
+ include/linux/security.h      |    8 ++++++++
+ security/security.c           |    7 +++++++
+ 4 files changed, 24 insertions(+)
 
-diff --git a/include/linux/sched/user.h b/include/linux/sched/user.h
-index 917d88edb7b9..a8ec3b6093fc 100644
---- a/include/linux/sched/user.h
-+++ b/include/linux/sched/user.h
-@@ -36,6 +36,9 @@ struct user_struct {
-     defined(CONFIG_NET) || defined(CONFIG_IO_URING)
- 	atomic_long_t locked_vm;
- #endif
-+#ifdef CONFIG_WATCH_QUEUE
-+	atomic_t nr_watches;	/* The number of watches this user currently has */
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index af998f93d256..f6eaf8bd617b 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -264,6 +264,9 @@ LSM_HOOK(int, 0, post_notification, const struct cred *w_cred,
+ #if defined(CONFIG_SECURITY) && defined(CONFIG_KEY_NOTIFICATIONS)
+ LSM_HOOK(int, 0, watch_key, struct key *key)
+ #endif /* CONFIG_SECURITY && CONFIG_KEY_NOTIFICATIONS */
++#ifdef CONFIG_MOUNT_NOTIFICATIONS
++LSM_HOOK(int, 0, watch_mount, struct watch *watch, struct path *path)
 +#endif
  
- 	/* Miscellaneous per-user rate limit */
- 	struct ratelimit_state ratelimit;
-diff --git a/kernel/watch_queue.c b/kernel/watch_queue.c
-index f74020f6bd9d..0ef8f65bd2d7 100644
---- a/kernel/watch_queue.c
-+++ b/kernel/watch_queue.c
-@@ -393,6 +393,7 @@ static void free_watch(struct rcu_head *rcu)
- 	struct watch *watch = container_of(rcu, struct watch, rcu);
- 
- 	put_watch_queue(rcu_access_pointer(watch->queue));
-+	atomic_dec(&watch->cred->user->nr_watches);
- 	put_cred(watch->cred);
+ #ifdef CONFIG_SECURITY_NETWORK
+ LSM_HOOK(int, 0, unix_stream_connect, struct sock *sock, struct sock *other,
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 95b7c1d32062..56275145b91d 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -1468,6 +1468,12 @@
+  *	from a key or keyring.
+  *	@key: The key to watch.
+  *
++ * @watch_mount:
++ *	Check to see if a process is allowed to watch for mount topology change
++ *	notifications on a mount subtree.
++ *	@watch: The watch object
++ *	@path: The root of the subtree to watch.
++ *
+  * Security hooks for using the eBPF maps and programs functionalities through
+  * eBPF syscalls.
+  *
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 0a0a03b36a3b..318fdfe7f4d6 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -1314,6 +1314,14 @@ static inline int security_watch_key(struct key *key)
+ 	return 0;
  }
+ #endif
++#if defined(CONFIG_SECURITY) && defined(CONFIG_MOUNT_NOTIFICATIONS)
++int security_watch_mount(struct watch *watch, struct path *path);
++#else
++static inline int security_watch_mount(struct watch *watch, struct path *path)
++{
++	return 0;
++}
++#endif
  
-@@ -452,6 +453,13 @@ int add_watch_to_object(struct watch *watch, struct watch_list *wlist)
- 	watch->cred = get_current_cred();
- 	rcu_assign_pointer(watch->watch_list, wlist);
+ #ifdef CONFIG_SECURITY_NETWORK
  
-+	if (atomic_inc_return(&watch->cred->user->nr_watches) >
-+	    task_rlimit(current, RLIMIT_NOFILE)) {
-+		atomic_dec(&watch->cred->user->nr_watches);
-+		put_cred(watch->cred);
-+		return -EAGAIN;
-+	}
+diff --git a/security/security.c b/security/security.c
+index 70a7ad357bc6..3cdf5039f727 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -2067,6 +2067,13 @@ int security_watch_key(struct key *key)
+ }
+ #endif
+ 
++#ifdef CONFIG_MOUNT_NOTIFICATIONS
++int security_watch_mount(struct watch *watch, struct path *path)
++{
++	return call_int_hook(watch_mount, 0, watch, path);
++}
++#endif
 +
- 	spin_lock_bh(&wqueue->lock);
- 	kref_get(&wqueue->usage);
- 	kref_get(&watch->usage);
+ #ifdef CONFIG_SECURITY_NETWORK
+ 
+ int security_unix_stream_connect(struct sock *sock, struct sock *other, struct sock *newsk)
 
 
