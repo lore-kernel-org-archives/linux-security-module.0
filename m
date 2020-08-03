@@ -2,258 +2,145 @@ Return-Path: <SRS0=Dl7R=BN=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15536C433E4
-	for <linux-security-module@archiver.kernel.org>; Mon,  3 Aug 2020 22:49:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFFC6C433DF
+	for <linux-security-module@archiver.kernel.org>; Mon,  3 Aug 2020 23:16:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 25E482076C
-	for <linux-security-module@archiver.kernel.org>; Mon,  3 Aug 2020 22:49:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECE6A20781
+	for <linux-security-module@archiver.kernel.org>; Mon,  3 Aug 2020 23:16:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b="SKPIS2AE";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="VdpfVhwu"
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="U3y1piV/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728256AbgHCWs4 (ORCPT
+        id S1728926AbgHCXQY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 3 Aug 2020 18:48:56 -0400
-Received: from new3-smtp.messagingengine.com ([66.111.4.229]:46331 "EHLO
-        new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726770AbgHCWs4 (ORCPT
+        Mon, 3 Aug 2020 19:16:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57940 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728891AbgHCXQY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 3 Aug 2020 18:48:56 -0400
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailnew.nyi.internal (Postfix) with ESMTP id AF6BF5804EF;
-        Mon,  3 Aug 2020 18:48:54 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Mon, 03 Aug 2020 18:48:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
-        message-id:subject:from:to:cc:date:in-reply-to:references
-        :content-type:mime-version:content-transfer-encoding; s=fm3; bh=
-        THOZEHX1IYOljNZcOu9rJ4ttNxpkzNp6II0FV+RfVmU=; b=SKPIS2AE91bKyzja
-        nWa9F0jtD3a/JAMrvcDqIfxp+e6niqvABjEHLRU7LmtA/6J1VAZ7tdHwGZY++yE/
-        QFcWt2dDEy+zsZNL50+x2WqbtVG+7SUiEdoMOt2pdlSlZWbuhR4vbe0J0h6SGoC6
-        IJ/QZ7meZXMuPE0lNdwC6Q5s65bpfrerHpCaJjBJIbFj6jZeLp/Klp7fh5U2sFU1
-        uM+ejc+J9wfvcpNMRSHOrE5JAdLPST9zjJh7ftlayVjlZfLvDOLp1SXGdReMvS8l
-        JUmQ+D/I7q2raLv3C+kGeU3pqolvgeeEIZZUBVEFDRxfDFPLFi4RE673BgnrAdvE
-        xuZHdw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; bh=THOZEHX1IYOljNZcOu9rJ4ttNxpkzNp6II0FV+RfV
-        mU=; b=VdpfVhwuGSr+wvjIqM9NIoa+Rhg0GQ3xapsMGUZuiKG231yP3lUq7/alB
-        G5GOoa53n4nJO29GX/NZo9HKbevyMae2cYeqRchH52f/k+MhaP4US/e8uNRdOJF2
-        N9pxlxJUzHz0qwAziRmVdTCIAd8GvkmoKBXc6yblCQnOWFe1mxDLTdd6OQDlXS/h
-        X7wDtor6pDbQN6bI6ArQP2LF2Bus4XBFFd2d5y5jDJnEqxzVL26avgpTgEflDs+n
-        e3yq/2gWR4sqmSTk4naJsa2PzsgCKu0Ekg5QrKS5F1kIQh6htPwdBiPDY3pWWnaN
-        MsDVQeia9eYcMpDRHQgBq78Ih3N3A==
-X-ME-Sender: <xms:VZQoXw2a42WGwSue6AdNL6HwonUsnXw1CwXtRNbwj9JMmRF_1HKvkQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduiedrjeehgdduhecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefkuffhvfffjghftggfggfgsehtkeertddtreejnecuhfhrohhmpefkrghnucfm
-    vghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnheple
-    egtdelledtffetjeduteefgfeiheehkeffheeuhfekgeekueelheffheeigeejnecuffho
-    mhgrihhnpehgihhthhhusgdrtghomhdpkhgvrhhnvghlrdhorhhgnecukfhppeduudekrd
-    dvtdekrdegjedrudeiudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgr
-    ihhlfhhrohhmpehrrghvvghnsehthhgvmhgrfidrnhgvth
-X-ME-Proxy: <xmx:VZQoX7FhQnBjq5oCrSpZkjKbXwQRF_EuXb40YIVfvAyxmcjktbKVgg>
-    <xmx:VZQoX472lPSIQDekhd503JWCWACpKo1E_S8tP8bo1UO0__QRoutdKQ>
-    <xmx:VZQoX536u6x3smkO9YZs1V3SgPwApPI2t4H5YM0-fnglTroZ2iaukQ>
-    <xmx:VpQoXy26O5xri8ckaQtxVw6APJOGfOSeVISXel41P24qXsmKL1Yccw>
-Received: from mickey.themaw.net (unknown [118.208.47.161])
-        by mail.messagingengine.com (Postfix) with ESMTPA id A93D9328005D;
-        Mon,  3 Aug 2020 18:48:49 -0400 (EDT)
-Message-ID: <8eb2e52f1cbdbb8bcf5c5205a53bdc9aaa11a071.camel@themaw.net>
-Subject: Re: [GIT PULL] Mount notifications
-From:   Ian Kent <raven@themaw.net>
-To:     David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     viro@zeniv.linux.org.uk, kzak@redhat.com, jlayton@redhat.com,
-        mszeredi@redhat.com, nicolas.dichtel@6wind.com,
-        christian@brauner.io, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Tue, 04 Aug 2020 06:48:45 +0800
-In-Reply-To: <1842689.1596468469@warthog.procyon.org.uk>
-References: <1842689.1596468469@warthog.procyon.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
+        Mon, 3 Aug 2020 19:16:24 -0400
+Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66233C061756
+        for <linux-security-module@vger.kernel.org>; Mon,  3 Aug 2020 16:16:23 -0700 (PDT)
+Received: by mail-ej1-x642.google.com with SMTP id g19so26563288ejc.9
+        for <linux-security-module@vger.kernel.org>; Mon, 03 Aug 2020 16:16:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=RVPV7oxVS93iXefV8KQ0bKUcXLAvqUAHupIudOdk4DQ=;
+        b=U3y1piV/vs4p2cFmwFCj+by9kLDR7TX3YB4ZXXse0JO6mC48hufglIAmDp/1g9uIBs
+         6bsztBElrfuBb4hbJPfuLqZSxGJNSvj3/G4tM5tKjtd/+mJ3xHaLyMfG/xEXB0gSEnrx
+         +Ho6EB6vdUJfqAfUm9UIxvOml5mFY53nl3mWOdgnYADlDiIG9mv6Y3pEcDXf8uh8pN4v
+         lEUXWqwbSqYq3slPqu1zwYKeZNcHsx2O/SpnoafrqasFD6/YGwr8lJe/O/l7KqRj8hw7
+         fFIOLe8D2C4MlVvFUVRfyPQrYDBVsN0zOgTAJMNadcjyHptvP336kbT6Bk6BFB6uJfGy
+         FInw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=RVPV7oxVS93iXefV8KQ0bKUcXLAvqUAHupIudOdk4DQ=;
+        b=p1Ql94jW+ATAHd+cMU5EQ7Hjyzohz9SxL0YLPiE/YTYclDC8vCcMruOUEMJXnA73Fj
+         5R4suraNwO4AzVYiRkf/pjw69wpaviXHlgRFzhBoHmAVpWKvH4ups+MhGFUay9DaQSbY
+         3ux5ykSahTINuqcEl61xyQUuvrddd0gMjvZX9abV8bm87aY24KxdKMIa2gvze4CBkfX0
+         YrCBLT5s/IpQnugYjsuiGlPOtL55xx/iAXgFx8BXV0ciSVW862wi3+3+ssodXotjR8we
+         Ynrf95EM6971Mszy5zsMBoMy3D34mBoPTyzxO1SOsZ1GdAHDfxxkraQvEC0+3eXHf9eR
+         wZeg==
+X-Gm-Message-State: AOAM533KMpITWwxbGu8Ljk86AaqJ1iuTbcagCkS005gKGZrM5N4UR+ty
+        nJwOk3GhYIkt5ay3RHztya7V7SjnNXLeuC7C9okTdlJL3tvz
+X-Google-Smtp-Source: ABdhPJzbjZ+13fbSX2hywI8tfmTickIarJs8hvmSCpKZYozNkrcWSZ9Sw/Fd/U/iaB60GIdz7Me9Kr3ZxTHvXOaQ8Q8=
+X-Received: by 2002:a17:906:1911:: with SMTP id a17mr17799685eje.431.1596496582017;
+ Mon, 03 Aug 2020 16:16:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 3 Aug 2020 19:16:10 -0400
+Message-ID: <CAHC9VhTy5xcOqx2SRjsyC-H-xvj3vvbHDt7O-S7TLYhXjANZGw@mail.gmail.com>
+Subject: [GIT PULL] SELinux patches for v5.9
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 2020-08-03 at 16:27 +0100, David Howells wrote:
-> Hi Linus,
-> 
-> Here's a set of patches to add notifications for mount topology
-> events,
-> such as mounting, unmounting, mount expiry, mount reconfiguration.
-> 
-> The first patch in the series adds a hard limit on the number of
-> watches
-> that any particular user can add.  The RLIMIT_NOFILE value for the
-> process
-> adding a watch is used as the limit.  Even if you don't take the rest
-> of
-> the series, can you at least take this one?
-> 
-> An LSM hook is included for an LSM to rule on whether or not a mount
-> watch
-> may be set on a particular path.
-> 
-> This series is intended to be taken in conjunction with the fsinfo
-> series
-> which I'll post a pull request for shortly and which is dependent on
-> it.
-> 
-> Karel Zak[*] has created preliminary patches that add support to
-> libmount
-> and Ian Kent has started working on making systemd use them.
-> 
-> [*] https://github.com/karelzak/util-linux/commits/topic/fsinfo
-> 
-> Note that there have been some last minute changes to the patchset:
-> you
-> wanted something adding and Miklós wanted some bits taking
-> out/changing.
-> I've placed a tag, fsinfo-core-20200724 on the aggregate of these two
-> patchsets that can be compared to fsinfo-core-20200803.
-> 
-> To summarise the changes: I added the limiter that you wanted;
-> removed an
-> unused symbol; made the mount ID fields in the notificaion 64-bit
-> (the
-> fsinfo patchset has a change to convey the mount uniquifier instead
-> of the
-> mount ID); removed the event counters from the mount notification and
-> moved
-> the event counters into the fsinfo patchset.
+Hi Linus,
 
-I've pushed my systemd changes to a github repo.
-I haven't yet updated it with the changes above but will get to it.
+Here is the SELinux pull request for the v5.9 release.  All the
+patches pass our test suite and earlier this evening they merged
+cleanly with your tree.
 
-They can be found at:
-https://github.com/raven-au/systemd.git branch notifications-devel
+Beyond the usual smattering of bug fixes, we've got three small
+improvements worth highlighting:
 
-> 
-> 
-> ====
-> WHY?
-> ====
-> 
-> Why do we want mount notifications?  Whilst /proc/mounts can be
-> polled, it
-> only tells you that something changed in your namespace.  To find
-> out, you
-> have to trawl /proc/mounts or similar to work out what changed in the
-> mount
-> object attributes and mount topology.  I'm told that the proc file
-> holding
-> the namespace_sem is a point of contention, especially as the process
-> of
-> generating the text descriptions of the mounts/superblocks can be
-> quite
-> involved.
-> 
-> The notification generated here directly indicates the mounts
-> involved in
-> any particular event and gives an idea of what the change was.
-> 
-> This is combined with a new fsinfo() system call that allows, amongst
-> other
-> things, the ability to retrieve in one go an { id, change_counter }
-> tuple
-> from all the children of a specified mount, allowing buffer overruns
-> to be
-> dealt with quickly.
-> 
-> This is of use to systemd to improve efficiency:
-> 
-> 	
-> https://lore.kernel.org/linux-fsdevel/20200227151421.3u74ijhqt6ekbiss@ws.net.home/
-> 
-> And it's not just Red Hat that's potentially interested in this:
-> 
-> 	
-> https://lore.kernel.org/linux-fsdevel/293c9bd3-f530-d75e-c353-ddeabac27cf6@6wind.com/
-> 
-> 
-> David
-> ---
-> The following changes since commit
-> ba47d845d715a010f7b51f6f89bae32845e6acb7:
-> 
->   Linux 5.8-rc6 (2020-07-19 15:41:18 -0700)
-> 
-> are available in the Git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git 
-> tags/mount-notifications-20200803
-> 
-> for you to fetch changes up to
-> 841a0dfa511364fa9a8d67512e0643669f1f03e3:
-> 
->   watch_queue: sample: Display mount tree change notifications (2020-
-> 08-03 12:15:38 +0100)
-> 
-> ----------------------------------------------------------------
-> Mount notifications
-> 
-> ----------------------------------------------------------------
-> David Howells (5):
->       watch_queue: Limit the number of watches a user can hold
->       watch_queue: Make watch_sizeof() check record size
->       watch_queue: Add security hooks to rule on setting mount
-> watches
->       watch_queue: Implement mount topology and attribute change
-> notifications
->       watch_queue: sample: Display mount tree change notifications
-> 
->  Documentation/watch_queue.rst               |  12 +-
->  arch/alpha/kernel/syscalls/syscall.tbl      |   1 +
->  arch/arm/tools/syscall.tbl                  |   1 +
->  arch/arm64/include/asm/unistd.h             |   2 +-
->  arch/arm64/include/asm/unistd32.h           |   2 +
->  arch/ia64/kernel/syscalls/syscall.tbl       |   1 +
->  arch/m68k/kernel/syscalls/syscall.tbl       |   1 +
->  arch/microblaze/kernel/syscalls/syscall.tbl |   1 +
->  arch/mips/kernel/syscalls/syscall_n32.tbl   |   1 +
->  arch/mips/kernel/syscalls/syscall_n64.tbl   |   1 +
->  arch/mips/kernel/syscalls/syscall_o32.tbl   |   1 +
->  arch/parisc/kernel/syscalls/syscall.tbl     |   1 +
->  arch/powerpc/kernel/syscalls/syscall.tbl    |   1 +
->  arch/s390/kernel/syscalls/syscall.tbl       |   1 +
->  arch/sh/kernel/syscalls/syscall.tbl         |   1 +
->  arch/sparc/kernel/syscalls/syscall.tbl      |   1 +
->  arch/x86/entry/syscalls/syscall_32.tbl      |   1 +
->  arch/x86/entry/syscalls/syscall_64.tbl      |   1 +
->  arch/xtensa/kernel/syscalls/syscall.tbl     |   1 +
->  fs/Kconfig                                  |   9 ++
->  fs/Makefile                                 |   1 +
->  fs/mount.h                                  |  18 +++
->  fs/mount_notify.c                           | 222
-> ++++++++++++++++++++++++++++
->  fs/namespace.c                              |  22 +++
->  include/linux/dcache.h                      |   1 +
->  include/linux/lsm_hook_defs.h               |   3 +
->  include/linux/lsm_hooks.h                   |   6 +
->  include/linux/sched/user.h                  |   3 +
->  include/linux/security.h                    |   8 +
->  include/linux/syscalls.h                    |   2 +
->  include/linux/watch_queue.h                 |   7 +-
->  include/uapi/asm-generic/unistd.h           |   4 +-
->  include/uapi/linux/watch_queue.h            |  31 +++-
->  kernel/sys_ni.c                             |   3 +
->  kernel/watch_queue.c                        |   8 +
->  samples/watch_queue/watch_test.c            |  41 ++++-
->  security/security.c                         |   7 +
->  37 files changed, 422 insertions(+), 6 deletions(-)
->  create mode 100644 fs/mount_notify.c
-> 
+- Improved SELinux policy symbol table performance due to a reworking
+of the insert and search functions
 
+- Allow reading of SELinux labels before the policy is loaded,
+allowing for some more "exotic" initramfs approaches
+
+- Improved checking an error reporting about process class/permissions
+during SELinux policy load
+
+Please merge these for v5.9.  Thanks,
+-Paul
+
+--
+The following changes since commit b3a9e3b9622ae10064826dccb4f7a52bd88c7407:
+
+ Linux 5.8-rc1 (2020-06-14 12:45:04 -0700)
+
+are available in the Git repository at:
+
+ git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+   tags/selinux-pr-20200803
+
+for you to fetch changes up to 54b27f9287a7b3dfc85549f01fc9d292c92c68b9:
+
+ selinux: complete the inlining of hashtab functions
+   (2020-07-09 19:08:16 -0400)
+
+----------------------------------------------------------------
+selinux/stable-5.9 PR 20200803
+
+----------------------------------------------------------------
+Ethan Edwards (1):
+     selinux: fixed a checkpatch warning with the sizeof macro
+
+Jonathan Lebon (1):
+     selinux: allow reading labels before policy is loaded
+
+Ondrej Mosnacek (3):
+     selinux: specialize symtab insert and search functions
+     selinux: prepare for inlining of hashtab functions
+     selinux: complete the inlining of hashtab functions
+
+Stephen Smalley (2):
+     scripts/selinux/mdp: fix initial SID handling
+     selinux: log error messages on required process class / permissions
+
+lihao (1):
+     selinux: Fix spelling mistakes in the comments
+
+scripts/selinux/mdp/mdp.c         |  23 ++++--
+security/selinux/hooks.c          |   7 +-
+security/selinux/netif.c          |   2 +-
+security/selinux/netnode.c        |   2 +-
+security/selinux/netport.c        |   2 +-
+security/selinux/ss/conditional.c |   8 +--
+security/selinux/ss/conditional.h |   2 +-
+security/selinux/ss/hashtab.c     |  59 ++-------------
+security/selinux/ss/hashtab.h     |  77 ++++++++++++++++----
+security/selinux/ss/mls.c         |  23 +++---
+security/selinux/ss/policydb.c    | 148 ++++++++++++++++++++++------------
+security/selinux/ss/policydb.h    |   9 +++
+security/selinux/ss/services.c    |  38 +++++-----
+security/selinux/ss/symtab.c      |  21 ++++--
+security/selinux/ss/symtab.h      |   3 +
+15 files changed, 258 insertions(+), 166 deletions(-)
+
+-- 
+paul moore
+www.paul-moore.com
