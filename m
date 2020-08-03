@@ -2,69 +2,57 @@ Return-Path: <SRS0=Dl7R=BN=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2291C433E0
-	for <linux-security-module@archiver.kernel.org>; Mon,  3 Aug 2020 10:02:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C43EDC433E0
+	for <linux-security-module@archiver.kernel.org>; Mon,  3 Aug 2020 10:08:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7457D2068F
-	for <linux-security-module@archiver.kernel.org>; Mon,  3 Aug 2020 10:02:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0ED0206D7
+	for <linux-security-module@archiver.kernel.org>; Mon,  3 Aug 2020 10:08:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="RpfQtFsH"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ghXigTM0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726579AbgHCKCh (ORCPT
+        id S1726489AbgHCKIf (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 3 Aug 2020 06:02:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48242 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726534AbgHCKCb (ORCPT
+        Mon, 3 Aug 2020 06:08:35 -0400
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:21013 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726478AbgHCKIe (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 3 Aug 2020 06:02:31 -0400
-Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8ABB4C06179F
-        for <linux-security-module@vger.kernel.org>; Mon,  3 Aug 2020 03:02:31 -0700 (PDT)
-Received: by mail-ej1-x643.google.com with SMTP id d6so24150010ejr.5
-        for <linux-security-module@vger.kernel.org>; Mon, 03 Aug 2020 03:02:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Vsw86Ioh4FX2LjY9IRNgVl3ySN874HqeJp7Mv8isep4=;
-        b=RpfQtFsHlbz8r366bIDazEG7v/rOLrIkoCqHg8rE2DUKq52Z8mwzP137tJ/5s7tPUj
-         VLb1iezTLNPzIJG1c0Pkm89UBzyKPJeX6JGIivqYWsnaSCB6ZaglPy5t0gDZQCPFTCU7
-         8llZA5AlGWWNzDr8tBx5EpJDGB/QTw7bpfPc8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Vsw86Ioh4FX2LjY9IRNgVl3ySN874HqeJp7Mv8isep4=;
-        b=aMyz4YxLFN5vj7KDugpZhU8+9VV1QJW1iyFMGYCYzNm32D5B+IN8iA7hmsjSt6d6SZ
-         MHCgUM542d//DxN2JOTdrp/ff7bFUc2eJiDiFdqRLXXn/Tl+obNwws1Z7Rbg5F6CGyXB
-         IZhBC1vVFyFCDGBSYcZhoGKr6Pihj3b3cfLHJKwM65MRDBZjCPJjVJuCoG9IatEYHKaU
-         g+cLY7mQJpSMWzeMFueBoPtttzpAEIyj/sptz/Ohdf7PKy9sfyqVPhsXXUu3T14kTuux
-         DSKqSjVKKgUne4O7qdkvLKvSgxWQ+DYoZzfPXWT/NdZ2K6RF47fr+4C11ThMoiEdfmAQ
-         VDkw==
-X-Gm-Message-State: AOAM531i9i2tcXy05M6rwU0SXG6zw/qfo5dfidq/SmRrw+eWh8ptt7HA
-        EdU1rSFf+osmbHi0rC9iFlVcsXfQwIeuGT0QZ1wTXw==
-X-Google-Smtp-Source: ABdhPJyBZEAYQ6WLR1Z0AfPVD+Khagrgtzu1YRtwovnq6WreKbtRGY02vgjzms1nTRrPans2kaPI2wtS5NWP0loHJ+k=
-X-Received: by 2002:a17:906:4c46:: with SMTP id d6mr16814326ejw.14.1596448949388;
- Mon, 03 Aug 2020 03:02:29 -0700 (PDT)
-MIME-Version: 1.0
-References: <1293241.1595501326@warthog.procyon.org.uk> <CAJfpegspWA6oUtdcYvYF=3fij=Bnq03b8VMbU9RNMKc+zzjbag@mail.gmail.com>
- <158454378820.2863966.10496767254293183123.stgit@warthog.procyon.org.uk>
- <158454391302.2863966.1884682840541676280.stgit@warthog.procyon.org.uk>
- <2003787.1595585999@warthog.procyon.org.uk> <865566fb800a014868a9a7e36a00a14430efb11e.camel@themaw.net>
- <2023286.1595590563@warthog.procyon.org.uk>
-In-Reply-To: <2023286.1595590563@warthog.procyon.org.uk>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Mon, 3 Aug 2020 12:02:18 +0200
-Message-ID: <CAJfpegsT_3YqHPWCZGX7Lr+sE0NVmczWz5L6cN8CzsVz4YKLCQ@mail.gmail.com>
-Subject: Re: [PATCH 13/17] watch_queue: Implement mount topology and attribute
- change notifications [ver #5]
-To:     David Howells <dhowells@redhat.com>
-Cc:     Ian Kent <raven@themaw.net>,
+        Mon, 3 Aug 2020 06:08:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1596449312;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=wb/gJmdKHBmw6w0WHlFlXyZB6Hy72W8IZAqpbVBmJts=;
+        b=ghXigTM0PV9KMysiz92r8Gcew6gEtZGExhkoMNxJHKSrWxZCOZZ+04ygOH1TO/1+lgG9Tk
+        DzARgWCSkBhC0jvt0fEGXGhP7yWnROlS8DCV6fnQ0cNaI48tKCQVyoSqUPCtnFtpf60Zof
+        whrSITLPj6X7bLEXoVRcy4133AHqOGA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-165-7YYFm4bNOqa5LSseulTMqA-1; Mon, 03 Aug 2020 06:08:29 -0400
+X-MC-Unique: 7YYFm4bNOqa5LSseulTMqA-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8F8761005504;
+        Mon,  3 Aug 2020 10:08:26 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-112-32.rdu2.redhat.com [10.10.112.32])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BAFD85D9F7;
+        Mon,  3 Aug 2020 10:08:22 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAJfpegsT_3YqHPWCZGX7Lr+sE0NVmczWz5L6cN8CzsVz4YKLCQ@mail.gmail.com>
+References: <CAJfpegsT_3YqHPWCZGX7Lr+sE0NVmczWz5L6cN8CzsVz4YKLCQ@mail.gmail.com> <1293241.1595501326@warthog.procyon.org.uk> <CAJfpegspWA6oUtdcYvYF=3fij=Bnq03b8VMbU9RNMKc+zzjbag@mail.gmail.com> <158454378820.2863966.10496767254293183123.stgit@warthog.procyon.org.uk> <158454391302.2863966.1884682840541676280.stgit@warthog.procyon.org.uk> <2003787.1595585999@warthog.procyon.org.uk> <865566fb800a014868a9a7e36a00a14430efb11e.camel@themaw.net> <2023286.1595590563@warthog.procyon.org.uk>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     dhowells@redhat.com, Ian Kent <raven@themaw.net>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
         Casey Schaufler <casey@schaufler-ca.com>,
@@ -77,38 +65,24 @@ Cc:     Ian Kent <raven@themaw.net>,
         linux-fsdevel@vger.kernel.org,
         LSM <linux-security-module@vger.kernel.org>,
         linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH 13/17] watch_queue: Implement mount topology and attribute change notifications [ver #5]
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1272196.1596449301.1@warthog.procyon.org.uk>
+Date:   Mon, 03 Aug 2020 11:08:21 +0100
+Message-ID: <1272197.1596449301@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jul 24, 2020 at 1:36 PM David Howells <dhowells@redhat.com> wrote:
->
-> Ian Kent <raven@themaw.net> wrote:
->
-> > I was wondering about id re-use.
-> >
-> > Assuming that ids that are returned to the idr db are re-used
-> > what would the chance that a recently used id would end up
-> > being used?
-> >
-> > Would that chance increase as ids are consumed and freed over
-> > time?
->
-> I've added something to deal with that in the fsinfo branch.  I've given each
-> mount object and superblock a supplementary 64-bit unique ID that's not likely
-> to repeat before we're no longer around to have to worry about it.
->
-> fsinfo() then allows you to retrieve them by path or by mount ID.
+Miklos Szeredi <miklos@szeredi.hu> wrote:
 
-Shouldn't the notification interface provide the unique ID?
+> > fsinfo() then allows you to retrieve them by path or by mount ID.
+> 
+> Shouldn't the notification interface provide the unique ID?
 
-Thanks,
-Miklos
+It could make sense - instead of the reusable mnt_id.
 
->
-> So, yes, mnt_id and s_dev are not unique and may be reused very quickly, but
-> I'm also providing uniquifiers that you can check.
->
-> David
->
+David
+
