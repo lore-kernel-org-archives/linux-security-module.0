@@ -2,202 +2,153 @@ Return-Path: <SRS0=Dl7R=BN=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEDBCC433E0
-	for <linux-security-module@archiver.kernel.org>; Mon,  3 Aug 2020 15:27:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6766FC433DF
+	for <linux-security-module@archiver.kernel.org>; Mon,  3 Aug 2020 15:41:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B95A02072A
-	for <linux-security-module@archiver.kernel.org>; Mon,  3 Aug 2020 15:27:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46413207FB
+	for <linux-security-module@archiver.kernel.org>; Mon,  3 Aug 2020 15:41:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Bil47FFs"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="h3lU+1ox"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726276AbgHCP17 (ORCPT
+        id S1727855AbgHCPl5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 3 Aug 2020 11:27:59 -0400
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:41444 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726356AbgHCP16 (ORCPT
+        Mon, 3 Aug 2020 11:41:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44330 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727846AbgHCPl5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 3 Aug 2020 11:27:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1596468477;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=WIZ7bSYiDkZRaRp/PG2/VcJpUHi5wIOy+qtpqbYupjU=;
-        b=Bil47FFsEOIgKVJ7qu9n49vSH+6oO8gQ/yxn2Jm66JZsh5hq6Pgu5Sm8QL0VH+blkdDLv+
-        UeEgGWbHpgMQ3mIidVmxDMvO0RqZKO+ZV9rx5D1XcaB/nS5tjSITFMgyeWYHLGr1TyCbOT
-        9+KYHN8UXRaNUq8MQZF0WNWPMBhrRpc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-131-1nFJN-FaMq-j5STgXb9V6g-1; Mon, 03 Aug 2020 11:27:54 -0400
-X-MC-Unique: 1nFJN-FaMq-j5STgXb9V6g-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7F069106B77E;
-        Mon,  3 Aug 2020 15:27:52 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-112-32.rdu2.redhat.com [10.10.112.32])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BF77F8BED5;
-        Mon,  3 Aug 2020 15:27:49 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk, raven@themaw.net,
-        kzak@redhat.com, jlayton@redhat.com, mszeredi@redhat.com,
-        nicolas.dichtel@6wind.com, christian@brauner.io,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Mount notifications
+        Mon, 3 Aug 2020 11:41:57 -0400
+Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C51F4C061756
+        for <linux-security-module@vger.kernel.org>; Mon,  3 Aug 2020 08:41:56 -0700 (PDT)
+Received: by mail-wr1-x441.google.com with SMTP id r12so34592876wrj.13
+        for <linux-security-module@vger.kernel.org>; Mon, 03 Aug 2020 08:41:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=zDbpSdI+Kg7J21FMtDaptpRpDHvK4QQHCXQIzqF2Kt8=;
+        b=h3lU+1oxPPOe5Swh2bMYvJ8QZyr2RAeEDsNKI3Wl0DqmhQRbEmjGM9H9UUkrmZjOdw
+         l/rSdNWDp4v0+B7g2+pXgW2Wx8kp2vICMRLuNoWtWfNrzS7HUjIjvcdffOBXILgAYOgO
+         ELENyyZDMqP+Xc8OTSYTHH03K5WrobUBwa/AA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=zDbpSdI+Kg7J21FMtDaptpRpDHvK4QQHCXQIzqF2Kt8=;
+        b=pv+OYyfxtkyQQvEUhicDDvgqPaxJA5fyJSbvJ51yiXd/Y0lV7g8CZ0vUnkKiuSq1x0
+         O92XD5LFWNNllt8uFvFmYPxNIzJ5kyQMABIIIDktHHyfLUfjWk5a/BSDCo/TLQIfUzhd
+         YmUDTRPQWa7pVBBpcYlZyFYFSGSVWt824w8vAJR+eih4DCAwdWEVHjCBU+zlU2iHct9h
+         197Hu0iZSRETRa92i1zUSQq0CTTG8C6khF0bfxc+idYIGIxm2HBHOyO8Y9jB3SyaPSnO
+         MaVvr+yk2XpVR+ku0gAwvmtzB+ih6vnuIqHXDFB6O8e1DN49BuvmyMPLCIDXpem1LDur
+         fLAg==
+X-Gm-Message-State: AOAM532SBorovNru9MU0WEESmFIpkqpN8nZkcfEkbgZT5smzVaCuQOro
+        AXaXUDyT41E29WKVrjjsNzpLeQ==
+X-Google-Smtp-Source: ABdhPJxpsj//aPwb+f5tDc2RkKT8w2hW8MyYJ8torm6jn/JP7wErdFoQ472ZVtlUEzpAdIldlnSmig==
+X-Received: by 2002:adf:edd0:: with SMTP id v16mr17070883wro.271.1596469315419;
+        Mon, 03 Aug 2020 08:41:55 -0700 (PDT)
+Received: from kpsingh-macbookpro2.roam.corp.google.com ([81.6.44.51])
+        by smtp.gmail.com with ESMTPSA id q4sm25807370wme.31.2020.08.03.08.41.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Aug 2020 08:41:54 -0700 (PDT)
+Subject: Re: [PATCH bpf-next v7 5/7] bpf: Implement bpf_local_storage for
+ inodes
+To:     Martin KaFai Lau <kafai@fb.com>
+Cc:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
+        Florent Revest <revest@chromium.org>
+References: <20200730140716.404558-1-kpsingh@chromium.org>
+ <20200730140716.404558-6-kpsingh@chromium.org>
+ <20200731010822.fctk5lawnr3p7blf@kafai-mbp.dhcp.thefacebook.com>
+ <adbfc73e-bd32-d9ba-4dab-4ccc39b40fdd@chromium.org>
+ <20200731190226.6ugmk6cnl2yortgt@kafai-mbp.dhcp.thefacebook.com>
+From:   KP Singh <kpsingh@chromium.org>
+Message-ID: <c376c46c-f8e9-8a4c-3f81-300faddac831@chromium.org>
+Date:   Mon, 3 Aug 2020 17:41:54 +0200
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
+ Gecko/20100101 Thunderbird/68.10.0
 MIME-Version: 1.0
+In-Reply-To: <20200731190226.6ugmk6cnl2yortgt@kafai-mbp.dhcp.thefacebook.com>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date:   Mon, 03 Aug 2020 16:27:49 +0100
-Message-ID: <1842689.1596468469@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 
-Hi Linus,
 
-Here's a set of patches to add notifications for mount topology events,
-such as mounting, unmounting, mount expiry, mount reconfiguration.
+On 31.07.20 21:02, Martin KaFai Lau wrote:
+> On Fri, Jul 31, 2020 at 02:08:55PM +0200, KP Singh wrote:
+> [ ... ]
+>>>> +const struct bpf_map_ops inode_storage_map_ops = {
 
-The first patch in the series adds a hard limit on the number of watches
-that any particular user can add.  The RLIMIT_NOFILE value for the process
-adding a watch is used as the limit.  Even if you don't take the rest of
-the series, can you at least take this one?
+[...]
 
-An LSM hook is included for an LSM to rule on whether or not a mount watch
-may be set on a particular path.
+>>
+>> btf  dump file /sys/kernel/btf/vmlinux | grep "STRUCT 'inode'"
+>> "[915] STRUCT 'inode' size=984 vlen=48
+>>
+>> So it seems like btf_id[0] and btf_id[1] are set to the BTF ID
+>> for inode. Now I think this might just be a coincidence as
+>> the next helper (bpf_inode_storage_delete) 
+>> also has a BTF argument of type inode.
+> It seems the next BTF_ID_LIST(bpf_inode_storage_delete_btf_ids)
+> is not needed because they are the same.  I think one
+> BTF_ID_LIST(bpf_inode_btf_ids) can be used for both helpers.
+> 
 
-This series is intended to be taken in conjunction with the fsinfo series
-which I'll post a pull request for shortly and which is dependent on it.
+Cool, yeah. I have fixed it and also for sock helpers. Will
+send a new series out.
 
-Karel Zak[*] has created preliminary patches that add support to libmount
-and Ian Kent has started working on making systemd use them.
+- KP
 
-[*] https://github.com/karelzak/util-linux/commits/topic/fsinfo
+>>
+>> and sure enough if I call:
+>>
+>> bpf_inode_storage_delete from my selftests program, 
+>> it does not load:
 
-Note that there have been some last minute changes to the patchset: you
-wanted something adding and Mikl=C3=B3s wanted some bits taking out/changin=
-g.
-I've placed a tag, fsinfo-core-20200724 on the aggregate of these two
-patchsets that can be compared to fsinfo-core-20200803.
+[...]
 
-To summarise the changes: I added the limiter that you wanted; removed an
-unused symbol; made the mount ID fields in the notificaion 64-bit (the
-fsinfo patchset has a change to convey the mount uniquifier instead of the
-mount ID); removed the event counters from the mount notification and moved
-the event counters into the fsinfo patchset.
-
-
-=3D=3D=3D=3D
-WHY?
-=3D=3D=3D=3D
-
-Why do we want mount notifications?  Whilst /proc/mounts can be polled, it
-only tells you that something changed in your namespace.  To find out, you
-have to trawl /proc/mounts or similar to work out what changed in the mount
-object attributes and mount topology.  I'm told that the proc file holding
-the namespace_sem is a point of contention, especially as the process of
-generating the text descriptions of the mounts/superblocks can be quite
-involved.
-
-The notification generated here directly indicates the mounts involved in
-any particular event and gives an idea of what the change was.
-
-This is combined with a new fsinfo() system call that allows, amongst other
-things, the ability to retrieve in one go an { id, change_counter } tuple
-from all the children of a specified mount, allowing buffer overruns to be
-dealt with quickly.
-
-This is of use to systemd to improve efficiency:
-
-	https://lore.kernel.org/linux-fsdevel/20200227151421.3u74ijhqt6ekbiss@ws.n=
-et.home/
-
-And it's not just Red Hat that's potentially interested in this:
-
-	https://lore.kernel.org/linux-fsdevel/293c9bd3-f530-d75e-c353-ddeabac27cf6=
-@6wind.com/
-
-
-David
----
-The following changes since commit ba47d845d715a010f7b51f6f89bae32845e6acb7:
-
-  Linux 5.8-rc6 (2020-07-19 15:41:18 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags/=
-mount-notifications-20200803
-
-for you to fetch changes up to 841a0dfa511364fa9a8d67512e0643669f1f03e3:
-
-  watch_queue: sample: Display mount tree change notifications (2020-08-03 =
-12:15:38 +0100)
-
-----------------------------------------------------------------
-Mount notifications
-
-----------------------------------------------------------------
-David Howells (5):
-      watch_queue: Limit the number of watches a user can hold
-      watch_queue: Make watch_sizeof() check record size
-      watch_queue: Add security hooks to rule on setting mount watches
-      watch_queue: Implement mount topology and attribute change notificati=
-ons
-      watch_queue: sample: Display mount tree change notifications
-
- Documentation/watch_queue.rst               |  12 +-
- arch/alpha/kernel/syscalls/syscall.tbl      |   1 +
- arch/arm/tools/syscall.tbl                  |   1 +
- arch/arm64/include/asm/unistd.h             |   2 +-
- arch/arm64/include/asm/unistd32.h           |   2 +
- arch/ia64/kernel/syscalls/syscall.tbl       |   1 +
- arch/m68k/kernel/syscalls/syscall.tbl       |   1 +
- arch/microblaze/kernel/syscalls/syscall.tbl |   1 +
- arch/mips/kernel/syscalls/syscall_n32.tbl   |   1 +
- arch/mips/kernel/syscalls/syscall_n64.tbl   |   1 +
- arch/mips/kernel/syscalls/syscall_o32.tbl   |   1 +
- arch/parisc/kernel/syscalls/syscall.tbl     |   1 +
- arch/powerpc/kernel/syscalls/syscall.tbl    |   1 +
- arch/s390/kernel/syscalls/syscall.tbl       |   1 +
- arch/sh/kernel/syscalls/syscall.tbl         |   1 +
- arch/sparc/kernel/syscalls/syscall.tbl      |   1 +
- arch/x86/entry/syscalls/syscall_32.tbl      |   1 +
- arch/x86/entry/syscalls/syscall_64.tbl      |   1 +
- arch/xtensa/kernel/syscalls/syscall.tbl     |   1 +
- fs/Kconfig                                  |   9 ++
- fs/Makefile                                 |   1 +
- fs/mount.h                                  |  18 +++
- fs/mount_notify.c                           | 222 ++++++++++++++++++++++++=
-++++
- fs/namespace.c                              |  22 +++
- include/linux/dcache.h                      |   1 +
- include/linux/lsm_hook_defs.h               |   3 +
- include/linux/lsm_hooks.h                   |   6 +
- include/linux/sched/user.h                  |   3 +
- include/linux/security.h                    |   8 +
- include/linux/syscalls.h                    |   2 +
- include/linux/watch_queue.h                 |   7 +-
- include/uapi/asm-generic/unistd.h           |   4 +-
- include/uapi/linux/watch_queue.h            |  31 +++-
- kernel/sys_ni.c                             |   3 +
- kernel/watch_queue.c                        |   8 +
- samples/watch_queue/watch_test.c            |  41 ++++-
- security/security.c                         |   7 +
- 37 files changed, 422 insertions(+), 6 deletions(-)
- create mode 100644 fs/mount_notify.c
-
+>> ./test_progs -t test_local_storage
+>> [   20.577223] btf_ids[0]=0
+>> [   20.577702] btf_ids[1]=915
+>>
+>> Thanks for noticing this! 
+>>
+>> - KP
+>>
+>>>
+>>>> +
+>>>> +const struct bpf_func_proto bpf_inode_storage_get_proto = {
+>>>> +	.func		= bpf_inode_storage_get,
+>>>> +	.gpl_only	= false,
+>>>> +	.ret_type	= RET_PTR_TO_MAP_VALUE_OR_NULL,
+>>>> +	.arg1_type	= ARG_CONST_MAP_PTR,
+>>>> +	.arg2_type	= ARG_PTR_TO_BTF_ID,
+>>>> +	.arg3_type	= ARG_PTR_TO_MAP_VALUE_OR_NULL,
+>>>> +	.arg4_type	= ARG_ANYTHING,
+>>>> +	.btf_id		= bpf_inode_storage_get_btf_ids,
+>>>> +};
+>>>> +
+>>>> +BTF_ID_LIST(bpf_inode_storage_delete_btf_ids)
+>>>> +BTF_ID(struct, inode)
+>>>> +
+>>>> +const struct bpf_func_proto bpf_inode_storage_delete_proto = {
+>>>> +	.func		= bpf_inode_storage_delete,
+>>>> +	.gpl_only	= false,
+>>>> +	.ret_type	= RET_INTEGER,
+>>>> +	.arg1_type	= ARG_CONST_MAP_PTR,
+>>>> +	.arg2_type	= ARG_PTR_TO_BTF_ID,
+>>>> +	.btf_id		= bpf_inode_storage_delete_btf_ids,
+>>>> +};
