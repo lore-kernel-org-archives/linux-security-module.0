@@ -2,150 +2,133 @@ Return-Path: <SRS0=B0YM=BO=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42382C433E0
-	for <linux-security-module@archiver.kernel.org>; Tue,  4 Aug 2020 15:29:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B44BC433DF
+	for <linux-security-module@archiver.kernel.org>; Tue,  4 Aug 2020 15:39:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 241212086A
-	for <linux-security-module@archiver.kernel.org>; Tue,  4 Aug 2020 15:29:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32D42207FC
+	for <linux-security-module@archiver.kernel.org>; Tue,  4 Aug 2020 15:39:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jZ2Jas15"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="mCiJhDrQ";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="bmKnsvG0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729603AbgHDP3o (ORCPT
+        id S1727064AbgHDPjw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 4 Aug 2020 11:29:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38426 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729526AbgHDP3l (ORCPT
+        Tue, 4 Aug 2020 11:39:52 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:51856 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727038AbgHDPjt (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 4 Aug 2020 11:29:41 -0400
-Received: from mail-qt1-x843.google.com (mail-qt1-x843.google.com [IPv6:2607:f8b0:4864:20::843])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A383C06174A;
-        Tue,  4 Aug 2020 08:29:41 -0700 (PDT)
-Received: by mail-qt1-x843.google.com with SMTP id b25so31200713qto.2;
-        Tue, 04 Aug 2020 08:29:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=A3dFPndoyZvaWEl6YVaSywxK6lVziWTAEQzlumQD6Fs=;
-        b=jZ2Jas15OLgmyhb72/ztVsVnNfEV5LeMoUoRQzqhZg2uMUEZuzDlWCZvZ9o/Z6c4Ga
-         ZN08Z/F0NNr6/0b35XQHiji2W1nAdzt/d9R44eIknuUgLEyE6hIxSWYAPPLUe0lywx66
-         nDp06wt43XmZ/CFOGnj4mDCHMvl9l8xo4y7rUQzWXKeZi+B9hBpxv5my4khl24R+Rk2j
-         4ZlBvJc+igtHi8Pj8upBiENNO5Ev3loMwmgo8OsneFP0Vgp1m1zOSnLQoN3Gd4JyN6Kq
-         jEje80e5k8uSgMvEPl4hpjbMlMIWhSufxgqKBThDb7xRsqZh3Ze+jgParxQqDB/Eu7Ok
-         GoQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=A3dFPndoyZvaWEl6YVaSywxK6lVziWTAEQzlumQD6Fs=;
-        b=Y/uosQC0XCIujQeVG8WXu3eajODjiL7IqbmGgYzkM8eMxGii4bbLe4W24wjYoQek6g
-         8tcsgxSE3/zmNtlJxxKH8ygd4ZSBU1LJiq6I5d/nZopiCKwwvD9qSVhzQ3R5n+QJqOcL
-         FB8EqRm6Ydojau3d+yuH9HwvpuE2BtV9qdC+WdrZ7kKVhN0kJkxi7Ms+90o8FWNqEIOl
-         LtLcGZLtk+Ph9Q+JOd9kSgcaMzIxx2HTCzESnHevuvQJ1R59bVUDavBqnqpdvyJqd0Ov
-         6ZueRJv1eLO2WKUiGe8gobIuFOC918npztge/5Bs0jIUbz+aojsVKAyNn/bARRkbs9wk
-         P+zg==
-X-Gm-Message-State: AOAM532E54lByEQifpSOsd7ZX7MtKsO9MIQT0zfVv+pPz2ZgRHJbH1Ax
-        IEvfjYaznFT42854DU6tyX0GeI0bHjc=
-X-Google-Smtp-Source: ABdhPJwQAAeoyAn31/xwdwHap5tFvMTs6BZKat8bFoDFP6/onB9Itr1XbdKiZVYUWS9WJMpJ5W8E6g==
-X-Received: by 2002:ac8:4b4d:: with SMTP id e13mr21821962qts.256.1596554980407;
-        Tue, 04 Aug 2020 08:29:40 -0700 (PDT)
-Received: from [192.168.1.190] (pool-96-244-118-111.bltmmd.fios.verizon.net. [96.244.118.111])
-        by smtp.gmail.com with ESMTPSA id d26sm17370443qtc.51.2020.08.04.08.29.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Aug 2020 08:29:39 -0700 (PDT)
-Subject: Re: [PATCH v5 3/4] LSM: Define SELinux function to measure state and
- policy
-From:   Stephen Smalley <stephen.smalley.work@gmail.com>
-To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Tyler Hicks <tyhicks@linux.microsoft.com>, sashal@kernel.org,
-        James Morris <jmorris@namei.org>,
-        linux-integrity@vger.kernel.org,
-        SElinux list <selinux@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <20200730034724.3298-1-nramas@linux.microsoft.com>
- <20200730034724.3298-4-nramas@linux.microsoft.com>
- <dfd6f9c8-d62a-d278-9b0e-6b1f5ad03d3e@gmail.com>
- <6371efa9-5ae6-05ac-c357-3fbe1a5a93d5@linux.microsoft.com>
- <CAEjxPJ789kmdDwy-6RaL7HuMFxKpQ9Hwxj9J-_-f62XDCNJUiA@mail.gmail.com>
- <f992901f-6dca-7d31-3426-5a74d36c2c8c@gmail.com>
- <d988a6d0-04e0-62f0-2705-4352b268ca55@linux.microsoft.com>
- <5c843a3d-713c-e71f-8d4f-c6e5f51422f1@gmail.com>
- <3e766eed-7a0b-afca-6139-ac43dea053d7@linux.microsoft.com>
- <0fa0b1f3-6226-c307-0f11-8b3a881a070e@gmail.com>
-Message-ID: <32da0a4a-252a-67d8-5dc8-173959f6ddb4@gmail.com>
-Date:   Tue, 4 Aug 2020 11:29:38 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <0fa0b1f3-6226-c307-0f11-8b3a881a070e@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+        Tue, 4 Aug 2020 11:39:49 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 9ACC18EE19F;
+        Tue,  4 Aug 2020 08:39:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1596555587;
+        bh=ubA7UgAjztHk4GVyHjlFRj5OwpgCUgVMlAu9TLOG2Po=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=mCiJhDrQYtjSKfKCoc+zcXJw20GOjtM2YdZhPriO5Hpid2hhKtxkt8+OGJwn2AR3k
+         /FzvI51x/wnSixkOpn44wsemSD62wUTee772UZzM6yfGamb8lw4JDlhYCqImJp8k0g
+         hmxDKw2bpbC2GIaRZMiNMW3KnidEG+hyy2eB6oS4=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id Bg9YfVLl3_vu; Tue,  4 Aug 2020 08:39:47 -0700 (PDT)
+Received: from [153.66.254.194] (unknown [50.35.76.230])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 939768EE0E4;
+        Tue,  4 Aug 2020 08:39:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1596555586;
+        bh=ubA7UgAjztHk4GVyHjlFRj5OwpgCUgVMlAu9TLOG2Po=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=bmKnsvG0vWB3ZUCvyzNR7rWc4eZ9+ZsNbdyYPV9VoolPcD7XlGUzdRm1c07fHjqT1
+         qmu1PsFAW7gpFD+aA+3WSAkibprMkfYJ8qYBN+PYTXiY0qbHHzX8qwXsshnmHzmyD6
+         Q9O+aU2LAAvWaja75qo/xTXfUs/5DETrYxxrcOpI=
+Message-ID: <1596555579.10158.23.camel@HansenPartnership.com>
+Subject: Re: [PATCH 00/18] VFS: Filesystem information [ver #21]
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     David Howells <dhowells@redhat.com>, viro@zeniv.linux.org.uk
+Cc:     Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Jeff Layton <jlayton@kernel.org>, linux-ext4@vger.kernel.org,
+        Carlos Maiolino <cmaiolino@redhat.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-api@vger.kernel.org, torvalds@linux-foundation.org,
+        raven@themaw.net, mszeredi@redhat.com, christian@brauner.io,
+        jannh@google.com, kzak@redhat.com, jlayton@redhat.com,
+        linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Tue, 04 Aug 2020 08:39:39 -0700
+In-Reply-To: <159646178122.1784947.11705396571718464082.stgit@warthog.procyon.org.uk>
+References: <159646178122.1784947.11705396571718464082.stgit@warthog.procyon.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 8/4/20 11:20 AM, Stephen Smalley wrote:
+On Mon, 2020-08-03 at 14:36 +0100, David Howells wrote:
+> Here's a set of patches that adds a system call, fsinfo(), that
+> allows information about the VFS, mount topology, superblock and
+> files to be retrieved.
+> 
+> The patchset is based on top of the notifications patchset and allows
+> event counters implemented in the latter to be retrieved to allow
+> overruns to be efficiently managed.
 
-> On 8/3/20 6:08 PM, Lakshmi Ramasubramanian wrote:
->
->> On 8/3/20 2:07 PM, Stephen Smalley wrote:
->>
->>>>>> [   68.870715] irq event stamp: 23486085
->>>>>> [   68.870715] hardirqs last  enabled at (23486085):
->>>>>> [<ffffffffaa419406>] _raw_spin_unlock_irqrestore+0x46/0x60
->>>>>> [   68.870715] hardirqs last disabled at (23486084):
->>>>>> [<ffffffffaa419443>] _raw_spin_lock_irqsave+0x23/0x90
->>>>>> [   68.870715] softirqs last  enabled at (23486074):
->>>>>> [<ffffffffaa8004f3>] __do_softirq+0x4f3/0x662
->>>>>> [   68.870715] softirqs last disabled at (23486067):
->>>>>> [<ffffffffaa601072>] asm_call_on_stack+0x12/0x20
->>>>>> [   68.870715] ---[ end trace fb02740ff6f4d0cd ]---
->>>>>
->>>>> I think one issue here is that systemd loads SELinux policy first, 
->>>>> then IMA policy, so it doesn't know whether it needs to measure 
->>>>> SELinux policy on first policy load, and another issue is that the 
->>>>> policy is too large to just queue the policy data itself this way 
->>>>> (or you need to use an allocator that can handle larger sizes).
->>>>>
->>>>
->>>> The problem seems to be that a lock is held when the IMA hook to 
->>>> measure the LSM state is called. So memory allocation is not 
->>>> allowed, but the hook is doing an allocation. I'll address this - 
->>>> thanks for catching it.
->>>>
->>>> I have the following CONFIGs enabled, but I still don't see the 
->>>> above issue on my machine.
->>>>
->>> The warning has to do with the memory allocation order being above 
->>> the max order supported for kmalloc.  I think the problem is that 
->>> ima_alloc_data_entry() is using kmemdup() to duplicate a payload of 
->>> arbitrary size.  Policies on e.g. Fedora can be quite large, so you 
->>> can't assume they can be allocated with kmalloc and friends.
->>>
->>
->> Thanks for clarifying. Yes ima_alloc_entry() does use kmemdup to save 
->> the given buffer (to be measured) until IMA loads custom policy.
->>
->> On my machine the SELinux policy size is about 2MB.
->>
->> Perhaps vmalloc would be better than using kmalloc? If there are 
->> better options for such large buffer allocation, please let me know.
->
-> kvmalloc() can be used to select whichever one is most appropriate.
+Could I repeat the question I asked about six months back that never
+got answered:
 
-Other option would be for ima to compute and save the hash(es) of the 
-payload and not the payload itself for later use.  I guess you won't 
-know at that point which hash algorithm is desired?
+https://lore.kernel.org/linux-api/1582316494.3376.45.camel@HansenPartnership.com/
+
+It sort of petered out into a long winding thread about why not use
+sysfs instead, which really doesn't look like a good idea to me.
+
+I'll repeat the information for those who want to quote it easily on
+reply without having to use a web interface:
+
+---
+Could I make a suggestion about how this should be done in a way that
+doesn't actually require the fsinfo syscall at all: it could just be
+done with fsconfig.  The idea is based on something I've wanted to do
+for configfd but couldn't because otherwise it wouldn't substitute for
+fsconfig, but Christian made me think it was actually essential to the
+ability of the seccomp and other verifier tools in the critique of
+configfd and I belive the same critique applies here.
+
+Instead of making fsconfig functionally configure ... as in you pass
+the attribute name, type and parameters down into the fs specific
+handler and the handler does a string match and then verifies the
+parameters and then acts on them, make it table configured, so what
+each fstype does is register a table of attributes which can be got and
+optionally set (with each attribute having a get and optional set
+function).  We'd have multiple tables per fstype, so the generic VFS
+can register a table of attributes it understands for every fstype
+(things like name, uuid and the like) and then each fs type would
+register a table of fs specific attributes following the same pattern. 
+The system would examine the fs specific table before the generic one,
+allowing overrides.  fsconfig would have the ability to both get and
+set attributes, permitting retrieval as well as setting (which is how I
+get rid of the fsinfo syscall), we'd have a global parameter, which
+would retrieve the entire table by name and type so the whole thing is
+introspectable because the upper layer knows a-priori all the
+attributes which can be set for a given fs type and what type they are
+(so we can make more of the parsing generic).  Any attribute which
+doesn't have a set routine would be read only and all attributes would
+have to have a get routine meaning everything is queryable.
+
+I think I know how to code this up in a way that would be fully
+transparent to the existing syscalls.
+---
+
+James
+
 
 
