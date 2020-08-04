@@ -2,98 +2,152 @@ Return-Path: <SRS0=B0YM=BO=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22CB2C433E0
-	for <linux-security-module@archiver.kernel.org>; Tue,  4 Aug 2020 17:49:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E92C8C433E0
+	for <linux-security-module@archiver.kernel.org>; Tue,  4 Aug 2020 19:18:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0617321744
-	for <linux-security-module@archiver.kernel.org>; Tue,  4 Aug 2020 17:49:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D044A21744
+	for <linux-security-module@archiver.kernel.org>; Tue,  4 Aug 2020 19:18:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="Ata+1fw+"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="nQ4grv0/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728676AbgHDRtQ (ORCPT
+        id S1726807AbgHDTSw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 4 Aug 2020 13:49:16 -0400
-Received: from sonic307-15.consmr.mail.ne1.yahoo.com ([66.163.190.38]:42289
-        "EHLO sonic307-15.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728597AbgHDRtP (ORCPT
+        Tue, 4 Aug 2020 15:18:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45374 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726011AbgHDTSv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 4 Aug 2020 13:49:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1596563354; bh=9CN9OOEMnPfpZeDCm4a2IWZdvQhL+vpZWFnAuWsKyjM=; h=To:Cc:From:Subject:Date:References:From:Subject; b=Ata+1fw+ljE+JqoL14DRxyaBOV95k+KaphQNOvu47RiSGU4nZHeY1L2OFQM6GiLGBBNZH742UaSsWcaHhK5j+6v75f0ktLibLDWMNGByj+ZO5zfWMkS+2ME3oJZiE7yRsv9IoX/yTgu1VYaJ6r2jLgWYBNxHAEgSmKD+eFQNyqyu4uGwZRP7zZWV3V4Lk+KbzQlwPZiviTu9eEESHlRy3yAa8Ek4+AviIP+ipOwVsaVTmVIS6uL4h7/s8EwuNYccDHVgohK9ssQjgVRKbuTly/6HViS3PgcK4O12zrTfRb0LjQbo6QRHm1Yv2h8Bh0rDKanNqhtaU0N5zlP97qcE0A==
-X-YMail-OSG: TZ1u4LQVM1maeWRg0odaZljk2Y.gCDjZDl5ldg7rep5NrOFL_DFiC8jED8YcJ2l
- f1OJII7WnLopN6W48NqmJfA.e7cbbl7qHVWWmbuJcy6I7cfnqWBmPIs5k7WWmUQ2DccgNOsSRLt5
- wzr30rXbqbye_oYS5IRsXz4PEQED9WtstKJ2czECp0XkurJQZBb2uu2qVx3tw.FCzkkWnSlFuO10
- n89AoeSL4Uut.91ZaHlqTj.tie7Edm2nnHEr5A17Jzwe37qpSAZ4kxEXHp8xDupXcZPppZAAPbIq
- GgdBPo7X2UfuqV06HC4oKcYSdyJ7mZY_eLs5jj7.0eEZCQdSRqf5s.IaL95e_Q3FXS5OGw7vzBQi
- PbGZOGwxaPGEWpmA5OlcxJo8Wjpe9Ldq34b.9ALUbNVGQc6.7XaYrN0VknfXbQl5SelfdFQwLzt9
- zU7AAJ4Gpwg5dGG6QNy6ozd0OgdYY6WvcaeOlrVN_R_xdB72CuK7OpU1maSF3EpNXCs06o5QTY6h
- ik50VUFtHLXqC0mxW6cLuRE2OP7H9dr8yfVOwWNR4_HvW_N_HpKgflDkZ6XDQZxDT5fPwSYiPGtJ
- NnitxDXoMHlnBQtSTmIcwkl6nScVt1r5pjzm_6d0r34YOdlDmKNMQgMnpMEr5Py6A_AFQoBQhYRF
- I4pyVacAPkKtkUFwP.t.IDcd3j_uNQsgG.1SYzY4clR3K7ZgGv0n_vsHG0t_VcSTb01seGus5ful
- Hkk3aKY17w8w8hMhS66ECTE91oPQcxW0ib7HmRAIxjMeF4gcgMKVMZpJ_ypY_IHpwFmjesT8nGQJ
- 25.u9fybSqk7W88UHAli21ALg52k1D1OsoDyJTCpCROCMHdsWaAlCF9OYOA3Ofjxd7tCuKsGYn8a
- R7LfePhUhYxdnuFBODI1BlHruRrzmEnieOKMONyj5Mwd2W4oV92pH2wpVFFncQPrFdJBJZ986wQx
- QZDKeubPGLfjl4tE71rblOAPI_ohzBRkjD43frp9NbBPOlKcUSAZyDWlyovUciwuXNURAjhHBjAK
- uvAtS_K.FCmlPdPufDXxuE8hGzTpqxtYs1m4xUsWEf1JLmO5qutRZGzoCJ_oz8BKJFXJcwaGp6kF
- JPMCq_KgEwSyZioXR._X6yuIQ_hWfgQX5lmI2EPYTUIamIRA_qtC9QnYC3mjZ3z0JgyHwdbDGv3d
- p2bPm_CPui.tkH_nNgXG4CxHAJqh21RCvOsz5q0Md4_5RUSxx44b3tY8CEXO.gl4T_60U2y9Nz0i
- 9XMbsA4Sh5t2Iq28.w9SyoTRz6m2qAkSAONO4RX1n8ZsGhzZ.QgjS.fkMoUq9np4LFvMc4MesRRw
- vcJQV_xmUI6MjTbmea48LfhM6_BvyEHJVrjcd079VD8E-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic307.consmr.mail.ne1.yahoo.com with HTTP; Tue, 4 Aug 2020 17:49:14 +0000
-Received: by smtp418.mail.ne1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 4161dd1e2f88195a64a81452e29391ff;
-          Tue, 04 Aug 2020 17:49:10 +0000 (UTC)
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Subject: [GIT PULL] Smack patches for v5.9
-Message-ID: <8ce85723-5656-0ee8-67a7-35597d9df0dd@schaufler-ca.com>
-Date:   Tue, 4 Aug 2020 10:49:09 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.11.0
+        Tue, 4 Aug 2020 15:18:51 -0400
+Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54E21C06174A
+        for <linux-security-module@vger.kernel.org>; Tue,  4 Aug 2020 12:18:51 -0700 (PDT)
+Received: by mail-ej1-x644.google.com with SMTP id o23so16253858ejr.1
+        for <linux-security-module@vger.kernel.org>; Tue, 04 Aug 2020 12:18:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=iECZKbCttisI32R5vOBuQe0LHnglBF7s4axnvjSdNlk=;
+        b=nQ4grv0/FGhjcX/X9Q+kj/w809eT436vH2U+X4EgTlnaRGNA7g8vikX3m+zfSmYRaT
+         i6cmBUlwtVL6LQdpbpBz3ozbnlKtLwkowabhGu0920duv5F6NKDItb0IoNMhvkRdBd2i
+         gIIVodOYdnVzl0Ma8TCtUfhW97EQEZHXDBBfE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=iECZKbCttisI32R5vOBuQe0LHnglBF7s4axnvjSdNlk=;
+        b=VWvn0Yu93fNoQF9xg9/C3ti3bqsT0H74KMqjX98C0xwzw6wxwdqDyhDpeUWkNEpLYo
+         RWlbhkXuumRDS8wSaUZpYuG2hIpeImbsyi/2mJD5y6ZeiY/tAVwflerCAq//136w5C7F
+         FkCT7ybDYLatEZQOg/VW6aG+1BhUQ3C25amQwIIVbrkHtNi96B3KckMaCYt2mb+YAqPB
+         cYGi6cZUIASCqBJ2Ab3+4+CG0AMZeky1phhvLG5+UjjrlN5bOKoLTHDAx4XXLShAMw1v
+         cei6Uf5q6XxdYtf7oSRLE6FOgEvb3PHjCWTp8K0ZCLUbND5YBUlcd8xXgEC+zddK9lUA
+         JaBQ==
+X-Gm-Message-State: AOAM531Vj9rjWq8B8KARdKemt0oLPDtapG8og1sj5WSiBko0KMnhhxyO
+        Bz4gohNqmizELtJSKXuAiTxaEyPFGzml7vaUhYm5KA==
+X-Google-Smtp-Source: ABdhPJxzCVu2FMIuLxYbxYX+UMEg7zT277U5zuZN2lWf6qdwT1ZHQkTlmDhsVnKdcF178T6jfpPcrpCd3ySV7qJkuu8=
+X-Received: by 2002:a17:906:4aca:: with SMTP id u10mr20883333ejt.320.1596568729975;
+ Tue, 04 Aug 2020 12:18:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-References: <8ce85723-5656-0ee8-67a7-35597d9df0dd.ref@schaufler-ca.com>
-X-Mailer: WebService/1.1.16397 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo Apache-HttpAsyncClient/4.1.4 (Java/11.0.7)
+References: <159646178122.1784947.11705396571718464082.stgit@warthog.procyon.org.uk>
+ <1596555579.10158.23.camel@HansenPartnership.com>
+In-Reply-To: <1596555579.10158.23.camel@HansenPartnership.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Tue, 4 Aug 2020 21:18:38 +0200
+Message-ID: <CAJfpegtbX4DZcEuyF1oBatP__jRc_=HFmcJE8XUHjy1rwtqdOg@mail.gmail.com>
+Subject: Re: [PATCH 00/18] VFS: Filesystem information [ver #21]
+To:     James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc:     David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Jeff Layton <jlayton@kernel.org>, linux-ext4@vger.kernel.org,
+        Carlos Maiolino <cmaiolino@redhat.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ian Kent <raven@themaw.net>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Christian Brauner <christian@brauner.io>,
+        Jann Horn <jannh@google.com>, Karel Zak <kzak@redhat.com>,
+        Jeff Layton <jlayton@redhat.com>,
+        linux-fsdevel@vger.kernel.org,
+        LSM <linux-security-module@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello Linus
+On Tue, Aug 4, 2020 at 5:40 PM James Bottomley
+<James.Bottomley@hansenpartnership.com> wrote:
+>
+> On Mon, 2020-08-03 at 14:36 +0100, David Howells wrote:
+> > Here's a set of patches that adds a system call, fsinfo(), that
+> > allows information about the VFS, mount topology, superblock and
+> > files to be retrieved.
+> >
+> > The patchset is based on top of the notifications patchset and allows
+> > event counters implemented in the latter to be retrieved to allow
+> > overruns to be efficiently managed.
+>
+> Could I repeat the question I asked about six months back that never
+> got answered:
+>
+> https://lore.kernel.org/linux-api/1582316494.3376.45.camel@HansenPartnership.com/
+>
+> It sort of petered out into a long winding thread about why not use
+> sysfs instead, which really doesn't look like a good idea to me.
+>
+> I'll repeat the information for those who want to quote it easily on
+> reply without having to use a web interface:
+>
+> ---
+> Could I make a suggestion about how this should be done in a way that
+> doesn't actually require the fsinfo syscall at all: it could just be
+> done with fsconfig.  The idea is based on something I've wanted to do
+> for configfd but couldn't because otherwise it wouldn't substitute for
+> fsconfig, but Christian made me think it was actually essential to the
+> ability of the seccomp and other verifier tools in the critique of
+> configfd and I belive the same critique applies here.
+>
+> Instead of making fsconfig functionally configure ... as in you pass
+> the attribute name, type and parameters down into the fs specific
+> handler and the handler does a string match and then verifies the
+> parameters and then acts on them, make it table configured, so what
+> each fstype does is register a table of attributes which can be got and
+> optionally set (with each attribute having a get and optional set
+> function).  We'd have multiple tables per fstype, so the generic VFS
+> can register a table of attributes it understands for every fstype
+> (things like name, uuid and the like) and then each fs type would
+> register a table of fs specific attributes following the same pattern.
+> The system would examine the fs specific table before the generic one,
+> allowing overrides.  fsconfig would have the ability to both get and
+> set attributes, permitting retrieval as well as setting (which is how I
+> get rid of the fsinfo syscall), we'd have a global parameter, which
+> would retrieve the entire table by name and type so the whole thing is
+> introspectable because the upper layer knows a-priori all the
+> attributes which can be set for a given fs type and what type they are
+> (so we can make more of the parsing generic).  Any attribute which
+> doesn't have a set routine would be read only and all attributes would
+> have to have a get routine meaning everything is queryable.
 
-Here are three minor fixes to Smack for the v5.9 release.
-All were found by automated checkers and have straight forward
-resolution.
+fsconfig(2) takes an fd referring to an fs_context, that in turn
+refers to a super_block.
 
---
-The following changes since commit b3a9e3b9622ae10064826dccb4f7a52bd88c7407:
+So using fsconfig() for retrieving super_block attributes would be
+fine (modulo value being const, and lack of buffer size).
 
-  Linux 5.8-rc1 (2020-06-14 12:45:04 -0700)
+But what about mount attributes?
 
-are available in the Git repository at:
+I don't buy the argument that an API needs to be designed around the
+requirements of seccomp and the like.  It should be the other way
+round.  In that, I think your configfd idea was fine, and would answer
+the above question.
 
-  https://github.com/cschaufler/smack-next smack-for-5.9
-
-for you to fetch changes up to 42a2df3e829f3c5562090391b33714b2e2e5ad4a:
-
-  Smack: prevent underflow in smk_set_cipso() (2020-07-27 13:35:12 -0700)
-
-----------------------------------------------------------------
-Dan Carpenter (2):
-      Smack: fix another vsscanf out of bounds
-      Smack: prevent underflow in smk_set_cipso()
-
-Eric Biggers (1):
-      Smack: fix use-after-free in smk_write_relabel_self()
-
- security/smack/smackfs.c | 19 ++++++++++++++++---
- 1 file changed, 16 insertions(+), 3 deletions(-)
-
+Thanks,
+Miklos
