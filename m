@@ -1,146 +1,174 @@
-Return-Path: <SRS0=Dl7R=BN=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=B0YM=BO=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFFC6C433DF
-	for <linux-security-module@archiver.kernel.org>; Mon,  3 Aug 2020 23:16:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B227C433E3
+	for <linux-security-module@archiver.kernel.org>; Tue,  4 Aug 2020 02:16:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ECE6A20781
-	for <linux-security-module@archiver.kernel.org>; Mon,  3 Aug 2020 23:16:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3AC1420792
+	for <linux-security-module@archiver.kernel.org>; Tue,  4 Aug 2020 02:16:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="U3y1piV/"
+	dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b="c6z5GPuR";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="nFx19OQY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728926AbgHCXQY (ORCPT
+        id S1727115AbgHDCP7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 3 Aug 2020 19:16:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57940 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728891AbgHCXQY (ORCPT
+        Mon, 3 Aug 2020 22:15:59 -0400
+Received: from wnew1-smtp.messagingengine.com ([64.147.123.26]:49735 "EHLO
+        wnew1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725975AbgHDCP6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 3 Aug 2020 19:16:24 -0400
-Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66233C061756
-        for <linux-security-module@vger.kernel.org>; Mon,  3 Aug 2020 16:16:23 -0700 (PDT)
-Received: by mail-ej1-x642.google.com with SMTP id g19so26563288ejc.9
-        for <linux-security-module@vger.kernel.org>; Mon, 03 Aug 2020 16:16:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=RVPV7oxVS93iXefV8KQ0bKUcXLAvqUAHupIudOdk4DQ=;
-        b=U3y1piV/vs4p2cFmwFCj+by9kLDR7TX3YB4ZXXse0JO6mC48hufglIAmDp/1g9uIBs
-         6bsztBElrfuBb4hbJPfuLqZSxGJNSvj3/G4tM5tKjtd/+mJ3xHaLyMfG/xEXB0gSEnrx
-         +Ho6EB6vdUJfqAfUm9UIxvOml5mFY53nl3mWOdgnYADlDiIG9mv6Y3pEcDXf8uh8pN4v
-         lEUXWqwbSqYq3slPqu1zwYKeZNcHsx2O/SpnoafrqasFD6/YGwr8lJe/O/l7KqRj8hw7
-         fFIOLe8D2C4MlVvFUVRfyPQrYDBVsN0zOgTAJMNadcjyHptvP336kbT6Bk6BFB6uJfGy
-         FInw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=RVPV7oxVS93iXefV8KQ0bKUcXLAvqUAHupIudOdk4DQ=;
-        b=p1Ql94jW+ATAHd+cMU5EQ7Hjyzohz9SxL0YLPiE/YTYclDC8vCcMruOUEMJXnA73Fj
-         5R4suraNwO4AzVYiRkf/pjw69wpaviXHlgRFzhBoHmAVpWKvH4ups+MhGFUay9DaQSbY
-         3ux5ykSahTINuqcEl61xyQUuvrddd0gMjvZX9abV8bm87aY24KxdKMIa2gvze4CBkfX0
-         YrCBLT5s/IpQnugYjsuiGlPOtL55xx/iAXgFx8BXV0ciSVW862wi3+3+ssodXotjR8we
-         Ynrf95EM6971Mszy5zsMBoMy3D34mBoPTyzxO1SOsZ1GdAHDfxxkraQvEC0+3eXHf9eR
-         wZeg==
-X-Gm-Message-State: AOAM533KMpITWwxbGu8Ljk86AaqJ1iuTbcagCkS005gKGZrM5N4UR+ty
-        nJwOk3GhYIkt5ay3RHztya7V7SjnNXLeuC7C9okTdlJL3tvz
-X-Google-Smtp-Source: ABdhPJzbjZ+13fbSX2hywI8tfmTickIarJs8hvmSCpKZYozNkrcWSZ9Sw/Fd/U/iaB60GIdz7Me9Kr3ZxTHvXOaQ8Q8=
-X-Received: by 2002:a17:906:1911:: with SMTP id a17mr17799685eje.431.1596496582017;
- Mon, 03 Aug 2020 16:16:22 -0700 (PDT)
-MIME-Version: 1.0
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 3 Aug 2020 19:16:10 -0400
-Message-ID: <CAHC9VhTy5xcOqx2SRjsyC-H-xvj3vvbHDt7O-S7TLYhXjANZGw@mail.gmail.com>
-Subject: [GIT PULL] SELinux patches for v5.9
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        Mon, 3 Aug 2020 22:15:58 -0400
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
+        by mailnew.west.internal (Postfix) with ESMTP id D0BE1109E;
+        Mon,  3 Aug 2020 22:15:56 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Mon, 03 Aug 2020 22:15:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
+        message-id:subject:from:to:cc:date:in-reply-to:references
+        :content-type:mime-version:content-transfer-encoding; s=fm3; bh=
+        Yf5WKRO+L01e+K0gQ+L/XIx6I13Eu/IhzjwnU3V5dgc=; b=c6z5GPuRxHtsPtGY
+        P2POfINNzW66vYofIVzYVwHi13eTDhiL2WxSOKOvbymdtptV7Mp+qlpNOL9tHc83
+        7fmMAA6LyGKVnsT+O8LfiHvywmCyYJ3iVdZ1rVggs1J82fMbth7pQPw/4iZoZYZ6
+        j4FhANVoVoqR3fzOjngPvn7ypuMd2gIFNfr4RUpoq6owEo8lQi9zNjuAgaoZtPC5
+        z3uLb7fxv8OvYiSlmnwoCPCmR1WNcVH0VvhxPaLgvMa52OaYzMJp5MJ4nBo97rAp
+        FtbgtlMsub9XfboFIqq8Z2Fn7ztP3CRkAFrIIoirO/xa4bMWi8UN8ya2RaYt9xlQ
+        msCcEA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; bh=Yf5WKRO+L01e+K0gQ+L/XIx6I13Eu/IhzjwnU3V5d
+        gc=; b=nFx19OQYzzZpwIHK6HpTDDfgmz5APlzGRIrPXSKbMKbCjhJLMd9hjYCV/
+        nt/IqfJaZ3H6oCg9XzUyPcdbUAggHTBBdSkT2kwwlHk+xoR9jPRg17l0gHFJ9VOW
+        ENJnDcKVKCq0pPnLHq4WNa+Hw5O5KS3RGu/0+G10QClUN5jMgG1uJg6EMj5JsP7Y
+        2suqHnujWz3a5aeQN27H22ipANuVkaGJ4m50iCQo6g7Y0OhSM/jt5VvU4tDFhcEp
+        4DLT/n/3Oh2N3lLE22sLsRoPPnplqJWHlKJxasVXH+OSSTKi82THesNcef9ixwqP
+        U4QcPM9C10N9mJOycOn3BR7LLrfVg==
+X-ME-Sender: <xms:28QoX9kfHU6I_-P-KFh2NCyyMhNxO0Wy56iSBdkKI5_54YoL7qltNg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduiedrjeehgdehjecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefkuffhvfffjghftggfggfgsehtkeertddtreejnecuhfhrohhmpefkrghnucfm
+    vghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnhepgf
+    elleekteehleegheeujeeuudfhueffgfelhefgvedthefhhffhhfdtudfgfeehnecukfhp
+    peduudekrddvtdekrdegjedrudeiudenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpehrrghvvghnsehthhgvmhgrfidrnhgvth
+X-ME-Proxy: <xmx:28QoX42hBT_u_f-GDrU9bAY2IwY1BIl1uRaOxGt1nlKBi0UyIUYeaQ>
+    <xmx:28QoXzrP5g94gMa__7eHy5VgGK6VG041qEheMqb1HaU1RwJDQiX3hA>
+    <xmx:28QoX9nDz72gVMjYcV8Caf9p_0KxKhaSeU7w54d29-HZHR65WMi5Cw>
+    <xmx:3MQoX9yMsQy_Sa6iqa0KFI5VWNpxAgWRegW3V-tKjokRuAyJAk3yIh4uc0w>
+Received: from mickey.themaw.net (unknown [118.208.47.161])
+        by mail.messagingengine.com (Postfix) with ESMTPA id D9CA2328005E;
+        Mon,  3 Aug 2020 22:15:50 -0400 (EDT)
+Message-ID: <ac1f5e3406abc0af4cd08d818fe920a202a67586.camel@themaw.net>
+Subject: Re: [GIT PULL] Filesystem Information
+From:   Ian Kent <raven@themaw.net>
+To:     Miklos Szeredi <miklos@szeredi.hu>,
+        David Howells <dhowells@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, Karel Zak <kzak@redhat.com>,
+        Jeff Layton <jlayton@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        Christian Brauner <christian@brauner.io>,
+        Lennart Poettering <lennart@poettering.net>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        LSM <linux-security-module@vger.kernel.org>,
         linux-kernel@vger.kernel.org
+Date:   Tue, 04 Aug 2020 10:15:47 +0800
+In-Reply-To: <CAJfpegunY3fuxh486x9ysKtXbhTE0745ZCVHcaqs9Gww9RV2CQ@mail.gmail.com>
+References: <1842689.1596468469@warthog.procyon.org.uk>
+         <1845353.1596469795@warthog.procyon.org.uk>
+         <CAJfpegunY3fuxh486x9ysKtXbhTE0745ZCVHcaqs9Gww9RV2CQ@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Linus,
+On Mon, 2020-08-03 at 18:42 +0200, Miklos Szeredi wrote:
+> On Mon, Aug 3, 2020 at 5:50 PM David Howells <dhowells@redhat.com>
+> wrote:
+> > 
+> > Hi Linus,
+> > 
+> > Here's a set of patches that adds a system call, fsinfo(), that
+> > allows
+> > information about the VFS, mount topology, superblock and files to
+> > be
+> > retrieved.
+> > 
+> > The patchset is based on top of the mount notifications patchset so
+> > that
+> > the mount notification mechanism can be hooked to provide event
+> > counters
+> > that can be retrieved with fsinfo(), thereby making it a lot faster
+> > to work
+> > out which mounts have changed.
+> > 
+> > Note that there was a last minute change requested by Miklós: the
+> > event
+> > counter bits got moved from the mount notification patchset to this
+> > one.
+> > The counters got made atomic_long_t inside the kernel and __u64 in
+> > the
+> > UAPI.  The aggregate changes can be assessed by comparing pre-
+> > change tag,
+> > fsinfo-core-20200724 to the requested pull tag.
+> > 
+> > Karel Zak has created preliminary patches that add support to
+> > libmount[*]
+> > and Ian Kent has started working on making systemd use these and
+> > mount
+> > notifications[**].
+> 
+> So why are you asking to pull at this stage?
+> 
+> Has anyone done a review of the patchset?
 
-Here is the SELinux pull request for the v5.9 release.  All the
-patches pass our test suite and earlier this evening they merged
-cleanly with your tree.
+I have been working with the patch set as it has evolved for quite a
+while now.
 
-Beyond the usual smattering of bug fixes, we've got three small
-improvements worth highlighting:
+I've been reading the kernel code quite a bit and forwarded questions
+and minor changes to David as they arose.
 
-- Improved SELinux policy symbol table performance due to a reworking
-of the insert and search functions
+As for a review, not specifically, but while the series implements a
+rather large change it's surprisingly straight forward to read.
 
-- Allow reading of SELinux labels before the policy is loaded,
-allowing for some more "exotic" initramfs approaches
+In the time I have been working with it I haven't noticed any problems
+except for those few minor things that I reported to David early on (in
+some cases accompanied by simple patches).
 
-- Improved checking an error reporting about process class/permissions
-during SELinux policy load
+And more recently (obviously) I've been working with the mount
+notifications changes and, from a readability POV, I find it's the
+same as the fsinfo() code.
 
-Please merge these for v5.9.  Thanks,
--Paul
+> 
+> I think it's obvious that this API needs more work.  The integration
+> work done by Ian is a good direction, but it's not quite the full
+> validation and review that a complex new API needs.
 
---
-The following changes since commit b3a9e3b9622ae10064826dccb4f7a52bd88c7407:
+Maybe but the system call is fundamental to making notifications useful
+and, as I say, after working with it for quite a while I don't fell
+there's missing features (that David hasn't added along the way) and
+have found it provides what's needed for what I'm doing (for mount
+notifications at least).
 
- Linux 5.8-rc1 (2020-06-14 12:45:04 -0700)
+I'll be posting a github PR for systemd for discussion soon while I
+get on with completing the systemd change. Like overflow handling and
+meson build system changes to allow building with and without the
+util-linux libmount changes.
 
-are available in the Git repository at:
+So, ideally, I'd like to see the series merged, we've been working on
+it for quite a considerable time now.
 
- git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
-   tags/selinux-pr-20200803
+Ian
 
-for you to fetch changes up to 54b27f9287a7b3dfc85549f01fc9d292c92c68b9:
-
- selinux: complete the inlining of hashtab functions
-   (2020-07-09 19:08:16 -0400)
-
-----------------------------------------------------------------
-selinux/stable-5.9 PR 20200803
-
-----------------------------------------------------------------
-Ethan Edwards (1):
-     selinux: fixed a checkpatch warning with the sizeof macro
-
-Jonathan Lebon (1):
-     selinux: allow reading labels before policy is loaded
-
-Ondrej Mosnacek (3):
-     selinux: specialize symtab insert and search functions
-     selinux: prepare for inlining of hashtab functions
-     selinux: complete the inlining of hashtab functions
-
-Stephen Smalley (2):
-     scripts/selinux/mdp: fix initial SID handling
-     selinux: log error messages on required process class / permissions
-
-lihao (1):
-     selinux: Fix spelling mistakes in the comments
-
-scripts/selinux/mdp/mdp.c         |  23 ++++--
-security/selinux/hooks.c          |   7 +-
-security/selinux/netif.c          |   2 +-
-security/selinux/netnode.c        |   2 +-
-security/selinux/netport.c        |   2 +-
-security/selinux/ss/conditional.c |   8 +--
-security/selinux/ss/conditional.h |   2 +-
-security/selinux/ss/hashtab.c     |  59 ++-------------
-security/selinux/ss/hashtab.h     |  77 ++++++++++++++++----
-security/selinux/ss/mls.c         |  23 +++---
-security/selinux/ss/policydb.c    | 148 ++++++++++++++++++++++------------
-security/selinux/ss/policydb.h    |   9 +++
-security/selinux/ss/services.c    |  38 +++++-----
-security/selinux/ss/symtab.c      |  21 ++++--
-security/selinux/ss/symtab.h      |   3 +
-15 files changed, 258 insertions(+), 166 deletions(-)
-
--- 
-paul moore
-www.paul-moore.com
