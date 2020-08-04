@@ -4,59 +4,59 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D46FCC433E1
-	for <linux-security-module@archiver.kernel.org>; Tue,  4 Aug 2020 10:33:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7AEDC433E1
+	for <linux-security-module@archiver.kernel.org>; Tue,  4 Aug 2020 10:41:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C23A32065C
-	for <linux-security-module@archiver.kernel.org>; Tue,  4 Aug 2020 10:33:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98B8920656
+	for <linux-security-module@archiver.kernel.org>; Tue,  4 Aug 2020 10:41:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="ADWwdFbG"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="RsP0Dez4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728254AbgHDKdk (ORCPT
+        id S1725996AbgHDKlV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 4 Aug 2020 06:33:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49290 "EHLO
+        Tue, 4 Aug 2020 06:41:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50468 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726056AbgHDKdj (ORCPT
+        with ESMTP id S1728560AbgHDKlN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 4 Aug 2020 06:33:39 -0400
-Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 657CAC06174A
-        for <linux-security-module@vger.kernel.org>; Tue,  4 Aug 2020 03:33:39 -0700 (PDT)
-Received: by mail-ej1-x641.google.com with SMTP id bo3so19218489ejb.11
-        for <linux-security-module@vger.kernel.org>; Tue, 04 Aug 2020 03:33:39 -0700 (PDT)
+        Tue, 4 Aug 2020 06:41:13 -0400
+Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF4E6C06179E
+        for <linux-security-module@vger.kernel.org>; Tue,  4 Aug 2020 03:41:12 -0700 (PDT)
+Received: by mail-ed1-x541.google.com with SMTP id l23so15762435edv.11
+        for <linux-security-module@vger.kernel.org>; Tue, 04 Aug 2020 03:41:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=szeredi.hu; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=7OdZPdzwSvHqm7g1yE57slREGh+EjSxFCsqpvTzonbk=;
-        b=ADWwdFbGWs4B/ikeUd3/W3NjqmaGTrpwY2+qPXtasVwoEydz3WHJxkYqeQsEvrSLT5
-         BpsHhDs719A33JO9W123zhpsOHv8eWh98CSfIfmdxsBpN/6RUpaOEypJLwFHZ/8PyoXf
-         zYLxSQmcy4jgUCeZKSYMdg97iheD2DqNjfQ2A=
+        bh=HJDGqnBNBibFjObEixMOV83HWOZyXU89o9TO01hMyLI=;
+        b=RsP0Dez4CRPGgZm75GnJjeLxJeymavBEExZwCbGNsxvzH9OVH+kmlD7Ldhp3eNAs7I
+         8vyA8lcp9xzI4MBspyZMRog4UFEg00GloukWpE58T2vOYxFEpgJtiSOUn73KEJmnc2Uh
+         EdkcgdhRO4zxRCvdu7IVVBcqAfMPVu35vt85I=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=7OdZPdzwSvHqm7g1yE57slREGh+EjSxFCsqpvTzonbk=;
-        b=Q69QBPAUHHnVv/SdytaIX2u2zaRaygih6qy3Gn9fCAK5/7111qSMjIMXkgeUSzz4eS
-         0TADah55zpwQksrC2X7xWIYuYNqj5xpXjXl5iFi7RLZa+NVyD0/yL4euL1hZMZtHpzI4
-         JfrnKkTYGK4eGwcnoz855ITCuj0oSfgxPKOH0HvGPpQqzlGeDRrEc6ufT6mBrUU0uUBN
-         LjmmczH0RZzQgrLrL3jBN+VE3E4WjdlqiiKEgJD1iJnB/UiKUhkY7KX4iocekjVqL85a
-         EyNXXZOt65nA6c62ZNWRCTB/4jkjZskG/LnGVUBV43pD9fWr9tLnavZhOZ2zCFvwJQiK
-         g64w==
-X-Gm-Message-State: AOAM532yWm33oE1MVZub07oopFConou4CdZlvGMD6QZtB36KKbkPshb/
-        YC5wWhtoURsxIgZ1VHdshNkeow==
-X-Google-Smtp-Source: ABdhPJwVqE32WvMqnbbzWhUokykbnLig/Ij4fLqiT+LpYqVwVytsRaB4rbhqvyAT2rGIY81cpLkLoQ==
-X-Received: by 2002:a17:906:95d4:: with SMTP id n20mr21851381ejy.485.1596537218076;
-        Tue, 04 Aug 2020 03:33:38 -0700 (PDT)
+        bh=HJDGqnBNBibFjObEixMOV83HWOZyXU89o9TO01hMyLI=;
+        b=CwynIjNdIeEBC0YNPKhWAqkzcSZfvO18OXM7HEo5NZ70NCaKdTjffUtV7h5cgDBynp
+         fOYNgofloME0Mg64psOa4SDt52+THpSjuW8qF203PC6IaOSl4GFVk4G+RccQ0ZfyOcf0
+         PP/RrYY4NxxZf9tv+A2YUfa577keGrRPNElx4GzcAaaMjmuwuwIT95dT4m3c1RCtmD9n
+         EdtvgbBevQ3ECCiVqK7c9oxL3+yRo7s2lbILvysBzSFrVTb8h9eTjoNYdUQp2wl0qG+q
+         6crRFLuaUIDlt+cGsBU/RR+NQtP5JD/y4jLrNfEDVV2quBwf+6Rn80OGeOMFmOfzl4tG
+         Fs1A==
+X-Gm-Message-State: AOAM531sC1svx/5lXZ651Jxhb7iPQPJlpxOzEGXGB8lv++CvVOKKOizA
+        AuFncWTMWh9Ap2sFNTvBQFx0Dw==
+X-Google-Smtp-Source: ABdhPJwyySilMxuE+LAsWOY2Y0iK4ietlusLfHz1j0+yzFekAp6FeWunyjURnbnr9K5sXQ47ys4WCQ==
+X-Received: by 2002:a05:6402:b1b:: with SMTP id bm27mr14223356edb.140.1596537671215;
+        Tue, 04 Aug 2020 03:41:11 -0700 (PDT)
 Received: from miu.piliscsaba.redhat.com (94-21-100-63.pool.digikabel.hu. [94.21.100.63])
-        by smtp.gmail.com with ESMTPSA id lj26sm7464319ejb.26.2020.08.04.03.33.36
+        by smtp.gmail.com with ESMTPSA id c18sm18357270eja.13.2020.08.04.03.41.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Aug 2020 03:33:37 -0700 (PDT)
-Date:   Tue, 4 Aug 2020 12:33:35 +0200
+        Tue, 04 Aug 2020 03:41:10 -0700 (PDT)
+Date:   Tue, 4 Aug 2020 12:41:08 +0200
 From:   Miklos Szeredi <miklos@szeredi.hu>
 To:     David Howells <dhowells@redhat.com>
 Cc:     viro@zeniv.linux.org.uk, torvalds@linux-foundation.org,
@@ -65,354 +65,101 @@ Cc:     viro@zeniv.linux.org.uk, torvalds@linux-foundation.org,
         jlayton@redhat.com, linux-api@vger.kernel.org,
         linux-fsdevel@vger.kernel.org,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 05/18] fsinfo: Allow fsinfo() to look up a mount object
- by ID [ver #21]
-Message-ID: <20200804103335.GB32719@miu.piliscsaba.redhat.com>
+Subject: Re: [PATCH 06/18] fsinfo: Add a uniquifier ID to struct mount [ver
+ #21]
+Message-ID: <20200804104108.GC32719@miu.piliscsaba.redhat.com>
 References: <159646178122.1784947.11705396571718464082.stgit@warthog.procyon.org.uk>
- <159646182832.1784947.10440560370840683639.stgit@warthog.procyon.org.uk>
+ <159646183662.1784947.5709738540440380373.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <159646182832.1784947.10440560370840683639.stgit@warthog.procyon.org.uk>
+In-Reply-To: <159646183662.1784947.5709738540440380373.stgit@warthog.procyon.org.uk>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Aug 03, 2020 at 02:37:08PM +0100, David Howells wrote:
-> Allow the fsinfo() syscall to look up a mount object by ID rather than by
-> pathname.  This is necessary as there can be multiple mounts stacked up at
-> the same pathname and there's no way to look through them otherwise.
+On Mon, Aug 03, 2020 at 02:37:16PM +0100, David Howells wrote:
+> Add a uniquifier ID to struct mount that is effectively unique over the
+> kernel lifetime to deal around mnt_id values being reused.  This can then
+> be exported through fsinfo() to allow detection of replacement mounts that
+> happen to end up with the same mount ID.
 > 
-> This is done by passing FSINFO_FLAGS_QUERY_MOUNT to fsinfo() in the
-> parameters and then passing the mount ID as a string to fsinfo() in place
-> of the filename:
+> The normal mount handle is still used for referring to a particular mount.
 > 
-> 	struct fsinfo_params params = {
-> 		.flags	 = FSINFO_FLAGS_QUERY_MOUNT,
-> 		.request = FSINFO_ATTR_IDS,
-> 	};
-> 
-> 	ret = fsinfo(AT_FDCWD, "21", &params, buffer, sizeof(buffer));
-> 
-> The caller is only permitted to query a mount object if the root directory
-> of that mount connects directly to the current chroot if dfd == AT_FDCWD[*]
-> or the directory specified by dfd otherwise.  Note that this is not
-> available to the pathwalk of any other syscall.
-> 
-> [*] This needs to be something other than AT_FDCWD, perhaps AT_FDROOT.
-> 
-> [!] This probably needs an LSM hook.
-> 
-> [!] This might want to check the permissions on all the intervening dirs -
->     but it would have to do that under RCU conditions.
-> 
-> [!] This might want to check a CAP_* flag.
-
-Was this reviewed by security folks?
-
+> The mount notification is then changed to convey these unique mount IDs
+> rather than the mount handle.
 > 
 > Signed-off-by: David Howells <dhowells@redhat.com>
 > ---
 > 
->  fs/fsinfo.c                 |   53 +++++++++++++++++++
->  fs/internal.h               |    1 
->  fs/namespace.c              |  117 ++++++++++++++++++++++++++++++++++++++++++-
->  include/uapi/linux/fsinfo.h |    1 
->  samples/vfs/test-fsinfo.c   |    7 ++-
->  5 files changed, 175 insertions(+), 4 deletions(-)
+>  fs/mount.h        |    3 +++
+>  fs/mount_notify.c |    4 ++--
+>  fs/namespace.c    |    3 +++
+>  3 files changed, 8 insertions(+), 2 deletions(-)
 > 
-> diff --git a/fs/fsinfo.c b/fs/fsinfo.c
-> index aef7a736e8fc..8ccbcddb4f16 100644
-> --- a/fs/fsinfo.c
-> +++ b/fs/fsinfo.c
-> @@ -563,6 +563,56 @@ static int vfs_fsinfo_fd(unsigned int fd, struct fsinfo_context *ctx)
->  	return ret;
->  }
+> diff --git a/fs/mount.h b/fs/mount.h
+> index 85456a5f5a3a..1037781be055 100644
+> --- a/fs/mount.h
+> +++ b/fs/mount.h
+> @@ -79,6 +79,9 @@ struct mount {
+>  	int mnt_expiry_mark;		/* true if marked for expiry */
+>  	struct hlist_head mnt_pins;
+>  	struct hlist_head mnt_stuck_children;
+> +#ifdef CONFIG_FSINFO
+> +	u64	mnt_unique_id;		/* ID unique over lifetime of kernel */
+> +#endif
+
+Not sure if it's worth making conditional.
+
+>  #ifdef CONFIG_MOUNT_NOTIFICATIONS
+>  	struct watch_list *mnt_watchers; /* Watches on dentries within this mount */
+>  #endif
+> diff --git a/fs/mount_notify.c b/fs/mount_notify.c
+> index 44f570e4cebe..d8ba66ed5f77 100644
+> --- a/fs/mount_notify.c
+> +++ b/fs/mount_notify.c
+> @@ -90,7 +90,7 @@ void notify_mount(struct mount *trigger,
+>  	n.watch.type	= WATCH_TYPE_MOUNT_NOTIFY;
+>  	n.watch.subtype	= subtype;
+>  	n.watch.info	= info_flags | watch_sizeof(n);
+> -	n.triggered_on	= trigger->mnt_id;
+> +	n.triggered_on	= trigger->mnt_unique_id;
 >  
-> +/*
-> + * Look up the root of a mount object.  This allows access to mount objects
-> + * (and their attached superblocks) that can't be retrieved by path because
-> + * they're entirely covered.
-> + *
-> + * We only permit access to a mount that has a direct path between either the
-> + * dentry pointed to by dfd or to our chroot (if dfd is AT_FDCWD).
-> + */
-> +static int vfs_fsinfo_mount(int dfd, const char __user *filename,
-> +			    struct fsinfo_context *ctx)
-> +{
-> +	struct path path;
-> +	struct fd f = {};
-> +	char *name;
-> +	unsigned long mnt_id;
-> +	int ret;
-> +
-> +	if (!filename)
-> +		return -EINVAL;
-> +
-> +	name = strndup_user(filename, 32);
-> +	if (IS_ERR(name))
-> +		return PTR_ERR(name);
-> +	ret = kstrtoul(name, 0, &mnt_id);
-> +	if (ret < 0)
-> +		goto out_name;
-> +	if (mnt_id > INT_MAX)
-> +		goto out_name;
-> +
-> +	if (dfd != AT_FDCWD) {
-> +		ret = -EBADF;
-> +		f = fdget_raw(dfd);
-> +		if (!f.file)
-> +			goto out_name;
-> +	}
-> +
-> +	ret = lookup_mount_object(f.file ? &f.file->f_path : NULL,
-> +				  mnt_id, &path);
-> +	if (ret < 0)
-> +		goto out_fd;
-> +
-> +	ret = vfs_fsinfo(&path, ctx);
-> +	path_put(&path);
-> +out_fd:
-> +	fdput(f);
-> +out_name:
-> +	kfree(name);
-> +	return ret;
-> +}
-> +
->  /**
->   * sys_fsinfo - System call to get filesystem information
->   * @dfd: Base directory to pathwalk from or fd referring to filesystem.
-> @@ -636,6 +686,9 @@ SYSCALL_DEFINE6(fsinfo,
->  			return -EINVAL;
->  		ret = vfs_fsinfo_fd(dfd, &ctx);
+>  	switch (subtype) {
+>  	case NOTIFY_MOUNT_EXPIRY:
+> @@ -102,7 +102,7 @@ void notify_mount(struct mount *trigger,
+>  	case NOTIFY_MOUNT_UNMOUNT:
+>  	case NOTIFY_MOUNT_MOVE_FROM:
+>  	case NOTIFY_MOUNT_MOVE_TO:
+> -		n.auxiliary_mount	= aux->mnt_id;
+> +		n.auxiliary_mount = aux->mnt_unique_id;
+
+Hmm, so we now have two ID's:
+
+ - one can be used to look up the mount
+ - one is guaranteed to be unique
+
+With this change the mount cannot be looked up with FSINFO_FLAGS_QUERY_MOUNT,
+right?
+
+Should we be merging the two ID's into a single one which has both properties?
+
 >  		break;
-> +	case FSINFO_FLAGS_QUERY_MOUNT:
-> +		ret = vfs_fsinfo_mount(dfd, pathname, &ctx);
-> +		break;
+>  
 >  	default:
->  		return -EINVAL;
->  	}
-> diff --git a/fs/internal.h b/fs/internal.h
-> index 0b57da498f06..84bbb743a5ac 100644
-> --- a/fs/internal.h
-> +++ b/fs/internal.h
-> @@ -89,6 +89,7 @@ extern int __mnt_want_write_file(struct file *);
->  extern void __mnt_drop_write_file(struct file *);
->  
->  extern void dissolve_on_fput(struct vfsmount *);
-> +extern int lookup_mount_object(struct path *, unsigned int, struct path *);
->  extern int fsinfo_generic_mount_source(struct path *, struct fsinfo_context *);
->  
->  /*
 > diff --git a/fs/namespace.c b/fs/namespace.c
-> index ead8d1a16610..b2b9920ffd3c 100644
+> index b2b9920ffd3c..1db8a64cd76f 100644
 > --- a/fs/namespace.c
 > +++ b/fs/namespace.c
-> @@ -64,7 +64,7 @@ static int __init set_mphash_entries(char *str)
->  __setup("mphash_entries=", set_mphash_entries);
->  
->  static u64 event;
-> -static DEFINE_IDA(mnt_id_ida);
-> +static DEFINE_IDR(mnt_id_ida);
->  static DEFINE_IDA(mnt_group_ida);
->  
->  static struct hlist_head *mount_hashtable __read_mostly;
-> @@ -105,17 +105,27 @@ static inline struct hlist_head *mp_hash(struct dentry *dentry)
->  
->  static int mnt_alloc_id(struct mount *mnt)
->  {
-> -	int res = ida_alloc(&mnt_id_ida, GFP_KERNEL);
-> +	int res;
->  
-> +	/* Allocate an ID, but don't set the pointer back to the mount until
-> +	 * later, as once we do that, we have to follow RCU protocols to get
-> +	 * rid of the mount struct.
-> +	 */
-> +	res = idr_alloc(&mnt_id_ida, NULL, 0, INT_MAX, GFP_KERNEL);
-
-This needs to be a separate patch.
-
+> @@ -115,6 +115,9 @@ static int mnt_alloc_id(struct mount *mnt)
 >  	if (res < 0)
 >  		return res;
 >  	mnt->mnt_id = res;
+> +#ifdef CONFIG_FSINFO
+> +	mnt->mnt_unique_id = atomic64_inc_return(&vfs_unique_counter);
+> +#endif
 >  	return 0;
 >  }
->  
-> +static void mnt_publish_id(struct mount *mnt)
-> +{
-> +	idr_replace(&mnt_id_ida, mnt, mnt->mnt_id);
-> +}
-> +
->  static void mnt_free_id(struct mount *mnt)
->  {
-> -	ida_free(&mnt_id_ida, mnt->mnt_id);
-> +	idr_remove(&mnt_id_ida, mnt->mnt_id);
->  }
->  
->  /*
-> @@ -975,6 +985,7 @@ struct vfsmount *vfs_create_mount(struct fs_context *fc)
->  	lock_mount_hash();
->  	list_add_tail(&mnt->mnt_instance, &mnt->mnt.mnt_sb->s_mounts);
->  	unlock_mount_hash();
-> +	mnt_publish_id(mnt);
->  	return &mnt->mnt;
->  }
->  EXPORT_SYMBOL(vfs_create_mount);
-> @@ -1068,6 +1079,7 @@ static struct mount *clone_mnt(struct mount *old, struct dentry *root,
->  	lock_mount_hash();
->  	list_add_tail(&mnt->mnt_instance, &sb->s_mounts);
->  	unlock_mount_hash();
-> +	mnt_publish_id(mnt);
->  
->  	if ((flag & CL_SLAVE) ||
->  	    ((flag & CL_SHARED_TO_SLAVE) && IS_MNT_SHARED(old))) {
-> @@ -4151,4 +4163,103 @@ int fsinfo_generic_mount_source(struct path *path, struct fsinfo_context *ctx)
->  	return m.count + 1;
->  }
->  
-> +/*
-> + * See if one path point connects directly to another by ancestral relationship
-> + * across mountpoints.  Must call with the RCU read lock held.
-> + */
-> +static bool are_paths_connected(struct path *ancestor, struct path *to_check)
-> +{
-> +	struct mount *mnt, *parent;
-> +	struct path cursor;
-> +	unsigned seq;
-> +	bool connected;
-> +
-> +	seq = 0;
-> +restart:
-> +	cursor = *to_check;
-> +
-> +	read_seqbegin_or_lock(&rename_lock, &seq);
-> +	while (cursor.mnt != ancestor->mnt) {
-> +		mnt = real_mount(cursor.mnt);
-> +		parent = READ_ONCE(mnt->mnt_parent);
-> +		if (mnt == parent)
-> +			goto failed;
-> +		cursor.dentry = READ_ONCE(mnt->mnt_mountpoint);
-> +		cursor.mnt = &parent->mnt;
-> +	}
-> +
-> +	while (cursor.dentry != ancestor->dentry) {
-> +		if (cursor.dentry == cursor.mnt->mnt_root ||
-> +		    IS_ROOT(cursor.dentry))
-> +			goto failed;
-> +		cursor.dentry = READ_ONCE(cursor.dentry->d_parent);
-> +	}
-> +
-> +	connected = true;
-> +out:
-> +	done_seqretry(&rename_lock, seq);
-> +	return connected;
-> +
-> +failed:
-> +	if (need_seqretry(&rename_lock, seq)) {
-> +		seq = 1;
-> +		goto restart;
-> +	}
-> +	connected = false;
-> +	goto out;
-> +}
-> +
-> +/**
-> + * lookup_mount_object - Look up a vfsmount object by ID
-> + * @root: The mount root must connect backwards to this point (or chroot if NULL).
-> + * @id: The ID of the mountpoint.
-> + * @_mntpt: Where to return the resulting mountpoint path.
-> + *
-> + * Look up the root of the mount with the corresponding ID.  This is only
-> + * permitted if that mount connects directly to the specified root/chroot.
-> + */
-> +int lookup_mount_object(struct path *root, unsigned int mnt_id, struct path *_mntpt)
-> +{
-> +	struct mount *mnt;
-> +	struct path stop, mntpt = {};
-> +	int ret = -EPERM;
-> +
-> +	if (!root)
-> +		get_fs_root(current->fs, &stop);
-> +	else
-> +		stop = *root;
-> +
-> +	rcu_read_lock();
-> +	lock_mount_hash();
-> +	mnt = idr_find(&mnt_id_ida, mnt_id);
-> +	if (!mnt)
-> +		goto out_unlock_mh;
-> +	if (mnt->mnt.mnt_flags & (MNT_SYNC_UMOUNT | MNT_UMOUNT | MNT_DOOMED))
-> +		goto out_unlock_mh;
-> +	if (mnt_get_count(mnt) == 0)
-> +		goto out_unlock_mh;
-> +	mnt_add_count(mnt, 1);
-> +	mntpt.mnt = &mnt->mnt;
-> +	mntpt.dentry = dget(mnt->mnt.mnt_root);
-> +	unlock_mount_hash();
-> +
-> +	if (are_paths_connected(&stop, &mntpt)) {
-> +		*_mntpt = mntpt;
-> +		mntpt.mnt = NULL;
-> +		mntpt.dentry = NULL;
-> +		ret = 0;
-> +	}
-> +
-> +out_unlock:
-> +	rcu_read_unlock();
-> +	if (!root)
-> +		path_put(&stop);
-> +	path_put(&mntpt);
-> +	return ret;
-> +
-> +out_unlock_mh:
-> +	unlock_mount_hash();
-> +	goto out_unlock;
-> +}
-> +
->  #endif /* CONFIG_FSINFO */
-> diff --git a/include/uapi/linux/fsinfo.h b/include/uapi/linux/fsinfo.h
-> index a27e92b68266..d24e47762a07 100644
-> --- a/include/uapi/linux/fsinfo.h
-> +++ b/include/uapi/linux/fsinfo.h
-> @@ -44,6 +44,7 @@ struct fsinfo_params {
->  #define FSINFO_FLAGS_QUERY_MASK	0x0007 /* What object should fsinfo() query? */
->  #define FSINFO_FLAGS_QUERY_PATH	0x0000 /* - path, specified by dirfd,pathname,AT_EMPTY_PATH */
->  #define FSINFO_FLAGS_QUERY_FD	0x0001 /* - fd specified by dirfd */
-> +#define FSINFO_FLAGS_QUERY_MOUNT 0x0002	/* - mount object (path=>mount_id, dirfd=>subtree) */
->  	__u32	request;	/* ID of requested attribute */
->  	__u32	Nth;		/* Instance of it (some may have multiple) */
->  	__u32	Mth;		/* Subinstance of Nth instance */
-> diff --git a/samples/vfs/test-fsinfo.c b/samples/vfs/test-fsinfo.c
-> index 634f30b7e67f..dfa44bba8bbd 100644
-> --- a/samples/vfs/test-fsinfo.c
-> +++ b/samples/vfs/test-fsinfo.c
-> @@ -593,7 +593,7 @@ int main(int argc, char **argv)
->  	bool meta = false;
->  	int raw = 0, opt, Nth, Mth;
->  
-> -	while ((opt = getopt(argc, argv, "Madlr"))) {
-> +	while ((opt = getopt(argc, argv, "Madmlr"))) {
->  		switch (opt) {
->  		case 'M':
->  			meta = true;
-> @@ -609,6 +609,10 @@ int main(int argc, char **argv)
->  			params.at_flags &= ~AT_SYMLINK_NOFOLLOW;
->  			params.flags = FSINFO_FLAGS_QUERY_PATH;
->  			continue;
-> +		case 'm':
-> +			params.resolve_flags = 0;
-> +			params.flags = FSINFO_FLAGS_QUERY_MOUNT;
-> +			continue;
->  		case 'r':
->  			raw = 1;
->  			continue;
-> @@ -621,6 +625,7 @@ int main(int argc, char **argv)
->  
->  	if (argc != 1) {
->  		printf("Format: test-fsinfo [-Madlr] <path>\n");
-> +		printf("Format: test-fsinfo [-Mdr] -m <mnt_id>\n");
->  		exit(2);
->  	}
 >  
 > 
 > 
