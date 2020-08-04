@@ -2,65 +2,65 @@ Return-Path: <SRS0=B0YM=BO=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 521A5C433DF
-	for <linux-security-module@archiver.kernel.org>; Tue,  4 Aug 2020 21:43:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9A82C433DF
+	for <linux-security-module@archiver.kernel.org>; Tue,  4 Aug 2020 21:48:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 396F422B45
-	for <linux-security-module@archiver.kernel.org>; Tue,  4 Aug 2020 21:43:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1C312086A
+	for <linux-security-module@archiver.kernel.org>; Tue,  4 Aug 2020 21:48:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="pS/D8xIc"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="sbys9aic"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728021AbgHDVnZ (ORCPT
+        id S1727922AbgHDVs6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 4 Aug 2020 17:43:25 -0400
-Received: from sonic307-15.consmr.mail.ne1.yahoo.com ([66.163.190.38]:33471
-        "EHLO sonic307-15.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727092AbgHDVnZ (ORCPT
+        Tue, 4 Aug 2020 17:48:58 -0400
+Received: from sonic304-28.consmr.mail.ne1.yahoo.com ([66.163.191.154]:41050
+        "EHLO sonic304-28.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727120AbgHDVs5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 4 Aug 2020 17:43:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1596577404; bh=FUdYe0IBctUZEGwqD3LywKgSj01JLkKeBk54wXzszqw=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=pS/D8xIcGppJzVXlbBX9+mvlHHuKsnvd+EOKQUGTZyKJ1Es+XWLJekzRTn/RCJ7vvpd+CI6TbH7472Cnqq7SV8kvfiPXkw+L6DgWD+YAs+qohlPZLzjIWmEja2W/Nw6/39jKhJbSxfrM0HJFflwVKRkdV394ZnFIXOI8TbHhljk0ffq2yHuOWTTeszuDNWPdqR+799VMD0Nm626G1MvOSGETga/xZToEZsqqqBpcCwJQ/HxFhUEPc2Z6EeRiStwMe5SnmZ1aBYLtCW643gAsJsKFS5YhopZ/GKKjUBVQqPfPXkeRxfmb5ZVCoN1jAhCgIeLwp/6rppXxGsYApRznUw==
-X-YMail-OSG: kuUr3KwVM1nN0ELkdL3PWjjv0jvx90sD3cXNNxYU8gWIR3DJFyL7JKle2wizLgn
- QKqftlZKZl4gELGAI6ZoCaaW.lMZZPFFmREK8aKLc9isPiWKPCKAOaIAIDoqObiYy.UjX4COE6LS
- J0DaLx_jkA8cjQDXb2_Md1om8Y4bg_yCFa6uXstklN8ADh8mrfcZtXUwTc_g5gXOFrLFgmNwk.fg
- uVITJdJv9aGxdr.6.99I2w8zQ.cDfGsC68VWLj8ev7T4hyiH41LGtnxnerVhAZDNBb1cp1pxMU2h
- PfG8DPakZ1_B2F_6Ech3VcQcgTrRXT5FDvoyB5kKhCmpnWbSUP.OnMSu9XJcyIoxs0qMkHJYsSEr
- eLWeloNSiBQcrfEpf3skfRiOGrTDIMp0PBVhsEcEACeCFSi8BMj0PoeFflgPu84vbUTA9SsnnHfy
- qKBdrMhfRnIit4pdbw8Cnv.C7ZKrxyUBTiUe3IOuV43JDhSu3jNSdpINRISTpXRLLnn6dQQMrUoF
- I8v0KFc9zsqpqRbSFoYe.aki8tW0C5Ap2LoDbQxHpN76tj0MGHdi307BTr0JuAQMIH43cHi5SUcY
- PfWCcaN0E.LuaUYsejBBA3X8kUuf6mwcUMvpAlLZqz3eqX_c17PJEm_6F_pPBh2WnKUyW52gsl2D
- EZYLsKlq9Q3pfVrwoCUz3hi51IQlndGkDV8otwOPv7beuYUv28TlEi6yye8q6g.CCXy0LQ7Fhtum
- 14Aw34IU4183imtyWJMyizqzHcP2SGpyg6xRHXScd0HnclaD09qclXP7BT5fX1tPK5W3kS_vhZFB
- rN82R89jrVDKvxA2uRD1WsXm_8kTfDRP3zs3_vRXpiMJCbuaRqLY4b7ZJoeUgI2h_fTPA.5QUI.9
- ybJRuDBLbWFFhPnu1SU8_Hdvq2E8_VbpnM_l7rMQo1aoh4b8C5HlQSlOHaDGZP3m_rjrX9gW3ql.
- Lb8rJAceXqiRuAY4CFjec0RjP0EZ6OQIKG9x2GagJ8KAEIvw_E3PfYTIhC2HH2piEdpYjDZ7i0kc
- 8crfqc9TDk5uGvY0nw7flPsYnNgQUW06l6veq5R5LWFEN_r4W.odwaPSZvLwelQP3x5QK38WwyQt
- t6.JWPN6EYMVs8aytZ2IBDOdEUQ9G6i7RGCqsC7yc8zZXg350aheyXhDCNgObzzj_jyY9.1vD4gS
- RzLqoyqGEi14OG5kkatpFvsaQFeRh8knejwRWrLuR1A95nkh23nN4TeqcfAyOc3G.0XJqjzJRyD8
- qAxwrqThlLV0feUq28Q4fwHf7iGhvkIefVuOll4F4CthZo15Br4ZmRACF_296P1r8.y7_i3Pm8RT
- 2zjSY7qpCUWku4_CVcMnlcskewC.TDS4Tzc897IzRClgQAM.VoQzBgw2knNbJuMH3R9N9
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic307.consmr.mail.ne1.yahoo.com with HTTP; Tue, 4 Aug 2020 21:43:24 +0000
-Received: by smtp420.mail.gq1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 08988a7113e655af56d674f4574816c9;
-          Tue, 04 Aug 2020 21:43:20 +0000 (UTC)
-Subject: Re: [GIT PULL] Smack patches for v5.9
+        Tue, 4 Aug 2020 17:48:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1596577735; bh=0L27Uq8ZrsYi22gP4kjh4ixcW31fg5B0yfsMY3ayTaM=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=sbys9aicF+5bXJrltrn9ucCHo8U1Q+2cp8or60KpTSLSgKCO31ve5s+FMjycEEQiNiQ/8/ltBsmF5vmiqpsb7HCGNydRR5IFCaxwZmuDSUiQooix+VwgnR8KXRyRTABi0Xb+v7uSER31DM7vrJX+EPTHZmBI5eRt5sxvlm8NZl22qKccn0/PpTAedIC5JpyIk+bvKP3GorEvw6EKm+w+n+T3bPjtWJpv1vzoBTnxEixPl4MmHhG94JFMl1TrXSYkN319fQtrOfC2tUFe1k39yAmeoIkJWQCiNNncZmp8tELwBT6humAnjv49CGmdkSFY73u/M+cRXMKb8GMzOUj1VA==
+X-YMail-OSG: Qgh8100VM1ngycjbd1S.nfM6w0dGp7YvvO15Nf0I9gK7HXc9qFP6rX517qEtTkk
+ uoWOhvT9h5dwBbniYQxeteRwIZtJ0okru2SRsKM3NgaxFA1eOPN_sSJJaSGWdZODa5HvlBuQKuaf
+ Sx14cQCspNsp9DwQJ3TvShGxKpsqQH_Eyy5ij.jGJULszl4xOB8VnAmSNlnFeksnpR2DikROwqQ4
+ ycucRYImc70zc_DFBSOymVq16nVavAgAAlEW802ypXVaAgQoplNOsWAOLoc6zdxR1CLq9LKuQmIi
+ CBWV8FgFN3uOba6wd0Kj3o8pcgW0.qOfNBpCzooL5KPyauEDmtw_BmJzrZiM5lA778.cNdaazp6v
+ 3r0_C9U1aaARjkz..rFph3UG5nx.AAZqqE8zCVZaXzBY5qYzRDIkcaaCOEwz5zfdHzW5_Kxgh5OH
+ M3THxuotf1ditrVnx1mFHdG9CZbcifKWsINMdGvmnX4DidYXGRwZqe0QjDjuByfablLiemX.yDvC
+ vXvw3lZIkNRCu4FyA54p3heHfgCEOqvkreMnhE_DzVeaw2twJvIcrSldBSS.Es0C3.vlzk8TU23s
+ LDLFYrRsfEEltDWvs8.attysc6yGWPl_w1dSPVHlm6e5zr_6Nyb6kszkz_tGkX9XXKdcpSa_DlKz
+ KHgjj7GW.x6PLIM2A4ucBGRBDCF8Py53CtawJ_s0dSDe7bBdHA8u.T4YBT5mB7YqZnl2UU7SCOHc
+ rSxnIUtIJKUiY1kijL.nkKSHxyg_M_i_Er7h6HuR2OncQXqsj4n4KtgQH17pyA8lQVHfV17dRheY
+ epCEngcGFAgfDEq8069vwIkUgucurDip_k8O3JuXuQTGS.fwNAkCAkBCzelc9rXQuzoAqSM0ag7e
+ XoPt95.Yjb6_2xgly.HYdBU.nP2E8BHswsW2LVR89f6Ke55FGcb9hev1zu7mmQSadGsQAu4L35sx
+ Q.Ogj35RiFx.I4r8IuyexAVLnwintkep0Y8Vv4bWpVplWHW9blE12lNFIWmJSAgGiwhWZauyTX48
+ TWy8aoRj.jd4lZe.992jS76W8mZfUzC2gS_dovI8PVINbc4EPnRM2V3fNPqdE66n7_6VCjqzVlTM
+ d9vKk6NUKo4orFMWo0lpy.BYQTjKr0PJ4bH7a0Umjex7cjAGturt.634PC7hphYRFZjTRaZTTu9H
+ 4nxE.FQWG40AKkedTJ_wGZowtzrQQ0oKOdWHOEJDOQ0tdcnzeqy5mmS0zo5UuIaPf90xum3YbhuZ
+ KtdZMCiW45HBuMWROpCcVF.GXBgmmcLefYPouw_5T0jq1mshm50kZYgVimnA4xWmRPsT7igjygdZ
+ Fz34dMtRwVeZ4ogIIDjT__i.mMo3YuoVGbVdStILSzzkh
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.ne1.yahoo.com with HTTP; Tue, 4 Aug 2020 21:48:55 +0000
+Received: by smtp402.mail.gq1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 01b7835d11afa0d3bb48b983b86ef450;
+          Tue, 04 Aug 2020 21:48:52 +0000 (UTC)
+Subject: [GIT PULL] Smack patches for v5.9
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     Linux Security Module list 
         <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
+        LKML <linux-kernel@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
 References: <8ce85723-5656-0ee8-67a7-35597d9df0dd.ref@schaufler-ca.com>
  <8ce85723-5656-0ee8-67a7-35597d9df0dd@schaufler-ca.com>
- <CAHk-=wjkuGCCk7DCNP6836FYeOaKZR9KLOBzr21fPOVNnOZiKA@mail.gmail.com>
 From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <a900626d-be1e-55cb-7fd3-2de444c30109@schaufler-ca.com>
-Date:   Tue, 4 Aug 2020 14:43:19 -0700
+Message-ID: <38f418d7-ec77-255b-2bf2-dd73ebfc615c@schaufler-ca.com>
+Date:   Tue, 4 Aug 2020 14:48:50 -0700
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
  Thunderbird/68.11.0
 MIME-Version: 1.0
-In-Reply-To: <CAHk-=wjkuGCCk7DCNP6836FYeOaKZR9KLOBzr21fPOVNnOZiKA@mail.gmail.com>
+In-Reply-To: <8ce85723-5656-0ee8-67a7-35597d9df0dd@schaufler-ca.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Content-Language: en-US
@@ -69,16 +69,38 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 8/4/2020 2:26 PM, Linus Torvalds wrote:
-> On Tue, Aug 4, 2020 at 10:49 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
->> Here are three minor fixes to Smack for the v5.9 release.
-> I can't pull this: that's not a signed tag, and I don't pull unsigned
-> stuff from open hosting sites, no matter how obvious they may seem.
->
-> You typically have a capitalized signed tag, but I'm not seeing that
-> this time. Hmm?
+Hello Linus
 
-You're right. Tag usage failure on my part.
-I will resubmit. Sorry for the extra work.
+I have corrected the tagging for the pull request.
 
->              Linus
+Here are three minor fixes to Smack for the v5.9 release.
+All were found by automated checkers and have straight forward
+resolution.
+
+--
+The following changes since commit b3a9e3b9622ae10064826dccb4f7a52bd88c7407:
+
+  Linux 5.8-rc1 (2020-06-14 12:45:04 -0700)
+
+are available in the Git repository at:
+
+  https://github.com/cschaufler/smack-next tags/Smack-for-5.9
+
+for you to fetch changes up to 42a2df3e829f3c5562090391b33714b2e2e5ad4a:
+
+  Smack: prevent underflow in smk_set_cipso() (2020-07-27 13:35:12 -0700)
+
+----------------------------------------------------------------
+Smack fixes for 5.9
+
+----------------------------------------------------------------
+Dan Carpenter (2):
+      Smack: fix another vsscanf out of bounds
+      Smack: prevent underflow in smk_set_cipso()
+
+Eric Biggers (1):
+      Smack: fix use-after-free in smk_write_relabel_self()
+
+ security/smack/smackfs.c | 19 ++++++++++++++++---
+ 1 file changed, 16 insertions(+), 3 deletions(-)
+
