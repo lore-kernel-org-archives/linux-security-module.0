@@ -2,212 +2,141 @@ Return-Path: <SRS0=iE4T=BP=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no autolearn_force=no
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BBA4C433E3
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 20:11:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16512C433E0
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 20:14:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2A1FC22CF8
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 20:11:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E597C22CA1
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 20:14:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Y5nQ3MyE"
+	dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b="AwFBpkUn";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="lGi918tC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728122AbgHEUKk (ORCPT
+        id S1729609AbgHEUNr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 5 Aug 2020 16:10:40 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:44140 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726466AbgHEQ1o (ORCPT
+        Wed, 5 Aug 2020 16:13:47 -0400
+Received: from wnew3-smtp.messagingengine.com ([64.147.123.17]:37003 "EHLO
+        wnew3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726629AbgHEQX0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 5 Aug 2020 12:27:44 -0400
-Received: from sequoia (162-237-133-238.lightspeed.rcsntx.sbcglobal.net [162.237.133.238])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 7D4B620B4913;
-        Wed,  5 Aug 2020 09:14:51 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7D4B620B4913
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1596644092;
-        bh=ibr863Q1D2n0VDtx2GGoUC50igD6fYAc5tUGJtyPIYY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Y5nQ3MyEhfx1WFBBzQq6lN5jvrtzeK9gAPkiDtOKOuDmvdZqG4wnQGZYpsHVy75Ik
-         Tm9a+ohvkP3kf1xbFtTN9+jRc0eoYQwjuFN8avpzi9yi7I10krk0vrWJT2kKiOXgKZ
-         2DlkijBG1M+Z9ydMBVfhPJsRuq7R5zw5YKDirkx4=
-Date:   Wed, 5 Aug 2020 11:14:49 -0500
-From:   Tyler Hicks <tyhicks@linux.microsoft.com>
-To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>, zohar@linux.ibm.com,
-        stephen.smalley.work@gmail.com, sashal@kernel.org,
-        jmorris@namei.org, linux-integrity@vger.kernel.org,
-        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        Wed, 5 Aug 2020 12:23:26 -0400
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
+        by mailnew.west.internal (Postfix) with ESMTP id 37C75970;
+        Wed,  5 Aug 2020 07:36:16 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Wed, 05 Aug 2020 07:36:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
+        message-id:subject:from:to:cc:date:in-reply-to:references
+        :content-type:mime-version:content-transfer-encoding; s=fm3; bh=
+        TV/ywlemDl0JIUauxpySAysG0pozcgKEtLbmEq/dGCI=; b=AwFBpkUnA5Q3eZVP
+        GUBhoB/ilhwXI9VqrBWf6R5OCpprqNbp8Idwbc0ORpfdwf9XRzKHxTAwASOBHloP
+        C8kELv06f6HkCdmM7o/reWrBy3ZFHjtS93RPzrtwzpS9px9u0fikYwf5UfAk8BZ5
+        RcJHbvLqHaFZmmEjgxmdm0rRJiF6rzz0BWYeVdJTPAjS1R2mxJunWX3eTVWhiAW/
+        6Ap9JaHp1kY6tvHneM1y6nxLkgmPIl/GLPbviB/kmezKdXUMUKBQ6umnfBH0G58f
+        uP7AT57ilb7hRJHyP0HqrNRGP3Aw+xdw/wbrLXYX5oE44K2eyZIzhipL3rbEpcmc
+        S1RKug==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; bh=TV/ywlemDl0JIUauxpySAysG0pozcgKEtLbmEq/dG
+        CI=; b=lGi918tCPuQclchc60ZkZQcFuFeLnuEaz5oFvKYw47Yf6N9duODX99vQ0
+        v2wjcf/SgbslZcfvhprEmRgqBL19HB/1eb/JYzoYuP5jz2HFYgT/ak9IDUfwnhAJ
+        YkJIqH/75jxgyxwt67ZoBjpJqUEoP+E/n89yydB8voI+I/O7zCc7QhLrKKOuLxd8
+        vDlll4NR2YcE16zazVrfdI/a8y3gt5FGnB5CxQbKvQx0Q1/68uU+NYGdXE8gcVBZ
+        bHzmSNEbRP2lrp6vbGU5+8EiHmA2mQO1uyjzA/m5uW9PHXNgxKUgFedSPlxBTu5F
+        R1D43CcSiAfHDm04i23VAV+1VwUBw==
+X-ME-Sender: <xms:rpkqXxIM464vxKzxo1Ps1E1MNcoGOyyXu-byRxZmcehu1oS4oiPbAg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduiedrjeekgdeggecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefkuffhvfffjghftggfggfgsehtjeertddtreejnecuhfhrohhmpefkrghnucfm
+    vghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnhepfe
+    efteetvdeguddvveefveeftedtffduudehueeihfeuvefgveehffeludeggfejnecukfhp
+    peehkedrjedrvdehhedrvddvtdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpehrrghvvghnsehthhgvmhgrfidrnhgvth
+X-ME-Proxy: <xmx:rpkqX9JrEnjQ0a_60B4dCHApSvALGVOSkJ8Sxj0D243ONHuAEjv0JQ>
+    <xmx:rpkqX5vsriW3o_YwMp5QeyhNrGEqZvM_FMb5gGXkEH6Kldth5k2SAw>
+    <xmx:rpkqXyZs1QHUmAvW5-dnVwWP92AJYBeyrGhvLg8ZW4Z58zFbXsHgqw>
+    <xmx:r5kqX0T5XKAiop0pugkIzJKNdw90x3nEoU89eXDiXzbLMU5kcLe6uaYBMNU>
+Received: from mickey.themaw.net (58-7-255-220.dyn.iinet.net.au [58.7.255.220])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 1578A30600B1;
+        Wed,  5 Aug 2020 07:36:08 -0400 (EDT)
+Message-ID: <013e9bb3cb1536c73a5b58c5ff000b3b00629561.camel@themaw.net>
+Subject: Re: [PATCH 13/17] watch_queue: Implement mount topology and
+ attribute change notifications [ver #5]
+From:   Ian Kent <raven@themaw.net>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        Christian Brauner <christian@brauner.io>, andres@anarazel.de,
+        Jeff Layton <jlayton@redhat.com>, dray@redhat.com,
+        Karel Zak <kzak@redhat.com>, keyrings@vger.kernel.org,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        LSM <linux-security-module@vger.kernel.org>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 0/4] LSM: Measure security module data
-Message-ID: <20200805161449.GC4365@sequoia>
-References: <20200805004331.20652-1-nramas@linux.microsoft.com>
- <f3971f35-309d-c3e5-9126-69add7ad4c11@schaufler-ca.com>
- <50587a3e-bcb5-c68e-c16c-41baf68b4d4a@linux.microsoft.com>
- <c7c168f2-e30b-d2c5-abcb-1b6919197474@schaufler-ca.com>
- <20200805154504.GB4365@sequoia>
- <7c7a076b-6ba7-2e8d-409a-b3b4e4738c41@linux.microsoft.com>
+Date:   Wed, 05 Aug 2020 19:36:05 +0800
+In-Reply-To: <CAJfpegvxKTy+4Zk6banvxQ83PeFV7Xnt2Qv=kkOg57rxFKqVEg@mail.gmail.com>
+References: <158454378820.2863966.10496767254293183123.stgit@warthog.procyon.org.uk>
+         <158454391302.2863966.1884682840541676280.stgit@warthog.procyon.org.uk>
+         <CAJfpegspWA6oUtdcYvYF=3fij=Bnq03b8VMbU9RNMKc+zzjbag@mail.gmail.com>
+         <1293241.1595501326@warthog.procyon.org.uk>
+         <CAJfpeguvLMCw1H8+DPsfZE_k0sEiRtA17pD9HjnceSsAvqqAZw@mail.gmail.com>
+         <43c061d26ddef2aa3ca1ac726da7db9ab461e7be.camel@themaw.net>
+         <CAJfpeguFkDDhz7+70pSUv_j=xY5L08ESpaE+jER9vE5p+ZmfFw@mail.gmail.com>
+         <c558fc4af785f62a2751be3b297d1ccbbfcfa969.camel@themaw.net>
+         <CAJfpegvxKTy+4Zk6banvxQ83PeFV7Xnt2Qv=kkOg57rxFKqVEg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7c7a076b-6ba7-2e8d-409a-b3b4e4738c41@linux.microsoft.com>
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2020-08-05 09:07:48, Lakshmi Ramasubramanian wrote:
-> On 8/5/20 8:45 AM, Tyler Hicks wrote:
-> > On 2020-08-05 08:36:40, Casey Schaufler wrote:
-> > > On 8/4/2020 6:14 PM, Lakshmi Ramasubramanian wrote:
-> > > > On 8/4/20 6:04 PM, Casey Schaufler wrote:
-> > > > > On 8/4/2020 5:43 PM, Lakshmi Ramasubramanian wrote:
-> > > > > > Critical data structures of security modules are currently not measured.
-> > > > > > Therefore an attestation service, for instance, would not be able to
-> > > > > > attest whether the security modules are always operating with the policies
-> > > > > > and configuration that the system administrator had setup. The policies
-> > > > > > and configuration for the security modules could be tampered with by
-> > > > > > malware by exploiting kernel vulnerabilities or modified through some
-> > > > > > inadvertent actions on the system. Measuring such critical data would
-> > > > > > enable an attestation service to better assess the state of the system.
-> > > > > 
-> > > > > I still wonder why you're calling this an LSM change/feature when
-> > > > > all the change is in IMA and SELinux. You're not putting anything
-> > > > > into the LSM infrastructure, not are you using the LSM infrastructure
-> > > > > to achieve your ends. Sure, you *could* support other security modules
-> > > > > using this scheme, but you have a configuration dependency on
-> > > > > SELinux, so that's at best going to be messy. If you want this to
-> > > > > be an LSM "feature" you need to use the LSM hooking mechanism.
-> > > > 
-> > > > > 
-> > > > > I'm not objecting to the feature. It adds value. But as you've
-> > > > > implemented it it is either an IMA extension to SELinux, or an
-> > > > > SELiux extension to IMA. Could AppArmor add hooks for this without
-> > > > > changing the IMA code? It doesn't look like it to me.
-> > > > 
-> > > > The check in IMA to allow the new IMA hook func LSM_STATE and LSM_POLICY when SELinux is enabled is just because SELinux is the only security module using these hooks now.
-> > > > 
-> > > > To enable AppArmor, for instance, to use the new IMA hooks to measure state and policy would just require adding the check for CONFIG_SECURITY_APPARMOR. Other than that, there are no IMA changes needed to support AppArmor or other such security modules.
+On Wed, 2020-08-05 at 09:43 +0200, Miklos Szeredi wrote:
+> On Wed, Aug 5, 2020 at 3:54 AM Ian Kent <raven@themaw.net> wrote:
+> > > > It's way more useful to have these in the notification than
+> > > > obtainable
+> > > > via fsinfo() IMHO.
 > > > 
-> > > This is exactly what I'm objecting to. What if a system has both SELinux
-> > > and AppArmor compiled in? What if it has both enabled?
+> > > What is it useful for?
 > > 
-> > The SELinux state and policy would be measured but the AppArmor
-> > state/policy would be silently ignored. This isn't ideal as the IMA
-> > policy author would need to read the kernel code to figure out which
-> > LSMs are going to be measured.
+> > Only to verify that you have seen all the notifications.
+> > 
+> > If you have to grab that info with a separate call then the count
+> > isn't necessarily consistent because other notifications can occur
+> > while you grab it.
 > 
-> Tyler - I am not sure why AppArmor state\policy would be ignored when both
-> SELinux and AppArmor are enabled. Could you please clarify?
+> No, no no.   The watch queue will signal an overflow, without any
+> additional overhead for the normal case.  If you think of this as a
+> protocol stack, then the overflow detection happens on the transport
+> layer, instead of the application layer.  The application layer is
+> responsible for restoring state in case of a transport layer error,
+> but detection of that error is not the responsibility of the
+> application layer.
 
-I think Casey is talking about now (when AppArmor is not supported by
-this feature) and you're talking about the future (when AppArmor may be
-supported by this feature).
+I can see in the kernel code that an error is returned if the message
+buffer is full when trying to add a message, I just can't see where
+to get it in the libmount code.
 
-Now, a "measure func=LSM_STATE" rule would be accepted by the IMA policy
-parser but do nothing for the AppArmor LSM. The rule may do something in
-the future but there's no difference in feedback to the IMA policy
-author between now and the future.
+That's not really a communication protocol problem.
 
-Tyler
+Still I need to work out how to detect it, maybe it is seen by
+the code in libmount already and I simply can't see what I need
+to do to recognise it ...
 
-> 
-> When both the security modules are enabled, IMA policy validator would look
-> like below:
-> 
-> if (IS_ENABLED(CONFIG_SECURITY_SELINUX) ||
->     IS_ENABLED(CONFIG_SECURITY_APPARMOR)) &&
->     strcmp(args[0].from, "LSM_STATE") == 0)
->                 entry->func = LSM_STATE;
-> 
-> Similar one for LSM_POLICY validation.
-> 
-> Both SELinux and AppArmor can call ima_measure_lsm_state() and
-> ima_measure_lsm_policy() to measure state and policy respectively.
-> 
-> I don't think we should go the route of defining IMA hooks per security
-> module (i.e., SELINUX_STATE, APPARMOR_STATE, SELINUX_POLICY, etc.) Instead
-> keep the hook generic that any SM could use - which is what I have tried to
-> address in this patch series.
-> 
-> > > 
-> > > > 
-> > > > Please see Patch 1/4
-> > > > 
-> > > > +            else if (IS_ENABLED(CONFIG_SECURITY_SELINUX) &&
-> > > > +                 strcmp(args[0].from, "LSM_STATE") == 0)
-> > > > +                entry->func = LSM_STATE;
-> > > > +            else if (IS_ENABLED(CONFIG_SECURITY_SELINUX) &&
-> > > > +                 strcmp(args[0].from, "LSM_POLICY") == 0)
-> > > > +                entry->func = LSM_POLICY;
-> > > > 
-> > > > And, if early boot measurement is needed for AppArmor the following change in IMA's Kconfig
-> > > > 
-> > > > Patch 4/4
-> > > > 
-> > > > +config IMA_QUEUE_EARLY_BOOT_DATA
-> > > >       bool
-> > > > +    depends on SECURITY_SELINUX || (IMA_MEASURE_ASYMMETRIC_KEYS && SYSTEM_TRUSTED_KEYRING)
-> > > >       default y
-> > > > 
-> > > > If you think calling this an "LSM feature" is not appropriate, please suggest a better phrase.
-> > > 
-> > > In the code above you are under CONFIG_SECURITY_SELINUX.
-> > > I would suggest that it's an SELinux feature, so you should
-> > > be using SELINUX_STATE and SELINUX_POLICY, as I suggested
-> > > before. Just because SELinux has state and policy to measure
-> > > doesn't mean that a different module might not have other data,
-> > > such as history, that should be covered as well.
-> 
-> Good point - if other SMs have data besides state and policy, we can define
-> IMA hooks to measure that as well.
-> 
-> But I still think it is not the right approach to call this SELINUX_STATE
-> and SELINUX_POLICY - it will lead to unnecessary code duplication in IMA as
-> more SMs are onboarded, in my opinion. Correct me if I am wrong.
-> 
->  -lakshmi
-> 
-> > 
-> > In addition to SELINUX_STATE and SELINUX_POLICY, we should also consider
-> > the proposed LSM_STATE and LSM_POLICY func values but require an "lsm"
-> > rule conditional.
-> > 
-> > So the current proposed rules:
-> > 
-> >   measure func=LSM_STATE
-> >   measure func=LSM_POLICY
-> > 
-> > Would become:
-> > 
-> >   measure func=LSM_STATE lsm=selinux
-> >   measure func=LSM_POLICY lsm=selinux
-> > 
-> > The following rules would be rejected:
-> > 
-> >   measure func=LSM_STATE
-> >   measure func=LSM_POLICY
-> >   measure func=LSM_STATE lsm=apparmor
-> >   measure func=LSM_POLICY lsm=smack
-> > 
-> > Of course, the apparmor and smack rules could/would be allowed when
-> > proper support is in place.
-> > 
-> 
-> > 
-> > > 
-> > > I realize that IMA already has compile time dependencies to
-> > > determine which xattrs to measure. There's no reason that
-> > > the xattr list couldn't be determined at boot time, with
-> > > each security module providing the XATTR_NAME values it
-> > > uses.
-> > > 
-> > > > 
-> > > > But like I said above, with minimal change in IMA other security modules can be supported to measure STATE and POLICY data.
-> > > > 
-> > > >   -lakshmi
-> > > > 
-> > > > 
+So I'm stuck wanting to verify I have got everything that was
+sent and am having trouble moving on from that.
+
+Ian
+
