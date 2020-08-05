@@ -2,97 +2,194 @@ Return-Path: <SRS0=iE4T=BP=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE338C433E1
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 15:48:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B3FCC433DF
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 16:02:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C426C2312B
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 15:48:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4008423434
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 16:02:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XbLe8kAn"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JmbYr8Iu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726248AbgHEPry (ORCPT
+        id S1725999AbgHEP7h (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 5 Aug 2020 11:47:54 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:50620 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726656AbgHEPku (ORCPT
+        Wed, 5 Aug 2020 11:59:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36520 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726071AbgHEPti (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 5 Aug 2020 11:40:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1596641785;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=tg1NaN73CW0LtnEK10fe+dApSmqLG8nxdGa4rhiVRvI=;
-        b=XbLe8kAnlsqrG4q/HLi1Fl1jCaiDEIimVOGc1ZWyJy3mS9uYkSgxvQcqjPJJnd84JNTw8l
-        esHz0LElwzZE8ZIHOErYnLFwHPr0oEVQzfUUstMiGFxU3pVnGKhaoG4njdgICi1JRohU/9
-        fL+D1h35nPaYO+lCegxBLdvD7cYZ4GM=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-321-K9dMuQccOZWetAzznd3kwg-1; Wed, 05 Aug 2020 11:30:16 -0400
-X-MC-Unique: K9dMuQccOZWetAzznd3kwg-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id BCFCE107B83C;
-        Wed,  5 Aug 2020 15:30:14 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-112-32.rdu2.redhat.com [10.10.112.32])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 710C660BF3;
-        Wed,  5 Aug 2020 15:30:11 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAJfpegtOguKOGWxv-sA_C9eSWG_3Srnj_k=oW-wSHNprCipFVg@mail.gmail.com>
-References: <CAJfpegtOguKOGWxv-sA_C9eSWG_3Srnj_k=oW-wSHNprCipFVg@mail.gmail.com> <159646178122.1784947.11705396571718464082.stgit@warthog.procyon.org.uk> <159646183662.1784947.5709738540440380373.stgit@warthog.procyon.org.uk> <20200804104108.GC32719@miu.piliscsaba.redhat.com> <2306029.1596636828@warthog.procyon.org.uk>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     dhowells@redhat.com, Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ian Kent <raven@themaw.net>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Christian Brauner <christian@brauner.io>,
-        Jann Horn <jannh@google.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Karel Zak <kzak@redhat.com>, Jeff Layton <jlayton@redhat.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        LSM <linux-security-module@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 06/18] fsinfo: Add a uniquifier ID to struct mount [ver #21]
+        Wed, 5 Aug 2020 11:49:38 -0400
+Received: from mail-qv1-xf42.google.com (mail-qv1-xf42.google.com [IPv6:2607:f8b0:4864:20::f42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52D48C001FC5;
+        Wed,  5 Aug 2020 08:43:48 -0700 (PDT)
+Received: by mail-qv1-xf42.google.com with SMTP id x6so15102211qvr.8;
+        Wed, 05 Aug 2020 08:43:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=czjIYKIMqrKx6NztO4qHKv0Vt37ieCFKeMG2O/uHiYg=;
+        b=JmbYr8IuLilXgfVziMkJJADX+seDHRIXyosFHEnEGxvzY7/FkcqApH7N3pvh+5shjk
+         Q9+bbS8dSq1gjKMskj0yJMF+TGs8ar6xTV30rGxjAP/fH9ccGRnUkkHYZKIAL0kTz8bv
+         4RsWkIposRJM9gxUZwrqGEjaFBs+3WCd2Z4rlDquUdCvagBjUsK8TCIKG4nhszIgTF7C
+         /+RIvsj8Z8xsySpriyn8IQ8s5w+Y35UKJkcnJ/w9nmh+P7la7XV3+BCAKjqiP5xoY/uL
+         Hd7atbVYYzxGQwPODP/fNVBOyjhWPGBcxO5ffP2utZDHNe4ks5lQ1hir+ZTN6OoWcist
+         rcUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=czjIYKIMqrKx6NztO4qHKv0Vt37ieCFKeMG2O/uHiYg=;
+        b=tOddIAlZs1QtERZCJT2irykS6q537sY9OA9SP8r2WEGx5v3cyrYmJcDKs379VZ9DbV
+         bmydf3S8uFXWmA2MxirzWcYfuZGIWjDLAEv4vFIrkH7Au7AVnSd0zuUIudmblGBhXigl
+         n9k3Ne41Fia9K7cCqL9S5MiCxm9vmaP9Ye/U8fVjCjr2Asxwt1fnPMAR0k+VqFddvLiN
+         doYXG9ldx/FRq56MhlfMgrI+iP108Sb1WU+bPWZH8XBKVLzqWDA5IXfu6HlP6xDXWp+d
+         avc/bpHIan3JOGA3BK4AWiYsIo8c0axVqukpu7bFCX1QB7UZYAcw+VSHjLH3RWHL+WTW
+         VfXA==
+X-Gm-Message-State: AOAM5325q1TWjZD7WWDprLoLk9ABGQ02TGN9QHn2hgonKFPbhb5+5PNF
+        HG64m1LBcOAxvh5xiBKV+bU=
+X-Google-Smtp-Source: ABdhPJyHjyZcUS4lx3kYJlGYbr+5Wv7FvFmaR0g2jYyml05P+PoihEVt8BPlIURWZmvmF7jy8xr56g==
+X-Received: by 2002:a0c:b604:: with SMTP id f4mr4418696qve.68.1596642224148;
+        Wed, 05 Aug 2020 08:43:44 -0700 (PDT)
+Received: from [192.168.1.190] (pool-71-244-252-199.bltmmd.fios.verizon.net. [71.244.252.199])
+        by smtp.gmail.com with ESMTPSA id k48sm2611318qtk.44.2020.08.05.08.43.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Aug 2020 08:43:43 -0700 (PDT)
+Subject: Re: [PATCH v6 1/4] IMA: Add func to measure LSM state and policy
+To:     Tyler Hicks <tyhicks@linux.microsoft.com>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Casey Schaufler <casey@schaufler-ca.com>, sashal@kernel.org,
+        James Morris <jmorris@namei.org>,
+        linux-integrity@vger.kernel.org,
+        SElinux list <selinux@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        John Johansen <john.johansen@canonical.com>
+References: <20200805004331.20652-1-nramas@linux.microsoft.com>
+ <20200805004331.20652-2-nramas@linux.microsoft.com>
+ <4b9d2715d3ef3c8f915ef03867cfb1a39c0abc54.camel@linux.ibm.com>
+ <f88bf25e-37ef-7f00-6162-215838961bb0@gmail.com>
+ <31d00876438d2652890ab8bf6ba2e80f554ca7a4.camel@linux.ibm.com>
+ <CAEjxPJ6X+Cqd5QtZBmNm2cujwbg-STfRF7_8i=Ny8yuc6z9BwQ@mail.gmail.com>
+ <b7df114e8e0d276e66575b6970a1e459d1dd4196.camel@linux.ibm.com>
+ <CAEjxPJ7d1yg659OCU6diXXGqegc_jSzO4ZPhkRqQtJnRn-kC0g@mail.gmail.com>
+ <20200805150732.GA4365@sequoia>
+From:   Stephen Smalley <stephen.smalley.work@gmail.com>
+Message-ID: <39390a53-51df-12f0-5451-e677ccca581a@gmail.com>
+Date:   Wed, 5 Aug 2020 11:43:42 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2315924.1596641410.1@warthog.procyon.org.uk>
-Date:   Wed, 05 Aug 2020 16:30:10 +0100
-Message-ID: <2315925.1596641410@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+In-Reply-To: <20200805150732.GA4365@sequoia>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Miklos Szeredi <miklos@szeredi.hu> wrote:
+On 8/5/20 11:07 AM, Tyler Hicks wrote:
 
-> idr_alloc_cyclic() seems to be a good template for doing the lower
-> 32bit allocation, and we can add code to increment the high 32bit on
-> wraparound.
-> 
-> Lots of code uses idr_alloc_cyclic() so I guess it shouldn't be too
-> bad in terms of memory use or performance.
+> On 2020-08-05 10:27:43, Stephen Smalley wrote:
+>> On Wed, Aug 5, 2020 at 9:20 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
+>>> On Wed, 2020-08-05 at 09:03 -0400, Stephen Smalley wrote:
+>>>> On Wed, Aug 5, 2020 at 8:57 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
+>>>>> On Wed, 2020-08-05 at 08:46 -0400, Stephen Smalley wrote:
+>>>>>> On 8/4/20 11:25 PM, Mimi Zohar wrote:
+>>>>>>
+>>>>>>> Hi Lakshmi,
+>>>>>>>
+>>>>>>> There's still  a number of other patch sets needing to be reviewed
+>>>>>>> before my getting to this one.  The comment below is from a high level.
+>>>>>>>
+>>>>>>> On Tue, 2020-08-04 at 17:43 -0700, Lakshmi Ramasubramanian wrote:
+>>>>>>>> Critical data structures of security modules need to be measured to
+>>>>>>>> enable an attestation service to verify if the configuration and
+>>>>>>>> policies for the security modules have been setup correctly and
+>>>>>>>> that they haven't been tampered with at runtime. A new IMA policy is
+>>>>>>>> required for handling this measurement.
+>>>>>>>>
+>>>>>>>> Define two new IMA policy func namely LSM_STATE and LSM_POLICY to
+>>>>>>>> measure the state and the policy provided by the security modules.
+>>>>>>>> Update ima_match_rules() and ima_validate_rule() to check for
+>>>>>>>> the new func and ima_parse_rule() to handle the new func.
+>>>>>>> I can understand wanting to measure the in kernel LSM memory state to
+>>>>>>> make sure it hasn't changed, but policies are stored as files.  Buffer
+>>>>>>> measurements should be limited  to those things that are not files.
+>>>>>>>
+>>>>>>> Changing how data is passed to the kernel has been happening for a
+>>>>>>> while.  For example, instead of passing the kernel module or kernel
+>>>>>>> image in a buffer, the new syscalls - finit_module, kexec_file_load -
+>>>>>>> pass an open file descriptor.  Similarly, instead of loading the IMA
+>>>>>>> policy data, a pathname may be provided.
+>>>>>>>
+>>>>>>> Pre and post security hooks already exist for reading files.   Instead
+>>>>>>> of adding IMA support for measuring the policy file data, update the
+>>>>>>> mechanism for loading the LSM policy.  Then not only will you be able
+>>>>>>> to measure the policy, you'll also be able to require the policy be
+>>>>>>> signed.
+>>>>>> To clarify, the policy being measured by this patch series is a
+>>>>>> serialized representation of the in-memory policy data structures being
+>>>>>> enforced by SELinux.  Not the file that was loaded.  Hence, this
+>>>>>> measurement would detect tampering with the in-memory policy data
+>>>>>> structures after the policy has been loaded.  In the case of SELinux,
+>>>>>> one can read this serialized representation via /sys/fs/selinux/policy.
+>>>>>> The result is not byte-for-byte identical to the policy file that was
+>>>>>> loaded but can be semantically compared via sediff and other tools to
+>>>>>> determine whether it is equivalent.
+>>>>> Thank you for the clarification.   Could the policy hash be included
+>>>>> with the other critical data?  Does it really need to be measured
+>>>>> independently?
+>>>> They were split into two separate functions because we wanted to be
+>>>> able to support using different templates for them (ima-buf for the
+>>>> state variables so that the measurement includes the original buffer,
+>>>> which is small and relatively fixed-size, and ima-ng for the policy
+>>>> because it is large and we just want to capture the hash for later
+>>>> comparison against known-good).  Also, the state variables are
+>>>> available for measurement always from early initialization, whereas
+>>>> the policy is only available for measurement once we have loaded an
+>>>> initial policy.
+>>> Ok, measuring the policy separately from other critical data makes
+>>> sense.  Instead of measuring the policy, which is large, measure the
+>>> policy hash.
+>> I think that was the original approach.  However, I had concerns with
+>> adding code to SELinux to compute a hash over the policy versus
+>> leaving that to IMA's existing policy and mechanism.  If that's
+>> preferred I guess we can do it that way but seems less flexible and
+>> duplicative.
+> In AppArmor, we store the sha1 of the raw policy as the policy is
+> loaded. The hash is exposed to userspace in apparmorfs. See commit
+> 5ac8c355ae00 ("apparmor: allow introspecting the loaded policy pre
+> internal transform").
+>
+> It has proved useful as a mechanism for debugging as sometimes the
+> on-disk policy doesn't match the loaded policy and this can be a good
+> way to check that while providing support to users. John also mentions
+> checkpoint/restore in the commit message and I could certainly see how
+> the policy hashes would be useful in that scenario.
+>
+> When thinking through how Lakshmi's series could be extended for
+> AppArmor support, I was thinking that the AppArmor policy measurement
+> would be a measurement of these hashes that we already have in place.
+>
+> Perhaps there's some general usefulness in storing/exposing an SELinux
+> policy hash rather than only seeing it as duplicative property required
+> this measurement series?
 
-It's optimised for shortness of path and trades memory for performance.  It's
-currently implemented using an xarray, so memory usage is dependent on the
-sparseness of the tree.  Each node in the tree is 576 bytes and in the worst
-case, each one node will contain one mount - and then you have to backfill the
-ancestry, though for lower memory costs.
+That would be a hash of the policy file that was last loaded via the 
+selinuxfs interface for loading policy, not a hash of the in-memory 
+policy data structures at the time of measurement (which is what this 
+patch series is implementing).  The duplicative part is with respect to 
+selecting a hash algorithm and hashing the in-memory policy as part of 
+the SELinux code rather than just passing the policy buffer to IMA for 
+measurement like any other buffer.  Userspace can already hash the 
+in-memory policy data itself by running sha256sum or whatever on 
+/sys/fs/selinux/policy, so we don't need to save or expose that separately.
 
-Systemd makes life more interesting since it sets up a whole load of
-propagations.  Each mount you make may cause several others to be created, but
-that would likely make the tree more efficient.
-
-David
 
