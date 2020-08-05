@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16512C433E0
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 20:14:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08609C433E1
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 20:14:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E597C22CA1
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 20:14:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7A8C22B42
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 20:14:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b="AwFBpkUn";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="lGi918tC"
+	dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b="k+tuYhnI";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="UlVjy0fz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729609AbgHEUNr (ORCPT
+        id S1726629AbgHEUOH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 5 Aug 2020 16:13:47 -0400
-Received: from wnew3-smtp.messagingengine.com ([64.147.123.17]:37003 "EHLO
+        Wed, 5 Aug 2020 16:14:07 -0400
+Received: from wnew3-smtp.messagingengine.com ([64.147.123.17]:36325 "EHLO
         wnew3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726629AbgHEQX0 (ORCPT
+        by vger.kernel.org with ESMTP id S1726627AbgHEQX0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
         Wed, 5 Aug 2020 12:23:26 -0400
 Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailnew.west.internal (Postfix) with ESMTP id 37C75970;
-        Wed,  5 Aug 2020 07:36:16 -0400 (EDT)
+        by mailnew.west.internal (Postfix) with ESMTP id E931D95C;
+        Wed,  5 Aug 2020 07:23:18 -0400 (EDT)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Wed, 05 Aug 2020 07:36:17 -0400
+  by compute2.internal (MEProxy); Wed, 05 Aug 2020 07:23:19 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
         message-id:subject:from:to:cc:date:in-reply-to:references
         :content-type:mime-version:content-transfer-encoding; s=fm3; bh=
-        TV/ywlemDl0JIUauxpySAysG0pozcgKEtLbmEq/dGCI=; b=AwFBpkUnA5Q3eZVP
-        GUBhoB/ilhwXI9VqrBWf6R5OCpprqNbp8Idwbc0ORpfdwf9XRzKHxTAwASOBHloP
-        C8kELv06f6HkCdmM7o/reWrBy3ZFHjtS93RPzrtwzpS9px9u0fikYwf5UfAk8BZ5
-        RcJHbvLqHaFZmmEjgxmdm0rRJiF6rzz0BWYeVdJTPAjS1R2mxJunWX3eTVWhiAW/
-        6Ap9JaHp1kY6tvHneM1y6nxLkgmPIl/GLPbviB/kmezKdXUMUKBQ6umnfBH0G58f
-        uP7AT57ilb7hRJHyP0HqrNRGP3Aw+xdw/wbrLXYX5oE44K2eyZIzhipL3rbEpcmc
-        S1RKug==
+        26J/RpIA9Dzs/j/8HMkMSuIzptW47JbejMg/q+iS3MA=; b=k+tuYhnIwwJqPC4a
+        ARmLeCMtIylGfe41ZB2xKZDmYvrKjpecqduRXwP+9BBuVWQgIaFmKGJTo3YJYXAx
+        Ypn3UJy81+Nvgtt39qeUW24jGFuqamg9GKZuaAL46pkTIrKEv0spYSGUItue51qM
+        BMEYBbtZSz2Afm8rvLkRPQLA3UQu5OFEeZcXaBtC28KAaWyED2HYsD1gD22fjByH
+        XaKZUEkNIEy+8yie9mVabtLESGXmRThqMwg8kT3n8Zks1mkufq0xGuTjVWrBZKJy
+        t+U0BtxJPwxVTRyKfTgopI4oCy+E+f9Q/YEOlFvgNxyDd/r3mZ38tXZoMCCaxSe8
+        BzA7cQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:content-type
         :date:from:in-reply-to:message-id:mime-version:references
         :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; bh=TV/ywlemDl0JIUauxpySAysG0pozcgKEtLbmEq/dG
-        CI=; b=lGi918tCPuQclchc60ZkZQcFuFeLnuEaz5oFvKYw47Yf6N9duODX99vQ0
-        v2wjcf/SgbslZcfvhprEmRgqBL19HB/1eb/JYzoYuP5jz2HFYgT/ak9IDUfwnhAJ
-        YkJIqH/75jxgyxwt67ZoBjpJqUEoP+E/n89yydB8voI+I/O7zCc7QhLrKKOuLxd8
-        vDlll4NR2YcE16zazVrfdI/a8y3gt5FGnB5CxQbKvQx0Q1/68uU+NYGdXE8gcVBZ
-        bHzmSNEbRP2lrp6vbGU5+8EiHmA2mQO1uyjzA/m5uW9PHXNgxKUgFedSPlxBTu5F
-        R1D43CcSiAfHDm04i23VAV+1VwUBw==
-X-ME-Sender: <xms:rpkqXxIM464vxKzxo1Ps1E1MNcoGOyyXu-byRxZmcehu1oS4oiPbAg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduiedrjeekgdeggecutefuodetggdotefrodftvf
+        :x-sasl-enc; s=fm3; bh=26J/RpIA9Dzs/j/8HMkMSuIzptW47JbejMg/q+iS3
+        MA=; b=UlVjy0fzxkWVFYnPUQXHQ3/SyandLHZI25k0hCWN2r2/1tUCxtdEGSYjm
+        GXKGrXAJ+D4IS9BdU05Xkvg4CRigWZWia+z/Rs8q9s8R/stmJ+fTTsh3K5yKFOem
+        sQyOz2u1x9OepQCiE0ydYQhN55yHJPMCnEtdrWPUXDOEOUk4FPLvn0WPOC9D0Sxy
+        93Xdzz7yWniafh0KlABxeImu8+TU6nNiOg1rz2EELtjJ21wVjypuFoLPPVVFFNQz
+        hTD2PklgWGLzAxRJZAnJYy8D5VV2qhj/k7v9pPO6mIPWTh7vUkxwxSWcVeSGgrKc
+        UmXy8Xn804pK0z1jYUQdrELOQxWwg==
+X-ME-Sender: <xms:pZYqXyxcpqQd8fkTI6CfOrrv8tj2qzF8np8tJRa1_efpe0JMgQiGkw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduiedrjeekgdegudcutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
     uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
     fjughrpefkuffhvfffjghftggfggfgsehtjeertddtreejnecuhfhrohhmpefkrghnucfm
@@ -59,42 +59,38 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduiedrjeekgdeggecutefuodetggdote
     efteetvdeguddvveefveeftedtffduudehueeihfeuvefgveehffeludeggfejnecukfhp
     peehkedrjedrvdehhedrvddvtdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
     epmhgrihhlfhhrohhmpehrrghvvghnsehthhgvmhgrfidrnhgvth
-X-ME-Proxy: <xmx:rpkqX9JrEnjQ0a_60B4dCHApSvALGVOSkJ8Sxj0D243ONHuAEjv0JQ>
-    <xmx:rpkqX5vsriW3o_YwMp5QeyhNrGEqZvM_FMb5gGXkEH6Kldth5k2SAw>
-    <xmx:rpkqXyZs1QHUmAvW5-dnVwWP92AJYBeyrGhvLg8ZW4Z58zFbXsHgqw>
-    <xmx:r5kqX0T5XKAiop0pugkIzJKNdw90x3nEoU89eXDiXzbLMU5kcLe6uaYBMNU>
+X-ME-Proxy: <xmx:pZYqX-TiKvrEJ-MB-FbK2Btrf7kE1Tw3EkDuTNy2v6yvzsOy2SlEgw>
+    <xmx:pZYqX0XLq-Ut0c4cHHkycDFeDRjTfcKY2AARmx6vEU009KfSrHB6bQ>
+    <xmx:pZYqX4j2RKFEQXdNPE9IPUWmO_fQ8BMKzSb1-ncgv31k1b-0y7ht3A>
+    <xmx:ppYqX0vJJE9yQ9CN4XXM-SnCkV-X0bG9y8hV4wWuiBbvkYky1I3se41MUu4>
 Received: from mickey.themaw.net (58-7-255-220.dyn.iinet.net.au [58.7.255.220])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 1578A30600B1;
-        Wed,  5 Aug 2020 07:36:08 -0400 (EDT)
-Message-ID: <013e9bb3cb1536c73a5b58c5ff000b3b00629561.camel@themaw.net>
-Subject: Re: [PATCH 13/17] watch_queue: Implement mount topology and
- attribute change notifications [ver #5]
+        by mail.messagingengine.com (Postfix) with ESMTPA id 40FB530600B4;
+        Wed,  5 Aug 2020 07:23:12 -0400 (EDT)
+Message-ID: <e1caad2bff5faf9b24b59fe4ee51df255412cc56.camel@themaw.net>
+Subject: Re: [PATCH 10/18] fsinfo: Provide notification overrun handling
+ support [ver #21]
 From:   Ian Kent <raven@themaw.net>
 To:     Miklos Szeredi <miklos@szeredi.hu>
 Cc:     David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
-        Christian Brauner <christian@brauner.io>, andres@anarazel.de,
-        Jeff Layton <jlayton@redhat.com>, dray@redhat.com,
-        Karel Zak <kzak@redhat.com>, keyrings@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Christian Brauner <christian@brauner.io>,
+        Jann Horn <jannh@google.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Karel Zak <kzak@redhat.com>, Jeff Layton <jlayton@redhat.com>,
         Linux API <linux-api@vger.kernel.org>,
         linux-fsdevel@vger.kernel.org,
         LSM <linux-security-module@vger.kernel.org>,
         linux-kernel@vger.kernel.org
-Date:   Wed, 05 Aug 2020 19:36:05 +0800
-In-Reply-To: <CAJfpegvxKTy+4Zk6banvxQ83PeFV7Xnt2Qv=kkOg57rxFKqVEg@mail.gmail.com>
-References: <158454378820.2863966.10496767254293183123.stgit@warthog.procyon.org.uk>
-         <158454391302.2863966.1884682840541676280.stgit@warthog.procyon.org.uk>
-         <CAJfpegspWA6oUtdcYvYF=3fij=Bnq03b8VMbU9RNMKc+zzjbag@mail.gmail.com>
-         <1293241.1595501326@warthog.procyon.org.uk>
-         <CAJfpeguvLMCw1H8+DPsfZE_k0sEiRtA17pD9HjnceSsAvqqAZw@mail.gmail.com>
-         <43c061d26ddef2aa3ca1ac726da7db9ab461e7be.camel@themaw.net>
-         <CAJfpeguFkDDhz7+70pSUv_j=xY5L08ESpaE+jER9vE5p+ZmfFw@mail.gmail.com>
-         <c558fc4af785f62a2751be3b297d1ccbbfcfa969.camel@themaw.net>
-         <CAJfpegvxKTy+4Zk6banvxQ83PeFV7Xnt2Qv=kkOg57rxFKqVEg@mail.gmail.com>
+Date:   Wed, 05 Aug 2020 19:23:07 +0800
+In-Reply-To: <CAJfpegs1NLaamFA12f=EJRN4B3_iC+Uzi2NQKTV-fBSypcufLQ@mail.gmail.com>
+References: <159646178122.1784947.11705396571718464082.stgit@warthog.procyon.org.uk>
+         <159646187082.1784947.4293611877413578847.stgit@warthog.procyon.org.uk>
+         <20200804135641.GE32719@miu.piliscsaba.redhat.com>
+         <94bba6f200bb2bbf83f4945faa2ccb83fd947540.camel@themaw.net>
+         <5078554c6028e29c91d815c63e2af1ffac2ecbbb.camel@themaw.net>
+         <CAJfpegs1NLaamFA12f=EJRN4B3_iC+Uzi2NQKTV-fBSypcufLQ@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
 MIME-Version: 1.0
@@ -103,40 +99,37 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 2020-08-05 at 09:43 +0200, Miklos Szeredi wrote:
-> On Wed, Aug 5, 2020 at 3:54 AM Ian Kent <raven@themaw.net> wrote:
-> > > > It's way more useful to have these in the notification than
-> > > > obtainable
-> > > > via fsinfo() IMHO.
-> > > 
-> > > What is it useful for?
+On Wed, 2020-08-05 at 09:45 +0200, Miklos Szeredi wrote:
+> On Wed, Aug 5, 2020 at 4:46 AM Ian Kent <raven@themaw.net> wrote:
+> > Coming back to an actual use case.
 > > 
-> > Only to verify that you have seen all the notifications.
+> > What I said above is one aspect but, since I'm looking at this
+> > right
+> > now with systemd, and I do have the legacy code to fall back to,
+> > the
+> > "just reset everything" suggestion does make sense.
 > > 
-> > If you have to grab that info with a separate call then the count
-> > isn't necessarily consistent because other notifications can occur
-> > while you grab it.
+> > But I'm struggling to see how I can identify notification buffer
+> > overrun in libmount, and overrun is just one possibility for lost
+> > notifications, so I like the idea that, as a library user, I can
+> > work out that I need to take action based on what I have in the
+> > notifications themselves.
 > 
-> No, no no.   The watch queue will signal an overflow, without any
-> additional overhead for the normal case.  If you think of this as a
-> protocol stack, then the overflow detection happens on the transport
-> layer, instead of the application layer.  The application layer is
-> responsible for restoring state in case of a transport layer error,
-> but detection of that error is not the responsibility of the
-> application layer.
+> Hmm, what's the other possibility for lost notifications?
 
-I can see in the kernel code that an error is returned if the message
-buffer is full when trying to add a message, I just can't see where
-to get it in the libmount code.
+In user space that is:
 
-That's not really a communication protocol problem.
+Multi-threaded application races, single threaded applications and
+signal processing races, other bugs ...
 
-Still I need to work out how to detect it, maybe it is seen by
-the code in libmount already and I simply can't see what I need
-to do to recognise it ...
+For example systemd has it's own event handling sub-system and handles
+half a dozen or so event types of which the mount changes are one. It's
+fairly complex so I find myself wondering if I can trust it and
+wondering if there are undiscovered bugs in it. The answer to the
+former is probably yes but the answer to the later is also probably
+yes.
 
-So I'm stuck wanting to verify I have got everything that was
-sent and am having trouble moving on from that.
-
+Maybe I just paranoid!
 Ian
+
 
