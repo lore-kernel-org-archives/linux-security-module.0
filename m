@@ -2,183 +2,162 @@ Return-Path: <SRS0=iE4T=BP=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA431C433E0
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 18:16:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C15DAC433E0
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 19:13:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CAB712084D
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 18:16:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3FE620842
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 19:13:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="sligP+Ml"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728384AbgHESQc (ORCPT
+        id S1728225AbgHETNa (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 5 Aug 2020 14:16:32 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33162 "EHLO
-        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728665AbgHESPy (ORCPT
+        Wed, 5 Aug 2020 15:13:30 -0400
+Received: from sonic304-27.consmr.mail.ne1.yahoo.com ([66.163.191.153]:34441
+        "EHLO sonic304-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729232AbgHES0s (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 5 Aug 2020 14:15:54 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 075I6IQw022319;
-        Wed, 5 Aug 2020 14:15:30 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 32qtnq5s5d-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 05 Aug 2020 14:15:30 -0400
-Received: from m0098421.ppops.net (m0098421.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 075I6SBw023318;
-        Wed, 5 Aug 2020 14:15:29 -0400
-Received: from ppma04fra.de.ibm.com (6a.4a.5195.ip4.static.sl-reverse.com [149.81.74.106])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 32qtnq5s4j-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 05 Aug 2020 14:15:29 -0400
-Received: from pps.filterd (ppma04fra.de.ibm.com [127.0.0.1])
-        by ppma04fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 075IAP9d012198;
-        Wed, 5 Aug 2020 18:15:27 GMT
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
-        by ppma04fra.de.ibm.com with ESMTP id 32n018au5x-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 05 Aug 2020 18:15:27 +0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 075IFOpu33489240
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 5 Aug 2020 18:15:25 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DDB2EAE051;
-        Wed,  5 Aug 2020 18:15:24 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 42453AE055;
-        Wed,  5 Aug 2020 18:15:19 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.95.205])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed,  5 Aug 2020 18:15:19 +0000 (GMT)
-Message-ID: <b08ae82102f35936427bf138085484f75532cff1.camel@linux.ibm.com>
-Subject: Re: [dm-devel] [RFC PATCH v5 00/11] Integrity Policy Enforcement
- LSM (IPE)
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     James Morris <jmorris@namei.org>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc:     Deven Bowers <deven.desai@linux.microsoft.com>,
-        Pavel Machek <pavel@ucw.cz>, Sasha Levin <sashal@kernel.org>,
-        snitzer@redhat.com, dm-devel@redhat.com,
-        tyhicks@linux.microsoft.com, agk@redhat.com, paul@paul-moore.com,
-        corbet@lwn.net, nramas@linux.microsoft.com, serge@hallyn.com,
-        pasha.tatashin@soleen.com, jannh@google.com,
-        linux-block@vger.kernel.org, viro@zeniv.linux.org.uk,
-        axboe@kernel.dk, mdsakib@microsoft.com,
-        linux-kernel@vger.kernel.org, eparis@redhat.com,
-        linux-security-module@vger.kernel.org, linux-audit@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        jaskarankhurana@linux.microsoft.com
-Date:   Wed, 05 Aug 2020 14:15:13 -0400
-In-Reply-To: <alpine.LRH.2.21.2008050934060.28225@namei.org>
-References: <20200728213614.586312-1-deven.desai@linux.microsoft.com>
-          <20200802115545.GA1162@bug> <20200802140300.GA2975990@sasha-vm>
-          <20200802143143.GB20261@amd>
-          <1596386606.4087.20.camel@HansenPartnership.com>
-          <fb35a1f7-7633-a678-3f0f-17cf83032d2b@linux.microsoft.com>
-         <1596639689.3457.17.camel@HansenPartnership.com>
-         <alpine.LRH.2.21.2008050934060.28225@namei.org>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-08-05_14:2020-08-03,2020-08-05 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- priorityscore=1501 phishscore=0 bulkscore=0 mlxlogscore=999
- lowpriorityscore=0 suspectscore=0 spamscore=0 mlxscore=0 impostorscore=0
- clxscore=1011 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2008050141
+        Wed, 5 Aug 2020 14:26:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1596651945; bh=FOt0zwyHrJWGV8EAmJgJDEq7xIcxGCYOB9lxPGye2YQ=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=sligP+Ml+0zuo/I/JfvSiHtxUKTMcEpvND0H95NeiDHvw2DSGx1zLe+2lArdHgJMKDRDWQIktPA1qeQl0A15IDLuRv2uhxj69lX241Sx65eaJJFTuO2ubMsS/X+Pd3fV2eSfpRytARw8MoE86QP1KuWHlNSrnftOZuQH+508PPx9XvAjBofb0VuSqdQvn/gLnoKhJ/CsvRBfT6XACVqYU/pCQ9f0FhzIdcBAhz0ho0U2ZoTjvoZQLrH+Syn+l507Riw794LdT8xga0ooLTmZxS8T9YWetudDjcl6CzomiW9291uxEq4Kt+tndWJbFjhEClJ6g4atHvZYNW5WOYqfmg==
+X-YMail-OSG: oN35ZiMVM1mfYW44uLsECdJwf7aD1ebBeTnN47QhSKpbA7H7q0Ta45_XoY7Kxk0
+ xRjvrj75awjVybWRzEYlkQqAg45ISZEVAfMkKYDi_XF__mUx5lwC9ueVSvW_Twy.88xSKQUysr9Y
+ E7brLsol0w7WOUw4yuyfX6IlxhhN7fCImvnue0cfi.rj05KqrVhqrv1FBU5BBp8gbsZU4SjqpnPY
+ UdVQLQfUJzYPvvSP9X3yTyTda5.PP1goC2KLANQ18Xk_zH8ezbsTw0e6mwF455n.7AUZ6lSVQtwx
+ AhALXcD0ZOkTYrxFIItbGTi5XVkwdRyZ639sUMf1lskNosHAA0OUWGETOZ3hUErwTUfoxx.3okAG
+ WggPQUXdxskaPZmPUM1GP3lUcFyFkA7mK0GmeHyedUXkiBuOvaju0xfCKlfo2k10.8lDazlgvQnY
+ RYczWa.58pSBZ0Eha2JLmD6yHtYawj2WbLgC0O0P9hdk3nuK2iyh0_Q3tb8X8OrELC7.zO94HAf.
+ 4u2bUphuWWJulV2f_voWaWwe34ebnkJ_hEu58OoG_xI9MkolsISXrzm9eWqe56tDp3AmkRJE_la0
+ GthSM4.GjUd3m1VIQ5y58cHlTRzjLiF.8S2H.8W_jZqd2N4DD4sW0Ap_QT_vi39MrOil7o_u6eX9
+ IlAwQzRZkGdDFU_UvbRxX6KGtCY5C4cqwJuxU3bA.wxUxZ8junCY4LHlbZguoL_ml2Ko8xCm0p7y
+ lBXzF5MTevox7HjcnvlKVcolNY1PB_l8d42XNjldN.4wIO.sGfhPWURdlYn0CnOdWD40gsvKjxTJ
+ 2y9kznja8hJWE1z8XGwU13S7nAHC_JKrgDzYiYTtuvo.pCwir4BF9EBjQHFq4qCLRH_jhuYL868C
+ u7DBHPQdFhDSD10r7Snc3bYEmoiLYAEnnLBwALxU_nOB768bcT5Ppv8Kk5Yb0TeT601.QOo5KkHD
+ AvDUdu1hgNLKXvwf1zL4EfV7RHAj203PLRRHTgJYMJ8FiINWOINsvyxlsXGkkKZMg2LwiEH6VO1D
+ 79fHSkZRKUPGx5dJWi4x_qjN2u3C72zPeWDymvlbLhkYlphEPaKwPLyjd_vCbo5wTMAvsnl13dwQ
+ YnIpL4vuo0i_Xt5SFphPU0pDe_0WnXFpl0etDBb3fYPKGBqC_KYGfj0gPpdUxc.N3ko.ScZU_iV6
+ oPV1DjWZVXATDpSYk82s6k_hlgFH61VIik95J2gTxRcexi3EdmVZub5vQNjbCoTPLULut5vo.9XN
+ 7YzU5BpMpMHc9Qiet3.LUhNtYZnxjBR41WDdFB6TfHTkncBh0c8JftZAiKL7fMPhmQfI_kTcP5nU
+ LlsKcjv8N1KPTj8tXQM4_0c_CvAnj6M44bRS8GcARpKK7z5EohGgkdnXuP40V7zrhXyk-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.ne1.yahoo.com with HTTP; Wed, 5 Aug 2020 18:25:45 +0000
+Received: by smtp410.mail.gq1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID a204618d0e4212a8de77f50ea77d7c86;
+          Wed, 05 Aug 2020 18:25:40 +0000 (UTC)
+Subject: Re: [PATCH v6 0/4] LSM: Measure security module data
+To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Tyler Hicks <tyhicks@linux.microsoft.com>
+Cc:     stephen.smalley.work@gmail.com, sashal@kernel.org,
+        jmorris@namei.org, linux-integrity@vger.kernel.org,
+        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <20200805004331.20652-1-nramas@linux.microsoft.com>
+ <f3971f35-309d-c3e5-9126-69add7ad4c11@schaufler-ca.com>
+ <50587a3e-bcb5-c68e-c16c-41baf68b4d4a@linux.microsoft.com>
+ <c7c168f2-e30b-d2c5-abcb-1b6919197474@schaufler-ca.com>
+ <20200805154504.GB4365@sequoia>
+ <69810007161e689ac817099fb1c6df21962963e4.camel@linux.ibm.com>
+ <9ad079ff-1bd4-1302-e6fb-25a7396ef12f@linux.microsoft.com>
+ <ecc97f59-c2cc-0b23-6199-925ba0d6358b@schaufler-ca.com>
+ <50f00ace-8d46-01c2-bf0f-d5484aafd95c@linux.microsoft.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <5570a4d8-8779-6efe-b208-f7efa8ba9488@schaufler-ca.com>
+Date:   Wed, 5 Aug 2020 11:25:39 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.11.0
+MIME-Version: 1.0
+In-Reply-To: <50f00ace-8d46-01c2-bf0f-d5484aafd95c@linux.microsoft.com>
+Content-Type: text/plain; charset=iso-8859-15
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Mailer: WebService/1.1.16436 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo Apache-HttpAsyncClient/4.1.4 (Java/11.0.7)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 2020-08-05 at 09:59 -0700, James Morris wrote:
-> On Wed, 5 Aug 2020, James Bottomley wrote:
-> 
-> > I'll leave Mimi to answer, but really this is exactly the question that
-> > should have been asked before writing IPE.  However, since we have the
-> > cart before the horse, let me break the above down into two specific
-> > questions.
-> 
-> The question is valid and it was asked. We decided to first prototype what 
-> we needed and then evaluate if it should be integrated with IMA. We 
-> discussed this plan in person with Mimi (at LSS-NA in 2019), and presented 
-> a more mature version of IPE to LSS-NA in 2020, with the expectation that 
-> such a discussion may come up (it did not).
+On 8/5/2020 11:08 AM, Lakshmi Ramasubramanian wrote:
+> On 8/5/20 10:57 AM, Casey Schaufler wrote:
+>> On 8/5/2020 10:25 AM, Lakshmi Ramasubramanian wrote:
+>>> On 8/5/20 10:03 AM, Mimi Zohar wrote:
+>>>> On Wed, 2020-08-05 at 10:45 -0500, Tyler Hicks wrote:
+>>>>
+>>>>> In addition to SELINUX_STATE and SELINUX_POLICY, we should also consider
+>>>>> the proposed LSM_STATE and LSM_POLICY func values but require an "lsm"
+>>>>> rule conditional.
+>>>>>
+>>>>> So the current proposed rules:
+>>>>>
+>>>>> ? measure func=LSM_STATE
+>>>>> ? measure func=LSM_POLICY
+>>>>>
+>>>>> Would become:
+>>>>>
+>>>>> ? measure func=LSM_STATE lsm=selinux
+>>>>> ? measure func=LSM_POLICY lsm=selinux
+>>>>>
+>>>>> The following rules would be rejected:
+>>>>>
+>>>>> ? measure func=LSM_STATE
+>>>>> ? measure func=LSM_POLICY
+>>>>> ? measure func=LSM_STATE lsm=apparmor
+>>>>> ? measure func=LSM_POLICY lsm=smack
+>>>>
+>>>> Kees is cleaning up the firmware code which differentiated between how
+>>>> firmware was loaded.?? There will be a single firmware enumeration.
+>>>>
+>>>> Similarly, the new IMA hook to measure critical state may be placed in
+>>>> multiple places.? Is there really a need from a policy perspective for
+>>>> differentiating the source of the critical state being measurind??? The
+>>>> data being measured should include some identifying information.
+>>>
+>>> Yes Mimi - SELinux is including the identifying information in the "event name" field. Please see a sample measurement of STATE and POLICY for SELinux below:
+>>>
+>>> 10 e32e...5ac3 ima-buf sha256:86e8...4594 selinux-state-1595389364:287899386 696e697469616c697a65643d313b656e61626c65643d313b656e666f7263696e673d303b636865636b72657170726f743d313b6e6574776f726b5f706565725f636f6e74726f6c733d313b6f70656e5f7065726d733d313b657874656e6465645f736f636b65745f636c6173733d313b616c776179735f636865636b5f6e6574776f726b3d303b6367726f75705f7365636c6162656c3d313b6e6e705f6e6f737569645f7472616e736974696f6e3d313b67656e66735f7365636c6162656c5f73796d6c696e6b733d303
+>>>
+>>> 10 f4a7...9408 ima-ng sha256:8d1d...1834 selinux-policy-hash-1595389353:863934271
+>>>
+>>>>
+>>>> I think moving away from the idea that measuring "critical" data should
+>>>> be limited to LSMs, will clarify this.
+>>>>
+>>>
+>>> Are you suggesting that instead of calling the hooks LSM_STATE and LSM_POLICY, we should keep it more generic so that it can be utilized by any subsystem to measure their "critical data"?
+>>
+>> Policy, state, history or whim, it should be up to the security module
+>> to determine what data it cares about, and how it should be measured.
+>> Smack does not keep its policy in a single blob of data, it uses lists
+>> which can be modified at will. Your definition of the behavior for
+>> LSM_POLICY wouldn't work for Smack. That doesn't mean that there isn't
+>> a viable way to measure the Smack policy, it just means that IMA isn't
+>> the place for it. If SELinux wants its data measured, SELinux should be
+>> providing the mechanism to do it.
+>>
+>> I guess that I'm agreeing with you in part. If you want a generic measurement
+>> of "critical data", you don't need to assign a type to it, you have the
+>> caller (a security module, a device driver or whatever) identify itself and
+>> how it is going to deal with the data. That's very different from what you've
+>> done to date.
+>
+> Agree.
+>
+> Like Stephen had stated earlier, the reason we kept separate hooks (STATE and POLICY) is because the data for state is usually small and therefore we measure the entire data. Whereas, policy data is usually quite large (a few MB) and hence we measure a hash of the policy.
 
-When we first spoke the concepts weren't fully formulated, at least to
-me.
-> 
-> These patches are still part of this process and 'RFC' status.
-> 
-> >    1. Could we implement IPE in IMA (as in would extensions to IMA cover
-> >       everything).  I think the answers above indicate this is a "yes".
-> 
-> It could be done, if needed.
-> 
-> >    2. Should we extend IMA to implement it?  This is really whether from a
-> >       usability standpoint two seperate LSMs would make sense to cover the
-> >       different use cases.
-> 
-> One issue here is that IMA is fundamentally a measurement & appraisal 
-> scheme which has been extended to include integrity enforcement. IPE was 
-> designed from scratch to only perform integrity enforcement. As such, it 
-> is a cleaner design -- "do one thing and do it well" is a good design 
-> pattern.
-> 
-> In our use-case, we utilize _both_ IMA and IPE, for attestation and code 
-> integrity respectively. It is useful to be able to separate these 
-> concepts. They really are different:
-> 
-> - Code integrity enforcement ensures that code running locally is of known 
-> provenance and has not been modified prior to execution.
-> 
-> - Attestation is about measuring the health of a system and having that 
-> measurement validated by a remote system. (Local attestation is useless).
-> 
-> I'm not sure there is value in continuing to shoe-horn both of these into 
-> IMA.
+SELinux should determine how it wants its data measured.
+SELinux, not IMA, should determine if some "critical data"
+be measured in total, by its hash or as a count of policy
+rules. It would be handy for IMA to supply functions to do
+data blobs and hashes, but it should be up to the caller to
+decide if they meet their needs.
 
-True, IMA was originally limited to measurement and attestation, but
-most of the original EVM concepts were subsequently included in IMA. 
-(Remember, Reiner Sailer wrote the original IMA, which I inherited.  I
-was originially working on EVM code integrity.)  From a naming
-perspective including EVM code integrity in IMA was a mistake.  My
-thinking at the time was that as IMA was already calculating the file
-hash, instead of re-calculating the file hash for integrity, calculate
-the file hash once and re-use it for multiple things - measurement, 
-integrity, and audit.   At the same time define a single system wide
-policy.
-
-When we first started working on IMA, EVM, trusted, and encrypted keys,
-the general kernel community didn't see a need for any of it.  Thus, a
-lot of what was accomplished has been accomplished without the backing
-of the real core filesystem people.
-
-If block layer integrity was enough, there wouldn't have been a need
-for fs-verity.   Even fs-verity is limited to read only filesystems,
-which makes validating file integrity so much easier.  From the
-beginning, we've said that fs-verity signatures should be included in
-the measurement list.  (I thought someone signed on to add that support
-to IMA, but have not yet seen anything.)
-
-Going forward I see a lot of what we've accomplished being incorporated
-into the filesystems.  When IMA will be limited to defining a system
-wide policy, I'll have completed my job.
-
-Mimi
-
-> 
-> >  I've got to say the least attractive thing
-> >       about separation is the fact that you now both have a policy parser.
-> >        You've tried to differentiate yours by making it more Kconfig
-> >       based, but policy has a way of becoming user space supplied because
-> >       the distros hate config options, so I think you're going to end up
-> >       with a policy parser very like IMAs.
-
-
+>
+> If change to a generic measurement of "critical data", at the least IMA should provide a way to measure "data" and "hash(data)".
+>
+> And, with the caller providing the identifying information, there would be no need to call it "LSM_STATE" or "SELINUX_STATE" or such.
+>
+> ?-lakshmi
+>
+>
