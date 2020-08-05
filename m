@@ -2,96 +2,163 @@ Return-Path: <SRS0=iE4T=BP=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 881DBC433E0
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 17:25:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06CB5C433E0
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 17:33:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6699E22D07
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 17:25:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D1C4B22D37
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 17:33:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="pIV877Jp"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="fLJxyoQ0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728768AbgHERZs (ORCPT
+        id S1728874AbgHERdP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 5 Aug 2020 13:25:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52852 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728745AbgHERZQ (ORCPT
+        Wed, 5 Aug 2020 13:33:15 -0400
+Received: from sonic307-15.consmr.mail.ne1.yahoo.com ([66.163.190.38]:35104
+        "EHLO sonic307-15.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728593AbgHERbT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 5 Aug 2020 13:25:16 -0400
-Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E6A5C0086A7
-        for <linux-security-module@vger.kernel.org>; Wed,  5 Aug 2020 07:46:44 -0700 (PDT)
-Received: by mail-ed1-x541.google.com with SMTP id a14so15763669edx.7
-        for <linux-security-module@vger.kernel.org>; Wed, 05 Aug 2020 07:46:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3edvsdiBJ+dMkVwgYQe5b56g/OTwtECyNQldn00sS/k=;
-        b=pIV877Jp9EOP/kj6De7JQRLtf8VLarGd/I50CrlfCnVlTSEvY4ZesiGKNPAJkMSA9S
-         1xuBLUfpu8+qhUlXVyP6XOQ6q0sRV7EwvIwaXpVhCVUJTjQCjAneENJ37v5t/IG4dAAS
-         5v+E0LKx1h0Z1Z/D73XVOhVsAP6a9wsqDzKnw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3edvsdiBJ+dMkVwgYQe5b56g/OTwtECyNQldn00sS/k=;
-        b=Wiii0VUnvlsltxX9qYa4REbA0+Vwk5x5vYdhYgzcBO/eIaDobALJZq8yExNT9Zgx4j
-         gup6XHHxlWhy60dw/ULIJ5GbYtxwoizI4A9N9IzmfNmVzrMeeTI9FubH2NBY9wj1ZgZp
-         Tol3qhHX2+c5Ws4EcjSkP2UB4fEDK5mW/aKHlcOn2h495mRY2btleY5acSWVbIZ6h44B
-         OCZpHOWfgnJrrl6z9sYXPclTkbzJkk0waMjJDdVWTTUc1N0t+isqkkPUWX9/quffTbx1
-         Vp+Gcw8FH4rmYy1R/VWad+Z1qKYQu6J6WxYirtEob73NAzXx4rSXLSVZjvdL2sh2HU9g
-         vPZw==
-X-Gm-Message-State: AOAM5316D9QzT1i0pa2mf2+WNsNFJqqLzTeKpZyzmm3XfKIGEJaukEQ0
-        ud1l3Oe6ZcGzIuaDmPeJbn0U9ugxfMxAt0IA5kEJ1A==
-X-Google-Smtp-Source: ABdhPJy96Yk1HJK8pmfb/tsUqlvWao5KdebzpybEXlIErIo0+XHeGRmkn8IkxZto7tV3EPeU3amgjnjkLpPlXf7haIA=
-X-Received: by 2002:a05:6402:13d4:: with SMTP id a20mr3180723edx.161.1596638802798;
- Wed, 05 Aug 2020 07:46:42 -0700 (PDT)
+        Wed, 5 Aug 2020 13:31:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1596648677; bh=jvxkSkOTSPyya8QAh7XMh9VDbBmnEMvd/5JFSW3wW7w=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=fLJxyoQ0Ucj0oVNgJ1rM4UO6F5l8kggbJlA+sGdfoJcr4vlI5q/42iAV7UtHQrh/oY3kmaVKJA/0Crvpf/c4iNqTLQAtqERivlNmgMe47lKK/DB2x71lilw87KRNj8ykzhrTWNEyXL8ErlIbBKSNdwbtOT9q/ikyt5KueH4wtCWWflI25uPG2Hq6Pkpsw+B9QzOfBcO4cbnQfth3jjLnmllsVjZh5osHnY0uN3QXvVGanJcCIKEN7RH2OC6EImqH9dGyoBC39E6wJyRcrVLHCMWjhsE4iB+wd7NVqkVN+aHnKk+V1ayim5vGXNfpnInEAkaaoQ/pg1GGzLYDek+qSQ==
+X-YMail-OSG: pQNn7cwVM1kuAR5tTKU.VeynlGP2Sr8sFVOjP1ZFSPgyutQRgtrndCh9OpSard8
+ OF0AvjfBMu4g6fshBSlG89XEg7WOTdJfx17d0BCYONAVElTfKBnK53K2oWDgZOda0AUs__XvjBm4
+ m6hpcf1JqSdeigNnKZ9E6Fcyfec7724ELUlAHAEx5s3cLwP0zw_KibM52X_3bHIHv.jbhJcNMd35
+ CL.FeLbN.GIkbk.xt3y47QWEw9nSDBqfI6ga0AeJkZ1WMIqoQ6d6a1YCM83KTAFzhKZBEsinsYJu
+ C_L62f8SDVJOFLrKXEow5u1WXLBXiy0YlHHdbOwd4XonjfLETA48fLfoUN2xPcTSomXsUCxNFKuN
+ hzysY48s6jIoPsIUah79BoOlsKhEUQkIf1t4TJX3.1rtCIGXgzp4hQSTQCg5d353biTu1BJgbqrl
+ aP5vbPM1qIB1oiwxSWrczivnCydbVQ0JanmEzwWTRIldQnqYx7AZY_GET94Vgu2LH20MpQ9emk9M
+ kSQjZG8gBZjfdt6a1ysgStYIDCabS3G0N6xcp8EptAcxw3Qruf4OdITjZj2S2zaF_Tt.skfdBiEH
+ lAHgm.huo_1ZXUxCE9z1t._79GXkQxOBd5zQiVaW0cqSShaB3LY4F8B6_vUTWwwdLONiXJ19J4Up
+ Wm31TQhynLbs7JZ68uP0QtT_XnyOhfhVy2R8pKrzP5PFxvFA_kghVA4ezXeISzW4o0KKFBMZ8Mnd
+ hQkhUb3PWp95j5EfJEorKMhuE37noTgh3Th8DHifuYcOblFW2t9kzlTvdgt0D9lAZSNnCCcQLK1M
+ DFOL48v0BX9ngqLh1GL2H5uPFdAIQqq5zCe7fg1Nx9UYJW_PF_aYkahieQxIFNbFmEAdfQmEB_E2
+ .bW.UZR9.ymD.VmFWfxrCjgDb7voW9KI6_9oYkpeeWjq0hN2aFmdeD5y_rJwO0uSnV6G_DojYwdD
+ kbh9qY.zpTtSKYx1VCH3EnvV0wimTKo_bqVjJ16q3eCoAV4HCEvFmMTiJo0qJUwuZytTjdJnPKOM
+ JSXznefce69FbHCgYl9jljaGUgZLDCf8y8mlkOb1dVj2SAgl9LOZib0nrdG3SXeZLloKPqmxF.M.
+ UuuM3qdiQHBOxoOB.er3adFi2oAQoewElCx.3rgVhzeuU7N8MQKOZg1Z7cFl8ihhdCJVguGdTuyX
+ xq30kdJHL0OXYG57JQFIlJgWt3FMFhRY8mnYjEJoVlkgBSIiyYYLdDa97YWhwnRgILsZqwK.tLFn
+ k3PNyzLH_5Twmr_etFSjeZqeFXrmxFjPxmQrIFbvY08YY55cHZFWLI.Iar6BUpjAHxet89OwO20M
+ R5UwWNtxKDvK8ErTgk6ThIsZ_UaG3A5mILcwpZywf1KXOJyUbq2fasYTJ_d0MapAK34JubX4c
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic307.consmr.mail.ne1.yahoo.com with HTTP; Wed, 5 Aug 2020 17:31:17 +0000
+Received: by smtp430.mail.gq1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID ed7a3cd929d73e97781e8fdb08361289;
+          Wed, 05 Aug 2020 17:31:15 +0000 (UTC)
+Subject: Re: [PATCH v6 0/4] LSM: Measure security module data
+To:     Tyler Hicks <tyhicks@linux.microsoft.com>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Cc:     zohar@linux.ibm.com, stephen.smalley.work@gmail.com,
+        sashal@kernel.org, jmorris@namei.org,
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <20200805004331.20652-1-nramas@linux.microsoft.com>
+ <f3971f35-309d-c3e5-9126-69add7ad4c11@schaufler-ca.com>
+ <50587a3e-bcb5-c68e-c16c-41baf68b4d4a@linux.microsoft.com>
+ <c7c168f2-e30b-d2c5-abcb-1b6919197474@schaufler-ca.com>
+ <20200805154504.GB4365@sequoia>
+ <7c7a076b-6ba7-2e8d-409a-b3b4e4738c41@linux.microsoft.com>
+ <20200805161449.GC4365@sequoia>
+ <ae80581d-a34c-51f4-d4f9-94c1e341fd15@linux.microsoft.com>
+ <20200805163243.GD4365@sequoia>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <ed202762-d7e3-dd13-eda4-03f4e77f1e28@schaufler-ca.com>
+Date:   Wed, 5 Aug 2020 10:31:14 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.11.0
 MIME-Version: 1.0
-References: <159646178122.1784947.11705396571718464082.stgit@warthog.procyon.org.uk>
- <159646183662.1784947.5709738540440380373.stgit@warthog.procyon.org.uk>
- <20200804104108.GC32719@miu.piliscsaba.redhat.com> <2306029.1596636828@warthog.procyon.org.uk>
-In-Reply-To: <2306029.1596636828@warthog.procyon.org.uk>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 5 Aug 2020 16:46:31 +0200
-Message-ID: <CAJfpegtOguKOGWxv-sA_C9eSWG_3Srnj_k=oW-wSHNprCipFVg@mail.gmail.com>
-Subject: Re: [PATCH 06/18] fsinfo: Add a uniquifier ID to struct mount [ver #21]
-To:     David Howells <dhowells@redhat.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ian Kent <raven@themaw.net>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Christian Brauner <christian@brauner.io>,
-        Jann Horn <jannh@google.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Karel Zak <kzak@redhat.com>, Jeff Layton <jlayton@redhat.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        LSM <linux-security-module@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200805163243.GD4365@sequoia>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Mailer: WebService/1.1.16436 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo Apache-HttpAsyncClient/4.1.4 (Java/11.0.7)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Aug 5, 2020 at 4:14 PM David Howells <dhowells@redhat.com> wrote:
+On 8/5/2020 9:32 AM, Tyler Hicks wrote:
+> On 2020-08-05 09:21:24, Lakshmi Ramasubramanian wrote:
+>> On 8/5/20 9:14 AM, Tyler Hicks wrote:
+>>> On 2020-08-05 09:07:48, Lakshmi Ramasubramanian wrote:
+>>>> On 8/5/20 8:45 AM, Tyler Hicks wrote:
+>>>>> On 2020-08-05 08:36:40, Casey Schaufler wrote:
+>>>>>> On 8/4/2020 6:14 PM, Lakshmi Ramasubramanian wrote:
+>>>>>>> On 8/4/20 6:04 PM, Casey Schaufler wrote:
+>>>>>>>> On 8/4/2020 5:43 PM, Lakshmi Ramasubramanian wrote:
+>>>>>>>>> Critical data structures of security modules are currently not measured.
+>>>>>>>>> Therefore an attestation service, for instance, would not be able to
+>>>>>>>>> attest whether the security modules are always operating with the policies
+>>>>>>>>> and configuration that the system administrator had setup. The policies
+>>>>>>>>> and configuration for the security modules could be tampered with by
+>>>>>>>>> malware by exploiting kernel vulnerabilities or modified through some
+>>>>>>>>> inadvertent actions on the system. Measuring such critical data would
+>>>>>>>>> enable an attestation service to better assess the state of the system.
+>>>>>>>> I still wonder why you're calling this an LSM change/feature when
+>>>>>>>> all the change is in IMA and SELinux. You're not putting anything
+>>>>>>>> into the LSM infrastructure, not are you using the LSM infrastructure
+>>>>>>>> to achieve your ends. Sure, you *could* support other security modules
+>>>>>>>> using this scheme, but you have a configuration dependency on
+>>>>>>>> SELinux, so that's at best going to be messy. If you want this to
+>>>>>>>> be an LSM "feature" you need to use the LSM hooking mechanism.
+>>>>>>>> I'm not objecting to the feature. It adds value. But as you've
+>>>>>>>> implemented it it is either an IMA extension to SELinux, or an
+>>>>>>>> SELiux extension to IMA. Could AppArmor add hooks for this without
+>>>>>>>> changing the IMA code? It doesn't look like it to me.
+>>>>>>> The check in IMA to allow the new IMA hook func LSM_STATE and LSM_POLICY when SELinux is enabled is just because SELinux is the only security module using these hooks now.
+>>>>>>>
+>>>>>>> To enable AppArmor, for instance, to use the new IMA hooks to measure state and policy would just require adding the check for CONFIG_SECURITY_APPARMOR. Other than that, there are no IMA changes needed to support AppArmor or other such security modules.
+>>>>>> This is exactly what I'm objecting to. What if a system has both SELinux
+>>>>>> and AppArmor compiled in? What if it has both enabled?
+>>>>> The SELinux state and policy would be measured but the AppArmor
+>>>>> state/policy would be silently ignored. This isn't ideal as the IMA
+>>>>> policy author would need to read the kernel code to figure out which
+>>>>> LSMs are going to be measured.
+>>>> Tyler - I am not sure why AppArmor state\policy would be ignored when both
+>>>> SELinux and AppArmor are enabled. Could you please clarify?
+>>> I think Casey is talking about now (when AppArmor is not supported by
+>>> this feature) and you're talking about the future (when AppArmor may be
+>>> supported by this feature).
+>> Got it - thanks for clarifying.
+>>
+>> But with the current code if SELinux is enabled on the system, but AppArmor
+>> is not and the IMA policy contains "measure func=LSM_STATE" then the policy
+>> will be rejected as "-EINVAL".
+> The AppArmor policy load? Yes, the load will fail.
+>
+> What Casey is talking about is when SELinux and AppArmor are enabled in
+> the kernel config but AppArmor is active. This scenario is true in
+> distro kernels such as Ubuntu's kernel:
+>
+> $ grep -e CONFIG_SECURITY_SELINUX= -e CONFIG_SECURITY_APPARMOR= /boot/config-5.4.0-42-generic 
+> CONFIG_SECURITY_SELINUX=y
+> CONFIG_SECURITY_APPARMOR=y
+> $ cat /sys/kernel/security/lsm
+> lockdown,capability,yama,apparmor
 
-> However, looking up that identifier requires some sort of structure for doing
-> this and it's kind of worst case for the IDR tree as the keys are gradually
-> going to spread out, causing it to eat more memory.  It may be a tradeoff
-> worth making, and the memory consumption might not be that bad - or we could
-> use some other data structure such as an rbtree.
+Yes. This is one reason that a compile time check is inappropriate.
+You also have the case with SELinux where you can unload the module.
+It's deprecated, but still possible.
 
-idr_alloc_cyclic() seems to be a good template for doing the lower
-32bit allocation, and we can add code to increment the high 32bit on
-wraparound.
+If you boot with SELinux compiled in, but with security=none on
+the boot line you also have a case where the compile time check is
+inappropriate.
 
-Lots of code uses idr_alloc_cyclic() so I guess it shouldn't be too
-bad in terms of memory use or performance.
+> Casey also likely has LSM stacking in mind here where SELinux and
+> AppArmor could both be active at the same time but the LSM stacking
+> series is not yet applied.
 
-Thanks,
-Miklos
+It isn't in Linus' kernel, but is available in Ubuntu.
+The audit/IMA rule selection get hairy in the multiple
+security module case, but you don't need to add that
+for the proposed scheme to be flawed.
+
+>
+> Tyler
+>
+>> So the policy author would get a feedback even now.
+>> Correct me if I am wrong.
+>>
+>>  -lakshmi
