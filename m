@@ -2,105 +2,102 @@ Return-Path: <SRS0=iE4T=BP=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 653FAC433DF
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 19:26:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0587CC433E1
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 19:27:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 293892075D
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 19:26:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EPFQ+szw"
+	by mail.kernel.org (Postfix) with ESMTP id CCD4B206F6
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 19:27:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728798AbgHET0K (ORCPT
+        id S1726841AbgHET1e (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 5 Aug 2020 15:26:10 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:56948 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728680AbgHERN7 (ORCPT
+        Wed, 5 Aug 2020 15:27:34 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:65210 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728649AbgHERNE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 5 Aug 2020 13:13:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1596647638;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=yTnFp3FGNnUMIV+drG+EiP28NPY1kzNtc5gU15VKTgg=;
-        b=EPFQ+szwIY5F62w8zr2I2fjpdpckbH7cE/mKO500e5Z2FY5u5l5us7dqhV/PNScv64ZY6+
-        ryH4fDs8xkJtta7Mc3G0sHwUiK85UkV78lhlGTuOH/bcpT7ceLV5jMIUag0rRkkD0ihpXO
-        vqY9RXcf5GpJyr7QAFBrplc0ttcqEHE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-404-CVKT19CpOAaHFqv9tWctXA-1; Wed, 05 Aug 2020 13:13:57 -0400
-X-MC-Unique: CVKT19CpOAaHFqv9tWctXA-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3CC2D80183C;
-        Wed,  5 Aug 2020 17:13:55 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-112-32.rdu2.redhat.com [10.10.112.32])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 089C25D9DC;
-        Wed,  5 Aug 2020 17:13:48 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <1596555579.10158.23.camel@HansenPartnership.com>
-References: <1596555579.10158.23.camel@HansenPartnership.com> <159646178122.1784947.11705396571718464082.stgit@warthog.procyon.org.uk>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
-        Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Jeff Layton <jlayton@kernel.org>, linux-ext4@vger.kernel.org,
-        Carlos Maiolino <cmaiolino@redhat.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-api@vger.kernel.org, torvalds@linux-foundation.org,
-        raven@themaw.net, mszeredi@redhat.com, christian@brauner.io,
-        jannh@google.com, kzak@redhat.com, jlayton@redhat.com,
-        linux-fsdevel@vger.kernel.org,
+        Wed, 5 Aug 2020 13:13:04 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 075BXXuJ178180;
+        Wed, 5 Aug 2020 08:00:44 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 32qst1vrkv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 05 Aug 2020 08:00:44 -0400
+Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 075BZrpK184019;
+        Wed, 5 Aug 2020 08:00:43 -0400
+Received: from ppma02fra.de.ibm.com (47.49.7a9f.ip4.static.sl-reverse.com [159.122.73.71])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 32qst1vrj7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 05 Aug 2020 08:00:43 -0400
+Received: from pps.filterd (ppma02fra.de.ibm.com [127.0.0.1])
+        by ppma02fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 075BuB2d019265;
+        Wed, 5 Aug 2020 12:00:41 GMT
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
+        by ppma02fra.de.ibm.com with ESMTP id 32n018ameg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 05 Aug 2020 12:00:40 +0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 075C0cZX26870164
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 5 Aug 2020 12:00:38 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2487D4C05A;
+        Wed,  5 Aug 2020 12:00:38 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7F2D04C050;
+        Wed,  5 Aug 2020 12:00:35 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.95.205])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed,  5 Aug 2020 12:00:35 +0000 (GMT)
+Message-ID: <1624d016e4110cf903e4b3d22f253edc34c6b39c.camel@linux.ibm.com>
+Subject: Re: [PATCH v6 0/4] LSM: Measure security module data
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        stephen.smalley.work@gmail.com, casey@schaufler-ca.com
+Cc:     tyhicks@linux.microsoft.com, sashal@kernel.org, jmorris@namei.org,
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/18] VFS: Filesystem information [ver #21]
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2329128.1596647628.1@warthog.procyon.org.uk>
-Date:   Wed, 05 Aug 2020 18:13:48 +0100
-Message-ID: <2329129.1596647628@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+Date:   Wed, 05 Aug 2020 08:00:33 -0400
+In-Reply-To: <20200805004331.20652-1-nramas@linux.microsoft.com>
+References: <20200805004331.20652-1-nramas@linux.microsoft.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-08-05_08:2020-08-03,2020-08-05 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=840
+ impostorscore=0 priorityscore=1501 lowpriorityscore=0 mlxscore=0
+ adultscore=0 clxscore=1015 suspectscore=0 spamscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2006250000 definitions=main-2008050097
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-James Bottomley <James.Bottomley@HansenPartnership.com> wrote:
+On Tue, 2020-08-04 at 17:43 -0700, Lakshmi Ramasubramanian wrote:
+> Critical data structures of security modules are currently not measured.
+> Therefore an attestation service, for instance, would not be able to
+> attest whether the security modules are always operating with the policies
+> and configuration that the system administrator had setup. The policies
+> and configuration for the security modules could be tampered with by
+> malware by exploiting kernel vulnerabilities or modified through some
+> inadvertent actions on the system. Measuring such critical data would
+> enable an attestation service to better assess the state of the system.
 
-> It sort of petered out into a long winding thread about why not use
-> sysfs instead, which really doesn't look like a good idea to me.
+From a high level review, "Critical data structures" should be the
+focus of this patch set.  Measuring "critical data structures" should
+be independent of measuring the "policy" being loaded.   The in memory
+policy hash could be an example of  data included in the "critical data
+structures". 
 
-It seemed to turn into a set of procfs symlinks that pointed at a bunch of
-sysfs stuff - or possibly some special filesystem.
+Keep this patch set simple.
 
-> Could I make a suggestion about how this should be done in a way that
-> doesn't actually require the fsinfo syscall at all: it could just be
-> done with fsconfig.
-
-I'd prefer to keep it separate.  The interface for fsconfig() is intended to
-move stuff into the kernel, not out of it.  Better to add a parallel syscall
-to go the other way (kind of like we have setxattr/getxattr, sendmsg/recvmsg).
-
-Further, fsinfo() can refer directly to a file/fd/mount/whatever, but
-fsconfig() doesn't do that.  You have to use fspick() to get a context before
-you can use fsconfig().  Now, that's fine if you want to gather several pieces
-of information from a particular object, but it's not so good if you want to
-get one piece of information from each of several objects.
-
-> ... make it table configured...
-
-I did, kind of (though I didn't call it that).  Al rewrote the code to get rid
-of it.
-
-David
+Mimi
 
