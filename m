@@ -2,124 +2,96 @@ Return-Path: <SRS0=iE4T=BP=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D17F9C433E1
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 17:23:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 881DBC433E0
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 17:25:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B49542177B
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 17:23:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6699E22D07
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 17:25:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="pIV877Jp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728464AbgHERXd (ORCPT
+        id S1728768AbgHERZs (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 5 Aug 2020 13:23:33 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50746 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728479AbgHERXY (ORCPT
+        Wed, 5 Aug 2020 13:25:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52852 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728745AbgHERZQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 5 Aug 2020 13:23:24 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 075H3NZ0092705;
-        Wed, 5 Aug 2020 13:03:41 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 32qtnvccjv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 05 Aug 2020 13:03:41 -0400
-Received: from m0098399.ppops.net (m0098399.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 075H3dbq094591;
-        Wed, 5 Aug 2020 13:03:40 -0400
-Received: from ppma02fra.de.ibm.com (47.49.7a9f.ip4.static.sl-reverse.com [159.122.73.71])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 32qtnvccf8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 05 Aug 2020 13:03:40 -0400
-Received: from pps.filterd (ppma02fra.de.ibm.com [127.0.0.1])
-        by ppma02fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 075GsubG030897;
-        Wed, 5 Aug 2020 17:03:35 GMT
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
-        by ppma02fra.de.ibm.com with ESMTP id 32n018atg4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 05 Aug 2020 17:03:34 +0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 075H3W4a22872388
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 5 Aug 2020 17:03:32 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 965AB42045;
-        Wed,  5 Aug 2020 17:03:32 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A174242042;
-        Wed,  5 Aug 2020 17:03:29 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.95.205])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed,  5 Aug 2020 17:03:29 +0000 (GMT)
-Message-ID: <69810007161e689ac817099fb1c6df21962963e4.camel@linux.ibm.com>
-Subject: Re: [PATCH v6 0/4] LSM: Measure security module data
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Tyler Hicks <tyhicks@linux.microsoft.com>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        stephen.smalley.work@gmail.com, sashal@kernel.org,
-        jmorris@namei.org, linux-integrity@vger.kernel.org,
-        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        Wed, 5 Aug 2020 13:25:16 -0400
+Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E6A5C0086A7
+        for <linux-security-module@vger.kernel.org>; Wed,  5 Aug 2020 07:46:44 -0700 (PDT)
+Received: by mail-ed1-x541.google.com with SMTP id a14so15763669edx.7
+        for <linux-security-module@vger.kernel.org>; Wed, 05 Aug 2020 07:46:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3edvsdiBJ+dMkVwgYQe5b56g/OTwtECyNQldn00sS/k=;
+        b=pIV877Jp9EOP/kj6De7JQRLtf8VLarGd/I50CrlfCnVlTSEvY4ZesiGKNPAJkMSA9S
+         1xuBLUfpu8+qhUlXVyP6XOQ6q0sRV7EwvIwaXpVhCVUJTjQCjAneENJ37v5t/IG4dAAS
+         5v+E0LKx1h0Z1Z/D73XVOhVsAP6a9wsqDzKnw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3edvsdiBJ+dMkVwgYQe5b56g/OTwtECyNQldn00sS/k=;
+        b=Wiii0VUnvlsltxX9qYa4REbA0+Vwk5x5vYdhYgzcBO/eIaDobALJZq8yExNT9Zgx4j
+         gup6XHHxlWhy60dw/ULIJ5GbYtxwoizI4A9N9IzmfNmVzrMeeTI9FubH2NBY9wj1ZgZp
+         Tol3qhHX2+c5Ws4EcjSkP2UB4fEDK5mW/aKHlcOn2h495mRY2btleY5acSWVbIZ6h44B
+         OCZpHOWfgnJrrl6z9sYXPclTkbzJkk0waMjJDdVWTTUc1N0t+isqkkPUWX9/quffTbx1
+         Vp+Gcw8FH4rmYy1R/VWad+Z1qKYQu6J6WxYirtEob73NAzXx4rSXLSVZjvdL2sh2HU9g
+         vPZw==
+X-Gm-Message-State: AOAM5316D9QzT1i0pa2mf2+WNsNFJqqLzTeKpZyzmm3XfKIGEJaukEQ0
+        ud1l3Oe6ZcGzIuaDmPeJbn0U9ugxfMxAt0IA5kEJ1A==
+X-Google-Smtp-Source: ABdhPJy96Yk1HJK8pmfb/tsUqlvWao5KdebzpybEXlIErIo0+XHeGRmkn8IkxZto7tV3EPeU3amgjnjkLpPlXf7haIA=
+X-Received: by 2002:a05:6402:13d4:: with SMTP id a20mr3180723edx.161.1596638802798;
+ Wed, 05 Aug 2020 07:46:42 -0700 (PDT)
+MIME-Version: 1.0
+References: <159646178122.1784947.11705396571718464082.stgit@warthog.procyon.org.uk>
+ <159646183662.1784947.5709738540440380373.stgit@warthog.procyon.org.uk>
+ <20200804104108.GC32719@miu.piliscsaba.redhat.com> <2306029.1596636828@warthog.procyon.org.uk>
+In-Reply-To: <2306029.1596636828@warthog.procyon.org.uk>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Wed, 5 Aug 2020 16:46:31 +0200
+Message-ID: <CAJfpegtOguKOGWxv-sA_C9eSWG_3Srnj_k=oW-wSHNprCipFVg@mail.gmail.com>
+Subject: Re: [PATCH 06/18] fsinfo: Add a uniquifier ID to struct mount [ver #21]
+To:     David Howells <dhowells@redhat.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ian Kent <raven@themaw.net>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Christian Brauner <christian@brauner.io>,
+        Jann Horn <jannh@google.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Karel Zak <kzak@redhat.com>, Jeff Layton <jlayton@redhat.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        LSM <linux-security-module@vger.kernel.org>,
         linux-kernel@vger.kernel.org
-Date:   Wed, 05 Aug 2020 13:03:28 -0400
-In-Reply-To: <20200805154504.GB4365@sequoia>
-References: <20200805004331.20652-1-nramas@linux.microsoft.com>
-         <f3971f35-309d-c3e5-9126-69add7ad4c11@schaufler-ca.com>
-         <50587a3e-bcb5-c68e-c16c-41baf68b4d4a@linux.microsoft.com>
-         <c7c168f2-e30b-d2c5-abcb-1b6919197474@schaufler-ca.com>
-         <20200805154504.GB4365@sequoia>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-08-05_13:2020-08-03,2020-08-05 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=905
- malwarescore=0 suspectscore=0 spamscore=0 mlxscore=0 bulkscore=0
- phishscore=0 clxscore=1015 priorityscore=1501 lowpriorityscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2008050136
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 2020-08-05 at 10:45 -0500, Tyler Hicks wrote:
+On Wed, Aug 5, 2020 at 4:14 PM David Howells <dhowells@redhat.com> wrote:
 
-> In addition to SELINUX_STATE and SELINUX_POLICY, we should also consider
-> the proposed LSM_STATE and LSM_POLICY func values but require an "lsm"
-> rule conditional.
-> 
-> So the current proposed rules:
-> 
->  measure func=LSM_STATE
->  measure func=LSM_POLICY
-> 
-> Would become:
-> 
->  measure func=LSM_STATE lsm=selinux
->  measure func=LSM_POLICY lsm=selinux
-> 
-> The following rules would be rejected:
-> 
->  measure func=LSM_STATE
->  measure func=LSM_POLICY
->  measure func=LSM_STATE lsm=apparmor
->  measure func=LSM_POLICY lsm=smack
+> However, looking up that identifier requires some sort of structure for doing
+> this and it's kind of worst case for the IDR tree as the keys are gradually
+> going to spread out, causing it to eat more memory.  It may be a tradeoff
+> worth making, and the memory consumption might not be that bad - or we could
+> use some other data structure such as an rbtree.
 
-Kees is cleaning up the firmware code which differentiated between how
-firmware was loaded.   There will be a single firmware enumeration.
+idr_alloc_cyclic() seems to be a good template for doing the lower
+32bit allocation, and we can add code to increment the high 32bit on
+wraparound.
 
-Similarly, the new IMA hook to measure critical state may be placed in
-multiple places.  Is there really a need from a policy perspective for
-differentiating the source of the critical state being measurind?   The
-data being measured should include some identifying information.
+Lots of code uses idr_alloc_cyclic() so I guess it shouldn't be too
+bad in terms of memory use or performance.
 
-I think moving away from the idea that measuring "critical" data should
-be limited to LSMs, will clarify this.
-
-Mimi
-
+Thanks,
+Miklos
