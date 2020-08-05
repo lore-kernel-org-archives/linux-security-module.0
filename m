@@ -2,317 +2,95 @@ Return-Path: <SRS0=iE4T=BP=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25523C433E1
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 00:59:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92E20C433DF
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 01:04:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 02719207FC
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 00:59:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 758FA207FC
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 01:04:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b="sORHxIGz";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="VBkJmeYw"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="r4WFgesd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726806AbgHEA7r (ORCPT
+        id S1727032AbgHEBEh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 4 Aug 2020 20:59:47 -0400
-Received: from wnew1-smtp.messagingengine.com ([64.147.123.26]:42591 "EHLO
-        wnew1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726584AbgHEA7r (ORCPT
+        Tue, 4 Aug 2020 21:04:37 -0400
+Received: from sonic314-27.consmr.mail.ne1.yahoo.com ([66.163.189.153]:38693
+        "EHLO sonic314-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726643AbgHEBEh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 4 Aug 2020 20:59:47 -0400
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailnew.west.internal (Postfix) with ESMTP id BAFECD72;
-        Tue,  4 Aug 2020 20:59:44 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Tue, 04 Aug 2020 20:59:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
-        message-id:subject:from:to:cc:date:in-reply-to:references
-        :content-type:mime-version:content-transfer-encoding; s=fm3; bh=
-        UbMq8vhUFQ5WNbhixsusY27gtC0XOuRLZBvROi8eeUA=; b=sORHxIGzLipepjw5
-        AzKlZt7mBM44z5Hm+vh1XXNUOFfcGHs9ZxDBK5kHBjEh3Wh56nzViRKHUXSqfoX3
-        cUXreERGWIgZp8pKfObf3WxNuPaWiv9oavpfoJVQwUpBdy7ni+f8b2zjVTm4pyB5
-        IbtZpL/uT4TbmStgVqjR6hpNnRFFC42hf4JGJ0Xl6i24pGH+P80yoLTZ+EufaDUG
-        aR8lhmukVqZ92DjPFQyGBl7ZGO711hGsEmTUPoUmDuOkjHj9LsTonFLMuYmEqrY7
-        vNR9hbAP2DEROpYyvOLKW5H2CbetumRUCGWq+kt5K0E43bVCWkjC9DCPVatmP9A1
-        j7XK5w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; bh=UbMq8vhUFQ5WNbhixsusY27gtC0XOuRLZBvROi8ee
-        UA=; b=VBkJmeYwtIp9OHqhwRl2Ftl9NkbyGtx0c1bQJ7u1QF5d+ROn/o+3JHPrL
-        6H+q2D13LdVHLYDadT9wA5jMTdvgVlxHv0Ll06yfjNo7HYHlWJUW9bTf26xvST0b
-        Hj7ZBaijyEwd9QVQ0KhWa6I37Owau1JJFKkhLSe945+Bfhihld+wuRY7RLGL+8hz
-        FN1N9mdbOeTJiejuaXxb9to9KLceZ1Nbr69chQHEwtyV3y1KtvrFcOXa7CD8XS5H
-        3mvEGjqm6Y4DdLZ/KUPAeeUsVJqt1GI6lxkHN2j2oMJ/BuDFtXxzZutgCkAWBGU9
-        np+wfLoCwuZjJJGuRVHQBYiox4/vA==
-X-ME-Sender: <xms:fwQqX-YL-jeE8MWGhjQzKayDUKpSyVntwXV-ztZ9gkodQWHnoI--Bg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduiedrjeejgdegvdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefkuffhvfffjghftggfggfgsehtjeertddtreejnecuhfhrohhmpefkrghnucfm
-    vghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnhepfe
-    efteetvdeguddvveefveeftedtffduudehueeihfeuvefgveehffeludeggfejnecukfhp
-    peehkedrjedrvdehhedrvddvtdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpehrrghvvghnsehthhgvmhgrfidrnhgvth
-X-ME-Proxy: <xmx:fwQqXxbRJTCx4PdbWuzpYfogTZCiZ83ahMC0mMhfUE5emi1g_bF24Q>
-    <xmx:fwQqX48inEUx0R3fvUlkmWfDKkHLzbWc-iLN28OZZY_MTKz1CAOIFw>
-    <xmx:fwQqXwqdPg014DvVnGdiCMOKWomogNfEpw16E5ZxcHfvlO2KfV8LrA>
-    <xmx:gAQqX00Uvd97n4wSmAEc_3xmOA_O6gI2xuL6oeJOkiG25xVMAOQQThsU0yg>
-Received: from mickey.themaw.net (58-7-255-220.dyn.iinet.net.au [58.7.255.220])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 16D4530600A3;
-        Tue,  4 Aug 2020 20:59:38 -0400 (EDT)
-Message-ID: <730ad205e3aafd5b983b331077bbcc581aa4df78.camel@themaw.net>
-Subject: Re: [PATCH 15/18] fsinfo: Add an attribute that lists all the
- visible mounts in a namespace [ver #21]
-From:   Ian Kent <raven@themaw.net>
-To:     Miklos Szeredi <miklos@szeredi.hu>,
-        David Howells <dhowells@redhat.com>
-Cc:     viro@zeniv.linux.org.uk, torvalds@linux-foundation.org,
-        mszeredi@redhat.com, christian@brauner.io, jannh@google.com,
-        darrick.wong@oracle.com, kzak@redhat.com, jlayton@redhat.com,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 05 Aug 2020 08:59:34 +0800
-In-Reply-To: <20200804140558.GF32719@miu.piliscsaba.redhat.com>
-References: <159646178122.1784947.11705396571718464082.stgit@warthog.procyon.org.uk>
-         <159646191446.1784947.11228235431863356055.stgit@warthog.procyon.org.uk>
-         <20200804140558.GF32719@miu.piliscsaba.redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
+        Tue, 4 Aug 2020 21:04:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1596589475; bh=15yyDM3bVAWECgKz7oLx+I/ZvqZiZU4J8rThZ2JKCCs=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=r4WFgesdP5gl/Rbe38EMe5736cYNZXnOEf02AIMJOAl6q56puEMVvpxd+h20+KNNeoBRoCoMYqqrPH1TnC4d0rP8120dKGC4QTIsS0xZQZzNhT4MDHIggo9jgrYBAs3P5ghMFOABP4pCvi4xXNkSIlBENgzYfmY108RW+w0zdGfOF6x7X8g/P7vrm5lrnlROhJkxy0Ap/WJb6ERsMCAEckgECWe7qEcN9tiDxhXTvBv6ujS92jDj+VA1VVN28xO/tMrW4aQw6GR08HYzS8L0cwpu5FRj1HykZ05PUf2pcEFrWL8OHZu5cTrLjUIlI9ppsuTCxykYwadV4fPPEU47Hw==
+X-YMail-OSG: zA7gwXAVM1k8jezbi.SsnhgWqQcQ0L8EljVIEVzgzTKlnyxWgJXTMD88rtoAkyN
+ hxX8K2pKGVFRl6x06onco_or1m.dIJExyO6Rs0eS3R7E8bam9GSJGebEoOovc1JmYk_oMmSRYboi
+ 0Oo.kpgsTEcyGWaOAvVeIoLNQwhMzlwHS6oCjQ7sGb80Z1yjgQww_AL0kOZBDfzQidpj_vbtlWLh
+ pz4zeGPL8T0PK.CTMca4K9okeZoltMiZYkTvRAot3oCo5LZVikYJ7ImMfg9hvjJZ689Bj_6AulBc
+ KEI2GbQQXkcAXIdhaoGJBVEbUEYfe.E5NMTzbpsOoRMZp8CqKMAj44kTDzpvu4ydniD0XcXvpK07
+ lhV3328lNCpwwbzW1fcktjIJeUKs8QIvfn3B3vjS1pWa18lDdSyXBwfP_UOTjCxYdTeaPJ00s6Dq
+ qO17JRo5elAYuWpvxwCnWzOKrRNk7of_hHpbekTTx71EG9vz3fdHgPWWfMAOojtbEdAK2wiHDLRw
+ p0_dAbqR5_VfTQpvKrJ5kut5nHQ.J_5FZ9ZeAjRvUs2hAoGS36NU87miFlnHbrq3ryjwoK3TUixu
+ or806SAR95qOP3HsH38iTJeKEhoEx7rsLmi2Ek8_BB1Ul4Tz4KyKXq7QKOMLjChH8j3VjgfGgWoe
+ JJlTuXO0N3jziK73PZGqb7duirK64CQBfGtPoikLMRyF47ki7iFenv7gkUdutabp0guUq7kppcFj
+ zahHSeqUaIO3YEWaDbhJYnG8.QlVtqg1NBYxWMZJTvfUZEB93M8GoHmZxep1e0e6ghfBMv26k3Gn
+ jAr8gtL3aoyVYrzoc01W1oazWGOH_OHn4cntu3_NQjrdFacHcPaWVSCigFtvFVGPDnIOHCsPaNyS
+ tKaORpP4c3a9JzEwOXmKq31ugsW5Rk4Wr_AWcl5lJXxZ5GCAtjsfaC6ATJoev.Y8PwyqUZ7wm8l1
+ 0L.pCU1aL36c51pbuskKO3F6ejHn_Gln9.PI_M2m9wYK_iV8XF3srPIeTgAzXiEjpExmBU9zJzXw
+ 8BxYSgsqIT9DTYaJHGUOEp.AQHIkyP3oc29KnwUTQLkYrElTtgD2YPPwq9LcL2aB0Uu9gj4a8kly
+ Cdzs3eXmXI4x0lcPm_j1r0H7Mr40BD8uy7TzCZoLdXpqlQoLnIbGY4RWgKncOa9urFrD8xfoa6T8
+ COcX32qRUDMtXdcTHAqcunJ825yiwe77Zd9NhekhZFoNfTyvd8Gl1RTghPaSeZVZ7JDmsbe6R5Rd
+ OIruT99L5t3xpIXim1cfm9p7snp9p79vmh.0cDDEVhgD9323lSa_ZMwTsdG1mbcnSf7KUgjwaIoI
+ Bx9K8ag1ybsFnaPtGA217CyJByrwirXFmU5_k8eyDNGb2D_LV4_h25wYw8SsejBKD
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.ne1.yahoo.com with HTTP; Wed, 5 Aug 2020 01:04:35 +0000
+Received: by smtp428.mail.gq1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 7f4333369d465d186f6d9a97b53e0a06;
+          Wed, 05 Aug 2020 01:04:31 +0000 (UTC)
+Subject: Re: [PATCH v6 0/4] LSM: Measure security module data
+To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        zohar@linux.ibm.com, stephen.smalley.work@gmail.com
+Cc:     tyhicks@linux.microsoft.com, sashal@kernel.org, jmorris@namei.org,
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <20200805004331.20652-1-nramas@linux.microsoft.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <f3971f35-309d-c3e5-9126-69add7ad4c11@schaufler-ca.com>
+Date:   Tue, 4 Aug 2020 18:04:30 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.11.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20200805004331.20652-1-nramas@linux.microsoft.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Mailer: WebService/1.1.16436 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo Apache-HttpAsyncClient/4.1.4 (Java/11.0.7)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 2020-08-04 at 16:05 +0200, Miklos Szeredi wrote:
-> On Mon, Aug 03, 2020 at 02:38:34PM +0100, David Howells wrote:
-> > Add a filesystem attribute that exports a list of all the visible
-> > mounts in
-> > a namespace, given the caller's chroot setting.  The returned list
-> > is an
-> > array of:
-> > 
-> > 	struct fsinfo_mount_child {
-> > 		__u64	mnt_unique_id;
-> > 		__u32	mnt_id;
-> > 		__u32	parent_id;
-> > 		__u32	mnt_notify_sum;
-> > 		__u32	sb_notify_sum;
-> > 	};
-> > 
-> > where each element contains a once-in-a-system-lifetime unique ID,
-> > the
-> > mount ID (which may get reused), the parent mount ID and sums of
-> > the
-> > notification/change counters for the mount and its superblock.
-> 
-> The change counters are currently conditional on
-> CONFIG_MOUNT_NOTIFICATIONS.
-> Is this is intentional?
-> 
-> > This works with a read lock on the namespace_sem, but ideally would
-> > do it
-> > under the RCU read lock only.
-> > 
-> > Signed-off-by: David Howells <dhowells@redhat.com>
-> > ---
-> > 
-> >  fs/fsinfo.c                 |    1 +
-> >  fs/internal.h               |    1 +
-> >  fs/namespace.c              |   37
-> > +++++++++++++++++++++++++++++++++++++
-> >  include/uapi/linux/fsinfo.h |    4 ++++
-> >  samples/vfs/test-fsinfo.c   |   22 ++++++++++++++++++++++
-> >  5 files changed, 65 insertions(+)
-> > 
-> > diff --git a/fs/fsinfo.c b/fs/fsinfo.c
-> > index 0540cce89555..f230124ffdf5 100644
-> > --- a/fs/fsinfo.c
-> > +++ b/fs/fsinfo.c
-> > @@ -296,6 +296,7 @@ static const struct fsinfo_attribute
-> > fsinfo_common_attributes[] = {
-> >  	FSINFO_STRING	(FSINFO_ATTR_MOUNT_POINT,	fsinfo_gene
-> > ric_mount_point),
-> >  	FSINFO_STRING	(FSINFO_ATTR_MOUNT_POINT_FULL,	fsinfo_gene
-> > ric_mount_point_full),
-> >  	FSINFO_LIST	(FSINFO_ATTR_MOUNT_CHILDREN,	fsinfo_generic_moun
-> > t_children),
-> > +	FSINFO_LIST	(FSINFO_ATTR_MOUNT_ALL,		fsinfo_generic_moun
-> > t_all),
-> >  	{}
-> >  };
-> >  
-> > diff --git a/fs/internal.h b/fs/internal.h
-> > index cb5edcc7125a..267b4aaf0271 100644
-> > --- a/fs/internal.h
-> > +++ b/fs/internal.h
-> > @@ -102,6 +102,7 @@ extern int fsinfo_generic_mount_topology(struct
-> > path *, struct fsinfo_context *)
-> >  extern int fsinfo_generic_mount_point(struct path *, struct
-> > fsinfo_context *);
-> >  extern int fsinfo_generic_mount_point_full(struct path *, struct
-> > fsinfo_context *);
-> >  extern int fsinfo_generic_mount_children(struct path *, struct
-> > fsinfo_context *);
-> > +extern int fsinfo_generic_mount_all(struct path *, struct
-> > fsinfo_context *);
-> >  
-> >  /*
-> >   * fs_struct.c
-> > diff --git a/fs/namespace.c b/fs/namespace.c
-> > index 122c12f9512b..1f2e06507244 100644
-> > --- a/fs/namespace.c
-> > +++ b/fs/namespace.c
-> > @@ -4494,4 +4494,41 @@ int fsinfo_generic_mount_children(struct
-> > path *path, struct fsinfo_context *ctx)
-> >  	return ctx->usage;
-> >  }
-> >  
-> > +/*
-> > + * Return information about all the mounts in the namespace
-> > referenced by the
-> > + * path.
-> > + */
-> > +int fsinfo_generic_mount_all(struct path *path, struct
-> > fsinfo_context *ctx)
-> > +{
-> > +	struct mnt_namespace *ns;
-> > +	struct mount *m, *p;
-> > +	struct path chroot;
-> > +	bool allow;
-> > +
-> > +	m = real_mount(path->mnt);
-> > +	ns = m->mnt_ns;
-> > +
-> > +	get_fs_root(current->fs, &chroot);
-> > +	rcu_read_lock();
-> > +	allow = are_paths_connected(&chroot, path) ||
-> > capable(CAP_SYS_ADMIN);
-> > +	rcu_read_unlock();
-> > +	path_put(&chroot);
-> > +	if (!allow)
-> > +		return -EPERM;
-> > +
-> > +	down_read(&namespace_sem);
-> > +
-> > +	list_for_each_entry(p, &ns->list, mnt_list) {
-> 
-> This is missing locking and check added by commit 9f6c61f96f2d
-> ("proc/mounts:
-> add cursor").
+On 8/4/2020 5:43 PM, Lakshmi Ramasubramanian wrote:
+> Critical data structures of security modules are currently not measured.
+> Therefore an attestation service, for instance, would not be able to
+> attest whether the security modules are always operating with the policies
+> and configuration that the system administrator had setup. The policies
+> and configuration for the security modules could be tampered with by
+> malware by exploiting kernel vulnerabilities or modified through some
+> inadvertent actions on the system. Measuring such critical data would
+> enable an attestation service to better assess the state of the system.
 
-That's a good catch Miklos.
+I still wonder why you're calling this an LSM change/feature when
+all the change is in IMA and SELinux. You're not putting anything
+into the LSM infrastructure, not are you using the LSM infrastructure
+to achieve your ends. Sure, you *could* support other security modules
+using this scheme, but you have a configuration dependency on
+SELinux, so that's at best going to be messy. If you want this to
+be an LSM "feature" you need to use the LSM hooking mechanism.
 
-Yes, the extra lock and the cursor check that's now needed.
-
-> 
-> > +		struct path mnt_root;
-> > +
-> > +		mnt_root.mnt	= &p->mnt;
-> > +		mnt_root.dentry	= p->mnt.mnt_root;
-> > +		if (are_paths_connected(path, &mnt_root))
-> > +			fsinfo_store_mount(ctx, p, p == m);
-> > +	}
-> > +
-> > +	up_read(&namespace_sem);
-> > +	return ctx->usage;
-> > +}
-> > +
-> >  #endif /* CONFIG_FSINFO */
-> > diff --git a/include/uapi/linux/fsinfo.h
-> > b/include/uapi/linux/fsinfo.h
-> > index 81329de6905e..e40192d98648 100644
-> > --- a/include/uapi/linux/fsinfo.h
-> > +++ b/include/uapi/linux/fsinfo.h
-> > @@ -37,6 +37,7 @@
-> >  #define FSINFO_ATTR_MOUNT_POINT_FULL	0x203	/* Absolute
-> > path of mount (string) */
-> >  #define FSINFO_ATTR_MOUNT_TOPOLOGY	0x204	/* Mount object
-> > topology */
-> >  #define FSINFO_ATTR_MOUNT_CHILDREN	0x205	/* Children of this
-> > mount (list) */
-> > +#define FSINFO_ATTR_MOUNT_ALL		0x206	/* List all
-> > mounts in a namespace (list) */
-> >  
-> >  #define FSINFO_ATTR_AFS_CELL_NAME	0x300	/* AFS cell name
-> > (string) */
-> >  #define FSINFO_ATTR_AFS_SERVER_NAME	0x301	/* Name of
-> > the Nth server (string) */
-> > @@ -128,6 +129,8 @@ struct fsinfo_mount_topology {
-> >  /*
-> >   * Information struct element for
-> > fsinfo(FSINFO_ATTR_MOUNT_CHILDREN).
-> >   * - An extra element is placed on the end representing the parent
-> > mount.
-> > + *
-> > + * Information struct element for fsinfo(FSINFO_ATTR_MOUNT_ALL).
-> >   */
-> >  struct fsinfo_mount_child {
-> >  	__u64	mnt_unique_id;		/* Kernel-lifetime unique
-> > mount ID */
-> > @@ -139,6 +142,7 @@ struct fsinfo_mount_child {
-> >  };
-> >  
-> >  #define FSINFO_ATTR_MOUNT_CHILDREN__STRUCT struct
-> > fsinfo_mount_child
-> > +#define FSINFO_ATTR_MOUNT_ALL__STRUCT struct fsinfo_mount_child
-> >  
-> >  /*
-> >   * Information struct for fsinfo(FSINFO_ATTR_STATFS).
-> > diff --git a/samples/vfs/test-fsinfo.c b/samples/vfs/test-fsinfo.c
-> > index 374825ab85b0..596fa5e71762 100644
-> > --- a/samples/vfs/test-fsinfo.c
-> > +++ b/samples/vfs/test-fsinfo.c
-> > @@ -365,6 +365,27 @@ static void
-> > dump_fsinfo_generic_mount_children(void *reply, unsigned int size)
-> >  	       (unsigned long long)r->mnt_notify_sum, mp);
-> >  }
-> >  
-> > +static void dump_fsinfo_generic_mount_all(void *reply, unsigned
-> > int size)
-> > +{
-> > +	struct fsinfo_mount_child *r = reply;
-> > +	ssize_t mplen;
-> > +	char path[32], *mp;
-> > +
-> > +	struct fsinfo_params params = {
-> > +		.flags		= FSINFO_FLAGS_QUERY_MOUNT,
-> > +		.request	= FSINFO_ATTR_MOUNT_POINT_FULL,
-> > +	};
-> > +
-> > +	sprintf(path, "%u", r->mnt_id);
-> > +	mplen = get_fsinfo(path, "FSINFO_ATTR_MOUNT_POINT_FULL",
-> > &params, (void **)&mp);
-> > +	if (mplen < 0)
-> > +		mp = "-";
-> > +
-> > +	printf("%5x %5x %12llx %10llu %s\n",
-> > +	       r->mnt_id, r->parent_id, (unsigned long long)r-
-> > >mnt_unique_id,
-> > +	       r->mnt_notify_sum, mp);
-> > +}
-> > +
-> >  static void dump_afs_fsinfo_server_address(void *reply, unsigned
-> > int size)
-> >  {
-> >  	struct fsinfo_afs_server_address *f = reply;
-> > @@ -492,6 +513,7 @@ static const struct fsinfo_attribute
-> > fsinfo_attributes[] = {
-> >  	FSINFO_STRING_N	(FSINFO_ATTR_MOUNT_POINT,	string),
-> >  	FSINFO_STRING_N	(FSINFO_ATTR_MOUNT_POINT_FULL,	string),
-> >  	FSINFO_LIST	(FSINFO_ATTR_MOUNT_CHILDREN,	fsinfo_generic_moun
-> > t_children),
-> > +	FSINFO_LIST	(FSINFO_ATTR_MOUNT_ALL,		fsinfo_generic_moun
-> > t_all),
-> >  
-> >  	FSINFO_STRING	(FSINFO_ATTR_AFS_CELL_NAME,	string),
-> >  	FSINFO_STRING	(FSINFO_ATTR_AFS_SERVER_NAME,	string),
-> > 
-> > 
+I'm not objecting to the feature. It adds value. But as you've
+implemented it it is either an IMA extension to SELinux, or an
+SELiux extension to IMA. Could AppArmor add hooks for this without
+changing the IMA code? It doesn't look like it to me.
+ 
 
