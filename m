@@ -2,100 +2,69 @@ Return-Path: <SRS0=iE4T=BP=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 167F0C433DF
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 20:16:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F077CC433E0
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 23:52:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DDEC122B42
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 20:16:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VhawphbV"
+	by mail.kernel.org (Postfix) with ESMTP id D135021D95
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 23:52:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727005AbgHEUQU (ORCPT
+        id S1726604AbgHEXwZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 5 Aug 2020 16:16:20 -0400
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:28975 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726242AbgHEQS5 (ORCPT
+        Wed, 5 Aug 2020 19:52:25 -0400
+Received: from namei.org ([65.99.196.166]:57738 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725779AbgHEXwY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 5 Aug 2020 12:18:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1596644320;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=NOmiaPGZyWfLelA46Ml6D9sENv38lZYZOuC+13qLzsM=;
-        b=VhawphbVb4CjWVesMD3drTw0fAFthTjG0BGyIZu7Szw43G2DPylX4xoPF6IPxx0AGj3Y8D
-        Xef1/JyfSV62bCGHNQSUIo6AGTUz+w599WN+sog5XzOdsPcwAq7lrm8am/y8AUD7CB6y7k
-        G+MQd6vxqu3Ykd9dZVvEYrMRItKfv7c=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-3-AxTiy8ZWOS-ruwjeo1BfXg-1; Wed, 05 Aug 2020 11:37:36 -0400
-X-MC-Unique: AxTiy8ZWOS-ruwjeo1BfXg-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 666F057;
-        Wed,  5 Aug 2020 15:37:34 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-112-32.rdu2.redhat.com [10.10.112.32])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id F20B45D9E2;
-        Wed,  5 Aug 2020 15:37:31 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20200804133817.GD32719@miu.piliscsaba.redhat.com>
-References: <20200804133817.GD32719@miu.piliscsaba.redhat.com> <159646178122.1784947.11705396571718464082.stgit@warthog.procyon.org.uk> <159646185371.1784947.14555585307218856883.stgit@warthog.procyon.org.uk>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
-        torvalds@linux-foundation.org, raven@themaw.net,
-        mszeredi@redhat.com, christian@brauner.io, jannh@google.com,
-        darrick.wong@oracle.com, kzak@redhat.com, jlayton@redhat.com,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 08/18] fsinfo: Allow mount topology and propagation info to be retrieved [ver #21]
+        Wed, 5 Aug 2020 19:52:24 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id 075Npvex020649;
+        Wed, 5 Aug 2020 23:51:57 GMT
+Date:   Thu, 6 Aug 2020 09:51:57 +1000 (AEST)
+From:   James Morris <jmorris@namei.org>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+cc:     James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Pavel Machek <pavel@ucw.cz>, Sasha Levin <sashal@kernel.org>,
+        snitzer@redhat.com, dm-devel@redhat.com,
+        tyhicks@linux.microsoft.com, agk@redhat.com, paul@paul-moore.com,
+        corbet@lwn.net, nramas@linux.microsoft.com, serge@hallyn.com,
+        pasha.tatashin@soleen.com, jannh@google.com,
+        linux-block@vger.kernel.org, viro@zeniv.linux.org.uk,
+        axboe@kernel.dk, mdsakib@microsoft.com,
+        linux-kernel@vger.kernel.org, eparis@redhat.com,
+        linux-security-module@vger.kernel.org, linux-audit@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        jaskarankhurana@linux.microsoft.com
+Subject: Re: [dm-devel] [RFC PATCH v5 00/11] Integrity Policy Enforcement
+ LSM (IPE)
+In-Reply-To: <b08ae82102f35936427bf138085484f75532cff1.camel@linux.ibm.com>
+Message-ID: <alpine.LRH.2.21.2008060949410.20084@namei.org>
+References: <20200728213614.586312-1-deven.desai@linux.microsoft.com>   <20200802115545.GA1162@bug> <20200802140300.GA2975990@sasha-vm>   <20200802143143.GB20261@amd>   <1596386606.4087.20.camel@HansenPartnership.com>   <fb35a1f7-7633-a678-3f0f-17cf83032d2b@linux.microsoft.com>
+  <1596639689.3457.17.camel@HansenPartnership.com>  <alpine.LRH.2.21.2008050934060.28225@namei.org> <b08ae82102f35936427bf138085484f75532cff1.camel@linux.ibm.com>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2316805.1596641851.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Wed, 05 Aug 2020 16:37:31 +0100
-Message-ID: <2316806.1596641851@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+Content-Type: text/plain; charset=US-ASCII
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Miklos Szeredi <miklos@szeredi.hu> wrote:
+On Wed, 5 Aug 2020, Mimi Zohar wrote:
 
-> > +	__u32	shared_group_id;	/* Shared: mount group ID */
-> > +	__u32	dependent_source_id;	/* Dependent: source mount group ID */
-> > +	__u32	dependent_clone_of_id;	/* Dependent: ID of mount this was clon=
-ed from */
-> =
+> If block layer integrity was enough, there wouldn't have been a need
+> for fs-verity.   Even fs-verity is limited to read only filesystems,
+> which makes validating file integrity so much easier.  From the
+> beginning, we've said that fs-verity signatures should be included in
+> the measurement list.  (I thought someone signed on to add that support
+> to IMA, but have not yet seen anything.)
+> 
+> Going forward I see a lot of what we've accomplished being incorporated
+> into the filesystems.  When IMA will be limited to defining a system
+> wide policy, I'll have completed my job.
 
-> Another set of ID's that are currently 32bit *internally* but that doesn=
-'t
-> mean they will always be 32 bit.
-> =
-
-> And that last one (apart from "slave" being obfuscated)
-
-I had "slave" in there.  It got objected to.  See
-Documentation/process/coding-style.rst section 4.
-
-> is simply incorrect.  It has nothing to do with cloning.  It's the "ID o=
-f
-> the closest peer group in the propagation chain that has a representativ=
-e
-> mount in the current root".
-
-You appear to be in disagreement with others that I've asked.
-
-David
+What are your thoughts on IPE being a standalone LSM? Would you prefer to 
+see its functionality integrated into IMA?
 
