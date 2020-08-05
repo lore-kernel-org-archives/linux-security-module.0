@@ -2,139 +2,89 @@ Return-Path: <SRS0=iE4T=BP=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3A17C433DF
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 19:54:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEBDAC433E0
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 19:56:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 92BCD22CAD
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 19:54:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B214B2076E
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 19:56:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LROGuguX"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cZHcYmzE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729548AbgHETyw (ORCPT
+        id S1728032AbgHET4e (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 5 Aug 2020 15:54:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46436 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728081AbgHEQsi (ORCPT
+        Wed, 5 Aug 2020 15:56:34 -0400
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:25342 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727791AbgHEQoW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 5 Aug 2020 12:48:38 -0400
-Received: from mail-oi1-x244.google.com (mail-oi1-x244.google.com [IPv6:2607:f8b0:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 664BEC034620;
-        Wed,  5 Aug 2020 06:03:43 -0700 (PDT)
-Received: by mail-oi1-x244.google.com with SMTP id h3so15908107oie.11;
-        Wed, 05 Aug 2020 06:03:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Ul3JxSNvbALNnsNm5N/3G9x3g0fvSkROIvPtcZ09wUQ=;
-        b=LROGuguX5eiFdK6/HlbWEokY57y9PRkvH4jrbMW7pvqEqfBl4fsI0EsSOc7HRg+t0R
-         JOs7LqFUIzCtXMZZFUIZrvgUNoSDAZljV+i4rERX/mIHAUemgFelCE2LMlgSfxg9acXt
-         S3DkWL9NDKPmWNE3ZLDgNJK2W3EdYp5m+8vcUUBVOsnHD8wJFqxFKg9Q8oKiS+zSDpOd
-         recsk89/sPpJ0Alx/5835DXnf6sEwIVJhZaK6Ji6i369xdBze0s7g7LhCYhWuuqI+JiL
-         ozNKT+azc/r7cuLp616hFleQ+jQ1S34u4nqbw3TggVuMgV0FOV1PSd1OgkAu8i+pMnxa
-         3djw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Ul3JxSNvbALNnsNm5N/3G9x3g0fvSkROIvPtcZ09wUQ=;
-        b=RpBoHLl3rJJ74cUvFyBguEHK3o8zFW/Aij9lEjWrrxv4KhjzT0nAII1UlDHu6bFjxN
-         awLavYzw/5yYKe3BqHZzxAJyFF6X2PDo/+j0GR/CMbpQXpBKmjls6yiA5AxBLyqhM/cn
-         BNFduMdBxFlcwb40gnJN+rUr4kEobSV5lm2OmRdSpqavaPTp6i6LVWoMW6aVOQVDKIFq
-         xQKktzoBsemhXhM2BEhA/fEd7VSC3HtGWCNSP5LWKwFJy8WTN/lAPHmxCV2pD+40oSBQ
-         GL1xkvO9oCKHPx9x2X8i/AbyR1hebSr8MFeU3nvrGOHkyvYAbxA9SFcgqZmWzYzdZk5b
-         +Yww==
-X-Gm-Message-State: AOAM532xV3+9/DuB5wcUpVO3mlqi+Tm9CzyVQvvLvqmvbrfyIVXf+tNg
-        QsJzNcW16FWg9TP57MfHNwAqFaD6k9IY4w5z2w/TikaK
-X-Google-Smtp-Source: ABdhPJxbWangRjtzFke0pdRSrSqZfY52F1RdfyqnwFlX+c55Bg9gvfGBbpI8V3Ef7fb4pVuBjJea8Lt3bt15m1ENnpI=
-X-Received: by 2002:a54:4817:: with SMTP id j23mr2616355oij.140.1596632622694;
- Wed, 05 Aug 2020 06:03:42 -0700 (PDT)
+        Wed, 5 Aug 2020 12:44:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1596645859;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=ymSp4PIW1iklpKRZ7s5LPng5aoYV9shgptoEdnu23SM=;
+        b=cZHcYmzE9r/tv3b5wNvyxrcDtlq/aaTlJVxzu1IOxFW+CWRiWP3lAopcjTEGuEPhkCUQLW
+        LQsgFnpqaOdu+AsTu1x+NSNfFbM5+XTmb5ovbZJr2efWifiYnl+6ev1S8ei01jLcQJsGSA
+        dlOjULjDpMp2wwb8Bh4H4BWtdphvFzs=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-471-4W7hKjd4NCeORz2QHj-HnQ-1; Wed, 05 Aug 2020 12:44:17 -0400
+X-MC-Unique: 4W7hKjd4NCeORz2QHj-HnQ-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4333957;
+        Wed,  5 Aug 2020 16:44:15 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-112-32.rdu2.redhat.com [10.10.112.32])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CDCF65F202;
+        Wed,  5 Aug 2020 16:44:12 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20200804140558.GF32719@miu.piliscsaba.redhat.com>
+References: <20200804140558.GF32719@miu.piliscsaba.redhat.com> <159646178122.1784947.11705396571718464082.stgit@warthog.procyon.org.uk> <159646191446.1784947.11228235431863356055.stgit@warthog.procyon.org.uk>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
+        torvalds@linux-foundation.org, raven@themaw.net,
+        mszeredi@redhat.com, christian@brauner.io, jannh@google.com,
+        darrick.wong@oracle.com, kzak@redhat.com, jlayton@redhat.com,
+        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 15/18] fsinfo: Add an attribute that lists all the visible mounts in a namespace [ver #21]
 MIME-Version: 1.0
-References: <20200805004331.20652-1-nramas@linux.microsoft.com>
- <20200805004331.20652-2-nramas@linux.microsoft.com> <4b9d2715d3ef3c8f915ef03867cfb1a39c0abc54.camel@linux.ibm.com>
- <f88bf25e-37ef-7f00-6162-215838961bb0@gmail.com> <31d00876438d2652890ab8bf6ba2e80f554ca7a4.camel@linux.ibm.com>
-In-Reply-To: <31d00876438d2652890ab8bf6ba2e80f554ca7a4.camel@linux.ibm.com>
-From:   Stephen Smalley <stephen.smalley.work@gmail.com>
-Date:   Wed, 5 Aug 2020 09:03:31 -0400
-Message-ID: <CAEjxPJ6X+Cqd5QtZBmNm2cujwbg-STfRF7_8i=Ny8yuc6z9BwQ@mail.gmail.com>
-Subject: Re: [PATCH v6 1/4] IMA: Add func to measure LSM state and policy
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Tyler Hicks <tyhicks@linux.microsoft.com>, sashal@kernel.org,
-        James Morris <jmorris@namei.org>,
-        linux-integrity@vger.kernel.org,
-        SElinux list <selinux@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2325154.1596645852.1@warthog.procyon.org.uk>
+Date:   Wed, 05 Aug 2020 17:44:12 +0100
+Message-ID: <2325155.1596645852@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Aug 5, 2020 at 8:57 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
->
-> On Wed, 2020-08-05 at 08:46 -0400, Stephen Smalley wrote:
-> > On 8/4/20 11:25 PM, Mimi Zohar wrote:
-> >
-> > > Hi Lakshmi,
-> > >
-> > > There's still  a number of other patch sets needing to be reviewed
-> > > before my getting to this one.  The comment below is from a high level.
-> > >
-> > > On Tue, 2020-08-04 at 17:43 -0700, Lakshmi Ramasubramanian wrote:
-> > > > Critical data structures of security modules need to be measured to
-> > > > enable an attestation service to verify if the configuration and
-> > > > policies for the security modules have been setup correctly and
-> > > > that they haven't been tampered with at runtime. A new IMA policy is
-> > > > required for handling this measurement.
-> > > >
-> > > > Define two new IMA policy func namely LSM_STATE and LSM_POLICY to
-> > > > measure the state and the policy provided by the security modules.
-> > > > Update ima_match_rules() and ima_validate_rule() to check for
-> > > > the new func and ima_parse_rule() to handle the new func.
-> > > I can understand wanting to measure the in kernel LSM memory state to
-> > > make sure it hasn't changed, but policies are stored as files.  Buffer
-> > > measurements should be limited  to those things that are not files.
-> > >
-> > > Changing how data is passed to the kernel has been happening for a
-> > > while.  For example, instead of passing the kernel module or kernel
-> > > image in a buffer, the new syscalls - finit_module, kexec_file_load -
-> > > pass an open file descriptor.  Similarly, instead of loading the IMA
-> > > policy data, a pathname may be provided.
-> > >
-> > > Pre and post security hooks already exist for reading files.   Instead
-> > > of adding IMA support for measuring the policy file data, update the
-> > > mechanism for loading the LSM policy.  Then not only will you be able
-> > > to measure the policy, you'll also be able to require the policy be
-> > > signed.
-> >
-> > To clarify, the policy being measured by this patch series is a
-> > serialized representation of the in-memory policy data structures being
-> > enforced by SELinux.  Not the file that was loaded.  Hence, this
-> > measurement would detect tampering with the in-memory policy data
-> > structures after the policy has been loaded.  In the case of SELinux,
-> > one can read this serialized representation via /sys/fs/selinux/policy.
-> > The result is not byte-for-byte identical to the policy file that was
-> > loaded but can be semantically compared via sediff and other tools to
-> > determine whether it is equivalent.
->
-> Thank you for the clarification.   Could the policy hash be included
-> with the other critical data?  Does it really need to be measured
-> independently?
+Miklos Szeredi <miklos@szeredi.hu> wrote:
 
-They were split into two separate functions because we wanted to be
-able to support using different templates for them (ima-buf for the
-state variables so that the measurement includes the original buffer,
-which is small and relatively fixed-size, and ima-ng for the policy
-because it is large and we just want to capture the hash for later
-comparison against known-good).  Also, the state variables are
-available for measurement always from early initialization, whereas
-the policy is only available for measurement once we have loaded an
-initial policy.
+> > where each element contains a once-in-a-system-lifetime unique ID, the
+> > mount ID (which may get reused), the parent mount ID and sums of the
+> > notification/change counters for the mount and its superblock.
+> 
+> The change counters are currently conditional on CONFIG_MOUNT_NOTIFICATIONS.
+> Is this is intentional?
+
+Yeah - the counters aren't driven unless CONFIG_MOUNT_NOTIFICATIONS=y.
+
+I could perhaps make it so they're driven in both cases, but driving the
+in-subtree counter is somewhat tied up in the notification posting.
+
+This is something that can be fixed after this patchset is taken - if it is
+taken since that doesn't change the UAPI.
+
+David
+
