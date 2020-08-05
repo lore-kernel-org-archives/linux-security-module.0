@@ -2,123 +2,118 @@ Return-Path: <SRS0=iE4T=BP=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B319C433E1
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 19:23:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E0D5C433DF
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 19:24:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2441020842
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 19:23:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22540206D4
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 19:24:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eI7VMI+I"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="aq120tI8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728943AbgHETXU (ORCPT
+        id S1728448AbgHER0j (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 5 Aug 2020 15:23:20 -0400
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:50369 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728880AbgHERbX (ORCPT
+        Wed, 5 Aug 2020 13:26:39 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:51984 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728734AbgHERZm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 5 Aug 2020 13:31:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1596648682;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=e2gumUE5A/5ojzMFKs9UdfuL6+IZWqdj2OsZcZsTEkI=;
-        b=eI7VMI+Ic8nifMSLQzQsI5duOrcCcqDS9M2fITOl4U+oVELqIG28XSA202IlbRXWPbEcHJ
-        cNDMuguvFcY2NVb04+PzG1L1QcCxsRAVsMRqPUJJw6HL6gJB3jHQGKTdLPLMd7CZtrL+Lt
-        i+4OqzvCJrXJLy0Ewsz/DjeKrKq8DC0=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-12-8_Z_ROD0MgGQYCnHoTmj4w-1; Wed, 05 Aug 2020 10:14:03 -0400
-X-MC-Unique: 8_Z_ROD0MgGQYCnHoTmj4w-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2EC371DF7;
-        Wed,  5 Aug 2020 14:13:54 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-112-32.rdu2.redhat.com [10.10.112.32])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DE65D5C1BD;
-        Wed,  5 Aug 2020 14:13:48 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20200804104108.GC32719@miu.piliscsaba.redhat.com>
-References: <20200804104108.GC32719@miu.piliscsaba.redhat.com> <159646178122.1784947.11705396571718464082.stgit@warthog.procyon.org.uk> <159646183662.1784947.5709738540440380373.stgit@warthog.procyon.org.uk>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
-        torvalds@linux-foundation.org, raven@themaw.net,
-        mszeredi@redhat.com, christian@brauner.io, jannh@google.com,
-        darrick.wong@oracle.com, kzak@redhat.com, jlayton@redhat.com,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 06/18] fsinfo: Add a uniquifier ID to struct mount [ver #21]
+        Wed, 5 Aug 2020 13:25:42 -0400
+Received: from [192.168.0.104] (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 996E520B4908;
+        Wed,  5 Aug 2020 10:25:41 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 996E520B4908
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1596648341;
+        bh=+M6ltu7sGUQlnHNTsNp9mZLiIc2hQZ8PeYQpqVYXFYM=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=aq120tI83eo/0ZfotJa85eOXCSF6WK2VaEKe3K2eI2Z1BqmcHcv5/LO7pbV8P3+cS
+         mDeBH4cFuU3GixNGpG6yad9UkomydJTxgRnnBfA7TMacP+M+eS8KMn5BgrBUhTrVqj
+         Tf4oYsXQu+N4S/h0nRw7ASxCAi5FIzFChV3/3c+Q=
+Subject: Re: [PATCH v6 0/4] LSM: Measure security module data
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        Tyler Hicks <tyhicks@linux.microsoft.com>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Cc:     stephen.smalley.work@gmail.com, sashal@kernel.org,
+        jmorris@namei.org, linux-integrity@vger.kernel.org,
+        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20200805004331.20652-1-nramas@linux.microsoft.com>
+ <f3971f35-309d-c3e5-9126-69add7ad4c11@schaufler-ca.com>
+ <50587a3e-bcb5-c68e-c16c-41baf68b4d4a@linux.microsoft.com>
+ <c7c168f2-e30b-d2c5-abcb-1b6919197474@schaufler-ca.com>
+ <20200805154504.GB4365@sequoia>
+ <69810007161e689ac817099fb1c6df21962963e4.camel@linux.ibm.com>
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Message-ID: <9ad079ff-1bd4-1302-e6fb-25a7396ef12f@linux.microsoft.com>
+Date:   Wed, 5 Aug 2020 10:25:41 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2306028.1596636828.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Wed, 05 Aug 2020 15:13:48 +0100
-Message-ID: <2306029.1596636828@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+In-Reply-To: <69810007161e689ac817099fb1c6df21962963e4.camel@linux.ibm.com>
+Content-Type: text/plain; charset=iso-8859-15; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Miklos Szeredi <miklos@szeredi.hu> wrote:
+On 8/5/20 10:03 AM, Mimi Zohar wrote:
+> On Wed, 2020-08-05 at 10:45 -0500, Tyler Hicks wrote:
+> 
+>> In addition to SELINUX_STATE and SELINUX_POLICY, we should also consider
+>> the proposed LSM_STATE and LSM_POLICY func values but require an "lsm"
+>> rule conditional.
+>>
+>> So the current proposed rules:
+>>
+>>   measure func=LSM_STATE
+>>   measure func=LSM_POLICY
+>>
+>> Would become:
+>>
+>>   measure func=LSM_STATE lsm=selinux
+>>   measure func=LSM_POLICY lsm=selinux
+>>
+>> The following rules would be rejected:
+>>
+>>   measure func=LSM_STATE
+>>   measure func=LSM_POLICY
+>>   measure func=LSM_STATE lsm=apparmor
+>>   measure func=LSM_POLICY lsm=smack
+> 
+> Kees is cleaning up the firmware code which differentiated between how
+> firmware was loaded.   There will be a single firmware enumeration.
+> 
+> Similarly, the new IMA hook to measure critical state may be placed in
+> multiple places.  Is there really a need from a policy perspective for
+> differentiating the source of the critical state being measurind?   The
+> data being measured should include some identifying information.
 
-> > +#ifdef CONFIG_FSINFO
-> > +	u64	mnt_unique_id;		/* ID unique over lifetime of kernel */
-> > +#endif
->
-> Not sure if it's worth making conditional.
+Yes Mimi - SELinux is including the identifying information in the 
+"event name" field. Please see a sample measurement of STATE and POLICY 
+for SELinux below:
 
-You can't get at it without CONFIG_FSINFO=3Dy as it stands, but making it
-unconditional might be reasonable.
+10 e32e...5ac3 ima-buf sha256:86e8...4594 
+selinux-state-1595389364:287899386 
+696e697469616c697a65643d313b656e61626c65643d313b656e666f7263696e673d303b636865636b72657170726f743d313b6e6574776f726b5f706565725f636f6e74726f6c733d313b6f70656e5f7065726d733d313b657874656e6465645f736f636b65745f636c6173733d313b616c776179735f636865636b5f6e6574776f726b3d303b6367726f75705f7365636c6162656c3d313b6e6e705f6e6f737569645f7472616e736974696f6e3d313b67656e66735f7365636c6162656c5f73796d6c696e6b733d303
 
-> > -		n.auxiliary_mount	=3D aux->mnt_id;
-> > +		n.auxiliary_mount =3D aux->mnt_unique_id;
->
-> Hmm, so we now have two ID's:
->
->  - one can be used to look up the mount
->  - one is guaranteed to be unique
->
-> With this change the mount cannot be looked up with FSINFO_FLAGS_QUERY_M=
-OUNT,
-> right?
->
-> Should we be merging the two ID's into a single one which has both prope=
-rties?
+10 f4a7...9408 ima-ng sha256:8d1d...1834 
+selinux-policy-hash-1595389353:863934271
 
-Ideally, yes... but...  The 31-bit mnt_id is currently exposed to userspac=
-e in
-various places, e.g. /proc, sys_name_to_handle_at().  So we have to keep t=
-hat
-as is and we can't expand it.
+> 
+> I think moving away from the idea that measuring "critical" data should
+> be limited to LSMs, will clarify this.
+> 
 
-For fsinfo(), however, it might make sense to only use the 64-bit uniquifi=
-er
-as the identifier to use for direct look up.
+Are you suggesting that instead of calling the hooks LSM_STATE and 
+LSM_POLICY, we should keep it more generic so that it can be utilized by 
+any subsystem to measure their "critical data"?
 
-However, looking up that identifier requires some sort of structure for do=
-ing
-this and it's kind of worst case for the IDR tree as the keys are graduall=
-y
-going to spread out, causing it to eat more memory.  It may be a tradeoff
-worth making, and the memory consumption might not be that bad - or we cou=
-ld
-use some other data structure such as an rbtree.
+I think that is a good idea.
 
-That's why I was going for the 31-bit identifier + uniquifier so that you =
-can at
-least tell if the identifier got recycled reasonably quickly.
-
-David
-
+  -lakshmi
