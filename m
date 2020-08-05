@@ -1,106 +1,151 @@
-Return-Path: <SRS0=B0YM=BO=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=iE4T=BP=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9A82C433DF
-	for <linux-security-module@archiver.kernel.org>; Tue,  4 Aug 2020 21:48:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0677FC433E0
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 00:43:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B1C312086A
-	for <linux-security-module@archiver.kernel.org>; Tue,  4 Aug 2020 21:48:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D561220792
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 00:43:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="sbys9aic"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="mbl18OTN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727922AbgHDVs6 (ORCPT
+        id S1726282AbgHEAnh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 4 Aug 2020 17:48:58 -0400
-Received: from sonic304-28.consmr.mail.ne1.yahoo.com ([66.163.191.154]:41050
-        "EHLO sonic304-28.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727120AbgHDVs5 (ORCPT
+        Tue, 4 Aug 2020 20:43:37 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:38356 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726166AbgHEAnh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 4 Aug 2020 17:48:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1596577735; bh=0L27Uq8ZrsYi22gP4kjh4ixcW31fg5B0yfsMY3ayTaM=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=sbys9aicF+5bXJrltrn9ucCHo8U1Q+2cp8or60KpTSLSgKCO31ve5s+FMjycEEQiNiQ/8/ltBsmF5vmiqpsb7HCGNydRR5IFCaxwZmuDSUiQooix+VwgnR8KXRyRTABi0Xb+v7uSER31DM7vrJX+EPTHZmBI5eRt5sxvlm8NZl22qKccn0/PpTAedIC5JpyIk+bvKP3GorEvw6EKm+w+n+T3bPjtWJpv1vzoBTnxEixPl4MmHhG94JFMl1TrXSYkN319fQtrOfC2tUFe1k39yAmeoIkJWQCiNNncZmp8tELwBT6humAnjv49CGmdkSFY73u/M+cRXMKb8GMzOUj1VA==
-X-YMail-OSG: Qgh8100VM1ngycjbd1S.nfM6w0dGp7YvvO15Nf0I9gK7HXc9qFP6rX517qEtTkk
- uoWOhvT9h5dwBbniYQxeteRwIZtJ0okru2SRsKM3NgaxFA1eOPN_sSJJaSGWdZODa5HvlBuQKuaf
- Sx14cQCspNsp9DwQJ3TvShGxKpsqQH_Eyy5ij.jGJULszl4xOB8VnAmSNlnFeksnpR2DikROwqQ4
- ycucRYImc70zc_DFBSOymVq16nVavAgAAlEW802ypXVaAgQoplNOsWAOLoc6zdxR1CLq9LKuQmIi
- CBWV8FgFN3uOba6wd0Kj3o8pcgW0.qOfNBpCzooL5KPyauEDmtw_BmJzrZiM5lA778.cNdaazp6v
- 3r0_C9U1aaARjkz..rFph3UG5nx.AAZqqE8zCVZaXzBY5qYzRDIkcaaCOEwz5zfdHzW5_Kxgh5OH
- M3THxuotf1ditrVnx1mFHdG9CZbcifKWsINMdGvmnX4DidYXGRwZqe0QjDjuByfablLiemX.yDvC
- vXvw3lZIkNRCu4FyA54p3heHfgCEOqvkreMnhE_DzVeaw2twJvIcrSldBSS.Es0C3.vlzk8TU23s
- LDLFYrRsfEEltDWvs8.attysc6yGWPl_w1dSPVHlm6e5zr_6Nyb6kszkz_tGkX9XXKdcpSa_DlKz
- KHgjj7GW.x6PLIM2A4ucBGRBDCF8Py53CtawJ_s0dSDe7bBdHA8u.T4YBT5mB7YqZnl2UU7SCOHc
- rSxnIUtIJKUiY1kijL.nkKSHxyg_M_i_Er7h6HuR2OncQXqsj4n4KtgQH17pyA8lQVHfV17dRheY
- epCEngcGFAgfDEq8069vwIkUgucurDip_k8O3JuXuQTGS.fwNAkCAkBCzelc9rXQuzoAqSM0ag7e
- XoPt95.Yjb6_2xgly.HYdBU.nP2E8BHswsW2LVR89f6Ke55FGcb9hev1zu7mmQSadGsQAu4L35sx
- Q.Ogj35RiFx.I4r8IuyexAVLnwintkep0Y8Vv4bWpVplWHW9blE12lNFIWmJSAgGiwhWZauyTX48
- TWy8aoRj.jd4lZe.992jS76W8mZfUzC2gS_dovI8PVINbc4EPnRM2V3fNPqdE66n7_6VCjqzVlTM
- d9vKk6NUKo4orFMWo0lpy.BYQTjKr0PJ4bH7a0Umjex7cjAGturt.634PC7hphYRFZjTRaZTTu9H
- 4nxE.FQWG40AKkedTJ_wGZowtzrQQ0oKOdWHOEJDOQ0tdcnzeqy5mmS0zo5UuIaPf90xum3YbhuZ
- KtdZMCiW45HBuMWROpCcVF.GXBgmmcLefYPouw_5T0jq1mshm50kZYgVimnA4xWmRPsT7igjygdZ
- Fz34dMtRwVeZ4ogIIDjT__i.mMo3YuoVGbVdStILSzzkh
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.ne1.yahoo.com with HTTP; Tue, 4 Aug 2020 21:48:55 +0000
-Received: by smtp402.mail.gq1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 01b7835d11afa0d3bb48b983b86ef450;
-          Tue, 04 Aug 2020 21:48:52 +0000 (UTC)
-Subject: [GIT PULL] Smack patches for v5.9
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <8ce85723-5656-0ee8-67a7-35597d9df0dd.ref@schaufler-ca.com>
- <8ce85723-5656-0ee8-67a7-35597d9df0dd@schaufler-ca.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <38f418d7-ec77-255b-2bf2-dd73ebfc615c@schaufler-ca.com>
-Date:   Tue, 4 Aug 2020 14:48:50 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.11.0
+        Tue, 4 Aug 2020 20:43:37 -0400
+Received: from localhost.localdomain (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
+        by linux.microsoft.com (Postfix) with ESMTPSA id A3C9E20B4908;
+        Tue,  4 Aug 2020 17:43:35 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A3C9E20B4908
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1596588215;
+        bh=witi/8JgEwCGp4a82OugmSroOHn6fU6ZrDmuPHmc6HA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=mbl18OTNOVFV4KGyTveIpOvWT76NAPgnoQTp+HNsvL+V1Wh93+uDm/iPpGQQx4MOP
+         mvnPqk3lk3OLjyRIS86q00dUrKxDoFOJeS4pkvu5Ai18R5SgpHZCWwhZbg9hotxR2x
+         raeuw5fP19jFqOUzgBbpWlpWXXCY0ibLeoVokZ5w=
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+To:     zohar@linux.ibm.com, stephen.smalley.work@gmail.com,
+        casey@schaufler-ca.com
+Cc:     tyhicks@linux.microsoft.com, sashal@kernel.org, jmorris@namei.org,
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v6 0/4] LSM: Measure security module data
+Date:   Tue,  4 Aug 2020 17:43:27 -0700
+Message-Id: <20200805004331.20652-1-nramas@linux.microsoft.com>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-In-Reply-To: <8ce85723-5656-0ee8-67a7-35597d9df0dd@schaufler-ca.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Mailer: WebService/1.1.16436 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo Apache-HttpAsyncClient/4.1.4 (Java/11.0.7)
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello Linus
+Critical data structures of security modules are currently not measured.
+Therefore an attestation service, for instance, would not be able to
+attest whether the security modules are always operating with the policies
+and configuration that the system administrator had setup. The policies
+and configuration for the security modules could be tampered with by
+malware by exploiting kernel vulnerabilities or modified through some
+inadvertent actions on the system. Measuring such critical data would
+enable an attestation service to better assess the state of the system.
 
-I have corrected the tagging for the pull request.
+IMA subsystem measures system files, command line arguments passed to
+kexec, boot aggregate, keys, etc. It can be used to measure critical
+data structures of security modules as well.
 
-Here are three minor fixes to Smack for the v5.9 release.
-All were found by automated checkers and have straight forward
-resolution.
+This change aims to address measuring critical data structures
+of security modules when they are initialized and when they are
+updated at runtime.
 
---
-The following changes since commit b3a9e3b9622ae10064826dccb4f7a52bd88c7407:
+This series is based on commit 3db0d0c276a7 ("integrity: remove
+redundant initialization of variable ret") in next-integrity
 
-  Linux 5.8-rc1 (2020-06-14 12:45:04 -0700)
+Change log:
 
-are available in the Git repository at:
+  v6:
+      => Use kvmalloc for payload data for early boot data measurement
+         since payload size may exceed the limit supported by kmalloc.
+      => Fixed IMA policy rule match error when checking for IMA hook
+         func LSM_STATE and LSM_POLICY.
+      => Enable early boot data measurement and IMA hook func
+         LSM_STATE and LSM_POLICY when SELinux is enabled.
 
-  https://github.com/cschaufler/smack-next tags/Smack-for-5.9
+  v5:
+      => Append timestamp to "event name" string in the call to
+         the IMA hooks so that LSM data is always measured by IMA.
+      => Removed workqueue patch that was handling periodic checking
+         of the LSM data. This change will be introduced as a separate
+         patch set while keeping this patch set focussed on measuring
+         the LSM data on initialization and on updates at runtime.
+      => Handle early boot measurement of LSM data.
 
-for you to fetch changes up to 42a2df3e829f3c5562090391b33714b2e2e5ad4a:
+  v4:
+      => Added LSM_POLICY func and IMA hook to measure LSM policy.
+      => Pass SELinux policy data, instead of the hash of the policy,
+         to the IMA hook to measure.
+      => Include "initialized" flag in SELinux measurement.
+         Also, measure SELinux state even when initialization is not yet
+         completed. But measure SELinux policy only after initialization.
 
-  Smack: prevent underflow in smk_set_cipso() (2020-07-27 13:35:12 -0700)
+  v3:
+      => Loop through policy_capabilities to build the state data
+         to measure instead of hardcoding to current set of
+         policy capabilities.
+      => Added error log messages for failure conditions.
 
-----------------------------------------------------------------
-Smack fixes for 5.9
+  v2:
+      => Pass selinux_state struct as parameter to the function
+         that measures SELinux data.
+      => Use strings from selinux_policycap_names array for SELinux
+         state measurement.
+      => Refactored security_read_policy() to alloc kernel or user
+         virtual memory and then read the SELinux policy.
 
-----------------------------------------------------------------
-Dan Carpenter (2):
-      Smack: fix another vsscanf out of bounds
-      Smack: prevent underflow in smk_set_cipso()
+  v1:
+      => Per Stephen Smalley's suggestion added selinux_state booleans
+         and hash of SELinux policy in the measured data for SELinux.
+      => Call IMA hook from the security module directly instead of
+         redirecting through the LSM.
 
-Eric Biggers (1):
-      Smack: fix use-after-free in smk_write_relabel_self()
+Lakshmi Ramasubramanian (4):
+  IMA: Add func to measure LSM state and policy
+  IMA: Define IMA hooks to measure LSM state and policy
+  LSM: Define SELinux function to measure state and policy
+  IMA: Handle early boot data measurement
 
- security/smack/smackfs.c | 19 ++++++++++++++++---
- 1 file changed, 16 insertions(+), 3 deletions(-)
+ Documentation/ABI/testing/ima_policy         |   9 +
+ include/linux/ima.h                          |  14 ++
+ security/integrity/ima/Kconfig               |   5 +-
+ security/integrity/ima/Makefile              |   2 +-
+ security/integrity/ima/ima.h                 |  45 +++--
+ security/integrity/ima/ima_api.c             |   2 +-
+ security/integrity/ima/ima_asymmetric_keys.c |   6 +-
+ security/integrity/ima/ima_init.c            |   2 +-
+ security/integrity/ima/ima_main.c            |  64 ++++++-
+ security/integrity/ima/ima_policy.c          |  36 +++-
+ security/integrity/ima/ima_queue_data.c      | 190 +++++++++++++++++++
+ security/integrity/ima/ima_queue_keys.c      | 174 -----------------
+ security/selinux/Makefile                    |   2 +
+ security/selinux/hooks.c                     |   1 +
+ security/selinux/include/security.h          |  15 ++
+ security/selinux/measure.c                   | 150 +++++++++++++++
+ security/selinux/selinuxfs.c                 |   3 +
+ security/selinux/ss/services.c               |  71 ++++++-
+ 18 files changed, 569 insertions(+), 222 deletions(-)
+ create mode 100644 security/integrity/ima/ima_queue_data.c
+ delete mode 100644 security/integrity/ima/ima_queue_keys.c
+ create mode 100644 security/selinux/measure.c
+
+-- 
+2.27.0
 
