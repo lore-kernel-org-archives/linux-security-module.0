@@ -2,217 +2,317 @@ Return-Path: <SRS0=iE4T=BP=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-20.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3272EC433E1
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 00:43:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25523C433E1
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 00:59:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 17F342073E
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 00:43:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02719207FC
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 00:59:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="gkoWPIfv"
+	dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b="sORHxIGz";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="VBkJmeYw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726846AbgHEAnt (ORCPT
+        id S1726806AbgHEA7r (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 4 Aug 2020 20:43:49 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:38378 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726210AbgHEAnh (ORCPT
+        Tue, 4 Aug 2020 20:59:47 -0400
+Received: from wnew1-smtp.messagingengine.com ([64.147.123.26]:42591 "EHLO
+        wnew1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726584AbgHEA7r (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 4 Aug 2020 20:43:37 -0400
-Received: from localhost.localdomain (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 3F4BF20B490D;
-        Tue,  4 Aug 2020 17:43:36 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3F4BF20B490D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1596588216;
-        bh=rlps7OqHhVGVD16ISs6BovnL28JviBxRVRibNHIIlhY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gkoWPIfviFKFKawhpIfi3Z0VTFwBIeRTLMjgHwOPbQOk9cGhVQbZVV50rddIvqkTF
-         uPPMe/vuKYHv63XDDif27JgryMYYxrW/z1rPqbO3E8Ma4kCh50wTKXYPtfRv0nIlUu
-         ZCJwQiGJN8qTBRIBKXUYX2zROhTAUpMPEnXuzEys=
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-To:     zohar@linux.ibm.com, stephen.smalley.work@gmail.com,
-        casey@schaufler-ca.com
-Cc:     tyhicks@linux.microsoft.com, sashal@kernel.org, jmorris@namei.org,
-        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
+        Tue, 4 Aug 2020 20:59:47 -0400
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
+        by mailnew.west.internal (Postfix) with ESMTP id BAFECD72;
+        Tue,  4 Aug 2020 20:59:44 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Tue, 04 Aug 2020 20:59:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
+        message-id:subject:from:to:cc:date:in-reply-to:references
+        :content-type:mime-version:content-transfer-encoding; s=fm3; bh=
+        UbMq8vhUFQ5WNbhixsusY27gtC0XOuRLZBvROi8eeUA=; b=sORHxIGzLipepjw5
+        AzKlZt7mBM44z5Hm+vh1XXNUOFfcGHs9ZxDBK5kHBjEh3Wh56nzViRKHUXSqfoX3
+        cUXreERGWIgZp8pKfObf3WxNuPaWiv9oavpfoJVQwUpBdy7ni+f8b2zjVTm4pyB5
+        IbtZpL/uT4TbmStgVqjR6hpNnRFFC42hf4JGJ0Xl6i24pGH+P80yoLTZ+EufaDUG
+        aR8lhmukVqZ92DjPFQyGBl7ZGO711hGsEmTUPoUmDuOkjHj9LsTonFLMuYmEqrY7
+        vNR9hbAP2DEROpYyvOLKW5H2CbetumRUCGWq+kt5K0E43bVCWkjC9DCPVatmP9A1
+        j7XK5w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; bh=UbMq8vhUFQ5WNbhixsusY27gtC0XOuRLZBvROi8ee
+        UA=; b=VBkJmeYwtIp9OHqhwRl2Ftl9NkbyGtx0c1bQJ7u1QF5d+ROn/o+3JHPrL
+        6H+q2D13LdVHLYDadT9wA5jMTdvgVlxHv0Ll06yfjNo7HYHlWJUW9bTf26xvST0b
+        Hj7ZBaijyEwd9QVQ0KhWa6I37Owau1JJFKkhLSe945+Bfhihld+wuRY7RLGL+8hz
+        FN1N9mdbOeTJiejuaXxb9to9KLceZ1Nbr69chQHEwtyV3y1KtvrFcOXa7CD8XS5H
+        3mvEGjqm6Y4DdLZ/KUPAeeUsVJqt1GI6lxkHN2j2oMJ/BuDFtXxzZutgCkAWBGU9
+        np+wfLoCwuZjJJGuRVHQBYiox4/vA==
+X-ME-Sender: <xms:fwQqX-YL-jeE8MWGhjQzKayDUKpSyVntwXV-ztZ9gkodQWHnoI--Bg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduiedrjeejgdegvdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefkuffhvfffjghftggfggfgsehtjeertddtreejnecuhfhrohhmpefkrghnucfm
+    vghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnhepfe
+    efteetvdeguddvveefveeftedtffduudehueeihfeuvefgveehffeludeggfejnecukfhp
+    peehkedrjedrvdehhedrvddvtdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpehrrghvvghnsehthhgvmhgrfidrnhgvth
+X-ME-Proxy: <xmx:fwQqXxbRJTCx4PdbWuzpYfogTZCiZ83ahMC0mMhfUE5emi1g_bF24Q>
+    <xmx:fwQqX48inEUx0R3fvUlkmWfDKkHLzbWc-iLN28OZZY_MTKz1CAOIFw>
+    <xmx:fwQqXwqdPg014DvVnGdiCMOKWomogNfEpw16E5ZxcHfvlO2KfV8LrA>
+    <xmx:gAQqX00Uvd97n4wSmAEc_3xmOA_O6gI2xuL6oeJOkiG25xVMAOQQThsU0yg>
+Received: from mickey.themaw.net (58-7-255-220.dyn.iinet.net.au [58.7.255.220])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 16D4530600A3;
+        Tue,  4 Aug 2020 20:59:38 -0400 (EDT)
+Message-ID: <730ad205e3aafd5b983b331077bbcc581aa4df78.camel@themaw.net>
+Subject: Re: [PATCH 15/18] fsinfo: Add an attribute that lists all the
+ visible mounts in a namespace [ver #21]
+From:   Ian Kent <raven@themaw.net>
+To:     Miklos Szeredi <miklos@szeredi.hu>,
+        David Howells <dhowells@redhat.com>
+Cc:     viro@zeniv.linux.org.uk, torvalds@linux-foundation.org,
+        mszeredi@redhat.com, christian@brauner.io, jannh@google.com,
+        darrick.wong@oracle.com, kzak@redhat.com, jlayton@redhat.com,
+        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v6 2/4] IMA: Define IMA hooks to measure LSM state and policy
-Date:   Tue,  4 Aug 2020 17:43:29 -0700
-Message-Id: <20200805004331.20652-3-nramas@linux.microsoft.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20200805004331.20652-1-nramas@linux.microsoft.com>
-References: <20200805004331.20652-1-nramas@linux.microsoft.com>
+Date:   Wed, 05 Aug 2020 08:59:34 +0800
+In-Reply-To: <20200804140558.GF32719@miu.piliscsaba.redhat.com>
+References: <159646178122.1784947.11705396571718464082.stgit@warthog.procyon.org.uk>
+         <159646191446.1784947.11228235431863356055.stgit@warthog.procyon.org.uk>
+         <20200804140558.GF32719@miu.piliscsaba.redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-IMA subsystem needs to define IMA hooks that the security modules can
-call to measure state and policy data.
+On Tue, 2020-08-04 at 16:05 +0200, Miklos Szeredi wrote:
+> On Mon, Aug 03, 2020 at 02:38:34PM +0100, David Howells wrote:
+> > Add a filesystem attribute that exports a list of all the visible
+> > mounts in
+> > a namespace, given the caller's chroot setting.  The returned list
+> > is an
+> > array of:
+> > 
+> > 	struct fsinfo_mount_child {
+> > 		__u64	mnt_unique_id;
+> > 		__u32	mnt_id;
+> > 		__u32	parent_id;
+> > 		__u32	mnt_notify_sum;
+> > 		__u32	sb_notify_sum;
+> > 	};
+> > 
+> > where each element contains a once-in-a-system-lifetime unique ID,
+> > the
+> > mount ID (which may get reused), the parent mount ID and sums of
+> > the
+> > notification/change counters for the mount and its superblock.
+> 
+> The change counters are currently conditional on
+> CONFIG_MOUNT_NOTIFICATIONS.
+> Is this is intentional?
+> 
+> > This works with a read lock on the namespace_sem, but ideally would
+> > do it
+> > under the RCU read lock only.
+> > 
+> > Signed-off-by: David Howells <dhowells@redhat.com>
+> > ---
+> > 
+> >  fs/fsinfo.c                 |    1 +
+> >  fs/internal.h               |    1 +
+> >  fs/namespace.c              |   37
+> > +++++++++++++++++++++++++++++++++++++
+> >  include/uapi/linux/fsinfo.h |    4 ++++
+> >  samples/vfs/test-fsinfo.c   |   22 ++++++++++++++++++++++
+> >  5 files changed, 65 insertions(+)
+> > 
+> > diff --git a/fs/fsinfo.c b/fs/fsinfo.c
+> > index 0540cce89555..f230124ffdf5 100644
+> > --- a/fs/fsinfo.c
+> > +++ b/fs/fsinfo.c
+> > @@ -296,6 +296,7 @@ static const struct fsinfo_attribute
+> > fsinfo_common_attributes[] = {
+> >  	FSINFO_STRING	(FSINFO_ATTR_MOUNT_POINT,	fsinfo_gene
+> > ric_mount_point),
+> >  	FSINFO_STRING	(FSINFO_ATTR_MOUNT_POINT_FULL,	fsinfo_gene
+> > ric_mount_point_full),
+> >  	FSINFO_LIST	(FSINFO_ATTR_MOUNT_CHILDREN,	fsinfo_generic_moun
+> > t_children),
+> > +	FSINFO_LIST	(FSINFO_ATTR_MOUNT_ALL,		fsinfo_generic_moun
+> > t_all),
+> >  	{}
+> >  };
+> >  
+> > diff --git a/fs/internal.h b/fs/internal.h
+> > index cb5edcc7125a..267b4aaf0271 100644
+> > --- a/fs/internal.h
+> > +++ b/fs/internal.h
+> > @@ -102,6 +102,7 @@ extern int fsinfo_generic_mount_topology(struct
+> > path *, struct fsinfo_context *)
+> >  extern int fsinfo_generic_mount_point(struct path *, struct
+> > fsinfo_context *);
+> >  extern int fsinfo_generic_mount_point_full(struct path *, struct
+> > fsinfo_context *);
+> >  extern int fsinfo_generic_mount_children(struct path *, struct
+> > fsinfo_context *);
+> > +extern int fsinfo_generic_mount_all(struct path *, struct
+> > fsinfo_context *);
+> >  
+> >  /*
+> >   * fs_struct.c
+> > diff --git a/fs/namespace.c b/fs/namespace.c
+> > index 122c12f9512b..1f2e06507244 100644
+> > --- a/fs/namespace.c
+> > +++ b/fs/namespace.c
+> > @@ -4494,4 +4494,41 @@ int fsinfo_generic_mount_children(struct
+> > path *path, struct fsinfo_context *ctx)
+> >  	return ctx->usage;
+> >  }
+> >  
+> > +/*
+> > + * Return information about all the mounts in the namespace
+> > referenced by the
+> > + * path.
+> > + */
+> > +int fsinfo_generic_mount_all(struct path *path, struct
+> > fsinfo_context *ctx)
+> > +{
+> > +	struct mnt_namespace *ns;
+> > +	struct mount *m, *p;
+> > +	struct path chroot;
+> > +	bool allow;
+> > +
+> > +	m = real_mount(path->mnt);
+> > +	ns = m->mnt_ns;
+> > +
+> > +	get_fs_root(current->fs, &chroot);
+> > +	rcu_read_lock();
+> > +	allow = are_paths_connected(&chroot, path) ||
+> > capable(CAP_SYS_ADMIN);
+> > +	rcu_read_unlock();
+> > +	path_put(&chroot);
+> > +	if (!allow)
+> > +		return -EPERM;
+> > +
+> > +	down_read(&namespace_sem);
+> > +
+> > +	list_for_each_entry(p, &ns->list, mnt_list) {
+> 
+> This is missing locking and check added by commit 9f6c61f96f2d
+> ("proc/mounts:
+> add cursor").
 
-Define two new IMA hooks, namely ima_lsm_state() and ima_lsm_policy(),
-that the security modules can call to measure LSM state and LSM policy
-respectively. Return the status of the measurement operation from these
-two IMA hooks.
+That's a good catch Miklos.
 
-Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Reviewed-by: Tyler Hicks <tyhicks@linux.microsoft.com>
----
- include/linux/ima.h               | 14 +++++++++
- security/integrity/ima/ima.h      |  6 ++--
- security/integrity/ima/ima_main.c | 50 ++++++++++++++++++++++++++-----
- 3 files changed, 60 insertions(+), 10 deletions(-)
+Yes, the extra lock and the cursor check that's now needed.
 
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index d15100de6cdd..442ca0dce3c8 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -26,6 +26,10 @@ extern int ima_post_read_file(struct file *file, void *buf, loff_t size,
- extern void ima_post_path_mknod(struct dentry *dentry);
- extern int ima_file_hash(struct file *file, char *buf, size_t buf_size);
- extern void ima_kexec_cmdline(int kernel_fd, const void *buf, int size);
-+extern int ima_measure_lsm_state(const char *lsm_event_name, const void *buf,
-+				 int size);
-+extern int ima_measure_lsm_policy(const char *lsm_event_name, const void *buf,
-+				  int size);
- 
- #ifdef CONFIG_IMA_KEXEC
- extern void ima_add_kexec_buffer(struct kimage *image);
-@@ -104,6 +108,16 @@ static inline int ima_file_hash(struct file *file, char *buf, size_t buf_size)
- }
- 
- static inline void ima_kexec_cmdline(int kernel_fd, const void *buf, int size) {}
-+static inline int ima_measure_lsm_state(const char *lsm_event_name,
-+					const void *buf, int size)
-+{
-+	return -EOPNOTSUPP;
-+}
-+static inline int ima_measure_lsm_policy(const char *lsm_event_name,
-+					 const void *buf, int size)
-+{
-+	return -EOPNOTSUPP;
-+}
- #endif /* CONFIG_IMA */
- 
- #ifndef CONFIG_IMA_KEXEC
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 1b5f4b2f17d0..8ed9f5e1dd40 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -267,9 +267,9 @@ void ima_store_measurement(struct integrity_iint_cache *iint, struct file *file,
- 			   struct evm_ima_xattr_data *xattr_value,
- 			   int xattr_len, const struct modsig *modsig, int pcr,
- 			   struct ima_template_desc *template_desc);
--void process_buffer_measurement(struct inode *inode, const void *buf, int size,
--				const char *eventname, enum ima_hooks func,
--				int pcr, const char *keyring);
-+int process_buffer_measurement(struct inode *inode, const void *buf, int size,
-+			       const char *eventname, enum ima_hooks func,
-+			       int pcr, const char *keyring);
- void ima_audit_measurement(struct integrity_iint_cache *iint,
- 			   const unsigned char *filename);
- int ima_alloc_init_template(struct ima_event_data *event_data,
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 8a91711ca79b..74d421e40c8f 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -736,9 +736,9 @@ int ima_load_data(enum kernel_load_data_id id)
-  *
-  * Based on policy, the buffer is measured into the ima log.
-  */
--void process_buffer_measurement(struct inode *inode, const void *buf, int size,
--				const char *eventname, enum ima_hooks func,
--				int pcr, const char *keyring)
-+int process_buffer_measurement(struct inode *inode, const void *buf, int size,
-+			       const char *eventname, enum ima_hooks func,
-+			       int pcr, const char *keyring)
- {
- 	int ret = 0;
- 	const char *audit_cause = "ENOMEM";
-@@ -758,7 +758,7 @@ void process_buffer_measurement(struct inode *inode, const void *buf, int size,
- 	u32 secid;
- 
- 	if (!ima_policy_flag)
--		return;
-+		return 0;
- 
- 	/*
- 	 * Both LSM hooks and auxilary based buffer measurements are
-@@ -772,7 +772,7 @@ void process_buffer_measurement(struct inode *inode, const void *buf, int size,
- 		action = ima_get_action(inode, current_cred(), secid, 0, func,
- 					&pcr, &template, keyring);
- 		if (!(action & IMA_MEASURE))
--			return;
-+			return 0;
- 	}
- 
- 	if (!pcr)
-@@ -787,7 +787,7 @@ void process_buffer_measurement(struct inode *inode, const void *buf, int size,
- 			pr_err("template %s init failed, result: %d\n",
- 			       (strlen(template->name) ?
- 				template->name : template->fmt), ret);
--			return;
-+			return ret;
- 		}
- 	}
- 
-@@ -819,7 +819,7 @@ void process_buffer_measurement(struct inode *inode, const void *buf, int size,
- 					func_measure_str(func),
- 					audit_cause, ret, 0, ret);
- 
--	return;
-+	return ret;
- }
- 
- /**
-@@ -846,6 +846,42 @@ void ima_kexec_cmdline(int kernel_fd, const void *buf, int size)
- 	fdput(f);
- }
- 
-+/**
-+ * ima_measure_lsm_state - measure LSM specific state
-+ * @lsm_event_name: LSM event
-+ * @buf: pointer to buffer containing LSM specific state
-+ * @size: Number of bytes in buf
-+ *
-+ * Buffers can only be measured, not appraised.
-+ */
-+int ima_measure_lsm_state(const char *lsm_event_name, const void *buf,
-+			  int size)
-+{
-+	if (!lsm_event_name || !buf || !size)
-+		return -EINVAL;
-+
-+	return process_buffer_measurement(NULL, buf, size, lsm_event_name,
-+					  LSM_STATE, 0, NULL);
-+}
-+
-+/**
-+ * ima_measure_lsm_policy - measure LSM specific policy
-+ * @lsm_event_name: LSM event
-+ * @buf: pointer to buffer containing LSM specific policy
-+ * @size: Number of bytes in buf
-+ *
-+ * Buffers can only be measured, not appraised.
-+ */
-+int ima_measure_lsm_policy(const char *lsm_event_name, const void *buf,
-+			   int size)
-+{
-+	if (!lsm_event_name || !buf || !size)
-+		return -EINVAL;
-+
-+	return process_buffer_measurement(NULL, buf, size, lsm_event_name,
-+					  LSM_POLICY, 0, NULL);
-+}
-+
- static int __init init_ima(void)
- {
- 	int error;
--- 
-2.27.0
+> 
+> > +		struct path mnt_root;
+> > +
+> > +		mnt_root.mnt	= &p->mnt;
+> > +		mnt_root.dentry	= p->mnt.mnt_root;
+> > +		if (are_paths_connected(path, &mnt_root))
+> > +			fsinfo_store_mount(ctx, p, p == m);
+> > +	}
+> > +
+> > +	up_read(&namespace_sem);
+> > +	return ctx->usage;
+> > +}
+> > +
+> >  #endif /* CONFIG_FSINFO */
+> > diff --git a/include/uapi/linux/fsinfo.h
+> > b/include/uapi/linux/fsinfo.h
+> > index 81329de6905e..e40192d98648 100644
+> > --- a/include/uapi/linux/fsinfo.h
+> > +++ b/include/uapi/linux/fsinfo.h
+> > @@ -37,6 +37,7 @@
+> >  #define FSINFO_ATTR_MOUNT_POINT_FULL	0x203	/* Absolute
+> > path of mount (string) */
+> >  #define FSINFO_ATTR_MOUNT_TOPOLOGY	0x204	/* Mount object
+> > topology */
+> >  #define FSINFO_ATTR_MOUNT_CHILDREN	0x205	/* Children of this
+> > mount (list) */
+> > +#define FSINFO_ATTR_MOUNT_ALL		0x206	/* List all
+> > mounts in a namespace (list) */
+> >  
+> >  #define FSINFO_ATTR_AFS_CELL_NAME	0x300	/* AFS cell name
+> > (string) */
+> >  #define FSINFO_ATTR_AFS_SERVER_NAME	0x301	/* Name of
+> > the Nth server (string) */
+> > @@ -128,6 +129,8 @@ struct fsinfo_mount_topology {
+> >  /*
+> >   * Information struct element for
+> > fsinfo(FSINFO_ATTR_MOUNT_CHILDREN).
+> >   * - An extra element is placed on the end representing the parent
+> > mount.
+> > + *
+> > + * Information struct element for fsinfo(FSINFO_ATTR_MOUNT_ALL).
+> >   */
+> >  struct fsinfo_mount_child {
+> >  	__u64	mnt_unique_id;		/* Kernel-lifetime unique
+> > mount ID */
+> > @@ -139,6 +142,7 @@ struct fsinfo_mount_child {
+> >  };
+> >  
+> >  #define FSINFO_ATTR_MOUNT_CHILDREN__STRUCT struct
+> > fsinfo_mount_child
+> > +#define FSINFO_ATTR_MOUNT_ALL__STRUCT struct fsinfo_mount_child
+> >  
+> >  /*
+> >   * Information struct for fsinfo(FSINFO_ATTR_STATFS).
+> > diff --git a/samples/vfs/test-fsinfo.c b/samples/vfs/test-fsinfo.c
+> > index 374825ab85b0..596fa5e71762 100644
+> > --- a/samples/vfs/test-fsinfo.c
+> > +++ b/samples/vfs/test-fsinfo.c
+> > @@ -365,6 +365,27 @@ static void
+> > dump_fsinfo_generic_mount_children(void *reply, unsigned int size)
+> >  	       (unsigned long long)r->mnt_notify_sum, mp);
+> >  }
+> >  
+> > +static void dump_fsinfo_generic_mount_all(void *reply, unsigned
+> > int size)
+> > +{
+> > +	struct fsinfo_mount_child *r = reply;
+> > +	ssize_t mplen;
+> > +	char path[32], *mp;
+> > +
+> > +	struct fsinfo_params params = {
+> > +		.flags		= FSINFO_FLAGS_QUERY_MOUNT,
+> > +		.request	= FSINFO_ATTR_MOUNT_POINT_FULL,
+> > +	};
+> > +
+> > +	sprintf(path, "%u", r->mnt_id);
+> > +	mplen = get_fsinfo(path, "FSINFO_ATTR_MOUNT_POINT_FULL",
+> > &params, (void **)&mp);
+> > +	if (mplen < 0)
+> > +		mp = "-";
+> > +
+> > +	printf("%5x %5x %12llx %10llu %s\n",
+> > +	       r->mnt_id, r->parent_id, (unsigned long long)r-
+> > >mnt_unique_id,
+> > +	       r->mnt_notify_sum, mp);
+> > +}
+> > +
+> >  static void dump_afs_fsinfo_server_address(void *reply, unsigned
+> > int size)
+> >  {
+> >  	struct fsinfo_afs_server_address *f = reply;
+> > @@ -492,6 +513,7 @@ static const struct fsinfo_attribute
+> > fsinfo_attributes[] = {
+> >  	FSINFO_STRING_N	(FSINFO_ATTR_MOUNT_POINT,	string),
+> >  	FSINFO_STRING_N	(FSINFO_ATTR_MOUNT_POINT_FULL,	string),
+> >  	FSINFO_LIST	(FSINFO_ATTR_MOUNT_CHILDREN,	fsinfo_generic_moun
+> > t_children),
+> > +	FSINFO_LIST	(FSINFO_ATTR_MOUNT_ALL,		fsinfo_generic_moun
+> > t_all),
+> >  
+> >  	FSINFO_STRING	(FSINFO_ATTR_AFS_CELL_NAME,	string),
+> >  	FSINFO_STRING	(FSINFO_ATTR_AFS_SERVER_NAME,	string),
+> > 
+> > 
 
