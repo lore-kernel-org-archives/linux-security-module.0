@@ -4,53 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77A60C433DF
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 20:15:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 167F0C433DF
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 20:16:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 528F322CA1
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 20:15:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DDEC122B42
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 20:16:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eUrfOov9"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VhawphbV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726249AbgHEUPL (ORCPT
+        id S1727005AbgHEUQU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 5 Aug 2020 16:15:11 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:41118 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726566AbgHEQUv (ORCPT
+        Wed, 5 Aug 2020 16:16:20 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:28975 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726242AbgHEQS5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 5 Aug 2020 12:20:51 -0400
+        Wed, 5 Aug 2020 12:18:57 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1596644449;
+        s=mimecast20190719; t=1596644320;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=DHFlZmfElMYNy0WR9YIOE++ShLmq+Nylm/oekejIBn8=;
-        b=eUrfOov91pCGRCux7Vq/UqdrAwLhBzd6Yuht5RSPzxzbK7XLO/SSTpkDGHpjOvBstb4WE+
-        RcPdAT3MNQb2DjoKO++incdyOgk5lTEzp4jD3vNCRU7fR8cbyFYpH5AC3e3YqDKQrGOO07
-        8048aqyilUVBh5AAu5n5LvDJJ6PZtTM=
+        bh=NOmiaPGZyWfLelA46Ml6D9sENv38lZYZOuC+13qLzsM=;
+        b=VhawphbVb4CjWVesMD3drTw0fAFthTjG0BGyIZu7Szw43G2DPylX4xoPF6IPxx0AGj3Y8D
+        Xef1/JyfSV62bCGHNQSUIo6AGTUz+w599WN+sog5XzOdsPcwAq7lrm8am/y8AUD7CB6y7k
+        G+MQd6vxqu3Ykd9dZVvEYrMRItKfv7c=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-307-oiElo-DiOHyMD5tPH4SYlQ-1; Wed, 05 Aug 2020 12:07:07 -0400
-X-MC-Unique: oiElo-DiOHyMD5tPH4SYlQ-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+ us-mta-3-AxTiy8ZWOS-ruwjeo1BfXg-1; Wed, 05 Aug 2020 11:37:36 -0400
+X-MC-Unique: AxTiy8ZWOS-ruwjeo1BfXg-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9B20558;
-        Wed,  5 Aug 2020 16:07:02 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 666F057;
+        Wed,  5 Aug 2020 15:37:34 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-112-32.rdu2.redhat.com [10.10.112.32])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 96B4B87E2A;
-        Wed,  5 Aug 2020 16:06:59 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id F20B45D9E2;
+        Wed,  5 Aug 2020 15:37:31 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
 From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20200804135641.GE32719@miu.piliscsaba.redhat.com>
-References: <20200804135641.GE32719@miu.piliscsaba.redhat.com> <159646178122.1784947.11705396571718464082.stgit@warthog.procyon.org.uk> <159646187082.1784947.4293611877413578847.stgit@warthog.procyon.org.uk>
+In-Reply-To: <20200804133817.GD32719@miu.piliscsaba.redhat.com>
+References: <20200804133817.GD32719@miu.piliscsaba.redhat.com> <159646178122.1784947.11705396571718464082.stgit@warthog.procyon.org.uk> <159646185371.1784947.14555585307218856883.stgit@warthog.procyon.org.uk>
 To:     Miklos Szeredi <miklos@szeredi.hu>
 Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
         torvalds@linux-foundation.org, raven@themaw.net,
@@ -58,47 +59,43 @@ Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
         darrick.wong@oracle.com, kzak@redhat.com, jlayton@redhat.com,
         linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 10/18] fsinfo: Provide notification overrun handling support [ver #21]
+Subject: Re: [PATCH 08/18] fsinfo: Allow mount topology and propagation info to be retrieved [ver #21]
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2320581.1596643618.1@warthog.procyon.org.uk>
-Date:   Wed, 05 Aug 2020 17:06:58 +0100
-Message-ID: <2320582.1596643618@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-ID: <2316805.1596641851.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Wed, 05 Aug 2020 16:37:31 +0100
+Message-ID: <2316806.1596641851@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 Miklos Szeredi <miklos@szeredi.hu> wrote:
 
-> Shoun't we just make sure that the likelyhood of overruns is low
+> > +	__u32	shared_group_id;	/* Shared: mount group ID */
+> > +	__u32	dependent_source_id;	/* Dependent: source mount group ID */
+> > +	__u32	dependent_clone_of_id;	/* Dependent: ID of mount this was clon=
+ed from */
+> =
 
-That's not necessarily easy.  To avoid overruns you need a bigger buffer.  The
-buffer is preallocated from unswappable kernel space.  Yes, you can increase
-the size of the buffer, but it eats out of your pipe bufferage limit.
+> Another set of ID's that are currently 32bit *internally* but that doesn=
+'t
+> mean they will always be 32 bit.
+> =
 
-Further, it's a *general* notifications queue, not just for a specific
-purpose, but that means it might get connected to multiple sources, and doing
-something like tearing down a container might generate enough notifications to
-overrun the queue.
+> And that last one (apart from "slave" being obfuscated)
 
-> and if it happens, just reinitialize everthing from scratch (shouldn't be
-> *that* expensive).
+I had "slave" in there.  It got objected to.  See
+Documentation/process/coding-style.rst section 4.
 
-If you then spend time reinitialising everything, you're increasing the
-likelihood of racing with further events.  Further, there multiple expenses:
-firstly, you have to tear down and discard all the data that you've spent time
-setting up; secondly, it takes time doing all this; thirdly, it takes cpu
-cycles away from applications.
+> is simply incorrect.  It has nothing to do with cloning.  It's the "ID o=
+f
+> the closest peer group in the propagation chain that has a representativ=
+e
+> mount in the current root".
 
-The reason I put the event counters in there and made it so that fsinfo()
-could read all the mounts in a subtree and their event counters in one go is
-to make it faster for the user to find out what changed in the event that a
-notification is lost.
-
-I have a patch (not included here as it occasionally induces oopses) that
-attempts to make this doable under the RCU read lock so that it doesn't
-prevent mounts from taking place during the scan.
+You appear to be in disagreement with others that I've asked.
 
 David
 
