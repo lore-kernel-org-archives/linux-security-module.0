@@ -2,121 +2,103 @@ Return-Path: <SRS0=iE4T=BP=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12382C433E0
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 20:14:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77A60C433DF
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 20:15:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E47C222B42
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 20:14:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 528F322CA1
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 20:15:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="tAdrgRN+"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eUrfOov9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729587AbgHEUOj (ORCPT
+        id S1726249AbgHEUPL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 5 Aug 2020 16:14:39 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:43510 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726624AbgHEQX0 (ORCPT
+        Wed, 5 Aug 2020 16:15:11 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:41118 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726566AbgHEQUv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 5 Aug 2020 12:23:26 -0400
-Received: from [192.168.0.104] (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 33C1D20B4916;
-        Wed,  5 Aug 2020 09:21:25 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 33C1D20B4916
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1596644485;
-        bh=GzAsE7yIveqCecXCvd87U4xE2Iv3TtxhwzS/oH7sMZQ=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=tAdrgRN+aiLODwPD2Pu1t/IPAMRAiJp2U3MWvDjOQx4AmOIgoovl6hWOOeVMDJtJt
-         srJScwliKGlB05ubxJW3Wzi7YO2eKzS+pomSQSUqJxynjqI9F3S5cW+JA1RfOPWOoS
-         r5NxUGUp0TBH7UejIn8B1uTkrKsu2u62Nak4Higk=
-Subject: Re: [PATCH v6 0/4] LSM: Measure security module data
-To:     Tyler Hicks <tyhicks@linux.microsoft.com>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>, zohar@linux.ibm.com,
-        stephen.smalley.work@gmail.com, sashal@kernel.org,
-        jmorris@namei.org, linux-integrity@vger.kernel.org,
-        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20200805004331.20652-1-nramas@linux.microsoft.com>
- <f3971f35-309d-c3e5-9126-69add7ad4c11@schaufler-ca.com>
- <50587a3e-bcb5-c68e-c16c-41baf68b4d4a@linux.microsoft.com>
- <c7c168f2-e30b-d2c5-abcb-1b6919197474@schaufler-ca.com>
- <20200805154504.GB4365@sequoia>
- <7c7a076b-6ba7-2e8d-409a-b3b4e4738c41@linux.microsoft.com>
- <20200805161449.GC4365@sequoia>
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Message-ID: <ae80581d-a34c-51f4-d4f9-94c1e341fd15@linux.microsoft.com>
-Date:   Wed, 5 Aug 2020 09:21:24 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Wed, 5 Aug 2020 12:20:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1596644449;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=DHFlZmfElMYNy0WR9YIOE++ShLmq+Nylm/oekejIBn8=;
+        b=eUrfOov91pCGRCux7Vq/UqdrAwLhBzd6Yuht5RSPzxzbK7XLO/SSTpkDGHpjOvBstb4WE+
+        RcPdAT3MNQb2DjoKO++incdyOgk5lTEzp4jD3vNCRU7fR8cbyFYpH5AC3e3YqDKQrGOO07
+        8048aqyilUVBh5AAu5n5LvDJJ6PZtTM=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-307-oiElo-DiOHyMD5tPH4SYlQ-1; Wed, 05 Aug 2020 12:07:07 -0400
+X-MC-Unique: oiElo-DiOHyMD5tPH4SYlQ-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9B20558;
+        Wed,  5 Aug 2020 16:07:02 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-112-32.rdu2.redhat.com [10.10.112.32])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 96B4B87E2A;
+        Wed,  5 Aug 2020 16:06:59 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20200804135641.GE32719@miu.piliscsaba.redhat.com>
+References: <20200804135641.GE32719@miu.piliscsaba.redhat.com> <159646178122.1784947.11705396571718464082.stgit@warthog.procyon.org.uk> <159646187082.1784947.4293611877413578847.stgit@warthog.procyon.org.uk>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
+        torvalds@linux-foundation.org, raven@themaw.net,
+        mszeredi@redhat.com, christian@brauner.io, jannh@google.com,
+        darrick.wong@oracle.com, kzak@redhat.com, jlayton@redhat.com,
+        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 10/18] fsinfo: Provide notification overrun handling support [ver #21]
 MIME-Version: 1.0
-In-Reply-To: <20200805161449.GC4365@sequoia>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2320581.1596643618.1@warthog.procyon.org.uk>
+Date:   Wed, 05 Aug 2020 17:06:58 +0100
+Message-ID: <2320582.1596643618@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 8/5/20 9:14 AM, Tyler Hicks wrote:
-> On 2020-08-05 09:07:48, Lakshmi Ramasubramanian wrote:
->> On 8/5/20 8:45 AM, Tyler Hicks wrote:
->>> On 2020-08-05 08:36:40, Casey Schaufler wrote:
->>>> On 8/4/2020 6:14 PM, Lakshmi Ramasubramanian wrote:
->>>>> On 8/4/20 6:04 PM, Casey Schaufler wrote:
->>>>>> On 8/4/2020 5:43 PM, Lakshmi Ramasubramanian wrote:
->>>>>>> Critical data structures of security modules are currently not measured.
->>>>>>> Therefore an attestation service, for instance, would not be able to
->>>>>>> attest whether the security modules are always operating with the policies
->>>>>>> and configuration that the system administrator had setup. The policies
->>>>>>> and configuration for the security modules could be tampered with by
->>>>>>> malware by exploiting kernel vulnerabilities or modified through some
->>>>>>> inadvertent actions on the system. Measuring such critical data would
->>>>>>> enable an attestation service to better assess the state of the system.
->>>>>>
->>>>>> I still wonder why you're calling this an LSM change/feature when
->>>>>> all the change is in IMA and SELinux. You're not putting anything
->>>>>> into the LSM infrastructure, not are you using the LSM infrastructure
->>>>>> to achieve your ends. Sure, you *could* support other security modules
->>>>>> using this scheme, but you have a configuration dependency on
->>>>>> SELinux, so that's at best going to be messy. If you want this to
->>>>>> be an LSM "feature" you need to use the LSM hooking mechanism.
->>>>>
->>>>>>
->>>>>> I'm not objecting to the feature. It adds value. But as you've
->>>>>> implemented it it is either an IMA extension to SELinux, or an
->>>>>> SELiux extension to IMA. Could AppArmor add hooks for this without
->>>>>> changing the IMA code? It doesn't look like it to me.
->>>>>
->>>>> The check in IMA to allow the new IMA hook func LSM_STATE and LSM_POLICY when SELinux is enabled is just because SELinux is the only security module using these hooks now.
->>>>>
->>>>> To enable AppArmor, for instance, to use the new IMA hooks to measure state and policy would just require adding the check for CONFIG_SECURITY_APPARMOR. Other than that, there are no IMA changes needed to support AppArmor or other such security modules.
->>>>
->>>> This is exactly what I'm objecting to. What if a system has both SELinux
->>>> and AppArmor compiled in? What if it has both enabled?
->>>
->>> The SELinux state and policy would be measured but the AppArmor
->>> state/policy would be silently ignored. This isn't ideal as the IMA
->>> policy author would need to read the kernel code to figure out which
->>> LSMs are going to be measured.
->>
->> Tyler - I am not sure why AppArmor state\policy would be ignored when both
->> SELinux and AppArmor are enabled. Could you please clarify?
-> 
-> I think Casey is talking about now (when AppArmor is not supported by
-> this feature) and you're talking about the future (when AppArmor may be
-> supported by this feature).
+Miklos Szeredi <miklos@szeredi.hu> wrote:
 
-Got it - thanks for clarifying.
+> Shoun't we just make sure that the likelyhood of overruns is low
 
-But with the current code if SELinux is enabled on the system, but 
-AppArmor is not and the IMA policy contains "measure func=LSM_STATE" 
-then the policy will be rejected as "-EINVAL".
-So the policy author would get a feedback even now.
-Correct me if I am wrong.
+That's not necessarily easy.  To avoid overruns you need a bigger buffer.  The
+buffer is preallocated from unswappable kernel space.  Yes, you can increase
+the size of the buffer, but it eats out of your pipe bufferage limit.
 
-  -lakshmi
+Further, it's a *general* notifications queue, not just for a specific
+purpose, but that means it might get connected to multiple sources, and doing
+something like tearing down a container might generate enough notifications to
+overrun the queue.
+
+> and if it happens, just reinitialize everthing from scratch (shouldn't be
+> *that* expensive).
+
+If you then spend time reinitialising everything, you're increasing the
+likelihood of racing with further events.  Further, there multiple expenses:
+firstly, you have to tear down and discard all the data that you've spent time
+setting up; secondly, it takes time doing all this; thirdly, it takes cpu
+cycles away from applications.
+
+The reason I put the event counters in there and made it so that fsinfo()
+could read all the mounts in a subtree and their event counters in one go is
+to make it faster for the user to find out what changed in the event that a
+notification is lost.
+
+I have a patch (not included here as it occasionally induces oopses) that
+attempts to make this doable under the RCU read lock so that it doesn't
+prevent mounts from taking place during the scan.
+
+David
+
