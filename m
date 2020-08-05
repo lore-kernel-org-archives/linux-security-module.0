@@ -2,160 +2,121 @@ Return-Path: <SRS0=iE4T=BP=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6000BC433E1
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 20:14:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12382C433E0
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 20:14:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3601F22CA1
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 20:14:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E47C222B42
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 20:14:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b="SN6O21jH";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="l6X0RVD4"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="tAdrgRN+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729592AbgHEUO1 (ORCPT
+        id S1729587AbgHEUOj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 5 Aug 2020 16:14:27 -0400
-Received: from wnew3-smtp.messagingengine.com ([64.147.123.17]:33995 "EHLO
-        wnew3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726630AbgHEQX0 (ORCPT
+        Wed, 5 Aug 2020 16:14:39 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:43510 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726624AbgHEQX0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
         Wed, 5 Aug 2020 12:23:26 -0400
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailnew.west.internal (Postfix) with ESMTP id C2975896;
-        Wed,  5 Aug 2020 07:14:05 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Wed, 05 Aug 2020 07:14:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
-        message-id:subject:from:to:cc:date:in-reply-to:references
-        :content-type:mime-version:content-transfer-encoding; s=fm3; bh=
-        FVkQ6ze2JnvmGPoYApJAFrAYvt8zexmv/OJPsQaZMgU=; b=SN6O21jHLK0jauIv
-        DHnrckspKjX+uHVpnvEe4ydIfNyWICmVz5vDuIWkrhD6BDOFY0TkwrbAZRk6w+1n
-        b0JOgpMtOaA0CdCItQ1I7EP2XGvtxxkIXzXKr6pJzrkg1imkIHrw6qdEr5usv770
-        TF94RSGVQzI1I1xhTD81JGRpO0o1CXFMC1fOaDHeMuFz6zLfH1gh/4sZb45Sypzp
-        nxt9P31drzNGLf82/3m7ou6Qi0MeUCQz4nUovrm1phU4nAmFwgWNorQqxTKuOZrE
-        cX+zbtVKnadGSqYxJYPKNSm6hVeiZBjSiqrm31nXRfRBqHJf92PTpJZ8ojGEvp9T
-        cY6Lug==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; bh=FVkQ6ze2JnvmGPoYApJAFrAYvt8zexmv/OJPsQaZM
-        gU=; b=l6X0RVD4SEfucgzG7MU9P4LWBYpQeenQulu7vIeLEodV4OgRrxT8p5V7d
-        SX+i0vqXNgN/pYIF94Vw+/Nny8YMre3j+pMQ0VIcIXobZM3QRawB+4Y0nJOE5oXI
-        KOCq53RP+0gfhifZeaDjotj0XF5st0cm5xdyFeS60gNJPGMOnLD7GqsRKoa2CmkV
-        LF080vlM7qNt+pzSo5yWegq5WhzlQgbJz4+Fzzsa9Pynj0hFWWtUKcqfDDfdHDXT
-        b0MMmHgxM4tETeVo4tYY1IwgGGa9BKZ5NePS1ZUEMhjXNUbxFc2hRtG6/XEyaZ4v
-        IPiwEYwE9Clglld0sB+of3asGsH0g==
-X-ME-Sender: <xms:fJQqX3YA6t9GhKywLlioHdvjAPLUKQoeO-w2HpxmGXhTOWuEfFbO_g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduiedrjeekgdegtdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefkuffhvfffjghftggfggfgsehtjeertddtreejnecuhfhrohhmpefkrghnucfm
-    vghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnhepfe
-    efteetvdeguddvveefveeftedtffduudehueeihfeuvefgveehffeludeggfejnecukfhp
-    peehkedrjedrvdehhedrvddvtdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpehrrghvvghnsehthhgvmhgrfidrnhgvth
-X-ME-Proxy: <xmx:fJQqX2ZSypsPRmH_WPh6Sn6WnkeTZD5BzdfzmwHtuNQSc1OfyePtoQ>
-    <xmx:fJQqX58RlXwDK3acV11t81Cv0jisurrfQMtArHXlzDZZB43U0xvcAg>
-    <xmx:fJQqX9rGxF5_oGzFN9o9XGL1hKRia1bhRkTp65swupz3FRzBIFvAsQ>
-    <xmx:fZQqXx1SYZGX-rvfKFPpEzq0vN_0iaQlPqCCpIxnDdLEADGFuTzMz10KcRw>
-Received: from mickey.themaw.net (58-7-255-220.dyn.iinet.net.au [58.7.255.220])
-        by mail.messagingengine.com (Postfix) with ESMTPA id D79573280060;
-        Wed,  5 Aug 2020 07:13:59 -0400 (EDT)
-Message-ID: <c44b1c225b0aec20969aace1ba1b7900ddda5a5e.camel@themaw.net>
-Subject: Re: [GIT PULL] Filesystem Information
-From:   Ian Kent <raven@themaw.net>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, Karel Zak <kzak@redhat.com>,
-        Jeff Layton <jlayton@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
-        Christian Brauner <christian@brauner.io>,
-        Lennart Poettering <lennart@poettering.net>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        LSM <linux-security-module@vger.kernel.org>,
+Received: from [192.168.0.104] (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 33C1D20B4916;
+        Wed,  5 Aug 2020 09:21:25 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 33C1D20B4916
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1596644485;
+        bh=GzAsE7yIveqCecXCvd87U4xE2Iv3TtxhwzS/oH7sMZQ=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=tAdrgRN+aiLODwPD2Pu1t/IPAMRAiJp2U3MWvDjOQx4AmOIgoovl6hWOOeVMDJtJt
+         srJScwliKGlB05ubxJW3Wzi7YO2eKzS+pomSQSUqJxynjqI9F3S5cW+JA1RfOPWOoS
+         r5NxUGUp0TBH7UejIn8B1uTkrKsu2u62Nak4Higk=
+Subject: Re: [PATCH v6 0/4] LSM: Measure security module data
+To:     Tyler Hicks <tyhicks@linux.microsoft.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>, zohar@linux.ibm.com,
+        stephen.smalley.work@gmail.com, sashal@kernel.org,
+        jmorris@namei.org, linux-integrity@vger.kernel.org,
+        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Date:   Wed, 05 Aug 2020 19:13:55 +0800
-In-Reply-To: <CAJfpegvQdCr+u51_xkpbS7eMZyNqtnk_tdK1KVhsiCuiFWWJJw@mail.gmail.com>
-References: <1842689.1596468469@warthog.procyon.org.uk>
-         <1845353.1596469795@warthog.procyon.org.uk>
-         <CAJfpegunY3fuxh486x9ysKtXbhTE0745ZCVHcaqs9Gww9RV2CQ@mail.gmail.com>
-         <ac1f5e3406abc0af4cd08d818fe920a202a67586.camel@themaw.net>
-         <CAJfpegu8omNZ613tLgUY7ukLV131tt7owR+JJ346Kombt79N0A@mail.gmail.com>
-         <dd1a41a129cd6e8d13525a14807e6dc65b52e0bf.camel@themaw.net>
-         <CAJfpegvQdCr+u51_xkpbS7eMZyNqtnk_tdK1KVhsiCuiFWWJJw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
+References: <20200805004331.20652-1-nramas@linux.microsoft.com>
+ <f3971f35-309d-c3e5-9126-69add7ad4c11@schaufler-ca.com>
+ <50587a3e-bcb5-c68e-c16c-41baf68b4d4a@linux.microsoft.com>
+ <c7c168f2-e30b-d2c5-abcb-1b6919197474@schaufler-ca.com>
+ <20200805154504.GB4365@sequoia>
+ <7c7a076b-6ba7-2e8d-409a-b3b4e4738c41@linux.microsoft.com>
+ <20200805161449.GC4365@sequoia>
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Message-ID: <ae80581d-a34c-51f4-d4f9-94c1e341fd15@linux.microsoft.com>
+Date:   Wed, 5 Aug 2020 09:21:24 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
+In-Reply-To: <20200805161449.GC4365@sequoia>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 2020-08-05 at 10:00 +0200, Miklos Szeredi wrote:
-> On Wed, Aug 5, 2020 at 3:33 AM Ian Kent <raven@themaw.net> wrote:
-> > On Tue, 2020-08-04 at 16:36 +0200, Miklos Szeredi wrote:
-> > > And notice how similar the above interface is to getxattr(), or
-> > > the
-> > > proposed readfile().  Where has the "everything is  a file"
-> > > philosophy
-> > > gone?
-> > 
-> > Maybe, but that philosophy (in a roundabout way) is what's resulted
-> > in some of the problems we now have. Granted it's blind application
-> > of that philosophy rather than the philosophy itself but that is
-> > what happens.
+On 8/5/20 9:14 AM, Tyler Hicks wrote:
+> On 2020-08-05 09:07:48, Lakshmi Ramasubramanian wrote:
+>> On 8/5/20 8:45 AM, Tyler Hicks wrote:
+>>> On 2020-08-05 08:36:40, Casey Schaufler wrote:
+>>>> On 8/4/2020 6:14 PM, Lakshmi Ramasubramanian wrote:
+>>>>> On 8/4/20 6:04 PM, Casey Schaufler wrote:
+>>>>>> On 8/4/2020 5:43 PM, Lakshmi Ramasubramanian wrote:
+>>>>>>> Critical data structures of security modules are currently not measured.
+>>>>>>> Therefore an attestation service, for instance, would not be able to
+>>>>>>> attest whether the security modules are always operating with the policies
+>>>>>>> and configuration that the system administrator had setup. The policies
+>>>>>>> and configuration for the security modules could be tampered with by
+>>>>>>> malware by exploiting kernel vulnerabilities or modified through some
+>>>>>>> inadvertent actions on the system. Measuring such critical data would
+>>>>>>> enable an attestation service to better assess the state of the system.
+>>>>>>
+>>>>>> I still wonder why you're calling this an LSM change/feature when
+>>>>>> all the change is in IMA and SELinux. You're not putting anything
+>>>>>> into the LSM infrastructure, not are you using the LSM infrastructure
+>>>>>> to achieve your ends. Sure, you *could* support other security modules
+>>>>>> using this scheme, but you have a configuration dependency on
+>>>>>> SELinux, so that's at best going to be messy. If you want this to
+>>>>>> be an LSM "feature" you need to use the LSM hooking mechanism.
+>>>>>
+>>>>>>
+>>>>>> I'm not objecting to the feature. It adds value. But as you've
+>>>>>> implemented it it is either an IMA extension to SELinux, or an
+>>>>>> SELiux extension to IMA. Could AppArmor add hooks for this without
+>>>>>> changing the IMA code? It doesn't look like it to me.
+>>>>>
+>>>>> The check in IMA to allow the new IMA hook func LSM_STATE and LSM_POLICY when SELinux is enabled is just because SELinux is the only security module using these hooks now.
+>>>>>
+>>>>> To enable AppArmor, for instance, to use the new IMA hooks to measure state and policy would just require adding the check for CONFIG_SECURITY_APPARMOR. Other than that, there are no IMA changes needed to support AppArmor or other such security modules.
+>>>>
+>>>> This is exactly what I'm objecting to. What if a system has both SELinux
+>>>> and AppArmor compiled in? What if it has both enabled?
+>>>
+>>> The SELinux state and policy would be measured but the AppArmor
+>>> state/policy would be silently ignored. This isn't ideal as the IMA
+>>> policy author would need to read the kernel code to figure out which
+>>> LSMs are going to be measured.
+>>
+>> Tyler - I am not sure why AppArmor state\policy would be ignored when both
+>> SELinux and AppArmor are enabled. Could you please clarify?
 > 
-> Agree.   What people don't seem to realize, even though there are
-> blindingly obvious examples, that binary interfaces like the proposed
-> fsinfo(2) syscall can also result in a multitude of problems at the
-> same time as solving some others.
-> 
-> There's no magic solution in API design,  it's not balck and white.
-> We just need to strive for a good enough solution.  The problem seems
-> to be that trying to discuss the merits of other approaches seems to
-> hit a brick wall.  We just see repeated pull requests from David,
-> without any real discussion of the proposed alternatives.
-> 
-> > I get that your comments are driven by the way that philosophy
-> > should
-> > be applied which is more of a "if it works best doing it that way
-> > then
-> > do it that way, and that's usually a file".
-> > 
-> > In this case there is a logical division of various types of file
-> > system information and the underlying suggestion is maybe it's time
-> > to move away from the "everything is a file" hard and fast rule,
-> > and get rid of some of the problems that have resulted from it.
-> > 
-> > The notifications is an example, yes, the delivery mechanism is
-> > a "file" but the design of the queueing mechanism makes a lot of
-> > sense for the throughput that's going to be needed as time marches
-> > on. Then there's different sub-systems each with unique information
-> > that needs to be deliverable some other way because delivering
-> > "all"
-> > the information via the notification would be just plain wrong so
-> > a multi-faceted information delivery mechanism makes the most
-> > sense to allow specific targeted retrieval of individual items of
-> > information.
-> > 
-> > But that also supposes your at least open to the idea that "maybe
-> > not everything should be a file".
-> 
-> Sure.  I've learned pragmatism, although idealist at heart.  And I'm
-> not saying all API's from David are shit.  statx(2) is doing fine.
-> It's a simple binary interface that does its job well.   Compare the
-> header files for statx and fsinfo, though, and maybe you'll see what
-> I'm getting at...
+> I think Casey is talking about now (when AppArmor is not supported by
+> this feature) and you're talking about the future (when AppArmor may be
+> supported by this feature).
 
-Yeah, but I'm biased so not much joy there ... ;)
+Got it - thanks for clarifying.
 
-Ian
+But with the current code if SELinux is enabled on the system, but 
+AppArmor is not and the IMA policy contains "measure func=LSM_STATE" 
+then the policy will be rejected as "-EINVAL".
+So the policy author would get a feedback even now.
+Correct me if I am wrong.
 
+  -lakshmi
