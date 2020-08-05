@@ -2,118 +2,110 @@ Return-Path: <SRS0=iE4T=BP=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3977C433DF
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 03:25:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32523C433E0
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 07:43:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DFD8F206B6
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 03:25:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10D7922B40
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 07:43:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="G2U85/Sh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725999AbgHEDZY (ORCPT
+        id S1726635AbgHEHny (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 4 Aug 2020 23:25:24 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:19786 "EHLO
-        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725864AbgHEDZY (ORCPT
+        Wed, 5 Aug 2020 03:43:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47020 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726008AbgHEHnv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 4 Aug 2020 23:25:24 -0400
-Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 07533LNV150015;
-        Tue, 4 Aug 2020 23:25:17 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 32qcf1u8fr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 04 Aug 2020 23:25:17 -0400
-Received: from m0127361.ppops.net (m0127361.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 07533WAv150504;
-        Tue, 4 Aug 2020 23:25:17 -0400
-Received: from ppma02fra.de.ibm.com (47.49.7a9f.ip4.static.sl-reverse.com [159.122.73.71])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 32qcf1u8fc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 04 Aug 2020 23:25:17 -0400
-Received: from pps.filterd (ppma02fra.de.ibm.com [127.0.0.1])
-        by ppma02fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 0753PFEt028243;
-        Wed, 5 Aug 2020 03:25:15 GMT
-Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
-        by ppma02fra.de.ibm.com with ESMTP id 32n018adaf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 05 Aug 2020 03:25:15 +0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0753NkR162587312
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 5 Aug 2020 03:23:46 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0F2E2AE045;
-        Wed,  5 Aug 2020 03:25:13 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 119F5AE04D;
-        Wed,  5 Aug 2020 03:25:10 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.44.248])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed,  5 Aug 2020 03:25:09 +0000 (GMT)
-Message-ID: <4b9d2715d3ef3c8f915ef03867cfb1a39c0abc54.camel@linux.ibm.com>
-Subject: Re: [PATCH v6 1/4] IMA: Add func to measure LSM state and policy
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        stephen.smalley.work@gmail.com, casey@schaufler-ca.com
-Cc:     tyhicks@linux.microsoft.com, sashal@kernel.org, jmorris@namei.org,
-        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Tue, 04 Aug 2020 23:25:08 -0400
-In-Reply-To: <20200805004331.20652-2-nramas@linux.microsoft.com>
-References: <20200805004331.20652-1-nramas@linux.microsoft.com>
-         <20200805004331.20652-2-nramas@linux.microsoft.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-08-05_03:2020-08-03,2020-08-05 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
- mlxlogscore=999 priorityscore=1501 spamscore=0 malwarescore=0 mlxscore=0
- lowpriorityscore=0 phishscore=0 bulkscore=0 clxscore=1011 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
- definitions=main-2008050026
+        Wed, 5 Aug 2020 03:43:51 -0400
+Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5B61C06179E
+        for <linux-security-module@vger.kernel.org>; Wed,  5 Aug 2020 00:43:50 -0700 (PDT)
+Received: by mail-ed1-x544.google.com with SMTP id a14so14818119edx.7
+        for <linux-security-module@vger.kernel.org>; Wed, 05 Aug 2020 00:43:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=c7MS/sDmqsu2UeEHE/y1WIBOLGRyoL/hTSKDaerW230=;
+        b=G2U85/Sh33+IcIW0dxhFoe+oW0YUFI67TOMZGh5yXHDRtVNTTIES6+/5ghbYizPlrA
+         NxqWRNYE+WiZQ5x/6V5NBGxTNuIsiyaYdE1+DK4um+EutgPdxUhLgshYgl+AqycDH9vs
+         4dvJRUCTUHLDjtWW+GCIgH/TbkBbaYm/yDD6c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=c7MS/sDmqsu2UeEHE/y1WIBOLGRyoL/hTSKDaerW230=;
+        b=hKUokd4kmRQyxQrt0F/bxRdWBChxZYPji+cWCaFTaRIxQnjhvSl13p0HOLfTKeVgIM
+         YvMAVFzDJwMQAbSjZboILzhPvL40poM48dK4WDdOSv2F3mkEo3yNcCtu9ozwNwW0F7dc
+         WvlEQcm6mi4qflRn011L2kWAQGRmJB25wNpGRbMHZcENMDYMbCK/Y8evXRRh4bJVK1kt
+         g+P5gBo5ZGTsFJXahvfOb0s0w7Uc/1OQOPOGnUASxZowR6Mldlj7/iOVKPlolX2CQ5ps
+         p2yq+zzKARb0UXOoDFywPCwJakKgfGuWrHPMRHW68VeBLJZBbUbRgrTVIjkFRDj1jf/p
+         UhHQ==
+X-Gm-Message-State: AOAM533LRkXjC3xH0CQR4NIKlwVh12gNpWHPynrLWw9Mzp9VbOYfHYva
+        cDVIf8w79/oKimxUuUGhapp8cPXmXQkS61zSeVkDHg==
+X-Google-Smtp-Source: ABdhPJxB/evMZ5+0ZnmBx4YzSXoXDzPSNs9Cjc++wXkfuUDJKvalsR0eiNz5UMmlIUDOEP5Cy96B5iGq/jW2A8IePJ4=
+X-Received: by 2002:a50:fb10:: with SMTP id d16mr1638111edq.134.1596613429317;
+ Wed, 05 Aug 2020 00:43:49 -0700 (PDT)
+MIME-Version: 1.0
+References: <158454378820.2863966.10496767254293183123.stgit@warthog.procyon.org.uk>
+ <158454391302.2863966.1884682840541676280.stgit@warthog.procyon.org.uk>
+ <CAJfpegspWA6oUtdcYvYF=3fij=Bnq03b8VMbU9RNMKc+zzjbag@mail.gmail.com>
+ <1293241.1595501326@warthog.procyon.org.uk> <CAJfpeguvLMCw1H8+DPsfZE_k0sEiRtA17pD9HjnceSsAvqqAZw@mail.gmail.com>
+ <43c061d26ddef2aa3ca1ac726da7db9ab461e7be.camel@themaw.net>
+ <CAJfpeguFkDDhz7+70pSUv_j=xY5L08ESpaE+jER9vE5p+ZmfFw@mail.gmail.com> <c558fc4af785f62a2751be3b297d1ccbbfcfa969.camel@themaw.net>
+In-Reply-To: <c558fc4af785f62a2751be3b297d1ccbbfcfa969.camel@themaw.net>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Wed, 5 Aug 2020 09:43:38 +0200
+Message-ID: <CAJfpegvxKTy+4Zk6banvxQ83PeFV7Xnt2Qv=kkOg57rxFKqVEg@mail.gmail.com>
+Subject: Re: [PATCH 13/17] watch_queue: Implement mount topology and attribute
+ change notifications [ver #5]
+To:     Ian Kent <raven@themaw.net>
+Cc:     David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        Christian Brauner <christian@brauner.io>, andres@anarazel.de,
+        Jeff Layton <jlayton@redhat.com>, dray@redhat.com,
+        Karel Zak <kzak@redhat.com>, keyrings@vger.kernel.org,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        LSM <linux-security-module@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Lakshmi,
+On Wed, Aug 5, 2020 at 3:54 AM Ian Kent <raven@themaw.net> wrote:
+>
 
-There's still  a number of other patch sets needing to be reviewed
-before my getting to this one.  The comment below is from a high level.
+> > > It's way more useful to have these in the notification than
+> > > obtainable
+> > > via fsinfo() IMHO.
+> >
+> > What is it useful for?
+>
+> Only to verify that you have seen all the notifications.
+>
+> If you have to grab that info with a separate call then the count
+> isn't necessarily consistent because other notifications can occur
+> while you grab it.
 
-On Tue, 2020-08-04 at 17:43 -0700, Lakshmi Ramasubramanian wrote:
-> Critical data structures of security modules need to be measured to
-> enable an attestation service to verify if the configuration and
-> policies for the security modules have been setup correctly and
-> that they haven't been tampered with at runtime. A new IMA policy is
-> required for handling this measurement.
-> 
-> Define two new IMA policy func namely LSM_STATE and LSM_POLICY to
-> measure the state and the policy provided by the security modules.
-> Update ima_match_rules() and ima_validate_rule() to check for
-> the new func and ima_parse_rule() to handle the new func.
+No, no no.   The watch queue will signal an overflow, without any
+additional overhead for the normal case.  If you think of this as a
+protocol stack, then the overflow detection happens on the transport
+layer, instead of the application layer.  The application layer is
+responsible for restoring state in case of a transport layer error,
+but detection of that error is not the responsibility of the
+application layer.
 
-I can understand wanting to measure the in kernel LSM memory state to
-make sure it hasn't changed, but policies are stored as files.  Buffer
-measurements should be limited  to those things that are not files.
 
-Changing how data is passed to the kernel has been happening for a
-while.  For example, instead of passing the kernel module or kernel
-image in a buffer, the new syscalls - finit_module, kexec_file_load -
-pass an open file descriptor.  Similarly, instead of loading the IMA
-policy data, a pathname may be provided.
-
-Pre and post security hooks already exist for reading files.   Instead
-of adding IMA support for measuring the policy file data, update the
-mechanism for loading the LSM policy.  Then not only will you be able
-to measure the policy, you'll also be able to require the policy be
-signed.
-
-Mimi
-
+Thanks,
+Miklos
