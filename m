@@ -2,279 +2,132 @@ Return-Path: <SRS0=ihSo=BQ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E872C433E4
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Aug 2020 17:29:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66597C433E0
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Aug 2020 17:38:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EFE9422DCC
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Aug 2020 17:29:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE3CE206B2
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Aug 2020 17:38:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="zSigtDix"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="bMeu9VLD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729961AbgHFR3B (ORCPT
+        id S1729605AbgHFRel (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 6 Aug 2020 13:29:01 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:43768 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729852AbgHFRAh (ORCPT
+        Thu, 6 Aug 2020 13:34:41 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39642 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729382AbgHFRbn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 6 Aug 2020 13:00:37 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 076GggDO190108;
-        Thu, 6 Aug 2020 17:00:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : in-reply-to : references : date : message-id : mime-version :
- content-type; s=corp-2020-01-29;
- bh=8ETxh9POcmm1a7HCLuTWIWDrs1t/hR+hZh1eFjCnrR4=;
- b=zSigtDixPHeIE9/oIwmGYYnezU4SAVDltmr3xiXpKmlQ71WNPo5T8lDFDmtcch9lwdZN
- KH+oWKgaP0s70OYsoauDvKz3gAH8mN/ZZ8ePPSVS7OyLTjxGr7it2wFlNYclH0jtIn0c
- 0kEsYL/VybMix5804qkumcOu3xU5FaBb7AVlOVu5F4h9RCnplhc0MoZvqEasMfiH1Nhf
- SijQ8Rdw1z5J1YuHFerwc95dQTBeGETMxnko76NfRff2PPhDkCzXhYPOcIcI5ozfPCPo
- BJlCbqX08+vBf6U2Zhg5J7mdh1xHV4D3ehpNtV4quLwYUnfasVfQ6r6ggrlD5I2lvQbH CA== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2120.oracle.com with ESMTP id 32r6fxm7at-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 06 Aug 2020 17:00:14 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 076GhqLD050483;
-        Thu, 6 Aug 2020 17:00:13 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3030.oracle.com with ESMTP id 32r6cvs805-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 06 Aug 2020 17:00:11 +0000
-Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 076H07ee010325;
-        Thu, 6 Aug 2020 17:00:07 GMT
-Received: from starbug-mbp.localdomain (/79.97.215.145)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 06 Aug 2020 10:00:07 -0700
-Received: by starbug-mbp.localdomain (Postfix, from userid 501)
-        id 48426F0A107; Thu,  6 Aug 2020 18:00:02 +0100 (IST)
-From:   Darren Kenny <darren.kenny@oracle.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
-        linux-sgx@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-security-module@vger.kernel.org,
-        Jethro Beekman <jethro@fortanix.com>,
-        Andy Lutomirski <luto@kernel.org>, akpm@linux-foundation.org,
-        andriy.shevchenko@linux.intel.com, asapek@google.com, bp@alien8.de,
-        cedric.xing@intel.com, chenalexchen@google.com,
-        conradparker@google.com, cyhanish@google.com,
-        dave.hansen@intel.com, haitao.huang@intel.com,
-        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
-        kmoy@google.com, ludloff@google.com, nhorman@redhat.com,
-        npmccallum@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
-        sean.j.christopherson@intel.com, tglx@linutronix.de,
-        yaozhangx@google.com
-Subject: Re: [PATCH v36 15/24] x86/sgx: Allow a limited use of
- ATTRIBUTE.PROVISIONKEY for attestation
-In-Reply-To: <20200716135303.276442-16-jarkko.sakkinen@linux.intel.com>
-References: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
- <20200716135303.276442-16-jarkko.sakkinen@linux.intel.com>
-Date:   Thu, 06 Aug 2020 18:00:02 +0100
-Message-ID: <m27dubr9pp.fsf@oracle.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9705 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 mlxscore=0 bulkscore=0
- spamscore=0 adultscore=0 mlxlogscore=999 phishscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
- definitions=main-2008060114
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9705 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 impostorscore=0 adultscore=0
- bulkscore=0 priorityscore=1501 mlxlogscore=999 phishscore=0
- lowpriorityscore=0 suspectscore=1 spamscore=0 clxscore=1015 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
- definitions=main-2008060114
+        Thu, 6 Aug 2020 13:31:43 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 076EXCZP003778;
+        Thu, 6 Aug 2020 10:33:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=MrweLZr65tdDL5CZMf8GqFvMQW1Pa0eEhdhRCa8/Rl8=;
+ b=bMeu9VLDdOGfRt59JZ1nCfEW4qn+TnVsKMh7ZkE8Rbrz6IK6zZ/7V46qw6msXhAK3x3X
+ WjoZCzT0Ehh04xKqenqoLHPKjddYRzPlVLlwo0rvNkJONfmMk9hWFUn3gGoi9qORgbef
+ 32sJwQ/xgAERC6vf3KcXSSnnB965i3l14tRIlHRYbOCneBpg7S9UM2Paxc44hy9tP/1b
+ pFNra3BULZG4i/NbCagg6W43vHCisfiqrky2Mcd4icM8ZW2zw6zVwKEzYc7YfS/ZtwdJ
+ VEY1Kcrpu3t5N+mG7D02qhqDv/Gl7cvl1TlVuzBDna74gIikinGUNqb1lsXYhKz0nv7R JQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 32rhhk4k4a-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 06 Aug 2020 10:33:33 -0400
+Received: from m0098410.ppops.net (m0098410.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 076EXXS5005245;
+        Thu, 6 Aug 2020 10:33:33 -0400
+Received: from ppma02fra.de.ibm.com (47.49.7a9f.ip4.static.sl-reverse.com [159.122.73.71])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 32rhhk4k38-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 06 Aug 2020 10:33:32 -0400
+Received: from pps.filterd (ppma02fra.de.ibm.com [127.0.0.1])
+        by ppma02fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 076EVGC6007671;
+        Thu, 6 Aug 2020 14:33:30 GMT
+Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
+        by ppma02fra.de.ibm.com with ESMTP id 32n018bdfn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 06 Aug 2020 14:33:30 +0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 076EW1RT62521766
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 6 Aug 2020 14:32:01 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D7DB4A4054;
+        Thu,  6 Aug 2020 14:33:27 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A08B0A405B;
+        Thu,  6 Aug 2020 14:33:22 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.58.181])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu,  6 Aug 2020 14:33:22 +0000 (GMT)
+Message-ID: <eb7a2f5b5cd22cf9231aa0fd8fdb77c729a83428.camel@linux.ibm.com>
+Subject: Re: [dm-devel] [RFC PATCH v5 00/11] Integrity Policy Enforcement
+ LSM (IPE)
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     James Morris <jmorris@namei.org>
+Cc:     James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Pavel Machek <pavel@ucw.cz>, Sasha Levin <sashal@kernel.org>,
+        snitzer@redhat.com, dm-devel@redhat.com,
+        tyhicks@linux.microsoft.com, agk@redhat.com, paul@paul-moore.com,
+        corbet@lwn.net, nramas@linux.microsoft.com, serge@hallyn.com,
+        pasha.tatashin@soleen.com, jannh@google.com,
+        linux-block@vger.kernel.org, viro@zeniv.linux.org.uk,
+        axboe@kernel.dk, mdsakib@microsoft.com,
+        linux-kernel@vger.kernel.org, eparis@redhat.com,
+        linux-security-module@vger.kernel.org, linux-audit@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        jaskarankhurana@linux.microsoft.com
+Date:   Thu, 06 Aug 2020 10:33:21 -0400
+In-Reply-To: <alpine.LRH.2.21.2008060949410.20084@namei.org>
+References: <20200728213614.586312-1-deven.desai@linux.microsoft.com>
+           <20200802115545.GA1162@bug> <20200802140300.GA2975990@sasha-vm>
+           <20200802143143.GB20261@amd>
+           <1596386606.4087.20.camel@HansenPartnership.com>
+           <fb35a1f7-7633-a678-3f0f-17cf83032d2b@linux.microsoft.com>
+         <1596639689.3457.17.camel@HansenPartnership.com>
+          <alpine.LRH.2.21.2008050934060.28225@namei.org>
+         <b08ae82102f35936427bf138085484f75532cff1.camel@linux.ibm.com>
+         <alpine.LRH.2.21.2008060949410.20084@namei.org>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-08-06_09:2020-08-06,2020-08-06 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ adultscore=0 bulkscore=0 impostorscore=0 malwarescore=0 mlxscore=0
+ suspectscore=0 mlxlogscore=999 phishscore=0 spamscore=0 lowpriorityscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2006250000 definitions=main-2008060104
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thursday, 2020-07-16 at 16:52:54 +03, Jarkko Sakkinen wrote:
-> Provisioning Certification Enclave (PCE), the root of trust for other
-> enclaves, generates a signing key from a fused key called Provisioning
-> Certification Key. PCE can then use this key to certify an attestation key
-> of a Quoting Enclave (QE), e.g. we get the chain of trust down to the
-> hardware if the Intel signed PCE is used.
->
-> To use the needed keys, ATTRIBUTE.PROVISIONKEY is required but should be
-> only allowed for those who actually need it so that only the trusted
-> parties can certify QE's.
->
-> Obviously the attestation service should know the public key of the used
-> PCE and that way detect illegit attestation, but whitelisting the legit
-> users still adds an additional layer of defence.
->
-> Add new device file called /dev/sgx/provision. The sole purpose of this
-> file is to provide file descriptors that act as privilege tokens to allow
-> to build enclaves with ATTRIBUTE.PROVISIONKEY set. A new ioctl called
-> SGX_IOC_ENCLAVE_SET_ATTRIBUTE is used to assign this token to an enclave.
->
-> Cc: linux-security-module@vger.kernel.org
-> Acked-by: Jethro Beekman <jethro@fortanix.com>
-> Suggested-by: Andy Lutomirski <luto@kernel.org>
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+On Thu, 2020-08-06 at 09:51 +1000, James Morris wrote:
+> On Wed, 5 Aug 2020, Mimi Zohar wrote:
+> 
+> > If block layer integrity was enough, there wouldn't have been a need
+> > for fs-verity.   Even fs-verity is limited to read only filesystems,
+> > which makes validating file integrity so much easier.  From the
+> > beginning, we've said that fs-verity signatures should be included in
+> > the measurement list.  (I thought someone signed on to add that support
+> > to IMA, but have not yet seen anything.)
+> > 
+> > Going forward I see a lot of what we've accomplished being incorporated
+> > into the filesystems.  When IMA will be limited to defining a system
+> > wide policy, I'll have completed my job.
+> 
+> What are your thoughts on IPE being a standalone LSM? Would you prefer to 
+> see its functionality integrated into IMA?
 
-Reviewed-by: Darren Kenny <darren.kenny@oracle.com>
+Improving the integrity subsystem would be preferred.
 
-> ---
->  arch/x86/include/uapi/asm/sgx.h  | 11 ++++++++
->  arch/x86/kernel/cpu/sgx/driver.c | 18 ++++++++++++
->  arch/x86/kernel/cpu/sgx/driver.h |  2 ++
->  arch/x86/kernel/cpu/sgx/ioctl.c  | 47 ++++++++++++++++++++++++++++++++
->  4 files changed, 78 insertions(+)
->
-> diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
-> index 5edb08ab8fd0..57d0d30c79b3 100644
-> --- a/arch/x86/include/uapi/asm/sgx.h
-> +++ b/arch/x86/include/uapi/asm/sgx.h
-> @@ -25,6 +25,8 @@ enum sgx_page_flags {
->  	_IOWR(SGX_MAGIC, 0x01, struct sgx_enclave_add_pages)
->  #define SGX_IOC_ENCLAVE_INIT \
->  	_IOW(SGX_MAGIC, 0x02, struct sgx_enclave_init)
-> +#define SGX_IOC_ENCLAVE_SET_ATTRIBUTE \
-> +	_IOW(SGX_MAGIC, 0x03, struct sgx_enclave_set_attribute)
->  
->  /**
->   * struct sgx_enclave_create - parameter structure for the
-> @@ -63,4 +65,13 @@ struct sgx_enclave_init {
->  	__u64 sigstruct;
->  };
->  
-> +/**
-> + * struct sgx_enclave_set_attribute - parameter structure for the
-> + *				      %SGX_IOC_ENCLAVE_SET_ATTRIBUTE ioctl
-> + * @attribute_fd:	file handle of the attribute file in the securityfs
-> + */
-> +struct sgx_enclave_set_attribute {
-> +	__u64 attribute_fd;
-> +};
-> +
->  #endif /* _UAPI_ASM_X86_SGX_H */
-> diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/driver.c
-> index 5559bc18de41..b9af330a16fa 100644
-> --- a/arch/x86/kernel/cpu/sgx/driver.c
-> +++ b/arch/x86/kernel/cpu/sgx/driver.c
-> @@ -138,6 +138,10 @@ static const struct file_operations sgx_encl_fops = {
->  	.get_unmapped_area	= sgx_get_unmapped_area,
->  };
->  
-> +const struct file_operations sgx_provision_fops = {
-> +	.owner			= THIS_MODULE,
-> +};
-> +
->  static struct miscdevice sgx_dev_enclave = {
->  	.minor = MISC_DYNAMIC_MINOR,
->  	.name = "enclave",
-> @@ -145,6 +149,13 @@ static struct miscdevice sgx_dev_enclave = {
->  	.fops = &sgx_encl_fops,
->  };
->  
-> +static struct miscdevice sgx_dev_provision = {
-> +	.minor = MISC_DYNAMIC_MINOR,
-> +	.name = "provision",
-> +	.nodename = "sgx/provision",
-> +	.fops = &sgx_provision_fops,
-> +};
-> +
->  int __init sgx_drv_init(void)
->  {
->  	unsigned int eax, ebx, ecx, edx;
-> @@ -185,5 +196,12 @@ int __init sgx_drv_init(void)
->  		return ret;
->  	}
->  
-> +	ret = misc_register(&sgx_dev_provision);
-> +	if (ret) {
-> +		pr_err("Creating /dev/sgx/provision failed with %d.\n", ret);
-> +		misc_deregister(&sgx_dev_enclave);
-> +		return ret;
-> +	}
-> +
->  	return 0;
->  }
-> diff --git a/arch/x86/kernel/cpu/sgx/driver.h b/arch/x86/kernel/cpu/sgx/driver.h
-> index e4063923115b..72747d01c046 100644
-> --- a/arch/x86/kernel/cpu/sgx/driver.h
-> +++ b/arch/x86/kernel/cpu/sgx/driver.h
-> @@ -23,6 +23,8 @@ extern u64 sgx_attributes_reserved_mask;
->  extern u64 sgx_xfrm_reserved_mask;
->  extern u32 sgx_xsave_size_tbl[64];
->  
-> +extern const struct file_operations sgx_provision_fops;
-> +
->  long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg);
->  
->  int sgx_drv_init(void);
-> diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-> index 3444de955191..95b0a1e62ea7 100644
-> --- a/arch/x86/kernel/cpu/sgx/ioctl.c
-> +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-> @@ -669,6 +669,50 @@ static long sgx_ioc_enclave_init(struct sgx_encl *encl, void __user *arg)
->  	return ret;
->  }
->  
-> +/**
-> + * sgx_ioc_enclave_set_attribute - handler for %SGX_IOC_ENCLAVE_SET_ATTRIBUTE
-> + * @filep:	open file to /dev/sgx
-> + * @arg:	userspace pointer to a struct sgx_enclave_set_attribute instance
-> + *
-> + * Mark the enclave as being allowed to access a restricted attribute bit.
-> + * The requested attribute is specified via the attribute_fd field in the
-> + * provided struct sgx_enclave_set_attribute.  The attribute_fd must be a
-> + * handle to an SGX attribute file, e.g. "/dev/sgx/provision".
-> + *
-> + * Failure to explicitly request access to a restricted attribute will cause
-> + * sgx_ioc_enclave_init() to fail.  Currently, the only restricted attribute
-> + * is access to the PROVISION_KEY.
-> + *
-> + * Note, access to the EINITTOKEN_KEY is disallowed entirely.
-> + *
-> + * Return: 0 on success, -errno otherwise
-> + */
-> +static long sgx_ioc_enclave_set_attribute(struct sgx_encl *encl,
-> +					  void __user *arg)
-> +{
-> +	struct sgx_enclave_set_attribute params;
-> +	struct file *attribute_file;
-> +	int ret;
-> +
-> +	if (copy_from_user(&params, arg, sizeof(params)))
-> +		return -EFAULT;
-> +
-> +	attribute_file = fget(params.attribute_fd);
-> +	if (!attribute_file)
-> +		return -EINVAL;
-> +
-> +	if (attribute_file->f_op != &sgx_provision_fops) {
-> +		ret = -EINVAL;
-> +		goto out;
-> +	}
-> +
-> +	encl->allowed_attributes |= SGX_ATTR_PROVISIONKEY;
-> +	ret = 0;
-> +
-> +out:
-> +	fput(attribute_file);
-> +	return ret;
-> +}
->  
->  long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
->  {
-> @@ -694,6 +738,9 @@ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
->  	case SGX_IOC_ENCLAVE_INIT:
->  		ret = sgx_ioc_enclave_init(encl, (void __user *)arg);
->  		break;
-> +	case SGX_IOC_ENCLAVE_SET_ATTRIBUTE:
-> +		ret = sgx_ioc_enclave_set_attribute(encl, (void __user *)arg);
-> +		break;
->  	default:
->  		ret = -ENOIOCTLCMD;
->  		break;
-> -- 
-> 2.25.1
+Mimi
+
