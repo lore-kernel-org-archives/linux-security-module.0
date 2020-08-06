@@ -1,70 +1,119 @@
-Return-Path: <SRS0=iE4T=BP=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=ihSo=BQ=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F077CC433E0
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 23:52:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30B0EC433E0
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Aug 2020 01:48:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D135021D95
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Aug 2020 23:52:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E3B420823
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Aug 2020 01:48:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b="SbMcZbCu";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="GSa5KQgn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726604AbgHEXwZ (ORCPT
+        id S1726150AbgHFBrz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 5 Aug 2020 19:52:25 -0400
-Received: from namei.org ([65.99.196.166]:57738 "EHLO namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725779AbgHEXwY (ORCPT
+        Wed, 5 Aug 2020 21:47:55 -0400
+Received: from wnew1-smtp.messagingengine.com ([64.147.123.26]:33477 "EHLO
+        wnew1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725998AbgHFBry (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 5 Aug 2020 19:52:24 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id 075Npvex020649;
-        Wed, 5 Aug 2020 23:51:57 GMT
-Date:   Thu, 6 Aug 2020 09:51:57 +1000 (AEST)
-From:   James Morris <jmorris@namei.org>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-cc:     James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Pavel Machek <pavel@ucw.cz>, Sasha Levin <sashal@kernel.org>,
-        snitzer@redhat.com, dm-devel@redhat.com,
-        tyhicks@linux.microsoft.com, agk@redhat.com, paul@paul-moore.com,
-        corbet@lwn.net, nramas@linux.microsoft.com, serge@hallyn.com,
-        pasha.tatashin@soleen.com, jannh@google.com,
-        linux-block@vger.kernel.org, viro@zeniv.linux.org.uk,
-        axboe@kernel.dk, mdsakib@microsoft.com,
-        linux-kernel@vger.kernel.org, eparis@redhat.com,
-        linux-security-module@vger.kernel.org, linux-audit@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        jaskarankhurana@linux.microsoft.com
-Subject: Re: [dm-devel] [RFC PATCH v5 00/11] Integrity Policy Enforcement
- LSM (IPE)
-In-Reply-To: <b08ae82102f35936427bf138085484f75532cff1.camel@linux.ibm.com>
-Message-ID: <alpine.LRH.2.21.2008060949410.20084@namei.org>
-References: <20200728213614.586312-1-deven.desai@linux.microsoft.com>   <20200802115545.GA1162@bug> <20200802140300.GA2975990@sasha-vm>   <20200802143143.GB20261@amd>   <1596386606.4087.20.camel@HansenPartnership.com>   <fb35a1f7-7633-a678-3f0f-17cf83032d2b@linux.microsoft.com>
-  <1596639689.3457.17.camel@HansenPartnership.com>  <alpine.LRH.2.21.2008050934060.28225@namei.org> <b08ae82102f35936427bf138085484f75532cff1.camel@linux.ibm.com>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        Wed, 5 Aug 2020 21:47:54 -0400
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
+        by mailnew.west.internal (Postfix) with ESMTP id B3836D43;
+        Wed,  5 Aug 2020 21:47:52 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Wed, 05 Aug 2020 21:47:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
+        message-id:subject:from:to:cc:date:in-reply-to:references
+        :content-type:mime-version:content-transfer-encoding; s=fm3; bh=
+        U/mBUsHb71A738YQ5oNiB6WYMuEfMjRBkpOFnVl3kck=; b=SbMcZbCujvCFqvMG
+        UYR2zXtt8MdtVE6zCyaBbYKHz6/FBXAFbOgKg02VuGsGEVcRNYpNR7qyAsAkcP+i
+        x5NTNCq90+2Xo0WQXAcOd87Oknpx4mKWlV4ChRhpu1iPox6Hd31qhdTZXabRGFtd
+        Z6mRTpX7sHtoblLP23SoSTczxYxklD1b/JjRWk5ohE3Ljg40DfbsDge0FoByNf6p
+        PSX/Db2HUGV1Ynz4jePO0u1Q5CNScjDSUkINwI7dCgCSnz62hu8wAoikK7JH2c0K
+        xUXLUx7td3ABBIPyrRcdhcxx3KWThrf7eBDVS+ONxkVJtq2eSwlLE+rxvLiChpjc
+        c5or7Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; bh=U/mBUsHb71A738YQ5oNiB6WYMuEfMjRBkpOFnVl3k
+        ck=; b=GSa5KQgndYXvTiLwV902ReZEGcG6iZqZL2q2MA56f91jcSXIr5+9piJ6r
+        HbcMxVP1pb9TmRUIEIQoC4eyFtHQ9LxaXUp2rVhQPv6PvFohFJbklhwl/CRQLS5R
+        i3FBLgCNY/xjscE5bqHOva3pBeqx3ANZcUW0EecigD2hqEQMkOBCdMZtiWJmCIy8
+        kynUr+f0+E9m0AQ2hoeGCCrEI97PgP8HipKrwbGO0CEJQy/GAPDjqu3PiCXJ9w/l
+        bWzXGdv/XCrqbGVt4UmYl91l9tutor6QaMDiMEK1xm4pA7zg9ifooHj1g8mgIPCt
+        20HL7XwAzaDWgWJhy9lXE2t15qhpQ==
+X-ME-Sender: <xms:R2ErX-Ow0TFcTtDZrZeKOB7EXkGcFyJWbTfpwaJoU1lJLKqSgS_eiw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduiedrjeelgdehvdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefkuffhvfffjghftggfggfgsehtjeertddtreejnecuhfhrohhmpefkrghnucfm
+    vghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnhepfe
+    efteetvdeguddvveefveeftedtffduudehueeihfeuvefgveehffeludeggfejnecukfhp
+    peduudekrddvtdekrdehvddruddtleenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpehrrghvvghnsehthhgvmhgrfidrnhgvth
+X-ME-Proxy: <xmx:R2ErX89ebs4xGXj3osgQqYAy76fviH262DcjF9AhUz5dcG_abpUbRQ>
+    <xmx:R2ErX1SwYO5T_NvB8DU9zVrp31k0l-VE0UPfdhT8i-mESmigYto58A>
+    <xmx:R2ErX-v36Qd5Efi5Q5w8Y-K6ArBRt249ARC-EA4B-pNs2oia7VukoQ>
+    <xmx:SGErX27p6Gko2FlPisZFLjpUCL0wiWWZvxt3AzDh2CqzDPeWIkGwgxjfrs8>
+Received: from mickey.themaw.net (unknown [118.208.52.109])
+        by mail.messagingengine.com (Postfix) with ESMTPA id B32DF328005E;
+        Wed,  5 Aug 2020 21:47:46 -0400 (EDT)
+Message-ID: <25a6f18404b55e3991ffa0874e6bec78eed7463d.camel@themaw.net>
+Subject: Re: [PATCH 10/18] fsinfo: Provide notification overrun handling
+ support [ver #21]
+From:   Ian Kent <raven@themaw.net>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Christian Brauner <christian@brauner.io>,
+        Jann Horn <jannh@google.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Karel Zak <kzak@redhat.com>, Jeff Layton <jlayton@redhat.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        LSM <linux-security-module@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Date:   Thu, 06 Aug 2020 09:47:43 +0800
+In-Reply-To: <CAJfpeguvTspY7pi52n1aznebCF2jYki40hy5idkgu1D2y6C6mg@mail.gmail.com>
+References: <159646178122.1784947.11705396571718464082.stgit@warthog.procyon.org.uk>
+         <159646187082.1784947.4293611877413578847.stgit@warthog.procyon.org.uk>
+         <20200804135641.GE32719@miu.piliscsaba.redhat.com>
+         <94bba6f200bb2bbf83f4945faa2ccb83fd947540.camel@themaw.net>
+         <5078554c6028e29c91d815c63e2af1ffac2ecbbb.camel@themaw.net>
+         <CAJfpegs1NLaamFA12f=EJRN4B3_iC+Uzi2NQKTV-fBSypcufLQ@mail.gmail.com>
+         <e1caad2bff5faf9b24b59fe4ee51df255412cc56.camel@themaw.net>
+         <CAJfpeguvTspY7pi52n1aznebCF2jYki40hy5idkgu1D2y6C6mg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 5 Aug 2020, Mimi Zohar wrote:
-
-> If block layer integrity was enough, there wouldn't have been a need
-> for fs-verity.   Even fs-verity is limited to read only filesystems,
-> which makes validating file integrity so much easier.  From the
-> beginning, we've said that fs-verity signatures should be included in
-> the measurement list.  (I thought someone signed on to add that support
-> to IMA, but have not yet seen anything.)
+On Wed, 2020-08-05 at 13:27 +0200, Miklos Szeredi wrote:
+> On Wed, Aug 5, 2020 at 1:23 PM Ian Kent <raven@themaw.net> wrote:
+> > On Wed, 2020-08-05 at 09:45 +0200, Miklos Szeredi wrote:
+> > > Hmm, what's the other possibility for lost notifications?
+> > 
+> > In user space that is:
+> > 
+> > Multi-threaded application races, single threaded applications and
+> > signal processing races, other bugs ...
 > 
-> Going forward I see a lot of what we've accomplished being incorporated
-> into the filesystems.  When IMA will be limited to defining a system
-> wide policy, I'll have completed my job.
+> Okay, let's fix the bugs then.
 
-What are your thoughts on IPE being a standalone LSM? Would you prefer to 
-see its functionality integrated into IMA?
+It's the the bugs you don't know about that get you, in this case
+the world "is" actually out to get you, ;)
+
+Ian
 
