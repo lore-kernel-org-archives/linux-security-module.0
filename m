@@ -2,145 +2,219 @@ Return-Path: <SRS0=ihSo=BQ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B915C43468
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Aug 2020 11:01:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26D3EC433DF
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Aug 2020 16:54:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6713D23119
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Aug 2020 11:01:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6EE3E2086A
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Aug 2020 16:54:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b="1krTwyay";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="q4byEJlG"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="NFp7G9kd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727837AbgHFFnY (ORCPT
+        id S1729099AbgHFQyp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 6 Aug 2020 01:43:24 -0400
-Received: from wnew3-smtp.messagingengine.com ([64.147.123.17]:44399 "EHLO
-        wnew3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726093AbgHFFnX (ORCPT
+        Thu, 6 Aug 2020 12:54:45 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52960 "EHLO
+        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729111AbgHFQym (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 6 Aug 2020 01:43:23 -0400
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailnew.west.internal (Postfix) with ESMTP id B1A6FC10;
-        Thu,  6 Aug 2020 01:43:21 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Thu, 06 Aug 2020 01:43:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
-        message-id:subject:from:to:cc:date:in-reply-to:references
-        :content-type:mime-version:content-transfer-encoding; s=fm3; bh=
-        Awpd/iaKMwO3xriBXgL7yRd6ZsbwGEwHcJ9iVbEAWAs=; b=1krTwyayDva0Q1mK
-        m6P8LfWxFtP0gbC5ZJ4RXLrW4Xe3B+4DvLjbWeiGFj6KbGknmmigNG2sczhB0pcG
-        13nhBFr7d4/GOjO6ol86Fq6R0tks5VS0Y8ZasfxsrRZlVdjrKyq8YzfFcG6cksw2
-        fmiIS+SwhFecOGr6hs2vrTnBCgZZQAyTlJlvrrSvijUecgyWUFcre4aMZaTcWp8V
-        o2ffi+CgrWkpBgpdrNBWsVFhZsR0EaRMyXM9kMFOYp48W1uOibG7iUx/HBqCzMqT
-        3qy2MXnvbgV1QDuMCz5n5aCDC7hrTdsaymx+RfzFPZP9v/yME/r2wN+n572rU40y
-        6Rdb5A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; bh=Awpd/iaKMwO3xriBXgL7yRd6ZsbwGEwHcJ9iVbEAW
-        As=; b=q4byEJlGrJpU4Clt62ffMOHvyBeHqc8C49IeF6pTmi7wr38QHrxKsMNpl
-        y5dLQJjehgjmpRhgdyrHqIJM96MnLMEqv2uIEfVh+6c/g4ip2shY47lR8d6Cmmlf
-        OwIWw4AENYOwphwTZwXTQgCLOcFzMdAQseX4NITk+jA3z/mDNi6EVqnH4hA94Cex
-        M4teDxu4YBDH0MvD4NF99T/BrjbDMC3Qv4FyRD4oxYERb2ttk1kc7Cj6nXM71eh/
-        J4RQK7qglO5YRf3zWv639KugPAyujWjKJ56z+0VJ2tvQNHtTQAqFRmKOTC7Z2CxZ
-        GBj2WEEHNmbzR/5lxWi9FFCZQsfqw==
-X-ME-Sender: <xms:d5grXypyMjU5lPa9O4PGPfW_TL8izh0JfU_S0FxO4JBNUUSrSvVtcQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduiedrjeelgddutdduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkffuhffvffgjfhgtfggggfesthejredttderjeenucfhrhhomhepkfgrnhcu
-    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucggtffrrghtthgvrhhnpe
-    effeettedvgeduvdevfeevfeettdffudduheeuiefhueevgfevheffledugefgjeenucfk
-    phepuddukedrvddtkedrhedvrddutdelnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
-    hrrghmpehmrghilhhfrhhomheprhgrvhgvnhesthhhvghmrgifrdhnvght
-X-ME-Proxy: <xmx:d5grXwp0uuu8oMFPdvGqzuBMRqEA3BQKG45IOM9gIDwhnWZDUE42EQ>
-    <xmx:d5grX3O8PH9YKBd8nAHvF_fed9saYJjKkXqKcvJbWWRWqa2xQdb7Ww>
-    <xmx:d5grXx77End6UsceFnSpNn6SWZS4jkW4VNblRQK2WzSbvaqpHFr_2w>
-    <xmx:eZgrX-x5TRGWifJQA8UOi0mdSPMkYSl7bB2iSPKyppoLGJ0yjVu8kiLTR-w>
-Received: from mickey.themaw.net (unknown [118.208.52.109])
-        by mail.messagingengine.com (Postfix) with ESMTPA id E5174328005E;
-        Thu,  6 Aug 2020 01:43:14 -0400 (EDT)
-Message-ID: <61ad7b12b1d242247b066e6ffbf5f9382bc57b2a.camel@themaw.net>
-Subject: Re: [PATCH 06/18] fsinfo: Add a uniquifier ID to struct mount [ver
- #21]
-From:   Ian Kent <raven@themaw.net>
-To:     Matthew Wilcox <willy@infradead.org>,
-        David Howells <dhowells@redhat.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Christian Brauner <christian@brauner.io>,
-        Jann Horn <jannh@google.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Karel Zak <kzak@redhat.com>, Jeff Layton <jlayton@redhat.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        LSM <linux-security-module@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Date:   Thu, 06 Aug 2020 13:43:11 +0800
-In-Reply-To: <20200805193303.GM23808@casper.infradead.org>
-References: <CAJfpegtOguKOGWxv-sA_C9eSWG_3Srnj_k=oW-wSHNprCipFVg@mail.gmail.com>
-         <159646178122.1784947.11705396571718464082.stgit@warthog.procyon.org.uk>
-         <159646183662.1784947.5709738540440380373.stgit@warthog.procyon.org.uk>
-         <20200804104108.GC32719@miu.piliscsaba.redhat.com>
-         <2306029.1596636828@warthog.procyon.org.uk>
-         <2315925.1596641410@warthog.procyon.org.uk>
-         <20200805193303.GM23808@casper.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
+        Thu, 6 Aug 2020 12:54:42 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 076FVtLN001663;
+        Thu, 6 Aug 2020 11:34:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=/6OwY2FMLYMMfilDKDbdLEaroXYly6ajpHy06tH7vzE=;
+ b=NFp7G9kd2x96lc9KEZiGdkoiJtZVPUeCg+siGa9Rvr+HnY3ZwjZHVOiTfqDwgSCPW+Tc
+ iBDfRXr0claVrFidVYxv7V2IYQzOQwBVk4nGtfYZYPN5PqB3+pk+VMlJ0chbURrLir9W
+ 1hgjui5lwxXaXhU+Ye7jMRSajeC8rMDRlotc7FrkXP1qwAwvsH/dbKvBKSfZjpEc+/J9
+ GmEGWO4h5GI2Bgi+3kjgnQ1ycjz5i/zbYiF1M7Jncc+PMyFW1a0l6vOEd2d0+rLCUlDb
+ UD2Ou4iJP+c3h7K4bcLdfqya0iBR0RxJd5IivrCFQIXoQduwt0WcXW5+HrqmSDhZWj8i OA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 32repgumnm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 06 Aug 2020 11:34:48 -0400
+Received: from m0098421.ppops.net (m0098421.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 076FWxK7005324;
+        Thu, 6 Aug 2020 11:34:48 -0400
+Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 32repgumn8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 06 Aug 2020 11:34:48 -0400
+Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
+        by ppma01wdc.us.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 076FYC00010222;
+        Thu, 6 Aug 2020 15:34:47 GMT
+Received: from b03cxnp07029.gho.boulder.ibm.com (b03cxnp07029.gho.boulder.ibm.com [9.17.130.16])
+        by ppma01wdc.us.ibm.com with ESMTP id 32n018jgks-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 06 Aug 2020 15:34:47 +0000
+Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
+        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 076FYkDv60096866
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 6 Aug 2020 15:34:46 GMT
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id F1999C605B;
+        Thu,  6 Aug 2020 15:34:45 +0000 (GMT)
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1F259C6055;
+        Thu,  6 Aug 2020 15:34:44 +0000 (GMT)
+Received: from swastik.ibm.com (unknown [9.160.68.187])
+        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Thu,  6 Aug 2020 15:34:43 +0000 (GMT)
+Subject: Re: [PATCH 1/2] ima: Pre-parse the list of keyrings in a KEY_CHECK
+ rule
+To:     Tyler Hicks <tyhicks@linux.microsoft.com>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Tushar Sugandhi <tusharsu@linux.microsoft.com>,
+        Nayna Jain <nayna@linux.ibm.com>, linux-kernel@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+References: <20200727140831.64251-1-tyhicks@linux.microsoft.com>
+ <20200727140831.64251-2-tyhicks@linux.microsoft.com>
+From:   Nayna <nayna@linux.vnet.ibm.com>
+Message-ID: <8f749594-1214-9f2d-4614-d360772a2ab6@linux.vnet.ibm.com>
+Date:   Thu, 6 Aug 2020 11:34:43 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20200727140831.64251-2-tyhicks@linux.microsoft.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-08-06_12:2020-08-06,2020-08-06 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
+ priorityscore=1501 mlxscore=0 lowpriorityscore=0 suspectscore=0
+ adultscore=0 mlxlogscore=999 clxscore=1011 phishscore=0 spamscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2006250000 definitions=main-2008060108
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 2020-08-05 at 20:33 +0100, Matthew Wilcox wrote:
-> On Wed, Aug 05, 2020 at 04:30:10PM +0100, David Howells wrote:
-> > Miklos Szeredi <miklos@szeredi.hu> wrote:
-> > 
-> > > idr_alloc_cyclic() seems to be a good template for doing the
-> > > lower
-> > > 32bit allocation, and we can add code to increment the high 32bit
-> > > on
-> > > wraparound.
-> > > 
-> > > Lots of code uses idr_alloc_cyclic() so I guess it shouldn't be
-> > > too
-> > > bad in terms of memory use or performance.
-> > 
-> > It's optimised for shortness of path and trades memory for
-> > performance.  It's
-> > currently implemented using an xarray, so memory usage is dependent
-> > on the
-> > sparseness of the tree.  Each node in the tree is 576 bytes and in
-> > the worst
-> > case, each one node will contain one mount - and then you have to
-> > backfill the
-> > ancestry, though for lower memory costs.
-> > 
-> > Systemd makes life more interesting since it sets up a whole load
-> > of
-> > propagations.  Each mount you make may cause several others to be
-> > created, but
-> > that would likely make the tree more efficient.
-> 
-> I would recommend using xa_alloc and ignoring the ID assigned from
-> xa_alloc.  Looking up by unique ID is then a matter of iterating
-> every
-> mount (xa_for_each()) looking for a matching unique ID in the mount
-> struct.  That's O(n) search, but it's faster than a linked list, and
-> we
-> don't have that many mounts in a system.
 
-How many is not many, 5000, 10000, I agree that 30000 plus is fairly
-rare, even for the autofs direct mount case I hope the implementation
-here will help to fix.
+On 7/27/20 10:08 AM, Tyler Hicks wrote:
+> The ima_keyrings buffer was used as a work buffer for strsep()-based
+> parsing of the "keyrings=" option of an IMA policy rule. This parsing
+> was re-performed each time an asymmetric key was added to a kernel
+> keyring for each loaded policy rule that contained a "keyrings=" option.
+>
+> An example rule specifying this option is:
+>
+>   measure func=KEY_CHECK keyrings=a|b|c
+>
+> The rule says to measure asymmetric keys added to any of the kernel
+> keyrings named "a", "b", or "c". The size of the buffer size was
+> equal to the size of the largest "keyrings=" value seen in a previously
+> loaded rule (5 + 1 for the NUL-terminator in the previous example) and
+> the buffer was pre-allocated at the time of policy load.
+>
+> The pre-allocated buffer approach suffered from a couple bugs:
+>
+> 1) There was no locking around the use of the buffer so concurrent key
+>     add operations, to two different keyrings, would result in the
+>     strsep() loop of ima_match_keyring() to modify the buffer at the same
+>     time. This resulted in unexpected results from ima_match_keyring()
+>     and, therefore, could cause unintended keys to be measured or keys to
+>     not be measured when IMA policy intended for them to be measured.
+>
+> 2) If the kstrdup() that initialized entry->keyrings in ima_parse_rule()
+>     failed, the ima_keyrings buffer was freed and set to NULL even when a
+>     valid KEY_CHECK rule was previously loaded. The next KEY_CHECK event
+>     would trigger a call to strcpy() with a NULL destination pointer and
+>     crash the kernel.
+>
+> Remove the need for a pre-allocated global buffer by parsing the list of
+> keyrings in a KEY_CHECK rule at the time of policy load. The
+> ima_rule_entry will contain an array of string pointers which point to
+> the name of each keyring specified in the rule. No string processing
+> needs to happen at the time of asymmetric key add so iterating through
+> the list and doing a string comparison is all that's required at the
+> time of policy check.
+>
+> In the process of changing how the "keyrings=" policy option is handled,
+> a couple additional bugs were fixed:
+>
+> 1) The rule parser accepted rules containing invalid "keyrings=" values
+>     such as "a|b||c", "a|b|", or simply "|".
+>
+> 2) The /sys/kernel/security/ima/policy file did not display the entire
+>     "keyrings=" value if the list of keyrings was longer than what could
+>     fit in the fixed size tbuf buffer in ima_policy_show().
+>
+> Fixes: 5c7bac9fb2c5 ("IMA: pre-allocate buffer to hold keyrings string")
+> Fixes: 2b60c0ecedf8 ("IMA: Read keyrings= option from the IMA policy")
+> Signed-off-by: Tyler Hicks <tyhicks@linux.microsoft.com>
+> ---
+>   security/integrity/ima/ima_policy.c | 138 +++++++++++++++++++---------
+>   1 file changed, 93 insertions(+), 45 deletions(-)
+>
+> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+> index 07f033634b27..c328cfa0fc49 100644
+> --- a/security/integrity/ima/ima_policy.c
+> +++ b/security/integrity/ima/ima_policy.c
+> @@ -59,6 +59,11 @@ enum policy_types { ORIGINAL_TCB = 1, DEFAULT_TCB };
+>   
+>   enum policy_rule_list { IMA_DEFAULT_POLICY = 1, IMA_CUSTOM_POLICY };
+>   
+> +struct ima_rule_opt_list {
+> +	size_t count;
+> +	char *items[];
+> +};
+> +
+>   struct ima_rule_entry {
+>   	struct list_head list;
+>   	int action;
+> @@ -78,7 +83,7 @@ struct ima_rule_entry {
+>   		int type;	/* audit type */
+>   	} lsm[MAX_LSM_RULES];
+>   	char *fsname;
+> -	char *keyrings; /* Measure keys added to these keyrings */
+> +	struct ima_rule_opt_list *keyrings; /* Measure keys added to these keyrings */
+>   	struct ima_template_desc *template;
+>   };
+>   
+> @@ -206,10 +211,6 @@ static LIST_HEAD(ima_policy_rules);
+>   static LIST_HEAD(ima_temp_rules);
+>   static struct list_head *ima_rules = &ima_default_rules;
+>   
+> -/* Pre-allocated buffer used for matching keyrings. */
+> -static char *ima_keyrings;
+> -static size_t ima_keyrings_len;
+> -
+>   static int ima_policy __initdata;
+>   
+>   static int __init default_measure_policy_setup(char *str)
+> @@ -253,6 +254,72 @@ static int __init default_appraise_policy_setup(char *str)
+>   }
+>   __setup("ima_appraise_tcb", default_appraise_policy_setup);
+>   
+> +static struct ima_rule_opt_list *ima_alloc_rule_opt_list(const substring_t *src)
+> +{
+> +	struct ima_rule_opt_list *opt_list;
+> +	size_t count = 0;
+> +	char *src_copy;
+> +	char *cur, *next;
+> +	size_t i;
+> +
+> +	src_copy = match_strdup(src);
+> +	if (!src_copy)
+> +		return NULL;
 
-Ian
+The caller of this function checks for IS_ERR(..) and not 
+IS_ERR_OR_NULL(..). Shouldn't it return ERR_PTR(-EINVAL) instead of NULL ?
+
+Thanks & Regards,
+
+     - Nayna
 
