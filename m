@@ -2,133 +2,83 @@ Return-Path: <SRS0=PbfF=BR=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3BD0C433DF
-	for <linux-security-module@archiver.kernel.org>; Fri,  7 Aug 2020 16:14:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 952F1C433E0
+	for <linux-security-module@archiver.kernel.org>; Fri,  7 Aug 2020 16:41:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 814592065E
-	for <linux-security-module@archiver.kernel.org>; Fri,  7 Aug 2020 16:14:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1596816879;
-	bh=EZ95wbeqbSW+QwR189FPk2U69kerKfYvd/9xSyu+Sno=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=BzsC6ZDanQoCNEt+iQ7oiRFXsKC2RFvtBkAsKVF7fH3l/Uw6U/pYnLW+3OTH/7M8n
-	 6Myy5NEzRycuZwzFbOr7gjePo2aK8oFNraUax7hHlxtz/eoB71Hf/f/3NENHB51gS1
-	 I99W1rIr+vju+GjRnH7JO0sR1NI+BGDNfAqooKYE=
+	by mail.kernel.org (Postfix) with ESMTP id 6F21120748
+	for <linux-security-module@archiver.kernel.org>; Fri,  7 Aug 2020 16:41:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726094AbgHGQOi (ORCPT
+        id S1726067AbgHGQli (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 7 Aug 2020 12:14:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38746 "EHLO mail.kernel.org"
+        Fri, 7 Aug 2020 12:41:38 -0400
+Received: from namei.org ([65.99.196.166]:57952 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725934AbgHGQOh (ORCPT
+        id S1725936AbgHGQli (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 7 Aug 2020 12:14:37 -0400
-Received: from ebiggers-linuxstation.mtv.corp.google.com (unknown [104.132.1.76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2407D2065E;
-        Fri,  7 Aug 2020 16:14:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1596816877;
-        bh=EZ95wbeqbSW+QwR189FPk2U69kerKfYvd/9xSyu+Sno=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Ga++VxnuNCskNN1HQQSS4pc61zB7Vj/mM5/VmS3eULFKjXXQ6O72cPImAFw2iMeyp
-         cKXL9lc+bsNdRhI1V/NMwAqwEwRJ0kJ0r54K3m7kg4TUv3u6zjuYV6NDLYvNgTd2dk
-         L+ool0q9jfGxrYQbUtkxdWpRJ/9DBALtx/xhqwts=
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     stable@vger.kernel.org
-Cc:     linux-security-module@vger.kernel.org,
-        syzbot+e6416dabb497a650da40@syzkaller.appspotmail.com,
-        Casey Schaufler <casey@schaufler-ca.com>
-Subject: [PATCH 4.19/4.14/4.9/4.4] Smack: fix use-after-free in smk_write_relabel_self()
-Date:   Fri,  7 Aug 2020 09:13:24 -0700
-Message-Id: <20200807161324.1690303-1-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.28.0.236.gb10cc79966-goog
+        Fri, 7 Aug 2020 12:41:38 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id 077Gf5ki013063;
+        Fri, 7 Aug 2020 16:41:05 GMT
+Date:   Sat, 8 Aug 2020 02:41:05 +1000 (AEST)
+From:   James Morris <jmorris@namei.org>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+cc:     James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Pavel Machek <pavel@ucw.cz>, Sasha Levin <sashal@kernel.org>,
+        snitzer@redhat.com, dm-devel@redhat.com,
+        tyhicks@linux.microsoft.com, agk@redhat.com, paul@paul-moore.com,
+        corbet@lwn.net, nramas@linux.microsoft.com, serge@hallyn.com,
+        pasha.tatashin@soleen.com, jannh@google.com,
+        linux-block@vger.kernel.org, viro@zeniv.linux.org.uk,
+        axboe@kernel.dk, mdsakib@microsoft.com,
+        linux-kernel@vger.kernel.org, eparis@redhat.com,
+        linux-security-module@vger.kernel.org, linux-audit@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        jaskarankhurana@linux.microsoft.com
+Subject: Re: [dm-devel] [RFC PATCH v5 00/11] Integrity Policy Enforcement
+ LSM (IPE)
+In-Reply-To: <eb7a2f5b5cd22cf9231aa0fd8fdb77c729a83428.camel@linux.ibm.com>
+Message-ID: <alpine.LRH.2.21.2008080240350.13040@namei.org>
+References: <20200728213614.586312-1-deven.desai@linux.microsoft.com>           <20200802115545.GA1162@bug> <20200802140300.GA2975990@sasha-vm>           <20200802143143.GB20261@amd>           <1596386606.4087.20.camel@HansenPartnership.com>          
+ <fb35a1f7-7633-a678-3f0f-17cf83032d2b@linux.microsoft.com>         <1596639689.3457.17.camel@HansenPartnership.com>          <alpine.LRH.2.21.2008050934060.28225@namei.org>         <b08ae82102f35936427bf138085484f75532cff1.camel@linux.ibm.com>        
+ <alpine.LRH.2.21.2008060949410.20084@namei.org> <eb7a2f5b5cd22cf9231aa0fd8fdb77c729a83428.camel@linux.ibm.com>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Eric Biggers <ebiggers@google.com>
+On Thu, 6 Aug 2020, Mimi Zohar wrote:
 
-commit beb4ee6770a89646659e6a2178538d2b13e2654e upstream.
+> On Thu, 2020-08-06 at 09:51 +1000, James Morris wrote:
+> > On Wed, 5 Aug 2020, Mimi Zohar wrote:
+> > 
+> > > If block layer integrity was enough, there wouldn't have been a need
+> > > for fs-verity.   Even fs-verity is limited to read only filesystems,
+> > > which makes validating file integrity so much easier.  From the
+> > > beginning, we've said that fs-verity signatures should be included in
+> > > the measurement list.  (I thought someone signed on to add that support
+> > > to IMA, but have not yet seen anything.)
+> > > 
+> > > Going forward I see a lot of what we've accomplished being incorporated
+> > > into the filesystems.  When IMA will be limited to defining a system
+> > > wide policy, I'll have completed my job.
+> > 
+> > What are your thoughts on IPE being a standalone LSM? Would you prefer to 
+> > see its functionality integrated into IMA?
+> 
+> Improving the integrity subsystem would be preferred.
+> 
 
-smk_write_relabel_self() frees memory from the task's credentials with
-no locking, which can easily cause a use-after-free because multiple
-tasks can share the same credentials structure.
+Are you planning to attend Plumbers? Perhaps we could propose a BoF 
+session on this topic.
 
-Fix this by using prepare_creds() and commit_creds() to correctly modify
-the task's credentials.
-
-Reproducer for "BUG: KASAN: use-after-free in smk_write_relabel_self":
-
-	#include <fcntl.h>
-	#include <pthread.h>
-	#include <unistd.h>
-
-	static void *thrproc(void *arg)
-	{
-		int fd = open("/sys/fs/smackfs/relabel-self", O_WRONLY);
-		for (;;) write(fd, "foo", 3);
-	}
-
-	int main()
-	{
-		pthread_t t;
-		pthread_create(&t, NULL, thrproc, NULL);
-		thrproc(NULL);
-	}
-
-Reported-by: syzbot+e6416dabb497a650da40@syzkaller.appspotmail.com
-Fixes: 38416e53936e ("Smack: limited capability for changing process label")
-Cc: <stable@vger.kernel.org> # v4.4+
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
----
- security/smack/smackfs.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
-
-diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
-index 371ae368da35..10ee51d04492 100644
---- a/security/smack/smackfs.c
-+++ b/security/smack/smackfs.c
-@@ -2746,7 +2746,6 @@ static int smk_open_relabel_self(struct inode *inode, struct file *file)
- static ssize_t smk_write_relabel_self(struct file *file, const char __user *buf,
- 				size_t count, loff_t *ppos)
- {
--	struct task_smack *tsp = current_security();
- 	char *data;
- 	int rc;
- 	LIST_HEAD(list_tmp);
-@@ -2771,11 +2770,21 @@ static ssize_t smk_write_relabel_self(struct file *file, const char __user *buf,
- 	kfree(data);
- 
- 	if (!rc || (rc == -EINVAL && list_empty(&list_tmp))) {
-+		struct cred *new;
-+		struct task_smack *tsp;
-+
-+		new = prepare_creds();
-+		if (!new) {
-+			rc = -ENOMEM;
-+			goto out;
-+		}
-+		tsp = new->security;
- 		smk_destroy_label_list(&tsp->smk_relabel);
- 		list_splice(&list_tmp, &tsp->smk_relabel);
-+		commit_creds(new);
- 		return count;
- 	}
--
-+out:
- 	smk_destroy_label_list(&list_tmp);
- 	return rc;
- }
 -- 
-2.28.0.236.gb10cc79966-goog
+James Morris
+<jmorris@namei.org>
 
