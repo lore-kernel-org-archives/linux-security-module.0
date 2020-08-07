@@ -2,134 +2,196 @@ Return-Path: <SRS0=PbfF=BR=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.6 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44AF1C433E0
-	for <linux-security-module@archiver.kernel.org>; Fri,  7 Aug 2020 21:27:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2046DC433E0
+	for <linux-security-module@archiver.kernel.org>; Fri,  7 Aug 2020 22:50:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1CB312086A
-	for <linux-security-module@archiver.kernel.org>; Fri,  7 Aug 2020 21:27:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E735B214F1
+	for <linux-security-module@archiver.kernel.org>; Fri,  7 Aug 2020 22:50:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="skihW5Fs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726015AbgHGV15 (ORCPT
+        id S1726167AbgHGWuO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 7 Aug 2020 17:27:57 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:38604 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725893AbgHGV15 (ORCPT
+        Fri, 7 Aug 2020 18:50:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37622 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726149AbgHGWuN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 7 Aug 2020 17:27:57 -0400
-Received: from 2.general.sarnold.us.vpn ([10.172.64.71] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <seth.arnold@canonical.com>)
-        id 1k49u5-0006am-ET; Fri, 07 Aug 2020 21:27:53 +0000
-Date:   Fri, 7 Aug 2020 21:27:51 +0000
-From:   Seth Arnold <seth.arnold@canonical.com>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, apparmor@lists.ubuntu.com,
+        Fri, 7 Aug 2020 18:50:13 -0400
+Received: from mail-qt1-x84a.google.com (mail-qt1-x84a.google.com [IPv6:2607:f8b0:4864:20::84a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 857E1C061757
+        for <linux-security-module@vger.kernel.org>; Fri,  7 Aug 2020 15:50:13 -0700 (PDT)
+Received: by mail-qt1-x84a.google.com with SMTP id h10so2779912qtc.4
+        for <linux-security-module@vger.kernel.org>; Fri, 07 Aug 2020 15:50:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=DQO/d2NW9ycP8DpTdbgC9T07rqomhGHKBXOmCuHa3fI=;
+        b=skihW5FsoS5B78IzyrqqnSUBgOERm/DgSjBN+uMjnt0AZnPktaxaQbH2qQou65YQmU
+         qP21JoLind2jMwtpvkUtQldXZyx2lxVWdw0ROo0fDFRei2PlwNCMAdF/NA7atmf1rSDB
+         H7kEdhYhgDhiDrf8XmbVr9tEFsAU5rlfePr16DRyDkDz6gSCvwU4V8ZSUUK2oxRzfgsS
+         munPXEMVTA90J6c38s3k83pWnxFTpLR9v9nQreC1CwIf7cllzdpDOGRD96jwPxYDm58R
+         q6Qtrly3U9bt3QCQAvZaY2pCYItO38lzL923Ms6TFxmvinsPFI0AsgcvV6ABS9gDigIt
+         DrWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=DQO/d2NW9ycP8DpTdbgC9T07rqomhGHKBXOmCuHa3fI=;
+        b=AwbYJAUkRR8MGyiQj/Mocj7wsr2Nva76AS4RnLFPxIuCUrdgGdpzmf0M9kuGk7mLhY
+         j0lOFIhxqf6E9EYIP7B6HXWzfMvJjJzcrJD5hrwuv+QlH9QQKYsAJLJ+wccTVKU/qeMo
+         cQyu+i4BBiBSbUKzGpfLAecGk25soSd9geuUworRXcsR9eBrMJVh0LwMgmtoeTv54hia
+         B5kvVS9dJtyUCSHzLOOFta4HIBc6qiQ7ybir82JuozVHi4VieCE5SKhZ29zJtLVECb6p
+         c2zfpUcmzXoMUAKX+yAgtK1boDtm/qeiXaSmDdoXaYq1i2JSKfNy23nNOSFdKdynD4Ux
+         fd2A==
+X-Gm-Message-State: AOAM533GZgjrCEhmrYoPxkQnRLtj6YIX61c6Th+6cMjhMIklK/p4tkDC
+        IB6Qz1Ne/o1CTDvgSKJNpIIS6ohI9ZzUQsubng==
+X-Google-Smtp-Source: ABdhPJyG3KGIHkCpGfBzgWcWyqw9H33fn3v9KCn90f9K5GXlgb5Y6RbVNwWjkzPw3a2FniVWsQnK4tgwCbB49VCiMw==
+X-Received: by 2002:a0c:e604:: with SMTP id z4mr17234420qvm.222.1596840612573;
+ Fri, 07 Aug 2020 15:50:12 -0700 (PDT)
+Date:   Fri,  7 Aug 2020 15:49:38 -0700
+Message-Id: <20200807224941.3440722-1-lokeshgidra@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.28.0.236.gb10cc79966-goog
+Subject: [PATCH v6 0/3] SELinux support for anonymous inodes and UFFD
+From:   Lokesh Gidra <lokeshgidra@google.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         James Morris <jmorris@namei.org>,
-        linux-security-module@vger.kernel.org,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Subject: Re: [apparmor] [PATCH] security: apparmor: delete repeated words in
- comments
-Message-ID: <20200807212751.GB3169683@millbarge>
-References: <20200807165055.3756-1-rdunlap@infradead.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="oLBj+sq0vYjzfsbl"
-Content-Disposition: inline
-In-Reply-To: <20200807165055.3756-1-rdunlap@infradead.org>
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Eric Biggers <ebiggers@kernel.org>
+Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        Daniel Colascione <dancol@dancol.org>,
+        Kees Cook <keescook@chromium.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        KP Singh <kpsingh@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Thomas Cedeno <thomascedeno@google.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Matthew Garrett <matthewgarrett@google.com>,
+        Aaron Goidel <acgoide@tycho.nsa.gov>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Adrian Reber <areber@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        kaleshsingh@google.com, calin@google.com, surenb@google.com,
+        nnk@google.com, jeffv@google.com, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Userfaultfd in unprivileged contexts could be potentially very
+useful. We'd like to harden userfaultfd to make such unprivileged use
+less risky. This patch series allows SELinux to manage userfaultfd
+file descriptors and in the future, other kinds of
+anonymous-inode-based file descriptor.  SELinux policy authors can
+apply policy types to anonymous inodes by providing name-based
+transition rules keyed off the anonymous inode internal name (
+"[userfaultfd]" in the case of userfaultfd(2) file descriptors) and
+applying policy to the new SIDs thus produced.
 
---oLBj+sq0vYjzfsbl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Inside the kernel, a pair of new anon_inodes interface,
+anon_inode_getfile_secure and anon_inode_getfd_secure, allow callers
+to opt into this SELinux management. In this new "secure" mode,
+anon_inodes creates new ephemeral inodes for anonymous file objects
+instead of reusing the normal anon_inodes singleton dummy inode. A new
+LSM hook gives security modules an opportunity to configure and veto
+these ephemeral inodes.
 
-On Fri, Aug 07, 2020 at 09:50:55AM -0700, Randy Dunlap wrote:
-> Drop repeated words in comments.
-> {a, then, to}
->=20
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Cc: John Johansen <john.johansen@canonical.com>
-> Cc: apparmor@lists.ubuntu.com
-> Cc: James Morris <jmorris@namei.org>
-> Cc: "Serge E. Hallyn" <serge@hallyn.com>
-> Cc: linux-security-module@vger.kernel.org
+This patch series is one of two fork of [1] and is an
+alternative to [2].
 
-Reviewed-By: Seth Arnold <seth.arnold@canonical.com>
+The primary difference between the two patch series is that this
+partch series creates a unique inode for each "secure" anonymous
+inode, while the other patch series ([2]) continues using the
+singleton dummy anonymous inode and adds a way to attach SELinux
+security information directly to file objects.
 
-Thanks
+I prefer the approach in this patch series because 1) it's a smaller
+patch than [2], and 2) it produces a more regular security
+architecture: in this patch series, secure anonymous inodes aren't
+S_PRIVATE and they maintain the SELinux property that the label for a
+file is in its inode. We do need an additional inode per anonymous
+file, but per-struct-file inode creation doesn't seem to be a problem
+for pipes and sockets.
 
-> ---
->  security/apparmor/include/file.h  |    2 +-
->  security/apparmor/path.c          |    2 +-
->  security/apparmor/policy_unpack.c |    2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
->=20
-> --- linux-next-20200731.orig/security/apparmor/include/file.h
-> +++ linux-next-20200731/security/apparmor/include/file.h
-> @@ -167,7 +167,7 @@ int aa_audit_file(struct aa_profile *pro
->   * @perms: permission table indexed by the matched state accept entry of=
- @dfa
->   * @trans: transition table for indexed by named x transitions
->   *
-> - * File permission are determined by matching a path against @dfa and th=
-en
-> + * File permission are determined by matching a path against @dfa and
->   * then using the value of the accept entry for the matching state as
->   * an index into @perms.  If a named exec transition is required it is
->   * looked up in the transition table.
-> --- linux-next-20200731.orig/security/apparmor/path.c
-> +++ linux-next-20200731/security/apparmor/path.c
-> @@ -83,7 +83,7 @@ static int disconnect(const struct path
->   *
->   * Returns: %0 else error code if path lookup fails
->   *          When no error the path name is returned in @name which point=
-s to
-> - *          to a position in @buf
-> + *          a position in @buf
->   */
->  static int d_namespace_path(const struct path *path, char *buf, char **n=
-ame,
->  			    int flags, const char *disconnected)
-> --- linux-next-20200731.orig/security/apparmor/policy_unpack.c
-> +++ linux-next-20200731/security/apparmor/policy_unpack.c
-> @@ -39,7 +39,7 @@
-> =20
->  /*
->   * The AppArmor interface treats data as a type byte followed by the
-> - * actual data.  The interface has the notion of a a named entry
-> + * actual data.  The interface has the notion of a named entry
->   * which has a name (AA_NAME typecode followed by name string) followed =
-by
->   * the entries typecode and data.  Named types allow for optional
->   * elements and extensions to be added and tested for without breaking
->=20
-> --=20
-> AppArmor mailing list
-> AppArmor@lists.ubuntu.com
-> Modify settings or unsubscribe at: https://lists.ubuntu.com/mailman/listi=
-nfo/apparmor
+The previous version of this feature ([1]) created a new SELinux
+security class for userfaultfd file descriptors. This version adopts
+the generic transition-based approach of [2].
 
---oLBj+sq0vYjzfsbl
-Content-Type: application/pgp-signature; name="signature.asc"
+This patch series also differs from [2] in that it doesn't affect all
+anonymous inodes right away --- instead requiring anon_inodes callers
+to opt in --- but this difference isn't one of basic approach. The
+important question to resolve is whether we should be creating new
+inodes or enhancing per-file data.
 
------BEGIN PGP SIGNATURE-----
+Changes from the first version of the patch:
 
-iQEzBAABCgAdFiEEQVAQ8bojyMcg37H18yFyWZ2NLpcFAl8tx1YACgkQ8yFyWZ2N
-LpeN+Qf+OkvGh9PooJZWP1r+NZGJt4P/B/3fK5qaEZmnHpJafI5S2SIjDeD2N82S
-t7JYEeRnOCRkoI3awiL0TL4rGQ87mevJKwrZgthbGWdnnb5FBLcOA+R3Xrm1FUtl
-EXChzjoYe5ObfbGluB4zWJTtFNQNcSgvFnizGqfSrDNLKf9tCXPxgLyJIaR1C7vF
-JONeSYhvwisK5kgoXXnPUdhfmrPM0OiO7LXWRkeAbta20fp2SaQyRCjEj2itnjOS
-M5Nd6oILXRi8FW6F1vSmw/XYz3ohR2R/WEAiAdhGK8pMMkqOuSwMoWrItKUr4w4y
-trBH6c8l432rLmlUFA4Zn0Ve09QKDw==
-=WcjH
------END PGP SIGNATURE-----
+  - Removed some error checks
+  - Defined a new anon_inode SELinux class to resolve the
+    ambiguity in [3]
+  - Inherit sclass as well as descriptor from context inode
 
---oLBj+sq0vYjzfsbl--
+Changes from the second version of the patch:
+
+  - Fixed example policy in the commit message to reflect the use of
+    the new anon_inode class.
+
+Changes from the third version of the patch:
+
+  - Dropped the fops parameter to the LSM hook
+  - Documented hook parameters
+  - Fixed incorrect class used for SELinux transition
+  - Removed stray UFFD changed early in the series
+  - Removed a redundant ERR_PTR(PTR_ERR())
+
+Changes from the fourth version of the patch:
+
+  - Removed an unused parameter from an internal function
+  - Fixed function documentation
+
+Changes from the fifth version of the patch:
+
+  - Fixed function documentation in fs/anon_inodes.c and
+    include/linux/lsm_hooks.h
+  - Used anon_inode_getfd_secure() in userfaultfd() syscall and removed
+    owner from userfaultfd_ctx.
+
+[1] https://lore.kernel.org/lkml/20200211225547.235083-1-dancol@google.com/
+[2] https://lore.kernel.org/linux-fsdevel/20200213194157.5877-1-sds@tycho.nsa.gov/
+[3] https://lore.kernel.org/lkml/23f725ca-5b5a-5938-fcc8-5bbbfc9ba9bc@tycho.nsa.gov/
+
+Daniel Colascione (3):
+  Add a new LSM-supporting anonymous inode interface
+  Teach SELinux about anonymous inodes
+  Wire UFFD up to SELinux
+
+ fs/anon_inodes.c                    | 193 ++++++++++++++++++++++------
+ fs/userfaultfd.c                    |  23 ++--
+ include/linux/anon_inodes.h         |  13 ++
+ include/linux/lsm_hook_defs.h       |   2 +
+ include/linux/lsm_hooks.h           |   7 +
+ include/linux/security.h            |   3 +
+ security/security.c                 |   9 ++
+ security/selinux/hooks.c            |  53 ++++++++
+ security/selinux/include/classmap.h |   2 +
+ 9 files changed, 255 insertions(+), 50 deletions(-)
+
+-- 
+2.28.0.236.gb10cc79966-goog
+
