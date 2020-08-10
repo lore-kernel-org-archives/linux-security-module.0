@@ -2,127 +2,158 @@ Return-Path: <SRS0=vg7s=BU=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 600E9C433E0
-	for <linux-security-module@archiver.kernel.org>; Mon, 10 Aug 2020 13:39:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB05CC433DF
+	for <linux-security-module@archiver.kernel.org>; Mon, 10 Aug 2020 15:35:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3246720729
-	for <linux-security-module@archiver.kernel.org>; Mon, 10 Aug 2020 13:39:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84C8C22BEA
+	for <linux-security-module@archiver.kernel.org>; Mon, 10 Aug 2020 15:35:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="VZxGuHIq";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Ww39GGau"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="cVt1iMuK";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="MjwJxpgT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726614AbgHJNjW (ORCPT
+        id S1729191AbgHJPfr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 10 Aug 2020 09:39:22 -0400
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:38973 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726569AbgHJNjV (ORCPT
+        Mon, 10 Aug 2020 11:35:47 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:55864 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728752AbgHJPfn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 10 Aug 2020 09:39:21 -0400
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.nyi.internal (Postfix) with ESMTP id BC1CE5C00CB;
-        Mon, 10 Aug 2020 09:39:20 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute1.internal (MEProxy); Mon, 10 Aug 2020 09:39:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=ZhnjRGAeCHne7uifxiQGpe/FnFE
-        ts4/XW5+zaLnq0GM=; b=VZxGuHIqZ53gH4vxAv9D8kS7Y1Wkpk8/UpEKX2/Jd4R
-        0jNMxmfEidh5lDaOHwsg8aTHlxE9630Ds6UFEAzROuBiMzJfyzxik/jgxEWeXSbl
-        AOVIDCensKMEOBpvJlZoMRncCL8w6RFRpf/PzWFbcjpLP44mrnZrkWJ4VuZACXW3
-        JCAcm9waJnSGJ4Z9gENb4in6qoHShz8tcNnixrwaa5FqfA7knqIT3zSwZU8lfN78
-        +3EKgq47lv/kDmTZr0XDBp1Wj+2HfnCqY8nx4Tvh9OqUzy+lixoaOKW/3kn2NuMt
-        ADnjn/jxM0YNK4F9+bH5TjNfLhVexA1f9PPQ1+8M8MQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=ZhnjRG
-        AeCHne7uifxiQGpe/FnFEts4/XW5+zaLnq0GM=; b=Ww39GGaupB6eegXScjEkWI
-        wc7fxiIX0bB7UmNngS4yNBd9xNBr8pNKXBHv2vfY5vOq9DzkJG9mh5b5pgZ3+Jge
-        Cmq6aahpWHjQP2IjqG57W91DHOIiBSI9JGkJW5IjFAdX7wjaKSOK7d9SekAb3UMC
-        JdLTgkbfKsh6AGwP/ak/h+i0LD2fSURSfRD+jJzOLo/L1MkyGPDvM2065zojVsi3
-        yUYAMXW5gyCiyeWnDgXSi3FDSF+5Kf0u2pgTkQ06PNnpd34vPAy6t69U+6Tu00wU
-        eMSjPhmV6tFVs1F8t5T9x6Dd31m1dL6JHcIIIxpp0xvjx5J3feM8epb322NZ6xQw
-        ==
-X-ME-Sender: <xms:CE4xX2STEyw-vcazPigCYVVsVzxdBxA5_sRzDMoyHVLcP01sNvJnOg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduiedrkeekgdeijecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepifhrvghgucfm
-    jfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecuggftrfgrthhtvghrnhepveeuheejgf
-    ffgfeivddukedvkedtleelleeghfeljeeiueeggeevueduudekvdetnecukfhppeekfedr
-    keeirdekledruddtjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrih
-    hlfhhrohhmpehgrhgvgheskhhrohgrhhdrtghomh
-X-ME-Proxy: <xmx:CE4xX7y15zoPHuTNw-n5ulKV4T28ysCmG9wkWikWStb-N0ESXqgN1g>
-    <xmx:CE4xXz2hn8qvfUO4IQiCvIFFxfA802T1GHpt9kntk1YWBz8A-C0x6A>
-    <xmx:CE4xXyDh838Ip0dsY_ubIwB0PxuBTyrvkKw5TsExmeKDdHiV--7ElQ>
-    <xmx:CE4xX3bwOXyS-XTZDso5t8QOeVPbycsxldtHfZx_mSBjoxho_ud3Nw>
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        by mail.messagingengine.com (Postfix) with ESMTPA id F170630600B1;
-        Mon, 10 Aug 2020 09:39:19 -0400 (EDT)
-Date:   Mon, 10 Aug 2020 15:39:31 +0200
-From:   Greg KH <greg@kroah.com>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     stable@vger.kernel.org, linux-security-module@vger.kernel.org,
-        syzbot+e6416dabb497a650da40@syzkaller.appspotmail.com,
-        Casey Schaufler <casey@schaufler-ca.com>
-Subject: Re: [PATCH 4.19/4.14/4.9/4.4] Smack: fix use-after-free in
- smk_write_relabel_self()
-Message-ID: <20200810133931.GB3491228@kroah.com>
-References: <20200807161324.1690303-1-ebiggers@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200807161324.1690303-1-ebiggers@kernel.org>
+        Mon, 10 Aug 2020 11:35:43 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id E27C78EE1DD;
+        Mon, 10 Aug 2020 08:35:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1597073741;
+        bh=H6RkvIzpfXOLSmHTbzR8XGbmPVN5aMmAbFV+0MS/vCw=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=cVt1iMuKWH4Bg+bLnyRSpUB/wXbG1V4IcQrDFdM+He/KopgifO7HNehQkYRafWpR7
+         B7RZHTNO5ffSnIB2urr4t5jxmwSfl4SQgYlbRQkBhgcHt8qoHLUYBwA7Q6vT3o6/tt
+         pW81Sr83Alr3AG3vWPtlKAQ4u+snVOqOmdggu00Q=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id NaS3pjwBelNS; Mon, 10 Aug 2020 08:35:40 -0700 (PDT)
+Received: from [153.66.254.174] (c-73-35-198-56.hsd1.wa.comcast.net [73.35.198.56])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 490FA8EE12E;
+        Mon, 10 Aug 2020 08:35:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1597073740;
+        bh=H6RkvIzpfXOLSmHTbzR8XGbmPVN5aMmAbFV+0MS/vCw=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=MjwJxpgTQz4M0HQgOVHVrw7HDPZ5iwScXAZ3T0CV5ey1CM8n8Q+96pCZP7NtESu7J
+         Aa755rKZNaN6eMUTRHzcTFugAubBvvES0Y0Tz+SDho/oQczzL4HdAtuVcZFPuzBhG3
+         6CMTxxSQ5umiDNicSAXPubohnY0HnMFKrU59s060=
+Message-ID: <1597073737.3966.12.camel@HansenPartnership.com>
+Subject: Re: [dm-devel] [RFC PATCH v5 00/11] Integrity Policy Enforcement
+ LSM (IPE)
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        Chuck Lever <chucklever@gmail.com>,
+        James Morris <jmorris@namei.org>
+Cc:     Deven Bowers <deven.desai@linux.microsoft.com>,
+        Pavel Machek <pavel@ucw.cz>, Sasha Levin <sashal@kernel.org>,
+        snitzer@redhat.com, dm-devel@redhat.com,
+        tyhicks@linux.microsoft.com, agk@redhat.com,
+        Paul Moore <paul@paul-moore.com>,
+        Jonathan Corbet <corbet@lwn.net>, nramas@linux.microsoft.com,
+        serge@hallyn.com, pasha.tatashin@soleen.com,
+        Jann Horn <jannh@google.com>, linux-block@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>, mdsakib@microsoft.com,
+        open list <linux-kernel@vger.kernel.org>, eparis@redhat.com,
+        linux-security-module@vger.kernel.org, linux-audit@redhat.com,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-integrity@vger.kernel.org,
+        jaskarankhurana@linux.microsoft.com
+Date:   Mon, 10 Aug 2020 08:35:37 -0700
+In-Reply-To: <da6f54d0438ee3d3903b2c75fcfbeb0afdf92dc2.camel@linux.ibm.com>
+References: <20200728213614.586312-1-deven.desai@linux.microsoft.com>
+         <20200802115545.GA1162@bug> <20200802140300.GA2975990@sasha-vm>
+         <20200802143143.GB20261@amd>
+         <1596386606.4087.20.camel@HansenPartnership.com>
+         <fb35a1f7-7633-a678-3f0f-17cf83032d2b@linux.microsoft.com>
+         <1596639689.3457.17.camel@HansenPartnership.com>
+         <alpine.LRH.2.21.2008050934060.28225@namei.org>
+         <b08ae82102f35936427bf138085484f75532cff1.camel@linux.ibm.com>
+         <329E8DBA-049E-4959-AFD4-9D118DEB176E@gmail.com>
+         <da6f54d0438ee3d3903b2c75fcfbeb0afdf92dc2.camel@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Aug 07, 2020 at 09:13:24AM -0700, Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
+On Sun, 2020-08-09 at 13:16 -0400, Mimi Zohar wrote:
+> On Sat, 2020-08-08 at 13:47 -0400, Chuck Lever wrote:
+> > > On Aug 5, 2020, at 2:15 PM, Mimi Zohar <zohar@linux.ibm.com>
+> > > wrote:
 > 
-> commit beb4ee6770a89646659e6a2178538d2b13e2654e upstream.
+> <snip>
 > 
-> smk_write_relabel_self() frees memory from the task's credentials with
-> no locking, which can easily cause a use-after-free because multiple
-> tasks can share the same credentials structure.
+> > > If block layer integrity was enough, there wouldn't have been a
+> > > need for fs-verity.   Even fs-verity is limited to read only
+> > > filesystems, which makes validating file integrity so much
+> > > easier.  From the beginning, we've said that fs-verity signatures
+> > > should be included in the measurement list.  (I thought someone
+> > > signed on to add that support to IMA, but have not yet seen
+> > > anything.)
+> > 
+> > Mimi, when you and I discussed this during LSS NA 2019, I didn't
+> > fully understand that you expected me to implement signed Merkle
+> > trees for all filesystems. At the time, it sounded to me like you
+> > wanted signed Merkle trees only for NFS files. Is that still the
+> > case?
 > 
-> Fix this by using prepare_creds() and commit_creds() to correctly modify
-> the task's credentials.
+> I definitely do not expect you to support signed Merkle trees for all
+> filesystems.  My interested is from an IMA perspective of measuring
+> and verifying the fs-verity Merkle tree root (and header info)
+> signature. This is independent of which filesystems support it.
 > 
-> Reproducer for "BUG: KASAN: use-after-free in smk_write_relabel_self":
+> > 
+> > The first priority (for me, anyway) therefore is getting the
+> > ability to move IMA metadata between NFS clients and servers
+> > shoveled into the NFS protocol, but that's been blocked for various
+> > legal reasons.
 > 
-> 	#include <fcntl.h>
-> 	#include <pthread.h>
-> 	#include <unistd.h>
-> 
-> 	static void *thrproc(void *arg)
-> 	{
-> 		int fd = open("/sys/fs/smackfs/relabel-self", O_WRONLY);
-> 		for (;;) write(fd, "foo", 3);
-> 	}
-> 
-> 	int main()
-> 	{
-> 		pthread_t t;
-> 		pthread_create(&t, NULL, thrproc, NULL);
-> 		thrproc(NULL);
-> 	}
-> 
-> Reported-by: syzbot+e6416dabb497a650da40@syzkaller.appspotmail.com
-> Fixes: 38416e53936e ("Smack: limited capability for changing process label")
-> Cc: <stable@vger.kernel.org> # v4.4+
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
-> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> ---
->  security/smack/smackfs.c | 13 +++++++++++--
->  1 file changed, 11 insertions(+), 2 deletions(-)
+> Up to now, verifying remote filesystem file integrity has been out of
+> scope for IMA.   With fs-verity file signatures I can at least grasp
+> how remote file integrity could possibly work.  I don't understand
+> how remote file integrity with existing IMA formats could be
+> supported. You might want to consider writing a whitepaper, which
+> could later be used as the basis for a patch set cover letter.
 
-Thanks for the backport, now queued up.
+I think, before this, we can help with the basics (and perhaps we
+should sort them out before we start documenting what we'll do).  The
+first basic is that a merkle tree allows unit at a time verification. 
+First of all we should agree on the unit.  Since we always fault a page
+at a time, I think our merkle tree unit should be a page not a block. 
+Next, we should agree where the check gates for the per page accesses
+should be ... definitely somewhere in readpage, I suspect and finally
+we should agree how the merkle tree is presented at the gate.  I think
+there are three ways:
 
-greg k-h
+   1. Ahead of time transfer:  The merkle tree is transferred and verified
+      at some time before the accesses begin, so we already have a
+      verified copy and can compare against the lower leaf.
+   2. Async transfer:  We provide an async mechanism to transfer the
+      necessary components, so when presented with a unit, we check the
+      log n components required to get to the root
+   3. The protocol actually provides the capability of 2 (like the SCSI
+      DIF/DIX), so to IMA all the pieces get presented instead of IMA
+      having to manage the tree
+
+There are also a load of minor things like how we get the head hash,
+which must be presented and verified ahead of time for each of the
+above 3.
+
+James
+
+
+
