@@ -4,87 +4,84 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AB71C433DF
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Aug 2020 16:18:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4714CC433E1
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Aug 2020 16:31:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ED52E206B5
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Aug 2020 16:18:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2421820771
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Aug 2020 16:31:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1597162691;
-	bh=agiOZ1VlrH546FGYEHu+2a2fdebjGxLoWx6nls/0HZE=;
+	s=default; t=1597163492;
+	bh=1bGkqbxXRxs8nZtgA7u8/gl4kuWmpCxjJpvFGP6d9ZA=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=SldwPGcKizQHFz7e1Fycu9mMqkYo1I9kVMZPSdWs5aNwYvuNPVXelHWJSOT99duen
-	 BPs6xrNJa5U9R+wP1piyMu4kZgFJkQPpbMck9b2wTeh3mAzafkkkWyK20v5/pehRlR
-	 Nk1zCDTMSrX0LSvcAuz4wRtH1HE1LbUJlYtWTXdc=
+	b=NO8AwQZQHt021unTLGw9fqxw7Q0NDnBqa/b4OtWVVGEEIOVw4Ctths1QhjxTR89ui
+	 JO5Q20JMtqejOeK+7d2g5HxwkkKeq2g7KXqTAFMW4PDB0XYmjAR5gygot253jtCg9x
+	 hz6CSos4fdqNmfdHMFXxp8UszysqTZIEhbZuMxwQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729004AbgHKQSK (ORCPT
+        id S1729305AbgHKQbY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 11 Aug 2020 12:18:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39326 "EHLO
+        Tue, 11 Aug 2020 12:31:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41306 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728947AbgHKQSJ (ORCPT
+        with ESMTP id S1729211AbgHKQbJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 11 Aug 2020 12:18:09 -0400
-Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53799C06174A
-        for <linux-security-module@vger.kernel.org>; Tue, 11 Aug 2020 09:18:08 -0700 (PDT)
-Received: by mail-lj1-x241.google.com with SMTP id t23so14194824ljc.3
-        for <linux-security-module@vger.kernel.org>; Tue, 11 Aug 2020 09:18:08 -0700 (PDT)
+        Tue, 11 Aug 2020 12:31:09 -0400
+Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7E14C061788
+        for <linux-security-module@vger.kernel.org>; Tue, 11 Aug 2020 09:31:07 -0700 (PDT)
+Received: by mail-lj1-x243.google.com with SMTP id i10so14240769ljn.2
+        for <linux-security-module@vger.kernel.org>; Tue, 11 Aug 2020 09:31:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=ARDqa0ttwGGpwIjIpukccBn4z80sUg1Y95J7pw/cBrc=;
-        b=ARjGfgTTe8Hs0S97+HBco6KPkmP42m5OKE0ERo6Sf2t684ErIUsYZb+F9N6GI8m7VH
-         sHrR/7XxUU0WvzcWkmBHB9j/WQDrOrGh9T97uhNn/7Dj2ZTIxVy3Iz23WUYyWjs31hnR
-         EPcWsf2mQ8nUFDg+i2/4NJ7eEH6TQJE7uk7EY=
+        bh=N7traUqX1fM13wKjAbxkcSlNBWmdCV6QJf9i7XpWydE=;
+        b=WPJKoAqHiSl/tMI6ux9ZyiwFZyLZeSf9IYnGPT6aXv5JxD0edUrsFyfwibupSRZPli
+         sRgA0IHx4UhfQY9IUr+rb1b91G/QJ4IOfgHOH9XwY0IGnWNZoZAF+orZ9O7vZ9YyH60H
+         QN4mw78jv4VsrakmBralo6Vc4sNZK78skPMUk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=ARDqa0ttwGGpwIjIpukccBn4z80sUg1Y95J7pw/cBrc=;
-        b=BXCeGPUPAtE9cu/2Uoo53O0CwLT0DV/p4EHhIZY8KURh7+4C4Tcu415XdtXbvPNxpA
-         LUZ2RUgpVqGreHRsuDO9p7cSQx0E4fzYQvWnih+GZejaVuF+yz84kbZmWSIG3KXXajSW
-         IhB1A2iCDzFF360wrB8HDd05afU2Zg46YeXcYPm9m67x5/NT7ucctoE5NB7GzXFD/8bl
-         AIc1JV0BucBI2Q64zLooaO7e8Dby8L7CUuj+JlyUWnvG29sza8vuBlObRvLz4F2xASPA
-         /IHzbO8NWJ2kXOjgJRNQJidLPE2D28/rRJsGMF0+VKeUIjoRwrV3tZ2YU5EfUEP6Zrvl
-         f3VA==
-X-Gm-Message-State: AOAM531ZmWmuf1Yusws0QA1Gz7wW7HXQ9c8DvASjPMOapH972nzWHZYq
-        N4HymQ+UOz4zhxha2KScv2ftxFpI/KY=
-X-Google-Smtp-Source: ABdhPJzShDV8edvMHqffh3/i315X+PuaefGejC8W6io1BrLoVoBtuHdYI0XyV85N5Xs8mEZeoerkPg==
-X-Received: by 2002:a2e:b04e:: with SMTP id d14mr3625693ljl.16.1597162686722;
-        Tue, 11 Aug 2020 09:18:06 -0700 (PDT)
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com. [209.85.208.177])
-        by smtp.gmail.com with ESMTPSA id o1sm10152144ljc.3.2020.08.11.09.18.05
+        bh=N7traUqX1fM13wKjAbxkcSlNBWmdCV6QJf9i7XpWydE=;
+        b=beq2hi5cgvBhHWiQl6G1jvV8JHX1D1xKeX+sOgBvfmX7A1Gw5B8vSKta51fU/oE5uc
+         H96wJFFwQiihpbMJR2NGg4GnrHt4xj8m0okhZSixyEgNvt+Cx/tH6EAvvUmLNcJSE8E3
+         zyqGwYbPhcscR8eDAo9q46MMcBSD4zNa60hS701zLZj6VGbi1QmOQxLSlgL4RCrZKWp+
+         oBhWIIQQid/BP9QUX49U3cJyaiUbD7XEiWHW9JuoxZU3l/mEpQGJPQPlYv/vzE+deDZP
+         CSs4Av6J2Zxswoxu0nn0KlvYe94mL/vt8AmoCb8Dbdeovsi7pPrt7OvXHH+wYuNC7YXO
+         YowA==
+X-Gm-Message-State: AOAM532x6z8xKoU+ybJG90AaTvuGQm9Z3yHrF9Zl7ymO4yDIipjO1n8O
+        S+pT0MacQ/ICcGVL282l9E6ICyAWGCM=
+X-Google-Smtp-Source: ABdhPJxBBaz9v5FFo8IA3692FkS/6UVQfmFsCHySzjdijZFcu3ttT4QiEQ15MrRkUG7oGfy/Gn5Z9A==
+X-Received: by 2002:a2e:b6cd:: with SMTP id m13mr3511835ljo.91.1597163465657;
+        Tue, 11 Aug 2020 09:31:05 -0700 (PDT)
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com. [209.85.208.172])
+        by smtp.gmail.com with ESMTPSA id h5sm11709671lfm.70.2020.08.11.09.31.04
         for <linux-security-module@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Aug 2020 09:18:06 -0700 (PDT)
-Received: by mail-lj1-f177.google.com with SMTP id w25so14157010ljo.12
-        for <linux-security-module@vger.kernel.org>; Tue, 11 Aug 2020 09:18:05 -0700 (PDT)
-X-Received: by 2002:a2e:7615:: with SMTP id r21mr3191279ljc.371.1597162192777;
- Tue, 11 Aug 2020 09:09:52 -0700 (PDT)
+        Tue, 11 Aug 2020 09:31:04 -0700 (PDT)
+Received: by mail-lj1-f172.google.com with SMTP id i10so14240610ljn.2
+        for <linux-security-module@vger.kernel.org>; Tue, 11 Aug 2020 09:31:04 -0700 (PDT)
+X-Received: by 2002:a2e:9a11:: with SMTP id o17mr3282002lji.314.1597163463666;
+ Tue, 11 Aug 2020 09:31:03 -0700 (PDT)
 MIME-Version: 1.0
-References: <1842689.1596468469@warthog.procyon.org.uk> <1845353.1596469795@warthog.procyon.org.uk>
- <CAJfpegunY3fuxh486x9ysKtXbhTE0745ZCVHcaqs9Gww9RV2CQ@mail.gmail.com>
- <ac1f5e3406abc0af4cd08d818fe920a202a67586.camel@themaw.net>
- <CAJfpegu8omNZ613tLgUY7ukLV131tt7owR+JJ346Kombt79N0A@mail.gmail.com>
- <CAJfpegtNP8rQSS4Z14Ja4x-TOnejdhDRTsmmDD-Cccy2pkfVVw@mail.gmail.com>
- <20200811135419.GA1263716@miu.piliscsaba.redhat.com> <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com>
- <20200811160534.GL1236603@ZenIV.linux.org.uk>
-In-Reply-To: <20200811160534.GL1236603@ZenIV.linux.org.uk>
+References: <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com>
+ <5C8E0FA8-274E-4B56-9B5A-88E768D01F3A@amacapital.net> <a6cd01ed-918a-0ed7-aa87-0585db7b6852@schaufler-ca.com>
+In-Reply-To: <a6cd01ed-918a-0ed7-aa87-0585db7b6852@schaufler-ca.com>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 11 Aug 2020 09:09:36 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgHZig-+dXQeW4pPEjdYsrq=3bgc+vUhwiT2Ox4ipLHwg@mail.gmail.com>
-Message-ID: <CAHk-=wgHZig-+dXQeW4pPEjdYsrq=3bgc+vUhwiT2Ox4ipLHwg@mail.gmail.com>
+Date:   Tue, 11 Aug 2020 09:30:47 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whNwsV6PYrB=MB6y8AJ00GO70CGVUcgKxZHZybhcNp_6w@mail.gmail.com>
+Message-ID: <CAHk-=whNwsV6PYrB=MB6y8AJ00GO70CGVUcgKxZHZybhcNp_6w@mail.gmail.com>
 Subject: Re: file metadata via fs API (was: [GIT PULL] Filesystem Information)
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Miklos Szeredi <miklos@szeredi.hu>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         David Howells <dhowells@redhat.com>,
-        Karel Zak <kzak@redhat.com>, Jeff Layton <jlayton@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, Karel Zak <kzak@redhat.com>,
+        Jeff Layton <jlayton@redhat.com>,
         Miklos Szeredi <mszeredi@redhat.com>,
         Nicolas Dichtel <nicolas.dichtel@6wind.com>,
         Christian Brauner <christian@brauner.io>,
@@ -98,19 +95,32 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Aug 11, 2020 at 9:05 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
+On Tue, Aug 11, 2020 at 9:17 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
 >
-> Except that you suddenly see non-directory dentries get children.
-> And a lot of dcache-related logics needs to be changed if that
-> becomes possible.
+> This doesn't work so well for setxattr(), which we want to be atomic.
 
-Yeah, I think you'd basically need to associate a (dynamic)
-mount-point to that path when you start doing O_ALT. Or something.
+Well, it's not like the old interfaces could go away. But yes, doing
 
-And it might not be reasonably implementable. I just think that as
-_interface_ it's unambiguous and fairly clean, and if Miklos can
-implement something like that, I think it would be maintainable.
+        metadatafd = openat(fd, "metadataname", O_ALT | O_CREAT | O_EXCL)
 
-No?
+to create a new xattr (and then write to it) would not act like
+setxattr(). Even if you do it as one atomic write, a reader would see
+that zero-sized xattr between the O_CREAT and the write.
 
-                Linus
+Of course, we could just hide zero-sized xattrs from the legacy
+interfaces and avoid things like that, but another option is to say
+that only the legacy interfaces give that particular atomicity
+guarantee.
+
+> Since a////////b has known meaning, and lots of applications
+> play loose with '/', its really dangerous to treat the string as
+> special. We only get away with '.' and '..' because their behavior
+> was defined before many of y'all were born.
+
+Yeah, I really don't think it's a good idea to play with "//".
+
+POSIX does allow special semantics for a pathname with "//" at the
+*beginning*, but even that has been very questionable (and Linux has
+never supported it).
+
+                   Linus
