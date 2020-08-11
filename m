@@ -2,89 +2,38 @@ Return-Path: <SRS0=15+v=BV=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A00FDC433E0
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Aug 2020 21:19:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6FF7C433DF
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Aug 2020 21:20:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7EEEB2078B
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Aug 2020 21:19:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1597180744;
-	bh=iAsvlzzjmL2yMDlzgwPkgVoLOZ76Z/bhkwh8ZzmYQE4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=ay3X9od1IGbtTuLH3pcER3Vraw92kq2Z0xxr4wemsEN0hlNe0jwvp5fCONBho4p1Y
-	 GU2G26pB45djkYcT+l217yX9Y4rqqPulm12JJWmQiNmkbtH/HbltuUiGK9cQpETL3V
-	 0/9RJEd3OP+tex/QCYcp7CfkkI4pkWC1H5EYADEc=
+	by mail.kernel.org (Postfix) with ESMTP id A089F20658
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Aug 2020 21:20:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725987AbgHKVTD (ORCPT
+        id S1726115AbgHKVUZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 11 Aug 2020 17:19:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57574 "EHLO
+        Tue, 11 Aug 2020 17:20:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726604AbgHKVTC (ORCPT
+        with ESMTP id S1726020AbgHKVUY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 11 Aug 2020 17:19:02 -0400
-Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 340ADC061787
-        for <linux-security-module@vger.kernel.org>; Tue, 11 Aug 2020 14:19:02 -0700 (PDT)
-Received: by mail-lj1-x243.google.com with SMTP id h19so15114312ljg.13
-        for <linux-security-module@vger.kernel.org>; Tue, 11 Aug 2020 14:19:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rA8YRs7dGB/GfkhZuYULS9uPbpqUgOSLUWngUo8yoaM=;
-        b=B37Vu6gJyZiMc+9rfRlkcU20N9U10pvTExHnPuibbYthtQqVMegykJE7HYcY2zldNY
-         5gxGBXFItNBRH8z/eG/knEXfMsho/PZusS91v/AIuz6EknTOjHM1WbX1WJwE9Kjez0Pq
-         BW2ud3bdkqnIsddUMftapP9Lsi2ETAl3njB+s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rA8YRs7dGB/GfkhZuYULS9uPbpqUgOSLUWngUo8yoaM=;
-        b=AQCUsid9mECJvEY5FqP8VNaKPFSVngaB/iGOgMB4g/7Ieqd6LKbFtWase/DhpNHIW3
-         hM+VRWAWv4s0NydamheBEV+k28srQz3f5XI6lY9keXhiKpm2Mir7d24o6o2cNdOK2Byu
-         kKEfxSIXE1dGhjMaSDLA3vL/zZP41FhIjMPkFe4Yue8nXMxrkqUFdJJk7vdIUSSGswXF
-         CPFFXT/T6Y2vBiuMjoBsvRO+bKA0vJn4PE2hKwd7LA16ksUvaK7Gj9ifLtIW8Q/dhbAS
-         mGOp97iGYaqpilqSv+2OXSdwNnEEdzFiht68T4rXcOzXcA1YlNA2L8ITMdFjwsLYjK5V
-         LLOQ==
-X-Gm-Message-State: AOAM533nrjmLRm5R60897Dr5RpCGpuEerzKRPm9Bz7AEG2kcB9o6HQCw
-        3WY4m06Nfec8WD4/qYdXWgzP16VZQHQ=
-X-Google-Smtp-Source: ABdhPJxtRCEAYZy/Cf+h+FK3emwunhl19xVLjTCA+nd1r8ydOeKztJPsO7GJoO9/ui7BS7pVMHW+Mg==
-X-Received: by 2002:a2e:898a:: with SMTP id c10mr4015553lji.175.1597180740214;
-        Tue, 11 Aug 2020 14:19:00 -0700 (PDT)
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
-        by smtp.gmail.com with ESMTPSA id f14sm11908530lfd.2.2020.08.11.14.18.58
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Aug 2020 14:18:58 -0700 (PDT)
-Received: by mail-lj1-f171.google.com with SMTP id f26so13723837ljc.8
-        for <linux-security-module@vger.kernel.org>; Tue, 11 Aug 2020 14:18:58 -0700 (PDT)
-X-Received: by 2002:a2e:545:: with SMTP id 66mr3970905ljf.285.1597180737731;
- Tue, 11 Aug 2020 14:18:57 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com>
- <5C8E0FA8-274E-4B56-9B5A-88E768D01F3A@amacapital.net> <a6cd01ed-918a-0ed7-aa87-0585db7b6852@schaufler-ca.com>
- <CAJfpegvUBpb+C2Ab=CLAwWffOaeCedr-b7ZZKZnKvF4ph1nJrw@mail.gmail.com>
- <CAG48ez3Li+HjJ6-wJwN-A84WT2MFE131Dt+6YiU96s+7NO5wkQ@mail.gmail.com> <CAJfpeguh5VaDBdVkV3FJtRsMAvXHWUcBfEpQrYPEuX9wYzg9dA@mail.gmail.com>
-In-Reply-To: <CAJfpeguh5VaDBdVkV3FJtRsMAvXHWUcBfEpQrYPEuX9wYzg9dA@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 11 Aug 2020 14:18:41 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whE42mFLi8CfNcdB6Jc40tXsG3sR+ThWAFihhBwfUbczA@mail.gmail.com>
-Message-ID: <CAHk-=whE42mFLi8CfNcdB6Jc40tXsG3sR+ThWAFihhBwfUbczA@mail.gmail.com>
-Subject: Re: file metadata via fs API (was: [GIT PULL] Filesystem Information)
+        Tue, 11 Aug 2020 17:20:24 -0400
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A2B2C06174A;
+        Tue, 11 Aug 2020 14:20:24 -0700 (PDT)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1k5bgs-00DlEE-SY; Tue, 11 Aug 2020 21:20:14 +0000
+Date:   Tue, 11 Aug 2020 22:20:14 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
 To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Jann Horn <jannh@google.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
         Andy Lutomirski <luto@amacapital.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, Karel Zak <kzak@redhat.com>,
-        Jeff Layton <jlayton@redhat.com>,
+        Karel Zak <kzak@redhat.com>, Jeff Layton <jlayton@redhat.com>,
         Miklos Szeredi <mszeredi@redhat.com>,
         Nicolas Dichtel <nicolas.dichtel@6wind.com>,
         Christian Brauner <christian@brauner.io>,
@@ -93,20 +42,61 @@ Cc:     Jann Horn <jannh@google.com>,
         Ian Kent <raven@themaw.net>,
         LSM <linux-security-module@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: file metadata via fs API (was: [GIT PULL] Filesystem Information)
+Message-ID: <20200811212014.GN1236603@ZenIV.linux.org.uk>
+References: <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com>
+ <5C8E0FA8-274E-4B56-9B5A-88E768D01F3A@amacapital.net>
+ <a6cd01ed-918a-0ed7-aa87-0585db7b6852@schaufler-ca.com>
+ <CAJfpegvUBpb+C2Ab=CLAwWffOaeCedr-b7ZZKZnKvF4ph1nJrw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpegvUBpb+C2Ab=CLAwWffOaeCedr-b7ZZKZnKvF4ph1nJrw@mail.gmail.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Aug 11, 2020 at 1:56 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
->
-> So that's where O_ALT comes in.   If the application is consenting,
-> then that should prevent exploits.   Or?
+On Tue, Aug 11, 2020 at 10:28:31PM +0200, Miklos Szeredi wrote:
+> On Tue, Aug 11, 2020 at 6:17 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> 
+> > Since a////////b has known meaning, and lots of applications
+> > play loose with '/', its really dangerous to treat the string as
+> > special. We only get away with '.' and '..' because their behavior
+> > was defined before many of y'all were born.
+> 
+> So the founding fathers have set things in stone and now we can't
+> change it.   Right?
 
-If the application is consenting AND GETS IT RIGHT it should prevent exploits.
+Right.
 
-But that's a big deal.
+> Well that's how it looks... but let's think a little; we have '/' and
+> '\0' that can't be used in filenames.  Also '.' and '..' are
+> prohibited names. It's not a trivial limitation, so applications are
+> probably not used to dumping binary data into file names.  And that
+> means it's probably possible to find a fairly short combination that
+> is never used in practice (probably containing the "/." sequence).
 
-Why not just do it the way I suggested? Then you don't have any of these issues.
+No, it is not.  Miklos, get real - you will end up with obscure
+pathname produced once in a while by a script fragment from hell
+spewed out by crusty piece of awk buried in a piece of shit
+makefile from hell (and you are lucky if it won't be an automake
+output, while we are at it).  Exercised only when some shipped
+turd needs to be regenerated.  Have you _ever_ tried to debug e.g.
+gcc build problems?  I have, and it's extremely unpleasant.  Failures
+tend to be obscure as hell, backtracking them through the makefiles
+is a massive PITA and figuring out why said piece of awk produces
+what it does...
 
-              Linus
+I know what I would've done if the likely 5 hours of cursing everything
+would have ended up with discovery that some luser had assumed that
+surely, no sane software would ever generate this sequence of characters
+in anything used as a pathname, and that for this reason I'm looking
+forward to several more hours of playing with utterly revolting crap
+to convince it to stay away from that sequence...
+
+> Why couldn't we reserve such a combination now?
+> 
+> I have no idea how to find such it, but other than that, I see no
+> theoretical problem with extending the list of reserved filenames.
+
+"not breaking userland", for one.
