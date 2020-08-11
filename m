@@ -2,164 +2,153 @@ Return-Path: <SRS0=15+v=BV=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MIME_QP_LONG_LINE,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35FB0C433E0
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Aug 2020 15:32:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39FA2C433DF
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Aug 2020 15:39:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 07BF220768
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Aug 2020 15:32:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 198AA20866
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Aug 2020 15:39:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="XjfA1fqd";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="LWfToPsd"
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="nHEtCEzA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728957AbgHKPcx (ORCPT
+        id S1728833AbgHKPja (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 11 Aug 2020 11:32:53 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:41116 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728859AbgHKPcx (ORCPT
+        Tue, 11 Aug 2020 11:39:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33390 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728914AbgHKPj3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 11 Aug 2020 11:32:53 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id E738F8EE19D;
-        Tue, 11 Aug 2020 08:32:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1597159972;
-        bh=wWrttx+iJhZF4TwfmlzLv+L9PM0TdD9Fc3uir7nFLMM=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=XjfA1fqdWroJDmq6NYLlvqAen2Eu9mx40k7dwajpO5cdqxz8OBHTAj7LtnXt5D77r
-         yHD8FpZ2B8DPuLh9B0vQ3+a4we6/g8GeUBH/MEhQmafs87XW0uTaOy4AkMr/y85xEu
-         no3iCijZ0aDY7SPirzPrfB1ZKiYDgL37sKqkoDNM=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id b3YM1B3UJc5Z; Tue, 11 Aug 2020 08:32:51 -0700 (PDT)
-Received: from [153.66.254.174] (c-73-35-198-56.hsd1.wa.comcast.net [73.35.198.56])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 7D8168EE149;
-        Tue, 11 Aug 2020 08:32:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1597159971;
-        bh=wWrttx+iJhZF4TwfmlzLv+L9PM0TdD9Fc3uir7nFLMM=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=LWfToPsdUAM4OHjosIhR5/dzJ35cRneHKHc+1ZzcbqKKxvJcvDFZvI6pjja2WIkmc
-         +K+U4TpQP2HX9w8ZGbglVlC1eURNIPwla3RFrIuEXR75FGSSeUnGceNMM64gUYwCq7
-         IZjHJh9XO1JkIu1Kj6UVNO92zS1mMzzP3p+jQrFY=
-Message-ID: <1597159969.4325.21.camel@HansenPartnership.com>
-Subject: Re: [dm-devel] [RFC PATCH v5 00/11] Integrity Policy Enforcement
- LSM (IPE)
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Chuck Lever <chucklever@gmail.com>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>, James Morris <jmorris@namei.org>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Pavel Machek <pavel@ucw.cz>, Sasha Levin <sashal@kernel.org>,
-        snitzer@redhat.com, dm-devel@redhat.com,
-        tyhicks@linux.microsoft.com, agk@redhat.com,
-        Paul Moore <paul@paul-moore.com>,
-        Jonathan Corbet <corbet@lwn.net>, nramas@linux.microsoft.com,
-        serge@hallyn.com, pasha.tatashin@soleen.com,
-        Jann Horn <jannh@google.com>, linux-block@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, mdsakib@microsoft.com,
-        open list <linux-kernel@vger.kernel.org>, eparis@redhat.com,
-        linux-security-module@vger.kernel.org, linux-audit@redhat.com,
+        Tue, 11 Aug 2020 11:39:29 -0400
+Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6214C061788
+        for <linux-security-module@vger.kernel.org>; Tue, 11 Aug 2020 08:39:28 -0700 (PDT)
+Received: by mail-pl1-x643.google.com with SMTP id y6so6992357plt.3
+        for <linux-security-module@vger.kernel.org>; Tue, 11 Aug 2020 08:39:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=content-transfer-encoding:from:mime-version:subject:date:message-id
+         :references:cc:in-reply-to:to;
+        bh=k5Vv6xhQn88lB15k7GWg1mV+u5XAmiBOD5QRLYqo0NY=;
+        b=nHEtCEzA+K3xCyhNyTZMcv8HcHHns+1Hk8pycDEXFieqNICHleSe+O63Dg8nrD0ywV
+         o9FxDHPVmLM0E84TppnHf8iG7S6jFvmUO80JLVLQouLtTWeM771ruHtVW5aDq9qPlFD/
+         nPvs2QyLb4JcANu1Lw9v6YsDaxc4gzzjaYoAo+A4op1aaTwKJdGjDEBtT2htvCkHP/QB
+         M2r/LMeVxfL75GbnkDd0Rr7a/6JSOT1h/M4gxH2FCh1IUGFdbam1qcqLH8k5yRdjSkoQ
+         WGIhvHaJscZeR6w7h6ionNs/EknZAEI60DlrcQnPgdDW7ZSAV7EvgtRxy0pWXvYZnNYr
+         I/wA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:content-transfer-encoding:from:mime-version
+         :subject:date:message-id:references:cc:in-reply-to:to;
+        bh=k5Vv6xhQn88lB15k7GWg1mV+u5XAmiBOD5QRLYqo0NY=;
+        b=Ya6SL31jP3cKKU9KpNX8mGiNY4AQgxJvS/PVea7p3gQjhwlaE49UBiIM6scHx0Ppy8
+         rtMX+FZ1AQXcned553yKsCmyziZI3SUlMooqS6zmXmVVECd1Sy6IW7ZXcfCken6/40YF
+         P8XJoBgter8vd3DJg87y+Zm2FLNYse47cD6vrde50bGTCpNl/zlJkQbLhyYkjsEGzsIh
+         bw0LCJ2G0QJe7nyUut41Usd3pL1h0Ko4EziyFSnfjWynyFx16CUITQjl04kCfwXdhBrM
+         omqJbD6XKDC3UXi/22tSQebOzBH4jdJaxyFXQA8K90uzSyKn3hSeX+/ZZLLV3Uo5iEHj
+         IavA==
+X-Gm-Message-State: AOAM530Tb0Mo/O1F6+45tFwM+5CcGCI01pQPfV03+5XYetQULb8ccDEN
+        RKPFyOVvFyrmr8lx2+EDsmaKuQ==
+X-Google-Smtp-Source: ABdhPJy0yB+Dw1/CiiHffwfE44OfK3nBhmxE+9kmrh4+Xqbf7oNah664PCqIvEwN6uoP1FczdMwiuQ==
+X-Received: by 2002:a17:902:8693:: with SMTP id g19mr1455443plo.66.1597160368219;
+        Tue, 11 Aug 2020 08:39:28 -0700 (PDT)
+Received: from ?IPv6:2601:646:c200:1ef2:6127:e67c:651c:a994? ([2601:646:c200:1ef2:6127:e67c:651c:a994])
+        by smtp.gmail.com with ESMTPSA id 193sm25644247pfu.169.2020.08.11.08.39.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Aug 2020 08:39:27 -0700 (PDT)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+From:   Andy Lutomirski <luto@amacapital.net>
+Mime-Version: 1.0 (1.0)
+Subject: Re: file metadata via fs API (was: [GIT PULL] Filesystem Information)
+Date:   Tue, 11 Aug 2020 08:39:26 -0700
+Message-Id: <5C8E0FA8-274E-4B56-9B5A-88E768D01F3A@amacapital.net>
+References: <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-integrity@vger.kernel.org,
-        jaskarankhurana@linux.microsoft.com
-Date:   Tue, 11 Aug 2020 08:32:49 -0700
-In-Reply-To: <16C3BF97-A7D3-488A-9D26-7C9B18AD2084@gmail.com>
-References: <20200728213614.586312-1-deven.desai@linux.microsoft.com>
-         <20200802115545.GA1162@bug> <20200802140300.GA2975990@sasha-vm>
-         <20200802143143.GB20261@amd>
-         <1596386606.4087.20.camel@HansenPartnership.com>
-         <fb35a1f7-7633-a678-3f0f-17cf83032d2b@linux.microsoft.com>
-         <1596639689.3457.17.camel@HansenPartnership.com>
-         <alpine.LRH.2.21.2008050934060.28225@namei.org>
-         <b08ae82102f35936427bf138085484f75532cff1.camel@linux.ibm.com>
-         <329E8DBA-049E-4959-AFD4-9D118DEB176E@gmail.com>
-         <da6f54d0438ee3d3903b2c75fcfbeb0afdf92dc2.camel@linux.ibm.com>
-         <1597073737.3966.12.camel@HansenPartnership.com>
-         <6E907A22-02CC-42DD-B3CD-11D304F3A1A8@gmail.com>
-         <1597124623.30793.14.camel@HansenPartnership.com>
-         <16C3BF97-A7D3-488A-9D26-7C9B18AD2084@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, Karel Zak <kzak@redhat.com>,
+        Jeff Layton <jlayton@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        Christian Brauner <christian@brauner.io>,
+        Lennart Poettering <lennart@poettering.net>,
+        Linux API <linux-api@vger.kernel.org>,
+        Ian Kent <raven@themaw.net>,
+        LSM <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+In-Reply-To: <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+X-Mailer: iPhone Mail (17G68)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 2020-08-11 at 10:48 -0400, Chuck Lever wrote:
-> > On Aug 11, 2020, at 1:43 AM, James Bottomley
-> > <James.Bottomley@HansenPartnership.com> wrote:
-> > On Mon, 2020-08-10 at 19:36 -0400, Chuck Lever wrote:
-[...]
-> > > Thanks for the help! I just want to emphasize that documentation
-> > > (eg, a specification) will be critical for remote filesystems.
-> > > 
-> > > If any of this is to be supported by a remote filesystem, then we
-> > > need an unencumbered description of the new metadata format
-> > > rather than code. GPL-encumbered formats cannot be contributed to
-> > > the NFS standard, and are probably difficult for other
-> > > filesystems that are not Linux-native, like SMB, as well.
-> > 
-> > I don't understand what you mean by GPL encumbered formats.  The
-> > GPL is a code licence not a data or document licence.
-> 
-> IETF contributions occur under a BSD-style license incompatible
-> with the GPL.
-> 
-> https://trustee.ietf.org/trust-legal-provisions.html
-> 
-> Non-Linux implementers (of OEM storage devices) rely on such
-> standards processes to indemnify them against licensing claims.
 
-Well, that simply means we won't be contributing the Linux
-implementation, right? However, IETF doesn't require BSD for all
-implementations, so that's OK.
 
-> Today, there is no specification for existing IMA metadata formats,
-> there is only code. My lawyer tells me that because the code that
-> implements these formats is under GPL, the formats themselves cannot
-> be contributed to, say, the IETF without express permission from the
-> authors of that code. There are a lot of authors of the Linux IMA
-> code, so this is proving to be an impediment to contribution. That
-> blocks the ability to provide a fully-specified NFS protocol
-> extension to support IMA metadata formats.
+> On Aug 11, 2020, at 8:20 AM, Linus Torvalds <torvalds@linux-foundation.org=
+> wrote:
+>=20
+> =EF=BB=BF[ I missed the beginning of this discussion, so maybe this was al=
+ready
+> suggested ]
+>=20
+>> On Tue, Aug 11, 2020 at 6:54 AM Miklos Szeredi <miklos@szeredi.hu> wrote:=
 
-Well, let me put the counterpoint: I can write a book about how linux
-device drivers work (which includes describing the data formats), for
-instance, without having to get permission from all the authors ... or
-is your lawyer taking the view we should be suing Jonathan Corbet,
-Alessandro Rubini, and Greg Kroah-Hartman for licence infringement?  In
-fact do they think we now have a huge class action possibility against
-O'Reilly  and a host of other publishers ...
+>>=20
+>>>=20
+>>> E.g.
+>>>  openat(AT_FDCWD, "foo/bar//mnt/info", O_RDONLY | O_ALT);
+>>=20
+>> Proof of concept patch and test program below.
+>=20
+> I don't think this works for the reasons Al says, but a slight
+> modification might.
+>=20
+> IOW, if you do something more along the lines of
+>=20
+>       fd =3D open(""foo/bar", O_PATH);
+>       metadatafd =3D openat(fd, "metadataname", O_ALT);
+>=20
+> it might be workable.
+>=20
+> So you couldn't do it with _one_ pathname, because that is always
+> fundamentally going to hit pathname lookup rules.
+>=20
+> But if you start a new path lookup with new rules, that's fine.
+>=20
+> This is what I think xattrs should always have done, because they are
+> broken garbage.
+>=20
+> In fact, if we do it right, I think we could have "getxattr()" be 100%
+> equivalent to (modulo all the error handling that this doesn't do, of
+> course):
+>=20
+>  ssize_t getxattr(const char *path, const char *name,
+>                        void *value, size_t size)
+>  {
+>     int fd, attrfd;
+>=20
+>     fd =3D open(path, O_PATH);
+>     attrfd =3D openat(fd, name, O_ALT);
+>     close(fd);
+>     read(attrfd, value, size);
+>     close(attrfd);
+>  }
+>=20
+> and you'd still use getxattr() and friends as a shorthand (and for
+> POSIX compatibility), but internally in the kernel we'd have a
+> interface around that "xattrs are just file handles" model.
+>=20
+>=20
 
-> > The way the spec process works in Linux is that we implement or
-> > evolve a data format under a GPL implementaiton, but that
-> > implementation doesn't implicate the later standardisation of the
-> > data format and people are free to reimplement under any licence
-> > they choose.
-> 
-> That technology transfer can happen only if all the authors of that
-> prototype agree to contribute to a standard. That's much easier if
-> that agreement comes before an implementation is done. The current
-> IMA code base is more than a decade old, and there are more than a
-> hundred authors who have contributed to that base.
-> 
-> Thus IMO we want an unencumbered description of any IMA metadata
-> format that is to be contributed to an open standards body (as it
-> would have to be to extend, say, the NFS protocol).
+This is a lot like a less nutty version of NTFS streams, whereas the /// ide=
+a is kind of like an extra-nutty version of NTFS streams.
 
-Fine, good grief, people who take a sensible view of this can write the
-data format down and publish it under any licence you like then you can
-pick it up again safely.  Would CC0 be OK? ... neither GPL nor BSD are
-document licences and we shouldn't perpetuate bad practice by licensing
-documentation under them.
-
-James
-
+I am personally not a fan of the in-band signaling implications of overloadi=
+ng /.  For example, there is plenty of code out there that thinks that (a + =E2=
+=80=9C/=E2=80=9C + b) concatenates paths. With /// overloaded, this stops be=
+ing true.=
