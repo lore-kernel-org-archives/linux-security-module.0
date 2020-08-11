@@ -2,133 +2,145 @@ Return-Path: <SRS0=15+v=BV=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0 tests=BAD_ENC_HEADER,BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F57DC433E1
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Aug 2020 18:49:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A394C433DF
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Aug 2020 19:03:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 26E9B2076B
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Aug 2020 18:49:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="qsi/YfmV"
+	by mail.kernel.org (Postfix) with ESMTP id CD391206DA
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Aug 2020 19:03:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726457AbgHKStt (ORCPT
+        id S1725886AbgHKTD1 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 11 Aug 2020 14:49:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34548 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726430AbgHKSts (ORCPT
+        Tue, 11 Aug 2020 15:03:27 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:49030 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725889AbgHKTDZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 11 Aug 2020 14:49:48 -0400
-Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C862C061788
-        for <linux-security-module@vger.kernel.org>; Tue, 11 Aug 2020 11:49:48 -0700 (PDT)
-Received: by mail-ej1-x643.google.com with SMTP id bo3so14189531ejb.11
-        for <linux-security-module@vger.kernel.org>; Tue, 11 Aug 2020 11:49:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=QR5EthpwytHc0ejjeS7AxrlPWVpWopYIIKYLKzP2Eq4=;
-        b=qsi/YfmV5n8FbsFLNbmPsP/XkvX4WKPoDYdfXAcHJX7sKPLBuRLurDA3+/2q3dTeSc
-         QR8qUCCSWYQi8swtBn5FT3wk2zToUXW4QeK5DefeOUHbAjTA30lN66ie4B4qXy6igVCz
-         4BHo6BVZ9hbN3e+PMfS3B/xKbDT6XmlbbOAG8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=QR5EthpwytHc0ejjeS7AxrlPWVpWopYIIKYLKzP2Eq4=;
-        b=ZuzDGubH08jrfkYvsB4cYREXY7I1m/QF6YOy68DEPn0qBhnDNOtK2SWlqRy0YGXQZI
-         0aE9YE0GCh4IfZtHPcUz5bxOW0zVBbHyr/fTYK6U+DPT5lDo7z55Wi2iy29fSUpu94JI
-         HO02tAcDWgxrHH8d5N09jAXs2C+5iZKIWWOANbMvu168Xw5zY5KSEzfx6jwY1jLDwJ0x
-         PG6xjLCYGI1hlzc9BvHEZuATsABfHwgDnowDIOhcgkf8klfJfs5a8/uO9PXyl0XqSTc0
-         bMfxgevGn9+pWy11BhdaFOtQJPTlew+qTbLNFswEyhJYh0vXKKtGNBOftCraK3TMkLaM
-         TIFA==
-X-Gm-Message-State: AOAM532pSdVKY5Mr2zvXDl1Dd7bi9VBC0+xYczFYKSAnxcPWyqu/++5d
-        cXJ+KGOp1wfCe3pItYJhqCxwRMKXRkF1HKZkTXSXvg==
-X-Google-Smtp-Source: ABdhPJwnvaq93oJFCq5dS1yTahe560sCcekZabn8tDE66ijpKnt1L+Oo8yrivZ6IVjeel10rJKNsayxlhVFf1TUW2Xc=
-X-Received: by 2002:a17:907:94ca:: with SMTP id dn10mr27509087ejc.110.1597171786328;
- Tue, 11 Aug 2020 11:49:46 -0700 (PDT)
+        Tue, 11 Aug 2020 15:03:25 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out02.mta.xmission.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1k5ZYK-006qgE-65; Tue, 11 Aug 2020 13:03:16 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1k5ZYJ-0006gu-5w; Tue, 11 Aug 2020 13:03:15 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+Cc:     linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Eric Chiang <ericchiang@google.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Philippe =?utf-8?Q?Tr=C3=A9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Thibaut Sautereau <thibaut.sautereau@clip-os.org>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+References: <20200723171227.446711-1-mic@digikod.net>
+        <20200723171227.446711-2-mic@digikod.net>
+Date:   Tue, 11 Aug 2020 13:59:48 -0500
+In-Reply-To: <20200723171227.446711-2-mic@digikod.net> (=?utf-8?Q?=22Micka?=
+ =?utf-8?Q?=C3=ABl_Sala=C3=BCn=22's?=
+        message of "Thu, 23 Jul 2020 19:12:21 +0200")
+Message-ID: <87eeodnh3v.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-References: <1842689.1596468469@warthog.procyon.org.uk> <1845353.1596469795@warthog.procyon.org.uk>
- <CAJfpegunY3fuxh486x9ysKtXbhTE0745ZCVHcaqs9Gww9RV2CQ@mail.gmail.com>
- <ac1f5e3406abc0af4cd08d818fe920a202a67586.camel@themaw.net>
- <CAJfpegu8omNZ613tLgUY7ukLV131tt7owR+JJ346Kombt79N0A@mail.gmail.com>
- <CAJfpegtNP8rQSS4Z14Ja4x-TOnejdhDRTsmmDD-Cccy2pkfVVw@mail.gmail.com>
- <20200811135419.GA1263716@miu.piliscsaba.redhat.com> <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com>
- <CAJfpegtWai+5Tzxi1_G+R2wEZz0q66uaOFndNE0YEQSDjq0f_A@mail.gmail.com> <CAHk-=wg_bfVf5eazwH2uXTG-auCYZUpq-xb1kDeNjY7yaXS7bw@mail.gmail.com>
-In-Reply-To: <CAHk-=wg_bfVf5eazwH2uXTG-auCYZUpq-xb1kDeNjY7yaXS7bw@mail.gmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Tue, 11 Aug 2020 20:49:35 +0200
-Message-ID: <CAJfpeguo5nAWcmduX4frknQGiRJeaj9Rdj018xUBrwqOJhVufw@mail.gmail.com>
-Subject: Re: file metadata via fs API (was: [GIT PULL] Filesystem Information)
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, Karel Zak <kzak@redhat.com>,
-        Jeff Layton <jlayton@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
-        Christian Brauner <christian@brauner.io>,
-        Lennart Poettering <lennart@poettering.net>,
-        Linux API <linux-api@vger.kernel.org>,
-        Ian Kent <raven@themaw.net>,
-        LSM <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-XM-SPF: eid=1k5ZYJ-0006gu-5w;;;mid=<87eeodnh3v.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19Ak6/vsLtopnFYs9ZfaNrZr8Zt2Ow/qiA=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH v7 1/7] exec: Change uselib(2) IS_SREG() failure to EACCES
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Aug 11, 2020 at 6:05 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+Mickaël Salaün <mic@digikod.net> writes:
 
-> and then people do "$(srctree)/". If you haven't seen that kind of
-> pattern where the pathname has two (or sometimes more!) slashes in the
-> middle, you've led a very sheltered life.
-
-Oh, I have.   That's why I opted for triple slashes, since that should
-work most of the time even in those concatenated cases.  And yes, I
-know, most is not always, and this might just be hiding bugs, etc...
-I think the pragmatic approach would be to try this and see how many
-triple slash hits a normal workload gets and if it's reasonably low,
-then hopefully that together with warnings for O_ALT would be enough.
-
->  (b) even if the new user space were to think about that, and remove
-> those (hah! when have you ever seen user space do that?), as Al
-> mentioned, the user *filesystem* might have pathnames with double
-> slashes as part of symlinks.
+> From: Kees Cook <keescook@chromium.org>
 >
-> So now we'd have to make sure that when we traverse symlinks, that
-> O_ALT gets cleared.
+> Change uselib(2)' S_ISREG() error return to EACCES instead of EINVAL so
+> the behavior matches execve(2), and the seemingly documented value.
+> The "not a regular file" failure mode of execve(2) is explicitly
+> documented[1], but it is not mentioned in uselib(2)[2] which does,
+> however, say that open(2) and mmap(2) errors may apply. The documentation
+> for open(2) does not include a "not a regular file" error[3], but mmap(2)
+> does[4], and it is EACCES.
 
-That's exactly what I implemented in the proof of concept patch.
+Do you have enough visibility into uselib to be certain this will change
+will not cause regressions?
 
-> Which means that it's not a unified namespace
-> after all, because you can't make symlinks point to metadata.
+My sense of uselib is that it would be easier to remove the system call
+entirely (I think it's last use was in libc5) than to validate that a
+change like this won't cause problems for the users of uselib.
 
-I don't think that's a great deal.  Also I think other limitations
-would make sense:
+For the kernel what is important are real world users and the manpages
+are only important as far as they suggest what the real world users do.
 
- - no mounts allowed under ///
- - no ./.. resolution after ///
- - no hardlinks
- - no special files, just regular and directory
- - no seeking (regular or dir)
+Eric
 
->     cat my-file.tar/inside/the/archive.c
+
+> [1] http://man7.org/linux/man-pages/man2/execve.2.html#ERRORS
+> [2] http://man7.org/linux/man-pages/man2/uselib.2.html#ERRORS
+> [3] http://man7.org/linux/man-pages/man2/open.2.html#ERRORS
+> [4] http://man7.org/linux/man-pages/man2/mmap.2.html#ERRORS
 >
-> or similar.
+> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
+> Link: https://lore.kernel.org/r/20200605160013.3954297-2-keescook@chromium.org
+> ---
+>  fs/exec.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 >
-> Al has convinced me it's a horrible idea (and there you have a
-> non-ambiguous marker: the slash at the end of a pathname that
-> otherwise looks and acts as a non-directory)
-
-Umm, can you remind me what's so horrible about that?  Yeah, hard
-linked directories are a no-no.  But it doesn't have to be implemented
-in a way to actually be a problem with hard links.
-
-Thanks,
-Miklos
+> diff --git a/fs/exec.c b/fs/exec.c
+> index e6e8a9a70327..d7c937044d10 100644
+> --- a/fs/exec.c
+> +++ b/fs/exec.c
+> @@ -141,11 +141,10 @@ SYSCALL_DEFINE1(uselib, const char __user *, library)
+>  	if (IS_ERR(file))
+>  		goto out;
+>  
+> -	error = -EINVAL;
+> +	error = -EACCES;
+>  	if (!S_ISREG(file_inode(file)->i_mode))
+>  		goto exit;
+>  
+> -	error = -EACCES;
+>  	if (path_noexec(&file->f_path))
+>  		goto exit;
