@@ -2,133 +2,92 @@ Return-Path: <SRS0=15+v=BV=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1,
-	USER_IN_DEF_DKIM_WL autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4E77C433E1
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Aug 2020 15:54:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B49DBC433DF
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Aug 2020 16:05:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8448D20771
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Aug 2020 15:54:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="XjJgHPUV"
+	by mail.kernel.org (Postfix) with ESMTP id 9042120756
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Aug 2020 16:05:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729070AbgHKPys (ORCPT
+        id S1728844AbgHKQFm (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 11 Aug 2020 11:54:48 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:46966 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728902AbgHKPyn (ORCPT
+        Tue, 11 Aug 2020 12:05:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37412 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728797AbgHKQFl (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 11 Aug 2020 11:54:43 -0400
-Received: from [192.168.254.32] (unknown [47.187.206.220])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 526A020B4908;
-        Tue, 11 Aug 2020 08:54:41 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 526A020B4908
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1597161281;
-        bh=4AnwX8pKWPwuyBMQsqp5N2j48UHwDWqRiS19V2RyUzA=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=XjJgHPUVELV8QE2+Nsp1p5tMtuU8P+D3ZycY0KrJ6EOneE/ByWA3lLQxw3g/B9Mw2
-         vWi2ncOTpaIkbJhV4RsoLHIkICD1ZGWQ7AXMucKMWRJHnO31eOS5fl2cDtURk5xkzx
-         AtMEKomaUXd1s2zq9SUxj3UK2cWtqfSH2YCiPVhU=
-Subject: Re: [PATCH v1 0/4] [RFC] Implement Trampoline File Descriptor
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, oleg@redhat.com,
-        x86@kernel.org
-References: <aefc85852ea518982e74b233e11e16d2e707bc32>
- <20200728131050.24443-1-madvenka@linux.microsoft.com>
- <20200731180955.GC67415@C02TD0UTHF1T.local>
- <6236adf7-4bed-534e-0956-fddab4fd96b6@linux.microsoft.com>
- <20200804143018.GB7440@C02TD0UTHF1T.local>
- <b3368692-afe6-89b5-d634-12f4f0a601f8@linux.microsoft.com>
- <20200808221748.GA1020@bug>
- <6cca8eac-f767-b891-dc92-eaa7504a0e8b@linux.microsoft.com>
- <20200811130837.hi6wllv6g67j5wds@duo.ucw.cz>
-From:   "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>
-Message-ID: <1eec55aa-1bd6-b273-a88e-09d3c726111c@linux.microsoft.com>
-Date:   Tue, 11 Aug 2020 10:54:40 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Tue, 11 Aug 2020 12:05:41 -0400
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BAF4BC06174A;
+        Tue, 11 Aug 2020 09:05:41 -0700 (PDT)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1k5WmM-00DeT8-FM; Tue, 11 Aug 2020 16:05:34 +0000
+Date:   Tue, 11 Aug 2020 17:05:34 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Karel Zak <kzak@redhat.com>, Jeff Layton <jlayton@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        Christian Brauner <christian@brauner.io>,
+        Lennart Poettering <lennart@poettering.net>,
+        Linux API <linux-api@vger.kernel.org>,
+        Ian Kent <raven@themaw.net>,
+        LSM <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: file metadata via fs API (was: [GIT PULL] Filesystem Information)
+Message-ID: <20200811160534.GL1236603@ZenIV.linux.org.uk>
+References: <1842689.1596468469@warthog.procyon.org.uk>
+ <1845353.1596469795@warthog.procyon.org.uk>
+ <CAJfpegunY3fuxh486x9ysKtXbhTE0745ZCVHcaqs9Gww9RV2CQ@mail.gmail.com>
+ <ac1f5e3406abc0af4cd08d818fe920a202a67586.camel@themaw.net>
+ <CAJfpegu8omNZ613tLgUY7ukLV131tt7owR+JJ346Kombt79N0A@mail.gmail.com>
+ <CAJfpegtNP8rQSS4Z14Ja4x-TOnejdhDRTsmmDD-Cccy2pkfVVw@mail.gmail.com>
+ <20200811135419.GA1263716@miu.piliscsaba.redhat.com>
+ <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20200811130837.hi6wllv6g67j5wds@duo.ucw.cz>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Tue, Aug 11, 2020 at 08:20:24AM -0700, Linus Torvalds wrote:
 
-
-On 8/11/20 8:08 AM, Pavel Machek wrote:
-> Hi!
+> I don't think this works for the reasons Al says, but a slight
+> modification might.
 > 
->>>> Thanks for the lively discussion. I have tried to answer some of the
->>>> comments below.
->>>
->>>>> There are options today, e.g.
->>>>>
->>>>> a) If the restriction is only per-alias, you can have distinct aliases
->>>>>    where one is writable and another is executable, and you can make it
->>>>>    hard to find the relationship between the two.
->>>>>
->>>>> b) If the restriction is only temporal, you can write instructions into
->>>>>    an RW- buffer, transition the buffer to R--, verify the buffer
->>>>>    contents, then transition it to --X.
->>>>>
->>>>> c) You can have two processes A and B where A generates instrucitons into
->>>>>    a buffer that (only) B can execute (where B may be restricted from
->>>>>    making syscalls like write, mprotect, etc).
->>>>
->>>> The general principle of the mitigation is W^X. I would argue that
->>>> the above options are violations of the W^X principle. If they are
->>>> allowed today, they must be fixed. And they will be. So, we cannot
->>>> rely on them.
->>>
->>> Would you mind describing your threat model?
->>>
->>> Because I believe you are using model different from everyone else.
->>>
->>> In particular, I don't believe b) is a problem or should be fixed.
->>
->> It is a problem because a kernel that implements W^X properly
->> will not allow it. It has no idea what has been done in userland.
->> It has no idea that the user has checked and verified the buffer
->> contents after transitioning the page to R--.
+> IOW, if you do something more along the lines of
 > 
-> No, it is not a problem. W^X is designed to protect from attackers
-> doing buffer overflows, not attackers doing arbitrary syscalls.
+>        fd = open(""foo/bar", O_PATH);
+>        metadatafd = openat(fd, "metadataname", O_ALT);
 > 
+> it might be workable.
+> 
+> So you couldn't do it with _one_ pathname, because that is always
+> fundamentally going to hit pathname lookup rules.
+> 
+> But if you start a new path lookup with new rules, that's fine.
 
-Hey Pavel,
+Except that you suddenly see non-directory dentries get children.
+And a lot of dcache-related logics needs to be changed if that
+becomes possible.
 
-You are correct. The W^X implementation today still has some holes.
-IIUC, the principle of W^X is - user should not be able to (W) write code
-into a page and use some trick to get it to (X) execute. So, what I
-was trying to say was that the W^X principle is not implemented
-completely today.
+I agree that xattrs are garbage, but this approach won't be
+a straightforward solution.  Can those suckers be passed to
+...at() as starting points?  Can they be bound in namespace?
+Can something be bound *on* them?  What do they have for inodes
+and what maintains their inumbers (and st_dev, while we are at
+it)?  Can _they_ have secondaries like that (sensu Swift)?
+Is that a flat space, or can they be directories?
 
-Mark Rutland mentioned some other tricks as well which are being used
-today.
-
-For instance, Microsoft has submitted this proposal:
-
- https://microsoft.github.io/ipe/
-
-IPE is an LSM. In this proposal, only mappings that are backed by a
-signature verified file can have execute permissions. This means that
-all anonymous page based tricks will fail. And, file mapping based
-tricks will fail as well when temporary files are used to load code
-and mmap(). That is the intent.
-
-Thanks!
-
-Madhavan
+Only a part of the problems is implementation-related (and those are
+not trivial at all); most the fun comes from semantics of those things.
+And answers to the implementation questions are seriously dependent upon
+that...
