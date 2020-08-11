@@ -2,131 +2,125 @@ Return-Path: <SRS0=15+v=BV=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B801C433E0
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Aug 2020 17:18:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D81B2C433DF
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Aug 2020 18:28:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 55CF7206DC
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Aug 2020 17:18:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B0E9B2076C
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Aug 2020 18:28:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="PoJFWvdJ"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="f8kSFMTU";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="OSDLkaQV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729079AbgHKRSL (ORCPT
+        id S1726127AbgHKS2e (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 11 Aug 2020 13:18:11 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:56798 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728990AbgHKRSK (ORCPT
+        Tue, 11 Aug 2020 14:28:34 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:43170 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725889AbgHKS2d (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 11 Aug 2020 13:18:10 -0400
-Received: from [10.137.106.139] (unknown [131.107.174.11])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 364D420B4908;
-        Tue, 11 Aug 2020 10:18:09 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 364D420B4908
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1597166289;
-        bh=4CUNuNiiePWf1WTPIiwYBL13LZ+7k2/9/J/jpcaXW7A=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=PoJFWvdJ1RO9aetIAjmD0rk7oHcgoNUd11mJAo6cf98zwa1+fMROHW9q/uMp6iMeX
-         Gx9jAgsZekiKh7pxAVZrnSCW536fsoku8TARzOm+dS5qqA/BlR8Bpa7J8vLGhpHHRD
-         Yi+yCyW66KZsN6+KFh8r2FianF/MQzdF5N+1bL7A=
-Subject: Re: [PATCH v7 0/7] Add support for O_MAYEXEC
-To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Christian Heimes <christian@python.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Eric Chiang <ericchiang@google.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Thibaut Sautereau <thibaut.sautereau@clip-os.org>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
+        Tue, 11 Aug 2020 14:28:33 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 12B4B8EE19D;
+        Tue, 11 Aug 2020 11:28:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1597170512;
+        bh=3WEnw6QUJlA/ul3OQNUWXjoU13+yLZLQS09srF5MAho=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=f8kSFMTUDNJBODH89PuFjILL2FIdhsJg734xkqUR/cnDMS0KoMreMUczSAhnUyPMA
+         FTeH0AYqaAUb8S0lZlH/2MKXOBNx4BiGB+ITLubur3uSRnr1jBTuyfUMErztSAvCOK
+         o6mPwANArB0pQb+2/z1bhs18+blmHF0lRNFSsct0=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id zuQo8S5FYJFD; Tue, 11 Aug 2020 11:28:31 -0700 (PDT)
+Received: from [153.66.254.174] (c-73-35-198-56.hsd1.wa.comcast.net [73.35.198.56])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 7EF748EE149;
+        Tue, 11 Aug 2020 11:28:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1597170511;
+        bh=3WEnw6QUJlA/ul3OQNUWXjoU13+yLZLQS09srF5MAho=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=OSDLkaQVZ4KRYf4a0s5X94LSMaapheTMG3B7iv1TDO9dOQ2MOULwugwtLeHe6qdeF
+         qJgkWRBhCi9y0UIGoySKjkb+RHhMP2bUFkZ9nJkEdlUyNr1yc428zvmYrJhUC4gJZu
+         kZoLKW8vwf99sZFDKUvV19sDo8EBD6kP0uULOtBM=
+Message-ID: <1597170509.4325.55.camel@HansenPartnership.com>
+Subject: Re: [dm-devel] [RFC PATCH v5 00/11] Integrity Policy Enforcement
+ LSM (IPE)
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Chuck Lever <chucklever@gmail.com>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>, James Morris <jmorris@namei.org>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Pavel Machek <pavel@ucw.cz>, Sasha Levin <sashal@kernel.org>,
+        snitzer@redhat.com, dm-devel@redhat.com,
+        tyhicks@linux.microsoft.com, agk@redhat.com,
+        Paul Moore <paul@paul-moore.com>,
+        Jonathan Corbet <corbet@lwn.net>, nramas@linux.microsoft.com,
+        serge@hallyn.com, pasha.tatashin@soleen.com,
+        Jann Horn <jannh@google.com>, linux-block@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>, mdsakib@microsoft.com,
+        open list <linux-kernel@vger.kernel.org>, eparis@redhat.com,
+        linux-security-module@vger.kernel.org, linux-audit@redhat.com,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         linux-integrity@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-References: <20200723171227.446711-1-mic@digikod.net>
- <202007241205.751EBE7@keescook>
- <0733fbed-cc73-027b-13c7-c368c2d67fb3@digikod.net>
- <20200810202123.GC1236603@ZenIV.linux.org.uk>
- <917bb071-8b1a-3ba4-dc16-f8d7b4cc849f@digikod.net>
- <CAG48ez0NAV5gPgmbDaSjo=zzE=FgnYz=-OHuXwu0Vts=B5gesA@mail.gmail.com>
- <0cc94c91-afd3-27cd-b831-8ea16ca8ca93@digikod.net>
-From:   Deven Bowers <deven.desai@linux.microsoft.com>
-Message-ID: <77d685ec-aba2-6a2c-5d25-1172279ceb83@linux.microsoft.com>
-Date:   Tue, 11 Aug 2020 10:18:08 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.11.0
-MIME-Version: 1.0
-In-Reply-To: <0cc94c91-afd3-27cd-b831-8ea16ca8ca93@digikod.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        jaskarankhurana@linux.microsoft.com
+Date:   Tue, 11 Aug 2020 11:28:29 -0700
+In-Reply-To: <16C3BF97-A7D3-488A-9D26-7C9B18AD2084@gmail.com>
+References: <20200728213614.586312-1-deven.desai@linux.microsoft.com>
+         <20200802115545.GA1162@bug> <20200802140300.GA2975990@sasha-vm>
+         <20200802143143.GB20261@amd>
+         <1596386606.4087.20.camel@HansenPartnership.com>
+         <fb35a1f7-7633-a678-3f0f-17cf83032d2b@linux.microsoft.com>
+         <1596639689.3457.17.camel@HansenPartnership.com>
+         <alpine.LRH.2.21.2008050934060.28225@namei.org>
+         <b08ae82102f35936427bf138085484f75532cff1.camel@linux.ibm.com>
+         <329E8DBA-049E-4959-AFD4-9D118DEB176E@gmail.com>
+         <da6f54d0438ee3d3903b2c75fcfbeb0afdf92dc2.camel@linux.ibm.com>
+         <1597073737.3966.12.camel@HansenPartnership.com>
+         <6E907A22-02CC-42DD-B3CD-11D304F3A1A8@gmail.com>
+         <1597124623.30793.14.camel@HansenPartnership.com>
+         <16C3BF97-A7D3-488A-9D26-7C9B18AD2084@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Tue, 2020-08-11 at 10:48 -0400, Chuck Lever wrote:
+> Mimi's earlier point is that any IMA metadata format that involves
+> unsigned digests is exposed to an alteration attack at rest or in
+> transit, thus will not provide a robust end-to-end integrity
+> guarantee.
 
+I don't believe that is Mimi's point, because it's mostly not correct:
+the xattr mechanism does provide this today.  The point is the
+mechanism we use for storing IMA hashes and signatures today is xattrs
+because they have robust security properties for local filesystems that
+the kernel enforces.  This use goes beyond IMA, selinux labels for
+instance use this property as well.
 
-On 8/11/2020 1:48 AM, Mickaël Salaün wrote:
+What I think you're saying is that NFS can't provide the robust
+security for xattrs we've been relying on, so you need some other
+mechanism for storing them.
 
-[...snip]
+I think Mimi's other point is actually that IMA uses a flat hash which
+we derive by reading the entire file and then watching for mutations. 
+Since you cannot guarantee we get notice of mutation with NFS, the
+entire IMA mechanism can't really be applied in its current form and we
+have to resort to chunk at a time verifications that a Merkel tree
+would provide.  Doesn't this make moot any thinking about
+standardisation in NFS for the current IMA flat hash mechanism because
+we simply can't use it ... If I were to construct a prototype I'd have
+to work out and securely cache the hash of ever chunk when verifying
+the flat hash so I could recheck on every chunk read.  I think that's
+infeasible for large files.
 
->>> It is a
->>> good practice to check as soon as possible such properties, and it may
->>> enables to avoid (user space) time-of-check to time-of-use (TOCTOU)
->>> attacks (i.e. misuse of already open resources).
->>
->> The assumption that security checks should happen as early as possible
->> can actually cause security problems. For example, because seccomp was
->> designed to do its checks as early as possible, including before
->> ptrace, we had an issue for a long time where the ptrace API could be
->> abused to bypass seccomp filters.
->>
->> Please don't decide that a check must be ordered first _just_ because
->> it is a security check. While that can be good for limiting attack
->> surface, it can also create issues when the idea is applied too
->> broadly.
-> 
-> I'd be interested with such security issue examples.
-> 
-> I hope that delaying checks will not be an issue for mechanisms such as
-> IMA or IPE:
-> https://lore.kernel.org/lkml/1544699060.6703.11.camel@linux.ibm.com/
-> 
-> Any though Mimi, Deven, Chrome OS folks?
-> 
+James
 
-I don't see an issue with IPE. As long as the hypothetical new syscall
-and associated security hook have the file struct available in the
-hook, it should integrate fairly easily.
-
-[...snip]
