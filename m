@@ -2,137 +2,93 @@ Return-Path: <SRS0=RtEY=BW=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2598C433DF
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Aug 2020 14:18:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD649C433DF
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Aug 2020 14:24:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C170A207DA
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Aug 2020 14:18:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9278720639
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Aug 2020 14:24:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cRsT2ZGx"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Zfgarcwe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726468AbgHLOSq (ORCPT
+        id S1726564AbgHLOYJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 Aug 2020 10:18:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44868 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726485AbgHLOSo (ORCPT
+        Wed, 12 Aug 2020 10:24:09 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:51407 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726680AbgHLOYE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 Aug 2020 10:18:44 -0400
-Received: from mail-il1-x144.google.com (mail-il1-x144.google.com [IPv6:2607:f8b0:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8B70C061383;
-        Wed, 12 Aug 2020 07:18:44 -0700 (PDT)
-Received: by mail-il1-x144.google.com with SMTP id 77so1764476ilc.5;
-        Wed, 12 Aug 2020 07:18:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=48IsAeauuq9BcWaKpHbdNQ/tldBG5RElnWagtcAUqV4=;
-        b=cRsT2ZGxUqGKOyzMO0wNvu9c+MKHGwNtaL6WtkzcJzG2FycOznSzVRew0E6OYHFgux
-         fsIyKPl6ke8ScaAfvjEtSMjX/9nYkikjCzR9HUZnzR8ETeQxqgzT8T9m9tkPZXgOf2rz
-         QTa2ibKV/kc3wjS8YgXlIeurfSfb/bDJCAKxjA45Lso2Ku4KDO7jliyJhWJHeEhDFA7X
-         ReTwAvAMpfx0ApCdtT50EYjARYNFr2Pa0x4ybb5B05UqDaqofUj0hJUWtxBZFJZPdZOq
-         VTjf/jf3xqOmYG2RwMDDkJTrdk7iPHgg2+DhSezRHe/5imOjPJK1QaINlGCpBwHoXiux
-         1TmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=48IsAeauuq9BcWaKpHbdNQ/tldBG5RElnWagtcAUqV4=;
-        b=jDAFX//wlZ67ADG3BRoc+98oHpeUn1PkrsX26dCVeGKDRRPBup3obeJAuaOiYMIbCR
-         a9iWZ1Ixmd4rKaYTO9a7qUhqRuy3y/hE/klwkuoTnXP38yhvxernDptdOOZ/OPAObcZ0
-         6VG3d2Xx91WoPNA+E1zpCGTYV3490uFcffflct3GLTVVramOjjnfUfq1HKBva40INeWV
-         50Qt5h+zszbG5bX2ZM20lLfWXJQzKKtx2iSdyb04CCbjo/lAkVceldBJ4a4gTDdKCafk
-         OuMbd7Wnc/zmu9QEkRuXBCUzVDH2U2jDp6MohoIFcy870Fj1QYhk9LibeVcL82uf/WQ3
-         hayA==
-X-Gm-Message-State: AOAM532wUN5rEwsWt789RLQyCVJRltRw3Tr8BCd2LgsN6EC6lldeZk7T
-        ApzeZzY2nQkFsclluTDHq60=
-X-Google-Smtp-Source: ABdhPJzf/jasvT0zc9p1+CGDgqywSS+wUi9D5ewUAR1wjx5vZ+7v7igbj00P+ikLT5qiFiGJ2YZ2iA==
-X-Received: by 2002:a92:418b:: with SMTP id o133mr14743047ila.277.1597241924157;
-        Wed, 12 Aug 2020 07:18:44 -0700 (PDT)
-Received: from anon-dhcp-152.1015granger.net (c-68-61-232-219.hsd1.mi.comcast.net. [68.61.232.219])
-        by smtp.gmail.com with ESMTPSA id r8sm1129252ilt.54.2020.08.12.07.18.41
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Aug 2020 07:18:42 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 13.4 \(3608.80.23.2.2\))
-Subject: Re: [dm-devel] [RFC PATCH v5 00/11] Integrity Policy Enforcement LSM
- (IPE)
-From:   Chuck Lever <chucklever@gmail.com>
-In-Reply-To: <alpine.LRH.2.21.2008120643370.10591@namei.org>
-Date:   Wed, 12 Aug 2020 10:18:41 -0400
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Pavel Machek <pavel@ucw.cz>, Sasha Levin <sashal@kernel.org>,
-        snitzer@redhat.com, dm-devel@redhat.com,
-        tyhicks@linux.microsoft.com, agk@redhat.com,
-        Paul Moore <paul@paul-moore.com>,
-        Jonathan Corbet <corbet@lwn.net>, nramas@linux.microsoft.com,
-        serge@hallyn.com, pasha.tatashin@soleen.com,
-        Jann Horn <jannh@google.com>, linux-block@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, mdsakib@microsoft.com,
-        open list <linux-kernel@vger.kernel.org>, eparis@redhat.com,
-        linux-security-module@vger.kernel.org, linux-audit@redhat.com,
+        Wed, 12 Aug 2020 10:24:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1597242242;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=xF1PzXjpzf3p7zUDwOJiId7wF1Lsnzi9qAduhzfHZOs=;
+        b=ZfgarcweGQzfDfwIyh+mNyZ7H3yH5Kyy0MOkkAFrxHdUMbZEEh9OAXBMXYwv6b9+UghmwB
+        srhrmiAPB7549HuFtT6hZbc5NNrrBMSl2wNICckpFElAM64nI5Y/DgQiTBR3driZraA3EW
+        +hX31Md+j/ExfIGVivKG//cX+e4nXB4=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-309-gt8_i8atP8K4P7OsjX-rFQ-1; Wed, 12 Aug 2020 10:23:59 -0400
+X-MC-Unique: gt8_i8atP8K4P7OsjX-rFQ-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B6D6F101C8A5;
+        Wed, 12 Aug 2020 14:23:56 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-127.rdu2.redhat.com [10.10.120.127])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B129F5D6BD;
+        Wed, 12 Aug 2020 14:23:53 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAJfpegvLaoQHZTm1-QKorzsL3ZDnTOcHpcAJn36yF=n-YymCow@mail.gmail.com>
+References: <CAJfpegvLaoQHZTm1-QKorzsL3ZDnTOcHpcAJn36yF=n-YymCow@mail.gmail.com> <1842689.1596468469@warthog.procyon.org.uk> <1845353.1596469795@warthog.procyon.org.uk> <CAJfpegunY3fuxh486x9ysKtXbhTE0745ZCVHcaqs9Gww9RV2CQ@mail.gmail.com> <ac1f5e3406abc0af4cd08d818fe920a202a67586.camel@themaw.net> <CAJfpegu8omNZ613tLgUY7ukLV131tt7owR+JJ346Kombt79N0A@mail.gmail.com> <CAJfpegtNP8rQSS4Z14Ja4x-TOnejdhDRTsmmDD-Cccy2pkfVVw@mail.gmail.com> <20200811135419.GA1263716@miu.piliscsaba.redhat.com> <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com> <135551.1597240486@warthog.procyon.org.uk>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     dhowells@redhat.com,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-integrity@vger.kernel.org,
-        jaskarankhurana@linux.microsoft.com
-Content-Transfer-Encoding: 7bit
-Message-Id: <70603A4E-A548-4ECB-97D4-D3102CE77701@gmail.com>
-References: <20200728213614.586312-1-deven.desai@linux.microsoft.com>
- <20200802115545.GA1162@bug> <20200802140300.GA2975990@sasha-vm>
- <20200802143143.GB20261@amd> <1596386606.4087.20.camel@HansenPartnership.com>
- <fb35a1f7-7633-a678-3f0f-17cf83032d2b@linux.microsoft.com>
- <1596639689.3457.17.camel@HansenPartnership.com>
- <alpine.LRH.2.21.2008050934060.28225@namei.org>
- <b08ae82102f35936427bf138085484f75532cff1.camel@linux.ibm.com>
- <329E8DBA-049E-4959-AFD4-9D118DEB176E@gmail.com>
- <alpine.LRH.2.21.2008120643370.10591@namei.org>
-To:     James Morris <jmorris@namei.org>
-X-Mailer: Apple Mail (2.3608.80.23.2.2)
+        Al Viro <viro@zeniv.linux.org.uk>, Karel Zak <kzak@redhat.com>,
+        Jeff Layton <jlayton@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        Christian Brauner <christian@brauner.io>,
+        Lennart Poettering <lennart@poettering.net>,
+        Linux API <linux-api@vger.kernel.org>,
+        Ian Kent <raven@themaw.net>,
+        LSM <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: file metadata via fs API (was: [GIT PULL] Filesystem Information)
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <137928.1597242232.1@warthog.procyon.org.uk>
+Date:   Wed, 12 Aug 2020 15:23:52 +0100
+Message-ID: <137929.1597242232@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Miklos Szeredi <miklos@szeredi.hu> wrote:
 
+> The point is that generic operations already exist and no need to add
+> new, specialized ones to access metadata.
 
-> On Aug 11, 2020, at 5:03 PM, James Morris <jmorris@namei.org> wrote:
-> 
-> On Sat, 8 Aug 2020, Chuck Lever wrote:
-> 
->> My interest is in code integrity enforcement for executables stored
->> in NFS files.
->> 
->> My struggle with IPE is that due to its dependence on dm-verity, it
->> does not seem to able to protect content that is stored separately
->> from its execution environment and accessed via a file access
->> protocol (FUSE, SMB, NFS, etc).
-> 
-> It's not dependent on DM-Verity, that's just one possible integrity 
-> verification mechanism, and one of two supported in this initial 
-> version. The other is 'boot_verified' for a verified or otherwise trusted 
-> rootfs. Future versions will support FS-Verity, at least.
-> 
-> IPE was designed to be extensible in this way, with a strong separation of 
-> mechanism and policy.
+open and read already exist, yes, but the metadata isn't currently in
+convenient inodes and dentries that you can just walk through.  So you're
+going to end up with a specialised filesystem instead, I suspect.  Basically,
+it's the same as your do-everything-through-/proc/self/fds/ approach.
 
-I got that, but it looked to me like the whole system relied on having
-access to the block device under the filesystem. That's not possible
-for a remote filesystem like Ceph or NFS.
+And it's going to be heavier.  I don't know if you're planning on creating a
+superblock each time you do an O_ALT open, but you will end up creating some
+inodes, dentries and a file - even before you get to the reading bit.
 
-I'm happy to take a closer look if someone can point me the right way.
-
-
---
-Chuck Lever
-chucklever@gmail.com
-
-
+David
 
