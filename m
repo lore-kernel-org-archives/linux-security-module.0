@@ -2,276 +2,147 @@ Return-Path: <SRS0=RtEY=BW=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-20.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CC4DC433E0
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Aug 2020 19:31:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40E86C433E0
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Aug 2020 19:34:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5349020774
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Aug 2020 19:31:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 21C53206DA
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Aug 2020 19:34:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="MIxMEJeI"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XzEheugo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726685AbgHLTb1 (ORCPT
+        id S1726768AbgHLTea (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 Aug 2020 15:31:27 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:51170 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726681AbgHLTbO (ORCPT
+        Wed, 12 Aug 2020 15:34:30 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:56387 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726567AbgHLTe2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 Aug 2020 15:31:14 -0400
-Received: from tusharsu-Ubuntu.lan (c-71-197-163-6.hsd1.wa.comcast.net [71.197.163.6])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 3C4B120B490D;
-        Wed, 12 Aug 2020 12:31:12 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3C4B120B490D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1597260672;
-        bh=1JH4jChNS0fa5DFFMyXyCP3gvcSLfR3XN5s6YUWp8Eg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MIxMEJeISvTQ7NN5IisP4jWYFX4zFj3WHpvnd+9p1LDZgpMXGC+bckHZqRClUr+Nc
-         PkHUFZMNpr92w7Aw0Xl258nJ9C9Be+thQmt+eyIUo9K5LrICU+WDKg59D7I6nKZvdI
-         vY8c9rsHafodvjTnRv3J4EINhRMUu2+9wRaRHmpY=
-From:   Tushar Sugandhi <tusharsu@linux.microsoft.com>
-To:     zohar@linux.ibm.com, stephen.smalley.work@gmail.com,
-        casey@schaufler-ca.com, gmazyland@gmail.com
-Cc:     tyhicks@linux.microsoft.com, sashal@kernel.org, jmorris@namei.org,
-        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dm-devel@redhat.com,
-        nramas@linux.microsoft.com
-Subject: [PATCH 2/3] IMA: add policy to support measuring critical data from kernel components
-Date:   Wed, 12 Aug 2020 12:31:01 -0700
-Message-Id: <20200812193102.18636-3-tusharsu@linux.microsoft.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200812193102.18636-1-tusharsu@linux.microsoft.com>
-References: <20200812193102.18636-1-tusharsu@linux.microsoft.com>
+        Wed, 12 Aug 2020 15:34:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1597260866;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=9pSEoniKEkFNSbD4TVkJ4Otoswkj5jDImE3i/ppi82o=;
+        b=XzEheugoQtlYzcbFfnnod43CgVF2mWOJpalaOEUxK3g4qw1aIxdwyNUjylFSg6SfLh7CQL
+        /pqYKVFNw3SYlGWlkz9+MJfTiO+8FQ5cDP/3RsfzwQ7Qnti5UnZ995C0oTFG4kwcS8ImcL
+        pCo4h9En890oxqdIb7vYMlwsXe8e7aY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-394-PsWf2ViBP-2ePLGug1Gcog-1; Wed, 12 Aug 2020 15:34:23 -0400
+X-MC-Unique: PsWf2ViBP-2ePLGug1Gcog-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B39E61902EB3;
+        Wed, 12 Aug 2020 19:34:20 +0000 (UTC)
+Received: from fogou.chygwyn.com (unknown [10.33.36.12])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 239A3100AE52;
+        Wed, 12 Aug 2020 19:34:13 +0000 (UTC)
+Subject: Re: file metadata via fs API
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, Karel Zak <kzak@redhat.com>,
+        Jeff Layton <jlayton@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        Christian Brauner <christian@brauner.io>,
+        Lennart Poettering <lennart@poettering.net>,
+        Linux API <linux-api@vger.kernel.org>,
+        Ian Kent <raven@themaw.net>,
+        LSM <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <1842689.1596468469@warthog.procyon.org.uk>
+ <1845353.1596469795@warthog.procyon.org.uk>
+ <CAJfpegunY3fuxh486x9ysKtXbhTE0745ZCVHcaqs9Gww9RV2CQ@mail.gmail.com>
+ <ac1f5e3406abc0af4cd08d818fe920a202a67586.camel@themaw.net>
+ <CAJfpegu8omNZ613tLgUY7ukLV131tt7owR+JJ346Kombt79N0A@mail.gmail.com>
+ <CAJfpegtNP8rQSS4Z14Ja4x-TOnejdhDRTsmmDD-Cccy2pkfVVw@mail.gmail.com>
+ <20200811135419.GA1263716@miu.piliscsaba.redhat.com>
+ <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com>
+ <52483.1597190733@warthog.procyon.org.uk>
+ <CAHk-=wiPx0UJ6Q1X=azwz32xrSeKnTJcH8enySwuuwnGKkHoPA@mail.gmail.com>
+From:   Steven Whitehouse <swhiteho@redhat.com>
+Message-ID: <066f9aaf-ee97-46db-022f-5d007f9e6edb@redhat.com>
+Date:   Wed, 12 Aug 2020 20:34:11 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
+MIME-Version: 1.0
+In-Reply-To: <CAHk-=wiPx0UJ6Q1X=azwz32xrSeKnTJcH8enySwuuwnGKkHoPA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-There would be several candidate kernel components suitable for IMA
-measurement. Not all of them would be enlightened for IMA measurement.
-Also, system administrators may not want to measure data for all of
-them, even when they are enlightened for IMA measurements. An IMA policy
-specific to various kernel components is needed to measure their
-respective critical data.
+Hi,
 
-Add a new IMA policy CRITICAL_DATA+data_sources to support measuring
-various critical kernel components. This policy would enable the
-system administrators to limit the measurement to the components,
-if the components are enlightened for IMA measurement.
+On 12/08/2020 19:18, Linus Torvalds wrote:
+> On Tue, Aug 11, 2020 at 5:05 PM David Howells <dhowells@redhat.com> wrote:
+>> Well, the start of it was my proposal of an fsinfo() system call.
+> Ugh. Ok, it's that thing.
+>
+> This all seems *WAY* over-designed - both your fsinfo and Miklos' version.
+>
+> What's wrong with fstatfs()? All the extra magic metadata seems to not
+> really be anything people really care about.
+>
+> What people are actually asking for seems to be some unique mount ID,
+> and we have 16 bytes of spare information in 'struct statfs64'.
+>
+> All the other fancy fsinfo stuff seems to be "just because", and like
+> complete overdesign.
+>
+> Let's not add system calls just because we can.
+>
+>               Linus
+>
 
-Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
----
- Documentation/ABI/testing/ima_policy |  6 +-
- security/integrity/ima/ima.h         |  1 +
- security/integrity/ima/ima_api.c     |  2 +-
- security/integrity/ima/ima_policy.c  | 84 ++++++++++++++++++++++------
- 4 files changed, 74 insertions(+), 19 deletions(-)
+The point of this is to give us the ability to monitor mounts from 
+userspace. The original inspiration was rtnetlink, in that we need a 
+"dump" operation to give us a snapshot of the current mount state, plus 
+then a stream of events which allow us to keep that state updated. The 
+tricky question is what happens in case of overflow of the events queue, 
+and just like netlink, that needs a resync of the current state to fix 
+that, since we can't block mounts, of course.
 
-diff --git a/Documentation/ABI/testing/ima_policy b/Documentation/ABI/testing/ima_policy
-index cd572912c593..a0dd0f108555 100644
---- a/Documentation/ABI/testing/ima_policy
-+++ b/Documentation/ABI/testing/ima_policy
-@@ -29,7 +29,7 @@ Description:
- 		base: 	func:= [BPRM_CHECK][MMAP_CHECK][CREDS_CHECK][FILE_CHECK][MODULE_CHECK]
- 				[FIRMWARE_CHECK]
- 				[KEXEC_KERNEL_CHECK] [KEXEC_INITRAMFS_CHECK]
--				[KEXEC_CMDLINE] [KEY_CHECK]
-+				[KEXEC_CMDLINE] [KEY_CHECK] [CRITICAL_DATA]
- 			mask:= [[^]MAY_READ] [[^]MAY_WRITE] [[^]MAY_APPEND]
- 			       [[^]MAY_EXEC]
- 			fsmagic:= hex value
-@@ -125,3 +125,7 @@ Description:
- 		keys added to .builtin_trusted_keys or .ima keyring:
- 
- 			measure func=KEY_CHECK keyrings=.builtin_trusted_keys|.ima
-+
-+		Example of measure rule using CRITICAL_DATA to measure critical data
-+
-+			measure func=CRITICAL_DATA data_sources=selinux|apparmor|dm-crypt
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index e2a151d6653d..99773dfa2541 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -200,6 +200,7 @@ static inline unsigned int ima_hash_key(u8 *digest)
- 	hook(POLICY_CHECK, policy)			\
- 	hook(KEXEC_CMDLINE, kexec_cmdline)		\
- 	hook(KEY_CHECK, key)				\
-+	hook(CRITICAL_DATA, critical_data)		\
- 	hook(MAX_CHECK, none)
- 
- #define __ima_hook_enumify(ENUM, str)	ENUM,
-diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
-index af218babd198..9917e1730cb6 100644
---- a/security/integrity/ima/ima_api.c
-+++ b/security/integrity/ima/ima_api.c
-@@ -176,7 +176,7 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
-  *		subj=, obj=, type=, func=, mask=, fsmagic=
-  *	subj,obj, and type: are LSM specific.
-  *	func: FILE_CHECK | BPRM_CHECK | CREDS_CHECK | MMAP_CHECK | MODULE_CHECK
-- *	| KEXEC_CMDLINE | KEY_CHECK
-+ *	| KEXEC_CMDLINE | KEY_CHECK | CRITICAL_DATA
-  *	mask: contains the permission mask
-  *	fsmagic: hex value
-  *
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 4efaf8956eb8..8451ccb2a775 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -22,17 +22,18 @@
- #include "ima.h"
- 
- /* flags definitions */
--#define IMA_FUNC	0x0001
--#define IMA_MASK	0x0002
--#define IMA_FSMAGIC	0x0004
--#define IMA_UID		0x0008
--#define IMA_FOWNER	0x0010
--#define IMA_FSUUID	0x0020
--#define IMA_INMASK	0x0040
--#define IMA_EUID	0x0080
--#define IMA_PCR		0x0100
--#define IMA_FSNAME	0x0200
--#define IMA_KEYRINGS	0x0400
-+#define IMA_FUNC		0x0001
-+#define IMA_MASK		0x0002
-+#define IMA_FSMAGIC		0x0004
-+#define IMA_UID			0x0008
-+#define IMA_FOWNER		0x0010
-+#define IMA_FSUUID		0x0020
-+#define IMA_INMASK		0x0040
-+#define IMA_EUID		0x0080
-+#define IMA_PCR			0x0100
-+#define IMA_FSNAME		0x0200
-+#define IMA_KEYRINGS		0x0400
-+#define IMA_DATA_SOURCES	0x0800
- 
- #define UNKNOWN		0
- #define MEASURE		0x0001	/* same as IMA_MEASURE */
-@@ -84,6 +85,7 @@ struct ima_rule_entry {
- 	} lsm[MAX_LSM_RULES];
- 	char *fsname;
- 	struct ima_rule_opt_list *keyrings; /* Measure keys added to these keyrings */
-+	struct ima_rule_opt_list *data_sources; /* Measure data from these sources */
- 	struct ima_template_desc *template;
- };
- 
-@@ -508,14 +510,23 @@ static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
- {
- 	int i;
- 
--	if (func == KEY_CHECK) {
--		return (rule->flags & IMA_FUNC) && (rule->func == func) &&
--		       ima_match_rule_data(rule, rule->keyrings, func_data,
--					   true, cred);
--	}
- 	if ((rule->flags & IMA_FUNC) &&
- 	    (rule->func != func && func != POST_SETATTR))
- 		return false;
-+
-+	switch (func) {
-+	case KEY_CHECK:
-+		return ((rule->func == func) &&
-+			ima_match_rule_data(rule, rule->keyrings,
-+					    func_data, true, cred));
-+	case CRITICAL_DATA:
-+		return ((rule->func == func) &&
-+			ima_match_rule_data(rule, rule->data_sources,
-+					    func_data, false, cred));
-+	default:
-+		break;
-+	}
-+
- 	if ((rule->flags & IMA_MASK) &&
- 	    (rule->mask != mask && func != POST_SETATTR))
- 		return false;
-@@ -911,7 +922,7 @@ enum {
- 	Opt_uid_lt, Opt_euid_lt, Opt_fowner_lt,
- 	Opt_appraise_type, Opt_appraise_flag,
- 	Opt_permit_directio, Opt_pcr, Opt_template, Opt_keyrings,
--	Opt_err
-+	Opt_data_sources, Opt_err
- };
- 
- static const match_table_t policy_tokens = {
-@@ -948,6 +959,7 @@ static const match_table_t policy_tokens = {
- 	{Opt_pcr, "pcr=%s"},
- 	{Opt_template, "template=%s"},
- 	{Opt_keyrings, "keyrings=%s"},
-+	{Opt_data_sources, "data_sources=%s"},
- 	{Opt_err, NULL}
- };
- 
-@@ -1110,6 +1122,19 @@ static bool ima_validate_rule(struct ima_rule_entry *entry)
- 		if (ima_rule_contains_lsm_cond(entry))
- 			return false;
- 
-+		break;
-+	case CRITICAL_DATA:
-+		if (entry->action & ~(MEASURE | DONT_MEASURE))
-+			return false;
-+
-+		if (!(entry->flags & IMA_DATA_SOURCES) ||
-+		    (entry->flags & ~(IMA_FUNC | IMA_UID | IMA_PCR |
-+		    IMA_DATA_SOURCES)))
-+			return false;
-+
-+		if (ima_rule_contains_lsm_cond(entry))
-+			return false;
-+
- 		break;
- 	default:
- 		return false;
-@@ -1242,6 +1267,8 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
- 			else if (IS_ENABLED(CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS) &&
- 				 strcmp(args[0].from, "KEY_CHECK") == 0)
- 				entry->func = KEY_CHECK;
-+			else if (strcmp(args[0].from, "CRITICAL_DATA") == 0)
-+				entry->func = CRITICAL_DATA;
- 			else
- 				result = -EINVAL;
- 			if (!result)
-@@ -1312,6 +1339,23 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
- 
- 			entry->flags |= IMA_KEYRINGS;
- 			break;
-+		case Opt_data_sources:
-+			ima_log_string(ab, "data_sources", args[0].from);
-+
-+			if (entry->data_sources) {
-+				result = -EINVAL;
-+				break;
-+			}
-+
-+			entry->data_sources = ima_alloc_rule_opt_list(args);
-+			if (IS_ERR(entry->data_sources)) {
-+				result = PTR_ERR(entry->data_sources);
-+				entry->data_sources = NULL;
-+				break;
-+			}
-+
-+			entry->flags |= IMA_DATA_SOURCES;
-+			break;
- 		case Opt_fsuuid:
- 			ima_log_string(ab, "fsuuid", args[0].from);
- 
-@@ -1692,6 +1736,12 @@ int ima_policy_show(struct seq_file *m, void *v)
- 		seq_puts(m, " ");
- 	}
- 
-+	if (entry->flags & IMA_DATA_SOURCES) {
-+		seq_puts(m, "data_sources=");
-+		ima_show_rule_opt_list(m, entry->data_sources);
-+		seq_puts(m, " ");
-+	}
-+
- 	if (entry->flags & IMA_PCR) {
- 		snprintf(tbuf, sizeof(tbuf), "%d", entry->pcr);
- 		seq_printf(m, pt(Opt_pcr), tbuf);
--- 
-2.17.1
+The fsinfo syscall was designed to be the "dump" operation in this 
+system. David's other patch set provides the stream of events. So the 
+two are designed to work together. We had the discussion on using 
+netlink, of whatever form a while back, and there are a number of 
+reasons why that doesn't work (namespace being one).
+
+I think fstatfs might also suffer from the issue of not being easy to 
+call on things for which you have no path (e.g. over-mounted mounts) 
+Plus we need to know which paths to query, which is why we need to 
+enumerate the mounts in the first place - how would we get the fds for 
+each mount? It might give you some sb info, but it doesn't tell you the 
+options that the sb is mounted with, and it doesn't tell you where it is 
+mounted either.
+
+The overall aim is to solve some issues relating to scaling to large 
+numbers of mount in systemd and autofs, and also to provide a 
+generically useful interface that other tools may use to monitor mounts 
+in due course too. Currently parsing /proc/mounts is the only option, 
+and that tends to be slow and is certainly not atomic. Extension to 
+other sb related messages is a future goal, quota being one possible 
+application for the notifications.
+
+If there is a simpler way to get to that goal, then thats all to the 
+good, and we should definitely consider it,
+
+Steve.
+
+
+
 
