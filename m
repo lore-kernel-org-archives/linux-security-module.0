@@ -2,138 +2,116 @@ Return-Path: <SRS0=RtEY=BW=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FBEDC433E4
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Aug 2020 19:50:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEF01C433E0
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Aug 2020 20:37:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E10A620B1F
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Aug 2020 19:50:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1597261853;
-	bh=zANYippBEM8vlz4ACqIlFjW9XcLrdF4n06DKDTjMecs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=Vj8BFANx0MLZbMaVEysRq1ym5J4yfiH/A0ST5++2Az9l2sqz18Hweukbtl8Ze/+ei
-	 RzYnUYNhKfP81xSVInnVvdMahYcfjzHmnf4JK6mmF5ATN425JnM2O/jOt784Jnn9y8
-	 0Lt1ySCNFQQeppPjBasPJr5ob+FvnZk0evMoNW1w=
+	by mail.kernel.org (Postfix) with ESMTP id C76A42080C
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Aug 2020 20:37:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="ImHXDqrP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726642AbgHLTuv (ORCPT
+        id S1726573AbgHLUho (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 Aug 2020 15:50:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39458 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726640AbgHLTut (ORCPT
+        Wed, 12 Aug 2020 16:37:44 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:59092 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726030AbgHLUhn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 Aug 2020 15:50:49 -0400
-Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64092C061383
-        for <linux-security-module@vger.kernel.org>; Wed, 12 Aug 2020 12:50:49 -0700 (PDT)
-Received: by mail-lf1-x141.google.com with SMTP id b30so1785040lfj.12
-        for <linux-security-module@vger.kernel.org>; Wed, 12 Aug 2020 12:50:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=l0LPNTEWbU2mq6BgRpzsioeNr4RPYOF2TnDOgMD6NIs=;
-        b=U1hdSpOUSLOjOrO72XqzG+q96d1pIF0cv/aZqt7kBp+fkvgL9591I+FRTAk0LrnIxR
-         8JT4UZPZRO/zc5YAudhwHewQ4vDe1rgRhtOdIJf44K3wQIjkVGrwuKfqWiz5aOBB7xzw
-         NmuJO1e6+UoXEurWxTmy0lrzQtpRHAgwv0Dgc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=l0LPNTEWbU2mq6BgRpzsioeNr4RPYOF2TnDOgMD6NIs=;
-        b=sEcE0H2Oc+9fSzJ+c2Pj2sxwvdGvXzW/lQ9XN5PUg4/5fwcWS9NNuQmQOaUOWu/X41
-         Ly22qWcYOClLn6m4//a23LGR3fNEHLx5BbCP4VhVd8FdIpp6Ddk7hZG8GUKo9vIrQMfa
-         4dcOoKdfaF8g/98mJDt5uurgwNDIYszyJiAkg0QLTJByxdA99bD+vBT8KYPSb1P6bw7C
-         h5CEdtz16gES8fzVzji5aRrU+oo9wRwcA7Q+xmjv/l7LskASvXtkeifdM8s5TKQWIQVq
-         2GaMICR1eYAt5MreNU7BJFWqjhncSBgUIYduCzgcq8GkkTV2YdnJWdpblrOmjAkEoi/D
-         0HVg==
-X-Gm-Message-State: AOAM530QP+xILWSoRsNdimCZHKUWShuPTcNOfd2eaSmgI1J3Ncq4dYNx
-        piDFV8GG1a5UvqFrWwOpXjvTaJTqamE=
-X-Google-Smtp-Source: ABdhPJxAL+NLQmQiE8AXPIgjFqCnmTWLJD0rp4rQn4itGlOyW0rntQK+K8cxcBQCEtiGIdiNcP1xwA==
-X-Received: by 2002:ac2:5f64:: with SMTP id c4mr502139lfc.170.1597261847230;
-        Wed, 12 Aug 2020 12:50:47 -0700 (PDT)
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com. [209.85.167.50])
-        by smtp.gmail.com with ESMTPSA id t13sm686774lfg.53.2020.08.12.12.50.46
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Aug 2020 12:50:46 -0700 (PDT)
-Received: by mail-lf1-f50.google.com with SMTP id i80so1781641lfi.13
-        for <linux-security-module@vger.kernel.org>; Wed, 12 Aug 2020 12:50:46 -0700 (PDT)
-X-Received: by 2002:a05:6512:3b7:: with SMTP id v23mr500353lfp.10.1597261845653;
- Wed, 12 Aug 2020 12:50:45 -0700 (PDT)
+        Wed, 12 Aug 2020 16:37:43 -0400
+Received: from [192.168.0.104] (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 7D4AC20B4908;
+        Wed, 12 Aug 2020 13:37:42 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7D4AC20B4908
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1597264662;
+        bh=Tny2pnFNQ9hZUYldUbLplhq2a8CRyeGK5gKXS0FC5Ls=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=ImHXDqrPSRfYm7TycdwQ548TDuo5B86Aq8OlGHQ3N/VC9Ho7HqPd7t13a1cLWE38E
+         OdEkCIsFTO8kLm89D3GyAJLW6DWoGdkV6hodM4mAD0jsM9Kf/1tX8eidQ2JaxG4Uu/
+         CUidwV9uPzhWVvDTMi8pcRT1E0LNPevuwxD1AdcY=
+Subject: Re: [PATCH v6 0/4] LSM: Measure security module data
+To:     Casey Schaufler <casey@schaufler-ca.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Tyler Hicks <tyhicks@linux.microsoft.com>
+Cc:     stephen.smalley.work@gmail.com, sashal@kernel.org,
+        jmorris@namei.org, linux-integrity@vger.kernel.org,
+        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20200805004331.20652-1-nramas@linux.microsoft.com>
+ <f3971f35-309d-c3e5-9126-69add7ad4c11@schaufler-ca.com>
+ <50587a3e-bcb5-c68e-c16c-41baf68b4d4a@linux.microsoft.com>
+ <c7c168f2-e30b-d2c5-abcb-1b6919197474@schaufler-ca.com>
+ <20200805154504.GB4365@sequoia>
+ <69810007161e689ac817099fb1c6df21962963e4.camel@linux.ibm.com>
+ <9ad079ff-1bd4-1302-e6fb-25a7396ef12f@linux.microsoft.com>
+ <ecc97f59-c2cc-0b23-6199-925ba0d6358b@schaufler-ca.com>
+ <50f00ace-8d46-01c2-bf0f-d5484aafd95c@linux.microsoft.com>
+ <5570a4d8-8779-6efe-b208-f7efa8ba9488@schaufler-ca.com>
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Message-ID: <42c35947-9a81-e343-b111-5d4d90095888@linux.microsoft.com>
+Date:   Wed, 12 Aug 2020 13:37:38 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-References: <1842689.1596468469@warthog.procyon.org.uk> <1845353.1596469795@warthog.procyon.org.uk>
- <CAJfpegunY3fuxh486x9ysKtXbhTE0745ZCVHcaqs9Gww9RV2CQ@mail.gmail.com>
- <ac1f5e3406abc0af4cd08d818fe920a202a67586.camel@themaw.net>
- <CAJfpegu8omNZ613tLgUY7ukLV131tt7owR+JJ346Kombt79N0A@mail.gmail.com>
- <CAJfpegtNP8rQSS4Z14Ja4x-TOnejdhDRTsmmDD-Cccy2pkfVVw@mail.gmail.com>
- <20200811135419.GA1263716@miu.piliscsaba.redhat.com> <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com>
- <52483.1597190733@warthog.procyon.org.uk> <CAHk-=wiPx0UJ6Q1X=azwz32xrSeKnTJcH8enySwuuwnGKkHoPA@mail.gmail.com>
- <066f9aaf-ee97-46db-022f-5d007f9e6edb@redhat.com>
-In-Reply-To: <066f9aaf-ee97-46db-022f-5d007f9e6edb@redhat.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 12 Aug 2020 12:50:28 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgz5H-xYG4bOrHaEtY7rvFA1_6+mTSpjrgK8OsNbfF+Pw@mail.gmail.com>
-Message-ID: <CAHk-=wgz5H-xYG4bOrHaEtY7rvFA1_6+mTSpjrgK8OsNbfF+Pw@mail.gmail.com>
-Subject: Re: file metadata via fs API
-To:     Steven Whitehouse <swhiteho@redhat.com>
-Cc:     David Howells <dhowells@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, Karel Zak <kzak@redhat.com>,
-        Jeff Layton <jlayton@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
-        Christian Brauner <christian@brauner.io>,
-        Lennart Poettering <lennart@poettering.net>,
-        Linux API <linux-api@vger.kernel.org>,
-        Ian Kent <raven@themaw.net>,
-        LSM <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <5570a4d8-8779-6efe-b208-f7efa8ba9488@schaufler-ca.com>
+Content-Type: text/plain; charset=iso-8859-15; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Aug 12, 2020 at 12:34 PM Steven Whitehouse <swhiteho@redhat.com> wrote:
->
-> The point of this is to give us the ability to monitor mounts from
-> userspace.
+On 8/5/20 11:25 AM, Casey Schaufler wrote:
 
-We haven't had that before, I don't see why it's suddenly such a big deal.
+>>>>>
+>>>>> I think moving away from the idea that measuring "critical" data should
+>>>>> be limited to LSMs, will clarify this.
+>>>>>
+>>>>
+>>>> Are you suggesting that instead of calling the hooks LSM_STATE and LSM_POLICY, we should keep it more generic so that it can be utilized by any subsystem to measure their "critical data"?
+>>>
+>>> Policy, state, history or whim, it should be up to the security module
+>>> to determine what data it cares about, and how it should be measured.
+>>> Smack does not keep its policy in a single blob of data, it uses lists
+>>> which can be modified at will. Your definition of the behavior for
+>>> LSM_POLICY wouldn't work for Smack. That doesn't mean that there isn't
+>>> a viable way to measure the Smack policy, it just means that IMA isn't
+>>> the place for it. If SELinux wants its data measured, SELinux should be
+>>> providing the mechanism to do it.
+>>>
+>>> I guess that I'm agreeing with you in part. If you want a generic measurement
+>>> of "critical data", you don't need to assign a type to it, you have the
+>>> caller (a security module, a device driver or whatever) identify itself and
+>>> how it is going to deal with the data. That's very different from what you've
+>>> done to date.
+>>
+>> Agree.
+>>
+>> Like Stephen had stated earlier, the reason we kept separate hooks (STATE and POLICY) is because the data for state is usually small and therefore we measure the entire data. Whereas, policy data is usually quite large (a few MB) and hence we measure a hash of the policy.
+> 
+> SELinux should determine how it wants its data measured.
+> SELinux, not IMA, should determine if some "critical data"
+> be measured in total, by its hash or as a count of policy
+> rules. It would be handy for IMA to supply functions to do
+> data blobs and hashes, but it should be up to the caller to
+> decide if they meet their needs.
+> 
 
-The notification side I understand. Polling /proc files is not the answer.
+Per feedback from you all, my colleague Tushar has posted a patch series 
+that defines a generic IMA hook to measure critical data from other 
+subsystems (such as SELinux, AppArmor, Device-Mapper targets, etc.)
 
-But the whole "let's design this crazy subsystem for it" seems way
-overkill. I don't see anybody caring that deeply.
+Link to the patch series is given below:
 
-It really smells like "do it because we can, not because we must".
+	https://patchwork.kernel.org/patch/11711249/
 
-Who the hell cares about monitoring mounts at a kHz frequencies? If
-this is for MIS use, you want a nice GUI and not wasting CPU time
-polling.
+Shortly I will re-post the SELinux state and hash of policy measurement 
+patch that will be based on the above patch series.
 
-I'm starting to ignore the pull requests from David Howells, because
-by now they have had the same pattern for a couple of years now:
-esoteric new interfaces that seem overdesigned for corner-cases that
-I'm not seeing people clamoring for.
-
-I need (a) proof this is actualyl something real users care about and
-(b) way more open discussion and implementation from multiple parties.
-
-Because right now it looks like a small in-cabal of a couple of people
-who have wild ideas but I'm not seeing the wider use of it.
-
-Convince me otherwise. AGAIN. This is the exact same issue I had with
-the notification queues that I really wanted actual use-cases for, and
-feedback from actual outside users.
-
-I really think this is engineering for its own sake, rather than
-responding to actual user concerns.
-
-               Linus
+thanks,
+  -lakshmi
