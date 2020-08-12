@@ -2,69 +2,32 @@ Return-Path: <SRS0=RtEY=BW=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38186C433E0
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Aug 2020 14:46:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10A4FC433E0
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Aug 2020 15:08:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 12986204FD
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Aug 2020 14:46:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="VAqCelzN"
+	by mail.kernel.org (Postfix) with ESMTP id EF1AC20781
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Aug 2020 15:08:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726518AbgHLOqd (ORCPT
+        id S1726578AbgHLPIY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 Aug 2020 10:46:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49120 "EHLO
+        Wed, 12 Aug 2020 11:08:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52502 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726485AbgHLOqd (ORCPT
+        with ESMTP id S1726477AbgHLPIX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 Aug 2020 10:46:33 -0400
-Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E879BC061383
-        for <linux-security-module@vger.kernel.org>; Wed, 12 Aug 2020 07:46:32 -0700 (PDT)
-Received: by mail-ej1-x643.google.com with SMTP id o18so2553536eje.7
-        for <linux-security-module@vger.kernel.org>; Wed, 12 Aug 2020 07:46:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=CevgO8y+bID+0RAL78i6xuCLe1DAtuhsuxp9oVmqPQU=;
-        b=VAqCelzNyjnT6iNu6JL0OmE0MRSdkKZhVA4vV7FxA77mfestyhafmSBAI3sD50miSZ
-         J5esPSbvoNSwivwgD7HrxmmozNQhTCw6laCyOnzMciZMuFOjZbZpT6M/JpF1foP9AZlE
-         CTt6UyxNn0t4maELRb8vFmnciOaAi9XeCYAX0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CevgO8y+bID+0RAL78i6xuCLe1DAtuhsuxp9oVmqPQU=;
-        b=dyzRt3TJpcYxkHOFTWBFdCYHrhA9FRTsr/+g0Zn6Yv7vT/U3oZsUQ7G0WIFvVGWEtL
-         ElpOkhyqq/xIS0j2UScUGm0TWnj+MwGeJpcZLFEeDzvrq2craLwPYjcWEJhlKq47/06v
-         5XhdsE48rm7tB/BeWGyOlEkI3o1iEvvYyScAVoxrAVw7oeUNBmZYqNetrY0SOwZA/tk3
-         70K1P+Gtr11EX3g+g7JJD2YyRE6dCWNfP0dlbba00q56D7f/5uySwQ1nWG6GTaIow0jn
-         XqL6WiPPSFjbgb+KrDPah6aoHX0fMNsKhhXIWy5UJV3o/BB5yy9Wbz37uRoO+4SGgmdJ
-         J4wg==
-X-Gm-Message-State: AOAM530eL6y/j092XGIwHV444cd9XdkXur+kBSETyGQMVZK7otbQyqeh
-        A3PPgDa+PnlNqDdisI6VYSOhAmT1SZK0dz6e0lFkrg==
-X-Google-Smtp-Source: ABdhPJznRUZHYjzTK+AQg0Ekew5Jmkjqxgf9THY/0F2af+vjSso/3Yfi5HB6kL+u3+1mzuQyYpPhW+i0c+cYdCrgi/M=
-X-Received: by 2002:a17:906:4aca:: with SMTP id u10mr138835ejt.320.1597243591705;
- Wed, 12 Aug 2020 07:46:31 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com>
- <5C8E0FA8-274E-4B56-9B5A-88E768D01F3A@amacapital.net> <a6cd01ed-918a-0ed7-aa87-0585db7b6852@schaufler-ca.com>
- <CAJfpegvUBpb+C2Ab=CLAwWffOaeCedr-b7ZZKZnKvF4ph1nJrw@mail.gmail.com>
- <CAG48ez3Li+HjJ6-wJwN-A84WT2MFE131Dt+6YiU96s+7NO5wkQ@mail.gmail.com>
- <CAJfpeguh5VaDBdVkV3FJtRsMAvXHWUcBfEpQrYPEuX9wYzg9dA@mail.gmail.com>
- <CAHk-=whE42mFLi8CfNcdB6Jc40tXsG3sR+ThWAFihhBwfUbczA@mail.gmail.com>
- <CAJfpegtXtj2Q1wsR-3eUNA0S=_skzHF0CEmcK_Krd8dtKkWkGA@mail.gmail.com> <20200812143957.GQ1236603@ZenIV.linux.org.uk>
-In-Reply-To: <20200812143957.GQ1236603@ZenIV.linux.org.uk>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 12 Aug 2020 16:46:20 +0200
-Message-ID: <CAJfpegvFBdp3v9VcCp-wNDjZnQF3q6cufb-8PJieaGDz14sbBg@mail.gmail.com>
-Subject: Re: file metadata via fs API (was: [GIT PULL] Filesystem Information)
-To:     Al Viro <viro@zeniv.linux.org.uk>
+        Wed, 12 Aug 2020 11:08:23 -0400
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05E8FC061383;
+        Wed, 12 Aug 2020 08:08:23 -0700 (PDT)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1k5sMJ-00E8Uk-5O; Wed, 12 Aug 2020 15:08:07 +0000
+Date:   Wed, 12 Aug 2020 16:08:07 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Miklos Szeredi <miklos@szeredi.hu>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         Jann Horn <jannh@google.com>,
         Casey Schaufler <casey@schaufler-ca.com>,
@@ -80,53 +43,80 @@ Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         Ian Kent <raven@themaw.net>,
         LSM <linux-security-module@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: file metadata via fs API (was: [GIT PULL] Filesystem Information)
+Message-ID: <20200812150807.GR1236603@ZenIV.linux.org.uk>
+References: <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com>
+ <5C8E0FA8-274E-4B56-9B5A-88E768D01F3A@amacapital.net>
+ <a6cd01ed-918a-0ed7-aa87-0585db7b6852@schaufler-ca.com>
+ <CAJfpegvUBpb+C2Ab=CLAwWffOaeCedr-b7ZZKZnKvF4ph1nJrw@mail.gmail.com>
+ <CAG48ez3Li+HjJ6-wJwN-A84WT2MFE131Dt+6YiU96s+7NO5wkQ@mail.gmail.com>
+ <CAJfpeguh5VaDBdVkV3FJtRsMAvXHWUcBfEpQrYPEuX9wYzg9dA@mail.gmail.com>
+ <CAHk-=whE42mFLi8CfNcdB6Jc40tXsG3sR+ThWAFihhBwfUbczA@mail.gmail.com>
+ <CAJfpegtXtj2Q1wsR-3eUNA0S=_skzHF0CEmcK_Krd8dtKkWkGA@mail.gmail.com>
+ <20200812143957.GQ1236603@ZenIV.linux.org.uk>
+ <CAJfpegvFBdp3v9VcCp-wNDjZnQF3q6cufb-8PJieaGDz14sbBg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpegvFBdp3v9VcCp-wNDjZnQF3q6cufb-8PJieaGDz14sbBg@mail.gmail.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Aug 12, 2020 at 4:40 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> On Wed, Aug 12, 2020 at 09:23:23AM +0200, Miklos Szeredi wrote:
->
-> > Anyway, starting with just introducing the alt namespace without
-> > unification seems to be a good first step. If that turns out to be
-> > workable, we can revisit unification later.
->
-> Start with coming up with answers to the questions on semantics
-> upthread.  To spare you the joy of digging through the branches
-> of that thread, how's that for starters?
->
-> "Can those suckers be passed to
-> ...at() as starting points?
+On Wed, Aug 12, 2020 at 04:46:20PM +0200, Miklos Szeredi wrote:
 
-No.
+> > "Can those suckers be passed to
+> > ...at() as starting points?
+> 
+> No.
 
->  Can they be bound in namespace?
+Lovely.  And what of fchdir() to those?  Are they all non-directories?
+Because the starting point of ...at() can be simulated that way...
 
-No.
+> >  Can they be bound in namespace?
+> 
+> No.
+> 
+> > Can something be bound *on* them?
+> 
+> No.
+> 
+> >  What do they have for inodes
+> > and what maintains their inumbers (and st_dev, while we are at
+> > it)?
+> 
+> Irrelevant.  Can be some anon dev + shared inode.
+> 
+> The only attribute of an attribute that I can think of that makes
+> sense would be st_size, but even that is probably unimportant.
+> 
+> >  Can _they_ have secondaries like that (sensu Swift)?
+> 
+> Reference?
 
-> Can something be bound *on* them?
+http://www.online-literature.com/swift/3515/
+	So, naturalists observe, a flea
+	Has smaller fleas that on him prey;
+	And these have smaller still to bite 'em,
+	And so proceed ad infinitum.
+of course ;-)
+IOW, can the things in those trees have secondary trees on them, etc.?
+Not "will they have it in your originally intended use?" - "do we need
+the architecture of the entire thing to be capable to deal with that?"
 
-No.
+> > Is that a flat space, or can they be directories?"
+> 
+> Yes it has a directory tree.   But you can't mkdir, rename, link,
+> symlink, etc on anything in there.
 
->  What do they have for inodes
-> and what maintains their inumbers (and st_dev, while we are at
-> it)?
+That kills the "shared inode" part - you'll get deadlocks from
+hell that way.  "Can't mkdir" doesn't save you from that.  BTW,
+what of unlink()?  If the tree shape is not a hardwired constant,
+you get to decide how it's initially populated...
 
-Irrelevant.  Can be some anon dev + shared inode.
-
-The only attribute of an attribute that I can think of that makes
-sense would be st_size, but even that is probably unimportant.
-
->  Can _they_ have secondaries like that (sensu Swift)?
-
-Reference?
-
-> Is that a flat space, or can they be directories?"
-
-Yes it has a directory tree.   But you can't mkdir, rename, link,
-symlink, etc on anything in there.
-
-Thanks,
-Miklos
+Next: what will that tree be attached to?  As in, "what's the parent
+of its root"?  And while we are at it, what will be the struct mount
+used with those - same as the original file, something different
+attached to it, something created on the fly for each pathwalk and
+lazy-umounted?  And see above re fchdir() - if they can be directories,
+it's very much in the game.
