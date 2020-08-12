@@ -2,72 +2,59 @@ Return-Path: <SRS0=RtEY=BW=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50013C433E0
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Aug 2020 13:09:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5405C433E0
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Aug 2020 13:33:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2C0A920639
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Aug 2020 13:09:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9204C207F7
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Aug 2020 13:33:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="f3imS+8n"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ifdemghE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727050AbgHLNJt (ORCPT
+        id S1728138AbgHLNdV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 Aug 2020 09:09:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34146 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727000AbgHLNJm (ORCPT
+        Wed, 12 Aug 2020 09:33:21 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:53408 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728021AbgHLNdV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 Aug 2020 09:09:42 -0400
-Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3ECC9C06178A
-        for <linux-security-module@vger.kernel.org>; Wed, 12 Aug 2020 06:09:39 -0700 (PDT)
-Received: by mail-ed1-x544.google.com with SMTP id c10so1469370edk.6
-        for <linux-security-module@vger.kernel.org>; Wed, 12 Aug 2020 06:09:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dDaKIw34dbl2BS19WgtGHw4f1WrFR2cMDs9vgYrFqRA=;
-        b=f3imS+8nyoc+AeGEyfplnYFj1FbYpGqeslu9w52ddIfQ/9dI/X2nGcCAKVKStLE6Dp
-         9/bG54SxegeZiSz6ojev1zwm6xgk7bREoz2f33F4iLpDVdGYn749mq7xMDWbwNmnTo5r
-         sy2qzQIlhF5PDon4IfaUAfEgRmQOA5q+0cTuo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dDaKIw34dbl2BS19WgtGHw4f1WrFR2cMDs9vgYrFqRA=;
-        b=AJETAb16UEy7um9MEv0VgHLcJjiMwm+n4rXzbRGaz8lIA2D3qFgcNyDp72IPS24U8e
-         2cVojPUiLklKoYeuoEUibK5NRMRBOU6Aif3CCHyfGclRvkY5yh3jZQXRGRXytsDHegkW
-         BjOIgXYHveWq4Z7gDFLhHbc2uc3uqjZ2Ium4qVkt+mF2yheNKxCBOWaiDbYz9Qceb98v
-         NSULET3+5q+ykDKVsax7IiMqMkxMupDsysYgmou4q9QBM7Q8CMfavn43NRD8TsI9xRgf
-         QDzhrzb5vJgjRlYWQZpY8ZtbixuxaQXEypL2+X4jJ6HarkR+L2XPQD82W8eeaeas8WWo
-         HYTQ==
-X-Gm-Message-State: AOAM530ncjBx6WFYHXs3vgE+7tmRKWW91fYX8BWR3AuOKUjvjEJnJEaT
-        00YPke89XCfvG8fBQ341m6oGz+ftIJwPSv74oCwwIw==
-X-Google-Smtp-Source: ABdhPJy+Hr/67owQkNGvK1aBkG90FSTzz/k2k/Fp5hemfnktI3EmSZYkogSqjcd19XWiEp4n5RNRJT0KfkhES6hsxXo=
-X-Received: by 2002:a50:fb10:: with SMTP id d16mr31093480edq.134.1597237777804;
- Wed, 12 Aug 2020 06:09:37 -0700 (PDT)
-MIME-Version: 1.0
-References: <1842689.1596468469@warthog.procyon.org.uk> <1845353.1596469795@warthog.procyon.org.uk>
- <CAJfpegunY3fuxh486x9ysKtXbhTE0745ZCVHcaqs9Gww9RV2CQ@mail.gmail.com>
- <ac1f5e3406abc0af4cd08d818fe920a202a67586.camel@themaw.net>
- <CAJfpegu8omNZ613tLgUY7ukLV131tt7owR+JJ346Kombt79N0A@mail.gmail.com>
- <CAJfpegtNP8rQSS4Z14Ja4x-TOnejdhDRTsmmDD-Cccy2pkfVVw@mail.gmail.com>
- <20200811135419.GA1263716@miu.piliscsaba.redhat.com> <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com>
- <20200812101405.brquf7xxt2q22dd3@ws.net.home>
-In-Reply-To: <20200812101405.brquf7xxt2q22dd3@ws.net.home>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 12 Aug 2020 15:09:26 +0200
-Message-ID: <CAJfpegs4gzvJMBz=su8KgXXxX41tv8tVhO88Eap9pDeHRaSDPA@mail.gmail.com>
-Subject: Re: file metadata via fs API (was: [GIT PULL] Filesystem Information)
-To:     Karel Zak <kzak@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Wed, 12 Aug 2020 09:33:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1597239200;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=NWN81718k5D1jMF9UtCdbu9hqX0kFHSaNB7Aldah82c=;
+        b=ifdemghE2u0Vt1oEkeybVJpvNgo6DDOhN8JilzZRosoFa8J5LcKTmXKJOPXCPni2s9JTot
+        i9ZoxLq62XethR52iwn4JGqflEm0mQVvHCQaRkvHMXHGGO1a4iiWnaoiKz/N5hEQrXcK1w
+        NX7DHRLAOPmoV1oy09kKQm5pMPu+tvo=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-82-ig7PBHqSNSKE-wAwBjuKtw-1; Wed, 12 Aug 2020 09:33:18 -0400
+X-MC-Unique: ig7PBHqSNSKE-wAwBjuKtw-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B8D0380183C;
+        Wed, 12 Aug 2020 13:33:16 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-127.rdu2.redhat.com [10.10.120.127])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D88E45D73A;
+        Wed, 12 Aug 2020 13:33:13 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAJfpegs4gzvJMBz=su8KgXXxX41tv8tVhO88Eap9pDeHRaSDPA@mail.gmail.com>
+References: <CAJfpegs4gzvJMBz=su8KgXXxX41tv8tVhO88Eap9pDeHRaSDPA@mail.gmail.com> <1842689.1596468469@warthog.procyon.org.uk> <1845353.1596469795@warthog.procyon.org.uk> <CAJfpegunY3fuxh486x9ysKtXbhTE0745ZCVHcaqs9Gww9RV2CQ@mail.gmail.com> <ac1f5e3406abc0af4cd08d818fe920a202a67586.camel@themaw.net> <CAJfpegu8omNZ613tLgUY7ukLV131tt7owR+JJ346Kombt79N0A@mail.gmail.com> <CAJfpegtNP8rQSS4Z14Ja4x-TOnejdhDRTsmmDD-Cccy2pkfVVw@mail.gmail.com> <20200811135419.GA1263716@miu.piliscsaba.redhat.com> <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com> <20200812101405.brquf7xxt2q22dd3@ws.net.home>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     dhowells@redhat.com, Karel Zak <kzak@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
         Al Viro <viro@zeniv.linux.org.uk>,
         Jeff Layton <jlayton@redhat.com>,
         Miklos Szeredi <mszeredi@redhat.com>,
@@ -78,37 +65,49 @@ Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         Ian Kent <raven@themaw.net>,
         LSM <linux-security-module@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: file metadata via fs API (was: [GIT PULL] Filesystem Information)
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <133507.1597239193.1@warthog.procyon.org.uk>
+Date:   Wed, 12 Aug 2020 14:33:13 +0100
+Message-ID: <133508.1597239193@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Aug 12, 2020 at 12:14 PM Karel Zak <kzak@redhat.com> wrote:
+Miklos Szeredi <miklos@szeredi.hu> wrote:
 
-> For example,  by fsinfo(FSINFO_ATTR_MOUNT_TOPOLOGY) you get all
-> mountpoint propagation setting and relations by one syscall,
+> You said yourself, that what's really needed is e.g. consistent
+> snapshot of a complete mount tree topology.  And to get the complete
+> topology FSINFO_ATTR_MOUNT_TOPOLOGY and FSINFO_ATTR_MOUNT_CHILDREN are
+> needed for *each* individual mount.
 
-That's just an arbitrary grouping of attributes.
+That's not entirely true.
 
-You said yourself, that what's really needed is e.g. consistent
-snapshot of a complete mount tree topology.  And to get the complete
-topology FSINFO_ATTR_MOUNT_TOPOLOGY and FSINFO_ATTR_MOUNT_CHILDREN are
-needed for *each* individual mount.  The topology can obviously change
-between those calls.
+FSINFO_ATTR_MOUNT_ALL can be used instead of FSINFO_ATTR_MOUNT_CHILDREN if you
+want to scan an entire subtree in one go.  It returns the same record type.
 
-So there's no fundamental difference between getting individual
-attributes or getting attribute groups in this respect.
+The result from ALL/CHILDREN includes sufficient information to build the
+tree.  That only requires the parent ID.  All the rest of the information
+TOPOLOGY exposes is to do with propagation.
 
-> It would be also nice to avoid some strings formatting and separators
-> like we use in the current mountinfo.
+Now, granted, I didn't include all of the topology info in the records
+returned by ALL/CHILDREN because I don't expect it to change very often.  But
+you can check the event counter supplied with each record to see if it might
+have changed - and then call TOPOLOGY on the ones that changed.
 
-I think quoting non-printable is okay.
+If it simplifies life, I could add the propagation info into ALL/CHILDREN so
+that you only need to call ALL to scan everything.  It requires larger
+buffers, however.
 
-> I can imagine multiple values separated by binary header (like we already
-> have for watch_notification, inotify, etc):
+> Adding a few generic binary interfaces is okay.   Adding many
+> specialized binary interfaces is a PITA.
 
-Adding a few generic binary interfaces is okay.   Adding many
-specialized binary interfaces is a PITA.
+Text interfaces are also a PITA, especially when you may get multiple pieces
+of information returned in one buffer and especially when you throw in
+character escaping.  Of course, we can do it - and we do do it all over - but
+that doesn't make it efficient.
 
-Thanks,
-Miklos
+David
+
