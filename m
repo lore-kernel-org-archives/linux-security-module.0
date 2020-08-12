@@ -7,49 +7,50 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 371FCC433E0
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Aug 2020 10:14:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ADEEC433DF
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Aug 2020 11:28:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1681720781
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Aug 2020 10:14:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A60320829
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Aug 2020 11:28:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Isi6oYcu"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XjnyI23b"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727078AbgHLKOV (ORCPT
+        id S1726804AbgHLL2l (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 Aug 2020 06:14:21 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:58085 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727780AbgHLKOV (ORCPT
+        Wed, 12 Aug 2020 07:28:41 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:57297 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726453AbgHLL2i (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 Aug 2020 06:14:21 -0400
+        Wed, 12 Aug 2020 07:28:38 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1597227260;
+        s=mimecast20190719; t=1597231717;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=xlMaPj1QKypnrQ0JYf3BSvOZztYvxS9nKRk9zqeHA7Y=;
-        b=Isi6oYcuaQL/N5QcBPC06FeukL+0Z42GTgP/TBPHqA3thEmAptzRQn4XOwuyRX7mXH4eyo
-        ehyjI5ECuIBCj6SvgDZomHldUAJFyhivKGdPGoVGJDBgrg5mgWmb4/KCrOTfwaidESwh09
-        mbGMPqyhlQFJcSurNHcIOKiOG+HzUlo=
+        bh=KjV6K3m7aYpDUqAWmC+w9QBoR6kWl/pmzBrtpDLCLfY=;
+        b=XjnyI23bd/wx5qQzWg1Yl3tHGH5/c9Toj6qSYmUJCSBSf0FmfjNUkCt4XGwMlpwEgr8PtQ
+        iHvnwbQDGy47AJD0PdQiEBLF1kAgIzqJ6F1ygD0EwOWy0BL7BTVpA6+HhUGH0bVdHZY3Yl
+        JKiIiqDhW3sbDtU+2a/cGRY04+/dnX0=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-50-nnbUiC46N7C0aUmdRLKZbg-1; Wed, 12 Aug 2020 06:14:16 -0400
-X-MC-Unique: nnbUiC46N7C0aUmdRLKZbg-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+ us-mta-244-5J3rQyDiMHeKboA2VdWEqw-1; Wed, 12 Aug 2020 07:28:33 -0400
+X-MC-Unique: 5J3rQyDiMHeKboA2VdWEqw-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 580991DE0;
-        Wed, 12 Aug 2020 10:14:14 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 56817802B54;
+        Wed, 12 Aug 2020 11:28:31 +0000 (UTC)
 Received: from ws.net.home (unknown [10.40.193.69])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B7C6B60C84;
-        Wed, 12 Aug 2020 10:14:08 +0000 (UTC)
-Date:   Wed, 12 Aug 2020 12:14:05 +0200
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id CA50710013D7;
+        Wed, 12 Aug 2020 11:28:27 +0000 (UTC)
+Date:   Wed, 12 Aug 2020 13:28:25 +0200
 From:   Karel Zak <kzak@redhat.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Steven Whitehouse <swhiteho@redhat.com>,
         David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
         Jeff Layton <jlayton@redhat.com>,
         Miklos Szeredi <mszeredi@redhat.com>,
@@ -60,76 +61,55 @@ Cc:     Miklos Szeredi <miklos@szeredi.hu>,
         Ian Kent <raven@themaw.net>,
         LSM <linux-security-module@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: file metadata via fs API (was: [GIT PULL] Filesystem Information)
-Message-ID: <20200812101405.brquf7xxt2q22dd3@ws.net.home>
-References: <1842689.1596468469@warthog.procyon.org.uk>
- <1845353.1596469795@warthog.procyon.org.uk>
- <CAJfpegunY3fuxh486x9ysKtXbhTE0745ZCVHcaqs9Gww9RV2CQ@mail.gmail.com>
- <ac1f5e3406abc0af4cd08d818fe920a202a67586.camel@themaw.net>
- <CAJfpegu8omNZ613tLgUY7ukLV131tt7owR+JJ346Kombt79N0A@mail.gmail.com>
+Subject: Re: file metadata via fs API
+Message-ID: <20200812112825.b52tqeuro2lquxlw@ws.net.home>
+References: <CAJfpegu8omNZ613tLgUY7ukLV131tt7owR+JJ346Kombt79N0A@mail.gmail.com>
  <CAJfpegtNP8rQSS4Z14Ja4x-TOnejdhDRTsmmDD-Cccy2pkfVVw@mail.gmail.com>
  <20200811135419.GA1263716@miu.piliscsaba.redhat.com>
  <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com>
+ <52483.1597190733@warthog.procyon.org.uk>
+ <CAJfpegt=cQ159kEH9zCYVHV7R_08jwMxF0jKrSUV5E=uBg4Lzw@mail.gmail.com>
+ <98802.1597220949@warthog.procyon.org.uk>
+ <CAJfpegsVJo9e=pHf3YGWkE16fT0QaNGhgkUdq4KUQypXaD=OgQ@mail.gmail.com>
+ <d2d179c7-9b60-ca1a-0c9f-d308fc7af5ce@redhat.com>
+ <CAJfpeguMjU+n-JXE6aUQQGeMpCS4bsy4HQ37NHJ8aD8Aeg2qhA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+In-Reply-To: <CAJfpeguMjU+n-JXE6aUQQGeMpCS4bsy4HQ37NHJ8aD8Aeg2qhA@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Aug 11, 2020 at 08:20:24AM -0700, Linus Torvalds wrote:
-> IOW, if you do something more along the lines of
+On Wed, Aug 12, 2020 at 12:04:14PM +0200, Miklos Szeredi wrote:
+> On Wed, Aug 12, 2020 at 11:43 AM Steven Whitehouse <swhiteho@redhat.com> wrote:
+> >
+> > Hi,
+> >
+> > On 12/08/2020 09:37, Miklos Szeredi wrote:
+> > [snip]
+> > >
+> > > b) The awarded performance boost is not warranted for the use cases it
+> > > is designed for.
 > 
->        fd = open(""foo/bar", O_PATH);
->        metadatafd = openat(fd, "metadataname", O_ALT);
+> >
+> > This is a key point. One of the main drivers for this work is the
+> > efficiency improvement for large numbers of mounts. Ian and Karel have
+> > already provided performance measurements showing a significant benefit
+> > compared with what we have today. If you want to propose this
+> > alternative interface then you need to show that it can sustain similar
+> > levels of performance, otherwise it doesn't solve the problem. So
+> > performance numbers here would be helpful.
 > 
-> it might be workable.
+> Definitely.   Will measure performance with the interface which Linus proposed.
 
-I have thought we want to replace mountinfo to reduce overhead. If I
-understand your idea than we will need openat()+read()+close() for
-each attribute? Sounds like a pretty expensive interface.
+The proposal is based on paths and open(), how do you plan to deal
+with mount IDs? David's fsinfo() allows to ask for mount info by mount
+ID and it works well with mount notification where you get the ID. The
+collaboration with notification interface is critical for our use-cases.
 
-The question is also how consistent results you get if you will read
-information about the same mountpoint by multiple openat()+read()+close()
-calls. 
-
-For example,  by fsinfo(FSINFO_ATTR_MOUNT_TOPOLOGY) you get all
-mountpoint propagation setting and relations by one syscall, with
-your idea you will read parent, slave and flags by multiple read() and
-without any lock. Sounds like you can get a mess if someone moves or
-reconfigure the mountpoint or so.
-  
-
-openat(O_ALT) seems elegant at first glance, but it will be necessary to 
-provide a richer (complex) answers by read() to reduce overhead and 
-to make it more consistent for userspace. 
-
-It would be also nice to avoid some strings formatting and separators
-like we use in the current mountinfo.
-
-I can imagine multiple values separated by binary header (like we already 
-have for watch_notification, inotify, etc):
-
-  fd = openat(fd, "mountinfo", O_ALT);
-
-  sz = read(fd, buf, BUFSZ);
-  p = buf;
-
-  while (sz) {
-     struct alt_metadata *alt = (struct alt_metadata *) p;
-
-     char *varname = alt->name;
-     char *data = alt->data;
-     int len  = alt->len;
-
-     sz -= len;
-     p += len;
-  }
-
-
-  Karel
+    Karel
 
 -- 
  Karel Zak  <kzak@redhat.com>
