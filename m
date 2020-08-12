@@ -2,186 +2,131 @@ Return-Path: <SRS0=RtEY=BW=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A766C433E0
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Aug 2020 14:46:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38186C433E0
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Aug 2020 14:46:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 44815204FD
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Aug 2020 14:46:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 12986204FD
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Aug 2020 14:46:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HGQFwkMB"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="VAqCelzN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726637AbgHLOqB (ORCPT
+        id S1726518AbgHLOqd (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 Aug 2020 10:46:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49038 "EHLO
+        Wed, 12 Aug 2020 10:46:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726485AbgHLOqB (ORCPT
+        with ESMTP id S1726485AbgHLOqd (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 Aug 2020 10:46:01 -0400
-Received: from mail-il1-x142.google.com (mail-il1-x142.google.com [IPv6:2607:f8b0:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3492C061383;
-        Wed, 12 Aug 2020 07:46:00 -0700 (PDT)
-Received: by mail-il1-x142.google.com with SMTP id p13so1858958ilh.4;
-        Wed, 12 Aug 2020 07:46:00 -0700 (PDT)
+        Wed, 12 Aug 2020 10:46:33 -0400
+Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E879BC061383
+        for <linux-security-module@vger.kernel.org>; Wed, 12 Aug 2020 07:46:32 -0700 (PDT)
+Received: by mail-ej1-x643.google.com with SMTP id o18so2553536eje.7
+        for <linux-security-module@vger.kernel.org>; Wed, 12 Aug 2020 07:46:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=kQOJV8hQKKWi1Q4IBwonjxI4nlnYdAyxL48CghY2b34=;
-        b=HGQFwkMBI0qZO7MrD0rp1rh/DwuatULSWC/TiTjc9FpR639vDt8wLod16lHEAgWVXH
-         XY/Olcv9YPJYu5mbQ//6e/+4DgrFb2uQNUoGS3NSOjDW3Z+GX1guEJ8A5V/+WuogzmwZ
-         qKc9hbiTlyrh/T0KKY6Y9dDr4uMbK6x4uLivHygeyGF1RnzfICFM6Jk8oc+wvWnk+Xjc
-         2yv81izp0yfN4CzEpLu8fNlunwIjjUt2c7fono233rGNqbuOlrCVp/N8zDYXr/Ob99Jm
-         eUwgbm0s0S5ZhVeIpen7HznxUNNDmhXFS1QDH9omiN2bvck9akJvRUz2WQEpMvLM1v0S
-         B8wg==
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=CevgO8y+bID+0RAL78i6xuCLe1DAtuhsuxp9oVmqPQU=;
+        b=VAqCelzNyjnT6iNu6JL0OmE0MRSdkKZhVA4vV7FxA77mfestyhafmSBAI3sD50miSZ
+         J5esPSbvoNSwivwgD7HrxmmozNQhTCw6laCyOnzMciZMuFOjZbZpT6M/JpF1foP9AZlE
+         CTt6UyxNn0t4maELRb8vFmnciOaAi9XeCYAX0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=kQOJV8hQKKWi1Q4IBwonjxI4nlnYdAyxL48CghY2b34=;
-        b=D8wUSmkNZBxuObflQKSY2ViJdaFvyC4PJTzq7KHd58X7fgXUNyWukWM3fcV5KvNUVO
-         mopMHZPCFVxumKI0i8shEBsY1BX3Wjn6kV+0rDxEHXbCzFuV+NhHihjNwKAgho+3J7iv
-         6US6gTMsTKBamXTqfPoCB92YUMHtZFgjGOYkll/lSQjWNrPb44f3tPEoCGWiKgdKNM1l
-         feTGsWSRKqcCgD3Sx25TrXtI02/8QAHbLVfp4F3VW2zRmZWuK1JScA0FLqZWoUy1kCNK
-         tdOnZ5rJr8xW85KX9axb22EGe+U2tuPuFwCYo1R9NYisG4H/4Q+rOGuCMhhprGTlSrZf
-         so4w==
-X-Gm-Message-State: AOAM530tDB9lArvmlVVkc5LxQI7Grm74UttCcwlOHEA1tH0Py1Poc6Z4
-        5rI92Mj0qTvS4QtA/rmpSyw=
-X-Google-Smtp-Source: ABdhPJwhgRbaRRSqe0vcGsrFV97VYVYstE/PFYHOorVWwg7UGiBOlCHPQtwmMYxo8Rf89OCc3e2t5w==
-X-Received: by 2002:a92:6d0c:: with SMTP id i12mr8272ilc.37.1597243558796;
-        Wed, 12 Aug 2020 07:45:58 -0700 (PDT)
-Received: from anon-dhcp-152.1015granger.net (c-68-61-232-219.hsd1.mi.comcast.net. [68.61.232.219])
-        by smtp.gmail.com with ESMTPSA id k14sm1089731ion.17.2020.08.12.07.45.56
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Aug 2020 07:45:57 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 13.4 \(3608.80.23.2.2\))
-Subject: Re: [dm-devel] [RFC PATCH v5 00/11] Integrity Policy Enforcement LSM
- (IPE)
-From:   Chuck Lever <chucklever@gmail.com>
-In-Reply-To: <1597159969.4325.21.camel@HansenPartnership.com>
-Date:   Wed, 12 Aug 2020 10:45:56 -0400
-Cc:     Mimi Zohar <zohar@linux.ibm.com>, James Morris <jmorris@namei.org>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Pavel Machek <pavel@ucw.cz>, Sasha Levin <sashal@kernel.org>,
-        snitzer@redhat.com, dm-devel@redhat.com,
-        tyhicks@linux.microsoft.com, agk@redhat.com,
-        Paul Moore <paul@paul-moore.com>,
-        Jonathan Corbet <corbet@lwn.net>, nramas@linux.microsoft.com,
-        serge@hallyn.com, pasha.tatashin@soleen.com,
-        Jann Horn <jannh@google.com>, linux-block@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, mdsakib@microsoft.com,
-        open list <linux-kernel@vger.kernel.org>, eparis@redhat.com,
-        linux-security-module@vger.kernel.org, linux-audit@redhat.com,
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=CevgO8y+bID+0RAL78i6xuCLe1DAtuhsuxp9oVmqPQU=;
+        b=dyzRt3TJpcYxkHOFTWBFdCYHrhA9FRTsr/+g0Zn6Yv7vT/U3oZsUQ7G0WIFvVGWEtL
+         ElpOkhyqq/xIS0j2UScUGm0TWnj+MwGeJpcZLFEeDzvrq2craLwPYjcWEJhlKq47/06v
+         5XhdsE48rm7tB/BeWGyOlEkI3o1iEvvYyScAVoxrAVw7oeUNBmZYqNetrY0SOwZA/tk3
+         70K1P+Gtr11EX3g+g7JJD2YyRE6dCWNfP0dlbba00q56D7f/5uySwQ1nWG6GTaIow0jn
+         XqL6WiPPSFjbgb+KrDPah6aoHX0fMNsKhhXIWy5UJV3o/BB5yy9Wbz37uRoO+4SGgmdJ
+         J4wg==
+X-Gm-Message-State: AOAM530eL6y/j092XGIwHV444cd9XdkXur+kBSETyGQMVZK7otbQyqeh
+        A3PPgDa+PnlNqDdisI6VYSOhAmT1SZK0dz6e0lFkrg==
+X-Google-Smtp-Source: ABdhPJznRUZHYjzTK+AQg0Ekew5Jmkjqxgf9THY/0F2af+vjSso/3Yfi5HB6kL+u3+1mzuQyYpPhW+i0c+cYdCrgi/M=
+X-Received: by 2002:a17:906:4aca:: with SMTP id u10mr138835ejt.320.1597243591705;
+ Wed, 12 Aug 2020 07:46:31 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com>
+ <5C8E0FA8-274E-4B56-9B5A-88E768D01F3A@amacapital.net> <a6cd01ed-918a-0ed7-aa87-0585db7b6852@schaufler-ca.com>
+ <CAJfpegvUBpb+C2Ab=CLAwWffOaeCedr-b7ZZKZnKvF4ph1nJrw@mail.gmail.com>
+ <CAG48ez3Li+HjJ6-wJwN-A84WT2MFE131Dt+6YiU96s+7NO5wkQ@mail.gmail.com>
+ <CAJfpeguh5VaDBdVkV3FJtRsMAvXHWUcBfEpQrYPEuX9wYzg9dA@mail.gmail.com>
+ <CAHk-=whE42mFLi8CfNcdB6Jc40tXsG3sR+ThWAFihhBwfUbczA@mail.gmail.com>
+ <CAJfpegtXtj2Q1wsR-3eUNA0S=_skzHF0CEmcK_Krd8dtKkWkGA@mail.gmail.com> <20200812143957.GQ1236603@ZenIV.linux.org.uk>
+In-Reply-To: <20200812143957.GQ1236603@ZenIV.linux.org.uk>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Wed, 12 Aug 2020 16:46:20 +0200
+Message-ID: <CAJfpegvFBdp3v9VcCp-wNDjZnQF3q6cufb-8PJieaGDz14sbBg@mail.gmail.com>
+Subject: Re: file metadata via fs API (was: [GIT PULL] Filesystem Information)
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Jann Horn <jannh@google.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Andy Lutomirski <luto@amacapital.net>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-integrity@vger.kernel.org,
-        jaskarankhurana@linux.microsoft.com
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <20F82AFA-D0AC-479B-AB1D-0D354AE19498@gmail.com>
-References: <20200728213614.586312-1-deven.desai@linux.microsoft.com>
- <20200802115545.GA1162@bug> <20200802140300.GA2975990@sasha-vm>
- <20200802143143.GB20261@amd> <1596386606.4087.20.camel@HansenPartnership.com>
- <fb35a1f7-7633-a678-3f0f-17cf83032d2b@linux.microsoft.com>
- <1596639689.3457.17.camel@HansenPartnership.com>
- <alpine.LRH.2.21.2008050934060.28225@namei.org>
- <b08ae82102f35936427bf138085484f75532cff1.camel@linux.ibm.com>
- <329E8DBA-049E-4959-AFD4-9D118DEB176E@gmail.com>
- <da6f54d0438ee3d3903b2c75fcfbeb0afdf92dc2.camel@linux.ibm.com>
- <1597073737.3966.12.camel@HansenPartnership.com>
- <6E907A22-02CC-42DD-B3CD-11D304F3A1A8@gmail.com>
- <1597124623.30793.14.camel@HansenPartnership.com>
- <16C3BF97-A7D3-488A-9D26-7C9B18AD2084@gmail.com>
- <1597159969.4325.21.camel@HansenPartnership.com>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>
-X-Mailer: Apple Mail (2.3608.80.23.2.2)
+        David Howells <dhowells@redhat.com>,
+        Karel Zak <kzak@redhat.com>, Jeff Layton <jlayton@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        Christian Brauner <christian@brauner.io>,
+        Lennart Poettering <lennart@poettering.net>,
+        Linux API <linux-api@vger.kernel.org>,
+        Ian Kent <raven@themaw.net>,
+        LSM <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Wed, Aug 12, 2020 at 4:40 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> On Wed, Aug 12, 2020 at 09:23:23AM +0200, Miklos Szeredi wrote:
+>
+> > Anyway, starting with just introducing the alt namespace without
+> > unification seems to be a good first step. If that turns out to be
+> > workable, we can revisit unification later.
+>
+> Start with coming up with answers to the questions on semantics
+> upthread.  To spare you the joy of digging through the branches
+> of that thread, how's that for starters?
+>
+> "Can those suckers be passed to
+> ...at() as starting points?
 
+No.
 
-> On Aug 11, 2020, at 11:32 AM, James Bottomley =
-<James.Bottomley@HansenPartnership.com> wrote:
->=20
-> On Tue, 2020-08-11 at 10:48 -0400, Chuck Lever wrote:
->>> On Aug 11, 2020, at 1:43 AM, James Bottomley
->>> <James.Bottomley@HansenPartnership.com> wrote:
->>> On Mon, 2020-08-10 at 19:36 -0400, Chuck Lever wrote:
-> [...]
->>>> Thanks for the help! I just want to emphasize that documentation
->>>> (eg, a specification) will be critical for remote filesystems.
->>>>=20
->>>> If any of this is to be supported by a remote filesystem, then we
->>>> need an unencumbered description of the new metadata format
->>>> rather than code. GPL-encumbered formats cannot be contributed to
->>>> the NFS standard, and are probably difficult for other
->>>> filesystems that are not Linux-native, like SMB, as well.
->>>=20
->>> I don't understand what you mean by GPL encumbered formats.  The
->>> GPL is a code licence not a data or document licence.
->>=20
->> IETF contributions occur under a BSD-style license incompatible
->> with the GPL.
->>=20
->> https://trustee.ietf.org/trust-legal-provisions.html
->>=20
->> Non-Linux implementers (of OEM storage devices) rely on such
->> standards processes to indemnify them against licensing claims.
->=20
-> Well, that simply means we won't be contributing the Linux
-> implementation, right?
+>  Can they be bound in namespace?
 
-At the present time, there is nothing but the Linux implementation.
-There's no English description, there's no specification of the
-formats, the format is described only by source code.
+No.
 
-The only way to contribute current IMA metadata formats to an open
-standards body like the IETF is to look at encumbered code first.
-We would effectively be contributing an implementation in this case.
+> Can something be bound *on* them?
 
-(I'm not saying the current formats should or should not be
-contributed; merely that there is a legal stumbling block to doing
-so that can be avoided for newly defined formats).
+No.
 
+>  What do they have for inodes
+> and what maintains their inumbers (and st_dev, while we are at
+> it)?
 
-> Well, let me put the counterpoint: I can write a book about how linux
-> device drivers work (which includes describing the data formats)
+Irrelevant.  Can be some anon dev + shared inode.
 
+The only attribute of an attribute that I can think of that makes
+sense would be st_size, but even that is probably unimportant.
 
-Our position is that someone who reads that book and implements those
-formats under a non-GPL-compatible license would be in breach of the
-GPL.
+>  Can _they_ have secondaries like that (sensu Swift)?
 
-The point of the standards process is to indemnify implementing
-and distributing under _any_ license what has been published by the
-standards body. That legally enables everyone to use the published
-protocol/format in their own code no matter how it happens to be
-licensed.
+Reference?
 
+> Is that a flat space, or can they be directories?"
 
-> Fine, good grief, people who take a sensible view of this can write =
-the
-> data format down and publish it under any licence you like then you =
-can
-> pick it up again safely.
+Yes it has a directory tree.   But you can't mkdir, rename, link,
+symlink, etc on anything in there.
 
-
-That's what I proposed. Write it down under the IETF Trust legal
-provisions license. And I volunteered to do that.
-
-All I'm saying is that description needs to come before code.
-
-
---
-Chuck Lever
-chucklever@gmail.com
-
-
-
+Thanks,
+Miklos
