@@ -2,116 +2,95 @@ Return-Path: <SRS0=RtEY=BW=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL
+X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEF01C433E0
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Aug 2020 20:37:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86282C433DF
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Aug 2020 21:30:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C76A42080C
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Aug 2020 20:37:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="ImHXDqrP"
+	by mail.kernel.org (Postfix) with ESMTP id 586B22080C
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Aug 2020 21:30:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726573AbgHLUho (ORCPT
+        id S1726546AbgHLVa6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 Aug 2020 16:37:44 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:59092 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726030AbgHLUhn (ORCPT
+        Wed, 12 Aug 2020 17:30:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54832 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726030AbgHLVa6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 Aug 2020 16:37:43 -0400
-Received: from [192.168.0.104] (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 7D4AC20B4908;
-        Wed, 12 Aug 2020 13:37:42 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7D4AC20B4908
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1597264662;
-        bh=Tny2pnFNQ9hZUYldUbLplhq2a8CRyeGK5gKXS0FC5Ls=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=ImHXDqrPSRfYm7TycdwQ548TDuo5B86Aq8OlGHQ3N/VC9Ho7HqPd7t13a1cLWE38E
-         OdEkCIsFTO8kLm89D3GyAJLW6DWoGdkV6hodM4mAD0jsM9Kf/1tX8eidQ2JaxG4Uu/
-         CUidwV9uPzhWVvDTMi8pcRT1E0LNPevuwxD1AdcY=
-Subject: Re: [PATCH v6 0/4] LSM: Measure security module data
-To:     Casey Schaufler <casey@schaufler-ca.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Tyler Hicks <tyhicks@linux.microsoft.com>
-Cc:     stephen.smalley.work@gmail.com, sashal@kernel.org,
-        jmorris@namei.org, linux-integrity@vger.kernel.org,
-        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20200805004331.20652-1-nramas@linux.microsoft.com>
- <f3971f35-309d-c3e5-9126-69add7ad4c11@schaufler-ca.com>
- <50587a3e-bcb5-c68e-c16c-41baf68b4d4a@linux.microsoft.com>
- <c7c168f2-e30b-d2c5-abcb-1b6919197474@schaufler-ca.com>
- <20200805154504.GB4365@sequoia>
- <69810007161e689ac817099fb1c6df21962963e4.camel@linux.ibm.com>
- <9ad079ff-1bd4-1302-e6fb-25a7396ef12f@linux.microsoft.com>
- <ecc97f59-c2cc-0b23-6199-925ba0d6358b@schaufler-ca.com>
- <50f00ace-8d46-01c2-bf0f-d5484aafd95c@linux.microsoft.com>
- <5570a4d8-8779-6efe-b208-f7efa8ba9488@schaufler-ca.com>
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Message-ID: <42c35947-9a81-e343-b111-5d4d90095888@linux.microsoft.com>
-Date:   Wed, 12 Aug 2020 13:37:38 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Wed, 12 Aug 2020 17:30:58 -0400
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11F36C061383;
+        Wed, 12 Aug 2020 14:30:58 -0700 (PDT)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1k5yKX-00EISw-Ml; Wed, 12 Aug 2020 21:30:41 +0000
+Date:   Wed, 12 Aug 2020 22:30:41 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Jann Horn <jannh@google.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Karel Zak <kzak@redhat.com>, Jeff Layton <jlayton@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        Christian Brauner <christian@brauner.io>,
+        Lennart Poettering <lennart@poettering.net>,
+        Linux API <linux-api@vger.kernel.org>,
+        Ian Kent <raven@themaw.net>,
+        LSM <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: file metadata via fs API (was: [GIT PULL] Filesystem Information)
+Message-ID: <20200812213041.GV1236603@ZenIV.linux.org.uk>
+References: <CAHk-=whE42mFLi8CfNcdB6Jc40tXsG3sR+ThWAFihhBwfUbczA@mail.gmail.com>
+ <CAJfpegtXtj2Q1wsR-3eUNA0S=_skzHF0CEmcK_Krd8dtKkWkGA@mail.gmail.com>
+ <20200812143957.GQ1236603@ZenIV.linux.org.uk>
+ <CAJfpegvFBdp3v9VcCp-wNDjZnQF3q6cufb-8PJieaGDz14sbBg@mail.gmail.com>
+ <20200812150807.GR1236603@ZenIV.linux.org.uk>
+ <CAJfpegsQF1aN4XJ_8j977rnQESxc=Kcn7Z2C+LnVDWXo4PKhTQ@mail.gmail.com>
+ <20200812163347.GS1236603@ZenIV.linux.org.uk>
+ <CAJfpegv8MTnO9YAiFUJPjr3ryeT82=KWHUpLFmgRNOcQfeS17w@mail.gmail.com>
+ <20200812173911.GT1236603@ZenIV.linux.org.uk>
+ <20200812183326.GU1236603@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <5570a4d8-8779-6efe-b208-f7efa8ba9488@schaufler-ca.com>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200812183326.GU1236603@ZenIV.linux.org.uk>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 8/5/20 11:25 AM, Casey Schaufler wrote:
+On Wed, Aug 12, 2020 at 07:33:26PM +0100, Al Viro wrote:
 
->>>>>
->>>>> I think moving away from the idea that measuring "critical" data should
->>>>> be limited to LSMs, will clarify this.
->>>>>
->>>>
->>>> Are you suggesting that instead of calling the hooks LSM_STATE and LSM_POLICY, we should keep it more generic so that it can be utilized by any subsystem to measure their "critical data"?
->>>
->>> Policy, state, history or whim, it should be up to the security module
->>> to determine what data it cares about, and how it should be measured.
->>> Smack does not keep its policy in a single blob of data, it uses lists
->>> which can be modified at will. Your definition of the behavior for
->>> LSM_POLICY wouldn't work for Smack. That doesn't mean that there isn't
->>> a viable way to measure the Smack policy, it just means that IMA isn't
->>> the place for it. If SELinux wants its data measured, SELinux should be
->>> providing the mechanism to do it.
->>>
->>> I guess that I'm agreeing with you in part. If you want a generic measurement
->>> of "critical data", you don't need to assign a type to it, you have the
->>> caller (a security module, a device driver or whatever) identify itself and
->>> how it is going to deal with the data. That's very different from what you've
->>> done to date.
->>
->> Agree.
->>
->> Like Stephen had stated earlier, the reason we kept separate hooks (STATE and POLICY) is because the data for state is usually small and therefore we measure the entire data. Whereas, policy data is usually quite large (a few MB) and hence we measure a hash of the policy.
+> BTW, what would such opened files look like from /proc/*/fd/* POV?  And
+> what would happen if you walk _through_ that symlink, with e.g. ".."
+> following it?  Or with names of those attributes, for that matter...
+> What about a normal open() of such a sucker?  It won't know where to
+> look for your ->private_data...
 > 
-> SELinux should determine how it wants its data measured.
-> SELinux, not IMA, should determine if some "critical data"
-> be measured in total, by its hash or as a count of policy
-> rules. It would be handy for IMA to supply functions to do
-> data blobs and hashes, but it should be up to the caller to
-> decide if they meet their needs.
-> 
+> FWIW, you keep refering to regularity of this stuff from the syscall
+> POV, but it looks like you have no real idea of what subset of the
+> things available for normal descriptors will be available for those.
 
-Per feedback from you all, my colleague Tushar has posted a patch series 
-that defines a generic IMA hook to measure critical data from other 
-subsystems (such as SELinux, AppArmor, Device-Mapper targets, etc.)
+Another question: what should happen with that sucker on umount of
+the filesystem holding the underlying object?  Should it be counted
+as pinning that fs?
 
-Link to the patch series is given below:
+Who controls what's in that tree?  If we plan to have xattrs there,
+will they be in a flat tree, or should it mirror the hierarchy of
+xattrs?  When is it populated?  open() time?  What happens if we
+add/remove an xattr after that point?
 
-	https://patchwork.kernel.org/patch/11711249/
+If we open the same file several times, what should we get?  A full
+copy of the tree every time, with all coherency being up to whatever's
+putting attributes there?
 
-Shortly I will re-post the SELinux state and hash of policy measurement 
-patch that will be based on the above patch series.
+What are the permissions needed to do lookups in that thing?
 
-thanks,
-  -lakshmi
+All of that is about semantics and the answers are needed before we
+start looking into implementations.  "Whatever my implementation
+does" is _not_ a good way to go, especially since that'll be cast
+in stone as soon as API becomes exposed to userland...
