@@ -2,108 +2,195 @@ Return-Path: <SRS0=/I77=BX=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3561EC433DF
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Aug 2020 15:21:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8A0DC433E1
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Aug 2020 15:31:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DBD032078D
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Aug 2020 15:21:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=bmw.de header.i=@bmw.de header.b="L8M84DUu"
+	by mail.kernel.org (Postfix) with ESMTP id B4ADE20781
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Aug 2020 15:31:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726249AbgHMPVP (ORCPT
+        id S1726615AbgHMPb3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 13 Aug 2020 11:21:15 -0400
-Received: from esa1.hc324-48.eu.iphmx.com ([207.54.68.119]:32035 "EHLO
-        esa1.hc324-48.eu.iphmx.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726167AbgHMPVP (ORCPT
+        Thu, 13 Aug 2020 11:31:29 -0400
+Received: from smtp-42ae.mail.infomaniak.ch ([84.16.66.174]:45899 "EHLO
+        smtp-42ae.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726531AbgHMPb3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 13 Aug 2020 11:21:15 -0400
-X-Greylist: delayed 427 seconds by postgrey-1.27 at vger.kernel.org; Thu, 13 Aug 2020 11:21:14 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=bmw.de; i=@bmw.de; q=dns/txt; s=mailing1;
-  t=1597332074; x=1628868074;
-  h=from:to:subject:date:message-id:
-   content-transfer-encoding:mime-version;
-  bh=m+kWdlHbxZ4OIsRYKBv9LGgoH+NPqdqAaHQgNUgUd+g=;
-  b=L8M84DUuvPjZlG22INTUG0Ba0oKJ2YFf7o8nNTq19F/ZqZq5IongdtJ7
-   sXtztYJQOx2CzgpZStpQpWd3qmdTwEZ7MBjzsWHjLOVBinBdlvJPhEG/Q
-   Z36fBc6HumqhY1KC1w4LXh85HVZvhvELObU52qh3vAQNa+OlqYnikg7lC
-   o=;
-Received: from esagw6.bmwgroup.com (HELO esagw6.muc) ([160.46.252.49]) by
- esa1.hc324-48.eu.iphmx.com with ESMTP/TLS; 13 Aug 2020 17:14:05 +0200
-Received: from esabb4.muc ([160.50.100.33])  by esagw6.muc with ESMTP/TLS;
- 13 Aug 2020 17:14:05 +0200
-Received: from smucm27m.bmwgroup.net (HELO smucm27m.europe.bmw.corp) ([160.46.167.34])
- by esabb4.muc with ESMTP/TLS; 13 Aug 2020 17:14:05 +0200
-Received: from smucm27l.europe.bmw.corp (160.46.167.33) by smucm27m.europe.bmw.corp
- (160.46.167.34) with Microsoft SMTP Server (TLS;
- Thu, 13 Aug 2020 17:14:05 +0200
-Received: from smucm27l.europe.bmw.corp ([160.46.167.33]) by
- smucm27l.europe.bmw.corp ([160.46.167.33]) with mapi id 15.00.1497.006; Thu,
- 13 Aug 2020 17:14:05 +0200
-From:   <Martin.U.Lang@bmw.de>
-To:     <keescook@chromium.org>, <linux-security-module@vger.kernel.org>
-Subject: Loadpin: Possibility of exceptions for certain firmwares?
-Thread-Topic: Loadpin: Possibility of exceptions for certain firmwares?
-Thread-Index: AdZxb4wfx4uDSW6hQrGa2itsKiChwA==
-Date:   Thu, 13 Aug 2020 15:14:05 +0000
-Message-ID: <6557a5ede7674fd69d6a610a2b39188d@smucm27l.europe.bmw.corp>
-Accept-Language: de-DE, en-US
-Content-Language: de-DE
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 13 Aug 2020 11:31:29 -0400
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4BS9XG4mmCzlhLv2;
+        Thu, 13 Aug 2020 17:31:26 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
+        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4BS9XC0vpZzlh8T5;
+        Thu, 13 Aug 2020 17:31:23 +0200 (CEST)
+Subject: Re: [PATCH v7 3/7] exec: Move path_noexec() check earlier
+To:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Eric Chiang <ericchiang@google.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Thibaut Sautereau <thibaut.sautereau@clip-os.org>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+References: <20200723171227.446711-1-mic@digikod.net>
+ <20200723171227.446711-4-mic@digikod.net>
+ <87a6z1m0u1.fsf@x220.int.ebiederm.org>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Message-ID: <89b6bb7f-d841-cf0a-8d5c-26c611b56ae7@digikod.net>
+Date:   Thu, 13 Aug 2020 17:31:22 +0200
+User-Agent: 
 MIME-Version: 1.0
+In-Reply-To: <87a6z1m0u1.fsf@x220.int.ebiederm.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
+X-Antivirus-Code: 0x100000
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Kees, hi LSM community,
+Kees Cook wrote this patch, which is in Andrew Morton's tree, but I
+think you're talking about O_MAYEXEC, not this patch specifically.
 
-I'm currently struggling a bit with the bare simplicity of loadpin and tryi=
-ng to understand which options exist for me.
+On 11/08/2020 21:36, Eric W. Biederman wrote:
+> Mickaël Salaün <mic@digikod.net> writes:
+> 
+>> From: Kees Cook <keescook@chromium.org>
+>>
+>> The path_noexec() check, like the regular file check, was happening too
+>> late, letting LSMs see impossible execve()s. Check it earlier as well
+>> in may_open() and collect the redundant fs/exec.c path_noexec() test
+>> under the same robustness comment as the S_ISREG() check.
+>>
+>> My notes on the call path, and related arguments, checks, etc:
+> 
+> A big question arises, that I think someone already asked.
 
-We have the following situation:=20
-Our root file system is integrity protected with dm-verity. During the deve=
-lopment/validation stage, we create builds that use a test key for secure b=
-oot.  For certain builds that successfully passed validation, we would like=
- to "promote" these builds to be a real release and sign them with the real=
- secure-boot/verified-boot release keys. This requires us to re-sign all se=
-cure-boot signed artifacts (bootloaders, TEE, kernel, ...) including the dm=
--verity root hash(es) of the filesystem(s). During this re-signing process =
-we do not want to touch the root file system (due to validation concerns) b=
-ut only to provide new signatures for the dm-verity root hash.
-As it turns out, some of the firmware blobs of our system are signed with t=
-he secure boot keys of the system and this signature is validated somewhere=
- outside of the Linux kernel (by other firmware, by the TEE...). So, we wan=
-ted to move those outside of the root filesystem in order to avoid changing=
- the file system as part of the release re-signing process. However, we the=
-n noticed that the kernel driver seems to load these firmwares using the us=
-ual firmware loader infrastructure of Linux. Consequently, loadpin kicks in=
-, does its job and denies loading the firmware as it comes now from this ex=
-tra partition.
+Al Viro and Jann Horn expressed such concerns for O_MAYEXEC:
+https://lore.kernel.org/lkml/0cc94c91-afd3-27cd-b831-8ea16ca8ca93@digikod.net/
 
-So, I was wondering if adding an exception list to loadpin could be a reaso=
-nable approach to this issue. If I understand the whole infrastructure corr=
-ectly, the driver requests a firmware (file) by name. If I know on my syste=
-m that the firmware with this name is self-contained secure-boot signed and=
- later-on validated independently anyways, there is no security benefit in =
-letting loadpin enforce that it must come from my root fs. Consequently, I =
-was thinking of adding a (configurable) exception list mechanism to loadpin=
- to accept certain firmwares (by name) even if they are not loaded from the=
- pinned fs.
+> 
+> Why perform this test in may_open directly instead of moving
+> it into inode_permission.  That way the code can be shared with
+> faccessat, and any other code path that wants it?
 
-Would you be open to such an extension of loadpin? If there are other sugge=
-stions how this issue could be addressed, I'm also grateful for input. I wo=
-uld like to see a solution that enables us to use loadpin as it saves quite=
- some effort on kernel module signing.
+This patch is just a refactoring.
 
-Best Regards,
+About O_MAYEXEC, path-based LSM, IMA and IPE need to work on a struct
+file, whereas inode_permission() only gives a struct inode. However,
+faccessat2(2) (with extended flags) seems to be the perfect candidate if
+we want to be able to check file descriptors.
 
-Martin
+> 
+> That would look to provide a more maintainable kernel.
+
+Why would it be more maintainable?
+
+> 
+> Eric
+> 
+> 
+>> do_open_execat()
+>>     struct open_flags open_exec_flags = {
+>>         .open_flag = O_LARGEFILE | O_RDONLY | __FMODE_EXEC,
+>>         .acc_mode = MAY_EXEC,
+>>         ...
+>>     do_filp_open(dfd, filename, open_flags)
+>>         path_openat(nameidata, open_flags, flags)
+>>             file = alloc_empty_file(open_flags, current_cred());
+>>             do_open(nameidata, file, open_flags)
+>>                 may_open(path, acc_mode, open_flag)
+>>                     /* new location of MAY_EXEC vs path_noexec() test */
+>>                     inode_permission(inode, MAY_OPEN | acc_mode)
+>>                         security_inode_permission(inode, acc_mode)
+>>                 vfs_open(path, file)
+>>                     do_dentry_open(file, path->dentry->d_inode, open)
+>>                         security_file_open(f)
+>>                         open()
+>>     /* old location of path_noexec() test */
+>>
+>> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+>> Signed-off-by: Kees Cook <keescook@chromium.org>
+>> Link: https://lore.kernel.org/r/20200605160013.3954297-4-keescook@chromium.org
+>> ---
+>>  fs/exec.c  | 12 ++++--------
+>>  fs/namei.c |  4 ++++
+>>  2 files changed, 8 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/fs/exec.c b/fs/exec.c
+>> index bdc6a6eb5dce..4eea20c27b01 100644
+>> --- a/fs/exec.c
+>> +++ b/fs/exec.c
+>> @@ -147,10 +147,8 @@ SYSCALL_DEFINE1(uselib, const char __user *, library)
+>>  	 * and check again at the very end too.
+>>  	 */
+>>  	error = -EACCES;
+>> -	if (WARN_ON_ONCE(!S_ISREG(file_inode(file)->i_mode)))
+>> -		goto exit;
+>> -
+>> -	if (path_noexec(&file->f_path))
+>> +	if (WARN_ON_ONCE(!S_ISREG(file_inode(file)->i_mode) ||
+>> +			 path_noexec(&file->f_path)))
+>>  		goto exit;
+>>  
+>>  	fsnotify_open(file);
+>> @@ -897,10 +895,8 @@ static struct file *do_open_execat(int fd, struct filename *name, int flags)
+>>  	 * and check again at the very end too.
+>>  	 */
+>>  	err = -EACCES;
+>> -	if (WARN_ON_ONCE(!S_ISREG(file_inode(file)->i_mode)))
+>> -		goto exit;
+>> -
+>> -	if (path_noexec(&file->f_path))
+>> +	if (WARN_ON_ONCE(!S_ISREG(file_inode(file)->i_mode) ||
+>> +			 path_noexec(&file->f_path)))
+>>  		goto exit;
+>>  
+>>  	err = deny_write_access(file);
+>> diff --git a/fs/namei.c b/fs/namei.c
+>> index a559ad943970..ddc9b25540fe 100644
+>> --- a/fs/namei.c
+>> +++ b/fs/namei.c
+>> @@ -2863,6 +2863,10 @@ static int may_open(const struct path *path, int acc_mode, int flag)
+>>  			return -EACCES;
+>>  		flag &= ~O_TRUNC;
+>>  		break;
+>> +	case S_IFREG:
+>> +		if ((acc_mode & MAY_EXEC) && path_noexec(path))
+>> +			return -EACCES;
+>> +		break;
+>>  	}
+>>  
+>>  	error = inode_permission(inode, MAY_OPEN | acc_mode);
