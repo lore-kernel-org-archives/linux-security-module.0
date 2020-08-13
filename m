@@ -2,183 +2,108 @@ Return-Path: <SRS0=/I77=BX=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40CE6C433E1
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Aug 2020 15:10:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3561EC433DF
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Aug 2020 15:21:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 14AD720791
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Aug 2020 15:10:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DBD032078D
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Aug 2020 15:21:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="UXxGSZzb";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="x+VnzAVj"
+	dkim=pass (1024-bit key) header.d=bmw.de header.i=@bmw.de header.b="L8M84DUu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726752AbgHMPKW (ORCPT
+        id S1726249AbgHMPVP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 13 Aug 2020 11:10:22 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:40852 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726334AbgHMPKU (ORCPT
+        Thu, 13 Aug 2020 11:21:15 -0400
+Received: from esa1.hc324-48.eu.iphmx.com ([207.54.68.119]:32035 "EHLO
+        esa1.hc324-48.eu.iphmx.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726167AbgHMPVP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 13 Aug 2020 11:10:20 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 31D6D8EE1E5;
-        Thu, 13 Aug 2020 08:10:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1597331419;
-        bh=3o0Gk5U5c/tgboU6is0RXdqjpM4d/4IJwBiUFG8jMuA=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=UXxGSZzb46QTJOqy/JWeOyqw626U8bbIwuEYbPim6fbMyyL04cdp0qwwJKvmyfbNr
-         UEM7+n2fjQro3OPR+d/0IwaOPThCF0S2IiZVh8i0RvltCmlgynmf81fQxVjRPrZJrD
-         VwN5qGlaATNYTzytjZ828B9lKPRGjJv7sHKFKj4I=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id jxbPeuibIPjQ; Thu, 13 Aug 2020 08:10:19 -0700 (PDT)
-Received: from [153.66.254.174] (c-73-35-198-56.hsd1.wa.comcast.net [73.35.198.56])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id B99EB8EE0F8;
-        Thu, 13 Aug 2020 08:10:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1597331418;
-        bh=3o0Gk5U5c/tgboU6is0RXdqjpM4d/4IJwBiUFG8jMuA=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=x+VnzAVj+2h2xN4tfyE/FLRLHz0e4JjMHIuRNpMRmGGydOuuD3MXZ92u9QxCCpuy8
-         /P6QJ618zgdYz9/h9V2XOl+QoySrm5cdkOm6q1yiNBqMdfPyKCaoZZignH3VT/LZKu
-         KlGKtuSb51ELidAyvRI6WiT5Zd7nq6+fKNWHN0PQ=
-Message-ID: <1597331416.3708.26.camel@HansenPartnership.com>
-Subject: Re: [dm-devel] [RFC PATCH v5 00/11] Integrity Policy Enforcement
- LSM (IPE)
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Chuck Lever <chucklever@gmail.com>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>, James Morris <jmorris@namei.org>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Pavel Machek <pavel@ucw.cz>, Sasha Levin <sashal@kernel.org>,
-        snitzer@redhat.com, dm-devel@redhat.com,
-        tyhicks@linux.microsoft.com, agk@redhat.com,
-        Paul Moore <paul@paul-moore.com>,
-        Jonathan Corbet <corbet@lwn.net>, nramas@linux.microsoft.com,
-        serge@hallyn.com, pasha.tatashin@soleen.com,
-        Jann Horn <jannh@google.com>, linux-block@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, mdsakib@microsoft.com,
-        open list <linux-kernel@vger.kernel.org>, eparis@redhat.com,
-        linux-security-module@vger.kernel.org, linux-audit@redhat.com,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-integrity@vger.kernel.org,
-        jaskarankhurana@linux.microsoft.com
-Date:   Thu, 13 Aug 2020 08:10:16 -0700
-In-Reply-To: <D470BA4B-EF1A-49CA-AFB9-0F7FFC4C6001@gmail.com>
-References: <20200728213614.586312-1-deven.desai@linux.microsoft.com>
-         <20200802115545.GA1162@bug> <20200802140300.GA2975990@sasha-vm>
-         <20200802143143.GB20261@amd>
-         <1596386606.4087.20.camel@HansenPartnership.com>
-         <fb35a1f7-7633-a678-3f0f-17cf83032d2b@linux.microsoft.com>
-         <1596639689.3457.17.camel@HansenPartnership.com>
-         <alpine.LRH.2.21.2008050934060.28225@namei.org>
-         <b08ae82102f35936427bf138085484f75532cff1.camel@linux.ibm.com>
-         <329E8DBA-049E-4959-AFD4-9D118DEB176E@gmail.com>
-         <da6f54d0438ee3d3903b2c75fcfbeb0afdf92dc2.camel@linux.ibm.com>
-         <1597073737.3966.12.camel@HansenPartnership.com>
-         <6E907A22-02CC-42DD-B3CD-11D304F3A1A8@gmail.com>
-         <1597124623.30793.14.camel@HansenPartnership.com>
-         <16C3BF97-A7D3-488A-9D26-7C9B18AD2084@gmail.com>
-         <1597161218.4325.38.camel@HansenPartnership.com>
-         <02D551EF-C975-4B91-86CA-356FA0FF515C@gmail.com>
-         <1597247482.7293.18.camel@HansenPartnership.com>
-         <D470BA4B-EF1A-49CA-AFB9-0F7FFC4C6001@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Thu, 13 Aug 2020 11:21:15 -0400
+X-Greylist: delayed 427 seconds by postgrey-1.27 at vger.kernel.org; Thu, 13 Aug 2020 11:21:14 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=bmw.de; i=@bmw.de; q=dns/txt; s=mailing1;
+  t=1597332074; x=1628868074;
+  h=from:to:subject:date:message-id:
+   content-transfer-encoding:mime-version;
+  bh=m+kWdlHbxZ4OIsRYKBv9LGgoH+NPqdqAaHQgNUgUd+g=;
+  b=L8M84DUuvPjZlG22INTUG0Ba0oKJ2YFf7o8nNTq19F/ZqZq5IongdtJ7
+   sXtztYJQOx2CzgpZStpQpWd3qmdTwEZ7MBjzsWHjLOVBinBdlvJPhEG/Q
+   Z36fBc6HumqhY1KC1w4LXh85HVZvhvELObU52qh3vAQNa+OlqYnikg7lC
+   o=;
+Received: from esagw6.bmwgroup.com (HELO esagw6.muc) ([160.46.252.49]) by
+ esa1.hc324-48.eu.iphmx.com with ESMTP/TLS; 13 Aug 2020 17:14:05 +0200
+Received: from esabb4.muc ([160.50.100.33])  by esagw6.muc with ESMTP/TLS;
+ 13 Aug 2020 17:14:05 +0200
+Received: from smucm27m.bmwgroup.net (HELO smucm27m.europe.bmw.corp) ([160.46.167.34])
+ by esabb4.muc with ESMTP/TLS; 13 Aug 2020 17:14:05 +0200
+Received: from smucm27l.europe.bmw.corp (160.46.167.33) by smucm27m.europe.bmw.corp
+ (160.46.167.34) with Microsoft SMTP Server (TLS;
+ Thu, 13 Aug 2020 17:14:05 +0200
+Received: from smucm27l.europe.bmw.corp ([160.46.167.33]) by
+ smucm27l.europe.bmw.corp ([160.46.167.33]) with mapi id 15.00.1497.006; Thu,
+ 13 Aug 2020 17:14:05 +0200
+From:   <Martin.U.Lang@bmw.de>
+To:     <keescook@chromium.org>, <linux-security-module@vger.kernel.org>
+Subject: Loadpin: Possibility of exceptions for certain firmwares?
+Thread-Topic: Loadpin: Possibility of exceptions for certain firmwares?
+Thread-Index: AdZxb4wfx4uDSW6hQrGa2itsKiChwA==
+Date:   Thu, 13 Aug 2020 15:14:05 +0000
+Message-ID: <6557a5ede7674fd69d6a610a2b39188d@smucm27l.europe.bmw.corp>
+Accept-Language: de-DE, en-US
+Content-Language: de-DE
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 2020-08-13 at 10:42 -0400, Chuck Lever wrote:
-> > On Aug 12, 2020, at 11:51 AM, James Bottomley <James.Bottomley@Hans
-> > enPartnership.com> wrote:
-> > On Wed, 2020-08-12 at 10:15 -0400, Chuck Lever wrote:
-> > > > On Aug 11, 2020, at 11:53 AM, James Bottomley
-> > > > <James.Bottomley@HansenPartnership.com> wrote:
-> > > > On Tue, 2020-08-11 at 10:48 -0400, Chuck Lever wrote:
-[...]
-> > > > > > > The client would have to reconstruct that tree again if
-> > > > > > > memory pressure caused some or all of the tree to be
-> > > > > > > evicted, so perhaps an on-demand mechanism is preferable.
-> > > > > > 
-> > > > > > Right, but I think that's implementation detail.  Probably
-> > > > > > what we need is a way to get the log(N) verification hashes
-> > > > > > from the server and it's up to the client whether it caches
-> > > > > > them or not.
-> > > > > 
-> > > > > Agreed, these are implementation details. But see above about
-> > > > > the trustworthiness of the intermediate hashes. If they are
-> > > > > conveyed on an untrusted network, then they can't be trusted
-> > > > > either.
-> > > > 
-> > > > Yes, they can, provided enough of them are asked for to
-> > > > verify.  If you look at the simple example above, suppose I
-> > > > have cached H11 and H12, but I've lost the entire H2X layer.  I
-> > > > want to verify B3 so I also ask you for your copy of H24.  Then
-> > > > I generate H23 from B3 and Hash H23 and H24.  If this doesn't
-> > > > hash to H12 I know either you supplied me the wrong block or
-> > > > lied about H24.  However, if it all hashes correctly I know you
-> > > > supplied me with both the correct B3 and the correct H24.
-> > > 
-> > > My point is there is a difference between a trusted cache and an
-> > > untrusted cache. I argue there is not much value in a cache where
-> > > the hashes have to be verified again.
-> > 
-> > And my point isn't about caching, it's about where the tree comes
-> > from. I claim and you agree the client can get the tree from the
-> > server a piece at a time (because it can path verify it) and
-> > doesn't have to generate it itself.
-> 
-> OK, let's focus on where the tree comes from. It is certainly
-> possible to build protocol to exchange parts of a Merkle tree.
+Hi Kees, hi LSM community,
 
-Which is what I think we need to extend IMA to do.
+I'm currently struggling a bit with the bare simplicity of loadpin and tryi=
+ng to understand which options exist for me.
 
->  The question is how it might be stored on the server.
+We have the following situation:=20
+Our root file system is integrity protected with dm-verity. During the deve=
+lopment/validation stage, we create builds that use a test key for secure b=
+oot.  For certain builds that successfully passed validation, we would like=
+ to "promote" these builds to be a real release and sign them with the real=
+ secure-boot/verified-boot release keys. This requires us to re-sign all se=
+cure-boot signed artifacts (bootloaders, TEE, kernel, ...) including the dm=
+-verity root hash(es) of the filesystem(s). During this re-signing process =
+we do not want to touch the root file system (due to validation concerns) b=
+ut only to provide new signatures for the dm-verity root hash.
+As it turns out, some of the firmware blobs of our system are signed with t=
+he secure boot keys of the system and this signature is validated somewhere=
+ outside of the Linux kernel (by other firmware, by the TEE...). So, we wan=
+ted to move those outside of the root filesystem in order to avoid changing=
+ the file system as part of the release re-signing process. However, we the=
+n noticed that the kernel driver seems to load these firmwares using the us=
+ual firmware loader infrastructure of Linux. Consequently, loadpin kicks in=
+, does its job and denies loading the firmware as it comes now from this ex=
+tra partition.
 
-I think the only thing the server has to guarantee to store is the head
-hash, possibly signed.
+So, I was wondering if adding an exception list to loadpin could be a reaso=
+nable approach to this issue. If I understand the whole infrastructure corr=
+ectly, the driver requests a firmware (file) by name. If I know on my syste=
+m that the firmware with this name is self-contained secure-boot signed and=
+ later-on validated independently anyways, there is no security benefit in =
+letting loadpin enforce that it must come from my root fs. Consequently, I =
+was thinking of adding a (configurable) exception list mechanism to loadpin=
+ to accept certain firmwares (by name) even if they are not loaded from the=
+ pinned fs.
 
->  There are some underlying assumptions about the metadata storage
-> mechanism that should be stated up front.
-> 
-> Current forms of IMA metadata are limited in size and stored in a
-> container that is read and written in a single operation. If we stick
-> with that container format, I don't see a way to store a Merkle tree
-> in there for all file sizes.
+Would you be open to such an extension of loadpin? If there are other sugge=
+stions how this issue could be addressed, I'm also grateful for input. I wo=
+uld like to see a solution that enables us to use loadpin as it saves quite=
+ some effort on kernel module signing.
 
-Well, I don't think you need to.  The only thing that needs to be
-stored is the head hash.  Everything else can be reconstructed.  If you
-asked me to implement it locally, I'd probably put the head hash in an
-xattr but use a CAM based cache for the merkel trees and construct the
-tree on first access if it weren't already in the cache.
+Best Regards,
 
-However, the above isn't what fs-verity does: it stores the tree in a
-hidden section of the file.  That's why I don't think we'd mandate
-anything about tree storage.  Just describe the partial retrieval
-properties we'd like and leave the rest as an implementation detail.
-
-> Thus it seems to me that we cannot begin to consider the tree-on-the-
-> server model unless there is a proposed storage mechanism for that
-> whole tree. Otherwise, the client must have the primary role in
-> unpacking and verifying the tree.
-
-Well, as I said,  I don't think you need to store the tree.  You
-certainly could decide to store the entire tree (as fs-verity does) if
-it fitted your use case, but it's not required.  Perhaps even in my
-case I'd make the CAM based cache persistent, like android's dalvik
-cache.
-
-James
-
-
-> Storing only the tree root in the metadata means the metadata format
-> is nicely bounded in size.
+Martin
