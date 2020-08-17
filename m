@@ -2,153 +2,154 @@ Return-Path: <SRS0=ORYe=B3=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14D5FC433E3
-	for <linux-security-module@archiver.kernel.org>; Mon, 17 Aug 2020 02:07:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CA4DC433DF
+	for <linux-security-module@archiver.kernel.org>; Mon, 17 Aug 2020 10:07:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DCACF207FF
-	for <linux-security-module@archiver.kernel.org>; Mon, 17 Aug 2020 02:07:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F192B206FA
+	for <linux-security-module@archiver.kernel.org>; Mon, 17 Aug 2020 10:07:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Y5P7UBdU"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eBDfICT/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726417AbgHQCHo (ORCPT
+        id S1727056AbgHQKHi (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 16 Aug 2020 22:07:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50994 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726340AbgHQCHm (ORCPT
+        Mon, 17 Aug 2020 06:07:38 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:45029 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726760AbgHQKHg (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 16 Aug 2020 22:07:42 -0400
-Received: from ozlabs.org (ozlabs.org [IPv6:2401:3900:2:1::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E06BAC061786;
-        Sun, 16 Aug 2020 19:07:41 -0700 (PDT)
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        Mon, 17 Aug 2020 06:07:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1597658855;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=j/v002Gxe6nBxuXIo8xXJ4Ruh4kteZD7I/mhEJxj0MM=;
+        b=eBDfICT/v8YTHDafFU/7iASSIecGa09jy49lMA6bKXC89EsO/mJj0qoN4tM2a5qvfLkR4r
+        pFqXaIi9hi+YMfN+KOMDRihz3nqHlAupC5Ctyvn9sMPk7c6Ly4ZKyoHvt3ARqY7UwxZ8cl
+        l+5cL25XSxE5vWBojlUA20wFm6n3qpY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-444-zoNlyZsOPL2h4UiP-b4EoQ-1; Mon, 17 Aug 2020 06:07:31 -0400
+X-MC-Unique: zoNlyZsOPL2h4UiP-b4EoQ-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4BVHVt2tgsz9sTK;
-        Mon, 17 Aug 2020 12:07:34 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1597630055;
-        bh=NUVL7wCS3C8AjNkO2+T076Su0229oneQ8GpXoq1sVvU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Y5P7UBdUOrLfq15c3+yrX4hNJWlKwBdrKEbO8tlxw0ZVi2cZFHtIr+yJ4e8YPwmzR
-         g46Pt4KUM4u7jB+Mv9FqHIDw1vwRlBY7kasTmjYHk0L5KQRHDJz/qG1FQh+pDLwZ6D
-         W6aVMYc/yWy9CLPsDlep0dlgdut718OAA4BgbZqLhKZ3y/CNVKrH0/hZ/nxdGf/v25
-         qBIJqNXV+/Y254JsnPQD0UU8KReuWTA5iQ4icYxTxEsyWRrtleh0QpEVOFpDKdUnG3
-         H2IIqDFGIVPF8tlY6sUHJFalhjnD3/cImvI4GJNx2bwyDYu9tPq4IoXediWbO4L4y1
-         N97kpC0IJMJJQ==
-Date:   Mon, 17 Aug 2020 12:07:31 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Amol Grover <frextrite@gmail.com>, James Morris <jmorris@namei.org>
-Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH RESEND] device_cgroup: Fix RCU list debugging warning
-Message-ID: <20200817120731.218e1bc5@canb.auug.org.au>
-In-Reply-To: <20200608041734.GA10911@mail.hallyn.com>
-References: <20200406105950.GA2285@workstation-kernel-dev>
-        <20200607062340.7be7e8d5@canb.auug.org.au>
-        <20200607190840.GG4455@paulmck-ThinkPad-P72>
-        <20200608041734.GA10911@mail.hallyn.com>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 379E1801AF2;
+        Mon, 17 Aug 2020 10:07:30 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-127.rdu2.redhat.com [10.10.120.127])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 053085C62B;
+        Mon, 17 Aug 2020 10:07:28 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH] watch_queue: Limit the number of watches a user can hold
+From:   David Howells <dhowells@redhat.com>
+To:     torvalds@linux-foundation.org
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        dhowells@redhat.com, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Mon, 17 Aug 2020 11:07:28 +0100
+Message-ID: <159765884811.1436382.16387370517871969276.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.23
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_//6LbZg5fP0ZKmOnWMaIHeAu";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
---Sig_//6LbZg5fP0ZKmOnWMaIHeAu
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Impose a limit on the number of watches that a user can hold so that they
+can't use this mechanism to fill up all the available memory.
 
-Hi all,
+This is done by putting a counter in user_struct that's incremented when a
+watch is allocated and decreased when it is released.  If the number
+exceeds the RLIMIT_NOFILE limit, the watch is rejected with EAGAIN.
 
-On Sun, 7 Jun 2020 23:17:34 -0500 "Serge E. Hallyn" <serge@hallyn.com> wrot=
-e:
-> On Sun, Jun 07, 2020 at 12:08:40PM -0700, Paul E. McKenney wrote:
-> > On Sun, Jun 07, 2020 at 06:23:40AM +1000, Stephen Rothwell wrote: =20
-> > >=20
-> > > On Mon, 6 Apr 2020 16:29:50 +0530 Amol Grover <frextrite@gmail.com> w=
-rote: =20
-> > > >
-> > > > exceptions may be traversed using list_for_each_entry_rcu()
-> > > > outside of an RCU read side critical section BUT under the
-> > > > protection of decgroup_mutex. Hence add the corresponding
-> > > > lockdep expression to fix the following false-positive
-> > > > warning:
-> > > >=20
-> > > > [    2.304417] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > > [    2.304418] WARNING: suspicious RCU usage
-> > > > [    2.304420] 5.5.4-stable #17 Tainted: G            E
-> > > > [    2.304422] -----------------------------
-> > > > [    2.304424] security/device_cgroup.c:355 RCU-list traversed in n=
-on-reader section!!
-> > > >=20
-> > > > Signed-off-by: Amol Grover <frextrite@gmail.com>
-> > > > ---
-> > > >  security/device_cgroup.c | 3 ++-
-> > > >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > > >=20
-> > > > diff --git a/security/device_cgroup.c b/security/device_cgroup.c
-> > > > index 7d0f8f7431ff..b7da9e0970d9 100644
-> > > > --- a/security/device_cgroup.c
-> > > > +++ b/security/device_cgroup.c
-> > > > @@ -352,7 +352,8 @@ static bool match_exception_partial(struct list=
-_head *exceptions, short type,
-> > > >  {
-> > > >  	struct dev_exception_item *ex;
-> > > > =20
-> > > > -	list_for_each_entry_rcu(ex, exceptions, list) {
-> > > > +	list_for_each_entry_rcu(ex, exceptions, list,
-> > > > +				lockdep_is_held(&devcgroup_mutex)) {
-> > > >  		if ((type & DEVCG_DEV_BLOCK) && !(ex->type & DEVCG_DEV_BLOCK))
-> > > >  			continue;
-> > > >  		if ((type & DEVCG_DEV_CHAR) && !(ex->type & DEVCG_DEV_CHAR))
-> > >=20
-> > > I have been carrying the above patch in linux-next for some time now.
-> > > I have been carrying it because it fixes problems for syzbot (see the
-> > > third warning in
-> > > https://lore.kernel.org/linux-next/CACT4Y+YnjK+kq0pfb5fe-q1bqe2T1jq_m=
-vKHf--Z80Z3wkyK1Q@mail.gmail.com/).
-> > > Is there some reason it has not been applied to some tree? =20
-> >=20
-> > The RCU changes on which this patch depends have long since made it to
-> > mainline, so it can go up any tree.  I can take it if no one else will,
-> > but it might be better going in via the security tree.
->=20
-> James, do you mind pulling it in?
+This can be tested by the following means:
 
-I am still carrying this patch.  Has it been superceded, or is it still
-necessary?
+ (1) Create a watch queue and attach it to fd 5 in the program given - in
+     this case, bash:
 
---=20
-Cheers,
-Stephen Rothwell
+	keyctl watch_session /tmp/nlog /tmp/gclog 5 bash
 
---Sig_//6LbZg5fP0ZKmOnWMaIHeAu
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+ (2) In the shell, set the maximum number of files to, say, 99:
 
------BEGIN PGP SIGNATURE-----
+	ulimit -n 99
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl855mMACgkQAVBC80lX
-0Gz3+Qf7B8fFdkNeo/Cqcxhz3GWuAnNd4IeG9m8dsl67F77sOJ7U8WNnX95ZsmAw
-TWCTwMDVm07rUAoqBu6uz3GxgpYTpP8lM/j4Q37kSuR3xVb6spXMyIM4J3hHC2Tz
-J9pHZyBomsYrRdcAMIY2WumPPo2euve4S1MesruCJLvcA7kRrgsO3VMtPMdY72LC
-5xFffg3NVRvkrJb4njqABLk9SgQObnMzBQdXYpKEy3b2XTGtQHb0T8JMc101xrnA
-PxlA2JQP2T7h/HEDuK4+Nm2PbeNonAviErZjnTvRpAP6krQ9YM0wdxPVmfaFjoa3
-5X0NEOx5ikRI+XktkfuPmLUeiAzmYQ==
-=Nz8C
------END PGP SIGNATURE-----
+ (3) Add 200 keyrings:
 
---Sig_//6LbZg5fP0ZKmOnWMaIHeAu--
+	for ((i=0; i<200; i++)); do keyctl newring a$i @s || break; done
+
+ (4) Try to watch all of the keyrings:
+
+	for ((i=0; i<200; i++)); do echo $i; keyctl watch_add 5 %:a$i || break; done
+
+     This should fail when the number of watches belonging to the user hits
+     99.
+
+ (5) Remove all the keyrings and all of those watches should go away:
+
+	for ((i=0; i<200; i++)); do keyctl unlink %:a$i; done
+
+ (6) Kill off the watch queue by exiting the shell spawned by
+     watch_session.
+
+Fixes: c73be61cede5 ("pipe: Add general notification queue support")
+Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: David Howells <dhowells@redhat.com>
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+
+ include/linux/sched/user.h |    3 +++
+ kernel/watch_queue.c       |    8 ++++++++
+ 2 files changed, 11 insertions(+)
+
+diff --git a/include/linux/sched/user.h b/include/linux/sched/user.h
+index 917d88edb7b9..a8ec3b6093fc 100644
+--- a/include/linux/sched/user.h
++++ b/include/linux/sched/user.h
+@@ -36,6 +36,9 @@ struct user_struct {
+     defined(CONFIG_NET) || defined(CONFIG_IO_URING)
+ 	atomic_long_t locked_vm;
+ #endif
++#ifdef CONFIG_WATCH_QUEUE
++	atomic_t nr_watches;	/* The number of watches this user currently has */
++#endif
+ 
+ 	/* Miscellaneous per-user rate limit */
+ 	struct ratelimit_state ratelimit;
+diff --git a/kernel/watch_queue.c b/kernel/watch_queue.c
+index f74020f6bd9d..0ef8f65bd2d7 100644
+--- a/kernel/watch_queue.c
++++ b/kernel/watch_queue.c
+@@ -393,6 +393,7 @@ static void free_watch(struct rcu_head *rcu)
+ 	struct watch *watch = container_of(rcu, struct watch, rcu);
+ 
+ 	put_watch_queue(rcu_access_pointer(watch->queue));
++	atomic_dec(&watch->cred->user->nr_watches);
+ 	put_cred(watch->cred);
+ }
+ 
+@@ -452,6 +453,13 @@ int add_watch_to_object(struct watch *watch, struct watch_list *wlist)
+ 	watch->cred = get_current_cred();
+ 	rcu_assign_pointer(watch->watch_list, wlist);
+ 
++	if (atomic_inc_return(&watch->cred->user->nr_watches) >
++	    task_rlimit(current, RLIMIT_NOFILE)) {
++		atomic_dec(&watch->cred->user->nr_watches);
++		put_cred(watch->cred);
++		return -EAGAIN;
++	}
++
+ 	spin_lock_bh(&wqueue->lock);
+ 	kref_get(&wqueue->usage);
+ 	kref_get(&watch->usage);
+
+
