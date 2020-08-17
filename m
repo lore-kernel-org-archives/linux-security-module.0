@@ -2,160 +2,130 @@ Return-Path: <SRS0=ORYe=B3=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AB85C433E3
-	for <linux-security-module@archiver.kernel.org>; Mon, 17 Aug 2020 22:33:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5E05C433DF
+	for <linux-security-module@archiver.kernel.org>; Mon, 17 Aug 2020 22:52:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E88BD206DA
-	for <linux-security-module@archiver.kernel.org>; Mon, 17 Aug 2020 22:33:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="swgkvlSD"
+	by mail.kernel.org (Postfix) with ESMTP id C099A20760
+	for <linux-security-module@archiver.kernel.org>; Mon, 17 Aug 2020 22:52:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1597704723;
+	bh=BLNiL+DLsRVFIcOkeCwPvYUOudP2ncDTYkPeW/BHm2Y=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=KFaR9S1O0MyAGA7ro77HnuMuLn0UvngRMFTE3QgQ8ZPymyxi6QygAN6MuMjscDv/i
+	 znhjHUBd61YmK5cDEzC5rxQB3Hj/i9PoxKJBf/nWm3JSqCsJr9jbt2r/uG2uqpZn6Z
+	 UnMZH0J/UYU6Y5eG22qmrQWYiM/Hh+R6kg72AgCs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729620AbgHQWdX (ORCPT
+        id S1726990AbgHQWwD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 17 Aug 2020 18:33:23 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:51290 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726778AbgHQWdR (ORCPT
+        Mon, 17 Aug 2020 18:52:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46526 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726987AbgHQWwC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 17 Aug 2020 18:33:17 -0400
-Received: from [192.168.0.104] (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
-        by linux.microsoft.com (Postfix) with ESMTPSA id BE15420B4908;
-        Mon, 17 Aug 2020 15:33:15 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com BE15420B4908
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1597703596;
-        bh=aibMo0CumtGR31rpfcglMmxeuGyUCEhP5RyL6PW1LkE=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=swgkvlSDWoMKDBUbT0Y9k20qov6zELpI0CXmJhEbkIJoOdx8fRSj3XGPlhHd3faWB
-         j8HkqPr1z2+K8ErzkwNs8PH40LSkZWZi/b84oN4FmiUHxpwa+r4uZV+LWXzNl1DY5X
-         K1ihZPDsL4GYak+MZDT3xVFhzrN4pN3EUGX5K44I=
-Subject: Re: [PATCH 2/2] SELinux: Measure state and hash of policy using IMA
-To:     Casey Schaufler <casey@schaufler-ca.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>
-Cc:     Tyler Hicks <tyhicks@linux.microsoft.com>,
-        tusharsu@linux.microsoft.com, sashal@kernel.org,
-        James Morris <jmorris@namei.org>,
-        linux-integrity@vger.kernel.org,
-        SElinux list <selinux@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        paul Moore <paul@paul-moore.com>
-References: <20200813170707.2659-1-nramas@linux.microsoft.com>
- <20200813170707.2659-3-nramas@linux.microsoft.com>
- <5f738fd8-fe28-5358-b3d8-b671b45caa7f@gmail.com>
- <7315b7e8-2c53-2555-bc2e-aae42e16aaa2@linux.microsoft.com>
- <CAEjxPJ6sZdm2w=bbkL0uJyEkHw0gCT_y812WQBZPtLCJzO6r3A@mail.gmail.com>
- <e935c06f-09e2-a2f7-f97f-768bc017f477@linux.microsoft.com>
- <CAEjxPJ7uWee5jjALtQ3azMvKRMk8pxFiYByWmYVhjgJiMNZ8ww@mail.gmail.com>
- <3679df359c35561f5bf6608911f96cc0292c7854.camel@linux.ibm.com>
- <57f972a7-26f1-3ac7-4001-54c0bc7e12a8@schaufler-ca.com>
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Message-ID: <089ca24d-863b-ca84-4859-d2d6e4f09b4c@linux.microsoft.com>
-Date:   Mon, 17 Aug 2020 15:33:15 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Mon, 17 Aug 2020 18:52:02 -0400
+Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAEF9C061389
+        for <linux-security-module@vger.kernel.org>; Mon, 17 Aug 2020 15:52:01 -0700 (PDT)
+Received: by mail-ed1-x543.google.com with SMTP id v22so13720179edy.0
+        for <linux-security-module@vger.kernel.org>; Mon, 17 Aug 2020 15:52:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=D4oCLwSFAMfX0jUk1zRXnY7OWQRSXzVnX6hrYGZa4vs=;
+        b=Ot97LDuE1VQD/tFXQHGZ9kal3BL+Bs8jJUmcjt3HaQFhxwhsmdVZmU7bqaxx6SHCOi
+         Am2J3ry3DoqYNnlkX0YdsYu0rNFw9zoYcgEwV5ZpYnntndFXmS3jFlz+g59jSMMLNjLs
+         FbV6xSzh8EqoGh9CvhAN6frNL/9IP9BgJF/YE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=D4oCLwSFAMfX0jUk1zRXnY7OWQRSXzVnX6hrYGZa4vs=;
+        b=UKJxIrdz9IXZvAUuBYrAKA3Sz+XH+8AnDsfT2JAFmvkiuNMFpqQcwp+nmDaNB5tLC2
+         qVBagEXXCrZ580x0lq1qQ59AacLirPZ+mhWf+8eKHD5qIqUa1kHK6w86x4ARabm9edph
+         GYsiMSCQKHm9gYJPBMofW7NhyBXYt8BazTiKJaBJ6oSSVEu7WHzeT/IfVwJCuYDrpw1B
+         OltqiTWwequkn7zA7hTM9BDr8SP/TKG2Cj3jrgbPIHM/gfQxepTJKomMdpYV2VOef6kA
+         lsKbPIYptw2yQ5Wi6/cm7V2R695hzb72kynuFEPJdDpWEP4hRT+rIuEb70T2kwTo9GjQ
+         vR2w==
+X-Gm-Message-State: AOAM532d8FTVSL8RV4OKqWw+QXS9OFKURmjmrgWj0xR76qoasyNc+QzV
+        5m/zQj/oTjJBJJ3UQiKdC24cJcYRUs0H2g==
+X-Google-Smtp-Source: ABdhPJwxXb46/R3LdC6iWuUT9sZC2PChenxbpNEDvaNk1Bu+HYHXmc8W3Bie6RQTa+UXgpiYlPXh9g==
+X-Received: by 2002:aa7:d607:: with SMTP id c7mr16953788edr.184.1597704720279;
+        Mon, 17 Aug 2020 15:52:00 -0700 (PDT)
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com. [209.85.218.48])
+        by smtp.gmail.com with ESMTPSA id g21sm14131720edm.65.2020.08.17.15.51.59
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Aug 2020 15:52:00 -0700 (PDT)
+Received: by mail-ej1-f48.google.com with SMTP id a26so19800557ejc.2
+        for <linux-security-module@vger.kernel.org>; Mon, 17 Aug 2020 15:51:59 -0700 (PDT)
+X-Received: by 2002:a2e:2e04:: with SMTP id u4mr8046290lju.102.1597704285617;
+ Mon, 17 Aug 2020 15:44:45 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <57f972a7-26f1-3ac7-4001-54c0bc7e12a8@schaufler-ca.com>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1842689.1596468469@warthog.procyon.org.uk> <1845353.1596469795@warthog.procyon.org.uk>
+ <CAJfpegunY3fuxh486x9ysKtXbhTE0745ZCVHcaqs9Gww9RV2CQ@mail.gmail.com>
+ <ac1f5e3406abc0af4cd08d818fe920a202a67586.camel@themaw.net>
+ <CAJfpegu8omNZ613tLgUY7ukLV131tt7owR+JJ346Kombt79N0A@mail.gmail.com>
+ <CAJfpegtNP8rQSS4Z14Ja4x-TOnejdhDRTsmmDD-Cccy2pkfVVw@mail.gmail.com>
+ <20200811135419.GA1263716@miu.piliscsaba.redhat.com> <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com>
+ <52483.1597190733@warthog.procyon.org.uk> <CAHk-=wiPx0UJ6Q1X=azwz32xrSeKnTJcH8enySwuuwnGKkHoPA@mail.gmail.com>
+ <066f9aaf-ee97-46db-022f-5d007f9e6edb@redhat.com> <CAHk-=wgz5H-xYG4bOrHaEtY7rvFA1_6+mTSpjrgK8OsNbfF+Pw@mail.gmail.com>
+ <94f907f0-996e-0456-db8a-7823e2ef3d3f@redhat.com> <CAHk-=wig0ZqWxgWtD9F1xZzE7jEmgLmXRWABhss0+er3ZRtb9g@mail.gmail.com>
+In-Reply-To: <CAHk-=wig0ZqWxgWtD9F1xZzE7jEmgLmXRWABhss0+er3ZRtb9g@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 17 Aug 2020 15:44:29 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wh4qaj6iFTrbHy8TPfmM3fj+msYC5X_KE0rCdStJKH2NA@mail.gmail.com>
+Message-ID: <CAHk-=wh4qaj6iFTrbHy8TPfmM3fj+msYC5X_KE0rCdStJKH2NA@mail.gmail.com>
+Subject: Re: file metadata via fs API
+To:     Steven Whitehouse <swhiteho@redhat.com>
+Cc:     David Howells <dhowells@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, Karel Zak <kzak@redhat.com>,
+        Jeff Layton <jlayton@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        Christian Brauner <christian@brauner.io>,
+        Lennart Poettering <lennart@poettering.net>,
+        Linux API <linux-api@vger.kernel.org>,
+        Ian Kent <raven@themaw.net>,
+        LSM <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 8/17/20 3:00 PM, Casey Schaufler wrote:
-> On 8/17/2020 2:31 PM, Mimi Zohar wrote:
->> On Thu, 2020-08-13 at 14:13 -0400, Stephen Smalley wrote:
->>> On Thu, Aug 13, 2020 at 2:03 PM Lakshmi Ramasubramanian
->>> <nramas@linux.microsoft.com> wrote:
->>>> On 8/13/20 10:58 AM, Stephen Smalley wrote:
->>>>> On Thu, Aug 13, 2020 at 1:52 PM Lakshmi Ramasubramanian
->>>>> <nramas@linux.microsoft.com> wrote:
->>>>>> On 8/13/20 10:42 AM, Stephen Smalley wrote:
->>>>>>
->>>>>>>> diff --git a/security/selinux/measure.c b/security/selinux/measure.c
->>>>>>>> new file mode 100644
->>>>>>>> index 000000000000..f21b7de4e2ae
->>>>>>>> --- /dev/null
->>>>>>>> +++ b/security/selinux/measure.c
->>>>>>>> @@ -0,0 +1,204 @@
->>>>>>>> +static int selinux_hash_buffer(void *buf, size_t buf_len,
->>>>>>>> +                   void **buf_hash, int *buf_hash_len)
->>>>>>>> +{
->>>>>>>> +    struct crypto_shash *tfm;
->>>>>>>> +    struct shash_desc *desc = NULL;
->>>>>>>> +    void *digest = NULL;
->>>>>>>> +    int desc_size;
->>>>>>>> +    int digest_size;
->>>>>>>> +    int ret = 0;
->>>>>>>> +
->>>>>>>> +    tfm = crypto_alloc_shash("sha256", 0, 0);
->>>>>>>> +    if (IS_ERR(tfm))
->>>>>>>> +        return PTR_ERR(tfm);
->>>>>>> Can we make the algorithm selectable via kernel parameter and/or writing
->>>>>>> to a new selinuxfs node?
->>>>>> I can add a kernel parameter to select this hash algorithm.
->>>>> Also can we provide a Kconfig option for the default value like IMA does?
->>>>>
->>>> Would we need both - Kconfig and kernel param?
->>>>
->>>> The other option is to provide an IMA function to return the current
->>>> hash algorithm used for measurement. That way a consistent hash
->>>> algorithm can be employed by both IMA and the callers. Would that be better?
->>> This is why I preferred just passing the serialized policy buffer to
->>> IMA and letting it handle the hashing.  But apparently that approach
->>> wouldn't fly.  IMA appears to support both a Kconfig option for
->>> selecting a default algorithm and a kernel parameter for overriding
->>> it.  I assume the idea is that the distros can pick a reasonable
->>> default and then the end users can override that if they have specific
->>> requirements.  I'd want the same for SELinux.  If IMA is willing to
->>> export its hash algorithm to external components, then I'm willing to
->>> reuse that but not sure if that's a layering violation.
->> With the new ima_measure_critical_data() hook, I agree with you and
->> Casey it doesn't make sense for each caller to have to write their own
->> function.  Casey suggested exporting IMA's hash function or defining a
->> new common hash function.   There's nothing specific to IMA.
-> 
-> Except that no one is going to use the function unless they're
-> doing an IMA operation.
+On Mon, Aug 17, 2020 at 10:15 AM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> So it has this very complex "random structures of random things"
+> implementation. It's a huge sign of over-design and "I don't know what
+> the hell I want to expose, so I'll make this generic thing that can
+> expose anything, and then I start adding random fields".
 
-Can we do the following instead:
+You can see the overdesign in other places too: that "time
+granularity" is some very odd stuff. It doesn't actually even match
+the kernel granularity rules, so that fsinfo interface is basically
+exporting random crap that doesn't match reality.
 
-In ima_measure_critical_data() IMA hook, we can add another param for 
-the caller to indicate whether
+In the kernel, we give the granularity in nsec, but for some reason
+that fsinfo stuff gives it in some hand-written pseudo-floating-point
+format. Why? Don't ask me.
 
-  => The contents of "buf" needs to be measured
-     OR
-  => Hash of the contents of "buf" needs to be measured.
+And do we really want to have that whole odd Nth/Mth thing?
+Considering that it cannot be consistent or atomic, and the complaint
+against the /proc interfaces have been about that part, it really
+smells completely bogus.
 
-This way IMA doesn't need to export any new function to meet the hashing 
-requirement.
+So please. Can we just make a simple extended statfs() and be done
+with it, instead of this hugely complex thing that does five different
+things with the same interface and makes it really odd as a result?
 
-  -lakshmi
-
-> 
->>    Should
->> the common hash function be prefixed with "security_"?
-> 
-> Yuck. That prefix is for interfaces that are exported outside the
-> security sub-system. We're talking about a function that is provided
-> for use within the security sub-system, but not for any one particular
-> security module or non-module feature. We're currently using the lsm_
-> prefix for interfaces used within the security subsystem, so I suggest
-> lsm_hash_brown_potatoes() might be the way to go.
-
-
-> 
->>
->> Like when we add a new security hook call, the new LSM call is separate
->> from any other change.   Please break up this patch with the SELinux
->> specific pieces separated from the ima_measure_critical_data() call as
->> much as possible.
->>
-
+                  Linus
+So honestly,  there's a
