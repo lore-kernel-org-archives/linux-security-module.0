@@ -2,154 +2,209 @@ Return-Path: <SRS0=ORYe=B3=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-5.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CA4DC433DF
-	for <linux-security-module@archiver.kernel.org>; Mon, 17 Aug 2020 10:07:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38695C433DF
+	for <linux-security-module@archiver.kernel.org>; Mon, 17 Aug 2020 11:33:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F192B206FA
-	for <linux-security-module@archiver.kernel.org>; Mon, 17 Aug 2020 10:07:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09F282067C
+	for <linux-security-module@archiver.kernel.org>; Mon, 17 Aug 2020 11:33:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eBDfICT/"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="P8RqICs6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727056AbgHQKHi (ORCPT
+        id S1726727AbgHQLdQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 17 Aug 2020 06:07:38 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:45029 "EHLO
+        Mon, 17 Aug 2020 07:33:16 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:44261 "EHLO
         us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726760AbgHQKHg (ORCPT
+        with ESMTP id S1726802AbgHQLdQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 17 Aug 2020 06:07:36 -0400
+        Mon, 17 Aug 2020 07:33:16 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1597658855;
+        s=mimecast20190719; t=1597663994;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=j/v002Gxe6nBxuXIo8xXJ4Ruh4kteZD7I/mhEJxj0MM=;
-        b=eBDfICT/v8YTHDafFU/7iASSIecGa09jy49lMA6bKXC89EsO/mJj0qoN4tM2a5qvfLkR4r
-        pFqXaIi9hi+YMfN+KOMDRihz3nqHlAupC5Ctyvn9sMPk7c6Ly4ZKyoHvt3ARqY7UwxZ8cl
-        l+5cL25XSxE5vWBojlUA20wFm6n3qpY=
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=yGNaFx2Jg2/WUMJiM6JmNJk/uv+6+QM3rr6hE8Ya/eo=;
+        b=P8RqICs6QPjiwUtacccFnu0jwiFyLZsDk8jSw9IeK3IMB9MDqQ9cIYKeFJBmfVAamkeeoZ
+        sOSWA/CGZIyRKbbnsDMF3qiDYR8hPVXBRZlY/VLPxw7GMypgsXEAU+bYQ5MKe0UvyqsPkb
+        lf2Awukdd6s12GWVFLRsknC7lfYeu4c=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-444-zoNlyZsOPL2h4UiP-b4EoQ-1; Mon, 17 Aug 2020 06:07:31 -0400
-X-MC-Unique: zoNlyZsOPL2h4UiP-b4EoQ-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+ us-mta-308-WwqY1EEVM_-CA6hqEqDjGw-1; Mon, 17 Aug 2020 07:33:07 -0400
+X-MC-Unique: WwqY1EEVM_-CA6hqEqDjGw-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 379E1801AF2;
-        Mon, 17 Aug 2020 10:07:30 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-127.rdu2.redhat.com [10.10.120.127])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 053085C62B;
-        Mon, 17 Aug 2020 10:07:28 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH] watch_queue: Limit the number of watches a user can hold
-From:   David Howells <dhowells@redhat.com>
-To:     torvalds@linux-foundation.org
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        dhowells@redhat.com, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 17 Aug 2020 11:07:28 +0100
-Message-ID: <159765884811.1436382.16387370517871969276.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/0.23
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 98322E75C;
+        Mon, 17 Aug 2020 11:33:04 +0000 (UTC)
+Received: from fogou.chygwyn.com (unknown [10.33.36.12])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1AC7C7D66F;
+        Mon, 17 Aug 2020 11:32:57 +0000 (UTC)
+Subject: Re: file metadata via fs API
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     David Howells <dhowells@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, Karel Zak <kzak@redhat.com>,
+        Jeff Layton <jlayton@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        Christian Brauner <christian@brauner.io>,
+        Lennart Poettering <lennart@poettering.net>,
+        Linux API <linux-api@vger.kernel.org>,
+        Ian Kent <raven@themaw.net>,
+        LSM <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <1842689.1596468469@warthog.procyon.org.uk>
+ <1845353.1596469795@warthog.procyon.org.uk>
+ <CAJfpegunY3fuxh486x9ysKtXbhTE0745ZCVHcaqs9Gww9RV2CQ@mail.gmail.com>
+ <ac1f5e3406abc0af4cd08d818fe920a202a67586.camel@themaw.net>
+ <CAJfpegu8omNZ613tLgUY7ukLV131tt7owR+JJ346Kombt79N0A@mail.gmail.com>
+ <CAJfpegtNP8rQSS4Z14Ja4x-TOnejdhDRTsmmDD-Cccy2pkfVVw@mail.gmail.com>
+ <20200811135419.GA1263716@miu.piliscsaba.redhat.com>
+ <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com>
+ <52483.1597190733@warthog.procyon.org.uk>
+ <CAHk-=wiPx0UJ6Q1X=azwz32xrSeKnTJcH8enySwuuwnGKkHoPA@mail.gmail.com>
+ <066f9aaf-ee97-46db-022f-5d007f9e6edb@redhat.com>
+ <CAHk-=wgz5H-xYG4bOrHaEtY7rvFA1_6+mTSpjrgK8OsNbfF+Pw@mail.gmail.com>
+From:   Steven Whitehouse <swhiteho@redhat.com>
+Message-ID: <94f907f0-996e-0456-db8a-7823e2ef3d3f@redhat.com>
+Date:   Mon, 17 Aug 2020 12:32:52 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <CAHk-=wgz5H-xYG4bOrHaEtY7rvFA1_6+mTSpjrgK8OsNbfF+Pw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Impose a limit on the number of watches that a user can hold so that they
-can't use this mechanism to fill up all the available memory.
+Hi,
 
-This is done by putting a counter in user_struct that's incremented when a
-watch is allocated and decreased when it is released.  If the number
-exceeds the RLIMIT_NOFILE limit, the watch is rejected with EAGAIN.
+On 12/08/2020 20:50, Linus Torvalds wrote:
+> On Wed, Aug 12, 2020 at 12:34 PM Steven Whitehouse <swhiteho@redhat.com> wrote:
+>> The point of this is to give us the ability to monitor mounts from
+>> userspace.
+> We haven't had that before, I don't see why it's suddenly such a big deal.
+>
+> The notification side I understand. Polling /proc files is not the answer.
+>
+> But the whole "let's design this crazy subsystem for it" seems way
+> overkill. I don't see anybody caring that deeply.
+>
+> It really smells like "do it because we can, not because we must".
+>
+> Who the hell cares about monitoring mounts at a kHz frequencies? If
+> this is for MIS use, you want a nice GUI and not wasting CPU time
+> polling.
+>
+> I'm starting to ignore the pull requests from David Howells, because
+> by now they have had the same pattern for a couple of years now:
+> esoteric new interfaces that seem overdesigned for corner-cases that
+> I'm not seeing people clamoring for.
+>
+> I need (a) proof this is actualyl something real users care about and
+> (b) way more open discussion and implementation from multiple parties.
+>
+> Because right now it looks like a small in-cabal of a couple of people
+> who have wild ideas but I'm not seeing the wider use of it.
+>
+> Convince me otherwise. AGAIN. This is the exact same issue I had with
+> the notification queues that I really wanted actual use-cases for, and
+> feedback from actual outside users.
+>
+> I really think this is engineering for its own sake, rather than
+> responding to actual user concerns.
+>
+>                 Linus
+>
 
-This can be tested by the following means:
+I've been hesitant to reply to this immediately, because I can see that 
+somehow there is a significant disconnect between what you expect to 
+happen, and what has actually happened in this case. Have pondered this 
+for a few days, I hope that the best way forward might be to explore 
+where the issues are, with the intention of avoiding a repeat in the 
+future. Sometimes email is a difficult medium for these kinds of 
+communication, and face to face is better, but with the lack of 
+conferences/travel at the moment, that option is not open in the near 
+future.
 
- (1) Create a watch queue and attach it to fd 5 in the program given - in
-     this case, bash:
+The whole plan here, leading towards the ability to get a "dump plus 
+updates" view of mounts in the kernel has been evolving over time. It 
+has been discussed at LSF over a number of years [1] and in fact the new 
+mount API which was merged recently - I wonder if this is what you are 
+referring to above as:
 
-	keyctl watch_session /tmp/nlog /tmp/gclog 5 bash
+> I'm starting to ignore the pull requests from David Howells, because
+> by now they have had the same pattern for a couple of years now
 
- (2) In the shell, set the maximum number of files to, say, 99:
+was originally proposed by Al, and also worked on by Miklos[2] in 2017 
+and others. Community discussion resulted in that becoming a 
+prerequisite for the later notifications/fsinfo work. This was one of 
+the main reasons that David picked it up[3] to work on, but not the only 
+reason. That did also appear to be logical, in that cleaning up the way 
+in which arguments were handled during mount would make it much easier 
+to create future generic code to handle them.
 
-	ulimit -n 99
+That said, the overall aim here is to solve the problem and if there are 
+better solutions available then I'm sure that everyone is very open to 
+those. I agree very much that monitoring at kHz frequencies is not 
+useful, but at the same time, there are cases which can generate large 
+amounts of mount changes in a very short time period. We want to be 
+reasonably efficient, but not to over-optimise, and sometimes that is a 
+fine line. We also don't want to block mounts if the notifications queue 
+fills up, so some kind of resync operation would be required in the 
+queue overflows. The notifications and fsinfo were designed very much as 
+two sides of the same coin, but submitted separately for ease of review 
+more than anything else.
 
- (3) Add 200 keyrings:
+You recently requested some details of real users for the notifications, 
+and (I assumed) by extension fsinfo too. Ian wrote these emails [4][5] 
+in direct response to your request. That is what we thought you were 
+looking for, so if that isn't not quite what you meant, perhaps you 
+could clarify a bit more. Again, apologies if we've misinterpreted what 
+you were asking for.
 
-	for ((i=0; i<200; i++)); do keyctl newring a$i @s || break; done
+You also mention "...it looks like a small in-cabal of a couple of 
+people..." and I hope that it doesn't look that way, it is certainly not 
+our intention. There have been a fair number of people involved, and 
+we've done our best to ensure that the development is guided by the 
+potential users, such as autofs, AFS and systemd. If there are others 
+out there with use cases, and particularly so if the use case is a GUI 
+file manager type application who'd like to get involved, then please 
+do. We definitely want to see involvement from end users, since there is 
+no point in spending a large effort creating something that is then 
+never used. As you pointed that out above, this kind of application was 
+very much part of the original motivation, but we had started with the 
+other users since there were clearly defined use cases that could 
+demonstrate significant performance gains in those cases.
 
- (4) Try to watch all of the keyrings:
+So hopefully that helps to give a bit more background about where we are 
+and how we got here. Where we go next will no doubt depend on the 
+outcome of the current discussions, and any guidance you can give around 
+how we should have better approached this would be very helpful at this 
+stage,
 
-	for ((i=0; i<200; i++)); do echo $i; keyctl watch_add 5 %:a$i || break; done
+Steve.
 
-     This should fail when the number of watches belonging to the user hits
-     99.
 
- (5) Remove all the keyrings and all of those watches should go away:
+[1] https://lwn.net/Articles/718803/
 
-	for ((i=0; i<200; i++)); do keyctl unlink %:a$i; done
+[2] https://lwn.net/Articles/718638/
 
- (6) Kill off the watch queue by exiting the shell spawned by
-     watch_session.
+[3] https://lwn.net/Articles/753473/
 
-Fixes: c73be61cede5 ("pipe: Add general notification queue support")
-Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: David Howells <dhowells@redhat.com>
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
+[4] https://lkml.org/lkml/2020/6/2/1182
 
- include/linux/sched/user.h |    3 +++
- kernel/watch_queue.c       |    8 ++++++++
- 2 files changed, 11 insertions(+)
-
-diff --git a/include/linux/sched/user.h b/include/linux/sched/user.h
-index 917d88edb7b9..a8ec3b6093fc 100644
---- a/include/linux/sched/user.h
-+++ b/include/linux/sched/user.h
-@@ -36,6 +36,9 @@ struct user_struct {
-     defined(CONFIG_NET) || defined(CONFIG_IO_URING)
- 	atomic_long_t locked_vm;
- #endif
-+#ifdef CONFIG_WATCH_QUEUE
-+	atomic_t nr_watches;	/* The number of watches this user currently has */
-+#endif
- 
- 	/* Miscellaneous per-user rate limit */
- 	struct ratelimit_state ratelimit;
-diff --git a/kernel/watch_queue.c b/kernel/watch_queue.c
-index f74020f6bd9d..0ef8f65bd2d7 100644
---- a/kernel/watch_queue.c
-+++ b/kernel/watch_queue.c
-@@ -393,6 +393,7 @@ static void free_watch(struct rcu_head *rcu)
- 	struct watch *watch = container_of(rcu, struct watch, rcu);
- 
- 	put_watch_queue(rcu_access_pointer(watch->queue));
-+	atomic_dec(&watch->cred->user->nr_watches);
- 	put_cred(watch->cred);
- }
- 
-@@ -452,6 +453,13 @@ int add_watch_to_object(struct watch *watch, struct watch_list *wlist)
- 	watch->cred = get_current_cred();
- 	rcu_assign_pointer(watch->watch_list, wlist);
- 
-+	if (atomic_inc_return(&watch->cred->user->nr_watches) >
-+	    task_rlimit(current, RLIMIT_NOFILE)) {
-+		atomic_dec(&watch->cred->user->nr_watches);
-+		put_cred(watch->cred);
-+		return -EAGAIN;
-+	}
-+
- 	spin_lock_bh(&wqueue->lock);
- 	kref_get(&wqueue->usage);
- 	kref_get(&watch->usage);
+[5] 
+https://lore.kernel.org/linux-fsdevel/8eb2e52f1cbdbb8bcf5c5205a53bdc9aaa11a071.camel@themaw.net/
 
 
