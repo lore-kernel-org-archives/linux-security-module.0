@@ -2,51 +2,87 @@ Return-Path: <SRS0=ORYe=B3=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38695C433DF
-	for <linux-security-module@archiver.kernel.org>; Mon, 17 Aug 2020 11:33:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACF97C433E1
+	for <linux-security-module@archiver.kernel.org>; Mon, 17 Aug 2020 17:27:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 09F282067C
-	for <linux-security-module@archiver.kernel.org>; Mon, 17 Aug 2020 11:33:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="P8RqICs6"
+	by mail.kernel.org (Postfix) with ESMTP id 89ED020657
+	for <linux-security-module@archiver.kernel.org>; Mon, 17 Aug 2020 17:27:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1597685230;
+	bh=ZD0J8YBkO0KVXTkVaLC2OlcG4smLzYi8u9H7onA3kPk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=Kv7E/+T8s4vmA83r2dI//pQRTCYjm2+YstpP6RVCnZMjBSbXobOZZco9NRJCvpU0b
+	 LEjd3CdypNVLZ+ti/VTxVl8t07r/KOT5SAei34ZcTnQi/8wCI6p3nV7cMzfWuJjwcZ
+	 18HOOqav0wR5fwiMCBgTVihL/NVaAsKrUxXlVUyk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726727AbgHQLdQ (ORCPT
+        id S2389724AbgHQR1J (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 17 Aug 2020 07:33:16 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:44261 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726802AbgHQLdQ (ORCPT
+        Mon, 17 Aug 2020 13:27:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51310 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389784AbgHQRWT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 17 Aug 2020 07:33:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1597663994;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=yGNaFx2Jg2/WUMJiM6JmNJk/uv+6+QM3rr6hE8Ya/eo=;
-        b=P8RqICs6QPjiwUtacccFnu0jwiFyLZsDk8jSw9IeK3IMB9MDqQ9cIYKeFJBmfVAamkeeoZ
-        sOSWA/CGZIyRKbbnsDMF3qiDYR8hPVXBRZlY/VLPxw7GMypgsXEAU+bYQ5MKe0UvyqsPkb
-        lf2Awukdd6s12GWVFLRsknC7lfYeu4c=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-308-WwqY1EEVM_-CA6hqEqDjGw-1; Mon, 17 Aug 2020 07:33:07 -0400
-X-MC-Unique: WwqY1EEVM_-CA6hqEqDjGw-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 98322E75C;
-        Mon, 17 Aug 2020 11:33:04 +0000 (UTC)
-Received: from fogou.chygwyn.com (unknown [10.33.36.12])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1AC7C7D66F;
-        Mon, 17 Aug 2020 11:32:57 +0000 (UTC)
+        Mon, 17 Aug 2020 13:22:19 -0400
+Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5BFCC061389
+        for <linux-security-module@vger.kernel.org>; Mon, 17 Aug 2020 10:22:18 -0700 (PDT)
+Received: by mail-ed1-x544.google.com with SMTP id di22so12882056edb.12
+        for <linux-security-module@vger.kernel.org>; Mon, 17 Aug 2020 10:22:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DTKpRQCJHedRM3FbZvyYbTIR6de/XsGxhtwq6dwi9YM=;
+        b=PMBxHujDdM06S7/LBYxWztuV9Qz9M9XMftYKfNncXrXEOWl8S9SfA8Rombi+0je/I0
+         A84g6y4oncHBFuyCuaStiv1xllCcI1u554NplHzJl+AHhh3aSCdz63J8MUzhGeEWT8sx
+         kXa9iLijsc9rTUTCiHyOc6bHkoxCbBHR8fr9M=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DTKpRQCJHedRM3FbZvyYbTIR6de/XsGxhtwq6dwi9YM=;
+        b=k/FTHzJkUtvjTXKGFJyfU8facUvCMGBC8jnG9sVNp8tfyWBa57hrIT6D8muAL3iDAu
+         hZW2wOGobI8g9V1QzzMR+FkQHnxjj7Wk+Sjr+kzGtCabm9ocDEnNYIJtEgWQHVXibSW8
+         93xCYZxeWLYNA/mVuWh7Vkuy8+1O2M958lupnQi+LleTaM2Ot+G+JIojIgkACNbvteLR
+         QK8KpzXvZNfjz5rG7x0j08MCQ2rhxWVqWeSjT8OiNjoP38bpe/UJr/Awn7jaDOHn+Ka+
+         top6nb8OL47oK2c+9rnp3g5oqEjjE6pQayhONAzkX7T2J+O7pBSSJv2yd/WlHyHy7bWF
+         JAvA==
+X-Gm-Message-State: AOAM531UNcEgk8a24BnwrcNgqnJtTfd8XFnypBPhxwf+W9Tou2DLxbuC
+        tpOAdTs2GH/MjdywDEjNmF8wRgzwyDmhWQ==
+X-Google-Smtp-Source: ABdhPJy1vAPNZjyV7fC8upZzVszX0CG8lCDVVv2n7WXFW6LYET7bXghVvbQzVlm6R+ugXDJj1KdIyA==
+X-Received: by 2002:a50:d80b:: with SMTP id o11mr15589226edj.148.1597684936949;
+        Mon, 17 Aug 2020 10:22:16 -0700 (PDT)
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
+        by smtp.gmail.com with ESMTPSA id p23sm9950383edm.31.2020.08.17.10.22.16
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Aug 2020 10:22:16 -0700 (PDT)
+Received: by mail-ed1-f45.google.com with SMTP id c10so12906850edk.6
+        for <linux-security-module@vger.kernel.org>; Mon, 17 Aug 2020 10:22:16 -0700 (PDT)
+X-Received: by 2002:a05:651c:503:: with SMTP id o3mr8363984ljp.312.1597684524581;
+ Mon, 17 Aug 2020 10:15:24 -0700 (PDT)
+MIME-Version: 1.0
+References: <1842689.1596468469@warthog.procyon.org.uk> <1845353.1596469795@warthog.procyon.org.uk>
+ <CAJfpegunY3fuxh486x9ysKtXbhTE0745ZCVHcaqs9Gww9RV2CQ@mail.gmail.com>
+ <ac1f5e3406abc0af4cd08d818fe920a202a67586.camel@themaw.net>
+ <CAJfpegu8omNZ613tLgUY7ukLV131tt7owR+JJ346Kombt79N0A@mail.gmail.com>
+ <CAJfpegtNP8rQSS4Z14Ja4x-TOnejdhDRTsmmDD-Cccy2pkfVVw@mail.gmail.com>
+ <20200811135419.GA1263716@miu.piliscsaba.redhat.com> <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com>
+ <52483.1597190733@warthog.procyon.org.uk> <CAHk-=wiPx0UJ6Q1X=azwz32xrSeKnTJcH8enySwuuwnGKkHoPA@mail.gmail.com>
+ <066f9aaf-ee97-46db-022f-5d007f9e6edb@redhat.com> <CAHk-=wgz5H-xYG4bOrHaEtY7rvFA1_6+mTSpjrgK8OsNbfF+Pw@mail.gmail.com>
+ <94f907f0-996e-0456-db8a-7823e2ef3d3f@redhat.com>
+In-Reply-To: <94f907f0-996e-0456-db8a-7823e2ef3d3f@redhat.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 17 Aug 2020 10:15:08 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wig0ZqWxgWtD9F1xZzE7jEmgLmXRWABhss0+er3ZRtb9g@mail.gmail.com>
+Message-ID: <CAHk-=wig0ZqWxgWtD9F1xZzE7jEmgLmXRWABhss0+er3ZRtb9g@mail.gmail.com>
 Subject: Re: file metadata via fs API
-To:     Linus Torvalds <torvalds@linux-foundation.org>
+To:     Steven Whitehouse <swhiteho@redhat.com>
 Cc:     David Howells <dhowells@redhat.com>,
         Miklos Szeredi <miklos@szeredi.hu>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
@@ -60,151 +96,69 @@ Cc:     David Howells <dhowells@redhat.com>,
         Ian Kent <raven@themaw.net>,
         LSM <linux-security-module@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <1842689.1596468469@warthog.procyon.org.uk>
- <1845353.1596469795@warthog.procyon.org.uk>
- <CAJfpegunY3fuxh486x9ysKtXbhTE0745ZCVHcaqs9Gww9RV2CQ@mail.gmail.com>
- <ac1f5e3406abc0af4cd08d818fe920a202a67586.camel@themaw.net>
- <CAJfpegu8omNZ613tLgUY7ukLV131tt7owR+JJ346Kombt79N0A@mail.gmail.com>
- <CAJfpegtNP8rQSS4Z14Ja4x-TOnejdhDRTsmmDD-Cccy2pkfVVw@mail.gmail.com>
- <20200811135419.GA1263716@miu.piliscsaba.redhat.com>
- <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com>
- <52483.1597190733@warthog.procyon.org.uk>
- <CAHk-=wiPx0UJ6Q1X=azwz32xrSeKnTJcH8enySwuuwnGKkHoPA@mail.gmail.com>
- <066f9aaf-ee97-46db-022f-5d007f9e6edb@redhat.com>
- <CAHk-=wgz5H-xYG4bOrHaEtY7rvFA1_6+mTSpjrgK8OsNbfF+Pw@mail.gmail.com>
-From:   Steven Whitehouse <swhiteho@redhat.com>
-Message-ID: <94f907f0-996e-0456-db8a-7823e2ef3d3f@redhat.com>
-Date:   Mon, 17 Aug 2020 12:32:52 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
-MIME-Version: 1.0
-In-Reply-To: <CAHk-=wgz5H-xYG4bOrHaEtY7rvFA1_6+mTSpjrgK8OsNbfF+Pw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi,
-
-On 12/08/2020 20:50, Linus Torvalds wrote:
-> On Wed, Aug 12, 2020 at 12:34 PM Steven Whitehouse <swhiteho@redhat.com> wrote:
->> The point of this is to give us the ability to monitor mounts from
->> userspace.
-> We haven't had that before, I don't see why it's suddenly such a big deal.
+On Mon, Aug 17, 2020 at 4:33 AM Steven Whitehouse <swhiteho@redhat.com> wrote:
 >
-> The notification side I understand. Polling /proc files is not the answer.
->
-> But the whole "let's design this crazy subsystem for it" seems way
-> overkill. I don't see anybody caring that deeply.
->
-> It really smells like "do it because we can, not because we must".
->
-> Who the hell cares about monitoring mounts at a kHz frequencies? If
-> this is for MIS use, you want a nice GUI and not wasting CPU time
-> polling.
->
-> I'm starting to ignore the pull requests from David Howells, because
-> by now they have had the same pattern for a couple of years now:
-> esoteric new interfaces that seem overdesigned for corner-cases that
-> I'm not seeing people clamoring for.
->
-> I need (a) proof this is actualyl something real users care about and
-> (b) way more open discussion and implementation from multiple parties.
->
-> Because right now it looks like a small in-cabal of a couple of people
-> who have wild ideas but I'm not seeing the wider use of it.
->
-> Convince me otherwise. AGAIN. This is the exact same issue I had with
-> the notification queues that I really wanted actual use-cases for, and
-> feedback from actual outside users.
->
-> I really think this is engineering for its own sake, rather than
-> responding to actual user concerns.
->
->                 Linus
->
+> That said, the overall aim here is to solve the problem and if there are
+> better solutions available then I'm sure that everyone is very open to
+> those. I agree very much that monitoring at kHz frequencies is not
+> useful, but at the same time, there are cases which can generate large
+> amounts of mount changes in a very short time period.
 
-I've been hesitant to reply to this immediately, because I can see that 
-somehow there is a significant disconnect between what you expect to 
-happen, and what has actually happened in this case. Have pondered this 
-for a few days, I hope that the best way forward might be to explore 
-where the issues are, with the intention of avoiding a repeat in the 
-future. Sometimes email is a difficult medium for these kinds of 
-communication, and face to face is better, but with the lack of 
-conferences/travel at the moment, that option is not open in the near 
-future.
+So the thing is, I absolutely believe in the kernel _notifying_ about
+changes so that people don't need to poll. It's why I did merge the
+notification queues, although I wanted to make sure that those worked.
 
-The whole plan here, leading towards the ability to get a "dump plus 
-updates" view of mounts in the kernel has been evolving over time. It 
-has been discussed at LSF over a number of years [1] and in fact the new 
-mount API which was merged recently - I wonder if this is what you are 
-referring to above as:
+> You recently requested some details of real users for the notifications,
+> and (I assumed) by extension fsinfo too.
 
-> I'm starting to ignore the pull requests from David Howells, because
-> by now they have had the same pattern for a couple of years now
+No, fsinfo wasn't on the table there. To me, notifications are a
+completely separate issue, because you *can* get the information from
+existing sources (ie things like /proc/mounts etc), and notification
+seemed to be the much more fundamental issue.
 
-was originally proposed by Al, and also worked on by Miklos[2] in 2017 
-and others. Community discussion resulted in that becoming a 
-prerequisite for the later notifications/fsinfo work. This was one of 
-the main reasons that David picked it up[3] to work on, but not the only 
-reason. That did also appear to be logical, in that cleaning up the way 
-in which arguments were handled during mount would make it much easier 
-to create future generic code to handle them.
+If you poll for changes, parsing something like /proc/mounts is
+obviously very heavy indeed. I don't find that particularly
+controversial. Plus the notification queues had other uses, even if it
+wasn't clear how many or who would use them.
 
-That said, the overall aim here is to solve the problem and if there are 
-better solutions available then I'm sure that everyone is very open to 
-those. I agree very much that monitoring at kHz frequencies is not 
-useful, but at the same time, there are cases which can generate large 
-amounts of mount changes in a very short time period. We want to be 
-reasonably efficient, but not to over-optimise, and sometimes that is a 
-fine line. We also don't want to block mounts if the notifications queue 
-fills up, so some kind of resync operation would be required in the 
-queue overflows. The notifications and fsinfo were designed very much as 
-two sides of the same coin, but submitted separately for ease of review 
-more than anything else.
+But honestly, the actual fsinfo thing seems (a) overdesigned and (b)
+broken. I've now had two different people say how they want to use it
+to figure out whether a filesystem supports certain things that aren't
+even per-filesystem things in the first place.
 
-You recently requested some details of real users for the notifications, 
-and (I assumed) by extension fsinfo too. Ian wrote these emails [4][5] 
-in direct response to your request. That is what we thought you were 
-looking for, so if that isn't not quite what you meant, perhaps you 
-could clarify a bit more. Again, apologies if we've misinterpreted what 
-you were asking for.
+And this feature is clearly controversial, with actual discussion about it.
 
-You also mention "...it looks like a small in-cabal of a couple of 
-people..." and I hope that it doesn't look that way, it is certainly not 
-our intention. There have been a fair number of people involved, and 
-we've done our best to ensure that the development is guided by the 
-potential users, such as autofs, AFS and systemd. If there are others 
-out there with use cases, and particularly so if the use case is a GUI 
-file manager type application who'd like to get involved, then please 
-do. We definitely want to see involvement from end users, since there is 
-no point in spending a large effort creating something that is then 
-never used. As you pointed that out above, this kind of application was 
-very much part of the original motivation, but we had started with the 
-other users since there were clearly defined use cases that could 
-demonstrate significant performance gains in those cases.
+And I find the whole thing confusing and over-engineered. If this was
+a better statfs(), that would be one thing. But it is designed to be
+this monstoer thing that does many different things, and I find it
+distasteful.  Yes, you can query "extended statfs" kind of data with
+it and get the per-file attributes. I find it really annoying how the
+vfs layer calls to the filesystems, that then call back to the vfs
+layer to fill things in, but I guess we have that nasty pattern from
+stat() already. I'd rather have the VFS layer just fill in all the
+default values and the stuff it already knows about, and then maybe
+have the filesystem callback fill in the ones the vfs *doesn't* know
+about, but whatever.
 
-So hopefully that helps to give a bit more background about where we are 
-and how we got here. Where we go next will no doubt depend on the 
-outcome of the current discussions, and any guidance you can give around 
-how we should have better approached this would be very helpful at this 
-stage,
+But then you can *also* query odd things like mounts that aren't even
+visible, and the topology, and completely random error state.
 
-Steve.
+So it has this very complex "random structures of random things"
+implementation. It's a huge sign of over-design and "I don't know what
+the hell I want to expose, so I'll make this generic thing that can
+expose anything, and then I start adding random fields".
 
+Some things are per-file, some things are per-mount, and some things
+are per-namespace and cross mount boundaries.
 
-[1] https://lwn.net/Articles/718803/
+And honestly, the "random binary interfaces" just turns me off a lot.
 
-[2] https://lwn.net/Articles/718638/
+A simple and straightforward struct? Sure. But this random "whatever
+goes" thing? No.
 
-[3] https://lwn.net/Articles/753473/
-
-[4] https://lkml.org/lkml/2020/6/2/1182
-
-[5] 
-https://lore.kernel.org/linux-fsdevel/8eb2e52f1cbdbb8bcf5c5205a53bdc9aaa11a071.camel@themaw.net/
-
-
+                 Linus
