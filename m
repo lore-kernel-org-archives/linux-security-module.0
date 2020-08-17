@@ -1,133 +1,154 @@
-Return-Path: <SRS0=hu4j=BY=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=ORYe=B3=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+X-Spam-Status: No, score=-9.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5CC6C433DF
-	for <linux-security-module@archiver.kernel.org>; Fri, 14 Aug 2020 17:12:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14D5FC433E3
+	for <linux-security-module@archiver.kernel.org>; Mon, 17 Aug 2020 02:07:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C2E2F20838
-	for <linux-security-module@archiver.kernel.org>; Fri, 14 Aug 2020 17:12:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1597425177;
-	bh=AfbstP+k4FgET/zQNAlAR/09TPUNHExZjGv0x7+VM0A=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=OJe29GV5jGohsUxbfapP4FCNW0lTG3luT04MCfOHqiDYBQugJ61MDCGMv4Qea3F81
-	 MfcG0L7sDGq2zVcCJzCzf1MtE8eJGwNPAdmJ/fkMwDG9PFLkXyAIjjblrJ1NcqoOGp
-	 ZXxaQz7W7Fm0gycCokAfPm2BfG0eQmrJnlf0F8w8=
+	by mail.kernel.org (Postfix) with ESMTP id DCACF207FF
+	for <linux-security-module@archiver.kernel.org>; Mon, 17 Aug 2020 02:07:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Y5P7UBdU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728018AbgHNRM4 (ORCPT
+        id S1726417AbgHQCHo (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 14 Aug 2020 13:12:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35164 "EHLO
+        Sun, 16 Aug 2020 22:07:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50994 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727894AbgHNRMz (ORCPT
+        with ESMTP id S1726340AbgHQCHm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 14 Aug 2020 13:12:55 -0400
-Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 087D3C061384
-        for <linux-security-module@vger.kernel.org>; Fri, 14 Aug 2020 10:12:55 -0700 (PDT)
-Received: by mail-ej1-x644.google.com with SMTP id c16so10654568ejx.12
-        for <linux-security-module@vger.kernel.org>; Fri, 14 Aug 2020 10:12:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qYuJ9NHHO+qnoSaHW0PlHI0fiXCW7zDlZFu/ah5uFho=;
-        b=QZC+eNnnLcPaczh2E7Iym7nx2PQpiiDURT50bzxJZUsdtO86YlDCUBTiiWPJAXsWnA
-         U49+U2ao8O1Ymle/LvRAFOmnKYrXWnRy0koTc1q4uPH3YiU1H0Bu0Wp5Fx58rMDOEorn
-         lZP3mAReqkIBPzLDybNfptRtvd5sif7WdrmnA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qYuJ9NHHO+qnoSaHW0PlHI0fiXCW7zDlZFu/ah5uFho=;
-        b=DC5us9Iy+ulpijuXbImoyDWBudrDu6BUwrmb+5msxAepQ7RDDDbjKABOjV8UBtUA7u
-         Aq0+HCiSzpcrBY7tmVmECQOci94kuctZRjE+7dYX+gH7A6lDl6hr7ZXaPmiEm3PwGdTk
-         PR8SDNCNmoNR36ecBTed2fle93ZQbqpM5fochvT3JCEARXsVrMXcCVydGp2cXXyN+M3D
-         +A59O438ZQLvuW246DrDyKFzYec0D6IlgCeIFxK4OInSmMfYIp83ON4+canhzXNW0Sz0
-         AvVzfY+Xt+DJAxKDEnHoDjvcwl1h6DKzNVmsxEf3jCJGiRZUcq2d5mBh9w+h5vqyTlzT
-         C4Tg==
-X-Gm-Message-State: AOAM532jqJZ00FXaSzrccBStt9XVcK+yNOq15S6natFfTWw0lWplWLYu
-        ovM0hFKzQxLMk9KrjVEmXbbLKRhV/Nlcwg==
-X-Google-Smtp-Source: ABdhPJwKVQvuJGfY+swwmK2810FNVNrO033r90cLo+SkOSRlGqMBLJIvhcvMSvJamYuMkbaZlQyY4w==
-X-Received: by 2002:a17:906:36c2:: with SMTP id b2mr3258484ejc.238.1597425173470;
-        Fri, 14 Aug 2020 10:12:53 -0700 (PDT)
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com. [209.85.218.47])
-        by smtp.gmail.com with ESMTPSA id v20sm6941282ejr.12.2020.08.14.10.12.52
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Aug 2020 10:12:52 -0700 (PDT)
-Received: by mail-ej1-f47.google.com with SMTP id m22so10637849eje.10
-        for <linux-security-module@vger.kernel.org>; Fri, 14 Aug 2020 10:12:52 -0700 (PDT)
-X-Received: by 2002:a2e:9a11:: with SMTP id o17mr1629608lji.314.1597424726058;
- Fri, 14 Aug 2020 10:05:26 -0700 (PDT)
+        Sun, 16 Aug 2020 22:07:42 -0400
+Received: from ozlabs.org (ozlabs.org [IPv6:2401:3900:2:1::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E06BAC061786;
+        Sun, 16 Aug 2020 19:07:41 -0700 (PDT)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4BVHVt2tgsz9sTK;
+        Mon, 17 Aug 2020 12:07:34 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1597630055;
+        bh=NUVL7wCS3C8AjNkO2+T076Su0229oneQ8GpXoq1sVvU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Y5P7UBdUOrLfq15c3+yrX4hNJWlKwBdrKEbO8tlxw0ZVi2cZFHtIr+yJ4e8YPwmzR
+         g46Pt4KUM4u7jB+Mv9FqHIDw1vwRlBY7kasTmjYHk0L5KQRHDJz/qG1FQh+pDLwZ6D
+         W6aVMYc/yWy9CLPsDlep0dlgdut718OAA4BgbZqLhKZ3y/CNVKrH0/hZ/nxdGf/v25
+         qBIJqNXV+/Y254JsnPQD0UU8KReuWTA5iQ4icYxTxEsyWRrtleh0QpEVOFpDKdUnG3
+         H2IIqDFGIVPF8tlY6sUHJFalhjnD3/cImvI4GJNx2bwyDYu9tPq4IoXediWbO4L4y1
+         N97kpC0IJMJJQ==
+Date:   Mon, 17 Aug 2020 12:07:31 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Amol Grover <frextrite@gmail.com>, James Morris <jmorris@namei.org>
+Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        linux-kernel@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH RESEND] device_cgroup: Fix RCU list debugging warning
+Message-ID: <20200817120731.218e1bc5@canb.auug.org.au>
+In-Reply-To: <20200608041734.GA10911@mail.hallyn.com>
+References: <20200406105950.GA2285@workstation-kernel-dev>
+        <20200607062340.7be7e8d5@canb.auug.org.au>
+        <20200607190840.GG4455@paulmck-ThinkPad-P72>
+        <20200608041734.GA10911@mail.hallyn.com>
 MIME-Version: 1.0
-References: <1842689.1596468469@warthog.procyon.org.uk> <1845353.1596469795@warthog.procyon.org.uk>
- <CAJfpegunY3fuxh486x9ysKtXbhTE0745ZCVHcaqs9Gww9RV2CQ@mail.gmail.com>
- <ac1f5e3406abc0af4cd08d818fe920a202a67586.camel@themaw.net>
- <CAJfpegu8omNZ613tLgUY7ukLV131tt7owR+JJ346Kombt79N0A@mail.gmail.com>
- <CAJfpegtNP8rQSS4Z14Ja4x-TOnejdhDRTsmmDD-Cccy2pkfVVw@mail.gmail.com>
- <20200811135419.GA1263716@miu.piliscsaba.redhat.com> <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com>
- <52483.1597190733@warthog.procyon.org.uk> <CAHk-=wiPx0UJ6Q1X=azwz32xrSeKnTJcH8enySwuuwnGKkHoPA@mail.gmail.com>
- <679456f1-5867-4017-b1d6-95197d2fa81b@auristor.com>
-In-Reply-To: <679456f1-5867-4017-b1d6-95197d2fa81b@auristor.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 14 Aug 2020 10:05:09 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whLhwum2E+qperD=TypGHXxoBtXOu-HHDd9L9_XFFyiaA@mail.gmail.com>
-Message-ID: <CAHk-=whLhwum2E+qperD=TypGHXxoBtXOu-HHDd9L9_XFFyiaA@mail.gmail.com>
-Subject: Re: file metadata via fs API (was: [GIT PULL] Filesystem Information)
-To:     Jeffrey E Altman <jaltman@auristor.com>
-Cc:     David Howells <dhowells@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, Karel Zak <kzak@redhat.com>,
-        Jeff Layton <jlayton@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
-        Christian Brauner <christian@brauner.io>,
-        Lennart Poettering <lennart@poettering.net>,
-        Linux API <linux-api@vger.kernel.org>,
-        Ian Kent <raven@themaw.net>,
-        LSM <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_//6LbZg5fP0ZKmOnWMaIHeAu";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Aug 12, 2020 at 8:53 PM Jeffrey E Altman <jaltman@auristor.com> wrote:
->
-> For the AFS community, fsinfo offers a method of exposing some server
-> and volume properties that are obtained via "path ioctls" in OpenAFS and
-> AuriStorFS.  Some example of properties that might be exposed include
-> answers to questions such as:
+--Sig_//6LbZg5fP0ZKmOnWMaIHeAu
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Note that several of the questions you ask aren't necessarily
-mount-related at all.
+Hi all,
 
-Doing it by mount ends up being completely the wrong thing.
+On Sun, 7 Jun 2020 23:17:34 -0500 "Serge E. Hallyn" <serge@hallyn.com> wrot=
+e:
+> On Sun, Jun 07, 2020 at 12:08:40PM -0700, Paul E. McKenney wrote:
+> > On Sun, Jun 07, 2020 at 06:23:40AM +1000, Stephen Rothwell wrote: =20
+> > >=20
+> > > On Mon, 6 Apr 2020 16:29:50 +0530 Amol Grover <frextrite@gmail.com> w=
+rote: =20
+> > > >
+> > > > exceptions may be traversed using list_for_each_entry_rcu()
+> > > > outside of an RCU read side critical section BUT under the
+> > > > protection of decgroup_mutex. Hence add the corresponding
+> > > > lockdep expression to fix the following false-positive
+> > > > warning:
+> > > >=20
+> > > > [    2.304417] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > > [    2.304418] WARNING: suspicious RCU usage
+> > > > [    2.304420] 5.5.4-stable #17 Tainted: G            E
+> > > > [    2.304422] -----------------------------
+> > > > [    2.304424] security/device_cgroup.c:355 RCU-list traversed in n=
+on-reader section!!
+> > > >=20
+> > > > Signed-off-by: Amol Grover <frextrite@gmail.com>
+> > > > ---
+> > > >  security/device_cgroup.c | 3 ++-
+> > > >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > > >=20
+> > > > diff --git a/security/device_cgroup.c b/security/device_cgroup.c
+> > > > index 7d0f8f7431ff..b7da9e0970d9 100644
+> > > > --- a/security/device_cgroup.c
+> > > > +++ b/security/device_cgroup.c
+> > > > @@ -352,7 +352,8 @@ static bool match_exception_partial(struct list=
+_head *exceptions, short type,
+> > > >  {
+> > > >  	struct dev_exception_item *ex;
+> > > > =20
+> > > > -	list_for_each_entry_rcu(ex, exceptions, list) {
+> > > > +	list_for_each_entry_rcu(ex, exceptions, list,
+> > > > +				lockdep_is_held(&devcgroup_mutex)) {
+> > > >  		if ((type & DEVCG_DEV_BLOCK) && !(ex->type & DEVCG_DEV_BLOCK))
+> > > >  			continue;
+> > > >  		if ((type & DEVCG_DEV_CHAR) && !(ex->type & DEVCG_DEV_CHAR))
+> > >=20
+> > > I have been carrying the above patch in linux-next for some time now.
+> > > I have been carrying it because it fixes problems for syzbot (see the
+> > > third warning in
+> > > https://lore.kernel.org/linux-next/CACT4Y+YnjK+kq0pfb5fe-q1bqe2T1jq_m=
+vKHf--Z80Z3wkyK1Q@mail.gmail.com/).
+> > > Is there some reason it has not been applied to some tree? =20
+> >=20
+> > The RCU changes on which this patch depends have long since made it to
+> > mainline, so it can go up any tree.  I can take it if no one else will,
+> > but it might be better going in via the security tree.
+>=20
+> James, do you mind pulling it in?
 
-For example, at a minimum, these guys may well be per-directory (or
-even possibly per-file):
+I am still carrying this patch.  Has it been superceded, or is it still
+necessary?
 
->  * where is a mounted volume hosted? which fileservers, named by uuid
->  * what is the block size? 1K, 4K, ...
->  * are directories just-send-8, case-sensitive, case-preserving, or
->    case-insensitive?
->  * if not just-send-8, what character set is used?
->  * if Unicode, what normalization rules? etc.
->  * what volume security policy (authn, integ, priv) is assigned, if any?
->  * what is the replication policy, if any?
->  * what is the volume encryption policy, if any?
+--=20
+Cheers,
+Stephen Rothwell
 
-and trying to solve this with some kind of "mount info" is pure garbage.
+--Sig_//6LbZg5fP0ZKmOnWMaIHeAu
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Honestly, I really think you may want an extended [f]statfs(), not
-some mount tracking.
+-----BEGIN PGP SIGNATURE-----
 
-                 Linus
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl855mMACgkQAVBC80lX
+0Gz3+Qf7B8fFdkNeo/Cqcxhz3GWuAnNd4IeG9m8dsl67F77sOJ7U8WNnX95ZsmAw
+TWCTwMDVm07rUAoqBu6uz3GxgpYTpP8lM/j4Q37kSuR3xVb6spXMyIM4J3hHC2Tz
+J9pHZyBomsYrRdcAMIY2WumPPo2euve4S1MesruCJLvcA7kRrgsO3VMtPMdY72LC
+5xFffg3NVRvkrJb4njqABLk9SgQObnMzBQdXYpKEy3b2XTGtQHb0T8JMc101xrnA
+PxlA2JQP2T7h/HEDuK4+Nm2PbeNonAviErZjnTvRpAP6krQ9YM0wdxPVmfaFjoa3
+5X0NEOx5ikRI+XktkfuPmLUeiAzmYQ==
+=Nz8C
+-----END PGP SIGNATURE-----
+
+--Sig_//6LbZg5fP0ZKmOnWMaIHeAu--
