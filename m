@@ -2,163 +2,125 @@ Return-Path: <SRS0=ORYe=B3=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACF97C433E1
-	for <linux-security-module@archiver.kernel.org>; Mon, 17 Aug 2020 17:27:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 756DBC433E3
+	for <linux-security-module@archiver.kernel.org>; Mon, 17 Aug 2020 20:43:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 89ED020657
-	for <linux-security-module@archiver.kernel.org>; Mon, 17 Aug 2020 17:27:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1597685230;
-	bh=ZD0J8YBkO0KVXTkVaLC2OlcG4smLzYi8u9H7onA3kPk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=Kv7E/+T8s4vmA83r2dI//pQRTCYjm2+YstpP6RVCnZMjBSbXobOZZco9NRJCvpU0b
-	 LEjd3CdypNVLZ+ti/VTxVl8t07r/KOT5SAei34ZcTnQi/8wCI6p3nV7cMzfWuJjwcZ
-	 18HOOqav0wR5fwiMCBgTVihL/NVaAsKrUxXlVUyk=
+	by mail.kernel.org (Postfix) with ESMTP id 47A1720674
+	for <linux-security-module@archiver.kernel.org>; Mon, 17 Aug 2020 20:43:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="I5IdPebn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389724AbgHQR1J (ORCPT
+        id S1726651AbgHQUnX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 17 Aug 2020 13:27:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51310 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389784AbgHQRWT (ORCPT
+        Mon, 17 Aug 2020 16:43:23 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:14178 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726366AbgHQUnT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 17 Aug 2020 13:22:19 -0400
-Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5BFCC061389
-        for <linux-security-module@vger.kernel.org>; Mon, 17 Aug 2020 10:22:18 -0700 (PDT)
-Received: by mail-ed1-x544.google.com with SMTP id di22so12882056edb.12
-        for <linux-security-module@vger.kernel.org>; Mon, 17 Aug 2020 10:22:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=DTKpRQCJHedRM3FbZvyYbTIR6de/XsGxhtwq6dwi9YM=;
-        b=PMBxHujDdM06S7/LBYxWztuV9Qz9M9XMftYKfNncXrXEOWl8S9SfA8Rombi+0je/I0
-         A84g6y4oncHBFuyCuaStiv1xllCcI1u554NplHzJl+AHhh3aSCdz63J8MUzhGeEWT8sx
-         kXa9iLijsc9rTUTCiHyOc6bHkoxCbBHR8fr9M=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=DTKpRQCJHedRM3FbZvyYbTIR6de/XsGxhtwq6dwi9YM=;
-        b=k/FTHzJkUtvjTXKGFJyfU8facUvCMGBC8jnG9sVNp8tfyWBa57hrIT6D8muAL3iDAu
-         hZW2wOGobI8g9V1QzzMR+FkQHnxjj7Wk+Sjr+kzGtCabm9ocDEnNYIJtEgWQHVXibSW8
-         93xCYZxeWLYNA/mVuWh7Vkuy8+1O2M958lupnQi+LleTaM2Ot+G+JIojIgkACNbvteLR
-         QK8KpzXvZNfjz5rG7x0j08MCQ2rhxWVqWeSjT8OiNjoP38bpe/UJr/Awn7jaDOHn+Ka+
-         top6nb8OL47oK2c+9rnp3g5oqEjjE6pQayhONAzkX7T2J+O7pBSSJv2yd/WlHyHy7bWF
-         JAvA==
-X-Gm-Message-State: AOAM531UNcEgk8a24BnwrcNgqnJtTfd8XFnypBPhxwf+W9Tou2DLxbuC
-        tpOAdTs2GH/MjdywDEjNmF8wRgzwyDmhWQ==
-X-Google-Smtp-Source: ABdhPJy1vAPNZjyV7fC8upZzVszX0CG8lCDVVv2n7WXFW6LYET7bXghVvbQzVlm6R+ugXDJj1KdIyA==
-X-Received: by 2002:a50:d80b:: with SMTP id o11mr15589226edj.148.1597684936949;
-        Mon, 17 Aug 2020 10:22:16 -0700 (PDT)
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
-        by smtp.gmail.com with ESMTPSA id p23sm9950383edm.31.2020.08.17.10.22.16
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Aug 2020 10:22:16 -0700 (PDT)
-Received: by mail-ed1-f45.google.com with SMTP id c10so12906850edk.6
-        for <linux-security-module@vger.kernel.org>; Mon, 17 Aug 2020 10:22:16 -0700 (PDT)
-X-Received: by 2002:a05:651c:503:: with SMTP id o3mr8363984ljp.312.1597684524581;
- Mon, 17 Aug 2020 10:15:24 -0700 (PDT)
-MIME-Version: 1.0
-References: <1842689.1596468469@warthog.procyon.org.uk> <1845353.1596469795@warthog.procyon.org.uk>
- <CAJfpegunY3fuxh486x9ysKtXbhTE0745ZCVHcaqs9Gww9RV2CQ@mail.gmail.com>
- <ac1f5e3406abc0af4cd08d818fe920a202a67586.camel@themaw.net>
- <CAJfpegu8omNZ613tLgUY7ukLV131tt7owR+JJ346Kombt79N0A@mail.gmail.com>
- <CAJfpegtNP8rQSS4Z14Ja4x-TOnejdhDRTsmmDD-Cccy2pkfVVw@mail.gmail.com>
- <20200811135419.GA1263716@miu.piliscsaba.redhat.com> <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com>
- <52483.1597190733@warthog.procyon.org.uk> <CAHk-=wiPx0UJ6Q1X=azwz32xrSeKnTJcH8enySwuuwnGKkHoPA@mail.gmail.com>
- <066f9aaf-ee97-46db-022f-5d007f9e6edb@redhat.com> <CAHk-=wgz5H-xYG4bOrHaEtY7rvFA1_6+mTSpjrgK8OsNbfF+Pw@mail.gmail.com>
- <94f907f0-996e-0456-db8a-7823e2ef3d3f@redhat.com>
-In-Reply-To: <94f907f0-996e-0456-db8a-7823e2ef3d3f@redhat.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 17 Aug 2020 10:15:08 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wig0ZqWxgWtD9F1xZzE7jEmgLmXRWABhss0+er3ZRtb9g@mail.gmail.com>
-Message-ID: <CAHk-=wig0ZqWxgWtD9F1xZzE7jEmgLmXRWABhss0+er3ZRtb9g@mail.gmail.com>
-Subject: Re: file metadata via fs API
-To:     Steven Whitehouse <swhiteho@redhat.com>
-Cc:     David Howells <dhowells@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, Karel Zak <kzak@redhat.com>,
-        Jeff Layton <jlayton@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
-        Christian Brauner <christian@brauner.io>,
-        Lennart Poettering <lennart@poettering.net>,
-        Linux API <linux-api@vger.kernel.org>,
-        Ian Kent <raven@themaw.net>,
-        LSM <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 17 Aug 2020 16:43:19 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 07HKgUIo185682;
+        Mon, 17 Aug 2020 16:43:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=1nLf40E4gF14fzxXPCJyZRGuu2Yhxjx3oE/IMN7M+Jk=;
+ b=I5IdPebnuROuVDDlclUkS/gOWnaqYalo1V/s2XYoktARCNQLYrOIcoftcIfxAJ9Iz3NI
+ mrCxgDKBayG2b7T3u7B7Oym9pQLHag+Ef0Giarh/cCHhj4VB56VnYuL1P2v/PfUXmrnq
+ j7vbklk9j1AJUhQEJCaFwBaIERqDdG8jNW2mbxqDGKrJtQ9J0FTPr+BwdKWQ/pKoIipD
+ bBNTH9MFh40l7dFGFhlRt8Wl223diSEy+IYQKUXIceaINAWilYSmxId16AEZqFgEN9Z1
+ gnG9El5a+J30vqxqrj0imy5KZPI9GDKcmBWrxPDFQg2aF7KZh8pk3q9nOAwp8pIk0A29 7Q== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 32y4f4aj5j-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 17 Aug 2020 16:43:12 -0400
+Received: from m0098419.ppops.net (m0098419.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 07HKh8sc189640;
+        Mon, 17 Aug 2020 16:43:12 -0400
+Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 32y4f4aj4w-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 17 Aug 2020 16:43:11 -0400
+Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
+        by ppma03ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 07HKfCro008572;
+        Mon, 17 Aug 2020 20:43:09 GMT
+Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
+        by ppma03ams.nl.ibm.com with ESMTP id 32x7b82mt5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 17 Aug 2020 20:43:09 +0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 07HKfceR62390554
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 17 Aug 2020 20:41:38 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 09143A4059;
+        Mon, 17 Aug 2020 20:43:07 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 87B87A4040;
+        Mon, 17 Aug 2020 20:43:03 +0000 (GMT)
+Received: from sig-9-65-192-88.ibm.com (unknown [9.65.192.88])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 17 Aug 2020 20:43:03 +0000 (GMT)
+Message-ID: <591b5f09c7df8ef0378866eaf3afde7a7cb4e82f.camel@linux.ibm.com>
+Subject: Re: [PATCH 2/3] IMA: add policy to support measuring critical data
+ from kernel components
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Tushar Sugandhi <tusharsu@linux.microsoft.com>,
+        stephen.smalley.work@gmail.com, casey@schaufler-ca.com,
+        gmazyland@gmail.com
+Cc:     tyhicks@linux.microsoft.com, sashal@kernel.org, jmorris@namei.org,
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dm-devel@redhat.com,
+        nramas@linux.microsoft.com
+Date:   Mon, 17 Aug 2020 16:43:02 -0400
+In-Reply-To: <20200812193102.18636-3-tusharsu@linux.microsoft.com>
+References: <20200812193102.18636-1-tusharsu@linux.microsoft.com>
+         <20200812193102.18636-3-tusharsu@linux.microsoft.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-08-17_14:2020-08-17,2020-08-17 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=3
+ clxscore=1011 priorityscore=1501 phishscore=0 adultscore=0 mlxscore=0
+ mlxlogscore=999 bulkscore=0 impostorscore=0 spamscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
+ definitions=main-2008170136
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Aug 17, 2020 at 4:33 AM Steven Whitehouse <swhiteho@redhat.com> wrote:
->
-> That said, the overall aim here is to solve the problem and if there are
-> better solutions available then I'm sure that everyone is very open to
-> those. I agree very much that monitoring at kHz frequencies is not
-> useful, but at the same time, there are cases which can generate large
-> amounts of mount changes in a very short time period.
+On Wed, 2020-08-12 at 12:31 -0700, Tushar Sugandhi wrote:
+> There would be several candidate kernel components suitable for IMA
+> measurement. Not all of them would be enlightened for IMA measurement.
+> Also, system administrators may not want to measure data for all of
+> them, even when they are enlightened for IMA measurements. An IMA policy
+> specific to various kernel components is needed to measure their
+> respective critical data.
+> 
+> Add a new IMA policy CRITICAL_DATA+data_sources to support measuring
+> various critical kernel components. This policy would enable the
+> system administrators to limit the measurement to the components,
+> if the components are enlightened for IMA measurement.
 
-So the thing is, I absolutely believe in the kernel _notifying_ about
-changes so that people don't need to poll. It's why I did merge the
-notification queues, although I wanted to make sure that those worked.
+"enlightened", really?  Please find a different term, maybe something
+like "supported".
 
-> You recently requested some details of real users for the notifications,
-> and (I assumed) by extension fsinfo too.
+Before posting a patch set, please look at the patches line by line,
+like anyone reviewing the code needs to do.  Please minimize code
+change.   Unnecessary formatting changes are unacceptible.   For
+example, like the "#define", below, or in 3/3 the
+"process_buffer_measurement()" change from void to int.
 
-No, fsinfo wasn't on the table there. To me, notifications are a
-completely separate issue, because you *can* get the information from
-existing sources (ie things like /proc/mounts etc), and notification
-seemed to be the much more fundamental issue.
+scripts/Lindent isn't as prevalent as it used to be, but it's still
+included in Documentation/process/coding-style.rst.  Use it as a guide.
 
-If you poll for changes, parsing something like /proc/mounts is
-obviously very heavy indeed. I don't find that particularly
-controversial. Plus the notification queues had other uses, even if it
-wasn't clear how many or who would use them.
+Mimi
 
-But honestly, the actual fsinfo thing seems (a) overdesigned and (b)
-broken. I've now had two different people say how they want to use it
-to figure out whether a filesystem supports certain things that aren't
-even per-filesystem things in the first place.
-
-And this feature is clearly controversial, with actual discussion about it.
-
-And I find the whole thing confusing and over-engineered. If this was
-a better statfs(), that would be one thing. But it is designed to be
-this monstoer thing that does many different things, and I find it
-distasteful.  Yes, you can query "extended statfs" kind of data with
-it and get the per-file attributes. I find it really annoying how the
-vfs layer calls to the filesystems, that then call back to the vfs
-layer to fill things in, but I guess we have that nasty pattern from
-stat() already. I'd rather have the VFS layer just fill in all the
-default values and the stuff it already knows about, and then maybe
-have the filesystem callback fill in the ones the vfs *doesn't* know
-about, but whatever.
-
-But then you can *also* query odd things like mounts that aren't even
-visible, and the topology, and completely random error state.
-
-So it has this very complex "random structures of random things"
-implementation. It's a huge sign of over-design and "I don't know what
-the hell I want to expose, so I'll make this generic thing that can
-expose anything, and then I start adding random fields".
-
-Some things are per-file, some things are per-mount, and some things
-are per-namespace and cross mount boundaries.
-
-And honestly, the "random binary interfaces" just turns me off a lot.
-
-A simple and straightforward struct? Sure. But this random "whatever
-goes" thing? No.
-
-                 Linus
