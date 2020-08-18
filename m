@@ -4,31 +4,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDE13C433E1
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Aug 2020 15:44:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D35FFC433E1
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Aug 2020 15:44:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B568220674
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Aug 2020 15:44:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B392F20674
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Aug 2020 15:44:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726990AbgHRPoh (ORCPT
+        id S1727776AbgHRPoi (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 18 Aug 2020 11:44:37 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2634 "EHLO huawei.com"
+        Tue, 18 Aug 2020 11:44:38 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2636 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726911AbgHRPo1 (ORCPT
+        id S1726685AbgHRPob (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 18 Aug 2020 11:44:27 -0400
-Received: from lhreml722-chm.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id 9BB6028283C12E031ACF;
-        Tue, 18 Aug 2020 16:44:25 +0100 (IST)
+        Tue, 18 Aug 2020 11:44:31 -0400
+Received: from lhreml722-chm.china.huawei.com (unknown [172.18.7.107])
+        by Forcepoint Email with ESMTP id 87348B7096922947690A;
+        Tue, 18 Aug 2020 16:44:30 +0100 (IST)
 Received: from kstruczy-linux-box (10.204.65.138) by
  lhreml722-chm.china.huawei.com (10.201.108.73) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1913.5; Tue, 18 Aug 2020 16:44:23 +0100
-Received: by kstruczy-linux-box (sSMTP sendmail emulation); Tue, 18 Aug 2020 17:44:26 +0200
+ 15.1.1913.5; Tue, 18 Aug 2020 16:44:28 +0100
+Received: by kstruczy-linux-box (sSMTP sendmail emulation); Tue, 18 Aug 2020 17:44:31 +0200
 From:   <krzysztof.struczynski@huawei.com>
 To:     <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <containers@lists.linux-foundation.org>,
@@ -39,9 +39,9 @@ CC:     <zohar@linux.ibm.com>, <stefanb@linux.vnet.ibm.com>,
         <jmorris@namei.org>, <christian@brauner.io>,
         <silviu.vlasceanu@huawei.com>, <roberto.sassu@huawei.com>,
         Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
-Subject: [RFC PATCH 11/30] ima: Keep track of the measurment list per ima namespace
-Date:   Tue, 18 Aug 2020 17:42:11 +0200
-Message-ID: <20200818154230.14016-2-krzysztof.struczynski@huawei.com>
+Subject: [RFC PATCH 13/30] ima: Add a new ima template that includes namespace ID
+Date:   Tue, 18 Aug 2020 17:42:13 +0200
+Message-ID: <20200818154230.14016-4-krzysztof.struczynski@huawei.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200818154230.14016-1-krzysztof.struczynski@huawei.com>
 References: <20200818154230.14016-1-krzysztof.struczynski@huawei.com>
@@ -58,59 +58,78 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
 
-Add a pointer to the tail of the measurement list to the ima namespace
-when the namespace is created. This will allow to skip the irrelevant
-measurement list entries while iterating the measurement list in that
-ima namespace. Only entries with the matching ima namespace ID will be
-displayed.
+Add a new ima-ns template:
+"d-ng|n-ng|ns"
 
 Signed-off-by: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
 ---
- include/linux/ima.h               | 1 +
- security/integrity/ima/ima_init.c | 1 +
- security/integrity/ima/ima_ns.c   | 5 +++++
- 3 files changed, 7 insertions(+)
+ security/integrity/ima/ima_template.c     |  5 ++++-
+ security/integrity/ima/ima_template_lib.c | 13 +++++++++++++
+ security/integrity/ima/ima_template_lib.h |  2 ++
+ 3 files changed, 19 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index 1d0439d86ade..df22143ffe30 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -202,6 +202,7 @@ struct ima_namespace {
- 	bool frozen;
- 	struct ima_policy_data *policy_data;
- 	struct integrity_iint_tree *iint_tree;
-+	struct list_head *measurements;
- } __randomize_layout;
- 
- extern struct ima_namespace init_ima_ns;
-diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
-index d63ecb02b032..aece357286b8 100644
---- a/security/integrity/ima/ima_init.c
-+++ b/security/integrity/ima/ima_init.c
-@@ -35,6 +35,7 @@ struct ima_namespace init_ima_ns = {
- 	.frozen = true,
- 	.policy_data = &init_policy_data,
- 	.iint_tree = &init_iint_tree,
-+	.measurements = &ima_measurements,
+diff --git a/security/integrity/ima/ima_template.c b/security/integrity/ima/ima_template.c
+index 945e70fafd2e..2020bd5176a4 100644
+--- a/security/integrity/ima/ima_template.c
++++ b/security/integrity/ima/ima_template.c
+@@ -22,6 +22,7 @@ static struct ima_template_desc builtin_templates[] = {
+ 	{.name = "ima-sig", .fmt = "d-ng|n-ng|sig"},
+ 	{.name = "ima-buf", .fmt = "d-ng|n-ng|buf"},
+ 	{.name = "ima-modsig", .fmt = "d-ng|n-ng|sig|d-modsig|modsig"},
++	{.name = "ima-ns", .fmt = "d-ng|n-ng|ns"},
+ 	{.name = "", .fmt = ""},	/* placeholder for a custom format */
  };
- EXPORT_SYMBOL(init_ima_ns);
  
-diff --git a/security/integrity/ima/ima_ns.c b/security/integrity/ima/ima_ns.c
-index 04aa50473971..f331187a4d3c 100644
---- a/security/integrity/ima/ima_ns.c
-+++ b/security/integrity/ima/ima_ns.c
-@@ -293,6 +293,11 @@ static int imans_activate(struct ima_namespace *ima_ns)
+@@ -45,6 +46,8 @@ static const struct ima_template_field supported_fields[] = {
+ 	 .field_show = ima_show_template_digest_ng},
+ 	{.field_id = "modsig", .field_init = ima_eventmodsig_init,
+ 	 .field_show = ima_show_template_sig},
++	{.field_id = "ns", .field_init = ima_eventns_init,
++	 .field_show = ima_show_template_buf},
+ };
  
- 	ima_ns->frozen = true;
+ /*
+@@ -52,7 +55,7 @@ static const struct ima_template_field supported_fields[] = {
+  * need to be accounted for since they shouldn't be defined in the same template
+  * description as 'd-ng' and 'n-ng' respectively.
+  */
+-#define MAX_TEMPLATE_NAME_LEN sizeof("d-ng|n-ng|sig|buf|d-modisg|modsig")
++#define MAX_TEMPLATE_NAME_LEN sizeof("d-ng|n-ng|sig|buf|d-modisg|modsig|ns")
  
-+	/* Set current last element as list's head */
-+	rcu_read_lock();
-+	ima_ns->measurements = list_tail_rcu(&ima_measurements);
-+	rcu_read_unlock();
+ static struct ima_template_desc *ima_template;
+ 
+diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
+index 635c6ac05050..cda5374dbbc4 100644
+--- a/security/integrity/ima/ima_template_lib.c
++++ b/security/integrity/ima/ima_template_lib.c
+@@ -484,3 +484,16 @@ int ima_eventmodsig_init(struct ima_event_data *event_data,
+ 	return ima_write_template_field_data(data, data_len, DATA_FMT_HEX,
+ 					     field_data);
+ }
 +
- 	down_write(&ima_ns_list_lock);
- 	list_add_tail(&ima_ns->list, &ima_ns_list);
- 	up_write(&ima_ns_list_lock);
++/*
++ *  ima_eventns_init - include the ima namespace id as part of the
++ *  template data
++ */
++int ima_eventns_init(struct ima_event_data *event_data,
++		     struct ima_field_data *field_data)
++{
++	return ima_write_template_field_data(&(event_data->ns_id),
++					     sizeof(event_data->ns_id),
++					     DATA_FMT_HEX,
++					     field_data);
++}
+diff --git a/security/integrity/ima/ima_template_lib.h b/security/integrity/ima/ima_template_lib.h
+index 9a88c79a7a61..7e67d1402192 100644
+--- a/security/integrity/ima/ima_template_lib.h
++++ b/security/integrity/ima/ima_template_lib.h
+@@ -46,4 +46,6 @@ int ima_eventbuf_init(struct ima_event_data *event_data,
+ 		      struct ima_field_data *field_data);
+ int ima_eventmodsig_init(struct ima_event_data *event_data,
+ 			 struct ima_field_data *field_data);
++int ima_eventns_init(struct ima_event_data *event_data,
++		     struct ima_field_data *field_data);
+ #endif /* __LINUX_IMA_TEMPLATE_LIB_H */
 -- 
 2.20.1
 
