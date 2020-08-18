@@ -2,33 +2,33 @@ Return-Path: <SRS0=wQ8B=B4=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72744C433DF
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Aug 2020 15:49:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4181C433E1
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Aug 2020 15:51:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 478A1208B3
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Aug 2020 15:49:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BEE1B2080C
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Aug 2020 15:51:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728068AbgHRPtk (ORCPT
+        id S1726701AbgHRPve (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 18 Aug 2020 11:49:40 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2653 "EHLO huawei.com"
+        Tue, 18 Aug 2020 11:51:34 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2650 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728269AbgHRPtL (ORCPT
+        id S1728236AbgHRPsF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 18 Aug 2020 11:49:11 -0400
-Received: from lhreml722-chm.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id 51E8BDCF110317A0CBA6;
-        Tue, 18 Aug 2020 16:49:10 +0100 (IST)
+        Tue, 18 Aug 2020 11:48:05 -0400
+Received: from lhreml722-chm.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id 9C8BD5D5C87FB618FA08;
+        Tue, 18 Aug 2020 16:48:03 +0100 (IST)
 Received: from kstruczy-linux-box (10.204.65.138) by
  lhreml722-chm.china.huawei.com (10.201.108.73) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1913.5; Tue, 18 Aug 2020 16:49:08 +0100
-Received: by kstruczy-linux-box (sSMTP sendmail emulation); Tue, 18 Aug 2020 17:49:11 +0200
+ 15.1.1913.5; Tue, 18 Aug 2020 16:48:01 +0100
+Received: by kstruczy-linux-box (sSMTP sendmail emulation); Tue, 18 Aug 2020 17:48:04 +0200
 From:   <krzysztof.struczynski@huawei.com>
 To:     <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <containers@lists.linux-foundation.org>,
@@ -39,9 +39,9 @@ CC:     <zohar@linux.ibm.com>, <stefanb@linux.vnet.ibm.com>,
         <jmorris@namei.org>, <christian@brauner.io>,
         <silviu.vlasceanu@huawei.com>, <roberto.sassu@huawei.com>,
         Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
-Subject: [RFC PATCH 30/30] ima: Set ML template per ima namespace
-Date:   Tue, 18 Aug 2020 17:42:30 +0200
-Message-ID: <20200818154230.14016-21-krzysztof.struczynski@huawei.com>
+Subject: [RFC PATCH 27/30] integrity: Add key domain tag to the search criteria
+Date:   Tue, 18 Aug 2020 17:42:27 +0200
+Message-ID: <20200818154230.14016-18-krzysztof.struczynski@huawei.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200818154230.14016-1-krzysztof.struczynski@huawei.com>
 References: <20200818154230.14016-1-krzysztof.struczynski@huawei.com>
@@ -58,201 +58,255 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
 
-Set ML template based on the ima_template string. It can be defined by
-the user through kcmd_for_children ima securityfs entry. Acceptable
-values are the same as for the ima_template kernel boot parameter.
+Add key domain tag to the search criteria in digsig module. If the
+domain tag is not set for the keys from the given keyring, it is set to
+NULL and the behaviour is unchanged.
+
+The key domain tag is added to the ima appraisal keys loaded to the
+system ima keyring.
 
 Signed-off-by: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
 ---
- include/linux/ima.h                   |  1 +
- security/integrity/ima/ima.h          |  1 +
- security/integrity/ima/ima_init.c     |  1 +
- security/integrity/ima/ima_ns.c       | 30 ++++++++++++++++++++++++++-
- security/integrity/ima/ima_template.c | 29 +++++++++++++++-----------
- 5 files changed, 49 insertions(+), 13 deletions(-)
+ include/linux/digsig.h                 | 11 ++++---
+ lib/digsig.c                           | 11 +++----
+ security/integrity/digsig.c            | 40 ++++++++++++++++++++++----
+ security/integrity/digsig_asymmetric.c | 20 ++++++++-----
+ security/integrity/integrity.h         | 11 ++++---
+ 5 files changed, 67 insertions(+), 26 deletions(-)
 
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index 7db4995c66cf..f65d6424e584 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -211,6 +211,7 @@ struct ima_namespace {
- #ifdef CONFIG_KEYS
- 	struct key_tag *key_domain;
- #endif
-+	struct ima_template_desc *ima_template;
- } __randomize_layout;
+diff --git a/include/linux/digsig.h b/include/linux/digsig.h
+index 2ace69e41088..9e4121253899 100644
+--- a/include/linux/digsig.h
++++ b/include/linux/digsig.h
+@@ -44,13 +44,16 @@ struct signature_hdr {
  
- extern struct ima_namespace init_ima_ns;
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index b55d25c2bf63..89cb050d5668 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -177,6 +177,7 @@ int template_desc_init_fields(const char *template_fmt,
- struct ima_template_desc *ima_template_desc_current(void);
- struct ima_template_desc *lookup_template_desc(const char *name);
- bool ima_template_has_modsig(const struct ima_template_desc *ima_template);
-+int ima_template_setup(char *str, struct ima_namespace *ima_ns);
- int ima_restore_measurement_entry(struct ima_template_entry *entry);
- int ima_restore_measurement_list(loff_t bufsize, void *buf);
- int ima_measurements_show(struct seq_file *m, void *v);
-diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
-index 1668edf3ed32..af77d2c85964 100644
---- a/security/integrity/ima/ima_init.c
-+++ b/security/integrity/ima/ima_init.c
-@@ -49,6 +49,7 @@ struct ima_namespace init_ima_ns = {
- #ifdef CONFIG_KEYS
- 	.key_domain = &init_ima_key_domain,
- #endif
-+	.ima_template = NULL,
- };
- EXPORT_SYMBOL(init_ima_ns);
+ #if defined(CONFIG_SIGNATURE) || defined(CONFIG_SIGNATURE_MODULE)
  
-diff --git a/security/integrity/ima/ima_ns.c b/security/integrity/ima/ima_ns.c
-index 9b9c34e71cc6..05c5f0df8f8f 100644
---- a/security/integrity/ima/ima_ns.c
-+++ b/security/integrity/ima/ima_ns.c
-@@ -48,6 +48,28 @@ static void dec_ima_namespaces(struct ucounts *ucounts)
- 	return dec_ucount(ucounts, UCOUNT_IMA_NAMESPACES);
- }
+-int digsig_verify(struct key *keyring, const char *sig, int siglen,
+-					const char *digest, int digestlen);
++int digsig_verify(struct key *keyring, struct key_tag *domain_tag,
++		  const char *sig, int siglen, const char *digest,
++		  int digestlen);
  
-+static int ima_set_ns_template(struct ima_namespace *ima_ns)
-+{
-+	int result;
-+
-+	if (!ima_ns->ima_template)
-+		ima_ns->ima_template =
-+			lookup_template_desc(CONFIG_IMA_DEFAULT_TEMPLATE);
-+
-+	result = template_desc_init_fields(ima_ns->ima_template->fmt,
-+					   &(ima_ns->ima_template->fields),
-+					   &(ima_ns->ima_template->num_fields));
-+	if (result < 0) {
-+		pr_err("template %s init failed, result: %d\n",
-+		       (strlen(ima_ns->ima_template->name) ?
-+		       ima_ns->ima_template->name :
-+		       ima_ns->ima_template->fmt), result);
-+		ima_ns->ima_template = NULL;
-+	}
-+
-+	return result;
-+}
-+
- static int ima_ns_add_boot_aggregate(struct ima_namespace *ima_ns)
+ #else
+ 
+-static inline int digsig_verify(struct key *keyring, const char *sig,
+-				int siglen, const char *digest, int digestlen)
++static inline int digsig_verify(struct key *keyring,
++				struct key_tag *domain_tag,
++				const char *sig, int siglen, const char *digest,
++				int digestlen)
  {
- 	static const char op[] = "ns_add_boot_aggregate";
-@@ -269,6 +291,7 @@ static struct ima_namespace *clone_ima_ns(struct user_namespace *user_ns,
- 	ns->policy_path_for_children = NULL;
- 	ns->x509_path_for_children = NULL;
- 	ns->policy_setup_for_children = NULL;
-+	ns->ima_template = NULL;
- 
- 	INIT_LIST_HEAD(&ns->policy_data->ima_default_rules);
- 	INIT_LIST_HEAD(&ns->policy_data->ima_policy_rules);
-@@ -444,6 +467,10 @@ static int imans_activate(struct ima_namespace *ima_ns)
- 	if (ima_ns->frozen)
- 		goto out;
- 
-+	res = ima_set_ns_template(ima_ns);
-+	if (res < 0)
-+		goto out;
-+
- 	res = ima_set_ns_policy(ima_ns);
- 	if (res < 0)
- 		goto out;
-@@ -580,10 +607,11 @@ struct ima_kernel_param {
- 	int (*set)(char *val, struct ima_namespace *ima_ns);
- };
- 
--/* TODO: add ima_template, ima_template_fmt, ima_hash, ... */
-+/* TODO: add ima_template_fmt, ima_hash, ... */
- static const struct ima_kernel_param ima_kernel_params[] = {
- 	{"ima_appraise", ima_default_appraise_setup},
- 	{"ima_policy", ima_policy_setup},
-+	{"ima_template", ima_template_setup},
- };
- static const size_t ima_kernel_params_size = ARRAY_SIZE(ima_kernel_params);
- 
-diff --git a/security/integrity/ima/ima_template.c b/security/integrity/ima/ima_template.c
-index 2020bd5176a4..91339a7e1134 100644
---- a/security/integrity/ima/ima_template.c
-+++ b/security/integrity/ima/ima_template.c
-@@ -57,8 +57,6 @@ static const struct ima_template_field supported_fields[] = {
+ 	return -EOPNOTSUPP;
+ }
+diff --git a/lib/digsig.c b/lib/digsig.c
+index e0627c3e53b2..bd234b1abb4f 100644
+--- a/lib/digsig.c
++++ b/lib/digsig.c
+@@ -196,8 +196,8 @@ static int digsig_verify_rsa(struct key *key,
+  * Normally hash of the content is used as a data for this function.
+  *
   */
- #define MAX_TEMPLATE_NAME_LEN sizeof("d-ng|n-ng|sig|buf|d-modisg|modsig|ns")
- 
--static struct ima_template_desc *ima_template;
--
- /**
-  * ima_template_has_modsig - Check whether template has modsig-related fields.
-  * @ima_template: IMA template to check.
-@@ -78,12 +76,12 @@ bool ima_template_has_modsig(const struct ima_template_desc *ima_template)
- 	return false;
- }
- 
--static int __init ima_template_setup(char *str)
-+int ima_template_setup(char *str, struct ima_namespace *ima_ns)
+-int digsig_verify(struct key *keyring, const char *sig, int siglen,
+-						const char *data, int datalen)
++int digsig_verify(struct key *keyring, struct key_tag *domain_tag,
++		  const char *sig, int siglen, const char *data, int datalen)
  {
- 	struct ima_template_desc *template_desc;
- 	int template_len = strlen(str);
- 
--	if (ima_template)
-+	if (ima_ns->ima_template)
- 		return 1;
- 
- 	ima_init_template_list();
-@@ -109,16 +107,21 @@ static int __init ima_template_setup(char *str)
- 		return 1;
+ 	int err = -ENOMEM;
+ 	struct signature_hdr *sh = (struct signature_hdr *)sig;
+@@ -217,14 +217,15 @@ int digsig_verify(struct key *keyring, const char *sig, int siglen,
+ 	if (keyring) {
+ 		/* search in specific keyring */
+ 		key_ref_t kref;
+-		kref = keyring_search(make_key_ref(keyring, 1UL),
+-				      &key_type_user, name, true);
++		kref = keyring_search_tag(make_key_ref(keyring, 1UL),
++					  &key_type_user, name,
++					  domain_tag, true);
+ 		if (IS_ERR(kref))
+ 			key = ERR_CAST(kref);
+ 		else
+ 			key = key_ref_to_ptr(kref);
+ 	} else {
+-		key = request_key(&key_type_user, name, NULL);
++		key = request_key_tag(&key_type_user, name, domain_tag, NULL);
  	}
+ 	if (IS_ERR(key)) {
+ 		pr_err("key not found, id: %s\n", name);
+diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
+index e9cbadade74b..523fc786c4d7 100644
+--- a/security/integrity/digsig.c
++++ b/security/integrity/digsig.c
+@@ -15,6 +15,7 @@
+ #include <linux/vmalloc.h>
+ #include <crypto/public_key.h>
+ #include <keys/system_keyring.h>
++#include <linux/ima.h>
  
--	ima_template = template_desc;
-+	ima_ns->ima_template = template_desc;
- 	return 1;
- }
--__setup("ima_template=", ima_template_setup);
+ #include "integrity.h"
+ 
+@@ -31,6 +32,16 @@ static const char * const keyring_name[INTEGRITY_KEYRING_MAX] = {
+ 	".platform",
+ };
+ 
++static unsigned long keyring_alloc_flags[INTEGRITY_KEYRING_MAX] = {
++	KEY_ALLOC_NOT_IN_QUOTA,
++#ifdef CONFIG_IMA_NS
++	KEY_ALLOC_NOT_IN_QUOTA | KEY_ALLOC_DOMAIN_IMA,
++#else
++	KEY_ALLOC_NOT_IN_QUOTA,
++#endif
++	KEY_ALLOC_NOT_IN_QUOTA,
++};
 +
-+static int __init template_setup(char *str)
+ #ifdef CONFIG_IMA_KEYRINGS_PERMIT_SIGNED_BY_BUILTIN_OR_SECONDARY
+ #define restrict_link_to_ima restrict_link_by_builtin_and_secondary_trusted
+ #else
+@@ -56,10 +67,22 @@ static struct key *integrity_keyring_from_id(const unsigned int id)
+ 	return keyring[id];
+ }
+ 
++static struct key_tag *domain_tag_from_id(const unsigned int id)
 +{
-+	return ima_template_setup(str, &init_ima_ns);
-+}
-+__setup("ima_template=", template_setup);
- 
- static int __init ima_template_fmt_setup(char *str)
- {
- 	int num_templates = ARRAY_SIZE(builtin_templates);
- 
--	if (ima_template)
-+	if (init_ima_ns.ima_template)
- 		return 1;
- 
- 	if (template_desc_init_fields(str, NULL, NULL) < 0) {
-@@ -128,7 +131,7 @@ static int __init ima_template_fmt_setup(char *str)
- 	}
- 
- 	builtin_templates[num_templates - 1].fmt = str;
--	ima_template = builtin_templates + num_templates - 1;
-+	init_ima_ns.ima_template = builtin_templates + num_templates - 1;
- 
- 	return 1;
- }
-@@ -247,12 +250,14 @@ void ima_init_template_list(void)
- 
- struct ima_template_desc *ima_template_desc_current(void)
- {
--	if (!ima_template) {
-+	struct ima_namespace *ima_ns = get_current_ns();
++	if (id >= INTEGRITY_KEYRING_MAX)
++		return ERR_PTR(-EINVAL);
 +
-+	if (!ima_ns->ima_template) {
- 		ima_init_template_list();
--		ima_template =
--		    lookup_template_desc(CONFIG_IMA_DEFAULT_TEMPLATE);
-+		ima_ns->ima_template =
-+			lookup_template_desc(CONFIG_IMA_DEFAULT_TEMPLATE);
++	if (id == INTEGRITY_KEYRING_IMA)
++		return current->nsproxy->ima_ns->key_domain;
++
++	return NULL;
++}
++
+ int integrity_digsig_verify(const unsigned int id, const char *sig, int siglen,
+ 			    const char *digest, int digestlen)
+ {
+ 	struct key *keyring;
++	struct key_tag *domain_tag;
+ 
+ 	if (siglen < 2)
+ 		return -EINVAL;
+@@ -68,14 +91,18 @@ int integrity_digsig_verify(const unsigned int id, const char *sig, int siglen,
+ 	if (IS_ERR(keyring))
+ 		return PTR_ERR(keyring);
+ 
++	domain_tag = domain_tag_from_id(id);
++	if (IS_ERR(domain_tag))
++		return PTR_ERR(domain_tag);
++
+ 	switch (sig[1]) {
+ 	case 1:
+ 		/* v1 API expect signature without xattr type */
+-		return digsig_verify(keyring, sig + 1, siglen - 1, digest,
+-				     digestlen);
++		return digsig_verify(keyring, domain_tag,
++				     sig + 1, siglen - 1, digest, digestlen);
+ 	case 2:
+-		return asymmetric_verify(keyring, sig, siglen, digest,
+-					 digestlen);
++		return asymmetric_verify(keyring, domain_tag, sig, siglen,
++					 digest, digestlen);
  	}
--	return ima_template;
-+	return ima_ns->ima_template;
+ 
+ 	return -EOPNOTSUPP;
+@@ -101,7 +128,8 @@ static int __init __integrity_init_keyring(const unsigned int id,
+ 
+ 	keyring[id] = keyring_alloc(keyring_name[id], KUIDT_INIT(0),
+ 				    KGIDT_INIT(0), cred, perm,
+-				    KEY_ALLOC_NOT_IN_QUOTA, restriction, NULL);
++				    keyring_alloc_flags[id],
++				    restriction, NULL);
+ 	if (IS_ERR(keyring[id])) {
+ 		err = PTR_ERR(keyring[id]);
+ 		pr_info("Can't allocate %s keyring (%d)\n",
+@@ -153,7 +181,7 @@ int __init integrity_add_key(const unsigned int id, const void *data,
+ 
+ 	key = key_create_or_update(make_key_ref(keyring[id], 1), "asymmetric",
+ 				   NULL, data, size, perm,
+-				   KEY_ALLOC_NOT_IN_QUOTA);
++				   keyring_alloc_flags[id]);
+ 	if (IS_ERR(key)) {
+ 		rc = PTR_ERR(key);
+ 		pr_err("Problem loading X.509 certificate %d\n", rc);
+diff --git a/security/integrity/digsig_asymmetric.c b/security/integrity/digsig_asymmetric.c
+index cfa4127d0518..4994a9773247 100644
+--- a/security/integrity/digsig_asymmetric.c
++++ b/security/integrity/digsig_asymmetric.c
+@@ -19,7 +19,9 @@
+ /*
+  * Request an asymmetric key.
+  */
+-static struct key *request_asymmetric_key(struct key *keyring, uint32_t keyid)
++static struct key *request_asymmetric_key(struct key *keyring,
++					  struct key_tag *domain_tag,
++					  uint32_t keyid)
+ {
+ 	struct key *key;
+ 	char name[12];
+@@ -44,14 +46,16 @@ static struct key *request_asymmetric_key(struct key *keyring, uint32_t keyid)
+ 		/* search in specific keyring */
+ 		key_ref_t kref;
+ 
+-		kref = keyring_search(make_key_ref(keyring, 1),
+-				      &key_type_asymmetric, name, true);
++		kref = keyring_search_tag(make_key_ref(keyring, 1),
++					  &key_type_asymmetric, name,
++					  domain_tag, true);
+ 		if (IS_ERR(kref))
+ 			key = ERR_CAST(kref);
+ 		else
+ 			key = key_ref_to_ptr(kref);
+ 	} else {
+-		key = request_key(&key_type_asymmetric, name, NULL);
++		key = request_key_tag(&key_type_asymmetric,
++				      name, domain_tag, NULL);
+ 	}
+ 
+ 	if (IS_ERR(key)) {
+@@ -73,8 +77,9 @@ static struct key *request_asymmetric_key(struct key *keyring, uint32_t keyid)
+ 	return key;
  }
  
- int __init ima_init_template(void)
+-int asymmetric_verify(struct key *keyring, const char *sig,
+-		      int siglen, const char *data, int datalen)
++int asymmetric_verify(struct key *keyring, struct key_tag *domain_tag,
++		      const char *sig, int siglen,
++		      const char *data, int datalen)
+ {
+ 	struct public_key_signature pks;
+ 	struct signature_v2_hdr *hdr = (struct signature_v2_hdr *)sig;
+@@ -92,7 +97,8 @@ int asymmetric_verify(struct key *keyring, const char *sig,
+ 	if (hdr->hash_algo >= HASH_ALGO__LAST)
+ 		return -ENOPKG;
+ 
+-	key = request_asymmetric_key(keyring, be32_to_cpu(hdr->keyid));
++	key = request_asymmetric_key(keyring, domain_tag,
++				     be32_to_cpu(hdr->keyid));
+ 	if (IS_ERR(key))
+ 		return PTR_ERR(key);
+ 
+diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
+index c2981a98547e..207a1aef28e4 100644
+--- a/security/integrity/integrity.h
++++ b/security/integrity/integrity.h
+@@ -212,11 +212,14 @@ static inline int __init integrity_load_cert(const unsigned int id,
+ #endif /* CONFIG_INTEGRITY_SIGNATURE */
+ 
+ #ifdef CONFIG_INTEGRITY_ASYMMETRIC_KEYS
+-int asymmetric_verify(struct key *keyring, const char *sig,
+-		      int siglen, const char *data, int datalen);
++int asymmetric_verify(struct key *keyring, struct key_tag *domain_tag,
++		      const char *sig, int siglen,
++		      const char *data, int datalen);
+ #else
+-static inline int asymmetric_verify(struct key *keyring, const char *sig,
+-				    int siglen, const char *data, int datalen)
++static inline int asymmetric_verify(struct key *keyring,
++				    struct key_tag *domain_tag,
++				    const char *sig, int siglen,
++				    const char *data, int datalen)
+ {
+ 	return -EOPNOTSUPP;
+ }
 -- 
 2.20.1
 
