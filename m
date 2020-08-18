@@ -6,72 +6,73 @@ X-Spam-Status: No, score=-3.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94370C433E3
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Aug 2020 09:41:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E44EC433E1
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Aug 2020 12:50:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6231B207FB
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Aug 2020 09:41:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A8AF320578
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Aug 2020 12:50:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="TKBIZQ9c"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="kwpEsN1R"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726636AbgHRJlq (ORCPT
+        id S1726391AbgHRMuu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 18 Aug 2020 05:41:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34414 "EHLO
+        Tue, 18 Aug 2020 08:50:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36318 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726630AbgHRJlo (ORCPT
+        with ESMTP id S1726688AbgHRMur (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 18 Aug 2020 05:41:44 -0400
-Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BAA3CC061343
-        for <linux-security-module@vger.kernel.org>; Tue, 18 Aug 2020 02:41:42 -0700 (PDT)
-Received: by mail-ej1-x642.google.com with SMTP id p24so21260921ejf.13
-        for <linux-security-module@vger.kernel.org>; Tue, 18 Aug 2020 02:41:42 -0700 (PDT)
+        Tue, 18 Aug 2020 08:50:47 -0400
+Received: from mail-ed1-x542.google.com (mail-ed1-x542.google.com [IPv6:2a00:1450:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 059B5C061389
+        for <linux-security-module@vger.kernel.org>; Tue, 18 Aug 2020 05:50:47 -0700 (PDT)
+Received: by mail-ed1-x542.google.com with SMTP id a14so15145820edx.7
+        for <linux-security-module@vger.kernel.org>; Tue, 18 Aug 2020 05:50:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=szeredi.hu; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Dv1Xhl1bS+5jEQYbFML/aNrkT6FMSIT4YIWLINTkYuA=;
-        b=TKBIZQ9cEM0s7XlAhqk+9WuMaJ5WAzHt28fYx7z2YcY+Ky15uWjPK9XQAlE4GEUNqa
-         mV0SnmJ2Gpom5vx/h8sEIfNfZa5zbCrKs2dnoVh0T89qV+LR7R+5+3MROncxObXPQArg
-         /jnklxkh2Vw4IJ9BkaOQd5d8BqCmxE3VXbUS4=
+        bh=fFLadAGytIbd6Cde9KqrXGMzmbxXEZAqgtRrBn6qG1k=;
+        b=kwpEsN1R8kGzBgmiohXGBZgKhiEohfySxA4S1MY16t8M7GjlXhS8WB6B+ckdr+Ugzu
+         NyGaVnYxne0bipWKHzdc7aHgrK7BCFA5GPEZ4KlzlIVwgbsHkZbCaCsbUfEym5+PO6MQ
+         8EEjkbG/zZtLFIzG+9In1Pyo0bXAM7GI10ja4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Dv1Xhl1bS+5jEQYbFML/aNrkT6FMSIT4YIWLINTkYuA=;
-        b=XjNtPKOh4cOnl9wZEHz2UU7ljRUDCDLzacimI06Bg2tOOnt+VQ1xe1S7IBxxZUVyXM
-         XlUW1pfe7omRtmCf8W3vGKmGpEJdJlt0WzKqyCE1JrYyM5P6Hnto4RM47/aAsVfA0aFT
-         lXwrd6J8ysiaywsqrFzLN7Gwj1itKtgVcwFQCmP9cOxLo0WSRA4a1xJpM05sLW/ncWkH
-         U6gLuqZyMBRj9BKPYuEpvdWdE7q44nBpoWGq3PmWaoC/vC7QX2KGaOrXsRhQ8Qn3CtbT
-         Xb+OIkx15MZDcipW21UxgsF2g5qagwPaVhm8ZquC+XuuYk8iYzKWmDI4DTaIBIndrL9o
-         MajA==
-X-Gm-Message-State: AOAM530+6hZAiTD8ZEJ4bsZIDDdWQGyEc2CGlSHiDYPs43+kUrarwWEs
-        xziDzQ3y7QGfwPEZW82RnsP/Wt4L7rgtoYjr1ehQuA==
-X-Google-Smtp-Source: ABdhPJzt1EdcvKZCvCY2Z46UPxjvinPUBrda1Z9vw7Mvqcsu6bquKdK/yTIXHnA8ZslRVtZfcgEoy+b/s/oUX8tNtng=
-X-Received: by 2002:a17:907:94ca:: with SMTP id dn10mr19044858ejc.110.1597743701266;
- Tue, 18 Aug 2020 02:41:41 -0700 (PDT)
+        bh=fFLadAGytIbd6Cde9KqrXGMzmbxXEZAqgtRrBn6qG1k=;
+        b=YfcBYp4FzvzZnWWjP3TtnnGxQAvN18OWwzUk0zBMBleLg2kzO/5/x3LQrH4tn2KjSb
+         XK/m0n669foBuhnXsTmXTk/fJ/gUDsdJndis7aG5wZY1OWGrGsXUSKxCJRCKx5//WXT3
+         Zz+8pflNmfQ+6r235+YGXeK2vRzukzlDDSeu5VRtMN/r2FVWemEE3n8yFCLIji6+vQE7
+         +XjKpnHIgpgmcdSamsOfs9zCUnbCwubGBvZNIvC6hqOkucdDWUcSEbUypZELhIs1H3dn
+         lInBc2Ofitzbt/ABKkgndyq9zV+WZqGkF+t1OgGicDazE0CVEZZBeM4QAhj2XUOsI2Rd
+         A08g==
+X-Gm-Message-State: AOAM533Gx82yMLcdyGmOdZNI1UNBlKMoh/V7qocrknK7mEnG4F37ToS+
+        Dhi0OkpHPzG9unaRWomul2cpGCmUPi0zhw0pXXbKHA==
+X-Google-Smtp-Source: ABdhPJxXjvpMrRuOGDAZZiMkm9L4E1Gzc1z9smi3A79LHbSHxaELKwrkyMmeNUkO/4bFpdYJUvYB0HAAUfI7kyaNEms=
+X-Received: by 2002:a05:6402:13d4:: with SMTP id a20mr20108726edx.161.1597755044073;
+ Tue, 18 Aug 2020 05:50:44 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAHk-=whE42mFLi8CfNcdB6Jc40tXsG3sR+ThWAFihhBwfUbczA@mail.gmail.com>
- <CAJfpegtXtj2Q1wsR-3eUNA0S=_skzHF0CEmcK_Krd8dtKkWkGA@mail.gmail.com>
- <20200812143957.GQ1236603@ZenIV.linux.org.uk> <CAJfpegvFBdp3v9VcCp-wNDjZnQF3q6cufb-8PJieaGDz14sbBg@mail.gmail.com>
- <20200812150807.GR1236603@ZenIV.linux.org.uk> <CAJfpegsQF1aN4XJ_8j977rnQESxc=Kcn7Z2C+LnVDWXo4PKhTQ@mail.gmail.com>
- <20200812163347.GS1236603@ZenIV.linux.org.uk> <CAJfpegv8MTnO9YAiFUJPjr3ryeT82=KWHUpLFmgRNOcQfeS17w@mail.gmail.com>
- <20200812173911.GT1236603@ZenIV.linux.org.uk> <20200812183326.GU1236603@ZenIV.linux.org.uk>
- <20200812213041.GV1236603@ZenIV.linux.org.uk>
-In-Reply-To: <20200812213041.GV1236603@ZenIV.linux.org.uk>
+References: <1842689.1596468469@warthog.procyon.org.uk> <1845353.1596469795@warthog.procyon.org.uk>
+ <CAJfpegunY3fuxh486x9ysKtXbhTE0745ZCVHcaqs9Gww9RV2CQ@mail.gmail.com>
+ <ac1f5e3406abc0af4cd08d818fe920a202a67586.camel@themaw.net>
+ <CAJfpegu8omNZ613tLgUY7ukLV131tt7owR+JJ346Kombt79N0A@mail.gmail.com>
+ <CAJfpegtNP8rQSS4Z14Ja4x-TOnejdhDRTsmmDD-Cccy2pkfVVw@mail.gmail.com>
+ <20200811135419.GA1263716@miu.piliscsaba.redhat.com> <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com>
+ <52483.1597190733@warthog.procyon.org.uk> <CAHk-=wiPx0UJ6Q1X=azwz32xrSeKnTJcH8enySwuuwnGKkHoPA@mail.gmail.com>
+ <066f9aaf-ee97-46db-022f-5d007f9e6edb@redhat.com> <CAHk-=wgz5H-xYG4bOrHaEtY7rvFA1_6+mTSpjrgK8OsNbfF+Pw@mail.gmail.com>
+ <94f907f0-996e-0456-db8a-7823e2ef3d3f@redhat.com> <CAHk-=wig0ZqWxgWtD9F1xZzE7jEmgLmXRWABhss0+er3ZRtb9g@mail.gmail.com>
+ <CAHk-=wh4qaj6iFTrbHy8TPfmM3fj+msYC5X_KE0rCdStJKH2NA@mail.gmail.com>
+In-Reply-To: <CAHk-=wh4qaj6iFTrbHy8TPfmM3fj+msYC5X_KE0rCdStJKH2NA@mail.gmail.com>
 From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Tue, 18 Aug 2020 11:41:29 +0200
-Message-ID: <CAJfpeguyQhfxrSnaH1mZkncgfiLFB2yM2ZgdMBzuhAdKdmmuxA@mail.gmail.com>
-Subject: Re: file metadata via fs API (was: [GIT PULL] Filesystem Information)
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Jann Horn <jannh@google.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+Date:   Tue, 18 Aug 2020 14:50:32 +0200
+Message-ID: <CAJfpegsr8URJHoFunnGShB-=jqypvtrmLV-BcWajkHux2H4x2w@mail.gmail.com>
+Subject: Re: file metadata via fs API
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Steven Whitehouse <swhiteho@redhat.com>,
         David Howells <dhowells@redhat.com>,
-        Karel Zak <kzak@redhat.com>, Jeff Layton <jlayton@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, Karel Zak <kzak@redhat.com>,
+        Jeff Layton <jlayton@redhat.com>,
         Miklos Szeredi <mszeredi@redhat.com>,
         Nicolas Dichtel <nicolas.dichtel@6wind.com>,
         Christian Brauner <christian@brauner.io>,
@@ -85,60 +86,17 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Aug 12, 2020 at 11:30 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> On Wed, Aug 12, 2020 at 07:33:26PM +0100, Al Viro wrote:
->
-> > BTW, what would such opened files look like from /proc/*/fd/* POV?  And
-> > what would happen if you walk _through_ that symlink, with e.g. ".."
-> > following it?  Or with names of those attributes, for that matter...
-> > What about a normal open() of such a sucker?  It won't know where to
-> > look for your ->private_data...
-> >
-> > FWIW, you keep refering to regularity of this stuff from the syscall
-> > POV, but it looks like you have no real idea of what subset of the
-> > things available for normal descriptors will be available for those.
->
-> Another question: what should happen with that sucker on umount of
-> the filesystem holding the underlying object?  Should it be counted
-> as pinning that fs?
+On Tue, Aug 18, 2020 at 12:44 AM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
 
-Obviously yes.
+> So please. Can we just make a simple extended statfs() and be done
+> with it, instead of this hugely complex thing that does five different
+> things with the same interface and makes it really odd as a result?
 
-> Who controls what's in that tree?
+How do you propose handling variable size attributes, like the list of
+fs options?
 
-It could be several entities:
-
- - global (like mount info)
- - per inode (like xattr)
- - per fs (fs specific inode attributes)
- - etc..
-
->  If we plan to have xattrs there,
-> will they be in a flat tree, or should it mirror the hierarchy of
-> xattrs?  When is it populated?  open() time?  What happens if we
-> add/remove an xattr after that point?
-
-From the interface perspective it would be dynamic (i.e. would get
-updated on open or read).  From an implementation POV it could have
-caching, but that's not how I'd start out.
-
-> If we open the same file several times, what should we get?  A full
-> copy of the tree every time, with all coherency being up to whatever's
-> putting attributes there?
->
-> What are the permissions needed to do lookups in that thing?
-
-That would depend on what would need to be looked up.  Top level would
-be world readable, otherwise it would be up to the attribute/group.
-
->
-> All of that is about semantics and the answers are needed before we
-> start looking into implementations.  "Whatever my implementation
-> does" is _not_ a good way to go, especially since that'll be cast
-> in stone as soon as API becomes exposed to userland...
-
-Fine.
+Otherwise I'm fine with a statx-like interface for querying fs/mount attributes.
 
 Thanks,
 Miklos
