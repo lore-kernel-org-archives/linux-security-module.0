@@ -2,33 +2,33 @@ Return-Path: <SRS0=wQ8B=B4=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-9.9 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT
+	SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14463C433DF
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Aug 2020 15:48:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72744C433DF
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Aug 2020 15:49:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DD79020897
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Aug 2020 15:48:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 478A1208B3
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Aug 2020 15:49:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728160AbgHRPsV (ORCPT
+        id S1728068AbgHRPtk (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 18 Aug 2020 11:48:21 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2649 "EHLO huawei.com"
+        Tue, 18 Aug 2020 11:49:40 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2653 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728218AbgHRPsC (ORCPT
+        id S1728269AbgHRPtL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 18 Aug 2020 11:48:02 -0400
+        Tue, 18 Aug 2020 11:49:11 -0400
 Received: from lhreml722-chm.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id 582E3AB7CD1EE9FB02EE;
-        Tue, 18 Aug 2020 16:48:01 +0100 (IST)
+        by Forcepoint Email with ESMTP id 51E8BDCF110317A0CBA6;
+        Tue, 18 Aug 2020 16:49:10 +0100 (IST)
 Received: from kstruczy-linux-box (10.204.65.138) by
  lhreml722-chm.china.huawei.com (10.201.108.73) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1913.5; Tue, 18 Aug 2020 16:47:59 +0100
-Received: by kstruczy-linux-box (sSMTP sendmail emulation); Tue, 18 Aug 2020 17:48:02 +0200
+ 15.1.1913.5; Tue, 18 Aug 2020 16:49:08 +0100
+Received: by kstruczy-linux-box (sSMTP sendmail emulation); Tue, 18 Aug 2020 17:49:11 +0200
 From:   <krzysztof.struczynski@huawei.com>
 To:     <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <containers@lists.linux-foundation.org>,
@@ -39,9 +39,9 @@ CC:     <zohar@linux.ibm.com>, <stefanb@linux.vnet.ibm.com>,
         <jmorris@namei.org>, <christian@brauner.io>,
         <silviu.vlasceanu@huawei.com>, <roberto.sassu@huawei.com>,
         Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
-Subject: [RFC PATCH 26/30] ima: Add key domain to the ima namespace
-Date:   Tue, 18 Aug 2020 17:42:26 +0200
-Message-ID: <20200818154230.14016-17-krzysztof.struczynski@huawei.com>
+Subject: [RFC PATCH 30/30] ima: Set ML template per ima namespace
+Date:   Tue, 18 Aug 2020 17:42:30 +0200
+Message-ID: <20200818154230.14016-21-krzysztof.struczynski@huawei.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200818154230.14016-1-krzysztof.struczynski@huawei.com>
 References: <20200818154230.14016-1-krzysztof.struczynski@huawei.com>
@@ -58,142 +58,201 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
 
-Add key domain to the ima namespace. This will allow to bind the
-appraisal keys with the namespace and store all appraisal keys in the
-ima system keyring.
+Set ML template based on the ima_template string. It can be defined by
+the user through kcmd_for_children ima securityfs entry. Acceptable
+values are the same as for the ima_template kernel boot parameter.
 
 Signed-off-by: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
 ---
- include/linux/ima.h               |  3 +++
- security/integrity/ima/ima_init.c |  8 ++++++++
- security/integrity/ima/ima_ns.c   | 14 ++++++++++++++
- security/keys/key.c               | 10 +++++++---
- 4 files changed, 32 insertions(+), 3 deletions(-)
+ include/linux/ima.h                   |  1 +
+ security/integrity/ima/ima.h          |  1 +
+ security/integrity/ima/ima_init.c     |  1 +
+ security/integrity/ima/ima_ns.c       | 30 ++++++++++++++++++++++++++-
+ security/integrity/ima/ima_template.c | 29 +++++++++++++++-----------
+ 5 files changed, 49 insertions(+), 13 deletions(-)
 
 diff --git a/include/linux/ima.h b/include/linux/ima.h
-index 158028834747..7db4995c66cf 100644
+index 7db4995c66cf..f65d6424e584 100644
 --- a/include/linux/ima.h
 +++ b/include/linux/ima.h
-@@ -208,6 +208,9 @@ struct ima_namespace {
- 	char *policy_path_for_children;
- 	char *x509_path_for_children;
- 	struct ima_policy_setup_data *policy_setup_for_children;
-+#ifdef CONFIG_KEYS
-+	struct key_tag *key_domain;
-+#endif
+@@ -211,6 +211,7 @@ struct ima_namespace {
+ #ifdef CONFIG_KEYS
+ 	struct key_tag *key_domain;
+ #endif
++	struct ima_template_desc *ima_template;
  } __randomize_layout;
  
  extern struct ima_namespace init_ima_ns;
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index b55d25c2bf63..89cb050d5668 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -177,6 +177,7 @@ int template_desc_init_fields(const char *template_fmt,
+ struct ima_template_desc *ima_template_desc_current(void);
+ struct ima_template_desc *lookup_template_desc(const char *name);
+ bool ima_template_has_modsig(const struct ima_template_desc *ima_template);
++int ima_template_setup(char *str, struct ima_namespace *ima_ns);
+ int ima_restore_measurement_entry(struct ima_template_entry *entry);
+ int ima_restore_measurement_list(loff_t bufsize, void *buf);
+ int ima_measurements_show(struct seq_file *m, void *v);
 diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
-index d14c6689f422..1668edf3ed32 100644
+index 1668edf3ed32..af77d2c85964 100644
 --- a/security/integrity/ima/ima_init.c
 +++ b/security/integrity/ima/ima_init.c
-@@ -18,6 +18,7 @@
- #include <linux/kref.h>
- #include <linux/proc_ns.h>
- #include <linux/user_namespace.h>
-+#include <linux/key.h>
- 
- #include "ima.h"
- 
-@@ -25,6 +26,10 @@
- const char boot_aggregate_name[] = "boot_aggregate";
- struct tpm_chip *ima_tpm_chip;
- 
-+#ifdef CONFIG_KEYS
-+static struct key_tag init_ima_key_domain = { .usage = REFCOUNT_INIT(1) };
-+#endif
-+
- struct ima_namespace init_ima_ns = {
- 	.kref = KREF_INIT(2),
- 	.user_ns = &init_user_ns,
-@@ -41,6 +46,9 @@ struct ima_namespace init_ima_ns = {
- 	.measurements = &ima_measurements,
- 	.ml_len = ATOMIC_LONG_INIT(0),
- 	.violations = ATOMIC_LONG_INIT(0),
-+#ifdef CONFIG_KEYS
-+	.key_domain = &init_ima_key_domain,
-+#endif
+@@ -49,6 +49,7 @@ struct ima_namespace init_ima_ns = {
+ #ifdef CONFIG_KEYS
+ 	.key_domain = &init_ima_key_domain,
+ #endif
++	.ima_template = NULL,
  };
  EXPORT_SYMBOL(init_ima_ns);
  
 diff --git a/security/integrity/ima/ima_ns.c b/security/integrity/ima/ima_ns.c
-index ec3abc803c82..872dc6a96a96 100644
+index 9b9c34e71cc6..05c5f0df8f8f 100644
 --- a/security/integrity/ima/ima_ns.c
 +++ b/security/integrity/ima/ima_ns.c
-@@ -28,6 +28,7 @@
- #include <linux/mutex.h>
- #include <linux/string.h>
- #include <linux/kernel.h>
-+#include <linux/key.h>
+@@ -48,6 +48,28 @@ static void dec_ima_namespaces(struct ucounts *ucounts)
+ 	return dec_ucount(ucounts, UCOUNT_IMA_NAMESPACES);
+ }
  
- #include "ima.h"
- 
-@@ -65,8 +66,16 @@ static struct ima_namespace *ima_ns_alloc(void)
- 	if (!ima_ns->iint_tree)
- 		goto policy_free;
- 
-+#ifdef CONFIG_KEYS
-+	ima_ns->key_domain = kzalloc(sizeof(struct key_tag), GFP_KERNEL);
-+	if (!ima_ns->key_domain)
-+		goto iint_free;
-+#endif
++static int ima_set_ns_template(struct ima_namespace *ima_ns)
++{
++	int result;
 +
- 	return ima_ns;
- 
-+iint_free:
-+	kfree(ima_ns->iint_tree);
- policy_free:
- 	kfree(ima_ns->policy_data);
- ns_free:
-@@ -171,6 +180,9 @@ static struct ima_namespace *clone_ima_ns(struct user_namespace *user_ns,
- 	rwlock_init(&ns->iint_tree->lock);
- 	ns->iint_tree->root = RB_ROOT;
- 
-+#ifdef CONFIG_KEYS
-+	refcount_set(&ns->key_domain->usage, 1);
-+#endif
++	if (!ima_ns->ima_template)
++		ima_ns->ima_template =
++			lookup_template_desc(CONFIG_IMA_DEFAULT_TEMPLATE);
++
++	result = template_desc_init_fields(ima_ns->ima_template->fmt,
++					   &(ima_ns->ima_template->fields),
++					   &(ima_ns->ima_template->num_fields));
++	if (result < 0) {
++		pr_err("template %s init failed, result: %d\n",
++		       (strlen(ima_ns->ima_template->name) ?
++		       ima_ns->ima_template->name :
++		       ima_ns->ima_template->fmt), result);
++		ima_ns->ima_template = NULL;
++	}
++
++	return result;
++}
++
+ static int ima_ns_add_boot_aggregate(struct ima_namespace *ima_ns)
+ {
+ 	static const char op[] = "ns_add_boot_aggregate";
+@@ -269,6 +291,7 @@ static struct ima_namespace *clone_ima_ns(struct user_namespace *user_ns,
  	ns->policy_path_for_children = NULL;
  	ns->x509_path_for_children = NULL;
  	ns->policy_setup_for_children = NULL;
-@@ -184,6 +196,7 @@ static struct ima_namespace *clone_ima_ns(struct user_namespace *user_ns,
- fail_free:
- 	kfree(ns->iint_tree);
- 	kfree(ns->policy_data);
-+	kfree(ns->key_domain);
- 	kfree(ns);
- fail_dec:
- 	dec_ima_namespaces(ucounts);
-@@ -239,6 +252,7 @@ static void destroy_ima_ns(struct ima_namespace *ns)
- 	bool is_init_ns = (ns == &init_ima_ns);
++	ns->ima_template = NULL;
  
- 	dec_ima_namespaces(ns->ucounts);
-+	key_remove_domain(ns->key_domain);
- 	put_user_ns(ns->user_ns);
- 	ns_free_inum(&ns->ns);
- 	integrity_iint_tree_free(ns->iint_tree);
-diff --git a/security/keys/key.c b/security/keys/key.c
-index 1b0183d33bbc..fca0d12f5c71 100644
---- a/security/keys/key.c
-+++ b/security/keys/key.c
-@@ -285,10 +285,14 @@ struct key *key_alloc(struct key_type *type, const char *desc,
+ 	INIT_LIST_HEAD(&ns->policy_data->ima_default_rules);
+ 	INIT_LIST_HEAD(&ns->policy_data->ima_policy_rules);
+@@ -444,6 +467,10 @@ static int imans_activate(struct ima_namespace *ima_ns)
+ 	if (ima_ns->frozen)
+ 		goto out;
  
- 		/* set domain tag if it's not predefined for the key type */
- 		if ((!type->flags) && (flags & KEY_ALLOC_DOMAIN_IMA))
--			/* Set it to something meaningful after adding a key
--			 * domain to the ima namespace.
-+			/* Use ima_ns_for_children, not ima_ns. ima_ns_for
-+			 * children is equal to ima_ns, unless ima namespace was
-+			 * unshared and the new namespace is being configured.
-+			 * In that case, new keys should be associated with the
-+			 * new ima namespace.
- 			 */
--			key->index_key.domain_tag = NULL;
-+			key->index_key.domain_tag =
-+				current->nsproxy->ima_ns_for_children->key_domain;
++	res = ima_set_ns_template(ima_ns);
++	if (res < 0)
++		goto out;
++
+ 	res = ima_set_ns_policy(ima_ns);
+ 	if (res < 0)
+ 		goto out;
+@@ -580,10 +607,11 @@ struct ima_kernel_param {
+ 	int (*set)(char *val, struct ima_namespace *ima_ns);
+ };
+ 
+-/* TODO: add ima_template, ima_template_fmt, ima_hash, ... */
++/* TODO: add ima_template_fmt, ima_hash, ... */
+ static const struct ima_kernel_param ima_kernel_params[] = {
+ 	{"ima_appraise", ima_default_appraise_setup},
+ 	{"ima_policy", ima_policy_setup},
++	{"ima_template", ima_template_setup},
+ };
+ static const size_t ima_kernel_params_size = ARRAY_SIZE(ima_kernel_params);
+ 
+diff --git a/security/integrity/ima/ima_template.c b/security/integrity/ima/ima_template.c
+index 2020bd5176a4..91339a7e1134 100644
+--- a/security/integrity/ima/ima_template.c
++++ b/security/integrity/ima/ima_template.c
+@@ -57,8 +57,6 @@ static const struct ima_template_field supported_fields[] = {
+  */
+ #define MAX_TEMPLATE_NAME_LEN sizeof("d-ng|n-ng|sig|buf|d-modisg|modsig|ns")
+ 
+-static struct ima_template_desc *ima_template;
+-
+ /**
+  * ima_template_has_modsig - Check whether template has modsig-related fields.
+  * @ima_template: IMA template to check.
+@@ -78,12 +76,12 @@ bool ima_template_has_modsig(const struct ima_template_desc *ima_template)
+ 	return false;
+ }
+ 
+-static int __init ima_template_setup(char *str)
++int ima_template_setup(char *str, struct ima_namespace *ima_ns)
+ {
+ 	struct ima_template_desc *template_desc;
+ 	int template_len = strlen(str);
+ 
+-	if (ima_template)
++	if (ima_ns->ima_template)
+ 		return 1;
+ 
+ 	ima_init_template_list();
+@@ -109,16 +107,21 @@ static int __init ima_template_setup(char *str)
+ 		return 1;
  	}
  
- 	key->index_key.desc_len = desclen;
+-	ima_template = template_desc;
++	ima_ns->ima_template = template_desc;
+ 	return 1;
+ }
+-__setup("ima_template=", ima_template_setup);
++
++static int __init template_setup(char *str)
++{
++	return ima_template_setup(str, &init_ima_ns);
++}
++__setup("ima_template=", template_setup);
+ 
+ static int __init ima_template_fmt_setup(char *str)
+ {
+ 	int num_templates = ARRAY_SIZE(builtin_templates);
+ 
+-	if (ima_template)
++	if (init_ima_ns.ima_template)
+ 		return 1;
+ 
+ 	if (template_desc_init_fields(str, NULL, NULL) < 0) {
+@@ -128,7 +131,7 @@ static int __init ima_template_fmt_setup(char *str)
+ 	}
+ 
+ 	builtin_templates[num_templates - 1].fmt = str;
+-	ima_template = builtin_templates + num_templates - 1;
++	init_ima_ns.ima_template = builtin_templates + num_templates - 1;
+ 
+ 	return 1;
+ }
+@@ -247,12 +250,14 @@ void ima_init_template_list(void)
+ 
+ struct ima_template_desc *ima_template_desc_current(void)
+ {
+-	if (!ima_template) {
++	struct ima_namespace *ima_ns = get_current_ns();
++
++	if (!ima_ns->ima_template) {
+ 		ima_init_template_list();
+-		ima_template =
+-		    lookup_template_desc(CONFIG_IMA_DEFAULT_TEMPLATE);
++		ima_ns->ima_template =
++			lookup_template_desc(CONFIG_IMA_DEFAULT_TEMPLATE);
+ 	}
+-	return ima_template;
++	return ima_ns->ima_template;
+ }
+ 
+ int __init ima_init_template(void)
 -- 
 2.20.1
 
