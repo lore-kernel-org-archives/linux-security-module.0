@@ -2,33 +2,33 @@ Return-Path: <SRS0=wQ8B=B4=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-10.0 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3179C433E1
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Aug 2020 15:48:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14463C433DF
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Aug 2020 15:48:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 92377208B3
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Aug 2020 15:48:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD79020897
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Aug 2020 15:48:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728247AbgHRPs2 (ORCPT
+        id S1728160AbgHRPsV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 18 Aug 2020 11:48:28 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2652 "EHLO huawei.com"
+        Tue, 18 Aug 2020 11:48:21 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2649 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728241AbgHRPsR (ORCPT
+        id S1728218AbgHRPsC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 18 Aug 2020 11:48:17 -0400
-Received: from lhreml722-chm.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id 055F67BBDC167B873813;
-        Tue, 18 Aug 2020 16:48:08 +0100 (IST)
+        Tue, 18 Aug 2020 11:48:02 -0400
+Received: from lhreml722-chm.china.huawei.com (unknown [172.18.7.107])
+        by Forcepoint Email with ESMTP id 582E3AB7CD1EE9FB02EE;
+        Tue, 18 Aug 2020 16:48:01 +0100 (IST)
 Received: from kstruczy-linux-box (10.204.65.138) by
  lhreml722-chm.china.huawei.com (10.201.108.73) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1913.5; Tue, 18 Aug 2020 16:48:06 +0100
-Received: by kstruczy-linux-box (sSMTP sendmail emulation); Tue, 18 Aug 2020 17:48:09 +0200
+ 15.1.1913.5; Tue, 18 Aug 2020 16:47:59 +0100
+Received: by kstruczy-linux-box (sSMTP sendmail emulation); Tue, 18 Aug 2020 17:48:02 +0200
 From:   <krzysztof.struczynski@huawei.com>
 To:     <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <containers@lists.linux-foundation.org>,
@@ -39,9 +39,9 @@ CC:     <zohar@linux.ibm.com>, <stefanb@linux.vnet.ibm.com>,
         <jmorris@namei.org>, <christian@brauner.io>,
         <silviu.vlasceanu@huawei.com>, <roberto.sassu@huawei.com>,
         Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
-Subject: [RFC PATCH 29/30] ima: Add dummy boot aggregate to per ima namespace measurement list
-Date:   Tue, 18 Aug 2020 17:42:29 +0200
-Message-ID: <20200818154230.14016-20-krzysztof.struczynski@huawei.com>
+Subject: [RFC PATCH 26/30] ima: Add key domain to the ima namespace
+Date:   Tue, 18 Aug 2020 17:42:26 +0200
+Message-ID: <20200818154230.14016-17-krzysztof.struczynski@huawei.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200818154230.14016-1-krzysztof.struczynski@huawei.com>
 References: <20200818154230.14016-1-krzysztof.struczynski@huawei.com>
@@ -58,101 +58,142 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
 
-Add dummy boot aggregate entry to the ima measurement list, for every
-new ima namespace, when the first process is born into that namespace.
-
-There is at most one TPM chip in the system and one measurement list
-associated to one of its PCRs. IMA namespace IDs can be re-used after
-namespace is destroyed. The per namespace boot aggregate entry marks
-the moment of the ima namespace creation. It is useful when host's
-root parses the global measurement list to find entries for destroyed
-containers. If the ima namespace ID is reused, the user will know, that
-the given entry belongs to a different container.
+Add key domain to the ima namespace. This will allow to bind the
+appraisal keys with the namespace and store all appraisal keys in the
+ima system keyring.
 
 Signed-off-by: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
 ---
- security/integrity/ima/ima_ns.c | 61 +++++++++++++++++++++++++++++++++
- 1 file changed, 61 insertions(+)
+ include/linux/ima.h               |  3 +++
+ security/integrity/ima/ima_init.c |  8 ++++++++
+ security/integrity/ima/ima_ns.c   | 14 ++++++++++++++
+ security/keys/key.c               | 10 +++++++---
+ 4 files changed, 32 insertions(+), 3 deletions(-)
 
+diff --git a/include/linux/ima.h b/include/linux/ima.h
+index 158028834747..7db4995c66cf 100644
+--- a/include/linux/ima.h
++++ b/include/linux/ima.h
+@@ -208,6 +208,9 @@ struct ima_namespace {
+ 	char *policy_path_for_children;
+ 	char *x509_path_for_children;
+ 	struct ima_policy_setup_data *policy_setup_for_children;
++#ifdef CONFIG_KEYS
++	struct key_tag *key_domain;
++#endif
+ } __randomize_layout;
+ 
+ extern struct ima_namespace init_ima_ns;
+diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
+index d14c6689f422..1668edf3ed32 100644
+--- a/security/integrity/ima/ima_init.c
++++ b/security/integrity/ima/ima_init.c
+@@ -18,6 +18,7 @@
+ #include <linux/kref.h>
+ #include <linux/proc_ns.h>
+ #include <linux/user_namespace.h>
++#include <linux/key.h>
+ 
+ #include "ima.h"
+ 
+@@ -25,6 +26,10 @@
+ const char boot_aggregate_name[] = "boot_aggregate";
+ struct tpm_chip *ima_tpm_chip;
+ 
++#ifdef CONFIG_KEYS
++static struct key_tag init_ima_key_domain = { .usage = REFCOUNT_INIT(1) };
++#endif
++
+ struct ima_namespace init_ima_ns = {
+ 	.kref = KREF_INIT(2),
+ 	.user_ns = &init_user_ns,
+@@ -41,6 +46,9 @@ struct ima_namespace init_ima_ns = {
+ 	.measurements = &ima_measurements,
+ 	.ml_len = ATOMIC_LONG_INIT(0),
+ 	.violations = ATOMIC_LONG_INIT(0),
++#ifdef CONFIG_KEYS
++	.key_domain = &init_ima_key_domain,
++#endif
+ };
+ EXPORT_SYMBOL(init_ima_ns);
+ 
 diff --git a/security/integrity/ima/ima_ns.c b/security/integrity/ima/ima_ns.c
-index 11e1d896f603..9b9c34e71cc6 100644
+index ec3abc803c82..872dc6a96a96 100644
 --- a/security/integrity/ima/ima_ns.c
 +++ b/security/integrity/ima/ima_ns.c
-@@ -48,6 +48,65 @@ static void dec_ima_namespaces(struct ucounts *ucounts)
- 	return dec_ucount(ucounts, UCOUNT_IMA_NAMESPACES);
- }
+@@ -28,6 +28,7 @@
+ #include <linux/mutex.h>
+ #include <linux/string.h>
+ #include <linux/kernel.h>
++#include <linux/key.h>
  
-+static int ima_ns_add_boot_aggregate(struct ima_namespace *ima_ns)
-+{
-+	static const char op[] = "ns_add_boot_aggregate";
-+	static const char ns_aggregate_name_prefix[] = "ns_aggregate_";
-+	const char *audit_cause = "ENOMEM";
-+	struct ima_template_entry *entry;
-+	struct integrity_iint_cache tmp_iint, *iint = &tmp_iint;
-+	struct ima_event_data event_data = { .iint = iint };
-+	int result = -ENOMEM;
-+	int violation = 0;
-+	struct {
-+		struct ima_digest_data hdr;
-+		char digest[TPM_DIGEST_SIZE];
-+	} hash;
-+	unsigned int ns_id = get_ns_id(ima_ns);
-+	char *ns_aggregate_name;
-+
-+	ns_aggregate_name = kmalloc(sizeof(ns_aggregate_name_prefix) +
-+				    sizeof(unsigned int),
-+				    GFP_KERNEL);
-+	if (!ns_aggregate_name)
-+		goto err_out;
-+
-+	sprintf(ns_aggregate_name, "%s%u", ns_aggregate_name_prefix, ns_id);
-+
-+	event_data.filename = ns_aggregate_name;
-+	event_data.ns_id = ns_id;
-+
-+	memset(iint, 0, sizeof(*iint));
-+	memset(&hash, 0, sizeof(hash));
-+	iint->ima_hash = &hash.hdr;
-+	iint->ima_hash->algo = HASH_ALGO_SHA1;
-+	iint->ima_hash->length = SHA1_DIGEST_SIZE;
-+
-+	result = ima_alloc_init_template(&event_data, &entry, NULL);
-+	if (result < 0) {
-+		audit_cause = "alloc_entry";
-+		goto err_out;
-+	}
-+
-+	result = ima_store_template(entry, violation, NULL,
-+				    ns_aggregate_name,
-+				    CONFIG_IMA_MEASURE_PCR_IDX,
-+				    ima_ns);
-+	if (result < 0) {
-+		ima_free_template_entry(entry);
-+		audit_cause = "store_entry";
-+	}
-+
-+err_out:
-+	if (result < 0)
-+		integrity_audit_msg(AUDIT_INTEGRITY_PCR, NULL,
-+				    ns_aggregate_name, op, audit_cause,
-+				    result, 0);
-+	kfree(ns_aggregate_name);
-+
-+	return result;
-+}
-+
- #ifdef CONFIG_IMA_LOAD_X509
- static int ima_ns_load_x509(struct ima_namespace *ima_ns)
- {
-@@ -404,6 +463,8 @@ static int imans_activate(struct ima_namespace *ima_ns)
- 	list_add_tail(&ima_ns->list, &ima_ns_list);
- 	up_write(&ima_ns_list_lock);
+ #include "ima.h"
  
-+	ima_ns_add_boot_aggregate(ima_ns);
+@@ -65,8 +66,16 @@ static struct ima_namespace *ima_ns_alloc(void)
+ 	if (!ima_ns->iint_tree)
+ 		goto policy_free;
+ 
++#ifdef CONFIG_KEYS
++	ima_ns->key_domain = kzalloc(sizeof(struct key_tag), GFP_KERNEL);
++	if (!ima_ns->key_domain)
++		goto iint_free;
++#endif
 +
- 	destroy_child_config(ima_ns);
- out:
- 	mutex_unlock(&frozen_lock);
+ 	return ima_ns;
+ 
++iint_free:
++	kfree(ima_ns->iint_tree);
+ policy_free:
+ 	kfree(ima_ns->policy_data);
+ ns_free:
+@@ -171,6 +180,9 @@ static struct ima_namespace *clone_ima_ns(struct user_namespace *user_ns,
+ 	rwlock_init(&ns->iint_tree->lock);
+ 	ns->iint_tree->root = RB_ROOT;
+ 
++#ifdef CONFIG_KEYS
++	refcount_set(&ns->key_domain->usage, 1);
++#endif
+ 	ns->policy_path_for_children = NULL;
+ 	ns->x509_path_for_children = NULL;
+ 	ns->policy_setup_for_children = NULL;
+@@ -184,6 +196,7 @@ static struct ima_namespace *clone_ima_ns(struct user_namespace *user_ns,
+ fail_free:
+ 	kfree(ns->iint_tree);
+ 	kfree(ns->policy_data);
++	kfree(ns->key_domain);
+ 	kfree(ns);
+ fail_dec:
+ 	dec_ima_namespaces(ucounts);
+@@ -239,6 +252,7 @@ static void destroy_ima_ns(struct ima_namespace *ns)
+ 	bool is_init_ns = (ns == &init_ima_ns);
+ 
+ 	dec_ima_namespaces(ns->ucounts);
++	key_remove_domain(ns->key_domain);
+ 	put_user_ns(ns->user_ns);
+ 	ns_free_inum(&ns->ns);
+ 	integrity_iint_tree_free(ns->iint_tree);
+diff --git a/security/keys/key.c b/security/keys/key.c
+index 1b0183d33bbc..fca0d12f5c71 100644
+--- a/security/keys/key.c
++++ b/security/keys/key.c
+@@ -285,10 +285,14 @@ struct key *key_alloc(struct key_type *type, const char *desc,
+ 
+ 		/* set domain tag if it's not predefined for the key type */
+ 		if ((!type->flags) && (flags & KEY_ALLOC_DOMAIN_IMA))
+-			/* Set it to something meaningful after adding a key
+-			 * domain to the ima namespace.
++			/* Use ima_ns_for_children, not ima_ns. ima_ns_for
++			 * children is equal to ima_ns, unless ima namespace was
++			 * unshared and the new namespace is being configured.
++			 * In that case, new keys should be associated with the
++			 * new ima namespace.
+ 			 */
+-			key->index_key.domain_tag = NULL;
++			key->index_key.domain_tag =
++				current->nsproxy->ima_ns_for_children->key_domain;
+ 	}
+ 
+ 	key->index_key.desc_len = desclen;
 -- 
 2.20.1
 
