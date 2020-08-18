@@ -2,140 +2,86 @@ Return-Path: <SRS0=wQ8B=B4=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C436C433E3
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Aug 2020 15:51:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FFC3C433E3
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Aug 2020 15:54:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DCDAD2245C
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Aug 2020 15:51:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 56D5E2245C
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Aug 2020 15:54:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728265AbgHRPvg (ORCPT
+        id S1728320AbgHRPyI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 18 Aug 2020 11:51:36 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2648 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727826AbgHRPsA (ORCPT
+        Tue, 18 Aug 2020 11:54:08 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:49103 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727108AbgHRPyD (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 18 Aug 2020 11:48:00 -0400
-Received: from lhreml722-chm.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id E729ED50D5FCC4DDD013;
-        Tue, 18 Aug 2020 16:47:58 +0100 (IST)
-Received: from kstruczy-linux-box (10.204.65.138) by
- lhreml722-chm.china.huawei.com (10.201.108.73) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1913.5; Tue, 18 Aug 2020 16:47:56 +0100
-Received: by kstruczy-linux-box (sSMTP sendmail emulation); Tue, 18 Aug 2020 17:47:59 +0200
-From:   <krzysztof.struczynski@huawei.com>
-To:     <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <containers@lists.linux-foundation.org>,
-        <linux-security-module@vger.kernel.org>
-CC:     <zohar@linux.ibm.com>, <stefanb@linux.vnet.ibm.com>,
-        <sunyuqiong1988@gmail.com>, <mkayaalp@cs.binghamton.edu>,
-        <dmitry.kasatkin@gmail.com>, <serge@hallyn.com>,
-        <jmorris@namei.org>, <christian@brauner.io>,
-        <silviu.vlasceanu@huawei.com>, <roberto.sassu@huawei.com>,
-        Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
-Subject: [RFC PATCH 25/30] keys: Allow to set key domain tag separately from the key type
-Date:   Tue, 18 Aug 2020 17:42:25 +0200
-Message-ID: <20200818154230.14016-16-krzysztof.struczynski@huawei.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200818154230.14016-1-krzysztof.struczynski@huawei.com>
-References: <20200818154230.14016-1-krzysztof.struczynski@huawei.com>
+        Tue, 18 Aug 2020 11:54:03 -0400
+Received: from ip5f5af70b.dynamic.kabel-deutschland.de ([95.90.247.11] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1k83vr-0003fb-1J; Tue, 18 Aug 2020 15:53:51 +0000
+Date:   Tue, 18 Aug 2020 17:53:50 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     krzysztof.struczynski@huawei.com
+Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        containers@lists.linux-foundation.org,
+        linux-security-module@vger.kernel.org, zohar@linux.ibm.com,
+        stefanb@linux.vnet.ibm.com, sunyuqiong1988@gmail.com,
+        mkayaalp@cs.binghamton.edu, dmitry.kasatkin@gmail.com,
+        serge@hallyn.com, jmorris@namei.org, christian@brauner.io,
+        silviu.vlasceanu@huawei.com, roberto.sassu@huawei.com
+Subject: Re: [RFC PATCH 00/30] ima: Introduce IMA namespace
+Message-ID: <20200818155350.oy3axodt3vj5k7ij@wittgenstein>
+References: <N>
+ <20200818152037.11869-1-krzysztof.struczynski@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.204.65.138]
-X-ClientProxiedBy: fraeml707-chm.china.huawei.com (10.206.15.35) To
- lhreml722-chm.china.huawei.com (10.201.108.73)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200818152037.11869-1-krzysztof.struczynski@huawei.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
+On Tue, Aug 18, 2020 at 05:20:07PM +0200, krzysztof.struczynski@huawei.com wrote:
+> From: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
+> 
+> IMA has not been designed to work with containers. It handles every
+> process in the same way, and it cannot distinguish if a process belongs to
+> a container or not.
+> 
+> Containers use namespaces to make it appear to the processes in the
+> containers that they have their own isolated instance of the global
+> resource. For IMA as well, it is desirable to let processes in the
+> containers have IMA functionality independent from other containers:
+> separate policy rules, measurement list, additional appraisal keys to
+> verify the container image, separate audit logs.
+> 
+> As previous work done in this area, this patch series introduces the IMA
+> namespace, which is a separate instance of IMA to handle a subset of
+> processes that belong to a container.
+> 
+> The IMA namespace is created using clone3() or unshare() system calls. It
+> is important to configure the namespace before any process appears in it,
+> so that the new policy rules apply to the very first process in the
+> namespace. To achieve that, the intermediate namespace ima_ns_for_children
+> is used. It stores the configuration and becomes active on the next fork
+> or when the first process enters it using the setns() system call. The
+> similar process is used for the time namespace.
+> 
+> The IMA namespace can be configured using the new securityfs directory
+> entries that allow the user to set the policy rules, x509 certificate for
+> appraisal and pass IMA configuration parameters normally included in the
+> kernel command line parameters. It is intended to extend the clone_args to
+> allow configuration from clone3() syscall.
 
-Add KEY_ALLOC_DOMAIN_* flags so that the key domain tag can be
-specified on the key creation. This is done to separate the
-key domain setting from the key type.
+Not to be the downer right away but just as an fyi, if this patchset
+makes it, clone3() will not allow to be extended with any real
+second-level pointers. That will see a hard NAK from me and several
+other maintainers.
 
-If applied to the keyring, it will set the requested domain tag for
-every key added to that keyring.
-
-IMA uses the existing key_type_asymmetric for appraisal, but also has
-to specify the key domain to bind appraisal key with the ima namespace.
-
-Signed-off-by: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
----
- include/linux/key.h | 10 ++++++++++
- security/keys/key.c | 16 ++++++++++++++++
- 2 files changed, 26 insertions(+)
-
-diff --git a/include/linux/key.h b/include/linux/key.h
-index 223ab9d76d15..47430cd7fbc6 100644
---- a/include/linux/key.h
-+++ b/include/linux/key.h
-@@ -272,6 +272,12 @@ struct key {
- 	 * restriction.
- 	 */
- 	struct key_restriction *restrict_link;
-+
-+	/* This is set on a keyring to indicate that every key added to this
-+	 * keyring should be tagged with a given key domain tag. It is ignored
-+	 * for the non-keyring keys and can be overridden by the key-type flags.
-+	 */
-+	unsigned long key_alloc_domain;
- };
- 
- extern struct key *key_alloc(struct key_type *type,
-@@ -290,6 +296,10 @@ extern struct key *key_alloc(struct key_type *type,
- #define KEY_ALLOC_BYPASS_RESTRICTION	0x0008	/* Override the check on restricted keyrings */
- #define KEY_ALLOC_UID_KEYRING		0x0010	/* allocating a user or user session keyring */
- 
-+/* Only one domain can be set */
-+#define KEY_ALLOC_DOMAIN_IMA		0x0100  /* add IMA domain tag, based on the "current" */
-+#define KEY_ALLOC_DOMAIN_MASK		0xFF00
-+
- extern void key_revoke(struct key *key);
- extern void key_invalidate(struct key *key);
- extern void key_put(struct key *key);
-diff --git a/security/keys/key.c b/security/keys/key.c
-index e282c6179b21..1b0183d33bbc 100644
---- a/security/keys/key.c
-+++ b/security/keys/key.c
-@@ -278,6 +278,19 @@ struct key *key_alloc(struct key_type *type, const char *desc,
- 	if (!key)
- 		goto no_memory_2;
- 
-+	if (flags & KEY_ALLOC_DOMAIN_MASK) {
-+		/* set alloc domain for all keys added to this keyring */
-+		if (type == &key_type_keyring)
-+			key->key_alloc_domain = (flags & KEY_ALLOC_DOMAIN_MASK);
-+
-+		/* set domain tag if it's not predefined for the key type */
-+		if ((!type->flags) && (flags & KEY_ALLOC_DOMAIN_IMA))
-+			/* Set it to something meaningful after adding a key
-+			 * domain to the ima namespace.
-+			 */
-+			key->index_key.domain_tag = NULL;
-+	}
-+
- 	key->index_key.desc_len = desclen;
- 	key->index_key.description = kmemdup(desc, desclen + 1, GFP_KERNEL);
- 	if (!key->index_key.description)
-@@ -925,6 +938,9 @@ key_ref_t key_create_or_update(key_ref_t keyring_ref,
- 			perm |= KEY_POS_WRITE;
- 	}
- 
-+	if (keyring->key_alloc_domain)
-+		flags |= keyring->key_alloc_domain;
-+
- 	/* allocate a new key */
- 	key = key_alloc(index_key.type, index_key.description,
- 			cred->fsuid, cred->fsgid, cred, perm, flags, NULL);
--- 
-2.20.1
-
+Christian
