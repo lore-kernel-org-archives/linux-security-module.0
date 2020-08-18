@@ -2,180 +2,120 @@ Return-Path: <SRS0=wQ8B=B4=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 948ECC433E3
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Aug 2020 15:27:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA05AC433E1
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Aug 2020 15:33:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 74BE7206DA
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Aug 2020 15:27:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A430820786
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Aug 2020 15:33:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ac/Dzu3F"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728143AbgHRP0z (ORCPT
+        id S1727942AbgHRPdk (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 18 Aug 2020 11:26:55 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2628 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728060AbgHRP0T (ORCPT
+        Tue, 18 Aug 2020 11:33:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33932 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727835AbgHRPdc (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 18 Aug 2020 11:26:19 -0400
-Received: from lhreml722-chm.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id 7D6AA7FAC173646AF9E4;
-        Tue, 18 Aug 2020 16:26:17 +0100 (IST)
-Received: from kstruczy-linux-box (10.204.65.138) by
- lhreml722-chm.china.huawei.com (10.201.108.73) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1913.5; Tue, 18 Aug 2020 16:26:15 +0100
-Received: by kstruczy-linux-box (sSMTP sendmail emulation); Tue, 18 Aug 2020 17:26:18 +0200
-From:   <krzysztof.struczynski@huawei.com>
-To:     <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <containers@lists.linux-foundation.org>,
-        <linux-security-module@vger.kernel.org>
-CC:     Krzysztof Struczynski <krzysztof.struczynski@huawei.com>,
-        <zohar@linux.ibm.com>, <stefanb@linux.vnet.ibm.com>,
-        <sunyuqiong1988@gmail.com>, <mkayaalp@cs.binghamton.edu>,
-        <dmitry.kasatkin@gmail.com>, <serge@hallyn.com>,
-        <jmorris@namei.org>, <christian@brauner.io>,
-        <silviu.vlasceanu@huawei.com>, <roberto.sassu@huawei.com>
-Subject: [RFC PATCH 05/30] ima: Add methods for parsing ima policy configuration string
-Date:   Tue, 18 Aug 2020 17:20:12 +0200
-Message-ID: <20200818152037.11869-6-krzysztof.struczynski@huawei.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200818152037.11869-1-krzysztof.struczynski@huawei.com>
-References: <N>
- <20200818152037.11869-1-krzysztof.struczynski@huawei.com>
+        Tue, 18 Aug 2020 11:33:32 -0400
+Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 540CAC061342
+        for <linux-security-module@vger.kernel.org>; Tue, 18 Aug 2020 08:33:32 -0700 (PDT)
+Received: by mail-ed1-x544.google.com with SMTP id l23so15585369edv.11
+        for <linux-security-module@vger.kernel.org>; Tue, 18 Aug 2020 08:33:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=a6JBuZhVYWp23R6HGvWW9nRcBBE4mX5ykNxzEwYLGKc=;
+        b=Ac/Dzu3FoXOA6oUvQv+5yd66VJmRWG0TPTYZXLVCZhZ4XGLWHKfhHvYLK89FQ+LGKK
+         bU8jBb9tSJU/9bNKH2g389dVKDn23kZ3IeUw0+p9c6iVLightb+zUKKgg7pN6l8WM7XN
+         dTrSvLt5iuvwFupu3p0EAeJnaCYoYuw/Vn51w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=a6JBuZhVYWp23R6HGvWW9nRcBBE4mX5ykNxzEwYLGKc=;
+        b=d+NLT/Rpn4xxS/a5nC/DzD32bslxsqLezLcTYMXZHh0o0fFrwoLoPU5iJee/84Jv96
+         iXCl4KhjKcE8Sns+YniNX0Y2ZwV3kc1xgCbLixLjB/twtH5R2cKAYPxzrwa3F0Ab73t9
+         JpSUQi/Ldh5oQefmV7ZxSwJBi+GIdM2EGO5TRU4oxP7MUqpnC4KkSoitbQgrpKnQrPeJ
+         6+vfENmcIpsW/ssuvEV23kAhw+SMJz+c3LciDEXXjuSES9mXWi9ADd7yR+H3Leep5dFp
+         djcgetxK6R99yNYzpvrZO7sw9qtOg0DvzVE9QOqZAEL57BLO0/OxCFW6irFH4Gg1Jx7j
+         ViIg==
+X-Gm-Message-State: AOAM531qws+z2cwrb/1V5TDOtseaF/gZqnmvvaWGKolltDr+J973RYtK
+        kRTO67lPdpRqXtIwiMlLbWHiRA==
+X-Google-Smtp-Source: ABdhPJwK0rMXcmZjLSnIfUTDa+I60/0YARRpPhkhaEKKvECvklhauoQ6XXcKSJeD0BL0upcmv4+7+Q==
+X-Received: by 2002:a05:6402:3070:: with SMTP id bs16mr20055627edb.269.1597764810834;
+        Tue, 18 Aug 2020 08:33:30 -0700 (PDT)
+Received: from [192.168.2.66] ([81.6.44.51])
+        by smtp.gmail.com with ESMTPSA id q2sm17169535edb.82.2020.08.18.08.33.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Aug 2020 08:33:30 -0700 (PDT)
+Subject: Re: [PATCH bpf-next v8 5/7] bpf: Implement bpf_local_storage for
+ inodes
+To:     Martin KaFai Lau <kafai@fb.com>
+Cc:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
+        Florent Revest <revest@chromium.org>
+References: <20200803164655.1924498-1-kpsingh@chromium.org>
+ <20200803164655.1924498-6-kpsingh@chromium.org>
+ <20200818012758.4666zlknkr4x6cbl@kafai-mbp.dhcp.thefacebook.com>
+ <60344fad-f761-0fee-a6ef-4880c45c3e52@chromium.org>
+ <20200818152316.pkyko6gcpzeqp5sn@kafai-mbp.dhcp.thefacebook.com>
+From:   KP Singh <kpsingh@chromium.org>
+Message-ID: <9a1544ac-309b-4c16-3f6a-e34d90b275b8@chromium.org>
+Date:   Tue, 18 Aug 2020 17:33:29 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.204.65.138]
-X-ClientProxiedBy: fraeml707-chm.china.huawei.com (10.206.15.35) To
- lhreml722-chm.china.huawei.com (10.201.108.73)
-X-CFilter-Loop: Reflected
+In-Reply-To: <20200818152316.pkyko6gcpzeqp5sn@kafai-mbp.dhcp.thefacebook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
 
-IMA subsystem is configured at boot time using kernel command-line
-parameters, e.g.: ima_policy=tcb|appraise_tcb|secure_boot. The same
-configuration options should be available for the new ima namespace.
-Add new functions to parse configuration string and store parsed data
-in the new policy data structures. Don't implement it yet, just add the
-dummy interface.
 
-Signed-off-by: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
----
- security/integrity/ima/ima.h          | 10 ++++++++
- security/integrity/ima/ima_appraise.c |  9 +++++++
- security/integrity/ima/ima_policy.c   | 37 +++++++++++++++++++++++++++
- 3 files changed, 56 insertions(+)
+On 8/18/20 5:23 PM, Martin KaFai Lau wrote:
+> On Tue, Aug 18, 2020 at 05:10:34PM +0200, KP Singh wrote:
+>>
+>>
+>> On 8/18/20 3:27 AM, Martin KaFai Lau wrote:>>> On Mon, Aug 03, 2020 at 06:46:53PM +0200, KP Singh wrote:
 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 0d88222e3500..4872f193f7a3 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -306,6 +306,16 @@ void *ima_policy_next(struct seq_file *m, void *v, loff_t *pos);
- void ima_policy_stop(struct seq_file *m, void *v);
- int ima_policy_show(struct seq_file *m, void *v);
- 
-+int ima_policy_setup(char *str,
-+		     struct ima_policy_setup_data *policy_setup_data,
-+		     bool *fail_unverifiable_sigs);
-+int ima_default_measure_policy_setup(const char *str,
-+				     struct ima_policy_setup_data *setup_data);
-+int ima_default_appraise_policy_setup(const char *str,
-+				      struct ima_policy_setup_data *setup_data);
-+int ima_default_appraise_setup(const char *str,
-+			       struct ima_policy_setup_data *setup_data);
-+
- /* Appraise integrity measurements */
- #define IMA_APPRAISE_ENFORCE	0x01
- #define IMA_APPRAISE_FIX	0x02
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index 372d16382960..0632d3881611 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -16,6 +16,15 @@
- 
- #include "ima.h"
- 
-+int ima_default_appraise_setup(const char *str,
-+			       struct ima_policy_setup_data *setup_data)
-+{
-+	/* Currently unused. It will be implemented after namespacing ima
-+	 * policy, when global variables are removed.
-+	 */
-+	return 1;
-+}
-+
- static int __init default_appraise_setup(char *str)
- {
- #ifdef CONFIG_IMA_APPRAISE_BOOTPARAM
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 6b56741ec1c9..403854b18ef2 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -223,6 +223,15 @@ struct ima_policy_data init_policy_data = {
- 	.ima_temp_rules = LIST_HEAD_INIT(init_policy_data.ima_temp_rules),
- };
- 
-+int ima_default_measure_policy_setup(const char *str,
-+				     struct ima_policy_setup_data *setup_data)
-+{
-+	/* Currently unused. It will be implemented after namespacing ima
-+	 * policy, when global variables are removed.
-+	 */
-+	return 1;
-+}
-+
- static int __init default_measure_policy_setup(char *str)
- {
- 	if (ima_policy)
-@@ -236,6 +245,25 @@ __setup("ima_tcb", default_measure_policy_setup);
- static bool ima_use_appraise_tcb __initdata;
- static bool ima_use_secure_boot __initdata;
- static bool ima_fail_unverifiable_sigs __ro_after_init;
-+
-+/**
-+ * ima_policy_setup - parse policy configuration string "ima_policy="
-+ * @str: string to be parsed
-+ * @setup_data: pointer to a structure where parsed data is stored
-+ * @fail_unverifiable_sigs: boolean flag treated separately to preserve
-+ * __ro_after_init
-+ */
-+int ima_policy_setup(char *str,
-+		     struct ima_policy_setup_data *setup_data,
-+		     bool *fail_unverifiable_sigs)
-+{
-+
-+	/* Currently unused. It will be implemented after namespacing ima
-+	 * policy, when global variables are removed.
-+	 */
-+	return 1;
-+}
-+
- static int __init policy_setup(char *str)
- {
- 	char *p;
-@@ -257,6 +285,15 @@ static int __init policy_setup(char *str)
- }
- __setup("ima_policy=", policy_setup);
- 
-+int ima_default_appraise_policy_setup(const char *str,
-+				      struct ima_policy_setup_data *setup_data)
-+{
-+	/* Currently unused. It will be implemented after namespacing ima
-+	 * policy, when global variables are removed.
-+	 */
-+	return 1;
-+}
-+
- static int __init default_appraise_policy_setup(char *str)
- {
- 	ima_use_appraise_tcb = true;
--- 
-2.20.1
+[...]
 
+a get_file
+>> rather fcheck followed by get_file_rcu:
+>>
+>> #define get_file_rcu_many(x, cnt)	\
+>> 	atomic_long_add_unless(&(x)->f_count, (cnt), 0)
+>> #define get_file_rcu(x) get_file_rcu_many((x), 1)
+>> #define file_count(x)	atomic_long_read(&(x)->f_count)
+>>
+>> But there is an easier way than all of this and this is to use 
+>> fget_raw which also calls get_file_rcu_many 
+>> and ensures a non-zero count before getting a reference.
+> ic. Make sense.
+> 
+> There are fdget() and fdput() also which are used in bpf/syscall.c.
+
+Yeah we could use fdget_raw but we don't really need the struct fd but just the 
+struct file.
+
+he non-raw versions masks away FMODE_PATH (O_PATH) files, we should still be able to
+access blobs on the O_PATH files, thus the _raw version here.
+
+- KP
+
+> 
