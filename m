@@ -4,31 +4,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACBBDC433E5
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Aug 2020 15:26:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A5EDC433E1
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Aug 2020 15:26:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 93E85206DA
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Aug 2020 15:26:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 313D62076E
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Aug 2020 15:26:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728055AbgHRP0S (ORCPT
+        id S1727927AbgHRP0Y (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 18 Aug 2020 11:26:18 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2626 "EHLO huawei.com"
+        Tue, 18 Aug 2020 11:26:24 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2630 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727927AbgHRP0O (ORCPT
+        id S1728080AbgHRP0X (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 18 Aug 2020 11:26:14 -0400
+        Tue, 18 Aug 2020 11:26:23 -0400
 Received: from lhreml722-chm.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id 839E617247B5794C5F4C;
-        Tue, 18 Aug 2020 16:26:12 +0100 (IST)
+        by Forcepoint Email with ESMTP id 0B4381ACF16B75453D57;
+        Tue, 18 Aug 2020 16:26:22 +0100 (IST)
 Received: from kstruczy-linux-box (10.204.65.138) by
  lhreml722-chm.china.huawei.com (10.201.108.73) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1913.5; Tue, 18 Aug 2020 16:26:10 +0100
-Received: by kstruczy-linux-box (sSMTP sendmail emulation); Tue, 18 Aug 2020 17:26:13 +0200
+ 15.1.1913.5; Tue, 18 Aug 2020 16:26:20 +0100
+Received: by kstruczy-linux-box (sSMTP sendmail emulation); Tue, 18 Aug 2020 17:26:23 +0200
 From:   <krzysztof.struczynski@huawei.com>
 To:     <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <containers@lists.linux-foundation.org>,
@@ -39,9 +39,9 @@ CC:     Krzysztof Struczynski <krzysztof.struczynski@huawei.com>,
         <dmitry.kasatkin@gmail.com>, <serge@hallyn.com>,
         <jmorris@namei.org>, <christian@brauner.io>,
         <silviu.vlasceanu@huawei.com>, <roberto.sassu@huawei.com>
-Subject: [RFC PATCH 03/30] ima: Bind ima namespace to the file descriptor
-Date:   Tue, 18 Aug 2020 17:20:10 +0200
-Message-ID: <20200818152037.11869-4-krzysztof.struczynski@huawei.com>
+Subject: [RFC PATCH 07/30] ima: Extend the APIs in the integrity subsystem
+Date:   Tue, 18 Aug 2020 17:20:14 +0200
+Message-ID: <20200818152037.11869-8-krzysztof.struczynski@huawei.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200818152037.11869-1-krzysztof.struczynski@huawei.com>
 References: <N>
@@ -59,137 +59,329 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
 
-IMA namespace reference will be required in ima_file_free() to check
-the policy and find inode integrity data for the correct ima namespace.
-ima_file_free() is called on __fput(), and __fput() may be called after
-releasing namespaces in exit_task_namespaces() in do_exit() and
-therefore nsproxy reference cannot be used - it is already set to NULL.
-
-This is a preparation for namespacing policy and inode integrity data.
+Inode integrity cache will be maintained per ima namespace. Add new
+functions that allow to specify the iint tree to use.
 
 Signed-off-by: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
 ---
- fs/file_table.c                   |  6 +++++-
- include/linux/fs.h                |  3 +++
- include/linux/ima.h               |  6 ++++++
- security/integrity/ima/ima_main.c | 27 +++++++++++++++++++++++++--
- 4 files changed, 39 insertions(+), 3 deletions(-)
+ include/linux/integrity.h      |  31 ++++++++
+ security/integrity/iint.c      | 126 ++++++++++++++++++++++++++-------
+ security/integrity/integrity.h |  11 +++
+ 3 files changed, 144 insertions(+), 24 deletions(-)
 
-diff --git a/fs/file_table.c b/fs/file_table.c
-index 656647f9575a..878213d8af92 100644
---- a/fs/file_table.c
-+++ b/fs/file_table.c
-@@ -109,6 +109,8 @@ static struct file *__alloc_file(int flags, const struct cred *cred)
- 		return ERR_PTR(error);
- 	}
+diff --git a/include/linux/integrity.h b/include/linux/integrity.h
+index 2271939c5c31..5019fedaa17a 100644
+--- a/include/linux/integrity.h
++++ b/include/linux/integrity.h
+@@ -8,6 +8,10 @@
+ #define _LINUX_INTEGRITY_H
  
-+	ima_file_alloc(f);
+ #include <linux/fs.h>
++#include <linux/rwlock_types.h>
 +
- 	atomic_long_set(&f->f_count, 1);
- 	rwlock_init(&f->f_owner.lock);
- 	spin_lock_init(&f->f_lock);
-@@ -259,8 +261,10 @@ static void __fput(struct file *file)
- 	struct inode *inode = file->f_inode;
- 	fmode_t mode = file->f_mode;
++struct rb_root;
++struct integrity_iint_tree;
  
--	if (unlikely(!(file->f_mode & FMODE_OPENED)))
-+	if (unlikely(!(file->f_mode & FMODE_OPENED))) {
-+		ima_file_free(file);
- 		goto out;
-+	}
+ enum integrity_status {
+ 	INTEGRITY_PASS = 0,
+@@ -21,8 +25,15 @@ enum integrity_status {
+ /* List of EVM protected security xattrs */
+ #ifdef CONFIG_INTEGRITY
+ extern struct integrity_iint_cache *integrity_inode_get(struct inode *inode);
++extern struct integrity_iint_cache *integrity_inode_rb_get(struct
++							   integrity_iint_tree
++							   *iint_tree,
++							   struct inode *inode);
+ extern void integrity_inode_free(struct inode *inode);
++extern void integrity_inode_rb_free(struct integrity_iint_tree *iint_tree,
++				    struct inode *inode);
+ extern void __init integrity_load_keys(void);
++extern void integrity_iint_tree_free(struct integrity_iint_tree *iint_tree);
  
- 	might_sleep();
- 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 407881ebeab1..8d6264755935 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -947,6 +947,9 @@ struct file {
- 	struct address_space	*f_mapping;
- 	errseq_t		f_wb_err;
- 	errseq_t		f_sb_err; /* for syncfs */
-+#ifdef CONFIG_IMA
-+	void			*f_ima;
-+#endif
- } __randomize_layout
-   __attribute__((aligned(4)));	/* lest something weird decides that 2 is OK */
- 
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index 5b6235b97603..3954cef57c00 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -21,6 +21,7 @@ struct llist_node;
- extern int ima_bprm_check(struct linux_binprm *bprm);
- extern int ima_file_check(struct file *file, int mask);
- extern void ima_post_create_tmpfile(struct inode *inode);
-+extern int ima_file_alloc(struct file *file);
- extern void ima_file_free(struct file *file);
- extern int ima_file_mmap(struct file *file, unsigned long prot);
- extern int ima_file_mprotect(struct vm_area_struct *vma, unsigned long prot);
-@@ -66,6 +67,11 @@ static inline void ima_post_create_tmpfile(struct inode *inode)
- {
+ #else
+ static inline struct integrity_iint_cache *
+@@ -31,14 +42,34 @@ static inline struct integrity_iint_cache *
+ 	return NULL;
  }
  
-+static inline int ima_file_alloc(struct file *file)
++static inline struct integrity_iint_cache *
++				integrity_inode_rb_get(struct
++						       integrity_iint_tree
++						       *iint_tree,
++						       struct inode *inode)
 +{
-+	return 0;
++	return NULL;
 +}
 +
- static inline void ima_file_free(struct file *file)
+ static inline void integrity_inode_free(struct inode *inode)
  {
  	return;
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index d800e73c8b62..c7e29277b953 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -169,6 +169,23 @@ static void ima_check_last_writer(struct integrity_iint_cache *iint,
- 	mutex_unlock(&iint->mutex);
+ }
+ 
++static inline void integrity_inode_rb_free(struct integrity_iint_tree
++					   *iint_tree,
++					   struct inode *inode)
++{
++}
++
+ static inline void integrity_load_keys(void)
+ {
+ }
++
++static inline void integrity_iint_tree_free(struct integrity_iint_tree
++					    *iint_tree)
++{
++}
+ #endif /* CONFIG_INTEGRITY */
+ 
+ #ifdef CONFIG_INTEGRITY_ASYMMETRIC_KEYS
+diff --git a/security/integrity/iint.c b/security/integrity/iint.c
+index 1d20003243c3..34a36f298f92 100644
+--- a/security/integrity/iint.c
++++ b/security/integrity/iint.c
+@@ -21,19 +21,29 @@
+ #include <linux/lsm_hooks.h>
+ #include "integrity.h"
+ 
+-static struct rb_root integrity_iint_tree = RB_ROOT;
+-static DEFINE_RWLOCK(integrity_iint_lock);
++struct integrity_iint_tree init_iint_tree = {
++	.lock = __RW_LOCK_UNLOCKED(init_iint_tree.lock),
++	.root = RB_ROOT
++};
++
+ static struct kmem_cache *iint_cache __read_mostly;
+ 
+ struct dentry *integrity_dir;
+ 
+ /*
+- * __integrity_iint_find - return the iint associated with an inode
++ * __integrity_iint_rb_find - return the iint associated with an inode
++ * @iint_rb_root: pointer to the root of the iint tree
++ * @inode: pointer to the inode
++ * @return: pointer to the iint if found, NULL otherwise
+  */
+-static struct integrity_iint_cache *__integrity_iint_find(struct inode *inode)
++static struct integrity_iint_cache *
++				__integrity_iint_rb_find(const struct rb_root
++							 *iint_rb_root,
++							 const struct inode
++							 *inode)
+ {
+ 	struct integrity_iint_cache *iint;
+-	struct rb_node *n = integrity_iint_tree.rb_node;
++	struct rb_node *n = iint_rb_root->rb_node;
+ 
+ 	while (n) {
+ 		iint = rb_entry(n, struct integrity_iint_cache, rb_node);
+@@ -52,22 +62,37 @@ static struct integrity_iint_cache *__integrity_iint_find(struct inode *inode)
+ }
+ 
+ /*
+- * integrity_iint_find - return the iint associated with an inode
++ * integrity_iint_rb_find - return the iint associated with an inode
++ * @iint_tree: pointer to the iint tree root node and the associated lock
++ * @inode: pointer to the inode
++ * @return: pointer to the iint if found, NULL otherwise
+  */
+-struct integrity_iint_cache *integrity_iint_find(struct inode *inode)
++struct integrity_iint_cache *integrity_iint_rb_find(struct integrity_iint_tree
++						    *iint_tree,
++						    const struct inode *inode)
+ {
+ 	struct integrity_iint_cache *iint;
+ 
+ 	if (!IS_IMA(inode))
+ 		return NULL;
+ 
+-	read_lock(&integrity_iint_lock);
+-	iint = __integrity_iint_find(inode);
+-	read_unlock(&integrity_iint_lock);
++	read_lock(&iint_tree->lock);
++	iint = __integrity_iint_rb_find(&iint_tree->root, inode);
++	read_unlock(&iint_tree->lock);
+ 
+ 	return iint;
+ }
+ 
++/*
++ * integrity_iint_find - return the iint associated with an inode
++ * @inode: pointer to the inode
++ * @return: pointer to the iint if found, NULL otherwise
++ */
++struct integrity_iint_cache *integrity_iint_find(struct inode *inode)
++{
++	return integrity_iint_rb_find(&init_iint_tree, inode);
++}
++
+ static void iint_free(struct integrity_iint_cache *iint)
+ {
+ 	kfree(iint->ima_hash);
+@@ -86,19 +111,42 @@ static void iint_free(struct integrity_iint_cache *iint)
+ }
+ 
+ /**
+- * integrity_inode_get - find or allocate an iint associated with an inode
++ * integrity_iint_tree_free - traverse the tree and free all nodes
++ * @iint_tree: pointer to the iint tree root node and the associated lock
++ *
++ * The tree cannot be in use. This function should be called only from the
++ * destructor when no locks are required.
++ */
++void integrity_iint_tree_free(struct integrity_iint_tree *iint_tree)
++{
++	struct rb_root *root = &iint_tree->root;
++	struct integrity_iint_cache *iint, *tmp;
++
++	rbtree_postorder_for_each_entry_safe(iint, tmp, root, rb_node) {
++		iint_free(iint);
++	}
++
++	iint_tree->root = RB_ROOT;
++}
++
++/**
++ * integrity_inode_rb_get - find or allocate an iint associated with an inode
++ * @iint_tree: pointer to the iint tree root node and the associated lock
+  * @inode: pointer to the inode
+- * @return: allocated iint
++ * @return: pointer to the existing iint if found, pointer to the allocated iint
++ * if it didn't exist, NULL in case of error
+  *
+  * Caller must lock i_mutex
+  */
+-struct integrity_iint_cache *integrity_inode_get(struct inode *inode)
++struct integrity_iint_cache *integrity_inode_rb_get(struct integrity_iint_tree
++						    *iint_tree,
++						    struct inode *inode)
+ {
+ 	struct rb_node **p;
+ 	struct rb_node *node, *parent = NULL;
+ 	struct integrity_iint_cache *iint, *test_iint;
+ 
+-	iint = integrity_iint_find(inode);
++	iint = integrity_iint_rb_find(iint_tree, inode);
+ 	if (iint)
+ 		return iint;
+ 
+@@ -106,9 +154,9 @@ struct integrity_iint_cache *integrity_inode_get(struct inode *inode)
+ 	if (!iint)
+ 		return NULL;
+ 
+-	write_lock(&integrity_iint_lock);
++	write_lock(&iint_tree->lock);
+ 
+-	p = &integrity_iint_tree.rb_node;
++	p = &iint_tree->root.rb_node;
+ 	while (*p) {
+ 		parent = *p;
+ 		test_iint = rb_entry(parent, struct integrity_iint_cache,
+@@ -123,33 +171,63 @@ struct integrity_iint_cache *integrity_inode_get(struct inode *inode)
+ 	node = &iint->rb_node;
+ 	inode->i_flags |= S_IMA;
+ 	rb_link_node(node, parent, p);
+-	rb_insert_color(node, &integrity_iint_tree);
++	rb_insert_color(node, &iint_tree->root);
+ 
+-	write_unlock(&integrity_iint_lock);
++	write_unlock(&iint_tree->lock);
+ 	return iint;
+ }
+ 
+ /**
+- * integrity_inode_free - called on security_inode_free
++ * integrity_inode_get - find or allocate an iint associated with an inode
++ * @inode: pointer to the inode
++ * @return: pointer to the existing iint if found, pointer to the allocated iint
++ * if it didn't exist, NULL in case of error
++ *
++ * Caller must lock i_mutex
++ */
++struct integrity_iint_cache *integrity_inode_get(struct inode *inode)
++{
++	return integrity_inode_rb_get(&init_iint_tree, inode);
++}
++
++/**
++ * integrity_inode_rb_free - called on security_inode_free
++ * @iint_tree: pointer to the iint tree root node and the associated lock
+  * @inode: pointer to the inode
+  *
+  * Free the integrity information(iint) associated with an inode.
+  */
+-void integrity_inode_free(struct inode *inode)
++void integrity_inode_rb_free(struct integrity_iint_tree *iint_tree,
++			     struct inode *inode)
+ {
+ 	struct integrity_iint_cache *iint;
+ 
+ 	if (!IS_IMA(inode))
+ 		return;
+ 
+-	write_lock(&integrity_iint_lock);
+-	iint = __integrity_iint_find(inode);
+-	rb_erase(&iint->rb_node, &integrity_iint_tree);
+-	write_unlock(&integrity_iint_lock);
++	write_lock(&iint_tree->lock);
++	iint = __integrity_iint_rb_find(&iint_tree->root, inode);
++	if (!iint) {
++		write_unlock(&iint_tree->lock);
++		return;
++	}
++	rb_erase(&iint->rb_node, &iint_tree->root);
++	write_unlock(&iint_tree->lock);
+ 
+ 	iint_free(iint);
  }
  
 +/**
-+ * ima_file_alloc - called on __alloc_file()
-+ * @file: pointer to file structure being created
++ * integrity_inode_free - called on security_inode_free
++ * @inode: pointer to the inode
 + *
-+ * Bind IMA namespace to the file descriptor. This is necessary, because
-+ * __fput can be called after exit_task_namespaces() in do_exit().
-+ * In that case nsproxy is already NULL and ima ns has to be found
-+ * differently in ima_file_free(). If process joins different ima ns, files
-+ * opened in the old ns will point to that (old) ns.
++ * Free the integrity information(iint) associated with an inode.
 + */
-+int ima_file_alloc(struct file *file)
++void integrity_inode_free(struct inode *inode)
 +{
-+	file->f_ima = get_current_ns();
-+	get_ima_ns((struct ima_namespace *)file->f_ima);
-+	return 0;
++	integrity_inode_rb_free(&init_iint_tree, inode);
 +}
 +
- /**
-  * ima_file_free - called on __fput()
-  * @file: pointer to file structure being freed
-@@ -179,15 +196,21 @@ void ima_file_free(struct file *file)
+ static void init_once(void *foo)
  {
- 	struct inode *inode = file_inode(file);
- 	struct integrity_iint_cache *iint;
-+	struct ima_namespace *ima_ns = (struct ima_namespace *)file->f_ima;
+ 	struct integrity_iint_cache *iint = foo;
+diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
+index 413c803c5208..721d1850e4f9 100644
+--- a/security/integrity/integrity.h
++++ b/security/integrity/integrity.h
+@@ -140,11 +140,20 @@ struct integrity_iint_cache {
+ 	struct ima_digest_data *ima_hash;
+ };
+ 
++struct integrity_iint_tree {
++	rwlock_t lock;
++	struct rb_root root;
++};
 +
-+	if (unlikely(!(file->f_mode & FMODE_OPENED)))
-+		goto out;
+ /* rbtree tree calls to lookup, insert, delete
+  * integrity data associated with an inode.
+  */
+ struct integrity_iint_cache *integrity_iint_find(struct inode *inode);
  
- 	if (!ima_policy_flag || !S_ISREG(inode->i_mode))
--		return;
-+		goto out;
++struct integrity_iint_cache *integrity_iint_rb_find(struct integrity_iint_tree
++						    *iint_tree,
++						    const struct inode *inode);
++
+ int integrity_kernel_read(struct file *file, loff_t offset,
+ 			  void *addr, unsigned long count);
  
- 	iint = integrity_iint_find(inode);
- 	if (!iint)
--		return;
-+		goto out;
+@@ -155,6 +164,8 @@ int integrity_kernel_read(struct file *file, loff_t offset,
  
- 	ima_check_last_writer(iint, inode, file);
-+out:
-+	put_ima_ns(ima_ns);
- }
+ extern struct dentry *integrity_dir;
  
- static int process_measurement(struct file *file, const struct cred *cred,
++extern struct integrity_iint_tree init_iint_tree;
++
+ struct modsig;
+ 
+ #ifdef CONFIG_INTEGRITY_SIGNATURE
 -- 
 2.20.1
 
