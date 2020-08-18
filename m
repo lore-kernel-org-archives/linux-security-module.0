@@ -7,28 +7,28 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CF07C433E3
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Aug 2020 15:45:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AE66C433DF
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Aug 2020 15:46:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E118C2087D
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Aug 2020 15:45:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 011282245C
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Aug 2020 15:46:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728030AbgHRPpy (ORCPT
+        id S1727929AbgHRPpw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 18 Aug 2020 11:45:54 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2641 "EHLO huawei.com"
+        Tue, 18 Aug 2020 11:45:52 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2639 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726834AbgHRPpo (ORCPT
+        id S1727122AbgHRPpj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 18 Aug 2020 11:45:44 -0400
-Received: from lhreml722-chm.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id A69F3321DE040DAE081E;
-        Tue, 18 Aug 2020 16:45:42 +0100 (IST)
+        Tue, 18 Aug 2020 11:45:39 -0400
+Received: from lhreml722-chm.china.huawei.com (unknown [172.18.7.107])
+        by Forcepoint Email with ESMTP id 8C3E2B9656467A8B2B83;
+        Tue, 18 Aug 2020 16:45:37 +0100 (IST)
 Received: from kstruczy-linux-box (10.204.65.138) by
  lhreml722-chm.china.huawei.com (10.201.108.73) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1913.5; Tue, 18 Aug 2020 16:45:41 +0100
-Received: by kstruczy-linux-box (sSMTP sendmail emulation); Tue, 18 Aug 2020 17:45:43 +0200
+ 15.1.1913.5; Tue, 18 Aug 2020 16:45:35 +0100
+Received: by kstruczy-linux-box (sSMTP sendmail emulation); Tue, 18 Aug 2020 17:45:38 +0200
 From:   <krzysztof.struczynski@huawei.com>
 To:     <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <containers@lists.linux-foundation.org>,
@@ -39,9 +39,9 @@ CC:     <zohar@linux.ibm.com>, <stefanb@linux.vnet.ibm.com>,
         <jmorris@namei.org>, <christian@brauner.io>,
         <silviu.vlasceanu@huawei.com>, <roberto.sassu@huawei.com>,
         Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
-Subject: [RFC PATCH 18/30] ima: Change the owning user namespace of the ima namespace if necessary
-Date:   Tue, 18 Aug 2020 17:42:18 +0200
-Message-ID: <20200818154230.14016-9-krzysztof.struczynski@huawei.com>
+Subject: [RFC PATCH 16/30] ima: Extend permissions to the ima securityfs entries
+Date:   Tue, 18 Aug 2020 17:42:16 +0200
+Message-ID: <20200818154230.14016-7-krzysztof.struczynski@huawei.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200818154230.14016-1-krzysztof.struczynski@huawei.com>
 References: <20200818154230.14016-1-krzysztof.struczynski@huawei.com>
@@ -58,125 +58,134 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
 
-It's possible that the user first unshares the ima namespace and then
-creates a new user namespace using clone3(). In that case the owning
-user namespace is the newly created one, because it is associated with
-the first process in the new ima namespace.
+Add "others" permissions to the namespaced ima securityfs entries. It
+is necessary so that the root in the user namespace that is the parent
+of the given ima namespace has access to the ima related data.
+
+Loosened DAC restrictrions are compensated by an extra check for
+SYS_ADMIN capabilities in the ima code. The access is given
+only to the namespaced data, e.g. root user in the new ima namespace
+will see measurement list entries collected for that namespace and not
+for the other existing namespaces. The only exception is made for the
+admin in the initial user namespace, who has access to all the data.
 
 Signed-off-by: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
 ---
- include/linux/ima.h             |  6 +++--
- kernel/nsproxy.c                |  2 +-
- security/integrity/ima/ima_ns.c | 42 +++++++++++++++++++++++++++------
- 3 files changed, 40 insertions(+), 10 deletions(-)
+ security/integrity/ima/ima.h    |  4 ++--
+ security/integrity/ima/ima_fs.c | 31 +++++++++++++++++++++++++++----
+ 2 files changed, 29 insertions(+), 6 deletions(-)
 
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index 7eb7a008c5fe..4b5b832417b0 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -216,7 +216,8 @@ struct ima_namespace *copy_ima_ns(unsigned long flags,
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index e08f88aab0b5..7318fff3ccaa 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -523,9 +523,9 @@ static inline int ima_filter_rule_match(u32 secid, u32 field, u32 op,
+ #endif /* CONFIG_IMA_LSM_RULES */
  
- void free_ima_ns(struct kref *kref);
+ #ifdef	CONFIG_IMA_READ_POLICY
+-#define	POLICY_FILE_FLAGS	(S_IWUSR | S_IRUSR)
++#define	POLICY_FILE_FLAGS	(S_IWUSR | S_IRUSR | S_IROTH | S_IWOTH)
+ #else
+-#define	POLICY_FILE_FLAGS	S_IWUSR
++#define	POLICY_FILE_FLAGS	(S_IWUSR | I_WOTH)
+ #endif /* CONFIG_IMA_READ_POLICY */
  
--int imans_on_fork(struct nsproxy *nsproxy, struct task_struct *tsk);
-+int imans_on_fork(struct nsproxy *nsproxy, struct task_struct *tsk,
-+		  struct user_namespace *user_ns);
+ #endif /* __LINUX_IMA_H */
+diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
+index e2893f0b0f31..6d370874d80f 100644
+--- a/security/integrity/ima/ima_fs.c
++++ b/security/integrity/ima/ima_fs.c
+@@ -59,6 +59,16 @@ static const struct file_operations ima_htable_violations_ops = {
+ 	.llseek = generic_file_llseek,
+ };
  
- static inline struct ima_namespace *get_ima_ns(struct ima_namespace *ns)
- {
-@@ -239,7 +240,8 @@ static inline struct ima_namespace *copy_ima_ns(unsigned long flags,
- }
- 
- static inline int imans_on_fork(struct nsproxy *nsproxy,
--				struct task_struct *tsk)
-+				struct task_struct *tsk,
-+				struct user_namespace *user_ns)
- {
- 	return 0;
- }
-diff --git a/kernel/nsproxy.c b/kernel/nsproxy.c
-index 791efffd7a03..4b1ecf405f11 100644
---- a/kernel/nsproxy.c
-+++ b/kernel/nsproxy.c
-@@ -204,7 +204,7 @@ int copy_namespaces(unsigned long flags, struct task_struct *tsk)
- 		return ret;
- 	}
- 
--	ret = imans_on_fork(new_ns, tsk);
-+	ret = imans_on_fork(new_ns, tsk, user_ns);
- 	if (ret) {
- 		free_nsproxy(new_ns);
- 		return ret;
-diff --git a/security/integrity/ima/ima_ns.c b/security/integrity/ima/ima_ns.c
-index 3012287b22d2..b8bfab39b55b 100644
---- a/security/integrity/ima/ima_ns.c
-+++ b/security/integrity/ima/ima_ns.c
-@@ -92,6 +92,24 @@ static void ima_set_ns_policy(struct ima_namespace *ima_ns,
- 	ima_init_ns_policy(ima_ns, &setup_data);
- }
- 
-+static int ima_swap_user_ns(struct ima_namespace *ima_ns,
-+			    struct user_namespace *user_ns)
++static int ima_open_measurements_count(struct inode *inode, struct file *file)
 +{
-+	struct ucounts *ucounts;
++	struct ima_namespace *ima_ns = get_current_ns();
 +
-+	dec_ima_namespaces(ima_ns->ucounts);
-+	put_user_ns(ima_ns->user_ns);
-+
-+	ucounts = inc_ima_namespaces(user_ns);
-+	if (!ucounts)
-+		return -ENOSPC;
-+
-+	ima_ns->user_ns = get_user_ns(user_ns);
-+	ima_ns->ucounts = ucounts;
++	if (!ns_capable(ima_ns->user_ns, CAP_SYS_ADMIN))
++		return -EPERM;
 +
 +	return 0;
 +}
 +
- /**
-  * Clone a new ns copying an original ima namespace, setting refcount to 1
-  *
-@@ -337,23 +355,33 @@ static int imans_install(struct nsset *nsset, struct ns_common *new)
- 	return res;
+ static ssize_t ima_show_measurements_count(struct file *filp,
+ 					   char __user *buf,
+ 					   size_t count, loff_t *ppos)
+@@ -70,6 +80,7 @@ static ssize_t ima_show_measurements_count(struct file *filp,
  }
  
--int imans_on_fork(struct nsproxy *nsproxy, struct task_struct *tsk)
-+int imans_on_fork(struct nsproxy *nsproxy, struct task_struct *tsk,
-+		  struct user_namespace *user_ns)
+ static const struct file_operations ima_measurements_count_ops = {
++	.open = ima_open_measurements_count,
+ 	.read = ima_show_measurements_count,
+ 	.llseek = generic_file_llseek,
+ };
+@@ -242,6 +253,11 @@ static const struct seq_operations ima_measurments_seqops = {
+ 
+ static int ima_measurements_open(struct inode *inode, struct file *file)
  {
- 	int res;
--	struct ns_common *nsc = &nsproxy->ima_ns_for_children->ns;
--	struct ima_namespace *ns = to_ima_ns(nsc);
-+	struct ima_namespace *ima_ns = nsproxy->ima_ns_for_children;
- 
- 	/* create_new_namespaces() already incremented the ref counter */
--	if (nsproxy->ima_ns == nsproxy->ima_ns_for_children)
-+	if (nsproxy->ima_ns == ima_ns)
- 		return 0;
- 
--	res = imans_activate(ns);
-+	/* It's possible that the user first unshares the IMA namespace and
-+	 * then creates a new user namespace on clone3(). In that case swap
-+	 * user namespace for the "current" one.
-+	 */
-+	if (ima_ns->user_ns != user_ns) {
-+		res = ima_swap_user_ns(ima_ns, user_ns);
-+		if (res)
-+			return res;
-+	}
++	struct ima_namespace *ima_ns = get_current_ns();
 +
-+	res = imans_activate(ima_ns);
- 	if (res)
- 		return res;
- 
--	get_ima_ns(ns);
-+	get_ima_ns(ima_ns);
- 	put_ima_ns(nsproxy->ima_ns);
--	nsproxy->ima_ns = ns;
-+	nsproxy->ima_ns = ima_ns;
- 
- 	return res;
++	if (!ns_capable(ima_ns->user_ns, CAP_SYS_ADMIN))
++		return -EPERM;
++
+ 	return seq_open(file, &ima_measurments_seqops);
  }
+ 
+@@ -308,6 +324,11 @@ static const struct seq_operations ima_ascii_measurements_seqops = {
+ 
+ static int ima_ascii_measurements_open(struct inode *inode, struct file *file)
+ {
++	struct ima_namespace *ima_ns = get_current_ns();
++
++	if (!ns_capable(ima_ns->user_ns, CAP_SYS_ADMIN))
++		return -EPERM;
++
+ 	return seq_open(file, &ima_ascii_measurements_seqops);
+ }
+ 
+@@ -429,13 +450,15 @@ static const struct seq_operations ima_policy_seqops = {
+  */
+ static int ima_open_policy(struct inode *inode, struct file *filp)
+ {
++	struct ima_namespace *ima_ns = get_current_ns();
++
+ 	if (!(filp->f_flags & O_WRONLY)) {
+ #ifndef	CONFIG_IMA_READ_POLICY
+ 		return -EACCES;
+ #else
+ 		if ((filp->f_flags & O_ACCMODE) != O_RDONLY)
+ 			return -EACCES;
+-		if (!capable(CAP_SYS_ADMIN))
++		if (!ns_capable(ima_ns->user_ns, CAP_SYS_ADMIN))
+ 			return -EPERM;
+ 		return seq_open(filp, &ima_policy_seqops);
+ #endif
+@@ -509,21 +532,21 @@ int __init ima_fs_init(void)
+ 
+ 	binary_runtime_measurements =
+ 	    securityfs_create_file("binary_runtime_measurements",
+-				   S_IRUSR | S_IRGRP, ima_dir, NULL,
++				   S_IRUSR | S_IRGRP | S_IROTH, ima_dir, NULL,
+ 				   &ima_measurements_ops);
+ 	if (IS_ERR(binary_runtime_measurements))
+ 		goto out;
+ 
+ 	ascii_runtime_measurements =
+ 	    securityfs_create_file("ascii_runtime_measurements",
+-				   S_IRUSR | S_IRGRP, ima_dir, NULL,
++				   S_IRUSR | S_IRGRP | S_IROTH, ima_dir, NULL,
+ 				   &ima_ascii_measurements_ops);
+ 	if (IS_ERR(ascii_runtime_measurements))
+ 		goto out;
+ 
+ 	runtime_measurements_count =
+ 	    securityfs_create_file("runtime_measurements_count",
+-				   S_IRUSR | S_IRGRP, ima_dir, NULL,
++				   S_IRUSR | S_IRGRP | S_IROTH, ima_dir, NULL,
+ 				   &ima_measurements_count_ops);
+ 	if (IS_ERR(runtime_measurements_count))
+ 		goto out;
 -- 
 2.20.1
 
