@@ -2,33 +2,33 @@ Return-Path: <SRS0=wQ8B=B4=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-10.0 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5960C433E1
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Aug 2020 16:00:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17F1CC433DF
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Aug 2020 16:00:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8C392206DA
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 Aug 2020 16:00:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECCD920639
+	for <linux-security-module@archiver.kernel.org>; Tue, 18 Aug 2020 16:00:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726696AbgHRP5v (ORCPT
+        id S1726682AbgHRQAQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 18 Aug 2020 11:57:51 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2647 "EHLO huawei.com"
+        Tue, 18 Aug 2020 12:00:16 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2638 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727931AbgHRPq5 (ORCPT
+        id S1726990AbgHRPpg (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 18 Aug 2020 11:46:57 -0400
+        Tue, 18 Aug 2020 11:45:36 -0400
 Received: from lhreml722-chm.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id 4CFA21D71B243D763320;
-        Tue, 18 Aug 2020 16:46:56 +0100 (IST)
+        by Forcepoint Email with ESMTP id 545BE99586F4F7D8E732;
+        Tue, 18 Aug 2020 16:45:35 +0100 (IST)
 Received: from kstruczy-linux-box (10.204.65.138) by
  lhreml722-chm.china.huawei.com (10.201.108.73) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1913.5; Tue, 18 Aug 2020 16:46:54 +0100
-Received: by kstruczy-linux-box (sSMTP sendmail emulation); Tue, 18 Aug 2020 17:46:57 +0200
+ 15.1.1913.5; Tue, 18 Aug 2020 16:45:33 +0100
+Received: by kstruczy-linux-box (sSMTP sendmail emulation); Tue, 18 Aug 2020 17:45:36 +0200
 From:   <krzysztof.struczynski@huawei.com>
 To:     <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <containers@lists.linux-foundation.org>,
@@ -39,9 +39,9 @@ CC:     <zohar@linux.ibm.com>, <stefanb@linux.vnet.ibm.com>,
         <jmorris@namei.org>, <christian@brauner.io>,
         <silviu.vlasceanu@huawei.com>, <roberto.sassu@huawei.com>,
         Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
-Subject: [RFC PATCH 24/30] keys: Include key domain tag in the iterative search
-Date:   Tue, 18 Aug 2020 17:42:24 +0200
-Message-ID: <20200818154230.14016-15-krzysztof.struczynski@huawei.com>
+Subject: [RFC PATCH 15/30] ima: Add a reader counter to the integrity inode data
+Date:   Tue, 18 Aug 2020 17:42:15 +0200
+Message-ID: <20200818154230.14016-6-krzysztof.struczynski@huawei.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200818154230.14016-1-krzysztof.struczynski@huawei.com>
 References: <20200818154230.14016-1-krzysztof.struczynski@huawei.com>
@@ -58,100 +58,259 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
 
-Add domain tag to the key_match_data. If set, check domain tag in the
-default match function and asymmetric keys match functions.
+To detect ToMToU violations reader counter of the given inode is
+checked. This is not enough, because the reader may exist in a
+different ima namespace. Per inode reader counter tracks readers in all
+ima namespaces, whereas the per namespace counter is necessary to avoid
+false positives.
 
-This will allow to use the key domain tag in the search criteria for
-the iterative search, not only for the direct lookup that is based on
-the index key.
+Add a new reader counter to the integrity inode cache entry.
 
 Signed-off-by: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
 ---
- crypto/asymmetric_keys/asymmetric_type.c | 20 ++++++++++++++++----
- include/linux/key-type.h                 |  1 +
- security/keys/keyring.c                  | 10 +++++++++-
- 3 files changed, 26 insertions(+), 5 deletions(-)
+ security/integrity/ima/ima_main.c | 71 ++++++++++++++++++++++---------
+ security/integrity/integrity.h    | 18 ++++++++
+ 2 files changed, 70 insertions(+), 19 deletions(-)
 
-diff --git a/crypto/asymmetric_keys/asymmetric_type.c b/crypto/asymmetric_keys/asymmetric_type.c
-index 33e77d846caa..177429bc5c7b 100644
---- a/crypto/asymmetric_keys/asymmetric_type.c
-+++ b/crypto/asymmetric_keys/asymmetric_type.c
-@@ -249,9 +249,15 @@ static bool asymmetric_key_cmp(const struct key *key,
- {
- 	const struct asymmetric_key_ids *kids = asymmetric_key_ids(key);
- 	const struct asymmetric_key_id *match_id = match_data->preparsed;
-+	bool match;
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index b933c7e6c8e1..6555cdf6b65e 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -28,6 +28,11 @@
  
--	return asymmetric_match_key_ids(kids, match_id,
--					asymmetric_key_id_same);
-+	match = asymmetric_match_key_ids(kids, match_id,
-+					 asymmetric_key_id_same);
+ #include "ima.h"
+ 
++struct ima_file_data {
++	struct ima_namespace *ima_ns;
++	bool is_readcount;
++};
 +
-+	if (match_data->domain_tag)
-+		match &= key->index_key.domain_tag == match_data->domain_tag;
+ int ima_hash_algo = HASH_ALGO_SHA1;
+ static int hash_setup_done;
+ 
+@@ -116,8 +121,8 @@ static void ima_rdwr_violation_check(struct file *file,
+ 				iint = integrity_iint_rb_find(ima_ns->iint_tree,
+ 							      inode);
+ 			/* IMA_MEASURE is set from reader side */
+-			if (iint && test_bit(IMA_MUST_MEASURE,
+-						&iint->atomic_flags))
++			if (iint && atomic_read(&iint->readcount) &&
++			    test_bit(IMA_MUST_MEASURE, &iint->atomic_flags))
+ 				send_tomtou = true;
+ 		}
+ 	} else {
+@@ -171,7 +176,7 @@ static void ima_check_last_writer(struct integrity_iint_cache *iint,
+ {
+ 	fmode_t mode = file->f_mode;
+ 	bool update;
+-	struct ima_namespace *ima_ns = (struct ima_namespace *)file->f_ima;
++	struct ima_file_data *f_data = (struct ima_file_data *)file->f_ima;
+ 
+ 	if (!(mode & FMODE_WRITE))
+ 		return;
+@@ -186,7 +191,7 @@ static void ima_check_last_writer(struct integrity_iint_cache *iint,
+ 			iint->flags &= ~(IMA_DONE_MASK | IMA_NEW_FILE);
+ 			iint->measured_pcrs = 0;
+ 
+-			ima_check_active_ns(ima_ns, inode);
++			ima_check_active_ns(f_data->ima_ns, inode);
+ 
+ 			if (update)
+ 				ima_update_xattr(iint, file);
+@@ -207,8 +212,18 @@ static void ima_check_last_writer(struct integrity_iint_cache *iint,
+  */
+ int ima_file_alloc(struct file *file)
+ {
+-	file->f_ima = get_current_ns();
+-	get_ima_ns((struct ima_namespace *)file->f_ima);
++	struct ima_file_data *f_data;
 +
-+	return match;
++	f_data = kmalloc(sizeof(struct ima_file_data), GFP_KERNEL);
++	if (!f_data)
++		return -ENOMEM;
++
++	f_data->ima_ns = get_current_ns();
++	f_data->is_readcount = false;
++	get_ima_ns(f_data->ima_ns);
++
++	file->f_ima = f_data;
++
+ 	return 0;
  }
  
- /*
-@@ -262,9 +268,15 @@ static bool asymmetric_key_cmp_partial(const struct key *key,
+@@ -222,27 +237,33 @@ void ima_file_free(struct file *file)
  {
- 	const struct asymmetric_key_ids *kids = asymmetric_key_ids(key);
- 	const struct asymmetric_key_id *match_id = match_data->preparsed;
-+	bool match;
-+
-+	match = asymmetric_match_key_ids(kids, match_id,
-+					 asymmetric_key_id_partial);
-+
-+	if (match_data->domain_tag)
-+		match &= key->index_key.domain_tag == match_data->domain_tag;
+ 	struct inode *inode = file_inode(file);
+ 	struct integrity_iint_cache *iint;
+-	struct ima_namespace *ima_ns = (struct ima_namespace *)file->f_ima;
++	struct ima_file_data *f_data = (struct ima_file_data *)file->f_ima;
  
--	return asymmetric_match_key_ids(kids, match_id,
--					asymmetric_key_id_partial);
-+	return match;
+ 	if (unlikely(!(file->f_mode & FMODE_OPENED)))
+ 		goto out;
+ 
+-	if (!ima_ns->policy_data->ima_policy_flag || !S_ISREG(inode->i_mode))
++	if (!f_data->ima_ns->policy_data->ima_policy_flag ||
++	    !S_ISREG(inode->i_mode))
+ 		goto out;
+ 
+-	iint = integrity_iint_rb_find(ima_ns->iint_tree, inode);
++	iint = integrity_iint_rb_find(f_data->ima_ns->iint_tree, inode);
+ 	if (!iint)
+ 		goto out;
+ 
+ 	ima_check_last_writer(iint, inode, file);
++
++	if (f_data->is_readcount)
++		iint_readcount_dec(iint);
+ out:
+-	put_ima_ns(ima_ns);
++	put_ima_ns(f_data->ima_ns);
++	kfree(f_data);
  }
  
- /*
-diff --git a/include/linux/key-type.h b/include/linux/key-type.h
-index 2ab2d6d6aeab..c8ea26ab242c 100644
---- a/include/linux/key-type.h
-+++ b/include/linux/key-type.h
-@@ -55,6 +55,7 @@ struct key_match_data {
- 	unsigned	lookup_type;	/* Type of lookup for this search. */
- #define KEYRING_SEARCH_LOOKUP_DIRECT	0x0000	/* Direct lookup by description. */
- #define KEYRING_SEARCH_LOOKUP_ITERATE	0x0001	/* Iterative search. */
-+	struct key_tag  *domain_tag;    /* Key domain tag */
+ static int process_ns_measurement(struct file *file, const struct cred *cred,
+ 				  u32 secid, char *buf, loff_t size, int mask,
+ 				  enum ima_hooks func,
+-				  struct ima_namespace *ima_ns)
++				  struct ima_namespace *ima_ns,
++				  bool readcount_open)
+ {
+ 	struct inode *inode = file_inode(file);
+ 	struct integrity_iint_cache *iint = NULL;
+@@ -262,6 +283,12 @@ static int process_ns_measurement(struct file *file, const struct cred *cred,
+ 	if (!ima_ns->policy_data->ima_policy_flag)
+ 		return 0;
+ 
++	if (ima_ns != current_ima_ns) {
++		iint = integrity_iint_rb_find(ima_ns->iint_tree, inode);
++		if (!iint)
++			return 0;
++	}
++
+ 	/* Return an IMA_MEASURE, IMA_APPRAISE, IMA_AUDIT action
+ 	 * bitmask based on the appraise/audit/measurement policy.
+ 	 * Included is the appraise submask.
+@@ -282,12 +309,18 @@ static int process_ns_measurement(struct file *file, const struct cred *cred,
+ 
+ 	inode_lock(inode);
+ 
+-	if (action) {
++	if (action && !iint) {
+ 		iint = integrity_inode_rb_get(ima_ns->iint_tree, inode);
+ 		if (!iint)
+ 			rc = -ENOMEM;
+ 	}
+ 
++	if ((ima_ns == current_ima_ns) && iint && readcount_open &&
++	    ((file->f_mode & (FMODE_READ | FMODE_WRITE)) == FMODE_READ)) {
++		iint_readcount_inc(iint);
++		((struct ima_file_data *)file->f_ima)->is_readcount = true;
++	}
++
+ 	if (!rc && violation_check)
+ 		ima_rdwr_violation_check(file, iint, action & IMA_MEASURE,
+ 					 &pathbuf, &pathname, filename, ima_ns);
+@@ -429,7 +462,7 @@ static int process_ns_measurement(struct file *file, const struct cred *cred,
+ 
+ static int process_measurement(struct file *file, const struct cred *cred,
+ 			       u32 secid, char *buf, loff_t size, int mask,
+-			       enum ima_hooks func)
++			       enum ima_hooks func, bool readcount_open)
+ {
+ 	int ret;
+ 	struct ima_namespace *ima_ns;
+@@ -444,7 +477,7 @@ static int process_measurement(struct file *file, const struct cred *cred,
+ 			continue;
+ 
+ 		ret = process_ns_measurement(file, cred, secid, buf, size, mask,
+-					     func, ima_ns);
++					     func, ima_ns, readcount_open);
+ 		if (ret != 0)
+ 			break;
+ 	}
+@@ -471,7 +504,7 @@ int ima_file_mmap(struct file *file, unsigned long prot)
+ 	if (file && (prot & PROT_EXEC)) {
+ 		security_task_getsecid(current, &secid);
+ 		return process_measurement(file, current_cred(), secid, NULL,
+-					   0, MAY_EXEC, MMAP_CHECK);
++					   0, MAY_EXEC, MMAP_CHECK, true);
+ 	}
+ 
+ 	return 0;
+@@ -551,13 +584,13 @@ int ima_bprm_check(struct linux_binprm *bprm)
+ 
+ 	security_task_getsecid(current, &secid);
+ 	ret = process_measurement(bprm->file, current_cred(), secid, NULL, 0,
+-				  MAY_EXEC, BPRM_CHECK);
++				  MAY_EXEC, BPRM_CHECK, false);
+ 	if (ret)
+ 		return ret;
+ 
+ 	security_cred_getsecid(bprm->cred, &secid);
+ 	return process_measurement(bprm->file, bprm->cred, secid, NULL, 0,
+-				   MAY_EXEC, CREDS_CHECK);
++				   MAY_EXEC, CREDS_CHECK, false);
+ }
+ 
+ /**
+@@ -577,7 +610,7 @@ int ima_file_check(struct file *file, int mask)
+ 	security_task_getsecid(current, &secid);
+ 	return process_measurement(file, current_cred(), secid, NULL, 0,
+ 				   mask & (MAY_READ | MAY_WRITE | MAY_EXEC |
+-					   MAY_APPEND), FILE_CHECK);
++					   MAY_APPEND), FILE_CHECK, true);
+ }
+ EXPORT_SYMBOL_GPL(ima_file_check);
+ 
+@@ -779,7 +812,7 @@ int ima_post_read_file(struct file *file, void *buf, loff_t size,
+ 	func = read_idmap[read_id] ?: FILE_CHECK;
+ 	security_task_getsecid(current, &secid);
+ 	return process_measurement(file, current_cred(), secid, buf, size,
+-				   MAY_READ, func);
++				   MAY_READ, func, false);
+ }
+ 
+ /**
+diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
+index 721d1850e4f9..c2981a98547e 100644
+--- a/security/integrity/integrity.h
++++ b/security/integrity/integrity.h
+@@ -17,6 +17,7 @@
+ #include <crypto/sha.h>
+ #include <linux/key.h>
+ #include <linux/audit.h>
++#include <linux/atomic.h>
+ 
+ /* iint action cache flags */
+ #define IMA_MEASURE		0x00000001
+@@ -138,6 +139,9 @@ struct integrity_iint_cache {
+ 	enum integrity_status ima_creds_status:4;
+ 	enum integrity_status evm_status:4;
+ 	struct ima_digest_data *ima_hash;
++	atomic_t readcount; /* Reader counter, incremented only in FILE_CHECK or
++			     * MMAP_CHECK hooks, used for ima violation check.
++			     */
  };
  
- /*
-diff --git a/security/keys/keyring.c b/security/keys/keyring.c
-index 12583241ff63..7e45e534035f 100644
---- a/security/keys/keyring.c
-+++ b/security/keys/keyring.c
-@@ -565,7 +565,13 @@ int restrict_link_reject(struct key *keyring,
- bool key_default_cmp(const struct key *key,
- 		     const struct key_match_data *match_data)
+ struct integrity_iint_tree {
+@@ -294,3 +298,17 @@ static inline void __init add_to_platform_keyring(const char *source,
  {
--	return strcmp(key->description, match_data->raw_data) == 0;
-+	bool match;
-+
-+	match = strcmp(key->description, match_data->raw_data) == 0;
-+	if (match_data->domain_tag)
-+		match &= key->index_key.domain_tag == match_data->domain_tag;
-+
-+	return match;
  }
- 
- /*
-@@ -957,6 +963,8 @@ key_ref_t keyring_search_tag(key_ref_t keyring,
- 
- 	if (recurse)
- 		ctx.flags |= KEYRING_SEARCH_RECURSE;
-+	if (domain_tag)
-+		ctx.match_data.domain_tag = domain_tag;
- 	if (type->match_preparse) {
- 		ret = type->match_preparse(&ctx.match_data);
- 		if (ret < 0)
+ #endif
++
++#ifdef CONFIG_IMA
++static inline void iint_readcount_inc(struct integrity_iint_cache *iint)
++{
++	atomic_inc(&iint->readcount);
++}
++static inline void iint_readcount_dec(struct integrity_iint_cache *iint)
++{
++	if (WARN_ON(!atomic_read(&iint->readcount)))
++		return;
++
++	atomic_dec(&iint->readcount);
++}
++#endif
 -- 
 2.20.1
 
