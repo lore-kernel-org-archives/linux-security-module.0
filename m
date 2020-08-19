@@ -2,106 +2,191 @@ Return-Path: <SRS0=6iY4=B5=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C0C3C433DF
-	for <linux-security-module@archiver.kernel.org>; Wed, 19 Aug 2020 18:04:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF3BCC433DF
+	for <linux-security-module@archiver.kernel.org>; Wed, 19 Aug 2020 18:54:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 68109208E4
-	for <linux-security-module@archiver.kernel.org>; Wed, 19 Aug 2020 18:04:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Dm12xVmM"
+	by mail.kernel.org (Postfix) with ESMTP id B65242083B
+	for <linux-security-module@archiver.kernel.org>; Wed, 19 Aug 2020 18:54:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726732AbgHSSEc (ORCPT
+        id S1726731AbgHSSyT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 19 Aug 2020 14:04:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55440 "EHLO
+        Wed, 19 Aug 2020 14:54:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34902 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726609AbgHSSE2 (ORCPT
+        with ESMTP id S1726673AbgHSSyS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 19 Aug 2020 14:04:28 -0400
-Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EF15C061342
-        for <linux-security-module@vger.kernel.org>; Wed, 19 Aug 2020 11:04:27 -0700 (PDT)
-Received: by mail-pl1-x641.google.com with SMTP id u10so11199144plr.7
-        for <linux-security-module@vger.kernel.org>; Wed, 19 Aug 2020 11:04:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=o5QWU1nEiy+Wm6gh5sFTQwgB0RXtZgwdt6tODGtZKRg=;
-        b=Dm12xVmMzZ7+gsbRjbkm68z3UhSAAY6ovLHRwBvSlZRYXMn/jyVefCRwwEuid/htYs
-         br88nAj9HKrAuowA12vkOzJAwRYaRkbgsNo09lWJDv7VL18k1yKtxP+qrqbV68ClR1J9
-         aINuOTkBRJSvuCX+knwKWIe7bXQAL6ulo1Sg4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=o5QWU1nEiy+Wm6gh5sFTQwgB0RXtZgwdt6tODGtZKRg=;
-        b=VCzENvUkC+OHuuPL5PfJNoIsST5TSxDWjLxNes/zt7bE4fzi5YFWTusNguGRl6Anc/
-         V2UpTOJ/14ybd8dBxJ8CDCgddi7FbwSJ1eUTEzGO0m0YEPega1/b2TzdysqvMmXP/h0k
-         V15KWQbBUwPuOeAgutRgIj8O/Axttw0TIQAL44o5viKbDPi4xYqfMDTX5h71y8a84C/y
-         GNX9Jl/zQtL5XjqBwtSog1Lxp14eF5DsmtQ5u1sTOdBJAyrWyHxhLYf+d1QRkrnKEpVq
-         p9kU2tolVNbxLoOc2imfI1B+Zp0H9K9k0vraQsJs6d1RaocnFjYIMGJvtqNMY0tYASYt
-         Bh2g==
-X-Gm-Message-State: AOAM530plrtMAtFa/DW3/qN22QJNRlclpObqDjgUTZbTn3QUDIFrRolS
-        YBYS6Z5RDRrwFn1qVIE11mlKRg==
-X-Google-Smtp-Source: ABdhPJzcCUFsTUuuU/7fR9DIMfV1GDtBk230JWzP+wvh2sEXRmU+hodx93sL2eXCM5k81uPM4O9/vg==
-X-Received: by 2002:a17:90b:46d3:: with SMTP id jx19mr5046020pjb.158.1597860267077;
-        Wed, 19 Aug 2020 11:04:27 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id d4sm3563704pju.56.2020.08.19.11.04.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Aug 2020 11:04:26 -0700 (PDT)
-Date:   Wed, 19 Aug 2020 11:04:24 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Miaohe Lin <linmiaohe@huawei.com>
-Cc:     akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH] mm/migrate: Avoid possible unnecessary
- ptrace_may_access() call in kernel_move_pages()
-Message-ID: <202008191103.D88345E410@keescook>
-References: <20200817115933.44565-1-linmiaohe@huawei.com>
+        Wed, 19 Aug 2020 14:54:18 -0400
+Received: from smtp-1909.mail.infomaniak.ch (smtp-1909.mail.infomaniak.ch [IPv6:2001:1600:3:17::1909])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71715C061383
+        for <linux-security-module@vger.kernel.org>; Wed, 19 Aug 2020 11:54:17 -0700 (PDT)
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4BWxlD0kK1zlhQGJ;
+        Wed, 19 Aug 2020 20:54:00 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
+        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4BWxlB6m3Xzlh8TC;
+        Wed, 19 Aug 2020 20:53:58 +0200 (CEST)
+Subject: Re: [PATCH v1 0/4] [RFC] Implement Trampoline File Descriptor
+To:     Mark Rutland <mark.rutland@arm.com>,
+        "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>
+Cc:     kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, oleg@redhat.com,
+        x86@kernel.org
+References: <aefc85852ea518982e74b233e11e16d2e707bc32>
+ <20200728131050.24443-1-madvenka@linux.microsoft.com>
+ <20200731180955.GC67415@C02TD0UTHF1T.local>
+ <6236adf7-4bed-534e-0956-fddab4fd96b6@linux.microsoft.com>
+ <20200804143018.GB7440@C02TD0UTHF1T.local>
+ <b3368692-afe6-89b5-d634-12f4f0a601f8@linux.microsoft.com>
+ <20200812100650.GB28154@C02TD0UTHF1T.local>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Message-ID: <41c4de64-68d0-6fcb-e5c3-63ebd459262e@digikod.net>
+Date:   Wed, 19 Aug 2020 20:53:42 +0200
+User-Agent: 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200817115933.44565-1-linmiaohe@huawei.com>
+In-Reply-To: <20200812100650.GB28154@C02TD0UTHF1T.local>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
+X-Antivirus-Code: 0x100000
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Aug 17, 2020 at 07:59:33AM -0400, Miaohe Lin wrote:
-> There is no need to check if this process has the right to modify the
-> specified process when they are same.
+
+On 12/08/2020 12:06, Mark Rutland wrote:
+> On Thu, Aug 06, 2020 at 12:26:02PM -0500, Madhavan T. Venkataraman wrote:
+>> Thanks for the lively discussion. I have tried to answer some of the
+>> comments below.
+>>
+>> On 8/4/20 9:30 AM, Mark Rutland wrote:
+>>>
+>>>> So, the context is - if security settings in a system disallow a page to have
+>>>> both write and execute permissions, how do you allow the execution of
+>>>> genuine trampolines that are runtime generated and placed in a data
+>>>> page or a stack page?
+>>> There are options today, e.g.
+>>>
+>>> a) If the restriction is only per-alias, you can have distinct aliases
+>>>    where one is writable and another is executable, and you can make it
+>>>    hard to find the relationship between the two.
+>>>
+>>> b) If the restriction is only temporal, you can write instructions into
+>>>    an RW- buffer, transition the buffer to R--, verify the buffer
+>>>    contents, then transition it to --X.
+>>>
+>>> c) You can have two processes A and B where A generates instrucitons into
+>>>    a buffer that (only) B can execute (where B may be restricted from
+>>>    making syscalls like write, mprotect, etc).
+>>
+>> The general principle of the mitigation is W^X. I would argue that
+>> the above options are violations of the W^X principle. If they are
+>> allowed today, they must be fixed. And they will be. So, we cannot
+>> rely on them.
 > 
-> Signed-off-by: Hongxiang Lou <louhongxiang@huawei.com>
-> Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
-> ---
->  mm/migrate.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Hold on.
 > 
-> diff --git a/mm/migrate.c b/mm/migrate.c
-> index 34a842a8eb6a..342c1ce0b433 100644
-> --- a/mm/migrate.c
-> +++ b/mm/migrate.c
-> @@ -1903,7 +1903,7 @@ static int kernel_move_pages(pid_t pid, unsigned long nr_pages,
->  	 * Check if this process has the right to modify the specified
->  	 * process. Use the regular "ptrace_may_access()" checks.
->  	 */
-> -	if (!ptrace_may_access(task, PTRACE_MODE_READ_REALCREDS)) {
-> +	if (pid && !ptrace_may_access(task, PTRACE_MODE_READ_REALCREDS)) {
->  		rcu_read_unlock();
->  		err = -EPERM;
->  		goto out;
+> Contemporary W^X means that a given virtual alias cannot be writeable
+> and executeable simultaneously, permitting (a) and (b). If you read the
+> references on the Wikipedia page for W^X you'll see the OpenBSD 3.3
+> release notes and related presentation make this clear, and further they
+> expect (b) to occur with JITS flipping W/X with mprotect().
 
-NAK, please don't do this -- the ptrace and security hooks already do
-these kinds of self-introspection checks, and I'd like to keep a central
-place to perform these kinds of checks.
+W^X (with "permanent" mprotect restrictions [1]) goes back to 2000 with
+PaX [2] (which predates partial OpenBSD implementation from 2003).
 
-Is there a specific problem you've encountered that this fixes?
+[1] https://pax.grsecurity.net/docs/mprotect.txt
+[2] https://undeadly.org/cgi?action=article;sid=20030417082752
 
--- 
-Kees Cook
+> 
+> Please don't conflate your assumed stronger semantics with the general
+> principle. It not matching you expectations does not necessarily mean
+> that it is wrong.
+> 
+> If you want a stronger W^X semantics, please refer to this specifically
+> with a distinct name.
+> 
+>> a) This requires a remap operation. Two mappings point to the same
+>>      physical page. One mapping has W and the other one has X. This
+>>      is a violation of W^X.
+>>
+>> b) This is again a violation. The kernel should refuse to give execute
+>>      permission to a page that was writeable in the past and refuse to
+>>      give write permission to a page that was executable in the past.
+>>
+>> c) This is just a variation of (a).
+> 
+> As above, this is not true.
+> 
+> If you have a rationale for why this is desirable or necessary, please
+> justify that before using this as justification for additional features.
+> 
+>> In general, the problem with user-level methods to map and execute
+>> dynamic code is that the kernel cannot tell if a genuine application is
+>> using them or an attacker is using them or piggy-backing on them.
+> 
+> Yes, and as I pointed out the same is true for trampfd unless you can
+> somehow authenticate the calls are legitimate (in both callsite and the
+> set of arguments), and I don't see any reasonable way of doing that.
+> 
+> If you relax your threat model to an attacker not being able to make
+> arbitrary syscalls, then your suggestion that userspace can perorm
+> chceks between syscalls may be sufficient, but as I pointed out that's
+> equally true for a sealed memfd or similar.
+> 
+>> Off the top of my head, I have tried to identify some examples
+>> where we can have more trust on dynamic code and have the kernel
+>> permit its execution.
+>>
+>> 1. If the kernel can do the job, then that is one safe way. Here, the kernel
+>>     is the code. There is no code generation involved. This is what I
+>>     have presented in the patch series as the first cut.
+> 
+> This is sleight-of-hand; it doesn't matter where the logic is performed
+> if the power is identical. Practically speaking this is equivalent to
+> some dynamic code generation.
+> 
+> I think that it's misleading to say that because the kernel emulates
+> something it is safe when the provenance of the syscall arguments cannot
+> be verified.
+> 
+> [...]
+> 
+>> Anyway, these are just examples. The principle is - if we can identify
+>> dynamic code that has a certain measure of trust, can the kernel
+>> permit their execution?
+> 
+> My point generally is that the kernel cannot identify this, and if
+> usrspace code is trusted to dynamically generate trampfd arguments it
+> can equally be trusted to dyncamilly generate code.
+> 
+> [...]
+> 
+>> As I have mentioned above, I intend to have the kernel generate code
+>> only if the code generation is simple enough. For more complicated cases,
+>> I plan to use a user-level code generator that is for exclusive kernel use.
+>> I have yet to work out the details on how this would work. Need time.
+> 
+> This reads to me like trampfd is only dealing with a few special cases
+> and we know that we need a more general solution.
+> 
+> I hope I am mistaken, but I get the strong impression that you're trying
+> to justify your existing solution rather than trying to understand the
+> problem space.
+> 
+> To be clear, my strong opinion is that we should not be trying to do
+> this sort of emulation or code generation within the kernel. I do think
+> it's worthwhile to look at mechanisms to make it harder to subvert
+> dynamic userspace code generation, but I think the code generation
+> itself needs to live in userspace (e.g. for ABI reasons I previously
+> mentioned).
+> 
+> Mark.
+> 
