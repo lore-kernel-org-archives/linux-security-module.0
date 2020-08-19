@@ -2,80 +2,387 @@ Return-Path: <SRS0=6iY4=B5=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9180C433E1
-	for <linux-security-module@archiver.kernel.org>; Wed, 19 Aug 2020 02:29:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE84AC433E1
+	for <linux-security-module@archiver.kernel.org>; Wed, 19 Aug 2020 12:42:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A80352075E
-	for <linux-security-module@archiver.kernel.org>; Wed, 19 Aug 2020 02:29:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 93D49206B5
+	for <linux-security-module@archiver.kernel.org>; Wed, 19 Aug 2020 12:42:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MMwcAkNP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726949AbgHSC3T (ORCPT
+        id S1728191AbgHSMmB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 18 Aug 2020 22:29:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51818 "EHLO
+        Wed, 19 Aug 2020 08:42:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33432 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726372AbgHSC3T (ORCPT
+        with ESMTP id S1726794AbgHSMly (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 18 Aug 2020 22:29:19 -0400
-Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D12E3C061389;
-        Tue, 18 Aug 2020 19:29:18 -0700 (PDT)
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1k8Dqd-000c0L-B6; Wed, 19 Aug 2020 02:29:07 +0000
-Date:   Wed, 19 Aug 2020 03:29:07 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Steven Whitehouse <swhiteho@redhat.com>,
-        David Howells <dhowells@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Karel Zak <kzak@redhat.com>, Jeff Layton <jlayton@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
-        Christian Brauner <christian@brauner.io>,
-        Lennart Poettering <lennart@poettering.net>,
-        Linux API <linux-api@vger.kernel.org>,
-        Ian Kent <raven@themaw.net>,
-        LSM <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: file metadata via fs API
-Message-ID: <20200819022907.GE1236603@ZenIV.linux.org.uk>
-References: <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com>
- <52483.1597190733@warthog.procyon.org.uk>
- <CAHk-=wiPx0UJ6Q1X=azwz32xrSeKnTJcH8enySwuuwnGKkHoPA@mail.gmail.com>
- <066f9aaf-ee97-46db-022f-5d007f9e6edb@redhat.com>
- <CAHk-=wgz5H-xYG4bOrHaEtY7rvFA1_6+mTSpjrgK8OsNbfF+Pw@mail.gmail.com>
- <94f907f0-996e-0456-db8a-7823e2ef3d3f@redhat.com>
- <CAHk-=wig0ZqWxgWtD9F1xZzE7jEmgLmXRWABhss0+er3ZRtb9g@mail.gmail.com>
- <CAHk-=wh4qaj6iFTrbHy8TPfmM3fj+msYC5X_KE0rCdStJKH2NA@mail.gmail.com>
- <CAJfpegsr8URJHoFunnGShB-=jqypvtrmLV-BcWajkHux2H4x2w@mail.gmail.com>
- <CAHk-=wh5YifP7hzKSbwJj94+DZ2czjrZsczy6GBimiogZws=rg@mail.gmail.com>
+        Wed, 19 Aug 2020 08:41:54 -0400
+Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8587C061757
+        for <linux-security-module@vger.kernel.org>; Wed, 19 Aug 2020 05:41:53 -0700 (PDT)
+Received: by mail-ej1-x643.google.com with SMTP id f24so26143144ejx.6
+        for <linux-security-module@vger.kernel.org>; Wed, 19 Aug 2020 05:41:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=/y3jRYjISN6SJ5xQ83KSW3ddpwc4GdyAtPJH5CRfRJ0=;
+        b=MMwcAkNPoxSXmPkz0pR7sTwo66Xg5xE8uIJAgcgY7tIE1K+xayzXU/yLxzn1EmRPBz
+         cqK+MOxm4aZbhj43T3YSsPW3XM1y4yq7glyAHROQ4b1KQRxmH1gLlBRq+rhvyuZrYS+x
+         bdxpA7wELpjNG4SRngDWN43obystfj96snvms=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=/y3jRYjISN6SJ5xQ83KSW3ddpwc4GdyAtPJH5CRfRJ0=;
+        b=D4gEGbEUtedXDE6mVcyTibPZOknMOGeCeGgYCJQwNCGv2OIcb3A0spVXrN+Rn5pCk3
+         qYydBNrQp/91FqI6bgKHTnJlsuhDsy+ngDZ0mGnf+hTeM2cjGCDwM8vTiHqV5wIpczmq
+         pEUtabmyqLDSL2hstprPw+BQizb1XPXuxADHbuhdgBFTFc+q5PjxTeGEcc2OZA93ryv0
+         en/ogTMFaUHYprNnIxKF7a9pPSrsDVo2XVsgBi4Hr81sIvC6xEdjqLNi0j2gY5nxOe2F
+         MOBiFSJgjYmqIJL2W1GXEh93FZ2HlwheIDqv3wBgFS64ojwTmAB52uZh0Qm1DKAMyRc9
+         +1GQ==
+X-Gm-Message-State: AOAM533EDTASB4BHpOmiG24ugGZAgZDZj7tdQwrlu2hYjK61BNsuxLgD
+        f/Ziiyni0QAlFqDArcgSPCaGpg==
+X-Google-Smtp-Source: ABdhPJzARsZBOTQokn+pLPQqdAoHgnbmZAYTqgVRhFkyXjlQCLD8bRL5hnqaqrbxwy82mMtNYBxSig==
+X-Received: by 2002:a17:906:86c9:: with SMTP id j9mr24478953ejy.5.1597840912462;
+        Wed, 19 Aug 2020 05:41:52 -0700 (PDT)
+Received: from [192.168.2.66] ([81.6.44.51])
+        by smtp.gmail.com with ESMTPSA id t3sm17820566edq.26.2020.08.19.05.41.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Aug 2020 05:41:51 -0700 (PDT)
+Subject: Re: [PATCH bpf-next v8 3/7] bpf: Generalize bpf_sk_storage
+To:     Martin KaFai Lau <kafai@fb.com>
+Cc:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
+        Florent Revest <revest@chromium.org>
+References: <20200803164655.1924498-1-kpsingh@chromium.org>
+ <20200803164655.1924498-4-kpsingh@chromium.org>
+ <20200818010545.iix72le4tkhuyqe5@kafai-mbp.dhcp.thefacebook.com>
+From:   KP Singh <kpsingh@chromium.org>
+Message-ID: <6cb51fa0-61a5-2cf6-b44d-84d58d08c775@chromium.org>
+Date:   Wed, 19 Aug 2020 14:41:50 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wh5YifP7hzKSbwJj94+DZ2czjrZsczy6GBimiogZws=rg@mail.gmail.com>
+In-Reply-To: <20200818010545.iix72le4tkhuyqe5@kafai-mbp.dhcp.thefacebook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Aug 18, 2020 at 11:51:25AM -0700, Linus Torvalds wrote:
 
-> I think people who have problems parsing plain ASCII text are just
-> wrong. It's not that expensive. The thing that makes /proc/mounts
-> expensive is not the individual lines - it's that there are a lot of
-> them.
 
-	It is expensive - if you use strdup() all over the place,
-do asprintf() equivalents for concatenation, etc.  IOW, you can write
-BASIC (or javascript) in any language...
+On 8/18/20 3:05 AM, Martin KaFai Lau wrote:
+> On Mon, Aug 03, 2020 at 06:46:51PM +0200, KP Singh wrote:
+>> From: KP Singh <kpsingh@google.com>
+>>
+>> Refactor the functionality in bpf_sk_storage.c so that concept of
+>> storage linked to kernel objects can be extended to other objects like
+>> inode, task_struct etc.
+>>
+>> Each new local storage will still be a separate map and provide its own
+>> set of helpers. This allows for future object specific extensions and
+>> still share a lot of the underlying implementation.
+>>
+>> This includes the changes suggested by Martin in:
+>>
+>>   https://lore.kernel.org/bpf/20200725013047.4006241-1-kafai@fb.com/
+>>
+>> which adds map_local_storage_charge, map_local_storage_uncharge,
+>> and map_owner_storage_ptr.
+> A description will still be useful in the commit message to talk
+> about the new map_ops, e.g.
+> they allow kernel object to optionally have different mem-charge strategy.
+> 
+>>
+>> Co-developed-by: Martin KaFai Lau <kafai@fb.com>
+>> Signed-off-by: KP Singh <kpsingh@google.com>
+>> ---
+>>  include/linux/bpf.h            |   9 ++
+>>  include/net/bpf_sk_storage.h   |  51 +++++++
+>>  include/uapi/linux/bpf.h       |   8 +-
+>>  net/core/bpf_sk_storage.c      | 246 +++++++++++++++++++++------------
+>>  tools/include/uapi/linux/bpf.h |   8 +-
+>>  5 files changed, 233 insertions(+), 89 deletions(-)
+>>
+>> diff --git a/include/linux/bpf.h b/include/linux/bpf.h
+>> index cef4ef0d2b4e..8e1e23c60dc7 100644
+>> --- a/include/linux/bpf.h
+>> +++ b/include/linux/bpf.h
+>> @@ -34,6 +34,9 @@ struct btf_type;
+>>  struct exception_table_entry;
+>>  struct seq_operations;
+>>  struct bpf_iter_aux_info;
+>> +struct bpf_local_storage;
+>> +struct bpf_local_storage_map;
+>> +struct bpf_local_storage_elem;
+> "struct bpf_local_storage_elem" is not needed.
 
-	systemd used to be that bad - exactly in parsing /proc/mounts;
-I hadn't checked that code lately, so it's possible that it had gotten
-better, but about 4 years ago it had been awful.  OTOH, at that time
-I'd been looking at the atrocities kernel-side (in fs/pnode.c), where
-on realistic setups we had O(N^2) allocations done, with all but O(N)
-of them ending up freed before anyone could see them.  So it's not as
-if they had a monopoly on bloody awful code...
+True, I moved it to bpf_sk_storage.h because it's needed there.
+
+> 
+>>  
+>>  extern struct idr btf_idr;
+>>  extern spinlock_t btf_idr_lock;
+>> @@ -104,6 +107,12 @@ struct bpf_map_ops {
+>>  	__poll_t (*map_poll)(struct bpf_map *map, struct file *filp,
+>>  			     struct poll_table_struct *pts);
+>>  
+>> +	/* Functions called by bpf_local_storage maps */
+>> +	int (*map_local_storage_charge)(struct bpf_local_storage_map *smap,
+>> +					void *owner, u32 size);
+>> +	void (*map_local_storage_uncharge)(struct bpf_local_storage_map *smap,
+>> +					   void *owner, u32 size);
+>> +	struct bpf_local_storage __rcu ** (*map_owner_storage_ptr)(void *owner);
+
+
+[...]
+
+>> +			struct bpf_local_storage_map *smap,
+>> +			struct bpf_local_storage_elem *first_selem);
+>> +
+>> +struct bpf_local_storage_data *
+>> +bpf_local_storage_update(void *owner, struct bpf_map *map, void *value,
+> Nit.  It may be more consistent to take "struct bpf_local_storage_map *smap"
+> instead of "struct bpf_map *map" here.
+> 
+> bpf_local_storage_map_check_btf() will be the only one taking
+> "struct bpf_map *map".
+
+That's because it is used in map operations as map_check_btf which expects
+a bpf_map *map pointer. We can wrap it in another function but is that
+worth doing? 
+
+> 
+>> +			 u64 map_flags);
+>> +
+>>  #ifdef CONFIG_BPF_SYSCALL
+>>  int bpf_sk_storage_clone(const struct sock *sk, struct sock *newsk);
+>>  struct bpf_sk_storage_diag *
+>> diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
+>> index b134e679e9db..35629752cec8 100644
+>> --- a/include/uapi/linux/bpf.h
+>> +++ b/include/uapi/linux/bpf.h
+>> @@ -3647,9 +3647,13 @@ enum {
+>>  	BPF_F_SYSCTL_BASE_NAME		= (1ULL << 0),
+>>  };
+>>  
+>> -/* BPF_FUNC_sk_storage_get flags */
+>> +/* BPF_FUNC_<local>_storage_get flags */
+> BPF_FUNC_<kernel_obj>_storage_get flags?
+> 
+
+Done.
+
+>>  enum {
+>> -	BPF_SK_STORAGE_GET_F_CREATE	= (1ULL << 0),
+>> +	BPF_LOCAL_STORAGE_GET_F_CREATE	= (1ULL << 0),
+>> +	/* BPF_SK_STORAGE_GET_F_CREATE is only kept for backward compatibility
+>> +	 * and BPF_LOCAL_STORAGE_GET_F_CREATE must be used instead.
+>> +	 */
+>> +	BPF_SK_STORAGE_GET_F_CREATE  = BPF_LOCAL_STORAGE_GET_F_CREATE,
+>>  };
+>>  
+>>  /* BPF_FUNC_read_branch_records flags. */
+>> diff --git a/net/core/bpf_sk_storage.c b/net/core/bpf_sk_storage.c
+>> index 99dde7b74767..bb2375769ca1 100644
+>> --- a/net/core/bpf_sk_storage.c
+>> +++ b/net/core/bpf_sk_storage.c
+>> @@ -84,7 +84,7 @@ struct bpf_local_storage_elem {
+>>  struct bpf_local_storage {
+>>  	struct bpf_local_storage_data __rcu *cache[BPF_LOCAL_STORAGE_CACHE_SIZE];
+>>  	struct hlist_head list; /* List of bpf_local_storage_elem */
+>> -	struct sock *owner;	/* The object that owns the the above "list" of
+
+[...]
+
+>>  }
+>>  
+>> -/* sk_storage->lock must be held and selem->sk_storage == sk_storage.
+>> +/* local_storage->lock must be held and selem->sk_storage == sk_storage.
+> This name change belongs to patch 1.
+> 
+> Also,
+> selem->"local_"storage == "local_"storage
+
+Done.
+
+> 
+>>   * The caller must ensure selem->smap is still valid to be
+>>   * dereferenced for its smap->elem_size and smap->cache_idx.
+>>   */
+> 
+> [ ... ]
+> 
+>> @@ -367,7 +401,7 @@ static int sk_storage_alloc(struct sock *sk,
+>>  		/* Note that even first_selem was linked to smap's
+>>  		 * bucket->list, first_selem can be freed immediately
+>>  		 * (instead of kfree_rcu) because
+>> -		 * bpf_sk_storage_map_free() does a
+>> +		 * bpf_local_storage_map_free() does a
+
+
+[...]
+
+>>  			kfree(selem);
+>> -			atomic_sub(smap->elem_size, &sk->sk_omem_alloc);
+>> +			mem_uncharge(smap, owner, smap->elem_size);
+>>  			return ERR_PTR(err);
+>>  		}
+>>  
+>> @@ -430,8 +464,8 @@ bpf_local_storage_update(struct sock *sk, struct bpf_map *map, void *value,
+>>  		 * such that it can avoid taking the local_storage->lock
+>>  		 * and changing the lists.
+>>  		 */
+>> -		old_sdata =
+>> -			bpf_local_storage_lookup(local_storage, smap, false);
+>> +		old_sdata = bpf_local_storage_lookup(local_storage, smap,
+>> +						     false);
+> Pure indentation change.  The same line has been changed in patch 1.  Please change
+> the identation in patch 1 if the above way is preferred.
+
+I removed this change. 
+
+> 
+>>  		err = check_flags(old_sdata, map_flags);
+>>  		if (err)
+>>  			return ERR_PTR(err);
+>> @@ -475,7 +509,7 @@ bpf_local_storage_update(struct sock *sk, struct bpf_map *map, void *value,
+>>  	 * old_sdata will not be uncharged later during
+>>  	 * bpf_selem_unlink_storage().
+>>  	 */
+>> -	selem = bpf_selem_alloc(smap, sk, value, !old_sdata);
+>> +	selem = bpf_selem_alloc(smap, owner, value, !old_sdata);
+>>  	if (!selem) {
+>>  		err = -ENOMEM;
+>>  		goto unlock_err;
+>> @@ -567,7 +601,7 @@ void bpf_sk_storage_free(struct sock *sk)
+>>  	 * Thus, no elem can be added-to or deleted-from the
+>>  	 * sk_storage->list by the bpf_prog or by the bpf-map's syscall.
+>>  	 *
+>> -	 * It is racing with bpf_sk_storage_map_free() alone
+>> +	 * It is racing with bpf_local_storage_map_free() alone
+> This name change belongs to patch 1 also.
+
+Done.
+
+> 
+>>  	 * when unlinking elem from the sk_storage->list and
+>>  	 * the map's bucket->list.
+>>  	 */
+>> @@ -587,17 +621,12 @@ void bpf_sk_storage_free(struct sock *sk)
+>>  		kfree_rcu(sk_storage, rcu);
+>>  }
+>>  
+>> -static void bpf_local_storage_map_free(struct bpf_map *map)
+
+[..]
+
+>>  
+>>  	/* bpf prog and the userspace can no longer access this map
+>>  	 * now.  No new selem (of this map) can be added
+>> -	 * to the sk->sk_bpf_storage or to the map bucket's list.
+>> +	 * to the bpf_local_storage or to the map bucket's list.
+> s/bpf_local_storage/owner->storage/
+
+Done.
+
+> 
+>>  	 *
+>>  	 * The elem of this map can be cleaned up here
+>>  	 * or
+>> -	 * by bpf_sk_storage_free() during __sk_destruct().
+>> +	 * by bpf_local_storage_free() during the destruction of the
+>> +	 * owner object. eg. __sk_destruct.
+> This belongs to patch 1 also.
+
+
+In patch, 1, changed it to:
+
+	 * The elem of this map can be cleaned up here
+	 * or when the storage is freed e.g.
+	 * by bpf_sk_storage_free() during __sk_destruct().
+
+> 
+>>  	 */
+>>  	for (i = 0; i < (1U << smap->bucket_log); i++) {
+>>  		b = &smap->buckets[i];
+>> @@ -627,22 +657,31 @@ static void bpf_local_storage_map_free(struct bpf_map *map)
+>>  		rcu_read_unlock();
+>>  	}
+>>  
+>> -	/* bpf_sk_storage_free() may still need to access the map.
+>> -	 * e.g. bpf_sk_storage_free() has unlinked selem from the map
+>> +	/* bpf_local_storage_free() may still need to access the map.
+> It is confusing.  There is no bpf_local_storage_free().
+
+	/* While freeing the storage we may still need to access the map.
+	 *
+	 * e.g. when bpf_sk_storage_free() has unlinked selem from the map
+	 * which then made the above while((selem = ...)) loop
+	 * exited immediately.
+
+> 
+>> +	 * e.g. bpf_local_storage_free() has unlinked selem from the map
+>>  	 * which then made the above while((selem = ...)) loop
+>>  	 * exited immediately.
+>>  	 *
+>> -	 * However, the bpf_sk_storage_free() still needs to access
+>> +	 * However, the bpf_local_storage_free() still needs to access
+> Same here.
+
+With the change above, this can stay bpf_sk_storage_free
+
+> 
+>>  	 * the smap->elem_size to do the uncharging in
+>>  	 * bpf_selem_unlink_storage().
+>>  	 *
+>>  	 * Hence, wait another rcu grace period for the
+>> -	 * bpf_sk_storage_free() to finish.
+>> +	 * bpf_local_storage_free() to finish.
+> and here.
+
+and this too can stay bpf_sk_storage_free
+
+> 
+>>  	 */
+>>  	synchronize_rcu();
+>>  
+>>  	kvfree(smap->buckets);
+>> -	kfree(map);
+>> +	kfree(smap);
+>> +}
+>> +
+>> +static void sk_storage_map_free(struct bpf_map *map)
+>> +{
+
+[...]
+
+_attr *attr)
+>>  		raw_spin_lock_init(&smap->buckets[i].lock);
+>>  	}
+>>  
+>> -	smap->elem_size = sizeof(struct bpf_local_storage_elem) + attr->value_size;
+>> -	smap->cache_idx = bpf_local_storage_cache_idx_get(&sk_cache);
+>> +	smap->elem_size =
+>> +		sizeof(struct bpf_local_storage_elem) + attr->value_size;
+> Same line has changed in patch 1.   Change the indentation in patch 1 also
+> if the above way is desired.
+
+Done.
+
+> Others LGTM.
+> 
