@@ -2,235 +2,119 @@ Return-Path: <SRS0=ujXN=B6=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFEE9C433E1
-	for <linux-security-module@archiver.kernel.org>; Thu, 20 Aug 2020 21:46:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BDE9C433E1
+	for <linux-security-module@archiver.kernel.org>; Thu, 20 Aug 2020 22:38:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C73622075E
-	for <linux-security-module@archiver.kernel.org>; Thu, 20 Aug 2020 21:46:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1186620674
+	for <linux-security-module@archiver.kernel.org>; Thu, 20 Aug 2020 22:38:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jqlWDd6s"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="twbOspkk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726435AbgHTVqI (ORCPT
+        id S1728353AbgHTWiv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 20 Aug 2020 17:46:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57838 "EHLO
+        Thu, 20 Aug 2020 18:38:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37904 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728018AbgHTVqB (ORCPT
+        with ESMTP id S1728139AbgHTWiu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 20 Aug 2020 17:46:01 -0400
-Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31A6AC061387
-        for <linux-security-module@vger.kernel.org>; Thu, 20 Aug 2020 14:46:01 -0700 (PDT)
-Received: by mail-pg1-x52c.google.com with SMTP id g33so1774739pgb.4
-        for <linux-security-module@vger.kernel.org>; Thu, 20 Aug 2020 14:46:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=lAdAyYh5aN2j5JPQrGtT0EfFNZkeh1mFjZ/MnX14mHg=;
-        b=jqlWDd6sxFDmFJ/KUiqRGFnNyGKWDiNJLpoSwupzugFLhqCN9ZS6qtccF0An5Z2pAp
-         nwBWlzga+bXknE60CNsiILhMirgchDDV2Vj7hY7IEMtxh8h6VGzn+3wNGo2+F7ea9pJx
-         uume6sU6+RSqa4UeUUuBxrG3vOAzelifZxGgw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=lAdAyYh5aN2j5JPQrGtT0EfFNZkeh1mFjZ/MnX14mHg=;
-        b=buRRn5fqfUT4D3h+RyVUQYeriqzoe8zDNcGcp5eSe9K8e3165zDGxnEbUFAoWLJ9LJ
-         fqJ5wYv/i7dnMzv+4rqobux/ykGNaiQIn+Sc8lAJiqH+Gsw+BRuunBmY6GrENnFy6cmJ
-         nHTRNLsbozym4zpNyBqfzHcnzHP2Jwhqe7hLkNUPp5zcyfidy4Lucosjj54WfP4pzsdx
-         NmmljDeCOfukv5hvLcxAgJ95Xt7202BC6qrd1BHig0YlVHqYG3gLR4GHuN/+M7DgekoP
-         afUK716A+AlKTHbtWecSVhk6hNDNRwCJaRebGm2P/zifCG42wP9mchPCSNQPOGHwxwMV
-         LGDg==
-X-Gm-Message-State: AOAM531TohKsdSjp8zpxk44+MaaiB5KighhjeYuRK77rz9jPOmMqdx0U
-        q9UCjtuRfhXfWDA83ibynOZYoA==
-X-Google-Smtp-Source: ABdhPJy7ns/mk8REZldx/9DoA3Zk3IWns4swu15vQGd9bLEgzAMf1K45e88Ruhw0luZiFw52DoX76w==
-X-Received: by 2002:a65:66c4:: with SMTP id c4mr64065pgw.442.1597959959876;
-        Thu, 20 Aug 2020 14:45:59 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id k21sm4159pgl.0.2020.08.20.14.45.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Aug 2020 14:45:58 -0700 (PDT)
-Date:   Thu, 20 Aug 2020 14:45:57 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Brendan Jackman <jackmanb@chromium.org>
-Cc:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Paul Renauld <renauld@google.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        James Morris <jmorris@namei.org>, pjt@google.com,
-        jannh@google.com, peterz@infradead.org, rafael.j.wysocki@intel.com,
-        thgarnie@chromium.org, kpsingh@google.com,
-        paul.renauld.epfl@gmail.com, Brendan Jackman <jackmanb@google.com>
-Subject: Re: [RFC] security: replace indirect calls with static calls
-Message-ID: <202008201435.97CF8296@keescook>
-References: <20200820164753.3256899-1-jackmanb@chromium.org>
+        Thu, 20 Aug 2020 18:38:50 -0400
+Received: from ozlabs.org (bilbo.ozlabs.org [IPv6:2401:3900:2:1::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70102C061385;
+        Thu, 20 Aug 2020 15:38:50 -0700 (PDT)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4BXfh26lXPz9sPB;
+        Fri, 21 Aug 2020 08:38:41 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1597963123;
+        bh=F1zcYsdZEtWVf/zph6DxdSSfdnjlkS+N4xOJss6GUmU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=twbOspkkBIkYtrG22l8cHZJMJ874DskZKQSqUK/BojIL90zIYlRaszfuWRwzfeyK9
+         HvAP/5WyOgFxt8eEsZrsc1+YPGInbkR5J68Rf8oLW52dh6rMauQpPwmUyAwmNWFyZX
+         iLmgngRaeYPOMYGLkKSLxCKcXfsKrpYHinTUIMSA/pEtoMOH2z/jL5W6DZadhAP5hn
+         ufpw1rO/nlW2VbIZDXV32TLdVwGe5lJsKlnG+MugFuPMgA0SmUC9WUBKaqdN2n8k/M
+         ane0XFbh+mu6rDjRT0iAW3xk+j427833EGIWtWdEcDObxxVOvdQaW41EwchCp4oZci
+         lvytoweLXSwBw==
+Date:   Fri, 21 Aug 2020 08:38:41 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     James Morris <jmorris@namei.org>
+Cc:     Amol Grover <frextrite@gmail.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        linux-kernel@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH RESEND] device_cgroup: Fix RCU list debugging warning
+Message-ID: <20200821083841.2ff9e0c3@canb.auug.org.au>
+In-Reply-To: <alpine.LRH.2.21.2008210427590.29407@namei.org>
+References: <20200406105950.GA2285@workstation-kernel-dev>
+        <20200607062340.7be7e8d5@canb.auug.org.au>
+        <20200607190840.GG4455@paulmck-ThinkPad-P72>
+        <20200608041734.GA10911@mail.hallyn.com>
+        <20200817120731.218e1bc5@canb.auug.org.au>
+        <alpine.LRH.2.21.2008210427590.29407@namei.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200820164753.3256899-1-jackmanb@chromium.org>
+Content-Type: multipart/signed; boundary="Sig_/a_eM9dyE5z92OcSM1Vl5uSN";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Aug 20, 2020 at 06:47:53PM +0200, Brendan Jackman wrote:
-> From: Paul Renauld <renauld@google.com>
-> 
-> LSMs have high overhead due to indirect function calls through
-> retpolines. This RPC proposes to replace these with static calls [1]
+--Sig_/a_eM9dyE5z92OcSM1Vl5uSN
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-typo: RFC
+Hi James,
 
-> instead.
+On Fri, 21 Aug 2020 04:28:34 +1000 (AEST) James Morris <jmorris@namei.org> =
+wrote:
+>
+> On Mon, 17 Aug 2020, Stephen Rothwell wrote:
+>=20
+> > > > mainline, so it can go up any tree.  I can take it if no one else w=
+ill,
+> > > > but it might be better going in via the security tree. =20
+> > >=20
+> > > James, do you mind pulling it in? =20
+> >=20
+> > I am still carrying this patch.  Has it been superceded, or is it still
+> > necessary? =20
+>=20
+> It appears to be necessary.
+>=20
+> Applied to
+> git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git =
+fixes-v5.9
 
-Yay! :)
+Thanks, I have dropped my copy.
 
-> [...]
-> This overhead prevents the adoption of bpf LSM on performance critical
-> systems, and also, in general, slows down all LSMs.
+--=20
+Cheers,
+Stephen Rothwell
 
-I'd be curious to see other workloads too. (Your measurements are a bit
-synthetic, mostly showing "worst case": one short syscall in a tight
-loop. I'm curious how much performance gain can be had -- we should
-still do it, it'll be a direct performance improvement, but I'm curious
-about "real world" impact too.)
+--Sig_/a_eM9dyE5z92OcSM1Vl5uSN
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-> [...]
-> Previously, the code for this hook would have looked like this:
-> 
-> 	ret = DEFAULT_RET;
-> 
->         for each cb in [A, B, C]:
->                 ret = cb(args); <--- costly indirect call here
->                 if ret != 0:
->                         break;
-> 
->         return ret;
-> 
-> Static calls are defined at build time and are initially empty (NOP
-> instructions). When the LSMs are initialized, the slots are filled as
-> follows:
-> 
->  slot idx     content
->            |-----------|
->     0      |           |
->            |-----------|
->     1      |           |
->            |-----------|
->     2      |   call A  | <-- base_slot_idx = 2
->            |-----------|
->     3      |   call B  |
->            |-----------|
->     4      |   call C  |
->            |-----------|
-> 
-> The generated code will unroll the foreach loop to have a static call for
-> each possible LSM:
-> 
->         ret = DEFAULT_RET;
->         switch(base_slot_idx):
-> 
->                 case 0:
->                         NOP
->                         if ret != 0:
->                                 break;
->                         // fallthrough
->                 case 1:
->                         NOP
->                         if ret != 0:
->                                 break;
->                         // fallthrough
->                 case 2:
->                         ret = A(args); <--- direct call, no retpoline
->                         if ret != 0:
->                                 break;
->                         // fallthrough
->                 case 3:
->                         ret = B(args); <--- direct call, no retpoline
->                         if ret != 0:
->                                 break;
->                         // fallthrough
-> 
->                 [...]
-> 
->                 default:
->                         break;
-> 
->         return ret;
-> 
-> A similar logic is applied for void hooks.
-> 
-> Why this trick with a switch statement? The table of static call is defined
-> at compile time. The number of hook callbacks that will be defined is
-> unknown at that time, and the table cannot be resized at runtime.  Static
-> calls do not define a conditional execution for a non-void function, so the
-> executed slots must be non-empty.  With this use of the table and the
-> switch, it is possible to jump directly to the first used slot and execute
-> all of the slots after. This essentially makes the entry point of the table
-> dynamic. Instead, it would also be possible to start from 0 and break after
-> the final populated slot, but that would require an additional conditional
-> after each slot.
+-----BEGIN PGP SIGNATURE-----
 
-Instead of just "NOP", having the static branches perform a jump would
-solve this pretty cleanly, yes? Something like:
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl8++3EACgkQAVBC80lX
+0GyaTAf+IaxI9JhgNTkeBKSvhvhEo7K22MCpbRAH+wHik1W7k/hlpLkHMBuHfkIZ
+NlRQFvJkPc950k5rSeWxE0+/53XCK2lnnp7tThfD0Xh8YyOk6kXX+kNhzfNAHFSn
+a66Fm7lsC8jtjicjGx9QN//v/ZsEn96vQsCECZ60Hll9iIG4tMOEqD4wdoHNVshH
+GyzzvPYAw0SLakK06GC0v8Xxsk8587SeGaTYG0SDyo1Fx955poQqfeMbwIWNXP4K
+Qt7QI4yKli5iDBLmWeQnhVpEiZea5p1oUfttOBp10zlhcWXm8ewZKzk6zG/0+lXu
++v5s3BQf4z2bdOg4hsz18vLQ7f7BeQ==
+=gRVV
+-----END PGP SIGNATURE-----
 
-	ret = DEFAULT_RET;
-
-	ret = A(args); <--- direct call, no retpoline
-	if ret != 0:
-		goto out;
-
-	ret = B(args); <--- direct call, no retpoline
-	if ret != 0:
-		goto out;
-
-	goto out;
-	if ret != 0:
-		goto out;
-
-out:
-	return ret;
-
-
-> [...]
-> The number of available slots for each LSM hook is currently fixed at
-> 11 (the number of LSMs in the kernel). Ideally, it should automatically
-> adapt to the number of LSMs compiled into the kernel.
-
-Seems like a reasonable thing to do and could be a separate patch.
-
-> If there’s no practical way to implement such automatic adaptation, an
-> option instead would be to remove the panic call by falling-back to the old
-> linked-list mechanism, which is still present anyway (see below).
-> 
-> A few special cases of LSM don't use the macro call_[int/void]_hook but
-> have their own calling logic. The linked-lists are kept as a possible slow
-> path fallback for them.
-
-I assume you mean the integrity subsystem? That just needs to be fixed
-correctly. If we switch to this, let's ditch the linked list entirely.
-Fixing integrity's stacking can be a separate patch too.
-
-> [...]
-> Signed-off-by: Paul Renauld <renauld@google.com>
-> Signed-off-by: KP Singh <kpsingh@google.com>
-> Signed-off-by: Brendan Jackman <jackmanb@google.com>
-
-This implies a maintainership chain, with Paul as the sole author. If
-you mean all of you worked on the patch, include Co-developed-by: as
-needed[1].
-
--Kees
-
-[1] https://www.kernel.org/doc/html/latest/process/submitting-patches.html#when-to-use-acked-by-cc-and-co-developed-by
-
--- 
-Kees Cook
+--Sig_/a_eM9dyE5z92OcSM1Vl5uSN--
