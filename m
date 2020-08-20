@@ -2,135 +2,66 @@ Return-Path: <SRS0=ujXN=B6=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 895DBC433DF
-	for <linux-security-module@archiver.kernel.org>; Thu, 20 Aug 2020 18:25:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0646FC433E1
+	for <linux-security-module@archiver.kernel.org>; Thu, 20 Aug 2020 18:28:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4FB05208E4
-	for <linux-security-module@archiver.kernel.org>; Thu, 20 Aug 2020 18:25:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1597947926;
-	bh=HD+6B26pOM3xOHTkv4x7zLa79Thbsh5pJUjBsUjrp/w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=ja5/hL754h4WsFU7qq75MUeI/q4snay9wDmmCQeIX1W1xkX0s3/c4Y6uCOMQBUBLC
-	 G5PaAqGQil29KWfnIEHUUDlWrmZeITRoCNxBDlG6sIYMzWmQf3aWLh9pI5DDOFyEHE
-	 J6HGB2ImgJ2gabfDJocEVpXzFxPqpJXUZ/jBETE0=
+	by mail.kernel.org (Postfix) with ESMTP id C7AE4208B3
+	for <linux-security-module@archiver.kernel.org>; Thu, 20 Aug 2020 18:28:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726990AbgHTSZU (ORCPT
+        id S1726990AbgHTS25 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 20 Aug 2020 14:25:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57524 "EHLO mail.kernel.org"
+        Thu, 20 Aug 2020 14:28:57 -0400
+Received: from namei.org ([65.99.196.166]:60258 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726896AbgHTSZU (ORCPT
+        id S1726977AbgHTS24 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 20 Aug 2020 14:25:20 -0400
-Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 336AA204FD;
-        Thu, 20 Aug 2020 18:25:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1597947918;
-        bh=HD+6B26pOM3xOHTkv4x7zLa79Thbsh5pJUjBsUjrp/w=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=2apTTtZszk/WzWxBLqb/GueTDxRXME6bRh6QcMCrNyO3oVk9djn5GlimeaQC41dpa
-         Zw62S5Yh/2y87P89CE4SeNzYO72SecBzL6gocrBJJDApjxzjILh0IFlfiQJAu2HQ5o
-         nDFntFlLqzJpbcftsqC+BSodnlGcJY19CIVjW39g=
-Date:   Thu, 20 Aug 2020 11:25:16 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        lkft-triage@lists.linaro.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        linux- stable <stable@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        LTP List <ltp@lists.linux.it>,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
-Subject: Re: [PATCH 5.8 000/232] 5.8.3-rc1 review
-Message-ID: <20200820182516.GA49496@sol.localdomain>
-References: <20200820091612.692383444@linuxfoundation.org>
- <CA+G9fYtebf78TH-XpqArunHc1L6s9mHdLEbpY1EY9tSyDjp=sg@mail.gmail.com>
+        Thu, 20 Aug 2020 14:28:56 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id 07KISY9J029978;
+        Thu, 20 Aug 2020 18:28:35 GMT
+Date:   Fri, 21 Aug 2020 04:28:34 +1000 (AEST)
+From:   James Morris <jmorris@namei.org>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+cc:     Amol Grover <frextrite@gmail.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        linux-kernel@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH RESEND] device_cgroup: Fix RCU list debugging warning
+In-Reply-To: <20200817120731.218e1bc5@canb.auug.org.au>
+Message-ID: <alpine.LRH.2.21.2008210427590.29407@namei.org>
+References: <20200406105950.GA2285@workstation-kernel-dev> <20200607062340.7be7e8d5@canb.auug.org.au> <20200607190840.GG4455@paulmck-ThinkPad-P72> <20200608041734.GA10911@mail.hallyn.com> <20200817120731.218e1bc5@canb.auug.org.au>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+G9fYtebf78TH-XpqArunHc1L6s9mHdLEbpY1EY9tSyDjp=sg@mail.gmail.com>
+Content-Type: text/plain; charset=US-ASCII
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Aug 20, 2020 at 08:57:57PM +0530, Naresh Kamboju wrote:
-> On Thu, 20 Aug 2020 at 14:55, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > This is the start of the stable review cycle for the 5.8.3 release.
-> > There are 232 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> >
-> > Responses should be made by Sat, 22 Aug 2020 09:15:09 +0000.
-> > Anything received after that time might be too late.
-> >
-> > The whole patch series can be found in one patch at:
-> >         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.8.3-rc1.gz
-> > or in the git tree and branch at:
-> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.8.y
-> > and the diffstat can be found below.
-> >
-> > thanks,
-> >
-> > greg k-h
-> 
-> > Herbert Xu <herbert@gondor.apana.org.au>
-> >     crypto: af_alg - Fix regression on empty requests
-> 
-> Results from Linaro’s test farm.
-> Regressions detected.
-> 
->   ltp-crypto-tests:
->     * af_alg02
->   ltp-cve-tests:
->     * cve-2017-17805
-> 
-> af_alg02.c:52: BROK: Timed out while reading from request socket.
-> We are running the LTP 20200515 tag released test suite.
->  https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/crypto/af_alg02.c
-> 
-> Summary
-> ------------------------------------------------------------------------
-> 
-> kernel: 5.8.3-rc1
-> git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-> git branch: linux-5.8.y
-> git commit: 201fff807310ce10485bcff294d47be95f3769eb
-> git describe: v5.8.2-233-g201fff807310
-> Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-5.8-oe/build/v5.8.2-233-g201fff807310
-> 
-> Regressions (compared to build v5.8.2)
-> ------------------------------------------------------------------------
-> 
-> x15:
->   ltp-crypto-tests:
->     * af_alg02
-> 
->   ltp-cve-tests:
->     * cve-2017-17805
-> 
+On Mon, 17 Aug 2020, Stephen Rothwell wrote:
 
-Looks like this test is still "broken" because it assumes behavior that isn't
-clearly specified, as previously discussed at
-https://lkml.kernel.org/r/20200702033221.GA19367@gondor.apana.org.au.
+> > > mainline, so it can go up any tree.  I can take it if no one else will,
+> > > but it might be better going in via the security tree.
+> > 
+> > James, do you mind pulling it in?
+> 
+> I am still carrying this patch.  Has it been superceded, or is it still
+> necessary?
 
-I sent out LTP patches to fix it:
-https://lkml.kernel.org/linux-crypto/20200820181918.404758-1-ebiggers@kernel.org/T/#u
+It appears to be necessary.
 
-- Eric
+Applied to
+git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git fixes-v5.9
+
+-- 
+James Morris
+<jmorris@namei.org>
+
