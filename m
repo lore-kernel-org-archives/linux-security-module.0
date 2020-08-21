@@ -2,140 +2,207 @@ Return-Path: <SRS0=891B=B7=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=ham
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D832C433DF
-	for <linux-security-module@archiver.kernel.org>; Fri, 21 Aug 2020 20:14:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF358C433E1
+	for <linux-security-module@archiver.kernel.org>; Fri, 21 Aug 2020 20:34:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3FC7C207CD
-	for <linux-security-module@archiver.kernel.org>; Fri, 21 Aug 2020 20:14:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C09120724
+	for <linux-security-module@archiver.kernel.org>; Fri, 21 Aug 2020 20:34:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="rvkncGg+"
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="NhZ9BlLw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726716AbgHUUOv (ORCPT
+        id S1726757AbgHUUe5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 21 Aug 2020 16:14:51 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60666 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725938AbgHUUOu (ORCPT
+        Fri, 21 Aug 2020 16:34:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44658 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726440AbgHUUey (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 21 Aug 2020 16:14:50 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 07LK3H1P132003;
-        Fri, 21 Aug 2020 16:14:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=OEL2qiQPMhRIm7Kf1rmkn8qZo5qwji4nRxuZSZ+sKUc=;
- b=rvkncGg+heFsofqSqD8cscXSzXxVYKzgeH/Icc7sfVL0xKNqLeOgd0nwqFFEzch86iwE
- VZulPcvulKDfulzwX906quMaHfHuZEKEYymfp9Ii3r33S8mr695jmEVksqs3tPjtd45u
- NWyD/vb+rv+4mvNqRAA0DMLYqrX3VXxbdOhueO7yzumIMoKu9UkJsqAKyCGh/2ijzFII
- QIPP342d+8f4V/EQShyut2odxaC/2jnl7YIYszYFx0C9lu0o07le7sBYwIMh4nY/gRxN
- LnImjSLAt9/p68Kb/xC+k8VliAQF8vvvkVdZtFVTbD8QV/AeSg8MDf0mZtnjikd9fkPc Ug== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3327xueyev-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 21 Aug 2020 16:14:43 -0400
-Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 07LK3PAG132989;
-        Fri, 21 Aug 2020 16:14:43 -0400
-Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3327xueyee-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 21 Aug 2020 16:14:43 -0400
-Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
-        by ppma04ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 07LK52fH015848;
-        Fri, 21 Aug 2020 20:14:41 GMT
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
-        by ppma04ams.nl.ibm.com with ESMTP id 3304cc4qka-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 21 Aug 2020 20:14:41 +0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 07LKEdlB24314184
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 21 Aug 2020 20:14:39 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 29160A4053;
-        Fri, 21 Aug 2020 20:14:39 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7ED45A4040;
-        Fri, 21 Aug 2020 20:14:37 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.65.240])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 21 Aug 2020 20:14:37 +0000 (GMT)
-Message-ID: <caedd49bc2080a2fb8b16b9ecacab67d11e68fd7.camel@linux.ibm.com>
-Subject: Re: [PATCH 03/11] evm: Refuse EVM_ALLOW_METADATA_WRITES only if the
- HMAC key is loaded
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>, mjg59@google.com
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Date:   Fri, 21 Aug 2020 16:14:36 -0400
-In-Reply-To: <20200618160133.937-3-roberto.sassu@huawei.com>
-References: <20200618160133.937-1-roberto.sassu@huawei.com>
-         <20200618160133.937-3-roberto.sassu@huawei.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
-Mime-Version: 1.0
+        Fri, 21 Aug 2020 16:34:54 -0400
+Received: from mail-qv1-xf41.google.com (mail-qv1-xf41.google.com [IPv6:2607:f8b0:4864:20::f41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C51B1C061574
+        for <linux-security-module@vger.kernel.org>; Fri, 21 Aug 2020 13:34:54 -0700 (PDT)
+Received: by mail-qv1-xf41.google.com with SMTP id t6so1227355qvw.1
+        for <linux-security-module@vger.kernel.org>; Fri, 21 Aug 2020 13:34:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:from:to:cc:date:message-id:user-agent:mime-version
+         :content-transfer-encoding;
+        bh=gtYkus8ZVVc5pmWJLu8BIzUlBoq3dgwoix4MDLg9CP8=;
+        b=NhZ9BlLwXuB+GFtl7cKffYH0zhfkWL/WSkQtfHgqgfDHRf5pL5PPk1dZVv9acUrgeW
+         BE413GiRIotoOjZwD6VeTM2HLzyqxWxDKxIAtQkaPG4uNkREAmp+G9oV0IrcpXynP46t
+         8VizZ4qQn2NbP0d1s9ez5FHu/QYS2HdRkGgc02r15zn3wkfjrFmqwdj1bF+QlZA8a1/g
+         0NUV9wPeIseYV79MxRR5zEhMm0OWXCpUSMOkc+4wFZRxRaj1DA8gErM1GTC9wGkCssqw
+         DnVAPGFkTNYZCxTSniValX1oejiDpHcKvomdCBMAJN6PZ1VNW+LdlMnnNI7c5pN3NesQ
+         PJTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:date:message-id:user-agent
+         :mime-version:content-transfer-encoding;
+        bh=gtYkus8ZVVc5pmWJLu8BIzUlBoq3dgwoix4MDLg9CP8=;
+        b=Q+MV9eGOVTyI5wn6EkbF+7y64a83gmnYfAIccqQHf+RLKfwhTaLm2lNWd4hvRvF6UM
+         2h8IeAK9D2KlZNIIGbioxoI4tzVeWHQFTLqAJ1pKOFuZezWFV4gnIxY8kF/bMtdD9V3T
+         qBjxnsaVw7caE1+HzxxBj2wMzZ9JM67SafswjloL+Fe1CmLUqjgu6B+GC/udXhw3r6Kq
+         8PnLsGTmUArOLl0hAoqVkvUBXRPbFbUzqnApCsHEi5dGXKZQLtAuNS9VDdISIKNztgxA
+         KQuMe4Z58CpSM5NaSahNfCEZ3qiflyjIqF/JjMFWYXNI93kgv9OPCrdYKWb+qtJXacBX
+         ZVgg==
+X-Gm-Message-State: AOAM5318qemhIhTikh4WO85M7Grv9RuZkLmLs8R+Ru7c8EfSyvXD6kAV
+        PcZ+W0D6/Zk/mPYm7OLsYXrD
+X-Google-Smtp-Source: ABdhPJz8j+1pCA53E3Grk45ESNsN0PVvN11X7njTJ3Ea12itZgwJb9nO1rLFL84r1uLmlvhcUWyxPw==
+X-Received: by 2002:a05:6214:1108:: with SMTP id e8mr4020105qvs.237.1598042093697;
+        Fri, 21 Aug 2020 13:34:53 -0700 (PDT)
+Received: from localhost (pool-96-230-24-152.bstnma.fios.verizon.net. [96.230.24.152])
+        by smtp.gmail.com with ESMTPSA id k1sm2675427qkf.12.2020.08.21.13.34.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Aug 2020 13:34:52 -0700 (PDT)
+Subject: [net PATCH] netlabel: fix problems with mapping removal
+From:   Paul Moore <paul@paul-moore.com>
+To:     netdev@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        Stephen Smalley <stephen.smalley.work@gmail.com>
+Date:   Fri, 21 Aug 2020 16:34:52 -0400
+Message-ID: <159804209207.16190.14955035148979265114.stgit@sifl>
+User-Agent: StGit/0.23
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-08-21_09:2020-08-21,2020-08-21 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- impostorscore=0 mlxscore=0 phishscore=0 adultscore=0 suspectscore=0
- spamscore=0 priorityscore=1501 mlxlogscore=999 lowpriorityscore=0
- bulkscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2008210183
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Roberto,
+This patch fixes two main problems seen when removing NetLabel
+mappings: memory leaks and potentially extra audit noise.
 
-On Thu, 2020-06-18 at 18:01 +0200, Roberto Sassu wrote:
-> Granting metadata write is safe if the HMAC key is not loaded, as it won't
-> let an attacker obtain a valid HMAC from corrupted xattrs. evm_write_key()
-> however does not allow it if any key is loaded, including a public key,
-> which should not be a problem.
-> 
+The memory leaks are caused by not properly free'ing the mapping's
+address selector struct when free'ing the entire entry as well as
+not properly cleaning up a temporary mapping entry when adding new
+address selectors to an existing entry.  This patch fixes both these
+problems such that kmemleak reports no NetLabel associated leaks
+after running the SELinux test suite.
 
-Why is the existing hebavior a problem?  What is the problem being
-solved?
+The potentially extra audit noise was caused by the auditing code in
+netlbl_domhsh_remove_entry() being called regardless of the entry's
+validity.  If another thread had already marked the entry as invalid,
+but not removed/free'd it from the list of mappings, then it was
+possible that an additional mapping removal audit record would be
+generated.  This patch fixes this by returning early from the removal
+function when the entry was previously marked invalid.  This change
+also had the side benefit of improving the code by decreasing the
+indentation level of large chunk of code by one (accounting for most
+of the diffstat).
 
-> This patch allows setting EVM_ALLOW_METADATA_WRITES if the EVM_INIT_HMAC
-> flag is not set.
-> 
-> Cc: stable@vger.kernel.org # 4.16.x
-> Fixes: ae1ba1676b88e ("EVM: Allow userland to permit modification of EVM-protected metadata")
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> ---
->  security/integrity/evm/evm_secfs.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/security/integrity/evm/evm_secfs.c b/security/integrity/evm/evm_secfs.c
-> index cfc3075769bb..92fe26ace797 100644
-> --- a/security/integrity/evm/evm_secfs.c
-> +++ b/security/integrity/evm/evm_secfs.c
-> @@ -84,7 +84,7 @@ static ssize_t evm_write_key(struct file *file, const char __user *buf,
->  	 * keys are loaded.
->  	 */
->  	if ((i & EVM_ALLOW_METADATA_WRITES) &&
-> -	    ((evm_initialized & EVM_KEY_MASK) != 0) &&
-> +	    ((evm_initialized & EVM_INIT_HMAC) != 0) &&
->  	    !(evm_initialized & EVM_ALLOW_METADATA_WRITES))
->  		return -EPERM;
+Fixes: 63c416887437 ("netlabel: Add network address selectors to the NetLabel/LSM domain mapping")
+Reported-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+Signed-off-by: Paul Moore <paul@paul-moore.com>
+---
+ net/netlabel/netlabel_domainhash.c |   59 ++++++++++++++++++------------------
+ 1 file changed, 30 insertions(+), 29 deletions(-)
 
->  
-
-Documentation/ABI/testing/evm needs to be updated as well.
-
-thanks,
-
-Mimi
-
-
+diff --git a/net/netlabel/netlabel_domainhash.c b/net/netlabel/netlabel_domainhash.c
+index d07de2c0fbc7..f73a8382c275 100644
+--- a/net/netlabel/netlabel_domainhash.c
++++ b/net/netlabel/netlabel_domainhash.c
+@@ -85,6 +85,7 @@ static void netlbl_domhsh_free_entry(struct rcu_head *entry)
+ 			kfree(netlbl_domhsh_addr6_entry(iter6));
+ 		}
+ #endif /* IPv6 */
++		kfree(ptr->def.addrsel);
+ 	}
+ 	kfree(ptr->domain);
+ 	kfree(ptr);
+@@ -537,6 +538,8 @@ int netlbl_domhsh_add(struct netlbl_dom_map *entry,
+ 				goto add_return;
+ 		}
+ #endif /* IPv6 */
++		/* cleanup the new entry since we've moved everything over */
++		netlbl_domhsh_free_entry(&entry->rcu);
+ 	} else
+ 		ret_val = -EINVAL;
+ 
+@@ -580,6 +583,12 @@ int netlbl_domhsh_remove_entry(struct netlbl_dom_map *entry,
+ {
+ 	int ret_val = 0;
+ 	struct audit_buffer *audit_buf;
++	struct netlbl_af4list *iter4;
++	struct netlbl_domaddr4_map *map4;
++#if IS_ENABLED(CONFIG_IPV6)
++	struct netlbl_af6list *iter6;
++	struct netlbl_domaddr6_map *map6;
++#endif /* IPv6 */
+ 
+ 	if (entry == NULL)
+ 		return -ENOENT;
+@@ -597,6 +606,9 @@ int netlbl_domhsh_remove_entry(struct netlbl_dom_map *entry,
+ 		ret_val = -ENOENT;
+ 	spin_unlock(&netlbl_domhsh_lock);
+ 
++	if (ret_val)
++		return ret_val;
++
+ 	audit_buf = netlbl_audit_start_common(AUDIT_MAC_MAP_DEL, audit_info);
+ 	if (audit_buf != NULL) {
+ 		audit_log_format(audit_buf,
+@@ -606,40 +618,29 @@ int netlbl_domhsh_remove_entry(struct netlbl_dom_map *entry,
+ 		audit_log_end(audit_buf);
+ 	}
+ 
+-	if (ret_val == 0) {
+-		struct netlbl_af4list *iter4;
+-		struct netlbl_domaddr4_map *map4;
+-#if IS_ENABLED(CONFIG_IPV6)
+-		struct netlbl_af6list *iter6;
+-		struct netlbl_domaddr6_map *map6;
+-#endif /* IPv6 */
+-
+-		switch (entry->def.type) {
+-		case NETLBL_NLTYPE_ADDRSELECT:
+-			netlbl_af4list_foreach_rcu(iter4,
+-					     &entry->def.addrsel->list4) {
+-				map4 = netlbl_domhsh_addr4_entry(iter4);
+-				cipso_v4_doi_putdef(map4->def.cipso);
+-			}
++	switch (entry->def.type) {
++	case NETLBL_NLTYPE_ADDRSELECT:
++		netlbl_af4list_foreach_rcu(iter4, &entry->def.addrsel->list4) {
++			map4 = netlbl_domhsh_addr4_entry(iter4);
++			cipso_v4_doi_putdef(map4->def.cipso);
++		}
+ #if IS_ENABLED(CONFIG_IPV6)
+-			netlbl_af6list_foreach_rcu(iter6,
+-					     &entry->def.addrsel->list6) {
+-				map6 = netlbl_domhsh_addr6_entry(iter6);
+-				calipso_doi_putdef(map6->def.calipso);
+-			}
++		netlbl_af6list_foreach_rcu(iter6, &entry->def.addrsel->list6) {
++			map6 = netlbl_domhsh_addr6_entry(iter6);
++			calipso_doi_putdef(map6->def.calipso);
++		}
+ #endif /* IPv6 */
+-			break;
+-		case NETLBL_NLTYPE_CIPSOV4:
+-			cipso_v4_doi_putdef(entry->def.cipso);
+-			break;
++		break;
++	case NETLBL_NLTYPE_CIPSOV4:
++		cipso_v4_doi_putdef(entry->def.cipso);
++		break;
+ #if IS_ENABLED(CONFIG_IPV6)
+-		case NETLBL_NLTYPE_CALIPSO:
+-			calipso_doi_putdef(entry->def.calipso);
+-			break;
++	case NETLBL_NLTYPE_CALIPSO:
++		calipso_doi_putdef(entry->def.calipso);
++		break;
+ #endif /* IPv6 */
+-		}
+-		call_rcu(&entry->rcu, netlbl_domhsh_free_entry);
+ 	}
++	call_rcu(&entry->rcu, netlbl_domhsh_free_entry);
+ 
+ 	return ret_val;
+ }
 
