@@ -2,149 +2,211 @@ Return-Path: <SRS0=891B=B7=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=BAYES_00,DKIM_ADSP_CUSTOM_MED,
+	DKIM_INVALID,DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B7EAC433DF
-	for <linux-security-module@archiver.kernel.org>; Fri, 21 Aug 2020 18:45:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F24BCC433E1
+	for <linux-security-module@archiver.kernel.org>; Fri, 21 Aug 2020 18:57:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1FD1920658
-	for <linux-security-module@archiver.kernel.org>; Fri, 21 Aug 2020 18:45:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC64720714
+	for <linux-security-module@archiver.kernel.org>; Fri, 21 Aug 2020 18:57:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="UBn8tYSN"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="eIM0ewAL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725935AbgHUSpa (ORCPT
+        id S1726435AbgHUS5G (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 21 Aug 2020 14:45:30 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:23686 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725906AbgHUSp0 (ORCPT
+        Fri, 21 Aug 2020 14:57:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57628 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726541AbgHUS5C (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 21 Aug 2020 14:45:26 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 07LIX9jP063691;
-        Fri, 21 Aug 2020 14:45:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=vSOS4YCf0VCleD8hfNfex3HRQvYcTP2XxAkZXGq19qo=;
- b=UBn8tYSNsfkoeSxiwg1bdoiR5tPseLBd+3251b7x4IA0t5Jl+pg3+Q4anG7vQMnY28yr
- Xs80SUKuGV3yOLVdUP+yGlJszJAny6J15bM8AeXcIPvSTouS6uVtCWiW5pBgPOrTbFid
- 0Ef2yBJ9AkBRAIy5naK+A+FJhtay4SgxplmuyCTm/+54oNi38sFZwLmWTr8x0oaZewta
- 6PX3YP/2bCPhhiwD4NNbic3kfDZq9OjJArQuWAjW7TfgxF7lNfFu4e5JhRgKnv2E3ZPy
- gSWa2Py8f52MAErMHw4HerdgxXRQPBzlfNjFOj3CfVZCdRBeu1accV2zF7l88J5rRmDE Xg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 332hdd45c1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 21 Aug 2020 14:45:22 -0400
-Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 07LIY2gc066917;
-        Fri, 21 Aug 2020 14:45:22 -0400
-Received: from ppma04fra.de.ibm.com (6a.4a.5195.ip4.static.sl-reverse.com [149.81.74.106])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 332hdd45b8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 21 Aug 2020 14:45:21 -0400
-Received: from pps.filterd (ppma04fra.de.ibm.com [127.0.0.1])
-        by ppma04fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 07LIjJGL012179;
-        Fri, 21 Aug 2020 18:45:19 GMT
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
-        by ppma04fra.de.ibm.com with ESMTP id 3304ujtud6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 21 Aug 2020 18:45:19 +0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 07LIjHTD21823964
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 21 Aug 2020 18:45:17 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 429D0A4053;
-        Fri, 21 Aug 2020 18:45:17 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CBFDAA4057;
-        Fri, 21 Aug 2020 18:45:15 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.65.240])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 21 Aug 2020 18:45:15 +0000 (GMT)
-Message-ID: <8a1773d7707639d275fff138736d57472e26ade5.camel@linux.ibm.com>
-Subject: Re: [PATCH 02/11] evm: Load EVM key in ima_load_x509() to avoid
- appraisal
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>, mjg59@google.com
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Fri, 21 Aug 2020 14:45:14 -0400
-In-Reply-To: <20200618160133.937-2-roberto.sassu@huawei.com>
-References: <20200618160133.937-1-roberto.sassu@huawei.com>
-         <20200618160133.937-2-roberto.sassu@huawei.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
+        Fri, 21 Aug 2020 14:57:02 -0400
+Received: from mail-pg1-x549.google.com (mail-pg1-x549.google.com [IPv6:2607:f8b0:4864:20::549])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 566EFC061575
+        for <linux-security-module@vger.kernel.org>; Fri, 21 Aug 2020 11:57:02 -0700 (PDT)
+Received: by mail-pg1-x549.google.com with SMTP id h36so1489033pgl.14
+        for <linux-security-module@vger.kernel.org>; Fri, 21 Aug 2020 11:57:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=sender:date:message-id:mime-version:subject:from:to:cc;
+        bh=oWFdh/PRo3gGpAV+9k5dRsjIEptJbJCkCMmQ8ucgmPk=;
+        b=eIM0ewALXtMVmYnzBh1gd4g4cgWboGe0k6p4lIbSnc4fQ9pdVfb/Lou19RPdZZRuvW
+         LQ1XfkVQ7fNa7xZdIxLlxZVnD85d40wlITdn0IogFA8+wRa6Km6GAMS6AR77/FyVikhn
+         k7I2TtjHFF28aa4JRfiYHZpYN13mSNw6UmnKj2E0VdZiuoz0P9iY12JQ0q2WtMJbiLKP
+         ABwU3IpnqkAQwDr6il5lNzibh2vxu4CCl2w0fflGUVCCj5sOS2BZeOejFV49RTluCkBQ
+         kINmFvUY++dvTYPkUrPciNOdDObE1Gk0zpF8P5GtYe2+xl0tMOJlJJ+70ilrXz9Bdt5/
+         h0YQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:message-id:mime-version:subject:from
+         :to:cc;
+        bh=oWFdh/PRo3gGpAV+9k5dRsjIEptJbJCkCMmQ8ucgmPk=;
+        b=S/dLSjUe0Kd5xctuHIxBFfKUfgAZiQkFY32LbiCWqHRLar7JWlM6iVqdwjA1vJLkPv
+         SmMiDor5g633fUGjNyqJEoVOgW5825HdetaSS1rzAYZA41B7ygF/hHMm0xhxLvd3oyt0
+         iw1MiviDCJIl3wSXjXwJXLuXFKJaKB8LLIgPaxk1z5Qlj13Mhy0pQyK7Bx5hf+u9ar1x
+         QE41k0CUEhA2zsPh0xiKF3fLoeu/IKxCMGlLv3iwJcZXkpemWj+KrqQyhu1w4akJ2WFK
+         w+wmM2OE7FMwROEV7yz0W6fk+lMIVCjuAWJbeTB+8KZxo8U2f68tgbN/xOee4tBOisey
+         rrcg==
+X-Gm-Message-State: AOAM530gGi6fSHaACZ8PN8y6pSAsAZUE2GWAU6T69TsmXITvipbDG5ld
+        HlKkwPPzdbqGNrOGvTlbOZF0WtRkrtqOocL8cw==
+X-Google-Smtp-Source: ABdhPJyD3Yh3CAqaICxx5JQmoTQsRkSWlUNlrc+z2K5FgB5OskDZ16gE5AERUF9KvVPCjDJ27Vch2q4YlRDdaNWY1Q==
+X-Received: from lg.mtv.corp.google.com ([2620:15c:211:202:f693:9fff:fef4:29dd])
+ (user=lokeshgidra job=sendgmr) by 2002:a17:90a:9405:: with SMTP id
+ r5mr3668948pjo.74.1598036220902; Fri, 21 Aug 2020 11:57:00 -0700 (PDT)
+Date:   Fri, 21 Aug 2020 11:56:42 -0700
+Message-Id: <20200821185645.801971-1-lokeshgidra@google.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-08-21_08:2020-08-21,2020-08-21 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
- malwarescore=0 bulkscore=0 phishscore=0 clxscore=1015 mlxlogscore=999
- suspectscore=0 lowpriorityscore=0 priorityscore=1501 spamscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2008210175
+X-Mailer: git-send-email 2.28.0.297.g1956fa8f8d-goog
+Subject: [PATCH v7 0/3] SELinux support for anonymous inodes and UFFD
+From:   Lokesh Gidra <lokeshgidra@google.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        James Morris <jmorris@namei.org>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Eric Biggers <ebiggers@kernel.org>
+Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        Daniel Colascione <dancol@dancol.org>,
+        Kees Cook <keescook@chromium.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        KP Singh <kpsingh@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Thomas Cedeno <thomascedeno@google.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Matthew Garrett <matthewgarrett@google.com>,
+        Aaron Goidel <acgoide@tycho.nsa.gov>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Adrian Reber <areber@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        kaleshsingh@google.com, calin@google.com, surenb@google.com,
+        nnk@google.com, jeffv@google.com, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 2020-06-18 at 18:01 +0200, Roberto Sassu wrote:
-> Public keys do not need to be appraised by IMA as the restriction on the
-> IMA/EVM keyrings ensures that a key is loaded only if it is signed with a
-> key in the primary or secondary keyring.
-> 
-> However, when evm_load_x509() is loaded, appraisal is already enabled and
-> a valid IMA signature must be added to the EVM key to pass verification.
-> 
-> Since the restriction is applied on both IMA and EVM keyrings, it is safe
-> to disable appraisal also when the EVM key is loaded. This patch calls
-> evm_load_x509() inside ima_load_x509() if CONFIG_IMA_LOAD_X509 is defined.
-> 
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> ---
->  security/integrity/iint.c         | 2 ++
->  security/integrity/ima/ima_init.c | 4 ++++
->  2 files changed, 6 insertions(+)
-> 
-> diff --git a/security/integrity/iint.c b/security/integrity/iint.c
-> index e12c4900510f..4765a266ba96 100644
-> --- a/security/integrity/iint.c
-> +++ b/security/integrity/iint.c
-> @@ -212,7 +212,9 @@ int integrity_kernel_read(struct file *file, loff_t offset,
->  void __init integrity_load_keys(void)
->  {
->  	ima_load_x509();
-> +#ifndef CONFIG_IMA_LOAD_X509
->  	evm_load_x509();
-> +#endif
->  }
->  
->  static int __init integrity_fs_init(void)
-> diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
-> index 4902fe7bd570..9d29a1680da8 100644
-> --- a/security/integrity/ima/ima_init.c
-> +++ b/security/integrity/ima/ima_init.c
-> @@ -106,6 +106,10 @@ void __init ima_load_x509(void)
->  
->  	ima_policy_flag &= ~unset_flags;
->  	integrity_load_x509(INTEGRITY_KEYRING_IMA, CONFIG_IMA_X509_PATH);
-> +
-> +	/* load also EVM key to avoid appraisal */
-> +	evm_load_x509();
-> +
->  	ima_policy_flag |= unset_flags;
->  }
->  #endif
+Userfaultfd in unprivileged contexts could be potentially very
+useful. We'd like to harden userfaultfd to make such unprivileged use
+less risky. This patch series allows SELinux to manage userfaultfd
+file descriptors and in the future, other kinds of
+anonymous-inode-based file descriptor.  SELinux policy authors can
+apply policy types to anonymous inodes by providing name-based
+transition rules keyed off the anonymous inode internal name (
+"[userfaultfd]" in the case of userfaultfd(2) file descriptors) and
+applying policy to the new SIDs thus produced.
 
-As much as possible IMA and EVM should remain independent of each
-other.   Modifying integrity_load_x509() doesn't help.  This looks like
-a good reason for calling another EVM function from within IMA.
+With SELinux managed userfaultfd, an admin can control creation and
+movement of the file descriptors. In particular, handling of
+a userfaultfd descriptor by a different process is essentially a
+ptrace access into the process, without any of the corresponding
+security_ptrace_access_check() checks. For privacy, the admin may
+want to deny such accesses, which is possible with SELinux support.
 
-Mimi
+Inside the kernel, a new anon_inode interface, anon_inode_getfd_secure,
+allows callers to opt into this SELinux management. In this new "secure"
+mode, anon_inodes create new ephemeral inodes for anonymous file objects
+instead of reusing the normal anon_inodes singleton dummy inode. A new
+LSM hook gives security modules an opportunity to configure and veto
+these ephemeral inodes.
 
+This patch series is one of two fork of [1] and is an
+alternative to [2].
+
+The primary difference between the two patch series is that this
+partch series creates a unique inode for each "secure" anonymous
+inode, while the other patch series ([2]) continues using the
+singleton dummy anonymous inode and adds a way to attach SELinux
+security information directly to file objects.
+
+I prefer the approach in this patch series because 1) it's a smaller
+patch than [2], and 2) it produces a more regular security
+architecture: in this patch series, secure anonymous inodes aren't
+S_PRIVATE and they maintain the SELinux property that the label for a
+file is in its inode. We do need an additional inode per anonymous
+file, but per-struct-file inode creation doesn't seem to be a problem
+for pipes and sockets.
+
+The previous version of this feature ([1]) created a new SELinux
+security class for userfaultfd file descriptors. This version adopts
+the generic transition-based approach of [2].
+
+This patch series also differs from [2] in that it doesn't affect all
+anonymous inodes right away --- instead requiring anon_inodes callers
+to opt in --- but this difference isn't one of basic approach. The
+important question to resolve is whether we should be creating new
+inodes or enhancing per-file data.
+
+Changes from the first version of the patch:
+
+  - Removed some error checks
+  - Defined a new anon_inode SELinux class to resolve the
+    ambiguity in [3]
+  - Inherit sclass as well as descriptor from context inode
+
+Changes from the second version of the patch:
+
+  - Fixed example policy in the commit message to reflect the use of
+    the new anon_inode class.
+
+Changes from the third version of the patch:
+
+  - Dropped the fops parameter to the LSM hook
+  - Documented hook parameters
+  - Fixed incorrect class used for SELinux transition
+  - Removed stray UFFD changed early in the series
+  - Removed a redundant ERR_PTR(PTR_ERR())
+
+Changes from the fourth version of the patch:
+
+  - Removed an unused parameter from an internal function
+  - Fixed function documentation
+
+Changes from the fifth version of the patch:
+
+  - Fixed function documentation in fs/anon_inodes.c and
+    include/linux/lsm_hooks.h
+  - Used anon_inode_getfd_secure() in userfaultfd() syscall and removed
+    owner from userfaultfd_ctx.
+
+Changed from the sixth version of the patch:
+
+  - Removed definition of anon_inode_getfile_secure() as there are no
+    callers.
+  - Simplified function description of anon_inode_getfd_secure().
+  - Elaborated more on the purpose of 'context_inode' in commit message.
+
+[1] https://lore.kernel.org/lkml/20200211225547.235083-1-dancol@google.com/
+[2] https://lore.kernel.org/linux-fsdevel/20200213194157.5877-1-sds@tycho.nsa.gov/
+[3] https://lore.kernel.org/lkml/23f725ca-5b5a-5938-fcc8-5bbbfc9ba9bc@tycho.nsa.gov/
+
+Daniel Colascione (3):
+  Add a new LSM-supporting anonymous inode interface
+  Teach SELinux about anonymous inodes
+  Wire UFFD up to SELinux
+
+ fs/anon_inodes.c                    | 148 ++++++++++++++++++++--------
+ fs/userfaultfd.c                    |  23 +++--
+ include/linux/anon_inodes.h         |  13 +++
+ include/linux/lsm_hook_defs.h       |   2 +
+ include/linux/lsm_hooks.h           |   7 ++
+ include/linux/security.h            |   3 +
+ security/security.c                 |   9 ++
+ security/selinux/hooks.c            |  53 ++++++++++
+ security/selinux/include/classmap.h |   2 +
+ 9 files changed, 210 insertions(+), 50 deletions(-)
+
+-- 
+2.28.0.297.g1956fa8f8d-goog
 
