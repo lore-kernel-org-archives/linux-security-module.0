@@ -2,206 +2,129 @@ Return-Path: <SRS0=891B=B7=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15BDEC433E1
-	for <linux-security-module@archiver.kernel.org>; Fri, 21 Aug 2020 01:46:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ED37C433E1
+	for <linux-security-module@archiver.kernel.org>; Fri, 21 Aug 2020 03:49:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EB15E2075E
-	for <linux-security-module@archiver.kernel.org>; Fri, 21 Aug 2020 01:46:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 592F720855
+	for <linux-security-module@archiver.kernel.org>; Fri, 21 Aug 2020 03:49:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="ibItNJPC"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Aq+MFU9K"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725859AbgHUBqT (ORCPT
+        id S1727926AbgHUDtK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 20 Aug 2020 21:46:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38706 "EHLO
+        Thu, 20 Aug 2020 23:49:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57746 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726846AbgHUBqR (ORCPT
+        with ESMTP id S1727892AbgHUDtF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 20 Aug 2020 21:46:17 -0400
-Received: from mail-qv1-xf42.google.com (mail-qv1-xf42.google.com [IPv6:2607:f8b0:4864:20::f42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 116A6C061386
-        for <linux-security-module@vger.kernel.org>; Thu, 20 Aug 2020 18:46:16 -0700 (PDT)
-Received: by mail-qv1-xf42.google.com with SMTP id j10so81453qvo.13
-        for <linux-security-module@vger.kernel.org>; Thu, 20 Aug 2020 18:46:16 -0700 (PDT)
+        Thu, 20 Aug 2020 23:49:05 -0400
+Received: from mail-io1-xd43.google.com (mail-io1-xd43.google.com [IPv6:2607:f8b0:4864:20::d43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D6A1C061388
+        for <linux-security-module@vger.kernel.org>; Thu, 20 Aug 2020 20:49:05 -0700 (PDT)
+Received: by mail-io1-xd43.google.com with SMTP id z17so462800ioi.6
+        for <linux-security-module@vger.kernel.org>; Thu, 20 Aug 2020 20:49:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:cc:date:message-id:user-agent:mime-version
-         :content-transfer-encoding;
-        bh=DyvLbCUvGL9bDmrWcO1tap29+Q0copNEphXJwMJfUmM=;
-        b=ibItNJPCRFASoGaCEsVRuAr/AecET8unfSAvJnDmMSe1rXmkMQeMfzT+8WGlBig4bj
-         BgNWcIXwlUVRAvDX+KjAjiFEd0ZdbeUX8PeItKDCnmCwJUgR5nzN4nE+QRdzaub5806n
-         6OR+Wj/qZSu3GKUeKtMfy1gKp9j26muVNbfDFUbVq252YWn8g2RmKoyMArinM2jc6LT8
-         EsxWAzXdzRdFrewjGmZAQ88KTREq7cLcIepBsMIp1FZhaYLfORocS4VTbyukA9FG38oV
-         XjpdzSSHKQHoTbLMS2WvKeBtwE2onN8LPJb2t/2ATb+hcKLDBerpoixnQh6fM2Uwja/a
-         L3Gw==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YD6EeTnsT2wy78rPM62cWU7iNSgM0HOqIQD7wF0JrbY=;
+        b=Aq+MFU9KfwsZ6o2zwcEjbLvshHLnaZ6+vHTfx0cyGPVPvcdPDwWcejYGYyDqS3xjHG
+         McomnkZUutkTmLbcxfQyj/9Da7L6YBAqC3T/66zupxF23Yvl/gjon8spfexymNQ7S1px
+         iSStKpkFx0XXuhE79pL51BmzeTXHk+JpFXgaGli36qLoxMCyzzLpP0FZS+iNL5ZdUC2x
+         xMnP0ex12um7i+J6B9RgoAtiZzv0bvjkzB5GaNC9TccJNFCnfnZMTsKBrSE5u+jdN7yI
+         B4PsPDzSC31jiX+amsUT7YPuPBq+uS50qXN5DIZ+mHEs9kbz+ElK6ekebmV8mEMH6F5O
+         R1Ug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:date:message-id:user-agent
-         :mime-version:content-transfer-encoding;
-        bh=DyvLbCUvGL9bDmrWcO1tap29+Q0copNEphXJwMJfUmM=;
-        b=fQ799VQyT0I5ZbQBDXKvxKPwLfHpViOtdVxHOVdMvcHIt44L26E+jIcK0OHlIsMOx5
-         OzVSG7IJetDwzD6Fs28UPlPOI24mBBEm4h8jO2saoIrn/8+6NSi7fXnEwsoHeasirNVM
-         4Cqy0DswIEvcq2iqtYq7eaB3/Hd6nunN6dyYuiv1Zv18DecXRhIMnjFW+H+k1mZ2IIpt
-         a5d4YwPPr7VHwtlkS0RWiASvfUGvFpEPtTJ95ssCrP0b9nmQVc/iHwjggIE64mBhPgnl
-         dsLjw2uqhhAFgRrqKshi/dHxnz0XfL+k0RfgzGnH8KUwLrlh5dp5LeT9ysnpcq2QHcwY
-         U2LQ==
-X-Gm-Message-State: AOAM5309SXEYTWDcN9zA2pPMzwfwxbVpwinX9uMGDCSVJWg5m1cBpIjm
-        +TzIxnpW86oksLzQ6IC2Jjb+
-X-Google-Smtp-Source: ABdhPJyOVPxphVgx4G2XqHy+bhOOLXovVWDzOOaG5IdOspzieM/eTDM67hCWvMvogMj9eP67TkLdmQ==
-X-Received: by 2002:a0c:9cc4:: with SMTP id j4mr519547qvf.230.1597974375782;
-        Thu, 20 Aug 2020 18:46:15 -0700 (PDT)
-Received: from localhost (pool-96-230-24-152.bstnma.fios.verizon.net. [96.230.24.152])
-        by smtp.gmail.com with ESMTPSA id d20sm311079qkl.36.2020.08.20.18.46.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Aug 2020 18:46:14 -0700 (PDT)
-Subject: [net-next PATCH] netlabel: fix problems with mapping removal
-From:   Paul Moore <paul@paul-moore.com>
-To:     netdev@vger.kernel.org
-Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        Stephen Smalley <stephen.smalley.work@gmail.com>
-Date:   Thu, 20 Aug 2020 21:46:14 -0400
-Message-ID: <159797437409.20181.15427109610194880479.stgit@sifl>
-User-Agent: StGit/0.23
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YD6EeTnsT2wy78rPM62cWU7iNSgM0HOqIQD7wF0JrbY=;
+        b=ZJkUb+egzgrVjN6Vy2ax5kcuV1csYhNYEQmuUFL4b+lqi8XZ8RIpuwxhV7bYFPpupc
+         VA88BjpQW5qLQAIn0CttYelddVTp3RqgvZugifwjnALt4LZ/TW2ayK8JRYoR+rrXDRjC
+         Abb576WgMkFXmoyVa89OeVYhjftTiaPJp2B0tH1Nmu9g4DaRxYLZXYiojuN2n0YFm+3J
+         nJ4lYzXPBfLtQ3M0BEETHktKFH1p1PQH1liEiSAHfuQ47NvX1mX25n5kclaDwkfc7jch
+         mAhY6Yd9RinLxdm4KyRzvOp5kanEDcsYRq6S9iC4Pd4f3OQnyxN20u3nxZSgSLo7wED5
+         Rclw==
+X-Gm-Message-State: AOAM533+yZ7hly0EtLbnLCMs5UU7o4dEIlJKv0dCzToQCDhcoOzNdO4k
+        RpvkJ1LRd0t502Dv8BkX4dlRddZa6qCenNhmvAsSLQ==
+X-Google-Smtp-Source: ABdhPJxsfUIfpYKTijmSzZMn/3bzl+PiJKaMjoCHFOVRg+kLNgbYqegwT2dpCaQupytAQ40v4lUIluDFJfph+PDjmzo=
+X-Received: by 2002:a05:6602:45a:: with SMTP id e26mr880042iov.168.1597981744082;
+ Thu, 20 Aug 2020 20:49:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+References: <20200807224941.3440722-1-lokeshgidra@google.com> <alpine.LRH.2.21.2008210433591.29407@namei.org>
+In-Reply-To: <alpine.LRH.2.21.2008210433591.29407@namei.org>
+From:   Lokesh Gidra <lokeshgidra@google.com>
+Date:   Thu, 20 Aug 2020 20:48:52 -0700
+Message-ID: <CA+EESO5u89hEqgmBZMKq9njHvAKyWJJusVtkSLFHoQpv8rBzMg@mail.gmail.com>
+Subject: Re: [PATCH v6 0/3] SELinux support for anonymous inodes and UFFD
+To:     James Morris <jmorris@namei.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Daniel Colascione <dancol@dancol.org>,
+        Kees Cook <keescook@chromium.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        KP Singh <kpsingh@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Thomas Cedeno <thomascedeno@google.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Matthew Garrett <matthewgarrett@google.com>,
+        Aaron Goidel <acgoide@tycho.nsa.gov>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Adrian Reber <areber@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        SElinux list <selinux@vger.kernel.org>,
+        Kalesh Singh <kaleshsingh@google.com>,
+        Calin Juravle <calin@google.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Nick Kralevich <nnk@google.com>,
+        Jeffrey Vander Stoep <jeffv@google.com>,
+        kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This patch fixes two main problems seen when removing NetLabel
-mappings: memory leaks and potentially extra audit noise.
+On Thu, Aug 20, 2020 at 11:36 AM James Morris <jmorris@namei.org> wrote:
+>
+> On Fri, 7 Aug 2020, Lokesh Gidra wrote:
+>
+> > Userfaultfd in unprivileged contexts could be potentially very
+> > useful. We'd like to harden userfaultfd to make such unprivileged use
+> > less risky. This patch series allows SELinux to manage userfaultfd
+> > file descriptors and in the future, other kinds of
+> > anonymous-inode-based file descriptor.  SELinux policy authors can
+> > apply policy types to anonymous inodes by providing name-based
+> > transition rules keyed off the anonymous inode internal name (
+> > "[userfaultfd]" in the case of userfaultfd(2) file descriptors) and
+> > applying policy to the new SIDs thus produced.
+>
+> Can you expand more on why this would be useful, e.g. use-cases?
+>
+With SELinux managed userfaultfd file descriptors, an administrator
+can control creation and movement of them. In particular, handling of
+a userfaultfd descriptor by a different process is essentially a
+ptrace access into the process, without any of the
+corresponding security_ptrace_access_check() checks. For privacy, the
+admin may want to deny such accesses,
+which is possible with SELinux support.
 
-The memory leaks are caused by not properly free'ing the mapping's
-address selector struct when free'ing the entire entry as well as
-not properly cleaning up a temporary mapping entry when adding new
-address selectors to an existing entry.  This patch fixes both these
-problems such that kmemleak reports no NetLabel associated leaks
-after running the SELinux test suite.
-
-The potentially extra audit noise was caused by the auditing code in
-netlbl_domhsh_remove_entry() being called regardless of the entry's
-validity.  If another thread had already marked the entry as invalid,
-but not removed/free'd it from the list of mappings, then it was
-possible that an additional mapping removal audit record would be
-generated.  This patch fixes this by returning early from the removal
-function when the entry was previously marked invalid.  This change
-also had the side benefit of improving the code by decreasing the
-indentation level of large chunk of code by one (accounting for most
-of the diffstat).
-
-Reported-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-Signed-off-by: Paul Moore <paul@paul-moore.com>
----
- net/netlabel/netlabel_domainhash.c |   59 ++++++++++++++++++------------------
- 1 file changed, 30 insertions(+), 29 deletions(-)
-
-diff --git a/net/netlabel/netlabel_domainhash.c b/net/netlabel/netlabel_domainhash.c
-index d07de2c0fbc7..f73a8382c275 100644
---- a/net/netlabel/netlabel_domainhash.c
-+++ b/net/netlabel/netlabel_domainhash.c
-@@ -85,6 +85,7 @@ static void netlbl_domhsh_free_entry(struct rcu_head *entry)
- 			kfree(netlbl_domhsh_addr6_entry(iter6));
- 		}
- #endif /* IPv6 */
-+		kfree(ptr->def.addrsel);
- 	}
- 	kfree(ptr->domain);
- 	kfree(ptr);
-@@ -537,6 +538,8 @@ int netlbl_domhsh_add(struct netlbl_dom_map *entry,
- 				goto add_return;
- 		}
- #endif /* IPv6 */
-+		/* cleanup the new entry since we've moved everything over */
-+		netlbl_domhsh_free_entry(&entry->rcu);
- 	} else
- 		ret_val = -EINVAL;
- 
-@@ -580,6 +583,12 @@ int netlbl_domhsh_remove_entry(struct netlbl_dom_map *entry,
- {
- 	int ret_val = 0;
- 	struct audit_buffer *audit_buf;
-+	struct netlbl_af4list *iter4;
-+	struct netlbl_domaddr4_map *map4;
-+#if IS_ENABLED(CONFIG_IPV6)
-+	struct netlbl_af6list *iter6;
-+	struct netlbl_domaddr6_map *map6;
-+#endif /* IPv6 */
- 
- 	if (entry == NULL)
- 		return -ENOENT;
-@@ -597,6 +606,9 @@ int netlbl_domhsh_remove_entry(struct netlbl_dom_map *entry,
- 		ret_val = -ENOENT;
- 	spin_unlock(&netlbl_domhsh_lock);
- 
-+	if (ret_val)
-+		return ret_val;
-+
- 	audit_buf = netlbl_audit_start_common(AUDIT_MAC_MAP_DEL, audit_info);
- 	if (audit_buf != NULL) {
- 		audit_log_format(audit_buf,
-@@ -606,40 +618,29 @@ int netlbl_domhsh_remove_entry(struct netlbl_dom_map *entry,
- 		audit_log_end(audit_buf);
- 	}
- 
--	if (ret_val == 0) {
--		struct netlbl_af4list *iter4;
--		struct netlbl_domaddr4_map *map4;
--#if IS_ENABLED(CONFIG_IPV6)
--		struct netlbl_af6list *iter6;
--		struct netlbl_domaddr6_map *map6;
--#endif /* IPv6 */
--
--		switch (entry->def.type) {
--		case NETLBL_NLTYPE_ADDRSELECT:
--			netlbl_af4list_foreach_rcu(iter4,
--					     &entry->def.addrsel->list4) {
--				map4 = netlbl_domhsh_addr4_entry(iter4);
--				cipso_v4_doi_putdef(map4->def.cipso);
--			}
-+	switch (entry->def.type) {
-+	case NETLBL_NLTYPE_ADDRSELECT:
-+		netlbl_af4list_foreach_rcu(iter4, &entry->def.addrsel->list4) {
-+			map4 = netlbl_domhsh_addr4_entry(iter4);
-+			cipso_v4_doi_putdef(map4->def.cipso);
-+		}
- #if IS_ENABLED(CONFIG_IPV6)
--			netlbl_af6list_foreach_rcu(iter6,
--					     &entry->def.addrsel->list6) {
--				map6 = netlbl_domhsh_addr6_entry(iter6);
--				calipso_doi_putdef(map6->def.calipso);
--			}
-+		netlbl_af6list_foreach_rcu(iter6, &entry->def.addrsel->list6) {
-+			map6 = netlbl_domhsh_addr6_entry(iter6);
-+			calipso_doi_putdef(map6->def.calipso);
-+		}
- #endif /* IPv6 */
--			break;
--		case NETLBL_NLTYPE_CIPSOV4:
--			cipso_v4_doi_putdef(entry->def.cipso);
--			break;
-+		break;
-+	case NETLBL_NLTYPE_CIPSOV4:
-+		cipso_v4_doi_putdef(entry->def.cipso);
-+		break;
- #if IS_ENABLED(CONFIG_IPV6)
--		case NETLBL_NLTYPE_CALIPSO:
--			calipso_doi_putdef(entry->def.calipso);
--			break;
-+	case NETLBL_NLTYPE_CALIPSO:
-+		calipso_doi_putdef(entry->def.calipso);
-+		break;
- #endif /* IPv6 */
--		}
--		call_rcu(&entry->rcu, netlbl_domhsh_free_entry);
- 	}
-+	call_rcu(&entry->rcu, netlbl_domhsh_free_entry);
- 
- 	return ret_val;
- }
-
+I'll add this use case in the cover letter too in the next version.
