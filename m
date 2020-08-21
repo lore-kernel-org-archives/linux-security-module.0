@@ -2,224 +2,140 @@ Return-Path: <SRS0=891B=B7=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,
-	DKIM_ADSP_CUSTOM_MED,DKIM_INVALID,DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F4F2C433DF
-	for <linux-security-module@archiver.kernel.org>; Fri, 21 Aug 2020 18:57:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D832C433DF
+	for <linux-security-module@archiver.kernel.org>; Fri, 21 Aug 2020 20:14:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DBBD72076E
-	for <linux-security-module@archiver.kernel.org>; Fri, 21 Aug 2020 18:57:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FC7C207CD
+	for <linux-security-module@archiver.kernel.org>; Fri, 21 Aug 2020 20:14:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="VbVsQAOB"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="rvkncGg+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726832AbgHUS5p (ORCPT
+        id S1726716AbgHUUOv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 21 Aug 2020 14:57:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57682 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726817AbgHUS5S (ORCPT
+        Fri, 21 Aug 2020 16:14:51 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60666 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725938AbgHUUOu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 21 Aug 2020 14:57:18 -0400
-Received: from mail-pf1-x44a.google.com (mail-pf1-x44a.google.com [IPv6:2607:f8b0:4864:20::44a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96D29C061795
-        for <linux-security-module@vger.kernel.org>; Fri, 21 Aug 2020 11:57:17 -0700 (PDT)
-Received: by mail-pf1-x44a.google.com with SMTP id e30so1898371pfj.0
-        for <linux-security-module@vger.kernel.org>; Fri, 21 Aug 2020 11:57:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=sender:date:in-reply-to:message-id:mime-version:references:subject
-         :from:to:cc;
-        bh=Iq5R0ob3wLGD7a6AG2sD0xZ3ShIVbhilSI5LIdomLv4=;
-        b=VbVsQAOBPBwmteSCpL1Ctu9EF8RviP+MJXO/6Ta2Imsxu3iNsS/iCLT/IMNNb08EnQ
-         xdo6xYb2bvXetWvM/kbGmb4/G+6vKwUVcvGBNYFxSiRdlgDIHU0S/3Do239TUTMFndci
-         DqynNELjgoN4lytvU1yZZIATY89YES/nHCcqVEKc9yi4FoA0j1i77tZ0elV1+oFZkg6+
-         FbWM0yTzVFbj/M0RmB8dQnHmT527q45BD745tar4UFy6H5rO3b4PTvL1jA7RPIt5e8tB
-         5SbRzb4jGqybHsxYfwWZp6MCf2KOeHKEMnmnS4108MgDycNFitqjIRfVLG9W3AIj0foM
-         kSzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=Iq5R0ob3wLGD7a6AG2sD0xZ3ShIVbhilSI5LIdomLv4=;
-        b=UhqaLD+XVRLIJ16ZgTCs4c+furgk6or+mRFtLExhn8wlMJIHWIwOjEsPmNqHdJnRkq
-         WQ3SeZK39Jjt2v9zr8OrdvIXWEVVRhk3fQq6jdaffEcXrCQXdkGFJzvg6+LmftcA/M2L
-         sLPy8sGRWc+SDlR8XNZqoT3VINngHdgFHP9bm6WxPmM9e4wR31fsxrg1QnORhT/l1FDr
-         BNypmNdqzOM1YW/KDrTppK3vl00abBmXy3XCsxcuon5WeurP7pvt8/w0didZqdAep/cL
-         AQULFXqaIaQ6nPPF3u2v23T3cFdkV0Kup5bTJYVXbzJ9EBafok8f4U7Wt9Lk7qAyn/KM
-         2IOg==
-X-Gm-Message-State: AOAM5319uSb6lJpue9CT4rW8ZUtMRIUxN713aYImwQnA9lJyTh6JPe1J
-        dLbB5ImiWizlfB4oCpMcSHjFo9avIeRcJnfeVw==
-X-Google-Smtp-Source: ABdhPJyxtYKKp0bzjn1ZGU1LnsLfHtCivFS6BP+n87OClg8Kwlcv+q1qg+fmF/HJYoCY6aUzHmuRmxS9mx3BW4Wg3Q==
-X-Received: from lg.mtv.corp.google.com ([2620:15c:211:202:f693:9fff:fef4:29dd])
- (user=lokeshgidra job=sendgmr) by 2002:a17:90a:4dca:: with SMTP id
- r10mr3439872pjl.200.1598036236945; Fri, 21 Aug 2020 11:57:16 -0700 (PDT)
-Date:   Fri, 21 Aug 2020 11:56:44 -0700
-In-Reply-To: <20200821185645.801971-1-lokeshgidra@google.com>
-Message-Id: <20200821185645.801971-3-lokeshgidra@google.com>
+        Fri, 21 Aug 2020 16:14:50 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 07LK3H1P132003;
+        Fri, 21 Aug 2020 16:14:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=OEL2qiQPMhRIm7Kf1rmkn8qZo5qwji4nRxuZSZ+sKUc=;
+ b=rvkncGg+heFsofqSqD8cscXSzXxVYKzgeH/Icc7sfVL0xKNqLeOgd0nwqFFEzch86iwE
+ VZulPcvulKDfulzwX906quMaHfHuZEKEYymfp9Ii3r33S8mr695jmEVksqs3tPjtd45u
+ NWyD/vb+rv+4mvNqRAA0DMLYqrX3VXxbdOhueO7yzumIMoKu9UkJsqAKyCGh/2ijzFII
+ QIPP342d+8f4V/EQShyut2odxaC/2jnl7YIYszYFx0C9lu0o07le7sBYwIMh4nY/gRxN
+ LnImjSLAt9/p68Kb/xC+k8VliAQF8vvvkVdZtFVTbD8QV/AeSg8MDf0mZtnjikd9fkPc Ug== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3327xueyev-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 21 Aug 2020 16:14:43 -0400
+Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 07LK3PAG132989;
+        Fri, 21 Aug 2020 16:14:43 -0400
+Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3327xueyee-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 21 Aug 2020 16:14:43 -0400
+Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
+        by ppma04ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 07LK52fH015848;
+        Fri, 21 Aug 2020 20:14:41 GMT
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
+        by ppma04ams.nl.ibm.com with ESMTP id 3304cc4qka-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 21 Aug 2020 20:14:41 +0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 07LKEdlB24314184
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 21 Aug 2020 20:14:39 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 29160A4053;
+        Fri, 21 Aug 2020 20:14:39 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7ED45A4040;
+        Fri, 21 Aug 2020 20:14:37 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.65.240])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 21 Aug 2020 20:14:37 +0000 (GMT)
+Message-ID: <caedd49bc2080a2fb8b16b9ecacab67d11e68fd7.camel@linux.ibm.com>
+Subject: Re: [PATCH 03/11] evm: Refuse EVM_ALLOW_METADATA_WRITES only if the
+ HMAC key is loaded
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>, mjg59@google.com
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Date:   Fri, 21 Aug 2020 16:14:36 -0400
+In-Reply-To: <20200618160133.937-3-roberto.sassu@huawei.com>
+References: <20200618160133.937-1-roberto.sassu@huawei.com>
+         <20200618160133.937-3-roberto.sassu@huawei.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
 Mime-Version: 1.0
-References: <20200821185645.801971-1-lokeshgidra@google.com>
-X-Mailer: git-send-email 2.28.0.297.g1956fa8f8d-goog
-Subject: [PATCH v7 2/3] Teach SELinux about anonymous inodes
-From:   Lokesh Gidra <lokeshgidra@google.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        James Morris <jmorris@namei.org>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Eric Biggers <ebiggers@kernel.org>
-Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Lokesh Gidra <lokeshgidra@google.com>,
-        Daniel Colascione <dancol@dancol.org>,
-        Kees Cook <keescook@chromium.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        KP Singh <kpsingh@google.com>,
-        David Howells <dhowells@redhat.com>,
-        Thomas Cedeno <thomascedeno@google.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        Matthew Garrett <matthewgarrett@google.com>,
-        Aaron Goidel <acgoide@tycho.nsa.gov>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Adrian Reber <areber@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        kaleshsingh@google.com, calin@google.com, surenb@google.com,
-        nnk@google.com, jeffv@google.com, kernel-team@android.com,
-        Daniel Colascione <dancol@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-08-21_09:2020-08-21,2020-08-21 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ impostorscore=0 mlxscore=0 phishscore=0 adultscore=0 suspectscore=0
+ spamscore=0 priorityscore=1501 mlxlogscore=999 lowpriorityscore=0
+ bulkscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2006250000 definitions=main-2008210183
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Daniel Colascione <dancol@google.com>
+Hi Roberto,
 
-This change uses the anon_inodes and LSM infrastructure introduced in
-the previous patch to give SELinux the ability to control
-anonymous-inode files that are created using the new anon_inode_getfd_secure()
-function.
+On Thu, 2020-06-18 at 18:01 +0200, Roberto Sassu wrote:
+> Granting metadata write is safe if the HMAC key is not loaded, as it won't
+> let an attacker obtain a valid HMAC from corrupted xattrs. evm_write_key()
+> however does not allow it if any key is loaded, including a public key,
+> which should not be a problem.
+> 
 
-A SELinux policy author detects and controls these anonymous inodes by
-adding a name-based type_transition rule that assigns a new security
-type to anonymous-inode files created in some domain. The name used
-for the name-based transition is the name associated with the
-anonymous inode for file listings --- e.g., "[userfaultfd]" or
-"[perf_event]".
+Why is the existing hebavior a problem?  What is the problem being
+solved?
 
-Example:
+> This patch allows setting EVM_ALLOW_METADATA_WRITES if the EVM_INIT_HMAC
+> flag is not set.
+> 
+> Cc: stable@vger.kernel.org # 4.16.x
+> Fixes: ae1ba1676b88e ("EVM: Allow userland to permit modification of EVM-protected metadata")
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> ---
+>  security/integrity/evm/evm_secfs.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/security/integrity/evm/evm_secfs.c b/security/integrity/evm/evm_secfs.c
+> index cfc3075769bb..92fe26ace797 100644
+> --- a/security/integrity/evm/evm_secfs.c
+> +++ b/security/integrity/evm/evm_secfs.c
+> @@ -84,7 +84,7 @@ static ssize_t evm_write_key(struct file *file, const char __user *buf,
+>  	 * keys are loaded.
+>  	 */
+>  	if ((i & EVM_ALLOW_METADATA_WRITES) &&
+> -	    ((evm_initialized & EVM_KEY_MASK) != 0) &&
+> +	    ((evm_initialized & EVM_INIT_HMAC) != 0) &&
+>  	    !(evm_initialized & EVM_ALLOW_METADATA_WRITES))
+>  		return -EPERM;
 
-type uffd_t;
-type_transition sysadm_t sysadm_t : anon_inode uffd_t "[userfaultfd]";
-allow sysadm_t uffd_t:anon_inode { create };
+>  
 
-(The next patch in this series is necessary for making userfaultfd
-support this new interface.  The example above is just
-for exposition.)
+Documentation/ABI/testing/evm needs to be updated as well.
 
-Signed-off-by: Daniel Colascione <dancol@google.com>
-Acked-by: Casey Schaufler <casey@schaufler-ca.com>
-Acked-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Andrew Morton <akpm@linux-foundation.org>
----
- security/selinux/hooks.c            | 53 +++++++++++++++++++++++++++++
- security/selinux/include/classmap.h |  2 ++
- 2 files changed, 55 insertions(+)
+thanks,
 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index ca901025802a..5b403ad44aad 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -2926,6 +2926,58 @@ static int selinux_inode_init_security(struct inode *inode, struct inode *dir,
- 	return 0;
- }
- 
-+static int selinux_inode_init_security_anon(struct inode *inode,
-+					    const struct qstr *name,
-+					    const struct inode *context_inode)
-+{
-+	const struct task_security_struct *tsec = selinux_cred(current_cred());
-+	struct common_audit_data ad;
-+	struct inode_security_struct *isec;
-+	int rc;
-+
-+	if (unlikely(!selinux_state.initialized))
-+		return 0;
-+
-+	isec = selinux_inode(inode);
-+
-+	/*
-+	 * We only get here once per ephemeral inode.  The inode has
-+	 * been initialized via inode_alloc_security but is otherwise
-+	 * untouched.
-+	 */
-+
-+	if (context_inode) {
-+		struct inode_security_struct *context_isec =
-+			selinux_inode(context_inode);
-+		isec->sclass = context_isec->sclass;
-+		isec->sid = context_isec->sid;
-+	} else {
-+		isec->sclass = SECCLASS_ANON_INODE;
-+		rc = security_transition_sid(
-+			&selinux_state, tsec->sid, tsec->sid,
-+			isec->sclass, name, &isec->sid);
-+		if (rc)
-+			return rc;
-+	}
-+
-+	isec->initialized = LABEL_INITIALIZED;
-+
-+	/*
-+	 * Now that we've initialized security, check whether we're
-+	 * allowed to actually create this type of anonymous inode.
-+	 */
-+
-+	ad.type = LSM_AUDIT_DATA_INODE;
-+	ad.u.inode = inode;
-+
-+	return avc_has_perm(&selinux_state,
-+			    tsec->sid,
-+			    isec->sid,
-+			    isec->sclass,
-+			    FILE__CREATE,
-+			    &ad);
-+}
-+
- static int selinux_inode_create(struct inode *dir, struct dentry *dentry, umode_t mode)
- {
- 	return may_create(dir, dentry, SECCLASS_FILE);
-@@ -6993,6 +7045,7 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
- 
- 	LSM_HOOK_INIT(inode_free_security, selinux_inode_free_security),
- 	LSM_HOOK_INIT(inode_init_security, selinux_inode_init_security),
-+	LSM_HOOK_INIT(inode_init_security_anon, selinux_inode_init_security_anon),
- 	LSM_HOOK_INIT(inode_create, selinux_inode_create),
- 	LSM_HOOK_INIT(inode_link, selinux_inode_link),
- 	LSM_HOOK_INIT(inode_unlink, selinux_inode_unlink),
-diff --git a/security/selinux/include/classmap.h b/security/selinux/include/classmap.h
-index 40cebde62856..ba2e01a6955c 100644
---- a/security/selinux/include/classmap.h
-+++ b/security/selinux/include/classmap.h
-@@ -249,6 +249,8 @@ struct security_class_mapping secclass_map[] = {
- 	  {"open", "cpu", "kernel", "tracepoint", "read", "write"} },
- 	{ "lockdown",
- 	  { "integrity", "confidentiality", NULL } },
-+	{ "anon_inode",
-+	  { COMMON_FILE_PERMS, NULL } },
- 	{ NULL }
-   };
- 
--- 
-2.28.0.297.g1956fa8f8d-goog
+Mimi
+
+
 
