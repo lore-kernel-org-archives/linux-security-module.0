@@ -2,129 +2,130 @@ Return-Path: <SRS0=891B=B7=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ED37C433E1
-	for <linux-security-module@archiver.kernel.org>; Fri, 21 Aug 2020 03:49:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D70BAC433E1
+	for <linux-security-module@archiver.kernel.org>; Fri, 21 Aug 2020 06:51:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 592F720855
-	for <linux-security-module@archiver.kernel.org>; Fri, 21 Aug 2020 03:49:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Aq+MFU9K"
+	by mail.kernel.org (Postfix) with ESMTP id BD2BF20748
+	for <linux-security-module@archiver.kernel.org>; Fri, 21 Aug 2020 06:51:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727926AbgHUDtK (ORCPT
+        id S1727097AbgHUGvJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 20 Aug 2020 23:49:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57746 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727892AbgHUDtF (ORCPT
+        Fri, 21 Aug 2020 02:51:09 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54880 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726119AbgHUGvJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 20 Aug 2020 23:49:05 -0400
-Received: from mail-io1-xd43.google.com (mail-io1-xd43.google.com [IPv6:2607:f8b0:4864:20::d43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D6A1C061388
-        for <linux-security-module@vger.kernel.org>; Thu, 20 Aug 2020 20:49:05 -0700 (PDT)
-Received: by mail-io1-xd43.google.com with SMTP id z17so462800ioi.6
-        for <linux-security-module@vger.kernel.org>; Thu, 20 Aug 2020 20:49:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YD6EeTnsT2wy78rPM62cWU7iNSgM0HOqIQD7wF0JrbY=;
-        b=Aq+MFU9KfwsZ6o2zwcEjbLvshHLnaZ6+vHTfx0cyGPVPvcdPDwWcejYGYyDqS3xjHG
-         McomnkZUutkTmLbcxfQyj/9Da7L6YBAqC3T/66zupxF23Yvl/gjon8spfexymNQ7S1px
-         iSStKpkFx0XXuhE79pL51BmzeTXHk+JpFXgaGli36qLoxMCyzzLpP0FZS+iNL5ZdUC2x
-         xMnP0ex12um7i+J6B9RgoAtiZzv0bvjkzB5GaNC9TccJNFCnfnZMTsKBrSE5u+jdN7yI
-         B4PsPDzSC31jiX+amsUT7YPuPBq+uS50qXN5DIZ+mHEs9kbz+ElK6ekebmV8mEMH6F5O
-         R1Ug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YD6EeTnsT2wy78rPM62cWU7iNSgM0HOqIQD7wF0JrbY=;
-        b=ZJkUb+egzgrVjN6Vy2ax5kcuV1csYhNYEQmuUFL4b+lqi8XZ8RIpuwxhV7bYFPpupc
-         VA88BjpQW5qLQAIn0CttYelddVTp3RqgvZugifwjnALt4LZ/TW2ayK8JRYoR+rrXDRjC
-         Abb576WgMkFXmoyVa89OeVYhjftTiaPJp2B0tH1Nmu9g4DaRxYLZXYiojuN2n0YFm+3J
-         nJ4lYzXPBfLtQ3M0BEETHktKFH1p1PQH1liEiSAHfuQ47NvX1mX25n5kclaDwkfc7jch
-         mAhY6Yd9RinLxdm4KyRzvOp5kanEDcsYRq6S9iC4Pd4f3OQnyxN20u3nxZSgSLo7wED5
-         Rclw==
-X-Gm-Message-State: AOAM533+yZ7hly0EtLbnLCMs5UU7o4dEIlJKv0dCzToQCDhcoOzNdO4k
-        RpvkJ1LRd0t502Dv8BkX4dlRddZa6qCenNhmvAsSLQ==
-X-Google-Smtp-Source: ABdhPJxsfUIfpYKTijmSzZMn/3bzl+PiJKaMjoCHFOVRg+kLNgbYqegwT2dpCaQupytAQ40v4lUIluDFJfph+PDjmzo=
-X-Received: by 2002:a05:6602:45a:: with SMTP id e26mr880042iov.168.1597981744082;
- Thu, 20 Aug 2020 20:49:04 -0700 (PDT)
+        Fri, 21 Aug 2020 02:51:09 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 36528B663;
+        Fri, 21 Aug 2020 06:51:35 +0000 (UTC)
+Date:   Fri, 21 Aug 2020 08:51:05 +0200
+From:   Petr Vorel <pvorel@suse.cz>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LTP List <ltp@lists.linux.it>,
+        open list <linux-kernel@vger.kernel.org>,
+        lkft-triage@lists.linaro.org, patches@kernelci.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        linux- stable <stable@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [LTP] [PATCH 5.8 000/232] 5.8.3-rc1 review
+Message-ID: <20200821065105.GB11908@dell5510>
+Reply-To: Petr Vorel <pvorel@suse.cz>
+References: <20200820091612.692383444@linuxfoundation.org>
+ <CA+G9fYtebf78TH-XpqArunHc1L6s9mHdLEbpY1EY9tSyDjp=sg@mail.gmail.com>
+ <20200820182516.GA49496@sol.localdomain>
 MIME-Version: 1.0
-References: <20200807224941.3440722-1-lokeshgidra@google.com> <alpine.LRH.2.21.2008210433591.29407@namei.org>
-In-Reply-To: <alpine.LRH.2.21.2008210433591.29407@namei.org>
-From:   Lokesh Gidra <lokeshgidra@google.com>
-Date:   Thu, 20 Aug 2020 20:48:52 -0700
-Message-ID: <CA+EESO5u89hEqgmBZMKq9njHvAKyWJJusVtkSLFHoQpv8rBzMg@mail.gmail.com>
-Subject: Re: [PATCH v6 0/3] SELinux support for anonymous inodes and UFFD
-To:     James Morris <jmorris@namei.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Daniel Colascione <dancol@dancol.org>,
-        Kees Cook <keescook@chromium.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        KP Singh <kpsingh@google.com>,
-        David Howells <dhowells@redhat.com>,
-        Thomas Cedeno <thomascedeno@google.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        Matthew Garrett <matthewgarrett@google.com>,
-        Aaron Goidel <acgoide@tycho.nsa.gov>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Adrian Reber <areber@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        SElinux list <selinux@vger.kernel.org>,
-        Kalesh Singh <kaleshsingh@google.com>,
-        Calin Juravle <calin@google.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Nick Kralevich <nnk@google.com>,
-        Jeffrey Vander Stoep <jeffv@google.com>,
-        kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200820182516.GA49496@sol.localdomain>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Aug 20, 2020 at 11:36 AM James Morris <jmorris@namei.org> wrote:
->
-> On Fri, 7 Aug 2020, Lokesh Gidra wrote:
->
-> > Userfaultfd in unprivileged contexts could be potentially very
-> > useful. We'd like to harden userfaultfd to make such unprivileged use
-> > less risky. This patch series allows SELinux to manage userfaultfd
-> > file descriptors and in the future, other kinds of
-> > anonymous-inode-based file descriptor.  SELinux policy authors can
-> > apply policy types to anonymous inodes by providing name-based
-> > transition rules keyed off the anonymous inode internal name (
-> > "[userfaultfd]" in the case of userfaultfd(2) file descriptors) and
-> > applying policy to the new SIDs thus produced.
->
-> Can you expand more on why this would be useful, e.g. use-cases?
->
-With SELinux managed userfaultfd file descriptors, an administrator
-can control creation and movement of them. In particular, handling of
-a userfaultfd descriptor by a different process is essentially a
-ptrace access into the process, without any of the
-corresponding security_ptrace_access_check() checks. For privacy, the
-admin may want to deny such accesses,
-which is possible with SELinux support.
+Hi all,
 
-I'll add this use case in the cover letter too in the next version.
+> On Thu, Aug 20, 2020 at 08:57:57PM +0530, Naresh Kamboju wrote:
+> > On Thu, 20 Aug 2020 at 14:55, Greg Kroah-Hartman
+> > <gregkh@linuxfoundation.org> wrote:
+
+> > > This is the start of the stable review cycle for the 5.8.3 release.
+> > > There are 232 patches in this series, all will be posted as a response
+> > > to this one.  If anyone has any issues with these being applied, please
+> > > let me know.
+
+> > > Responses should be made by Sat, 22 Aug 2020 09:15:09 +0000.
+> > > Anything received after that time might be too late.
+
+> > > The whole patch series can be found in one patch at:
+> > >         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.8.3-rc1.gz
+> > > or in the git tree and branch at:
+> > >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.8.y
+> > > and the diffstat can be found below.
+
+> > > thanks,
+
+> > > greg k-h
+
+> > > Herbert Xu <herbert@gondor.apana.org.au>
+> > >     crypto: af_alg - Fix regression on empty requests
+
+> > Results from Linaro’s test farm.
+> > Regressions detected.
+
+> >   ltp-crypto-tests:
+> >     * af_alg02
+> >   ltp-cve-tests:
+> >     * cve-2017-17805
+
+> > af_alg02.c:52: BROK: Timed out while reading from request socket.
+> > We are running the LTP 20200515 tag released test suite.
+> >  https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/crypto/af_alg02.c
+
+> > Summary
+> > ------------------------------------------------------------------------
+
+> > kernel: 5.8.3-rc1
+> > git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+> > git branch: linux-5.8.y
+> > git commit: 201fff807310ce10485bcff294d47be95f3769eb
+> > git describe: v5.8.2-233-g201fff807310
+> > Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-5.8-oe/build/v5.8.2-233-g201fff807310
+
+> > Regressions (compared to build v5.8.2)
+> > ------------------------------------------------------------------------
+
+> > x15:
+> >   ltp-crypto-tests:
+> >     * af_alg02
+
+> >   ltp-cve-tests:
+> >     * cve-2017-17805
+
+
+> Looks like this test is still "broken" because it assumes behavior that isn't
+> clearly specified, as previously discussed at
+> https://lkml.kernel.org/r/20200702033221.GA19367@gondor.apana.org.au.
+
+> I sent out LTP patches to fix it:
+> https://lkml.kernel.org/linux-crypto/20200820181918.404758-1-ebiggers@kernel.org/T/#u
+
+FYI fix for LTP merged.
+
+Kind regards,
+Petr
+
+> - Eric
