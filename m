@@ -2,111 +2,134 @@ Return-Path: <SRS0=891B=B7=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BCE4C433E1
-	for <linux-security-module@archiver.kernel.org>; Fri, 21 Aug 2020 11:16:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DBE3C433E3
+	for <linux-security-module@archiver.kernel.org>; Fri, 21 Aug 2020 13:18:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ED3A82072D
-	for <linux-security-module@archiver.kernel.org>; Fri, 21 Aug 2020 11:16:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598008590;
-	bh=Cd+VoXUvwJoGAVVf2MJ9G2nda7Xj5OzTfnu49z0OnaM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=vMUFTk5k2VWFQ8bxfI6Vs88SupvnQGJo6Jd7mxfhzE8dpLEcm/8Xl+LtFnRN5IOb+
-	 UEot0+kaTpvk8wJ3hnpzTuzlCT5+81Y8/jrjv5L0zwS2C97obqvUpjtEGyRAeglAS1
-	 e4Gbmmb/JmbByWNadXBIxpFddBul4j4jxuJQeU10=
+	by mail.kernel.org (Postfix) with ESMTP id D9A7920724
+	for <linux-security-module@archiver.kernel.org>; Fri, 21 Aug 2020 13:18:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="NU0Mcks7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728211AbgHULPU (ORCPT
+        id S1728130AbgHUNST (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 21 Aug 2020 07:15:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58822 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726118AbgHULPR (ORCPT
+        Fri, 21 Aug 2020 09:18:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33260 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727843AbgHUNSP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 21 Aug 2020 07:15:17 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BB66120738;
-        Fri, 21 Aug 2020 11:15:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1598008516;
-        bh=Cd+VoXUvwJoGAVVf2MJ9G2nda7Xj5OzTfnu49z0OnaM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=12JYQxi4ejZkUIEesZewhBfWUQ8hgtJxF8GwvPIQG/3OgM2uQnieWte9i/Yxy9Oyr
-         ThPKZ9roAg3JXeLxoQS5WpzDG+5JCfH7bVG7EeI4f6Bpa5umKeLVewur4v5fRBw0AB
-         6s1jA/B1G+DxBcEyy2rW2mm/IultwhXAsGdN8/Ic=
-Date:   Fri, 21 Aug 2020 13:15:35 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        lkft-triage@lists.linaro.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        linux- stable <stable@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        LTP List <ltp@lists.linux.it>,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        Eric Biggers <ebiggers@kernel.org>
-Subject: Re: [PATCH 5.8 000/232] 5.8.3-rc1 review
-Message-ID: <20200821111535.GC2222852@kroah.com>
-References: <20200820091612.692383444@linuxfoundation.org>
- <CA+G9fYtebf78TH-XpqArunHc1L6s9mHdLEbpY1EY9tSyDjp=sg@mail.gmail.com>
+        Fri, 21 Aug 2020 09:18:15 -0400
+Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63DF9C061387
+        for <linux-security-module@vger.kernel.org>; Fri, 21 Aug 2020 06:18:12 -0700 (PDT)
+Received: by mail-ej1-x643.google.com with SMTP id u21so1565632ejz.0
+        for <linux-security-module@vger.kernel.org>; Fri, 21 Aug 2020 06:18:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9Ewq1eqi128tS/YtHe1Hdp0zK/pkzPgQy1G+gIZ86vk=;
+        b=NU0Mcks72tdUBoRxTtGff5uEDLvy5q+04uOXS/JLA0SJHrmqdiP6jaEKtTvuhKsMgU
+         lDfci7M0dnl3iqCTEKGFvbcUksW7F5hk3a91SmK7L3wWBKVmDsI9uP/rUVnGbwAsuDli
+         PjLRD2P5KK/Uqcps5LzpvzKRXm9f6EQs1OMtc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9Ewq1eqi128tS/YtHe1Hdp0zK/pkzPgQy1G+gIZ86vk=;
+        b=o0DCVH7LD6i/tdKXD/ioGCAtSavzaZWxaBswvEZgMlxNgkfAd/eDoKVr3UXf02GeM0
+         hN6JSuHQEZOvtL64JGn09RahCgB0GuJGFv2IqAK2gHF7RHDgAvvnhburbztLm01nzb3L
+         xDqZfGeNxztzpXYGnZG1/FwsrmG9cF2sa/fLj4P73/xj1/V6iAnnU8yVcvXBgXrlUrUJ
+         xZUwBiNQMayoouCkrG/GMFzKiJXz9dxEYCgS5r/Hrh8d1MypZdh4dLMwk6+IRuFXFkQR
+         iPK73fz5lScp4UJB/GDDgSf9jOTUF2QAUQRyZpAMUOrnj5eiOWmGp3QxWklB5UKqwMCD
+         ZJVQ==
+X-Gm-Message-State: AOAM531ZW3xy4cakjYDWIpYbiE2eLCkGXZrqWtkoquVggyt6W6Y9BpEx
+        Dp5JT4xUc4iXPj1VfCcYszeaXndr5raxv7sttC70oEGPNn362g==
+X-Google-Smtp-Source: ABdhPJx3TSW7MukTCaIid5gIoeUYGZLVJD0O+yZ7UPk2PTQBJG9g/hYdPVKEFV4KdfwhkvYvNtwBHnp0gKnoaXGmvjM=
+X-Received: by 2002:a17:906:b2d7:: with SMTP id cf23mr2811015ejb.113.1598015890534;
+ Fri, 21 Aug 2020 06:18:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+G9fYtebf78TH-XpqArunHc1L6s9mHdLEbpY1EY9tSyDjp=sg@mail.gmail.com>
+References: <1842689.1596468469@warthog.procyon.org.uk> <1845353.1596469795@warthog.procyon.org.uk>
+ <CAJfpegunY3fuxh486x9ysKtXbhTE0745ZCVHcaqs9Gww9RV2CQ@mail.gmail.com>
+ <ac1f5e3406abc0af4cd08d818fe920a202a67586.camel@themaw.net>
+ <CAJfpegu8omNZ613tLgUY7ukLV131tt7owR+JJ346Kombt79N0A@mail.gmail.com>
+ <CAJfpegtNP8rQSS4Z14Ja4x-TOnejdhDRTsmmDD-Cccy2pkfVVw@mail.gmail.com>
+ <20200811135419.GA1263716@miu.piliscsaba.redhat.com> <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com>
+ <52483.1597190733@warthog.procyon.org.uk> <CAHk-=wiPx0UJ6Q1X=azwz32xrSeKnTJcH8enySwuuwnGKkHoPA@mail.gmail.com>
+ <066f9aaf-ee97-46db-022f-5d007f9e6edb@redhat.com> <CAHk-=wgz5H-xYG4bOrHaEtY7rvFA1_6+mTSpjrgK8OsNbfF+Pw@mail.gmail.com>
+ <94f907f0-996e-0456-db8a-7823e2ef3d3f@redhat.com> <CAHk-=wig0ZqWxgWtD9F1xZzE7jEmgLmXRWABhss0+er3ZRtb9g@mail.gmail.com>
+ <CAHk-=wh4qaj6iFTrbHy8TPfmM3fj+msYC5X_KE0rCdStJKH2NA@mail.gmail.com>
+ <CAJfpegsr8URJHoFunnGShB-=jqypvtrmLV-BcWajkHux2H4x2w@mail.gmail.com>
+ <CAHk-=wh5YifP7hzKSbwJj94+DZ2czjrZsczy6GBimiogZws=rg@mail.gmail.com>
+ <CAJfpegt9yEHX3C-sF9UyOXJcRa1cfDnf450OEJ47Xk=FmyEs8A@mail.gmail.com> <CAHk-=wiUcfgC1PdbS_4mfAj2+VTacOwD_uUu6krSxjpvh42T7A@mail.gmail.com>
+In-Reply-To: <CAHk-=wiUcfgC1PdbS_4mfAj2+VTacOwD_uUu6krSxjpvh42T7A@mail.gmail.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Fri, 21 Aug 2020 15:17:59 +0200
+Message-ID: <CAJfpegsBSsMkSXReN6Sheye1cksCO2pcqcx_3VwY4C1J9kDhaw@mail.gmail.com>
+Subject: Re: file metadata via fs API
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Steven Whitehouse <swhiteho@redhat.com>,
+        David Howells <dhowells@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, Karel Zak <kzak@redhat.com>,
+        Jeff Layton <jlayton@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        Christian Brauner <christian@brauner.io>,
+        Lennart Poettering <lennart@poettering.net>,
+        Linux API <linux-api@vger.kernel.org>,
+        Ian Kent <raven@themaw.net>,
+        LSM <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Aug 20, 2020 at 08:57:57PM +0530, Naresh Kamboju wrote:
-> On Thu, 20 Aug 2020 at 14:55, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > This is the start of the stable review cycle for the 5.8.3 release.
-> > There are 232 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> >
-> > Responses should be made by Sat, 22 Aug 2020 09:15:09 +0000.
-> > Anything received after that time might be too late.
-> >
-> > The whole patch series can be found in one patch at:
-> >         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.8.3-rc1.gz
-> > or in the git tree and branch at:
-> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.8.y
-> > and the diffstat can be found below.
-> >
-> > thanks,
-> >
-> > greg k-h
-> 
-> > Herbert Xu <herbert@gondor.apana.org.au>
-> >     crypto: af_alg - Fix regression on empty requests
-> 
-> Results from Linaro’s test farm.
-> Regressions detected.
-> 
->   ltp-crypto-tests:
->     * af_alg02
->   ltp-cve-tests:
->     * cve-2017-17805
-> 
-> af_alg02.c:52: BROK: Timed out while reading from request socket.
-> We are running the LTP 20200515 tag released test suite.
->  https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/crypto/af_alg02.c
+On Tue, Aug 18, 2020 at 10:53 PM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
 
-Looks like the crypto tests are now fixed :)
+> Basically, I think a rough rule of thumb can and should be:
+>
+>  - stuff that the VFS knows about natively and fully is clearly pretty
+> mount-agnostic and generic, and can be represented in whatever
+> extended "struct statfs_x" directly.
+>
+>  - anything that is variable-format and per-fs should be expressed in
+> the ASCII buffer
+>
+> Look at our fancy new fs_context - that's pretty much what it does
+> even inside the kernel. Sure, we have "binary" fields there for core
+> basic information ("struct dentry *root", but also things like flags
+> with MNT_NOSUID), but the configuration stuff is ASCII that the
+> filesystem can parse itself.
+>
+> Exactly because some things are very much specific to some
+> filesystems, not generic things.
+>
+> So we fundamentally already have a mix of "standard FS data" and
+> "filesystem-specific options", and it's already basically split that
+> way: binary flag fields for the generic stuff, and ASCII text for the
+> odd options.
 
-Anyway, thanks for testing all of these and letting me know.
+Okay.
 
-greg k-h
+Something else:  do we want a separate statmount(2) or is it okay to
+mix per-mount and per-sb attributes in the same syscall?
+
+/proc/mounts concatenates mount and sb options (since it copies the
+/etc/mtab format)
+
+/proc/self/mountinfo separates per-mount and per-sb data into
+different fields at least, but the fields themselves are mixed
+
+If we are introducing completely new interfaces, I think it would make
+sense to separate per-mount and per-sb attributes somehow.  Atomicity
+arguments don't apply since they have separate locking.  And we
+already have separate interfaces for configuring them...
+
+Thanks,
+Miklos
