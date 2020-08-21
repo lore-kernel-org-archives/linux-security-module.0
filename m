@@ -2,453 +2,618 @@ Return-Path: <SRS0=891B=B7=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.4 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+X-Spam-Status: No, score=-20.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
 	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C98C8C433DF
-	for <linux-security-module@archiver.kernel.org>; Fri, 21 Aug 2020 21:20:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05F75C433DF
+	for <linux-security-module@archiver.kernel.org>; Fri, 21 Aug 2020 23:12:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 85CBB207DA
-	for <linux-security-module@archiver.kernel.org>; Fri, 21 Aug 2020 21:20:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7F442067C
+	for <linux-security-module@archiver.kernel.org>; Fri, 21 Aug 2020 23:12:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QXEtJ1aO"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="YXil7rgL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726641AbgHUVUm (ORCPT
+        id S1726701AbgHUXMz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 21 Aug 2020 17:20:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51772 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726433AbgHUVUj (ORCPT
+        Fri, 21 Aug 2020 19:12:55 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:53768 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726541AbgHUXMy (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 21 Aug 2020 17:20:39 -0400
-Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80191C061573
-        for <linux-security-module@vger.kernel.org>; Fri, 21 Aug 2020 14:20:38 -0700 (PDT)
-Received: by mail-io1-xd42.google.com with SMTP id s2so3128839ioo.2
-        for <linux-security-module@vger.kernel.org>; Fri, 21 Aug 2020 14:20:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=MqA3XuobnlSGzRs0Mz7TDIq9pF1JxVEkQTSIdtov2z8=;
-        b=QXEtJ1aOC65TXhV8cXrKqq6LuD7WUxo4eG2H+p7w6rV7c2h256hsL+TE1Nrogdk6Tk
-         kJbvdJ9HxBN/scIGB5OACV05H8Aa2t1yu9BIg3mZwkK0pqvbuFZqVXpoym7GNvTxtgdY
-         jxkU3SNIOcPqhcvkQ2kFOvPmaFRj25pyf6P7BDDScDVARZAQViMneUUOhWzT3FJyb3Yr
-         lPM2chUdzdZtYAbh5v1SAVJKugt4F69rnz3R1mzb7xsQvP8rno7TX643SUsOZUKv5gSZ
-         67sYTXExBEzH/uCyATr5t7C15hN4UGSU9UXlwYFtSIBC/6Q7hbxmDfnVypI8AUB1nDT7
-         lDQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MqA3XuobnlSGzRs0Mz7TDIq9pF1JxVEkQTSIdtov2z8=;
-        b=GfN93b+g4FJltxxqQpBEWcl67xNvSa3viVVc1hgax2T3GHLZcyJTi9+qs7uA3ZIVYp
-         54njSZOsxAheRaWJsS3i8Xp3NIwlbyELcCW3/I6xqpub6Gn0Javyj/9Qiu40ryA8GFpk
-         lHAJNt9iCwwUhrSbVe9YX9kiq55y6R4OlBMwXCS/RAG+o7s54uaEbc99trDBxNA4e54V
-         wXvcoPxWfVMcPDuDtRrz1q+6qb+FTlm2K/WN3aa2GhleMtbGP8IEvlJkRCIlSBtsGRsX
-         GpMFhLwySHLqcbLIVLCF9oEHKxQFKM+Lxpg7NPFIcVAAIrJYGdCZ/J+iPZTcnADjoPwk
-         ZEvA==
-X-Gm-Message-State: AOAM5323IUaZwMZnlFoCDin3I/7nEB5U99DprY6rl7D/jWVtno3a8gUX
-        TsYA7zTmls47bL7q8GISCNg15O11zcoe8DO4WmQWPg==
-X-Google-Smtp-Source: ABdhPJxO8uKDSuY4S4m5ScbZtstX/BaLyQyxL0uWIgPoG8PkuvXUY3kTYyRpch2OAKf4SuIY1u62mSMbBlkJd4aZlLU=
-X-Received: by 2002:a02:544a:: with SMTP id t71mr4208695jaa.144.1598044837357;
- Fri, 21 Aug 2020 14:20:37 -0700 (PDT)
+        Fri, 21 Aug 2020 19:12:54 -0400
+Received: from localhost.localdomain (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 758B720B4908;
+        Fri, 21 Aug 2020 16:12:51 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 758B720B4908
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1598051571;
+        bh=0K8yNmueQmmo4U8tBRXJdKpHRxXlmetPQ1bFKnh3sqU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=YXil7rgLfCAvXYMuyITi2vqmWPESiwNvazHFlukuya1WXprhsXL0Ni4l7cjt9YVRO
+         mUgrzII7lXLx7Wy0FvXIFBnc8fvC/4XjSeEw3Kxd3xtjV8929Za89tHqlaqlGfKd6F
+         K+acZDXcQOdoNXpAgS4WlptzimPNBpCuRjuzbDRc=
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+To:     zohar@linux.ibm.com, stephen.smalley.work@gmail.com,
+        casey@schaufler-ca.com
+Cc:     tyhicks@linux.microsoft.com, tusharsu@linux.microsoft.com,
+        sashal@kernel.org, jmorris@namei.org,
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] IMA: Handle early boot data measurement
+Date:   Fri, 21 Aug 2020 16:12:30 -0700
+Message-Id: <20200821231230.20212-1-nramas@linux.microsoft.com>
+X-Mailer: git-send-email 2.28.0
 MIME-Version: 1.0
-References: <20200821185645.801971-1-lokeshgidra@google.com> <20200821185645.801971-2-lokeshgidra@google.com>
-In-Reply-To: <20200821185645.801971-2-lokeshgidra@google.com>
-From:   Lokesh Gidra <lokeshgidra@google.com>
-Date:   Fri, 21 Aug 2020 14:20:26 -0700
-Message-ID: <CA+EESO6RZYmXuBgcMve1bRk8j6mpmhV6BRFP2ULbx7g42f_ZhQ@mail.gmail.com>
-Subject: Re: [PATCH v7 1/3] Add a new LSM-supporting anonymous inode interface
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        James Morris <jmorris@namei.org>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Eric Biggers <ebiggers@kernel.org>
-Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Daniel Colascione <dancol@dancol.org>,
-        Kees Cook <keescook@chromium.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        KP Singh <kpsingh@google.com>,
-        David Howells <dhowells@redhat.com>,
-        Thomas Cedeno <thomascedeno@google.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        Matthew Garrett <matthewgarrett@google.com>,
-        Aaron Goidel <acgoide@tycho.nsa.gov>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Adrian Reber <areber@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        SElinux list <selinux@vger.kernel.org>,
-        Kalesh Singh <kaleshsingh@google.com>,
-        Calin Juravle <calin@google.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Nick Kralevich <nnk@google.com>,
-        Jeffrey Vander Stoep <jeffv@google.com>,
-        kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Aug 21, 2020 at 11:57 AM Lokesh Gidra <lokeshgidra@google.com> wrote:
->
-> From: Daniel Colascione <dancol@google.com>
->
-> This change adds a new function, anon_inode_getfd_secure, that creates
-> anonymous-node file with individual non-S_PRIVATE inode to which security
-> modules can apply policy. Existing callers continue using the original
-> singleton-inode kind of anonymous-inode file. We can transition anonymous
-> inode users to the new kind of anonymous inode in individual patches for
-> the sake of bisection and review.
->
-> The new function accepts an optional context_inode parameter that
-> callers can use to provide additional contextual information to
-> security modules for granting/denying permission to create an anon inode
-> of the same type.
->
-> For example, in case of userfaultfd, the created inode is a
-> 'logical child' of the context_inode (userfaultfd inode of the
-> parent process) in the sense that it provides the security context
-> required during creation of the child process' userfaultfd inode.
->
-> Signed-off-by: Daniel Colascione <dancol@google.com>
->
-> [Fix comment documenting return values of inode_init_security_anon()]
-> [Add context_inode description in comments to anon_inode_getfd_secure()]
-> [Remove definition of anon_inode_getfile_secure() as there are no callers]
-> [Make _anon_inode_getfile() static]
-> [Use correct error cast in _anon_inode_getfile()]
->
-> Signed-off-by: Lokesh Gidra <lokeshgidra@google.com>
-> ---
->  fs/anon_inodes.c              | 148 ++++++++++++++++++++++++----------
->  include/linux/anon_inodes.h   |  13 +++
->  include/linux/lsm_hook_defs.h |   2 +
->  include/linux/lsm_hooks.h     |   7 ++
->  include/linux/security.h      |   3 +
->  security/security.c           |   9 +++
->  6 files changed, 141 insertions(+), 41 deletions(-)
->
-> diff --git a/fs/anon_inodes.c b/fs/anon_inodes.c
-> index 89714308c25b..2aa8b57be895 100644
-> --- a/fs/anon_inodes.c
-> +++ b/fs/anon_inodes.c
-> @@ -55,61 +55,78 @@ static struct file_system_type anon_inode_fs_type = {
->         .kill_sb        = kill_anon_super,
->  };
->
-> -/**
-> - * anon_inode_getfile - creates a new file instance by hooking it up to an
-> - *                      anonymous inode, and a dentry that describe the "class"
-> - *                      of the file
-> - *
-> - * @name:    [in]    name of the "class" of the new file
-> - * @fops:    [in]    file operations for the new file
-> - * @priv:    [in]    private data for the new file (will be file's private_data)
-> - * @flags:   [in]    flags
-> - *
-> - * Creates a new file by hooking it on a single inode. This is useful for files
-> - * that do not need to have a full-fledged inode in order to operate correctly.
-> - * All the files created with anon_inode_getfile() will share a single inode,
-> - * hence saving memory and avoiding code duplication for the file/inode/dentry
-> - * setup.  Returns the newly created file* or an error pointer.
-> - */
-> -struct file *anon_inode_getfile(const char *name,
-> -                               const struct file_operations *fops,
-> -                               void *priv, int flags)
-> +static struct inode *anon_inode_make_secure_inode(
-> +       const char *name,
-> +       const struct inode *context_inode)
-> +{
-> +       struct inode *inode;
-> +       const struct qstr qname = QSTR_INIT(name, strlen(name));
-> +       int error;
-> +
-> +       inode = alloc_anon_inode(anon_inode_mnt->mnt_sb);
-> +       if (IS_ERR(inode))
-> +               return inode;
-> +       inode->i_flags &= ~S_PRIVATE;
-> +       error = security_inode_init_security_anon(
-> +               inode, &qname, context_inode);
-> +       if (error) {
-> +               iput(inode);
-> +               return ERR_PTR(error);
-> +       }
-> +       return inode;
-> +}
-> +
-> +static struct file *_anon_inode_getfile(const char *name,
-> +                                       const struct file_operations *fops,
-> +                                       void *priv, int flags,
-> +                                       const struct inode *context_inode,
-> +                                       bool secure)
->  {
-> +       struct inode *inode;
->         struct file *file;
->
-> -       if (IS_ERR(anon_inode_inode))
-> -               return ERR_PTR(-ENODEV);
-> +       if (secure) {
-> +               inode = anon_inode_make_secure_inode(
-> +                       name, context_inode);
-> +               if (IS_ERR(inode))
-> +                       return ERR_CAST(inode);
-> +       } else {
-> +               inode = anon_inode_inode;
-> +               if (IS_ERR(inode))
-> +                       return ERR_PTR(-ENODEV);
-> +               /*
-> +                * We know the anon_inode inode count is always
-> +                * greater than zero, so ihold() is safe.
-> +                */
-> +               ihold(inode);
-> +       }
->
-> -       if (fops->owner && !try_module_get(fops->owner))
-> -               return ERR_PTR(-ENOENT);
-> +       if (fops->owner && !try_module_get(fops->owner)) {
-> +               file = ERR_PTR(-ENOENT);
-> +               goto err;
-> +       }
->
-> -       /*
-> -        * We know the anon_inode inode count is always greater than zero,
-> -        * so ihold() is safe.
-> -        */
-> -       ihold(anon_inode_inode);
-> -       file = alloc_file_pseudo(anon_inode_inode, anon_inode_mnt, name,
-> +       file = alloc_file_pseudo(inode, anon_inode_mnt, name,
->                                  flags & (O_ACCMODE | O_NONBLOCK), fops);
->         if (IS_ERR(file))
->                 goto err;
->
-> -       file->f_mapping = anon_inode_inode->i_mapping;
-> +       file->f_mapping = inode->i_mapping;
->
->         file->private_data = priv;
->
->         return file;
->
->  err:
-> -       iput(anon_inode_inode);
-> +       iput(inode);
->         module_put(fops->owner);
->         return file;
->  }
-> -EXPORT_SYMBOL_GPL(anon_inode_getfile);
->
->  /**
-> - * anon_inode_getfd - creates a new file instance by hooking it up to an
-> - *                    anonymous inode, and a dentry that describe the "class"
-> - *                    of the file
-> + * anon_inode_getfile - creates a new file instance by hooking it up to an
-> + *                      anonymous inode, and a dentry that describe the "class"
-> + *                      of the file
->   *
->   * @name:    [in]    name of the "class" of the new file
->   * @fops:    [in]    file operations for the new file
-> @@ -118,12 +135,23 @@ EXPORT_SYMBOL_GPL(anon_inode_getfile);
->   *
->   * Creates a new file by hooking it on a single inode. This is useful for files
->   * that do not need to have a full-fledged inode in order to operate correctly.
-> - * All the files created with anon_inode_getfd() will share a single inode,
-> + * All the files created with anon_inode_getfile() will share a single inode,
->   * hence saving memory and avoiding code duplication for the file/inode/dentry
-> - * setup.  Returns new descriptor or an error code.
-> + * setup.  Returns the newly created file* or an error pointer.
->   */
-> -int anon_inode_getfd(const char *name, const struct file_operations *fops,
-> -                    void *priv, int flags)
-> +struct file *anon_inode_getfile(const char *name,
-> +                               const struct file_operations *fops,
-> +                               void *priv, int flags)
-> +{
-> +       return _anon_inode_getfile(name, fops, priv, flags, NULL, false);
-> +}
-> +EXPORT_SYMBOL_GPL(anon_inode_getfile);
-> +
-> +static int _anon_inode_getfd(const char *name,
-> +                            const struct file_operations *fops,
-> +                            void *priv, int flags,
-> +                            const struct inode *context_inode,
-> +                            bool secure)
->  {
->         int error, fd;
->         struct file *file;
-> @@ -133,7 +161,8 @@ int anon_inode_getfd(const char *name, const struct file_operations *fops,
->                 return error;
->         fd = error;
->
-> -       file = anon_inode_getfile(name, fops, priv, flags);
-> +       file = _anon_inode_getfile(name, fops, priv, flags, context_inode,
-> +                                  secure);
->         if (IS_ERR(file)) {
->                 error = PTR_ERR(file);
->                 goto err_put_unused_fd;
-> @@ -146,8 +175,46 @@ int anon_inode_getfd(const char *name, const struct file_operations *fops,
->         put_unused_fd(fd);
->         return error;
->  }
-> +
-> +/**
-> + * anon_inode_getfd - creates a new file instance by hooking it up to
-> + *                    an anonymous inode and a dentry that describe
-> + *                    the "class" of the file
-> + *
-> + * @name:    [in]    name of the "class" of the new file
-> + * @fops:    [in]    file operations for the new file
-> + * @priv:    [in]    private data for the new file (will be file's private_data)
-> + * @flags:   [in]    flags
-> + *
-> + * Creates a new file by hooking it on a single inode. This is
-> + * useful for files that do not need to have a full-fledged inode in
-> + * order to operate correctly.  All the files created with
-> + * anon_inode_getfile() will use the same singleton inode, reducing
-> + * memory use and avoiding code duplication for the file/inode/dentry
-> + * setup.  Returns a newly created file descriptor or an error code.
-> + */
-> +int anon_inode_getfd(const char *name, const struct file_operations *fops,
-> +                    void *priv, int flags)
-> +{
-> +       return _anon_inode_getfd(name, fops, priv, flags, NULL, false);
-> +}
->  EXPORT_SYMBOL_GPL(anon_inode_getfd);
->
-> +/**
-> + * Like anon_inode_getfd(), but adds the @context_inode argument to
-> + * allow security modules to control creation of the new file. Once the
-> + * security module makes the decision, this inode is no longer needed
-> + * and hence reference to it is not held.
-> + */
-> +int anon_inode_getfd_secure(const char *name, const struct file_operations *fops,
-> +                           void *priv, int flags,
-> +                           const struct inode *context_inode)
-> +{
-> +       return _anon_inode_getfd(name, fops, priv, flags,
-> +                                context_inode, true);
-> +}
-> +EXPORT_SYMBOL_GPL(anon_inode_getfd_secure);
-> +
->  static int __init anon_inode_init(void)
->  {
->         anon_inode_mnt = kern_mount(&anon_inode_fs_type);
-> @@ -162,4 +229,3 @@ static int __init anon_inode_init(void)
->  }
->
->  fs_initcall(anon_inode_init);
-> -
-> diff --git a/include/linux/anon_inodes.h b/include/linux/anon_inodes.h
-> index d0d7d96261ad..67bd85d92dca 100644
-> --- a/include/linux/anon_inodes.h
-> +++ b/include/linux/anon_inodes.h
-> @@ -10,12 +10,25 @@
->  #define _LINUX_ANON_INODES_H
->
->  struct file_operations;
-> +struct inode;
-> +
-> +struct file *anon_inode_getfile_secure(const char *name,
-> +                                      const struct file_operations *fops,
-> +                                      void *priv, int flags,
-> +                                      const struct inode *context_inode);
->
-oops, I forgot to remove the function prototype. I'll fix it in the
-next revision. Meanwhile please let me know if any other issues are
-noticed.
+The current implementation of early boot measurement in
+the IMA subsystem is very specific to asymmetric keys. It does not
+handle early boot measurement of data from other subsystems such as
+Linux Security Module (LSM), Device-Mapper, etc. As a result data,
+provided by these subsystems during system boot are not measured by IMA.
 
->  struct file *anon_inode_getfile(const char *name,
->                                 const struct file_operations *fops,
->                                 void *priv, int flags);
-> +
-> +int anon_inode_getfd_secure(const char *name,
-> +                           const struct file_operations *fops,
-> +                           void *priv, int flags,
-> +                           const struct inode *context_inode);
-> +
->  int anon_inode_getfd(const char *name, const struct file_operations *fops,
->                      void *priv, int flags);
->
-> +
->  #endif /* _LINUX_ANON_INODES_H */
->
-> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-> index 2a8c74d99015..35ff75c43de4 100644
-> --- a/include/linux/lsm_hook_defs.h
-> +++ b/include/linux/lsm_hook_defs.h
-> @@ -113,6 +113,8 @@ LSM_HOOK(void, LSM_RET_VOID, inode_free_security, struct inode *inode)
->  LSM_HOOK(int, 0, inode_init_security, struct inode *inode,
->          struct inode *dir, const struct qstr *qstr, const char **name,
->          void **value, size_t *len)
-> +LSM_HOOK(int, 0, inode_init_security_anon, struct inode *inode,
-> +        const struct qstr *name, const struct inode *context_inode)
->  LSM_HOOK(int, 0, inode_create, struct inode *dir, struct dentry *dentry,
->          umode_t mode)
->  LSM_HOOK(int, 0, inode_link, struct dentry *old_dentry, struct inode *dir,
-> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-> index 9e2e3e63719d..2d590d2689b9 100644
-> --- a/include/linux/lsm_hooks.h
-> +++ b/include/linux/lsm_hooks.h
-> @@ -233,6 +233,13 @@
->   *     Returns 0 if @name and @value have been successfully set,
->   *     -EOPNOTSUPP if no security attribute is needed, or
->   *     -ENOMEM on memory allocation failure.
-> + * @inode_init_security_anon:
-> + *      Set up a secure anonymous inode.
-> + *      @inode contains the inode structure
-> + *      @name name of the anonymous inode class
-> + *      @context_inode optional related inode
-> + *     Returns 0 on success, -EACCESS if the security module denies the
-> + *     creation of this inode, or another -errno upon other errors.
->   * @inode_create:
->   *     Check permission to create a regular file.
->   *     @dir contains inode structure of the parent of the new file.
-> diff --git a/include/linux/security.h b/include/linux/security.h
-> index 0a0a03b36a3b..95c133a8f8bb 100644
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -322,6 +322,9 @@ void security_inode_free(struct inode *inode);
->  int security_inode_init_security(struct inode *inode, struct inode *dir,
->                                  const struct qstr *qstr,
->                                  initxattrs initxattrs, void *fs_data);
-> +int security_inode_init_security_anon(struct inode *inode,
-> +                                     const struct qstr *name,
-> +                                     const struct inode *context_inode);
->  int security_old_inode_init_security(struct inode *inode, struct inode *dir,
->                                      const struct qstr *qstr, const char **name,
->                                      void **value, size_t *len);
-> diff --git a/security/security.c b/security/security.c
-> index 70a7ad357bc6..149b3f024e2d 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -1057,6 +1057,15 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
->  }
->  EXPORT_SYMBOL(security_inode_init_security);
->
-> +int
-> +security_inode_init_security_anon(struct inode *inode,
-> +                                 const struct qstr *name,
-> +                                 const struct inode *context_inode)
-> +{
-> +       return call_int_hook(inode_init_security_anon, 0, inode, name,
-> +                            context_inode);
-> +}
-> +
->  int security_old_inode_init_security(struct inode *inode, struct inode *dir,
->                                      const struct qstr *qstr, const char **name,
->                                      void **value, size_t *len)
-> --
-> 2.28.0.297.g1956fa8f8d-goog
->
+Update the early boot key measurement to handle any early boot data.
+Refactor the code from ima_queue_keys.c to a new file ima_queue_data.c.
+Rename the kernel configuration CONFIG_IMA_QUEUE_EARLY_BOOT_KEYS to
+CONFIG_IMA_QUEUE_EARLY_BOOT_DATA so it can be used for enabling any
+early boot data measurement. Since measurement of asymmetric keys is
+the first consumer of early boot measurement, this kernel configuration
+is enabled if IMA_MEASURE_ASYMMETRIC_KEYS and SYSTEM_TRUSTED_KEYRING are
+both enabled.
+
+Update the IMA hook ima_measure_critical_data() to utilize early boot
+measurement support.
+
+This patch is dependent on the following patch series:
+	https://patchwork.kernel.org/patch/11709527/
+	https://patchwork.kernel.org/patch/11730193/
+
+Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+---
+ security/integrity/ima/Kconfig               |   2 +-
+ security/integrity/ima/Makefile              |   2 +-
+ security/integrity/ima/ima.h                 |  37 ++--
+ security/integrity/ima/ima_asymmetric_keys.c |   7 +-
+ security/integrity/ima/ima_init.c            |   2 +-
+ security/integrity/ima/ima_main.c            |  10 +
+ security/integrity/ima/ima_policy.c          |   2 +-
+ security/integrity/ima/ima_queue_data.c      | 191 +++++++++++++++++++
+ security/integrity/ima/ima_queue_keys.c      | 175 -----------------
+ 9 files changed, 231 insertions(+), 197 deletions(-)
+ create mode 100644 security/integrity/ima/ima_queue_data.c
+ delete mode 100644 security/integrity/ima/ima_queue_keys.c
+
+diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
+index 080c53545ff0..bc2adab7bae2 100644
+--- a/security/integrity/ima/Kconfig
++++ b/security/integrity/ima/Kconfig
+@@ -322,7 +322,7 @@ config IMA_MEASURE_ASYMMETRIC_KEYS
+ 	depends on ASYMMETRIC_PUBLIC_KEY_SUBTYPE=y
+ 	default y
+ 
+-config IMA_QUEUE_EARLY_BOOT_KEYS
++config IMA_QUEUE_EARLY_BOOT_DATA
+ 	bool
+ 	depends on IMA_MEASURE_ASYMMETRIC_KEYS
+ 	depends on SYSTEM_TRUSTED_KEYRING
+diff --git a/security/integrity/ima/Makefile b/security/integrity/ima/Makefile
+index 67dabca670e2..6a0f9ef93bf0 100644
+--- a/security/integrity/ima/Makefile
++++ b/security/integrity/ima/Makefile
+@@ -13,4 +13,4 @@ ima-$(CONFIG_IMA_APPRAISE_MODSIG) += ima_modsig.o
+ ima-$(CONFIG_HAVE_IMA_KEXEC) += ima_kexec.o
+ ima-$(CONFIG_IMA_BLACKLIST_KEYRING) += ima_mok.o
+ ima-$(CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS) += ima_asymmetric_keys.o
+-ima-$(CONFIG_IMA_QUEUE_EARLY_BOOT_KEYS) += ima_queue_keys.o
++ima-$(CONFIG_IMA_QUEUE_EARLY_BOOT_DATA) += ima_queue_data.o
+\ No newline at end of file
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index 00b84052c8f1..366d7cb5c22e 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -228,29 +228,36 @@ extern const char *const func_tokens[];
+ 
+ struct modsig;
+ 
+-#ifdef CONFIG_IMA_QUEUE_EARLY_BOOT_KEYS
++#ifdef CONFIG_IMA_QUEUE_EARLY_BOOT_DATA
+ /*
+  * To track keys that need to be measured.
+  */
+-struct ima_key_entry {
++struct ima_data_entry {
+ 	struct list_head list;
+ 	void *payload;
+ 	size_t payload_len;
+-	char *keyring_name;
++	const char *event_name;
++	const char *event_data;
++	enum ima_hooks func;
++	bool measure_payload_hash;
+ };
+-void ima_init_key_queue(void);
+-bool ima_should_queue_key(void);
+-bool ima_queue_key(struct key *keyring, const void *payload,
+-		   size_t payload_len);
+-void ima_process_queued_keys(void);
++void ima_init_data_queue(void);
++bool ima_should_queue_data(void);
++bool ima_queue_data(const char *event_name, const void *payload,
++		    size_t payload_len, const char *event_data,
++		    enum ima_hooks func, bool measure_payload_hash);
++void ima_process_queued_data(void);
+ #else
+-static inline void ima_init_key_queue(void) {}
+-static inline bool ima_should_queue_key(void) { return false; }
+-static inline bool ima_queue_key(struct key *keyring,
+-				 const void *payload,
+-				 size_t payload_len) { return false; }
+-static inline void ima_process_queued_keys(void) {}
+-#endif /* CONFIG_IMA_QUEUE_EARLY_BOOT_KEYS */
++static inline void ima_init_data_queue(void) {}
++static inline bool ima_should_queue_data(void) { return false; }
++static inline bool ima_queue_data(const char *event_name,
++				  const void *payload,
++				  size_t payload_len,
++				  const char *event_data,
++				  enum ima_hooks func,
++				  bool measure_payload_hash) { return false; }
++static inline void ima_process_queued_data(void) {}
++#endif /* CONFIG_IMA_QUEUE_EARLY_BOOT_DATA */
+ 
+ /* LIM API function definitions */
+ int ima_get_action(struct inode *inode, const struct cred *cred, u32 secid,
+diff --git a/security/integrity/ima/ima_asymmetric_keys.c b/security/integrity/ima/ima_asymmetric_keys.c
+index a74095793936..65423754765f 100644
+--- a/security/integrity/ima/ima_asymmetric_keys.c
++++ b/security/integrity/ima/ima_asymmetric_keys.c
+@@ -37,9 +37,10 @@ void ima_post_key_create_or_update(struct key *keyring, struct key *key,
+ 	if (!payload || (payload_len == 0))
+ 		return;
+ 
+-	if (ima_should_queue_key())
+-		queued = ima_queue_key(keyring, payload, payload_len);
+-
++	if (ima_should_queue_data())
++		queued = ima_queue_data(keyring->description, payload,
++					payload_len, keyring->description,
++					KEY_CHECK, false);
+ 	if (queued)
+ 		return;
+ 
+diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
+index 4902fe7bd570..892894bf4af3 100644
+--- a/security/integrity/ima/ima_init.c
++++ b/security/integrity/ima/ima_init.c
+@@ -145,7 +145,7 @@ int __init ima_init(void)
+ 	if (rc != 0)
+ 		return rc;
+ 
+-	ima_init_key_queue();
++	ima_init_data_queue();
+ 
+ 	return rc;
+ }
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 5db6dc3d45aa..728557662903 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -885,9 +885,19 @@ int ima_measure_critical_data(const char *event_name,
+ 			      const void *buf, int buf_len,
+ 			      bool measure_buf_hash)
+ {
++	bool queued = false;
++
+ 	if (!event_name || !event_data_source || !buf || !buf_len)
+ 		return -EINVAL;
+ 
++	if (ima_should_queue_data())
++		queued = ima_queue_data(event_name, buf, buf_len,
++					event_data_source, CRITICAL_DATA,
++					measure_buf_hash);
++
++	if (queued)
++		return 0;
++
+ 	return process_buffer_measurement(NULL, buf, buf_len, event_name,
+ 					  CRITICAL_DATA, 0, event_data_source,
+ 					  measure_buf_hash);
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index 59058ce7906b..f4f095ae6f8f 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -906,7 +906,7 @@ void ima_update_policy(void)
+ 	ima_update_policy_flag();
+ 
+ 	/* Custom IMA policy has been loaded */
+-	ima_process_queued_keys();
++	ima_process_queued_data();
+ }
+ 
+ /* Keep the enumeration in sync with the policy_tokens! */
+diff --git a/security/integrity/ima/ima_queue_data.c b/security/integrity/ima/ima_queue_data.c
+new file mode 100644
+index 000000000000..d466ee742377
+--- /dev/null
++++ b/security/integrity/ima/ima_queue_data.c
+@@ -0,0 +1,191 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Copyright (C) 2020 Microsoft Corporation
++ *
++ * Author: Lakshmi Ramasubramanian (nramas@linux.microsoft.com)
++ *
++ * File: ima_queue_data.c
++ *       Enables deferred processing of data
++ */
++
++#include <linux/workqueue.h>
++#include "ima.h"
++
++/*
++ * Flag to indicate whether data can be processed
++ * right away or should be queued for processing later.
++ */
++static bool ima_process_data;
++
++/*
++ * To synchronize access to the list of data that need to be measured
++ */
++static DEFINE_MUTEX(ima_data_lock);
++static LIST_HEAD(ima_queued_data);
++
++/*
++ * If custom IMA policy is not loaded then data queued up
++ * for measurement should be freed. This worker is used
++ * for handling this scenario.
++ */
++static long ima_data_queue_timeout = 300000; /* 5 Minutes */
++static void ima_data_handler(struct work_struct *work);
++static DECLARE_DELAYED_WORK(ima_data_delayed_work, ima_data_handler);
++static bool timer_expired;
++
++/*
++ * This worker function frees data that may still be
++ * queued up in case custom IMA policy was not loaded.
++ */
++static void ima_data_handler(struct work_struct *work)
++{
++	timer_expired = true;
++	ima_process_queued_data();
++}
++
++/*
++ * This function sets up a worker to free queued data in case
++ * custom IMA policy was never loaded.
++ */
++void ima_init_data_queue(void)
++{
++	schedule_delayed_work(&ima_data_delayed_work,
++			      msecs_to_jiffies(ima_data_queue_timeout));
++}
++
++static void ima_free_data_entry(struct ima_data_entry *entry)
++{
++	if (!entry)
++		return;
++
++	kvfree(entry->payload);
++	kfree(entry->event_name);
++	kfree(entry->event_data);
++	kfree(entry);
++}
++
++static void *ima_kvmemdup(const void *src, size_t len)
++{
++	void *p = kvmalloc(len, GFP_KERNEL);
++
++	if (p)
++		memcpy(p, src, len);
++	return p;
++}
++
++static struct ima_data_entry *ima_alloc_data_entry(const char *event_name,
++						   const void *payload,
++						   size_t payload_len,
++						   const char *event_data,
++						   enum ima_hooks func,
++						   bool measure_payload_hash)
++{
++	struct ima_data_entry *entry;
++
++	entry = kzalloc(sizeof(*entry), GFP_KERNEL);
++	if (!entry)
++		goto out;
++
++	/*
++	 * Payload size may exceed the limit supported by kmalloc.
++	 * So use kvmalloc instead.
++	 */
++	entry->payload = ima_kvmemdup(payload, payload_len);
++	entry->event_name = kstrdup(event_name, GFP_KERNEL);
++	if (event_data)
++		entry->event_data = kstrdup(event_data, GFP_KERNEL);
++
++	entry->payload_len = payload_len;
++	entry->func = func;
++	entry->measure_payload_hash = measure_payload_hash;
++
++	if (!entry->payload || !entry->event_name ||
++		(event_data && !entry->event_data))
++		goto out;
++
++	INIT_LIST_HEAD(&entry->list);
++	return entry;
++
++out:
++	integrity_audit_message(AUDIT_INTEGRITY_PCR, NULL,
++				event_name, func_measure_str(func),
++				"ENOMEM", -ENOMEM, 0, -ENOMEM);
++	ima_free_data_entry(entry);
++	return NULL;
++}
++
++bool ima_queue_data(const char *event_name, const void *payload,
++		    size_t payload_len, const char *event_data,
++		    enum ima_hooks func, bool measure_payload_hash)
++{
++	bool queued = false;
++	struct ima_data_entry *entry;
++
++	entry = ima_alloc_data_entry(event_name, payload, payload_len,
++				     event_data, func, measure_payload_hash);
++	if (!entry)
++		return false;
++
++	mutex_lock(&ima_data_lock);
++	if (!ima_process_data) {
++		list_add_tail(&entry->list, &ima_queued_data);
++		queued = true;
++	}
++	mutex_unlock(&ima_data_lock);
++
++	if (!queued)
++		ima_free_data_entry(entry);
++
++	return queued;
++}
++
++/*
++ * ima_process_queued_data() - process data queued for measurement
++ *
++ * This function sets ima_process_data to true and processes queued data.
++ * From here on data will be processed right away (not queued).
++ */
++void ima_process_queued_data(void)
++{
++	struct ima_data_entry *entry, *tmp;
++	bool process = false;
++
++	if (ima_process_data)
++		return;
++
++	/*
++	 * Since ima_process_data is set to true, any new data will be
++	 * processed immediately and not be queued to ima_queued_data list.
++	 * First one setting the ima_process_data flag to true will
++	 * process the queued data.
++	 */
++	mutex_lock(&ima_data_lock);
++	if (!ima_process_data) {
++		ima_process_data = true;
++		process = true;
++	}
++	mutex_unlock(&ima_data_lock);
++
++	if (!process)
++		return;
++
++	if (!timer_expired)
++		cancel_delayed_work_sync(&ima_data_delayed_work);
++
++	list_for_each_entry_safe(entry, tmp, &ima_queued_data, list) {
++		if (!timer_expired)
++			process_buffer_measurement(NULL, entry->payload,
++						   entry->payload_len,
++						   entry->event_name,
++						   entry->func, 0,
++						   entry->event_data,
++						   entry->measure_payload_hash);
++		list_del(&entry->list);
++		ima_free_data_entry(entry);
++	}
++}
++
++inline bool ima_should_queue_data(void)
++{
++	return !ima_process_data;
++}
+diff --git a/security/integrity/ima/ima_queue_keys.c b/security/integrity/ima/ima_queue_keys.c
+deleted file mode 100644
+index c2f2ad34f9b7..000000000000
+--- a/security/integrity/ima/ima_queue_keys.c
++++ /dev/null
+@@ -1,175 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0+
+-/*
+- * Copyright (C) 2019 Microsoft Corporation
+- *
+- * Author: Lakshmi Ramasubramanian (nramas@linux.microsoft.com)
+- *
+- * File: ima_queue_keys.c
+- *       Enables deferred processing of keys
+- */
+-
+-#include <linux/workqueue.h>
+-#include <keys/asymmetric-type.h>
+-#include "ima.h"
+-
+-/*
+- * Flag to indicate whether a key can be processed
+- * right away or should be queued for processing later.
+- */
+-static bool ima_process_keys;
+-
+-/*
+- * To synchronize access to the list of keys that need to be measured
+- */
+-static DEFINE_MUTEX(ima_keys_lock);
+-static LIST_HEAD(ima_keys);
+-
+-/*
+- * If custom IMA policy is not loaded then keys queued up
+- * for measurement should be freed. This worker is used
+- * for handling this scenario.
+- */
+-static long ima_key_queue_timeout = 300000; /* 5 Minutes */
+-static void ima_keys_handler(struct work_struct *work);
+-static DECLARE_DELAYED_WORK(ima_keys_delayed_work, ima_keys_handler);
+-static bool timer_expired;
+-
+-/*
+- * This worker function frees keys that may still be
+- * queued up in case custom IMA policy was not loaded.
+- */
+-static void ima_keys_handler(struct work_struct *work)
+-{
+-	timer_expired = true;
+-	ima_process_queued_keys();
+-}
+-
+-/*
+- * This function sets up a worker to free queued keys in case
+- * custom IMA policy was never loaded.
+- */
+-void ima_init_key_queue(void)
+-{
+-	schedule_delayed_work(&ima_keys_delayed_work,
+-			      msecs_to_jiffies(ima_key_queue_timeout));
+-}
+-
+-static void ima_free_key_entry(struct ima_key_entry *entry)
+-{
+-	if (entry) {
+-		kfree(entry->payload);
+-		kfree(entry->keyring_name);
+-		kfree(entry);
+-	}
+-}
+-
+-static struct ima_key_entry *ima_alloc_key_entry(struct key *keyring,
+-						 const void *payload,
+-						 size_t payload_len)
+-{
+-	int rc = 0;
+-	const char *audit_cause = "ENOMEM";
+-	struct ima_key_entry *entry;
+-
+-	entry = kzalloc(sizeof(*entry), GFP_KERNEL);
+-	if (entry) {
+-		entry->payload = kmemdup(payload, payload_len, GFP_KERNEL);
+-		entry->keyring_name = kstrdup(keyring->description,
+-					      GFP_KERNEL);
+-		entry->payload_len = payload_len;
+-	}
+-
+-	if ((entry == NULL) || (entry->payload == NULL) ||
+-	    (entry->keyring_name == NULL)) {
+-		rc = -ENOMEM;
+-		goto out;
+-	}
+-
+-	INIT_LIST_HEAD(&entry->list);
+-
+-out:
+-	if (rc) {
+-		integrity_audit_message(AUDIT_INTEGRITY_PCR, NULL,
+-					keyring->description,
+-					func_measure_str(KEY_CHECK),
+-					audit_cause, rc, 0, rc);
+-		ima_free_key_entry(entry);
+-		entry = NULL;
+-	}
+-
+-	return entry;
+-}
+-
+-bool ima_queue_key(struct key *keyring, const void *payload,
+-		   size_t payload_len)
+-{
+-	bool queued = false;
+-	struct ima_key_entry *entry;
+-
+-	entry = ima_alloc_key_entry(keyring, payload, payload_len);
+-	if (!entry)
+-		return false;
+-
+-	mutex_lock(&ima_keys_lock);
+-	if (!ima_process_keys) {
+-		list_add_tail(&entry->list, &ima_keys);
+-		queued = true;
+-	}
+-	mutex_unlock(&ima_keys_lock);
+-
+-	if (!queued)
+-		ima_free_key_entry(entry);
+-
+-	return queued;
+-}
+-
+-/*
+- * ima_process_queued_keys() - process keys queued for measurement
+- *
+- * This function sets ima_process_keys to true and processes queued keys.
+- * From here on keys will be processed right away (not queued).
+- */
+-void ima_process_queued_keys(void)
+-{
+-	struct ima_key_entry *entry, *tmp;
+-	bool process = false;
+-
+-	if (ima_process_keys)
+-		return;
+-
+-	/*
+-	 * Since ima_process_keys is set to true, any new key will be
+-	 * processed immediately and not be queued to ima_keys list.
+-	 * First one setting the ima_process_keys flag to true will
+-	 * process the queued keys.
+-	 */
+-	mutex_lock(&ima_keys_lock);
+-	if (!ima_process_keys) {
+-		ima_process_keys = true;
+-		process = true;
+-	}
+-	mutex_unlock(&ima_keys_lock);
+-
+-	if (!process)
+-		return;
+-
+-	if (!timer_expired)
+-		cancel_delayed_work_sync(&ima_keys_delayed_work);
+-
+-	list_for_each_entry_safe(entry, tmp, &ima_keys, list) {
+-		if (!timer_expired)
+-			process_buffer_measurement(NULL, entry->payload,
+-						   entry->payload_len,
+-						   entry->keyring_name,
+-						   KEY_CHECK, 0,
+-						   entry->keyring_name,
+-						   false);
+-		list_del(&entry->list);
+-		ima_free_key_entry(entry);
+-	}
+-}
+-
+-inline bool ima_should_queue_key(void)
+-{
+-	return !ima_process_keys;
+-}
+-- 
+2.28.0
+
