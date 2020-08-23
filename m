@@ -1,162 +1,210 @@
-Return-Path: <SRS0=YI3d=CA=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=4Vpg=CB=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3D43C433E1
-	for <linux-security-module@archiver.kernel.org>; Sat, 22 Aug 2020 03:05:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D1B6C433E1
+	for <linux-security-module@archiver.kernel.org>; Sun, 23 Aug 2020 16:56:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DF0E42063A
-	for <linux-security-module@archiver.kernel.org>; Sat, 22 Aug 2020 03:05:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C0612076D
+	for <linux-security-module@archiver.kernel.org>; Sun, 23 Aug 2020 16:56:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UMeUwR6e"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726639AbgHVDFr (ORCPT
+        id S1727768AbgHWQ4U (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 21 Aug 2020 23:05:47 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:38318 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726387AbgHVDFr (ORCPT
+        Sun, 23 Aug 2020 12:56:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59156 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726569AbgHWQ4T (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 21 Aug 2020 23:05:47 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id A9F3D65E5144998DEE4F;
-        Sat, 22 Aug 2020 11:05:44 +0800 (CST)
-Received: from use12-sp2.huawei.com (10.67.189.174) by
- DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
- 14.3.487.0; Sat, 22 Aug 2020 11:05:36 +0800
-From:   Xiaoming Ni <nixiaoming@huawei.com>
-To:     <serge@hallyn.com>, <jmorris@namei.org>, <zohar@linux.ibm.com>,
-        <dmitry.kasatkin@gmail.com>, <casey@schaufler-ca.com>,
-        <takedakn@nttdata.co.jp>, <penguin-kernel@I-love.SAKURA.ne.jp>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-integrity@vger.kernel.org>
-CC:     <wangle6@huawei.com>, <nixiaoming@huawei.com>
-Subject: [PATCH] security: fix some spelling mistakes in the comments by codespell
-Date:   Sat, 22 Aug 2020 11:05:34 +0800
-Message-ID: <20200822030534.2577-1-nixiaoming@huawei.com>
-X-Mailer: git-send-email 2.27.0
+        Sun, 23 Aug 2020 12:56:19 -0400
+Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C70A8C061573
+        for <linux-security-module@vger.kernel.org>; Sun, 23 Aug 2020 09:56:18 -0700 (PDT)
+Received: by mail-wm1-x342.google.com with SMTP id x5so6209134wmi.2
+        for <linux-security-module@vger.kernel.org>; Sun, 23 Aug 2020 09:56:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=N9VV0VUKWdKHrZoZz+bAO4AdD0M5HnXZsnWHlLxVB6M=;
+        b=UMeUwR6etEL/eS6zVJBLfsO6LqOADW8C+YVfMTVz2AwAGxY+gZLPgmt6ZjQsM2BPWX
+         4VnGZKCt5BXluaf623gXfO2dU+2GYpdeVMW+09hbYvsMHNrzMB7h4iMxkcXZhIQu2i5z
+         2O7XesC0dmfmALO5Envzj4vGDut6MX/CCdLVE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=N9VV0VUKWdKHrZoZz+bAO4AdD0M5HnXZsnWHlLxVB6M=;
+        b=o1t2Q1plwzLZDi6RcMlMsR8zO5RPnLkGhRbQ/UPLhVVwqzLg542MMg8FTBjX8fnVIG
+         1/tf++J/O2lmc2kBa64CYNa4cOm1Ge/+pzskROPBgtegMCkqwCiUb3lbyoyc0GtRikPa
+         bJ3WAJXZJKZkrTbnyB7fPR4tCoOKi0Znc6Kujln0BpiXX6fWm4U/Up6sH4/73NNgJdi6
+         vsfD0taqldVM8uoSIs5zm8PELjI/1AjgBHdf5B81GySYp+T5HnQN+4w6gz3N6h06JhP5
+         uPeNd5aUAotlbnOiZcJC5RkWdX1glLHIAKdf5P91eBBzpZmaPqUCIgqXKwmLK0PVXj3m
+         ZPhw==
+X-Gm-Message-State: AOAM5314b28p2SgN7bJHDXHl4rcmUJ1C9pdy8qCLjGQoLECO2a9Ui7NG
+        cF6AOtUBAetSrHIJLCkqgNEgR7zxBh0A2w==
+X-Google-Smtp-Source: ABdhPJyK463/MZaqw9Mr5vZyyPpODXteH13nvjHT/Vt4TwEfctmO5SmOa65LMqohhCFoqcG1VTVbmA==
+X-Received: by 2002:a1c:a385:: with SMTP id m127mr2166694wme.189.1598201777210;
+        Sun, 23 Aug 2020 09:56:17 -0700 (PDT)
+Received: from kpsingh.zrh.corp.google.com ([81.6.44.51])
+        by smtp.gmail.com with ESMTPSA id d10sm5425974wrg.3.2020.08.23.09.56.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Aug 2020 09:56:16 -0700 (PDT)
+From:   KP Singh <kpsingh@chromium.org>
+To:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
+        Florent Revest <revest@chromium.org>
+Subject: [PATCH bpf-next v9 0/7] Generalizing bpf_local_storage
+Date:   Sun, 23 Aug 2020 18:56:05 +0200
+Message-Id: <20200823165612.404892-1-kpsingh@chromium.org>
+X-Mailer: git-send-email 2.28.0.297.g1956fa8f8d-goog
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.67.189.174]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-ecurity/commoncap.c: capabilties ==> capabilities
-security/lsm_audit.c: programers ==> programmers
-security/tomoyo/audit.c: stuct ==> struct
-security/tomoyo/common.c: Poiter ==> Pointer
-security/smack/smack_lsm.c: overriden ==> overridden overridden
-security/smack/smackfs.c: overriden ==> overridden
-security/integrity/ima/ima_template_lib.c: algoritm ==> algorithm
+From: KP Singh <kpsingh@google.com>
 
-Signed-off-by: Xiaoming Ni <nixiaoming@huawei.com>
----
- security/commoncap.c                      | 2 +-
- security/integrity/ima/ima_template_lib.c | 2 +-
- security/lsm_audit.c                      | 2 +-
- security/smack/smack_lsm.c                | 2 +-
- security/smack/smackfs.c                  | 2 +-
- security/tomoyo/audit.c                   | 2 +-
- security/tomoyo/common.c                  | 2 +-
- 7 files changed, 7 insertions(+), 7 deletions(-)
+# v8 -> v9
 
-diff --git a/security/commoncap.c b/security/commoncap.c
-index 59bf3c1674c8..2c3a0f1b6876 100644
---- a/security/commoncap.c
-+++ b/security/commoncap.c
-@@ -1046,7 +1046,7 @@ int cap_task_fix_setuid(struct cred *new, const struct cred *old, int flags)
- 		break;
- 
- 	case LSM_SETID_FS:
--		/* juggle the capabilties to follow FSUID changes, unless
-+		/* juggle the capabilities to follow FSUID changes, unless
- 		 * otherwise suppressed
- 		 *
- 		 * FIXME - is fsuser used for all CAP_FS_MASK capabilities?
-diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
-index c022ee9e2a4e..9513564ee0b2 100644
---- a/security/integrity/ima/ima_template_lib.c
-+++ b/security/integrity/ima/ima_template_lib.c
-@@ -231,7 +231,7 @@ static int ima_eventdigest_init_common(const u8 *digest, u32 digestsize,
- 	 * digest formats:
- 	 *  - DATA_FMT_DIGEST: digest
- 	 *  - DATA_FMT_DIGEST_WITH_ALGO: [<hash algo>] + ':' + '\0' + digest,
--	 *    where <hash algo> is provided if the hash algoritm is not
-+	 *    where <hash algo> is provided if the hash algorithm is not
- 	 *    SHA1 or MD5
- 	 */
- 	u8 buffer[CRYPTO_MAX_ALG_NAME + 2 + IMA_MAX_DIGEST_SIZE] = { 0 };
-diff --git a/security/lsm_audit.c b/security/lsm_audit.c
-index 53d0d183db8f..a0ff2e441069 100644
---- a/security/lsm_audit.c
-+++ b/security/lsm_audit.c
-@@ -212,7 +212,7 @@ static void dump_common_audit_data(struct audit_buffer *ab,
- 	char comm[sizeof(current->comm)];
- 
- 	/*
--	 * To keep stack sizes in check force programers to notice if they
-+	 * To keep stack sizes in check force programmers to notice if they
- 	 * start making this union too large!  See struct lsm_network_audit
- 	 * as an example of how to deal with large data.
- 	 */
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 8c0893eb5aa8..960d4641239c 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -1784,7 +1784,7 @@ static int smack_file_send_sigiotask(struct task_struct *tsk,
- 	 */
- 	file = container_of(fown, struct file, f_owner);
- 
--	/* we don't log here as rc can be overriden */
-+	/* we don't log here as rc can be overridden */
- 	blob = smack_file(file);
- 	skp = *blob;
- 	rc = smk_access(skp, tkp, MAY_DELIVER, NULL);
-diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
-index 9c4308077574..5c581ec814ac 100644
---- a/security/smack/smackfs.c
-+++ b/security/smack/smackfs.c
-@@ -111,7 +111,7 @@ struct smack_known *smack_syslog_label;
- /*
-  * Ptrace current rule
-  * SMACK_PTRACE_DEFAULT    regular smack ptrace rules (/proc based)
-- * SMACK_PTRACE_EXACT      labels must match, but can be overriden with
-+ * SMACK_PTRACE_EXACT      labels must match, but can be overridden with
-  *			   CAP_SYS_PTRACE
-  * SMACK_PTRACE_DRACONIAN  lables must match, CAP_SYS_PTRACE has no effect
-  */
-diff --git a/security/tomoyo/audit.c b/security/tomoyo/audit.c
-index 3c96e8402e94..b51bad121c11 100644
---- a/security/tomoyo/audit.c
-+++ b/security/tomoyo/audit.c
-@@ -311,7 +311,7 @@ static LIST_HEAD(tomoyo_log);
- /* Lock for "struct list_head tomoyo_log". */
- static DEFINE_SPINLOCK(tomoyo_log_lock);
- 
--/* Length of "stuct list_head tomoyo_log". */
-+/* Length of "struct list_head tomoyo_log". */
- static unsigned int tomoyo_log_count;
- 
- /**
-diff --git a/security/tomoyo/common.c b/security/tomoyo/common.c
-index 4bee32bfe16d..38bdc0ffc312 100644
---- a/security/tomoyo/common.c
-+++ b/security/tomoyo/common.c
-@@ -2608,7 +2608,7 @@ ssize_t tomoyo_read_control(struct tomoyo_io_buffer *head, char __user *buffer,
- /**
-  * tomoyo_parse_policy - Parse a policy line.
-  *
-- * @head: Poiter to "struct tomoyo_io_buffer".
-+ * @head: Pointer to "struct tomoyo_io_buffer".
-  * @line: Line to parse.
-  *
-  * Returns 0 on success, negative value otherwise.
+- Fixed reference count logic for files for inode maps.
+- Other fixes suggested by Martin
+- Rebase
+
+# v7 -> v8
+
+- Fixed an issue with BTF IDs for helpers and added
+  bpf_<>_storage_delete to selftests to catch this issue.
+- Update comments about refcounts and grabbed a refcount to the open
+  file for userspace inode helpers.
+- Rebase.
+
+# v6 -> v7
+
+- Updated the series to use Martin's POC patch:
+
+  https://lore.kernel.org/bpf/20200725013047.4006241-1-kafai@fb.com/
+
+  I added a Co-developed-by: tag, but would need Martin's Signoff
+  (was not sure of the procedure here).
+
+- Rebase.
+
+# v5 -> v6
+
+- Fixed a build warning.
+- Rebase.
+
+# v4 -> v5
+
+- Split non-functional changes into separate commits.
+- Updated the cache macros to be simpler.
+- Fixed some bugs noticed by Martin.
+- Updated the userspace map functions to use an fd for lookups, updates
+  and deletes.
+- Rebase.
+
+# v3 -> v4
+
+- Fixed a missing include to bpf_sk_storage.h in bpf_sk_storage.c
+- Fixed some functions that were not marked as static which led to
+  W=1 compilation warnings.
+
+# v2 -> v3
+
+* Restructured the code as per Martin's suggestions:
+  - Common functionality in bpf_local_storage.c
+  - bpf_sk_storage functionality remains in net/bpf_sk_storage.
+  - bpf_inode_storage is kept separate as it is enabled only with
+    CONFIG_BPF_LSM.
+* A separate cache for inode and sk storage with macros to define it.
+* Use the ops style approach as suggested by Martin instead of the
+  enum + switch style.
+* Added the inode map to bpftool bash completion and docs.
+* Rebase and indentation fixes.
+
+# v1 -> v2
+
+* Use the security blob pointer instead of dedicated member in
+  struct inode.
+* Better code re-use as suggested by Alexei.
+* Dropped the inode count arithmetic as pointed out by Alexei.
+* Minor bug fixes and rebase.
+
+bpf_sk_storage can already be used by some BPF program types to annotate
+socket objects. These annotations are managed with the life-cycle of the
+object (i.e. freed when the object is freed) which makes BPF programs
+much simpler and less prone to errors and leaks.
+
+This patch series:
+
+* Generalizes the bpf_sk_storage infrastructure to allow easy
+  implementation of local storage for other objects
+* Implements local storage for inodes
+* Makes both bpf_{sk, inode}_storage available to LSM programs.
+
+Local storage is safe to use in LSM programs as the attachment sites are
+limited and the owning object won't be freed, however, this is not the
+case for tracing. Usage in tracing is expected to follow a white-list
+based approach similar to the d_path helper
+(https://lore.kernel.org/bpf/20200506132946.2164578-1-jolsa@kernel.org).
+
+Access to local storage would allow LSM programs to implement stateful
+detections like detecting the unlink of a running executable from the
+examples shared as a part of the KRSI series
+https://lore.kernel.org/bpf/20200329004356.27286-1-kpsingh@chromium.org/
+and
+https://github.com/sinkap/linux-krsi/blob/patch/v1/examples/samples/bpf/lsm_detect_exec_unlink.c
+
+KP Singh (7):
+  bpf: Renames in preparation for bpf_local_storage
+  bpf: Generalize caching for sk_storage.
+  bpf: Generalize bpf_sk_storage
+  bpf: Split bpf_local_storage to bpf_sk_storage
+  bpf: Implement bpf_local_storage for inodes
+  bpf: Allow local storage to be used from LSM programs
+  bpf: Add selftests for local_storage
+
+ include/linux/bpf.h                           |   8 +
+ include/linux/bpf_local_storage.h             | 163 ++++
+ include/linux/bpf_lsm.h                       |  29 +
+ include/linux/bpf_types.h                     |   3 +
+ include/net/bpf_sk_storage.h                  |  14 +
+ include/net/sock.h                            |   4 +-
+ include/uapi/linux/bpf.h                      |  53 +-
+ kernel/bpf/Makefile                           |   2 +
+ kernel/bpf/bpf_inode_storage.c                | 265 ++++++
+ kernel/bpf/bpf_local_storage.c                | 600 +++++++++++++
+ kernel/bpf/bpf_lsm.c                          |  21 +-
+ kernel/bpf/syscall.c                          |   3 +-
+ kernel/bpf/verifier.c                         |  10 +
+ net/core/bpf_sk_storage.c                     | 830 +++---------------
+ security/bpf/hooks.c                          |   7 +
+ .../bpf/bpftool/Documentation/bpftool-map.rst |   2 +-
+ tools/bpf/bpftool/bash-completion/bpftool     |   3 +-
+ tools/bpf/bpftool/map.c                       |   3 +-
+ tools/include/uapi/linux/bpf.h                |  53 +-
+ tools/lib/bpf/libbpf_probes.c                 |   5 +-
+ .../bpf/prog_tests/test_local_storage.c       |  60 ++
+ .../selftests/bpf/progs/local_storage.c       | 140 +++
+ 22 files changed, 1566 insertions(+), 712 deletions(-)
+ create mode 100644 include/linux/bpf_local_storage.h
+ create mode 100644 kernel/bpf/bpf_inode_storage.c
+ create mode 100644 kernel/bpf/bpf_local_storage.c
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/test_local_storage.c
+ create mode 100644 tools/testing/selftests/bpf/progs/local_storage.c
+
 -- 
-2.27.0
+2.28.0.297.g1956fa8f8d-goog
 
