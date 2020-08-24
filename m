@@ -2,130 +2,143 @@ Return-Path: <SRS0=szIC=CC=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19393C433E1
-	for <linux-security-module@archiver.kernel.org>; Mon, 24 Aug 2020 19:37:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6E1FC433E3
+	for <linux-security-module@archiver.kernel.org>; Mon, 24 Aug 2020 20:01:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0046D2078D
-	for <linux-security-module@archiver.kernel.org>; Mon, 24 Aug 2020 19:37:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8261220656
+	for <linux-security-module@archiver.kernel.org>; Mon, 24 Aug 2020 20:01:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aW1gbBVc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726598AbgHXThR (ORCPT
+        id S1726784AbgHXUBf (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 24 Aug 2020 15:37:17 -0400
-Received: from mail-il1-f199.google.com ([209.85.166.199]:51354 "EHLO
-        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726531AbgHXThP (ORCPT
+        Mon, 24 Aug 2020 16:01:35 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:24709 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725921AbgHXUBd (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 24 Aug 2020 15:37:15 -0400
-Received: by mail-il1-f199.google.com with SMTP id f22so7326202ill.18
-        for <linux-security-module@vger.kernel.org>; Mon, 24 Aug 2020 12:37:14 -0700 (PDT)
+        Mon, 24 Aug 2020 16:01:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1598299291;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=uscrMvCrVpuzBs8CCqTlviFEzNB9Ka9n9LSLMNlONOY=;
+        b=aW1gbBVcqVCzvpcGarXB2wzf8AKhuqvkFcHVXgh1TlkEXhVWUCt4jBa8izb0etDlQBm5Qw
+        CS5v+tzjnzDszkdSwLTtn5c3pbrWAYgBtMHg4pptJanvmdiXgagJIAyImT0QJ7EM8pGcwI
+        Ti3eWQNT4gIQmPw9ezRLOl7lOuLWRjE=
+Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
+ [209.85.208.198]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-313-D8VQ60bMNfq_iOyMCQZbYg-1; Mon, 24 Aug 2020 16:01:29 -0400
+X-MC-Unique: D8VQ60bMNfq_iOyMCQZbYg-1
+Received: by mail-lj1-f198.google.com with SMTP id r11so3109524ljn.22
+        for <linux-security-module@vger.kernel.org>; Mon, 24 Aug 2020 13:01:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=vsgtHuVnx0ZvzeehfUfHgJ33sOPqjeFQQzciJ80PJFc=;
-        b=CU5laznUxUIdb3Hv7cNg5nYqioG974gmDShBzhADgdwbJqCAv8X+cR/oK1kts6NAlt
-         cX70buP6nhsNUBKQF6dZdYwj/HRK4N7PT53pK+1WahtcxhjwUCbQXHUByfrJtiR2GY0z
-         f4WN1J95Nuvpc5Yjye07fYUm0yd2HBcEJ0knwUd2DuqRnoZ4k3n0DfAVdK8PEl9149T/
-         Y3mNrOvHcYqGzo6puypWi5fRUziGdDaidl3gi7vRHEtYNR+XeA6ooQO3UDhBSfGAyglB
-         F1idUIswFBZo1auaQFk5+Uf6eXM1HGGyIq8L17OeCrQPRVf3VDIq18UQZYGVXu0uGo54
-         wg7g==
-X-Gm-Message-State: AOAM5310mrqsjJ8AdTBrtEv4bAuXP5vkfKIurvgLfwffF1Z66CngBqNP
-        SR+ri+U0x13ogOvNbYZkyYxI2+ykgAzwLTWIhwCrbcx170yj
-X-Google-Smtp-Source: ABdhPJykWdEKk+SqTsQefs1R/IQeVu1pLKHEgBFUhzI6awaY9lYXscEbCL7ZEK/z8a0bRxGhiWSjE9l+GUyu97x6RSF5GLHIb1/m
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=uscrMvCrVpuzBs8CCqTlviFEzNB9Ka9n9LSLMNlONOY=;
+        b=iQxoRauzAX+T9EaRYqf9J2Q38X9DZm2EkHKzry7ORMVrheY9STfgfN8kYfcvTGtM8I
+         V8KcKLpn54F1VV8xGn191LAoCxsenJPteI6/vXPS0AHipSQDAPW1SXSNhx7Pu7aldbT5
+         O3bVWjOTtHTXSKr/xF3Fai+P46XANoUW+BVW47by3R5pwGO3/T/dpeJglf5js20oUBIe
+         7gW7aIdnPb05mMC2epFMvAPitiz73leVFZUFPXdSSfTci0E5nS5fVU67DvmBfA9Z9h1i
+         wGVRmnCmuVjE9oGMXUgDff7Zld9s8MaDMsmyl7X+QLVgBVEETdDjInLAHOHeW91fulWt
+         SC/w==
+X-Gm-Message-State: AOAM530q6Dyb9D38lxQ6A3BzATsIbFKOP59UoFTo8TpYWKiCwTvfkR3j
+        di4yElaPqaduuAL2sYVSaiJIfXAcAS0zmDQhy3/7r0Pi5nD7F1PfpOLRV39AiqsvxNNJicoXVPF
+        cbOJKd/exCXCXz+eK2Gv00spsBfrKJzjq2lqw+usRXQiS22t/+/o5
+X-Received: by 2002:a2e:7010:: with SMTP id l16mr3180387ljc.38.1598299288320;
+        Mon, 24 Aug 2020 13:01:28 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzlH+auARhq7SWPbHEI59342ZMN+shTt3ocQ8lwjHmShhNGjby6clQhLnKc2Mg8F5+NM25k106HjhZgrKaoXJ0=
+X-Received: by 2002:a2e:7010:: with SMTP id l16mr3180369ljc.38.1598299288036;
+ Mon, 24 Aug 2020 13:01:28 -0700 (PDT)
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:1393:: with SMTP id w19mr7060480jad.113.1598297834201;
- Mon, 24 Aug 2020 12:37:14 -0700 (PDT)
-Date:   Mon, 24 Aug 2020 12:37:14 -0700
-In-Reply-To: <0000000000008caae305ab9a5318@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a726a405ada4b6cf@google.com>
-Subject: Re: general protection fault in security_inode_getattr
-From:   syzbot <syzbot+f07cc9be8d1d226947ed@syzkaller.appspotmail.com>
-To:     andriin@fb.com, ast@kernel.org, bpf@vger.kernel.org,
-        daniel@iogearbox.net, jmorris@namei.org, john.fastabend@gmail.com,
-        kafai@fb.com, kpsingh@chromium.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        serge@hallyn.com, songliubraving@fb.com,
-        syzkaller-bugs@googlegroups.com, yhs@fb.com
+References: <20200822010018.19453-1-nramas@linux.microsoft.com>
+ <CAEjxPJ5Kok-TBfS=XQ+NUC5tuaZRkyLBOawG4UDky51_bsMnGw@mail.gmail.com>
+ <418618c4-a0c6-6b28-6718-2726a29b83c5@linux.microsoft.com> <CAEjxPJ6-8WnZRJnADsn=RVakzJiESjEjK-f8nSkscpT7dnricQ@mail.gmail.com>
+In-Reply-To: <CAEjxPJ6-8WnZRJnADsn=RVakzJiESjEjK-f8nSkscpT7dnricQ@mail.gmail.com>
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+Date:   Mon, 24 Aug 2020 22:01:17 +0200
+Message-ID: <CAFqZXNvVQ5U6Ea3gT32Z0hfWbu7GPR-mTF2z6-JZZJT57Heuuw@mail.gmail.com>
+Subject: Re: [PATCH] SELinux: Measure state and hash of policy using IMA
+To:     Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Tyler Hicks <tyhicks@linux.microsoft.com>,
+        tusharsu@linux.microsoft.com, Sasha Levin <sashal@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        linux-integrity@vger.kernel.org,
+        SElinux list <selinux@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=omosnace@redhat.com
+X-Mimecast-Spam-Score: 0.004
+X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-syzbot has found a reproducer for the following issue on:
+On Mon, Aug 24, 2020 at 9:30 PM Stephen Smalley
+<stephen.smalley.work@gmail.com> wrote:
+> On Mon, Aug 24, 2020 at 2:13 PM Lakshmi Ramasubramanian
+> <nramas@linux.microsoft.com> wrote:
+> >
+> > On 8/24/20 7:00 AM, Stephen Smalley wrote:
+> >
+> > >> +int security_read_policy_kernel(struct selinux_state *state,
+> > >> +                               void **data, size_t *len)
+> > >> +{
+> > >> +       int rc;
+> > >> +
+> > >> +       rc = security_read_policy_len(state, len);
+> > >> +       if (rc)
+> > >> +               return rc;
+> > >> +
+> > >> +       *data = vmalloc(*len);
+> > >> +       if (!*data)
+> > >> +               return -ENOMEM;
+> > >>
+> > >> +       return security_read_selinux_policy(state, data, len);
+> > >>   }
+> > >
+> > > See the discussion here:
+> > > https://lore.kernel.org/selinux/20200824113015.1375857-1-omosnace@redhat.com/T/#t
+> > >
+> > > In order for this to be safe, you need to ensure that all callers of
+> > > security_read_policy_kernel() have taken fsi->mutex in selinuxfs and
+> > > any use of security_read_policy_len() occurs while holding the mutex.
+> > > Otherwise, the length can change between security_read_policy_len()
+> > > and security_read_selinux_policy() if policy is reloaded.
+> > >
+> >
+> > "struct selinux_fs_info" is available when calling
+> > security_read_policy_kernel() - currently in measure.c.
+> > Only "struct selinux_state" is.
+> >
+> > Is Ondrej's re-try approach I need to use to workaround policy reload issue?
+>
+> No, I think perhaps we should move the mutex to selinux_state instead
+> of selinux_fs_info.  selinux_fs_info has a pointer to selinux_state so
+> it can then use it indirectly.  Note that your patches are going to
+> conflict with other ongoing work in the selinux next branch that is
+> refactoring policy load and converting the policy rwlock to RCU.
 
-HEAD commit:    d012a719 Linux 5.9-rc2
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14aa130e900000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=891ca5711a9f1650
-dashboard link: https://syzkaller.appspot.com/bug?extid=f07cc9be8d1d226947ed
-compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=104a650e900000
+Yeah, and I'm experimenting with a patch on top of Stephen's RCU work
+that would allow you to do this in a straightforward way without even
+messing with the fsi->mutex. My patch may or may not be eventually
+committed, but either way I'd recommend holding off on this for a
+while until the dust settles around the RCU conversion.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+f07cc9be8d1d226947ed@syzkaller.appspotmail.com
-
-general protection fault, probably for non-canonical address 0xdffffc000000000d: 0000 [#1] PREEMPT SMP KASAN
-KASAN: null-ptr-deref in range [0x0000000000000068-0x000000000000006f]
-CPU: 1 PID: 32288 Comm: syz-executor.3 Not tainted 5.9.0-rc2-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:d_backing_inode include/linux/dcache.h:549 [inline]
-RIP: 0010:security_inode_getattr+0x42/0x140 security/security.c:1276
-Code: 1b fe 49 8d 5e 08 48 89 d8 48 c1 e8 03 42 80 3c 38 00 74 08 48 89 df e8 bc b4 5b fe 48 8b 1b 48 83 c3 68 48 89 d8 48 c1 e8 03 <42> 80 3c 38 00 74 08 48 89 df e8 9f b4 5b fe 48 8b 1b 48 83 c3 0c
-RSP: 0018:ffffc9000a017750 EFLAGS: 00010202
-RAX: 000000000000000d RBX: 0000000000000068 RCX: ffff888093ec6180
-RDX: 0000000000000000 RSI: ffffc9000a017860 RDI: ffffc9000a017850
-RBP: ffffc9000a017850 R08: dffffc0000000000 R09: ffffc9000a017850
-R10: fffff52001402f0c R11: 0000000000000000 R12: ffffc9000a017860
-R13: 0000000000008401 R14: ffffc9000a017850 R15: dffffc0000000000
-FS:  00007f292d4ef700(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b30920074 CR3: 00000000937fd000 CR4: 00000000001506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- vfs_getattr+0x21/0x60 fs/stat.c:121
- ovl_copy_up_one fs/overlayfs/copy_up.c:850 [inline]
- ovl_copy_up_flags+0x2ef/0x2a00 fs/overlayfs/copy_up.c:931
- ovl_maybe_copy_up+0x154/0x180 fs/overlayfs/copy_up.c:963
- ovl_open+0xa2/0x200 fs/overlayfs/file.c:147
- do_dentry_open+0x7c8/0x1010 fs/open.c:817
- do_open fs/namei.c:3251 [inline]
- path_openat+0x2794/0x3840 fs/namei.c:3368
- do_filp_open+0x191/0x3a0 fs/namei.c:3395
- file_open_name+0x321/0x430 fs/open.c:1113
- acct_on kernel/acct.c:207 [inline]
- __do_sys_acct kernel/acct.c:286 [inline]
- __se_sys_acct+0x122/0x6f0 kernel/acct.c:273
- do_syscall_64+0x31/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x45d579
-Code: 5d b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 2b b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f292d4eec78 EFLAGS: 00000246 ORIG_RAX: 00000000000000a3
-RAX: ffffffffffffffda RBX: 0000000000000700 RCX: 000000000045d579
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000020000040
-RBP: 000000000118cf70 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 000000000118cf4c
-R13: 00007ffc8e04bc4f R14: 00007f292d4ef9c0 R15: 000000000118cf4c
-Modules linked in:
----[ end trace 7e4f1041b188e411 ]---
-RIP: 0010:d_backing_inode include/linux/dcache.h:549 [inline]
-RIP: 0010:security_inode_getattr+0x42/0x140 security/security.c:1276
-Code: 1b fe 49 8d 5e 08 48 89 d8 48 c1 e8 03 42 80 3c 38 00 74 08 48 89 df e8 bc b4 5b fe 48 8b 1b 48 83 c3 68 48 89 d8 48 c1 e8 03 <42> 80 3c 38 00 74 08 48 89 df e8 9f b4 5b fe 48 8b 1b 48 83 c3 0c
-RSP: 0018:ffffc9000a017750 EFLAGS: 00010202
-RAX: 000000000000000d RBX: 0000000000000068 RCX: ffff888093ec6180
-RDX: 0000000000000000 RSI: ffffc9000a017860 RDI: ffffc9000a017850
-RBP: ffffc9000a017850 R08: dffffc0000000000 R09: ffffc9000a017850
-R10: fffff52001402f0c R11: 0000000000000000 R12: ffffc9000a017860
-R13: 0000000000008401 R14: ffffc9000a017850 R15: dffffc0000000000
-FS:  00007f292d4ef700(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fef820e7000 CR3: 00000000937fd000 CR4: 00000000001506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+-- 
+Ondrej Mosnacek
+Software Engineer, Platform Security - SELinux kernel
+Red Hat, Inc.
 
