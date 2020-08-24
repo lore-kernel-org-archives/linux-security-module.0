@@ -1,226 +1,106 @@
-Return-Path: <SRS0=4Vpg=CB=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=szIC=CC=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-8.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF5A2C433E5
-	for <linux-security-module@archiver.kernel.org>; Sun, 23 Aug 2020 16:57:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94E76C433E1
+	for <linux-security-module@archiver.kernel.org>; Mon, 24 Aug 2020 12:15:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9E9402074D
-	for <linux-security-module@archiver.kernel.org>; Sun, 23 Aug 2020 16:57:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73B292078D
+	for <linux-security-module@archiver.kernel.org>; Mon, 24 Aug 2020 12:15:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="CwhyfZh5"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="l6QVX2hL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727961AbgHWQ5t (ORCPT
+        id S1726026AbgHXMPB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 23 Aug 2020 12:57:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59184 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727849AbgHWQ4W (ORCPT
+        Mon, 24 Aug 2020 08:15:01 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:13384 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725906AbgHXMPA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 23 Aug 2020 12:56:22 -0400
-Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 092C0C061574
-        for <linux-security-module@vger.kernel.org>; Sun, 23 Aug 2020 09:56:20 -0700 (PDT)
-Received: by mail-wm1-x344.google.com with SMTP id c19so4609210wmd.1
-        for <linux-security-module@vger.kernel.org>; Sun, 23 Aug 2020 09:56:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=7EGajeDiJIxrlPr3Y0NRvAuPtl3AEsFbIm2NTrH6ZEc=;
-        b=CwhyfZh5+VOoAaJmKYhren9Fal42PrPyNC7OVekZ4j0KJizvXdmylkSyryY0Oj3Tx7
-         hXFUiir7tLOxUSsQEQQUpc0kAaT/t8VQizZlo5lTv7UoKwMkw82Zk3/1w3zRXjb63eiN
-         Axl3Gczb/oVreJdGL999ylrFbqrmg6Q7h67e4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=7EGajeDiJIxrlPr3Y0NRvAuPtl3AEsFbIm2NTrH6ZEc=;
-        b=RK3btIyneIxvbfbWzKointjyA4e0wPGl9B1407LTOsjOXhMOKjdHjBl2ekirSrzgjl
-         oy/HAkT3oSZ9gVFi3TkNzNQ/CaJDfzTiI96SjD8VkH7u9MEnGB3DZ+okPtV0lDcmlJWN
-         LNtpw6vWhJj3wyvWIGjux7ij54fivzuz7Ogu1WsMxtLnSuc0sOwjmslLLVjq5pup1W8w
-         b4mbPESGC4jN7FjyhFngz5dH7RX/1JfXSJY8S68c9yeaQWy7VWsBhmcTvIuRiIt3GvJa
-         8uV2lECjufi9KwGjNjYO0CM05jgKFmX/879J+4ocU4TLkQIVJ/WJ+Lu178uHBzHOeQ6M
-         zBkw==
-X-Gm-Message-State: AOAM533aLuk0bQtFnhF/fzwtyOPNDcx1xItduNLKeZuGhoUNkxy5XXNa
-        V0jtHVBN69Ljc/0NulVGRenEPQ==
-X-Google-Smtp-Source: ABdhPJzZCM/fPFw3SRazDY87wFNAxYWhIa+cd5mpCui3imi1t0pFeqDbVi0bEdk/AIA3k60/U/mAVQ==
-X-Received: by 2002:a7b:c452:: with SMTP id l18mr2178956wmi.13.1598201778936;
-        Sun, 23 Aug 2020 09:56:18 -0700 (PDT)
-Received: from kpsingh.zrh.corp.google.com ([81.6.44.51])
-        by smtp.gmail.com with ESMTPSA id d10sm5425974wrg.3.2020.08.23.09.56.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Aug 2020 09:56:18 -0700 (PDT)
-From:   KP Singh <kpsingh@chromium.org>
-To:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Cc:     Martin KaFai Lau <kafai@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
-        Florent Revest <revest@chromium.org>
-Subject: [PATCH bpf-next v9 2/7] bpf: Generalize caching for sk_storage.
-Date:   Sun, 23 Aug 2020 18:56:07 +0200
-Message-Id: <20200823165612.404892-3-kpsingh@chromium.org>
-X-Mailer: git-send-email 2.28.0.297.g1956fa8f8d-goog
-In-Reply-To: <20200823165612.404892-1-kpsingh@chromium.org>
-References: <20200823165612.404892-1-kpsingh@chromium.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Mon, 24 Aug 2020 08:15:00 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 07OC235Z146980;
+        Mon, 24 Aug 2020 08:14:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=ilaU6IUDf52Jth9wTolQYR+bi5i9FlQ3hnQWsivcPRE=;
+ b=l6QVX2hLXEf/1hDtQuWvBcZ4rvLQ6h0urOXN8QpiEf9FxQwO51ZyP3xKQO3pFd6smLaE
+ hebJABxG8PpAUYEaIWBXn+SCnWwDgeyNmf9AukG+FlYDgb22u5ZhERjoio+Zm+mddIKC
+ KxDwG9oTPWYp6r8toFCAbSPatHMivlk9SUJvNhKuTqkLWTiturRlD7uIZbZ1Ggl3g0Jw
+ WhvIaRIbh6I+/9UnXXwZ3DJBOVw84BygJ7ZqTZoQGmnBTmyjBx/2pv+RAFGPifdkI9MN
+ sQ1GfcQEYi0hnXpMJZtCwSxIaYqDqarOQRMAsvQ2Ye1IvoZRFcdyVVja2K83ESPB32vT 3Q== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 334b09msjj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 24 Aug 2020 08:14:53 -0400
+Received: from m0098414.ppops.net (m0098414.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 07OC26uI147048;
+        Mon, 24 Aug 2020 08:14:53 -0400
+Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 334b09mshv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 24 Aug 2020 08:14:52 -0400
+Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
+        by ppma06ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 07OCEIY2004082;
+        Mon, 24 Aug 2020 12:14:51 GMT
+Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
+        by ppma06ams.nl.ibm.com with ESMTP id 332uk6ab3n-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 24 Aug 2020 12:14:51 +0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 07OCDJ7C61342054
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 24 Aug 2020 12:13:19 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id F0F0EA404D;
+        Mon, 24 Aug 2020 12:14:48 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 52496A4040;
+        Mon, 24 Aug 2020 12:14:47 +0000 (GMT)
+Received: from sig-9-65-254-31.ibm.com (unknown [9.65.254.31])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 24 Aug 2020 12:14:47 +0000 (GMT)
+Message-ID: <1a30cf978efa004efb5583c2c1aef0121eaa6caa.camel@linux.ibm.com>
+Subject: Re: [PATCH 04/11] evm: Check size of security.evm before using it
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>, mjg59@google.com
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Date:   Mon, 24 Aug 2020 08:14:46 -0400
+In-Reply-To: <20200618160133.937-4-roberto.sassu@huawei.com>
+References: <20200618160133.937-1-roberto.sassu@huawei.com>
+         <20200618160133.937-4-roberto.sassu@huawei.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-08-24_08:2020-08-24,2020-08-24 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 malwarescore=0
+ impostorscore=0 phishscore=0 clxscore=1015 mlxscore=0 bulkscore=0
+ spamscore=0 lowpriorityscore=0 priorityscore=1501 mlxlogscore=788
+ suspectscore=3 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2006250000 definitions=main-2008240092
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: KP Singh <kpsingh@google.com>
+On Thu, 2020-06-18 at 18:01 +0200, Roberto Sassu wrote:
+> This patch checks the size for the EVM_IMA_XATTR_DIGSIG and
+> EVM_XATTR_PORTABLE_DIGSIG types to ensure that the algorithm is read from
+> the buffer returned by vfs_getxattr_alloc().
+> 
+> Cc: stable@vger.kernel.org # 4.19.x
+> Fixes: 5feeb61183dde ("evm: Allow non-SHA1 digital signatures")
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 
-Provide the a ability to define local storage caches on a per-object
-type basis. The caches and caching indices for different objects should
-not be inter-mixed as suggested in:
-
-  https://lore.kernel.org/bpf/20200630193441.kdwnkestulg5erii@kafai-mbp.dhcp.thefacebook.com/
-
-  "Caching a sk-storage at idx=0 of a sk should not stop an
-  inode-storage to be cached at the same idx of a inode."
-
-Acked-by: Martin KaFai Lau <kafai@fb.com>
-Signed-off-by: KP Singh <kpsingh@google.com>
----
- include/net/bpf_sk_storage.h | 19 +++++++++++++++++++
- net/core/bpf_sk_storage.c    | 31 +++++++++++++++----------------
- 2 files changed, 34 insertions(+), 16 deletions(-)
-
-diff --git a/include/net/bpf_sk_storage.h b/include/net/bpf_sk_storage.h
-index 5036c94c0503..950c5aaba15e 100644
---- a/include/net/bpf_sk_storage.h
-+++ b/include/net/bpf_sk_storage.h
-@@ -3,6 +3,9 @@
- #ifndef _BPF_SK_STORAGE_H
- #define _BPF_SK_STORAGE_H
- 
-+#include <linux/types.h>
-+#include <linux/spinlock.h>
-+
- struct sock;
- 
- void bpf_sk_storage_free(struct sock *sk);
-@@ -15,6 +18,22 @@ struct sk_buff;
- struct nlattr;
- struct sock;
- 
-+#define BPF_LOCAL_STORAGE_CACHE_SIZE	16
-+
-+struct bpf_local_storage_cache {
-+	spinlock_t idx_lock;
-+	u64 idx_usage_counts[BPF_LOCAL_STORAGE_CACHE_SIZE];
-+};
-+
-+#define DEFINE_BPF_STORAGE_CACHE(name)				\
-+static struct bpf_local_storage_cache name = {			\
-+	.idx_lock = __SPIN_LOCK_UNLOCKED(name.idx_lock),	\
-+}
-+
-+u16 bpf_local_storage_cache_idx_get(struct bpf_local_storage_cache *cache);
-+void bpf_local_storage_cache_idx_free(struct bpf_local_storage_cache *cache,
-+				      u16 idx);
-+
- #ifdef CONFIG_BPF_SYSCALL
- int bpf_sk_storage_clone(const struct sock *sk, struct sock *newsk);
- struct bpf_sk_storage_diag *
-diff --git a/net/core/bpf_sk_storage.c b/net/core/bpf_sk_storage.c
-index f975e2d01207..ec61ee7c7ee4 100644
---- a/net/core/bpf_sk_storage.c
-+++ b/net/core/bpf_sk_storage.c
-@@ -14,6 +14,8 @@
- 
- #define BPF_LOCAL_STORAGE_CREATE_FLAG_MASK (BPF_F_NO_PREALLOC | BPF_F_CLONE)
- 
-+DEFINE_BPF_STORAGE_CACHE(sk_cache);
-+
- struct bpf_local_storage_map_bucket {
- 	struct hlist_head list;
- 	raw_spinlock_t lock;
-@@ -78,10 +80,6 @@ struct bpf_local_storage_elem {
- #define SELEM(_SDATA)							\
- 	container_of((_SDATA), struct bpf_local_storage_elem, sdata)
- #define SDATA(_SELEM) (&(_SELEM)->sdata)
--#define BPF_LOCAL_STORAGE_CACHE_SIZE	16
--
--static DEFINE_SPINLOCK(cache_idx_lock);
--static u64 cache_idx_usage_counts[BPF_LOCAL_STORAGE_CACHE_SIZE];
- 
- struct bpf_local_storage {
- 	struct bpf_local_storage_data __rcu *cache[BPF_LOCAL_STORAGE_CACHE_SIZE];
-@@ -521,16 +519,16 @@ static int sk_storage_delete(struct sock *sk, struct bpf_map *map)
- 	return 0;
- }
- 
--static u16 cache_idx_get(void)
-+u16 bpf_local_storage_cache_idx_get(struct bpf_local_storage_cache *cache)
- {
- 	u64 min_usage = U64_MAX;
- 	u16 i, res = 0;
- 
--	spin_lock(&cache_idx_lock);
-+	spin_lock(&cache->idx_lock);
- 
- 	for (i = 0; i < BPF_LOCAL_STORAGE_CACHE_SIZE; i++) {
--		if (cache_idx_usage_counts[i] < min_usage) {
--			min_usage = cache_idx_usage_counts[i];
-+		if (cache->idx_usage_counts[i] < min_usage) {
-+			min_usage = cache->idx_usage_counts[i];
- 			res = i;
- 
- 			/* Found a free cache_idx */
-@@ -538,18 +536,19 @@ static u16 cache_idx_get(void)
- 				break;
- 		}
- 	}
--	cache_idx_usage_counts[res]++;
-+	cache->idx_usage_counts[res]++;
- 
--	spin_unlock(&cache_idx_lock);
-+	spin_unlock(&cache->idx_lock);
- 
- 	return res;
- }
- 
--static void cache_idx_free(u16 idx)
-+void bpf_local_storage_cache_idx_free(struct bpf_local_storage_cache *cache,
-+				      u16 idx)
- {
--	spin_lock(&cache_idx_lock);
--	cache_idx_usage_counts[idx]--;
--	spin_unlock(&cache_idx_lock);
-+	spin_lock(&cache->idx_lock);
-+	cache->idx_usage_counts[idx]--;
-+	spin_unlock(&cache->idx_lock);
- }
- 
- /* Called by __sk_destruct() & bpf_sk_storage_clone() */
-@@ -601,7 +600,7 @@ static void bpf_local_storage_map_free(struct bpf_map *map)
- 
- 	smap = (struct bpf_local_storage_map *)map;
- 
--	cache_idx_free(smap->cache_idx);
-+	bpf_local_storage_cache_idx_free(&sk_cache, smap->cache_idx);
- 
- 	/* Note that this map might be concurrently cloned from
- 	 * bpf_sk_storage_clone. Wait for any existing bpf_sk_storage_clone
-@@ -718,7 +717,7 @@ static struct bpf_map *bpf_local_storage_map_alloc(union bpf_attr *attr)
- 
- 	smap->elem_size =
- 		sizeof(struct bpf_local_storage_elem) + attr->value_size;
--	smap->cache_idx = cache_idx_get();
-+	smap->cache_idx = bpf_local_storage_cache_idx_get(&sk_cache);
- 
- 	return &smap->map;
- }
--- 
-2.28.0.297.g1956fa8f8d-goog
+Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 
