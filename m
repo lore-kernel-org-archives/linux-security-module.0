@@ -2,95 +2,113 @@ Return-Path: <SRS0=szIC=CC=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,
+	DKIM_ADSP_CUSTOM_MED,DKIM_INVALID,DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35225C433E1
-	for <linux-security-module@archiver.kernel.org>; Mon, 24 Aug 2020 20:34:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CEDAC433DF
+	for <linux-security-module@archiver.kernel.org>; Mon, 24 Aug 2020 20:45:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 092F2204EA
-	for <linux-security-module@archiver.kernel.org>; Mon, 24 Aug 2020 20:34:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F65D205CB
+	for <linux-security-module@archiver.kernel.org>; Mon, 24 Aug 2020 20:45:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="LTZe1eH1"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="pX8HeaHX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726051AbgHXUeS (ORCPT
+        id S1726867AbgHXUpI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 24 Aug 2020 16:34:18 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:1106 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725998AbgHXUeS (ORCPT
+        Mon, 24 Aug 2020 16:45:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36124 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726051AbgHXUpH (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 24 Aug 2020 16:34:18 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 07OKVq7S048655;
-        Mon, 24 Aug 2020 16:34:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=5UxruWg1y/uPgPkV8OLCmhUuZVY+wffupe7K2rEHVew=;
- b=LTZe1eH1lcf7efRdX3Z3lgEoygOE/U1Ygh3J0c2Y76ydzJOT//VUgio99Lr7z4FTam+J
- rrhnBOla60yqTWR2iVfSeVeyEO5OKbRGQKYfn3Bhbyi79cdKBWBZggq2IC9nD5Yck2PO
- cteNmP2/zmh0xWdYRfhEVzNmf/t3tNwBKA4cw9iaL/lygIvPjcGaBLVjWhHin16YV3le
- Wul+MVw8upWXJYHqlEMm/pULbk0hyYXv8NIIbvpotARMe7U7jTe8TkVwWXs5W4wel5e1
- xnjb/62ymfAfbnzT+gmMj+RbWpBvmiulCXzr6V7gCyVkLja6QnOjVBof9oxVuANzgtfQ zw== 
-Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 334kvgsm7s-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 24 Aug 2020 16:34:06 -0400
-Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
-        by ppma04ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 07OKRBYJ008371;
-        Mon, 24 Aug 2020 20:34:04 GMT
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
-        by ppma04ams.nl.ibm.com with ESMTP id 33498u8mmk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 24 Aug 2020 20:34:04 +0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 07OKY2Gj23527812
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 24 Aug 2020 20:34:02 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 201415205A;
-        Mon, 24 Aug 2020 20:34:02 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.38.197])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 6E25C5204F;
-        Mon, 24 Aug 2020 20:34:00 +0000 (GMT)
-Message-ID: <7a347b605b68aabfbc160b62fc4394fb52d9de4e.camel@linux.ibm.com>
-Subject: Re: [PATCH] integrity: Use current_uid() in
- integrity_audit_message()
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Denis Efremov <efremov@linux.com>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 24 Aug 2020 16:33:59 -0400
-In-Reply-To: <20200824125435.487194-1-efremov@linux.com>
-References: <20200824125435.487194-1-efremov@linux.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
+        Mon, 24 Aug 2020 16:45:07 -0400
+Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAE72C061574
+        for <linux-security-module@vger.kernel.org>; Mon, 24 Aug 2020 13:45:06 -0700 (PDT)
+Received: by mail-yb1-xb49.google.com with SMTP id y9so12043770ybp.8
+        for <linux-security-module@vger.kernel.org>; Mon, 24 Aug 2020 13:45:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=sender:date:message-id:mime-version:subject:from:to:cc;
+        bh=UhQXWcJr+5AoGLVvN3r8tMmBPLG9sprnFDAtBah1ytY=;
+        b=pX8HeaHXQwwtYqEGVbc7owuncNK+VkVxqA6JrBLkHY0VR5Fq5NOdR6ewx8RTxsmV7P
+         vL/VyLPRSdOCsaBC26za2O+cn40t0EE7laqYOe6/JcNeAoF0/2u9NDJT0uXGF+EEzx75
+         kCBRCTdBhW2tSC5tm5MevbX3P7/mFYSq0B3BfU1EKZ0vGRKwfEhAsJR2HJUZZL5cgnLg
+         m99+a3KP7Lz9DeajCxjgNCRuauILDxJm0EGQB7Ey/M81yS2G3qC7VYpkyVNsTcK4inIo
+         tTckhqkb1oDaAtBwIhTgSaP36fqUXffXWyxtWMOY/jejZ7iXUWJ5NPWfDlnpFKuxikzK
+         RnAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:message-id:mime-version:subject:from
+         :to:cc;
+        bh=UhQXWcJr+5AoGLVvN3r8tMmBPLG9sprnFDAtBah1ytY=;
+        b=faQKgkB6FH1jjxf3EUpFiUVPk6WEz8N2i+1kSqRKRoccU8v0jbNCfz9QMjK9P24WIx
+         5eD9q3UuGAUqY9LwiAo/3wpeaLUeTL1L+pQOkOQiexqPtR8aQILtMdXW+/0SAxXOXQQP
+         5MaWKBT384NOT/CmqOX5Ondc9AaXRvEe1cUp+mWcK0+Lj6T4/9yIw2W2vk9XPy0X7I0j
+         ysQh2iZoYkDlkgTSHEhu282AiE7xLzWu43za7MUuBzAH/2c/1kIggBrExaplDn/v9/IV
+         stJe5cJTzPdudA8AJXJmqR5EXMhUcO7a2YZiDe1iyItXyXwQS/9IMJ2UFMmcf6IMUbvS
+         uQ+A==
+X-Gm-Message-State: AOAM530HoRLV/V4d/1xAfgfpAGIj4uMjt5qYWGl1ooqmcY/FhVT+7pYf
+        jFXxwJtF8sypFiDpVKbtI2n6ibs9oRk=
+X-Google-Smtp-Source: ABdhPJyQtPlZNY8qKcSrGSypIXx7bMWbjne4oaHh5ALmmnqay5BvInjL0APbUOk1+SCle/Y14u8sml+iLig=
+X-Received: from khazhy-linux.svl.corp.google.com ([2620:15c:2cd:202:1ea0:b8ff:fe75:bae4])
+ (user=khazhy job=sendgmr) by 2002:a25:1189:: with SMTP id 131mr9454007ybr.364.1598301905865;
+ Mon, 24 Aug 2020 13:45:05 -0700 (PDT)
+Date:   Mon, 24 Aug 2020 13:45:01 -0700
+Message-Id: <20200824204501.1707957-1-khazhy@google.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-08-24_12:2020-08-24,2020-08-24 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
- priorityscore=1501 adultscore=0 suspectscore=0 phishscore=0 clxscore=1015
- malwarescore=0 impostorscore=0 bulkscore=0 mlxlogscore=891 mlxscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2008240157
+X-Mailer: git-send-email 2.28.0.297.g1956fa8f8d-goog
+Subject: [PATCH] block: grant IOPRIO_CLASS_RT to CAP_SYS_NICE
+From:   Khazhismel Kumykov <khazhy@google.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Serge Hallyn <serge@hallyn.com>,
+        Paolo Valente <paolo.valente@linaro.org>,
+        Bart Van Assche <bvanassche@acm.org>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Khazhismel Kumykov <khazhy@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 2020-08-24 at 15:54 +0300, Denis Efremov wrote:
-> Modify integrity_audit_message() to use current_uid().
-> 
-> Signed-off-by: Denis Efremov <efremov@linux.com>
+CAP_SYS_ADMIN is too broad, and ionice fits into CAP_SYS_NICE's grouping.
 
-Thank you.  This patch is now queued in next-integrity-testing.
+Retain CAP_SYS_ADMIN permission for backwards compatibility.
 
-Mimi
+Signed-off-by: Khazhismel Kumykov <khazhy@google.com>
+---
+ block/ioprio.c                  | 2 +-
+ include/uapi/linux/capability.h | 2 ++
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
+diff --git a/block/ioprio.c b/block/ioprio.c
+index 77bcab11dce5..4572456430f9 100644
+--- a/block/ioprio.c
++++ b/block/ioprio.c
+@@ -69,7 +69,7 @@ int ioprio_check_cap(int ioprio)
+ 
+ 	switch (class) {
+ 		case IOPRIO_CLASS_RT:
+-			if (!capable(CAP_SYS_ADMIN))
++			if (!capable(CAP_SYS_ADMIN) || !capable(CAP_SYS_NICE))
+ 				return -EPERM;
+ 			/* fall through */
+ 			/* rt has prio field too */
+diff --git a/include/uapi/linux/capability.h b/include/uapi/linux/capability.h
+index 395dd0df8d08..c6ca33034147 100644
+--- a/include/uapi/linux/capability.h
++++ b/include/uapi/linux/capability.h
+@@ -288,6 +288,8 @@ struct vfs_ns_cap_data {
+    processes and setting the scheduling algorithm used by another
+    process. */
+ /* Allow setting cpu affinity on other processes */
++/* Allow setting realtime ioprio class */
++/* Allow setting ioprio class on other processes */
+ 
+ #define CAP_SYS_NICE         23
+ 
+-- 
+2.28.0.297.g1956fa8f8d-goog
 
