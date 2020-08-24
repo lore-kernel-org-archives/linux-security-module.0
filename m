@@ -2,196 +2,240 @@ Return-Path: <SRS0=szIC=CC=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.4 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88EC1C433E1
-	for <linux-security-module@archiver.kernel.org>; Mon, 24 Aug 2020 14:00:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 108B2C433DF
+	for <linux-security-module@archiver.kernel.org>; Mon, 24 Aug 2020 14:09:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5ED622065F
-	for <linux-security-module@archiver.kernel.org>; Mon, 24 Aug 2020 14:00:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D85CC206B5
+	for <linux-security-module@archiver.kernel.org>; Mon, 24 Aug 2020 14:09:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j8uvweuk"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ja5bDYhr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726187AbgHXOAV (ORCPT
+        id S1726189AbgHXOJ0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 24 Aug 2020 10:00:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57494 "EHLO
+        Mon, 24 Aug 2020 10:09:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58902 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725921AbgHXOAS (ORCPT
+        with ESMTP id S1725946AbgHXOJZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 24 Aug 2020 10:00:18 -0400
-Received: from mail-oi1-x242.google.com (mail-oi1-x242.google.com [IPv6:2607:f8b0:4864:20::242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89841C061573;
-        Mon, 24 Aug 2020 07:00:18 -0700 (PDT)
-Received: by mail-oi1-x242.google.com with SMTP id j18so3454733oig.5;
-        Mon, 24 Aug 2020 07:00:18 -0700 (PDT)
+        Mon, 24 Aug 2020 10:09:25 -0400
+Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6CA6C061574
+        for <linux-security-module@vger.kernel.org>; Mon, 24 Aug 2020 07:09:24 -0700 (PDT)
+Received: by mail-io1-xd33.google.com with SMTP id g13so8747601ioo.9
+        for <linux-security-module@vger.kernel.org>; Mon, 24 Aug 2020 07:09:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=a8tt+CMGp7q/HOS53VXK8umX/MA6yVJ2CpHA9QlQNUw=;
-        b=j8uvweukLv7148MhKVNormlhapYg2r0+5kfglczLY9e1LRAzzw1ydGewupqwmMvSU9
-         0SjUkT2GcExDoXKcNevn7vGcs0xGz2h1N4tCpeSa0iXNchm6UQrqjss8wj8iqknBoa+S
-         4MyIoD7O1E/7jGZ1HXXTiSnTZI3z75OxzfwbLWooVh5tkB9F7CVR106kj2K77Gh7i9XF
-         R4rRhqAGQvSFYzETpRYZQRJ6IgM/bI2fHoUXs2zfGtW/xvFSxFiN3NLS1+UM9fAiOcBA
-         a11bZrRB4MWND2aPR8LFcTFIthLCJPUkn3jleIrczBllIiwRIWw7tpwZbx1P6n/krn/Q
-         xt3Q==
+         :cc;
+        bh=bA1BV2aseyQF/WzkRQXsks8mi0w91MOj30YomTdhB24=;
+        b=ja5bDYhrwnRbhqtcV0+hArCGMnGdzSqsZnKyGRT5k1UJ6WElf/GjM4OZXfddKwvvzm
+         aWNZ6AFUkq8/LzdiwGSPGOjVfTOb4+3TJ7ET1YyZp1Zdnod24BL/Sra3SQj1gqE4cvlb
+         7QU0pJv/WCuTKoWLToLBqK3d9nWpz/R1RPA7yiC6ko5eWBRA/SLEIuIekew8dqUHOfEs
+         /GbP79fBHvXldRjOSv36xwdhJF2LjlICsaoDuvKZSilgvgGVmo6nMlfSK2tr98QDU6z7
+         ccrR0wUHcnJB0uD8sb4A5AUXB02vie0m06hkYEraoVRGjxgJ31pfijIQ25dwc6Ox/eH7
+         9GnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=a8tt+CMGp7q/HOS53VXK8umX/MA6yVJ2CpHA9QlQNUw=;
-        b=kGZk87T8Cc1h4YPI6UyNdqulXpbOOc2kfJZ6cKMhnOY9uVN7+9/13q6oQ1BY6K+A3k
-         U+js+qnbrND0F0whi1XLTmcZ9T0hfP9VWKdcH5EclQI0NfNN/iqWBjTL+jmVT8qJw3Th
-         l2g7tanKvTwyWf6cTTaQdtFRVewtNGvYcpUABZsCLnKVey1RgEBlYE9aiuIeat3W7WKV
-         LDqz1OMGPAimTaMErloh+R6j02f5Sn8f5ApSWQ+QaaDyxPzf7l6r31tBXsPdof44zkEm
-         LF5N0pzTGHRTVUq33IP5yd05JkpaQavTtGKYek61aSx3KACgzH03tkaefPA+bApL/BR3
-         Ih4Q==
-X-Gm-Message-State: AOAM531IaKNpScUfaFa9kdFKZDZA0d0j7NeoZWfqKRTKB/+Y1hLdAqZy
-        MJFcJxSrMl/guOYlsyFGwGOYoz/S7eB3kE2CqG8=
-X-Google-Smtp-Source: ABdhPJzSCgmgjsf4aPA4dULiOZlq9CD+b2wfdzyohpAoZ/AbfGHUt43p6iguzyk+upLrdXl8pepvjautteI5JHkkAOQ=
-X-Received: by 2002:a54:4817:: with SMTP id j23mr3170930oij.140.1598277617933;
- Mon, 24 Aug 2020 07:00:17 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=bA1BV2aseyQF/WzkRQXsks8mi0w91MOj30YomTdhB24=;
+        b=ZHPuSZ2aqoxw9OrcBqI7Zw9+BGGL5rh3B69HUZ7HM6WerFKuA30Rm+s0NhPdSxB4Tm
+         rHw9lnlQEKGUpnuZxmxb4mervZLUr29SMDjLm3ntWdgiNFxJSHBzyqm185uU6s4bmwdq
+         DjGt4Wo4NR4xWWqGUcb72NZ9teNWrv72l6vXuw1hf7D0wq3forA0+kBj0rm4LgOF4rYT
+         1QefQUyYe1o9I+EQA92DdkEt0Cv7sFJdBDTK6nqt3m3jTuAVrhasFwki8EbXxXXFwJbQ
+         4XCLp0nn27ma046JI0eznQsC/Y3QHczK15LbMPmOnGZNLu122TjCtkivEn8+aRl8c7f9
+         KE4w==
+X-Gm-Message-State: AOAM532zhR9VfoIIwca2vqiGJEP//1ekVSji5AD9hC84FAMkO1+Yog5C
+        bLJ+XWZt2pe4fF2DsQrxSqta5TwAyywCoE7QWjpvcA==
+X-Google-Smtp-Source: ABdhPJwjelAWzcEn7VzNUk7+Vkp9BFR/nJBH2gLe74ADI/3bVYbtSMs4/T4jOU84m5eRayVGvqGd5Ele60w9x5+iCr0=
+X-Received: by 2002:a02:a403:: with SMTP id c3mr5678171jal.102.1598278161040;
+ Mon, 24 Aug 2020 07:09:21 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200822010018.19453-1-nramas@linux.microsoft.com>
-In-Reply-To: <20200822010018.19453-1-nramas@linux.microsoft.com>
-From:   Stephen Smalley <stephen.smalley.work@gmail.com>
-Date:   Mon, 24 Aug 2020 10:00:07 -0400
-Message-ID: <CAEjxPJ5Kok-TBfS=XQ+NUC5tuaZRkyLBOawG4UDky51_bsMnGw@mail.gmail.com>
-Subject: Re: [PATCH] SELinux: Measure state and hash of policy using IMA
-To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Tyler Hicks <tyhicks@linux.microsoft.com>,
-        tusharsu@linux.microsoft.com, sashal@kernel.org,
-        James Morris <jmorris@namei.org>,
-        linux-integrity@vger.kernel.org,
-        SElinux list <selinux@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
+References: <20200820164753.3256899-1-jackmanb@chromium.org> <202008201435.97CF8296@keescook>
+In-Reply-To: <202008201435.97CF8296@keescook>
+From:   Brendan Jackman <jackmanb@google.com>
+Date:   Mon, 24 Aug 2020 16:09:09 +0200
+Message-ID: <CA+i-1C0XEuWWRm5nMPWCzEPUao7rp5346Eotpt1A_S3Za3Wysw@mail.gmail.com>
+Subject: Re: [RFC] security: replace indirect calls with static calls
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Brendan Jackman <jackmanb@chromium.org>,
+        linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Paul Renauld <renauld@google.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        James Morris <jmorris@namei.org>, pjt@google.com,
+        Jann Horn <jannh@google.com>, peterz@infradead.org,
+        rafael.j.wysocki@intel.com, thgarnie@chromium.org,
+        KP Singh <kpsingh@google.com>, paul.renauld.epfl@gmail.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Aug 21, 2020 at 9:00 PM Lakshmi Ramasubramanian
-<nramas@linux.microsoft.com> wrote:
+On Thu, 20 Aug 2020 at 23:46, Kees Cook <keescook@chromium.org> wrote:
 >
-> Critical data structures of security modules are currently not measured.
-> Therefore an attestation service, for instance, would not be able to
-> attest whether the security modules are always operating with the policie=
-s
-> and configuration that the system administrator had setup. The policies
-> and configuration for the security modules could be tampered with by
-> rogue user mode agents or modified through some inadvertent actions on
-> the system. Measuring such critical data would enable an attestation
-> service to reliably assess the security configuration of the system.
+> On Thu, Aug 20, 2020 at 06:47:53PM +0200, Brendan Jackman wrote:
+> > From: Paul Renauld <renauld@google.com>
+> >
+> > LSMs have high overhead due to indirect function calls through
+> > retpolines. This RPC proposes to replace these with static calls [1]
 >
-> SELinux configuration and policy are some of the critical data for this
-> security module that needs to be measured. This measurement can be used
-> by an attestation service, for instance, to verify if the configuration
-> and policies have been setup correctly and that they haven't been tampere=
-d
-> with at runtime.
->
-> Measure SELinux configuration, policy capabilities settings, and the hash
-> of the loaded policy by calling the IMA hook ima_measure_critical_data().
-> Since the size of the loaded policy can be quite large, hash of the polic=
-y
-> is measured instead of the entire policy to avoid bloating the IMA log.
->
-> Enable early boot measurement for SELinux in IMA since SELinux
-> initializes its state and policy before custom IMA policy is loaded.
->
-> Sample measurement of SELinux state and hash of the policy:
->
-> 10 e32e...5ac3 ima-buf sha256:86e8...4594 selinux-state-1595389364:287899=
-386 696e697469616c697a65643d313b656e61626c65643d313b656e666f7263696e673d303=
-b636865636b72657170726f743d313b6e6574776f726b5f706565725f636f6e74726f6c733d=
-313b6f70656e5f7065726d733d313b657874656e6465645f736f636b65745f636c6173733d3=
-13b616c776179735f636865636b5f6e6574776f726b3d303b6367726f75705f7365636c6162=
-656c3d313b6e6e705f6e6f737569645f7472616e736974696f6e3d313b67656e66735f73656=
-36c6162656c5f73796d6c696e6b733d303
-> 10 9e81...0857 ima-buf sha256:4941...68fc selinux-policy-hash-1597335667:=
-462051628 8d1d...1834
->
-> To verify the measurement check the following:
->
-> Execute the following command to extract the measured data
-> from the IMA log for SELinux configuration (selinux-state).
->
->   grep -m 1 "selinux-state" /sys/kernel/security/integrity/ima/ascii_runt=
-ime_measurements | cut -d' ' -f 6 | xxd -r -p
->
-> The output should be the list of key-value pairs. For example,
->  initialized=3D1;enabled=3D1;enforcing=3D0;checkreqprot=3D1;network_peer_=
-controls=3D1;open_perms=3D1;extended_socket_class=3D1;always_check_network=
-=3D0;cgroup_seclabel=3D1;nnp_nosuid_transition=3D1;genfs_seclabel_symlinks=
-=3D0;
->
-> To verify the measured data with the current SELinux state:
->
->  =3D> enabled should be set to 1 if /sys/fs/selinux folder exists,
->     0 otherwise
->
-> For other entries, compare the integer value in the files
->  =3D> /sys/fs/selinux/enforce
->  =3D> /sys/fs/selinux/checkreqprot
-> And, each of the policy capabilities files under
->  =3D> /sys/fs/selinux/policy_capabilities
->
-> For selinux-policy-hash, the hash of SELinux policy is included
-> in the IMA log entry.
->
-> To verify the measured data with the current SELinux policy run
-> the following commands and verify the output hash values match.
->
->   sha256sum /sys/fs/selinux/policy | cut -d' ' -f 1
->
->   grep -m 1 "selinux-policy-hash" /sys/kernel/security/integrity/ima/asci=
-i_runtime_measurements | cut -d' ' -f 6
->
-> This patch is dependent on the following patch series:
->         https://patchwork.kernel.org/patch/11709527/
->         https://patchwork.kernel.org/patch/11730193/
->         https://patchwork.kernel.org/patch/11730757/
->
-> Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-> Suggested-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-> Reported-by: kernel test robot <lkp@intel.com> # error: implicit declarat=
-ion of function 'vfree'
-> Reported-by: kernel test robot <lkp@intel.com> # error: implicit declarat=
-ion of function 'crypto_alloc_shash'
-> Reported-by: kernel test robot <lkp@intel.com> # sparse: symbol 'security=
-_read_selinux_policy' was not declared. Should it be static?
-> ---
+> typo: RFC
 
-> +int security_read_policy_kernel(struct selinux_state *state,
-> +                               void **data, size_t *len)
-> +{
-> +       int rc;
-> +
-> +       rc =3D security_read_policy_len(state, len);
-> +       if (rc)
-> +               return rc;
-> +
-> +       *data =3D vmalloc(*len);
-> +       if (!*data)
-> +               return -ENOMEM;
+Oops, thanks - I also meant to have the [RFC] subject prefix.
+
 >
-> +       return security_read_selinux_policy(state, data, len);
->  }
+> > instead.
+>
+> Yay! :)
+>
+> > [...]
+> > This overhead prevents the adoption of bpf LSM on performance critical
+> > systems, and also, in general, slows down all LSMs.
+>
+> I'd be curious to see other workloads too. (Your measurements are a bit
+> synthetic, mostly showing "worst case": one short syscall in a tight
+> loop. I'm curious how much performance gain can be had -- we should
+> still do it, it'll be a direct performance improvement, but I'm curious
+> about "real world" impact too.)
+>
 
-See the discussion here:
-https://lore.kernel.org/selinux/20200824113015.1375857-1-omosnace@redhat.co=
-m/T/#t
+Sounds good - I'll gather some more data and get back.
 
-In order for this to be safe, you need to ensure that all callers of
-security_read_policy_kernel() have taken fsi->mutex in selinuxfs and
-any use of security_read_policy_len() occurs while holding the mutex.
-Otherwise, the length can change between security_read_policy_len()
-and security_read_selinux_policy() if policy is reloaded.
+(I would also reiterate what KP said in response
+to James: the "worst case" relative indirect call overhead (i.e. the case
+where the hook callback does minimal work) is exactly the case we care
+about here. If the callback is doing enough work that the indirect call overhead
+becomes negligible, that callback is probably anyway too heavyweight for the
+use cases that motivated this work).
+
+> > [...]
+> > Previously, the code for this hook would have looked like this:
+> >
+> >       ret = DEFAULT_RET;
+> >
+> >         for each cb in [A, B, C]:
+> >                 ret = cb(args); <--- costly indirect call here
+> >                 if ret != 0:
+> >                         break;
+> >
+> >         return ret;
+> >
+> > Static calls are defined at build time and are initially empty (NOP
+> > instructions). When the LSMs are initialized, the slots are filled as
+> > follows:
+> >
+> >  slot idx     content
+> >            |-----------|
+> >     0      |           |
+> >            |-----------|
+> >     1      |           |
+> >            |-----------|
+> >     2      |   call A  | <-- base_slot_idx = 2
+> >            |-----------|
+> >     3      |   call B  |
+> >            |-----------|
+> >     4      |   call C  |
+> >            |-----------|
+> >
+> > The generated code will unroll the foreach loop to have a static call for
+> > each possible LSM:
+> >
+> >         ret = DEFAULT_RET;
+> >         switch(base_slot_idx):
+> >
+> >                 case 0:
+> >                         NOP
+> >                         if ret != 0:
+> >                                 break;
+> >                         // fallthrough
+> >                 case 1:
+> >                         NOP
+> >                         if ret != 0:
+> >                                 break;
+> >                         // fallthrough
+> >                 case 2:
+> >                         ret = A(args); <--- direct call, no retpoline
+> >                         if ret != 0:
+> >                                 break;
+> >                         // fallthrough
+> >                 case 3:
+> >                         ret = B(args); <--- direct call, no retpoline
+> >                         if ret != 0:
+> >                                 break;
+> >                         // fallthrough
+> >
+> >                 [...]
+> >
+> >                 default:
+> >                         break;
+> >
+> >         return ret;
+> >
+> > A similar logic is applied for void hooks.
+> >
+> > Why this trick with a switch statement? The table of static call is defined
+> > at compile time. The number of hook callbacks that will be defined is
+> > unknown at that time, and the table cannot be resized at runtime.  Static
+> > calls do not define a conditional execution for a non-void function, so the
+> > executed slots must be non-empty.  With this use of the table and the
+> > switch, it is possible to jump directly to the first used slot and execute
+> > all of the slots after. This essentially makes the entry point of the table
+> > dynamic. Instead, it would also be possible to start from 0 and break after
+> > the final populated slot, but that would require an additional conditional
+> > after each slot.
+>
+> Instead of just "NOP", having the static branches perform a jump would
+> solve this pretty cleanly, yes? Something like:
+>
+>         ret = DEFAULT_RET;
+>
+>         ret = A(args); <--- direct call, no retpoline
+>         if ret != 0:
+>                 goto out;
+>
+>         ret = B(args); <--- direct call, no retpoline
+>         if ret != 0:
+>                 goto out;
+>
+>         goto out;
+>         if ret != 0:
+>                 goto out;
+>
+> out:
+>         return ret;
+
+Hmm yeah that's a cool idea. This would either need to be implemented
+with custom
+code-modification logic for the LSM hooks, or we'd need to think of a
+way to express it
+in a sensible addition to the static_call API. I do wonder if the
+latter could take
+the form of a generic system for arrays of static calls.
+
+It would also need to handle the fact that IIUC at the moment the last
+static_call may be a tail
+call, so we'd be patching an existing jump into a jump to a different
+target, I don't know if we
+can do that atomically.
+
+More research required on my side here, on both points.
+
+ > [...]
+> > Signed-off-by: Paul Renauld <renauld@google.com>
+> > Signed-off-by: KP Singh <kpsingh@google.com>
+> > Signed-off-by: Brendan Jackman <jackmanb@google.com>
+>
+> This implies a maintainership chain, with Paul as the sole author. If
+> you mean all of you worked on the patch, include Co-developed-by: as
+> needed[1].
+
+Yep, this is intentional - Paul is the sole author so far (I suppose
+KP's sign-off
+is not technically required since he's also at the Google).
