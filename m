@@ -7,49 +7,52 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94321C433DF
-	for <linux-security-module@archiver.kernel.org>; Mon, 24 Aug 2020 12:50:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15EB9C433DF
+	for <linux-security-module@archiver.kernel.org>; Mon, 24 Aug 2020 12:54:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 755552078D
-	for <linux-security-module@archiver.kernel.org>; Mon, 24 Aug 2020 12:50:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E367020706
+	for <linux-security-module@archiver.kernel.org>; Mon, 24 Aug 2020 12:54:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725904AbgHXMuD (ORCPT
+        id S1726878AbgHXMyx (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 24 Aug 2020 08:50:03 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:46443 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726716AbgHXMuC (ORCPT
+        Mon, 24 Aug 2020 08:54:53 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:38061 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725904AbgHXMyw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 24 Aug 2020 08:50:02 -0400
-Received: by mail-lj1-f194.google.com with SMTP id h19so9461902ljg.13;
-        Mon, 24 Aug 2020 05:50:00 -0700 (PDT)
+        Mon, 24 Aug 2020 08:54:52 -0400
+Received: by mail-lf1-f65.google.com with SMTP id k10so1434336lfm.5;
+        Mon, 24 Aug 2020 05:54:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=gvOrwFdrNoIKZpBYrzMhMigaSOSnkliOa0D4FtRauyo=;
-        b=Fge5OPS2AMd/7JRaeCCe6sNg9HYeHGQKTxnPC8ARiuDdZvQ7TW73hXYvcre9p8R3UB
-         NdBMCjY2cAU9P3+osB0inn1HRbqBoc0jaVDNPat7yQJWYT9AFz8Z+iS4hXjKqjiiqU3a
-         +zJd+qZmxttoE4Io2QozJRG5XEAxJfh5CciZghoWS87ygNhY2bBHLklHjokga2+NrG69
-         hhoKZIQRDmLEPFYmhBdq42alCJi6Rt/94ZJtTYLlbqB4yLkdorn6nti1GLCUoSiao5I5
-         B13mdGG6eHVdVrJt8GltfpYn6LjOyBqSwN2r5VWaiIjZHV430RusIsEtz7p3CRWGzB2l
-         IePQ==
-X-Gm-Message-State: AOAM532VWIYkeZaoNVu+mTk6/ZCCC3HAPCpFUBeW2GVIV2wd1gbfrpqM
-        WMumpJ7yFhu5GFObjoFLn77/4ZtgVTw=
-X-Google-Smtp-Source: ABdhPJzbqz/ZHLB2zP4m4MdzXpDMkmvjL30Iy7yYnA3v7NASAZN5gbpzR+R/Qt/3Rq6kwpS0RVw2yw==
-X-Received: by 2002:a2e:a316:: with SMTP id l22mr2689012lje.301.1598273399100;
-        Mon, 24 Aug 2020 05:49:59 -0700 (PDT)
+        bh=SfkQJO0WX7QYvcvwyypgBXvjdOGetP3yae225kbDPA0=;
+        b=OjwtheQlj2je4vqPGpUnKbo8Nk9Er2JZnzMOQPWbAYMaHqsHzkb/rhZYKzsybwKj9I
+         HfncScfOwRDOyYELReLPAF3TmWYUAD+ZPbubTe9c/UPN9GthSxPpapZyTN5Lr3E326WX
+         hDdj2SBaufTdIFkSD+8sXifnDU+hlL/C4/ujHQtermMKju2eDvpm6Q2Mhm66t94xMoAK
+         mW9AfLjj5cECSlwayNI9XBTI2hV61QjAa4m4RFgldOS45VsMhFg0KvQfhytQAtc8UOyo
+         Bj4VzJxmKw5ESGyOp1GdBNvQsA7xUH3xAY8XcwbGqLr+5ovieR6/ZMfZQ4CoUkGC304y
+         p8QA==
+X-Gm-Message-State: AOAM533cYqJgJzmlqbPsDdcVeNHPjakK8W2aCaCHEwtykTFUB2xCqY8B
+        SLfckJv8xGFFnlME5TEtfig=
+X-Google-Smtp-Source: ABdhPJwyAl2uc3oyptrluwFV1MiM+VwGe1DqD+6Z1SICiQM/MTtZ2Ox39NlC1Wchh/4jnEE/Sv9NkA==
+X-Received: by 2002:a19:4290:: with SMTP id p138mr1743951lfa.187.1598273689854;
+        Mon, 24 Aug 2020 05:54:49 -0700 (PDT)
 Received: from localhost.localdomain ([213.87.147.111])
-        by smtp.googlemail.com with ESMTPSA id h23sm2166181lji.139.2020.08.24.05.49.56
+        by smtp.googlemail.com with ESMTPSA id e17sm2177112ljg.85.2020.08.24.05.54.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Aug 2020 05:49:58 -0700 (PDT)
+        Mon, 24 Aug 2020 05:54:49 -0700 (PDT)
 From:   Denis Efremov <efremov@linux.com>
-Cc:     Denis Efremov <efremov@linux.com>, Serge Hallyn <serge@hallyn.com>,
+Cc:     Denis Efremov <efremov@linux.com>,
         James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] security/commoncap: Use current_user_ns()
-Date:   Mon, 24 Aug 2020 15:49:39 +0300
-Message-Id: <20200824124939.486728-1-efremov@linux.com>
+Subject: [PATCH] integrity: Use current_uid() in integrity_audit_message()
+Date:   Mon, 24 Aug 2020 15:54:35 +0300
+Message-Id: <20200824125435.487194-1-efremov@linux.com>
 X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -58,35 +61,26 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Modify cap_inh_is_capped(), cap_task_prctl() to use current_user_ns().
+Modify integrity_audit_message() to use current_uid().
 
 Signed-off-by: Denis Efremov <efremov@linux.com>
 ---
- security/commoncap.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ security/integrity/integrity_audit.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/security/commoncap.c b/security/commoncap.c
-index 59bf3c1674c8..82a61f77c07c 100644
---- a/security/commoncap.c
-+++ b/security/commoncap.c
-@@ -220,7 +220,7 @@ static inline int cap_inh_is_capped(void)
- 	/* they are so limited unless the current task has the CAP_SETPCAP
- 	 * capability
- 	 */
--	if (cap_capable(current_cred(), current_cred()->user_ns,
-+	if (cap_capable(current_cred(), current_user_ns(),
- 			CAP_SETPCAP, CAP_OPT_NONE) == 0)
- 		return 0;
- 	return 1;
-@@ -1206,7 +1206,7 @@ int cap_task_prctl(int option, unsigned long arg2, unsigned long arg3,
- 		    || ((old->securebits & SECURE_ALL_LOCKS & ~arg2))	/*[2]*/
- 		    || (arg2 & ~(SECURE_ALL_LOCKS | SECURE_ALL_BITS))	/*[3]*/
- 		    || (cap_capable(current_cred(),
--				    current_cred()->user_ns,
-+				    current_user_ns(),
- 				    CAP_SETPCAP,
- 				    CAP_OPT_NONE) != 0)			/*[4]*/
- 			/*
+diff --git a/security/integrity/integrity_audit.c b/security/integrity/integrity_audit.c
+index f25e7df099c8..29220056207f 100644
+--- a/security/integrity/integrity_audit.c
++++ b/security/integrity/integrity_audit.c
+@@ -47,7 +47,7 @@ void integrity_audit_message(int audit_msgno, struct inode *inode,
+ 	ab = audit_log_start(audit_context(), GFP_KERNEL, audit_msgno);
+ 	audit_log_format(ab, "pid=%d uid=%u auid=%u ses=%u",
+ 			 task_pid_nr(current),
+-			 from_kuid(&init_user_ns, current_cred()->uid),
++			 from_kuid(&init_user_ns, current_uid()),
+ 			 from_kuid(&init_user_ns, audit_get_loginuid(current)),
+ 			 audit_get_sessionid(current));
+ 	audit_log_task_context(ab);
 -- 
 2.26.2
 
