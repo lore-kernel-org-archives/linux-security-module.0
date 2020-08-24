@@ -2,120 +2,183 @@ Return-Path: <SRS0=szIC=CC=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86D90C433DF
-	for <linux-security-module@archiver.kernel.org>; Mon, 24 Aug 2020 17:45:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A828C433E1
+	for <linux-security-module@archiver.kernel.org>; Mon, 24 Aug 2020 17:54:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6A5E42063A
-	for <linux-security-module@archiver.kernel.org>; Mon, 24 Aug 2020 17:45:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C37720639
+	for <linux-security-module@archiver.kernel.org>; Mon, 24 Aug 2020 17:54:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="sOX5dqt/"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="jv9ij9F1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726429AbgHXRpM (ORCPT
+        id S1726736AbgHXRyb (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 24 Aug 2020 13:45:12 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:31306 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725601AbgHXRpM (ORCPT
+        Mon, 24 Aug 2020 13:54:31 -0400
+Received: from sonic312-30.consmr.mail.ne1.yahoo.com ([66.163.191.211]:37815
+        "EHLO sonic312-30.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726718AbgHXRyb (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 24 Aug 2020 13:45:12 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 07OHVwsT169379;
-        Mon, 24 Aug 2020 13:45:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=LLSRJbnN1rzlyk5a9nLMVRUtWdyFeR8aOd9giiaAzjg=;
- b=sOX5dqt/fm60iVUH5jNLH6ljv0F/G3N41XlagB2QNV8IYDVPUq4yHHP+Ls+Iq93Ukmsk
- 8GEnX+oSAkGhiTe4hgEhll4a2qMlEK6gMQu7GWSPcIERC5chPuRkc4P0V3O8k9B+xF9D
- nvfV34tXGLOtj3txCcecfrutXTQJO7K9qyF9PG6UIDAQhF9CimrzIcV1/i8AEyVOkazu
- 1cNRnP+eoyQOok68F+phTeDBOjqJTYNsIsraVLoGOCCqX3FjpImS0B3BJ4i8oQGa6zSC
- /UARsq9dzsz7A3HZRiuVxoRMaHlDmaSMOy2TAniP9+vdu0Erj0HXBh/ivNNjpP47SL8+ gw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 334gxn2h6c-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 24 Aug 2020 13:45:07 -0400
-Received: from m0098394.ppops.net (m0098394.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 07OHWoCN174371;
-        Mon, 24 Aug 2020 13:45:07 -0400
-Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 334gxn2h54-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 24 Aug 2020 13:45:06 -0400
-Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
-        by ppma06ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 07OHh2B6017626;
-        Mon, 24 Aug 2020 17:45:04 GMT
-Received: from b06avi18878370.portsmouth.uk.ibm.com (b06avi18878370.portsmouth.uk.ibm.com [9.149.26.194])
-        by ppma06ams.nl.ibm.com with ESMTP id 332uk6akxg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 24 Aug 2020 17:45:04 +0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 07OHj2JA60817720
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 24 Aug 2020 17:45:02 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5D93E4C04A;
-        Mon, 24 Aug 2020 17:45:02 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 520F94C046;
-        Mon, 24 Aug 2020 17:45:01 +0000 (GMT)
-Received: from sig-9-65-254-31.ibm.com (unknown [9.65.254.31])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 24 Aug 2020 17:45:01 +0000 (GMT)
-Message-ID: <d4c9d5333256b17acdbe41729dd680f534266130.camel@linux.ibm.com>
-Subject: Re: [PATCH 01/11] evm: Execute evm_inode_init_security() only when
- the HMAC key is loaded
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>, mjg59@google.com
-Cc:     linux-integrity@vger.kernel.org,
+        Mon, 24 Aug 2020 13:54:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1598291670; bh=wZWdeV82grk1vCCG3xyxethbZMe/msX85Us+HfU7CEg=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=jv9ij9F16qa1xzyTPbSC3hnDR9x22zIAPzidexwZ8V1iieDz9qQ/QN8c/5W2Jbv/RvY9OghklFdK6UC6ACXnwnKkaK3gEPYF8slGbb77OJvt89udcJQ8lt2o4FGalovEt69dZXhzGFXVWNdmXn1gITh97KNgA+x/yghb5m+RtTs8K2DGYGRBZ1LxhgNYCQ3SfIPqnvfxfAr2gm3uL7bMB3nXUNFDDCIWXqu5LNhtLYa25Yd3J0/PWMsQuNwPbggpYy5BOzmhLnBlo+rTYbN6ON3DNDscx4cBjle9Lt+xCYKgqNTsGFJXQcVRYZI+dI+jl8UzPaoiJqqp1OZjhWTVhQ==
+X-YMail-OSG: Ws92fo4VM1mkc77h2D.KIK2Of1VKQjfcG5Xhd0ffvRyyGPxmw9R4IkYrt3w_B4b
+ uRu0TI7SB834dyQBAW16L3WTq8guJKN9SnGrQI682oRyq8S0HBrrClnY0tm608wSl6e3kY7Mt1aO
+ _TwTmWs8c9b7CReMmupYS_BFSTdILsnwtqeVd4ASRxDgYVrePEB48z4xAIbuk9Wt0eY1ntsCuV0N
+ ndQVjlcXGGF1NcPAwXX3R7Awt2x_J_2_EMq3GkSJSfHkzKUSXzkWm6te2_2R0uOQfmPb6I9sqmCf
+ DhCvnkDN6PgwBLxxC9nJk5zT13M05d4EHWhzDIeNEpdq6pzj9so6aOfOmHpLFU4gIBGMERjL21WM
+ lLx3pmo38q5YF6e4rPEefVJwOhHFzQvzbT7kGM2gLh6M67pPYu9rcsll2EaXzshDj2UE4bgk4h0z
+ EJD9MzIm2kS5dMGquCPX_kiRTlgFfI8WBufDu4YehRbblA7tbIA8glPx5jecV.DPDLSW19ACBDIV
+ BkUpCHmGP7Iu_8ANK0LDOBjhnE9QzbLVz1.fz_fe20UroPQRTqOPL2oAEtlu2NeLk2NZcgO5mOpR
+ SInSnlqLSrrKn8O1SQJOHDmwDYx5mV1vYVytf0tDe4cGcDx47goIaEHpbAWg3avgrUIdVDwngvtJ
+ xdUEUeQIYM5Xx7u14JXVpK5Ib06jDfAv_YeHma3cvtO1DlAs6FP9AH2TxRGQDwIKf7NTf0qhlv.x
+ bK48ym9Bw_PvQnrqHgVJIXEoHM0mX_dH_udz50xk4J7BYNesuvKx9JT3Q6p7oRYNnWQRMWd0VOyE
+ 7rIuNK4.k4LytuDmTc_TSJl_UUvGCh9BsyZSOxSBJTufmGspWuIN4ksYXsOGG3aw0slVVo2L44iO
+ fEQmBsFjAVslIG9ZeCHgoJvo9aYQuI81W_uC0n7gn8G6NS0ulF7vJoop4D5PYyylIt8N4u9VStW1
+ agihrNPCnfxLp3_oR.gEOemkPgt_iJcdk614qyiGNKHia_fQAr4iHPcR2SlXyhhZ1c85xjf4yTjE
+ B3Fxup53R1f1YHFJp5qUk7BdTYVgaQu3Wmi3h9jYyFe_xdXLG0xFQpd0a._wNrLqoFBmgC9RJiF8
+ _D3CQmdMGmxndAzeE5XwNIyw1tFUVo7urFX_A5p42ad71YG.1U4xQ6iTjdQzif4a.YHw2q58F9ds
+ Uy39Nr4CvGo_zhZT6Dk1W4wg9FVEtW5aUxbTZVFJgSs583KudHfuUTIZGXJ_i7liInk3QGuI2tRd
+ zpH.1lsfZjpRTMzJQu4fGAWP.PLbs1p0PO6LNj_4e777B2DC2tRgahap0rzyqkXoIgstGQuhHXGs
+ 0KxDgruSu3k9EPUQhyv0oXDER8iiKPHQs_FwCze07PxxvntxkXcRSuLlHALZduypZH0CBJuYizUK
+ A0mBeQoFFQ35XUBUU1y_6oCoWRIznzI577W5FeDQXKuEOPZb..FtUGTHdoikcFPLt4YO31C2t.bQ
+ ScOGwV2hCGpehlb0oPMb1k1Y2FMeodRGu.jaGcMb4oGVhHiM_aimKPooogDH9S6OzZRgFLSbBY6X
+ 5G0lBS86LqJKcNwVHcvZzWz0tcrwnweTi6vQMuLUDQyK1pB9NMDaBEonHoI8IXLH5tVZCjewdCMH
+ PZqw_tM36DJszZMAbNQAtJ5mH
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.ne1.yahoo.com with HTTP; Mon, 24 Aug 2020 17:54:30 +0000
+Received: by smtp424.mail.bf1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 56d747b8779068a3f044ba03cad1d4c1;
+          Mon, 24 Aug 2020 17:54:29 +0000 (UTC)
+Subject: Re: [RFC] security: replace indirect calls with static calls
+To:     Brendan Jackman <jackmanb@google.com>
+Cc:     Brendan Jackman <jackmanb@chromium.org>,
+        linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Date:   Mon, 24 Aug 2020 13:45:00 -0400
-In-Reply-To: <2b204e31d21e93c0167d154c2397cd5d11be6e7f.camel@linux.ibm.com>
-References: <20200618160133.937-1-roberto.sassu@huawei.com>
-         <2b204e31d21e93c0167d154c2397cd5d11be6e7f.camel@linux.ibm.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
-Mime-Version: 1.0
+        Paul Renauld <renauld@google.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        James Morris <jmorris@namei.org>, Paul Turner <pjt@google.com>,
+        Jann Horn <jannh@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        rafael.j.wysocki@intel.com, Kees Cook <keescook@chromium.org>,
+        thgarnie@chromium.org, KP Singh <kpsingh@google.com>,
+        paul.renauld.epfl@gmail.com,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <20200820164753.3256899-1-jackmanb@chromium.org>
+ <42fb4180-772c-5579-ef3e-b4003e2b784b@schaufler-ca.com>
+ <CA+i-1C09YZ8aCr6p5NOA2e3Ji5TKwdET=qAy=M328NK--L=0RA@mail.gmail.com>
+ <66a35f25-53be-17c3-8ab3-7cb32b0bc77a@schaufler-ca.com>
+ <CA+i-1C1GwgYJAfaUofzv47nyryQ15znE6OLWhAN-gsscm6mMoA@mail.gmail.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <04b2d1ca-1524-d503-084c-4b27d55f862c@schaufler-ca.com>
+Date:   Mon, 24 Aug 2020 10:54:26 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.11.0
+MIME-Version: 1.0
+In-Reply-To: <CA+i-1C1GwgYJAfaUofzv47nyryQ15znE6OLWhAN-gsscm6mMoA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-08-24_12:2020-08-24,2020-08-24 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 clxscore=1015
- bulkscore=0 impostorscore=0 priorityscore=1501 malwarescore=0 spamscore=0
- lowpriorityscore=0 adultscore=0 phishscore=0 mlxscore=0 suspectscore=3
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
- definitions=main-2008240138
+Content-Language: en-US
+X-Mailer: WebService/1.1.16455 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo Apache-HttpAsyncClient/4.1.4 (Java/11.0.7)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Roberto,
+On 8/24/2020 10:04 AM, Brendan Jackman wrote:
+> On Mon, 24 Aug 2020 at 18:43, Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> On 8/24/2020 8:20 AM, Brendan Jackman wrote:
+>>> On Fri, 21 Aug 2020 at 00:46, Casey Schaufler <casey@schaufler-ca.com> wrote:
+>>>> On 8/20/2020 9:47 AM, Brendan Jackman wrote:
+>>> [...]
+>>>> What does NOP really look like?
+>>> The NOP is the same as a regular function call but the CALL
+>>> instruction is replaced with a NOP instruction. The code that sets up
+>>> the call parameters is unchanged, and so is the code that expects to
+>>> get the return value in eax or whatever.
+>> Right. Are you saying that NOP is in-line assembler in your switch?
+> That's right - although it's behind the static_call API that the patch
+> depends on ([5] in the original mail).
+>
+>>> That means we cannot actually
+>>> call the static_calls for NULL slots, we'd get undefined behaviour
+>>> (except for void hooks) - this is what Peter is talking about in the
+>>> sibling thread.
+>> Referring to the "sibling thread" is kinda confusing, and
+>> assumes everyone is one all the right mailing lists, and knows
+>> which other thread you're talking about.
+> Sure, sorry - here's the Lore link for future reference:
+>
+> https://lore.kernel.org/lkml/20200820164753.3256899-1-jackmanb@chromium.org/T/#m5a6fb3f10141049ce43e18a41f154796090ae1d5
+>
+>>> For this reason, there are _no gaps_ in the callback table. For a
+>>> given LSM hook, all the slots after base_slot_idx are filled,
+>> Why go to all the trouble of maintaining the base_slot_idx
+>> if NOP is so cheap? Why not fill all unused slots with NOP?
+>> Worst case would be a hook with no users, in which case you
+>> have 11 NOPS in the void hook case and 11 "if (ret != DEFAULT_RET)"
+>> and 11 NOPS in the int case. No switch magic required. Even
+>> better, in the int case you have two calls/slot, the first is the
+>> module supplied function (or NOP) and the second is
+>>         int isit(int ret) { return (ret != DEFAULT_RET) ? ret : 0; }
+>> (or NOP).
+>>
+>> The no security module case degenerates to 22 NOP instructions
+>> and no if checks of any sort. I'm not the performance guy, but
+>> that seems better than maintaining and checking base_slot_idx
+>> to me.
+> The switch trick is not really motivated by performance.
 
-On Fri, 2020-08-21 at 14:30 -0400, Mimi Zohar wrote:
-> Sorry for the delay in reviewing these patches.   Missing from this
-> patch set is a cover letter with an explanation for grouping these
-> patches into a patch set, other than for convenience.  In this case, it
-> would be along the lines that the original use case for EVM portable
-> and immutable keys support was for a few critical files, not combined
-> with an EVM encrypted key type.   This patch set more fully integrates
-> the initial EVM portable and immutable signature support.
+Then what is its motivation? It makes the code more complicated,
+and is unnecessary.
 
-Thank you for more fully integrating the EVM portable signatures into
-IMA.
+> I think all the focus on the NOPs themselves is a bit misleading here
+> - we _can't_ execute the NOPs for the int hooks, because there are
+> instructions after them that expect a function to have just returned a
+> value, which NOP doesn't do.
 
-" [PATCH 08/11] ima: Allow imasig requirement to be satisfied by EVM
-portable signatures" equates an IMA signature to having a portable and
-immutable EVM signature.  That is true in terms of signature
-verification, but from an attestation perspective the "ima-sig"
-template will not contain a signature.  If not the EVM signature, then
-at least some other indication should be included in the measurement
-list.
+That's what I was hoping to address with the second call in the slot.
+The first call in the slot would be either the module supplied code
+or a NOP if the module isn't using the hook. The second would be
+supplied by the LSM infrastructure and would be NOP if the module
+didn't use the hook. The LSM supplied function would do the necessary
+checking. Its more complicated than the void case, but not that much
+more complicated than the existing list based scheme.
 
-Are you planning on posting the associated IMA/EVM regression tests?
+The concern about the non-existent return on a NOP can be dealt with
+by setting up initial conditions correctly in most cases. Dealing with
+multiple security modules providing information (e.g. secid_to_secctx)
+is where it gets tricky.
 
-Mimi
+>  When there is a NOP in the slot instead
+> of a CALL, it would appear to "return" whatever value is leftover in
+> the return register. At the C level, this is why the static_call API
+> doesn't allow static_call_cond to return a value (which is what PeterZ
+> is referring to in the thread I linked above).
+>
+> So, we could drop the switch trick for void hooks and just use
+> static_call_cond, but this doesn't work for int hooks. IMO that
+> variation between the two hook types would just add confusion.
+
+With the number of cases where the switch trick isn't going to
+work in the long term I'm disinclined to think it makes things
+less confusing.
+
+
+>>>>> +#define __UNROLL_MACRO_LOOP_20(MACRO, ...) \
+>>>>> + __UNROLL_MACRO_LOOP_19(MACRO, __VA_ARGS__) \
+>>>>> + MACRO(19, __VA_ARGS__)
+>>>>> +
+>>>> Where does "20" come from? Why are you unrolling beyond 11?
+>>> It's just an arbitrary limit on the unrolling macro implementation, we
+>>> aren't actually unrolling beyond 11 where the macro is used (N is set
+>>> to 11).
+>> I'm not a fan of including macros you can't use, especially
+>> when they're just obvious variants of other macros.
+> Not sure what you mean here - is there already a macro that does what
+> UNROLL_MACRO_LOOP does?
+
+No, I'm saying that __UNROLL_MACRO_LOOP_20() will never be used on
+a system that has at most 11 security modules. You've added a bunch of
+text that serves no purpose. "Future expansion" is pretty silly here.
 
