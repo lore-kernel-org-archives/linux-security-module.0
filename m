@@ -2,82 +2,82 @@ Return-Path: <SRS0=szIC=CC=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8EFCC433E1
-	for <linux-security-module@archiver.kernel.org>; Mon, 24 Aug 2020 13:03:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7FECC433E1
+	for <linux-security-module@archiver.kernel.org>; Mon, 24 Aug 2020 13:03:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7CA1B2074D
-	for <linux-security-module@archiver.kernel.org>; Mon, 24 Aug 2020 13:03:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9602A20838
+	for <linux-security-module@archiver.kernel.org>; Mon, 24 Aug 2020 13:03:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Wi+Zu+BG"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="HfpJdQn6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726241AbgHXNDI (ORCPT
+        id S1727774AbgHXNDe (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 24 Aug 2020 09:03:08 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:11976 "EHLO
+        Mon, 24 Aug 2020 09:03:34 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:18870 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727774AbgHXNDH (ORCPT
+        by vger.kernel.org with ESMTP id S1726820AbgHXND3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 24 Aug 2020 09:03:07 -0400
+        Mon, 24 Aug 2020 09:03:29 -0400
 Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 07OD2ZHx095086;
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 07OD2Xeb094901;
         Mon, 24 Aug 2020 09:03:03 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
  from : to : cc : date : in-reply-to : references : content-type :
  mime-version : content-transfer-encoding; s=pp1;
- bh=W2mh9+xogrvrMRCw5xMAGNdHiDT6mqWyQbS8cOp1XkY=;
- b=Wi+Zu+BGQgMhUNJ/D+bcMUocxMnfFto0qT/BfJ4B9r+5BjPRnKpo05FD+41FlZARhkT/
- uWhb45mUpPDxDdeRxFCLUgDMWNybV4NWiae+KNN08MFwTcNVNj9mrAXULGZsPs74dxvA
- 6QYpAW9N1iLZfaxpo36GQnJvTP9qPUTNl4VdSCsFTRajaTGk68dyy2GDMeY0oi8xpqW0
- g0+C1mq/Y15eL9v+Ioaj+LD7QgdulVBvH5Yc6i2Br0AjxPxTuRtZN5sOKxBuhJeM0/DO
- 8vN87tz6T0Dix82uX/Ypo/azNqjYIh70nyIMxYlnMp8o9rjrITVoYJwD76OfSy3Lk1SH Kg== 
+ bh=/Berv+RXYni/EpfBinvlSS7q5Og6GZMPUA3Mdr4e7C8=;
+ b=HfpJdQn6BQdd8P8bPquOAqj2zw2uWBs+uEUVJrdxZzTnp4Q1ZR4ws0gUQV8I/oNuAMof
+ Sd31HJe/+T0yKdU/Xbdv5kzm+oKTLrufjxuWoJQoO8XFCsaaYFz7pokhP3czRRD2/IbU
+ QyokIhC7ZLEsVLcZmhyJGxVLUwjjNI3yvClnsxPPn2sDpeXet/0uk1rOICS7Jx40I0TB
+ ZKtsZM8+o39LDP25SmZctx7CvPicpoNB6jne/9xxOqbDBX0owwYRt+ThsVvhCHHJHpFe
+ 9tPNviMNToxF1ik6o5jIMpKcEazJ4ExIp3Bbldtxt2ZItVlV82VxdXktpNd4lyBXi6R3 lg== 
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 334b5c5ndh-1
+        by mx0a-001b2d01.pphosted.com with ESMTP id 334b5c5nc1-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 24 Aug 2020 09:03:03 -0400
+        Mon, 24 Aug 2020 09:03:02 -0400
 Received: from m0098394.ppops.net (m0098394.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 07OD2tAJ096823;
-        Mon, 24 Aug 2020 09:02:57 -0400
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 07OD2tAH096823;
+        Mon, 24 Aug 2020 09:02:55 -0400
 Received: from ppma06fra.de.ibm.com (48.49.7a9f.ip4.static.sl-reverse.com [159.122.73.72])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 334b5c5mve-1
+        by mx0a-001b2d01.pphosted.com with ESMTP id 334b5c5msx-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 24 Aug 2020 09:02:57 -0400
+        Mon, 24 Aug 2020 09:02:54 -0400
 Received: from pps.filterd (ppma06fra.de.ibm.com [127.0.0.1])
-        by ppma06fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 07OCwAA6009870;
-        Mon, 24 Aug 2020 13:02:19 GMT
-Received: from b06avi18878370.portsmouth.uk.ibm.com (b06avi18878370.portsmouth.uk.ibm.com [9.149.26.194])
-        by ppma06fra.de.ibm.com with ESMTP id 332uwesef0-1
+        by ppma06fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 07OCwQTa009904;
+        Mon, 24 Aug 2020 13:02:13 GMT
+Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
+        by ppma06fra.de.ibm.com with ESMTP id 332uweseew-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 24 Aug 2020 13:02:19 +0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 07OD2HR459900208
+        Mon, 24 Aug 2020 13:02:13 +0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 07OD0ebv33817084
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 24 Aug 2020 13:02:17 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 016F3A4068;
-        Mon, 24 Aug 2020 13:02:17 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 94C76A4062;
-        Mon, 24 Aug 2020 13:02:15 +0000 (GMT)
+        Mon, 24 Aug 2020 13:00:40 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D1B5CAE056;
+        Mon, 24 Aug 2020 13:02:10 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 582E4AE05D;
+        Mon, 24 Aug 2020 13:02:09 +0000 (GMT)
 Received: from sig-9-65-254-31.ibm.com (unknown [9.65.254.31])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 24 Aug 2020 13:02:15 +0000 (GMT)
-Message-ID: <681d6bd21410152c0488615b634f4b29140a3974.camel@linux.ibm.com>
-Subject: Re: [PATCH 09/11] ima: Don't remove security.ima if file must not
- be appraised
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 24 Aug 2020 13:02:09 +0000 (GMT)
+Message-ID: <32ef47317871a27f24287e48a2f6ac5a7e552943.camel@linux.ibm.com>
+Subject: Re: [PATCH 08/11] ima: Allow imasig requirement to be satisfied by
+ EVM portable signatures
 From:   Mimi Zohar <zohar@linux.ibm.com>
 To:     Roberto Sassu <roberto.sassu@huawei.com>, mjg59@google.com
 Cc:     linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
-Date:   Mon, 24 Aug 2020 09:02:14 -0400
-In-Reply-To: <20200618160458.1579-9-roberto.sassu@huawei.com>
+Date:   Mon, 24 Aug 2020 09:02:08 -0400
+In-Reply-To: <20200618160458.1579-8-roberto.sassu@huawei.com>
 References: <20200618160329.1263-2-roberto.sassu@huawei.com>
-         <20200618160458.1579-9-roberto.sassu@huawei.com>
+         <20200618160458.1579-8-roberto.sassu@huawei.com>
 Content-Type: text/plain; charset="ISO-8859-15"
 X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
 Mime-Version: 1.0
@@ -87,7 +87,7 @@ X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
  definitions=2020-08-24_11:2020-08-24,2020-08-24 signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
  adultscore=0 spamscore=0 impostorscore=0 suspectscore=3 clxscore=1015
- phishscore=0 malwarescore=0 lowpriorityscore=0 mlxlogscore=772
+ phishscore=0 malwarescore=0 lowpriorityscore=0 mlxlogscore=999
  priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2006250000 definitions=main-2008240099
 Sender: owner-linux-security-module@vger.kernel.org
@@ -95,14 +95,107 @@ Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 On Thu, 2020-06-18 at 18:04 +0200, Roberto Sassu wrote:
-> Files might come from a remote source and might have xattrs, including
-> security.ima. It should not be IMA task to decide whether security.ima
-> should be kept or not. This patch removes the removexattr() system
-> call in ima_inode_post_setattr().
+> System administrators can require that all accessed files have a signature
+> by specifying appraise_type=imasig in a policy rule.
+> 
+> Currently, only IMA signatures satisfy this requirement.
+
+Appended signatures may also satisfy this requirement, but are not
+applicable as ...
+
+> IMA signatures
+> ensure data source authentication for file content and prevent any change.
+> EVM signatures instead ensure data source authentication for file metadata.
+> Given that the digest or signature of the file content must be included in
+> the metadata, EVM signatures provide at least the same guarantees of IMA
+> signatures.
+
+^provide the same file data guarantees of IMA signatures, as well as
+providing file metadata guarantees.
+
+> 
+> This patch lets systems protected with EVM signatures pass appraisal
+> verification if the appraise_type=imasig requirement is specified in the
+> policy. This facilitates deployment in the scenarios where only EVM
+> signatures are available.
+> 
+> The patch makes the following changes:
+> 
+> file xattr types:
+> security.ima: IMA_XATTR_DIGEST/IMA_XATTR_DIGEST_NG
+> security.evm: EVM_XATTR_PORTABLE_DIGSIG
+> 
+> execve(), mmap(), open() behavior (with appraise_type=imasig):
+> before: denied (file without IMA signature, imasig requirement not met)
+> after: allowed (file with EVM portable signature, imasig requirement met)
+> 
+> open(O_WRONLY) behavior (without appraise_type=imasig):
+> before: allowed (file without IMA signature, not immutable)
+> after: denied (file with EVM portable signature, immutable)
+> 
+> In addition, similarly to IMA signatures, this patch temporarily allows
+> new files without or with incomplete metadata to be opened so that content
+> can be written.
 > 
 > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 
-Yes, this has been previously discussed.
+After addressing the comments above and below,
 
 Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+
+> ---
+>  security/integrity/ima/ima_appraise.c | 20 +++++++++++++-------
+>  1 file changed, 13 insertions(+), 7 deletions(-)
+> 
+> diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+> index 21bda264fc30..9505bb390d90 100644
+> --- a/security/integrity/ima/ima_appraise.c
+> +++ b/security/integrity/ima/ima_appraise.c
+> @@ -219,12 +219,16 @@ static int xattr_verify(enum ima_hooks func, struct integrity_iint_cache *iint,
+>  		hash_start = 1;
+>  		/* fall through */
+>  	case IMA_XATTR_DIGEST:
+> -		if (iint->flags & IMA_DIGSIG_REQUIRED) {
+> -			*cause = "IMA-signature-required";
+> -			*status = INTEGRITY_FAIL;
+> -			break;
+> +		if (*status != INTEGRITY_PASS_IMMUTABLE) {
+> +			if (iint->flags & IMA_DIGSIG_REQUIRED) {
+> +				*cause = "IMA-signature-required";
+> +				*status = INTEGRITY_FAIL;
+> +				break;
+> +			}
+> +			clear_bit(IMA_DIGSIG, &iint->atomic_flags);
+> +		} else {
+> +			set_bit(IMA_DIGSIG, &iint->atomic_flags);
+>  		}
+> -		clear_bit(IMA_DIGSIG, &iint->atomic_flags);
+>  		if (xattr_len - sizeof(xattr_value->type) - hash_start >=
+>  				iint->ima_hash->length)
+>  			/*
+> @@ -394,6 +398,8 @@ int ima_appraise_measurement(enum ima_hooks func,
+>  		cause = "missing-HMAC";
+>  		goto out;
+>  	case INTEGRITY_FAIL_IMMUTABLE:
+> +		set_bit(IMA_DIGSIG, &iint->atomic_flags);
+> +		fallthrough;
+>  	case INTEGRITY_FAIL:		/* Invalid HMAC/signature. */
+>  		cause = "invalid-HMAC";
+>  		goto out;
+> @@ -437,9 +443,9 @@ int ima_appraise_measurement(enum ima_hooks func,
+>  				status = INTEGRITY_PASS;
+>  		}
+>  
+> -		/* Permit new files with file signatures, but without data. */
+> +		/* Permit new files marked as immutable, but without data. */
+
+This comment isn't quite right.
+
+>  		if (inode->i_size == 0 && iint->flags & IMA_NEW_FILE &&
+> -		    xattr_value && xattr_value->type == EVM_IMA_XATTR_DIGSIG) {
+> +		    test_bit(IMA_DIGSIG, &iint->atomic_flags)) {
+>  			status = INTEGRITY_PASS;
+>  		}
+>  
+
 
