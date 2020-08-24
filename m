@@ -2,114 +2,126 @@ Return-Path: <SRS0=szIC=CC=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,
-	DKIM_ADSP_CUSTOM_MED,DKIM_INVALID,DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEC5AC433E1
-	for <linux-security-module@archiver.kernel.org>; Mon, 24 Aug 2020 22:11:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32F4EC433E1
+	for <linux-security-module@archiver.kernel.org>; Mon, 24 Aug 2020 22:18:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8FEAD207D3
-	for <linux-security-module@archiver.kernel.org>; Mon, 24 Aug 2020 22:11:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A2E12074D
+	for <linux-security-module@archiver.kernel.org>; Mon, 24 Aug 2020 22:18:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="EqHlX/qM"
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="q8aqKNgA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728001AbgHXWLR (ORCPT
+        id S1726617AbgHXWSU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 24 Aug 2020 18:11:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49526 "EHLO
+        Mon, 24 Aug 2020 18:18:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50638 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726531AbgHXWLQ (ORCPT
+        with ESMTP id S1726365AbgHXWST (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 24 Aug 2020 18:11:16 -0400
-Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF82DC061574
-        for <linux-security-module@vger.kernel.org>; Mon, 24 Aug 2020 15:11:15 -0700 (PDT)
-Received: by mail-yb1-xb49.google.com with SMTP id g127so12309428ybf.11
-        for <linux-security-module@vger.kernel.org>; Mon, 24 Aug 2020 15:11:15 -0700 (PDT)
+        Mon, 24 Aug 2020 18:18:19 -0400
+Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 142F5C061574
+        for <linux-security-module@vger.kernel.org>; Mon, 24 Aug 2020 15:18:19 -0700 (PDT)
+Received: by mail-ej1-x643.google.com with SMTP id d11so13702042ejt.13
+        for <linux-security-module@vger.kernel.org>; Mon, 24 Aug 2020 15:18:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=sender:date:message-id:mime-version:subject:from:to:cc;
-        bh=7libFXTeoVXtSxsZx4eAfjri3vn9ydzbEFYgezZigKg=;
-        b=EqHlX/qMRMx/LOwfZ1t7WQK/nNN6yCRmIDpxachI3gcsZfP/KIGo3bOlFE9vp/zh+F
-         tCOnzlWuSPyTdi1yDrB95sLgu3Iq5Jn55KtezGQ1Ar7Z/xzw1pqTLWmU2chqAKL1zR1K
-         K86rsCcH4CvK90lNsaaLZok/HBhHi/fw3BLbprys2DBLQHMFaqQ7C4LDnTaaVpQYgk6h
-         EVbC+8oLy3pOkK/AL3GTgSBMJZxGuJMS7rgzpqGUBu6za8FP0vaqa4KujiTQtGOCBLGP
-         vVSmEqn+Jp8Sk6Wmz5vOk8u9PE9NGeTprgIlPEyyfJ4eGzQVOHes5tXsS27n9QGgwvZ0
-         I2EA==
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zbf1ipuYiVgdUWQ8HAa35vLjx5URShNXD1uA8qol15c=;
+        b=q8aqKNgAlrJcW1DfAsWkK0x70/h9sqAj6sG9yqn4l/81Q41m4/G0P59I57LZClkaXi
+         CPRLqLU/FdeEg+A0IImj5/xmgMzpxLzV0U9aJUwFuwU3geGJYK3FSk86WpPspnvnCuHc
+         lw2P/Pm6qanEAdo3l1ruLGUEqfthWuBXvPR7BlqcKs2ZOdJXVKdhy5zbtJGbRokQ+hlf
+         Rc/Zp2cKm0uj5jtbaIIJ7vTYZl3New8ZpWpAvBSNXx6c6BJLfSJczOJCxTqywbT6jrff
+         qDtfZZQwwLNKFMrIDwZ5J/yokHCrMA2+vPPJ17xngNIpCph3FoV8syaw2e0zK33I2uSz
+         IaJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:message-id:mime-version:subject:from
-         :to:cc;
-        bh=7libFXTeoVXtSxsZx4eAfjri3vn9ydzbEFYgezZigKg=;
-        b=JyML6Bn9OhG+cKjLx8OxgIrn2IDONps+pY0lyvJUtfIGmVSZxLukBZD6qn7tGYHLk/
-         BcgItOl7doram6gP4QqxElVilQiow5WwRZzq44IpQ4lbqwAekhQ3S+BXc+CENmzqWOHj
-         Ybhtl2WWNg9xfLMRGKKR/oB/XdPdTM47PT9Fwa5bzfQJ4qHrXXA5iYkBb6NXe5a8HvrP
-         BX2vmbEk19czqE5WcES/ctkvr16+bAHgcBtZydCAla8k4E5fjywo41unb0exDboQMefM
-         u3tQGzf2OcPy7wiiiyU/L8E/e+ydd6wTcLBcla7HRpknDuIB3EgHM+uGlqb1BCQdyk3v
-         sdQg==
-X-Gm-Message-State: AOAM532wd2MBjjgXvA7E4HMwIB8kmGYmvIiPbSmw8LJDbnWLrxtCaauU
-        W6gBxUgvZPEsxRMxi2TcwVqlInPV1aM=
-X-Google-Smtp-Source: ABdhPJyYbIT3pRoEDWt2ng9koXX6AnueTSFvvd/SsxvbXJGSutYvdR3F5iCExJF30Lab3lVhBZgD2c8i/SU=
-X-Received: from khazhy-linux.svl.corp.google.com ([2620:15c:2cd:202:1ea0:b8ff:fe75:bae4])
- (user=khazhy job=sendgmr) by 2002:a25:502:: with SMTP id 2mr10156615ybf.6.1598307075217;
- Mon, 24 Aug 2020 15:11:15 -0700 (PDT)
-Date:   Mon, 24 Aug 2020 15:10:34 -0700
-Message-Id: <20200824221034.2170308-1-khazhy@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.28.0.297.g1956fa8f8d-goog
-Subject: [PATCH v2] block: grant IOPRIO_CLASS_RT to CAP_SYS_NICE
-From:   Khazhismel Kumykov <khazhy@google.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Serge Hallyn <serge@hallyn.com>,
-        Paolo Valente <paolo.valente@linaro.org>,
-        Bart Van Assche <bvanassche@acm.org>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Khazhismel Kumykov <khazhy@google.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zbf1ipuYiVgdUWQ8HAa35vLjx5URShNXD1uA8qol15c=;
+        b=gzqTu5ERy0zkAQDzZCO3VTXAjvltgaBnMvIeNjpGnLa9ibSy3mK8W8o0/QpDWw+whm
+         2d+SQOlS69bJ1TgWC2pTdUVSUJ/+k3oPNVUKnMUTycsvSu0WR2bfj3GQP7a3Eo4OG/XN
+         psw5QuDIffb9qFr2T/dz5YZEut5B4c0/Am1tlvfi+BuuFR3JgiKjMEn42cmK4Celuyt1
+         2DunXU0sYAr8XsqECyHp7nYGeqT79gnQ99sgjg7QZmTTG66z0/bwrl4LkwsNrnCrGZzk
+         XXIEtN/uhoGsuuzpPvNr5F/6/KmlLJX4Yqx4r8yK7HXIQBlJ3TkOAFZdN02WTP4IqMLF
+         u/Lg==
+X-Gm-Message-State: AOAM531eGGEpq3SwvkWOY22PeyUuo5Pfj6KYwtS+oNbj0GkoOPHoKB/x
+        lGj9zwLn92yGI0RRvIYz9dzsxvi8i8kPHhAQ1tA3
+X-Google-Smtp-Source: ABdhPJyWFqwCWCfOf3aV/DF5A9ybjw9coxTPI7UoJ5H9ThnSSr/T7I4PmxsgQ0RTLjLnYwrNv3pGmxT7ITZ5GTP/Ijs=
+X-Received: by 2002:a17:906:e0e:: with SMTP id l14mr7179237eji.398.1598307497548;
+ Mon, 24 Aug 2020 15:18:17 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200822010018.19453-1-nramas@linux.microsoft.com>
+ <CAEjxPJ5Kok-TBfS=XQ+NUC5tuaZRkyLBOawG4UDky51_bsMnGw@mail.gmail.com>
+ <418618c4-a0c6-6b28-6718-2726a29b83c5@linux.microsoft.com>
+ <CAEjxPJ6-8WnZRJnADsn=RVakzJiESjEjK-f8nSkscpT7dnricQ@mail.gmail.com>
+ <CAFqZXNvVQ5U6Ea3gT32Z0hfWbu7GPR-mTF2z6-JZZJT57Heuuw@mail.gmail.com> <f041e8ee-3955-9551-b72d-d4d7fa6e636d@linux.microsoft.com>
+In-Reply-To: <f041e8ee-3955-9551-b72d-d4d7fa6e636d@linux.microsoft.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 24 Aug 2020 18:18:05 -0400
+Message-ID: <CAHC9VhQP7_rV+Oi6weLjVhrx2d8iu9UJ8zeE=ZcqnBMqngrJ4Q@mail.gmail.com>
+Subject: Re: [PATCH] SELinux: Measure state and hash of policy using IMA
+To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Cc:     Ondrej Mosnacek <omosnace@redhat.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Tyler Hicks <tyhicks@linux.microsoft.com>,
+        tusharsu@linux.microsoft.com, Sasha Levin <sashal@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        linux-integrity@vger.kernel.org,
+        SElinux list <selinux@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-CAP_SYS_ADMIN is too broad, and ionice fits into CAP_SYS_NICE's grouping.
+On Mon, Aug 24, 2020 at 5:29 PM Lakshmi Ramasubramanian
+<nramas@linux.microsoft.com> wrote:
+> On 8/24/20 1:01 PM, Ondrej Mosnacek wrote:
+> > On Mon, Aug 24, 2020 at 9:30 PM Stephen Smalley
+> > <stephen.smalley.work@gmail.com> wrote:
+> >> On Mon, Aug 24, 2020 at 2:13 PM Lakshmi Ramasubramanian
+> >> <nramas@linux.microsoft.com> wrote:
+> >>> On 8/24/20 7:00 AM, Stephen Smalley wrote:
 
-Retain CAP_SYS_ADMIN permission for backwards compatibility.
+...
 
-Signed-off-by: Khazhismel Kumykov <khazhy@google.com>
----
- block/ioprio.c                  | 2 +-
- include/uapi/linux/capability.h | 2 ++
- 2 files changed, 3 insertions(+), 1 deletion(-)
+> >>> Is Ondrej's re-try approach I need to use to workaround policy reload issue?
+> >>
+> >> No, I think perhaps we should move the mutex to selinux_state instead
+> >> of selinux_fs_info.  selinux_fs_info has a pointer to selinux_state so
+> >> it can then use it indirectly.  Note that your patches are going to
+> >> conflict with other ongoing work in the selinux next branch that is
+> >> refactoring policy load and converting the policy rwlock to RCU.
+> >
+> > Yeah, and I'm experimenting with a patch on top of Stephen's RCU work
+> > that would allow you to do this in a straightforward way without even
+> > messing with the fsi->mutex. My patch may or may not be eventually
+> > committed, but either way I'd recommend holding off on this for a
+> > while until the dust settles around the RCU conversion.
+>
+> I can make the SELinux\IMA changes in "selinux next branch" taking
+> dependencies on Stephen's patches + relevant IMA patches.
 
-v2: fix embarrassing logic mistake
-diff --git a/block/ioprio.c b/block/ioprio.c
-index 77bcab11dce5..276496246fe9 100644
---- a/block/ioprio.c
-+++ b/block/ioprio.c
-@@ -69,7 +69,7 @@ int ioprio_check_cap(int ioprio)
- 
- 	switch (class) {
- 		case IOPRIO_CLASS_RT:
--			if (!capable(CAP_SYS_ADMIN))
-+			if (!capable(CAP_SYS_NICE) && !capable(CAP_SYS_ADMIN))
- 				return -EPERM;
- 			/* fall through */
- 			/* rt has prio field too */
-diff --git a/include/uapi/linux/capability.h b/include/uapi/linux/capability.h
-index 395dd0df8d08..c6ca33034147 100644
---- a/include/uapi/linux/capability.h
-+++ b/include/uapi/linux/capability.h
-@@ -288,6 +288,8 @@ struct vfs_ns_cap_data {
-    processes and setting the scheduling algorithm used by another
-    process. */
- /* Allow setting cpu affinity on other processes */
-+/* Allow setting realtime ioprio class */
-+/* Allow setting ioprio class on other processes */
- 
- #define CAP_SYS_NICE         23
- 
+I know it can be frustrating to hear what I'm about to say, but the
+best option is probably just to wait a little to let things settle in
+the SELinux -next branch.  There is a lot of stuff going on right now
+with patches flooding in (at least "flooding" from a SELinux kernel
+development perspective) and we/I've haven't gotten through all of
+them yet.
+
+> Could you please let me know the URL to the "selinux next branch"?
+
+git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git next
+
 -- 
-2.28.0.297.g1956fa8f8d-goog
-
+paul moore
+www.paul-moore.com
