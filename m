@@ -2,200 +2,101 @@ Return-Path: <SRS0=szIC=CC=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7FECC433E1
-	for <linux-security-module@archiver.kernel.org>; Mon, 24 Aug 2020 13:03:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 590A2C433DF
+	for <linux-security-module@archiver.kernel.org>; Mon, 24 Aug 2020 13:07:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9602A20838
-	for <linux-security-module@archiver.kernel.org>; Mon, 24 Aug 2020 13:03:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3685A2074D
+	for <linux-security-module@archiver.kernel.org>; Mon, 24 Aug 2020 13:07:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="HfpJdQn6"
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="PuPOlDaS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727774AbgHXNDe (ORCPT
+        id S1726578AbgHXNHu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 24 Aug 2020 09:03:34 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:18870 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726820AbgHXND3 (ORCPT
+        Mon, 24 Aug 2020 09:07:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49132 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726581AbgHXNHt (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 24 Aug 2020 09:03:29 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 07OD2Xeb094901;
-        Mon, 24 Aug 2020 09:03:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=/Berv+RXYni/EpfBinvlSS7q5Og6GZMPUA3Mdr4e7C8=;
- b=HfpJdQn6BQdd8P8bPquOAqj2zw2uWBs+uEUVJrdxZzTnp4Q1ZR4ws0gUQV8I/oNuAMof
- Sd31HJe/+T0yKdU/Xbdv5kzm+oKTLrufjxuWoJQoO8XFCsaaYFz7pokhP3czRRD2/IbU
- QyokIhC7ZLEsVLcZmhyJGxVLUwjjNI3yvClnsxPPn2sDpeXet/0uk1rOICS7Jx40I0TB
- ZKtsZM8+o39LDP25SmZctx7CvPicpoNB6jne/9xxOqbDBX0owwYRt+ThsVvhCHHJHpFe
- 9tPNviMNToxF1ik6o5jIMpKcEazJ4ExIp3Bbldtxt2ZItVlV82VxdXktpNd4lyBXi6R3 lg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 334b5c5nc1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 24 Aug 2020 09:03:02 -0400
-Received: from m0098394.ppops.net (m0098394.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 07OD2tAH096823;
-        Mon, 24 Aug 2020 09:02:55 -0400
-Received: from ppma06fra.de.ibm.com (48.49.7a9f.ip4.static.sl-reverse.com [159.122.73.72])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 334b5c5msx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 24 Aug 2020 09:02:54 -0400
-Received: from pps.filterd (ppma06fra.de.ibm.com [127.0.0.1])
-        by ppma06fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 07OCwQTa009904;
-        Mon, 24 Aug 2020 13:02:13 GMT
-Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
-        by ppma06fra.de.ibm.com with ESMTP id 332uweseew-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 24 Aug 2020 13:02:13 +0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 07OD0ebv33817084
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 24 Aug 2020 13:00:40 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D1B5CAE056;
-        Mon, 24 Aug 2020 13:02:10 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 582E4AE05D;
-        Mon, 24 Aug 2020 13:02:09 +0000 (GMT)
-Received: from sig-9-65-254-31.ibm.com (unknown [9.65.254.31])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 24 Aug 2020 13:02:09 +0000 (GMT)
-Message-ID: <32ef47317871a27f24287e48a2f6ac5a7e552943.camel@linux.ibm.com>
-Subject: Re: [PATCH 08/11] ima: Allow imasig requirement to be satisfied by
- EVM portable signatures
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>, mjg59@google.com
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
-Date:   Mon, 24 Aug 2020 09:02:08 -0400
-In-Reply-To: <20200618160458.1579-8-roberto.sassu@huawei.com>
-References: <20200618160329.1263-2-roberto.sassu@huawei.com>
-         <20200618160458.1579-8-roberto.sassu@huawei.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-08-24_11:2020-08-24,2020-08-24 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
- adultscore=0 spamscore=0 impostorscore=0 suspectscore=3 clxscore=1015
- phishscore=0 malwarescore=0 lowpriorityscore=0 mlxlogscore=999
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2008240099
+        Mon, 24 Aug 2020 09:07:49 -0400
+Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA6E0C061574
+        for <linux-security-module@vger.kernel.org>; Mon, 24 Aug 2020 06:07:48 -0700 (PDT)
+Received: by mail-ed1-x544.google.com with SMTP id ba10so7969123edb.3
+        for <linux-security-module@vger.kernel.org>; Mon, 24 Aug 2020 06:07:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=++wVUAAL3FCIdU3Q7RBNPjfei0JC7QKDqs3d4gqLkD8=;
+        b=PuPOlDaS3kto3atocjIDkePSCIXXIRpoKpPyuqY5As+lkPNxkYEIQAP9a/Nn2cf/ec
+         zaFf5NNaSgVhzUZzGa4jT0EjXhrn3xTBWwhYneS2DFlEwstp+iof/WuOGObTgk2w8lW+
+         cljb0Y9Qi3MmisyXxw2zwe8hcu0J00jevDGQsZ5Vec6b3SmGNOhiu0mujwKUpkoDGR87
+         Sl5LHDc7XtsFWO/JUWqiA0gGgJ3A7tljnA1y0ltBpKiAg22PHAD56l8cejbAXvw9RAOK
+         dwRkIuhsCAcYD0Rjth+QWS9fNGlDwFJlPb3RtgULuRw46wLEZ5oJELovinbtoaNvIcT4
+         xZ7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=++wVUAAL3FCIdU3Q7RBNPjfei0JC7QKDqs3d4gqLkD8=;
+        b=SOjDxsv+LR/Tylgj1SBGKCycW6owWoYB7bh5Djj3lNt7GtaTV5QJN//uISM/s+UYAm
+         xq8lTRl2M1XJWMF2MJ7bN8pebdCZS9MWLz685IQbnPPpWQ4NwDYHVLOQBf59Qjkaw7i2
+         Ubc1Xbj3HZcs9UOzxBptWzJT7x6v5zjZF4pC5e8XnPSAeZrw1aRHebUYouk3e8SaB5ql
+         Jrgb3bSAhi2kMs1lWwHSUy8OA1jDe7yS9ve9P9CGDj7klhA5AiN63HJy8RLMHs8zyeUp
+         XRb9ZG2S53VE1CjH9s7JnJM3YDy9LlY7ej3ez1vJ8Mm8pgBmMpABpVM4aaRXDzApENVO
+         MAuQ==
+X-Gm-Message-State: AOAM530Jm0EIAK1iC1KHfwOEqipWEJYomvsJ+NRQuChzXopKyxt1SDtZ
+        nnEXZ2h7+hPcdxGWq0Cty8KdYfVQy99yvmwAbi7e
+X-Google-Smtp-Source: ABdhPJwvkn1F/xNYp0KGduUPe7dAvQCo8OrTtHv27xZTH9XHSiNh4240+VtyTkIu/D5pi9/aoxporbUNR2gCrGL2wZ4=
+X-Received: by 2002:aa7:ca46:: with SMTP id j6mr2684340edt.128.1598274467311;
+ Mon, 24 Aug 2020 06:07:47 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200807165134.3913-1-rdunlap@infradead.org> <CAHC9VhQW-8pem59QHQctx9UNhMNLEAjNwDiOU1ODz9wX5B_tdQ@mail.gmail.com>
+In-Reply-To: <CAHC9VhQW-8pem59QHQctx9UNhMNLEAjNwDiOU1ODz9wX5B_tdQ@mail.gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 24 Aug 2020 09:07:36 -0400
+Message-ID: <CAHC9VhT4EG3qs76=nfQ7sLW9t9V-jXymmczV9Ygq+9T+Qz4Pfg@mail.gmail.com>
+Subject: Re: [PATCH] security: selinux: delete repeated words in comments
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 2020-06-18 at 18:04 +0200, Roberto Sassu wrote:
-> System administrators can require that all accessed files have a signature
-> by specifying appraise_type=imasig in a policy rule.
-> 
-> Currently, only IMA signatures satisfy this requirement.
+On Fri, Aug 7, 2020 at 2:09 PM Paul Moore <paul@paul-moore.com> wrote:
+> On Fri, Aug 7, 2020 at 12:51 PM Randy Dunlap <rdunlap@infradead.org> wrote:
+> >
+> > Drop a repeated word in comments.
+> > {open, is, then}
+> >
+> > Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> > Cc: Paul Moore <paul@paul-moore.com>
+> > Cc: Stephen Smalley <stephen.smalley.work@gmail.com>
+> > Cc: Eric Paris <eparis@parisplace.org>
+> > Cc: selinux@vger.kernel.org
+> > Cc: James Morris <jmorris@namei.org>
+> > Cc: "Serge E. Hallyn" <serge@hallyn.com>
+> > Cc: linux-security-module@vger.kernel.org
+> > ---
+> >  security/selinux/hooks.c |    6 +++---
+> >  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> This obviously looks fine, but it will need to wait until after the
+> merge window closes.  I'll send another reply once it is merged.
 
-Appended signatures may also satisfy this requirement, but are not
-applicable as ...
+Hi Randy, this got buried a bit due to vacations and other patches but
+I just merged it into selinux/next.  Thanks for your patience.
 
-> IMA signatures
-> ensure data source authentication for file content and prevent any change.
-> EVM signatures instead ensure data source authentication for file metadata.
-> Given that the digest or signature of the file content must be included in
-> the metadata, EVM signatures provide at least the same guarantees of IMA
-> signatures.
-
-^provide the same file data guarantees of IMA signatures, as well as
-providing file metadata guarantees.
-
-> 
-> This patch lets systems protected with EVM signatures pass appraisal
-> verification if the appraise_type=imasig requirement is specified in the
-> policy. This facilitates deployment in the scenarios where only EVM
-> signatures are available.
-> 
-> The patch makes the following changes:
-> 
-> file xattr types:
-> security.ima: IMA_XATTR_DIGEST/IMA_XATTR_DIGEST_NG
-> security.evm: EVM_XATTR_PORTABLE_DIGSIG
-> 
-> execve(), mmap(), open() behavior (with appraise_type=imasig):
-> before: denied (file without IMA signature, imasig requirement not met)
-> after: allowed (file with EVM portable signature, imasig requirement met)
-> 
-> open(O_WRONLY) behavior (without appraise_type=imasig):
-> before: allowed (file without IMA signature, not immutable)
-> after: denied (file with EVM portable signature, immutable)
-> 
-> In addition, similarly to IMA signatures, this patch temporarily allows
-> new files without or with incomplete metadata to be opened so that content
-> can be written.
-> 
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-
-After addressing the comments above and below,
-
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-
-> ---
->  security/integrity/ima/ima_appraise.c | 20 +++++++++++++-------
->  1 file changed, 13 insertions(+), 7 deletions(-)
-> 
-> diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-> index 21bda264fc30..9505bb390d90 100644
-> --- a/security/integrity/ima/ima_appraise.c
-> +++ b/security/integrity/ima/ima_appraise.c
-> @@ -219,12 +219,16 @@ static int xattr_verify(enum ima_hooks func, struct integrity_iint_cache *iint,
->  		hash_start = 1;
->  		/* fall through */
->  	case IMA_XATTR_DIGEST:
-> -		if (iint->flags & IMA_DIGSIG_REQUIRED) {
-> -			*cause = "IMA-signature-required";
-> -			*status = INTEGRITY_FAIL;
-> -			break;
-> +		if (*status != INTEGRITY_PASS_IMMUTABLE) {
-> +			if (iint->flags & IMA_DIGSIG_REQUIRED) {
-> +				*cause = "IMA-signature-required";
-> +				*status = INTEGRITY_FAIL;
-> +				break;
-> +			}
-> +			clear_bit(IMA_DIGSIG, &iint->atomic_flags);
-> +		} else {
-> +			set_bit(IMA_DIGSIG, &iint->atomic_flags);
->  		}
-> -		clear_bit(IMA_DIGSIG, &iint->atomic_flags);
->  		if (xattr_len - sizeof(xattr_value->type) - hash_start >=
->  				iint->ima_hash->length)
->  			/*
-> @@ -394,6 +398,8 @@ int ima_appraise_measurement(enum ima_hooks func,
->  		cause = "missing-HMAC";
->  		goto out;
->  	case INTEGRITY_FAIL_IMMUTABLE:
-> +		set_bit(IMA_DIGSIG, &iint->atomic_flags);
-> +		fallthrough;
->  	case INTEGRITY_FAIL:		/* Invalid HMAC/signature. */
->  		cause = "invalid-HMAC";
->  		goto out;
-> @@ -437,9 +443,9 @@ int ima_appraise_measurement(enum ima_hooks func,
->  				status = INTEGRITY_PASS;
->  		}
->  
-> -		/* Permit new files with file signatures, but without data. */
-> +		/* Permit new files marked as immutable, but without data. */
-
-This comment isn't quite right.
-
->  		if (inode->i_size == 0 && iint->flags & IMA_NEW_FILE &&
-> -		    xattr_value && xattr_value->type == EVM_IMA_XATTR_DIGSIG) {
-> +		    test_bit(IMA_DIGSIG, &iint->atomic_flags)) {
->  			status = INTEGRITY_PASS;
->  		}
->  
-
-
+-- 
+paul moore
+www.paul-moore.com
