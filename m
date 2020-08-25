@@ -2,65 +2,65 @@ Return-Path: <SRS0=UPXR=CD=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6750C433E1
-	for <linux-security-module@archiver.kernel.org>; Tue, 25 Aug 2020 21:06:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B1D9C433DF
+	for <linux-security-module@archiver.kernel.org>; Tue, 25 Aug 2020 22:13:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6DCC62074A
-	for <linux-security-module@archiver.kernel.org>; Tue, 25 Aug 2020 21:06:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0133A20706
+	for <linux-security-module@archiver.kernel.org>; Tue, 25 Aug 2020 22:13:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ixa9FJoz"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YtIqtANn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726627AbgHYVGL (ORCPT
+        id S1726627AbgHYWNS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 25 Aug 2020 17:06:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38734 "EHLO
+        Tue, 25 Aug 2020 18:13:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49134 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726391AbgHYVGK (ORCPT
+        with ESMTP id S1726466AbgHYWNR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 25 Aug 2020 17:06:10 -0400
-Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A556C061574;
-        Tue, 25 Aug 2020 14:06:10 -0700 (PDT)
-Received: by mail-lj1-x243.google.com with SMTP id i10so15453981ljn.2;
-        Tue, 25 Aug 2020 14:06:10 -0700 (PDT)
+        Tue, 25 Aug 2020 18:13:17 -0400
+Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33406C061574;
+        Tue, 25 Aug 2020 15:13:15 -0700 (PDT)
+Received: by mail-lj1-x244.google.com with SMTP id w25so28624ljo.12;
+        Tue, 25 Aug 2020 15:13:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=5imsyI0b83eRRG7XSm8dcgFIEu+jMWu3oUZKB77rnAk=;
-        b=ixa9FJozDSEupBwlfbfT2YKeDnuGuwPKxniHDijVcnofGH60f/oOxgRLqF4uQMIZex
-         ur5IuPNQdYJo/OsDiFthjqN4CuvC/8MAPB6+KkNDeQpSvOX2QdZjKWSXsss0/6Jo208g
-         c9roI/+A7cr5YMtRaHqe4QevRkhAa9NQTVPa8+t6RCB+iY74Q/sInS7ruQdiE7/XpjVz
-         v/cJGXdOLtkKeqz/KLOi19mJ59kH0okjnIXPlqPgepfsif4a3SP5hS5fCU4cv/nMiMXF
-         8MR4co23JzgfUyfnirEqeCMTAl7ZRu0ylqWFTrmdC883alloiP+uLnj0EbfAqzm2xRLR
-         C3ZA==
+        bh=HhJsKBW02BtS7ow2CWHt5zwUeBTuEgT+ywQPrRSabdI=;
+        b=YtIqtANnDHeWhG7NcT0yReoTOgBY4QboTpun67yZZHj9DyZHtMHpeAtWAPsc/DoMFx
+         7DSRf3AyaoCF+vLJ+iZGSE7UqoF1/26kmRJPkTru5oQ2J3Ydb1kErHH5tBOf8E4rLlnf
+         bREUQwadn7XR3FTbFjMF/eUo6YHJwC6DIoJ+0oJZ2Wc4rwZWAMa8AUTGQqvf2FNvEYte
+         Xb0kyIqdBqhp9OnierClYc10HO4XWvYjqncixoRV/5YnwNKsrXa1TBBuVGQIQQ1sJBLq
+         +TnrM8eIufvT+F9YJs3wkH2YLjQVg/RKO5LBzT+6D6sLkFA36T4TJEN4PQDVKwcJrcyP
+         IW/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=5imsyI0b83eRRG7XSm8dcgFIEu+jMWu3oUZKB77rnAk=;
-        b=PKJ4S+gnnRKqM/mRebfKhkdPGXNX7mGoP2101GagbsJN+/2jwLvkWV+1LMAiJVnKY6
-         GvI73LZCSYLMmwJVBM3fCqSlLSOFSF0aAUimhghpnFeDyNbX5RxZLWHIlTy67uRw3MfI
-         o32VW90TPJ+aROgVi4NahL2wqmELHU+fY0g1aEG/Jm+0xSU2vO8P5DXummCA7HSkK8U2
-         +7Wabzlrr+8bGSXQ1y4vzSLkFB0XE3pfI5MN/LDLtHExKSOe4bzczEKVkIsEoeZesCMI
-         ahcstg6FAtrK97PHx9SgmR1IXwRnsjUFhcWnT/xb8XJ7RNXPoAkw0Z0luGSkNipD66uC
-         /9Gw==
-X-Gm-Message-State: AOAM5305N3K5/eQDPnvnH7eYFCN1bmtYsw9SjMZepRBPtVqaL9SFbFrf
-        m+Gh83GksXusoFHcUWRBom9QUD21c97APvVeO14=
-X-Google-Smtp-Source: ABdhPJzqBo3BZIqb32YXAiqn3A8kkfWg8836sSqMY+6pdpkL6vCTqGuwP9woNyZ1/BoQn9KjnpJ6CuDknJMY7tR/H4U=
-X-Received: by 2002:a2e:4e09:: with SMTP id c9mr5869546ljb.283.1598389568661;
- Tue, 25 Aug 2020 14:06:08 -0700 (PDT)
+        bh=HhJsKBW02BtS7ow2CWHt5zwUeBTuEgT+ywQPrRSabdI=;
+        b=c2h+x04OOlht3Y7BjVU/9XTmIGraLcRyc1P5C42OTLKG6wMUQ2JnCBie+DFEb79c1+
+         lsakFrr3q1xl/a21W2l1/yMD7Dff0dKoAqUKRDq5eiNqqOCZeEGyZONCu3cfczTgRYTn
+         QR4zPTx8eKFltw1lXKCIlZZ+KZCQF/bQ0Gn39ser42vdSf7lhuH3I/FsbnLCoqWA/7tq
+         cTWshF7Ez9Wa4HajjLLAVCPjqLCJWQViNQocKlHVtM89CxYsJIGKpD8t/o5a+mLrAXLW
+         ZrbSNUEbxRutJA2Qk5GQ+i7K7ZPfKmp9lAXaaSm8+7L4rxzpjNWM73htcZnzU4ZDAqOu
+         6rYg==
+X-Gm-Message-State: AOAM530nkN8isI6kFQ1pvvodgY3cgN4pqzZjAc/JlimUH/xjZci3qahO
+        h0/bT/u06HMFwYXLftXYpvvBFkoggte/99gdiHw=
+X-Google-Smtp-Source: ABdhPJzz2wF45wgf/FXw/JhSJGsQdVgdCOrsFVQh5ecXi7Q0ljP46EcESueuQP9ZLOVOkt2NOX+z6IHI8EEFINShqYg=
+X-Received: by 2002:a2e:4e09:: with SMTP id c9mr5968600ljb.283.1598393593961;
+ Tue, 25 Aug 2020 15:13:13 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200825182919.1118197-1-kpsingh@chromium.org>
-In-Reply-To: <20200825182919.1118197-1-kpsingh@chromium.org>
+References: <20200825182919.1118197-1-kpsingh@chromium.org> <CAADnVQJG+vMTyuNGjWTYnWX11ZqJU-EE30UC5KPJtpv1MC78cw@mail.gmail.com>
+In-Reply-To: <CAADnVQJG+vMTyuNGjWTYnWX11ZqJU-EE30UC5KPJtpv1MC78cw@mail.gmail.com>
 From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date:   Tue, 25 Aug 2020 14:05:57 -0700
-Message-ID: <CAADnVQJG+vMTyuNGjWTYnWX11ZqJU-EE30UC5KPJtpv1MC78cw@mail.gmail.com>
+Date:   Tue, 25 Aug 2020 15:13:02 -0700
+Message-ID: <CAADnVQK0sKWa-XMUR9y28KEqMCOQhnRcAu=MDv4rU8iPwLBW1w@mail.gmail.com>
 Subject: Re: [PATCH bpf-next v10 0/7] Generalizing bpf_local_storage
 To:     KP Singh <kpsingh@chromium.org>
 Cc:     LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
@@ -75,51 +75,86 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Aug 25, 2020 at 11:29 AM KP Singh <kpsingh@chromium.org> wrote:
+On Tue, Aug 25, 2020 at 2:05 PM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
 >
-> From: KP Singh <kpsingh@google.com>
+> On Tue, Aug 25, 2020 at 11:29 AM KP Singh <kpsingh@chromium.org> wrote:
+> >
+> > From: KP Singh <kpsingh@google.com>
+> >
+> > # v9 -> v10
+> >
+> > - Added NULL check for inode_storage_ptr before calling
+> >   bpf_local_storage_update
+> > - Removed an extraneous include
+> > - Rebased and added Acks / Signoff.
 >
-> # v9 -> v10
+> Hmm. Though it looks good I cannot apply it, because
+> test_progs -t map_ptr
+> is broken:
+> 2225: (18) r2 = 0xffffc900004e5004
+> 2227: (b4) w1 = 58
+> 2228: (63) *(u32 *)(r2 +0) = r1
+>  R0=map_value(id=0,off=0,ks=4,vs=4,imm=0) R1_w=inv58
+> R2_w=map_value(id=0,off=4,ks=4,vs=8,imm=0) R3=inv49 R4=inv63
+> R5=inv(id=0,umax_value=4294967295,var_off=(0x0; 0xffffffff)) R6_w=inv0
+> R7=invP8 R8=map_ptr(id=0,off=0,ks=4,vs=4,imm=0) R10=?
+> ; VERIFY_TYPE(BPF_MAP_TYPE_SK_STORAGE, check_sk_storage);
+> 2229: (18) r1 = 0xffffc900004e5000
+> 2231: (b4) w3 = 24
+> 2232: (63) *(u32 *)(r1 +0) = r3
+>  R0=map_value(id=0,off=0,ks=4,vs=4,imm=0)
+> R1_w=map_value(id=0,off=0,ks=4,vs=8,imm=0)
+> R2_w=map_value(id=0,off=4,ks=4,vs=8,imm=0) R3_w=inv24 R4=inv63
+> R5=inv(id=0,umax_value=4294967295,var_off=(0x0; 0xffffffff)) R6_w=inv0
+> R7=invP8 R8=map_pt?
+> 2233: (18) r3 = 0xffff8881f03f7000
+> ; VERIFY(indirect->map_type == direct->map_type);
+> 2235: (85) call unknown#195896080
+> invalid func unknown#195896080
+> processed 4678 insns (limit 1000000) max_states_per_insn 9
+> total_states 240 peak_states 178 mark_read 11
 >
-> - Added NULL check for inode_storage_ptr before calling
->   bpf_local_storage_update
-> - Removed an extraneous include
-> - Rebased and added Acks / Signoff.
+> libbpf: -- END LOG --
+> libbpf: failed to load program 'cgroup_skb/egress'
+> libbpf: failed to load object 'map_ptr_kern'
+> libbpf: failed to load BPF skeleton 'map_ptr_kern': -4007
+> test_map_ptr:FAIL:skel_open_load open_load failed
+> #43 map_ptr:FAIL
+>
+> Above 'invalid func unknown#195896080' happens
+> when libbpf fails to do a relocation at runtime.
+> Please debug.
+> It's certainly caused by this set, but not sure why.
 
-Hmm. Though it looks good I cannot apply it, because
-test_progs -t map_ptr
-is broken:
-2225: (18) r2 = 0xffffc900004e5004
-2227: (b4) w1 = 58
-2228: (63) *(u32 *)(r2 +0) = r1
- R0=map_value(id=0,off=0,ks=4,vs=4,imm=0) R1_w=inv58
-R2_w=map_value(id=0,off=4,ks=4,vs=8,imm=0) R3=inv49 R4=inv63
-R5=inv(id=0,umax_value=4294967295,var_off=(0x0; 0xffffffff)) R6_w=inv0
-R7=invP8 R8=map_ptr(id=0,off=0,ks=4,vs=4,imm=0) R10=?
-; VERIFY_TYPE(BPF_MAP_TYPE_SK_STORAGE, check_sk_storage);
-2229: (18) r1 = 0xffffc900004e5000
-2231: (b4) w3 = 24
-2232: (63) *(u32 *)(r1 +0) = r3
- R0=map_value(id=0,off=0,ks=4,vs=4,imm=0)
-R1_w=map_value(id=0,off=0,ks=4,vs=8,imm=0)
-R2_w=map_value(id=0,off=4,ks=4,vs=8,imm=0) R3_w=inv24 R4=inv63
-R5=inv(id=0,umax_value=4294967295,var_off=(0x0; 0xffffffff)) R6_w=inv0
-R7=invP8 R8=map_pt?
-2233: (18) r3 = 0xffff8881f03f7000
-; VERIFY(indirect->map_type == direct->map_type);
-2235: (85) call unknown#195896080
-invalid func unknown#195896080
-processed 4678 insns (limit 1000000) max_states_per_insn 9
-total_states 240 peak_states 178 mark_read 11
+So I've ended up bisecting and debugging it.
+It turned out that the patch 1 was responsible.
+I've added the following hunk to fix it:
+diff --git a/tools/testing/selftests/bpf/progs/map_ptr_kern.c
+b/tools/testing/selftests/bpf/progs/map_ptr_kern.c
+index 473665cac67e..982a2d8aa844 100644
+--- a/tools/testing/selftests/bpf/progs/map_ptr_kern.c
++++ b/tools/testing/selftests/bpf/progs/map_ptr_kern.c
+@@ -589,7 +589,7 @@ static inline int check_stack(void)
+        return 1;
+ }
 
-libbpf: -- END LOG --
-libbpf: failed to load program 'cgroup_skb/egress'
-libbpf: failed to load object 'map_ptr_kern'
-libbpf: failed to load BPF skeleton 'map_ptr_kern': -4007
-test_map_ptr:FAIL:skel_open_load open_load failed
-#43 map_ptr:FAIL
+-struct bpf_sk_storage_map {
++struct bpf_local_storage_map {
+        struct bpf_map map;
+ } __attribute__((preserve_access_index));
 
-Above 'invalid func unknown#195896080' happens
-when libbpf fails to do a relocation at runtime.
-Please debug.
-It's certainly caused by this set, but not sure why.
+@@ -602,8 +602,8 @@ struct {
+
+ static inline int check_sk_storage(void)
+ {
+-       struct bpf_sk_storage_map *sk_storage =
+-               (struct bpf_sk_storage_map *)&m_sk_storage;
++       struct bpf_local_storage_map *sk_storage =
++               (struct bpf_local_storage_map *)&m_sk_storage;
+        struct bpf_map *map = (struct bpf_map *)&m_sk_storage;
+
+and pushed the whole set.
+In the future please always run test_progs and test_progs-no_alu32
+for every patch and submit patches only if _all_ tests are passing.
+Do not assume that your change is not responsible for breakage.
