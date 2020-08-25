@@ -2,320 +2,151 @@ Return-Path: <SRS0=UPXR=CD=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3016CC433DF
-	for <linux-security-module@archiver.kernel.org>; Tue, 25 Aug 2020 18:30:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 122F5C433E1
+	for <linux-security-module@archiver.kernel.org>; Tue, 25 Aug 2020 19:35:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 135B52074D
-	for <linux-security-module@archiver.kernel.org>; Tue, 25 Aug 2020 18:30:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E54BA2075E
+	for <linux-security-module@archiver.kernel.org>; Tue, 25 Aug 2020 19:35:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="S4kmTq23"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="ZDyXrwy3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726090AbgHYSa1 (ORCPT
+        id S1726391AbgHYTfZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 25 Aug 2020 14:30:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42738 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726391AbgHYS3k (ORCPT
+        Tue, 25 Aug 2020 15:35:25 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:55714 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726090AbgHYTfZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 25 Aug 2020 14:29:40 -0400
-Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2639BC0617A9
-        for <linux-security-module@vger.kernel.org>; Tue, 25 Aug 2020 11:29:33 -0700 (PDT)
-Received: by mail-ej1-x641.google.com with SMTP id o18so17854148eje.7
-        for <linux-security-module@vger.kernel.org>; Tue, 25 Aug 2020 11:29:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=UQsnRZlN0H9BcX2r4S5kq1SuETDS5jf7walwVksTH94=;
-        b=S4kmTq23hn3c5x6dDrPPRADtdxouNbGaglISf+110wP0HCsA2GmLSuM0EkGQAuj24C
-         VsZgLifucYVDpdlRkjKUkXm7FkGl9AiYwBe8YbC78zHDafg3TQpWS6XScocuXLNAdCZh
-         1PD/7HPrhVfrA8+1Jxx5JIFOYyeq0IxDQPs+0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=UQsnRZlN0H9BcX2r4S5kq1SuETDS5jf7walwVksTH94=;
-        b=WI+zsZzDBMnm3n7RUL7Xa76yEDDRNvrAhtGzNOISUspRWcBH9DRe9EcFTmU8x0Gj8i
-         SzkDKTqkiTAPas5STj5ntptRvBwXWmNo0E5qREMHydhKpQ/7I8gMryFcHgc7q/A5CEVL
-         zvxFG/YvimU/6MCxi/O0WC1vMXE3ZTwLNpm80OTA4dHjkAHsieTMv3icPXhU4eGK0jcG
-         DuP2+9RVVxQgPcTpcSzMbHQnyqrOSrEhgeaUf/Hq7l1EoFN3rfkuzQzhmUL4DV8FMZCh
-         3ZsYbPBbXtOiXV7b24MyDAxs6qV8MB0tyH13l/FUv3M34wUHX0Cg8TnaZ55eW2tdidqg
-         TksQ==
-X-Gm-Message-State: AOAM531y0ynILv9B51RWphBlUK8VSZzpxeY763nr91+2KST6ckEZpB6p
-        tx1/K5N/D2KegsRdOUcJrg4e6A==
-X-Google-Smtp-Source: ABdhPJz1JfvNo65OJ9r9gQgOVA5SsP2Ub+ZB2uY2L7FHVSKJIso58vh+xWKQkANnkCKKXYRi/cDxMg==
-X-Received: by 2002:a17:906:4089:: with SMTP id u9mr12450371ejj.235.1598380170754;
-        Tue, 25 Aug 2020 11:29:30 -0700 (PDT)
-Received: from kpsingh.zrh.corp.google.com ([81.6.44.51])
-        by smtp.gmail.com with ESMTPSA id dr21sm15323286ejc.112.2020.08.25.11.29.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Aug 2020 11:29:30 -0700 (PDT)
-From:   KP Singh <kpsingh@chromium.org>
-To:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Cc:     Andrii Nakryiko <andriin@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
-        Florent Revest <revest@chromium.org>
-Subject: [PATCH bpf-next v10 7/7] bpf: Add selftests for local_storage
-Date:   Tue, 25 Aug 2020 20:29:19 +0200
-Message-Id: <20200825182919.1118197-8-kpsingh@chromium.org>
-X-Mailer: git-send-email 2.28.0.297.g1956fa8f8d-goog
-In-Reply-To: <20200825182919.1118197-1-kpsingh@chromium.org>
-References: <20200825182919.1118197-1-kpsingh@chromium.org>
+        Tue, 25 Aug 2020 15:35:25 -0400
+Received: from [192.168.0.104] (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
+        by linux.microsoft.com (Postfix) with ESMTPSA id D0AF520B4908;
+        Tue, 25 Aug 2020 12:35:23 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com D0AF520B4908
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1598384124;
+        bh=Fw5PHt/J5OR4kflOPB4F5zZgn2LUaRRDHppz3JIp4NI=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=ZDyXrwy3YN/YeW8PWs7m5W4puC1eAAXy+vwudsE6S2eIXh+TqCTS7KKQz0YoM23ZJ
+         JEaghXk+Cud0NSADOA/C4fbFfieGQaYdhesKFMuFk9fGwnO2B6aHMupx6r9xyUf0Ge
+         BQXmszEqRkhNhzqQH41ReyNkKLLjHLgnjyFI4jX4=
+Subject: Re: [PATCH] IMA: Handle early boot data measurement
+To:     Mimi Zohar <zohar@linux.ibm.com>, stephen.smalley.work@gmail.com,
+        casey@schaufler-ca.com
+Cc:     tyhicks@linux.microsoft.com, tusharsu@linux.microsoft.com,
+        sashal@kernel.org, jmorris@namei.org,
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200821231230.20212-1-nramas@linux.microsoft.com>
+ <a7ea2da1f895ee3db4697c00804160acb6db656e.camel@linux.ibm.com>
+ <307617de-b42d-ac52-6e9e-9e0d16bbc20e@linux.microsoft.com>
+ <49f8a616d80344c539b512f8b83590ea281ee54d.camel@linux.ibm.com>
+ <52d2204b-5b6e-e13f-d0dd-192a776812bc@linux.microsoft.com>
+ <805e35d6835df219b5836e8159742bed086e0554.camel@linux.ibm.com>
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Message-ID: <958853ec-5354-fbcb-3fa0-2002954c3e40@linux.microsoft.com>
+Date:   Tue, 25 Aug 2020 12:35:19 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <805e35d6835df219b5836e8159742bed086e0554.camel@linux.ibm.com>
+Content-Type: text/plain; charset=iso-8859-15; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: KP Singh <kpsingh@google.com>
+On 8/25/20 11:03 AM, Mimi Zohar wrote:
+> On Tue, 2020-08-25 at 10:55 -0700, Lakshmi Ramasubramanian wrote:
+>> On 8/25/20 10:42 AM, Mimi Zohar wrote:
+>>
+>>>>> Please limit the changes in this patch to renaming the functions and/or
+>>>>> files.  For example, adding "measure_payload_hash" should be a separate
+>>>>> patch, not hidden here.
+>>>>>
+>>>>
+>>>> Thanks for the feedback Mimi.
+>>>>
+>>>> I'll split this into 2 patches:
+>>>>
+>>>> PATCH 1: Rename files + rename CONFIG
+>>>> PATCH 2: Update IMA hook to utilize early boot data measurement.
+>>>
+>>> I'm referring to introducing the "measure_payload_hash" flag.  I assume
+>>> this is to indicate whether the buffer should be hashed or not.
+>>>
+>>> Example 1: ima_alloc_key_entry() and ima_alloc_data_entry(0 comparison
+>>>> -static struct ima_key_entry *ima_alloc_key_entry(struct key *keyring,
+>>>> -                                                const void *payload,
+>>>> -                                                size_t payload_len)
+>>>> -{
+>>>> +static struct ima_data_entry *ima_alloc_data_entry(const char *event_name,
+>>>> +                                                  const void *payload,
+>>>> +                                                  size_t payload_len,
+>>>> +                                                  const char *event_data,
+>>>> +                                                  enum ima_hooks func,
+>>>> +                                                  bool measure_payload_hash)  <====
+>>>> +{
+>>>
+>>> Example 2:
+>>> diff --git a/security/integrity/ima/ima_asymmetric_keys.c b/security/integrity/ima/ima_asymmetric_keys.c
+>>> index a74095793936..65423754765f 100644
+>>> --- a/security/integrity/ima/ima_asymmetric_keys.c
+>>> +++ b/security/integrity/ima/ima_asymmetric_keys.c
+>>> @@ -37,9 +37,10 @@ void ima_post_key_create_or_update(struct key *keyring, struct key *key,
+>>>           if (!payload || (payload_len == 0))
+>>>                   return;
+>>>    
+>>> -       if (ima_should_queue_key())
+>>> -               queued = ima_queue_key(keyring, payload, payload_len);
+>>> -
+>>> +       if (ima_should_queue_data())
+>>> +               queued = ima_queue_data(keyring->description, payload,
+>>> +                                       payload_len, keyring->description,
+>>> +                                       KEY_CHECK, false);   <===
+>>>           if (queued)
+>>>                   return;
+>>>
+>>> But in general, as much as possible function and file name changes
+>>> should be done independently of other changes.
+>>>
+>>> thanks,
+>>
+>> I agree - but in this case, Tushar's patch series on adding support for
+>> "Critical Data" measurement has already introduced
+>> "measure_payload_hash" flag. His patch updates
+>> "process_buffer_measurement()" to take this new flag and measure hash of
+>> the given data.
+>>
+>> My patches extend that to queuing the early boot requests and processing
+>> them after a custom IMA policy is loaded.
+>>
+>> If you still think "measure_payload_hash" flag should be introduced in
+>> the queuing change as a separate patch I'll split the patches further.
+>> Please let me know.
+> 
+> There's a major problem if his changes add new function arguments
+> without modifying all the callers of the function.  I assume the kernel
+> would fail to compile properly.
 
-inode_local_storage:
+Tushar's patch series does update all the existing callers of 
+process_buffer_measurement() to handle the new arguments. His patch 
+series is self contained, and builds and works fine.
 
-* Hook to the file_open and inode_unlink LSM hooks.
-* Create and unlink a temporary file.
-* Store some information in the inode's bpf_local_storage during
-  file_open.
-* Verify that this information exists when the file is unlinked.
+> 
+> Changing the function parameters to include "measure_payload_hash"
+> needs to be a separate patch, whether it is part of his patch set or
+> yours.
+> 
 
-sk_local_storage:
+ok - I'll split the queuing patch to include "measure_payload_hash" in a 
+separate patch.
 
-* Hook to the socket_post_create and socket_bind LSM hooks.
-* Open and bind a socket and set the sk_storage in the
-  socket_post_create hook using the start_server helper.
-* Verify if the information is set in the socket_bind hook.
-
-Acked-by: Andrii Nakryiko <andriin@fb.com>
-Signed-off-by: KP Singh <kpsingh@google.com>
----
- .../bpf/prog_tests/test_local_storage.c       |  60 ++++++++
- .../selftests/bpf/progs/local_storage.c       | 140 ++++++++++++++++++
- 2 files changed, 200 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/prog_tests/test_local_storage.c
- create mode 100644 tools/testing/selftests/bpf/progs/local_storage.c
-
-diff --git a/tools/testing/selftests/bpf/prog_tests/test_local_storage.c b/tools/testing/selftests/bpf/prog_tests/test_local_storage.c
-new file mode 100644
-index 000000000000..91cd6f357246
---- /dev/null
-+++ b/tools/testing/selftests/bpf/prog_tests/test_local_storage.c
-@@ -0,0 +1,60 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/*
-+ * Copyright (C) 2020 Google LLC.
-+ */
-+
-+#include <test_progs.h>
-+#include <linux/limits.h>
-+
-+#include "local_storage.skel.h"
-+#include "network_helpers.h"
-+
-+int create_and_unlink_file(void)
-+{
-+	char fname[PATH_MAX] = "/tmp/fileXXXXXX";
-+	int fd;
-+
-+	fd = mkstemp(fname);
-+	if (fd < 0)
-+		return fd;
-+
-+	close(fd);
-+	unlink(fname);
-+	return 0;
-+}
-+
-+void test_test_local_storage(void)
-+{
-+	struct local_storage *skel = NULL;
-+	int err, duration = 0, serv_sk = -1;
-+
-+	skel = local_storage__open_and_load();
-+	if (CHECK(!skel, "skel_load", "lsm skeleton failed\n"))
-+		goto close_prog;
-+
-+	err = local_storage__attach(skel);
-+	if (CHECK(err, "attach", "lsm attach failed: %d\n", err))
-+		goto close_prog;
-+
-+	skel->bss->monitored_pid = getpid();
-+
-+	err = create_and_unlink_file();
-+	if (CHECK(err < 0, "exec_cmd", "err %d errno %d\n", err, errno))
-+		goto close_prog;
-+
-+	CHECK(skel->data->inode_storage_result != 0, "inode_storage_result",
-+	      "inode_local_storage not set\n");
-+
-+	serv_sk = start_server(AF_INET6, SOCK_STREAM, NULL, 0, 0);
-+	if (CHECK(serv_sk < 0, "start_server", "failed to start server\n"))
-+		goto close_prog;
-+
-+	CHECK(skel->data->sk_storage_result != 0, "sk_storage_result",
-+	      "sk_local_storage not set\n");
-+
-+	close(serv_sk);
-+
-+close_prog:
-+	local_storage__destroy(skel);
-+}
-diff --git a/tools/testing/selftests/bpf/progs/local_storage.c b/tools/testing/selftests/bpf/progs/local_storage.c
-new file mode 100644
-index 000000000000..0758ba229ae0
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/local_storage.c
-@@ -0,0 +1,140 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/*
-+ * Copyright 2020 Google LLC.
-+ */
-+
-+#include <errno.h>
-+#include <linux/bpf.h>
-+#include <stdbool.h>
-+#include <bpf/bpf_helpers.h>
-+#include <bpf/bpf_tracing.h>
-+
-+char _license[] SEC("license") = "GPL";
-+
-+#define DUMMY_STORAGE_VALUE 0xdeadbeef
-+
-+int monitored_pid = 0;
-+int inode_storage_result = -1;
-+int sk_storage_result = -1;
-+
-+struct dummy_storage {
-+	__u32 value;
-+};
-+
-+struct {
-+	__uint(type, BPF_MAP_TYPE_INODE_STORAGE);
-+	__uint(map_flags, BPF_F_NO_PREALLOC);
-+	__type(key, int);
-+	__type(value, struct dummy_storage);
-+} inode_storage_map SEC(".maps");
-+
-+struct {
-+	__uint(type, BPF_MAP_TYPE_SK_STORAGE);
-+	__uint(map_flags, BPF_F_NO_PREALLOC | BPF_F_CLONE);
-+	__type(key, int);
-+	__type(value, struct dummy_storage);
-+} sk_storage_map SEC(".maps");
-+
-+/* TODO Use vmlinux.h once BTF pruning for embedded types is fixed.
-+ */
-+struct sock {} __attribute__((preserve_access_index));
-+struct sockaddr {} __attribute__((preserve_access_index));
-+struct socket {
-+	struct sock *sk;
-+} __attribute__((preserve_access_index));
-+
-+struct inode {} __attribute__((preserve_access_index));
-+struct dentry {
-+	struct inode *d_inode;
-+} __attribute__((preserve_access_index));
-+struct file {
-+	struct inode *f_inode;
-+} __attribute__((preserve_access_index));
-+
-+
-+SEC("lsm/inode_unlink")
-+int BPF_PROG(unlink_hook, struct inode *dir, struct dentry *victim)
-+{
-+	__u32 pid = bpf_get_current_pid_tgid() >> 32;
-+	struct dummy_storage *storage;
-+
-+	if (pid != monitored_pid)
-+		return 0;
-+
-+	storage = bpf_inode_storage_get(&inode_storage_map, victim->d_inode, 0,
-+				     BPF_SK_STORAGE_GET_F_CREATE);
-+	if (!storage)
-+		return 0;
-+
-+	if (storage->value == DUMMY_STORAGE_VALUE)
-+		inode_storage_result = -1;
-+
-+	inode_storage_result =
-+		bpf_inode_storage_delete(&inode_storage_map, victim->d_inode);
-+
-+	return 0;
-+}
-+
-+SEC("lsm/socket_bind")
-+int BPF_PROG(socket_bind, struct socket *sock, struct sockaddr *address,
-+	     int addrlen)
-+{
-+	__u32 pid = bpf_get_current_pid_tgid() >> 32;
-+	struct dummy_storage *storage;
-+
-+	if (pid != monitored_pid)
-+		return 0;
-+
-+	storage = bpf_sk_storage_get(&sk_storage_map, sock->sk, 0,
-+				     BPF_SK_STORAGE_GET_F_CREATE);
-+	if (!storage)
-+		return 0;
-+
-+	if (storage->value == DUMMY_STORAGE_VALUE)
-+		sk_storage_result = -1;
-+
-+	sk_storage_result = bpf_sk_storage_delete(&sk_storage_map, sock->sk);
-+	return 0;
-+}
-+
-+SEC("lsm/socket_post_create")
-+int BPF_PROG(socket_post_create, struct socket *sock, int family, int type,
-+	     int protocol, int kern)
-+{
-+	__u32 pid = bpf_get_current_pid_tgid() >> 32;
-+	struct dummy_storage *storage;
-+
-+	if (pid != monitored_pid)
-+		return 0;
-+
-+	storage = bpf_sk_storage_get(&sk_storage_map, sock->sk, 0,
-+				     BPF_SK_STORAGE_GET_F_CREATE);
-+	if (!storage)
-+		return 0;
-+
-+	storage->value = DUMMY_STORAGE_VALUE;
-+
-+	return 0;
-+}
-+
-+SEC("lsm/file_open")
-+int BPF_PROG(file_open, struct file *file)
-+{
-+	__u32 pid = bpf_get_current_pid_tgid() >> 32;
-+	struct dummy_storage *storage;
-+
-+	if (pid != monitored_pid)
-+		return 0;
-+
-+	if (!file->f_inode)
-+		return 0;
-+
-+	storage = bpf_inode_storage_get(&inode_storage_map, file->f_inode, 0,
-+				     BPF_LOCAL_STORAGE_GET_F_CREATE);
-+	if (!storage)
-+		return 0;
-+
-+	storage->value = DUMMY_STORAGE_VALUE;
-+	return 0;
-+}
--- 
-2.28.0.297.g1956fa8f8d-goog
+thanks,
+  -lakshmi
 
