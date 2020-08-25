@@ -2,181 +2,385 @@ Return-Path: <SRS0=UPXR=CD=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
+X-Spam-Status: No, score=-21.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AB5AC433DF
-	for <linux-security-module@archiver.kernel.org>; Tue, 25 Aug 2020 22:52:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC234C433E3
+	for <linux-security-module@archiver.kernel.org>; Tue, 25 Aug 2020 23:23:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E790E2075F
-	for <linux-security-module@archiver.kernel.org>; Tue, 25 Aug 2020 22:52:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A276E2075F
+	for <linux-security-module@archiver.kernel.org>; Tue, 25 Aug 2020 23:23:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QkYEIrVg"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Estte5WR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726759AbgHYWwM (ORCPT
+        id S1726180AbgHYXXK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 25 Aug 2020 18:52:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55078 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726471AbgHYWwJ (ORCPT
+        Tue, 25 Aug 2020 19:23:10 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:40136 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726542AbgHYXXK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 25 Aug 2020 18:52:09 -0400
-Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BE64C061574
-        for <linux-security-module@vger.kernel.org>; Tue, 25 Aug 2020 15:52:09 -0700 (PDT)
-Received: by mail-wm1-x343.google.com with SMTP id t14so605156wmi.3
-        for <linux-security-module@vger.kernel.org>; Tue, 25 Aug 2020 15:52:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=cfOl2UQHdbCINZIldHubnmx8IVpsfXAYL83fcmtlXw4=;
-        b=QkYEIrVgLfpQTJIqmhbHY5M5fM5kJic86WqU3jpgR1PUjq7Lp9fn2kZtNEe1+D+oxZ
-         ulF3o5vvudoz2/UXKjoXPEelAOmg8R7YPWOaZ77xVjb+sciCMghJm9EQwHretixTnYp6
-         T4RmmOq9Fda1Hh/mBcwPwM0mT2ew82EgE/agw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cfOl2UQHdbCINZIldHubnmx8IVpsfXAYL83fcmtlXw4=;
-        b=a1bLU18+nZ4mjxM7HayGdpLxmjYiHw2J2/QGsn1q4OQFYdomeUyLj3TVX+OFbsjjhT
-         7lU5fzbHYB0hyAvFKFtD/e9w41qabGh2KaYa5ECu7g8KeO65u2Fk/EOGdFb16p93Ji6h
-         9hGtAptjV1nIMYdquwDvU7SHxRJw+30QDpL5l+/FGpWDivIAZo1dDtWac4fvsFBqtb3f
-         0JbvXZm+fQFiSiuXjJIzM9ZEv2vdoA8wPzfvUgOAEVVXi8iIO7IhUxt+1M6txIWV0bzV
-         CR8yUXsvBDY5w4cHdiW6MG65rLOBoKNPkkHgwR7NJpMO/yqY7YpcyJTIh7H/CIukJ2Is
-         TE0Q==
-X-Gm-Message-State: AOAM5305dhy0lAzNjWmp90nYZZ6A2vK8qFxan2q30daYC0RjHSgwYZZy
-        3HMm26CEZgW3VkDWpRls8i0fic8dH5pMJBdkpJ982Q==
-X-Google-Smtp-Source: ABdhPJwpMoZqgzHr01+lgnJ9+FUckysA+/VP6wA0DAh6UJAf/MhHZjVoI3Nd3t+B0oMotoHDmAdl90MhToObkEkKQx4=
-X-Received: by 2002:a1c:a9c3:: with SMTP id s186mr3938731wme.131.1598395927741;
- Tue, 25 Aug 2020 15:52:07 -0700 (PDT)
+        Tue, 25 Aug 2020 19:23:10 -0400
+Received: from [192.168.86.21] (c-71-197-163-6.hsd1.wa.comcast.net [71.197.163.6])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 5B4E020B4908;
+        Tue, 25 Aug 2020 16:23:07 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5B4E020B4908
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1598397787;
+        bh=vDXdboWqSLcvUiA1m/6/TudyLiPU0Q9vKws166s3eKc=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Estte5WR7K0ZW2sAvXF2qDw4X1hT8v97bH28uAWm0eDONXfJNuaN5JaUSw35eJWHG
+         WC+2LGqs4faD6XzWtErOXx/Mi3Tdr/HAG/pykUDfpAIVo3vug79OQaI2C2YNowuSR0
+         1/GWL3mGE5R2nS9+HKpwRXgwvedNAXe7LN1cVjKI=
+Subject: Re: [PATCH v2 2/3] IMA: add policy to support measuring critical data
+ from kernel components
+To:     Mimi Zohar <zohar@linux.ibm.com>, stephen.smalley.work@gmail.com,
+        casey@schaufler-ca.com, agk@redhat.com, snitzer@redhat.com,
+        gmazyland@gmail.com
+Cc:     tyhicks@linux.microsoft.com, sashal@kernel.org, jmorris@namei.org,
+        nramas@linux.microsoft.com, linux-integrity@vger.kernel.org,
+        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dm-devel@redhat.com
+References: <20200821182107.5328-1-tusharsu@linux.microsoft.com>
+ <20200821182107.5328-3-tusharsu@linux.microsoft.com>
+ <d82c5cdab170d3dcc513b38632801c3aa14ca389.camel@linux.ibm.com>
+ <e701ad15-1672-d208-c2b8-8228a728c98d@linux.microsoft.com>
+ <879a504a63021b248e8d2ce952283bbf83f21688.camel@linux.ibm.com>
+From:   Tushar Sugandhi <tusharsu@linux.microsoft.com>
+Message-ID: <fbe0c83d-563b-e5be-ffcd-20a7857c80c3@linux.microsoft.com>
+Date:   Tue, 25 Aug 2020 16:23:06 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-References: <20200825182919.1118197-1-kpsingh@chromium.org>
- <CAADnVQJG+vMTyuNGjWTYnWX11ZqJU-EE30UC5KPJtpv1MC78cw@mail.gmail.com> <CAADnVQK0sKWa-XMUR9y28KEqMCOQhnRcAu=MDv4rU8iPwLBW1w@mail.gmail.com>
-In-Reply-To: <CAADnVQK0sKWa-XMUR9y28KEqMCOQhnRcAu=MDv4rU8iPwLBW1w@mail.gmail.com>
-From:   KP Singh <kpsingh@chromium.org>
-Date:   Wed, 26 Aug 2020 00:51:57 +0200
-Message-ID: <CACYkzJ7fM4KEhWh1ACkJbtc+VNnN1A0CESkn3k45L5Bywae21w@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v10 0/7] Generalizing bpf_local_storage
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
-        Florent Revest <revest@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <879a504a63021b248e8d2ce952283bbf83f21688.camel@linux.ibm.com>
+Content-Type: text/plain; charset=iso-8859-15; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Aug 26, 2020 at 12:13 AM Alexei Starovoitov
-<alexei.starovoitov@gmail.com> wrote:
->
-> On Tue, Aug 25, 2020 at 2:05 PM Alexei Starovoitov
-> <alexei.starovoitov@gmail.com> wrote:
-> >
-> > On Tue, Aug 25, 2020 at 11:29 AM KP Singh <kpsingh@chromium.org> wrote:
-> > >
-> > > From: KP Singh <kpsingh@google.com>
-> > >
-> > > # v9 -> v10
-> > >
-> > > - Added NULL check for inode_storage_ptr before calling
-> > >   bpf_local_storage_update
-> > > - Removed an extraneous include
-> > > - Rebased and added Acks / Signoff.
-> >
-> > Hmm. Though it looks good I cannot apply it, because
-> > test_progs -t map_ptr
-> > is broken:
-> > 2225: (18) r2 = 0xffffc900004e5004
-> > 2227: (b4) w1 = 58
-> > 2228: (63) *(u32 *)(r2 +0) = r1
-> >  R0=map_value(id=0,off=0,ks=4,vs=4,imm=0) R1_w=inv58
-> > R2_w=map_value(id=0,off=4,ks=4,vs=8,imm=0) R3=inv49 R4=inv63
-> > R5=inv(id=0,umax_value=4294967295,var_off=(0x0; 0xffffffff)) R6_w=inv0
-> > R7=invP8 R8=map_ptr(id=0,off=0,ks=4,vs=4,imm=0) R10=?
-> > ; VERIFY_TYPE(BPF_MAP_TYPE_SK_STORAGE, check_sk_storage);
-> > 2229: (18) r1 = 0xffffc900004e5000
-> > 2231: (b4) w3 = 24
-> > 2232: (63) *(u32 *)(r1 +0) = r3
-> >  R0=map_value(id=0,off=0,ks=4,vs=4,imm=0)
-> > R1_w=map_value(id=0,off=0,ks=4,vs=8,imm=0)
-> > R2_w=map_value(id=0,off=4,ks=4,vs=8,imm=0) R3_w=inv24 R4=inv63
-> > R5=inv(id=0,umax_value=4294967295,var_off=(0x0; 0xffffffff)) R6_w=inv0
-> > R7=invP8 R8=map_pt?
-> > 2233: (18) r3 = 0xffff8881f03f7000
-> > ; VERIFY(indirect->map_type == direct->map_type);
-> > 2235: (85) call unknown#195896080
-> > invalid func unknown#195896080
-> > processed 4678 insns (limit 1000000) max_states_per_insn 9
-> > total_states 240 peak_states 178 mark_read 11
-> >
-> > libbpf: -- END LOG --
-> > libbpf: failed to load program 'cgroup_skb/egress'
-> > libbpf: failed to load object 'map_ptr_kern'
-> > libbpf: failed to load BPF skeleton 'map_ptr_kern': -4007
-> > test_map_ptr:FAIL:skel_open_load open_load failed
-> > #43 map_ptr:FAIL
-> >
-> > Above 'invalid func unknown#195896080' happens
-> > when libbpf fails to do a relocation at runtime.
-> > Please debug.
-> > It's certainly caused by this set, but not sure why.
->
-> So I've ended up bisecting and debugging it.
-> It turned out that the patch 1 was responsible.
-> I've added the following hunk to fix it:
 
-Thanks for fixing and debugging it.
 
-> diff --git a/tools/testing/selftests/bpf/progs/map_ptr_kern.c
-> b/tools/testing/selftests/bpf/progs/map_ptr_kern.c
-> index 473665cac67e..982a2d8aa844 100644
-> --- a/tools/testing/selftests/bpf/progs/map_ptr_kern.c
-> +++ b/tools/testing/selftests/bpf/progs/map_ptr_kern.c
-> @@ -589,7 +589,7 @@ static inline int check_stack(void)
->         return 1;
+On 2020-08-25 1:43 p.m., Mimi Zohar wrote:
+> On Tue, 2020-08-25 at 10:32 -0700, Tushar Sugandhi wrote:
+>>
+>> On 2020-08-24 3:46 p.m., Mimi Zohar wrote:
+>>> On Fri, 2020-08-21 at 11:21 -0700, Tushar Sugandhi wrote:
+>>>> There would be several candidate kernel components suitable for IMA
+>>>> measurement. Not all of them would have support for IMA measurement.
+>>>> Also, system administrators may not want to measure data for all of
+>>>> them, even when they support IMA measurement. An IMA policy specific
+>>>> to various kernel components is needed to measure their respective
+>>>> critical data.
+>>>>
+>>>> Add a new IMA policy CRITICAL_DATA+data_sources to support measuring
+>>>> various critical kernel components. This policy would enable the
+>>>> system administrators to limit the measurement to the components,
+>>>> if the components support IMA measurement.
+>>>>
+>>>> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+>>>> ---
+>>>>    Documentation/ABI/testing/ima_policy |  6 ++-
+>>>>    security/integrity/ima/ima.h         |  1 +
+>>>>    security/integrity/ima/ima_api.c     |  2 +-
+>>>>    security/integrity/ima/ima_policy.c  | 62 +++++++++++++++++++++++++---
+>>>>    4 files changed, 63 insertions(+), 8 deletions(-)
+>>>>
+>>>> diff --git a/Documentation/ABI/testing/ima_policy b/Documentation/ABI/testing/ima_policy
+>>>> index cd572912c593..a0dd0f108555 100644
+>>>> --- a/Documentation/ABI/testing/ima_policy
+>>>> +++ b/Documentation/ABI/testing/ima_policy
+>>>> @@ -29,7 +29,7 @@ Description:
+>>>>    		base: 	func:= [BPRM_CHECK][MMAP_CHECK][CREDS_CHECK][FILE_CHECK][MODULE_CHECK]
+>>>>    				[FIRMWARE_CHECK]
+>>>>    				[KEXEC_KERNEL_CHECK] [KEXEC_INITRAMFS_CHECK]
+>>>> -				[KEXEC_CMDLINE] [KEY_CHECK]
+>>>> +				[KEXEC_CMDLINE] [KEY_CHECK] [CRITICAL_DATA]
+>>>>    			mask:= [[^]MAY_READ] [[^]MAY_WRITE] [[^]MAY_APPEND]
+>>>>    			       [[^]MAY_EXEC]
+>>>>    			fsmagic:= hex value
+>>>> @@ -125,3 +125,7 @@ Description:
+>>>>    		keys added to .builtin_trusted_keys or .ima keyring:
+>>>>    
+>>>>    			measure func=KEY_CHECK keyrings=.builtin_trusted_keys|.ima
+>>>> +
+>>>> +		Example of measure rule using CRITICAL_DATA to measure critical data
+>>>> +
+>>>> +			measure func=CRITICAL_DATA data_sources=selinux|apparmor|dm-crypt
+>>>
+>>> This example uses "data_sources" without first defining it in the
+>>> "option:" section.  Defining two new options is an indication that this
+>> Thanks. I will define "data_sources" first in "option:" section.
+>>> patch should be split up.  One which defines the "CRITICAL_DATA" and
+>>> another one which defines the new key value pair.  The term
+>> I intentionally kept the "CRITICAL_DATA" and "data_sources" in the same
+>> patch.
+>>
+>> CRITICAL_DATA is different than KEY_CHECK because in case of KEY_CHECK,
+>> "keyrings=" is optional. If "keyrings=" is not specified, then we
+>> measure all keyrings.
+>>
+>> Where for CRITICAL_DATA, "data_sources=" is mandatory.
+>>
+>> Because the data sources would be diverse and orthogonal to each other,
+>> (unlike "keyrings=") - not specifying "data_sources=" shouldn't result
+>> in IMA blindly measuring all data sources.
+> 
+> Good point.
+>>
+>> Since CRITICAL_DATA, and "data_sources=" go hand in hand, I wanted them
+>> to be part of the same patch.
+> 
+> Separating them will help clarify the patch description.  There's no
+> harm in defining the critical data source first.
+> 
+I will put func=CRITICAL_DATA into one patch, and "data_sources=" into 
+the next patch. Coding wise, the reverse order of patches (where
+"data_sources=" goes in the first patch, before func=CRITICAL_DATA)
+doesn't make sense. Because ima_match_rules() etc. have switch cases
+built around func=CRITICAL_DATA etc.
 
-[...]
+>>> "data_sources" is pretty generic.  Perhaps constrain it a bit by re-
+>>> naming it "critical_data=".  Or was such using a generic name
+>>> intentional?
+>>>
+>> We intentionally kept the name generic because the data to be measured
+>> could be coming from any kernel component with any granularity (from a
+>> single bool to megabytes of data). The kernel component is also loosely
+>> defined here. It could be an LSM (like SELinux), or a broader base layer
+>> (like device-mapper), or a specific module (like dm-crypt), or it could
+>> be different parts of a single module.
+>>
+>> Also, we didn't want to name "data_sources" as "critical_data" to avoid
+>> confusion with func "CRITICAL_DATA".
+> 
+> The point is that you're measuring critical data, not just any data
+> from any source.  Whatever term is used, it needs to be added to the
+> Documentation/ABI/testing/ima_policy.  I think something that is self
+> describing will help.  See what makes the most sense.
+Fair enough.
+Does "critical_kernel_data_sources=" sound ok?
+> 
+>>> Normally "CRITICAL_DATA" would be defined with the critical data hook,
+>>> but that seems to be defined in patch 3/3 "IMA: define IMA hook to
+>>> measure critical data from kernel components".
+>>>
+>> I can make the "CRITICAL_DATA" and the hook as part of the same patch.
+>> That would mean combining patch 2 and 3 into a single one.
+>>
+>> Does it sound ok?
+> 
+> In the other thread, we discussed separating out "measure_payload_hash"from other changes.  The end result you want one logical change per patch.  Each patch builds upon the previous one.  (Look at how Tyler does it.)
+Will do.
+> 
+>>>> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+>>>> index 8875085db689..0f4209a92bfb 100644
+>>>> --- a/security/integrity/ima/ima.h
+>>>> +++ b/security/integrity/ima/ima.h
+>>>> @@ -200,6 +200,7 @@ static inline unsigned int ima_hash_key(u8 *digest)
+>>>>    	hook(POLICY_CHECK, policy)			\
+>>>>    	hook(KEXEC_CMDLINE, kexec_cmdline)		\
+>>>>    	hook(KEY_CHECK, key)				\
+>>>> +	hook(CRITICAL_DATA, critical_data)		\
+>>>>    	hook(MAX_CHECK, none)
+>>>>    
+>>>>    #define __ima_hook_enumify(ENUM, str)	ENUM,
+>>>> diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
+>>>> index af218babd198..9917e1730cb6 100644
+>>>> --- a/security/integrity/ima/ima_api.c
+>>>> +++ b/security/integrity/ima/ima_api.c
+>>>> @@ -176,7 +176,7 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
+>>>>     *		subj=, obj=, type=, func=, mask=, fsmagic=
+>>>>     *	subj,obj, and type: are LSM specific.
+>>>>     *	func: FILE_CHECK | BPRM_CHECK | CREDS_CHECK | MMAP_CHECK | MODULE_CHECK
+>>>> - *	| KEXEC_CMDLINE | KEY_CHECK
+>>>> + *	| KEXEC_CMDLINE | KEY_CHECK | CRITICAL_DATA
+>>>>     *	mask: contains the permission mask
+>>>>     *	fsmagic: hex value
+>>>>     *
+>>>> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+>>>> index 8866e84d0062..7b649095ac7a 100644
+>>>> --- a/security/integrity/ima/ima_policy.c
+>>>> +++ b/security/integrity/ima/ima_policy.c
+>>>> @@ -33,6 +33,7 @@
+>>>>    #define IMA_PCR		0x0100
+>>>>    #define IMA_FSNAME	0x0200
+>>>>    #define IMA_KEYRINGS	0x0400
+>>>> +#define IMA_DATA_SOURCES	0x0800
+>>>>    
+>>>>    #define UNKNOWN		0
+>>>>    #define MEASURE		0x0001	/* same as IMA_MEASURE */
+>>>> @@ -84,6 +85,7 @@ struct ima_rule_entry {
+>>>>    	} lsm[MAX_LSM_RULES];
+>>>>    	char *fsname;
+>>>>    	struct ima_rule_opt_list *keyrings; /* Measure keys added to these keyrings */
+>>>> +	struct ima_rule_opt_list *data_sources; /* Measure data from these sources */
+>>>>    	struct ima_template_desc *template;
+>>>>    };
+>>>>    
+>>>> @@ -508,14 +510,23 @@ static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
+>>>>    {
+>>>>    	int i;
+>>>>    
+>>>> -	if (func == KEY_CHECK) {
+>>>> -		return (rule->flags & IMA_FUNC) && (rule->func == func) &&
+>>>> -		       ima_match_rule_data(rule, rule->keyrings, func_data,
+>>>> -					   true, cred);
+>>>> -	}
+>>>>    	if ((rule->flags & IMA_FUNC) &&
+>>>>    	    (rule->func != func && func != POST_SETATTR))
+>>>>    		return false;
+>>>> +
+>>>> +	switch (func) {
+>>>> +	case KEY_CHECK:
+>>>> +		return ((rule->func == func) &&
+>>>> +			ima_match_rule_data(rule, rule->keyrings,
+>>>> +					    func_data, true, cred));
+>>>> +	case CRITICAL_DATA:
+>>>> +		return ((rule->func == func) &&
+>>>> +			ima_match_rule_data(rule, rule->data_sources,
+>>>> +					    func_data, false, cred));
+>>>> +	default:
+>>>> +		break;
+>>>> +	}
+>>>> +
+>>>>    	if ((rule->flags & IMA_MASK) &&
+>>>>    	    (rule->mask != mask && func != POST_SETATTR))
+>>>>    		return false;
+>>>> @@ -911,7 +922,7 @@ enum {
+>>>>    	Opt_uid_lt, Opt_euid_lt, Opt_fowner_lt,
+>>>>    	Opt_appraise_type, Opt_appraise_flag,
+>>>>    	Opt_permit_directio, Opt_pcr, Opt_template, Opt_keyrings,
+>>>> -	Opt_err
+>>>> +	Opt_data_sources, Opt_err
+>>>>    };
+>>>>    
+>>>>    static const match_table_t policy_tokens = {
+>>>> @@ -948,6 +959,7 @@ static const match_table_t policy_tokens = {
+>>>>    	{Opt_pcr, "pcr=%s"},
+>>>>    	{Opt_template, "template=%s"},
+>>>>    	{Opt_keyrings, "keyrings=%s"},
+>>>> +	{Opt_data_sources, "data_sources=%s"},
+>>>>    	{Opt_err, NULL}
+>>>>    };
+>>>>    
+>>>> @@ -1110,6 +1122,19 @@ static bool ima_validate_rule(struct ima_rule_entry *entry)
+>>>>    		if (ima_rule_contains_lsm_cond(entry))
+>>>>    			return false;
+>>>>    
+>>>> +		break;
+>>>> +	case CRITICAL_DATA:
+>>>> +		if (entry->action & ~(MEASURE | DONT_MEASURE))
+>>>> +			return false;
+>>>> +
+>>>> +		if (!(entry->flags & IMA_DATA_SOURCES) ||
+>>>> +		    (entry->flags & ~(IMA_FUNC | IMA_UID | IMA_PCR |
+>>>> +		    IMA_DATA_SOURCES)))
+>>>> +			return false;
+>>>
+>>> Requiring IMA_FUNC and IMA_DATA_SOURCES makes sense, but why are
+>>> IMA_UID and IMA_PCR required?
+>>>
+>> Since the data to be measured could be for any scenario, I didn't want
+>> to restrict the kernel components from choosing UID to measure the data
+>> for, or restrict them from choosing PCR to store the measurements in.
+>> But as the consumers are kernel components, perhaps support for IMA_UID
+>> is not required.  But we should still support IMA_PCR.
+>> Please let me know what do you think, and I can update the logic
+>> accordingly.
+> 
+> I think I misinterpreted this code.  As long as IMA_UID and IMA_PCR
+> aren't required, then it is fine.
+Yes, IMA_UID and IMA_PCR are not mandatory. Only IMA_DATA_SOURCES is.
+I will keep both of them.
+Thanks for confirming.
 
-> and pushed the whole set.
-> In the future please always run test_progs and test_progs-no_alu32
+> 
+>>>> +
+>>>> +		if (ima_rule_contains_lsm_cond(entry))
+>>>> +			return false;
+>>>> +
+>>>>    		break;
+>>>>    	default:
+>>>>    		return false;
+>>>> @@ -1242,6 +1267,8 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+>>>>    			else if (IS_ENABLED(CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS) &&
+>>>>    				 strcmp(args[0].from, "KEY_CHECK") == 0)
+>>>>    				entry->func = KEY_CHECK;
+>>>> +			else if (strcmp(args[0].from, "CRITICAL_DATA") == 0)
+>>>> +				entry->func = CRITICAL_DATA;
+>>>>    			else
+>>>>    				result = -EINVAL;
+>>>>    			if (!result)
+>>>> @@ -1312,6 +1339,23 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+>>>>    
+>>>>    			entry->flags |= IMA_KEYRINGS;
+>>>>    			break;
+>>>> +		case Opt_data_sources:
+>>>> +			ima_log_string(ab, "data_sources", args[0].from);
+>>>> +
+>>>> +			if (entry->data_sources) {
+>>>> +				result = -EINVAL;
+>>>> +				break;
+>>>> +			}
+>>>> +
+>>>> +			entry->data_sources = ima_alloc_rule_opt_list(args);
+>>>> +			if (IS_ERR(entry->data_sources)) {
+>>>> +				result = PTR_ERR(entry->data_sources);
+>>>> +				entry->data_sources = NULL;
+>>>> +				break;
+>>>> +			}
+>>>> +
+>>>
+>>> "keyrings=" isn't bounded because keyrings can be created by userspace.
+>>> Perhaps keyring names has a minimum/maximum length.  IMA isn't
+>>> measuring userspace construsts.  Shouldn't the list of critical data
+>>> being measured be bounded and verified?
+>> The comment is not entirely clear.
+>> Do you mean there should be some sort of allow_list in IMA, against
+>> which the values in "data_sources=" should be vetted? And if the
+>> value is present in the IMA allow_list, then only the measurements for
+>> that data source are allowed?
+>>
+>> Or do you mean something else?
+> 
+> Yes, something along those lines.  Does the list of critical data need
+> to be vetted?  And if so, against what?
+I am thinking of having an enum and string array - just like ima_hooks
+and ima_hooks_measure_str in ima.h.
+And any new kernel component that would support generic IMA measurements
+in future would have to add itself to the enum/array.
+And the param *event_data_source in ima_measure_critical_data() will be 
+vetted against the above enum/string array.
 
-Noted, I do run them but this test gave me a different error and I always
-ended up ignoring this:
+I will implement it in the next iteration, and hopefully the vetting
+workflow will be more clear.
 
-./test_progs -t map_ptr
-libbpf: Error in bpf_create_map_xattr(m_array_of_maps):ERROR:
-strerror_r(-524)=22(-524). Retrying without BTF.
-libbpf: Error in bpf_create_map_xattr(m_hash_of_maps):ERROR:
-strerror_r(-524)=22(-524). Retrying without BTF.
-libbpf: Error in bpf_create_map_xattr(m_perf_event_array):ERROR:
-strerror_r(-524)=22(-524). Retrying without BTF.
-libbpf: Error in bpf_create_map_xattr(m_stack_trace):ERROR:
-strerror_r(-524)=22(-524). Retrying without BTF.
-libbpf: Error in bpf_create_map_xattr(m_cgroup_array):ERROR:
-strerror_r(-524)=22(-524). Retrying without BTF.
-libbpf: Error in bpf_create_map_xattr(m_devmap):ERROR:
-strerror_r(-524)=22(-524). Retrying without BTF.
-libbpf: Error in bpf_create_map_xattr(m_sockmap):Invalid
-argument(-22). Retrying without BTF.
-libbpf: map 'm_sockmap': failed to create: Invalid argument(-22)
-libbpf: failed to load object 'map_ptr_kern'
-libbpf: failed to load BPF skeleton 'map_ptr_kern': -22
-test_map_ptr:FAIL:skel_open_load open_load failed
-
-I now realized that I was not sourcing
-tools/testing/selftests/bpf/config correctly
-and CONFIG_BPF_STREAM_PARSER was not enabled in my configuration.
-
-Nonetheless, no excuses and will ensure these tests pass in the future.
-
-- KP
-
-> for every patch and submit patches only if _all_ tests are passing.
-> Do not assume that your change is not responsible for breakage.
+~Tushar
+> 
+> Mimi
+> 
+>>>
+>>>> +			entry->flags |= IMA_DATA_SOURCES;
+>>>> +			break;
+>>>>    		case Opt_fsuuid:
+>>>>    			ima_log_string(ab, "fsuuid", args[0].from);
+>>>>    
+>>>> @@ -1692,6 +1736,12 @@ int ima_policy_show(struct seq_file *m, void *v)
+>>>>    		seq_puts(m, " ");
+>>>>    	}
+>>>>    
+>>>> +	if (entry->flags & IMA_DATA_SOURCES) {
+>>>> +		seq_puts(m, "data_sources=");
+>>>> +		ima_show_rule_opt_list(m, entry->data_sources);
+>>>> +		seq_puts(m, " ");
+>>>> +	}
+>>>> +
+>>>>    	if (entry->flags & IMA_PCR) {
+>>>>    		snprintf(tbuf, sizeof(tbuf), "%d", entry->pcr);
+>>>>    		seq_printf(m, pt(Opt_pcr), tbuf);
+> 
