@@ -2,212 +2,174 @@ Return-Path: <SRS0=UPXR=CD=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,RCVD_ILLEGAL_IP,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5550BC433DF
-	for <linux-security-module@archiver.kernel.org>; Tue, 25 Aug 2020 17:40:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60826C433E1
+	for <linux-security-module@archiver.kernel.org>; Tue, 25 Aug 2020 17:42:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2B4A820782
-	for <linux-security-module@archiver.kernel.org>; Tue, 25 Aug 2020 17:40:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3BE392076C
+	for <linux-security-module@archiver.kernel.org>; Tue, 25 Aug 2020 17:42:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="qNzb0qmh";
-	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="UuSmATjs"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="oHzfQuFH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726187AbgHYRjz (ORCPT
+        id S1726180AbgHYRmi (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 25 Aug 2020 13:39:55 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:34312 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725936AbgHYRjx (ORCPT
+        Tue, 25 Aug 2020 13:42:38 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:2110 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726119AbgHYRma (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 25 Aug 2020 13:39:53 -0400
-Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
-        by m0089730.ppops.net (8.16.0.42/8.16.0.42) with SMTP id 07PHZOJh018389;
-        Tue, 25 Aug 2020 10:39:32 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=date : from : to : cc :
- subject : message-id : references : content-type : in-reply-to :
- mime-version; s=facebook; bh=Klzn/5GDglqr9+v3V+ruJgQ1fcQUY3wyLgew7EBfK9Y=;
- b=qNzb0qmhWiFEbVWt0StFqyk+UsfRhxDJ33fso+UC8egIO5NS9IVIIGlR7E+HRxhif/fm
- 8fELq7hdMvmJMtrb/IdMynoud2IU+nB8FuQMewkFi76B0DS22cwdXu6VIF2AmxLuZmPm
- p8Ce1oQZskO7ws/rB+gbhg4KKVkbBYAqTO4= 
-Received: from mail.thefacebook.com ([163.114.132.120])
-        by m0089730.ppops.net with ESMTP id 332xuwqk3j-2
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Tue, 25 Aug 2020 10:39:32 -0700
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (100.104.98.9) by
- o365-in.thefacebook.com (100.104.94.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1979.3; Tue, 25 Aug 2020 10:39:31 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=dXv0Gxa2jpZVRgYWCryVURJkJ1jbXizXaqzb2HAKVy0qPqKdnnnHhK1W53jiWfpMOzOfpbpIpMi+2gnZN3ShVBSMQQtaauVf0nncHonquA2Ew5sjl7l6+2cB2SuI4wJn/y6G0MBX3RM72aeUWoC/eQQd8WUkAfbUsA9KbtzkWZ5EtT8FeXuRdQ1k0Sz7xE0aJVAUT4FEd8bBPyi9oTRQQJSO5+6JfDITAuVC3oM9ndQYVF/qBlANVbp8wh9tEP2K0r/eyyUcn4/g0tJkUBJjG1rPYBZVTaIEFugBpSUhpw5ikmp1ZqIwzZHEeVKsQ4DZ/sJt1E488GnRJpgxfRJrBQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Klzn/5GDglqr9+v3V+ruJgQ1fcQUY3wyLgew7EBfK9Y=;
- b=UErgu/aDkI+1LT9EIvsNMMUrfyOEK1I/YiaRlQdtY+ILipU8/QPDKdulHRwY1jW69Umk1XTOjXC2Pu0qFBARDKHIGIP/fugOmPj72ADJrNcfhpiDN2NU4SIqnzMysMM6NDDMjLvd28POUziK0ZhMQFaPdvhhFq4dhiCsXyJC9wtUb5dpBfDpnGophyqq/3kBQjmsi1kRrSJcjtdamoYz0xxO+dHZChvTRuc2DpB5DHBh2rh2eAmUklyIn6xqD+n9htALyrhp7A/gPZ+Jvvz8iTapzB9UYNZCkEIKBas3VPgc54dVXGzFOAATOAlwO678zcOxkAsmOtq4P2vYtOPiuQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
- header.d=fb.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector2-fb-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Klzn/5GDglqr9+v3V+ruJgQ1fcQUY3wyLgew7EBfK9Y=;
- b=UuSmATjsV+Hkcmc1EaEEgz2XA4mp38JBrtWvVvPmvpcG6e8u8PVyhDuqlL9IkLv9TzQf5ksE3uFmmmNZWCR1ny43w6evT6g6HDmhw4xCsc6+7+/MIKDKKcqdmGCYRh38EFU0weJKhClLX6iw7xw9WUIreyjd34Xx8owGhAuaxMM=
-Authentication-Results: chromium.org; dkim=none (message not signed)
- header.d=none;chromium.org; dmarc=none action=none header.from=fb.com;
-Received: from BY5PR15MB3571.namprd15.prod.outlook.com (2603:10b6:a03:1f6::32)
- by BYAPR15MB3000.namprd15.prod.outlook.com (2603:10b6:a03:b1::31) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3305.25; Tue, 25 Aug
- 2020 17:39:30 +0000
-Received: from BY5PR15MB3571.namprd15.prod.outlook.com
- ([fe80::c13c:fca9:5e04:9bfb]) by BY5PR15MB3571.namprd15.prod.outlook.com
- ([fe80::c13c:fca9:5e04:9bfb%3]) with mapi id 15.20.3305.026; Tue, 25 Aug 2020
- 17:39:30 +0000
-Date:   Tue, 25 Aug 2020 10:39:25 -0700
-From:   Martin KaFai Lau <kafai@fb.com>
-To:     KP Singh <kpsingh@chromium.org>
-CC:     <linux-kernel@vger.kernel.org>, <bpf@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
-        Florent Revest <revest@chromium.org>
-Subject: Re: [PATCH bpf-next v9 5/7] bpf: Implement bpf_local_storage for
- inodes
-Message-ID: <20200825173925.tmi4h5lomzwkciew@kafai-mbp.dhcp.thefacebook.com>
-References: <20200823165612.404892-1-kpsingh@chromium.org>
- <20200823165612.404892-6-kpsingh@chromium.org>
- <20200825005249.tu4c54fg36jt3rh4@kafai-mbp.dhcp.thefacebook.com>
- <8d188285-96f5-3b17-126f-5e842702e339@chromium.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8d188285-96f5-3b17-126f-5e842702e339@chromium.org>
-X-ClientProxiedBy: BYAPR07CA0085.namprd07.prod.outlook.com
- (2603:10b6:a03:12b::26) To BY5PR15MB3571.namprd15.prod.outlook.com
- (2603:10b6:a03:1f6::32)
-MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from 255.255.255.255 (255.255.255.255) by BYAPR07CA0085.namprd07.prod.outlook.com (2603:10b6:a03:12b::26) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3305.25 via Frontend Transport; Tue, 25 Aug 2020 17:39:29 +0000
-X-Originating-IP: [2620:10d:c090:400::5:ae73]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 8ab68737-e0df-4405-a02e-08d8491dd21f
-X-MS-TrafficTypeDiagnostic: BYAPR15MB3000:
-X-Microsoft-Antispam-PRVS: <BYAPR15MB300078C9FEAFB6D5463E9990D5570@BYAPR15MB3000.namprd15.prod.outlook.com>
-X-FB-Source: Internal
-X-MS-Oob-TLC-OOBClassifiers: OLM:7691;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: pRdr7YzkENZZg3wuvWfPtgcYY0zps9ZDtfNdNrvYfsy28ScIu0QJKUz/jMkUB4Hqv2PEbgoN8OAPlNEbZ6z73MVXwgCGei8Q7FhXlm27xhGRwz6Xp9ZAML6ZHtS+0iB3e2TFXgLF3BsQuXICYO0+QrL1txlh/UIz81puVeHUMiHM+D+hvoiZYDePfWhk3fM+2zW3X++HOFjfJiQJEQnHua3W74c6oO4LfuIOlUWkMVRSZBgF6C3F76kPBuA10yq3Pt/7bAgx1AogOsbrL5Gxy0VPnRfuJLSATmr2qKiT5ampWj4rLZURwNXrJHi8W9AJ/eSCK/WIz9kCKbFly6e6ig==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR15MB3571.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(39860400002)(396003)(346002)(366004)(136003)(376002)(9686003)(6666004)(316002)(53546011)(66556008)(8936002)(66476007)(66946007)(2906002)(83380400001)(54906003)(8676002)(16576012)(86362001)(52116002)(478600001)(6486002)(4326008)(5660300002)(956004)(6916009)(186003)(1076003);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData: AXbB41vLHsgKSuQuyQGO5XbzkbqGNiYe7FJY9F/TGiksU1KrwraxI1ik30oIGN/B+e/AtVRfEQ5r5ytRUeMFEzBKyQeGgxvIxA2T2WdL7jC8ZoTdU2j8qaoia7H2vFMO7QX+2NqaSna5oXADE2h+8MdEAgxDVBV8AcUhmBIbxGH9K/fU8A8LVaweXu4/13mf3yjeESJXFRWqpDhoJTXMWgivZ2e+MSaXtv17G9w9Hjoe+wSVY5QHpvczKBUvVuMNnS1yBT80C1ByaILiRfFW6E/wDYLd3PcFHmL6hRKMk2Sv7piUM5XSBq+TccfVoQ3nfofHxeWRnG7YROZcGjzDQxwj64atJtx8aTVjMQBnDgNALGxKuWcCxQyniQcKkOp0bA02iQzX3Q2iQNh3OZtKGlR9p7hERyMgyH8GnCH8uK2g9P6A9AMAP9QDopf81YUz66MBc6or1xBPnUndyNNouLC0Hm6vZlS2Rfv+uWvXILMszPvy3IjdPvZP/WZabT6aEmeTMyGWSENMQIwzgjFntF80B8j5cbl7pqt2pUo/sq9d4BUdE5O+fZguijB1j4Quoc46L8JRmxnuqb45FqYb+NLrYbLavGkZv6x0PQom/kx0nTKYbt2GKMaPA1Im26ysU6o5oJb+8vNTRiXiSZRu/JoZ+e7oiwrupWduLw1yhtw=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8ab68737-e0df-4405-a02e-08d8491dd21f
-X-MS-Exchange-CrossTenant-AuthSource: BY5PR15MB3571.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Aug 2020 17:39:30.4590
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: iFtcaDk16qNQ/8xx6U1ui73COFownj4Xx68b1mPSikIqKyNz/K0jPCJKFunG+MQa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB3000
-X-OriginatorOrg: fb.com
+        Tue, 25 Aug 2020 13:42:30 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 07PHVkMg119397;
+        Tue, 25 Aug 2020 13:42:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=YaEteyqYhXWEEFt5cfVRUCG9Bu1VG3wqjnkN65nMqUU=;
+ b=oHzfQuFHJc2IeY8KZsVVlhLHqj2OMy70BTA+F3OMcrOxPDIAyO+EAS2fJ5q16Ts+xsIf
+ SkZ2VoL1DDsssHMt6y6Zy3MVlwyCY3OYZRVuC8Kp4SJEPocEfxvKdnvTF7LIH0zElxk1
+ Yu6HGgvBATpY5tsfyz2VXxzEDm0YSXLxHUK3/8bafDK2gq+NAfH6Q1CVBW+HL9GzYwkx
+ PEhZTyelB5mefmatnWDEpuVLO4eEW8wgbco3S6tHv+A+bvIGqrroa5QuJrV29/OP94AP
+ e8NG4rpBATZcGzSRBf/M3JCPnToqbpuXOQKgsffCpiyOVOXY06P7kxiZ2QBRTNwIo4xj CQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3356u68s7g-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 25 Aug 2020 13:42:21 -0400
+Received: from m0098419.ppops.net (m0098419.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 07PHW9b2121391;
+        Tue, 25 Aug 2020 13:42:21 -0400
+Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3356u68s71-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 25 Aug 2020 13:42:21 -0400
+Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
+        by ppma03ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 07PHbpeV010599;
+        Tue, 25 Aug 2020 17:42:19 GMT
+Received: from b06avi18878370.portsmouth.uk.ibm.com (b06avi18878370.portsmouth.uk.ibm.com [9.149.26.194])
+        by ppma03ams.nl.ibm.com with ESMTP id 332ujkup8c-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 25 Aug 2020 17:42:19 +0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 07PHgHj511010526
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 25 Aug 2020 17:42:17 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 399674C04E;
+        Tue, 25 Aug 2020 17:42:17 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A48D14C04A;
+        Tue, 25 Aug 2020 17:42:14 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.103.4])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 25 Aug 2020 17:42:14 +0000 (GMT)
+Message-ID: <49f8a616d80344c539b512f8b83590ea281ee54d.camel@linux.ibm.com>
+Subject: Re: [PATCH] IMA: Handle early boot data measurement
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        stephen.smalley.work@gmail.com, casey@schaufler-ca.com
+Cc:     tyhicks@linux.microsoft.com, tusharsu@linux.microsoft.com,
+        sashal@kernel.org, jmorris@namei.org,
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Tue, 25 Aug 2020 13:42:13 -0400
+In-Reply-To: <307617de-b42d-ac52-6e9e-9e0d16bbc20e@linux.microsoft.com>
+References: <20200821231230.20212-1-nramas@linux.microsoft.com>
+         <a7ea2da1f895ee3db4697c00804160acb6db656e.camel@linux.ibm.com>
+         <307617de-b42d-ac52-6e9e-9e0d16bbc20e@linux.microsoft.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
  definitions=2020-08-25_08:2020-08-25,2020-08-25 signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 lowpriorityscore=0
- adultscore=0 bulkscore=0 suspectscore=1 priorityscore=1501 mlxscore=0
- spamscore=0 malwarescore=0 mlxlogscore=870 phishscore=0 clxscore=1015
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2008250132
-X-FB-Internal: deliver
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ lowpriorityscore=0 spamscore=0 mlxscore=0 phishscore=0 bulkscore=0
+ adultscore=0 suspectscore=0 priorityscore=1501 clxscore=1015
+ impostorscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2006250000 definitions=main-2008250129
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Aug 25, 2020 at 04:10:26PM +0200, KP Singh wrote:
-> 
-> 
-> On 8/25/20 2:52 AM, Martin KaFai Lau wrote:
-> > On Sun, Aug 23, 2020 at 06:56:10PM +0200, KP Singh wrote:
-> >> From: KP Singh <kpsingh@google.com>
-> >>
-> >> Similar to bpf_local_storage for sockets, add local storage for inodes.
-> >> The life-cycle of storage is managed with the life-cycle of the inode.
-> >> i.e. the storage is destroyed along with the owning inode.
-> >>
-> >> The BPF LSM allocates an __rcu pointer to the bpf_local_storage in the
-> >> security blob which are now stackable and can co-exist with other LSMs.
-> >>
-> > [ ... ]
+On Tue, 2020-08-25 at 08:46 -0700, Lakshmi Ramasubramanian wrote:
+> On 8/25/20 8:40 AM, Mimi Zohar wrote:
+> > On Fri, 2020-08-21 at 16:12 -0700, Lakshmi Ramasubramanian wrote:
+> > > The current implementation of early boot measurement in
+> > > the IMA subsystem is very specific to asymmetric keys. It does not
+> > > handle early boot measurement of data from other subsystems such as
+> > > Linux Security Module (LSM), Device-Mapper, etc. As a result data,
+> > > provided by these subsystems during system boot are not measured by IMA.
+> > > 
+> > > Update the early boot key measurement to handle any early boot data.
+> > > Refactor the code from ima_queue_keys.c to a new file ima_queue_data.c.
+> > > Rename the kernel configuration CONFIG_IMA_QUEUE_EARLY_BOOT_KEYS to
+> > > CONFIG_IMA_QUEUE_EARLY_BOOT_DATA so it can be used for enabling any
+> > > early boot data measurement. Since measurement of asymmetric keys is
+> > > the first consumer of early boot measurement, this kernel configuration
+> > > is enabled if IMA_MEASURE_ASYMMETRIC_KEYS and SYSTEM_TRUSTED_KEYRING are
+> > > both enabled.
+> > > 
+> > > Update the IMA hook ima_measure_critical_data() to utilize early boot
+> > > measurement support.
 > > 
-> >> diff --git a/kernel/bpf/bpf_inode_storage.c b/kernel/bpf/bpf_inode_storage.c
-> >> new file mode 100644
-> >> index 000000000000..b0b283c224c1
-> >> --- /dev/null
-> >> +++ b/kernel/bpf/bpf_inode_storage.c
-> 
-> [...]
-> 
-> >> +
-> >> +DEFINE_BPF_STORAGE_CACHE(inode_cache);
-> >> +
-> >> +static struct bpf_local_storage __rcu **
-> >> +inode_storage_ptr(void *owner)
-> >> +{
-> >> +	struct inode *inode = owner;
-> >> +	struct bpf_storage_blob *bsb;
-> >> +
-> >> +	bsb = bpf_inode(inode);
-> >> +	if (!bsb)
-> >> +		return NULL;
-> > just noticed this one.  NULL could be returned here.  When will it happen?
-> 
-> This can happen if CONFIG_BPF_LSM is enabled but "bpf" is not in the list of
-> active LSMs.
-> 
+> > Please limit the changes in this patch to renaming the functions and/or
+> > files.  For example, adding "measure_payload_hash" should be a separate
+> > patch, not hidden here.
 > > 
-> >> +	return &bsb->storage;
-> >> +}
-> >> +
-> >> +static struct bpf_local_storage_data *inode_storage_lookup(struct inode *inode,
-> >> +							   struct bpf_map *map,
-> >> +							   bool cacheit_lockit)
-> >> +{
 > 
-> [...]
+> Thanks for the feedback Mimi.
 > 
-> > path first before calling the bpf_local_storage_update() since
-> > this case is specific to inode local storage.
-> > 
-> > Same for the other bpf_local_storage_update() cases.
+> I'll split this into 2 patches:
 > 
-> If you're okay with this I can send a new series with the following updates.
-> 
-> diff --git a/kernel/bpf/bpf_inode_storage.c b/kernel/bpf/bpf_inode_storage.c
-> index b0b283c224c1..74546cee814d 100644
-> --- a/kernel/bpf/bpf_inode_storage.c
-> +++ b/kernel/bpf/bpf_inode_storage.c
-> @@ -125,7 +125,7 @@ static int bpf_fd_inode_storage_update_elem(struct bpf_map *map, void *key,
->  
->         fd = *(int *)key;
->         f = fget_raw(fd);
-> -       if (!f)
-> +       if (!f || !inode_storage_ptr(f->f_inode))
->                 return -EBADF;
->  
->         sdata = bpf_local_storage_update(f->f_inode,
-> @@ -171,6 +171,14 @@ BPF_CALL_4(bpf_inode_storage_get, struct bpf_map *, map, struct inode *, inode,
->         if (flags & ~(BPF_LOCAL_STORAGE_GET_F_CREATE))
->                 return (unsigned long)NULL;
->  
-> +       /* explicitly check that the inode_storage_ptr is not
-> +        * NULL as inode_storage_lookup returns NULL in this case and
-> +        * and bpf_local_storage_update expects the owner to have a
-> +        * valid storage pointer.
-> +        */
-> +       if (!inode_storage_ptr(inode))
-> +               return (unsigned long)NULL;
-LGTM
+> PATCH 1: Rename files + rename CONFIG
+> PATCH 2: Update IMA hook to utilize early boot data measurement.
+
+I'm referring to introducing the "measure_payload_hash" flag.  I assume
+this is to indicate whether the buffer should be hashed or not.  
+
+Example 1: ima_alloc_key_entry() and ima_alloc_data_entry(0 comparison
+> -static struct ima_key_entry *ima_alloc_key_entry(struct key *keyring,
+> -                                                const void *payload,
+> -                                                size_t payload_len)
+> -{
+
+
+> +static struct ima_data_entry *ima_alloc_data_entry(const char *event_name,
+> +                                                  const void *payload,
+> +                                                  size_t payload_len,
+> +                                                  const char *event_data,
+> +                                                  enum ima_hooks func,
+> +                                                  bool measure_payload_hash)  <====
+> +{
+
+Example 2:  
+diff --git a/security/integrity/ima/ima_asymmetric_keys.c b/security/integrity/ima/ima_asymmetric_keys.c
+index a74095793936..65423754765f 100644
+--- a/security/integrity/ima/ima_asymmetric_keys.c
++++ b/security/integrity/ima/ima_asymmetric_keys.c
+@@ -37,9 +37,10 @@ void ima_post_key_create_or_update(struct key *keyring, struct key *key,
+        if (!payload || (payload_len == 0))
+                return;
+ 
+-       if (ima_should_queue_key())
+-               queued = ima_queue_key(keyring, payload, payload_len);
+-
++       if (ima_should_queue_data())
++               queued = ima_queue_data(keyring->description, payload,
++                                       payload_len, keyring->description,
++                                       KEY_CHECK, false);   <===
+        if (queued)
+                return;
+
+But in general, as much as possible function and file name changes
+should be done independently of other changes.
+
+thanks,
+
+Mimi
+
