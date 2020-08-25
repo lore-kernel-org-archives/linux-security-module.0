@@ -2,136 +2,325 @@ Return-Path: <SRS0=UPXR=CD=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MSGID_FROM_MTA_HEADER,RCVD_ILLEGAL_IP,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD262C433DF
-	for <linux-security-module@archiver.kernel.org>; Tue, 25 Aug 2020 00:54:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71E9CC433DF
+	for <linux-security-module@archiver.kernel.org>; Tue, 25 Aug 2020 03:50:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AF16F2177B
-	for <linux-security-module@archiver.kernel.org>; Tue, 25 Aug 2020 00:54:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="b+XyJG+r";
-	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="U/93fW8m"
+	by mail.kernel.org (Postfix) with ESMTP id 4C0ED207FB
+	for <linux-security-module@archiver.kernel.org>; Tue, 25 Aug 2020 03:50:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1598327455;
+	bh=/qaH/Df2BjIuDnX7glMJFXv/aDKx+6dGkNKeusDOWLk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=VtKXyazqs0U3RekXywxKBXmVArNKwftQ/XC7magTeFYE9f67XWsBhVWMQ3Tk4+14b
+	 kdQoJjSNLqenZ5WJkpLl7oi7OvmrBg2bOcZRsStJbIpC3mCl4wdSNlJQYg/riG/qC0
+	 94iLDX5Rwkx3A0Jyvoe71EquVh15cQqdbRbwx2hA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728373AbgHYAy4 (ORCPT
+        id S1728377AbgHYDuk (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 24 Aug 2020 20:54:56 -0400
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:40766 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728324AbgHYAyz (ORCPT
+        Mon, 24 Aug 2020 23:50:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60392 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728080AbgHYDuj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 24 Aug 2020 20:54:55 -0400
-Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 07P0oUqc011124;
-        Mon, 24 Aug 2020 17:54:40 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=date : from : to : cc :
- subject : message-id : references : content-type : in-reply-to :
- mime-version; s=facebook; bh=6fqUrGM9oqv4+eRLMJc5JY9oBDw3jjneTWRvvcJcny4=;
- b=b+XyJG+rIEOoWgkL8n2UaDyueR7oDMH/xvuXeVg5g0zo11S8zyB4PqvCLrBg64t+mCMJ
- VZkEsTO9SKRmzY8U1cldugGwYTf4f7wdqOI1WC/ERW7VvvSg8P3RanrdTcRHrdi/AZ/0
- 2Ou4I65b4Ac+RmstL+ZrlQ8wXR4FFVb9QGc= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com with ESMTP id 333juu03y2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Mon, 24 Aug 2020 17:54:40 -0700
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (100.104.31.183)
- by o365-in.thefacebook.com (100.104.35.172) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1979.3; Mon, 24 Aug 2020 17:54:38 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=hZ7VWkNDIi4F3EjNvLCSqYgxgCY0+mU5kgIU/nGE0p7a7QwiKng9UPTnoXbH4r7XwjQPkXH6lrfHp8U7PzB8NBAdWVPKGjy5MQnMD+NanUuDUvHoH84euiOPdeYfYfYWuWMpmantsRqS3jHMq4FZCzUTArxG80oDA76fjTyWMzynqr08BZjlS9NKc6EM37QNx3rmSknkUR5MJXkctB3Ct3/2a22R/+AZIN+jkRPqqz1bgj3TG170HfamXKLWiVYcC8xwfYEx1h6DlB6nehxOrwQ8itC9ngLU71tOoWDl6+kXfQxvJPVEsjWXHfDKrWR8xvZ++QTlEbG2Bb07Ia0/1Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6fqUrGM9oqv4+eRLMJc5JY9oBDw3jjneTWRvvcJcny4=;
- b=iPWoyFmYXH141Zx20l5IEKbd+REzVBmQK1QmFrQFTc3bUsDPF8REDyubXF/yX7oxrsdQt0IXjkPmI8H0HjSyGIHdk3pm/hZU2307wkNq9TbJBMzXYDiNGsd6E5CgP4ZxLPJnuaoRPRs6RV4SYdnrpv6P+jWtpuQxEEsemXrrmqpdJOvf7KOfmnAyEoapcEEfJiD5OEwFJjv7AFO+QwKVGqc1bKo4mu3gA03cgAzcaBX9uZd0LI67WdFbMLCmfHf4hgV2xyFaOoMwBDuI3I64HhKdPcmvw+hfdrTKWwBxifz3DhfUnMXjB2CZTrFn1QhXxrxf/2SvCDyS8/41VLVYNg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
- header.d=fb.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector2-fb-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6fqUrGM9oqv4+eRLMJc5JY9oBDw3jjneTWRvvcJcny4=;
- b=U/93fW8mRwvDk33BkNeu3JO87kkLFbGuiI2UfclHJ/YgcEJEx2bmUTImz2ufjoHN3pbIXWtAzJITDHYgYdMo8XHUb3FNQQRIb/2BJRCu4qixgyPMTshdmYdATHiueF0TBoMzzEB6p2eelf8I68rloXzeOEJMWRHyKWPVB3qVc6Y=
-Authentication-Results: chromium.org; dkim=none (message not signed)
- header.d=none;chromium.org; dmarc=none action=none header.from=fb.com;
-Received: from BY5PR15MB3571.namprd15.prod.outlook.com (2603:10b6:a03:1f6::32)
- by BYAPR15MB3207.namprd15.prod.outlook.com (2603:10b6:a03:101::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3305.25; Tue, 25 Aug
- 2020 00:54:37 +0000
-Received: from BY5PR15MB3571.namprd15.prod.outlook.com
- ([fe80::c13c:fca9:5e04:9bfb]) by BY5PR15MB3571.namprd15.prod.outlook.com
- ([fe80::c13c:fca9:5e04:9bfb%3]) with mapi id 15.20.3305.026; Tue, 25 Aug 2020
- 00:54:37 +0000
-Date:   Mon, 24 Aug 2020 17:54:32 -0700
-From:   Martin KaFai Lau <kafai@fb.com>
-To:     KP Singh <kpsingh@chromium.org>
-CC:     <linux-kernel@vger.kernel.org>, <bpf@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
+        Mon, 24 Aug 2020 23:50:39 -0400
+Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BF55420665;
+        Tue, 25 Aug 2020 03:50:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1598327438;
+        bh=/qaH/Df2BjIuDnX7glMJFXv/aDKx+6dGkNKeusDOWLk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Pqhw2dYFDJDJ4xe2JZ/DeHzdi72rteajBIf3gFrGLdbChFC1WT6kbSCwJJz7jwy/M
+         vT5/SQf8EHg4ZOfVVX4PLiECRO0ikm6uKB1Dh+QMq69GDdE28NwK9oRxj6x5rXkaNx
+         k9ea63AnL4lck3rLkMpzQ+JYcNe6ljtw0E3tj2Qg=
+Date:   Mon, 24 Aug 2020 20:50:36 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Lokesh Gidra <lokeshgidra@google.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        James Morris <jmorris@namei.org>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Daniel Colascione <dancol@dancol.org>,
+        Kees Cook <keescook@chromium.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        KP Singh <kpsingh@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Thomas Cedeno <thomascedeno@google.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Matthew Garrett <matthewgarrett@google.com>,
+        Aaron Goidel <acgoide@tycho.nsa.gov>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
         Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
-        Florent Revest <revest@chromium.org>
-Subject: Re: [PATCH bpf-next v9 4/7] bpf: Split bpf_local_storage to
- bpf_sk_storage
-Message-ID: <20200825005432.5iknjupl3o2hhqw7@kafai-mbp.dhcp.thefacebook.com>
-References: <20200823165612.404892-1-kpsingh@chromium.org>
- <20200823165612.404892-5-kpsingh@chromium.org>
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Adrian Reber <areber@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        kaleshsingh@google.com, calin@google.com, surenb@google.com,
+        nnk@google.com, jeffv@google.com, kernel-team@android.com,
+        Daniel Colascione <dancol@google.com>
+Subject: Re: [PATCH v7 1/3] Add a new LSM-supporting anonymous inode interface
+Message-ID: <20200825035036.GC810@sol.localdomain>
+References: <20200821185645.801971-1-lokeshgidra@google.com>
+ <20200821185645.801971-2-lokeshgidra@google.com>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200823165612.404892-5-kpsingh@chromium.org>
-X-ClientProxiedBy: BY5PR17CA0027.namprd17.prod.outlook.com
- (2603:10b6:a03:1b8::40) To BY5PR15MB3571.namprd15.prod.outlook.com
- (2603:10b6:a03:1f6::32)
-MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from 255.255.255.255 (255.255.255.255) by BY5PR17CA0027.namprd17.prod.outlook.com (2603:10b6:a03:1b8::40) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3305.25 via Frontend Transport; Tue, 25 Aug 2020 00:54:37 +0000
-X-Originating-IP: [2620:10d:c090:400::5:87f3]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: b08f0fd9-e36b-4e70-c4bb-08d8489170d1
-X-MS-TrafficTypeDiagnostic: BYAPR15MB3207:
-X-Microsoft-Antispam-PRVS: <BYAPR15MB3207CF3699DA8EE8A69E0661D5570@BYAPR15MB3207.namprd15.prod.outlook.com>
-X-FB-Source: Internal
-X-MS-Oob-TLC-OOBClassifiers: OLM:345;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: /+2KDaDA9h7cNKabeaIDo2trYWeJCVfeKVeC1KFV+fPg6vrFLWGXo3wTfiLJuxzctQO6UMHGllFWUTV5fth9xZmTEL5s9FN2yHOCBiCWuNYm0rzw0MurUY7nkkPvMngDDvWmSqRyiKtf8AePz4TyNIJrnRpkwYFOIG0exaKjmY5bDSh9Fir9oNA+un8wNNn90HDn1dC2q+Dmafuh3TRKWrG29NxFBzzzYZvYab+U6NBNVdu7TsHdS1xvQtRGSS5HfLlE/A2bLBF9w+2PVpHSNfShr2/NZ+EMGnPd+tomasn55POi6aJRUIngpmhrVlV7
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR15MB3571.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(396003)(136003)(39860400002)(346002)(366004)(376002)(6486002)(186003)(5660300002)(6916009)(52116002)(4744005)(956004)(86362001)(4326008)(66946007)(16576012)(66556008)(9686003)(6666004)(8676002)(316002)(8936002)(2906002)(66476007)(54906003)(1076003)(478600001);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData: FipcjUWAQkIyAWuzmljhondlUpgMfqZokoj3WLNIH84WH+9CohlWivBaEg2xg8GL6PPqGnB6uS/ePKCeZ6t54VUmcpfNDQoqjitq5WM6+1wsG8/nOwYBBqK5CiAd1vmXFR6w5/7mfoPHTY9nrUksLSfnJs79jNnCY3a63GJT1kXCL/u3X0qzSlv1AjjWc0yX8M5IlTq3AWDd1jw/IpVrTh9tSJXoptnQo+SkAO1IeWx6kJ2faU4/BilFSXY/28ITqEsBjU3qkMF0vQfeRJ2u3GlMNKYT5mLbqhTDxCyoQAAXgXvMfllB2fXqEuVgWxMH7DHzAEE4xbGwc922agmFn4HXRHQPdLvVvbagC575McrngN9KpTZDvmo/J9/w2Idaj3SJCd23meOYpqcbevXI5UJ9jtkatnG17IvSyuNWKDyaiReXBEBhMkcsgL0TGnDuRcP4EkkU27zyBoAES3GKeHvM+MLcuey4pLS1ssriqoa6sRRBft01pi8y+sWk6OFSzwRe/VsgXWgb6EE1pyjCxIYM85QgyofbCm2gyHLkju/H4Z1gU/IT5d0hlCC/q4SvCd5Iv3m3/wrhBIw/MPCLZA4h4Kb7V2JXPJL0toPh6jZ/XlXzLqRCEBxfZvAwYzdhqkuJG5E5I60baOkQuf6FkNSDYZ6VJpfBnl7KF+QdPq0=
-X-MS-Exchange-CrossTenant-Network-Message-Id: b08f0fd9-e36b-4e70-c4bb-08d8489170d1
-X-MS-Exchange-CrossTenant-AuthSource: BY5PR15MB3571.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Aug 2020 00:54:37.5057
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: UXaGLi290Jmyfw/ZPVHK4uO5GHUT92V3OyLzbBbfFKIgyy1Y/lcG6hebNsqIxWAk
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB3207
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-08-24_12:2020-08-24,2020-08-24 signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 adultscore=0
- priorityscore=1501 spamscore=0 bulkscore=0 phishscore=0 mlxlogscore=707
- clxscore=1015 impostorscore=0 malwarescore=0 suspectscore=1
- lowpriorityscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2006250000 definitions=main-2008250005
-X-FB-Internal: deliver
+In-Reply-To: <20200821185645.801971-2-lokeshgidra@google.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sun, Aug 23, 2020 at 06:56:09PM +0200, KP Singh wrote:
-> From: KP Singh <kpsingh@google.com>
+On Fri, Aug 21, 2020 at 11:56:43AM -0700, Lokesh Gidra wrote:
+> From: Daniel Colascione <dancol@google.com>
 > 
-> A purely mechanical change:
+> This change adds a new function, anon_inode_getfd_secure, that creates
+> anonymous-node file with individual non-S_PRIVATE inode to which security
+> modules can apply policy. Existing callers continue using the original
+> singleton-inode kind of anonymous-inode file. We can transition anonymous
+> inode users to the new kind of anonymous inode in individual patches for
+> the sake of bisection and review.
 > 
-> 	bpf_sk_storage.c = bpf_sk_storage.c + bpf_local_storage.c
-> 	bpf_sk_storage.h = bpf_sk_storage.h + bpf_local_storage.h
+> The new function accepts an optional context_inode parameter that
+> callers can use to provide additional contextual information to
+> security modules for granting/denying permission to create an anon inode
+> of the same type.
 > 
-> Signed-off-by: KP Singh <kpsingh@google.com>
-Acked-by: Martin KaFai Lau <kafai@fb.com>
+> For example, in case of userfaultfd, the created inode is a
+> 'logical child' of the context_inode (userfaultfd inode of the
+> parent process) in the sense that it provides the security context
+> required during creation of the child process' userfaultfd inode.
+> 
+> Signed-off-by: Daniel Colascione <dancol@google.com>
+> 
+> [Fix comment documenting return values of inode_init_security_anon()]
+> [Add context_inode description in comments to anon_inode_getfd_secure()]
+> [Remove definition of anon_inode_getfile_secure() as there are no callers]
+> [Make _anon_inode_getfile() static]
+> [Use correct error cast in _anon_inode_getfile()]
+> 
+> Signed-off-by: Lokesh Gidra <lokeshgidra@google.com>
+> ---
+>  fs/anon_inodes.c              | 148 ++++++++++++++++++++++++----------
+>  include/linux/anon_inodes.h   |  13 +++
+>  include/linux/lsm_hook_defs.h |   2 +
+>  include/linux/lsm_hooks.h     |   7 ++
+>  include/linux/security.h      |   3 +
+>  security/security.c           |   9 +++
+>  6 files changed, 141 insertions(+), 41 deletions(-)
+> 
+> diff --git a/fs/anon_inodes.c b/fs/anon_inodes.c
+> index 89714308c25b..2aa8b57be895 100644
+> --- a/fs/anon_inodes.c
+> +++ b/fs/anon_inodes.c
+> @@ -55,61 +55,78 @@ static struct file_system_type anon_inode_fs_type = {
+>  	.kill_sb	= kill_anon_super,
+>  };
+>  
+> -/**
+> - * anon_inode_getfile - creates a new file instance by hooking it up to an
+> - *                      anonymous inode, and a dentry that describe the "class"
+> - *                      of the file
+> - *
+> - * @name:    [in]    name of the "class" of the new file
+> - * @fops:    [in]    file operations for the new file
+> - * @priv:    [in]    private data for the new file (will be file's private_data)
+> - * @flags:   [in]    flags
+> - *
+> - * Creates a new file by hooking it on a single inode. This is useful for files
+> - * that do not need to have a full-fledged inode in order to operate correctly.
+> - * All the files created with anon_inode_getfile() will share a single inode,
+> - * hence saving memory and avoiding code duplication for the file/inode/dentry
+> - * setup.  Returns the newly created file* or an error pointer.
+> - */
+> -struct file *anon_inode_getfile(const char *name,
+> -				const struct file_operations *fops,
+> -				void *priv, int flags)
+> +static struct inode *anon_inode_make_secure_inode(
+> +	const char *name,
+> +	const struct inode *context_inode)
+> +{
+> +	struct inode *inode;
+> +	const struct qstr qname = QSTR_INIT(name, strlen(name));
+> +	int error;
+> +
+> +	inode = alloc_anon_inode(anon_inode_mnt->mnt_sb);
+> +	if (IS_ERR(inode))
+> +		return inode;
+> +	inode->i_flags &= ~S_PRIVATE;
+> +	error =	security_inode_init_security_anon(
+> +		inode, &qname, context_inode);
+
+Weird indentation here.  The call to security_inode_init_security_anon() fits on
+one line.
+
+> +	if (error) {
+> +		iput(inode);
+> +		return ERR_PTR(error);
+> +	}
+> +	return inode;
+> +}
+> +
+> +static struct file *_anon_inode_getfile(const char *name,
+> +					const struct file_operations *fops,
+> +					void *priv, int flags,
+> +					const struct inode *context_inode,
+> +					bool secure)
+>  {
+> +	struct inode *inode;
+>  	struct file *file;
+>  
+> -	if (IS_ERR(anon_inode_inode))
+> -		return ERR_PTR(-ENODEV);
+> +	if (secure) {
+> +		inode =	anon_inode_make_secure_inode(
+> +			name, context_inode);
+
+Likewise here.  The call to anon_inode_make_secure_inode() fits on one line.
+
+> +		if (IS_ERR(inode))
+> +			return ERR_CAST(inode);
+> +	} else {
+> +		inode =	anon_inode_inode;
+> +		if (IS_ERR(inode))
+> +			return ERR_PTR(-ENODEV);
+> +		/*
+> +		 * We know the anon_inode inode count is always
+> +		 * greater than zero, so ihold() is safe.
+> +		 */
+> +		ihold(inode);
+> +	}
+>  
+> -	if (fops->owner && !try_module_get(fops->owner))
+> -		return ERR_PTR(-ENOENT);
+> +	if (fops->owner && !try_module_get(fops->owner)) {
+> +		file = ERR_PTR(-ENOENT);
+> +		goto err;
+> +	}
+
+The error path here does module_put(fops->owner), even though a reference wasn't
+acquired.
+
+> +
+> +/**
+> + * anon_inode_getfd - creates a new file instance by hooking it up to
+> + *                    an anonymous inode and a dentry that describe
+> + *                    the "class" of the file
+> + *
+> + * @name:    [in]    name of the "class" of the new file
+> + * @fops:    [in]    file operations for the new file
+> + * @priv:    [in]    private data for the new file (will be file's private_data)
+> + * @flags:   [in]    flags
+> + *
+> + * Creates a new file by hooking it on a single inode. This is
+> + * useful for files that do not need to have a full-fledged inode in
+> + * order to operate correctly.  All the files created with
+> + * anon_inode_getfile() will use the same singleton inode, reducing
+
+This should say anon_inode_getfd(), not anon_inode_getfile().
+
+> +/**
+> + * Like anon_inode_getfd(), but adds the @context_inode argument to
+> + * allow security modules to control creation of the new file. Once the
+> + * security module makes the decision, this inode is no longer needed
+> + * and hence reference to it is not held.
+> + */
+> +int anon_inode_getfd_secure(const char *name, const struct file_operations *fops,
+> +			    void *priv, int flags,
+> +			    const struct inode *context_inode)
+> +{
+> +	return _anon_inode_getfd(name, fops, priv, flags,
+> +				 context_inode, true);
+> +}
+
+Weird indentation here again.  The call to _anon_inode_getfd() fits on one line.
+
+> @@ -162,4 +229,3 @@ static int __init anon_inode_init(void)
+>  }
+>  
+>  fs_initcall(anon_inode_init);
+> -
+
+Unnecessary whitespace change.
+
+> diff --git a/include/linux/anon_inodes.h b/include/linux/anon_inodes.h
+> index d0d7d96261ad..67bd85d92dca 100644
+> --- a/include/linux/anon_inodes.h
+> +++ b/include/linux/anon_inodes.h
+> @@ -10,12 +10,25 @@
+>  #define _LINUX_ANON_INODES_H
+>  
+>  struct file_operations;
+> +struct inode;
+> +
+> +struct file *anon_inode_getfile_secure(const char *name,
+> +				       const struct file_operations *fops,
+> +				       void *priv, int flags,
+> +				       const struct inode *context_inode);
+
+This function isn't defined anywhere.
+
+> + * @inode_init_security_anon:
+> + *      Set up a secure anonymous inode.
+> + *      @inode contains the inode structure
+> + *      @name name of the anonymous inode class
+> + *      @context_inode optional related inode
+> + *	Returns 0 on success, -EACCESS if the security module denies the
+> + *	creation of this inode, or another -errno upon other errors.
+
+Is there a better name for this than "secure anonymous inode"?
+(What is meant by "secure"?)
+
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index 0a0a03b36a3b..95c133a8f8bb 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -322,6 +322,9 @@ void security_inode_free(struct inode *inode);
+>  int security_inode_init_security(struct inode *inode, struct inode *dir,
+>  				 const struct qstr *qstr,
+>  				 initxattrs initxattrs, void *fs_data);
+> +int security_inode_init_security_anon(struct inode *inode,
+> +				      const struct qstr *name,
+> +				      const struct inode *context_inode);
+>  int security_old_inode_init_security(struct inode *inode, struct inode *dir,
+>  				     const struct qstr *qstr, const char **name,
+>  				     void **value, size_t *len);
+
+This patch doesn't compile when !CONFIG_SECURITY because this file is missing a
+!CONFIG_SECURITY stub for security_inode_init_security_anon().
+
+> diff --git a/security/security.c b/security/security.c
+> index 70a7ad357bc6..149b3f024e2d 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -1057,6 +1057,15 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
+>  }
+>  EXPORT_SYMBOL(security_inode_init_security);
+>  
+> +int
+> +security_inode_init_security_anon(struct inode *inode,
+> +				  const struct qstr *name,
+> +				  const struct inode *context_inode)
+> +{
+> +	return call_int_hook(inode_init_security_anon, 0, inode, name,
+> +			     context_inode);
+> +}
+
+Nit: everything else in this file has 'int' on the same line as the function
+name.
+
+- Eric
