@@ -2,336 +2,212 @@ Return-Path: <SRS0=UPXR=CD=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-21.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,RCVD_ILLEGAL_IP,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67222C433E1
-	for <linux-security-module@archiver.kernel.org>; Tue, 25 Aug 2020 17:32:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5550BC433DF
+	for <linux-security-module@archiver.kernel.org>; Tue, 25 Aug 2020 17:40:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4B09E20782
-	for <linux-security-module@archiver.kernel.org>; Tue, 25 Aug 2020 17:32:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B4A820782
+	for <linux-security-module@archiver.kernel.org>; Tue, 25 Aug 2020 17:40:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="ZdemlU3p"
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="qNzb0qmh";
+	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="UuSmATjs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726611AbgHYRcp (ORCPT
+        id S1726187AbgHYRjz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 25 Aug 2020 13:32:45 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:33360 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726090AbgHYRcl (ORCPT
+        Tue, 25 Aug 2020 13:39:55 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:34312 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725936AbgHYRjx (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 25 Aug 2020 13:32:41 -0400
-Received: from [192.168.86.21] (c-71-197-163-6.hsd1.wa.comcast.net [71.197.163.6])
-        by linux.microsoft.com (Postfix) with ESMTPSA id ECFA320B4908;
-        Tue, 25 Aug 2020 10:32:38 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com ECFA320B4908
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1598376759;
-        bh=ym33B67iPgLMuGorJ+JkAin7zQIK5vYjzuOwS2ATPhE=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=ZdemlU3p12xh8psoe6kCUoclHXAO+vW1DjPGYEmWVB2oKaLHALD2Lr7OabJju3Dby
-         q6GdmohVnbZ3hwVA8sNJmnKweX2gXxXn9yT3fhqYbdqt2DKE3TOSswO8+zJc28DqUZ
-         t3jfyDHByak1kKSADbfF9KG0MO++aZVTUT6VrISY=
-Subject: Re: [PATCH v2 2/3] IMA: add policy to support measuring critical data
- from kernel components
-To:     Mimi Zohar <zohar@linux.ibm.com>, stephen.smalley.work@gmail.com,
-        casey@schaufler-ca.com, agk@redhat.com, snitzer@redhat.com,
-        gmazyland@gmail.com
-Cc:     tyhicks@linux.microsoft.com, sashal@kernel.org, jmorris@namei.org,
-        nramas@linux.microsoft.com, linux-integrity@vger.kernel.org,
-        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dm-devel@redhat.com
-References: <20200821182107.5328-1-tusharsu@linux.microsoft.com>
- <20200821182107.5328-3-tusharsu@linux.microsoft.com>
- <d82c5cdab170d3dcc513b38632801c3aa14ca389.camel@linux.ibm.com>
-From:   Tushar Sugandhi <tusharsu@linux.microsoft.com>
-Message-ID: <e701ad15-1672-d208-c2b8-8228a728c98d@linux.microsoft.com>
-Date:   Tue, 25 Aug 2020 10:32:38 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Tue, 25 Aug 2020 13:39:53 -0400
+Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
+        by m0089730.ppops.net (8.16.0.42/8.16.0.42) with SMTP id 07PHZOJh018389;
+        Tue, 25 Aug 2020 10:39:32 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=date : from : to : cc :
+ subject : message-id : references : content-type : in-reply-to :
+ mime-version; s=facebook; bh=Klzn/5GDglqr9+v3V+ruJgQ1fcQUY3wyLgew7EBfK9Y=;
+ b=qNzb0qmhWiFEbVWt0StFqyk+UsfRhxDJ33fso+UC8egIO5NS9IVIIGlR7E+HRxhif/fm
+ 8fELq7hdMvmJMtrb/IdMynoud2IU+nB8FuQMewkFi76B0DS22cwdXu6VIF2AmxLuZmPm
+ p8Ce1oQZskO7ws/rB+gbhg4KKVkbBYAqTO4= 
+Received: from mail.thefacebook.com ([163.114.132.120])
+        by m0089730.ppops.net with ESMTP id 332xuwqk3j-2
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Tue, 25 Aug 2020 10:39:32 -0700
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (100.104.98.9) by
+ o365-in.thefacebook.com (100.104.94.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1979.3; Tue, 25 Aug 2020 10:39:31 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=dXv0Gxa2jpZVRgYWCryVURJkJ1jbXizXaqzb2HAKVy0qPqKdnnnHhK1W53jiWfpMOzOfpbpIpMi+2gnZN3ShVBSMQQtaauVf0nncHonquA2Ew5sjl7l6+2cB2SuI4wJn/y6G0MBX3RM72aeUWoC/eQQd8WUkAfbUsA9KbtzkWZ5EtT8FeXuRdQ1k0Sz7xE0aJVAUT4FEd8bBPyi9oTRQQJSO5+6JfDITAuVC3oM9ndQYVF/qBlANVbp8wh9tEP2K0r/eyyUcn4/g0tJkUBJjG1rPYBZVTaIEFugBpSUhpw5ikmp1ZqIwzZHEeVKsQ4DZ/sJt1E488GnRJpgxfRJrBQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Klzn/5GDglqr9+v3V+ruJgQ1fcQUY3wyLgew7EBfK9Y=;
+ b=UErgu/aDkI+1LT9EIvsNMMUrfyOEK1I/YiaRlQdtY+ILipU8/QPDKdulHRwY1jW69Umk1XTOjXC2Pu0qFBARDKHIGIP/fugOmPj72ADJrNcfhpiDN2NU4SIqnzMysMM6NDDMjLvd28POUziK0ZhMQFaPdvhhFq4dhiCsXyJC9wtUb5dpBfDpnGophyqq/3kBQjmsi1kRrSJcjtdamoYz0xxO+dHZChvTRuc2DpB5DHBh2rh2eAmUklyIn6xqD+n9htALyrhp7A/gPZ+Jvvz8iTapzB9UYNZCkEIKBas3VPgc54dVXGzFOAATOAlwO678zcOxkAsmOtq4P2vYtOPiuQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
+ header.d=fb.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector2-fb-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Klzn/5GDglqr9+v3V+ruJgQ1fcQUY3wyLgew7EBfK9Y=;
+ b=UuSmATjsV+Hkcmc1EaEEgz2XA4mp38JBrtWvVvPmvpcG6e8u8PVyhDuqlL9IkLv9TzQf5ksE3uFmmmNZWCR1ny43w6evT6g6HDmhw4xCsc6+7+/MIKDKKcqdmGCYRh38EFU0weJKhClLX6iw7xw9WUIreyjd34Xx8owGhAuaxMM=
+Authentication-Results: chromium.org; dkim=none (message not signed)
+ header.d=none;chromium.org; dmarc=none action=none header.from=fb.com;
+Received: from BY5PR15MB3571.namprd15.prod.outlook.com (2603:10b6:a03:1f6::32)
+ by BYAPR15MB3000.namprd15.prod.outlook.com (2603:10b6:a03:b1::31) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3305.25; Tue, 25 Aug
+ 2020 17:39:30 +0000
+Received: from BY5PR15MB3571.namprd15.prod.outlook.com
+ ([fe80::c13c:fca9:5e04:9bfb]) by BY5PR15MB3571.namprd15.prod.outlook.com
+ ([fe80::c13c:fca9:5e04:9bfb%3]) with mapi id 15.20.3305.026; Tue, 25 Aug 2020
+ 17:39:30 +0000
+Date:   Tue, 25 Aug 2020 10:39:25 -0700
+From:   Martin KaFai Lau <kafai@fb.com>
+To:     KP Singh <kpsingh@chromium.org>
+CC:     <linux-kernel@vger.kernel.org>, <bpf@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
+        Florent Revest <revest@chromium.org>
+Subject: Re: [PATCH bpf-next v9 5/7] bpf: Implement bpf_local_storage for
+ inodes
+Message-ID: <20200825173925.tmi4h5lomzwkciew@kafai-mbp.dhcp.thefacebook.com>
+References: <20200823165612.404892-1-kpsingh@chromium.org>
+ <20200823165612.404892-6-kpsingh@chromium.org>
+ <20200825005249.tu4c54fg36jt3rh4@kafai-mbp.dhcp.thefacebook.com>
+ <8d188285-96f5-3b17-126f-5e842702e339@chromium.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8d188285-96f5-3b17-126f-5e842702e339@chromium.org>
+X-ClientProxiedBy: BYAPR07CA0085.namprd07.prod.outlook.com
+ (2603:10b6:a03:12b::26) To BY5PR15MB3571.namprd15.prod.outlook.com
+ (2603:10b6:a03:1f6::32)
 MIME-Version: 1.0
-In-Reply-To: <d82c5cdab170d3dcc513b38632801c3aa14ca389.camel@linux.ibm.com>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from 255.255.255.255 (255.255.255.255) by BYAPR07CA0085.namprd07.prod.outlook.com (2603:10b6:a03:12b::26) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3305.25 via Frontend Transport; Tue, 25 Aug 2020 17:39:29 +0000
+X-Originating-IP: [2620:10d:c090:400::5:ae73]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 8ab68737-e0df-4405-a02e-08d8491dd21f
+X-MS-TrafficTypeDiagnostic: BYAPR15MB3000:
+X-Microsoft-Antispam-PRVS: <BYAPR15MB300078C9FEAFB6D5463E9990D5570@BYAPR15MB3000.namprd15.prod.outlook.com>
+X-FB-Source: Internal
+X-MS-Oob-TLC-OOBClassifiers: OLM:7691;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: pRdr7YzkENZZg3wuvWfPtgcYY0zps9ZDtfNdNrvYfsy28ScIu0QJKUz/jMkUB4Hqv2PEbgoN8OAPlNEbZ6z73MVXwgCGei8Q7FhXlm27xhGRwz6Xp9ZAML6ZHtS+0iB3e2TFXgLF3BsQuXICYO0+QrL1txlh/UIz81puVeHUMiHM+D+hvoiZYDePfWhk3fM+2zW3X++HOFjfJiQJEQnHua3W74c6oO4LfuIOlUWkMVRSZBgF6C3F76kPBuA10yq3Pt/7bAgx1AogOsbrL5Gxy0VPnRfuJLSATmr2qKiT5ampWj4rLZURwNXrJHi8W9AJ/eSCK/WIz9kCKbFly6e6ig==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR15MB3571.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(39860400002)(396003)(346002)(366004)(136003)(376002)(9686003)(6666004)(316002)(53546011)(66556008)(8936002)(66476007)(66946007)(2906002)(83380400001)(54906003)(8676002)(16576012)(86362001)(52116002)(478600001)(6486002)(4326008)(5660300002)(956004)(6916009)(186003)(1076003);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData: AXbB41vLHsgKSuQuyQGO5XbzkbqGNiYe7FJY9F/TGiksU1KrwraxI1ik30oIGN/B+e/AtVRfEQ5r5ytRUeMFEzBKyQeGgxvIxA2T2WdL7jC8ZoTdU2j8qaoia7H2vFMO7QX+2NqaSna5oXADE2h+8MdEAgxDVBV8AcUhmBIbxGH9K/fU8A8LVaweXu4/13mf3yjeESJXFRWqpDhoJTXMWgivZ2e+MSaXtv17G9w9Hjoe+wSVY5QHpvczKBUvVuMNnS1yBT80C1ByaILiRfFW6E/wDYLd3PcFHmL6hRKMk2Sv7piUM5XSBq+TccfVoQ3nfofHxeWRnG7YROZcGjzDQxwj64atJtx8aTVjMQBnDgNALGxKuWcCxQyniQcKkOp0bA02iQzX3Q2iQNh3OZtKGlR9p7hERyMgyH8GnCH8uK2g9P6A9AMAP9QDopf81YUz66MBc6or1xBPnUndyNNouLC0Hm6vZlS2Rfv+uWvXILMszPvy3IjdPvZP/WZabT6aEmeTMyGWSENMQIwzgjFntF80B8j5cbl7pqt2pUo/sq9d4BUdE5O+fZguijB1j4Quoc46L8JRmxnuqb45FqYb+NLrYbLavGkZv6x0PQom/kx0nTKYbt2GKMaPA1Im26ysU6o5oJb+8vNTRiXiSZRu/JoZ+e7oiwrupWduLw1yhtw=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8ab68737-e0df-4405-a02e-08d8491dd21f
+X-MS-Exchange-CrossTenant-AuthSource: BY5PR15MB3571.namprd15.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Aug 2020 17:39:30.4590
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: iFtcaDk16qNQ/8xx6U1ui73COFownj4Xx68b1mPSikIqKyNz/K0jPCJKFunG+MQa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB3000
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-08-25_08:2020-08-25,2020-08-25 signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 lowpriorityscore=0
+ adultscore=0 bulkscore=0 suspectscore=1 priorityscore=1501 mlxscore=0
+ spamscore=0 malwarescore=0 mlxlogscore=870 phishscore=0 clxscore=1015
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2006250000 definitions=main-2008250132
+X-FB-Internal: deliver
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-
-On 2020-08-24 3:46 p.m., Mimi Zohar wrote:
-> On Fri, 2020-08-21 at 11:21 -0700, Tushar Sugandhi wrote:
->> There would be several candidate kernel components suitable for IMA
->> measurement. Not all of them would have support for IMA measurement.
->> Also, system administrators may not want to measure data for all of
->> them, even when they support IMA measurement. An IMA policy specific
->> to various kernel components is needed to measure their respective
->> critical data.
->>
->> Add a new IMA policy CRITICAL_DATA+data_sources to support measuring
->> various critical kernel components. This policy would enable the
->> system administrators to limit the measurement to the components,
->> if the components support IMA measurement.
->>
->> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
->> ---
->>   Documentation/ABI/testing/ima_policy |  6 ++-
->>   security/integrity/ima/ima.h         |  1 +
->>   security/integrity/ima/ima_api.c     |  2 +-
->>   security/integrity/ima/ima_policy.c  | 62 +++++++++++++++++++++++++---
->>   4 files changed, 63 insertions(+), 8 deletions(-)
->>
->> diff --git a/Documentation/ABI/testing/ima_policy b/Documentation/ABI/testing/ima_policy
->> index cd572912c593..a0dd0f108555 100644
->> --- a/Documentation/ABI/testing/ima_policy
->> +++ b/Documentation/ABI/testing/ima_policy
->> @@ -29,7 +29,7 @@ Description:
->>   		base: 	func:= [BPRM_CHECK][MMAP_CHECK][CREDS_CHECK][FILE_CHECK][MODULE_CHECK]
->>   				[FIRMWARE_CHECK]
->>   				[KEXEC_KERNEL_CHECK] [KEXEC_INITRAMFS_CHECK]
->> -				[KEXEC_CMDLINE] [KEY_CHECK]
->> +				[KEXEC_CMDLINE] [KEY_CHECK] [CRITICAL_DATA]
->>   			mask:= [[^]MAY_READ] [[^]MAY_WRITE] [[^]MAY_APPEND]
->>   			       [[^]MAY_EXEC]
->>   			fsmagic:= hex value
->> @@ -125,3 +125,7 @@ Description:
->>   		keys added to .builtin_trusted_keys or .ima keyring:
->>   
->>   			measure func=KEY_CHECK keyrings=.builtin_trusted_keys|.ima
->> +
->> +		Example of measure rule using CRITICAL_DATA to measure critical data
->> +
->> +			measure func=CRITICAL_DATA data_sources=selinux|apparmor|dm-crypt
+On Tue, Aug 25, 2020 at 04:10:26PM +0200, KP Singh wrote:
 > 
-> This example uses "data_sources" without first defining it in the
-> "option:" section.  Defining two new options is an indication that this
-Thanks. I will define "data_sources" first in "option:" section.
-> patch should be split up.  One which defines the "CRITICAL_DATA" and
-> another one which defines the new key value pair.  The term
-I intentionally kept the "CRITICAL_DATA" and "data_sources" in the same
-patch.
-
-CRITICAL_DATA is different than KEY_CHECK because in case of KEY_CHECK,
-"keyrings=" is optional. If "keyrings=" is not specified, then we
-measure all keyrings.
-
-Where for CRITICAL_DATA, "data_sources=" is mandatory.
-
-Because the data sources would be diverse and orthogonal to each other,
-(unlike "keyrings=") - not specifying "data_sources=" shouldn't result
-in IMA blindly measuring all data sources.
-
-Since CRITICAL_DATA, and "data_sources=" go hand in hand, I wanted them
-to be part of the same patch.
-> "data_sources" is pretty generic.  Perhaps constrain it a bit by re-
-> naming it "critical_data=".  Or was such using a generic name
-> intentional?
 > 
-We intentionally kept the name generic because the data to be measured
-could be coming from any kernel component with any granularity (from a
-single bool to megabytes of data). The kernel component is also loosely
-defined here. It could be an LSM (like SELinux), or a broader base layer
-(like device-mapper), or a specific module (like dm-crypt), or it could
-be different parts of a single module.
-
-Also, we didn't want to name "data_sources" as "critical_data" to avoid
-confusion with func "CRITICAL_DATA".
-
-> Normally "CRITICAL_DATA" would be defined with the critical data hook,
-> but that seems to be defined in patch 3/3 "IMA: define IMA hook to
-> measure critical data from kernel components".
+> On 8/25/20 2:52 AM, Martin KaFai Lau wrote:
+> > On Sun, Aug 23, 2020 at 06:56:10PM +0200, KP Singh wrote:
+> >> From: KP Singh <kpsingh@google.com>
+> >>
+> >> Similar to bpf_local_storage for sockets, add local storage for inodes.
+> >> The life-cycle of storage is managed with the life-cycle of the inode.
+> >> i.e. the storage is destroyed along with the owning inode.
+> >>
+> >> The BPF LSM allocates an __rcu pointer to the bpf_local_storage in the
+> >> security blob which are now stackable and can co-exist with other LSMs.
+> >>
+> > [ ... ]
+> > 
+> >> diff --git a/kernel/bpf/bpf_inode_storage.c b/kernel/bpf/bpf_inode_storage.c
+> >> new file mode 100644
+> >> index 000000000000..b0b283c224c1
+> >> --- /dev/null
+> >> +++ b/kernel/bpf/bpf_inode_storage.c
 > 
-I can make the "CRITICAL_DATA" and the hook as part of the same patch.
-That would mean combining patch 2 and 3 into a single one.
-
-Does it sound ok?
->> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
->> index 8875085db689..0f4209a92bfb 100644
->> --- a/security/integrity/ima/ima.h
->> +++ b/security/integrity/ima/ima.h
->> @@ -200,6 +200,7 @@ static inline unsigned int ima_hash_key(u8 *digest)
->>   	hook(POLICY_CHECK, policy)			\
->>   	hook(KEXEC_CMDLINE, kexec_cmdline)		\
->>   	hook(KEY_CHECK, key)				\
->> +	hook(CRITICAL_DATA, critical_data)		\
->>   	hook(MAX_CHECK, none)
->>   
->>   #define __ima_hook_enumify(ENUM, str)	ENUM,
->> diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
->> index af218babd198..9917e1730cb6 100644
->> --- a/security/integrity/ima/ima_api.c
->> +++ b/security/integrity/ima/ima_api.c
->> @@ -176,7 +176,7 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
->>    *		subj=, obj=, type=, func=, mask=, fsmagic=
->>    *	subj,obj, and type: are LSM specific.
->>    *	func: FILE_CHECK | BPRM_CHECK | CREDS_CHECK | MMAP_CHECK | MODULE_CHECK
->> - *	| KEXEC_CMDLINE | KEY_CHECK
->> + *	| KEXEC_CMDLINE | KEY_CHECK | CRITICAL_DATA
->>    *	mask: contains the permission mask
->>    *	fsmagic: hex value
->>    *
->> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
->> index 8866e84d0062..7b649095ac7a 100644
->> --- a/security/integrity/ima/ima_policy.c
->> +++ b/security/integrity/ima/ima_policy.c
->> @@ -33,6 +33,7 @@
->>   #define IMA_PCR		0x0100
->>   #define IMA_FSNAME	0x0200
->>   #define IMA_KEYRINGS	0x0400
->> +#define IMA_DATA_SOURCES	0x0800
->>   
->>   #define UNKNOWN		0
->>   #define MEASURE		0x0001	/* same as IMA_MEASURE */
->> @@ -84,6 +85,7 @@ struct ima_rule_entry {
->>   	} lsm[MAX_LSM_RULES];
->>   	char *fsname;
->>   	struct ima_rule_opt_list *keyrings; /* Measure keys added to these keyrings */
->> +	struct ima_rule_opt_list *data_sources; /* Measure data from these sources */
->>   	struct ima_template_desc *template;
->>   };
->>   
->> @@ -508,14 +510,23 @@ static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
->>   {
->>   	int i;
->>   
->> -	if (func == KEY_CHECK) {
->> -		return (rule->flags & IMA_FUNC) && (rule->func == func) &&
->> -		       ima_match_rule_data(rule, rule->keyrings, func_data,
->> -					   true, cred);
->> -	}
->>   	if ((rule->flags & IMA_FUNC) &&
->>   	    (rule->func != func && func != POST_SETATTR))
->>   		return false;
->> +
->> +	switch (func) {
->> +	case KEY_CHECK:
->> +		return ((rule->func == func) &&
->> +			ima_match_rule_data(rule, rule->keyrings,
->> +					    func_data, true, cred));
->> +	case CRITICAL_DATA:
->> +		return ((rule->func == func) &&
->> +			ima_match_rule_data(rule, rule->data_sources,
->> +					    func_data, false, cred));
->> +	default:
->> +		break;
->> +	}
->> +
->>   	if ((rule->flags & IMA_MASK) &&
->>   	    (rule->mask != mask && func != POST_SETATTR))
->>   		return false;
->> @@ -911,7 +922,7 @@ enum {
->>   	Opt_uid_lt, Opt_euid_lt, Opt_fowner_lt,
->>   	Opt_appraise_type, Opt_appraise_flag,
->>   	Opt_permit_directio, Opt_pcr, Opt_template, Opt_keyrings,
->> -	Opt_err
->> +	Opt_data_sources, Opt_err
->>   };
->>   
->>   static const match_table_t policy_tokens = {
->> @@ -948,6 +959,7 @@ static const match_table_t policy_tokens = {
->>   	{Opt_pcr, "pcr=%s"},
->>   	{Opt_template, "template=%s"},
->>   	{Opt_keyrings, "keyrings=%s"},
->> +	{Opt_data_sources, "data_sources=%s"},
->>   	{Opt_err, NULL}
->>   };
->>   
->> @@ -1110,6 +1122,19 @@ static bool ima_validate_rule(struct ima_rule_entry *entry)
->>   		if (ima_rule_contains_lsm_cond(entry))
->>   			return false;
->>   
->> +		break;
->> +	case CRITICAL_DATA:
->> +		if (entry->action & ~(MEASURE | DONT_MEASURE))
->> +			return false;
->> +
->> +		if (!(entry->flags & IMA_DATA_SOURCES) ||
->> +		    (entry->flags & ~(IMA_FUNC | IMA_UID | IMA_PCR |
->> +		    IMA_DATA_SOURCES)))
->> +			return false;
+> [...]
 > 
-> Requiring IMA_FUNC and IMA_DATA_SOURCES makes sense, but why are
-> IMA_UID and IMA_PCR required?
+> >> +
+> >> +DEFINE_BPF_STORAGE_CACHE(inode_cache);
+> >> +
+> >> +static struct bpf_local_storage __rcu **
+> >> +inode_storage_ptr(void *owner)
+> >> +{
+> >> +	struct inode *inode = owner;
+> >> +	struct bpf_storage_blob *bsb;
+> >> +
+> >> +	bsb = bpf_inode(inode);
+> >> +	if (!bsb)
+> >> +		return NULL;
+> > just noticed this one.  NULL could be returned here.  When will it happen?
 > 
-Since the data to be measured could be for any scenario, I didn't want
-to restrict the kernel components from choosing UID to measure the data
-for, or restrict them from choosing PCR to store the measurements in.
-But as the consumers are kernel components, perhaps support for IMA_UID
-is not required.  But we should still support IMA_PCR.
-Please let me know what do you think, and I can update the logic
-accordingly.
->> +
->> +		if (ima_rule_contains_lsm_cond(entry))
->> +			return false;
->> +
->>   		break;
->>   	default:
->>   		return false;
->> @@ -1242,6 +1267,8 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
->>   			else if (IS_ENABLED(CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS) &&
->>   				 strcmp(args[0].from, "KEY_CHECK") == 0)
->>   				entry->func = KEY_CHECK;
->> +			else if (strcmp(args[0].from, "CRITICAL_DATA") == 0)
->> +				entry->func = CRITICAL_DATA;
->>   			else
->>   				result = -EINVAL;
->>   			if (!result)
->> @@ -1312,6 +1339,23 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
->>   
->>   			entry->flags |= IMA_KEYRINGS;
->>   			break;
->> +		case Opt_data_sources:
->> +			ima_log_string(ab, "data_sources", args[0].from);
->> +
->> +			if (entry->data_sources) {
->> +				result = -EINVAL;
->> +				break;
->> +			}
->> +
->> +			entry->data_sources = ima_alloc_rule_opt_list(args);
->> +			if (IS_ERR(entry->data_sources)) {
->> +				result = PTR_ERR(entry->data_sources);
->> +				entry->data_sources = NULL;
->> +				break;
->> +			}
->> +
+> This can happen if CONFIG_BPF_LSM is enabled but "bpf" is not in the list of
+> active LSMs.
 > 
-> "keyrings=" isn't bounded because keyrings can be created by userspace.
-> Perhaps keyring names has a minimum/maximum length.  IMA isn't
-> measuring userspace construsts.  Shouldn't the list of critical data
-> being measured be bounded and verified?
-The comment is not entirely clear.
-Do you mean there should be some sort of allow_list in IMA, against
-which the values in "data_sources=" should be vetted? And if the
-value is present in the IMA allow_list, then only the measurements for
-that data source are allowed?
-
-Or do you mean something else?
-
-~Tushar
+> > 
+> >> +	return &bsb->storage;
+> >> +}
+> >> +
+> >> +static struct bpf_local_storage_data *inode_storage_lookup(struct inode *inode,
+> >> +							   struct bpf_map *map,
+> >> +							   bool cacheit_lockit)
+> >> +{
 > 
-> Mimi
+> [...]
 > 
->> +			entry->flags |= IMA_DATA_SOURCES;
->> +			break;
->>   		case Opt_fsuuid:
->>   			ima_log_string(ab, "fsuuid", args[0].from);
->>   
->> @@ -1692,6 +1736,12 @@ int ima_policy_show(struct seq_file *m, void *v)
->>   		seq_puts(m, " ");
->>   	}
->>   
->> +	if (entry->flags & IMA_DATA_SOURCES) {
->> +		seq_puts(m, "data_sources=");
->> +		ima_show_rule_opt_list(m, entry->data_sources);
->> +		seq_puts(m, " ");
->> +	}
->> +
->>   	if (entry->flags & IMA_PCR) {
->>   		snprintf(tbuf, sizeof(tbuf), "%d", entry->pcr);
->>   		seq_printf(m, pt(Opt_pcr), tbuf);
+> > path first before calling the bpf_local_storage_update() since
+> > this case is specific to inode local storage.
+> > 
+> > Same for the other bpf_local_storage_update() cases.
 > 
+> If you're okay with this I can send a new series with the following updates.
+> 
+> diff --git a/kernel/bpf/bpf_inode_storage.c b/kernel/bpf/bpf_inode_storage.c
+> index b0b283c224c1..74546cee814d 100644
+> --- a/kernel/bpf/bpf_inode_storage.c
+> +++ b/kernel/bpf/bpf_inode_storage.c
+> @@ -125,7 +125,7 @@ static int bpf_fd_inode_storage_update_elem(struct bpf_map *map, void *key,
+>  
+>         fd = *(int *)key;
+>         f = fget_raw(fd);
+> -       if (!f)
+> +       if (!f || !inode_storage_ptr(f->f_inode))
+>                 return -EBADF;
+>  
+>         sdata = bpf_local_storage_update(f->f_inode,
+> @@ -171,6 +171,14 @@ BPF_CALL_4(bpf_inode_storage_get, struct bpf_map *, map, struct inode *, inode,
+>         if (flags & ~(BPF_LOCAL_STORAGE_GET_F_CREATE))
+>                 return (unsigned long)NULL;
+>  
+> +       /* explicitly check that the inode_storage_ptr is not
+> +        * NULL as inode_storage_lookup returns NULL in this case and
+> +        * and bpf_local_storage_update expects the owner to have a
+> +        * valid storage pointer.
+> +        */
+> +       if (!inode_storage_ptr(inode))
+> +               return (unsigned long)NULL;
+LGTM
