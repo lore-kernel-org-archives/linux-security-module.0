@@ -2,211 +2,119 @@ Return-Path: <SRS0=UPXR=CD=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55419C433DF
-	for <linux-security-module@archiver.kernel.org>; Tue, 25 Aug 2020 14:10:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26F42C433E1
+	for <linux-security-module@archiver.kernel.org>; Tue, 25 Aug 2020 15:40:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 277AB20665
-	for <linux-security-module@archiver.kernel.org>; Tue, 25 Aug 2020 14:10:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02BC4207BC
+	for <linux-security-module@archiver.kernel.org>; Tue, 25 Aug 2020 15:40:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jLnUNSiR"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="gs1qaOpX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726096AbgHYOKd (ORCPT
+        id S1726570AbgHYPkm (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 25 Aug 2020 10:10:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58854 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725947AbgHYOK3 (ORCPT
+        Tue, 25 Aug 2020 11:40:42 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:45510 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725998AbgHYPkl (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 25 Aug 2020 10:10:29 -0400
-Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BAD1C061574
-        for <linux-security-module@vger.kernel.org>; Tue, 25 Aug 2020 07:10:29 -0700 (PDT)
-Received: by mail-ej1-x643.google.com with SMTP id o18so16728433eje.7
-        for <linux-security-module@vger.kernel.org>; Tue, 25 Aug 2020 07:10:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=KBFZttGfteQiG/F6m1JwLuRmWwiLtOn1NGTSQxlL0R8=;
-        b=jLnUNSiRkVPmazSgOpBGGkBIFbQgn3SubSGBtfI3udYnQF9YnvGbPLGw/Bg6gNQG51
-         2HwfjMpqoLNbtQmB1chriB3Xc8+RWCRJunAgmt/FWga/wQK351I3xuMzc9ungM1zD6Tt
-         VRfW5hS51m8ANRTTusv4bV+aPInEeBnWiAcyo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=KBFZttGfteQiG/F6m1JwLuRmWwiLtOn1NGTSQxlL0R8=;
-        b=Xtqri9kvJ7/3JM7hG8A4kNXvk9Tg7LuDu2NdinOfmA34GiaGCt0ud2boujM9icHpgV
-         F4+uHZyuIPY9vJ0WQcyoUbY2/xG6kOxLgsrqS+rs6WFLY9Oo0a/Q+E9oQ/1V1rBakSLN
-         QUuuNZmEz06X1XhWIK+SxZmK5FRlmUwaFSzmyVRJocGhvAz/hkLnzUScLmKpK4y3lXL9
-         JavR53aap6zkOtzBFQmZXFmDlFDuCu3AkxM24ZKeOWjTEONjSVGdbF/hfeLV1B872rl5
-         94FQhd732Ll+icpBs9jMS/miTj/6G8u+fNiT769OCO6Q4jSwj6cU6gpa5Or3C2Bqv0NM
-         F+jQ==
-X-Gm-Message-State: AOAM531Sl7BdVHqwlLb4XbGgZuHdKHJOUHgRAGAfCMn5WXQWH3WdHEa4
-        qoXWiM8v8GaNTixAWCmUdx/0Vg==
-X-Google-Smtp-Source: ABdhPJxq6mmRIKDhAU5ShGteau34Y08h7aVZadX+431P5t07HDWQQ3Kk0Yx+B6hDuJMw7xniEin/hA==
-X-Received: by 2002:a17:906:553:: with SMTP id k19mr11039230eja.401.1598364627531;
-        Tue, 25 Aug 2020 07:10:27 -0700 (PDT)
-Received: from [192.168.2.66] ([81.6.44.51])
-        by smtp.gmail.com with ESMTPSA id dj16sm7658961edb.5.2020.08.25.07.10.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Aug 2020 07:10:27 -0700 (PDT)
-Subject: Re: [PATCH bpf-next v9 5/7] bpf: Implement bpf_local_storage for
- inodes
-To:     Martin KaFai Lau <kafai@fb.com>
-Cc:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
-        Florent Revest <revest@chromium.org>
-References: <20200823165612.404892-1-kpsingh@chromium.org>
- <20200823165612.404892-6-kpsingh@chromium.org>
- <20200825005249.tu4c54fg36jt3rh4@kafai-mbp.dhcp.thefacebook.com>
-From:   KP Singh <kpsingh@chromium.org>
-Message-ID: <8d188285-96f5-3b17-126f-5e842702e339@chromium.org>
-Date:   Tue, 25 Aug 2020 16:10:26 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.11.0
-MIME-Version: 1.0
-In-Reply-To: <20200825005249.tu4c54fg36jt3rh4@kafai-mbp.dhcp.thefacebook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Tue, 25 Aug 2020 11:40:41 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 07PFXQ0U074972;
+        Tue, 25 Aug 2020 11:40:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=yMwbzI8DRQBhwKsLR3tDH4EBDq3DYbqddm2fcfs2stY=;
+ b=gs1qaOpXwCoRLJYPUasHUPKNgeEvBc4nTuoqTkYPYQO8GQjZVfgakx1Ib3gRzaSAfBQB
+ /AXw62eFumZHayBlTIdPNx/igqu7rCeVQg0Jy0cLd9e6YRFvcFiM6Nm3mwyHcF2lVdYc
+ rldfMcWLygj64pVKliErC6nLdTuSeOG3Rv/iPyrJ2B29yhNwBa8gNzelpWTrJUaUr0kq
+ Fl+hyzHabMdd8GNUfYzyP/WOdGETjAU3uET2xvZXrOLkQPJ/gKxl/F7bAbMxZDZA6Y7V
+ u9iSXMBVMXwCbvWKrh0ZRxESxZUbedm0LRE/92F9X3txd++53gnxo4EXrErEEIA5b8Wj ew== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3355bh0ef1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 25 Aug 2020 11:40:35 -0400
+Received: from m0098410.ppops.net (m0098410.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 07PFXewI076532;
+        Tue, 25 Aug 2020 11:40:35 -0400
+Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3355bh0ee2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 25 Aug 2020 11:40:34 -0400
+Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
+        by ppma04ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 07PFSBnS003009;
+        Tue, 25 Aug 2020 15:40:32 GMT
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
+        by ppma04ams.nl.ibm.com with ESMTP id 33498u9gxj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 25 Aug 2020 15:40:32 +0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 07PFeTCg24576316
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 25 Aug 2020 15:40:30 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D66AEA405B;
+        Tue, 25 Aug 2020 15:40:29 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8EEF7A4065;
+        Tue, 25 Aug 2020 15:40:27 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.103.4])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 25 Aug 2020 15:40:27 +0000 (GMT)
+Message-ID: <a7ea2da1f895ee3db4697c00804160acb6db656e.camel@linux.ibm.com>
+Subject: Re: [PATCH] IMA: Handle early boot data measurement
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        stephen.smalley.work@gmail.com, casey@schaufler-ca.com
+Cc:     tyhicks@linux.microsoft.com, tusharsu@linux.microsoft.com,
+        sashal@kernel.org, jmorris@namei.org,
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Tue, 25 Aug 2020 11:40:26 -0400
+In-Reply-To: <20200821231230.20212-1-nramas@linux.microsoft.com>
+References: <20200821231230.20212-1-nramas@linux.microsoft.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-08-25_05:2020-08-25,2020-08-25 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
+ mlxscore=0 mlxlogscore=931 bulkscore=0 lowpriorityscore=0 impostorscore=0
+ priorityscore=1501 adultscore=0 malwarescore=0 spamscore=0 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
+ definitions=main-2008250114
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-
-On 8/25/20 2:52 AM, Martin KaFai Lau wrote:
-> On Sun, Aug 23, 2020 at 06:56:10PM +0200, KP Singh wrote:
->> From: KP Singh <kpsingh@google.com>
->>
->> Similar to bpf_local_storage for sockets, add local storage for inodes.
->> The life-cycle of storage is managed with the life-cycle of the inode.
->> i.e. the storage is destroyed along with the owning inode.
->>
->> The BPF LSM allocates an __rcu pointer to the bpf_local_storage in the
->> security blob which are now stackable and can co-exist with other LSMs.
->>
-> [ ... ]
+On Fri, 2020-08-21 at 16:12 -0700, Lakshmi Ramasubramanian wrote:
+> The current implementation of early boot measurement in
+> the IMA subsystem is very specific to asymmetric keys. It does not
+> handle early boot measurement of data from other subsystems such as
+> Linux Security Module (LSM), Device-Mapper, etc. As a result data,
+> provided by these subsystems during system boot are not measured by IMA.
 > 
->> diff --git a/kernel/bpf/bpf_inode_storage.c b/kernel/bpf/bpf_inode_storage.c
->> new file mode 100644
->> index 000000000000..b0b283c224c1
->> --- /dev/null
->> +++ b/kernel/bpf/bpf_inode_storage.c
-
-[...]
-
->> +
->> +DEFINE_BPF_STORAGE_CACHE(inode_cache);
->> +
->> +static struct bpf_local_storage __rcu **
->> +inode_storage_ptr(void *owner)
->> +{
->> +	struct inode *inode = owner;
->> +	struct bpf_storage_blob *bsb;
->> +
->> +	bsb = bpf_inode(inode);
->> +	if (!bsb)
->> +		return NULL;
-> just noticed this one.  NULL could be returned here.  When will it happen?
-
-This can happen if CONFIG_BPF_LSM is enabled but "bpf" is not in the list of
-active LSMs.
-
+> Update the early boot key measurement to handle any early boot data.
+> Refactor the code from ima_queue_keys.c to a new file ima_queue_data.c.
+> Rename the kernel configuration CONFIG_IMA_QUEUE_EARLY_BOOT_KEYS to
+> CONFIG_IMA_QUEUE_EARLY_BOOT_DATA so it can be used for enabling any
+> early boot data measurement. Since measurement of asymmetric keys is
+> the first consumer of early boot measurement, this kernel configuration
+> is enabled if IMA_MEASURE_ASYMMETRIC_KEYS and SYSTEM_TRUSTED_KEYRING are
+> both enabled.
 > 
->> +	return &bsb->storage;
->> +}
->> +
->> +static struct bpf_local_storage_data *inode_storage_lookup(struct inode *inode,
->> +							   struct bpf_map *map,
->> +							   bool cacheit_lockit)
->> +{
+> Update the IMA hook ima_measure_critical_data() to utilize early boot
+> measurement support.
 
-[...]
+Please limit the changes in this patch to renaming the functions and/or
+files.  For example, adding "measure_payload_hash" should be a separate
+patch, not hidden here.
 
-> path first before calling the bpf_local_storage_update() since
-> this case is specific to inode local storage.
-> 
-> Same for the other bpf_local_storage_update() cases.
+Mimi
 
-If you're okay with this I can send a new series with the following updates.
-
-diff --git a/kernel/bpf/bpf_inode_storage.c b/kernel/bpf/bpf_inode_storage.c
-index b0b283c224c1..74546cee814d 100644
---- a/kernel/bpf/bpf_inode_storage.c
-+++ b/kernel/bpf/bpf_inode_storage.c
-@@ -125,7 +125,7 @@ static int bpf_fd_inode_storage_update_elem(struct bpf_map *map, void *key,
- 
-        fd = *(int *)key;
-        f = fget_raw(fd);
--       if (!f)
-+       if (!f || !inode_storage_ptr(f->f_inode))
-                return -EBADF;
- 
-        sdata = bpf_local_storage_update(f->f_inode,
-@@ -171,6 +171,14 @@ BPF_CALL_4(bpf_inode_storage_get, struct bpf_map *, map, struct inode *, inode,
-        if (flags & ~(BPF_LOCAL_STORAGE_GET_F_CREATE))
-                return (unsigned long)NULL;
- 
-+       /* explicitly check that the inode_storage_ptr is not
-+        * NULL as inode_storage_lookup returns NULL in this case and
-+        * and bpf_local_storage_update expects the owner to have a
-+        * valid storage pointer.
-+        */
-+       if (!inode_storage_ptr(inode))
-+               return (unsigned long)NULL;
-+
-        sdata = inode_storage_lookup(inode, map, true);
-        if (sdata)
-                return (unsigned long)sdata->data;
-
-
-> 
->> +					 (struct bpf_local_storage_map *)map,
->> +					 value, map_flags);
->> +	fput(f);
->> +	return PTR_ERR_OR_ZERO(sdata);
->> +}
->> +
-> 
-
-[...]
-
->> +	return (unsigned long)NULL;
->> +}
->> +
-> 
->> diff --git a/security/bpf/hooks.c b/security/bpf/hooks.c
->> index 32d32d485451..35f9b19259e5 100644
->> --- a/security/bpf/hooks.c
->> +++ b/security/bpf/hooks.c
->> @@ -3,6 +3,7 @@
->>  /*
->>   * Copyright (C) 2020 Google LLC.
->>   */
->> +#include <linux/bpf_local_storage.h>
-> Is it needed?
-
-No. Removed. Thanks!
-
-> 
->>  #include <linux/lsm_hooks.h>
->>  #include <linux/bpf_lsm.h>
->>  
->> @@ -11,6 +12,7 @@ static struct security_hook_list bpf_lsm_hooks[] __lsm_ro_after_init = {
->>  	LSM_HOOK_INIT(NAME, bpf_lsm_##NAME),
-
-[...]
-
->> +	.blobs = &bpf_lsm_blob_sizes
->>  };
