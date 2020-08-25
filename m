@@ -2,94 +2,225 @@ Return-Path: <SRS0=UPXR=CD=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6321FC433DF
-	for <linux-security-module@archiver.kernel.org>; Tue, 25 Aug 2020 15:47:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1DC5C433DF
+	for <linux-security-module@archiver.kernel.org>; Tue, 25 Aug 2020 16:44:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 338B2207D3
-	for <linux-security-module@archiver.kernel.org>; Tue, 25 Aug 2020 15:47:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8ABD420706
+	for <linux-security-module@archiver.kernel.org>; Tue, 25 Aug 2020 16:44:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="mSj8+R+H"
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="n3XzR9wj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727034AbgHYPq7 (ORCPT
+        id S1726257AbgHYQoX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 25 Aug 2020 11:46:59 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:41560 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727011AbgHYPq5 (ORCPT
+        Tue, 25 Aug 2020 12:44:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54548 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725805AbgHYQoX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 25 Aug 2020 11:46:57 -0400
-Received: from [192.168.0.104] (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
-        by linux.microsoft.com (Postfix) with ESMTPSA id B6F5220B4908;
-        Tue, 25 Aug 2020 08:46:55 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B6F5220B4908
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1598370415;
-        bh=cG0PU1AiCXqIk4eMHJUWBNM5pgMeFVP8Pc2YAFUO1Lo=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=mSj8+R+HyTWTccdCmaX3nwvs/qC1Imig3edjrJgu4HulycBCUbGm+F3HHf/nae1yY
-         IHq+ic0DuDVeei+Ezy6lmnMP89du0Dok1QeKMez78ncPIJYfxf3WGtCc88IlTa4RAE
-         /IzxlHbvHQp02qxCLmLTQfN2YaXczm/r9xcZei0g=
-Subject: Re: [PATCH] IMA: Handle early boot data measurement
-To:     Mimi Zohar <zohar@linux.ibm.com>, stephen.smalley.work@gmail.com,
-        casey@schaufler-ca.com
-Cc:     tyhicks@linux.microsoft.com, tusharsu@linux.microsoft.com,
-        sashal@kernel.org, jmorris@namei.org,
-        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200821231230.20212-1-nramas@linux.microsoft.com>
- <a7ea2da1f895ee3db4697c00804160acb6db656e.camel@linux.ibm.com>
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Message-ID: <307617de-b42d-ac52-6e9e-9e0d16bbc20e@linux.microsoft.com>
-Date:   Tue, 25 Aug 2020 08:46:55 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Tue, 25 Aug 2020 12:44:23 -0400
+Received: from mail.skyhub.de (mail.skyhub.de [IPv6:2a01:4f8:190:11c2::b:1457])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 209CFC061574;
+        Tue, 25 Aug 2020 09:44:23 -0700 (PDT)
+Received: from zn.tnic (p200300ec2f0c5a009557515e5e730b1a.dip0.t-ipconnect.de [IPv6:2003:ec:2f0c:5a00:9557:515e:5e73:b1a])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0475A1EC02F2;
+        Tue, 25 Aug 2020 18:44:16 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1598373856;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=UbGRBBMOM4Q+XbRJRW9yoJJWM1PqXnrPAdAFhJ8j8HI=;
+        b=n3XzR9wjuhdBeQAChl71tjSERzGHM/7ChjhMLTpdK0tjwwXSW7ZSaBUPzhMRAF+t37OVsZ
+        pbqX76gRFEZlONdkGnDHJVQfVFuGc1kZk8gG7HHsXP6hHxdTwG1ycidTBcirjy3HJJ4zkB
+        FDspO26JvSPEAuNQvaEZcICBzHoID2c=
+Date:   Tue, 25 Aug 2020 18:44:12 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Chunyang Hui <sanqian.hcy@antfin.com>,
+        Jordan Hand <jorhand@linux.microsoft.com>,
+        Nathaniel McCallum <npmccallum@redhat.com>,
+        Seth Moore <sethmo@google.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        andriy.shevchenko@linux.intel.com, asapek@google.com,
+        cedric.xing@intel.com, chenalexchen@google.com,
+        conradparker@google.com, cyhanish@google.com,
+        dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, luto@kernel.org,
+        nhorman@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
+        tglx@linutronix.de, yaozhangx@google.com
+Subject: Re: [PATCH v36 11/24] x86/sgx: Add SGX enclave driver
+Message-ID: <20200825164412.GF12107@zn.tnic>
+References: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
+ <20200716135303.276442-12-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <a7ea2da1f895ee3db4697c00804160acb6db656e.camel@linux.ibm.com>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200716135303.276442-12-jarkko.sakkinen@linux.intel.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 8/25/20 8:40 AM, Mimi Zohar wrote:
-> On Fri, 2020-08-21 at 16:12 -0700, Lakshmi Ramasubramanian wrote:
->> The current implementation of early boot measurement in
->> the IMA subsystem is very specific to asymmetric keys. It does not
->> handle early boot measurement of data from other subsystems such as
->> Linux Security Module (LSM), Device-Mapper, etc. As a result data,
->> provided by these subsystems during system boot are not measured by IMA.
->>
->> Update the early boot key measurement to handle any early boot data.
->> Refactor the code from ima_queue_keys.c to a new file ima_queue_data.c.
->> Rename the kernel configuration CONFIG_IMA_QUEUE_EARLY_BOOT_KEYS to
->> CONFIG_IMA_QUEUE_EARLY_BOOT_DATA so it can be used for enabling any
->> early boot data measurement. Since measurement of asymmetric keys is
->> the first consumer of early boot measurement, this kernel configuration
->> is enabled if IMA_MEASURE_ASYMMETRIC_KEYS and SYSTEM_TRUSTED_KEYRING are
->> both enabled.
->>
->> Update the IMA hook ima_measure_critical_data() to utilize early boot
->> measurement support.
-> 
-> Please limit the changes in this patch to renaming the functions and/or
-> files.  For example, adding "measure_payload_hash" should be a separate
-> patch, not hidden here.
-> 
+On Thu, Jul 16, 2020 at 04:52:50PM +0300, Jarkko Sakkinen wrote:
 
-Thanks for the feedback Mimi.
+Just minor things below - I'm not even going to pretend I fully
+understand what's going on but FWICT, it looks non-threateningly ok to
+me.
 
-I'll split this into 2 patches:
+> diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/driver.c
+> new file mode 100644
+> index 000000000000..b52520407f5b
+> --- /dev/null
+> +++ b/arch/x86/kernel/cpu/sgx/driver.c
+> @@ -0,0 +1,177 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+> +// Copyright(c) 2016-18 Intel Corporation.
+> +
+> +#include <linux/acpi.h>
+> +#include <linux/miscdevice.h>
+> +#include <linux/mman.h>
+> +#include <linux/security.h>
+> +#include <linux/suspend.h>
+> +#include <asm/traps.h>
+> +#include "driver.h"
+> +#include "encl.h"
+> +
+> +MODULE_DESCRIPTION("Intel SGX Enclave Driver");
+> +MODULE_AUTHOR("Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>");
+> +MODULE_LICENSE("Dual BSD/GPL");
 
-PATCH 1: Rename files + rename CONFIG
-PATCH 2: Update IMA hook to utilize early boot data measurement.
+That boilerplate stuff usually goes to the end of the file.
 
-  -lakshmi
+...
 
+> +static struct sgx_encl_page *sgx_encl_load_page(struct sgx_encl *encl,
+> +						unsigned long addr)
+> +{
+> +	struct sgx_encl_page *entry;
+> +	unsigned int flags;
+> +
+> +	/* If process was forked, VMA is still there but vm_private_data is set
+> +	 * to NULL.
+> +	 */
+> +	if (!encl)
+> +		return ERR_PTR(-EFAULT);
+> +
+> +	flags = atomic_read(&encl->flags);
+> +
 
+^ Superfluous newline.
 
+> +	if ((flags & SGX_ENCL_DEAD) || !(flags & SGX_ENCL_INITIALIZED))
+> +		return ERR_PTR(-EFAULT);
+> +
+> +	entry = xa_load(&encl->page_array, PFN_DOWN(addr));
+> +	if (!entry)
+> +		return ERR_PTR(-EFAULT);
+> +
+> +	/* Page is already resident in the EPC. */
+> +	if (entry->epc_page)
+> +		return entry;
+> +
+> +	return ERR_PTR(-EFAULT);
+> +}
+> +
+> +static void sgx_mmu_notifier_release(struct mmu_notifier *mn,
+> +				     struct mm_struct *mm)
+> +{
+> +	struct sgx_encl_mm *encl_mm =
+> +		container_of(mn, struct sgx_encl_mm, mmu_notifier);
+
+Just let it stick out.
+
+> +	struct sgx_encl_mm *tmp = NULL;
+> +
+> +	/*
+> +	 * The enclave itself can remove encl_mm.  Note, objects can't be moved
+> +	 * off an RCU protected list, but deletion is ok.
+> +	 */
+> +	spin_lock(&encl_mm->encl->mm_lock);
+> +	list_for_each_entry(tmp, &encl_mm->encl->mm_list, list) {
+> +		if (tmp == encl_mm) {
+> +			list_del_rcu(&encl_mm->list);
+> +			break;
+> +		}
+> +	}
+> +	spin_unlock(&encl_mm->encl->mm_lock);
+> +
+> +	if (tmp == encl_mm) {
+> +		synchronize_srcu(&encl_mm->encl->srcu);
+> +		mmu_notifier_put(mn);
+> +	}
+> +}
+> +
+> +static void sgx_mmu_notifier_free(struct mmu_notifier *mn)
+> +{
+> +	struct sgx_encl_mm *encl_mm =
+> +		container_of(mn, struct sgx_encl_mm, mmu_notifier);
+
+Ditto.
+
+...
+
+> +/**
+> + * sgx_encl_may_map() - Check if a requested VMA mapping is allowed
+> + * @encl:		an enclave
+> + * @start:		lower bound of the address range, inclusive
+> + * @end:		upper bound of the address range, exclusive
+> + * @vm_prot_bits:	requested protections of the address range
+> + *
+> + * Iterate through the enclave pages contained within [@start, @end) to verify
+> + * the permissions requested by @vm_prot_bits do not exceed that of any enclave
+> + * page to be mapped.
+> + *
+> + * Return:
+> + *   0 on success,
+> + *   -EACCES if VMA permissions exceed enclave page permissions
+> + */
+> +int sgx_encl_may_map(struct sgx_encl *encl, unsigned long start,
+> +		     unsigned long end, unsigned long vm_flags)
+> +{
+> +	unsigned long vm_prot_bits = vm_flags & (VM_READ | VM_WRITE | VM_EXEC);
+> +	unsigned long idx_start = PFN_DOWN(start);
+> +	unsigned long idx_end = PFN_DOWN(end - 1);
+> +	struct sgx_encl_page *page;
+> +	XA_STATE(xas, &encl->page_array, idx_start);
+> +
+> +	/*
+> +	 * Disallow RIE tasks as their VMA permissions might conflict with the
+
+"RIE", hmm what is that?
+
+/me looks at the test
+
+Aaah, READ_IMPLIES_EXEC. Is "RIE" some widely accepted acronym I'm not
+aware of?
+
+> +	 * enclave page permissions.
+> +	 */
+> +	if (!!(current->personality & READ_IMPLIES_EXEC))
+
+The "!!" is not really needed - you're in boolean context.
+
+...
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
