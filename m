@@ -2,91 +2,169 @@ Return-Path: <SRS0=FUAt=CE=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CF7BC433E1
-	for <linux-security-module@archiver.kernel.org>; Wed, 26 Aug 2020 15:27:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DF9EC433E1
+	for <linux-security-module@archiver.kernel.org>; Wed, 26 Aug 2020 15:58:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 17CA722B3F
-	for <linux-security-module@archiver.kernel.org>; Wed, 26 Aug 2020 15:27:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 147982078D
+	for <linux-security-module@archiver.kernel.org>; Wed, 26 Aug 2020 15:58:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="kGz04hp8"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ANtUBcFP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727927AbgHZP1H (ORCPT
+        id S1727970AbgHZP57 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 26 Aug 2020 11:27:07 -0400
-Received: from sonic310-30.consmr.mail.ne1.yahoo.com ([66.163.186.211]:37454
-        "EHLO sonic310-30.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727053AbgHZP1G (ORCPT
+        Wed, 26 Aug 2020 11:57:59 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:13026 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727882AbgHZP54 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 26 Aug 2020 11:27:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1598455626; bh=5Y1Avt2lYh1VGgnMFZIY8U8V0ORICnB+F3ZB/kSXHoM=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=kGz04hp8+jvfPSNe8xtmUL1eh+Rj8XGk6HvlDSh1uuJ8U7X0BhOPaUQlcmoxpFOWju+qZcUTF/VTFIBkdWLovAkncOGZRveLdyc+IR3QoTlFZLqLSxPORg2It+BYWlGFqNF6Du+nJ2wGGLWrwppAL016Ii/bWbKRRiTc0/1LSbTMyt3tRtfpM6mXfQDQOme036SoyRjdULZYgUCryyicZ0ZLnbRNekzHtYVfS82tEd9HMxQ6yMN3G/r6X/1aFTmSgiNO8h3fcz88V3RyFe3QIruR14zRjDXqk9htuSyJDgLiQiJRmpPsCwXVHV6EheYNt/5jRT5FEAXWOq1k6qgJwA==
-X-YMail-OSG: _pJE7_sVM1meXA56Bcfg0IRYuoeU8IJfqss204jAi6XC3SF_q191.SFiNAxrpXB
- Zzc.gA5rTCGN.jemSXx4gI.LSrqxJuIk_vjAfn5tmJPOyTkXZ5g.WQiSmlKhT4QStmxhntwy5ZJ0
- NWIRQZpjLfnvTU4m4qjYgDy35IXyPPqr.5TlSd86C2USJLBP7kUH857fC8E_C3hpha1SWXiCu8Kh
- x0byvjMXuJiD6t4Plr4CLXYWPa8_8FvGX7ChMvKRPZDoa3vz_i3eJsdRrCGi1n.zACrpHimqj1O5
- i3CHPQK6M2w2_KNPTASde9fblfshj1xPK0en9_XEuFo6H2ngi_UdlrgdcZpFvuVwZGhAxBdkfVcf
- hYTwv4VJkXH0jIKXiLenlVGImmI2dBY2mSCRk8WjIXX4QLtmK5QmVQyB8Ngzd0279cmqyTDBAhEX
- uajQdgoX4kqYMwxrPICgdV2wntoxB.GdboySV48.Crac5vNRJucJcNlbHK7a6zXJY39tAkPOC8sK
- f0h_sMmqdDf5dNkghNtJehwAxXdXzmH7_cxAoA2mOQIimoGmtT3zdMozEqWRskNAghoqF8y2WzA_
- I9ZyQTrfx_jZxKgQClHi1p353yh3QYIo5Knb1njt6bwhMUv5OLC9YW7Xewbjbg2SlC0V1DKxgccf
- PwlMyQUOdBFs0Kc4dk5j72ZYRfBsK_iOF9D01AmkHB9oTquCCk8JkYGMFjroexU1znnqjCVrt8K1
- qs52tkltqnaRpg0rqV2D6vqDWj_m8gG_GogRCUb2vtOy6pZEjkGCR3mimMT2jsD.vKPq6J2iiCae
- i2QtT2hItiFatGXBujwDYUJqQOpSpkUURPo2FLdBQUG0FwhuXXmLrB4k4s7jNPFToQnzukSNhe6k
- iBCRRp77atw8yjLy3lQPDRrYFVr_y2RhWII0_y4HN_sBQsZOO6rf8cESYN0zKH0r6.f2A8IHduIA
- KZqa4PZcq67Ix1unR0yit360dAC6cV2.x7HrW4r4gq4YSpKRbvxnVQlB8pwcXbaqfKRS2rFRHJqv
- vbR1M.ESsfk0m1z.1LL6DX7sxUmb1yZuHCXm0lKqEoYvcps114OMxQ11s1Pn50ANfWSGslelkDWJ
- byGU_I9QtmGNGrk4OXFVTj5ol1Ct0iGXV01PP6OJdtxel0.HGGjSyTXOUDhzdvokwC.dTaIITaX2
- PbsaAESUwCVQ5lY_dS.EABdVvGFeWoGVwZ8FrQ8.opszNqZenUb9sNZ75C8syaLMBFMftV1NqJFQ
- AIX6ovvFjCrEIvk8z4WnV7ocADyEWvcxp0QLJlTJ.OLU_Brj2C8X1gFnCVfG_km.yXsmIh1FXouT
- W1eQ7ROig4ltNHNC6PLuA_A4wHv1kKhussqWbWJI1IID9EVJ245zdLTXZyQO8pdkD9DZFRY8e4RT
- ipkRh5GQ58po.IUwViwy2FzNSBR3uKDp7ltsVc2JWEZMVH6K_ehp_Ys4qo731PW4QUjtDhrVgpKl
- o95aeNB2qdHE56de_Bj1tFIsUfvIqySPAfLHPjREhSg.PvtbCRwewFQN6NcapDKwXkxCXhL9jUaK
- 7ZUSW7Hg6nJEtI7YbctwJtA--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.ne1.yahoo.com with HTTP; Wed, 26 Aug 2020 15:27:06 +0000
-Received: by smtp415.mail.bf1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID b5b563c2696ac3f378a8a1ac18efa795;
-          Wed, 26 Aug 2020 15:27:03 +0000 (UTC)
-Subject: Re: [PATCH v20 00/23] LSM: Module stacking for AppArmor
-To:     casey.schaufler@intel.com, jmorris@namei.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Cc:     linux-audit@redhat.com, keescook@chromium.org,
-        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-        paul@paul-moore.com, sds@tycho.nsa.gov,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <20200826145247.10029-1-casey.ref@schaufler-ca.com>
- <20200826145247.10029-1-casey@schaufler-ca.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <a4c67f8e-66d4-2c35-0640-9a75fa15cc4c@schaufler-ca.com>
-Date:   Wed, 26 Aug 2020 08:27:01 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.11.0
+        Wed, 26 Aug 2020 11:57:56 -0400
+Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 07QFW2UE189368;
+        Wed, 26 Aug 2020 11:57:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=HccGIv1kXZpAh+2ptA3ZwBl+YCt3qQZHYAt/DHYIo6A=;
+ b=ANtUBcFPSlnyCBhe5XzhRefOY2CgJjUqIOmxh1eIBlq0ufnA9irIv25sJwTzxLxVs4p6
+ C0HUMNg7YT8OzXYjH5hIeUu/5kiVVPv4P3U3s9g1YYkVPhkLsbGnmhKXeNamTTYZ3+yy
+ I3kaShD2c3D67HVwlSDeTlPyRNX+noqw9Zc9kqrsvjOPRppGshX74HTFT5RTBSwnkTYy
+ dZFQIrHOO/Kl3gRRd+uW946QfWb9U3SjWwc91o7JuimsHddlbM5xvNygwBK+sX8GIRNy
+ Kcl+Eo386LY5WQvXv/iU2gA/3W0PWt6RNsjdyQhFNLpBjsmaWT0SCZelxQwa5dpgsULv qA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 335t9v8x77-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 26 Aug 2020 11:57:49 -0400
+Received: from m0187473.ppops.net (m0187473.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 07QFW54D189756;
+        Wed, 26 Aug 2020 11:57:48 -0400
+Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 335t9v8x5r-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 26 Aug 2020 11:57:48 -0400
+Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
+        by ppma02dal.us.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 07QFVqnL020411;
+        Wed, 26 Aug 2020 15:57:46 GMT
+Received: from b01cxnp23033.gho.pok.ibm.com (b01cxnp23033.gho.pok.ibm.com [9.57.198.28])
+        by ppma02dal.us.ibm.com with ESMTP id 335kvcbp2q-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 26 Aug 2020 15:57:46 +0000
+Received: from b01ledav002.gho.pok.ibm.com (b01ledav002.gho.pok.ibm.com [9.57.199.107])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 07QFvjWl56099296
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 26 Aug 2020 15:57:45 GMT
+Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9E942124055;
+        Wed, 26 Aug 2020 15:57:45 +0000 (GMT)
+Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AB9CD124052;
+        Wed, 26 Aug 2020 15:57:44 +0000 (GMT)
+Received: from swastik.ibm.com (unknown [9.160.97.86])
+        by b01ledav002.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 26 Aug 2020 15:57:44 +0000 (GMT)
+Subject: Re: [PATCH v2 0/2] ima: Fix keyrings race condition and other key
+ related bugs
+To:     Tyler Hicks <tyhicks@linux.microsoft.com>,
+        Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Tushar Sugandhi <tusharsu@linux.microsoft.com>,
+        Nayna Jain <nayna@linux.ibm.com>, linux-kernel@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+References: <20200811192621.281675-1-tyhicks@linux.microsoft.com>
+From:   Nayna <nayna@linux.vnet.ibm.com>
+Message-ID: <48c98a62-01f0-825b-7648-7d8fa9f13b40@linux.vnet.ibm.com>
+Date:   Wed, 26 Aug 2020 11:57:44 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20200826145247.10029-1-casey@schaufler-ca.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20200811192621.281675-1-tyhicks@linux.microsoft.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-X-Mailer: WebService/1.1.16455 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo Apache-HttpAsyncClient/4.1.4 (Java/11.0.7)
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-08-26_09:2020-08-26,2020-08-26 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ priorityscore=1501 lowpriorityscore=0 malwarescore=0 phishscore=0
+ mlxscore=0 clxscore=1015 bulkscore=0 impostorscore=0 suspectscore=0
+ adultscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2006250000 definitions=main-2008260114
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 8/26/2020 7:52 AM, Casey Schaufler wrote:
-> This patchset provides the changes required for
-> the AppArmor security module to stack safely with any other.
->
-> v20: Rebase to 5.9-rc1
->      Change the BPF security module to use the lsmblob data. (patch 0002)
->      Repair length logic in subject label processing (patch 0015)
->      Handle -EINVAL from the empty BPF setprocattr hook (patch 0020)
->      Correct length processing in append_ctx() (patch 0022)
-> ...
->
-> https://github.com/cschaufler/lsm-stacking.git#stack-5.8-rc6-a-v19
 
-https://github.com/cschaufler/lsm-stacking.git#stack-5.9-rc1-v20
+On 8/11/20 3:26 PM, Tyler Hicks wrote:
+> v2:
+>   - Always return an ERR_PTR from ima_alloc_rule_opt_list() (Nayna)
+>   - Add Lakshmi's Reviewed-by to both patches
+>   - Rebased on commit 3db0d0c276a7 ("integrity: remove redundant
+>     initialization of variable ret") of next-integrity
+> v1: https://lore.kernel.org/lkml/20200727140831.64251-1-tyhicks@linux.microsoft.com/
+>
+> Nayna pointed out that the "keyrings=" option in an IMA policy rule
+> should only be accepted when CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS is
+> enabled:
+>
+>   https://lore.kernel.org/linux-integrity/336cc947-1f70-0286-6506-6df3d1d23a1d@linux.vnet.ibm.com/
+>
+> While fixing this, the compiler warned me about the potential for the
+> ima_keyrings pointer to be NULL despite it being used, without a check
+> for NULL, as the destination address for the strcpy() in
+> ima_match_keyring().
+>
+> It also became apparent that there was not adequate locking around the
+> use of the pre-allocated buffer that ima_keyrings points to. The kernel
+> keyring has a lock (.sem member of struct key) that ensures only one key
+> can be added to a given keyring at a time but there's no protection
+> against adding multiple keys to different keyrings at the same time.
+>
+> The first patch in this series fixes both ima_keyrings related issues by
+> parsing the list of keyrings in a KEY_CHECK rule at policy load time
+> rather than deferring the parsing to policy check time. Once that fix is
+> in place, the second patch can enforce that
+> CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS must be enabled in order to use
+> "func=KEY_CHECK" or "keyrings=" options in IMA policy.
+>
+> The new "keyrings=" value handling is done in a generic manner that can
+> be reused by other options in the future. This seems to make sense as
+> "appraise_type=" has similar style (though it doesn't need to be fully
+> parsed at this time) and using "|" as an alternation delimiter is
+> becoming the norm in IMA policy.
+>
+> This series is based on commit 311aa6aafea4 ("ima: move
+> APPRAISE_BOOTPARAM dependency on ARCH_POLICY to runtime") in
+> next-integrity.
+>
+> Tyler
+>
+> Tyler Hicks (2):
+>    ima: Pre-parse the list of keyrings in a KEY_CHECK rule
+>    ima: Fail rule parsing when asymmetric key measurement isn't
+>      supportable
+>
+>   security/integrity/ima/ima_policy.c | 142 +++++++++++++++++++---------
+>   1 file changed, 96 insertions(+), 46 deletions(-)
+>
 
-Sorry about the old URL.
+Sorry for delay in responding.
+
+The patches look good. Feel free to add my tag
+
+Reviewed-by: Nayna Jain <nayna@linux.ibm.com>
+
+Thanks & Regards,
+
+     - Nayna
+
+
+
 
