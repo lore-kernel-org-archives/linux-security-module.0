@@ -2,348 +2,100 @@ Return-Path: <SRS0=FUAt=CE=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.4 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+X-Spam-Status: No, score=-4.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 622F5C433E3
-	for <linux-security-module@archiver.kernel.org>; Wed, 26 Aug 2020 00:25:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4831C433E1
+	for <linux-security-module@archiver.kernel.org>; Wed, 26 Aug 2020 03:45:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 30BAF20782
-	for <linux-security-module@archiver.kernel.org>; Wed, 26 Aug 2020 00:25:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA93020719
+	for <linux-security-module@archiver.kernel.org>; Wed, 26 Aug 2020 03:45:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ib56OhRs"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jPzaJJQN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726627AbgHZAZy (ORCPT
+        id S1726759AbgHZDpF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 25 Aug 2020 20:25:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41330 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726633AbgHZAZr (ORCPT
+        Tue, 25 Aug 2020 23:45:05 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:29137 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726682AbgHZDpF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 25 Aug 2020 20:25:47 -0400
-Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AA2BC061757
-        for <linux-security-module@vger.kernel.org>; Tue, 25 Aug 2020 17:25:47 -0700 (PDT)
-Received: by mail-il1-x143.google.com with SMTP id q14so317805ilj.8
-        for <linux-security-module@vger.kernel.org>; Tue, 25 Aug 2020 17:25:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=K/dyzKl2KNDp/r+WfnPynkuztX4WyPxO01OxIzOPsJ4=;
-        b=ib56OhRsrZHqLngBOX7WcYBi5OVWlsUTXEhNLYmH95tp2zLJU9SZi0F14WkOZEjSdB
-         YL2vv1mZMvs631kK8DIkddhpnGpvHWXwJk0/SBy3PK4mFkBHOvSblRdP3JfRalaXmeEA
-         4jLU442pDRP82Tk0CxZaZ1vz3Dtyngw09LHmYEsteHyGGxdUgG81gN1fRytCwmXFqjDQ
-         YBb0+wUGqKkZJxxuVGUtFC1UQBso067BO/zLJGx/f9XL3tCZGgrDP0e0H+8rzrdaz1SQ
-         2q/TdyDbZAOh/ErdLcMitEGi8Y74Qwl1jaWKm/GtYZ7PZj4Q5K+kqqUQdIESC6PttW5e
-         YoAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=K/dyzKl2KNDp/r+WfnPynkuztX4WyPxO01OxIzOPsJ4=;
-        b=r2fO2F4Zy1sLEf3QFFPEKOlCQB9qTrEdsgkB9gACzkp3gNdZ/2tOVDt4+6DA7Gtf6u
-         ZPi+bzyR54J5qs+UjaqMyQeY51RaRQwLjr2YNVgz5TFmaxNHD4sa5TcUW9qaV7zLxPY/
-         ePzNLlB5XrSKn+BOjKf6V4yM5pj9AuMs5QRCWXDEVlBz4lwx7wHpuUWVagwOc6NBTVhb
-         wOgO6LAi0Q5DTu0+WZPN2gXi27SwocDX+TSmLce0oL99cheFo0VOGjfv8y+uCXUSenKX
-         kkKkKAIPT7jUhfa6kPu8CUJC/sBI/wP54FIPW2/J2wua3KCfVXLLgr4uyMmrpFtNIVmS
-         wf0w==
-X-Gm-Message-State: AOAM530jFSYIEWi/rW/59vj2vH3SAy5g5uuwd72ds+yUzbToB9Mgrv60
-        rUlbSyCjcnV4nCQlfm1+qzSLipw0hyRiZBSXz+/KEQ==
-X-Google-Smtp-Source: ABdhPJyu1EJ1dRN4fAV7VA7O9vNx4XEDXtN9oKEprWXupCUNBnM8L5AfVi9mlfJPiFSlKmachtOfFp6J9htuuDjldAw=
-X-Received: by 2002:a92:dc90:: with SMTP id c16mr11226649iln.202.1598401546414;
- Tue, 25 Aug 2020 17:25:46 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200821185645.801971-1-lokeshgidra@google.com>
- <20200821185645.801971-2-lokeshgidra@google.com> <20200825035036.GC810@sol.localdomain>
-In-Reply-To: <20200825035036.GC810@sol.localdomain>
-From:   Lokesh Gidra <lokeshgidra@google.com>
-Date:   Tue, 25 Aug 2020 17:25:35 -0700
-Message-ID: <CA+EESO7YG=9K7o=rjRm++n7HWPhhP1W8Xo7CF_4_pGBheExmqA@mail.gmail.com>
-Subject: Re: [PATCH v7 1/3] Add a new LSM-supporting anonymous inode interface
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        James Morris <jmorris@namei.org>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Daniel Colascione <dancol@dancol.org>,
-        Kees Cook <keescook@chromium.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        KP Singh <kpsingh@google.com>,
-        David Howells <dhowells@redhat.com>,
-        Thomas Cedeno <thomascedeno@google.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        Matthew Garrett <matthewgarrett@google.com>,
-        Aaron Goidel <acgoide@tycho.nsa.gov>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Adrian Reber <areber@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        SElinux list <selinux@vger.kernel.org>,
-        Kalesh Singh <kaleshsingh@google.com>,
-        Calin Juravle <calin@google.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Nick Kralevich <nnk@google.com>,
-        Jeffrey Vander Stoep <jeffv@google.com>,
-        kernel-team@android.com, Daniel Colascione <dancol@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 25 Aug 2020 23:45:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1598413503;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc; bh=LT6POVV8HSmICCQ9Cr0CByMFS3SYARiZwXUJRkcEo+U=;
+        b=jPzaJJQNlCfYJ2mXuO5yZDW1jaFPQvpUYS6e9U2+hJLOL+2sPm9CJv34/GRSCoUwhGCGu1
+        zErPDf1TLttcYmBodFTJw09JCkST0P/dQg7loDp98caqy0XG+5f9a5UtdFxyWmTVRNlepc
+        x2Y9QnzzJ2sEK0f5THjVrr3In/Md7b0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-87-naIzhBe0MFmexAJKAilz9A-1; Tue, 25 Aug 2020 23:45:01 -0400
+X-MC-Unique: naIzhBe0MFmexAJKAilz9A-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id DE3FA1005E5B;
+        Wed, 26 Aug 2020 03:44:59 +0000 (UTC)
+Received: from lszubowi.redhat.com (unknown [10.10.110.32])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B1C7A5D9E4;
+        Wed, 26 Aug 2020 03:44:56 +0000 (UTC)
+From:   Lenny Szubowicz <lszubowi@redhat.com>
+To:     linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org,
+        linux-security-module@vger.kernel.org, ardb@kernel.org,
+        jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
+        zohar@linux.ibm.com, bp@alien8.de, pjones@redhat.com,
+        dhowells@redhat.com, prarit@redhat.com
+Subject: [PATCH 0/3] integrity: Load certs from EFI MOK config table
+Date:   Tue, 25 Aug 2020 23:44:52 -0400
+Message-Id: <20200826034455.28707-1-lszubowi@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Aug 24, 2020 at 8:50 PM Eric Biggers <ebiggers@kernel.org> wrote:
->
-> On Fri, Aug 21, 2020 at 11:56:43AM -0700, Lokesh Gidra wrote:
-> > From: Daniel Colascione <dancol@google.com>
-> >
-> > This change adds a new function, anon_inode_getfd_secure, that creates
-> > anonymous-node file with individual non-S_PRIVATE inode to which security
-> > modules can apply policy. Existing callers continue using the original
-> > singleton-inode kind of anonymous-inode file. We can transition anonymous
-> > inode users to the new kind of anonymous inode in individual patches for
-> > the sake of bisection and review.
-> >
-> > The new function accepts an optional context_inode parameter that
-> > callers can use to provide additional contextual information to
-> > security modules for granting/denying permission to create an anon inode
-> > of the same type.
-> >
-> > For example, in case of userfaultfd, the created inode is a
-> > 'logical child' of the context_inode (userfaultfd inode of the
-> > parent process) in the sense that it provides the security context
-> > required during creation of the child process' userfaultfd inode.
-> >
-> > Signed-off-by: Daniel Colascione <dancol@google.com>
-> >
-> > [Fix comment documenting return values of inode_init_security_anon()]
-> > [Add context_inode description in comments to anon_inode_getfd_secure()]
-> > [Remove definition of anon_inode_getfile_secure() as there are no callers]
-> > [Make _anon_inode_getfile() static]
-> > [Use correct error cast in _anon_inode_getfile()]
-> >
-> > Signed-off-by: Lokesh Gidra <lokeshgidra@google.com>
-> > ---
-> >  fs/anon_inodes.c              | 148 ++++++++++++++++++++++++----------
-> >  include/linux/anon_inodes.h   |  13 +++
-> >  include/linux/lsm_hook_defs.h |   2 +
-> >  include/linux/lsm_hooks.h     |   7 ++
-> >  include/linux/security.h      |   3 +
-> >  security/security.c           |   9 +++
-> >  6 files changed, 141 insertions(+), 41 deletions(-)
-> >
-> > diff --git a/fs/anon_inodes.c b/fs/anon_inodes.c
-> > index 89714308c25b..2aa8b57be895 100644
-> > --- a/fs/anon_inodes.c
-> > +++ b/fs/anon_inodes.c
-> > @@ -55,61 +55,78 @@ static struct file_system_type anon_inode_fs_type = {
-> >       .kill_sb        = kill_anon_super,
-> >  };
-> >
-> > -/**
-> > - * anon_inode_getfile - creates a new file instance by hooking it up to an
-> > - *                      anonymous inode, and a dentry that describe the "class"
-> > - *                      of the file
-> > - *
-> > - * @name:    [in]    name of the "class" of the new file
-> > - * @fops:    [in]    file operations for the new file
-> > - * @priv:    [in]    private data for the new file (will be file's private_data)
-> > - * @flags:   [in]    flags
-> > - *
-> > - * Creates a new file by hooking it on a single inode. This is useful for files
-> > - * that do not need to have a full-fledged inode in order to operate correctly.
-> > - * All the files created with anon_inode_getfile() will share a single inode,
-> > - * hence saving memory and avoiding code duplication for the file/inode/dentry
-> > - * setup.  Returns the newly created file* or an error pointer.
-> > - */
-> > -struct file *anon_inode_getfile(const char *name,
-> > -                             const struct file_operations *fops,
-> > -                             void *priv, int flags)
-> > +static struct inode *anon_inode_make_secure_inode(
-> > +     const char *name,
-> > +     const struct inode *context_inode)
-> > +{
-> > +     struct inode *inode;
-> > +     const struct qstr qname = QSTR_INIT(name, strlen(name));
-> > +     int error;
-> > +
-> > +     inode = alloc_anon_inode(anon_inode_mnt->mnt_sb);
-> > +     if (IS_ERR(inode))
-> > +             return inode;
-> > +     inode->i_flags &= ~S_PRIVATE;
-> > +     error = security_inode_init_security_anon(
-> > +             inode, &qname, context_inode);
->
-> Weird indentation here.  The call to security_inode_init_security_anon() fits on
-> one line.
->
-> > +     if (error) {
-> > +             iput(inode);
-> > +             return ERR_PTR(error);
-> > +     }
-> > +     return inode;
-> > +}
-> > +
-> > +static struct file *_anon_inode_getfile(const char *name,
-> > +                                     const struct file_operations *fops,
-> > +                                     void *priv, int flags,
-> > +                                     const struct inode *context_inode,
-> > +                                     bool secure)
-> >  {
-> > +     struct inode *inode;
-> >       struct file *file;
-> >
-> > -     if (IS_ERR(anon_inode_inode))
-> > -             return ERR_PTR(-ENODEV);
-> > +     if (secure) {
-> > +             inode = anon_inode_make_secure_inode(
-> > +                     name, context_inode);
->
-> Likewise here.  The call to anon_inode_make_secure_inode() fits on one line.
->
-> > +             if (IS_ERR(inode))
-> > +                     return ERR_CAST(inode);
-> > +     } else {
-> > +             inode = anon_inode_inode;
-> > +             if (IS_ERR(inode))
-> > +                     return ERR_PTR(-ENODEV);
-> > +             /*
-> > +              * We know the anon_inode inode count is always
-> > +              * greater than zero, so ihold() is safe.
-> > +              */
-> > +             ihold(inode);
-> > +     }
-> >
-> > -     if (fops->owner && !try_module_get(fops->owner))
-> > -             return ERR_PTR(-ENOENT);
-> > +     if (fops->owner && !try_module_get(fops->owner)) {
-> > +             file = ERR_PTR(-ENOENT);
-> > +             goto err;
-> > +     }
->
-> The error path here does module_put(fops->owner), even though a reference wasn't
-> acquired.
->
-> > +
-> > +/**
-> > + * anon_inode_getfd - creates a new file instance by hooking it up to
-> > + *                    an anonymous inode and a dentry that describe
-> > + *                    the "class" of the file
-> > + *
-> > + * @name:    [in]    name of the "class" of the new file
-> > + * @fops:    [in]    file operations for the new file
-> > + * @priv:    [in]    private data for the new file (will be file's private_data)
-> > + * @flags:   [in]    flags
-> > + *
-> > + * Creates a new file by hooking it on a single inode. This is
-> > + * useful for files that do not need to have a full-fledged inode in
-> > + * order to operate correctly.  All the files created with
-> > + * anon_inode_getfile() will use the same singleton inode, reducing
->
-> This should say anon_inode_getfd(), not anon_inode_getfile().
->
-> > +/**
-> > + * Like anon_inode_getfd(), but adds the @context_inode argument to
-> > + * allow security modules to control creation of the new file. Once the
-> > + * security module makes the decision, this inode is no longer needed
-> > + * and hence reference to it is not held.
-> > + */
-> > +int anon_inode_getfd_secure(const char *name, const struct file_operations *fops,
-> > +                         void *priv, int flags,
-> > +                         const struct inode *context_inode)
-> > +{
-> > +     return _anon_inode_getfd(name, fops, priv, flags,
-> > +                              context_inode, true);
-> > +}
->
-> Weird indentation here again.  The call to _anon_inode_getfd() fits on one line.
->
-> > @@ -162,4 +229,3 @@ static int __init anon_inode_init(void)
-> >  }
-> >
-> >  fs_initcall(anon_inode_init);
-> > -
->
-> Unnecessary whitespace change.
->
-> > diff --git a/include/linux/anon_inodes.h b/include/linux/anon_inodes.h
-> > index d0d7d96261ad..67bd85d92dca 100644
-> > --- a/include/linux/anon_inodes.h
-> > +++ b/include/linux/anon_inodes.h
-> > @@ -10,12 +10,25 @@
-> >  #define _LINUX_ANON_INODES_H
-> >
-> >  struct file_operations;
-> > +struct inode;
-> > +
-> > +struct file *anon_inode_getfile_secure(const char *name,
-> > +                                    const struct file_operations *fops,
-> > +                                    void *priv, int flags,
-> > +                                    const struct inode *context_inode);
->
-> This function isn't defined anywhere.
->
-> > + * @inode_init_security_anon:
-> > + *      Set up a secure anonymous inode.
-> > + *      @inode contains the inode structure
-> > + *      @name name of the anonymous inode class
-> > + *      @context_inode optional related inode
-> > + *   Returns 0 on success, -EACCESS if the security module denies the
-> > + *   creation of this inode, or another -errno upon other errors.
->
-> Is there a better name for this than "secure anonymous inode"?
-> (What is meant by "secure"?)
->
-> > diff --git a/include/linux/security.h b/include/linux/security.h
-> > index 0a0a03b36a3b..95c133a8f8bb 100644
-> > --- a/include/linux/security.h
-> > +++ b/include/linux/security.h
-> > @@ -322,6 +322,9 @@ void security_inode_free(struct inode *inode);
-> >  int security_inode_init_security(struct inode *inode, struct inode *dir,
-> >                                const struct qstr *qstr,
-> >                                initxattrs initxattrs, void *fs_data);
-> > +int security_inode_init_security_anon(struct inode *inode,
-> > +                                   const struct qstr *name,
-> > +                                   const struct inode *context_inode);
-> >  int security_old_inode_init_security(struct inode *inode, struct inode *dir,
-> >                                    const struct qstr *qstr, const char **name,
-> >                                    void **value, size_t *len);
->
-> This patch doesn't compile when !CONFIG_SECURITY because this file is missing a
-> !CONFIG_SECURITY stub for security_inode_init_security_anon().
->
-> > diff --git a/security/security.c b/security/security.c
-> > index 70a7ad357bc6..149b3f024e2d 100644
-> > --- a/security/security.c
-> > +++ b/security/security.c
-> > @@ -1057,6 +1057,15 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
-> >  }
-> >  EXPORT_SYMBOL(security_inode_init_security);
-> >
-> > +int
-> > +security_inode_init_security_anon(struct inode *inode,
-> > +                               const struct qstr *name,
-> > +                               const struct inode *context_inode)
-> > +{
-> > +     return call_int_hook(inode_init_security_anon, 0, inode, name,
-> > +                          context_inode);
-> > +}
->
-> Nit: everything else in this file has 'int' on the same line as the function
-> name.
->
-Thanks a lot for reviewing. I'll send another version with all these fixed.
+Because of system-specific EFI firmware limitations,
+EFI volatile variables may not be capable of holding the
+required contents of the Machine Owner Key (MOK) certificate
+store. Therefore, an EFI boot loader may pass the MOK certs
+via a EFI configuration table created specifically for this
+purpose to avoid this firmware limitation.
 
-> - Eric
+An EFI configuration table is a simpler and more robust mechanism
+compared to EFI variables and is well suited for one-way passage
+of static information from a pre-OS environment to the kernel.
+
+This patch set does not remove the support for loading certs
+from the EFI MOK variables into the platform key ring.
+However, if both the EFI MOK config table and corresponding
+EFI MOK variables are present, the MOK table is used as the
+source of MOK certs.
+
+The contents of the individual named MOK config table entries are
+made available to user space via read-only sysfs binary files under:
+
+	/sys/firmware/efi/mok-variables/
+
+
+Lenny Szubowicz (3):
+  efi: Support for MOK variable config table
+  integrity: Move import of MokListRT certs to a separate routine
+  integrity: Load certs from the EFI MOK config table
+
+ arch/x86/kernel/setup.c                       |   1 +
+ arch/x86/platform/efi/efi.c                   |   3 +
+ drivers/firmware/efi/Makefile                 |   1 +
+ drivers/firmware/efi/arm-init.c               |   1 +
+ drivers/firmware/efi/efi.c                    |   6 +
+ drivers/firmware/efi/mokvar-table.c           | 360 ++++++++++++++++++
+ include/linux/efi.h                           |  34 ++
+ security/integrity/platform_certs/load_uefi.c |  85 ++++-
+ 8 files changed, 472 insertions(+), 19 deletions(-)
+ create mode 100644 drivers/firmware/efi/mokvar-table.c
+
+-- 
+2.27.0
+
