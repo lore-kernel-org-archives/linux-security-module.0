@@ -2,124 +2,127 @@ Return-Path: <SRS0=FUAt=CE=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42BE1C433DF
-	for <linux-security-module@archiver.kernel.org>; Wed, 26 Aug 2020 11:56:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3372C433E3
+	for <linux-security-module@archiver.kernel.org>; Wed, 26 Aug 2020 12:51:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1D6B420707
-	for <linux-security-module@archiver.kernel.org>; Wed, 26 Aug 2020 11:56:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A6BB32075E
+	for <linux-security-module@archiver.kernel.org>; Wed, 26 Aug 2020 12:51:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Ufg/BlL2"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ttr3PaIs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729188AbgHZLzk (ORCPT
+        id S1730030AbgHZMvl (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 26 Aug 2020 07:55:40 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:23922 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729184AbgHZLzj (ORCPT
+        Wed, 26 Aug 2020 08:51:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43258 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730018AbgHZMvi (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 26 Aug 2020 07:55:39 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 07QBXJ7x021628;
-        Wed, 26 Aug 2020 07:55:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : date : in-reply-to : references : content-type : mime-version
- : content-transfer-encoding; s=pp1;
- bh=dHqlfOWSxjq+gaqjLFymI8135q9+O5+SFhB0cL1SeAg=;
- b=Ufg/BlL2bIQ4Z8Vs2bqLdfnFjNZRXOHuBIuvqOuxdB/L4XCegNlA+4KQuAat81knZc6v
- Xri75XdYAgIZTq5jBONqlcU2BPV8cggLx/F4OaG8lX12H6aNLaWrieeAGknTuGTiW43Z
- VWWJGAsOk0FVBryUHK649HimsSX/qkKY5SUMgwMz48t3EJzYSrwP5YDIBkr2qEgqMDwn
- lJ7WN1lEpnCyMHYzwh1c1ZbQ40k11fDV7Pj7RvIJrqZTJ+3w/KFj+8jAUS0EMi0hWRo8
- GkzT2UEap8iufCWz2cWHLZ0T3Ix5Tt5KoAXJ5RQ4Rf7187Rx8/tlebLr77O8A2tnNPDf rw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 335pfn9gn4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 26 Aug 2020 07:55:20 -0400
-Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 07QBYHm3025194;
-        Wed, 26 Aug 2020 07:55:19 -0400
-Received: from ppma03fra.de.ibm.com (6b.4a.5195.ip4.static.sl-reverse.com [149.81.74.107])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 335pfn9gm4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 26 Aug 2020 07:55:19 -0400
-Received: from pps.filterd (ppma03fra.de.ibm.com [127.0.0.1])
-        by ppma03fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 07QBr8Ul003672;
-        Wed, 26 Aug 2020 11:55:17 GMT
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
-        by ppma03fra.de.ibm.com with ESMTP id 332utq2rkv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 26 Aug 2020 11:55:16 +0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 07QBtENT26476832
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 26 Aug 2020 11:55:14 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7A07352057;
-        Wed, 26 Aug 2020 11:55:14 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.28.3])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id A618A52050;
-        Wed, 26 Aug 2020 11:55:11 +0000 (GMT)
-Message-ID: <6f63a0cf1349281ef2c407d95abedfba1f90345a.camel@linux.ibm.com>
-Subject: Re: [PATCH 0/3] integrity: Load certs from EFI MOK config table
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Lenny Szubowicz <lszubowi@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org,
-        linux-security-module@vger.kernel.org, ardb@kernel.org,
-        jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
-        bp@alien8.de, pjones@redhat.com, dhowells@redhat.com,
-        prarit@redhat.com
-Date:   Wed, 26 Aug 2020 07:55:10 -0400
-In-Reply-To: <20200826034455.28707-1-lszubowi@redhat.com>
-References: <20200826034455.28707-1-lszubowi@redhat.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-08-26_08:2020-08-26,2020-08-26 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1011
- impostorscore=0 mlxlogscore=999 lowpriorityscore=0 priorityscore=1501
- mlxscore=0 malwarescore=0 adultscore=0 bulkscore=0 phishscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2008260094
+        Wed, 26 Aug 2020 08:51:38 -0400
+Received: from mail-oo1-xc41.google.com (mail-oo1-xc41.google.com [IPv6:2607:f8b0:4864:20::c41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44F1CC061574;
+        Wed, 26 Aug 2020 05:51:38 -0700 (PDT)
+Received: by mail-oo1-xc41.google.com with SMTP id x6so408663ooe.8;
+        Wed, 26 Aug 2020 05:51:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=diZBGnPjcaRpzNNj2xUjW6fq8RTGqEBgIiCRFd1AUvI=;
+        b=ttr3PaIsjT/RjpWXQtLVmsui9TXBbtizCopYLMyvJTdW7EZMRA2PpoSrAsjerIXr/z
+         YaNlHvT8BWC263/aLRGBR3zCvP7tqHR8H97Y3oe6Ofc5jEF9EkcrrjTm0hu4W2xqYrqT
+         eYCCCdlkwUXwMGp1Qj/k13eA4A7+ac7kZ0kEmM+fydpqWPkoPivDeaT0U3yKTPjnwo2a
+         qAkJVV+/5B86W4OCfcC6zQshjourutOlO/Xo9/WX0AYAZvFHz5k4TXJu0ZRUEHJNGtG3
+         UiOEOgk9gXrki77lUns3qG5O8lvJmRPVuZILLFGmiNWwJIz4qyGQRjFthGhdezTsis5G
+         4fHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=diZBGnPjcaRpzNNj2xUjW6fq8RTGqEBgIiCRFd1AUvI=;
+        b=XX6ux3HJ/oGWCB1YbhHzayR8J1VMZa8IvXS4kLDo7E0siLRjM1SJjISjiJGxvGEPTe
+         BeHjamuKpl3VekqrQlSZuiDyjjR2biF4giuNx5CnEQ2u5oYLbkOehZUqCLH9qRjPdy+f
+         YoaUs5VjzaGdYYfZALx/Q9S5tgKK7DAnNKeZam9OX7ENhRgNk5T7TXvxQTE202L+k5HT
+         WXGQlqWWw5GtKsfRQyg/ozv52YbJbvvXFFITsktyK0ne9T4kZ9tm1cOphUaR4qnWI9vy
+         L60gHKiKLF5zCxgDU2/BX5XpSs5pSoJuoBjBxTnxYmYaZlRywIfFZ1GSlU6bq5Duzck8
+         c0ew==
+X-Gm-Message-State: AOAM530gN747LKJevhr0DCZ38pApMlixXWoe5loAny7ptS3YUT44OsFG
+        abjQCCqm1Rbl0N8CpwnsswHBs5U1iykmOl8L19zfEV6E
+X-Google-Smtp-Source: ABdhPJzmjHEiAqqyB6P0v1hZaqEVA0oSJ76tcW7W9vc9a0ZBpSV8NZ1U0o+lj1suA/o+LdgT1knTCjGmuXzY0Q80Igc=
+X-Received: by 2002:a4a:b80b:: with SMTP id g11mr10543780oop.13.1598446297471;
+ Wed, 26 Aug 2020 05:51:37 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200822010018.19453-1-nramas@linux.microsoft.com>
+ <CAEjxPJ5Kok-TBfS=XQ+NUC5tuaZRkyLBOawG4UDky51_bsMnGw@mail.gmail.com>
+ <418618c4-a0c6-6b28-6718-2726a29b83c5@linux.microsoft.com>
+ <CAEjxPJ6-8WnZRJnADsn=RVakzJiESjEjK-f8nSkscpT7dnricQ@mail.gmail.com>
+ <CAFqZXNvVQ5U6Ea3gT32Z0hfWbu7GPR-mTF2z6-JZZJT57Heuuw@mail.gmail.com>
+ <f041e8ee-3955-9551-b72d-d4d7fa6e636d@linux.microsoft.com>
+ <CAHC9VhQP7_rV+Oi6weLjVhrx2d8iu9UJ8zeE=ZcqnBMqngrJ4Q@mail.gmail.com> <07854807-c495-b7e5-fc44-26d78ff14f1b@linux.microsoft.com>
+In-Reply-To: <07854807-c495-b7e5-fc44-26d78ff14f1b@linux.microsoft.com>
+From:   Stephen Smalley <stephen.smalley.work@gmail.com>
+Date:   Wed, 26 Aug 2020 08:51:26 -0400
+Message-ID: <CAEjxPJ4TkEEKG+pXwUjyysov1s1mFk4jbGGVyC7ghmpfd3TJ4w@mail.gmail.com>
+Subject: Re: [PATCH] SELinux: Measure state and hash of policy using IMA
+To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Cc:     Paul Moore <paul@paul-moore.com>,
+        Ondrej Mosnacek <omosnace@redhat.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Tyler Hicks <tyhicks@linux.microsoft.com>,
+        tusharsu@linux.microsoft.com, Sasha Levin <sashal@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        linux-integrity@vger.kernel.org,
+        SElinux list <selinux@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Lenny,
+On Tue, Aug 25, 2020 at 4:49 PM Lakshmi Ramasubramanian
+<nramas@linux.microsoft.com> wrote:
+>
+> On 8/24/20 3:18 PM, Paul Moore wrote:
+>
+> Hi Paul,
+>
+> >>>>> Is Ondrej's re-try approach I need to use to workaround policy reload issue?
+> >>>>
+> >>>> No, I think perhaps we should move the mutex to selinux_state instead
+> >>>> of selinux_fs_info.  selinux_fs_info has a pointer to selinux_state so
+> >>>> it can then use it indirectly.  Note that your patches are going to
+> >>>> conflict with other ongoing work in the selinux next branch that is
+> >>>> refactoring policy load and converting the policy rwlock to RCU.
+> >>>
+> >>> Yeah, and I'm experimenting with a patch on top of Stephen's RCU work
+> >>> that would allow you to do this in a straightforward way without even
+> >>> messing with the fsi->mutex. My patch may or may not be eventually
+> >>> committed, but either way I'd recommend holding off on this for a
+> >>> while until the dust settles around the RCU conversion.
+> >>
+> >> I can make the SELinux\IMA changes in "selinux next branch" taking
+> >> dependencies on Stephen's patches + relevant IMA patches.
+> >
+> > I know it can be frustrating to hear what I'm about to say, but the
+> > best option is probably just to wait a little to let things settle in
+> > the SELinux -next branch.  There is a lot of stuff going on right now
+> > with patches flooding in (at least "flooding" from a SELinux kernel
+> > development perspective) and we/I've haven't gotten through all of
+> > them yet.
+> >
+>
+> Could you please let me know when the current set of changes in SELinux
+> next branch would be completed and be ready to take new changes?
+>
+> I mean, roughly - would it be a month from now or you expect that to
+> take longer?
 
-On Tue, 2020-08-25 at 23:44 -0400, Lenny Szubowicz wrote:
-> Because of system-specific EFI firmware limitations,
-> EFI volatile variables may not be capable of holding the
-> required contents of the Machine Owner Key (MOK) certificate
-> store. Therefore, an EFI boot loader may pass the MOK certs
-> via a EFI configuration table created specifically for this
-> purpose to avoid this firmware limitation.
-> 
-> An EFI configuration table is a simpler and more robust mechanism
-> compared to EFI variables and is well suited for one-way passage
-> of static information from a pre-OS environment to the kernel.
-> 
-> This patch set does not remove the support for loading certs
-> from the EFI MOK variables into the platform key ring.
-> However, if both the EFI MOK config table and corresponding
-> EFI MOK variables are present, the MOK table is used as the
-> source of MOK certs.
-> 
-> The contents of the individual named MOK config table entries are
-> made available to user space via read-only sysfs binary files under:
-> 
-> 	/sys/firmware/efi/mok-variables/
-
-Please include a security section in this cover letter with a
-comparison of the MoK variables and the EFI configuration table
-security (eg. same mechanism?).  Has mokutil been updated?  If so,
-please provide a link.
-
-Mimi
-
+I can't speak for Paul but I would expect it to be sooner rather than
+later. Ondrej has some follow ups on top of my policy rcu conversion
+but then it should be good to go.
