@@ -2,104 +2,62 @@ Return-Path: <SRS0=x8UA=CF=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 577EBC433E1
-	for <linux-security-module@archiver.kernel.org>; Thu, 27 Aug 2020 07:29:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23980C433DF
+	for <linux-security-module@archiver.kernel.org>; Thu, 27 Aug 2020 13:29:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3E84222BEA
-	for <linux-security-module@archiver.kernel.org>; Thu, 27 Aug 2020 07:29:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 069BA2177B
+	for <linux-security-module@archiver.kernel.org>; Thu, 27 Aug 2020 13:29:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727105AbgH0H3j (ORCPT
+        id S1727973AbgH0N2t (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 27 Aug 2020 03:29:39 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:41238 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726123AbgH0H3j (ORCPT
+        Thu, 27 Aug 2020 09:28:49 -0400
+Received: from mga09.intel.com ([134.134.136.24]:25468 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727950AbgH0N1e (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 27 Aug 2020 03:29:39 -0400
-Received: by mail-lj1-f193.google.com with SMTP id f26so5260811ljc.8;
-        Thu, 27 Aug 2020 00:29:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=mi5B+pEaQqn6pQw0ZtzMwgBCvwV3kCOCPtMygdOsJBE=;
-        b=ZqIdGucKIQNbUlibmv6J2iC/5brpw9BrQnfLyjIaMsqv03qewVtIEAU0wGnmpXMLkR
-         rVZdnWYRFU6i2gNAfdopfAHJX7mbFkQ4YrDW3jOyvQIGVS9Hsn8P7VAWjYvgCUz6BUf/
-         j6RcGXay0+zaP7rKVsOQTxNo0Aw/hSSBkRgh4AAvijGSEjdadmqbVeF5vSEZzeNzyHWb
-         yXB4UtN47smYjKiYB1s2qOREEXn4BCOXGpj1HpQknW4/1RURV5aj+wiL+zVSSRHP1hhj
-         yW6MpUjkIdSlgqDk1NclQGJm/M9z6ku+6/2w5Y6ujcCDI/U49fKPg5liZfRckZpEuk7C
-         XIfQ==
-X-Gm-Message-State: AOAM530QubuNGkBu8LQ5DFiCyv8Bs4yDHPjebvBgn6W24x5EVvCuydKK
-        IDjtjI7f147SvuVXdoR6CPGmsj/I6CM=
-X-Google-Smtp-Source: ABdhPJxdibxvNaWK3AH/SUvgZdJ/g/29tgk1jocDnAWkojyr2dHo2SJMjA3D0C6AlWYKP3guwKTLYQ==
-X-Received: by 2002:a2e:9c86:: with SMTP id x6mr8751433lji.346.1598513376601;
-        Thu, 27 Aug 2020 00:29:36 -0700 (PDT)
-Received: from localhost.localdomain ([213.87.147.111])
-        by smtp.googlemail.com with ESMTPSA id m25sm282937ljg.79.2020.08.27.00.29.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Aug 2020 00:29:36 -0700 (PDT)
-From:   Denis Efremov <efremov@linux.com>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Denis Efremov <efremov@linux.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] security/keys: use kvfree_sensitive()
-Date:   Thu, 27 Aug 2020 10:29:23 +0300
-Message-Id: <20200827072923.14718-1-efremov@linux.com>
-X-Mailer: git-send-email 2.26.2
+        Thu, 27 Aug 2020 09:27:34 -0400
+IronPort-SDR: EC8OmkCIwfxNKfw9D0RHo60DHh1GPwvg05GhC14E/KPgnzxqb7DrtkmP5u6yf51Kdq2VPbGzR9
+ O2M97k6wxHqg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9725"; a="157502881"
+X-IronPort-AV: E=Sophos;i="5.76,359,1592895600"; 
+   d="scan'208";a="157502881"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2020 06:26:37 -0700
+IronPort-SDR: WhNojoZRv8BDAJxuDmNLU0S7hnXhFGcA+TWKJCg3tQUQ8QuNIkOiuByoTG2QBFlrvxPdcMctXf
+ yuseHTrVRqhw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.76,359,1592895600"; 
+   d="scan'208";a="282103688"
+Received: from tbeaumon-mobl3.ger.corp.intel.com (HELO localhost) ([10.252.55.254])
+  by fmsmga008.fm.intel.com with ESMTP; 27 Aug 2020 06:26:35 -0700
+Date:   Thu, 27 Aug 2020 16:26:34 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Denis Efremov <efremov@linux.com>
+Cc:     David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] security/keys: use kvfree_sensitive()
+Message-ID: <20200827132634.GB4674@linux.intel.com>
+References: <20200827072923.14718-1-efremov@linux.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200827072923.14718-1-efremov@linux.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Use kvfree_sensitive() instead of open-coding it.
+On Thu, Aug 27, 2020 at 10:29:23AM +0300, Denis Efremov wrote:
+> Use kvfree_sensitive() instead of open-coding it.
+> 
+> Signed-off-by: Denis Efremov <efremov@linux.com>
 
-Signed-off-by: Denis Efremov <efremov@linux.com>
----
- security/keys/big_key.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-diff --git a/security/keys/big_key.c b/security/keys/big_key.c
-index 691347dea3c1..d17e5f09eeb8 100644
---- a/security/keys/big_key.c
-+++ b/security/keys/big_key.c
-@@ -121,8 +121,7 @@ int big_key_preparse(struct key_preparsed_payload *prep)
- 		*path = file->f_path;
- 		path_get(path);
- 		fput(file);
--		memzero_explicit(buf, enclen);
--		kvfree(buf);
-+		kvfree_sensitive(buf, enclen);
- 	} else {
- 		/* Just store the data in a buffer */
- 		void *data = kmalloc(datalen, GFP_KERNEL);
-@@ -140,8 +139,7 @@ int big_key_preparse(struct key_preparsed_payload *prep)
- err_enckey:
- 	kfree_sensitive(enckey);
- error:
--	memzero_explicit(buf, enclen);
--	kvfree(buf);
-+	kvfree_sensitive(buf, enclen);
- 	return ret;
- }
- 
-@@ -273,8 +271,7 @@ long big_key_read(const struct key *key, char *buffer, size_t buflen)
- err_fput:
- 		fput(file);
- error:
--		memzero_explicit(buf, enclen);
--		kvfree(buf);
-+		kvfree_sensitive(buf, enclen);
- 	} else {
- 		ret = datalen;
- 		memcpy(buffer, key->payload.data[big_key_data], datalen);
--- 
-2.26.2
-
+/Jarkko
