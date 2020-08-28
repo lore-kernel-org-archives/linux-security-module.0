@@ -2,38 +2,38 @@ Return-Path: <SRS0=zmOV=CG=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-20.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B647C433E6
-	for <linux-security-module@archiver.kernel.org>; Fri, 28 Aug 2020 01:57:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF493C433E7
+	for <linux-security-module@archiver.kernel.org>; Fri, 28 Aug 2020 01:57:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7911120848
-	for <linux-security-module@archiver.kernel.org>; Fri, 28 Aug 2020 01:57:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA27A20848
+	for <linux-security-module@archiver.kernel.org>; Fri, 28 Aug 2020 01:57:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="auHHUx3z"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Cyz/YHC3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728239AbgH1B5S (ORCPT
+        id S1728367AbgH1B5Y (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 27 Aug 2020 21:57:18 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:38412 "EHLO
+        Thu, 27 Aug 2020 21:57:24 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:38500 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726147AbgH1B5S (ORCPT
+        with ESMTP id S1728353AbgH1B5V (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 27 Aug 2020 21:57:18 -0400
+        Thu, 27 Aug 2020 21:57:21 -0400
 Received: from tusharsu-Ubuntu.lan (c-71-197-163-6.hsd1.wa.comcast.net [71.197.163.6])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 144F720B7178;
-        Thu, 27 Aug 2020 18:57:17 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 144F720B7178
+        by linux.microsoft.com (Postfix) with ESMTPSA id 5BEF120C27C5;
+        Thu, 27 Aug 2020 18:57:20 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5BEF120C27C5
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1598579837;
-        bh=xcLyoCG73RULVdbULRTyICyaCH1/+89JRVwjrVGQQYk=;
-        h=From:To:Cc:Subject:Date:From;
-        b=auHHUx3zzRaZqF2Q4uil4Xmb8tLHAUDUJEujc7H8AwWfF1cjlY6ItPMOwkN0NRma2
-         22TYlVQEhEKk5FtO3MSm8qJhQNIO9G/h5E8tO/Tt5qbEsLeGJOr18e9REC2gPa3GeD
-         cWp/mFEwXt7v150PHt3uMz+16nU3GgdiE9ya1nL0=
+        s=default; t=1598579840;
+        bh=/oNkgUW9zSIuVV9hzhJDu+lqIFChEKC0BuHbXmW5m3Y=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Cyz/YHC3WltXaOC2W1Hu7dvdzMKlVlrik0OyrAKvc3bYjiBOWarXk/sMLKG5Rg302
+         fbDJaPYrLp1qHtc2FhixkEyPt5aRcJ9BDsKfLQZuW7svV2PjA1czuY27qzJ0eRdFwn
+         TEcJ+5giT+ILXTcXHTRG3KaEqEnPdHzOp8Y6cqDM=
 From:   Tushar Sugandhi <tusharsu@linux.microsoft.com>
 To:     zohar@linux.ibm.com, stephen.smalley.work@gmail.com,
         casey@schaufler-ca.com, agk@redhat.com, snitzer@redhat.com,
@@ -42,90 +42,94 @@ Cc:     tyhicks@linux.microsoft.com, sashal@kernel.org, jmorris@namei.org,
         nramas@linux.microsoft.com, linux-integrity@vger.kernel.org,
         selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, dm-devel@redhat.com
-Subject: [PATCH v3 0/6] IMA: Infrastructure for measurement of critical kernel data
-Date:   Thu, 27 Aug 2020 18:56:58 -0700
-Message-Id: <20200828015704.6629-1-tusharsu@linux.microsoft.com>
+Subject: [PATCH v3 6/6] IMA: validate supported kernel data sources before measurement
+Date:   Thu, 27 Aug 2020 18:57:04 -0700
+Message-Id: <20200828015704.6629-7-tusharsu@linux.microsoft.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200828015704.6629-1-tusharsu@linux.microsoft.com>
+References: <20200828015704.6629-1-tusharsu@linux.microsoft.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-There are several kernel components that contain critical data which if
-accidentally or maliciously altered, can compromise the security of the
-kernel. Example of such components would include LSMs like SELinux, or
-AppArmor; or device-mapper targets like dm-crypt, dm-verity etc.
+Currently, IMA does not restrict random data sources from measuring their
+data using ima_measure_critical_data(). Any kernel data source can call
+the function, and it's data will get measured as long as the input
+event_data_source is part of the IMA policy -
+CRITICAL_DATA+critical_kernel_data_sources. This may result in IMA log
+getting bloated by random data sources. Supporting random data sources
+at run-time may also impact the reliability of the system. 
 
-Many of these components do not use the capabilities provided by kernel
-integrity subsystem (IMA), and thus they don't use the benefits of
-extended TPM PCR quotes and ultimately the benefits of remote attestation.
+To ensure that only data from supported sources are measured, the kernel
+component needs to be added to a compile-time list of supported sources
+(an "allowed list of components") in ima.h. IMA then validates the input
+parameter - event_data_source passed to ima_measure_critical_data()
+against this allowed list at run-time.
 
-This series bridges this gap, so that potential kernel components that
-contain data critical to the security of the kernel could take advantage
-of IMA's measuring and quoting abilities - thus ultimately enabling
-remote attestation for their specific data.
+Provide an infrastructure for kernel data sources to be added to
+the supported data sources list at compile-time. Update
+ima_measure_critical_data() to validate, at run-time, that the data
+source is supported before measuring the data.
+Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+---
+ security/integrity/ima/ima.h      | 29 +++++++++++++++++++++++++++++
+ security/integrity/ima/ima_main.c |  3 +++
+ 2 files changed, 32 insertions(+)
 
-System administrators may want to pick and choose which kernel
-components they would want to enable for measurements, quoting, and
-remote attestation. To enable that, a new IMA policy is introduced.
-
-And lastly, the functionality is exposed through a function
-ima_measure_critical_data(). The functionality is generic enough to
-measure the data of any kernel component at run-time. To ensure that only
-data from supported sources are measured, the kernel component needs to
-be added to a compile-time list of supported sources (an "allowed list
-of components"). IMA validates the source passed to
-ima_measure_critical_data() against this allowed list at run-time. 
-
-This series is based on the following repo/branch:
-
- repo: https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git
- branch: next-integrity
- commit d012a7190fc1 ("Linux 5.9-rc2")
-
-This series also has a dependency on the following patch series:
- https://patchwork.kernel.org/patch/11709527/
-
-Change Log v3:
-Incorporated feedback from Mimi on v2.
- - Renamed the policy "data_sources" to
-   "critical_kernel_data_sources".
- - Added "critical_kernel_data_sources" description in
-   Documentation/ima-policy.
- - Split CRITICAL_DATA + critical_kernel_data_sources into two separate
-   patches.
- - Merged hook ima_measure_critical_data() + CRITICAL_DATA into a single
-   patch.
- - Added functionality to validate data sources before measurement.
-
-Change Log v2:
- - Reverted the unnecessary indentations in existing #define.
- - Updated the description to replace the word 'enlightened' with
-   'supported'.
- - Reverted the unnecessary rename of attribute size to buf_len.
- - Introduced a boolean parameter measure_buf_hash as per community
-   feedback to support measuring hash of the buffer, instead of the
-   buffer itself.
-
-
-Tushar Sugandhi (6):
-  IMA: generalize keyring specific measurement constructs
-  IMA: change process_buffer_measurement return type from void to int
-  IMA: update process_buffer_measurement to measure buffer hash
-  IMA: add policy to measure critical data from kernel components
-  IMA: add hook to measure critical data from kernel components
-  IMA: validate supported kernel data sources before measurement
-
- Documentation/ABI/testing/ima_policy         |  11 +-
- include/linux/ima.h                          |  11 ++
- security/integrity/ima/ima.h                 |  41 +++++++-
- security/integrity/ima/ima_api.c             |   8 +-
- security/integrity/ima/ima_appraise.c        |   2 +-
- security/integrity/ima/ima_asymmetric_keys.c |   2 +-
- security/integrity/ima/ima_main.c            |  72 +++++++++++--
- security/integrity/ima/ima_policy.c          | 101 +++++++++++++++----
- security/integrity/ima/ima_queue_keys.c      |   3 +-
- 9 files changed, 205 insertions(+), 46 deletions(-)
-
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index 00b84052c8f1..ecb0a1e7378f 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -228,6 +228,35 @@ extern const char *const func_tokens[];
+ 
+ struct modsig;
+ 
++#define __ima_supported_kernel_data_sources(source)	\
++	source(MIN_SOURCE, min_source)			\
++	source(MAX_SOURCE, max_source)
++
++#define __ima_enum_stringify(ENUM, str) (#str),
++
++enum ima_supported_kernel_data_sources {
++	__ima_supported_kernel_data_sources(__ima_hook_enumify)
++};
++
++static const char * const ima_supported_kernel_data_sources_str[] = {
++	__ima_supported_kernel_data_sources(__ima_enum_stringify)
++};
++
++static inline bool ima_kernel_data_source_is_supported(const char *source)
++{
++	int i;
++
++	if (!source)
++		return false;
++
++	for (i = MIN_SOURCE + 1; i < MAX_SOURCE; i++) {
++		if (!strcmp(ima_supported_kernel_data_sources_str[i], source))
++			return true;
++	}
++
++	return false;
++}
++
+ #ifdef CONFIG_IMA_QUEUE_EARLY_BOOT_KEYS
+ /*
+  * To track keys that need to be measured.
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index a889bf40cb7e..41be4d1d839e 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -888,6 +888,9 @@ int ima_measure_critical_data(const char *event_name,
+ 	if (!event_name || !event_data_source || !buf || !buf_len)
+ 		return -EINVAL;
+ 
++	if (!ima_kernel_data_source_is_supported(event_data_source))
++		return -EPERM;
++
+ 	return process_buffer_measurement(NULL, buf, buf_len, event_name,
+ 					  CRITICAL_DATA, 0, event_data_source,
+ 					  measure_buf_hash);
 -- 
 2.17.1
 
