@@ -2,159 +2,152 @@ Return-Path: <SRS0=bHuK=CJ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96613C433E7
-	for <linux-security-module@archiver.kernel.org>; Mon, 31 Aug 2020 11:56:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BDCBC433E6
+	for <linux-security-module@archiver.kernel.org>; Mon, 31 Aug 2020 14:47:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7322820DD4
-	for <linux-security-module@archiver.kernel.org>; Mon, 31 Aug 2020 11:56:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B3D22083E
+	for <linux-security-module@archiver.kernel.org>; Mon, 31 Aug 2020 14:47:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="hdX++FVt"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="okkSFCeO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726249AbgHaL4A (ORCPT
+        id S1728126AbgHaOrT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 31 Aug 2020 07:56:00 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36658 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726167AbgHaL4A (ORCPT
+        Mon, 31 Aug 2020 10:47:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48552 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726384AbgHaOrP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 31 Aug 2020 07:56:00 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 07VB2tNO140261;
-        Mon, 31 Aug 2020 07:55:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=3NqTThVQ8eaoP7oELAZFEv4/SLtWiHWWrwVAhpVkpk8=;
- b=hdX++FVthQmmHIUCRF++GF+br4ETo0E1IXszaV4waSDggNyyW+CblURewKoKVE9+7+wX
- jtlkmTbFSyWezqvgj1dYxn6J7yPOnt2++gvO+ImtTwz2qgou4AO96IEmcHENte+sHzaO
- X+IEjlFggT49gLLpfU1QB7/TusX9uwRJvuDeKEvelBOyH9uo65NusT/Qj/2WBLHhfOgJ
- ExiKBB9JMK+M9+pqm+jk5Dnmbi2CZxPIsgYQxQh3VEn+dOSWbQy8GZ9zChzuTsS7CgHu
- pG9zZRBKwvMmsT78twDDRPkcm0evGR2nUKvPg9nF53vadfKkJtW1uaVfkMWUR2Y+txB+ 8g== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 338xgvbgf9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 31 Aug 2020 07:55:54 -0400
-Received: from m0098413.ppops.net (m0098413.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 07VBPJih031055;
-        Mon, 31 Aug 2020 07:55:54 -0400
-Received: from ppma05fra.de.ibm.com (6c.4a.5195.ip4.static.sl-reverse.com [149.81.74.108])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 338xgvbget-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 31 Aug 2020 07:55:53 -0400
-Received: from pps.filterd (ppma05fra.de.ibm.com [127.0.0.1])
-        by ppma05fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 07VBmS5r002148;
-        Mon, 31 Aug 2020 11:55:52 GMT
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
-        by ppma05fra.de.ibm.com with ESMTP id 337en819qt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 31 Aug 2020 11:55:52 +0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 07VBtnPh26411484
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 31 Aug 2020 11:55:49 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 47839A405B;
-        Mon, 31 Aug 2020 11:55:49 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1C219A4051;
-        Mon, 31 Aug 2020 11:55:46 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.2.129])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 31 Aug 2020 11:55:45 +0000 (GMT)
-Message-ID: <4802c73c2ed22c64ea4f315d3115ead919c3205e.camel@linux.ibm.com>
-Subject: Re: [PATCH v3 1/6] IMA: generalize keyring specific measurement
- constructs
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Tushar Sugandhi <tusharsu@linux.microsoft.com>,
-        stephen.smalley.work@gmail.com, casey@schaufler-ca.com,
-        agk@redhat.com, snitzer@redhat.com, gmazyland@gmail.com
-Cc:     tyhicks@linux.microsoft.com, sashal@kernel.org, jmorris@namei.org,
-        nramas@linux.microsoft.com, linux-integrity@vger.kernel.org,
-        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dm-devel@redhat.com
-Date:   Mon, 31 Aug 2020 07:55:45 -0400
-In-Reply-To: <20200828015704.6629-2-tusharsu@linux.microsoft.com>
-References: <20200828015704.6629-1-tusharsu@linux.microsoft.com>
-         <20200828015704.6629-2-tusharsu@linux.microsoft.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-08-31_04:2020-08-31,2020-08-31 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- impostorscore=0 lowpriorityscore=0 suspectscore=0 bulkscore=0 mlxscore=0
- spamscore=0 adultscore=0 mlxlogscore=999 phishscore=0 clxscore=1015
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2008310062
+        Mon, 31 Aug 2020 10:47:15 -0400
+Received: from mail-ot1-x344.google.com (mail-ot1-x344.google.com [IPv6:2607:f8b0:4864:20::344])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AFFCC061573;
+        Mon, 31 Aug 2020 07:47:14 -0700 (PDT)
+Received: by mail-ot1-x344.google.com with SMTP id g96so2946895otb.12;
+        Mon, 31 Aug 2020 07:47:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Q2tcN9Jz0h7kw1m7OiNmzbCBKujbmSV8MqHohL1aMxc=;
+        b=okkSFCeO2nLOMIkvoDn5wLrmrRFbpUKUqcypUHRgryOCdvmz3bPyt7lDX0PFnuYEhO
+         6c1MpCfws1lykdrr5sGQGnJ3t2/jkaOafYInME7Uaowdrhymh8jFoBia/4swJJohXsyq
+         QgGEF/yDCmAs0V0u9D3NiJEDrjYd9qH3H6Co+ZRgTYBFxrqUeC8fQ+D1V+PmFF66zVu2
+         pMJrZ0kfwK9NJM9tJ+lwaDcSSBJKkFv6wWGhPOB3InIaQTDMNjD2B6KBwy+kLr52z2ux
+         AVdRnxjK4d1VkohanZCV2N5dT0GVBilRt+j/7o/mxVGHgM2S03t5opG2vu74RxPAaz9+
+         5YgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Q2tcN9Jz0h7kw1m7OiNmzbCBKujbmSV8MqHohL1aMxc=;
+        b=SdjyGfHfLkTiniboi0XyCntDZA9EHvE1FvqlVkrwMOsyifVZlhmaTLatpqb65I9t5i
+         KKtjeT3GTzakiqUzlF1vkcf4Ug/I+sKUsHwZUyaisnJloUhWMUK3KkBt/AXabWO2cZ/g
+         UVKnhl+c7Jo6lAwrDbRnNuhPW8PWy8p7yRmH4iUjhPGppSqLVhQaGqrm7ud5wF/H/BEZ
+         weuk3HhJ1Skpv4bqMhR8nG5hLOVgTLiiW3guyYGWOq7DLLm9pK7efEiEFbQZkwUisIi7
+         7Dm9YbFx8utYYf2aGLe3k2ytCwIvs672pVbgIJOGMGaM4DnawboJrsoGZPAGZJO7yZy1
+         MPyA==
+X-Gm-Message-State: AOAM5317WEQUhprz+kgRZFhdAZypa728ybuXV/6gm2pt5raYtcpA6O2U
+        dJbIYb9EXWvoi5MfFzRsm6zHOTUeY9WDzIjin1g=
+X-Google-Smtp-Source: ABdhPJxPXXHtDiYGXjiJJVFSGYMXS15SU9DduSu2S4QuZFBZsnY3dQXEFlX9xjhw6RNRvh0QzILJ6LFIiS2sjeJp1Y8=
+X-Received: by 2002:a05:6830:1258:: with SMTP id s24mr1192602otp.162.1598885233434;
+ Mon, 31 Aug 2020 07:47:13 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200822010018.19453-1-nramas@linux.microsoft.com>
+ <CAEjxPJ5Kok-TBfS=XQ+NUC5tuaZRkyLBOawG4UDky51_bsMnGw@mail.gmail.com>
+ <418618c4-a0c6-6b28-6718-2726a29b83c5@linux.microsoft.com>
+ <CAEjxPJ6-8WnZRJnADsn=RVakzJiESjEjK-f8nSkscpT7dnricQ@mail.gmail.com>
+ <CAFqZXNvVQ5U6Ea3gT32Z0hfWbu7GPR-mTF2z6-JZZJT57Heuuw@mail.gmail.com>
+ <f041e8ee-3955-9551-b72d-d4d7fa6e636d@linux.microsoft.com>
+ <CAHC9VhQP7_rV+Oi6weLjVhrx2d8iu9UJ8zeE=ZcqnBMqngrJ4Q@mail.gmail.com>
+ <07854807-c495-b7e5-fc44-26d78ff14f1b@linux.microsoft.com> <CAEjxPJ4TkEEKG+pXwUjyysov1s1mFk4jbGGVyC7ghmpfd3TJ4w@mail.gmail.com>
+In-Reply-To: <CAEjxPJ4TkEEKG+pXwUjyysov1s1mFk4jbGGVyC7ghmpfd3TJ4w@mail.gmail.com>
+From:   Stephen Smalley <stephen.smalley.work@gmail.com>
+Date:   Mon, 31 Aug 2020 10:47:02 -0400
+Message-ID: <CAEjxPJ6GkUot29g5qq2GVYzmY2xwfTvVJkNP2kK54OcW7tkz1Q@mail.gmail.com>
+Subject: Re: [PATCH] SELinux: Measure state and hash of policy using IMA
+To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Cc:     Paul Moore <paul@paul-moore.com>,
+        Ondrej Mosnacek <omosnace@redhat.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Tyler Hicks <tyhicks@linux.microsoft.com>,
+        tusharsu@linux.microsoft.com, Sasha Levin <sashal@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        linux-integrity@vger.kernel.org,
+        SElinux list <selinux@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 2020-08-27 at 18:56 -0700, Tushar Sugandhi wrote:
-> IMA functions such as ima_match_keyring(), process_buffer_measurement(),
-> ima_match_policy() etc. handle data specific to keyrings. Currently,
-> these constructs are not generic to handle any func specific data.
-> This makes it harder to extend without code duplication.
-> 
-> Refactor the keyring specific measurement constructs to be generic and
-> reusable in other measurement scenarios.
+On Wed, Aug 26, 2020 at 8:51 AM Stephen Smalley
+<stephen.smalley.work@gmail.com> wrote:
+>
+> On Tue, Aug 25, 2020 at 4:49 PM Lakshmi Ramasubramanian
+> <nramas@linux.microsoft.com> wrote:
+> >
+> > On 8/24/20 3:18 PM, Paul Moore wrote:
+> >
+> > Hi Paul,
+> >
+> > >>>>> Is Ondrej's re-try approach I need to use to workaround policy reload issue?
+> > >>>>
+> > >>>> No, I think perhaps we should move the mutex to selinux_state instead
+> > >>>> of selinux_fs_info.  selinux_fs_info has a pointer to selinux_state so
+> > >>>> it can then use it indirectly.  Note that your patches are going to
+> > >>>> conflict with other ongoing work in the selinux next branch that is
+> > >>>> refactoring policy load and converting the policy rwlock to RCU.
+> > >>>
+> > >>> Yeah, and I'm experimenting with a patch on top of Stephen's RCU work
+> > >>> that would allow you to do this in a straightforward way without even
+> > >>> messing with the fsi->mutex. My patch may or may not be eventually
+> > >>> committed, but either way I'd recommend holding off on this for a
+> > >>> while until the dust settles around the RCU conversion.
+> > >>
+> > >> I can make the SELinux\IMA changes in "selinux next branch" taking
+> > >> dependencies on Stephen's patches + relevant IMA patches.
+> > >
+> > > I know it can be frustrating to hear what I'm about to say, but the
+> > > best option is probably just to wait a little to let things settle in
+> > > the SELinux -next branch.  There is a lot of stuff going on right now
+> > > with patches flooding in (at least "flooding" from a SELinux kernel
+> > > development perspective) and we/I've haven't gotten through all of
+> > > them yet.
+> > >
+> >
+> > Could you please let me know when the current set of changes in SELinux
+> > next branch would be completed and be ready to take new changes?
+> >
+> > I mean, roughly - would it be a month from now or you expect that to
+> > take longer?
+>
+> I can't speak for Paul but I would expect it to be sooner rather than
+> later. Ondrej has some follow ups on top of my policy rcu conversion
+> but then it should be good to go.
 
-Mostly this patch changes the variable name from keyring to func_data,
-which is good.  Other changes should be minimized.
+I think the major changes are now merged although there are still a
+couple of changes coming from Ondrej that could affect your code.  For
+your purposes, the important things to note are:
 
-> 
-> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
-> ---
+1) The mutex has moved from selinux_fs_info to selinux_state and is
+now named policy_mutex.  You will need to take it around your call to
+security_read_policy_kernel().
 
-<snip>
+2) security_policydb_len() was removed and security_read_policy() just
+directly reads the policydb len.  You can do the same from your
+security_read_policy_kernel() variant.
 
-> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-> index fe1df373c113..8866e84d0062 100644
-> --- a/security/integrity/ima/ima_policy.c
-> +++ b/security/integrity/ima/ima_policy.c
-> @@ -451,15 +451,21 @@ int ima_lsm_policy_change(struct notifier_block *nb, unsigned long event,
->  }
->  
->  /**
-> - * ima_match_keyring - determine whether the keyring matches the measure rule
-> - * @rule: a pointer to a rule
-> - * @keyring: name of the keyring to match against the measure rule
-> + * ima_match_rule_data - determine whether the given func_data matches
-> + *			 the measure rule data
-> + * @rule: IMA policy rule
-> + * @opt_list: rule data to match func_data against
-> + * @func_data: data to match against the measure rule data
-> + * @allow_empty_opt_list: If true matches all func_data
->   * @cred: a pointer to a credentials structure for user validation
->   *
-> - * Returns true if keyring matches one in the rule, false otherwise.
-> + * Returns true if func_data matches one in the rule, false otherwise.
->   */
-> -static bool ima_match_keyring(struct ima_rule_entry *rule,
-> -			      const char *keyring, const struct cred *cred)
-> +static bool ima_match_rule_data(struct ima_rule_entry *rule,
-> +				const struct ima_rule_opt_list *opt_list, 
+3) Ondrej has a pending change to move the policycap[] array from
+selinux_state to selinux_policy so that it can be atomically updated
+with the policy.
 
-Ok
-
-> +				const char *func_data,
-> +				bool allow_empty_opt_list,
-
-As the policy is loaded, shouldn't the rules should be checked, not
-here on usage?
-
-Mimi
-
-> +				const struct cred *cred)
->  {
->  	bool matched = false;
->  	size_t i;
-> 
-
+4) Ondrej has a pending change to eliminate the separate initialized
+boolean from selinux_state and just test whether selinux_state.policy
+is non-NULL but as long as you are using selinux_initialized() to
+test, your code should be unaffected.
