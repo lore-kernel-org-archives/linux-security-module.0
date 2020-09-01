@@ -2,111 +2,168 @@ Return-Path: <SRS0=IsuJ=CK=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.1 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84A74C433E6
-	for <linux-security-module@archiver.kernel.org>; Tue,  1 Sep 2020 20:49:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CD13C433E6
+	for <linux-security-module@archiver.kernel.org>; Tue,  1 Sep 2020 22:49:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 65E922078B
-	for <linux-security-module@archiver.kernel.org>; Tue,  1 Sep 2020 20:49:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7BC3A206C0
+	for <linux-security-module@archiver.kernel.org>; Tue,  1 Sep 2020 22:49:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Mf03Kg00"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pltBoz0p"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727845AbgIAUtO (ORCPT
+        id S1726124AbgIAWt1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 1 Sep 2020 16:49:14 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:64736 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726091AbgIAUtN (ORCPT
+        Tue, 1 Sep 2020 18:49:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37388 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726293AbgIAWtY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 1 Sep 2020 16:49:13 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 081KmciW110668;
-        Tue, 1 Sep 2020 16:48:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : date : in-reply-to : references : content-type : mime-version
- : content-transfer-encoding; s=pp1;
- bh=LriRH46lQxUd0tQXUZHWmDgdjSCZ34A+0AfqPQWnviM=;
- b=Mf03Kg00Kj9NmYoTGbjLMDn+i+R/6RHxZ847xmMb4iNDEZY7YXXL2e7+lnegXgRnl1Og
- 9SMCfrULSHKE+5QQoXan+Uo61VnvVbfYWa/H6UY/nrDmxS22UgovN9vQnuk3FlXLsz6k
- Hac1uuOOaK+daEA1+CrhncWLMUTMY4jhPJdL6qvro6KCuhrRjNfIYyybbTjHourKCPvc
- 5d535RDUCDPv6BdZtDdAtY+QpJWmlcCucR5n87rD7z5jlt3vesUzNdf9qCKE3bBlLSxX
- syaFfTJ1+Tx/dxvhE3oHmaAe8hYTk2JJwLt54nWz22FvRdHhw3YVC7ec/t3Mp9a1j5oy Qg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 339wnrr03u-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 01 Sep 2020 16:48:58 -0400
-Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 081KmwQF111445;
-        Tue, 1 Sep 2020 16:48:58 -0400
-Received: from ppma05fra.de.ibm.com (6c.4a.5195.ip4.static.sl-reverse.com [149.81.74.108])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 339wnrr03h-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 01 Sep 2020 16:48:58 -0400
-Received: from pps.filterd (ppma05fra.de.ibm.com [127.0.0.1])
-        by ppma05fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 081KksPW004529;
-        Tue, 1 Sep 2020 20:48:56 GMT
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (d06relay11.portsmouth.uk.ibm.com [9.149.109.196])
-        by ppma05fra.de.ibm.com with ESMTP id 337en82dpe-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 01 Sep 2020 20:48:56 +0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 081Kms0127394346
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 1 Sep 2020 20:48:54 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 449C34203F;
-        Tue,  1 Sep 2020 20:48:54 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3990542041;
-        Tue,  1 Sep 2020 20:48:51 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.77.139])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue,  1 Sep 2020 20:48:51 +0000 (GMT)
-Message-ID: <4190d5a54590e16a7612f132c6013f3310f99571.camel@linux.ibm.com>
-Subject: Re: [PATCH 2/3] integrity: Move import of MokListRT certs to a
- separate routine
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Lenny Szubowicz <lszubowi@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org,
-        linux-security-module@vger.kernel.org, ardb@kernel.org,
-        jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
-        bp@alien8.de, pjones@redhat.com, dhowells@redhat.com,
-        prarit@redhat.com
-Date:   Tue, 01 Sep 2020 16:48:50 -0400
-In-Reply-To: <20200826034455.28707-3-lszubowi@redhat.com>
-References: <20200826034455.28707-1-lszubowi@redhat.com>
-         <20200826034455.28707-3-lszubowi@redhat.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-09-01_10:2020-09-01,2020-09-01 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=999
- bulkscore=0 lowpriorityscore=0 suspectscore=0 malwarescore=0
- priorityscore=1501 clxscore=1015 impostorscore=0 phishscore=0 mlxscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2009010170
+        Tue, 1 Sep 2020 18:49:24 -0400
+Received: from mail-qv1-xf44.google.com (mail-qv1-xf44.google.com [IPv6:2607:f8b0:4864:20::f44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DCB0C061245
+        for <linux-security-module@vger.kernel.org>; Tue,  1 Sep 2020 15:49:24 -0700 (PDT)
+Received: by mail-qv1-xf44.google.com with SMTP id s15so1354023qvv.7
+        for <linux-security-module@vger.kernel.org>; Tue, 01 Sep 2020 15:49:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=WoJQyVyRigJ/VPyMq4P5S7btJTjrlzwWo+ai9P5xEXM=;
+        b=pltBoz0p7LUMTb9N83GxsOhoaf5QtMmnF0TzmFYYTMBsytMHZUqOb93vVczu3YJ8iv
+         bift3Wx/KdWl2jd+sxb4+A54G1LmVgbinmV7jnonDfOyj36E+P6tvigetqoENX70sP+s
+         HF6uzbbA128JlFGR3YGJJsYukgrTVws4IkN+8PQ/40hvwghHC1LCfJtU6PL3iVYtlTVd
+         hX8kAhGPOWrgvbojsrEW9ivwJ+/m8NIb/3QKXeTb364k9HBfj7ChOIdeCj/5u9CiXU3M
+         8djQO6xfJeQtzRb0nzWdlQlhOovEKIOEZtNmADOK4aAViDeGKylxhE41yhC7iCx9clj8
+         2XZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WoJQyVyRigJ/VPyMq4P5S7btJTjrlzwWo+ai9P5xEXM=;
+        b=hyb+q1IF9wR6Cs6NEnTghOYYMGYwnx1Q5F56Gy/9a88gM7zfEQDFrlavy2ubVsN4Zz
+         LiTS23JZ8CZppIZ34LPoizb0clep0mfcEHU2Dbz+izuEOExrHVU/eDBJMsH7spYDncQ3
+         bC3AliOVcfxvlYlVPcJnzQOL0Hnt9k3L7Gth6lYMc8O7ZrIW9I9bduIVz1fw8fPOuNgB
+         ewZVAn2R8ahi0BoOjqLltm9UDtrdQwkhPYhDtylxtBP0Ilx5+2SXN0vo0OkvRrSUeXq9
+         pNwrBKELUnhXvmOjccOryuXMOSaMpT+zVJt/C17frwI4fNPaKAmnPANKZkONzyrr/rMw
+         8afg==
+X-Gm-Message-State: AOAM532jZt1Z1RHEjx0mE05GtQy0M33RCI4VP9eOEddt/eP9gffG5dAH
+        Ug0YXWU8U16c1G66yioa5WDryXhcMwBfq5QV85TQgw==
+X-Google-Smtp-Source: ABdhPJzb6iQ2xfAd3GFaoPdmG5TMtcbzW9pWV02FfgMB6CIItnsA19KeXvuCMy7dEmf4Fhbln6H2+lYktJe9ILr5OFY=
+X-Received: by 2002:ad4:4e89:: with SMTP id dy9mr4325462qvb.25.1599000563420;
+ Tue, 01 Sep 2020 15:49:23 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200824221034.2170308-1-khazhy@google.com> <e50a4ff6-39fb-6ba0-40ab-d348fbf5567f@acm.org>
+In-Reply-To: <e50a4ff6-39fb-6ba0-40ab-d348fbf5567f@acm.org>
+From:   Khazhismel Kumykov <khazhy@google.com>
+Date:   Tue, 1 Sep 2020 15:49:12 -0700
+Message-ID: <CACGdZY+6qdymU5cVqu9cVep+P6uNw6muxznZ23XJkxdiihiKFg@mail.gmail.com>
+Subject: Re: [PATCH v2] block: grant IOPRIO_CLASS_RT to CAP_SYS_NICE
+To:     Bart Van Assche <bvanassche@acm.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, Serge Hallyn <serge@hallyn.com>,
+        Paolo Valente <paolo.valente@linaro.org>,
+        linux-block@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+        boundary="0000000000009b427205ae4854d1"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 2020-08-25 at 23:44 -0400, Lenny Szubowicz wrote:
-> Move the loading of certs from the UEFI MokListRT into a separate
-> routine to facilitate additional MokList functionality.
-> 
-> There is no visible functional change as a result of this patch.
-> Although the UEFI dbx certs are now loaded before the MokList certs,
-> they are loaded onto different key rings. So the order of the keys
-> on their respective key rings is the same.
-> 
-> Signed-off-by: Lenny Szubowicz <lszubowi@redhat.com>
+--0000000000009b427205ae4854d1
+Content-Type: text/plain; charset="UTF-8"
 
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+On Sat, Aug 29, 2020 at 6:00 PM Bart Van Assche <bvanassche@acm.org> wrote:
+>
+> From https://www.kernel.org/doc/man-pages/linux-api-ml.html:
+> "all Linux kernel patches that change userspace interfaces should be CCed
+> to linux-api@vger.kernel.org"
+>
+> So I have added the linux-api mailing list to the Cc-list. Anyway:
+Thanks, sorry for missing that!
+>
+> Reviewed-by: Bart Van Assche <bvanassche@acm.org>
 
+Jens, does this change look good?
+
+khazhy
+
+--0000000000009b427205ae4854d1
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+MIIPBgYJKoZIhvcNAQcCoIIO9zCCDvMCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
+ggxpMIIEkjCCA3qgAwIBAgINAewckktV4F6Q7sAtGDANBgkqhkiG9w0BAQsFADBMMSAwHgYDVQQL
+ExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSMzETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UEAxMK
+R2xvYmFsU2lnbjAeFw0xODA2MjAwMDAwMDBaFw0yODA2MjAwMDAwMDBaMEsxCzAJBgNVBAYTAkJF
+MRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSEwHwYDVQQDExhHbG9iYWxTaWduIFNNSU1FIENB
+IDIwMTgwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCUeobu8FdB5oJg6Fz6SFf8YsPI
+dNcq4rBSiSDAwqMNYbeTpRrINMBdWuPqVWaBX7WHYMsKQwCOvAF1b7rkD+ROo+CCTJo76EAY25Pp
+jt7TYP/PxoLesLQ+Ld088+BeyZg9pQaf0VK4tn23fOCWbFWoM8hdnF86Mqn6xB6nLsxJcz4CUGJG
+qAhC3iedFiCfZfsIp2RNyiUhzPAqalkrtD0bZQvCgi5aSNJseNyCysS1yA58OuxEyn2e9itZJE+O
+sUeD8VFgz+nAYI5r/dmFEXu5d9npLvTTrSJjrEmw2/ynKn6r6ONueZnCfo6uLmP1SSglhI/SN7dy
+L1rKUCU7R1MjAgMBAAGjggFyMIIBbjAOBgNVHQ8BAf8EBAMCAYYwJwYDVR0lBCAwHgYIKwYBBQUH
+AwIGCCsGAQUFBwMEBggrBgEFBQcDCTASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdDgQWBBRMtwWJ
+1lPNI0Ci6A94GuRtXEzs0jAfBgNVHSMEGDAWgBSP8Et/qC5FJK5NUPpjmove4t0bvDA+BggrBgEF
+BQcBAQQyMDAwLgYIKwYBBQUHMAGGImh0dHA6Ly9vY3NwMi5nbG9iYWxzaWduLmNvbS9yb290cjMw
+NgYDVR0fBC8wLTAroCmgJ4YlaHR0cDovL2NybC5nbG9iYWxzaWduLmNvbS9yb290LXIzLmNybDBn
+BgNVHSAEYDBeMAsGCSsGAQQBoDIBKDAMBgorBgEEAaAyASgKMEEGCSsGAQQBoDIBXzA0MDIGCCsG
+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
+BQcCARYmaHR0cHM6Ly93d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wUQYIKwYBBQUHAQEE
+RTBDMEEGCCsGAQUFBzAChjVodHRwOi8vc2VjdXJlLmdsb2JhbHNpZ24uY29tL2NhY2VydC9nc3Nt
+aW1lY2EyMDE4LmNydDAfBgNVHSMEGDAWgBRMtwWJ1lPNI0Ci6A94GuRtXEzs0jA/BgNVHR8EODA2
+MDSgMqAwhi5odHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2NhL2dzc21pbWVjYTIwMTguY3JsMA0G
+CSqGSIb3DQEBCwUAA4IBAQAzGsyTMuMEs+rU0JhN7+X62InoLA+QLAozxi+mmLGmfS48HalmbNSM
+50i9IOpsIW0GqjrLgilzP7b04OWA0eGsQ2PzobSd/6yLpFvdU+R52Iyu6/IVcCoEcWj11PYvmtMp
+SZrCvtwvCj+zfJSxNqLmOhITBB1uGneHUHjwTEK87WDqGVcm43pwBMHZ8qMziJdVf8MbKPm4w6a9
+1zewg0bTPT33PFWgCFIsqvTcQPEKoL3Kj8e/DBz1DgFhw4WkwfmzmnLamf93T+t9TU+iQdSESxgT
+NC8D2u/lHre/+I8qQ3tgofQC+AomdFoGhr+nQj+6O1Sv8BKB1ArDiku4umqVMYICYTCCAl0CAQEw
+XzBLMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTEhMB8GA1UEAxMYR2xv
+YmFsU2lnbiBTTUlNRSBDQSAyMDE4AhABBw5QEQ1RT42XN3T1kVOEMA0GCWCGSAFlAwQCAQUAoIHU
+MC8GCSqGSIb3DQEJBDEiBCAnyQYq+MYL4m/S31loPtU6Iu/N5TLGFfSXWyC1pKqyTTAYBgkqhkiG
+9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yMDA5MDEyMjQ5MjNaMGkGCSqGSIb3
+DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglghkgBZQMEAQIwCgYIKoZIhvcN
+AwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEBBzALBglghkgBZQMEAgEwDQYJKoZIhvcNAQEBBQAE
+ggEACmfp4bSp4wnZ2CodpF6naxDdrmLlInczvE+Hfw2vLAi38ZfXB46t9Z0kgqII+perJGWaMDrA
+5Rnrcp1gU2B/YQCH786HI2545xi+N19H4UBy5E5sv1mk04YylmoRon3RWMnSfIX/ed+O7Gr0XSV5
+QimiWWh4vkLbaYQE0LU1aNz6twtdd3pqPxPXl/pyAnr4KqJKMTEpjFyif0SvxywphpV0DNXSWJo3
+4uIZn7bPeG2gsOXbud3n2TAXnWTiRpE7DfxFDcQubLUsisAojzZgzmTrYo91uZxj8LMkytA4PH2Q
+yV2gelupJXBJdZpgifAJzix30SzB2pc2x2Exqxck8A==
+--0000000000009b427205ae4854d1--
