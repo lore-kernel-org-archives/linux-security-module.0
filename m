@@ -1,137 +1,186 @@
-Return-Path: <SRS0=bHuK=CJ=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=IsuJ=CK=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A909AC433E6
-	for <linux-security-module@archiver.kernel.org>; Mon, 31 Aug 2020 21:31:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9D4AC433E7
+	for <linux-security-module@archiver.kernel.org>; Tue,  1 Sep 2020 09:09:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 78D0320719
-	for <linux-security-module@archiver.kernel.org>; Mon, 31 Aug 2020 21:31:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="EUkMf822"
+	by mail.kernel.org (Postfix) with ESMTP id 8FBAD2083B
+	for <linux-security-module@archiver.kernel.org>; Tue,  1 Sep 2020 09:09:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726927AbgHaVbh (ORCPT
+        id S1726124AbgIAJJA convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 31 Aug 2020 17:31:37 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54514 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726224AbgHaVbh (ORCPT
+        Tue, 1 Sep 2020 05:09:00 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2719 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725848AbgIAJJA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 31 Aug 2020 17:31:37 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 07VL2uYE110245;
-        Mon, 31 Aug 2020 17:31:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=1Dbw3IMHWQxOhGrQ00lEjLfXQ44s1hsxiHPb7q4Nmjo=;
- b=EUkMf822AAlWQ//FDIhDFf6IzXlhbwcw1qzafRLv8MVYdgPY0LMMnRbM/aCNOnoPeVBm
- 8hPoXrXjD6rOVvkRNOdnkE221KQv4xW3eWpMqKE3zUkyLFtS6oghgivUGPTsdiT1hyZg
- JXHksymgb0A5Ojkga6XknSP6msxgU6iUQnmM26942ZodWuJjfAEbzEJhAeqpeDHXSmVB
- rR/0PFzchy88xHP+iwBTEpZ/aoKdA9tEa5NyX3EtQATWfike6YVxYZ0aVKtb30k4/Rvv
- wNBXXt14zniNcqLNGAbm3hudpDOVaG5eLXrx5melgq3fHINq/6/r9CGdAZSX7KVwfh3M qQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 33975wb1bk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 31 Aug 2020 17:31:33 -0400
-Received: from m0098393.ppops.net (m0098393.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 07VLKk0O017994;
-        Mon, 31 Aug 2020 17:31:33 -0400
-Received: from ppma02fra.de.ibm.com (47.49.7a9f.ip4.static.sl-reverse.com [159.122.73.71])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 33975wb1a4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 31 Aug 2020 17:31:33 -0400
-Received: from pps.filterd (ppma02fra.de.ibm.com [127.0.0.1])
-        by ppma02fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 07VLGK3s013879;
-        Mon, 31 Aug 2020 21:31:30 GMT
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
-        by ppma02fra.de.ibm.com with ESMTP id 337en7hkq6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 31 Aug 2020 21:31:30 +0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 07VLVSM414418202
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 31 Aug 2020 21:31:28 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 69D92A4067;
-        Mon, 31 Aug 2020 21:31:28 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C1732A4062;
-        Mon, 31 Aug 2020 21:31:26 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.2.129])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 31 Aug 2020 21:31:26 +0000 (GMT)
-Message-ID: <b74a68cb22656e4646d61c651aeb5ebee234530c.camel@linux.ibm.com>
-Subject: Re: [PATCH 03/11] evm: Refuse EVM_ALLOW_METADATA_WRITES only if the
- HMAC key is loaded
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>,
+        Tue, 1 Sep 2020 05:09:00 -0400
+Received: from lhreml732-chm.china.huawei.com (unknown [172.18.7.107])
+        by Forcepoint Email with ESMTP id 2E910473AFED2B69E7F2;
+        Tue,  1 Sep 2020 10:08:58 +0100 (IST)
+Received: from fraeml702-chm.china.huawei.com (10.206.15.51) by
+ lhreml732-chm.china.huawei.com (10.201.108.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
+ 15.1.1913.5; Tue, 1 Sep 2020 10:08:57 +0100
+Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
+ fraeml702-chm.china.huawei.com (10.206.15.51) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1913.5; Tue, 1 Sep 2020 11:08:57 +0200
+Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
+ fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.1913.007;
+ Tue, 1 Sep 2020 11:08:57 +0200
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>,
         "mjg59@google.com" <mjg59@google.com>
-Cc:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+CC:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
         "linux-security-module@vger.kernel.org" 
         <linux-security-module@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
-Date:   Mon, 31 Aug 2020 17:31:26 -0400
-In-Reply-To: <0c1c8fb398c340d89531360be7e3418b@huawei.com>
-References: <20200618160133.937-1-roberto.sassu@huawei.com>
-         <20200618160133.937-3-roberto.sassu@huawei.com>
-         <caedd49bc2080a2fb8b16b9ecacab67d11e68fd7.camel@linux.ibm.com>
-         <0c1c8fb398c340d89531360be7e3418b@huawei.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-08-31_10:2020-08-31,2020-08-31 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- suspectscore=0 phishscore=0 adultscore=0 spamscore=0 mlxscore=0
- clxscore=1015 priorityscore=1501 bulkscore=0 impostorscore=0
- malwarescore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2006250000 definitions=main-2008310123
+        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: RE: [PATCH 07/11] evm: Set IMA_CHANGE_XATTR/ATTR bit if
+ EVM_ALLOW_METADATA_WRITES is set
+Thread-Topic: [PATCH 07/11] evm: Set IMA_CHANGE_XATTR/ATTR bit if
+ EVM_ALLOW_METADATA_WRITES is set
+Thread-Index: AQHWRYqWnNLPRhTOMk2ID5bSdlZ6YalHdJUAgAx1KTA=
+Date:   Tue, 1 Sep 2020 09:08:57 +0000
+Message-ID: <a5e6a5acf2274a6d844b275dacfbabb8@huawei.com>
+References: <20200618160329.1263-2-roberto.sassu@huawei.com>
+         <20200618160458.1579-7-roberto.sassu@huawei.com>
+ <67cafcf63daf8e418871eb5302e7327ba851e253.camel@linux.ibm.com>
+In-Reply-To: <67cafcf63daf8e418871eb5302e7327ba851e253.camel@linux.ibm.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.48.193.114]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 2020-08-31 at 08:24 +0000, Roberto Sassu wrote:
-> > From: Mimi Zohar [mailto:zohar@linux.ibm.com]
-> > Sent: Friday, August 21, 2020 10:15 PM
-> > Hi Roberto,
-> > 
-> > On Thu, 2020-06-18 at 18:01 +0200, Roberto Sassu wrote:
-> > > Granting metadata write is safe if the HMAC key is not loaded, as it won't
-> > > let an attacker obtain a valid HMAC from corrupted xattrs.
-> > evm_write_key()
-> > > however does not allow it if any key is loaded, including a public key,
-> > > which should not be a problem.
-> > >
-> > 
-> > Why is the existing hebavior a problem?  What is the problem being
-> > solved?
+> From: Mimi Zohar [mailto:zohar@linux.ibm.com]
+> Sent: Monday, August 24, 2020 2:18 PM
+> On Thu, 2020-06-18 at 18:04 +0200, Roberto Sassu wrote:
+> > When EVM_ALLOW_METADATA_WRITES is set, EVM allows any operation
+> on
+> > metadata. Its main purpose is to allow users to freely set metadata when
+> > they are protected by a portable signature, until the HMAC key is loaded.
+> >
+> > However, IMA is not notified about metadata changes and, after the first
+> > appraisal, always allows access to the files without checking metadata
+> > again.
 > 
-> Hi Mimi
+> ^after the first successful appraisal
+> >
+> > This patch checks in evm_reset_status() if EVM_ALLOW_METADATA
+> WRITES is
+> > enabled and if it is, sets the IMA_CHANGE_XATTR/ATTR bits depending on
+> the
+> > operation performed. At the next appraisal, metadata are revalidated.
 > 
-> currently it is not possible to set EVM_ALLOW_METADATA_WRITES when
-> only a public key is loaded and the HMAC key is not. The patch removes
-> this limitation.
+> EVM modifying IMA bits crosses the boundary between EVM and IMA.
+> There
+> is already an IMA post_setattr hook.  IMA could reset its own bit
+> there.  If necessary EVM could export as a function it's status info.
 
-Yes, I understand.  You're describing "what" the problem is, not "why"
-this is a problem.  Support for loading EVM HMAC and x509 certificates
-isn't new.  Please add a line or two prior to this paragraph providing
-the context for why this is now a problem.
+I wouldn't try to guess in IMA when EVM resets its status. We would have
+to duplicate the logic to check if an EVM key is loaded, if the passed xattr
+is a POSIX ACL, ...
 
-Is the problem related to previoulsy not beginning EVM verification
-until after the EVM HMAC key was loaded?  Or perhaps EVM signatures
-were not that common since they weren't portable.   Now, with portable
-and immutable signatures loading x509 certificates is more common.
+I think it is better to set a flag, maybe a new one, directly in EVM, to notify
+the integrity subsystem that iint->evm_status is no longer valid.
 
-thanks,
+If the EVM flag is set, IMA would reset the appraisal flags, as it uses
+iint->evm_status for appraisal. We can consider to reset also the measure
+flags when we have a template that includes file metadata.
 
-Mimi
+Roberto
+
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Li Peng, Li Jian, Shi Yanli
+
+> Mimi
+> 
+> >
+> > This patch also adds a call to evm_reset_status() in
+> > evm_inode_post_setattr() so that EVM won't return the cached status
+> the
+> > next time appraisal is performed.
+> >
+> > Cc: stable@vger.kernel.org # 4.16.x
+> > Fixes: ae1ba1676b88e ("EVM: Allow userland to permit modification of
+> EVM-protected metadata")
+> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > ---
+> >  security/integrity/evm/evm_main.c | 14 ++++++++++----
+> >  1 file changed, 10 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/security/integrity/evm/evm_main.c
+> b/security/integrity/evm/evm_main.c
+> > index 41cc6a4aaaab..d4d918183094 100644
+> > --- a/security/integrity/evm/evm_main.c
+> > +++ b/security/integrity/evm/evm_main.c
+> > @@ -478,13 +478,17 @@ int evm_inode_removexattr(struct dentry
+> *dentry, const char *xattr_name)
+> >  	return evm_protect_xattr(dentry, xattr_name, NULL, 0);
+> >  }
+> >
+> > -static void evm_reset_status(struct inode *inode)
+> > +static void evm_reset_status(struct inode *inode, int bit)
+> >  {
+> >  	struct integrity_iint_cache *iint;
+> >
+> >  	iint = integrity_iint_find(inode);
+> > -	if (iint)
+> > +	if (iint) {
+> > +		if (evm_initialized & EVM_ALLOW_METADATA_WRITES)
+> > +			set_bit(bit, &iint->atomic_flags);
+> > +
+> >  		iint->evm_status = INTEGRITY_UNKNOWN;
+> > +	}
+> >  }
+> >
+> >  /**:q
+> > @@ -507,7 +511,7 @@ void evm_inode_post_setxattr(struct dentry
+> *dentry, const char *xattr_name,
+> >  				  && !posix_xattr_acl(xattr_name)))
+> >  		return;
+> >
+> > -	evm_reset_status(dentry->d_inode);
+> > +	evm_reset_status(dentry->d_inode, IMA_CHANGE_XATTR);
+> >
+> >  	evm_update_evmxattr(dentry, xattr_name, xattr_value,
+> xattr_value_len);
+> >  }
+> > @@ -527,7 +531,7 @@ void evm_inode_post_removexattr(struct dentry
+> *dentry, const char *xattr_name)
+> >  	if (!evm_key_loaded() || !evm_protected_xattr(xattr_name))
+> >  		return;
+> >
+> > -	evm_reset_status(dentry->d_inode);
+> > +	evm_reset_status(dentry->d_inode, IMA_CHANGE_XATTR);
+> >
+> >  	evm_update_evmxattr(dentry, xattr_name, NULL, 0);
+> >  }
+> > @@ -600,6 +604,8 @@ void evm_inode_post_setattr(struct dentry
+> *dentry, int ia_valid)
+> >  	if (!evm_key_loaded())
+> >  		return;
+> >
+> > +	evm_reset_status(dentry->d_inode, IMA_CHANGE_ATTR);
+> > +
+> >  	if (ia_valid & (ATTR_MODE | ATTR_UID | ATTR_GID))
+> >  		evm_update_evmxattr(dentry, NULL, NULL, 0);
+> >  }
+> 
 
