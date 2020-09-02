@@ -1,106 +1,139 @@
-Return-Path: <SRS0=IsuJ=CK=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=tQ1I=CL=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CD77C433E2
-	for <linux-security-module@archiver.kernel.org>; Tue,  1 Sep 2020 22:51:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FBF1C433E2
+	for <linux-security-module@archiver.kernel.org>; Wed,  2 Sep 2020 03:07:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 538F5206C0
-	for <linux-security-module@archiver.kernel.org>; Tue,  1 Sep 2020 22:51:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="JbImz5Ws"
+	by mail.kernel.org (Postfix) with ESMTP id 8766A2068F
+	for <linux-security-module@archiver.kernel.org>; Wed,  2 Sep 2020 03:07:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726355AbgIAWvk (ORCPT
+        id S1726355AbgIBDHB convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 1 Sep 2020 18:51:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37724 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726490AbgIAWvf (ORCPT
+        Tue, 1 Sep 2020 23:07:01 -0400
+Received: from mga03.intel.com ([134.134.136.65]:62774 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726144AbgIBDHA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 1 Sep 2020 18:51:35 -0400
-Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B408C061245
-        for <linux-security-module@vger.kernel.org>; Tue,  1 Sep 2020 15:51:35 -0700 (PDT)
-Received: by mail-pj1-x1041.google.com with SMTP id np15so1256697pjb.0
-        for <linux-security-module@vger.kernel.org>; Tue, 01 Sep 2020 15:51:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=73Z9tnUqBHSQd4rVrF0YKolOG5wWkir8Qe+k7njEBUs=;
-        b=JbImz5WsjQvNso/bkzCqvJB3HU/vCONvAuUDL1NUhxq8EXfgBd6gJU/ZbPxsO4JCoj
-         fbia4mrRoqvjC9hA2NE877kpM8KSXxurm3Sx0F3EUrx5+hNHxVqURx7Al9dd/TdZJEt8
-         M1fRjT4TjPeMdm8pIPkKuO+B86gugS4YQG5QKHpnEVfRzc6aBzdOh87c4uZbVSn+adTT
-         Bxa6y9Yjd8zSdL7Y/JPXy23oNwj/xfQCIeHasUirag5WP3wtFNsX5pt6tutvFlh8uRUh
-         ocSwHqvV58dwCL2IXYTiyWDy2SrnKLJDmavsdFO+jTguZkigciC00f+5WMe4rTC2CbZt
-         9JMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=73Z9tnUqBHSQd4rVrF0YKolOG5wWkir8Qe+k7njEBUs=;
-        b=UsN48mdqSGUqs/nY03PF7J3U56DtkiVmYZSoB3HSab1fwlI6k/CIoaw7beZTnw8dB1
-         gb88j/1c9kMnNSS2C4YXZNzQRZrnlVwocNWFq4efecO7T/W+VkDlNxg74xAaYhABuTPR
-         1zFwEH/oVI4PNQu+rnDkCY4tBCuNSBJn7WAdLEBUaY9Od0OZ1UEoPRZi6vGh2+sDFUau
-         7Zmff2ZwYzEP0hayVh5ZbkhdVB8gHuUJwjxBcoJXSdRlmHplhWHvC1aj3gKf8xdf/p6Q
-         O2EWh7eEikMg7HgDv5VmYuqCk68zKUaHSNghQnqSzFlOxrISarABKOFz2ur3jQFaDYxl
-         WNwQ==
-X-Gm-Message-State: AOAM531em+4CsyjUqMZ6r9wpfStMLcIwsBdLtUQ+z1x4H4IwgXjJFcYk
-        9Rj/gi8FseUolO05qHHHt//b1g==
-X-Google-Smtp-Source: ABdhPJybEiMVNVLdw9lLzttpP8rQTxf/7m5Nxo5x90EP5wGNQib42AHfwb/cCr16WzqHroCbzeq4CQ==
-X-Received: by 2002:a17:902:a70d:: with SMTP id w13mr3305891plq.94.1599000694466;
-        Tue, 01 Sep 2020 15:51:34 -0700 (PDT)
-Received: from [192.168.1.187] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id f21sm2554223pjj.48.2020.09.01.15.51.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Sep 2020 15:51:33 -0700 (PDT)
-Subject: Re: [PATCH v2] block: grant IOPRIO_CLASS_RT to CAP_SYS_NICE
-To:     Khazhismel Kumykov <khazhy@google.com>,
-        Bart Van Assche <bvanassche@acm.org>
-Cc:     Serge Hallyn <serge@hallyn.com>,
-        Paolo Valente <paolo.valente@linaro.org>,
-        linux-block@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org
-References: <20200824221034.2170308-1-khazhy@google.com>
- <e50a4ff6-39fb-6ba0-40ab-d348fbf5567f@acm.org>
- <CACGdZY+6qdymU5cVqu9cVep+P6uNw6muxznZ23XJkxdiihiKFg@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <97f1712d-ed8a-b84a-b3b2-acc518cd9324@kernel.dk>
-Date:   Tue, 1 Sep 2020 16:51:32 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Tue, 1 Sep 2020 23:07:00 -0400
+IronPort-SDR: unM1avL+8Bv4KDKX5LdlKNNHpvgTp8c/uGlUQQAeULU62FTFHVjLXJQ0HJQijyEEGKvu0xFcMZ
+ Nk+ChD4fgRIg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9731"; a="157314554"
+X-IronPort-AV: E=Sophos;i="5.76,381,1592895600"; 
+   d="scan'208";a="157314554"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2020 20:07:00 -0700
+IronPort-SDR: dLeqMVa6k07q6GfWLy1bB+3vOfmMnoTP2rO/Z3OhbuYRKqvNNOSecXkZNbJOFaa/e5W5oPifUo
+ wxSBJ2F+iiIw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.76,381,1592895600"; 
+   d="scan'208";a="502498257"
+Received: from hhuan26-mobl1.amr.corp.intel.com ([10.255.35.33])
+  by fmsmga005.fm.intel.com with ESMTP; 01 Sep 2020 20:06:36 -0700
+Content-Type: text/plain; charset=utf-8; format=flowed; delsp=yes
+To:     "Sean Christopherson" <sean.j.christopherson@intel.com>,
+        "Jarkko Sakkinen" <jarkko.sakkinen@linux.intel.com>
+Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        "Jethro Beekman" <jethro@fortanix.com>,
+        "Chunyang Hui" <sanqian.hcy@antfin.com>,
+        "Jordan Hand" <jorhand@linux.microsoft.com>,
+        "Nathaniel McCallum" <npmccallum@redhat.com>,
+        "Seth Moore" <sethmo@google.com>,
+        "Suresh Siddha" <suresh.b.siddha@intel.com>,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
+        chenalexchen@google.com, conradparker@google.com,
+        cyhanish@google.com, dave.hansen@intel.com, josh@joshtriplett.org,
+        kai.huang@intel.com, kai.svahn@intel.com, kmoy@google.com,
+        ludloff@google.com, luto@kernel.org, nhorman@redhat.com,
+        puiterwijk@redhat.com, rientjes@google.com, tglx@linutronix.de,
+        yaozhangx@google.com
+Subject: Re: [PATCH v33 11/21] x86/sgx: Linux Enclave Driver
+References: <20200617220844.57423-1-jarkko.sakkinen@linux.intel.com>
+ <20200617220844.57423-12-jarkko.sakkinen@linux.intel.com>
+ <20200702035902.GC1819@linux.intel.com>
+ <20200704033025.GA144756@linux.intel.com>
+Date:   Tue, 01 Sep 2020 22:06:32 -0500
 MIME-Version: 1.0
-In-Reply-To: <CACGdZY+6qdymU5cVqu9cVep+P6uNw6muxznZ23XJkxdiihiKFg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8BIT
+From:   "Haitao Huang" <haitao.huang@linux.intel.com>
+Organization: Intel Corp
+Message-ID: <op.0qaqw6rvwjvjmi@hhuan26-mobl1.amr.corp.intel.com>
+In-Reply-To: <20200704033025.GA144756@linux.intel.com>
+User-Agent: Opera Mail/1.0 (Win32)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 9/1/20 4:49 PM, Khazhismel Kumykov wrote:
-> On Sat, Aug 29, 2020 at 6:00 PM Bart Van Assche <bvanassche@acm.org> wrote:
->>
->> From https://www.kernel.org/doc/man-pages/linux-api-ml.html:
->> "all Linux kernel patches that change userspace interfaces should be CCed
->> to linux-api@vger.kernel.org"
->>
->> So I have added the linux-api mailing list to the Cc-list. Anyway:
-> Thanks, sorry for missing that!
->>
->> Reviewed-by: Bart Van Assche <bvanassche@acm.org>
-> 
-> Jens, does this change look good?
+On Fri, 03 Jul 2020 22:31:10 -0500, Jarkko Sakkinen  
+<jarkko.sakkinen@linux.intel.com> wrote:
 
-Yes, I'll queue it up for 5.10.
+> On Wed, Jul 01, 2020 at 08:59:02PM -0700, Sean Christopherson wrote:
+>> On Thu, Jun 18, 2020 at 01:08:33AM +0300, Jarkko Sakkinen wrote:
+>> > +static int sgx_validate_secs(const struct sgx_secs *secs,
+>> > +			     unsigned long ssaframesize)
+>> > +{
+>> > +	if (secs->size < (2 * PAGE_SIZE) || !is_power_of_2(secs->size))
+>> > +		return -EINVAL;
+>> > +
+>> > +	if (secs->base & (secs->size - 1))
+>> > +		return -EINVAL;
+>> > +
+>> > +	if (secs->miscselect & sgx_misc_reserved_mask ||
+>> > +	    secs->attributes & sgx_attributes_reserved_mask ||
+>> > +	    secs->xfrm & sgx_xfrm_reserved_mask)
+>> > +		return -EINVAL;
+>> > +
+>> > +	if (secs->attributes & SGX_ATTR_MODE64BIT) {
+>> > +		if (secs->size > sgx_encl_size_max_64)
+>> > +			return -EINVAL;
+>> > +	} else if (secs->size > sgx_encl_size_max_32)
+>> > +		return -EINVAL;
+>>
+>> These should be >=, not >, the SDM uses one of those fancy ≥ ligatures.
+>>
+>> Internal versions use more obvious pseudocode, e.g.:
+>>
+>>     if ((DS:TMP_SECS.ATTRIBUTES.MODE64BIT = 1) AND
+>>         (DS:TMP_SECS.SIZE AND (~((1 << CPUID.18.0:EDX[15:8]) – 1)))
+>>     {
+>>         #GP(0);
+>
+> Updated as:
+>
+> static int sgx_validate_secs(const struct sgx_secs *secs)
+> {
+> 	u64 max_size = (secs->attributes & SGX_ATTR_MODE64BIT) ?
+> 		       sgx_encl_size_max_64 : sgx_encl_size_max_32;
+>
+> 	if (secs->size < (2 * PAGE_SIZE) || !is_power_of_2(secs->size))
+> 		return -EINVAL;
+>
+> 	if (secs->base & (secs->size - 1))
+> 		return -EINVAL;
+>
+> 	if (secs->miscselect & sgx_misc_reserved_mask ||
+> 	    secs->attributes & sgx_attributes_reserved_mask ||
+> 	    secs->xfrm & sgx_xfrm_reserved_mask)
+> 		return -EINVAL;
+>
+> 	if (secs->size >= max_size)
+> 		return -EINVAL;
+>
 
--- 
-Jens Axboe
+This should be > not >=. Issue raised and fixed by Fábio Silva for ported  
+patches for OOT SGX support:  
+https://github.com/intel/SGXDataCenterAttestationPrimitives/pull/123
 
+I tested and verified with Intel arch, the comparison indeed should be >.
+
+Thanks
+Haitao
