@@ -2,158 +2,104 @@ Return-Path: <SRS0=tQ1I=CL=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E54C3C433E2
-	for <linux-security-module@archiver.kernel.org>; Wed,  2 Sep 2020 07:55:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23D14C2BBD0
+	for <linux-security-module@archiver.kernel.org>; Wed,  2 Sep 2020 11:42:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C2A822084C
-	for <linux-security-module@archiver.kernel.org>; Wed,  2 Sep 2020 07:55:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dUhRbwVR"
+	by mail.kernel.org (Postfix) with ESMTP id 092AE20767
+	for <linux-security-module@archiver.kernel.org>; Wed,  2 Sep 2020 11:42:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726882AbgIBHzn (ORCPT
+        id S1726177AbgIBLmZ convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 2 Sep 2020 03:55:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36632 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726167AbgIBHzi (ORCPT
+        Wed, 2 Sep 2020 07:42:25 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2734 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726183AbgIBLmZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 2 Sep 2020 03:55:38 -0400
-Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 802EAC061244;
-        Wed,  2 Sep 2020 00:55:38 -0700 (PDT)
-Received: by mail-pl1-x643.google.com with SMTP id q3so1906061pls.11;
-        Wed, 02 Sep 2020 00:55:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Vv9wafYlcRndezilwjOVw+Uvg14avW3QcJVd3Hrp9X0=;
-        b=dUhRbwVRhGDqCmPDJulA9D1NH7C7y9XHVxD2cCdGOWci+8hb5IympO9z/mRng67H8/
-         EdOTtIbOUtlS0mzLi//6vD4CigO1owTjoWyCjHgRxEoqhFi1zxwgFApN05D3L06ODh+s
-         AVvnjlPrW+HYJTAL/8YojwCSWZA0hmWlOyI4Z0ujWxLb7QaZJHPkmOvkknBkjULMUk8O
-         vZCA+YksoU5lSSMLMuTxe0RWE+SopR/Bz0y9IzEH472wSI8+jrXlqe5BwxCUUpZ/v2qU
-         95IpUaWjKi1whSEN6uAGZZ96PnIq+fl78D9OB6zeF8Yss0rzX0NdmyXMSAg8XGrUO6+9
-         /VDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Vv9wafYlcRndezilwjOVw+Uvg14avW3QcJVd3Hrp9X0=;
-        b=IRLT6+5EpSjhCNN2Y+fuqxvT2I7RU50cwxBbtEOS8deSGrJwEGlRdPApKzPES+ZLyO
-         SFnp5iWtdGg8iIFlyjQXPH++EoPKxfbxZv5RGcYNc0oEYbru4GZwC/1QqaogidogrYgh
-         gABgTyJvETFXBA65OhtSvaPW08EmiHELT5adZqNP267l2b6+KAkFfUNQ7bj3YP0JJoVN
-         pXQh0FaX2pI/zblAIl+lz24ALGt6c38x1X9kL7nNmYpanp8pZDEM2bG9dEvD8i0VQtZ6
-         CpZBvw1AObVOEwFuoUxmH7dGSMQo51ZXaFY2WMeSept7X+IBO3t+sg1IftDnDOoziV0T
-         O/ZQ==
-X-Gm-Message-State: AOAM532Gw5cmG/vr2kwCptWuwxHS4t3hqvTTpVUb3dnMSu6fyjGqjIxc
-        RAVGU/Z2oW5Fzh/AIiF60mnxwt+NnnH5bZuPAWkmNH2bPx8=
-X-Google-Smtp-Source: ABdhPJxNZ9O3Sj7OvHiGloTdmPJ7LxTz4zR2Er8HbAv/pmqjuckAEtpUdzJasMFcDiKbP+NTn6IiUaUkABxel3cBWdE=
-X-Received: by 2002:a17:902:b715:: with SMTP id d21mr1104159pls.92.1599033338028;
- Wed, 02 Sep 2020 00:55:38 -0700 (PDT)
+        Wed, 2 Sep 2020 07:42:25 -0400
+Received: from lhreml704-chm.china.huawei.com (unknown [172.18.7.106])
+        by Forcepoint Email with ESMTP id B8F9D176BA1B83CC7429;
+        Wed,  2 Sep 2020 12:42:20 +0100 (IST)
+Received: from fraeml705-chm.china.huawei.com (10.206.15.54) by
+ lhreml704-chm.china.huawei.com (10.201.108.53) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1913.5; Wed, 2 Sep 2020 12:42:20 +0100
+Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
+ fraeml705-chm.china.huawei.com (10.206.15.54) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1913.5; Wed, 2 Sep 2020 13:42:19 +0200
+Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
+ fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.1913.007;
+ Wed, 2 Sep 2020 13:42:19 +0200
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        "mjg59@google.com" <mjg59@google.com>
+CC:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
+Subject: RE: [PATCH 01/11] evm: Execute evm_inode_init_security() only when
+ the HMAC key is loaded
+Thread-Topic: [PATCH 01/11] evm: Execute evm_inode_init_security() only when
+ the HMAC key is loaded
+Thread-Index: AQHWRYobDbVZBK0ooUeUmv97U2KzFqlDJY2AgASqawCADd9g0A==
+Date:   Wed, 2 Sep 2020 11:42:19 +0000
+Message-ID: <5404e618f79b4914b45c1d19791f470b@huawei.com>
+References: <20200618160133.937-1-roberto.sassu@huawei.com>
+         <2b204e31d21e93c0167d154c2397cd5d11be6e7f.camel@linux.ibm.com>
+ <d4c9d5333256b17acdbe41729dd680f534266130.camel@linux.ibm.com>
+In-Reply-To: <d4c9d5333256b17acdbe41729dd680f534266130.camel@linux.ibm.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.48.203.41]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-References: <20200826034455.28707-1-lszubowi@redhat.com> <20200826034455.28707-3-lszubowi@redhat.com>
-In-Reply-To: <20200826034455.28707-3-lszubowi@redhat.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 2 Sep 2020 10:55:21 +0300
-Message-ID: <CAHp75Vec0a3LC7dGY6wacQu0brc+Zjfowt6kGdcZ9sfMzoDR9g@mail.gmail.com>
-Subject: Re: [PATCH 2/3] integrity: Move import of MokListRT certs to a
- separate routine
-To:     Lenny Szubowicz <lszubowi@redhat.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Kees Cook <keescook@chromium.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Peter Jones <pjones@redhat.com>,
-        David Howells <dhowells@redhat.com>,
-        Prarit Bhargava <prarit@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Aug 26, 2020 at 6:45 AM Lenny Szubowicz <lszubowi@redhat.com> wrote:
->
-> Move the loading of certs from the UEFI MokListRT into a separate
-> routine to facilitate additional MokList functionality.
->
-> There is no visible functional change as a result of this patch.
-> Although the UEFI dbx certs are now loaded before the MokList certs,
-> they are loaded onto different key rings. So the order of the keys
-> on their respective key rings is the same.
+> From: Mimi Zohar [mailto:zohar@linux.ibm.com]
+> Sent: Monday, August 24, 2020 7:45 PM
+> Hi Roberto,
+> 
+> On Fri, 2020-08-21 at 14:30 -0400, Mimi Zohar wrote:
+> > Sorry for the delay in reviewing these patches.   Missing from this
+> > patch set is a cover letter with an explanation for grouping these
+> > patches into a patch set, other than for convenience.  In this case, it
+> > would be along the lines that the original use case for EVM portable
+> > and immutable keys support was for a few critical files, not combined
+> > with an EVM encrypted key type.   This patch set more fully integrates
+> > the initial EVM portable and immutable signature support.
+> 
+> Thank you for more fully integrating the EVM portable signatures into
+> IMA.
+> 
+> " [PATCH 08/11] ima: Allow imasig requirement to be satisfied by EVM
+> portable signatures" equates an IMA signature to having a portable and
+> immutable EVM signature.  That is true in terms of signature
+> verification, but from an attestation perspective the "ima-sig"
+> template will not contain a signature.  If not the EVM signature, then
+> at least some other indication should be included in the measurement
+> list.
 
-...
+Would it be ok to print the EVM portable signature in the sig field if the IMA
+signature is not found? Later we can introduce the new template evm-sig
+to include all metadata necessary to verify the EVM portable signature.
 
->  /*
-> + * load_moklist_certs() - Load MokList certs
-> + *
-> + * Returns:    Summary error status
-> + *
-> + * Load the certs contained in the UEFI MokListRT database into the
-> + * platform trusted keyring.
-> + */
+> Are you planning on posting the associated IMA/EVM regression tests?
 
-Hmm... Is it intentionally kept out of kernel doc format?
+I didn't have a look yet at the code. I will try to write some later.
 
-> +static int __init load_moklist_certs(void)
-> +{
-> +       efi_guid_t mok_var = EFI_SHIM_LOCK_GUID;
-> +       void *mok = NULL;
-> +       unsigned long moksize = 0;
-> +       efi_status_t status;
-> +       int rc = 0;
+Roberto
 
-Redundant assignment (see below).
-
-> +       /* Get MokListRT. It might not exist, so it isn't an error
-> +        * if we can't get it.
-> +        */
-> +       mok = get_cert_list(L"MokListRT", &mok_var, &moksize, &status);
-
-> +       if (!mok) {
-
-Why not positive conditional? Sometimes ! is hard to notice.
-
-> +               if (status == EFI_NOT_FOUND)
-> +                       pr_debug("MokListRT variable wasn't found\n");
-> +               else
-> +                       pr_info("Couldn't get UEFI MokListRT\n");
-> +       } else {
-> +               rc = parse_efi_signature_list("UEFI:MokListRT",
-> +                                             mok, moksize, get_handler_for_db);
-> +               if (rc)
-> +                       pr_err("Couldn't parse MokListRT signatures: %d\n", rc);
-> +               kfree(mok);
-
- kfree(...)
- if (rc)
-  ...
- return rc;
-
-And with positive conditional there will be no need to have redundant
-'else' followed by additional level of indentation.
-
-> +       }
-
-> +       return rc;
-
-return 0;
-
-> +}
-
-P.S. Yes, I see that the above was in the original code, so, consider
-my comments as suggestions to improve the code.
-
--- 
-With Best Regards,
-Andy Shevchenko
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Li Peng, Li Jian, Shi Yanli
