@@ -2,151 +2,157 @@ Return-Path: <SRS0=tQ1I=CL=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F4D8C43461
-	for <linux-security-module@archiver.kernel.org>; Wed,  2 Sep 2020 18:41:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9574BC433E2
+	for <linux-security-module@archiver.kernel.org>; Wed,  2 Sep 2020 18:53:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5DE5620C56
-	for <linux-security-module@archiver.kernel.org>; Wed,  2 Sep 2020 18:41:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6BA3F2083B
+	for <linux-security-module@archiver.kernel.org>; Wed,  2 Sep 2020 18:53:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="nO/4CuY3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728262AbgIBSkz convert rfc822-to-8bit (ORCPT
+        id S1726858AbgIBSxr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 2 Sep 2020 14:40:55 -0400
-Received: from mga07.intel.com ([134.134.136.100]:17072 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726567AbgIBSky (ORCPT
+        Wed, 2 Sep 2020 14:53:47 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:10394 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726124AbgIBSxo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 2 Sep 2020 14:40:54 -0400
-IronPort-SDR: tKAYgg1zYv4AUuuI/LWak6KL/a4DCSATuhu1aXx/v2EX2FyzYWFPPoS2BQfzB/7AFmitdb0V5a
- dEiz4fCJvdMg==
-X-IronPort-AV: E=McAfee;i="6000,8403,9732"; a="221674238"
-X-IronPort-AV: E=Sophos;i="5.76,383,1592895600"; 
-   d="scan'208";a="221674238"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2020 11:40:52 -0700
-IronPort-SDR: P4YeBPN8mp1qKmIrafAtjmZm4807Q/A2J7qZUuipcGX0UCptRPoHbegSotuQlM/6nSqA5dL+kN
- EMMI3WIakq6Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.76,383,1592895600"; 
-   d="scan'208";a="502231194"
-Received: from hhuan26-mobl1.amr.corp.intel.com ([10.255.38.180])
-  by fmsmga006.fm.intel.com with ESMTP; 02 Sep 2020 11:40:48 -0700
-Content-Type: text/plain; charset=utf-8; format=flowed; delsp=yes
-To:     "Sean Christopherson" <sean.j.christopherson@intel.com>
-Cc:     "Jarkko Sakkinen" <jarkko.sakkinen@linux.intel.com>,
-        x86@kernel.org, linux-sgx@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        "Jethro Beekman" <jethro@fortanix.com>,
-        "Chunyang Hui" <sanqian.hcy@antfin.com>,
-        "Jordan Hand" <jorhand@linux.microsoft.com>,
-        "Nathaniel McCallum" <npmccallum@redhat.com>,
-        "Seth Moore" <sethmo@google.com>,
-        "Suresh Siddha" <suresh.b.siddha@intel.com>,
-        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
-        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
-        chenalexchen@google.com, conradparker@google.com,
-        cyhanish@google.com, dave.hansen@intel.com, josh@joshtriplett.org,
-        kai.huang@intel.com, kai.svahn@intel.com, kmoy@google.com,
-        ludloff@google.com, luto@kernel.org, nhorman@redhat.com,
-        puiterwijk@redhat.com, rientjes@google.com, tglx@linutronix.de,
-        yaozhangx@google.com
-Subject: Re: [PATCH v33 11/21] x86/sgx: Linux Enclave Driver
-References: <20200617220844.57423-1-jarkko.sakkinen@linux.intel.com>
- <20200617220844.57423-12-jarkko.sakkinen@linux.intel.com>
- <20200702035902.GC1819@linux.intel.com>
- <20200704033025.GA144756@linux.intel.com>
- <op.0qaqw6rvwjvjmi@hhuan26-mobl1.amr.corp.intel.com>
- <20200902161012.GD11695@sjchrist-ice>
-Date:   Wed, 02 Sep 2020 13:40:47 -0500
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-From:   "Haitao Huang" <haitao.huang@linux.intel.com>
-Organization: Intel Corp
-Message-ID: <op.0qbx59v2wjvjmi@hhuan26-mobl1.amr.corp.intel.com>
-In-Reply-To: <20200902161012.GD11695@sjchrist-ice>
-User-Agent: Opera Mail/1.0 (Win32)
+        Wed, 2 Sep 2020 14:53:44 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 082IWCL2121893;
+        Wed, 2 Sep 2020 14:53:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=D8h2MQ2BFxQFN1LZrIEeY+TR98t0M6uXFJff0XnwfCo=;
+ b=nO/4CuY3MHL193LgWq2pWOz32bp8Wps5HPZ1D15dg+xwybGLqQGGr+ewLMi6AJ7TE+U4
+ V9chqW9Lh2zqOMH5EA3kTBjhqnUHroMrkPvUJSC1bsey12HRVPiJKXPMN8chFF+HeSBG
+ DgtR7K6nZQMqwV6e0/AwFuWyk1Ej/Cp11y7Ul/jN6VceIOyBVP4PEeqpRW4Yq+r12yxW
+ JLS2CsBgPFt4VU1v2kv0TZejCZXUngVgA/PJ/0q4+H0R3ohiDY6zSBylP9oi0+bdBXYe
+ OqSYZ2kKyFMsutfd+hfmCAgo7NQXcNyKrgjMtIna8lCrpWJo/PtdMUVfL3j4LoWOVBHT IQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 33agp70p4s-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 02 Sep 2020 14:53:25 -0400
+Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 082IWHbV122282;
+        Wed, 2 Sep 2020 14:53:25 -0400
+Received: from ppma04fra.de.ibm.com (6a.4a.5195.ip4.static.sl-reverse.com [149.81.74.106])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 33agp70p42-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 02 Sep 2020 14:53:25 -0400
+Received: from pps.filterd (ppma04fra.de.ibm.com [127.0.0.1])
+        by ppma04fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 082Ir06n023126;
+        Wed, 2 Sep 2020 18:53:23 GMT
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
+        by ppma04fra.de.ibm.com with ESMTP id 339ap7sd77-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 02 Sep 2020 18:53:23 +0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 082IrLMC25166286
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 2 Sep 2020 18:53:21 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 53F3211C04C;
+        Wed,  2 Sep 2020 18:53:21 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5A81211C04A;
+        Wed,  2 Sep 2020 18:53:18 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.121.98])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed,  2 Sep 2020 18:53:18 +0000 (GMT)
+Message-ID: <5331e60b5a1afb55e2bc778db1b95998466b687d.camel@linux.ibm.com>
+Subject: Re: [RFC PATCH 00/30] ima: Introduce IMA namespace
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Krzysztof Struczynski <krzysztof.struczynski@huawei.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "containers@lists.linux-foundation.org" 
+        <containers@lists.linux-foundation.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>
+Cc:     "stefanb@linux.vnet.ibm.com" <stefanb@linux.vnet.ibm.com>,
+        "sunyuqiong1988@gmail.com" <sunyuqiong1988@gmail.com>,
+        "mkayaalp@cs.binghamton.edu" <mkayaalp@cs.binghamton.edu>,
+        "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
+        "serge@hallyn.com" <serge@hallyn.com>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "christian@brauner.io" <christian@brauner.io>,
+        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Date:   Wed, 02 Sep 2020 14:53:17 -0400
+In-Reply-To: <401a2f36149f450291d1742aeb6c2260@huawei.com>
+References: <N> <20200818152037.11869-1-krzysztof.struczynski@huawei.com>
+         <1597767571.3898.15.camel@HansenPartnership.com>
+         <401a2f36149f450291d1742aeb6c2260@huawei.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-09-02_12:2020-09-02,2020-09-02 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ lowpriorityscore=0 spamscore=0 malwarescore=0 adultscore=0
+ priorityscore=1501 bulkscore=0 phishscore=0 impostorscore=0 mlxscore=0
+ mlxlogscore=999 clxscore=1011 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2006250000 definitions=main-2009020170
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 02 Sep 2020 11:10:12 -0500, Sean Christopherson  
-<sean.j.christopherson@intel.com> wrote:
+On Fri, 2020-08-21 at 15:13 +0000, Krzysztof Struczynski wrote:
+> > From: James Bottomley [mailto:James.Bottomley@HansenPartnership.com]
+> > On Tue, 2020-08-18 at 17:20 +0200, krzysztof.struczynski@huawei.com
+> > wrote:
+> > > The measurement list remains global, with the assumption that there
+> > > is only one TPM in the system. Each IMA namespace has a unique ID,
+> > > that allows to track measurements per IMA namespace. Processes in one
+> > > namespace, have access only to the measurements from that namespace.
+> > > The exception is made for the initial IMA namespace, whose processes
+> > > have access to all entries.
+> > 
+> > So I think this can work in the use case where the system owner is
+> > responsible for doing the logging and attestation and the tenants just
+> > trust the owner without requiring an attestation.  However, in a multi-
+> > tenant system you need a way for the attestation to be per-container
+> > (because the combined list of who executed what would be a security
+> > leak between tenants).  Since we can't virtualise the PCRs without
+> > introducing a vtpm this is going to require a vtpm infrastructure like
+> > that used for virtual machines and then we can do IMA logging per
+> > container.
+> 
+> I agree and wonder if we should decouple the attestation trust model,
+> which depends on the specific use case (e.g. multi/single tenant,
+> public/private cloud), from the IMA logic of linking the measurements to
+> the container. Indeed, attestation from within the container might require
+> anchoring to a vTPM/vPCR and the current measurement tagging mechanism can
+> support several ways of anchoring them to a (virtual) root of trust.
+> 
+> > I don't think the above has to be in your first patch set, we just have
+> > to have an idea of how it could be done to show that nothing in this
+> > patch set precludes a follow on from doing this.
+> 
+> Given that virtualizing trust anchors seems like a separate problem in
+> which industry consensus is not easy to reach for all use cases, an
+> anchoring mechanism should probably be a separate IMA feature.
 
-> On Tue, Sep 01, 2020 at 10:06:32PM -0500, Haitao Huang wrote:
->> On Fri, 03 Jul 2020 22:31:10 -0500, Jarkko Sakkinen
->> <jarkko.sakkinen@linux.intel.com> wrote:
->>
->> > On Wed, Jul 01, 2020 at 08:59:02PM -0700, Sean Christopherson wrote:
->> > > On Thu, Jun 18, 2020 at 01:08:33AM +0300, Jarkko Sakkinen wrote:
->> > > > +static int sgx_validate_secs(const struct sgx_secs *secs,
->> > > > +			     unsigned long ssaframesize)
->> > > > +{
->> > > > +	if (secs->size < (2 * PAGE_SIZE) || !is_power_of_2(secs->size))
->> > > > +		return -EINVAL;
->> > > > +
->> > > > +	if (secs->base & (secs->size - 1))
->> > > > +		return -EINVAL;
->> > > > +
->> > > > +	if (secs->miscselect & sgx_misc_reserved_mask ||
->> > > > +	    secs->attributes & sgx_attributes_reserved_mask ||
->> > > > +	    secs->xfrm & sgx_xfrm_reserved_mask)
->> > > > +		return -EINVAL;
->> > > > +
->> > > > +	if (secs->attributes & SGX_ATTR_MODE64BIT) {
->> > > > +		if (secs->size > sgx_encl_size_max_64)
->> > > > +			return -EINVAL;
->> > > > +	} else if (secs->size > sgx_encl_size_max_32)
->> > > > +		return -EINVAL;
->> > >
->> > > These should be >=, not >, the SDM uses one of those fancy ≥  
->> ligatures.
->> > >
->> > > Internal versions use more obvious pseudocode, e.g.:
->> > >
->> > >     if ((DS:TMP_SECS.ATTRIBUTES.MODE64BIT = 1) AND
->> > >         (DS:TMP_SECS.SIZE AND (~((1 << CPUID.18.0:EDX[15:8]) – 1)))
->> > >     {
->> > >         #GP(0);
->> >
->> > Updated as:
->> >
->> > static int sgx_validate_secs(const struct sgx_secs *secs)
->> > {
->> > 	u64 max_size = (secs->attributes & SGX_ATTR_MODE64BIT) ?
->> > 		       sgx_encl_size_max_64 : sgx_encl_size_max_32;
->> >
->> > 	if (secs->size < (2 * PAGE_SIZE) || !is_power_of_2(secs->size))
->> > 		return -EINVAL;
->> >
->> > 	if (secs->base & (secs->size - 1))
->> > 		return -EINVAL;
->> >
->> > 	if (secs->miscselect & sgx_misc_reserved_mask ||
->> > 	    secs->attributes & sgx_attributes_reserved_mask ||
->> > 	    secs->xfrm & sgx_xfrm_reserved_mask)
->> > 		return -EINVAL;
->> >
->> > 	if (secs->size >= max_size)
->> > 		return -EINVAL;
->> >
->>
->> This should be > not >=. Issue raised and fixed by Fábio Silva for  
->> ported
->> patches for OOT SGX support:
->> https://github.com/intel/SGXDataCenterAttestationPrimitives/pull/123
->>
->> I tested and verified with Intel arch, the comparison indeed should be  
->> >.
->
-> And this is a confirmed SDM bug, correct?
+Other trust anchors for "trusted keys" has been discussed, but I wasn't
+aware of any discussion about other trust anchors for the IMA
+measurement list.  The IMA measurement list is very much tied to a TPM.
 
-yes, the pseudo code for ECREATE is inaccurate and inconsistent with the  
-CPUID spec. The latter is correct.
-Haitao
+Including container measurements in the host measurement list, will
+unnecessarily cause the host measurement list to grow.  The decision of
+what should and shouldn't be included in the host measurement list
+shouldn't be defined by the container.
+
+Mimi
+
+
+
