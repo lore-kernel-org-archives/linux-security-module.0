@@ -2,143 +2,138 @@ Return-Path: <SRS0=tQ1I=CL=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2947C433E7
-	for <linux-security-module@archiver.kernel.org>; Wed,  2 Sep 2020 13:46:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7161CC433E2
+	for <linux-security-module@archiver.kernel.org>; Wed,  2 Sep 2020 16:10:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B124120767
-	for <linux-security-module@archiver.kernel.org>; Wed,  2 Sep 2020 13:46:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Rcs11yb/"
+	by mail.kernel.org (Postfix) with ESMTP id 5B9F020773
+	for <linux-security-module@archiver.kernel.org>; Wed,  2 Sep 2020 16:10:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726922AbgIBNqN (ORCPT
+        id S1727859AbgIBQKQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 2 Sep 2020 09:46:13 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:2180 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726853AbgIBNpo (ORCPT
+        Wed, 2 Sep 2020 12:10:16 -0400
+Received: from mga12.intel.com ([192.55.52.136]:54567 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726293AbgIBQKP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 2 Sep 2020 09:45:44 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 082DWCwx077202;
-        Wed, 2 Sep 2020 09:41:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=5oLkh9zCufGNd1xyAl+9tctnQwJ8sBHIuNfKtYGlwVw=;
- b=Rcs11yb/MxsMAIaM7LLduxZtDQ/C5o0jMsp6uzNaigxkhadHGrc1URXBmxKnl/a2ESxy
- pTuuUE2Uf0dC41K3rHnAOFUaSE2+GcMoQDVfpLgkUrOqB2sgmg3An36Nxrt+6kt47ts/
- 8C8I0n+IfqhAPWWXcCBLIiBTk1bAPizg2uyFnwVYVPufLwN9IqYDKavOAOULyjODyiZx
- bADAaLfJp8aGvg3A7A7Kad7rPkziMpbyur3QjHDySAT2LPp4c+OoQYj811jPc+x+qx1H
- a08VCL7d3a9A7LNZCXucjjwyl5TaJ0Rg4arhqgB0jaRdEtFgnjjASNcLwTmmMWXpzWoM 7g== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 33ab96jjb0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 02 Sep 2020 09:41:00 -0400
-Received: from m0098404.ppops.net (m0098404.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 082DXJq5082445;
-        Wed, 2 Sep 2020 09:41:00 -0400
-Received: from ppma02fra.de.ibm.com (47.49.7a9f.ip4.static.sl-reverse.com [159.122.73.71])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 33ab96jj9j-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 02 Sep 2020 09:40:59 -0400
-Received: from pps.filterd (ppma02fra.de.ibm.com [127.0.0.1])
-        by ppma02fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 082DcMA1022715;
-        Wed, 2 Sep 2020 13:40:57 GMT
-Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
-        by ppma02fra.de.ibm.com with ESMTP id 337en7jxa7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 02 Sep 2020 13:40:57 +0000
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 082DdNN065405210
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 2 Sep 2020 13:39:23 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DC0574203F;
-        Wed,  2 Sep 2020 13:40:54 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B66B942042;
-        Wed,  2 Sep 2020 13:40:52 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.121.98])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed,  2 Sep 2020 13:40:52 +0000 (GMT)
-Message-ID: <3c5840d3a827ccae575fc73d1aa4ed9f523c46b8.camel@linux.ibm.com>
-Subject: Re: [PATCH 01/11] evm: Execute evm_inode_init_security() only when
- the HMAC key is loaded
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>,
-        "mjg59@google.com" <mjg59@google.com>, Petr Vorel <pvorel@suse.cz>
-Cc:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
-Date:   Wed, 02 Sep 2020 09:40:51 -0400
-In-Reply-To: <5404e618f79b4914b45c1d19791f470b@huawei.com>
-References: <20200618160133.937-1-roberto.sassu@huawei.com>
-         <2b204e31d21e93c0167d154c2397cd5d11be6e7f.camel@linux.ibm.com>
-         <d4c9d5333256b17acdbe41729dd680f534266130.camel@linux.ibm.com>
-         <5404e618f79b4914b45c1d19791f470b@huawei.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-09-02_09:2020-09-02,2020-09-02 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 mlxscore=0
- bulkscore=0 phishscore=0 mlxlogscore=999 lowpriorityscore=0 malwarescore=0
- clxscore=1015 impostorscore=0 adultscore=0 priorityscore=1501 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
- definitions=main-2009020123
+        Wed, 2 Sep 2020 12:10:15 -0400
+IronPort-SDR: pTlYTrPte78yWv7EsbcamGLtbomhEQ2xXyX5iiWnQIWxxhMOdGy/FMWOfD/0dIAWwOGio6rBqp
+ udCDY098iAeA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9732"; a="136936699"
+X-IronPort-AV: E=Sophos;i="5.76,383,1592895600"; 
+   d="scan'208";a="136936699"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2020 09:10:14 -0700
+IronPort-SDR: z7oVRryQh/ClvKbs+i9o24T4ivjV7OmRQjFOvPMU7sRVdfGLKDdgp/Ru5lhwJWC/pV1wW0GNPE
+ p6CXSVkxosHg==
+X-IronPort-AV: E=Sophos;i="5.76,383,1592895600"; 
+   d="scan'208";a="446576484"
+Received: from sjchrist-ice.jf.intel.com (HELO sjchrist-ice) ([10.54.31.34])
+  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2020 09:10:14 -0700
+Date:   Wed, 2 Sep 2020 09:10:12 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Haitao Huang <haitao.huang@linux.intel.com>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
+        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Jethro Beekman <jethro@fortanix.com>,
+        Chunyang Hui <sanqian.hcy@antfin.com>,
+        Jordan Hand <jorhand@linux.microsoft.com>,
+        Nathaniel McCallum <npmccallum@redhat.com>,
+        Seth Moore <sethmo@google.com>,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
+        chenalexchen@google.com, conradparker@google.com,
+        cyhanish@google.com, dave.hansen@intel.com, josh@joshtriplett.org,
+        kai.huang@intel.com, kai.svahn@intel.com, kmoy@google.com,
+        ludloff@google.com, luto@kernel.org, nhorman@redhat.com,
+        puiterwijk@redhat.com, rientjes@google.com, tglx@linutronix.de,
+        yaozhangx@google.com
+Subject: Re: [PATCH v33 11/21] x86/sgx: Linux Enclave Driver
+Message-ID: <20200902161012.GD11695@sjchrist-ice>
+References: <20200617220844.57423-1-jarkko.sakkinen@linux.intel.com>
+ <20200617220844.57423-12-jarkko.sakkinen@linux.intel.com>
+ <20200702035902.GC1819@linux.intel.com>
+ <20200704033025.GA144756@linux.intel.com>
+ <op.0qaqw6rvwjvjmi@hhuan26-mobl1.amr.corp.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <op.0qaqw6rvwjvjmi@hhuan26-mobl1.amr.corp.intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 2020-09-02 at 11:42 +0000, Roberto Sassu wrote:
-> > From: Mimi Zohar [mailto:zohar@linux.ibm.com]
-> > Sent: Monday, August 24, 2020 7:45 PM
-> > Hi Roberto,
-> > 
-> > On Fri, 2020-08-21 at 14:30 -0400, Mimi Zohar wrote:
-> > > Sorry for the delay in reviewing these patches.   Missing from this
-> > > patch set is a cover letter with an explanation for grouping these
-> > > patches into a patch set, other than for convenience.  In this case, it
-> > > would be along the lines that the original use case for EVM portable
-> > > and immutable keys support was for a few critical files, not combined
-> > > with an EVM encrypted key type.   This patch set more fully integrates
-> > > the initial EVM portable and immutable signature support.
-> > 
-> > Thank you for more fully integrating the EVM portable signatures into
-> > IMA.
-> > 
-> > " [PATCH 08/11] ima: Allow imasig requirement to be satisfied by EVM
-> > portable signatures" equates an IMA signature to having a portable and
-> > immutable EVM signature.  That is true in terms of signature
-> > verification, but from an attestation perspective the "ima-sig"
-> > template will not contain a signature.  If not the EVM signature, then
-> > at least some other indication should be included in the measurement
-> > list.
+On Tue, Sep 01, 2020 at 10:06:32PM -0500, Haitao Huang wrote:
+> On Fri, 03 Jul 2020 22:31:10 -0500, Jarkko Sakkinen
+> <jarkko.sakkinen@linux.intel.com> wrote:
 > 
-> Would it be ok to print the EVM portable signature in the sig field if the IMA
-> signature is not found? Later we can introduce the new template evm-sig
-> to include all metadata necessary to verify the EVM portable signature.
-
-As long as the attestation server can differentiate between the
-signature types, including the EVM signature should be fine.
-
+> > On Wed, Jul 01, 2020 at 08:59:02PM -0700, Sean Christopherson wrote:
+> > > On Thu, Jun 18, 2020 at 01:08:33AM +0300, Jarkko Sakkinen wrote:
+> > > > +static int sgx_validate_secs(const struct sgx_secs *secs,
+> > > > +			     unsigned long ssaframesize)
+> > > > +{
+> > > > +	if (secs->size < (2 * PAGE_SIZE) || !is_power_of_2(secs->size))
+> > > > +		return -EINVAL;
+> > > > +
+> > > > +	if (secs->base & (secs->size - 1))
+> > > > +		return -EINVAL;
+> > > > +
+> > > > +	if (secs->miscselect & sgx_misc_reserved_mask ||
+> > > > +	    secs->attributes & sgx_attributes_reserved_mask ||
+> > > > +	    secs->xfrm & sgx_xfrm_reserved_mask)
+> > > > +		return -EINVAL;
+> > > > +
+> > > > +	if (secs->attributes & SGX_ATTR_MODE64BIT) {
+> > > > +		if (secs->size > sgx_encl_size_max_64)
+> > > > +			return -EINVAL;
+> > > > +	} else if (secs->size > sgx_encl_size_max_32)
+> > > > +		return -EINVAL;
+> > > 
+> > > These should be >=, not >, the SDM uses one of those fancy ≥ ligatures.
+> > > 
+> > > Internal versions use more obvious pseudocode, e.g.:
+> > > 
+> > >     if ((DS:TMP_SECS.ATTRIBUTES.MODE64BIT = 1) AND
+> > >         (DS:TMP_SECS.SIZE AND (~((1 << CPUID.18.0:EDX[15:8]) – 1)))
+> > >     {
+> > >         #GP(0);
+> > 
+> > Updated as:
+> > 
+> > static int sgx_validate_secs(const struct sgx_secs *secs)
+> > {
+> > 	u64 max_size = (secs->attributes & SGX_ATTR_MODE64BIT) ?
+> > 		       sgx_encl_size_max_64 : sgx_encl_size_max_32;
+> > 
+> > 	if (secs->size < (2 * PAGE_SIZE) || !is_power_of_2(secs->size))
+> > 		return -EINVAL;
+> > 
+> > 	if (secs->base & (secs->size - 1))
+> > 		return -EINVAL;
+> > 
+> > 	if (secs->miscselect & sgx_misc_reserved_mask ||
+> > 	    secs->attributes & sgx_attributes_reserved_mask ||
+> > 	    secs->xfrm & sgx_xfrm_reserved_mask)
+> > 		return -EINVAL;
+> > 
+> > 	if (secs->size >= max_size)
+> > 		return -EINVAL;
+> > 
 > 
-> > Are you planning on posting the associated IMA/EVM regression tests?
+> This should be > not >=. Issue raised and fixed by Fábio Silva for ported
+> patches for OOT SGX support:
+> https://github.com/intel/SGXDataCenterAttestationPrimitives/pull/123
 > 
-> I didn't have a look yet at the code. I will try to write some later.
+> I tested and verified with Intel arch, the comparison indeed should be >.
 
-It looks like ima_verify_signature() in ima-evm-utils could be extended
-to support the EVM portable signature or at least not to fail the
-signature verification.
-
-Mimi
-
+And this is a confirmed SDM bug, correct?
