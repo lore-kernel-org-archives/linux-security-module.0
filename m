@@ -1,102 +1,116 @@
-Return-Path: <SRS0=7Ydo=CM=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=mt4R=CN=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18ACDC433E2
-	for <linux-security-module@archiver.kernel.org>; Thu,  3 Sep 2020 21:49:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5246C433E2
+	for <linux-security-module@archiver.kernel.org>; Fri,  4 Sep 2020 09:27:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E427A20639
-	for <linux-security-module@archiver.kernel.org>; Thu,  3 Sep 2020 21:49:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="RVaVhV2P"
+	by mail.kernel.org (Postfix) with ESMTP id 863C020770
+	for <linux-security-module@archiver.kernel.org>; Fri,  4 Sep 2020 09:27:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728129AbgICVtn (ORCPT
+        id S1730018AbgIDJ1V (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 3 Sep 2020 17:49:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47544 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726397AbgICVtl (ORCPT
+        Fri, 4 Sep 2020 05:27:21 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2753 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728205AbgIDJ1V (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 3 Sep 2020 17:49:41 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0368DC061244
-        for <linux-security-module@vger.kernel.org>; Thu,  3 Sep 2020 14:49:40 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id b12so4133835edz.11
-        for <linux-security-module@vger.kernel.org>; Thu, 03 Sep 2020 14:49:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tRdD44ooa252jPQTr3SlD5eHHLG1Cfiq4c2JyyoJvFI=;
-        b=RVaVhV2PnuNIhb7EuI34tMbUlxG3nkUEWnUarjqDQCqYcG8PR0gDAAmJd2Xcn8eLju
-         Q0qGoNRJIwdEpmMghFs5rNOnvEAE2CAEJb17YYGRikKJYpHhg1dEik6vc9yspme5rFIZ
-         mYziqD88HjZvMjMGKGI7A4JgK3QFqMznJXn+TnTOdxgVSi6eAEFp/Tm5b9nQN2F3w+BR
-         PcKW0tgpQocaRgsRC+9fOBXOI0S/WTwdfRvh9b0FGwwJJGEXKxBEhbR6uKJK7KHU1fy8
-         bMoHvyWiVmRfyrFqCrusTHXmln7JYujXESjRx8CPCDhf8GAEgBSt3LAc+kehAqhqfTSz
-         kk5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tRdD44ooa252jPQTr3SlD5eHHLG1Cfiq4c2JyyoJvFI=;
-        b=rNWjNR+2Zcsj9W6HPxd/DdUsCFZ5l+vNhCGHJVcDMuEjNM8rlyeNX6i4o0XYrqcUjr
-         2ddAOS7bM474lc7eJcd7EnQnJLi4W0+AvGAzq+Dvwzc1jZA4m6Z4aAQvmej+pwwu7xfH
-         gIj2A21itqj4KoqHy+gHTcgz+gzkLoW8yW5oUM0O8CJa0YGLxlZyTyEiQV/QYkyPCwLx
-         5ro1VdHpUo0ckBiiulCU5LlHYHqXZ6RO/vtVM80DX4dGbiHaaJ9N2HfNkdpv+nQ5+loC
-         wqQpxUMX88sRxs17Y31FdR0vbsI0u1X2MBEBJK/jN7KPMm5AkukJUcsoByJ/XflxXvy1
-         bibQ==
-X-Gm-Message-State: AOAM5338gzx9i6jLV7FWEyb3F9RMtL7nqWpEar3kVTbX7uPG2q9rIJw3
-        UYfH6Hfg351V28Z3b5TULdDcB5g2iRXDCpdTOFf0
-X-Google-Smtp-Source: ABdhPJwOpksQCOYSRfyTuYdZhy0UiaEWTCEBitsjcs0peI2vbaOLiz+D5IVwdQU+cX0QqHXlH0jLjwIfQI1mYqVLRco=
-X-Received: by 2002:a50:8e17:: with SMTP id 23mr5303949edw.31.1599169779286;
- Thu, 03 Sep 2020 14:49:39 -0700 (PDT)
+        Fri, 4 Sep 2020 05:27:21 -0400
+Received: from lhreml740-chm.china.huawei.com (unknown [172.18.7.107])
+        by Forcepoint Email with ESMTP id EC5356981EE86CB54334;
+        Fri,  4 Sep 2020 10:27:19 +0100 (IST)
+Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
+ lhreml740-chm.china.huawei.com (10.201.108.190) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1913.5; Fri, 4 Sep 2020 10:27:19 +0100
+Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.160)
+ by fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
+ 15.1.1913.5; Fri, 4 Sep 2020 11:27:18 +0200
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <zohar@linux.ibm.com>, <mjg59@google.com>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v2 00/12] IMA/EVM fixes
+Date:   Fri, 4 Sep 2020 11:23:27 +0200
+Message-ID: <20200904092339.19598-1-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.27.GIT
 MIME-Version: 1.0
-References: <20200826145247.10029-1-casey@schaufler-ca.com>
- <20200826145247.10029-21-casey@schaufler-ca.com> <alpine.LRH.2.21.2009040231550.1484@namei.org>
-In-Reply-To: <alpine.LRH.2.21.2009040231550.1484@namei.org>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 3 Sep 2020 17:49:28 -0400
-Message-ID: <CAHC9VhRoaB=R15jiwGHTnJHvR4+SiiVjEhL1FeGn6z6b6W+hkA@mail.gmail.com>
-Subject: Re: [PATCH v20 20/23] Audit: Add new record for multiple process LSM attributes
-To:     James Morris <jmorris@namei.org>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        casey.schaufler@intel.com, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org, linux-audit@redhat.com,
-        keescook@chromium.org, john.johansen@canonical.com,
-        penguin-kernel@i-love.sakura.ne.jp,
-        Stephen Smalley <sds@tycho.nsa.gov>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.204.65.160]
+X-ClientProxiedBy: lhreml709-chm.china.huawei.com (10.201.108.58) To
+ fraeml714-chm.china.huawei.com (10.206.15.33)
+X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Sep 3, 2020 at 12:32 PM James Morris <jmorris@namei.org> wrote:
-> On Wed, 26 Aug 2020, Casey Schaufler wrote:
->
-> > Create a new audit record type to contain the subject information
-> > when there are multiple security modules that require such data.
-> > This record is linked with the same timestamp and serial number.
-> > The record is produced only in cases where there is more than one
-> > security module with a process "context".
-> >
-> > Before this change the only audit events that required multiple
-> > records were syscall events. Several non-syscall events include
-> > subject contexts, so the use of audit_context data has been expanded
-> > as necessary.
-> >
-> > Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> > Cc: linux-audit@redhat.com
->
-> Paul, can you review/ack the audit changes?
+This patch set includes various fixes for IMA and EVM.
 
-I did a previous version at some point in the past, I'll take a look
-at v20 tomorrow or this weekend.
+Patches 1-3 are trivial fixes. The remaining improve support and usability
+of EVM portable signatures. In particular patch 4 allows EVM to be used
+without an HMAC key. Patch 5 avoids appraisal verification of public keys
+(they are already verified by the key subsystem).
+
+Patches 6-7 allow metadata verification to be turned off when the HMAC key
+is not already loaded and to use this mode in a safe way (by ensuring that
+IMA revalidates metadata when there is a change).
+
+Patches 8-9 make portable signatures more usable if metadata verification
+cannot be turned off (because the HMAC key is loaded) by accepting any
+metadata modification until signature verification succeeds (useful when
+xattrs/attrs are copied in a sequence from a source) and by allowing
+operations that don't change metadata.
+
+Patch 10 makes it possible to use portable signatures when the IMA policy
+requires file signatures and patch 11 shows portable signatures when the
+ima-sig measurement list template is selected.
+
+Lastly, patch 12 avoids undesired removal of security.ima when a file is
+not selected by the IMA policy.
+
+Roberto Sassu (12):
+  ima: Don't ignore errors from crypto_shash_update()
+  ima: Remove semicolon at the end of ima_get_binary_runtime_size()
+  evm: Check size of security.evm before using it
+  evm: Execute evm_inode_init_security() only when the HMAC key is
+    loaded
+  evm: Load EVM key in ima_load_x509() to avoid appraisal
+  evm: Refuse EVM_ALLOW_METADATA_WRITES only if the HMAC key is loaded
+  evm: Introduce EVM_RESET_STATUS atomic flag
+  evm: Allow xattr/attr operations for portable signatures if check
+    fails
+  evm: Allow setxattr() and setattr() if metadata digest won't change
+  ima: Allow imasig requirement to be satisfied by EVM portable
+    signatures
+  ima: Introduce template field evmsig and write to field sig as
+    fallback
+  ima: Don't remove security.ima if file must not be appraised
+
+ Documentation/ABI/testing/evm             |   6 +-
+ Documentation/security/IMA-templates.rst  |   4 +-
+ include/linux/integrity.h                 |   1 +
+ security/integrity/evm/evm_main.c         | 151 ++++++++++++++++++++--
+ security/integrity/evm/evm_secfs.c        |   2 +-
+ security/integrity/iint.c                 |   2 +
+ security/integrity/ima/ima_appraise.c     |  26 ++--
+ security/integrity/ima/ima_crypto.c       |   2 +
+ security/integrity/ima/ima_init.c         |   4 +
+ security/integrity/ima/ima_main.c         |   8 +-
+ security/integrity/ima/ima_queue.c        |   2 +-
+ security/integrity/ima/ima_template.c     |   2 +
+ security/integrity/ima/ima_template_lib.c |  39 +++++-
+ security/integrity/ima/ima_template_lib.h |   2 +
+ security/integrity/integrity.h            |   1 +
+ 15 files changed, 225 insertions(+), 27 deletions(-)
 
 -- 
-paul moore
-www.paul-moore.com
+2.27.GIT
+
