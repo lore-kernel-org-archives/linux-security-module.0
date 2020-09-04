@@ -2,205 +2,106 @@ Return-Path: <SRS0=mt4R=CN=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6C5AC43461
-	for <linux-security-module@archiver.kernel.org>; Fri,  4 Sep 2020 16:01:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A19DC433E2
+	for <linux-security-module@archiver.kernel.org>; Fri,  4 Sep 2020 18:54:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A9C3620795
-	for <linux-security-module@archiver.kernel.org>; Fri,  4 Sep 2020 16:01:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3653206B7
+	for <linux-security-module@archiver.kernel.org>; Fri,  4 Sep 2020 18:53:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="q9BXhdl5"
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="Rn0xA98t"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727807AbgIDQBN (ORCPT
+        id S1726047AbgIDSx5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 4 Sep 2020 12:01:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46240 "EHLO
+        Fri, 4 Sep 2020 14:53:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44696 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727075AbgIDQBB (ORCPT
+        with ESMTP id S1726277AbgIDSx4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 4 Sep 2020 12:01:01 -0400
-Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3D4AC061244;
-        Fri,  4 Sep 2020 09:01:00 -0700 (PDT)
-Received: by mail-ej1-x642.google.com with SMTP id j11so9381322ejk.0;
-        Fri, 04 Sep 2020 09:01:00 -0700 (PDT)
+        Fri, 4 Sep 2020 14:53:56 -0400
+Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A071C061245
+        for <linux-security-module@vger.kernel.org>; Fri,  4 Sep 2020 11:53:56 -0700 (PDT)
+Received: by mail-pj1-x1041.google.com with SMTP id g6so3462804pjl.0
+        for <linux-security-module@vger.kernel.org>; Fri, 04 Sep 2020 11:53:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=BIz3Dqv9/KGHKChd3/IFzzxn7xbyzIDCFdjTQoSAu6w=;
-        b=q9BXhdl5PVF9mLC9vkchxmULiG9xehyXT0Dy35pIMdBIVb2r4uf3zo0DYi5Uy4TT9g
-         8HtDMU8X3UsMUtmhW3jmB+GsLG784ov5aFIt3DdqsI6s7+pRgLhN3Hvl5mSOeUe8Ncfs
-         RJx7BFIoShGkf/rkq2/jJ/tU5AZxegj5QRXv6XnnqIZZDSy1L0fVaJ8tabsEGyzNHoMd
-         2F/JQXKHQGqHSsl0Dx/uK6/36BJ6/onw/wG8iB9evJXvU+ZSreM5vc6/jHG72Y/lYhSh
-         BfHjVKV7pCkdnSOdXA39mIocO3m/zYbismyZ/bLDTbpFwTYpEIcpLtHDtcX+hoi5JWnn
-         u90g==
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=F0EdNA6QqIRV7z2Jdp5B7kGzED4Dd6lXmJioCdLGMho=;
+        b=Rn0xA98tLfMfoCKeJ2h/KHMOI6v+CnTBiEwiE/btIxIlOhpAarSGm6Srx0HJklSxao
+         wrgrD6QaSLH/kKBEHiLyrZBWXOt7AY1q+q5LrSg8stGLRdaA8vdVXWBjijuDFX0p7Ivr
+         uLrAwLY7JCnhHoXEH8EfLPiznYk4/iLaoJbXt0k8mTx/x9etmIAym9hwWW5pA8F0rsNk
+         lK/xRQtDse4QUHyqoAizt7jnnPGUuBbGW7W4XSN40mI5o/C17qGhbF0W2VnM1Fad0XdR
+         MvIc5EaA7zxe0h0e1d+g1djZY78b7V5u3aNesKt0ecccJmIxQTcTgx05uVwOd95ODSy3
+         ASKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=BIz3Dqv9/KGHKChd3/IFzzxn7xbyzIDCFdjTQoSAu6w=;
-        b=LB4/YPPnngc7Y9X1m+iOqP7GhNYqTaLg5nhoI2undJ97rOYv+Eh3DpShc0YeztsMwK
-         dCwutA/sNR8iifu2FMRTO7MTLFa8KTKC0FwECDLobqem/NsHJolM8dwnoy4h9XKV7hdJ
-         WDeSe6oPOnsW2cLTGtQywGZszAnT1Dt5S6evcaLNdrudycjULxW3i+qdz0VDRfBF/6Kr
-         o6kSGKbvhJXRZyj1tNaPEW3VoPkRheoizNCDZgvGbM6iI72sRQ7A50TY98NJnAfF7121
-         024CyqJePbevmUWvp7iKa6e8r0sRYSnWqNk7/2+d1kNZ5HjIHxknJOl0WbVkckGWBgTm
-         BU1w==
-X-Gm-Message-State: AOAM5329+RV75/spu9Ect5uVJK/ctlGjW6DP4Mr0S6c39frOZ6oOxjFQ
-        kdECx9u47A7bfv9++Mot8hiLKuQSMZ0CXSxH
-X-Google-Smtp-Source: ABdhPJz3Q8w4Tv7USQ8eui4LVCy5y4lAuTULMivw04dlU/rjS5/aBfLukg0LJ56MBQC+0SmUli78/Q==
-X-Received: by 2002:a17:906:5a83:: with SMTP id l3mr8552049ejq.14.1599235259141;
-        Fri, 04 Sep 2020 09:00:59 -0700 (PDT)
-Received: from debianHome.localdomain (x5f700e02.dyn.telefonica.de. [95.112.14.2])
-        by smtp.gmail.com with ESMTPSA id h10sm6276025eds.0.2020.09.04.09.00.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Sep 2020 09:00:58 -0700 (PDT)
-From:   =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>
-Subject: [RFC PATCH] sched: only issue an audit on privileged operation
-Date:   Fri,  4 Sep 2020 18:00:31 +0200
-Message-Id: <20200904160031.6444-1-cgzones@googlemail.com>
-X-Mailer: git-send-email 2.28.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=F0EdNA6QqIRV7z2Jdp5B7kGzED4Dd6lXmJioCdLGMho=;
+        b=Dhn2lwqmmD/9C8eeCFYv7K26dyG1sG0qPXRmIoCWmrThZnfl6EsVqHEJKUmgV5SaAj
+         mVjXBNpnmzTMeHeMAXKSrcaWOJxJO6XaOPI75ikQMkpouJIxUOiT122eluu4HEhcXBDh
+         CtBujhlaBJLDgRhi6tyhaduK7DarbQtVSk1uO+5D0sjeW4/M+7K8lqLdqulc0epDbrF3
+         Fac/RT1+3RgbT7p1jDyfxlsWigbnVvs/AhBjN+NJ0c0lfq2Ypt39ANCNWk5zvpHzG1vA
+         9mg8iL/tfMDDwQZRbQl8/q9RmuLdlSIXJMzVhVQ/1Gmmt8TjBLmXQgurffF/VcK3zfqj
+         fheA==
+X-Gm-Message-State: AOAM530vXJnlSS25zXYfyF4DSoLoMfKuKBaMCptiRHab+zHONAP6aM8D
+        qWmTNLUCngums5IztyAq58WNm18bT/FXNCrns3IZ
+X-Google-Smtp-Source: ABdhPJyM9O0la6AoFSfY0FtgHcG7DxhFxvh9tdrS0BKPzORvKYAQm06i1OFQLZrxVd5kaPq97I37Cbphesx4sQLi/2M=
+X-Received: by 2002:a17:902:b20e:: with SMTP id t14mr3393806plr.24.1599245634561;
+ Fri, 04 Sep 2020 11:53:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20200826145247.10029-1-casey@schaufler-ca.com> <20200826145247.10029-4-casey@schaufler-ca.com>
+In-Reply-To: <20200826145247.10029-4-casey@schaufler-ca.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Fri, 4 Sep 2020 14:53:43 -0400
+Message-ID: <CAHC9VhSe18hJMcjma4kDLPzo2MmiWYk2FY5+EfYiDUX5FmTyrg@mail.gmail.com>
+Subject: Re: [PATCH v20 03/23] LSM: Use lsmblob in security_audit_rule_match
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     casey.schaufler@intel.com, James Morris <jmorris@namei.org>,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com, keescook@chromium.org,
+        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+        Stephen Smalley <sds@tycho.nsa.gov>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-sched_setattr(2) does via kernel/sched/core.c:__sched_setscheduler()
-issue a CAP_SYS_NICE audit event unconditionally, even when the requested
-operation does not require that capability / is un-privileged.
+On Wed, Aug 26, 2020 at 11:04 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>
+> Change the secid parameter of security_audit_rule_match
+> to a lsmblob structure pointer. Pass the entry from the
+> lsmblob structure for the approprite slot to the LSM hook.
+>
+> Change the users of security_audit_rule_match to use the
+> lsmblob instead of a u32. The scaffolding function lsmblob_init()
+> fills the blob with the value of the old secid, ensuring that
+> it is available to the appropriate module hook. The sources of
+> the secid, security_task_getsecid() and security_inode_getsecid(),
+> will be converted to use the blob structure later in the series.
+> At the point the use of lsmblob_init() is dropped.
+>
+> Reviewed-by: Kees Cook <keescook@chromium.org>
+> Reviewed-by: John Johansen <john.johansen@canonical.com>
+> Acked-by: Stephen Smalley <sds@tycho.nsa.gov>
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> ---
+>  include/linux/security.h            |  7 ++++---
+>  kernel/auditfilter.c                |  6 ++++--
+>  kernel/auditsc.c                    | 14 ++++++++++----
+>  security/integrity/ima/ima.h        |  4 ++--
+>  security/integrity/ima/ima_policy.c |  7 +++++--
+>  security/security.c                 | 10 ++++++++--
+>  6 files changed, 33 insertions(+), 15 deletions(-)
 
-Perform privilged/unprivileged catigorization first and perform a
-capable test only if needed.
+Acked-by: Paul Moore <paul@paul-moore.com>
 
-Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
----
- kernel/sched/core.c | 65 ++++++++++++++++++++++++++++++++-------------
- 1 file changed, 47 insertions(+), 18 deletions(-)
-
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 8471a0f7eb32..954f968d2466 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -5249,13 +5249,19 @@ static int __sched_setscheduler(struct task_struct *p,
- 		return -EINVAL;
- 
- 	/*
--	 * Allow unprivileged RT tasks to decrease priority:
-+	 * Allow unprivileged RT tasks to decrease priority.
-+	 * Only issue a capable test if needed to avoid audit
-+	 * event on non-privileged operations:
- 	 */
--	if (user && !capable(CAP_SYS_NICE)) {
-+	if (user) {
- 		if (fair_policy(policy)) {
- 			if (attr->sched_nice < task_nice(p) &&
--			    !can_nice(p, attr->sched_nice))
--				return -EPERM;
-+			    !can_nice(p, attr->sched_nice)) {
-+				if (capable(CAP_SYS_NICE))
-+					goto sys_nice_capable;
-+				else
-+					return -EPERM;
-+			}
- 		}
- 
- 		if (rt_policy(policy)) {
-@@ -5263,13 +5269,21 @@ static int __sched_setscheduler(struct task_struct *p,
- 					task_rlimit(p, RLIMIT_RTPRIO);
- 
- 			/* Can't set/change the rt policy: */
--			if (policy != p->policy && !rlim_rtprio)
--				return -EPERM;
-+			if (policy != p->policy && !rlim_rtprio) {
-+				if (capable(CAP_SYS_NICE))
-+					goto sys_nice_capable;
-+				else
-+					return -EPERM;
-+			}
- 
- 			/* Can't increase priority: */
- 			if (attr->sched_priority > p->rt_priority &&
--			    attr->sched_priority > rlim_rtprio)
--				return -EPERM;
-+			    attr->sched_priority > rlim_rtprio) {
-+				if (capable(CAP_SYS_NICE))
-+					goto sys_nice_capable;
-+				else
-+					return -EPERM;
-+			}
- 		}
- 
- 		 /*
-@@ -5278,28 +5292,43 @@ static int __sched_setscheduler(struct task_struct *p,
- 		  * unprivileged DL tasks to increase their relative deadline
- 		  * or reduce their runtime (both ways reducing utilization)
- 		  */
--		if (dl_policy(policy))
--			return -EPERM;
-+		if (dl_policy(policy)) {
-+			if (capable(CAP_SYS_NICE))
-+				goto sys_nice_capable;
-+			else
-+				return -EPERM;
-+		}
- 
- 		/*
- 		 * Treat SCHED_IDLE as nice 20. Only allow a switch to
- 		 * SCHED_NORMAL if the RLIMIT_NICE would normally permit it.
- 		 */
- 		if (task_has_idle_policy(p) && !idle_policy(policy)) {
--			if (!can_nice(p, task_nice(p)))
--				return -EPERM;
-+			if (!can_nice(p, task_nice(p))) {
-+				if (capable(CAP_SYS_NICE))
-+					goto sys_nice_capable;
-+				else
-+					return -EPERM;
-+			}
- 		}
- 
- 		/* Can't change other user's priorities: */
--		if (!check_same_owner(p))
--			return -EPERM;
-+		if (!check_same_owner(p)) {
-+			if (capable(CAP_SYS_NICE))
-+				goto sys_nice_capable;
-+			else
-+				return -EPERM;
-+		}
- 
- 		/* Normal users shall not reset the sched_reset_on_fork flag: */
--		if (p->sched_reset_on_fork && !reset_on_fork)
--			return -EPERM;
--	}
-+		if (p->sched_reset_on_fork && !reset_on_fork) {
-+			if (capable(CAP_SYS_NICE))
-+				goto sys_nice_capable;
-+			else
-+				return -EPERM;
-+		}
- 
--	if (user) {
-+sys_nice_capable:
- 		if (attr->sched_flags & SCHED_FLAG_SUGOV)
- 			return -EINVAL;
- 
 -- 
-2.28.0
-
+paul moore
+www.paul-moore.com
