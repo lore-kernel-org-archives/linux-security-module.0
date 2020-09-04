@@ -2,45 +2,49 @@ Return-Path: <SRS0=mt4R=CN=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5246C433E2
-	for <linux-security-module@archiver.kernel.org>; Fri,  4 Sep 2020 09:27:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29BFAC43461
+	for <linux-security-module@archiver.kernel.org>; Fri,  4 Sep 2020 09:27:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 863C020770
+	by mail.kernel.org (Postfix) with ESMTP id F2EBE20770
 	for <linux-security-module@archiver.kernel.org>; Fri,  4 Sep 2020 09:27:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730018AbgIDJ1V (ORCPT
+        id S1730032AbgIDJ1W (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 4 Sep 2020 05:27:21 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2753 "EHLO huawei.com"
+        Fri, 4 Sep 2020 05:27:22 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2754 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728205AbgIDJ1V (ORCPT
+        id S1728658AbgIDJ1W (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 4 Sep 2020 05:27:21 -0400
-Received: from lhreml740-chm.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id EC5356981EE86CB54334;
-        Fri,  4 Sep 2020 10:27:19 +0100 (IST)
+        Fri, 4 Sep 2020 05:27:22 -0400
+Received: from lhreml741-chm.china.huawei.com (unknown [172.18.7.107])
+        by Forcepoint Email with ESMTP id 9709F4A1BBA0D160854A;
+        Fri,  4 Sep 2020 10:27:20 +0100 (IST)
 Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- lhreml740-chm.china.huawei.com (10.201.108.190) with Microsoft SMTP Server
+ lhreml741-chm.china.huawei.com (10.201.108.191) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1913.5; Fri, 4 Sep 2020 10:27:19 +0100
+ 15.1.1913.5; Fri, 4 Sep 2020 10:27:20 +0100
 Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.160)
  by fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
- 15.1.1913.5; Fri, 4 Sep 2020 11:27:18 +0200
+ 15.1.1913.5; Fri, 4 Sep 2020 11:27:19 +0200
 From:   Roberto Sassu <roberto.sassu@huawei.com>
 To:     <zohar@linux.ibm.com>, <mjg59@google.com>
 CC:     <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v2 00/12] IMA/EVM fixes
-Date:   Fri, 4 Sep 2020 11:23:27 +0200
-Message-ID: <20200904092339.19598-1-roberto.sassu@huawei.com>
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        <stable@vger.kernel.org>
+Subject: [PATCH v2 01/12] ima: Don't ignore errors from crypto_shash_update()
+Date:   Fri, 4 Sep 2020 11:23:28 +0200
+Message-ID: <20200904092339.19598-2-roberto.sassu@huawei.com>
 X-Mailer: git-send-email 2.27.GIT
+In-Reply-To: <20200904092339.19598-1-roberto.sassu@huawei.com>
+References: <20200904092339.19598-1-roberto.sassu@huawei.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
@@ -52,65 +56,32 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This patch set includes various fixes for IMA and EVM.
+Errors returned by crypto_shash_update() are not checked in
+ima_calc_boot_aggregate_tfm() and thus can be overwritten at the next
+iteration of the loop. This patch adds a check after calling
+crypto_shash_update() and returns immediately if the result is not zero.
 
-Patches 1-3 are trivial fixes. The remaining improve support and usability
-of EVM portable signatures. In particular patch 4 allows EVM to be used
-without an HMAC key. Patch 5 avoids appraisal verification of public keys
-(they are already verified by the key subsystem).
+Cc: stable@vger.kernel.org
+Fixes: 3323eec921efd ("integrity: IMA as an integrity service provider")
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+---
+ security/integrity/ima/ima_crypto.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Patches 6-7 allow metadata verification to be turned off when the HMAC key
-is not already loaded and to use this mode in a safe way (by ensuring that
-IMA revalidates metadata when there is a change).
-
-Patches 8-9 make portable signatures more usable if metadata verification
-cannot be turned off (because the HMAC key is loaded) by accepting any
-metadata modification until signature verification succeeds (useful when
-xattrs/attrs are copied in a sequence from a source) and by allowing
-operations that don't change metadata.
-
-Patch 10 makes it possible to use portable signatures when the IMA policy
-requires file signatures and patch 11 shows portable signatures when the
-ima-sig measurement list template is selected.
-
-Lastly, patch 12 avoids undesired removal of security.ima when a file is
-not selected by the IMA policy.
-
-Roberto Sassu (12):
-  ima: Don't ignore errors from crypto_shash_update()
-  ima: Remove semicolon at the end of ima_get_binary_runtime_size()
-  evm: Check size of security.evm before using it
-  evm: Execute evm_inode_init_security() only when the HMAC key is
-    loaded
-  evm: Load EVM key in ima_load_x509() to avoid appraisal
-  evm: Refuse EVM_ALLOW_METADATA_WRITES only if the HMAC key is loaded
-  evm: Introduce EVM_RESET_STATUS atomic flag
-  evm: Allow xattr/attr operations for portable signatures if check
-    fails
-  evm: Allow setxattr() and setattr() if metadata digest won't change
-  ima: Allow imasig requirement to be satisfied by EVM portable
-    signatures
-  ima: Introduce template field evmsig and write to field sig as
-    fallback
-  ima: Don't remove security.ima if file must not be appraised
-
- Documentation/ABI/testing/evm             |   6 +-
- Documentation/security/IMA-templates.rst  |   4 +-
- include/linux/integrity.h                 |   1 +
- security/integrity/evm/evm_main.c         | 151 ++++++++++++++++++++--
- security/integrity/evm/evm_secfs.c        |   2 +-
- security/integrity/iint.c                 |   2 +
- security/integrity/ima/ima_appraise.c     |  26 ++--
- security/integrity/ima/ima_crypto.c       |   2 +
- security/integrity/ima/ima_init.c         |   4 +
- security/integrity/ima/ima_main.c         |   8 +-
- security/integrity/ima/ima_queue.c        |   2 +-
- security/integrity/ima/ima_template.c     |   2 +
- security/integrity/ima/ima_template_lib.c |  39 +++++-
- security/integrity/ima/ima_template_lib.h |   2 +
- security/integrity/integrity.h            |   1 +
- 15 files changed, 225 insertions(+), 27 deletions(-)
-
+diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
+index 011c3c76af86..21989fa0c107 100644
+--- a/security/integrity/ima/ima_crypto.c
++++ b/security/integrity/ima/ima_crypto.c
+@@ -829,6 +829,8 @@ static int ima_calc_boot_aggregate_tfm(char *digest, u16 alg_id,
+ 		/* now accumulate with current aggregate */
+ 		rc = crypto_shash_update(shash, d.digest,
+ 					 crypto_shash_digestsize(tfm));
++		if (rc != 0)
++			return rc;
+ 	}
+ 	/*
+ 	 * Extend cumulative digest over TPM registers 8-9, which contain
 -- 
 2.27.GIT
 
