@@ -4,44 +4,43 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 172C2C28E83
-	for <linux-security-module@archiver.kernel.org>; Fri,  4 Sep 2020 09:30:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C288C433E2
+	for <linux-security-module@archiver.kernel.org>; Fri,  4 Sep 2020 09:30:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ECAAC20770
-	for <linux-security-module@archiver.kernel.org>; Fri,  4 Sep 2020 09:30:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0CDB9205CB
+	for <linux-security-module@archiver.kernel.org>; Fri,  4 Sep 2020 09:30:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730272AbgIDJag (ORCPT
+        id S1730289AbgIDJag (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
         Fri, 4 Sep 2020 05:30:36 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2760 "EHLO huawei.com"
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2761 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730267AbgIDJaS (ORCPT
+        id S1730269AbgIDJaS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
         Fri, 4 Sep 2020 05:30:18 -0400
-Received: from lhreml723-chm.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id 65E3C44D87CEC059D949;
-        Fri,  4 Sep 2020 10:30:16 +0100 (IST)
+Received: from lhreml722-chm.china.huawei.com (unknown [172.18.7.107])
+        by Forcepoint Email with ESMTP id 0DBA06B1C434323EC8BC;
+        Fri,  4 Sep 2020 10:30:17 +0100 (IST)
 Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- lhreml723-chm.china.huawei.com (10.201.108.74) with Microsoft SMTP Server
+ lhreml722-chm.china.huawei.com (10.201.108.73) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
  15.1.1913.5; Fri, 4 Sep 2020 10:30:16 +0100
 Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.160)
  by fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
- 15.1.1913.5; Fri, 4 Sep 2020 11:30:15 +0200
+ 15.1.1913.5; Fri, 4 Sep 2020 11:30:16 +0200
 From:   Roberto Sassu <roberto.sassu@huawei.com>
 To:     <zohar@linux.ibm.com>, <mjg59@google.com>
 CC:     <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        <stable@vger.kernel.org>
-Subject: [PATCH v2 07/12] evm: Introduce EVM_RESET_STATUS atomic flag
-Date:   Fri, 4 Sep 2020 11:26:38 +0200
-Message-ID: <20200904092643.20013-3-roberto.sassu@huawei.com>
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v2 08/12] evm: Allow xattr/attr operations for portable signatures if check fails
+Date:   Fri, 4 Sep 2020 11:26:39 +0200
+Message-ID: <20200904092643.20013-4-roberto.sassu@huawei.com>
 X-Mailer: git-send-email 2.27.GIT
 In-Reply-To: <20200904092339.19598-1-roberto.sassu@huawei.com>
 References: <20200904092339.19598-1-roberto.sassu@huawei.com>
@@ -56,113 +55,137 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-When EVM_ALLOW_METADATA_WRITES is set, EVM allows any operation on
-metadata. Its main purpose is to allow users to freely set metadata when
-they are protected by a portable signature, until the HMAC key is loaded.
+If files with portable signatures are copied from one location to another
+or are extracted from an archive, verification can temporarily fail until
+all xattrs/attrs are set in the destination. Only portable signatures may
+be moved or copied from one file to another, as they don't depend on
+system-specific information such as the inode generation. Instead portable
+signatures must include security.ima.
 
-However, IMA is not notified about metadata changes and, after the first
-successful appraisal, always allows access to the files without checking
-metadata again.
+Unlike other security.evm types, EVM portable signatures are also
+immutable. Thus, it wouldn't be a problem to allow xattr/attr operations
+when verification fails, as portable signatures will never be replaced with
+an HMAC on possibly corrupted xattrs/attrs.
 
-This patch introduces the new atomic flag EVM_RESET_STATUS in
-integrity_iint_cache that is set in the EVM post hooks and cleared in
-evm_verify_hmac(). IMA checks the new flag in process_measurement() and if
-it is set, it clears the appraisal flags.
+This patch first introduces a new integrity status called
+INTEGRITY_FAIL_IMMUTABLE, that allows callers of
+evm_verify_current_integrity() to detect that a portable signature didn't
+pass verification and then adds an exception in evm_protect_xattr() and
+evm_inode_setattr() for this status and returns 0 instead of -EPERM.
 
-Although the flag could be cleared also by evm_inode_setxattr() and
-evm_inode_setattr() before IMA sees it, this does not happen if
-EVM_ALLOW_METADATA_WRITES is set. Since the only remaining caller is
-evm_verifyxattr(), this ensures that IMA always sees the flag set before it
-is cleared.
-
-This patch also adds a call to evm_reset_status() in
-evm_inode_post_setattr() so that EVM won't return the cached status the
-next time appraisal is performed.
-
-Cc: stable@vger.kernel.org # 4.16.x
-Fixes: ae1ba1676b88e ("EVM: Allow userland to permit modification of EVM-protected metadata")
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 ---
- security/integrity/evm/evm_main.c | 17 +++++++++++++++--
- security/integrity/ima/ima_main.c |  8 ++++++--
- security/integrity/integrity.h    |  1 +
- 3 files changed, 22 insertions(+), 4 deletions(-)
+ include/linux/integrity.h             |  1 +
+ security/integrity/evm/evm_main.c     | 31 +++++++++++++++++++++------
+ security/integrity/ima/ima_appraise.c |  2 ++
+ 3 files changed, 27 insertions(+), 7 deletions(-)
 
+diff --git a/include/linux/integrity.h b/include/linux/integrity.h
+index 2271939c5c31..2ea0f2f65ab6 100644
+--- a/include/linux/integrity.h
++++ b/include/linux/integrity.h
+@@ -13,6 +13,7 @@ enum integrity_status {
+ 	INTEGRITY_PASS = 0,
+ 	INTEGRITY_PASS_IMMUTABLE,
+ 	INTEGRITY_FAIL,
++	INTEGRITY_FAIL_IMMUTABLE,
+ 	INTEGRITY_NOLABEL,
+ 	INTEGRITY_NOXATTRS,
+ 	INTEGRITY_UNKNOWN,
 diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-index 4e9f5e8b21d5..05be1ad3e6f3 100644
+index 05be1ad3e6f3..a5dab1ac9374 100644
 --- a/security/integrity/evm/evm_main.c
 +++ b/security/integrity/evm/evm_main.c
-@@ -221,8 +221,15 @@ static enum integrity_status evm_verify_hmac(struct dentry *dentry,
- 		evm_status = (rc == -ENODATA) ?
- 				INTEGRITY_NOXATTRS : INTEGRITY_FAIL;
+@@ -27,7 +27,8 @@
+ int evm_initialized;
+ 
+ static const char * const integrity_status_msg[] = {
+-	"pass", "pass_immutable", "fail", "no_label", "no_xattrs", "unknown"
++	"pass", "pass_immutable", "fail", "fail_immutable", "no_label",
++	"no_xattrs", "unknown"
+ };
+ int evm_hmac_attrs;
+ 
+@@ -134,7 +135,7 @@ static enum integrity_status evm_verify_hmac(struct dentry *dentry,
+ 	enum integrity_status evm_status = INTEGRITY_PASS;
+ 	struct evm_digest digest;
+ 	struct inode *inode;
+-	int rc, xattr_len;
++	int rc, xattr_len, evm_immutable = 0;
+ 
+ 	if (iint && (iint->evm_status == INTEGRITY_PASS ||
+ 		     iint->evm_status == INTEGRITY_PASS_IMMUTABLE))
+@@ -179,8 +180,10 @@ static enum integrity_status evm_verify_hmac(struct dentry *dentry,
+ 		if (rc)
+ 			rc = -EINVAL;
+ 		break;
+-	case EVM_IMA_XATTR_DIGSIG:
+ 	case EVM_XATTR_PORTABLE_DIGSIG:
++		evm_immutable = 1;
++		fallthrough;
++	case EVM_IMA_XATTR_DIGSIG:
+ 		/* accept xattr with non-empty signature field */
+ 		if (xattr_len <= sizeof(struct signature_v2_hdr)) {
+ 			evm_status = INTEGRITY_FAIL;
+@@ -217,9 +220,12 @@ static enum integrity_status evm_verify_hmac(struct dentry *dentry,
+ 		break;
+ 	}
+ 
+-	if (rc)
+-		evm_status = (rc == -ENODATA) ?
+-				INTEGRITY_NOXATTRS : INTEGRITY_FAIL;
++	if (rc) {
++		evm_status = INTEGRITY_NOXATTRS;
++		if (rc != -ENODATA)
++			evm_status = evm_immutable ?
++				     INTEGRITY_FAIL_IMMUTABLE : INTEGRITY_FAIL;
++	}
  out:
--	if (iint)
-+	if (iint) {
-+		/*
-+		 * EVM_RESET_STATUS can be cleared only by evm_verifyxattr()
-+		 * when EVM_ALLOW_METADATA_WRITES is set. This guarantees that
-+		 * IMA sees the EVM_RESET_STATUS flag set before it is cleared.
-+		 */
-+		clear_bit(EVM_RESET_STATUS, &iint->atomic_flags);
- 		iint->evm_status = evm_status;
-+	}
- 	kfree(xattr_data);
- 	return evm_status;
- }
-@@ -418,8 +425,12 @@ static void evm_reset_status(struct inode *inode)
- 	struct integrity_iint_cache *iint;
- 
- 	iint = integrity_iint_find(inode);
--	if (iint)
-+	if (iint) {
-+		if (evm_initialized & EVM_ALLOW_METADATA_WRITES)
-+			set_bit(EVM_RESET_STATUS, &iint->atomic_flags);
+ 	if (iint) {
+ 		/*
+@@ -358,6 +364,12 @@ static int evm_protect_xattr(struct dentry *dentry, const char *xattr_name,
+ 				    -EPERM, 0);
+ 	}
+ out:
++	/* Writing other xattrs is safe for portable signatures, as portable
++	 * signatures are immutable and can never be updated.
++	 */
++	if (evm_status == INTEGRITY_FAIL_IMMUTABLE)
++		return 0;
 +
- 		iint->evm_status = INTEGRITY_UNKNOWN;
-+	}
- }
- 
- /**
-@@ -513,6 +524,8 @@ void evm_inode_post_setattr(struct dentry *dentry, int ia_valid)
- 	if (!evm_key_loaded())
- 		return;
- 
-+	evm_reset_status(dentry->d_inode);
+ 	if (evm_status != INTEGRITY_PASS)
+ 		integrity_audit_msg(AUDIT_INTEGRITY_METADATA, d_backing_inode(dentry),
+ 				    dentry->d_name.name, "appraise_metadata",
+@@ -499,9 +511,14 @@ int evm_inode_setattr(struct dentry *dentry, struct iattr *attr)
+ 	if (!(ia_valid & (ATTR_MODE | ATTR_UID | ATTR_GID)))
+ 		return 0;
+ 	evm_status = evm_verify_current_integrity(dentry);
++	/* Writing attrs is safe for portable signatures, as portable signatures
++	 * are immutable and can never be updated.
++	 */
+ 	if ((evm_status == INTEGRITY_PASS) ||
+-	    (evm_status == INTEGRITY_NOXATTRS))
++	    (evm_status == INTEGRITY_NOXATTRS) ||
++	    (evm_status == INTEGRITY_FAIL_IMMUTABLE))
+ 		return 0;
 +
- 	if (ia_valid & (ATTR_MODE | ATTR_UID | ATTR_GID))
- 		evm_update_evmxattr(dentry, NULL, NULL, 0);
- }
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 8a91711ca79b..bb9976dc2b74 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -246,8 +246,12 @@ static int process_measurement(struct file *file, const struct cred *cred,
- 
- 	mutex_lock(&iint->mutex);
- 
--	if (test_and_clear_bit(IMA_CHANGE_ATTR, &iint->atomic_flags))
--		/* reset appraisal flags if ima_inode_post_setattr was called */
-+	if (test_and_clear_bit(IMA_CHANGE_ATTR, &iint->atomic_flags) ||
-+	    test_bit(EVM_RESET_STATUS, &iint->atomic_flags))
-+		/*
-+		 * Reset appraisal flags if ima_inode_post_setattr was called or
-+		 * EVM reset its status and metadata modification was enabled.
-+		 */
- 		iint->flags &= ~(IMA_APPRAISE | IMA_APPRAISED |
- 				 IMA_APPRAISE_SUBMASK | IMA_APPRAISED_SUBMASK |
- 				 IMA_ACTION_FLAGS);
-diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
-index 413c803c5208..2adec51c0f6e 100644
---- a/security/integrity/integrity.h
-+++ b/security/integrity/integrity.h
-@@ -70,6 +70,7 @@
- #define IMA_CHANGE_ATTR		2
- #define IMA_DIGSIG		3
- #define IMA_MUST_MEASURE	4
-+#define EVM_RESET_STATUS	5
- 
- enum evm_ima_xattr_type {
- 	IMA_XATTR_DIGEST = 0x01,
+ 	integrity_audit_msg(AUDIT_INTEGRITY_METADATA, d_backing_inode(dentry),
+ 			    dentry->d_name.name, "appraise_metadata",
+ 			    integrity_status_msg[evm_status], -EPERM, 0);
+diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+index b8848f53c8cc..4d682bc3a77f 100644
+--- a/security/integrity/ima/ima_appraise.c
++++ b/security/integrity/ima/ima_appraise.c
+@@ -399,6 +399,8 @@ int ima_appraise_measurement(enum ima_hooks func,
+ 	case INTEGRITY_NOLABEL:		/* No security.evm xattr. */
+ 		cause = "missing-HMAC";
+ 		goto out;
++	case INTEGRITY_FAIL_IMMUTABLE:
++		fallthrough;
+ 	case INTEGRITY_FAIL:		/* Invalid HMAC/signature. */
+ 		cause = "invalid-HMAC";
+ 		goto out;
 -- 
 2.27.GIT
 
