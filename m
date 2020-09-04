@@ -2,287 +2,150 @@ Return-Path: <SRS0=mt4R=CN=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E71BC2BB84
-	for <linux-security-module@archiver.kernel.org>; Fri,  4 Sep 2020 23:21:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28DFAC433E2
+	for <linux-security-module@archiver.kernel.org>; Fri,  4 Sep 2020 23:58:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D5E6E2078E
-	for <linux-security-module@archiver.kernel.org>; Fri,  4 Sep 2020 23:21:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC8AB2087C
+	for <linux-security-module@archiver.kernel.org>; Fri,  4 Sep 2020 23:58:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="bjrYzJsH"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="oBW+xGwu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728272AbgIDXVG (ORCPT
+        id S1728160AbgIDX6w (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 4 Sep 2020 19:21:06 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:59760 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728249AbgIDXVF (ORCPT
+        Fri, 4 Sep 2020 19:58:52 -0400
+Received: from sonic316-27.consmr.mail.ne1.yahoo.com ([66.163.187.153]:38641
+        "EHLO sonic316-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726277AbgIDX6w (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 4 Sep 2020 19:21:05 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 084NG2LG132422;
-        Fri, 4 Sep 2020 23:20:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
- mime-version : subject : from : in-reply-to : date : cc :
- content-transfer-encoding : message-id : references : to;
- s=corp-2020-01-29; bh=3U+AWzZ3VOvj5CDDuDWGs0DpY0EazstKv2374JGKZMQ=;
- b=bjrYzJsHfZVC4SlZKC/XSIwbMSDXq0tVME7GYOCMuDH/ikV9WyNsu2KPzDlF2+uOtJGr
- NN7mo3hCWdLhJm1SmsUDfm0tGl6/OL4eCUIEvDgUoUKiLfQIx+R/wdyFaC/BOjIniJ0f
- Q7rPTNG5e6C05tJZEGhjASB+DKJck5xyRP+9I8+V5nfkDpz/oouHVi0/hj3hJoPkcMyE
- rZsE1eKKr8YufTnN68jSjC1X9O9Q6Y2aazgEuXZ2K5VTomnw5TEQlcRPchEhZPZ0YiWc
- oXhi5/0CdCgA7aZXaTr7D5qEiK/6Z6li9fgJ7vp0wh+YhCuwQSwdDivpO7cv/dXMLORs JA== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2130.oracle.com with ESMTP id 337eerguwj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 04 Sep 2020 23:20:38 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 084NFEM4103386;
-        Fri, 4 Sep 2020 23:20:38 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3020.oracle.com with ESMTP id 33bhs5an24-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 04 Sep 2020 23:20:38 +0000
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 084NKK3c016818;
-        Fri, 4 Sep 2020 23:20:21 GMT
-Received: from dhcp-10-65-147-1.vpn.oracle.com (/10.65.147.1)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 04 Sep 2020 16:20:20 -0700
+        Fri, 4 Sep 2020 19:58:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1599263930; bh=Bn+G+kKTLMlT91hsvkN4OBE9vtBjjhP53Hnpq34KXXg=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=oBW+xGwuccE0OXVileGCK85MenySq4/BtMhuuAq8K1xJA+9/LyvxocnQ5Ox/Hp5kz0zkLqzr5YPeYjb23luPtSTIMd2JKw+H0ThxFIOroIYqhCo4tnKck+ggh6yiI0boRsFV67LEQhcsW0KRpJQ86D7xSS/YgWHwCI+11deAwlbS5cUZ6AEyc3s8UmY+Q9TdjBErDRZJbludgVK+QiGJyXk7BDDAQ/l+7WwPZDDmI7nT2q37JuOzDw1KayYOWCvgSmPWXN6prl65s47shJ040yWZPGX9ifaIXl76eRsHa+WQJofJ+u98r/wtxUi4dLQKbE/PJtEsZz45Ws3JM0hzRw==
+X-YMail-OSG: NYqv0qYVM1kg4ANV6.jw0jnzHfac9YNHujC4RqUWyqEWfcY6B5dA3Y.JZxa_8P8
+ hV1In0w3O0q.9wKSICpzmnLntEE73QvZfu_T.6agKAvPtuM63mmAVzc3n2ZvxTdfiOXgVXIvMK.B
+ v54opuWIrSn9WrQL7.aG1Gq8Didd.hwBPt8iJHBLg_hqMg0HXsf9g.uIhoPM8seBNtLgZYQanoi5
+ wzZyhnAj7iCSc_zpa8IWWQSupT0h2zhKnZxPvpJ9H6K9KNAhCGQFA_bnthDFe75krA1f.4eKys.N
+ Z51ZN5X.qEZC11XbHzfMHiSczJFH6txprxAdZd6sHYCoSboOZ5ErUHwFcOEJ.pISHJ2QlVRA1a1Y
+ HOfq8yVpE8vt2xAcZZ27biY4vXsemAqMady99Y4G.5t54GqziD9ovgbjwMWSadhfVurXpbzn4gxW
+ QPT480qVctMhfqhqLvBhikrMgtVmXqo0mA.VDVVfwBZ67HyVef92ihT23NS_UkLx383LA.lK86pp
+ uR.h0m4xJleaO3RrrzLHrnUbeEEW8zOwur9JqTqYzxqVKa5PgwAZ83zfLz.oENdSdKyLGH1th5.A
+ g_j9WqaH5zR18wwor52LqdX.x_yg.munDULFWPCer2sDHxW_lxNV7iN0NyklvchgWHzTjBohfWJm
+ dJahAO9diwxp_vcxUvdA9JtXNK3hfHr3MuwDRLnyru_w3fr4MThVQpv7AYT5jzcvJL_yCxmyvpkc
+ DAZiN5hdstz2UbwmuJxs252D.C3Ti.S0BrgLcUteIWD30ok4I3S6xGsyqtQJOWA7VjCL2iBD8Dgl
+ WoxCuNVYBY9N5irqfQ4zeOCOZY8wAjeoq0SzezmzA4bOlo1vT4DFyFP4iSo3_gehDKaSyKl4h8e4
+ 8MbeFrUq6WGk.FWPrD5b9PBsGn9.n6BuNlMszJ0NFVgjbnwwuDQu.DGjWLfiVzKe8I3M7zwQ8DTO
+ 6SUHCpuWg5FAXznpQMLD8sf_90EtjovXuWTGZfFktEMR03cxiuqLFSgrto54pz0e6p0mQRyzckNh
+ dQ1jAnHt3grdn.GJhoaNBC3Kj2kLaJuVLiA8wM8D2Mm4v5h0iZVGchK_Cu4G75IZJLkEAN6mH3Ns
+ QK5UIQkmqwoZGK09WIGQ36nIUg81HZ9q3A4cs9R5Arau4FgTlUaQg8lMxAOtqVDd1OqqmMI53JLX
+ KuAcB_l2ate7uyAhTK67eS4EUW2HCYyHrm2zuttu7Z4Fm5v.QQFHiJG3iupYlvIsCIDalLZkF5.E
+ 6J.hjQYZaY.GeIGM4g82x3T9PzPe.S3BvoIg6aU0Qf.QTa.VBNSeroLiwAEyhVc8EXWtv9KfEOGG
+ x2fFD0M3govOzM9cwya2kBivAq6F2SAPK9T7ZLy2onlSFFdBuGswQE1E5fOhaXN5XDGvYKG9fW0m
+ RfLgTV_JJQeZURuL2Gkiyd1NUsIRnzb9IiklyFJc4H.NdSvQmX.eibQd4B775i0.vuMCqeiwbXLI
+ gG6llpRRhcYoo6V7vUdlL89H2nuq5K8u_cmDVxrvh5fnwP210E8bVdW4r0ANUtFSJ3mlFFeVkgnd
+ .zUw.3wWQCs3itaXWE92riW3QB2uRdXw-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Fri, 4 Sep 2020 23:58:50 +0000
+Received: by smtp423.mail.bf1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID a395354623817bca1029a7e7161b6f91;
+          Fri, 04 Sep 2020 23:58:46 +0000 (UTC)
+Subject: Re: [PATCH v20 05/23] net: Prepare UDS for security module stacking
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     casey.schaufler@intel.com, James Morris <jmorris@namei.org>,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com, keescook@chromium.org,
+        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <20200826145247.10029-1-casey@schaufler-ca.com>
+ <20200826145247.10029-6-casey@schaufler-ca.com>
+ <CAHC9VhSh=r4w_3mZOUwmKN0UxCMxPNGKd=_vr_iGV06rvCNbSA@mail.gmail.com>
+ <1eeef766-405f-3800-c0cf-3eb008f9673e@schaufler-ca.com>
+ <CAHC9VhSf8RWUnRPYLR6LLzbn-cvNg8J0wnZGwTOAe=dOqkvd0g@mail.gmail.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <ef6a049a-c6b9-370b-c521-4594aa73e403@schaufler-ca.com>
+Date:   Fri, 4 Sep 2020 16:58:44 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.0
+MIME-Version: 1.0
+In-Reply-To: <CAHC9VhSf8RWUnRPYLR6LLzbn-cvNg8J0wnZGwTOAe=dOqkvd0g@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: Re: [RFC PATCH] certs: Add EFI_CERT_X509_GUID support for dbx
- entries]
-From:   Eric Snowberg <eric.snowberg@oracle.com>
-In-Reply-To: <20200904125931.GE39023@linux.intel.com>
-Date:   Fri, 4 Sep 2020 17:20:17 -0600
-Cc:     dhowells@redhat.com, dwmw2@infradead.org, jmorris@namei.org,
-        serge@hallyn.com, Mimi Zohar <zohar@linux.ibm.com>,
-        erichte@linux.ibm.com, nayna@linux.ibm.com, mpe@ellerman.id.au,
-        keyrings@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <D842021F-3054-45FC-8519-9DF5A85AFC37@oracle.com>
-References: <20200901165143.10295-1-eric.snowberg@oracle.com>
- <20200904125931.GE39023@linux.intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-X-Mailer: Apple Mail (2.3273)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9734 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxscore=0 bulkscore=0
- mlxlogscore=999 spamscore=0 adultscore=0 suspectscore=3 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
- definitions=main-2009040196
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9734 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 clxscore=1015 priorityscore=1501
- lowpriorityscore=0 malwarescore=0 adultscore=0 spamscore=0 mlxscore=0
- phishscore=0 impostorscore=0 mlxlogscore=999 bulkscore=0 suspectscore=3
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
- definitions=main-2009040196
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Mailer: WebService/1.1.16565 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo Apache-HttpAsyncClient/4.1.4 (Java/11.0.7)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On 9/4/2020 2:53 PM, Paul Moore wrote:
+> On Fri, Sep 4, 2020 at 5:35 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> On 9/4/2020 1:08 PM, Paul Moore wrote:
+>>> On Wed, Aug 26, 2020 at 11:07 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>>>> Change the data used in UDS SO_PEERSEC processing from a
+>>>> secid to a more general struct lsmblob. Update the
+>>>> security_socket_getpeersec_dgram() interface to use the
+>>>> lsmblob. There is a small amount of scaffolding code
+>>>> that will come out when the security_secid_to_secctx()
+>>>> code is brought in line with the lsmblob.
+>>>>
+>>>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+>>>> ---
+>>>>  include/linux/security.h |  7 +++++--
+>>>>  include/net/af_unix.h    |  2 +-
+>>>>  include/net/scm.h        |  8 +++++---
+>>>>  net/ipv4/ip_sockglue.c   |  8 +++++---
+>>>>  net/unix/af_unix.c       |  6 +++---
+>>>>  security/security.c      | 18 +++++++++++++++---
+>>>>  6 files changed, 34 insertions(+), 15 deletions(-)
+>>> ...
+>>>
+>>>> diff --git a/include/net/af_unix.h b/include/net/af_unix.h
+>>>> index f42fdddecd41..a86da0cb5ec1 100644
+>>>> --- a/include/net/af_unix.h
+>>>> +++ b/include/net/af_unix.h
+>>>> @@ -36,7 +36,7 @@ struct unix_skb_parms {
+>>>>         kgid_t                  gid;
+>>>>         struct scm_fp_list      *fp;            /* Passed files         */
+>>>>  #ifdef CONFIG_SECURITY_NETWORK
+>>>> -       u32                     secid;          /* Security ID          */
+>>>> +       struct lsmblob          lsmblob;        /* Security LSM data    */
+>>> As mentioned in a previous revision, I remain concerned that this is
+>>> going to become a problem due to the size limit on unix_skb_parms.  I
+>>> would need to redo the math to be certain, but if I recall correctly
+>>> this would limit us to five LSMs assuming both that we don't need to
+>>> grow the per-LSM size of lsmblob *and* the netdev folks don't decide
+>>> to add more fields to the unix_skb_parms.
+>>>
+>>> I lost track of that earlier discussion so I'm not sure where it ended
+>>> up, but if there is a viable alternative it might be a good idea to
+>>> pursue it.
+>> Stephen had concerns about the lifecycle management involved. He also
+>> pointed out that I had taken a cowards way out when allocations failed.
+>> That could result in unexpected behavior when an allocation failed.
+>> Fixing that would have required a major re-write of the currently simple
+>> UDS attribute code, which I suspect would be as hard a sell to netdev as
+>> expanding the secid to a lsmblob. I also thought I'd gotten netdev on the
+>> CC: for this patch, but it looks like I missed it.
+>>
+>> I did start on the UDS attribute re-do, and discovered that I was going
+>> to have to introduce new failure paths, and that it might not be possible
+>> to maintain compatibility for all cases because of the new possibilities
+>> of failure.
+> ... and you're hoping to not be responsible for this code by the time
+> this becomes a limiting issue? ;)
 
-> On Sep 4, 2020, at 6:59 AM, Jarkko Sakkinen =
-<jarkko.sakkinen@linux.intel.com> wrote:
->=20
-> On Tue, Sep 01, 2020 at 12:51:43PM -0400, Eric Snowberg wrote:
->> The Secure Boot Forbidden Signature Database, dbx, contains a list of =
-now
->> revoked signatures and keys previously approved to boot with UEFI =
-Secure
->> Boot enabled.  The dbx is capable of containing any number of
->> EFI_CERT_X509_SHA256_GUID, EFI_CERT_SHA256_GUID, and =
-EFI_CERT_X509_GUID
->> entries.
->>=20
->> Currently when EFI_CERT_X509_GUID are contained in the dbx, the =
-entries are
->> skipped.
->>=20
->> This change adds support for EFI_CERT_X509_GUID dbx entries. When a
->> EFI_CERT_X509_GUID is found, it is added as an asymmetrical key to =
-the
->> .blacklist keyring.  Anytime the .platform keyring is used, the keys =
-in
->> the .blacklist keyring are referenced, if a matching key is found, =
-the
->> key will be rejected.
->>=20
->> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
->=20
-> In the last paragraph, please use imperative form: "Add support for =
-=E2=80=A6".
+Well, maybe. More likely that full dementia will have set in by the
+time I get the alternative done correctly. It's a _lot_ more complicated.
+I'm carefully watching what the BPF people are doing with their
+memory management schemes in the hope they will come up with something
+useful. 
 
-I will change this in V2.
+> I understand the concerns you mention, they are all valid as far as
+> I'm concerned, but I think we are going to get burned by this code as
+> it currently stands.
 
->=20
->> ---
->> certs/blacklist.c                             | 36 =
-+++++++++++++++++++
->> certs/system_keyring.c                        |  6 ++++
->> include/keys/system_keyring.h                 | 11 ++++++
->> .../platform_certs/keyring_handler.c          | 11 ++++++
->> 4 files changed, 64 insertions(+)
->>=20
->> diff --git a/certs/blacklist.c b/certs/blacklist.c
->> index 6514f9ebc943..17ebf50cf0ae 100644
->> --- a/certs/blacklist.c
->> +++ b/certs/blacklist.c
->> @@ -15,6 +15,7 @@
->> #include <linux/err.h>
->> #include <linux/seq_file.h>
->> #include <keys/system_keyring.h>
->> +#include <crypto/pkcs7.h>
->> #include "blacklist.h"
->>=20
->> static struct key *blacklist_keyring;
->> @@ -100,6 +101,41 @@ int mark_hash_blacklisted(const char *hash)
->> 	return 0;
->> }
->>=20
->> +int mark_key_revocationlisted(const char *data, size_t size)
->> +{
->> +	key_ref_t key;
->> +
->> +	key =3D key_create_or_update(make_key_ref(blacklist_keyring, =
-true),
->> +				   "asymmetric",
->> +				   NULL,
->> +				   data,
->> +				   size,
->> +				   ((KEY_POS_ALL & ~KEY_POS_SETATTR) |
->> +				    KEY_USR_VIEW),
->> +				   KEY_ALLOC_NOT_IN_QUOTA |
->> +				   KEY_ALLOC_BUILT_IN);
->> +
->> +	if (IS_ERR(key)) {
->> +		pr_err("Problem with revocation key (%ld)\n", =
-PTR_ERR(key));
->> +		return PTR_ERR(key);
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +int is_key_revocationlisted(struct pkcs7_message *pkcs7)
->> +{
->> +	int ret;
->> +
->> +	ret =3D pkcs7_validate_trust(pkcs7, blacklist_keyring);
->> +
->> +	if (ret =3D=3D 0)
->> +		return -EKEYREJECTED;
->> +
->> +	return -ENOKEY;
->> +}
->> +EXPORT_SYMBOL_GPL(is_key_revocationlisted);
->> +
->> /**
->>  * is_hash_blacklisted - Determine if a hash is blacklisted
->>  * @hash: The hash to be checked as a binary blob
->> diff --git a/certs/system_keyring.c b/certs/system_keyring.c
->> index 798291177186..f8ea96219155 100644
->> --- a/certs/system_keyring.c
->> +++ b/certs/system_keyring.c
->> @@ -241,6 +241,12 @@ int verify_pkcs7_message_sig(const void *data, =
-size_t len,
->> 			pr_devel("PKCS#7 platform keyring is not =
-available\n");
->> 			goto error;
->> 		}
->> +
->> +		ret =3D is_key_revocationlisted(pkcs7);
->> +		if (ret !=3D -ENOKEY) {
->> +			pr_devel("PKCS#7 platform key =
-revocationlisted\n");
->> +			goto error;
->> +		}
->> 	}
->> 	ret =3D pkcs7_validate_trust(pkcs7, trusted_keys);
->> 	if (ret < 0) {
->> diff --git a/include/keys/system_keyring.h =
-b/include/keys/system_keyring.h
->> index fb8b07daa9d1..b6991cfe1b6d 100644
->> --- a/include/keys/system_keyring.h
->> +++ b/include/keys/system_keyring.h
->> @@ -31,11 +31,14 @@ extern int =
-restrict_link_by_builtin_and_secondary_trusted(
->> #define restrict_link_by_builtin_and_secondary_trusted =
-restrict_link_by_builtin_trusted
->> #endif
->>=20
->> +extern struct pkcs7_message *pkcs7;
->> #ifdef CONFIG_SYSTEM_BLACKLIST_KEYRING
->> extern int mark_hash_blacklisted(const char *hash);
->> +extern int mark_key_revocationlisted(const char *data, size_t size);
->> extern int is_hash_blacklisted(const u8 *hash, size_t hash_len,
->> 			       const char *type);
->> extern int is_binary_blacklisted(const u8 *hash, size_t hash_len);
->> +extern int is_key_revocationlisted(struct pkcs7_message *pkcs7);
->> #else
->> static inline int is_hash_blacklisted(const u8 *hash, size_t =
-hash_len,
->> 				      const char *type)
->> @@ -47,6 +50,14 @@ static inline int is_binary_blacklisted(const u8 =
-*hash, size_t hash_len)
->> {
->> 	return 0;
->> }
->> +static inline int mark_key_revocationlisted(const char *data, size_t =
-size)
->> +{
->> +	return 0;
->> +}
->> +static inline int is_key_revocationlisted(struct pkcs7_message =
-*pkcs7)
->> +{
->> +	return -ENOKEY;
->> +}
->> #endif
->>=20
->> #ifdef CONFIG_IMA_BLACKLIST_KEYRING
->> diff --git a/security/integrity/platform_certs/keyring_handler.c =
-b/security/integrity/platform_certs/keyring_handler.c
->> index c5ba695c10e3..cc5a43804bc4 100644
->> --- a/security/integrity/platform_certs/keyring_handler.c
->> +++ b/security/integrity/platform_certs/keyring_handler.c
->> @@ -55,6 +55,15 @@ static __init void uefi_blacklist_binary(const =
-char *source,
->> 	uefi_blacklist_hash(source, data, len, "bin:", 4);
->> }
->>=20
->> +/*
->> + * Revocationlist the X509 cert
->> + */
->> +static __init void uefi_revocationlist_x509(const char *source,
->> +					    const void *data, size_t =
-len)
->> +{
->> +	mark_key_revocationlisted(data, len);
->> +}
->> +
->> /*
->>  * Return the appropriate handler for particular signature list types =
-found in
->>  * the UEFI db and MokListRT tables.
->> @@ -76,5 +85,7 @@ __init efi_element_handler_t =
-get_handler_for_dbx(const efi_guid_t *sig_type)
->> 		return uefi_blacklist_x509_tbs;
->> 	if (efi_guidcmp(*sig_type, efi_cert_sha256_guid) =3D=3D 0)
->> 		return uefi_blacklist_binary;
->> +	if (efi_guidcmp(*sig_type, efi_cert_x509_guid) =3D=3D 0)
->> +		return uefi_revocationlist_x509;
->> 	return 0;
->> }
->> --=20
->> 2.18.1
->>=20
->=20
-> I did not find anything wrong with the code change.
-
-Thanks
+Yes, I can see that. We're getting burned by the non-extensibility
+of secids. It will take someone smarter than me to figure out how to
+fit N secids into 32bits without danger of either failure or memory
+allocation.
 
