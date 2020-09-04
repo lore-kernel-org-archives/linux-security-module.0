@@ -2,149 +2,162 @@ Return-Path: <SRS0=mt4R=CN=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D4D7C433E2
-	for <linux-security-module@archiver.kernel.org>; Fri,  4 Sep 2020 14:07:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8F2AC43461
+	for <linux-security-module@archiver.kernel.org>; Fri,  4 Sep 2020 14:35:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5DEC7206B7
-	for <linux-security-module@archiver.kernel.org>; Fri,  4 Sep 2020 14:07:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pb+ilJUJ"
+	by mail.kernel.org (Postfix) with ESMTP id C6763206D4
+	for <linux-security-module@archiver.kernel.org>; Fri,  4 Sep 2020 14:35:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730443AbgIDOHn (ORCPT
+        id S1730799AbgIDOe7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 4 Sep 2020 10:07:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56664 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730564AbgIDOG7 (ORCPT
+        Fri, 4 Sep 2020 10:34:59 -0400
+Received: from wind.enjellic.com ([76.10.64.91]:53456 "EHLO wind.enjellic.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730457AbgIDOev (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 4 Sep 2020 10:06:59 -0400
-Received: from mail-oi1-x242.google.com (mail-oi1-x242.google.com [IPv6:2607:f8b0:4864:20::242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 398FAC061245;
-        Fri,  4 Sep 2020 07:06:38 -0700 (PDT)
-Received: by mail-oi1-x242.google.com with SMTP id w16so6628745oia.2;
-        Fri, 04 Sep 2020 07:06:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Wr4ik479hXJMABoUt+QySGUcxYVpD0giYre42tl6Lak=;
-        b=pb+ilJUJRPhJ/T5Cca3PbrSqzWYKDzd+9lVwpvCtKeG4tVFR5fQw4XDiIQxMEernf8
-         cN/W80EeOycrznLPrK9RkdvnacufPub2oUdkxxGTpGcA1GBMVIWkw8BcapZhRF7M9hCX
-         LrD+cFDk+B5RNXXHuTCwraVJ0QWLjLRxgn87VwM/dXlhI1esf59Ab11er8fAr6j7znQn
-         1V9KCjQAelo+dg9xaytKB3gQHCJarbecol+hxcLg9/Xw65DqUlhuFRQhvem9IilKf3KU
-         QrlZV18mXNtahcZ9xGvB827p/mMnHDDm/dVEvJf//2styAsjRlmRlP03lJjgKsdCw9HM
-         LR3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Wr4ik479hXJMABoUt+QySGUcxYVpD0giYre42tl6Lak=;
-        b=YFHRXYJWMLh/4WzZyeLNHs3mmdzOgyik91fNNkBpqM3zEmRv3il4NDFA7mZ/STlxJV
-         IeV4gRztZGpD87BTxLBVwgLwVusI9T+EicOa8swRiG2OxnXgJPIH2eDe5U+0M1cWkSrF
-         IQ3DQzB4lts4gNRZ/Rw+JOxLvrqi/QabCX2ZxOVLwrNy8W3cWli6uTjlpaoL0uDRwg4v
-         Fkv/lu2mJJVL78g17xCS9LK+OG3Y5ch9iQ9wjtWxntnGtuGUtuIOmbrn+Y/11EIhkpL1
-         zcMfp6UtrLhC/XuaL3yES9g0Wg+J7xJTWOCBDVbfh3zOnUTUAZBcO6+64qBHQupDXGd2
-         5X5g==
-X-Gm-Message-State: AOAM530raUbSwRRHlwxX1FcBx7yj2JLPjwWF/dw0kOOw7jJVIsb4S0+U
-        lFOD24nFZqpfTacMsoHpv6100zi+/J1egJAlUuU=
-X-Google-Smtp-Source: ABdhPJziFDpId3xQV+kTiECfez29XequCwVUbV9zAOTxbsVuPohRo7dKhwXxjzjzByWc3HuEEQrlxZ5l47bnwwTL+yY=
-X-Received: by 2002:a54:4f9b:: with SMTP id g27mr5430650oiy.140.1599228397615;
- Fri, 04 Sep 2020 07:06:37 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200802215903.91936-1-mic@digikod.net> <20200802215903.91936-6-mic@digikod.net>
- <779c290b-45f5-b86c-c573-2edb4004105d@tycho.nsa.gov> <03f522c0-414c-434b-a0d1-57c3b17fa67f@digikod.net>
- <CAEjxPJ7POnxKy=5w-iQkKhjftxf2-=UuvA6D8EmhUPJyS1F6qg@mail.gmail.com>
-In-Reply-To: <CAEjxPJ7POnxKy=5w-iQkKhjftxf2-=UuvA6D8EmhUPJyS1F6qg@mail.gmail.com>
-From:   Stephen Smalley <stephen.smalley.work@gmail.com>
-Date:   Fri, 4 Sep 2020 10:06:26 -0400
-Message-ID: <CAEjxPJ7ARJO57MBW66=xsBzMMRb=9uLgqocK5eskHCaiVMx7Vw@mail.gmail.com>
-Subject: Re: [PATCH v20 05/12] LSM: Infrastructure management of the superblock
-To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Kees Cook <keescook@chromium.org>,
-        John Johansen <john.johansen@canonical.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
-        Jeff Dike <jdike@addtoit.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-kselftest@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        X86 ML <x86@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 4 Sep 2020 10:34:51 -0400
+X-Greylist: delayed 1672 seconds by postgrey-1.27 at vger.kernel.org; Fri, 04 Sep 2020 10:34:50 EDT
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 084E6Dui018627;
+        Fri, 4 Sep 2020 09:06:13 -0500
+Received: (from greg@localhost)
+        by wind.enjellic.com (8.15.2/8.15.2/Submit) id 084E6BWY018626;
+        Fri, 4 Sep 2020 09:06:11 -0500
+Date:   Fri, 4 Sep 2020 09:06:11 -0500
+From:   "Dr. Greg" <greg@enjellic.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Krzysztof Struczynski <krzysztof.struczynski@huawei.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "containers@lists.linux-foundation.org" 
+        <containers@lists.linux-foundation.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "stefanb@linux.vnet.ibm.com" <stefanb@linux.vnet.ibm.com>,
+        "sunyuqiong1988@gmail.com" <sunyuqiong1988@gmail.com>,
+        "mkayaalp@cs.binghamton.edu" <mkayaalp@cs.binghamton.edu>,
+        "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
+        "serge@hallyn.com" <serge@hallyn.com>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "christian@brauner.io" <christian@brauner.io>,
+        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>, nick.dusek@gmail.com
+Subject: Re: [RFC PATCH 00/30] ima: Introduce IMA namespace
+Message-ID: <20200904140611.GA18124@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <20200818152037.11869-1-krzysztof.struczynski@huawei.com> <1597767571.3898.15.camel@HansenPartnership.com> <401a2f36149f450291d1742aeb6c2260@huawei.com> <5331e60b5a1afb55e2bc778db1b95998466b687d.camel@linux.ibm.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5331e60b5a1afb55e2bc778db1b95998466b687d.camel@linux.ibm.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Fri, 04 Sep 2020 09:06:13 -0500 (CDT)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Aug 13, 2020 at 2:39 PM Stephen Smalley
-<stephen.smalley.work@gmail.com> wrote:
->
-> On Thu, Aug 13, 2020 at 10:17 AM Micka=C3=ABl Sala=C3=BCn <mic@digikod.ne=
-t> wrote:
-> >
-> >
-> > On 12/08/2020 21:16, Stephen Smalley wrote:
-> > > On 8/2/20 5:58 PM, Micka=C3=ABl Sala=C3=BCn wrote:
-> > >> From: Casey Schaufler <casey@schaufler-ca.com>
-> > >>
-> > >> Move management of the superblock->sb_security blob out
-> > >> of the individual security modules and into the security
-> > >> infrastructure. Instead of allocating the blobs from within
-> > >> the modules the modules tell the infrastructure how much
-> > >> space is required, and the space is allocated there.
-> > >>
-> > >> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> > >> Reviewed-by: Kees Cook <keescook@chromium.org>
-> > >> Reviewed-by: John Johansen <john.johansen@canonical.com>
-> > >> Reviewed-by: Stephen Smalley <sds@tycho.nsa.gov>
-> > >> Reviewed-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
-> > >> Link:
-> > >> https://lore.kernel.org/r/20190829232935.7099-2-casey@schaufler-ca.c=
-om
-> > >> ---
-> > >>
-> > >> Changes since v17:
-> > >> * Rebase the original LSM stacking patch from v5.3 to v5.7: I fixed =
-some
-> > >>    diff conflicts caused by code moves and function renames in
-> > >>    selinux/include/objsec.h and selinux/hooks.c .  I checked that it
-> > >>    builds but I didn't test the changes for SELinux nor SMACK.
-> > >
-> > > You shouldn't retain Signed-off-by and Reviewed-by lines from an earl=
-ier
-> > > patch if you made non-trivial changes to it (even more so if you didn=
-'t
-> > > test them).
-> >
-> > I think I made trivial changes according to the original patch. But
-> > without reply from other people with Signed-off-by or Reviewed-by
-> > (Casey, Kees, John), I'll remove them. I guess you don't want your
-> > Reviewed-by to be kept, so I'll remove it, except if you want to review
-> > this patch (or the modified part).
->
-> At the very least your Reviewed-by line is wrong - yours should be
-> Signed-off-by because the patch went through you and you modified it.
-> I'll try to take a look as time permits but FYI you should this
-> address (already updated in MAINTAINERS) going forward.
+On Wed, Sep 02, 2020 at 02:53:17PM -0400, Mimi Zohar wrote:
 
-I finally got around to reviewing your updated patch.  You can drop
-the old line and add:
-Reviewed-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+Good morning, I hope the week is ending well for everyone.
+
+> On Fri, 2020-08-21 at 15:13 +0000, Krzysztof Struczynski wrote:
+> > > From: James Bottomley [mailto:James.Bottomley@HansenPartnership.com]
+> > > On Tue, 2020-08-18 at 17:20 +0200, krzysztof.struczynski@huawei.com
+> > > wrote:
+> > > > The measurement list remains global, with the assumption that there
+> > > > is only one TPM in the system. Each IMA namespace has a unique ID,
+> > > > that allows to track measurements per IMA namespace. Processes in one
+> > > > namespace, have access only to the measurements from that namespace.
+> > > > The exception is made for the initial IMA namespace, whose processes
+> > > > have access to all entries.
+> > > 
+> > > So I think this can work in the use case where the system owner is
+> > > responsible for doing the logging and attestation and the tenants just
+> > > trust the owner without requiring an attestation.  However, in a multi-
+> > > tenant system you need a way for the attestation to be per-container
+> > > (because the combined list of who executed what would be a security
+> > > leak between tenants).  Since we can't virtualise the PCRs without
+> > > introducing a vtpm this is going to require a vtpm infrastructure like
+> > > that used for virtual machines and then we can do IMA logging per
+> > > container.
+> > 
+> > I agree and wonder if we should decouple the attestation trust model,
+> > which depends on the specific use case (e.g. multi/single tenant,
+> > public/private cloud), from the IMA logic of linking the measurements to
+> > the container. Indeed, attestation from within the container might require
+> > anchoring to a vTPM/vPCR and the current measurement tagging mechanism can
+> > support several ways of anchoring them to a (virtual) root of trust.
+> > 
+> > > I don't think the above has to be in your first patch set, we just have
+> > > to have an idea of how it could be done to show that nothing in this
+> > > patch set precludes a follow on from doing this.
+> > 
+> > Given that virtualizing trust anchors seems like a separate problem in
+> > which industry consensus is not easy to reach for all use cases, an
+> > anchoring mechanism should probably be a separate IMA feature.
+
+> Other trust anchors for "trusted keys" has been discussed, but I wasn't
+> aware of any discussion about other trust anchors for the IMA
+> measurement list.  The IMA measurement list is very much tied to a TPM.
+> 
+> Including container measurements in the host measurement list, will
+> unnecessarily cause the host measurement list to grow.  The decision of
+> what should and shouldn't be included in the host measurement list
+> shouldn't be defined by the container.
+
+We have been shipping, and more importantly maintaining in the wild,
+systems with a namespaced IMA implementation for 4+ years now. We
+presented the foundations for all of this at the 2015 Linux Security
+Summit in Seattle.
+
+For the purposes of further conversation, I should clarify and
+indicate that we have been shipping and maintaining what a namespaced
+IMA implementation turns into when all of the engineering challenges
+have been addressed with respect to workability issues, particularly
+in regards to keeping the resultant system from being too fragile to
+be effectively deployed and maintained.
+
+If practical experience is worth anything, I don't believe that
+namespacing the current IMA implementation is the optimum path
+forward.  With respect to developing operationally relevant trusted
+platforms, the objective needs to be modeling the behavior of
+namespaces spawned from a known root behavior.
+
+The current IMA implementation provides a great deal of relevant
+infrastructure, but as these conversations have suggested, namespacing
+the current implementation is problematic given how entangled it has
+become with existing kernel infrastructure.  What is needed is
+something far simpler that delegates, on the basis of a namespace,
+security policy to something other then the kernel, consistent with
+what we have learned about policy over the last 29+ years of Linux
+development.
+
+With respect to roots of trust, I don't think TPM's/fTPM's, virtual or
+otherwise, are going to be the relevant technology moving forward,
+although they will be part of the picture.
+
+Mimi has another post down thread that I will provide some more direct
+reflections on all of this for whatever value they may have.
+
+> Mimi
+
+Have a good day.
+
+Dr. Greg
+
+As always,
+Dr. Greg Wettstein, Ph.D, Worker      Autonomously self-defensive
+Enjellic Systems Development, LLC     IOT platforms and edge devices.
+4206 N. 19th Ave.
+Fargo, ND  58102
+PH: 701-281-1686                      EMAIL: dg@enjellic.com
+------------------------------------------------------------------------------
+"I had far rather walk, as I do, in daily terror of eternity, than feel
+ that this was only a children's game in which all of the contestants
+ would get equally worthless prizes in the end."
+                                -- T. S. Elliot
