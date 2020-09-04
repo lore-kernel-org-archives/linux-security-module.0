@@ -4,34 +4,34 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29BFAC43461
-	for <linux-security-module@archiver.kernel.org>; Fri,  4 Sep 2020 09:27:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BA12C433E2
+	for <linux-security-module@archiver.kernel.org>; Fri,  4 Sep 2020 09:27:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F2EBE20770
-	for <linux-security-module@archiver.kernel.org>; Fri,  4 Sep 2020 09:27:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16B5020791
+	for <linux-security-module@archiver.kernel.org>; Fri,  4 Sep 2020 09:27:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730032AbgIDJ1W (ORCPT
+        id S1730064AbgIDJ1Z (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 4 Sep 2020 05:27:22 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2754 "EHLO huawei.com"
+        Fri, 4 Sep 2020 05:27:25 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2757 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728658AbgIDJ1W (ORCPT
+        id S1730044AbgIDJ1Y (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 4 Sep 2020 05:27:22 -0400
-Received: from lhreml741-chm.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id 9709F4A1BBA0D160854A;
-        Fri,  4 Sep 2020 10:27:20 +0100 (IST)
+        Fri, 4 Sep 2020 05:27:24 -0400
+Received: from lhreml744-chm.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id D83F044A6B178DFA5CF1;
+        Fri,  4 Sep 2020 10:27:22 +0100 (IST)
 Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- lhreml741-chm.china.huawei.com (10.201.108.191) with Microsoft SMTP Server
+ lhreml744-chm.china.huawei.com (10.201.108.194) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1913.5; Fri, 4 Sep 2020 10:27:20 +0100
+ 15.1.1913.5; Fri, 4 Sep 2020 10:27:22 +0100
 Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.160)
  by fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
- 15.1.1913.5; Fri, 4 Sep 2020 11:27:19 +0200
+ 15.1.1913.5; Fri, 4 Sep 2020 11:27:21 +0200
 From:   Roberto Sassu <roberto.sassu@huawei.com>
 To:     <zohar@linux.ibm.com>, <mjg59@google.com>
 CC:     <linux-integrity@vger.kernel.org>,
@@ -39,9 +39,9 @@ CC:     <linux-integrity@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
         Roberto Sassu <roberto.sassu@huawei.com>,
         <stable@vger.kernel.org>
-Subject: [PATCH v2 01/12] ima: Don't ignore errors from crypto_shash_update()
-Date:   Fri, 4 Sep 2020 11:23:28 +0200
-Message-ID: <20200904092339.19598-2-roberto.sassu@huawei.com>
+Subject: [PATCH v2 04/12] evm: Execute evm_inode_init_security() only when the HMAC key is loaded
+Date:   Fri, 4 Sep 2020 11:23:31 +0200
+Message-ID: <20200904092339.19598-5-roberto.sassu@huawei.com>
 X-Mailer: git-send-email 2.27.GIT
 In-Reply-To: <20200904092339.19598-1-roberto.sassu@huawei.com>
 References: <20200904092339.19598-1-roberto.sassu@huawei.com>
@@ -56,32 +56,39 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Errors returned by crypto_shash_update() are not checked in
-ima_calc_boot_aggregate_tfm() and thus can be overwritten at the next
-iteration of the loop. This patch adds a check after calling
-crypto_shash_update() and returns immediately if the result is not zero.
+evm_inode_init_security() requires the HMAC key to calculate the HMAC on
+initial xattrs provided by LSMs. Unfortunately, with the evm_key_loaded()
+check, the function continues even if the HMAC key is not loaded
+(evm_key_loaded() returns true also if EVM has been initialized only with a
+public key). If the HMAC key is not loaded, evm_inode_init_security()
+returns an error later when it calls evm_init_hmac().
 
-Cc: stable@vger.kernel.org
-Fixes: 3323eec921efd ("integrity: IMA as an integrity service provider")
+Thus, this patch replaces the evm_key_loaded() check with a check of the
+EVM_INIT_HMAC flag in evm_initialized, so that evm_inode_init_security()
+returns 0 instead of an error.
+
+Cc: stable@vger.kernel.org # 4.5.x
+Fixes: 26ddabfe96b ("evm: enable EVM when X509 certificate is loaded")
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 ---
- security/integrity/ima/ima_crypto.c | 2 ++
- 1 file changed, 2 insertions(+)
+ security/integrity/evm/evm_main.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
-index 011c3c76af86..21989fa0c107 100644
---- a/security/integrity/ima/ima_crypto.c
-+++ b/security/integrity/ima/ima_crypto.c
-@@ -829,6 +829,8 @@ static int ima_calc_boot_aggregate_tfm(char *digest, u16 alg_id,
- 		/* now accumulate with current aggregate */
- 		rc = crypto_shash_update(shash, d.digest,
- 					 crypto_shash_digestsize(tfm));
-+		if (rc != 0)
-+			return rc;
- 	}
- 	/*
- 	 * Extend cumulative digest over TPM registers 8-9, which contain
+diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+index e4b47759ba1c..4e9f5e8b21d5 100644
+--- a/security/integrity/evm/evm_main.c
++++ b/security/integrity/evm/evm_main.c
+@@ -527,7 +527,8 @@ int evm_inode_init_security(struct inode *inode,
+ 	struct evm_xattr *xattr_data;
+ 	int rc;
+ 
+-	if (!evm_key_loaded() || !evm_protected_xattr(lsm_xattr->name))
++	if (!(evm_initialized & EVM_INIT_HMAC) ||
++	    !evm_protected_xattr(lsm_xattr->name))
+ 		return 0;
+ 
+ 	xattr_data = kzalloc(sizeof(*xattr_data), GFP_NOFS);
 -- 
 2.27.GIT
 
