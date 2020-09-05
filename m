@@ -2,98 +2,101 @@ Return-Path: <SRS0=FBAC=CO=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DF50C43461
-	for <linux-security-module@archiver.kernel.org>; Sat,  5 Sep 2020 13:21:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D69AC433E2
+	for <linux-security-module@archiver.kernel.org>; Sat,  5 Sep 2020 13:25:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 003BE2072D
-	for <linux-security-module@archiver.kernel.org>; Sat,  5 Sep 2020 13:21:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD5A020760
+	for <linux-security-module@archiver.kernel.org>; Sat,  5 Sep 2020 13:25:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="WlyHOhgS"
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="zuIDeADX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728610AbgIENVO (ORCPT
+        id S1728564AbgIENZ1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 5 Sep 2020 09:21:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44364 "EHLO
+        Sat, 5 Sep 2020 09:25:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45034 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728601AbgIENVC (ORCPT
+        with ESMTP id S1728556AbgIENZ0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 5 Sep 2020 09:21:02 -0400
-Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66DB5C061246
-        for <linux-security-module@vger.kernel.org>; Sat,  5 Sep 2020 06:21:02 -0700 (PDT)
-Received: by mail-ej1-x641.google.com with SMTP id nw23so12123751ejb.4
-        for <linux-security-module@vger.kernel.org>; Sat, 05 Sep 2020 06:21:02 -0700 (PDT)
+        Sat, 5 Sep 2020 09:25:26 -0400
+Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 590C8C061245
+        for <linux-security-module@vger.kernel.org>; Sat,  5 Sep 2020 06:25:26 -0700 (PDT)
+Received: by mail-ej1-x644.google.com with SMTP id nw23so12132469ejb.4
+        for <linux-security-module@vger.kernel.org>; Sat, 05 Sep 2020 06:25:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=cf70RVIxoNSgahE+uIsH3+C73R0A8ae+hS6CMm9ibGo=;
-        b=WlyHOhgSqWfBqdLy0WSRBGuNOED84GtNTNQ+Tg3130NwVM5JG66IDt773ASOPFQiPw
-         5+7VMCMoYs3lP1tjpecM1xXsUXneiT7LsRj3A+6tz4YJM5D1UY+62QbaRqSCOjLmTvx7
-         DnGxz5F6JBwQnOKsFColkQ3ywiTBuQ0HARw6LUFPPdjxC0T8X2m+iePG0Jzxc/NAWrM1
-         Zz/H/XBM+ysTYXqaunRGZ66M2XIVMGdTG5HwXewvoet5cDJB1luGhBqyIzUZbgSieFkt
-         wwd0mzTkkutAqrqqVXEGQsvSbPjyhnkA2OWQ6icP4Ew12rViKWRdCNR+E4dNaB+rS826
-         WiRw==
+        bh=ie9e005vGpeYxWm0WXYp4ZFqRLXamHsEroBYvkvSe6o=;
+        b=zuIDeADXkz8tJwtl0SbURyUkAA3XlVMuaNLSYiCxAAekyiiFXzExEiylis3mEXv6k5
+         KgGSiONjkQlHp0C6s6LXAGTvDc/BX9dW9Nz9MMIoiLqpnwXw/5AXeSAiLinq7hp4DzYo
+         s4dc6EGykUo1seb4WZCaU4gaKsTqXBOsnbEqGbskRUgLPrXwJtThKs51fO9ae/Lk3A5h
+         PCImRLUjdxlJhIbNv4HWa8zrAUdDtiorojeVrMttvZS5g6nPfS4muEiCzQLvYFgQoGj9
+         vA+cmLHGkwK5lf3eiUEGR69eXTiVJWOfS5PKkx0flxSIZ6FYhupU6IdHFojFxLBleHa1
+         ygOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=cf70RVIxoNSgahE+uIsH3+C73R0A8ae+hS6CMm9ibGo=;
-        b=Brgn7q0164LbX7fC+ZwAh0fziKK1x84srb4cTuN5o5begv2x6OphFZlaEFbZVwuKTn
-         E68FTUeHxVKSAQIJKcOYcILsjPvi1BeHF8o4gJNJ4c+ZxjkurVJ+ulH1YGFYByy57zDY
-         6gJ3b1H4FB05If0MMFiHiQKOMEhZJ9YzMfyt9OrWhZCI97nBqYzCJnWoAsOLJwdoMsgB
-         ARZ6IyTTjBZp8MCcowwCPTV/C7TmG29RrQ3W0r2ODdD7sa6EZ+YWXjlySYtvf1mCXPvU
-         tfVW+pZGuXzuwYAzkjlJ/nXfNGw/UQZPY/o8GBlA/h2FvQBxhcZOTG592L/9BsAJpaTM
-         h8Tg==
-X-Gm-Message-State: AOAM533tD/piSVxvBWmz+19aO0TVd9YOenAMery6vF0dvfEtMV1AaMc9
-        WBbrvf1PgEcGsGQg1TrwMYMJpU47NQMiuiXIo6u/
-X-Google-Smtp-Source: ABdhPJzK5OBvPjv4UCM6lUpsfkAvko4dfcrSwtYROIrJJ1NOd9VUANU2TzN94R2eyORzcQb0ryRH67pSUK0SpPp44Sg=
-X-Received: by 2002:a17:906:43c9:: with SMTP id j9mr12357873ejn.542.1599312060415;
- Sat, 05 Sep 2020 06:21:00 -0700 (PDT)
+        bh=ie9e005vGpeYxWm0WXYp4ZFqRLXamHsEroBYvkvSe6o=;
+        b=aRQEHvoyBnqFGOd0Utf3OIyeegYdbjMi03sWxNH3ayTWaTdEq+ACcfuVg3Zit3wDLW
+         IuwMB5UXAgccht7V9ZM8FRBe3rFfFNWrVUtkrZxgCBpkxvdmiSmiO6GC+sSBybILlnq4
+         y6Uim7U0DMHbSgmPlujhOgwi1O0u8oKl7CQOS+RIDTsroVpTwUDd39fubUi5VLuvV2Fb
+         EBTAQaAAAA8LJvU5fQLQsxfA7dZM+yADhTB4qnYkKPlf8dPSyckRYogukgb1KIyD5WrC
+         2DGxAXMOIWBac/269O/U2L7D1DuiHmQU3jt5cpWqecuTV6li6dr4K+xin0UEmJrTZqit
+         CgFA==
+X-Gm-Message-State: AOAM530rT0KbUgnjoHN6tExwtyVo4J1wBshb7/cpxlpIrE92elOC67MZ
+        NbdOodAdXmIzJo8UtJaJzyEttBEp0x0/vVx/nQet
+X-Google-Smtp-Source: ABdhPJwCaOgYK/F9wk68UkyQKW1/SozAMRuWXaWQi2G9kZivtfrjsCtXnEpBDCt41ghL1Cqjg24uuP1iTYI81sdPCzQ=
+X-Received: by 2002:a17:906:5205:: with SMTP id g5mr12119953ejm.488.1599312324669;
+ Sat, 05 Sep 2020 06:25:24 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200826145247.10029-1-casey@schaufler-ca.com> <20200826145247.10029-11-casey@schaufler-ca.com>
-In-Reply-To: <20200826145247.10029-11-casey@schaufler-ca.com>
+References: <20200826145247.10029-1-casey@schaufler-ca.com>
+ <20200826145247.10029-6-casey@schaufler-ca.com> <CAHC9VhSh=r4w_3mZOUwmKN0UxCMxPNGKd=_vr_iGV06rvCNbSA@mail.gmail.com>
+ <1eeef766-405f-3800-c0cf-3eb008f9673e@schaufler-ca.com> <CAHC9VhSf8RWUnRPYLR6LLzbn-cvNg8J0wnZGwTOAe=dOqkvd0g@mail.gmail.com>
+ <ef6a049a-c6b9-370b-c521-4594aa73e403@schaufler-ca.com>
+In-Reply-To: <ef6a049a-c6b9-370b-c521-4594aa73e403@schaufler-ca.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Sat, 5 Sep 2020 09:20:49 -0400
-Message-ID: <CAHC9VhQDmx5tSJ4NrEGat-iXjONL0Rfn1O2OqqW7ZbJ43tH6gA@mail.gmail.com>
-Subject: Re: [PATCH v20 10/23] LSM: Use lsmblob in security_inode_getsecid
+Date:   Sat, 5 Sep 2020 09:25:13 -0400
+Message-ID: <CAHC9VhSu4qqKWsutm3=GF_pihUKpwjAtc9gAhfjGsGtKfz-Azw@mail.gmail.com>
+Subject: Re: [PATCH v20 05/23] net: Prepare UDS for security module stacking
 To:     Casey Schaufler <casey@schaufler-ca.com>
 Cc:     casey.schaufler@intel.com, James Morris <jmorris@namei.org>,
         linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
         linux-audit@redhat.com, keescook@chromium.org,
         john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        linux-integrity@vger.kernel.org
+        Stephen Smalley <sds@tycho.nsa.gov>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Aug 26, 2020 at 11:12 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
+On Fri, Sep 4, 2020 at 7:58 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
 >
-> Change the security_inode_getsecid() interface to fill in a
-> lsmblob structure instead of a u32 secid. This allows for its
-> callers to gather data from all registered LSMs. Data is provided
-> for IMA and audit.
->
-> Reviewed-by: Kees Cook <keescook@chromium.org>
-> Reviewed-by: John Johansen <john.johansen@canonical.com>
-> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> Acked-by: Stephen Smalley <sds@tycho.nsa.gov>
-> cc: linux-integrity@vger.kernel.org
-> ---
->  include/linux/security.h            |  7 ++++---
->  kernel/auditsc.c                    |  6 +++++-
->  security/integrity/ima/ima_policy.c |  4 +---
->  security/security.c                 | 11 +++++++++--
->  4 files changed, 19 insertions(+), 9 deletions(-)
+> On 9/4/2020 2:53 PM, Paul Moore wrote:
+> > On Fri, Sep 4, 2020 at 5:35 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> >> On 9/4/2020 1:08 PM, Paul Moore wrote:
 
-Acked-by: Paul Moore <paul@paul-moore.com>
+...
+
+> > I understand the concerns you mention, they are all valid as far as
+> > I'm concerned, but I think we are going to get burned by this code as
+> > it currently stands.
+>
+> Yes, I can see that. We're getting burned by the non-extensibility
+> of secids. It will take someone smarter than me to figure out how to
+> fit N secids into 32bits without danger of either failure or memory
+> allocation.
+
+Sooo what are the next steps here?  It sounds like there is some
+agreement that the currently proposed unix_skb_params approach is a
+problem, but it also sounds like you just want to merge it anyway?
+
+I was sorta hoping for something a bit better.
 
 -- 
 paul moore
