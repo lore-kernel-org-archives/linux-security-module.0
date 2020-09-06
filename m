@@ -2,94 +2,123 @@ Return-Path: <SRS0=OZUD=CP=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DA9BC2D0A8
-	for <linux-security-module@archiver.kernel.org>; Sun,  6 Sep 2020 02:56:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2563C43461
+	for <linux-security-module@archiver.kernel.org>; Sun,  6 Sep 2020 03:11:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1FD2F20782
-	for <linux-security-module@archiver.kernel.org>; Sun,  6 Sep 2020 02:56:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A109820782
+	for <linux-security-module@archiver.kernel.org>; Sun,  6 Sep 2020 03:11:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="zYC43D3B"
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="ykReTnxB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728400AbgIFC4A (ORCPT
+        id S1728713AbgIFDLh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 5 Sep 2020 22:56:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56446 "EHLO
+        Sat, 5 Sep 2020 23:11:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58816 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728733AbgIFCz6 (ORCPT
+        with ESMTP id S1728257AbgIFDLf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 5 Sep 2020 22:55:58 -0400
-Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD732C061573
-        for <linux-security-module@vger.kernel.org>; Sat,  5 Sep 2020 19:55:56 -0700 (PDT)
-Received: by mail-ej1-x643.google.com with SMTP id nw23so13458750ejb.4
-        for <linux-security-module@vger.kernel.org>; Sat, 05 Sep 2020 19:55:56 -0700 (PDT)
+        Sat, 5 Sep 2020 23:11:35 -0400
+Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AAB3C061573
+        for <linux-security-module@vger.kernel.org>; Sat,  5 Sep 2020 20:11:34 -0700 (PDT)
+Received: by mail-ej1-x642.google.com with SMTP id i22so13473774eja.5
+        for <linux-security-module@vger.kernel.org>; Sat, 05 Sep 2020 20:11:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=XrzR+/JpzSYwrKw8f7HoYXOSurj0d42UoeyPovZLhO8=;
-        b=zYC43D3BtPdQLnRCjnxRp1hX757mvabTDTjRo3bYiFlRs11tftTlYr5CsfALgpdZks
-         TiACz+n8b2M+WGf3kYgjPpGmyfvnL80caU2SsdDafT6Kf+ItT958/180nr3BbExO/IBQ
-         qZQ08L4xfQMLppIaiBW8NAyzr7KnxaRSOUHEYg3fBwgAYIbzanej+AsHGiy1C4lBjDFx
-         jpC9Z4a/mNBjU47QCLI1iNQf4o0HazCyuqfFRei7Tl2Z7Zw4SFT+PByuqnO2KISyiK9f
-         PduND22ms9vHOqvvvLG/0HjpNT4IdkG3u/7jFRopdPac7yUk8oKPe8Jz3Ldibruqptuw
-         l6DA==
+        bh=SybKxt5r4DpvJrcMyqAvCQLDougVZq4LzKHHKUMsChQ=;
+        b=ykReTnxBXkJsWZZN0PHYU3YOHbOnWIm0kjaI7+WAIAr1lrM94tp+tB0exoUy676xU2
+         YKwk5Ae/lyF0lu+6+en61/Mo/0wuZNyVsiq7X0EeD0JAHQmEdKIX3ZlIHKzXlwQ8ijE/
+         e5uPvT2aOUt3ZdzDDvK+/Si4RmFcxDiSi34Pyrrt+zBBphdUqsNWnJD778wLYFbQPYsQ
+         u0w5gkBYuhNlKlps6SlKT4ejErFd0NbDjLZipVA+6AsQds4qmOgrvH+JeKcw0Ttkgdxi
+         kJMyHfxnbuKoK/PKSoCM3IbCTRJ9ddqBnzLNWAsvyAyNw9UNdOidjbGAEk4IZilIU/j4
+         jiUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=XrzR+/JpzSYwrKw8f7HoYXOSurj0d42UoeyPovZLhO8=;
-        b=ll/2xmQCA2GGul3X7h9Y4a8gJyoEfI04NTUfTGquRmhNUtlmwCkslD0Gu8+8RFIwts
-         IyydxZ/sastDkn14m2e41BTmvzim/t1bgY2LjZ08MPYXOepFUV03czx4wwYnlQ1VfkF2
-         FVo2n3RA9mkDh/JalRNj0jBe1z3D4tx8eKM++B9xpZaT99mlR25gmxt3ModvPw2st1dj
-         vnLP88WXaFAqVrbdHzjoimt5RDsmlPQuk2G9kdsgvOVLbHKYpjP5/r8aTDaDPz1sEH7N
-         83nPovA1mbJKw0Mp3lHRlU2Dd6zr3PTYPLcsrTm8tL4vbx0b5NsbGQnAEZhsNnj82wXS
-         Tyhg==
-X-Gm-Message-State: AOAM5315317Bd0EekaE6vYeYnmnWEeRl5LJ0CjkGEGdP5HFo6+Op7nPr
-        f9VP4iVRmCbzWN/ix3sFjsOURq0FDNOydNDxCW1L
-X-Google-Smtp-Source: ABdhPJx0bbwxpEDgIIhOu/lGMFbl3Uwi1hzkVJXfvBMLz4eoFci2W4EPe6s5SiDNNFf68i9C+KtANwcP2Ndg6HpJu4Y=
-X-Received: by 2002:a17:906:a415:: with SMTP id l21mr13943401ejz.431.1599360955372;
- Sat, 05 Sep 2020 19:55:55 -0700 (PDT)
+        bh=SybKxt5r4DpvJrcMyqAvCQLDougVZq4LzKHHKUMsChQ=;
+        b=JsAZPbcbv2LEFfVBcQGFccxq1QSpeQ6qAoIGZLlTkLYH7I5QyyTJ7oR1p5POB2arZ7
+         hVhTsWfGwMdekgs4e/XwwmQBhXgTRhEj1FHw8dPSoi1xOVKDzOcI98IoypsSkPfJkAj8
+         pKgbweV5v7jKNiy4DVE6fOYYIvooefjCvl/nfm4EB6hsa9dkOgkEeWMuoQ46fkhPTD2i
+         6w6VdfJcVlsu/rYn6jBIV/VoYhxwN0vpv+mf5N2RC5CIKMMYMhT4nBu+jSD33DZ1xmUH
+         PZggQp3hnGUO5N9/XIPOJmct+Jaq7U30uqJ6aIQUttQJcfj7NRLPgWSSpkfG9bjIFK4R
+         isRQ==
+X-Gm-Message-State: AOAM531rkhHVoUDT/LE7QsNJbdz1kZlw/f/enSgaRZ0M1qgCc45+reVQ
+        SkiTqz/67Uip8a65fp37NAmvRNlZL9z762adZJ1r
+X-Google-Smtp-Source: ABdhPJz5gSoHhhwkKtx1ywEnb64j++4ZT6agTN648mykHqeVYLGtzaHe4GRGCTjL1A1eMy+wXx/j7tG+2Bw+w4rGAXU=
+X-Received: by 2002:a17:906:a415:: with SMTP id l21mr13979834ejz.431.1599361892319;
+ Sat, 05 Sep 2020 20:11:32 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200826145247.10029-1-casey@schaufler-ca.com> <20200826145247.10029-17-casey@schaufler-ca.com>
-In-Reply-To: <20200826145247.10029-17-casey@schaufler-ca.com>
+References: <20200826145247.10029-1-casey@schaufler-ca.com> <20200826145247.10029-18-casey@schaufler-ca.com>
+In-Reply-To: <20200826145247.10029-18-casey@schaufler-ca.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Sat, 5 Sep 2020 22:55:44 -0400
-Message-ID: <CAHC9VhScgUoV452BrbufH1xCdFS3hLmKSyFqQRxHBO6k8tk55Q@mail.gmail.com>
-Subject: Re: [PATCH v20 16/23] LSM: Use lsmcontext in security_inode_getsecctx
+Date:   Sat, 5 Sep 2020 23:11:21 -0400
+Message-ID: <CAHC9VhQEvw2jKekJeC+-eXVNii4gTS7vxqDHqWVgQL2vFCJqXA@mail.gmail.com>
+Subject: Re: [PATCH v20 17/23] LSM: security_secid_to_secctx in netlink netfilter
 To:     Casey Schaufler <casey@schaufler-ca.com>
 Cc:     casey.schaufler@intel.com, James Morris <jmorris@namei.org>,
         linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
         linux-audit@redhat.com, keescook@chromium.org,
         john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-        Stephen Smalley <sds@tycho.nsa.gov>
+        Stephen Smalley <sds@tycho.nsa.gov>, netdev@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Aug 26, 2020 at 11:19 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
+On Wed, Aug 26, 2020 at 11:20 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
 >
-> Change the security_inode_getsecctx() interface to fill
-> a lsmcontext structure instead of data and length pointers.
-> This provides the information about which LSM created the
-> context so that security_release_secctx() can use the
-> correct hook.
+> Change netlink netfilter interfaces to use lsmcontext
+> pointers, and remove scaffolding.
 >
+> Reviewed-by: Kees Cook <keescook@chromium.org>
+> Reviewed-by: John Johansen <john.johansen@canonical.com>
 > Acked-by: Stephen Smalley <sds@tycho.nsa.gov>
 > Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> cc: netdev@vger.kernel.org
 > ---
->  fs/nfsd/nfs4xdr.c        | 23 +++++++++--------------
->  include/linux/security.h |  5 +++--
->  security/security.c      | 13 +++++++++++--
->  3 files changed, 23 insertions(+), 18 deletions(-)
+>  net/netfilter/nfnetlink_queue.c | 31 ++++++++++++-------------------
+>  1 file changed, 12 insertions(+), 19 deletions(-)
 
-Acked-by: Paul Moore <paul@paul-moore.com>
+...
+
+> diff --git a/net/netfilter/nfnetlink_queue.c b/net/netfilter/nfnetlink_queue.c
+> index d3f8e808c5d3..c830401f7792 100644
+> --- a/net/netfilter/nfnetlink_queue.c
+> +++ b/net/netfilter/nfnetlink_queue.c
+> @@ -401,8 +399,7 @@ nfqnl_build_packet_message(struct net *net, struct nfqnl_instance *queue,
+>         enum ip_conntrack_info ctinfo;
+>         struct nfnl_ct_hook *nfnl_ct;
+>         bool csum_verify;
+> -       struct lsmcontext scaff; /* scaffolding */
+> -       char *secdata = NULL;
+> +       struct lsmcontext context = { };
+>         u32 seclen = 0;
+>
+>         size = nlmsg_total_size(sizeof(struct nfgenmsg))
+> @@ -469,7 +466,7 @@ nfqnl_build_packet_message(struct net *net, struct nfqnl_instance *queue,
+>         }
+>
+>         if ((queue->flags & NFQA_CFG_F_SECCTX) && entskb->sk) {
+> -               seclen = nfqnl_get_sk_secctx(entskb, &secdata);
+> +               seclen = nfqnl_get_sk_secctx(entskb, &context);
+>                 if (seclen)
+>                         size += nla_total_size(seclen);
+>         }
+
+I think we can get rid of the local "seclen" variable, right?  We can
+embed the nfqnl_get_sk_secctx() in the conditional and then simply
+reference "context.len" everywhere else, yes?  For example:
+
+  if (nfqnl_get_sk_secctx(..., &context))
+    size += nla_total_size(context.len);
 
 -- 
 paul moore
