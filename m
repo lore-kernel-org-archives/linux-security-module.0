@@ -4,135 +4,92 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C20F6C43461
-	for <linux-security-module@archiver.kernel.org>; Sun,  6 Sep 2020 02:46:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DA9BC2D0A8
+	for <linux-security-module@archiver.kernel.org>; Sun,  6 Sep 2020 02:56:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7427920757
-	for <linux-security-module@archiver.kernel.org>; Sun,  6 Sep 2020 02:46:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1FD2F20782
+	for <linux-security-module@archiver.kernel.org>; Sun,  6 Sep 2020 02:56:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="DmhPGb7A"
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="zYC43D3B"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728680AbgIFCqO (ORCPT
+        id S1728400AbgIFC4A (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 5 Sep 2020 22:46:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54968 "EHLO
+        Sat, 5 Sep 2020 22:56:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56446 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728257AbgIFCqM (ORCPT
+        with ESMTP id S1728733AbgIFCz6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 5 Sep 2020 22:46:12 -0400
-Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C139C061573
-        for <linux-security-module@vger.kernel.org>; Sat,  5 Sep 2020 19:46:11 -0700 (PDT)
-Received: by mail-ed1-x541.google.com with SMTP id g4so9506857edk.0
-        for <linux-security-module@vger.kernel.org>; Sat, 05 Sep 2020 19:46:11 -0700 (PDT)
+        Sat, 5 Sep 2020 22:55:58 -0400
+Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD732C061573
+        for <linux-security-module@vger.kernel.org>; Sat,  5 Sep 2020 19:55:56 -0700 (PDT)
+Received: by mail-ej1-x643.google.com with SMTP id nw23so13458750ejb.4
+        for <linux-security-module@vger.kernel.org>; Sat, 05 Sep 2020 19:55:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=fZqDWW5vNAoJJAbX0kuyb7Ud5+qbw+9T/B7X+7yryh8=;
-        b=DmhPGb7AyMoKvO+EZ6qSA6y0mbdaxr6Hf+3iisa/FrUxspdnpBXYMQLIrBlGXFwX/I
-         msIH1xrcZozf6lMLykq8tZh1ognEbytLSE67zNmMiBFjNvGt923/zAuglw0hFw87dbRc
-         A1nyUIALkitD3VJq/qWFJuvK+ZkX1gzGCVZ+BrlG+poI90JAyIDZaw4uM0Ck9giFZ+Gg
-         F6AfmR4omPmNAUbd9YHfF7akFNYhRd5gAvcLH1JH7gjnFQE9VKaNDBHNXkVikQ+++umT
-         2W6r1to8acOWY7IG4HMbK5dMFncajEXDc1z81RDr8E9youj5oQovA0CzpF8j+MGWg1Y0
-         VZ+w==
+        bh=XrzR+/JpzSYwrKw8f7HoYXOSurj0d42UoeyPovZLhO8=;
+        b=zYC43D3BtPdQLnRCjnxRp1hX757mvabTDTjRo3bYiFlRs11tftTlYr5CsfALgpdZks
+         TiACz+n8b2M+WGf3kYgjPpGmyfvnL80caU2SsdDafT6Kf+ItT958/180nr3BbExO/IBQ
+         qZQ08L4xfQMLppIaiBW8NAyzr7KnxaRSOUHEYg3fBwgAYIbzanej+AsHGiy1C4lBjDFx
+         jpC9Z4a/mNBjU47QCLI1iNQf4o0HazCyuqfFRei7Tl2Z7Zw4SFT+PByuqnO2KISyiK9f
+         PduND22ms9vHOqvvvLG/0HjpNT4IdkG3u/7jFRopdPac7yUk8oKPe8Jz3Ldibruqptuw
+         l6DA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=fZqDWW5vNAoJJAbX0kuyb7Ud5+qbw+9T/B7X+7yryh8=;
-        b=RpZdLvc4DmvGeKoS+G/mbZGDHdvt3DPkMSD+nlznev/ZaQYiM1Bq9U/Lfp5zLUrru6
-         kkk4aDbStJTFGwbDCqOxrzCOgvGy396s5vySskwbaCtG6+3ywQsBHHnrvQKVPHVG2QNf
-         95Waj5QeG2L64DvE27gPhOGpwv5CKMSS3YN99qDBj23hW7AONDe7ajZ2yk7x9E2QkedF
-         WdwL3uA80p2PRY42pGIlChv8tL2VQkai7i5GEwQoe6T+C08DmmaflRvV6s8PttLucKcP
-         qdPx6u7A2c5TjiN/CTfmIckJfVV8aC9E5TPCxZupGi7M6mKsyZ+6XmKmgisobxl7DkAi
-         edpw==
-X-Gm-Message-State: AOAM530Wleh1QNP4Rsgp/4jPp+zCr9Hse73jmWhMFnM0OG4DsuZaeqS3
-        LxeXC4zqMeKlmikhjR2VtC6jFDQUqOHscwmD84LZ
-X-Google-Smtp-Source: ABdhPJwEnqc7V1NRJVUfKvCRxDcLWxHKwC04LW/AslJ8t3tHT+VIhkM1GtvHSi9RzbnnsIGUXVyYSmBJ5klezGQfiL8=
-X-Received: by 2002:aa7:ce97:: with SMTP id y23mr16089395edv.128.1599360369151;
- Sat, 05 Sep 2020 19:46:09 -0700 (PDT)
+        bh=XrzR+/JpzSYwrKw8f7HoYXOSurj0d42UoeyPovZLhO8=;
+        b=ll/2xmQCA2GGul3X7h9Y4a8gJyoEfI04NTUfTGquRmhNUtlmwCkslD0Gu8+8RFIwts
+         IyydxZ/sastDkn14m2e41BTmvzim/t1bgY2LjZ08MPYXOepFUV03czx4wwYnlQ1VfkF2
+         FVo2n3RA9mkDh/JalRNj0jBe1z3D4tx8eKM++B9xpZaT99mlR25gmxt3ModvPw2st1dj
+         vnLP88WXaFAqVrbdHzjoimt5RDsmlPQuk2G9kdsgvOVLbHKYpjP5/r8aTDaDPz1sEH7N
+         83nPovA1mbJKw0Mp3lHRlU2Dd6zr3PTYPLcsrTm8tL4vbx0b5NsbGQnAEZhsNnj82wXS
+         Tyhg==
+X-Gm-Message-State: AOAM5315317Bd0EekaE6vYeYnmnWEeRl5LJ0CjkGEGdP5HFo6+Op7nPr
+        f9VP4iVRmCbzWN/ix3sFjsOURq0FDNOydNDxCW1L
+X-Google-Smtp-Source: ABdhPJx0bbwxpEDgIIhOu/lGMFbl3Uwi1hzkVJXfvBMLz4eoFci2W4EPe6s5SiDNNFf68i9C+KtANwcP2Ndg6HpJu4Y=
+X-Received: by 2002:a17:906:a415:: with SMTP id l21mr13943401ejz.431.1599360955372;
+ Sat, 05 Sep 2020 19:55:55 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200826145247.10029-1-casey@schaufler-ca.com> <20200826145247.10029-15-casey@schaufler-ca.com>
-In-Reply-To: <20200826145247.10029-15-casey@schaufler-ca.com>
+References: <20200826145247.10029-1-casey@schaufler-ca.com> <20200826145247.10029-17-casey@schaufler-ca.com>
+In-Reply-To: <20200826145247.10029-17-casey@schaufler-ca.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Sat, 5 Sep 2020 22:45:57 -0400
-Message-ID: <CAHC9VhQmEgNgsXmk8MeMsfkvZ82GuHBguoBvG5WR9mcoztBDOA@mail.gmail.com>
-Subject: Re: [PATCH v20 14/23] LSM: Ensure the correct LSM context releaser
+Date:   Sat, 5 Sep 2020 22:55:44 -0400
+Message-ID: <CAHC9VhScgUoV452BrbufH1xCdFS3hLmKSyFqQRxHBO6k8tk55Q@mail.gmail.com>
+Subject: Re: [PATCH v20 16/23] LSM: Use lsmcontext in security_inode_getsecctx
 To:     Casey Schaufler <casey@schaufler-ca.com>
 Cc:     casey.schaufler@intel.com, James Morris <jmorris@namei.org>,
         linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
         linux-audit@redhat.com, keescook@chromium.org,
         john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        linux-integrity@vger.kernel.org, netdev@vger.kernel.org
+        Stephen Smalley <sds@tycho.nsa.gov>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Aug 26, 2020 at 11:16 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
+On Wed, Aug 26, 2020 at 11:19 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
 >
-> Add a new lsmcontext data structure to hold all the information
-> about a "security context", including the string, its size and
-> which LSM allocated the string. The allocation information is
-> necessary because LSMs have different policies regarding the
-> lifecycle of these strings. SELinux allocates and destroys
-> them on each use, whereas Smack provides a pointer to an entry
-> in a list that never goes away.
+> Change the security_inode_getsecctx() interface to fill
+> a lsmcontext structure instead of data and length pointers.
+> This provides the information about which LSM created the
+> context so that security_release_secctx() can use the
+> correct hook.
 >
-> Reviewed-by: Kees Cook <keescook@chromium.org>
-> Reviewed-by: John Johansen <john.johansen@canonical.com>
 > Acked-by: Stephen Smalley <sds@tycho.nsa.gov>
 > Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> Cc: linux-integrity@vger.kernel.org
-> Cc: netdev@vger.kernel.org
 > ---
->  drivers/android/binder.c                | 10 ++++---
->  fs/ceph/xattr.c                         |  6 ++++-
->  fs/nfs/nfs4proc.c                       |  8 ++++--
->  fs/nfsd/nfs4xdr.c                       |  7 +++--
->  include/linux/security.h                | 35 +++++++++++++++++++++++--
->  include/net/scm.h                       |  5 +++-
->  kernel/audit.c                          | 14 +++++++---
->  kernel/auditsc.c                        | 12 ++++++---
->  net/ipv4/ip_sockglue.c                  |  4 ++-
->  net/netfilter/nf_conntrack_netlink.c    |  4 ++-
->  net/netfilter/nf_conntrack_standalone.c |  4 ++-
->  net/netfilter/nfnetlink_queue.c         | 13 ++++++---
->  net/netlabel/netlabel_unlabeled.c       | 19 +++++++++++---
->  net/netlabel/netlabel_user.c            |  4 ++-
->  security/security.c                     | 11 ++++----
->  15 files changed, 121 insertions(+), 35 deletions(-)
-
-One small comment below, but otherwise ...
+>  fs/nfsd/nfs4xdr.c        | 23 +++++++++--------------
+>  include/linux/security.h |  5 +++--
+>  security/security.c      | 13 +++++++++++--
+>  3 files changed, 23 insertions(+), 18 deletions(-)
 
 Acked-by: Paul Moore <paul@paul-moore.com>
-
-> +/**
-> + * lsmcontext_init - initialize an lsmcontext structure.
-> + * @cp: Pointer to the context to initialize
-> + * @context: Initial context, or NULL
-> + * @size: Size of context, or 0
-> + * @slot: Which LSM provided the context
-> + *
-> + * Fill in the lsmcontext from the provided information.
-> + * This is a scaffolding function that will be removed when
-> + * lsmcontext integration is complete.
-> + */
-> +static inline void lsmcontext_init(struct lsmcontext *cp, char *context,
-> +                                  u32 size, int slot)
-> +{
-> +       cp->slot = slot;
-> +       cp->context = context;
-> +       cp->len = size;
-> +}
-
-Here is another case where some of the intermediate code, and perhaps
-some of the final code, can probably be simplified if
-lsmcontext_init() returns the lsmcontext pointer.
 
 -- 
 paul moore
