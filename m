@@ -2,270 +2,80 @@ Return-Path: <SRS0=OZUD=CP=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-3.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6D84C43461
-	for <linux-security-module@archiver.kernel.org>; Sun,  6 Sep 2020 12:18:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4835DC433E2
+	for <linux-security-module@archiver.kernel.org>; Sun,  6 Sep 2020 14:21:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 907B1208B3
-	for <linux-security-module@archiver.kernel.org>; Sun,  6 Sep 2020 12:18:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C5FB2087C
+	for <linux-security-module@archiver.kernel.org>; Sun,  6 Sep 2020 14:21:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=gmx.net header.i=@gmx.net header.b="B+kMDvbl"
+	dkim=pass (1024-bit key) header.d=gmx.net header.i=@gmx.net header.b="aq9r46vI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728681AbgIFMRp (ORCPT
+        id S1728917AbgIFOUp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 6 Sep 2020 08:17:45 -0400
-Received: from mout.gmx.net ([212.227.15.18]:40327 "EHLO mout.gmx.net"
+        Sun, 6 Sep 2020 10:20:45 -0400
+Received: from mout.gmx.net ([212.227.15.18]:50303 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726342AbgIFMRp (ORCPT
+        id S1728891AbgIFOUA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 6 Sep 2020 08:17:45 -0400
+        Sun, 6 Sep 2020 10:20:00 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1599394583;
-        bh=fQwrab/3EerbqYpxqZ04WJLrtDjl6Vf1m279QN3M5dY=;
-        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
-        b=B+kMDvblQcck9rRUDTaTgdtvW4iQHy41+nPJXh4ycqmYmxHYApQJkpCoEngQW4/jg
-         bdyTElk2mt64K0pLmjwWrJuiuxpdE/JMwI996osvzZbLkTVNH/CSqAHNiagkuo/WJz
-         LlPVdmClYVftqYcWbfaI6Bplj3BDvm/Gq5YmSQ1U=
+        s=badeba3b8450; t=1599401997;
+        bh=/6GY+vCiDq3r2TFREQwT9xodDtp5h9Zbvasvf+ukhDc=;
+        h=X-UI-Sender-Class:Date:From:To:Subject:In-Reply-To;
+        b=aq9r46vIU6b2ST1PXWAYvsRpefCsFLwACAAMiNwgCO6dTAxQgtYjQ/vLEDT/3FCg0
+         uYX9EWP1YKbCfVyF04P5flttiB6OP4OwJCSleJ+SHcQIy/nr19vBi2LQhtj9vkpSJX
+         HGcGmI+4g6uiU5m8M5R92u69v4mNVgf/5A5wW1mE=
 X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from localhost.localdomain ([79.150.73.70]) by mail.gmx.com
- (mrgmx005 [212.227.17.184]) with ESMTPSA (Nemesis) id
- 1MvsEn-1kW10D2mP9-00sttf; Sun, 06 Sep 2020 14:16:22 +0200
+Received: from ubuntu ([79.150.73.70]) by mail.gmx.com (mrgmx004
+ [212.227.17.184]) with ESMTPSA (Nemesis) id 1MNKhs-1jvc9n0az4-00Oqxu for
+ <linux-security-module@vger.kernel.org>; Sun, 06 Sep 2020 16:13:25 +0200
+Date:   Sun, 6 Sep 2020 16:13:23 +0200
 From:   John Wood <john.wood@gmx.com>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     John Wood <john.wood@gmx.com>, Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        kernel-hardening@lists.openwall.com
-Subject: [RFC PATCH 0/9] Fork brute force attack mitigation (fbfam)
-Date:   Sun,  6 Sep 2020 14:15:35 +0200
-Message-Id: <20200906121544.4204-1-john.wood@gmx.com>
-X-Mailer: git-send-email 2.25.1
+To:     linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH 0/9] Fork brute force attack mitigation (fbfam)
+Message-ID: <20200906141323.GT4823@ubuntu>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:AGT3UJ3W0iU8AA373PKnhI/b31jFD58Olo8G2LzHwLpYviT9FLx
- 0RgaViNVNg4BteZYzjsXQMk3VBOPeIpDWRxF+1N2PIh3CCWUW59L5viHyRqePmpC5ZkpERs
- QmNXUZYIP2vtNsk5d64jtTxcb0SHQAT80pHVRFwBwJ0bcUBGJMMsxjVqwsddQS5nwQOuZEw
- 0eD5AAsrhlvg9PIN0t1iw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:jBp4vi39wb8=:7s6s8X49DaOj2jSXkNjw0d
- 9cmCDck8v33hk/6Pv4dylLZoIS5tHnZ2DyOFEL2cwaCCVKErOR5PWK3wYQWfe7j0tn5S9bs+C
- gG6TmD3aK1rLEX4KhMnXt+nXfMfnyevRclLf1b3YuKtHvyuaBzZG1Pb0Jbdwh8ncVQi4/DDhL
- rtH6DVQgxMFxoYtYXPmoITibSQwY1S2UvX+fqsOtx6jTynAOeAe5JjvY0zgm6ndxhI8VbWZjI
- jr5GnytI+tJSbrPpB1FyV9bzdikPt1Q6SlfRYReXpPn9c+NghXDd9vb0OHupNkABo+I+P9mAp
- pYTZ2EHtmMiNlaWWIyQkkpomsx5eYo03i/fH8+1MdFF24V6Ygn/44WVNzmKFvTfFyFqzCIlJ0
- HLTTp1pKdCH/l6n4HqapqzwK0zHT8pGp+je7n8VogTtmrRUF2aXTk+zl2rkvJ5S/FO8zdeICa
- 1ypuBMiq36mqQ4MfIExuEvFg+X/9LwO6AVzxFP1MKm/KHpeuvLHIt+y8Y/1X+52BIXqeNOmOd
- J6npkyIV/O8gofrBhw6htAyj83BOGIHJQrN6IOoRW4Re/G/UXj107Y7j0BEL/EKt00e8LHPQW
- Knl2wrc8IB0K2GloDmIqWilHfr5KoNIYCy5F0mg5d06L4IHiVJiNFcSrdLwTLizoHw0crye1r
- DOXakKf0rJOLs4ETcPT9xQz4praSGLlLtFjx+57pheUdxabPOli0eTwgUnqyUiU3g5oNK8xNy
- s9Vz1ywxxRYIWYNnK1ACrzrU+Bda+2imqYNwim2Avm6O+LAAT443pgdNvQuY2k4PKfuGQbQhg
- p/e6yEBAwrv1jq3C4ArKkQn0PqEBRcL6BJTXO8j5ues194JP6AQXOxafLzQy5fwRJe6AP3tDH
- 4nOJa2Ws9A8IgW4P3SSFKXzgyXwHn3NjgRREEqdLDsvh/hl+5Wsvd1HOtyr2b0iVqy9ZE8NFH
- mFSAnqU03JrlpwSUeh8hV+YtqgxKkFktVMYdSzYvVrqrq5PfpuFKjgbwgy4vrLE+yamO/s+H9
- 7UVGl1oTBzRQh/9SIlJtwzSUxJN3x3hmDYGZp5pueUOwbB+SmBNMcNNhxul97U4J1E09TdIXT
- EEkPM4EaidwEtPbq3ZvAJzjbgEsRJzYcTeErLxCJld/JOT9489mnRmsecShbHMBbGfYnh3qjd
- q2WETQ8KKZ3wSXTeB3Nh/yVrJg1J//eZ1LuRLjbAhIGG7jZNv8iDbPURYZzZeMsQoCqg5abJJ
- TP1u+zt7+EdCyG8bE1pV01lprcry3KqdLyQ7ZNA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200906121544.4204-1-john.wood@gmx.com>
+X-Provags-ID: V03:K1:/vhj176bBf1ATaBlls0fYYpaALcITn3MrfMDw3fKS8dA7EJcOlv
+ cvTHX0rUoNn5+seT869Ri+yW2AArELR7t90EUKyKf1p9wT8qa6Vr3eQiVF17L63cdVwXlt/
+ aahiObw/LqLG4/CFX7mISN+VmW8H3tLHE6tWYTxjMXXyBxvmgVTR2Ee716JgoBY0hjTTnBL
+ 8yVOVtJVThS8tHya3aJ5Q==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:MKo8UgG87Jw=:Y3ebRzFDQL5dc4/oICLDRV
+ ioPCEKtLhd4p/jLZDj+HrLi4r6mxpsh1R76/9Z2enbBhqv27jolt9L3LLJzs5JoZcNKuA4ODw
+ +DFjoPmUpuVv2tsFiLc099EMVKrQyTwHVDHg0vmX4mrEHvJcNIzTGwOFdTd2/AawBo/ZZL49a
+ 9zkC4pAaBPzLSTlMn4NLnLvkld4ne4J/M5YNfSbAZFoTd9IdTyJClw955APfzTPKXLDvP5p0c
+ 81WV5b/R+1znEm2Giim18AYQwkUR3WIexAkS/U1qOy3tpelcA4iec1vbRJTB0xdnghsjKZjv3
+ FaVoBKJF6u2LiTUDymYo6jRvvQt0p0setmkVle3CVPsgNlDauOqRLwo0v8aDsnnUDAdzLj5yd
+ fJXcNBe6rqs5V4QvbqdRFdMtYF8iFc13Xa0CEaVQyRRT/ZJZ2PIOdh3zWsqucoGKhSlD0mPd1
+ P3r+NZfEZiQ22uZw3gQgtGKh6WxO1ywuJ7N4CQ68YcM5jUK/TLPrJVSpC3BeYbMttvF+OeBmC
+ Y4q2w+2/cim7NqChZp1QF9Wn0xfJEJ1Wj5VHhyVQvhMRlBS1n3PViEo7RfIElby6/W9kTTfoJ
+ QhMHsiYJ7axiDDPN5dtWOokkcnlTDPF2jCnHGNeDVtMUaMsOMQGeMxocxV+z9zrlzVBEpT+ye
+ 9fB4bAp98TAI7kTKHEmiPmJZyznp6JJLZk5YzXuMi4YH7/JyNt15d8Y5L0f2Usqf8YhIi4cvf
+ UIDZDUOMb2fT1ZbgAK3cvupbNExi5US5eR6WjREJokjnvCvLG5ldHMCgahBvVPsrl7YxRGhVD
+ Bl+rCza+VlMHyCGpytZ7SrweIhFlzvYc3QAlWz75tr8i2JcJjn9gfX8undS3VNgQ9zOl0P7NH
+ rgvmMPRMVFygfs7/GSwexe3Ln8dNUJVy96IlloaRYssAgQVWBQzYOiGk/AVRX7m4GPznaif/M
+ Or14TQwEpLxsufqFNHcYdRAypXhzE16oRMyPJqPORIDgC+1yz5RyTdheZkcjKEtDQkFd75P+H
+ Z9ZP1tSM4mahCCVbIw+eUK9+1+kb+kloW8Z8GyNVfkM2+ZFPmv1zWKDuEYmccY4d74aqJOUQh
+ zDZ/Ng0YSmd/i/6/evWMG7rxTmCgNxRD47jpvEvg7C7+MWuXHJIO0wBYY3sU4xVkDVdUwRrgN
+ kZQOca8Ty8mu+DvI15IST5LGM8HG59ak0Wb3U3rGxBGG7+rnsrFOuNdOyrzB+kGh1r6Lh0gv0
+ 6JclEibGXzpPtqgMTWtVh2vy7PXooaK7L+MRBCQ==
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The goal of this patch serie is to detect and mitigate a fork brute force
-attack.
+Hi. I have problems with my email account to send the patch serie  [1] to
+all the recipients. My account blocks if I send an email to a big amount of
+recipients.
 
-Attacks with the purpose to break ASLR or bypass canaries traditionaly use
-some level of brute force with the help of the fork system call. This is
-possible since when creating a new process using fork its memory contents
-are the same as those of the parent process (the process that called the
-fork system call). So, the attacker can test the memory infinite times to
-find the correct memory values or the correct memory addresses without
-worrying about crashing the application.
+Please don't reply to this message.
+Thanks
 
-Based on the above scenario it would be nice to have this detected and
-mitigated, and this is the goal of this implementation.
-
-Other implementations
-=2D--------------------
-
-The public version of grsecurity, as a summary, is based on the idea of
-delay the fork system call if a child died due to a fatal error. This has
-some issues:
-
-1.- Bad practices: Add delays to the kernel is, in general, a bad idea.
-
-2.- Weak points: This protection can be bypassed using two different
-    methods since it acts only when the fork is called after a child has
-    crashed.
-
-    2.1.- Bypass 1: So, it would still be possible for an attacker to fork
-	  a big amount of children (in the order of thousands), then probe
-	  all of them, and finally wait the protection time before repeat
-	  the steps.
-
-    2.2.- Bypass 2: This method is based on the idea that the protection
-	  doesn't act if the parent crashes. So, it would still be possible
-	  for an attacker to fork a process and probe itself. Then, fork
-	  the child process and probe itself again. This way, these steps
-	  can be repeated infinite times without any mitigation.
-
-
-This implementation
-=2D------------------
-
-The main idea behind this implementation is to improve the existing ones
-focusing on the weak points annotated before. So, the solution for the
-first bypass method is to detect a fast crash rate instead of only one
-simple crash. For the second bypass method the solution is to detect both
-the crash of parent and child processes. Moreover, as a mitigation method
-it is better to kill all the offending tasks involve in the attack instead
-of use delays.
-
-So, the solution to the two bypass methods previously commented is to use
-some statistical data shared across all the processes that can have the
-same memory contents. Or in other words, a statistical data shared between
-all the processes that fork the task 0, and all the processes that fork
-after an execve system call.
-
-These statistics hold the timestamp for the first fork (case of a fork of
-task zero) or the timestamp for the execve system call (the other case).
-Also, hold the number of faults of all the tasks that share the same
-statistical data since the commented timestamp.
-
-With this information it is possible to detect a brute force attack when a
-task die in a fatal way computing the crashing rate. This rate shows the
-milliseconds per fault and when it goes under a certain threshold there is
-a clear signal that something malicious is happening.
-
-Once detected, the mitigation only kills the processes that share the same
-statistical data and so, all the tasks that can have the same memory
-contents. This way, an attack is rejected.
-
-The fbfam feature can be enabled, disabled and tuned as follows:
-
-1.- Per system enabling: This feature can be enabled in build time using
-    the config application under:
-
-    Security options  --->  Fork brute force attack mitigation
-
-2.- Per process enabling/disabling: To allow that specific applications ca=
-n
-    turn off or turn on the detection and mitigation of a fork brute force
-    attack when required, there are two new prctls.
-
-    prctl(PR_FBFAM_ENABLE, 0, 0, 0, 0)  -> To enable the feature
-    prctl(PR_FBFAM_DISABLE, 0, 0, 0, 0) -> To disable the feature
-
-    Both functions return zero on success and -EFAULT if the current task
-    doesn't have statistical data.
-
-3.- Fine tuning: To customize the detection's sensibility there is a new
-    sysctl that allows to set the crashing rate threshold. It is accessibl=
-e
-    through the file:
-
-    /proc/sys/kernel/fbfam/crashing_rate_threshold
-
-    The units are in milliseconds per fault and the attack's mitigation is
-    triggered if the crashing rate of an application goes under this
-    threshold. So, the higher this value, the faster an attack will be
-    detected.
-
-So, knowing all this information I will explain now the different patches:
-
-The 1/9 patch adds a new config for the fbfam feature.
-
-The 2/9 and 3/9 patches add and use the api to manage the statistical data
-necessary to compute the crashing rate of an application.
-
-The 4/9 patch adds a new sysctl to fine tuning the detection's sensibility=
-.
-
-The 5/9 patch detects a fork brute force attack calculating the crashing
-rate.
-
-The 6/9 patch mitigates the attack killing all the offending tasks.
-
-The 7/9 patch adds two new prctls to allow per task enabling/disabling.
-
-The 8/9 patch adds general documentation.
-
-The 9/9 patch adds an entry to the maintainers list.
-
-This patch series is a task of the KSPP [1] and it is worth to mention
-that there is a previous attempt without any continuation [2].
-
-[1] https://github.com/KSPP/linux/issues/39
-[2] https://lore.kernel.org/linux-fsdevel/1419457167-15042-1-git-send-emai=
-l-richard@nod.at/
-
-Any constructive comments are welcome.
-
-Note: During the compilation these warnings were shown:
-
-kernel/exit.o: warning: objtool: __x64_sys_exit_group()+0x18: unreachable =
-instruction
-arch/x86/kernel/cpu/mce/core.o: warning: objtool: mce_panic()+0x123: unrea=
-chable instruction
-arch/x86/kernel/smpboot.o: warning: objtool: native_play_dead()+0x122: unr=
-eachable instruction
-net/core/skbuff.o: warning: objtool: skb_push.cold()+0x14: unreachable ins=
-truction
-
-John Wood (9):
-  security/fbfam: Add a Kconfig to enable the fbfam feature
-  security/fbfam: Add the api to manage statistics
-  security/fbfam: Use the api to manage statistics
-  security/fbfam: Add a new sysctl to control the crashing rate
-    threshold
-  security/fbfam: Detect a fork brute force attack
-  security/fbfam: Mitigate a fork brute force attack
-  security/fbfam: Add two new prctls to enable and disable the fbfam
-    feature
-  Documentation/security: Add documentation for the fbfam feature
-  MAINTAINERS: Add a new entry for the fbfam feature
-
- Documentation/security/fbfam.rst | 111 +++++++++++
- Documentation/security/index.rst |   1 +
- MAINTAINERS                      |   7 +
- fs/coredump.c                    |   2 +
- fs/exec.c                        |   2 +
- include/fbfam/fbfam.h            |  29 +++
- include/linux/sched.h            |   4 +
- include/uapi/linux/prctl.h       |   4 +
- kernel/exit.c                    |   2 +
- kernel/fork.c                    |   4 +
- kernel/sys.c                     |   8 +
- kernel/sysctl.c                  |   9 +
- security/Kconfig                 |   1 +
- security/Makefile                |   4 +
- security/fbfam/Kconfig           |  10 +
- security/fbfam/Makefile          |   3 +
- security/fbfam/fbfam.c           | 329 +++++++++++++++++++++++++++++++
- security/fbfam/sysctl.c          |  20 ++
- 18 files changed, 550 insertions(+)
- create mode 100644 Documentation/security/fbfam.rst
- create mode 100644 include/fbfam/fbfam.h
- create mode 100644 security/fbfam/Kconfig
- create mode 100644 security/fbfam/Makefile
- create mode 100644 security/fbfam/fbfam.c
- create mode 100644 security/fbfam/sysctl.c
-
-=2D-
-2.25.1
+[1] https://lore.kernel.org/kernel-hardening/20200906121544.4204-1-john.wood@gmx.com/
 
