@@ -2,104 +2,124 @@ Return-Path: <SRS0=wBbN=CR=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 205ADC43461
-	for <linux-security-module@archiver.kernel.org>; Tue,  8 Sep 2020 10:46:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88201C2D0A8
+	for <linux-security-module@archiver.kernel.org>; Tue,  8 Sep 2020 11:37:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EE20C20759
-	for <linux-security-module@archiver.kernel.org>; Tue,  8 Sep 2020 10:46:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FB4C2177B
+	for <linux-security-module@archiver.kernel.org>; Tue,  8 Sep 2020 11:37:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YdZke3Km"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729746AbgIHKqw (ORCPT
+        id S1729912AbgIHLa0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 8 Sep 2020 06:46:52 -0400
-Received: from correo.us.es ([193.147.175.20]:34114 "EHLO mail.us.es"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729434AbgIHKq0 (ORCPT
+        Tue, 8 Sep 2020 07:30:26 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:50529 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730068AbgIHL3n (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 8 Sep 2020 06:46:26 -0400
-Received: from antivirus1-rhel7.int (unknown [192.168.2.11])
-        by mail.us.es (Postfix) with ESMTP id EA47319190B
-        for <linux-security-module@vger.kernel.org>; Tue,  8 Sep 2020 12:46:24 +0200 (CEST)
-Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
-        by antivirus1-rhel7.int (Postfix) with ESMTP id DC1B8DA856
-        for <linux-security-module@vger.kernel.org>; Tue,  8 Sep 2020 12:46:24 +0200 (CEST)
-Received: by antivirus1-rhel7.int (Postfix, from userid 99)
-        id CD25ADA84A; Tue,  8 Sep 2020 12:46:24 +0200 (CEST)
-Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
-        by antivirus1-rhel7.int (Postfix) with ESMTP id 7AA62DA78C;
-        Tue,  8 Sep 2020 12:46:22 +0200 (CEST)
-Received: from 192.168.1.97 (192.168.1.97)
- by antivirus1-rhel7.int (F-Secure/fsigk_smtp/550/antivirus1-rhel7.int);
- Tue, 08 Sep 2020 12:46:22 +0200 (CEST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/antivirus1-rhel7.int)
-Received: from us.es (unknown [90.77.255.23])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: 1984lsi)
-        by entrada.int (Postfix) with ESMTPSA id 40AB14301DE1;
-        Tue,  8 Sep 2020 12:46:22 +0200 (CEST)
-Date:   Tue, 8 Sep 2020 12:46:21 +0200
-X-SMTPAUTHUS: auth mail.us.es
-From:   Pablo Neira Ayuso <pablo@netfilter.org>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     casey.schaufler@intel.com, jmorris@namei.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-audit@redhat.com, keescook@chromium.org,
-        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-        paul@paul-moore.com, sds@tycho.nsa.gov, netdev@vger.kernel.org
-Subject: Re: [PATCH v20 17/23] LSM: security_secid_to_secctx in netlink
- netfilter
-Message-ID: <20200908104621.GB4838@salvia>
-References: <20200826145247.10029-1-casey@schaufler-ca.com>
- <20200826145247.10029-18-casey@schaufler-ca.com>
+        Tue, 8 Sep 2020 07:29:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1599564551;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=8SJToen5De/FMO5Uvn6WpRdklNdA0QrVJ+xmLiUK7iQ=;
+        b=YdZke3Km2tL23v8jomnzr6AFDI3Ts1dQ78h2HxeYJFB7ca5vsECxa87RSKm2NXZBxs+8LC
+        0Hf9f+AMUEW6mfBuuKfg88eSKg6zNHUUFLxqZSBI2Fw9pRQ1t3RaSybbyytaEl264gUfsP
+        1NORzE4FRfY6dwNXCNwAJeaSwuJBnm8=
+Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
+ [209.85.208.198]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-205-YjIy3Ht0OOivNu1Bju26qg-1; Tue, 08 Sep 2020 07:29:08 -0400
+X-MC-Unique: YjIy3Ht0OOivNu1Bju26qg-1
+Received: by mail-lj1-f198.google.com with SMTP id z9so3402178ljk.21
+        for <linux-security-module@vger.kernel.org>; Tue, 08 Sep 2020 04:29:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=8SJToen5De/FMO5Uvn6WpRdklNdA0QrVJ+xmLiUK7iQ=;
+        b=PQjRj2ZFEHwpdtvMH9O8CWcaocx04EHNoIRzOb7KrolXJr1Vk9hZtdCXKUQXct0R5r
+         +93Tf9fF2oYywftfJl+qWwn6Ii5kLhGt/VkqeKdTeIVWdX6OImKIZug15QjFphXtTdkM
+         /5pWVBGkku84JtiDngecB0EfPeQcUu0/0hI3q3uzdegFdGvx8K0Eg8N65wu+hccPvv5r
+         RWXmVyDRECYAIuCd81vGRToQrKPGxIbMZL3m2lD78NC/N5dOBwExraGRf1e6ahfd8fYP
+         KeUTjVcABhu33c+pjGU4+cTTj+wSOo2uKWaN8TGLLKAdVv9Btm75ZLsGHIIBlqB8N+PD
+         AljA==
+X-Gm-Message-State: AOAM533If88FRO84lQ/M0jnC+shsTcbTPFAZuxoxben2sYM/CV9s0eBt
+        qT4lUC9HDxqZ4KR1DWMAc3UiBcVi83SsjTwaViDWpJGIY2NyQhDVQdCJPXelz+4r4NXQpljth96
+        UDQ1Iewzh971O5bEKs7sqyM+2uut1EUTdeSe9ACg9GOhQ8mCKbMve
+X-Received: by 2002:a2e:93c9:: with SMTP id p9mr13042323ljh.311.1599564546509;
+        Tue, 08 Sep 2020 04:29:06 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzzAkVnfY3RS8jLmTTPylLLgZwYimBUxyg65KS1GNPlqmB6hBjIWbaP1koimAnXDD5XhM3jLRXYLRHBdxEEogQ=
+X-Received: by 2002:a2e:93c9:: with SMTP id p9mr13042309ljh.311.1599564546218;
+ Tue, 08 Sep 2020 04:29:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200826145247.10029-18-casey@schaufler-ca.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Virus-Scanned: ClamAV using ClamSMTP
+References: <20200904160031.6444-1-cgzones@googlemail.com> <20200908102537.GU2674@hirez.programming.kicks-ass.net>
+In-Reply-To: <20200908102537.GU2674@hirez.programming.kicks-ass.net>
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+Date:   Tue, 8 Sep 2020 13:28:55 +0200
+Message-ID: <CAFqZXNuD3SRQtE9OUC5NX0XepThg0MJ0b8TJ5TF7YRgS93+TOg@mail.gmail.com>
+Subject: Re: [RFC PATCH] sched: only issue an audit on privileged operation
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+        SElinux list <selinux@vger.kernel.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=omosnace@redhat.com
+X-Mimecast-Spam-Score: 0.002
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Aug 26, 2020 at 07:52:41AM -0700, Casey Schaufler wrote:
-> Change netlink netfilter interfaces to use lsmcontext
-> pointers, and remove scaffolding.
-> 
-> Reviewed-by: Kees Cook <keescook@chromium.org>
-> Reviewed-by: John Johansen <john.johansen@canonical.com>
-> Acked-by: Stephen Smalley <sds@tycho.nsa.gov>
-> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> cc: netdev@vger.kernel.org
-> ---
->  net/netfilter/nfnetlink_queue.c | 31 ++++++++++++-------------------
->  1 file changed, 12 insertions(+), 19 deletions(-)
-> 
-[...]
->  static u32 nfqnl_get_bridge_size(struct nf_queue_entry *entry)
-> @@ -401,8 +399,7 @@ nfqnl_build_packet_message(struct net *net, struct nfqnl_instance *queue,
->  	enum ip_conntrack_info ctinfo;
->  	struct nfnl_ct_hook *nfnl_ct;
->  	bool csum_verify;
-> -	struct lsmcontext scaff; /* scaffolding */
-> -	char *secdata = NULL;
-> +	struct lsmcontext context = { };
->  	u32 seclen = 0;
+On Tue, Sep 8, 2020 at 12:26 PM <peterz@infradead.org> wrote:
+> On Fri, Sep 04, 2020 at 06:00:31PM +0200, Christian G=C3=83=C2=B6ttsche w=
+rote:
+> > sched_setattr(2) does via kernel/sched/core.c:__sched_setscheduler()
+> > issue a CAP_SYS_NICE audit event unconditionally, even when the request=
+ed
+> > operation does not require that capability / is un-privileged.
+> >
+> > Perform privilged/unprivileged catigorization first and perform a
+> > capable test only if needed.
+> >
+> > Signed-off-by: Christian G=C3=83=C2=B6ttsche <cgzones@googlemail.com>
+> > ---
+> >  kernel/sched/core.c | 65 ++++++++++++++++++++++++++++++++-------------
+> >  1 file changed, 47 insertions(+), 18 deletions(-)
+>
+> So who sodding cares about audit, and why is that a reason to make a
+> trainwreck of code?
 
-While at it, please introduce reverse xmas tree in variable
-definitions incrementally:
+The commit message should be more specific. I believe Christian is
+talking about the case where SELinux or other LSM denies the
+capability, in which case the denial is usually logged to the audit
+log. Obviously, we don't want to get a denial logged when the
+capability wasn't actually required for the operation to be allowed.
 
-	struct lsmcontext context = { };
-  	enum ip_conntrack_info ctinfo;
-  	struct nfnl_ct_hook *nfnl_ct;
-  	bool csum_verify;
- 	u32 seclen = 0;
+Unfortunately, the capability interface doesn't provide a way to first
+get the decision value and only trigger the auditing when it was
+actually used in the decision, so in complex scenarios like this the
+caller needs to jump through some hoops to avoid such false-positive
+denial records.
 
-And Cc: netfilter-devel@vger.kernel.org for patches that update the
-Netfilter codebase.
+--
+Ondrej Mosnacek
+Software Engineer, Platform Security - SELinux kernel
+Red Hat, Inc.
 
-Thanks.
