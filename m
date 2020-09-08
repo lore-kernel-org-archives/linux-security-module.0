@@ -2,318 +2,213 @@ Return-Path: <SRS0=wBbN=CR=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7125BC2BC11
-	for <linux-security-module@archiver.kernel.org>; Tue,  8 Sep 2020 18:04:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86F02C43461
+	for <linux-security-module@archiver.kernel.org>; Tue,  8 Sep 2020 18:36:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0DF902074D
-	for <linux-security-module@archiver.kernel.org>; Tue,  8 Sep 2020 18:04:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3CDAE2080A
+	for <linux-security-module@archiver.kernel.org>; Tue,  8 Sep 2020 18:36:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Am0P4t7m"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="pYExEl4G"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732264AbgIHR6r (ORCPT
+        id S1731500AbgIHSgE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 8 Sep 2020 13:58:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56602 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731535AbgIHQMO (ORCPT
+        Tue, 8 Sep 2020 14:36:04 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:64168 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731363AbgIHQJ2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 8 Sep 2020 12:12:14 -0400
-Received: from mail-ot1-x342.google.com (mail-ot1-x342.google.com [IPv6:2607:f8b0:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8EE4C061385;
-        Tue,  8 Sep 2020 05:29:00 -0700 (PDT)
-Received: by mail-ot1-x342.google.com with SMTP id n61so6994908ota.10;
-        Tue, 08 Sep 2020 05:29:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=fZHagmsPoaN3dfpaMIS6LHX3fvwlejq5mDI6zTR/iOo=;
-        b=Am0P4t7mHMARUpo3k6pBwG7sBs8ZIHBcLfM13uFw+hldnbRLZp3TY7oJJ2CIW1+cIn
-         CbXxjXU+yXGzC+XM7Ex6qgTi5zwQ9CjDG12jU5ceaZna20Rs9Gl0s+E5FJUIooCz7Pel
-         XoFE1185F5cBvrb1qoyz3C1Sd6WMZvVtKFAvuh11iEpfHfHkQTPvMNUEbgSwrcVWKfYs
-         +yX4mBJlAo7BcpfSrJ8D2QLd5P+i0dleUj3iDOIVhK1A8f1DDjkB+e2J+Hh+i0mBnD+l
-         plL+QTRWPzhwUPr1rOc77CuIWnCkxoHLnnkzwAiu3HpevxDwYO2uHX6tcNpTICxPtfdX
-         DC6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=fZHagmsPoaN3dfpaMIS6LHX3fvwlejq5mDI6zTR/iOo=;
-        b=V3dlk6bhRtIbAaJJMx21aQ7iNKYoBN8Qlxf1BCuYQwqunq4z837LXV859ZSVxoB4e3
-         pd53XAxcoI+sjHirtOS1gGZPoA8Cezl/70+z+sa57FHJut7ceouXoEcRJ1XRWMILS+N3
-         VutieNDZHw300zYHrJVP+iYSJX95qXWq+bl3+rpDfHW8rKfANVDI1Qs3eNFkaRsXsF7F
-         4/gJqDHWS0f3HThhWUJizhZXbmMUscIDJS4rimDL8rqzh5acOvSBlCbA1rxuiuIhWmMu
-         Mlx6UZKhTTMpHAsXf3Z5hyFuszbNcllotfOQylcdrA4wjLhRyP/EzAWPfhvNthUMv5OW
-         Gw1A==
-X-Gm-Message-State: AOAM532p3cEm60946zgILSetv0wTN9szlsW5g37NQWcRn+bKJwUO3Knc
-        srz7hUjCOjGH7XjwX62dTddgZzgAcSo0pXprflw=
-X-Google-Smtp-Source: ABdhPJzPzLrSGFB6n46kcHxrUu7fJvn2jX5PE5gWuzgLhSpcFs85Ww7KdeAp2jDridKFVCvUlUfFTDgWQ2tYQBzYCfY=
-X-Received: by 2002:a9d:7a92:: with SMTP id l18mr16851445otn.89.1599568139206;
- Tue, 08 Sep 2020 05:28:59 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200907213855.3572-1-nramas@linux.microsoft.com>
-In-Reply-To: <20200907213855.3572-1-nramas@linux.microsoft.com>
-From:   Stephen Smalley <stephen.smalley.work@gmail.com>
-Date:   Tue, 8 Sep 2020 08:28:48 -0400
-Message-ID: <CAEjxPJ4Swgi2Jewzja8MRiVdYn8H1-OkDy5BR7Vv4A4LaLWZ+Q@mail.gmail.com>
-Subject: Re: [PATCH] SELinux: Measure state and hash of policy using IMA
-To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>, Paul Moore <paul@paul-moore.com>,
-        Ondrej Mosnacek <omosnace@redhat.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Tyler Hicks <tyhicks@linux.microsoft.com>,
-        tusharsu@linux.microsoft.com, Sasha Levin <sashal@kernel.org>,
-        James Morris <jmorris@namei.org>,
+        Tue, 8 Sep 2020 12:09:28 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 088FV4J6007885;
+        Tue, 8 Sep 2020 11:38:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=O7XJu38SFyTf1J7F17Pgsezh+TcCF29rZjjKnS09FC4=;
+ b=pYExEl4GEir85/Swt3pY2PU9iGqB8dcyGYsI82ZJjGwQGRLzF9mkEp53MznyY4r4vDmx
+ /sX1HujoahyPL9VqjGnWudxMPW9mI1xs/37j5Y2bTk9wnGlFZ7ekTMXxwdVAw4CkMXCW
+ RwSLMCm/4GRxExwvGpwnQvMiABZjDGYjB6X91q8R3lkYbBCJjWCyzRvAvxBUbfHCMDCd
+ hB5w/QLMPlGTxAx6lu8hPwArF6/igmizfH0NSxE5PMYZHUvDtuB8Mn8dSb46R/NmD4GJ
+ t5X5Mz4miQWpT3g6A/G6hVqZVqxuH90bSxYBcSJwCeKBdhK4ien0Hk0/cYwrsa4QlOpp Aw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 33earbnbmv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 08 Sep 2020 11:38:44 -0400
+Received: from m0098416.ppops.net (m0098416.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 088FVCaN008753;
+        Tue, 8 Sep 2020 11:38:43 -0400
+Received: from ppma05fra.de.ibm.com (6c.4a.5195.ip4.static.sl-reverse.com [149.81.74.108])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 33earbnbkh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 08 Sep 2020 11:38:43 -0400
+Received: from pps.filterd (ppma05fra.de.ibm.com [127.0.0.1])
+        by ppma05fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 088FbHIt023938;
+        Tue, 8 Sep 2020 15:38:40 GMT
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
+        by ppma05fra.de.ibm.com with ESMTP id 33c2a8a6j1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 08 Sep 2020 15:38:39 +0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 088FcbWi18153774
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 8 Sep 2020 15:38:37 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 59CBF4C04E;
+        Tue,  8 Sep 2020 15:38:37 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1125C4C04A;
+        Tue,  8 Sep 2020 15:38:29 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.24.202])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue,  8 Sep 2020 15:38:28 +0000 (GMT)
+Message-ID: <4ba95bc2071185a7819261c4e008ec9aa452b30e.camel@linux.ibm.com>
+Subject: Re: [RFC PATCH v8 1/3] fs: Introduce AT_INTERPRETED flag for
+ faccessat2(2)
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Eric Chiang <ericchiang@google.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Philippe =?ISO-8859-1?Q?Tr=E9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Thibaut Sautereau <thibaut.sautereau@clip-os.org>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
         linux-integrity@vger.kernel.org,
-        SElinux list <selinux@vger.kernel.org>,
         LSM List <linux-security-module@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@linux.microsoft.com>,
+        John Johansen <john.johansen@canonical.com>
+Date:   Tue, 08 Sep 2020 11:38:28 -0400
+In-Reply-To: <532eefa8-49ca-1c23-1228-d5a4e2d8af90@digikod.net>
+References: <20200908075956.1069018-1-mic@digikod.net>
+         <20200908075956.1069018-2-mic@digikod.net>
+         <d216615b48c093ebe9349a9dab3830b646575391.camel@linux.ibm.com>
+         <75451684-58f3-b946-dca4-4760fa0d7440@digikod.net>
+         <CAEjxPJ49_BgGX50ZAhHh79Qy3OMN6sssnUHT_2yXqdmgyt==9w@mail.gmail.com>
+         <CAEjxPJ6ZTKeunzJvWf_kS3QYjca6v1yJq=ad-jCCuDSgG6n60g@mail.gmail.com>
+         <bdc10ab89cf9197e104f02a751009cf0d549ddf5.camel@linux.ibm.com>
+         <CAEjxPJ5evWDSv-T-p=4OX29Pr584ZRAsnYoxSRd4qFDoryB+fQ@mail.gmail.com>
+         <532eefa8-49ca-1c23-1228-d5a4e2d8af90@digikod.net>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-09-08_07:2020-09-08,2020-09-08 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1015
+ adultscore=0 mlxscore=0 spamscore=0 mlxlogscore=999 impostorscore=0
+ phishscore=0 bulkscore=0 priorityscore=1501 malwarescore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2006250000 definitions=main-2009080143
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Sep 7, 2020 at 5:39 PM Lakshmi Ramasubramanian
-<nramas@linux.microsoft.com> wrote:
->
-> Critical data structures of security modules are currently not measured.
-> Therefore an attestation service, for instance, would not be able to
-> attest whether the security modules are always operating with the policie=
-s
-> and configuration that the system administrator had setup. The policies
-> and configuration for the security modules could be tampered with by
-> rogue user mode agents or modified through some inadvertent actions on
-> the system. Measuring such critical data would enable an attestation
-> service to reliably assess the security configuration of the system.
->
-> SELinux configuration and policy are some of the critical data for this
-> security module that needs to be measured. This measurement can be used
-> by an attestation service, for instance, to verify if the configuration
-> and policies have been setup correctly and that they haven't been tampere=
-d
-> with at runtime.
->
-> Measure SELinux configuration, policy capabilities settings, and the hash
-> of the loaded policy by calling the IMA hook ima_measure_critical_data().
-> Since the size of the loaded policy can be quite large, hash of the polic=
-y
-> is measured instead of the entire policy to avoid bloating the IMA log.
->
-> Enable early boot measurement for SELinux in IMA since SELinux
-> initializes its state and policy before custom IMA policy is loaded.
->
-> Sample measurement of SELinux state and hash of the policy:
->
-> 10 e32e...5ac3 ima-buf sha256:86e8...4594 selinux-state-1595389364:287899=
-386 696e697469616c697a65643d313b656e61626c65643d313b656e666f7263696e673d303=
-b636865636b72657170726f743d313b6e6574776f726b5f706565725f636f6e74726f6c733d=
-313b6f70656e5f7065726d733d313b657874656e6465645f736f636b65745f636c6173733d3=
-13b616c776179735f636865636b5f6e6574776f726b3d303b6367726f75705f7365636c6162=
-656c3d313b6e6e705f6e6f737569645f7472616e736974696f6e3d313b67656e66735f73656=
-36c6162656c5f73796d6c696e6b733d303
-> 10 9e81...0857 ima-buf sha256:4941...68fc selinux-policy-hash-1597335667:=
-462051628 8d1d...1834
->
-> To verify the measurement check the following:
->
-> Execute the following command to extract the measured data
-> from the IMA log for SELinux configuration (selinux-state).
->
->   grep -m 1 "selinux-state" /sys/kernel/security/integrity/ima/ascii_runt=
-ime_measurements | cut -d' ' -f 6 | xxd -r -p
->
-> The output should be the list of key-value pairs. For example,
->  initialized=3D1;enabled=3D1;enforcing=3D0;checkreqprot=3D1;network_peer_=
-controls=3D1;open_perms=3D1;extended_socket_class=3D1;always_check_network=
-=3D0;cgroup_seclabel=3D1;nnp_nosuid_transition=3D1;genfs_seclabel_symlinks=
-=3D0;
->
-> To verify the measured data with the current SELinux state:
->
->  =3D> enabled should be set to 1 if /sys/fs/selinux folder exists,
->     0 otherwise
->
-> For other entries, compare the integer value in the files
->  =3D> /sys/fs/selinux/enforce
->  =3D> /sys/fs/selinux/checkreqprot
-> And, each of the policy capabilities files under
->  =3D> /sys/fs/selinux/policy_capabilities
->
-> For selinux-policy-hash, the hash of SELinux policy is included
-> in the IMA log entry.
->
-> To verify the measured data with the current SELinux policy run
-> the following commands and verify the output hash values match.
->
->   sha256sum /sys/fs/selinux/policy | cut -d' ' -f 1
->
->   grep -m 1 "selinux-policy-hash" /sys/kernel/security/integrity/ima/asci=
-i_runtime_measurements | cut -d' ' -f 6
->
-> This patch is based on commit 66ccd2560aff ("selinux: simplify away secur=
-ity_policydb_len()")
-> in "next" branch in https://git.kernel.org/pub/scm/linux/kernel/git/pcmoo=
-re/selinux.git
->
-> This patch is dependent on the following patch series and must be
-> applied in the given order:
->         https://patchwork.kernel.org/patch/11709527/
->         https://patchwork.kernel.org/patch/11730193/
->         https://patchwork.kernel.org/patch/11730757/
->
-> Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-> Suggested-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-> ---
->
-> diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kcon=
-fig
-> index 953314d145bb..9bf0f65d720b 100644
-> --- a/security/integrity/ima/Kconfig
-> +++ b/security/integrity/ima/Kconfig
-> @@ -324,8 +324,7 @@ config IMA_MEASURE_ASYMMETRIC_KEYS
->
->  config IMA_QUEUE_EARLY_BOOT_DATA
->         bool
-> -       depends on IMA_MEASURE_ASYMMETRIC_KEYS
-> -       depends on SYSTEM_TRUSTED_KEYRING
-> +       depends on (IMA_MEASURE_ASYMMETRIC_KEYS && SYSTEM_TRUSTED_KEYRING=
-) || SECURITY_SELINUX
->         default y
+[Cc'ing Casey]
 
-I don't see why this is necessary or desirable.  We should avoid
-leaking dependencies on a single security module into other
-subsystems.
-It might not yet fully support other security modules but we shouldn't
-preclude adding that in the future.
-Up to the IMA maintainer but I would recommend dropping this part.
+On Tue, 2020-09-08 at 16:14 +0200, Mickaël Salaün wrote:
+> On 08/09/2020 15:42, Stephen Smalley wrote:
+> > On Tue, Sep 8, 2020 at 9:29 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
+> >>
+> >> On Tue, 2020-09-08 at 08:52 -0400, Stephen Smalley wrote:
+> >>> On Tue, Sep 8, 2020 at 8:50 AM Stephen Smalley
+> >>> <stephen.smalley.work@gmail.com> wrote:
+> >>>>
+> >>>> On Tue, Sep 8, 2020 at 8:43 AM Mickaël Salaün <mic@digikod.net> wrote:
+> >>>>>
+> >>>>>
+> >>>>> On 08/09/2020 14:28, Mimi Zohar wrote:
+> >>>>>> Hi Mickael,
+> >>>>>>
+> >>>>>> On Tue, 2020-09-08 at 09:59 +0200, Mickaël Salaün wrote:
+> >>>>>>> +                    mode |= MAY_INTERPRETED_EXEC;
+> >>>>>>> +                    /*
+> >>>>>>> +                     * For compatibility reasons, if the system-wide policy
+> >>>>>>> +                     * doesn't enforce file permission checks, then
+> >>>>>>> +                     * replaces the execute permission request with a read
+> >>>>>>> +                     * permission request.
+> >>>>>>> +                     */
+> >>>>>>> +                    mode &= ~MAY_EXEC;
+> >>>>>>> +                    /* To be executed *by* user space, files must be readable. */
+> >>>>>>> +                    mode |= MAY_READ;
+> >>>>>>
+> >>>>>> After this change, I'm wondering if it makes sense to add a call to
+> >>>>>> security_file_permission().  IMA doesn't currently define it, but
+> >>>>>> could.
+> >>>>>
+> >>>>> Yes, that's the idea. We could replace the following inode_permission()
+> >>>>> with file_permission(). I'm not sure how this will impact other LSMs though.
+> >>
+> >> I wasn't suggesting replacing the existing security_inode_permission
+> >> hook later, but adding a new security_file_permission hook here.
+> >>
+> >>>>
+> >>>> They are not equivalent at least as far as SELinux is concerned.
+> >>>> security_file_permission() was only to be used to revalidate
+> >>>> read/write permissions previously checked at file open to support
+> >>>> policy changes and file or process label changes.  We'd have to modify
+> >>>> the SELinux hook if we wanted to have it check execute access even if
+> >>>> nothing has changed since open time.
+> >>>
+> >>> Also Smack doesn't appear to implement file_permission at all, so it
+> >>> would skip Smack checking.
+> >>
+> >> My question is whether adding a new security_file_permission call here
+> >> would break either SELinux or Apparmor?
+> > 
+> > selinux_inode_permission() has special handling for MAY_ACCESS so we'd
+> > need to duplicate that into selinux_file_permission() ->
+> > selinux_revalidate_file_permission().  Also likely need to adjust
+> > selinux_file_permission() to explicitly check whether the mask
+> > includes any permissions not checked at open time.  So some changes
+> > would be needed here.  By default, it would be a no-op unless there
+> > was a policy reload or the file was relabeled between the open(2) and
+> > the faccessat(2) call.
+> > 
+> 
+> We could create a new hook path_permission(struct path *path, int mask)
+> as a superset of inode_permission(). To be more convenient, his new hook
+> could then just call inode_permission() for every LSMs not implementing
+> path_permission().
 
-> diff --git a/security/selinux/include/security.h b/security/selinux/inclu=
-de/security.h
-> index cbdd3c7aff8b..c971ec09d855 100644
-> --- a/security/selinux/include/security.h
-> +++ b/security/selinux/include/security.h
-> @@ -209,6 +209,11 @@ static inline bool selinux_policycap_genfs_seclabel_=
-symlinks(void)
->         return state->policycap[POLICYDB_CAPABILITY_GENFS_SECLABEL_SYMLIN=
-KS];
->  }
->
-> +static inline bool selinux_checkreqprot(const struct selinux_state *stat=
-e)
-> +{
-> +       return READ_ONCE(state->checkreqprot);
-> +}
-> +
+The LSM maintainers need to chime in here on this suggestion.  In terms
+of the name, except for one hook, all the security_path_XXXX() hooks
+are dependent on CONFIG_SECURITY_PATH being configured.
 
-Since you are introducing this helper, you should also convert
-existing reads of selinux_state.checkreqprot and
-fsi->state->checkreqprot to use it, and writes to use WRITE_ONCE()
-just like for enforcing and disabled.  The introduction of the helper
-and conversion to use it could be done as a separate patch before this
-one.
+Mimi
 
-> diff --git a/security/selinux/measure.c b/security/selinux/measure.c
-> new file mode 100644
-> index 000000000000..caf9107937d9
-> --- /dev/null
-> +++ b/security/selinux/measure.c
-<snip>
-> +static int read_selinux_state(char **state_str, int *state_str_len,
-> +                             struct selinux_state *state)
-> +{
-> +       char *buf, *str_fmt =3D "%s=3D%d;";
-> +       int i, buf_len, curr;
-<snip>
-> +       for (i =3D 0; i < __POLICYDB_CAPABILITY_MAX; i++) {
-> +               buf_len +=3D snprintf(NULL, 0, str_fmt,
-> +                                   selinux_policycap_names[i],
-> +                                   state->policycap[i]);
-> +       }
-
-This will need to be converted to use
-security_policycap_supported(state, i) rather than state->policycap[i]
-since the latter is going to be removed by Ondrej's patches I think.
-
-> +       for (i =3D 0; i < __POLICYDB_CAPABILITY_MAX; i++) {
-> +               curr +=3D snprintf((buf + curr), (buf_len - curr), str_fm=
-t,
-> +                                selinux_policycap_names[i],
-> +                                state->policycap[i]);
-
-Ditto.
-
-> diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
-> index 45e9efa9bf5b..bb460954de03 100644
-> --- a/security/selinux/selinuxfs.c
-> +++ b/security/selinux/selinuxfs.c
-> @@ -176,6 +176,7 @@ static ssize_t sel_write_enforce(struct file *file, c=
-onst char __user *buf,
->                         from_kuid(&init_user_ns, audit_get_loginuid(curre=
-nt)),
->                         audit_get_sessionid(current));
->                 enforcing_set(state, new_value);
-> +               selinux_measure_state(state, false);
-
-I think we should move this to after the avc_ss_reset call so that we
-don't introduce a potentially long delay between setting the enforcing
-mode and flushing the AVC at least.  Potentially it could be moved to
-the very end after selnl_notify_setenforce() too so that it doesn't
-delay notifying userspace, but that's less crucial.
-
->                 if (new_value)
->                         avc_ss_reset(state->avc, 0);
->                 selnl_notify_setenforce(new_value);
-> @@ -761,6 +762,8 @@ static ssize_t sel_write_checkreqprot(struct file *fi=
-le, const char __user *buf,
->
->         fsi->state->checkreqprot =3D new_value ? 1 : 0;
-
-This should switch to using WRITE_ONCE() or a helper that uses it.
-
-> diff --git a/security/selinux/ss/services.c b/security/selinux/ss/service=
-s.c
-> index 8dc111fbe23a..04a9c3d8c19b 100644
-> --- a/security/selinux/ss/services.c
-> +++ b/security/selinux/ss/services.c
-> @@ -3874,6 +3875,30 @@ int security_netlbl_sid_to_secattr(struct selinux_=
-state *state,
->  }
->  #endif /* CONFIG_NETLABEL */
->
-> +/**
-> + * security_read_selinux_policy - read the policy.
-> + * @policy: SELinux policy
-> + * @data: binary policy data
-> + * @len: length of data in bytes
-> + *
-> + */
-> +static int security_read_selinux_policy(struct selinux_policy *policy,
-> +                                       void **data, size_t *len)
-> +{
-
-Since this only uses *data, why not just pass that here?
-
-> +       int rc;
-> +       struct policy_file fp;
-> +
-> +       fp.data =3D *data;
-> +       fp.len =3D *len;
-> +
-> +       rc =3D policydb_write(&policy->policydb, &fp);
-> +       if (rc)
-> +               return rc;
-> +
-> +       *len =3D (unsigned long)fp.data - (unsigned long)*data;
-> +       return 0;
-> +}
-> +
->  /**
->   * security_read_policy - read the policy.
->   * @data: binary policy data
