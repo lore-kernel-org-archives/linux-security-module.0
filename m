@@ -2,159 +2,109 @@ Return-Path: <SRS0=wBbN=CR=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEDDBC433E2
-	for <linux-security-module@archiver.kernel.org>; Tue,  8 Sep 2020 20:05:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D1ADC43461
+	for <linux-security-module@archiver.kernel.org>; Tue,  8 Sep 2020 21:22:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B8864204FD
-	for <linux-security-module@archiver.kernel.org>; Tue,  8 Sep 2020 20:05:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 12D162145D
+	for <linux-security-module@archiver.kernel.org>; Tue,  8 Sep 2020 21:22:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="J4Aozqdw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730375AbgIHUFl (ORCPT
+        id S1728617AbgIHVWi (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 8 Sep 2020 16:05:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48122 "EHLO
+        Tue, 8 Sep 2020 17:22:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49250 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729908AbgIHPV5 (ORCPT
+        with ESMTP id S1728197AbgIHVWh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 8 Sep 2020 11:21:57 -0400
-X-Greylist: delayed 22472 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 08 Sep 2020 07:14:48 PDT
-Received: from smtp-42a9.mail.infomaniak.ch (smtp-42a9.mail.infomaniak.ch [IPv6:2001:1600:3:17::42a9])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2ECDAC0610EC;
-        Tue,  8 Sep 2020 07:14:47 -0700 (PDT)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Bm6bc3HDJzlhTgZ;
-        Tue,  8 Sep 2020 16:14:36 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Bm6bY253dzlh8TH;
-        Tue,  8 Sep 2020 16:14:33 +0200 (CEST)
-Subject: Re: [RFC PATCH v8 1/3] fs: Introduce AT_INTERPRETED flag for
- faccessat2(2)
-To:     Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Mimi Zohar <zohar@linux.ibm.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Christian Heimes <christian@python.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Eric Chiang <ericchiang@google.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Thibaut Sautereau <thibaut.sautereau@clip-os.org>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>,
-        John Johansen <john.johansen@canonical.com>
-References: <20200908075956.1069018-1-mic@digikod.net>
- <20200908075956.1069018-2-mic@digikod.net>
- <d216615b48c093ebe9349a9dab3830b646575391.camel@linux.ibm.com>
- <75451684-58f3-b946-dca4-4760fa0d7440@digikod.net>
- <CAEjxPJ49_BgGX50ZAhHh79Qy3OMN6sssnUHT_2yXqdmgyt==9w@mail.gmail.com>
- <CAEjxPJ6ZTKeunzJvWf_kS3QYjca6v1yJq=ad-jCCuDSgG6n60g@mail.gmail.com>
- <bdc10ab89cf9197e104f02a751009cf0d549ddf5.camel@linux.ibm.com>
- <CAEjxPJ5evWDSv-T-p=4OX29Pr584ZRAsnYoxSRd4qFDoryB+fQ@mail.gmail.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Message-ID: <532eefa8-49ca-1c23-1228-d5a4e2d8af90@digikod.net>
-Date:   Tue, 8 Sep 2020 16:14:32 +0200
-User-Agent: 
+        Tue, 8 Sep 2020 17:22:37 -0400
+Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40278C061755
+        for <linux-security-module@vger.kernel.org>; Tue,  8 Sep 2020 14:22:35 -0700 (PDT)
+Received: by mail-ej1-x642.google.com with SMTP id lo4so447582ejb.8
+        for <linux-security-module@vger.kernel.org>; Tue, 08 Sep 2020 14:22:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=oqOh6m3rLnlC8ajqd5NeDF4oaHEgZ3CJ+Z2OjKrzUuc=;
+        b=J4AozqdwEKhDUAF8qiC996g76KjEa+7fEqijzj1IFbCJEoXLhNG+Nrp0d50v6SzQzQ
+         0uMGM41XDzGUpPiQtyQbPJ0eME8YRxb1Cnjz2IE6qrdgGZYl1ejj6n2uUX6pmNj+8rqH
+         z0x+ZG76FWV/i42HQSlOGyd4mIfoB3DMKskJQMoYkyIA4qDxccFXw3QsJxJa7JJNdaJg
+         mRjXd9Dgsr1QqCoTmoxMC8l3Xd/GAJnafq2Gxr6w5P42JzdZY8kHj6qyZJ+pXhdWhIVE
+         jOXyBnV+6IKcft3XKG87pIdf6nyFg5pkYc2zr76bhSk6vtD7FJETscD3DmITNWD4nkPF
+         rbPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=oqOh6m3rLnlC8ajqd5NeDF4oaHEgZ3CJ+Z2OjKrzUuc=;
+        b=tTs2MUe2mNReqD52Q8lUhjSRgvx/50nav9Us1ZibT/Ew9EIFiP+qMtYhuzAlpnoerb
+         IOoUm+tLV1WLDgh9gL11+dsAS0YJsw69IgmfFB5A6fDmYdtGAAnl7P0IxLDUOTVC61U0
+         mvHt9WqU5HshPZjEhoMTiI9ukKLVfYY5cr9cUmQbJe/IHAjzF3FV8jltSokeonpuB0wj
+         vOuRFWij0A3YoqNV7/fkeN7nCzMigABVaseUG3snbzXJfPBwkNlRLaAQpjAfvp0GWQUx
+         hErkGUu9zdCQDdpv/gurVYqFRFQWvEpvCN9tRG8/DDhwhHEZ4V906CW0c8xFtPTptceC
+         twZw==
+X-Gm-Message-State: AOAM532LmsOkmt8MAB7GjHp+Fv+SgRujKwOwoWRSvraEuO/pRmIPIGSc
+        qR2sX3dq/kzGXA4tKTvn3SB9u3XnGBYVJXPBil+K
+X-Google-Smtp-Source: ABdhPJyKvVm5mCUhxRz1wocuTCtuocuPD14pIldrj3Y3TUjT2RAvb0w0smMDFxSMcrS2qzG/vcpJ24LMokTS4CQ84OI=
+X-Received: by 2002:a17:906:a415:: with SMTP id l21mr375281ejz.431.1599600153969;
+ Tue, 08 Sep 2020 14:22:33 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAEjxPJ5evWDSv-T-p=4OX29Pr584ZRAsnYoxSRd4qFDoryB+fQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20200908135915.22039-1-wanghai38@huawei.com>
+In-Reply-To: <20200908135915.22039-1-wanghai38@huawei.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 8 Sep 2020 17:22:22 -0400
+Message-ID: <CAHC9VhTMmChHskO2K8GchSxX06C-XdAVVQu9Gfih1BH-=eb+uw@mail.gmail.com>
+Subject: Re: [PATCH net-next] cipso: fix 'audit_secid' kernel-doc warning in cipso_ipv4.c
+To:     Wang Hai <wanghai38@huawei.com>
+Cc:     davem@davemloft.net, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
+        kuba@kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Tue, Sep 8, 2020 at 10:02 AM Wang Hai <wanghai38@huawei.com> wrote:
+>
+> Fixes the following W=1 kernel build warning(s):
+>
+> net/ipv4/cipso_ipv4.c:510: warning: Excess function parameter 'audit_secid' description in 'cipso_v4_doi_remove'
+>
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Wang Hai <wanghai38@huawei.com>
+> ---
+>  net/ipv4/cipso_ipv4.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-On 08/09/2020 15:42, Stephen Smalley wrote:
-> On Tue, Sep 8, 2020 at 9:29 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
->>
->> On Tue, 2020-09-08 at 08:52 -0400, Stephen Smalley wrote:
->>> On Tue, Sep 8, 2020 at 8:50 AM Stephen Smalley
->>> <stephen.smalley.work@gmail.com> wrote:
->>>>
->>>> On Tue, Sep 8, 2020 at 8:43 AM Mickaël Salaün <mic@digikod.net> wrote:
->>>>>
->>>>>
->>>>> On 08/09/2020 14:28, Mimi Zohar wrote:
->>>>>> Hi Mickael,
->>>>>>
->>>>>> On Tue, 2020-09-08 at 09:59 +0200, Mickaël Salaün wrote:
->>>>>>> +                    mode |= MAY_INTERPRETED_EXEC;
->>>>>>> +                    /*
->>>>>>> +                     * For compatibility reasons, if the system-wide policy
->>>>>>> +                     * doesn't enforce file permission checks, then
->>>>>>> +                     * replaces the execute permission request with a read
->>>>>>> +                     * permission request.
->>>>>>> +                     */
->>>>>>> +                    mode &= ~MAY_EXEC;
->>>>>>> +                    /* To be executed *by* user space, files must be readable. */
->>>>>>> +                    mode |= MAY_READ;
->>>>>>
->>>>>> After this change, I'm wondering if it makes sense to add a call to
->>>>>> security_file_permission().  IMA doesn't currently define it, but
->>>>>> could.
->>>>>
->>>>> Yes, that's the idea. We could replace the following inode_permission()
->>>>> with file_permission(). I'm not sure how this will impact other LSMs though.
->>
->> I wasn't suggesting replacing the existing security_inode_permission
->> hook later, but adding a new security_file_permission hook here.
->>
->>>>
->>>> They are not equivalent at least as far as SELinux is concerned.
->>>> security_file_permission() was only to be used to revalidate
->>>> read/write permissions previously checked at file open to support
->>>> policy changes and file or process label changes.  We'd have to modify
->>>> the SELinux hook if we wanted to have it check execute access even if
->>>> nothing has changed since open time.
->>>
->>> Also Smack doesn't appear to implement file_permission at all, so it
->>> would skip Smack checking.
->>
->> My question is whether adding a new security_file_permission call here
->> would break either SELinux or Apparmor?
-> 
-> selinux_inode_permission() has special handling for MAY_ACCESS so we'd
-> need to duplicate that into selinux_file_permission() ->
-> selinux_revalidate_file_permission().  Also likely need to adjust
-> selinux_file_permission() to explicitly check whether the mask
-> includes any permissions not checked at open time.  So some changes
-> would be needed here.  By default, it would be a no-op unless there
-> was a policy reload or the file was relabeled between the open(2) and
-> the faccessat(2) call.
-> 
+Thanks for catching this and submitting the fix.
 
-We could create a new hook path_permission(struct path *path, int mask)
-as a superset of inode_permission(). To be more convenient, his new hook
-could then just call inode_permission() for every LSMs not implementing
-path_permission().
+Acked-by: Paul Moore <paul@paul-moore.com>
+
+> diff --git a/net/ipv4/cipso_ipv4.c b/net/ipv4/cipso_ipv4.c
+> index 2eb71579f4d2..471d33a0d095 100644
+> --- a/net/ipv4/cipso_ipv4.c
+> +++ b/net/ipv4/cipso_ipv4.c
+> @@ -498,7 +498,7 @@ static void cipso_v4_doi_free_rcu(struct rcu_head *entry)
+>  /**
+>   * cipso_v4_doi_remove - Remove an existing DOI from the CIPSO protocol engine
+>   * @doi: the DOI value
+> - * @audit_secid: the LSM secid to use in the audit message
+> + * @audit_info: NetLabel audit information
+>   *
+>   * Description:
+>   * Removes a DOI definition from the CIPSO engine.  The NetLabel routines will
+> --
+> 2.17.1
+>
+
+
+-- 
+paul moore
+www.paul-moore.com
