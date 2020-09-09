@@ -2,60 +2,97 @@ Return-Path: <SRS0=Ul/Y=CS=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E13FC43461
-	for <linux-security-module@archiver.kernel.org>; Wed,  9 Sep 2020 03:05:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EDF1C43461
+	for <linux-security-module@archiver.kernel.org>; Wed,  9 Sep 2020 07:19:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4523B20EDD
-	for <linux-security-module@archiver.kernel.org>; Wed,  9 Sep 2020 03:05:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F036F2078E
+	for <linux-security-module@archiver.kernel.org>; Wed,  9 Sep 2020 07:19:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726369AbgIIDFD (ORCPT
+        id S1728297AbgIIHTp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 8 Sep 2020 23:05:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45280 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730108AbgIIDFA (ORCPT
+        Wed, 9 Sep 2020 03:19:45 -0400
+Received: from smtp-42aa.mail.infomaniak.ch ([84.16.66.170]:38433 "EHLO
+        smtp-42aa.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726534AbgIIHTo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 8 Sep 2020 23:05:00 -0400
-Received: from shards.monkeyblade.net (shards.monkeyblade.net [IPv6:2620:137:e000::1:9])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2532FC061573;
-        Tue,  8 Sep 2020 20:05:00 -0700 (PDT)
-Received: from localhost (unknown [IPv6:2601:601:9f00:477::3d5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 0042511E3E4C3;
-        Tue,  8 Sep 2020 19:48:11 -0700 (PDT)
-Date:   Tue, 08 Sep 2020 20:04:58 -0700 (PDT)
-Message-Id: <20200908.200458.328284475983758086.davem@davemloft.net>
-To:     wanghai38@huawei.com
-Cc:     paul@paul-moore.com, kuba@kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH net-next] netlabel: Fix some kernel-doc warnings
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20200908140543.25514-1-wanghai38@huawei.com>
-References: <20200908140543.25514-1-wanghai38@huawei.com>
-X-Mailer: Mew version 6.8 on Emacs 27.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [2620:137:e000::1:9]); Tue, 08 Sep 2020 19:48:12 -0700 (PDT)
+        Wed, 9 Sep 2020 03:19:44 -0400
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4BmYKr480Wzlhj0M;
+        Wed,  9 Sep 2020 09:19:12 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
+        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4BmYKn34q7zlh8TL;
+        Wed,  9 Sep 2020 09:19:09 +0200 (CEST)
+Subject: Re: [RFC PATCH v8 0/3] Add support for AT_INTERPRETED (was O_MAYEXEC)
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Eric Chiang <ericchiang@google.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Thibaut Sautereau <thibaut.sautereau@clip-os.org>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+References: <20200908075956.1069018-1-mic@digikod.net>
+ <20200908185026.GU1236603@ZenIV.linux.org.uk>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Message-ID: <e3223b50-0d00-3b64-1e09-cfb1b9648b02@digikod.net>
+Date:   Wed, 9 Sep 2020 09:19:11 +0200
+User-Agent: 
+MIME-Version: 1.0
+In-Reply-To: <20200908185026.GU1236603@ZenIV.linux.org.uk>
+Content-Type: text/plain; charset=iso-8859-15
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Wang Hai <wanghai38@huawei.com>
-Date: Tue, 8 Sep 2020 22:05:43 +0800
 
-> Fixes the following W=1 kernel build warning(s):
+On 08/09/2020 20:50, Al Viro wrote:
+> On Tue, Sep 08, 2020 at 09:59:53AM +0200, Mickaël Salaün wrote:
+>> Hi,
+>>
+>> This height patch series rework the previous O_MAYEXEC series by not
+>> adding a new flag to openat2(2) but to faccessat2(2) instead.  As
+>> suggested, this enables to perform the access check on a file descriptor
+>> instead of on a file path (while opening it).  This may require two
+>> checks (one on open and then with faccessat2) but it is a more generic
+>> approach [8].
 > 
-> net/netlabel/netlabel_calipso.c:438: warning: Excess function parameter 'audit_secid' description in 'calipso_doi_remove'
-> net/netlabel/netlabel_calipso.c:605: warning: Excess function parameter 'reg' description in 'calipso_req_delattr'
+> Again, why is that folded into lookup/open/whatnot, rather than being
+> an operation applied to a file (e.g. O_PATH one)?
 > 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Wang Hai <wanghai38@huawei.com>
 
-Applied.
+I don't understand your question. AT_INTERPRETED can and should be used
+with AT_EMPTY_PATH. The two checks I wrote about was for IMA.
