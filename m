@@ -1,128 +1,133 @@
-Return-Path: <SRS0=Ul/Y=CS=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=OzCb=CT=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2809C43461
-	for <linux-security-module@archiver.kernel.org>; Wed,  9 Sep 2020 20:02:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DD43C433E2
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Sep 2020 04:32:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 976FE21D7E
-	for <linux-security-module@archiver.kernel.org>; Wed,  9 Sep 2020 20:02:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D23192075B
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Sep 2020 04:32:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WMSVkLEZ"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="RF3P/tH4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726414AbgIIUCP (ORCPT
+        id S1726569AbgIJEcM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 9 Sep 2020 16:02:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33282 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725975AbgIIUCO (ORCPT
+        Thu, 10 Sep 2020 00:32:12 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:51678 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725855AbgIJEcK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 9 Sep 2020 16:02:14 -0400
-Received: from mail-ot1-x341.google.com (mail-ot1-x341.google.com [IPv6:2607:f8b0:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CC59C061573;
-        Wed,  9 Sep 2020 13:02:13 -0700 (PDT)
-Received: by mail-ot1-x341.google.com with SMTP id 60so3401580otw.3;
-        Wed, 09 Sep 2020 13:02:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Uyw71uc/UrDKRonmuOmxdKfI21OPcapU/xkp1sKYzJc=;
-        b=WMSVkLEZQBZ1aZLPOFZ1T0+V1vZd0E0msVq9Ln6MvIJPIywS9tG7dmAbXmYQ5fVdO6
-         HnuRwLBcNpFCoouQv1TmIIeYQ4oJMiYD6fh+vdtNiCOuBDL2jP89dMvm049St1h+99SF
-         nx1FNimGkQ4A47UK1aZ0hlUZe7LXoC/H28B0LosIzL/a+Xeu7N6WpLhVRmnz3pUY4Qj6
-         iJP1Y7mPMko8dYT3JAwTVYhmeHEr/+pOoa2LoKGDGYVqV5SQvTzPb8PaIHs6PSPv0wMY
-         UyiIVFmQsUbTn3kyCs9/ninKB7WwWo0R8YRhIVQAW5OtnltLY+nv3L5T6Dsx8mj6E5gF
-         L1dA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Uyw71uc/UrDKRonmuOmxdKfI21OPcapU/xkp1sKYzJc=;
-        b=Hx6r9aEUhVmmwa8svvIdANj6gKc++Hnt7DkwQDEQhZXGCPOQbUztBRrys5Av6VSPep
-         v68E+9XzztnVUlSqEbbp7FCpurlXDvCvgffjPZ3QrcnyEpKYoodDNvDa0pYK/+fgtbC8
-         TMqxh7QjwgiuKZPflLgl+aU7O8/OTnF08Oa42aqHHBOfN9WVoZ9yolfoqbF16PeAV3j1
-         /sp0Oyyujs10acE0LWwV3zp9tHKbKLe1Kxd1xT7Nvkcumx6IZsxiHn8V6/giDImH2gvd
-         SQKIgU5hMZqM2oQLKksY7+kcD1dCBtIMknZF7Wq9hBVTS0dZnia7/Ji6aqtB6lOWPH5+
-         g0Zg==
-X-Gm-Message-State: AOAM531It7KSgyYYoAWiGK4s0UczC8dINJpIVXGu4OTCH6f5BkUezVhH
-        WFFFgbZgKTQccD6D9ZRdoDt7pcf2CaR5pX80/eo=
-X-Google-Smtp-Source: ABdhPJy+9ffxclh7eAoQYtaeVADJdorlrA7ZSLNtNX/tNQNH2W2mJ7jGLZyTXNjxcpSsKISptydTYL4GK64s1RdIN0s=
-X-Received: by 2002:a9d:185:: with SMTP id e5mr1837153ote.135.1599681732535;
- Wed, 09 Sep 2020 13:02:12 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200909182351.10740-1-nramas@linux.microsoft.com>
-In-Reply-To: <20200909182351.10740-1-nramas@linux.microsoft.com>
-From:   Stephen Smalley <stephen.smalley.work@gmail.com>
-Date:   Wed, 9 Sep 2020 16:02:01 -0400
-Message-ID: <CAEjxPJ4ndTZ7A5RKV3-2fXNYkP7KG44ot8hxmgW6qBAbhfwqmA@mail.gmail.com>
-Subject: Re: [PATCH] selinux: Add helper functions to get and set checkreqprot
-To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Cc:     Paul Moore <paul@paul-moore.com>, Sasha Levin <sashal@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        SElinux list <selinux@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 10 Sep 2020 00:32:10 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 089MiVL4156976;
+        Wed, 9 Sep 2020 22:44:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2020-01-29; bh=ZJSWj8UDSgwVvdQeB1Q6BSZE1Es3ixnnotRP8TRgN6o=;
+ b=RF3P/tH4qLGee2XEa4s4rwbn+vrl/a0mcYAsQtMXbU2cV5G71WwcSYGEOqb7At4ftVba
+ /CbbLxC/exYoayLX7V5zJRQYuiXH21IgdBpM1Ae1LX0Otp1GzOg/nUqLQf0becWmULLy
+ fW+0y0ZdbzlCZ1Kh4C6TldbMmjxy1o4qUEyqEF6x+AJrYYZn+WjrE+XfgPubBSwX0uWY
+ Pr0gp6VgRQknYwScAZ4TnTi9RvbvRz/dXlRjJikkP01H7rR/EkNqYq0vA1deh4haUKHW
+ PqIr0FyH22YWxLUirxY35CX0DUpVRGYxBjxzhEH0Epx8W9Rgm3cdlk8htI0tQtTpHdcZ Qw== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 33c2mm4pmm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 09 Sep 2020 22:44:47 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 089MdcWP132724;
+        Wed, 9 Sep 2020 22:44:47 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3030.oracle.com with ESMTP id 33dacm6e4s-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 09 Sep 2020 22:44:46 +0000
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 089Miet6010647;
+        Wed, 9 Sep 2020 22:44:41 GMT
+Received: from dhcp-10-65-181-26.vpn.oracle.com (/10.65.181.26)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 09 Sep 2020 15:44:40 -0700
+Content-Type: text/plain; charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Subject: Re: [PATCH v2] certs: Add EFI_CERT_X509_GUID support for dbx entries
+From:   Eric Snowberg <eric.snowberg@oracle.com>
+In-Reply-To: <5074bc5c-8dd4-16d7-2760-3e657b90bfa2@infradead.org>
+Date:   Wed, 9 Sep 2020 16:44:37 -0600
+Cc:     dhowells@redhat.com, dwmw2@infradead.org,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        herbert@gondor.apana.org.au, davem@davemloft.net,
+        jmorris@namei.org, serge@hallyn.com, nayna@linux.ibm.com,
+        Mimi Zohar <zohar@linux.ibm.com>, erichte@linux.ibm.com,
+        mpe@ellerman.id.au, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <0D3BE738-67D5-41DB-B58E-FCD2ECD9A4F0@oracle.com>
+References: <20200909172736.73003-1-eric.snowberg@oracle.com>
+ <5074bc5c-8dd4-16d7-2760-3e657b90bfa2@infradead.org>
+To:     Randy Dunlap <rdunlap@infradead.org>
+X-Mailer: Apple Mail (2.3273)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9739 signatures=668679
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 malwarescore=0
+ bulkscore=0 phishscore=0 adultscore=0 suspectscore=3 spamscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2006250000 definitions=main-2009090198
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9739 signatures=668679
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 priorityscore=1501
+ phishscore=0 adultscore=0 bulkscore=0 clxscore=1011 mlxlogscore=999
+ malwarescore=0 suspectscore=3 lowpriorityscore=0 spamscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2006250000 definitions=main-2009090199
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Sep 9, 2020 at 2:23 PM Lakshmi Ramasubramanian
-<nramas@linux.microsoft.com> wrote:
->
-> checkreqprot data member in selinux_state struct is accessed directly by
-> SELinux functions to get and set. This could cause unexpected read or
-> write access to this data member due to compiler optimizations and\or
 
-and/or
+> On Sep 9, 2020, at 11:40 AM, Randy Dunlap <rdunlap@infradead.org> =
+wrote:
+>=20
+> On 9/9/20 10:27 AM, Eric Snowberg wrote:
+>> diff --git a/include/crypto/pkcs7.h b/include/crypto/pkcs7.h
+>> index 38ec7f5f9041..d8f2e0fdfbf4 100644
+>> --- a/include/crypto/pkcs7.h
+>> +++ b/include/crypto/pkcs7.h
+>> @@ -26,11 +26,19 @@ extern int pkcs7_get_content_data(const struct =
+pkcs7_message *pkcs7,
+>> 				  const void **_data, size_t *_datalen,
+>> 				  size_t *_headerlen);
+>>=20
+>> +#ifdef CONFIG_PKCS7_MESSAGE_PARSER
+>> /*
+>>  * pkcs7_trust.c
+>>  */
+>> extern int pkcs7_validate_trust(struct pkcs7_message *pkcs7,
+>> 				struct key *trust_keyring);
+>> +#else
+>> +static inline int pkcs7_validate_trust(struct pkcs7_message *pkcs7,
+>> +				       struct key *trust_keyring)
+>> +{
+>> +	return -ENOKEY;
+>> +}
+>> +#endif
+>=20
+> Just to be clear, you want to do the #else block when
+> CONFIG_PKCS7_MESSAGE_PARSER=3Dm.  Is that correct?
+>=20
+> If so, it might be clearer to use
+>=20
+> #if IS_BUILTIN(CONFIG_PKCS7_MESSAGE_PARSER)
+>=20
 
-> compiler's reordering of access to this field.
->
-> Add helper functions to get and set checkreqprot data member in
-> selinux_state struct. These helper functions use READ_ONCE and
-> WRITE_ONCE macros to ensure explicit read or write of memory for
-> this data member.
+I just added this part to fix a build error when none of the
+asymmetrical keys are defined within a config.  I failed to notice
+CONFIG_PKCS7_MESSAGE_PARSER could be configured to build as a module
+too.  The code I added that uses pkcs7_validate_trust is always=20
+builtin. Taking this into account, please disregard this patch. =20
+I will need to solve this a different way.  Thanks for pointing this=20
+out.
 
-s/explicit/atomic/
-
-> This patch is based on commit 66ccd2560aff
-> ("selinux: simplify away security_policydb_len()") in "next" branch
-> in https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
-
-Don't include this kind of information in a commit message, if needed
-it can go after the --- or in brackets in the subject line ala [-next]
- but it isn't necessary when sending against the next branch because
-that's the default expectation for submitted patches for selinux.  No
-need to cc lsm list on selinux-only patches.
-
-> Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-> Suggested-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-> ---
-
-> diff --git a/security/selinux/include/security.h b/security/selinux/include/security.h
-> index cbdd3c7aff8b..b19d919f01e7 100644
-> --- a/security/selinux/include/security.h
-> +++ b/security/selinux/include/security.h
-> @@ -209,6 +209,16 @@ static inline bool selinux_policycap_genfs_seclabel_symlinks(void)
->         return state->policycap[POLICYDB_CAPABILITY_GENFS_SECLABEL_SYMLINKS];
->  }
->
-> +static inline bool selinux_checkreqprot(const struct selinux_state *state)
-> +{
-> +       return READ_ONCE(state->checkreqprot);
-> +}
-> +static inline void selinux_checkreqprot_set(struct selinux_state *state,
-> +                                           bool value)
-> +{
-> +       WRITE_ONCE(state->checkreqprot, value);
-> +}
-
-Move these up with the enforcing accessor functions in this header and
-use a consistent naming, e.g. checkreqprot_enabled(),
-checkreqprot_set().
