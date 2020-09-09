@@ -2,145 +2,160 @@ Return-Path: <SRS0=Ul/Y=CS=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CA3AC433E2
-	for <linux-security-module@archiver.kernel.org>; Wed,  9 Sep 2020 10:12:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B86AC43461
+	for <linux-security-module@archiver.kernel.org>; Wed,  9 Sep 2020 13:23:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E09A5215A4
-	for <linux-security-module@archiver.kernel.org>; Wed,  9 Sep 2020 10:12:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A76F42087C
+	for <linux-security-module@archiver.kernel.org>; Wed,  9 Sep 2020 13:23:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mqnxKZl5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726226AbgIIKMB (ORCPT
+        id S1730312AbgIINWx (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 9 Sep 2020 06:12:01 -0400
-Received: from wind.enjellic.com ([76.10.64.91]:53888 "EHLO wind.enjellic.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725917AbgIIKMA (ORCPT
+        Wed, 9 Sep 2020 09:22:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55492 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730303AbgIINVV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 9 Sep 2020 06:12:00 -0400
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 089ABMRJ016828;
-        Wed, 9 Sep 2020 05:11:23 -0500
-Received: (from greg@localhost)
-        by wind.enjellic.com (8.15.2/8.15.2/Submit) id 089ABLvd016827;
-        Wed, 9 Sep 2020 05:11:21 -0500
-Date:   Wed, 9 Sep 2020 05:11:21 -0500
-From:   "Dr. Greg" <greg@enjellic.com>
-To:     Luke Hinds <lhinds@redhat.com>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        krzysztof.struczynski@huawei.com, linux-integrity@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        containers@lists.linux-foundation.org,
-        linux-security-module@vger.kernel.org, stefanb@linux.vnet.ibm.com,
-        sunyuqiong1988@gmail.com, mkayaalp@cs.binghamton.edu,
-        dmitry.kasatkin@gmail.com, "Serge E. Hallyn" <serge@hallyn.com>,
-        James Morris <jmorris@namei.org>, christian@brauner.io,
-        silviu.vlasceanu@huawei.com, roberto.sassu@huawei.com,
-        ebiederm@xmission.com, viro@zeniv.linux.org.uk,
-        torvalds@linux-foundation.org, luto@amacapital.net,
-        jannh@google.com, nick.dusek@gmail.com
-Subject: Re: [RFC PATCH 00/30] ima: Introduce IMA namespace
-Message-ID: <20200909101120.GA16191@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <20200818152037.11869-1-krzysztof.struczynski@huawei.com> <20200818164943.va3um7toztazcfud@wittgenstein> <d77a6cd783319702fddd06783cb84fdeb86210a6.camel@linux.ibm.com> <20200906171413.GA8305@wind.enjellic.com> <CAKrSGQR3Pw=Rad2RgUuCHqr0r2Nc6x2nLoo2cVAkD+_8Vbmd7A@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKrSGQR3Pw=Rad2RgUuCHqr0r2Nc6x2nLoo2cVAkD+_8Vbmd7A@mail.gmail.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Wed, 09 Sep 2020 05:11:23 -0500 (CDT)
+        Wed, 9 Sep 2020 09:21:21 -0400
+Received: from mail-oo1-xc44.google.com (mail-oo1-xc44.google.com [IPv6:2607:f8b0:4864:20::c44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48316C061573;
+        Wed,  9 Sep 2020 06:20:50 -0700 (PDT)
+Received: by mail-oo1-xc44.google.com with SMTP id y25so563462oog.4;
+        Wed, 09 Sep 2020 06:20:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=63PSCFxVUgf9cFtZOFDppeprHasPYk7KVkEdZRn0bLw=;
+        b=mqnxKZl5ZnGwnTRHWg2f3W56NXbv+AJ2D3DCAG3pGsWIaVfiSQgMflgwmoqg4Cbed8
+         d/A3qWEmO25H4Bj7qRDimUgZqTd+JXlaXQXLkCC/cwXwbyAvcTI8QEr6Z6V/X+UFaU8E
+         nKV8YxphMYMUX7Zf/9kNF8UmlYJsoc8AIYp+qNYV9tcBll1BFKmhZ+n7LdohoujAFAnp
+         yi8S0tjA9brImGo48Taw2qVCdp7S0OY05b9Iydm0kpbRLgq6uR+3vCuQmd9xvoIMDwje
+         SRoCGmEOTReDlzvappeJffe6mOULEaiADDUzj+4WTidcT+IfsFSDxB0Z20+o5dA8Wg1u
+         VWWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=63PSCFxVUgf9cFtZOFDppeprHasPYk7KVkEdZRn0bLw=;
+        b=MsiN0FBnhPTJPhGedSHvgNF+PvjIGDoEKQKWkjosFnDWhlbwEM3PHdoRogbsdabIDh
+         pCir15grRJ5rif6yww1TIjDKxRwruWO1e+Kqz4tqd1cSZTKwKB/TQKC8Q+GFFKj1Qnd/
+         WPaUvagG6ERjXhe95hJPNzd87sbOdmu0wKeU/6mvXprBee3GVWfr2/RpoY/uawxPMr+1
+         h/bi4TheYAbFQ2T5WDJZ0Tx/Zok6WNCjgaQ2Xyc+pOa9tAH+NaNEsd7W3kRih7B372Je
+         3nAUGoacVitC0OL+vKH24SNXktETyJ9LIqH/Uz65+hKO0FqTYv75LZc9VjPfyZ99qVIO
+         g5Dw==
+X-Gm-Message-State: AOAM533hMJrBv5z4qX2kVF6fN5wwKuPbQOipLqcJ4JqWPgfrs55PxXwA
+        jvVohqOcR6ncNn0ppFyxd9lOV0hkdRWNoEaz80k=
+X-Google-Smtp-Source: ABdhPJzbXO7IXxWz8rasFqinds+vOSPYPPdDjmRVyVts6q7FAYoa/eJ4UHjV7ccel0e9l/ol8uS94rdkvmvRdOniqjg=
+X-Received: by 2002:a4a:c541:: with SMTP id j1mr763455ooq.13.1599657649486;
+ Wed, 09 Sep 2020 06:20:49 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200826145247.10029-1-casey@schaufler-ca.com>
+ <20200826145247.10029-6-casey@schaufler-ca.com> <CAHC9VhSh=r4w_3mZOUwmKN0UxCMxPNGKd=_vr_iGV06rvCNbSA@mail.gmail.com>
+ <1eeef766-405f-3800-c0cf-3eb008f9673e@schaufler-ca.com> <CAHC9VhSf8RWUnRPYLR6LLzbn-cvNg8J0wnZGwTOAe=dOqkvd0g@mail.gmail.com>
+ <ef6a049a-c6b9-370b-c521-4594aa73e403@schaufler-ca.com> <CAHC9VhSu4qqKWsutm3=GF_pihUKpwjAtc9gAhfjGsGtKfz-Azw@mail.gmail.com>
+ <585600d7-70fb-0982-1e6b-ffd7b7c33e32@schaufler-ca.com> <9a58d14c-eaff-3acf-4689-925cf08ba406@canonical.com>
+ <CAEjxPJ7i5Ruy=NZ+sq3qCm8ux+sZXY5+XX_zJu3+OqFq3d_SLQ@mail.gmail.com>
+ <CAEjxPJ5KudgTjhmXBNdCO_ctvioy5UA5PXcoKX4zc19NYKgHZA@mail.gmail.com>
+ <c5bef71e-6d78-2058-bcaa-8497c76d7375@schaufler-ca.com> <b320f0f6-02db-95a5-acc5-cadd5dbb57dc@canonical.com>
+In-Reply-To: <b320f0f6-02db-95a5-acc5-cadd5dbb57dc@canonical.com>
+From:   Stephen Smalley <stephen.smalley.work@gmail.com>
+Date:   Wed, 9 Sep 2020 09:19:40 -0400
+Message-ID: <CAEjxPJ6wFJz935RR_1u+-EjAw3VMv4nabo-Za_OqkZGJuNS5Sg@mail.gmail.com>
+Subject: Re: [PATCH v20 05/23] net: Prepare UDS for security module stacking
+To:     John Johansen <john.johansen@canonical.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        James Morris <jmorris@namei.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        SElinux list <selinux@vger.kernel.org>, linux-audit@redhat.com,
+        Kees Cook <keescook@chromium.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Stephen Smalley <sds@tycho.nsa.gov>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Sep 07, 2020 at 12:50:07PM +0100, Luke Hinds wrote:
-
-Good morning, I hope the week is going well for everyone.
-
-> On Sun, Sep 6, 2020 at 6:15 PM Dr. Greg <greg@enjellic.com> wrote:
-> > Just to be clear, we are not campaigning or advocating what we have
-> > done but are simply providing background for discussion.  We haven't
-> > campaigned this approach given how complex the kernel development has
-> > become, particurlarly with respect to security infrastructure.
+On Tue, Sep 8, 2020 at 8:21 PM John Johansen
+<john.johansen@canonical.com> wrote:
+>
+> On 9/8/20 4:37 PM, Casey Schaufler wrote:
+> > On 9/8/2020 6:35 AM, Stephen Smalley wrote:
+> >> On Mon, Sep 7, 2020 at 9:28 PM Stephen Smalley
+> >> <stephen.smalley.work@gmail.com> wrote:
+> >>> On Sat, Sep 5, 2020 at 3:07 PM John Johansen
+> >>> <john.johansen@canonical.com> wrote:
+> >>>> On 9/5/20 11:13 AM, Casey Schaufler wrote:
+> >>>>> On 9/5/2020 6:25 AM, Paul Moore wrote:
+> >>>>>> On Fri, Sep 4, 2020 at 7:58 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> >>>>>>> On 9/4/2020 2:53 PM, Paul Moore wrote:
+> >>>>>>>> On Fri, Sep 4, 2020 at 5:35 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> >>>>>>>>> On 9/4/2020 1:08 PM, Paul Moore wrote:
+> >>>>>> ...
+> >>>>>>
+> >>>>>>>> I understand the concerns you mention, they are all valid as far as
+> >>>>>>>> I'm concerned, but I think we are going to get burned by this code as
+> >>>>>>>> it currently stands.
+> >>>>>>> Yes, I can see that. We're getting burned by the non-extensibility
+> >>>>>>> of secids. It will take someone smarter than me to figure out how to
+> >>>>>>> fit N secids into 32bits without danger of either failure or memory
+> >>>>>>> allocation.
+> >>>>>> Sooo what are the next steps here?  It sounds like there is some
+> >>>>>> agreement that the currently proposed unix_skb_params approach is a
+> >>>>>> problem, but it also sounds like you just want to merge it anyway?
+> >>>>> There are real problems with all the approaches. This is by far the
+> >>>>> least invasive of the lot. If this is acceptable for now I will commit
+> >>>>> to including the dynamic allocation version in the full stacking
+> >>>>> (e.g. Smack + SELinux) stage. If it isn't, well, this stage is going
+> >>>>> to take even longer than it already has. Sigh.
+> >>>>>
+> >>>>>
+> >>>>>> I was sorta hoping for something a bit better.
+> >>>>> I will be looking at alternatives. I am very much open to suggestions.
+> >>>>> I'm not even 100% convinced that Stephen's objections to my separate
+> >>>>> allocation strategy outweigh its advantages. If you have an opinion on
+> >>>>> that, I'd love to hear it.
+> >>>>>
+> >>>> fwiw I prefer the separate allocation strategy, but as you have already
+> >>>> said it trading off one set of problems for another. I would rather see
+> >>>> this move forward and one set of trade offs isn't significantly worse
+> >>>> than the other to me so, either wfm.
+> >>> I remain unclear that AppArmor needs this patch at all even when
+> >>> support for SO_PEERSEC lands.
+> >>> Contrary to the patch description, it is about supporting SCM_SECURITY
+> >>> for datagram not SO_PEERSEC.  And I don't know of any actual users of
+> >>> SCM_SECURITY even for SELinux, just SO_PEERSEC.
+> >> I remembered that systemd once tried using SCM_SECURITY but that was a
+> >> bug since systemd was using it with stream sockets and that wasn't
+> >> supported by the kernel at the time,
+> >> https://bugzilla.redhat.com/show_bug.cgi?id=1224211, so systemd
+> >> switched over to using SO_PEERSEC.  Subsequently I did fix
+> >> SCM_SECURITY to work with stream sockets via kernel commit
+> >> 37a9a8df8ce9de6ea73349c9ac8bdf6ba4ec4f70 but SO_PEERSEC is still
+> >> preferred.  Looking around, I see that there is still one usage of
+> >> SCM_SECURITY in systemd-journald but it doesn't seem to be required
+> >> (if provided, journald will pass the label along but nothing seems to
+> >> depend on it AFAICT).  In any event, I don't believe this patch is
+> >> needed to support stacking AppArmor.
 > >
-> > Candidly, given the politics of security technology being viewed as
-> > 'constraining' user rights, I think that a lot of forthcoming security
-> > technology may end up being out of tree moving forward.
-
-> I think it's prudent to look forward and plan diligently, but I would not
-> want perfect to be the enemy of good.
+> > Stephen is, as is so often the case, correct. AppArmor has a stub
+> > socket_getpeersec_dgram() that gets removed in patch 23. If I remove
 >
-> I approach this more from a user's perspective. We are using IMA in
-> https://keylime.dev to measure a host and would like to measure
-> within a container too. It's the most common request we hear from
-> our users.
->
-> Perhaps we all collaborate on a proposal extending Stefans work here:
-> https://kernsec.org/wiki/index.php/IMA_Namespacing_design_considerations
->
-> I have seen around 3-4 patches now get submitted, so work has been
-> done before, and as above, users are present too. We could then have
-> some consensus on how this should look and later patches might have
-> more success at landing.
->
-> Would anyone be interested in this and have recommendations on how
-> we could approach this?
+> right but as I said before this is coming, I have been playing with
+> it and have code. So the series doesn't need it today but sooner than
+> later it will be needed
 
-Obviously everyone is interested in sharpening their own knives so the
-first challenge will be defining where this theme of measurement and
-attestation needs to go.
-
-Our focus in all of this is from a platform behavior modeling
-perspective.  Our objective is to design platforms/containers that are
-capable of self-disciplining themselves in the event that they exhibit
-behavior inconsistent with the wishes of their designer.  Container
-measurement trivially falls out of this model.
-
-With respect to measurement namespaces, the first problem to be
-addressed is what takes custody and responsibility for the measurement
-events.  In classic IMA this is, of course, a TPM.  In our model we
-use a Trusted Execution Environment (TEE) as this entity.
-
-The TEE makes a decision as to whether or not the kernel should label
-a context of execution as being a 'bad actor' if it indicates a desire
-to exhibit a behavior inconsistent with a previously defined model.
-As I noted previously we have an SGX based solution that provides this
-infrastructure but have designed and are moving to a micro-controller
-based alternative, given the fact that SGX is now moving to a 'cloud
-only' solution.
-
-One of the pain points in all of this appears to be whether or not a
-measurement stream from a container should feed into the root
-measurement of the platform or be fed into a measurement/monitoring
-domain that can be attested against the root measurement of the
-platform.  Based on our experiences the latter model is the only one
-that is feasible or makes sense from an attestation perspective.
-
-So it would seem that a generic approach to directing the target of
-the measurement events would be the first objective.  If there is
-interest we can make a copy of our patch available as it supports both
-models.
-
-> - Luke
-
-Have a good day.
-
-Dr. Greg
-
-As always,
-Dr. Greg Wettstein, Ph.D, Worker      Autonomously self-defensive
-Enjellic Systems Development, LLC     IOT platforms and edge devices.
-4206 N. 19th Ave.
-Fargo, ND  58102
-PH: 701-281-1686                      EMAIL: dg@enjellic.com
-------------------------------------------------------------------------------
-"I created a hack to make the division come out right ... I was
- relieved because I thought I was coding wrong.
-
- Did you?  It took a guy (Thomas Nicely) with a Ph.D. doing heavy
- research in computational number theory to find it, yet you found it
- while working on a game in QuickBasic?"
-                                -- Slashdot
+I don't understand why.  Is there a userspace component that relies on
+SCM_SECURITY today for anything real (more than just blindly passing
+it along and maybe writing to a log somewhere)?  And this doesn't
+provide support for a composite SCM_SECURITY or SCM_CONTEXT, so it
+doesn't really solve the stacking problem for it anyway.  What am I
+missing?  Why do you care about this patch?
