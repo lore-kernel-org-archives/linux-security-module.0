@@ -2,114 +2,127 @@ Return-Path: <SRS0=Ul/Y=CS=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,
-	DKIM_ADSP_CUSTOM_MED,DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-14.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A3EBC433E2
-	for <linux-security-module@archiver.kernel.org>; Wed,  9 Sep 2020 19:09:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2809C43461
+	for <linux-security-module@archiver.kernel.org>; Wed,  9 Sep 2020 20:02:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D9CA6218AC
-	for <linux-security-module@archiver.kernel.org>; Wed,  9 Sep 2020 19:09:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 976FE21D7E
+	for <linux-security-module@archiver.kernel.org>; Wed,  9 Sep 2020 20:02:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xr0TqVWc"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WMSVkLEZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726534AbgIITJQ (ORCPT
+        id S1726414AbgIIUCP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 9 Sep 2020 15:09:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53310 "EHLO
+        Wed, 9 Sep 2020 16:02:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33282 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725772AbgIITJO (ORCPT
+        with ESMTP id S1725975AbgIIUCO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 9 Sep 2020 15:09:14 -0400
-Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71111C061573;
-        Wed,  9 Sep 2020 12:09:13 -0700 (PDT)
-Received: by mail-wm1-x344.google.com with SMTP id a9so3491692wmm.2;
-        Wed, 09 Sep 2020 12:09:13 -0700 (PDT)
+        Wed, 9 Sep 2020 16:02:14 -0400
+Received: from mail-ot1-x341.google.com (mail-ot1-x341.google.com [IPv6:2607:f8b0:4864:20::341])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CC59C061573;
+        Wed,  9 Sep 2020 13:02:13 -0700 (PDT)
+Received: by mail-ot1-x341.google.com with SMTP id 60so3401580otw.3;
+        Wed, 09 Sep 2020 13:02:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=3CtnsHu1kocc8uwLlDaSSxN5AfuSpASFecFNMuqKHqI=;
-        b=Xr0TqVWcl1f3bR1fLi1bK3iFtjf3T3nwYBn4qS4SvMW9SkenRS+jnybhPFvwb/APP+
-         gwGqheFmi7Vh0WPGI5P1tU9VsnUhGiTLp43Tdpp0mURPswE6QMyo8EDUqY7SEZeHRUtY
-         MWnFxi87H6ZmNyNPr5+f+V8G945Rdq7eCNTi5p/e23unmdflSx3oyQoJv60527Ek7cgr
-         DkHiYLHXx9+PHRuuPUdTpZj+l0vxMI5k8lEAEST88k7TdG0tA2N/02CnGqJw8JtSwUOY
-         3U3C18G17PCheM/Hl+KiTPOZIy7VjWFXGDsov1cJm+5ZHrDfeBKbnmtdmleL08wggObM
-         XCfA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Uyw71uc/UrDKRonmuOmxdKfI21OPcapU/xkp1sKYzJc=;
+        b=WMSVkLEZQBZ1aZLPOFZ1T0+V1vZd0E0msVq9Ln6MvIJPIywS9tG7dmAbXmYQ5fVdO6
+         HnuRwLBcNpFCoouQv1TmIIeYQ4oJMiYD6fh+vdtNiCOuBDL2jP89dMvm049St1h+99SF
+         nx1FNimGkQ4A47UK1aZ0hlUZe7LXoC/H28B0LosIzL/a+Xeu7N6WpLhVRmnz3pUY4Qj6
+         iJP1Y7mPMko8dYT3JAwTVYhmeHEr/+pOoa2LoKGDGYVqV5SQvTzPb8PaIHs6PSPv0wMY
+         UyiIVFmQsUbTn3kyCs9/ninKB7WwWo0R8YRhIVQAW5OtnltLY+nv3L5T6Dsx8mj6E5gF
+         L1dA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=3CtnsHu1kocc8uwLlDaSSxN5AfuSpASFecFNMuqKHqI=;
-        b=VTCn+glHkT7t+a5qCwfBN3RNoKh6yD/l4D3oM80NsRkyuqUKmT2kv46M7IfIlXRyVp
-         4AAfcouI6dsJmqER+3W2N9wHQxqV0qAYs7RNBXAFVsHwwwgcA0sKmx6i9tr7TuOLSixy
-         qbkSO0Au0lLy9hgaFURIJXlU1oupDF+R0SSfT8extf3+ltESEMOhxo/qEb/nLeHCfTvP
-         pB//BnhuyeJXKljG8VraGhoWrGSa17/3rLV0IV390kisRUQy07RkovdUwxpm8Hh6U3Jo
-         RMHgXCz4mRU/Bj5nhGXRjib1fhaeavLeAQP1qUn/ru/rSyZZUCLyGWITAnU87Rk6O9Sq
-         zfXg==
-X-Gm-Message-State: AOAM5305ipTVxQCNtEmS5DUsN32xHARnXY2rO9kgvsHB7JiyPWuMP9yr
-        HIRZoIKRXzyukUaIdvKKNB0=
-X-Google-Smtp-Source: ABdhPJyOefeiMFkPtAS+u9KKFh1ftgY9to3EIPbs6NcaiNIlTcgWE17qOnji0DYHm6wmjlL1VvK4vg==
-X-Received: by 2002:a7b:ca56:: with SMTP id m22mr4673591wml.12.1599678551993;
-        Wed, 09 Sep 2020 12:09:11 -0700 (PDT)
-Received: from localhost.localdomain (cpc83661-brig20-2-0-cust443.3-3.cable.virginm.net. [82.28.105.188])
-        by smtp.gmail.com with ESMTPSA id b187sm93304wmb.8.2020.09.09.12.09.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Sep 2020 12:09:11 -0700 (PDT)
-From:   Alex Dewar <alex.dewar90@gmail.com>
-Cc:     Alex Dewar <alex.dewar90@gmail.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ima: Use kmemdup rather than kmalloc+memcpy
-Date:   Wed,  9 Sep 2020 20:09:06 +0100
-Message-Id: <20200909190907.164013-1-alex.dewar90@gmail.com>
-X-Mailer: git-send-email 2.28.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Uyw71uc/UrDKRonmuOmxdKfI21OPcapU/xkp1sKYzJc=;
+        b=Hx6r9aEUhVmmwa8svvIdANj6gKc++Hnt7DkwQDEQhZXGCPOQbUztBRrys5Av6VSPep
+         v68E+9XzztnVUlSqEbbp7FCpurlXDvCvgffjPZ3QrcnyEpKYoodDNvDa0pYK/+fgtbC8
+         TMqxh7QjwgiuKZPflLgl+aU7O8/OTnF08Oa42aqHHBOfN9WVoZ9yolfoqbF16PeAV3j1
+         /sp0Oyyujs10acE0LWwV3zp9tHKbKLe1Kxd1xT7Nvkcumx6IZsxiHn8V6/giDImH2gvd
+         SQKIgU5hMZqM2oQLKksY7+kcD1dCBtIMknZF7Wq9hBVTS0dZnia7/Ji6aqtB6lOWPH5+
+         g0Zg==
+X-Gm-Message-State: AOAM531It7KSgyYYoAWiGK4s0UczC8dINJpIVXGu4OTCH6f5BkUezVhH
+        WFFFgbZgKTQccD6D9ZRdoDt7pcf2CaR5pX80/eo=
+X-Google-Smtp-Source: ABdhPJy+9ffxclh7eAoQYtaeVADJdorlrA7ZSLNtNX/tNQNH2W2mJ7jGLZyTXNjxcpSsKISptydTYL4GK64s1RdIN0s=
+X-Received: by 2002:a9d:185:: with SMTP id e5mr1837153ote.135.1599681732535;
+ Wed, 09 Sep 2020 13:02:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+References: <20200909182351.10740-1-nramas@linux.microsoft.com>
+In-Reply-To: <20200909182351.10740-1-nramas@linux.microsoft.com>
+From:   Stephen Smalley <stephen.smalley.work@gmail.com>
+Date:   Wed, 9 Sep 2020 16:02:01 -0400
+Message-ID: <CAEjxPJ4ndTZ7A5RKV3-2fXNYkP7KG44ot8hxmgW6qBAbhfwqmA@mail.gmail.com>
+Subject: Re: [PATCH] selinux: Add helper functions to get and set checkreqprot
+To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Cc:     Paul Moore <paul@paul-moore.com>, Sasha Levin <sashal@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        SElinux list <selinux@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Issue identified with Coccinelle.
+On Wed, Sep 9, 2020 at 2:23 PM Lakshmi Ramasubramanian
+<nramas@linux.microsoft.com> wrote:
+>
+> checkreqprot data member in selinux_state struct is accessed directly by
+> SELinux functions to get and set. This could cause unexpected read or
+> write access to this data member due to compiler optimizations and\or
 
-Signed-off-by: Alex Dewar <alex.dewar90@gmail.com>
----
- security/integrity/ima/ima_policy.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+and/or
 
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index b4de33074b37..1de3140b334f 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -284,15 +284,14 @@ static struct ima_rule_entry *ima_lsm_copy_rule(struct ima_rule_entry *entry)
- 	struct ima_rule_entry *nentry;
- 	int i;
- 
--	nentry = kmalloc(sizeof(*nentry), GFP_KERNEL);
--	if (!nentry)
--		return NULL;
--
- 	/*
- 	 * Immutable elements are copied over as pointers and data; only
- 	 * lsm rules can change
- 	 */
--	memcpy(nentry, entry, sizeof(*nentry));
-+	nentry = kmemdup(entry, sizeof(*nentry), GFP_KERNEL);
-+	if (!nentry)
-+		return NULL;
-+
- 	memset(nentry->lsm, 0, sizeof_field(struct ima_rule_entry, lsm));
- 
- 	for (i = 0; i < MAX_LSM_RULES; i++) {
--- 
-2.28.0
+> compiler's reordering of access to this field.
+>
+> Add helper functions to get and set checkreqprot data member in
+> selinux_state struct. These helper functions use READ_ONCE and
+> WRITE_ONCE macros to ensure explicit read or write of memory for
+> this data member.
 
+s/explicit/atomic/
+
+> This patch is based on commit 66ccd2560aff
+> ("selinux: simplify away security_policydb_len()") in "next" branch
+> in https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+
+Don't include this kind of information in a commit message, if needed
+it can go after the --- or in brackets in the subject line ala [-next]
+ but it isn't necessary when sending against the next branch because
+that's the default expectation for submitted patches for selinux.  No
+need to cc lsm list on selinux-only patches.
+
+> Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+> Suggested-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+> ---
+
+> diff --git a/security/selinux/include/security.h b/security/selinux/include/security.h
+> index cbdd3c7aff8b..b19d919f01e7 100644
+> --- a/security/selinux/include/security.h
+> +++ b/security/selinux/include/security.h
+> @@ -209,6 +209,16 @@ static inline bool selinux_policycap_genfs_seclabel_symlinks(void)
+>         return state->policycap[POLICYDB_CAPABILITY_GENFS_SECLABEL_SYMLINKS];
+>  }
+>
+> +static inline bool selinux_checkreqprot(const struct selinux_state *state)
+> +{
+> +       return READ_ONCE(state->checkreqprot);
+> +}
+> +static inline void selinux_checkreqprot_set(struct selinux_state *state,
+> +                                           bool value)
+> +{
+> +       WRITE_ONCE(state->checkreqprot, value);
+> +}
+
+Move these up with the enforcing accessor functions in this header and
+use a consistent naming, e.g. checkreqprot_enabled(),
+checkreqprot_set().
