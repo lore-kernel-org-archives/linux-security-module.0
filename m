@@ -2,64 +2,68 @@ Return-Path: <SRS0=OzCb=CT=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55B50C43461
-	for <linux-security-module@archiver.kernel.org>; Thu, 10 Sep 2020 20:49:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25BA5C433E2
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Sep 2020 20:59:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 11B3120829
-	for <linux-security-module@archiver.kernel.org>; Thu, 10 Sep 2020 20:49:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CEEB02080A
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Sep 2020 20:59:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BclfH4h6"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="L1fFI0y0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726848AbgIJUtq (ORCPT
+        id S1725864AbgIJU7L (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 10 Sep 2020 16:49:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54790 "EHLO
+        Thu, 10 Sep 2020 16:59:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60106 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726410AbgIJUVS (ORCPT
+        with ESMTP id S1727908AbgIJUzj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 10 Sep 2020 16:21:18 -0400
-Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D6DCC061756
-        for <linux-security-module@vger.kernel.org>; Thu, 10 Sep 2020 13:21:18 -0700 (PDT)
-Received: by mail-pf1-x444.google.com with SMTP id z19so5372424pfn.8
-        for <linux-security-module@vger.kernel.org>; Thu, 10 Sep 2020 13:21:18 -0700 (PDT)
+        Thu, 10 Sep 2020 16:55:39 -0400
+Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8212C061757
+        for <linux-security-module@vger.kernel.org>; Thu, 10 Sep 2020 13:55:38 -0700 (PDT)
+Received: by mail-ej1-x642.google.com with SMTP id gr14so10798335ejb.1
+        for <linux-security-module@vger.kernel.org>; Thu, 10 Sep 2020 13:55:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=t7QYn1yhWQ40fqsjl2bkOVXNzJEardYI1LG85/i6U4Y=;
-        b=BclfH4h6+3Bniz3hlYX1B8/uwcukDuLERmdv/too1YSZlXK9dBtB6T76hiHYKxbvf9
-         ygrdCHBb2d1zvH8fNVjO46IvyeFd1UQ1/ZyJKm4z7MgXVjH3rg/TxqlBaSg381uGWgSp
-         a0ksHPHgB/X4oFDK2ba/ovfJCDRHiImWHRs4Y=
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6WIiEBg2V+e3hARqFde0aiNR5ScO14X3JJL78bMDSrs=;
+        b=L1fFI0y0Pe7czKsJuyVbxrmCDK0BnWq+6Kvh94sOd+r3i7msl/xLwLjzzzL9c28sAK
+         rR/+QnQaVicDMJJygLh0QwtQZRBvwqQJ5B/ajnk1a5e6wni2BRpk21gKHUzsEjqhdZlC
+         iNnidHCMLR8KiKmhBg9yFZO8/CrMLJAzGj7kfuVVeFwgzG8EdxWJtB4hNNKdRY4VNRNi
+         4fsNcbKzW3Vus8t+CEXPUuK+1etDhZqfaf5eNc0V+gczmE2YOW+pKG3W/Ot9ScdzAV9L
+         5xA17qxbjuoEpJU1m/PvmZL3DAYqeFNX1Tief9l5wRZX2ahMJBmPCcBHUhzF2E/mTgnd
+         rd8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=t7QYn1yhWQ40fqsjl2bkOVXNzJEardYI1LG85/i6U4Y=;
-        b=mKnHjfVcyl2X9qQd9Cy0GU0ct6Qh/kaZ/80ZbTvSn0Yay7eR1OoiySm45YvGSli6UU
-         83wmKO1XmWG9+NlGraJTMTp+VDFvvrnl23B75FJIZ9MWQ1e1WHbLAlj56PG8VVs01khv
-         OFoppabQCiARzjaKaqTy6NmojsQ3ZteiXlrxIenqQFwfeneYOWpscN7kbolOxHDC1V3f
-         PnJ2BOVbE8tNf0pEDSfjH1UfAj0QKsI1GHNkWc08oN1K5l2rBqMPxegSVacqVwRhF4Ls
-         VKaAQXuS+7tmUjhMIHK3VHx6hECyyqTlxrKa8JVR5jotCTFkZGcJHqE8E7w5GwhYXhaN
-         3wXA==
-X-Gm-Message-State: AOAM532ha1g6C+x8JQ6hLTDwovNP6L63CbY/q3kvQ79YgEfx+PLI17JB
-        Pu5QdeXAGBkP8V32sI1htqYdYA==
-X-Google-Smtp-Source: ABdhPJx0DRsV2uk7XRhN5WyrdQ3GN+smsELZkM+SGtSpILq3ccN5AWUrZdo9DI6cB7SYJM/QqYly8g==
-X-Received: by 2002:a63:4418:: with SMTP id r24mr5838961pga.8.1599769277620;
-        Thu, 10 Sep 2020 13:21:17 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id a13sm5241229pgq.41.2020.09.10.13.21.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Sep 2020 13:21:16 -0700 (PDT)
-From:   Kees Cook <keescook@chromium.org>
-To:     kernel-hardening@lists.openwall.com
-Cc:     Kees Cook <keescook@chromium.org>, John Wood <john.wood@gmx.com>,
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6WIiEBg2V+e3hARqFde0aiNR5ScO14X3JJL78bMDSrs=;
+        b=AlWYAZmr5ycJFgqoGV2vfMIzbcmoD5cnshCIxAbPCNC1r4c2+6RhSn1XphSE3I9HZx
+         RTBV5VIUJ+JsGyEp28ea1WkpnX8+jKZAPNhCKQpAiToL+v2+jcLKVoPn8LLQi+HNaF8L
+         KGPk8iNWupgwL7xWkTgDqg95igVdo1m0bdtq/0tK5lq1sZWTEJ1r9nNl4k7ICivYoVGg
+         7c0Gfv8/Pgw1n4u2XiyWLil1oJ9fSElka0u13gGs+cpcFt8dZ2Hjq2MNl79IxltfCUvl
+         1elphSuibfOr89HYh3eqCBZ7jjv+cY2vmLid4MnRXhxD8T1KE0fTjt/We/VwjJ7Q9fRY
+         jG3g==
+X-Gm-Message-State: AOAM532YJLjETxBn36IuLWBLw/u9ISc/0WNkHTaWIKccu8IIXu1dgcus
+        CaCPTtjwcLezfjZAj0pBogFp+88Djh55M1Ic2SEjbw==
+X-Google-Smtp-Source: ABdhPJz2fcbh8Swae5gqu3WCfXH+VoeuT8fBYorB0A9IvemCCzCy2a8aXjwcmpKuCfugC/8/pRR1MEGeVzo0AYRbaxo=
+X-Received: by 2002:a17:906:1513:: with SMTP id b19mr11068344ejd.537.1599771337075;
+ Thu, 10 Sep 2020 13:55:37 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200910202107.3799376-1-keescook@chromium.org> <20200910202107.3799376-7-keescook@chromium.org>
+In-Reply-To: <20200910202107.3799376-7-keescook@chromium.org>
+From:   Jann Horn <jannh@google.com>
+Date:   Thu, 10 Sep 2020 22:55:11 +0200
+Message-ID: <CAG48ez0boPBDm=Uh5xHXAxTj0BTRGyGp4uCgPgw7PkOCo47Hdg@mail.gmail.com>
+Subject: Re: [RFC PATCH 6/6] security/fbfam: Mitigate a fork brute force attack
+To:     Kees Cook <keescook@chromium.org>, John Wood <john.wood@gmx.com>
+Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
         Matthew Wilcox <willy@infradead.org>,
         Jonathan Corbet <corbet@lwn.net>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -74,60 +78,102 @@ Cc:     Kees Cook <keescook@chromium.org>, John Wood <john.wood@gmx.com>,
         Iurii Zaikin <yzaikin@google.com>,
         James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: [RFC PATCH 1/6] security/fbfam: Add a Kconfig to enable the fbfam feature
-Date:   Thu, 10 Sep 2020 13:21:02 -0700
-Message-Id: <20200910202107.3799376-2-keescook@chromium.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200910202107.3799376-1-keescook@chromium.org>
-References: <20200910202107.3799376-1-keescook@chromium.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: John Wood <john.wood@gmx.com>
+On Thu, Sep 10, 2020 at 10:22 PM Kees Cook <keescook@chromium.org> wrote:
+> In order to mitigate a fork brute force attack it is necessary to kill
+> all the offending tasks. This tasks are all the ones that share the
+> statistical data with the current task (the task that has crashed).
+>
+> Since the attack detection is done in the function fbfam_handle_attack()
+> that is called every time a core dump is triggered, only is needed to
+> kill the others tasks that share the same statistical data, not the
+> current one as this is in the path to be killed.
+>
+> When the SIGKILL signal is sent to the offending tasks from the function
+> fbfam_kill_tasks(), this one will be called again during the core dump
+> due to the shared statistical data shows a quickly crashing rate. So, to
+> avoid kill again the same tasks due to a recursive call of this
+> function, it is necessary to disable the attack detection.
+>
+> To disable this attack detection, add a condition in the function
+> fbfam_handle_attack() to not compute the crashing rate when the jiffies
+> stored in the statistical data are set to zero.
+[...]
+>  /**
+> - * fbfam_handle_attack() - Fork brute force attack detection.
+> + * fbfam_kill_tasks() - Kill the offending tasks
+> + *
+> + * When a fork brute force attack is detected it is necessary to kill all the
+> + * offending tasks. Since this function is called from fbfam_handle_attack(),
+> + * and so, every time a core dump is triggered, only is needed to kill the
+> + * others tasks that share the same statistical data, not the current one as
+> + * this is in the path to be killed.
+> + *
+> + * When the SIGKILL signal is sent to the offending tasks, this function will be
+> + * called again during the core dump due to the shared statistical data shows a
+> + * quickly crashing rate. So, to avoid kill again the same tasks due to a
+> + * recursive call of this function, it is necessary to disable the attack
+> + * detection setting the jiffies to zero.
+> + *
+> + * To improve the for_each_process loop it is possible to end it when all the
+> + * tasks that shared the same statistics are found.
 
-Add a menu entry under "Security options" to enable the "Fork brute
-force attack mitigation" feature.
+This is not a fastpath, there's no need to be clever and optimize
+things here, please get rid of that optimization. Especially since
+that fastpath looks racy against concurrent execve().
 
-Signed-off-by: John Wood <john.wood@gmx.com>
----
- security/Kconfig       |  1 +
- security/fbfam/Kconfig | 10 ++++++++++
- 2 files changed, 11 insertions(+)
- create mode 100644 security/fbfam/Kconfig
+> + * Return: -EFAULT if the current task doesn't have statistical data. Zero
+> + *         otherwise.
+> + */
+> +static int fbfam_kill_tasks(void)
+> +{
+> +       struct fbfam_stats *stats = current->fbfam_stats;
+> +       struct task_struct *p;
+> +       unsigned int to_kill, killed = 0;
+> +
+> +       if (!stats)
+> +               return -EFAULT;
+> +
+> +       to_kill = refcount_read(&stats->refc) - 1;
+> +       if (!to_kill)
+> +               return 0;
+> +
+> +       /* Disable the attack detection */
+> +       stats->jiffies = 0;
+> +       rcu_read_lock();
+> +
+> +       for_each_process(p) {
+> +               if (p == current || p->fbfam_stats != stats)
 
-diff --git a/security/Kconfig b/security/Kconfig
-index 7561f6f99f1d..00a90e25b8d5 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -290,6 +290,7 @@ config LSM
- 	  If unsure, leave this as the default.
- 
- source "security/Kconfig.hardening"
-+source "security/fbfam/Kconfig"
- 
- endmenu
- 
-diff --git a/security/fbfam/Kconfig b/security/fbfam/Kconfig
-new file mode 100644
-index 000000000000..bbe7f6aad369
---- /dev/null
-+++ b/security/fbfam/Kconfig
-@@ -0,0 +1,10 @@
-+# SPDX-License-Identifier: GPL-2.0
-+config FBFAM
-+	bool "Fork brute force attack mitigation"
-+	default n
-+	help
-+	  This is a user defense that detects any fork brute force attack
-+	  based on the application's crashing rate. When this measure is
-+	  triggered the fork system call is blocked.
-+
-+	  If you are unsure how to answer this question, answer N.
--- 
-2.25.1
+p->fbfam_stats could change concurrently, you should at least use
+READ_ONCE() here.
 
+Also, if this codepath is hit by a non-leader thread, "p == current"
+will always be false, and you'll end up killing the caller, too. You
+may want to compare with current->group_leader instead.
+
+
+> +                       continue;
+> +
+> +               do_send_sig_info(SIGKILL, SEND_SIG_PRIV, p, PIDTYPE_PID);
+> +               pr_warn("fbfam: Offending process with PID %d killed\n",
+> +                       p->pid);
+
+Normally pr_*() messages about tasks mention not just the pid, but
+also the ->comm name of the task.
+
+> +               killed += 1;
+> +               if (killed >= to_kill)
+> +                       break;
+> +       }
+> +
+> +       rcu_read_unlock();
+> +       return 0;
+> +}
