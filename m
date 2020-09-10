@@ -2,64 +2,68 @@ Return-Path: <SRS0=OzCb=CT=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2EDAC43461
-	for <linux-security-module@archiver.kernel.org>; Thu, 10 Sep 2020 20:24:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A895C43461
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Sep 2020 20:40:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 83D35221E5
-	for <linux-security-module@archiver.kernel.org>; Thu, 10 Sep 2020 20:24:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3547B20829
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Sep 2020 20:40:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IcAkD4z1"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WH2gIvD2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726301AbgIJUYR (ORCPT
+        id S1727035AbgIJUkA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 10 Sep 2020 16:24:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54938 "EHLO
+        Thu, 10 Sep 2020 16:40:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57638 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727007AbgIJUWD (ORCPT
+        with ESMTP id S1726890AbgIJUjh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 10 Sep 2020 16:22:03 -0400
-Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5CF5C0617BD
-        for <linux-security-module@vger.kernel.org>; Thu, 10 Sep 2020 13:21:23 -0700 (PDT)
-Received: by mail-pj1-x1041.google.com with SMTP id jw11so590447pjb.0
-        for <linux-security-module@vger.kernel.org>; Thu, 10 Sep 2020 13:21:23 -0700 (PDT)
+        Thu, 10 Sep 2020 16:39:37 -0400
+Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83D79C061756
+        for <linux-security-module@vger.kernel.org>; Thu, 10 Sep 2020 13:39:32 -0700 (PDT)
+Received: by mail-ed1-x544.google.com with SMTP id c10so7734836edk.6
+        for <linux-security-module@vger.kernel.org>; Thu, 10 Sep 2020 13:39:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=AfgkhWr5TvQdUsjIexLihHefc7s9wXFiV4jpjvqj+P4=;
-        b=IcAkD4z1/2S2dWxK0asptEvpDVQMKoSNKpWAR+6zYzikYLiAPypGc6/bX5F0imPsE7
-         MkE0O1TZK8LaTu5qFlEQkg4K5glh23k39a6UqEbwmlwKwof7KYPT/0hXh4MNToieMUdR
-         JYV1fCi//9FyuuJt8WiHG8zeHG9pAxzJd/fSw=
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=QYmngQGxhwrP1IO10+U44hIuDR+Bh29FacWTWPCzifs=;
+        b=WH2gIvD2kocNW47TzoJUq8vy8koxj0ikTiqTurIt6Osqva8P4NIsbGtJVGwywUIjkq
+         xe3qkruoqIuEPaS3xmqhN2h7V3FGdVjN/fZNXtAtjbUs+ii6wOWOxYBwlihrbKA6Dsi2
+         ZcxxkAAiqBfwAJnSmslWIncB3hpPqqLBsQnucMZPZcNa3susHR1gFRdjKlEQ6Zwl4evT
+         Ngj6/THEyDfAL+bxEhBtLcLnD1Efcq5a03Byz8i2VKTt0P9PSzdVa+iwn8BOcmkqFZjj
+         WKCR+bEgC/b8wFZGdDbKxyU2GcFt1zleojRTJ6mzpqrmZfP30xuKihxrC7oSbqE+O1e4
+         z6+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=AfgkhWr5TvQdUsjIexLihHefc7s9wXFiV4jpjvqj+P4=;
-        b=AQN2ybpthz3jZvMN8+QHsdOmQgJrpu7rRKJLGX19a8Rnn8jh2Ovhmgb7ZaKg/ebwhJ
-         omW/NPAGtTcOV3OZbvcXF3ag/vGH06EccTX3aRo8JRCbXfHwZLj52jeXWmIhb6nUF5jK
-         tkwcbPdogsS3964H43eTQNDSZcEb9oUi/Zj5/CxxeBED32c52ixTHqsDiL59gzmcH5ou
-         S13zSFz307mBQcOOeruaOMJYOEHWWwc8zxXESi16iCMJZ5T1P215FZ6Hkew17S2Pp2Nv
-         Wnr272SGz6YdCkL3nLtSb5k0IshfMb3IlAguuunD6wcPIW51Vnwkp8gotymEs8cVCgsA
-         vy0A==
-X-Gm-Message-State: AOAM5326I7qNQeQhtnOP1Tk0fq4IcBd+YM1Zvld7KPPCpVDuefDkXinu
-        JDOBf36p0vIQSbFlqSko9yb0JA==
-X-Google-Smtp-Source: ABdhPJzB6YHe1rp5zg2xo+FQRvAQwCLx++qVkJQa5at9cU43jBjrpf+5y4Cf716aA6XzEhbVIBp+Zw==
-X-Received: by 2002:a17:90a:cc0e:: with SMTP id b14mr1520840pju.166.1599769283338;
-        Thu, 10 Sep 2020 13:21:23 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id r123sm7002776pfc.187.2020.09.10.13.21.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Sep 2020 13:21:21 -0700 (PDT)
-From:   Kees Cook <keescook@chromium.org>
-To:     kernel-hardening@lists.openwall.com
-Cc:     Kees Cook <keescook@chromium.org>, John Wood <john.wood@gmx.com>,
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QYmngQGxhwrP1IO10+U44hIuDR+Bh29FacWTWPCzifs=;
+        b=B32mwGCKuS2c1KSuEIjkzDWxIEGKkIIMb/FoqmQFYNhpyf4k+FKD+VPcB5YSHB7ZFd
+         FCVQetSH+hbxhtbheex2UQRb9v0f6bkrdcsDjXVDpmHoScxac4ZBhS76XLCtpXHB7Ob9
+         gLX0PCzQyF3DJHYGyNihhsMnsR5iwNNrlKahCMngSD922J2VAOkgX79+ygOdItzx08el
+         eY4QNc0u0866CzTWS6KrjLZxaYLICEi345AZ6HdF7zBKgUuPxPjw2ZqcxOgx/VIsLIZB
+         3g2n9d8x/I7eTJZUOyYWTGfTH08XpRceLNdR95SVgsVU8LLbRv4vs//Y4v4HIVMjLiJ0
+         ZpSw==
+X-Gm-Message-State: AOAM532M3RK4D6HJhTW7CuaNS1oF9ijKfhSL3WcDlWI3HCP76fTi6XT4
+        o0FqT0M+w8ulmY7x6yBbTAAh7mktL28wJ930NKkysw==
+X-Google-Smtp-Source: ABdhPJzQ6i+tHlAxsWiND/QkNM3WvkTC+Ju6Mk1rDHZmgMyEa8UX1fZqVV5xbVt8ItiYrZl+V7nr/bCNAXGD3jgXwtk=
+X-Received: by 2002:a05:6402:7d2:: with SMTP id u18mr11556708edy.69.1599770370678;
+ Thu, 10 Sep 2020 13:39:30 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200910202107.3799376-1-keescook@chromium.org>
+In-Reply-To: <20200910202107.3799376-1-keescook@chromium.org>
+From:   Jann Horn <jannh@google.com>
+Date:   Thu, 10 Sep 2020 22:39:04 +0200
+Message-ID: <CAG48ez0WzMpTqaTgtZwQ9MenCoWuyFn1yRhL9R0+s+=pbonTQA@mail.gmail.com>
+Subject: Re: [RESEND][RFC PATCH 0/6] Fork brute force attack mitigation (fbfam)
+To:     Kees Cook <keescook@chromium.org>, John Wood <john.wood@gmx.com>
+Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
         Matthew Wilcox <willy@infradead.org>,
         Jonathan Corbet <corbet@lwn.net>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -74,169 +78,30 @@ Cc:     Kees Cook <keescook@chromium.org>, John Wood <john.wood@gmx.com>,
         Iurii Zaikin <yzaikin@google.com>,
         James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: [RFC PATCH 6/6] security/fbfam: Mitigate a fork brute force attack
-Date:   Thu, 10 Sep 2020 13:21:07 -0700
-Message-Id: <20200910202107.3799376-7-keescook@chromium.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200910202107.3799376-1-keescook@chromium.org>
-References: <20200910202107.3799376-1-keescook@chromium.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: John Wood <john.wood@gmx.com>
+On Thu, Sep 10, 2020 at 10:21 PM Kees Cook <keescook@chromium.org> wrote:
+> [kees: re-sending this series on behalf of John Wood <john.wood@gmx.com>
+> also visible at https://github.com/johwood/linux fbfam]
+[...]
+> The goal of this patch serie is to detect and mitigate a fork brute force
+> attack.
+>
+> Attacks with the purpose to break ASLR or bypass canaries traditionaly use
+> some level of brute force with the help of the fork system call. This is
+> possible since when creating a new process using fork its memory contents
+> are the same as those of the parent process (the process that called the
+> fork system call). So, the attacker can test the memory infinite times to
+> find the correct memory values or the correct memory addresses without
+> worrying about crashing the application.
 
-In order to mitigate a fork brute force attack it is necessary to kill
-all the offending tasks. This tasks are all the ones that share the
-statistical data with the current task (the task that has crashed).
-
-Since the attack detection is done in the function fbfam_handle_attack()
-that is called every time a core dump is triggered, only is needed to
-kill the others tasks that share the same statistical data, not the
-current one as this is in the path to be killed.
-
-When the SIGKILL signal is sent to the offending tasks from the function
-fbfam_kill_tasks(), this one will be called again during the core dump
-due to the shared statistical data shows a quickly crashing rate. So, to
-avoid kill again the same tasks due to a recursive call of this
-function, it is necessary to disable the attack detection.
-
-To disable this attack detection, add a condition in the function
-fbfam_handle_attack() to not compute the crashing rate when the jiffies
-stored in the statistical data are set to zero.
-
-Signed-off-by: John Wood <john.wood@gmx.com>
----
- security/fbfam/fbfam.c | 76 +++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 71 insertions(+), 5 deletions(-)
-
-diff --git a/security/fbfam/fbfam.c b/security/fbfam/fbfam.c
-index 3aa669e4ea51..173a6122390f 100644
---- a/security/fbfam/fbfam.c
-+++ b/security/fbfam/fbfam.c
-@@ -4,8 +4,11 @@
- #include <linux/errno.h>
- #include <linux/gfp.h>
- #include <linux/jiffies.h>
-+#include <linux/pid.h>
- #include <linux/printk.h>
-+#include <linux/rcupdate.h>
- #include <linux/refcount.h>
-+#include <linux/sched/signal.h>
- #include <linux/signal.h>
- #include <linux/slab.h>
- 
-@@ -24,7 +27,8 @@ unsigned long sysctl_crashing_rate_threshold = 30000;
-  * struct fbfam_stats - Fork brute force attack mitigation statistics.
-  * @refc: Reference counter.
-  * @faults: Number of crashes since jiffies.
-- * @jiffies: First fork or execve timestamp.
-+ * @jiffies: First fork or execve timestamp. If zero, the attack detection is
-+ *           disabled.
-  *
-  * The purpose of this structure is to manage all the necessary information to
-  * compute the crashing rate of an application. So, it holds a first fork or
-@@ -175,13 +179,69 @@ int fbfam_exit(void)
- }
- 
- /**
-- * fbfam_handle_attack() - Fork brute force attack detection.
-+ * fbfam_kill_tasks() - Kill the offending tasks
-+ *
-+ * When a fork brute force attack is detected it is necessary to kill all the
-+ * offending tasks. Since this function is called from fbfam_handle_attack(),
-+ * and so, every time a core dump is triggered, only is needed to kill the
-+ * others tasks that share the same statistical data, not the current one as
-+ * this is in the path to be killed.
-+ *
-+ * When the SIGKILL signal is sent to the offending tasks, this function will be
-+ * called again during the core dump due to the shared statistical data shows a
-+ * quickly crashing rate. So, to avoid kill again the same tasks due to a
-+ * recursive call of this function, it is necessary to disable the attack
-+ * detection setting the jiffies to zero.
-+ *
-+ * To improve the for_each_process loop it is possible to end it when all the
-+ * tasks that shared the same statistics are found.
-+ *
-+ * Return: -EFAULT if the current task doesn't have statistical data. Zero
-+ *         otherwise.
-+ */
-+static int fbfam_kill_tasks(void)
-+{
-+	struct fbfam_stats *stats = current->fbfam_stats;
-+	struct task_struct *p;
-+	unsigned int to_kill, killed = 0;
-+
-+	if (!stats)
-+		return -EFAULT;
-+
-+	to_kill = refcount_read(&stats->refc) - 1;
-+	if (!to_kill)
-+		return 0;
-+
-+	/* Disable the attack detection */
-+	stats->jiffies = 0;
-+	rcu_read_lock();
-+
-+	for_each_process(p) {
-+		if (p == current || p->fbfam_stats != stats)
-+			continue;
-+
-+		do_send_sig_info(SIGKILL, SEND_SIG_PRIV, p, PIDTYPE_PID);
-+		pr_warn("fbfam: Offending process with PID %d killed\n",
-+			p->pid);
-+
-+		killed += 1;
-+		if (killed >= to_kill)
-+			break;
-+	}
-+
-+	rcu_read_unlock();
-+	return 0;
-+}
-+
-+/**
-+ * fbfam_handle_attack() - Fork brute force attack detection and mitigation.
-  * @signal: Signal number that causes the core dump.
-  *
-  * The crashing rate of an application is computed in milliseconds per fault in
-  * each crash. So, if this rate goes under a certain threshold there is a clear
-  * signal that the application is crashing quickly. At this moment, a fork brute
-- * force attack is happening.
-+ * force attack is happening. Under this scenario it is necessary to kill all
-+ * the offending tasks in order to mitigate the attack.
-  *
-  * Return: -EFAULT if the current task doesn't have statistical data. Zero
-  *         otherwise.
-@@ -195,6 +255,10 @@ int fbfam_handle_attack(int signal)
- 	if (!stats)
- 		return -EFAULT;
- 
-+	/* The attack detection is disabled */
-+	if (!stats->jiffies)
-+		return 0;
-+
- 	if (!(signal == SIGILL || signal == SIGBUS || signal == SIGKILL ||
- 	      signal == SIGSEGV || signal == SIGSYS))
- 		return 0;
-@@ -205,9 +269,11 @@ int fbfam_handle_attack(int signal)
- 	delta_time = jiffies64_to_msecs(delta_jiffies);
- 	crashing_rate = delta_time / (u64)stats->faults;
- 
--	if (crashing_rate < (u64)sysctl_crashing_rate_threshold)
--		pr_warn("fbfam: Fork brute force attack detected\n");
-+	if (crashing_rate >= (u64)sysctl_crashing_rate_threshold)
-+		return 0;
- 
-+	pr_warn("fbfam: Fork brute force attack detected\n");
-+	fbfam_kill_tasks();
- 	return 0;
- }
- 
--- 
-2.25.1
-
+For the next version of this patchset, you may want to clarify that
+this is intended to stop brute force attacks *against vulnerable
+userspace processes* that fork off worker processes. I was halfway
+through the patch series before I realized that.
