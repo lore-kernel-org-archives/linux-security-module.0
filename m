@@ -5,58 +5,58 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 062BAC43461
-	for <linux-security-module@archiver.kernel.org>; Thu, 10 Sep 2020 23:33:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E117C433E2
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Sep 2020 23:49:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BF696208A9
-	for <linux-security-module@archiver.kernel.org>; Thu, 10 Sep 2020 23:33:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09FB9208CA
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Sep 2020 23:49:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="N8GTm1Db"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OZvRIiWx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725283AbgIJXdv (ORCPT
+        id S1725771AbgIJXtO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 10 Sep 2020 19:33:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56446 "EHLO
+        Thu, 10 Sep 2020 19:49:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58850 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725294AbgIJXdm (ORCPT
+        with ESMTP id S1725283AbgIJXtL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 10 Sep 2020 19:33:42 -0400
-Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B002C061756
-        for <linux-security-module@vger.kernel.org>; Thu, 10 Sep 2020 16:33:40 -0700 (PDT)
-Received: by mail-pf1-x444.google.com with SMTP id d9so5784569pfd.3
-        for <linux-security-module@vger.kernel.org>; Thu, 10 Sep 2020 16:33:40 -0700 (PDT)
+        Thu, 10 Sep 2020 19:49:11 -0400
+Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D07BCC061756
+        for <linux-security-module@vger.kernel.org>; Thu, 10 Sep 2020 16:49:10 -0700 (PDT)
+Received: by mail-pg1-x541.google.com with SMTP id l191so5241537pgd.5
+        for <linux-security-module@vger.kernel.org>; Thu, 10 Sep 2020 16:49:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=4RBaH+SNtQZyszf95yfys9ev5YuersLuBj4oZ/8U4uI=;
-        b=N8GTm1Dbn84HIt88mWsX44tIFWprbrc8Nc57ldNK0e9KxJ6Y7OPleZjHiHVfU+EuVR
-         Nt6fd0ykv8WwDqUq/5E01PmMJR61Td7yjaCcLKAw3GmXUrIYA18yNyiRiHhfJIls1wi1
-         iTfm3bQHDHv6CpIyM6R2MGv8nAKpsNuDdrCNg=
+        bh=IaBh+ddcuDpz6mDgalgDYidOFzTPwsq/h7xo4uSnjys=;
+        b=OZvRIiWxvgbgV7rDrzwW/mo7pKOcUBLaRM/3F39IPc1E9icQFqomZHx0N4US35FTp7
+         vSsnel87R3svfqBGdMoOlyN5B8k6YMqAy64tGhVQUCa1SGGb6+xnGqr9dmXdn7NgrUmc
+         d/YNAWAvalvIjWW1alPmRiVUPHjkZXuTlKro4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=4RBaH+SNtQZyszf95yfys9ev5YuersLuBj4oZ/8U4uI=;
-        b=AYsaJrhWAGBLVTIZ/+Hzb76Ww5MxkT4x+6XH7+UdzbQSRQGAcHyT4ijbrpsQp6O23n
-         ezp0inp64+5PTq55Uoe4PWcp3UvlhuBCao6YAdUyOKyN9YBq98nSoZwqf0v6fEm2zB+s
-         WMKJCkQul/uDjLZ+VhlE7VuTCacPwBknASDmI6QWsyryld8AF2/0nVBXt1Fp+Rv2MNnU
-         SMq+i540RkTJF1xFMfxFi78klNHid4aIPCh//FmjHfzs+OG1+0qp2hgC2sC6GJUkI8fB
-         pYDJOgTTskuCvTGP/5RZGvEa5AsXCMpW8XefYb1Lto1qPAi5PGwDAJSq35rXNnbG6v5i
-         pRVQ==
-X-Gm-Message-State: AOAM53218TM2VY15CSEsZd5p12SPycB6Y5Ai8u60ZB0KqgYAI1gzhDHf
-        Paw0i5LBVpAQDkJUgRB1ifOLjw==
-X-Google-Smtp-Source: ABdhPJyofycYEK5HfnkOAbIa42Gr5C/nTGkv9iw512ddPj4Vz91LXsCiAIST2k+Ma2HQuPcKS1NFXA==
-X-Received: by 2002:a17:902:9891:b029:d1:9bd3:6772 with SMTP id s17-20020a1709029891b02900d19bd36772mr985688plp.28.1599780820075;
-        Thu, 10 Sep 2020 16:33:40 -0700 (PDT)
+        bh=IaBh+ddcuDpz6mDgalgDYidOFzTPwsq/h7xo4uSnjys=;
+        b=a5Dt19V4de0yAb4CAkIuD0prTtJxURgw3VjYqHvrDhKRs3slPG+8c6yAx05mc7mase
+         Sg1A1k5bWZ27XRIrdQ7r3vdu5LfEnxsEu9l6HOzFYElgtAJWP5F7A4ddeNjCXUPbNXMn
+         5ylJ6zfwA8I/2AUcYJku1qZPScVt3TA1BOFUdwmUtdvxIZMiCG9Nrb0QmeShWK6l13P9
+         PIr8p2y9r/hFztRT9mYJoqh2LChxtZIdahuRqbFtIowQa1TiGgj37T/eu0JmDT0Kh7EJ
+         smXNbELxgP6JHGXgcvwhacdWIy6V6iN4ggDUytqqTFReZrL5iMESLxfQe/Q5kLs3WMve
+         F5Bw==
+X-Gm-Message-State: AOAM533VvBc3i/JmbCp8CUoulev13+MH+vC9xOurGyPmShaiYtf2GUPs
+        KoP34IGAu9eozhf9Wsp1MSrK5A==
+X-Google-Smtp-Source: ABdhPJwZ1J9qu1mZJrqinh8jNTWdAMVS2FuQ2HVvvaEDccGanTL5jugLR2huQsSNnXe/gHlg9CGKaA==
+X-Received: by 2002:a05:6a00:f:b029:13e:d13d:a089 with SMTP id h15-20020a056a00000fb029013ed13da089mr7496884pfk.32.1599781750231;
+        Thu, 10 Sep 2020 16:49:10 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id n7sm172755pfq.114.2020.09.10.16.33.39
+        by smtp.gmail.com with ESMTPSA id p190sm215398pfp.9.2020.09.10.16.49.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Sep 2020 16:33:39 -0700 (PDT)
-Date:   Thu, 10 Sep 2020 16:33:38 -0700
+        Thu, 10 Sep 2020 16:49:09 -0700 (PDT)
+Date:   Thu, 10 Sep 2020 16:49:08 -0700
 From:   Kees Cook <keescook@chromium.org>
 To:     kernel-hardening@lists.openwall.com
 Cc:     John Wood <john.wood@gmx.com>,
@@ -76,114 +76,161 @@ Cc:     John Wood <john.wood@gmx.com>,
         "Serge E. Hallyn" <serge@hallyn.com>, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH 3/6] security/fbfam: Use the api to manage statistics
-Message-ID: <202009101625.0E3B6242@keescook>
+Subject: Re: [RFC PATCH 5/6] security/fbfam: Detect a fork brute force attack
+Message-ID: <202009101634.52ED6751AD@keescook>
 References: <20200910202107.3799376-1-keescook@chromium.org>
- <20200910202107.3799376-4-keescook@chromium.org>
+ <20200910202107.3799376-6-keescook@chromium.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200910202107.3799376-4-keescook@chromium.org>
+In-Reply-To: <20200910202107.3799376-6-keescook@chromium.org>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Sep 10, 2020 at 01:21:04PM -0700, Kees Cook wrote:
+On Thu, Sep 10, 2020 at 01:21:06PM -0700, Kees Cook wrote:
 > From: John Wood <john.wood@gmx.com>
 > 
-> Use the previous defined api to manage statistics calling it accordingly
-> when a task forks, calls execve or exits.
+> To detect a fork brute force attack it is necessary to compute the
+> crashing rate of the application. This calculation is performed in each
+> fatal fail of a task, or in other words, when a core dump is triggered.
+> If this rate shows that the application is crashing quickly, there is a
+> clear signal that an attack is happening.
+> 
+> Since the crashing rate is computed in milliseconds per fault, if this
+> rate goes under a certain threshold a warning is triggered.
 > 
 > Signed-off-by: John Wood <john.wood@gmx.com>
 > ---
->  fs/exec.c     | 2 ++
->  kernel/exit.c | 2 ++
->  kernel/fork.c | 4 ++++
->  3 files changed, 8 insertions(+)
+>  fs/coredump.c          |  2 ++
+>  include/fbfam/fbfam.h  |  2 ++
+>  security/fbfam/fbfam.c | 39 +++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 43 insertions(+)
 > 
-> diff --git a/fs/exec.c b/fs/exec.c
-> index a91003e28eaa..b30118674d32 100644
-> --- a/fs/exec.c
-> +++ b/fs/exec.c
-> @@ -71,6 +71,7 @@
+> diff --git a/fs/coredump.c b/fs/coredump.c
+> index 76e7c10edfc0..d4ba4e1828d5 100644
+> --- a/fs/coredump.c
+> +++ b/fs/coredump.c
+> @@ -51,6 +51,7 @@
 >  #include "internal.h"
 >  
 >  #include <trace/events/sched.h>
 > +#include <fbfam/fbfam.h>
 >  
->  static int bprm_creds_from_file(struct linux_binprm *bprm);
->  
-> @@ -1940,6 +1941,7 @@ static int bprm_execve(struct linux_binprm *bprm,
->  	task_numa_free(current, false);
->  	if (displaced)
->  		put_files_struct(displaced);
-> +	fbfam_execve();
+>  int core_uses_pid;
+>  unsigned int core_pipe_limit;
+> @@ -825,6 +826,7 @@ void do_coredump(const kernel_siginfo_t *siginfo)
+>  fail_creds:
+>  	put_cred(cred);
+>  fail:
+> +	fbfam_handle_attack(siginfo->si_signo);
 
-As mentioned in the other emails, I think this could trivially be
-converted into an LSM: all the hooks are available AFAICT. If you only
-want to introspect execve _happening_, you can use bprm_creds_for_exec
-which is called a few lines above. Otherwise, my prior suggestion ("the
-exec has happened" hook via brpm_cred_committing, etc).
+I don't think this is the right place for detecting a crash -- isn't
+this only for the "dumping core" condition? In other words, don't you
+want to do this in get_signal()'s "fatal" block? (i.e. very close to the
+do_coredump, but without the "should I dump?" check?)
 
->  	return retval;
->  
->  out:
-> diff --git a/kernel/exit.c b/kernel/exit.c
-> index 733e80f334e7..39a6139dcf31 100644
-> --- a/kernel/exit.c
-> +++ b/kernel/exit.c
-> @@ -67,6 +67,7 @@
->  #include <linux/uaccess.h>
->  #include <asm/unistd.h>
->  #include <asm/mmu_context.h>
-> +#include <fbfam/fbfam.h>
->  
->  static void __unhash_process(struct task_struct *p, bool group_dead)
->  {
-> @@ -852,6 +853,7 @@ void __noreturn do_exit(long code)
->  		__this_cpu_add(dirty_throttle_leaks, tsk->nr_dirtied);
->  	exit_rcu();
->  	exit_tasks_rcu_finish();
-> +	fbfam_exit();
->  
->  	lockdep_free_task(tsk);
->  	do_task_dead();
+Hmm, but maybe I'm wrong? It looks like you're looking at noticing the
+process taking a signal from SIG_KERNEL_COREDUMP_MASK ?
 
-The place for this would be put_task_struct, and the LSM hook is
-task_free. :) (The only caveat with task_free hook is that it may be
-called in non-process context due to being freed during RCU, etc. In
-practice, this is unlikely to cause problems.)
+(Better yet: what are fatal conditions that do NOT match
+SIG_KERNEL_COREDUMP_MASK, and should those be covered?)
 
-> diff --git a/kernel/fork.c b/kernel/fork.c
-> index 49677d668de4..c933838450a8 100644
-> --- a/kernel/fork.c
-> +++ b/kernel/fork.c
-> @@ -107,6 +107,8 @@
->  #define CREATE_TRACE_POINTS
->  #include <trace/events/task.h>
+Regardless, *this* looks like the only place without an LSM hook. And it
+doesn't seem unreasonable to add one here. I assume it would probably
+just take the siginfo pointer, which is also what you're checking.
+
+e.g. for include/linux/lsm_hook_defs.h:
+
+LSM_HOOK(int, 0, task_coredump, const kernel_siginfo_t *siginfo);
+
+
+>  	return;
+>  }
 >  
-> +#include <fbfam/fbfam.h>
-> +
->  /*
->   * Minimum number of threads to boot the kernel
->   */
-> @@ -941,6 +943,8 @@ static struct task_struct *dup_task_struct(struct task_struct *orig, int node)
->  #ifdef CONFIG_MEMCG
->  	tsk->active_memcg = NULL;
+> diff --git a/include/fbfam/fbfam.h b/include/fbfam/fbfam.h
+> index 2cfe51d2b0d5..9ac8e33d8291 100644
+> --- a/include/fbfam/fbfam.h
+> +++ b/include/fbfam/fbfam.h
+> @@ -12,10 +12,12 @@ extern struct ctl_table fbfam_sysctls[];
+>  int fbfam_fork(struct task_struct *child);
+>  int fbfam_execve(void);
+>  int fbfam_exit(void);
+> +int fbfam_handle_attack(int signal);
+>  #else
+>  static inline int fbfam_fork(struct task_struct *child) { return 0; }
+>  static inline int fbfam_execve(void) { return 0; }
+>  static inline int fbfam_exit(void) { return 0; }
+> +static inline int fbfam_handle_attack(int signal) { return 0; }
 >  #endif
-> +
-> +	fbfam_fork(tsk);
->  	return tsk;
-
-Since you don't need "orig", this is also trivially an LSM hook.
-dup_task_struct() is called by copy_process(), which will also call the
-task_alloc LSM hook later on.
-
 >  
->  free_stack:
-> -- 
-> 2.25.1
-> 
+>  #endif /* _FBFAM_H_ */
+> diff --git a/security/fbfam/fbfam.c b/security/fbfam/fbfam.c
+> index 9be4639b72eb..3aa669e4ea51 100644
+> --- a/security/fbfam/fbfam.c
+> +++ b/security/fbfam/fbfam.c
+> @@ -4,7 +4,9 @@
+>  #include <linux/errno.h>
+>  #include <linux/gfp.h>
+>  #include <linux/jiffies.h>
+> +#include <linux/printk.h>
+>  #include <linux/refcount.h>
+> +#include <linux/signal.h>
+>  #include <linux/slab.h>
+>  
+>  /**
+> @@ -172,3 +174,40 @@ int fbfam_exit(void)
+>  	return 0;
+>  }
+>  
+> +/**
+> + * fbfam_handle_attack() - Fork brute force attack detection.
+> + * @signal: Signal number that causes the core dump.
+> + *
+> + * The crashing rate of an application is computed in milliseconds per fault in
+> + * each crash. So, if this rate goes under a certain threshold there is a clear
+> + * signal that the application is crashing quickly. At this moment, a fork brute
+> + * force attack is happening.
+> + *
+> + * Return: -EFAULT if the current task doesn't have statistical data. Zero
+> + *         otherwise.
+> + */
+> +int fbfam_handle_attack(int signal)
+> +{
+> +	struct fbfam_stats *stats = current->fbfam_stats;
+> +	u64 delta_jiffies, delta_time;
+> +	u64 crashing_rate;
+> +
+> +	if (!stats)
+> +		return -EFAULT;
+> +
+> +	if (!(signal == SIGILL || signal == SIGBUS || signal == SIGKILL ||
+> +	      signal == SIGSEGV || signal == SIGSYS))
+> +		return 0;
+
+This will only be called for:
+
+#define SIG_KERNEL_COREDUMP_MASK (\
+        rt_sigmask(SIGQUIT)   |  rt_sigmask(SIGILL)    | \
+        rt_sigmask(SIGTRAP)   |  rt_sigmask(SIGABRT)   | \
+        rt_sigmask(SIGFPE)    |  rt_sigmask(SIGSEGV)   | \
+        rt_sigmask(SIGBUS)    |  rt_sigmask(SIGSYS)    | \
+        rt_sigmask(SIGXCPU)   |  rt_sigmask(SIGXFSZ)   | \
+        SIGEMT_MASK                                    )
+
+So you're skipping:
+
+	SIGQUIT
+	SIGTRAP
+	SIGABRT
+	SIGFPE
+	SIGXCPU
+	SIGXFSZ
+	SIGEMT_MASK
+
+I would include SIGABRT (e.g. glibc will call abort() for stack
+canary, malloc, etc failures, which may indicate a mitigation has
+fired).
 
 -- 
 Kees Cook
