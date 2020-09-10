@@ -2,178 +2,160 @@ Return-Path: <SRS0=OzCb=CT=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25BA5C433E2
-	for <linux-security-module@archiver.kernel.org>; Thu, 10 Sep 2020 20:59:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68195C433E2
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Sep 2020 21:02:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CEEB02080A
-	for <linux-security-module@archiver.kernel.org>; Thu, 10 Sep 2020 20:59:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 117F820829
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Sep 2020 21:02:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="L1fFI0y0"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CNOzJABt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725864AbgIJU7L (ORCPT
+        id S1725971AbgIJVCO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 10 Sep 2020 16:59:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60106 "EHLO
+        Thu, 10 Sep 2020 17:02:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32842 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727908AbgIJUzj (ORCPT
+        with ESMTP id S1727980AbgIJVBz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 10 Sep 2020 16:55:39 -0400
-Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8212C061757
-        for <linux-security-module@vger.kernel.org>; Thu, 10 Sep 2020 13:55:38 -0700 (PDT)
-Received: by mail-ej1-x642.google.com with SMTP id gr14so10798335ejb.1
-        for <linux-security-module@vger.kernel.org>; Thu, 10 Sep 2020 13:55:38 -0700 (PDT)
+        Thu, 10 Sep 2020 17:01:55 -0400
+Received: from mail-qk1-x744.google.com (mail-qk1-x744.google.com [IPv6:2607:f8b0:4864:20::744])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11126C061756;
+        Thu, 10 Sep 2020 14:01:52 -0700 (PDT)
+Received: by mail-qk1-x744.google.com with SMTP id p4so7624053qkf.0;
+        Thu, 10 Sep 2020 14:01:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6WIiEBg2V+e3hARqFde0aiNR5ScO14X3JJL78bMDSrs=;
-        b=L1fFI0y0Pe7czKsJuyVbxrmCDK0BnWq+6Kvh94sOd+r3i7msl/xLwLjzzzL9c28sAK
-         rR/+QnQaVicDMJJygLh0QwtQZRBvwqQJ5B/ajnk1a5e6wni2BRpk21gKHUzsEjqhdZlC
-         iNnidHCMLR8KiKmhBg9yFZO8/CrMLJAzGj7kfuVVeFwgzG8EdxWJtB4hNNKdRY4VNRNi
-         4fsNcbKzW3Vus8t+CEXPUuK+1etDhZqfaf5eNc0V+gczmE2YOW+pKG3W/Ot9ScdzAV9L
-         5xA17qxbjuoEpJU1m/PvmZL3DAYqeFNX1Tief9l5wRZX2ahMJBmPCcBHUhzF2E/mTgnd
-         rd8w==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Qj+bF6JHAiKUykX77NiGv2uVk1sGIJT54ofxqXbZgR4=;
+        b=CNOzJABtDEmZY6gFwgUpGwuAig4xQxjZutndog6nXBEkfkWAt9oQjMk0y0rArt5yzj
+         6w8mOJwIzmQcGG6QJC/eXM4pdsn+4vYY1ZIBK797L4dbXCrqrGCOj/LevtX0SLMsXscb
+         Xn7LLmE99m1EOg/WWgIQrnOM1wN8AT9WBfUtK+DenHHZWEXiBGDpiqj0Hs4GPDryJrve
+         9FkKmt/7NLKhczHZsUsDWn+QAUJlMqJJP4/KCGD/kJNMS5NA0gm5h7Kwb3zNAZx48Ynw
+         vve6TpP9tIWpf9r9opVGITGYI8gNQ9LqygPVjRcbcqa5Wf3lubUzBU/aVlLK3WKewxUq
+         dr7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6WIiEBg2V+e3hARqFde0aiNR5ScO14X3JJL78bMDSrs=;
-        b=AlWYAZmr5ycJFgqoGV2vfMIzbcmoD5cnshCIxAbPCNC1r4c2+6RhSn1XphSE3I9HZx
-         RTBV5VIUJ+JsGyEp28ea1WkpnX8+jKZAPNhCKQpAiToL+v2+jcLKVoPn8LLQi+HNaF8L
-         KGPk8iNWupgwL7xWkTgDqg95igVdo1m0bdtq/0tK5lq1sZWTEJ1r9nNl4k7ICivYoVGg
-         7c0Gfv8/Pgw1n4u2XiyWLil1oJ9fSElka0u13gGs+cpcFt8dZ2Hjq2MNl79IxltfCUvl
-         1elphSuibfOr89HYh3eqCBZ7jjv+cY2vmLid4MnRXhxD8T1KE0fTjt/We/VwjJ7Q9fRY
-         jG3g==
-X-Gm-Message-State: AOAM532YJLjETxBn36IuLWBLw/u9ISc/0WNkHTaWIKccu8IIXu1dgcus
-        CaCPTtjwcLezfjZAj0pBogFp+88Djh55M1Ic2SEjbw==
-X-Google-Smtp-Source: ABdhPJz2fcbh8Swae5gqu3WCfXH+VoeuT8fBYorB0A9IvemCCzCy2a8aXjwcmpKuCfugC/8/pRR1MEGeVzo0AYRbaxo=
-X-Received: by 2002:a17:906:1513:: with SMTP id b19mr11068344ejd.537.1599771337075;
- Thu, 10 Sep 2020 13:55:37 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Qj+bF6JHAiKUykX77NiGv2uVk1sGIJT54ofxqXbZgR4=;
+        b=kprPMUF+LTx3bNRpr0PpS2jVBuYJkLoAXIf+85g44DYArRvlrV/kZpQ10DH60ZqS8N
+         sdEgicjLuutamsDdYNc6AvnskUpRww4OsE0xuH3Y3ZupTOkBfz8L88UBALX4OX+MoOqB
+         DiWS/fwmDVzbyPmYZXLTrz5URbjDIjBo1wHGPWT7RtEAqkJha1sFrDuZDR6fKlwAVp2k
+         dzS8kB+WQfZyxYSIA+KvSG5AKVQd45Tg3wEM/f3h6YGSJICygLr09Kmw3GKg1YrzG0zJ
+         XLKBWeYQN5ibYH6e4kv/Jzr1sCJG+CCD2H4vpLlTmIBROrhwt6giI3as8t1Xk3ndhaVp
+         odFg==
+X-Gm-Message-State: AOAM5325WOeDEgajtR5DGNaYiyKbr9kjBuYtM2glCiO7L2JUwU6c4f3S
+        7SKOI/cnQ3ufJxQxq5ygmRE=
+X-Google-Smtp-Source: ABdhPJw9OCeXPquFymYHBaZYRTytzOzHjznm/e9LSivf+IcVTn/OufvciOc7XaKg+oW4v7pnzMkXLA==
+X-Received: by 2002:ae9:e8c5:: with SMTP id a188mr9966875qkg.204.1599771710554;
+        Thu, 10 Sep 2020 14:01:50 -0700 (PDT)
+Received: from puritycontrol.fios-router.home (pool-68-134-6-11.bltmmd.fios.verizon.net. [68.134.6.11])
+        by smtp.gmail.com with ESMTPSA id g12sm153604qke.90.2020.09.10.14.01.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Sep 2020 14:01:50 -0700 (PDT)
+From:   Stephen Smalley <stephen.smalley.work@gmail.com>
+To:     mtk.manpages@gmail.com
+Cc:     linux-man@vger.kernel.org, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org,
+        Stephen Smalley <stephen.smalley.work@gmail.com>
+Subject: [PATCH] socket.7,unix.7: add initial description for SO_PEERSEC
+Date:   Thu, 10 Sep 2020 17:00:59 -0400
+Message-Id: <20200910210059.34759-1-stephen.smalley.work@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20200910202107.3799376-1-keescook@chromium.org> <20200910202107.3799376-7-keescook@chromium.org>
-In-Reply-To: <20200910202107.3799376-7-keescook@chromium.org>
-From:   Jann Horn <jannh@google.com>
-Date:   Thu, 10 Sep 2020 22:55:11 +0200
-Message-ID: <CAG48ez0boPBDm=Uh5xHXAxTj0BTRGyGp4uCgPgw7PkOCo47Hdg@mail.gmail.com>
-Subject: Re: [RFC PATCH 6/6] security/fbfam: Mitigate a fork brute force attack
-To:     Kees Cook <keescook@chromium.org>, John Wood <john.wood@gmx.com>
-Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, linux-doc@vger.kernel.org,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Sep 10, 2020 at 10:22 PM Kees Cook <keescook@chromium.org> wrote:
-> In order to mitigate a fork brute force attack it is necessary to kill
-> all the offending tasks. This tasks are all the ones that share the
-> statistical data with the current task (the task that has crashed).
->
-> Since the attack detection is done in the function fbfam_handle_attack()
-> that is called every time a core dump is triggered, only is needed to
-> kill the others tasks that share the same statistical data, not the
-> current one as this is in the path to be killed.
->
-> When the SIGKILL signal is sent to the offending tasks from the function
-> fbfam_kill_tasks(), this one will be called again during the core dump
-> due to the shared statistical data shows a quickly crashing rate. So, to
-> avoid kill again the same tasks due to a recursive call of this
-> function, it is necessary to disable the attack detection.
->
-> To disable this attack detection, add a condition in the function
-> fbfam_handle_attack() to not compute the crashing rate when the jiffies
-> stored in the statistical data are set to zero.
-[...]
->  /**
-> - * fbfam_handle_attack() - Fork brute force attack detection.
-> + * fbfam_kill_tasks() - Kill the offending tasks
-> + *
-> + * When a fork brute force attack is detected it is necessary to kill all the
-> + * offending tasks. Since this function is called from fbfam_handle_attack(),
-> + * and so, every time a core dump is triggered, only is needed to kill the
-> + * others tasks that share the same statistical data, not the current one as
-> + * this is in the path to be killed.
-> + *
-> + * When the SIGKILL signal is sent to the offending tasks, this function will be
-> + * called again during the core dump due to the shared statistical data shows a
-> + * quickly crashing rate. So, to avoid kill again the same tasks due to a
-> + * recursive call of this function, it is necessary to disable the attack
-> + * detection setting the jiffies to zero.
-> + *
-> + * To improve the for_each_process loop it is possible to end it when all the
-> + * tasks that shared the same statistics are found.
+SO_PEERSEC was introduced for AF_UNIX stream sockets connected via
+connect(2) in Linux 2.6.2 and later augmented to support AF_UNIX stream
+and datagram sockets created via socketpair(2) in Linux 4.18.  Document
+SO_PEERSEC in the socket.7 and unix.7 man pages following the example
+of the existing SO_PEERCRED descriptions.  SO_PEERSEC is also supported
+on AF_INET sockets when using labeled IPSEC or NetLabel but defer
+adding a description of that support to a separate patch.
 
-This is not a fastpath, there's no need to be clever and optimize
-things here, please get rid of that optimization. Especially since
-that fastpath looks racy against concurrent execve().
+Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+---
+ man7/socket.7 |  5 +++++
+ man7/unix.7   | 40 ++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 45 insertions(+)
 
-> + * Return: -EFAULT if the current task doesn't have statistical data. Zero
-> + *         otherwise.
-> + */
-> +static int fbfam_kill_tasks(void)
-> +{
-> +       struct fbfam_stats *stats = current->fbfam_stats;
-> +       struct task_struct *p;
-> +       unsigned int to_kill, killed = 0;
-> +
-> +       if (!stats)
-> +               return -EFAULT;
-> +
-> +       to_kill = refcount_read(&stats->refc) - 1;
-> +       if (!to_kill)
-> +               return 0;
-> +
-> +       /* Disable the attack detection */
-> +       stats->jiffies = 0;
-> +       rcu_read_lock();
-> +
-> +       for_each_process(p) {
-> +               if (p == current || p->fbfam_stats != stats)
+diff --git a/man7/socket.7 b/man7/socket.7
+index 21e891791..c3635f95b 100644
+--- a/man7/socket.7
++++ b/man7/socket.7
+@@ -690,6 +690,11 @@ Return the credentials of the peer process connected to this socket.
+ For further details, see
+ .BR unix (7).
+ .TP
++.BR SO_PEERSEC " (since Linux 2.6.2)"
++Return the security context of the peer socket connected to this socket.
++For further details, see
++.BR unix (7).
++.TP
+ .B SO_PRIORITY
+ Set the protocol-defined priority for all packets to be sent on
+ this socket.
+diff --git a/man7/unix.7 b/man7/unix.7
+index f61b51424..1032c0aa1 100644
+--- a/man7/unix.7
++++ b/man7/unix.7
+@@ -349,6 +349,46 @@ stream sockets and for
+ .B AF_UNIX
+ stream and datagram socket pairs created using
+ .BR socketpair (2).
++.TP
++.B SO_PEERSEC
++This read-only socket option returns the
++security context of the peer socket connected to this socket.
++By default, this will be the same as the security context of
++the process that created the peer socket unless overridden
++by the policy or by a process with the required permissions.
++.IP
++The argument to
++.BR getsockopt (2)
++is a pointer to a
++buffer of the specified length in bytes
++into which the security context string will be copied.
++If the buffer length is less than the length of the security
++context string, then
++.BR getsockopt (2)
++will return the required length
++via
++.I optlen
++and return \-1 and sets
++.I errno
++to
++.BR ERANGE .
++The caller should allocate at least
++.BR NAME_MAX
++bytes for the buffer initially although this is not guaranteed
++to be sufficient.  Resizing the buffer to the returned length
++and retrying may be necessary.
++.IP
++For SELinux, the security context string is a null-terminated
++string and the returned length includes the terminating null.
++Other security modules may differ.
++.IP
++The use of this option for sockets in the
++.B AF_UNIX
++address family
++is supported since Linux 2.6.2 for connected stream sockets and
++since Linux 4.18, also for stream and datagram socket pairs created
++using
++.BR socketpair (2).
+ .\"
+ .SS Autobind feature
+ If a
+-- 
+2.25.1
 
-p->fbfam_stats could change concurrently, you should at least use
-READ_ONCE() here.
-
-Also, if this codepath is hit by a non-leader thread, "p == current"
-will always be false, and you'll end up killing the caller, too. You
-may want to compare with current->group_leader instead.
-
-
-> +                       continue;
-> +
-> +               do_send_sig_info(SIGKILL, SEND_SIG_PRIV, p, PIDTYPE_PID);
-> +               pr_warn("fbfam: Offending process with PID %d killed\n",
-> +                       p->pid);
-
-Normally pr_*() messages about tasks mention not just the pid, but
-also the ->comm name of the task.
-
-> +               killed += 1;
-> +               if (killed >= to_kill)
-> +                       break;
-> +       }
-> +
-> +       rcu_read_unlock();
-> +       return 0;
-> +}
