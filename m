@@ -2,115 +2,98 @@ Return-Path: <SRS0=OzCb=CT=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 979F6C43461
-	for <linux-security-module@archiver.kernel.org>; Thu, 10 Sep 2020 21:22:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C925FC433E2
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Sep 2020 21:22:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4ECB8221E2
-	for <linux-security-module@archiver.kernel.org>; Thu, 10 Sep 2020 21:22:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F26D221E5
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Sep 2020 21:22:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Pmbtzx/w"
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="mj1ksRYl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728202AbgIJVWd (ORCPT
+        id S1726539AbgIJVWf (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 10 Sep 2020 17:22:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36024 "EHLO
+        Thu, 10 Sep 2020 17:22:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54996 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726539AbgIJVW1 (ORCPT
+        with ESMTP id S1731085AbgIJOXu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 10 Sep 2020 17:22:27 -0400
-Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 909CFC061573
-        for <linux-security-module@vger.kernel.org>; Thu, 10 Sep 2020 14:22:26 -0700 (PDT)
-Received: by mail-ej1-x644.google.com with SMTP id nw23so10853854ejb.4
-        for <linux-security-module@vger.kernel.org>; Thu, 10 Sep 2020 14:22:26 -0700 (PDT)
+        Thu, 10 Sep 2020 10:23:50 -0400
+Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB96DC0617A4
+        for <linux-security-module@vger.kernel.org>; Thu, 10 Sep 2020 07:11:25 -0700 (PDT)
+Received: by mail-ed1-x541.google.com with SMTP id ay8so6449453edb.8
+        for <linux-security-module@vger.kernel.org>; Thu, 10 Sep 2020 07:11:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=N10c9+tEMvd+V1v5/kjFg7uIplbi+YryLR/t+QNnqsU=;
-        b=Pmbtzx/w5PJRKpuyzWZgUthB5SqsFujhymQl5gJo8f6W3hvApNoms7SWH1Ie3t+Xhv
-         G4BzucZpRgNaCDRkBPiUSWCjEuLpi8agAsdGI/QBUu92rYGZ8Pp3MkAt2a24+m/S5x3B
-         6epqPgVItTvZ5dHCiaBsFReRRMDht3h8fKCaRGh1IkHnw2lateEx0y9mDjHKtpX8Y8Nz
-         pj8E/O7vvbiRPAFHA3pzg1fCXA5Q5JExBVpXPTHZUF0gtsfus/hcwcxmf9RfgHDwtSxq
-         1bx0ofN7Nm21fcXiPRlbKh/d5ruR2ePp3ji5Py5uWlztcfvuDu+7GtC29bjR7vEOzNWS
-         NI6g==
+        bh=JqER1n/S/bVapO+RyrM1xxWOQKbNzVguXbfv8iwgPWk=;
+        b=mj1ksRYlYZoHO7kIpCwr5VKl8QULoy2ghTj3LYS/kfji3j2CawjoMCGn42zS79XNRh
+         WnAI5fHo5s/8DNoLXqOv92dWpYX5paf1rXOWMU60tkmXsWATdO6Pw4W7TVAV2Tt6gLBw
+         fMahCQYUhQ0eGLb3crDNL0DixDC2fR/N9X7QyM/1+bRWkSC1gO1vqbsQMv+cIL/bd5Zk
+         UxjIAtIySJgzO8XbV+0+BGxHgqrGrETxylsz7OmcMjO7wbExWp2bcEV97VSNj80I5Vyz
+         Bqdvy09ZzA21IET4hSfY4IoRwccGy8h8N4SBVhYpRHEEd0rl8X1PS/VgM+Tlx/+Uf7z+
+         /PWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=N10c9+tEMvd+V1v5/kjFg7uIplbi+YryLR/t+QNnqsU=;
-        b=EAkTdvVcHXM5KxA/9iw5+nz0to/6HOmNOFQWtuwGFCs47tmUoFLbisrTWEwWNqvQ9/
-         NTuJBptSxIuP3w6nlUQ2KJkqgGzuZvOlzARKb/71kIRm52Ju/hqXhSKwBsGyasuLx6/0
-         UK5jtgyo8aLJGxkC20Scj1cBMYV9214qBVzMwvjTRBvhEI41YIZGUNHyC+ZTs8DiezCn
-         hUeRgKtUPgv3AlE2idqo0nBET0siQjVVKdyVjrW0KywDOz9Dei2t3q/jWqWTBrJwp5r6
-         iXfae5Uhxorb+iqiKOTTKmSCF4twMGGVHfb1DPP3nTA0KUjPX7NMGZRtscoSAuULSelY
-         opCw==
-X-Gm-Message-State: AOAM532zyd/8Cpvl/PnAda2+Qo30ighMiXs7GeUhgqAJlb1KQn8s5AvE
-        BYisqGh7Rst8xWrhW3w2VbootFfIEiF8ux/IYL2bpw==
-X-Google-Smtp-Source: ABdhPJz1ZXFqvRU0UEmWsJMjbaIMk2L+dkrdUn+tEviQSYc6CnuQg/EudEOu/jzT2CS0AbLrfEZiZReKFnSsXFJuWYE=
-X-Received: by 2002:a17:906:4088:: with SMTP id u8mr11408126ejj.184.1599772945031;
- Thu, 10 Sep 2020 14:22:25 -0700 (PDT)
+        bh=JqER1n/S/bVapO+RyrM1xxWOQKbNzVguXbfv8iwgPWk=;
+        b=pcHTlARDltIfNjCvtFORXAdSkMia7Kmu+9MvChSmCO34utWpJBWEUB2PNdCi7KPrO1
+         afI2seAdzju9IQdxhOQSflYq2Jw2iIjsXgIhQMJlxnzs5F3N745xsZZv5jxzS0Wuenj9
+         zvY9XcCPs2OYyudz0vWuE7KgOdf85Sj7R9bGiTNEApRuQIB2k3vUPl2gW1e+PMMQ3Lgp
+         RG+bIvbNDTDz/3obwXb2PmYNE7Ik0S7xeQjZk/0qMoRJNSGKyFToMYpLGyro6UjNSI03
+         PdnN/sqjG4T3TXuXSLyalWec0a4PmCB6YJiLo0re7ipbszAeGdLllNmaAWsSD61K9BLy
+         xE5A==
+X-Gm-Message-State: AOAM530Mk3XHU8m0SJuL2SFon7tmb86yDYzL80IOsxmBngGfTWQlVQqP
+        IHlDqLBytOw7nTGxbsCDdtNiMYO/BoSICwHy6c1m
+X-Google-Smtp-Source: ABdhPJy1FTJ7DXFJo05WoW+t4O9pZDdDoW4TpXiv609ezJYlL+41ua8D4GnLvm80oWsYted6RRcGfRiYYQPB685hrWg=
+X-Received: by 2002:a05:6402:1805:: with SMTP id g5mr9107156edy.135.1599747084327;
+ Thu, 10 Sep 2020 07:11:24 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200910202107.3799376-1-keescook@chromium.org> <20200910202107.3799376-2-keescook@chromium.org>
-In-Reply-To: <20200910202107.3799376-2-keescook@chromium.org>
-From:   Jann Horn <jannh@google.com>
-Date:   Thu, 10 Sep 2020 23:21:58 +0200
-Message-ID: <CAG48ez1V=oVczCCSuRaWX=bbN2cOi0Y9q48=e-Fuhg7mwMOi0A@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/6] security/fbfam: Add a Kconfig to enable the fbfam feature
-To:     Kees Cook <keescook@chromium.org>, John Wood <john.wood@gmx.com>
-Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Iurii Zaikin <yzaikin@google.com>,
+References: <20200826145247.10029-1-casey@schaufler-ca.com>
+ <20200826145247.10029-6-casey@schaufler-ca.com> <CAHC9VhSh=r4w_3mZOUwmKN0UxCMxPNGKd=_vr_iGV06rvCNbSA@mail.gmail.com>
+ <1eeef766-405f-3800-c0cf-3eb008f9673e@schaufler-ca.com> <CAHC9VhSf8RWUnRPYLR6LLzbn-cvNg8J0wnZGwTOAe=dOqkvd0g@mail.gmail.com>
+ <ef6a049a-c6b9-370b-c521-4594aa73e403@schaufler-ca.com> <CAHC9VhSu4qqKWsutm3=GF_pihUKpwjAtc9gAhfjGsGtKfz-Azw@mail.gmail.com>
+ <585600d7-70fb-0982-1e6b-ffd7b7c33e32@schaufler-ca.com> <9a58d14c-eaff-3acf-4689-925cf08ba406@canonical.com>
+ <CAEjxPJ7i5Ruy=NZ+sq3qCm8ux+sZXY5+XX_zJu3+OqFq3d_SLQ@mail.gmail.com>
+ <CAEjxPJ5KudgTjhmXBNdCO_ctvioy5UA5PXcoKX4zc19NYKgHZA@mail.gmail.com>
+ <c5bef71e-6d78-2058-bcaa-8497c76d7375@schaufler-ca.com> <b320f0f6-02db-95a5-acc5-cadd5dbb57dc@canonical.com>
+ <CAEjxPJ6wFJz935RR_1u+-EjAw3VMv4nabo-Za_OqkZGJuNS5Sg@mail.gmail.com> <b67799e2-fa22-2890-698d-f410913b0c8a@canonical.com>
+In-Reply-To: <b67799e2-fa22-2890-698d-f410913b0c8a@canonical.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 10 Sep 2020 10:11:13 -0400
+Message-ID: <CAHC9VhRMubBNRNRKSLWrQw9nGZFX1G96+8EZzaG69OHWvZaJoQ@mail.gmail.com>
+Subject: Re: [PATCH v20 05/23] net: Prepare UDS for security module stacking
+To:     John Johansen <john.johansen@canonical.com>
+Cc:     Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
         James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, linux-doc@vger.kernel.org,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>
+        LSM List <linux-security-module@vger.kernel.org>,
+        SElinux list <selinux@vger.kernel.org>, linux-audit@redhat.com,
+        Kees Cook <keescook@chromium.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Stephen Smalley <sds@tycho.nsa.gov>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Sep 10, 2020 at 10:21 PM Kees Cook <keescook@chromium.org> wrote:
-> From: John Wood <john.wood@gmx.com>
->
-> Add a menu entry under "Security options" to enable the "Fork brute
-> force attack mitigation" feature.
-[...]
-> +config FBFAM
+On Wed, Sep 9, 2020 at 2:47 PM John Johansen
+<john.johansen@canonical.com> wrote:
+> ... For now Casey can drop it from this series.
 
-Please give this a more descriptive name than FBFAM. Some name where,
-if a random kernel developer sees an "#ifdef" with that name in some
-random piece of kernel code, they immediately have a rough idea for
-what kind of feature this is.
+As long as that whenever it reappears there is at the very least some
+note of the limits in the commit description and the code (via
+comments in the struct).  Of course that assumes we can't find an
+alternate solution that we can all agree on which doesn't have these
+stacking limits.
 
-Perhaps something like THROTTLE_FORK_CRASHES. Or something else that
-is equally descriptive.
-
-> +       bool "Fork brute force attack mitigation"
-> +       default n
-
-"default n" is superfluous and should AFAIK be omitted.
-
-> +       help
-> +         This is a user defense that detects any fork brute force attack
-> +         based on the application's crashing rate. When this measure is
-> +         triggered the fork system call is blocked.
-
-This help text claims that the mitigation will block fork(), but patch
-6/6 actually kills the process hierarchy.
+-- 
+paul moore
+www.paul-moore.com
