@@ -7,56 +7,56 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30CD9C2D0E1
-	for <linux-security-module@archiver.kernel.org>; Thu, 10 Sep 2020 23:14:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 723BDC433E2
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Sep 2020 23:18:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E18BC20882
-	for <linux-security-module@archiver.kernel.org>; Thu, 10 Sep 2020 23:14:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D2EB20770
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Sep 2020 23:18:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LphtKGn7"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="e0bs/fLL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725440AbgIJXOt (ORCPT
+        id S1725283AbgIJXSW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 10 Sep 2020 19:14:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53478 "EHLO
+        Thu, 10 Sep 2020 19:18:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54060 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725283AbgIJXOl (ORCPT
+        with ESMTP id S1725616AbgIJXSL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 10 Sep 2020 19:14:41 -0400
-Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B6B0C061757
-        for <linux-security-module@vger.kernel.org>; Thu, 10 Sep 2020 16:14:41 -0700 (PDT)
-Received: by mail-pg1-x544.google.com with SMTP id t14so5165701pgl.10
-        for <linux-security-module@vger.kernel.org>; Thu, 10 Sep 2020 16:14:40 -0700 (PDT)
+        Thu, 10 Sep 2020 19:18:11 -0400
+Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6DD5C0613ED
+        for <linux-security-module@vger.kernel.org>; Thu, 10 Sep 2020 16:18:10 -0700 (PDT)
+Received: by mail-pf1-x442.google.com with SMTP id l126so5750758pfd.5
+        for <linux-security-module@vger.kernel.org>; Thu, 10 Sep 2020 16:18:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=XRt6nSNPxJiqB4pOHgzoSIJ78PpEPBdKLumFlkWFQwM=;
-        b=LphtKGn7Rgdt9LI14XrV7jiDNYBp3aZlcmx+ruu3B1nvRSEuXUQFe3FD4po4thh6g9
-         u3IV9+HxnDny97gctunoDE95qy48iPv3EQp23Ghv5NklSgQksDkw4X1oGXPFNBRGP8gM
-         OpDfYMZcwgJR5Fjc7PWxxlUiqQ+RNTNTHEvrY=
+        bh=ahcfJWxMLLWCQWWMSaduDRixyqLU7R2VmWJmYScB+xI=;
+        b=e0bs/fLL5/nal1hkQQK8DqWL0oUik0NhYYhdIwGet7sKAsECUiTvD0lpGfKcU5pPSz
+         UWGqg4d+81XpUEqJGRxPydRngpjoC+VeTS1Z01mtq0/4saWZosh7U4GKnJWYMXaqhvex
+         MrsLwwKtAJrOwh/txFCgXVdSCsIGtRRcNzL4E=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=XRt6nSNPxJiqB4pOHgzoSIJ78PpEPBdKLumFlkWFQwM=;
-        b=phRA7yR0KCyDCgOcYcTSKHEujsgY9GsVskKfhKM6JFPM0ccpk4DAc6x2SshTQ4xf90
-         eRcZxg7Z2izXvW+nH0OtBIRByrBdsnTNsvdIAgD7xQxdNtiCTtb1MDTcuf9Pt6i5utcl
-         IL7C1xU6e9OaAAK4gEEZFUIvuNVTzTjUx9bZCkHL/WUAy48IlksUgGyeqZ0Dg7X8VQSl
-         aK+rTqnAIsUhcuW6Rv3c54V49V6522utgOl5r6iHOley30c/B0P/NRQ5Bhr2wd+NjvXC
-         ggcF+BkBzFGLGxq+7D3kttTG//Z5bfc8GTV2kturyAEqtzfyjjoEqxy75ooqp6pcxtZm
-         uX9g==
-X-Gm-Message-State: AOAM531bKZYDZK/6qTQoQvN2tjdBYEZAJnXQ+k+hYF9/mNN0PwGb6QHJ
-        xyJiWPU4XiWffpwV+XcRwXiSBQ==
-X-Google-Smtp-Source: ABdhPJxDYVL86Urmgrp1lPYox3Iemaytipsn4FBXUP6Vsa6qVLV7QyJUGW6mgbI4ZgWGFABync3VFQ==
-X-Received: by 2002:a62:864e:: with SMTP id x75mr7531560pfd.60.1599779680294;
-        Thu, 10 Sep 2020 16:14:40 -0700 (PDT)
+        bh=ahcfJWxMLLWCQWWMSaduDRixyqLU7R2VmWJmYScB+xI=;
+        b=NIINBrtvT4885oQzFrKPC71Zyc4mpot6d4wrjFZuCdyNukXX97T7bUMi1PO2+nGuAY
+         m0kjilauIsjGD7gdiZasgKfirHC3qyMg7MdztV8I82nYRRF8779VHa9guvsBnSibJIaR
+         bwJI45061jw3gkF/MEJ4h9MJ1/vfgCkloBf4V3JPfqFWMkAR4aFdrH2KFuxuzYRria88
+         A7cp/GgGQrKMR+mnGUJqeMyD9rtu1DldPMkoYbPeoD0LE3FbnAbCvr2Iah8RYkQZbIxh
+         1vhtx4vMKhxxN/UF/9oHH3BSu7PRfzi/4vYDL/ZtSBNHHw/6+tSxGUoBNi2b74386p4L
+         s8Pg==
+X-Gm-Message-State: AOAM532Vf41bdmxJctTMWRd5Iq+YaHX2r/18KIElAFqy5n7PlTDh+Ni3
+        CozfzpqordxEO7Tl1QDjbWV1OA==
+X-Google-Smtp-Source: ABdhPJyDlBU+y8fl3h3ui9sPcSP+9dtdObZsk3zIBZIW66XSoC5FKE/37mQEGAa93/DFlZtCDe1HSw==
+X-Received: by 2002:aa7:8ec7:0:b029:13e:d13d:a080 with SMTP id b7-20020aa78ec70000b029013ed13da080mr7345919pfr.23.1599779890038;
+        Thu, 10 Sep 2020 16:18:10 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id fs24sm105321pjb.8.2020.09.10.16.14.39
+        by smtp.gmail.com with ESMTPSA id 17sm166428pfi.55.2020.09.10.16.18.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Sep 2020 16:14:39 -0700 (PDT)
-Date:   Thu, 10 Sep 2020 16:14:38 -0700
+        Thu, 10 Sep 2020 16:18:09 -0700 (PDT)
+Date:   Thu, 10 Sep 2020 16:18:08 -0700
 From:   Kees Cook <keescook@chromium.org>
 To:     kernel-hardening@lists.openwall.com
 Cc:     John Wood <john.wood@gmx.com>,
@@ -76,153 +76,60 @@ Cc:     John Wood <john.wood@gmx.com>,
         "Serge E. Hallyn" <serge@hallyn.com>, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH 4/6] security/fbfam: Add a new sysctl to control the
- crashing rate threshold
-Message-ID: <202009101612.18BAD0241D@keescook>
+Subject: Re: [RFC PATCH 1/6] security/fbfam: Add a Kconfig to enable the
+ fbfam feature
+Message-ID: <202009101615.8566BA3967@keescook>
 References: <20200910202107.3799376-1-keescook@chromium.org>
- <20200910202107.3799376-5-keescook@chromium.org>
+ <20200910202107.3799376-2-keescook@chromium.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200910202107.3799376-5-keescook@chromium.org>
+In-Reply-To: <20200910202107.3799376-2-keescook@chromium.org>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Sep 10, 2020 at 01:21:05PM -0700, Kees Cook wrote:
+On Thu, Sep 10, 2020 at 01:21:02PM -0700, Kees Cook wrote:
 > From: John Wood <john.wood@gmx.com>
 > 
-> This is a previous step to add the detection feature.
-> 
-> A fork brute force attack will be detected when an application crashes
-> quickly. Since, a rate can be defined as a time per fault, add a new
-> sysctl to control the crashing rate threshold.
-> 
-> This way, each system can tune the detection's sensibility adjusting the
-> milliseconds per fault. So, if the application's crashing rate falls
-> under this threshold an attack will be detected. So, the higher this
-> value, the faster an attack will be detected.
+> Add a menu entry under "Security options" to enable the "Fork brute
+> force attack mitigation" feature.
 > 
 > Signed-off-by: John Wood <john.wood@gmx.com>
 > ---
->  include/fbfam/fbfam.h   |  4 ++++
->  kernel/sysctl.c         |  9 +++++++++
->  security/fbfam/Makefile |  1 +
->  security/fbfam/fbfam.c  | 11 +++++++++++
->  security/fbfam/sysctl.c | 20 ++++++++++++++++++++
->  5 files changed, 45 insertions(+)
->  create mode 100644 security/fbfam/sysctl.c
+>  security/Kconfig       |  1 +
+>  security/fbfam/Kconfig | 10 ++++++++++
+>  2 files changed, 11 insertions(+)
+>  create mode 100644 security/fbfam/Kconfig
 > 
-> diff --git a/include/fbfam/fbfam.h b/include/fbfam/fbfam.h
-> index b5b7d1127a52..2cfe51d2b0d5 100644
-> --- a/include/fbfam/fbfam.h
-> +++ b/include/fbfam/fbfam.h
-> @@ -3,8 +3,12 @@
->  #define _FBFAM_H_
+> diff --git a/security/Kconfig b/security/Kconfig
+> index 7561f6f99f1d..00a90e25b8d5 100644
+> --- a/security/Kconfig
+> +++ b/security/Kconfig
+> @@ -290,6 +290,7 @@ config LSM
+>  	  If unsure, leave this as the default.
 >  
->  #include <linux/sched.h>
-> +#include <linux/sysctl.h>
+>  source "security/Kconfig.hardening"
+> +source "security/fbfam/Kconfig"
+
+Given the layout you've chosen and the interface you've got, I think
+this should just be treated like a regular LSM.
+
 >  
->  #ifdef CONFIG_FBFAM
-> +#ifdef CONFIG_SYSCTL
-> +extern struct ctl_table fbfam_sysctls[];
-> +#endif
-
-Instead of doing the extern and adding to sysctl.c, this can all be done
-directly (dynamically) from the fbfam.c file instead.
-
->  int fbfam_fork(struct task_struct *child);
->  int fbfam_execve(void);
->  int fbfam_exit(void);
-> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-> index 09e70ee2332e..c3b4d737bef3 100644
-> --- a/kernel/sysctl.c
-> +++ b/kernel/sysctl.c
-> @@ -77,6 +77,8 @@
->  #include <linux/uaccess.h>
->  #include <asm/processor.h>
+>  endmenu
 >  
-> +#include <fbfam/fbfam.h>
-> +
->  #ifdef CONFIG_X86
->  #include <asm/nmi.h>
->  #include <asm/stacktrace.h>
-> @@ -2660,6 +2662,13 @@ static struct ctl_table kern_table[] = {
->  		.extra1		= SYSCTL_ZERO,
->  		.extra2		= SYSCTL_ONE,
->  	},
-> +#endif
-> +#ifdef CONFIG_FBFAM
-> +	{
-> +		.procname	= "fbfam",
-> +		.mode		= 0555,
-> +		.child		= fbfam_sysctls,
-> +	},
->  #endif
->  	{ }
->  };
-> diff --git a/security/fbfam/Makefile b/security/fbfam/Makefile
-> index f4b9f0b19c44..b8d5751ecea4 100644
-> --- a/security/fbfam/Makefile
-> +++ b/security/fbfam/Makefile
-> @@ -1,2 +1,3 @@
->  # SPDX-License-Identifier: GPL-2.0
->  obj-$(CONFIG_FBFAM) += fbfam.o
-> +obj-$(CONFIG_SYSCTL) += sysctl.o
-> diff --git a/security/fbfam/fbfam.c b/security/fbfam/fbfam.c
-> index 0387f95f6408..9be4639b72eb 100644
-> --- a/security/fbfam/fbfam.c
-> +++ b/security/fbfam/fbfam.c
-> @@ -7,6 +7,17 @@
->  #include <linux/refcount.h>
->  #include <linux/slab.h>
->  
-> +/**
-> + * sysctl_crashing_rate_threshold - Crashing rate threshold.
-> + *
-> + * The rate's units are in milliseconds per fault.
-> + *
-> + * A fork brute force attack will be detected if the application's crashing rate
-> + * falls under this threshold. So, the higher this value, the faster an attack
-> + * will be detected.
-> + */
-> +unsigned long sysctl_crashing_rate_threshold = 30000;
-
-I would move the sysctls here, instead. (Also, the above should be
-const.)
-
-> +
->  /**
->   * struct fbfam_stats - Fork brute force attack mitigation statistics.
->   * @refc: Reference counter.
-> diff --git a/security/fbfam/sysctl.c b/security/fbfam/sysctl.c
+> diff --git a/security/fbfam/Kconfig b/security/fbfam/Kconfig
 > new file mode 100644
-> index 000000000000..430323ad8e9f
+> index 000000000000..bbe7f6aad369
 > --- /dev/null
-> +++ b/security/fbfam/sysctl.c
-> @@ -0,0 +1,20 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +#include <linux/sysctl.h>
-> +
-> +extern unsigned long sysctl_crashing_rate_threshold;
-> +static unsigned long ulong_one = 1;
-> +static unsigned long ulong_max = ULONG_MAX;
-> +
-> +struct ctl_table fbfam_sysctls[] = {
-> +	{
-> +		.procname	= "crashing_rate_threshold",
-> +		.data		= &sysctl_crashing_rate_threshold,
-> +		.maxlen		= sizeof(sysctl_crashing_rate_threshold),
-> +		.mode		= 0644,
-> +		.proc_handler	= proc_doulongvec_minmax,
-> +		.extra1		= &ulong_one,
-> +		.extra2		= &ulong_max,
-> +	},
-> +	{ }
-> +};
+> +++ b/security/fbfam/Kconfig
+> @@ -0,0 +1,10 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +config FBFAM
 
-I wouldn't bother splitting this into a separate file. (Just leave it in
-fbfam.c)
+To jump on the bikeshed: how about just calling this
+FORK_BRUTE_FORCE_DETECTION or FORK_BRUTE, and the directory could be
+"brute", etc. "fbfam" doesn't tell anyone anything.
 
 -- 
 Kees Cook
