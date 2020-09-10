@@ -2,98 +2,227 @@ Return-Path: <SRS0=OzCb=CT=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C925FC433E2
-	for <linux-security-module@archiver.kernel.org>; Thu, 10 Sep 2020 21:22:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30CD9C2D0E1
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Sep 2020 23:14:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8F26D221E5
-	for <linux-security-module@archiver.kernel.org>; Thu, 10 Sep 2020 21:22:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E18BC20882
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Sep 2020 23:14:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="mj1ksRYl"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LphtKGn7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726539AbgIJVWf (ORCPT
+        id S1725440AbgIJXOt (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 10 Sep 2020 17:22:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54996 "EHLO
+        Thu, 10 Sep 2020 19:14:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53478 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731085AbgIJOXu (ORCPT
+        with ESMTP id S1725283AbgIJXOl (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 10 Sep 2020 10:23:50 -0400
-Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB96DC0617A4
-        for <linux-security-module@vger.kernel.org>; Thu, 10 Sep 2020 07:11:25 -0700 (PDT)
-Received: by mail-ed1-x541.google.com with SMTP id ay8so6449453edb.8
-        for <linux-security-module@vger.kernel.org>; Thu, 10 Sep 2020 07:11:25 -0700 (PDT)
+        Thu, 10 Sep 2020 19:14:41 -0400
+Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B6B0C061757
+        for <linux-security-module@vger.kernel.org>; Thu, 10 Sep 2020 16:14:41 -0700 (PDT)
+Received: by mail-pg1-x544.google.com with SMTP id t14so5165701pgl.10
+        for <linux-security-module@vger.kernel.org>; Thu, 10 Sep 2020 16:14:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=JqER1n/S/bVapO+RyrM1xxWOQKbNzVguXbfv8iwgPWk=;
-        b=mj1ksRYlYZoHO7kIpCwr5VKl8QULoy2ghTj3LYS/kfji3j2CawjoMCGn42zS79XNRh
-         WnAI5fHo5s/8DNoLXqOv92dWpYX5paf1rXOWMU60tkmXsWATdO6Pw4W7TVAV2Tt6gLBw
-         fMahCQYUhQ0eGLb3crDNL0DixDC2fR/N9X7QyM/1+bRWkSC1gO1vqbsQMv+cIL/bd5Zk
-         UxjIAtIySJgzO8XbV+0+BGxHgqrGrETxylsz7OmcMjO7wbExWp2bcEV97VSNj80I5Vyz
-         Bqdvy09ZzA21IET4hSfY4IoRwccGy8h8N4SBVhYpRHEEd0rl8X1PS/VgM+Tlx/+Uf7z+
-         /PWw==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=XRt6nSNPxJiqB4pOHgzoSIJ78PpEPBdKLumFlkWFQwM=;
+        b=LphtKGn7Rgdt9LI14XrV7jiDNYBp3aZlcmx+ruu3B1nvRSEuXUQFe3FD4po4thh6g9
+         u3IV9+HxnDny97gctunoDE95qy48iPv3EQp23Ghv5NklSgQksDkw4X1oGXPFNBRGP8gM
+         OpDfYMZcwgJR5Fjc7PWxxlUiqQ+RNTNTHEvrY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JqER1n/S/bVapO+RyrM1xxWOQKbNzVguXbfv8iwgPWk=;
-        b=pcHTlARDltIfNjCvtFORXAdSkMia7Kmu+9MvChSmCO34utWpJBWEUB2PNdCi7KPrO1
-         afI2seAdzju9IQdxhOQSflYq2Jw2iIjsXgIhQMJlxnzs5F3N745xsZZv5jxzS0Wuenj9
-         zvY9XcCPs2OYyudz0vWuE7KgOdf85Sj7R9bGiTNEApRuQIB2k3vUPl2gW1e+PMMQ3Lgp
-         RG+bIvbNDTDz/3obwXb2PmYNE7Ik0S7xeQjZk/0qMoRJNSGKyFToMYpLGyro6UjNSI03
-         PdnN/sqjG4T3TXuXSLyalWec0a4PmCB6YJiLo0re7ipbszAeGdLllNmaAWsSD61K9BLy
-         xE5A==
-X-Gm-Message-State: AOAM530Mk3XHU8m0SJuL2SFon7tmb86yDYzL80IOsxmBngGfTWQlVQqP
-        IHlDqLBytOw7nTGxbsCDdtNiMYO/BoSICwHy6c1m
-X-Google-Smtp-Source: ABdhPJy1FTJ7DXFJo05WoW+t4O9pZDdDoW4TpXiv609ezJYlL+41ua8D4GnLvm80oWsYted6RRcGfRiYYQPB685hrWg=
-X-Received: by 2002:a05:6402:1805:: with SMTP id g5mr9107156edy.135.1599747084327;
- Thu, 10 Sep 2020 07:11:24 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200826145247.10029-1-casey@schaufler-ca.com>
- <20200826145247.10029-6-casey@schaufler-ca.com> <CAHC9VhSh=r4w_3mZOUwmKN0UxCMxPNGKd=_vr_iGV06rvCNbSA@mail.gmail.com>
- <1eeef766-405f-3800-c0cf-3eb008f9673e@schaufler-ca.com> <CAHC9VhSf8RWUnRPYLR6LLzbn-cvNg8J0wnZGwTOAe=dOqkvd0g@mail.gmail.com>
- <ef6a049a-c6b9-370b-c521-4594aa73e403@schaufler-ca.com> <CAHC9VhSu4qqKWsutm3=GF_pihUKpwjAtc9gAhfjGsGtKfz-Azw@mail.gmail.com>
- <585600d7-70fb-0982-1e6b-ffd7b7c33e32@schaufler-ca.com> <9a58d14c-eaff-3acf-4689-925cf08ba406@canonical.com>
- <CAEjxPJ7i5Ruy=NZ+sq3qCm8ux+sZXY5+XX_zJu3+OqFq3d_SLQ@mail.gmail.com>
- <CAEjxPJ5KudgTjhmXBNdCO_ctvioy5UA5PXcoKX4zc19NYKgHZA@mail.gmail.com>
- <c5bef71e-6d78-2058-bcaa-8497c76d7375@schaufler-ca.com> <b320f0f6-02db-95a5-acc5-cadd5dbb57dc@canonical.com>
- <CAEjxPJ6wFJz935RR_1u+-EjAw3VMv4nabo-Za_OqkZGJuNS5Sg@mail.gmail.com> <b67799e2-fa22-2890-698d-f410913b0c8a@canonical.com>
-In-Reply-To: <b67799e2-fa22-2890-698d-f410913b0c8a@canonical.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 10 Sep 2020 10:11:13 -0400
-Message-ID: <CAHC9VhRMubBNRNRKSLWrQw9nGZFX1G96+8EZzaG69OHWvZaJoQ@mail.gmail.com>
-Subject: Re: [PATCH v20 05/23] net: Prepare UDS for security module stacking
-To:     John Johansen <john.johansen@canonical.com>
-Cc:     Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=XRt6nSNPxJiqB4pOHgzoSIJ78PpEPBdKLumFlkWFQwM=;
+        b=phRA7yR0KCyDCgOcYcTSKHEujsgY9GsVskKfhKM6JFPM0ccpk4DAc6x2SshTQ4xf90
+         eRcZxg7Z2izXvW+nH0OtBIRByrBdsnTNsvdIAgD7xQxdNtiCTtb1MDTcuf9Pt6i5utcl
+         IL7C1xU6e9OaAAK4gEEZFUIvuNVTzTjUx9bZCkHL/WUAy48IlksUgGyeqZ0Dg7X8VQSl
+         aK+rTqnAIsUhcuW6Rv3c54V49V6522utgOl5r6iHOley30c/B0P/NRQ5Bhr2wd+NjvXC
+         ggcF+BkBzFGLGxq+7D3kttTG//Z5bfc8GTV2kturyAEqtzfyjjoEqxy75ooqp6pcxtZm
+         uX9g==
+X-Gm-Message-State: AOAM531bKZYDZK/6qTQoQvN2tjdBYEZAJnXQ+k+hYF9/mNN0PwGb6QHJ
+        xyJiWPU4XiWffpwV+XcRwXiSBQ==
+X-Google-Smtp-Source: ABdhPJxDYVL86Urmgrp1lPYox3Iemaytipsn4FBXUP6Vsa6qVLV7QyJUGW6mgbI4ZgWGFABync3VFQ==
+X-Received: by 2002:a62:864e:: with SMTP id x75mr7531560pfd.60.1599779680294;
+        Thu, 10 Sep 2020 16:14:40 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id fs24sm105321pjb.8.2020.09.10.16.14.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Sep 2020 16:14:39 -0700 (PDT)
+Date:   Thu, 10 Sep 2020 16:14:38 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     kernel-hardening@lists.openwall.com
+Cc:     John Wood <john.wood@gmx.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Iurii Zaikin <yzaikin@google.com>,
         James Morris <jmorris@namei.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        SElinux list <selinux@vger.kernel.org>, linux-audit@redhat.com,
-        Kees Cook <keescook@chromium.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Stephen Smalley <sds@tycho.nsa.gov>
-Content-Type: text/plain; charset="UTF-8"
+        "Serge E. Hallyn" <serge@hallyn.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH 4/6] security/fbfam: Add a new sysctl to control the
+ crashing rate threshold
+Message-ID: <202009101612.18BAD0241D@keescook>
+References: <20200910202107.3799376-1-keescook@chromium.org>
+ <20200910202107.3799376-5-keescook@chromium.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200910202107.3799376-5-keescook@chromium.org>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Sep 9, 2020 at 2:47 PM John Johansen
-<john.johansen@canonical.com> wrote:
-> ... For now Casey can drop it from this series.
+On Thu, Sep 10, 2020 at 01:21:05PM -0700, Kees Cook wrote:
+> From: John Wood <john.wood@gmx.com>
+> 
+> This is a previous step to add the detection feature.
+> 
+> A fork brute force attack will be detected when an application crashes
+> quickly. Since, a rate can be defined as a time per fault, add a new
+> sysctl to control the crashing rate threshold.
+> 
+> This way, each system can tune the detection's sensibility adjusting the
+> milliseconds per fault. So, if the application's crashing rate falls
+> under this threshold an attack will be detected. So, the higher this
+> value, the faster an attack will be detected.
+> 
+> Signed-off-by: John Wood <john.wood@gmx.com>
+> ---
+>  include/fbfam/fbfam.h   |  4 ++++
+>  kernel/sysctl.c         |  9 +++++++++
+>  security/fbfam/Makefile |  1 +
+>  security/fbfam/fbfam.c  | 11 +++++++++++
+>  security/fbfam/sysctl.c | 20 ++++++++++++++++++++
+>  5 files changed, 45 insertions(+)
+>  create mode 100644 security/fbfam/sysctl.c
+> 
+> diff --git a/include/fbfam/fbfam.h b/include/fbfam/fbfam.h
+> index b5b7d1127a52..2cfe51d2b0d5 100644
+> --- a/include/fbfam/fbfam.h
+> +++ b/include/fbfam/fbfam.h
+> @@ -3,8 +3,12 @@
+>  #define _FBFAM_H_
+>  
+>  #include <linux/sched.h>
+> +#include <linux/sysctl.h>
+>  
+>  #ifdef CONFIG_FBFAM
+> +#ifdef CONFIG_SYSCTL
+> +extern struct ctl_table fbfam_sysctls[];
+> +#endif
 
-As long as that whenever it reappears there is at the very least some
-note of the limits in the commit description and the code (via
-comments in the struct).  Of course that assumes we can't find an
-alternate solution that we can all agree on which doesn't have these
-stacking limits.
+Instead of doing the extern and adding to sysctl.c, this can all be done
+directly (dynamically) from the fbfam.c file instead.
+
+>  int fbfam_fork(struct task_struct *child);
+>  int fbfam_execve(void);
+>  int fbfam_exit(void);
+> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+> index 09e70ee2332e..c3b4d737bef3 100644
+> --- a/kernel/sysctl.c
+> +++ b/kernel/sysctl.c
+> @@ -77,6 +77,8 @@
+>  #include <linux/uaccess.h>
+>  #include <asm/processor.h>
+>  
+> +#include <fbfam/fbfam.h>
+> +
+>  #ifdef CONFIG_X86
+>  #include <asm/nmi.h>
+>  #include <asm/stacktrace.h>
+> @@ -2660,6 +2662,13 @@ static struct ctl_table kern_table[] = {
+>  		.extra1		= SYSCTL_ZERO,
+>  		.extra2		= SYSCTL_ONE,
+>  	},
+> +#endif
+> +#ifdef CONFIG_FBFAM
+> +	{
+> +		.procname	= "fbfam",
+> +		.mode		= 0555,
+> +		.child		= fbfam_sysctls,
+> +	},
+>  #endif
+>  	{ }
+>  };
+> diff --git a/security/fbfam/Makefile b/security/fbfam/Makefile
+> index f4b9f0b19c44..b8d5751ecea4 100644
+> --- a/security/fbfam/Makefile
+> +++ b/security/fbfam/Makefile
+> @@ -1,2 +1,3 @@
+>  # SPDX-License-Identifier: GPL-2.0
+>  obj-$(CONFIG_FBFAM) += fbfam.o
+> +obj-$(CONFIG_SYSCTL) += sysctl.o
+> diff --git a/security/fbfam/fbfam.c b/security/fbfam/fbfam.c
+> index 0387f95f6408..9be4639b72eb 100644
+> --- a/security/fbfam/fbfam.c
+> +++ b/security/fbfam/fbfam.c
+> @@ -7,6 +7,17 @@
+>  #include <linux/refcount.h>
+>  #include <linux/slab.h>
+>  
+> +/**
+> + * sysctl_crashing_rate_threshold - Crashing rate threshold.
+> + *
+> + * The rate's units are in milliseconds per fault.
+> + *
+> + * A fork brute force attack will be detected if the application's crashing rate
+> + * falls under this threshold. So, the higher this value, the faster an attack
+> + * will be detected.
+> + */
+> +unsigned long sysctl_crashing_rate_threshold = 30000;
+
+I would move the sysctls here, instead. (Also, the above should be
+const.)
+
+> +
+>  /**
+>   * struct fbfam_stats - Fork brute force attack mitigation statistics.
+>   * @refc: Reference counter.
+> diff --git a/security/fbfam/sysctl.c b/security/fbfam/sysctl.c
+> new file mode 100644
+> index 000000000000..430323ad8e9f
+> --- /dev/null
+> +++ b/security/fbfam/sysctl.c
+> @@ -0,0 +1,20 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +#include <linux/sysctl.h>
+> +
+> +extern unsigned long sysctl_crashing_rate_threshold;
+> +static unsigned long ulong_one = 1;
+> +static unsigned long ulong_max = ULONG_MAX;
+> +
+> +struct ctl_table fbfam_sysctls[] = {
+> +	{
+> +		.procname	= "crashing_rate_threshold",
+> +		.data		= &sysctl_crashing_rate_threshold,
+> +		.maxlen		= sizeof(sysctl_crashing_rate_threshold),
+> +		.mode		= 0644,
+> +		.proc_handler	= proc_doulongvec_minmax,
+> +		.extra1		= &ulong_one,
+> +		.extra2		= &ulong_max,
+> +	},
+> +	{ }
+> +};
+
+I wouldn't bother splitting this into a separate file. (Just leave it in
+fbfam.c)
 
 -- 
-paul moore
-www.paul-moore.com
+Kees Cook
