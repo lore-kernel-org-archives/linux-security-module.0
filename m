@@ -2,126 +2,128 @@ Return-Path: <SRS0=uslm=CU=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,
-	DKIM_ADSP_CUSTOM_MED,DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ADC9C43461
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Sep 2020 11:45:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D3E6C43461
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Sep 2020 12:17:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 49F8F21D79
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Sep 2020 11:45:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oSXLqLzq"
+	by mail.kernel.org (Postfix) with ESMTP id 02B15221ED
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Sep 2020 12:17:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725811AbgIKLos (ORCPT
+        id S1725849AbgIKMRH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 11 Sep 2020 07:44:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55580 "EHLO
+        Fri, 11 Sep 2020 08:17:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60554 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725784AbgIKLoJ (ORCPT
+        with ESMTP id S1725822AbgIKMQj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 11 Sep 2020 07:44:09 -0400
-Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 465BFC061757;
-        Fri, 11 Sep 2020 04:44:08 -0700 (PDT)
-Received: by mail-wr1-x442.google.com with SMTP id j2so11164328wrx.7;
-        Fri, 11 Sep 2020 04:44:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=2Uxr7xy49Weq7pd1s1vVHMdn6nRX902qFhoxZ9UgjIY=;
-        b=oSXLqLzqLlp5KZmNeVY0rQeg2YQWiyK/CQHbZfAfzhckCkA6R2l/25b8JyRCiarCBW
-         hvshme8hDGfVvh1ji7zNlQRVNH4W1ufpY0crIE/Wf8KFPiJGfhf2uz7guen8da/aU8Xu
-         /To45Nc8IKKsge6WBiZtwMJ/s06FYTtwTk+MfdJ2ZhppqAWiB0xkMLh7E+IguiYy3Fc+
-         aKt71dFkuzb96Q+M0APNpLnEvfF5l17+Wo3ki/en1iVCfFilTry9kM/dsIb3qF3/YDH3
-         eGBSbi+KeT6BZojwDv+UMymFE/ipvNf1plpL3yciN6FbZbjWWw5rrtQYYWm+rXnI5qBZ
-         nCoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=2Uxr7xy49Weq7pd1s1vVHMdn6nRX902qFhoxZ9UgjIY=;
-        b=XI6yTvkD/GjeGHPrTYh2qS8kwIV3d4ghF2glkXg49isscB4I9SyW67asOjNPJ1Vwde
-         KxokUqGNcdQgpk50W1BxqAAIK+72SoN8bh0+RPr3yOgb6grAtXqv4fQfTxl2s2t5D9+M
-         d3SuASVh+UMS8Ymx1yJlN5XBoe6L/pfQQsBaMe6ZKm77ljfGL3KIezLfoPCNqRsljjYn
-         LcMyC1rHGooNKZudepG1ovuRIR6963loka7D0JcwP7ky+kHIhX9mhBxnd4Bj3YcGcntz
-         N1aZz/gHZ90o5jbfZwVTdpUIo5/LBjTgdVynuiVdufwdcQnNmhsvOtSiMo34WDxpPOPU
-         xalA==
-X-Gm-Message-State: AOAM5337qBCgzBF5/n9ep2PbKuPngsafB4kEk2xvL5UMnew9nq1OZ2Xe
-        H7fqP48vZHC63cmvnRqGBuY=
-X-Google-Smtp-Source: ABdhPJzsWtAPOH+dRmC4weQKtjF8A0Sq7DDAltrpBt83Tf2MFmx73sM9ngU2lceOV2OmN5zPwxhftA==
-X-Received: by 2002:a5d:4d49:: with SMTP id a9mr1779144wru.363.1599824646937;
-        Fri, 11 Sep 2020 04:44:06 -0700 (PDT)
-Received: from localhost.localdomain (cpc83661-brig20-2-0-cust443.3-3.cable.virginm.net. [82.28.105.188])
-        by smtp.gmail.com with ESMTPSA id g143sm3752442wme.0.2020.09.11.04.44.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Sep 2020 04:44:06 -0700 (PDT)
-From:   Alex Dewar <alex.dewar90@gmail.com>
-Cc:     Alex Dewar <alex.dewar90@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] security: keys: Use kvfree_sensitive in a few places
-Date:   Fri, 11 Sep 2020 12:44:00 +0100
-Message-Id: <20200911114400.82207-1-alex.dewar90@gmail.com>
-X-Mailer: git-send-email 2.28.0
+        Fri, 11 Sep 2020 08:16:39 -0400
+Received: from smtp-1909.mail.infomaniak.ch (smtp-1909.mail.infomaniak.ch [IPv6:2001:1600:3:17::1909])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89434C061756;
+        Fri, 11 Sep 2020 05:16:36 -0700 (PDT)
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Bnvqv0ZqWzlhfqK;
+        Fri, 11 Sep 2020 14:16:27 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
+        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Bnvqq5mSFzlh8T4;
+        Fri, 11 Sep 2020 14:16:23 +0200 (CEST)
+Subject: Re: [RFC PATCH v9 0/3] Add introspect_access(2) (was O_MAYEXEC)
+To:     Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>, linux-kernel@vger.kernel.org,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Eric Chiang <ericchiang@google.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Thibaut Sautereau <thibaut.sautereau@clip-os.org>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+References: <20200910164612.114215-1-mic@digikod.net>
+ <20200910170424.GU6583@casper.infradead.org>
+ <f6e2358c-8e5e-e688-3e66-2cdd943e360e@digikod.net>
+ <a48145770780d36e90f28f1526805a7292eb74f6.camel@linux.ibm.com>
+ <880bb4ee-89a2-b9b0-747b-0f779ceda995@digikod.net>
+ <20200910184033.GX6583@casper.infradead.org>
+ <20200910200010.GF1236603@ZenIV.linux.org.uk>
+ <20200910200543.GY6583@casper.infradead.org>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Message-ID: <3dd9b2b3-6304-03df-bfba-13864169453e@digikod.net>
+Date:   Fri, 11 Sep 2020 14:16:23 +0200
+User-Agent: 
 MIME-Version: 1.0
+In-Reply-To: <20200910200543.GY6583@casper.infradead.org>
+Content-Type: text/plain; charset=iso-8859-15
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-In big_key.c, there are a few places where memzero_explicit + kvfree is
-used. It is better to use kvfree_sensitive instead, which is more
-readable and also prevents the compiler from eliding the call to
-memzero_explicit. Fix this.
 
-Signed-off-by: Alex Dewar <alex.dewar90@gmail.com>
----
- security/keys/big_key.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+On 10/09/2020 22:05, Matthew Wilcox wrote:
+> On Thu, Sep 10, 2020 at 09:00:10PM +0100, Al Viro wrote:
+>> On Thu, Sep 10, 2020 at 07:40:33PM +0100, Matthew Wilcox wrote:
+>>> On Thu, Sep 10, 2020 at 08:38:21PM +0200, Mickaël Salaün wrote:
+>>>> There is also the use case of noexec mounts and file permissions. From
+>>>> user space point of view, it doesn't matter which kernel component is in
+>>>> charge of defining the policy. The syscall should then not be tied with
+>>>> a verification/integrity/signature/appraisal vocabulary, but simply an
+>>>> access control one.
+>>>
+>>> permission()?
+>>
+>> int lsm(int fd, const char *how, char *error, int size);
+>>
+>> Seriously, this is "ask LSM to apply special policy to file"; let's
+>> _not_ mess with flags, etc. for that; give it decent bandwidth
+>> and since it's completely opaque for the rest of the kernel,
+>> just a pass a string to be parsed by LSM as it sees fit.
 
-diff --git a/security/keys/big_key.c b/security/keys/big_key.c
-index 691347dea3c1..d17e5f09eeb8 100644
---- a/security/keys/big_key.c
-+++ b/security/keys/big_key.c
-@@ -121,8 +121,7 @@ int big_key_preparse(struct key_preparsed_payload *prep)
- 		*path = file->f_path;
- 		path_get(path);
- 		fput(file);
--		memzero_explicit(buf, enclen);
--		kvfree(buf);
-+		kvfree_sensitive(buf, enclen);
- 	} else {
- 		/* Just store the data in a buffer */
- 		void *data = kmalloc(datalen, GFP_KERNEL);
-@@ -140,8 +139,7 @@ int big_key_preparse(struct key_preparsed_payload *prep)
- err_enckey:
- 	kfree_sensitive(enckey);
- error:
--	memzero_explicit(buf, enclen);
--	kvfree(buf);
-+	kvfree_sensitive(buf, enclen);
- 	return ret;
- }
- 
-@@ -273,8 +271,7 @@ long big_key_read(const struct key *key, char *buffer, size_t buflen)
- err_fput:
- 		fput(file);
- error:
--		memzero_explicit(buf, enclen);
--		kvfree(buf);
-+		kvfree_sensitive(buf, enclen);
- 	} else {
- 		ret = datalen;
- 		memcpy(buffer, key->payload.data[big_key_data], datalen);
--- 
-2.28.0
+Well, I don't know why you're so angry against LSM, but as noticed by
+Matthew, the main focus of this patch series is not about LSM (no hook,
+no security/* code, only file permission and mount option checks,
+nothing fancy). Moreover, the syscall you're proposing doesn't make
+sense, but I guess it's yet another sarcastic reply. Please, cool down.
+We asked for constructive comments and already followed your previous
+requests (even if we didn't get answers for some questions), but
+seriously, this one is nonsense.
 
+> 
+> Hang on, it does have some things which aren't BD^W^WLSM.  It lets
+> the interpreter honour the mount -o noexec option.  I presume it's
+> not easily defeated by
+> 	cat /home/salaun/bin/bad.pl | perl -
+> 
+
+Funny. I know there is a lot of text and links but please read the
+commit messages before further comments.
