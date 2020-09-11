@@ -2,144 +2,87 @@ Return-Path: <SRS0=uslm=CU=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.0 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5CCCC43461
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Sep 2020 16:46:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E80DDC433E2
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Sep 2020 16:58:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9848C206A2
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Sep 2020 16:46:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D0982074B
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Sep 2020 16:58:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=gmx.net header.i=@gmx.net header.b="FmLtj3P9"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="GG9RMhwB";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="GG9RMhwB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726155AbgIKQpq (ORCPT
+        id S1726238AbgIKQ5k (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 11 Sep 2020 12:45:46 -0400
-Received: from mout.gmx.net ([212.227.17.22]:42089 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725899AbgIKPIL (ORCPT
+        Fri, 11 Sep 2020 12:57:40 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:42218 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726305AbgIKPE3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 11 Sep 2020 11:08:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1599836889;
-        bh=G9EeG684OMdUFlLwG1fKDDjwAUDvW1fU+fIQtdRyrqw=;
-        h=X-UI-Sender-Class:Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=FmLtj3P9nVtYk8D8IP76Gmfsm2buRmLyiyQJRp6MZsa3iShB8zigqcBT44hnkwwmI
-         5eecR7w0LtVhaWsKRupn9EeksxPPL9VTw28MtVNl8121pp7XS3x+cRXEyTL0CGpuyd
-         cGWKI8GJa90QBOf3N1GGz5xXp1s9a9uDFnCWqZjY=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from ubuntu ([79.150.73.70]) by mail.gmx.com (mrgmx104
- [212.227.17.174]) with ESMTPSA (Nemesis) id 1MDhlf-1kPqko2S7L-00ApMA; Fri, 11
- Sep 2020 16:48:25 +0200
-Date:   Fri, 11 Sep 2020 16:48:06 +0200
-From:   John Wood <john.wood@gmx.com>
-To:     Kees Cook <keescook@chromium.org>, Jann Horn <jannh@google.com>
-Cc:     John Wood <john.wood@gmx.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Iurii Zaikin <yzaikin@google.com>,
+        Fri, 11 Sep 2020 11:04:29 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id DA4558EE21C;
+        Fri, 11 Sep 2020 08:04:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1599836666;
+        bh=yhrDiYi9c8FE4wC2C86eKSK5/tP+mtNUZsOBeMc7Vzc=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=GG9RMhwBXb3CICZQMZm9a4wVWVt6Ol3eFNMBxAfJmWq4hQgPx+g1bhEuf5tVSH43W
+         CpQhW2TTOG3WcIxLq77wP6UHE55ai2mZF2pqByFiubhxsRQLwRsy7j/UAQirc+n/ov
+         Hz0RaVNlD904A1y9gLwulrhpgULCyeDAi5xevVSw=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id FWbnV69cVc6j; Fri, 11 Sep 2020 08:04:26 -0700 (PDT)
+Received: from [153.66.254.174] (c-73-35-198-56.hsd1.wa.comcast.net [73.35.198.56])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 0BF3A8EE0F8;
+        Fri, 11 Sep 2020 08:04:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1599836666;
+        bh=yhrDiYi9c8FE4wC2C86eKSK5/tP+mtNUZsOBeMc7Vzc=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=GG9RMhwBXb3CICZQMZm9a4wVWVt6Ol3eFNMBxAfJmWq4hQgPx+g1bhEuf5tVSH43W
+         CpQhW2TTOG3WcIxLq77wP6UHE55ai2mZF2pqByFiubhxsRQLwRsy7j/UAQirc+n/ov
+         Hz0RaVNlD904A1y9gLwulrhpgULCyeDAi5xevVSw=
+Message-ID: <1599836664.4041.21.camel@HansenPartnership.com>
+Subject: Re: [PATCH] security: keys: Use kvfree_sensitive in a few places
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Alex Dewar <alex.dewar90@gmail.com>
+Cc:     David Howells <dhowells@redhat.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: [RESEND][RFC PATCH 0/6] Fork brute force attack mitigation
- (fbfam)
-Message-ID: <20200911144806.GA4128@ubuntu>
-References: <20200910202107.3799376-1-keescook@chromium.org>
- <202009101656.FB68C6A@keescook>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202009101656.FB68C6A@keescook>
-X-Provags-ID: V03:K1:lN2qV3qD2XYCvHt1VuPq2YwfnHEhZEnQJ2uck8HViBxO+Ey5Oty
- ATL+/5H8I/zUYXvMP33JfPDWFPyE23DM1AJqhd6s4wpWmgJrYDZrA175xylTSlrpm8qP0yc
- MSG8/CNOMmjcRYHet6fxq6oZmbbmZ58JhxOdd6qmCTLg2Q6zBO3VPwETDll1RoQlo/eNtDY
- 3q5yWEZTjUslSuNBTCm+w==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:zfZog7YqfRo=:zP6dF4Pc4v/zEQ0GrAlY32
- Vj1gyg+5Zzktg+BOyx9VBIKDtXxN6/44JOf5S6QodMzC0O6bZnz56stqlFuHiqRFENmvuTpWs
- jTIro+BUEm7IxLqcLcO+e6JaPVjJqb4yvIOWzyCWZ2CqeZLCiaeYQg60JvfwKGblRBQlM3+5y
- K6aDRFSOB+2iQWd8D8GUh0xXnXGW60BDtdfn7UPLiCbuJsPx45odycKDWexWKFBPevcMTkmAu
- EKwmT3OX8I6/mqz3wZVsImCi9ty5ZNK7sHgh63aOJyZ/sm9T2POA2YYqRMkBDQHHbkRniLE/f
- a9RZBVuO0I1NMh823pz1vDUpUr0ALGilVxPTvpdAi3nvVb2x9zldJuUHKX3dFvnAq4OPlPWd4
- k6NwXXX68I8nPyDQDrcWnm8XtBc6PdgKsjR0Ub9GvfQAXqUCkS/DajD178gxlrQHLtN5PjaAx
- NqVt44EyMA5CP+UKjc+/0igPCELzV4+YvXRDAw4J8NalCapZnCK+bJbnt6RLnagKeQvQJX07n
- TZEDg9wKJMG9iLl5ncSZsftRjNtsT1CpD6BRDXeSFw49oZJkQbZkc9BsBS33qvtWqiKR7i0tu
- cTJziIT8fJj55RVQTCsscqKRnu6vJhkg9Meko3pN1KczigZiUbAPfgMYcQOwMfxct/reeK5Zx
- Erx2mEHwYuym2JEPYL9jn/HavbsIP2LweKcoRcDPBy7VcW2K1hw/MxY7tw9nnpOkUI46FixR5
- Gw+IR+8Of7cge5x4+zId8DOxdGTKps+R8sVC5Xr5p4/2YlpMksyTN35w7nO9uslZjLkGsn0L3
- uETGqa5VEs/VdiXJUt9/lqpaVTnoKcVeSmwov/qjxaRr+P8reu9vIEZnyO5EC+hw0mS5AYrvC
- ZttVKe1SSdmsBaynS9OyLpfkwOi+vV+Tl+XPzISzfU5xlpF3dzZMz+6Rjs6Z2AJtCbFasuKDk
- BfgHosBBg20NjSkI26DtyKjL57QWhQdD2VLTqJUyppaUY9uVHj9nnyf/lf1icm/BX7LD+3P5v
- ZK7I0p6jZCkcQDUPtpEITx71pOnpz4qe8CpmItQqPD1kqdR/cosFJvycw70mkLIVVFVFwpb9p
- zDM5i5gu2NckEjBKXtK33o08FEjtEGCES/vhygf8XzOboN7KopApFhD0heCwLotVp4Q0YIlQ1
- C0hiiA+J6T15UZPuGYByLV5B2mKXEvdqvhLsxk+oNVznW2J4AngtOKse6t7AfF4lqqnZWasMe
- NKXE6fbDSTJk/Uh6URk44hZGrKuzuq7+SsZFdZg==
-Content-Transfer-Encoding: quoted-printable
+        "Serge E. Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Fri, 11 Sep 2020 08:04:24 -0700
+In-Reply-To: <20200911114400.82207-1-alex.dewar90@gmail.com>
+References: <20200911114400.82207-1-alex.dewar90@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi,
+On Fri, 2020-09-11 at 12:44 +0100, Alex Dewar wrote:
+> In big_key.c, there are a few places where memzero_explicit + kvfree
+> is used. It is better to use kvfree_sensitive instead, which is more
+> readable and also prevents the compiler from eliding the call to
+> memzero_explicit. Fix this.
 
-On Thu, Sep 10, 2020 at 04:58:29PM -0700, Kees Cook wrote:
-> On Thu, Sep 10, 2020 at 01:21:01PM -0700, Kees Cook wrote:
-> > From: John Wood <john.wood@gmx.com>
-> >
-> > The goal of this patch serie is to detect and mitigate a fork brute fo=
-rce
-> > attack.
->
-> Thanks for this RFC! I'm excited to get this problem finally handled in
-> the kernel. Hopefully the feedback is useful. :)
+That last bit is untrue: the compiler can't elide memzero_explicit ...
+that's why it has the explicit suffix.
 
-Kees and Jann,
+The original problem was a lot of people do memset(.., 0, ..); kfree()
+which the compiler can elide if it understands the memory is going out
+of scope.  Or the even more problematic memset(..., 0, ...) on a stack
+variable before it goes out of scope.
 
-Thank you very much for your comments and advices. I'm a newbie in the
-linux kernel development and this is my first attempt. So, I would prefer
-to study all your comments before to reply since a big amount of terms
-you expose are unknown to me.
+We can argue about readability but there's no secret leak here.
 
-In other words, a late reply to this serie comments is not a lack of
-interest. Moreover, I think it would be better that I try to understand an=
-d
-to implement your ideas before anything else.
+James
 
-My original patch serie is composed of 9 patches, so the 3 lasts are lost.
-Kees: Have you removed them for some reason? Can you send them for review?
-
-security/fbfam: Add two new prctls to enable and disable the fbfam feature
-https://github.com/johwood/linux/commit/8a36399847213e7eb7b45b853568a53666=
-bd0083
-
-Documentation/security: Add documentation for the fbfam feature
-https://github.com/johwood/linux/commit/fb46804541f5c0915f3f48acefbe6dc998=
-815609
-
-MAINTAINERS: Add a new entry for the fbfam feature
-https://github.com/johwood/linux/commit/4303bc8935334136c6ef47b5e50b87cd2c=
-472c1f
-
-Is there a problem if I ask for some guidance (replying to this thread)
-during the process to do my second patch series?
-
-My goal is to learn as much as possible doing something useful for the
-linux kernel.
-
-Thanks a lot,
-John Wood
-
-> --
-> Kees Cook
