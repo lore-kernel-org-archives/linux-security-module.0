@@ -2,113 +2,164 @@ Return-Path: <SRS0=uslm=CU=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F224C433E2
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Sep 2020 19:09:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CC08C433E2
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Sep 2020 19:24:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C867122208
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Sep 2020 19:09:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 29C5322209
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Sep 2020 19:24:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="QZ04DitK"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="KEM/NXHw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725813AbgIKTJC (ORCPT
+        id S1725778AbgIKTX6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 11 Sep 2020 15:09:02 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:27334 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725730AbgIKTJA (ORCPT
+        Fri, 11 Sep 2020 15:23:58 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58124 "EHLO
+        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725770AbgIKTX5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 11 Sep 2020 15:09:00 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 08BJ3pA0135511;
-        Fri, 11 Sep 2020 15:08:47 -0400
+        Fri, 11 Sep 2020 15:23:57 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 08BJ3lDc140475;
+        Fri, 11 Sep 2020 15:23:03 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
  from : to : cc : date : in-reply-to : references : content-type :
  mime-version : content-transfer-encoding; s=pp1;
- bh=8jEx563BrMVT+19G9TowoPShp91w2ilK5GNGgfLV120=;
- b=QZ04DitK+0lZdNOLKV7awEI4LN3LSkNHCLnMu1At/8aJqbh82+7KQwGr3goFbEapCZca
- tN298/p7BZLMsgtQujXDRl12rDi+vm92R7W2xQ5ih9REpUZOrtvqOec2harRSIVVOljT
- 2M1uElWyUMJ4LYLb0qnjefUgY5qSoAV3rnuWykZ0RfZVUL1xNTuynY8Bb08jScsU5dQJ
- DmFe1h1gDSWxkxb26un54JdUdlYyBZ3N+kcXyAwlUQjIzBMkKN6TVZ4ccYkQHQXS778i
- yQ7GccvQYe2lDveKz5Rw856URwV3pphWePhnmPwPNSJKpuaZ7x632JCHpWmf3enDUxFB 5g== 
+ bh=3EROlRDCWp8OcJdYHfRi+TO7g3x6mxZvq5GRTKFOd8U=;
+ b=KEM/NXHwHPIiTplq1HOhIvX5bAsmw36/0TQu/fZm18VA6D2Zq/anpjXZBRrLmVPOFpmy
+ TTxOvSzULmhPdjNJXttCue5U+nbERKLQaVeEVEOnS3oyH0qJ94oxDELU20uLnyTimzz+
+ PZxz2lNUjBZ0YpE9/YhEf2c23wjw2VO6eN18JT5ax0/YjI24xVuGFk72HZZpNa0aDy7q
+ v2T/0GQBesxj+93SiMLgJLMINVa0ZePtFKARQFWBcmMWHmzb7JzfUKSzU4pTuvFimYEd
+ 3W8uSHAS5ypVFxtmKSTkM6jA2EYmiJcLYSxMb+ksDBTr7gQ8JOOchFkAQF6mCn7BGq25 NQ== 
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 33gf2j04cm-1
+        by mx0a-001b2d01.pphosted.com with ESMTP id 33gexu0m0f-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 11 Sep 2020 15:08:47 -0400
-Received: from m0098404.ppops.net (m0098404.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 08BJ5Bu2144825;
-        Fri, 11 Sep 2020 15:08:47 -0400
-Received: from ppma03fra.de.ibm.com (6b.4a.5195.ip4.static.sl-reverse.com [149.81.74.107])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 33gf2j04as-1
+        Fri, 11 Sep 2020 15:23:03 -0400
+Received: from m0098421.ppops.net (m0098421.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 08BJ41F3141951;
+        Fri, 11 Sep 2020 15:23:02 -0400
+Received: from ppma01fra.de.ibm.com (46.49.7a9f.ip4.static.sl-reverse.com [159.122.73.70])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 33gexu0kys-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 11 Sep 2020 15:08:46 -0400
-Received: from pps.filterd (ppma03fra.de.ibm.com [127.0.0.1])
-        by ppma03fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 08BJ7FlU011806;
-        Fri, 11 Sep 2020 19:08:44 GMT
-Received: from b06avi18878370.portsmouth.uk.ibm.com (b06avi18878370.portsmouth.uk.ibm.com [9.149.26.194])
-        by ppma03fra.de.ibm.com with ESMTP id 33c2a8c97b-1
+        Fri, 11 Sep 2020 15:23:02 -0400
+Received: from pps.filterd (ppma01fra.de.ibm.com [127.0.0.1])
+        by ppma01fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 08BJMmTu031168;
+        Fri, 11 Sep 2020 19:23:00 GMT
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
+        by ppma01fra.de.ibm.com with ESMTP id 33c2a827a9-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 11 Sep 2020 19:08:43 +0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 08BJ8feS59638190
+        Fri, 11 Sep 2020 19:23:00 +0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 08BJMvdY32768344
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 11 Sep 2020 19:08:41 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B28995204E;
-        Fri, 11 Sep 2020 19:08:41 +0000 (GMT)
+        Fri, 11 Sep 2020 19:22:57 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C37A5A4040;
+        Fri, 11 Sep 2020 19:22:57 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B845EA4053;
+        Fri, 11 Sep 2020 19:22:51 +0000 (GMT)
 Received: from sig-9-65-251-51.ibm.com (unknown [9.65.251.51])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id E9AF25204F;
-        Fri, 11 Sep 2020 19:08:38 +0000 (GMT)
-Message-ID: <06ea64fec71ebd18f0c5ed6b0d9b5a7d8f1d4775.camel@linux.ibm.com>
-Subject: Re: [PATCH V2 2/3] integrity: Move import of MokListRT certs to a
- separate routine
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 11 Sep 2020 19:22:51 +0000 (GMT)
+Message-ID: <46c6f4c1ccab14d914837aa1e4b4ab5674ecc93c.camel@linux.ibm.com>
+Subject: Re: [PATCH v6 8/8] integrity: Asymmetric digsig supports
+ SM2-with-SM3 algorithm
 From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Ard Biesheuvel <ardb@kernel.org>,
-        Lenny Szubowicz <lszubowi@redhat.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        platform-driver-x86@vger.kernel.org,
-        linux-security-module@vger.kernel.org, andy.shevchenko@gmail.com,
-        James Morris <jmorris@namei.org>, serge@hallyn.com,
-        Kees Cook <keescook@chromium.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Peter Jones <pjones@redhat.com>,
-        David Howells <dhowells@redhat.com>, prarit@redhat.com
-Date:   Fri, 11 Sep 2020 15:08:38 -0400
-In-Reply-To: <CAMj1kXEz8y+X6KjqWWFD=38dDowqXDBvnPbgeh30+o83KpmKrg@mail.gmail.com>
-References: <20200905013107.10457-1-lszubowi@redhat.com>
-         <20200905013107.10457-3-lszubowi@redhat.com>
-         <CAMj1kXEdkdeE8VSZqEzhd__Kb7_ZmG2af6iBpbY3=nsj1-phYw@mail.gmail.com>
-         <f0a079b1-5f02-8618-fdfe-aea2278113c9@redhat.com>
-         <cb8b4ebaa35d79eba65b011d042d20a991adf540.camel@linux.ibm.com>
-         <394190b9-59bd-5cb3-317e-736852f190f4@redhat.com>
-         <CAMj1kXEz8y+X6KjqWWFD=38dDowqXDBvnPbgeh30+o83KpmKrg@mail.gmail.com>
+To:     Tianjia Zhang <tianjia.zhang@linux.alibaba.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        David Howells <dhowells@redhat.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Stephan Mueller <smueller@chronox.de>,
+        Marcelo Henrique Cerri <marcelo.cerri@canonical.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Waiman Long <longman@redhat.com>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Tushar Sugandhi <tusharsu@linux.microsoft.com>,
+        Vitaly Chikunov <vt@altlinux.org>,
+        Gilad Ben-Yossef <gilad@benyossef.com>,
+        Pascal van Leeuwen <pvanleeuwen@rambus.com>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org,
+        linux-security-module@vger.kernel.org
+Cc:     Xufeng Zhang <yunbo.xufeng@linux.alibaba.com>,
+        Jia Zhang <zhang.jia@linux.alibaba.com>
+Date:   Fri, 11 Sep 2020 15:22:50 -0400
+In-Reply-To: <20200903131242.128665-9-tianjia.zhang@linux.alibaba.com>
+References: <20200903131242.128665-1-tianjia.zhang@linux.alibaba.com>
+         <20200903131242.128665-9-tianjia.zhang@linux.alibaba.com>
 Content-Type: text/plain; charset="ISO-8859-15"
 X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 X-TM-AS-GCONF: 00
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-09-11_10:2020-09-10,2020-09-11 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
- priorityscore=1501 mlxscore=0 mlxlogscore=859 adultscore=0 malwarescore=0
- suspectscore=3 lowpriorityscore=0 spamscore=0 clxscore=1015
- impostorscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2006250000 definitions=main-2009110152
+ definitions=2020-09-11_09:2020-09-10,2020-09-11 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
+ clxscore=1011 impostorscore=0 spamscore=0 mlxscore=0 priorityscore=1501
+ suspectscore=3 lowpriorityscore=0 phishscore=0 adultscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2006250000 definitions=main-2009110148
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 2020-09-11 at 21:16 +0300, Ard Biesheuvel wrote:
-> I think we can just merge the patches as they are, with Mimi's R-b carried over.
+On Thu, 2020-09-03 at 21:12 +0800, Tianjia Zhang wrote:
+> Asymmetric digsig supports SM2-with-SM3 algorithm combination,
+> so that IMA can also verify SM2's signature data.
+> 
+> Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+> Tested-by: Xufeng Zhang <yunbo.xufeng@linux.alibaba.com>
 
-Other than the comments beginning on the "/*" line as opposed to the
-subsequent line, the updated 2/2 and 3/3 patches look fine.
+Reviewed-by: Mimi Zohar <zohar@linux.ibm.com> (coding, not crypto
+perspective)
+> ---
+>  security/integrity/digsig_asymmetric.c | 14 +++++++++++---
+>  1 file changed, 11 insertions(+), 3 deletions(-)
+> 
+> diff --git a/security/integrity/digsig_asymmetric.c b/security/integrity/digsig_asymmetric.c
+> index cfa4127d0518..b86a4a8f61ab 100644
+> --- a/security/integrity/digsig_asymmetric.c
+> +++ b/security/integrity/digsig_asymmetric.c
+> @@ -99,14 +99,22 @@ int asymmetric_verify(struct key *keyring, const char *sig,
+>  	memset(&pks, 0, sizeof(pks));
+>  
+>  	pks.hash_algo = hash_algo_name[hdr->hash_algo];
+> -	if (hdr->hash_algo == HASH_ALGO_STREEBOG_256 ||
+> -	    hdr->hash_algo == HASH_ALGO_STREEBOG_512) {
+> +	switch (hdr->hash_algo) {
+> +	case HASH_ALGO_STREEBOG_256:
+> +	case HASH_ALGO_STREEBOG_512:
+>  		/* EC-RDSA and Streebog should go together. */
+>  		pks.pkey_algo = "ecrdsa";
+>  		pks.encoding = "raw";
+> -	} else {
+> +		break;
+> +	case HASH_ALGO_SM3_256:
+> +		/* SM2 and SM3 should go together. */
+> +		pks.pkey_algo = "sm2";
+> +		pks.encoding = "raw";
+> +		break;
+> +	default:
+>  		pks.pkey_algo = "rsa";
+>  		pks.encoding = "pkcs1";
+> +		break;
+>  	}
+>  	pks.digest = (u8 *)data;
+>  	pks.digest_size = datalen;
 
-thanks,
-
-Mimi
 
