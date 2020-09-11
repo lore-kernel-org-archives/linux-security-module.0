@@ -2,150 +2,145 @@ Return-Path: <SRS0=uslm=CU=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D511AC433E2
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Sep 2020 16:28:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17BB2C2BC11
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Sep 2020 16:33:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8635E221EB
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Sep 2020 16:28:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599841695;
-	bh=gupGZfyCWjzyTybhAS/ra1qQ28eHy8myobsIyy93VJA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=Ie/bES91J045bfFz+2dySYZenAgDbl4z43C87CuA0dXbbn12CAJrVDMKX3DdskGiw
-	 HXqmUsdELoRjvPxkvBlQTvTEbGbCEuFJCRIgjaWDhy+NK8f8R4bV1gd6HGhzCI7J0T
-	 3OtlGFzEgk+JE1BSm58zr88d3Z1jItEJ+8RVWY5o=
+	by mail.kernel.org (Postfix) with ESMTP id DAD01208FE
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Sep 2020 16:33:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726300AbgIKQ1y (ORCPT
+        id S1726502AbgIKQc5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 11 Sep 2020 12:27:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53910 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726454AbgIKPUY (ORCPT
+        Fri, 11 Sep 2020 12:32:57 -0400
+Received: from mxout04.lancloud.ru ([89.108.124.63]:53730 "EHLO
+        mxout04.lancloud.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726466AbgIKQcz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 11 Sep 2020 11:20:24 -0400
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E5DDC21D81;
-        Fri, 11 Sep 2020 15:17:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599837460;
-        bh=gupGZfyCWjzyTybhAS/ra1qQ28eHy8myobsIyy93VJA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=m0oQPP2XCKYz+rwQfM4O1rdYT4yltshP7twQJqK62UXdUmP7mAN8yidHGu/qxh5wR
-         Yij4F3nIw3qQ22KKyVgxcdpg6bGWact2evoQ35oegTLBfPZJEJ5LnXeQ+DJE8vaGkX
-         teW2jpUmwLifBSRr7/LlebUSQIbQk94yNv2wTGMo=
-Received: by mail-ot1-f49.google.com with SMTP id a2so8597256otr.11;
-        Fri, 11 Sep 2020 08:17:39 -0700 (PDT)
-X-Gm-Message-State: AOAM5329fU0dMKxiltpkEdCwL44njWjCTLPvn4OUDQFPDYfmzv+Hu79G
-        SSBCht3DMXWMVF2GUDd9hzsCJNa9gsNtbPeJj+U=
-X-Google-Smtp-Source: ABdhPJzOyF/HBAXFTBoyNO5I33yKfSijH56wjqNzdZ68h+mmUbhU+Ox68k7PwAF8A8PvXqxLJLUtyECmO01vhMnpYb4=
-X-Received: by 2002:a9d:6193:: with SMTP id g19mr1472882otk.108.1599837459251;
- Fri, 11 Sep 2020 08:17:39 -0700 (PDT)
+        Fri, 11 Sep 2020 12:32:55 -0400
+X-Greylist: delayed 4420 seconds by postgrey-1.27 at vger.kernel.org; Fri, 11 Sep 2020 12:32:52 EDT
+Received: from LanCloud
+DKIM-Filter: OpenDKIM Filter v2.11.0 mxout04.lancloud.ru 27D1B20A0DEC
+Received: from LanCloud
+Received: from LanCloud
+Subject: Re: [RFC PATCH v9 0/3] Add introspect_access(2) (was O_MAYEXEC)
+To:     Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+CC:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        <linux-kernel@vger.kernel.org>, Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Eric Chiang <ericchiang@google.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Thibaut Sautereau <thibaut.sautereau@clip-os.org>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        <kernel-hardening@lists.openwall.com>, <linux-api@vger.kernel.org>,
+        <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>
+References: <20200910164612.114215-1-mic@digikod.net>
+ <20200910170424.GU6583@casper.infradead.org>
+ <f6e2358c-8e5e-e688-3e66-2cdd943e360e@digikod.net>
+ <a48145770780d36e90f28f1526805a7292eb74f6.camel@linux.ibm.com>
+ <880bb4ee-89a2-b9b0-747b-0f779ceda995@digikod.net>
+ <20200910184033.GX6583@casper.infradead.org>
+ <20200910200010.GF1236603@ZenIV.linux.org.uk>
+ <20200910200543.GY6583@casper.infradead.org>
+From:   Igor Zhbanov <i.zhbanov@omprussia.ru>
+Message-ID: <c77abad8-55a6-d66a-8d4d-dfc598fe5251@omprussia.ru>
+Date:   Fri, 11 Sep 2020 17:15:10 +0300
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20200905013107.10457-1-lszubowi@redhat.com>
-In-Reply-To: <20200905013107.10457-1-lszubowi@redhat.com>
-From:   Ard Biesheuvel <ardb@kernel.org>
-Date:   Fri, 11 Sep 2020 18:17:28 +0300
-X-Gmail-Original-Message-ID: <CAMj1kXHOcGiwOT_sNTQRA=G7GCQSKLk2HSNoS2vEQYPzQpn0nw@mail.gmail.com>
-Message-ID: <CAMj1kXHOcGiwOT_sNTQRA=G7GCQSKLk2HSNoS2vEQYPzQpn0nw@mail.gmail.com>
-Subject: Re: [PATCH V2 0/3] integrity: Load certs from EFI MOK config table
-To:     Lenny Szubowicz <lszubowi@redhat.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        platform-driver-x86@vger.kernel.org,
-        linux-security-module@vger.kernel.org, andy.shevchenko@gmail.com,
-        James Morris <jmorris@namei.org>, serge@hallyn.com,
-        Kees Cook <keescook@chromium.org>, zohar@linux.ibm.com,
-        Borislav Petkov <bp@alien8.de>,
-        Peter Jones <pjones@redhat.com>,
-        David Howells <dhowells@redhat.com>, prarit@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200910200543.GY6583@casper.infradead.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: ru-RU
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [89.179.245.198]
+X-ClientProxiedBy: LFEXT01.lancloud.ru (fd00:f066::141) To LFEX15.lancloud.ru
+ (fd00:f066::45)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, 5 Sep 2020 at 04:31, Lenny Szubowicz <lszubowi@redhat.com> wrote:
->
-> Because of system-specific EFI firmware limitations, EFI volatile
-> variables may not be capable of holding the required contents of
-> the Machine Owner Key (MOK) certificate store when the certificate
-> list grows above some size. Therefore, an EFI boot loader may pass
-> the MOK certs via a EFI configuration table created specifically for
-> this purpose to avoid this firmware limitation.
->
-> An EFI configuration table is a simpler and more robust mechanism
-> compared to EFI variables and is well suited for one-way passage
-> of static information from a pre-OS environment to the kernel.
->
-> Entries in the MOK variable configuration table are named key/value
-> pairs. Therefore the shim boot loader can create a MokListRT named
-> entry in the MOK configuration table that contains exactly the same
-> data as the MokListRT UEFI variable does or would otherwise contain.
-> As such, the kernel can load certs from the data in the MokListRT
-> configuration table entry data in the same way that it loads certs
-> from the data returned by the EFI GetVariable() runtime call for the
-> MokListRT variable.
->
-> This patch set does not remove the support for loading certs from the
-> EFI MOK variables into the platform key ring. However, if both the EFI
-> MOK configuration table and corresponding EFI MOK variables are present,
-> the MOK table is used as the source of MOK certs.
->
-> The contents of the individual named MOK config table entries are
-> made available to user space as individual sysfs binary files,
-> which are read-only to root, under:
->
->         /sys/firmware/efi/mok-variables/
->
-> This enables an updated mokutil to provide support for:
->
->         mokutil --list-enrolled
->
-> such that it can provide accurate information regardless of whether
-> the MOK configuration table or MOK EFI variables were the source
-> for certs. Note that all modifications of MOK related state are still
-> initiated by mokutil via EFI variables.
->
-> V2: Incorporate feedback from V1
->   Patch 01: efi: Support for MOK variable config table
->   - Minor update to change log; no code changes
->   Patch 02: integrity: Move import of MokListRT certs to a separate routine
->   - Clean up code flow in code moved to load_moklist_certs()
->   - Remove some unnecessary initialization of variables
->   Patch 03: integrity: Load certs from the EFI MOK config table
->   - Update required due to changes in patch 02.
->   - Remove unnecessary init of mokvar_entry in load_moklist_certs()
->
-> V1:
->   https://lore.kernel.org/lkml/20200826034455.28707-1-lszubowi@redhat.com/
->
-> Lenny Szubowicz (3):
->   efi: Support for MOK variable config table
->   integrity: Move import of MokListRT certs to a separate routine
->   integrity: Load certs from the EFI MOK config table
->
->  arch/x86/kernel/setup.c                       |   1 +
->  arch/x86/platform/efi/efi.c                   |   3 +
->  drivers/firmware/efi/Makefile                 |   1 +
->  drivers/firmware/efi/arm-init.c               |   1 +
->  drivers/firmware/efi/efi.c                    |   6 +
->  drivers/firmware/efi/mokvar-table.c           | 360 ++++++++++++++++++
->  include/linux/efi.h                           |  34 ++
->  security/integrity/platform_certs/load_uefi.c |  85 ++++-
->  8 files changed, 472 insertions(+), 19 deletions(-)
->  create mode 100644 drivers/firmware/efi/mokvar-table.c
->
+On 10.09.2020 23:05, Matthew Wilcox wrote:
+> On Thu, Sep 10, 2020 at 09:00:10PM +0100, Al Viro wrote:
+>> On Thu, Sep 10, 2020 at 07:40:33PM +0100, Matthew Wilcox wrote:
+>>> On Thu, Sep 10, 2020 at 08:38:21PM +0200, Mickaël Salaün wrote:
+>>>> There is also the use case of noexec mounts and file permissions. From
+>>>> user space point of view, it doesn't matter which kernel component is in
+>>>> charge of defining the policy. The syscall should then not be tied with
+>>>> a verification/integrity/signature/appraisal vocabulary, but simply an
+>>>> access control one.
+>>>
+>>> permission()?
+>>
+>> int lsm(int fd, const char *how, char *error, int size);
+>>
+>> Seriously, this is "ask LSM to apply special policy to file"; let's
+>> _not_ mess with flags, etc. for that; give it decent bandwidth
+>> and since it's completely opaque for the rest of the kernel,
+>> just a pass a string to be parsed by LSM as it sees fit.
+> 
+> Hang on, it does have some things which aren't BD^W^WLSM.  It lets
+> the interpreter honour the mount -o noexec option.  I presume it's
+> not easily defeated by
+> 	cat /home/salaun/bin/bad.pl | perl -
 
-Thanks. I have tentatively queued these up in efi/next.
+Hi!
 
-Mimi, please let me know if you have any thoughts on 3/3, and whether
-your R-b on 2/3 [v1] implies that you are ok with the series going
-through the EFI tree.
+It could be bypassed this way. There are several ways of executing some
+script:
 
--- 
-Ard.
+1) /unsigned.sh (Already handled by IMA)
+2) bash /unsigned.sh (Not handled. Works even with "-o noexec" mount)
+3) bash < /unsigned.sh (Not handled. Works even with "-o noexec" mount)
+4) cat /unsigned.sh | bash (Not handled. Works even with "-o noexec" mount)
+
+AFAIK, the proposed syscall solves #2 and may be #3. As for #4 in security
+critical environments there should be system-wide options to disable
+interpreting scripts from the standard input. I suppose, executing commands
+from the stdin is a rare case, and could be avoided entirely in security
+critical environments. And yes, some help from the interpreters is needed
+for that.
+
+As for the usage of the system call, I have a proposal to extend its usage
+to validate systemd unit files. Because a unit file could specify what UID
+to use for a service, also it contains ExecStartPre which is actually a script
+and is running as root (for the system session services).
+
+For the syscall name it could be:
+- trusted_file()
+- trusted_file_content()
+- valid_file()
+- file_integrity()
+because what we are checking here is the file content integrity (IMA) and
+may be file permissions/attrs integrity (EVM).
