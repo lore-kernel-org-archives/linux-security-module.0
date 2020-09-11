@@ -2,128 +2,99 @@ Return-Path: <SRS0=uslm=CU=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D3E6C43461
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Sep 2020 12:17:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAA17C433E2
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Sep 2020 12:27:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 02B15221ED
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Sep 2020 12:17:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0276221E3
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Sep 2020 12:27:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CB8CyjFb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725849AbgIKMRH (ORCPT
+        id S1725887AbgIKM1o (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 11 Sep 2020 08:17:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60554 "EHLO
+        Fri, 11 Sep 2020 08:27:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33024 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725822AbgIKMQj (ORCPT
+        with ESMTP id S1725784AbgIKMVN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 11 Sep 2020 08:16:39 -0400
-Received: from smtp-1909.mail.infomaniak.ch (smtp-1909.mail.infomaniak.ch [IPv6:2001:1600:3:17::1909])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89434C061756;
-        Fri, 11 Sep 2020 05:16:36 -0700 (PDT)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Bnvqv0ZqWzlhfqK;
-        Fri, 11 Sep 2020 14:16:27 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Bnvqq5mSFzlh8T4;
-        Fri, 11 Sep 2020 14:16:23 +0200 (CEST)
-Subject: Re: [RFC PATCH v9 0/3] Add introspect_access(2) (was O_MAYEXEC)
-To:     Matthew Wilcox <willy@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>, linux-kernel@vger.kernel.org,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Christian Heimes <christian@python.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Eric Chiang <ericchiang@google.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Thibaut Sautereau <thibaut.sautereau@clip-os.org>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-References: <20200910164612.114215-1-mic@digikod.net>
- <20200910170424.GU6583@casper.infradead.org>
- <f6e2358c-8e5e-e688-3e66-2cdd943e360e@digikod.net>
- <a48145770780d36e90f28f1526805a7292eb74f6.camel@linux.ibm.com>
- <880bb4ee-89a2-b9b0-747b-0f779ceda995@digikod.net>
- <20200910184033.GX6583@casper.infradead.org>
- <20200910200010.GF1236603@ZenIV.linux.org.uk>
- <20200910200543.GY6583@casper.infradead.org>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Message-ID: <3dd9b2b3-6304-03df-bfba-13864169453e@digikod.net>
-Date:   Fri, 11 Sep 2020 14:16:23 +0200
-User-Agent: 
+        Fri, 11 Sep 2020 08:21:13 -0400
+Received: from mail-oi1-x244.google.com (mail-oi1-x244.google.com [IPv6:2607:f8b0:4864:20::244])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47E58C061573;
+        Fri, 11 Sep 2020 05:21:12 -0700 (PDT)
+Received: by mail-oi1-x244.google.com with SMTP id w16so9271714oia.2;
+        Fri, 11 Sep 2020 05:21:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PAY5e79HIyPiP3CUcve1Tj4nEV9yBhSTgHOjkBA3dK4=;
+        b=CB8CyjFbMIQqXATVVkWH25mTl8jijugrT5o9xJKnQCHb2mqLV4yiSmAkIgaqYHcSgQ
+         d/FEp57R++sC8yO8e/85jdPE10a66I5T2tA6wO05ecu22toQhzelRIa8woazTmWqBusf
+         B6YTpyJlmKHfeSAlO4Z8hDTchu5F0euZnRLVtT42zFR/5/omZnrwUxKSj7VdC/Y1R9Qi
+         HFo8F9t9T93qYLRtuMEQQBagwLMcz6AP3rs7wjAit320NIk9dCSyqpAr6K285q8fI/YP
+         MzhTBCvZJLP6GmfDUZpRpvxmpVKAimxx2Ua4jIQVP6f0qkW+GKq2VHimDBqXXI9XfhCM
+         lHOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PAY5e79HIyPiP3CUcve1Tj4nEV9yBhSTgHOjkBA3dK4=;
+        b=AIhfYIthK96HAphXs/b2ahs4KpoVvrRovaV90LtAH8zDZlOduPqvRPwP2rc15039P7
+         wywFRva9bXp9TMDfArF5wuO5aPjJ3ISdmxHOqH83InpG/E9Hp9bvAsBYC6ZKH/ytBEMn
+         xPabZyOqbkxs+tsp5J0LYiYy9bgCNLb3uzQiiY3X9wEof64N5YEMrM1PHIXiqXOysSlM
+         gT7cu0SA0mH0UiS8Q6sBaY11WoFM3s6wGdfvxf0FJaSA3mq7A2SUAR77HVnnAr9QfFH5
+         seMmALJhEedb1jrYOZSn/U/O5OxDEvgwiBTUP+n9eb3f7ljo8f2VoSenTo4KuIQlQ5z8
+         w+qg==
+X-Gm-Message-State: AOAM532/v2gVCNekwR0x3hxeNeqirQ6ok0SIUhcFx6WjJ53EfAlvRdfk
+        7JoYhrHqC8r1IMUt8JTzwmZUIaOWkYCKEOIOxRM=
+X-Google-Smtp-Source: ABdhPJzmkHJZlB6cVPx57xni1maCEZAkiIuTYiKwgIwUl+YW7wmqwby9Wyix2LyI65YIMAEfnbLXlbmr0OCTP2CrWGY=
+X-Received: by 2002:aca:ec53:: with SMTP id k80mr1045219oih.92.1599826870993;
+ Fri, 11 Sep 2020 05:21:10 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200910200543.GY6583@casper.infradead.org>
-Content-Type: text/plain; charset=iso-8859-15
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20200910210059.34759-1-stephen.smalley.work@gmail.com> <20200911092320.GA1302235@horizon>
+In-Reply-To: <20200911092320.GA1302235@horizon>
+From:   Stephen Smalley <stephen.smalley.work@gmail.com>
+Date:   Fri, 11 Sep 2020 08:20:11 -0400
+Message-ID: <CAEjxPJ5j4vHMdH9TC501Q1yFtHoYS1d3zibFr-3BJ0QSdMgAgA@mail.gmail.com>
+Subject: Re: [PATCH] socket.7,unix.7: add initial description for SO_PEERSEC
+To:     Simon McVittie <smcv@collabora.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Cc:     Michael Kerrisk <mtk.manpages@gmail.com>,
+        linux-man@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        SElinux list <selinux@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Fri, Sep 11, 2020 at 5:23 AM Simon McVittie <smcv@collabora.com> wrote:
+>
+> On Thu, 10 Sep 2020 at 17:00:59 -0400, Stephen Smalley wrote:
+> > +For SELinux, the security context string is a null-terminated
+> > +string and the returned length includes the terminating null.
+> > +Other security modules may differ.
+>
+> We discussed this interface a while ago when I was setting up dbus to
+> use SO_PEERSEC. It would be really useful if the man page documented
+> what callers can and can't expect from an unknown LSM, so that the
+> author of the next D-Bus-equivalent doesn't have to turn up on the
+> linux-security-module list and annoy maintainers like I did.
+>
+> Perhaps something like this?
+>
+>     The security context string may include a terminating null character
+>     in the returned length, but is not guaranteed to do so:
+>     a security context "foo" might be represented as either {'f','o','o'}
+>     of length 3 or {'f','o','o','\0'} of length 4, which are considered
+>     to be interchangeable. It is printable, does not contain non-terminating
+>     null characters, and is in an unspecified encoding (in particular it is
+>     not guaranteed to be ASCII or UTF-8).
 
-On 10/09/2020 22:05, Matthew Wilcox wrote:
-> On Thu, Sep 10, 2020 at 09:00:10PM +0100, Al Viro wrote:
->> On Thu, Sep 10, 2020 at 07:40:33PM +0100, Matthew Wilcox wrote:
->>> On Thu, Sep 10, 2020 at 08:38:21PM +0200, Mickaël Salaün wrote:
->>>> There is also the use case of noexec mounts and file permissions. From
->>>> user space point of view, it doesn't matter which kernel component is in
->>>> charge of defining the policy. The syscall should then not be tied with
->>>> a verification/integrity/signature/appraisal vocabulary, but simply an
->>>> access control one.
->>>
->>> permission()?
->>
->> int lsm(int fd, const char *how, char *error, int size);
->>
->> Seriously, this is "ask LSM to apply special policy to file"; let's
->> _not_ mess with flags, etc. for that; give it decent bandwidth
->> and since it's completely opaque for the rest of the kernel,
->> just a pass a string to be parsed by LSM as it sees fit.
-
-Well, I don't know why you're so angry against LSM, but as noticed by
-Matthew, the main focus of this patch series is not about LSM (no hook,
-no security/* code, only file permission and mount option checks,
-nothing fancy). Moreover, the syscall you're proposing doesn't make
-sense, but I guess it's yet another sarcastic reply. Please, cool down.
-We asked for constructive comments and already followed your previous
-requests (even if we didn't get answers for some questions), but
-seriously, this one is nonsense.
-
-> 
-> Hang on, it does have some things which aren't BD^W^WLSM.  It lets
-> the interpreter honour the mount -o noexec option.  I presume it's
-> not easily defeated by
-> 	cat /home/salaun/bin/bad.pl | perl -
-> 
-
-Funny. I know there is a lot of text and links but please read the
-commit messages before further comments.
+Works for me.  Do the security subsystem maintainers concur?
