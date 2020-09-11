@@ -1,89 +1,114 @@
 Return-Path: <SRS0=uslm=CU=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.5 required=3.0 tests=BAYES_50,
-	HEADER_FROM_DIFFERENT_DOMAINS,LOTS_OF_MONEY,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,T_DEAR_BENEFICIARY,UNCLAIMED_MONEY autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38410C43461
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Sep 2020 18:24:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F224C433E2
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Sep 2020 19:09:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E949D208E4
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Sep 2020 18:24:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C867122208
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Sep 2020 19:09:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="QZ04DitK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725911AbgIKSYN convert rfc822-to-8bit (ORCPT
+        id S1725813AbgIKTJC (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 11 Sep 2020 14:24:13 -0400
-Received: from mail.flex.co.jp ([211.8.82.123]:56702 "EHLO www.flex.co.jp"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725901AbgIKSYN (ORCPT
+        Fri, 11 Sep 2020 15:09:02 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:27334 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725730AbgIKTJA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 11 Sep 2020 14:24:13 -0400
-Received: from live.com.mx ([103.89.89.225])
-        (authenticated bits=0)
-        by www.flex.co.jp (MTA) with ESMTP id 0898nrjE009772
-        for <linux-security-module@vger.kernel.org>; Wed, 9 Sep 2020 17:49:56 +0900
-Reply-To: powerinthewords@yahoo.co.jp
-From:   piyin.crhe@live.com.mx
-To:     linux-security-module@vger.kernel.org
-Subject: =?utf-8?Q?=5BSpam=5D?=
- We are still waiting for your email...
-Date:   09 Sep 2020 01:49:54 -0700
-Message-ID: <20200909014954.DDFCBAD158BE8BF9@live.com.mx>
-MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-X-SpamInfo: FortiGuard-AntiSpam ip, connection black ip 103.89.89.225
+        Fri, 11 Sep 2020 15:09:00 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 08BJ3pA0135511;
+        Fri, 11 Sep 2020 15:08:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=8jEx563BrMVT+19G9TowoPShp91w2ilK5GNGgfLV120=;
+ b=QZ04DitK+0lZdNOLKV7awEI4LN3LSkNHCLnMu1At/8aJqbh82+7KQwGr3goFbEapCZca
+ tN298/p7BZLMsgtQujXDRl12rDi+vm92R7W2xQ5ih9REpUZOrtvqOec2harRSIVVOljT
+ 2M1uElWyUMJ4LYLb0qnjefUgY5qSoAV3rnuWykZ0RfZVUL1xNTuynY8Bb08jScsU5dQJ
+ DmFe1h1gDSWxkxb26un54JdUdlYyBZ3N+kcXyAwlUQjIzBMkKN6TVZ4ccYkQHQXS778i
+ yQ7GccvQYe2lDveKz5Rw856URwV3pphWePhnmPwPNSJKpuaZ7x632JCHpWmf3enDUxFB 5g== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 33gf2j04cm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 11 Sep 2020 15:08:47 -0400
+Received: from m0098404.ppops.net (m0098404.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 08BJ5Bu2144825;
+        Fri, 11 Sep 2020 15:08:47 -0400
+Received: from ppma03fra.de.ibm.com (6b.4a.5195.ip4.static.sl-reverse.com [149.81.74.107])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 33gf2j04as-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 11 Sep 2020 15:08:46 -0400
+Received: from pps.filterd (ppma03fra.de.ibm.com [127.0.0.1])
+        by ppma03fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 08BJ7FlU011806;
+        Fri, 11 Sep 2020 19:08:44 GMT
+Received: from b06avi18878370.portsmouth.uk.ibm.com (b06avi18878370.portsmouth.uk.ibm.com [9.149.26.194])
+        by ppma03fra.de.ibm.com with ESMTP id 33c2a8c97b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 11 Sep 2020 19:08:43 +0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 08BJ8feS59638190
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 11 Sep 2020 19:08:41 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B28995204E;
+        Fri, 11 Sep 2020 19:08:41 +0000 (GMT)
+Received: from sig-9-65-251-51.ibm.com (unknown [9.65.251.51])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id E9AF25204F;
+        Fri, 11 Sep 2020 19:08:38 +0000 (GMT)
+Message-ID: <06ea64fec71ebd18f0c5ed6b0d9b5a7d8f1d4775.camel@linux.ibm.com>
+Subject: Re: [PATCH V2 2/3] integrity: Move import of MokListRT certs to a
+ separate routine
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Ard Biesheuvel <ardb@kernel.org>,
+        Lenny Szubowicz <lszubowi@redhat.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        platform-driver-x86@vger.kernel.org,
+        linux-security-module@vger.kernel.org, andy.shevchenko@gmail.com,
+        James Morris <jmorris@namei.org>, serge@hallyn.com,
+        Kees Cook <keescook@chromium.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Peter Jones <pjones@redhat.com>,
+        David Howells <dhowells@redhat.com>, prarit@redhat.com
+Date:   Fri, 11 Sep 2020 15:08:38 -0400
+In-Reply-To: <CAMj1kXEz8y+X6KjqWWFD=38dDowqXDBvnPbgeh30+o83KpmKrg@mail.gmail.com>
+References: <20200905013107.10457-1-lszubowi@redhat.com>
+         <20200905013107.10457-3-lszubowi@redhat.com>
+         <CAMj1kXEdkdeE8VSZqEzhd__Kb7_ZmG2af6iBpbY3=nsj1-phYw@mail.gmail.com>
+         <f0a079b1-5f02-8618-fdfe-aea2278113c9@redhat.com>
+         <cb8b4ebaa35d79eba65b011d042d20a991adf540.camel@linux.ibm.com>
+         <394190b9-59bd-5cb3-317e-736852f190f4@redhat.com>
+         <CAMj1kXEz8y+X6KjqWWFD=38dDowqXDBvnPbgeh30+o83KpmKrg@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-09-11_10:2020-09-10,2020-09-11 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
+ priorityscore=1501 mlxscore=0 mlxlogscore=859 adultscore=0 malwarescore=0
+ suspectscore=3 lowpriorityscore=0 spamscore=0 clxscore=1015
+ impostorscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2006250000 definitions=main-2009110152
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Dear Beneficiary,
+On Fri, 2020-09-11 at 21:16 +0300, Ard Biesheuvel wrote:
+> I think we can just merge the patches as they are, with Mimi's R-b carried over.
 
-We wish to inform you that a power of attorney was forwarded to 
-our office  by two gentlemen regarding your unclaimed fund of $56 
-Million Dollar. One of them is an American citizen named Mr. 
-Robert Porter and the other is Mr. Wilhelm Berg a Swedish 
-citizen.We have be waiting for you to contact us since last year.
+Other than the comments beginning on the "/*" line as opposed to the
+subsequent line, the updated 2/2 and 3/3 patches look fine.
 
-The document claims these gentlemen to be your authorized 
-representatives, and the power of attorney states that you are 
-already deceased.  It further states that your death was due to 
-lung cancer, with your date of death being January 27th, 2020.
+thanks,
 
-They have now submitted a new account to replace the receiving 
-account that was in the original claim of funds. These funds have 
-remained unclaimed for quite some time and the need for 
-resolution is pressing. Below is the new account they have 
-submitted.
+Mimi
 
-Account Name's :  Robert Porter /Wilhelm Berg
-Account: 5007-29 438 66
-IBAN-nr: SE4150000000050072943866
-Bic-kod: ESSESESS
-Skandinaviska Enskilda Banken. (SEB :)
-SWEDEN .
-
-In the event that you are in fact still alive, we ask that you 
-confirm your existence by responding to this email. You are to 
-view this as a matter requiring immediate attention and response. 
-We have 48 hr monitoring of all activities within Federal Reserve 
-Bank.On this regard,you will be directed to any of our office 
-center that you will go in person to sign the final papers,
-because we have our payment center in Europe,Asia,America and 
-Canada.You will go to any of the office that you will be directed 
-to with the copy of the documents of your fund.
-
-We have contacted the bank in the Sweden asking them to wait for 
-further directives from Federal Reserve Bank, prior to 
-authorizing any withdrawals in any form.  Our request is based 
-entirely on our attempt to verify that you are in fact deceased, 
-before money is wrongly disbursed.
-
-Your in Service,
-
-Robert Steven Kaplan
-2200 N Pearl St, Dallas, TX 75201, United States
