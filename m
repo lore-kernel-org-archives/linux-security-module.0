@@ -2,143 +2,156 @@ Return-Path: <SRS0=uslm=CU=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-21.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0072AC433E2
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Sep 2020 16:09:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C6C9C43461
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Sep 2020 16:20:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A0729206CA
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Sep 2020 16:09:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09015206E6
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Sep 2020 16:20:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VCEJZlPM"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="FsBXu82E"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726640AbgIKQJj (ORCPT
+        id S1726214AbgIKQUZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 11 Sep 2020 12:09:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40402 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726306AbgIKQJZ (ORCPT
+        Fri, 11 Sep 2020 12:20:25 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:58712 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726547AbgIKQTI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 11 Sep 2020 12:09:25 -0400
-Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C22CDC061573;
-        Fri, 11 Sep 2020 09:09:24 -0700 (PDT)
-Received: by mail-wr1-x441.google.com with SMTP id a17so12024196wrn.6;
-        Fri, 11 Sep 2020 09:09:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=kF3M0VHm/sZfXwfpUGn8gtMPq/WOXn1La3E2HQo2qRw=;
-        b=VCEJZlPMh5mA2vGW4gRyTeLdCCDcyrkFNhS12DFsiIl5+rolnD1UiT/mAe/4gP7jGr
-         hnVn0ci+b+dRkWITbUWPh8EFNvFUcOA0l0zDpSyh8Wj/2nmwtzL1ZWIGNrVtWcEvxakh
-         a3ImdXgytvz4ocdSnmjHVdzakdA0AZ8z3VOzMmnPvtVocpDiuFowH/JOSsS2IUixcwIf
-         VkNZzuEqwOyRY8bEwRe7npCOZIi0B5gkRLVJHBXHvh672gZY4rBLjX60FwG+dPQDc5v5
-         9IfIsRl9P7cNxzO7dpoFS3D8XP5QC+UqO0IYMARNteCcKjSUgoFQUuiWZdV8zsg9ypNZ
-         X2eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=kF3M0VHm/sZfXwfpUGn8gtMPq/WOXn1La3E2HQo2qRw=;
-        b=GDNefyjaofVl6H4mFXkSfa9USG9uhDH0qV2cMEQE0Zq0iob9zLnNKKmWj02G3miRK7
-         34cAyw2U1c/rC8yGaW02h+eaB1ul126UN2WJh13iMMWes2HxdKoFLZ1+smsHOa6avzbt
-         EXG27BHkfRv7crJqEo3ruOdFb+dJDoP8xXIxbwvTlbubuL2xc6AL6KeJqHB7YQcZZ9BK
-         7HeNh0WuxXURkhqQ/lAwhuMEDyiy3gmh4Xc4lFZEuQB2oNlEmDkNYZnBGZigUFre6j9b
-         EsGlznvRYBvtCrhePrHI5JbfJHbOfdb/ZVHW2BfogXIGaLDZcsRl6EEB9w4v8dFG7+os
-         hXWQ==
-X-Gm-Message-State: AOAM5336yXgxMYZ05JXtpEFj7TfObdjA1x/MwqHVEEppJIDj76FHadaH
-        pQJpSHZr6qBk7xsibUpP69TcWk36JXc7PIDm
-X-Google-Smtp-Source: ABdhPJwPSqvu2enCOLMILSViYbHAZKMDV0Qz699kBYQoxBPTIngm0AbKoSXr+gpWwdsHqKjeKG5nBA==
-X-Received: by 2002:a5d:53d1:: with SMTP id a17mr2638483wrw.98.1599840562399;
-        Fri, 11 Sep 2020 09:09:22 -0700 (PDT)
-Received: from [192.168.0.18] (cpc83661-brig20-2-0-cust443.3-3.cable.virginm.net. [82.28.105.188])
-        by smtp.gmail.com with ESMTPSA id b187sm5244540wmb.8.2020.09.11.09.09.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Sep 2020 09:09:21 -0700 (PDT)
-Subject: Re: [PATCH] security: keys: Use kvfree_sensitive in a few places
-To:     efremov@linux.com
-Cc:     David Howells <dhowells@redhat.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200911114400.82207-1-alex.dewar90@gmail.com>
- <f97076d2-de8a-4600-ee81-4cf4fcdc3ec1@linux.com>
-From:   Alex Dewar <alex.dewar90@gmail.com>
-Message-ID: <f0ac74e6-6e33-e736-494c-001e85327fdb@gmail.com>
-Date:   Fri, 11 Sep 2020 17:09:20 +0100
+        Fri, 11 Sep 2020 12:19:08 -0400
+Received: from [192.168.86.21] (c-71-197-163-6.hsd1.wa.comcast.net [71.197.163.6])
+        by linux.microsoft.com (Postfix) with ESMTPSA id BADE820716FA;
+        Fri, 11 Sep 2020 09:19:02 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com BADE820716FA
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1599841143;
+        bh=IGrl9wd59ouiSwrHZJue38Gb4uezQLGVnD6HcWU/o80=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=FsBXu82EbG6MT9yrcRvWBKCe/fCu0gn4AeEUk/dfZHITC7I1H5MCCf54UkUgHic+Q
+         Q6RJ62GCP+uXr5rTl3rBDSNCjuooLp9aVofY2HZwXFj/+dwATBdWZ4oRCjIs0kWFaH
+         hJ/BhkB7cn3gds8zgReSqdEySHPgV159fhuezYAs=
+Subject: Re: [PATCH v3 1/6] IMA: generalize keyring specific measurement
+ constructs
+To:     Mimi Zohar <zohar@linux.ibm.com>, stephen.smalley.work@gmail.com,
+        casey@schaufler-ca.com, agk@redhat.com, snitzer@redhat.com,
+        gmazyland@gmail.com
+Cc:     tyhicks@linux.microsoft.com, sashal@kernel.org, jmorris@namei.org,
+        nramas@linux.microsoft.com, linux-integrity@vger.kernel.org,
+        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dm-devel@redhat.com
+References: <20200828015704.6629-1-tusharsu@linux.microsoft.com>
+ <20200828015704.6629-2-tusharsu@linux.microsoft.com>
+ <4802c73c2ed22c64ea4f315d3115ead919c3205e.camel@linux.ibm.com>
+From:   Tushar Sugandhi <tusharsu@linux.microsoft.com>
+Message-ID: <1a456a10-bb49-206b-9fb9-cc996eea6e29@linux.microsoft.com>
+Date:   Fri, 11 Sep 2020 09:19:01 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.0
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <f97076d2-de8a-4600-ee81-4cf4fcdc3ec1@linux.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <4802c73c2ed22c64ea4f315d3115ead919c3205e.camel@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2020-09-11 17:05, Denis Efremov wrote:
-> Hi,
->
-> same patch
->
-> https://lkml.org/lkml/2020/8/27/168
->
-> Thanks,
-> Denis
-Ah ok. Sorry for the noise!
->
-> On 9/11/20 2:44 PM, Alex Dewar wrote:
->> In big_key.c, there are a few places where memzero_explicit + kvfree is
->> used. It is better to use kvfree_sensitive instead, which is more
->> readable and also prevents the compiler from eliding the call to
->> memzero_explicit. Fix this.
+
+
+On 2020-08-31 4:55 a.m., Mimi Zohar wrote:
+> On Thu, 2020-08-27 at 18:56 -0700, Tushar Sugandhi wrote:
+>> IMA functions such as ima_match_keyring(), process_buffer_measurement(),
+>> ima_match_policy() etc. handle data specific to keyrings. Currently,
+>> these constructs are not generic to handle any func specific data.
+>> This makes it harder to extend without code duplication.
 >>
->> Signed-off-by: Alex Dewar <alex.dewar90@gmail.com>
+>> Refactor the keyring specific measurement constructs to be generic and
+>> reusable in other measurement scenarios.
+> 
+> Mostly this patch changes the variable name from keyring to func_data,
+> which is good.  Other changes should be minimized.
+> 
+The only other change in this patch is introduction of
+bool allow_empty_opt_list, which is needed as per my comment below.
+
+Maybe I can move "allow_empty_opt_list" to a new patch after this one in
+this series.
+
+>>
+>> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
 >> ---
->>   security/keys/big_key.c | 9 +++------
->>   1 file changed, 3 insertions(+), 6 deletions(-)
->>
->> diff --git a/security/keys/big_key.c b/security/keys/big_key.c
->> index 691347dea3c1..d17e5f09eeb8 100644
->> --- a/security/keys/big_key.c
->> +++ b/security/keys/big_key.c
->> @@ -121,8 +121,7 @@ int big_key_preparse(struct key_preparsed_payload *prep)
->>   		*path = file->f_path;
->>   		path_get(path);
->>   		fput(file);
->> -		memzero_explicit(buf, enclen);
->> -		kvfree(buf);
->> +		kvfree_sensitive(buf, enclen);
->>   	} else {
->>   		/* Just store the data in a buffer */
->>   		void *data = kmalloc(datalen, GFP_KERNEL);
->> @@ -140,8 +139,7 @@ int big_key_preparse(struct key_preparsed_payload *prep)
->>   err_enckey:
->>   	kfree_sensitive(enckey);
->>   error:
->> -	memzero_explicit(buf, enclen);
->> -	kvfree(buf);
->> +	kvfree_sensitive(buf, enclen);
->>   	return ret;
+> 
+> <snip>
+> 
+>> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+>> index fe1df373c113..8866e84d0062 100644
+>> --- a/security/integrity/ima/ima_policy.c
+>> +++ b/security/integrity/ima/ima_policy.c
+>> @@ -451,15 +451,21 @@ int ima_lsm_policy_change(struct notifier_block *nb, unsigned long event,
 >>   }
 >>   
->> @@ -273,8 +271,7 @@ long big_key_read(const struct key *key, char *buffer, size_t buflen)
->>   err_fput:
->>   		fput(file);
->>   error:
->> -		memzero_explicit(buf, enclen);
->> -		kvfree(buf);
->> +		kvfree_sensitive(buf, enclen);
->>   	} else {
->>   		ret = datalen;
->>   		memcpy(buffer, key->payload.data[big_key_data], datalen);
->>
+>>   /**
+>> - * ima_match_keyring - determine whether the keyring matches the measure rule
+>> - * @rule: a pointer to a rule
+>> - * @keyring: name of the keyring to match against the measure rule
+>> + * ima_match_rule_data - determine whether the given func_data matches
+>> + *			 the measure rule data
+>> + * @rule: IMA policy rule
+>> + * @opt_list: rule data to match func_data against
+>> + * @func_data: data to match against the measure rule data
+>> + * @allow_empty_opt_list: If true matches all func_data
+>>    * @cred: a pointer to a credentials structure for user validation
+>>    *
+>> - * Returns true if keyring matches one in the rule, false otherwise.
+>> + * Returns true if func_data matches one in the rule, false otherwise.
+>>    */
+>> -static bool ima_match_keyring(struct ima_rule_entry *rule,
+>> -			      const char *keyring, const struct cred *cred)
+>> +static bool ima_match_rule_data(struct ima_rule_entry *rule,
+>> +				const struct ima_rule_opt_list *opt_list,
+> 
+> Ok
+> 
+>> +				const char *func_data,
+>> +				bool allow_empty_opt_list,
+> 
+> As the policy is loaded, shouldn't the rules should be checked, not
+> here on usage?
+> 
+> Mimi
 
+Since "keyrings=" is optional, I cannot check the rule at load time for
+keyrings. func=KEY_CHECK may or may not have "keyrings=", and both are
+valid scenarios.
+
+However "critical_kernel_data_sources=" is mandatory for 
+func=CRITICAL_DATA.
+
+So I am already making that check at policy load time.
+
+See patch 5/6 – function ima_match_rules(), where I check for
+IMA_DATA_SOURCES.
+
++       case CRITICAL_DATA:
+<snip>
++               if (!(entry->flags & IMA_DATA_SOURCES) ||
+<snip>
++                       return false;
++
+
+Since ima_match_rule_data (this function) handles both func=KEY_CHECK 
+and func=CRITICAL_DATA, we have to use the bool "allow_empty_opt_list"
+to differentiate between the two scenarios – whether the rule is
+optional or not for a given func.
+
+> 
+>> +				const struct cred *cred)
+>>   {
+>>   	bool matched = false;
+>>   	size_t i;
+>>
