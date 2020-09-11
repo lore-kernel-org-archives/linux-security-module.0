@@ -2,83 +2,69 @@ Return-Path: <SRS0=uslm=CU=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8495DC2D0E3
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Sep 2020 04:26:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94B47C43461
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Sep 2020 09:23:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4A5D8221E5
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Sep 2020 04:26:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 48A24221EB
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Sep 2020 09:23:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725766AbgIKEZ7 (ORCPT
+        id S1725787AbgIKJX1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 11 Sep 2020 00:25:59 -0400
-Received: from helcar.hmeau.com ([216.24.177.18]:58474 "EHLO fornost.hmeau.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725355AbgIKEZ7 (ORCPT
+        Fri, 11 Sep 2020 05:23:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33924 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725764AbgIKJX1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 11 Sep 2020 00:25:59 -0400
-Received: from gwarestrin.arnor.me.apana.org.au ([192.168.0.7])
-        by fornost.hmeau.com with smtp (Exim 4.92 #5 (Debian))
-        id 1kGac6-0006CE-L0; Fri, 11 Sep 2020 14:24:43 +1000
-Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Fri, 11 Sep 2020 14:24:42 +1000
-Date:   Fri, 11 Sep 2020 14:24:42 +1000
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        David Howells <dhowells@redhat.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Stephan Mueller <smueller@chronox.de>,
-        Marcelo Henrique Cerri <marcelo.cerri@canonical.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Waiman Long <longman@redhat.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Tushar Sugandhi <tusharsu@linux.microsoft.com>,
-        Vitaly Chikunov <vt@altlinux.org>,
-        Gilad Ben-Yossef <gilad@benyossef.com>,
-        Pascal van Leeuwen <pvanleeuwen@rambus.com>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        keyrings@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-security-module@vger.kernel.org,
-        Xufeng Zhang <yunbo.xufeng@linux.alibaba.com>,
-        Jia Zhang <zhang.jia@linux.alibaba.com>
-Subject: Re: [PATCH v6 0/8] crpyto: introduce OSCCA certificate and SM2
- asymmetric algorithm
-Message-ID: <20200911042442.GA5420@gondor.apana.org.au>
-References: <20200903131242.128665-1-tianjia.zhang@linux.alibaba.com>
+        Fri, 11 Sep 2020 05:23:27 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7877C061573;
+        Fri, 11 Sep 2020 02:23:26 -0700 (PDT)
+Received: from localhost (unknown [IPv6:2001:4d48:ad58:9a10:ebf2:10f4:8670:18b5])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: smcv)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id BFC0129BDF4;
+        Fri, 11 Sep 2020 10:23:22 +0100 (BST)
+Date:   Fri, 11 Sep 2020 10:23:20 +0100
+From:   Simon McVittie <smcv@collabora.com>
+To:     Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc:     mtk.manpages@gmail.com, linux-man@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Subject: Re: [PATCH] socket.7,unix.7: add initial description for SO_PEERSEC
+Message-ID: <20200911092320.GA1302235@horizon>
+References: <20200910210059.34759-1-stephen.smalley.work@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200903131242.128665-1-tianjia.zhang@linux.alibaba.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200910210059.34759-1-stephen.smalley.work@gmail.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Sep 03, 2020 at 09:12:34PM +0800, Tianjia Zhang wrote:
->
-> ---
-> v6 changes:
->   1. remove mpi_sub_ui function from mpi library.
->   2. rebase on mainline.
+On Thu, 10 Sep 2020 at 17:00:59 -0400, Stephen Smalley wrote:
+> +For SELinux, the security context string is a null-terminated
+> +string and the returned length includes the terminating null.
+> +Other security modules may differ.
 
-This series is still missing acks for patches 6-8.  Without them
-it cannot proceed.
+We discussed this interface a while ago when I was setting up dbus to
+use SO_PEERSEC. It would be really useful if the man page documented
+what callers can and can't expect from an unknown LSM, so that the
+author of the next D-Bus-equivalent doesn't have to turn up on the
+linux-security-module list and annoy maintainers like I did.
+
+Perhaps something like this?
+
+    The security context string may include a terminating null character
+    in the returned length, but is not guaranteed to do so:
+    a security context "foo" might be represented as either {'f','o','o'}
+    of length 3 or {'f','o','o','\0'} of length 4, which are considered
+    to be interchangeable. It is printable, does not contain non-terminating
+    null characters, and is in an unspecified encoding (in particular it is
+    not guaranteed to be ASCII or UTF-8).
 
 Thanks,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+    smcv
