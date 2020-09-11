@@ -2,96 +2,99 @@ Return-Path: <SRS0=uslm=CU=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECDBAC2D0E0
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Sep 2020 19:34:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EF34C433E2
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Sep 2020 19:46:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B0BFD22208
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Sep 2020 19:34:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 364FA2075B
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Sep 2020 19:46:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jQ0TBMUB"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Nu3XlVqM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725824AbgIKTek (ORCPT
+        id S1725900AbgIKTqx (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 11 Sep 2020 15:34:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44334 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725770AbgIKTeI (ORCPT
+        Fri, 11 Sep 2020 15:46:53 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:55558 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725842AbgIKTqw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 11 Sep 2020 15:34:08 -0400
-Received: from mail-ot1-x341.google.com (mail-ot1-x341.google.com [IPv6:2607:f8b0:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C79CC061795;
-        Fri, 11 Sep 2020 12:34:08 -0700 (PDT)
-Received: by mail-ot1-x341.google.com with SMTP id g96so9269418otb.12;
-        Fri, 11 Sep 2020 12:34:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=WCThZXerFfZYx0QG7y1KWqhdQz5BxEk4lg5U5pEdCbE=;
-        b=jQ0TBMUB5EBcw939Er4wGnF73/2cy8t4/peHMlgxJ1kELwdEp80dXENyUcpgaqHtDg
-         uyo2pasDXFaFe58LPY0Gc6vKV/aMYXpBtj1dnzk3F7KCV98JWY6RgPANX+/VB1goJpJH
-         UwH97QYWzyksGccihj8Ugm9YC02r8riMSVyIxytZ3LBe1yp77dvFdanSiXSNkbkLhXKN
-         T1tKQBXl2+MICndvG68+p33Qt9UOETixwPeP1uSexokFM0cS2QQnO0IdI+9LbmjLjLHD
-         +X1VXGdJLgLKHVLIAzs+/gAmzmgjVfOwGzFR/X/tytLlnQZg/sDxjeg2KwH6bj9jfLZg
-         iUxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WCThZXerFfZYx0QG7y1KWqhdQz5BxEk4lg5U5pEdCbE=;
-        b=Vedbaiw90mK7GnIQQWBY4iR9mf+hArjMdk3CCzwjR+qgSr7ZunQulBi4MVlpXYh8hg
-         nAAQnA2dJNIZfKuv6TLmw/qQjpOjSLaMmSLPlWfd/xTbPxhvWL5EljKUmfzNuftFWUrT
-         lZAG2lXd5jZJ5WpybCyfm6KTmdJlgWFbMolZo0DtcU1Wz3ajU9QrNu+w1OHsHKtfXSTV
-         C+qqcBXHsoG1KYKRFq2OnrNfkqH8cnyMP3fgM3ZVWDDMB2br6yy1EHmbr6SgkgNy/7MW
-         BnEoPZVIYdTao4qEmWjCHANhXVFpsa0YwXbnlFnQD5SnFcTJefMZrHCmqYaoSJONlDcE
-         zgHg==
-X-Gm-Message-State: AOAM5336UXGIGrnsOMdvItw7XxGBWiEFdDGuNqZq+LiKw46hSAogv4Ye
-        fuW8RkgbJt3mHU1gVgz4MDq0ekZG+jgoBdKb425uBhExxfY=
-X-Google-Smtp-Source: ABdhPJyiRVYJhuPcc1z1+QUjwcL81aNHPtY7/tCCuOsUz7rT1HUBGg6KCaWcvqU/5iyBdf2dS8avA/sx4p3Eiy34pPc=
-X-Received: by 2002:a05:6830:1be7:: with SMTP id k7mr2202672otb.162.1599852847479;
- Fri, 11 Sep 2020 12:34:07 -0700 (PDT)
+        Fri, 11 Sep 2020 15:46:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1599853611;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=hjmdNZgB1QiAcVQQi1OwUZy+vXn3Z68cHLsliVqlB+g=;
+        b=Nu3XlVqMZ7RaBiFYoW663tf0LZPapgX+gpCDV5ywA7xqb5PbY+IwyePYS9MWtahXj5UfFJ
+        ZG3SYO/hHc1xY8u/8o4ajYMOsZqkawjNzq0+DNkii0C6bl/+49YZpPQoYNlPfTBxQEKLQd
+        SVVD+uRj0JbXc31u4/rxEDQoAlNO1rA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-305-iOmjCR0DMIGu14XkI0guwg-1; Fri, 11 Sep 2020 15:46:47 -0400
+X-MC-Unique: iOmjCR0DMIGu14XkI0guwg-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5330D81F005;
+        Fri, 11 Sep 2020 19:46:45 +0000 (UTC)
+Received: from [10.10.110.42] (unknown [10.10.110.42])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7788A3782;
+        Fri, 11 Sep 2020 19:46:42 +0000 (UTC)
+Subject: Re: [PATCH V2 2/3] integrity: Move import of MokListRT certs to a
+ separate routine
+To:     Mimi Zohar <zohar@linux.ibm.com>, Ard Biesheuvel <ardb@kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        platform-driver-x86@vger.kernel.org,
+        linux-security-module@vger.kernel.org, andy.shevchenko@gmail.com,
+        James Morris <jmorris@namei.org>, serge@hallyn.com,
+        Kees Cook <keescook@chromium.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Peter Jones <pjones@redhat.com>,
+        David Howells <dhowells@redhat.com>, prarit@redhat.com
+References: <20200905013107.10457-1-lszubowi@redhat.com>
+ <20200905013107.10457-3-lszubowi@redhat.com>
+ <CAMj1kXEdkdeE8VSZqEzhd__Kb7_ZmG2af6iBpbY3=nsj1-phYw@mail.gmail.com>
+ <f0a079b1-5f02-8618-fdfe-aea2278113c9@redhat.com>
+ <cb8b4ebaa35d79eba65b011d042d20a991adf540.camel@linux.ibm.com>
+ <394190b9-59bd-5cb3-317e-736852f190f4@redhat.com>
+ <CAMj1kXEz8y+X6KjqWWFD=38dDowqXDBvnPbgeh30+o83KpmKrg@mail.gmail.com>
+ <06ea64fec71ebd18f0c5ed6b0d9b5a7d8f1d4775.camel@linux.ibm.com>
+From:   Lenny Szubowicz <lszubowi@redhat.com>
+Message-ID: <dda103c3-9a32-df8a-131e-1e8e91b92960@redhat.com>
+Date:   Fri, 11 Sep 2020 15:46:41 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.0
 MIME-Version: 1.0
-References: <20200910210059.34759-1-stephen.smalley.work@gmail.com>
-In-Reply-To: <20200910210059.34759-1-stephen.smalley.work@gmail.com>
-From:   Stephen Smalley <stephen.smalley.work@gmail.com>
-Date:   Fri, 11 Sep 2020 15:33:56 -0400
-Message-ID: <CAEjxPJ4zprVhZth28bU6zXr2OxVMUn0TnnU8mUYVpU+3WUWYfA@mail.gmail.com>
-Subject: Re: [PATCH] socket.7,unix.7: add initial description for SO_PEERSEC
-To:     Michael Kerrisk <mtk.manpages@gmail.com>
-Cc:     linux-man@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        SElinux list <selinux@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <06ea64fec71ebd18f0c5ed6b0d9b5a7d8f1d4775.camel@linux.ibm.com>
+Content-Type: text/plain; charset=iso-8859-15; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Sep 10, 2020 at 5:01 PM Stephen Smalley
-<stephen.smalley.work@gmail.com> wrote:
->
-> SO_PEERSEC was introduced for AF_UNIX stream sockets connected via
-> connect(2) in Linux 2.6.2 and later augmented to support AF_UNIX stream
-> and datagram sockets created via socketpair(2) in Linux 4.18.  Document
-> SO_PEERSEC in the socket.7 and unix.7 man pages following the example
-> of the existing SO_PEERCRED descriptions.  SO_PEERSEC is also supported
-> on AF_INET sockets when using labeled IPSEC or NetLabel but defer
-> adding a description of that support to a separate patch.
->
-> Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+On 9/11/20 3:08 PM, Mimi Zohar wrote:
+> On Fri, 2020-09-11 at 21:16 +0300, Ard Biesheuvel wrote:
+>> I think we can just merge the patches as they are, with Mimi's R-b carried over.
+> 
+> Other than the comments beginning on the "/*" line as opposed to the
+> subsequent line, the updated 2/2 and 3/3 patches look fine.
+> 
+> thanks,
+> 
+> Mimi
+> 
 
-Here are the relevant commits introducing SO_PEERSEC and the
-socketpair support (the first one is from the pre-git history tree
-since it predates git):
+I also prefer the block comment style that you are suggesting. However, I
+kept to the style used by the load_uefi.c source file. If checkpatch.pl
+considers it acceptable, I deferred to consistency within the source module.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git/commit/?id=da6e57a2e6bd7939f610d957afacaf6a131e75ed
+                       -Lenny.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=0b811db2cb2aabc910e53d34ebb95a15997c33e7
-
-Can add those into the commit message.    Not sure if you want them in
-the man pages themselves (especially the first pre-git one).
