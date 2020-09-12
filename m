@@ -2,111 +2,125 @@ Return-Path: <SRS0=vzfn=CV=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7FC4C43461
-	for <linux-security-module@archiver.kernel.org>; Sat, 12 Sep 2020 00:30:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66263C43461
+	for <linux-security-module@archiver.kernel.org>; Sat, 12 Sep 2020 07:55:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 81BD6206B8
-	for <linux-security-module@archiver.kernel.org>; Sat, 12 Sep 2020 00:30:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 176C320796
+	for <linux-security-module@archiver.kernel.org>; Sat, 12 Sep 2020 07:55:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bhWveefs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725924AbgILAaF (ORCPT
+        id S1725845AbgILHzH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 11 Sep 2020 20:30:05 -0400
-Received: from namei.org ([65.99.196.166]:56856 "EHLO namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725857AbgILAaE (ORCPT
+        Sat, 12 Sep 2020 03:55:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45456 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725820AbgILHzG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 11 Sep 2020 20:30:04 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id 08C0SqIZ019846;
-        Sat, 12 Sep 2020 00:28:52 GMT
-Date:   Sat, 12 Sep 2020 10:28:52 +1000 (AEST)
-From:   James Morris <jmorris@namei.org>
-To:     Matthew Wilcox <willy@infradead.org>
-cc:     =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-        Mimi Zohar <zohar@linux.ibm.com>, linux-kernel@vger.kernel.org,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Christian Heimes <christian@python.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Eric Chiang <ericchiang@google.com>,
-        Florian Weimer <fweimer@redhat.com>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        =?ISO-8859-15?Q?Philippe_Tr=E9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Thibaut Sautereau <thibaut.sautereau@clip-os.org>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH v9 0/3] Add introspect_access(2) (was O_MAYEXEC)
-In-Reply-To: <20200910184033.GX6583@casper.infradead.org>
-Message-ID: <alpine.LRH.2.21.2009121019050.17638@namei.org>
-References: <20200910164612.114215-1-mic@digikod.net> <20200910170424.GU6583@casper.infradead.org> <f6e2358c-8e5e-e688-3e66-2cdd943e360e@digikod.net> <a48145770780d36e90f28f1526805a7292eb74f6.camel@linux.ibm.com> <880bb4ee-89a2-b9b0-747b-0f779ceda995@digikod.net>
- <20200910184033.GX6583@casper.infradead.org>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        Sat, 12 Sep 2020 03:55:06 -0400
+Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A305AC061573
+        for <linux-security-module@vger.kernel.org>; Sat, 12 Sep 2020 00:55:06 -0700 (PDT)
+Received: by mail-pl1-x642.google.com with SMTP id c3so1995542plz.5
+        for <linux-security-module@vger.kernel.org>; Sat, 12 Sep 2020 00:55:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=SwmgBKMctXV6TtEg0fYkPqOSmPyVvQUoCAnAPe5+4Yw=;
+        b=bhWveefsCp+YI5xlakkMnFNndET2vW3kVhSGwfV/mCfiv4CDzaMV/OCiIzY0SHzzv6
+         b1dtKF6usuNxBxxNupsYEbODeK5eyIybIL46HK2kKImUz0TfGPmz6XFk/CQ+rl1AYdGg
+         2oYPI7IzyUunJ7NBRgfFqO9TKqfzQ+XD+O5ow=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=SwmgBKMctXV6TtEg0fYkPqOSmPyVvQUoCAnAPe5+4Yw=;
+        b=h8fY9X282+yUF38bvaYcFFlPpv9zSuRrKEWw11AxB6xE1/8YmQ6oHWTBdeskIgCFnT
+         pVJb7lNTSkAT7N7IbsCUsAV1aW00tv7daJ+nSLMbLkt+tTi3O3AcKVWELgKHwEfrUSqW
+         knkVBKaRfYpmqkYZUu2ZBsBOUf59rxwCZerDdtGNEqhpcBBPSo1/TkIxg/H0Sp4KUilL
+         j50xHEqTwi/mF3BLT8u0hjfB33TxMLxU0026MoV1hmPNzp0qy+SobijQXYaHrs4zExqf
+         Di+eLjzzV3VntcXeDgPy5uj92zItARQmZgRsaiY02OM/D8y1ZFwWX00C8pK5e5UWSAmf
+         u+Lg==
+X-Gm-Message-State: AOAM5323AAnZVxfiuwLRtNhidHS35OS2Yovr91M99gmnesavmqUvDKEK
+        tnSV6DOZnmmsGtjaH25D8TcxFA==
+X-Google-Smtp-Source: ABdhPJxqrfVafrPK3gxgwUxw9HHTOjH0Ec5Yun4GlH4SiLxpVSA605MrMv2cG84RTf0D+4l68327UA==
+X-Received: by 2002:a17:90b:3cb:: with SMTP id go11mr5054511pjb.152.1599897305693;
+        Sat, 12 Sep 2020 00:55:05 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id a16sm3464188pgh.48.2020.09.12.00.55.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 12 Sep 2020 00:55:04 -0700 (PDT)
+Date:   Sat, 12 Sep 2020 00:55:03 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     John Wood <john.wood@gmx.com>
+Cc:     Jann Horn <jannh@google.com>, Matthew Wilcox <willy@infradead.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [RESEND][RFC PATCH 0/6] Fork brute force attack mitigation
+ (fbfam)
+Message-ID: <202009120053.9FB7F2A7@keescook>
+References: <20200910202107.3799376-1-keescook@chromium.org>
+ <202009101656.FB68C6A@keescook>
+ <20200911144806.GA4128@ubuntu>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="1665246916-2084386636-1599870464=:17638"
-Content-ID: <alpine.LRH.2.21.2009121028320.17638@namei.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200911144806.GA4128@ubuntu>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Fri, Sep 11, 2020 at 04:48:06PM +0200, John Wood wrote:
+> In other words, a late reply to this serie comments is not a lack of
+> interest. Moreover, I think it would be better that I try to understand and
+> to implement your ideas before anything else.
 
---1665246916-2084386636-1599870464=:17638
-Content-Type: text/plain; CHARSET=ISO-8859-15
-Content-Transfer-Encoding: 8BIT
-Content-ID: <alpine.LRH.2.21.2009121028321.17638@namei.org>
+Understood! :)
 
-On Thu, 10 Sep 2020, Matthew Wilcox wrote:
-
-> On Thu, Sep 10, 2020 at 08:38:21PM +0200, Mickaël Salaün wrote:
-> > There is also the use case of noexec mounts and file permissions. From
-> > user space point of view, it doesn't matter which kernel component is in
-> > charge of defining the policy. The syscall should then not be tied with
-> > a verification/integrity/signature/appraisal vocabulary, but simply an
-> > access control one.
+> My original patch serie is composed of 9 patches, so the 3 lasts are lost.
+> Kees: Have you removed them for some reason? Can you send them for review?
 > 
-> permission()?
+> security/fbfam: Add two new prctls to enable and disable the fbfam feature
+> https://github.com/johwood/linux/commit/8a36399847213e7eb7b45b853568a53666bd0083
 > 
+> Documentation/security: Add documentation for the fbfam feature
+> https://github.com/johwood/linux/commit/fb46804541f5c0915f3f48acefbe6dc998815609
+> 
+> MAINTAINERS: Add a new entry for the fbfam feature
+> https://github.com/johwood/linux/commit/4303bc8935334136c6ef47b5e50b87cd2c472c1f
 
-The caller is not asking the kernel to grant permission, it's asking 
-"SHOULD I access this file?"
+Oh, hm, I'm not sure where they went. I think they were missing from my
+inbox when I saved your series from email. An oversight on my part;
+apologies!
 
-The caller doesn't know, for example, if the script file it's about to 
-execute has been signed, or if it's from a noexec mount. It's asking the 
-kernel, which does know. (Note that this could also be extended to reading 
-configuration files).
+> Is there a problem if I ask for some guidance (replying to this thread)
+> during the process to do my second patch series?
 
-How about: should_faccessat ?
+Please feel free! I'm happy to help. :)
+
+> My goal is to learn as much as possible doing something useful for the
+> linux kernel.
+
+Sounds good; thanks!
 
 -- 
-James Morris
-<jmorris@namei.org>
---1665246916-2084386636-1599870464=:17638--
+Kees Cook
