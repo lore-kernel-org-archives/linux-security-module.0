@@ -2,104 +2,126 @@ Return-Path: <SRS0=vzfn=CV=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4203AC43461
-	for <linux-security-module@archiver.kernel.org>; Sat, 12 Sep 2020 07:56:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F019FC433E2
+	for <linux-security-module@archiver.kernel.org>; Sat, 12 Sep 2020 08:37:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E891620796
-	for <linux-security-module@archiver.kernel.org>; Sat, 12 Sep 2020 07:56:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Q9kfaBgC"
+	by mail.kernel.org (Postfix) with ESMTP id C152F214F1
+	for <linux-security-module@archiver.kernel.org>; Sat, 12 Sep 2020 08:37:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725845AbgILH4Z (ORCPT
+        id S1725845AbgILIg5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 12 Sep 2020 03:56:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45662 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725847AbgILH4U (ORCPT
+        Sat, 12 Sep 2020 04:36:57 -0400
+Received: from vmicros1.altlinux.org ([194.107.17.57]:57326 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725809AbgILIg5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 12 Sep 2020 03:56:20 -0400
-Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79ABBC061757
-        for <linux-security-module@vger.kernel.org>; Sat, 12 Sep 2020 00:56:20 -0700 (PDT)
-Received: by mail-pl1-x642.google.com with SMTP id g21so679568plq.1
-        for <linux-security-module@vger.kernel.org>; Sat, 12 Sep 2020 00:56:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=hkQEv8N2/w/dmNjYwzWRoPRR2BMD1Mf3MgOBCOD6/rw=;
-        b=Q9kfaBgCkng9JivxtuhaKvmzjWwgFuCsu9/UAxcUobUAoj/9SPC7EtdbYOSRjTOJSc
-         Fnr1MUOI8CX0s6DIV8FgquI2A4SjmZo40Wi1doqaY36HoTm2EikFQnPgjDOY0VzHymxD
-         ZiEKD4FD9hAvoUJOm1e9BDVFp4AD63ZWGdalU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=hkQEv8N2/w/dmNjYwzWRoPRR2BMD1Mf3MgOBCOD6/rw=;
-        b=se9azVrdzkU+ZAnTTSV41KGCGHVzGEhJnroJc+7h1pUMkBBswZQxOwBKPfa5rWZt/U
-         Kl8nYhcgVwbj3R9HUVWiGLmcX4Fb3semTn71QMkHCzkf3n2TyLD0lPO+o7fXge9OyZcZ
-         j/IddC2jjMTy7uDDf7LA0vjDecd1GIkv/ekGjWJSAdRkwdCtRrFvDpJkBoeyDt9BU1Y/
-         9IRCVYFk7CMKi3ZSdqg9zQnZoSEvby5yYUTewt9G8/jv7/pcfO5pyXmsVWTE4fn1SoCy
-         oM+Isag4ZUxUjoxIP99nKf8OS0UijXUvMSRgVRaOB7vJOs62bNDpbn/O26ahpoIxE/93
-         dl0g==
-X-Gm-Message-State: AOAM531jsrnwa2L8ypnOdXYuwcI5x/FaZUzvzYSsQFSoTp9EEAXTauvT
-        AOGscOM7YNVL9wBMdTngzimg9g==
-X-Google-Smtp-Source: ABdhPJwQevL1YXacLJDW8V7rFiaRpiL0yftWZ/h48xy/1yQZi0+Jij9pWA3ZgVkjnFKvtTVUwsjfUQ==
-X-Received: by 2002:a17:902:8c91:b029:d1:9be4:7fe6 with SMTP id t17-20020a1709028c91b02900d19be47fe6mr5905601plo.33.1599897380079;
-        Sat, 12 Sep 2020 00:56:20 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id f6sm4369191pfq.82.2020.09.12.00.56.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 12 Sep 2020 00:56:19 -0700 (PDT)
-Date:   Sat, 12 Sep 2020 00:56:18 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     James Morris <jmorris@namei.org>
-Cc:     kernel-hardening@lists.openwall.com, John Wood <john.wood@gmx.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: [RESEND][RFC PATCH 0/6] Fork brute force attack mitigation
- (fbfam)
-Message-ID: <202009120055.F6BF704620@keescook>
-References: <20200910202107.3799376-1-keescook@chromium.org>
- <alpine.LRH.2.21.2009121002100.17638@namei.org>
+        Sat, 12 Sep 2020 04:36:57 -0400
+Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id 8C4D172CA54;
+        Sat, 12 Sep 2020 11:36:52 +0300 (MSK)
+Received: from altlinux.org (sole.flsd.net [185.75.180.6])
+        by imap.altlinux.org (Postfix) with ESMTPSA id 40EEF4A4A16;
+        Sat, 12 Sep 2020 11:36:52 +0300 (MSK)
+Date:   Sat, 12 Sep 2020 11:36:52 +0300
+From:   Vitaly Chikunov <vt@altlinux.org>
+To:     Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        David Howells <dhowells@redhat.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Stephan Mueller <smueller@chronox.de>,
+        Marcelo Henrique Cerri <marcelo.cerri@canonical.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Waiman Long <longman@redhat.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Tushar Sugandhi <tusharsu@linux.microsoft.com>,
+        Gilad Ben-Yossef <gilad@benyossef.com>,
+        Pascal van Leeuwen <pvanleeuwen@rambus.com>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org,
+        linux-security-module@vger.kernel.org,
+        Xufeng Zhang <yunbo.xufeng@linux.alibaba.com>,
+        Jia Zhang <zhang.jia@linux.alibaba.com>
+Subject: Re: [PATCH v6 8/8] integrity: Asymmetric digsig supports
+ SM2-with-SM3 algorithm
+Message-ID: <20200912083652.dxosjsartbvnxq2r@altlinux.org>
+References: <20200903131242.128665-1-tianjia.zhang@linux.alibaba.com>
+ <20200903131242.128665-9-tianjia.zhang@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=koi8-r
 Content-Disposition: inline
-In-Reply-To: <alpine.LRH.2.21.2009121002100.17638@namei.org>
+In-Reply-To: <20200903131242.128665-9-tianjia.zhang@linux.alibaba.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, Sep 12, 2020 at 10:03:23AM +1000, James Morris wrote:
-> On Thu, 10 Sep 2020, Kees Cook wrote:
+On Thu, Sep 03, 2020 at 09:12:42PM +0800, Tianjia Zhang wrote:
+> Asymmetric digsig supports SM2-with-SM3 algorithm combination,
+> so that IMA can also verify SM2's signature data.
 > 
-> > [kees: re-sending this series on behalf of John Wood <john.wood@gmx.com>
-> >  also visible at https://github.com/johwood/linux fbfam]
-> > 
-> > From: John Wood <john.wood@gmx.com>
+> Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+> Tested-by: Xufeng Zhang <yunbo.xufeng@linux.alibaba.com>
+> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com> (coding, not crypto
+
+It looks not breaking ecrdsa/streebog handling and accords to rfc draft:
+
+  https://tools.ietf.org/html/draft-shen-sm2-ecdsa-02
+
+  5.1.4.2.  Hash Functions
+    The sm2 digital signature algorithm requires the hash functions
+    approved by Chinese Commercial Cryptography Administration Office,
+    such as sm3.
+
+Reviewed-by: Vitaly Chikunov <vt@altlinux.org>
+
+Thanks,
+
+> ---
+>  security/integrity/digsig_asymmetric.c | 14 +++++++++++---
+>  1 file changed, 11 insertions(+), 3 deletions(-)
 > 
-> Why are you resending this? The author of the code needs to be able to 
-> send and receive emails directly as part of development and maintenance.
-
-I wanted to flush it from my "review" TODO list, mainly.
-
--- 
-Kees Cook
+> diff --git a/security/integrity/digsig_asymmetric.c b/security/integrity/digsig_asymmetric.c
+> index cfa4127d0518..b86a4a8f61ab 100644
+> --- a/security/integrity/digsig_asymmetric.c
+> +++ b/security/integrity/digsig_asymmetric.c
+> @@ -99,14 +99,22 @@ int asymmetric_verify(struct key *keyring, const char *sig,
+>  	memset(&pks, 0, sizeof(pks));
+>  
+>  	pks.hash_algo = hash_algo_name[hdr->hash_algo];
+> -	if (hdr->hash_algo == HASH_ALGO_STREEBOG_256 ||
+> -	    hdr->hash_algo == HASH_ALGO_STREEBOG_512) {
+> +	switch (hdr->hash_algo) {
+> +	case HASH_ALGO_STREEBOG_256:
+> +	case HASH_ALGO_STREEBOG_512:
+>  		/* EC-RDSA and Streebog should go together. */
+>  		pks.pkey_algo = "ecrdsa";
+>  		pks.encoding = "raw";
+> -	} else {
+> +		break;
+> +	case HASH_ALGO_SM3_256:
+> +		/* SM2 and SM3 should go together. */
+> +		pks.pkey_algo = "sm2";
+> +		pks.encoding = "raw";
+> +		break;
+> +	default:
+>  		pks.pkey_algo = "rsa";
+>  		pks.encoding = "pkcs1";
+> +		break;
+>  	}
+>  	pks.digest = (u8 *)data;
+>  	pks.digest_size = datalen;
