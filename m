@@ -2,159 +2,127 @@ Return-Path: <SRS0=vzfn=CV=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FCCAC433E2
-	for <linux-security-module@archiver.kernel.org>; Sat, 12 Sep 2020 08:50:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70D7FC433E2
+	for <linux-security-module@archiver.kernel.org>; Sat, 12 Sep 2020 09:38:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 34F7E214F1
-	for <linux-security-module@archiver.kernel.org>; Sat, 12 Sep 2020 08:50:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E5FF721D6C
+	for <linux-security-module@archiver.kernel.org>; Sat, 12 Sep 2020 09:38:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=gmx.net header.i=@gmx.net header.b="FftAd7pn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725879AbgILIuU (ORCPT
+        id S1725834AbgILJib (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 12 Sep 2020 04:50:20 -0400
-Received: from vmicros1.altlinux.org ([194.107.17.57]:40718 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725833AbgILIuR (ORCPT
+        Sat, 12 Sep 2020 05:38:31 -0400
+Received: from mout.gmx.net ([212.227.17.20]:59077 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725825AbgILJi1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 12 Sep 2020 04:50:17 -0400
-Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 6D69372CA54;
-        Sat, 12 Sep 2020 11:50:13 +0300 (MSK)
-Received: from altlinux.org (sole.flsd.net [185.75.180.6])
-        by imap.altlinux.org (Postfix) with ESMTPSA id 2144F4A4A16;
-        Sat, 12 Sep 2020 11:50:13 +0300 (MSK)
-Date:   Sat, 12 Sep 2020 11:50:13 +0300
-From:   Vitaly Chikunov <vt@altlinux.org>
-To:     Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        David Howells <dhowells@redhat.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Stephan Mueller <smueller@chronox.de>,
-        Marcelo Henrique Cerri <marcelo.cerri@canonical.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Waiman Long <longman@redhat.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Tushar Sugandhi <tusharsu@linux.microsoft.com>,
-        Gilad Ben-Yossef <gilad@benyossef.com>,
-        Pascal van Leeuwen <pvanleeuwen@rambus.com>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        keyrings@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-security-module@vger.kernel.org,
-        Xufeng Zhang <yunbo.xufeng@linux.alibaba.com>,
-        Jia Zhang <zhang.jia@linux.alibaba.com>
-Subject: Re: [PATCH v6 6/8] X.509: support OSCCA certificate parse
-Message-ID: <20200912085013.ugm2azs5xr7iirda@altlinux.org>
-References: <20200903131242.128665-1-tianjia.zhang@linux.alibaba.com>
- <20200903131242.128665-7-tianjia.zhang@linux.alibaba.com>
+        Sat, 12 Sep 2020 05:38:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1599903434;
+        bh=skrUagSvgqgEZzCi9PdeBBeP4Cqi1Erda0k0fJgiIB8=;
+        h=X-UI-Sender-Class:Date:From:To:Cc:Subject:References:In-Reply-To;
+        b=FftAd7pnCH3fzdB/mQwK5o3526+5rvmiQVz+tQTbnxcymkk3GlkdpnrB1m2vpsdbp
+         bVEFr4c00PT2nMP+9JAormOkurommMEJuzzsM4/u0ca4qnWDib1RRNZL4PXOSjCKAh
+         fDfSSux5fckZULv312TbZpx8w+A0tRK5qrIOmacA=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from ubuntu ([79.150.73.70]) by mail.gmx.com (mrgmx105
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 1N49hB-1khfbc3Ii9-0105Mu; Sat, 12
+ Sep 2020 11:37:14 +0200
+Date:   Sat, 12 Sep 2020 11:36:52 +0200
+From:   John Wood <john.wood@gmx.com>
+To:     James Morris <jmorris@namei.org>
+Cc:     Kees Cook <keescook@chromium.org>,
+        kernel-hardening@lists.openwall.com, John Wood <john.wood@gmx.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [RESEND][RFC PATCH 0/6] Fork brute force attack mitigation
+ (fbfam)
+Message-ID: <20200912093652.GA3041@ubuntu>
+References: <20200910202107.3799376-1-keescook@chromium.org>
+ <alpine.LRH.2.21.2009121002100.17638@namei.org>
+ <202009120055.F6BF704620@keescook>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=koi8-r
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200903131242.128665-7-tianjia.zhang@linux.alibaba.com>
+In-Reply-To: <202009120055.F6BF704620@keescook>
+X-Provags-ID: V03:K1:82dXCEl3cI4cxk3DUO6WIKkws0kGiKuodYSB2Poy3pHIMexgZ3i
+ ocFk/YHAJ3DjbN6PRnUmpAr0uwh00WrBXziJGf+yniVRw7LGtyUeiPQxsr9LYsq68ZOZ/WG
+ OENMjSgGJ5obexYYwh4gx7hG4Wndyaod5tu/wNF+B9F43ME0vKJv7InV5yifThD30BcMIi2
+ Q7LJJJvz5chA4C5qqIZxQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:B2c/eYE3vYI=:Zbn3OSff8V0GZehoI25jPB
+ XIfX7t9qpGtZR8iToZ2IiS6lBYW3veovlwaqN8mf32YrZRUISKTblWhYZOBmzwc6y1t6GWQFg
+ NdXxqlWHuT/7m6k6X/TrkwVRrGN25qz+McCYG8lPBpTCw7ivlZfj9Z735ZZ5uyw755BwbxKH2
+ Mcahz9+L5cwafaC6wE+M3yFzSdDdqgOjLEneU3IiQe9CTo6o2/XnE+5on3hC6R5N5Y/2wDA1d
+ e4Nnj6ywD8yk/2CJj10pGq6SUZacy1ZB7XDohXjC0rYrS6WCSuKTw9DBk+yy15YbsEvPdlA2N
+ U61QJgWqOuK7zU9LSzpDbGlzdDkM29EjmqSg8P2SlrTrkBRGhfgRapA8x8jtt2G4JUr6RTnPT
+ U8pEJsZM7xoOvN8OzB0KEELqXvLCwnGb26LA9reUNMcWkpu1B5cNO0ZtKB/pSiuWGE7RTChJb
+ l5S+YoiivwbgZwCkA9KRrYfEE27VDdXvdizZqQesZOP1P5mOqbwqDei1qY2Sv0yXC1qPnTOkz
+ 2p0M3jHGbC2w8rgDcdZXLGPjbtoT7xTwD3cEBxAcclCYf0WWOTq/olDnkhk/m/uZvK2dVhHlS
+ WjQwncs9EkPlHrctJvP2Oe2OS9q8wHNtJBIDdeppW9IJm8Qii6I31cidHaVDNjYX1mBhCFkLN
+ jiScnSXnSMd1b/7nVji25Xc3vuYViuTid6XK9zHV7YyP+iL2R5BpKiRTdMtgSv5CHC/pBSzko
+ JDSvogEy9A5MmMidBC+cOz55JnA3hHDDfs/7A1NmktypKRT11aVSggosuWvmDBjMJJdOWEl7H
+ uMFJ54BGGSRmkHruKcQQJ725axPIs21Kt6iBcda6GFvnWDVGBa20iL4mT0yqMunGI5UabkMaT
+ fZbWHEO+dHExVkhgVhOK5FbTAYXqmf+xh1GQWmR7t5wfL9Ca5InGyqkBXRyorIMZJTVAR2/PU
+ +0HSLXm/WAi1uBa5W3DiiKIqzLwGM/N26IefxV4lU4Llo9ttwCaSbT53Z6Sgn2C23GZja/Rnb
+ pw05y6c0WGrchZCat0neiVuDUAaVQJg1Qp/LUGvu6/DholigBT2VFgsI+Rs7fRD4x9Vw4YQC7
+ mMkA9u/JNdyN2AIqH8u52XMNg7egvycBRjfeMC/whjW1damf6Wjredeau9o/d5+3ZJF1XpIiH
+ /lOMjNgOO53bzcOPNaS3HB3MpkPxpyK+D3BtdQwAK9AxA7TtZvKdMNdfvTKHQTXVpfh9ez+8i
+ u+gvCQ8PYYgQYTpOab3Yestd59t2YICSNXMfnpA==
+Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Sep 03, 2020 at 09:12:40PM +0800, Tianjia Zhang wrote:
-> The digital certificate format based on SM2 crypto algorithm as
-> specified in GM/T 0015-2012. It was published by State Encryption
-> Management Bureau, China.
-> 
-> This patch adds the OID object identifier defined by OSCCA. The
-> x509 certificate supports sm2-with-sm3 type certificate parsing.
-> It uses the standard elliptic curve public key, and the sm2
-> algorithm signs the hash generated by sm3.
-> 
-> Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-> Tested-by: Xufeng Zhang <yunbo.xufeng@linux.alibaba.com>
-> ---
->  crypto/asymmetric_keys/x509_cert_parser.c | 14 +++++++++++++-
->  include/linux/oid_registry.h              |  6 ++++++
->  2 files changed, 19 insertions(+), 1 deletion(-)
-> 
-> diff --git a/crypto/asymmetric_keys/x509_cert_parser.c b/crypto/asymmetric_keys/x509_cert_parser.c
-> index 26ec20ef4899..6a8aee22bfd4 100644
-> --- a/crypto/asymmetric_keys/x509_cert_parser.c
-> +++ b/crypto/asymmetric_keys/x509_cert_parser.c
-> @@ -234,6 +234,10 @@ int x509_note_pkey_algo(void *context, size_t hdrlen,
->  	case OID_gost2012Signature512:
->  		ctx->cert->sig->hash_algo = "streebog512";
->  		goto ecrdsa;
-> +
-> +	case OID_sm2_with_sm3:
-> +		ctx->cert->sig->hash_algo = "sm3";
-> +		goto sm2;
->  	}
->  
->  rsa_pkcs1:
-> @@ -246,6 +250,11 @@ int x509_note_pkey_algo(void *context, size_t hdrlen,
->  	ctx->cert->sig->encoding = "raw";
->  	ctx->algo_oid = ctx->last_oid;
->  	return 0;
-> +sm2:
-> +	ctx->cert->sig->pkey_algo = "sm2";
-> +	ctx->cert->sig->encoding = "raw";
-> +	ctx->algo_oid = ctx->last_oid;
-> +	return 0;
->  }
->  
->  /*
-> @@ -266,7 +275,8 @@ int x509_note_signature(void *context, size_t hdrlen,
->  	}
->  
->  	if (strcmp(ctx->cert->sig->pkey_algo, "rsa") == 0 ||
-> -	    strcmp(ctx->cert->sig->pkey_algo, "ecrdsa") == 0) {
-> +	    strcmp(ctx->cert->sig->pkey_algo, "ecrdsa") == 0 ||
-> +	    strcmp(ctx->cert->sig->pkey_algo, "sm2") == 0) {
->  		/* Discard the BIT STRING metadata */
->  		if (vlen < 1 || *(const u8 *)value != 0)
->  			return -EBADMSG;
-> @@ -456,6 +466,8 @@ int x509_extract_key_data(void *context, size_t hdrlen,
->  	else if (ctx->last_oid == OID_gost2012PKey256 ||
->  		 ctx->last_oid == OID_gost2012PKey512)
->  		ctx->cert->pub->pkey_algo = "ecrdsa";
-> +	else if (ctx->last_oid == OID_id_ecPublicKey)
-> +		ctx->cert->pub->pkey_algo = "sm2";
->  	else
->  		return -ENOPKG;
->  
-> diff --git a/include/linux/oid_registry.h b/include/linux/oid_registry.h
-> index 657d6bf2c064..48fe3133ff39 100644
-> --- a/include/linux/oid_registry.h
-> +++ b/include/linux/oid_registry.h
-> @@ -107,6 +107,12 @@ enum OID {
->  	OID_gostTC26Sign512B,		/* 1.2.643.7.1.2.1.2.2 */
->  	OID_gostTC26Sign512C,		/* 1.2.643.7.1.2.1.2.3 */
->  
-> +	/* OSCCA */
-> +	OID_sm2,			/* 1.2.156.10197.1.301 */
-> +	OID_sm3,			/* 1.2.156.10197.1.401 */
-> +	OID_sm2_with_sm3,		/* 1.2.156.10197.1.501 */
-> +	OID_sm3WithRSAEncryption,	/* 1.2.156.10197.1.504 */
+On Sat, Sep 12, 2020 at 12:56:18AM -0700, Kees Cook wrote:
+> On Sat, Sep 12, 2020 at 10:03:23AM +1000, James Morris wrote:
+> > On Thu, 10 Sep 2020, Kees Cook wrote:
+> >
+> > > [kees: re-sending this series on behalf of John Wood <john.wood@gmx.=
+com>
+> > >  also visible at https://github.com/johwood/linux fbfam]
+> > >
+> > > From: John Wood <john.wood@gmx.com>
+> >
+> > Why are you resending this? The author of the code needs to be able to
+> > send and receive emails directly as part of development and maintenanc=
+e.
 
-OID_sm3WithRSAEncryption identifier is unused and this mode looks not
-implemented. But, this is probably ok for possible future extension.
+I tried to send the full patch serie by myself but my email got blocked. A=
+fter
+get support from my email provider it told to me that my account is young,
+and due to its spam policie I am not allow, for now, to send a big amount
+of mails in a short period. They also informed me that soon I will be able
+to send more mails. The quantity increase with the age of the account.
 
-Reviewed-by: Vitaly Chikunov <vt@altlinux.org>
+I hope that for the next version all works as expected.
+Apologies.
 
-Thanks,
+> I wanted to flush it from my "review" TODO list, mainly.
 
+Thanks Kees for the re-send and review.
 
-> +
->  	OID__NR
->  };
->  
+> --
+> Kees Cook
+
+Regards,
+John Wood
