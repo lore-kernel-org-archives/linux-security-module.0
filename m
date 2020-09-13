@@ -1,154 +1,244 @@
-Return-Path: <SRS0=vzfn=CV=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=ngjd=CW=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25687C433E2
-	for <linux-security-module@archiver.kernel.org>; Sat, 12 Sep 2020 20:49:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35BF7C43461
+	for <linux-security-module@archiver.kernel.org>; Sun, 13 Sep 2020 07:12:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CC797207EA
-	for <linux-security-module@archiver.kernel.org>; Sat, 12 Sep 2020 20:49:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1AAA207C3
+	for <linux-security-module@archiver.kernel.org>; Sun, 13 Sep 2020 07:12:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dr0Ce72Z"
+	dkim=pass (2048-bit key) header.d=benyossef-com.20150623.gappssmtp.com header.i=@benyossef-com.20150623.gappssmtp.com header.b="GBJWFNVx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725885AbgILUtH (ORCPT
+        id S1725916AbgIMHMZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 12 Sep 2020 16:49:07 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:25418 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725906AbgILUtA (ORCPT
+        Sun, 13 Sep 2020 03:12:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60928 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725909AbgIMHMV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 12 Sep 2020 16:49:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1599943737;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=cJuHYlMJJGIC0qBjlrqnGCpyE1IZMKKDiH+/8N+tl5c=;
-        b=dr0Ce72Zjyh5SeDxwKvFw4/m19xObHSL43mDbzO+s7revoyWKKXwlq0IY0uNdFBtynqS7+
-        +8klonsDyYpwtdJshU07+r1pbtmiutmK7sGN9COiJxZdxJ1wrsu8qZUgFCtDVTNVUNJSSX
-        NWJmUnANjHfzUCxNxI/5uGqTukRwVWY=
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
- [209.85.167.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-188-GZbPpo10O2CUDcx9b2Qy4A-1; Sat, 12 Sep 2020 16:48:54 -0400
-X-MC-Unique: GZbPpo10O2CUDcx9b2Qy4A-1
-Received: by mail-lf1-f72.google.com with SMTP id z77so1529967lfc.2
-        for <linux-security-module@vger.kernel.org>; Sat, 12 Sep 2020 13:48:53 -0700 (PDT)
+        Sun, 13 Sep 2020 03:12:21 -0400
+Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56A49C061575
+        for <linux-security-module@vger.kernel.org>; Sun, 13 Sep 2020 00:12:20 -0700 (PDT)
+Received: by mail-pj1-x1044.google.com with SMTP id mm21so3817807pjb.4
+        for <linux-security-module@vger.kernel.org>; Sun, 13 Sep 2020 00:12:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=benyossef-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=GvZM5rf5aV2Zc9VWGMundiwBvF5h3OlvoOB40Du6TQg=;
+        b=GBJWFNVxqHqk8jJElMjtWuriXVh3KdRKD5z/H0647c5ofUOkKOUvZPk7bXkwivl27h
+         kHaEzoRCdHCaJiD1s32VXjF0WiBIZGmfcvxBDRXJsupT6WuH9y0ID5oNBeMEc8TAaiPu
+         fUWNMO27vFop6ZrqR3d3GRwcJUdikIU8ONh+XwVlLe1M19I4KJHcBXFmC5sdHEz4WeLq
+         YuHCfJjto3cY443Y5hiAAd/w3CfRXkAWIvf1mXcRM7MVfzfRMj9VY/LnOqlpl3UYGgZ7
+         RtMK3BO9f9KOM1Bf5MSkWI04pPKpjoHBQVNXdM67/60WBiC+q7ODpbKhMkcXazNdyDR1
+         Wqpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cJuHYlMJJGIC0qBjlrqnGCpyE1IZMKKDiH+/8N+tl5c=;
-        b=IXf9Bje71aF//jqMA+3fP7/X1Ub/VIOB9Y9l42kXoyg+WsuiRv0AeFFzGRG7qqIChz
-         3zkEmALKQi60GqfDIPlCoeWbVpP3bwqC5bX6B074gTZ5hIhvKxTqFtQaKPN1geJ5/dLB
-         VfNrMW/I/KVSN4rOvj4pV+JhaVWFnoXIwxetB6+UtunxaWGOl0sg8nQ3ohVJ6o+SobFJ
-         45dHhWwlBvNs/KVT44cIuTUyDVVyerZ2rx2kCiOEBgELU39fCK34hQR6j50ZJBD5GZz8
-         rEwAYIse+lCnqeutPHV2Gqy8cb+hR6xA7dFBhy+PskKZdhSh/ZZsw2vx0Yly542j8Zxf
-         v+rA==
-X-Gm-Message-State: AOAM533gxybsLEpYzTATl82IduboEzhTnq84Oo3lIIFPqSh1hc/BRuAU
-        AKcN3nf60MPmoPP6ZpvhBI9xmQ1zAbUM8gbXLzW160IzQPuV9WAcP734vKkIN+wQTL8NcV1qDow
-        U6kKZvMUp9db933A063fZ4vtX5bFrl0srXPmRipQnv+8OFYa/r9/6
-X-Received: by 2002:a2e:8046:: with SMTP id p6mr2567815ljg.372.1599943732616;
-        Sat, 12 Sep 2020 13:48:52 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyDE6x8wpSTW0zchyo7JE5ZtuT3H92rSVgfacoMie83rLd05GidX9QR1xfHp5MvqzE7vmFLBF7QNJ6Y0VNPIQs=
-X-Received: by 2002:a2e:8046:: with SMTP id p6mr2567810ljg.372.1599943732385;
- Sat, 12 Sep 2020 13:48:52 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=GvZM5rf5aV2Zc9VWGMundiwBvF5h3OlvoOB40Du6TQg=;
+        b=OUVDeVb2kn0ZYtvS7n8AExgsPHMm/h9hojyScCCKeiDYilDd7cZXhRPtFkdgvwjyWd
+         hltITxrYLCN6iApTdrDUTtyukr01TGf2DrZPeyECJnPb11xzYqvHRCB/QMeKlqje85wD
+         xd2pPco4+TbC2ZxIwJegjPzgF17VpRD8TMT1kR1b45TYYv+GLYVZ5ThZgdfUT36Xshkz
+         Lz+4l5tiNm7u6VdP1RpcmgNnxTm5nJ8OaQNSfpGJ7No7NMJXVJBDRV6dXMiMBDj9obxB
+         T4S+/nV8YjIoy8lAXX2FAhIhvNr4eioVBhcftBCKcjZkkO+STLPkwen2pHRSaeeEOogf
+         wwSw==
+X-Gm-Message-State: AOAM531bCflV8P+23ubqKuOoZQ0eNKzLlQa/vwT8z2EbKbIAnBxTpaaS
+        LI0PfpwORmwUb9S5yv+17voPVG6zb79PWC4zKgmqEQ==
+X-Google-Smtp-Source: ABdhPJw6YNDARVPayuQQbt53xib3TWvar5zYdHdcFp0GbBRVYl+LqmDEzsx5NZyTVnc4kR7JRLrQATbzdTiFdugFixk=
+X-Received: by 2002:a17:90a:e609:: with SMTP id j9mr8481445pjy.129.1599981139628;
+ Sun, 13 Sep 2020 00:12:19 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200910202107.3799376-1-keescook@chromium.org>
- <alpine.LRH.2.21.2009121002100.17638@namei.org> <202009120055.F6BF704620@keescook>
- <20200912093652.GA3041@ubuntu> <20200912144722.GE3117@suse.de>
-In-Reply-To: <20200912144722.GE3117@suse.de>
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-Date:   Sat, 12 Sep 2020 22:48:39 +0200
-Message-ID: <CAFqZXNtwDpX+O69Jj3AmxMoiW7o6SE07SqDDFnGMObu8hLDQDg@mail.gmail.com>
-Subject: Re: [RESEND][RFC PATCH 0/6] Fork brute force attack mitigation (fbfam)
-To:     Mel Gorman <mgorman@suse.de>
-Cc:     John Wood <john.wood@gmx.com>, James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>, linux-doc@vger.kernel.org,
+References: <20200903131242.128665-1-tianjia.zhang@linux.alibaba.com> <20200903131242.128665-8-tianjia.zhang@linux.alibaba.com>
+In-Reply-To: <20200903131242.128665-8-tianjia.zhang@linux.alibaba.com>
+From:   Gilad Ben-Yossef <gilad@benyossef.com>
+Date:   Sun, 13 Sep 2020 10:12:09 +0300
+Message-ID: <CAOtvUMfT5zgv=e9nCgz8-1r7LuYSRZ8Zdx2xc0JwckUJZufcvg@mail.gmail.com>
+Subject: Re: [PATCH v6 7/8] X.509: support OSCCA sm2-with-sm3 certificate verification
+To:     Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        David Howells <dhowells@redhat.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Stephan Mueller <smueller@chronox.de>,
+        Marcelo Henrique Cerri <marcelo.cerri@canonical.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Waiman Long <longman@redhat.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Tushar Sugandhi <tusharsu@linux.microsoft.com>,
+        Vitaly Chikunov <vt@altlinux.org>,
+        Pascal van Leeuwen <pvanleeuwen@rambus.com>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
         Linux kernel mailing list <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=omosnace@redhat.com
-X-Mimecast-Spam-Score: 0.002
-X-Mimecast-Originator: redhat.com
+        keyrings@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-security-module@vger.kernel.org,
+        Xufeng Zhang <yunbo.xufeng@linux.alibaba.com>,
+        Jia Zhang <zhang.jia@linux.alibaba.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, Sep 12, 2020 at 4:51 PM Mel Gorman <mgorman@suse.de> wrote:
-> On Sat, Sep 12, 2020 at 11:36:52AM +0200, John Wood wrote:
-> > On Sat, Sep 12, 2020 at 12:56:18AM -0700, Kees Cook wrote:
-> > > On Sat, Sep 12, 2020 at 10:03:23AM +1000, James Morris wrote:
-> > > > On Thu, 10 Sep 2020, Kees Cook wrote:
-> > > >
-> > > > > [kees: re-sending this series on behalf of John Wood <john.wood@gmx.com>
-> > > > >  also visible at https://github.com/johwood/linux fbfam]
-> > > > >
-> > > > > From: John Wood <john.wood@gmx.com>
-> > > >
-> > > > Why are you resending this? The author of the code needs to be able to
-> > > > send and receive emails directly as part of development and maintenance.
-> >
-> > I tried to send the full patch serie by myself but my email got blocked. After
-> > get support from my email provider it told to me that my account is young,
-> > and due to its spam policie I am not allow, for now, to send a big amount
-> > of mails in a short period. They also informed me that soon I will be able
-> > to send more mails. The quantity increase with the age of the account.
-> >
->
-> If you're using "git send-email" then specify --confirm=always and
-> either manually send a mail every few seconds or use an expect script
-> like
->
-> #!/bin/bash
-> EXPECT_SCRIPT=
-> function cleanup() {
->         if [ "$EXPECT_SCRIPT" != "" ]; then
->                 rm $EXPECT_SCRIPT
->         fi
-> }
-> trap cleanup EXIT
->
-> EXPECT_SCRIPT=`mktemp`
-> cat > $EXPECT_SCRIPT <<EOF
-> spawn sh ./SEND
-> expect {
->         "Send this email"   { sleep 10; exp_send y\\r; exp_continue }
-> }
-> EOF
->
-> expect -f $EXPECT_SCRIPT
-> exit $?
->
-> This will work if your provider limits the rate mails are sent rather
-> than the total amount.
+Hi,
 
-...or you could keep it simple and just pass "--batch-size 1
---relogin-delay 10" to git send-email ;)
 
--- 
-Ondrej Mosnacek
-Software Engineer, Platform Security - SELinux kernel
-Red Hat, Inc.
+On Thu, Sep 3, 2020 at 4:13 PM Tianjia Zhang
+<tianjia.zhang@linux.alibaba.com> wrote:
+>
+> The digital certificate format based on SM2 crypto algorithm as
+> specified in GM/T 0015-2012. It was published by State Encryption
+> Management Bureau, China.
+>
+> The method of generating Other User Information is defined as
+> ZA=3DH256(ENTLA || IDA || a || b || xG || yG || xA || yA), it also
+> specified in https://tools.ietf.org/html/draft-shen-sm2-ecdsa-02.
+>
+> The x509 certificate supports sm2-with-sm3 type certificate
+> verification.  Because certificate verification requires ZA
+> in addition to tbs data, ZA also depends on elliptic curve
+> parameters and public key data, so you need to access tbs in sig
+> and calculate ZA. Finally calculate the digest of the
+> signature and complete the verification work. The calculation
+> process of ZA is declared in specifications GM/T 0009-2012
+> and GM/T 0003.2-2012.
+>
+> Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+> Tested-by: Xufeng Zhang <yunbo.xufeng@linux.alibaba.com>
+> ---
+>  crypto/asymmetric_keys/Makefile          |  1 +
+>  crypto/asymmetric_keys/public_key.c      |  6 +++
+>  crypto/asymmetric_keys/public_key_sm2.c  | 61 ++++++++++++++++++++++++
+>  crypto/asymmetric_keys/x509_public_key.c |  3 ++
+>  include/crypto/public_key.h              | 15 ++++++
+>  5 files changed, 86 insertions(+)
+>  create mode 100644 crypto/asymmetric_keys/public_key_sm2.c
+>
+> diff --git a/crypto/asymmetric_keys/Makefile b/crypto/asymmetric_keys/Mak=
+efile
+> index 28b91adba2ae..1a99ea5acb6b 100644
+> --- a/crypto/asymmetric_keys/Makefile
+> +++ b/crypto/asymmetric_keys/Makefile
+> @@ -11,6 +11,7 @@ asymmetric_keys-y :=3D \
+>         signature.o
+>
+>  obj-$(CONFIG_ASYMMETRIC_PUBLIC_KEY_SUBTYPE) +=3D public_key.o
+> +obj-$(CONFIG_ASYMMETRIC_PUBLIC_KEY_SUBTYPE) +=3D public_key_sm2.o
+>  obj-$(CONFIG_ASYMMETRIC_TPM_KEY_SUBTYPE) +=3D asym_tpm.o
+>
+>  #
+> diff --git a/crypto/asymmetric_keys/public_key.c b/crypto/asymmetric_keys=
+/public_key.c
+> index d8410ffd7f12..1d0492098bbd 100644
+> --- a/crypto/asymmetric_keys/public_key.c
+> +++ b/crypto/asymmetric_keys/public_key.c
+> @@ -299,6 +299,12 @@ int public_key_verify_signature(const struct public_=
+key *pkey,
+>         if (ret)
+>                 goto error_free_key;
+>
+> +       if (strcmp(sig->pkey_algo, "sm2") =3D=3D 0 && sig->data_size) {
+> +               ret =3D cert_sig_digest_update(sig, tfm);
+> +               if (ret)
+> +                       goto error_free_key;
+> +       }
+> +
+>         sg_init_table(src_sg, 2);
+>         sg_set_buf(&src_sg[0], sig->s, sig->s_size);
+>         sg_set_buf(&src_sg[1], sig->digest, sig->digest_size);
+> diff --git a/crypto/asymmetric_keys/public_key_sm2.c b/crypto/asymmetric_=
+keys/public_key_sm2.c
+> new file mode 100644
+> index 000000000000..7325cf21dbb4
+> --- /dev/null
+> +++ b/crypto/asymmetric_keys/public_key_sm2.c
+> @@ -0,0 +1,61 @@
+> +/* SPDX-License-Identifier: GPL-2.0-or-later */
+> +/*
+> + * asymmetric public-key algorithm for SM2-with-SM3 certificate
+> + * as specified by OSCCA GM/T 0003.1-2012 -- 0003.5-2012 SM2 and
+> + * described at https://tools.ietf.org/html/draft-shen-sm2-ecdsa-02
+> + *
+> + * Copyright (c) 2020, Alibaba Group.
+> + * Authors: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+> + */
+> +
+> +#include <crypto/sm3_base.h>
+> +#include <crypto/sm2.h>
+> +#include <crypto/public_key.h>
+> +
+> +#if IS_REACHABLE(CONFIG_CRYPTO_SM2)
+> +
+> +int cert_sig_digest_update(const struct public_key_signature *sig,
+> +                               struct crypto_akcipher *tfm_pkey)
+> +{
+> +       struct crypto_shash *tfm;
+> +       struct shash_desc *desc;
+> +       size_t desc_size;
+> +       unsigned char dgst[SM3_DIGEST_SIZE];
+> +       int ret;
+> +
+> +       BUG_ON(!sig->data);
+> +
+> +       ret =3D sm2_compute_z_digest(tfm_pkey, SM2_DEFAULT_USERID,
+> +                                       SM2_DEFAULT_USERID_LEN, dgst);
+> +       if (ret)
+> +               return ret;
+> +
+> +       tfm =3D crypto_alloc_shash(sig->hash_algo, 0, 0);
+> +       if (IS_ERR(tfm))
+> +               return PTR_ERR(tfm);
+> +
+> +       desc_size =3D crypto_shash_descsize(tfm) + sizeof(*desc);
+> +       desc =3D kzalloc(desc_size, GFP_KERNEL);
+> +       if (!desc)
+> +               goto error_free_tfm;
+> +
+> +       desc->tfm =3D tfm;
+> +
+> +       ret =3D crypto_shash_init(desc);
+> +       if (ret < 0)
+> +               goto error_free_desc;
+> +
+> +       ret =3D crypto_shash_update(desc, dgst, SM3_DIGEST_SIZE);
+> +       if (ret < 0)
+> +               goto error_free_desc;
+> +
+> +       ret =3D crypto_shash_finup(desc, sig->data, sig->data_size, sig->=
+digest);
 
+It looks like you are doing a separate init, update, finup every time
+- I would consider using crypto_shash_digest() in one go.
+
+In fact, considering the fact that you are allocating a tfm just for
+this use and then releasing it, I would consider switching to
+crypto_shash_tfm_digest() and dropping the kzalloc all together.
+
+This should simplify the code a bit.
+
+Other than that I don't have anything smart to say :-)
+
+Gilad
+
+--=20
+Gilad Ben-Yossef
+Chief Coffee Drinker
+
+values of =CE=B2 will give rise to dom!
