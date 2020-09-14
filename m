@@ -2,71 +2,177 @@ Return-Path: <SRS0=N365=CX=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41155C43461
-	for <linux-security-module@archiver.kernel.org>; Mon, 14 Sep 2020 18:05:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0F01C2BC11
+	for <linux-security-module@archiver.kernel.org>; Mon, 14 Sep 2020 18:08:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0C97E2067C
-	for <linux-security-module@archiver.kernel.org>; Mon, 14 Sep 2020 18:05:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ABF05206E9
+	for <linux-security-module@archiver.kernel.org>; Mon, 14 Sep 2020 18:08:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FJhRhoqK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726043AbgINSF0 (ORCPT
+        id S1726140AbgINSHn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 14 Sep 2020 14:05:26 -0400
-Received: from mga07.intel.com ([134.134.136.100]:36714 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725964AbgINSFZ (ORCPT
+        Mon, 14 Sep 2020 14:07:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43518 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726134AbgINSHQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 14 Sep 2020 14:05:25 -0400
-IronPort-SDR: DZ85E3HONqaWybxfsFhe1xm5uLWaRWGgcFe2FACthqL9U4glNacopZ5wgml63T9gjnFpb+KqM2
- WMHB6aHFPAtg==
-X-IronPort-AV: E=McAfee;i="6000,8403,9744"; a="223315675"
-X-IronPort-AV: E=Sophos;i="5.76,427,1592895600"; 
-   d="scan'208";a="223315675"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2020 11:05:20 -0700
-IronPort-SDR: ITGKirPXRtC4MiTsUGWfq/qZkKTcPmNColBPFib9Mc/8RuAbTEjc0Mu18/Oc+Hz3Z0jxEFZ0Nu
- DRCFBaaZ8tow==
-X-IronPort-AV: E=Sophos;i="5.76,427,1592895600"; 
-   d="scan'208";a="330842744"
-Received: from mgorski-mobl.ger.corp.intel.com (HELO localhost) ([10.249.43.120])
-  by fmsmga004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2020 11:05:15 -0700
-Date:   Mon, 14 Sep 2020 21:05:10 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Denis Efremov <efremov@linux.com>,
-        David Howells <dhowells@redhat.com>
-Cc:     Alex Dewar <alex.dewar90@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] security: keys: Use kvfree_sensitive in a few places
-Message-ID: <20200914180510.GC9369@linux.intel.com>
-References: <20200911114400.82207-1-alex.dewar90@gmail.com>
- <f97076d2-de8a-4600-ee81-4cf4fcdc3ec1@linux.com>
+        Mon, 14 Sep 2020 14:07:16 -0400
+Received: from mail-qv1-xf44.google.com (mail-qv1-xf44.google.com [IPv6:2607:f8b0:4864:20::f44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB53BC06174A;
+        Mon, 14 Sep 2020 11:07:15 -0700 (PDT)
+Received: by mail-qv1-xf44.google.com with SMTP id q10so216214qvs.1;
+        Mon, 14 Sep 2020 11:07:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5cS4S52/ivmcWHzOjUPY4AEjw85T58jQTfSasZl/Goc=;
+        b=FJhRhoqKijSkFo2NNl4y6osks5SS1dlbFfvB0LjzDf3FD+fIrLnMc9FDSQz+Pnyivz
+         6A14GwWYuL4xBqRsx2NGEP81iz5bVTQHZEyHDadB2RPkyCfgkhsfouOTlvXwYLHkrNn2
+         zE4vfX/LvtEt4Eed3E3ce1rFbkO8Rx3TP7DPxTzAdUQW/VE+kqojgz9WTKak+oS7bDgT
+         l9WEDw4RsXje1yYpRq9bJ18EfTI0fGiVT4+7PaG/UKJo5uPFYtCFl5pGqmlA/fQhe2Y/
+         HPzc2sVYjAPPPHDGow3evKQAiUUGnVxOhRzVLUYxWurhNvMGkNjudA0YNwFi8BLKyEPY
+         AyuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5cS4S52/ivmcWHzOjUPY4AEjw85T58jQTfSasZl/Goc=;
+        b=NVbUpkElgmVI5+lkJWZrwSWfzC14LK3W3Vq63J9j7JZdW8DTedhtLKCBohLy/OTab2
+         YqM49EZMSXspRoUg2AFmOZxXbGWG/ZzF/491erGwMrzne5v+ILWGzoUg1U0mDGXdrYvY
+         Wtom/Q0fQFP8lyEkcI6Wy3AmoaOh/yLnJl1sbamJ546vI5JElsUxjB3eKbK51cqeV9x7
+         Jyntawt95jUii5des8vJwrs60YdFKrwuomFYrLh6GuM3x1bnaxX6krRNegvJtEMVBI16
+         y4D1fa14o2WdsC2AslhPUWDciWACwUcDM3rZuT1aIlLWr7YsoR7XYd+4qn4peVPNNbjG
+         +rcA==
+X-Gm-Message-State: AOAM531+3fvm5quRDHZnRi9cqNf9zDwA9+t1jzxYwHNZqJVtfqwbNbHC
+        ZxYUpRa0Khrwl1a/lypBWSI=
+X-Google-Smtp-Source: ABdhPJz0CEz8IP33W+amLFQ03M7/CVQLV3Wox1IyeKYUsaqNsmiCQMhx2cHyOFKbh8MNVm8pKPT14g==
+X-Received: by 2002:a0c:cc13:: with SMTP id r19mr14127259qvk.15.1600106833276;
+        Mon, 14 Sep 2020 11:07:13 -0700 (PDT)
+Received: from puritycontrol.fios-router.home (pool-96-234-167-227.bltmmd.fios.verizon.net. [96.234.167.227])
+        by smtp.gmail.com with ESMTPSA id n136sm13675972qkn.14.2020.09.14.11.07.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Sep 2020 11:07:12 -0700 (PDT)
+From:   Stephen Smalley <stephen.smalley.work@gmail.com>
+To:     mtk.manpages@gmail.com
+Cc:     linux-man@vger.kernel.org, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org, smcv@collabora.com, jmorris@namei.org,
+        serge@hallyn.com, Stephen Smalley <stephen.smalley.work@gmail.com>
+Subject: [PATCH v2] socket.7,unix.7: add initial description for SO_PEERSEC
+Date:   Mon, 14 Sep 2020 14:07:00 -0400
+Message-Id: <20200914180700.11003-1-stephen.smalley.work@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f97076d2-de8a-4600-ee81-4cf4fcdc3ec1@linux.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Sep 11, 2020 at 07:05:16PM +0300, Denis Efremov wrote:
-> Hi,
-> 
-> same patch
-> 
-> https://lkml.org/lkml/2020/8/27/168
-> 
-> Thanks,
-> Denis
+SO_PEERSEC was introduced for AF_UNIX stream sockets connected via
+connect(2) in Linux 2.6.2 [1] and later augmented to support AF_UNIX stream
+and datagram sockets created via socketpair(2) in Linux 4.18 [2].  Document
+SO_PEERSEC in the socket.7 and unix.7 man pages following the example
+of the existing SO_PEERCRED descriptions.  SO_PEERSEC is also supported
+on AF_INET sockets when using labeled IPSEC or NetLabel but defer
+adding a description of that support to a separate patch.
 
-David, can you pick this up?
+The module-independent description of the security context returned
+by SO_PEERSEC is from Simon McVittie <smcv@collabora.com>.
 
-/Jarkko
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git/commit/?id=da6e57a2e6bd7939f610d957afacaf6a131e75ed
+
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=0b811db2cb2aabc910e53d34ebb95a15997c33e7
+
+Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+---
+v2 adds kernel commit info to the description and man page and uses
+the suggested text from Simon McVittie for the description of
+the security context string in a module-neutral way.
+
+ man7/socket.7 |  5 +++++
+ man7/unix.7   | 46 ++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 51 insertions(+)
+
+diff --git a/man7/socket.7 b/man7/socket.7
+index 21e891791..c3635f95b 100644
+--- a/man7/socket.7
++++ b/man7/socket.7
+@@ -690,6 +690,11 @@ Return the credentials of the peer process connected to this socket.
+ For further details, see
+ .BR unix (7).
+ .TP
++.BR SO_PEERSEC " (since Linux 2.6.2)"
++Return the security context of the peer socket connected to this socket.
++For further details, see
++.BR unix (7).
++.TP
+ .B SO_PRIORITY
+ Set the protocol-defined priority for all packets to be sent on
+ this socket.
+diff --git a/man7/unix.7 b/man7/unix.7
+index 50828a5bc..298521d4a 100644
+--- a/man7/unix.7
++++ b/man7/unix.7
+@@ -349,6 +349,52 @@ stream sockets and for
+ .B AF_UNIX
+ stream and datagram socket pairs created using
+ .BR socketpair (2).
++.TP
++.B SO_PEERSEC
++This read-only socket option returns the
++security context of the peer socket connected to this socket.
++By default, this will be the same as the security context of
++the process that created the peer socket unless overridden
++by the policy or by a process with the required permissions.
++.IP
++The argument to
++.BR getsockopt (2)
++is a pointer to a
++buffer of the specified length in bytes
++into which the security context string will be copied.
++If the buffer length is less than the length of the security
++context string, then
++.BR getsockopt (2)
++will return the required length
++via
++.I optlen
++and return \-1 and sets
++.I errno
++to
++.BR ERANGE .
++The caller should allocate at least
++.BR NAME_MAX
++bytes for the buffer initially although this is not guaranteed
++to be sufficient.  Resizing the buffer to the returned length
++and retrying may be necessary.
++.IP
++The security context string may include a terminating null character
++in the returned length, but is not guaranteed to do so: a security
++context "foo" might be represented as either {'f','o','o'} of length 3
++or {'f','o','o','\\0'} of length 4, which are considered to be
++interchangeable. It is printable, does not contain non-terminating
++null characters, and is in an unspecified encoding (in particular it
++is not guaranteed to be ASCII or UTF-8).
++.IP
++The use of this option for sockets in the
++.B AF_UNIX
++address family
++is supported since Linux 2.6.2 for connected stream sockets and
++since Linux 4.18,
++.\" commit 0b811db2cb2aabc910e53d34ebb95a15997c33e7
++also for stream and datagram socket pairs created
++using
++.BR socketpair (2).
+ .\"
+ .SS Autobind feature
+ If a
+-- 
+2.25.1
+
