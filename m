@@ -2,177 +2,159 @@ Return-Path: <SRS0=N365=CX=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.4 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_IN_DEF_DKIM_WL autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0F01C2BC11
-	for <linux-security-module@archiver.kernel.org>; Mon, 14 Sep 2020 18:08:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C9F8C43461
+	for <linux-security-module@archiver.kernel.org>; Mon, 14 Sep 2020 19:39:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ABF05206E9
-	for <linux-security-module@archiver.kernel.org>; Mon, 14 Sep 2020 18:08:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EECB42193E
+	for <linux-security-module@archiver.kernel.org>; Mon, 14 Sep 2020 19:39:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FJhRhoqK"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KMb8YL82"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726140AbgINSHn (ORCPT
+        id S1726040AbgINTjn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 14 Sep 2020 14:07:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43518 "EHLO
+        Mon, 14 Sep 2020 15:39:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57728 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726134AbgINSHQ (ORCPT
+        with ESMTP id S1726064AbgINTjk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 14 Sep 2020 14:07:16 -0400
-Received: from mail-qv1-xf44.google.com (mail-qv1-xf44.google.com [IPv6:2607:f8b0:4864:20::f44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB53BC06174A;
-        Mon, 14 Sep 2020 11:07:15 -0700 (PDT)
-Received: by mail-qv1-xf44.google.com with SMTP id q10so216214qvs.1;
-        Mon, 14 Sep 2020 11:07:15 -0700 (PDT)
+        Mon, 14 Sep 2020 15:39:40 -0400
+Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84960C061788
+        for <linux-security-module@vger.kernel.org>; Mon, 14 Sep 2020 12:39:38 -0700 (PDT)
+Received: by mail-ed1-x541.google.com with SMTP id t16so740147edw.7
+        for <linux-security-module@vger.kernel.org>; Mon, 14 Sep 2020 12:39:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=5cS4S52/ivmcWHzOjUPY4AEjw85T58jQTfSasZl/Goc=;
-        b=FJhRhoqKijSkFo2NNl4y6osks5SS1dlbFfvB0LjzDf3FD+fIrLnMc9FDSQz+Pnyivz
-         6A14GwWYuL4xBqRsx2NGEP81iz5bVTQHZEyHDadB2RPkyCfgkhsfouOTlvXwYLHkrNn2
-         zE4vfX/LvtEt4Eed3E3ce1rFbkO8Rx3TP7DPxTzAdUQW/VE+kqojgz9WTKak+oS7bDgT
-         l9WEDw4RsXje1yYpRq9bJ18EfTI0fGiVT4+7PaG/UKJo5uPFYtCFl5pGqmlA/fQhe2Y/
-         HPzc2sVYjAPPPHDGow3evKQAiUUGnVxOhRzVLUYxWurhNvMGkNjudA0YNwFi8BLKyEPY
-         AyuA==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lG5XGf95bwNJOiL8PcjSLhdHd8W32J8QXR/kZviOKdg=;
+        b=KMb8YL82jYt+MdR+06nAv1SDjyBvY4xZgeT/ZSDzaA/sIk4BMgBJiDBRB+e1bufy3+
+         8ZUWjMH8ilySI8ll0tpW9SGHNcwfcXvuO/ogAr+JiAJ+gLYB2oFiAISVMsXaZiFZKhG6
+         rNV9jXE4AzKiGnJtbZ01dTfsAaRXm01QgaG5C8WCbA0mkKFr6J1uj1+DZPrJ9hzkpFLt
+         7CafX7kXEWTa72gmB4FzIyzXC1KrE0sLckGmAtvfbSZqoUxrNCh+knJSNyZnBMhxAxTx
+         dNPT5gnmXVGLWsSSXLj6HwJ+ZnTlIAmp/gH/hWa2wQfaMmrOBh6HBlLkbN6H+zlGsjQ8
+         UTIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=5cS4S52/ivmcWHzOjUPY4AEjw85T58jQTfSasZl/Goc=;
-        b=NVbUpkElgmVI5+lkJWZrwSWfzC14LK3W3Vq63J9j7JZdW8DTedhtLKCBohLy/OTab2
-         YqM49EZMSXspRoUg2AFmOZxXbGWG/ZzF/491erGwMrzne5v+ILWGzoUg1U0mDGXdrYvY
-         Wtom/Q0fQFP8lyEkcI6Wy3AmoaOh/yLnJl1sbamJ546vI5JElsUxjB3eKbK51cqeV9x7
-         Jyntawt95jUii5des8vJwrs60YdFKrwuomFYrLh6GuM3x1bnaxX6krRNegvJtEMVBI16
-         y4D1fa14o2WdsC2AslhPUWDciWACwUcDM3rZuT1aIlLWr7YsoR7XYd+4qn4peVPNNbjG
-         +rcA==
-X-Gm-Message-State: AOAM531+3fvm5quRDHZnRi9cqNf9zDwA9+t1jzxYwHNZqJVtfqwbNbHC
-        ZxYUpRa0Khrwl1a/lypBWSI=
-X-Google-Smtp-Source: ABdhPJz0CEz8IP33W+amLFQ03M7/CVQLV3Wox1IyeKYUsaqNsmiCQMhx2cHyOFKbh8MNVm8pKPT14g==
-X-Received: by 2002:a0c:cc13:: with SMTP id r19mr14127259qvk.15.1600106833276;
-        Mon, 14 Sep 2020 11:07:13 -0700 (PDT)
-Received: from puritycontrol.fios-router.home (pool-96-234-167-227.bltmmd.fios.verizon.net. [96.234.167.227])
-        by smtp.gmail.com with ESMTPSA id n136sm13675972qkn.14.2020.09.14.11.07.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Sep 2020 11:07:12 -0700 (PDT)
-From:   Stephen Smalley <stephen.smalley.work@gmail.com>
-To:     mtk.manpages@gmail.com
-Cc:     linux-man@vger.kernel.org, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org, smcv@collabora.com, jmorris@namei.org,
-        serge@hallyn.com, Stephen Smalley <stephen.smalley.work@gmail.com>
-Subject: [PATCH v2] socket.7,unix.7: add initial description for SO_PEERSEC
-Date:   Mon, 14 Sep 2020 14:07:00 -0400
-Message-Id: <20200914180700.11003-1-stephen.smalley.work@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lG5XGf95bwNJOiL8PcjSLhdHd8W32J8QXR/kZviOKdg=;
+        b=D//xFtjuXnQG/FIReQPx3TYsGi029u28aUr2CW9qHCXPtKB092xlizkSFWUbqYs8bv
+         Xxjzfks3iNg158Mo3qnHKBoKQZ1a76evMyMVnv9Zap5MvIz4XKmSoJClzyNe+SllzOuJ
+         YvvFaPY3NIAcTk0BQRNoQkr+EFO+J28uYDDgHlHWztlb1wytgwqHtjxRfXQdJtgrMLhX
+         Go2L++onfo4pbUoK8hYfxmRmdV+lOHuFNdCn173Nrajm9rkD7fTlS4bCVZeWurSXUz/R
+         jqahBzQKXIjXV7ts5YxvRgzAyK5Vkt7Jsd6rXl8k9oeSGxQvLW2tR3LedPJJp6ycg1hf
+         Q6bg==
+X-Gm-Message-State: AOAM530dimtYNTEbD2B45SfFLqse3NQ8z31pe2AMCKjhSs/EI2oX457Q
+        LadKnA+F4viM4WlbFEuDrb0iXyePkmCDbQhcv7AM/Q==
+X-Google-Smtp-Source: ABdhPJxc/PtfgEbkD4fcsDei9QMBxurLSxbpcXluh3HHDXLs/uUkzi3B73RmIjNWnbIXKDpCIS3Fg5qNSvIHPX0J6v4=
+X-Received: by 2002:a50:e807:: with SMTP id e7mr19255309edn.84.1600112376719;
+ Mon, 14 Sep 2020 12:39:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200910202107.3799376-1-keescook@chromium.org>
+ <20200910202107.3799376-6-keescook@chromium.org> <202009101634.52ED6751AD@keescook>
+ <CAG48ez2fP7yupg6Th+Hg0tL3o06p2PR1HtQcvy4Ro+Q5T2Nfkw@mail.gmail.com> <20200913152724.GB2873@ubuntu>
+In-Reply-To: <20200913152724.GB2873@ubuntu>
+From:   Jann Horn <jannh@google.com>
+Date:   Mon, 14 Sep 2020 21:39:10 +0200
+Message-ID: <CAG48ez3aQXb3EuGRVvLLo7BxycqJ4Y2mL83QhY9-QMK_qkfCuQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 5/6] security/fbfam: Detect a fork brute force attack
+To:     John Wood <john.wood@gmx.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, linux-doc@vger.kernel.org,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-SO_PEERSEC was introduced for AF_UNIX stream sockets connected via
-connect(2) in Linux 2.6.2 [1] and later augmented to support AF_UNIX stream
-and datagram sockets created via socketpair(2) in Linux 4.18 [2].  Document
-SO_PEERSEC in the socket.7 and unix.7 man pages following the example
-of the existing SO_PEERCRED descriptions.  SO_PEERSEC is also supported
-on AF_INET sockets when using labeled IPSEC or NetLabel but defer
-adding a description of that support to a separate patch.
+On Sun, Sep 13, 2020 at 6:56 PM John Wood <john.wood@gmx.com> wrote:
+> On Fri, Sep 11, 2020 at 02:01:56AM +0200, Jann Horn wrote:
+> > On Fri, Sep 11, 2020 at 1:49 AM Kees Cook <keescook@chromium.org> wrote:
+> > > On Thu, Sep 10, 2020 at 01:21:06PM -0700, Kees Cook wrote:
+> > > > diff --git a/fs/coredump.c b/fs/coredump.c
+> > > > index 76e7c10edfc0..d4ba4e1828d5 100644
+> > > > --- a/fs/coredump.c
+> > > > +++ b/fs/coredump.c
+> > > > @@ -51,6 +51,7 @@
+> > > >  #include "internal.h"
+> > > >
+> > > >  #include <trace/events/sched.h>
+> > > > +#include <fbfam/fbfam.h>
+> > > >
+> > > >  int core_uses_pid;
+> > > >  unsigned int core_pipe_limit;
+> > > > @@ -825,6 +826,7 @@ void do_coredump(const kernel_siginfo_t *siginfo)
+> > > >  fail_creds:
+> > > >       put_cred(cred);
+> > > >  fail:
+> > > > +     fbfam_handle_attack(siginfo->si_signo);
+> > >
+> > > I don't think this is the right place for detecting a crash -- isn't
+> > > this only for the "dumping core" condition? In other words, don't you
+> > > want to do this in get_signal()'s "fatal" block? (i.e. very close to the
+> > > do_coredump, but without the "should I dump?" check?)
+> > >
+> > > Hmm, but maybe I'm wrong? It looks like you're looking at noticing the
+> > > process taking a signal from SIG_KERNEL_COREDUMP_MASK ?
+> > >
+> > > (Better yet: what are fatal conditions that do NOT match
+> > > SIG_KERNEL_COREDUMP_MASK, and should those be covered?)
+> > >
+> > > Regardless, *this* looks like the only place without an LSM hook. And it
+> > > doesn't seem unreasonable to add one here. I assume it would probably
+> > > just take the siginfo pointer, which is also what you're checking.
+> >
+> > Good point, making this an LSM might be a good idea.
+> >
+> > > e.g. for include/linux/lsm_hook_defs.h:
+> > >
+> > > LSM_HOOK(int, 0, task_coredump, const kernel_siginfo_t *siginfo);
+> >
+> > I guess it should probably be an LSM_RET_VOID hook? And since, as you
+> > said, it's not really semantically about core dumping, maybe it should
+> > be named task_fatal_signal or something like that.
+>
+> If I understand correctly you propose to add a new LSM hook without return
+> value and place it here:
+>
+> diff --git a/kernel/signal.c b/kernel/signal.c
+> index a38b3edc6851..074492d23e98 100644
+> --- a/kernel/signal.c
+> +++ b/kernel/signal.c
+> @@ -2751,6 +2751,8 @@ bool get_signal(struct ksignal *ksig)
+>                         do_coredump(&ksig->info);
+>                 }
+>
+> +               // Add the new LSM hook here
+> +
+>                 /*
+>                  * Death signals, no core dump.
+>                  */
 
-The module-independent description of the security context returned
-by SO_PEERSEC is from Simon McVittie <smcv@collabora.com>.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git/commit/?id=da6e57a2e6bd7939f610d957afacaf6a131e75ed
-
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=0b811db2cb2aabc910e53d34ebb95a15997c33e7
-
-Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
----
-v2 adds kernel commit info to the description and man page and uses
-the suggested text from Simon McVittie for the description of
-the security context string in a module-neutral way.
-
- man7/socket.7 |  5 +++++
- man7/unix.7   | 46 ++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 51 insertions(+)
-
-diff --git a/man7/socket.7 b/man7/socket.7
-index 21e891791..c3635f95b 100644
---- a/man7/socket.7
-+++ b/man7/socket.7
-@@ -690,6 +690,11 @@ Return the credentials of the peer process connected to this socket.
- For further details, see
- .BR unix (7).
- .TP
-+.BR SO_PEERSEC " (since Linux 2.6.2)"
-+Return the security context of the peer socket connected to this socket.
-+For further details, see
-+.BR unix (7).
-+.TP
- .B SO_PRIORITY
- Set the protocol-defined priority for all packets to be sent on
- this socket.
-diff --git a/man7/unix.7 b/man7/unix.7
-index 50828a5bc..298521d4a 100644
---- a/man7/unix.7
-+++ b/man7/unix.7
-@@ -349,6 +349,52 @@ stream sockets and for
- .B AF_UNIX
- stream and datagram socket pairs created using
- .BR socketpair (2).
-+.TP
-+.B SO_PEERSEC
-+This read-only socket option returns the
-+security context of the peer socket connected to this socket.
-+By default, this will be the same as the security context of
-+the process that created the peer socket unless overridden
-+by the policy or by a process with the required permissions.
-+.IP
-+The argument to
-+.BR getsockopt (2)
-+is a pointer to a
-+buffer of the specified length in bytes
-+into which the security context string will be copied.
-+If the buffer length is less than the length of the security
-+context string, then
-+.BR getsockopt (2)
-+will return the required length
-+via
-+.I optlen
-+and return \-1 and sets
-+.I errno
-+to
-+.BR ERANGE .
-+The caller should allocate at least
-+.BR NAME_MAX
-+bytes for the buffer initially although this is not guaranteed
-+to be sufficient.  Resizing the buffer to the returned length
-+and retrying may be necessary.
-+.IP
-+The security context string may include a terminating null character
-+in the returned length, but is not guaranteed to do so: a security
-+context "foo" might be represented as either {'f','o','o'} of length 3
-+or {'f','o','o','\\0'} of length 4, which are considered to be
-+interchangeable. It is printable, does not contain non-terminating
-+null characters, and is in an unspecified encoding (in particular it
-+is not guaranteed to be ASCII or UTF-8).
-+.IP
-+The use of this option for sockets in the
-+.B AF_UNIX
-+address family
-+is supported since Linux 2.6.2 for connected stream sockets and
-+since Linux 4.18,
-+.\" commit 0b811db2cb2aabc910e53d34ebb95a15997c33e7
-+also for stream and datagram socket pairs created
-+using
-+.BR socketpair (2).
- .\"
- .SS Autobind feature
- If a
--- 
-2.25.1
-
+It should probably be in the "if (sig_kernel_coredump(signr)) {"
+branch. And I'm not sure whether it should be before or after
+do_coredump() - if you do it after do_coredump(), the hook will have
+to wait until the core dump file has been written, which may take a
+little bit of time.
