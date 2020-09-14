@@ -2,132 +2,146 @@ Return-Path: <SRS0=N365=CX=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0310BC2D0E3
-	for <linux-security-module@archiver.kernel.org>; Mon, 14 Sep 2020 17:44:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0591C43461
+	for <linux-security-module@archiver.kernel.org>; Mon, 14 Sep 2020 18:03:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B721E217BA
-	for <linux-security-module@archiver.kernel.org>; Mon, 14 Sep 2020 17:44:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B7C52076C
+	for <linux-security-module@archiver.kernel.org>; Mon, 14 Sep 2020 18:03:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726154AbgINRnu convert rfc822-to-8bit (ORCPT
+        id S1725951AbgINSDK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 14 Sep 2020 13:43:50 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2812 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726102AbgINMGa (ORCPT
+        Mon, 14 Sep 2020 14:03:10 -0400
+Received: from mga18.intel.com ([134.134.136.126]:18033 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725948AbgINSCx (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 14 Sep 2020 08:06:30 -0400
-Received: from lhreml715-chm.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id 9D53517D0D1F819FF294;
-        Mon, 14 Sep 2020 13:06:08 +0100 (IST)
-Received: from fraeml708-chm.china.huawei.com (10.206.15.36) by
- lhreml715-chm.china.huawei.com (10.201.108.66) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1913.5; Mon, 14 Sep 2020 13:05:49 +0100
-Received: from lhreml722-chm.china.huawei.com (10.201.108.73) by
- fraeml708-chm.china.huawei.com (10.206.15.36) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1913.5; Mon, 14 Sep 2020 14:05:48 +0200
-Received: from lhreml722-chm.china.huawei.com ([10.201.108.73]) by
- lhreml722-chm.china.huawei.com ([10.201.108.73]) with mapi id 15.01.1913.007;
- Mon, 14 Sep 2020 13:05:48 +0100
-From:   Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "containers@lists.linux-foundation.org" 
-        <containers@lists.linux-foundation.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-CC:     "stefanb@linux.vnet.ibm.com" <stefanb@linux.vnet.ibm.com>,
-        "sunyuqiong1988@gmail.com" <sunyuqiong1988@gmail.com>,
-        "mkayaalp@cs.binghamton.edu" <mkayaalp@cs.binghamton.edu>,
-        "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
-        "serge@hallyn.com" <serge@hallyn.com>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "christian@brauner.io" <christian@brauner.io>,
-        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Subject: RE: [RFC PATCH 00/30] ima: Introduce IMA namespace
-Thread-Topic: [RFC PATCH 00/30] ima: Introduce IMA namespace
-Thread-Index: AQHWdXPBkpeRDLdh20+fyp1BiEOjYak9+wmAgASx5lCAEwwJgIASd/FA
-Date:   Mon, 14 Sep 2020 12:05:48 +0000
-Message-ID: <2a9fa5a443a84f77992959773369beb2@huawei.com>
-References: <N> <20200818152037.11869-1-krzysztof.struczynski@huawei.com>
-         <1597767571.3898.15.camel@HansenPartnership.com>
-         <401a2f36149f450291d1742aeb6c2260@huawei.com>
- <5331e60b5a1afb55e2bc778db1b95998466b687d.camel@linux.ibm.com>
-In-Reply-To: <5331e60b5a1afb55e2bc778db1b95998466b687d.camel@linux.ibm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.48.217.147]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Mon, 14 Sep 2020 14:02:53 -0400
+IronPort-SDR: wCt4aihyJyDXkIu0yXviar0sZEmDJHSsMWxM5F5H8WCZT7/22t2PP9uQ1mk2Xn+3TbGl41wif4
+ m+g/PrqJ0RiQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9744"; a="146871632"
+X-IronPort-AV: E=Sophos;i="5.76,427,1592895600"; 
+   d="scan'208";a="146871632"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2020 11:02:49 -0700
+IronPort-SDR: weGdycT837iMKjq92vbU6fhtgMdmxLyQhGZDZU4y2sMklAB0Ljdccsw20TsI3ClC6pR+IT5dLL
+ 9etEcGO1bwSA==
+X-IronPort-AV: E=Sophos;i="5.76,427,1592895600"; 
+   d="scan'208";a="450979687"
+Received: from mgorski-mobl.ger.corp.intel.com (HELO localhost) ([10.249.43.120])
+  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2020 11:02:44 -0700
+Date:   Mon, 14 Sep 2020 21:02:38 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Eric Snowberg <eric.snowberg@oracle.com>
+Cc:     dhowells@redhat.com, dwmw2@infradead.org,
+        herbert@gondor.apana.org.au, davem@davemloft.net,
+        jmorris@namei.org, serge@hallyn.com, nayna@linux.ibm.com,
+        zohar@linux.ibm.com, erichte@linux.ibm.com, mpe@ellerman.id.au,
+        keyrings@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v2] certs: Add EFI_CERT_X509_GUID support for dbx entries
+Message-ID: <20200914180238.GB9369@linux.intel.com>
+References: <20200909172736.73003-1-eric.snowberg@oracle.com>
+ <20200914180127.GA9369@linux.intel.com>
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200914180127.GA9369@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-> From: Mimi Zohar [mailto:zohar@linux.ibm.com]
-> Sent: Wednesday, September 2, 2020 8:53 PM
-> > > So I think this can work in the use case where the system owner is
-> > > responsible for doing the logging and attestation and the tenants just
-> > > trust the owner without requiring an attestation.  However, in a multi-
-> > > tenant system you need a way for the attestation to be per-container
-> > > (because the combined list of who executed what would be a security
-> > > leak between tenants).  Since we can't virtualise the PCRs without
-> > > introducing a vtpm this is going to require a vtpm infrastructure like
-> > > that used for virtual machines and then we can do IMA logging per
-> > > container.
-> >
-> > I agree and wonder if we should decouple the attestation trust model,
-> > which depends on the specific use case (e.g. multi/single tenant,
-> > public/private cloud), from the IMA logic of linking the measurements to
-> > the container. Indeed, attestation from within the container might require
-> > anchoring to a vTPM/vPCR and the current measurement tagging mechanism
-> can
-> > support several ways of anchoring them to a (virtual) root of trust.
-> >
-> > > I don't think the above has to be in your first patch set, we just have
-> > > to have an idea of how it could be done to show that nothing in this
-> > > patch set precludes a follow on from doing this.
-> >
-> > Given that virtualizing trust anchors seems like a separate problem in
-> > which industry consensus is not easy to reach for all use cases, an
-> > anchoring mechanism should probably be a separate IMA feature.
+On Mon, Sep 14, 2020 at 09:01:34PM +0300, Jarkko Sakkinen wrote:
+> On Wed, Sep 09, 2020 at 01:27:36PM -0400, Eric Snowberg wrote:
+> > The Secure Boot Forbidden Signature Database, dbx, contains a list of now
+> > revoked signatures and keys previously approved to boot with UEFI Secure
+> > Boot enabled.  The dbx is capable of containing any number of
+> > EFI_CERT_X509_SHA256_GUID, EFI_CERT_SHA256_GUID, and EFI_CERT_X509_GUID
+> > entries.
+> > 
+> > Currently when EFI_CERT_X509_GUID are contained in the dbx, the entries are
+> > skipped.
+> > 
+> > Add support for EFI_CERT_X509_GUID dbx entries. When a EFI_CERT_X509_GUID
+> > is found, it is added as an asymmetrical key to the .blacklist keyring.
+> > Anytime the .platform keyring is used, the keys in the .blacklist keyring
+> > are referenced, if a matching key is found, the key will be rejected.
+> > 
+> > Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
+> > ---
+> > 
+> > v2: 
+> >  Fixed build issue reported by kernel test robot <lkp@intel.com>
+> >  Commit message update (suggested by Jarkko Sakkinen)
+> > 
+> > ---
+> >  certs/blacklist.c                             | 36 +++++++++++++++++++
+> >  certs/system_keyring.c                        |  6 ++++
+> >  include/crypto/pkcs7.h                        |  8 +++++
+> >  include/keys/system_keyring.h                 | 11 ++++++
+> >  .../platform_certs/keyring_handler.c          | 11 ++++++
+> >  5 files changed, 72 insertions(+)
+> > 
+> > diff --git a/certs/blacklist.c b/certs/blacklist.c
+> > index 6514f9ebc943..17ebf50cf0ae 100644
+> > --- a/certs/blacklist.c
+> > +++ b/certs/blacklist.c
+> > @@ -15,6 +15,7 @@
+> >  #include <linux/err.h>
+> >  #include <linux/seq_file.h>
+> >  #include <keys/system_keyring.h>
+> > +#include <crypto/pkcs7.h>
+> >  #include "blacklist.h"
+> >  
+> >  static struct key *blacklist_keyring;
+> > @@ -100,6 +101,41 @@ int mark_hash_blacklisted(const char *hash)
+> >  	return 0;
+> >  }
+> >  
+> > +int mark_key_revocationlisted(const char *data, size_t size)
+> > +{
+> > +	key_ref_t key;
+> > +
+> > +	key = key_create_or_update(make_key_ref(blacklist_keyring, true),
+> > +				   "asymmetric",
+> > +				   NULL,
+> > +				   data,
+> > +				   size,
+> > +				   ((KEY_POS_ALL & ~KEY_POS_SETATTR) |
+> > +				    KEY_USR_VIEW),
+> > +				   KEY_ALLOC_NOT_IN_QUOTA |
+> > +				   KEY_ALLOC_BUILT_IN);
+> > +
+> > +	if (IS_ERR(key)) {
+> > +		pr_err("Problem with revocation key (%ld)\n", PTR_ERR(key));
+> > +		return PTR_ERR(key);
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +int is_key_revocationlisted(struct pkcs7_message *pkcs7)
+> > +{
+> > +	int ret;
+> > +
+> > +	ret = pkcs7_validate_trust(pkcs7, blacklist_keyring);
+> > +
+> > +	if (ret == 0)
+> > +		return -EKEYREJECTED;
+> > +
+> > +	return -ENOKEY;
+> > +}
+> > +EXPORT_SYMBOL_GPL(is_key_revocationlisted);
 > 
-> Other trust anchors for "trusted keys" has been discussed, but I wasn't
-> aware of any discussion about other trust anchors for the IMA
-> measurement list.  The IMA measurement list is very much tied to a TPM.
-> 
+> What required this callable from a module?
 
-Agreed. I wouldn't consider anything else than the TPM in the IMA
-measurement list context. The anchoring mechanism mentioned above
-pertained to the possible extensions of the TPM anchor in the
-containerized environment, like the vTPM.
+Right, nees to be exported for pkcs7.
 
-> Including container measurements in the host measurement list, will
-> unnecessarily cause the host measurement list to grow.  The decision of
-> what should and shouldn't be included in the host measurement list
-> shouldn't be defined by the container.
-> 
 
-The container has no impact on the measurement list entries other than the
-ones related to the processes running within the container. This in turn,
-the same as for the original IMA, is defined by the (container's) policy,
-loaded on the container's creation.
-
-Best regards,
-Krzysztof
-
-> Mimi
-> 
-> 
-
+/Jarkko
