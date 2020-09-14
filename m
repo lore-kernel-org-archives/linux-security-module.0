@@ -2,131 +2,118 @@ Return-Path: <SRS0=N365=CX=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B73AEC43461
-	for <linux-security-module@archiver.kernel.org>; Mon, 14 Sep 2020 09:29:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50B1BC2D0E3
+	for <linux-security-module@archiver.kernel.org>; Mon, 14 Sep 2020 16:44:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7B33820719
-	for <linux-security-module@archiver.kernel.org>; Mon, 14 Sep 2020 09:29:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 24115217BA
+	for <linux-security-module@archiver.kernel.org>; Mon, 14 Sep 2020 16:44:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726246AbgINJ3b (ORCPT
+        id S1725987AbgINQoI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 14 Sep 2020 05:29:31 -0400
-Received: from mail-io1-f78.google.com ([209.85.166.78]:45933 "EHLO
-        mail-io1-f78.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726285AbgINJ3R (ORCPT
+        Mon, 14 Sep 2020 12:44:08 -0400
+Received: from smtp-42a8.mail.infomaniak.ch ([84.16.66.168]:56733 "EHLO
+        smtp-42a8.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726359AbgINQn5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 14 Sep 2020 05:29:17 -0400
-Received: by mail-io1-f78.google.com with SMTP id h21so5532655iof.12
-        for <linux-security-module@vger.kernel.org>; Mon, 14 Sep 2020 02:29:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=FxeDq5AQH5uHHpJ+wPvZ1zxw5WWwefv1515RpflhzxI=;
-        b=oosTr3ef2qd167FKujbHhAlHPDciY/A65bgJqMwa2WnP0hZTkQL+w/xDoyK8Wor2Xs
-         fEYvbaqnn54YUfkpGHE23YLa9VJoR1UsPrSH/Dunx/a7vaGQ9lWYKz1tEr/11/NHTcC1
-         jgGkro/mCltD/TEMgnLz1yz6BAMzpUeMoYs+RtxPHmoP256DviucJXdrFNg51Mmh/Ni3
-         6RnWK/7o9ZdA7EpIblNTX3xiIvAL+20a4Q2mCYh+x+XHpoNwvOF7tD1QPUGQm77Y74Qc
-         zJBGMTERJ1hrMgwF2nQnYGgjXsi9zJ5pN8si9vdBtgqWiDFFHzaPlTqKB7tzdJ3Cm3lY
-         Pppw==
-X-Gm-Message-State: AOAM532vpb+U1WhtOKyo0UlcxkajMWruwONmq2eaY6ZW1jgrUyI1q352
-        lYyOvzFIk/KhJCQWDNhmeJSnLLTzr2tx5txbOhstbHVGRwJx
-X-Google-Smtp-Source: ABdhPJyWyUMD8W6ehOB2EEv3I0k651Qbg5cZcJ/j5goK3SazR4aqiGrSybdd3RQxvz4mMpCrNrFVsbBCpbJ5GqBNgB1Pp3GpHuGf
+        Mon, 14 Sep 2020 12:43:57 -0400
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4BqscT0NnczlhdtR;
+        Mon, 14 Sep 2020 18:43:21 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
+        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4BqscQ11RWzlh8TF;
+        Mon, 14 Sep 2020 18:43:18 +0200 (CEST)
+Subject: Re: [RFC PATCH v9 0/3] Add introspect_access(2) (was O_MAYEXEC)
+Cc:     James Morris <jmorris@namei.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mimi Zohar <zohar@linux.ibm.com>, linux-kernel@vger.kernel.org,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Eric Chiang <ericchiang@google.com>,
+        Florian Weimer <fweimer@redhat.com>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Thibaut Sautereau <thibaut.sautereau@clip-os.org>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+References: <20200910164612.114215-1-mic@digikod.net>
+ <20200910170424.GU6583@casper.infradead.org>
+ <f6e2358c-8e5e-e688-3e66-2cdd943e360e@digikod.net>
+ <a48145770780d36e90f28f1526805a7292eb74f6.camel@linux.ibm.com>
+ <880bb4ee-89a2-b9b0-747b-0f779ceda995@digikod.net>
+ <20200910184033.GX6583@casper.infradead.org>
+ <alpine.LRH.2.21.2009121019050.17638@namei.org>
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        linux-api@vger.kernel.org
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Message-ID: <d7126fd7-cca1-42e4-6a7b-6a3b9e77306e@digikod.net>
+Date:   Mon, 14 Sep 2020 18:43:17 +0200
+User-Agent: 
 MIME-Version: 1.0
-X-Received: by 2002:a02:c8c6:: with SMTP id q6mr12342949jao.76.1600075756987;
- Mon, 14 Sep 2020 02:29:16 -0700 (PDT)
-Date:   Mon, 14 Sep 2020 02:29:16 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000001be78b05af42abd8@google.com>
-Subject: kernel BUG at lib/assoc_array.c:LINE! (2)
-From:   syzbot <syzbot+5cb98ddf89ec01d73c6d@syzkaller.appspotmail.com>
-To:     dhowells@redhat.com, jarkko.sakkinen@linux.intel.com,
-        jmorris@namei.org, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, serge@hallyn.com,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <alpine.LRH.2.21.2009121019050.17638@namei.org>
+Content-Type: text/plain; charset=iso-8859-15
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello,
+Arnd and Michael,
 
-syzbot found the following issue on:
-
-HEAD commit:    e8878ab8 Merge tag 'spi-fix-v5.9-rc4' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12892c11900000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c61610091f4ca8c4
-dashboard link: https://syzkaller.appspot.com/bug?extid=5cb98ddf89ec01d73c6d
-compiler:       gcc (GCC) 10.1.0-syz 20200507
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+5cb98ddf89ec01d73c6d@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-kernel BUG at lib/assoc_array.c:652!
-invalid opcode: 0000 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 7123 Comm: kworker/1:3 Not tainted 5.9.0-rc4-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Workqueue: afs afs_manage_cell
-RIP: 0010:assoc_array_insert_into_terminal_node lib/assoc_array.c:652 [inline]
-RIP: 0010:assoc_array_insert+0x1cbe/0x2a80 lib/assoc_array.c:1001
-Code: 0f 84 cd fe ff ff e8 e1 62 15 fe e9 c3 fe ff ff e8 57 5c d5 fd 0f 0b e8 50 5c d5 fd 0f 0b e8 49 5c d5 fd 0f 0b e8 42 5c d5 fd <0f> 0b 48 8b 04 24 4c 89 74 24 70 48 b9 00 00 00 00 00 fc ff df 41
-RSP: 0018:ffffc900054977a0 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: 000000000000000f RCX: ffffffff839eeb4c
-RDX: ffff8880553a0540 RSI: ffffffff839ef13e RDI: ffff88804726f688
-RBP: 0000000000000011 R08: 0000000000000dc0 R09: ffffffff8b177750
-R10: 0000000000000010 R11: 000000000000016e R12: 0000000000000010
-R13: ffff888053910000 R14: ffff888051e50101 R15: 0000000000000001
-FS:  0000000000000000(0000) GS:ffff8880ae700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000768000 CR3: 000000009e098000 CR4: 00000000001506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- __key_link_begin+0xec/0x250 security/keys/keyring.c:1314
- construct_alloc_key security/keys/request_key.c:404 [inline]
- construct_key_and_link security/keys/request_key.c:499 [inline]
- request_key_and_link+0x894/0x1350 security/keys/request_key.c:637
- request_key_tag+0x4e/0xb0 security/keys/request_key.c:701
- dns_query+0x257/0x6c3 net/dns_resolver/dns_query.c:128
- afs_dns_query+0x122/0x390 fs/afs/addr_list.c:249
- afs_update_cell fs/afs/cell.c:403 [inline]
- afs_manage_cell+0x8c5/0x11c0 fs/afs/cell.c:708
- process_one_work+0x94c/0x1670 kernel/workqueue.c:2269
- worker_thread+0x64c/0x1120 kernel/workqueue.c:2415
- kthread+0x3b5/0x4a0 kernel/kthread.c:292
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
-Modules linked in:
----[ end trace 234f5667657c5700 ]---
-RIP: 0010:assoc_array_insert_into_terminal_node lib/assoc_array.c:652 [inline]
-RIP: 0010:assoc_array_insert+0x1cbe/0x2a80 lib/assoc_array.c:1001
-Code: 0f 84 cd fe ff ff e8 e1 62 15 fe e9 c3 fe ff ff e8 57 5c d5 fd 0f 0b e8 50 5c d5 fd 0f 0b e8 49 5c d5 fd 0f 0b e8 42 5c d5 fd <0f> 0b 48 8b 04 24 4c 89 74 24 70 48 b9 00 00 00 00 00 fc ff df 41
-RSP: 0018:ffffc900054977a0 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: 000000000000000f RCX: ffffffff839eeb4c
-RDX: ffff8880553a0540 RSI: ffffffff839ef13e RDI: ffff88804726f688
-RBP: 0000000000000011 R08: 0000000000000dc0 R09: ffffffff8b177750
-R10: 0000000000000010 R11: 000000000000016e R12: 0000000000000010
-R13: ffff888053910000 R14: ffff888051e50101 R15: 0000000000000001
-FS:  0000000000000000(0000) GS:ffff8880ae700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f340d222000 CR3: 00000000a6f13000 CR4: 00000000001506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+What do you think of "should_faccessat" or "entrusted_faccessat" for
+this new system call?
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+On 12/09/2020 02:28, James Morris wrote:
+> On Thu, 10 Sep 2020, Matthew Wilcox wrote:
+> 
+>> On Thu, Sep 10, 2020 at 08:38:21PM +0200, Mickaël Salaün wrote:
+>>> There is also the use case of noexec mounts and file permissions. From
+>>> user space point of view, it doesn't matter which kernel component is in
+>>> charge of defining the policy. The syscall should then not be tied with
+>>> a verification/integrity/signature/appraisal vocabulary, but simply an
+>>> access control one.
+>>
+>> permission()?
+>>
+> 
+> The caller is not asking the kernel to grant permission, it's asking 
+> "SHOULD I access this file?"
+> 
+> The caller doesn't know, for example, if the script file it's about to 
+> execute has been signed, or if it's from a noexec mount. It's asking the 
+> kernel, which does know. (Note that this could also be extended to reading 
+> configuration files).
+> 
+> How about: should_faccessat ?
+> 
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Sounds good to me.
