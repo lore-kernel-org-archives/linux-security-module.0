@@ -2,198 +2,257 @@ Return-Path: <SRS0=nJ8u=CY=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BAF0C43461
-	for <linux-security-module@archiver.kernel.org>; Tue, 15 Sep 2020 08:56:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC9BCC43461
+	for <linux-security-module@archiver.kernel.org>; Tue, 15 Sep 2020 11:43:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F080F2078D
-	for <linux-security-module@archiver.kernel.org>; Tue, 15 Sep 2020 08:56:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8739B20684
+	for <linux-security-module@archiver.kernel.org>; Tue, 15 Sep 2020 11:43:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uLVVgcra"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="gDvTnwIw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726142AbgIOI4k (ORCPT
+        id S1726440AbgIOLm0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 15 Sep 2020 04:56:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39096 "EHLO
+        Tue, 15 Sep 2020 07:42:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36352 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726122AbgIOI4d (ORCPT
+        with ESMTP id S1726429AbgIOLlg (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 15 Sep 2020 04:56:33 -0400
-Received: from mail-ot1-x342.google.com (mail-ot1-x342.google.com [IPv6:2607:f8b0:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E093C06174A;
-        Tue, 15 Sep 2020 01:56:31 -0700 (PDT)
-Received: by mail-ot1-x342.google.com with SMTP id g96so2472636otb.12;
-        Tue, 15 Sep 2020 01:56:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
-         :subject:to:cc;
-        bh=YZ2xcLhxbjlI52RLvcrAaM6nB7lZoLRxC6ASYMLeKGk=;
-        b=uLVVgcraiZB205c1iojS4bfzSDaGM/Dq/UC57Irv7aYG70FRjk0RNTOfWrnj3PQe2x
-         xX/zPU3UAW3DjfBgrm+7BSUyUWNLrZ4KyKuUyqQXLCu1zHfL/Og9iaRjQ9eRtFSaxACk
-         j6tD2irIdqNBwxUPPeA8l+2Q2QMZBGvxoVysWZWgL2/LWvqEPNwyoiQKQSkyAOL1Yok+
-         YhxghCi52WzeYEmWehUJaEJDO7Lmg89joRpTq768uDvGBqgv/5GnHZ31j3uRN3VVLbTp
-         VzyFm11yZ5WXB6IYIZnAjlcZCtVQliLxIGTrQKltLqv9NbH0pnnB/t3ceG0VinM0lg3o
-         kvaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc;
-        bh=YZ2xcLhxbjlI52RLvcrAaM6nB7lZoLRxC6ASYMLeKGk=;
-        b=Csr1NBnJ/2WHvUSGI+Jt4w6+z9fxW7QA0RfvHpB1hU18Y6kr2wdIfK0+4Pkc5tZR6B
-         RyHBJS5l/qmTU8394iso/FIAq9VDBui42YipeJ7AtwFz44faoDoW4+nUXos4YnhZQ7Kv
-         PHmZQwRLznBrllJ9bWW+N50+JZZDZ4xRSBLvBsX8XpFqyvqR08v3JhixzyHYgFB9eZWQ
-         52yRy6HouYFlKYL7HeSOBLLUgtEzpV56h/enhAeRsdBSWDeHAdfuNYxc6UP/6Sc6UDk0
-         lEbKBELzGB5nw9CSfQI4jWxNzpaNvtPFaceWXsJehzEgxaD/+VPxzOF1dCC4/qGoGaaG
-         O23w==
-X-Gm-Message-State: AOAM532jCNpifpBZ456Dy65OHZVHKHGfhg7Sb2hTpidq5+bjLTTl/pZS
-        CbD+ybiVYCYWB8MgE4jYgRiYNxx1JjAbZtoq6Hs=
-X-Google-Smtp-Source: ABdhPJy+7ZzAUXeSQKME7L/Y8ZzEzdXlveA5KuXFiYGKgyoem4JHcGwd6ojZMzMog4FTYYviX95GtENFaQrAJ2FM17o=
-X-Received: by 2002:a9d:7745:: with SMTP id t5mr12050208otl.114.1600160189856;
- Tue, 15 Sep 2020 01:56:29 -0700 (PDT)
+        Tue, 15 Sep 2020 07:41:36 -0400
+Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0275CC06178A;
+        Tue, 15 Sep 2020 04:41:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+         s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=QE1Xi/YD6acZw3ExWtlutd0OjFac+kcZ6vKNXWFskhs=; b=gDvTnwIwShaz9tUxICLhlhcoW1
+        lediCIZiWpGdq8nMOqrwmuFOQu3ujFAUBVPwnhKM6eWr/+825zNSk+3RAyKZ8hn3zzBA73nSsYizb
+        +JW3s4h2xJkLK6k4o5PC2Zgh2inMf8ohE3hqhi5IyDkUedEWdp3nYK0sZGu22efmFdcMj8grSP6GS
+        cLjm5LOGjRmC6tpvB2fvm/4dQyDdcg5YICBtL7yEPDUlDuIUIMI+AuxTdLYtv3BHchjS0IkcNg2Di
+        +QP9mQUBQpLyUef5s+qDQuzeXDBRfMsTX87Sk0Z6KK9lUGsPXvVFtLRI5n3SAS37d/pyDKyVpmNKl
+        ahS5UC5w==;
+Received: from 83-245-197-237.elisa-laajakaista.fi ([83.245.197.237] helo=localhost)
+        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <jarkko.sakkinen@linux.intel.com>)
+        id 1kI8mE-0005xs-7L; Tue, 15 Sep 2020 14:05:34 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     x86@kernel.org, linux-sgx@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-security-module@vger.kernel.org,
+        Jethro Beekman <jethro@fortanix.com>,
+        Darren Kenny <darren.kenny@oracle.com>,
+        Andy Lutomirski <luto@kernel.org>, akpm@linux-foundation.org,
+        andriy.shevchenko@linux.intel.com, asapek@google.com, bp@alien8.de,
+        cedric.xing@intel.com, chenalexchen@google.com,
+        conradparker@google.com, cyhanish@google.com,
+        dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, nhorman@redhat.com,
+        npmccallum@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
+        sean.j.christopherson@intel.com, tglx@linutronix.de,
+        yaozhangx@google.com
+Subject: [PATCH v38 15/24] x86/sgx: Enable provisioning for remote attestation
+Date:   Tue, 15 Sep 2020 14:05:13 +0300
+Message-Id: <20200915110522.893152-16-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200915110522.893152-1-jarkko.sakkinen@linux.intel.com>
+References: <20200915110522.893152-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
-References: <20200914180700.11003-1-stephen.smalley.work@gmail.com>
-In-Reply-To: <20200914180700.11003-1-stephen.smalley.work@gmail.com>
-Reply-To: mtk.manpages@gmail.com
-From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Date:   Tue, 15 Sep 2020 10:56:18 +0200
-Message-ID: <CAKgNAkgjndEr4zd1zGD_h+2srWsRAQT7=Hyqh7Ktxy7FQn35Dg@mail.gmail.com>
-Subject: Re: [PATCH v2] socket.7,unix.7: add initial description for SO_PEERSEC
-To:     Stephen Smalley <stephen.smalley.work@gmail.com>
-Cc:     linux-man <linux-man@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        selinux@vger.kernel.org, smcv@collabora.com,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 83.245.197.237
+X-SA-Exim-Mail-From: jarkko.sakkinen@linux.intel.com
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello Stephen,
+Provisioning Certification Enclave (PCE), the root of trust for other
+enclaves, generates a signing key from a fused key called Provisioning
+Certification Key. PCE can then use this key to certify an attestation key
+of a Quoting Enclave (QE), e.g. we get the chain of trust down to the
+hardware if the Intel signed PCE is used.
 
-On Mon, 14 Sep 2020 at 20:07, Stephen Smalley
-<stephen.smalley.work@gmail.com> wrote:
->
-> SO_PEERSEC was introduced for AF_UNIX stream sockets connected via
-> connect(2) in Linux 2.6.2 [1] and later augmented to support AF_UNIX stream
-> and datagram sockets created via socketpair(2) in Linux 4.18 [2].  Document
-> SO_PEERSEC in the socket.7 and unix.7 man pages following the example
-> of the existing SO_PEERCRED descriptions.  SO_PEERSEC is also supported
-> on AF_INET sockets when using labeled IPSEC or NetLabel but defer
-> adding a description of that support to a separate patch.
->
-> The module-independent description of the security context returned
-> by SO_PEERSEC is from Simon McVittie <smcv@collabora.com>.
+To use the needed keys, ATTRIBUTE.PROVISIONKEY is required but should be
+only allowed for those who actually need it so that only the trusted
+parties can certify QE's.
 
-Thanks for the patch, The text looks in reasonable shape to me. I'm
-just hanging off applying for a bit in case some Reviewed/Acked-by
-comes in.
+Obviously the attestation service should know the public key of the used
+PCE and that way detect illegit attestation, but whitelisting the legit
+users still adds an additional layer of defence.
 
-Cheers,
+Add new device file called /dev/sgx/provision. The sole purpose of this
+file is to provide file descriptors that act as privilege tokens to allow
+to build enclaves with ATTRIBUTE.PROVISIONKEY set. A new ioctl called
+SGX_IOC_ENCLAVE_PROVISION is used to assign this token to an enclave.
 
-Michael
+Cc: linux-security-module@vger.kernel.org
+Acked-by: Jethro Beekman <jethro@fortanix.com>
+Reviewed-by: Darren Kenny <darren.kenny@oracle.com>
+Suggested-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+ arch/x86/include/uapi/asm/sgx.h  | 11 ++++++++
+ arch/x86/kernel/cpu/sgx/driver.c | 18 ++++++++++++
+ arch/x86/kernel/cpu/sgx/driver.h |  2 ++
+ arch/x86/kernel/cpu/sgx/ioctl.c  | 47 ++++++++++++++++++++++++++++++++
+ 4 files changed, 78 insertions(+)
 
-
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git/commit/?id=da6e57a2e6bd7939f610d957afacaf6a131e75ed
->
-> [2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=0b811db2cb2aabc910e53d34ebb95a15997c33e7
->
-> Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-> ---
-> v2 adds kernel commit info to the description and man page and uses
-> the suggested text from Simon McVittie for the description of
-> the security context string in a module-neutral way.
->
->  man7/socket.7 |  5 +++++
->  man7/unix.7   | 46 ++++++++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 51 insertions(+)
->
-> diff --git a/man7/socket.7 b/man7/socket.7
-> index 21e891791..c3635f95b 100644
-> --- a/man7/socket.7
-> +++ b/man7/socket.7
-> @@ -690,6 +690,11 @@ Return the credentials of the peer process connected to this socket.
->  For further details, see
->  .BR unix (7).
->  .TP
-> +.BR SO_PEERSEC " (since Linux 2.6.2)"
-> +Return the security context of the peer socket connected to this socket.
-> +For further details, see
-> +.BR unix (7).
-> +.TP
->  .B SO_PRIORITY
->  Set the protocol-defined priority for all packets to be sent on
->  this socket.
-> diff --git a/man7/unix.7 b/man7/unix.7
-> index 50828a5bc..298521d4a 100644
-> --- a/man7/unix.7
-> +++ b/man7/unix.7
-> @@ -349,6 +349,52 @@ stream sockets and for
->  .B AF_UNIX
->  stream and datagram socket pairs created using
->  .BR socketpair (2).
-> +.TP
-> +.B SO_PEERSEC
-> +This read-only socket option returns the
-> +security context of the peer socket connected to this socket.
-> +By default, this will be the same as the security context of
-> +the process that created the peer socket unless overridden
-> +by the policy or by a process with the required permissions.
-> +.IP
-> +The argument to
-> +.BR getsockopt (2)
-> +is a pointer to a
-> +buffer of the specified length in bytes
-> +into which the security context string will be copied.
-> +If the buffer length is less than the length of the security
-> +context string, then
-> +.BR getsockopt (2)
-> +will return the required length
-> +via
-> +.I optlen
-> +and return \-1 and sets
-> +.I errno
-> +to
-> +.BR ERANGE .
-> +The caller should allocate at least
-> +.BR NAME_MAX
-> +bytes for the buffer initially although this is not guaranteed
-> +to be sufficient.  Resizing the buffer to the returned length
-> +and retrying may be necessary.
-> +.IP
-> +The security context string may include a terminating null character
-> +in the returned length, but is not guaranteed to do so: a security
-> +context "foo" might be represented as either {'f','o','o'} of length 3
-> +or {'f','o','o','\\0'} of length 4, which are considered to be
-> +interchangeable. It is printable, does not contain non-terminating
-> +null characters, and is in an unspecified encoding (in particular it
-> +is not guaranteed to be ASCII or UTF-8).
-> +.IP
-> +The use of this option for sockets in the
-> +.B AF_UNIX
-> +address family
-> +is supported since Linux 2.6.2 for connected stream sockets and
-> +since Linux 4.18,
-> +.\" commit 0b811db2cb2aabc910e53d34ebb95a15997c33e7
-> +also for stream and datagram socket pairs created
-> +using
-> +.BR socketpair (2).
->  .\"
->  .SS Autobind feature
->  If a
-> --
-> 2.25.1
->
-
-
+diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
+index 7729730d8580..d0916fb9629e 100644
+--- a/arch/x86/include/uapi/asm/sgx.h
++++ b/arch/x86/include/uapi/asm/sgx.h
+@@ -25,6 +25,8 @@ enum sgx_page_flags {
+ 	_IOWR(SGX_MAGIC, 0x01, struct sgx_enclave_add_pages)
+ #define SGX_IOC_ENCLAVE_INIT \
+ 	_IOW(SGX_MAGIC, 0x02, struct sgx_enclave_init)
++#define SGX_IOC_ENCLAVE_PROVISION \
++	_IOW(SGX_MAGIC, 0x03, struct sgx_enclave_provision)
+ 
+ /**
+  * struct sgx_enclave_create - parameter structure for the
+@@ -61,4 +63,13 @@ struct sgx_enclave_init {
+ 	__u64 sigstruct;
+ };
+ 
++/**
++ * struct sgx_enclave_provision - parameter structure for the
++ *				  %SGX_IOC_ENCLAVE_PROVISION ioctl
++ * @attribute_fd:	file handle of the attribute file in the securityfs
++ */
++struct sgx_enclave_provision {
++	__u64 attribute_fd;
++};
++
+ #endif /* _UAPI_ASM_X86_SGX_H */
+diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/driver.c
+index 7bdb49dfcca6..d01b28f7ce4a 100644
+--- a/arch/x86/kernel/cpu/sgx/driver.c
++++ b/arch/x86/kernel/cpu/sgx/driver.c
+@@ -134,6 +134,10 @@ static const struct file_operations sgx_encl_fops = {
+ 	.get_unmapped_area	= sgx_get_unmapped_area,
+ };
+ 
++const struct file_operations sgx_provision_fops = {
++	.owner			= THIS_MODULE,
++};
++
+ static struct miscdevice sgx_dev_enclave = {
+ 	.minor = MISC_DYNAMIC_MINOR,
+ 	.name = "enclave",
+@@ -141,6 +145,13 @@ static struct miscdevice sgx_dev_enclave = {
+ 	.fops = &sgx_encl_fops,
+ };
+ 
++static struct miscdevice sgx_dev_provision = {
++	.minor = MISC_DYNAMIC_MINOR,
++	.name = "provision",
++	.nodename = "sgx/provision",
++	.fops = &sgx_provision_fops,
++};
++
+ int __init sgx_drv_init(void)
+ {
+ 	unsigned int eax, ebx, ecx, edx;
+@@ -181,5 +192,12 @@ int __init sgx_drv_init(void)
+ 		return ret;
+ 	}
+ 
++	ret = misc_register(&sgx_dev_provision);
++	if (ret) {
++		pr_err("Creating /dev/sgx/provision failed with %d.\n", ret);
++		misc_deregister(&sgx_dev_enclave);
++		return ret;
++	}
++
+ 	return 0;
+ }
+diff --git a/arch/x86/kernel/cpu/sgx/driver.h b/arch/x86/kernel/cpu/sgx/driver.h
+index e4063923115b..72747d01c046 100644
+--- a/arch/x86/kernel/cpu/sgx/driver.h
++++ b/arch/x86/kernel/cpu/sgx/driver.h
+@@ -23,6 +23,8 @@ extern u64 sgx_attributes_reserved_mask;
+ extern u64 sgx_xfrm_reserved_mask;
+ extern u32 sgx_xsave_size_tbl[64];
+ 
++extern const struct file_operations sgx_provision_fops;
++
+ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg);
+ 
+ int sgx_drv_init(void);
+diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+index de2ed4f35ffb..4227bca7b477 100644
+--- a/arch/x86/kernel/cpu/sgx/ioctl.c
++++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+@@ -673,6 +673,50 @@ static long sgx_ioc_enclave_init(struct sgx_encl *encl, void __user *arg)
+ 	return ret;
+ }
+ 
++/**
++ * sgx_ioc_enclave_set_attribute - handler for %SGX_IOC_ENCLAVE_PROVISION
++ * @filep:	open file to /dev/sgx
++ * @arg:	userspace pointer to a struct sgx_enclave_provision instance
++ *
++ * Mark the enclave as being allowed to access a restricted attribute bit.
++ * The requested attribute is specified via the attribute_fd field in the
++ * provided struct sgx_enclave_provision.  The attribute_fd must be a
++ * handle to an SGX attribute file, e.g. "/dev/sgx/provision".
++ *
++ * Failure to explicitly request access to a restricted attribute will cause
++ * sgx_ioc_enclave_init() to fail.  Currently, the only restricted attribute
++ * is access to the PROVISION_KEY.
++ *
++ * Note, access to the EINITTOKEN_KEY is disallowed entirely.
++ *
++ * Return: 0 on success, -errno otherwise
++ */
++static long sgx_ioc_enclave_provision(struct sgx_encl *encl,
++					  void __user *arg)
++{
++	struct sgx_enclave_provision params;
++	struct file *attribute_file;
++	int ret;
++
++	if (copy_from_user(&params, arg, sizeof(params)))
++		return -EFAULT;
++
++	attribute_file = fget(params.attribute_fd);
++	if (!attribute_file)
++		return -EINVAL;
++
++	if (attribute_file->f_op != &sgx_provision_fops) {
++		ret = -EINVAL;
++		goto out;
++	}
++
++	encl->attributes |= SGX_ATTR_PROVISIONKEY;
++	ret = 0;
++
++out:
++	fput(attribute_file);
++	return ret;
++}
+ 
+ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
+ {
+@@ -698,6 +742,9 @@ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
+ 	case SGX_IOC_ENCLAVE_INIT:
+ 		ret = sgx_ioc_enclave_init(encl, (void __user *)arg);
+ 		break;
++	case SGX_IOC_ENCLAVE_PROVISION:
++		ret = sgx_ioc_enclave_provision(encl, (void __user *)arg);
++		break;
+ 	default:
+ 		ret = -ENOIOCTLCMD;
+ 		break;
 -- 
-Michael Kerrisk
-Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
-Linux/UNIX System Programming Training: http://man7.org/training/
+2.25.1
+
