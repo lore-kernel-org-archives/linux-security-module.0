@@ -1,135 +1,199 @@
-Return-Path: <SRS0=N365=CX=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=nJ8u=CY=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43A11C43461
-	for <linux-security-module@archiver.kernel.org>; Mon, 14 Sep 2020 19:43:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BAF0C43461
+	for <linux-security-module@archiver.kernel.org>; Tue, 15 Sep 2020 08:56:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 079752193E
-	for <linux-security-module@archiver.kernel.org>; Mon, 14 Sep 2020 19:43:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F080F2078D
+	for <linux-security-module@archiver.kernel.org>; Tue, 15 Sep 2020 08:56:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MvgJXiZx"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uLVVgcra"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726028AbgINTnJ (ORCPT
+        id S1726142AbgIOI4k (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 14 Sep 2020 15:43:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58266 "EHLO
+        Tue, 15 Sep 2020 04:56:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725914AbgINTnF (ORCPT
+        with ESMTP id S1726122AbgIOI4d (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 14 Sep 2020 15:43:05 -0400
-Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AF4BC061788
-        for <linux-security-module@vger.kernel.org>; Mon, 14 Sep 2020 12:43:05 -0700 (PDT)
-Received: by mail-ed1-x541.google.com with SMTP id k14so795760edo.1
-        for <linux-security-module@vger.kernel.org>; Mon, 14 Sep 2020 12:43:05 -0700 (PDT)
+        Tue, 15 Sep 2020 04:56:33 -0400
+Received: from mail-ot1-x342.google.com (mail-ot1-x342.google.com [IPv6:2607:f8b0:4864:20::342])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E093C06174A;
+        Tue, 15 Sep 2020 01:56:31 -0700 (PDT)
+Received: by mail-ot1-x342.google.com with SMTP id g96so2472636otb.12;
+        Tue, 15 Sep 2020 01:56:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=B26ZPwSMQkEgl0FLKfBn1bcFzAEPMlr/0cRYgdbCJm4=;
-        b=MvgJXiZx2nV1v+RFwDa0Ew2gpF/YMUm1Qzl9uP0JoeTwPkWschjlATZudFOjyAIymN
-         jJB7CAfq+BpdKpEqeroG5Y7ueTlhTlgM+6LKj7M/TcVdvxK4rdi9pYpCVGasFgNnIweT
-         66+OK8SAHXNYBvklweFjzvmaa+Q7pxQDrOuyV4OSavfjbUh/GTOB0/dTGHcXB5og63fs
-         hvyUH+1dQT5+qQQyzqRC8vgQa2klF9z87EZ56xelz5zRMKd7xRTRJDyE/7GPPA7Gsper
-         vQGtuke/Cs2S3Z/KC4HPmMFtSHp3XPc5cMLPQw2vv+ytvQBW4AUOUbR1dxtFSHQYUW0E
-         xajw==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc;
+        bh=YZ2xcLhxbjlI52RLvcrAaM6nB7lZoLRxC6ASYMLeKGk=;
+        b=uLVVgcraiZB205c1iojS4bfzSDaGM/Dq/UC57Irv7aYG70FRjk0RNTOfWrnj3PQe2x
+         xX/zPU3UAW3DjfBgrm+7BSUyUWNLrZ4KyKuUyqQXLCu1zHfL/Og9iaRjQ9eRtFSaxACk
+         j6tD2irIdqNBwxUPPeA8l+2Q2QMZBGvxoVysWZWgL2/LWvqEPNwyoiQKQSkyAOL1Yok+
+         YhxghCi52WzeYEmWehUJaEJDO7Lmg89joRpTq768uDvGBqgv/5GnHZ31j3uRN3VVLbTp
+         VzyFm11yZ5WXB6IYIZnAjlcZCtVQliLxIGTrQKltLqv9NbH0pnnB/t3ceG0VinM0lg3o
+         kvaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=B26ZPwSMQkEgl0FLKfBn1bcFzAEPMlr/0cRYgdbCJm4=;
-        b=rK4JvTdII/vz3SkxPcvA/4JPioOGUIKDvBQiLH7fUOqCVU27QVYCeHr+hSZAxBZKaa
-         Aeqhi9VlwqsazucWGrjJfrfaxkkEQQJIDWFR55QirRFS8ej+gG94MHUovlmrF7skkwH3
-         kVfV764LcZCF7wQmr7VhoFOCtvnF1JjTOcg4Sjw6QdhXBukmd2TiVGqT9kaBgb6GxlYC
-         E9cL5R7QIboOUEFESMHfI1gSzmacWf+WEGHgvzele8UnGjv7+QKTWOtIgiM23paHWkvn
-         CdnfS37Vys2vHbdzzBF7wrEkf8iifKxAgs17Jrcd0dtJW6/2BFr5qqufd098pGWWwKCA
-         3hug==
-X-Gm-Message-State: AOAM532ylXLijRpji0iPMI+1qJpLumvyIfg2Xry4UWsAyI8CmDX62Prb
-        fVeGUu2HiQDEUzbUKWcvivJfGCZT1kpr4KDt+yn7pA==
-X-Google-Smtp-Source: ABdhPJwIyj+9kqnlMOpAnTl++v/tLI6DikXxNqu6vECzgkcVLWCncCazo3lOF4hNj+FGq7wU79q5bP4k/TU5T/il6ac=
-X-Received: by 2002:a05:6402:176c:: with SMTP id da12mr19288248edb.386.1600112583753;
- Mon, 14 Sep 2020 12:43:03 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc;
+        bh=YZ2xcLhxbjlI52RLvcrAaM6nB7lZoLRxC6ASYMLeKGk=;
+        b=Csr1NBnJ/2WHvUSGI+Jt4w6+z9fxW7QA0RfvHpB1hU18Y6kr2wdIfK0+4Pkc5tZR6B
+         RyHBJS5l/qmTU8394iso/FIAq9VDBui42YipeJ7AtwFz44faoDoW4+nUXos4YnhZQ7Kv
+         PHmZQwRLznBrllJ9bWW+N50+JZZDZ4xRSBLvBsX8XpFqyvqR08v3JhixzyHYgFB9eZWQ
+         52yRy6HouYFlKYL7HeSOBLLUgtEzpV56h/enhAeRsdBSWDeHAdfuNYxc6UP/6Sc6UDk0
+         lEbKBELzGB5nw9CSfQI4jWxNzpaNvtPFaceWXsJehzEgxaD/+VPxzOF1dCC4/qGoGaaG
+         O23w==
+X-Gm-Message-State: AOAM532jCNpifpBZ456Dy65OHZVHKHGfhg7Sb2hTpidq5+bjLTTl/pZS
+        CbD+ybiVYCYWB8MgE4jYgRiYNxx1JjAbZtoq6Hs=
+X-Google-Smtp-Source: ABdhPJy+7ZzAUXeSQKME7L/Y8ZzEzdXlveA5KuXFiYGKgyoem4JHcGwd6ojZMzMog4FTYYviX95GtENFaQrAJ2FM17o=
+X-Received: by 2002:a9d:7745:: with SMTP id t5mr12050208otl.114.1600160189856;
+ Tue, 15 Sep 2020 01:56:29 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200910202107.3799376-1-keescook@chromium.org>
- <20200910202107.3799376-6-keescook@chromium.org> <CAG48ez1gbu+eBA_PthLemcVVR+AU7Xa1zzbJ8tLMLBDCe_a+fQ@mail.gmail.com>
- <20200913172415.GA2880@ubuntu>
-In-Reply-To: <20200913172415.GA2880@ubuntu>
-From:   Jann Horn <jannh@google.com>
-Date:   Mon, 14 Sep 2020 21:42:37 +0200
-Message-ID: <CAG48ez0BcSY0is2LzdkizcOQYkaOJwfa=5ZSwjKb+faRwG9QCA@mail.gmail.com>
-Subject: Re: [RFC PATCH 5/6] security/fbfam: Detect a fork brute force attack
-To:     John Wood <john.wood@gmx.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Iurii Zaikin <yzaikin@google.com>,
+References: <20200914180700.11003-1-stephen.smalley.work@gmail.com>
+In-Reply-To: <20200914180700.11003-1-stephen.smalley.work@gmail.com>
+Reply-To: mtk.manpages@gmail.com
+From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Date:   Tue, 15 Sep 2020 10:56:18 +0200
+Message-ID: <CAKgNAkgjndEr4zd1zGD_h+2srWsRAQT7=Hyqh7Ktxy7FQn35Dg@mail.gmail.com>
+Subject: Re: [PATCH v2] socket.7,unix.7: add initial description for SO_PEERSEC
+To:     Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc:     linux-man <linux-man@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        selinux@vger.kernel.org, smcv@collabora.com,
         James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, linux-doc@vger.kernel.org,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sun, Sep 13, 2020 at 7:55 PM John Wood <john.wood@gmx.com> wrote:
-> On Thu, Sep 10, 2020 at 11:10:38PM +0200, Jann Horn wrote:
-> > On Thu, Sep 10, 2020 at 10:22 PM Kees Cook <keescook@chromium.org> wrote:
-> > > To detect a fork brute force attack it is necessary to compute the
-> > > crashing rate of the application. This calculation is performed in each
-> > > fatal fail of a task, or in other words, when a core dump is triggered.
-> > > If this rate shows that the application is crashing quickly, there is a
-> > > clear signal that an attack is happening.
-> > >
-> > > Since the crashing rate is computed in milliseconds per fault, if this
-> > > rate goes under a certain threshold a warning is triggered.
-[...]
-> > > +       delta_jiffies = get_jiffies_64() - stats->jiffies;
-> > > +       delta_time = jiffies64_to_msecs(delta_jiffies);
-> > > +       crashing_rate = delta_time / (u64)stats->faults;
-> >
-> > Do I see this correctly, is this computing the total runtime of this
-> > process hierarchy divided by the total number of faults seen in this
-> > process hierarchy? If so, you may want to reconsider whether that's
-> > really the behavior you want. For example, if I configure the minimum
-> > period between crashes to be 30s (as is the default in the sysctl
-> > patch), and I try to attack a server that has been running without any
-> > crashes for a month, I'd instantly be able to crash around
-> > 30*24*60*60/30 = 86400 times before the detection kicks in. That seems
-> > suboptimal.
->
-> You are right. This is not the behaviour we want. So, for the next
-> version it would be better to compute the crashing period as the time
-> between two faults, or the time between the execve call and the first
-> fault (first fault case).
->
-> However, I am afraid of a premature detection if a child process fails
-> twice in a short period.
->
-> So, I think it would be a good idea add a new sysctl to setup a
-> minimum number of faults before the time between faults starts to be
-> computed. And so, the attack detection only will be triggered if the
-> application crashes quickly but after a number of crashes.
->
-> What do you think?
+Hello Stephen,
 
-You could keep a list of the timestamps of the last five crashes or
-so, and then take action if the last five crashes happened within
-(5-1)*crash_period_limit time.
+On Mon, 14 Sep 2020 at 20:07, Stephen Smalley
+<stephen.smalley.work@gmail.com> wrote:
+>
+> SO_PEERSEC was introduced for AF_UNIX stream sockets connected via
+> connect(2) in Linux 2.6.2 [1] and later augmented to support AF_UNIX stream
+> and datagram sockets created via socketpair(2) in Linux 4.18 [2].  Document
+> SO_PEERSEC in the socket.7 and unix.7 man pages following the example
+> of the existing SO_PEERCRED descriptions.  SO_PEERSEC is also supported
+> on AF_INET sockets when using labeled IPSEC or NetLabel but defer
+> adding a description of that support to a separate patch.
+>
+> The module-independent description of the security context returned
+> by SO_PEERSEC is from Simon McVittie <smcv@collabora.com>.
+
+Thanks for the patch, The text looks in reasonable shape to me. I'm
+just hanging off applying for a bit in case some Reviewed/Acked-by
+comes in.
+
+Cheers,
+
+Michael
+
+
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git/commit/?id=da6e57a2e6bd7939f610d957afacaf6a131e75ed
+>
+> [2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=0b811db2cb2aabc910e53d34ebb95a15997c33e7
+>
+> Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+> ---
+> v2 adds kernel commit info to the description and man page and uses
+> the suggested text from Simon McVittie for the description of
+> the security context string in a module-neutral way.
+>
+>  man7/socket.7 |  5 +++++
+>  man7/unix.7   | 46 ++++++++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 51 insertions(+)
+>
+> diff --git a/man7/socket.7 b/man7/socket.7
+> index 21e891791..c3635f95b 100644
+> --- a/man7/socket.7
+> +++ b/man7/socket.7
+> @@ -690,6 +690,11 @@ Return the credentials of the peer process connected to this socket.
+>  For further details, see
+>  .BR unix (7).
+>  .TP
+> +.BR SO_PEERSEC " (since Linux 2.6.2)"
+> +Return the security context of the peer socket connected to this socket.
+> +For further details, see
+> +.BR unix (7).
+> +.TP
+>  .B SO_PRIORITY
+>  Set the protocol-defined priority for all packets to be sent on
+>  this socket.
+> diff --git a/man7/unix.7 b/man7/unix.7
+> index 50828a5bc..298521d4a 100644
+> --- a/man7/unix.7
+> +++ b/man7/unix.7
+> @@ -349,6 +349,52 @@ stream sockets and for
+>  .B AF_UNIX
+>  stream and datagram socket pairs created using
+>  .BR socketpair (2).
+> +.TP
+> +.B SO_PEERSEC
+> +This read-only socket option returns the
+> +security context of the peer socket connected to this socket.
+> +By default, this will be the same as the security context of
+> +the process that created the peer socket unless overridden
+> +by the policy or by a process with the required permissions.
+> +.IP
+> +The argument to
+> +.BR getsockopt (2)
+> +is a pointer to a
+> +buffer of the specified length in bytes
+> +into which the security context string will be copied.
+> +If the buffer length is less than the length of the security
+> +context string, then
+> +.BR getsockopt (2)
+> +will return the required length
+> +via
+> +.I optlen
+> +and return \-1 and sets
+> +.I errno
+> +to
+> +.BR ERANGE .
+> +The caller should allocate at least
+> +.BR NAME_MAX
+> +bytes for the buffer initially although this is not guaranteed
+> +to be sufficient.  Resizing the buffer to the returned length
+> +and retrying may be necessary.
+> +.IP
+> +The security context string may include a terminating null character
+> +in the returned length, but is not guaranteed to do so: a security
+> +context "foo" might be represented as either {'f','o','o'} of length 3
+> +or {'f','o','o','\\0'} of length 4, which are considered to be
+> +interchangeable. It is printable, does not contain non-terminating
+> +null characters, and is in an unspecified encoding (in particular it
+> +is not guaranteed to be ASCII or UTF-8).
+> +.IP
+> +The use of this option for sockets in the
+> +.B AF_UNIX
+> +address family
+> +is supported since Linux 2.6.2 for connected stream sockets and
+> +since Linux 4.18,
+> +.\" commit 0b811db2cb2aabc910e53d34ebb95a15997c33e7
+> +also for stream and datagram socket pairs created
+> +using
+> +.BR socketpair (2).
+>  .\"
+>  .SS Autobind feature
+>  If a
+> --
+> 2.25.1
+>
+
+
+-- 
+Michael Kerrisk
+Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
+Linux/UNIX System Programming Training: http://man7.org/training/
