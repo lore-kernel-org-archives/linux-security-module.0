@@ -1,186 +1,177 @@
-Return-Path: <SRS0=nJ8u=CY=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=TMVc=CZ=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 403E2C433E2
-	for <linux-security-module@archiver.kernel.org>; Tue, 15 Sep 2020 22:46:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB5DEC43461
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Sep 2020 00:19:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F4228212CC
-	for <linux-security-module@archiver.kernel.org>; Tue, 15 Sep 2020 22:46:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="OprU6tm8"
+	by mail.kernel.org (Postfix) with ESMTP id 7AC0D20575
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Sep 2020 00:19:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727735AbgIOWqx (ORCPT
+        id S1726269AbgIPATE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 15 Sep 2020 18:46:53 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:48738 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727490AbgIOPpH (ORCPT
+        Tue, 15 Sep 2020 20:19:04 -0400
+Received: from mail.hallyn.com ([178.63.66.53]:42412 "EHLO mail.hallyn.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726858AbgIOOWN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 15 Sep 2020 11:45:07 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 08FFP3ca146660;
-        Tue, 15 Sep 2020 15:44:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
- mime-version : subject : from : in-reply-to : date : cc :
- content-transfer-encoding : message-id : references : to;
- s=corp-2020-01-29; bh=dtTmhZe5n21zVdQpTOTAtBeFkVA42Abq50W1Y+Hydlc=;
- b=OprU6tm8Pf4j3FOvGuBH51uVcE2dGBc9k0MwnaLrDqBQCLrURlJNlqWziuCTfnbk4Z7F
- qHn24Yd4VFJjk8SX6+USk320Gh0QowSG/Ybhe/eXGv0E/LjcwhgrsHNulUbwxbh3B028
- 8YhbegIF1sYOwt9YScVT8Y+ukRsj8mE4XnuHfODlKLRlXSRfJsWt5IzT/BdHjW0Y/BlO
- 4nlL4AdKVN1as2QX2ae/nXhWTgxLXwDChJwCwWPnCvst5Kvhnje9b3kOHbBfJyIKbQnp
- cVBi586AVkx4Ij/22PY89PVqyI1pm9PIvwilhHZYY2ITh4S+OxT7ZGIKK87pzf0ZMdaL Rg== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2120.oracle.com with ESMTP id 33gp9m5x17-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 15 Sep 2020 15:44:40 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 08FFJxKU017009;
-        Tue, 15 Sep 2020 15:42:39 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3030.oracle.com with ESMTP id 33h7wpadr9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 15 Sep 2020 15:42:39 +0000
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 08FFgVH5017794;
-        Tue, 15 Sep 2020 15:42:33 GMT
-Received: from dhcp-10-65-178-159.vpn.oracle.com (/10.65.178.159)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 15 Sep 2020 15:42:30 +0000
-Content-Type: text/plain; charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: Re: [PATCH v3] certs: Add EFI_CERT_X509_GUID support for dbx entries
-From:   Eric Snowberg <eric.snowberg@oracle.com>
-In-Reply-To: <20200914181227.GF9369@linux.intel.com>
-Date:   Tue, 15 Sep 2020 09:42:27 -0600
-Cc:     dhowells@redhat.com, dwmw2@infradead.org, jmorris@namei.org,
-        serge@hallyn.com, nayna@linux.ibm.com, erichte@linux.ibm.com,
-        mpe@ellerman.id.au, zohar@linux.ibm.com, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, rdunlap@infradead.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <F25F6F0E-7E13-4C9D-A7BA-33CDEF7074F2@oracle.com>
-References: <20200911182230.62266-1-eric.snowberg@oracle.com>
- <20200914181227.GF9369@linux.intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-X-Mailer: Apple Mail (2.3273)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9745 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
- adultscore=0 bulkscore=0 phishscore=0 mlxlogscore=999 mlxscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2009150128
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9745 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxlogscore=999
- adultscore=0 malwarescore=0 clxscore=1015 lowpriorityscore=0 phishscore=0
- spamscore=0 priorityscore=1501 suspectscore=3 impostorscore=0 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
- definitions=main-2009150128
+        Tue, 15 Sep 2020 10:22:13 -0400
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+        id EEC1BC38; Tue, 15 Sep 2020 09:19:46 -0500 (CDT)
+Date:   Tue, 15 Sep 2020 09:19:46 -0500
+From:   "Serge E. Hallyn" <serge@hallyn.com>
+To:     "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Cc:     Stephen Smalley <stephen.smalley.work@gmail.com>,
+        linux-man <linux-man@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        selinux@vger.kernel.org, smcv@collabora.com,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Subject: Re: [PATCH v2] socket.7,unix.7: add initial description for
+ SO_PEERSEC
+Message-ID: <20200915141946.GA19979@mail.hallyn.com>
+References: <20200914180700.11003-1-stephen.smalley.work@gmail.com>
+ <CAKgNAkgjndEr4zd1zGD_h+2srWsRAQT7=Hyqh7Ktxy7FQn35Dg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKgNAkgjndEr4zd1zGD_h+2srWsRAQT7=Hyqh7Ktxy7FQn35Dg@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Tue, Sep 15, 2020 at 10:56:18AM +0200, Michael Kerrisk (man-pages) wrote:
+> Hello Stephen,
+> 
+> On Mon, 14 Sep 2020 at 20:07, Stephen Smalley
+> <stephen.smalley.work@gmail.com> wrote:
+> >
+> > SO_PEERSEC was introduced for AF_UNIX stream sockets connected via
+> > connect(2) in Linux 2.6.2 [1] and later augmented to support AF_UNIX stream
+> > and datagram sockets created via socketpair(2) in Linux 4.18 [2].  Document
+> > SO_PEERSEC in the socket.7 and unix.7 man pages following the example
+> > of the existing SO_PEERCRED descriptions.  SO_PEERSEC is also supported
+> > on AF_INET sockets when using labeled IPSEC or NetLabel but defer
+> > adding a description of that support to a separate patch.
+> >
+> > The module-independent description of the security context returned
+> > by SO_PEERSEC is from Simon McVittie <smcv@collabora.com>.
+> 
+> Thanks for the patch, The text looks in reasonable shape to me. I'm
+> just hanging off applying for a bit in case some Reviewed/Acked-by
+> comes in.
+> 
 
-> On Sep 14, 2020, at 12:12 PM, Jarkko Sakkinen =
-<jarkko.sakkinen@linux.intel.com> wrote:
->=20
-> On Fri, Sep 11, 2020 at 02:22:30PM -0400, Eric Snowberg wrote:
->> The Secure Boot Forbidden Signature Database, dbx, contains a list of =
-now
->> revoked signatures and keys previously approved to boot with UEFI =
-Secure
->> Boot enabled.  The dbx is capable of containing any number of
->> EFI_CERT_X509_SHA256_GUID, EFI_CERT_SHA256_GUID, and =
-EFI_CERT_X509_GUID
->> entries.
->>=20
->> Currently when EFI_CERT_X509_GUID are contained in the dbx, the =
-entries are
->> skipped.
->>=20
->> Add support for EFI_CERT_X509_GUID dbx entries. When a =
-EFI_CERT_X509_GUID
->> is found, it is added as an asymmetrical key to the .blacklist =
-keyring.
->> Anytime the .platform keyring is used, the keys in the .blacklist =
-keyring
->> are referenced, if a matching key is found, the key will be rejected.
->>=20
->> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
->> ---
->> v3:
->> Fixed an issue when CONFIG_PKCS7_MESSAGE_PARSER is not builtin and =
-defined
->> as a module instead, pointed out by Randy Dunlap
->>=20
->> v2:=20
->> Fixed build issue reported by kernel test robot <lkp@intel.com>
->> Commit message update (suggested by Jarkko Sakkinen)
->> ---
->> certs/blacklist.c                             | 33 =
-+++++++++++++++++++
->> certs/blacklist.h                             | 12 +++++++
->> certs/system_keyring.c                        |  6 ++++
->> include/keys/system_keyring.h                 | 11 +++++++
->> .../platform_certs/keyring_handler.c          | 11 +++++++
->> 5 files changed, 73 insertions(+)
->>=20
->> diff --git a/certs/blacklist.c b/certs/blacklist.c
->> index 6514f9ebc943..3d1514ba5d47 100644
->> --- a/certs/blacklist.c
->> +++ b/certs/blacklist.c
->> @@ -100,6 +100,39 @@ int mark_hash_blacklisted(const char *hash)
->> 	return 0;
->> }
->>=20
->> +int mark_key_revocationlisted(const char *data, size_t size)
->> +{
->> +	key_ref_t key;
->> +
->> +	key =3D key_create_or_update(make_key_ref(blacklist_keyring, =
-true),
->> +				   "asymmetric",
->> +				   NULL,
->> +				   data,
->> +				   size,
->> +				   ((KEY_POS_ALL & ~KEY_POS_SETATTR) | =
-KEY_USR_VIEW),
->> +				   KEY_ALLOC_NOT_IN_QUOTA | =
-KEY_ALLOC_BUILT_IN);
->> +
->> +	if (IS_ERR(key)) {
->> +		pr_err("Problem with revocation key (%ld)\n", =
-PTR_ERR(key));
->> +		return PTR_ERR(key);
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +int is_key_revocationlisted(struct pkcs7_message *pkcs7)
->> +{
->> +	int ret;
->> +
->> +	ret =3D validate_trust(pkcs7, blacklist_keyring);
->> +
->> +	if (ret =3D=3D 0)
->> +		return -EKEYREJECTED;
->> +
->> +	return -ENOKEY;
->> +}
->> +EXPORT_SYMBOL_GPL(is_key_revocationlisted);
->=20
-> Hmm... ignore my previous comment about this. Export symbol is called
-> only by system keyring code.
->=20
-> Would be best if the commit message would explicitly reason new =
-exports.
+fwiw just as someone who's used this,
 
-I don=E2=80=99t see a good reason to keep the export now, I=E2=80=99ll =
-remove it from the
-next version.  Thanks.
+Reviewed-by: Serge Hallyn <serge@hallyn.com>
 
+Thanks Stephen, thanks Michael.
+
+> Cheers,
+> 
+> Michael
+> 
+> 
+> > [1] https://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git/commit/?id=da6e57a2e6bd7939f610d957afacaf6a131e75ed
+> >
+> > [2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=0b811db2cb2aabc910e53d34ebb95a15997c33e7
+> >
+> > Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+> > ---
+> > v2 adds kernel commit info to the description and man page and uses
+> > the suggested text from Simon McVittie for the description of
+> > the security context string in a module-neutral way.
+> >
+> >  man7/socket.7 |  5 +++++
+> >  man7/unix.7   | 46 ++++++++++++++++++++++++++++++++++++++++++++++
+> >  2 files changed, 51 insertions(+)
+> >
+> > diff --git a/man7/socket.7 b/man7/socket.7
+> > index 21e891791..c3635f95b 100644
+> > --- a/man7/socket.7
+> > +++ b/man7/socket.7
+> > @@ -690,6 +690,11 @@ Return the credentials of the peer process connected to this socket.
+> >  For further details, see
+> >  .BR unix (7).
+> >  .TP
+> > +.BR SO_PEERSEC " (since Linux 2.6.2)"
+> > +Return the security context of the peer socket connected to this socket.
+> > +For further details, see
+> > +.BR unix (7).
+> > +.TP
+> >  .B SO_PRIORITY
+> >  Set the protocol-defined priority for all packets to be sent on
+> >  this socket.
+> > diff --git a/man7/unix.7 b/man7/unix.7
+> > index 50828a5bc..298521d4a 100644
+> > --- a/man7/unix.7
+> > +++ b/man7/unix.7
+> > @@ -349,6 +349,52 @@ stream sockets and for
+> >  .B AF_UNIX
+> >  stream and datagram socket pairs created using
+> >  .BR socketpair (2).
+> > +.TP
+> > +.B SO_PEERSEC
+> > +This read-only socket option returns the
+> > +security context of the peer socket connected to this socket.
+> > +By default, this will be the same as the security context of
+> > +the process that created the peer socket unless overridden
+> > +by the policy or by a process with the required permissions.
+> > +.IP
+> > +The argument to
+> > +.BR getsockopt (2)
+> > +is a pointer to a
+> > +buffer of the specified length in bytes
+> > +into which the security context string will be copied.
+> > +If the buffer length is less than the length of the security
+> > +context string, then
+> > +.BR getsockopt (2)
+> > +will return the required length
+> > +via
+> > +.I optlen
+> > +and return \-1 and sets
+> > +.I errno
+> > +to
+> > +.BR ERANGE .
+> > +The caller should allocate at least
+> > +.BR NAME_MAX
+> > +bytes for the buffer initially although this is not guaranteed
+> > +to be sufficient.  Resizing the buffer to the returned length
+> > +and retrying may be necessary.
+> > +.IP
+> > +The security context string may include a terminating null character
+> > +in the returned length, but is not guaranteed to do so: a security
+> > +context "foo" might be represented as either {'f','o','o'} of length 3
+> > +or {'f','o','o','\\0'} of length 4, which are considered to be
+> > +interchangeable. It is printable, does not contain non-terminating
+> > +null characters, and is in an unspecified encoding (in particular it
+> > +is not guaranteed to be ASCII or UTF-8).
+> > +.IP
+> > +The use of this option for sockets in the
+> > +.B AF_UNIX
+> > +address family
+> > +is supported since Linux 2.6.2 for connected stream sockets and
+> > +since Linux 4.18,
+> > +.\" commit 0b811db2cb2aabc910e53d34ebb95a15997c33e7
+> > +also for stream and datagram socket pairs created
+> > +using
+> > +.BR socketpair (2).
+> >  .\"
+> >  .SS Autobind feature
+> >  If a
+> > --
+> > 2.25.1
+> >
+> 
+> 
+> -- 
+> Michael Kerrisk
+> Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
+> Linux/UNIX System Programming Training: http://man7.org/training/
