@@ -2,260 +2,257 @@ Return-Path: <SRS0=TMVc=CZ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C4BAC2D0E3
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Sep 2020 00:52:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0FADC43461
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Sep 2020 00:53:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 191A520936
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Sep 2020 00:52:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B6C0A20936
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Sep 2020 00:53:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="NA/shWYm"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="yEb7CF7V"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726467AbgIPAw1 (ORCPT
+        id S1726406AbgIPAw7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 15 Sep 2020 20:52:27 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:39066 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726592AbgIPAwR (ORCPT
+        Tue, 15 Sep 2020 20:52:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34722 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726243AbgIOLdB (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 15 Sep 2020 20:52:17 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 08G0oMEh142287;
-        Wed, 16 Sep 2020 00:51:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id; s=corp-2020-01-29;
- bh=P1pMOoWe6LNIy0K4uxNXT7zrnhjw8PJuQG/b1p84A/8=;
- b=NA/shWYmIU/HiJZQs68zdaRh+mh+f9i58n8nc+wpbk6gWgvsYkSIoYRXYBiqODqTQyNp
- PwMBbOESlIV6AUE+xmvI0TqKeZZevtT40RS8JNyzE5PFDyk00ho6am3VM5es7lyDTCge
- v7JisUOYAcbj7TAB9vF2q6mYq2aVo2BasPzvV+escOBUrT6YkKxezM9jmCPuYNoxCntM
- F+S/5+MWL5JwWuCT/qo46uLpE4OzDeQ5kmyj/xno3IjtIj79Rg6vvJueX5GIbszky3dy
- HkJZ9N9FJrtummgcUW3Vuo8U5H69bWRZXs72mt1bArIk11DvHNjWthl8sz3Mjrz8YkOb vg== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2130.oracle.com with ESMTP id 33gnrr0827-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 16 Sep 2020 00:51:48 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 08G0UjCe151431;
-        Wed, 16 Sep 2020 00:49:47 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3030.oracle.com with ESMTP id 33h890bpgx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 16 Sep 2020 00:49:47 +0000
-Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 08G0naIe029785;
-        Wed, 16 Sep 2020 00:49:39 GMT
-Received: from localhost.us.oracle.com (/10.147.27.2)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 16 Sep 2020 00:49:35 +0000
-From:   Eric Snowberg <eric.snowberg@oracle.com>
-To:     dhowells@redhat.com, dwmw2@infradead.org,
-        jarkko.sakkinen@linux.intel.com
-Cc:     herbert@gondor.apana.org.au, davem@davemloft.net,
-        jmorris@namei.org, serge@hallyn.com, nayna@linux.ibm.com,
-        zohar@linux.ibm.com, eric.snowberg@oracle.com,
-        erichte@linux.ibm.com, mpe@ellerman.id.au,
-        keyrings@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: [PATCH v4] certs: Add EFI_CERT_X509_GUID support for dbx entries
-Date:   Tue, 15 Sep 2020 20:49:27 -0400
-Message-Id: <20200916004927.64276-1-eric.snowberg@oracle.com>
-X-Mailer: git-send-email 2.18.1
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9745 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 spamscore=0 adultscore=0
- suspectscore=0 mlxscore=0 bulkscore=0 mlxlogscore=999 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
- definitions=main-2009160001
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9745 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 spamscore=0
- lowpriorityscore=0 malwarescore=0 mlxscore=0 bulkscore=0 suspectscore=0
- clxscore=1015 mlxlogscore=999 adultscore=0 priorityscore=1501
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2009160002
+        Tue, 15 Sep 2020 07:33:01 -0400
+Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B180C061224;
+        Tue, 15 Sep 2020 04:28:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+         s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=QE1Xi/YD6acZw3ExWtlutd0OjFac+kcZ6vKNXWFskhs=; b=yEb7CF7VXUBTMqzfiw4ld3c6IU
+        JM7fjBDUbJf0yFLlx59z3IYLWvPbd7ozfT3p6u4Rjc3S5OKmGWW26rytfV55J+HLJZAXFPY0CIWjs
+        ETJpme56f1MNL0KgiTv5lajkRy3bU0cFYE6WyYx4TQdcpEljmOD63gS++/0rpdjbe88GWMKi8g5rz
+        MhOwaTrW9y8rVvWFZTw75YerrbZceHMVe8p1ABONIYctP6bCJ8lZYRuXrX6fUUJ6nErNh5sZOeEBp
+        i5pZMpWFZiE4dVev9drtmT/fvBCoOaUIUefMZKzdYOoTk4RF99XPteV1toMgEbE5o8IxZ7L7ll6rP
+        fbkMKd5w==;
+Received: from 83-245-197-237.elisa-laajakaista.fi ([83.245.197.237] helo=localhost)
+        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <jjs@kapsi.fi>)
+        id 1kI98m-0000l5-EX; Tue, 15 Sep 2020 14:28:52 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     x86@kernel.org, linux-sgx@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-security-module@vger.kernel.org,
+        Jethro Beekman <jethro@fortanix.com>,
+        Darren Kenny <darren.kenny@oracle.com>,
+        Andy Lutomirski <luto@kernel.org>, akpm@linux-foundation.org,
+        andriy.shevchenko@linux.intel.com, asapek@google.com, bp@alien8.de,
+        cedric.xing@intel.com, chenalexchen@google.com,
+        conradparker@google.com, cyhanish@google.com,
+        dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, nhorman@redhat.com,
+        npmccallum@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
+        sean.j.christopherson@intel.com, tglx@linutronix.de,
+        yaozhangx@google.com
+Subject: [PATCH v38 15/24] x86/sgx: Enable provisioning for remote attestation
+Date:   Tue, 15 Sep 2020 14:28:33 +0300
+Message-Id: <20200915112842.897265-16-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200915112842.897265-1-jarkko.sakkinen@linux.intel.com>
+References: <20200915112842.897265-1-jarkko.sakkinen@linux.intel.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 83.245.197.237
+X-SA-Exim-Mail-From: jjs@kapsi.fi
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The Secure Boot Forbidden Signature Database, dbx, contains a list of now
-revoked signatures and keys previously approved to boot with UEFI Secure
-Boot enabled.  The dbx is capable of containing any number of
-EFI_CERT_X509_SHA256_GUID, EFI_CERT_SHA256_GUID, and EFI_CERT_X509_GUID
-entries.
+Provisioning Certification Enclave (PCE), the root of trust for other
+enclaves, generates a signing key from a fused key called Provisioning
+Certification Key. PCE can then use this key to certify an attestation key
+of a Quoting Enclave (QE), e.g. we get the chain of trust down to the
+hardware if the Intel signed PCE is used.
 
-Currently when EFI_CERT_X509_GUID are contained in the dbx, the entries are
-skipped.
+To use the needed keys, ATTRIBUTE.PROVISIONKEY is required but should be
+only allowed for those who actually need it so that only the trusted
+parties can certify QE's.
 
-Add support for EFI_CERT_X509_GUID dbx entries. When a EFI_CERT_X509_GUID
-is found, it is added as an asymmetrical key to the .blacklist keyring.
-Anytime the .platform keyring is used, the keys in the .blacklist keyring
-are referenced, if a matching key is found, the key will be rejected.
+Obviously the attestation service should know the public key of the used
+PCE and that way detect illegit attestation, but whitelisting the legit
+users still adds an additional layer of defence.
 
-Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
+Add new device file called /dev/sgx/provision. The sole purpose of this
+file is to provide file descriptors that act as privilege tokens to allow
+to build enclaves with ATTRIBUTE.PROVISIONKEY set. A new ioctl called
+SGX_IOC_ENCLAVE_PROVISION is used to assign this token to an enclave.
+
+Cc: linux-security-module@vger.kernel.org
+Acked-by: Jethro Beekman <jethro@fortanix.com>
+Reviewed-by: Darren Kenny <darren.kenny@oracle.com>
+Suggested-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
-v4:
-Remove unneeded symbol export found by Jarkko Sakkinen
+ arch/x86/include/uapi/asm/sgx.h  | 11 ++++++++
+ arch/x86/kernel/cpu/sgx/driver.c | 18 ++++++++++++
+ arch/x86/kernel/cpu/sgx/driver.h |  2 ++
+ arch/x86/kernel/cpu/sgx/ioctl.c  | 47 ++++++++++++++++++++++++++++++++
+ 4 files changed, 78 insertions(+)
 
-v3:
-Fixed an issue when CONFIG_PKCS7_MESSAGE_PARSER is not builtin and defined
-as a module instead, pointed out by Randy Dunlap
-
-v2: 
-Fixed build issue reported by kernel test robot <lkp@intel.com>
-Commit message update (suggested by Jarkko Sakkinen)
----
- certs/blacklist.c                             | 32 +++++++++++++++++++
- certs/blacklist.h                             | 12 +++++++
- certs/system_keyring.c                        |  6 ++++
- include/keys/system_keyring.h                 | 11 +++++++
- .../platform_certs/keyring_handler.c          | 11 +++++++
- 5 files changed, 72 insertions(+)
-
-diff --git a/certs/blacklist.c b/certs/blacklist.c
-index 6514f9ebc943..4adac7f8fd94 100644
---- a/certs/blacklist.c
-+++ b/certs/blacklist.c
-@@ -100,6 +100,38 @@ int mark_hash_blacklisted(const char *hash)
- 	return 0;
- }
+diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
+index 7729730d8580..d0916fb9629e 100644
+--- a/arch/x86/include/uapi/asm/sgx.h
++++ b/arch/x86/include/uapi/asm/sgx.h
+@@ -25,6 +25,8 @@ enum sgx_page_flags {
+ 	_IOWR(SGX_MAGIC, 0x01, struct sgx_enclave_add_pages)
+ #define SGX_IOC_ENCLAVE_INIT \
+ 	_IOW(SGX_MAGIC, 0x02, struct sgx_enclave_init)
++#define SGX_IOC_ENCLAVE_PROVISION \
++	_IOW(SGX_MAGIC, 0x03, struct sgx_enclave_provision)
  
-+int mark_key_revocationlisted(const char *data, size_t size)
-+{
-+	key_ref_t key;
+ /**
+  * struct sgx_enclave_create - parameter structure for the
+@@ -61,4 +63,13 @@ struct sgx_enclave_init {
+ 	__u64 sigstruct;
+ };
+ 
++/**
++ * struct sgx_enclave_provision - parameter structure for the
++ *				  %SGX_IOC_ENCLAVE_PROVISION ioctl
++ * @attribute_fd:	file handle of the attribute file in the securityfs
++ */
++struct sgx_enclave_provision {
++	__u64 attribute_fd;
++};
 +
-+	key = key_create_or_update(make_key_ref(blacklist_keyring, true),
-+				   "asymmetric",
-+				   NULL,
-+				   data,
-+				   size,
-+				   ((KEY_POS_ALL & ~KEY_POS_SETATTR) | KEY_USR_VIEW),
-+				   KEY_ALLOC_NOT_IN_QUOTA | KEY_ALLOC_BUILT_IN);
+ #endif /* _UAPI_ASM_X86_SGX_H */
+diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/driver.c
+index 7bdb49dfcca6..d01b28f7ce4a 100644
+--- a/arch/x86/kernel/cpu/sgx/driver.c
++++ b/arch/x86/kernel/cpu/sgx/driver.c
+@@ -134,6 +134,10 @@ static const struct file_operations sgx_encl_fops = {
+ 	.get_unmapped_area	= sgx_get_unmapped_area,
+ };
+ 
++const struct file_operations sgx_provision_fops = {
++	.owner			= THIS_MODULE,
++};
 +
-+	if (IS_ERR(key)) {
-+		pr_err("Problem with revocation key (%ld)\n", PTR_ERR(key));
-+		return PTR_ERR(key);
+ static struct miscdevice sgx_dev_enclave = {
+ 	.minor = MISC_DYNAMIC_MINOR,
+ 	.name = "enclave",
+@@ -141,6 +145,13 @@ static struct miscdevice sgx_dev_enclave = {
+ 	.fops = &sgx_encl_fops,
+ };
+ 
++static struct miscdevice sgx_dev_provision = {
++	.minor = MISC_DYNAMIC_MINOR,
++	.name = "provision",
++	.nodename = "sgx/provision",
++	.fops = &sgx_provision_fops,
++};
++
+ int __init sgx_drv_init(void)
+ {
+ 	unsigned int eax, ebx, ecx, edx;
+@@ -181,5 +192,12 @@ int __init sgx_drv_init(void)
+ 		return ret;
+ 	}
+ 
++	ret = misc_register(&sgx_dev_provision);
++	if (ret) {
++		pr_err("Creating /dev/sgx/provision failed with %d.\n", ret);
++		misc_deregister(&sgx_dev_enclave);
++		return ret;
 +	}
 +
-+	return 0;
-+}
+ 	return 0;
+ }
+diff --git a/arch/x86/kernel/cpu/sgx/driver.h b/arch/x86/kernel/cpu/sgx/driver.h
+index e4063923115b..72747d01c046 100644
+--- a/arch/x86/kernel/cpu/sgx/driver.h
++++ b/arch/x86/kernel/cpu/sgx/driver.h
+@@ -23,6 +23,8 @@ extern u64 sgx_attributes_reserved_mask;
+ extern u64 sgx_xfrm_reserved_mask;
+ extern u32 sgx_xsave_size_tbl[64];
+ 
++extern const struct file_operations sgx_provision_fops;
 +
-+int is_key_revocationlisted(struct pkcs7_message *pkcs7)
+ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg);
+ 
+ int sgx_drv_init(void);
+diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+index de2ed4f35ffb..4227bca7b477 100644
+--- a/arch/x86/kernel/cpu/sgx/ioctl.c
++++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+@@ -673,6 +673,50 @@ static long sgx_ioc_enclave_init(struct sgx_encl *encl, void __user *arg)
+ 	return ret;
+ }
+ 
++/**
++ * sgx_ioc_enclave_set_attribute - handler for %SGX_IOC_ENCLAVE_PROVISION
++ * @filep:	open file to /dev/sgx
++ * @arg:	userspace pointer to a struct sgx_enclave_provision instance
++ *
++ * Mark the enclave as being allowed to access a restricted attribute bit.
++ * The requested attribute is specified via the attribute_fd field in the
++ * provided struct sgx_enclave_provision.  The attribute_fd must be a
++ * handle to an SGX attribute file, e.g. "/dev/sgx/provision".
++ *
++ * Failure to explicitly request access to a restricted attribute will cause
++ * sgx_ioc_enclave_init() to fail.  Currently, the only restricted attribute
++ * is access to the PROVISION_KEY.
++ *
++ * Note, access to the EINITTOKEN_KEY is disallowed entirely.
++ *
++ * Return: 0 on success, -errno otherwise
++ */
++static long sgx_ioc_enclave_provision(struct sgx_encl *encl,
++					  void __user *arg)
 +{
++	struct sgx_enclave_provision params;
++	struct file *attribute_file;
 +	int ret;
 +
-+	ret = validate_trust(pkcs7, blacklist_keyring);
++	if (copy_from_user(&params, arg, sizeof(params)))
++		return -EFAULT;
 +
-+	if (ret == 0)
-+		return -EKEYREJECTED;
++	attribute_file = fget(params.attribute_fd);
++	if (!attribute_file)
++		return -EINVAL;
 +
-+	return -ENOKEY;
++	if (attribute_file->f_op != &sgx_provision_fops) {
++		ret = -EINVAL;
++		goto out;
++	}
++
++	encl->attributes |= SGX_ATTR_PROVISIONKEY;
++	ret = 0;
++
++out:
++	fput(attribute_file);
++	return ret;
 +}
-+
- /**
-  * is_hash_blacklisted - Determine if a hash is blacklisted
-  * @hash: The hash to be checked as a binary blob
-diff --git a/certs/blacklist.h b/certs/blacklist.h
-index 1efd6fa0dc60..420bb7c86e07 100644
---- a/certs/blacklist.h
-+++ b/certs/blacklist.h
-@@ -1,3 +1,15 @@
- #include <linux/kernel.h>
-+#include <linux/errno.h>
-+#include <crypto/pkcs7.h>
  
- extern const char __initconst *const blacklist_hashes[];
-+
-+#ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
-+#define validate_trust pkcs7_validate_trust
-+#else
-+static inline int validate_trust(struct pkcs7_message *pkcs7,
-+				 struct key *trust_keyring)
-+{
-+	return -ENOKEY;
-+}
-+#endif
-diff --git a/certs/system_keyring.c b/certs/system_keyring.c
-index 798291177186..f8ea96219155 100644
---- a/certs/system_keyring.c
-+++ b/certs/system_keyring.c
-@@ -241,6 +241,12 @@ int verify_pkcs7_message_sig(const void *data, size_t len,
- 			pr_devel("PKCS#7 platform keyring is not available\n");
- 			goto error;
- 		}
-+
-+		ret = is_key_revocationlisted(pkcs7);
-+		if (ret != -ENOKEY) {
-+			pr_devel("PKCS#7 platform key revocationlisted\n");
-+			goto error;
-+		}
- 	}
- 	ret = pkcs7_validate_trust(pkcs7, trusted_keys);
- 	if (ret < 0) {
-diff --git a/include/keys/system_keyring.h b/include/keys/system_keyring.h
-index fb8b07daa9d1..b6991cfe1b6d 100644
---- a/include/keys/system_keyring.h
-+++ b/include/keys/system_keyring.h
-@@ -31,11 +31,14 @@ extern int restrict_link_by_builtin_and_secondary_trusted(
- #define restrict_link_by_builtin_and_secondary_trusted restrict_link_by_builtin_trusted
- #endif
- 
-+extern struct pkcs7_message *pkcs7;
- #ifdef CONFIG_SYSTEM_BLACKLIST_KEYRING
- extern int mark_hash_blacklisted(const char *hash);
-+extern int mark_key_revocationlisted(const char *data, size_t size);
- extern int is_hash_blacklisted(const u8 *hash, size_t hash_len,
- 			       const char *type);
- extern int is_binary_blacklisted(const u8 *hash, size_t hash_len);
-+extern int is_key_revocationlisted(struct pkcs7_message *pkcs7);
- #else
- static inline int is_hash_blacklisted(const u8 *hash, size_t hash_len,
- 				      const char *type)
-@@ -47,6 +50,14 @@ static inline int is_binary_blacklisted(const u8 *hash, size_t hash_len)
+ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
  {
- 	return 0;
- }
-+static inline int mark_key_revocationlisted(const char *data, size_t size)
-+{
-+	return 0;
-+}
-+static inline int is_key_revocationlisted(struct pkcs7_message *pkcs7)
-+{
-+	return -ENOKEY;
-+}
- #endif
- 
- #ifdef CONFIG_IMA_BLACKLIST_KEYRING
-diff --git a/security/integrity/platform_certs/keyring_handler.c b/security/integrity/platform_certs/keyring_handler.c
-index c5ba695c10e3..cc5a43804bc4 100644
---- a/security/integrity/platform_certs/keyring_handler.c
-+++ b/security/integrity/platform_certs/keyring_handler.c
-@@ -55,6 +55,15 @@ static __init void uefi_blacklist_binary(const char *source,
- 	uefi_blacklist_hash(source, data, len, "bin:", 4);
- }
- 
-+/*
-+ * Revocationlist the X509 cert
-+ */
-+static __init void uefi_revocationlist_x509(const char *source,
-+					    const void *data, size_t len)
-+{
-+	mark_key_revocationlisted(data, len);
-+}
-+
- /*
-  * Return the appropriate handler for particular signature list types found in
-  * the UEFI db and MokListRT tables.
-@@ -76,5 +85,7 @@ __init efi_element_handler_t get_handler_for_dbx(const efi_guid_t *sig_type)
- 		return uefi_blacklist_x509_tbs;
- 	if (efi_guidcmp(*sig_type, efi_cert_sha256_guid) == 0)
- 		return uefi_blacklist_binary;
-+	if (efi_guidcmp(*sig_type, efi_cert_x509_guid) == 0)
-+		return uefi_revocationlist_x509;
- 	return 0;
- }
+@@ -698,6 +742,9 @@ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
+ 	case SGX_IOC_ENCLAVE_INIT:
+ 		ret = sgx_ioc_enclave_init(encl, (void __user *)arg);
+ 		break;
++	case SGX_IOC_ENCLAVE_PROVISION:
++		ret = sgx_ioc_enclave_provision(encl, (void __user *)arg);
++		break;
+ 	default:
+ 		ret = -ENOIOCTLCMD;
+ 		break;
 -- 
-2.18.1
+2.25.1
 
