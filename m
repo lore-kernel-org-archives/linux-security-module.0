@@ -2,83 +2,150 @@ Return-Path: <SRS0=TMVc=CZ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B11AC433E2
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Sep 2020 21:05:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1701CC43461
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Sep 2020 21:06:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A7D16206BE
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Sep 2020 21:04:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="AZNeyeOM"
+	by mail.kernel.org (Postfix) with ESMTP id BC28B206D4
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Sep 2020 21:06:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726570AbgIPVE5 (ORCPT
+        id S1726578AbgIPVG5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 16 Sep 2020 17:04:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48476 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726389AbgIPQPB (ORCPT
+        Wed, 16 Sep 2020 17:06:57 -0400
+Received: from mga06.intel.com ([134.134.136.31]:7845 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726302AbgIPQOr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 16 Sep 2020 12:15:01 -0400
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 101DEC0D9419
-        for <linux-security-module@vger.kernel.org>; Wed, 16 Sep 2020 07:52:06 -0700 (PDT)
-Received: by mail-wr1-x42f.google.com with SMTP id o5so7173083wrn.13
-        for <linux-security-module@vger.kernel.org>; Wed, 16 Sep 2020 07:52:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=Jprj3Ljb1hJqVas03n8biEIlmZI1CNLC20MekGwZ6qM=;
-        b=AZNeyeOMfnv1iw6EUbZxwoPYMEiCX84IG2zN8hU26Bn77jdCTqA4AnlrrvQj5LSZoH
-         Xw0/DwrzjcgpzUOhzGqZiLEU07teqHaVbZelkyFe0jmVlJiYh2xNrTWb6M8qYbW8xPHC
-         8vZ5C/bAiUZA87xhIrHQSpggRDb+fASpYhozE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=Jprj3Ljb1hJqVas03n8biEIlmZI1CNLC20MekGwZ6qM=;
-        b=TtSXl8qQF2GkhwHGAoV5a//UjLzaGWbkzs3tJr1NXKvOfeK3yqlN+XFwmYu22Cuywn
-         CQ/WUar1uC0Cyc8y4XVVWEHOgc1wo7Rh4+GZ1WlZW5IMlTsV1fiose1usaf5ZYbW8jex
-         GCpnESvwaQ/a7m4gy4vM97zb0bbRhlHUNIenxKoobrthPtpwjhapbZ15QfbXxxzh4eBh
-         25DVnYEwa7NZpqpzGMGVF6+wVvAbs1LS9J8X++5apk8l8Wtma6yMMM467oqd4hQy6Peh
-         vUpxRgklETZV8f8rDWOGwdgJ7B5VqEQJ+t+RtxLXQQIRxjy6OaIBa2H7E0lxahDb2lto
-         aZIA==
-X-Gm-Message-State: AOAM532pf6h4AlyGmZ0XxIjrcticsTDYkIg3AaILWkWXDK/8okiLUfZy
-        27h916Mt4GUa70yrB4+ivVIRBb+JIBcPXZkk3iL/M7A/yrGRekiv
-X-Google-Smtp-Source: ABdhPJzs4OEsf1kM0ZNCGKyUVbO+v3o4OUzHCNsOvXaX4m5BYp7TOLc7AQVnFz3jjb00B8Zr0J0N8RKNgx+x8wr0R/w=
-X-Received: by 2002:a5d:43cf:: with SMTP id v15mr27884370wrr.269.1600267923353;
- Wed, 16 Sep 2020 07:52:03 -0700 (PDT)
+        Wed, 16 Sep 2020 12:14:47 -0400
+IronPort-SDR: lDQtUxIFNjuogwTTrnwCLSMGnQ6wKRi6fPMKYDC/yfEJwO4g7e0b2yfYCm6jNCyI/MXB8L0LEh
+ 72SDh5bX8mXQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9746"; a="221058448"
+X-IronPort-AV: E=Sophos;i="5.76,433,1592895600"; 
+   d="scan'208";a="221058448"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2020 09:12:13 -0700
+IronPort-SDR: 2vjGeqnxUxN7atVeLloPGSsd1S4TArm4bw6REZOyt7KtQJYUyTucIlnIWqoeBQxkOksVlh6aBQ
+ kGb9t07g4M8A==
+X-IronPort-AV: E=Sophos;i="5.76,433,1592895600"; 
+   d="scan'208";a="451916049"
+Received: from scusackx-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.45.87])
+  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2020 09:12:10 -0700
+Date:   Wed, 16 Sep 2020 19:12:08 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Eric Snowberg <eric.snowberg@oracle.com>
+Cc:     dhowells@redhat.com, dwmw2@infradead.org, jmorris@namei.org,
+        serge@hallyn.com, nayna@linux.ibm.com, erichte@linux.ibm.com,
+        mpe@ellerman.id.au, zohar@linux.ibm.com, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, rdunlap@infradead.org
+Subject: Re: [PATCH v3] certs: Add EFI_CERT_X509_GUID support for dbx entries
+Message-ID: <20200916161208.GE21026@linux.intel.com>
+References: <20200911182230.62266-1-eric.snowberg@oracle.com>
+ <20200914181227.GF9369@linux.intel.com>
+ <F25F6F0E-7E13-4C9D-A7BA-33CDEF7074F2@oracle.com>
 MIME-Version: 1.0
-From:   KP Singh <kpsingh@chromium.org>
-Date:   Wed, 16 Sep 2020 16:51:52 +0200
-Message-ID: <CACYkzJ6fVfQOEztvsbMHXg7y3OkSUUdZ+dkg7pQAPb0GDcUxJg@mail.gmail.com>
-Subject: [TEST]: Patches not making it to the lists
-To:     Linux Security Module list <linux-security-module@vger.kernel.org>
-Cc:     James Morris <jmorris@namei.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <F25F6F0E-7E13-4C9D-A7BA-33CDEF7074F2@oracle.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The mailing lists seem to be silently dropping my patches. it gets
-delivered to the CC'ed folks but does not appear any archives or
-delivered to the subscribers. The patch is not in HTML and was sent
-using git send-email.
+On Tue, Sep 15, 2020 at 09:42:27AM -0600, Eric Snowberg wrote:
+> 
+> > On Sep 14, 2020, at 12:12 PM, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com> wrote:
+> > 
+> > On Fri, Sep 11, 2020 at 02:22:30PM -0400, Eric Snowberg wrote:
+> >> The Secure Boot Forbidden Signature Database, dbx, contains a list of now
+> >> revoked signatures and keys previously approved to boot with UEFI Secure
+> >> Boot enabled.  The dbx is capable of containing any number of
+> >> EFI_CERT_X509_SHA256_GUID, EFI_CERT_SHA256_GUID, and EFI_CERT_X509_GUID
+> >> entries.
+> >> 
+> >> Currently when EFI_CERT_X509_GUID are contained in the dbx, the entries are
+> >> skipped.
+> >> 
+> >> Add support for EFI_CERT_X509_GUID dbx entries. When a EFI_CERT_X509_GUID
+> >> is found, it is added as an asymmetrical key to the .blacklist keyring.
+> >> Anytime the .platform keyring is used, the keys in the .blacklist keyring
+> >> are referenced, if a matching key is found, the key will be rejected.
+> >> 
+> >> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
+> >> ---
+> >> v3:
+> >> Fixed an issue when CONFIG_PKCS7_MESSAGE_PARSER is not builtin and defined
+> >> as a module instead, pointed out by Randy Dunlap
+> >> 
+> >> v2: 
+> >> Fixed build issue reported by kernel test robot <lkp@intel.com>
+> >> Commit message update (suggested by Jarkko Sakkinen)
+> >> ---
+> >> certs/blacklist.c                             | 33 +++++++++++++++++++
+> >> certs/blacklist.h                             | 12 +++++++
+> >> certs/system_keyring.c                        |  6 ++++
+> >> include/keys/system_keyring.h                 | 11 +++++++
+> >> .../platform_certs/keyring_handler.c          | 11 +++++++
+> >> 5 files changed, 73 insertions(+)
+> >> 
+> >> diff --git a/certs/blacklist.c b/certs/blacklist.c
+> >> index 6514f9ebc943..3d1514ba5d47 100644
+> >> --- a/certs/blacklist.c
+> >> +++ b/certs/blacklist.c
+> >> @@ -100,6 +100,39 @@ int mark_hash_blacklisted(const char *hash)
+> >> 	return 0;
+> >> }
+> >> 
+> >> +int mark_key_revocationlisted(const char *data, size_t size)
+> >> +{
+> >> +	key_ref_t key;
+> >> +
+> >> +	key = key_create_or_update(make_key_ref(blacklist_keyring, true),
+> >> +				   "asymmetric",
+> >> +				   NULL,
+> >> +				   data,
+> >> +				   size,
+> >> +				   ((KEY_POS_ALL & ~KEY_POS_SETATTR) | KEY_USR_VIEW),
+> >> +				   KEY_ALLOC_NOT_IN_QUOTA | KEY_ALLOC_BUILT_IN);
+> >> +
+> >> +	if (IS_ERR(key)) {
+> >> +		pr_err("Problem with revocation key (%ld)\n", PTR_ERR(key));
+> >> +		return PTR_ERR(key);
+> >> +	}
+> >> +
+> >> +	return 0;
+> >> +}
+> >> +
+> >> +int is_key_revocationlisted(struct pkcs7_message *pkcs7)
+> >> +{
+> >> +	int ret;
+> >> +
+> >> +	ret = validate_trust(pkcs7, blacklist_keyring);
+> >> +
+> >> +	if (ret == 0)
+> >> +		return -EKEYREJECTED;
+> >> +
+> >> +	return -ENOKEY;
+> >> +}
+> >> +EXPORT_SYMBOL_GPL(is_key_revocationlisted);
+> > 
+> > Hmm... ignore my previous comment about this. Export symbol is called
+> > only by system keyring code.
+> > 
+> > Would be best if the commit message would explicitly reason new exports.
+> 
+> I don’t see a good reason to keep the export now, I’ll remove it from the
+> next version.  Thanks.
 
-I don't get a bounce back either and replying-all does not help (my
-colleague tried it as well and it did not appear on the list)
+OK, great, thanks.
 
-I can think of two possibilities:
+Was somewhat puzzled with this for a while :-)
 
-- My email is triggering a spam filter. In which case this email won't
-be delivered either.
-- The body of the patch is causing something to crash on the mailserver.
-
-Here's the patch ("ima: Fix NULL pointer dereference in
-ima_file_hash") on a github gist for your reference:
-
-https://gist.githubusercontent.com/sinkap/6dd3829a8259343a6b178cef3f59342b/raw/2b3152a48d77b1c65d0e1b5b8b2e8b6ae6d04ec5/ima.patch
-
-- KP
+/Jarkko
