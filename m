@@ -2,257 +2,285 @@ Return-Path: <SRS0=TMVc=CZ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0FADC43461
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Sep 2020 00:53:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 050A3C433E2
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Sep 2020 08:01:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B6C0A20936
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Sep 2020 00:53:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE0522083B
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Sep 2020 08:01:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="yEb7CF7V"
+	dkim=pass (2048-bit key) header.d=benyossef-com.20150623.gappssmtp.com header.i=@benyossef-com.20150623.gappssmtp.com header.b="QC/a9gxI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726406AbgIPAw7 (ORCPT
+        id S1726481AbgIPIBv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 15 Sep 2020 20:52:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34722 "EHLO
+        Wed, 16 Sep 2020 04:01:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56702 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726243AbgIOLdB (ORCPT
+        with ESMTP id S1726161AbgIPIBp (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 15 Sep 2020 07:33:01 -0400
-Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B180C061224;
-        Tue, 15 Sep 2020 04:28:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-         s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=QE1Xi/YD6acZw3ExWtlutd0OjFac+kcZ6vKNXWFskhs=; b=yEb7CF7VXUBTMqzfiw4ld3c6IU
-        JM7fjBDUbJf0yFLlx59z3IYLWvPbd7ozfT3p6u4Rjc3S5OKmGWW26rytfV55J+HLJZAXFPY0CIWjs
-        ETJpme56f1MNL0KgiTv5lajkRy3bU0cFYE6WyYx4TQdcpEljmOD63gS++/0rpdjbe88GWMKi8g5rz
-        MhOwaTrW9y8rVvWFZTw75YerrbZceHMVe8p1ABONIYctP6bCJ8lZYRuXrX6fUUJ6nErNh5sZOeEBp
-        i5pZMpWFZiE4dVev9drtmT/fvBCoOaUIUefMZKzdYOoTk4RF99XPteV1toMgEbE5o8IxZ7L7ll6rP
-        fbkMKd5w==;
-Received: from 83-245-197-237.elisa-laajakaista.fi ([83.245.197.237] helo=localhost)
-        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <jjs@kapsi.fi>)
-        id 1kI98m-0000l5-EX; Tue, 15 Sep 2020 14:28:52 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     x86@kernel.org, linux-sgx@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-security-module@vger.kernel.org,
-        Jethro Beekman <jethro@fortanix.com>,
-        Darren Kenny <darren.kenny@oracle.com>,
-        Andy Lutomirski <luto@kernel.org>, akpm@linux-foundation.org,
-        andriy.shevchenko@linux.intel.com, asapek@google.com, bp@alien8.de,
-        cedric.xing@intel.com, chenalexchen@google.com,
-        conradparker@google.com, cyhanish@google.com,
-        dave.hansen@intel.com, haitao.huang@intel.com,
-        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
-        kmoy@google.com, ludloff@google.com, nhorman@redhat.com,
-        npmccallum@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
-        sean.j.christopherson@intel.com, tglx@linutronix.de,
-        yaozhangx@google.com
-Subject: [PATCH v38 15/24] x86/sgx: Enable provisioning for remote attestation
-Date:   Tue, 15 Sep 2020 14:28:33 +0300
-Message-Id: <20200915112842.897265-16-jarkko.sakkinen@linux.intel.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200915112842.897265-1-jarkko.sakkinen@linux.intel.com>
-References: <20200915112842.897265-1-jarkko.sakkinen@linux.intel.com>
+        Wed, 16 Sep 2020 04:01:45 -0400
+Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 211DCC061788
+        for <linux-security-module@vger.kernel.org>; Wed, 16 Sep 2020 01:01:45 -0700 (PDT)
+Received: by mail-pf1-x443.google.com with SMTP id w7so3514884pfi.4
+        for <linux-security-module@vger.kernel.org>; Wed, 16 Sep 2020 01:01:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=benyossef-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Jzms5XAy0HxBD6ul+TJwAtKpEdXIIQEvIQXmembsOLs=;
+        b=QC/a9gxIFQcQOJO+uA+vjVshZqDN8e+LFRdyf/aIAVoxC6nt6GyZMHOWcZvoME0w87
+         aSe0E7xu0+ZGXIE7WrAXn//6ydaMyNBCBc+QjStY7SIQBm1YCSo7xYtzW0RFzRgNXf1f
+         1yLhZ0g0VuKfw3IfLpoz0voPYrp9ZPxHjaAovtMHgeQVMKX9bVGNvpS/rRgm/9pv0ToS
+         0V6gf+vOX7w9japVUv1/b/bs6Ze4C4xX7YFaUhdfalPVuIoiVi88/RAMDRrSVn4FyHSJ
+         rwDYrlp4PuzT/W5NxJEjng8q7U6zQwC8KQFZCIj1QyHKdfzL3/798HNVYEbVM8c7I2Wc
+         ZG3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Jzms5XAy0HxBD6ul+TJwAtKpEdXIIQEvIQXmembsOLs=;
+        b=DQW3X3OtWVFSBxgWbulnIIPq2edxgpV7KNTvjd8Y/JRoM/co8D9fGYM4ZLJqnlEjmA
+         5eFBG1z5DVPPef1ONaRjIZpEJ8JbNo8Wexlveg/D90eZcYF/ai1WYGluwCeQOB2wEaz9
+         FB2JEGSY3o3zQw9dFY0XY9mHTBGNdvNTk7uj5+2KJL0ZNaE3HgEtXR5V9szFuYo/DMB9
+         lKH2/ZwagWzSqXJExO5yk7ZIZErSD00oyWw4Km6ShTrDlt8LLp8yzlwJd/fc/lpVh6hm
+         HavEwkYn0ITN1aA7dsnseU5JWHmXWgcnQ8M/TCiWAE1hSvN4s9D66jX5Yrou9ZKui1Ze
+         Voig==
+X-Gm-Message-State: AOAM532Iv+IxguMOMRneCezJjdcmLvIlYThw7Xaoql6g/S480pY8BYGK
+        qaZuSh7GBwr650bWXj2eQe93B3uPtjJQFxGQqLD69Q==
+X-Google-Smtp-Source: ABdhPJwN2QFGXNPzAZFIilK1Py2rGwqQ0bbheksG8Mxx6NCNiQuM7ZG8NklYYP87LUBNlsvMF6HpPVEL1Zj6OHCa7iw=
+X-Received: by 2002:aa7:941a:0:b029:142:2501:35d1 with SMTP id
+ x26-20020aa7941a0000b0290142250135d1mr5277487pfo.49.1600243304416; Wed, 16
+ Sep 2020 01:01:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 83.245.197.237
-X-SA-Exim-Mail-From: jjs@kapsi.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+References: <20200903131242.128665-1-tianjia.zhang@linux.alibaba.com>
+ <20200903131242.128665-8-tianjia.zhang@linux.alibaba.com> <CAOtvUMfT5zgv=e9nCgz8-1r7LuYSRZ8Zdx2xc0JwckUJZufcvg@mail.gmail.com>
+ <6f251e1e-42a0-7e6c-e0cd-51fba3150d17@linux.alibaba.com>
+In-Reply-To: <6f251e1e-42a0-7e6c-e0cd-51fba3150d17@linux.alibaba.com>
+From:   Gilad Ben-Yossef <gilad@benyossef.com>
+Date:   Wed, 16 Sep 2020 11:01:34 +0300
+Message-ID: <CAOtvUMdxeYxztajMG=XDzV-G8cB2GLaVnNBSAxLkwuZwqPxr2A@mail.gmail.com>
+Subject: Re: [PATCH v6 7/8] X.509: support OSCCA sm2-with-sm3 certificate verification
+To:     Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        David Howells <dhowells@redhat.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Stephan Mueller <smueller@chronox.de>,
+        Marcelo Henrique Cerri <marcelo.cerri@canonical.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Waiman Long <longman@redhat.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Tushar Sugandhi <tusharsu@linux.microsoft.com>,
+        Vitaly Chikunov <vt@altlinux.org>,
+        Pascal van Leeuwen <pvanleeuwen@rambus.com>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+        keyrings@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-security-module@vger.kernel.org,
+        Xufeng Zhang <yunbo.xufeng@linux.alibaba.com>,
+        Jia Zhang <zhang.jia@linux.alibaba.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Provisioning Certification Enclave (PCE), the root of trust for other
-enclaves, generates a signing key from a fused key called Provisioning
-Certification Key. PCE can then use this key to certify an attestation key
-of a Quoting Enclave (QE), e.g. we get the chain of trust down to the
-hardware if the Intel signed PCE is used.
+On Mon, Sep 14, 2020 at 9:34 AM Tianjia Zhang
+<tianjia.zhang@linux.alibaba.com> wrote:
+>
+> Hi Gilad,
+>
+> On 9/13/20 3:12 PM, Gilad Ben-Yossef wrote:
+> > Hi,
+> >
+> >
+> > On Thu, Sep 3, 2020 at 4:13 PM Tianjia Zhang
+> > <tianjia.zhang@linux.alibaba.com> wrote:
+> >>
+> >> The digital certificate format based on SM2 crypto algorithm as
+> >> specified in GM/T 0015-2012. It was published by State Encryption
+> >> Management Bureau, China.
+> >>
+> >> The method of generating Other User Information is defined as
+> >> ZA=3DH256(ENTLA || IDA || a || b || xG || yG || xA || yA), it also
+> >> specified in https://tools.ietf.org/html/draft-shen-sm2-ecdsa-02.
+> >>
+> >> The x509 certificate supports sm2-with-sm3 type certificate
+> >> verification.  Because certificate verification requires ZA
+> >> in addition to tbs data, ZA also depends on elliptic curve
+> >> parameters and public key data, so you need to access tbs in sig
+> >> and calculate ZA. Finally calculate the digest of the
+> >> signature and complete the verification work. The calculation
+> >> process of ZA is declared in specifications GM/T 0009-2012
+> >> and GM/T 0003.2-2012.
+> >>
+> >> Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+> >> Tested-by: Xufeng Zhang <yunbo.xufeng@linux.alibaba.com>
+> >> ---
+> >>   crypto/asymmetric_keys/Makefile          |  1 +
+> >>   crypto/asymmetric_keys/public_key.c      |  6 +++
+> >>   crypto/asymmetric_keys/public_key_sm2.c  | 61 ++++++++++++++++++++++=
+++
+> >>   crypto/asymmetric_keys/x509_public_key.c |  3 ++
+> >>   include/crypto/public_key.h              | 15 ++++++
+> >>   5 files changed, 86 insertions(+)
+> >>   create mode 100644 crypto/asymmetric_keys/public_key_sm2.c
+> >>
+> >> diff --git a/crypto/asymmetric_keys/Makefile b/crypto/asymmetric_keys/=
+Makefile
+> >> index 28b91adba2ae..1a99ea5acb6b 100644
+> >> --- a/crypto/asymmetric_keys/Makefile
+> >> +++ b/crypto/asymmetric_keys/Makefile
+> >> @@ -11,6 +11,7 @@ asymmetric_keys-y :=3D \
+> >>          signature.o
+> >>
+> >>   obj-$(CONFIG_ASYMMETRIC_PUBLIC_KEY_SUBTYPE) +=3D public_key.o
+> >> +obj-$(CONFIG_ASYMMETRIC_PUBLIC_KEY_SUBTYPE) +=3D public_key_sm2.o
+> >>   obj-$(CONFIG_ASYMMETRIC_TPM_KEY_SUBTYPE) +=3D asym_tpm.o
+> >>
+> >>   #
+> >> diff --git a/crypto/asymmetric_keys/public_key.c b/crypto/asymmetric_k=
+eys/public_key.c
+> >> index d8410ffd7f12..1d0492098bbd 100644
+> >> --- a/crypto/asymmetric_keys/public_key.c
+> >> +++ b/crypto/asymmetric_keys/public_key.c
+> >> @@ -299,6 +299,12 @@ int public_key_verify_signature(const struct publ=
+ic_key *pkey,
+> >>          if (ret)
+> >>                  goto error_free_key;
+> >>
+> >> +       if (strcmp(sig->pkey_algo, "sm2") =3D=3D 0 && sig->data_size) =
+{
+> >> +               ret =3D cert_sig_digest_update(sig, tfm);
+> >> +               if (ret)
+> >> +                       goto error_free_key;
+> >> +       }
+> >> +
+> >>          sg_init_table(src_sg, 2);
+> >>          sg_set_buf(&src_sg[0], sig->s, sig->s_size);
+> >>          sg_set_buf(&src_sg[1], sig->digest, sig->digest_size);
+> >> diff --git a/crypto/asymmetric_keys/public_key_sm2.c b/crypto/asymmetr=
+ic_keys/public_key_sm2.c
+> >> new file mode 100644
+> >> index 000000000000..7325cf21dbb4
+> >> --- /dev/null
+> >> +++ b/crypto/asymmetric_keys/public_key_sm2.c
+> >> @@ -0,0 +1,61 @@
+> >> +/* SPDX-License-Identifier: GPL-2.0-or-later */
+> >> +/*
+> >> + * asymmetric public-key algorithm for SM2-with-SM3 certificate
+> >> + * as specified by OSCCA GM/T 0003.1-2012 -- 0003.5-2012 SM2 and
+> >> + * described at https://tools.ietf.org/html/draft-shen-sm2-ecdsa-02
+> >> + *
+> >> + * Copyright (c) 2020, Alibaba Group.
+> >> + * Authors: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+> >> + */
+> >> +
+> >> +#include <crypto/sm3_base.h>
+> >> +#include <crypto/sm2.h>
+> >> +#include <crypto/public_key.h>
+> >> +
+> >> +#if IS_REACHABLE(CONFIG_CRYPTO_SM2)
+> >> +
+> >> +int cert_sig_digest_update(const struct public_key_signature *sig,
+> >> +                               struct crypto_akcipher *tfm_pkey)
+> >> +{
+> >> +       struct crypto_shash *tfm;
+> >> +       struct shash_desc *desc;
+> >> +       size_t desc_size;
+> >> +       unsigned char dgst[SM3_DIGEST_SIZE];
+> >> +       int ret;
+> >> +
+> >> +       BUG_ON(!sig->data);
+> >> +
+> >> +       ret =3D sm2_compute_z_digest(tfm_pkey, SM2_DEFAULT_USERID,
+> >> +                                       SM2_DEFAULT_USERID_LEN, dgst);
+> >> +       if (ret)
+> >> +               return ret;
+> >> +
+> >> +       tfm =3D crypto_alloc_shash(sig->hash_algo, 0, 0);
+> >> +       if (IS_ERR(tfm))
+> >> +               return PTR_ERR(tfm);
+> >> +
+> >> +       desc_size =3D crypto_shash_descsize(tfm) + sizeof(*desc);
+> >> +       desc =3D kzalloc(desc_size, GFP_KERNEL);
+> >> +       if (!desc)
+> >> +               goto error_free_tfm;
+> >> +
+> >> +       desc->tfm =3D tfm;
+> >> +
+> >> +       ret =3D crypto_shash_init(desc);
+> >> +       if (ret < 0)
+> >> +               goto error_free_desc;
+> >> +
+> >> +       ret =3D crypto_shash_update(desc, dgst, SM3_DIGEST_SIZE);
+> >> +       if (ret < 0)
+> >> +               goto error_free_desc;
+> >> +
+> >> +       ret =3D crypto_shash_finup(desc, sig->data, sig->data_size, si=
+g->digest);
+> >
+> > It looks like you are doing a separate init, update, finup every time
+> > - I would consider using crypto_shash_digest() in one go.
+> >
+> > In fact, considering the fact that you are allocating a tfm just for
+> > this use and then releasing it, I would consider switching to
+> > crypto_shash_tfm_digest() and dropping the kzalloc all together.
+> >
+> > This should simplify the code a bit.
+> >
+> > Other than that I don't have anything smart to say :-)
+> >
+> > Gilad
+> >
+>
+> The hash calculation here includes two parts of data, 'dgst' and
+> 'sig->data'. The last call is 'finup()' not 'final()'. I understand that
+> it should not be possible to use 'crypto_shash_tfm_digest()' This kind
+> of function is simplified.
+>
+> If a new scope is added, the assignment of desc can be optimized, as
+> follows:
+> ```
+> do {
+>      SHASH_DESC_ON_STACK(desc, tfm);
+>      desc->tfm =3D tfm;
+>
+>      /* ... */
+> } while (0);
+> ```
+> However, the kernel code may not accept this style. What is your opinion?
 
-To use the needed keys, ATTRIBUTE.PROVISIONKEY is required but should be
-only allowed for those who actually need it so that only the trusted
-parties can certify QE's.
+No, you are right. I've indeed missed that it's a finup() and not a
+final(). If the size of data was big enough it might have been worth
+going to the async. hash interface and creating a scatter list for
+this but I suspect it is not justified with the data sizes we are
+dealing with there.
 
-Obviously the attestation service should know the public key of the used
-PCE and that way detect illegit attestation, but whitelisting the legit
-users still adds an additional layer of defence.
+So:
 
-Add new device file called /dev/sgx/provision. The sole purpose of this
-file is to provide file descriptors that act as privilege tokens to allow
-to build enclaves with ATTRIBUTE.PROVISIONKEY set. A new ioctl called
-SGX_IOC_ENCLAVE_PROVISION is used to assign this token to an enclave.
+Reviewed-by: Gilad Ben-Yossef <gilad@benyossef.com>
 
-Cc: linux-security-module@vger.kernel.org
-Acked-by: Jethro Beekman <jethro@fortanix.com>
-Reviewed-by: Darren Kenny <darren.kenny@oracle.com>
-Suggested-by: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
- arch/x86/include/uapi/asm/sgx.h  | 11 ++++++++
- arch/x86/kernel/cpu/sgx/driver.c | 18 ++++++++++++
- arch/x86/kernel/cpu/sgx/driver.h |  2 ++
- arch/x86/kernel/cpu/sgx/ioctl.c  | 47 ++++++++++++++++++++++++++++++++
- 4 files changed, 78 insertions(+)
+Thanks,
+Gilad
 
-diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
-index 7729730d8580..d0916fb9629e 100644
---- a/arch/x86/include/uapi/asm/sgx.h
-+++ b/arch/x86/include/uapi/asm/sgx.h
-@@ -25,6 +25,8 @@ enum sgx_page_flags {
- 	_IOWR(SGX_MAGIC, 0x01, struct sgx_enclave_add_pages)
- #define SGX_IOC_ENCLAVE_INIT \
- 	_IOW(SGX_MAGIC, 0x02, struct sgx_enclave_init)
-+#define SGX_IOC_ENCLAVE_PROVISION \
-+	_IOW(SGX_MAGIC, 0x03, struct sgx_enclave_provision)
- 
- /**
-  * struct sgx_enclave_create - parameter structure for the
-@@ -61,4 +63,13 @@ struct sgx_enclave_init {
- 	__u64 sigstruct;
- };
- 
-+/**
-+ * struct sgx_enclave_provision - parameter structure for the
-+ *				  %SGX_IOC_ENCLAVE_PROVISION ioctl
-+ * @attribute_fd:	file handle of the attribute file in the securityfs
-+ */
-+struct sgx_enclave_provision {
-+	__u64 attribute_fd;
-+};
-+
- #endif /* _UAPI_ASM_X86_SGX_H */
-diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/driver.c
-index 7bdb49dfcca6..d01b28f7ce4a 100644
---- a/arch/x86/kernel/cpu/sgx/driver.c
-+++ b/arch/x86/kernel/cpu/sgx/driver.c
-@@ -134,6 +134,10 @@ static const struct file_operations sgx_encl_fops = {
- 	.get_unmapped_area	= sgx_get_unmapped_area,
- };
- 
-+const struct file_operations sgx_provision_fops = {
-+	.owner			= THIS_MODULE,
-+};
-+
- static struct miscdevice sgx_dev_enclave = {
- 	.minor = MISC_DYNAMIC_MINOR,
- 	.name = "enclave",
-@@ -141,6 +145,13 @@ static struct miscdevice sgx_dev_enclave = {
- 	.fops = &sgx_encl_fops,
- };
- 
-+static struct miscdevice sgx_dev_provision = {
-+	.minor = MISC_DYNAMIC_MINOR,
-+	.name = "provision",
-+	.nodename = "sgx/provision",
-+	.fops = &sgx_provision_fops,
-+};
-+
- int __init sgx_drv_init(void)
- {
- 	unsigned int eax, ebx, ecx, edx;
-@@ -181,5 +192,12 @@ int __init sgx_drv_init(void)
- 		return ret;
- 	}
- 
-+	ret = misc_register(&sgx_dev_provision);
-+	if (ret) {
-+		pr_err("Creating /dev/sgx/provision failed with %d.\n", ret);
-+		misc_deregister(&sgx_dev_enclave);
-+		return ret;
-+	}
-+
- 	return 0;
- }
-diff --git a/arch/x86/kernel/cpu/sgx/driver.h b/arch/x86/kernel/cpu/sgx/driver.h
-index e4063923115b..72747d01c046 100644
---- a/arch/x86/kernel/cpu/sgx/driver.h
-+++ b/arch/x86/kernel/cpu/sgx/driver.h
-@@ -23,6 +23,8 @@ extern u64 sgx_attributes_reserved_mask;
- extern u64 sgx_xfrm_reserved_mask;
- extern u32 sgx_xsave_size_tbl[64];
- 
-+extern const struct file_operations sgx_provision_fops;
-+
- long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg);
- 
- int sgx_drv_init(void);
-diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index de2ed4f35ffb..4227bca7b477 100644
---- a/arch/x86/kernel/cpu/sgx/ioctl.c
-+++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -673,6 +673,50 @@ static long sgx_ioc_enclave_init(struct sgx_encl *encl, void __user *arg)
- 	return ret;
- }
- 
-+/**
-+ * sgx_ioc_enclave_set_attribute - handler for %SGX_IOC_ENCLAVE_PROVISION
-+ * @filep:	open file to /dev/sgx
-+ * @arg:	userspace pointer to a struct sgx_enclave_provision instance
-+ *
-+ * Mark the enclave as being allowed to access a restricted attribute bit.
-+ * The requested attribute is specified via the attribute_fd field in the
-+ * provided struct sgx_enclave_provision.  The attribute_fd must be a
-+ * handle to an SGX attribute file, e.g. "/dev/sgx/provision".
-+ *
-+ * Failure to explicitly request access to a restricted attribute will cause
-+ * sgx_ioc_enclave_init() to fail.  Currently, the only restricted attribute
-+ * is access to the PROVISION_KEY.
-+ *
-+ * Note, access to the EINITTOKEN_KEY is disallowed entirely.
-+ *
-+ * Return: 0 on success, -errno otherwise
-+ */
-+static long sgx_ioc_enclave_provision(struct sgx_encl *encl,
-+					  void __user *arg)
-+{
-+	struct sgx_enclave_provision params;
-+	struct file *attribute_file;
-+	int ret;
-+
-+	if (copy_from_user(&params, arg, sizeof(params)))
-+		return -EFAULT;
-+
-+	attribute_file = fget(params.attribute_fd);
-+	if (!attribute_file)
-+		return -EINVAL;
-+
-+	if (attribute_file->f_op != &sgx_provision_fops) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
-+	encl->attributes |= SGX_ATTR_PROVISIONKEY;
-+	ret = 0;
-+
-+out:
-+	fput(attribute_file);
-+	return ret;
-+}
- 
- long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
- {
-@@ -698,6 +742,9 @@ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
- 	case SGX_IOC_ENCLAVE_INIT:
- 		ret = sgx_ioc_enclave_init(encl, (void __user *)arg);
- 		break;
-+	case SGX_IOC_ENCLAVE_PROVISION:
-+		ret = sgx_ioc_enclave_provision(encl, (void __user *)arg);
-+		break;
- 	default:
- 		ret = -ENOIOCTLCMD;
- 		break;
--- 
-2.25.1
+--=20
+Gilad Ben-Yossef
+Chief Coffee Drinker
 
+values of =CE=B2 will give rise to dom!
