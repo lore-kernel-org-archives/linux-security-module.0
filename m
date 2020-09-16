@@ -2,433 +2,151 @@ Return-Path: <SRS0=TMVc=CZ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-20.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3F12C433E2
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Sep 2020 18:31:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7BB0C43461
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Sep 2020 18:36:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 72E6120936
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Sep 2020 18:31:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79971206B5
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Sep 2020 18:36:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="s2ZFheVG"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="F+8NDuo/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728128AbgIPSbX (ORCPT
+        id S1728041AbgIPSgm (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 16 Sep 2020 14:31:23 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:37876 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728097AbgIPSaF (ORCPT
+        Wed, 16 Sep 2020 14:36:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42252 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728083AbgIPS3N (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 16 Sep 2020 14:30:05 -0400
-Received: from localhost.localdomain (unknown [47.187.206.220])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 4870820BBF7F;
-        Wed, 16 Sep 2020 08:08:36 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 4870820BBF7F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1600268916;
-        bh=7zXFDd5e9gQDRl70elYDzZIUqUSxDlwg1R6LYZvjU+I=;
-        h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=s2ZFheVG+P0uRmjNTszmwk9fbxWsYCCpDqdIGp30oHwFKYghaxExAOPCVPHp+tPSl
-         6vJViEnIrdgBcxzgdTL3n1FkpLxcsEDLRwYMF86YzQjb4Y846v0MRWwA0iA27t4T/2
-         CfADuZvI7CGd2bZouNpMCVpBurSU8DdGLI1X38nE=
-From:   madvenka@linux.microsoft.com
-To:     kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, oleg@redhat.com,
-        x86@kernel.org, madvenka@linux.microsoft.com
-Subject: [PATCH v2 3/4] [RFC] arm64/trampfd: Provide support for the trampoline file descriptor
-Date:   Wed, 16 Sep 2020 10:08:25 -0500
-Message-Id: <20200916150826.5990-4-madvenka@linux.microsoft.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200916150826.5990-1-madvenka@linux.microsoft.com>
-References: <210d7cd762d5307c2aa1676705b392bd445f1baa>
- <20200916150826.5990-1-madvenka@linux.microsoft.com>
+        Wed, 16 Sep 2020 14:29:13 -0400
+Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBC67C0A888D
+        for <linux-security-module@vger.kernel.org>; Wed, 16 Sep 2020 05:48:00 -0700 (PDT)
+Received: by mail-wm1-x343.google.com with SMTP id q9so2667172wmj.2
+        for <linux-security-module@vger.kernel.org>; Wed, 16 Sep 2020 05:48:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0Ak62nesCbOREDTTzpc8X9wLA7URHRevPKbppowyS5I=;
+        b=F+8NDuo/1RWe7wgG2WhonViKgW4VIrYKG0fuQMdu+s7s5fBfnou/S/twaeShYbWsMb
+         SpuEoGcFcKnM/hRqmfdKUbO45bKl7Q1S7ixO2QN1hVzhYdN/ZC6KlkmpSJBXli3nrJC4
+         C8wZha5ZkpFJr1yLUzyj/IveBKWMSQSs7Tpis=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0Ak62nesCbOREDTTzpc8X9wLA7URHRevPKbppowyS5I=;
+        b=pIoSLtrSmyEKB/ulPTnpLQ53+JATwZqfg/1XaNpn4w49JkipNthQaFdC/74qMiVrZO
+         Fd4MECOgzG3/csmS7B1dICTzubMtg/7/gzCOifZGZbgt+SEk1SFs/G4wlpodUMx/RgJJ
+         phDFiiTo06vucGaNduSaoCKX57fCaxhpMMrgm/NVUBlDoLqlaBnkwwOERpn+aWEIrb13
+         ISAstg+XjrZRy3bgSrQ3Mbgd1JvwBmosWVdm0eEJThqPKWIVF428a0OzGGWBfglspmbX
+         1b8BJD5va1QDnPhhjADEGIoTsuBWwupTeaLrxuwH+PbvB0glSkjO2jQBBYlWnzSXlatL
+         lLgQ==
+X-Gm-Message-State: AOAM530IZkzz5TfyNJKphFb2yJKQgIGJXooImmhn8ZH8+ZynuFEVZAGW
+        f62OaHhOpQbZJMIL83efiuGWkgzAX1ZCE1YMFur8Ow==
+X-Google-Smtp-Source: ABdhPJw7+Ll62XVAkpr+sbPg39fiPYa0S/X4E49SjQZq1wnxbE/A4/IKrdERM2HSi8OlQ4BlpjNN0mLfNxPL88VRoi0=
+X-Received: by 2002:a1c:1902:: with SMTP id 2mr4874239wmz.26.1600260478858;
+ Wed, 16 Sep 2020 05:47:58 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200916120548.364892-1-kpsingh@chromium.org> <5ab256148e8ad5f9882e888dac809bc72cd3fe66.camel@chromium.org>
+In-Reply-To: <5ab256148e8ad5f9882e888dac809bc72cd3fe66.camel@chromium.org>
+From:   KP Singh <kpsingh@chromium.org>
+Date:   Wed, 16 Sep 2020 14:47:48 +0200
+Message-ID: <CACYkzJ7dZuOL9NhzaMmpvGqE3TWYHV=AicNmjgs1aD81TctR0Q@mail.gmail.com>
+Subject: Re: [PATCH] ima: Fix NULL pointer dereference in ima_file_hash
+To:     Florent Revest <revest@chromium.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        James Morris <jmorris@namei.org>,
+        Kees Cook <keescook@chromium.org>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Jann Horn <jannh@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>
+Somehow this patch does not seem to have been picked up by any of the
+mailing list archives and I am not sure if this was delivered to the
+lists. I will send a v2 and add Florent's Reviewed-by tag.
 
-	- Define architecture specific register names
-	- Architecture specific functions for:
-		- system call init
-		- code descriptor check
-		- data descriptor check
-	- Fill a page with a trampoline table for:
-		- 32-bit user process
-		- 64-bit user process
-
-Signed-off-by: Madhavan T. Venkataraman <madvenka@linux.microsoft.com>
----
- arch/arm64/include/asm/unistd.h      |   2 +-
- arch/arm64/include/asm/unistd32.h    |   2 +
- arch/arm64/include/uapi/asm/ptrace.h |  59 +++++++
- arch/arm64/kernel/Makefile           |   2 +
- arch/arm64/kernel/trampfd.c          | 244 +++++++++++++++++++++++++++
- 5 files changed, 308 insertions(+), 1 deletion(-)
- create mode 100644 arch/arm64/kernel/trampfd.c
-
-diff --git a/arch/arm64/include/asm/unistd.h b/arch/arm64/include/asm/unistd.h
-index 3b859596840d..b3b2019f8d16 100644
---- a/arch/arm64/include/asm/unistd.h
-+++ b/arch/arm64/include/asm/unistd.h
-@@ -38,7 +38,7 @@
- #define __ARM_NR_compat_set_tls		(__ARM_NR_COMPAT_BASE + 5)
- #define __ARM_NR_COMPAT_END		(__ARM_NR_COMPAT_BASE + 0x800)
- 
--#define __NR_compat_syscalls		440
-+#define __NR_compat_syscalls		441
- #endif
- 
- #define __ARCH_WANT_SYS_CLONE
-diff --git a/arch/arm64/include/asm/unistd32.h b/arch/arm64/include/asm/unistd32.h
-index 6d95d0c8bf2f..c0493c5322d9 100644
---- a/arch/arm64/include/asm/unistd32.h
-+++ b/arch/arm64/include/asm/unistd32.h
-@@ -885,6 +885,8 @@ __SYSCALL(__NR_openat2, sys_openat2)
- __SYSCALL(__NR_pidfd_getfd, sys_pidfd_getfd)
- #define __NR_faccessat2 439
- __SYSCALL(__NR_faccessat2, sys_faccessat2)
-+#define __NR_trampfd 440
-+__SYSCALL(__NR_trampfd, sys_trampfd)
- 
- /*
-  * Please add new compat syscalls above this comment and update
-diff --git a/arch/arm64/include/uapi/asm/ptrace.h b/arch/arm64/include/uapi/asm/ptrace.h
-index 42cbe34d95ce..2778789c1cbe 100644
---- a/arch/arm64/include/uapi/asm/ptrace.h
-+++ b/arch/arm64/include/uapi/asm/ptrace.h
-@@ -88,6 +88,65 @@ struct user_pt_regs {
- 	__u64		pstate;
- };
- 
-+/*
-+ * These register names are to be used by 32-bit applications.
-+ */
-+enum reg_32_name {
-+	arm_min,
-+	arm_r0 = arm_min,
-+	arm_r1,
-+	arm_r2,
-+	arm_r3,
-+	arm_r4,
-+	arm_r5,
-+	arm_r6,
-+	arm_r7,
-+	arm_r8,
-+	arm_r9,
-+	arm_r10,
-+	arm_r11,
-+	arm_r12,
-+	arm_max,
-+};
-+
-+/*
-+ * These register names are to be used by 64-bit applications.
-+ */
-+enum reg_64_name {
-+	arm64_min = arm_max,
-+	arm64_r0 = arm64_min,
-+	arm64_r1,
-+	arm64_r2,
-+	arm64_r3,
-+	arm64_r4,
-+	arm64_r5,
-+	arm64_r6,
-+	arm64_r7,
-+	arm64_r8,
-+	arm64_r9,
-+	arm64_r10,
-+	arm64_r11,
-+	arm64_r12,
-+	arm64_r13,
-+	arm64_r14,
-+	arm64_r15,
-+	arm64_r16,
-+	arm64_r17,
-+	arm64_r18,
-+	arm64_r19,
-+	arm64_r20,
-+	arm64_r21,
-+	arm64_r22,
-+	arm64_r23,
-+	arm64_r24,
-+	arm64_r25,
-+	arm64_r26,
-+	arm64_r27,
-+	arm64_r28,
-+	arm64_r29,
-+	arm64_max,
-+};
-+
- struct user_fpsimd_state {
- 	__uint128_t	vregs[32];
- 	__u32		fpsr;
-diff --git a/arch/arm64/kernel/Makefile b/arch/arm64/kernel/Makefile
-index a561cbb91d4d..18d373fb1208 100644
---- a/arch/arm64/kernel/Makefile
-+++ b/arch/arm64/kernel/Makefile
-@@ -71,3 +71,5 @@ extra-y					+= $(head-y) vmlinux.lds
- ifeq ($(CONFIG_DEBUG_EFI),y)
- AFLAGS_head.o += -DVMLINUX_PATH="\"$(realpath $(objtree)/vmlinux)\""
- endif
-+
-+obj-$(CONFIG_TRAMPFD)			+= trampfd.o
-diff --git a/arch/arm64/kernel/trampfd.c b/arch/arm64/kernel/trampfd.c
-new file mode 100644
-index 000000000000..3b40ebb12907
---- /dev/null
-+++ b/arch/arm64/kernel/trampfd.c
-@@ -0,0 +1,244 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Trampoline FD - ARM64 support.
-+ *
-+ * Author: Madhavan T. Venkataraman (madvenka@linux.microsoft.com)
-+ *
-+ * Copyright (c) 2020, Microsoft Corporation.
-+ */
-+
-+#include <linux/thread_info.h>
-+#include <asm/compat.h>
-+#include <linux/trampfd.h>
-+
-+#define TRAMPFD_CODE_32_SIZE		28
-+#define TRAMPFD_CODE_64_SIZE		48
-+
-+static inline bool is_compat(void)
-+{
-+	return is_compat_thread(task_thread_info(current));
-+}
-+
-+/*
-+ * trampfd syscall.
-+ */
-+void trampfd_arch(struct trampfd_info *info)
-+{
-+	if (is_compat())
-+		info->code_size = TRAMPFD_CODE_32_SIZE;
-+	else
-+		info->code_size = TRAMPFD_CODE_64_SIZE;
-+	info->ntrampolines = PAGE_SIZE / info->code_size;
-+	info->code_offset = TRAMPFD_CODE_PGOFF << PAGE_SHIFT;
-+	info->reserved = 0;
-+}
-+
-+/*
-+ * trampfd code descriptor check.
-+ */
-+int trampfd_code_arch(struct trampfd_code *code)
-+{
-+	int	ntrampolines;
-+	int	min, max;
-+
-+	if (is_compat()) {
-+		min = arm_min;
-+		max = arm_max;
-+		ntrampolines = PAGE_SIZE / TRAMPFD_CODE_32_SIZE;
-+	} else {
-+		min = arm64_min;
-+		max = arm64_max;
-+		ntrampolines = PAGE_SIZE / TRAMPFD_CODE_64_SIZE;
-+	}
-+
-+	if (code->reg < min || code->reg >= max)
-+		return -EINVAL;
-+
-+	if (!code->ntrampolines || code->ntrampolines > ntrampolines)
-+		return -EINVAL;
-+	return 0;
-+}
-+
-+/*
-+ * trampfd data descriptor check.
-+ */
-+int trampfd_data_arch(struct trampfd_data *data)
-+{
-+	int	min, max;
-+
-+	if (is_compat()) {
-+		min = arm_min;
-+		max = arm_max;
-+	} else {
-+		min = arm64_min;
-+		max = arm64_max;
-+	}
-+
-+	if (data->reg < min || data->reg >= max)
-+		return -EINVAL;
-+	return 0;
-+}
-+
-+#define MOVARM(ins, reg, imm32)						\
-+{									\
-+	u16	*_imm16 = (u16 *) &(imm32);	/* little endian */	\
-+	int	_hw, _opcode;						\
-+									\
-+	for (_hw = 0; _hw < 2; _hw++) {					\
-+		/* movw or movt */					\
-+		_opcode = _hw ? 0xe3400000 : 0xe3000000;		\
-+		*ins++ = _opcode | (_imm16[_hw] >> 12) << 16 |		\
-+			 (reg) << 12 | (_imm16[_hw] & 0xFFF);		\
-+	}								\
-+}
-+
-+#define LDRARM(ins, reg)						\
-+{									\
-+	*ins++ = 0xe5900000 | (reg) << 16 | (reg) << 12;		\
-+}
-+
-+#define BXARM(ins, reg)							\
-+{									\
-+	*ins++ = 0xe12fff10 | (reg);					\
-+}
-+
-+static void trampfd_code_fill_32(struct trampfd *trampfd, char *addr)
-+{
-+	char		*eaddr = addr + PAGE_SIZE;
-+	int		creg = trampfd->code_reg - arm_min;
-+	int		dreg = trampfd->data_reg - arm_min;
-+	u32		*code = trampfd->code;
-+	u32		*data = trampfd->data;
-+	u32		*instruction = (u32 *) addr;
-+	int		i;
-+
-+	for (i = 0; i < trampfd->ntrampolines; i++, code++, data++) {
-+		/*
-+		 * movw creg, code & 0xFFFF
-+		 * movt creg, code >> 16
-+		 */
-+		MOVARM(instruction, creg, code);
-+
-+		/*
-+		 * ldr	creg, [creg]
-+		 */
-+		LDRARM(instruction, creg);
-+
-+		/*
-+		 * movw dreg, data & 0xFFFF
-+		 * movt dreg, data >> 16
-+		 */
-+		MOVARM(instruction, dreg, data);
-+
-+		/*
-+		 * ldr	dreg, [dreg]
-+		 */
-+		LDRARM(instruction, dreg);
-+
-+		/*
-+		 * bx	creg
-+		 */
-+		BXARM(instruction, creg);
-+	}
-+	addr = (char *) instruction;
-+	memset(addr, 0, eaddr - addr);
-+}
-+
-+#define MOVQ(ins, reg, imm64)						\
-+{									\
-+	u16	*_imm16 = (u16 *) &(imm64);	/* little endian */	\
-+	int	_hw, _opcode;						\
-+									\
-+	for (_hw = 0; _hw < 4; _hw++) {					\
-+		/* movz or movk */					\
-+		_opcode = _hw ? 0xf2800000 : 0xd2800000;		\
-+		*ins++ = _opcode | _hw << 21 | _imm16[_hw] << 5 | (reg);\
-+	}								\
-+}
-+
-+#define LDR(ins, reg)							\
-+{									\
-+	*ins++ = 0xf9400000 | (reg) << 5 | (reg);			\
-+}
-+
-+#define BR(ins, reg)							\
-+{									\
-+	*ins++ = 0xd61f0000 | (reg) << 5;				\
-+}
-+
-+#define PAD(ins)							\
-+{									\
-+	while ((uintptr_t) ins & 7)					\
-+		*ins++ = 0;						\
-+}
-+
-+static void trampfd_code_fill_64(struct trampfd *trampfd, char *addr)
-+{
-+	char		*eaddr = addr + PAGE_SIZE;
-+	int		creg = trampfd->code_reg - arm64_min;
-+	int		dreg = trampfd->data_reg - arm64_min;
-+	u64		*code = trampfd->code;
-+	u64		*data = trampfd->data;
-+	u32		*instruction = (u32 *) addr;
-+	int		i;
-+
-+	for (i = 0; i < trampfd->ntrampolines; i++, code++, data++) {
-+		/*
-+		 * Pseudo instruction:
-+		 *
-+		 * movq creg, code
-+		 *
-+		 * Actual instructions:
-+		 *
-+		 * movz	creg, code & 0xFFFF
-+		 * movk	creg, (code >> 16) & 0xFFFF, lsl 16
-+		 * movk	creg, (code >> 32) & 0xFFFF, lsl 32
-+		 * movk	creg, (code >> 48) & 0xFFFF, lsl 48
-+		 */
-+		MOVQ(instruction, creg, code);
-+
-+		/*
-+		 * ldr	creg, [creg]
-+		 */
-+		LDR(instruction, creg);
-+
-+		/*
-+		 * Pseudo instruction:
-+		 *
-+		 * movq dreg, data
-+		 *
-+		 * Actual instructions:
-+		 *
-+		 * movz	dreg, data & 0xFFFF
-+		 * movk	dreg, (data >> 16) & 0xFFFF, lsl 16
-+		 * movk	dreg, (data >> 32) & 0xFFFF, lsl 32
-+		 * movk	dreg, (data >> 48) & 0xFFFF, lsl 48
-+		 */
-+		MOVQ(instruction, dreg, data);
-+
-+		/*
-+		 * ldr	dreg, [dreg]
-+		 */
-+		LDR(instruction, dreg);
-+
-+		/*
-+		 * br	creg
-+		 */
-+		BR(instruction, creg);
-+
-+		/*
-+		 * Pad to 8-byte boundary
-+		 */
-+		PAD(instruction);
-+	}
-+	addr = (char *) instruction;
-+	memset(addr, 0, eaddr - addr);
-+}
-+
-+void trampfd_code_fill(struct trampfd *trampfd, char *addr)
-+{
-+	if (is_compat())
-+		trampfd_code_fill_32(trampfd, addr);
-+	else
-+		trampfd_code_fill_64(trampfd, addr);
-+}
--- 
-2.17.1
-
+On Wed, Sep 16, 2020 at 2:41 PM Florent Revest <revest@chromium.org> wrote:
+>
+> Reviewed-by: Florent Revest <revest@chromium.org>
+>
+> On Wed, 2020-09-16 at 12:05 +0000, KP Singh wrote:
+> > From: KP Singh <kpsingh@google.com>
+> >
+> > ima_file_hash can be called when there is no iint->ima_hash available
+> > even though the inode exists in the integrity cache.
+> >
+> > An example where this can happen (suggested by Jann Horn):
+> >
+> > Process A does:
+> >
+> >       while(1) {
+> >               unlink("/tmp/imafoo");
+> >               fd = open("/tmp/imafoo", O_RDWR|O_CREAT|O_TRUNC, 0700);
+> >               if (fd == -1) {
+> >                       perror("open");
+> >                       continue;
+> >               }
+> >               write(fd, "A", 1);
+> >               close(fd);
+> >       }
+> >
+> > and Process B does:
+> >
+> >       while (1) {
+> >               int fd = open("/tmp/imafoo", O_RDONLY);
+> >               if (fd == -1)
+> >                       continue;
+> >               char *mapping = mmap(NULL, 0x1000, PROT_READ|PROT_EXEC,
+> >                                    MAP_PRIVATE, fd, 0);
+> >               if (mapping != MAP_FAILED)
+> >                       munmap(mapping, 0x1000);
+> >               close(fd);
+> >       }
+> >
+> > Due to the race to get the iint->mutex between ima_file_hash and
+> > process_measurement iint->ima_hash could still be NULL.
+> >
+> > Fixes: 6beea7afcc72 ("ima: add the ability to query the cached hash
+> > of a given file")
+> > Signed-off-by: KP Singh <kpsingh@google.com>
+> > ---
+> >  security/integrity/ima/ima_main.c | 10 ++++++++++
+> >  1 file changed, 10 insertions(+)
+> >
+> > diff --git a/security/integrity/ima/ima_main.c
+> > b/security/integrity/ima/ima_main.c
+> > index 8a91711ca79b..4c86cd4eece0 100644
+> > --- a/security/integrity/ima/ima_main.c
+> > +++ b/security/integrity/ima/ima_main.c
+> > @@ -531,6 +531,16 @@ int ima_file_hash(struct file *file, char *buf,
+> > size_t buf_size)
+> >               return -EOPNOTSUPP;
+> >
+> >       mutex_lock(&iint->mutex);
+> > +
+> > +     /*
+> > +      * ima_file_hash can be called when ima_collect_measurement has
+> > still
+> > +      * not been called, we might not always have a hash.
+> > +      */
+> > +     if (!iint->ima_hash) {
+> > +             mutex_unlock(&iint->mutex);
+> > +             return -EOPNOTSUPP;
+> > +     }
+> > +
+> >       if (buf) {
+> >               size_t copied_size;
+> >
+>
