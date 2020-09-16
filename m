@@ -2,840 +2,260 @@ Return-Path: <SRS0=TMVc=CZ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FAEDC2D0E3
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Sep 2020 00:52:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C4BAC2D0E3
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Sep 2020 00:52:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 60BBB20770
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Sep 2020 00:52:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 191A520936
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Sep 2020 00:52:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="fZUtviWb"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="NA/shWYm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726599AbgIPAwG (ORCPT
+        id S1726467AbgIPAw1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 15 Sep 2020 20:52:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34638 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726336AbgIOLdC (ORCPT
+        Tue, 15 Sep 2020 20:52:27 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:39066 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726592AbgIPAwR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 15 Sep 2020 07:33:02 -0400
-X-Greylist: delayed 1399 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 15 Sep 2020 04:29:03 PDT
-Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C4E4C061221;
-        Tue, 15 Sep 2020 04:28:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-         s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=G3A4Jd8qyp8Y8V5S/z3YXPCAvuIvwnUirfp88s6hSlY=; b=fZUtviWbrQ51ZnPK4cFHf8vNWI
-        mtH58aGBtUAl8kAwIqdh5Aebenf/CY7vMdQybflOjQi8IDUDF2wTJkR1sGzM9ZQoqwqSF96dvKcDY
-        b9hBY9KKho+JvjLTWzSeUj6eSs4N1CZ36wVVHI+fr2zVbuCCbGFMDjVlLJS6PwD+pCDfXaWI0fH/2
-        Jeg1opH8poRfDNTGl6ORcZ2JQSQ9ys3+P48lraG5Ll6cDKrGGb2dHKfmBMNHtCDyqKYOKSi7Zjkux
-        Ev6xHsAqe6h07rgnH5+Ozoci2hKDcbq+P47bGCFsk1gC/ZWts109o8EWwmuDvYcSN+xWsgtEggWSH
-        x6XBj9qQ==;
-Received: from 83-245-197-237.elisa-laajakaista.fi ([83.245.197.237] helo=localhost)
-        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <jjs@kapsi.fi>)
-        id 1kI98k-0000jq-HK; Tue, 15 Sep 2020 14:28:50 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     x86@kernel.org, linux-sgx@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-security-module@vger.kernel.org, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Chunyang Hui <sanqian.hcy@antfin.com>,
-        Jordan Hand <jorhand@linux.microsoft.com>,
-        Nathaniel McCallum <npmccallum@redhat.com>,
-        Seth Moore <sethmo@google.com>,
-        Darren Kenny <darren.kenny@oracle.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        andriy.shevchenko@linux.intel.com, asapek@google.com, bp@alien8.de,
-        cedric.xing@intel.com, chenalexchen@google.com,
-        conradparker@google.com, cyhanish@google.com,
-        dave.hansen@intel.com, haitao.huang@intel.com,
-        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
-        kmoy@google.com, ludloff@google.com, luto@kernel.org,
-        nhorman@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
-        tglx@linutronix.de, yaozhangx@google.com
-Subject: [PATCH v38 11/24] x86/sgx: Add SGX enclave driver
-Date:   Tue, 15 Sep 2020 14:28:29 +0300
-Message-Id: <20200915112842.897265-12-jarkko.sakkinen@linux.intel.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200915112842.897265-1-jarkko.sakkinen@linux.intel.com>
-References: <20200915112842.897265-1-jarkko.sakkinen@linux.intel.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 83.245.197.237
-X-SA-Exim-Mail-From: jjs@kapsi.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+        Tue, 15 Sep 2020 20:52:17 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 08G0oMEh142287;
+        Wed, 16 Sep 2020 00:51:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2020-01-29;
+ bh=P1pMOoWe6LNIy0K4uxNXT7zrnhjw8PJuQG/b1p84A/8=;
+ b=NA/shWYmIU/HiJZQs68zdaRh+mh+f9i58n8nc+wpbk6gWgvsYkSIoYRXYBiqODqTQyNp
+ PwMBbOESlIV6AUE+xmvI0TqKeZZevtT40RS8JNyzE5PFDyk00ho6am3VM5es7lyDTCge
+ v7JisUOYAcbj7TAB9vF2q6mYq2aVo2BasPzvV+escOBUrT6YkKxezM9jmCPuYNoxCntM
+ F+S/5+MWL5JwWuCT/qo46uLpE4OzDeQ5kmyj/xno3IjtIj79Rg6vvJueX5GIbszky3dy
+ HkJZ9N9FJrtummgcUW3Vuo8U5H69bWRZXs72mt1bArIk11DvHNjWthl8sz3Mjrz8YkOb vg== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 33gnrr0827-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 16 Sep 2020 00:51:48 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 08G0UjCe151431;
+        Wed, 16 Sep 2020 00:49:47 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3030.oracle.com with ESMTP id 33h890bpgx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 16 Sep 2020 00:49:47 +0000
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 08G0naIe029785;
+        Wed, 16 Sep 2020 00:49:39 GMT
+Received: from localhost.us.oracle.com (/10.147.27.2)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 16 Sep 2020 00:49:35 +0000
+From:   Eric Snowberg <eric.snowberg@oracle.com>
+To:     dhowells@redhat.com, dwmw2@infradead.org,
+        jarkko.sakkinen@linux.intel.com
+Cc:     herbert@gondor.apana.org.au, davem@davemloft.net,
+        jmorris@namei.org, serge@hallyn.com, nayna@linux.ibm.com,
+        zohar@linux.ibm.com, eric.snowberg@oracle.com,
+        erichte@linux.ibm.com, mpe@ellerman.id.au,
+        keyrings@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: [PATCH v4] certs: Add EFI_CERT_X509_GUID support for dbx entries
+Date:   Tue, 15 Sep 2020 20:49:27 -0400
+Message-Id: <20200916004927.64276-1-eric.snowberg@oracle.com>
+X-Mailer: git-send-email 2.18.1
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9745 signatures=668679
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 spamscore=0 adultscore=0
+ suspectscore=0 mlxscore=0 bulkscore=0 mlxlogscore=999 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
+ definitions=main-2009160001
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9745 signatures=668679
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 spamscore=0
+ lowpriorityscore=0 malwarescore=0 mlxscore=0 bulkscore=0 suspectscore=0
+ clxscore=1015 mlxlogscore=999 adultscore=0 priorityscore=1501
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2006250000 definitions=main-2009160002
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Intel Software Guard eXtensions (SGX) is a set of CPU instructions that can
-be used by applications to set aside private regions of code and data. The
-code outside the SGX hosted software entity is prevented from accessing the
-memory inside the enclave by the CPU. We call these entities as enclaves.
+The Secure Boot Forbidden Signature Database, dbx, contains a list of now
+revoked signatures and keys previously approved to boot with UEFI Secure
+Boot enabled.  The dbx is capable of containing any number of
+EFI_CERT_X509_SHA256_GUID, EFI_CERT_SHA256_GUID, and EFI_CERT_X509_GUID
+entries.
 
-Add a driver that provides an ioctl API to construct and run enclaves.
-Enclaves are constructed from pages residing in reserved physical memory
-areas. The contents of these pages can only be accessed when they are
-mapped as part of an enclave, by a hardware thread running inside the
-enclave.
+Currently when EFI_CERT_X509_GUID are contained in the dbx, the entries are
+skipped.
 
-The starting state of an enclave consists of a fixed measured set of
-pages that are copied to the EPC during the construction process by
-using the opcode ENCLS leaf functions and Software Enclave Control
-Structure (SECS) that defines the enclave properties.
+Add support for EFI_CERT_X509_GUID dbx entries. When a EFI_CERT_X509_GUID
+is found, it is added as an asymmetrical key to the .blacklist keyring.
+Anytime the .platform keyring is used, the keys in the .blacklist keyring
+are referenced, if a matching key is found, the key will be rejected.
 
-Enclaves are constructed by using ENCLS leaf functions ECREATE, EADD and
-EINIT. ECREATE initializes SECS, EADD copies pages from system memory to
-the EPC and EINIT checks a given signed measurement and moves the enclave
-into a state ready for execution.
-
-An initialized enclave can only be accessed through special Thread Control
-Structure (TCS) pages by using ENCLU (ring-3 only) leaf EENTER.  This leaf
-function converts a thread into enclave mode and continues the execution in
-the offset defined by the TCS provided to EENTER. An enclave is exited
-through syscall, exception, interrupts or by explicitly calling another
-ENCLU leaf EEXIT.
-
-The mmap() permissions are capped by the contained enclave page
-permissions. The mapped areas must also be populated, i.e. each page
-address must contain a page. This logic is implemented in
-sgx_encl_may_map().
-
-Cc: linux-security-module@vger.kernel.org
-Cc: linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Matthew Wilcox <willy@infradead.org>
-Acked-by: Jethro Beekman <jethro@fortanix.com>
-Tested-by: Jethro Beekman <jethro@fortanix.com>
-Tested-by: Haitao Huang <haitao.huang@linux.intel.com>
-Tested-by: Chunyang Hui <sanqian.hcy@antfin.com>
-Tested-by: Jordan Hand <jorhand@linux.microsoft.com>
-Tested-by: Nathaniel McCallum <npmccallum@redhat.com>
-Tested-by: Seth Moore <sethmo@google.com>
-Tested-by: Darren Kenny <darren.kenny@oracle.com>
-Reviewed-by: Darren Kenny <darren.kenny@oracle.com>
-Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Co-developed-by: Suresh Siddha <suresh.b.siddha@intel.com>
-Signed-off-by: Suresh Siddha <suresh.b.siddha@intel.com>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
 ---
- arch/x86/kernel/cpu/sgx/Makefile |   2 +
- arch/x86/kernel/cpu/sgx/driver.c | 173 ++++++++++++++++
- arch/x86/kernel/cpu/sgx/driver.h |  29 +++
- arch/x86/kernel/cpu/sgx/encl.c   | 331 +++++++++++++++++++++++++++++++
- arch/x86/kernel/cpu/sgx/encl.h   |  85 ++++++++
- arch/x86/kernel/cpu/sgx/main.c   |  11 +
- 6 files changed, 631 insertions(+)
- create mode 100644 arch/x86/kernel/cpu/sgx/driver.c
- create mode 100644 arch/x86/kernel/cpu/sgx/driver.h
- create mode 100644 arch/x86/kernel/cpu/sgx/encl.c
- create mode 100644 arch/x86/kernel/cpu/sgx/encl.h
+v4:
+Remove unneeded symbol export found by Jarkko Sakkinen
 
-diff --git a/arch/x86/kernel/cpu/sgx/Makefile b/arch/x86/kernel/cpu/sgx/Makefile
-index 79510ce01b3b..3fc451120735 100644
---- a/arch/x86/kernel/cpu/sgx/Makefile
-+++ b/arch/x86/kernel/cpu/sgx/Makefile
-@@ -1,2 +1,4 @@
- obj-y += \
-+	driver.o \
-+	encl.o \
- 	main.o
-diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/driver.c
-new file mode 100644
-index 000000000000..f54da5f19c2b
---- /dev/null
-+++ b/arch/x86/kernel/cpu/sgx/driver.c
-@@ -0,0 +1,173 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
-+// Copyright(c) 2016-18 Intel Corporation.
-+
-+#include <linux/acpi.h>
-+#include <linux/miscdevice.h>
-+#include <linux/mman.h>
-+#include <linux/security.h>
-+#include <linux/suspend.h>
-+#include <asm/traps.h>
-+#include "driver.h"
-+#include "encl.h"
-+
-+u64 sgx_encl_size_max_32;
-+u64 sgx_encl_size_max_64;
-+u32 sgx_misc_reserved_mask;
-+u64 sgx_attributes_reserved_mask;
-+u64 sgx_xfrm_reserved_mask = ~0x3;
-+u32 sgx_xsave_size_tbl[64];
-+
-+static int sgx_open(struct inode *inode, struct file *file)
-+{
-+	struct sgx_encl *encl;
-+	int ret;
-+
-+	encl = kzalloc(sizeof(*encl), GFP_KERNEL);
-+	if (!encl)
-+		return -ENOMEM;
-+
-+	atomic_set(&encl->flags, 0);
-+	kref_init(&encl->refcount);
-+	xa_init(&encl->page_array);
-+	mutex_init(&encl->lock);
-+	INIT_LIST_HEAD(&encl->mm_list);
-+	spin_lock_init(&encl->mm_lock);
-+
-+	ret = init_srcu_struct(&encl->srcu);
-+	if (ret) {
-+		kfree(encl);
-+		return ret;
-+	}
-+
-+	file->private_data = encl;
-+
-+	return 0;
-+}
-+
-+static int sgx_release(struct inode *inode, struct file *file)
-+{
-+	struct sgx_encl *encl = file->private_data;
-+	struct sgx_encl_mm *encl_mm;
-+
-+	for ( ; ; )  {
-+		spin_lock(&encl->mm_lock);
-+
-+		if (list_empty(&encl->mm_list)) {
-+			encl_mm = NULL;
-+		} else {
-+			encl_mm = list_first_entry(&encl->mm_list,
-+						   struct sgx_encl_mm, list);
-+			list_del_rcu(&encl_mm->list);
-+		}
-+
-+		spin_unlock(&encl->mm_lock);
-+
-+		/* The list is empty, ready to go. */
-+		if (!encl_mm)
-+			break;
-+
-+		synchronize_srcu(&encl->srcu);
-+		mmu_notifier_unregister(&encl_mm->mmu_notifier, encl_mm->mm);
-+		kfree(encl_mm);
-+	}
-+
-+	mutex_lock(&encl->lock);
-+	atomic_or(SGX_ENCL_DEAD, &encl->flags);
-+	mutex_unlock(&encl->lock);
-+
-+	kref_put(&encl->refcount, sgx_encl_release);
-+	return 0;
-+}
-+
-+static int sgx_mmap(struct file *file, struct vm_area_struct *vma)
-+{
-+	struct sgx_encl *encl = file->private_data;
-+	int ret;
-+
-+	ret = sgx_encl_may_map(encl, vma->vm_start, vma->vm_end, vma->vm_flags);
-+	if (ret)
-+		return ret;
-+
-+	ret = sgx_encl_mm_add(encl, vma->vm_mm);
-+	if (ret)
-+		return ret;
-+
-+	vma->vm_ops = &sgx_vm_ops;
-+	vma->vm_flags |= VM_PFNMAP | VM_DONTEXPAND | VM_DONTDUMP | VM_IO;
-+	vma->vm_private_data = encl;
-+
-+	return 0;
-+}
-+
-+static unsigned long sgx_get_unmapped_area(struct file *file,
-+					   unsigned long addr,
-+					   unsigned long len,
-+					   unsigned long pgoff,
-+					   unsigned long flags)
-+{
-+	if ((flags & MAP_TYPE) == MAP_PRIVATE)
-+		return -EINVAL;
-+
-+	if (flags & MAP_FIXED)
-+		return addr;
-+
-+	return current->mm->get_unmapped_area(file, addr, len, pgoff, flags);
-+}
-+
-+static const struct file_operations sgx_encl_fops = {
-+	.owner			= THIS_MODULE,
-+	.open			= sgx_open,
-+	.release		= sgx_release,
-+	.mmap			= sgx_mmap,
-+	.get_unmapped_area	= sgx_get_unmapped_area,
-+};
-+
-+static struct miscdevice sgx_dev_enclave = {
-+	.minor = MISC_DYNAMIC_MINOR,
-+	.name = "enclave",
-+	.nodename = "sgx/enclave",
-+	.fops = &sgx_encl_fops,
-+};
-+
-+int __init sgx_drv_init(void)
-+{
-+	unsigned int eax, ebx, ecx, edx;
-+	u64 attr_mask, xfrm_mask;
-+	int ret;
-+	int i;
-+
-+	if (!boot_cpu_has(X86_FEATURE_SGX_LC)) {
-+		pr_info("The public key MSRs are not writable.\n");
-+		return -ENODEV;
-+	}
-+
-+	cpuid_count(SGX_CPUID, 0, &eax, &ebx, &ecx, &edx);
-+	sgx_misc_reserved_mask = ~ebx | SGX_MISC_RESERVED_MASK;
-+	sgx_encl_size_max_64 = 1ULL << ((edx >> 8) & 0xFF);
-+	sgx_encl_size_max_32 = 1ULL << (edx & 0xFF);
-+
-+	cpuid_count(SGX_CPUID, 1, &eax, &ebx, &ecx, &edx);
-+
-+	attr_mask = (((u64)ebx) << 32) + (u64)eax;
-+	sgx_attributes_reserved_mask = ~attr_mask | SGX_ATTR_RESERVED_MASK;
-+
-+	if (boot_cpu_has(X86_FEATURE_OSXSAVE)) {
-+		xfrm_mask = (((u64)edx) << 32) + (u64)ecx;
-+
-+		for (i = 2; i < 64; i++) {
-+			cpuid_count(0x0D, i, &eax, &ebx, &ecx, &edx);
-+			if ((1UL << i) & xfrm_mask)
-+				sgx_xsave_size_tbl[i] = eax + ebx;
-+		}
-+
-+		sgx_xfrm_reserved_mask = ~xfrm_mask;
-+	}
-+
-+	ret = misc_register(&sgx_dev_enclave);
-+	if (ret) {
-+		pr_err("Creating /dev/sgx/enclave failed with %d.\n", ret);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-diff --git a/arch/x86/kernel/cpu/sgx/driver.h b/arch/x86/kernel/cpu/sgx/driver.h
-new file mode 100644
-index 000000000000..f7ce40dedc91
---- /dev/null
-+++ b/arch/x86/kernel/cpu/sgx/driver.h
-@@ -0,0 +1,29 @@
-+/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
-+#ifndef __ARCH_SGX_DRIVER_H__
-+#define __ARCH_SGX_DRIVER_H__
-+
-+#include <crypto/hash.h>
-+#include <linux/kref.h>
-+#include <linux/mmu_notifier.h>
-+#include <linux/radix-tree.h>
-+#include <linux/rwsem.h>
-+#include <linux/sched.h>
-+#include <linux/workqueue.h>
-+#include "sgx.h"
-+
-+#define SGX_EINIT_SPIN_COUNT	20
-+#define SGX_EINIT_SLEEP_COUNT	50
-+#define SGX_EINIT_SLEEP_TIME	20
-+
-+extern u64 sgx_encl_size_max_32;
-+extern u64 sgx_encl_size_max_64;
-+extern u32 sgx_misc_reserved_mask;
-+extern u64 sgx_attributes_reserved_mask;
-+extern u64 sgx_xfrm_reserved_mask;
-+extern u32 sgx_xsave_size_tbl[64];
-+
-+long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg);
-+
-+int sgx_drv_init(void);
-+
-+#endif /* __ARCH_X86_SGX_DRIVER_H__ */
-diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-new file mode 100644
-index 000000000000..c2c4a77af36b
---- /dev/null
-+++ b/arch/x86/kernel/cpu/sgx/encl.c
-@@ -0,0 +1,331 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
-+// Copyright(c) 2016-18 Intel Corporation.
-+
-+#include <linux/lockdep.h>
-+#include <linux/mm.h>
-+#include <linux/mman.h>
-+#include <linux/shmem_fs.h>
-+#include <linux/suspend.h>
-+#include <linux/sched/mm.h>
-+#include "arch.h"
-+#include "encl.h"
-+#include "encls.h"
-+#include "sgx.h"
-+
-+static struct sgx_encl_page *sgx_encl_load_page(struct sgx_encl *encl,
-+						unsigned long addr)
-+{
-+	struct sgx_encl_page *entry;
-+	unsigned int flags;
-+
-+	/* If process was forked, VMA is still there but vm_private_data is set
-+	 * to NULL.
-+	 */
-+	if (!encl)
-+		return ERR_PTR(-EFAULT);
-+
-+	flags = atomic_read(&encl->flags);
-+	if ((flags & SGX_ENCL_DEAD) || !(flags & SGX_ENCL_INITIALIZED))
-+		return ERR_PTR(-EFAULT);
-+
-+	entry = xa_load(&encl->page_array, PFN_DOWN(addr));
-+	if (!entry)
-+		return ERR_PTR(-EFAULT);
-+
-+	/* Page is already resident in the EPC. */
-+	if (entry->epc_page)
-+		return entry;
-+
-+	return ERR_PTR(-EFAULT);
-+}
-+
-+static void sgx_mmu_notifier_release(struct mmu_notifier *mn,
-+				     struct mm_struct *mm)
-+{
-+	struct sgx_encl_mm *encl_mm = container_of(mn, struct sgx_encl_mm, mmu_notifier);
-+	struct sgx_encl_mm *tmp = NULL;
-+
-+	/*
-+	 * The enclave itself can remove encl_mm.  Note, objects can't be moved
-+	 * off an RCU protected list, but deletion is ok.
-+	 */
-+	spin_lock(&encl_mm->encl->mm_lock);
-+	list_for_each_entry(tmp, &encl_mm->encl->mm_list, list) {
-+		if (tmp == encl_mm) {
-+			list_del_rcu(&encl_mm->list);
-+			break;
-+		}
-+	}
-+	spin_unlock(&encl_mm->encl->mm_lock);
-+
-+	if (tmp == encl_mm) {
-+		synchronize_srcu(&encl_mm->encl->srcu);
-+		mmu_notifier_put(mn);
-+	}
-+}
-+
-+static void sgx_mmu_notifier_free(struct mmu_notifier *mn)
-+{
-+	struct sgx_encl_mm *encl_mm = container_of(mn, struct sgx_encl_mm, mmu_notifier);
-+
-+	kfree(encl_mm);
-+}
-+
-+static const struct mmu_notifier_ops sgx_mmu_notifier_ops = {
-+	.release		= sgx_mmu_notifier_release,
-+	.free_notifier		= sgx_mmu_notifier_free,
-+};
-+
-+static struct sgx_encl_mm *sgx_encl_find_mm(struct sgx_encl *encl,
-+					    struct mm_struct *mm)
-+{
-+	struct sgx_encl_mm *encl_mm = NULL;
-+	struct sgx_encl_mm *tmp;
-+	int idx;
-+
-+	idx = srcu_read_lock(&encl->srcu);
-+
-+	list_for_each_entry_rcu(tmp, &encl->mm_list, list) {
-+		if (tmp->mm == mm) {
-+			encl_mm = tmp;
-+			break;
-+		}
-+	}
-+
-+	srcu_read_unlock(&encl->srcu, idx);
-+
-+	return encl_mm;
-+}
-+
-+int sgx_encl_mm_add(struct sgx_encl *encl, struct mm_struct *mm)
-+{
-+	struct sgx_encl_mm *encl_mm;
-+	int ret;
-+
-+	/* mm_list can be accessed only by a single thread at a time. */
-+	mmap_assert_write_locked(mm);
-+
-+	if (atomic_read(&encl->flags) & SGX_ENCL_DEAD)
-+		return -EINVAL;
-+
-+	/*
-+	 * mm_structs are kept on mm_list until the mm or the enclave dies,
-+	 * i.e. once an mm is off the list, it's gone for good, therefore it's
-+	 * impossible to get a false positive on @mm due to a stale mm_list.
-+	 */
-+	if (sgx_encl_find_mm(encl, mm))
-+		return 0;
-+
-+	encl_mm = kzalloc(sizeof(*encl_mm), GFP_KERNEL);
-+	if (!encl_mm)
-+		return -ENOMEM;
-+
-+	encl_mm->encl = encl;
-+	encl_mm->mm = mm;
-+	encl_mm->mmu_notifier.ops = &sgx_mmu_notifier_ops;
-+
-+	ret = __mmu_notifier_register(&encl_mm->mmu_notifier, mm);
-+	if (ret) {
-+		kfree(encl_mm);
-+		return ret;
-+	}
-+
-+	spin_lock(&encl->mm_lock);
-+	list_add_rcu(&encl_mm->list, &encl->mm_list);
-+	spin_unlock(&encl->mm_lock);
-+
-+	return 0;
-+}
-+
-+static void sgx_vma_open(struct vm_area_struct *vma)
-+{
-+	struct sgx_encl *encl = vma->vm_private_data;
-+
-+	if (!encl)
-+		return;
-+
-+	if (sgx_encl_mm_add(encl, vma->vm_mm))
-+		vma->vm_private_data = NULL;
-+}
-+
-+static unsigned int sgx_vma_fault(struct vm_fault *vmf)
-+{
-+	unsigned long addr = (unsigned long)vmf->address;
-+	struct vm_area_struct *vma = vmf->vma;
-+	struct sgx_encl *encl = vma->vm_private_data;
-+	struct sgx_encl_page *entry;
-+	int ret = VM_FAULT_NOPAGE;
-+	unsigned long pfn;
-+
-+	if (!encl)
-+		return VM_FAULT_SIGBUS;
-+
-+	mutex_lock(&encl->lock);
-+
-+	entry = sgx_encl_load_page(encl, addr);
-+	if (IS_ERR(entry)) {
-+		if (unlikely(PTR_ERR(entry) != -EBUSY))
-+			ret = VM_FAULT_SIGBUS;
-+
-+		goto out;
-+	}
-+
-+	if (!follow_pfn(vma, addr, &pfn))
-+		goto out;
-+
-+	ret = vmf_insert_pfn(vma, addr, PFN_DOWN(entry->epc_page->desc));
-+	if (ret != VM_FAULT_NOPAGE) {
-+		ret = VM_FAULT_SIGBUS;
-+		goto out;
-+	}
-+
-+out:
-+	mutex_unlock(&encl->lock);
-+	return ret;
-+}
-+
-+/**
-+ * sgx_encl_may_map() - Check if a requested VMA mapping is allowed
-+ * @encl:		an enclave pointer
-+ * @start:		lower bound of the address range, inclusive
-+ * @end:		upper bound of the address range, exclusive
-+ * @vm_prot_bits:	requested protections of the address range
-+ *
-+ * Iterate through the enclave pages contained within [@start, @end) to verify
-+ * the permissions requested by @vm_prot_bits do not exceed that of any enclave
-+ * page to be mapped.
-+ *
-+ * Return:
-+ *   0 on success,
-+ *   -EACCES if VMA permissions exceed enclave page permissions
-+ */
-+int sgx_encl_may_map(struct sgx_encl *encl, unsigned long start,
-+		     unsigned long end, unsigned long vm_flags)
-+{
-+	unsigned long vm_prot_bits = vm_flags & (VM_READ | VM_WRITE | VM_EXEC);
-+	unsigned long idx_start = PFN_DOWN(start);
-+	unsigned long idx_end = PFN_DOWN(end - 1);
-+	struct sgx_encl_page *page;
-+
-+	XA_STATE(xas, &encl->page_array, idx_start);
-+
-+	/*
-+	 * Disallow READ_IMPLIES_EXEC tasks as their VMA permissions might
-+	 * conflict with the enclave page permissions.
-+	 */
-+	if (current->personality & READ_IMPLIES_EXEC)
-+		return -EACCES;
-+
-+	xas_for_each(&xas, page, idx_end)
-+		if (!page || (~page->vm_max_prot_bits & vm_prot_bits))
-+			return -EACCES;
-+
-+	return 0;
-+}
-+
-+static int sgx_vma_mprotect(struct vm_area_struct *vma,
-+			    struct vm_area_struct **pprev, unsigned long start,
-+			    unsigned long end, unsigned long newflags)
-+{
-+	int ret;
-+
-+	ret = sgx_encl_may_map(vma->vm_private_data, start, end, newflags);
-+	if (ret)
-+		return ret;
-+
-+	return mprotect_fixup(vma, pprev, start, end, newflags);
-+}
-+
-+const struct vm_operations_struct sgx_vm_ops = {
-+	.open = sgx_vma_open,
-+	.fault = sgx_vma_fault,
-+	.mprotect = sgx_vma_mprotect,
-+};
-+
-+/**
-+ * sgx_encl_find - find an enclave
-+ * @mm:		mm struct of the current process
-+ * @addr:	address in the ELRANGE
-+ * @vma:	the resulting VMA
-+ *
-+ * Find an enclave identified by the given address. Give back a VMA that is
-+ * part of the enclave and located in that address. The VMA is given back if it
-+ * is a proper enclave VMA even if an &sgx_encl instance does not exist yet
-+ * (enclave creation has not been performed).
-+ *
-+ * Return:
-+ *   0 on success,
-+ *   -EINVAL if an enclave was not found,
-+ *   -ENOENT if the enclave has not been created yet
-+ */
-+int sgx_encl_find(struct mm_struct *mm, unsigned long addr,
-+		  struct vm_area_struct **vma)
-+{
-+	struct vm_area_struct *result;
-+	struct sgx_encl *encl;
-+
-+	result = find_vma(mm, addr);
-+	if (!result || result->vm_ops != &sgx_vm_ops || addr < result->vm_start)
-+		return -EINVAL;
-+
-+	encl = result->vm_private_data;
-+	*vma = result;
-+
-+	return encl ? 0 : -ENOENT;
-+}
-+
-+/**
-+ * sgx_encl_destroy() - destroy enclave resources
-+ * @encl:	an enclave pointer
-+ */
-+void sgx_encl_destroy(struct sgx_encl *encl)
-+{
-+	struct sgx_encl_page *entry;
-+	unsigned long index;
-+
-+	atomic_or(SGX_ENCL_DEAD, &encl->flags);
-+
-+	xa_for_each(&encl->page_array, index, entry) {
-+		if (entry->epc_page) {
-+			sgx_free_epc_page(entry->epc_page);
-+			encl->secs_child_cnt--;
-+			entry->epc_page = NULL;
-+		}
-+
-+		kfree(entry);
-+	}
-+
-+	xa_destroy(&encl->page_array);
-+
-+	if (!encl->secs_child_cnt && encl->secs.epc_page) {
-+		sgx_free_epc_page(encl->secs.epc_page);
-+		encl->secs.epc_page = NULL;
-+	}
-+}
-+
-+/**
-+ * sgx_encl_release - Destroy an enclave instance
-+ * @kref:	address of a kref inside &sgx_encl
-+ *
-+ * Used together with kref_put(). Frees all the resources associated with the
-+ * enclave and the instance itself.
-+ */
-+void sgx_encl_release(struct kref *ref)
-+{
-+	struct sgx_encl *encl = container_of(ref, struct sgx_encl, refcount);
-+
-+	sgx_encl_destroy(encl);
-+
-+	if (encl->backing)
-+		fput(encl->backing);
-+
-+	cleanup_srcu_struct(&encl->srcu);
-+
-+	WARN_ON_ONCE(!list_empty(&encl->mm_list));
-+
-+	/* Detect EPC page leak's. */
-+	WARN_ON_ONCE(encl->secs_child_cnt);
-+	WARN_ON_ONCE(encl->secs.epc_page);
-+
-+	kfree(encl);
-+}
-diff --git a/arch/x86/kernel/cpu/sgx/encl.h b/arch/x86/kernel/cpu/sgx/encl.h
-new file mode 100644
-index 000000000000..8ff445476657
---- /dev/null
-+++ b/arch/x86/kernel/cpu/sgx/encl.h
-@@ -0,0 +1,85 @@
-+/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
-+/**
-+ * Copyright(c) 2016-19 Intel Corporation.
-+ */
-+#ifndef _X86_ENCL_H
-+#define _X86_ENCL_H
-+
-+#include <linux/cpumask.h>
-+#include <linux/kref.h>
-+#include <linux/list.h>
-+#include <linux/mm_types.h>
-+#include <linux/mmu_notifier.h>
-+#include <linux/mutex.h>
-+#include <linux/notifier.h>
-+#include <linux/srcu.h>
-+#include <linux/workqueue.h>
-+#include <linux/xarray.h>
-+#include "sgx.h"
-+
-+/**
-+ * enum sgx_encl_page_desc - defines bits for an enclave page's descriptor
-+ * %SGX_ENCL_PAGE_ADDR_MASK:		Holds the virtual address of the page.
-+ *
-+ * The page address for SECS is zero and is used by the subsystem to recognize
-+ * the SECS page.
-+ */
-+enum sgx_encl_page_desc {
-+	/* Bits 11:3 are available when the page is not swapped. */
-+	SGX_ENCL_PAGE_ADDR_MASK		= PAGE_MASK,
-+};
-+
-+#define SGX_ENCL_PAGE_ADDR(page) \
-+	((page)->desc & SGX_ENCL_PAGE_ADDR_MASK)
-+
-+struct sgx_encl_page {
-+	unsigned long desc;
-+	unsigned long vm_max_prot_bits;
-+	struct sgx_epc_page *epc_page;
-+	struct sgx_encl *encl;
-+};
-+
-+enum sgx_encl_flags {
-+	SGX_ENCL_CREATED	= BIT(0),
-+	SGX_ENCL_INITIALIZED	= BIT(1),
-+	SGX_ENCL_DEBUG		= BIT(2),
-+	SGX_ENCL_DEAD		= BIT(3),
-+	SGX_ENCL_IOCTL		= BIT(4),
-+};
-+
-+struct sgx_encl_mm {
-+	struct sgx_encl *encl;
-+	struct mm_struct *mm;
-+	struct list_head list;
-+	struct mmu_notifier mmu_notifier;
-+};
-+
-+struct sgx_encl {
-+	atomic_t flags;
-+	unsigned int page_cnt;
-+	unsigned int secs_child_cnt;
-+	struct mutex lock;
-+	struct list_head mm_list;
-+	spinlock_t mm_lock;
-+	struct file *backing;
-+	struct kref refcount;
-+	struct srcu_struct srcu;
-+	unsigned long base;
-+	unsigned long size;
-+	unsigned long ssaframesize;
-+	struct xarray page_array;
-+	struct sgx_encl_page secs;
-+	cpumask_t cpumask;
-+};
-+
-+extern const struct vm_operations_struct sgx_vm_ops;
-+
-+int sgx_encl_find(struct mm_struct *mm, unsigned long addr,
-+		  struct vm_area_struct **vma);
-+void sgx_encl_destroy(struct sgx_encl *encl);
-+void sgx_encl_release(struct kref *ref);
-+int sgx_encl_mm_add(struct sgx_encl *encl, struct mm_struct *mm);
-+int sgx_encl_may_map(struct sgx_encl *encl, unsigned long start,
-+		     unsigned long end, unsigned long vm_flags);
-+
-+#endif /* _X86_ENCL_H */
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index 97c6895fb6c9..4137254fb29e 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -9,6 +9,8 @@
- #include <linux/sched/mm.h>
- #include <linux/sched/signal.h>
- #include <linux/slab.h>
-+#include "driver.h"
-+#include "encl.h"
- #include "encls.h"
+v3:
+Fixed an issue when CONFIG_PKCS7_MESSAGE_PARSER is not builtin and defined
+as a module instead, pointed out by Randy Dunlap
+
+v2: 
+Fixed build issue reported by kernel test robot <lkp@intel.com>
+Commit message update (suggested by Jarkko Sakkinen)
+---
+ certs/blacklist.c                             | 32 +++++++++++++++++++
+ certs/blacklist.h                             | 12 +++++++
+ certs/system_keyring.c                        |  6 ++++
+ include/keys/system_keyring.h                 | 11 +++++++
+ .../platform_certs/keyring_handler.c          | 11 +++++++
+ 5 files changed, 72 insertions(+)
+
+diff --git a/certs/blacklist.c b/certs/blacklist.c
+index 6514f9ebc943..4adac7f8fd94 100644
+--- a/certs/blacklist.c
++++ b/certs/blacklist.c
+@@ -100,6 +100,38 @@ int mark_hash_blacklisted(const char *hash)
+ 	return 0;
+ }
  
- struct sgx_epc_section sgx_epc_sections[SGX_MAX_EPC_SECTIONS];
-@@ -260,6 +262,8 @@ static bool __init sgx_page_cache_init(void)
++int mark_key_revocationlisted(const char *data, size_t size)
++{
++	key_ref_t key;
++
++	key = key_create_or_update(make_key_ref(blacklist_keyring, true),
++				   "asymmetric",
++				   NULL,
++				   data,
++				   size,
++				   ((KEY_POS_ALL & ~KEY_POS_SETATTR) | KEY_USR_VIEW),
++				   KEY_ALLOC_NOT_IN_QUOTA | KEY_ALLOC_BUILT_IN);
++
++	if (IS_ERR(key)) {
++		pr_err("Problem with revocation key (%ld)\n", PTR_ERR(key));
++		return PTR_ERR(key);
++	}
++
++	return 0;
++}
++
++int is_key_revocationlisted(struct pkcs7_message *pkcs7)
++{
++	int ret;
++
++	ret = validate_trust(pkcs7, blacklist_keyring);
++
++	if (ret == 0)
++		return -EKEYREJECTED;
++
++	return -ENOKEY;
++}
++
+ /**
+  * is_hash_blacklisted - Determine if a hash is blacklisted
+  * @hash: The hash to be checked as a binary blob
+diff --git a/certs/blacklist.h b/certs/blacklist.h
+index 1efd6fa0dc60..420bb7c86e07 100644
+--- a/certs/blacklist.h
++++ b/certs/blacklist.h
+@@ -1,3 +1,15 @@
+ #include <linux/kernel.h>
++#include <linux/errno.h>
++#include <crypto/pkcs7.h>
  
- static void __init sgx_init(void)
+ extern const char __initconst *const blacklist_hashes[];
++
++#ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
++#define validate_trust pkcs7_validate_trust
++#else
++static inline int validate_trust(struct pkcs7_message *pkcs7,
++				 struct key *trust_keyring)
++{
++	return -ENOKEY;
++}
++#endif
+diff --git a/certs/system_keyring.c b/certs/system_keyring.c
+index 798291177186..f8ea96219155 100644
+--- a/certs/system_keyring.c
++++ b/certs/system_keyring.c
+@@ -241,6 +241,12 @@ int verify_pkcs7_message_sig(const void *data, size_t len,
+ 			pr_devel("PKCS#7 platform keyring is not available\n");
+ 			goto error;
+ 		}
++
++		ret = is_key_revocationlisted(pkcs7);
++		if (ret != -ENOKEY) {
++			pr_devel("PKCS#7 platform key revocationlisted\n");
++			goto error;
++		}
+ 	}
+ 	ret = pkcs7_validate_trust(pkcs7, trusted_keys);
+ 	if (ret < 0) {
+diff --git a/include/keys/system_keyring.h b/include/keys/system_keyring.h
+index fb8b07daa9d1..b6991cfe1b6d 100644
+--- a/include/keys/system_keyring.h
++++ b/include/keys/system_keyring.h
+@@ -31,11 +31,14 @@ extern int restrict_link_by_builtin_and_secondary_trusted(
+ #define restrict_link_by_builtin_and_secondary_trusted restrict_link_by_builtin_trusted
+ #endif
+ 
++extern struct pkcs7_message *pkcs7;
+ #ifdef CONFIG_SYSTEM_BLACKLIST_KEYRING
+ extern int mark_hash_blacklisted(const char *hash);
++extern int mark_key_revocationlisted(const char *data, size_t size);
+ extern int is_hash_blacklisted(const u8 *hash, size_t hash_len,
+ 			       const char *type);
+ extern int is_binary_blacklisted(const u8 *hash, size_t hash_len);
++extern int is_key_revocationlisted(struct pkcs7_message *pkcs7);
+ #else
+ static inline int is_hash_blacklisted(const u8 *hash, size_t hash_len,
+ 				      const char *type)
+@@ -47,6 +50,14 @@ static inline int is_binary_blacklisted(const u8 *hash, size_t hash_len)
  {
-+	int ret;
-+
- 	if (!boot_cpu_has(X86_FEATURE_SGX))
- 		return;
+ 	return 0;
+ }
++static inline int mark_key_revocationlisted(const char *data, size_t size)
++{
++	return 0;
++}
++static inline int is_key_revocationlisted(struct pkcs7_message *pkcs7)
++{
++	return -ENOKEY;
++}
+ #endif
  
-@@ -269,8 +273,15 @@ static void __init sgx_init(void)
- 	if (!sgx_page_reclaimer_init())
- 		goto err_page_cache;
+ #ifdef CONFIG_IMA_BLACKLIST_KEYRING
+diff --git a/security/integrity/platform_certs/keyring_handler.c b/security/integrity/platform_certs/keyring_handler.c
+index c5ba695c10e3..cc5a43804bc4 100644
+--- a/security/integrity/platform_certs/keyring_handler.c
++++ b/security/integrity/platform_certs/keyring_handler.c
+@@ -55,6 +55,15 @@ static __init void uefi_blacklist_binary(const char *source,
+ 	uefi_blacklist_hash(source, data, len, "bin:", 4);
+ }
  
-+	ret = sgx_drv_init();
-+	if (ret)
-+		goto err_kthread;
++/*
++ * Revocationlist the X509 cert
++ */
++static __init void uefi_revocationlist_x509(const char *source,
++					    const void *data, size_t len)
++{
++	mark_key_revocationlisted(data, len);
++}
 +
- 	return;
- 
-+err_kthread:
-+	kthread_stop(ksgxswapd_tsk);
-+
- err_page_cache:
- 	sgx_page_cache_teardown();
+ /*
+  * Return the appropriate handler for particular signature list types found in
+  * the UEFI db and MokListRT tables.
+@@ -76,5 +85,7 @@ __init efi_element_handler_t get_handler_for_dbx(const efi_guid_t *sig_type)
+ 		return uefi_blacklist_x509_tbs;
+ 	if (efi_guidcmp(*sig_type, efi_cert_sha256_guid) == 0)
+ 		return uefi_blacklist_binary;
++	if (efi_guidcmp(*sig_type, efi_cert_x509_guid) == 0)
++		return uefi_revocationlist_x509;
+ 	return 0;
  }
 -- 
-2.25.1
+2.18.1
 
