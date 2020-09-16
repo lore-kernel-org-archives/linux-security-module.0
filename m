@@ -2,150 +2,142 @@ Return-Path: <SRS0=TMVc=CZ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1701CC43461
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Sep 2020 21:06:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3FADC433E2
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Sep 2020 22:52:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BC28B206D4
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Sep 2020 21:06:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F8C62087D
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Sep 2020 22:52:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="W7uHI0jP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726578AbgIPVG5 (ORCPT
+        id S1726280AbgIPWwB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 16 Sep 2020 17:06:57 -0400
-Received: from mga06.intel.com ([134.134.136.31]:7845 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726302AbgIPQOr (ORCPT
+        Wed, 16 Sep 2020 18:52:01 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35042 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726187AbgIPWwB (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 16 Sep 2020 12:14:47 -0400
-IronPort-SDR: lDQtUxIFNjuogwTTrnwCLSMGnQ6wKRi6fPMKYDC/yfEJwO4g7e0b2yfYCm6jNCyI/MXB8L0LEh
- 72SDh5bX8mXQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9746"; a="221058448"
-X-IronPort-AV: E=Sophos;i="5.76,433,1592895600"; 
-   d="scan'208";a="221058448"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2020 09:12:13 -0700
-IronPort-SDR: 2vjGeqnxUxN7atVeLloPGSsd1S4TArm4bw6REZOyt7KtQJYUyTucIlnIWqoeBQxkOksVlh6aBQ
- kGb9t07g4M8A==
-X-IronPort-AV: E=Sophos;i="5.76,433,1592895600"; 
-   d="scan'208";a="451916049"
-Received: from scusackx-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.45.87])
-  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2020 09:12:10 -0700
-Date:   Wed, 16 Sep 2020 19:12:08 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Eric Snowberg <eric.snowberg@oracle.com>
-Cc:     dhowells@redhat.com, dwmw2@infradead.org, jmorris@namei.org,
-        serge@hallyn.com, nayna@linux.ibm.com, erichte@linux.ibm.com,
-        mpe@ellerman.id.au, zohar@linux.ibm.com, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, rdunlap@infradead.org
-Subject: Re: [PATCH v3] certs: Add EFI_CERT_X509_GUID support for dbx entries
-Message-ID: <20200916161208.GE21026@linux.intel.com>
-References: <20200911182230.62266-1-eric.snowberg@oracle.com>
- <20200914181227.GF9369@linux.intel.com>
- <F25F6F0E-7E13-4C9D-A7BA-33CDEF7074F2@oracle.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <F25F6F0E-7E13-4C9D-A7BA-33CDEF7074F2@oracle.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-Sender: owner-linux-security-module@vger.kernel.org
+        Wed, 16 Sep 2020 18:52:01 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 08GMWFka096278;
+        Wed, 16 Sep 2020 18:51:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=mD5J2m9mVxfbwRwuig36H0SZbVnvMzPmhArUub6MZiY=;
+ b=W7uHI0jPQgJHeOZg/zw7uyIeUFVMIhMMkERp7XmYUE4gkdrZa4jMRIpcb2bV/cc414QO
+ tUhHgAM63GM6hxvusOR85tAqXzuiIuF4LPw38xMey7eLAHIkahFpNKyB2dfSUG974mbr
+ 4c9hGsl5GiNOktc66BbKbiANMYLY9TNW/c+zHfu1/HI1a+WHbn35QUzwZGLv+sY3mOz9
+ 6b1pHFbl4VlH56jQtp/7Ox6lq+h2MoBDTnJF/mU9aKWyZOV0NDhbzImPZ/XrIylH6JkG
+ zBXQ2Ce2YaUCHLNAdTySdsEbks+DK78KRSiL/u0QIg3nxCWPXZccknykfgu69O9/ZtNs BQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 33kt9ba7b6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 16 Sep 2020 18:51:57 -0400
+Received: from m0098394.ppops.net (m0098394.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 08GMpuNL019444;
+        Wed, 16 Sep 2020 18:51:56 -0400
+Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 33kt9ba7aq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 16 Sep 2020 18:51:56 -0400
+Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
+        by ppma03ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 08GMmeu0031548;
+        Wed, 16 Sep 2020 22:51:54 GMT
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
+        by ppma03ams.nl.ibm.com with ESMTP id 33k6esh45k-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 16 Sep 2020 22:51:54 +0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 08GMppkZ19464486
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 16 Sep 2020 22:51:52 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DEC0942045;
+        Wed, 16 Sep 2020 22:51:51 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 100CD42042;
+        Wed, 16 Sep 2020 22:51:50 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.98.9])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 16 Sep 2020 22:51:49 +0000 (GMT)
+Message-ID: <1e1177862e4465cadbb65ee3ad0adfae3f4ec92e.camel@linux.ibm.com>
+Subject: Re: [PATCH v3] ima: Fix NULL pointer dereference in ima_file_hash
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     KP Singh <kpsingh@chromium.org>, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Cc:     Florent Revest <revest@chromium.org>,
+        James Morris <jmorris@namei.org>,
+        Kees Cook <keescook@chromium.org>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Jann Horn <jannh@google.com>
+Date:   Wed, 16 Sep 2020 18:51:49 -0400
+In-Reply-To: <20200916180242.430668-1-kpsingh@chromium.org>
+References: <20200916180242.430668-1-kpsingh@chromium.org>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-09-16_13:2020-09-16,2020-09-16 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
+ priorityscore=1501 spamscore=0 mlxscore=0 impostorscore=0 malwarescore=0
+ suspectscore=0 bulkscore=0 adultscore=0 lowpriorityscore=0 clxscore=1015
+ mlxlogscore=866 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2006250000 definitions=main-2009160160
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Sep 15, 2020 at 09:42:27AM -0600, Eric Snowberg wrote:
+On Wed, 2020-09-16 at 18:02 +0000, KP Singh wrote:
+> From: KP Singh <kpsingh@google.com>
 > 
-> > On Sep 14, 2020, at 12:12 PM, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com> wrote:
-> > 
-> > On Fri, Sep 11, 2020 at 02:22:30PM -0400, Eric Snowberg wrote:
-> >> The Secure Boot Forbidden Signature Database, dbx, contains a list of now
-> >> revoked signatures and keys previously approved to boot with UEFI Secure
-> >> Boot enabled.  The dbx is capable of containing any number of
-> >> EFI_CERT_X509_SHA256_GUID, EFI_CERT_SHA256_GUID, and EFI_CERT_X509_GUID
-> >> entries.
-> >> 
-> >> Currently when EFI_CERT_X509_GUID are contained in the dbx, the entries are
-> >> skipped.
-> >> 
-> >> Add support for EFI_CERT_X509_GUID dbx entries. When a EFI_CERT_X509_GUID
-> >> is found, it is added as an asymmetrical key to the .blacklist keyring.
-> >> Anytime the .platform keyring is used, the keys in the .blacklist keyring
-> >> are referenced, if a matching key is found, the key will be rejected.
-> >> 
-> >> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
-> >> ---
-> >> v3:
-> >> Fixed an issue when CONFIG_PKCS7_MESSAGE_PARSER is not builtin and defined
-> >> as a module instead, pointed out by Randy Dunlap
-> >> 
-> >> v2: 
-> >> Fixed build issue reported by kernel test robot <lkp@intel.com>
-> >> Commit message update (suggested by Jarkko Sakkinen)
-> >> ---
-> >> certs/blacklist.c                             | 33 +++++++++++++++++++
-> >> certs/blacklist.h                             | 12 +++++++
-> >> certs/system_keyring.c                        |  6 ++++
-> >> include/keys/system_keyring.h                 | 11 +++++++
-> >> .../platform_certs/keyring_handler.c          | 11 +++++++
-> >> 5 files changed, 73 insertions(+)
-> >> 
-> >> diff --git a/certs/blacklist.c b/certs/blacklist.c
-> >> index 6514f9ebc943..3d1514ba5d47 100644
-> >> --- a/certs/blacklist.c
-> >> +++ b/certs/blacklist.c
-> >> @@ -100,6 +100,39 @@ int mark_hash_blacklisted(const char *hash)
-> >> 	return 0;
-> >> }
-> >> 
-> >> +int mark_key_revocationlisted(const char *data, size_t size)
-> >> +{
-> >> +	key_ref_t key;
-> >> +
-> >> +	key = key_create_or_update(make_key_ref(blacklist_keyring, true),
-> >> +				   "asymmetric",
-> >> +				   NULL,
-> >> +				   data,
-> >> +				   size,
-> >> +				   ((KEY_POS_ALL & ~KEY_POS_SETATTR) | KEY_USR_VIEW),
-> >> +				   KEY_ALLOC_NOT_IN_QUOTA | KEY_ALLOC_BUILT_IN);
-> >> +
-> >> +	if (IS_ERR(key)) {
-> >> +		pr_err("Problem with revocation key (%ld)\n", PTR_ERR(key));
-> >> +		return PTR_ERR(key);
-> >> +	}
-> >> +
-> >> +	return 0;
-> >> +}
-> >> +
-> >> +int is_key_revocationlisted(struct pkcs7_message *pkcs7)
-> >> +{
-> >> +	int ret;
-> >> +
-> >> +	ret = validate_trust(pkcs7, blacklist_keyring);
-> >> +
-> >> +	if (ret == 0)
-> >> +		return -EKEYREJECTED;
-> >> +
-> >> +	return -ENOKEY;
-> >> +}
-> >> +EXPORT_SYMBOL_GPL(is_key_revocationlisted);
-> > 
-> > Hmm... ignore my previous comment about this. Export symbol is called
-> > only by system keyring code.
-> > 
-> > Would be best if the commit message would explicitly reason new exports.
+> ima_file_hash can be called when there is no iint->ima_hash available
+> even though the inode exists in the integrity cache. It is fairly
+> common for a file to not have a hash. (e.g. an mknodat, prior to the
+> file being closed).
 > 
-> I don’t see a good reason to keep the export now, I’ll remove it from the
-> next version.  Thanks.
+> Another example where this can happen (suggested by Jann Horn):
+> 
+> Process A does:
+> 
+> 	while(1) {
+> 		unlink("/tmp/imafoo");
+> 		fd = open("/tmp/imafoo", O_RDWR|O_CREAT|O_TRUNC, 0700);
+> 		if (fd == -1) {
+> 			perror("open");
+> 			continue;
+> 		}
+> 		write(fd, "A", 1);
+> 		close(fd);
+> 	}
+> 
+> and Process B does:
+> 
+> 	while (1) {
+> 		int fd = open("/tmp/imafoo", O_RDONLY);
+> 		if (fd == -1)
+> 			continue;
+>     		char *mapping = mmap(NULL, 0x1000, PROT_READ|PROT_EXEC,
+> 			 	     MAP_PRIVATE, fd, 0);
+> 		if (mapping != MAP_FAILED)
+> 			munmap(mapping, 0x1000);
+> 		close(fd);
+>   	}
+> 
+> Due to the race to get the iint->mutex between ima_file_hash and
+> process_measurement iint->ima_hash could still be NULL.
+> 
+> Fixes: 6beea7afcc72 ("ima: add the ability to query the cached hash of a given file")
+> Signed-off-by: KP Singh <kpsingh@google.com>
+> Reviewed-by: Florent Revest <revest@chromium.org>
 
-OK, great, thanks.
+Thanks, the patch is queued in next-integrity-testing.
 
-Was somewhat puzzled with this for a while :-)
+Mimi
 
-/Jarkko
