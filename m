@@ -2,118 +2,83 @@ Return-Path: <SRS0=TMVc=CZ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 387B6C433E2
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Sep 2020 21:03:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B11AC433E2
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Sep 2020 21:05:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D4E85206D4
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Sep 2020 21:03:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A7D16206BE
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Sep 2020 21:04:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="PgRGQyZW"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="AZNeyeOM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726247AbgIPVDH (ORCPT
+        id S1726570AbgIPVE5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 16 Sep 2020 17:03:07 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46746 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726437AbgIPQPE (ORCPT
+        Wed, 16 Sep 2020 17:04:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48476 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726389AbgIPQPB (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 16 Sep 2020 12:15:04 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 08GG1wO1023944;
-        Wed, 16 Sep 2020 12:14:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=HP4yZlq52JSVWPrTLzkNCcxKiqvvHrgoi02QnEzI7Uc=;
- b=PgRGQyZWtUG3G0tNTDe7d6ISguA6J2p2alTdxHfMoZrqKehGQ+ZLKeXyy8CNKHIqMp5o
- igoNiRGR3NqSO4vpvoe+3tkqwy1mG6UJ0szMYr3UT2P8G5ddh5E1P4tbrCpOTeyEV4Tu
- sznJNmH4ZSyXD7ddKfWVmAEuZMGoz7g9ITezlWUEXl/uFjXjs+hHVVlWpdNatjXOkJeF
- MoxQWNTLJSMpXmusuVVjCbXUHi+xULHPPSCVlUnyfQ7f26n1sgiHSU2C7tItU764/VFt
- 9wawM2oHCTJHRhd797opCl4lFqxxX36fzw/OKyPUi3p8WNfhOlBTHDQU45xs5Z7ZP0U2 2w== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 33knrk8mwy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 16 Sep 2020 12:14:56 -0400
-Received: from m0098416.ppops.net (m0098416.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 08GG2PNH026983;
-        Wed, 16 Sep 2020 12:14:56 -0400
-Received: from ppma04fra.de.ibm.com (6a.4a.5195.ip4.static.sl-reverse.com [149.81.74.106])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 33knrk8mw8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 16 Sep 2020 12:14:56 -0400
-Received: from pps.filterd (ppma04fra.de.ibm.com [127.0.0.1])
-        by ppma04fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 08GFvBsn030698;
-        Wed, 16 Sep 2020 16:14:54 GMT
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
-        by ppma04fra.de.ibm.com with ESMTP id 33k64s8e5k-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 16 Sep 2020 16:14:54 +0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 08GGEqxk32178510
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 16 Sep 2020 16:14:52 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E7F224C04A;
-        Wed, 16 Sep 2020 16:14:51 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7C1D84C040;
-        Wed, 16 Sep 2020 16:14:50 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.98.9])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 16 Sep 2020 16:14:50 +0000 (GMT)
-Message-ID: <681455532936011e3dc5e0050fddc2c3a3a7fc3c.camel@linux.ibm.com>
-Subject: Re: [PATCH v2 00/12] IMA/EVM fixes
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>, mjg59@google.com
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
-Date:   Wed, 16 Sep 2020 12:14:49 -0400
-In-Reply-To: <20200904092339.19598-1-roberto.sassu@huawei.com>
-References: <20200904092339.19598-1-roberto.sassu@huawei.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-09-16_10:2020-09-16,2020-09-16 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 impostorscore=0 mlxlogscore=999 spamscore=0
- mlxscore=0 lowpriorityscore=0 adultscore=0 bulkscore=0 phishscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2009160114
+        Wed, 16 Sep 2020 12:15:01 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 101DEC0D9419
+        for <linux-security-module@vger.kernel.org>; Wed, 16 Sep 2020 07:52:06 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id o5so7173083wrn.13
+        for <linux-security-module@vger.kernel.org>; Wed, 16 Sep 2020 07:52:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=Jprj3Ljb1hJqVas03n8biEIlmZI1CNLC20MekGwZ6qM=;
+        b=AZNeyeOMfnv1iw6EUbZxwoPYMEiCX84IG2zN8hU26Bn77jdCTqA4AnlrrvQj5LSZoH
+         Xw0/DwrzjcgpzUOhzGqZiLEU07teqHaVbZelkyFe0jmVlJiYh2xNrTWb6M8qYbW8xPHC
+         8vZ5C/bAiUZA87xhIrHQSpggRDb+fASpYhozE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=Jprj3Ljb1hJqVas03n8biEIlmZI1CNLC20MekGwZ6qM=;
+        b=TtSXl8qQF2GkhwHGAoV5a//UjLzaGWbkzs3tJr1NXKvOfeK3yqlN+XFwmYu22Cuywn
+         CQ/WUar1uC0Cyc8y4XVVWEHOgc1wo7Rh4+GZ1WlZW5IMlTsV1fiose1usaf5ZYbW8jex
+         GCpnESvwaQ/a7m4gy4vM97zb0bbRhlHUNIenxKoobrthPtpwjhapbZ15QfbXxxzh4eBh
+         25DVnYEwa7NZpqpzGMGVF6+wVvAbs1LS9J8X++5apk8l8Wtma6yMMM467oqd4hQy6Peh
+         vUpxRgklETZV8f8rDWOGwdgJ7B5VqEQJ+t+RtxLXQQIRxjy6OaIBa2H7E0lxahDb2lto
+         aZIA==
+X-Gm-Message-State: AOAM532pf6h4AlyGmZ0XxIjrcticsTDYkIg3AaILWkWXDK/8okiLUfZy
+        27h916Mt4GUa70yrB4+ivVIRBb+JIBcPXZkk3iL/M7A/yrGRekiv
+X-Google-Smtp-Source: ABdhPJzs4OEsf1kM0ZNCGKyUVbO+v3o4OUzHCNsOvXaX4m5BYp7TOLc7AQVnFz3jjb00B8Zr0J0N8RKNgx+x8wr0R/w=
+X-Received: by 2002:a5d:43cf:: with SMTP id v15mr27884370wrr.269.1600267923353;
+ Wed, 16 Sep 2020 07:52:03 -0700 (PDT)
+MIME-Version: 1.0
+From:   KP Singh <kpsingh@chromium.org>
+Date:   Wed, 16 Sep 2020 16:51:52 +0200
+Message-ID: <CACYkzJ6fVfQOEztvsbMHXg7y3OkSUUdZ+dkg7pQAPb0GDcUxJg@mail.gmail.com>
+Subject: [TEST]: Patches not making it to the lists
+To:     Linux Security Module list <linux-security-module@vger.kernel.org>
+Cc:     James Morris <jmorris@namei.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Roberto,
+The mailing lists seem to be silently dropping my patches. it gets
+delivered to the CC'ed folks but does not appear any archives or
+delivered to the subscribers. The patch is not in HTML and was sent
+using git send-email.
 
-On Fri, 2020-09-04 at 11:23 +0200, Roberto Sassu wrote:
-> This patch set includes various fixes for IMA and EVM.
-> 
-> Patches 1-3 are trivial fixes. 
+I don't get a bounce back either and replying-all does not help (my
+colleague tried it as well and it did not appear on the list)
 
-I've queued these patches in the next-integrity-testing branch for now.
-When reposting this patch set please replace the cover letter subject
-line with a more appropriate one.
+I can think of two possibilities:
 
-> The remaining improve support and usability
-> of EVM portable signatures. In particular patch 4 allows EVM to be used
-> without an HMAC key.
+- My email is triggering a spam filter. In which case this email won't
+be delivered either.
+- The body of the patch is causing something to crash on the mailserver.
 
-EVM already supports using EVM portable and immutable sigatures without
-an HMAC key.   
+Here's the patch ("ima: Fix NULL pointer dereference in
+ima_file_hash") on a github gist for your reference:
 
-I was able to apply this patch set, but patch 10/12 does not apply
-cleanly due to the "fallthrough" line.  Please hold off on reposting,
-until I've finished reviewing the entire patch set.
+https://gist.githubusercontent.com/sinkap/6dd3829a8259343a6b178cef3f59342b/raw/2b3152a48d77b1c65d0e1b5b8b2e8b6ae6d04ec5/ima.patch
 
-thanks,
-
-Mimi
-
+- KP
