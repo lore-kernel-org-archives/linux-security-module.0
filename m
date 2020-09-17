@@ -2,94 +2,177 @@ Return-Path: <SRS0=t07G=C2=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F764C2BBD1
-	for <linux-security-module@archiver.kernel.org>; Thu, 17 Sep 2020 16:25:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F191C43461
+	for <linux-security-module@archiver.kernel.org>; Thu, 17 Sep 2020 17:32:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5B5702072E
-	for <linux-security-module@archiver.kernel.org>; Thu, 17 Sep 2020 16:25:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE79D22226
+	for <linux-security-module@archiver.kernel.org>; Thu, 17 Sep 2020 17:32:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i7O5uCFi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728511AbgIQQZj (ORCPT
+        id S1726520AbgIQRc2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 17 Sep 2020 12:25:39 -0400
-Received: from mga12.intel.com ([192.55.52.136]:44028 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728180AbgIQQZ0 (ORCPT
+        Thu, 17 Sep 2020 13:32:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59272 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726343AbgIQRcX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 17 Sep 2020 12:25:26 -0400
-IronPort-SDR: DsXWU7/+aVl4TAJEdhk5F6Fs+Phw9NrPRiCQWH7IGatsQU9yHxXH632tOg0o67dpRUIRpldq1g
- ppDil8as2W/A==
-X-IronPort-AV: E=McAfee;i="6000,8403,9747"; a="139236721"
-X-IronPort-AV: E=Sophos;i="5.77,271,1596524400"; 
-   d="scan'208";a="139236721"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2020 09:25:17 -0700
-IronPort-SDR: PDAql5mIiHxBEiUG7vy+HU9oL6HWgsVWHNIh7FEw8CEQMferWTmRWED5XCtGpsb0o5BI7eIdwZ
- xfH048D/iB3A==
-X-IronPort-AV: E=Sophos;i="5.77,271,1596524400"; 
-   d="scan'208";a="452375009"
-Received: from sdompke-mobl.ger.corp.intel.com (HELO localhost) ([10.249.45.123])
-  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2020 09:25:08 -0700
-Date:   Thu, 17 Sep 2020 19:25:06 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Sumit Garg <sumit.garg@linaro.org>
-Cc:     zohar@linux.ibm.com, jejb@linux.ibm.com, dhowells@redhat.com,
-        jens.wiklander@linaro.org, corbet@lwn.net, jmorris@namei.org,
-        serge@hallyn.com, casey@schaufler-ca.com, janne.karhunen@gmail.com,
-        daniel.thompson@linaro.org, Markus.Wamser@mixed-mode.de,
-        lhinds@redhat.com, keyrings@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        op-tee@lists.trustedfirmware.org
-Subject: Re: [PATCH v6 1/4] KEYS: trusted: Add generic trusted keys framework
-Message-ID: <20200917162506.GC9750@linux.intel.com>
-References: <1600350398-4813-1-git-send-email-sumit.garg@linaro.org>
- <1600350398-4813-2-git-send-email-sumit.garg@linaro.org>
- <20200917162142.GB9750@linux.intel.com>
+        Thu, 17 Sep 2020 13:32:23 -0400
+Received: from mail-qk1-x741.google.com (mail-qk1-x741.google.com [IPv6:2607:f8b0:4864:20::741])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8D16C06178B;
+        Thu, 17 Sep 2020 10:31:52 -0700 (PDT)
+Received: by mail-qk1-x741.google.com with SMTP id t138so3111591qka.0;
+        Thu, 17 Sep 2020 10:31:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=AKD/9E79SiZQSW8oLqIokHA8vYGAi3tIl8g3KfMvNZo=;
+        b=i7O5uCFiTKcXzgLkwDex6HWSQBoUI+9kgqEAVg2IH/LpTwrClxKKk48Hku+F9EaVEj
+         ik/CjXF+lBlDqP6VAi6xR5NYYcLqNgA3afDwEQEo6/zb5T2v2Ag+YMtxbm5E2qoe8z70
+         mnl6tDHo5gMC/OehcctCXL2bhQgDrmj2nogKnA5PocP1/o/8VUDM9VOuhVIrSnMN93fB
+         q5BweGKQuuWvdkEcrotqmZht9Hj1YvKOXMr0H8acngAvsJE9IWX6nHObFtoOipQIpuaz
+         UmSNjz1X7WKQ55jMtPjBR81Q9Wi5l9FgtvDeOzIcXMN/ptl3E0NVxr584KxtJ2YYBLuS
+         mmOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=AKD/9E79SiZQSW8oLqIokHA8vYGAi3tIl8g3KfMvNZo=;
+        b=cTZctJMH9XkfDjIrURSWTJvqFCHiU079barNXca4eR22+ihFqCO351X++ZKxWlXETu
+         HQ+WAp5gP1tHCh7dxJ+KoT5cKDMfWRyQmFD1Jw1w690F+X5ElNhYMlaBwgI8cam/Kywx
+         Bl4G8KrT8ortg+3OoaN8MxGGO4CnU85/gJ8lXG8gBRAb0ZOExzCwafZKQ+SqRDMFrm42
+         UhfG/REKF6gcAvGT5uVxBc/kiFJE0TggjDa/ZvJxOz7WB1WiHJ13OkR/hSpetM5Z7TOa
+         3epLuiGKCDh4IyNvoSqI7bzHAjvFXQiuHTHnWfubuEGc+XTT0X9yUdHXNRUqaQjpRBKT
+         1imw==
+X-Gm-Message-State: AOAM5300PwifwQiL2DpTBWF6o5Nhjv33mQytD7p4Df61PDN5UUz0ci5z
+        U0RsnBZYh4LLvoG9omWEDkk=
+X-Google-Smtp-Source: ABdhPJw7RbnGGgOX1j37sVcKkhBWi28KOF3PvRne37dN6DIZIQo2h0vEj4EjBDtBZObYBFIXls2IVQ==
+X-Received: by 2002:a37:54a:: with SMTP id 71mr26161702qkf.407.1600363912118;
+        Thu, 17 Sep 2020 10:31:52 -0700 (PDT)
+Received: from puritycontrol.fios-router.home (pool-96-234-167-227.bltmmd.fios.verizon.net. [96.234.167.227])
+        by smtp.gmail.com with ESMTPSA id z3sm277480qkf.92.2020.09.17.10.31.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Sep 2020 10:31:51 -0700 (PDT)
+From:   Stephen Smalley <stephen.smalley.work@gmail.com>
+To:     mtk.manpages@gmail.com
+Cc:     linux-man@vger.kernel.org, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org, smcv@collabora.com, jmorris@namei.org,
+        serge@hallyn.com, paul@paul-moore.com,
+        Stephen Smalley <stephen.smalley.work@gmail.com>
+Subject: [PATCH] ip.7: Document IP_PASSSEC for UDP sockets
+Date:   Thu, 17 Sep 2020 13:31:43 -0400
+Message-Id: <20200917173143.57241-1-stephen.smalley.work@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200917162142.GB9750@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Sep 17, 2020 at 07:21:49PM +0300, Jarkko Sakkinen wrote:
-> On Thu, Sep 17, 2020 at 07:16:35PM +0530, Sumit Garg wrote:
-> > Current trusted keys framework is tightly coupled to use TPM device as
-> > an underlying implementation which makes it difficult for implementations
-> > like Trusted Execution Environment (TEE) etc. to provide trusted keys
-> > support in case platform doesn't posses a TPM device.
-> > 
-> > So this patch tries to add generic trusted keys framework where underlying
-> > implementations like TPM, TEE etc. could be easily plugged-in.
-> 
-> I would rephrase this a bit:
-> 
-> "Add a generic trusted keys framework where underlying implementations
-> can be easily plugged in. Create struct trusted_key_ops to achieve this,
-> which contains necessary functions of a backend."
-> 
-> I remember asking about this approach that what if there was just a
-> header for trusted key functions and a compile time decision, which C
-> file to include instead of ops struct. I don't remember if these was a
-> conclusion on this or not.
-> 
-> E.g. lets say you have a device with TEE and TPM, should you be able
-> to be use both at run-time? I might play along how this works now but
-> somehow, in the commit message preferably, it should be conclude why
-> one alternative is chosen over another.
+Document the IP_PASSSEC socket option and SCM_SECURITY
+ancillary/control message type for UDP sockets.
 
-We must somehow seal this discussion because the other changes are
-based on this decision.
+IP_PASSSEC for UDP sockets was introduced in Linux 2.6.17 [1].
 
-I don't think tail of this patch set takes a long time spin. This
-is the main architectural decision.
+Example NetLabel and IPSEC configurations and usage of this option
+can be found in the SELinux Notebook [2] and SELinux testsuite [3].
 
-/Jarkko
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=2c7946a7bf45ae86736ab3b43d0085e43947945c
+
+[2] https://github.com/SELinuxProject/selinux-notebook
+
+[3] https://github.com/SELinuxProject/selinux-testsuite
+
+Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+---
+ man7/ip.7 | 48 ++++++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 42 insertions(+), 6 deletions(-)
+
+diff --git a/man7/ip.7 b/man7/ip.7
+index 03a9f3f7c..681234c90 100644
+--- a/man7/ip.7
++++ b/man7/ip.7
+@@ -17,11 +17,6 @@
+ .\" 	IP_IPSEC_POLICY (2.5.47)
+ .\"	    Needs CAP_NET_ADMIN
+ .\"
+-.\" 	IP_PASSSEC (2.6.17)
+-.\" 	    Boolean
+-.\"	    commit 2c7946a7bf45ae86736ab3b43d0085e43947945c
+-.\"	    Author: Catherine Zhang <cxzhang@watson.ibm.com>
+-.\"
+ .\"	IP_MINTTL (2.6.34)
+ .\"	    commit d218d11133d888f9745802146a50255a4781d37a
+ .\"	    Author: Stephen Hemminger <shemminger@vyatta.com>
+@@ -664,6 +659,47 @@ with
+ .B IP_OPTIONS
+ puts the current IP options used for sending into the supplied buffer.
+ .TP
++.BR IP_PASSSEC " (since Linux 2.6.17)"
++.\" commit 2c7946a7bf45ae86736ab3b43d0085e43947945c
++If labeled IPSEC or NetLabel is configured on the sending and receiving
++hosts, this option enables receiving of the security context of the peer
++socket in an ancillary message of type
++.B SCM_SECURITY
++retrieved using
++.BR recvmsg (2).
++This option is only supported for UDP sockets; for TCP or SCTP sockets,
++see the description of the
++.B SO_PEERSEC
++option below.
++.IP
++The value given as an argument to
++.BR setsockopt (2)
++and returned as the result of
++.BR getsockopt (2)
++is an integer boolean flag.
++.IP
++The security context returned in the
++.B SCM_SECURITY
++ancillary message
++is of the same format as the one described under the
++.B SO_PEERSEC
++option below.
++.IP
++NOTE: The reuse of the
++.B SCM_SECURITY
++message type
++for the
++.B IP_PASSSEC
++socket option was likely a mistake since other IP control messages use
++their own numbering scheme in the IP namespace and often use the
++socket option value as the message type.  There is no conflict
++currently since the IP option with the same value
++as
++.B SCM_SECURITY
++is
++.B IP_HDRINCL
++and this is never used for a control message type.
++.TP
+ .BR IP_PKTINFO " (since Linux 2.2)"
+ .\" Precisely: 2.1.68
+ Pass an
+@@ -1290,13 +1326,13 @@ and
+ .BR IP_MTU ,
+ .BR IP_MTU_DISCOVER ,
+ .BR IP_RECVORIGDSTADDR ,
++.BR IP_PASSSEC ,
+ .BR IP_PKTINFO ,
+ .BR IP_RECVERR ,
+ .BR IP_ROUTER_ALERT ,
+ and
+ .BR IP_TRANSPARENT
+ are Linux-specific.
+-.\" IP_PASSSEC is Linux-specific
+ .\" IP_XFRM_POLICY is Linux-specific
+ .\" IP_IPSEC_POLICY is a nonstandard extension, also present on some BSDs
+ .PP
+-- 
+2.25.1
+
