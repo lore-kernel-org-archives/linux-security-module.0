@@ -2,177 +2,185 @@ Return-Path: <SRS0=t07G=C2=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F191C43461
-	for <linux-security-module@archiver.kernel.org>; Thu, 17 Sep 2020 17:32:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5412CC433E2
+	for <linux-security-module@archiver.kernel.org>; Thu, 17 Sep 2020 17:36:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CE79D22226
-	for <linux-security-module@archiver.kernel.org>; Thu, 17 Sep 2020 17:32:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i7O5uCFi"
+	by mail.kernel.org (Postfix) with ESMTP id 1C9B8208E4
+	for <linux-security-module@archiver.kernel.org>; Thu, 17 Sep 2020 17:36:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726520AbgIQRc2 (ORCPT
+        id S1726544AbgIQRgW convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 17 Sep 2020 13:32:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59272 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726343AbgIQRcX (ORCPT
+        Thu, 17 Sep 2020 13:36:22 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2882 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726318AbgIQRgP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 17 Sep 2020 13:32:23 -0400
-Received: from mail-qk1-x741.google.com (mail-qk1-x741.google.com [IPv6:2607:f8b0:4864:20::741])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8D16C06178B;
-        Thu, 17 Sep 2020 10:31:52 -0700 (PDT)
-Received: by mail-qk1-x741.google.com with SMTP id t138so3111591qka.0;
-        Thu, 17 Sep 2020 10:31:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=AKD/9E79SiZQSW8oLqIokHA8vYGAi3tIl8g3KfMvNZo=;
-        b=i7O5uCFiTKcXzgLkwDex6HWSQBoUI+9kgqEAVg2IH/LpTwrClxKKk48Hku+F9EaVEj
-         ik/CjXF+lBlDqP6VAi6xR5NYYcLqNgA3afDwEQEo6/zb5T2v2Ag+YMtxbm5E2qoe8z70
-         mnl6tDHo5gMC/OehcctCXL2bhQgDrmj2nogKnA5PocP1/o/8VUDM9VOuhVIrSnMN93fB
-         q5BweGKQuuWvdkEcrotqmZht9Hj1YvKOXMr0H8acngAvsJE9IWX6nHObFtoOipQIpuaz
-         UmSNjz1X7WKQ55jMtPjBR81Q9Wi5l9FgtvDeOzIcXMN/ptl3E0NVxr584KxtJ2YYBLuS
-         mmOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=AKD/9E79SiZQSW8oLqIokHA8vYGAi3tIl8g3KfMvNZo=;
-        b=cTZctJMH9XkfDjIrURSWTJvqFCHiU079barNXca4eR22+ihFqCO351X++ZKxWlXETu
-         HQ+WAp5gP1tHCh7dxJ+KoT5cKDMfWRyQmFD1Jw1w690F+X5ElNhYMlaBwgI8cam/Kywx
-         Bl4G8KrT8ortg+3OoaN8MxGGO4CnU85/gJ8lXG8gBRAb0ZOExzCwafZKQ+SqRDMFrm42
-         UhfG/REKF6gcAvGT5uVxBc/kiFJE0TggjDa/ZvJxOz7WB1WiHJ13OkR/hSpetM5Z7TOa
-         3epLuiGKCDh4IyNvoSqI7bzHAjvFXQiuHTHnWfubuEGc+XTT0X9yUdHXNRUqaQjpRBKT
-         1imw==
-X-Gm-Message-State: AOAM5300PwifwQiL2DpTBWF6o5Nhjv33mQytD7p4Df61PDN5UUz0ci5z
-        U0RsnBZYh4LLvoG9omWEDkk=
-X-Google-Smtp-Source: ABdhPJw7RbnGGgOX1j37sVcKkhBWi28KOF3PvRne37dN6DIZIQo2h0vEj4EjBDtBZObYBFIXls2IVQ==
-X-Received: by 2002:a37:54a:: with SMTP id 71mr26161702qkf.407.1600363912118;
-        Thu, 17 Sep 2020 10:31:52 -0700 (PDT)
-Received: from puritycontrol.fios-router.home (pool-96-234-167-227.bltmmd.fios.verizon.net. [96.234.167.227])
-        by smtp.gmail.com with ESMTPSA id z3sm277480qkf.92.2020.09.17.10.31.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Sep 2020 10:31:51 -0700 (PDT)
-From:   Stephen Smalley <stephen.smalley.work@gmail.com>
-To:     mtk.manpages@gmail.com
-Cc:     linux-man@vger.kernel.org, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org, smcv@collabora.com, jmorris@namei.org,
-        serge@hallyn.com, paul@paul-moore.com,
-        Stephen Smalley <stephen.smalley.work@gmail.com>
-Subject: [PATCH] ip.7: Document IP_PASSSEC for UDP sockets
-Date:   Thu, 17 Sep 2020 13:31:43 -0400
-Message-Id: <20200917173143.57241-1-stephen.smalley.work@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        Thu, 17 Sep 2020 13:36:15 -0400
+Received: from lhreml729-chm.china.huawei.com (unknown [172.18.7.106])
+        by Forcepoint Email with ESMTP id 4C8B462749644120D060;
+        Thu, 17 Sep 2020 18:36:05 +0100 (IST)
+Received: from fraeml706-chm.china.huawei.com (10.206.15.55) by
+ lhreml729-chm.china.huawei.com (10.201.108.80) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
+ 15.1.1913.5; Thu, 17 Sep 2020 18:36:05 +0100
+Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
+ fraeml706-chm.china.huawei.com (10.206.15.55) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1913.5; Thu, 17 Sep 2020 19:36:03 +0200
+Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
+ fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.1913.007;
+ Thu, 17 Sep 2020 19:36:03 +0200
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        "mjg59@google.com" <mjg59@google.com>,
+        John Johansen <john.johansen@canonical.com>
+CC:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: RE: [PATCH v2 07/12] evm: Introduce EVM_RESET_STATUS atomic flag
+Thread-Topic: [PATCH v2 07/12] evm: Introduce EVM_RESET_STATUS atomic flag
+Thread-Index: AQHWgp3/4yVQpxJegUaUIa256vF1xqlsrbeAgAB3aaA=
+Date:   Thu, 17 Sep 2020 17:36:03 +0000
+Message-ID: <581966c47e94412ab3fd5b2ca9aacd3d@huawei.com>
+References: <20200904092339.19598-1-roberto.sassu@huawei.com>
+         <20200904092643.20013-3-roberto.sassu@huawei.com>
+ <5bbf2169cfa38bb7a3d696e582c1de954a82d5c6.camel@linux.ibm.com>
+In-Reply-To: <5bbf2169cfa38bb7a3d696e582c1de954a82d5c6.camel@linux.ibm.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.220.96.108]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Document the IP_PASSSEC socket option and SCM_SECURITY
-ancillary/control message type for UDP sockets.
+> From: Mimi Zohar [mailto:zohar@linux.ibm.com]
+> Sent: Thursday, September 17, 2020 2:01 PM
+> [Cc'ing John Johansen]
+> 
+> Hi Roberto,
+> 
+> On Fri, 2020-09-04 at 11:26 +0200, Roberto Sassu wrote:
+> > When EVM_ALLOW_METADATA_WRITES is set, EVM allows any operation
+> on
+> > metadata. Its main purpose is to allow users to freely set metadata when
+> > they are protected by a portable signature, until the HMAC key is loaded.
+> >
+> > However, IMA is not notified about metadata changes and, after the first
+> > successful appraisal, always allows access to the files without checking
+> > metadata again.
+> >
+> > This patch introduces the new atomic flag EVM_RESET_STATUS in
+> > integrity_iint_cache that is set in the EVM post hooks and cleared in
+> > evm_verify_hmac(). IMA checks the new flag in process_measurement()
+> and if
+> > it is set, it clears the appraisal flags.
+> >
+> > Although the flag could be cleared also by evm_inode_setxattr() and
+> > evm_inode_setattr() before IMA sees it, this does not happen if
+> > EVM_ALLOW_METADATA_WRITES is set. Since the only remaining caller is
+> > evm_verifyxattr(), this ensures that IMA always sees the flag set before it
+> > is cleared.
+> >
+> > This patch also adds a call to evm_reset_status() in
+> > evm_inode_post_setattr() so that EVM won't return the cached status
+> the
+> > next time appraisal is performed.
+> >
+> > Cc: stable@vger.kernel.org # 4.16.x
+> > Fixes: ae1ba1676b88e ("EVM: Allow userland to permit modification of
+> EVM-protected metadata")
+> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > ---
+> >  security/integrity/evm/evm_main.c | 17 +++++++++++++++--
+> >  security/integrity/ima/ima_main.c |  8 ++++++--
+> >  security/integrity/integrity.h    |  1 +
+> >  3 files changed, 22 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/security/integrity/evm/evm_main.c
+> b/security/integrity/evm/evm_main.c
+> > index 4e9f5e8b21d5..05be1ad3e6f3 100644
+> > --- a/security/integrity/evm/evm_main.c
+> > +++ b/security/integrity/evm/evm_main.c
+> > @@ -221,8 +221,15 @@ static enum integrity_status
+> evm_verify_hmac(struct dentry *dentry,
+> >  		evm_status = (rc == -ENODATA) ?
+> >  				INTEGRITY_NOXATTRS : INTEGRITY_FAIL;
+> >  out:
+> > -	if (iint)
+> > +	if (iint) {
+> > +		/*
+> > +		 * EVM_RESET_STATUS can be cleared only by
+> evm_verifyxattr()
+> > +		 * when EVM_ALLOW_METADATA_WRITES is set. This
+> guarantees that
+> > +		 * IMA sees the EVM_RESET_STATUS flag set before it is
+> cleared.
+> > +		 */
+> > +		clear_bit(EVM_RESET_STATUS, &iint->atomic_flags);
+> >  		iint->evm_status = evm_status;
+> 
+> True IMA is currently the only caller of evm_verifyxattr() in the
+> upstreamed kernel, but it is an exported function, which may be called
+> from elsewhere.  The previous version crossed the boundary between EVM
+> & IMA with EVM modifying the IMA flag directly.  This version assumes
+> that IMA will be the only caller.  Otherwise, I like this version.
 
-IP_PASSSEC for UDP sockets was introduced in Linux 2.6.17 [1].
+Ok, I think it is better, as you suggested, to export a new EVM function
+that tells if evm_reset_status() will be executed in the EVM post hooks, and
+to call this function from IMA. IMA would then call ima_reset_appraise_flags()
+also depending on the result of the new EVM function.
 
-Example NetLabel and IPSEC configurations and usage of this option
-can be found in the SELinux Notebook [2] and SELinux testsuite [3].
+ima_reset_appraise_flags() should be called in a post hook in IMA.
+Should I introduce it?
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=2c7946a7bf45ae86736ab3b43d0085e43947945c
+Thanks
 
-[2] https://github.com/SELinuxProject/selinux-notebook
+Roberto
 
-[3] https://github.com/SELinuxProject/selinux-testsuite
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Li Peng, Li Jian, Shi Yanli
 
-Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
----
- man7/ip.7 | 48 ++++++++++++++++++++++++++++++++++++++++++------
- 1 file changed, 42 insertions(+), 6 deletions(-)
-
-diff --git a/man7/ip.7 b/man7/ip.7
-index 03a9f3f7c..681234c90 100644
---- a/man7/ip.7
-+++ b/man7/ip.7
-@@ -17,11 +17,6 @@
- .\" 	IP_IPSEC_POLICY (2.5.47)
- .\"	    Needs CAP_NET_ADMIN
- .\"
--.\" 	IP_PASSSEC (2.6.17)
--.\" 	    Boolean
--.\"	    commit 2c7946a7bf45ae86736ab3b43d0085e43947945c
--.\"	    Author: Catherine Zhang <cxzhang@watson.ibm.com>
--.\"
- .\"	IP_MINTTL (2.6.34)
- .\"	    commit d218d11133d888f9745802146a50255a4781d37a
- .\"	    Author: Stephen Hemminger <shemminger@vyatta.com>
-@@ -664,6 +659,47 @@ with
- .B IP_OPTIONS
- puts the current IP options used for sending into the supplied buffer.
- .TP
-+.BR IP_PASSSEC " (since Linux 2.6.17)"
-+.\" commit 2c7946a7bf45ae86736ab3b43d0085e43947945c
-+If labeled IPSEC or NetLabel is configured on the sending and receiving
-+hosts, this option enables receiving of the security context of the peer
-+socket in an ancillary message of type
-+.B SCM_SECURITY
-+retrieved using
-+.BR recvmsg (2).
-+This option is only supported for UDP sockets; for TCP or SCTP sockets,
-+see the description of the
-+.B SO_PEERSEC
-+option below.
-+.IP
-+The value given as an argument to
-+.BR setsockopt (2)
-+and returned as the result of
-+.BR getsockopt (2)
-+is an integer boolean flag.
-+.IP
-+The security context returned in the
-+.B SCM_SECURITY
-+ancillary message
-+is of the same format as the one described under the
-+.B SO_PEERSEC
-+option below.
-+.IP
-+NOTE: The reuse of the
-+.B SCM_SECURITY
-+message type
-+for the
-+.B IP_PASSSEC
-+socket option was likely a mistake since other IP control messages use
-+their own numbering scheme in the IP namespace and often use the
-+socket option value as the message type.  There is no conflict
-+currently since the IP option with the same value
-+as
-+.B SCM_SECURITY
-+is
-+.B IP_HDRINCL
-+and this is never used for a control message type.
-+.TP
- .BR IP_PKTINFO " (since Linux 2.2)"
- .\" Precisely: 2.1.68
- Pass an
-@@ -1290,13 +1326,13 @@ and
- .BR IP_MTU ,
- .BR IP_MTU_DISCOVER ,
- .BR IP_RECVORIGDSTADDR ,
-+.BR IP_PASSSEC ,
- .BR IP_PKTINFO ,
- .BR IP_RECVERR ,
- .BR IP_ROUTER_ALERT ,
- and
- .BR IP_TRANSPARENT
- are Linux-specific.
--.\" IP_PASSSEC is Linux-specific
- .\" IP_XFRM_POLICY is Linux-specific
- .\" IP_IPSEC_POLICY is a nonstandard extension, also present on some BSDs
- .PP
--- 
-2.25.1
+> Mimi
+> 
+> > +	}
+> >  	kfree(xattr_data);
+> >  	return evm_status;
+> >  }
+> > @@ -418,8 +425,12 @@ static void evm_reset_status(struct inode *inode)
+> >  	struct integrity_iint_cache *iint;
+> >
+> >  	iint = integrity_iint_find(inode);
+> > -	if (iint)
+> > +	if (iint) {
+> > +		if (evm_initialized & EVM_ALLOW_METADATA_WRITES)
+> > +			set_bit(EVM_RESET_STATUS, &iint->atomic_flags);
+> > +
+> >  		iint->evm_status = INTEGRITY_UNKNOWN;
+> > +	}
+> >  }
+> >
+> >  /**
+> > @@ -513,6 +524,8 @@ void evm_inode_post_setattr(struct dentry
+> *dentry, int ia_valid)
+> >  	if (!evm_key_loaded())
+> >  		return;
+> >
+> > +	evm_reset_status(dentry->d_inode);
+> > +
+> >  	if (ia_valid & (ATTR_MODE | ATTR_UID | ATTR_GID))
+> >  		evm_update_evmxattr(dentry, NULL, NULL, 0);
+> >  }
 
