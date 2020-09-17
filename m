@@ -2,185 +2,139 @@ Return-Path: <SRS0=t07G=C2=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5412CC433E2
-	for <linux-security-module@archiver.kernel.org>; Thu, 17 Sep 2020 17:36:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BE52C43461
+	for <linux-security-module@archiver.kernel.org>; Thu, 17 Sep 2020 17:43:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1C9B8208E4
-	for <linux-security-module@archiver.kernel.org>; Thu, 17 Sep 2020 17:36:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E9936221E3
+	for <linux-security-module@archiver.kernel.org>; Thu, 17 Sep 2020 17:43:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=gmx.net header.i=@gmx.net header.b="AZ54eguB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726544AbgIQRgW convert rfc822-to-8bit (ORCPT
+        id S1726644AbgIQRmm (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 17 Sep 2020 13:36:22 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2882 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726318AbgIQRgP (ORCPT
+        Thu, 17 Sep 2020 13:42:42 -0400
+Received: from mout.gmx.net ([212.227.17.22]:34289 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726593AbgIQRlF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 17 Sep 2020 13:36:15 -0400
-Received: from lhreml729-chm.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id 4C8B462749644120D060;
-        Thu, 17 Sep 2020 18:36:05 +0100 (IST)
-Received: from fraeml706-chm.china.huawei.com (10.206.15.55) by
- lhreml729-chm.china.huawei.com (10.201.108.80) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
- 15.1.1913.5; Thu, 17 Sep 2020 18:36:05 +0100
-Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- fraeml706-chm.china.huawei.com (10.206.15.55) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1913.5; Thu, 17 Sep 2020 19:36:03 +0200
-Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
- fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.1913.007;
- Thu, 17 Sep 2020 19:36:03 +0200
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        "mjg59@google.com" <mjg59@google.com>,
-        John Johansen <john.johansen@canonical.com>
-CC:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: RE: [PATCH v2 07/12] evm: Introduce EVM_RESET_STATUS atomic flag
-Thread-Topic: [PATCH v2 07/12] evm: Introduce EVM_RESET_STATUS atomic flag
-Thread-Index: AQHWgp3/4yVQpxJegUaUIa256vF1xqlsrbeAgAB3aaA=
-Date:   Thu, 17 Sep 2020 17:36:03 +0000
-Message-ID: <581966c47e94412ab3fd5b2ca9aacd3d@huawei.com>
-References: <20200904092339.19598-1-roberto.sassu@huawei.com>
-         <20200904092643.20013-3-roberto.sassu@huawei.com>
- <5bbf2169cfa38bb7a3d696e582c1de954a82d5c6.camel@linux.ibm.com>
-In-Reply-To: <5bbf2169cfa38bb7a3d696e582c1de954a82d5c6.camel@linux.ibm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.220.96.108]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Thu, 17 Sep 2020 13:41:05 -0400
+X-Greylist: delayed 400 seconds by postgrey-1.27 at vger.kernel.org; Thu, 17 Sep 2020 13:40:46 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1600364424;
+        bh=AtpaLz5T0doiwW45rKTXhN9OPitxExJgCcjhtNz0x98=;
+        h=X-UI-Sender-Class:Date:From:To:Cc:Subject:References:In-Reply-To;
+        b=AZ54eguBjBVpgfrIyJQ0SsL2DbHWtMwIHELHexCYssWjgRYBO475Odahy/r27XRnm
+         Ko3nlAolpxQqLoaPfZuDLPzAu76osTD6vmmgZAWj8rrYTPHYfElYy3nzEOB3yom1u1
+         pU/Ymjp7/OXsClocPacrbIv2nF3gNU9P0nV5ZqbI=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from ubuntu ([79.150.73.70]) by mail.gmx.com (mrgmx104
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 1MOA3F-1k7jNd13M1-00OYlk; Thu, 17
+ Sep 2020 19:32:28 +0200
+Date:   Thu, 17 Sep 2020 19:32:09 +0200
+From:   John Wood <john.wood@gmx.com>
+To:     Jann Horn <jannh@google.com>
+Cc:     Kees Cook <keescook@chromium.org>, John Wood <john.wood@gmx.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, linux-doc@vger.kernel.org,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Subject: Re: [RFC PATCH 1/6] security/fbfam: Add a Kconfig to enable the
+ fbfam feature
+Message-ID: <20200917173209.GA3637@ubuntu>
+References: <20200910202107.3799376-1-keescook@chromium.org>
+ <20200910202107.3799376-2-keescook@chromium.org>
+ <CAG48ez1V=oVczCCSuRaWX=bbN2cOi0Y9q48=e-Fuhg7mwMOi0A@mail.gmail.com>
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAG48ez1V=oVczCCSuRaWX=bbN2cOi0Y9q48=e-Fuhg7mwMOi0A@mail.gmail.com>
+X-Provags-ID: V03:K1:R5ZkovHXd6oUrfcKmVNF76tjDIn4TAPnGKJDjlfIyNZe9chhDUt
+ Esh/G27SFDsxpGe3eTJoHTkEtlKWjMzGSWaf4NY77J0KknyMS4Kn3FifB6lpQ9wSsgJm6aR
+ GWM1FOcKZJ7nuqitu7T9wYT0c/x3o41HPECfOOo6S21tnSwhYbEzXGPZ8NK/o/DFW7XB3Cr
+ jdRHD05vg7a/XdyN7NGVA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:/6CMB5QJPcI=:X8wmKlFpZ253znFDwPLRvb
+ YlZ/RdCI9xCVOBo9khl6lMLnAtBDlf5hMUNoOiyWZOv1J4QhAiinM2EoW6kY+qc8hjBJl2874
+ 9bMUGQjsWdx4JH9U5brc4MuC19cin2DtZ29eZvfSI96b/elLNnR9aTov1mQB/C5Eimqy4fn+3
+ 9Nf5mi/WXSFRHDUYdkLT8IszB7q6thtLFe2tvdQdPiPTRvVggd2/V0NX3n/t8N7/R+eCLy7lo
+ 68v/prC3P0LDKQ+MsH3wLOPe1kT9PYMxyCYZsb5EN5iD67JB+g8PBu+1B0UA4Z048/10ti3SE
+ WBTOV59GkNvF1RMmhH7mB7wW8J3GsMXdEfsTvEl98flGZc8dVunjEYCs8SNhdYTyUtklweh1b
+ tSLoGPdXya8K0TH79aqwk++pYYNHLo9XWonep/6IkJBZCb32iDfJvruIeklbxHTtLgwJzuPpG
+ 86NTtzC11WP5tG+UpwhgE1A6XzX0ItSGweTHyBkR20t1yP05fmU48TuhjvwJDnZzLxx+W9CKg
+ 0ZmvuiW7I6Jrx5Vu26y4FLlWxROQn+C96iSZDx9M9G/hYncOeeY13LyUbh5wAVg1cblVy4QLD
+ iQzVNhCq0J/ncRiijX1j7rDxLIFiwFZ5SI36ewts0CarJmfwiFE7lzIi+Xwg/+PeLHK8nnNLu
+ DkN1N0tORU5izm1eHOOKBV208HzG4zOw/uTKyxEcsncBin1AKCVMaBFTJjV5WEKxvNjxU97mi
+ zkLokRyZdGski1EAt1kPj3oG3AM2QZ7YRa6PeSsWKIPFqL4YeHgAxowfhHzQfNAAYTRFz6geZ
+ Bn/7XX6nPF7sxU3E5mzUu643lR3FWnXR4STPrrP/P25HBZ6IYiQjGUzd11xrNx78P7H0yPm9S
+ x9ii8+mMdTo+hTZ8ThfI2h5HyP40BIL2lFq5V7wafb8nRnoiq2Sdu3EvAhe8PRiReC8A8T7ci
+ wSQf+RvoGk8M9D8n1TF4g5icDvjJsssP8O5usLHZAIIfum5N/qwYm0dRHsaGDwcEnS7lr2CY9
+ BUJxYj5K3maLD/TaiF4AOmUIqZ+8pL7UAzpKTFkXA+JqapWjrdFAlftP2UPCet8sAsd4M6WSX
+ qS7gKahFwtQGMhnhzlsB2FF+5OciezSR/rQWZE6EoMRN6hqTok023YEUIjq28NmnUzBCwhjcy
+ LEuRV4FCDPe0Y7DnC/SknZzc5eO758PryvZxDUo87FL3KE6/El5axTRhxOkyWI2+ou/MBoEqs
+ DhSvYP2Mo0rcNzsdPPid0MuNieSbeSjCHLNBOaQ==
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-> From: Mimi Zohar [mailto:zohar@linux.ibm.com]
-> Sent: Thursday, September 17, 2020 2:01 PM
-> [Cc'ing John Johansen]
-> 
-> Hi Roberto,
-> 
-> On Fri, 2020-09-04 at 11:26 +0200, Roberto Sassu wrote:
-> > When EVM_ALLOW_METADATA_WRITES is set, EVM allows any operation
-> on
-> > metadata. Its main purpose is to allow users to freely set metadata when
-> > they are protected by a portable signature, until the HMAC key is loaded.
+On Thu, Sep 10, 2020 at 11:21:58PM +0200, Jann Horn wrote:
+> On Thu, Sep 10, 2020 at 10:21 PM Kees Cook <keescook@chromium.org> wrote=
+:
+> > From: John Wood <john.wood@gmx.com>
 > >
-> > However, IMA is not notified about metadata changes and, after the first
-> > successful appraisal, always allows access to the files without checking
-> > metadata again.
-> >
-> > This patch introduces the new atomic flag EVM_RESET_STATUS in
-> > integrity_iint_cache that is set in the EVM post hooks and cleared in
-> > evm_verify_hmac(). IMA checks the new flag in process_measurement()
-> and if
-> > it is set, it clears the appraisal flags.
-> >
-> > Although the flag could be cleared also by evm_inode_setxattr() and
-> > evm_inode_setattr() before IMA sees it, this does not happen if
-> > EVM_ALLOW_METADATA_WRITES is set. Since the only remaining caller is
-> > evm_verifyxattr(), this ensures that IMA always sees the flag set before it
-> > is cleared.
-> >
-> > This patch also adds a call to evm_reset_status() in
-> > evm_inode_post_setattr() so that EVM won't return the cached status
-> the
-> > next time appraisal is performed.
-> >
-> > Cc: stable@vger.kernel.org # 4.16.x
-> > Fixes: ae1ba1676b88e ("EVM: Allow userland to permit modification of
-> EVM-protected metadata")
-> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > ---
-> >  security/integrity/evm/evm_main.c | 17 +++++++++++++++--
-> >  security/integrity/ima/ima_main.c |  8 ++++++--
-> >  security/integrity/integrity.h    |  1 +
-> >  3 files changed, 22 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/security/integrity/evm/evm_main.c
-> b/security/integrity/evm/evm_main.c
-> > index 4e9f5e8b21d5..05be1ad3e6f3 100644
-> > --- a/security/integrity/evm/evm_main.c
-> > +++ b/security/integrity/evm/evm_main.c
-> > @@ -221,8 +221,15 @@ static enum integrity_status
-> evm_verify_hmac(struct dentry *dentry,
-> >  		evm_status = (rc == -ENODATA) ?
-> >  				INTEGRITY_NOXATTRS : INTEGRITY_FAIL;
-> >  out:
-> > -	if (iint)
-> > +	if (iint) {
-> > +		/*
-> > +		 * EVM_RESET_STATUS can be cleared only by
-> evm_verifyxattr()
-> > +		 * when EVM_ALLOW_METADATA_WRITES is set. This
-> guarantees that
-> > +		 * IMA sees the EVM_RESET_STATUS flag set before it is
-> cleared.
-> > +		 */
-> > +		clear_bit(EVM_RESET_STATUS, &iint->atomic_flags);
-> >  		iint->evm_status = evm_status;
-> 
-> True IMA is currently the only caller of evm_verifyxattr() in the
-> upstreamed kernel, but it is an exported function, which may be called
-> from elsewhere.  The previous version crossed the boundary between EVM
-> & IMA with EVM modifying the IMA flag directly.  This version assumes
-> that IMA will be the only caller.  Otherwise, I like this version.
+> > Add a menu entry under "Security options" to enable the "Fork brute
+> > force attack mitigation" feature.
+> [...]
+> > +config FBFAM
+>
+> Please give this a more descriptive name than FBFAM. Some name where,
+> if a random kernel developer sees an "#ifdef" with that name in some
+> random piece of kernel code, they immediately have a rough idea for
+> what kind of feature this is.
+>
+> Perhaps something like THROTTLE_FORK_CRASHES. Or something else that
+> is equally descriptive.
 
-Ok, I think it is better, as you suggested, to export a new EVM function
-that tells if evm_reset_status() will be executed in the EVM post hooks, and
-to call this function from IMA. IMA would then call ima_reset_appraise_flags()
-also depending on the result of the new EVM function.
+Ok, understood. This will be fixed for the next version. Thanks.
 
-ima_reset_appraise_flags() should be called in a post hook in IMA.
-Should I introduce it?
+> > +       bool "Fork brute force attack mitigation"
+> > +       default n
+>
+> "default n" is superfluous and should AFAIK be omitted.
 
-Thanks
+Ok. I will remove it. Thanks.
 
-Roberto
+> > +       help
+> > +         This is a user defense that detects any fork brute force att=
+ack
+> > +         based on the application's crashing rate. When this measure =
+is
+> > +         triggered the fork system call is blocked.
+>
+> This help text claims that the mitigation will block fork(), but patch
+> 6/6 actually kills the process hierarchy.
 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Li Peng, Li Jian, Shi Yanli
+Sorry, it's a mistake. It was the first idea but finally the implementatio=
+n
+changed and this description not was modified. Apologies. It will be fixed
+for the next version.
 
-> Mimi
-> 
-> > +	}
-> >  	kfree(xattr_data);
-> >  	return evm_status;
-> >  }
-> > @@ -418,8 +425,12 @@ static void evm_reset_status(struct inode *inode)
-> >  	struct integrity_iint_cache *iint;
-> >
-> >  	iint = integrity_iint_find(inode);
-> > -	if (iint)
-> > +	if (iint) {
-> > +		if (evm_initialized & EVM_ALLOW_METADATA_WRITES)
-> > +			set_bit(EVM_RESET_STATUS, &iint->atomic_flags);
-> > +
-> >  		iint->evm_status = INTEGRITY_UNKNOWN;
-> > +	}
-> >  }
-> >
-> >  /**
-> > @@ -513,6 +524,8 @@ void evm_inode_post_setattr(struct dentry
-> *dentry, int ia_valid)
-> >  	if (!evm_key_loaded())
-> >  		return;
-> >
-> > +	evm_reset_status(dentry->d_inode);
-> > +
-> >  	if (ia_valid & (ATTR_MODE | ATTR_UID | ATTR_GID))
-> >  		evm_update_evmxattr(dentry, NULL, NULL, 0);
-> >  }
-
+Thanks,
+John Wood
