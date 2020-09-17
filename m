@@ -2,80 +2,86 @@ Return-Path: <SRS0=t07G=C2=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D7A7C433E2
-	for <linux-security-module@archiver.kernel.org>; Thu, 17 Sep 2020 16:10:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62482C433E2
+	for <linux-security-module@archiver.kernel.org>; Thu, 17 Sep 2020 16:22:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3503D22596
-	for <linux-security-module@archiver.kernel.org>; Thu, 17 Sep 2020 16:10:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Bap21mAv"
+	by mail.kernel.org (Postfix) with ESMTP id 19D1C206E6
+	for <linux-security-module@archiver.kernel.org>; Thu, 17 Sep 2020 16:22:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728270AbgIQQJy (ORCPT
+        id S1728468AbgIQQWl (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 17 Sep 2020 12:09:54 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:56106 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728246AbgIQP7t (ORCPT
+        Thu, 17 Sep 2020 12:22:41 -0400
+Received: from mga12.intel.com ([192.55.52.136]:43644 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728312AbgIQQWN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 17 Sep 2020 11:59:49 -0400
-Received: from [192.168.254.38] (unknown [47.187.206.220])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 0C12120B7178;
-        Thu, 17 Sep 2020 08:57:20 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0C12120B7178
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1600358241;
-        bh=gUfIqFqpkrN0miyEH74CDfja3bpQECkvCujVL/Nljqg=;
-        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
-        b=Bap21mAvyeJKL22S4sguYInURgSgiXufpOk5kqSzqijlzRcX3iHUIe82IA0u8e5iF
-         HUp6Jh7UtZquNUVfdaJKc5R07sTADe2RHBpUNCP9wEbiLC2OnHb/EKxDlG4YI6Xwcj
-         FLLh69Sze7efG1K6kw3QGbPypJvP6/2ulwQipahs=
-Subject: Re: [PATCH v2 0/4] [RFC] Implement Trampoline File Descriptor
-From:   "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>
-To:     Florian Weimer <fw@deneb.enyo.de>
-Cc:     kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, oleg@redhat.com,
-        x86@kernel.org, libffi-discuss@sourceware.org
-References: <20200916150826.5990-1-madvenka@linux.microsoft.com>
- <87v9gdz01h.fsf@mid.deneb.enyo.de>
- <96ea02df-4154-5888-1669-f3beeed60b33@linux.microsoft.com>
-Message-ID: <d96b87ed-9869-c732-9938-a1c717a065f3@linux.microsoft.com>
-Date:   Thu, 17 Sep 2020 10:57:20 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Thu, 17 Sep 2020 12:22:13 -0400
+IronPort-SDR: ZaXvWywsfbf/12JF3KptBpFN508iGkAL8MVW+95HVhVbdAS2y/F6+Kxd9ZzeGi8McEFuEOHlRk
+ U71/qsW/oUCQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9747"; a="139236045"
+X-IronPort-AV: E=Sophos;i="5.77,271,1596524400"; 
+   d="scan'208";a="139236045"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2020 09:21:50 -0700
+IronPort-SDR: trHhcLQ1BQG6RgqiolRqyttLbS6G0s9kB2GNYwfwgc4KfQyHIb3FBM1tAZeeUzazTznHkgCZMq
+ uyAIhJqrRqaQ==
+X-IronPort-AV: E=Sophos;i="5.77,271,1596524400"; 
+   d="scan'208";a="483808637"
+Received: from sdompke-mobl.ger.corp.intel.com (HELO localhost) ([10.249.45.123])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2020 09:21:44 -0700
+Date:   Thu, 17 Sep 2020 19:21:42 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sumit Garg <sumit.garg@linaro.org>
+Cc:     zohar@linux.ibm.com, jejb@linux.ibm.com, dhowells@redhat.com,
+        jens.wiklander@linaro.org, corbet@lwn.net, jmorris@namei.org,
+        serge@hallyn.com, casey@schaufler-ca.com, janne.karhunen@gmail.com,
+        daniel.thompson@linaro.org, Markus.Wamser@mixed-mode.de,
+        lhinds@redhat.com, keyrings@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        op-tee@lists.trustedfirmware.org
+Subject: Re: [PATCH v6 1/4] KEYS: trusted: Add generic trusted keys framework
+Message-ID: <20200917162142.GB9750@linux.intel.com>
+References: <1600350398-4813-1-git-send-email-sumit.garg@linaro.org>
+ <1600350398-4813-2-git-send-email-sumit.garg@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <96ea02df-4154-5888-1669-f3beeed60b33@linux.microsoft.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1600350398-4813-2-git-send-email-sumit.garg@linaro.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-
-On 9/17/20 10:36 AM, Madhavan T. Venkataraman wrote:
->>> libffi
->>> ======
->>>
->>> I have implemented my solution for libffi and provided the changes for
->>> X86 and ARM, 32-bit and 64-bit. Here is the reference patch:
->>>
->>> http://linux.microsoft.com/~madvenka/libffi/libffi.v2.txt
->> The URL does not appear to work, I get a 403 error.
-> I apologize for that. That site is supposed to be accessible publicly.
-> I will contact the administrator and get this resolved.
+On Thu, Sep 17, 2020 at 07:16:35PM +0530, Sumit Garg wrote:
+> Current trusted keys framework is tightly coupled to use TPM device as
+> an underlying implementation which makes it difficult for implementations
+> like Trusted Execution Environment (TEE) etc. to provide trusted keys
+> support in case platform doesn't posses a TPM device.
 > 
-> Sorry for the annoyance.
-> 
+> So this patch tries to add generic trusted keys framework where underlying
+> implementations like TPM, TEE etc. could be easily plugged-in.
 
-Could you try the link again and confirm that you can access it?
-Again, sorry for the trouble.
+I would rephrase this a bit:
 
-Madhavan
+"Add a generic trusted keys framework where underlying implementations
+can be easily plugged in. Create struct trusted_key_ops to achieve this,
+which contains necessary functions of a backend."
+
+I remember asking about this approach that what if there was just a
+header for trusted key functions and a compile time decision, which C
+file to include instead of ops struct. I don't remember if these was a
+conclusion on this or not.
+
+E.g. lets say you have a device with TEE and TPM, should you be able
+to be use both at run-time? I might play along how this works now but
+somehow, in the commit message preferably, it should be conclude why
+one alternative is chosen over another.
+
+/Jarkko
