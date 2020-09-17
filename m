@@ -2,152 +2,115 @@ Return-Path: <SRS0=t07G=C2=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52E71C433E2
-	for <linux-security-module@archiver.kernel.org>; Thu, 17 Sep 2020 18:41:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10E5FC43463
+	for <linux-security-module@archiver.kernel.org>; Thu, 17 Sep 2020 21:22:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EE2FB21D7B
-	for <linux-security-module@archiver.kernel.org>; Thu, 17 Sep 2020 18:41:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E30E206BE
+	for <linux-security-module@archiver.kernel.org>; Thu, 17 Sep 2020 21:22:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=gmx.net header.i=@gmx.net header.b="e9t1Z/p/"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="LeKvkbkF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726436AbgIQSlf (ORCPT
+        id S1725874AbgIQVW0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 17 Sep 2020 14:41:35 -0400
-Received: from mout.gmx.net ([212.227.17.22]:49501 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726379AbgIQSld (ORCPT
+        Thu, 17 Sep 2020 17:22:26 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57150 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725858AbgIQVWZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 17 Sep 2020 14:41:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1600368012;
-        bh=BJaSI38+zQjgcLqD+dMdPDjGZYHwT/xid39c3EhZ514=;
-        h=X-UI-Sender-Class:Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=e9t1Z/p/aOHSebcLMutxKwgppPMe/c4ATNfVeaagoYuVRoFaa2lcxDVvXkzWR76hB
-         YofRiSl0Oz66n/3Ox6RXXKJl0zCEVor4IEaBtxU8K7RZNYnhgrVIaB3LpC3/tCCxMV
-         KpFqJTeep7knJ//m+d/o4g/0m+imNEeAr2az4VAk=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from ubuntu ([79.150.73.70]) by mail.gmx.com (mrgmx105
- [212.227.17.174]) with ESMTPSA (Nemesis) id 1MqJmF-1kmnc722Vv-00nPxK; Thu, 17
- Sep 2020 20:40:12 +0200
-Date:   Thu, 17 Sep 2020 20:40:06 +0200
-From:   John Wood <john.wood@gmx.com>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Jann Horn <jannh@google.com>, kernel-hardening@lists.openwall.com,
-        John Wood <john.wood@gmx.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH 1/6] security/fbfam: Add a Kconfig to enable the
- fbfam feature
-Message-ID: <20200917175146.GB3637@ubuntu>
-References: <20200910202107.3799376-1-keescook@chromium.org>
- <20200910202107.3799376-2-keescook@chromium.org>
- <202009101615.8566BA3967@keescook>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202009101615.8566BA3967@keescook>
-X-Provags-ID: V03:K1:hfSrV/JuouzV96KqzDpTM0p1F5fgksRQkQ6glwDqKnplLy7aA51
- LEXmlmjhZhsKwcw5j0kbmt75CSucf6iASudyPU5ybTSp6TwgdsHyhmEvzYWejOaYtXBaxA/
- PnRKC9PzHtt0+UFq1WxYfr9s9ZeCojzAxzMMqSLlO3HjvJvoExAeNrCrqI6qFldyYkuwPt5
- pa5DJIH2/13k0Vpfy5WPw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:F+CYmWgFS1M=:BsRffWDkQBmHd+tKnquYN/
- 8GM8gVMJzJUHm1wLN6sXJNkaM1TtRt/1V5S2aDYLosqzA7/u+EEtothfBo8QFKI9FsOFNyOFy
- H4gOTJ0PF86fTmrXj6o7Tz1Z6U8o7uI4HIj5/mIYwLFl/TTv52z/+P6riiqXobBwn6C+80my/
- gFNP+8JTHOp6yYAVBo+A8OSWoCQ5MagOVy0OoyK9mTw/3jXZItatZ2UsEYTSyPeb9+sQXm2tH
- LLvGlF9TZ83maf5WrMyEJMqXha5sf7FjN4voWB3UEc8J4dWImKh15qpA/hr2sicARZPIKPe6F
- K6QNgXaMIap5HLkHsnQETPu+cPdKK61VbmNLxFBwlfNcvFNu4y05X0UuH7IrTqMxlfV4MSus1
- mkxSH4DErxV9mJfPRiannVBfsktkpXJAC8eczFtHls1VXsqZ+UTYg6BRGmdK4MGtH1ReFH9ZA
- ywFRgt+be+8LcK4jyQAFgZQpRqrGJRqYUGTdFbGZ/tEdNcBc/q8s9ygAr7KMCKBmITyFkDRYN
- E2K4u3EPUFOIaJqgd7EZ84wtGR39Sqniot95q5qpQEC8HNFBJ6yGzLnHy311i48kU+X2Z2yjp
- kfxfaNP66eE/U59rDWestmaYslNyqva/9g2civeO4EtLuH3mpUwArmBzb0/qlIit5/fVwI/Cf
- RN1Ur93LTn76zDgltjycZ8ALztU4UiZeDL5ChGXw3vK1pDz8pndc4M+kTZMdxWLAjKfqQURqJ
- PKMjOcNHsujSTb9s3fJVMCIuM1ndW0RPV89rtBn38eMK77nv3r4yrzQpZdykSZQmvi2wgvWiK
- HUz6U8VlqmJVX0IcIupeW1EWfrtdYb9JcWvMnhX8yfjg7N0/4Ijrly8zmsppeNTu3kZrMdLj1
- VO7J368MKPC0a5VAZ510UDgycg7VfOfLijEnyU5EmK6FwTQJ3AodhBVWJJt/b4CUCs1gdsrIC
- dXLbIuM177k0+HIj51B+7ikdPWBivlOy8obh0XKgsNk5GliXVn6jCrxTUtT+C1WvaxSYOlUxm
- 8ZSYhm/OSApgQDJD2mvOL9huMsK/GHuEMP5N2x78Ewd6j8QsvmGBY3daU7p5WFAac5BELEUmp
- IOhwYHNGrrQI/FUuAy1z5G/w46UgEIYf4p5lOTNp+lmjx9tHvtb0EoAdpU/1t1rzPsPSwXc5d
- jQWlqvI38Yv94/imXFKlXrwpMtvjpHh39fqQxvy1z7m85HSQrL5DuN01Fp0JhxQtXd/s24Dsq
- V81jzjHU6ZR+y6kUDixI7ItGZU/kNMJFd4Eerpw==
-Content-Transfer-Encoding: quoted-printable
+        Thu, 17 Sep 2020 17:22:25 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 08HKWaNo039062;
+        Thu, 17 Sep 2020 16:53:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=xQvwnAivXgUxH+l33TWWdZYCxIRDFo0lKCWSsGIqums=;
+ b=LeKvkbkFzIV8dbkMqn8pr34ZDvibP5Ly5UBSmNCdfOIB96mGFZs+thLToamH0rEc7RtO
+ vxf7efDFP4+Gw8vuy42x4hBQ48PKOeNPTvCyvIV3GnX4Fb6/6ema6Ab9GVwUZNHT6NGe
+ 0Lalfco2tHfX+XyJKw2t57dUgK+CeLh1CXIqkNpYIC+EXhPtufRzNVvcqgx0wfjnIKxu
+ BAPjfNmSsF4k0gejqNiGXcyIKCvp19ghlV+S1aC9ljhnCnyH0TXShmEM0OPmJDvT7QJx
+ 0gZRdPFRJUBAawmfUUVZt07KWcqzGZzW7zVorD5emmS0hxk9sAV4lLFJ1le3j6UQ7yBP lA== 
+Received: from ppma05fra.de.ibm.com (6c.4a.5195.ip4.static.sl-reverse.com [149.81.74.108])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 33mea81bc0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 17 Sep 2020 16:53:56 -0400
+Received: from pps.filterd (ppma05fra.de.ibm.com [127.0.0.1])
+        by ppma05fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 08HKrDYS027406;
+        Thu, 17 Sep 2020 20:53:55 GMT
+Received: from b06avi18878370.portsmouth.uk.ibm.com (b06avi18878370.portsmouth.uk.ibm.com [9.149.26.194])
+        by ppma05fra.de.ibm.com with ESMTP id 33k6f2h9cs-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 17 Sep 2020 20:53:54 +0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 08HKrpxc25624980
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 17 Sep 2020 20:53:51 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8D79FA4053;
+        Thu, 17 Sep 2020 20:53:52 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A02BEA404D;
+        Thu, 17 Sep 2020 20:53:51 +0000 (GMT)
+Received: from sig-9-65-208-105.ibm.com (unknown [9.65.208.105])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 17 Sep 2020 20:53:51 +0000 (GMT)
+Message-ID: <7488a57e29dd33440ae98d6883f8f92d5833b97a.camel@linux.ibm.com>
+Subject: Re: LSM that blocks execution of the code from the anonymous pages
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Igor Zhbanov <i.zhbanov@omprussia.ru>,
+        linux-integrity <linux-integrity@vger.kernel.org>
+Cc:     linux-security-module <linux-security-module@vger.kernel.org>
+Date:   Thu, 17 Sep 2020 16:53:50 -0400
+In-Reply-To: <88b9444e-08bc-4240-7943-298070dfc47c@omprussia.ru>
+References: <5f166ecd-38e4-a808-c377-683aabf6bf65@omprussia.ru>
+         <2ba01c4961b2b967bb314e2d618a92e91d4fe511.camel@linux.ibm.com>
+         <88b9444e-08bc-4240-7943-298070dfc47c@omprussia.ru>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-09-17_17:2020-09-16,2020-09-17 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxscore=0
+ suspectscore=62 malwarescore=0 phishscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 clxscore=1015 lowpriorityscore=0 bulkscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2006250000 definitions=main-2009170146
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi,
+Hi Igor,
 
-On Thu, Sep 10, 2020 at 04:18:08PM -0700, Kees Cook wrote:
-> On Thu, Sep 10, 2020 at 01:21:02PM -0700, Kees Cook wrote:
-> > From: John Wood <john.wood@gmx.com>
-> >
-> > Add a menu entry under "Security options" to enable the "Fork brute
-> > force attack mitigation" feature.
-> >
-> > Signed-off-by: John Wood <john.wood@gmx.com>
-> > ---
-> >  security/Kconfig       |  1 +
-> >  security/fbfam/Kconfig | 10 ++++++++++
-> >  2 files changed, 11 insertions(+)
-> >  create mode 100644 security/fbfam/Kconfig
-> >
-> > diff --git a/security/Kconfig b/security/Kconfig
-> > index 7561f6f99f1d..00a90e25b8d5 100644
-> > --- a/security/Kconfig
-> > +++ b/security/Kconfig
-> > @@ -290,6 +290,7 @@ config LSM
-> >  	  If unsure, leave this as the default.
-> >
-> >  source "security/Kconfig.hardening"
-> > +source "security/fbfam/Kconfig"
->
-> Given the layout you've chosen and the interface you've got, I think
-> this should just be treated like a regular LSM.
+(Reminder the Linux kernel mailing lists convention is to inline/bottom
+post.)
 
-Yes, throughout the review it seems the most appropiate is treat
-this feature as a regular LSM. Thanks.
+On Thu, 2020-09-17 at 23:39 +0300, Igor Zhbanov wrote:
+> My question is more about whether this functionality fits into IMA's
+> responsibility. I.e. I can propose the changes as the extension of IMA's
+> functionality (which I think it would be better), or I could create a separate
+> LSM if this functionality doesn't align with IMA's purpose for some reason.
+> This is the first question.
+> 
+> And the second question, what kind of operation modes do you think would
+> be useful?
+> 
+> 1) no anonymous code for privileged processes (as currently),
+> 2) no anonymous code for all processes,
+> 3) no anonymous code for all processes with xattr-based exceptions (may be
+>       with xattr value signing)
 
-> >
-> >  endmenu
-> >
-> > diff --git a/security/fbfam/Kconfig b/security/fbfam/Kconfig
-> > new file mode 100644
-> > index 000000000000..bbe7f6aad369
-> > --- /dev/null
-> > +++ b/security/fbfam/Kconfig
-> > @@ -0,0 +1,10 @@
-> > +# SPDX-License-Identifier: GPL-2.0
-> > +config FBFAM
->
-> To jump on the bikeshed: how about just calling this
-> FORK_BRUTE_FORCE_DETECTION or FORK_BRUTE, and the directory could be
-> "brute", etc. "fbfam" doesn't tell anyone anything.
+These are generic questions not dependent on whether this would be
+upstreamed as an independent LSM or as part of IMA.  For this reason,
+I've Cc'ed the LSM mailing list.
 
-Understood. But how about use the fbfam abbreviation in the code? Like as
-function name prefix, struct name prefix, ... It would be better to use a
-more descriptive name in this scenario? It is not clear to me.
+Mimi
 
-> --
-> Kees Cook
-
-Thanks,
-John Wood
+> 
+> For #3 I definitely would prefer to implement the code as a part of IMA
+> because of sharing of xattrs cache, etc. to avoid reinventing the wheel.
 
